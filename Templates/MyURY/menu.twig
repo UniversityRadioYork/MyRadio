@@ -1,0 +1,20 @@
+{% extends 'stripe.twig' %}
+{% block stripecontent %}
+{% for column in menu %}
+<div class="menu-column">
+  <header>{{ column.title }}</header>
+    {% for section in column.sections %}
+  <header class="section">{{ section.title }}</header>
+  <ul>
+    {% for item in section.items %}
+      {% if item.template is not sameas(null) %}
+      {% include item.template %}
+      {% else %}
+      <li><a href="{{ item.link }}">{{ item.title }}</a></li>
+      {% endif %}
+    {% endfor %}
+    </ul>
+    {% endfor %}
+  </div>
+{% endfor %}
+{% endblock %}
