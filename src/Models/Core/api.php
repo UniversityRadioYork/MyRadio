@@ -24,3 +24,6 @@ require_once 'Classes/Database.php';
 //Initiate Cache
 require_once 'Interfaces/CacheProvider.php';
 require_once 'Classes/'.Config::$cache_provider.'.php';
+
+//Initiate User
+$member = User::getInstance();
