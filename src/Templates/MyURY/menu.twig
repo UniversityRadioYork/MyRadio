@@ -1,4 +1,8 @@
 {% extends 'stripe.twig' %}
+{% block head %}
+{{ parent() }}
+<script type="text/javascript" src="js/myury.menu.js"></script>
+{% endblock %}
 {% block stripecontent %}
 <div id="menu-wrapper">
 {% for column in menu %}
@@ -11,7 +15,7 @@
       {% if item.template is not sameas(null) %}
       {% include item.template %}
       {% else %}
-      <li><a href="{{ item.link }}">{{ item.title }}</a></li>
+      <li><a href="{{ item.url }}" title="{{ item.description }}">{{ item.title }}</a></li>
       {% endif %}
     {% endfor %}
     </ul>
