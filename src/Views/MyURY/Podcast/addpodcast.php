@@ -1,6 +1,6 @@
 <?php
 require 'Views/MyURY/bootstrap.php';
-$twig->setTemplate('MyURY/podcastadd.twig')
+$twig->setTemplate('MyURY/podcast/podcastadd.twig')
         ->addVariable('title', 'Podcast Manager - Add Podcast')
         ->addVariable('heading', 'Podcast Manager')
         ->render();
