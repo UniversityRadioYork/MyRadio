@@ -72,23 +72,26 @@ class Podcast {
       //It's not cached. Let's generate it now
       $db = Database::getInstance();
       //First, shows
-      $shows = $db->fetch_all('SELECT podid, title FROM public.pod_item
-        ORDER BY position ASC');
-      //Now, sections
-      $sections = $db->fetch_all('SELECT sectionid, columnid, title FROM myury.menu_sections
-        ORDER BY position ASC');
-      //And finally, items
-      $items = array_merge(
-              $db->fetch_all('SELECT itemid, sectionid, title, url, description FROM myury.menu_links ORDER BY title ASC'),
-              $db->fetch_all('SELECT sectionid, template FROM myury.menu_twigitems')
-      );
+      $shows = $db->fetch_all('SELECT DISTINCT summary, entryid, createddate
+						FROM sched_entry
+						INNER JOIN pod_item USING (entryid)
+					UNION
+						SELECT DISTINCT summary, entryid, createddate
+						FROM sched_entry
+						INNER JOIN sched_memberentry AS me USING (entryid)
+						INNER JOIN pod_item USING (entryid)
+					ORDER BY createddate DESC');
+      //Now Podcasts for those shows
+      $podcasts = $db->fetch_all('SELECT podid, title, extract(epoch FROM dateadded)
+                                        FROM pod_item
+                                    ORDER BY dateadded DESC');
       //Get permissions for each $item
-      foreach ($items as $key => $item) {
-        if (!isset($item['itemid']))
+      foreach ($podcasts as $key => $podcast) {
+        if (!isset($podcast['podid']))
           continue; //Skip twigitems
-        $items[$key]['permissions'] = $db->fetch_column('SELECT typeid FROM myury.menu_auth
-          WHERE linkid=$1', array($item['itemid']));
-        $items[$key]['url'] = $this->parseURL($item['url']);
+        $podcasts[$key]['permissions'] = $db->fetch_column('SELECT typeid FROM myury.menu_auth
+          WHERE linkid=$1', array($podcast['podid']));
+        $podcasts[$key]['url'] = $this->parseURL($item['url']);
       }
 
       //That'll do for now. Time to make $showlinked
@@ -101,15 +104,15 @@ class Podcast {
           if ($section['columnid'] != $show['columnid'])
             continue;
           //This section is for this column
-          $newItems = array();
+          $newPodcasts = array();
           //Iterate over each item
-          foreach ($items as $item) {
-            if ($item['sectionid'] != $section['sectionid'])
+          foreach ($podcasts as $podcast) {
+            if ($podcast['sectionid'] != $section['sectionid'])
               continue;
             //Item is for this section
-            $newItems[] = $item;
+            $newPodcasts[] = $podcast;
           }
-          $newShow['sections'][] = array('title' => $section['title'], 'items' => $newItems);
+          $newShow['sections'][] = array('title' => $section['title'], 'items' => $newPodcasts);
         }
 
         $showlinked[] = $newShow;
