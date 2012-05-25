@@ -6,6 +6,7 @@
  * @author Lloyd Wallis <lpw@ury.york.ac.uk>
  */
 class User {
+  private static $users = array();
   private $memberid;
   private $permissions;
   private $name;
@@ -15,8 +16,14 @@ class User {
   private $receive_email;
   private $local_name;
   private $account_locked;
+  private $studio_trained;
+  private $studio_demoed;
   private $db;
   
+  /**
+   * Initiates the User variables
+   * @param int $memberid The ID of the member to initialise
+   */
   private function __construct($memberid) {
     $this->initDB();
     $this->memberid = $memberid;
@@ -26,6 +33,11 @@ class User {
               receive_email, local_name, account_locked FROM member
               WHERE memberid=$1 LIMIT 1',
             array($memberid));
+    if (empty($data)) {
+      //This user doesn't exist
+      throw new MyURYException('The specified User does not appear to exist.');
+      return;
+    }
     //Set the variables
     foreach ($data as $key => $value) $this->$key = $value;
     
@@ -35,6 +47,11 @@ class User {
         WHERE memberid=$1 AND from_date < now()- interval \'1 month\' AND
         (till_date IS NULL OR till_date > now()- interval \'1 month\'))',
             array($memberid));
+    
+    //Get the user's training and demoed status
+    /**
+     * @todo this bit 
+     */
   }
   
   /**
@@ -69,13 +86,16 @@ class User {
   }
   
   public static function getInstance($memberid = -1) {
-    //Prepare a cache object
-    $cache = Config::$cache_provider;
-    $cache = $cache::getInstance();
-    
     //Check the input is an int, and use the session user if not otherwise told
     $memberid = (int) $memberid;
     if ($memberid === -1) $memberid = $_SESSION['memberid'];
+    
+    //Check if a user class already exists for this memberid
+    if (isset(self::$users[$memberid])) return self::$user[$memberid];
+    
+    //Prepare a cache object
+    $cache = Config::$cache_provider;
+    $cache = $cache::getInstance();
     
     //Return the object if it is cached
     $entry = $cache->get('MyURYUser_'.$memberid);
