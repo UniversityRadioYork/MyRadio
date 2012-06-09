@@ -11,6 +11,7 @@
 spl_autoload_register(function($class){
   $class .= '.php';
   if (file_exists(__DIR__.'/../../Classes/ServiceAPI/'.$class)) {
+    require_once 'Interfaces/ServiceAPI.php';
     require_once 'Classes/ServiceAPI/'.$class;
   }
 });

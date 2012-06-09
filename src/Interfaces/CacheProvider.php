@@ -3,7 +3,7 @@
  * A standard interface for cache systems. This should allow them to easily be
  * swapped out later (MemcachedProvider, APCProvider, PsqlProvider, FileProvider...) 
  */
-interface CacheProvider {
+interface CacheProvider extends Singleton {
   /**
    * Inserts or Updates a cache entry
    * @param int $expires The number of seconds the cache is valid for
@@ -24,8 +24,4 @@ interface CacheProvider {
    * Empties the cache 
    */
   public function purge();
-  /**
-   * Provides the singleton 
-   */
-  public static function getInstance();
 }

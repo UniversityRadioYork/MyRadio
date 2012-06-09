@@ -1,7 +1,8 @@
 <?php
 
 /**
- * Standard API Utilities. Basically miscellaneous function
+ * Standard API Utilities. Basically miscellaneous functions for the core system
+ * No database accessing etc should be setup here.
  *
  * @author lpw
  */
@@ -26,6 +27,7 @@ class CoreUtils {
   /**
    * Provides a template engine object compliant with TemplateEngine interface
    * @return URYTwig 
+   * @todo Make this generalisable for drop-in template engine replacements
    */
   public static function getTemplateObject() {
     require_once 'Twig/Autoloader.php';
