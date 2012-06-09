@@ -5,7 +5,7 @@
  *
  * @author lpw
  */
-abstract class ServiceAPI implements ServiceAPI {
+abstract class ServiceAPI implements IServiceAPI {
   protected static $db = null;
   protected static $cache = null;
   
