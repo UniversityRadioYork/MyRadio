@@ -84,7 +84,7 @@ class User extends ServiceAPI {
     if ($entry === false) {
       //Not cached.
       $entry = new User($memberid);
-      $cache->set('MyURYUser_'.$memberid, $entry, 3600);
+      self::$cache->set('MyURYUser_'.$memberid, $entry, 3600);
     } else {
       //Wake up the object
       $entry->__wakeup();
