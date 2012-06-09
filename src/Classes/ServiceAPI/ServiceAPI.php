@@ -9,13 +9,13 @@ abstract class ServiceAPI implements IServiceAPI {
   protected static $db = null;
   protected static $cache = null;
   
-  private static function initDB() {
+  protected static function initDB() {
     if (!self::$db) {
       self::$db = Database::getInstance();
     }
   }
   
-  private static function initCache() {
+  protected static function initCache() {
     if (!self::$cache) {
       $cache = Config::$cache_provider;
       self::$cache = $cache::getInstance();
