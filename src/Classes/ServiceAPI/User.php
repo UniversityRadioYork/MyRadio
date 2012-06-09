@@ -70,6 +70,7 @@ class User extends ServiceAPI {
   }
   
   public static function getInstance($memberid = -1) {
+    self::initCache();
     //Check the input is an int, and use the session user if not otherwise told
     $memberid = (int) $memberid;
     if ($memberid === -1) $memberid = $_SESSION['memberid'];
