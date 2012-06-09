@@ -13,12 +13,12 @@ interface IServiceAPI {
   /**
    * Initialises the database instance 
    */
-  function initDB();
+  static function initDB();
   
   /**
    * Initialises the Cache instance 
    */
-  function initCache();
+  static function initCache();
   
   /**
    * Reestablishes the database connection after being Cached 
