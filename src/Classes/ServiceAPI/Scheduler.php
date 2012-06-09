@@ -27,5 +27,5 @@ class Scheduler extends ServiceAPI {
     return 0;
   }
   
-  public static function getInstance() {throw new MyURYException("Fuck You.");}
+  public static function getInstance($id = -1) {throw new MyURYException('Not Implemented');}
 }
