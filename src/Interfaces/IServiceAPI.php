@@ -9,17 +9,6 @@
  * @author lpw
  */
 interface IServiceAPI {
-  
-  /**
-   * Initialises the database instance 
-   */
-  static function initDB();
-  
-  /**
-   * Initialises the Cache instance 
-   */
-  static function initCache();
-  
   /**
    * Reestablishes the database connection after being Cached 
    */
