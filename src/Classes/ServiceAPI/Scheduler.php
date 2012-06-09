@@ -26,4 +26,6 @@ class Scheduler extends ServiceAPI {
   public static function countPendingDisputes() {
     return 0;
   }
+  
+  public static function getInstance() {throw new MyURYException("Fuck You.");}
 }
