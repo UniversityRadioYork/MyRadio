@@ -9,8 +9,6 @@
  * @author lpw
  */
 interface ServiceAPI {
-  protected $db;
-  protected $cache;
   
   /**
    * Initialises the database instance 
