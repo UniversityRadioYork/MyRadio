@@ -7,6 +7,7 @@
  * @author Lloyd Wallis <lpw@ury.york.ac.uk> 
  */
 
+require_once 'Interfaces/Singleton.php';
 //Create a function to autoload classes when needed
 spl_autoload_register(function($class){
   $class .= '.php';
