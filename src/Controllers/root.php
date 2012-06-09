@@ -9,6 +9,7 @@ ini_set('include_path', str_replace('Controllers','',__DIR__).':'.ini_get('inclu
  * Yay authentication! 
  */
 require_once 'shibbobleh_client.php';
+require_once 'MyURY/CoreUtils.php';
 
 /**
  * Call the model that prepares the database and the Global Abstraction API 
