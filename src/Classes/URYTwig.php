@@ -17,6 +17,7 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
    */
   public function __construct() {
     $twig_loader = new Twig_Loader_Filesystem(__DIR__.'/../Templates/');
+    $this->contextVariables['notices'] = '';
     parent::__construct($twig_loader, array('debug' => Config::$template_debug));
   }
   
@@ -27,8 +28,19 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
    * @return URYTwig This for chaining
    */
   public function addVariable($name, $value) {
+    if ($name === 'notices') {
+      throw new MyURYException('Notices cannot be directly set via the Template Engine');
+    }
     $this->contextVariables[$name] = $value;
     return $this;
+  }
+  
+  public function addInfo($message, $icon = 'info') {
+    $this->contextVariables[$name] .= '<div class="ui-state-highlight"><span class="ui-icon ui-icon-'.$icon.'" style="float:left"></span>'.$message.'</div>';
+  }
+  
+  public function addError($message, $icon = 'alert') {
+    $this->contextVariables[$name] .= '<div class="ui-state-error"><span class="ui-icon ui-icon-'.$icon.'" style="float:left"></span>'.$message.'</div>';
   }
   
   /**

@@ -2,10 +2,10 @@
 /**
  * The user object provides and stores information about a user
  * It is not a singleton for Impersonate purposes
- * @version 23052012
+ * @version 09062012
  * @author Lloyd Wallis <lpw@ury.york.ac.uk>
  */
-class User {
+class User extends ServiceAPI {
   private static $users = array();
   private $memberid;
   private $permissions;
@@ -18,17 +18,15 @@ class User {
   private $account_locked;
   private $studio_trained;
   private $studio_demoed;
-  private $db;
   
   /**
    * Initiates the User variables
    * @param int $memberid The ID of the member to initialise
    */
   private function __construct($memberid) {
-    $this->initDB();
     $this->memberid = $memberid;
     //Get the base data
-    $data = $this->db->fetch_one(
+    $data = self::$db->fetch_one(
             'SELECT fname || sname AS name, college, phone, email,
               receive_email, local_name, account_locked FROM member
               WHERE memberid=$1 LIMIT 1',
@@ -42,7 +40,7 @@ class User {
     foreach ($data as $key => $value) $this->$key = $value;
     
     //Get the user's permissions
-    $this->permissions = $this->db->fetch_column('SELECT lookupid FROM auth_officer
+    $this->permissions = self::$db->fetch_column('SELECT lookupid FROM auth_officer
       WHERE officerid IN (SELECT officerid FROM member_officer
         WHERE memberid=$1 AND from_date < now()- interval \'1 month\' AND
         (till_date IS NULL OR till_date > now()- interval \'1 month\'))',
@@ -52,20 +50,6 @@ class User {
     /**
      * @todo this bit 
      */
-  }
-  
-  /**
-   * Initialises the database instance 
-   */
-  private function initDB() {
-    $this->db = Database::getInstance();
-  }
-  
-  /**
-   * Reestablishes the database connection after being Cached 
-   */
-  public function __wakeup() {
-    $this->initDB();
   }
   
   /**
@@ -91,14 +75,11 @@ class User {
     if ($memberid === -1) $memberid = $_SESSION['memberid'];
     
     //Check if a user class already exists for this memberid
+    //(Each memberid-user combination should only have one initiated instance)
     if (isset(self::$users[$memberid])) return self::$user[$memberid];
     
-    //Prepare a cache object
-    $cache = Config::$cache_provider;
-    $cache = $cache::getInstance();
-    
     //Return the object if it is cached
-    $entry = $cache->get('MyURYUser_'.$memberid);
+    $entry = self::$cache->get('MyURYUser_'.$memberid);
     if ($entry === false) {
       //Not cached.
       $entry = new User($memberid);

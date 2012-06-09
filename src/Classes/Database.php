@@ -43,6 +43,15 @@ class Database {
     }
     return $result;
   }
+  
+  /**
+   * Equates to a pg_num_rows($result)
+   * @param Resource $result a reference to a postgres result set
+   * @return int The number of rose in the result set
+   */
+  public function num_rows($result) {
+    return pg_num_rows($result);
+  }
 
   /**
    * The most commonly used database function

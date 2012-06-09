@@ -7,23 +7,16 @@
  * @depends Database
  * @author Andy Durant <aj@ury.york.ac.uk>
  */
-class Podcast {
-    
-  private $cache;
-
-  public function __construct() {
-    $obj = Config::$cache_provider;
-    $this->cache = $obj::getInstance();
-  }
+class Podcast extends ServiceAPI {
 
   /**
    * Returns the Show Linked Podcasts for the given user
    * @param User $user
    * @return Array A complex Podcast array array array array array
    */
-  public function getShowLinkedPodcastsForUser(User $user) {
+  public static function getShowLinkedPodcastsForUser(User $user) {
     //Check if it's cached
-    $cache = $this->cache->get('Podcast_ShowLinked_' . $user->getID());
+    $cache = self::$cache->get('Podcast_ShowLinked_' . $user->getID());
     if ($cache !== false)
       return $cache;
 

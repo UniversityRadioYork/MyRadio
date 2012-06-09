@@ -4,9 +4,8 @@
  * Allows drop-in replacement of template systems
  * @author Lloyd Wallis <lpw@ury.york.ac.uk>
  */
-interface TemplateEngine {
+interface TemplateEngine extends Singleton {
   public function addVariable($name, $value);
   public function setTemplate($template);
   public function render();
-  public static function getInstance(); //TemplateEngines must be Singleton classes
 }
