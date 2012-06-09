@@ -8,7 +8,7 @@
  * - A static factory to create an instance of the ServiceAPI Object
  * @author lpw
  */
-interface ServiceAPI {
+interface IServiceAPI {
   
   /**
    * Initialises the database instance 

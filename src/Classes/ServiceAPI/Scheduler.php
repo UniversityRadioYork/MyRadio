@@ -4,7 +4,7 @@
  *
  * @author lpw
  */
-class Scheduler extends ServiceAPI {
+class Scheduler extends IServiceAPI {
   
   private static function pendingAllocationsQuery() {
     return self::$db->query('SELECT * FROM sched_entry WHERE entryid NOT IN
