@@ -20,7 +20,7 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
     $this->contextVariables['notices'] = '';
     parent::__construct($twig_loader, array('debug' => Config::$template_debug, 'auto_reload' => true));
     $this->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : 'Anonymous');
-    $this->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? isset($_SESSION['timeslotname']) : null);
+    $this->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null);
     
   }
   
