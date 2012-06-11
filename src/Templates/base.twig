@@ -16,16 +16,20 @@
     {% endblock %}
     </head>
     <body>
-      <header class="main">
-        <a href="./">My<span class="r">((URY))</span></a> | {{serviceName}}
-        <span class="header-right"><a href="http://ury.york.ac.uk/">ury.org.uk</a></span>
+      <header id="bar">
+        <span class="header-left"><a href="./">My<span class="r">((URY))</span></a> | {{serviceName}}</span>
+        <span class="header-centre">{{ name }} - | - {{ timeslotname }}</span>
+        <span class="header-right"><a href="https://ury.york.ac.uk/portal/redir_out.php">Logout</a> | <a href="../">Members Internal</a></span>
       </header>
       <div class="menu">
         <h1><span class="r">{{ title }}</span></h1>
 {% block content %}{% endblock %}
 {% block footer %}
       </div>
-      <footer>Developed by <span class="r">((URY))</span> Computing 2011-2012.</footer>
+      <footer>
+          <span class="header-left">Developed by <span class="r">((URY))</span> Computing 2011-2012.</span>
+          <span class="header-right"><a href="http://ury.york.ac.uk/">ury.org.uk</a></span>
+      </footer>
 {% endblock %}
     </body>
   </html>
