@@ -19,8 +19,8 @@ class Database {
    * Constructs the singleton database connector 
    */
   private function __construct() {
-    $this->db = pg_connect('host='.Config::$db_hostname.' port=5432 dbname=membership
-            user='.Config::$db_user.' password='.Config::$db_pass);
+    $this->db = pg_connect('host=' . Config::$db_hostname . ' port=5432 dbname=membership
+            user=' . Config::$db_user . ' password=' . Config::$db_pass);
     if (!$this->db) {
       //Database isn't working. Throw an EVERYTHING IS BROKEN Exception
       throw new MyURYException('Database Connection Failed!',
@@ -43,7 +43,7 @@ class Database {
     }
     return $result;
   }
-  
+
   /**
    * Equates to a pg_num_rows($result)
    * @param Resource $result a reference to a postgres result set
@@ -56,19 +56,27 @@ class Database {
   /**
    * The most commonly used database function
    * Equates to a pg_fetch_all(pg_query)
-   * @param String $sql The query string to execute
+   * @param String|Resource $sql The query string to execute
+   * or a psql result resource
    * @param Array $params Parameters for the query
    * @return Array An array of result rows (potentially empty)
    * @throws MyURYException 
    */
   public function fetch_all($sql, $params = array()) {
-    try {
-      $result = $this->query($sql, $params);
-    } catch (MyURYException $e) {
-      return array();
+    if (is_resource($sql)) {
+      return pg_fetch_all($sql);
+    } elseif (is_string($sql)) {
+      try {
+        $result = $this->query($sql, $params);
+      } catch (MyURYException $e) {
+        return array();
+      }
+      if (pg_num_rows($result) === 0)
+        return array();
+      return pg_fetch_all($result);
+    } else {
+      throw new MyURYException('Invalid Request for $sql');
     }
-    if (pg_num_rows($result) === 0) return array();
-    return pg_fetch_all($result);
   }
 
   /**
@@ -86,7 +94,7 @@ class Database {
     }
     return pg_fetch_assoc($result);
   }
-  
+
   /**
    * Equates to a pg_fetch_all_columns(pg_query,0). Returns all first column entries
    * @param String $sql The query string to execute
@@ -100,7 +108,8 @@ class Database {
     } catch (MyURYException $e) {
       return array();
     }
-    if (pg_num_rows($result) === 0) return array();
+    if (pg_num_rows($result) === 0)
+      return array();
     return pg_fetch_all_columns($result, 0);
   }
 
