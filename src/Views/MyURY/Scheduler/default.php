@@ -1,6 +1,7 @@
 <?php
 require 'Views/MyURY/Scheduler/bootstrap.php';
-$twig->setTemplate('MyURY/menu.twig')
+$twig->setTemplate('table.twig')
+        ->addVariable('tablescript', 'schedule_pending')
         ->addVariable('heading', 'Scheduler')
-        ->addVariable('menu', array($items))
+        ->addVariable('tabledata', $pending_allocations)
         ->render();
