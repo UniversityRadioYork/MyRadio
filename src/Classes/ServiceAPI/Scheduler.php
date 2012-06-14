@@ -15,7 +15,8 @@ class Scheduler extends ServiceAPI {
         WHERE sched_entry.entryid = sched_showdetail.entryid
         AND sched_entry.entryid NOT IN (SELECT entryid FROM sched_timeslot)
         AND sched_entry.entryid NOT IN (SELECT entryid FROM sched_reject WHERE revokeddate IS NULL)
-        AND entrytypeid=3');
+        AND entrytypeid=3
+        ORDER BY createddate ASC');
     }
     
     return self::$pendingAllocationsResult;
