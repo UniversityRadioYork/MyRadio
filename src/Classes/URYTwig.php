@@ -39,11 +39,11 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
   }
   
   public function addInfo($message, $icon = 'info') {
-    $this->contextVariables[$name] .= '<div class="ui-state-highlight"><span class="ui-icon ui-icon-'.$icon.'" style="float:left"></span>'.$message.'</div>';
+    $this->contextVariables['notices'] .= '<div class="ui-state-highlight"><span class="ui-icon ui-icon-'.$icon.'" style="float:left"></span>'.$message.'</div>';
   }
   
   public function addError($message, $icon = 'alert') {
-    $this->contextVariables[$name] .= '<div class="ui-state-error"><span class="ui-icon ui-icon-'.$icon.'" style="float:left"></span>'.$message.'</div>';
+    $this->contextVariables['notices'] .= '<div class="ui-state-error"><span class="ui-icon ui-icon-'.$icon.'" style="float:left"></span>'.$message.'</div>';
   }
   
   /**
