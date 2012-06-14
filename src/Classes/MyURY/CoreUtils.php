@@ -50,5 +50,9 @@ class CoreUtils {
     }
     return true;
   }
+  
+  public static function happyTime($timestring, $time = true) {
+    return date('d/m/Y' . ($time ? ' H:i:s' : ''), strtotime($timestring));
+  }
 
 }
