@@ -9,15 +9,15 @@
   <thead>
   <tr>
     {% for title, column in tabledata[0] %}
-      <th>{{ tableheaders[title] }}</th>
+      <th id="columnheader-{{title}}">{{ tableheaders[title] }}</th>
     {% endfor %}
   </tr>
   </thead>
   <tbody>
   {% for row in tabledata %}
   <tr>
-    {% for column in row %}
-      <td>{{ column }}</td>
+    {% for title, column in row %}
+      <td class="column-{{title}}">{{ column }}</td>
     {% endfor %}
   </tr>
   {% else %}
