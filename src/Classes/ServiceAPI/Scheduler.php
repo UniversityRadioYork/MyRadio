@@ -9,9 +9,12 @@ class Scheduler extends ServiceAPI {
   
   private static function pendingAllocationsQuery() {
     if (self::$pendingAllocationsResult === null) {
-      self::$pendingAllocationsResult = self::$db->query('SELECT * FROM sched_entry WHERE entryid NOT IN
-        (SELECT entryid FROM sched_timeslot)
-        AND entryid NOT IN (SELECT entryid FROM sched_reject WHERE revokeddate IS NULL)');
+      self::$pendingAllocationsResult = 
+        self::$db->query('SELECT * FROM sched_entry, sched_showdetail
+        WHERE sched_entry.entryid = sched_showdetail.entryid
+        AND sched_entry.entryid NOT IN (SELECT entryid FROM sched_timeslot)
+        AND sched_entry.entryid NOT IN (SELECT entryid FROM sched_reject WHERE revokeddate IS NULL)
+        AND entrytypeid=3');
     }
     
     return self::$pendingAllocationsResult;
