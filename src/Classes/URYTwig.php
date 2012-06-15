@@ -18,7 +18,10 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
   public function __construct() {
     $twig_loader = new Twig_Loader_Filesystem(__DIR__.'/../Templates/');
     $this->contextVariables['notices'] = '';
-    parent::__construct($twig_loader, array('debug' => Config::$template_debug, 'auto_reload' => true));
+    parent::__construct($twig_loader, array('auto_reload' => true));
+    if (Config::$template_debug) {
+      $this->enableDebug();
+    }
     $this->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : 'Anonymous');
     $this->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null);
     
