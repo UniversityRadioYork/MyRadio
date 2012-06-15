@@ -19,9 +19,9 @@
     {% for title, column in row %}
             <td class="column-{{title}}">
       {% if column.display is defined %}
-        {% if column.display == text %}
+        {% if column.display == "text" %}
                 <a href="{{column.url}}">{{column.value}}</a>
-        {% elseif column.display == icon %}
+        {% elseif column.display == "icon" %}
                 [todo:icons]<a href="{{column.url}}">{{column.value}}</a>
         {% endif %}
       {% else %}

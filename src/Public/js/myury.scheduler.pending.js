@@ -17,6 +17,10 @@ $('.twig-datatable').dataTable({
   //requestedtime
   {
     "sTitle": "Requested Time"
+  },
+  //editlink
+  {
+    "sTitle" : ""
   }
   ],
   "bJQueryUI": true,
