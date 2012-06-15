@@ -76,7 +76,7 @@ class CoreUtils {
     $str = Config::$base_url . '?module=' . $module . '&action=' . $action;
     
     foreach ($params as $k => $v) {
-      $str .= "$k=$v";
+      $str .= "&$k=$v";
     }
     return $str;
   }

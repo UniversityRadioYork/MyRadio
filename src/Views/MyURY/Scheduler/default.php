@@ -4,12 +4,12 @@ require 'Views/MyURY/Scheduler/bootstrap.php';
 foreach ($pending_allocations as $k => $v) {
   $pending_allocations[$k]['editlink'] = array(
       'display' => 'text',
-      'url' => CoreUtils::makeURL('Scheduler', 'allocate', array('entryid', $v['entryid'])),
+      'url' => CoreUtils::makeURL('Scheduler', 'allocate', array('entryid' => $v['entryid'])),
       'value' => 'Edit/Allocate'
       );
   $pending_allocations[$k]['rejectlink'] = array(
       'display' => 'text',
-      'url' => CoreUtils::makeURL('Scheduler', 'reject', array('entryid', $v['entryid'])),
+      'url' => CoreUtils::makeURL('Scheduler', 'reject', array('entryid' => $v['entryid'])),
       'value' => 'Reject'
       );
 }

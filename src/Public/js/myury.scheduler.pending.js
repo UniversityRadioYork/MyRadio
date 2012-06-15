@@ -21,7 +21,12 @@ $('.twig-datatable').dataTable({
   //editlink
   {
     "sTitle": "Allocate",
-    "bSortable" : false
+    "bSortable": false
+  },
+  //rejectlink
+  {
+    "sTitle": "Reject",
+    "bSortable": false
   }
   ],
   "bJQueryUI": true,
