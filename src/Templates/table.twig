@@ -6,25 +6,9 @@
 {% endblock %}
 {% block stripecontent %}
 <table class="twig-datatable dataTable">
-  <thead>
-  <tr>
-    {% for title, column in tabledata[0] %}
-      <th id="columnheader-{{title}}">{{ tableheaders[title] }}</th>
-    {% endfor %}
-  </tr>
-  </thead>
-  <tbody>
-  {% for row in tabledata %}
-  <tr>
-    {% for title, column in row %}
-      <td class="column-{{title}}">{{ column }}</td>
-    {% endfor %}
-  </tr>
-  {% else %}
-    <tr>
-      <td>This table is empty!</td>
-    </tr>
-  {% endfor %}
-  </tbody>
 </table>
+<script type="text/javascript">
+  var tabledata = {{ tabledata|json_encode() }};
+</script>
+<script type="text/javascript" src="//ury.york.ac.uk/myury/Public/js/{{tablescript}}.js"></script>
 {% endblock %}
