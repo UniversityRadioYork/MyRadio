@@ -1,17 +1,24 @@
 $('.twig-datatable').dataTable({
   "aoColumns": [
+  //entryid
   {
-    "sTitle" : ""
+    "sTitle" : "",
+    "bVisible": false
   },
+  //summary
   {
-    "sTitle": "Summary"
+    "sTitle": "Title"
   },
+  //createddate
   {
     "sTitle": "Submitted"
   },
+  //requestedtime
   {
     "sTitle": "Requested Time"
   }
-  ]
-  }
+  ],
+  "bJQueryUI": true,
+  "bPaginate": false
+}
 );
