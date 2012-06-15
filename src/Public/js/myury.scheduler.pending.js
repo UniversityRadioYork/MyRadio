@@ -7,7 +7,8 @@ $('.twig-datatable').dataTable({
   },
   //summary
   {
-    "sTitle": "Title"
+    "sTitle": "Title",
+    "sClass": "left"
   },
   //createddate
   {
