@@ -103,6 +103,7 @@ class CoreUtils {
    * @return void Will Fatal error if the user does not have the permission
    */
   public static function requirePermission($permission) {
+    echo 'Invoked.';exit;
     if (!self::hasPermission($permission)) {
       //Load the 403 controller and exit
       require 'Controllers/Errors/403.php';
