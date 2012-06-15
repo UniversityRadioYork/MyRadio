@@ -1,5 +1,5 @@
 $('.twig-datatable').dataTable({
-  "aaData": tabledata,
+  "aaData": window.tabledata,
   "aoColumns": [
   {
     "sTitle" : ""
