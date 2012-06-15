@@ -7,6 +7,7 @@
  * @author lpw
  */
 class CoreUtils {
+  private static $auth_cached = false;
 
   /**
    * Checks whether a given Module/Action combination is valid
@@ -59,6 +60,53 @@ class CoreUtils {
    */
   public static function happyTime($timestring, $time = true) {
     return date('d/m/Y' . ($time ? ' H:i:s' : ''), strtotime($timestring));
+  }
+  
+  /**
+   * Builds a module/action URL
+   * @todo Finish and document.
+   * @param type $module
+   * @param type $action
+   * @return type
+   * @throws MyURYException 
+   */
+  public static function makeURL($module, $action) {
+    if (Config::$rewrite_url) throw new MyURYException('Rewritten URLs not implemented');
+    return Config::$base_url . '?module=' . $module . '&action=' . $action;
+  }
+  
+  /**
+   * Sets up the Authentication Constants
+   * @return void 
+   */
+  public static function setUpAuth() {
+    if (isset(self::$auth_cached)) return;
+    
+    $db = Database::getInstance();
+    $result = $db->fetch_all('SELECT typeid, phpconstant FROM l_action');
+    
+    foreach ($result as $row) {
+      define($row['phpconstant'], $row['typeid']);
+    }
+    
+    self::$auth_cached = true;
+  }
+  
+  public static function hasPermission($permission) {
+    return in_array($permission, $_SESSION['member_permissions']);
+  }
+  
+  /**
+   * Checks if the user has the given permission
+   * @param int $permission A permission constant to check
+   * @return void Will Fatal error if the user does not have the permission
+   */
+  public static function requirePermission($permission) {
+    if (!self::hasPermission($permission)) {
+      //Load the 500 controller and exit
+      require 'Controllers/Errors/403.php';
+      exit;
+    }
   }
 
 }
