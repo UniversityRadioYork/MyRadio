@@ -51,6 +51,12 @@ class CoreUtils {
     return true;
   }
   
+  /**
+   * Formats pretty much anything into a happy, human readable date/time
+   * @param string $timestring Some form of time
+   * @param bool $time Whether to include Hours,Mins,Secs. Default yes
+   * @return String A happy time 
+   */
   public static function happyTime($timestring, $time = true) {
     return date('d/m/Y' . ($time ? ' H:i:s' : ''), strtotime($timestring));
   }
