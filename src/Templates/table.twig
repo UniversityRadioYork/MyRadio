@@ -7,25 +7,35 @@
 {% block stripecontent %}
 <table class="twig-datatable dataTable">
   <thead>
-  <tr>
-    {% for title, column in tabledata[0] %}
-      <th id="columnheader-{{title}}">{{ title }}</th>
-    {% endfor %}
-  </tr>
-  </thead>
-  <tbody>
-  {% for row in tabledata %}
-  <tr>
-    {% for title, column in row %}
-      <td class="column-{{title}}">{{ column }}</td>
-    {% endfor %}
-  </tr>
-  {% else %}
     <tr>
-      <td>This table is empty!</td>
-    </tr>
+    {% for title, column in tabledata[0] %}
+        <th id="columnheader-{{title}}">{{ title }}</th>
+    {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+  {% for row in tabledata %}
+        <tr>
+    {% for title, column in row %}
+            <td class="column-{{title}}">
+      {% if defined(column.url) %}
+        {% if column.display == "text" %}
+                <a href="{{column.url}}">{{column.value}}</a>
+        {% elseif column.display == "icon" %}
+                [todo:icons]<a href="{{column.url}}">{{column.value}}</a>
+        {% endif %}
+      {% else %}
+                {{column}}
+     {% endif %}
+              </td>
+    {% endfor %}
+            </tr>
+  {% else %}
+            <tr>
+              <td>This table is empty!</td>
+            </tr>
   {% endfor %}
-  </tbody>
-</table>
-<script type="text/javascript" src="//ury.york.ac.uk/myury/js/{{tablescript}}.js"></script>
+          </tbody>
+        </table>
+        <script type="text/javascript" src="//ury.york.ac.uk/myury/js/{{tablescript}}.js"></script>
 {% endblock %}
