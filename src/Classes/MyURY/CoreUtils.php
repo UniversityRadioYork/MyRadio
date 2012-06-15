@@ -67,12 +67,18 @@ class CoreUtils {
    * @todo Finish and document.
    * @param type $module
    * @param type $action
+   * @param type $params
    * @return type
    * @throws MyURYException 
    */
-  public static function makeURL($module, $action) {
+  public static function makeURL($module, $action, $params = array()) {
     if (Config::$rewrite_url) throw new MyURYException('Rewritten URLs not implemented');
-    return Config::$base_url . '?module=' . $module . '&action=' . $action;
+    $str = Config::$base_url . '?module=' . $module . '&action=' . $action;
+    
+    foreach ($params as $k => $v) {
+      $str .= "$k=$v";
+    }
+    return $str;
   }
   
   /**
