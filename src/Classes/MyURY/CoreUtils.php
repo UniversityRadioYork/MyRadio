@@ -104,7 +104,7 @@ class CoreUtils {
    */
   public static function requirePermission($permission) {
     if (!self::hasPermission($permission)) {
-      //Load the 500 controller and exit
+      //Load the 403 controller and exit
       require 'Controllers/Errors/403.php';
       exit;
     }
