@@ -1,5 +1,4 @@
 <?php
-
 CoreUtils::requirePermission(AUTH_ALLOCATESHOWS);
 
 require 'Models/MyURY/Scheduler/notices.php';
