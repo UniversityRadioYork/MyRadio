@@ -18,7 +18,7 @@
         <tr>
     {% for title, column in row %}
             <td class="column-{{title}}">
-      {% if defined(column.url) %}
+      {% if column.display is defined %}
         {% if column.display == text %}
                 <a href="{{column.url}}">{{column.value}}</a>
         {% elseif column.display == icon %}
