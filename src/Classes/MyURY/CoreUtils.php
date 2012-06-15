@@ -84,7 +84,6 @@ class CoreUtils {
     
     $db = Database::getInstance();
     $result = $db->fetch_all('SELECT typeid, phpconstant FROM l_action');
-    print_r($result);
     foreach ($result as $row) {
       define($row['phpconstant'], $row['typeid']);
     }
