@@ -29,3 +29,4 @@ require_once 'Classes/'.Config::$cache_provider.'.php';
 
 //Initiate User
 $member = User::getInstance();
+CoreUtils::setUpAuth();
