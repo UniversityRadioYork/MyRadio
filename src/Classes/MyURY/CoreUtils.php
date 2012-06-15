@@ -93,6 +93,7 @@ class CoreUtils {
   }
   
   public static function hasPermission($permission) {
+    if (!isset($_SESSION['member_permissions'])) return false;
     return in_array($permission, $_SESSION['member_permissions']);
   }
   
