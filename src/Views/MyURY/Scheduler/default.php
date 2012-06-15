@@ -5,7 +5,7 @@ foreach ($pending_allocations as $k => $v) {
   $pending_allocations[$k]['editlink'] = array(
       'display' => 'text',
       'url' => CoreUtils::makeURL('Scheduler', 'entry'),
-      'value' => 'Edit'
+      'value' => 'Edit/Allocate'
       );
 }
 

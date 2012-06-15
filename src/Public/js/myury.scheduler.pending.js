@@ -20,7 +20,8 @@ $('.twig-datatable').dataTable({
   },
   //editlink
   {
-    "sTitle" : ""
+    "sTitle": "Allocate",
+    "bSortable" : false
   }
   ],
   "bJQueryUI": true,
