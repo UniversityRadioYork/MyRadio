@@ -109,13 +109,11 @@ class MyURYForm {
   }
   
   public function render() {
-    $content = '<fieldset class="'.$this->getClasses().'">';
-    $content .= '<form action="'.CoreUtils::makeURL($this->module, $this->action).'" method="'.
-            ($this->get ? 'get' : 'post').'">';
-    
-    $content .= '</form>';
-    $content .= '</fieldset>';
-    echo $content;
+    $twig = URYTwig::getInstance()->setTemplate($this->template)
+            ->addVariable('classes', $this->getClasses())
+            ->addVariable('action', CoreUtils::makeURL($this->module, $this->action))
+            ->addVariable('method', $this->get ? 'get' : 'post')
+            ->render();
   }
   
   private function getClasses() {
