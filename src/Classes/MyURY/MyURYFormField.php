@@ -107,6 +107,8 @@ class MyURYFormField {
     foreach ($this->classes as $class) {
       $classes .= " $class";
     }
+    
+    if ($this->hidden) $classes .= ' ui-helper-hidden';
 
     return $classes;
   }
@@ -118,8 +120,7 @@ class MyURYFormField {
         'type'        => $this->type,
         'required'    => $this->required,
         'explanation' => $this->explanation,
-        'display'     => $this->display,
-        'classes'     => $this->getClasses(),
+        'class'     => $this->getClasses(),
         'options'     => $this->options,
         'value'       => $this->value
     );
