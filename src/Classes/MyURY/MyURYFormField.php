@@ -108,7 +108,7 @@ class MyURYFormField {
       $classes .= " $class";
     }
     
-    if ($this->hidden) $classes .= ' ui-helper-hidden';
+    if (!$this->display) $classes .= ' ui-helper-hidden';
 
     return $classes;
   }
