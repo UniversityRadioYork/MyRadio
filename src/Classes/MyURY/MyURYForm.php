@@ -109,7 +109,7 @@ class MyURYForm {
   }
   
   public function render() {
-    $twig = URYTwig::getInstance()->setTemplate($this->template)
+    $GLOBALS['twig']->setTemplate($this->template)
             ->addVariable('classes', $this->getClasses())
             ->addVariable('action', CoreUtils::makeURL($this->module, $this->action))
             ->addVariable('method', $this->get ? 'get' : 'post')
