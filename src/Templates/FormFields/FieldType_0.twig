@@ -1,1 +1,3 @@
-<label for="{{name}}-{{field.name}}">{{field.label}}</label><input type="text" class="{{field.class}}"
+<label for="{{name}}-{{field.name}}">{{field.label}}</label>
+<input type="text" class="{{field.class}}{% if field.required %} required{% endif %}" value="{{field.value}}" name="{{name}}-{{field.name}}" id="{{name}}-{{field.name}}" />
+<span class="myuryfrmhint" id="{{name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
