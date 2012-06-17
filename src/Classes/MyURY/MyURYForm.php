@@ -99,4 +99,12 @@ class MyURYForm {
       $this->$k = $v;
     }
   }
+  
+  public function addField(MyURYFormField $field) {
+    //Sanity check - is this name in use
+    foreach ($this->fields as $f) {
+      if ($f->getName() === $field->getName()) throw new MyURYException('Tried to create a duplicate MyURYFormField '.$f->getName());
+    }
+    $this->fields[] = $field;
+  }
 }

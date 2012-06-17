@@ -54,6 +54,38 @@ class MyURYFormField {
    */
   private $classes = array();
   /**
-   * For selects, radios and checkboxes 
+   * For selects, radios and checkboxes only - the options to display
+   * @var 2D Array as defined
+   * {display: 'Value to Display', enabled: true}
    */
+  private $options = array();
+  /**
+   * The value of the form field
+   * @var mixed 
+   */
+  private $value = null;
+  /**
+   * Settings that cannot be altered by the $options parameter
+   * @var array 
+   */
+  private $restricted_attributes = array('restricted_attributes', 'value', 'options', 'name', 'type');
+  
+  public function __construct($name, $type, $options = array()) {
+    //Set essential parameters
+    $this->name = $name;
+    $this->type = $type;
+    
+    //Set optional parameters
+    foreach ($options as $k => $v) {
+      //Sanity checks - is this a valid parameter and is it not blacklisted?
+      if (!isset($this->$k)) throw new MyURYException('Tried to set MyURYFormField parameter '.$k.' but it does not exist.');
+      if (in_array($k, $this->restricted_attributes)) throw new MyURYException('Tried to set MyURYFormField parameter '.$k.' but it is not editable.');
+      $this->$k = $v;
+    }
+    
+  }
+  
+  public function getName() {
+    return $this->name;
+  }
 }
