@@ -2,8 +2,10 @@
 {% block stripecontent %}
 <fieldset class="{{classes}}">
   <form action="{{action | raw}}" method="{{method}}" name="{{name}}" id="{{name}}">
-    {% for item in items %}
-      <div id="
+    {% for field in fields %}
+      <div id="{{name}}-{{field.name}}-container">
+        {% include ('FormFields/FieldType_'~field.type~'.twig') %}
+      </div>
     {% endfor %}
     </form>
   </fieldset>

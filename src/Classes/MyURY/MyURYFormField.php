@@ -88,4 +88,12 @@ class MyURYFormField {
   public function getName() {
     return $this->name;
   }
+  
+  public function render() {
+    return {
+      'name' => $this->name,
+      'label' => ($this->label === null ? $this->name : $this->label),
+      'type' => $this->type
+    };
+  }
 }
