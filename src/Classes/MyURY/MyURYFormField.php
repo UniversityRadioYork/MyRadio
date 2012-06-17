@@ -90,10 +90,10 @@ class MyURYFormField {
   }
   
   public function render() {
-    return {
+    return array(
       'name' => $this->name,
       'label' => ($this->label === null ? $this->name : $this->label),
       'type' => $this->type
-    };
+    );
   }
 }
