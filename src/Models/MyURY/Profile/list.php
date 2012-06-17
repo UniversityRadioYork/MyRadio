@@ -1,0 +1,3 @@
+<?php
+
+$members = Profile::getThisYearsMembers();
