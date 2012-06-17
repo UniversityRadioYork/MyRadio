@@ -111,7 +111,7 @@ class MyURYForm {
   public function render() {
     $content = '<fieldset class="'.$this->getClasses().'">';
     $content .= '<form action="'.CoreUtils::makeURL($this->module, $this->action).'" method="'.
-            ($this->get ? 'get' : 'post').'"';
+            ($this->get ? 'get' : 'post').'">';
     
     $content .= '</form>';
     $content .= '</fieldset>';
@@ -123,5 +123,7 @@ class MyURYForm {
     foreach ($this->classes as $class) {
       $classes .= " $class";
     }
+    
+    return $classes;
   }
 }
