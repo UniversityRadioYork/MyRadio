@@ -63,6 +63,14 @@ class CoreUtils {
   }
   
   /**
+   * Gives you the starting year of the current academic year
+   * @return int year
+   */
+  public static function getAcademicYear() {
+    return (int)date('Y', strtotime('last october'));
+  }
+
+  /**
    * Builds a module/action URL
    * @todo Finish and document.
    * @param type $module
