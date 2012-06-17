@@ -20,6 +20,8 @@ class MyURYFormField {
   const TYPE_SELECT = 0x09;
   const TYPE_RADIO = 0x0A;
   const TYPE_CHECK = 0x0B;
+  const TYPE_DAY = 0x0C;
+  const TYPE_BLOCKTEST = 0x0D;
 
   /**
    * The name/id of the Form Field
