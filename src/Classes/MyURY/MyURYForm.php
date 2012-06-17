@@ -115,7 +115,7 @@ class MyURYForm {
     
     $content .= '</form>';
     $content .= '</fieldset>';
-    return $content;
+    echo $content;
   }
   
   private function getClasses() {
