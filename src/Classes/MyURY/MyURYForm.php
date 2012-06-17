@@ -128,6 +128,8 @@ class MyURYForm {
             ->addVariable('classes', $this->getClasses())
             ->addVariable('action', CoreUtils::makeURL($this->module, $this->action))
             ->addVariable('method', $this->get ? 'get' : 'post')
+            ->addVariable('name', $this->name)
+            ->addVariable('title', $this->name)
             ->render();
   }
 
