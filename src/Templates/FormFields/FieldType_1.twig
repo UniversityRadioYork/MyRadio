@@ -1,0 +1,5 @@
+<label for="{{name}}-{{field.name}}">{{field.label}}</label>
+<input type="number" class="{{field.class}}{% if field.required %} required{% endif %} number" value="{{field.value}}" name="{{name}}-{{field.name}}" id="{{name}}-{{field.name}}"
+       {% if field.options.min is defined %} min="{{field.options.min}}"{% endif %}
+       {% if field.options.max is defined %} max="{{field.options.max}}"{% endif %} />
+<span class="myuryfrmhint" id="{{name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
