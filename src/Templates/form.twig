@@ -3,7 +3,7 @@
 <fieldset class="{{classes}}">
   <form action="{{action | raw}}" method="{{method}}" name="{{name}}" id="{{name}}">
     {% for field in fields %}
-      <div id="{{name}}-{{field.name}}-container">
+      <div id="{{name}}-{{field.name}}-container" class="{{field.classes}}>
         {% include ('FormFields/FieldType_'~field.type~'.twig') %}
       </div>
     {% endfor %}
