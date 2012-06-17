@@ -1,8 +1,10 @@
 {% extends 'stripe.twig' %}
 {% block stripecontent %}
 <fieldset class="{{classes}}">
-  <form action="{{action | raw}}" method="{{method}}">
-
-  </form>
-</fieldset>
+  <form action="{{action | raw}}" method="{{method}}" name="{{name}}" id="{{name}}">
+    {% for item in items %}
+      <div id="
+    {% endfor %}
+    </form>
+  </fieldset>
 {% endblock %}
