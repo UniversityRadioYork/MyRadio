@@ -1,7 +1,7 @@
 {% extends 'stripe.twig' %}
 {% block stripecontent %}
 <fieldset class="{{classes}}">
-  <form action="{{action}}" method="{{method}}">
+  <form action="{{action | raw}}" method="{{method}}">
 
   </form>
 </fieldset>
