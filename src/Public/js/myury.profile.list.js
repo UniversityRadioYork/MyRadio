@@ -22,7 +22,8 @@ $('.twig-datatable').dataTable({
   },
   //paid
   {
-    "sTitle": "Amount Paid"
+    "sTitle": "Amount Paid",
+    "aDataSort": [ 4, 2, 1 ]
   },
   ],
   "bJQueryUI": true,
