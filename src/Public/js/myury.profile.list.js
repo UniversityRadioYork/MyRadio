@@ -13,7 +13,7 @@ $('.twig-datatable').dataTable({
   //college
   {
     "sTitle": "College"
-  }
+  },
   //paid
   {
     "sTitle": "Amount Paid"
