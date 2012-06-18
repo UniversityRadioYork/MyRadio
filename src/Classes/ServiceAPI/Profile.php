@@ -14,7 +14,7 @@ class Profile extends ServiceAPI {
     if (self::$allMembers === false) {
       self::initDB();
       self::$allMembers = 
-        self::$db->fetch_all('SELECT member.memberid, fname, sname, l_college.descr AS college, paid
+        self::$db->fetch_all('SELECT member.memberid, sname || \'\, \' fname AS name, l_college.descr AS college, paid
         FROM member LEFT JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
         ON ( member.memberid = member_year.memberid ), l_college
         WHERE member.college = l_college.collegeid
