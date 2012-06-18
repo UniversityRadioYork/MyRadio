@@ -5,10 +5,14 @@ $('.twig-datatable').dataTable({
     "sTitle" : "",
     "bVisible": false
   },
-  //name
+  //fname
   {
-    "sTitle": "Name",
+    "sTitle": "First Name",
     "sClass": "left"
+  },
+  //sname
+  {
+    "sTitle": "Surname",
   },
   //college
   {
