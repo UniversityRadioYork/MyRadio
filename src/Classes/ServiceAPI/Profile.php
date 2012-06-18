@@ -6,6 +6,7 @@
  */
 class Profile extends ServiceAPI {
   private static $allMembers = null;
+  private static $thisYearsMembers = null;
   
   public static function getAllMembers() {
       // @todo: set cache
@@ -24,15 +25,15 @@ class Profile extends ServiceAPI {
   public static function getThisYearsMembers() {
       // @todo: set cache
     self::initDB();
-    if (self::$allMembers === null) {
-      self::$allMembers = 
+    if (self::$thisYearsMembers === null) {
+      self::$thisYearsMembers = 
         self::$db->fetch_all('SELECT member.memberid, fname || \' \' || sname AS name, college, paid
         FROM member INNER JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
         ON ( member.memberid = member_year.memberid )
         ORDER BY sname ASC', array(CoreUtils::getAcademicYear()));
     }
     
-    return self::$allMembers;
+    return self::$thisYearsMembers;
   }
   
   public static function getInstance($serviceObjectId = -1) {
