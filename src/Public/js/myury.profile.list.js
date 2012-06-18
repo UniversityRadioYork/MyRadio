@@ -9,12 +9,12 @@ $('.twig-datatable').dataTable({
   {
     "sTitle": "First Name",
     "sClass": "left",
-    "aDataSort": [ 1, 2], "aTargets": [ 1 ]
+    "aDataSort": [ 1, 2 ]
   },
   //sname
   {
     "sTitle": "Surname",
-    "aDataSort": [ 2, 1], "aTargets": [ 2 ]
+    "aDataSort": [ 2, 1 ]
   },
   //college
   {
