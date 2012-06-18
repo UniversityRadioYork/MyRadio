@@ -18,10 +18,6 @@ $('.twig-datatable').dataTable({
   {
     "sTitle": "Amount Paid"
   },
-  //officer
-  {
-    "sTitle": "Officer"
-  },
   ],
   "bJQueryUI": true,
   "bPaginate": false
