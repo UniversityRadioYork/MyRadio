@@ -1,5 +1,7 @@
 $('.twig-datatable').dataTable({
   "aoColumns": [
+    { "aDataSort": [ 1, 2], "aTargets": [ 1 ]},
+    { "aDataSort": [ 2, 1], "aTargets": [ 2 ]},
   //memberid
   {
     "sTitle" : "",
@@ -12,7 +14,7 @@ $('.twig-datatable').dataTable({
   },
   //sname
   {
-    "sTitle": "Surname",
+    "sTitle": "Surname"
   },
   //college
   {
