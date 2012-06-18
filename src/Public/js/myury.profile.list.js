@@ -14,7 +14,7 @@ $('.twig-datatable').dataTable({
   //sname
   {
     "sTitle": "Surname",
-    "aDataSort": [ 2, 1 ]
+    "aDataSort": [ 1, 2 ]
   },
   //college
   {
