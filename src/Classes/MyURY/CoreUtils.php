@@ -67,7 +67,8 @@ class CoreUtils {
    * @return int year
    */
   public static function getAcademicYear() {
-    return (int)date('Y', strtotime('last october'));
+    if (date('m') >= 10) return (int)date('Y');
+    else return (int)date('Y')-1;
   }
 
   /**
