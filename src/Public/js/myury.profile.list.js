@@ -5,16 +5,11 @@ $('.twig-datatable').dataTable({
     "sTitle" : "",
     "bVisible": false
   },
-  //fname
+  //name
   {
-    "sTitle": "First Name",
+    "sTitle": "Name",
     "sClass": "left",
     "aDataSort": [ 1, 2 ]
-  },
-  //sname
-  {
-    "sTitle": "Surname",
-    "aDataSort": [ 2, 1 ]
   },
   //college
   {
@@ -23,7 +18,7 @@ $('.twig-datatable').dataTable({
   //paid
   {
     "sTitle": "Amount Paid",
-    "aDataSort": [ 4, 2, 1 ]
+    "aDataSort": [ 3, 1 ]
   },
   ],
   "bJQueryUI": true,
