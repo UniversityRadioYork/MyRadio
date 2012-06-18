@@ -5,7 +5,7 @@ foreach ($members as $k => $v) {
   $members[$k]['name'] = array(
       'display' => 'text',
       'url' => CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['memberid'])),
-      'value' => $v
+      'value' => $v['name']
       );
 }
 
