@@ -13,7 +13,7 @@ class Profile extends ServiceAPI {
     self::initDB();
     if (self::$allMembers === null) {
       self::$allMembers = 
-        self::$db->fetch_all('SELECT member.memberid, fname || \' \' || sname AS name, college, paid
+        self::$db->fetch_all('SELECT member.memberid, fname || \' \' || sname AS name, l_college.descr AS college, paid
         FROM member LEFT JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
         ON ( member.memberid = member_year.memberid ), l_college
         WHERE member.college = l_college.collegeid
@@ -28,7 +28,7 @@ class Profile extends ServiceAPI {
     self::initDB();
     if (self::$thisYearsMembers === null) {
       self::$thisYearsMembers = 
-        self::$db->fetch_all('SELECT member.memberid, fname || \' \' || sname AS name, college, paid
+        self::$db->fetch_all('SELECT member.memberid, fname || \' \' || sname AS name, l_college.descr AS college, paid
         FROM member INNER JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
         ON ( member.memberid = member_year.memberid ), l_college
         WHERE member.college = l_college.collegeid
