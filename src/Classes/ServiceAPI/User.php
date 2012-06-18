@@ -9,8 +9,11 @@ class User extends ServiceAPI {
   private static $users = array();
   private $memberid;
   private $permissions;
+  private $fname;
+  private $sname;
   private $name;
   private $email;
+  private $collegeid;
   private $college;
   private $phone;
   private $receive_email;
@@ -27,9 +30,11 @@ class User extends ServiceAPI {
     $this->memberid = $memberid;
     //Get the base data
     $data = self::$db->fetch_one(
-            'SELECT fname || sname AS name, college, phone, email,
-              receive_email, local_name, account_locked FROM member
-              WHERE memberid=$1 LIMIT 1',
+            'SELECT fname, sname, college AS collegeid, l_college.descr AS college, phone, email,
+              receive_email, local_name, account_locked FROM member, l_college
+              WHERE memberid=$1 
+              AND member.college = l_college.collegeid
+              LIMIT 1',
             array($memberid));
     if (empty($data)) {
       //This user doesn't exist
@@ -37,7 +42,15 @@ class User extends ServiceAPI {
       return;
     }
     //Set the variables
-    foreach ($data as $key => $value) $this->$key = $value;
+    foreach ($data as $key => $value) {
+      if (filter_var($value, FILTER_VALIDATE_INT)) $this->key = (int)$this->$value;
+      elseif ($value === 't') $this->key = true;
+      elseif ($value === 'f') $this->key = false;
+      else $this->$key = $value;
+    }
+    
+    //Set the full name of the user as one concated string
+    $this->name = $this->fname . ' ' . $this->sname;
     
     //Get the user's permissions
     $this->permissions = self::$db->fetch_column('SELECT lookupid FROM auth_officer
@@ -58,6 +71,86 @@ class User extends ServiceAPI {
    */
   public function getID() {
     return $this->memberid;
+  }
+  
+  /**
+   * Returns the Users's first name
+   * @return string The User's first name 
+   */
+  public function getFName() {
+    return $this->fname;
+  }
+  
+  /**
+   * Returns the Users's surname
+   * @return string The User's surname 
+   */
+  public function getSName() {
+    return $this->sname;
+  }
+  
+  /**
+   * Returns the Users's full name as one string
+   * @return string The User's name 
+   */
+  public function getName() {
+    return $this->name;
+  }
+  
+  /**
+   * Returns the Users's email address
+   * @return string The User's email 
+   */
+  public function getEmail() {
+    return $this->email;
+  }
+  
+  /**
+   * Returns the Users's college id
+   * @return int The User's college id
+   */
+  public function getCollegeID() {
+    return $this->collegeid;
+  }
+  
+  /**
+   * Returns the Users's college name
+   * @return string The User's college
+   */
+  public function getCollege() {
+    return $this->college;
+  }
+  
+  /**
+   * Returns the Users's phone number
+   * @return int The User's phone
+   */
+  public function getPhone() {
+    return $this->phone;
+  }
+  
+  /**
+   * Returns if the User is set to recive email
+   * @return bool if receive_email is set 
+   */
+  public function getReceiveEmail() {
+    return $this->receive_email;
+  }
+  
+  /**
+   * Returns the Users's local server account
+   * @return string The User's local_name
+   */
+  public function getLocalName() {
+    return $this->local_name;
+  }
+  
+  /**
+   * Returns if the user's account is locked
+   * @return bool if the account is locked
+   */
+  public function getAccountLocked() {
+    return $this->account_locked;
   }
   
   /**
