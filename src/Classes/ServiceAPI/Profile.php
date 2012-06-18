@@ -14,9 +14,9 @@ class Profile extends ServiceAPI {
     if (self::$allMembers === null) {
       self::$allMembers = 
         self::$db->fetch_all('SELECT member.memberid, fname || \' \' || sname AS name, college, paid
-        FROM member LEFT JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year, l_college
+        FROM member LEFT JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
+        ON ( member.memberid = member_year.memberid ), l_college
         WHERE member.college = l_college.collegeid
-        ON ( member.memberid = member_year.memberid )
         ORDER BY sname ASC', array(CoreUtils::getAcademicYear()));
     }
     
@@ -29,9 +29,9 @@ class Profile extends ServiceAPI {
     if (self::$thisYearsMembers === null) {
       self::$thisYearsMembers = 
         self::$db->fetch_all('SELECT member.memberid, fname || \' \' || sname AS name, college, paid
-        FROM member INNER JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year, l_college
+        FROM member INNER JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
+        ON ( member.memberid = member_year.memberid ), l_college
         WHERE member.college = l_college.collegeid
-        ON ( member.memberid = member_year.memberid )
         ORDER BY sname ASC', array(CoreUtils::getAcademicYear()));
     }
     
