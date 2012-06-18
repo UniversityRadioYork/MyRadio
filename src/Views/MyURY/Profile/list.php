@@ -2,10 +2,10 @@
 require 'Views/MyURY/Profile/bootstrap.php';
 
 foreach ($members as $k => $v) {
-  $members[$k]['fname'] = array(
+  $members[$k]['name'] = array(
       'display' => 'text',
       'url' => CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['memberid'])),
-      'value' => $v['fname']
+      'value' => $v['name']
       );
 }
 
