@@ -10,7 +10,11 @@ $('.twig-datatable').dataTable({
     "sTitle": "Name",
     "sClass": "left"
   },
-  //paidamount
+  //college
+  {
+    "sTitle": "College"
+  }
+  //paid
   {
     "sTitle": "Amount Paid"
   },
