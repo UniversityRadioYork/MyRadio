@@ -12,12 +12,15 @@ class User extends ServiceAPI {
   private $fname;
   private $sname;
   private $name;
+  private $sex;
   private $email;
   private $collegeid;
   private $college;
   private $phone;
   private $receive_email;
   private $local_name;
+  private $local_alias;
+  private $eduroam;
   private $account_locked;
   private $studio_trained;
   private $studio_demoed;
@@ -30,8 +33,9 @@ class User extends ServiceAPI {
     $this->memberid = $memberid;
     //Get the base data
     $data = self::$db->fetch_one(
-            'SELECT fname, sname, college AS collegeid, l_college.descr AS college, phone, email,
-              receive_email, local_name, account_locked FROM member, l_college
+            'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college, phone, email,
+              receive_email, local_name, local_alias, eduroam, account_locked 
+              FROM member, l_college
               WHERE memberid=$1 
               AND member.college = l_college.collegeid
               LIMIT 1',
@@ -98,6 +102,14 @@ class User extends ServiceAPI {
   }
   
   /**
+   * Returns the Users's sex
+   * @return string The User's sex 
+   */
+  public function getSex() {
+    return $this->sex;
+  }
+  
+  /**
    * Returns the Users's email address
    * @return string The User's email 
    */
@@ -143,6 +155,22 @@ class User extends ServiceAPI {
    */
   public function getLocalName() {
     return $this->local_name;
+  }
+  
+  /**
+   * Returns the Users's email alias
+   * @return string The User's local_alias
+   */
+  public function getLocalAlias() {
+    return $this->local_alias;
+  }
+  
+  /**
+   * Returns the Users's uni account
+   * @return string The User's uni email
+   */
+  public function getUniAccount() {
+    return $this->eduroam;
   }
   
   /**
