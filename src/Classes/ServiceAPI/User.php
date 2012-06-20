@@ -46,6 +46,7 @@ class User extends ServiceAPI {
       return;
     }
     //Set the variables
+    print_r($data);
     foreach ($data as $key => $value) {
       if (filter_var($value, FILTER_VALIDATE_INT)) $this->$key = (int)$this->$value;
       elseif ($value === 't') $this->$key = true;
