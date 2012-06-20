@@ -46,14 +46,12 @@ class User extends ServiceAPI {
       return;
     }
     //Set the variables
-    print_r($data);
     foreach ($data as $key => $value) {
       if (filter_var($value, FILTER_VALIDATE_INT)) $this->$key = (int)$value;
       elseif ($value === 't') $this->$key = true;
       elseif ($value === 'f') $this->$key = false;
       else $this->$key = $value;
     }
-    print_r($this);
     
     //Set the full name of the user as one concated string
     $this->name = $this->fname . ' ' . $this->sname;
