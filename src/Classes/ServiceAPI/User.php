@@ -11,7 +11,6 @@ class User extends ServiceAPI {
   private $permissions;
   private $fname;
   private $sname;
-  private $name;
   private $sex;
   private $email;
   private $collegeid;
@@ -53,9 +52,6 @@ class User extends ServiceAPI {
       else $this->$key = $value;
     }
     
-    //Set the full name of the user as one concated string
-    $this->name = $this->fname . ' ' . $this->sname;
-    
     //Get the user's permissions
     $this->permissions = self::$db->fetch_column('SELECT lookupid FROM auth_officer
       WHERE officerid IN (SELECT officerid FROM member_officer
@@ -78,7 +74,7 @@ class User extends ServiceAPI {
   }
   
   /**
-   * Returns the Users's first name
+   * Returns the User's first name
    * @return string The User's first name 
    */
   public function getFName() {
@@ -86,7 +82,7 @@ class User extends ServiceAPI {
   }
   
   /**
-   * Returns the Users's surname
+   * Returns the User's surname
    * @return string The User's surname 
    */
   public function getSName() {
@@ -94,15 +90,15 @@ class User extends ServiceAPI {
   }
   
   /**
-   * Returns the Users's full name as one string
+   * Returns the User's full name as one string
    * @return string The User's name 
    */
   public function getName() {
-    return $this->name;
+    return $this->fname . ' ' . $this->sname;
   }
   
   /**
-   * Returns the Users's sex
+   * Returns the User's sex
    * @return string The User's sex 
    */
   public function getSex() {
@@ -110,7 +106,7 @@ class User extends ServiceAPI {
   }
   
   /**
-   * Returns the Users's email address
+   * Returns the User's email address
    * @return string The User's email 
    */
   public function getEmail() {
@@ -118,7 +114,7 @@ class User extends ServiceAPI {
   }
   
   /**
-   * Returns the Users's college id
+   * Returns the User's college id
    * @return int The User's college id
    */
   public function getCollegeID() {
@@ -126,7 +122,7 @@ class User extends ServiceAPI {
   }
   
   /**
-   * Returns the Users's college name
+   * Returns the User's college name
    * @return string The User's college
    */
   public function getCollege() {
@@ -134,7 +130,7 @@ class User extends ServiceAPI {
   }
   
   /**
-   * Returns the Users's phone number
+   * Returns the User's phone number
    * @return int The User's phone
    */
   public function getPhone() {
@@ -150,7 +146,7 @@ class User extends ServiceAPI {
   }
   
   /**
-   * Returns the Users's local server account
+   * Returns the User's local server account
    * @return string The User's local_name
    */
   public function getLocalName() {
@@ -158,7 +154,7 @@ class User extends ServiceAPI {
   }
   
   /**
-   * Returns the Users's email alias
+   * Returns the User's email alias
    * @return string The User's local_alias
    */
   public function getLocalAlias() {
@@ -166,7 +162,7 @@ class User extends ServiceAPI {
   }
   
   /**
-   * Returns the Users's uni account
+   * Returns the User's uni account
    * @return string The User's uni email
    */
   public function getUniAccount() {
