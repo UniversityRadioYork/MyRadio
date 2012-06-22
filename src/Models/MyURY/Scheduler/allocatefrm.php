@@ -48,3 +48,5 @@ $form->addField(
         ->addField(
                 new MyURYFormField('testattribute13', MyURYFormField::TYPE_BLOCKTEXT)
                 );*/
+
+echo nl2br(print_r($form,true));
