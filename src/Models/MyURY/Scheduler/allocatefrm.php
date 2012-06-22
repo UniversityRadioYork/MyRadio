@@ -34,7 +34,7 @@ $form->addField(
                 )
         ->addField(
                 new MyURYFormField('testattribute9', MyURYFormField::TYPE_SELECT,
-                        array(array('value'=>0,'text'=>'test')))
+                        array('options'=>array('value'=>0,'text'=>'test')))
                 );/*
         ->addField(
                 new MyURYFormField('testattribute10', MyURYFormField::TYPE_RADIO)
