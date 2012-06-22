@@ -1,3 +1,8 @@
 <label for="{{name}}-{{field.name}}">{{field.label}}</label>
-<input type="text" class="{{field.class}}{% if field.required %} required{% endif %}" value="{{field.value}}" name="{{name}}-{{field.name}}" id="{{name}}-{{field.name}}" />
+<input type="text" class="{{field.class}}{% if field.required %} required{% endif %}"
+       value="{{field.value}}" name="{{name}}-{{field.name}}"
+       id="{{name}}-{{field.name}}"
+       {% if field.options.minlength is defined %} minlength="{{field.options.minlength}}"{% endif %}
+       {% if field.options.maxlength is defined %} maxlength="{{field.options.maxlength}}"{% endif %}
+       {% if not field.enabled %} readonly="readonly"{% endif %}/>
 <span class="myuryfrmhint" id="{{name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
