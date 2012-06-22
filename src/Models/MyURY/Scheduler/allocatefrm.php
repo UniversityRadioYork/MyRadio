@@ -13,10 +13,10 @@ $form->addField(
                 )
         ->addField(
                 new MyURYFormField('testattribute2', MyURYFormField::TYPE_EMAIL)
-                );/*
+                )
         ->addField(
                 new MyURYFormField('testattribute3', MyURYFormField::TYPE_DATE)
-                )
+                );/*
         ->addField(
                 new MyURYFormField('testattribute4', MyURYFormField::TYPE_DATETIME)
                 )
