@@ -1,6 +1,8 @@
 <label for="{{name}}-{{field.name}}">{{field.label}}</label>
 <select name="{{name}}-{{field.name}}" id="{{name}}-{{field.name}}"
         class="{{field.class}}{% if field.required %} required{% endif %}">
+  {% for field.options as option %}
   
+  {% endfor %}
 </select>
 <span class="myuryfrmhint" id="{{name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
