@@ -129,9 +129,10 @@ class MyURYFormField {
         'type'        => $this->type,
         'required'    => $this->required,
         'explanation' => $this->explanation,
-        'class'     => $this->getClasses(),
+        'class'       => $this->getClasses(),
         'options'     => $this->options,
-        'value'       => $this->value
+        'value'       => $this->value,
+        'enabled'     => $this->enabled
     );
   }
 
