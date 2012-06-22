@@ -22,7 +22,7 @@ $form->addField(
                 )
         ->addField(
                 new MyURYFormField('testattribute5', MyURYFormField::TYPE_MEMBER)
-                );/*
+                )
         ->addField(
                 new MyURYFormField('testattribute6', MyURYFormField::TYPE_TRACK)
                 )
@@ -31,7 +31,7 @@ $form->addField(
                 )
         ->addField(
                 new MyURYFormField('testattribute8', MyURYFormField::TYPE_HIDDEN)
-                )
+                );/*
         ->addField(
                 new MyURYFormField('testattribute9', MyURYFormField::TYPE_SELECT)
                 )
