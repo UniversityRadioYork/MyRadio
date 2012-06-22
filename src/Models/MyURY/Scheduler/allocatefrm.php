@@ -33,19 +33,19 @@ $form->addField(
                 new MyURYFormField('testattribute8', MyURYFormField::TYPE_HIDDEN)
                 )
         ->addField(
-                new MyURYFormField('testattribute1', MyURYFormField::TYPE_SELECT)
+                new MyURYFormField('testattribute9', MyURYFormField::TYPE_SELECT)
                 )
         ->addField(
-                new MyURYFormField('testattribute1', MyURYFormField::TYPE_RADIO)
+                new MyURYFormField('testattribute10', MyURYFormField::TYPE_RADIO)
                 )
         ->addField(
-                new MyURYFormField('testattribute1', MyURYFormField::TYPE_CHECK)
+                new MyURYFormField('testattribute11', MyURYFormField::TYPE_CHECK)
                 )
         ->addField(
-                new MyURYFormField('testattribute1', MyURYFormField::TYPE_DAY)
+                new MyURYFormField('testattribute12', MyURYFormField::TYPE_DAY)
                 )
         ->addField(
-                new MyURYFormField('testattribute1', MyURYFormField::TYPE_BLOCKTEXT)
+                new MyURYFormField('testattribute13', MyURYFormField::TYPE_BLOCKTEXT)
                 );
         
         
