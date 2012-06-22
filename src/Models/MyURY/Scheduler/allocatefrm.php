@@ -19,10 +19,10 @@ $form->addField(
                 )
         ->addField(
                 new MyURYFormField('testattribute4', MyURYFormField::TYPE_DATETIME)
-                );/*
+                )
         ->addField(
                 new MyURYFormField('testattribute5', MyURYFormField::TYPE_MEMBER)
-                )
+                );/*
         ->addField(
                 new MyURYFormField('testattribute6', MyURYFormField::TYPE_TRACK)
                 )
