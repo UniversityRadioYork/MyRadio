@@ -21,6 +21,7 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
     parent::__construct($twig_loader, array('auto_reload' => true));
     if (Config::$template_debug) {
       $this->enableDebug();
+      $this->addExtension(new Twig_Extension_Debug());
     }
     $this->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : 'Anonymous');
     $this->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null);
