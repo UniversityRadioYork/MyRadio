@@ -1,8 +1,9 @@
 <label for="{{name}}-{{field.name}}">{{field.label}}</label>
 <select name="{{name}}-{{field.name}}" id="{{name}}-{{field.name}}"
         class="{{field.class}}{% if field.required %} required{% endif %}">
-  {% for form.options as option %}
-  <option value="{{option.value}}"{% if field.value == option.value %} selected="selected"{% endif %}{% if option.disabled %} disabled="disabled"{% endif %}>{{option.text}}</option>
+  {% for field.options as option %}
+  <option value="{{option.value}}"{% if field.value == option.value %} selected="selected"{% endif %}
+{% if option.disabled %} disabled="disabled"{% endif %}>{{option.text}}</option>
   {% endfor %}
 </select>
 <span class="myuryfrmhint" id="{{name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
