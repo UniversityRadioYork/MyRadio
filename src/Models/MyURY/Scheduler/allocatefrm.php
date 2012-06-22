@@ -35,10 +35,10 @@ $form->addField(
         ->addField(
                 new MyURYFormField('testattribute9', MyURYFormField::TYPE_SELECT,
                         array('options'=>array(array('value'=>0,'text'=>'test'))))
-                );/*
+                )
         ->addField(
                 new MyURYFormField('testattribute10', MyURYFormField::TYPE_RADIO)
-                )
+                );/*
         ->addField(
                 new MyURYFormField('testattribute11', MyURYFormField::TYPE_CHECK)
                 )
@@ -48,5 +48,3 @@ $form->addField(
         ->addField(
                 new MyURYFormField('testattribute13', MyURYFormField::TYPE_BLOCKTEXT)
                 );*/
-
-echo nl2br(print_r($form,true));
