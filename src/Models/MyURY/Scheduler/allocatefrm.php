@@ -6,5 +6,46 @@ $form = new MyURYForm('sched_allocate', 'Scheduler', 'doAllocate',
         ));
 
 $form->addField(
-        new MyURYFormField('testattribute', MyURYFormField::TYPE_TEXT)
-        );
+        new MyURYFormField('testattribute0', MyURYFormField::TYPE_TEXT)
+        )
+        ->addField(
+                new MyURYFormField('testattribute1', MyURYFormField::TYPE_NUMBER)
+                )
+        ->addField(
+                new MyURYFormField('testattribute2', MyURYFormField::TYPE_EMAIL)
+                )
+        ->addField(
+                new MyURYFormField('testattribute3', MyURYFormField::TYPE_DATE)
+                )
+        ->addField(
+                new MyURYFormField('testattribute4', MyURYFormField::TYPE_DATETIME)
+                )
+        ->addField(
+                new MyURYFormField('testattribute5', MyURYFormField::TYPE_MEMBER)
+                )
+        ->addField(
+                new MyURYFormField('testattribute6', MyURYFormField::TYPE_TRACK)
+                )
+        ->addField(
+                new MyURYFormField('testattribute7', MyURYFormField::TYPE_ARTIST)
+                )
+        ->addField(
+                new MyURYFormField('testattribute8', MyURYFormField::TYPE_HIDDEN)
+                )
+        ->addField(
+                new MyURYFormField('testattribute1', MyURYFormField::TYPE_SELECT)
+                )
+        ->addField(
+                new MyURYFormField('testattribute1', MyURYFormField::TYPE_RADIO)
+                )
+        ->addField(
+                new MyURYFormField('testattribute1', MyURYFormField::TYPE_CHECK)
+                )
+        ->addField(
+                new MyURYFormField('testattribute1', MyURYFormField::TYPE_DAY)
+                )
+        ->addField(
+                new MyURYFormField('testattribute1', MyURYFormField::TYPE_BLOCKTEXT)
+                );
+        
+        
