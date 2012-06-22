@@ -8,20 +8,20 @@
  */
 class MyURYFormField {
 
-  const TYPE_TEXT = 0x00;
-  const TYPE_NUMBER = 0x01;
-  const TYPE_EMAIL = 0x02;
-  const TYPE_DATE = 0x03;
-  const TYPE_DATETIME = 0x04;
-  const TYPE_MEMBER = 0x05;
-  const TYPE_TRACK = 0x06;
-  const TYPE_ARTIST = 0x07;
-  const TYPE_HIDDEN = 0x08;
-  const TYPE_SELECT = 0x09;
-  const TYPE_RADIO = 0x0A;
-  const TYPE_CHECK = 0x0B;
-  const TYPE_DAY = 0x0C;
-  const TYPE_BLOCKTEST = 0x0D;
+  const TYPE_TEXT      = 0x00;
+  const TYPE_NUMBER    = 0x01;
+  const TYPE_EMAIL     = 0x02;
+  const TYPE_DATE      = 0x03;
+  const TYPE_DATETIME  = 0x04;
+  const TYPE_MEMBER    = 0x05;
+  const TYPE_TRACK     = 0x06;
+  const TYPE_ARTIST    = 0x07;
+  const TYPE_HIDDEN    = 0x08;
+  const TYPE_SELECT    = 0x09;
+  const TYPE_RADIO     = 0x0A;
+  const TYPE_CHECK     = 0x0B;
+  const TYPE_DAY       = 0x0C;
+  const TYPE_BLOCKTEXT = 0x0D;
 
   /**
    * The name/id of the Form Field
@@ -77,6 +77,13 @@ class MyURYFormField {
    * @var mixed 
    */
   private $value = null;
+  
+  /**
+   * Whether the field is enabled/disabled by default
+   * Actually renders as readonly in most cases
+   * @var bool
+   */
+  private $enabled = true;
 
   /**
    * Settings that cannot be altered by the $options parameter

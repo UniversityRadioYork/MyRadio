@@ -1,7 +1,6 @@
 <label for="{{name}}-{{field.name}}">{{field.label}}</label>
-<input type="email"
-       class="{{field.class}}{% if field.required %} required{% endif %} email"
+<input type="checkbox" class="{{field.class}}{% if field.required %} required{% endif %}"
        value="{{field.value}}" name="{{name}}-{{field.name}}"
        id="{{name}}-{{field.name}}"
-       {% if not field.enabled %} readonly="readonly"{% endif %} />
+       {% if field.options.checked is defined and field.options.checked %} checked="checked"{% endif %} />
 <span class="myuryfrmhint" id="{{name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
