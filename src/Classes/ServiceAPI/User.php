@@ -222,7 +222,8 @@ class User extends ServiceAPI {
       $sname = $name;
     }
     return self::$db->fetch_all('SELECT memberid, fname, sname FROM member
-      WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $2 || \'%\' LIMIT $3',
+      WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $2 || \'%\'
+      ORDER BY fname, sname LIMIT $3',
             array($fname, $sname, $limit));
   }
 }
