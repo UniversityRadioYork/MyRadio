@@ -7,5 +7,5 @@ $(document).ready(function() {
   /**
    * Initialises the Date pickers where necessary
    */
-  $('fieldset.myuryfrm input.myuryfrmfield .date').datepicker();
+  $('fieldset.myuryfrm input.date').datepicker();
 });
