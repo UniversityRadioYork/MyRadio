@@ -28,6 +28,10 @@ $(document).ready(function() {
       $(this).val(ui.item.fname + ' ' + ui.item.sname);
       $('#'+$(this).attr('id').replace(/-ui$/, '')).val(ui.item.memberid);
       return false;
+    },
+    //Prevent the field blanking out when an item is given focus
+    focus: function (event, ui) {
+      return false;
     }
   })
   .data("autocomplete")._renderItem = function(ul, item) {
