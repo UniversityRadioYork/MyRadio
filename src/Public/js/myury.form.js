@@ -39,4 +39,25 @@ $(document).ready(function() {
     .append('<a>' + item.fname + ' ' + item.sname + '</a>')
     .appendTo(ul);
   };
+  /**
+   * Initialises the Track autocomplete pickers where necessary
+   */
+  $('fieldset.myuryfrm input.track-autocomplete').autocomplete({
+    minLength: 3,
+    source: "index.php?module=Core&action=a-findtrack",
+    select: function(event, ui) {
+      $(this).val(ui.item.title);
+      $('#'+$(this).attr('id').replace(/-ui$/, '')).val(ui.item.memberid);
+      return false;
+    },
+    //Prevent the field blanking out when an item is given focus
+    focus: function (event, ui) {
+      return false;
+    }
+  })
+  .data("autocomplete")._renderItem = function(ul, item) {
+    return $('<li></li>').data('item.autocomplete', item)
+    .append('<a>' + item.title + '<br>' + item.artist + '</a>')
+    .appendTo(ul);
+  };
 });

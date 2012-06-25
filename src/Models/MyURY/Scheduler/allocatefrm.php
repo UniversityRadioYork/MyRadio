@@ -6,48 +6,48 @@ $form = new MyURYForm('sched_allocate', 'Scheduler', 'doAllocate',
         ));
 
 $form->addField(
-        new MyURYFormField('testattribute0', MyURYFormField::TYPE_TEXT)
+        new MyURYFormField('Text', MyURYFormField::TYPE_TEXT)
         )
         ->addField(
-                new MyURYFormField('testattribute1', MyURYFormField::TYPE_NUMBER)
+                new MyURYFormField('Number', MyURYFormField::TYPE_NUMBER)
                 )
         ->addField(
-                new MyURYFormField('testattribute2', MyURYFormField::TYPE_EMAIL)
+                new MyURYFormField('Email', MyURYFormField::TYPE_EMAIL)
                 )
         ->addField(
-                new MyURYFormField('testattribute3', MyURYFormField::TYPE_DATE)
+                new MyURYFormField('Date', MyURYFormField::TYPE_DATE)
                 )
         ->addField(
-                new MyURYFormField('testattribute4', MyURYFormField::TYPE_DATETIME)
+                new MyURYFormField('Date/Time', MyURYFormField::TYPE_DATETIME)
                 )
         ->addField(
-                new MyURYFormField('testattribute5', MyURYFormField::TYPE_MEMBER)
+                new MyURYFormField('Member', MyURYFormField::TYPE_MEMBER)
                 )
         ->addField(
-                new MyURYFormField('testattribute6', MyURYFormField::TYPE_TRACK)
+                new MyURYFormField('Track', MyURYFormField::TYPE_TRACK)
                 )
         ->addField(
-                new MyURYFormField('testattribute7', MyURYFormField::TYPE_ARTIST)
+                new MyURYFormField('Artist', MyURYFormField::TYPE_ARTIST)
                 )
         ->addField(
-                new MyURYFormField('testattribute8', MyURYFormField::TYPE_HIDDEN)
+                new MyURYFormField('Hidden', MyURYFormField::TYPE_HIDDEN)
                 )
         ->addField(
-                new MyURYFormField('testattribute9', MyURYFormField::TYPE_SELECT,
+                new MyURYFormField('Select', MyURYFormField::TYPE_SELECT,
                         array('options'=>array(array('value'=>0,'text'=>'test'))))
                 )
         ->addField(
-                new MyURYFormField('testattribute10', MyURYFormField::TYPE_RADIO)
+                new MyURYFormField('Radio', MyURYFormField::TYPE_RADIO)
                 )
         ->addField(
-                new MyURYFormField('testattribute11', MyURYFormField::TYPE_CHECK)
+                new MyURYFormField('Checkbox', MyURYFormField::TYPE_CHECK)
                 )
         ->addField(
-                new MyURYFormField('testattribute12', MyURYFormField::TYPE_DAY)
+                new MyURYFormField('Day', MyURYFormField::TYPE_DAY)
                 )
         ->addField(
-                new MyURYFormField('testattribute13', MyURYFormField::TYPE_BLOCKTEXT)
+                new MyURYFormField('Block Text', MyURYFormField::TYPE_BLOCKTEXT)
                 )
         ->addField(
-                new MyURYFormField('testattribute14', MyURYFormField::TYPE_TIME)
+                new MyURYFormField('Time', MyURYFormField::TYPE_TIME)
                 );
