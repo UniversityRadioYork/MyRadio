@@ -121,6 +121,7 @@ class MyURYForm {
         throw new MyURYException('Tried to create a duplicate MyURYFormField ' . $f->getName());
     }
     $this->fields[] = $field;
+    return $this;
   }
 
   public function render() {

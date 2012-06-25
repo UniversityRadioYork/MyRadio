@@ -89,7 +89,7 @@ class MyURYFormField {
    * Settings that cannot be altered by the $options parameter
    * @var array 
    */
-  private $restricted_attributes = array('restricted_attributes', 'value', 'options', 'name', 'type');
+  private $restricted_attributes = array('restricted_attributes', 'value', 'name', 'type');
 
   public function __construct($name, $type, $options = array()) {
     //Set essential parameters
@@ -129,9 +129,10 @@ class MyURYFormField {
         'type'        => $this->type,
         'required'    => $this->required,
         'explanation' => $this->explanation,
-        'class'     => $this->getClasses(),
+        'class'       => $this->getClasses(),
         'options'     => $this->options,
-        'value'       => $this->value
+        'value'       => $this->value,
+        'enabled'     => $this->enabled
     );
   }
 
