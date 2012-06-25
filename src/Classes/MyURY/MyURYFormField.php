@@ -22,6 +22,7 @@ class MyURYFormField {
   const TYPE_CHECK     = 0x0B;
   const TYPE_DAY       = 0x0C;
   const TYPE_BLOCKTEXT = 0x0D;
+  const TYPE_TIME      = 0x0E;
 
   /**
    * The name/id of the Form Field
