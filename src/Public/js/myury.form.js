@@ -18,4 +18,16 @@ $(document).ready(function() {
     dateFormat:"dd/mm/yy",
     stepMinute: 15
   });
+  /**
+   * Initialises the Member autocomplete pickers where necessary
+   */
+  $('fieldset.myuryfrm input.member-autocomplete').autocomplete({
+    minLength: 3,
+    source: "index.php?module=Core&action=a-findmember"
+  })
+  .data("autocomplete")._renderItem = function(ul, item) {
+    return $('<li></li>').data('item.autocomplete', item)
+    .append('<a>' + item.fname + ' ' + item.sname + '</a>')
+    .appendTo(ul);
+  };
 });
