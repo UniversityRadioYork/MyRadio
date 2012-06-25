@@ -23,7 +23,12 @@ $(document).ready(function() {
    */
   $('fieldset.myuryfrm input.member-autocomplete').autocomplete({
     minLength: 3,
-    source: "index.php?module=Core&action=a-findmember"
+    source: "index.php?module=Core&action=a-findmember",
+    select: function(event, ui) {
+      $(this).val(ui.item.fname + ' ' + ui.item.sname);
+      $('#'+$(this).attr('id').replace(/-ui$/, '')).val(ui.item.memberid);
+      return false;
+    }
   })
   .data("autocomplete")._renderItem = function(ul, item) {
     return $('<li></li>').data('item.autocomplete', item)
