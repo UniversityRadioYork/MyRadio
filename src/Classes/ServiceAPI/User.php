@@ -220,9 +220,9 @@ class User extends ServiceAPI {
     } else {
       $fname = $name;
       $sname = $name;
-    }echo $fname;
+    }
     return self::$db->fetch_all('SELECT * FROM member
-      WHERE fname ILIKE \'%$1%\' OR sname ILIKE \'%$2%\' LIMIT $3',
+      WHERE fname ILIKE $1% OR sname ILIKE $2% LIMIT $3',
             array($fname, $sname, $limit));
   }
 }
