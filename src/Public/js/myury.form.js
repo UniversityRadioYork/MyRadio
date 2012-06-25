@@ -57,7 +57,7 @@ $(document).ready(function() {
   })
   .data("autocomplete")._renderItem = function(ul, item) {
     return $('<li></li>').data('item.autocomplete', item)
-    .append('<a>' + item.title + '<br><pre>' + item.artist + '</pre></a>')
+    .append('<a>' + item.title + '<br><span class="font-size:80%">' + item.artist + '</span></a>')
     .appendTo(ul);
   };
 });
