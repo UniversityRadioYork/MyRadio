@@ -209,4 +209,20 @@ class User extends ServiceAPI {
     
     return $entry;
   }
+  
+  public static function findByName($name, $limit) {
+    //If there's a space, split into first and last name
+    $name = trim($name);
+    $names = explode(' ', $name);
+    if (isset($names[1])) {
+      $fname = $names[0];
+      $sname = $names[1];
+    } else {
+      $fname = $name;
+      $sname = $name;
+    }
+    return self::$db->fetch_all('SELECT * FROM member
+      WHERE fname ILIKE \'%$1%\' OR sname ILIKE \'%$2%\' LIMIT $3',
+            array($fname, $sname, $limit));
+  }
 }
