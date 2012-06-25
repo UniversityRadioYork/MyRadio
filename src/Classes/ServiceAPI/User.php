@@ -215,15 +215,15 @@ class User extends ServiceAPI {
     $name = trim($name);
     $names = explode(' ', $name);
     if (isset($names[1])) {
-      $fname = $names[0];
-      $sname = $names[1];
-    } else {
-      $fname = $name;
-      $sname = $name;
-    }
-    return self::$db->fetch_all('SELECT memberid, fname, sname FROM member
-      WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $2 || \'%\'
+      return self::$db->fetch_all('SELECT memberid, fname, sname FROM member
+      WHERE fname ILIKE $1 || \'%\' AND sname ILIKE $2 || \'%\'
       ORDER BY sname, fname LIMIT $3',
-            array($fname, $sname, $limit));
+            array($names[0], $names[1], $limit));
+    } else {
+      return self::$db->fetch_all('SELECT memberid, fname, sname FROM member
+      WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $1 || \'%\'
+      ORDER BY sname, fname LIMIT $2',
+            array($name, $limit));
+    }
   }
 }
