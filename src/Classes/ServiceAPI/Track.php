@@ -28,6 +28,11 @@ class Track extends ServiceAPI {
     throw new MyURYException('Not implemented Track::__construct');
   }
   
+  public static function getInstance($trackid = -1) {
+    self::__wakeup();
+    throw new MyURYException('Not implemented Track::getInstance');
+  }
+  
   public static function findByName($title, $limit) {
     $title = trim($title);
     return self::$db->fetch_all('SELECT rec_track.title, rec_track.artist, rec_record.title AS record, trackid
