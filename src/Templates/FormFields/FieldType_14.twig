@@ -1,5 +1,5 @@
 <label for="{{name}}-{{field.name}}">{{field.label}}</label>
-<input type="text" class="{{field.class}}{% if field.required %} required{% endif %} datetime"
+<input type="text" class="{{field.class}}{% if field.required %} required{% endif %} time"
        value="{{field.value}}" name="{{name}}-{{field.name}}" id="{{name}}-{{field.name}}"
        {% if not field.enabled %} readonly="readonly"{% endif %} />
 <span class="myuryfrmhint" id="{{name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>

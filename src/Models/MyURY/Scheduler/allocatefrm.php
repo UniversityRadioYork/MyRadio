@@ -47,4 +47,7 @@ $form->addField(
                 )
         ->addField(
                 new MyURYFormField('testattribute13', MyURYFormField::TYPE_BLOCKTEXT)
+                )
+        ->addField(
+                new MyURYFormField('testattribute14', MyURYFormField::TYPE_TIME)
                 );
