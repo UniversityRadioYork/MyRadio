@@ -244,7 +244,7 @@ class User extends ServiceAPI {
       AND memberid=$1 AND till_date IS NOT NULL
       UNION
       SELECT message, t1.timestamp, \'photo_show_get\' AS photo FROM
-        (SELECT \'Started a series of \' || sched_entry.summary AS message, sched_entry.entryid
+        (SELECT \'Was on \' || sched_entry.summary AS message, sched_entry.entryid
         FROM sched_entry, sched_memberentry
         WHERE sched_entry.entryid = sched_memberentry.entryid
         AND entrytypeid = 3
