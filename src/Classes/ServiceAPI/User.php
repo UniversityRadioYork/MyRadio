@@ -248,7 +248,7 @@ class User extends ServiceAPI {
         FROM sched_entry, sched_memberentry
         WHERE sched_entry.entryid = sched_memberentry.entryid
         AND sched_memberentry.memberid = $1
-        AND sched_entry.entryid IN (SELECT entryid FROM sched_timeslot))
+        AND sched_entry.entryid IN (SELECT entryid FROM sched_timeslot)) AS t0
         LEFT JOIN (SELECT entryid, starttime AS timestamp FROM sched_timeslot
           ORDER BY timeslot ASC LIMIT 1) AS t1 ON (t1.entryid = sched_entry.entryid)
       ) AS t1
