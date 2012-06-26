@@ -254,7 +254,7 @@ class User extends ServiceAPI {
     
     //Get when they joined URY
     $events[] = array(
-        'timestamp' => $this->joined,
+        'timestamp' => date('Y-m-d',$this->joined),
         'message' => 'Joined URY',
         'photo' => Config::$photo_joined
     );
