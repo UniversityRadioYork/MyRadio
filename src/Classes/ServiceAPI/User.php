@@ -254,6 +254,6 @@ class User extends ServiceAPI {
         'photo' => Config::$photo_officership_down
       );
     }
-    return $data;
+    return $events;
   }
 }
