@@ -240,7 +240,7 @@ class User extends ServiceAPI {
       UNION
       SELECT \'Stepped Down as \' || officer_name AS message, till_date AS timestamp,
       \'photo_officership_down\' AS photo
-      FROM member_officer, officer, WHERE member_officer.officerid = officer.officerid
+      FROM member_officer, officer WHERE member_officer.officerid = officer.officerid
       AND memberid=$1 AND till_date IS NOT NULL
       ORDER BY timestamp DESC', array($this->memberid));
     
