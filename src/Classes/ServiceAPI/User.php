@@ -247,7 +247,7 @@ class User extends ServiceAPI {
     foreach ($result as $row) {
       $events[] = array(
         'timestamp' => $row['timestamp'],
-        'message' => $row['member'],
+        'message' => $row['message'],
         'photo' => Config::$$row['photo']
       );
     }
