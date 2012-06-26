@@ -1,0 +1,11 @@
+{% extends 'stripe.twig' %}
+{% block stripecontent %}
+<div id="timeline">
+{% for event in timeline %}
+<div id="timeline-event">
+  {{event.timestamp}}
+    <heading>{{event.message}}</heading>
+  </div>
+{% endfor %}
+</div>
+{% endblock %}

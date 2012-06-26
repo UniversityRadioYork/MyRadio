@@ -1,4 +1,7 @@
 <?php
 require 'Views/MyURY/Profile/bootstrap.php';
 
-print_r($data);
+$twig->setTemplate('MyURY/Profile/timeline.twig')
+        ->addVariable('heading', 'Timeline')
+        ->addVariable('timeline', $members)
+        ->render();
