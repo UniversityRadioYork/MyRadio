@@ -243,7 +243,7 @@ class User extends ServiceAPI {
       FROM member_officer, officer WHERE member_officer.officerid = officer.officerid
       AND memberid=$1 AND till_date IS NOT NULL
       UNION
-      SELECT t1.timestamp, message, \'photo_show_get\' AS photo FROM
+      SELECT message, t1.timestamp, \'photo_show_get\' AS photo FROM
         (SELECT \'Started a series of \' || sched_entry.summary AS message, sched_entry.entryid
         FROM sched_entry, sched_memberentry
         WHERE sched_entry.entryid = sched_memberentry.entryid
