@@ -2,12 +2,12 @@
 {% block stripecontent %}
 <h2>{{profile_name}}</h2>
 <div class="timeline">
-{% for event in timeline %}
-<div class="timeline-event">
   <div class="timeline-spine">&nbsp;</div>
+{% for event in timeline %}
+  <div class="timeline-event">
   {{event.timestamp}}
-    <heading>{{profile_name}} {{event.message}}</heading>
-  </div>
+      <heading>{{profile_name}} {{event.message}}</heading>
+    </div>
 {% endfor %}
-</div>
+  </div>
 {% endblock %}
