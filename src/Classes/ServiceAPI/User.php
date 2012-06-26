@@ -260,7 +260,7 @@ class User extends ServiceAPI {
     
     foreach ($result as $row) {
       $events[] = array(
-        'timestamp' => $row['timestamp'],
+        'timestamp' => date('d/m/Y',strtotime($this->joined)),
         'message' => $row['message'],
         'photo' => Config::$$row['photo']
       );
@@ -268,7 +268,7 @@ class User extends ServiceAPI {
     
     //Get when they joined URY
     $events[] = array(
-        'timestamp' => date('Y-m-d',strtotime($this->joined)),
+        'timestamp' => date('d/m/Y',strtotime($this->joined)),
         'message' => 'Joined URY',
         'photo' => Config::$photo_joined
     );
