@@ -242,6 +242,16 @@ class User extends ServiceAPI {
       \'photo_officership_down\' AS photo
       FROM member_officer, officer WHERE member_officer.officerid = officer.officerid
       AND memberid=$1 AND till_date IS NOT NULL
+      UNION
+      SELECT * FROM (
+        SELECT t1.timestamp, \'Started a series of \' || sched_entry.summary AS message
+        FROM sched_entry, sched_memberentry
+        WHERE sched_entry.entryid = sched_memberentry.entryid
+        AND sched_memberentry.memberid = $1
+        AND sched_entry.entryid IN (SELECT entryid FROM sched_timeslot)
+        LEFT JOIN (SELECT entryid, starttime AS timestamp FROM sched_timeslot
+          ORDER BY timeslot ASC LIMIT 1) AS t1 ON (t1.entryid = sched_entry.entryid)
+      ) AS t1
       ORDER BY timestamp DESC', array($this->memberid));
     
     foreach ($result as $row) {
