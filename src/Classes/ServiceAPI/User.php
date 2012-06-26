@@ -247,6 +247,7 @@ class User extends ServiceAPI {
         (SELECT \'Started a series of \' || sched_entry.summary AS message, sched_entry.entryid
         FROM sched_entry, sched_memberentry
         WHERE sched_entry.entryid = sched_memberentry.entryid
+        AND entrytypeid = 3
         AND sched_memberentry.memberid = $1
         AND sched_entry.entryid IN
           (SELECT entryid FROM sched_timeslot)
