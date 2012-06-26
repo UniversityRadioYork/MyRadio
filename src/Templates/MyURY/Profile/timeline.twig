@@ -4,6 +4,7 @@
 <div class="timeline">
 {% for event in timeline %}
 <div class="timeline-event">
+  <div class="timeline-spine">&nbsp;</div>
   {{event.timestamp}}
     <heading>{{profile_name}} {{event.message}}</heading>
   </div>
