@@ -230,6 +230,28 @@ class User extends ServiceAPI {
   
   public function getTimeline() {
     $events = array();
+    
+    //Get their officership history
+    $result = self::$db->fetch_all(
+      'SELECT \'Got Elected as \' || officer_name AS message, from_date AS timestamp,
+      \'photo_officership_get\' AS photo
+      FROM member_officer, officer WHERE member_officer.officerid = officer.officerid
+      AND memberid=$1
+      UNION
+      SELECT \'Stepped Down as \' || officer_name AS message, till_date AS timestamp,
+      \'photo_officership_down\' AS photo
+      FROM member_officer, officer, WHERE member_officer.officer = officer.officerid
+      AND memberid=$1 AND till_date IS NOT NULL
+      ORDER BY timestamp DESC', array($this->memberid));
+    
+    foreach ($result as $officership) {
+      $events[] = array(
+        'timestamp' => $officership['timestamp'],
+        'message' => $row['member'],
+        'photo' => Config::$$row['photo']
+      );
+    }
+    
     //Get when they joined URY
     $events[] = array(
         'timestamp' => $this->joined,
@@ -237,23 +259,6 @@ class User extends ServiceAPI {
         'photo' => Config::$photo_joined
     );
     
-    //Get their officership history
-    $result = self::$db->fetch_all('SELECT officer_name, from_date, till_date
-      FROM member_officer, officer WHERE member_officer.officerid = officer.officerid
-      AND memberid=$1', array($this->memberid));
-    
-    foreach ($result as $officership) {
-      $events[] = array(
-        'timestamp' => $officership['from_date'],
-        'message' => 'Got Elected as '.$officership['officer_name'],
-        'photo' => Config::$photo_officership_get
-      );
-      $events[] = array(
-        'timestamp' => $officership['till_date'],
-        'message' => 'Stepped Down as '.$officership['officer_name'],
-        'photo' => Config::$photo_officership_down
-      );
-    }
     return $events;
   }
 }
