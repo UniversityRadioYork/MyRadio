@@ -23,6 +23,7 @@ class User extends ServiceAPI {
   private $account_locked;
   private $studio_trained;
   private $studio_demoed;
+  private $joined;
   
   /**
    * Initiates the User variables
@@ -33,7 +34,7 @@ class User extends ServiceAPI {
     //Get the base data
     $data = self::$db->fetch_one(
             'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college, phone, email,
-              receive_email, local_name, local_alias, eduroam, account_locked 
+              receive_email, local_name, local_alias, eduroam, account_locked, joined 
               FROM member, l_college
               WHERE memberid=$1 
               AND member.college = l_college.collegeid
@@ -224,6 +225,34 @@ class User extends ServiceAPI {
       WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $1 || \'%\'
       ORDER BY sname, fname LIMIT $2',
             array($name, $limit));
+    }
+  }
+  
+  public function getTimeline() {
+    $events = array();
+    //Get when they joined URY
+    $events[] = array(
+        'timestamp' => $this->joined,
+        'message' => 'Joined URY',
+        'photo' => Config::$photo_joined
+    );
+    
+    //Get their officership history
+    $result = self::$db->fetch_all('SELECT officer_name, from_date, till_date
+      FROM member_officer, officer WHERE member_officer.officerid = officer.officerid
+      AND memberid=$1', array($this->memberid));
+    
+    foreach ($result as $officership) {
+      $events[] = array(
+        'timestamp' => $officership['from_date'],
+        'message' => 'Got Elected as '.$officership['officer_name'],
+        'photo' => Config::$photo_officership_get
+      );
+      $events[] = array(
+        'timestamp' => $officership['till_date'],
+        'message' => 'Stepped Down as '.$officership['officer_name'],
+        'photo' => Config::$photo_officership_down
+      );
     }
   }
 }
