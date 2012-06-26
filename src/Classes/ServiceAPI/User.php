@@ -251,8 +251,9 @@ class User extends ServiceAPI {
         AND sched_entry.entryid IN
           (SELECT entryid FROM sched_timeslot)
         ) AS t0
-        LEFT JOIN SELECT DISTINCT entryid, starttime AS timestamp FROM sched_timeslot
-          ORDER BY timestamp ASC) AS t1 ON (t1.entryid = t0.entryid) GROUP BY entryid
+        LEFT JOIN (SELECT DISTINCT entryid, starttime AS timestamp FROM sched_timeslot
+          ORDER BY timestamp ASC) AS t1 ON (t1.entryid = t0.entryid)
+          GROUP BY entryid) AS t1
       
       ORDER BY timestamp DESC', array($this->memberid));
     
