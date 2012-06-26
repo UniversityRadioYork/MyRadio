@@ -244,9 +244,9 @@ class User extends ServiceAPI {
       AND memberid=$1 AND till_date IS NOT NULL
       ORDER BY timestamp DESC', array($this->memberid));
     
-    foreach ($result as $officership) {
+    foreach ($result as $row) {
       $events[] = array(
-        'timestamp' => $officership['timestamp'],
+        'timestamp' => $row['timestamp'],
         'message' => $row['member'],
         'photo' => Config::$$row['photo']
       );
