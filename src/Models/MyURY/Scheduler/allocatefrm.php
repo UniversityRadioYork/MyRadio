@@ -37,7 +37,12 @@ $form->addField(
                         array('options'=>array(array('value'=>0,'text'=>'test'))))
                 )
         ->addField(
-                new MyURYFormField('Radio', MyURYFormField::TYPE_RADIO)
+                new MyURYFormField('Radio', MyURYFormField::TYPE_RADIO,
+                        array('options' =>
+                            array(
+                                array('value' => 0, 'text' => 'Week 1'),
+                                array('value' => 1, 'text' => 'Weeks 2-10')
+                            )))
                 )
         ->addField(
                 new MyURYFormField('Checkbox', MyURYFormField::TYPE_CHECK)
