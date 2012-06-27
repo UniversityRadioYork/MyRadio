@@ -81,4 +81,9 @@ $(document).ready(function() {
     .append('<a>' + item.title + '</a>')
     .appendTo(ul);
   };
+  
+  /**
+   * Validation
+   */
+  $('fieldset.myuryfrm form').validate();
 });
