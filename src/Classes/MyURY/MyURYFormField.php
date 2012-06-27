@@ -130,6 +130,7 @@ class MyURYFormField {
     foreach ($this->options as $k => $v) {
       if ($v instanceof self) {
         $options[$k] = $v->render();
+        print_r($options[$k]);
       } else {
         $options[$k] = $v;
       }
