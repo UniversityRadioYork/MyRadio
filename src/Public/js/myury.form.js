@@ -60,4 +60,25 @@ $(document).ready(function() {
     .append('<a>' + item.title + '<br><span style="font-size:.8em">' + item.artist + '</span></a>')
     .appendTo(ul);
   };
+  /**
+   * Initialises the Artist autocomplete pickers where necessary
+   */
+  $('fieldset.myuryfrm input.artist-autocomplete').autocomplete({
+    minLength: 3,
+    source: "index.php?module=Core&action=a-findartist",
+    select: function(event, ui) {
+      $(this).val(ui.item.title);
+      $('#'+$(this).attr('id').replace(/-ui$/, '')).val(ui.item.artistid);
+      return false;
+    },
+    //Prevent the field blanking out when an item is given focus
+    focus: function (event, ui) {
+      return false;
+    }
+  })
+  .data("autocomplete")._renderItem = function(ul, item) {
+    return $('<li></li>').data('item.autocomplete', item)
+    .append('<a>' + item.title + '</a>')
+    .appendTo(ul);
+  };
 });
