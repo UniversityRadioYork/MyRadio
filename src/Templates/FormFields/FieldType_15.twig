@@ -1,0 +1,9 @@
+{# Field must have a different name here so it can be defined for individual selects #}
+{% set container = field %}
+<fieldset>
+  <legend>{{field.label}}</legend>
+  <div class="myuryfrmhint" id="{{name}}-{{field.name}}-hint">{{field.explanation | raw}}</div>
+{% for field in container.options %}
+  {% include 'FormFields/FieldType_11.twig' %}
+{% endfor %}
+</fieldset>

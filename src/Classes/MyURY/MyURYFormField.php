@@ -23,6 +23,7 @@ class MyURYFormField {
   const TYPE_DAY       = 0x0C;
   const TYPE_BLOCKTEXT = 0x0D;
   const TYPE_TIME      = 0x0E;
+  const TYPE_CHECKGRP  = 0x0F;
 
   /**
    * The name/id of the Form Field
@@ -124,6 +125,15 @@ class MyURYFormField {
   }
 
   public function render() {
+    // If there are MyURYFormFields in Options, convert these to their render values
+    $options = array();
+    foreach ($this->options as $k => $v) {
+      if ($v instanceof self) {
+        $options[$k] = $v->render();
+      } else {
+        $options[$k] = $v;
+      }
+    }
     return array(
         'name'        => $this->name,
         'label'       => ($this->label === null ? $this->name : $this->label),
