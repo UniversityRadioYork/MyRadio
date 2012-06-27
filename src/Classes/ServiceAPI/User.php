@@ -260,7 +260,7 @@ class User extends ServiceAPI {
     
     foreach ($result as $row) {
       $events[] = array(
-        'timestamp' => date('d/m/Y',strtotime($this->joined)),
+        'timestamp' => date('d/m/Y',strtotime($row['timestamp'])),
         'message' => $row['message'],
         'photo' => Config::$$row['photo']
       );
