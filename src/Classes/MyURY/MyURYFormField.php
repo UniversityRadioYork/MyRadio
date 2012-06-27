@@ -130,7 +130,6 @@ class MyURYFormField {
     foreach ($this->options as $k => $v) {
       if ($v instanceof self) {
         $options[$k] = $v->render();
-        print_r($options[$k]);
       } else {
         $options[$k] = $v;
       }
@@ -142,7 +141,7 @@ class MyURYFormField {
         'required'    => $this->required,
         'explanation' => $this->explanation,
         'class'       => $this->getClasses(),
-        'options'     => $this->options,
+        'options'     => $options,
         'value'       => $this->value,
         'enabled'     => $this->enabled
     );
