@@ -56,4 +56,3 @@ $form->addField(
         ->addField(
                 new MyURYFormField('Time', MyURYFormField::TYPE_TIME)
                 );
-echo nl2br(print_r($form,true));
