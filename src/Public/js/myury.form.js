@@ -47,7 +47,7 @@ $(document).ready(function() {
     source: "index.php?module=Core&action=a-findtrack",
     select: function(event, ui) {
       $(this).val(ui.item.title);
-      $('#'+$(this).attr('id').replace(/-ui$/, '')).val(ui.item.memberid);
+      $('#'+$(this).attr('id').replace(/-ui$/, '')).val(ui.item.trackid);
       return false;
     },
     //Prevent the field blanking out when an item is given focus
