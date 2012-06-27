@@ -231,20 +231,20 @@ class User extends ServiceAPI {
   public function getTimeline() {
     $events = array();
     
-    //Get their officership history
+    //Get their officership history, show history and awards
     $result = self::$db->fetch_all(
-      'SELECT \'Got Elected as \' || officer_name AS message, from_date AS timestamp,
-      \'photo_officership_get\' AS photo
+      'SELECT \'got Elected as \' || officer_name AS message, from_date AS timestamp,
+        \'photo_officership_get\' AS photo
       FROM member_officer, officer WHERE member_officer.officerid = officer.officerid
       AND memberid=$1
       UNION
-      SELECT \'Stepped Down as \' || officer_name AS message, till_date AS timestamp,
-      \'photo_officership_down\' AS photo
+      SELECT \'stepped Down as \' || officer_name AS message, till_date AS timestamp,
+        \'photo_officership_down\' AS photo
       FROM member_officer, officer WHERE member_officer.officerid = officer.officerid
       AND memberid=$1 AND till_date IS NOT NULL
       UNION
       SELECT message, t1.timestamp, \'photo_show_get\' AS photo FROM
-        (SELECT \'Was on \' || sched_entry.summary AS message, sched_entry.entryid
+        (SELECT \'was on \' || sched_entry.summary AS message, sched_entry.entryid
         FROM sched_entry, sched_memberentry
         WHERE sched_entry.entryid = sched_memberentry.entryid
         AND entrytypeid = 3
@@ -255,6 +255,13 @@ class User extends ServiceAPI {
         LEFT JOIN (SELECT entryid, min(starttime) AS timestamp FROM sched_timeslot
           GROUP BY entryid
           ORDER BY timestamp ASC) AS t1 ON (t1.entryid = t0.entryid)
+       
+      UNION
+      SELECT awarded AS timestamp, \'won an award: \' || name AS message,
+        \'photo_award_get\' AS photo
+      FROM myury.award_categories, myury.award_member
+      WHERE myury.award_categories.awardid = myury.award_member.awardid
+      AND memberid = $1
       
       ORDER BY timestamp DESC', array($this->memberid));
     
