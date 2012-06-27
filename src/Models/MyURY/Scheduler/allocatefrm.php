@@ -61,5 +61,5 @@ $form->addField(
                         array('options' =>
                             array(
                                 new MyURYFormField('wk1', MyURYFormField::TYPE_CHECK, array('label' => 'Week 1')),
-                                new MyURYFormField('wk2', MyURYFormField::TYPE_CHECK, array('label' => 'Weeks 2-10'))
+                                new MyURYFormField('wk2', MyURYFormField::TYPE_CHECK, array('label' => 'Weeks 2-10'), 'required' => true)
                             ))));
