@@ -101,7 +101,7 @@ class MyURYFormField {
     //Set optional parameters
     foreach ($options as $k => $v) {
       //Sanity checks - is this a valid parameter and is it not blacklisted?
-      if (!isset($this->$k))
+      if (isset($this->$k) === false && @$this->$k !== null)
         throw new MyURYException('Tried to set MyURYFormField parameter ' . $k . ' but it does not exist.');
       if (in_array($k, $this->restricted_attributes))
         throw new MyURYException('Tried to set MyURYFormField parameter ' . $k . ' but it is not editable.');
