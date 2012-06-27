@@ -60,6 +60,6 @@ $form->addField(
                 new MyURYFormField('CheckboxGroup', MyURYFormField::TYPE_CHECKGRP,
                         array('options' =>
                             array(
-                                new MyURYFormField('Week 1', MyURYFormField::TYPE_CHECK),
-                                new MyURYFormField('Weeks 2-10', MyURYFormField::TYPE_CHECK)
+                                new MyURYFormField('Week1', MyURYFormField::TYPE_CHECK),
+                                new MyURYFormField('Weeks2-10', MyURYFormField::TYPE_CHECK)
                             ))));
