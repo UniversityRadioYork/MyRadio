@@ -85,5 +85,14 @@ $(document).ready(function() {
   /**
    * Validation
    */
-  $('fieldset.myuryfrm form').validate();
+  $('fieldset.myuryfrm form').validate({
+    errorClass: 'ui-state-error',
+    errorPlacement: function(error, element) {
+      error.addClass('label-nofloat').appendTo(element.parent('div'));
+    },
+    submitHandler: function(form) {
+      form.children('input[type=submit]').attr('disabled','disabled');
+      form.submit();
+    }
+  });
 });
