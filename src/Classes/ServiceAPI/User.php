@@ -257,7 +257,7 @@ class User extends ServiceAPI {
           ORDER BY timestamp ASC) AS t1 ON (t1.entryid = t0.entryid)
        
       UNION
-      SELECT awarded AS timestamp, \'won an award: \' || name AS message,
+      SELECT \'won an award: \' || name AS message, awarded AS timestamp,
         \'photo_award_get\' AS photo
       FROM myury.award_categories, myury.award_member
       WHERE myury.award_categories.awardid = myury.award_member.awardid
