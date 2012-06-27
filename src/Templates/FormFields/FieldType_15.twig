@@ -4,6 +4,7 @@
   <legend>{{field.label}}</legend>
   <div class="myuryfrmhint" id="{{name}}-{{field.name}}-hint">{{field.explanation | raw}}</div>
 {% for field in container.options %}
+  {% set field.name = container.name ~ '-' ~ field.name %}
   {% include 'FormFields/FieldType_11.twig' %}
 {% endfor %}
 </fieldset>
