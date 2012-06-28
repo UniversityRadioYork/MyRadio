@@ -72,6 +72,12 @@ class MyURYForm {
    * @var string
    */
   private $title = null;
+  
+  /**
+   * The module of the page
+   * @var string
+   */
+  private $module = null;
 
   /**
    * Logging output
@@ -141,6 +147,7 @@ class MyURYForm {
             ->addVariable('method', $this->get ? 'get' : 'post')
             ->addVariable('name', User::getInstance()->getName())
             ->addVariable('title', isset($this->title) ? $this->title : $this->name)
+            ->addVariable('module', isset($this->module) ? $this->module : $this->name)
             ->addVariable('fields', $fields)
             ->render();
   }
