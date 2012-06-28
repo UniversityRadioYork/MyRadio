@@ -1,9 +1,8 @@
 <?php
-$form = new MyURYForm('sched_allocate', 'Scheduler', 'doAllocate',
+$form = new MyURYForm('sched_allocate', $module, 'doAllocate',
         array(
             'debug' => true,
-            'title' => 'Allocate Show',
-            'module' => $module
+            'title' => 'Allocate Show'
             //'template' => 'MyURY/Scheduler/allocate.twig'
         ));
 

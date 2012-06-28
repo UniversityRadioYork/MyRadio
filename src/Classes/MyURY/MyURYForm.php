@@ -22,6 +22,7 @@ class MyURYForm {
 
   /**
    * The module that it will submit to
+   * Best practice is this should be the current module
    * @var string 
    */
   private $module;
@@ -72,12 +73,6 @@ class MyURYForm {
    * @var string
    */
   private $title = null;
-  
-  /**
-   * The module of the page
-   * @var string
-   */
-  private $module = null;
 
   /**
    * Logging output
