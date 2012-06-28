@@ -131,7 +131,7 @@ class MyURYForm {
     return $this;
   }
 
-  public function render() {
+  public function render($frmcustom = array()) {
     $fields = array();
     foreach ($this->fields as $field) {
       $fields[] = $field->render();
@@ -144,6 +144,7 @@ class MyURYForm {
             ->addVariable('title', isset($this->title) ? $this->title : $this->name)
             ->addVariable('serviceName', isset($this->module) ? $this->module : $this->name)
             ->addVariable('fields', $fields)
+            ->addVariable('frmcustom', $frmcustom)
             ->render();
   }
 
