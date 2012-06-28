@@ -66,6 +66,12 @@ class MyURYForm {
    * @var array 
    */
   private $fields = array();
+  
+  /**
+   * The title of the page (the human readable name)
+   * @var string
+   */
+  private $title = null;
 
   /**
    * Logging output
@@ -133,8 +139,8 @@ class MyURYForm {
             ->addVariable('classes', $this->getClasses())
             ->addVariable('action', CoreUtils::makeURL($this->module, $this->action))
             ->addVariable('method', $this->get ? 'get' : 'post')
-            ->addVariable('name', $this->name)
-            ->addVariable('title', $this->name)
+            ->addVariable('name', User::getInstance()->getName())
+            ->addVariable('title', isset($this->title) ? $this->title : $this->name)
             ->addVariable('fields', $fields)
             ->render();
   }
