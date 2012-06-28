@@ -142,7 +142,7 @@ class MyURYForm {
             ->addVariable('method', $this->get ? 'get' : 'post')
             ->addVariable('name', User::getInstance()->getName())
             ->addVariable('title', isset($this->title) ? $this->title : $this->name)
-            ->addVariable('module', isset($this->module) ? $this->module : $this->name)
+            ->addVariable('serviceName', isset($this->module) ? $this->module : $this->name)
             ->addVariable('fields', $fields)
             ->render();
   }
