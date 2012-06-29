@@ -1,4 +1,10 @@
 {% extends 'stripe.twig' %}
+{% block head %}
+{{ parent() }}
+<script type="text/javascript" src="//ury.york.ac.uk/portal/js/jquery-ui-timepicker.js"></script>
+<script type="text/javascript" src="//ury.york.ac.uk/portal/js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="js/myury.form.js"></script>
+{% endblock %}
 {% block stripecontent %}
 <fieldset class="{{classes}}">
   <form action="{{action | raw}}" method="{{method}}" name="{{name}}" id="{{name}}">
@@ -7,6 +13,7 @@
         {% include ('FormFields/FieldType_'~field.type~'.twig') %}
       </div>
     {% endfor %}
+      <input type="submit" value="Submit" />
     </form>
   </fieldset>
 {% endblock %}

@@ -22,6 +22,8 @@ class MyURYFormField {
   const TYPE_CHECK     = 0x0B;
   const TYPE_DAY       = 0x0C;
   const TYPE_BLOCKTEXT = 0x0D;
+  const TYPE_TIME      = 0x0E;
+  const TYPE_CHECKGRP  = 0x0F;
 
   /**
    * The name/id of the Form Field
@@ -99,7 +101,7 @@ class MyURYFormField {
     //Set optional parameters
     foreach ($options as $k => $v) {
       //Sanity checks - is this a valid parameter and is it not blacklisted?
-      if (!isset($this->$k))
+      if (isset($this->$k) === false && @$this->$k !== null)
         throw new MyURYException('Tried to set MyURYFormField parameter ' . $k . ' but it does not exist.');
       if (in_array($k, $this->restricted_attributes))
         throw new MyURYException('Tried to set MyURYFormField parameter ' . $k . ' but it is not editable.');
@@ -109,6 +111,10 @@ class MyURYFormField {
 
   public function getName() {
     return $this->name;
+  }
+  
+  public function setValue($value) {
+    $this->value = $value;
   }
 
   private function getClasses() {
@@ -123,6 +129,15 @@ class MyURYFormField {
   }
 
   public function render() {
+    // If there are MyURYFormFields in Options, convert these to their render values
+    $options = array();
+    foreach ($this->options as $k => $v) {
+      if ($v instanceof self) {
+        $options[$k] = $v->render();
+      } else {
+        $options[$k] = $v;
+      }
+    }
     return array(
         'name'        => $this->name,
         'label'       => ($this->label === null ? $this->name : $this->label),
@@ -130,7 +145,7 @@ class MyURYFormField {
         'required'    => $this->required,
         'explanation' => $this->explanation,
         'class'       => $this->getClasses(),
-        'options'     => $this->options,
+        'options'     => $options,
         'value'       => $this->value,
         'enabled'     => $this->enabled
     );

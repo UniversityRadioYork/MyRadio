@@ -23,6 +23,7 @@ class User extends ServiceAPI {
   private $account_locked;
   private $studio_trained;
   private $studio_demoed;
+  private $joined;
   
   /**
    * Initiates the User variables
@@ -33,7 +34,7 @@ class User extends ServiceAPI {
     //Get the base data
     $data = self::$db->fetch_one(
             'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college, phone, email,
-              receive_email, local_name, local_alias, eduroam, account_locked 
+              receive_email, local_name, local_alias, eduroam, account_locked, joined 
               FROM member, l_college
               WHERE memberid=$1 
               AND member.college = l_college.collegeid
@@ -208,5 +209,77 @@ class User extends ServiceAPI {
     }
     
     return $entry;
+  }
+  
+  public static function findByName($name, $limit) {
+    //If there's a space, split into first and last name
+    $name = trim($name);
+    $names = explode(' ', $name);
+    if (isset($names[1])) {
+      return self::$db->fetch_all('SELECT memberid, fname, sname FROM member
+      WHERE fname ILIKE $1 || \'%\' AND sname ILIKE $2 || \'%\'
+      ORDER BY sname, fname LIMIT $3',
+            array($names[0], $names[1], $limit));
+    } else {
+      return self::$db->fetch_all('SELECT memberid, fname, sname FROM member
+      WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $1 || \'%\'
+      ORDER BY sname, fname LIMIT $2',
+            array($name, $limit));
+    }
+  }
+  
+  public function getTimeline() {
+    $events = array();
+    
+    //Get their officership history, show history and awards
+    $result = self::$db->fetch_all(
+      'SELECT \'got Elected as \' || officer_name AS message, from_date AS timestamp,
+        \'photo_officership_get\' AS photo
+      FROM member_officer, officer WHERE member_officer.officerid = officer.officerid
+      AND memberid=$1
+      UNION
+      SELECT \'stepped Down as \' || officer_name AS message, till_date AS timestamp,
+        \'photo_officership_down\' AS photo
+      FROM member_officer, officer WHERE member_officer.officerid = officer.officerid
+      AND memberid=$1 AND till_date IS NOT NULL
+      UNION
+      SELECT message, t1.timestamp, \'photo_show_get\' AS photo FROM
+        (SELECT \'was on \' || sched_entry.summary AS message, sched_entry.entryid
+        FROM sched_entry, sched_memberentry
+        WHERE sched_entry.entryid = sched_memberentry.entryid
+        AND entrytypeid = 3
+        AND sched_memberentry.memberid = $1
+        AND sched_entry.entryid IN
+          (SELECT entryid FROM sched_timeslot)
+        ) AS t0
+        LEFT JOIN (SELECT entryid, min(starttime) AS timestamp FROM sched_timeslot
+          GROUP BY entryid
+          ORDER BY timestamp ASC) AS t1 ON (t1.entryid = t0.entryid)
+       
+      UNION
+      SELECT \'won an award: \' || name AS message, awarded AS timestamp,
+        \'photo_award_get\' AS photo
+      FROM myury.award_categories, myury.award_member
+      WHERE myury.award_categories.awardid = myury.award_member.awardid
+      AND memberid = $1
+      
+      ORDER BY timestamp DESC', array($this->memberid));
+    
+    foreach ($result as $row) {
+      $events[] = array(
+        'timestamp' => date('d/m/Y',strtotime($row['timestamp'])),
+        'message' => $row['message'],
+        'photo' => Config::$$row['photo']
+      );
+    }
+    
+    //Get when they joined URY
+    $events[] = array(
+        'timestamp' => date('d/m/Y',strtotime($this->joined)),
+        'message' => 'Joined URY',
+        'photo' => Config::$photo_joined
+    );
+    
+    return $events;
   }
 }
