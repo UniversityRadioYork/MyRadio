@@ -83,6 +83,20 @@ $(document).ready(function() {
   };
   
   /**
+   * Setup Checkbox Group select all / select none
+   */
+  $('fieldset a.checkgroup-all').click(function() {
+    $(this).parent('fieldset').children('input:[type=checkbox]').each(function(){
+      $(this).attr('checked','checked');
+    });
+  });
+  $('fieldset a.checkgroup-none').click(function() {
+    $(this).parent('fieldset').children('input:[type=checkbox]').each(function(){
+      $(this).attr('checked',null);
+    });
+  });
+  
+  /**
    * Validation
    */
   $('fieldset.myuryfrm form').validate({
