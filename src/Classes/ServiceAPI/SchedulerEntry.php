@@ -9,7 +9,7 @@ class SchedulerEntry extends ServiceAPI {
   
   function __construct($id) {}
   
-  public function getInstance($id) {
+  public static function getInstance($id) {
     return new self((int)$id);
   }
 }
