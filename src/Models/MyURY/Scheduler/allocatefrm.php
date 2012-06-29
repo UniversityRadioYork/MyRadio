@@ -7,6 +7,7 @@ $form = new MyURYForm('sched_allocate', $module, 'doAllocate',
                 //'template' => 'MyURY/Scheduler/allocate.twig'
         ));
 
+//Set up the terms select box
 $terms = Scheduler::getTerms();
 $term_options = array();
 
@@ -15,6 +16,13 @@ foreach ($terms as $term) {
       'value' => $term['termid'],
       'text' => $term['descr'] . ' ' . date('Y', $term['start'])
   );
+}
+unset($terms);
+
+//Set up the weeks checkboxes
+$weeks = array();
+for ($i = 1; $i <=10; $i++) {
+  $weeks[] = new MyURYFormField('wk'.$i, MyURYFormField::TYPE_CHECK, array('label' => 'Week '.$i, 'required' => false));
 }
 
 $form->addField(
