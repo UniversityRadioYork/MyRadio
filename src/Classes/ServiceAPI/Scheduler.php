@@ -46,5 +46,16 @@ class Scheduler extends ServiceAPI {
     return 0;
   }
   
+  /**
+   * Returns a list of terms in the present or future
+   * @return Array[Array] an array of arrays of terms
+   */
+  public function getTerms() {
+    return self::$db->fetch_all('SELECT termid, EXTRACT(EPOCH FROM start) AS start, descr
+                          FROM terms
+                          WHERE finish > now()
+                          ORDER BY start ASC');
+  }
+  
   public static function getInstance($id = -1) {throw new MyURYException('Not Implemented');}
 }

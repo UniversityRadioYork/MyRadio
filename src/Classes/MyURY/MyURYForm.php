@@ -22,6 +22,7 @@ class MyURYForm {
 
   /**
    * The module that it will submit to
+   * Best practice is this should be the current module
    * @var string 
    */
   private $module;
@@ -66,6 +67,12 @@ class MyURYForm {
    * @var array 
    */
   private $fields = array();
+  
+  /**
+   * The title of the page (the human readable name)
+   * @var string
+   */
+  private $title = null;
 
   /**
    * Logging output
@@ -106,7 +113,7 @@ class MyURYForm {
     //Check all optional parameters
     foreach ($params as $k => $v) {
       //Sanity checks - is this a valid parameter and is it not blacklisted?
-      if (!isset($this->$k))
+      if (isset($this->$k) === false && @$this->$k !== null)
         throw new MyURYException('Tried to set MyURYForm parameter ' . $k . ' but it does not exist.');
       if (in_array($k, $this->restricted_fields))
         throw new MyURYException('Tried to set MyURYForm parameter ' . $k . ' but it is not editable.');
@@ -123,8 +130,18 @@ class MyURYForm {
     $this->fields[] = $field;
     return $this;
   }
+  
+  public function setFieldValue($fieldname, $value) {
+    foreach ($this->fields as $k => $field) {
+      if ($field->getName() === $fieldname) {
+        $this->fields[$k]->setValue($value);
+        return;
+      }
+    }
+    throw new MyURYException('Cannot set value for field '.$fieldname.' as it does not exist.');
+  }
 
-  public function render() {
+  public function render($frmcustom = array()) {
     $fields = array();
     foreach ($this->fields as $field) {
       $fields[] = $field->render();
@@ -133,9 +150,11 @@ class MyURYForm {
             ->addVariable('classes', $this->getClasses())
             ->addVariable('action', CoreUtils::makeURL($this->module, $this->action))
             ->addVariable('method', $this->get ? 'get' : 'post')
-            ->addVariable('name', $this->name)
-            ->addVariable('title', $this->name)
+            ->addVariable('name', User::getInstance()->getName())
+            ->addVariable('title', isset($this->title) ? $this->title : $this->name)
+            ->addVariable('serviceName', isset($this->module) ? $this->module : $this->name)
             ->addVariable('fields', $fields)
+            ->addVariable('frmcustom', $frmcustom)
             ->render();
   }
 

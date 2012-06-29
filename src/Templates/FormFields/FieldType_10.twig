@@ -1,8 +1,8 @@
 <fieldset>
 <legend>{{field.label}}</legend>
 <div class="myuryfrmhint" id="{{name}}-{{field.name}}-hint">{{field.explanation | raw}}</div>
-{% for option in form.options %}
-<label for="{{name}}-{{fieldname}}-{{option.value}}">
+{% for option in field.options %}
+<label for="{{name}}-{{field.name}}-{{option.value}}">
 <input type="radio" name="{{name}}-{{field.name}}" id="{{name}}-{{field.name}}-{{option.value}}"
         class="{{field.class}} radio{% if field.required %} required{% endif %}"
         value="{{option.value}}"{% if field.value == option.value %} checked="checked"{% endif %}

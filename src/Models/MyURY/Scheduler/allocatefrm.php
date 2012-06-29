@@ -1,50 +1,42 @@
 <?php
-$form = new MyURYForm('sched_allocate', 'Scheduler', 'doAllocate',
-        array(
-            'debug' => true,
-            //'template' => 'MyURY/Scheduler/allocate.twig'
+
+$form = new MyURYForm('sched_allocate', $module, 'doAllocate',
+                array(
+                    'debug' => true,
+                    'title' => 'Allocate Show'
+                //'template' => 'MyURY/Scheduler/allocate.twig'
         ));
 
+//Set up the terms select box
+$terms = Scheduler::getTerms();
+$term_options = array();
+
+foreach ($terms as $term) {
+  $term_options[] = array(
+      'value' => $term['termid'],
+      'text' => $term['descr'] . ' ' . date('Y', $term['start'])
+  );
+}
+unset($terms);
+
+//Set up the weeks checkboxes
+$weeks = array();
+for ($i = 1; $i <=10; $i++) {
+  $weeks[] = new MyURYFormField('wk'.$i, MyURYFormField::TYPE_CHECK, array('label' => 'Week '.$i, 'required' => false));
+}
+
 $form->addField(
-        new MyURYFormField('testattribute0', MyURYFormField::TYPE_TEXT)
+                new MyURYFormField('Schedule for Term', MyURYFormField::TYPE_SELECT,
+                        array(
+                            'options' => $term_options,
+                            'explanation' => 'Please select what term you are scheduling for'
+                            )
+                        )
         )
         ->addField(
-                new MyURYFormField('testattribute1', MyURYFormField::TYPE_NUMBER)
+                new MyURYFormField('Weeks', MyURYFormField::TYPE_CHECKGRP,
+                        array('options' => $weeks,
+                            'explanation' => 'Select what weeks this term this show will be on air'
+                        )
                 )
-        ->addField(
-                new MyURYFormField('testattribute2', MyURYFormField::TYPE_EMAIL)
-                )
-        ->addField(
-                new MyURYFormField('testattribute3', MyURYFormField::TYPE_DATE)
-                )
-        ->addField(
-                new MyURYFormField('testattribute4', MyURYFormField::TYPE_DATETIME)
-                )
-        ->addField(
-                new MyURYFormField('testattribute5', MyURYFormField::TYPE_MEMBER)
-                )
-        ->addField(
-                new MyURYFormField('testattribute6', MyURYFormField::TYPE_TRACK)
-                )
-        ->addField(
-                new MyURYFormField('testattribute7', MyURYFormField::TYPE_ARTIST)
-                )
-        ->addField(
-                new MyURYFormField('testattribute8', MyURYFormField::TYPE_HIDDEN)
-                )
-        ->addField(
-                new MyURYFormField('testattribute9', MyURYFormField::TYPE_SELECT,
-                        array('options'=>array(array('value'=>0,'text'=>'test'))))
-                )
-        ->addField(
-                new MyURYFormField('testattribute10', MyURYFormField::TYPE_RADIO)
-                )
-        ->addField(
-                new MyURYFormField('testattribute11', MyURYFormField::TYPE_CHECK)
-                )
-        ->addField(
-                new MyURYFormField('testattribute12', MyURYFormField::TYPE_DAY)
-                )
-        ->addField(
-                new MyURYFormField('testattribute13', MyURYFormField::TYPE_BLOCKTEXT)
-                );
+);
