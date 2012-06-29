@@ -41,7 +41,7 @@ $form->addField(
                 new MyURYFormField('Radio', MyURYFormField::TYPE_RADIO,
                         array('options' =>
                             array(
-                                array('value' => 0, 'text' => 'Week 1'),
+                                array('value' => 1, 'text' => 'Week 1'),
                                 array('value' => 1, 'text' => 'Weeks 2-10')
                             )))
                 )
@@ -62,5 +62,13 @@ $form->addField(
                         array('options' =>
                             array(
                                 new MyURYFormField('wk1', MyURYFormField::TYPE_CHECK, array('label' => 'Week 1', 'required' => false)),
-                                new MyURYFormField('wk2', MyURYFormField::TYPE_CHECK, array('label' => 'Weeks 2-10', 'required' => false))
+                                new MyURYFormField('wk2', MyURYFormField::TYPE_CHECK, array('label' => 'Week 2', 'required' => false)),
+                                new MyURYFormField('wk3', MyURYFormField::TYPE_CHECK, array('label' => 'Week 3', 'required' => false)),
+                                new MyURYFormField('wk4', MyURYFormField::TYPE_CHECK, array('label' => 'Week 4', 'required' => false)),
+                                new MyURYFormField('wk5', MyURYFormField::TYPE_CHECK, array('label' => 'Week 5', 'required' => false)),
+                                new MyURYFormField('wk6', MyURYFormField::TYPE_CHECK, array('label' => 'Week 6', 'required' => false)),
+                                new MyURYFormField('wk7', MyURYFormField::TYPE_CHECK, array('label' => 'Week 7', 'required' => false)),
+                                new MyURYFormField('wk8', MyURYFormField::TYPE_CHECK, array('label' => 'Week 8', 'required' => false)),
+                                new MyURYFormField('wk9', MyURYFormField::TYPE_CHECK, array('label' => 'Week 9', 'required' => false)),
+                                new MyURYFormField('wk10', MyURYFormField::TYPE_CHECK, array('label' => 'Week 10', 'required' => false))
                             ))));
