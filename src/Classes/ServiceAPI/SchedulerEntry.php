@@ -5,6 +5,7 @@
  * @todo Write this class
  */
 
-class SchedulerEntry {
+class SchedulerEntry extends ServiceAPI {
+  
   function __construct($id) {}
 }
