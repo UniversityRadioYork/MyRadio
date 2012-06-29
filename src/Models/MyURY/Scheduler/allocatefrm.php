@@ -40,7 +40,7 @@ $form->addField(
                                 new MyURYFormField('wk9', MyURYFormField::TYPE_CHECK, array('label' => 'Week 9', 'required' => false)),
                                 new MyURYFormField('wk10', MyURYFormField::TYPE_CHECK, array('label' => 'Week 10', 'required' => false))
                             ),
-                            'explanation' => 'Select what weeks this term you will be able to do your show.'
+                            'explanation' => 'Select what weeks this term this show will be on air'
                         )
                 )
 );
