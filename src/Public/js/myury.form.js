@@ -86,7 +86,7 @@ $(document).ready(function() {
    * Setup Checkbox Group select all / select none
    */
   $('fieldset a.checkgroup-all').click(function() {
-    $(this).parent('fieldset').children('input:[type=checkbox]').each(function(){
+    $(this).parents('fieldset:first').children('input:[type=checkbox]').each(function(){
       $(this).attr('checked','checked');
     });
   });
