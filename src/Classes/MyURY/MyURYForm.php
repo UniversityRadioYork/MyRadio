@@ -130,6 +130,16 @@ class MyURYForm {
     $this->fields[] = $field;
     return $this;
   }
+  
+  public function setFieldValue($fieldname, $value) {
+    foreach ($this->fields as $k => $field) {
+      if ($field->getName() === $fieldname) {
+        $this->fields[$k]->setValue($value);
+        return;
+      }
+    }
+    throw new MyURYException('Cannot set value for field '.$fieldname.' as it does not exist.');
+  }
 
   public function render($frmcustom = array()) {
     $fields = array();

@@ -112,6 +112,10 @@ class MyURYFormField {
   public function getName() {
     return $this->name;
   }
+  
+  public function setValue($value) {
+    $this->value = $value;
+  }
 
   private function getClasses() {
     $classes = 'myuryfrmfield';
