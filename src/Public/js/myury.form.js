@@ -91,7 +91,7 @@ $(document).ready(function() {
     });
   });
   $('fieldset a.checkgroup-none').click(function() {
-    $(this).parent('fieldset').children('input:[type=checkbox]').each(function(){
+    $(this).parents('fieldset:first').find('input:[type=checkbox]').each(function(){
       $(this).attr('checked',null);
     });
   });
