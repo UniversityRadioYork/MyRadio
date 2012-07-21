@@ -159,6 +159,8 @@ class MyURYFormField {
       case self::TYPE_EMAIL:
       case self::TYPE_ARTIST:
       case self::TYPE_HIDDEN:
+      case self::TYPE_BLOCKTEXT:
+      case self::TYPE_TIME:
         return (string)$_REQUEST[$name];
         break;
       case self::TYPE_NUMBER:
@@ -166,6 +168,7 @@ class MyURYFormField {
       case self::TYPE_TRACK:
       case self::TYPE_SELECT:
       case self::TYPE_RADIO:
+      case self::TYPE_DAY:
         return (int)$_REQUEST[$name];
         break;
       case self::TYPE_DATE:
@@ -175,6 +178,12 @@ class MyURYFormField {
       case self::TYPE_CHECK:
         return (bool)isset($_REQEST[$name]) && ($_REQUEST[$name] === 'On' || $_REQUEST['name'] === 'on');
         break;
+      case self::TYPE_CHECKGRP:
+        $return = array();
+        foreach ($this->options as $option) {
+          $return[$option->getName()] = $option->readValue($name);
+        }
+        return $return;
       default:
         throw new MyURYException('Field type ' . $this->type . ' does not have a valid renderer definition.');
     }
