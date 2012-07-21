@@ -184,6 +184,7 @@ class MyURYFormField {
           $return[$option->getName()] = $option->readValue($name);
         }
         return $return;
+        break;
       default:
         throw new MyURYException('Field type ' . $this->type . ' does not have a valid renderer definition.');
     }
