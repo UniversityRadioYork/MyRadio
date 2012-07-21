@@ -1,4 +1,12 @@
 <?php
+/**
+ * 
+ * @todo Proper Documentation
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 21072012
+ * @package MyURY_Core
+ */
+
 //Set up the key environment settings
 error_reporting(E_ALL ^ E_STRICT);
 ini_set('display_errors', 'On');

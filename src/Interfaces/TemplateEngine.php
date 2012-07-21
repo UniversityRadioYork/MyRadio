@@ -2,7 +2,10 @@
 /**
  * A standard Interface for the Template Engine Abstractors
  * Allows drop-in replacement of template systems
- * @author Lloyd Wallis <lpw@ury.york.ac.uk>
+ * 
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 21072012
+ * @package MyURY_Core
  */
 interface TemplateEngine extends Singleton {
   public function addVariable($name, $value);
