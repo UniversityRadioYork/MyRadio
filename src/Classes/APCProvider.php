@@ -23,7 +23,7 @@ class APCProvider implements CacheProvider {
   private static $me;
   
   /**
-   * Stores whether caching should be rnning. If not, it does not do anything on function calls
+   * Stores whether caching should be used. If not, it does not do anything on function calls
    * @var boolean
    */
   private $enable;
