@@ -170,7 +170,7 @@ class MyURYForm {
   public function readValues() {
     $return = array();
     foreach ($this->fields as $field) {
-      $return[$field->getName] = $field->readValue($this->name . '-');
+      $return[$field->getName()] = $field->readValue($this->name . '-');
     }
     return $return;
   }
