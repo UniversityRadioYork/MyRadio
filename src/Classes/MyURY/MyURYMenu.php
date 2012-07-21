@@ -5,7 +5,9 @@
  * 
  * @depends Cache
  * @depends Database
- * @author Lloyd Wallis <lpw@ury.york.ac.uk>
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 21072012
+ * @package MyURY_Core
  */
 class MyURYMenu {
 

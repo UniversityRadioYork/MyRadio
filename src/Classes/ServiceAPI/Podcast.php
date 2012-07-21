@@ -5,7 +5,9 @@
  * 
  * @depends Cache
  * @depends Database
- * @author Andy Durant <aj@ury.york.ac.uk>
+ * @author Andy Durant <aj@ury.org.uk>
+ * @package MyURY_Podcast
+ * @version 21072012
  */
 class Podcast extends ServiceAPI {
 

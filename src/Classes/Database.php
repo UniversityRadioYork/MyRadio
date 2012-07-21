@@ -4,8 +4,9 @@
  * This singleton class handles actual database connection
  * 
  * @version 22052012
- * @author Lloyd Wallis <lpw@ury.york.ac.uk>
+ * @author Lloyd Wallis <lpw@ury.org.uk>
  * @depends Config
+ * @package MyURY_Core
  */
 class Database {
 

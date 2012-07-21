@@ -3,9 +3,10 @@ require_once 'Interfaces/TemplateEngine.php';
 /**
  * Singleton class for the Twig template engine
  *
- * @author Lloyd Wallis <lpw@ury.york.ac.uk>
+ * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 22052012
  * @depends Config
+ * @package MyURY_Core
  */
 class URYTwig extends Twig_Environment implements TemplateEngine {
   private static $me;

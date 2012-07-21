@@ -3,7 +3,9 @@
  * An Abstract superclass for ServiceAPI classes that implements essential
  * base functionality for full MyURY integration
  *
- * @author lpw
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 21072012
+ * @package MyURY_Core
  */
 abstract class ServiceAPI implements IServiceAPI {
   protected static $db = null;
