@@ -3,8 +3,10 @@
 /**
  * An input of some description that will be rendered in a form
  * A collection of these is automatically created when building a MyURYForm
- *
- * @author lpw
+ * 
+ * @package MyURY_Core
+ * @version 21072012
+ * @author Lloyd Wallis <lpw@ury.org.uk>
  */
 class MyURYFormField {
 
@@ -93,6 +95,22 @@ class MyURYFormField {
    */
   private $restricted_attributes = array('restricted_attributes', 'value', 'name', 'type');
 
+  /**
+   * Set up a new MyURY Form Field with the new parameters, returning the new field
+   * This method is only useful practically when the MyURYFormField is inserted to a MyURYForm
+   * @param String $name The name and id of the field, as used in the HTML properties - should be unique to the form
+   * @param int $type The MyURYFormField Field Type to use. See the constants defined in this class for details
+   * @param Array $options A set of additional settings for the MyURYFormField as follows (all optional):
+   *   required: Whether the field is required (default true)
+   *   label: The human-readable name of the field. (default reuses name)
+   *   explanation: Help text for the MyURYFormField (default none)
+   *   display: Whether the MyURYFormField should be visible when the page loads (default true)
+   *   classes: An array of additional classes to add to the input field (default empty)
+   *   options: An array of additional settings that are specific to the field type (default empty)
+   *   value: The default value of the field when it is rendered (default none)
+   *   enabled: Whether the field is enabled when the page is loaded (default true)
+   * @throws MyURYException If an attempt is made to set an $options value other than those listed above
+   */
   public function __construct($name, $type, $options = array()) {
     //Set essential parameters
     $this->name = $name;
@@ -108,15 +126,28 @@ class MyURYFormField {
       $this->$k = $v;
     }
   }
-
+  
+  /**
+   * Returns the name property of this MyURYFormField
+   * @return String The name of this MyURYFormField
+   */
   public function getName() {
     return $this->name;
   }
   
+  /**
+   * Sets the value that will be set in this MyURYFormField
+   * @param mixed $value The value that this MyURYFormField will be set to. Type depends on $type parameter.
+   */
   public function setValue($value) {
     $this->value = $value;
   }
 
+  /**
+   * Returns a space-separated string of classes that apply to this MyURYFormField
+   * Includes ui-helper-hidden if the MyURYFormField is set not to display
+   * @return string A space-separated string of classes that apply to this MyURYFormField
+   */
   private function getClasses() {
     $classes = 'myuryfrmfield';
     foreach ($this->classes as $class) {
@@ -128,6 +159,11 @@ class MyURYFormField {
     return $classes;
   }
 
+  /**
+   * Prepares an Array of parameters ready to be sent to the Templater in order to render this MyURYFormField in a
+   *  MyURYForm
+   * @return Array An array of parameters ready to be used in a Template render call
+   */
   public function render() {
     // If there are MyURYFormFields in Options, convert these to their render values
     $options = array();
@@ -151,6 +187,14 @@ class MyURYFormField {
     );
   }
   
+  /**
+   * To be used when getting values from a submitted form, this method returns the correctly type-cast value of the
+   * MyURYFormField depending on the $type parameter
+   * This is called by MyURYForm::readValues()
+   * @param String $prefix The current prefix to the field name
+   * @return mixed The submitted field value
+   * @throws MyURYException if the field type does not have a valid read handler
+   */
   public function readValue($prefix) {
     $name = $prefix . str_replace(' ', '_', $this->name);
     //The easiest ones can just be returned
