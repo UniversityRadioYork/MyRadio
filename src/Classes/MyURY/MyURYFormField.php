@@ -155,24 +155,24 @@ class MyURYFormField {
     $name = $prefix . $this->name;
     //The easiest ones can just be returned
     switch ($this->type) {
-      case TYPE_TEXT:
-      case TYPE_EMAIL:
-      case TYPE_ARTIST:
-      case TYPE_HIDDEN:
+      case self::TYPE_TEXT:
+      case self::TYPE_EMAIL:
+      case self::TYPE_ARTIST:
+      case self::TYPE_HIDDEN:
         return (string)$_REQUEST[$name];
         break;
-      case TYPE_NUMBER:
-      case TYPE_MEMBER:
-      case TYPE_TRACK:
-      case TYPE_SELECT:
-      case TYPE_RADIO:
+      case self::TYPE_NUMBER:
+      case self::TYPE_MEMBER:
+      case self::TYPE_TRACK:
+      case self::TYPE_SELECT:
+      case self::TYPE_RADIO:
         return (int)$_REQUEST[$name];
         break;
-      case TYPE_DATE:
-      case TYPE_DATETIME:
+      case self::TYPE_DATE:
+      case self::TYPE_DATETIME:
         return (int)strtotime($_REQUEST[$name]);
         break;
-      case TYPE_CHECK:
+      case self::TYPE_CHECK:
         return (bool)isset($_REQEST[$name]) && ($_REQUEST[$name] === 'On' || $_REQUEST['name'] === 'on');
         break;
       default:
