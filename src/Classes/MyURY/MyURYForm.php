@@ -147,10 +147,10 @@ class MyURYForm {
       $fields[] = $field->render();
     }
     CoreUtils::getTemplateObject()->setTemplate($this->template)
+            ->addVariable('frm_name', $this->name)
             ->addVariable('frm_classes', $this->getClasses())
             ->addVariable('frm_action', CoreUtils::makeURL($this->module, $this->action))
             ->addVariable('frm_method', $this->get ? 'get' : 'post')
-            ->addVariable('frm_name', User::getInstance()->getName())
             ->addVariable('title', isset($this->title) ? $this->title : $this->name)
             ->addVariable('serviceName', isset($this->module) ? $this->module : $this->name)
             ->addVariable('frm_fields', $fields)
