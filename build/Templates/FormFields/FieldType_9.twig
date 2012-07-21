@@ -1,9 +1,0 @@
-<label for="{{frm_name}}-{{field.name}}">{{field.label}}</label>
-<select name="{{frm_name}}-{{field.name}}" id="{{frm_name}}-{{field.name}}"
-        class="{{field.class}}{% if field.required %} required{% endif %}">
-  {% for option in field.options %}
-  <option value="{{option.value}}"{% if field.value == option.value %} selected="selected"{% endif %}
-{% if option.disabled %} disabled="disabled"{% endif %}>{{option.text}}</option>
-  {% endfor %}
-</select>
-<span class="myuryfrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
