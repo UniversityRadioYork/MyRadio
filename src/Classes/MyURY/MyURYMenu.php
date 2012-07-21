@@ -1,4 +1,8 @@
 <?php
+/**
+ * This file provides the MyURYMenu class for MyURY
+ * @package MyURY_Core
+ */
 
 /**
  * Abstractor for the MyURY Menu

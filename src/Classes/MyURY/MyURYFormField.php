@@ -1,4 +1,8 @@
 <?php
+/**
+ * This file provides the MyURYFormField class for MyURY
+ * @package MyURY_Core
+ */
 
 /**
  * An input of some description that will be rendered in a form
