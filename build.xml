@@ -1,208 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"  encoding="UTF-8" ?>
 
-<project name="MyURY" default="build">
-  <target name="full"
-          depends="build,publish" />
-  <target name="build"
-          depends="prepare,lint,copy,minify" />
-  <!--
-      depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdoc,phpunit,phpcb"/>
-  -->
-  <target name="clean" description="Cleanup build artifacts">
-    <delete dir="${basedir}/build"/>
-  </target>
+<project name="MyURY" basedir="." default="all">
+    <property file="./build.properties" />
 
-  <target name="prepare" depends="clean"
-          description="Prepare for build">
-    <mkdir dir="${basedir}/build"/>
-    <apply executable="mkdir" dest="build" addsourcefile="false">
-      <arg value="-pv" />
-      <targetfile />
-      <dirset dir="${basedir}/src">
-        <include name="**/*" />
-      </dirset>
-      <mapper type="identity" />
-    </apply>
-  </target>
+    <property name="package"  value="${phing.project.name}" override="true" />
+    <property name="builddir" value="${project.basedir}/build/" override="true" />
+    <property name="srcdir"   value="${project.basedir}/src" override="true" />
 
-  <target name="lint">
-    <apply executable="php" failonerror="true">
-      <arg value="-l" />
-      <fileset dir="${basedir}/src">
-        <include name="**/*.php" />
-      </fileset>
-    </apply>
-  </target>
-
-  <target name="phploc" description="Measure project size using PHPLOC">
-    <exec executable="phploc">
-      <arg value="--log-csv" />
-      <arg value="${basedir}/logs/phploc.csv" />
-      <arg path="${basedir}" />
-    </exec>
-  </target>
-
-  <target name="pdepend"
-          description="Calculate software metrics using PHP_Depend">
-    <exec executable="pdepend">
-      <arg value="--jdepend-xml=${basedir}/logs/jdepend.xml" />
-      <arg value="--jdepend-chart=${basedir}/pdepend/dependencies.svg" />
-      <arg value="--overview-pyramid=${basedir}/pdepend/overview-pyramid.svg"/>
-      <arg path="${basedir}/src" />
-    </exec>
-  </target>
-
-  <target name="phpmd"
-          description="Perform project mess detection using PHPMD">
-    <exec executable="phpmd">
-      <arg path="${basedir}/src" />
-      <arg value="text" />
-      <arg value="${basedir}/build/phpmd.xml" />
-    </exec>
-  </target>
-
-  <target name="phpmd-ci"
-          description="Perform project mess detection using PHPMD">
-    <exec executable="phpmd">
-      <arg path="${basedir}/src" />
-      <arg value="xml" />
-      <arg value="${basedir}/build/phpmd.xml" />
-      <arg value="--reportfile" />
-      <arg value="${basedir}/build/logs/pmd.xml" />
-    </exec>
-  </target>
-
-  <target name="phpcs"
-          description="Find coding standard violations using PHP_CodeSniffer">
-    <exec executable="phpcs">
-      <arg value="--standard=${basedir}/build/phpcs.xml" />
-      <arg path="${basedir}/src" />
-    </exec>
-  </target>
-
-  <target name="phpcs-ci"
-          description="Find coding standard violations using PHP_CodeSniffer">
-    <exec executable="phpcs" output="/dev/null">
-      <arg value="--report=checkstyle" />
-      <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
-      <arg value="--standard=${basedir}/build/phpcs.xml" />
-      <arg path="${basedir}/src" />
-    </exec>
-  </target>
-
-  <target name="phpcpd" description="Find duplicate code using PHPCPD">
-    <exec executable="phpcpd">
-      <arg value="--log-pmd" />
-      <arg value="${basedir}/build/logs/pmd-cpd.xml" />
-      <arg path="${basedir}/src" />
-    </exec>
-  </target>
-
-  <target name="phpdoc"
-          description="Generate API documentation using PHPDocumentor">
-    <exec executable="phpdoc">
-      <arg value="--directory" />
-      <arg path="${source}" />
-      <arg value="--target" />
-      <arg path="${basedir}/build/api" />
-    </exec>
-  </target>
-
-  <target name="phpunit" description="Run unit tests with PHPUnit">
-    <exec executable="phpunit" failonerror="true"/>
-  </target>
-
-  <target name="phpcb"
-          description="Aggregate tool output with PHP_CodeBrowser">
-    <exec executable="phpcb">
-      <arg value="--log" />
-      <arg path="${basedir}/build/logs" />
-      <arg value="--source" />
-      <arg path="${basedir}/src" />
-      <arg value="--output" />
-      <arg path="${basedir}/build/code-browser" />
-    </exec>
-  </target>
-
-  <target name="copy"
-          description="Copy raw files to the build directory">
-    <copy todir="${basedir}/build">
-      <fileset dir="${basedir}/src">
-        <!--
-            These files have optimisation passes that are invoked
-            later, so we don't just copy them to build.
-        -->
-        <exclude name="**/*.js" />
-      </fileset>
-    </copy>
-  </target>
-
-  <!--
-      The following are not used in the main build because they take
-      ages and should be done while you're working on the website.
-  -->
-
-  <target name="image-optimise"
-          description="Optimises the images in place in the source tree."
-          depends="pngcrush,jpegoptim" />
-
-  <target name="pngcrush"
-          description="Optimises the PNG images in the website">
-    <!--
-        Can't pngcrush in place, so write to temporary files and then
-        move them over the originals.
-    -->
-    <apply executable="pngcrush" failonerror="true" dest="src">
-      <srcfile />
-      <targetfile />
-      <fileset dir="src" includes="**/*.png"/>
-      <mapper type="glob" from="*" to="*.crush" />
-    </apply>
-    <move todir="src" includeemptydirs="false">
-    <fileset dir="src">
-      <include name="**/*.crush"/>
+    <!-- Fileset for all files -->
+    <fileset dir="${srcdir}" id="allfiles">
+        <include name="**" />
     </fileset>
-    <mapper type="glob" from="*.crush" to="*"/>
-  </move>
-  </target>
 
-  <target name="jpegoptim"
-          description="Optimises the JPG images in the website">
-    <fileset id="jpegs" dir="${basedir}/src">
-      <include name="**/*.jpg" />
-      <include name="**/*.jpeg" />
-    </fileset>
-    <apply executable="jpegoptim" failonerror="true"
-           dest="${basedir}/src"
-           addsourcefile="false"
-           force="true">
-      <arg value="-o" />
-      <targetfile />
-      <fileset refid="jpegs" />
-      <mapper type="identity" />
-    </apply>
-  </target>
+    <!-- ============================================  -->
+    <!-- (DEFAULT) Target: main                        -->
+    <!-- ============================================  -->
+    <target name="copyfiles" description="Copies files from src to build">
+        <copy todir="${builddir}">
+            <fileset refid="allfiles" />
+        </copy>
+    </target>
 
-  <target name="minify"
-          description="Minifies the JavaScript scripts in the website">
-    <apply executable="${basedir}/contrib/jsmin" failonerror="true">
-      <fileset dir="${basedir}/src">
-        <include name="**/*.js" />
-      </fileset>
-      <redirector>
-        <inputmapper type="glob" from="*" to="src/*"/>
-        <outputmapper id="out" type="glob" from="*.js" to="build/*.js"/>
-      </redirector>
-    </apply>
-  </target>
-
-  <target name="publish"
-          description="Makes the built website available for deployment.">
-    <exec executable="git">
-      <arg line="add build" />
-    </exec>
-    <exec executable="git">
-      <arg line='commit -m "Built website."' />
-    </exec>
-  </target>
+    <target name="all" depends="copyfiles">
+    </target>
 </project>

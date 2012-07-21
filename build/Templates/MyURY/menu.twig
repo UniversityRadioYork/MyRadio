@@ -1,0 +1,26 @@
+{% extends 'stripe.twig' %}
+{% block head %}
+{{ parent() }}
+<script type="text/javascript" src="js/myury.menu.js"></script>
+{% endblock %}
+{% block stripecontent %}
+<div id="menu-wrapper">
+{% for column in menu %}
+<div class="menu-column">
+  <h2>{{ column.title }}</h2>
+    {% for section in column.sections %}
+  <h3 class="section">{{ section.title }}</h3>
+  <ul>
+    {% for item in section.items %}
+      {% if item.template is not sameas(null) %}
+      {% include item.template %}
+      {% else %}
+      <li><a href="{{ item.url }}" title="{{ item.description }}">{{ item.title }}</a></li>
+      {% endif %}
+    {% endfor %}
+    </ul>
+    {% endfor %}
+  </div>
+{% endfor %}
+</div>
+{% endblock %}
