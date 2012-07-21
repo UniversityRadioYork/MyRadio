@@ -150,5 +150,34 @@ class MyURYFormField {
         'enabled'     => $this->enabled
     );
   }
+  
+  public function readValue($prefix) {
+    $name = $prefix . $this->name;
+    //The easiest ones can just be returned
+    switch ($this->type) {
+      case TYPE_TEXT:
+      case TYPE_EMAIL:
+      case TYPE_ARTIST:
+      case TYPE_HIDDEN:
+        return (string)$_REQUEST[$name];
+        break;
+      case TYPE_NUMBER:
+      case TYPE_MEMBER:
+      case TYPE_TRACK:
+      case TYPE_SELECT:
+      case TYPE_RADIO:
+        return (int)$_REQUEST[$name];
+        break;
+      case TYPE_DATE:
+      case TYPE_DATETIME:
+        return (int)strtotime($_REQUEST[$name]);
+        break;
+      case TYPE_CHECK:
+        return (bool)isset($_REQEST[$name]) && ($_REQUEST[$name] === 'On' || $_REQUEST['name'] === 'on');
+        break;
+      default:
+        throw new MyURYException('Field type ' . $this->type . ' does not have a valid renderer definition.');
+    }
+  }
 
 }
