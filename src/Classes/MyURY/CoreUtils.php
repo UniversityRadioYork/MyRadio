@@ -1,4 +1,9 @@
 <?php
+/**
+ * This file provides the CoreUtils object for MyURY
+ * @package MyURY_Core
+ */
+
 
 /**
  * Standard API Utilities. Basically miscellaneous functions for the core system
@@ -9,6 +14,11 @@
  * @package MyURY_Core
  */
 class CoreUtils {
+  /**
+   * This stores whether the Permissions have been defined to prevent re-defining, causing errors and wasting time
+   * Once setUpAuth is run, this is set to true to prevent subsequent runs
+   * @var boolean
+   */
   private static $auth_cached = false;
 
   /**
@@ -108,6 +118,11 @@ class CoreUtils {
     self::$auth_cached = true;
   }
   
+  /**
+   * Checks using cached Shibbobleh permissions whether the current member has the specified permission
+   * @param int $permission The ID of the permission, resolved by using an AUTH_ constant
+   * @return boolean Whether the member has the requested permission
+   */
   public static function hasPermission($permission) {
     if (!isset($_SESSION['member_permissions'])) return false;
     return in_array($permission, $_SESSION['member_permissions']);
