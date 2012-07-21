@@ -1,4 +1,8 @@
 <?php
+/**
+ * This file provides the MyURYForm class for MyURY
+ * @package MyURY_Core
+ */
 
 /**
  * Abstractor for MyURY Form Definitions
@@ -125,6 +129,13 @@ class MyURYForm {
     }
   }
 
+  /**
+   * Adds a new MyURYFormField to this MyURYForm. You should initialise a new MyURYFormField and pass the object
+   * straight into the parameter of this method
+   * @param MyURYFormField $field The new MyURYFormField to add to this MyURYForm
+   * @return \MyURYForm Returns this MyURYForm for easy chaining
+   * @throws MyURYException Thrown if there are duplicate fields with the same name
+   */
   public function addField(MyURYFormField $field) {
     //Sanity check - is this name in use
     foreach ($this->fields as $f) {
@@ -135,6 +146,13 @@ class MyURYForm {
     return $this;
   }
   
+  /**
+   * Allows you to update a MyURYFormField contained within this object with a new value to be used when rendering
+   * @param String $fieldname The unique name of the MyURYFormField to edit
+   * @param mixed $value The new value of the MyURYFormField. The variable type depends on the MyURYFormField type
+   * @return void
+   * @throws MyURYException When trying to update a MyURYFormField that is not attached to this MyURYForm
+   */
   public function setFieldValue($fieldname, $value) {
     foreach ($this->fields as $k => $field) {
       if ($field->getName() === $fieldname) {
@@ -143,8 +161,14 @@ class MyURYForm {
       }
     }
     throw new MyURYException('Cannot set value for field '.$fieldname.' as it does not exist.');
+    return;
   }
 
+  /**
+   * Renders a page using the template engine
+   * @param Array $frmcustom An optional array of custom fields to send to the Renderer. Useful when using a custom
+   * template which needs additional data.
+   */
   public function render($frmcustom = array()) {
     $fields = array();
     foreach ($this->fields as $field) {
@@ -162,6 +186,10 @@ class MyURYForm {
             ->render();
   }
 
+  /**
+   * Returns a space-seperated String of classes applying to this MyURYForm, ready to render
+   * @return String a space-seperated list of classes
+   */
   private function getClasses() {
     $classes = 'myuryfrm';
     foreach ($this->classes as $class) {
@@ -171,6 +199,10 @@ class MyURYForm {
     return $classes;
   }
   
+  /**
+   * Processes data submitted from this MyURYForm, returning an Array of the values
+   * @return Array An array of form data that was submitted using this form definition
+   */
   public function readValues() {
     $return = array();
     foreach ($this->fields as $field) {

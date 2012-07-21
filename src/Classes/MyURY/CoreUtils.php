@@ -1,6 +1,6 @@
 <?php
 /**
- * This file provides the CoreUtils object for MyURY
+ * This file provides the CoreUtils class for MyURY
  * @package MyURY_Core
  */
 
