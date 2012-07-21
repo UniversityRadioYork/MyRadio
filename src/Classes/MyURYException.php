@@ -3,8 +3,9 @@
  * Extends the standard Exception class to provide additional functionality
  * and logging
  *
- * @author Lloyd Wallis <lpw@ury.york.ac.uk>
+ * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 22052012
+ * @package MyURY_Core
  */
 class MyURYException extends Exception {
   const FATAL = -1;

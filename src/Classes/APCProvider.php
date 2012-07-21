@@ -2,7 +2,9 @@
 /**
  * Description of APCProvider
  *
- * @author lpw
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 21072012
+ * @package MyURY_Core
  */
 class APCProvider implements CacheProvider {
   private static $me;

@@ -2,7 +2,12 @@
 /**
  * Abstractor for the Profile Module
  *
- * @author aj
+ * @author Andy Durant <aj@ury.org.uk>
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @package MyURY_Profile
+ * @version 21072012
+ * @depends Database
+ * @depends Cache
  */
 class Profile extends ServiceAPI {
   private static $allMembers = null;

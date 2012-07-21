@@ -4,7 +4,9 @@
  * Standard API Utilities. Basically miscellaneous functions for the core system
  * No database accessing etc should be setup here.
  *
- * @author lpw
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 21072012
+ * @package MyURY_Core
  */
 class CoreUtils {
   private static $auth_cached = false;

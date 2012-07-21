@@ -2,7 +2,9 @@
 /**
  * Abstractor for the Scheduler Module
  *
- * @author lpw
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 21072012
+ * @package MyURY_Scheduler
  */
 class Scheduler extends ServiceAPI {
   private static $pendingAllocationsResult = null;

@@ -1,10 +1,12 @@
 <?php
 /**
  * The Artist class provides and stores information about a Artist
+ * 
  * @version 27062012
  * @author Lloyd Wallis <lpw@ury.york.ac.uk>
  * @todo The completion of this module is impossible as Artists do not have
  * unique identifiers. For this to happen, BAPS needs to be replaced/updated
+ * @package MyURY_Core
  */
 class Artist extends ServiceAPI {
   private static $artists = array();

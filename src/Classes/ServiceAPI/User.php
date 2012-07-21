@@ -2,8 +2,10 @@
 /**
  * The user object provides and stores information about a user
  * It is not a singleton for Impersonate purposes
+ * 
  * @version 09062012
- * @author Lloyd Wallis <lpw@ury.york.ac.uk>
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @package MyURY_Core
  */
 class User extends ServiceAPI {
   private static $users = array();

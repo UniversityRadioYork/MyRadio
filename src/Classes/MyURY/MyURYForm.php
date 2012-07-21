@@ -11,6 +11,10 @@
  * - A Form Viewer that loads the Form definition and sets the values
  * - A Form Saver that loads the Form definiton, reads submitted values
  *   and calls getter to interpret them
+ * 
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 21072012
+ * @package MyURY_Core
  */
 class MyURYForm {
 

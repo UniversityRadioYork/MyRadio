@@ -1,8 +1,10 @@
 <?php
 /**
  * The Track class provides and stores information about a Track
+ * 
  * @version 25062012
- * @author Lloyd Wallis <lpw@ury.york.ac.uk>
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @package MyURY_Core
  */
 class Track extends ServiceAPI {
   private static $tracks = array();
