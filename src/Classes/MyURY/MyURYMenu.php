@@ -15,6 +15,10 @@
  */
 class MyURYMenu {
 
+  /**
+   * A reference pointer to the current MyURY CacheProvider
+   * @var CacheProvider 
+   */
   private $cache;
 
   public function __construct() {
@@ -130,6 +134,7 @@ class MyURYMenu {
   /**
    * Detects module/action/service links and rewrites
    * This is a method so it can easily be changed if Apache rewrites
+   * @param String $url The URL to parse
    */
   private function parseURL($url) {
     $exp = explode(',', $url);
