@@ -1,6 +1,6 @@
-<label for="{{name}}-{{field.name}}">{{field.label}}</label>
+<label for="{{frm_name}}-{{field.name}}">{{field.label}}</label>
 <input type="checkbox" class="{{field.class}}{% if field.required %} required{% endif %}"
-       name="{{name}}-{{field.name}}"
-       id="{{name}}-{{field.name}}"
+       name="{{frm_name}}-{{field.name}}"
+       id="{{frm_name}}-{{field.name}}"
        {% if field.options.checked is defined and field.options.checked %} checked="checked"{% endif %} />
-<span class="myuryfrmhint" id="{{name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
+<span class="myuryfrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>

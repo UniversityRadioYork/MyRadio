@@ -1,5 +1,5 @@
-<label for="{{name}}-{{field.name}}">{{field.label}}</label>
-<select name="{{name}}-{{field.name}}" id="{{name}}-{{field.name}}"
+<label for="{{frm_name}}-{{field.name}}">{{field.label}}</label>
+<select name="{{frm_name}}-{{field.name}}" id="{{frm_name}}-{{field.name}}"
         class="{{field.class}}{% if field.required %} required{% endif %} day">
   <option value="0"{% if field.value == 0 %} selected="selected"{% endif %}>Monday</option>
   <option value="1"{% if field.value == 1 %} selected="selected"{% endif %}>Tuesday</option>
@@ -9,4 +9,4 @@
   <option value="5"{% if field.value == 5 %} selected="selected"{% endif %}>Saturday</option>
   <option value="6"{% if field.value == 6 %} selected="selected"{% endif %}>Sunday</option>
 </select>
-<span class="myuryfrmhint" id="{{name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
+<span class="myuryfrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
