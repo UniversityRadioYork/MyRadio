@@ -181,7 +181,7 @@ class MyURYFormField {
       case self::TYPE_CHECKGRP:
         $return = array();
         foreach ($this->options as $option) {
-          $return[$option->getName()] = (bool)$option->readValue($name);
+          $return[$option->getName()] = (int)$option->readValue($name);
         }
         return $return;
         break;
