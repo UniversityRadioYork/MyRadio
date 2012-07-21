@@ -21,6 +21,9 @@ class MyURYMenu {
    */
   private $cache;
 
+  /**
+   * Create a MyURYMenu Object
+   */
   public function __construct() {
     $obj = Config::$cache_provider;
     $this->cache = $obj::getInstance();
