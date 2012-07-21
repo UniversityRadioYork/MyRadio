@@ -166,5 +166,13 @@ class MyURYForm {
 
     return $classes;
   }
+  
+  public function readValues() {
+    $return = array();
+    foreach ($this->fields as $field) {
+      $return[$field->getName] = $field->readValue($this->name . '-');
+    }
+    return $return;
+  }
 
 }
