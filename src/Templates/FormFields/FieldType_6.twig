@@ -1,5 +1,5 @@
-<input type="hidden" name="{{name}}-{{field.name}}" id="{{name}}-{{field.name}}" value="{{field.value}}" />
-<label for="{{name}}-{{field.name}}-ui">{{field.label}}</label>
+<input type="hidden" name="{{frm_name}}-{{field.name}}" id="{{frm_name}}-{{field.name}}" value="{{field.value}}" />
+<label for="{{frm_name}}-{{field.name}}-ui">{{field.label}}</label>
 <input type="text" class="{{field.class}}{% if field.required %} required{% endif %} text track-autocomplete"
-       name="{{name}}-{{field.name}}-ui" id="{{name}}-{{field.name}}-ui" value="{{field.options.trackname}}" />
-<span class="myuryfrmhint" id="{{name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
+       name="{{frm_name}}-{{field.name}}-ui" id="{{frm_name}}-{{field.name}}-ui" value="{{field.options.trackname}}" />
+<span class="myuryfrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
