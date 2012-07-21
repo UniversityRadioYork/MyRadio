@@ -1,4 +1,8 @@
 <?php
+/**
+ * This file provides the Database object for MyURY
+ * @package MyURY_Core
+ */
 
 /**
  * This singleton class handles actual database connection
@@ -11,9 +15,14 @@
 class Database {
 
   /**
-   * @var Stores the instance of the Database object 
+   * Stores the singleton instance of the Database object 
+   * @var Database
    */
   private static $me;
+  /**
+   * Stores the resource id of the connection to the PostgreSQL database
+   * @var Resource
+   */
   private $db;
 
   /**
@@ -125,6 +134,10 @@ class Database {
     return self::$me;
   }
 
+  /**
+   * Prevent copies being unintentionally made
+   * @throws MyURYException
+   */
   public function __clone() {
     throw new MyURYException('Attempted to clone a singleton');
   }

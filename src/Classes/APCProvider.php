@@ -104,5 +104,13 @@ class APCProvider implements CacheProvider {
     }
     return self::$me;
   }
+  
+  /**
+   * Prevent copies being unintentionally made
+   * @throws MyURYException
+   */
+  public function __clone() {
+    throw new MyURYException('Attempted to clone a singleton');
+  }
 }
 
