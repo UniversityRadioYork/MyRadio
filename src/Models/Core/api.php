@@ -4,7 +4,8 @@
  * 
  * @todo This should abstract above Rapier, not directly to backend services
  * @version 22052012
- * @author Lloyd Wallis <lpw@ury.york.ac.uk> 
+ * @author Lloyd Wallis <lpw@ury.org.uk> 
+ * @package MyURY_Core
  */
 
 require_once 'Interfaces/Singleton.php';

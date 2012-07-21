@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * 
+ * @todo Proper Documentation
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 21072012
+ * @package MyURY_Scheduler
+ */
 $form = new MyURYForm('sched_allocate', $module, 'doAllocate',
                 array(
                     'debug' => true,

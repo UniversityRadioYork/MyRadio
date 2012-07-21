@@ -1,5 +1,13 @@
 <?php
 /**
+ * 
+ * @todo Proper Documentation
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 21072012
+ * @package MyURY_Core
+ */
+
+/**
  * Register a MyURY Autoloader 
  */
 spl_autoload_register(function($class){

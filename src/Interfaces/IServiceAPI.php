@@ -6,7 +6,10 @@
  * - Initialises a cache connection on instantiation
  * - Restores the database and cache connections on restore
  * - A static factory to create an instance of the ServiceAPI Object
- * @author lpw
+ * 
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 21072012
+ * @package MyURY_Core
  */
 interface IServiceAPI {
   /**
