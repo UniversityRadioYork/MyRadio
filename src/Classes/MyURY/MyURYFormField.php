@@ -176,7 +176,7 @@ class MyURYFormField {
         return (int)strtotime($_REQUEST[$name]);
         break;
       case self::TYPE_CHECK:
-        return (bool)(isset($_REQEST[$name]) && ($_REQUEST[$name] === 'On' || $_REQUEST['name'] === 'on'));
+        return (bool)(isset($_REQUEST[$name]) && ($_REQUEST[$name] === 'On' || $_REQUEST['name'] === 'on'));
         break;
       case self::TYPE_CHECKGRP:
         $return = array();
