@@ -152,7 +152,7 @@ class MyURYFormField {
   }
   
   public function readValue($prefix) {
-    $name = $prefix . $this->name;
+    $name = $prefix . str_replace(' ', '_', $this->name);
     //The easiest ones can just be returned
     switch ($this->type) {
       case self::TYPE_TEXT:
