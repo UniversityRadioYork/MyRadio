@@ -6,10 +6,10 @@
 <script type="text/javascript" src="js/myury.form.js"></script>
 {% endblock %}
 {% block stripecontent %}
-<fieldset class="{{classes}}">
-  <form action="{{action | raw}}" method="{{method}}" name="{{name}}" id="{{name}}">
-    {% for field in fields %}
-      <div id="{{name}}-{{field.name}}-container" class="{{field.class}}">
+<fieldset class="{{frm_classes}}">
+  <form action="{{action | raw}}" method="{{frm_method}}" name="{{frm_name}}" id="{{frm_name}}">
+    {% for field in frm_fields %}
+      <div id="{{frm_name}}-{{field.name}}-container" class="{{field.class}}">
         {% include ('FormFields/FieldType_'~field.type~'.twig') %}
       </div>
     {% endfor %}
