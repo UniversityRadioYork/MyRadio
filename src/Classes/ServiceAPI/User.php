@@ -11,27 +11,100 @@
  * @version 09062012
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
- * @uses Database
- * @uses CacheProvider
+ * @uses \Database
+ * @uses \CacheProvider
  */
 class User extends ServiceAPI {
+  /**
+   * Stores User Singletons
+   * @var User
+   */
   private static $users = array();
+  /**
+   * Stores the user's memberid
+   * @var int
+   */
   private $memberid;
+  /**
+   * Stores the User's permissions
+   * @var Array
+   */
   private $permissions;
+  /**
+   * Stores the User's first name
+   * @var String
+   */
   private $fname;
+  /**
+   * Stores the User's last name
+   * @var String
+   */
   private $sname;
+  /**
+   * Stores the User's gender (either 'm' or 'f')
+   * @var String
+   */
   private $sex;
+  /**
+   * Stores the User's preferred contact address
+   * @var String
+   */
   private $email;
+  /**
+   * Stores the ID of the User's college
+   * @var int
+   */
   private $collegeid;
+  /**
+   * Stores the String name of the User's college
+   * @var String
+   */
   private $college;
+  /**
+   * Stores the User's phone number
+   * @var String
+   */
   private $phone;
+  /**
+   * Stores whether the User wants to receive email
+   * @var bool
+   */
   private $receive_email;
+  /**
+   * Stores the User's username on internal servers, if they have one
+   * @var String
+   */
   private $local_name;
+  /**
+   * Stores the User's internal email alias, if they have one.
+   * The mail server actually uses this to calculate the values.
+   * @var String
+   */
   private $local_alias;
+  /**
+   * Stores the User's eduroam ID
+   * @var String
+   */
   private $eduroam;
+  /**
+   * Stores whether or not the account is locked out and cannot be used
+   * @var bool
+   */
   private $account_locked;
+  /**
+   * Stores whether the User has been studio trained
+   * @var bool
+   */
   private $studio_trained;
+  /**
+   * Stores whether the User has been studio demoed
+   * @var bool
+   */
   private $studio_demoed;
+  /**
+   * Stores the time the User joined URY
+   * @var int
+   */
   private $joined;
   
   /**
@@ -56,7 +129,8 @@ class User extends ServiceAPI {
     }
     //Set the variables
     foreach ($data as $key => $value) {
-      if (filter_var($value, FILTER_VALIDATE_INT)) $this->$key = (int)$value;
+      if ($key === 'joined') $this->$key = (int)strtotime($value);
+      elseif (filter_var($value, FILTER_VALIDATE_INT)) $this->$key = (int)$value;
       elseif ($value === 't') $this->$key = true;
       elseif ($value === 'f') $this->$key = false;
       else $this->$key = $value;
@@ -196,6 +270,11 @@ class User extends ServiceAPI {
     return (in_array($authid, $this->permissions));
   }
   
+  /**
+   * Returns the Singleton User instance of the given memberid, creating it if necessary
+   * @param int $memberid The ID of the User to return
+   * @return \User
+   */
   public static function getInstance($memberid = -1) {
     self::__wakeup();
     //Check the input is an int, and use the session user if not otherwise told

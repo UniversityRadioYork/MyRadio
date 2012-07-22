@@ -18,7 +18,7 @@ class MyURYException extends Exception {
    * Extends the default session by enabling useful output
    * @param String $message A nice message explaining what is going on
    * @param int $code A number representing the problem. -1 Indicates fatal.
-   * @param Exception $previous 
+   * @param \Exception $previous 
    */
   public function __construct($message, $code = 0, Exception $previous = null) {
     //Set up the Exception

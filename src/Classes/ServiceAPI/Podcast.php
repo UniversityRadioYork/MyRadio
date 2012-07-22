@@ -7,8 +7,8 @@
 /**
  * Abstractor for the Podcast Module
  * 
- * @uses CacheProvider
- * @uses Database
+ * @uses \CacheProvider
+ * @uses \Database
  * @author Andy Durant <aj@ury.org.uk>
  * @package MyURY_Podcast
  * @version 21072012

@@ -10,7 +10,7 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 21072012
  * @package MyURY_Scheduler
- * @uses Database
+ * @uses \Database
  */
 class Scheduler extends ServiceAPI {
   /**

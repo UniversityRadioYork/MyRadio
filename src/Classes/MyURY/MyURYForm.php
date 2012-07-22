@@ -24,73 +24,74 @@ class MyURYForm {
 
   /**
    * The name of the form
-   * @var string 
+   * @var String 
    */
   private $name = 'autofrm';
 
   /**
    * The module that it will submit to
    * Best practice is this should be the current module
-   * @var string 
+   * @var String 
    */
   private $module;
 
   /**
    * The action that it will submit to
-   * @var string 
+   * @var String 
    */
   private $action;
 
   /**
    * Whether to enable detailed output of what is happening (or isn't)
-   * @var boolean 
+   * @var bool
    */
   private $debug = false;
 
   /**
    * Additional classes to add to the base form element
-   * @var array 
+   * @var Array 
    */
   private $classes = array();
 
   /**
    * Whether to enable Form Validation
-   * @var boolean 
+   * @var bool
    */
   private $validate = true;
 
   /**
    * Whether to use GET instead of POST 
+   * @var bool
    */
   private $get = false;
 
   /**
    * The Twig template to use for the form. Must be form.twig or a child.
-   * @var string 
+   * @var String 
    */
   private $template = 'form.twig';
 
   /**
    * The form fields in the form (an array of MyURYFormField objects)
-   * @var array 
+   * @var Array 
    */
   private $fields = array();
   
   /**
    * The title of the page (the human readable name)
-   * @var string
+   * @var String
    */
   private $title = null;
 
   /**
    * Logging output
-   * @var array 
+   * @var Array 
    */
   private $debug_log = array();
 
   /**
    * Fields that cannot be edited by params
-   * @var array 
+   * @var Array 
    */
   private $restricted_fields = array('name', 'module', 'action', 'fields', 'restricted_fields', 'debug_log');
 
@@ -132,7 +133,7 @@ class MyURYForm {
   /**
    * Adds a new MyURYFormField to this MyURYForm. You should initialise a new MyURYFormField and pass the object
    * straight into the parameter of this method
-   * @param MyURYFormField $field The new MyURYFormField to add to this MyURYForm
+   * @param \MyURYFormField $field The new MyURYFormField to add to this MyURYForm
    * @return \MyURYForm Returns this MyURYForm for easy chaining
    * @throws MyURYException Thrown if there are duplicate fields with the same name
    */

@@ -12,12 +12,12 @@
  * @todo The completion of this module is impossible as Artists do not have
  * unique identifiers. For this to happen, BAPS needs to be replaced/updated
  * @package MyURY_Core
- * @uses Database
+ * @uses \Database
  */
 class Artist extends ServiceAPI {
   /**
    * When above @todo is completed, this will store cached artist singletons
-   * @var Artist 
+   * @var \Artist 
    */
   private static $artists = array();
   
