@@ -158,24 +158,15 @@ class MyURYFormField {
    * This method is only useful practically when the MyURYFormField is inserted to a MyURYForm
    * @param String $name The name and id of the field, as used in the HTML properties - should be unique to the form
    * @param int $type The MyURYFormField Field Type to use. See the constants defined in this class for details
-   * @param Array $options A set of additional settings for the MyURYFormField as follows (all optional):
-   *   
-   *   required: Whether the field is required (default true)
-   * 
-   *   label: The human-readable name of the field. (default reuses name)
-   * 
-   *   explanation: Help text for the MyURYFormField (default none)
-   * 
-   *   display: Whether the MyURYFormField should be visible when the page loads (default true)
-   * 
-   *   classes: An array of additional classes to add to the input field (default empty)
-   * 
-   *   options: An array of additional settings that are specific to the field type (default empty)
-   * 
-   *   value: The default value of the field when it is rendered (default none)
-   * 
-   *   enabled: Whether the field is enabled when the page is loaded (default true)
-   * 
+   * @param Array $options A set of additional settings for the MyURYFormField as follows (all optional):<br>
+   *   required: Whether the field is required (default true)<br>
+   *   label: The human-readable name of the field. (default reuses name)<br>
+   *   explanation: Help text for the MyURYFormField (default none)<br>
+   *   display: Whether the MyURYFormField should be visible when the page loads (default true)<br>
+   *   classes: An array of additional classes to add to the input field (default empty)<br>
+   *   options: An array of additional settings that are specific to the field type (default empty)<br>
+   *   value: The default value of the field when it is rendered (default none)<br>
+   *   enabled: Whether the field is enabled when the page is loaded (default true)  
    * @throws MyURYException If an attempt is made to set an $options value other than those listed above
    */
   public function __construct($name, $type, $options = array()) {
