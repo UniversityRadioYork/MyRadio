@@ -59,6 +59,7 @@ class Scheduler extends ServiceAPI {
   }
   
   /**
+   * Return the number of show application disputes pending response from Master of Scheduling
    * @todo implement this
    * @return int Zero. 
    */
