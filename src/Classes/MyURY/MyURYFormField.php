@@ -109,21 +109,75 @@ class MyURYFormField {
   /**
    * The constant used to specify this MyURYFormField must be a standard HTML select field.
    * 
-   * The Custom Options properly for this MyURYFormField type is an Array of items in the select list, each defined as
+   * The Custom Options property for this MyURYFormField type is an Array of items in the select list, each defined as
    * follows:
    * 
    * value: The value of the select option. This MUST be an integer.
    * 
-   * disabled: If true, this option can not be selected (default false)
+   * disabled: If true, this option cannot be selected (default false)
    * 
    * text: The human-readable value of the option that is displayed in the select dropdown.
    */
   const TYPE_SELECT    = 0x09;
+  /**
+   * The constant used to specify this MyURYFormField must be a set of standard HTML radio fields.
+   * 
+   * The Custom Options property for this MyURYFormField type is an Array of items in the Radio list, each defined as
+   * follows:
+   * 
+   * value: The value of the radio option. This MUSt be an integer.
+   * 
+   * disabled: If true, this option cannot be selected (default false)
+   * 
+   * text: The human-readable value of this option that is displayed next to the radio button
+   */
   const TYPE_RADIO     = 0x0A;
+  /**
+   * The constant used to specify this MyURYFormField must be a check box.
+   * 
+   * This field type does *not* use the value field.
+   * 
+   * The Custom Options this MyURYFormField uses are:
+   * 
+   * checked: Whether or not this checkbox is checked by default. Default false.
+   */
   const TYPE_CHECK     = 0x0B;
+  /**
+   * The constant used to specify this MyURYFormField must be a select input with the days of the week as options.
+   * 
+   * It returns a number from 0-6, with 0 representing Monday. Value can be used to pre-set a day using these numbers.
+   * 
+   * This field type does not use any Custom Options.
+   */
   const TYPE_DAY       = 0x0C;
+  /**
+   * The constant used to specify this MyURYFormField should be a textarea with rich text input.
+   * 
+   * The following Custom Options are supported by this MyURYFormField type:
+   * 
+   * minlength: The minimum number of characters the user must enter. This will include inserted HTML tags by the RTE.
+   * 
+   * maxlength: The maximum number of characters the user may enter. This will include inserted HTML tags by the RTE.
+   * 
+   * @todo Support custom # of rows and columns
+   */
   const TYPE_BLOCKTEXT = 0x0D;
+  /**
+   * The constant used to specify this MyURYFormField should be a text field that only accepts a time input.
+   * NOTE: This currently only accepts time entries at 15 minute intervals.
+   * @todo Support for custom time intervals
+   * 
+   * This MyURYFormField type does not support any Custom Options.
+   */
   const TYPE_TIME      = 0x0E;
+  /**
+   * The constant used to specify this MyURYFormField should be a group of checkbox MyURYFormFields grouped within a
+   * a single fieldset. This provides the advantage of Select All and Select None links and a generally more organised
+   * feel.
+   * 
+   * The Custom Options field for this MyURYFormField field type is an Array of MyURYFormFields of the Checkbox type
+   * which are to be rendered within this MyURYFormField.
+   */
   const TYPE_CHECKGRP  = 0x0F;
 
   /**
