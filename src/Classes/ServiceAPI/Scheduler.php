@@ -1,14 +1,32 @@
 <?php
 /**
+ * This file provides the Scheduler class for MyURY
+ * @package MyURY_Scheduler
+ */
+
+/**
  * Abstractor for the Scheduler Module
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 21072012
  * @package MyURY_Scheduler
+ * @uses Database
  */
 class Scheduler extends ServiceAPI {
+  /**
+   * This provides a temporary cache of the result from pendingAllocationsQuery
+   * @var Array
+   */
   private static $pendingAllocationsResult = null;
   
+  /**
+   * Returns an Array of pending show allocations.
+   * @return Array A 2D array with each element as follows:
+   * entryid: The unique id of the show application<br>
+   * summary: The name of the show<br>
+   * createddate: The time the application was made<br>
+   * requestedtime: The primary requested time of the application<br>
+   */
   private static function pendingAllocationsQuery() {
     if (self::$pendingAllocationsResult === null) {
       self::$pendingAllocationsResult = 
