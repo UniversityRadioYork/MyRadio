@@ -15,7 +15,15 @@
  * @uses \CacheProvider
  */
 abstract class ServiceAPI implements IServiceAPI {
+  /**
+   * All ServiceAPI subclasses will contain a reference to the Database Singleton
+   * @var \Database
+   */
   protected static $db = null;
+  /**
+   * All ServiceAPI subclasses will contain a reference to the CacheProvider Singleton
+   * @var \CacheProvider
+   */
   protected static $cache = null;
   
   /**
