@@ -78,5 +78,10 @@ class Scheduler extends ServiceAPI {
                           ORDER BY start ASC');
   }
   
-  public static function getInstance($id = -1) {throw new MyURYException('Not Implemented');}
+  /**
+   * The Scheduler class has no practical initislised use and will throw a fatal exception.
+   * @param int $id Whatever you want, I guess
+   * @throws MyURYException A fatal error
+   */
+  public static function getInstance($id = -1) {throw new MyURYException('Scheduler cannot be initialised');}
 }
