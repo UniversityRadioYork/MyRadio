@@ -12,6 +12,7 @@
  * @todo The completion of this module is impossible as Artists do not have
  * unique identifiers. For this to happen, BAPS needs to be replaced/updated
  * @package MyURY_Core
+ * @uses Database
  */
 class Artist extends ServiceAPI {
   /**
@@ -22,7 +23,7 @@ class Artist extends ServiceAPI {
   
   /**
    * Initiates the Artist object
-   * @param int $artist The ID of the Artist to initialise
+   * @param int $artistid The ID of the Artist to initialise
    */
   private function __construct($artistid) {
     $this->artistid = $artistid;

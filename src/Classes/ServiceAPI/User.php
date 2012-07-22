@@ -1,11 +1,18 @@
 <?php
 /**
+ * This file provides the User class for MyURY
+ * @package MyURY_Core
+ */
+
+/**
  * The user object provides and stores information about a user
  * It is not a singleton for Impersonate purposes
  * 
  * @version 09062012
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
+ * @uses Database
+ * @uses CacheProvider
  */
 class User extends ServiceAPI {
   private static $users = array();

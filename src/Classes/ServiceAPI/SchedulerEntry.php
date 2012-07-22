@@ -1,5 +1,10 @@
 <?php
 /**
+ * This file provides the SchedulerEntry class for MyURY
+ * @package MyURY_Scheduler
+ */
+
+/**
  * Object to represent a single Schedule Entry for MyURY Scheduler Module
  * Purely for use as a get/set/construct abstractor
  * 
@@ -8,8 +13,8 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 21072012
  * @package MyURY_Scheduler
+ * @todo Write this.
  */
-
 class SchedulerEntry extends ServiceAPI {
   
   function __construct($id) {}
