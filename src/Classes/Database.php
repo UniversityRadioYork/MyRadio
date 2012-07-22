@@ -1,6 +1,6 @@
 <?php
 /**
- * This file provides the Database object for MyURY
+ * This file provides the Database class for MyURY
  * @package MyURY_Core
  */
 

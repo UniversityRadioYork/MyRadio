@@ -1,5 +1,10 @@
 <?php
 /**
+ * This file provides the MyURYException class for MyURY
+ * @package MyURY_Core
+ */
+
+/**
  * Extends the standard Exception class to provide additional functionality
  * and logging
  *
