@@ -1,5 +1,10 @@
 <?php
 /**
+ * This file provides the Artist class for MyURY
+ * @package MyURY_Core
+ */
+
+/**
  * The Artist class provides and stores information about a Artist
  * 
  * @version 27062012
@@ -9,20 +14,24 @@
  * @package MyURY_Core
  */
 class Artist extends ServiceAPI {
+  /**
+   * When above @todo is completed, this will store cached artist singletons
+   * @var Artist 
+   */
   private static $artists = array();
   
   /**
-   * Initiates the Track variables
-   * @param int $trackid The ID of the track to initialise
+   * Initiates the Artist object
+   * @param int $artist The ID of the Artist to initialise
    */
-  private function __construct($trackid) {
+  private function __construct($artistid) {
     $this->artistid = $artistid;
-    throw new MyURYException('Not implemented Track::__construct');
+    throw new MyURYException('Not implemented ARtist::__construct');
   }
   
   public static function getInstance($trackid = -1) {
     self::__wakeup();
-    throw new MyURYException('Not implemented Track::getInstance');
+    throw new MyURYException('Not implemented ARtist::getInstance');
   }
   
   public static function findByName($title, $limit) {

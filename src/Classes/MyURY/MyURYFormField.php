@@ -14,12 +14,66 @@
  */
 class MyURYFormField {
 
+  /**
+   * The constant used to specify this MyURYFormField should be a standard text field.
+   * 
+   * A text field can take the following custom options:
+   * 
+   * minlength: The minimum number of characters the user must enter for this to be valid input
+   * 
+   * maxlength: The maximum number of characters the user can enter for this to be valid input
+   */
   const TYPE_TEXT      = 0x00;
+  /**
+   * The constant used to specify this MyURYFormField should be a standard number field.
+   * 
+   * A number field can take the following custom options:
+   * 
+   * min: The lowest number the user must enter for this to be valid input
+   * 
+   * max: The highest number the user can enter for this to be valid input
+   */
   const TYPE_NUMBER    = 0x01;
+  /**
+   * The constant used to specify this MyURYFormField must be a text field that validates as an email address
+   * 
+   * The email field takes no custom options.
+   */
   const TYPE_EMAIL     = 0x02;
+  /**
+   * The constant used to specify this MyURYFormField must be a valid date, and provides a datepicker widget for it
+   * 
+   * The date field currently takes no custom options.
+   * 
+   * @todo Support for mindate and maxdate
+   */
   const TYPE_DATE      = 0x03;
+  /**
+   * The constant used to specify this MyURYFormField must be a valid date and time, providing a datetime widget for it
+   * 
+   * The datetime field currently takes no custom options.
+   * NOTE: Currently, the TIME aspect must be in 15 minute intervals
+   * 
+   * @todo Support for a custom time interval
+   * 
+   * @todo Support for mindate and maxdate
+   * 
+   * @todo Support for mintime and maxtime
+   */
   const TYPE_DATETIME  = 0x04;
+  /**
+   * The constant used to specify this MyURYFormField must be a valid member, providing a Member autocomplete for it.
+   * This actually renders two fields - the visible one the user can enter a name into, and a hidden one that will
+   * store the ID once it has been selected.
+   * 
+   * The member field takes the following custom options:
+   * 
+   * membername: Since value will set the hidden integer value, this can be used to set the text value of the visible
+   * element when loading a pre-filled form.
+   * @todo Support for only displaying this year's members in the search query
+   */
   const TYPE_MEMBER    = 0x05;
+  
   const TYPE_TRACK     = 0x06;
   const TYPE_ARTIST    = 0x07;
   const TYPE_HIDDEN    = 0x08;
@@ -105,14 +159,23 @@ class MyURYFormField {
    * @param String $name The name and id of the field, as used in the HTML properties - should be unique to the form
    * @param int $type The MyURYFormField Field Type to use. See the constants defined in this class for details
    * @param Array $options A set of additional settings for the MyURYFormField as follows (all optional):
+   *   
    *   required: Whether the field is required (default true)
+   * 
    *   label: The human-readable name of the field. (default reuses name)
+   * 
    *   explanation: Help text for the MyURYFormField (default none)
+   * 
    *   display: Whether the MyURYFormField should be visible when the page loads (default true)
+   * 
    *   classes: An array of additional classes to add to the input field (default empty)
+   * 
    *   options: An array of additional settings that are specific to the field type (default empty)
+   * 
    *   value: The default value of the field when it is rendered (default none)
+   * 
    *   enabled: Whether the field is enabled when the page is loaded (default true)
+   * 
    * @throws MyURYException If an attempt is made to set an $options value other than those listed above
    */
   public function __construct($name, $type, $options = array()) {
@@ -193,7 +256,8 @@ class MyURYFormField {
   
   /**
    * To be used when getting values from a submitted form, this method returns the correctly type-cast value of the
-   * MyURYFormField depending on the $type parameter
+   * MyURYFormField depending on the $type parameter.
+   * 
    * This is called by MyURYForm::readValues()
    * @param String $prefix The current prefix to the field name
    * @return mixed The submitted field value

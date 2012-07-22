@@ -1,10 +1,14 @@
 <?php
+/**
+ * This file provides the Podcast class for MyURY
+ * @package MyURY_Podcast
+ */
 
 /**
  * Abstractor for the Podcast Module
  * 
- * @depends Cache
- * @depends Database
+ * @uses CacheProvider
+ * @uses Database
  * @author Andy Durant <aj@ury.org.uk>
  * @package MyURY_Podcast
  * @version 21072012
@@ -60,6 +64,7 @@ class Podcast extends ServiceAPI {
   }
   /**
    * Returns the entire MyURY Show Linked Podcast list 
+   * @todo Andy Durant needs to document the return format
    */
   public function getAllShowLinkedPodcasts() {
     $showlinked = $this->cache->get('Podcast_ShowLinked_Full');
