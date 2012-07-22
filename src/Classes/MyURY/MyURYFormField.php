@@ -70,13 +70,54 @@ class MyURYFormField {
    * 
    * membername: Since value will set the hidden integer value, this can be used to set the text value of the visible
    * element when loading a pre-filled form.
+   * 
    * @todo Support for only displaying this year's members in the search query
    */
   const TYPE_MEMBER    = 0x05;
-  
+  /**
+   * The constant used to specify this MyURYFormField must be a valid track, providing a Track autocomplete for it.
+   * This actually renders two fields - the visible one the user can enter a track into, and a hidden one that will
+   * store the ID once it has been selected.
+   * 
+   * The track field takes the following custom options:
+   * 
+   * trackname: Since value will set the hidden integer value, this can be used to set the text value of the visible
+   * element when loading a pre-filled form.
+   * 
+   * @todo Support for filtering to only digitised, clean tracks etc.
+   */
   const TYPE_TRACK     = 0x06;
+  /**
+   * The constant used to specify this MyURYFormField must be a valid artist, providing an Artist autocomplete for it.
+   * This actually renders two fields - the visible one the user can enter an artist into, and a hidden one that will
+   * store the ID once it has been selected.
+   * 
+   * The artist field takes the following custom options:
+   * 
+   * artistname: Since value will set the hidden integer value, this can be used to set the text value of the visible
+   * element when loading a pre-filled form.
+   * 
+   * @todo This currently doesn't work right as the Artists system needs some significant backend changes
+   */
   const TYPE_ARTIST    = 0x07;
+  /**
+   * The constant used to specify this MyURYFormField must be a standard HTML hidden field type.
+   * 
+   * The hidden field takes no custom options.
+   */
   const TYPE_HIDDEN    = 0x08;
+  /**
+   * The constant used to specify this MyURYFormField must be a standard HTML select field.
+   * 
+   * The Custom Options properly for this MyURYFormField type is an Array of items in the select list, each defined as
+   * follows:
+   * 
+   * value: The value of the select option. This MUST be an integer.
+   * 
+   * disabled: If true, this option can not be selected (default false)
+   * 
+   * text: The human-readable value of the option that is displayed in the select dropdown.
+   */
   const TYPE_SELECT    = 0x09;
   const TYPE_RADIO     = 0x0A;
   const TYPE_CHECK     = 0x0B;
@@ -154,7 +195,7 @@ class MyURYFormField {
   private $restricted_attributes = array('restricted_attributes', 'value', 'name', 'type');
 
   /**
-   * Set up a new MyURY Form Field with the new parameters, returning the new field
+   * Set up a new MyURY Form Field with the new parameters, returning the new field.
    * This method is only useful practically when the MyURYFormField is inserted to a MyURYForm
    * @param String $name The name and id of the field, as used in the HTML properties - should be unique to the form
    * @param int $type The MyURYFormField Field Type to use. See the constants defined in this class for details
