@@ -17,7 +17,7 @@ class MyURYMenu {
 
   /**
    * A reference pointer to the current MyURY CacheProvider
-   * @var CacheProvider 
+   * @var \CacheProvider 
    */
   private $cache;
 
@@ -31,7 +31,7 @@ class MyURYMenu {
 
   /**
    * Returns a customised MyURY menu for the given user
-   * @param User $user
+   * @param \User $user
    * @return Array A complex Menu array array array array array
    */
   public function getMenuForUser(User $user) {

@@ -11,8 +11,8 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 21072012
  * @package MyURY_Core
- * @uses Database
- * @uses CacheProvider
+ * @uses \Database
+ * @uses \CacheProvider
  */
 abstract class ServiceAPI implements IServiceAPI {
   protected static $db = null;

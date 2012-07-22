@@ -10,7 +10,7 @@
  * @version 25062012
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
- * @uses Database
+ * @uses \Database
  * @todo Write this
  */
 class Track extends ServiceAPI {

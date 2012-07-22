@@ -11,8 +11,8 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Profile
  * @version 21072012
- * @uses Database
- * @uses CacheProvider
+ * @uses \Database
+ * @uses \CacheProvider
  */
 class Profile extends ServiceAPI {
   /**
