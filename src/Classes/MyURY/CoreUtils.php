@@ -219,6 +219,18 @@ class CoreUtils {
   }
   
   /**
+   * Returns a list of all MyURY managed Services in a 2D Array.
+   * @return Array A 2D Array with each second dimension as follows:<br>
+   * value: The ID of the Service
+   * text: The Text ID of the Service
+   * enabeld: Whether the Service is enabled
+   */
+  public static function getServices() {
+    return Database::getInstance()->fetch_all('SELECT serviceid AS value, name AS text, enabled
+      FROM myury.services ORDER BY name ASC');
+  }
+  
+  /**
    * A simple debug method that only displays output for a specific user.
    * @param int $userid The ID of the user to display for
    * @param String $message The HTML to display for this user
