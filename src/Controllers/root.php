@@ -53,7 +53,7 @@ require_once 'Classes/Config.php';
 /**
  * Turn off visible error reporting, if needed
  */
-if (!Config::$debug) {
+if (!Config::$display_errors) {
   ini_set('display_errors','Off');
 }
 
