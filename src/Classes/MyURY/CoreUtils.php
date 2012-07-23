@@ -168,7 +168,7 @@ class CoreUtils {
       AND myury.services.name=$1
       AND (myury.modules.name=$2 OR myury.act_permission.moduleid IS NULL)
       AND (myury.actions.name=$3 OR myury.act_permission.actionid IS NULL)
-      AND NOT (myury.act_permisson.actionid IS NULL AND myury.act_permission.typeid IS NULL)
+      AND NOT (myury.act_permission.actionid IS NULL AND myury.act_permission.typeid IS NULL)
       AND NOT (myury.act_permission.moduleid IS NULL AND myury.act_permission.typeid IS NULL)',
     array($service, $module, $action));
     
