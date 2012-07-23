@@ -13,5 +13,5 @@ $twig->setTemplate('error.twig')
         ->addVariable('title', 'File Not Found')
         ->addVariable('heading', 'I\'m not the page you\'re looking for')
         ->addVariable('body', '<p>I\'m sorry, but the Action, Module or Service you are looking for doesn\'t seem to exist.</p>
-          <img src="img/small-vegetables.jpg" style="height:80%" /><p>Remember to Always Eat Your Vegetables</p>')
+          <img src="img/small-vegetables.jpg" style="height:75%" /><p>Remember to Always Eat Your Vegetables</p>')
         ->render();
