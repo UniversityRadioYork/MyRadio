@@ -52,9 +52,11 @@ class MyURYMenu {
       foreach ($column['sections'] as $section) {
         $items = array();
         foreach ($section['items'] as $item) {
-          if (empty($item['service']) ||
+          if (empty($item['service']) or
                   CoreUtils::requirePermissionAuto($item['service'], $item['module'], $item['action'], false)) {
             $items[] = $item;
+          } else {
+            echo "Hiding {$item['service']}/{$item['module']}/{$item['action']} for this user<br>";
           }
         }
         //Add this section (if it has anything in it)
