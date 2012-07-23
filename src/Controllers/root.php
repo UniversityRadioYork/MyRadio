@@ -85,7 +85,7 @@ if ($service === 'MyURY' && !CoreUtils::isValidController($module, $action)) {
  * Use the Database authentication data to check whether the use has permission to access that.
  * This method will automatically cause a premature exit if necessary.
  */
-CoreUtils::requireAuthAuto($service, $module, $action);
+CoreUtils::requirePermissionAuto($service, $module, $action);
 
 /**
  * If a Service is defined, it needs to be passed over to our Service Broker - this works out what version of the
