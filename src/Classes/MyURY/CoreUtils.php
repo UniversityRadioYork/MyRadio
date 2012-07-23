@@ -201,7 +201,7 @@ class CoreUtils {
    * @param String $message The HTML to display for this user
    */
   public static function debug_for($userid, $message) {
-    if ($_SESSION['memberid'] === $userid) echo $message;
+    if ($_SESSION['memberid'] === $userid) echo '<p>'.$message.'</p>';
   }
 
 }
