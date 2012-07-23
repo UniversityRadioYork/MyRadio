@@ -196,6 +196,29 @@ class CoreUtils {
   }
   
   /**
+   * Returns a list of all currently defined permissions on MyURY Service/Module/Action combinations.
+   * @return Array A 2D Array, where each second dimensions is as follows:<br>
+   * action: The name of the Action page<br>
+   * module: The name of the Module the action is in<br>
+   * service: The name of the Service the module is in<br>
+   * permission: The name of the permission applied to that Service/Module/Action combination<br>
+   * actpermissionid: The unique ID of this Service/Module/Action combination
+   */
+  public static function getAllActionPermissions() {
+    return Database::getInstance()->fetch_all(
+      'SELECT actpermissionid,
+          myury.actions.name AS action,
+          myury.modules.name AS module,
+          myury.services.name AS service,
+          public.l_action.descr AS permission
+          FROM myury.act_permission, myury.services, myury.modules, myury.actions, public.l_action.descr
+        WHERE myury.act_permission.actionid=myury.actions.actionid
+        AND myury.act_permission.moduleid=myury.modules.moduleid
+        AND myury.act_permission.serviceid=myury.services.serviceid
+        AND myury.act_permission.typeid = public.l_action.typeid');
+  }
+  
+  /**
    * A simple debug method that only displays output for a specific user.
    * @param int $userid The ID of the user to display for
    * @param String $message The HTML to display for this user

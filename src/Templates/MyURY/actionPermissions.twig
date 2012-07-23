@@ -5,5 +5,7 @@
 {% endblock %}
 {% block stripecontent %}
 {{ parent() }}
+{% set tabledata = frmcustom.tabledata %}
+{% set tablescript = frmcustom.tablescript %}
 {% include 'parts/table-content.twig' %}
 {% endblock %}
