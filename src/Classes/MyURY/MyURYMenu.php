@@ -52,7 +52,7 @@ class MyURYMenu {
       foreach ($column['sections'] as $section) {
         $items = array();
         foreach ($section['items'] as $item) {
-          if ($item['service'] === null ||
+          if (empty($item['service']) ||
                   CoreUtils::requirePermissionAuto($item['service'], $item['module'], $item['action'], false)) {
             $items[] = $item;
           }
