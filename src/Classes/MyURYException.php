@@ -25,7 +25,7 @@ class MyURYException extends Exception {
     parent::__construct($message, $code, $previous);
     if (class_exists('Config')) {
       //Configuration is available, use this to decide what to do
-      if (Config::$display_errors) {
+      if (Config::$display_errors or (class_exists('CoreUtils') && CoreUtils::hasPermission(AUTH_SHOWERRORS))) {
         //Output to the browser
         $error = "<p>MyURY has encountered a problem processing this request.</p>
           <table class='errortable'>
