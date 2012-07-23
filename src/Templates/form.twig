@@ -11,9 +11,9 @@
     {% for field in frm_fields %}
       <div id="{{frm_name}}-{{field.name}}-container" class="{{field.class}}">
         {% include ('FormFields/FieldType_'~field.type~'.twig') %}
-      </div>
+        </div>
     {% endfor %}
-      <input type="submit" value="Submit" />
-    </form>
-  </fieldset>
+        <input type="submit" value="Submit" />
+      </form>
+    </fieldset>
 {% endblock %}
