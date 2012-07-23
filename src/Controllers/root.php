@@ -53,7 +53,7 @@ require_once 'Classes/Config.php';
 /**
  * Turn off visible error reporting, if needed
  */
-if (!Config::$display_errors) {
+if (!Config::$display_errors && !CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
   ini_set('display_errors','Off');
 }
 
