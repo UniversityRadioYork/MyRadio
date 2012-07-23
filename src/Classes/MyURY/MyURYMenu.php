@@ -50,10 +50,8 @@ class MyURYMenu {
 
       foreach ($column['sections'] as $section) {
         $items = array();
-        /**
-         * @todo This used to enumerate permissions. This needs to come back.
-         */
         foreach ($section['items'] as $item) {
+          print_r($item);
             $items[] = $item;
         }
         //Add this section (if it has anything in it)
