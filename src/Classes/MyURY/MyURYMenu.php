@@ -145,32 +145,33 @@ class MyURYMenu {
           //This could be multiple variables separated by &
           $url .= '&' . $exp[2];
         }
-      } else {
-        //It's not a rewritable
-        if ($return !== 'url')
-          return null;
       }
-      if ($return === 'service') {
-        if (preg_match('/^service=/', $exp[0]) == 1) {
-          return str_replace('service=', '', $exp[0]);
-        } else {
-          return 'MyURY';
-        }
-      } elseif ($return === 'module') {
-        if (preg_match('/^module=/', $exp[0]) == 1) {
-          return str_replace('module=', '', $exp[0]);
-        } else {
-          return 'Core';
-        }
-      } elseif ($return === 'action') {
-        if (isset($exp[1])) {
-          return str_replace('action=', '', $exp[1]);
-        } else {
-          return 'default';
-        }
-      }
-      return $url;
+    } else {
+      //It's not a rewritable
+      if ($return !== 'url')
+        return null;
     }
+    if ($return === 'service') {
+      if (preg_match('/^service=/', $exp[0]) == 1) {
+        return str_replace('service=', '', $exp[0]);
+      } else {
+        return 'MyURY';
+      }
+    } elseif ($return === 'module') {
+      if (preg_match('/^module=/', $exp[0]) == 1) {
+        return str_replace('module=', '', $exp[0]);
+      } else {
+        return 'Core';
+      }
+    } elseif ($return === 'action') {
+      if (isset($exp[1])) {
+        return str_replace('action=', '', $exp[1]);
+      } else {
+        return 'default';
+      }
+    }
+    return $url;
   }
 
-  
+}
+
