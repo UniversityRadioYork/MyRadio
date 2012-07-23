@@ -27,15 +27,28 @@ class MyURYException extends Exception {
       //Configuration is available, use this to decide what to do
       if (Config::$display_errors) {
         //Output to the browser
-        echo "MyURY has encountered a problem processing this request.
-          <table>
+        $error = "MyURY has encountered a problem processing this request.
+          <table class='errortable'>
             <tr><td>Message</td><td>{$this->getMessage()}</td></tr>
             <tr><td>Location</td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
             <tr><td>Trace</td><td>".nl2br($this->getTraceAsString())."</td></tr>
           </table>";
+            
+        if (class_exists('CoreUtils') && !headers_sent()) {
+          //We can use a pretty full-page output
+          $twig = CoreUtils::getTemplateObject();
+          $twig->setTemplate('error.twig')
+                  ->addVariable('serviceName', 'Error')
+                  ->addVariable('title', 'Internal Server Error')
+                  ->addVariable('heading', 'Internal Server Error')
+                  ->addVariable('body', $error)
+                  ->render();
+        } else {
+          echo $error;
+        }
       }
     }
-    if ($code === -1) {
+    if ($code === self::FATAL) {
       echo '<div class="ui-state-error">A fatal error has occured that has prevented MyURY from performing the action you requested.</div>';
     }
   }
