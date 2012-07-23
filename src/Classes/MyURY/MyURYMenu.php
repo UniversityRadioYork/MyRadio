@@ -55,8 +55,6 @@ class MyURYMenu {
           if (empty($item['action']) or
                   CoreUtils::requirePermissionAuto($item['service'], $item['module'], $item['action'], false)) {
             $items[] = $item;
-          } else {
-            CoreUtils::debug_for(7449, "Hiding {$item['service']}/{$item['module']}/{$item['action']} for this user");
           }
         }
         //Add this section (if it has anything in it)
