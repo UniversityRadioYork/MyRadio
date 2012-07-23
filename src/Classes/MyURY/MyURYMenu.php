@@ -51,8 +51,9 @@ class MyURYMenu {
       foreach ($column['sections'] as $section) {
         $items = array();
         foreach ($section['items'] as $item) {
-          print_r($item);
+          if (CoreUtils::requirePermissionAuto($item['service'], $item['module'], $item['action'], false)) {
             $items[] = $item;
+          }
         }
         //Add this section (if it has anything in it)
         if (!empty($items))
@@ -90,6 +91,9 @@ class MyURYMenu {
         if (!isset($item['itemid']))
           continue; //Skip twigitems
         $items[$key]['url'] = $this->parseURL($item['url']);
+        $items[$key]['service'] = $this->parseURL($item['url'], 'service');
+        $items[$key]['module'] = $this->parseURL($item['url'], 'module');
+        $items[$key]['action'] = $this->parseURL($item['url'], 'action');
       }
 
       //That'll do for now. Time to make the $menu
@@ -125,13 +129,15 @@ class MyURYMenu {
    * Detects module/action/service links and rewrites
    * This is a method so it can easily be changed if Apache rewrites
    * @param String $url The URL to parse
+   * @todo Rewrite this to make sense
    */
-  private function parseURL($url) {
+  private function parseURL($url, $return = 'url') {
     $exp = explode(',', $url);
     if (preg_match('/^(module|service)=/',$exp[0]) == 1) {
       //It can be rewritten!
       $url = '?'.$exp[0];
       if (isset($exp[1])) {
+        if ($return === 'action') return str_replace('action=','',$exp[1]);
         //An action is defined!
         $url .= '&'.$exp[1];
         if (isset($exp[2])) {
@@ -139,6 +145,21 @@ class MyURYMenu {
           //This could be multiple variables separated by &
           $url .= '&'.$exp[2];
         }
+      } elseif ($return === 'action') {
+        return 'default';
+      }
+    }
+    if ($return === 'service') {
+      if (preg_match('/^service=/',$exp[0]) == 1) {
+        return str_replace('service=','',$exp[0]);
+      } else {
+        return 'MyURY';
+      }
+    } elseif ($return === 'module') {
+      if (preg_match('/^module=/',$exp[0]) == 1) {
+        return str_replace('module=','',$exp[0]);
+      } else {
+        return 'Core';
       }
     }
     return $url;
