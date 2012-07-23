@@ -6,7 +6,6 @@
  * @version 21072012
  * @package MyURY_Scheduler
  */
-CoreUtils::requirePermission(AUTH_ALLOCATESLOTS);
 
 //The Form definition
 require 'Models/MyURY/Scheduler/allocatefrm.php';
