@@ -180,13 +180,14 @@ class CoreUtils {
     
     $authorised = false;
     foreach ($result as $permission) {
-      //If the permissions is required, use requirePermission, otherwise use hasPermission
-      if ($require) {
-        self::requirePermission($permission);
-      } else {
-        //It only needs to match one
-        if (self::hasPermission($permission)) $authorised = true;
-      }
+      //It only needs to match one
+      if ($permission === null || self::hasPermission($permission)) $authorised = true;
+    }
+    
+    if (!$authorised && $require) {
+      //Fatal error
+      require 'Controllers/Errors/403.php';
+      exit;
     }
     
     //Return true on required success, or whether authorised otherwise
