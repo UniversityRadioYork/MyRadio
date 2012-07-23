@@ -6,7 +6,6 @@
  * @version 21072012
  * @package MyURY_Scheduler
  */
-CoreUtils::requirePermission(AUTH_ALLOCATESLOTS);
 
 //The standard Scheduler Notices
 require 'Models/MyURY/Scheduler/notices.php';
