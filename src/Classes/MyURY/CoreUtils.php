@@ -194,5 +194,14 @@ class CoreUtils {
     return $require || $authorised;
     
   }
+  
+  /**
+   * A simple debug method that only displays output for a specific user.
+   * @param int $userid The ID of the user to display for
+   * @param String $message The HTML to display for this user
+   */
+  public static function debug_for($userid, $message) {
+    if ($_SESSION['memberid'] === $userid) echo $message;
+  }
 
 }
