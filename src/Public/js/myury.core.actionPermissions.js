@@ -5,27 +5,22 @@ $('.twig-datatable').dataTable({
     "sTitle" : "",
     "bVisible": false
   },
-  //action
+  //service
   {
-    "sTitle": "Action",
+    "sTitle": "Service",
     "sClass": "left"
   },
-  //createddate
+  //model
   {
-    "sTitle": "Submitted"
+    "sTitle": "Model"
   },
-  //requestedtime
+  //action
   {
-    "sTitle": "Requested Time"
+    "sTitle": "Action"
   },
   //editlink
   {
-    "sTitle": "Allocate",
-    "bSortable": false
-  },
-  //rejectlink
-  {
-    "sTitle": "Reject",
+    "sTitle": "Remove",
     "bSortable": false
   }
   ],
