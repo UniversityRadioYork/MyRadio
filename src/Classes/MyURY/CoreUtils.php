@@ -219,6 +219,15 @@ class CoreUtils {
   }
   
   /**
+   * Returns a list of Permissions ready for direct use in a select MyURYFormField
+   * @return Array A 2D Array matching the MyURYFormField::TYPE_SELECT specification.
+   */
+  public static function getAllPermissions() {
+    return Database::getInstane()->fetch_all('SELECT typeid AS value, descr AS text FROM public.l_action
+      ORDER BY descr ASC');
+  }
+  
+  /**
    * Returns a list of all MyURY managed Services in a 2D Array.
    * @return Array A 2D Array with each second dimension as follows:<br>
    * value: The ID of the Service
