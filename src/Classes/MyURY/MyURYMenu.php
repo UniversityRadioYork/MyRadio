@@ -50,20 +50,11 @@ class MyURYMenu {
 
       foreach ($column['sections'] as $section) {
         $items = array();
+        /**
+         * @todo This used to enumerate permissions. This needs to come back.
+         */
         foreach ($section['items'] as $item) {
-          //If permissions is empty, everyone gets it
-          if (empty($item['permissions'])) {
             $items[] = $item;
-            continue;
-          }
-          //Otherwise enumerate
-          foreach ($item['permissions'] as $permission) {
-            if ($user->hasAuth($permission)) {
-              //Yay, add this item
-              $items[] = $item;
-              break;
-            }
-          }
         }
         //Add this section (if it has anything in it)
         if (!empty($items))
@@ -100,8 +91,6 @@ class MyURYMenu {
       foreach ($items as $key => $item) {
         if (!isset($item['itemid']))
           continue; //Skip twigitems
-        $items[$key]['permissions'] = $db->fetch_column('SELECT typeid FROM myury.menu_auth
-          WHERE linkid=$1', array($item['itemid']));
         $items[$key]['url'] = $this->parseURL($item['url']);
       }
 
