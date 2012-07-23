@@ -1,8 +1,9 @@
-{% extends 'stripe.twig' %}
+{% extends 'form.twig' %}
 {% block head %}
 {{ parent() }}
 {% include 'parts/table-header.twig' %}
 {% endblock %}
 {% block stripecontent %}
+{{ parent() }}
 {% include 'parts/table-content.twig' %}
 {% endblock %}
