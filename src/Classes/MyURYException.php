@@ -27,7 +27,7 @@ class MyURYException extends Exception {
       //Configuration is available, use this to decide what to do
       if (Config::$display_errors) {
         //Output to the browser
-        $error = "MyURY has encountered a problem processing this request.
+        $error = "<p>MyURY has encountered a problem processing this request.</p>
           <table class='errortable'>
             <tr><td>Message</td><td>{$this->getMessage()}</td></tr>
             <tr><td>Location</td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
