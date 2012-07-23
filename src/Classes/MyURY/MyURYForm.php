@@ -129,6 +129,17 @@ class MyURYForm {
       $this->$k = $v;
     }
   }
+  
+  /**
+   * Changes the template to use when rendering
+   * 
+   * @todo Check if template exists first
+   * @param String $template The path to the template, relative to Templates
+   */
+  public function setTemplate($template) {
+    $this->template = $template;
+    return $this;
+  }
 
   /**
    * Adds a new MyURYFormField to this MyURYForm. You should initialise a new MyURYFormField and pass the object
