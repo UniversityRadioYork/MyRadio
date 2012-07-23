@@ -140,5 +140,58 @@ class CoreUtils {
       exit;
     }
   }
+  
+  /**
+   * Checks if the user has the given permissions required for the given Service/Module/Action combination
+   * 
+   * The query needs a little bit of explaining.<br>
+   * The first three WHERE clauses just set up foreign key references - we're searching by name, not ID.<br>
+   * The next three WHERE clauses return exact or wildcard matches for this Service/Module/Action combination.<br>
+   * The final two AND NOT phrases make sure it ignores wildcards that allow any access.
+   * 
+   * @param String $service The Service to check permissions for
+   * @param String $module The Module to check permissions for
+   * @param String $action The Action to check permissions for
+   * @param bool $require If true, will die if the user does not have permission. If false, will just return false
+   * @return bool True on required or authorised, false on unauthorised
+   */
+  public static function requirePermissionAuto($service, $module, $action, $require = true) {
+    self::setUpAuth();
+    $db = Database::getInstance();
+    /**
+     * 
+     */
+    $result = $db->fetch_column('SELECT typeid FROM myury.act_permission, myury.services, myury.modules, myury.actions
+      WHERE myury.act_permission.actionid=myury.actions.actionid
+      AND myury.act_permission.moduleid=myury.modules.moduleid
+      AND myury.act_permission.serviceid=myury.services.serviceid
+      AND myury.services.name=$1
+      AND (myury.modules.name=$2 OR moduleid IS NULL)
+      AND (myury.actions.name=$3 OR actionid IS NULL)
+      AND NOT (myury.act_permisson.actionid IS NULL AND myury.act_permission.typeid IS NULL)
+      AND NOT (myury.act_permission.moduleid IS NULL AND myury.act_permission.typeid IS NULL)',
+    array($service, $module, $action));
+    
+    //Don't allow empty result sets - throw an Exception as this is very very bad.
+    if (empty($result)) {
+      throw new MyURYException('There are no permissions defined for the '.$service.'/'.$module.'/'.$action.' action!');
+      return false;
+    }
+    
+    $authorised = false;
+    foreach ($result as $permission) {
+      //If the permissions is required, use requirePermission, otherwise use hasPermission
+      if ($require) {
+        self::requirePermission($permission);
+      } else {
+        //It only needs to match one
+        if (self::hasPermission($permission)) $authorised = true;
+      }
+    }
+    
+    //Return true on required success, or whether authorised otherwise
+    return $require || $authorised;
+    
+  }
 
 }
