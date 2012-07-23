@@ -211,7 +211,7 @@ class CoreUtils {
           myury.modules.name AS module,
           myury.services.name AS service,
           public.l_action.descr AS permission
-          FROM myury.act_permission, myury.services, myury.modules, myury.actions, public.l_action.descr
+          FROM myury.act_permission, myury.services, myury.modules, myury.actions, public.l_action
         WHERE myury.act_permission.actionid=myury.actions.actionid
         AND myury.act_permission.moduleid=myury.modules.moduleid
         AND myury.act_permission.serviceid=myury.services.serviceid
