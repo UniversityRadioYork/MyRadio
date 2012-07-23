@@ -223,7 +223,7 @@ class CoreUtils {
    * @return Array A 2D Array matching the MyURYFormField::TYPE_SELECT specification.
    */
   public static function getAllPermissions() {
-    return Database::getInstane()->fetch_all('SELECT typeid AS value, descr AS text FROM public.l_action
+    return Database::getInstance()->fetch_all('SELECT typeid AS value, descr AS text FROM public.l_action
       ORDER BY descr ASC');
   }
   
