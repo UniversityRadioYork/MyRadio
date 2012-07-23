@@ -6,7 +6,7 @@
  * @version 24072012
  * @package MyURY_Core
  */
-$form = new MyURYForm('sched_allocate', $module, 'doAllocate',
+$form = new MyURYForm('assign_action_permissions', $module, 'addActionPermission',
                 array(
                     'debug' => true,
                     'title' => 'Assign Action Permissions'
