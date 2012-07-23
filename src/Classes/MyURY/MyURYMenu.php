@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file provides the MyURYMenu class for MyURY
  * @package MyURY_Core
@@ -60,7 +61,8 @@ class MyURYMenu {
           $newColumn['sections'][] = array('title' => $section['title'], 'items' => $items);
       }
 
-      if (!empty($newColumn['sections'])) $menu[] = $newColumn;
+      if (!empty($newColumn['sections']))
+        $menu[] = $newColumn;
       $this->cache->set('MyURYMenu_Menu_' . $user->getID(), $menu, 3600);
     }
 
@@ -83,8 +85,7 @@ class MyURYMenu {
         ORDER BY position ASC');
       //And finally, items
       $items = array_merge(
-              $db->fetch_all('SELECT itemid, sectionid, title, url, description FROM myury.menu_links ORDER BY title ASC'),
-              $db->fetch_all('SELECT sectionid, template FROM myury.menu_twigitems')
+              $db->fetch_all('SELECT itemid, sectionid, title, url, description FROM myury.menu_links ORDER BY title ASC'), $db->fetch_all('SELECT sectionid, template FROM myury.menu_twigitems')
       );
       //Get permissions for each $item
       foreach ($items as $key => $item) {
@@ -100,7 +101,7 @@ class MyURYMenu {
       $menu = array();
       foreach ($columns as $column) {
         $newColumn = array('title' => $column['title'], 'sections' => array());
-        
+
         //Iterate over each section
         foreach ($sections as $section) {
           if ($section['columnid'] != $column['columnid'])
@@ -124,7 +125,7 @@ class MyURYMenu {
     }
     return $menu;
   }
-  
+
   /**
    * Detects module/action/service links and rewrites
    * This is a method so it can easily be changed if Apache rewrites
@@ -133,36 +134,43 @@ class MyURYMenu {
    */
   private function parseURL($url, $return = 'url') {
     $exp = explode(',', $url);
-    if (preg_match('/^(module|service)=/',$exp[0]) == 1) {
+    if (preg_match('/^(module|service)=/', $exp[0]) == 1) {
       //It can be rewritten!
-      $url = '?'.$exp[0];
+      $url = '?' . $exp[0];
       if (isset($exp[1])) {
-        if ($return === 'action') return str_replace('action=','',$exp[1]);
         //An action is defined!
-        $url .= '&'.$exp[1];
+        $url .= '&' . $exp[1];
         if (isset($exp[2])) {
           //An additional query string
           //This could be multiple variables separated by &
-          $url .= '&'.$exp[2];
+          $url .= '&' . $exp[2];
+        }
+      } else {
+        //It's not a rewritable
+        if ($return !== 'url')
+          return null;
+      }
+      if ($return === 'service') {
+        if (preg_match('/^service=/', $exp[0]) == 1) {
+          return str_replace('service=', '', $exp[0]);
+        } else {
+          return 'MyURY';
+        }
+      } elseif ($return === 'module') {
+        if (preg_match('/^module=/', $exp[0]) == 1) {
+          return str_replace('module=', '', $exp[0]);
+        } else {
+          return 'Core';
         }
       } elseif ($return === 'action') {
-        return 'default';
+        if (isset($exp[1])) {
+          return str_replace('action=', '', $exp[1]);
+        } else {
+          return 'default';
+        }
       }
+      return $url;
     }
-    if ($return === 'service') {
-      if (preg_match('/^service=/',$exp[0]) == 1) {
-        return str_replace('service=','',$exp[0]);
-      } else {
-        return 'MyURY';
-      }
-    } elseif ($return === 'module') {
-      if (preg_match('/^module=/',$exp[0]) == 1) {
-        return str_replace('module=','',$exp[0]);
-      } else {
-        return 'Core';
-      }
-    }
-    return $url;
   }
 
-}
+  
