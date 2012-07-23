@@ -17,12 +17,5 @@ $twig->setTemplate('error.twig')
             <li>If you think you should have these permissions but do not, please contact Station Management.</li>
             <li>If you are Station Management, please contact Computing.</li>
             <li>If you are Computing, panic.</li>
-          </ul>
-          <details><summary>Detailed Request Information</summary>
-          Error: HTTP/1.1 403: Forbidden<br>
-          Service Requested: '.$service.'<br>
-          Module Requested: '.$module.'<br>
-          Action Requested: '.$action.'<br>
-          User Requesting: '.$member->getName().'
-          </details>')
+          </ul>')
         ->render();
