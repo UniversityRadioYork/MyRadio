@@ -32,10 +32,11 @@ for ($i = 1; $i <=10; $i++) {
 }
 
 $form->addField(
-                new MyURYFormField('Schedule for Term', MyURYFormField::TYPE_SELECT,
+                new MyURYFormField('term', MyURYFormField::TYPE_SELECT,
                         array(
                             'options' => $term_options,
-                            'explanation' => 'Please select what term you are scheduling for'
+                            'explanation' => 'Please select what term you are scheduling for',
+                            'label' => 'Schedule for Term'
                             )
                         )
         )

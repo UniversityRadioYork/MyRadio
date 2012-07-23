@@ -299,6 +299,15 @@ class User extends ServiceAPI {
     return $entry;
   }
   
+  /**
+   * Searches for Users with a name starting with $name
+   * @param String $name The name to search for. If there is a space, it is assumed the second word is the surname
+   * @param int $limit The maximum number of Users to return
+   * @return Array A 2D Array where every value of the first dimension is an Array as follows:<br>
+   * memberid: The unique id of the User<br>
+   * fname: The actual first name of the User<br>
+   * sname: The actual last name of the User
+   */
   public static function findByName($name, $limit) {
     //If there's a space, split into first and last name
     $name = trim($name);
@@ -316,6 +325,13 @@ class User extends ServiceAPI {
     }
   }
   
+  /**
+   * Runs a super-long pSQL query that returns the information used to generate the Profile Timeline
+   * @return Array A 2D Array where every value of the first dimension is an Array as follows:<br>
+   * timestamp: When the event occurred, formatted as d/m/Y<br>
+   * message: A text description of the event<br>
+   * photo: The photoid of a thumbnail to render with the event
+   */
   public function getTimeline() {
     $events = array();
     
