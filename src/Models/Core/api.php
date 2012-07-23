@@ -2,7 +2,20 @@
 /**
  * This is the magical file that provides access to URY's backend data services
  * 
- * @todo This should abstract above Rapier, not directly to backend services
+ * This file loads up the crtical Interfaces and Classes for MyURY<br>
+ * - The Singleton for efficiency, as almost every class uses it<br>
+ * - The IServiceAPI (including the ServiceAPI abstract class) to provide a standard way of establishing Database and
+ * CacheProvider connections<br>
+ * - The MyURY Configuration Class - This file contains the settings required to make MyURY Start<br>
+ * - The MyURYException Class - This is used for critical MyURY errors, formatting and communicating them as needed.
+ * It also sets the global exception handler as something that does nothing - preventing unwanted output<br>
+ * - The Database and CacheProvider Classes/Interfaces to provide access to the MyURY Data Stores<br>
+ * - The MyURY ServiceAPI Autoloader dynamically loads additional classes as needed
+ * 
+ * This file also does the following:<br>
+ * - Provides the <code>$member</code> global variable - this contains the current User<br>
+ * - Calls CoreUtils::setUpAuth, which configures the MyURY authentication constants
+ * 
  * @version 22052012
  * @author Lloyd Wallis <lpw@ury.org.uk> 
  * @package MyURY_Core
@@ -18,7 +31,6 @@ spl_autoload_register(function($class){
   }
 });
 set_exception_handler(function($e){});
-require_once 'Classes/Config.php';
 require_once 'Classes/MyURYException.php';
 
 //Initiate Database
