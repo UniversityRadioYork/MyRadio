@@ -1,0 +1,26 @@
+{% extends 'stripe.twig' %}
+
+{% block head %}
+  {% parent() %}
+<script src="js/myury.timeline.js"></script>
+{% endblock %}
+
+{% block stripecontent %}
+  <h2>{{profile_name}}</h2>
+  <div class="timelineContainer">
+  {% for event in timeline %}
+    <dl class="timelineMinor">
+      <dt id="{{event.timestamp}}">
+        <a>{{event.timestamp}}</a>
+      </dt>
+      <dd class="timelineEvent" id="{{event.timestamp}}EX" style="display: none; ">
+        {{profile_name}} {{event.message}}
+      </dd>
+    </dl>
+  {% endfor %}
+  </div>
+{% endblock %}
+{% block footer %}
+  {% parent() %}
+  <script>$.timeliner();</script>
+{% endblock %}
