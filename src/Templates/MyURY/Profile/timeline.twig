@@ -2,7 +2,7 @@
 
 {% block stripecontent %}
   <h2>{{profile_name}}</h2>
-  <div id="timelineContainer">
+  <div id="timelineContainer" class="clearfix">
   {% for event in timeline %}
     <dl class="timelineMinor">
       <dt id="{{ loop.index }}">
