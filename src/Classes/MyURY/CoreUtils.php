@@ -216,7 +216,7 @@ class CoreUtils {
         AND myury.act_permission.moduleid=myury.modules.moduleid
         AND myury.act_permission.serviceid=myury.services.serviceid
         AND myury.act_permission.typeid = public.l_action.typeid
-        ORDER BY yury.modules.name, myury.services.name');
+        ORDER BY myury.modules.name, myury.services.name');
   }
   
   /**
