@@ -1,6 +1,6 @@
 {% extends 'base.twig' %}
 {% block content %}
-<div class="content-stripe">
+<div id="content-stripe" class="clearfix">
   {% for notice in notices %}
     <div class="ui-state-{{notice.state}}"><span class="ui-icon ui-icon-{{notice.icon}}" style="float:left"></span>{{notice.message}}</div>
   {% endfor %}
