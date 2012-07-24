@@ -12,7 +12,7 @@ $('.twig-datatable').dataTable({
   },
   //model
   {
-    "sTitle": "Model"
+    "sTitle": "Module"
   },
   //action
   {
