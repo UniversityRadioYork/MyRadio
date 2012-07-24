@@ -22,7 +22,7 @@
         <span>{{ name }} - [Impersonating If Set]{% if timeslotname is not null %} - <a href="https://ury.york.ac.uk/portal/timeslot.php">{{ timeslotname }}</a>{% endif %}</span>
         <span class="fright"><a href="https://ury.york.ac.uk/portal/redir_out.php">Logout</a> | <a href="../">Members Internal</a></span>
       </header>
-      <div class="menu">
+      <div id="page">
         <h1 class="r">{{ title }}</h1>
 {% block content %}{% endblock %}
 {% block footer %}
