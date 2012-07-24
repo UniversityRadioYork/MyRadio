@@ -197,21 +197,24 @@ class CoreUtils {
   
   /**
    * Returns a list of all currently defined permissions on MyURY Service/Module/Action combinations.
+   *
+   * This has multiple UNIONS with similar queries so it gracefully deals with NULL values - the joins lose them.
+   * 
+   * @todo Is there a nicer way of doing this?
+   * 
    * @return Array A 2D Array, where each second dimensions is as follows:<br>
    * action: The name of the Action page<br>
    * module: The name of the Module the action is in<br>
    * service: The name of the Service the module is in<br>
    * permission: The name of the permission applied to that Service/Module/Action combination<br>
    * actpermissionid: The unique ID of this Service/Module/Action combination
+   * 
    */
   public static function getAllActionPermissions() {
     return Database::getInstance()->fetch_all(
       'SELECT actpermissionid,
-          myury.services.serviceid,
           myury.services.name AS service,
-          myury.modules.moduleid,
           myury.modules.name AS module,
-          myury.actions.actionid,
           myury.actions.name AS action,
           public.l_action.descr AS permission
           FROM myury.act_permission, myury.services, myury.modules, myury.actions, public.l_action
@@ -219,7 +222,34 @@ class CoreUtils {
         AND myury.act_permission.moduleid=myury.modules.moduleid
         AND myury.act_permission.serviceid=myury.services.serviceid
         AND myury.act_permission.typeid = public.l_action.typeid
-        ORDER BY myury.services.name ASC, myury.modules.name ASC');
+        
+        UNION
+        
+        SELECT actpermissionid,
+          myury.services.name AS service,
+          myury.modules.name AS module,
+          \'ALL ACTIONS\' AS action,
+          public.l_action.descr AS permission
+          FROM myury.act_permission, myury.services, myury.modules, public.l_action
+        WHERE myury.act_permission.moduleid=myury.modules.moduleid
+        AND myury.act_permission.serviceid=myury.services.serviceid
+        AND myury.act_permission.typeid = public.l_action.typeid
+        AND myury.act_permission.actionid IS NULL
+        
+        UNION
+        
+        SELECT actpermissionid,
+          myury.services.name AS service,
+          myury.modules.name AS module,
+          myury.actions.name AS action,
+          \'GLOBAL ACCESS\' AS permission
+          FROM myury.act_permission, myury.services, myury.modules, myury.actions
+        WHERE myury.act_permission.moduleid=myury.modules.moduleid
+        AND myury.act_permission.serviceid=myury.services.serviceid
+        AND myury.act_permission.actionid=myury.actions.actionid
+        AND myury.act_permission.typeid IS NULL
+        
+        ORDER BY service, module');
   }
   
   /**
