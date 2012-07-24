@@ -32,3 +32,11 @@ $('.twig-datatable').dataTable({
   "bPaginate": false
 }
 );
+
+$('.actionpermissions-delete-link').on('click', function() {
+  var id = $(this).parent('tr').children('td:first').attr('id');
+  console.log(id);
+  
+  $('<div title="Confirm Delete">Are you sure you want to remove this permission requirement? If this Action has no\n\
+other permission settings defined, it will no longer work.</div>').dialog({modal:true}).append('body');
+});
