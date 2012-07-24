@@ -18,9 +18,13 @@ $('.twig-datatable').dataTable({
   {
     "sTitle": "Action"
   },
-  //editlink
+  //permission
   {
-    "sTitle": "Remove",
+    "sTitle": "Required Permission"
+  },
+  //Remove link
+  {
+    "sTitle": "",
     "bSortable": false
   }
   ],
