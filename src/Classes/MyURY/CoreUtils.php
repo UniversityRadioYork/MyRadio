@@ -207,8 +207,11 @@ class CoreUtils {
   public static function getAllActionPermissions() {
     return Database::getInstance()->fetch_all(
       'SELECT actpermissionid,
+          myury.services.serviceid,
           myury.services.name AS service,
+          myury.modules.moduleid,
           myury.modules.name AS module,
+          myury.actions.actionid,
           myury.actions.name AS action,
           public.l_action.descr AS permission
           FROM myury.act_permission, myury.services, myury.modules, myury.actions, public.l_action
