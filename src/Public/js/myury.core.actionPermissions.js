@@ -47,6 +47,7 @@ other permission settings defined, it will no longer work.</div>').dialog({
         window.actionpermissionconfirmurl = null;
         $(this).dialog('close');
       }
-    }
+    },
+    width: 400
   });
 });
