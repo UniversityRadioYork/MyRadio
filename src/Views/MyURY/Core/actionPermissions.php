@@ -3,13 +3,16 @@
 /**
  * Render the Action Permissions management page
  * 
- * @todo Make delete button degrade gracefully?
  * @version 24072012
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package URY_Core
  */
 for ($i = 0; $i < sizeof($data); $i++) {
-  $data[$i]['del'] = '<a href="javascript:" class="actionpermissions-delete-link">Delete</a>';
+  $data[$i]['del'] = array(
+      'display' => 'text',
+      'url' => CoreUtils::makeURL('Core', 'delete', array('permissionid' => $data[$i]['actpermissionid'])),
+      'value' => 'Delete'
+      );
 }
 $form->setTemplate('MyURY/actionPermissions.twig')
         ->render(array(
