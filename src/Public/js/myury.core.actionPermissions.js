@@ -33,7 +33,8 @@ $('.twig-datatable').dataTable({
 }
 );
 
-$('.actionpermissions-delete-link').on('click', function() {
+$('td.column-del a').on('click', function(e) {
+  e.stopPropagation();
   var id = $(this).parent('tr').children('td:first').attr('id');
   console.log(id);
   
