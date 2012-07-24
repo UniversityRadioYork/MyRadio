@@ -247,5 +247,59 @@ class CoreUtils {
   public static function debug_for($userid, $message) {
     if ($_SESSION['memberid'] === $userid) echo '<p>'.$message.'</p>';
   }
+  
+  /**
+   * Returns the ID of a Service/Module combination, creating it if necessary
+   * @todo Document this
+   * @param type $service
+   * @param type $module
+   * @return type
+   */
+  public static function getModuleId($service, $module) {
+    $db = Database::getInstance();
+    $result = $db->fetch_column('SELECT moduleid FROM myury.modules WHERE serviceid=$1 AND name=$2',
+            array($service, $module));
+    
+    if (empty($result)) {
+      //The module needs creating
+      $result = $db->fetch_column('INSERT INTO myury.modules (serviceid, name) VALUES ($1, $2) RETURNING moduleid',
+              array($service, $module));
+    }
+    return $result[0];
+  }
+  
+  /**
+   * Returns the ID of a Service/Module/Action request, creating it if necessary
+   * @todo Document this
+   * @param type $module
+   * @param type $action
+   * @return type
+   */
+  public static function getActionId($module, $action) {
+    $db = Database::getInstance();
+    $result = $db->fetch_column('SELECT actionid FROM myury.actions WHERE moduleid=$1 AND name=$2',
+            array($module, $action));
+    
+    if (empty($result)) {
+      //The module needs creating
+      $result = $db->fetch_column('INSERT INTO myury.actions (moduleid, name) VALUES ($1, $2) RETURNING actionid',
+              array($module, $action));
+    }
+    return $result[0];
+  }
+  
+  /**
+   * Assigns a permission to a command
+   * @todo Document
+   * @param type $service
+   * @param type $module
+   * @param type $action
+   * @param type $permission
+   */
+  public static function addActionPermission($service, $module, $action, $permission) {
+    $db = Database::getInstance();
+    $db->query('INSERT INTO myury.act_permission (serviceid, moduleid, actionid, typeid)
+      VALUES ($1, $2, $3, $4)', array($service, $module, $action, $permission));
+  }
 
 }
