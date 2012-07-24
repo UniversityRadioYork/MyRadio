@@ -4,7 +4,6 @@
 <script type="text/javascript" src="js/myury.menu.js"></script>
 {% endblock %}
 {% block stripecontent %}
-<div id="menu-wrapper">
 {% for column in menu %}
 <div class="menu-column">
   <h2>{{ column.title }}</h2>
@@ -22,5 +21,4 @@
     {% endfor %}
   </div>
 {% endfor %}
-</div>
 {% endblock %}
