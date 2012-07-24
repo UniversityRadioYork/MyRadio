@@ -17,7 +17,7 @@
     {% endblock %}
     </head>
     <body>
-      <header id="bar">
+      <header class="bar">
         <span class="fleft"><a href="./">My<span class="r">((URY))</span></a> | {{serviceName}}</span>
         <span>{{ name }} - [Impersonating If Set]{% if timeslotname is not null %} - <a href="https://ury.york.ac.uk/portal/timeslot.php">{{ timeslotname }}</a>{% endif %}</span>
         <span class="fright"><a href="https://ury.york.ac.uk/portal/redir_out.php">Logout</a> | <a href="../">Members Internal</a></span>
@@ -27,7 +27,7 @@
 {% block content %}{% endblock %}
 {% block footer %}
       </div>
-      <footer>
+        <footer class="bar">
           <span class="fleft">Developed by <span class="r">((URY))</span> Computing 2011-2012.</span>
           <span class="fright"><a href="http://ury.york.ac.uk/">ury.org.uk</a></span>
       </footer>
