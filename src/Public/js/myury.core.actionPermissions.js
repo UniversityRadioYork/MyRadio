@@ -35,7 +35,7 @@ $('.twig-datatable').dataTable({
 
 $('td.column-del a').on('click', function(e) {
   e.preventDefault();
-  window.actionpermissionconfirmurl = $(this).attr('url');
+  window.actionpermissionconfirmurl = $(this).attr('href');
   $('<div title="Confirm Deletion">Are you sure you want to remove this permission requirement? If this Action has no\n\
 other permission settings defined, it will no longer work.</div>').dialog({
     modal:true,
