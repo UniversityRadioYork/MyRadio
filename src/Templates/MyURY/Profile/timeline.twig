@@ -1,5 +1,10 @@
 {% extends 'stripe.twig' %}
 
+{% block head %}
+  {% parent() %}
+  <script src="js/myury.timeline.js"></script>
+{% endblock %}
+
 {% block stripecontent %}
   <h2>{{profile_name}}</h2>
   <div id="timelineContainer" class="clearfix">
@@ -14,7 +19,7 @@
     </dl>
   {% endfor %}
   </div>
-  <script src="js/myury.timeline.js"></script>
+  
   <script>$.timeliner();</script>
 {% endblock %}
   
