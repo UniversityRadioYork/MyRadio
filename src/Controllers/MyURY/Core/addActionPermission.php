@@ -8,4 +8,4 @@
 
 require 'Models/MyURY/Core/actionPermissionsForm.php';
 
-print_r($form->readValue());
+print_r($form->readValues());
