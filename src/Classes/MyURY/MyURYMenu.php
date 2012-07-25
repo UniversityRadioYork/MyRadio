@@ -195,10 +195,10 @@ class MyURYMenu {
     $menu = array();
     foreach ($full as $item) {
       if ($this->userHasPermission($item)) {
-        $items[] = $item;
+        $menu[] = $item;
       }
     }
-    $this->cache->set($cache_key, 3600);
+    $this->cache->set($cache_key, $menu, 3600);
 
     return $menu;
   }
