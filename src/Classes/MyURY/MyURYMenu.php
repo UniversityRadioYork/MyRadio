@@ -94,8 +94,7 @@ class MyURYMenu {
       foreach ($items as $key => $item) {
         if (!isset($item['itemid']))
           continue; //Skip twigitems
-        array_merge($items[$key], $this->breakDownURL($item['url']));
-        print_r($this->breakDownURL($item['url']));
+        $items[$key] = array_merge($items[$key], $this->breakDownURL($item['url']));
       }
 
       //That'll do for now. Time to make the $menu
