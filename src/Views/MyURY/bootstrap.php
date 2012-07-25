@@ -7,4 +7,5 @@
  * @package MyURY_Core
  */
 $twig = CoreUtils::getTemplateObject();
-$twig->addVariable('serviceName', 'MyURY');
+$twig->addVariable('serviceName', 'MyURY')
+                ->addVariable('submenu', (new MyURYMenu())->getSubMenuForUser(CoreUtils::getModuleID($module), $member));
