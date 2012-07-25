@@ -8,11 +8,12 @@
 /**
  * Abstractor for the MyURY Menu
  * 
- * @depends Cache
- * @depends Database
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 21072012
  * @package MyURY_Core
+ * @uses \CacheProvider
+ * @uses \Database
+ * @uses \CoreUtils
  */
 class MyURYMenu {
 
@@ -31,8 +32,8 @@ class MyURYMenu {
   }
 
   /**
-   * Returns a customised MyURY menu for the given user
-   * @param \User $user
+   * Returns a customised MyURY menu for the *currently logged in* user
+   * @param \User $user The currently logged in User's User object
    * @return Array A complex Menu array array array array array
    */
   public function getMenuForUser(User $user) {
@@ -52,8 +53,7 @@ class MyURYMenu {
       foreach ($column['sections'] as $section) {
         $items = array();
         foreach ($section['items'] as $item) {
-          if (empty($item['action']) or
-                  CoreUtils::requirePermissionAuto($item['service'], $item['module'], $item['action'], false)) {
+          if ($this->userHasPermission($item)) {
             $items[] = $item;
           }
         }
@@ -71,10 +71,12 @@ class MyURYMenu {
   }
 
   /**
-   * Returns the entire MyURY Main Menu structure 
+   * Returns the entire MyURY Main Menu structure
+   * @todo Better Documentation
    */
-  public function getFullMenu() {
-    $menu = $this->cache->get('MyURYMenu_Menu_Full');
+  private function getFullMenu() {
+    $cache_key = 'MyURYMenu_Menu_Full';
+    $menu = $this->cache->get($cache_key);
     if ($menu === false) {
       //It's not cached. Let's generate it now
       $db = Database::getInstance();
@@ -92,10 +94,7 @@ class MyURYMenu {
       foreach ($items as $key => $item) {
         if (!isset($item['itemid']))
           continue; //Skip twigitems
-        $items[$key]['url'] = $this->parseURL($item['url']);
-        $items[$key]['service'] = $this->parseURL($item['url'], 'service');
-        $items[$key]['module'] = $this->parseURL($item['url'], 'module');
-        $items[$key]['action'] = $this->parseURL($item['url'], 'action');
+        array_merge($items[$key], $this->breakDownURL($item['url']));
       }
 
       //That'll do for now. Time to make the $menu
@@ -122,8 +121,85 @@ class MyURYMenu {
         $menu[] = $newColumn;
       }
       //Cache for a long, long while
-      $this->cache->set('MyURYMenu_Menu_Full', $menu);
+      $this->cache->set($cache_key, $menu);
     }
+    return $menu;
+  }
+
+  /**
+   * Gets all items for a module's submenu and puts them in an array.
+   * @param int $moduleid The id of the module to get items for
+   * @return Array An array that can be used by getSubMenuForUser() to build a submenu
+   */
+  private function getFullSubMenu($moduleid) {
+    $cache_key = 'MyURYMenu_Menu_' . $moduleid . '_Full';
+    $menu = $this->cache->get($cache_key);
+    if ($menu === false) {
+      //It's not cached. Let's generate it now
+      $db = Database::getInstance();
+
+      $items = $db->fetch_all('SELECT menumoduleid, title, url, description FROM myury.menu_module ORDER BY title ASC');
+      //Get permissions for each $item
+      foreach ($items as $key => $item) {
+        array_merge($items[$key], $this->breakDownURL($item['url']));
+      }
+
+      //Cache for a long, long while
+      $this->cache->set($cache_key, $items);
+    }
+    return $items;
+  }
+
+  /**
+   * Takes a $url database column entry, and breaks it into its components
+   * @param String $url A database-fetched menu item URL
+   * @return Array with four keys - 'url', 'service', 'module', 'action'. All are the String names, not IDs.
+   */
+  private function breakDownURL($url) {
+    return array(
+        'url' => $this->parseURL($url),
+        'service' => $this->parseURL($url, 'service'),
+        'module' => $this->parseURL($url, 'module'),
+        'action' => $this->parseURL($url, 'action')
+    );
+  }
+  
+  /**
+   * Check if user has permission to see this menu item
+   * @param Array $item A MyURYMenu Menu Item to check permissions for. Should have been passed through
+   * breadDownURL() previously.
+   * @return boolean Whether the user can see this item
+   */
+  private function userHasPermission($item) {
+    return empty($item['action']) or
+              CoreUtils::requirePermissionAuto($item['service'], $item['module'], $item['action'], false);
+  }
+
+  /**
+   * @todo Document
+   * @param type $moduleid
+   * @param \User $user The currently logged in User's User object
+   * @return array
+   */
+  public function getSubMenuForUser($moduleid, User $user) {
+    $cache_key = 'MyURYMenu_Menu_' . $moduleid . '_' . $user->getID();
+    //Check if it's cached
+    $cache = $this->cache->get($cache_key);
+    if ($cache !== false)
+      return $cache;
+
+    //Okay, it isn't cached. Maybe at least the menu result set is
+    $full = $this->getFullSubMenu($moduleid);
+
+    //Iterate over the Full Menu, creating a user menu
+    $menu = array();
+    foreach ($full as $item) {
+      if ($this->userHasPermission($item)) {
+        $items[] = $item;
+      }
+    }
+    $this->cache->set($cache_key, 3600);
+
     return $menu;
   }
 
