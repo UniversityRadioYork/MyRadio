@@ -143,10 +143,45 @@ class User extends ServiceAPI {
         (till_date IS NULL OR till_date > now()- interval \'1 month\'))',
             array($memberid));
     
-    //Get the user's training and demoed status
-    /**
-     * @todo this bit 
-     */
+    //Get the user's training status
+    $this->studio_trained = (bool)(self::$db->num_rows('SELECT completeddate FROM public.member_presenterstatus
+      WHERE memberid=$1 AND presenterstatusid=1
+      AND memberpresenterstatusid > (SELECT memberpresenterstatusid FROM public.member_presenterstatus
+        WHERE presenterstatusid=10 AND memberid=$1
+        UNION SELECT 0) LIMIT 1',
+            array($this->memberid)) === 1);
+    
+    //Get the user's demoed status
+    $this->studio_trained = (bool)(self::$db->num_rows('SELECT completeddate FROM public.member_presenterstatus
+      WHERE memberid=$1 AND presenterstatusid=2
+      AND memberpresenterstatusid > (SELECT memberpresenterstatusid FROM public.member_presenterstatus
+        WHERE presenterstatusid=9 AND memberid=$1
+        UNION SELECT 0) LIMIT 1',
+            array($this->memberid)) === 1);
+  }
+  
+  /**
+   * Returns if the user is Studio Trained
+   * @return boolean
+   */
+  public function isStudioTrained() {
+    return $this->studio_trained;
+  }
+  
+  /**
+   * Returns if the user is Studio Demoed
+   * @return boolean
+   */
+  public function isStudioDemoed() {
+    return $this->studio_demoed;
+  }
+  
+  /**
+   * @todo Write this
+   * @return boolean
+   */
+  public function hasShow() {
+    return true;
   }
   
   /**
