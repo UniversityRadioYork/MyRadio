@@ -13,4 +13,10 @@ $twig->setTemplate('MyURY/menu.twig')
         ->addVariable('menu', $menu)
         ->addVariable('clickthrough_en', $new_news)
         ->addVariable('clickthrough_msg', $new_news_msg)
+        /**
+         * This is some bonus stuff for the Get On Air item
+         */
+        ->addVariable('studio_trained', $member->isStudioTrained())
+        ->addVariable('studio_demoed', $member->isStudioDemoed())
+        ->addVariable('has_show', $member->hasShow())
         ->render();
