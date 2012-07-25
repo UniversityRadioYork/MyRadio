@@ -1,6 +1,13 @@
-<li{% if not studio_trained %} class="menu-checklist-done"{% endif %}>
+<li{% if studio_trained %} class="menu-checklist-done"{% endif %}>
   <a href="?module=training&action=studiolectures" title="The first stage to getting on air is going to a short lecture about the studio">Get Studio Trained</a>
 </li>
-<li class="{% if studio_demoed %}menu-checklist-done{% elseif not studio_trained %}menu-checklist-disabled{% endif %}">
+<li class="{% if studio_demoed %}menu-checklist-done {% elseif not studio_trained %} menu-checklist-disabled{% endif %}">
   <a href="?module=training&action=demos" title="Once you know how to use the studio, you need to do a 30 minute demonstration of your knowledge to a <span class='r'>((URY))</span> Certified Trainer">Get Demoed</a>
 </li>
+{% if studio_demoed %}
+<li>
+  <a href="?module=Scheduler&action=createShow" title="{% if has_show %}You've passed all the stages of training. Now it's time to apply for your very first show! {%
+else
+%}New term? One show a term not enough? Click here to apply for another show.{% endif %}">Apply for a Show</a>
+</li>
+{% endif %}
