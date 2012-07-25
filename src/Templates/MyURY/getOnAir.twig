@@ -2,7 +2,11 @@
   <a href="?module=Training&action=studiolectures" title="The first stage to getting on air is going to a short lecture about using the studio">Get Studio Trained</a>
 </li>
 <li class="{% if studio_demoed %}menu-checklist-done {% elseif not studio_trained %} menu-checklist-disabled{% endif %}">
-  <a href="?module=Training&action=demos" title="Once you know how to use the studio, you need to do a 30 minute demonstration of your knowledge to a <span class='r'>((URY))</span> Certified Trainer">Get Demoed</a>
+  {% if studio_trained %}
+    <a href="?module=Training&action=demos" title="Once you know how to use the studio, you need to do a 30 minute demonstration of your knowledge to a <span class='r'>((URY))</span> Certified Trainer">Get Demoed</a>
+  {% else %}
+    <a href="javascript:" title="Do a 30 minute off-air demo in the studio to prove your broadcasting prowess. You need to attend a studio training session first.">Get Demoed</a>
+  {% endif %}
 </li>
 {% if studio_demoed %}
 <li>
