@@ -95,6 +95,7 @@ class MyURYMenu {
         if (!isset($item['itemid']))
           continue; //Skip twigitems
         array_merge($items[$key], $this->breakDownURL($item['url']));
+        print_r($this->breakDownURL($item['url']));
       }
 
       //That'll do for now. Time to make the $menu
@@ -138,7 +139,8 @@ class MyURYMenu {
       //It's not cached. Let's generate it now
       $db = Database::getInstance();
 
-      $items = $db->fetch_all('SELECT menumoduleid, title, url, description FROM myury.menu_module ORDER BY title ASC');
+      $items = $db->fetch_all('SELECT menumoduleid, title, url, description FROM myury.menu_module
+        WHERE moduleid=$1 ORDER BY title ASC', array($moduleid));
       //Get permissions for each $item
       foreach ($items as $key => $item) {
         array_merge($items[$key], $this->breakDownURL($item['url']));
