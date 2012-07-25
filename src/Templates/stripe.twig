@@ -7,7 +7,7 @@
   {% block stripecontent %}{% endblock %}
     <menu id="stripe-module-submenu" style="width: 200px; height: auto; border: 1px solid #000; border-radius: 5px; float: right">
     {% for item in submenu %}
-        <li><a href="{{item.url}}" title="{{item.title}}">{{item.value}}</a></li>
+        <li><a href="{{item.url}}" title="{{item.description}}">{{item.title}}</a></li>
     {% endfor %}
       </menu>
     </div>
