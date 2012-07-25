@@ -4,7 +4,7 @@ require_once 'Interfaces/TemplateEngine.php';
  * Singleton class for the Twig template engine
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 22052012
+ * @version 25072012
  * @depends Config
  * @package MyURY_Core
  */
@@ -15,6 +15,7 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
   
   /**
    * Cannot be private - parent does not allow it
+   * @todo Better Documentation
    */
   public function __construct() {
     $twig_loader = new Twig_Loader_Filesystem(__DIR__.'/../Templates/');
@@ -32,7 +33,7 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
    * Registers a new variable to be passed to the template
    * @param String $name The name of the variable
    * @param mixed $value The value of the variable - literally any valid type
-   * @return URYTwig This for chaining
+   * @return \URYTwig This for chaining
    */
   public function addVariable($name, $value) {
     if ($name === 'notices') {
@@ -44,10 +45,12 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
   
   public function addInfo($message, $icon = 'info') {
     $this->contextVariables['notices'][] = array('icon' => $icon, 'message' => $message, 'state' => 'highlight');
+    return $this;
   }
   
   public function addError($message, $icon = 'alert') {
     $this->contextVariables['notices'][] = array('icon' => $icon, 'message' => $message, 'state' => 'error');
+    return $this;
   }
   
   /**
