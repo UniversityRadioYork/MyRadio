@@ -335,5 +335,15 @@ class CoreUtils {
     $db->query('INSERT INTO myury.act_permission (serviceid, moduleid, actionid, typeid)
       VALUES ($1, $2, $3, $4)', array($service, $module, $action, $permission));
   }
+  
+  /**
+   * Returns the ID of the given Module
+   * @param String $module The name of the module to get the ID for
+   * @return int The module's ID
+   */
+  public static function getModuleID($module) {
+    $db = Database::getInstance();
+    return (int)$db->fetch_row('SELECT moduleid FROM myury.modules WHERE title=$1 LIMIT 1', array($module));
+  }
 
 }
