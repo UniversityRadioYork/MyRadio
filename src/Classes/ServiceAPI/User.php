@@ -144,12 +144,12 @@ class User extends ServiceAPI {
             array($memberid));
     
     //Get the user's training status
-    $this->studio_trained = (bool)(self::$db->num_rows('SELECT completeddate FROM public.member_presenterstatus
+    $this->studio_trained = (bool)(self::$db->num_rows(self::$db->query('SELECT completeddate FROM public.member_presenterstatus
       WHERE memberid=$1 AND presenterstatusid=1
       AND memberpresenterstatusid > (SELECT memberpresenterstatusid FROM public.member_presenterstatus
         WHERE presenterstatusid=10 AND memberid=$1
         UNION SELECT 0) LIMIT 1',
-            array($this->memberid)) === 1);
+            array($this->memberid))) === 1);
     
     //Get the user's demoed status
     $this->studio_trained = (bool)(self::$db->num_rows(self::$db->query('SELECT completeddate FROM public.member_presenterstatus
