@@ -19,7 +19,7 @@
  * @todo Remove hardcoded value
  */
 if (CoreUtils::hasPermission(270)) {
-  require 'Views/MyURY/brokerVersion.php';
+  require 'Controllers/MyURY/brokerVersion.php';
 } else {
   $path = CoreUtils::getServiceVersionForUser(CoreUtils::getServiceID($service), $member);
   if ($path === false
