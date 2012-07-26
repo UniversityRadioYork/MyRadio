@@ -45,11 +45,6 @@ require_once 'shibbobleh_client.php';
  */
 require_once 'Classes/MyURY/CoreUtils.php';
 /**
- * The Service Broker decides what version of a Service the user has access to. This includes MyURY, so gets added
- * here.
- */
-require_once 'Controllers/service_broker.php';
-/**
  * Load up the general Configurables - this includes things like the Database connection settings, the CacheProvider
  * to use and whether debug mode is enabled.
  */
@@ -77,6 +72,13 @@ require 'Models/Core/api.php';
 $module = (isset($_REQUEST['module']) ? $_REQUEST['module'] : 'Core');
 $action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : 'default');
 $service = (isset($_REQUEST['service']) ? $_REQUEST['service'] : 'MyURY');
+
+/**
+ * The Service Broker decides what version of a Service the user has access to. This includes MyURY, so gets added
+ * here.
+ * @todo Discuss or document the parts of MyURY core that cannot be brokered, see if this can be moved earlier
+ */
+require_once 'Controllers/service_broker.php';
 
 /**
  * If it is a MyURY request, check it exists first
