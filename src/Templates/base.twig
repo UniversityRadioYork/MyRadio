@@ -18,8 +18,7 @@
     </head>
     <body>
       <header class="bar">
-        <span class="fleft"><a href="./">My<span class="logotype">((URY))</span></a> | {{serviceName}}
-{% if not serviceVersion == 'Stable' %}[{{serviceVersion}}]{% endif %}</span>
+        <span class="fleft"><a href="./">My<span class="logotype">((URY))</span></a> | {{serviceName}} [{{serviceVersion}}]</span>
         <span>{{ name }} - [Impersonating If Set]{% if timeslotname is not null %} - <a href="https://ury.york.ac.uk/portal/timeslot.php">{{ timeslotname }}</a>{% endif %}</span>
         <span class="fright"><a href="https://ury.york.ac.uk/portal/redir_out.php">Logout</a></span>
       </header>
