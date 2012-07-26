@@ -370,7 +370,7 @@ class CoreUtils {
           WHERE serviceid=$1)
          )', array($serviceid, $user->getID()));
     
-    self::debug_for($serviceid);
+    self::debug_for(7449, $serviceid);
     if (empty($result)) return self::getDefaultServiceVersion($serviceid); else return $result;
   }
   
