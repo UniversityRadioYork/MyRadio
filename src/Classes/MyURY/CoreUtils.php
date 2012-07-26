@@ -374,12 +374,15 @@ class CoreUtils {
   }
   
   /**
-   * @todo Write this.
+   * @todo Document this.
    * @param type $serviceid
    * @return boolean
    */
   public static function getDefaultServiceVersion($serviceid) {
-    return false;
+    $db = Database::getInstance();
+    
+    return $db->fetch_one('SELECT version, path FROM myury.services_versions WHERE serviceid=$1 AND default=\'t\'
+      LIMIT 1', array($serviceid));
   }
 
 }
