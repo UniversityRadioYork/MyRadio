@@ -357,17 +357,29 @@ class CoreUtils {
   }
   
   /**
-   * @todo Document
+   * @todo Document this
    * @param type $serviceid
    * @param User $user
    */
   public static function getServiceVersionForUser($serviceid, User $user) {
     $db = Database::getInstance();
-    return $db->fetch_one('SELECT version, path FROM myury.services_versions
+    
+    $result = $db->fetch_one('SELECT version, path FROM myury.services_versions
       WHERE serviceid IN (SELECT serviceid FROM myury.services_versions_member
         WHERE memberid=$2 AND serviceversionid IN (SELECT serviceversionid FROM myury.services_versions
           WHERE serviceid=$1)
          )', array($serviceid, $user->getID()));
+    
+    if (empty($result)) return self::getDefaultServiceVersion($serviceid); else return $result;
+  }
+  
+  /**
+   * @todo Write this.
+   * @param type $serviceid
+   * @return boolean
+   */
+  public static function getDefaultServiceVersion($serviceid) {
+    return false;
   }
 
 }
