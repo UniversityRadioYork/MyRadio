@@ -363,7 +363,7 @@ class CoreUtils {
    */
   public static function getServiceVersionForUser($serviceid, User $user) {
     $db = Database::getInstance();
-    return $db->fetch_one('SELECT name, path FROM myury.services_versions
+    return $db->fetch_one('SELECT version, path FROM myury.services_versions
       WHERE serviceid IN (SELECT serviceid FROM myury.services_versions_member
         WHERE memberid=$2 AND serviceversionid IN (SELECT serviceversionid FROM myury.services_versions
           WHERE serviceid=$1)
