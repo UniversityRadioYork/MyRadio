@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This is the Root Controller - it is the backbone of every request, preparing resources and passing the request onto
  * the necessary handler.
@@ -18,7 +19,6 @@
  * @uses \Database
  * @uses \CoreUtils
  */
-
 /**
  * Turn on Error Reporting for the base start. Once the Config object is loaded this is altered based on the
  * Config::$debug setting
@@ -32,7 +32,7 @@ date_default_timezone_get('Europe/London');
 /**
  * Sets the include path to include MyURY at the end - makes for nicer includes
  */
-ini_set('include_path', str_replace('Controllers','',__DIR__).':'.ini_get('include_path'));
+ini_set('include_path', str_replace('Controllers', '', __DIR__) . ':' . ini_get('include_path'));
 
 /**
  * The Shibbobleh Client checks whether the user is authenticated, asking them to login via its captive portal
@@ -45,6 +45,11 @@ require_once 'shibbobleh_client.php';
  */
 require_once 'Classes/MyURY/CoreUtils.php';
 /**
+ * The Service Broker decides what version of a Service the user has access to. This includes MyURY, so gets added
+ * here.
+ */
+require_once 'Controllers/service_broker.php';
+/**
  * Load up the general Configurables - this includes things like the Database connection settings, the CacheProvider
  * to use and whether debug mode is enabled.
  */
@@ -55,7 +60,7 @@ require_once 'Classes/Config.php';
  * 269 is AUTH_SHOWERRORS - the constants aren't initialised yet
  */
 if (!Config::$display_errors && !CoreUtils::hasPermission(269)) {
-  ini_set('display_errors','Off');
+  ini_set('display_errors', 'Off');
 }
 
 /**
@@ -92,25 +97,9 @@ if ($service === 'MyURY' && !CoreUtils::isValidController($module, $action)) {
 CoreUtils::requirePermissionAuto($service, $module, $action);
 
 /**
- * If a Service is defined, it needs to be passed over to our Service Broker - this works out what version of the
- * external service the User should be passed to and provides a basic framework of tools they can use.
- * 
- * @todo Potentially abstract further so after this stage different builds of MyURY could be used
+ * Include the Global Bootstrap for the Service - This is just sets up another autoloader and possibly
+ * some more variables. Just take a look at it to see more.
  */
-if ($service !== 'MyURY') {
-  //Oooh... This isn't directly managed by MyURY. Send it to the Service Broker
-  require 'Controllers/service_broker.php';
-}
-/*
- * The default service is requested - that's MyURY!
- * Check if the module/action combination is valid
- */
-else {
-  /**
-   * Include the Global Bootstrap for the MyURY Service - This is just sets up another autoloader and possibly
-   * some more variables. Just take a look at it to see more.
-   */
-  require 'Controllers/MyURY/bootstrap.php';
-  //Include the requested action
-  require 'Controllers/MyURY/'.$module.'/'.$action.'.php';
-}
+require 'Controllers/'.$service.'/bootstrap.php';
+//Include the requested action
+require 'Controllers/'.$service.'/' . $module . '/' . $action . '.php';

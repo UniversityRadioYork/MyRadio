@@ -283,6 +283,26 @@ class CoreUtils {
   }
   
   /**
+   * Returns the ID of a Service, creating it if necessary
+   * @todo Document this
+   * @param type $service
+   * @param type $module
+   * @return type
+   */
+  public static function getServiceId($service) {
+    $db = Database::getInstance();
+    $result = $db->fetch_column('SELECT serviceid FROM myury.services WHERE name=$1',
+            array($service));
+    
+    if (empty($result)) {
+      //The service needs creating
+      $result = $db->fetch_column('INSERT INTO myury.services (name) VALUES ($1) RETURNING serviceid',
+              array($service));
+    }
+    return $result[0];
+  }
+  
+  /**
    * Returns the ID of a Service/Module combination, creating it if necessary
    * @todo Document this
    * @param type $service
@@ -334,6 +354,20 @@ class CoreUtils {
     $db = Database::getInstance();
     $db->query('INSERT INTO myury.act_permission (serviceid, moduleid, actionid, typeid)
       VALUES ($1, $2, $3, $4)', array($service, $module, $action, $permission));
+  }
+  
+  /**
+   * @todo Document
+   * @param type $serviceid
+   * @param User $user
+   */
+  public static function getServiceVersionForUser($serviceid, User $user) {
+    $db = Database::getInstance();
+    return $db->fetch_one('SELECT name, path FROM myury.services_versions
+      WHERE serviceid IN (SELECT serviceid FROM myury.services_versions_member
+        WHERE memberid=$2 AND serviceversionid IN (SELECT serviceversionid FROM myury.services_versions
+          WHERE serviceid=$1)
+         )', array($serviceid, $user->getID()));
   }
 
 }
