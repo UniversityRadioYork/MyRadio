@@ -26,7 +26,7 @@ if (CoreUtils::hasPermission(270)) {
       //MyURY is a special case - *everyone* has this build by default
       && $service !== 'MyURY') {
     //This user doesn't have permission to use that Service
-    require 'Controllers/Error/403.php';
+    require 'Controllers/Errors/403.php';
     exit;
   }
   $service_version = $path['version'];
