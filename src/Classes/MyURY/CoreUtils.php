@@ -370,7 +370,6 @@ class CoreUtils {
           WHERE serviceid=$1)
          )', array($serviceid, $user->getID()));
     
-    self::debug_for(7449, $serviceid);
     if (empty($result)) return self::getDefaultServiceVersion($serviceid); else return $result;
   }
   
@@ -382,7 +381,7 @@ class CoreUtils {
   public static function getDefaultServiceVersion($serviceid) {
     $db = Database::getInstance();
     
-    return $db->fetch_one('SELECT version, path FROM myury.services_versions WHERE serviceid=$1 AND \'default\'=\'t\'
+    return $db->fetch_one('SELECT version, path FROM myury.services_versions WHERE serviceid=$1 AND is_default=true
       LIMIT 1', array($serviceid));
   }
 
