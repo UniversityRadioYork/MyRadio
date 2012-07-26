@@ -381,7 +381,7 @@ class CoreUtils {
   public static function getDefaultServiceVersion($serviceid) {
     $db = Database::getInstance();
     
-    return $db->fetch_one('SELECT version, path FROM myury.services_versions WHERE serviceid=$1 AND default=\'t\'
+    return $db->fetch_one('SELECT version, path FROM myury.services_versions WHERE serviceid=$1 AND \'default\'=\'t\'
       LIMIT 1', array($serviceid));
   }
 
