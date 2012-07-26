@@ -29,6 +29,7 @@ if (CoreUtils::hasPermission(270)) {
     require 'Controllers/Errors/403.php';
     exit;
   }
+  print_r($path);
   $service_version = $path['version'];
   set_include_path($path['path'].':'.get_include_path());
   unset($path);
