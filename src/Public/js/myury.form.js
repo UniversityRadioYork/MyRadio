@@ -124,7 +124,7 @@ $(document).ready(function() {
     var newid = origid + $('#'+origid+'-counter').val();
     $('#'+origid+'-counter').val($('#'+origid+'-counter').val()+1);
     
-    var clone = $('#origid').clone(true).attr('id', newid).val('');
+    var clone = $('#'+origid).clone(true).attr('id', newid).val('');
     $(clone).appendTo('#'+origid+'-container');
   });
 });
