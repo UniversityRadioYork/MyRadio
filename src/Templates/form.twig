@@ -13,7 +13,7 @@
         {% include ('FormFields/FieldType_'~field.type~'.twig') %}
           {% if field.repeating %}
           <div class="formfield-add-link"><a href="javascript:" id="{{frm_name}}-{{field.name}}-repeater">Add another...</a></div>
-          <input type="hidden" name="{{frm_name}}-{{field.name}}-counter" value="0" />
+          <input type="hidden" id="{{frm_name}}-{{field.name}}-counter" value="0" />
           {% endif %}
         </div>
     {% endfor %}
