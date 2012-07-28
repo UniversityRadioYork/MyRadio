@@ -404,7 +404,8 @@ class CoreUtils {
     
     return array_merge($news,
             array('seen' => $db->fetch_one('SELECT seen FROM public.member_news_feed
-              WHERE newsentryid=$1 AND memberid=$2 LIMIT 1', array($newsfeedid, $user->getID()))
+              WHERE newsentryid=$1 AND memberid=$2 LIMIT 1', array($newsfeedid, $user->getID())),
+                'posted' => CoreUtils::happyTime($news['posted'])
             ));
   }
 
