@@ -398,6 +398,7 @@ class CoreUtils {
     $news = $db->fetch_one('SELECT newsentryid, fname || \' \' || sname AS author, timestamp AS posted, content
       FROM public.news_feed, public.member
       WHERE public.news_feed.feedid=$1 AND public.news_feed.memberid = public.member.memberid
+      AND revoked=false
       ORDER BY timestamp DESC LIMIT 1', array($newsfeedid));
     
     if ($user === null) return $news;
