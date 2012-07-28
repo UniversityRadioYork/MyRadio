@@ -384,5 +384,28 @@ class CoreUtils {
     return $db->fetch_one('SELECT version, path FROM myury.services_versions WHERE serviceid=$1 AND is_default=true
       LIMIT 1', array($serviceid));
   }
+  
+  /**
+   * Returns the latest news item for the given feed, and if given a user, the timestamp of when they saw it
+   * @param id $newsfeedid The ID of the newsfeed to check
+   * @param User $user The User object to check if seen. Default null, won't return a seen column.
+   * @return [[DOCUMENT]]
+   * @todo Document return
+   */
+  public static function getNewsItem($newsfeedid, User $user = null) {
+    $db = Database::getInstance();
+    
+    $news = $db->fetch_one('SELECT newsentryid, fname || \' \' sname AS name, timestamp, content, \'\' AS seen
+      FROM public.news_feed, public.member
+      WHERE public.news_feed.feedid=$1 AND public.news_feed.memberid = public.member.memberid
+      ORDER BY timestamp DESC LIMIT 1', array($newsfeedid));
+    
+    if ($user === null) return $news;
+    
+    return array_merge($news,
+            $db->fetch_one('SELECT seen FROM public.member_news_feed
+              WHERE newsentryid=$1 AND memberid=$2 LIMIT 1', array($newsfeedid, $user->getID()))
+            );
+  }
 
 }
