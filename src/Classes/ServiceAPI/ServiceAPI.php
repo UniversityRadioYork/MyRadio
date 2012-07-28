@@ -53,7 +53,7 @@ abstract class ServiceAPI implements IServiceAPI {
     self::initCache();
   }
   
-  public function getInstance($itemid = -1) {
+  public static function getInstance($itemid = -1) {
     throw new MyURYException(__CLASS__ . ' is not an initialisable Service API!', MyURYException::$fatal);
   }
 }
