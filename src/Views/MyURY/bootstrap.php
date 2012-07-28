@@ -7,6 +7,8 @@
  * @package MyURY_Core
  */
 $twig = CoreUtils::getTemplateObject();
-$twig->addVariable('serviceName', 'MyURY')
+$twig->addVariable('serviceName', $service)
      ->addVariable('serviceVersion', $service_version)
-     ->addVariable('submenu', (new MyURYMenu())->getSubMenuForUser(CoreUtils::getModuleID(1, $module), $member));
+     ->addVariable('submenu', (new MyURYMenu())->getSubMenuForUser(CoreUtils::getModuleID(1, $module), $member))
+     ->setTemplate('stripe.twig')
+     ->addVariable('title', $module);

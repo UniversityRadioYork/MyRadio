@@ -15,6 +15,4 @@ if (isset($_GET['memberid'])) {
   $name = User::getInstance()->getName();
 }
 
-$twig->setTemplate('stripe.twig')
-        ->addVariable('title', 'Profiles')
-        ->addVariable('profile_name', $name);
+$twig->addVariable('profile_name', $name);
