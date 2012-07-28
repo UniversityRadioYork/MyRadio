@@ -409,5 +409,17 @@ class CoreUtils {
                 'posted' => CoreUtils::happyTime($news['posted'])
             ));
   }
+  
+  /**
+   * @todo Document this
+   * @param type $newsentryid
+   * @param User $user
+   */
+  public static function markNewsAsRead($newsentryid, User $user) {
+    $db = Database::getInstance();
+    
+    $db->query('INSERT INTO public.member_news_feed (newsentryid, memberid) VALUES ($1, $2)',
+            array($newsentryid, $user->getID()));
+  }
 
 }
