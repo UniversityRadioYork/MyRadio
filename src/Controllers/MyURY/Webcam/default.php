@@ -6,5 +6,5 @@
  * @version 28072012
  * @package MyURY_Webcam
  */
-$streams = MyURY_Webcam::getStreams(User::getInstance());
+$streams = MyURY_Webcam::getStreams();
 require 'Views/MyURY/Webcam/streams.php';
