@@ -6,7 +6,7 @@
 {% block stripecontent %}
 <div class="webcam-grid-container">
   {% for stream in streams %}
-    <figure class="webcam-stream-container" id="webcam-stream-{{stream.streamid}}">
+    <figure class="webcam-stream-container" id="webcam-stream-{{stream.streamid}}" style="display:inline-block">
       <img src="{{stream.liveurl}}" class="webcam-stream" style="width:40%" />
       <figcaption>{{stream.streamname}}</figcaption>
     </figure>
