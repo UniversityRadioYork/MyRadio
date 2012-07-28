@@ -395,7 +395,7 @@ class CoreUtils {
   public static function getNewsItem($newsfeedid, User $user = null) {
     $db = Database::getInstance();
     
-    $news = $db->fetch_one('SELECT newsentryid, fname || \' \' || sname AS name, timestamp, content, \'\' AS seen
+    $news = $db->fetch_one('SELECT newsentryid, fname || \' \' || sname AS name, timestamp, content
       FROM public.news_feed, public.member
       WHERE public.news_feed.feedid=$1 AND public.news_feed.memberid = public.member.memberid
       ORDER BY timestamp DESC LIMIT 1', array($newsfeedid));
@@ -403,9 +403,9 @@ class CoreUtils {
     if ($user === null) return $news;
     
     return array_merge($news,
-            $db->fetch_one('SELECT seen FROM public.member_news_feed
+            array('seen' => $db->fetch_one('SELECT seen FROM public.member_news_feed
               WHERE newsentryid=$1 AND memberid=$2 LIMIT 1', array($newsfeedid, $user->getID()))
-            );
+            ));
   }
 
 }
