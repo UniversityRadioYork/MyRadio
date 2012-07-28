@@ -2,11 +2,11 @@
 {% block head %}
 {{ parent() }}
 <script type="text/javascript" src="js/myury.menu.js"></script>
+{% if news_clickthrough %}
+<script type="text/javascript" src="js/myury.news.clickthrough.js"></script>
+{% endif %}
 {% endblock %}
 {% block stripecontent %}
-{% if news_clickthrough %}
-[[CLICKTHROUGH MODE]]
-{% endif %}
 <div class="myury-news-alert ui-widget-content">
   {{news.content | raw}}
     <footer><author>{{news.author}}</author> on {{news.posted}}</footer>
