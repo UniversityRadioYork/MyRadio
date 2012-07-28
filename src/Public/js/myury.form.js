@@ -120,6 +120,7 @@ $(document).ready(function() {
    * Repeating elements
    */
   $('div.formfield-add-link a').click(function() {
+    console.log($(this));
     var origid = $(this).attr('id').replace(/-repeater$/, '');
     var newid = origid + $('#'+origid+'-counter').val();
     $('#'+origid+'-counter').val($('#'+origid+'-counter').val()+1);
