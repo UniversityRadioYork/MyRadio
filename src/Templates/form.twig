@@ -11,6 +11,10 @@
     {% for field in frm_fields %}
       <div id="{{frm_name}}-{{field.name}}-container" class="{{field.class}}">
         {% include ('FormFields/FieldType_'~field.type~'.twig') %}
+          {% if field.repeating %}
+          <div class="formfield-add-link"><a href="javascript:" id="{{frm_name}}-{{field.name}}-repeater">Add another...</a></div>
+          <input type="hidden" name="{{frm_name}}-{{field.name}}-counter" value="0" />
+          {% endif %}
         </div>
     {% endfor %}
         <input type="submit" value="Submit" />

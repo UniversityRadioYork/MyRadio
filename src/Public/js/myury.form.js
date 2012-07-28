@@ -115,4 +115,16 @@ $(document).ready(function() {
       form.submit();
     }
   });
+  
+  /**
+   * Repeating elements
+   */
+  $('div.formfield-add-link a').click(function() {
+    var origid = $(this).attr('id').replace(/-repeater$/, '');
+    var newid = origid + $('#'+origid+'-counter').val();
+    $('#'+origid+'-counter').val($('#'+origid+'-counter').val()+1);
+    
+    var clone = $('#origid').clone(true).attr('id', newid).val('');
+    $(clone).appendTo('#'+origid+'-container');
+  });
 });
