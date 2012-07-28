@@ -4,13 +4,13 @@
   {% for notice in notices %}
     <div class="ui-state-{{notice.state}}"><span class="ui-icon ui-icon-{{notice.icon}} fleft"></span>{{notice.message}}</div>
   {% endfor %}
-  {% block stripecontent %}{% endblock %}
-  {% if submenu|length > 0 %}
+    {% if submenu|length > 0 %}
     <menu id="stripe-module-submenu" style="width: 200px; height: auto; border: 1px solid #000; border-radius: 5px; float: left">
     {% for item in submenu %}
         <li><a href="{{item.url}}" title="{{item.description}}">{{item.title}}</a></li>
     {% endfor %}
       </menu>
     {% endif %}
+  {% block stripecontent %}{% endblock %}
     </div>
 {% endblock %}
