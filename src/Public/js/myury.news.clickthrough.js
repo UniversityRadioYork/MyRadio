@@ -9,6 +9,7 @@ $(document).ready(function() {
     buttons: {
       'Continue': function() {
         alert('TODO: Mark read');
+        $(this).close();
       }
     },
     width: 600
