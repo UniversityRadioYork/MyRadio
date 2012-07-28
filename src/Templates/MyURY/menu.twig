@@ -4,6 +4,13 @@
 <script type="text/javascript" src="js/myury.menu.js"></script>
 {% endblock %}
 {% block stripecontent %}
+{% if news_clickthrough %}
+[[CLICKTHROUGH MODE]]
+{% endif %}
+<div class="myury-news-alert">
+  {{news.content | raw}}
+    <footer><author>{{news.author}}</author> on {{news.posted}}</footer>
+</div>
 {% for column in menu %}
 <div class="menu-column">
   <h2>{{ column.title }}</h2>

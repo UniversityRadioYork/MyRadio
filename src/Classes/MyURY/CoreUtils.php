@@ -395,7 +395,7 @@ class CoreUtils {
   public static function getNewsItem($newsfeedid, User $user = null) {
     $db = Database::getInstance();
     
-    $news = $db->fetch_one('SELECT newsentryid, fname || \' \' || sname AS name, timestamp, content
+    $news = $db->fetch_one('SELECT newsentryid, fname || \' \' || sname AS author, timestamp AS posted, content
       FROM public.news_feed, public.member
       WHERE public.news_feed.feedid=$1 AND public.news_feed.memberid = public.member.memberid
       ORDER BY timestamp DESC LIMIT 1', array($newsfeedid));
