@@ -124,8 +124,8 @@ $(document).ready(function() {
     var newid = origid + $('#'+origid+'-counter').val();
     $('#'+origid+'-counter').val($('#'+origid+'-counter').val()+1);
     
-    $('#'+origid).clone(true).attr('id', newid).val('').appendTo('#'+origid+'-container');
-    $('#'+origid+'-ui').clone(true).attr('id', newid+'-ui').val('').appendTo('#'+origid+'-container');
+    $('#'+origid).clone().attr('id', newid).val('').appendTo('#'+origid+'-container');
+    $('#'+origid+'-ui').clone().attr('id', newid+'-ui').val('').appendTo('#'+origid+'-container');
     $(document).ready();
   });
 });
