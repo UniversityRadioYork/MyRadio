@@ -46,4 +46,6 @@ $form->addField(
                             'explanation' => 'Select what weeks this term this show will be on air'
                         )
                 )
-);
+)->addField(
+        new MyURYFormField('Presenter', MyURYFormField::TYPE_MEMBER, array('repeating'=> true))
+        );
