@@ -10,6 +10,8 @@
       <img src="{{stream.liveurl}}" class="webcam-stream" />
       <figcaption>{{stream.streamname}}</figcaption>
     </figure>
-    {% endfor %}
-  </div>
+  {% endfor %}
+</div>
+<div class="ui-state-highlight" id="webcam-time-counter"><span class="ui-icon ui-icon-clock fleft"></span>
+  You've been watching the webcams for <span id="webcam-time-counter-value">not very long</span></div>
 {% endblock %}
