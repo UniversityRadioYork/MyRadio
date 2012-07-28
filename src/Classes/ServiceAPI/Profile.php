@@ -85,15 +85,4 @@ class Profile extends ServiceAPI {
     
     return self::$thisYearsMembers;
   }
-  
-  /**
-   * This method exists to satisfy the ServiceAPI requirement. It will throw a fatal error on use - the Profile API
-   * has no initialise purpose.
-   * 
-   * @param int $serviceObjectId Does nothing. Do what you want with it.
-   * @throws MyURYException Always throws a fata MyURYException
-   */
-  public static function getInstance($serviceObjectId = -1) {
-      throw new MyURYException('Something, Something, Something, Profile. Something, Something, Something, MyURY.');
-  }
 }
