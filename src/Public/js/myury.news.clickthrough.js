@@ -8,7 +8,11 @@ $(document).ready(function() {
     //Pretty button
     buttons: {
       'Continue': function() {
-        alert('TODO: Mark read');
+        $.ajax({
+          url: 'index.php?module=Core&action=a-readnews',
+          type: 'get',
+          data: 'newsentryid='.$(this).attr('id').replace(/newsentry\-/,'')
+        });
         $(this).dialog('close');
       }
     },

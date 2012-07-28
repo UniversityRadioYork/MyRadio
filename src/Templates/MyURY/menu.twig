@@ -7,7 +7,7 @@
 {% endif %}
 {% endblock %}
 {% block stripecontent %}
-<div class="myury-news-alert ui-widget-content" title="Latest News">
+<div class="myury-news-alert ui-widget-content" title="Latest News" id="newsentry-{{news.newsentryid}}">
   {{news.content | raw}}
     <footer><author>{{news.author}}</author> on {{news.posted}}</footer>
 </div>
