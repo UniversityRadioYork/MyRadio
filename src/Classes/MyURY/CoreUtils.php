@@ -402,8 +402,8 @@ class CoreUtils {
       ORDER BY timestamp DESC LIMIT 1', array($newsfeedid));
     
     return array_merge($news,
-            array('seen' => CoreUtils::happytime($db->fetch_one('SELECT seen FROM public.member_news_feed
-              WHERE newsentryid=$1 AND memberid=$2 LIMIT 1', array($newsfeedid, empty($user) ? 0 : $user->getID()))),
+            array('seen' => $db->fetch_one('SELECT seen FROM public.member_news_feed
+              WHERE newsentryid=$1 AND memberid=$2 LIMIT 1', array($newsfeedid, empty($user) ? 0 : $user->getID())),
                 'posted' => CoreUtils::happyTime($news['posted'])
             ));
   }
