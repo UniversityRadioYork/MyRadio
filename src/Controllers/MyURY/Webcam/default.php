@@ -7,5 +7,4 @@
  * @package MyURY_Webcam
  */
 $streams = MyURY_Webcam::getStreams();
-print_r($streams);
 require 'Views/MyURY/Webcam/streams.php';
