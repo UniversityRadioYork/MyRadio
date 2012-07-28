@@ -11,7 +11,7 @@
 class MyURY_Webcam extends ServiceAPI {
   
   public static function getStreams() {
-    return self::$db->query('SELECT * FROM webcam.streams ORDER BY streamid ASC');
+    return self::$db->fetch_all('SELECT * FROM webcam.streams ORDER BY streamid ASC');
   }
   
 }
