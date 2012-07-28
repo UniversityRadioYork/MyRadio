@@ -11,7 +11,7 @@ $(document).ready(function() {
         $.ajax({
           url: 'index.php?module=Core&action=a-readnews',
           type: 'get',
-          data: 'newsentryid='.($(this).attr('id').replace(/newsentry\-/,''))
+          data: 'newsentryid='+($(this).attr('id').replace(/newsentry\-/,''))
         });
         $(this).dialog('close');
       }
