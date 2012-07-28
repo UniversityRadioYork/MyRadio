@@ -126,5 +126,6 @@ $(document).ready(function() {
     
     $('#'+origid).clone(true).attr('id', newid).val('').appendTo('#'+origid+'-container');
     $('#'+origid+'-ui').clone(true).attr('id', newid+'-ui').val('').appendTo('#'+origid+'-container');
+    $(document).ready();
   });
 });
