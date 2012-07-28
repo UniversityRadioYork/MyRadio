@@ -9,7 +9,7 @@ $(document).ready(function() {
     buttons: {
       'Continue': function() {
         alert('TODO: Mark read');
-        $(this).close();
+        $(this).dialog('close');
       }
     },
     width: 600
