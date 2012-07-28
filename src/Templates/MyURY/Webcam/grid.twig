@@ -7,7 +7,7 @@
 <div class="webcam-grid-container">
   {% for stream in streams %}
     <figure class="webcam-stream-container" id="webcam-stream-{{stream.streamid}}">
-      <img src="{{stream.liveurl}}" class="webcam-stream" />
+      <img src="{{stream.liveurl}}" class="webcam-stream" style="width:40%" />
       <figcaption>{{stream.streamname}}</figcaption>
     </figure>
     {% endfor %}
