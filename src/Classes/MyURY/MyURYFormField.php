@@ -9,7 +9,7 @@
  * A collection of these is automatically created when building a MyURYForm
  * 
  * @package MyURY_Core
- * @version 21072012
+ * @version 28072012
  * @author Lloyd Wallis <lpw@ury.org.uk>
  */
 class MyURYFormField {
@@ -241,6 +241,15 @@ class MyURYFormField {
    * @var bool
    */
   private $enabled = true;
+  
+  /**
+   * Whether this MyURYFormField should be an auto-repeating Array. If this is true, a link is added to allow the
+   * user to create another instance of the element. The name will have [] added to it to make the submitted data
+   * an Array. The processing scripts should be prepared to accomodate for this.
+   * @todo Ensure all MyURYFormField Renderers support this option. Currently implemented on TYPE_MEMBER Only.
+   * @var type 
+   */
+  private $repeating = false;
 
   /**
    * Settings that cannot be altered by the $options parameter
@@ -261,7 +270,8 @@ class MyURYFormField {
    *   classes: An array of additional classes to add to the input field (default empty)<br>
    *   options: An array of additional settings that are specific to the field type (default empty)<br>
    *   value: The default value of the field when it is rendered (default none)<br>
-   *   enabled: Whether the field is enabled when the page is loaded (default true)  
+   *   enabled: Whether the field is enabled when the page is loaded (default true)<br>
+   *   repeating: Whether the MyURYFormField is self-repeatable i.e. can have mutliple values
    * @throws MyURYException If an attempt is made to set an $options value other than those listed above
    */
   public function __construct($name, $type, $options = array()) {
@@ -336,7 +346,8 @@ class MyURYFormField {
         'class'       => $this->getClasses(),
         'options'     => $options,
         'value'       => $this->value,
-        'enabled'     => $this->enabled
+        'enabled'     => $this->enabled,
+        'repeating'   => $this->repeating
     );
   }
   
@@ -367,7 +378,15 @@ class MyURYFormField {
       case self::TYPE_SELECT:
       case self::TYPE_RADIO:
       case self::TYPE_DAY:
-        return (int)$_REQUEST[$name];
+        //Deal with Arrays for repeated elements
+        if (is_array($_REQUEST[$name])) {
+          for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
+            $_REQUEST[$name][$i] = (int)$_REQUEST[$name][$i];
+            return $_REQUEST[$name];
+          }
+        } else {
+          return (int)$_REQUEST[$name];
+        }
         break;
       case self::TYPE_DATE:
       case self::TYPE_DATETIME:
