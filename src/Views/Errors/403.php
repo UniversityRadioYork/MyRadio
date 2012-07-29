@@ -23,6 +23,6 @@ $twig->setTemplate('error.twig')
           Service Requested: '.$service.'<br>
           Module Requested: '.$module.'<br>
           Action Requested: '.$action.'<br>
-          User Requesting: '.$member->getName().'
+          User Requesting: '.(class_exists('User') ? (User::getInstance()->getName()) : '').'
           </details>')
         ->render();
