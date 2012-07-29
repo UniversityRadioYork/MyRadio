@@ -9,5 +9,5 @@
 
 //The Form definition
 require 'Models/MyURY/Scheduler/allocatefrm.php';
-$form->setFieldValue('Presenter', User::getInstance()->getID());
+$form->setFieldValue('presenters', User::getInstance()->getID());
 require 'Views/MyURY/Scheduler/createShow.php';
