@@ -137,7 +137,7 @@ $(document).ready(function() {
   $('div.formfield-add-link a').click(function() {
     var origid = $(this).attr('id').replace(/-repeater$/, '');
     var newid = origid + $('#'+origid+'-counter').val();
-    $('#'+origid+'-counter').val($('#'+origid+'-counter').val()+1);
+    $('#'+origid+'-counter').val(parseInt($('#'+origid+'-counter').val())+1);
     
     $('#'+origid).clone().attr('id', newid).val('').appendTo('#'+origid+'-container');
     
