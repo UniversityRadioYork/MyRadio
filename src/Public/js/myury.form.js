@@ -142,7 +142,8 @@ $(document).ready(function() {
     $('#'+origid).clone().attr('id', newid).val('').append('<br>').insertBefore(this);
     
     //For autocomplete fields, they have a ui field which is what is very visible. This needs cloning and setting up
-    var autocomplete = $('#'+origid+'-ui').clone().attr('id', newid+'-ui').val('').append('<br>').insertBefore(this);
+    var autocomplete = $('#'+origid+'-ui').clone().attr('id', newid+'-ui').val('').insertBefore(this);
+    $('<br>').insertBefore(this);
     if ($(autocomplete).hasClass('member-autocomplete')) {
       MyURYForm.setUpMemberFields();
     }
