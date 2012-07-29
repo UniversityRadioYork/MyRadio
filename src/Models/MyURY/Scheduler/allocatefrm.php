@@ -41,11 +41,18 @@ $form->addField(
                         )
         )
         ->addField(
-                new MyURYFormField('Weeks', MyURYFormField::TYPE_CHECKGRP,
+                new MyURYFormField('weeks', MyURYFormField::TYPE_CHECKGRP,
                         array('options' => $weeks,
-                            'explanation' => 'Select what weeks this term this show will be on air'
+                            'explanation' => 'Select what weeks this term this show will be on air',
+                            'label' => 'Schedule for Weeks'
                         )
                 )
 )->addField(
-        new MyURYFormField('Presenter', MyURYFormField::TYPE_MEMBER, array('repeating'=> true))
+        new MyURYFormField('presenters', MyURYFormField::TYPE_MEMBER,
+                array(
+                    'repeating' => true,
+                    'explanation' => 'Who\'s on this show?',
+                    'label' => 'Presenters'
+                    )
+                )
         );
