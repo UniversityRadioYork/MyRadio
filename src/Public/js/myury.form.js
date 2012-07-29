@@ -139,10 +139,10 @@ $(document).ready(function() {
     var newid = origid + $('#'+origid+'-counter').val();
     $('#'+origid+'-counter').val(parseInt($('#'+origid+'-counter').val())+1);
     
-    $('#'+origid).clone().attr('id', newid).val('').appendTo('#'+origid+'-container');
+    $('#'+origid).clone().attr('id', newid).val('').insertBefore(this);
     
     //For autocomplete fields, they have a ui field which is what is very visible. This needs cloning and setting up
-    var autocomplete = $('#'+origid+'-ui').clone().attr('id', newid+'-ui').val('').appendTo('#'+origid+'-container');
+    var autocomplete = $('#'+origid+'-ui').clone().attr('id', newid+'-ui').val('').insertBefore(this));
     if ($(autocomplete).hasClass('member-autocomplete')) {
       MyURYForm.setUpMemberFields();
     }
