@@ -140,6 +140,8 @@ $(document).ready(function() {
     $('#'+origid+'-counter').val($('#'+origid+'-counter').val()+1);
     
     $('#'+origid).clone().attr('id', newid).val('').appendTo('#'+origid+'-container');
+    
+    //For autocomplete fields, they have a ui field which is what is very visible. This needs cloning and setting up
     var autocomplete = $('#'+origid+'-ui').clone().attr('id', newid+'-ui').val('').appendTo('#'+origid+'-container');
     if ($(autocomplete).hasClass('member-autocomplete')) {
       MyURYForm.setUpMemberFields();
