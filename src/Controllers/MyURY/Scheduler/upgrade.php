@@ -90,7 +90,7 @@ $db->query('DELETE FROM schedule.show');
 
 foreach ($show_seasoned as $name => $show) {
   $owner = $show[0]['presenters'][0];
-  $submitted = timeToTimestamp($show['created']);
+  $submitted = timeToTimestamp($show['info']['created']);
   $db->query('INSERT INTO schedule.show (show_type_id, submitted, memberid) VALUES (1, $1, $2)',
           array($submitted, $owner));
 }
