@@ -9,4 +9,4 @@ $db = Database::getInstance();
 
 $shows = $db->fetch_all('SELECT * FROM sched_entry WHERE summary=\'No Show Scheduled\'');
 
-print_r($shows);
+echo nl2br(print_r($shows, true));
