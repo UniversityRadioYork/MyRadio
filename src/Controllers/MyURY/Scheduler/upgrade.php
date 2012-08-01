@@ -5,7 +5,7 @@
  * Currently only migrates "No Show Scheduled"
  */
 ob_start();
-echo '<div class="ui-state-error">This script deletes all data from the new schedule schema.</div>'
+echo '<div class="ui-state-error">This script deletes all data from the new schedule schema.</div>';
 $db = Database::getInstance();
 $approving_user = 7449;
 
