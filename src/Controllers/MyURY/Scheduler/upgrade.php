@@ -25,6 +25,12 @@ function getPresentersForSeason($season_id) {
   return $db->fetch_column('SELECT memberid FROM sched_memberentry WHERE entryid=$1', array($season_id));
 }
 
+function getTagsForSeason($season_id) {
+  //Gets a list of presenters for a "Season"
+  global $db;
+  return $db->fetch_column('SELECT tag FROM sched_showtag WHERE entryid=$1', array($season_id));
+}
+
 function getStudioForSeason($season_id) {
   //Gets the studio for a "Season"
   global $db;
