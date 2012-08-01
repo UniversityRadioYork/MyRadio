@@ -180,7 +180,7 @@ if ($commit) {
      * Add Seasons
      */
     foreach ($show as $key => $season) {
-      if ($key === 'info') continue;
+      if ($key === 'info' or !isset($season['timeslots'][0])) continue;
       $season_id = $db->fetch_column('INSERT INTO schedule.show_season (show_id, termid, submitted, memberid) VALUES
         ($1, (SELECT termid FROM public.terms WHERE start < $2 ORDER BY start DESC LIMIT 1), $3, $4) RETURNING show_season_id',
               array($show_id, $season['timeslots'][0]['starttime'], timeToTimestamp($season['submitted']), $owner));
