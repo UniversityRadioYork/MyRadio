@@ -11,6 +11,6 @@
     {% endfor %}
       </menu>
     {% endif %}
-  {% block stripecontent %}{% endblock %}
+  {% block stripecontent %}{{stripedata | raw}}{% endblock %}
     </div>
 {% endblock %}
