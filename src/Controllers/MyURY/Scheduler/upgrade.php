@@ -57,4 +57,4 @@ for ($i = 0; $i < sizeof($shows); $i++) {
   $season_number++;
 }
 echo '</details>';
-echo nl2br(print_r($shows, true));
+echo nl2br(print_r($show_seasoned, true));
