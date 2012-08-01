@@ -5,6 +5,7 @@
  * Currently only migrates "No Show Scheduled"
  */
 ob_start();
+echo '<div class="ui-state-error">This script deletes all data from the new schedule schema.</div>'
 $db = Database::getInstance();
 $approving_user = 7449;
 
@@ -26,7 +27,7 @@ function getPresentersForSeason($season_id) {
 }
 
 function getTagsForSeason($season_id) {
-  //Gets a list of presenters for a "Season"
+  //Gets a list of tags for a "Season"
   global $db;
   return $db->fetch_column('SELECT tag FROM sched_showtag WHERE entryid=$1', array($season_id));
 }
@@ -103,6 +104,8 @@ echo '<details>'.nl2br(print_r($show_seasoned, true)).'</details>';
 //Reset
 $db->query('DELETE FROM schedule.show');
 
+
+//Insert the new shows
 foreach ($show_seasoned as $name => $show) {
   $owner = $show[0]['presenters'][0];
   $submitted = timeToTimestamp($show['info']['created']);
@@ -118,6 +121,12 @@ foreach ($show_seasoned as $name => $show) {
   $db->query('INSERT INTO schedule.show_metadata (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES
     (1, $1, $2, \'1970-01-01 00:00:00+00\', $3, $4)',
           array($show_id, $show[0]['description'], $owner, $approving_user));
+  //Add tags
+  foreach ($show['info']['tags'] as $tag) {
+    $db->query('INSERT INTO schedule.show_metadata (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES
+    (4, $1, $2, \'1970-01-01 00:00:00+00\', $3, $4)',
+          array($show_id, $tag, $owner, $approving_user));
+  }
 }
 
 echo '</div>';
