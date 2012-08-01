@@ -14,6 +14,7 @@ function getTimeslotsForSeason($season_id) {
   for ($i = 0; $i < sizeof($data); $i++) {
     $data[$i]['duration'] = strtotime($data[$i]['endtime']) - strtotime($data[$i]['starttime']);
   }
+  return $data;
 }
 
 function getPresentersForSeason($season_id) {
