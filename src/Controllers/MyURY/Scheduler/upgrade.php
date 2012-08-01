@@ -11,7 +11,7 @@ $approving_user = 7449;
 function getTimeslotsForSeason($season_id) {
   //Gets a list of timeslots for a "Season"
   global $db;
-  $data = $db->fetch_all('SELECT starttime,endtime FROM sched_timeslot WHERE entryid=$1 ORDER BY starttime ASC', array($season_id));
+  $data = $db->fetch_all('SELECT starttime,endtime FROM sched_timeslot WHERE summary=\'No Show Scheduled\' AND entryid=$1 ORDER BY starttime ASC', array($season_id));
   for ($i = 0; $i < sizeof($data); $i++) {
     $data[$i]['duration'] = strtotime($data[$i]['endtime']) - strtotime($data[$i]['starttime']);
     unset($data[$i]['endtime']);
@@ -80,6 +80,11 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
 }
 
 echo '<details>'.nl2br(print_r($show_seasoned, true)).'</details>';
+
+foreach ($show_seasoned as $show) {
+  
+}
+
 echo '</div>';
 
 $twig = CoreUtils::getTemplateObject();
