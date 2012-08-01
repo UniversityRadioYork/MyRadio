@@ -44,6 +44,10 @@ function getStudioForSeason($season_id) {
   }
 }
 
+function timeToTimestamp($time) {
+  return date('Y-m-d H:i:sO', $time);
+}
+
 //Type = 3 Limits to shows
 $shows = $db->fetch_all('SELECT * FROM sched_entry WHERE summary=\'No Show Scheduled\' AND entrytypeid=3 ORDER BY summary, entryid');
 echo '<div class="left">';
@@ -81,8 +85,14 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
 
 echo '<details>'.nl2br(print_r($show_seasoned, true)).'</details>';
 
-foreach ($show_seasoned as $show) {
-  
+//Reset
+$db->query('DELETE FROM schedule.show');
+
+foreach ($show_seasoned as $name => $show) {
+  $owner = $show[0]['presenters'][0];
+  $submitted = timeToTimestamp($show['created']);
+  $db->query('INSERT INTO schedule.show (show_type_id, submitted, memberid) VALUES (1, $1, $2)',
+          array($submitted, $owner));
 }
 
 echo '</div>';
