@@ -100,7 +100,8 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
   
   $season = array(
       'timeslots' => getTimeslotsForSeason($shows[$i]['entryid']),
-      'description' => $shows[$i]['description']
+      'description' => $shows[$i]['description'],
+      'submitted' => strtotime($shows[$i]['createddate'])
       );
   //Figure out presenter changes
   $presenter_start_time = strtotime($season['timeslots'][0]['starttime'])-1;
@@ -108,7 +109,7 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
   if (!isset($shows[$i+1]) or $shows[$i+1]['summary'] !== $previousshow) {
     $presenter_end_time = null;
   } else {
-    $presenter_end_time = strtotime($season['timeslots'][sizeof($season['timeslots'])]['starttime']-1)+$season['timeslots'][sizeof($season['timeslots'])-1]['duration'];
+    $presenter_end_time = strtotime($season['timeslots'][sizeof($season['timeslots'])-1]['starttime'])+$season['timeslots'][sizeof($season['timeslots'])-1]['duration'];
   }
   foreach (getPresentersForSeason($shows[$i]['entryid']) as $presenter) {
     //If it's a new presenter, add them
@@ -165,6 +166,26 @@ if ($commit) {
       $db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from, effective_to memberid, approvedid) VALUES
       ($1, 1, $2, $3, $4)',
             array($show_id, $presenter, $owner, $approving_user));
+    }
+    
+    /**
+     * Add Seasons
+     */
+    foreach ($show as $key => $season) {
+      if ($key === 'info') continue;
+      $season_id = $db->fetch_column('INSERT INTO schedule.show_season (show_id, term_id, submitted, memberid) VALUES
+        ($1, (SELECT termid FROM public.terms WHERE start < $2 ORDER BY start ASC LIMIT 1), $3, $4) RETURNING show_season_id',
+              array($show_id, $season['timeslots'][0]['starttime'], timeToTimestamp($season['submitted']), $owner));
+      $season_id = $season_id[0];
+      //Add description
+      $db->query('INSERT INTO schedule.season_metadata (metadata_key_id, show_season_id, metadata_value, effective_from, memberid, approvedid)
+        VALUES (1, $1, $2, \'1970-01-01 00:00:00+00\', $3, $4)',
+              array($season_id, $season['description'], $owner, $approving_user));
+      
+      //Add Timeslots
+      foreach ($season['timeslots'] as $timeslot) {
+        //$db->query('INSERT INTO schedule.') Table doesn't exist yet
+      }
     }
   }
 
