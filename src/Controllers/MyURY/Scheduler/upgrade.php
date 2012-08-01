@@ -9,6 +9,8 @@ $db = Database::getInstance();
 
 function getTimeslotsForSeason($season_id) {
   //Gets a list of timeslots for a "Season"
+  global $db;
+  return pg_fetch_all('SELECT * FROM sched_timeslot WHERE entryid=$1 ORDER BY starttime ASC', array($season_id));
 }
 
 //Type = 3 Limits to shows
@@ -26,10 +28,21 @@ for ($i = 0; $i < sizeof($shows); $i++) {
     }
     $seasons = array();
     $previousshow = $shows[$i]['summary'];
+    $season_number = 1;
     echo '<div style="background-color:#ccc">New Show: '.$previousshow.'</div><details>';
   }
   
   //Continue with the current show, adding the new season
+  echo 'Season '.$season_number.'<br><details>';
+  
+  $season = array(
+      'timeslots' => getTimeslotsForSeason($shows[$i]['entryid']),
+      'presenters' => getPresentersForSeason($shows[$i]['entryid']),
+      'info' => $shows[$i]
+      );
+  
+  echo '</details>';
+  $season_number++;
 }
 //Now for each show, we check if it's a different show or just a new season
 
