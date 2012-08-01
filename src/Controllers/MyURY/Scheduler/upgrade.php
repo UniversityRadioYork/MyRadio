@@ -4,7 +4,7 @@
  * 
  * Currently only migrates "No Show Scheduled"
  */
-
+ob_start();
 $db = Database::getInstance();
 
 function getTimeslotsForSeason($season_id) {
@@ -20,6 +20,25 @@ function getPresentersForSeason($season_id) {
   //Gets a list of presenters for a "Season"
   global $db;
   return $db->fetch_column('SELECT memberid FROM sched_memberentry WHERE entryid=$1', array($season_id));
+}
+
+function getStudioForSeason($season_id) {
+  //Gets the studio for a "Season"
+  global $db;
+  $data = $db->fetch_column('SELECT roomid FROM sched_roomentry WHERE entryid=$1', array($season_id));
+  switch ($data[0]) {
+    case 1:
+      return 1;
+      break;
+    case 3:
+      return 2;
+      break;
+    case 4:
+      return 3;
+      break;
+    default:
+      throw new MyURYException('Invalid Room Pointer');
+  }
 }
 
 //Type = 3 Limits to shows
@@ -58,3 +77,10 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
 }
 
 echo nl2br(print_r($show_seasoned, true));
+
+$twig = CoreUtils::getTemplateObject();
+$twig->addVariable('serviceName', 'Configuration')
+     ->addVariable('serviceVersion', 'Experimental')
+     ->setTemplate('stripe.twig')
+     ->addVariable('title', $module)
+     ->addVariable('stripedata', ob_get_clean());
