@@ -4,6 +4,15 @@
  * 
  * Currently only migrates "No Show Scheduled"
  */
+if (!isset($_POST['confirm'])) {
+  ?>
+<form action="?module=Scheduler&action=upgrade" method="post">
+  <input type="hidden" name="confirm" />
+  <input type="submit" value="I UNDERSTAND THIS WILL RESET THE NEW SCHEDULER SCHEMA AND MUST NOT BE USED IN PRODUCTION" />
+</form>
+<?php
+exit;
+}
 ob_start();
 echo '<div class="ui-state-error">This script deletes all data from the new schedule schema.</div>';
 $db = Database::getInstance();
