@@ -19,7 +19,7 @@ function getTimeslotsForSeason($season_id) {
 function getPresentersForSeason($season_id) {
   //Gets a list of presenters for a "Season"
   global $db;
-  return $db->fetch_all('SELECT * FROM sched_memberentry WHERE entryid=$1', array($season_id));
+  return $db->fetch_column('SELECT memberid FROM sched_memberentry WHERE entryid=$1', array($season_id));
 }
 
 //Type = 3 Limits to shows
