@@ -141,7 +141,7 @@ if ($commit) {
 
   //Insert the new shows
   foreach ($show_seasoned as $name => $show) {
-    $owner = array_keys($show['presenters']);
+    $owner = array_keys($show['info']['presenters']);
     $owner = $owner[0];
     $submitted = timeToTimestamp($show['info']['created']);
     $result = $db->fetch_column('INSERT INTO schedule.show (show_type_id, submitted, memberid) VALUES (1, $1, $2) RETURNING show_id',
