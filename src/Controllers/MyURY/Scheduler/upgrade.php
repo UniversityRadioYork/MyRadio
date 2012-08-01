@@ -36,13 +36,13 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
       $show_seasoned[$previousshow] = $seasons;
       echo '<details>'.nl2br(print_r($seasons,true)).'</details>';
     }
+    if (empty($shows[$i]['summary'])) continue;
     $seasons = array();
     $show_meta = array('created' => strtotime('+10 Years'));
     $previousshow = $shows[$i]['summary'];
     $season_number = 1;
     echo '<div style="background-color:#ccc">New Show: '.$previousshow.'</div><details>';
   }
-  if (empty($shows[$i]['summary'])) continue;
   
   //Continue with the current show, adding the new season
   echo 'Season '.$season_number.'<br><details>';
