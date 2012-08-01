@@ -10,9 +10,10 @@ $db = Database::getInstance();
 function getTimeslotsForSeason($season_id) {
   //Gets a list of timeslots for a "Season"
   global $db;
-  $data = $db->fetch_all('SELECT * FROM sched_timeslot WHERE entryid=$1 ORDER BY starttime ASC', array($season_id));
+  $data = $db->fetch_all('SELECT starttime,endtime FROM sched_timeslot WHERE entryid=$1 ORDER BY starttime ASC', array($season_id));
   for ($i = 0; $i < sizeof($data); $i++) {
     $data[$i]['duration'] = strtotime($data[$i]['endtime']) - strtotime($data[$i]['starttime']);
+    unset($data[$i]['endtime']);
   }
   return $data;
 }
