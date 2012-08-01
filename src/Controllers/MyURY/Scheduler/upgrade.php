@@ -18,6 +18,7 @@ echo '<div class="ui-state-error">This script deletes all data from the new sche
 $db = Database::getInstance();
 $approving_user = 7449;
 $commit = true;
+$nss_only = false;
 
 function getTimeslotsForSeason($season_id) {
   //Gets a list of timeslots for a "Season"
@@ -66,7 +67,7 @@ function timeToTimestamp($time) {
 }
 
 //Type = 3 Limits to shows
-$shows = $db->fetch_all('SELECT * FROM sched_entry WHERE summary=\'No Show Scheduled\' AND entrytypeid=3 ORDER BY summary, entryid');
+$shows = $db->fetch_all('SELECT * FROM sched_entry WHERE'.($nss_only ? 'summary=\'No Show Scheduled\' AND' : ' entrytypeid=3').' ORDER BY summary, entryid ASC');
 echo '<div class="left">';
 $previousshow = '';
 $show_seasoned = array();
