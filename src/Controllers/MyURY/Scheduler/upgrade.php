@@ -52,6 +52,7 @@ for ($i = 0; $i < sizeof($shows); $i++) {
       'info' => $shows[$i]
       );
   echo nl2br(print_r($season, true));
+  $seasons[] = $season;
   echo '</details>';
   $season_number++;
 }
