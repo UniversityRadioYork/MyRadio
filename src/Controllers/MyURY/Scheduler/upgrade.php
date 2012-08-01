@@ -46,11 +46,9 @@ for ($i = 0; $i < sizeof($shows); $i++) {
       'presenters' => getPresentersForSeason($shows[$i]['entryid']),
       'info' => $shows[$i]
       );
-  
+  echo nl2br(print_r($season, true));
   echo '</details>';
   $season_number++;
 }
-//Now for each show, we check if it's a different show or just a new season
-
-
+echo '</details>';
 echo nl2br(print_r($shows, true));
