@@ -36,6 +36,7 @@ for ($i = 0; $i < sizeof($shows); $i++) {
       echo '<details>'.nl2br(print_r($seasons,true)).'</details>';
     }
     $seasons = array();
+    $show_meta = array('created' => strtotime('+10 Years'));
     $previousshow = $shows[$i]['summary'];
     $season_number = 1;
     echo '<div style="background-color:#ccc">New Show: '.$previousshow.'</div><details>';
