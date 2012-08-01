@@ -27,7 +27,7 @@ $shows = $db->fetch_all('SELECT * FROM sched_entry WHERE summary=\'No Show Sched
 
 $previousshow = '';
 $show_seasoned = array();
-for ($i = 0; $i < sizeof($shows); $i++) {
+for ($i = 0; $i <= sizeof($shows); $i++) {
   if ($previousshow !== $shows[$i]['summary']) {
     //This is a new show, not a continuation. Stash the current show and reset
     if (!empty($seasons)) {
@@ -42,6 +42,7 @@ for ($i = 0; $i < sizeof($shows); $i++) {
     $season_number = 1;
     echo '<div style="background-color:#ccc">New Show: '.$previousshow.'</div><details>';
   }
+  if (empty($shows[$i]['summary'])) continue;
   
   //Continue with the current show, adding the new season
   echo 'Season '.$season_number.'<br><details>';
