@@ -7,6 +7,10 @@
 
 $db = Database::getInstance();
 
+function getTimeslotsForSeason($season_id) {
+  //Gets a list of timeslots for a "Season"
+}
+
 //Type = 3 Limits to shows
 $shows = $db->fetch_all('SELECT * FROM sched_entry WHERE summary=\'No Show Scheduled\' AND entrytypeid=3 ORDER BY summary');
 
@@ -16,13 +20,13 @@ for ($i = 0; $i < sizeof($shows); $i++) {
   if ($previousshow !== $shows[$i]['summary']) {
     //This is a new show, not a continuation. Stash the current show and reset
     if (!empty($seasons)) {
-      echo 'End of show '.$previousshow.'<br>';
+      echo '</details>End of show '.$previousshow.'<br>';
       $show_seasoned[$previousshow] = $seasons;
       echo '<details>'.nl2br(print_r($seasons,true)).'</details>';
     }
     $seasons = array();
     $previousshow = $shows[$i]['summary'];
-    echo '<div style="background-color:#ccc">New Show: '.$previousshow.'</div>';
+    echo '<div style="background-color:#ccc">New Show: '.$previousshow.'</div><details>';
   }
   
   //Continue with the current show, adding the new season
