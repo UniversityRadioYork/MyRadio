@@ -14,9 +14,9 @@ $previousshow = '';
 $show_seasoned = array();
 for ($i = 0; $i < sizeof($shows); $i++) {
   if ($previousshow !== $shows[$i]['summary']) {
-    echo 'End of show '.$previousshow.'<br>';
     //This is a new show, not a continuation. Stash the current show and reset
     if (!empty($seasons)) {
+      echo 'End of show '.$previousshow.'<br>';
       $show_seasoned[$previousshow] = $seasons;
       echo '<details>'.nl2br(print_r($seasons,true)).'</details>';
     }
