@@ -17,6 +17,7 @@ ob_start();
 echo '<div class="ui-state-error">This script deletes all data from the new schedule schema.</div>';
 $db = Database::getInstance();
 $approving_user = 7449;
+$commit = false;
 
 function getTimeslotsForSeason($season_id) {
   //Gets a list of timeslots for a "Season"
@@ -79,7 +80,7 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
     }
     if (empty($shows[$i]['summary'])) continue;
     $seasons = array();
-    $show_meta = array('created' => strtotime('+10 Years'), 'tags' => array());
+    $show_meta = array('created' => strtotime('+10 Years'), 'tags' => array(), 'presenters' => array());
     $previousshow = $shows[$i]['summary'];
     $season_number = 1;
     echo '<div style="background-color:#ccc">New Show: '.$previousshow.'</div><details>';
@@ -99,9 +100,30 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
   
   $season = array(
       'timeslots' => getTimeslotsForSeason($shows[$i]['entryid']),
-      'presenters' => getPresentersForSeason($shows[$i]['entryid']),
       'description' => $shows[$i]['description']
       );
+  //Figure out presenter changes
+  $presenter_start_time = strtotime($season['timeslots'][0]['starttime'])-1;
+  //If it's the last show, it's effective to present date
+  if (!isset($shows[$i+1]) or $shows[$i+1]['summary'] !== $previousshow) {
+    $presenter_end_time = null;
+  } else {
+    $presenter_end_time = strtotime($season['timeslots'][sizeof($season['timeslots'])+1]['starttime'])+$season['timeslots'][sizeof($season['timeslots'])+1]['duration'];
+  }
+  foreach (getPresentersForSeason($shows[$i]['entryid']) as $presenter) {
+    //If it's a new presenter, add them
+    if (!isset($show_meta['presenters'][$presenter])) {
+      $show_meta['presenters'][$presenter] = array(
+          'effective_from' => $presenter_start_time,
+          'effective_to' => $presenter_end_time
+          );
+    } else {
+      //Update an existing end time
+      if ($show_meta['presenters'][$presenter]['effective_to'] < $presenter_end_time or $presenter_end_time === null) {
+        $show_meta['presenters'][$presenter]['effective_to'] = $presenter_end_time;
+      }
+    }
+  }
   echo nl2br(print_r($season, true));
   $seasons[] = $season;
   echo '</details>';
@@ -110,32 +132,42 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
 
 echo '<details>'.nl2br(print_r($show_seasoned, true)).'</details>';
 
-//Reset
-$db->query('DELETE FROM schedule.show');
+
+if ($commit) {
+  //Reset
+  $db->query('DELETE FROM schedule.show');
 
 
-//Insert the new shows
-foreach ($show_seasoned as $name => $show) {
-  $owner = $show[0]['presenters'][0];
-  $submitted = timeToTimestamp($show['info']['created']);
-  $result = $db->fetch_column('INSERT INTO schedule.show (show_type_id, submitted, memberid) VALUES (1, $1, $2) RETURNING show_id',
-          array($submitted, $owner));
-  $show_id = $result[0];
-  
-  //Add name
-  $db->query('INSERT INTO schedule.show_metadata (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES
-    (2, $1, $2, \'1970-01-01 00:00:00+00\', $3, $4)',
-          array($show_id, $name, $owner, $approving_user));
-  //Add description
-  $db->query('INSERT INTO schedule.show_metadata (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES
-    (1, $1, $2, \'1970-01-01 00:00:00+00\', $3, $4)',
-          array($show_id, $show[0]['description'], $owner, $approving_user));
-  //Add tags
-  foreach ($show['info']['tags'] as $tag) {
+  //Insert the new shows
+  foreach ($show_seasoned as $name => $show) {
+    $owner = $show[0]['presenters'][0];
+    $submitted = timeToTimestamp($show['info']['created']);
+    $result = $db->fetch_column('INSERT INTO schedule.show (show_type_id, submitted, memberid) VALUES (1, $1, $2) RETURNING show_id',
+            array($submitted, $owner));
+    $show_id = $result[0];
+
+    //Add name
     $db->query('INSERT INTO schedule.show_metadata (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES
-    (4, $1, $2, \'1970-01-01 00:00:00+00\', $3, $4)',
-          array($show_id, $tag, $owner, $approving_user));
+      (2, $1, $2, \'1970-01-01 00:00:00+00\', $3, $4)',
+            array($show_id, $name, $owner, $approving_user));
+    //Add description
+    $db->query('INSERT INTO schedule.show_metadata (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES
+      (1, $1, $2, \'1970-01-01 00:00:00+00\', $3, $4)',
+            array($show_id, $show[0]['description'], $owner, $approving_user));
+    //Add tags
+    foreach ($show['info']['tags'] as $tag) {
+      $db->query('INSERT INTO schedule.show_metadata (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES
+      (4, $1, $2, \'1970-01-01 00:00:00+00\', $3, $4)',
+            array($show_id, $tag, $owner, $approving_user));
+    }
+    //Add presenters
+    foreach ($show['info']['presenters'] as $presenter => $pinfo) {
+      $db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from, effective_to memberid, approvedid) VALUES
+      ($1, 1, $2, $3, $4)',
+            array($show_id, $presenter, $owner, $approving_user));
+    }
   }
+
 }
 
 echo '</div>';
