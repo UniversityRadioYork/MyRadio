@@ -185,7 +185,9 @@ if ($commit) {
       
       //Add Timeslots
       foreach ($season['timeslots'] as $timeslot) {
-        //$db->query('INSERT INTO schedule.') Table doesn't exist yet
+        $db->query('INSERT INTO schedule.show_season_timeslot (show_season_id, start_time, duration, memberid, approvedid)
+          VALUES ($1, $2, $3, $4, $5)',
+                array($season_id, $timeslot['starttime'], $timeslot['duration'], $owner, $approving_user));
       }
     }
   }
