@@ -108,8 +108,7 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
   if (!isset($shows[$i+1]) or $shows[$i+1]['summary'] !== $previousshow) {
     $presenter_end_time = null;
   } else {
-    $presenter_end_time = strtotime($season['timeslots'][sizeof($season['timeslots'])+1]['starttime'])+$season['timeslots'][sizeof($season['timeslots'])+1]['duration'];
-    echo '<b>'.strtotime($season['timeslots'][sizeof($season['timeslots'])+1]['starttime']).'</b>';
+    $presenter_end_time = strtotime($season['timeslots'][sizeof($season['timeslots'])]['starttime'])+$season['timeslots'][sizeof($season['timeslots'])]['duration'];
   }
   foreach (getPresentersForSeason($shows[$i]['entryid']) as $presenter) {
     //If it's a new presenter, add them
