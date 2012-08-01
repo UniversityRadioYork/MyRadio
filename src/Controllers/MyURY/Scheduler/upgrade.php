@@ -11,7 +11,7 @@ $approving_user = 7449;
 function getTimeslotsForSeason($season_id) {
   //Gets a list of timeslots for a "Season"
   global $db;
-  $data = $db->fetch_all('SELECT starttime,endtime FROM sched_timeslot WHERE summary=\'No Show Scheduled\' AND entryid=$1 ORDER BY starttime ASC', array($season_id));
+  $data = $db->fetch_all('SELECT starttime,endtime FROM sched_timeslot WHERE entryid=$1 ORDER BY starttime ASC', array($season_id));
   for ($i = 0; $i < sizeof($data); $i++) {
     $data[$i]['duration'] = strtotime($data[$i]['endtime']) - strtotime($data[$i]['starttime']);
     unset($data[$i]['endtime']);
@@ -45,7 +45,7 @@ function getStudioForSeason($season_id) {
 }
 
 //Type = 3 Limits to shows
-$shows = $db->fetch_all('SELECT * FROM sched_entry WHERE entrytypeid=3 ORDER BY summary, entryid');
+$shows = $db->fetch_all('SELECT * FROM sched_entry WHERE summary=\'No Show Scheduled\' AND entrytypeid=3 ORDER BY summary, entryid');
 echo '<div class="left">';
 $previousshow = '';
 $show_seasoned = array();
