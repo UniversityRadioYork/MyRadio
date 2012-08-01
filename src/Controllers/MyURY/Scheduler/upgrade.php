@@ -10,7 +10,7 @@ $db = Database::getInstance();
 function getTimeslotsForSeason($season_id) {
   //Gets a list of timeslots for a "Season"
   global $db;
-  return pg_fetch_all('SELECT * FROM sched_timeslot WHERE entryid=$1 ORDER BY starttime ASC', array($season_id));
+  return $db->fetch_all('SELECT * FROM sched_timeslot WHERE entryid=$1 ORDER BY starttime ASC', array($season_id));
 }
 
 //Type = 3 Limits to shows
