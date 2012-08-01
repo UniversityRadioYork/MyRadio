@@ -83,4 +83,5 @@ $twig->addVariable('serviceName', 'Configuration')
      ->addVariable('serviceVersion', 'Experimental')
      ->setTemplate('stripe.twig')
      ->addVariable('title', $module)
-     ->addVariable('stripedata', ob_get_clean());
+     ->addVariable('stripedata', ob_get_clean())
+     ->render();
