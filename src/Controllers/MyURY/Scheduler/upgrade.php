@@ -132,7 +132,7 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
   $season_number++;
 }
 
-echo '<details>'.nl2br(print_r($show_seasoned, true)).'</details>';
+//echo '<details>'.nl2br(print_r($show_seasoned, true)).'</details>';
 
 
 if ($commit) {
