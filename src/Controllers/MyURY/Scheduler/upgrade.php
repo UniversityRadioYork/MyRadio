@@ -23,7 +23,7 @@ function getPresentersForSeason($season_id) {
 }
 
 //Type = 3 Limits to shows
-$shows = $db->fetch_all('SELECT * FROM sched_entry WHERE summary=\'No Show Scheduled\' AND entrytypeid=3 ORDER BY summary');
+$shows = $db->fetch_all('SELECT * FROM sched_entry WHERE summary=\'No Show Scheduled\' AND entrytypeid=3 ORDER BY summary, entryid');
 
 $previousshow = '';
 $show_seasoned = array();
@@ -50,7 +50,7 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
   $season = array(
       'timeslots' => getTimeslotsForSeason($shows[$i]['entryid']),
       'presenters' => getPresentersForSeason($shows[$i]['entryid']),
-      'info' => $shows[$i]
+      'description' => $shows[$i]['description']
       );
   echo nl2br(print_r($season, true));
   $seasons[] = $season;
