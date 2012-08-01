@@ -32,7 +32,7 @@ for ($i = 0; $i < sizeof($shows); $i++) {
     //This is a new show, not a continuation. Stash the current show and reset
     if (!empty($seasons)) {
       echo '</details>End of show '.$previousshow.'<br>';
-      $seasons['info'] => $show_meta;
+      $seasons['info'] = $show_meta;
       $show_seasoned[$previousshow] = $seasons;
       echo '<details>'.nl2br(print_r($seasons,true)).'</details>';
     }
