@@ -43,7 +43,7 @@ function getStudioForSeason($season_id) {
 
 //Type = 3 Limits to shows
 $shows = $db->fetch_all('SELECT * FROM sched_entry WHERE summary=\'No Show Scheduled\' AND entrytypeid=3 ORDER BY summary, entryid');
-
+echo '<div class="left">';
 $previousshow = '';
 $show_seasoned = array();
 for ($i = 0; $i <= sizeof($shows); $i++) {
@@ -77,6 +77,7 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
 }
 
 echo nl2br(print_r($show_seasoned, true));
+echo '</div>';
 
 $twig = CoreUtils::getTemplateObject();
 $twig->addVariable('serviceName', 'Configuration')
