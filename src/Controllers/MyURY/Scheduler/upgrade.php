@@ -63,7 +63,7 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
     }
     if (empty($shows[$i]['summary'])) continue;
     $seasons = array();
-    $show_meta = array('created' => strtotime('+10 Years'));
+    $show_meta = array('created' => strtotime('+10 Years'), 'tags' => array());
     $previousshow = $shows[$i]['summary'];
     $season_number = 1;
     echo '<div style="background-color:#ccc">New Show: '.$previousshow.'</div><details>';
@@ -71,6 +71,15 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
   
   //Continue with the current show, adding the new season
   echo 'Season '.$season_number.'<br><details style="margin-left:20px">';
+  
+  if ($show_meta['created'] > strtotime($shows[$i]['createddate'])) {
+    $show_meta['created'] = strtotime($shows[$i]['createddate']);
+  }
+  //Add tags
+  foreach (getTagsForSeason($shows[$i]['entryid']) as $tag) {
+    $tag = strtolower($tag);
+    if (!in_array($tag, $show_meta['tags'])) $show_meta['tags'][] = $tag;
+  }
   
   $season = array(
       'timeslots' => getTimeslotsForSeason($shows[$i]['entryid']),
@@ -91,8 +100,18 @@ $db->query('DELETE FROM schedule.show');
 foreach ($show_seasoned as $name => $show) {
   $owner = $show[0]['presenters'][0];
   $submitted = timeToTimestamp($show['info']['created']);
-  $db->query('INSERT INTO schedule.show (show_type_id, submitted, memberid) VALUES (1, $1, $2)',
+  $result = $db->fetch_column('INSERT INTO schedule.show (show_type_id, submitted, memberid) VALUES (1, $1, $2) RETURNING show_id',
           array($submitted, $owner));
+  $show_id = $result[0];
+  
+  //Add name
+  $db->query('INSERT INTO schedule.show_metadata (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES
+    (2, $1, $2, \'1970-01-01 00:00:00+00\', $3, $4)',
+          array($show_id, $name, $owner, $approving_user));
+  //Add description
+  $db->query('INSERT INTO schedule.show_metadata (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES
+    (1, $1, $2, \'1970-01-01 00:00:00+00\', $3, $4)',
+          array($show_id, $show[0]['description'], $owner, $approving_user));
 }
 
 echo '</div>';
