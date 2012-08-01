@@ -79,7 +79,7 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
   $season_number++;
 }
 
-echo nl2br(print_r($show_seasoned, true));
+echo '<details>'.nl2br(print_r($show_seasoned, true)).'</details>';
 echo '</div>';
 
 $twig = CoreUtils::getTemplateObject();
