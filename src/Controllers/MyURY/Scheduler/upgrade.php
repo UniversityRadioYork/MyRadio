@@ -13,6 +13,12 @@ function getTimeslotsForSeason($season_id) {
   return $db->fetch_all('SELECT * FROM sched_timeslot WHERE entryid=$1 ORDER BY starttime ASC', array($season_id));
 }
 
+function getPresentersForSeason($season_id) {
+  //Gets a list of presenters for a "Season"
+  global $db;
+  return $db->fetch_all('SELECT * FROM sched_memberentry WHERE entryid=$1', array($season_id));
+}
+
 //Type = 3 Limits to shows
 $shows = $db->fetch_all('SELECT * FROM sched_entry WHERE summary=\'No Show Scheduled\' AND entrytypeid=3 ORDER BY summary');
 
