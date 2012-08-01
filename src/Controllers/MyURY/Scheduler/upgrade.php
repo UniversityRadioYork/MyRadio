@@ -63,7 +63,7 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
   }
   
   //Continue with the current show, adding the new season
-  echo 'Season '.$season_number.'<br><details style="margin-left:10px">';
+  echo 'Season '.$season_number.'<br><details style="margin-left:20px">';
   
   $season = array(
       'timeslots' => getTimeslotsForSeason($shows[$i]['entryid']),
