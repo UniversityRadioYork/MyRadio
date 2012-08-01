@@ -34,7 +34,6 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
       echo '</details><br>';
       $seasons['info'] = $show_meta;
       $show_seasoned[$previousshow] = $seasons;
-      echo '<details>'.nl2br(print_r($seasons,true)).'</details>';
     }
     if (empty($shows[$i]['summary'])) continue;
     $seasons = array();
