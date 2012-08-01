@@ -6,6 +6,7 @@
  */
 ob_start();
 $db = Database::getInstance();
+$approving_user = 7449;
 
 function getTimeslotsForSeason($season_id) {
   //Gets a list of timeslots for a "Season"
@@ -44,7 +45,7 @@ function getStudioForSeason($season_id) {
 }
 
 //Type = 3 Limits to shows
-$shows = $db->fetch_all('SELECT * FROM sched_entry WHERE summary=\'No Show Scheduled\' AND entrytypeid=3 ORDER BY summary, entryid');
+$shows = $db->fetch_all('SELECT * FROM sched_entry WHERE entrytypeid=3 ORDER BY summary, entryid');
 echo '<div class="left">';
 $previousshow = '';
 $show_seasoned = array();
