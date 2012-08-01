@@ -165,7 +165,7 @@ if ($commit) {
     //Add presenters
     foreach ($show['info']['presenters'] as $presenter => $pinfo) {
       $db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from, effective_to, memberid, approvedid) VALUES
-      ($1, 1, $2, $3, $4, $5)',
+      ($1, 1, $2, $3, $4, $5, $6)',
             array($show_id, $presenter, timeToTimestamp($pinfo['effective_from']), timeToTimestamp($pinfo['effective_to']), $owner, $approving_user));
     }
     
