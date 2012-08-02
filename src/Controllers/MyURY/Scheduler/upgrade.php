@@ -152,7 +152,7 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
       $show_meta['genres'][$genre]['effective_to'] = $presenter_end_time;
     }
   }
-  $location = getStudioForSeason($show[$i]['entryid']);
+  $location = getStudioForSeason($shows[$i]['entryid']);
   if (!empty($show_meta['locations']) && $show_meta['locations'][sizeof($show_meta['locations'])-1]['location_id'] === $location) {
     //Update the current location
     $show_meta['locations'][sizeof($show_meta['locations'])-1]['effective_to'] = $presenter_end_time;
