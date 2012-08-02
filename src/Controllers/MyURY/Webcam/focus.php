@@ -7,5 +7,5 @@
  * @package MyURY_Webcam
  */
 $streams = MyURY_Webcam::getStreams();
-// $live = array_shift($streams);
-require 'Views/MyURY/Webcam/streams.php';
+$live = array_shift($streams);
+require 'Views/MyURY/Webcam/focus.php';
