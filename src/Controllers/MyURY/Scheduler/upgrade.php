@@ -52,6 +52,10 @@ function getStudioForSeason($season_id) {
   //Gets the studio for a "Season"
   global $db;
   $data = $db->fetch_column('SELECT roomid FROM sched_roomentry WHERE entryid=$1', array($season_id));
+  if (!isset($data[0])) {
+    //Default to S1
+    return 1;
+  }
   switch ($data[0]) {
     case 1:
       return 1;
@@ -71,7 +75,7 @@ function getGenreForSeason($season_id) {
   //Gets the studio for a "Season"
   global $db;
   $data = $db->fetch_column('SELECT genreid FROM sched_showgenre WHERE entryid=$1', array($season_id));
-  return is_numeric($data[0]) ? $data[0] : 1;
+  return (isset($data[0])) ? $data[0] : 1;
 }
 
 function timeToTimestamp($time) {
