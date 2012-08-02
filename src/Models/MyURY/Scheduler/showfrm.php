@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 
  * @todo Proper Documentation
@@ -14,10 +15,19 @@ $form = new MyURYForm('sched_allocate', $module, 'doShow',
         ));
 
 $form->addField(
-        new MyURYFormField('title', MyURYFormField::TYPE_TEXT,
-                array(
-                    'explanation' => 'Enter a name for your new show. Try and make it unique.',
-                    'label' => 'Show Name'
+                new MyURYFormField('title', MyURYFormField::TYPE_TEXT,
+                        array(
+                            'explanation' => 'Enter a name for your new show. Try and make it unique.',
+                            'label' => 'Show Name'
+                        )
                 )
-              )
-        );
+        )
+        ->addField(
+                new MyURYFormField('presenters', MyURYFormField::TYPE_MEMBER,
+                        array(
+                            'explanation' => 'Who\'s going to be on your new show? We\'ve taken the liberty of guessing you are.',
+                            'label' => 'Presenters',
+                            'repeating' => true
+                        )
+                )
+);
