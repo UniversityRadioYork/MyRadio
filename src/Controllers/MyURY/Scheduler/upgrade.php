@@ -70,38 +70,8 @@ function getStudioForSeason($season_id) {
 function getGenreForSeason($season_id) {
   //Gets the studio for a "Season"
   global $db;
-  $data = $db->fetch_column('SELECT musiccategoryid FROM sched_showdetail WHERE entryid=$1', array($season_id));
-  switch ($data[0]) {
-    case 1:
-      return 1;
-      break;
-    case 2:
-      return 14;
-      break;
-    case 3:
-      return 10;
-      break;
-    case 4:
-      return 15;
-      break;
-    case 5:
-      return 11;
-      break;
-    case 6:
-      return 16;
-      break;
-    case 7:
-      return 17;
-      break;
-    case 8:
-      return 12;
-      break;
-    case 9:
-      return 1;
-      break;
-    default:
-      throw new MyURYException('Invalid Genre Pointer '.$data[0]);
-  }
+  $data = $db->fetch_column('SELECT genreid FROM sched_showgenre WHERE entryid=$1', array($season_id));
+  return $data[0];
 }
 
 function timeToTimestamp($time) {
