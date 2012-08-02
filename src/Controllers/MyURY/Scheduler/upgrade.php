@@ -55,6 +55,25 @@ function getStudioForSeason($season_id) {
     case 1:
       return 1;
       break;
+    case 3:
+      return 2;
+      break;
+    case 4:
+      return 3;
+      break;
+    default:
+      throw new MyURYException('Invalid Room Pointer');
+  }
+}
+
+function getGenreForSeason($season_id) {
+  //Gets the studio for a "Season"
+  global $db;
+  $data = $db->fetch_column('SELECT musiccategoryid FROM sched_showdetail WHERE entryid=$1', array($season_id));
+  switch ($data[0]) {
+    case 1:
+      return 1;
+      break;
     case 2:
       return 14;
       break;
@@ -81,25 +100,6 @@ function getStudioForSeason($season_id) {
       break;
     default:
       throw new MyURYException('Invalid Genre Pointer');
-  }
-}
-
-function getGenreForSeason($season_id) {
-  //Gets the studio for a "Season"
-  global $db;
-  $data = $db->fetch_column('SELECT sched_musiccategory FROM sched_showdetail WHERE entryid=$1', array($season_id));
-  switch ($data[0]) {
-    case 1:
-      return 1;
-      break;
-    case 3:
-      return 2;
-      break;
-    case 4:
-      return 3;
-      break;
-    default:
-      throw new MyURYException('Invalid Room Pointer');
   }
 }
 
