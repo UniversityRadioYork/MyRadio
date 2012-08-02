@@ -209,7 +209,7 @@ if ($commit) {
         ($1, $2, $3, NULL, $4, $5)',
               array($show_id, $genre, timeToTimestamp($ginfo['effective_from']), $owner, $approving_user));
       } else {
-        $db->query('INSERT INTO schedule.show_credit (show_id, genre_id, effective_from, effective_to, memberid, approvedid) VALUES
+        $db->query('INSERT INTO schedule.show_genre (show_id, genre_id, effective_from, effective_to, memberid, approvedid) VALUES
         ($1, $2, $3, $4, $5, $6)',
               array($show_id, $genre, timeToTimestamp($ginfo['effective_from']), timeToTimestamp($ginfo['effective_to']), $owner, $approving_user));
       }
