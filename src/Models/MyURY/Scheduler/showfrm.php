@@ -11,9 +11,12 @@ $form = (new MyURYForm('sched_allocate', $module, 'doShow',
                 array(
                     'debug' => true,
                     'title' => 'Edit Show'
-                    //'template' => 'MyURY/Scheduler/allocate.twig'
+                //'template' => 'MyURY/Scheduler/allocate.twig'
                 )
         ))->addField(
+                new MyURYFormField('grp-basics', MyURYFormField::TYPE_SECTION,
+                        array('label' => 'About My Show'))
+        )->addField(
                 new MyURYFormField('title', MyURYFormField::TYPE_TEXT,
                         array(
                             'explanation' => 'Enter a name for your new show. Try and make it unique.',

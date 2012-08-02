@@ -179,6 +179,14 @@ class MyURYFormField {
    * which are to be rendered within this MyURYFormField.
    */
   const TYPE_CHECKGRP  = 0x0F;
+  /**
+   * The constant used to specify this MyURYFormField should be a section header - it is literally a pretty header
+   * that can be used to separate groups of fields.
+   * 
+   * This MyURYFormField type does not support any Custom Options
+   * @todo Collapsible?
+   */
+  const TYPE_SECTION = 0x10;
 
   /**
    * The name/id of the Form Field
