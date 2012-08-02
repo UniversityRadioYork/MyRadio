@@ -116,6 +116,8 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
       'description' => $shows[$i]['description'],
       'submitted' => strtotime($shows[$i]['createddate'])
       );
+  //Don't add seasons with no actual shows
+  if (empty($season['timeslots'])) continue;
   //Figure out presenter changes
   $presenter_start_time = strtotime($season['timeslots'][0]['starttime'])-1;
   //If it's the last show, it's effective to present date
