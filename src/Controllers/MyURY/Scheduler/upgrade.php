@@ -67,7 +67,7 @@ function getStudioForSeason($season_id) {
       return 3;
       break;
     default:
-      throw new MyURYException('Invalid Room Pointer');
+      throw new MyURYException('Invalid Room Pointer '.$data[0]);
   }
 }
 
