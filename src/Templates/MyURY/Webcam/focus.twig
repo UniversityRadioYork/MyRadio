@@ -4,7 +4,11 @@
 {% include 'MyURY/Webcam/tracker.twig' %}
 {% endblock %}
 {% block stripecontent %}
-<div class="webcam-grid-container">
+<figure class="webcam-focus-stream-container" id="webcam-stream-{{live.streamid}}">
+      <img src="{{live.liveurl}}" class="webcam-stream" />
+      <figcaption>{{live.streamname}}</figcaption>
+    </figure>
+<div class="webcam-focus-grid-container">
   {% for stream in streams %}
     <figure class="webcam-stream-container" id="webcam-stream-{{stream.streamid}}">
       <img src="{{stream.liveurl}}" class="webcam-stream" />
