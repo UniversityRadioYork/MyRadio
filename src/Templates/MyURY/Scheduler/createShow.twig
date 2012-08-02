@@ -1,5 +1,8 @@
 {% extends 'form.twig' %}
 {% block head %}
+{{ parent() }}
+{% endblock %}
+{% block stripecontent %}
 <h2>Create a New Show</h2>
 <div class="ui-state-highlight"><span class="ui-icon ui-icon-alert fleft"></span>Creating a new show is no longer the same as applying for a new season of an existing show!</div>
 <p>Fill out the form below to create a new <em>Show</em>. A Show comes with its own microsite and a range of settings that let you make it truely yours.</p>
