@@ -8,6 +8,6 @@
  */
 
 //The Form definition
-require 'Models/MyURY/Scheduler/allocatefrm.php';
+require 'Models/MyURY/Scheduler/showfrm.php';
 $form->setFieldValue('presenters', User::getInstance()->getID());
 require 'Views/MyURY/Scheduler/createShow.php';
