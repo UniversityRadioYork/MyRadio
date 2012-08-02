@@ -1,0 +1,8 @@
+{# submenu template #}
+{% block submenu %}
+<menu id="stripe-module-submenu" class="clearfix">
+  {% for item in submenu %}
+    <li><a href="{{item.url}}" title="{{item.description}}">{{item.title}}</a></li>
+  {% endfor %}
+</menu>
+{% endblock %}
