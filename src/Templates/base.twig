@@ -19,8 +19,8 @@
     <body>
       <header class="bar">
         <span class="fleft"><a href="./">My<span class="logotype">((URY))</span></a> | {{serviceName}} [{{serviceVersion}}]</span>
-        <span>{{ name }} - [Impersonating If Set]{% if timeslotname is not null %} - <a href="https://ury.york.ac.uk/portal/timeslot.php">{{ timeslotname }}</a>{% endif %}</span>
-        <span class="fright"><a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}">Change Timeslot</a> | <a href="https://ury.york.ac.uk/portal/redir_out.php">Logout</a></span>
+        <span>{{ name }} - [Impersonating If Set]{% if timeslotname is not null %} - <a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }} title="Click to change timeslot"">{{ timeslotname }}</a>{% endif %}</span>
+        <span class="fright">{% if timeslotname is null %}<a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}">Change Timeslot</a> | {% endif %}<a href="https://ury.york.ac.uk/portal/redir_out.php">Logout</a></span>
       </header>
       <div id="page">
         <h1 class="logotype">{{ title }}</h1>
