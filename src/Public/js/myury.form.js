@@ -32,7 +32,12 @@ var MyURYForm = {
       //If there's an existing value, load it in
       console.log($('#'+$(this).attr('id').replace(/-ui$/, '')).val());
       if ($('#'+$(this).attr('id').replace(/-ui$/, '')).val() != null) {
-        $(this).load("index.php?module=Core&action=a-membernamefromid&term="+$('#'+$(this).attr('id').replace(/-ui$/, '')).val());
+        $.ajax({
+          url: "index.php?module=Core&action=a-membernamefromid&term="+$('#'+$(this).attr('id').replace(/-ui$/, '')).val(),
+          success: function(data) {
+            $(this).val(data);
+          }
+        });
       }
     });
   },
