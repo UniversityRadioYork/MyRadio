@@ -35,6 +35,7 @@ var MyURYForm = {
         $.ajax({
           url: "index.php?module=Core&action=a-membernamefromid&term="+$('#'+$(this).attr('id').replace(/-ui$/, '')).val(),
           success: function(data) {
+            console.log($(this));
             $(this).val(data);
           }
         });
