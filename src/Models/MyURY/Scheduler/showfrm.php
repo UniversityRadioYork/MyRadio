@@ -23,8 +23,18 @@ $form = (new MyURYForm('sched_allocate', $module, 'doShow',
                             'label' => 'Show Name'
                         )
                 )
-        )
-        ->addField(
+        )->addField(
+                new MyURYFormField('description', MyURYFormField::TYPE_BLOCKTEXT,
+                        array(
+                            'explanation' => 'Describe your show in as much detail as you can. Minimum 280 characters.',
+                            'label' => 'Description',
+                            'options' => array('minlength' => 280)
+                        )
+                )
+        )->addField(
+                new MyURYFormField('grp-credits', MyURYFormField::TYPE_SECTION,
+                        array('label' => 'Who\'s on My Show'))
+        )->addField(
         new MyURYFormField('presenters', MyURYFormField::TYPE_MEMBER,
                 array(
                     'explanation' => 'Who\'s going to be on your new show? We\'ve taken the liberty of guessing you are.',
