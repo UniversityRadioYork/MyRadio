@@ -33,7 +33,7 @@ $form = (new MyURYForm('sched_allocate', $module, 'doShow',
                 )
         )->addField(
                 new MyURYFormField('grp-credits', MyURYFormField::TYPE_SECTION,
-                        array('label' => 'Who\'s on My Show'))
+                        array('label' => 'Who\'s On My Show'))
         )->addField(
         new MyURYFormField('presenters', MyURYFormField::TYPE_MEMBER,
                 array(

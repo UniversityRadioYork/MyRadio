@@ -28,6 +28,11 @@ var MyURYForm = {
         .append('<a>' + item.fname + ' ' + item.sname + '</a>')
         .appendTo(ul);
       };
+      
+      //If there's an existing value, load it in
+      if ($('#'+$(this).attr('id').replace(/-ui$/, '')).val() != null) {
+        $(this).load("index.php?module=Core&action=a-membernamefromid&term="+$('#'+$(this).attr('id').replace(/-ui$/, '')).val());
+      }
     });
   },
   setUpTrackFields: function() {
