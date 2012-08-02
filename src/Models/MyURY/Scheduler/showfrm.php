@@ -41,6 +41,13 @@ $form = (new MyURYForm('sched_allocate', $module, 'doShow',
                         )
                 )
         )->addField(
+                new MyURYFormField('tags', MyURYFormField::TYPE_TEXT,
+                        array(
+                            'label' => 'Tags',
+                            'explanation' => 'A set of keywords to describe your show generally, seperated with spaces.'
+                        )
+                )
+        )->addField(
                 new MyURYFormField('grp-credits', MyURYFormField::TYPE_SECTION,
                         array('label' => 'Who\'s On My Show'))
         )->addField(
