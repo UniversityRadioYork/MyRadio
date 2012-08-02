@@ -71,7 +71,7 @@ function getGenreForSeason($season_id) {
   //Gets the studio for a "Season"
   global $db;
   $data = $db->fetch_column('SELECT genreid FROM sched_showgenre WHERE entryid=$1', array($season_id));
-  return $data[0];
+  return is_numeric($data[0]) ? $data[0] : 1;
 }
 
 function timeToTimestamp($time) {
