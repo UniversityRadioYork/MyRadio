@@ -4,7 +4,7 @@
  */
 require 'Views/MyURY/Webcam/bootstrap.php';
 
-$twig->setTemplate('MyURY/Webcam/grid.twig')
+$twig->setTemplate('MyURY/Webcam/focus.twig')
         ->addVariable('streams', $streams)
         ->addVariable('live', $live)
         ->render();
