@@ -32,6 +32,15 @@ $form = (new MyURYForm('sched_allocate', $module, 'doShow',
                         )
                 )
         )->addField(
+                new MyURYFormField('genres', MyURYFormField::TYPE_SELECT,
+                        array(
+                            'options' => Scheduler::getGenres(),
+                            'repeating' => true,
+                            'label' => 'Genres',
+                            'explanation' => 'What type of music do you play, if any?'
+                        )
+                )
+        )->addField(
                 new MyURYFormField('grp-credits', MyURYFormField::TYPE_SECTION,
                         array('label' => 'Who\'s On My Show'))
         )->addField(
