@@ -117,7 +117,10 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
       'submitted' => strtotime($shows[$i]['createddate'])
       );
   //Don't add seasons with no actual shows
-  if (empty($season['timeslots'])) continue;
+  if (empty($season['timeslots'])) {
+    echo 'Skipped due to no timeslots.</details>';
+    continue;
+  }
   //Figure out presenter changes
   $presenter_start_time = strtotime($season['timeslots'][0]['starttime'])-1;
   //If it's the last show, it's effective to present date
