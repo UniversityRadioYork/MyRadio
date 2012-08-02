@@ -10,6 +10,7 @@
  */
 if (!isset($_POST['confirm'])) {
   ?>
+<h1>Schedule State Migration Tool (SSMT)</h1>
 <form action="?module=Scheduler&action=upgrade" method="post">
   <input type="hidden" name="confirm" />
   <input type="submit" value="I UNDERSTAND THIS WILL RESET THE NEW SCHEDULER SCHEMA AND MUST NOT BE USED IN PRODUCTION!" />
@@ -99,7 +100,7 @@ function getGenreForSeason($season_id) {
       return 1;
       break;
     default:
-      throw new MyURYException('Invalid Genre Pointer');
+      throw new MyURYException('Invalid Genre Pointer '.$data[0]);
   }
 }
 
@@ -275,6 +276,6 @@ $twig = CoreUtils::getTemplateObject();
 $twig->addVariable('serviceName', 'Configuration')
      ->addVariable('serviceVersion', 'Experimental')
      ->setTemplate('stripe.twig')
-     ->addVariable('title', $module)
+     ->addVariable('title', 'Schedule State Migration Tool')
      ->addVariable('stripedata', ob_get_clean())
      ->render();
