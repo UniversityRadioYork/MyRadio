@@ -1,0 +1,22 @@
+{% extends 'stripe.twig' %}
+{% block head %}
+{{ parent() }}
+{% include 'MyURY/Webcam/tracker.twig' %}
+{% endblock %}
+{% block stripecontent %}
+<figure class="webcam-stream-container" id="webcam-stream-{{live.streamid}}" style="display:inline-block">
+      <img src="{{live.liveurl}}" class="webcam-stream" />
+      <figcaption>{{live.streamname}}</figcaption>
+    </figure>
+<div class="webcam-grid-container">
+  {% for stream in streams %}
+    <figure class="webcam-stream-container" id="webcam-stream-{{stream.streamid}}" style="display:inline-block">
+      <img src="{{stream.liveurl}}" class="webcam-stream" />
+      <figcaption>{{stream.streamname}}</figcaption>
+    </figure>
+  {% endfor %}
+</div>
+<div class="ui-state-highlight" id="webcam-time-counter">
+  <span class="ui-icon ui-icon-clock fleft"></span>You've been watching the webcams for <span id="webcam-time-counter-value">not very long</span>
+</div>
+{% endblock %}
