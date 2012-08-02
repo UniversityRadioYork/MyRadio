@@ -18,7 +18,7 @@ echo '<div class="ui-state-error">This script deletes all data from the new sche
 $db = Database::getInstance();
 $approving_user = 7449;
 $commit = true;
-$nss_only = false;
+$nss_only = true;
 
 function getTimeslotsForSeason($season_id) {
   //Gets a list of timeslots for a "Season"
