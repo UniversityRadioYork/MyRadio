@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * @todo Proper Documentation
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 21072012
@@ -11,7 +11,7 @@ $form = (new MyURYForm('sched_allocate', $module, 'doShow',
                 array(
                     'debug' => true,
                     'title' => 'Edit Show'
-                //'template' => 'MyURY/Scheduler/allocate.twig'
+//'template' => 'MyURY/Scheduler/allocate.twig'
                 )
         ))->addField(
                 new MyURYFormField('grp-basics', MyURYFormField::TYPE_SECTION,
@@ -34,7 +34,7 @@ $form = (new MyURYForm('sched_allocate', $module, 'doShow',
         )->addField(
                 new MyURYFormField('genres', MyURYFormField::TYPE_SELECT,
                         array(
-                            'options' => Scheduler::getGenres(),
+                            'options' => array_merge(array('value' => null, 'text' => 'Please select...', 'disabled' => true), Scheduler::getGenres()),
                             'repeating' => true,
                             'label' => 'Genres',
                             'explanation' => 'What type of music do you play, if any?'
