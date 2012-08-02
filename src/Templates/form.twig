@@ -16,6 +16,9 @@
           <input type="hidden" id="{{frm_name}}-{{field.name}}-counter" value="0" />
           {% endif %}
         </div>
+      {% if myury_form_section_exists is defined %}
+        </div>
+      {% endif %}
     {% endfor %}
         <input type="submit" value="Submit" />
       </form>
