@@ -142,7 +142,7 @@ class MyURYMenu {
         WHERE moduleid=$1 ORDER BY title ASC', array($moduleid));
       //Get permissions for each $item
       foreach ($items as $key => $item) {
-        array_merge($items[$key], $this->breakDownURL($item['url']));
+        $items[$key] = array_merge($items[$key], $this->breakDownURL($item['url']));
       }
 
       //Cache for a long, long while
