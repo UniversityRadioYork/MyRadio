@@ -143,7 +143,7 @@ class MyURYMenu {
       //Get permissions for each $item
       foreach ($items as $key => $item) {
         CoreUtils::debug_for(7449, print_r($this->breakDownURL($item['url']), true));
-        array_merge($items[$key], $this->breakDownURL($item['url']));
+        $items[$key] = array_merge($items[$key], $this->breakDownURL($item['url']));
       }
 
       //Cache for a long, long while
