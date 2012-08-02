@@ -67,7 +67,7 @@ function timeToTimestamp($time) {
 }
 
 //Type = 3 Limits to shows
-$shows = $db->fetch_all('SELECT * FROM sched_entry WHERE'.($nss_only ? ' summary=\'No Show Scheduled\' AND' : ' entrytypeid=3').' ORDER BY summary, entryid ASC');
+$shows = $db->fetch_all('SELECT * FROM sched_entry WHERE'.($nss_only ? ' summary=\'No Show Scheduled\' AND' : '') . ' entrytypeid=3 ORDER BY summary, entryid ASC');
 echo '<div class="left">';
 $previousshow = '';
 $show_seasoned = array();
