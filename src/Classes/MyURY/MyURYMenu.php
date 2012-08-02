@@ -142,7 +142,6 @@ class MyURYMenu {
         WHERE moduleid=$1 ORDER BY title ASC', array($moduleid));
       //Get permissions for each $item
       foreach ($items as $key => $item) {
-        CoreUtils::debug_for(7449, print_r($this->breakDownURL($item['url']), true));
         $items[$key] = array_merge($items[$key], $this->breakDownURL($item['url']));
       }
 
