@@ -34,7 +34,7 @@ $form = (new MyURYForm('sched_allocate', $module, 'doShow',
         )->addField(
                 new MyURYFormField('genres', MyURYFormField::TYPE_SELECT,
                         array(
-                            'options' => array_merge(array('value' => null, 'text' => 'Please select...', 'disabled' => true), Scheduler::getGenres()),
+                            'options' => array_merge(array(array('value' => null, 'text' => 'Please select...', 'disabled' => true)), Scheduler::getGenres()),
                             'repeating' => true,
                             'label' => 'Genres',
                             'explanation' => 'What type of music do you play, if any?'
