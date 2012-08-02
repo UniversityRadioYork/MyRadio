@@ -168,18 +168,17 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
     }
   }
   //Do the same with genres
-  foreach (getGenresForSeason($shows[$i]['entryid']) as $genre) {
-    //If it's a new genre, add it
-    if (!isset($show_meta['genres'][$genre])) {
-      $show_meta['genres'][$genre] = array(
-          'effective_from' => $presenter_start_time,
-          'effective_to' => $presenter_end_time
-          );
-    } else {
-      //Update an existing end time
-      if ($show_meta['genres'][$genre]['effective_to'] < $presenter_end_time or $presenter_end_time === null) {
-        $show_meta['genres'][$genre]['effective_to'] = $presenter_end_time;
-      }
+  $genre = getGenreForSeason($shows[$i]['entryid']);
+  //If it's a new genre, add it
+  if (!isset($show_meta['genres'][$genre])) {
+    $show_meta['genres'][$genre] = array(
+        'effective_from' => $presenter_start_time,
+        'effective_to' => $presenter_end_time
+        );
+  } else {
+    //Update an existing end time
+    if ($show_meta['genres'][$genre]['effective_to'] < $presenter_end_time or $presenter_end_time === null) {
+      $show_meta['genres'][$genre]['effective_to'] = $presenter_end_time;
     }
   }
   echo nl2br(print_r($season, true));
