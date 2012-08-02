@@ -52,6 +52,10 @@ function getStudioForSeason($season_id) {
   //Gets the studio for a "Season"
   global $db;
   $data = $db->fetch_column('SELECT roomid FROM sched_roomentry WHERE entryid=$1', array($season_id));
+  if (!isset($data[0])) {
+    //Default to S1
+    return 1;
+  }
   switch ($data[0]) {
     case 1:
       return 1;
@@ -60,10 +64,12 @@ function getStudioForSeason($season_id) {
       return 2;
       break;
     case 4:
+    case 5:
+    case 0:
       return 3;
       break;
     default:
-      throw new MyURYException('Invalid Room Pointer');
+      throw new MyURYException('Invalid Room Pointer '.$data[0]);
   }
 }
 
@@ -71,7 +77,7 @@ function getGenreForSeason($season_id) {
   //Gets the studio for a "Season"
   global $db;
   $data = $db->fetch_column('SELECT genreid FROM sched_showgenre WHERE entryid=$1', array($season_id));
-  return is_numeric($data[0]) ? $data[0] : 1;
+  return (isset($data[0])) ? $data[0] : 1;
 }
 
 function timeToTimestamp($time) {
@@ -116,6 +122,11 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
       'description' => $shows[$i]['description'],
       'submitted' => strtotime($shows[$i]['createddate'])
       );
+  //Don't add seasons with no actual shows
+  if (empty($season['timeslots'])) {
+    echo 'Skipped due to no timeslots.</details></details>';
+    continue;
+  }
   //Figure out presenter changes
   $presenter_start_time = strtotime($season['timeslots'][0]['starttime'])-1;
   //If it's the last show, it's effective to present date
