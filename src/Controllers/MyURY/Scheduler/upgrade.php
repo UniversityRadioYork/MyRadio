@@ -23,7 +23,7 @@ echo '<div class="ui-state-error">This script deletes all data from the new sche
 $db = Database::getInstance();
 $approving_user = 7449;
 $commit = true;
-$nss_only = false;
+$nss_only = true;
 
 function getTimeslotsForSeason($season_id) {
   //Gets a list of timeslots for a "Season"
@@ -93,7 +93,7 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
     }
     if (empty($shows[$i]['summary'])) continue;
     $seasons = array();
-    $show_meta = array('created' => strtotime('+10 Years'), 'tags' => array(), 'presenters' => array());
+    $show_meta = array('created' => strtotime('+10 Years'), 'tags' => array(), 'presenters' => array(), 'genres' => array(), 'locations' => array());
     $previousshow = $shows[$i]['summary'];
     $season_number = 1;
     echo '<div style="background-color:#ccc">New Show: '.$previousshow.'</div><details>';
@@ -151,6 +151,18 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
     if ($show_meta['genres'][$genre]['effective_to'] < $presenter_end_time or $presenter_end_time === null) {
       $show_meta['genres'][$genre]['effective_to'] = $presenter_end_time;
     }
+  }
+  $location = getStudioForSeason($show[$i]['entryid']);
+  if (!empty($show_meta['locations']) && $show_meta['locations'][sizeof($show_meta['locations'])-1]['location_id'] === $location) {
+    //Update the current location
+    $show_meta['locations'][sizeof($show_meta['locations'])-1]['effective_to'] = $presenter_end_time;
+  } else {
+    //Add a new location
+    $show_meta['locations'][] = array(
+      'location_id' => $location,
+        'effective_from' => $presenter_start_time,
+        'effective_to' => $presenter_end_time
+    );
   }
   echo nl2br(print_r($season, true));
   $seasons[] = $season;
@@ -212,6 +224,19 @@ if ($commit) {
         $db->query('INSERT INTO schedule.show_genre (show_id, genre_id, effective_from, effective_to, memberid, approvedid) VALUES
         ($1, $2, $3, $4, $5, $6)',
               array($show_id, $genre, timeToTimestamp($ginfo['effective_from']), timeToTimestamp($ginfo['effective_to']), $owner, $approving_user));
+      }
+    }
+    
+    //Add locations
+    foreach ($show['info']['locations'] as $linfo) {
+      if ($linfo['effective_to'] == 0) {
+         $db->query('INSERT INTO schedule.show_location (show_id, location_id, effective_from, effective_to, memberid, approvedid) VALUES
+        ($1, $2, $3, NULL, $4, $5)',
+              array($show_id, $linfo['location_id'], timeToTimestamp($linfo['effective_from']), $owner, $approving_user));
+      } else {
+        $db->query('INSERT INTO schedule.show_location (show_id, location_id, effective_from, effective_to, memberid, approvedid) VALUES
+        ($1, $2, $3, $4, $5, $6)',
+              array($show_id, $linfo['location_id'], timeToTimestamp($linfo['effective_from']), timeToTimestamp($linfo['effective_to']), $owner, $approving_user));
       }
     }
     
