@@ -118,7 +118,7 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
       );
   //Don't add seasons with no actual shows
   if (empty($season['timeslots'])) {
-    echo 'Skipped due to no timeslots.</details>';
+    echo 'Skipped due to no timeslots.</details></details>';
     continue;
   }
   //Figure out presenter changes
