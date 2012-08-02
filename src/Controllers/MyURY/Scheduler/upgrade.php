@@ -2,13 +2,15 @@
 /**
  * Script to migrate shows from the old schema to Scheduler 2.0
  * 
- * Currently only migrates "No Show Scheduled"
+ * $approving_user = the user who *approves* all imported data
+ * $commit = Whether to actual import calculated data or just display it
+ * $nss_only = if true, only No Show Scheduled will be imported
  */
 if (!isset($_POST['confirm'])) {
   ?>
 <form action="?module=Scheduler&action=upgrade" method="post">
   <input type="hidden" name="confirm" />
-  <input type="submit" value="I UNDERSTAND THIS WILL RESET THE NEW SCHEDULER SCHEMA AND MUST NOT BE USED IN PRODUCTION" />
+  <input type="submit" value="I UNDERSTAND THIS WILL RESET THE NEW SCHEDULER SCHEMA AND MUST NOT BE USED IN PRODUCTION!" />
 </form>
 <?php
 exit;
@@ -47,6 +49,43 @@ function getStudioForSeason($season_id) {
   //Gets the studio for a "Season"
   global $db;
   $data = $db->fetch_column('SELECT roomid FROM sched_roomentry WHERE entryid=$1', array($season_id));
+  switch ($data[0]) {
+    case 1:
+      return 1;
+      break;
+    case 2:
+      return 14;
+      break;
+    case 3:
+      return 10;
+      break;
+    case 4:
+      return 15;
+      break;
+    case 5:
+      return 11;
+      break;
+    case 6:
+      return 16;
+      break;
+    case 7:
+      return 17;
+      break;
+    case 8:
+      return 12;
+      break;
+    case 9:
+      return 1;
+      break;
+    default:
+      throw new MyURYException('Invalid Genre Pointer');
+  }
+}
+
+function getGenreForSeason($season_id) {
+  //Gets the studio for a "Season"
+  global $db;
+  $data = $db->fetch_column('SELECT sched_musiccategory FROM sched_showdetail WHERE entryid=$1', array($season_id));
   switch ($data[0]) {
     case 1:
       return 1;
