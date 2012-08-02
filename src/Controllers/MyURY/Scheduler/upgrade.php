@@ -5,6 +5,8 @@
  * $approving_user = the user who *approves* all imported data
  * $commit = Whether to actual import calculated data or just display it
  * $nss_only = if true, only No Show Scheduled will be imported
+ * 
+ * @todo this cannot deal with presenters leaving and later returning - it counts as them never leaving
  */
 if (!isset($_POST['confirm'])) {
   ?>
@@ -165,6 +167,21 @@ for ($i = 0; $i <= sizeof($shows); $i++) {
       }
     }
   }
+  //Do the same with genres
+  foreach (getGenresForSeason($shows[$i]['entryid']) as $genre) {
+    //If it's a new genre, add it
+    if (!isset($show_meta['genres'][$genre])) {
+      $show_meta['genres'][$genre] = array(
+          'effective_from' => $presenter_start_time,
+          'effective_to' => $presenter_end_time
+          );
+    } else {
+      //Update an existing end time
+      if ($show_meta['genres'][$genre]['effective_to'] < $presenter_end_time or $presenter_end_time === null) {
+        $show_meta['genres'][$genre]['effective_to'] = $presenter_end_time;
+      }
+    }
+  }
   echo nl2br(print_r($season, true));
   $seasons[] = $season;
   echo '</details>';
@@ -212,6 +229,19 @@ if ($commit) {
         $db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from, effective_to, memberid, approvedid) VALUES
         ($1, 1, $2, $3, $4, $5, $6)',
               array($show_id, $presenter, timeToTimestamp($pinfo['effective_from']), timeToTimestamp($pinfo['effective_to']), $owner, $approving_user));
+      }
+    }
+    
+    //Add genres
+    foreach ($show['info']['genres'] as $genre => $ginfo) {
+      if ($pinfo['effective_to'] == 0) {
+         $db->query('INSERT INTO schedule.show_genre (show_id, genre_id, effective_from, effective_to, memberid, approvedid) VALUES
+        ($1, $2, $3, NULL, $4, $5)',
+              array($show_id, $genre, timeToTimestamp($ginfo['effective_from']), $owner, $approving_user));
+      } else {
+        $db->query('INSERT INTO schedule.show_credit (show_id, genre_id, effective_from, effective_to, memberid, approvedid) VALUES
+        ($1, $2, $3, $4, $5, $6)',
+              array($show_id, $genre, timeToTimestamp($ginfo['effective_from']), timeToTimestamp($ginfo['effective_to']), $owner, $approving_user));
       }
     }
     
