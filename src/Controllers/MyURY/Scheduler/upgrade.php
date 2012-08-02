@@ -64,6 +64,7 @@ function getStudioForSeason($season_id) {
       return 2;
       break;
     case 4:
+    case 5:
       return 3;
       break;
     default:
