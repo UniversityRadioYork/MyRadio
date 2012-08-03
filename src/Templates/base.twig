@@ -26,7 +26,7 @@
         {% if phperrors is not null %}
           <ul class="php_error">
             {% for phperror in phperrors %}
-              <li><strong>{{ phperror.name }}</strong> : {{ phperror.string|raw }} - In {{ phperror.file }} on <strong>line {{ phperror.line }}</strong></li>
+              <li><strong>{{ phperror.name }}</strong> : {{ phperror.string|raw }} - In <strong>{{ phperror.file }}</strong> on line {{ phperror.line }}</li>
             {% endfor %}
           </ul>
         {% endif %}
