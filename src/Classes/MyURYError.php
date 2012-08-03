@@ -34,7 +34,10 @@ class MyURYError {
     E_STRICT => 'Runtime notice',
     E_RECOVERABLE_ERROR => 'Recoverable error'
   );
-  public static $php_errorblock = array();
+  /**
+   * @var type $php_errorlist An array holding all php errors as <li> elements
+   */
+  public static $php_errorlist = array();
   
   /**
    * Places all phpErrors into the array $php_errorblock
@@ -55,7 +58,7 @@ class MyURYError {
             htmlspecialchars($errfile, ENT_NOQUOTES, 'UTF-8').
             '</strong> on line '.$errline.
             '</li>';
-    array_push(self::$php_errorblock, $php_error);
+    array_push(self::$php_errorlist, $php_error);
   }
   
 }
