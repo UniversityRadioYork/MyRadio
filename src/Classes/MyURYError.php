@@ -14,7 +14,7 @@
 class MyURYError {
   
 /**
- * @var type $error_type An array that matches error codes from $errno to a short string which names the error type (such as "User-generated error", or "User-generated warning")
+ * @var array $error_type An array that matches error codes from $errno to a short string which names the error type (such as "User-generated error", or "User-generated warning")
  */
   private static $error_type = array(
     E_ERROR => 'Fatal error',
@@ -32,16 +32,16 @@ class MyURYError {
     E_RECOVERABLE_ERROR => 'Recoverable error'
   );
   /**
-   * @var type $php_errorlist An array holding all php errors as arrays of [$error_name,$errstr,$errfile,$errline]
+   * @var array $php_errorlist An array holding all php errors as arrays of [$error_name,$errstr,$errfile,$errline]
    */
   public static $php_errorlist = array();
   
   /**
    * Places all php errors into the array $php_errorlist
-   * @param type $errno A numeric value which corresponds to the type of error (Notice, Fatal Error, User-generated warning, etc).
-   * @param type $errstr A string that contains the error message text, ideally including details that identify the cause of the error.
-   * @param type $errfile The full local path of the file which has triggered this error (such as /var/www/public_html/badscript.php).
-   * @param type $errline The line number where the error was generated (within the file identified by $errfile).
+   * @param string $errno A numeric value which corresponds to the type of error (Notice, Fatal Error, User-generated warning, etc).
+   * @param string $errstr A string that contains the error message text, ideally including details that identify the cause of the error.
+   * @param string $errfile The full local path of the file which has triggered this error (such as /var/www/public_html/badscript.php).
+   * @param string $errline The line number where the error was generated (within the file identified by $errfile).
    */
   public static function errorsToArray($errno, $errstr, $errfile, $errline) {
     $error_name = (isset(self::$error_type[$errno]) ? self::$error_type[$errno] : 'Unknown error code');
@@ -54,10 +54,10 @@ class MyURYError {
   }
   /**
    * Logs all php errors into the php log file
-   * @param type $errno A numeric value which corresponds to the type of error (Notice, Fatal Error, User-generated warning, etc).
-   * @param type $errstr A string that contains the error message text, ideally including details that identify the cause of the error.
-   * @param type $errfile The full local path of the file which has triggered this error (such as /var/www/public_html/badscript.php).
-   * @param type $errline The line number where the error was generated (within the file identified by $errfile).
+   * @param string $errno A numeric value which corresponds to the type of error (Notice, Fatal Error, User-generated warning, etc).
+   * @param string $errstr A string that contains the error message text, ideally including details that identify the cause of the error.
+   * @param string $errfile The full local path of the file which has triggered this error (such as /var/www/public_html/badscript.php).
+   * @param string $errline The line number where the error was generated (within the file identified by $errfile).
    */
   public static function errorsToLog($errno, $errstr, $errfile, $errline) {
     /*
