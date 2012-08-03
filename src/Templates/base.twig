@@ -23,6 +23,7 @@
         <span class="fright">{% if timeslotname is null %}<a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}">Change Timeslot</a> | {% endif %}<a href="https://ury.york.ac.uk/portal/redir_out.php">Logout</a></span>
       </header>
       <div id="page">
+        {% if phperror is not null %}<div class="php_error">{{ phperror }}</div>{% endif %}
         <h1 class="logotype">{{ title }}</h1>
 {% block content %}{% endblock %}
 {% block footer %}
