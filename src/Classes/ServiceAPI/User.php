@@ -311,7 +311,8 @@ class User extends ServiceAPI {
    * @return \User
    */
   public static function getInstance($memberid = -1) {
-    self::initCache();
+    //__wakeup isn't static.
+    self::initCache(); self::initDB();
     //Check the input is an int, and use the session user if not otherwise told
     $memberid = (int) $memberid;
     if ($memberid === -1) $memberid = $_SESSION['memberid'];
