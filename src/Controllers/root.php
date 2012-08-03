@@ -51,19 +51,21 @@ require_once 'Classes/MyURY/CoreUtils.php';
 require_once 'Classes/Config.php';
 
 /**
+ * Load the phpError handler class - this has functions to put errors nicely on
+ * the page, or to log them elsewhere.
+ * And set the error handler to use it
+ */
+require_once 'Classes/MyURYError.php';
+set_error_handler('MyURYError::errorsToArray');
+
+/**
  * Turn off visible error reporting, if needed
  * 269 is AUTH_SHOWERRORS - the constants aren't initialised yet
  */
 if (!Config::$display_errors && !CoreUtils::hasPermission(269)) {
   ini_set('display_errors', 'Off');
+  set_error_handler('MyURYError::errorsToLog');
 }
-
-/**
- * Load the phpError handler class
- * and set the error handler
- */
-require_once 'Classes/MyURYError.php';
-set_error_handler('MyURYError::errorsToArray');
 
 /**
  * Call the model that prepares the Database and the Global Abstraction API 
