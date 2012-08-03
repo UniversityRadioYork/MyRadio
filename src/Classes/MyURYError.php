@@ -32,7 +32,7 @@ define('PHP_ERROR_LOCK', $log_dir.'/php-error-logging-lock');
 define('ONE_DAY', 86400);  // one whole day, in seconds
 define('TESTING_ONLY', 10); // ten seconds, for test purposes
 
-define('SEND_ERROR_EMAIL_TO', 'aj@ury.york.ac.uk');
+define('SEND_ERROR_EMAIL_TO', 'computing@ury.york.ac.uk');
 
 class MyURYError {
   
@@ -176,7 +176,7 @@ class MyURYError {
             // but remember to change it back to ONE_DAY (or some
             // other value you deem suitable) when testing is
             // completed.
-            if ($diff_seconds < TESTING_ONLY) {
+            if ($diff_seconds < ONE_DAY) {
                 // Last alert for this $errfile was less than
                 // twenty-four hours ago, so we don't need to
                 // send out another email alert. (Nor do we need
