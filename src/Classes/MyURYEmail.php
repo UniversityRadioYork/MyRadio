@@ -31,25 +31,48 @@ class MyURYEmail {
   }
   /**
    * 
-   * @param string $name The name to send from
-   * @param string $email The email address to send from
+   * @param string $from email address or "Name <email>"
    * @return string The header line for From:
    */
-  private static function setSender($name, $email) {
-    return self::$headers . self::$rtnl . 'From: ' . $name . ' <' . $email . '>';
+  private static function setSender($from) {
+    return self::$headers . self::$rtnl . 'From: ' . $from;
   }
 
+  /**
+   * 
+   * @param string $to email address or "Name <email>"
+   * @param string $subject email subject
+   * @param sting $message email message
+   */
   public static function sendEmail($to, $subject, $message){
     mail($to, $subject, $message, self::getDefaultHeader());
   }
-  public static function sendEmailFrom($to, $fromName, $fromEmail, $subject, $message) {
-    mail($to, $subject, $message, self::setSender($fromName,$fromEmail));
+  /**
+   * 
+   * @param string $to email address or "Name <email>"
+   * @param string $from email address or "Name <email>"
+   * @param string $subject email subject
+   * @param sting $message email message
+   */
+  public static function sendEmailFrom($to, $from, $subject, $message) {
+    mail($to, $subject, $message, self::setSender($from));
   }
+  /**
+   * 
+   * @param string $to email address or "Name <email>"
+   * @param string $subject email subject
+   * @param sting $message email message
+   */
   public static function sendEmailFromComputing($to, $subject, $message){
-    mail($to, $subject, $message, self::setSender('URY Computing Team','computing@ury.york.ac.uk'));
+    mail($to, $subject, $message, self::setSender('URY Computing Team <computing@ury.york.ac.uk>'));
   }
+  /**
+   * 
+   * @param string $subject email subject
+   * @param sting $message email message
+   */
   public static function sendEmailToComputing($subject, $message){
-    mail("URY Computing <computing@ury.york.ac.uk>", $subject, $message, self::getDefaultHeader());
+    mail("URY Computing Team <computing@ury.york.ac.uk>", $subject, $message, self::getDefaultHeader());
   }
 }
 
