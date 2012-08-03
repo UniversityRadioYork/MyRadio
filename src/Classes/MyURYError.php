@@ -11,6 +11,24 @@
  * @version 03082012
  * @package MyURY_Core
  */
+
+/*
+ * SETTINGS
+ */
+
+// Determine path to the directory one level above doc root.
+// CHANGE THIS TO A PATH WHERE YOU WANT LOG FILES TO BE PLACED!
+$log_dir = realpath('/var/run');
+
+// Define a lock file location (used by log_all_errors, below)
+define('PHP_ERROR_LOCK', $log_dir.'/php-error-logging-lock');
+
+// For use within log_all_errors, stage two.
+define('ONE_DAY', 86400);  // one whole day, in seconds
+define('TESTING_ONLY', 10); // ten seconds, for test purposes
+
+define('SEND_ERROR_EMAIL_TO', 'aj@ury.york.ac.uk');
+
 class MyURYError {
   
 /**
@@ -72,11 +90,152 @@ class MyURYError {
             $errfile.' on line '.$errline;
     error_log($error_message, 0);  // log to PHP_ERROR_LOG file
   }
+  
   /**
-   * @todo errorsToEmail() - sends errors to computing@ury on a daily basis, 
-   * see http://www.bobulous.org.uk/coding/php-error-handling.html 
-   * using a standard MyURYEmail class
+   * @todo make this throw exceptions rather than echoing fails
    */
+  /**
+   * Sends the errors to the defined email every 24 hours
+   * @param string $errno A numeric value which corresponds to the type of error (Notice, Fatal Error, User-generated warning, etc).
+   * @param string $errstr A string that contains the error message text, ideally including details that identify the cause of the error.
+   * @param string $errfile The full local path of the file which has triggered this error (such as /var/www/public_html/badscript.php).
+   * @param string $errline The line number where the error was generated (within the file identified by $errfile).
+   */
+  public static function errorsToEmail($errno, $errstr, $errfile, $errline) {
+    /* 
+     * Stage two: find out whether we need to email a warning
+     * to the webmaster.
+     */
+    
+    $lockfile = fopen(PHP_ERROR_LOCK, 'a+');
+    if (!$lockfile) {
+        error_log('FAIL: fopen failed in '. __FUNCTION__ .' in '. __FILE__ .'');
+        error_log(__FUNCTION__ .' failed! Check server logs!',1, SEND_ERROR_EMAIL_TO);
+        echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
+        die();
+    }
+    $locked = flock($lockfile, LOCK_EX);
+    if (!$locked) {
+        error_log('FAIL: flock failed in '. __FUNCTION__ .' in '. __FILE__ .'');
+        error_log(__FUNCTION__ .' failed! Check server logs!',1, SEND_ERROR_EMAIL_TO);
+        echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
+        die();
+    }
+    rewind($lockfile);
+    
+    // Run through the lockfile and grab the date/errfile pairs.
+    unset($lockfile_data);
+    while (!feof($lockfile)) {
+        $buffer = fgets($lockfile);
+        if ($buffer == '') continue;  // EOF line is empty
+        $match = preg_match('#^([0-9]{4}-[0-9]{2}-[0-9]{2}'.
+                'T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\+|-)[0-9]{4})'.
+                '\s+(.+)$#', $buffer, $matches);
+        if (!$match) {
+            error_log('FAIL: preg_match could not match '.
+                    'expected pattern in error log file, in '.
+                    __FILE__ .'');
+            continue;
+        }
+        $lockfile_data[$matches[2]] = $matches[1]; 
+    }
+    
+    // If an alert date exists for the current $errfile value,
+    // then calculate whether or not the last error alert was
+    // sent (by email) less than twenty-four hours ago. If so,
+    // we don't need to send another alert right now.
+    $need_to_email_alert = true; // starting assumption
+    if (count($lockfile_data) > 0) {
+        if (isset($lockfile_data[$errfile])) {
+            $alert_date = date_create($lockfile_data[$errfile]);
+            if (!$alert_date) {
+                error_log('FAIL: date_create could not create a date object'.
+                        'from the last alert date in '. __FUNCTION__ .' in '.
+                        __FILE__ .'.');
+                error_log(__FUNCTION__ .' failed! Check server logs!', 1, SEND_ERROR_EMAIL_TO);
+                echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
+                die();
+            }
+            $alert_timestamp = date_format($alert_date, 'U');
+            $current_timestamp = date('U');
+            $diff_seconds = $current_timestamp -
+                    $alert_timestamp;
+            // Change this to TESTING_ONLY to check that it works
+            // but remember to change it back to ONE_DAY (or some
+            // other value you deem suitable) when testing is
+            // completed.
+            if ($diff_seconds < TESTING_ONLY) {
+                // Last alert for this $errfile was less than
+                // twenty-four hours ago, so we don't need to
+                // send out another email alert. (Nor do we need
+                // to update the alert date in the lockfile.)
+                $need_to_email_alert = false;
+            }
+        }
+    }
+    
+    
+    /*
+     * Stage three: send email and update lockfile, if necessary.
+     */ 
+    
+    // Either we've never sent an alert about this page before,
+    // or the last alert was sent more than 24 hours ago.
+    // First, update the lockfile with the current date+time,
+    // (so that lockfile can be released rather than hanging
+    // around to wait for the email to be sent).
+    if($need_to_email_alert) {
+        // Write out an updated version of the locking file after
+        // updating the alert date for this $errfile entry.
+        $lockfile_data[$errfile] = gmdate(DATE_ISO8601);
+        ftruncate($lockfile, 0);  // we want to start from blank
+        foreach($lockfile_data as $page => $date) {
+            fwrite($lockfile, $date.' '.$page."\n");
+        }
+    }
+    
+    // Now that lockfile has been updated (if it was necessary)
+    // it's time to release the lock, and close the file.
+    if(flock($lockfile, LOCK_UN) == false ||
+            fclose($lockfile) == false) {
+        error_log('FAIL: flock or fclose failed in '. __FUNCTION__ .' in '. __FILE__);
+        error_log(__FUNCTION__ .' failed! Check server logs!', 1, SEND_ERROR_EMAIL_TO);
+        echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
+        die();
+    }
+
+    // Now the lockfile has been released, send the alert email
+    // if necessary.
+    if($need_to_email_alert) {
+        if (SEND_ERROR_EMAIL_TO) {
+            $rtnl = "\r\n";  // carriage return + newline
+            $message = 'An error of type "'.$error_name.'" has '.
+                    'occurred on the page '.$rtnl.
+                    "\t".$errfile.$rtnl.
+                    'Check the error log on the server as soon '.
+                    'as possible.'.$rtnl.$rtnl.
+                    'NOTE: At most, one email alert per '.
+                    'day will be generated'.$rtnl.
+                    'for each page, so this will be the only '.
+                    'error generated'.$rtnl.
+                    'by this page in the next 24 hours. '.
+                    '(Errors of more serious'.$rtnl.
+                    'types may occur but not generate email '.
+                    'alerts. Check the'.$rtnl.
+                    'live error log.)';
+            $sent = MyURYEmail::sendEmail(SEND_ERROR_EMAIL_TO, 'PHP error alert', $message);
+            if (!$sent) {
+                error_log('FAIL: mail failed to send error alert email.');
+                // Good chance that if the mail command failed,
+                // then error_log will also fail to send mail,
+                // but we have to try.
+                error_log(__FUNCTION__ .' failed! Check server logs!', 1, SEND_ERROR_EMAIL_TO);
+                echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
+                die();
+            }
+        }
+    }
+  }
   /**
    * @todo handlerError() - the MyURYError class should decide how to actually handle the error
    * handlerError() would deal with it as it saw fit using the previously defined methods
