@@ -14,7 +14,7 @@
 class MyURYEmail {
   // Defaults
   private static $headers = 'Content-type: text/plain; charset=utf-8';
-  private static $sender = 'From: URY <no-reply@ury.york.ac.uk>';
+  private static $sender = 'From: MyURY <no-reply@ury.york.ac.uk>';
   
   // Standard
   /**
