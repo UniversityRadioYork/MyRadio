@@ -45,6 +45,12 @@ class MyURYEmail {
   public static function sendEmailFrom($to, $fromName, $fromEmail, $subject, $message) {
     mail($to, $subject, $message, self::setSender($fromName,$fromEmail));
   }
+  public static function sendEmailFromComputing($to, $subject, $message){
+    mail($to, $subject, $message, self::setSender('URY Computing Team','computing@ury.york.ac.uk'));
+  }
+  public static function sendEmailToComputing($subject, $message){
+    mail("URY Computing <computing@ury.york.ac.uk>", $subject, $message, self::getDefaultHeader());
+  }
 }
 
 
