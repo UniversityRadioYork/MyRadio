@@ -49,6 +49,10 @@ class MyURYError {
     E_STRICT => 'Runtime notice',
     E_RECOVERABLE_ERROR => 'Recoverable error'
   );
+  private static function getErrorName($errno) {
+    return $error_name = (isset(self::$error_type[$errno]) ? self::$error_type[$errno] : 'Unknown error code');
+  }
+
   /**
    * @var array $php_errorlist An array holding all php errors as arrays of [$error_name,$errstr,$errfile,$errline]
    */
@@ -62,7 +66,7 @@ class MyURYError {
    * @param string $errline The line number where the error was generated (within the file identified by $errfile).
    */
   public static function errorsToArray($errno, $errstr, $errfile, $errline) {
-    $error_name = (isset(self::$error_type[$errno]) ? self::$error_type[$errno] : 'Unknown error code');
+    $error_name = self::getErrorName($errno);
     $php_error = array(
         'name' => $error_name, 
         'string' => $errstr, 
@@ -81,7 +85,7 @@ class MyURYError {
     /*
      * Stage one: log the error using PHP's error logger.
      */
-    $error_name = (isset(self::$error_type[$errno]) ? self::$error_type[$errno] : 'Unknown error code');
+    $error_name = self::getErrorName($errno);
 
     // Structure the error message in the same way as PHP logs
     // fatal errors, because they'll be saved in the same file.
@@ -102,6 +106,7 @@ class MyURYError {
    * @param string $errline The line number where the error was generated (within the file identified by $errfile).
    */
   public static function errorsToEmail($errno, $errstr, $errfile, $errline) {
+    $error_name = self::getErrorName($errno);
     /* 
      * Stage two: find out whether we need to email a warning
      * to the webmaster.
@@ -211,7 +216,7 @@ class MyURYError {
             $rtnl = "\r\n";  // carriage return + newline
             $message = 'An error of type "'.$error_name.'" has '.
                     'occurred on the page '.$rtnl.
-                    "\t".$errfile.$rtnl.
+                    "\t".$errfile.' (line '.$errline.')'.$rtnl.
                     'Check the error log on the server as soon '.
                     'as possible.'.$rtnl.$rtnl.
                     'NOTE: At most, one email alert per '.
