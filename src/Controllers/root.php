@@ -56,7 +56,7 @@ require_once 'Classes/Config.php';
  * And set the error handler to use it
  */
 require_once 'Classes/MyURYError.php';
-set_error_handler('MyURYError::errorsToArray');
+set_error_handler('MyURYError::errorsToEmail');
 
 /**
  * Turn off visible error reporting, if needed
