@@ -61,7 +61,7 @@ require_once 'Classes/MyURYEmail.php';
  * And set the error handler to use it
  */
 require_once 'Classes/MyURYError.php';
-set_error_handler('MyURYError::errorsToEmail');
+set_error_handler('MyURYError::errorsToArray');
 
 /**
  * Turn off visible error reporting, if needed
@@ -69,7 +69,7 @@ set_error_handler('MyURYError::errorsToEmail');
  */
 if (!Config::$display_errors && !CoreUtils::hasPermission(269)) {
   ini_set('display_errors', 'Off');
-  set_error_handler('MyURYError::errorsToLog');
+  set_error_handler('MyURYError::errorsToEmail');
 }
 
 /**
