@@ -19,7 +19,7 @@ class MyURYError {
    * to a custom error handler, they are just logged by PHP
    * and then execution terminates.) 
    */
-  var $error_type = array(
+  private static $error_type = array(
     E_ERROR => 'Fatal error',
     E_WARNING => 'Warning',
     E_PARSE => 'Parse error',
@@ -34,7 +34,7 @@ class MyURYError {
     E_STRICT => 'Runtime notice',
     E_RECOVERABLE_ERROR => 'Recoverable error'
   );
-  var $php_errorblock = array();
+  public static $php_errorblock = array();
   
   /**
    * Places all phpErrors into the array $php_errorblock
@@ -45,9 +45,8 @@ class MyURYError {
    * @param type $errline The line number where the error was generated (within the file identified by $errfile).
    */
   public static function errorsToArray($errno, $errstr, $errfile, $errline) {
-    global $error_type;
-    $error_name = (isset($error_type[$errno]) ?
-            $error_type[$errno] : 'Unknown error code');
+    $error_name = (isset(self::$error_type[$errno]) ?
+            self::$error_type[$errno] : 'Unknown error code');
     $php_error = '<li class="php_error">' .
             '<strong>'.$error_name.'</strong> : ' .
             $errstr.
@@ -56,8 +55,7 @@ class MyURYError {
             htmlspecialchars($errfile, ENT_NOQUOTES, 'UTF-8').
             '</strong> on line '.$errline.
             '</li>';
-    print_r($php_error);
-    //array_push($php_errorblock, $php_error);
+    array_push(self::$php_errorblock, $php_error);
   }
   
 }
