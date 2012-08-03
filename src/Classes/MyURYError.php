@@ -72,4 +72,13 @@ class MyURYError {
             $errfile.' on line '.$errline;
     error_log($error_message, 0);  // log to PHP_ERROR_LOG file
   }
+  /**
+   * @todo errorsToEmail() - sends errors to computing@ury on a daily basis, 
+   * see http://www.bobulous.org.uk/coding/php-error-handling.html 
+   * using a standard MyURYEmail class
+   */
+  /**
+   * @todo handlerError() - the MyURYError class should decide how to actually handle the error
+   * handlerError() would deal with it as it saw fit using the previously defined methods
+   */
 }
