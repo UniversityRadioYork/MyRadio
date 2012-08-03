@@ -26,7 +26,7 @@
         {% if phperrors is not null %}
           <ul class="php_error">
             {% for phperror in phperrors %}
-              <li>{{ phperror }}</li>
+              <li>{{ phperror|raw }}</li>
             {% endfor %}
           </ul>
         {% endif %}
