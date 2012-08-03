@@ -19,7 +19,7 @@ class MyURYError {
    * to a custom error handler, they are just logged by PHP
    * and then execution terminates.) 
    */
-  private $error_type = array(
+  var $error_type = array(
     E_ERROR => 'Fatal error',
     E_WARNING => 'Warning',
     E_PARSE => 'Parse error',
@@ -34,6 +34,7 @@ class MyURYError {
     E_STRICT => 'Runtime notice',
     E_RECOVERABLE_ERROR => 'Recoverable error'
   );
+  var $php_errorblock = array();
   
   /**
    * Places all phpErrors into the array $php_errorblock
