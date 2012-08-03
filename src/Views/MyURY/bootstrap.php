@@ -13,5 +13,5 @@ $twig->addVariable('serviceName', $service)
      ->setTemplate('stripe.twig')
      ->addVariable('title', $module)
      ->addVariable('uri', $_SERVER['REQUEST_URI']);
-if(isset($php_errormsg)){
-$twig->addVariable('phperror', $php_errormsg);};
+if(isset(MyURYError::$php_errorblock)){
+$twig->addVariable('phperror', MyURYError::$php_errorblock);};
