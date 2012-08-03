@@ -32,7 +32,7 @@ class MyURYError {
     E_RECOVERABLE_ERROR => 'Recoverable error'
   );
   /**
-   * @var type $php_errorlist An array holding all php errors as <li> elements
+   * @var type $php_errorlist An array holding all php errors as arrays of [$error_name,$errstr,$errfile,$errline]
    */
   public static $php_errorlist = array();
   
@@ -45,12 +45,7 @@ class MyURYError {
    */
   public static function errorsToArray($errno, $errstr, $errfile, $errline) {
     $error_name = (isset(self::$error_type[$errno]) ? self::$error_type[$errno] : 'Unknown error code');
-    $php_error = '<strong>'.$error_name.'</strong> : ' .
-                 $errstr.
-                 ' - '.
-                 'In <strong>'.
-                 htmlspecialchars($errfile, ENT_NOQUOTES, 'UTF-8').
-                 '</strong> on line '.$errline;
+    $php_error = array($error_name, $errstr, htmlspecialchars($errfile, ENT_NOQUOTES, 'UTF-8'), $errline);
     array_push(self::$php_errorlist, $php_error);
   }
   
