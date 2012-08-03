@@ -56,7 +56,8 @@ class MyURYError {
             htmlspecialchars($errfile, ENT_NOQUOTES, 'UTF-8').
             '</strong> on line '.$errline.
             '</li>';
-    array_push($php_errorblock, $php_error);
+    print_r($php_error);
+    //array_push($php_errorblock, $php_error);
   }
   
 }
