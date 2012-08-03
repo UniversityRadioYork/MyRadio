@@ -98,7 +98,7 @@ class MyURYError {
     $error_message = $error_name.': '.
             $errstr.' in '.
             $errfile.' on line '.$errline;
-    error_log($error_message, 0);  // log to PHP_ERROR_LOG file
+    error_log($error_message);  // log to PHP_ERROR_LOG file
   }
   
   /**
@@ -113,6 +113,8 @@ class MyURYError {
    */
   public static function errorsToEmail($errno, $errstr, $errfile, $errline) {
     $error_name = self::getErrorName($errno);
+    // Log errors to file for permenance
+    self::errorsToLog($errno, $errstr, $errfile, $errline);
     /* 
      * Stage two: find out whether we need to email a warning
      * to the webmaster.
