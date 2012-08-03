@@ -51,6 +51,11 @@ require_once 'Classes/MyURY/CoreUtils.php';
 require_once 'Classes/Config.php';
 
 /**
+ * Load in email functions
+ */
+require_once 'Classes/MyURYEmail.php';
+
+/**
  * Load the phpError handler class - this has functions to put errors nicely on
  * the page, or to log them elsewhere.
  * And set the error handler to use it
