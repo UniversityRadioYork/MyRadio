@@ -59,6 +59,13 @@ if (!Config::$display_errors && !CoreUtils::hasPermission(269)) {
 }
 
 /**
+ * Load the phpError handler class
+ * and set the error handler
+ */
+require_once 'Classes/MyURYError.php';
+set_error_handler('MyURYError::errorsToArray');
+
+/**
  * Call the model that prepares the Database and the Global Abstraction API 
  */
 require 'Models/Core/api.php';
