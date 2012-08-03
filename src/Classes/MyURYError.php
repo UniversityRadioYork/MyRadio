@@ -45,7 +45,11 @@ class MyURYError {
    */
   public static function errorsToArray($errno, $errstr, $errfile, $errline) {
     $error_name = (isset(self::$error_type[$errno]) ? self::$error_type[$errno] : 'Unknown error code');
-    $php_error = array($error_name, $errstr, htmlspecialchars($errfile, ENT_NOQUOTES, 'UTF-8'), $errline);
+    $php_error = array(
+        'name' => $error_name, 
+        'string' => $errstr, 
+        'file' => htmlspecialchars($errfile, ENT_NOQUOTES, 'UTF-8'), 
+        'line' => $errline);
     array_push(self::$php_errorlist, $php_error);
   }
   
