@@ -13,12 +13,9 @@
  */
 class MyURYError {
   
-  /**
-   * Define a handy array that maps errno to an error name.
-   * (Note that most of these error types are not referred
-   * to a custom error handler, they are just logged by PHP
-   * and then execution terminates.) 
-   */
+/**
+ * @var type $error_type An array that matches error codes from $errno to a short string which names the error type (such as "User-generated error", or "User-generated warning")
+ */
   private static $error_type = array(
     E_ERROR => 'Fatal error',
     E_WARNING => 'Warning',
@@ -41,7 +38,6 @@ class MyURYError {
   
   /**
    * Places all phpErrors into the array $php_errorblock
-   * @global type $error_type An array that matches error codes from $errno to a short string which names the error type (such as "User-generated error", or "User-generated warning")
    * @param type $errno A numeric value which corresponds to the type of error (Notice, Fatal Error, User-generated warning, etc).
    * @param type $errstr A string that contains the error message text, ideally including details that identify the cause of the error.
    * @param type $errfile The full local path of the file which has triggered this error (such as /var/www/public_html/badscript.php).
