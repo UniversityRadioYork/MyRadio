@@ -46,6 +46,7 @@ class MyURYEmail {
    */
   public static function sendEmail($to, $subject, $message){
     mail($to, $subject, $message, self::getDefaultHeader());
+    return TRUE;
   }
   /**
    * 
@@ -56,6 +57,7 @@ class MyURYEmail {
    */
   public static function sendEmailFrom($to, $from, $subject, $message) {
     mail($to, $subject, $message, self::setSender($from));
+    return TRUE;
   }
   /**
    * 
@@ -65,6 +67,7 @@ class MyURYEmail {
    */
   public static function sendEmailFromComputing($to, $subject, $message){
     mail($to, $subject, $message, self::setSender('URY Computing Team <computing@ury.york.ac.uk>'));
+    return TRUE;
   }
   /**
    * 
@@ -73,6 +76,7 @@ class MyURYEmail {
    */
   public static function sendEmailToComputing($subject, $message){
     mail("URY Computing Team <computing@ury.york.ac.uk>", $subject, $message, self::getDefaultHeader());
+    return TRUE;
   }
 }
 
