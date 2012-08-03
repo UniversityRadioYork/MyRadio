@@ -15,6 +15,7 @@ class MyURYEmail {
   // Defaults
   private static $headers = 'Content-type: text/plain; charset=utf-8';
   private static $sender = 'From: MyURY <no-reply@ury.york.ac.uk>';
+  private static $footer = 'This email was sent automatically from MyURY';
   
   // Standard
   /**
@@ -37,6 +38,9 @@ class MyURYEmail {
   private static function setSender($from) {
     return self::$headers . self::$rtnl . 'From: ' . $from;
   }
+  private static function addFooter($message) {
+    return $message.self::$rtnl.self::$rtnl.self::$footer;
+  }
 
   /**
    * 
@@ -45,7 +49,7 @@ class MyURYEmail {
    * @param sting $message email message
    */
   public static function sendEmail($to, $subject, $message){
-    mail($to, $subject, $message, self::getDefaultHeader());
+    mail($to, $subject, self::addFooter($message), self::getDefaultHeader());
     return TRUE;
   }
   /**
@@ -75,7 +79,7 @@ class MyURYEmail {
    * @param sting $message email message
    */
   public static function sendEmailToComputing($subject, $message){
-    mail("URY Computing Team <computing@ury.york.ac.uk>", $subject, $message, self::getDefaultHeader());
+    mail("URY Computing Team <computing@ury.york.ac.uk>", $subject, self::addFooter($message), self::getDefaultHeader());
     return TRUE;
   }
 }
