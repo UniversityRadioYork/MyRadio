@@ -8,7 +8,7 @@
  * Abstractor for the Scheduler Module
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 21072012
+ * @version 03082012
  * @package MyURY_Scheduler
  * @uses \Database
  */
@@ -71,10 +71,17 @@ class Scheduler extends ServiceAPI {
    * Returns a list of terms in the present or future
    * @return Array[Array] an array of arrays of terms
    */
-  public function getTerms() {
+  public static function getTerms() {
     return self::$db->fetch_all('SELECT termid, EXTRACT(EPOCH FROM start) AS start, descr
                           FROM terms
                           WHERE finish > now()
                           ORDER BY start ASC');
+  }
+  
+  /**
+   * Returns a list of potential genres, organised so they can be used as a SELECT MyURYFormField data source
+   */
+  public static function getGenres() {
+    return self::$db->fetch_all('SELECT genre_id AS value, name AS text FROM schedule.genre ORDER BY name ASC');
   }
 }
