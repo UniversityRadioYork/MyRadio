@@ -10,5 +10,5 @@
  */
 if (!isset($_REQUEST['term'])) throw new MyURYException('Parameter \'term\' is required but was not provided');
 
-$data = User::getInstance((int)$_REQUEST['term'])->getID();
+$data = User::getInstance((int)$_REQUEST['term'])->getName();
 require 'Views/MyURY/Core/datatojson.php';

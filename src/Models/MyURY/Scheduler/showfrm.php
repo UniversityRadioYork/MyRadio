@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * @todo Proper Documentation
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 21072012
@@ -11,7 +11,7 @@ $form = (new MyURYForm('sched_allocate', $module, 'doShow',
                 array(
                     'debug' => true,
                     'title' => 'Edit Show'
-                //'template' => 'MyURY/Scheduler/allocate.twig'
+//'template' => 'MyURY/Scheduler/allocate.twig'
                 )
         ))->addField(
                 new MyURYFormField('grp-basics', MyURYFormField::TYPE_SECTION,
@@ -29,6 +29,22 @@ $form = (new MyURYForm('sched_allocate', $module, 'doShow',
                             'explanation' => 'Describe your show in as much detail as you can. Minimum 280 characters.',
                             'label' => 'Description',
                             'options' => array('minlength' => 280)
+                        )
+                )
+        )->addField(
+                new MyURYFormField('genres', MyURYFormField::TYPE_SELECT,
+                        array(
+                            'options' => array_merge(array(array('text' => 'Please select...', 'disabled' => true)), Scheduler::getGenres()),
+                            'repeating' => true,
+                            'label' => 'Genres',
+                            'explanation' => 'What type of music do you play, if any?'
+                        )
+                )
+        )->addField(
+                new MyURYFormField('tags', MyURYFormField::TYPE_TEXT,
+                        array(
+                            'label' => 'Tags',
+                            'explanation' => 'A set of keywords to describe your show generally, seperated with spaces.'
                         )
                 )
         )->addField(
