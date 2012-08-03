@@ -23,7 +23,7 @@
         <span class="fright">{% if timeslotname is null %}<a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}">Change Timeslot</a> | {% endif %}<a href="https://ury.york.ac.uk/portal/redir_out.php">Logout</a></span>
       </header>
       <div id="page">
-        {% if phperror is not null %}
+        {% if phperrors is not null %}
           <ul class="php_error">
             {% for phperror in phperrors %}
               <li>{{ phperror }}</li>
