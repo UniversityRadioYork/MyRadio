@@ -44,14 +44,13 @@ class MyURYError {
    * @param type $errline The line number where the error was generated (within the file identified by $errfile).
    */
   public static function errorsToArray($errno, $errstr, $errfile, $errline) {
-    $error_name = (isset(self::$error_type[$errno]) ?
-            self::$error_type[$errno] : 'Unknown error code');
+    $error_name = (isset(self::$error_type[$errno]) ? self::$error_type[$errno] : 'Unknown error code');
     $php_error = '<strong>'.$error_name.'</strong> : ' .
-            $errstr.
-            ' - '.
-            'In <strong>'.
-            htmlspecialchars($errfile, ENT_NOQUOTES, 'UTF-8').
-            '</strong> on line '.$errline;
+                 $errstr.
+                 ' - '.
+                 'In <strong>'.
+                 htmlspecialchars($errfile, ENT_NOQUOTES, 'UTF-8').
+                 '</strong> on line '.$errline;
     array_push(self::$php_errorlist, $php_error);
   }
   
