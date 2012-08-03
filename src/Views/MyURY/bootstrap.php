@@ -14,4 +14,4 @@ $twig->addVariable('serviceName', $service)
      ->addVariable('title', $module)
      ->addVariable('uri', $_SERVER['REQUEST_URI']);
 if(isset(MyURYError::$php_errorlist)){
-$twig->addVariable('phperror', MyURYError::$php_errorlist);};
+$twig->addVariable('phperrors', MyURYError::$php_errorlist);};
