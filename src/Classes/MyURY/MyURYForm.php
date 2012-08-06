@@ -169,11 +169,11 @@ class MyURYForm {
     foreach ($this->fields as $k => $field) {
       if ($field->getName() === $fieldname) {
         $this->fields[$k]->setValue($value);
-        return;
+        return $this;
       }
     }
     throw new MyURYException('Cannot set value for field '.$fieldname.' as it does not exist.');
-    return;
+    return $this;
   }
 
   /**
