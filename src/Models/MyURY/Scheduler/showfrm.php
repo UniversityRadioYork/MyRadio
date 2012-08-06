@@ -7,6 +7,7 @@
  * @version 21072012
  * @package MyURY_Scheduler
  */
+
 $form = (new MyURYForm('sched_allocate', $module, 'doShow',
                 array(
                     'debug' => true,
@@ -51,10 +52,19 @@ $form = (new MyURYForm('sched_allocate', $module, 'doShow',
                 new MyURYFormField('grp-credits', MyURYFormField::TYPE_SECTION,
                         array('label' => 'Who\'s On My Show'))
         )->addField(
-        new MyURYFormField('presenters', MyURYFormField::TYPE_MEMBER,
+                new MyURYFormField('credits', MyURYFormField::TYPE_MEMBER,
+                        array(
+                            'explanation' => 'Who\'s going to be on your new show? We\'ve taken the liberty of guessing you are.',
+                            'label' => '',
+                            'repeating' => true
+                        )
+                )
+        )->addField(
+        new MyURYFormField('credittypes', MyURYFormField::TYPE_SELECT,
                 array(
-                    'explanation' => 'Who\'s going to be on your new show? We\'ve taken the liberty of guessing you are.',
-                    'label' => 'Presenters',
+                    'options' => array_merge(array(array('text' => 'Please select...', 'disabled' => true)), Scheduler::getCreditTypes()),
+                    'explanation' => 'What are they doing on the show?',
+                    'label' => '',
                     'repeating' => true
                 )
         )
