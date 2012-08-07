@@ -1,6 +1,6 @@
 <?php
 /**
- * Ajaj request to increment track viewer counter
+ * Ajax request to increment track viewer counter
  */
 
 if (isset($_SESSION['webcam_lastcounterincrement']) && $_SESSION['webcam_lastcounterincrement'] > time()-10) {
