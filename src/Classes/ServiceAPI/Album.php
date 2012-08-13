@@ -24,12 +24,12 @@ class Artist extends ServiceAPI {
 	}
 	public static function findByName($title, $limit){
 		$title = trim($title);
-		return self::$db->fetch_all('SELECT DISTINCT rec_record.title AS title, FROM rec_record WHERE rec_record.title ILIKE \'%\' || $1 || \'%\' LIMIT $2;', array($title, $limit));
+		return self::$db->fetch_all('SELECT DISTINCT rec_record.recordid AS recordid, FROM rec_record WHERE rec_record.title ILIKE \'%\' || $1 || \'%\' LIMIT $2;', array($title, $limit));
 	}
 
 	public static function getAlbumDetails($title){
 		$title = trim($title);
-		return self::$db->fetch_all('SELECT DISTINCT rec_record.title AS title')
+		return self::$db->fetch_all('SELECT DISTINCT rec_record.title AS title, rec_record.artist AS artist, rec_record.status AS status FROM rec_record WHERE rec_record.recordid = $1;', array($title, $limit));
 	}
 	
 }
