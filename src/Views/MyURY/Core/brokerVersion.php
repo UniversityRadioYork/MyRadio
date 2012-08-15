@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 
  * @todo Proper Documentation
@@ -6,8 +7,12 @@
  * @version 15082012
  * @package MyURY_Core
  */
-require 'Views/MyURY/bootstrap.php';
-$twig->setTemplate('stripe.twig')
+$twig = CoreUtils::getTemplateObject();
+$twig->addVariable('serviceName', $service)
+        ->addVariable('serviceVersion', $service_version)
+        ->setTemplate('stripe.twig')
+        ->addVariable('title', $module)
+        ->addVariable('uri', $_SERVER['REQUEST_URI'])
         ->addVariable('title', 'Version Selector')
         ->addVariable('heading', 'Version Selector')
         ->addVariable('versions', $versions)
