@@ -17,11 +17,11 @@ $versions = CoreUtils::getServiceVersions(CoreUtils::getServiceID($service));
 
 // If the version selector has just been submitted, update the session
 if (isset($_POST['svc_version'])) {
-  $svc = $_POST['svc_name'];
+  $service = $_POST['svc_name'];
   foreach ($versions as $version) {
     if ($version['version'] === $version) {
-      $_SESSION['myury_svc_version_'.$svc] = $version['version'];
-      $_SESSION['myury_svc_version_'.$svc.'_path'] = $_POST['path'];
+      $_SESSION['myury_svc_version_'.$service] = $version['version'];
+      $_SESSION['myury_svc_version_'.$service.'_path'] = $_POST['path'];
     }
   }
 }
