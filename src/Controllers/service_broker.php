@@ -15,11 +15,11 @@
 
 //Check if the user is allowed to select a version of the service
 /**
- * AUTH_SELECTSERVICEVERSION = 
+ * AUTH_SELECTSERVICEVERSION = 270
  * @todo Remove hardcoded value
  */
 if (CoreUtils::hasPermission(270)) {
-  require 'Controllers/MyURY/brokerVersion.php';
+  require 'Controllers/brokerVersion.php';
 } else {
   $path = CoreUtils::getServiceVersionForUser(CoreUtils::getServiceID($service), $member);
   if ($path === false

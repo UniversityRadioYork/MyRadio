@@ -386,6 +386,17 @@ class CoreUtils {
   }
   
   /**
+   * @todo Document this.
+   * @param type $serviceid
+   * @return boolean
+   */
+  public static function getServiceVersions($serviceid) {
+    $db = Database::getInstance();
+    
+    return $db->fetch_all('SELECT version, path FROM myury.services_versions WHERE serviceid=$1', array($serviceid));
+  }
+  
+  /**
    * Returns the latest news item for the given feed, and if given a user, the timestamp of when they saw it
    * @param id $newsfeedid The ID of the newsfeed to check
    * @param User $user The User object to check if seen. Default null, won't return a seen column.
