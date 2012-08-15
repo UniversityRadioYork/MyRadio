@@ -17,11 +17,11 @@ $(document).ready(function() {
   /**
    * Hide the repeating add link for the credits input field
    */
-  $('#sched_allocate-credits-repeater').hide();
+  $('#sched_show-credits-repeater').hide();
   /**
    * Tell the credittype add link to trigger the credits add action
    */
   $('#sched_allocate-credittypes-repeater').click(function() {
-    $('#sched_allocate-credits-repeater').click();
+    $('#sched_show-credits-repeater').click();
   });
 });
