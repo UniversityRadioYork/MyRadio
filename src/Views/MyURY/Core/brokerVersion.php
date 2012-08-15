@@ -9,8 +9,8 @@
  */
 $twig = CoreUtils::getTemplateObject();
 $twig->addVariable('serviceName', $service)
-        ->addVariable('serviceVersion', $service_version)
-        ->setTemplate('stripe.twig')
+        ->addVariable('serviceVersion', 'Service Version Broker')
+        ->setTemplate('MyURY/brokerVersion.twig')
         ->addVariable('title', $module)
         ->addVariable('uri', $_SERVER['REQUEST_URI'])
         ->addVariable('title', 'Version Selector')
