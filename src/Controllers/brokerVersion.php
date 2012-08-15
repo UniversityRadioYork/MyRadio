@@ -12,18 +12,25 @@
  * Sets the $service_version Global Variable
  */
 
-// Get a list of Service Versions for this Service, required by brokerVersionFrm
+// Get a list of Service Versions for this Service
 $versions = CoreUtils::getServiceVersions();
 
 // If the version selector has just been submitted, update the session
-require_once 'Models/Core/brokerVersionFrm.php';
+if (isset($_POST['svc_version'])) {
+  foreach ($versions as $version) {
+    if ($version['version'] === $version) {
+      $_SESSION['myury_svc_version_'.$service] = $version['version'];
+      $_SESSION['myury_svc_version_'.$service.'_path'] = $_POST['path'];
+    }
+  }
+}
 
 // If the session already has a saved service version, use that
 if (isset($_SESSION['myury_svc_version_'.$service])) {
   $service_version = $_SESSION['myury_svc_version_'.$service];
   $path = $_SESSION['myury_svc_version_'.$service.'_path'];
 } else {
-  
-  // Shove the versions in the Form Definition and render
+  // Make a version select form
+  require 'Views/MyURY/Core/brokerVersion.php';
 }
 unset($form, $submitted_data, $versions);
