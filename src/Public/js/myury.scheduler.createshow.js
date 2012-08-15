@@ -21,7 +21,7 @@ $(document).ready(function() {
   /**
    * Tell the credittype add link to trigger the credits add action
    */
-  $('#sched_allocate-credittypes-repeater').click(function() {
-    $('#sched_show-credits-repeater').click();
+  $('#sched_show-credittypes-repeater').on('click', function() {
+    $('#sched_show-credits-repeater').trigger('click');
   });
 });
