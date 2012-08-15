@@ -13,7 +13,7 @@
  */
 
 // Get a list of Service Versions for this Service
-$versions = CoreUtils::getServiceVersions();
+$versions = CoreUtils::getServiceVersions($service);
 
 // If the version selector has just been submitted, update the session
 if (isset($_POST['svc_version'])) {
