@@ -8,7 +8,7 @@
  * @package MyURY_Scheduler
  */
 
-$form = (new MyURYForm('sched_allocate', $module, 'doShow',
+$form = (new MyURYForm('sched_show', $module, 'doShow',
                 array(
                     'debug' => true,
                     'title' => 'Edit Show'
