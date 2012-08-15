@@ -17,7 +17,6 @@ $versions = CoreUtils::getServiceVersions();
 
 // If the version selector has just been submitted, update the session
 require_once 'Models/Core/brokerVersionFrm.php'
-$submitted_data = 
 
 // If the session already has a saved service version, use that
 if (isset($_SESSION['myury_svc_version_'.$service])) {
