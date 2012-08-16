@@ -21,7 +21,7 @@ if (isset($_POST['svc_version'])) {
   foreach ($versions as $version) {
     if ($version['version'] === $_POST['svc_version']) {
       $_SESSION['myury_svc_version_'.$service] = $version['version'];
-      $_SESSION['myury_svc_version_'.$service.'_path'] = $_POST['path'];
+      $_SESSION['myury_svc_version_'.$service.'_path'] = $version['path'];
     }
   }
 }
