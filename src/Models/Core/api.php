@@ -25,8 +25,9 @@ require_once 'Interfaces/Singleton.php';
 //Create a function to autoload classes when needed
 spl_autoload_register(function($class){
   $class .= '.php';
-  if (file_exists(__DIR__.'/../../Classes/ServiceAPI/'.$class)) {
-    require_once 'Interfaces/IServiceAPI.php';
+  if (file_exists('Classes/ServiceAPI/'.$class)) {
+    //This path *must* be absolute - differing versions causes it to be reincluded otherwise
+    require_once __DIR__.'/../../Interfaces/IServiceAPI.php';
     require_once 'Classes/ServiceAPI/'.$class;
   }
 });
