@@ -12,8 +12,6 @@ $(document).ready(function() {
       $.ajax({
         url: '?module=Scheduler&action=a-findshowbytitle&term='+$(this).val()+'&limit=100',
         success: function(data) {
-          console.log(data);
-          console.log(data.length);
           if (data.length >= 1) {
             var html = 'Similar to '+data[0].title;
           } else {
@@ -22,7 +20,7 @@ $(document).ready(function() {
           if (data.length >= 2) {
             html = html + ' and '+(data.length-1)+' others';
           }
-          $('sched_show-title-hint').html(html)
+          $('#sched_show-title-hint').html(html)
         }
       });
     }
