@@ -7,12 +7,23 @@ $(document).ready(function() {
    * but it would be nice
    */
   $('#sched_show-title').on('input propertychange', function() {
-    $.ajax({
-      url: '?module=Scheduler&action=a-findshowbytitle&term='+$(this).val(),
-      success: function(data) {
-        
-      }
-    });
+    if ($(this).val().length >= 3)
+    {
+      $.ajax({
+        url: '?module=Scheduler&action=a-findshowbytitle&term='+$(this).val()+'&limit=100',
+        success: function(data) {
+          if (data.length >= 1) {
+            var html = 'Similar to '+data[0].title;
+          } else {
+            var html = 'That title is unique!';
+          }
+          if (data.length >= 2) {
+            html = html + ' and '+(data.length-1)+' others';
+          }
+          $('sched_show-title-hint').html(html)
+        }
+      });
+    }
   });
   /**
    * Hide the repeating add link for the credits input field
