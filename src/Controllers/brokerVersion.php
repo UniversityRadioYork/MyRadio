@@ -29,7 +29,6 @@ if (isset($_POST['svc_version'])) {
 // If the session already has a saved service version, use that
 if (isset($_SESSION['myury_svc_version_'.$service])) {
   $service_version = $_SESSION['myury_svc_version_'.$service];
-  echo $service_version;
   $path = $_SESSION['myury_svc_version_'.$service.'_path'];
 } else {
   // Make a version select form
