@@ -13,7 +13,7 @@ $(document).ready(function() {
         url: '?module=Scheduler&action=a-findshowbytitle&term='+$(this).val()+'&limit=100',
         success: function(data) {
           if (data.length >= 1) {
-            var html = 'Similar to '+data[0].title;
+            var html = '<span class="ui-icon ui-icon-info fleft"></span>Similar to '+data[0].title;
           } else {
             var html = '<span class="ui-icon ui-icon-circle-check fleft"></span>That title is unique!';
           }
