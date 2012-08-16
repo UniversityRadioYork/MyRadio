@@ -102,7 +102,7 @@ class Scheduler extends ServiceAPI {
    */
   public static function findShowByTitle($term, $limit) {
     self::initDB();
-    return self::$db->fetch_all('SELECT show_id, metadata_value AS title
+    return self::$db->fetch_all('SELECT schedule.show.show_id, metadata_value AS title
       FROM schedule.show, schedule.show_metadata
       WHERE schedule.show.show_id = schedule.show_metadata.show_id
       AND metadata_key_id IN (SELECT metadata_key_id FROM schedule.metadata_key WHERE name=\'title\')
