@@ -18,6 +18,7 @@
  * AUTH_SELECTSERVICEVERSION = 270
  * @todo Remove hardcoded value
  */
+echo "HELLO!";
 if (CoreUtils::hasPermission(270)) {
   require 'Controllers/brokerVersion.php';
 } else {

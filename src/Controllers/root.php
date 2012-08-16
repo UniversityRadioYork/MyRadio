@@ -92,7 +92,6 @@ $service = (isset($_REQUEST['service']) ? $_REQUEST['service'] : 'MyURY');
  * here.
  * @todo Discuss or document the parts of MyURY core that cannot be brokered, see if this can be moved earlier
  */
-echo "HELLO";
 require_once 'Controllers/service_broker.php';
 
 /**
