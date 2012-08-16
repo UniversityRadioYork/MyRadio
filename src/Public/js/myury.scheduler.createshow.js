@@ -12,6 +12,8 @@ $(document).ready(function() {
       $.ajax({
         url: '?module=Scheduler&action=a-findshowbytitle&term='+$(this).val()+'&limit=100',
         success: function(data) {
+          console.log(data);
+          console.log(data.length);
           if (data.length >= 1) {
             var html = 'Similar to '+data[0].title;
           } else {
