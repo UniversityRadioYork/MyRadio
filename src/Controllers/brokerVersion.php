@@ -19,8 +19,7 @@ $versions = CoreUtils::getServiceVersions(CoreUtils::getServiceID($service));
 if (isset($_POST['svc_version'])) {
   $service = $_POST['svc_name'];
   foreach ($versions as $version) {
-    echo $version['version'] . ' - ' . $version;
-    if ($version['version'] === $version) {
+    if ($version['version'] === $_POST['svc_version']) {
       $_SESSION['myury_svc_version_'.$service] = $version['version'];
       $_SESSION['myury_svc_version_'.$service.'_path'] = $_POST['path'];
     }
