@@ -39,6 +39,7 @@ class MyURYException extends Exception {
           $twig = CoreUtils::getTemplateObject();
           $twig->setTemplate('error.twig')
                   ->addVariable('serviceName', 'Error')
+                  ->addVariable('serviceVersion', $GLOBALS['service_version'])
                   ->addVariable('title', 'Internal Server Error')
                   ->addVariable('heading', 'Internal Server Error')
                   ->addVariable('body', $error)
