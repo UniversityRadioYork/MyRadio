@@ -91,4 +91,21 @@ class Scheduler extends ServiceAPI {
   public static function getCreditTypes() {
     return self::$db->fetch_all('SELECT show_credit_type_id AS value, name AS text FROM schedule.show_credit_type ORDER BY name ASC');
   }
+  
+  /**
+   * Returns an Array of Shows matching the given partial title
+   * @param String $title A partial or total title to search for
+   * @param int $limit The maximum number of shows to return
+   * @return Array 2D with each first dimension an Array as follows:<br>
+   * title: The title of the show<br>
+   * show_id: The unique id of the show
+   */
+  public static function findShowByTitle($term, $limit) {
+    self::initDB();
+    return self::$db->fetch_all('SELECT show_id, metadata_value AS title
+      FROM schedule.show, schedule.show_metadata
+      WHERE schedule.show.show_id = schedule.show_metadata.show_id
+      AND metadata_key_id IN (SELECT metadata_key_id FROM schedule.metadata_key WHERE name=\'title\')
+      AND title ILIKE \'%\' || $1 || \'%\' LIMIT $2', array($term, $limit));
+  }
 }
