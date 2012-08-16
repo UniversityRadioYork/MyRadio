@@ -54,7 +54,7 @@ $form = (new MyURYForm('sched_show', $module, 'doShow',
         )->addField(
                 new MyURYFormField('credits', MyURYFormField::TYPE_MEMBER,
                         array(
-                            'explanation' => 'Who\'s going to be on your new show? We\'ve taken the liberty of guessing you are.',
+                            'explanation' => '',
                             'label' => '',
                             'repeating' => true
                         )
