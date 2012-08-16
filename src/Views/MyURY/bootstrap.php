@@ -6,7 +6,6 @@
  * @version 21072012
  * @package MyURY_Core
  */
-echo 'VER:'.$service_version;
 $twig = CoreUtils::getTemplateObject();
 $twig->addVariable('serviceName', $service)
      ->addVariable('serviceVersion', $service_version)
