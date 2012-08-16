@@ -29,9 +29,11 @@ if (isset($_POST['svc_version'])) {
 // If the session already has a saved service version, use that
 if (isset($_SESSION['myury_svc_version_'.$service])) {
   $service_version = $_SESSION['myury_svc_version_'.$service];
+  echo "HAI;";
   $path = $_SESSION['myury_svc_version_'.$service.'_path'];
 } else {
   // Make a version select form
   require 'Views/MyURY/Core/brokerVersion.php';
+  exit;
 }
 unset($form, $submitted_data, $versions, $svc);
