@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This is the magical file that provides access to URY's backend data services
  * 
@@ -20,18 +21,21 @@
  * @author Lloyd Wallis <lpw@ury.org.uk> 
  * @package MyURY_Core
  */
-
 require_once 'Interfaces/Singleton.php';
 //Create a function to autoload classes when needed
-spl_autoload_register(function($class){
-  $class .= '.php';
-  if (file_exists('Classes/ServiceAPI/'.$class)) {
-    //This path *must* be absolute - differing versions causes it to be reincluded otherwise
-    require_once __DIR__.'/../../Interfaces/IServiceAPI.php';
-    require_once 'Classes/ServiceAPI/'.$class;
-  }
-});
-set_exception_handler(function($e){});
+spl_autoload_register(function($class) {
+          $class .= '.php';
+          if (
+                  (isset($GLOBALS['service_path']) && file_exists($GLOBALS['service_path'] . '/Classes/ServiceAPI/' . $class))
+                  or file_exists(__DIR__ . '/../../Classes/ServiceAPI/' . $class)) {
+            //This path *must* be absolute - differing versions causes it to be reincluded otherwise
+            require_once __DIR__ . '/../../Interfaces/IServiceAPI.php';
+            require_once 'Classes/ServiceAPI/' . $class;
+          }
+        });
+set_exception_handler(function($e) {
+          
+        });
 require_once 'Classes/MyURYException.php';
 
 //Initiate Database
@@ -39,7 +43,7 @@ require_once 'Classes/Database.php';
 
 //Initiate Cache
 require_once 'Interfaces/CacheProvider.php';
-require_once 'Classes/'.Config::$cache_provider.'.php';
+require_once 'Classes/' . Config::$cache_provider . '.php';
 
 //Initiate User
 $member = User::getInstance();

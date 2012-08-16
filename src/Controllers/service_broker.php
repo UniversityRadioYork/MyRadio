@@ -31,5 +31,6 @@ if (CoreUtils::hasPermission(270)) {
   }
   $service_version = $path['version'];
   set_include_path($path['path'].':'.get_include_path());
+  $service_path = $path['path'];
   unset($path);
 }
