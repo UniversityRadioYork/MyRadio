@@ -30,6 +30,7 @@ if (isset($_POST['svc_version'])) {
 if (isset($_SESSION['myury_svc_version_'.$service])) {
   $service_version = $_SESSION['myury_svc_version_'.$service];
   $path = $_SESSION['myury_svc_version_'.$service.'_path'];
+  set_include_path($path['path'].':'.get_include_path());
 } else {
   // Make a version select form
   require 'Views/MyURY/Core/brokerVersion.php';
