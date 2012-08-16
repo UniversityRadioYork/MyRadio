@@ -20,7 +20,6 @@
  */
 if (CoreUtils::hasPermission(270)) {
   require 'Controllers/brokerVersion.php';
-  echo $service_version;
 } else {
   $path = CoreUtils::getServiceVersionForUser(CoreUtils::getServiceID($service), $member);
   if ($path === false
