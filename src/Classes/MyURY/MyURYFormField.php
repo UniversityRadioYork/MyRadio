@@ -410,8 +410,10 @@ class MyURYFormField {
         }
         return $return;
         break;
+      case self::TYPE_SECTION:
+        return null;
       default:
-        throw new MyURYException('Field type ' . $this->type . ' does not have a valid renderer definition.');
+        throw new MyURYException('Field type ' . $this->type . ' does not have a valid value interpreter definition.');
     }
   }
 
