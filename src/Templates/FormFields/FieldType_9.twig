@@ -1,5 +1,5 @@
-<label for="{{frm_name}}-{{field.name}}">{{field.label}}</label>
-<select name="{{frm_name}}-{{field.name}}" id="{{frm_name}}-{{field.name}}"
+<label for="{{frm_name}}-{{sfieldname}}">{{field.label}}</label>
+<select name="{{frm_name}}-{{sfieldname}}" id="{{frm_name}}-{{field.name}}"
         class="{{field.class}}{% if field.required %} required{% endif %}">
   {% for option in field.options %}
   <option value="{{option.value}}"{% if field.value == option.value %} selected="selected"{% endif %}

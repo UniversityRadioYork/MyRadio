@@ -42,12 +42,17 @@ class Database {
    * Generic function that just runs a pg_query_params
    * @param String $sql The query string to execute
    * @param Array $params Parameters for the query
+   * @param bool $rollback If true, an error will automatically execute a rollback before throwing an Exception
+   * Use for transactions.
    * @return A pg result reference
    * @throws MyURYException 
    */
-  public function query($sql, $params = array()) {
+  public function query($sql, $params = array(), $rollback = false) {
     $result = pg_query_params($this->db, $sql, $params);
     if (!$result) {
+      if ($rollback) {
+        pg_query($this->db, 'ROLLBACK');
+      }
       throw new MyURYException('Query failure: ' . $sql . '<br />'
               . pg_errormessage($this->db));
     }
@@ -140,6 +145,13 @@ class Database {
    */
   public function __clone() {
     throw new MyURYException('Attempted to clone a singleton');
+  }
+  
+  /**
+   * Converts a postgresql array to a php array
+   */
+  public function decodeArray($data) {
+    return json_decode(str_replace(array('{','}'),array('[',']'),$data));
   }
 
 }

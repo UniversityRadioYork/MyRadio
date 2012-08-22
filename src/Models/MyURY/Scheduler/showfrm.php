@@ -63,7 +63,7 @@ $form = (new MyURYForm('sched_show', $module, 'doShow',
         new MyURYFormField('credittypes', MyURYFormField::TYPE_SELECT,
                 array(
                     'options' => array_merge(array(array('text' => 'Please select...', 'disabled' => true)), Scheduler::getCreditTypes()),
-                    'explanation' => 'What are they doing on the show?',
+                    'explanation' => '',
                     'label' => '',
                     'repeating' => true
                 )

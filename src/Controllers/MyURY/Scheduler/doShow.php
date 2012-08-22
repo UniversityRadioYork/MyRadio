@@ -8,8 +8,8 @@
  */
 
 //The Form definition
-require 'Models/MyURY/Scheduler/allocatefrm.php';
-print_r($_REQUEST);
-print_r($form->readValues());
+require 'Models/MyURY/Scheduler/showfrm.php';
 
-throw new MyURYException('Not Implemented', MyURYException::FATAL);
+echo nl2br(print_r($form->readValues(),true));
+
+print_r(MyURY_Show::create($form->readValues()));
