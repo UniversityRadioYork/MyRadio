@@ -129,7 +129,7 @@ $(document).ready(function() {
    * Initialises the Time pickers where necessary
    * @todo Make stepminute customisable?
    */
-  $('fieldset.myuryfrm input.datetime').timepicker({
+  $('fieldset.myuryfrm input.time').timepicker({
     stepMinute: 15
   });
   MyURYForm.setUpMemberFields();
