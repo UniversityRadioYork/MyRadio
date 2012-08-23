@@ -4,11 +4,11 @@
 <script type="text/javascript" src="js/myury.scheduler.createseason.js"></script>
 {% endblock %}
 {% block stripecontent %}
-{% if current_term = null %}
-<div class="ui-state-error"><span class="ui-icon ui-icon-alert fleft"></span>Season applications are currently <em>closed</em>. You can only apply for a season one week before the start of a term until the end of the term.</div>
+{% if frm_custom.current_term is null %}
+<div class="ui-state-error"><span class="ui-icon ui-icon-alert fleft"></span>Season applications are currently <strong>closed</strong>. You can apply for a season one week before the start of term.</div>
 {% else %}
 <h2>Apply for a New Season</h2>
-<div class="ui-state-highlight"><span class="ui-icon ui-icon-info fleft"></span>You are applying for a season for the Term {{current_term}}</div>
+<div class="ui-state-highlight"><span class="ui-icon ui-icon-info fleft"></span>You are applying for a season for the Term {{frm_custom.current_term}}</div>
 <p>Fill out the form below to create a new <em>Show</em>. A Show comes with its own microsite and a range of settings that let you make it truely yours.</p>
 <p>On the next page, you'll be given the opportunity to apply to have the first Season of your Show scheduled. If you already have a show and want to renew it for another term, please do not create a new show here.</p>
 {{ parent() }}
