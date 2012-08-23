@@ -44,8 +44,30 @@ class MyURY_Show extends ServiceAPI {
          ORDER BY show_genre_id)) AS genres
       FROM schedule.show WHERE show_id=$1', array($show_id));
     
-    $this->owner = $result['memberid'];
+    echo nl2br(print_r($result,true));
+    
+    //Deal with the easy fields
+    $this->owner = (int)$result['memberid'];
+    $this->show_type = (int)$result['show_type_id'];
+    $this->submitted_time = strtotime($result['submitted']);
     $this->genres = self::$db->decodeArray($result['genres']);
+    
+    //Deal with the Credits arrays
+    $credit_types = self::$db->decodeArray($result['credit_types']);
+    $credits = self::$db->decodeArray($result['credits']);
+    
+    for ($i = 0; $i < sizeof($credits); $i++) {
+      $this->credits[] = array('type' => $credit_types[$i], 'memberid' => $credits[$i]);
+    }
+    
+    
+    //Deal with the Metadata arrays
+    $metadata_types = self::$db->decodeArray($result['metadata_types']);
+    $metadata = self::$db->decodeArray($result['metadata']);
+    
+    for ($i = 0; $i < sizeof($metadata); $i++) {
+      $this->meta[$metadata_types[$i]] = $metadata[$i];
+    }
   }
 
   /**
