@@ -9,7 +9,9 @@ $(document).ready(function() {
   /**
    * Tell the credittype add link to trigger the credits add action
    */
-  $('#sched_season-etime-repeater').on('click', function() {
-    $('#sched_season-day-repeater, #sched_season-stime-repeater').trigger('click');
+  $('#sched_season-etime-repeater').on('click', function(e) {
+    $('#sched_season-day-repeater').trigger('click');
+    $('#sched_season-day-repeater').parent().find('label').clone().appendTo($('#sched_season-day-repeater').parent());
+    $('#sched_season-stime-repeater').trigger('click');
   });
 });
