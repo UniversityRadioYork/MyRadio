@@ -25,6 +25,19 @@ class MyURY_Show extends ServiceAPI {
   private $genres;
   private $show_type;
   private $submitted_time;
+  private $season_ids;
+  
+  public static function getInstance($show_id = null) {
+    if (!is_numeric($show_id)) {
+      throw new MyURYException('Invalid Show ID!', MyURYException::FATAL);
+    }
+    
+    if (!isset(self::$shows[$show_id])) {
+      self::$shows[$show_id] = new self($show_id);
+    }
+    
+    return self::$shows[$show_id];
+  }
 
   private function __construct($show_id) {
     $this->show_id = $show_id;
@@ -73,6 +86,10 @@ class MyURY_Show extends ServiceAPI {
         $this->meta[$metadata_types[$i]] = $metadata[$i];
       }
     }
+    
+    //Get information about Seasons
+    $this->season_ids = self::$db->fetch_column('SELECT show_season_id
+      FROM schedule.show_season WHERE show_id=$1', array($show_id));
   }
 
   /**
@@ -193,14 +210,42 @@ class MyURY_Show extends ServiceAPI {
     }
   }
   
+  /**
+   * Returns an array of shows which the given user owns or is an active
+   * credit in
+   * @param int $memberid The ID of the member to check. null means current user.
+   * @return Array an array of Show objects attached to the given user
+   */
   public static function getShowsAttachedToUser($memberid = null) {
     if ($memberid === null) $memberid = $_SESSION['memberid'];
     self::initDB();
     
-    $r = self::$db->fetch_all('SELECT show_id FROM schedule.show WHERE memberid=$1 OR show_id IN
+    $r = self::$db->fetch_column('SELECT show_id FROM schedule.show WHERE memberid=$1 OR show_id IN
         (SELECT show_id FROM schedule.show_credit WHERE creditid=$1 AND effective_from <= NOW() AND
           (effective_to >= NOW() OR effective_to IS NULL))',
             array($memberid));
+    
+    $return = array();
+    foreach ($r as $show_id) {
+      $return[] = self::getInstance($show_id);
+    }
+    return $return;
+  }
+  
+  public function getMeta($meta_string) {
+    return $this->meta[self::getMetadataKey($meta_string)];
+  }
+  
+  public function getNumberOfSeasons() {
+    return sizeof($this->season_ids);
+  }
+  
+  public function getID() {
+    return $this->show_id;
+  }
+  
+  public function getWebpage() {
+    return 'http://ury.org.uk/show/'.$this->getID();
   }
 
 }

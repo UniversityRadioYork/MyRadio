@@ -7,8 +7,5 @@
  * @package MyURY_Scheduler
  */
 
-print_r(MyURY_Show::getShowsAttachedToUser());exit;
-
-require 'Models/MyURY/Scheduler/notices.php';
-require 'Models/MyURY/Scheduler/pendingAllocations.php';
-require 'Views/MyURY/Scheduler/default.php';
+$shows = MyURY_Show::getShowsAttachedToUser();
+require 'Views/MyURY/Scheduler/showList.php';
