@@ -10,4 +10,11 @@
 //The Form definition
 require 'Models/MyURY/Scheduler/showfrm.php';
 
-print_r(MyURY_Show::create($form->readValues()));
+try {
+  MyURY_Show::create($form->readValues());
+} catch (MyURYException $e) {
+  require 'Views/Errors/500.php';
+  exit;
+}
+
+header('Location: '.CoreUtils::makeURL('Scheduler', 'myShows'));

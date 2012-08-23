@@ -29,7 +29,7 @@ class MyURY_Show extends ServiceAPI {
   private function __construct($show_id) {
     $this->show_id = $show_id;
     self::initDB();
-    
+
     $result = self::$db->fetch_one('SELECT show_type_id, submitted, memberid,
       (SELECT array(SELECT metadata_key_id FROM schedule.show_metadata WHERE show_id=$1 AND effective_from <= NOW()
         ORDER BY effective_from, show_metadata_id)) AS metadata_types,
@@ -45,30 +45,33 @@ class MyURY_Show extends ServiceAPI {
          WHERE show_id=$1 AND effective_from <= NOW() AND (effective_to IS NULL OR effective_to >= NOW()) AND approvedid IS NOT NULL
          ORDER BY show_genre_id)) AS genres
       FROM schedule.show WHERE show_id=$1', array($show_id));
-    
-    echo nl2br(print_r($result,true));
-    
+
     //Deal with the easy fields
-    $this->owner = (int)$result['memberid'];
-    $this->show_type = (int)$result['show_type_id'];
+    $this->owner = (int) $result['memberid'];
+    $this->show_type = (int) $result['show_type_id'];
     $this->submitted_time = strtotime($result['submitted']);
     $this->genres = self::$db->decodeArray($result['genres']);
-    
+
     //Deal with the Credits arrays
     $credit_types = self::$db->decodeArray($result['credit_types']);
     $credits = self::$db->decodeArray($result['credits']);
-    
+
     for ($i = 0; $i < sizeof($credits); $i++) {
       $this->credits[] = array('type' => $credit_types[$i], 'memberid' => $credits[$i]);
     }
-    
-    
+
+
     //Deal with the Metadata arrays
     $metadata_types = self::$db->decodeArray($result['metadata_types']);
     $metadata = self::$db->decodeArray($result['metadata']);
-    
+
     for ($i = 0; $i < sizeof($metadata); $i++) {
-      $this->meta[$metadata_types[$i]] = $metadata[$i];
+      if (self::isMetadataMultiple($metadata_types[$i])) {
+        //Multiples should be an array
+        $this->meta[$metadata_types[$i]][] = $metadata[$i];
+      } else {
+        $this->meta[$metadata_types[$i]] = $metadata[$i];
+      }
     }
   }
 
@@ -126,8 +129,7 @@ class MyURY_Show extends ServiceAPI {
     //Right, set the title and description next
     foreach (array('title', 'description') as $key) {
       self::$db->query('INSERT INTO schedule.show_metadata
-              (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)',
-              array(self::getMetadataKey($key), $show_id, $params[$key], $_SESSION['memberid']), true);
+              (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)', array(self::getMetadataKey($key), $show_id, $params[$key], $_SESSION['memberid']), true);
     }
 
     //Genre time powers activate!
@@ -142,38 +144,63 @@ class MyURY_Show extends ServiceAPI {
     $tags = explode(' ', $params['tags']);
     foreach ($tags as $tag) {
       self::$db->query('INSERT INTO schedule.show_metadata
-              (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)',
-              array(self::getMetadataKey('tag'), $show_id, $tag, $_SESSION['memberid']), true);
+              (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)', array(self::getMetadataKey('tag'), $show_id, $tag, $_SESSION['memberid']), true);
     }
 
     //And now all that's left is who's on the show
     for ($i = 0; $i < sizeof($params['credits']); $i++) {
       self::$db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from,
-              memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)',
-              array($show_id, (int) $params['credittypes'][$i], $params['credits'][$i], $_SESSION['memberid']), true);
+              memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)', array($show_id, (int) $params['credittypes'][$i], $params['credits'][$i], $_SESSION['memberid']), true);
     }
-
-    echo nl2br(print_r(new self($show_id), true));
-
-    //I'm still testing. Don't commit yet.
-    self::$db->query('ROLLBACK');
+    
+    //Actually commit the show to the database!
+    self::$db->query('COMMIT');
+    
+    return new self($show_id);
   }
 
   /**
    * Gets the id for the string representation of a type of metadata
    */
-  private static function getMetadataKey($string) {
-    if (empty(self::$metadata_keys)) {
-      self::initDB();
-      $r = self::$db->fetch_all('SELECT * FROM schedule.metadata_key');
-      foreach ($r as $key) {
-        self::$metadata_keys[$key['name']] = $key['metadata_key_id'];
-      }
-    }
+  public static function getMetadataKey($string) {
+    self::cacheMetadataKeys();
     if (!isset(self::$metadata_keys[$string])) {
       throw new MyURYException('Metadata Key ' . $string . ' does not exist');
     }
-    return self::$metadata_keys[$string];
+    return self::$metadata_keys[$string]['id'];
+  }
+
+  /**
+   * Gets whether the type of metadata is allowed to exist more than once
+   */
+  public static function isMetadataMultiple($id) {
+    self::cacheMetadataKeys();
+    foreach (self::$metadata_keys as $key) {
+      if ($key['id'] == $id)
+        return $key['multiple'];
+    }
+    throw new MyURYException('Metadata Key ID ' . $string . ' does not exist');
+  }
+
+  private static function cacheMetadataKeys() {
+    if (empty(self::$metadata_keys)) {
+      self::initDB();
+      $r = self::$db->fetch_all('SELECT metadata_key_id AS id, name, allow_multiple AS multiple FROM schedule.metadata_key');
+      foreach ($r as $key) {
+        self::$metadata_keys[$key['name']]['id'] = (int) $key['id'];
+        self::$metadata_keys[$key['name']]['multiple'] = ($key['multiple'] === 't');
+      }
+    }
+  }
+  
+  public static function getShowsAttachedToUser($memberid = null) {
+    if ($memberid === null) $memberid = $_SESSION['memberid'];
+    self::initDB();
+    
+    $r = self::$db->fetch_all('SELECT show_id FROM schedule.show WHERE memberid=$1 OR show_id IN
+        (SELECT show_id FROM schedule.show_credit WHERE creditid=$1 AND effective_from <= NOW() AND
+          (effective_to >= NOW() OR effective_to IS NULL))',
+            array($memberid));
   }
 
 }
