@@ -8,6 +8,8 @@
 /**
  * This singleton class handles actual database connection
  * 
+ * This is a Critical include! - It is loaded before MyURY Brokers into versions so only the live one is used!
+ * 
  * @version 22052012
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @depends Config
@@ -153,28 +155,27 @@ class Database {
    * Converts a postgresql array to a php array
    * json_decode *nearly* works in some cases, but this tends to be more reliable
    * 
-   * Caveat: If a string value starts and ends with ", they will be removed
+   * Based on http://stackoverflow.com/questions/3068683/convert-postgresql-array-to-php-array
    */
   public function decodeArray($text) {
-    //Check the input is valid
-    if (substr($text, 0, 1) !== '{' or substr($text, -1) !== '}') {
-      throw new MyURYException('Invalid input string');
-      return array();
-    }
+    $limit = strlen($text) - 1;
+    $output = array();
+    $offset = 1;
     
-    //Cuts off the first and last characters, then splits into an array
-    $keys = explode(',', substr($text, 1, -1));
-    
-    echo 'Values: '.nl2br(print_r($keys,true));
-    
-    for ($i = 0; $i < sizeof($keys); $i++) {
-      //Remove start and end quotes - PostgreSQL inconsistently adds these to strings
-      if (substr($keys[$i],0,1) === '"' and substr($keys[$i],-1) === '"') {
-        $keys[$i] = substr($keys[$i], 1, -1);
+    if ('{}' != $text)
+      do {
+        if ('{' != $text{$offset}) {
+          preg_match("/(\\{?\"([^\"\\\\]|\\\\.)*\"|[^,{}]+)+([,}]+)/", $text, $match, 0, $offset);
+          $offset += strlen($match[0]);
+          $output[] = ( '"' != $match[1]{0} ? $match[1] : stripcslashes(substr($match[1], 1, -1)) );
+          if ('},' == $match[3])
+            return $offset;
+        }
+        else
+          $offset = pg_array_parse($text, $output[], $limit, $offset + 1);
       }
-    }
-
-    return $keys;
+      while ($limit > $offset);
+    return $output;
   }
 
 }

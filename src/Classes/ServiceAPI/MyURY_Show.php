@@ -31,8 +31,10 @@ class MyURY_Show extends ServiceAPI {
     self::initDB();
     
     $result = self::$db->fetch_one('SELECT show_type_id, submitted, memberid,
-      (SELECT array(SELECT metadata_key_id FROM schedule.show_metadata WHERE show_id=$1 AND effective_from <= NOW() ORDER BY show_metadata_id)) AS metadata_types,
-      (SELECT array(SELECT metadata_value FROM schedule.show_metadata WHERE show_id=$1 AND effective_from <= NOW() ORDER BY show_metadata_id)) AS metadata,
+      (SELECT array(SELECT metadata_key_id FROM schedule.show_metadata WHERE show_id=$1 AND effective_from <= NOW()
+        ORDER BY effective_from, show_metadata_id)) AS metadata_types,
+      (SELECT array(SELECT metadata_value FROM schedule.show_metadata WHERE show_id=$1 AND effective_from <= NOW()
+        ORDER BY effective_from, show_metadata_id)) AS metadata,
       (SELECT array(SELECT credit_type_id FROM schedule.show_credit
          WHERE show_id=$1 AND effective_from <= NOW() AND (effective_to IS NULL OR effective_to >= NOW()) AND approvedid IS NOT NULL
          ORDER BY show_credit_id)) AS credit_types,
