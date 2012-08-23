@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file provides the Database class for MyURY
  * @package MyURY_Core
@@ -19,6 +20,7 @@ class Database {
    * @var Database
    */
   private static $me;
+
   /**
    * Stores the resource id of the connection to the PostgreSQL database
    * @var Resource
@@ -146,12 +148,33 @@ class Database {
   public function __clone() {
     throw new MyURYException('Attempted to clone a singleton');
   }
-  
+
   /**
    * Converts a postgresql array to a php array
+   * json_decode *nearly* works in some cases, but this tends to be more reliable
+   * 
+   * Caveat: If a string value starts and ends with ", they will be removed
    */
-  public function decodeArray($data) {
-    return json_decode(str_replace(array('{','}'),array('[',']'),$data));
+  public function decodeArray($text) {
+    //Check the input is valid
+    if (substr($text, 0, 1) !== '{' or substr($text, -1) !== '}') {
+      throw new MyURYException('Invalid input string');
+      return array();
+    }
+    
+    //Cuts off the first and last characters, then splits into an array
+    $keys = explode(',', substr($text, 1, -1));
+    
+    echo 'Values: '.nl2br(print_r($keys,true));
+    
+    for ($i = 0; $i < sizeof($keys); $i++) {
+      //Remove start and end quotes - PostgreSQL inconsistently adds these to strings
+      if (substr($keys[$i],0,1) === '"' and substr($keys[$i],-1) === '"') {
+        $keys[$i] = substr($keys[$i], 1, -1);
+      }
+    }
+
+    return $keys;
   }
 
 }
