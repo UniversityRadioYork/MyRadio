@@ -93,7 +93,7 @@ var MyURYForm = {
       };
     });
   },
-  setUpTimePicker: function() {
+  setUpTimePickers: function() {
     /**
    * Initialises the Time pickers where necessary
    * @todo Make stepminute customisable?
