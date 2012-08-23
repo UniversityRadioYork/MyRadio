@@ -33,8 +33,10 @@ $form = (new MyURYForm('sched_season', $module, 'default',
                         array('label' => 'Preferred Times'))
         )->addField(new MyURYFormField('day', MyURYFormField::TYPE_DAY,
                         array('repeating' => true, 'label' => ''))
-        )->addField(new MyURYFormField('time', MyURYFormField::TYPE_TIME,
-                        array('repeating' => true, 'label' => ''))
+        )->addField(new MyURYFormField('stime', MyURYFormField::TYPE_TIME,
+                        array('repeating' => true, 'label' => 'from'))
+        )->addField(new MyURYFormField('etime', MyURYFormField::TYPE_TIME,
+                        array('repeating' => true, 'label' => 'until'))
         )->addField(
                 new MyURYFormField('grp-adv', MyURYFormField::TYPE_SECTION,
                         array('label' => 'Advanced Options'))
