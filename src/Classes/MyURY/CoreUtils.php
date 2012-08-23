@@ -75,6 +75,17 @@ class CoreUtils {
   }
   
   /**
+   * Returns a postgresql-formatted timestamp
+   * @param int $time The time to get the timestamp for. Default right now.
+   * @return String a timestamp
+   */
+  public static function getTimestamp($time = null) {
+    if ($time === null) $time = time();
+    
+    return date('d/m/Y H:i:sO', $time);
+  }
+  
+  /**
    * Gives you the starting year of the current academic year
    * @return int year
    */
