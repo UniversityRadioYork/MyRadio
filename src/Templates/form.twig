@@ -9,9 +9,7 @@
 <fieldset class="{{frm_classes}}">
   <form action="{{frm_action | raw}}" method="{{frm_method}}" name="{{frm_name}}" id="{{frm_name}}">
     {% for field in frm_fields %}
-      {% if field.repeating %}
-      {% set sfieldname = field.name ~ '[]' %}
-      {% endif %}
+      {% if field.repeating %}{% set sfieldname = field.name ~ '[]' %}{% else %}{% set sfieldname = field.name %}{% endif %}
       <div id="{{frm_name}}-{{field.name}}-container" class="{{field.class}}">
         {% include ('FormFields/FieldType_'~field.type~'.twig') %}
           {% if field.repeating %}
