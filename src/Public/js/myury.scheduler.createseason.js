@@ -12,6 +12,7 @@ $(document).ready(function() {
   $('#sched_season-etime-repeater').on('click', function(e) {
     $('#sched_season-day-repeater').trigger('click');
     $('#sched_season-day-repeater').parent().parent().find('label').clone().appendTo($('#sched_season-day-repeater').parent().parent());
+    console.log($('#sched_season-day-repeater').parent().parent());
     $('#sched_season-stime-repeater').trigger('click');
   });
 });
