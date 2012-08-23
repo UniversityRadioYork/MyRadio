@@ -79,6 +79,32 @@ class Scheduler extends ServiceAPI {
   }
   
   /**
+   * Returns the Term currently available for Season applications.
+   * Users can only apply to the current term, or one week before the next one
+   * starts.
+   * 
+   * @return int|null Returns the id of the term or null if no active term
+   */
+  public static function getActiveApplicationTerm() {
+    $return = self::$db->fetch_column('SELECT termid FROM terms
+      WHERE start <= $1 AND finish >= NOW()',
+            array(CoreUtils::getTimestamp(strtotime('-7 Days'))));
+    echo CoreUtils::getTimestamp(strtotime('-7 Days'));
+    return $return[0];
+  }
+  
+  public static function getActiveApplicationTermInfo() {
+    $termid = self::getActiveApplicationTerm();
+    return array('termid' => $termid, 'descr' => self::getTermDescr($termid));
+  }
+  
+  public static function getTermDescr($termid) {
+    $return = self::$db->fetch_column('SELECT descr FROM terms WHERE termid=$1',
+            array($termid));
+    return $return[0];
+  }
+  
+  /**
    * Returns a list of potential genres, organised so they can be used as a SELECT MyURYFormField data source
    */
   public static function getGenres() {

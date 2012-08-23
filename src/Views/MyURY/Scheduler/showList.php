@@ -15,7 +15,7 @@ foreach ($shows as $show) {
       'applylink' => array('display' => 'icon',
           'value' => 'calendar',
           'title' => 'Apply for a new Season',
-          'url' => CoreUtils::makeURL('Scheduler', 'editShow', array('showid' => $show->getID()))),
+          'url' => CoreUtils::makeURL('Scheduler', 'createSeason', array('showid' => $show->getID()))),
       'micrositelink' => array('display' => 'icon',
           'value' => 'extlink',
           'title' => 'View Show Microsite',
@@ -24,7 +24,7 @@ foreach ($shows as $show) {
 }
 
 $twig->setTemplate('table.twig')
-        ->addVariable('heading', 'Scheduler')
+        ->addVariable('heading', 'My Shows')
         ->addVariable('tabledata', $tabledata)
         ->addVariable('tablescript', 'myury.scheduler.showlist')
         ->render();
