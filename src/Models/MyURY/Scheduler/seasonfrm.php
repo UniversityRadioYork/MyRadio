@@ -43,7 +43,7 @@ $form = (new MyURYForm('sched_season', $module, 'default',
         )->addField(
                 new MyURYFormField('description', MyURYFormField::TYPE_BLOCKTEXT,
                         array(
-                            'explanation' => 'Each season of your show can have it\'s own description. You can edit this later.',
+                            'explanation' => 'Each season of your show can have its own description. You can edit this later.',
                             'label' => 'Description',
                             'options' => array('minlength' => 140)
                         )
