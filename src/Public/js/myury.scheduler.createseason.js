@@ -14,5 +14,6 @@ $(document).ready(function() {
     $('#sched_season-stime-repeater').parent().parent().find('label').clone().insertBefore($('#sched_season-stime-repeater').parent());
     $('#sched_season-stime-repeater').trigger('click');
     $('#sched_season-etime-repeater').parent().parent().find('label').clone().insertBefore($('#sched_season-etime-repeater').parent().parent().last('input'));
+    console.log($('#sched_season-etime-repeater').parent().parent().last('input'));
   });
 });
