@@ -7,14 +7,37 @@
  * @version 21072012
  * @package MyURY_Scheduler
  */
-$form = (new MyURYForm('sched_season', $module, 'doSeason',
+//Set up the weeks checkboxes
+$weeks = array();
+for ($i = 1; $i <= 10; $i++) {
+  $weeks[] = new MyURYFormField('wk' . $i, MyURYFormField::TYPE_CHECK, array('label' => 'Week ' . $i, 'required' => false));
+}
+
+$form = (new MyURYForm('sched_season', $module, 'default',
                 array(
                     'debug' => true,
                     'title' => 'Edit Season'
                 )
         ))->addField(
                 new MyURYFormField('grp-basics', MyURYFormField::TYPE_SECTION,
-                        array('label' => 'Season Basics'))
+                        array('label' => ''))
+        )->addField(
+                new MyURYFormField('weeks', MyURYFormField::TYPE_CHECKGRP,
+                        array('options' => $weeks,
+                            'explanation' => 'Select what weeks this term this show will be on air',
+                            'label' => 'Schedule for Weeks'
+                        )
+                )
+        )->addField(
+                new MyURYFormField('grp-times', MyURYFormField::TYPE_SECTION,
+                        array('label' => 'Preferred Times'))
+        )->addField(new MyURYFormField('day', MyURYFormField::TYPE_DAY,
+                        array('repeating' => true, 'label' => ''))
+        )->addField(new MyURYFormField('time', MyURYFormField::TYPE_TIME,
+                        array('repeating' => true, 'label' => ''))
+        )->addField(
+                new MyURYFormField('grp-adv', MyURYFormField::TYPE_SECTION,
+                        array('label' => 'Advanced Options'))
         )->addField(
                 new MyURYFormField('description', MyURYFormField::TYPE_BLOCKTEXT,
                         array(
@@ -24,10 +47,10 @@ $form = (new MyURYForm('sched_season', $module, 'doSeason',
                         )
                 )
         )->addField(
-                new MyURYFormField('tags', MyURYFormField::TYPE_TEXT,
-                        array(
-                            'label' => 'Tags',
-                            'explanation' => 'A set of keywords to describe this season, in addition to the ones for your show in general'
-                        )
+        new MyURYFormField('tags', MyURYFormField::TYPE_TEXT,
+                array(
+                    'label' => 'Tags',
+                    'explanation' => 'A set of keywords to describe this season, in addition to the ones for your show in general'
                 )
-        );
+        )
+);

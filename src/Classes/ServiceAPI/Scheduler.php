@@ -87,9 +87,8 @@ class Scheduler extends ServiceAPI {
    */
   public static function getActiveApplicationTerm() {
     $return = self::$db->fetch_column('SELECT termid FROM terms
-      WHERE start <= $1 AND finish >= NOW()',
-            array(CoreUtils::getTimestamp(strtotime('-7 Days'))));
-    echo CoreUtils::getTimestamp(strtotime('-7 Days'));
+      WHERE start <= $1 AND finish >= NOW() LIMIT 1',
+            array(CoreUtils::getTimestamp(strtotime('+7 Days'))));
     return $return[0];
   }
   
@@ -99,9 +98,9 @@ class Scheduler extends ServiceAPI {
   }
   
   public static function getTermDescr($termid) {
-    $return = self::$db->fetch_column('SELECT descr FROM terms WHERE termid=$1',
+    $return = self::$db->fetch_one('SELECT descr, start FROM terms WHERE termid=$1',
             array($termid));
-    return $return[0];
+    return $return['descr'] . date(' Y',strtotime($return['start']));
   }
   
   /**
