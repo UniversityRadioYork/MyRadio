@@ -171,7 +171,7 @@ $(document).ready(function() {
       MyURYForm.setUpMemberFields();
     }
     
-    if ('#'+newid).hasClass('time')) {
+    if ($('#'+newid).hasClass('time')) {
       MyURYForm.setUpTimePickers();
     }
   });
