@@ -313,7 +313,6 @@ class CoreUtils {
     $db = Database::getInstance();
     $result = $db->fetch_column('SELECT moduleid FROM myury.modules WHERE serviceid=$1 AND name=$2',
             array($service, $module));
-    print_r(array($service,$module));exit;
     
     if (empty($result)) {
       //The module needs creating
