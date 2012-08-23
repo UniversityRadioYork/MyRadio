@@ -11,8 +11,8 @@ $(document).ready(function() {
    */
   $('#sched_season-etime-repeater').on('click', function(e) {
     $('#sched_season-day-repeater').trigger('click');
-    $('#sched_season-stime-repeater').parent().parent().find('label').clone().insertBefore($('#sched_season-stime-repeater').parent());
+    $('#sched_season-stime-repeater').parent().parent().find('label:first').clone().insertBefore($('#sched_season-stime-repeater').parent());
     $('#sched_season-stime-repeater').trigger('click');
-    $('#sched_season-etime-repeater').parent().parent().find('label').clone().insertBefore($('#sched_season-etime-repeater').parent().parent().children('input[type="text"]:last'));
+    $('#sched_season-etime-repeater').parent().parent().find('label:first').clone().insertBefore($('#sched_season-etime-repeater').parent().parent().children('input[type="text"]:last'));
   });
 });
