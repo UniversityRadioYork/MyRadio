@@ -93,6 +93,15 @@ var MyURYForm = {
       };
     });
   },
+  setUpTimePicker: function() {
+    /**
+   * Initialises the Time pickers where necessary
+   * @todo Make stepminute customisable?
+   */
+    $('fieldset.myuryfrm input.time').timepicker({
+      stepMinute: 15
+    });
+  },
   validate: function() {
     /**
    * Validation
@@ -125,13 +134,7 @@ $(document).ready(function() {
     dateFormat:"dd/mm/yy",
     stepMinute: 15
   });
-  /**
-   * Initialises the Time pickers where necessary
-   * @todo Make stepminute customisable?
-   */
-  $('fieldset.myuryfrm input.time').timepicker({
-    stepMinute: 15
-  });
+  MyURYForm.setUpTimePickers();
   MyURYForm.setUpMemberFields();
   MyURYForm.setUpTrackFields();
   
