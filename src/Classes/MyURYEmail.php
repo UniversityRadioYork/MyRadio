@@ -70,7 +70,7 @@ class MyURYEmail {
    * @param sting $message email message
    */
   public static function sendEmailFromComputing($to, $subject, $message){
-    mail($to, $subject, $message, self::setSender('URY Computing Team <computing@ury.york.ac.uk>'));
+    mail($to, $subject, $message, self::setSender('URY Computing Team <computing@ury.org.uk>'));
     return TRUE;
   }
   /**
@@ -79,7 +79,7 @@ class MyURYEmail {
    * @param sting $message email message
    */
   public static function sendEmailToComputing($subject, $message){
-    mail("URY Computing Team <computing@ury.york.ac.uk>", $subject, self::addFooter($message), self::getDefaultHeader());
+    mail("URY Computing Team <computing@ury.org.uk>", $subject, self::addFooter($message), self::getDefaultHeader());
     return TRUE;
   }
 }

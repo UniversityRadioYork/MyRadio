@@ -1,6 +1,6 @@
 <label for="{{frm_name}}-{{field.name}}">{{field.label}}</label>
 <input type="text" class="{{field.class}}{% if field.required %} required{% endif %}"
-       value="{{field.value}}" name="{{frm_name}}-{{field.name}}"
+       value="{{field.value}}" name="{{frm_name}}-{{sfieldname}}"
        id="{{frm_name}}-{{field.name}}"
        {% if field.options.minlength is defined %} minlength="{{field.options.minlength}}"{% endif %}
        {% if field.options.maxlength is defined %} maxlength="{{field.options.maxlength}}"{% endif %}

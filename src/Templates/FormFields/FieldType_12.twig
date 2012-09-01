@@ -1,5 +1,5 @@
 <label for="{{frm_name}}-{{field.name}}">{{field.label}}</label>
-<select name="{{frm_name}}-{{field.name}}" id="{{frm_name}}-{{field.name}}"
+<select name="{{frm_name}}-{{sfieldname}}" id="{{frm_name}}-{{field.name}}"
         class="{{field.class}}{% if field.required %} required{% endif %} day">
   <option value="0"{% if field.value == 0 %} selected="selected"{% endif %}>Monday</option>
   <option value="1"{% if field.value == 1 %} selected="selected"{% endif %}>Tuesday</option>
