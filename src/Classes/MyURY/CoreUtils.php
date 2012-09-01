@@ -34,7 +34,7 @@ class CoreUtils {
     } catch (MyURYException $e) {
       return false;
     }
-    return file_exists(__DIR__ . '/../../Controllers/MyURY/' . $module . '/' . $action . '.php');
+    return is_string(stream_resolve_include_path('Controllers/MyURY/' . $module . '/' . $action . '.php'));
   }
 
   /**
