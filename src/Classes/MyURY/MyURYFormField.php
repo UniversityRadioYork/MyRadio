@@ -390,15 +390,23 @@ class MyURYFormField {
         if (is_array($_REQUEST[$name])) {
           for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
             $_REQUEST[$name][$i] = (int)$_REQUEST[$name][$i];
-            return $_REQUEST[$name];
           }
+          return $_REQUEST[$name];
         } else {
           return (int)$_REQUEST[$name];
         }
         break;
       case self::TYPE_DATE:
       case self::TYPE_DATETIME:
-        return (int)strtotime($_REQUEST[$name]);
+        //Deal with repeated elements
+        if (is_array($_REQUEST[$name])) {
+          for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
+            $_REQUEST[$name][$i] = (int)strtotime($_REQUEST[$name][$i]);
+          }
+          return $_REQUEST[$name];
+        } else {
+          return (int)strtotime($_REQUEST[$name]);
+        }
         break;
       case self::TYPE_CHECK:
         return (bool)(isset($_REQUEST[$name]) && ($_REQUEST[$name] === 'On' || $_REQUEST[$name] === 'on'));
