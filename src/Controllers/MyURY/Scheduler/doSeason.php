@@ -8,7 +8,7 @@
  */
 
 //The Form definition
-require 'Models/MyURY/Scheduler/showfrm.php';
+require 'Models/MyURY/Scheduler/seasonfrm.php';
 
 echo nl2br(print_r($form->readValues(),true));
 

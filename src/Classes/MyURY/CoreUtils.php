@@ -34,6 +34,10 @@ class CoreUtils {
     } catch (MyURYException $e) {
       return false;
     }
+    /**
+     * This is better than file_exists because it ensures that the response is valid for a version which has the file
+     * when live does not
+     */
     return is_string(stream_resolve_include_path('Controllers/MyURY/' . $module . '/' . $action . '.php'));
   }
 
