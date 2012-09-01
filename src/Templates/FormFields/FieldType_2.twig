@@ -1,7 +1,7 @@
 <label for="{{frm_name}}-{{field.name}}">{{field.label}}</label>
 <input type="email"
        class="{{field.class}}{% if field.required %} required{% endif %} email"
-       value="{{field.value}}" name="{{frm_name}}-{{field.name}}"
+       value="{{field.value}}" name="{{frm_name}}-{{sfieldname}}"
        id="{{frm_name}}-{{field.name}}"
        {% if not field.enabled %} readonly="readonly"{% endif %} />
 <span class="myuryfrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
