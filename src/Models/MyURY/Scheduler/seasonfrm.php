@@ -13,7 +13,7 @@ for ($i = 1; $i <= 10; $i++) {
   $weeks[] = new MyURYFormField('wk' . $i, MyURYFormField::TYPE_CHECK, array('label' => 'Week ' . $i, 'required' => false));
 }
 
-$form = (new MyURYForm('sched_season', $module, 'default',
+$form = (new MyURYForm('sched_season', $module, 'doSeason',
                 array(
                     'debug' => true,
                     'title' => 'Edit Season'
@@ -45,14 +45,16 @@ $form = (new MyURYForm('sched_season', $module, 'default',
                         array(
                             'explanation' => 'Each season of your show can have its own description. You can edit this later.',
                             'label' => 'Description',
-                            'options' => array('minlength' => 140)
+                            'options' => array('minlength' => 140),
+                            'required' => false
                         )
                 )
         )->addField(
         new MyURYFormField('tags', MyURYFormField::TYPE_TEXT,
                 array(
                     'label' => 'Tags',
-                    'explanation' => 'A set of keywords to describe this season, in addition to the ones for your show in general'
+                    'explanation' => 'A set of keywords to describe this season, in addition to the ones for your show in general',
+                    'required' => false
                 )
         )
 );
