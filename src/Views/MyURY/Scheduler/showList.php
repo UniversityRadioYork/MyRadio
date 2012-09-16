@@ -26,5 +26,13 @@ foreach ($shows as $show) {
 $twig->setTemplate('table.twig')
         ->addVariable('heading', 'My Shows')
         ->addVariable('tabledata', $tabledata)
-        ->addVariable('tablescript', 'myury.scheduler.showlist')
-        ->render();
+        ->addVariable('tablescript', 'myury.scheduler.showlist');
+if (isset($_REQUEST['msg'])) {
+  switch($_REQUEST['msg']) {
+    case 'seasonCreated':
+      $twig->addInfo('Your season application has been submitted for processing.');
+      break;
+  }
+}
+
+$twig->render();

@@ -62,8 +62,6 @@ class MyURY_Season extends MyURY_Scheduler_Common {
       //Invalid Season
       throw new MyURYException('The MyURY_Season with instance ID #'.$season_id.' does not exist.');
     }
-    print_r($result);
-    
     
     //Deal with the easy bits
     $this->owner = User::getInstance($result['memberid']);
@@ -100,9 +98,6 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     foreach ($timeslots as $timeslot) {
       $this->timeslots[] = MyURYTimeslot::getInstance($timeslot);
     }
-    
-    echo nl2br(print_r($this,true));
-    exit;
   }
 
   /**
@@ -152,7 +147,6 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     $season_create_result = self::$db->fetch_column('INSERT INTO schedule.show_season (show_id, termid, submitted, memberid)
       VALUES ($1, $2, $3, $4) RETURNING show_season_id', array($params['show_id'], $term_id, CoreUtils::getTimestamp(), User::getInstance()->getID()), true);
     $season_id = $season_create_result[0];
-    echo $season_id;
 
     //Now let's allocate store the requested weeks for a term
     for ($i = 1; $i <= 10; $i++) {
@@ -198,13 +192,11 @@ class MyURY_Season extends MyURY_Scheduler_Common {
                 ), true);
       }
     }
-
-    $return = new self($season_id);
     
     //Actually commit the show to the database!
-    self::$db->query('ROLLBACK');
+    self::$db->query('COMMIT');
 
-    return $return;
+    return new self($season_id);
   }
 
   public function getMeta($meta_string) {

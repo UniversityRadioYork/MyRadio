@@ -114,7 +114,7 @@ class Scheduler extends ServiceAPI {
    * Returns a list of potential credit types, organsed so they can be used as a SELECT MyURYFormField data source
    */
   public static function getCreditTypes() {
-    return self::$db->fetch_all('SELECT show_credit_type_id AS value, name AS text FROM schedule.show_credit_type ORDER BY name ASC');
+    return self::$db->fetch_all('SELECT credit_type_id AS value, name AS text FROM people.credit_type ORDER BY name ASC');
   }
   
   /**
