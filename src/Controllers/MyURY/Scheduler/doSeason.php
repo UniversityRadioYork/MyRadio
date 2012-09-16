@@ -17,4 +17,4 @@ try {
   exit;
 }
 
-header('Location: '.CoreUtils::makeURL('Scheduler', 'myShows'));
+header('Location: '.CoreUtils::makeURL('Scheduler', 'myShows', array('msg' => 'seasonCreated')));
