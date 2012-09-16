@@ -97,6 +97,16 @@ class CoreUtils {
     if (date('m') >= 10) return (int)date('Y');
     else return (int)date('Y')-1;
   }
+  
+  /**
+   * Returns a postgresql formatted interval
+   * @param int $start The start time
+   * @param int $end The end time
+   * @return String a PgSQL valid interval value
+   */
+  public static function makeInterval($start, $end) {
+    return $end-$start . ' seconds';
+  }
 
   /**
    * Builds a module/action URL

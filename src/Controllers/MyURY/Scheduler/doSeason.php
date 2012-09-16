@@ -13,7 +13,7 @@ require 'Models/MyURY/Scheduler/seasonfrm.php';
 echo nl2br(print_r($form->readValues(),true));
 
 try {
-  MyURY_Show::create($form->readValues());
+  MyURY_Season::apply($form->readValues());
 } catch (MyURYException $e) {
   require 'Views/Errors/500.php';
   exit;

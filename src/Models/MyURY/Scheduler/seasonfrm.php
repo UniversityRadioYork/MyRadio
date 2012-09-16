@@ -19,6 +19,8 @@ $form = (new MyURYForm('sched_season', $module, 'doSeason',
                     'title' => 'Edit Season'
                 )
         ))->addField(
+                new MyURYFormField('show_id', MyURYFormField::TYPE_HIDDEN)
+        )->addField(
                 new MyURYFormField('grp-basics', MyURYFormField::TYPE_SECTION,
                         array('label' => ''))
         )->addField(
