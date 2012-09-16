@@ -14,7 +14,7 @@
  * 
  */
 
-class MyURY_Show extends ServiceAPI {
+class MyURY_Show extends MyURY_Scheduler_Common {
 
   private static $shows = array();
   private static $metadata_keys = array();
@@ -176,40 +176,6 @@ class MyURY_Show extends ServiceAPI {
     return new self($show_id);
   }
 
-  /**
-   * Gets the id for the string representation of a type of metadata
-   */
-  public static function getMetadataKey($string) {
-    self::cacheMetadataKeys();
-    if (!isset(self::$metadata_keys[$string])) {
-      throw new MyURYException('Metadata Key ' . $string . ' does not exist');
-    }
-    return self::$metadata_keys[$string]['id'];
-  }
-
-  /**
-   * Gets whether the type of metadata is allowed to exist more than once
-   */
-  public static function isMetadataMultiple($id) {
-    self::cacheMetadataKeys();
-    foreach (self::$metadata_keys as $key) {
-      if ($key['id'] == $id)
-        return $key['multiple'];
-    }
-    throw new MyURYException('Metadata Key ID ' . $string . ' does not exist');
-  }
-
-  private static function cacheMetadataKeys() {
-    if (empty(self::$metadata_keys)) {
-      self::initDB();
-      $r = self::$db->fetch_all('SELECT metadata_key_id AS id, name, allow_multiple AS multiple FROM schedule.metadata_key');
-      foreach ($r as $key) {
-        self::$metadata_keys[$key['name']]['id'] = (int) $key['id'];
-        self::$metadata_keys[$key['name']]['multiple'] = ($key['multiple'] === 't');
-      }
-    }
-  }
-  
   /**
    * Returns an array of shows which the given user owns or is an active
    * credit in

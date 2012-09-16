@@ -118,12 +118,14 @@ class Database {
    * Equates to a pg_fetch_all_columns(pg_query,0). Returns all first column entries
    * @param String $sql The query string to execute
    * @param Array $params Paramaters for the query
+   * @param bool $rollback If true, an error will automatically execute a rollback before throwing an Exception
+   * Use for transactions.
    * @return Array The requested result column, or an empty array on failure
    * @throws MyURYException 
    */
-  public function fetch_column($sql, $params = array()) {
+  public function fetch_column($sql, $params = array(), $rollback = false) {
     try {
-      $result = $this->query($sql, $params);
+      $result = $this->query($sql, $params, $rollback);
     } catch (MyURYException $e) {
       return array();
     }

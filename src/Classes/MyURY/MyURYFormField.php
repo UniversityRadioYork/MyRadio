@@ -367,6 +367,7 @@ class MyURYFormField {
    * @param String $prefix The current prefix to the field name
    * @return mixed The submitted field value
    * @throws MyURYException if the field type does not have a valid read handler
+   * @todo Verify all returns deal with repeated elements correctly
    */
   public function readValue($prefix) {
     $name = $prefix . str_replace(' ', '_', $this->name);
@@ -377,7 +378,9 @@ class MyURYFormField {
       case self::TYPE_ARTIST:
       case self::TYPE_HIDDEN:
       case self::TYPE_BLOCKTEXT:
-      case self::TYPE_TIME:
+        if (is_array($_REQUEST[$name])) {
+          return $_REQUEST[$name];
+        }
         return (string)$_REQUEST[$name];
         break;
       case self::TYPE_NUMBER:
@@ -398,10 +401,15 @@ class MyURYFormField {
         break;
       case self::TYPE_DATE:
       case self::TYPE_DATETIME:
+      case self::TYPE_TIME:
         //Deal with repeated elements
         if (is_array($_REQUEST[$name])) {
           for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
             $_REQUEST[$name][$i] = (int)strtotime($_REQUEST[$name][$i]);
+            //Times should be seconds since midnight *any* day
+            if ($this->type === self::TYPE_TIME) {
+              $_REQUEST[$name][$i] -= strtotime('Midnight');
+            }
           }
           return $_REQUEST[$name];
         } else {

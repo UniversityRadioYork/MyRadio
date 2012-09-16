@@ -13,4 +13,5 @@
 $current_term_info = Scheduler::getActiveApplicationTermInfo();
 $current_term = $current_term_info['descr'];
 require 'Models/MyURY/Scheduler/seasonfrm.php';
+$form->setFieldValue('show_id', (int)$_REQUEST['showid']);
 require 'Views/MyURY/Scheduler/createSeason.php';
