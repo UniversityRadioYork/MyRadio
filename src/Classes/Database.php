@@ -179,5 +179,9 @@ class Database {
       while ($limit > $offset);
     return $output;
   }
+  
+  public function intervalToTime($interval) {
+    return strtotime('1970-01-01 '.$interval);
+  }
 
 }

@@ -17,7 +17,6 @@
 class MyURY_Show extends MyURY_Scheduler_Common {
 
   private static $shows = array();
-  private static $metadata_keys = array();
   private $show_id;
   private $meta;
   private $owner;
