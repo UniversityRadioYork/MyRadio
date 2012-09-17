@@ -56,4 +56,8 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
   public static function getInstance($itemid = -1) {
     throw new MyURYException(__CLASS__ . ' is not an initialisable Service API!', MyURYException::$fatal);
   }
+  
+  public function toDataSource() {
+    throw new MyURYException(__CLASS__ . ' has not had a DataSource Conversion Method Defined!', MyURYException::$fatal);
+  }
 }
