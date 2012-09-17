@@ -75,7 +75,7 @@ class CoreUtils {
    * @return String A happy time 
    */
   public static function happyTime($timestring, $time = true) {
-    return date('d/m/Y' . ($time ? ' H:i:s' : ''), strtotime($timestring));
+    return date('d/m/Y' . ($time ? ' H:i:s' : ''), is_numeric($timestring) ? $timestring : strtotime($timestring));
   }
   
   /**

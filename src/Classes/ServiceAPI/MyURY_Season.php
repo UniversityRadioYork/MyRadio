@@ -218,7 +218,12 @@ class MyURY_Season extends MyURY_Scheduler_Common {
   }
 
   public function getMeta($meta_string) {
-    return $this->meta[self::getMetadataKey($meta_string)];
+    $key = self::getMetadataKey($meta_string);
+    if (isset($this->meta[$key])) {
+      return $this->meta[$key];
+    } else {
+      return $this->getShow()->getMeta($meta_string);
+    }
   }
 
   public function getID() {
@@ -226,11 +231,23 @@ class MyURY_Season extends MyURY_Scheduler_Common {
   }
 
   public function getShow() {
-    return MyURY_Show::getInstance($this->getShowID());
+    return MyURY_Show::getInstance($this->show_id);
+  }
+  
+  public function getSubmittedTime() {
+    return CoreUtils::happyTime($this->submitted);
   }
 
   public function getWebpage() {
     return 'http://ury.org.uk/show/' . $this->getShow()->getID() . '/' . $this->getID();
+  }
+  
+  public function toDataSource() {
+    return array(
+      'id' => $this->getID(),
+      'name' => $this->getMeta('title'),
+      'submitted' => $this->getSubmittedTime()
+    );
   }
 
 }
