@@ -10,5 +10,5 @@ interface MyURY_DataSource {
    * as needed.
    */
   public function toDataSource();
-  public static function setToDataSource();
+  public static function setToDataSource($array);
 }
