@@ -14,7 +14,7 @@
  * @uses \Database
  * @uses \CacheProvider
  */
-abstract class ServiceAPI implements IServiceAPI {
+abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
   /**
    * All ServiceAPI subclasses will contain a reference to the Database Singleton
    * @var \Database
