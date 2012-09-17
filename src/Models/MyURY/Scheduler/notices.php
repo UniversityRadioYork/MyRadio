@@ -8,5 +8,5 @@
  */
 //This model loads the little notices at the top of the scheduler mainpage
 
-$to_allocate = Scheduler::countPendingAllocations();
-$disputes = Scheduler::countPendingDisputes();
+$to_allocate = MyURY_Scheduler::countPendingAllocations();
+$disputes = MyURY_Scheduler::countPendingDisputes();

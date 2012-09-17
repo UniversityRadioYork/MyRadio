@@ -27,15 +27,15 @@ $form = (new MyURYForm('sched_show', $module, 'doShow',
         )->addField(
                 new MyURYFormField('description', MyURYFormField::TYPE_BLOCKTEXT,
                         array(
-                            'explanation' => 'Describe your show in as much detail as you can. Minimum 280 characters.',
+                            'explanation' => 'Describe your show in as much detail as you can. Minimum 140 characters.',
                             'label' => 'Description',
-                            'options' => array('minlength' => 280)
+                            'options' => array('minlength' => 140)
                         )
                 )
         )->addField(
                 new MyURYFormField('genres', MyURYFormField::TYPE_SELECT,
                         array(
-                            'options' => array_merge(array(array('text' => 'Please select...', 'disabled' => true)), Scheduler::getGenres()),
+                            'options' => array_merge(array(array('text' => 'Please select...', 'disabled' => true)), MyURY_Scheduler::getGenres()),
                             'repeating' => true,
                             'label' => 'Genres',
                             'explanation' => 'What type of music do you play, if any?'
@@ -62,7 +62,7 @@ $form = (new MyURYForm('sched_show', $module, 'doShow',
         )->addField(
         new MyURYFormField('credittypes', MyURYFormField::TYPE_SELECT,
                 array(
-                    'options' => array_merge(array(array('text' => 'Please select...', 'disabled' => true)), Scheduler::getCreditTypes()),
+                    'options' => array_merge(array(array('text' => 'Please select...', 'disabled' => true)), MyURY_Scheduler::getCreditTypes()),
                     'explanation' => '',
                     'label' => '',
                     'repeating' => true

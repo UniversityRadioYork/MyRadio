@@ -14,7 +14,7 @@ $form = new MyURYForm('sched_allocate', $module, 'doAllocate',
         ));
 
 //Set up the terms select box
-$terms = Scheduler::getTerms();
+$terms = MyURY_Scheduler::getTerms();
 $term_options = array();
 
 foreach ($terms as $term) {

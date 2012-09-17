@@ -26,7 +26,12 @@ class MyURY_Season extends MyURY_Scheduler_Common {
   private $metadata;
   private $timeslots;
   private $requested_times;
-
+  
+  /**
+   * These variables allow using this as a DataTable DataSource
+   */
+  private $editlink = array();
+  private $rejectlink = array();
   public static function getInstance($season_id = null) {
     if (!is_numeric($season_id)) {
       throw new MyURYException('Invalid Season ID!', MyURYException::FATAL);
@@ -36,11 +41,24 @@ class MyURY_Season extends MyURY_Scheduler_Common {
       self::$seasons[$season_id] = new self($season_id);
     }
 
-    return self::$season[$season_id];
+    return self::$seasons[$season_id];
   }
 
   private function __construct($season_id) {
     $this->season_id = $season_id;
+    //Make DataSourceable
+    $this->editlink = array(
+      'display' => 'text',
+      'url' => CoreUtils::makeURL('Scheduler', 'allocate', array('show_season_id' => $season_id)),
+      'value' => 'Edit/Allocate'
+      );
+    $this->rejectlink = array(
+      'display' => 'text',
+      'url' => CoreUtils::makeURL('Scheduler', 'reject', array('show_season_id' => $season_id)),
+      'value' => 'Reject'
+      );
+    
+    //Init Database
     self::initDB();
 
     //Get the basic info about the season
