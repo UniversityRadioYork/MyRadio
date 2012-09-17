@@ -6,6 +6,6 @@
  * @version 21072012
  * @package MyURY_Core
  */
-interface Singleton extends MyURY_DataSource {
+interface Singleton {
   public static function getInstance();
 }
