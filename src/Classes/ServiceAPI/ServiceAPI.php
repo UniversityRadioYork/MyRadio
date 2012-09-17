@@ -73,6 +73,7 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
     foreach ($array as $element) {
       //It must implement the toDataSource method!
       if (!method_exists($element, 'toDataSource')) {
+        echo "FAIL";
         throw new MyURYException('Attempted to convert '.get_class($element).' to a DataSource but it not a valid Data Object!', MyURYException::FATAL);
       } else {
         echo "RUN";
