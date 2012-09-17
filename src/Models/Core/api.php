@@ -21,6 +21,7 @@
  * @author Lloyd Wallis <lpw@ury.org.uk> 
  * @package MyURY_Core
  */
+require_once 'Interfaces/MyURY_DataSource.php';
 require_once 'Interfaces/Singleton.php';
 //Create a function to autoload classes when needed
 spl_autoload_register(function($class) {
