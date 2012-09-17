@@ -11,7 +11,7 @@
  * @version 21072012
  * @package MyURY_Core
  */
-interface IServiceAPI extends MyURY_DataSource {
+interface IServiceAPI {
   /**
    * Reestablishes the database connection after being Cached 
    */
