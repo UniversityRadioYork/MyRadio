@@ -6,6 +6,7 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 21072012
  * @package MyURY_Core
+ * @todo Is this needed? If it is it needs to be adapted to allow versioning support.
  */
 
 /**
