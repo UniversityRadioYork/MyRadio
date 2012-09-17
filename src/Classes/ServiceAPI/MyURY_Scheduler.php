@@ -37,7 +37,7 @@ class MyURY_Scheduler extends MyURY_Scheduler_Common {
       
       self::$pendingAllocationsResult = array();
       foreach ($result as $application) {
-        self::$pendingAllocationsResult = MyURY_Season::getInstance($application);
+        self::$pendingAllocationsResult[] = MyURY_Season::getInstance($application);
       }
     }
     

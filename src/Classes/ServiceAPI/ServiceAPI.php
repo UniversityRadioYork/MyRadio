@@ -54,11 +54,11 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
   }
   
   public static function getInstance($itemid = -1) {
-    throw new MyURYException(__CLASS__ . ' is not an initialisable Service API!', MyURYException::$fatal);
+    throw new MyURYException(__CLASS__ . ' is not an initialisable Service API!', MyURYException::FATAL);
   }
   
   public function toDataSource() {
-    throw new MyURYException(__CLASS__ . ' has not had a DataSource Conversion Method Defined!', MyURYException::$fatal);
+    throw new MyURYException(__CLASS__ . ' has not had a DataSource Conversion Method Defined!', MyURYException::FATAL);
   }
   
   /**
@@ -70,18 +70,14 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
    */
   public static function setToDataSource($array) {
     $result = array();
-    print_r($array);
     foreach ($array as $element) {
       //It must implement the toDataSource method!
       if (!method_exists($element, 'toDataSource')) {
-        echo "FAIL";
         throw new MyURYException('Attempted to convert '.get_class($element).' to a DataSource but it not a valid Data Object!', MyURYException::FATAL);
       } else {
-        echo "RUN";
         $result[] = $element->toDataSource();
       }
     }
-    print_r($result);
     return $result;
   }
 }
