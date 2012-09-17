@@ -8,5 +8,5 @@
  */
 
 require 'Models/MyURY/Scheduler/notices.php';
-require 'Models/MyURY/Scheduler/pendingAllocations.php';
+$pending_allocations = MyURY_Scheduler::getPendingAllocations();
 require 'Views/MyURY/Scheduler/default.php';

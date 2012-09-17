@@ -12,7 +12,7 @@
  * @package MyURY_Scheduler
  * @uses \Database
  */
-class Scheduler extends ServiceAPI {
+class MyURY_Scheduler extends MyURY_Scheduler_Common {
   /**
    * This provides a temporary cache of the result from pendingAllocationsQuery
    * @var Array
@@ -20,42 +20,44 @@ class Scheduler extends ServiceAPI {
   private static $pendingAllocationsResult = null;
   
   /**
-   * Returns an Array of pending show allocations.
-   * @return Array A 2D array with each element as follows:
-   * entryid: The unique id of the show application<br>
-   * summary: The name of the show<br>
-   * createddate: The time the application was made<br>
-   * requestedtime: The primary requested time of the application<br>
+   * Returns an Array of pending Season allocations.
+   * @return Array An Array of MyURY_Season objects which do not have an allocated timeslot, ordered by time submitted
+   * @todo Move to MyURY_Season?
    */
   private static function pendingAllocationsQuery() {
     if (self::$pendingAllocationsResult === null) {
-      self::$pendingAllocationsResult = 
-        self::$db->query('SELECT sched_entry.entryid, summary, createddate, day || \' \' || starttime as requestedtime
-        FROM sched_entry, sched_showdetail
-        WHERE sched_entry.entryid = sched_showdetail.entryid
-        AND sched_entry.entryid NOT IN (SELECT entryid FROM sched_timeslot)
-        AND sched_entry.entryid NOT IN (SELECT entryid FROM sched_reject WHERE revokeddate IS NULL)
-        AND entrytypeid=3
-        ORDER BY createddate ASC');
+      /**
+       * Must not be null - otherwise it hasn't been submitted yet
+       */
+      $result = 
+        self::$db->fetch_column('SELECT show_season_id FROM schedule.show_season
+          WHERE show_season_id NOT IN (SELECT show_season_id FROM schedule.show_season_timeslot)
+          AND submitted IS NOT NULL
+          ORDER BY submitted ASC');
+      
+      self::$pendingAllocationsResult = array();
+      foreach ($result as $application) {
+        self::$pendingAllocationsResult = MyURY_Season::getInstance($application);
+      }
     }
     
     return self::$pendingAllocationsResult;
   }
   
   /**
-   * Returns the number of shows awaiting a timeslot allocation
-   * @return int the number of pending shows 
+   * Returns the number of seasons awaiting a timeslot allocation
+   * @return int the number of pending season allocations 
    */
   public static function countPendingAllocations() {
-    return (int)self::$db->num_rows(self::pendingAllocationsQuery());
+    return sizeof(self::pendingAllocationsQuery());
   }
   
   /**
    * Returns all show requests awaiting a timeslot allocation
-   * @return Array[Array] An array of arrays of shows pending allocation
+   * @return Array[MyURY_Season] An array of Seasons of pending allocation
    */
   public static function getPendingAllocations() {
-    return self::$db->fetch_all(self::pendingAllocationsQuery());
+    return self::pendingAllocationsQuery();
   }
   
   /**
