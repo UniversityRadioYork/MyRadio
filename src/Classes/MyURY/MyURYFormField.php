@@ -345,6 +345,7 @@ class MyURYFormField {
         $options[$k] = $v;
       }
     }
+    
     return array(
         'name'        => $this->name,
         'label'       => ($this->label === null ? $this->name : $this->label),

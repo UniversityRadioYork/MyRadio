@@ -47,4 +47,11 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
       }
     }
   }
+  
+  protected static function getCreditName($credit_id) {
+    self::initDB();
+    $r = self::$db->fetch_one('SELECT name FROM people.credit_type WHERE credit_type_id=$1 LIMIT 1', array((int)$credit_id));
+    if (empty($r)) return 'Contrib';
+    return $r['name'];
+  }
 }

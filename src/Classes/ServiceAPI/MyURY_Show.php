@@ -212,5 +212,21 @@ class MyURY_Show extends MyURY_Scheduler_Common {
   public function getWebpage() {
     return 'http://ury.org.uk/show/'.$this->getID();
   }
+  
+  public function getCreditsNames() {
+    $return = array();
+    foreach ($this->credits as $credit) {
+      $credit['name'] = User::getInstance($credit['memberid'])->getName();
+      $credit['type_name'] = self::getCreditName($credit['type']);
+      $return[] = $credit;
+    }
+    return $return;
+  }
+  
+  public function toDataSource() {
+    return array(
+        'credits' => $this->getCreditsNames()
+    );
+  }
 
 }
