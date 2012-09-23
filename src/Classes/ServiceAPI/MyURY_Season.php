@@ -26,12 +26,8 @@ class MyURY_Season extends MyURY_Scheduler_Common {
   private $metadata;
   private $timeslots;
   private $requested_times;
-  
-  /**
-   * These variables allow using this as a DataTable DataSource
-   */
-  private $editlink = array();
-  private $rejectlink = array();
+  private $requested_weeks;
+
   public static function getInstance($season_id = null) {
     if (!is_numeric($season_id)) {
       throw new MyURYException('Invalid Season ID!', MyURYException::FATAL);
@@ -46,18 +42,6 @@ class MyURY_Season extends MyURY_Scheduler_Common {
 
   private function __construct($season_id) {
     $this->season_id = $season_id;
-    //Make DataSourceable
-    $this->editlink = array(
-      'display' => 'text',
-      'url' => CoreUtils::makeURL('Scheduler', 'allocate', array('show_season_id' => $season_id)),
-      'value' => 'Edit/Allocate'
-      );
-    $this->rejectlink = array(
-      'display' => 'text',
-      'url' => CoreUtils::makeURL('Scheduler', 'reject', array('show_season_id' => $season_id)),
-      'value' => 'Reject'
-      );
-    
     //Init Database
     self::initDB();
 
@@ -74,19 +58,20 @@ class MyURY_Season extends MyURY_Scheduler_Common {
       (SELECT array(SELECT duration FROM schedule.show_season_requested_time WHERE show_season_id=$1
         ORDER BY preference ASC)) AS requested_durations,
       (SELECT array(SELECT show_season_timeslot_id FROM schedule.show_season_timeslot WHERE show_season_id=$1
-        ORDER BY start_time ASC)) AS timeslots
+        ORDER BY start_time ASC)) AS timeslots,
+      (SELECT array(SELECT week FROM schedule.show_season_requested_week WHERE show_season_id=$1)) AS requested_weeks
       FROM schedule.show_season WHERE show_season_id=$1', array($season_id));
     if (empty($result)) {
       //Invalid Season
-      throw new MyURYException('The MyURY_Season with instance ID #'.$season_id.' does not exist.');
+      throw new MyURYException('The MyURY_Season with instance ID #' . $season_id . ' does not exist.');
     }
-    
+
     //Deal with the easy bits
     $this->owner = User::getInstance($result['memberid']);
-    $this->show_id = (int)$result['show_id'];
+    $this->show_id = (int) $result['show_id'];
     $this->submitted = strtotime($result['submitted']);
-    $this->term_id = (int)$result['termid'];
-    
+    $this->term_id = (int) $result['termid'];
+
     $metadata_types = self::$db->decodeArray($result['metadata_types']);
     $metadata = self::$db->decodeArray($result['metadata']);
     //Deal with the metadata
@@ -98,20 +83,26 @@ class MyURY_Season extends MyURY_Scheduler_Common {
       }
     }
     
+    //Requested Weeks
+    $requested_weeks = self::$db->decodeArray($result['requested_weeks']);
+    foreach ($requested_weeks as $requested_week) {
+      $this->requested_weeks[] = intval($requested_week);
+    }
+
     //Requested timeslots
     $requested_days = self::$db->decodeArray($result['requested_days']);
     $requested_start_times = self::$db->decodeArray($result['requested_start_times']);
     $requested_durations = self::$db->decodeArray($result['requested_durations']);
-    
+
     for ($i = 0; $i < sizeof($requested_days); $i++) {
       $this->requested_times = array(
-          'day' => (int)$requested_days[$i],
+          'day' => (int) $requested_days[$i],
           'start_time' => strtotime($requested_start_times[$i]),
           'duration' => self::$db->intervalToTime($requested_durations[$i])
       );
     }
-    
-    //And now timeslots
+
+    //And now initiate timeslots
     $timeslots = self::$db->decodeArray($result['timeslots']);
     foreach ($timeslots as $timeslot) {
       $this->timeslots[] = MyURYTimeslot::getInstance($timeslot);
@@ -184,8 +175,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
 
       //Enter the data
       self::$db->query('INSERT INTO schedule.show_season_requested_time 
-        (requested_day, start_time, preference, duration, show_season_id) VALUES ($1, $2, $3, $4, $5)',
-              array($params['day'][$i], $params['stime'][$i], $i, $interval, $season_id));
+        (requested_day, start_time, preference, duration, show_season_id) VALUES ($1, $2, $3, $4, $5)', array($params['day'][$i], $params['stime'][$i], $i, $interval, $season_id));
     }
 
     //If the description metadata is non-blank, then update that too
@@ -210,7 +200,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
                 ), true);
       }
     }
-    
+
     //Actually commit the show to the database!
     self::$db->query('COMMIT');
 
@@ -233,7 +223,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
   public function getShow() {
     return MyURY_Show::getInstance($this->show_id);
   }
-  
+
   public function getSubmittedTime() {
     return CoreUtils::happyTime($this->submitted);
   }
@@ -241,13 +231,57 @@ class MyURY_Season extends MyURY_Scheduler_Common {
   public function getWebpage() {
     return 'http://ury.org.uk/show/' . $this->getShow()->getID() . '/' . $this->getID();
   }
+
+  public function getRequestedTimes() {
+    $return = array();
+    foreach ($this->requested_times as $time) {
+      $return[] = $this->formatRequestedTime($time);
+    }
+    return $return;
+  }
   
+  /**
+   * Returns a 2D array:
+   * time: Value as per getRequestedTimes()
+   * conflict: True if one or more of requested weeks already have a booking that time
+   * info: If True above, will have human-readable why-it-is-a-conflict details
+   * @todo Discuss efficiency of this algorithm
+   */
+  public function getRequestedTimesAvail() {
+    $return = array();
+    foreach ($this->requested_times as $time) {
+      
+    }
+    return $return;
+  }
+  
+  private function formatRequestedTime($time) {
+    return date('D ', $time['day']) . date('H:i', $time['start']) . ' - ' . date('H:i', $time['start'] + $time['duration']);
+  }
+  
+  public function getRequestedWeeks() {
+    return $this->requested_weeks;
+  }
+
   public function toDataSource() {
-    return array(
-      'id' => $this->getID(),
-      'name' => $this->getMeta('title'),
-      'submitted' => $this->getSubmittedTime()
-    );
+    return array_merge($this->getShow()->toDataSource(),
+            array(
+        'id' => $this->getID(),
+        'name' => $this->getMeta('title'),
+        'submitted' => $this->getSubmittedTime(),
+        'requested_time' => $this->getRequestedTimes()[0],
+        'description' => $this->getMeta('description'),
+        'editlink' => array(
+            'display' => 'text',
+            'url' => CoreUtils::makeURL('Scheduler', 'allocate', array('show_season_id' => $this->getID())),
+            'value' => 'Edit/Allocate'
+        ),
+        'rejectlink' => array(
+            'display' => 'text',
+            'url' => CoreUtils::makeURL('Scheduler', 'reject', array('show_season_id' => $this->getID())),
+            'value' => 'Reject'
+        )
+    ));
   }
 
 }

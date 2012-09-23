@@ -7,6 +7,7 @@
  * @version 21072012
  * @package MyURY_Scheduler
  */
+
 //Set up the weeks checkboxes
 $weeks = array();
 for ($i = 1; $i <= 10; $i++) {

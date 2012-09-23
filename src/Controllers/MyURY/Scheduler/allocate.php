@@ -3,14 +3,13 @@
  * 
  * @todo Proper Documentation
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 21072012
+ * @version 22092012
  * @package MyURY_Scheduler
  */
 
-//The standard Scheduler Notices
-require 'Models/MyURY/Scheduler/notices.php';
-//The Entry to be edited
-require 'Models/MyURY/Scheduler/entry.php';
-//The Form definition
+//Model: The Season to be allocated
+$season = MyURY_Season::getInstance((int)$_REQUEST['show_season_id']);
+//Model: The Form definition
 require 'Models/MyURY/Scheduler/allocatefrm.php';
-require 'Views/MyURY/Scheduler/allocate.php';
+//View: The Form output with $season meta
+$form->render($season->toDataSource());

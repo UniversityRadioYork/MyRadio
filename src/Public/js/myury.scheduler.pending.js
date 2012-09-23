@@ -1,5 +1,10 @@
 $('.twig-datatable').dataTable({
   "aoColumns": [
+  //credits
+  {
+    "sTitle" : "",
+    "bVisible": false
+  },
   //entryid
   {
     "sTitle" : "",
