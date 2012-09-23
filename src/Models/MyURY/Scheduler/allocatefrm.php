@@ -28,6 +28,10 @@ for ($i = 1; $i <= 10; $i++) {
 }
 
 //Set up the requested times radios
+$times = array();
+foreach ($season->getRequestedTimesAvail() as $time) {
+  
+}
 
 $form->addField(
                 new MyURYFormField('weeks', MyURYFormField::TYPE_CHECKGRP,
