@@ -23,6 +23,11 @@ $('.twig-datatable').dataTable({
   {
     "sTitle": "Requested Time"
   },
+  //description
+  {
+    "sTitle" : "",
+    "bVisible": false
+  },
   //editlink
   {
     "sTitle": "Allocate",
