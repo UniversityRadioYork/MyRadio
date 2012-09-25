@@ -28,7 +28,9 @@ for ($i = 1; $i <= 10; $i++) {
 }
 
 //Set up the requested times radios
-$times = array();
+$times = array(
+    array('value' => null, 'text' => 'Please select...', 'disabled' => true)
+);
 $i = 0;
 foreach ($season->getRequestedTimesAvail() as $time) {
   print_r($time);
