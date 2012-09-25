@@ -11,6 +11,7 @@
  * @version 03082012
  * @package MyURY_Scheduler
  * @uses \Database
+ * @todo Dedicated Term class
  */
 class MyURY_Scheduler extends MyURY_Scheduler_Common {
   /**
@@ -103,6 +104,12 @@ class MyURY_Scheduler extends MyURY_Scheduler_Common {
     $return = self::$db->fetch_one('SELECT descr, start FROM terms WHERE termid=$1',
             array($termid));
     return $return['descr'] . date(' Y',strtotime($return['start']));
+  }
+  
+  public static function getTermStartDate($term_id = null) {
+    if ($term_id === null) $term_id = self::getActiveApplicationTerm();
+    $result = self::$db->fetch_one('SELECT start FROM terms WHERE termid=$1', array($term_id));
+    return strtotime($result['start']);
   }
   
   /**
