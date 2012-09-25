@@ -7,6 +7,6 @@
         class="{{field.class}} radio{% if field.required %} required{% endif %}"
         value="{{option.value}}"{% if field.value == option.value %} checked="checked"{% endif %}
         {% if option.disabled or field.disabled %} disabled="disabled"{% endif %} />
-{{option.text}}</label>
+{{option.text}}{{field.value}}</label>
   {% endfor %}
 </fieldset>
