@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Provides the Scheduler Common class for MyURY
  * @package MyURY_Scheduler
@@ -12,8 +13,11 @@
  * @uses \Database
  * 
  */
+
 abstract class MyURY_Scheduler_Common extends ServiceAPI {
+
   protected static $metadata_keys = array();
+
   /**
    * Gets the id for the string representation of a type of metadata
    */
@@ -47,11 +51,72 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
       }
     }
   }
-  
+
   protected static function getCreditName($credit_id) {
     self::initDB();
-    $r = self::$db->fetch_one('SELECT name FROM people.credit_type WHERE credit_type_id=$1 LIMIT 1', array((int)$credit_id));
-    if (empty($r)) return 'Contrib';
+    $r = self::$db->fetch_one('SELECT name FROM people.credit_type WHERE credit_type_id=$1 LIMIT 1', array((int) $credit_id));
+    if (empty($r))
+      return 'Contrib';
     return $r['name'];
   }
+
+  protected static function formatTimeHuman($time) {
+    return self::getDayNameFromID($time['day']) . date(' H:i', $time['start']) . ' - ' . date('H:i', $time['start'] + $time['duration']);
+  }
+
+  protected static function getDayNameFromID($day) {
+    switch ($day) {
+      case 0:
+        return 'Mon';
+      case 1:
+        return 'Tue';
+      case 2:
+        return 'Wed';
+      case 3:
+        return 'Thu';
+      case 4:
+        return 'Fri';
+      case 5:
+        return 'Sat';
+      case 6:
+        return 'Sun';
+        break;
+      default:
+        throw new MyURYException('Invalid Day ID ' . $day);
+    }
+  }
+
+  /**
+   * 
+   * @param int $term_id The term to check for
+   * @param Array $time:
+   * day: The day ID (0-6) to check for
+   * time: The start time in seconds since midnight
+   * duration: The duration in seconds
+   * 
+   * Return: Array of conflicts with week # as key and show as value
+   */
+  protected static function getScheduleConflicts($term_id, $time) {
+    self::initDB();
+    $conflicts = array();
+    $date = MyURY_Scheduler::getTermStartDate($term_id);
+    //Iterate over each week
+    for ($i = 1; $i <= 10; $i++) {
+      //Get the start and end times
+      $start = CoreUtils::getTimestamp($date + $time['start']);
+      $end = CoreUtils::getTimestamp($date + $time['start'] + $time['duration']);
+      //Query for conflicts
+      $r = self::$db->fetch_one('SELECT show_season_id FROM schedule.show_season_timeslot
+        WHERE (start_time <= $1 AND start_time + duration > $1)
+        OR (start_time > $1 AND start_time < $2)', array($start, $end));
+      
+      //If there's a conflict, log it
+      if (!empty($r)) $conflicts[$i] = $r['show_season_id'];
+      
+      //Increment week
+      $date += 3600*24*7;
+    }
+    return $conflicts;
+  }
+
 }

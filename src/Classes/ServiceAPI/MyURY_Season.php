@@ -82,7 +82,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
         $this->metadata[$metadata_types[$i]] = $metadata[$i];
       }
     }
-    
+
     //Requested Weeks
     $requested_weeks = self::$db->decodeArray($result['requested_weeks']);
     foreach ($requested_weeks as $requested_week) {
@@ -95,9 +95,9 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     $requested_durations = self::$db->decodeArray($result['requested_durations']);
 
     for ($i = 0; $i < sizeof($requested_days); $i++) {
-      $this->requested_times = array(
+      $this->requested_times[] = array(
           'day' => (int) $requested_days[$i],
-          'start_time' => strtotime($requested_start_times[$i]),
+          'start_time' => self::$db->intervalToTime($requested_start_times[$i]),
           'duration' => self::$db->intervalToTime($requested_durations[$i])
       );
     }
@@ -105,7 +105,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     //And now initiate timeslots
     $timeslots = self::$db->decodeArray($result['timeslots']);
     foreach ($timeslots as $timeslot) {
-      $this->timeslots[] = MyURYTimeslot::getInstance($timeslot);
+      //$this->timeslots[] = MyURYTimeslot::getInstance($timeslot);
     }
   }
 
@@ -235,53 +235,87 @@ class MyURY_Season extends MyURY_Scheduler_Common {
   public function getRequestedTimes() {
     $return = array();
     foreach ($this->requested_times as $time) {
-      $return[] = $this->formatRequestedTime($time);
+      $return[] = self::formatTimeHuman($time);
     }
     return $return;
   }
-  
+
   /**
    * Returns a 2D array:
    * time: Value as per getRequestedTimes()
    * conflict: True if one or more of requested weeks already have a booking that time
    * info: If True above, will have human-readable why-it-is-a-conflict details
    * @todo Discuss efficiency of this algorithm
+   * @todo Remove conflicts for non-requested weeks
    */
   public function getRequestedTimesAvail() {
     $return = array();
     foreach ($this->requested_times as $time) {
-      
+      //Check for existence of shows in requested times
+      $conflicts = self::getScheduleConflicts($this->term_id, $time);
+      //If there's a any conflicts, let's make the nice explanation
+      if (!empty($conflicts)) {
+        $names = '';
+        $weeks = ' on weeks ';
+        $week_num = -10;
+        //Count the number of conflicts with season ids
+        $sids = array();
+        foreach ($conflicts as $k => $v) {
+          /**
+           * @todo - figure out why this loop includes 0 and 11 sometimes
+           * @todo Work on weeks text output - duplicates/overlaps
+           */
+          if ($k > 10 || $k < 1) continue;
+          $sids[$v]++;
+          //Work out blocked weeks
+          if ($k == ++$week_num) {
+            //Continuation of previous sequence
+            $week_num = $k;
+            if ($k == 10) $weeks .= '-10';
+          } else {
+            //New sequence
+            if ($week_num > 0) $weeks .= '-' . $week_num . ', ';
+            $weeks .= $k;
+            $week_num = $k;
+          }
+        }
+        //Iterate over every conflicted show and log
+        foreach ($sids as $k => $v) {
+          //Get the show name and store it
+          if ($names !== '') $names .= ', ';
+          $names .= self::getInstance($k)->getMeta('title');
+        }
+        $return[] = array('time' => self::formatTimeHuman($time), 'conflict' => true, 'info' => 'Conflicts with ' . $names . $weeks);
+      } else {
+        //No conflicts
+        $return[] = array('time' => self::formatTimeHuman($time), 'conflict' => false, 'info' => '');
+      }
     }
     return $return;
   }
-  
-  private function formatRequestedTime($time) {
-    return date('D ', $time['day']) . date('H:i', $time['start']) . ' - ' . date('H:i', $time['start'] + $time['duration']);
-  }
-  
+
   public function getRequestedWeeks() {
     return $this->requested_weeks;
   }
 
   public function toDataSource() {
-    return array_merge($this->getShow()->toDataSource(),
-            array(
-        'id' => $this->getID(),
-        'name' => $this->getMeta('title'),
-        'submitted' => $this->getSubmittedTime(),
-        'requested_time' => $this->getRequestedTimes()[0],
-        'description' => $this->getMeta('description'),
-        'editlink' => array(
-            'display' => 'text',
-            'url' => CoreUtils::makeURL('Scheduler', 'allocate', array('show_season_id' => $this->getID())),
-            'value' => 'Edit/Allocate'
-        ),
-        'rejectlink' => array(
-            'display' => 'text',
-            'url' => CoreUtils::makeURL('Scheduler', 'reject', array('show_season_id' => $this->getID())),
-            'value' => 'Reject'
-        )
-    ));
+    return array_merge($this->getShow()->toDataSource(), array(
+                'id' => $this->getID(),
+                'name' => $this->getMeta('title'),
+                'submitted' => $this->getSubmittedTime(),
+                'requested_time' => $this->getRequestedTimes()[0],
+                'description' => $this->getMeta('description'),
+                'editlink' => array(
+                    'display' => 'text',
+                    'url' => CoreUtils::makeURL('Scheduler', 'allocate', array('show_season_id' => $this->getID())),
+                    'value' => 'Edit/Allocate'
+                ),
+                'rejectlink' => array(
+                    'display' => 'text',
+                    'url' => CoreUtils::makeURL('Scheduler', 'reject', array('show_season_id' => $this->getID())),
+                    'value' => 'Reject'
+                )
+            ));
   }
 
 }
