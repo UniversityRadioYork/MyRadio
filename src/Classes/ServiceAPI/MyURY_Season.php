@@ -147,7 +147,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
      * All values of stime and etime are between 0 and 86399
      * Select an appropriate value for $term_id
      */
-    $term_id = 26;
+    $term_id = self::getActiveApplicationTerm();
 
     //Start a transaction
     self::$db->query('BEGIN');
@@ -155,6 +155,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     //Right, let's start by getting a Season ID created for this entry
     $season_create_result = self::$db->fetch_column('INSERT INTO schedule.show_season (show_id, termid, submitted, memberid)
       VALUES ($1, $2, $3, $4) RETURNING show_season_id', array($params['show_id'], $term_id, CoreUtils::getTimestamp(), User::getInstance()->getID()), true);
+    
     $season_id = $season_create_result[0];
 
     //Now let's allocate store the requested weeks for a term
@@ -244,15 +245,25 @@ class MyURY_Season extends MyURY_Scheduler_Common {
    * Returns a 2D array:
    * time: Value as per getRequestedTimes()
    * conflict: True if one or more of requested weeks already have a booking that time
-   * info: If True above, will have human-readable why-it-is-a-conflict details
+   * info: If True above, will have human-readable why-it-is-a-conflict details. It may also contain information about
+   * "warnings" - conflicts on weeks this show isn't planned to be aired
+   * @todo The Warnings part above
    * @todo Discuss efficiency of this algorithm
-   * @todo Remove conflicts for non-requested weeks
    */
   public function getRequestedTimesAvail() {
     $return = array();
     foreach ($this->requested_times as $time) {
       //Check for existence of shows in requested times
       $conflicts = self::getScheduleConflicts($this->term_id, $time);
+      $warnings = array();
+      foreach ($conflicts as $wk => $sid) {
+        if (!in_array($wk, $conflicts)) {
+          //This isn't actually a conflict because the week isn't requested by the user
+          $warnings[$wk] = $sid;
+          unset($conflicts[$wk]);
+        }
+      }
+      print_r($warnings);
       //If there's a any conflicts, let's make the nice explanation
       if (!empty($conflicts)) {
         $names = '';
