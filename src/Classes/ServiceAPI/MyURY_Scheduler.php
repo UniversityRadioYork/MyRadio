@@ -81,20 +81,6 @@ class MyURY_Scheduler extends MyURY_Scheduler_Common {
                           ORDER BY start ASC');
   }
   
-  /**
-   * Returns the Term currently available for Season applications.
-   * Users can only apply to the current term, or one week before the next one
-   * starts.
-   * 
-   * @return int|null Returns the id of the term or null if no active term
-   */
-  public static function getActiveApplicationTerm() {
-    $return = self::$db->fetch_column('SELECT termid FROM terms
-      WHERE start <= $1 AND finish >= NOW() LIMIT 1',
-            array(CoreUtils::getTimestamp(strtotime('+7 Days'))));
-    return $return[0];
-  }
-  
   public static function getActiveApplicationTermInfo() {
     $termid = self::getActiveApplicationTerm();
     return array('termid' => $termid, 'descr' => self::getTermDescr($termid));

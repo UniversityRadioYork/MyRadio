@@ -187,6 +187,14 @@ class MyURYFormField {
    * @todo Collapsible?
    */
   const TYPE_SECTION = 0x10;
+  /**
+   * The constant used to specify this MyURYFormField should be a container for a set of repeating MyURYFormFields.
+   * By default these render in a tabular layout.
+   * 
+   * The Custom Options field for this MyURYFormField field type is an Array of MyURYFormFields of any singular type.
+   * This means that CHECKGRP, SECTION and other similar field types are not supported by this MyURYFormField Type
+   */
+  const TYPE_TABULARSET = 0x11;
 
   /**
    * The name/id of the Form Field

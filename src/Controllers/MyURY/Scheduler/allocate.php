@@ -9,6 +9,7 @@
 
 //Model: The Season to be allocated
 $season = MyURY_Season::getInstance((int)$_REQUEST['show_season_id']);
+$_SESSION['myury_working_with_season'] = $season->getID();
 //Model: The Form definition
 require 'Models/MyURY/Scheduler/allocatefrm.php';
 //View: The Form output with $season meta

@@ -28,12 +28,9 @@ for ($i = 1; $i <= 10; $i++) {
 }
 
 //Set up the requested times radios
-$times = array(
-    array('value' => null, 'text' => 'Please select...', 'disabled' => true)
-);
+$times = array();
 $i = 0;
 foreach ($season->getRequestedTimesAvail() as $time) {
-  print_r($time);
   $times[] = array(
       'value' => $i,
       'text' => $time['time'] . ' ' . $time['info'],
@@ -42,6 +39,8 @@ foreach ($season->getRequestedTimesAvail() as $time) {
   );
   $i++;
 }
+
+$times[] = array('value' => -1, 'text' => 'Other (Choose below)');
 
 $form->addField(
         new MyURYFormField('weeks', MyURYFormField::TYPE_CHECKGRP,
@@ -53,4 +52,13 @@ $form->addField(
         new MyURYFormField('time', MyURYFormField::TYPE_RADIO,
                 array('options' => $times, 'label' => 'Timeslot')
         )
+)->addField(
+        new MyURYFormField('timecustom_day', MyURYFormField::TYPE_DAY,
+                array('label' => 'Other Day: '))
+)->addField(
+        new MyURYFormField('timecustom_stime', MyURYFormField::TYPE_TIME,
+                array('label' => 'from', 'required' => false))
+)->addField(
+        new MyURYFormField('timecustom_etime', MyURYFormField::TYPE_TIME,
+                array('label' => 'to', 'required' => false))
 );
