@@ -169,7 +169,7 @@ $(document).ready(function() {
       newthing.children('h3').remove();
       newthing.children('a').remove();
       newthing.children('textarea').remove();
-      newthing.child('#sched_show-tags').remove();
+      newthing.children('#sched_show-tags').remove();
       newthing.insertAfter($(this).parent().parent().parent());
       return;
     }
