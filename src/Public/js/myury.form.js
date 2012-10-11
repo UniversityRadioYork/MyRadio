@@ -165,7 +165,9 @@ $(document).ready(function() {
      */
     if ($(this).attr('id') == "sched_season-etime-repeater") {
       var newthing = $(this).parent().parent().parent().clone();
-      newthing.removeChild('h3');
+      console.log(newthing);
+      newthing.remove('h3');
+      newthing.remove('a');
       newthing.insertAfter($(this).parent().parent().parent());
       return;
     }
