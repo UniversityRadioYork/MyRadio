@@ -1,4 +1,6 @@
 <?php
+
+die("Disabled as Scheduler Migration has now been finalised and this tool should no longer be used.");
 /**
  * Script to migrate shows from the old schema to Scheduler 2.0
  * 

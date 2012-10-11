@@ -11,16 +11,17 @@ $('.twig-datatable').dataTable({
   //editlink
   {
     "sTitle": "",
-    "bSortable": false
+    "bSortable": false,
+    "bVisible": false
   },
   //applylink
   {
-    "sTitle": "",
+    "sTitle": "New Season",
     "bSortable": false
   },
   //micrositelink
   {
-    "sTitle": "",
+    "sTitle": "Microsite",
     "bSortable": false
   }
   ],
