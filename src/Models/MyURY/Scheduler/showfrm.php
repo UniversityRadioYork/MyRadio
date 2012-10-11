@@ -27,9 +27,8 @@ $form = (new MyURYForm('sched_show', $module, 'doShow',
         )->addField(
                 new MyURYFormField('description', MyURYFormField::TYPE_BLOCKTEXT,
                         array(
-                            'explanation' => 'Describe your show in as much detail as you can. Minimum 140 characters.',
-                            'label' => 'Description',
-                            'options' => array('minlength' => 140)
+                            'explanation' => 'Describe your show as best you can. This goes on the public-facing website.',
+                            'label' => 'Description'
                         )
                 )
         )->addField(
