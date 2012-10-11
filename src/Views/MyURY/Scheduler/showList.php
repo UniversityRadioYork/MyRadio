@@ -23,7 +23,7 @@ foreach ($shows as $show) {
   );
 }
 
-$twig->setTemplate('table.twig')
+$twig->setTemplate('MyURY/Scheduler/showList.twig')
         ->addVariable('heading', 'My Shows')
         ->addVariable('tabledata', $tabledata)
         ->addVariable('tablescript', 'myury.scheduler.showlist');
