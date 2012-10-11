@@ -56,7 +56,8 @@ $form = (new MyURYForm('sched_show', $module, 'doShow',
                         array(
                             'explanation' => '',
                             'label' => '',
-                            'repeating' => true
+                            'repeating' => true,
+                            'classes' => array('nobr')
                         )
                 )
         )->addField(
@@ -65,7 +66,8 @@ $form = (new MyURYForm('sched_show', $module, 'doShow',
                     'options' => array_merge(array(array('text' => 'Please select...', 'disabled' => true)), MyURY_Scheduler::getCreditTypes()),
                     'explanation' => '',
                     'label' => '',
-                    'repeating' => true
+                    'repeating' => true,
+                    'classes' => array('nobr')
                 )
         )
 );

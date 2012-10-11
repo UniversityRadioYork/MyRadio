@@ -162,11 +162,17 @@ $(document).ready(function() {
     var newid = origid + $('#'+origid+'-counter').val();
     $('#'+origid+'-counter').val(parseInt($('#'+origid+'-counter').val())+1);
     
-    $('#'+origid).clone().attr('id', newid).val('').append('<br>').addClass('repeatedfield').removeClass('required').removeClass('hasDatepicker').insertBefore($(this).parent());
+    var origobj = $('#'+origid).clone().attr('id', newid).val('');
+    
+    if (!$(origobj).hasClass('nobr')) origobj.append('<br>');
+    
+    $(origobj).addClass('repeatedfield').removeClass('required').removeClass('hasDatepicker').insertBefore($(this).parent());
     
     //For autocomplete fields, they have a ui field which is what is very visible. This needs cloning and setting up
     var autocomplete = $('#'+origid+'-ui').clone().attr('id', newid+'-ui').val('').insertBefore($(this).parent());
-    $('<br>').insertBefore($(this).parent());
+    
+    if (!$(origobj).hasClass('nobr')) $('<br>').insertBefore($(this).parent());
+    
     if ($(autocomplete).hasClass('member-autocomplete')) {
       MyURYForm.setUpMemberFields();
     }
