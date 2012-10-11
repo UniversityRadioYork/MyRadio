@@ -164,13 +164,10 @@ $(document).ready(function() {
      * @todo Remove ASAP.
      */
     if ($(this).attr('id') == "sched_season-etime-repeater") {
-      var newthing = $(this).parent().parent().parent().clone();
-      console.log(newthing);
-      newthing.children('h3').remove();
-      newthing.children('a').remove();
-      newthing.children('textarea').remove();
-      newthing.children('#sched_show-tags').remove();
-      newthing.insertAfter($(this).parent().parent().parent());
+      var newthing = $('<div></div>').append($('#sched_season-day-container:first').clone())
+      .append($('#sched_season-stime-container:first').clone())
+      .append($('#sched_season-etime-container:first').clone());
+      newthing.insertBefore($(this));
       return;
     }
     
