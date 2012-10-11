@@ -158,6 +158,18 @@ $(document).ready(function() {
    * Repeating elements
    */
   $('div.formfield-add-link a').click(function() {
+    /**
+     * This is a really nasty hack that allows the scheduler to look pretty
+     * 
+     * @todo Remove ASAP.
+     */
+    if ($(this).attr('id') == "sched_season-etime-repeater") {
+      var newthing = $(this).parent().parent().parent().clone();
+      newthing.removeChild('h3');
+      newthing.insertAfter($(this).parent().parent().parent());
+      return;
+    }
+    
     var origid = $(this).attr('id').replace(/-repeater$/, '');
     var newid = origid + $('#'+origid+'-counter').val();
     $('#'+origid+'-counter').val(parseInt($('#'+origid+'-counter').val())+1);
