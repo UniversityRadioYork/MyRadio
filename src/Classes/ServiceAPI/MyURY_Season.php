@@ -93,13 +93,14 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     $requested_days = self::$db->decodeArray($result['requested_days']);
     $requested_start_times = self::$db->decodeArray($result['requested_start_times']);
     $requested_durations = self::$db->decodeArray($result['requested_durations']);
-
+    
     for ($i = 0; $i < sizeof($requested_days); $i++) {
       $this->requested_times[] = array(
           'day' => (int) $requested_days[$i],
-          'start_time' => self::$db->intervalToTime($requested_start_times[$i]),
+          'start_time' => (int)$requested_start_times[$i],
           'duration' => self::$db->intervalToTime($requested_durations[$i])
       );
+      echo nl2br(print_r($this->requested_times,true));
     }
 
     //And now initiate timeslots

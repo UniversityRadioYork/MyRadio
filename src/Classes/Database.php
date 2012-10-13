@@ -181,7 +181,7 @@ class Database {
   }
   
   public function intervalToTime($interval) {
-    return strtotime('1970-01-01 '.$interval);
+    return strtotime('1970-01-01 '.$interval.'+00');
   }
 
 }
