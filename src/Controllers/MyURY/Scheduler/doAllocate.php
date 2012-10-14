@@ -12,7 +12,5 @@
 //The Form definition
 $season = MyURY_Season::getInstance($_SESSION['myury_working_with_season']);
 require 'Models/MyURY/Scheduler/allocatefrm.php';
-print_r($_REQUEST);
-echo nl2br(print_r($form->readValues(),true));
-
 $season->schedule($form->readValues());
+require 'Controllers/MyURY/Scheduler/default.php';
