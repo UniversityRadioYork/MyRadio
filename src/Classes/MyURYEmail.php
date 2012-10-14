@@ -14,8 +14,8 @@
 class MyURYEmail {
   // Defaults
   private static $headers = 'Content-type: text/plain; charset=utf-8';
-  private static $sender = 'From: MyURY <no-reply@ury.york.ac.uk>';
-  private static $footer = 'This email was sent automatically from MyURY';
+  private static $sender = 'From: MyURY <no-reply@ury.org.uk>';
+  private static $footer = 'This email was sent automatically from MyURY. You can opt out of URY Emails by visiting https://ury.york.ac.uk/members/memberadmin/edit.php.';
   
   // Standard
   /**

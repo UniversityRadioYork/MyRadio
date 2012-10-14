@@ -399,6 +399,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
      * This will iterate over each week, decide if it should be scheduled,
      * then schedule it if it should. Simples.
      */
+    $times = '';
     for ($i = 1; $i <= 10; $i++) {
       if (isset($params['weeks']['wk'.$i]) && $params['weeks']['wk'.$i] == 1) {
         $show_time = date('d-m-Y ',$start_day+(($i-1)*7*86400)).$start_time;
@@ -414,10 +415,24 @@ class MyURY_Season extends MyURY_Scheduler_Common {
               $this->owner->getID(),
               $_SESSION['memberid']
           ), true);
+        $times .= $show_time.'<br>';
       }
     }
     //COMMIT
     self::$db->query('COMMIT');
+    //Email the user
+    $message = <<<EOT
+Hello,
+  
+  Please note that one of your shows has been allocated the following timeslots on the URY Schedule:
+  
+  $times
+    
+  Remember that except in exceptional circumstances, you must give at least 48 hours notice for cancelling your show as part of your presenter contract. If you do not do this for two shows in one season, all other shows are forfeit and may be cancelled.
+  
+  ~ URY Scheduling Wizard
+EOT;
+    if (!empty($times)) MyURYEmail::sendEmail($this->owner->getEmail(), $this->getMeta('title') . ' Scheduled', $message);
   }
 
 }
