@@ -61,7 +61,11 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
   }
 
   protected static function formatTimeHuman($time) {
-    return self::getDayNameFromID($time['day']) . date(' H:i', $time['start']) . ' - ' . date('H:i', $time['start'] + $time['duration']);
+    date_default_timezone_set('UTC');
+    $stime = date(' H:i', $time['start_time']);
+    $etime = date('H:i', $time['start_time'] + $time['duration']);
+    date_default_timezone_set('Europe/London');
+    return self::getDayNameFromID($time['day']) . $stime . ' - ' . $etime;
   }
 
   protected static function getDayNameFromID($day) {

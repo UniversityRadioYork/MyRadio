@@ -93,11 +93,11 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     $requested_days = self::$db->decodeArray($result['requested_days']);
     $requested_start_times = self::$db->decodeArray($result['requested_start_times']);
     $requested_durations = self::$db->decodeArray($result['requested_durations']);
-
+    
     for ($i = 0; $i < sizeof($requested_days); $i++) {
       $this->requested_times[] = array(
           'day' => (int) $requested_days[$i],
-          'start_time' => self::$db->intervalToTime($requested_start_times[$i]),
+          'start_time' => (int)$requested_start_times[$i],
           'duration' => self::$db->intervalToTime($requested_durations[$i])
       );
     }
@@ -263,7 +263,6 @@ class MyURY_Season extends MyURY_Scheduler_Common {
           unset($conflicts[$wk]);
         }
       }
-      print_r($warnings);
       //If there's a any conflicts, let's make the nice explanation
       if (!empty($conflicts)) {
         $names = '';
@@ -327,6 +326,89 @@ class MyURY_Season extends MyURY_Scheduler_Common {
                     'value' => 'Reject'
                 )
             ));
+  }
+  
+  /**
+   * This is where some of the most important MyURY stuff happens.
+   * This is where an application for a presenter's dreams become reality...
+   * or get crushed to pieces.
+   * @param Array $params key=>value of the following parameters:
+   * weeks: A key=>value away of weeks and whether to schedule (wk1 => 0, wk1=>1...)
+   * time: The preference number of the show_season_requested_time that was selected, or -1
+   * timecustom_day: Ignored if time is > -1
+   * If time = -1, this is the day # to schedule for
+   * timecustom_stime: Ignored if time is > -1
+   * If time = -1, this is the start time to schedule for
+   * timecustom_etime: Ignored if time is >-1
+   * If time = -1, this is the end time to schedule for
+   * 
+   * @todo Validate timeslots are available before scheduling
+   * @todo Email the user notifying them of scheduling
+   * @todo Verify the timeslot is free before scheduling
+   */
+  public function schedule($params) {
+    //Verify that the input time is valid
+    if (!isset($params['time']) or !is_numeric($params['time'])) {
+      throw new MyURYException('No valid Time was sent to the Scheduling Mapper.',
+              MyURYException::FATAL);
+    }
+    if ($params['time'] != -1 && !isset($this->requested_times[$params['time']])) {
+      throw new MyURYException('The Time value sent is not a valid Requested Time Reference.',
+              MyURYException::FATAL);
+    }
+    //Verify the custom times are valid
+    if ($params['time'] == -1 && (
+            empty($params['timecustom_day']) or
+            empty($params['timecustom_stime']) or
+            empty($params['timecustom_etime']))) {
+      throw new MyURYException('The Custom Time value sent is invalid.',
+              MyURYException::FATAL);
+    }
+    //Okay, let's get to business
+    //First, figure out what time things are happening
+    if ($params['time'] != -1) {
+      //Use the requested times value
+      $req_time = $this->requested_times[$params['time']];
+    } else {
+      //Use a custom value
+      $req_time = array(
+          'day' => $params['timecustom_day'],
+          'start_time' => strtotime('1970-01-01 '.$params['timecustom_stime']),
+          'duration' => strtotime('1970-01-01 '.$params['timecustom_etime']) - strtotime('1970-01-01 '.$params['timecustom_stime'])
+      );
+    }
+    /**
+     * Since terms start on the Monday, we just +1 day to it
+     */
+    $start_day = MyURY_Scheduler::getTermStartDate(
+            self::getActiveApplicationTerm())+($day*86400);
+    //And the next two lines give us the first instance of the show (in week 1)
+    $start_time = date('H:i:sO', $req_time['start_time']);
+    
+    //Now it's time to BEGIN to COMMIT!
+    self::$db->query('BEGIN');
+    /**
+     * This will iterate over each week, decide if it should be scheduled,
+     * then schedule it if it should. Simples.
+     */
+    for ($i = 1; $i <= 10; $i++) {
+      if (isset($params['weeks']['wk'.$i]) && $params['weeks']['wk'.$i] == 1) {
+        $show_time = date('d-m-Y ',$start_day+(($i-1)*7*86400)).$start_time;
+        //This week is due to be scheduled! QUERY! QUERY!
+        self::$db->query('INSERT INTO schedule.show_season_timeslot
+          (show_season_id, start_time, duration, memberid, approvedid)
+          VALUES ($1, $2, $3, $4, $5)
+          ', array(
+             $this->season_id,
+              $show_time,
+              $req_time['duration'],
+              $this->owner->getID(),
+              $_SESSION['memberid']
+          ), true);
+      }
+    }
+    //COMMIT
+    self::$db->query('COMMIT');
   }
 
 }

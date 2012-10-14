@@ -13,6 +13,6 @@
 $season = MyURY_Season::getInstance($_SESSION['myury_working_with_season']);
 require 'Models/MyURY/Scheduler/allocatefrm.php';
 print_r($_REQUEST);
-print_r($form->readValues());
+echo nl2br(print_r($form->readValues(),true));
 
-throw new MyURYException('Not Implemented', MyURYException::FATAL);
+$season->schedule($form->readValues());
