@@ -390,7 +390,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
      */
     if (substr($start_time, -5) == '+0100') {
       //Convert to UTC
-      $start_time = date('H:i:s+0000',strtotime($start_time)-3600);
+      $start_time = date('H:i:s',strtotime($start_time)-3600);
     }
     
     //Now it's time to BEGIN to COMMIT!
@@ -415,7 +415,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
               $this->owner->getID(),
               $_SESSION['memberid']
           ), true);
-        $times .= $show_time.'<br>';
+        $times .= $show_time."\r\n";
       }
     }
     //COMMIT
