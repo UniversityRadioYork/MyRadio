@@ -95,21 +95,20 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
    * @param int $term_id The term to check for
    * @param Array $time:
    * day: The day ID (0-6) to check for
-   * time|start_time: The start time in seconds since midnight
+   * start_time: The start time in seconds since midnight
    * duration: The duration in seconds
    * 
    * Return: Array of conflicts with week # as key and show as value
    */
   protected static function getScheduleConflicts($term_id, $time) {
-    if (!isset($time['time']) && isset($time['start_time'])) $time['time'] = $time['start_time'];
     self::initDB();
     $conflicts = array();
     $date = MyURY_Scheduler::getTermStartDate($term_id);
     //Iterate over each week
     for ($i = 1; $i <= 10; $i++) {
       //Get the start and end times
-      $start = CoreUtils::getTimestamp($date + $time['start']);
-      $end = CoreUtils::getTimestamp($date + $time['start'] + $time['duration']);
+      $start = CoreUtils::getTimestamp($date + $time['start_time']);
+      $end = CoreUtils::getTimestamp($date + $time['start_time'] + $time['duration']);
       //Query for conflicts
       $r = self::$db->fetch_one('SELECT show_season_id FROM schedule.show_season_timeslot
         WHERE (start_time <= $1 AND start_time + duration > $1)
