@@ -328,7 +328,7 @@ class MyURYFormField {
    * @return string A space-separated string of classes that apply to this MyURYFormField
    */
   private function getClasses() {
-    $classes = 'myuryfrmfield clearfix';
+    $classes = 'myuryfrmfield';
     foreach ($this->classes as $class) {
       $classes .= " $class";
     }
