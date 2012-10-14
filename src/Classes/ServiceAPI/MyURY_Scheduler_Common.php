@@ -95,12 +95,13 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
    * @param int $term_id The term to check for
    * @param Array $time:
    * day: The day ID (0-6) to check for
-   * time: The start time in seconds since midnight
+   * time|start_time: The start time in seconds since midnight
    * duration: The duration in seconds
    * 
    * Return: Array of conflicts with week # as key and show as value
    */
   protected static function getScheduleConflicts($term_id, $time) {
+    if (!isset($time['time']) && isset($time['start_time'])) $time['time'] = $time['start_time'];
     self::initDB();
     $conflicts = array();
     $date = MyURY_Scheduler::getTermStartDate($term_id);
