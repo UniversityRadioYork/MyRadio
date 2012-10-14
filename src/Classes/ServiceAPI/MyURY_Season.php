@@ -384,6 +384,14 @@ class MyURY_Season extends MyURY_Scheduler_Common {
             self::getActiveApplicationTerm())+($req_time['day']*86400);
     //And the next two lines give us the first instance of the show (in week 1)
     $start_time = date('H:i:sO', $req_time['start_time']);
+    /**
+     * This is a horrible hack to get things working
+     * @todo Fix Website frontend/general scheduling logic so this isn't necessary
+     */
+    if (substr($start_time, 5) == '+0100') {
+      //Convert to UTC
+      $start_time = date('H:i:s+0000',strtotime($start_time)-3600);
+    }
     
     //Now it's time to BEGIN to COMMIT!
     self::$db->query('BEGIN');
