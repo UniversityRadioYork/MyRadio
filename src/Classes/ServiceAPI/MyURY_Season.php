@@ -391,7 +391,6 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     if (substr($start_time, -5) == '+0100') {
       //Convert to UTC
       $start_time = date('H:i:s+0000',strtotime($start_time)-3600);
-      echo $start_time;exit;
     }
     
     //Now it's time to BEGIN to COMMIT!
@@ -403,6 +402,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     for ($i = 1; $i <= 10; $i++) {
       if (isset($params['weeks']['wk'.$i]) && $params['weeks']['wk'.$i] == 1) {
         $show_time = date('d-m-Y ',$start_day+(($i-1)*7*86400)).$start_time;
+        echo $show_time.'<br>';
         //This week is due to be scheduled! QUERY! QUERY!
         self::$db->query('INSERT INTO schedule.show_season_timeslot
           (show_season_id, start_time, duration, memberid, approvedid)
