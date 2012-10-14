@@ -381,7 +381,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
      * Since terms start on the Monday, we just +1 day to it
      */
     $start_day = MyURY_Scheduler::getTermStartDate(
-            self::getActiveApplicationTerm())+($day*86400);
+            self::getActiveApplicationTerm())+($req_time['day']*86400);
     //And the next two lines give us the first instance of the show (in week 1)
     $start_time = date('H:i:sO', $req_time['start_time']);
     
