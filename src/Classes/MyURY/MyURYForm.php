@@ -175,6 +175,25 @@ class MyURYForm {
     throw new MyURYException('Cannot set value for field '.$fieldname.' as it does not exist.');
     return $this;
   }
+  
+  /**
+   * Sets this MyURYForm as an editing form - it will take existing values and render them for editing and updating
+   * @param mixed $identifier Usually a primary key, something unique that the receiving controller will use to know
+   * which instance of an entry is being updated
+   * @param Array $values A key=>value array of input names and their values. These will literally be sent to setFieldValue
+   * iteratively
+   * 
+   * @todo Support for repeating fields with this
+   * 
+   * Note: This method should only be called once in the object's lifetime
+   */
+  public function editMode($identifier, $values) {
+    $this->addField(new MyURYFormField('myuryfrmedid', MyURYFormField::TYPE_HIDDEN, array('value' => $identifier)));
+    
+    foreach ($values as $k => $v) {
+      $this->setFieldValue($k, $v);
+    }
+  }
 
   /**
    * Renders a page using the template engine

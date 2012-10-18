@@ -271,7 +271,7 @@ class MyURYFormField {
    * Settings that cannot be altered by the $options parameter
    * @var array 
    */
-  private $restricted_attributes = array('restricted_attributes', 'value', 'name', 'type');
+  private $restricted_attributes = array('restricted_attributes', 'name', 'type');
 
   /**
    * Set up a new MyURY Form Field with the new parameters, returning the new field.
@@ -422,7 +422,12 @@ class MyURYFormField {
           }
           return $_REQUEST[$name];
         } else {
-          return (int)strtotime($_REQUEST[$name]);
+          $time = (int)strtotime($_REQUEST[$name]);
+          //Times should be seconds since midnight *any* day
+          if ($this->type === self::TYPE_TIME) {
+            $time -= strtotime('Midnight');
+          }
+          return $time;
         }
         break;
       case self::TYPE_CHECK:
