@@ -434,7 +434,7 @@ $times
 
   ~ URY Scheduling Wizard
 EOT;
-    //if (!empty($times)) MyURYEmail::sendEmail($this->owner->getEmail(), $this->getMeta('title') . ' Scheduled', $message);
+    if (!empty($times)) MyURYEmail::sendEmail($this->owner->getEmail(), $this->getMeta('title') . ' Scheduled', $message);
     
     /**
      * Flush Memcached - there will be stale schedule entries for the website
