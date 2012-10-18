@@ -171,7 +171,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
       if ($params['stime'][$i] < $params['etime'][$i]) {
         $interval = CoreUtils::makeInterval($params['stime'][$i], $params['etime'][$i]);
       } else {
-        $interval = CoreUtils::makeInterval($params['etime'][$i], $params['stime'][$i]);
+        $interval = CoreUtils::makeInterval($params['stime'][$i], $params['etime'][$i]+86400);
       }
 
       //Enter the data
@@ -372,6 +372,10 @@ class MyURY_Season extends MyURY_Scheduler_Common {
       $req_time = $this->requested_times[$params['time']];
     } else {
       //Use a custom value
+      //If etime is before stime, it's probably spanning midnight so make it the 2nd
+      if ($params['timecustom_etime'] < $params['timecustom_stime']) $edate = '1970-01-02'; else $edate = '1970-01-01';
+      $dur = strtotime($edate. ' ' .$params['timecustom_etime']) - strtotime('1970-01-01 '.$params['timecustom_stime']);
+      if ($dur <= 0) throw new MyURYException('A show has to last at least a second!', MyURYException::FATAL);
       $req_time = array(
           'day' => $params['timecustom_day'],
           'start_time' => $params['timecustom_stime'],
