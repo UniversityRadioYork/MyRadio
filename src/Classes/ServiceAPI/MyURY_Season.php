@@ -363,7 +363,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     //Verify the custom times are valid
     if ($params['time'] == -1 && (
             !isset($params['timecustom_day']) or //0 (monday) would fail an empty() test
-            empty($params['timecustom_stime']) or
+            !isset($params['timecustom_stime']) or //Same again with midnight (00:00)
             empty($params['timecustom_etime']))) {
       throw new MyURYException('The Custom Time value sent is invalid.',
               MyURYException::FATAL);
