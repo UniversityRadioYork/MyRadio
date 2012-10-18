@@ -60,5 +60,5 @@ $form->addField(
                 array('label' => 'from', 'required' => false))
 )->addField(
         new MyURYFormField('timecustom_etime', MyURYFormField::TYPE_TIME,
-                array('label' => 'to', 'required' => false))
+                array('label' => 'duration', 'required' => false, 'value' => '01:00'))
 );

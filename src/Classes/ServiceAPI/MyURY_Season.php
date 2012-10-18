@@ -340,13 +340,14 @@ class MyURY_Season extends MyURY_Scheduler_Common {
    * timecustom_stime: Ignored if time is > -1
    * If time = -1, this is the start time to schedule for
    * timecustom_etime: Ignored if time is >-1
-   * If time = -1, this is the end time to schedule for
+   * If time = -1, this is the *duration* to schedule for (not end time)
    * 
    * @todo Validate timeslots are available before scheduling
    * @todo Email the user notifying them of scheduling
    * @todo Verify the timeslot is free before scheduling
    */
   public function schedule($params) {
+    date_default_timezone_set('UTC');
     //Verify that the input time is valid
     if (!isset($params['time']) or !is_numeric($params['time'])) {
       throw new MyURYException('No valid Time was sent to the Scheduling Mapper.',
@@ -358,7 +359,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     }
     //Verify the custom times are valid
     if ($params['time'] == -1 && (
-            empty($params['timecustom_day']) or
+            !isset($params['timecustom_day']) or //0 (monday) would fail an empty() test
             empty($params['timecustom_stime']) or
             empty($params['timecustom_etime']))) {
       throw new MyURYException('The Custom Time value sent is invalid.',
@@ -373,8 +374,8 @@ class MyURY_Season extends MyURY_Scheduler_Common {
       //Use a custom value
       $req_time = array(
           'day' => $params['timecustom_day'],
-          'start_time' => strtotime('1970-01-01 '.$params['timecustom_stime']),
-          'duration' => strtotime('1970-01-01 '.$params['timecustom_etime']) - strtotime('1970-01-01 '.$params['timecustom_stime'])
+          'start_time' => $params['timecustom_stime'],
+          'duration' => $params['timecustom_etime']
       );
     }
     /**
@@ -382,16 +383,8 @@ class MyURY_Season extends MyURY_Scheduler_Common {
      */
     $start_day = MyURY_Scheduler::getTermStartDate(
             self::getActiveApplicationTerm())+($req_time['day']*86400);
-    //And the next two lines give us the first instance of the show (in week 1)
-    $start_time = date('H:i:sO', $req_time['start_time']);
-    /**
-     * This is a horrible hack to get things working
-     * @todo Fix Website frontend/general scheduling logic so this isn't necessary
-     */
-    if (substr($start_time, -5) == '+0100') {
-      //Convert to UTC
-      $start_time = date('H:i:s',strtotime($start_time)-3600);
-    }
+    
+    $start_time = date('H:i:s', $req_time['start_time']);
     
     //Now it's time to BEGIN to COMMIT!
     self::$db->query('BEGIN');
@@ -426,13 +419,26 @@ Hello,
   
   Please note that one of your shows has been allocated the following timeslots on the URY Schedule:
   
-  $times
+$times
     
   Remember that except in exceptional circumstances, you must give at least 48 hours notice for cancelling your show as part of your presenter contract. If you do not do this for two shows in one season, all other shows are forfeit and may be cancelled.
   
+  If you have any questions about your application, direct them to pc@ury.org.uk
+
   ~ URY Scheduling Wizard
 EOT;
-    if (!empty($times)) MyURYEmail::sendEmail($this->owner->getEmail(), $this->getMeta('title') . ' Scheduled', $message);
+    //if (!empty($times)) MyURYEmail::sendEmail($this->owner->getEmail(), $this->getMeta('title') . ' Scheduled', $message);
+    
+    /**
+     * Flush Memcached - there will be stale schedule entries for the website
+     * This is for Django as the MyURY Cache system is currently APCProvider
+     * @todo Consider setting up Memcached as an alternative CacheProvider implementation
+     */
+    $m = new Memcached();
+    $m->addServer(Config::$django_cache_server, 11211);
+    $m->flush();
+    
+    date_default_timezone_set('Europe/London');
   }
 
 }
