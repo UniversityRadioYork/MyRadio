@@ -101,11 +101,13 @@ class MyURY_Show extends MyURY_Scheduler_Common {
    * credits: An array of 1 or more memberids of people related to the Show<br>
    * credittypes: An array of identical size to credits, identifying the type of relation to the Show<br>
    * showtypeid: The ID of the type of show (see schedule.show_type). Defaults to "Show"
+   * location: The ID of the location the show will be in
    * 
    * title, description, credits and credittypes are required fields.
    * 
    * As this is the initial creation, all tags are <i>approved</i> by the submitted so the show has some initial values
    * 
+   * @todo location (above) Is not in the Show creation form
    * @throws MyURYException
    */
   public static function create($params = array()) {
@@ -160,8 +162,22 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     $tags = explode(' ', $params['tags']);
     foreach ($tags as $tag) {
       self::$db->query('INSERT INTO schedule.show_metadata
-              (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)', array(self::getMetadataKey('tag'), $show_id, $tag, $_SESSION['memberid']), true);
+              (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)',
+              array(self::getMetadataKey('tag'), $show_id, $tag, $_SESSION['memberid']), true);
     }
+    
+    //Set a location
+    if (!is_numeric($params['location'])) {
+      /**
+       * Hardcoded default to Studio 1
+       */
+      $params['location'] = 1;
+    }
+    self::$db->query('INSERT INTO schedule.show_location
+      (show_id, location_id, effective_from, memberid, approvedid) VALUES ($1, $2, NOW(), $3, $3)',
+            array(
+                $show_id, $params['location'], $_SESSION['memberid']
+            ), true);
 
     //And now all that's left is who's on the show
     for ($i = 0; $i < sizeof($params['credits']); $i++) {
