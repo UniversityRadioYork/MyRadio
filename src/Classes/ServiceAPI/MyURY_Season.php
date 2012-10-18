@@ -168,6 +168,9 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     //Now for requested times
     for ($i = 0; $i < sizeof($params['day']); $i++) {
       //Deal with the possibility of a show from 11pm to midnight etc.
+      /**
+       * @todo make this not be completely stupid
+       */
       if ($params['stime'][$i] < $params['etime'][$i]) {
         $interval = CoreUtils::makeInterval($params['stime'][$i], $params['etime'][$i]);
       } else {
