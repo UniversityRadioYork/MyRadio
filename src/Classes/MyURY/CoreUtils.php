@@ -86,7 +86,7 @@ class CoreUtils {
   public static function getTimestamp($time = null) {
     if ($time === null) $time = time();
     
-    return date('d/m/Y H:i:sO', $time);
+    return date('d/m/Y H:i:s', $time);
   }
   
   /**

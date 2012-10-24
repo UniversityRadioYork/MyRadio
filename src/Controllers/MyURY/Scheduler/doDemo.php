@@ -10,4 +10,11 @@
 //The Form definition
 require 'Models/MyURY/Scheduler/demofrm.php';
 
-print_r($form->readValues());
+/**
+ * @todo make this less horrific
+ */
+$demoinfo = $form->readValues();
+MyURY_Demo::registerDemo($demoinfo['demo-datetime']);
+
+print_r(MyURY_Demo::listDemos());exit;
+header('Location: https://ury.york.ac.uk/myury/?module=Scheduler&action=listDemos');
