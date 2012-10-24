@@ -38,7 +38,8 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
     $demos = array();
     foreach ($result as $demo) {
       $credits = self::$db->fetch_column('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', array($demo['start_time']));
-      $demos = array_merge($demo, array('attending' => sizeof($credits)));
+      $demo['start_time'] = date('d M H:i', strtotime($demo['start_time']));
+      $demos[] = array_merge($demo, array('attending' => sizeof($credits)));
     }
     
     return $demos;
