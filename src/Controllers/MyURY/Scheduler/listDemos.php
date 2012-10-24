@@ -8,5 +8,4 @@
  */
 
 $demos = MyURY_Demo::listDemos();
-print_r($demos);
 require 'Views/MyURY/Scheduler/demoList.php';
