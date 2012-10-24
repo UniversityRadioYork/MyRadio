@@ -131,7 +131,8 @@ $(document).ready(function() {
    * @todo Make stepminute customisable?
    */
   $('fieldset.myuryfrm input.datetime').datetimepicker({
-    dateFormat:"dd/mm/yy",
+    dateFormat:"yy-mm-dd",
+    timeFormat: "hh:mm:ss",
     stepMinute: 15
   });
   MyURYForm.setUpTimePickers();
