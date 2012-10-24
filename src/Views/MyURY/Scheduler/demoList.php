@@ -4,14 +4,10 @@ require 'Views/MyURY/Scheduler/bootstrap.php';
 
 $tabledata = array();
 foreach ($demos as $demo) {
-  $tabledata[] = array_merge($demo,array(
-      'applylink' => array('display' => 'icon',
-          'value' => 'calendar',
-          'title' => 'Attend this demo',
-          'url' => CoreUtils::makeURL('Scheduler', 'attendDemo', array('demoid' => $demo['show_season_timeslot_id']))))
-  );
+  $demo['join'] = '<a href="'.CoreUtils::makeURL('Scheduler', 'attendDemo', array('demoid' => $demo['show_season_timeslot_id'])).'">Join</a>';
+  $tabledata[] = $demo;
 }
-
+//print_r($tabledata);
 $twig->setTemplate('table.twig')
         ->addVariable('heading', 'Upcoming Demo Slots')
         ->addVariable('tabledata', $tabledata)
