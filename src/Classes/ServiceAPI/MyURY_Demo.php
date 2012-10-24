@@ -27,6 +27,11 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
     date_default_timezone_set('Europe/London');
   }
   
+  public static function attendingDemo($demoid) {
+    return self::$db->num_rows(
+            self::$db->query('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', array(self::getDemoTime($demoid))));
+  }
+  
   /**
    * Gets a list of available demo slots in the future
    */
@@ -37,12 +42,33 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
     //Add the credits for each member
     $demos = array();
     foreach ($result as $demo) {
-      $credits = self::$db->fetch_column('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', array($demo['start_time']));
       $demo['start_time'] = date('d M H:i', strtotime($demo['start_time']));
-      $demos[] = array_merge($demo, array('attending' => sizeof($credits)));
+      $demo['memberid'] = User::getInstance($demo['memberid'])->getName();
+      $demos[] = array_merge($demo, array('attending' => self::attendingDemo($demo['show_season_timeslot_id'])));
     }
     
     return $demos;
+  }
+  
+  /**
+   * The current user is marked as attending a demo
+   * Return 0: Success
+   * Return 1: Demo Full
+   * Return 2: *shrug*
+   */
+  public static function attend($demoid) {
+    self::initDB();
+    //Get # of attendees
+    if (self::attendingDemo($demoid) >= 2) return 1;
+    self::$db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from, effective_to, memberid, approvedid) VALUES
+      (0, 7, $1, $2, $2, $1, $1)', array($_SESSION['memberid'], self::getDemoTime($demoid)));
+    return 0;
+  }
+  
+  public static function getDemoTime($demoid) {
+    self::initDB();
+    $r = self::$db->fetch_column('SELECT start_time FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', array($demoid));
+    return $r[0];
   }
 
 }

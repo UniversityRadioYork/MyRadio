@@ -10,15 +10,15 @@ $('.twig-datatable').dataTable({
   },
   //member
   {
-    "sTitle": "Ran By"
+    "sTitle": "Trainer"
   },
   //attending
   {
-    "sTitle": "Attendees"
+    "sTitle": "# Joined"
   },
   //attend
   {
-    "sTitle": "Join this Session"
+    "sTitle": ""
   }
   ],
   "bJQueryUI": true,
