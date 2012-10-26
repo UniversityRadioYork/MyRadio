@@ -12,6 +12,7 @@ $twig->setTemplate('MyURY/Profile/user.twig')
         ->addVariable('title', 'View Member')
         ->addVariable('heading', 'View Profile')
         ->addVariable('user', $userData)
+        ->addVariable('name', $name)
         // @todo use an array for all this data
         // @todo use a separate array for years paid
         // @todo use an array for officerships held
