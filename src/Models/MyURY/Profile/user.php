@@ -7,7 +7,7 @@
  * @package MyURY_Profile
  */
 
-$user = new User($memberid);
+$user = User::getInstance();
 
 $name = $user->getName();
 $sex = $user->getSex();
