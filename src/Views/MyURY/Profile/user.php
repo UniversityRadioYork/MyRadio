@@ -8,8 +8,6 @@
  */
 require 'Views/MyURY/Profile/bootstrap.php';
 
-var_dump($userData);
-
 $twig->setTemplate('MyURY/Profile/user.twig')
         ->addVariable('title', 'View Member')
         ->addVariable('heading', 'View Profile')
