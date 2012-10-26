@@ -79,7 +79,13 @@
     </tr>
     <tr>
       <td><b>Last Login:</b></td>
-      <td>{{user.lastlogin}}</td>
+      <td>
+        {% if user.last_login %}
+          {{ user.last_login|date("j/n/Y H:i:s") }}
+        {% else %}
+          Never
+        {% endif %}
+      </td>
     </tr>
     <tr>
       <td colspan="2">&nbsp;</td>
