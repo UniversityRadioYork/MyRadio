@@ -2,5 +2,140 @@
 {% block stripecontent %}
 <div id="profile">
 {# @todo: put the user data into a nice format, implementation depends on sending in array or individual variables #}
+    
+  <table>
+    <tr>
+      <td><b>Name:</b></td>
+      <td>{{name}}</td>
+    </tr>
+    <tr>
+      <td><b>Sex:</b></td>
+      <td>
+        {% if sex == 'm' %}
+          Male
+        {% elseif sex == 'f' %}
+          Female
+        {% else %}
+          Unknown
+        {% endif %}
+      </td>
+    </tr>
+    {% if collegeid != 10 %}
+      <tr>
+        <td><b>College:</b></td>
+        <td>{{college}}</td>
+      </tr>
+    {% endif %}
+    {% if phone != '' %}
+      <tr>
+        <td><b>Phone:</b></td>
+        <td>{{phone}}</td>
+      </tr>
+    {% endif %}
+    <tr>
+      <td colspan="2">&nbsp;</td>
+    </tr>
+    {% if uni != '' %}
+      <tr>
+        <td><b>Uni Account:</b></td>
+        <td>{{uni}}</td>
+      </tr>
+    {% endif %}
+    <tr>
+      <td><b>Emails Go To:</b></td>
+      <td><a href="mailto:{{email}}">{{email}}</a></td>
+    </tr>
+    {% if local_alias != '' %}
+      <tr>
+        <td><b>Official Email:</b></td>
+        <td>{{local_alias}}</td>
+      </tr>
+    {% endif %}
+    {% if local_name != '' %}
+      <tr>
+        <td><b>Server Account:</b></td>
+        <td>{{local_name}}</td>
+      </tr>
+    {% endif %}
+    <tr>
+      <td><b>Receive Email:</b></td
+      <td>{{receive_email}}</td>
+    </tr>
+    <tr>
+      <td><b>Account Locked:</b></td>
+      <td>{{account_locked}}</td>
+    </tr>
+    <tr>
+      <td><b>Last Login:</b></td>
+      <td>{{lastlogin}}</td>
+    </tr>
+    <tr>
+      <td colspan="2">&nbsp;</td>
+    </tr>
+    {#<tr>
+      <td valign="top"><b>Paid:</b></td>
+      <td><?php 
+
+        foreach ($x['years'] as $year => $amount) {
+        if ($amount == '0.00') $amount = '--';
+        if ($year == GetYear())
+          print "$year: &pound;$amount<br>";
+        else print "<i><span style=\"color:grey\">$year: &pound;$amount</span></i><br>";
+      }
+      ?></td>
+    </tr>
+    <?php 
+    if (isset($x['officerships'])) {
+      ?><tr><td colspan="2">&nbsp;</td></tr>
+      <tr><td valign="top"><b>Officerships:</b></td><td><?php
+        foreach ($x['officerships'] as $office) {
+        if ($office['till_date'] == '')
+          print "${office['officer_name']} (${office['from_date']} - present)<br>";
+        else
+          print "<i><span style=\"color:grey\">${office['officer_name']} (${office['from_date']} - ${office['till_date']})</span></i><br>";
+      }
+      ?></td></tr><?php
+    }
+    ?>
+    <tr>
+      <td colspan="2">&nbsp;</td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Training:</b></td>
+      <td><?php
+
+          $StatusSoFar = TRAINED_NOTHING;
+        if (isset($x['training'])) {
+          ?><?php
+          foreach ($x['training'] as $status) {
+            switch ($status['presenterstatusid']) {
+            case TRAINED_STUDIO:
+              print "Studio Trained on ".date("j/n/Y",$status['date'])."<i><span style=\"color:grey\"> by ${status['fname']} ${status['sname']}</span></i>";
+              $StatusSoFar = max($StatusSoFar, TRAINED_STUDIO);
+              break;
+            case TRAINED_DEMO:
+              print "Passed Demo on ".date("j/n/Y",$status['date'])."<i><span style=\"color:grey\"> assessed by ${status['fname']} ${status['sname']}</span></i>";
+              $StatusSoFar = max($StatusSoFar, TRAINED_DEMO);
+              break;
+            case TRAINED_TRAINER:
+              print "Became Trainer on ".date("j/n/Y",$status['date'])."<i><span style=\"color:grey\"> approved by ${status['fname']} ${status['sname']}</span></i>";
+              $StatusSoFar = TRAINED_TRAINER;
+              break;
+            }
+            if (URY::$currentUser->hasAuth(AUTH_TRAIN_REVOKE))
+              print " [<a href=\"/members/memberadmin/settraining.php?uid=$uid&amp;revoke=true&amp;lvl=".$status['presenterstatusid']."\">Revoke</a>]";
+            print "<br>";
+          }
+        }
+        if (URY::$currentUser->hasAuth(AUTH_TRAIN)) {
+          switch ($StatusSoFar) {
+          case TRAINED_NOTHING: print "<a href=\"/members/memberadmin/settraining.php?uid=$uid&amp;lvl=".TRAINED_STUDIO."\">Register as Studio Trained</a><br>"; break;
+          case TRAINED_STUDIO: print "<a href=\"/members/memberadmin/settraining.php?uid=$uid&amp;lvl=".TRAINED_DEMO."\">Has Passed Demo</a><br>"; break;
+          case TRAINED_DEMO: print "<a href=\"/members/memberadmin/settraining.php?uid=$uid&amp;lvl=".TRAINED_TRAINER."\">Promote to Trainer</a><br>"; break;
+          }
+        }
+        ?></td>
+    </tr>#}
+  </table>
 </div>
 {% endblock %}
