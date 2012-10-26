@@ -59,11 +59,23 @@
     {% endif %}
     <tr>
       <td><b>Receive Email:</b></td
-      <td>{{receive_email}}</td>
+      <td>
+        {% if receive_email %}
+          Yes
+        {% else %}
+          No
+        {% endif %}
+      </td>
     </tr>
     <tr>
       <td><b>Account Locked:</b></td>
-      <td>{{account_locked}}</td>
+      <td>
+        {% if account_locked %}
+          Yes
+        {% else %}
+          No
+        {% endif %}
+      </td>
     </tr>
     <tr>
       <td><b>Last Login:</b></td>
