@@ -160,6 +160,11 @@ class User extends ServiceAPI {
             array($this->memberid))) === 1);
   }
   
+  
+  public function getData() {
+    return get_object_vars($this);
+  }
+  
   /**
    * Returns if the user is Studio Trained
    * @return boolean

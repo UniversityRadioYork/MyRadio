@@ -9,17 +9,7 @@
 
 $user = User::getInstance();
 
-$name = $user->getName();
-$sex = $user->getSex();
-$collegeid = $user->getCollegeID();
-$college = $user->getCollege();
-$phone = $user->getPhone();
-$uni = $user->getUniAccount();
-$email = $user->getEmail();
-$local_alias = $user->getLocalAlias();
-$local_account = $user->getLocalName();
-$receive_email = $user->getReceiveEmail();
-$account_locked = $user->getAccountLocked();
+$userData = $user->getData();
 
 
 /**

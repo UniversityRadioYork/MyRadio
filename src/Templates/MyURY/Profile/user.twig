@@ -6,61 +6,61 @@
   <table>
     <tr>
       <td><b>Name:</b></td>
-      <td>{{name}}</td>
+      <td>{{user.name}}</td>
     </tr>
     <tr>
       <td><b>Sex:</b></td>
       <td>
-        {% if sex == 'm' %}
+        {% if user.sex == 'm' %}
           Male
-        {% elseif sex == 'f' %}
+        {% elseif user.sex == 'f' %}
           Female
         {% else %}
           Unknown
         {% endif %}
       </td>
     </tr>
-    {% if collegeid != 10 %}
+    {% if user.collegeid != 10 %}
       <tr>
         <td><b>College:</b></td>
-        <td>{{college}}</td>
+        <td>{{user.college}}</td>
       </tr>
     {% endif %}
-    {% if phone != '' %}
+    {% if user.phone != '' %}
       <tr>
         <td><b>Phone:</b></td>
-        <td>{{phone}}</td>
+        <td>{{user.phone}}</td>
       </tr>
     {% endif %}
     <tr>
       <td colspan="2">&nbsp;</td>
     </tr>
-    {% if uni != '' %}
+    {% if user.eduroam != '' %}
       <tr>
         <td><b>Uni Account:</b></td>
-        <td>{{uni}}</td>
+        <td>{{user.eduroam}}</td>
       </tr>
     {% endif %}
     <tr>
       <td><b>Emails Go To:</b></td>
-      <td><a href="mailto:{{email}}">{{email}}</a></td>
+      <td><a href="mailto:{{user.email}}">{{user.email}}</a></td>
     </tr>
-    {% if local_alias != '' %}
+    {% if user.local_alias != '' %}
       <tr>
         <td><b>Official Email:</b></td>
-        <td>{{local_alias}}</td>
+        <td>{{user.local_alias}}</td>
       </tr>
     {% endif %}
-    {% if local_name != '' %}
+    {% if user.local_name != '' %}
       <tr>
         <td><b>Server Account:</b></td>
-        <td>{{local_name}}</td>
+        <td>{{user.local_name}}</td>
       </tr>
     {% endif %}
     <tr>
       <td><b>Receive Email:</b></td>
       <td>
-        {% if receive_email %}
+        {% if user.receive_email %}
           Yes
         {% else %}
           No
@@ -70,7 +70,7 @@
     <tr>
       <td><b>Account Locked:</b></td>
       <td>
-        {% if account_locked %}
+        {% if user.account_locked %}
           Yes
         {% else %}
           No
@@ -79,7 +79,7 @@
     </tr>
     <tr>
       <td><b>Last Login:</b></td>
-      <td>{{lastlogin}}</td>
+      <td>{{user.lastlogin}}</td>
     </tr>
     <tr>
       <td colspan="2">&nbsp;</td>
