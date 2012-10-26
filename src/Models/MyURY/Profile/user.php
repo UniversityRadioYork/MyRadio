@@ -11,7 +11,6 @@ $user = User::getInstance();
 
 $userData = $user->getData();
 
-
 /**
         ->addVariable('sex', $sex)
         ->addVariable('collegeid', $collegeid)
