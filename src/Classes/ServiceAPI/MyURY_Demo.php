@@ -42,7 +42,7 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
    */
   public static function listDemos() {
     self::initDB();
-    $result = self::$db->fetch_all('SELECT show_season_timeslot_id, start_time, memberid FROM schedule.show_season_timeslot WHERE show_season_id = 0 AND start_time > NOW()');
+    $result = self::$db->fetch_all('SELECT show_season_timeslot_id, start_time, memberid FROM schedule.show_season_timeslot WHERE show_season_id = 0 AND start_time > NOW() ORDER BY start_time ASC');
     
     //Add the credits for each member
     $demos = array();
