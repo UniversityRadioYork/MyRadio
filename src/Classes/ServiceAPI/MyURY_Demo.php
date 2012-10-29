@@ -21,7 +21,8 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
     /**
      * Check for conflicts
      */
-    if (!empty(self::getScheduleConflict($time, $time+3600))) {
+    $r = self::getScheduleConflict($time, $time+3600);
+    if (!empty($r)) {
       //There's a conflict
       throw new MyURYException('There is already something scheduled at that time', MyURYException::FATAL);
       return false;
