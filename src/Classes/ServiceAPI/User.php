@@ -97,16 +97,32 @@ class User extends ServiceAPI {
    */
   private $studio_trained;
   /**
+   * Stores when the User was studio trained if they have been
+   * @var String timestamp with timezone
+   */
+  private $studio_trained_date;
+  /**
    * Stores whether the User has been studio demoed
    * @var bool
    */
   private $studio_demoed;
   /**
+   * Stores when the User was studio demoed if they have been
+   * @var String timestamp with timezone
+   */
+  private $studio_demoed_date;
+  /**
    * Stores the time the User joined URY
    * @var int
    */
   private $joined;
-  
+  /**
+   *
+   * @var type 
+   */
+  private $lastlogin;
+
+
   /**
    * Initiates the User variables
    * @param int $memberid The ID of the member to initialise
@@ -116,7 +132,7 @@ class User extends ServiceAPI {
     //Get the base data
     $data = self::$db->fetch_one(
             'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college, phone, email,
-              receive_email, local_name, local_alias, eduroam, account_locked, joined 
+              receive_email, local_name, local_alias, eduroam, account_locked, last_login, joined 
               FROM member, l_college
               WHERE memberid=$1 
               AND member.college = l_college.collegeid
@@ -158,6 +174,11 @@ class User extends ServiceAPI {
         WHERE presenterstatusid=9 AND memberid=$1
         UNION SELECT 0) LIMIT 1',
             array($this->memberid))) === 1);
+  }
+  
+  
+  public function getData() {
+    return get_object_vars($this);
   }
   
   /**
