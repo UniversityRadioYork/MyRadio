@@ -14,7 +14,7 @@ $('.twig-datatable').dataTable({
   },
   //attending
   {
-    "sTitle": "# Joined"
+    "sTitle": "Attending"
   },
   //attend
   {
