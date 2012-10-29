@@ -1,8 +1,11 @@
 <?php
 /**
  * @todo Proper Documentation
- * @todo This.
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 21072012
+ * @author Andy Durant <aj@ury.org.uk>
+ * @version 26102012
  * @package MyURY_Profile
  */
+
+$user = User::getInstance();
+
+$userData = $user->getData();
