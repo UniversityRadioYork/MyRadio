@@ -93,32 +93,17 @@ class User extends ServiceAPI {
   private $account_locked;
   /**
    * Stores whether the User has been studio trained
-   * @var bool
+   * @var array
    */
-  private $studio_trained;
-  /**
-   * Stores when the User was studio trained if they have been
-   * @var String timestamp with timezone
-   */
-  private $studio_trained_date;
-  /**
-   * Stores whether the User has been studio demoed
-   * @var bool
-   */
-  private $studio_demoed;
-  /**
-   * Stores when the User was studio demoed if they have been
-   * @var String timestamp with timezone
-   */
-  private $studio_demoed_date;
+  private $training;
   /**
    * Stores the time the User joined URY
    * @var int
    */
   private $joined;
   /**
-   *
-   * @var type 
+   * Stores the datetime the User last logged in on.
+   * @var String timestamp with timezone
    */
   private $lastlogin;
 

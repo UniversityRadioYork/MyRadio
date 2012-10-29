@@ -114,13 +114,18 @@
       }
       ?></td></tr><?php
     }
-    ?>
+    ?>#}
     <tr>
       <td colspan="2">&nbsp;</td>
     </tr>
     <tr>
       <td valign="top"><b>Training:</b></td>
-      <td><?php
+      <td>
+        {% if user.studio_trained %}
+          
+        {% endif %}
+        
+        <?php
 
           $StatusSoFar = TRAINED_NOTHING;
         if (isset($x['training'])) {
@@ -153,7 +158,7 @@
           }
         }
         ?></td>
-    </tr>#}
+    </tr>
   </table>
 </div>
 {% endblock %}
