@@ -42,7 +42,8 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
    */
   public static function listDemos() {
     self::initDB();
-    $result = self::$db->fetch_all('SELECT show_season_timeslot_id, start_time, memberid FROM schedule.show_season_timeslot WHERE show_season_id = 0 AND start_time > NOW() ORDER BY start_time ASC');
+    $result = self::$db->fetch_all('SELECT show_season_timeslot_id, start_time, memberid FROM schedule.show_season_timeslot
+      WHERE show_season_id = 0 AND start_time > NOW() ORDER BY start_time ASC');
     
     //Add the credits for each member
     $demos = array();
@@ -71,10 +72,10 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
     $user = self::getDemoer($demoid);
     $attendee = User::getInstance();
     MyURYEmail::sendEmail($user->getEmail(), 'New Demo Attendee', $attendee->getName().' has joined your demo at '.$time.'.');
-    MyURYEmail::sendEmail($attendee->getEmail(), 'Attending Demo', 'Hi '.$attendee->getName().
+    MyURYEmail::sendEmail($attendee->getEmail(), 'Attending Demo', 'Hi '.$attendee->getFName().
             ",\r\n\r\nThanks for joining a demo at $time. You will be demoed by ".$user->getName().
             '. Just head over to the station in Vanbrugh College just before your demo and the trainer will be waiting for you.'
-            ."\r\nSee you on air soon!\r\nURY Training");
+            ."\r\n\r\nSee you on air soon!\r\nURY Training");
     return 0;
   }
   
