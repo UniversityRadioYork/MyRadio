@@ -62,6 +62,9 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
     if (self::attendingDemo($demoid) >= 2) return 1;
     self::$db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from, effective_to, memberid, approvedid) VALUES
       (0, 7, $1, $2, $2, $1, $1)', array($_SESSION['memberid'], self::getDemoTime($demoid)));
+    $time = self::getDemoTime($demoid);
+    $user = self::getDemoer($demoid);
+    MyURYEmail::sendEmail($user->getEmail(), 'New Demo Attendee', User::getInstance()->getName().' has joined your demo at '.$time.'.');
     return 0;
   }
   
@@ -69,6 +72,12 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
     self::initDB();
     $r = self::$db->fetch_column('SELECT start_time FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', array($demoid));
     return $r[0];
+  }
+  
+  public static function getDemoer($demoid) {
+    self::initDB();
+    $r = self::$db->fetch_column('SELECT memberid FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', array($demoid));
+    return User::getInstance($r[0]);
   }
 
 }
