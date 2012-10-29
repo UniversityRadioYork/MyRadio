@@ -107,12 +107,10 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
     //Iterate over each week
     for ($i = 1; $i <= 10; $i++) {
       //Get the start and end times
-      $start = CoreUtils::getTimestamp($date + $time['start_time']);
-      $end = CoreUtils::getTimestamp($date + $time['start_time'] + $time['duration']);
+      $start = $date + $time['start_time'];
+      $end = $date + $time['start_time'] + $time['duration'];
       //Query for conflicts
-      $r = self::$db->fetch_one('SELECT show_season_id FROM schedule.show_season_timeslot
-        WHERE (start_time <= $1 AND start_time + duration > $1)
-        OR (start_time > $1 AND start_time < $2)', array($start, $end));
+      $r = self::getScheduleConflict($start, $end);
       
       //If there's a conflict, log it
       if (!empty($r)) $conflicts[$i] = $r['show_season_id'];
@@ -121,6 +119,22 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
       $date += 3600*24*7;
     }
     return $conflicts;
+  }
+  
+  /**
+   * Returns a schedule conflict between the given times, if one exists
+   * @param int $start Start time
+   * @param int $end End time
+   * @return Array empty if no conflict, show information otherwise
+   */
+  protected static function getScheduleConflict($start, $end) {
+    $start = CoreUtils::getTimestamp($start);
+    $end = CoreUtils::getTimestamp($end);
+    
+    return self::$db->fetch_one('SELECT show_season_id FROM schedule.show_season_timeslot
+        WHERE (start_time <= $1 AND start_time + duration > $1)
+        OR (start_time > $1 AND start_time < $2)', array($start, $end));
+    
   }
   
   /**

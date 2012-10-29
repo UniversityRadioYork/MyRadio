@@ -16,15 +16,25 @@
 class MyURY_Demo extends MyURY_Scheduler_Common {
 
   public static function registerDemo($time) {
-    date_default_timezone_set('UTC');
     self::initDB();
 
+    /**
+     * Check for conflicts
+     */
+    if (!empty(self::getScheduleConflict($time, $time+3600))) {
+      //There's a conflict
+      throw new MyURYException('There is already something scheduled at that time', MyURYException::FATAL);
+      return false;
+    }
+    
+    date_default_timezone_set('UTC');
     /**
      * Demos use the timeslot member as the credit for simplicity
      */
     self::$db->query('INSERT INTO schedule.show_season_timeslot (show_season_id, start_time, memberid, approvedid, duration)
     VALUES (0, $1, $2, $2, \'01:00:00\')', array(CoreUtils::getTimestamp($time), $_SESSION['memberid']));
     date_default_timezone_set('Europe/London');
+    return true;
   }
   
   public static function attendingDemo($demoid) {
