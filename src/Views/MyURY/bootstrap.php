@@ -13,5 +13,6 @@ $twig->addVariable('serviceName', $service)
      ->setTemplate('stripe.twig')
      ->addVariable('title', $module)
      ->addVariable('uri', $_SERVER['REQUEST_URI']);
-if(isset(MyURYError::$php_errorlist)){
-$twig->addVariable('phperrors', MyURYError::$php_errorlist);};
+if(User::getInstance()->hasAuth(AUTH_SHOWERRORS)) {
+  $twig->addVariable('phperrors', MyURYError::$php_errorlist);
+}

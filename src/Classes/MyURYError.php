@@ -2,6 +2,7 @@
 /**
  * This file provides the MyURYError class for MyURY
  * @package MyURY_Core
+ * @todo Andy did this a bit weird....
  */
 
 /**
