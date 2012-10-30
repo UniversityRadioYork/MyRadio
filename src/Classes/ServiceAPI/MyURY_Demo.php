@@ -39,13 +39,21 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
   }
   
   public static function attendingDemo($demoid) {
-    $r = self::$db->fetch_column('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', array(self::getDemoTime($demoid)));
-    if (empty($r)) return 'Nobody';
-    $str = User::getInstance($r[0])->getName();
-    if (isset($r[1])) {
-      $str .= ', '.User::getInstance($r[1])->getName();
+    if (User::getInstance()->hasAuth(AUTH_ADDEMOS)) {
+      $r = self::$db->fetch_column('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', array(self::getDemoTime($demoid)));
+      if (empty($r)) return 'Nobody';
+      $str = User::getInstance($r[0])->getName();
+      if (isset($r[1])) {
+        $str .= ', '.User::getInstance($r[1])->getName();
+      }
+      return $str;
+    } else {
+      if (self::attendingDemoCount($demoid) < 2) {
+        return 'Space Available!';
+      } else {
+        return 'Full';
+      }
     }
-    return $str;
   }
   
   public static function attendingDemoCount($demoid) {
