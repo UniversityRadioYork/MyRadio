@@ -18,7 +18,7 @@ if (isset($_REQUEST['msg'])) {
       $twig->addInfo('You have successfully been added to this demo.');
       break;
     case 1: //full
-      $twig->addInfo('Sorry, but a maximum two people can join a demo.');
+      $twig->addError('Sorry, but a maximum two people can join a demo.');
       break;
   }
 }
