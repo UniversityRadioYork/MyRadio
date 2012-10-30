@@ -14,8 +14,11 @@ $twig->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.scheduler.demolist');
 if (isset($_REQUEST['msg'])) {
   switch($_REQUEST['msg']) {
-    case 'seasonCreated':
-      $twig->addInfo('Your season application has been submitted for processing.');
+    case 0: //joined
+      $twig->addInfo('You have successfully been added to this demo.');
+      break;
+    case 1: //full
+      $twig->addInfo('Sorry, but a maximum two people can join a demo.');
       break;
   }
 }
