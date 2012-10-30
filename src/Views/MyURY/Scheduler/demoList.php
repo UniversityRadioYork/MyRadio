@@ -9,7 +9,7 @@ foreach ($demos as $demo) {
 }
 //print_r($tabledata);
 $twig->setTemplate('table.twig')
-        ->addVariable('heading', 'Upcoming Demo Slots')
+        ->addVariable('title', 'Upcoming Demo Slots')
         ->addVariable('tabledata', $tabledata)
         ->addVariable('tablescript', 'myury.scheduler.demolist');
 if (isset($_REQUEST['msg'])) {
