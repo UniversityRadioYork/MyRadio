@@ -48,6 +48,10 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
     return $str;
   }
   
+  public static function attendingDemoCount($demoid) {
+    return self::$db->num_rows(self::$db->query('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', array(self::getDemoTime($demoid))));
+  }
+  
   /**
    * Gets a list of available demo slots in the future
    */
@@ -71,12 +75,11 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
    * The current user is marked as attending a demo
    * Return 0: Success
    * Return 1: Demo Full
-   * Return 2: *shrug*
    */
   public static function attend($demoid) {
     self::initDB();
     //Get # of attendees
-    if (self::attendingDemo($demoid) >= 2) return 1;
+    if (self::attendingDemoCount($demoid) >= 2) return 1;
     self::$db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from, effective_to, memberid, approvedid) VALUES
       (0, 7, $1, $2, $2, $1, $1)', array($_SESSION['memberid'], self::getDemoTime($demoid)));
     $time = self::getDemoTime($demoid);
