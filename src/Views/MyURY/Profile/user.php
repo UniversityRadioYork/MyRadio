@@ -12,7 +12,5 @@ $twig->setTemplate('MyURY/Profile/user.twig')
         ->addVariable('title', 'View Member')
         ->addVariable('heading', 'View Profile')
         ->addVariable('user', $userData)
-        // $name is set elsewhere! (for the header)
-        ->addVariable('name', $name)
         // @todo User.php class needs more to give twig more.
         ->render();
