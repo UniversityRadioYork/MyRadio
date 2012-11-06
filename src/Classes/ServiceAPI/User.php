@@ -145,8 +145,10 @@ class User extends ServiceAPI {
             array($memberid));
     
     // Get Training info all into array
-    $this->training = self::$db->fetch_all('SELECT * FROM public.member_presenterstatus
-      WHERE memberid=$1', 
+    $this->training = self::$db->fetch_all('SELECT presenterstatusid, completeddate, confirmedby
+      FROM public.member_presenterstatus
+      WHERE memberid=$1
+      ORDER BY completeddate ASC', 
             array($this->memberid));
     
   }
@@ -161,7 +163,9 @@ class User extends ServiceAPI {
    * @return boolean
    */
   public function isStudioTrained() {
-    return $this->studio_trained;
+    foreach($this->training as $key => $value){
+      
+    }
   }
   
   /**
