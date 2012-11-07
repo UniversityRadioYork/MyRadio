@@ -39,7 +39,7 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
   }
   
   public static function attendingDemo($demoid) {
-    if (User::getInstance()->hasAuth(AUTH_ADDEMOS)) {
+    if (User::getInstance()->hasAuth(AUTH_ADDDEMOS)) {
       $r = self::$db->fetch_column('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', array(self::getDemoTime($demoid)));
       if (empty($r)) return 'Nobody';
       $str = User::getInstance($r[0])->getName();

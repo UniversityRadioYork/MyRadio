@@ -137,7 +137,6 @@ class CoreUtils {
     $db = Database::getInstance();
     $result = $db->fetch_all('SELECT typeid, phpconstant FROM l_action');
     foreach ($result as $row) {
-      CoreUtils::debug_for(7449, "Initialising permission {$row['phpconstant']}");
       define($row['phpconstant'], $row['typeid']);
     }
     
