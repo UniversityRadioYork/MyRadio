@@ -137,6 +137,7 @@ class CoreUtils {
     $db = Database::getInstance();
     $result = $db->fetch_all('SELECT typeid, phpconstant FROM l_action');
     foreach ($result as $row) {
+      CoreUtils::debug_for(7449, "Initialising permission {$row['phpconstant']}");
       define($row['phpconstant'], $row['typeid']);
     }
     
@@ -147,6 +148,7 @@ class CoreUtils {
    * Checks using cached Shibbobleh permissions whether the current member has the specified permission
    * @param int $permission The ID of the permission, resolved by using an AUTH_ constant
    * @return boolean Whether the member has the requested permission
+   * @todo this is a duplication of the stuff in the User class. depreciate?
    */
   public static function hasPermission($permission) {
     if (!isset($_SESSION['member_permissions'])) return false;
