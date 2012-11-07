@@ -20,6 +20,9 @@ if (isset($_REQUEST['msg'])) {
     case 1: //full
       $twig->addError('Sorry, but a maximum two people can join a demo.');
       break;
+    case 2: //attending already
+      $twig->addError('You can only attend one demo at a time.');
+      break;
   }
 }
 

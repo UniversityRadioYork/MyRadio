@@ -83,11 +83,19 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
    * The current user is marked as attending a demo
    * Return 0: Success
    * Return 1: Demo Full
+   * Return 2: Already Attending a Demo
    */
   public static function attend($demoid) {
     self::initDB();
     //Get # of attendees
     if (self::attendingDemoCount($demoid) >= 2) return 1;
+    
+    //Check they aren't already attending one in the next week
+    if (self::$db->num_rows(self::$db->query('SELECT creditid FROM schedule.show_credit WHERE show_id=0 AND creditid=$1
+      AND start_time >= NOW() AND start_time <= (NOW() + INTERVAL(\'1 week\') LIMIT 1')) === 1) {
+      return 2;
+    }
+    
     self::$db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from, effective_to, memberid, approvedid) VALUES
       (0, 7, $1, $2, $2, $1, $1)', array($_SESSION['memberid'], self::getDemoTime($demoid)));
     $time = self::getDemoTime($demoid);
