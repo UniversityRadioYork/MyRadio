@@ -48,4 +48,5 @@ require_once 'Classes/' . Config::$cache_provider . '.php';
 
 //Initiate User
 $member = User::getInstance();
+//Initialise the permission constants
 CoreUtils::setUpAuth();
