@@ -163,9 +163,16 @@ class User extends ServiceAPI {
    * @return boolean
    */
   public function isStudioTrained() {
+    $trained = false;
     foreach($this->training as $key => $value){
-      
+      if ($value['presenterstatusid'] == 1) {
+        $trained = true;
+      }
+      if ($value['presenterstatusid'] == 10) {
+        $trained = true;
+      }
     }
+    return $trained;
   }
   
   /**
@@ -173,7 +180,33 @@ class User extends ServiceAPI {
    * @return boolean
    */
   public function isStudioDemoed() {
-    return $this->studio_demoed;
+    $demoed = false;
+    foreach($this->training as $key => $value){
+      if ($value['presenterstatusid'] == 2) {
+        $demoed = true;
+      }
+      if ($value['presenterstatusid'] == 9) {
+        $demoed = true;
+      }
+    }
+    return $demoed;
+  }
+  
+  /**
+   * Returns if the user is a Trainer
+   * @return boolean
+   */
+  public function isTrainer() {
+    $trainer = false;
+    foreach($this->training as $key => $value){
+      if ($value['presenterstatusid'] == 3) {
+        $trainer = true;
+      }
+      if ($value['presenterstatusid'] == 11) {
+        $trainer = true;
+      }
+    }
+    return $trainer;
   }
   
   /**
