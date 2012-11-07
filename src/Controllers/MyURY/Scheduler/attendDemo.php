@@ -8,4 +8,4 @@
  */
 
 $result = MyURY_Demo::attend($_REQUEST['demoid']);
-header('Location: '.CoreUtils::makeURL($module, 'listDemos', array(msg=>$result)));
+header('Location: '.CoreUtils::makeURL($module, 'listDemos', array('msg'=>$result)));
