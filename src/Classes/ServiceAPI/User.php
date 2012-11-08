@@ -145,9 +145,10 @@ class User extends ServiceAPI {
             array($memberid));
     
     // Get Training info all into array
-    $this->training = self::$db->fetch_all('SELECT presenterstatusid, completeddate, confirmedby
-      FROM public.member_presenterstatus
-      WHERE memberid=$1
+    $this->training = self::$db->fetch_all('SELECT presenterstatusid, completeddate, confirmedby, mem.fname||\' \'||mem.sname AS confirmedname
+      FROM public.member_presenterstatus pres
+      NNER JOIN member mem ON (confirmedby = mem.memberid)
+      WHERE pres.memberid=$1
       ORDER BY completeddate ASC', 
             array($this->memberid));
     
