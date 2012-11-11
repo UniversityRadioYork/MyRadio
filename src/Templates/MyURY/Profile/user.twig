@@ -6,7 +6,7 @@
   <table>
     <tr>
       <td><b>Name:</b></td>
-      <td>{{name}}</td>
+      <td>{{user.fname}} {{user.sname}}</td>
     </tr>
     <tr>
       <td><b>Sex:</b></td>
@@ -114,46 +114,42 @@
       }
       ?></td></tr><?php
     }
-    ?>
+    ?>#}
     <tr>
       <td colspan="2">&nbsp;</td>
     </tr>
     <tr>
       <td valign="top"><b>Training:</b></td>
-      <td><?php
-
-          $StatusSoFar = TRAINED_NOTHING;
-        if (isset($x['training'])) {
-          ?><?php
-          foreach ($x['training'] as $status) {
-            switch ($status['presenterstatusid']) {
-            case TRAINED_STUDIO:
-              print "Studio Trained on ".date("j/n/Y",$status['date'])."<i><span style=\"color:grey\"> by ${status['fname']} ${status['sname']}</span></i>";
-              $StatusSoFar = max($StatusSoFar, TRAINED_STUDIO);
-              break;
-            case TRAINED_DEMO:
-              print "Passed Demo on ".date("j/n/Y",$status['date'])."<i><span style=\"color:grey\"> assessed by ${status['fname']} ${status['sname']}</span></i>";
-              $StatusSoFar = max($StatusSoFar, TRAINED_DEMO);
-              break;
-            case TRAINED_TRAINER:
-              print "Became Trainer on ".date("j/n/Y",$status['date'])."<i><span style=\"color:grey\"> approved by ${status['fname']} ${status['sname']}</span></i>";
-              $StatusSoFar = TRAINED_TRAINER;
-              break;
-            }
-            if (URY::$currentUser->hasAuth(AUTH_TRAIN_REVOKE))
-              print " [<a href=\"/members/memberadmin/settraining.php?uid=$uid&amp;revoke=true&amp;lvl=".$status['presenterstatusid']."\">Revoke</a>]";
-            print "<br>";
-          }
-        }
-        if (URY::$currentUser->hasAuth(AUTH_TRAIN)) {
-          switch ($StatusSoFar) {
-          case TRAINED_NOTHING: print "<a href=\"/members/memberadmin/settraining.php?uid=$uid&amp;lvl=".TRAINED_STUDIO."\">Register as Studio Trained</a><br>"; break;
-          case TRAINED_STUDIO: print "<a href=\"/members/memberadmin/settraining.php?uid=$uid&amp;lvl=".TRAINED_DEMO."\">Has Passed Demo</a><br>"; break;
-          case TRAINED_DEMO: print "<a href=\"/members/memberadmin/settraining.php?uid=$uid&amp;lvl=".TRAINED_TRAINER."\">Promote to Trainer</a><br>"; break;
-          }
-        }
-        ?></td>
-    </tr>#}
+      <td>
+        <ul>
+        {% for train in user.training %}
+          <li>
+            {% if train.presenterstatusid == 1 %}
+              Studio Trained on {{ train.completeddate|date("j/n/Y") }}. <em>By {{ train.confirmedname }}</em>
+            {% endif %}
+            {% if train.presenterstatusid == 2 %}
+              Passed Demo on {{ train.completeddate|date("j/n/Y") }}. <em>Assessed by {{ train.confirmedname }}</em>
+            {% endif %}
+            {% if train.presenterstatusid == 3 %}
+              Became Trainer on {{ train.completeddate|date("j/n/Y") }}. <em>Approved by {{ train.confirmedname }}</em>
+            {% endif %}
+            {% if train.presenterstatusid == 10 %}
+              Studio Training Revoked on {{ train.completeddate|date("j/n/Y") }}. <em>By {{ train.confirmedname }}</em>
+            {% endif %}
+            {% if train.presenterstatusid == 9 %}
+              Demo Revoked on {{ train.completeddate|date("j/n/Y") }}. <em>By {{ train.confirmedname }}</em>
+            {% endif %}
+            {% if train.presenterstatusid == 11 %}
+              Trainer Status Revoked on {{ train.completeddate|date("j/n/Y") }}. <em>By {{ train.confirmedname }}</em>
+            {% endif %}
+          </li>
+        {% else %}
+          <li>No Training Status Available</li>
+        {% endfor %}
+        </ul>
+          {{ user.training }}
+        </td>
+    </tr>
   </table>
 </div>
 {% endblock %}

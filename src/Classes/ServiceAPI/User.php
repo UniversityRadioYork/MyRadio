@@ -93,32 +93,17 @@ class User extends ServiceAPI {
   private $account_locked;
   /**
    * Stores whether the User has been studio trained
-   * @var bool
+   * @var array
    */
-  private $studio_trained;
-  /**
-   * Stores when the User was studio trained if they have been
-   * @var String timestamp with timezone
-   */
-  private $studio_trained_date;
-  /**
-   * Stores whether the User has been studio demoed
-   * @var bool
-   */
-  private $studio_demoed;
-  /**
-   * Stores when the User was studio demoed if they have been
-   * @var String timestamp with timezone
-   */
-  private $studio_demoed_date;
+  private $training;
   /**
    * Stores the time the User joined URY
    * @var int
    */
   private $joined;
   /**
-   *
-   * @var type 
+   * Stores the datetime the User last logged in on.
+   * @var String timestamp with timezone
    */
   private $lastlogin;
 
@@ -159,21 +144,14 @@ class User extends ServiceAPI {
         (till_date IS NULL OR till_date > now()- interval \'1 month\'))',
             array($memberid));
     
-    //Get the user's training status
-    $this->studio_trained = (bool)(self::$db->num_rows(self::$db->query('SELECT completeddate FROM public.member_presenterstatus
-      WHERE memberid=$1 AND presenterstatusid=1
-      AND memberpresenterstatusid > (SELECT memberpresenterstatusid FROM public.member_presenterstatus
-        WHERE presenterstatusid=10 AND memberid=$1
-        UNION SELECT 0) LIMIT 1',
-            array($this->memberid))) === 1);
+    // Get Training info all into array
+    $this->training = self::$db->fetch_all('SELECT presenterstatusid, completeddate, confirmedby, mem.fname||\' \'||mem.sname AS confirmedname
+      FROM public.member_presenterstatus pres
+      NNER JOIN member mem ON (confirmedby = mem.memberid)
+      WHERE pres.memberid=$1
+      ORDER BY completeddate ASC', 
+            array($this->memberid));
     
-    //Get the user's demoed status
-    $this->studio_demoed = (bool)(self::$db->num_rows(self::$db->query('SELECT completeddate FROM public.member_presenterstatus
-      WHERE memberid=$1 AND presenterstatusid=2
-      AND memberpresenterstatusid > (SELECT memberpresenterstatusid FROM public.member_presenterstatus
-        WHERE presenterstatusid=9 AND memberid=$1
-        UNION SELECT 0) LIMIT 1',
-            array($this->memberid))) === 1);
   }
   
   
@@ -186,7 +164,16 @@ class User extends ServiceAPI {
    * @return boolean
    */
   public function isStudioTrained() {
-    return $this->studio_trained;
+    $trained = false;
+    foreach($this->training as $key => $value){
+      if ($value['presenterstatusid'] == 1) {
+        $trained = true;
+      }
+      if ($value['presenterstatusid'] == 10) {
+        $trained = true;
+      }
+    }
+    return $trained;
   }
   
   /**
@@ -194,7 +181,33 @@ class User extends ServiceAPI {
    * @return boolean
    */
   public function isStudioDemoed() {
-    return $this->studio_demoed;
+    $demoed = false;
+    foreach($this->training as $key => $value){
+      if ($value['presenterstatusid'] == 2) {
+        $demoed = true;
+      }
+      if ($value['presenterstatusid'] == 9) {
+        $demoed = true;
+      }
+    }
+    return $demoed;
+  }
+  
+  /**
+   * Returns if the user is a Trainer
+   * @return boolean
+   */
+  public function isTrainer() {
+    $trainer = false;
+    foreach($this->training as $key => $value){
+      if ($value['presenterstatusid'] == 3) {
+        $trainer = true;
+      }
+      if ($value['presenterstatusid'] == 11) {
+        $trainer = true;
+      }
+    }
+    return $trainer;
   }
   
   /**
