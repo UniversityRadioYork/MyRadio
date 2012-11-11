@@ -6,12 +6,12 @@
  * @package MyURY_Profile
  */
 
-$memberid = $_GET['memberid'];
+$getUserId = $_GET['memberid'];
 
-if (isset($memberid) && User::hasAuth(204)) {
-  $user = User::getInstance($memberid);
+if (isset($getUserId) && User::hasAuth(204)) {
+  $user = User::getInstance($getUserId);
 }
-else if (isset($memberid) && !User::hasAuth(204)) {
+else if (isset($getUserId) && !User::hasAuth(204)) {
   require 'Controllers/Errors/403.php';
 }
 else {
