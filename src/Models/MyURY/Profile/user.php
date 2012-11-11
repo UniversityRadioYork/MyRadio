@@ -8,7 +8,7 @@
 
 $getUserId = $_GET['memberid'];
 
-if (isset($getUserId) && User::hasAuth(204)) {
+if (isset($getUserId) && $member->hasAuth(204)) {
   $user = User::getInstance($getUserId);
 }
 else if (isset($getUserId) && !User::hasAuth(204)) {
