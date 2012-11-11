@@ -92,7 +92,17 @@ class User extends ServiceAPI {
    */
   private $account_locked;
   /**
-   * Stores whether the User has been studio trained
+   * Stores payment information about the User
+   * @var array
+   */
+  private $payment;
+  /**
+   * Stores all the User's officerships
+   * @var array
+   */
+  private $officerships;
+  /**
+   * Stores all the training data / status of the user
    * @var array
    */
   private $training;
@@ -142,6 +152,21 @@ class User extends ServiceAPI {
       WHERE officerid IN (SELECT officerid FROM member_officer
         WHERE memberid=$1 AND from_date < now()- interval \'1 month\' AND
         (till_date IS NULL OR till_date > now()- interval \'1 month\'))',
+            array($memberid));
+    
+    $this->payment = self::$db->fetch_all('SELECT year, paid 
+      FROM member_year 
+      WHERE memberid = $1 
+      ORDER BY year ASC;',
+            array($memberid));
+    
+    // Get the User's officerships
+    $this->officerships = self::$db->fetch_all('SELECT officerid,officer_name,teamid,EXTRACT(EPOCH FROM from_date) AS st,EXTRACT(EPOCH FROM till_date) AS en
+			 FROM member_officer 
+       INNER JOIN officer 
+       USING (officerid) 
+       WHERE memberid = $1 
+       ORDER BY st,en;', 
             array($memberid));
     
     // Get Training info all into array
