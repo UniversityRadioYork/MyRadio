@@ -170,7 +170,7 @@ class User extends ServiceAPI {
         $trained = true;
       }
       if ($value['presenterstatusid'] == 10) {
-        $trained = true;
+        $trained = false;
       }
     }
     return $trained;
@@ -187,7 +187,7 @@ class User extends ServiceAPI {
         $demoed = true;
       }
       if ($value['presenterstatusid'] == 9) {
-        $demoed = true;
+        $demoed = false;
       }
     }
     return $demoed;
@@ -204,7 +204,7 @@ class User extends ServiceAPI {
         $trainer = true;
       }
       if ($value['presenterstatusid'] == 11) {
-        $trainer = true;
+        $trainer = false;
       }
     }
     return $trainer;
