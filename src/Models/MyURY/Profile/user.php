@@ -9,3 +9,5 @@
 $user = User::getInstance();
 
 $userData = $user->getData();
+
+var_dump($userData);
