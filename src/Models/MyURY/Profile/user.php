@@ -6,6 +6,16 @@
  * @package MyURY_Profile
  */
 
-$user = User::getInstance();
+$memberid = $_GET['memberid'];
+
+if (isset($memberid) && User::hasAuth(204)) {
+  $user = User::getInstance($memberid);
+}
+else if (isset($memberid) && !User::hasAuth(204)) {
+  require 'Controllers/Errors/403.php';
+}
+else {
+  $user = User::getInstance();
+}
 
 $userData = $user->getData();
