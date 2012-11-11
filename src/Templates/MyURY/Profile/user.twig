@@ -143,41 +143,11 @@
               Trainer Status Revoked on {{ train.completeddate|date("j/n/Y") }}. <em>By {{ train.confirmedname }}</em>
             {% endif %}
           </li>
+        {% else %}
+          <li>No Training Status Available</li>
         {% endfor %}
         </ul>
-        <?php
-
-          $StatusSoFar = TRAINED_NOTHING;
-        if (isset($x['training'])) {
-          ?><?php
-          foreach ($x['training'] as $status) {
-            switch ($status['presenterstatusid']) {
-            case TRAINED_STUDIO:
-              print "Studio Trained on ".date("j/n/Y",$status['date'])."<i><span style=\"color:grey\"> by ${status['fname']} ${status['sname']}</span></i>";
-              $StatusSoFar = max($StatusSoFar, TRAINED_STUDIO);
-              break;
-            case TRAINED_DEMO:
-              print "Passed Demo on ".date("j/n/Y",$status['date'])."<i><span style=\"color:grey\"> assessed by ${status['fname']} ${status['sname']}</span></i>";
-              $StatusSoFar = max($StatusSoFar, TRAINED_DEMO);
-              break;
-            case TRAINED_TRAINER:
-              print "Became Trainer on ".date("j/n/Y",$status['date'])."<i><span style=\"color:grey\"> approved by ${status['fname']} ${status['sname']}</span></i>";
-              $StatusSoFar = TRAINED_TRAINER;
-              break;
-            }
-            if (URY::$currentUser->hasAuth(AUTH_TRAIN_REVOKE))
-              print " [<a href=\"/members/memberadmin/settraining.php?uid=$uid&amp;revoke=true&amp;lvl=".$status['presenterstatusid']."\">Revoke</a>]";
-            print "<br>";
-          }
-        }
-        if (URY::$currentUser->hasAuth(AUTH_TRAIN)) {
-          switch ($StatusSoFar) {
-          case TRAINED_NOTHING: print "<a href=\"/members/memberadmin/settraining.php?uid=$uid&amp;lvl=".TRAINED_STUDIO."\">Register as Studio Trained</a><br>"; break;
-          case TRAINED_STUDIO: print "<a href=\"/members/memberadmin/settraining.php?uid=$uid&amp;lvl=".TRAINED_DEMO."\">Has Passed Demo</a><br>"; break;
-          case TRAINED_DEMO: print "<a href=\"/members/memberadmin/settraining.php?uid=$uid&amp;lvl=".TRAINED_TRAINER."\">Promote to Trainer</a><br>"; break;
-          }
-        }
-        ?></td>
+        </td>
     </tr>
   </table>
 </div>
