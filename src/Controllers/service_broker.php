@@ -17,6 +17,7 @@
 /**
  * AUTH_SELECTSERVICEVERSION = 270
  * @todo Remove hardcoded value
+ * @todo fix redirection issues with the version selector
  */
 if (CoreUtils::hasPermission(270)) {
   require 'Controllers/brokerVersion.php';

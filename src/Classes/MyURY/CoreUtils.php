@@ -312,18 +312,22 @@ class CoreUtils {
    * Returns the ID of a Service, creating it if necessary
    * @todo Document this
    * @param type $service
-   * @param type $module
+   * @param bool $create Whether to create the service if it doesn't exist
    * @return type
    */
-  public static function getServiceId($service) {
+  public static function getServiceId($service, $create = false) {
     $db = Database::getInstance();
     $result = $db->fetch_column('SELECT serviceid FROM myury.services WHERE name=$1',
             array($service));
     
     if (empty($result)) {
-      //The service needs creating
-      $result = $db->fetch_column('INSERT INTO myury.services (name) VALUES ($1) RETURNING serviceid',
-              array($service));
+      if ($create) {
+        //The service needs creating
+        $result = $db->fetch_column('INSERT INTO myury.services (name) VALUES ($1) RETURNING serviceid',
+                array($service));
+      } else {
+        throw new MyURYException('Service '.$service.' does not exist.');
+      }
     }
     return $result[0];
   }
