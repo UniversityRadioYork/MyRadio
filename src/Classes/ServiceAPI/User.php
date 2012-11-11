@@ -161,12 +161,12 @@ class User extends ServiceAPI {
             array($memberid));
     
     // Get the User's officerships
-    $this->officerships = self::$db->fetch_all('SELECT officerid,officer_name,teamid,EXTRACT(EPOCH FROM from_date) AS st,EXTRACT(EPOCH FROM till_date) AS en
+    $this->officerships = self::$db->fetch_all('SELECT officerid,officer_name,teamid,from_date,till_date
 			 FROM member_officer 
        INNER JOIN officer 
        USING (officerid) 
        WHERE memberid = $1 
-       ORDER BY st,en;', 
+       ORDER BY from_date,till_date;', 
             array($memberid));
     
     // Get Training info all into array
