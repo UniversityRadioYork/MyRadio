@@ -104,13 +104,13 @@
         </ul>
       </td>
     </tr>
-    {% if officerships %}
+    {% if user.officerships %}
       <tr><td colspan="2">&nbsp;</td></tr>
       <tr>
         <td valign="top"><b>Officerships:</b></td>
         <td>
           <ul id="officerships">
-          {% for office in officerships %}
+          {% for office in user.officerships %}
             {% if office.till_date is null %}
               <li class="currentOffice">
                 {{ office.office_name }} ({{ office.from_date }} - present)
