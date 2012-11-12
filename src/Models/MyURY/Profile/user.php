@@ -24,3 +24,5 @@ else {
 
 // Get the selected users data
 $userData = $user->getData();
+
+var_dump($userData);
