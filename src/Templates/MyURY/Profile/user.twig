@@ -113,11 +113,11 @@
           {% for office in user.officerships %}
             {% if office.till_date is null %}
               <li class="currentOffice">
-                {{ office.office_name }} ({{ office.from_date }} - present)
+                {{ office.officer_name }} ({{ office.from_date }} - present)
               </li>
             {% else %}
               <li class="oldOffice">
-                {{ office.office_name }} ({{ office.from_date }} - {{ office.till_date }})
+                {{ office.officer_name }} ({{ office.from_date }} - {{ office.till_date }})
               </li>
             {% endif %}
           {% endfor %}
