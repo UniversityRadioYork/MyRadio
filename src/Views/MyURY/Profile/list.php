@@ -11,7 +11,7 @@ require 'Views/MyURY/Profile/bootstrap.php';
 foreach ($members as $k => $v) {
   $members[$k]['name'] = array(
       'display' => 'text',
-      'url' => CoreUtils::makeURL('Profile', 'default', array('memberid' => $v['memberid'])),
+      'url' => CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['memberid'])),
       'value' => $v['name']
       );
 }
