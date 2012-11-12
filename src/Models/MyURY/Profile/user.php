@@ -14,7 +14,7 @@ if (isset($getUserId) && $member->hasAuth(204)) {
   $user = User::getInstance($getUserId);
 }
 // If trying to view another member, and doesn't have permissions to the 403 them
-else if (isset($getUserId) && !User::hasAuth(204)) {
+else if (isset($getUserId) && !$member->hasAuth(204)) {
   require 'Controllers/Errors/403.php';
 }
 // Or just load their own profile
