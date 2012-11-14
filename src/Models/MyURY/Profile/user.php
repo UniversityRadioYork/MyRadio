@@ -7,7 +7,9 @@
  */
 
 // Set if trying to view another member's profile page
-$getUserId = $_GET['memberid'];
+if (isset($_GET['memberid'])) {
+  $getUserId = $_GET['memberid'];
+}
 
 // If trying to view another member, and has permissions to, then load that member
 if (isset($getUserId) && $member->hasAuth(AUTH_VIEWOTHERMEMBERS)) {
