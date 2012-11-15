@@ -9,5 +9,5 @@
  * @version 28072012
  * @package MyURY_Core
  */
-CoreUtils::markNewsAsRead((int)$_REQUEST['newsentryid'], $member);
+MyURYNews::markNewsAsRead((int)$_REQUEST['newsentryid'], $member);
 require 'Views/MyURY/Core/nocontent.php';
