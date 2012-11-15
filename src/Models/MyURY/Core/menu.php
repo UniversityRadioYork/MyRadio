@@ -7,4 +7,4 @@
  */
 $menu = (new MyURYMenu())->getMenuForUser($member);
 
-$news = CoreUtils::getNewsItem(Config::$news_feed, $member);
+$news = MyURYNews::getNewsItem(Config::$news_feed, $member);
