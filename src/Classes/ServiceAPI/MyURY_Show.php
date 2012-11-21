@@ -239,6 +239,10 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     return $return;
   }
   
+  public function getCredits() {
+    return $this->credits;
+  }
+  
   public function toDataSource() {
     return array(
         'credits' => $this->getCreditsNames()

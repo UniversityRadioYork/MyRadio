@@ -447,5 +447,47 @@ EOT;
     
     date_default_timezone_set('Europe/London');
   }
+  
+  /**
+   * Deletes all future occurances of a Timeslot for this Season
+   */
+  public function cancelRestOfSeason() {
+    //Get a list of timeslots that will be cancelled and email the creditors
+    $timeslots = $this->getFutureTimeslots();
+    if (empty($timeslots)) return;
+    
+    $timeslot_str = "\r\n";
+    foreach ($timeslots as $timeslot) {
+      $timeslot_str .= CoreUtils::happyTime("{$timeslot['start_time']}\r\n");
+    }
+    
+    $email = 'Please note that your show, '.$this->getMeta('title').' has been cancelled for the rest of the current Season. This is the following timeslots: '.$timeslot_str;
+    $email .= "\r\n\r\nRegards\r\nURY Programming Team";
+    
+    foreach ($this->getShow()->getCredits() as $credit) {
+      $u = User::getInstance($credit);
+      MyURYEmail::sendEmail($u->getName() . ' <'.$u->getEmail().'>', 'Show Cancelled', $email);
+    }
+    
+    $r = (bool)self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_id=$1 AND start_time >= NOW()',
+            array($this->getID()));
+    
+    $m = new Memcached();
+    $m->addServer(Config::$django_cache_server, 11211);
+    $m->flush();
+    
+    return $r;
+  }
+  
+  /**
+   * Returns an array of Timeslots in the future for this Season as follows:
+   * show_season_timeslot_id
+   * start_time
+   * duration
+   */
+  public function getFutureTimeslots() {
+    return self::$db->fetch_all('SELECT show_season_timeslot_id, start_time, duration FROM schedule.show_season_timeslot
+      WHERE show_season_id=$1 AND start_time >= NOW()', array($this->getID()));
+  }
 
 }
