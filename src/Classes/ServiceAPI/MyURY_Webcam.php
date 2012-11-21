@@ -30,4 +30,20 @@ class MyURY_Webcam extends ServiceAPI {
     return $counter;
   }
   
+  /**
+   * Returns the available range of times for the Webcam Archives
+   */
+  public static function getArchiveTimeRange() {
+    $files = scandir(Config::$webcam_archive_path);
+    $earliest = time();
+    $latest = time();
+    foreach ($files as $file) {
+      //Files are stored in the format yyyymmddhh-cam.mpg, if it doesn't match that pattern, skip it
+      if (preg_match('/^[0-9]{10}\-[a-zA-Z0-9\-]+\.mpg$/', $subject) === false) continue;
+      //Get a nicer timestamp format PHP can work with
+      $str = preg_replace('/^([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2}).*$/', '$1-$2-$3 $4:00', $file);
+      echo $str;
+    }
+  }
+  
 }
