@@ -9,7 +9,7 @@ foreach ($demos as $demo) {
 }
 
 if (empty($tabledata)) {
-  $tabledata = array(array('There are currently no demo slots available.'));
+  $tabledata = array(array('Error' => 'There are currently no demo slots available.'));
 }
 
 //print_r($tabledata);
