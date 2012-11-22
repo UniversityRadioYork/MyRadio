@@ -7,6 +7,11 @@ foreach ($demos as $demo) {
   $demo['join'] = '<a href="'.CoreUtils::makeURL('Scheduler', 'attendDemo', array('demoid' => $demo['show_season_timeslot_id'])).'">Join</a>';
   $tabledata[] = $demo;
 }
+
+if (empty($tabledata)) {
+  $tabledata = array(array('There are currently no demo slots available.'));
+}
+
 //print_r($tabledata);
 $twig->setTemplate('table.twig')
         ->addVariable('title', 'Upcoming Demo Slots')

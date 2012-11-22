@@ -39,11 +39,14 @@ class MyURY_Webcam extends ServiceAPI {
     $latest = time();
     foreach ($files as $file) {
       //Files are stored in the format yyyymmddhh-cam.mpg, if it doesn't match that pattern, skip it
-      if (preg_match('/^[0-9]{10}\-[a-zA-Z0-9\-]+\.mpg$/', $subject) === false) continue;
+      if (!preg_match('/^[0-9]{10}\-[a-zA-Z0-9\-]+\.mpg$/', $file)) continue;
       //Get a nicer timestamp format PHP can work with
-      $str = preg_replace('/^([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2}).*$/', '$1-$2-$3 $4:00', $file);
-      echo $str;
+      $str = preg_replace('/^([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2}).*$/', '$1-$2-$3 $4:00:00', $file);
+      $time = strtotime($str);
+      if ($time < $earliest) $earliest = $time;
+      if ($time > $latest) $latest = $time;
     }
+    echo $earliest.'='.$latest;
   }
   
 }
