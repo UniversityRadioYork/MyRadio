@@ -132,7 +132,7 @@ class MyURYMenu {
    * @return Array An array that can be used by getSubMenuForUser() to build a submenu
    */
   private function getFullSubMenu($moduleid) {
-    $cache_key = 'MyURYMenu_Menu_' . $moduleid . '_Full';
+    $cache_key = 'MyURYMenu_Menu_' . $moduleid . '_' . $_SESSION['userid'] . '_Full';
     $items = $this->cache->get($cache_key);
     if ($items === false) {
       //It's not cached. Let's generate it now
