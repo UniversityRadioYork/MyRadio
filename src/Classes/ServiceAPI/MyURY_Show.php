@@ -7,7 +7,7 @@
 
 /*
  * The Show class is used to create, view and manupulate Shows within the new MyURY Scheduler Format
- * @version 12082012
+ * @version 19122012
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Scheduler
  * @uses \Database
@@ -25,16 +25,16 @@ class MyURY_Show extends MyURY_Scheduler_Common {
   private $show_type;
   private $submitted_time;
   private $season_ids;
-  
+
   public static function getInstance($show_id = null) {
     if (!is_numeric($show_id)) {
       throw new MyURYException('Invalid Show ID!', MyURYException::FATAL);
     }
-    
+
     if (!isset(self::$shows[$show_id])) {
       self::$shows[$show_id] = new self($show_id);
     }
-    
+
     return self::$shows[$show_id];
   }
 
@@ -85,7 +85,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
         $this->meta[$metadata_types[$i]] = $metadata[$i];
       }
     }
-    
+
     //Get information about Seasons
     $this->season_ids = self::$db->fetch_column('SELECT show_season_id
       FROM schedule.show_season WHERE show_id=$1', array($show_id));
@@ -162,10 +162,9 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     $tags = explode(' ', $params['tags']);
     foreach ($tags as $tag) {
       self::$db->query('INSERT INTO schedule.show_metadata
-              (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)',
-              array(self::getMetadataKey('tag'), $show_id, $tag, $_SESSION['memberid']), true);
+              (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)', array(self::getMetadataKey('tag'), $show_id, $tag, $_SESSION['memberid']), true);
     }
-    
+
     //Set a location
     if (!is_numeric($params['location'])) {
       /**
@@ -174,9 +173,8 @@ class MyURY_Show extends MyURY_Scheduler_Common {
       $params['location'] = 1;
     }
     self::$db->query('INSERT INTO schedule.show_location
-      (show_id, location_id, effective_from, memberid, approvedid) VALUES ($1, $2, NOW(), $3, $3)',
-            array(
-                $show_id, $params['location'], $_SESSION['memberid']
+      (show_id, location_id, effective_from, memberid, approvedid) VALUES ($1, $2, NOW(), $3, $3)', array(
+        $show_id, $params['location'], $_SESSION['memberid']
             ), true);
 
     //And now all that's left is who's on the show
@@ -184,10 +182,10 @@ class MyURY_Show extends MyURY_Scheduler_Common {
       self::$db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from,
               memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)', array($show_id, (int) $params['credittypes'][$i], $params['credits'][$i], $_SESSION['memberid']), true);
     }
-    
+
     //Actually commit the show to the database!
     self::$db->query('COMMIT');
-    
+
     return new self($show_id);
   }
 
@@ -198,37 +196,37 @@ class MyURY_Show extends MyURY_Scheduler_Common {
    * @return Array an array of Show objects attached to the given user
    */
   public static function getShowsAttachedToUser($memberid = null) {
-    if ($memberid === null) $memberid = $_SESSION['memberid'];
+    if ($memberid === null)
+      $memberid = $_SESSION['memberid'];
     self::initDB();
-    
+
     $r = self::$db->fetch_column('SELECT show_id FROM schedule.show WHERE memberid=$1 OR show_id IN
         (SELECT show_id FROM schedule.show_credit WHERE creditid=$1 AND effective_from <= NOW() AND
-          (effective_to >= NOW() OR effective_to IS NULL))',
-            array($memberid));
-    
+          (effective_to >= NOW() OR effective_to IS NULL))', array($memberid));
+
     $return = array();
     foreach ($r as $show_id) {
       $return[] = self::getInstance($show_id);
     }
     return $return;
   }
-  
+
   public function getMeta($meta_string) {
     return $this->meta[self::getMetadataKey($meta_string)];
   }
-  
+
   public function getNumberOfSeasons() {
     return sizeof($this->season_ids);
   }
-  
+
   public function getID() {
     return $this->show_id;
   }
-  
+
   public function getWebpage() {
-    return 'http://ury.org.uk/show/'.$this->getID();
+    return 'http://ury.org.uk/show/' . $this->getID();
   }
-  
+
   public function getCreditsNames() {
     $return = array();
     foreach ($this->credits as $credit) {
@@ -238,14 +236,52 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     }
     return $return;
   }
-  
+
   public function getCredits() {
     return $this->credits;
   }
-  
+
+  public static function getAllShows($show_type_id = 1) {
+    self::initDB();
+    self::initCache();
+    $key = 'scheduler_all_shows_list';
+    
+    $r = self::$cache->get($key);
+    if ($r !== false) return $r;
+    
+    $shows = array();
+    foreach (self::$db->fetch_column('SELECT show_id FROM schedule.show WHERE show_type_id=$1', array($show_type_id))
+    as $show) {
+      $shows[] = self::getInstance($show);
+    }
+    
+    self::$cache->set($key, $shows, 3600);
+
+    return $shows;
+  }
+
   public function toDataSource() {
     return array(
-        'credits' => $this->getCreditsNames()
+        'title' => $this->getMeta('title'),
+        //'credits' => implode(', ', $this->getCreditsNames()),
+        'seasons' => array(
+            'display' => 'text',
+            'value' => $this->getNumberOfSeasons(),
+            'title' => 'Click to see Seasons for this show',
+            'url' => CoreUtils::makeURL('Scheduler', 'listSeasons', array('showid' => $this->getID()))),
+        'editlink' => array(
+            'display' => 'icon',
+            'value' => 'script',
+            'title' => 'Edit Show',
+            'url' => CoreUtils::makeURL('Scheduler', 'editShow', array('showid' => $this->getID()))),
+        'applylink' => array('display' => 'icon',
+            'value' => 'calendar',
+            'title' => 'Apply for a new Season',
+            'url' => CoreUtils::makeURL('Scheduler', 'createSeason', array('showid' => $this->getID()))),
+        'micrositelink' => array('display' => 'icon',
+            'value' => 'extlink',
+            'title' => 'View Show Microsite',
+            'url' => $this->getWebpage())
     );
   }
 
