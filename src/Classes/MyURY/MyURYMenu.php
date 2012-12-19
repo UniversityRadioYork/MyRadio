@@ -133,8 +133,8 @@ class MyURYMenu {
    */
   private function getFullSubMenu($moduleid) {
     $cache_key = 'MyURYMenu_Menu_' . $moduleid . '_Full';
-    $menu = $this->cache->get($cache_key);
-    if ($menu === false) {
+    $items = $this->cache->get($cache_key);
+    if ($items === false) {
       //It's not cached. Let's generate it now
       $db = Database::getInstance();
 
