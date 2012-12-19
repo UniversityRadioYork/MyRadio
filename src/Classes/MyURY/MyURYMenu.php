@@ -130,10 +130,11 @@ class MyURYMenu {
    * Gets all items for a module's submenu and puts them in an array.
    * @param int $moduleid The id of the module to get items for
    * @return Array An array that can be used by getSubMenuForUser() to build a submenu
+   * @todo Caching here breaks submenus
    */
   private function getFullSubMenu($moduleid) {
     $cache_key = 'MyURYMenu_Menu_' . $moduleid . '_' . $_SESSION['userid'] . '_Full';
-    $items = $this->cache->get($cache_key);
+    $items = false;//$this->cache->get($cache_key);
     if ($items === false) {
       //It's not cached. Let's generate it now
       $db = Database::getInstance();
