@@ -125,7 +125,7 @@ class MyURY_Scheduler extends MyURY_Scheduler_Common {
     return self::$db->fetch_all('SELECT schedule.show.show_id, metadata_value AS title
       FROM schedule.show, schedule.show_metadata
       WHERE schedule.show.show_id = schedule.show_metadata.show_id
-      AND metadata_key_id IN (SELECT metadata_key_id FROM schedule.metadata_key WHERE name=\'title\')
+      AND metadata_key_id IN (SELECT metadata_key_id FROM public.metadata_key WHERE name=\'title\')
       AND metadata_value ILIKE \'%\' || $1 || \'%\' LIMIT $2', array($term, $limit));
   }
 }
