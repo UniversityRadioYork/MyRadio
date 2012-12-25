@@ -36,10 +36,6 @@ class MyURYNews {
       AND revoked=false
       ORDER BY timestamp DESC LIMIT 1', array($newsfeedid));
     
-    if (!empty($user)) {
-      self::markNewsAsRead($news['newsentryid'], $user);
-    }
-    
     return array_merge($news,
             array('seen' => $db->fetch_one('SELECT seen FROM public.member_news_feed
               WHERE newsentryid=$1 AND memberid=$2 LIMIT 1', array($news['newsentryid'], empty($user) ? 0 : $user->getID())),
