@@ -16,7 +16,7 @@ $('.twig-datatable').dataTable({
   },
   //seasons
   {
-    "sTitle": "# Seasons"
+    "sTitle": "Seasons"
   },
   //editlink
   {
@@ -31,7 +31,7 @@ $('.twig-datatable').dataTable({
   //micrositelink
   {
     "sTitle": "View Microsite",
-    "bSortable": false
+    "bVisible": false
   },
   //id
   {
