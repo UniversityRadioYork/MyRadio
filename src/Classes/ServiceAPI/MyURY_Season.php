@@ -93,11 +93,11 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     $requested_days = self::$db->decodeArray($result['requested_days']);
     $requested_start_times = self::$db->decodeArray($result['requested_start_times']);
     $requested_durations = self::$db->decodeArray($result['requested_durations']);
-    
+
     for ($i = 0; $i < sizeof($requested_days); $i++) {
       $this->requested_times[] = array(
           'day' => (int) $requested_days[$i],
-          'start_time' => (int)$requested_start_times[$i],
+          'start_time' => (int) $requested_start_times[$i],
           'duration' => self::$db->intervalToTime($requested_durations[$i])
       );
     }
@@ -155,7 +155,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     //Right, let's start by getting a Season ID created for this entry
     $season_create_result = self::$db->fetch_column('INSERT INTO schedule.show_season (show_id, termid, submitted, memberid)
       VALUES ($1, $2, $3, $4) RETURNING show_season_id', array($params['show_id'], $term_id, CoreUtils::getTimestamp(), User::getInstance()->getID()), true);
-    
+
     $season_id = $season_create_result[0];
 
     //Now let's allocate store the requested weeks for a term
@@ -174,7 +174,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
       if ($params['stime'][$i] < $params['etime'][$i]) {
         $interval = CoreUtils::makeInterval($params['stime'][$i], $params['etime'][$i]);
       } else {
-        $interval = CoreUtils::makeInterval($params['stime'][$i], $params['etime'][$i]+86400);
+        $interval = CoreUtils::makeInterval($params['stime'][$i], $params['etime'][$i] + 86400);
       }
 
       //Enter the data
@@ -278,16 +278,19 @@ class MyURY_Season extends MyURY_Scheduler_Common {
            * @todo - figure out why this loop includes 0 and 11 sometimes
            * @todo Work on weeks text output - duplicates/overlaps
            */
-          if ($k > 10 || $k < 1) continue;
+          if ($k > 10 || $k < 1)
+            continue;
           $sids[$v]++;
           //Work out blocked weeks
           if ($k == ++$week_num) {
             //Continuation of previous sequence
             $week_num = $k;
-            if ($k == 10) $weeks .= '-10';
+            if ($k == 10)
+              $weeks .= '-10';
           } else {
             //New sequence
-            if ($week_num > 0) $weeks .= '-' . $week_num . ', ';
+            if ($week_num > 0)
+              $weeks .= '-' . $week_num . ', ';
             $weeks .= $k;
             $week_num = $k;
           }
@@ -295,7 +298,8 @@ class MyURY_Season extends MyURY_Scheduler_Common {
         //Iterate over every conflicted show and log
         foreach ($sids as $k => $v) {
           //Get the show name and store it
-          if ($names !== '') $names .= ', ';
+          if ($names !== '')
+            $names .= ', ';
           $names .= self::getInstance($k)->getMeta('title');
         }
         $return[] = array('time' => self::formatTimeHuman($time), 'conflict' => true, 'info' => 'Conflicts with ' . $names . $weeks);
@@ -314,23 +318,23 @@ class MyURY_Season extends MyURY_Scheduler_Common {
   public function toDataSource() {
     return array_merge($this->getShow()->toDataSource(), array(
                 'id' => $this->getID(),
-                'name' => $this->getMeta('title'),
+                'title' => $this->getMeta('title'),
+                'description' => $this->getMeta('description'),
                 'submitted' => $this->getSubmittedTime(),
                 'requested_time' => $this->getRequestedTimes()[0],
-                'description' => $this->getMeta('description'),
-                'editlink' => array(
-                    'display' => 'text',
-                    'url' => CoreUtils::makeURL('Scheduler', 'allocate', array('show_season_id' => $this->getID())),
-                    'value' => 'Edit/Allocate'
-                ),
+                'allocatelink' => array(
+                    'display' => 'icon',
+                    'value' => 'script',
+                    'title' => 'Edit Application or Allocate Season',
+                    'url' => CoreUtils::makeURL('Scheduler', 'allocate', array('show_season_id' => $this->getID()))),
                 'rejectlink' => array(
-                    'display' => 'text',
-                    'url' => CoreUtils::makeURL('Scheduler', 'reject', array('show_season_id' => $this->getID())),
-                    'value' => 'Reject'
-                )
+                    'display' => 'icon',
+                    'value' => 'trash',
+                    'title' => 'Reject Application',
+                    'url' => CoreUtils::makeURL('Scheduler', 'reject', array('show_season_id' => $this->getID())))
             ));
   }
-  
+
   /**
    * This is where some of the most important MyURY stuff happens.
    * This is where an application for a presenter's dreams become reality...
@@ -376,9 +380,12 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     } else {
       //Use a custom value
       //If etime is before stime, it's probably spanning midnight so make it the 2nd
-      if ($params['timecustom_etime'] < $params['timecustom_stime']) $edate = '1970-01-02'; else $edate = '1970-01-01';
-      $dur = strtotime($edate. ' ' .$params['timecustom_etime']) - strtotime('1970-01-01 '.$params['timecustom_stime']);
-      if ($dur <= 0) throw new MyURYException('A show has to last at least a second!', MyURYException::FATAL);
+      if ($params['timecustom_etime'] < $params['timecustom_stime'])
+        $edate = '1970-01-02'; else
+        $edate = '1970-01-01';
+      $dur = strtotime($edate . ' ' . $params['timecustom_etime']) - strtotime('1970-01-01 ' . $params['timecustom_stime']);
+      if ($dur <= 0)
+        throw new MyURYException('A show has to last at least a second!', MyURYException::FATAL);
       $req_time = array(
           'day' => $params['timecustom_day'],
           'start_time' => $params['timecustom_stime'],
@@ -389,10 +396,10 @@ class MyURY_Season extends MyURY_Scheduler_Common {
      * Since terms start on the Monday, we just +1 day to it
      */
     $start_day = MyURY_Scheduler::getTermStartDate(
-            self::getActiveApplicationTerm())+($req_time['day']*86400);
-    
+                    self::getActiveApplicationTerm()) + ($req_time['day'] * 86400);
+
     $start_time = date('H:i:s', $req_time['start_time']);
-    
+
     //Now it's time to BEGIN to COMMIT!
     self::$db->query('BEGIN');
     /**
@@ -401,21 +408,21 @@ class MyURY_Season extends MyURY_Scheduler_Common {
      */
     $times = '';
     for ($i = 1; $i <= 10; $i++) {
-      if (isset($params['weeks']['wk'.$i]) && $params['weeks']['wk'.$i] == 1) {
-        $show_time = date('d-m-Y ',$start_day+(($i-1)*7*86400)).$start_time;
-        echo $show_time.'<br>';
+      if (isset($params['weeks']['wk' . $i]) && $params['weeks']['wk' . $i] == 1) {
+        $show_time = date('d-m-Y ', $start_day + (($i - 1) * 7 * 86400)) . $start_time;
+        echo $show_time . '<br>';
         //This week is due to be scheduled! QUERY! QUERY!
         self::$db->query('INSERT INTO schedule.show_season_timeslot
           (show_season_id, start_time, duration, memberid, approvedid)
           VALUES ($1, $2, $3, $4, $5)
           ', array(
-             $this->season_id,
-              $show_time,
-              $req_time['duration'],
-              $this->owner->getID(),
-              $_SESSION['memberid']
-          ), true);
-        $times .= $show_time."\r\n";
+            $this->season_id,
+            $show_time,
+            $req_time['duration'],
+            $this->owner->getID(),
+            $_SESSION['memberid']
+                ), true);
+        $times .= $show_time . "\r\n";
       }
     }
     //COMMIT
@@ -434,8 +441,9 @@ $times
 
   ~ URY Scheduling Wizard
 EOT;
-    if (!empty($times)) MyURYEmail::sendEmail($this->owner->getEmail(), $this->getMeta('title') . ' Scheduled', $message);
-    
+    if (!empty($times))
+      MyURYEmail::sendEmail($this->owner->getEmail(), $this->getMeta('title') . ' Scheduled', $message);
+
     /**
      * Flush Memcached - there will be stale schedule entries for the website
      * This is for Django as the MyURY Cache system is currently APCProvider
@@ -444,41 +452,41 @@ EOT;
     $m = new Memcached();
     $m->addServer(Config::$django_cache_server, 11211);
     $m->flush();
-    
+
     date_default_timezone_set('Europe/London');
   }
-  
+
   /**
    * Deletes all future occurances of a Timeslot for this Season
    */
   public function cancelRestOfSeason() {
     //Get a list of timeslots that will be cancelled and email the creditors
     $timeslots = $this->getFutureTimeslots();
-    if (empty($timeslots)) return;
-    
+    if (empty($timeslots))
+      return;
+
     $timeslot_str = "\r\n";
     foreach ($timeslots as $timeslot) {
       $timeslot_str .= CoreUtils::happyTime("{$timeslot['start_time']}\r\n");
     }
-    
-    $email = 'Please note that your show, '.$this->getMeta('title').' has been cancelled for the rest of the current Season. This is the following timeslots: '.$timeslot_str;
+
+    $email = 'Please note that your show, ' . $this->getMeta('title') . ' has been cancelled for the rest of the current Season. This is the following timeslots: ' . $timeslot_str;
     $email .= "\r\n\r\nRegards\r\nURY Programming Team";
-    
+
     foreach ($this->getShow()->getCredits() as $credit) {
       $u = User::getInstance($credit);
-      MyURYEmail::sendEmail($u->getName() . ' <'.$u->getEmail().'>', 'Show Cancelled', $email);
+      MyURYEmail::sendEmail($u->getName() . ' <' . $u->getEmail() . '>', 'Show Cancelled', $email);
     }
-    
-    $r = (bool)self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_id=$1 AND start_time >= NOW()',
-            array($this->getID()));
-    
+
+    $r = (bool) self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_id=$1 AND start_time >= NOW()', array($this->getID()));
+
     $m = new Memcached();
     $m->addServer(Config::$django_cache_server, 11211);
     $m->flush();
-    
+
     return $r;
   }
-  
+
   /**
    * Returns an array of Timeslots in the future for this Season as follows:
    * show_season_timeslot_id
