@@ -10,7 +10,8 @@ $('.twig-datatable').dataTable({
   },
   //description
   {
-    "sTitle" : "Description"
+    "sTitle" : "Description",
+    "bVisible": false
   },
   //seasons
   {
