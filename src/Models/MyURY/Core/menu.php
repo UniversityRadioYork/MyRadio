@@ -8,3 +8,4 @@
 $menu = (new MyURYMenu())->getMenuForUser($member);
 
 $news = MyURYNews::getNewsItem(Config::$news_feed, $member);
+if (!$news['seen']) MyURYNews::markNewsAsRead($news['newsentryid'], $member);
