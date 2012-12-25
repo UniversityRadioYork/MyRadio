@@ -52,9 +52,6 @@ $('.twig-datatable').dataTable({
   }
   ],
   "bJQueryUI": true,
-  "bPaginate": false,
-  "oColReorder": {
-    "aiOrder": [0 , 4, 3, 2, 1]
-  }
+  "bPaginate": false
 }
 );
