@@ -20,8 +20,8 @@ $('.twig-datatable').dataTable({
   },
   //editlink
   {
-    "sTitle": "Allocate",
-    "bSortable": false
+    "sTitle": "Edit",
+    "bVisible": false
   },
   //applylink
   {
@@ -44,6 +44,11 @@ $('.twig-datatable').dataTable({
   //requestedtime
   {
     "sTitle": "Requested Time"
+  },
+  //allocatelink
+  {
+    "sTitle": "Allocate",
+    "bSortable": false
   },
   //rejectlink
   {
