@@ -5,6 +5,15 @@ $('.twig-datatable').dataTable({
     "sTitle": "Title",
     "sClass": "left"
   },
+  //credits
+  {
+    "sTitle": "Credits"
+  },
+  //description
+  {
+    "sTitle" : "",
+    "bVisible": false
+  },
   //seasons
   {
     "sTitle": "# Seasons"
@@ -35,11 +44,6 @@ $('.twig-datatable').dataTable({
   //requestedtime
   {
     "sTitle": "Requested Time"
-  },
-  //description
-  {
-    "sTitle" : "",
-    "bVisible": false
   },
   //rejectlink
   {
