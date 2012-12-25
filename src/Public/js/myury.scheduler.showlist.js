@@ -4,6 +4,14 @@ $('.twig-datatable').dataTable({
   {
     "sTitle" : "Title"
   },
+  //credits
+  {
+    "sTitle" : "Credits"
+  },
+  //description
+  {
+    "sTitle" : "Description"
+  },
   //seasons
   {
     "sTitle": "Seasons"
