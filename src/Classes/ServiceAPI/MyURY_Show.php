@@ -224,14 +224,23 @@ class MyURY_Show extends MyURY_Scheduler_Common {
   }
 
   public function getWebpage() {
-    return 'http://ury.org.uk/show/' . $this->getID();
+    return 'http://ury.org.uk/schedule/shows/' . $this->getID();
   }
 
-  public function getCreditsNames() {
+  /**
+   * Returns an Array of Arrays containing Credit names and roles, or just name.
+   * @param boolean $types If true return an array with the role as well. Otherwise just return the credit.
+   * @return type
+   */
+  public function getCreditsNames($types = true) {
     $return = array();
     foreach ($this->credits as $credit) {
-      $credit['name'] = User::getInstance($credit['memberid'])->getName();
-      $credit['type_name'] = self::getCreditName($credit['type']);
+      if ($types) {
+        $credit['name'] = User::getInstance($credit['memberid'])->getName();
+        $credit['type_name'] = self::getCreditName($credit['type']);
+      } else {
+        $credit = User::getInstance($credit['memberid'])->getName();
+      }
       $return[] = $credit;
     }
     return $return;
@@ -241,6 +250,10 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     return $this->credits;
   }
 
+  /**
+   * @todo Document this method
+   * @todo Ajax the All Shows page - this isn't a particularly nice query
+   */
   public static function getAllShows($show_type_id = 1) {
     self::initDB();
     self::initCache();
@@ -263,7 +276,8 @@ class MyURY_Show extends MyURY_Scheduler_Common {
   public function toDataSource() {
     return array(
         'title' => $this->getMeta('title'),
-        //'credits' => implode(', ', $this->getCreditsNames()),
+        'credits' => implode(', ', $this->getCreditsNames(false)),
+        'description' => $this->getMeta('description'),
         'seasons' => array(
             'display' => 'text',
             'value' => $this->getNumberOfSeasons(),
