@@ -1,19 +1,32 @@
 $('.twig-datatable').dataTable({
   "aoColumns": [
-  //credits
-  {
-    "sTitle" : "",
-    "bVisible": false
-  },
-  //entryid
-  {
-    "sTitle" : "",
-    "bVisible": false
-  },
-  //summary
+  //title
   {
     "sTitle": "Title",
     "sClass": "left"
+  },
+  //seasons
+  {
+    "sTitle": "# Seasons"
+  },
+  //editlink
+  {
+    "sTitle": "Allocate",
+    "bSortable": false
+  },
+  //applylink
+  {
+    "sTitle": "New Season",
+    "bVisible": false
+  },
+  //micrositelink
+  {
+    "sTitle": "View Microsite",
+    "bSortable": false
+  },
+  //id
+  {
+    "bVisible": false
   },
   //createddate
   {
@@ -28,11 +41,6 @@ $('.twig-datatable').dataTable({
     "sTitle" : "",
     "bVisible": false
   },
-  //editlink
-  {
-    "sTitle": "Allocate",
-    "bSortable": false
-  },
   //rejectlink
   {
     "sTitle": "Reject",
@@ -40,6 +48,9 @@ $('.twig-datatable').dataTable({
   }
   ],
   "bJQueryUI": true,
-  "bPaginate": false
+  "bPaginate": false,
+  "oColReorder": {
+    "aiOrder": [0 , 4, 3, 2, 1]
+  }
 }
 );
