@@ -72,6 +72,7 @@ class MyURYError {
    * @param string $errline The line number where the error was generated (within the file identified by $errfile).
    */
   public static function errorsToArray($errno, $errstr, $errfile, $errline) {
+    if ($errno === E_STRICT) return;
     $error_name = self::getErrorName($errno);
     $php_error = array(
         'name' => $error_name, 
