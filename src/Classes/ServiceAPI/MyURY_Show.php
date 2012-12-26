@@ -218,6 +218,14 @@ class MyURY_Show extends MyURY_Scheduler_Common {
   public function getNumberOfSeasons() {
     return sizeof($this->season_ids);
   }
+  
+  public function getAllSeasons() {
+    $seasons = array();
+    foreach ($this->season_ids as $season_id) {
+      $seasons[] = MyURY_Season::getInstance($season_id);
+    }
+    return $seasons;
+  }
 
   public function getID() {
     return $this->show_id;

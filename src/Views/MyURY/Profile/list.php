@@ -18,6 +18,6 @@ foreach ($members as $k => $v) {
 
 $twig->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.profile.list')
-        ->addVariable('heading', 'Members List')
+        ->addVariable('title', 'Members List')
         ->addVariable('tabledata', $members)
         ->render();

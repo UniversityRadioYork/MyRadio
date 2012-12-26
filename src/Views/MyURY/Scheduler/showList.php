@@ -3,7 +3,7 @@
 require 'Views/MyURY/Scheduler/bootstrap.php';
 
 $twig->setTemplate('MyURY/Scheduler/showList.twig')
-        ->addVariable('heading', 'My Shows')
+        ->addVariable('title', 'All Shows')
         ->addVariable('tabledata', ServiceAPI::setToDataSource($shows))
         ->addVariable('tablescript', 'myury.scheduler.showlist');
 if (isset($_REQUEST['msg'])) {
