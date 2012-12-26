@@ -10,7 +10,7 @@ require 'Views/MyURY/Profile/bootstrap.php';
 
 $twig->setTemplate('MyURY/Profile/user.twig')
         ->addVariable('title', 'View Member')
-        ->addVariable('heading', 'View Profile')
+        ->addVariable('title', 'View Profile')
         ->addVariable('user', $userData)
         // @todo User.php class needs more to give twig more.
         ->render();

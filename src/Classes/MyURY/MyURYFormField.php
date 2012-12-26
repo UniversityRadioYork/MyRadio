@@ -193,6 +193,7 @@ class MyURYFormField {
    * 
    * The Custom Options field for this MyURYFormField field type is an Array of MyURYFormFields of any singular type.
    * This means that CHECKGRP, SECTION and other similar field types are not supported by this MyURYFormField Type
+   * and may have... interesting... results.
    */
   const TYPE_TABULARSET = 0x11;
 
@@ -287,7 +288,7 @@ class MyURYFormField {
    *   options: An array of additional settings that are specific to the field type (default empty)<br>
    *   value: The default value of the field when it is rendered (default none)<br>
    *   enabled: Whether the field is enabled when the page is loaded (default true)<br>
-   *   repeating: Whether the MyURYFormField is self-repeatable i.e. can have mutliple values
+   *   repeating: Whether the MyURYFormField is self-repeatable i.e. can have mutliple values. DEPRECATED.
    * @throws MyURYException If an attempt is made to set an $options value other than those listed above
    */
   public function __construct($name, $type, $options = array()) {
