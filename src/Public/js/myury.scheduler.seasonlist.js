@@ -44,21 +44,25 @@ $('.twig-datatable').dataTable({
   },
   //createddate
   {
-    "sTitle": "Submitted"
+    "sTitle": "Submitted",
+    "bVisible": false
   },
   //requestedtime
   {
-    "sTitle": "Requested Time"
+    "sTitle": "Requested Time",
+    "bVisible": false
   },
   //allocatelink
   {
     "sTitle": "Allocate",
-    "bSortable": false
+    "bSortable": false,
+    "bVisible": false
   },
   //rejectlink
   {
     "sTitle": "Reject",
-    "bSortable": false
+    "bSortable": false,
+    "bVisible": false
   }
   ],
   "bJQueryUI": true,
