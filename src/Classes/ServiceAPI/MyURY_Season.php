@@ -27,6 +27,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
   private $timeslots;
   private $requested_times;
   private $requested_weeks;
+  private $season_num;
 
   public static function getInstance($season_id = null) {
     if (!is_numeric($season_id)) {
@@ -59,7 +60,10 @@ class MyURY_Season extends MyURY_Scheduler_Common {
         ORDER BY preference ASC)) AS requested_durations,
       (SELECT array(SELECT show_season_timeslot_id FROM schedule.show_season_timeslot WHERE show_season_id=$1
         ORDER BY start_time ASC)) AS timeslots,
-      (SELECT array(SELECT week FROM schedule.show_season_requested_week WHERE show_season_id=$1)) AS requested_weeks
+      (SELECT array(SELECT week FROM schedule.show_season_requested_week WHERE show_season_id=$1)) AS requested_weeks,
+      (SELECT COUNT(*) FROM schedule.show_season
+        WHERE show_id=(SELECT show_id FROM schedule.show_season WHERE show_season_id=$1) AND show_season_id<=$1
+          AND show_season_id IN (SELECT show_season_id FROM schedule.show_season_timeslot)) AS season_num
       FROM schedule.show_season WHERE show_season_id=$1', array($season_id));
     if (empty($result)) {
       //Invalid Season
@@ -71,6 +75,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     $this->show_id = (int) $result['show_id'];
     $this->submitted = strtotime($result['submitted']);
     $this->term_id = (int) $result['termid'];
+    $this->season_num = (int) $result['season_num'];
 
     $metadata_types = self::$db->decodeArray($result['metadata_types']);
     $metadata = self::$db->decodeArray($result['metadata']);
@@ -103,10 +108,10 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     }
 
     //And now initiate timeslots
-    $timeslots = self::$db->decodeArray($result['timeslots']);
+    /*$timeslots = self::$db->decodeArray($result['timeslots']);
     foreach ($timeslots as $timeslot) {
-      //$this->timeslots[] = MyURYTimeslot::getInstance($timeslot);
-    }
+      $this->timeslots[] = MyURYTimeslot::getInstance($timeslot);
+    }*/
   }
 
   /**
@@ -314,10 +319,20 @@ class MyURY_Season extends MyURY_Scheduler_Common {
   public function getRequestedWeeks() {
     return $this->requested_weeks;
   }
+  
+  /**
+   * Get the Season number - for the first season of a show, this is 1, for the second it's 2 etc.
+   * Seasons that don't have any timeslots scheduled do not count toward this value.
+   * @return int
+   */
+  public function getSeasonNumber() {
+    return $this->season_num;
+  }
 
   public function toDataSource() {
     return array_merge($this->getShow()->toDataSource(), array(
                 'id' => $this->getID(),
+                'season_num' => $this->getSeasonNumber(),
                 'title' => $this->getMeta('title'),
                 'description' => $this->getMeta('description'),
                 'submitted' => $this->getSubmittedTime(),
