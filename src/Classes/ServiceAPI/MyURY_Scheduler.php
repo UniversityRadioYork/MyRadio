@@ -83,6 +83,7 @@ class MyURY_Scheduler extends MyURY_Scheduler_Common {
   
   public static function getActiveApplicationTermInfo() {
     $termid = self::getActiveApplicationTerm();
+    if (empty($termid)) return null;
     return array('termid' => $termid, 'descr' => self::getTermDescr($termid));
   }
   
