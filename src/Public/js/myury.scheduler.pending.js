@@ -39,7 +39,8 @@ $('.twig-datatable').dataTable({
   },
   //season_num
   {
-    "sTitle": "Season #"
+    "sTitle": "Season #",
+    "bVisible": false
   },
   //createddate
   {
@@ -51,11 +52,13 @@ $('.twig-datatable').dataTable({
   },
   //firsttime
   {
-    "sTitle": "First Episode"
+    "sTitle": "First Episode",
+    "bVisible": false
   },
   //numepisodes
   {
-    "sTitle": "# of Episodes"
+    "sTitle": "# of Episodes",
+    "bVisible": false
   },
   //allocatelink
   {
