@@ -52,6 +52,14 @@ $('.twig-datatable').dataTable({
     "sTitle": "Requested Time",
     "bVisible": false
   },
+  //firsttime
+  {
+    "sTitle": "First Episode"
+  },
+  //numepisodes
+  {
+    "sTitle": "# of Episodes"
+  },
   //allocatelink
   {
     "sTitle": "Allocate",
