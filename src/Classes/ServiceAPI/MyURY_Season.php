@@ -108,10 +108,10 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     }
 
     //And now initiate timeslots
-    /*$timeslots = self::$db->decodeArray($result['timeslots']);
+    $timeslots = self::$db->decodeArray($result['timeslots']);
     foreach ($timeslots as $timeslot) {
-      $this->timeslots[] = MyURYTimeslot::getInstance($timeslot);
-    }*/
+      $this->timeslots[] = MyURY_Timeslot::getInstance($timeslot);
+    }
   }
 
   /**
@@ -337,6 +337,8 @@ class MyURY_Season extends MyURY_Scheduler_Common {
                 'description' => $this->getMeta('description'),
                 'submitted' => $this->getSubmittedTime(),
                 'requested_time' => $this->getRequestedTimes()[0],
+                'first_time' => (is_object($this->timeslots[0]) ? CoreUtils::happyTime($this->timeslots[0]->getStartTime()) : 'Not Scheduled'),
+                'num_episodes' => sizeof($this->timeslots),
                 'allocatelink' => array(
                     'display' => 'icon',
                     'value' => 'script',
