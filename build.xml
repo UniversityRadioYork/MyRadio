@@ -1,5 +1,4 @@
 <?xml version="1.0"  encoding="UTF-8" ?>
-/usr/local/share/pear/data/phing/etc/phing-grammar.rng
 <?xml-model href="/usr/local/share/pear/data/phing/etc/phing-grammar.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0" ?>
 <project name="MyURY" basedir="." default="rebuild">
     <property file="./build.properties" />
