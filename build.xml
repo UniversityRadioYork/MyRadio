@@ -1,10 +1,11 @@
 <?xml version="1.0"  encoding="UTF-8" ?>
-
-<project name="MyURY" basedir="." default="all">
+/usr/local/share/pear/data/phing/etc/phing-grammar.rng
+<?xml-model href="/usr/local/share/pear/data/phing/etc/phing-grammar.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0" ?>
+<project name="MyURY" basedir="." default="rebuild">
     <property file="./build.properties" />
 
     <property name="package"  value="${phing.project.name}" override="true" />
-    <property name="builddir" value="${project.basedir}/build/" override="true" />
+    <property name="builddir" value="${project.basedir}/build" override="true" />
     <property name="srcdir"   value="${project.basedir}/src" override="true" />
 
     <!-- Fileset for all files -->
@@ -15,12 +16,17 @@
     <!-- ============================================  -->
     <!-- (DEFAULT) Target: main                        -->
     <!-- ============================================  -->
-    <target name="copyfiles" description="Copies files from src to build">
+    <target name="main" description="main target">
         <copy todir="${builddir}">
             <fileset refid="allfiles" />
         </copy>
     </target>
 
-    <target name="all" depends="copyfiles">
+    <!-- ============================================  -->
+    <!-- Target: Rebuild                               -->
+    <!-- ============================================  -->
+    <target name="rebuild" description="rebuilds this package">
+        <delete dir="${builddir}" />
+        <phingcall target="main" />
     </target>
 </project>
