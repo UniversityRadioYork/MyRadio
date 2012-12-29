@@ -16,7 +16,7 @@
   </fileset>
   
   <!-- Fileset for all non-Test PHP files -->
-  <fileset dir="${srcdir}" id="allfiles">
+  <fileset dir="${srcdir}" id="coveragefiles">
     <include name="**.php" />
     <exclude name="**Test.php" />
   </fileset>
@@ -50,10 +50,7 @@
     <mkdir dir="${reportdir}" />
     
     <coverage-setup database="${reportdir}/coveragedb">
-      <fileset dir="${srcdir}">
-        <include name="**.php"/>
-        <exclude name="**Test.php"/>
-      </fileset>
+      <fileset refid="coveragefiles" />
     </coverage-setup>
     
     <phpunit codecoverage="true">
@@ -65,9 +62,9 @@
     </phpunit>
     
     <phpunitreport infile="${reportdir}/phpunit.xml" styledir="${phingdir}" format="frames" todir="${reportdir}" />
-    <coverage-report outfile="coverage-report/coverage.xml">
-      <report styledir="/usr/lib/php/data/phing/etc"
-              todir="coverage-report"/>
+    <coverage-report outfile="${reportdir}/coverage.xml">
+      <report styledir="${phingdir}"
+              todir="${reportdir}"/>
     </coverage-report>
   </target>
 </project>
