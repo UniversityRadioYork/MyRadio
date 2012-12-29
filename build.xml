@@ -7,22 +7,22 @@
   <property name="builddir" value="${project.basedir}/build" override="true" />
   <property name="reportdir" value="${project.basedir}/reports" override="true" />
   <property name="srcdir"   value="${project.basedir}/src" override="true" />
+  <property name="testdir"   value="${project.basedir}/tests" override="true" />
   <property name="phingdir" value="/usr/local/share/pear/data/phing/etc" override="true" />
 
   <!-- Fileset for all files to put as build artefacts -->
   <fileset dir="${srcdir}" id="allfiles">
     <include name="**" />
-    <exclude name="${srcdir}/Tests/*" />
   </fileset>
   
-  <!-- Fileset for all non-Test PHP files -->
+  <!-- Fileset for coverage test -->
   <fileset dir="${srcdir}/Classes" id="coveragefiles">
     <include name="*.php" />
     <include name="**/*.php" />
   </fileset>
     
   <!-- Fileset for Unit Test files -->
-  <fileset dir="${srcdir}/Tests" id="testfiles">
+  <fileset dir="${testdir}" id="testfiles">
     <include name="*Test.php" />
   </fileset>
 
