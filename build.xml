@@ -53,7 +53,7 @@
       <fileset refid="coveragefiles" />
     </coverage-setup>
     
-    <phpunit codecoverage="true">
+    <phpunit>
       <batchtest>
         <fileset refid="testfiles" />
       </batchtest>
