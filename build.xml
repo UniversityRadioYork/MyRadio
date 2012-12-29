@@ -54,9 +54,11 @@
     </coverage-setup>
     
     <phpunit codecoverage="true">
-      <fileset dir="${srcdir}/Tests">
-        <include name="*Test.php" />
-      </fileset>
+      <batchtest>
+        <fileset dir="${srcdir}/Tests" id="testfiles">
+          <include name="*Test.php" />
+        </fileset>
+      </batchtest>
       
       <formatter type="xml" todir="${reportdir}" outfile="phpunit.xml" />/
     </phpunit>
