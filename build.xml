@@ -12,7 +12,7 @@
   <!-- Fileset for all files to put as build artefacts -->
   <fileset dir="${srcdir}" id="allfiles">
     <include name="**" />
-    <exclude name="**Test.php" />
+    <exclude name="${srcdir}/Tests/*" />
   </fileset>
   
   <!-- Fileset for all non-Test PHP files -->
@@ -23,7 +23,7 @@
     
   <!-- Fileset for Unit Test files -->
   <fileset dir="${srcdir}" id="testfiles">
-    <include name="**Test.php" />
+    <include name="${srcdir}/Tests/*Test.php" />
   </fileset>
 
   <!-- ============================================  -->
