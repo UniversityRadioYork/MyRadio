@@ -17,7 +17,7 @@
   
   <!-- Fileset for all non-Test PHP files -->
   <fileset dir="${srcdir}/Classes" id="coveragefiles">
-    <include name="*.php" />
+    <include name="**.php" />
   </fileset>
     
   <!-- Fileset for Unit Test files -->
