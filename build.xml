@@ -18,7 +18,7 @@
   <!-- Fileset for all non-Test PHP files -->
   <fileset dir="${srcdir}" id="coveragefiles">
     <include name="**.php" />
-    <exclude name="**Test.php" />
+    <exclude name="${srcdir}/Tests/*" />
   </fileset>
     
   <!-- Fileset for Unit Test files -->
