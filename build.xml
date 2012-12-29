@@ -1,31 +1,73 @@
 <?xml version="1.0"  encoding="UTF-8" ?>
 <?xml-model href="/usr/local/share/pear/data/phing/etc/phing-grammar.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0" ?>
-<project name="MyURY" basedir="." default="rebuild">
-    <property file="./build.properties" />
+<project name="MyURY" basedir="." default="clean main">
+  <property file="./build.properties" />
 
-    <property name="package"  value="${phing.project.name}" override="true" />
-    <property name="builddir" value="${project.basedir}/build" override="true" />
-    <property name="srcdir"   value="${project.basedir}/src" override="true" />
+  <property name="package"  value="${phing.project.name}" override="true" />
+  <property name="builddir" value="${project.basedir}/build" override="true" />
+  <property name="reportdir" value="${project.basedir}/reports" override="true" />
+  <property name="srcdir"   value="${project.basedir}/src" override="true" />
+  <property name="phingdir" value="/usr/local/share/pear/data/phing/etc" override="true" />
 
-    <!-- Fileset for all files -->
-    <fileset dir="${srcdir}" id="allfiles">
-        <include name="**" />
-    </fileset>
+  <!-- Fileset for all files to put as build artefacts -->
+  <fileset dir="${srcdir}" id="allfiles">
+    <include name="**" />
+    <exclude name="**Test.php" />
+  </fileset>
+  
+  <!-- Fileset for all non-Test PHP files -->
+  <fileset dir="${srcdir}" id="allfiles">
+    <include name="**.php" />
+    <exclude name="**Test.php" />
+  </fileset>
+    
+  <!-- Fileset for Unit Test files -->
+  <fileset dir="${srcdir}" id="testfiles">
+    <include name="**Test.php" />
+  </fileset>
 
-    <!-- ============================================  -->
-    <!-- (DEFAULT) Target: main                        -->
-    <!-- ============================================  -->
-    <target name="main" description="main target">
-        <copy todir="${builddir}">
-            <fileset refid="allfiles" />
-        </copy>
-    </target>
+  <!-- ============================================  -->
+  <!-- Target: main                                  -->
+  <!-- ============================================  -->
+  <target name="main" description="main target">
+    <copy todir="${builddir}">
+      <fileset refid="allfiles" />
+    </copy>
+  </target>
 
-    <!-- ============================================  -->
-    <!-- Target: Rebuild                               -->
-    <!-- ============================================  -->
-    <target name="rebuild" description="rebuilds this package">
-        <delete dir="${builddir}" />
-        <phingcall target="main" />
-    </target>
+  <!-- ============================================  -->
+  <!-- Target: clean                                 -->
+  <!-- ============================================  -->
+  <target name="clean" description="cleans this package">
+    <delete dir="${builddir}" />
+    <delete dir="${reportdir}" />
+  </target>
+  
+  <!-- ============================================  -->
+  <!-- Target: test                                  -->
+  <!-- ============================================  -->
+  <target name="test" description="test this package">
+    <mkdir dir="${reportdir}" />
+    
+    <coverage-setup database="${reportdir}/coveragedb">
+      <fileset dir="${srcdir}">
+        <include name="**.php"/>
+        <exclude name="**Test.php"/>
+      </fileset>
+    </coverage-setup>
+    
+    <phpunit codecoverage="true">
+      <batchtest>
+        <fileset refid="testfiles" />
+      </batchtest>
+      
+      <formatter type="xml" todir="${reportdir}" outfile="phpunit.xml" />/
+    </phpunit>
+    
+    <phpunitreport infile="${reportdir}/phpunit.xml" styledir="${phingdir}" format="frames" todir="${reportdir}" />
+    <coverage-report outfile="coverage-report/coverage.xml">
+      <report styledir="/usr/lib/php/data/phing/etc"
+              todir="coverage-report"/>
+    </coverage-report>
+  </target>
 </project>
