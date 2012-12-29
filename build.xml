@@ -22,8 +22,8 @@
   </fileset>
     
   <!-- Fileset for Unit Test files -->
-  <fileset dir="${srcdir}" id="testfiles">
-    <include name="${srcdir}/Tests/*Test.php" />
+  <fileset dir="${srcdir}/Tests" id="testfiles">
+    <include name="*Test.php" />
   </fileset>
 
   <!-- ============================================  -->
