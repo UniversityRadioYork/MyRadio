@@ -341,7 +341,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
                 'num_episodes' => array(
                     'display' => 'text',
                     'value' => sizeof($this->timeslots),
-                    'url' => CoreUtils::makeURL('Scheduler', 'listEpisodes', array('show_season_id' => $this->getID()))),
+                    'url' => CoreUtils::makeURL('Scheduler', 'listTimeslots', array('show_season_id' => $this->getID()))),
                 'allocatelink' => array(
                     'display' => 'icon',
                     'value' => 'script',
