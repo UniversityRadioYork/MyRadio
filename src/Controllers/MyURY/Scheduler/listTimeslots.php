@@ -7,6 +7,6 @@
  * @todo This requires manual permission checks as it needs interesting things
  */
 
-$show = MyURY_Show::getInstance($_GET['showid']);
-$seasons = $show->getAllSeasons();
-require 'Views/MyURY/Scheduler/seasonList.php';
+$season = MyURY_Season::getInstance($_GET['show_season_id']);
+$timeslots = $season->getAllTimeslots();
+require 'Views/MyURY/Scheduler/timeslotList.php';

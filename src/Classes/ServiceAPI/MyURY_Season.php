@@ -512,10 +512,15 @@ EOT;
    * show_season_timeslot_id
    * start_time
    * duration
+   * @todo Refactor to return MyURY_Timeslot objects
    */
   public function getFutureTimeslots() {
     return self::$db->fetch_all('SELECT show_season_timeslot_id, start_time, duration FROM schedule.show_season_timeslot
       WHERE show_season_id=$1 AND start_time >= NOW()', array($this->getID()));
+  }
+  
+  public function getAllTimeslots() {
+    return $this->timeslots;
   }
 
 }
