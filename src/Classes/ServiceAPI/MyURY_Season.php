@@ -319,7 +319,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
   public function getRequestedWeeks() {
     return $this->requested_weeks;
   }
-  
+
   /**
    * Get the Season number - for the first season of a show, this is 1, for the second it's 2 etc.
    * Seasons that don't have any timeslots scheduled do not count toward this value.
@@ -338,7 +338,10 @@ class MyURY_Season extends MyURY_Scheduler_Common {
                 'submitted' => $this->getSubmittedTime(),
                 'requested_time' => $this->getRequestedTimes()[0],
                 'first_time' => (is_object($this->timeslots[0]) ? CoreUtils::happyTime($this->timeslots[0]->getStartTime()) : 'Not Scheduled'),
-                'num_episodes' => sizeof($this->timeslots),
+                'num_episodes' => array(
+                    'display' => 'text',
+                    'value' => sizeof($this->timeslots),
+                    'url' => CoreUtils::makeURL('Scheduler', 'listEpisodes', array('show_season_id' => $this->getID()))),
                 'allocatelink' => array(
                     'display' => 'icon',
                     'value' => 'script',
