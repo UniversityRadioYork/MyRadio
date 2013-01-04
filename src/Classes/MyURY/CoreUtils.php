@@ -10,8 +10,9 @@
  * No database accessing etc should be setup here.
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 21072012
+ * @version 03012012
  * @package MyURY_Core
+ * @todo Factor out permission code into a seperate class?
  */
 class CoreUtils {
   /**
@@ -26,6 +27,10 @@ class CoreUtils {
    * @param String $module The module to check
    * @param String $action The action to check. Default 'default'
    * @return boolean Whether or not the request is valid
+   * @assert ('Core', 'default') === true
+   * @assert ('foo', 'barthatdoesnotandwillnoteverexisteverbecauseitwouldbesilly') === false
+   * @assert ('../foo', 'bar') === false
+   * @assert ('foo', '../bar') === false
    */
   public static function isValidController($module, $action = 'default') {
     try {
@@ -45,6 +50,8 @@ class CoreUtils {
    * Provides a template engine object compliant with TemplateEngine interface
    * @return URYTwig 
    * @todo Make this generalisable for drop-in template engine replacements
+   * @assert () !== false
+   * @assert () !== null
    */
   public static function getTemplateObject() {
     require_once 'Twig/Autoloader.php';
@@ -58,6 +65,8 @@ class CoreUtils {
    * @param String $action A module action
    * @return boolean Whether the module is safe to be used on a filesystem
    * @throws MyURYException Thrown if directory traversal detected
+   * @assert ('safe!') === true
+   * @assert ('../notsafe!') throws MyURYException
    */
   public static function actionSafe($action) {
     if (strpos($action, '/') !== false) {
@@ -73,6 +82,7 @@ class CoreUtils {
    * @param string $timestring Some form of time
    * @param bool $time Whether to include Hours,Mins. Default yes
    * @return String A happy time 
+   * @assert (40000) == '01/01/1970'
    */
   public static function happyTime($timestring, $time = true) {
     return date('d/m/Y' . ($time ? ' H:i' : ''), is_numeric($timestring) ? $timestring : strtotime($timestring));
@@ -82,6 +92,7 @@ class CoreUtils {
    * Returns a postgresql-formatted timestamp
    * @param int $time The time to get the timestamp for. Default right now.
    * @return String a timestamp
+   * @assert (30) == '01/01/1970 00:00:30'
    */
   public static function getTimestamp($time = null) {
     if ($time === null) $time = time();
@@ -92,6 +103,7 @@ class CoreUtils {
   /**
    * Gives you the starting year of the current academic year
    * @return int year
+   * @assert () == 2012
    */
   public static function getAcademicYear() {
     if (date('m') >= 10) return (int)date('Y');
@@ -103,6 +115,7 @@ class CoreUtils {
    * @param int $start The start time
    * @param int $end The end time
    * @return String a PgSQL valid interval value
+   * @assert (0, 0) == '0 seconds'
    */
   public static function makeInterval($start, $end) {
     return $end-$start . ' seconds';
@@ -129,7 +142,8 @@ class CoreUtils {
   
   /**
    * Sets up the Authentication Constants
-   * @return void 
+   * @return void
+   * @assert () == null
    */
   public static function setUpAuth() {
     if (self::$auth_cached) return;
@@ -148,6 +162,7 @@ class CoreUtils {
    * @param int $permission The ID of the permission, resolved by using an AUTH_ constant
    * @return boolean Whether the member has the requested permission
    * @todo this is a duplication of the stuff in the User class. depreciate?
+   * @deprecated
    */
   public static function hasPermission($permission) {
     if (!isset($_SESSION['member_permissions'])) return false;
@@ -303,6 +318,7 @@ class CoreUtils {
    * A simple debug method that only displays output for a specific user.
    * @param int $userid The ID of the user to display for
    * @param String $message The HTML to display for this user
+   * @assert (7449, 'Test') == null
    */
   public static function debug_for($userid, $message) {
     if ($_SESSION['memberid'] === $userid) echo '<p>'.$message.'</p>';
@@ -314,6 +330,7 @@ class CoreUtils {
    * @param type $service
    * @param bool $create Whether to create the service if it doesn't exist
    * @return type
+   * @assert ('Lady Quackington') throws MyURYException
    */
   public static function getServiceId($service, $create = false) {
     $db = Database::getInstance();

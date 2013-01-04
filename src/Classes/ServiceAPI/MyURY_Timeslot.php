@@ -8,7 +8,7 @@
 /*
  * The Timeslot class is used to view and manupulate Timeslot within the new MyURY Scheduler Format
  * @todo Generally the creation of bulk Timeslots is currently handled by the Season/Show classes, but this should change
- * @version 26122012
+ * @version 04012013
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Scheduler
  * @uses \Database
@@ -125,7 +125,12 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
                 'title' => $this->getMeta('title'),
                 'description' => $this->getMeta('description'),
                 'start_time' => CoreUtils::happyTime($this->getStartTime()),
-                'duration' => $this->getDuration()
+                'duration' => $this->getDuration(),
+                'rejectlink' => array(
+                    'display' => 'icon',
+                    'value' => 'trash',
+                    'title' => 'Cancel Episode',
+                    'url' => CoreUtils::makeURL('Scheduler', 'cancelEpisode', array('show_season_timeslot_id' => $this->getID())))
             ));
   }
 

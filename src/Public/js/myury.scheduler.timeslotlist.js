@@ -7,7 +7,8 @@ $('.twig-datatable').dataTable({
   },
   //credits
   {
-    "sTitle": "Credits"
+    "sTitle": "Credits",
+    "bVisible": false
   },
   //description
   {
@@ -71,9 +72,9 @@ $('.twig-datatable').dataTable({
   },
   //rejectlink
   {
-    "sTitle": "Reject",
+    "sTitle": "Cancel",
     "bSortable": false,
-    "bVisible": false
+    "bVisible": true
   },
   //timeslotnum
   {
