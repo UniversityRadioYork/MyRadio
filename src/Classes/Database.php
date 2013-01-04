@@ -49,7 +49,9 @@ class Database {
    * @param bool $rollback If true, an error will automatically execute a rollback before throwing an Exception
    * Use for transactions.
    * @return A pg result reference
-   * @throws MyURYException 
+   * @throws MyURYException If the query fails
+   * @assert ('SELECT * FROM public.tableethatreallydoesntexist') throws MyURYException
+   * @assert ('SELECT * FROM public.member') != false
    */
   public function query($sql, $params = array(), $rollback = false) {
     $result = pg_query_params($this->db, $sql, $params);
