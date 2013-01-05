@@ -73,10 +73,6 @@ class MyURYEmail {
    * @todo Make the replacement string feature a standard method of User? Might have other uses.
    */
   public static function sendEmailToUserSet($to, $subject, $message) {
-    //Maps replace strings to their inner functions
-    $replace = array(
-        'NAME' => 'getFName()'
-    );
     
     foreach ($to as $user) {
       if (!is_a($user, User)) {
@@ -87,8 +83,8 @@ class MyURYEmail {
       $u_message = $message;
       
       foreach ($replace as $k => $v) {
-        $u_subject = str_ireplace('#'.$k, $user->$v, $u_subject);
-        $u_message = str_ireplace('#'.$k, $user->$v, $u_message);
+        $u_subject = str_ireplace('#NAME', $user->getFName(), $u_subject);
+        $u_message = str_ireplace('#NAME', $user->getFName(), $u_message);
       }
       
       self::sendEmailToUser($user, $u_subject, $u_message);

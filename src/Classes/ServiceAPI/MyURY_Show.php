@@ -264,7 +264,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
    */
   public function getCreditObjects() {
     $r = array();
-    foreach ($this->getCredits as $credit) {
+    foreach ($this->getCredits() as $credit) {
       $r[] = $credit['User'];
     }
     return $r;
