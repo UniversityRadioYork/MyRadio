@@ -82,11 +82,8 @@ class APCProvider implements CacheProvider {
   }
   
   /**
-   * This function currently does nothing as it does not have an obvious APC implementation
+   * This will completely wipe the APC User Object Cache
    * 
-   * The theory is that this will completely wipe the APC User Object Cache
-   * 
-   * @todo find a way to implement this in APC
    */
   public function purge() {
     if (!$this->enable) return false;
