@@ -7,7 +7,7 @@
 
 /*
  * The Show class is used to create, view and manupulate Shows within the new MyURY Scheduler Format
- * @version 19122012
+ * @version 05012013
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Scheduler
  * @uses \Database
@@ -69,7 +69,8 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     $credits = self::$db->decodeArray($result['credits']);
 
     for ($i = 0; $i < sizeof($credits); $i++) {
-      $this->credits[] = array('type' => $credit_types[$i], 'memberid' => $credits[$i]);
+      $this->credits[] = array('type' => $credit_types[$i], 'memberid' => $credits[$i],
+          'User' => User::getInstance($credits[$i]));
     }
 
 
@@ -256,6 +257,26 @@ class MyURY_Show extends MyURY_Scheduler_Common {
 
   public function getCredits() {
     return $this->credits;
+  }
+  
+  /**
+   * Similar to getCredits, but only returns the User objects. This means the loss of the credit type in the result.
+   */
+  public function getCreditObjects() {
+    $r = array();
+    foreach ($this->getCredits as $credit) {
+      $r[] = $credit['User'];
+    }
+    return $r;
+  }
+  
+  public function isCurrentUserAnOwner() {
+    foreach ($this->getCreditObjects() as $user) {
+      if ($user->getID() === $_SESSION['memberid']) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

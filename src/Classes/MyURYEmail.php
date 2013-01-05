@@ -53,6 +53,49 @@ class MyURYEmail {
     return TRUE;
   }
   /**
+   * Sends an email to the specified User
+   * @param User $to
+   * @param string $subject email subject
+   * @param sting $message email message
+   * @todo Check if "Receive Emails" is enabled for the User
+   */
+  public static function sendEmailToUser(User $to, $subject, $message) {
+    self::sendEmail($to->getName() . ' <' . $to->getEmail() . '>', $subject, $message);
+  }
+  /**
+   * Sends an email to all the specified Users, with certain customisation abilities:
+   * #NAME is replaced with the User's first name
+   * 
+   * @param Array $to An array of User objects
+   * @param string $subject email subject
+   * @param sting $message email message
+   * @todo Some more replacement strings?
+   * @todo Make the replacement string feature a standard method of User? Might have other uses.
+   */
+  public static function sendEmailToUserSet($to, $subject, $message) {
+    //Maps replace strings to their inner functions
+    $replace = array(
+        'NAME' => 'getFName()'
+    );
+    
+    foreach ($to as $user) {
+      if (!is_a($user, User)) {
+        throw new MyURYException($user .' is not an instance of User or a derivative!');
+      }
+      
+      $u_subject = $subject;
+      $u_message = $message;
+      
+      foreach ($replace as $k => $v) {
+        $u_subject = str_ireplace('#'.$k, $user->$v, $u_subject);
+        $u_message = str_ireplace('#'.$k, $user->$v, $u_message);
+      }
+      
+      self::sendEmailToUser($user, $u_subject, $u_message);
+      
+    }
+  }
+  /**
    * 
    * @param string $to email address or "Name <email>"
    * @param string $from email address or "Name <email>"

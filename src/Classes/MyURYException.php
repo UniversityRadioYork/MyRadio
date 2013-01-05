@@ -12,7 +12,7 @@
  * @version 22052012
  * @package MyURY_Core
  */
-class MyURYException extends Exception {
+class MyURYException extends RuntimeException {
   const FATAL = -1;
   /**
    * Extends the default session by enabling useful output

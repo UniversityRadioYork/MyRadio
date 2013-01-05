@@ -136,28 +136,104 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
 
   /**
    * Deletes this Timeslot from the Schedule, and everything associated with it
+   * This is a proxy for several other methods, depending on the User and the current time:
+   * (1) If the User has Cancel Show Privileges, then they can remove it at any time, notifying Creditors
+   * 
+   * (2) If the User is a Show Credit, and there are 48 hours or more until broadcast, they can remove it,
+   *     notifying the PC
+   * 
+   * (3) If the User is a Show Credit, and there are less than 48 hours until broadcast, they can send a request to the
+   *     PC for removal, and it will be flagged as hidden from the Schedule - it will still count as a noshow unless (1) occurs
+   * 
+   * @param string $reason, Why the episode was cancelled.
+   * 
    * @todo Make the smarter - check if it's a programming team person, in which case just do this, if it's not
    *       then if >48hrs away just do it but email programming, but <48hrs should hide it but tell prog to confirm reason
+   * @todo Response codes? i.e. error/db or error/403 etc
    */
-  public function cancelTimeslot() {
-
-    $email = 'Please note that an episode your show, ' . $this->getMeta('title') . ' has been cancelled for the rest of the current Season. The affected episode was at '.$this->getStartTime();
-    $email .= "\r\n\r\nRegards\r\nURY Programming Team";
-
-    foreach ($this->getShow()->getCredits() as $credit) {
-      $u = User::getInstance($credit);
-      MyURYEmail::sendEmail($u->getName() . ' <' . $u->getEmail() . '>', 'Episode of '.$this->getMeta('title').' Cancelled', $email);
+  public function cancelTimeslot($reason) {
+    
+    //Get if the User has permission to drop the episode
+    if (User::getInstance()->hasAuth(AUTH_DELETESHOWS)) {
+      //Yep, do an administrative drop
+      $r = $this->cancelTimeslotAdmin($reason);
     }
+    
+    //Get if the User is a Creditor
+    elseif ($this->getShow()->isCurrentUserAnOwner()) {
+      //Yaay, depending on time they can do an self-service drop or cancellation request
+      if ($this->getStartTime() > time()+(48*3600)) {
+        //Self-service cancellation
+        $r = $this->cancelTimeslotSelfService($reason);
+      } else {
+        //Emergency cancellation request
+        $r = $this->cancelTimeslotRequest($reason);
+      }
+    }
+   else {
+     //They can't do this.
+     return $r = false;
+   }
+   return $r;
+    
+  }
+  
+  private function cancelTimeslotAdmin($reason) {
+    $r = $this->deleteTimeslot();
+    if ($r) return false;
 
-    $r = (bool) self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', array($this->getID()));
+    $email = "Hi #NAME, \r\n\r\n Please note that an episode your show, " . $this->getMeta('title') .
+            ' has been cancelled by our Programming Team. The affected episode was at '.CoreUtils::happyTime($this->getStartTime());
+    $email .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\nURY Programming Team";
 
+    MyURYEmail::SendEmailToUserGroup($this->getShow()->getCreditObjects(), 'Episode of '.$this->getMeta('title').' Cancelled', $email);
+
+    return true;
+  }
+  
+  private function cancelTimeslotSelfService($reason) {
+    
+    $r = $this->deleteTimeslot();
+    if (!$r) return false;
+
+    $email1 = "Hi #NAME, \r\n\r\n You have requested that an episode of " . $this->getMeta('title') .
+            ' is cancelled. The affected episode was at '.CoreUtils::happyTime($this->getStartTime());
+    $email1 .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\nURY Scheduler Robot";
+    
+    $email2 = $this->getMeta('title') . ' on ' . CoreUtils::happyTime($this->getStartTime()) . ' was cancelled by a presenter because '.$reason;
+    $email2 .= "\r\n\r\nIt was cancelled automatically as more than required notice was given.";
+
+    MyURYEmail::sendEmail($this->getShow()->getCreditObjects(), 'Episode of '.$this->getMeta('title').' Cancelled', $email1);
+    MyURYEmail::sendEmail('programming@ury.org.uk', 'Episode of '.$this->getMeta('title').' Cancelled', $email2);
+
+    return true;
+  }
+  
+  private function cancelTimeslotRequest($reason) {
+    $email = $this->getMeta('title') . ' on ' . CoreUtils::happyTime($this->getStartTime()) . ' has requested cancellation because '.$reason;
+    $email .= "\r\n\r\nDue to the short notice, it has been passed to you for consideration. To cancel the timeslot, visit ";
+    $email .= CoreUtils::makeURL('Scheduler', 'cancelEpisode', array('show_season_timeslot_id' => $this->getID(), 'reason' => base64_encode($reason)));
+    
+    MyURYEmail::sendEmail('programming@ury.org.uk', 'Show Cancellation Request', $email);
+    
+    return true;
+  }
+  
+  /**
+   * Deletes the timeslot. Nothing else. See the cancelTimeslot... methods for recommended removal usage.
+   * @return bool success/fail
+   */
+  private function deleteTimeslot() {
+    $r = (bool) self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1',
+            array($this->getID()));
+    
     /**
      * @todo This is massively overkill, isn't it?
      */
     $m = new Memcached();
     $m->addServer(Config::$django_cache_server, 11211);
     $m->flush();
-
+    
     return $r;
   }
 
