@@ -90,6 +90,7 @@ class APCProvider implements CacheProvider {
    */
   public function purge() {
     if (!$this->enable) return false;
+    apc_clear_cache('user');
     return true;
   }
   

@@ -180,13 +180,14 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
   
   private function cancelTimeslotAdmin($reason) {
     $r = $this->deleteTimeslot();
-    if ($r) return false;
+    if (!$r) return false;
 
     $email = "Hi #NAME, \r\n\r\n Please note that an episode your show, " . $this->getMeta('title') .
             ' has been cancelled by our Programming Team. The affected episode was at '.CoreUtils::happyTime($this->getStartTime());
     $email .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\nURY Programming Team";
+    self::$cache->purge();
 
-    MyURYEmail::SendEmailToUserGroup($this->getShow()->getCreditObjects(), 'Episode of '.$this->getMeta('title').' Cancelled', $email);
+    MyURYEmail::sendEmailToUserSet($this->getSeason()->getShow()->getCreditObjects(), 'Episode of '.$this->getMeta('title').' Cancelled', $email);
 
     return true;
   }
@@ -203,7 +204,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
     $email2 = $this->getMeta('title') . ' on ' . CoreUtils::happyTime($this->getStartTime()) . ' was cancelled by a presenter because '.$reason;
     $email2 .= "\r\n\r\nIt was cancelled automatically as more than required notice was given.";
 
-    MyURYEmail::sendEmail($this->getShow()->getCreditObjects(), 'Episode of '.$this->getMeta('title').' Cancelled', $email1);
+    MyURYEmail::sendEmailToUserSet($this->getSeason->getShow()->getCreditObjects(), 'Episode of '.$this->getMeta('title').' Cancelled', $email1);
     MyURYEmail::sendEmail('programming@ury.org.uk', 'Episode of '.$this->getMeta('title').' Cancelled', $email2);
 
     return true;
@@ -224,7 +225,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
    * @return bool success/fail
    */
   private function deleteTimeslot() {
-    $r = (bool) self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1',
+    $r = self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1',
             array($this->getID()));
     
     /**
