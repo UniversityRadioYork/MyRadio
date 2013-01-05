@@ -16,3 +16,6 @@ $twig->addVariable('serviceName', $service)
 if(User::getInstance()->hasAuth(AUTH_SHOWERRORS)) {
   $twig->addVariable('phperrors', MyURYError::$php_errorlist);
 }
+if (isset($_REQUEST['message'])) {
+  $twig->addInfo(base64_decode($_REQUEST['message']));
+}
