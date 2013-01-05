@@ -82,10 +82,8 @@ class MyURYEmail {
       $u_subject = $subject;
       $u_message = $message;
       
-      foreach ($replace as $k => $v) {
-        $u_subject = str_ireplace('#NAME', $user->getFName(), $u_subject);
-        $u_message = str_ireplace('#NAME', $user->getFName(), $u_message);
-      }
+      $u_subject = str_ireplace('#NAME', $user->getFName(), $u_subject);
+      $u_message = str_ireplace('#NAME', $user->getFName(), $u_message);
       
       self::sendEmailToUser($user, $u_subject, $u_message);
       

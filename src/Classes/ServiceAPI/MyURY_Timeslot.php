@@ -204,7 +204,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
     $email2 = $this->getMeta('title') . ' on ' . CoreUtils::happyTime($this->getStartTime()) . ' was cancelled by a presenter because '.$reason;
     $email2 .= "\r\n\r\nIt was cancelled automatically as more than required notice was given.";
 
-    MyURYEmail::sendEmailToUserSet($this->getSeason->getShow()->getCreditObjects(), 'Episode of '.$this->getMeta('title').' Cancelled', $email1);
+    MyURYEmail::sendEmailToUserSet($this->getSeason()->getShow()->getCreditObjects(), 'Episode of '.$this->getMeta('title').' Cancelled', $email1);
     MyURYEmail::sendEmail('programming@ury.org.uk', 'Episode of '.$this->getMeta('title').' Cancelled', $email2);
 
     return true;
