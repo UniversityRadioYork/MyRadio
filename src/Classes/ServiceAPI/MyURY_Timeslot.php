@@ -160,7 +160,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
     }
     
     //Get if the User is a Creditor
-    elseif ($this->getTimeslot()->getShow()->isCurrentUserAnOwner()) {
+    elseif ($this->getSeason()->getShow()->isCurrentUserAnOwner()) {
       //Yaay, depending on time they can do an self-service drop or cancellation request
       if ($this->getStartTime() > time()+(48*3600)) {
         //Self-service cancellation
