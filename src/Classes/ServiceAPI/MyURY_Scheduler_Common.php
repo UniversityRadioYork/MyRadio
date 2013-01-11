@@ -44,7 +44,7 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
   protected static function cacheMetadataKeys() {
     if (empty(self::$metadata_keys)) {
       self::initDB();
-      $r = self::$db->fetch_all('SELECT metadata_key_id AS id, name, allow_multiple AS multiple FROM public.metadata_key');
+      $r = self::$db->fetch_all('SELECT metadata_key_id AS id, name, allow_multiple AS multiple FROM metadata.metadata_key');
       foreach ($r as $key) {
         self::$metadata_keys[$key['name']]['id'] = (int) $key['id'];
         self::$metadata_keys[$key['name']]['multiple'] = ($key['multiple'] === 't');
