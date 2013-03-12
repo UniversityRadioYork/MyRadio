@@ -15,7 +15,6 @@
  * @uses \MyURY_Show
  * 
  */
-
 class MyURY_Timeslot extends MyURY_Scheduler_Common {
 
   private static $timeslots = array();
@@ -237,5 +236,45 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
     
     return $r;
   }
+  
+  /**
+   * Returns the tracks etc. and their associated channels as planned for this show. Mainly used by NIPSWeb
+   */
+  public function getShowPlan() {
+    /**
+     * Find out if there's a NIPSWeb Schema listing for this timeslot.
+     * If not, throw back an empty array
+     */
+    $r = self::$db->query('SELECT * FROM bapsplanner.timeslot_items WHERE timeslot_id=$1
+      ORDER BY weight ASC', array($timeslotid));
 
+    if (!$r or pg_num_rows($r) === 0) {
+      //No show planned yet
+      return array();
+    } else {
+      $tracks = array();
+      /**
+       * @todo detect definition of multiple track types in an entry and fail out
+       */
+      //It uses the new schema! Load the tracks from this
+      foreach (pg_fetch_all($r) as $track) {
+        if ($track['rec_track_id'] != null) {
+          //CentralDB
+          $tracks[$track['channel_id']][] = $this->getRecTrack($track['rec_track_id']);
+        } elseif ($track['managed_item_id'] != null) {
+          //ManagedDB (Central Beds, Jingles...)
+          $tracks[$track['channel_id']][] = $this->getManagedTrack($track['managed_item_id']);
+        } elseif ($track['user_item_id'] != null) {
+          //UserDB (Personal Beds, Jingles... (Not Implemented)
+          /**
+           * @todo This bit here
+           */
+        } elseif ($track['legacy_aux_id'] != null) {
+          //LegacyAuxDB (Old personal/aux resource references)
+          $tracks[$track['channel_id']][] = $this->getLegacyAuxTrack($track['legacy_aux_id']);
+        }
+      }
+      return $tracks;
+    }
+  }
 }

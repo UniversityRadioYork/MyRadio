@@ -4,7 +4,7 @@
  * needed by the MyURY Core. Currently, this is only an additional autoloader for NIPSWeb Classes
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 111112
+ * @version 11112012
  * @package MyURY_NIPSWeb
  */
 
