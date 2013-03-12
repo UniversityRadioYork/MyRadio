@@ -25,6 +25,7 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
       $this->enableDebug();
     }
     $this->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : 'Anonymous');
+    $this->addVariable('impersonator', isset($_SESSION['impersonator']) ? ' - Impersonated by '.$_SESSION['impersonator']['name'] : '');
     $this->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null);
     $this->addVariable('shiburl', Config::$shib_url);
     

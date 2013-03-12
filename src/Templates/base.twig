@@ -10,32 +10,54 @@
       <script type="text/javascript" src="{{shiburl}}js/jquery-ui-init.js"></script>
       <link rel="Stylesheet" type="text/css" href="{{shiburl}}css/ury-purple/jquery-ui-1.10.1.custom.min.css">
       <link rel="Stylesheet" type="text/css" href="{{shiburl}}css/jquery-ui-themeswitcher.css">
-      <!--<link rel="Stylesheet" type="text/css" href="{{shiburl}}css/reset.css">-->
       <link rel="stylesheet" type="text/css" href="{{shiburl}}css/main.css">
+      <link rel="Stylesheet" type="text/css" href="{{shiburl}}css/style.css">
     {% endblock %}
     </head>
     <body>
-      <header class="bar">
-        <span class="fleft"><a href="./">My<span class="logotype">((URY))</span></a> | {{serviceName}} [{{serviceVersion}}]</span>
-        <span>{{ name }} - [Impersonating If Set]{% if timeslotname is not null %} - <a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</span>
-        <span class="fright">{% if timeslotname is null %}<a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}">Change Timeslot</a> | {% endif %}<a href="https://ury.york.ac.uk/portal/redir_out.php">Logout</a></span>
+      <header id="pageHeader" class="clearfix">
+        <a id="logo" href="./">
+          <img id="logo-img" alt="University Radio York" src="/static/img/logo.png">
+          <h1>University Radio York</h1>
+        </a>
       </header>
-      <div id="page">
+      <nav id="menu" class="transBG">
+        <a id="miniLogo" href="./"><img alt="((ury))" height="20" src="/static/img/logo.png"></a>
+        <span class="navRight">{{ name }}{{ impersonator }}{% if timeslotname is not null %} - <a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</span>
+        <ul>
+          <li>{% if timeslotname is null %}<a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}">Change Timeslot</a></li>
+          <li>{% endif %}<a href="https://ury.york.ac.uk/portal/redir_out.php">Logout</a></li>
+          <li><a href="http://ury.org.uk/">ury.org.uk</a></li>
+        </ul>
+      </nav>
+      <div id="grid" class="transBG clearfix">
+        <header id="content-header">
+          <h2>{{ title }}</h2>
         {% if phperrors is not null %}
           <ul class="php_error">
             {% for phperror in phperrors %}
               <li><strong>{{ phperror.name }}</strong> : {{ phperror.string|raw }} - In <strong>{{ phperror.file }}</strong> on line {{ phperror.line }}</li>
             {% endfor %}
-          </ul>
+                </ul>
         {% endif %}
-        <h1 class="logotype">{{ title }}</h1>
+              </header>
+              <div id="content-body">
 {% block content %}{% endblock %}
 {% block footer %}
-      </div>
-        <footer class="bar">
-          <span class="fleft">Developed by <span class="logotype">((URY))</span> Computing 2011-2012.</span>
-          <span class="fright"><a href="http://ury.org.uk/">ury.org.uk</a></span>
-      </footer>
+                </div>
+              </div>
+              <footer id="pageFooter" class="clearfix">
+                <div id="copyright">
+                  <p>&copy;1967-2013 University Radio York</p>
+                  <div class="flatblock block-urysite.copyright_extra">
+                    <div class="content">Maintained by <a href="mailto:webmaster@ury.org.uk">URY Computing Team</a></div>
+                  </div>
+                </div>
+                <ul>
+                  <li><a href="http://www.york.ac.uk/docs/disclaimer/disclaimer.htm">Disclaimer</a></li>
+                  <li><a href="http://ury.org.uk/contact/">Contact Us</a></li>
+                </ul>
+              </footer>
 {% endblock %}
-    </body>
-  </html>
+            </body>
+          </html>
