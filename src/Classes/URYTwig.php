@@ -65,6 +65,16 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
     if (!file_exists(__DIR__.'/../Templates/'.$template)) {
       throw new MyURYException("Template $template does not exist");
     }
+    
+    //Validate template
+    try {
+        $this->parse($this->tokenize(file_get_contents(__DIR__.'/../Templates/'.$template), $template));
+
+        // the $template is valid
+    } catch (Twig_Error_Syntax $e) {
+        throw new MyURYException('Twig Parse Error'. $e->getMessage(), $e->getCode(), $e);
+    }
+    
     $this->template = $this->loadTemplate($template);
     return $this;
   }
