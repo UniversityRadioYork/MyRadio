@@ -9,11 +9,11 @@
 <div id="head-icons"><button class="btn-feedback">Send Feedback</button>&nbsp;<button class="btn-help"></button><button class="btn-logout" onclick="window.location = 'https://ury.york.ac.uk/portal/redir_out.php'"></button></div>
 <div id="bapswrapper" class="ui-widget">
   <div id="baps-channel-container">
-    {% for i = 0..3 %}
+    {% for i in 0..3 %}
       <ul class="baps-channel ui-widget-content" channel="{{i+1}}" id="baps-channel-{{i + 1}}">
         {% for track in tracks[i] %}
           <li id='{{track['recordid']}}-{{track['trackid']}}' type='{{track['type']}}'
-              {% if defined track['managedid'] %}managedid='{{track['managedid']}}'{% endif %}
+              {% if track['managedid'] is defined %}managedid='{{track['managedid']}}'{% endif %}
               {% if track['type'] == 'aux' %}auxid='{{track['auxid']}}'{% endif %}
               length='{{track['length']}}'>{{track['summary']}}</li>
         {% endfor %}
@@ -39,7 +39,7 @@
 
         <div id="baps-channelaction-container">
     {% set channels = [1, 2, 3, 'res'] %}
-    {% for channels as channel %}
+    {% for channel in channels %}
             <div class='baps-channel channel-footer ui-widget-header{% if channel == 'res' %} library-footer'>Library{% else %}'>Channel {{channel}}{% endif %}}
               <br>
               <button class='play' id='ch{{channel}}-play' onclick='previewPlay("{{channel}}")'></button>
