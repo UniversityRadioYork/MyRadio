@@ -8,7 +8,7 @@
  */
 require 'Views/MyURY/bootstrap.php';
 
-$twig->setTemplate('NIPSWeb/menu.twig')
+$twig->setTemplate('NIPSWeb/main.twig')
         ->addVariable('title', 'Show Planner')
         ->addVariable('heading', 'Show Planner')
         ->addVariable('tracks', MyURY_Timeslot::getInstance($_SESSION['timeslotid'])->getShowPlan())

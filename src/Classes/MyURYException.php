@@ -28,7 +28,7 @@ class MyURYException extends RuntimeException {
       if (Config::$display_errors or (class_exists('CoreUtils') && CoreUtils::hasPermission(AUTH_SHOWERRORS))) {
         //Output to the browser
         $error = "<p>MyURY has encountered a problem processing this request.</p>
-          <table class='errortable'>
+          <table class='errortable' style='color:white'>
             <tr><td>Message</td><td>{$this->getMessage()}</td></tr>
             <tr><td>Location</td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
             <tr><td>Trace</td><td>".nl2br($this->getTraceAsString())."</td></tr>
