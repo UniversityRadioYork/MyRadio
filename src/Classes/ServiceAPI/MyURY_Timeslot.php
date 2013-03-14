@@ -246,7 +246,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
      * If not, throw back an empty array
      */
     $r = self::$db->query('SELECT * FROM bapsplanner.timeslot_items WHERE timeslot_id=$1
-      ORDER BY weight ASC', array($timeslotid));
+      ORDER BY weight ASC', array($this->getID()));
 
     if (!$r or pg_num_rows($r) === 0) {
       //No show planned yet
@@ -256,22 +256,13 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
       /**
        * @todo detect definition of multiple track types in an entry and fail out
        */
-      //It uses the new schema! Load the tracks from this
-      foreach (pg_fetch_all($r) as $track) {
+      foreach (self::$db->fetch_all($r) as $track) {
         if ($track['rec_track_id'] != null) {
           //CentralDB
-          $tracks[$track['channel_id']][] = $this->getRecTrack($track['rec_track_id']);
+          $tracks[$track['channel_id']][] = Track::getInstance($track['rec_track_id'])->toDataSource();
         } elseif ($track['managed_item_id'] != null) {
           //ManagedDB (Central Beds, Jingles...)
-          $tracks[$track['channel_id']][] = $this->getManagedTrack($track['managed_item_id']);
-        } elseif ($track['user_item_id'] != null) {
-          //UserDB (Personal Beds, Jingles... (Not Implemented)
-          /**
-           * @todo This bit here
-           */
-        } elseif ($track['legacy_aux_id'] != null) {
-          //LegacyAuxDB (Old personal/aux resource references)
-          $tracks[$track['channel_id']][] = $this->getLegacyAuxTrack($track['legacy_aux_id']);
+          $tracks[$track['channel_id']][] = NIPSWeb_ManagedItem::getInstance($track['managed_item_id'])->toDataSource();
         }
       }
       return $tracks;

@@ -41,14 +41,9 @@ class Track extends ServiceAPI {
   private $length;
   /**
    * The genreid of the Track
-   * @var int
+   * @var char
    */
   private $genre;
-  /**
-   * The name of the genre of the Track
-   * @var String
-   */
-  private $genre_name;
   /**
    * How long the intro (non-vocal) part of the track is, in seconds
    * @var int
@@ -68,38 +63,127 @@ class Track extends ServiceAPI {
    */
   private $trackid;
   /**
-   * The Unique ID of the Record this track is in
+   * The Record this track belongs to
    * @var int
    */
-  private $recordid;
+  private $record;
   /**
    * Whether or not there is a digital version of this track stored in the Central Database
    * @var bool
    */
   private $digitised;
   /**
-   * The ID of the member who digitised this track
-   * @var int
+   * The member who digitised this track
+   * @var User
    */
   private $digitisedby;
   
   /**
    * Initiates the Track variables
    * @param int $trackid The ID of the track to initialise
+   * @todo Genre class
+   * @todo Artist normalisation
    */
   private function __construct($trackid) {
     $this->trackid = $trackid;
-    throw new MyURYException('Not implemented Track::__construct');
+    $result = self::$db->fetch_one('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', array($trackid));
+    if (empty($result)) {
+      throw new MyURYException('The specified Track does not seem to exist');
+      return;
+    }
+    
+    $this->artist = $result['artist'];
+    $this->clean = $result['clean'];
+    $this->digitised = ($result['digitised'] == 't') ? true : false;
+    $this->digitisedby = empty($result['digitisedby']) ? null : User::getInstance($result['digitisedby']);
+    $this->genre = $result['genre'];
+    $this->intro = strtotime('1970-01-01 '.$result['intro'].'+00');
+    $this->length = strtotime('1970-01-01 '.$result['length'].'+00');
+    $this->number = (int)$result['intro'];
+    $this->record = Album::getInstance($result['recordid']);
+    $this->title = $result['title'];
   }
   
   /**
    * Returns the current instance of that Track object if there is one, or runs the constructor if there isn't
    * @param int $trackid The ID of the Track to return an object for
-   * @throws MyURYException Throws an exception because it is not implemented
    */
   public static function getInstance($trackid = -1) {
     self::__wakeup();
-    throw new MyURYException('Not implemented Track::getInstance');
+    if (!is_numeric($trackid)) {
+      throw new MyURYException('Invalid Track ID!', MyURYException::FATAL);
+    }
+
+    if (!isset(self::$tracks[$trackid])) {
+      self::$tracks[$trackid] = new self($trackid);
+    }
+
+    return self::$tracks[$trackid];
+  }
+  
+  /**
+   * Returns a "summary" string - the title and artist seperated with a dash.
+   * @return String
+   */
+  public function getSummary() {
+    return $this->getTitle() . ' - '.$this->getArtist();
+  }
+  
+  /**
+   * Get the Title of the Track
+   * @return String
+   */
+  public function getTitle() {
+    return $this->title;
+  }
+  
+  /**
+   * Get the Artist of the Track
+   * @return String
+   */
+  public function getArtist() {
+    return $this->artist;
+  }
+  
+  /**
+   * Get the Album of the Track;
+   * @return Album
+   */
+  public function getAlbum() {
+    return $this->record;
+  }
+  
+  /**
+   * Get the unique trackid of the Track
+   * @return int
+   */
+  public function getID() {
+    return $this->trackid;
+  }
+  
+  /**
+   * Get the length of the Track, in seconds
+   * @return int
+   */
+  public function getLength() {
+    return $this->length;
+  }
+  
+  /**
+   * Returns an array of key information, useful for Twig rendering and JSON requests
+   * @todo Expand the information this returns
+   * @return Array
+   */
+  public function toDataSource() {
+    return array(
+        'summary' => $this->getSummary(), //Used for legacy parts of the NIPSWeb Client
+        'title' => $this->getTitle(),
+        'artist' => $this->getArtist(),
+        'type' => 'central', //Tells NIPSWeb Client what this item type is
+        'album' => $this->getAlbum()->toDataSource(),
+        'trackid' => $this->getID(),
+        'length' => $this->getLength()
+    );
   }
   
   /**

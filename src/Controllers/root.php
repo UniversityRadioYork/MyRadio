@@ -112,10 +112,12 @@ if ($service === 'MyURY' && !CoreUtils::isValidController($module, $action)) {
  */
 CoreUtils::requirePermissionAuto($service, $module, $action);
 
+//Always include the MyURY Bootstrap
+require 'Controllers/MyURY/bootstrap.php';
 /**
  * Include the Global Bootstrap for the Service - This just sets up another autoloader and possibly
  * some more variables. Just take a look at it to see more.
  */
-require 'Controllers/'.$service.'/bootstrap.php';
+require_once 'Controllers/'.$service.'/bootstrap.php';
 //Include the requested action
 require 'Controllers/'.$service.'/' . $module . '/' . $action . '.php';
