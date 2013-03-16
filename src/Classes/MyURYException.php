@@ -27,6 +27,7 @@ class MyURYException extends RuntimeException {
       //Configuration is available, use this to decide what to do
       if (Config::$display_errors or (class_exists('CoreUtils') && CoreUtils::hasPermission(AUTH_SHOWERRORS))) {
         //Output to the browser
+        header('HTTP/1.1 500 Internal Server Error');
         $error = "<p>MyURY has encountered a problem processing this request.</p>
           <table class='errortable' style='color:#CCC'>
             <tr><td>Message</td><td>{$this->getMessage()}</td></tr>
