@@ -37,7 +37,7 @@ function initialiseUI() {
     },
     text: false
   }).on('click', function() {
-    window.open("index.php?action=faq", "nwfaq", "status = 1, height = 800, width = 400, resizable = 1");
+    window.open("?service=NIPSWeb&action=faq", "nwfaq", "status = 1, height = 800, width = 400, resizable = 1");
   });
   $('button.btn-feedback').button({
     icons: {
@@ -95,11 +95,11 @@ function previewLoad(channel) {
   if (type === 'central') {
     //Central Database Track
     $.ajax({
-      url: './ajax.php?action=create_token',
+      url: '?service=NIPSWeb&action=create_token',
       type: 'post',
       data: 'trackid=' + data[1] + '&recordid=' + data[0],
       success: function() {
-        playerVariables(channel).src = './ajax.php?action=secure_play&recordid=' + data[0] + '&trackid=' + data[1];
+        playerVariables(channel).src = '?service=NIPSWeb&action=secure_play&recordid=' + data[0] + '&trackid=' + data[1];
         $(playerVariables(channel)).on("canplay", function() {
           $('#ch' + channel + '-play').removeClass('ui-state-disabled');
           /**
@@ -117,7 +117,7 @@ function previewLoad(channel) {
       }
     });
   } else if (type === 'aux') {
-    playerVariables(channel).src = './ajax.php?action=managed_play&managedid=' + $('#' + audioid).attr('managedid');
+    playerVariables(channel).src = '?service=NIPSWeb&action=managed_play&managedid=' + $('#' + audioid).attr('managedid');
     $(playerVariables(channel)).on('canplay', function() {
       $('#ch' + channel + '-play').removeClass('ui-state-disabled');
     });

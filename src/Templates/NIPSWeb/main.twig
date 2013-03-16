@@ -3,13 +3,17 @@
 {{ parent() }}
 <script type="text/javascript" src="js/nipsweb.player.js"></script>
 <script type="text/javascript" src="js/nipsweb.librarypane.js"></script>
+<link rel="stylesheet" type="text/css" href="{{shiburl}}css/planner.css" />
 {% endblock %}
 {% block content %}
 <div id="notice" class="ui-state-highlight ui-helper-hidden">Saving...</div>
 <div id="head-icons"><button class="btn-feedback">Send Feedback</button>&nbsp;<button class="btn-help"></button><button class="btn-logout" onclick="window.location = 'https://ury.york.ac.uk/portal/redir_out.php'"></button></div>
+<header id="content-header">
+  <h2>{{title}}</h2>
+</header>
 <div id="bapswrapper" class="ui-widget">
   <div id="baps-channel-container">
-    {% for i in 0..3 %}
+    {% for i in 0..2 %}
       <ul class="baps-channel ui-widget-content" channel="{{i+1}}" id="baps-channel-{{i + 1}}">
         {% for track in tracks[i] %}
           <li id='{{track['recordid']}}-{{track['trackid']}}' type='{{track['type']}}'
@@ -40,14 +44,14 @@
         <div id="baps-channelaction-container">
     {% set channels = [1, 2, 3, 'res'] %}
     {% for channel in channels %}
-            <div class='baps-channel channel-footer ui-widget-header{% if channel == 'res' %} library-footer'>Library{% else %}'>Channel {{channel}}{% endif %}}
+            <div class='baps-channel channel-footer ui-widget-header{% if channel == 'res' %} library-footer'>Library{% else %}'>Channel {{channel}}{% endif %}
               <br>
               <button class='play' id='ch{{channel}}-play' onclick='previewPlay("{{channel}}")'></button>
               <button class='pause' id='ch{{channel}}-pause' onclick='previewPause("{{channel}}")'></button>
               <button class='stop' id='ch{{channel}}-stop' class='ui-state-disabled' onclick='previewStop("{{channel}}")'></button><br>
               <div id='progress-bar-{{channel}}'></div>
               <label id='ch{{channel}}-elapsed'>--:--</label> / 
-              <label id='ch{{channel}}-duration'>--:--</label></div>";
+              <label id='ch{{channel}}-duration'>--:--</label></div>
     {% endfor %}
           </div>
         </div>
@@ -60,5 +64,4 @@
             {% endfor %}
               });
           </script>
-        </body></html>
 {% endblock %}
