@@ -15,12 +15,6 @@
     {% endblock %}
     </head>
     <body>
-      <header id="pageHeader" class="clearfix">
-        <a id="logo" href="./">
-          <img id="logo-img" alt="University Radio York" src="/static/img/logo.png">
-          <h1>University Radio York</h1>
-        </a>
-      </header>
       <nav id="menu" class="transBG">
         <a id="miniLogo" href="./"><img alt="((ury))" height="20" src="/static/img/logo.png"></a>
         <span class="navRight">{{ name }}{{ impersonator }}{% if timeslotname is not null %} - <a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</span>
@@ -30,9 +24,6 @@
           <li><a href="http://ury.org.uk/">ury.org.uk</a></li>
         </ul>
       </nav>
-      <div id="grid" class="transBG clearfix">
-        <header id="content-header">
-          <h2>{{ title }}</h2>
         {% if phperrors is not null %}
           <ul class="php_error">
             {% for phperror in phperrors %}
@@ -40,7 +31,6 @@
             {% endfor %}
                 </ul>
         {% endif %}
-              </header>
 {% block content %}{% endblock %}
 {% block footer %}
               </div>
