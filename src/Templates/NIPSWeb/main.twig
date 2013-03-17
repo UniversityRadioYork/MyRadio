@@ -16,7 +16,7 @@
     {% for i in 0..2 %}
       <ul class="baps-channel ui-widget-content" channel="{{i+1}}" id="baps-channel-{{i + 1}}">
         {% for track in tracks[i] %}
-          <li id='{{track['recordid']}}-{{track['trackid']}}' type='{{track['type']}}'
+          <li id='{{track['album']['recordid']}}-{{track['trackid']}}' type='{{track['type']}}'
               {% if track['managedid'] is defined %}managedid='{{track['managedid']}}'{% endif %}
               {% if track['type'] == 'aux' %}auxid='{{track['auxid']}}'{% endif %}
               length='{{track['length']}}'>{{track['summary']}}</li>
