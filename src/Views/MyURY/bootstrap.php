@@ -9,7 +9,7 @@
 $twig = CoreUtils::getTemplateObject();
 $twig->addVariable('serviceName', $service)
      ->addVariable('serviceVersion', $service_version)
-     ->addVariable('submenu', (new MyURYMenu())->getSubMenuForUser(CoreUtils::getModuleID(1, $module), $member))
+     ->addVariable('submenu', (new MyURYMenu())->getSubMenuForUser(CoreUtils::getModuleID(1, $module), User::getInstance()))
      ->setTemplate('stripe.twig')
      ->addVariable('title', $module)
      ->addVariable('uri', $_SERVER['REQUEST_URI']);
