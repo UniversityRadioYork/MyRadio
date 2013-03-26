@@ -147,7 +147,7 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
   public static function getActiveApplicationTerm() {
     $return = self::$db->fetch_column('SELECT termid FROM terms
       WHERE start <= $1 AND finish >= NOW() LIMIT 1',
-            array(CoreUtils::getTimestamp(strtotime('+14 Days'))));
+            array(CoreUtils::getTimestamp(strtotime('+28 Days'))));
     return $return[0];
   }
 
