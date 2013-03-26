@@ -103,6 +103,7 @@ class MyURY_Scheduler extends MyURY_Scheduler_Common {
    * Returns a list of potential genres, organised so they can be used as a SELECT MyURYFormField data source
    */
   public static function getGenres() {
+    self::__wakeup();
     return self::$db->fetch_all('SELECT genre_id AS value, name AS text FROM schedule.genre ORDER BY name ASC');
   }
   
@@ -110,6 +111,7 @@ class MyURY_Scheduler extends MyURY_Scheduler_Common {
    * Returns a list of potential credit types, organsed so they can be used as a SELECT MyURYFormField data source
    */
   public static function getCreditTypes() {
+    self::__wakeup();
     return self::$db->fetch_all('SELECT credit_type_id AS value, name AS text FROM people.credit_type ORDER BY name ASC');
   }
   
