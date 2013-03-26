@@ -47,6 +47,6 @@ require_once 'Interfaces/CacheProvider.php';
 require_once 'Classes/' . Config::$cache_provider . '.php';
 
 //Initiate User
-if (!SHIBBOBLEH_ALLOW_READONLY) $member = User::getInstance();
+if (isset($_SESSION['memberid'])) $member = User::getInstance();
 //Initialise the permission constants
 CoreUtils::setUpAuth();
