@@ -23,7 +23,7 @@ var MyURYForm = {
         return false;
         }
         })
-      .data("autocomplete")._renderItem = function(ul, item) {
+      .data("ui-autocomplete")._renderItem = function(ul, item) {
         return $('<li></li>').data('item.autocomplete', item)
         .append('<a>' + item.fname + ' ' + item.sname + '</a>')
         .appendTo(ul);
@@ -61,7 +61,7 @@ var MyURYForm = {
         return false;
         }
         })
-      .data("autocomplete")._renderItem = function(ul, item) {
+      .data("ui-autocomplete")._renderItem = function(ul, item) {
         return $('<li></li>').data('item.autocomplete', item)
         .append('<a>' + item.title + '<br><span style="font-size:.8em">' + item.artist + '</span></a>')
         .appendTo(ul);
@@ -86,7 +86,7 @@ var MyURYForm = {
         return false;
         }
         })
-      .data("autocomplete")._renderItem = function(ul, item) {
+      .data("ui-autocomplete")._renderItem = function(ul, item) {
         return $('<li></li>').data('item.autocomplete', item)
         .append('<a>' + item.title + '</a>')
         .appendTo(ul);
