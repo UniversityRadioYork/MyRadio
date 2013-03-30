@@ -61,6 +61,8 @@ function initialiseUI() {
 
 function initialisePlayer(channel) {
 
+  if (channel == 0) channel = 'res';
+
   $("#progress-bar-" + channel).slider({
     range: "min",
     value: 0,
