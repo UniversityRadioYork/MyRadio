@@ -121,7 +121,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
         'summary' => $this->getTitle(), //Again, freaking NIPSWeb
         'title' => $this->getTitle(),
         'managedid' => $this->getID(),
-        'length' => $this->getLength(),
+        'length' => CoreUtils::happyTime($this->getLength() > 0 ? $this->getLength() : 0, true, false),
         'trackid' => $this->getID(),
         'recordid' => 'ManagedDB', //Legacy NIPSWeb Views
         'auxid' => 'managed:' . $this->getID() //Legacy NIPSWeb Views
