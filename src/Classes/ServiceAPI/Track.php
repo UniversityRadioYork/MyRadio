@@ -182,7 +182,7 @@ class Track extends ServiceAPI {
         'type' => 'central', //Tells NIPSWeb Client what this item type is
         'album' => $this->getAlbum()->toDataSource(),
         'trackid' => $this->getID(),
-        'length' => $this->getLength()
+        'length' => CoreUtils::happyTime($this->getLength(), true, false)
     );
   }
   
