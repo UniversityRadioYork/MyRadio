@@ -84,8 +84,8 @@ class CoreUtils {
    * @return String A happy time 
    * @assert (40000) == '01/01/1970'
    */
-  public static function happyTime($timestring, $time = true) {
-    return date('d/m/Y' . ($time ? ' H:i' : ''), is_numeric($timestring) ? $timestring : strtotime($timestring));
+  public static function happyTime($timestring, $time = true, $date = true) {
+    return date(($date ? 'd/m/Y' : '') . ($time ? ' H:i' : ''), is_numeric($timestring) ? $timestring : strtotime($timestring));
   }
   
   /**
