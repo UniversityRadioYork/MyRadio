@@ -13,7 +13,7 @@
  */
 if (!isset($_REQUEST['term'])) throw new MyURYException('Parameter \'term\' is required but was not provided');
 
-$data = Track::findByNameArtist(
+$data = MyURY_Track::findByNameArtist(
         $_REQUEST['term'],
         isset($_REQUEST['artist']) ? $_REQUEST['artist'] : '',
         isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default,

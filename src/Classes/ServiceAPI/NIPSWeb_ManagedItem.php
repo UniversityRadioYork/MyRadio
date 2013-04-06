@@ -6,7 +6,7 @@
  */
 
 /**
- * The NIPSWeb_ManagedItem class helps provide control and access to 
+ * The NIPSWeb_ManagedItem class helps provide control and access to Beds and Jingles and similar not-PPL resources
  * 
  * @version 13032013
  * @author Lloyd Wallis <lpw@ury.org.uk>
@@ -16,7 +16,7 @@
 class NIPSWeb_ManagedItem extends ServiceAPI {
   /**
    * The Singleton store for ManagedItem objects
-   * @var Track
+   * @var MyURY_Track
    */
   private static $resources = array();
   

@@ -1,22 +1,21 @@
 <?php
 /**
- * This file provides the Track class for MyURY
+ * This file provides the MyURY_Track class for MyURY
  * @package MyURY_Core
  */
 
 /**
- * The Track class provides and stores information about a Track
+ * The MyURY_Track class provides and stores information about a Track
  * 
- * @version 25062012
+ * @version 06042013
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
  * @uses \Database
- * @todo Write this
  */
-class Track extends ServiceAPI {
+class MyURY_Track extends ServiceAPI {
   /**
    * The Singleton store for Track objects
-   * @var Track
+   * @var MyURY_Track
    */
   private static $tracks = array();
   /**
@@ -233,7 +232,7 @@ class Track extends ServiceAPI {
     
     $response = array();
     foreach ($result as $trackid) {
-      $response[] = new Track($trackid);
+      $response[] = new MyURY_Track($trackid);
     }
     
     return $response;
