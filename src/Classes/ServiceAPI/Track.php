@@ -223,7 +223,7 @@ class Track extends ServiceAPI {
    * @return Array of Track objects
    */
   public static function findByNameArtist($title, $artist, $limit, $digitised = false) {
-    $result = self::$db->fetch_all('SELECT trackid
+    $result = self::$db->fetch_column('SELECT trackid
       FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
       AND rec_track.title ILIKE \'%\' || $1 || \'%\'
       AND rec_track.artist ILIKE \'%\' || $2 || \'%\'LIMIT $3',
