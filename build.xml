@@ -29,7 +29,7 @@
   <!-- ============================================  -->
   <!-- Target: main                                  -->
   <!-- ============================================  -->
-  <target name="main" description="main target" depends="clean,apigen">
+  <target name="main" description="main target" depends="clean,apigen,test">
     <copy todir="${builddir}">
       <fileset refid="allfiles" />
     </copy>
