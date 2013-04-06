@@ -4,6 +4,38 @@
  * @todo Includes length attribute to list items
  */
 
+/**
+ * Search the central library using the input criteria, rendering the response
+ * in the search panel
+ */
+function updateCentralSearch() {
+  $('#res-loading').show();
+  $.ajax({
+    url: '?service=NIPSWeb&action=search_central',
+    type: 'post',
+    data: 'artist=' + $('#res-filter-artist').val() + '&track=' + $('#res-filter-track').val(),
+    success: function(data) {
+      $('#baps-channel-res').empty();
+      for (file in data) {
+        var classes = '';
+        if (!data[file].digitised)
+          classes = classes + ' undigitised';
+        if (!data[file].clean)
+          classes = classes + ' unclean';
+
+        $('#baps-channel-res').append(
+                '<li id="' + data[file].bapsclientid + '" type="central" class="' + classes + '" length="00:00:00">' + data[file].summary + '</li>'
+                );
+      }
+      registerItemClicks();
+      $('#res-loading').hide();
+    },
+    error: function() {
+      $('#res-loading').html('Error loading library').addClass('ui-state-error');
+    }
+  });
+}
+
 /*
  *Deal with the Resources Library selector being changed
  */
@@ -13,20 +45,20 @@ $(document).ready(function() {
     if ($(this).val() === 'central') {
       $('#res-filter-name').hide();
       $('#res-filter-artist, #res-filter-track').fadeIn();
-    //This doesn't auto-load any files until search paramaters are set
+      //This doesn't auto-load any files until search paramaters are set
     } else if ($(this).val().match(/managed-.*/)) {
       //Load a managed playlist
       $('#res-loading').show();
       $.ajax({
         url: '?service=NIPSWeb&action=load_central_managed',
         type: 'post',
-        data: 'playlistid='+$(this).val(),
+        data: 'playlistid=' + $(this).val(),
         success: function(data) {
           for (file in data) {
             $('#baps-channel-res').append(
-              '<li id="'+data[file].bapsclientid+
-              '" type="central" length="00:00:00">'+data[file].summary+'</li>'
-              );
+                    '<li id="' + data[file].bapsclientid +
+                    '" type="central" length="00:00:00">' + data[file].summary + '</li>'
+                    );
           }
           $('#res-loading').hide();
           //Enable name filtering
@@ -46,13 +78,13 @@ $(document).ready(function() {
       $.ajax({
         url: '?service=NIPSWeb&action=load_auto_managed',
         type: 'post',
-        data: 'playlistid='+$(this).val(),
+        data: 'playlistid=' + $(this).val(),
         success: function(data) {
           for (file in data) {
             $('#baps-channel-res').append(
-              '<li id="'+data[file].bapsclientid+
-              '" type="central" length="00:00:00">'+data[file].summary+'</li>'
-              );
+                    '<li id="' + data[file].bapsclientid +
+                    '" type="central" length="00:00:00">' + data[file].summary + '</li>'
+                    );
           }
           $('#res-loading').hide();
           //Enable name filtering
@@ -71,16 +103,16 @@ $(document).ready(function() {
       $.ajax({
         url: '?service=NIPSWeb&action=load_aux_lib',
         type: 'post',
-        data: 'libraryid='+($(this).val().replace(/^res-/,'')),
+        data: 'libraryid=' + ($(this).val().replace(/^res-/, '')),
         success: function(data) {
           for (file in data) {
             if (data[file].meta == true) {
-              $('#baps-channel-res').append('<span>'+data[file].title+'</span><br>');
+              $('#baps-channel-res').append('<span>' + data[file].title + '</span><br>');
             } else {
               $('#baps-channel-res').append(
-                '<li id="ManagedDB-'+data[file].manageditemid+
-                '" type="aux" auxid="'+data[file].fileitemid+'" managedid="'+data[file].manageditemid+'">'+data[file].title+'</li>'
-                );
+                      '<li id="ManagedDB-' + data[file].manageditemid +
+                      '" type="aux" auxid="' + data[file].fileitemid + '" managedid="' + data[file].manageditemid + '">' + data[file].title + '</li>'
+                      );
             }
           }
           $('#res-loading').hide();
@@ -107,44 +139,15 @@ $(document).ready(function() {
         setTimeout("updateCentralSearch()", 50);
       }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
-        return $('<li></li>').data('item.autocomplete', item)
-        .append('<a>' + item.title + '</a>')
-        .appendTo(ul);
-      };;
+      return $('<li></li>').data('item.autocomplete', item)
+              .append('<a>' + item.title + '</a>')
+              .appendTo(ul);
+    };
+    ;
   });
 
-
-  /**
-   * Search the central library using the input criteria, rendering the response
-   * in the search panel
-   */
-  function updateCentralSearch() {
-    $('#res-loading').show();
-    $.ajax({
-      url: '?service=NIPSWeb&action=search_central',
-      type: 'post',
-      data: 'artist='+$('#res-filter-artist').val()+'&track='+$('#res-filter-track').val(),
-      success: function(data) {
-        $('#baps-channel-res').empty();
-        for (file in data) {
-          var classes = '';
-          if (!data[file].digitised) classes = classes + ' undigitised';
-          if (!data[file].clean) classes = classes + ' unclean';
-
-          $('#baps-channel-res').append(
-            '<li id="'+data[file].bapsclientid+'" type="central" class="'+classes+'" length="00:00:00">'+data[file].summary+'</li>'
-            );
-        }
-        registerItemClicks();
-        $('#res-loading').hide();
-      },
-      error: function() {
-        $('#res-loading').html('Error loading library').addClass('ui-state-error');
-      }
-    });
-  }
-  //Bind the above function
-  $('#res-filter-track').on('keyup',function(){
+  //Bind the central search function
+  $('#res-filter-track').on('keyup', function() {
     updateCentralSearch()
   });
 
@@ -153,7 +156,7 @@ $(document).ready(function() {
    */
   $('#a-manage-library').click(function() {
     var url = this.href;
-    var dialog = $('<div style="display:none"><iframe src="'+url+'" width="800" height="600" frameborder="0"></iframe></div>').appendTo('body');
+    var dialog = $('<div style="display:none"><iframe src="' + url + '" width="800" height="600" frameborder="0"></iframe></div>').appendTo('body');
     dialog.dialog({
       close: function(event, ui) {
         dialog.remove();
