@@ -1,11 +1,10 @@
 <?php
-
-/*
+/**
  * Provides the Scheduler Common class for MyURY
  * @package MyURY_Scheduler
  */
 
-/*
+/**
  * The Scheduler_Common class is used to provide common resources for the MyURY Scheduler classes
  * @version 04092012
  * @author Lloyd Wallis <lpw@ury.org.uk>
