@@ -106,7 +106,11 @@ $(document).ready(function() {
         //Let the autocomplete update the value of the filter
         setTimeout("updateCentralSearch()", 50);
       }
-    });
+    }).data("ui-autocomplete")._renderItem = function(ul, item) {
+        return $('<li></li>').data('item.autocomplete', item)
+        .append('<a>' + item.title + '</a>')
+        .appendTo(ul);
+      };;
   });
 
 
