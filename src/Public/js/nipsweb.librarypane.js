@@ -136,10 +136,10 @@ $(document).ready(function() {
       source: '?module=Core&action=a-findartist&limit=50',
       minLength: 2,
       select: function(event, ui) {
-        console.log(ui.item.title);
         $(this).val(ui.item.title);
         //Let the autocomplete update the value of the filter
         setTimeout("updateCentralSearch()", 50);
+        return false;
       }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
       return $('<li></li>').data('item.autocomplete', item)
