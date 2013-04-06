@@ -11,9 +11,9 @@
 function updateCentralSearch() {
   $('#res-loading').show();
   $.ajax({
-    url: '?service=NIPSWeb&action=search_central',
+    url: '?module=Core&action=a-findtrack&require_digitised=true',
     type: 'post',
-    data: 'artist=' + $('#res-filter-artist').val() + '&track=' + $('#res-filter-track').val(),
+    data: 'artist=' + $('#res-filter-artist').val() + '&term=' + $('#res-filter-track').val(),
     success: function(data) {
       $('#baps-channel-res').empty();
       for (file in data) {
@@ -24,7 +24,8 @@ function updateCentralSearch() {
           classes = classes + ' unclean';
 
         $('#baps-channel-res').append(
-                '<li id="' + data[file].bapsclientid + '" type="central" class="' + classes + '" length="00:00:00">' + data[file].summary + '</li>'
+                '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
+                  '" type="central" class="' + classes + '" length="' + data[file].length + '">' + data[file].summary + '</li>'
                 );
       }
       registerItemClicks();

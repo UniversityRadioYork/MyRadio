@@ -170,6 +170,14 @@ class Track extends ServiceAPI {
   }
   
   /**
+   * Get whether or not the track is digitised
+   * @return bool
+   */
+  public function getDigitised() {
+    return $this->digitised;
+  }
+  
+  /**
    * Returns an array of key information, useful for Twig rendering and JSON requests
    * @todo Expand the information this returns
    * @return Array
@@ -183,7 +191,8 @@ class Track extends ServiceAPI {
         'album' => $this->getAlbum()->toDataSource(),
         'trackid' => $this->getID(),
         'length' => CoreUtils::happyTime($this->getLength(), true, false),
-        'clean' => $this->clean === 'c'
+        'clean' => $this->clean === 'c',
+        'digitised' => $this->getDigitised()
     );
   }
   
