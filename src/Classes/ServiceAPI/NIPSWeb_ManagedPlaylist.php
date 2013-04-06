@@ -40,12 +40,12 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
     $result = self::$db->fetch_one('SELECT * FROM bapsplanner.managed_playlists WHERE managedplaylistid=$1 LIMIT 1',
             array($playlistid));
     if (empty($result)) {
-      throw new MyURYException('The specified NIPSWeb Managed Plsylist does not seem to exist');
+      throw new MyURYException('The specified NIPSWeb Managed Playlist does not seem to exist');
       return;
     }
     
     $this->name = $result['name'];
-    $this->folder = $result['folter'];
+    $this->folder = $result['folder'];
     $this->item_ttl = $result['item_ttl'];
   }
   
@@ -67,7 +67,7 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
   }
   
   /**
-   * Get the Title of the ManagedItem
+   * Get the Title of the ManagedPlaylist
    * @return String
    */
   public function getTitle() {
@@ -75,11 +75,19 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
   }
   
   /**
-   * Get the unique manageditemid of the ManagedItem
+   * Get the unique manageditemid of the ManagedPlaylist
    * @return int
    */
   public function getID() {
-    return $this->managed_item_id;
+    return $this->managed_playlist_id;
+  }
+  
+  /**
+   * Get the unique path of the ManagedPlaylist
+   * @return String
+   */
+  public function getFolder() {
+    return $this->folder;
   }
   
   /**

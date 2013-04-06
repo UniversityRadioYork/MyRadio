@@ -111,6 +111,14 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
   }
   
   /**
+   * Get the path of the ManagedItem
+   * @return string
+   */
+  public function getPath() {
+    return Config::$music_central_db_path.'/'.($this->managed_playlist ? $this->managed_playlist->getFolder() : $this->folder).'/'.$this->getID().'.mp3';
+  }
+  
+  /**
    * Returns an array of key information, useful for Twig rendering and JSON requests
    * @todo Expand the information this returns
    * @return Array
