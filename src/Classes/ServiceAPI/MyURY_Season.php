@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Provides the Season class for MyURY
  * @package MyURY_Scheduler

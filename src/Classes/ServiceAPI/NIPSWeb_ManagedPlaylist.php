@@ -1,7 +1,6 @@
 <?php
 /**
  * This file provides the NIPSWeb_ManagedPlaylist class for MyURY - Contains Jingles etc.
- * ilk
  * @package MyURY_NIPSWeb
  */
 

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file provides the Demo class for MyURY
  * @package MyURY_Demo

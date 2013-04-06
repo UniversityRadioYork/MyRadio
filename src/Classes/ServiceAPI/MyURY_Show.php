@@ -1,11 +1,10 @@
 <?php
-
-/*
+/**
  * Provides the Show class for MyURY
  * @package MyURY_Scheduler
  */
 
-/*
+/**
  * The Show class is used to create, view and manupulate Shows within the new MyURY Scheduler Format
  * @version 05012013
  * @author Lloyd Wallis <lpw@ury.org.uk>

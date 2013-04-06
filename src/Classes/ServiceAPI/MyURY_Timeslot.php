@@ -1,11 +1,10 @@
 <?php
-
-/*
+/**
  * Provides the Timeslot class for MyURY
  * @package MyURY_Scheduler
  */
 
-/*
+/**
  * The Timeslot class is used to view and manupulate Timeslot within the new MyURY Scheduler Format
  * @todo Generally the creation of bulk Timeslots is currently handled by the Season/Show classes, but this should change
  * @version 04012013

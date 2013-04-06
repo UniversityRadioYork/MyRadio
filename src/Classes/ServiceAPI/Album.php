@@ -1,12 +1,11 @@
 <?php
-
-/*
+/**
  * Provides the Album class for MyURY
  * Based and bashed around from the Artist class, so if there was a problem with that (12/Aug/2012), then it's likely to be here as well
  * @package MyURY_Core
  */
 
-/*
+/**
  * The Album class fetches information about albums in the Cental Databse. It may be expanded to deal with entering and modifying them at some point as well.
  * @version 12082012
  * @author Anthony Williams <anthony@ury.york.ac.uk>
