@@ -4,7 +4,6 @@
  * @package MyURY_Core
  */
 
-
 /**
  * Standard API Utilities. Basically miscellaneous functions for the core system
  * No database accessing etc should be setup here.
@@ -162,7 +161,7 @@ class CoreUtils {
    * Checks using cached Shibbobleh permissions whether the current member has the specified permission
    * @param int $permission The ID of the permission, resolved by using an AUTH_ constant
    * @return boolean Whether the member has the requested permission
-   * @todo this is a duplication of the stuff in the User class. depreciate?
+   * @todo this is a duplication of the stuff in the User class. deprecate?
    * @deprecated
    */
   public static function hasPermission($permission) {
