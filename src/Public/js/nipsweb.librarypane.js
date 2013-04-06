@@ -109,8 +109,8 @@ $(document).ready(function() {
               $('#baps-channel-res').append('<span>' + data[file].title + '</span><br>');
             } else {
               $('#baps-channel-res').append(
-                      '<li id="ManagedDB-' + data[file].manageditemid +
-                      '" type="aux" auxid="' + data[file].fileitemid + '" managedid="' + data[file].manageditemid + '">' + data[file].title + '</li>'
+                      '<li id="ManagedDB-' + data[file].managedid +
+                      '" type="aux" managedid="' + data[file].managedid + '">' + data[file].title + '</li>'
                       );
             }
           }
