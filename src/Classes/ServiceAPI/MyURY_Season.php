@@ -1,10 +1,10 @@
 <?php
-/*
+/**
  * Provides the Season class for MyURY
  * @package MyURY_Scheduler
  */
 
-/*
+/**
  * The Season class is used to create, view and manupulate Seasons within the new MyURY Scheduler Format
  * @version 12082012
  * @author Lloyd Wallis <lpw@ury.org.uk>
