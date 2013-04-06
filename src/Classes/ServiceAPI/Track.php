@@ -226,7 +226,7 @@ class Track extends ServiceAPI {
     $result = self::$db->fetch_all('SELECT trackid
       FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
       AND rec_track.title ILIKE \'%\' || $1 || \'%\'
-      AND rec_track.artist ILIKE \'%\' || $1 || \'%\'LIMIT $2',
+      AND rec_track.artist ILIKE \'%\' || $2 || \'%\'LIMIT $3',
             array($title, $artist, $limit));
     
     $response = array();
