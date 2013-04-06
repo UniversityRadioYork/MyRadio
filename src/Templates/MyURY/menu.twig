@@ -21,7 +21,7 @@
       {% if item.template is not sameas(null) %}
       {% include item.template %}
       {% else %}
-      <li><a href="{{ item.url }}" title="{{ item.description | raw | escape('html_attr') }}">{{ item.title }}</a></li>
+      <li><a href="{{ item.url }}" title="{{ item.description | raw | escape }}">{{ item.title }}</a></li>
       {% endif %}
     {% endfor %}
     </ul>
