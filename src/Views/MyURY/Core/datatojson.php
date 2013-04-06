@@ -8,4 +8,8 @@
  */
 header('Content-Type: text/json');
 header('HTTP/1.1 200 OK');
+
+//Decode to datasource if needed
+$data = CoreUtils::dataSourceParser($data);
+
 echo json_encode($data);
