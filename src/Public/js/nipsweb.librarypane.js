@@ -136,7 +136,7 @@ $(document).ready(function() {
       source: '?module=Core&action=a-findartist&limit=50',
       minLength: 2,
       select: function(event, ui) {
-        console.log(ui.item);
+        console.log(ui.item.title);
         $(this).val(ui.item.title);
         //Let the autocomplete update the value of the filter
         setTimeout("updateCentralSearch()", 50);
