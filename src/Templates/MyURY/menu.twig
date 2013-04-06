@@ -21,7 +21,7 @@
       {% if item.template is not sameas(null) %}
       {% include item.template %}
       {% else %}
-      <li><a href="{{ item.url }}" title="{{ item.description | replace({'"': '\"'}) }}">{{ item.title }}</a></li>
+      <li><a href="{{ item.url }}" title="{{ item.description | replace({'"': '\"'}) | raw }}">{{ item.title }}</a></li>
       {% endif %}
     {% endfor %}
     </ul>
