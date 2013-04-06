@@ -18,7 +18,7 @@ $(document).ready(function() {
       //Load a managed playlist
       $('#res-loading').show();
       $.ajax({
-        url: 'ajax.php?action=load_central_managed',
+        url: '?service=NIPSWeb&action=load_central_managed',
         type: 'post',
         data: 'playlistid='+$(this).val(),
         success: function(data) {
@@ -44,7 +44,7 @@ $(document).ready(function() {
       //Load an auto playlist
       $('#res-loading').show();
       $.ajax({
-        url: 'ajax.php?action=load_auto_managed',
+        url: '?service=NIPSWeb&action=load_auto_managed',
         type: 'post',
         data: 'playlistid='+$(this).val(),
         success: function(data) {
@@ -69,7 +69,7 @@ $(document).ready(function() {
     } else {
       $('#res-loading').show();
       $.ajax({
-        url: 'ajax.php?action=load_aux_lib',
+        url: '?service=NIPSWeb&action=load_aux_lib',
         type: 'post',
         data: 'libraryid='+($(this).val().replace(/^res-/,'')),
         success: function(data) {
@@ -100,7 +100,7 @@ $(document).ready(function() {
     $('#baps-channel-res').empty();
     //Makes the artist search autocompleting. When an artist is selected it'll filter
     $('#res-filter-artist').autocomplete({
-      source: 'ajax.php?action=search_artist',
+      source: '?service=NIPSWeb&action=search_artist',
       minLength: 2,
       select: function() {
         //Let the autocomplete update the value of the filter
@@ -117,7 +117,7 @@ $(document).ready(function() {
   function updateCentralSearch() {
     $('#res-loading').show();
     $.ajax({
-      url: 'ajax.php?action=search_central',
+      url: '?service=NIPSWeb&action=search_central',
       type: 'post',
       data: 'artist='+$('#res-filter-artist').val()+'&track='+$('#res-filter-track').val(),
       success: function(data) {
