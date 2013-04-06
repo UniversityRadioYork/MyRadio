@@ -351,9 +351,6 @@ function updateState() {
         trackid: ids[1]
       };
 
-      if (data.type === 'aux') {
-        data.auxid = $(this).attr('auxid');
-      }
       if ($(this).attr('managedid') !== '') {
         data.managedid = $(this).attr('managedid');
       }
