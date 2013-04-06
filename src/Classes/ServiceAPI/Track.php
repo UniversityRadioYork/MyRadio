@@ -182,7 +182,8 @@ class Track extends ServiceAPI {
         'type' => 'central', //Tells NIPSWeb Client what this item type is
         'album' => $this->getAlbum()->toDataSource(),
         'trackid' => $this->getID(),
-        'length' => CoreUtils::happyTime($this->getLength(), true, false)
+        'length' => CoreUtils::happyTime($this->getLength(), true, false),
+        'clean' => $this->clean === 'c'
     );
   }
   
@@ -202,5 +203,28 @@ class Track extends ServiceAPI {
       FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
       AND rec_track.title ILIKE \'%\' || $1 || \'%\' LIMIT $2',
             array($title, $limit));
+  }
+  
+  /**
+   * Returns an Array of Tracks matching the given partial title
+   * @param String $title A partial or total title to search for
+   * @param String $artist a partial or total title to search for
+   * @param int $limit The maximum number of tracks to return
+   * @param bool $digitised Whether the track must be digitised. Default false.
+   * @return Array of Track objects
+   */
+  public static function findByNameArtist($title, $artist, $limit, $digitised = false) {
+    $result = self::$db->fetch_all('SELECT trackid
+      FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
+      AND rec_track.title ILIKE \'%\' || $1 || \'%\'
+      AND rec_track.artist ILIKE \'%\' || $1 || \'%\'LIMIT $2',
+            array($title, $artist, $limit));
+    
+    $response = array();
+    foreach ($result as $trackid) {
+      $response[] = new Track($trackid);
+    }
+    
+    return $response;
   }
 }

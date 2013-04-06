@@ -10,7 +10,7 @@
  * No database accessing etc should be setup here.
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 03012012
+ * @version 06042013
  * @package MyURY_Core
  * @todo Factor out permission code into a seperate class?
  */
@@ -442,6 +442,24 @@ class CoreUtils {
     $db = Database::getInstance();
     
     return $db->fetch_all('SELECT version, path FROM myury.services_versions WHERE serviceid=$1', array($serviceid));
+  }
+  
+  /**
+   * Parses an object or array into client array datasource
+   * @param mixed $data
+   * @return array
+   */
+  public static function dataSourceParser($data) {
+    if (is_object($data) && $data instanceof MyURY_DataSource) {
+      return $data->toDataSource();
+    } elseif (is_array($data)) {
+      foreach ($data as $k => $v) {
+        $data[$k] = self::dataSourceParser($v);
+      }
+      return $data;
+    } else {
+      return $data;
+    }
   }
 
 }
