@@ -13,5 +13,9 @@
  */
 if (!isset($_REQUEST['term'])) throw new MyURYException('Parameter \'term\' is required but was not provided');
 
-$data = Track::findByName($_REQUEST['term'], isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default);
+$data = Track::findByNameArtist(
+        $_REQUEST['term'],
+        isset($_REQUEST['artist']) ? $_REQUEST['artist'] : '',
+        isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default,
+        isset($_REQUEST['require_digitised']) ? (bool)$_REQUEST['require_digitised'] : false);
 require 'Views/MyURY/Core/datatojson.php';
