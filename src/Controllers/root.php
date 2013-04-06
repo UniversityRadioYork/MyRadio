@@ -5,7 +5,7 @@
  * the necessary handler.
  * 
  * Some clarification about the two different 'Core' parts. They both use the package MyURY_Core, but the folders
- * distinguish them. Items iin folders such as Models/Core or just Controllers are part of the Core code required
+ * distinguish them. Items in folders such as Models/Core or just Controllers are part of the Core code required
  * to make any of the MyURY system work, including Service access.
  * 
  * Items in Models/MyURY/Core etc. are required to make the MyURY Service work - its module/action system. The

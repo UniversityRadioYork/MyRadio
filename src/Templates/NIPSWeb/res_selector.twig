@@ -1,0 +1,22 @@
+<select id="res-type-sel" class="ui-widget">
+  <option disabled="disabled" selected="selected">Select a library...</option>
+  <option value="central">Central Music Library</option>
+  
+  <option disabled="disabled">Playlists</option>
+  {% for list in reslists['managed'] %}
+    <option value='managed-{{list['playlistid']}}'>{{list['title']}}</option>
+  {% endfor %}
+  {% for list in reslists['auto'] %}
+    <option value='auto-{{list['playlistid']}}'>{{list['title']}}</option>
+  {% endfor %}
+
+  <option disabled="disabled">Resources</option>
+  {% for list in reslists['aux'] %}
+    <option value='{{list['managedid']}}'>{{list['title']}}</option>
+  {% endfor %}
+    
+  <option disabled="disabled">Personal Playlists</option>
+  {% for list in reslists['user'] %}
+    <option value='res-{{list['share']}}'>{{list['description']}}</option>
+  {% endfor %}
+</select>

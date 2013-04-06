@@ -46,6 +46,18 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
     $this->name = $result['name'];
     $this->folder = $result['folder'];
     $this->item_ttl = $result['item_ttl'];
+    
+    $items = self::$db->fetch_column('SELECT manageditemid FROM bapsplanner.managed_items WHERE managedplaylistid=$1
+      ORDER BY title', array($this->managed_playlist_id));
+    $this->items = array();
+    foreach ($items as $id) {
+      /**
+       * Pass this to the ManagedItem - it's called Dependency Injection and prevents loops and looks pretty
+       * http://stackoverflow.com/questions/4903387/can-2-singleton-classes-reference-each-other
+       * http://www.phparch.com/2010/03/static-methods-vs-singletons-choose-neither/
+       */
+      $this->items[] = NIPSWeb_ManagedItem::getInstance($id, $this);
+    }
   }
   
   /**
@@ -66,11 +78,19 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
   }
   
   /**
+   * Return the NIPSWeb_ManagedItems that belong to this playlist
+   * @return Array of ManagedItems
+   */
+  public function getItems() {
+    return $this->items;
+  }
+  
+  /**
    * Get the Title of the ManagedPlaylist
    * @return String
    */
   public function getTitle() {
-    return $this->title;
+    return $this->name;
   }
   
   /**
@@ -98,6 +118,16 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
     return $this->length;
   }
   
+  public static function getAllManagedPlaylists() {
+    $result = self::$db->fetch_column('SELECT managedplaylistid FROM bapsplanner.managed_playlists ORDER BY name');
+    $response = array();
+    foreach ($result as $id) {
+      $response[] = self::getInstance($id);
+    }
+    
+    return $response;
+  }
+  
   /**
    * Returns an array of key information, useful for Twig rendering and JSON requests
    * @todo Expand the information this returns
@@ -111,6 +141,7 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
         'managedid' => $this->getID(),
         'length' => $this->getLength(),
         'trackid' => $this->getID(),
+        'folder' => $this->getFolder(),
         'recordid' => 'ManagedDB', //Legacy NIPSWeb Views
         'auxid' => 'managed:' . $this->getID() //Legacy NIPSWeb Views
     );
