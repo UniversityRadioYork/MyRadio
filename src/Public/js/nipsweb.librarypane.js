@@ -100,7 +100,7 @@ $(document).ready(function() {
     $('#baps-channel-res').empty();
     //Makes the artist search autocompleting. When an artist is selected it'll filter
     $('#res-filter-artist').autocomplete({
-      source: '?module=Core&action=a-findartist',
+      source: '?module=Core&action=a-findartist&limit=50',
       minLength: 2,
       select: function() {
         //Let the autocomplete update the value of the filter
