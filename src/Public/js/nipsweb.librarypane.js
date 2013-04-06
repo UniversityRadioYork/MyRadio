@@ -18,8 +18,6 @@ function updateCentralSearch() {
       $('#baps-channel-res').empty();
       for (file in data) {
         var classes = '';
-        if (!data[file].digitised)
-          classes = classes + ' undigitised';
         if (!data[file].clean)
           classes = classes + ' unclean';
 
