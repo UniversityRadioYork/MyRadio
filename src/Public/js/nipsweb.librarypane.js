@@ -11,7 +11,7 @@
 function updateCentralSearch() {
   $('#res-loading').show();
   $.ajax({
-    url: '?module=Core&action=a-findtrack&require_digitised=true',
+    url: '?module=Core&action=a-findtrack&require_digitised=true&limit=200',
     type: 'post',
     data: 'artist=' + $('#res-filter-artist').val() + '&term=' + $('#res-filter-track').val(),
     success: function(data) {
