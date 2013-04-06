@@ -259,7 +259,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
       foreach (self::$db->fetch_all($r) as $track) {
         if ($track['rec_track_id'] != null) {
           //CentralDB
-          $tracks[$track['channel_id']][] = Track::getInstance($track['rec_track_id'])->toDataSource();
+          $tracks[$track['channel_id']][] = MyURY_Track::getInstance($track['rec_track_id'])->toDataSource();
         } elseif ($track['managed_item_id'] != null) {
           //ManagedDB (Central Beds, Jingles...)
           $tracks[$track['channel_id']][] = NIPSWeb_ManagedItem::getInstance($track['managed_item_id'])->toDataSource();

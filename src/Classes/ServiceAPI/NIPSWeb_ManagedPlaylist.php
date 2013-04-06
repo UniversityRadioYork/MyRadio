@@ -16,7 +16,7 @@
 class NIPSWeb_ManagedPlaylist extends ServiceAPI {
   /**
    * The Singleton store for AudioResource objects
-   * @var Track
+   * @var MyURY_Track
    */
   private static $playlists = array();
   

@@ -29,10 +29,20 @@
   <!-- ============================================  -->
   <!-- Target: main                                  -->
   <!-- ============================================  -->
-  <target name="main" description="main target" depends="clean,test">
+  <target name="main" description="main target" depends="clean,test,apigen">
     <copy todir="${builddir}">
       <fileset refid="allfiles" />
     </copy>
+  </target>
+  
+  <target name="apigen" description="Generate API">
+    <apigen
+    source="${srcdir}/Classes"
+    destination="docs"
+    exclude="*/tests/*"
+    title="MyURY Documentation"
+    deprecated="true"
+    todo="true"/>
   </target>
 
   <!-- ============================================  -->
