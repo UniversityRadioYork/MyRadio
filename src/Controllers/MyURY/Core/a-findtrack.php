@@ -14,8 +14,6 @@
  * @package MyURY_Core
  */
 
-die(print_r(iTones_Playlist::getInstance($_REQUEST['itonesplaylistid'])->getTracks()));
-
 $data = MyURY_Track::findByOptions(array(
         'title' => isset($_REQUEST['term']) ? $_REQUEST['term'] : '',
         'artist' => isset($_REQUEST['artist']) ? $_REQUEST['artist'] : '',

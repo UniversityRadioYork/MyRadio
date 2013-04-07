@@ -58,8 +58,6 @@ class iTones_Playlist extends ServiceAPI {
       AND revision_removed IS NULL
       ORDER BY entryid', array($this->playlistid));
     
-    print_r($items);
-    
     foreach ($items as $id) {
       $this->tracks[] = MyURY_Track::getInstance($id);
     }
