@@ -20,4 +20,8 @@ class NIPSWeb_PlayToken extends ServiceAPI {
   public static function hasToken($trackid) {
     return true;
   }
+  
+  public function getID() {
+    return $this->id;
+  }
 }
