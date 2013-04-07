@@ -33,6 +33,7 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
    * Initiates the ManagedPlaylist variables
    * @param int $playlistid The ID of the managed playlist to initialise
    * @todo Items
+   * Note: Only links *non-expired* items
    */
   private function __construct($playlistid) {
     $this->managed_playlist_id = $playlistid;
@@ -48,6 +49,7 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
     $this->item_ttl = $result['item_ttl'];
     
     $items = self::$db->fetch_column('SELECT manageditemid FROM bapsplanner.managed_items WHERE managedplaylistid=$1
+      AND (expirydate IS NULL OR expirydate > NOW())
       ORDER BY title', array($this->managed_playlist_id));
     $this->items = array();
     foreach ($items as $id) {
@@ -56,7 +58,7 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
        * http://stackoverflow.com/questions/4903387/can-2-singleton-classes-reference-each-other
        * http://www.phparch.com/2010/03/static-methods-vs-singletons-choose-neither/
        */
-      $this->items[] = NIPSWeb_ManagedItem::getInstance($id, $this);
+      $this->items[] = NIPSWeb_ManagedItem::getInstance((int)$id, $this);
     }
   }
   
@@ -109,15 +111,6 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
     return $this->folder;
   }
   
-  /**
-   * Get the length of the ManagedItem, in seconds
-   * @todo Not Implemented as Length not stored in DB
-   * @return int
-   */
-  public function getLength() {
-    return $this->length;
-  }
-  
   public static function getAllManagedPlaylists() {
     $result = self::$db->fetch_column('SELECT managedplaylistid FROM bapsplanner.managed_playlists ORDER BY name');
     $response = array();
@@ -135,15 +128,9 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
    */
   public function toDataSource() {
     return array(
-        'type' => 'aux', //Legacy NIPSWeb Views
-        'summary' => $this->getTitle(), //Again, freaking NIPSWeb
         'title' => $this->getTitle(),
         'managedid' => $this->getID(),
-        'length' => $this->getLength(),
-        'trackid' => $this->getID(),
         'folder' => $this->getFolder(),
-        'recordid' => 'ManagedDB', //Legacy NIPSWeb Views
-        'auxid' => 'managed:' . $this->getID() //Legacy NIPSWeb Views
     );
   }
 }

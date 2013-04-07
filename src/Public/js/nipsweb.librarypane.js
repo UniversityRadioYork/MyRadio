@@ -49,9 +49,9 @@ $(document).ready(function() {
       //Load a managed playlist
       $('#res-loading').show();
       $.ajax({
-        url: '?service=NIPSWeb&action=load_central_managed',
+        url: '?module=Core&action=a-findtrack&digitised=true&limit=0',
         type: 'post',
-        data: 'playlistid=' + $(this).val(),
+        data: 'itonesplaylistid=' + $(this).val().replace(/managed-/,''),
         success: function(data) {
           for (file in data) {
             $('#baps-channel-res').append(

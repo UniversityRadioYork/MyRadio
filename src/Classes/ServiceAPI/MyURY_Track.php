@@ -11,6 +11,7 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
  * @uses \Database
+ * @todo Cache this
  */
 class MyURY_Track extends ServiceAPI {
   /**
@@ -198,30 +199,12 @@ class MyURY_Track extends ServiceAPI {
   /**
    * Returns an Array of Tracks matching the given partial title
    * @param String $title A partial or total title to search for
-   * @param int $limit The maximum number of tracks to return
-   * @return Array 2D with each first dimension an Array as follows:<br>
-   * title: The title of the track<br>
-   * artist: The artist of the track (String name)<br>
-   * record: The name of the record the track is in<br>
-   * trackid: The unique id of the track
-   */
-  public static function findByName($title, $limit) {
-    $title = trim($title);
-    return self::$db->fetch_all('SELECT rec_track.title, rec_track.artist, rec_record.title AS record, trackid
-      FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
-      AND rec_track.title ILIKE \'%\' || $1 || \'%\' LIMIT $2',
-            array($title, $limit));
-  }
-  
-  /**
-   * Returns an Array of Tracks matching the given partial title
-   * @param String $title A partial or total title to search for
    * @param String $artist a partial or total title to search for
    * @param int $limit The maximum number of tracks to return
    * @param bool $digitised Whether the track must be digitised. Default false.
    * @return Array of Track objects
    */
-  public static function findByNameArtist($title, $artist, $limit, $digitised = false) {
+  private static function findByNameArtist($title, $artist, $limit, $digitised = false) {
     $result = self::$db->fetch_column('SELECT trackid
       FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
       AND rec_track.title ILIKE \'%\' || $1 || \'%\'
@@ -236,5 +219,44 @@ class MyURY_Track extends ServiceAPI {
     }
     
     return $response;
+  }
+  
+  /**
+   * 
+   * @param Array $options One or more of the following:
+   * title: String title of the track
+   * artist: String artist name of the track
+   * digitised: Boolean whether or not digitised
+   * itonesplaylistid: Tracks that are members of the iTones_Playlist id
+   * limit: Maximum number of items to return. 0 = No Limit
+   */
+  public static function findByOptions($options) {
+    if (!isset($options['title'])) $options['title'] = '';
+    if (!isset($options['artist'])) $options['artist'] = '';
+    if (!isset($options['digitised'])) $options['digitised'] = true;
+    if (!isset($options['itonesplaylistid'])) $options['itonesplaylistid'] = null;
+    if (!isset($options['limit'])) $options['limit'] = Config::$ajax_limit_default;
+    
+    //Prepare paramaters
+    $sql_params = array($options['title'], $options['artist']);
+    if ($options['limit'] != 0) $sql_params[] = $options['limit'];
+    
+    //Do the bulk of the sorting with SQL
+    $result = self::$db->fetch_column('SELECT trackid
+      FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
+      AND rec_track.title ILIKE \'%\' || $1 || \'%\'
+      AND rec_track.artist ILIKE \'%\' || $2 || \'%\'
+      '.($options['digitised'] ? ' AND digitised=\'t\'' : '').'
+      '.($options['limit'] == 0 ? '' : ' LIMIT $3'),
+            $sql_params);
+    
+    $response = array();
+    foreach ($result as $trackid) {
+      $response[] = new MyURY_Track($trackid);
+    }
+    
+    //Intersect with iTones if necessary, then return
+    return empty($options['itonesplaylistid']) ? $response : array_intersect($response,
+      iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks());
   }
 }

@@ -81,4 +81,8 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
     }
     return $result;
   }
+  
+  public function __toString() {
+    return __CLASS__.'-'.$this->getID();
+  }
 }
