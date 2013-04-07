@@ -131,4 +131,11 @@ class MyURY_Scheduler extends MyURY_Scheduler_Common {
       AND metadata_key_id IN (SELECT metadata_key_id FROM metadata.metadata_key WHERE name=\'title\')
       AND metadata_value ILIKE \'%\' || $1 || \'%\' LIMIT $2', array($term, $limit));
   }
+  
+  /**
+   * @todo This probably shouldn't implement ServiceAPI
+   */
+  public function getID() {
+    return 0;
+  }
 }
