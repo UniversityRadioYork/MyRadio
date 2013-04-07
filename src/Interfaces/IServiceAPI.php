@@ -21,9 +21,4 @@ interface IServiceAPI {
    * Static Factory method to setup an instance of a ServiceAPI Object
    */
   static function getInstance($serviceObjectId = -1);
-  
-  /**
-   * Returns the unique id of the object
-   */
-  public function getID();
 }
