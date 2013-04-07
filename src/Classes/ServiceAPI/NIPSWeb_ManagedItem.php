@@ -61,8 +61,8 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     }
     
     $this->managed_playlist = empty($result['managedplaylistid']) ? null : 
-            ($playlistref instanceof NIPSWeb_ManagedPlaylist) ? $playlistref :
-            NIPSWeb_ManagedPlaylist::getInstance($result['managedplaylistid']);
+            (($playlistref instanceof NIPSWeb_ManagedPlaylist) ? $playlistref :
+            NIPSWeb_ManagedPlaylist::getInstance($result['managedplaylistid']));
     $this->folder = $result['folder'];
     $this->title = $result['title'];
     $this->length = strtotime('1970-01-01 '.$result['length']);
