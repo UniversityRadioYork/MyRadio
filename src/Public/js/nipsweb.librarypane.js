@@ -35,7 +35,7 @@ function updateCentralSearch() {
   });
 }
 
-/*
+/**
  *Deal with the Resources Library selector being changed
  */
 $(document).ready(function() {
