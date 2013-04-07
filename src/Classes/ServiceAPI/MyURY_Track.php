@@ -229,8 +229,23 @@ class MyURY_Track extends ServiceAPI {
    * digitised: Boolean whether or not digitised
    * itonesplaylistid: Tracks that are members of the iTones_Playlist id
    * limit: Maximum number of items to return. 0 = No Limit
+   * 
+   * @todo Limit not accurate for itonesplaylistid queries
    */
   public static function findByOptions($options) {
+    
+    //Shortcircuit - if itonesplaylistid is the only not-default value, just return the playlist
+    $conflict = false;
+    foreach (array('title', 'artist', 'digitised') as $k) {
+      if (!empty($options[$k])) {
+        echo "$k not empty";exit;
+        $conflict = true;
+        break;
+      }
+    }
+    if (!$conflict && !empty($options['itonesplaylistid']))
+      return iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks();
+    
     if (!isset($options['title'])) $options['title'] = '';
     if (!isset($options['artist'])) $options['artist'] = '';
     if (!isset($options['digitised'])) $options['digitised'] = true;
