@@ -184,7 +184,6 @@ class MyURY_Track extends ServiceAPI {
    */
   public function toDataSource() {
     return array(
-        'summary' => $this->getSummary(), //Used for legacy parts of the NIPSWeb Client
         'title' => $this->getTitle(),
         'artist' => $this->getArtist(),
         'type' => 'central', //Tells NIPSWeb Client what this item type is

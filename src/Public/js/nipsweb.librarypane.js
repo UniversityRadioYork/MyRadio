@@ -23,7 +23,8 @@ function updateCentralSearch() {
 
         $('#baps-channel-res').append(
                 '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
-                  '" type="central" class="' + classes + '" length="' + data[file].length + '">' + data[file].summary + '</li>'
+                  '" type="central" class="' + classes + '" length="' + data[file].length + '">'
+                  + data[file].title + ' - ' + data[file].artjst + '</li>'
                 );
       }
       registerItemClicks();
@@ -55,8 +56,8 @@ $(document).ready(function() {
         success: function(data) {
           for (file in data) {
             $('#baps-channel-res').append(
-                    '<li id="' + data[file].bapsclientid +
-                    '" type="central" length="00:00:00">' + data[file].summary + '</li>'
+                    '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
+                    '" type="central" length="00:00:00">' + data[file].title + ' - ' + data[file].artist + '</li>'
                     );
           }
           $('#res-loading').hide();
