@@ -238,11 +238,11 @@ class MyURY_Track extends ServiceAPI {
     $conflict = false;
     foreach (array('title', 'artist', 'digitised') as $k) {
       if (!empty($options[$k])) {
-        echo "$k not empty";exit;
         $conflict = true;
         break;
       }
     }
+    
     if (!$conflict && !empty($options['itonesplaylistid']))
       return iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks();
     
