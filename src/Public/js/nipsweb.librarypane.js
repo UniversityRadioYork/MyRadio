@@ -24,7 +24,7 @@ function updateCentralSearch() {
         $('#baps-channel-res').append(
                 '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
                   '" type="central" class="' + classes + '" length="' + data[file].length + '">'
-                  + data[file].title + ' - ' + data[file].artjst + '</li>'
+                  + data[file].title + ' - ' + data[file].artist + '</li>'
                 );
       }
       registerItemClicks();
