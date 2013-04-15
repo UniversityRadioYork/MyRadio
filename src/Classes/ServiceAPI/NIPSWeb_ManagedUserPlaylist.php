@@ -14,6 +14,8 @@
  */
 class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist {
   
+  private static $playlists;
+  
   /**
    * Initiates the UserPlaylist variables
    * @param int $playlistid The folder of the user playlist to initialise, e.g. 7449/beds
@@ -25,7 +27,7 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist {
     $this->name = self::getNameFromFolder($this->folder);
     
     $items = self::$db->fetch_column('SELECT manageditemid FROM bapsplanner.managed_user_items
-      WHERE managedplaylistid=$1 ORDER BY title', array('membersmusic/'.$this->managed_playlist_id));
+      WHERE managedplaylistid=$1 ORDER BY title', array('membersmusic/'.$this->folder));
     $this->items = array();
     foreach ($items as $id) {
       /**
