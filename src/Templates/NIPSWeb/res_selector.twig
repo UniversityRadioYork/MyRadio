@@ -17,6 +17,6 @@
     
   <option disabled="disabled">Personal Playlists</option>
   {% for list in reslists['user'] %}
-    <option value='res-{{list['share']}}'>{{list['description']}}</option>
+    <option value='user-{{list['share']}}'>{{list['description']}}</option>
   {% endfor %}
 </select>
