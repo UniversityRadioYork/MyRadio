@@ -10,7 +10,7 @@
 if (is_numeric($_REQUEST['libraryid'])) {
   $data = NIPSWeb_ManagedPlaylist::getInstance($_REQUEST['libraryid'])->getItems();
 } else {
-  //Todo: managed personal playlists
+  $data = NIPSWeb_ManagedUserPlaylist::getInstance($_REQUEST['libraryid'])->getItems();
 }
 
 require 'Views/MyURY/Core/datatojson.php';
