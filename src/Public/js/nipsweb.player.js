@@ -58,7 +58,7 @@ function initialiseUI() {
     remove: function(e, ui) {
       if (ui.item.hasClass('selected')) {
         ui.item.removeClass('selected');
-        if (ui.item.nextSelect) ui.item.nextSelect.click();
+        if (ui.item.attr('nextSelect')) ui.item.attr('nextSelect').click();
       }
       ui.item.nextSelect = null;
     }
@@ -384,8 +384,8 @@ function updateState() {
 function registerItemClicks() {
   // Used by dragdrop - enables the selected item to move down on drag/drop
   $('ul.baps-channel li').off('mousedown.predrag').on('mousedown.predrag', function(e) {
-      $(this).nextSelect = $(this).next() ? $(this).next() : $(this).previous();
-      console.log($(this).nextSelect);
+      this.nextSelect = $(this).next() ? $(this).next() : $(this).previous();
+      console.log(this.nextSelect);
   });
   $('ul.baps-channel li').off('click.playactivator').on('click.playactivator', function(e) {
     if ($(this).hasClass('undigitised')) {
