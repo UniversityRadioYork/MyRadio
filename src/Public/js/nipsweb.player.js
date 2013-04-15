@@ -52,7 +52,20 @@ function initialiseUI() {
     connectWith: 'ul.baps-channel',
     //A distance dragged of 15 before entering the dragging state
     //Prevents accidentally dragging when clicking
-    distance: 15
+    distance: 15,
+    //Remove the "selected" class from the item - prevent multiple selected items in a channel
+    //Also activate the next/previous item, if there is one
+    stop: function(e, ui) {
+      if (ui.item.hasClass('selected')) {
+        ui.item.removeClass('selected');
+        if (ui.item.next('li')) {
+          ui.item.next('li').click();
+        } else {
+          ui.item.previous('li').click();
+        }
+      }
+    }
+    
   });
 
   registerItemClicks();
