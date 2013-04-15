@@ -54,7 +54,8 @@ function initialiseUI() {
     //Prevents accidentally dragging when clicking
     distance: 15,
     start: function(e, ui) {
-      ui.item.next().click();
+      ui.item.nextSelect = ui.item.next();
+      console.log(ui.item.nextSelect);
     },
     //Remove the "selected" class from the item - prevent multiple selected items in a channel
     //Also activate the next/previous item, if there is one
