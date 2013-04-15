@@ -59,9 +59,9 @@ function initialiseUI() {
       if (ui.item.hasClass('selected')) {
         ui.item.removeClass('selected');
         if (ui.item.next('li')) {
-          ui.item.next('li').click();
+          ui.item.next('li').mousedown();
         } else {
-          ui.item.previous('li').click();
+          ui.item.previous('li').mousedown();
         }
       }
     }
