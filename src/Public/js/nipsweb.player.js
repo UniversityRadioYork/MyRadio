@@ -385,8 +385,7 @@ function updateState() {
 function registerItemClicks() {
   // Used by dragdrop - enables the selected item to move down on drag/drop
   $('ul.baps-channel li').off('mousedown.predrag').on('mousedown.predrag', function(e) {
-      $(this).attr('nextSelect', $(this).next().attr('id') == undefined ? $(this).next().attr('id') : $(this).previous().attr('id'));
-      console.log($(this).next().attr('id'));
+      $(this).attr('nextSelect', typeof $(this).next().attr('id') !== 'undefined' ? $(this).next().attr('id') : $(this).previous().attr('id'));
   });
   $('ul.baps-channel li').off('click.playactivator').on('click.playactivator', function(e) {
     if ($(this).hasClass('undigitised')) {
