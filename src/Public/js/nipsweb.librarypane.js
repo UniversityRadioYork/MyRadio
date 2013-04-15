@@ -101,9 +101,9 @@ $(document).ready(function() {
     } else {
       $('#res-loading').show();
       $.ajax({
-        url: '?service=NIPSWeb&action=load_aux_lib',
+        url: '?service=NIPSWeb&action=load_user_lib',
         type: 'post',
-        data: 'libraryid=' + ($(this).val().replace(/^res-/, '')),
+        data: 'libraryid=' + ($(this).val().replace(/^user-/, '')),
         success: function(data) {
           for (file in data) {
             if (data[file].meta == true) {

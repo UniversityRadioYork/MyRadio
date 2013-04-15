@@ -14,8 +14,8 @@
  */
 class NIPSWeb_ManagedPlaylist extends ServiceAPI {
   /**
-   * The Singleton store for AudioResource objects
-   * @var MyURY_Track
+   * The Singleton store for ManagedPlaylist objects
+   * @var NIPSWeb_ManagedPlaylist
    */
   private static $playlists = array();
   
@@ -32,7 +32,6 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
   /**
    * Initiates the ManagedPlaylist variables
    * @param int $playlistid The ID of the managed playlist to initialise
-   * @todo Items
    * Note: Only links *non-expired* items
    */
   private function __construct($playlistid) {
