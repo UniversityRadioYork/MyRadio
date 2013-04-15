@@ -59,7 +59,7 @@ function initialiseUI() {
       if (ui.item.hasClass('selected')) {
         ui.item.removeClass('selected');
         console.log(ui.item.attr('nextSelect'));
-        if (ui.item.attr('nextSelect')) $(ui.item.attr('nextSelect')).click();
+        if (ui.item.attr('nextSelect')) $('#'+ui.item.attr('nextSelect')).click();
       }
       ui.item.nextSelect = null;
     }
@@ -385,7 +385,7 @@ function updateState() {
 function registerItemClicks() {
   // Used by dragdrop - enables the selected item to move down on drag/drop
   $('ul.baps-channel li').off('mousedown.predrag').on('mousedown.predrag', function(e) {
-      $(this).attr('nextSelect', $(this).next() ? $(this).next() : $(this).previous());
+      $(this).attr('nextSelect', $(this).next() ? $(this).next().attr('id') : $(this).previous().attr('id'));
       console.log($(this).attr('nextSelect'));
   });
   $('ul.baps-channel li').off('click.playactivator').on('click.playactivator', function(e) {
