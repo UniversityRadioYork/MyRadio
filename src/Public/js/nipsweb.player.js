@@ -78,6 +78,7 @@ function initialiseUI() {
         */
        var ops = [];
        if (typeof ui.item.attr('timeslotitemid') === 'undefined' && ui.item.attr('channel') !== 'res') {
+         console.log('AddOp');
          /**
           * This item has just been added to the show plan. Send the server a AddItem operation.
           * This operation will also send a number of MoveItem notifications - one for each item below this one in the
@@ -107,6 +108,7 @@ function initialiseUI() {
              weight: ui.item.attr('weight')
            });
        } else if (ui.item.attr('channel') === 'res') {
+         console.log('RemoveOp');
          /**
           * This item has just been removed from the Show Plan. Send the server a RemoveItem operation.
           * This operation will also send a number of MoveItem notifications - one for each item below this one in the
@@ -131,8 +133,8 @@ function initialiseUI() {
          ops.push({
              op: 'RemoveItem',
              id: ui.item.attr('timeslotitemid'),
-             channel: ui.item.attr('channel'),
-             weight: ui.item.attr('weight')
+             channel: oldChannel,
+             weight: oldWeight
            });
          
          ui.item.attr('timeslotitemid', undefined);
@@ -144,11 +146,12 @@ function initialiseUI() {
           * - Each item below its new location must have a MoveItem to increment the weight
           * - The item must have its channel/weight setting updated for its new location
           */
+         console.log('Extended MoveOp');
          var inc = array();
          var dec = array();
          
          $('#baps-channel-'+ui.item.attr('channel')).children().each(function() {
-           if ($(this).attr('weight') > ui.item.attr('weight')) {
+           if ($(this).attr('weight') > oldWeight) {
              dec.push($(this).attr('timeslotitemid'));
              $(this).attr('weight', $(this).attr('weight')-1);
            }
@@ -190,16 +193,11 @@ function initialiseUI() {
            });
          }
          
-         var oldchannel = ui.item.attr('channel');
-         var oldweight = ui.item.attr('weight');
-         ui.item.attr('channel', ui.item.parent().attr('channel'));
-         ui.item.attr('weight', ui.item.prev().attr('weight')+1);
-         
          ops.push({
            op: 'MoveItem',
            id: ui.item.attr('timeslotitemid'),
-           oldchannel: oldchannel,
-           oldweight: oldweight,
+           oldchannel: oldChannel,
+           oldweight: oldWeight,
            channel: ui.item.attr('channel'),
            weight: ui.item.attr('weight')
          });
