@@ -55,15 +55,9 @@ function initialiseUI() {
     distance: 15,
     //Remove the "selected" class from the item - prevent multiple selected items in a channel
     //Also activate the next/previous item, if there is one
-    start: function(e, ui) {
+    beforeStop: function(e, ui) {
       if (ui.item.hasClass('selected')) {
-        ui.item.removeClass('selected');
-        console.log(ui.item.next());
-        if (ui.item.next()) {
-          ui.item.next().mousedown();
-        } else {
-          ui.item.previous().mousedown();
-        }
+        ui.item.parent().children().last().mousedown();
       }
     }
     
