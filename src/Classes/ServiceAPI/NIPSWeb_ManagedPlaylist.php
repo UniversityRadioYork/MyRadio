@@ -17,15 +17,15 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
    * The Singleton store for ManagedPlaylist objects
    * @var NIPSWeb_ManagedPlaylist
    */
-  private static $playlists = array();
+  protected static $playlists = array();
   
   private $managed_playlist_id;
   
-  private $items;
+  protected $items;
   
-  private $name;
+  protected $name;
   
-  private $folder;
+  protected $folder;
   
   private $item_ttl;
   
