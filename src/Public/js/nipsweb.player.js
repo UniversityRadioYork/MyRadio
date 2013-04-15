@@ -58,7 +58,7 @@ function initialiseUI() {
     stop: function(e, ui) {
       if (ui.item.hasClass('selected')) {
         ui.item.removeClass('selected');
-        console.log(ui.item.next);
+        console.log(ui.item.next());
         if (ui.item.next()) {
           ui.item.next().mousedown();
         } else {
