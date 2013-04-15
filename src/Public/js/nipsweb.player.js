@@ -59,7 +59,7 @@ function initialiseUI() {
       if (ui.item.hasClass('selected')) {
         ui.item.removeClass('selected');
         console.log(ui.item.attr('nextSelect'));
-        if (ui.item.attr('nextSelect')) ui.item.attr('nextSelect').click();
+        if (ui.item.attr('nextSelect')) $(ui.item.attr('nextSelect')).click();
       }
       ui.item.nextSelect = null;
     }
