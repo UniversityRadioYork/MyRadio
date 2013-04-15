@@ -58,10 +58,11 @@ function initialiseUI() {
     stop: function(e, ui) {
       if (ui.item.hasClass('selected')) {
         ui.item.removeClass('selected');
-        if (ui.item.next('li')) {
-          ui.item.next('li').mousedown();
+        console.log(ui.item.next);
+        if (ui.item.next()) {
+          ui.item.next().mousedown();
         } else {
-          ui.item.previous('li').mousedown();
+          ui.item.previous().mousedown();
         }
       }
     }
