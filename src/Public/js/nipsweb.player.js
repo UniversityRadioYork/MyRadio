@@ -53,15 +53,17 @@ function initialiseUI() {
     //A distance dragged of 15 before entering the dragging state
     //Prevents accidentally dragging when clicking
     distance: 15,
+    start: function(e, ui) {
+      ui.item.next().click();
+    }
     //Remove the "selected" class from the item - prevent multiple selected items in a channel
     //Also activate the next/previous item, if there is one
     remove: function(e, ui) {
       if (ui.item.hasClass('selected')) {
         ui.item.removeClass('selected');
-        console.log(ui);
-        window.senderTest = ui;
-        ui.sender.children()[ui.originalPosition[1]].click();
+        if (ui.item.nextSelect) ui.item.nextSelect.click();
       }
+      ui.item.nextSelect = null;
     }
     
   });
