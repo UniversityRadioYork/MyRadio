@@ -381,7 +381,7 @@ function updateState() {
 }
 
 function registerItemClicks() {
-  $('ul.baps-channel li').off('mousedown.playactivator').on('mousedown.playactivator', function(e) {
+  $('ul.baps-channel li').off('click.playactivator').on('click.playactivator', function(e) {
     if ($(this).hasClass('undigitised')) {
       //Can't select the track - it isn't digitised
       $('#footer-tips').html('The track ' + $(this).html() + ' has not been digitised.').show();
