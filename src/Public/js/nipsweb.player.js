@@ -58,8 +58,8 @@ function initialiseUI() {
     remove: function(e, ui) {
       if (ui.item.hasClass('selected')) {
         ui.item.removeClass('selected');
-        console.log(ui.sender);
-        window.senderTest = ui.sender;
+        console.log(ui);
+        window.senderTest = ui;
         ui.sender.children()[ui.originalPosition[1]].click();
       }
     }
