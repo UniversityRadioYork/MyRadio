@@ -53,10 +53,6 @@ function initialiseUI() {
     //A distance dragged of 15 before entering the dragging state
     //Prevents accidentally dragging when clicking
     distance: 15,
-    start: function(e, ui) {
-      ui.item.nextSelect = ui.item.next();
-      console.log(ui.item.nextSelect);
-    },
     //Remove the "selected" class from the item - prevent multiple selected items in a channel
     //Also activate the next/previous item, if there is one
     remove: function(e, ui) {
@@ -386,6 +382,11 @@ function updateState() {
 }
 
 function registerItemClicks() {
+  // Used by dragdrop - enables the selected item to move down on drag/drop
+  $('ul.baps-channel li').off('mousedown.predrag').on('mousedown.predrag', function(e) {
+      this.nextSelect = this.next();
+      console.log(this.nextSelect);
+  });
   $('ul.baps-channel li').off('click.playactivator').on('click.playactivator', function(e) {
     if ($(this).hasClass('undigitised')) {
       //Can't select the track - it isn't digitised
