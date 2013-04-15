@@ -62,6 +62,150 @@ function initialiseUI() {
         if (ui.item.attr('nextSelect') != null) $('#'+ui.item.attr('nextSelect')).click();
       }
       ui.item.nextSelect = null;
+    },
+    stop: function(e, ui) {
+      /**
+      * Update the position of the item to its new values. If it doesn't have them, set them.
+      */
+     var oldChannel = ui.item.attr('channel');
+     var oldWeight = ui.item.attr('weight');
+     ui.item.attr('channel', ui.item.parent().attr('channel'));
+     ui.item.attr('weight', ui.item.index());
+     
+     if (oldChannel !== ui.item.attr('channel') || oldWeight !== ui.item.attr('weight')) {
+       /**
+        * This item definitely isn't where it was before. Notify the server of the potential actions.
+        */
+       var ops = [];
+       if (typeof ui.item.attr('timeslotitemid') === 'undefined' && ui.item.attr('channel') !== 'res') {
+         /**
+          * This item has just been added to the show plan. Send the server a AddItem operation.
+          * This operation will also send a number of MoveItem notifications - one for each item below this one in the
+          * channel, as their weights have now been increased to accomodate the new item.
+          * It will return a timeslotitemid from the server which then gets attached to the item.
+          */
+         var current = ui.item;
+         while (ui.item.next().length === 1) {
+           current = ui.item.next();
+           current.attr('weight', current.attr('weight')+1);
+           ops.push({
+             op: 'MoveItem',
+             timeslotitemid: current.attr('timeslotitemid'),
+             oldchannel: current.attr('channel'),
+             oldweight: current.attr('weight')-1,
+             channel: current.attr('channel'),
+             weight: current.attr('weight')
+           });
+         }
+         
+         //Push the actual Add Operation
+         // This is after the moves to ensure there aren't two items of the same weight
+         ops.push({
+             op: 'AddItem',
+             id: ui.item.attr('timeslotitemid'),
+             channel: ui.item.attr('channel'),
+             weight: ui.item.attr('weight')
+           });
+       } else if (ui.item.attr('channel') === 'res') {
+         /**
+          * This item has just been removed from the Show Plan. Send the server a RemoveItem operation.
+          * This operation will also send a number of MoveItem notifications - one for each item below this one in the
+          * channel, as their weights have now been decreased to accomodate the removed item.
+          */
+         var current = ui.item;
+         while (ui.item.next().length === 1) {
+           current = ui.item.next();
+           current.attr('weight', current.attr('weight')-1);
+           ops.push({
+             op: 'MoveItem',
+             timeslotitemid: current.attr('timeslotitemid'),
+             oldchannel: current.attr('channel'),
+             oldweight: current.attr('weight')+1,
+             channel: current.attr('channel'),
+             weight: current.attr('weight')
+           });
+         }
+         
+         //Push the actual Add Operation
+         // This is after the moves to ensure there aren't two items of the same weight
+         ops.push({
+             op: 'RemoveItem',
+             id: ui.item.attr('timeslotitemid'),
+             channel: ui.item.attr('channel'),
+             weight: ui.item.attr('weight')
+           });
+         
+         ui.item.attr('timeslotitemid', undefined);
+       } else {
+         /**
+          * This item has just been moved from one position to another.
+          * This involves a large number of MoveItem ops being sent to the server:
+          * - Each item below its previous location must have a MoveItem to decrement the weight
+          * - Each item below its new location must have a MoveItem to increment the weight
+          * - The item must have its channel/weight setting updated for its new location
+          */
+         var inc = array();
+         var dec = array();
+         
+         $('#baps-channel-'+ui.item.attr('channel')).children().each(function() {
+           if ($(this).attr('weight') > ui.item.attr('weight')) {
+             dec.push($(this).attr('timeslotitemid'));
+             $(this).attr('weight', $(this).attr('weight')-1);
+           }
+         });
+         
+         var current = ui.item;
+         while (ui.item.next().length === 1) {
+           var pos = $.inArray($(this).attr('timeslotitemid'), dec);
+           //This is actually a no-op move.
+           if (pos >= 0) {
+             dec[pos] = null;
+           } else {
+             inc.push($(this).attr('timeslotitemid'));
+             $(this).attr('weight', $(this).attr('weight')+1);
+           }
+         }
+         
+         for (i in inc) {
+           var obj = $('#'+inc[i]);
+           ops.push({
+             op: 'MoveItem',
+             id: inc[i],
+             oldchannel: obj.attr('channel'),
+             oldweight: obj.attr('weight')-1,
+             channel: obj.attr('channel'),
+             weight: obj.attr('weight')
+           });
+         }
+         
+         for (i in dec) {
+           var obj = $('#'+dec[i]);
+           ops.push({
+             op: 'MoveItem',
+             id: dec[i],
+             oldchannel: obj.attr('channel'),
+             oldweight: obj.attr('weight')+1,
+             channel: obj.attr('channel'),
+             weight: obj.attr('weight')
+           });
+         }
+         
+         var oldchannel = ui.item.attr('channel');
+         var oldweight = ui.item.attr('weight');
+         ui.item.attr('channel', ui.item.parent().attr('channel'));
+         ui.item.attr('weight', ui.item.prev().attr('weight')+1);
+         
+         ops.push({
+           op: 'MoveItem',
+           id: ui.item.attr('timeslotitemid'),
+           oldchannel: oldchannel,
+           oldweight: oldweight,
+           channel: ui.item.attr('channel'),
+           weight: ui.item.attr('weight')
+         });
+       }
+       console.log(ops);
+     }
     }
     
   });
