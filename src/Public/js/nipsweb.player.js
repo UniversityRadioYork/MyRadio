@@ -58,159 +58,160 @@ function initialiseUI() {
     start: function(e, ui) {
       if (ui.item.hasClass('selected')) {
         ui.item.removeClass('selected');
-        if (ui.item.attr('nextSelect') != null) $('#'+ui.item.attr('nextSelect')).click();
+        if (ui.item.attr('nextSelect') != null)
+          $('#' + ui.item.attr('nextSelect')).click();
       }
       ui.item.nextSelect = null;
     },
     stop: function(e, ui) {
       /**
-      * Update the position of the item to its new values. If it doesn't have them, set them.
-      */
-     var oldChannel = ui.item.attr('channel');
-     var oldWeight = ui.item.attr('weight');
-     ui.item.attr('channel', ui.item.parent().attr('channel') === 'res' ? 'res' : ui.item.parent().attr('channel')-1);
-     ui.item.attr('weight', ui.item.index());
-     
-     if (oldChannel !== ui.item.attr('channel') || oldWeight !== ui.item.attr('weight')) {
-       /**
-        * This item definitely isn't where it was before. Notify the server of the potential actions.
-        */
-       var ops = [];
-       if (typeof ui.item.attr('timeslotitemid') === 'undefined' && ui.item.attr('channel') !== 'res') {
-         console.log('AddOp');
-         /**
-          * This item has just been added to the show plan. Send the server a AddItem operation.
-          * This operation will also send a number of MoveItem notifications - one for each item below this one in the
-          * channel, as their weights have now been increased to accomodate the new item.
-          * It will return a timeslotitemid from the server which then gets attached to the item.
-          */
-         var current = ui.item;
-         while (current.next().length === 1) {
-           current = current.next();
-           current.attr('weight', parseInt(current.attr('weight'))+1);
-           ops.push({
-             op: 'MoveItem',
-             timeslotitemid: parseInt(current.attr('timeslotitemid')),
-             oldchannel: parseInt(current.attr('channel')),
-             oldweight: parseInt(current.attr('weight'))-1,
-             channel: parseInt(current.attr('channel')),
-             weight: parseInt(current.attr('weight'))
-           });
-         }
-         
-         //Push the actual Add Operation
-         // This is after the moves to ensure there aren't two items of the same weight
-         ops.push({
-             op: 'AddItem',
-             id: parseInt(ui.item.attr('timeslotitemid')),
-             channel: parseInt(ui.item.attr('channel')),
-             weight: parseInt(ui.item.attr('weight'))
-           });
-       } else if (ui.item.attr('channel') === 'res') {
-         console.log('RemoveOp');
-         /**
-          * This item has just been removed from the Show Plan. Send the server a RemoveItem operation.
-          * This operation will also send a number of MoveItem notifications - one for each item below this one in the
-          * channel, as their weights have now been decreased to accomodate the removed item.
-          */
-         var current = ui.item;
-         while (current.next().length === 1) {
-           current = current.next();
-           current.attr('weight', parseInt(current.attr('weight'))-1);
-           ops.push({
-             op: 'MoveItem',
-             timeslotitemid: parseInt(current.attr('timeslotitemid')),
-             oldchannel: parseInt(current.attr('channel')),
-             oldweight: parseInt(current.attr('weight'))+1,
-             channel: parseInt(current.attr('channel')),
-             weight: parseInt(current.attr('weight'))
-           });
-         }
-         
-         //Push the actual Remove Operation
-         // This is after the moves to ensure there aren't two items of the same weight
-         ops.push({
-             op: 'RemoveItem',
-             id: parseInt(ui.item.attr('timeslotitemid')),
-             channel: parseInt(oldChannel),
-             weight: parseInt(oldWeight)
-           });
-         
-         ui.item.attr('timeslotitemid', undefined);
-       } else {
-         /**
-          * This item has just been moved from one position to another.
-          * This involves a large number of MoveItem ops being sent to the server:
-          * - Each item below its previous location must have a MoveItem to decrement the weight
-          * - Each item below its new location must have a MoveItem to increment the weight
-          * - The item must have its channel/weight setting updated for its new location
-          */
-         console.log('Extended MoveOp');
-         var inc = new Array();
-         var dec = new Array();
-         
-         $('ul.baps-channel li[channel='+oldChannel+']').each(function() {
-           if (oldWeight - $(this).attr('weight') < 0) {
-             dec.push($(this).attr('timeslotitemid'));
-             $(this).attr('weight', parseInt($(this).attr('weight'))-1);
-           }
-         });
-         
-         var current = ui.item;
-         while (current.next().length === 1) {
-           current = current.next();
-           var pos = $.inArray(current.attr('timeslotitemid'), dec);
-           //This is actually a no-op move.
-           if (pos >= 0) {
-             $('ui.baps-channel li[timeslotitemid='+dec[pos]+']').attr('weight',
-              parseInt($('ui.baps-channel li[timeslotitemid='+dec[pos]+']'))+1)
-             dec[pos] = null;
-           } else {
-             inc.push(current.attr('timeslotitemid'));
-             current.attr('weight', parseInt(current.attr('weight'))+1);
-           }
-         }
-         
-         console.log(dec);
-         console.log(inc);
-         
-         for (i in inc) {
-           var obj = $('ul.baps-channel li[timeslotitemid='+inc[i]+']');
-           ops.push({
-             op: 'MoveItem',
-             id: parseInt(inc[i]),
-             oldchannel: parseInt(obj.attr('channel')),
-             oldweight: parseInt(obj.attr('weight'))-1,
-             channel: parseInt(obj.attr('channel')),
-             weight: parseInt(obj.attr('weight'))
-           });
-         }
-         
-         for (i in dec) {
-           var obj = $('ul.baps-channel li[timeslotitemid='+dec[i]+']');
-           ops.push({
-             op: 'MoveItem',
-             id: parseInt(dec[i]),
-             oldchannel: parseInt(obj.attr('channel')),
-             oldweight: parseInt(obj.attr('weight'))+1,
-             channel: parseInt(obj.attr('channel')),
-             weight: parseInt(obj.attr('weight'))
-           });
-         }
-         
-         ops.push({
-           op: 'MoveItem',
-           id: parseInt(ui.item.attr('timeslotitemid')),
-           oldchannel: parseInt(oldChannel),
-           oldweight: parseInt(oldWeight),
-           channel: parseInt(ui.item.attr('channel')),
-           weight: parseInt(ui.item.attr('weight'))
-         });
-       }
-       console.log(ops);
-     }
+       * Update the position of the item to its new values. If it doesn't have them, set them.
+       */
+      var oldChannel = ui.item.attr('channel');
+      var oldWeight = ui.item.attr('weight');
+      ui.item.attr('channel', ui.item.parent().attr('channel') === 'res' ? 'res' : ui.item.parent().attr('channel') - 1);
+      ui.item.attr('weight', ui.item.index());
+
+      if (oldChannel !== ui.item.attr('channel') || oldWeight !== ui.item.attr('weight')) {
+        /**
+         * This item definitely isn't where it was before. Notify the server of the potential actions.
+         */
+        var ops = [];
+        if (typeof ui.item.attr('timeslotitemid') === 'undefined' && ui.item.attr('channel') !== 'res') {
+          console.log('AddOp');
+          /**
+           * This item has just been added to the show plan. Send the server a AddItem operation.
+           * This operation will also send a number of MoveItem notifications - one for each item below this one in the
+           * channel, as their weights have now been increased to accomodate the new item.
+           * It will return a timeslotitemid from the server which then gets attached to the item.
+           */
+          var current = ui.item;
+          while (current.next().length === 1) {
+            current = current.next();
+            current.attr('weight', parseInt(current.attr('weight')) + 1);
+            ops.push({
+              op: 'MoveItem',
+              timeslotitemid: parseInt(current.attr('timeslotitemid')),
+              oldchannel: parseInt(current.attr('channel')),
+              oldweight: parseInt(current.attr('weight')) - 1,
+              channel: parseInt(current.attr('channel')),
+              weight: parseInt(current.attr('weight'))
+            });
+          }
+
+          //Push the actual Add Operation
+          // This is after the moves to ensure there aren't two items of the same weight
+          ops.push({
+            op: 'AddItem',
+            id: parseInt(ui.item.attr('timeslotitemid')),
+            channel: parseInt(ui.item.attr('channel')),
+            weight: parseInt(ui.item.attr('weight'))
+          });
+        } else if (ui.item.attr('channel') === 'res') {
+          console.log('RemoveOp');
+          /**
+           * This item has just been removed from the Show Plan. Send the server a RemoveItem operation.
+           * This operation will also send a number of MoveItem notifications - one for each item below this one in the
+           * channel, as their weights have now been decreased to accomodate the removed item.
+           */
+          $('ul.baps-channel li[channel=' + oldChannel + ']').each(function() {
+            if (oldWeight - $(this).attr('weight') < 0) {
+              $(this).attr('weight', parseInt($(this).attr('weight')) - 1);
+              ops.push({
+                op: 'MoveItem',
+                timeslotitemid: parseInt($(this).attr('timeslotitemid')),
+                oldchannel: parseInt($(this).attr('channel')),
+                oldweight: parseInt($(this).attr('weight')) + 1,
+                channel: parseInt($(this).attr('channel')),
+                weight: parseInt($(this).attr('weight'))
+              });
+            }
+          });
+
+          //Push the actual Remove Operation
+          // This is after the moves to ensure there aren't two items of the same weight
+          ops.push({
+            op: 'RemoveItem',
+            id: parseInt(ui.item.attr('timeslotitemid')),
+            channel: parseInt(oldChannel),
+            weight: parseInt(oldWeight)
+          });
+
+          ui.item.attr('timeslotitemid', undefined);
+        } else {
+          /**
+           * This item has just been moved from one position to another.
+           * This involves a large number of MoveItem ops being sent to the server:
+           * - Each item below its previous location must have a MoveItem to decrement the weight
+           * - Each item below its new location must have a MoveItem to increment the weight
+           * - The item must have its channel/weight setting updated for its new location
+           */
+          console.log('Extended MoveOp');
+          var inc = new Array();
+          var dec = new Array();
+
+          $('ul.baps-channel li[channel=' + oldChannel + ']').each(function() {
+            if (oldWeight - $(this).attr('weight') < 0) {
+              dec.push($(this).attr('timeslotitemid'));
+              $(this).attr('weight', parseInt($(this).attr('weight')) - 1);
+            }
+          });
+
+          var current = ui.item;
+          while (current.next().length === 1) {
+            current = current.next();
+            var pos = $.inArray(current.attr('timeslotitemid'), dec);
+            //This is actually a no-op move.
+            if (pos >= 0) {
+              $('ui.baps-channel li[timeslotitemid=' + dec[pos] + ']').attr('weight',
+                      parseInt($('ui.baps-channel li[timeslotitemid=' + dec[pos] + ']')) + 1)
+              dec[pos] = null;
+            } else {
+              inc.push(current.attr('timeslotitemid'));
+              current.attr('weight', parseInt(current.attr('weight')) + 1);
+            }
+          }
+
+          console.log(dec);
+          console.log(inc);
+
+          for (i in inc) {
+            var obj = $('ul.baps-channel li[timeslotitemid=' + inc[i] + ']');
+            ops.push({
+              op: 'MoveItem',
+              id: parseInt(inc[i]),
+              oldchannel: parseInt(obj.attr('channel')),
+              oldweight: parseInt(obj.attr('weight')) - 1,
+              channel: parseInt(obj.attr('channel')),
+              weight: parseInt(obj.attr('weight'))
+            });
+          }
+
+          for (i in dec) {
+            var obj = $('ul.baps-channel li[timeslotitemid=' + dec[i] + ']');
+            ops.push({
+              op: 'MoveItem',
+              id: parseInt(dec[i]),
+              oldchannel: parseInt(obj.attr('channel')),
+              oldweight: parseInt(obj.attr('weight')) + 1,
+              channel: parseInt(obj.attr('channel')),
+              weight: parseInt(obj.attr('weight'))
+            });
+          }
+
+          ops.push({
+            op: 'MoveItem',
+            id: parseInt(ui.item.attr('timeslotitemid')),
+            oldchannel: parseInt(oldChannel),
+            oldweight: parseInt(oldWeight),
+            channel: parseInt(ui.item.attr('channel')),
+            weight: parseInt(ui.item.attr('weight'))
+          });
+        }
+        console.log(ops);
+      }
     }
-    
+
   });
 
   registerItemClicks();
@@ -219,14 +220,15 @@ function initialiseUI() {
 
 function initialisePlayer(channel) {
 
-  if (channel == 0) channel = 'res';
+  if (channel == 0)
+    channel = 'res';
 
   $("#progress-bar-" + channel).slider({
     range: "min",
     value: 0,
     min: 0
   });
-  
+
   window.audioNodes[(channel === 'res') ? 0 : channel] = new Audio();
 
   setupListeners(channel);
@@ -247,7 +249,7 @@ function playerVariables(channel) {
  */
 // Loads the selected track into the player for the designated channel
 function previewLoad(channel) {
-  $('#ch' + channel + '-play, #ch'+channel+'-pause, #ch'+channel+'-stop').addClass('ui-state-disabled');
+  $('#ch' + channel + '-play, #ch' + channel + '-pause, #ch' + channel + '-stop').addClass('ui-state-disabled');
   //Find the active track for this channel
   var audioid = $('#baps-channel-' + channel + ' li.selected').attr('id');
   var data = getRecTrackFromID(audioid);
@@ -378,7 +380,7 @@ function setupGenericListeners() {
     F10: 121,
     F11: 122
   };
-  
+
   // Sets up key press triggers
   $(document).on('keydown.bapscontrol', function(e) {
     var trigger = false;
@@ -437,7 +439,8 @@ function setupListeners(channel) {
     getTime(channel);
     $('#progress-bar-' + channel).slider({value: audio.currentTime});
     //A mouse-over click doesn't set this properly on play
-    if (audio.currentTime > 0.1) $('#ch' + channel + '-play').addClass('ui-state-active');
+    if (audio.currentTime > 0.1)
+      $('#ch' + channel + '-play').addClass('ui-state-active');
   });
   $('#progress-bar-' + channel).slider({
     value: 0,
@@ -488,8 +491,8 @@ function timeSecs(time) {
 function registerItemClicks() {
   // Used by dragdrop - enables the selected item to move down on drag/drop
   $('ul.baps-channel li').off('mousedown.predrag').on('mousedown.predrag', function(e) {
-      $(this).attr('nextSelect',
-          typeof $(this).next().attr('id') !== 'undefined' ? $(this).next().attr('id') : $(this).prev().attr('id'));
+    $(this).attr('nextSelect',
+            typeof $(this).next().attr('id') !== 'undefined' ? $(this).next().attr('id') : $(this).prev().attr('id'));
   });
   $('ul.baps-channel li').off('click.playactivator').on('click.playactivator', function(e) {
     if ($(this).hasClass('undigitised')) {
