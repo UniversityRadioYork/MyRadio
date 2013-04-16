@@ -10,6 +10,6 @@
 if (!isset($_POST['clientid']))
   throw new MyURYException('ClientID Required', 400);
 
-$data = MyURY_Timeslot::getInstance(NIPSWeb_Token::getEditTokenTimeslot($_POST['clientid']))->updateShowPlan($_POST['ops']);
+$data = MyURY_Timeslot::getInstance(NIPSWeb_Token::getEditTokenTimeslot($_POST['clientid']))->updateShowPlan($_POST);
 
 require 'Views/MyURY/Core/datatojson.php';
