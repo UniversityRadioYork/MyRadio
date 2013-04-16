@@ -160,13 +160,13 @@ function initialiseUI() {
          var current = ui.item;
          while (current.next().length === 1) {
            current = current.next();
-           var pos = $.inArray($(this).attr('timeslotitemid'), dec);
+           var pos = $.inArray(current.attr('timeslotitemid'), dec);
            //This is actually a no-op move.
            if (pos >= 0) {
              dec[pos] = null;
            } else {
-             inc.push($(this).attr('timeslotitemid'));
-             $(this).attr('weight', $(this).attr('weight')+1);
+             inc.push(current.attr('timeslotitemid'));
+             $(this).attr('weight', current.attr('weight')+1);
            }
          }
          
