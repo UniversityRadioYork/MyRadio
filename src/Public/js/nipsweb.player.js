@@ -69,7 +69,7 @@ function initialiseUI() {
       */
      var oldChannel = ui.item.attr('channel');
      var oldWeight = ui.item.attr('weight');
-     ui.item.attr('channel', ui.item.parent().attr('channel')-1);
+     ui.item.attr('channel', ui.item.parent().attr('channel') === 'res' ? 'res' : ui.item.parent().attr('channel')-1);
      ui.item.attr('weight', ui.item.index());
      
      if (oldChannel !== ui.item.attr('channel') || oldWeight !== ui.item.attr('weight')) {
@@ -87,7 +87,6 @@ function initialiseUI() {
           */
          var current = ui.item;
          while (ui.item.next().length === 1) {
-           console.log(current);
            current = ui.item.next();
            current.attr('weight', current.attr('weight')+1);
            ops.push({
