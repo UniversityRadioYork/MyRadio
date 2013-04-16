@@ -80,7 +80,8 @@ function initialiseUI() {
          * This item definitely isn't where it was before. Notify the server of the potential actions.
          */
         var ops = [];
-        if (typeof ui.item.attr('timeslotitemid') === 'undefined' && ui.item.attr('channel') !== 'res') {
+        if ((typeof ui.item.attr('timeslotitemid') === 'undefined'
+                || ui.item.attr('timeslotitemid') == null) && ui.item.attr('channel') !== 'res') {
           console.log('AddOp');
           /**
            * This item has just been added to the show plan. Send the server a AddItem operation.
@@ -140,7 +141,7 @@ function initialiseUI() {
             weight: parseInt(oldWeight)
           });
 
-          ui.item.attr('timeslotitemid', undefined);
+          ui.item.attr('timeslotitemid', null);
         } else {
           /**
            * This item has just been moved from one position to another.
