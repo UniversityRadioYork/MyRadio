@@ -87,6 +87,7 @@ function initialiseUI() {
           */
          var current = ui.item;
          while (ui.item.next().length === 1) {
+           console.log(current);
            current = ui.item.next();
            current.attr('weight', current.attr('weight')+1);
            ops.push({
