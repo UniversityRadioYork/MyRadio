@@ -174,7 +174,7 @@ function initialiseUI() {
          console.log(inc);
          
          for (i in inc) {
-           var obj = $('#'+inc[i]);
+           var obj = $('ul.baps-channel li[timeslotitemid='+inc[i]+']');
            ops.push({
              op: 'MoveItem',
              id: inc[i],
