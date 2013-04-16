@@ -86,8 +86,8 @@ function initialiseUI() {
           * It will return a timeslotitemid from the server which then gets attached to the item.
           */
          var current = ui.item;
-         while (ui.item.next().length === 1) {
-           current = ui.item.next();
+         while (current.next().length === 1) {
+           current = current.next();
            current.attr('weight', current.attr('weight')+1);
            ops.push({
              op: 'MoveItem',
@@ -115,8 +115,8 @@ function initialiseUI() {
           * channel, as their weights have now been decreased to accomodate the removed item.
           */
          var current = ui.item;
-         while (ui.item.next().length === 1) {
-           current = ui.item.next();
+         while (current.next().length === 1) {
+           current = current.next();
            current.attr('weight', current.attr('weight')-1);
            ops.push({
              op: 'MoveItem',
@@ -158,7 +158,8 @@ function initialiseUI() {
          });
          
          var current = ui.item;
-         while (ui.item.next().length === 1) {
+         while (current.next().length === 1) {
+           current = current.next();
            var pos = $.inArray($(this).attr('timeslotitemid'), dec);
            //This is actually a no-op move.
            if (pos >= 0) {
