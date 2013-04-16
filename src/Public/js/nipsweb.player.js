@@ -170,6 +170,9 @@ function initialiseUI() {
            }
          }
          
+         console.log(dec);
+         console.log(inc);
+         
          for (i in inc) {
            var obj = $('#'+inc[i]);
            ops.push({
