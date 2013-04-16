@@ -220,6 +220,7 @@ function initialiseUI() {
         $.ajax({
           cache: false,
           success: function(data) {
+            $('#notice').hide();
             for (i in data) {
               if (typeof data[i].timeslotitemid != 'undefined') {
                 $('ul.baps-channel li[timeslotitemid="findme"]').attr('timeslotitemid', data[i].timeslotitemid);
