@@ -106,7 +106,7 @@ function initialiseUI() {
           // This is after the moves to ensure there aren't two items of the same weight
           ops.push({
             op: 'AddItem',
-            id: parseInt(ui.item.attr('timeslotitemid')),
+            id: ui.item.attr('id'),
             channel: parseInt(ui.item.attr('channel')),
             weight: parseInt(ui.item.attr('weight'))
           });
