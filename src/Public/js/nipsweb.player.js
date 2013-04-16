@@ -88,12 +88,12 @@ function initialiseUI() {
          var current = ui.item;
          while (current.next().length === 1) {
            current = current.next();
-           current.attr('weight', current.attr('weight')+1);
+           current.attr('weight', parseInt(current.attr('weight'))+1);
            ops.push({
              op: 'MoveItem',
              timeslotitemid: parseInt(current.attr('timeslotitemid')),
              oldchannel: parseInt(current.attr('channel')),
-             oldweight: parseInt(current.attr('weight')-1),
+             oldweight: parseInt(current.attr('weight'))-1,
              channel: parseInt(current.attr('channel')),
              weight: parseInt(current.attr('weight'))
            });
@@ -117,12 +117,12 @@ function initialiseUI() {
          var current = ui.item;
          while (current.next().length === 1) {
            current = current.next();
-           current.attr('weight', current.attr('weight')-1);
+           current.attr('weight', parseInt(current.attr('weight'))-1);
            ops.push({
              op: 'MoveItem',
              timeslotitemid: parseInt(current.attr('timeslotitemid')),
              oldchannel: parseInt(current.attr('channel')),
-             oldweight: parseInt(current.attr('weight')+1),
+             oldweight: parseInt(current.attr('weight'))+1,
              channel: parseInt(current.attr('channel')),
              weight: parseInt(current.attr('weight'))
            });
@@ -153,7 +153,7 @@ function initialiseUI() {
          $('#baps-channel-'+ui.item.attr('channel')).children().each(function() {
            if ($(this).attr('weight') > oldWeight) {
              dec.push($(this).attr('timeslotitemid'));
-             $(this).attr('weight', $(this).attr('weight')-1);
+             $(this).attr('weight', parseInt($(this).attr('weight'))-1);
            }
          });
          
@@ -166,7 +166,7 @@ function initialiseUI() {
              dec[pos] = null;
            } else {
              inc.push(current.attr('timeslotitemid'));
-             $(this).attr('weight', current.attr('weight')+1);
+             $(this).attr('weight', parseInt(current.attr('weight'))+1);
            }
          }
          
@@ -179,7 +179,7 @@ function initialiseUI() {
              op: 'MoveItem',
              id: parseInt(inc[i]),
              oldchannel: parseInt(obj.attr('channel')),
-             oldweight: parseInt(obj.attr('weight')-1),
+             oldweight: parseInt(obj.attr('weight'))-1,
              channel: parseInt(obj.attr('channel')),
              weight: parseInt(obj.attr('weight'))
            });
@@ -191,7 +191,7 @@ function initialiseUI() {
              op: 'MoveItem',
              id: parseInt(dec[i]),
              oldchannel: parseInt(obj.attr('channel')),
-             oldweight: parseInt(obj.attr('weight')+1),
+             oldweight: parseInt(obj.attr('weight'))+1,
              channel: parseInt(obj.attr('channel')),
              weight: parseInt(obj.attr('weight'))
            });
@@ -377,12 +377,7 @@ function setupGenericListeners() {
     F10: 121,
     F11: 122
   };
-  // Sets up saving the database
-  // - it could be bound to any of the channels but if you bind it to all 4 
-  //   it'll trigger 4 times every time something changes
-  $('#baps-channel-1').on('sortdeactivate', function() {
-    updateState();
-  });
+  
   // Sets up key press triggers
   $(document).on('keydown.bapscontrol', function(e) {
     var trigger = false;
@@ -466,8 +461,6 @@ function setupListeners(channel) {
 
 }
 
-
-
 /**
  * Generic Functions
  */
@@ -489,43 +482,6 @@ function timeSecs(time) {
     secs = '0' + secs;
   }
   return secs;
-}
-//Updates the JSON object with new item locations, then pushes this to the server
-function updateState() {
-  registerItemClicks();
-  $('#notice').show();
-  baps_state = {
-    0: [],
-    1: [],
-    2: []
-  };
-  for (var i = 1; i < 4; i++) {
-    $('#baps-channel-' + i + ' li').each(function() {
-      var ids = getRecTrackFromID($(this).attr('id'));
-      var data = {
-        type: $(this).attr('type'),
-        recordid: ids[0],
-        trackid: ids[1]
-      };
-
-      if ($(this).attr('managedid') !== '') {
-        data.managedid = $(this).attr('managedid');
-      }
-
-      baps_state[i - 1].push(data);
-    });
-  }
-  $.ajax({
-    url: 'ajax.php?action=save_state',
-    type: 'post',
-    data: baps_state,
-    success: function() {
-      $('#notice').hide();
-    },
-    error: function() {
-      $('#notice').html('Error saving changes').addClass('ui-state-error');
-    }
-  });
 }
 
 function registerItemClicks() {
