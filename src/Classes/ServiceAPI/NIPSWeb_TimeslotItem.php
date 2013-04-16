@@ -110,7 +110,7 @@ class NIPSWeb_TimeslotItem extends ServiceAPI {
   }
   
   public static function create_managed($timeslot, $manageditemid, $channel, $weight) {
-    $result = self::$db->fetch_one('INSERT INTO bapsplanner.timeslot_items (timeslot_id, managed_item_id, channel_id, weight)
+    $result = self::$db->fetch_column('INSERT INTO bapsplanner.timeslot_items (timeslot_id, managed_item_id, channel_id, weight)
       VALUES ($1, $2, $3, $4) RETURNING timeslot_item_id',
             array($timeslot, $manageditemid, $channel, $weight));
     
