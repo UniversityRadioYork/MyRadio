@@ -58,7 +58,6 @@ function initialiseUI() {
     start: function(e, ui) {
       if (ui.item.hasClass('selected')) {
         ui.item.removeClass('selected');
-        console.log(ui.item.attr('nextSelect'));
         if (ui.item.attr('nextSelect') != null) $('#'+ui.item.attr('nextSelect')).click();
       }
       ui.item.nextSelect = null;
@@ -156,6 +155,7 @@ function initialiseUI() {
              $(this).attr('weight', parseInt($(this).attr('weight'))-1);
            }
          });
+         console.log(dec);
          
          var current = ui.item;
          while (current.next().length === 1) {
