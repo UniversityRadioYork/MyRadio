@@ -155,7 +155,6 @@ function initialiseUI() {
              $(this).attr('weight', parseInt($(this).attr('weight'))-1);
            }
          });
-         console.log($('ul.baps-channel li[channel='+oldChannel+']'));
          
          var current = ui.item;
          while (current.next().length === 1) {
@@ -168,7 +167,7 @@ function initialiseUI() {
              dec[pos] = null;
            } else {
              inc.push(current.attr('timeslotitemid'));
-             $(this).attr('weight', parseInt(current.attr('weight'))+1);
+             current.attr('weight', parseInt(current.attr('weight'))+1);
            }
          }
          
