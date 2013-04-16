@@ -4,6 +4,9 @@
 
 manualSeek = true;
 window.audioNodes = new Array();
+window.clientid;
+//Get a client id to identify this session
+$.post('?module=NIPSWeb&action=get_client_token', null, function(data){window.clientid = data;});
 
 function initialiseUI() {
   // Setup UI elements
@@ -208,7 +211,21 @@ function initialiseUI() {
             weight: parseInt(ui.item.attr('weight'))
           });
         }
-        console.log(ops);
+        /**
+         * The important bit - ship the change operations over to the server to update the remote datastructure,
+         * the change log, and to propogate the changes to any other clients that may be active.
+         */
+        $('#notice').show();
+        $.ajax({
+          cache: false,
+          success: function(data) {
+            $('#notice').hide();
+          },
+          data: {clientid: window.clientid, ops: ops},
+          dataType: 'json',
+          type: 'POST',
+          url: '?service=NIPSWeb&action=recv_ops'
+        });
       }
     }
 
