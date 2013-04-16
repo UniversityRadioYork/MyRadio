@@ -6,7 +6,7 @@ manualSeek = true;
 window.audioNodes = new Array();
 window.clientid;
 //Get a client id to identify this session
-$.post('?service=NIPSWeb&action=get_client_token', null, function(data){window.clientid = data;});
+$.post('?service=NIPSWeb&action=get_client_token', null, function(data){window.clientid = parseInt(data);});
 
 function initialiseUI() {
   // Setup UI elements
