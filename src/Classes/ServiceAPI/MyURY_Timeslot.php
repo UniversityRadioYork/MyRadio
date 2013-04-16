@@ -237,6 +237,64 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
   }
   
   /**
+   * This is the server-side implementation of the JSONON system for tracking Show Planner alterations
+   * @param array $ops A JSONON operation set
+   */
+  public function updateShowPlan($ops) {
+    $result = array();
+    //Being a Database Transaction - this all succeeds, or none of it does
+    self::$db->query('BEGIN');
+    
+    foreach ($ops as $op) {
+      switch ($op['op']) {
+        case 'AddItem':
+          try {
+            //Is this a record or a manageditem?
+            $parts = explode('-',$op['id']);
+            if ($parts[0] === 'ManagedDB') {
+              //This is a managed item
+              NIPSWeb_TimeslotItem::create_managed($this->getID(), $parts[1], $op['channel'], $op['weight']);
+            } else {
+              //This is a rec database track
+              NIPSWeb_TimeslotItem::create_central($this->getID(), $parts[1], $op['channel'], $op['weight']);
+            }
+          } catch (MyURYException $e) {
+            $result[] = array('status' => false);
+            self::$db->query('ROLLBACK');
+            return $result;
+          }
+          
+          $result[] = array('status' => true, 'timeslotitemid' => (int)$result[0]);
+          break;
+        
+        case 'MoveItem':
+          $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
+          if ($i->getChannel() != $op['oldchannel'] or $i->getWeight() != $op['oldweight']) {
+            $result[] = array('status' => false);
+            self::$db->query('ROLLBACK');
+            return $result;
+          } else {
+            $i->setLocation($op['channel'], $op['weight']);
+            $result[] = array('status' => true);
+          }
+        break;
+        
+        case 'RemoveItem':
+          $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
+          if ($i->getChannel() != $op['oldchannel'] or $i->getWeight() != $op['oldweight']) {
+            $result[] = array('status' => false);
+            self::$db->query('ROLLBACK');
+            return $result;
+          } else {
+            $i->remove();
+            $result[] = array('status' => true);
+          }
+          break;
+      }
+    }
+  }
+  
+  /**
    * Returns the tracks etc. and their associated channels as planned for this show. Mainly used by NIPSWeb
    */
   public function getShowPlan() {
