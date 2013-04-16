@@ -53,7 +53,7 @@ class NIPSWeb_TimeslotItem extends ServiceAPI {
        $this->item = NIPSWeb_ManagedItem::getInstance($result['managed_item_id'], $playlistref);
      }
     
-    $this->channel = (int)$result['channel'];
+    $this->channel = (int)$result['channel_id'];
     $this->weight = (int)$result['weight'];
   }
   
