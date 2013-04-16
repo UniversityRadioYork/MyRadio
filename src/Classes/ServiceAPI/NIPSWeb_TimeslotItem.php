@@ -96,6 +96,35 @@ class NIPSWeb_TimeslotItem extends ServiceAPI {
     return $this->item;
   }
   
+  public function setLocation($channel, $weight) {
+    $this->channel = (int) $channel;
+    $this->weight = (int) $weight;
+    self::$db->query('UPDATE bapsplanner.timeslot_items SET channel=$1, weight=$2 WHERE timeslot_item_id=$3 LIMIT 1',
+            array($this->channel, $this->weight, $this->getID()));
+  }
+  
+  public function remove() {
+    self::$db->query('DELETE FROM WHERE timeslot_item_id=$1',
+            array($this->getID()));
+    unset($this);
+  }
+  
+  public static function create_managed($timeslot, $manageditemid, $channel, $weight) {
+    $result = self::$db->fetch_one('INSERT INTO bapsplanner.timeslot_items (timeslot_id, managed_item_id, channel_id, weight)
+      VALUES ($1, $2, $3, $4) RETURNING timeslot_item_id',
+            array($timeslot, $manageditemid, $channel, $weight));
+    
+    return self::getInstance($result[0]);
+  }
+  
+  public static function create_central($timeslot, $trackid, $channel, $weight) {
+    $result = self::$db->fetch_one('INSERT INTO bapsplanner.timeslot_items (timeslot_id, rec_track_id, channel_id, weight)
+      VALUES ($1, $2, $3, $4) RETURNING timeslot_item_id',
+            array($timeslot, $trackid, $channel, $weight));
+    
+    return self::getInstance($result[0]);
+  }
+  
   /**
    * Returns an array of key information, useful for Twig rendering and JSON requests
    * @todo Expand the information this returns

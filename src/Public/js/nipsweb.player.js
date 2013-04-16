@@ -135,7 +135,7 @@ function initialiseUI() {
           // This is after the moves to ensure there aren't two items of the same weight
           ops.push({
             op: 'RemoveItem',
-            id: parseInt(ui.item.attr('timeslotitemid')),
+            timeslotitemid: parseInt(ui.item.attr('timeslotitemid')),
             channel: parseInt(oldChannel),
             weight: parseInt(oldWeight)
           });
@@ -182,7 +182,7 @@ function initialiseUI() {
             var obj = $('ul.baps-channel li[timeslotitemid=' + inc[i] + ']');
             ops.push({
               op: 'MoveItem',
-              id: parseInt(inc[i]),
+              timeslotitemid: parseInt(inc[i]),
               oldchannel: parseInt(obj.attr('channel')),
               oldweight: parseInt(obj.attr('weight')) - 1,
               channel: parseInt(obj.attr('channel')),
@@ -194,7 +194,7 @@ function initialiseUI() {
             var obj = $('ul.baps-channel li[timeslotitemid=' + dec[i] + ']');
             ops.push({
               op: 'MoveItem',
-              id: parseInt(dec[i]),
+              timeslotitemid: parseInt(dec[i]),
               oldchannel: parseInt(obj.attr('channel')),
               oldweight: parseInt(obj.attr('weight')) + 1,
               channel: parseInt(obj.attr('channel')),
@@ -204,7 +204,7 @@ function initialiseUI() {
 
           ops.push({
             op: 'MoveItem',
-            id: parseInt(ui.item.attr('timeslotitemid')),
+            timeslotitemid: parseInt(ui.item.attr('timeslotitemid')),
             oldchannel: parseInt(oldChannel),
             oldweight: parseInt(oldWeight),
             channel: parseInt(ui.item.attr('channel')),
