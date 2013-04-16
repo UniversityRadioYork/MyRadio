@@ -191,6 +191,7 @@ function initialiseUI() {
           }
 
           for (i in dec) {
+            if (dec[i] === null) continue;
             var obj = $('ul.baps-channel li[timeslotitemid=' + dec[i] + ']');
             ops.push({
               op: 'MoveItem',
