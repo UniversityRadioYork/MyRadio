@@ -153,7 +153,8 @@ function initialiseUI() {
           var dec = new Array();
 
           $('ul.baps-channel li[channel=' + oldChannel + ']').each(function() {
-            if (oldWeight - $(this).attr('weight') < 0) {
+            if (oldWeight - $(this).attr('weight') < 0
+                    && $(this).attr('timeslotitemid') !== ui.item.attr('timeslotitemid')) {
               dec.push($(this).attr('timeslotitemid'));
               $(this).attr('weight', parseInt($(this).attr('weight')) - 1);
             }
