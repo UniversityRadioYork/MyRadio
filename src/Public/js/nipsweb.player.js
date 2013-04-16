@@ -225,6 +225,7 @@ function initialiseUI() {
             $('#notice').hide();
             for (i in data) {
               if (typeof data[i].timeslotitemid != 'undefined') {
+                //@todo multiple AddItem ops in a jsonon set will make this break
                 $('ul.baps-channel li[timeslotitemid="findme"]').attr('timeslotitemid', data[i].timeslotitemid);
               }
               if (!data[i].status && !window.debug) {
