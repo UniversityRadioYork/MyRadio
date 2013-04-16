@@ -294,7 +294,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
     }
     
     self::$db->query('INSERT INTO bapsplanner.timeslot_change_ops (client_id, change_ops)
-      VALUES ($1, $2)', array($set['client_id'], json_encode($set['ops'])));
+      VALUES ($1, $2)', array($set['clientid'], json_encode($set['ops'])));
     
     self::$db->query('COMMIT');
     return $result;
