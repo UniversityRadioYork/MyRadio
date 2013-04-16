@@ -5,6 +5,7 @@
 manualSeek = true;
 window.audioNodes = new Array();
 window.clientid;
+window.debug = false;
 //Get a client id to identify this session
 $.post('?service=NIPSWeb&action=get_client_token', null, function(data){window.clientid = parseInt(data);});
 
@@ -225,7 +226,7 @@ function initialiseUI() {
               if (typeof data[i].timeslotitemid != 'undefined') {
                 $('ul.baps-channel li[timeslotitemid="findme"]').attr('timeslotitemid', data[i].timeslotitemid);
               }
-              if (!data[i].status) {
+              if (!data[i].status && !window.debug) {
                 window.location.reload();
               }
             }
