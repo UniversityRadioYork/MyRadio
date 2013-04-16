@@ -110,6 +110,7 @@ function initialiseUI() {
             channel: parseInt(ui.item.attr('channel')),
             weight: parseInt(ui.item.attr('weight'))
           });
+          ui.item.attr('timeslotitemid', 'findme');
         } else if (ui.item.attr('channel') === 'res') {
           console.log('RemoveOp');
           /**
@@ -219,7 +220,11 @@ function initialiseUI() {
         $.ajax({
           cache: false,
           success: function(data) {
-            $('#notice').hide();
+            for (i in data) {
+              if (typeof data[i].timeslotitemid != 'undefined') {
+                $('ul.baps-channel li[timeslotitemid="findme"]').attr('timeslotitemid', data[i].timeslotitemid);
+              }
+            }
           },
           data: {clientid: window.clientid, ops: ops},
           dataType: 'json',
