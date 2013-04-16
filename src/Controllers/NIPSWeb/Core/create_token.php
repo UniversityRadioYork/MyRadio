@@ -6,6 +6,6 @@
  * @version 17032013
  * @package MyURY_NIPSWeb
  */
-NIPSWeb_PlayToken::createToken($_REQUEST['trackid']);
+NIPSWeb_Token::createToken($_REQUEST['trackid']);
 
 require 'Views/MyURY/Core/nocontent.php';
