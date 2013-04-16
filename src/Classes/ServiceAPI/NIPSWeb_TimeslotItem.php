@@ -102,7 +102,12 @@ class NIPSWeb_TimeslotItem extends ServiceAPI {
    * @return Array
    */
   public function toDataSource() {
-    return array_merge(array('timeslotitemid' => $this->getID()),
-            $this->getItem()->toDataSource());
+    return array_merge(array(
+        'timeslotitemid' => $this->getID(),
+        'channel' => $this->getChannel(),
+        'weight' => $this->getWeight()
+        ),
+        $this->getItem()->toDataSource()
+    );
   }
 }
