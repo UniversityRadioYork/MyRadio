@@ -69,7 +69,7 @@ function initialiseUI() {
       */
      var oldChannel = ui.item.attr('channel');
      var oldWeight = ui.item.attr('weight');
-     ui.item.attr('channel', ui.item.parent().attr('channel'));
+     ui.item.attr('channel', ui.item.parent().attr('channel')-1);
      ui.item.attr('weight', ui.item.index());
      
      if (oldChannel !== ui.item.attr('channel') || oldWeight !== ui.item.attr('weight')) {
