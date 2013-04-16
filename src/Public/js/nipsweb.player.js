@@ -120,21 +120,21 @@ function initialiseUI() {
            current.attr('weight', current.attr('weight')-1);
            ops.push({
              op: 'MoveItem',
-             timeslotitemid: current.attr('timeslotitemid'),
-             oldchannel: current.attr('channel'),
-             oldweight: current.attr('weight')+1,
-             channel: current.attr('channel'),
-             weight: current.attr('weight')
+             timeslotitemid: parseInt(current.attr('timeslotitemid')),
+             oldchannel: parseInt(current.attr('channel')),
+             oldweight: parseInt(current.attr('weight')+1),
+             channel: parseInt(current.attr('channel')),
+             weight: parseInt(current.attr('weight'))
            });
          }
          
-         //Push the actual Add Operation
+         //Push the actual Remove Operation
          // This is after the moves to ensure there aren't two items of the same weight
          ops.push({
              op: 'RemoveItem',
-             id: ui.item.attr('timeslotitemid'),
-             channel: oldChannel,
-             weight: oldWeight
+             id: parseInt(ui.item.attr('timeslotitemid')),
+             channel: parseInt(oldChannel),
+             weight: parseInt(oldWeight)
            });
          
          ui.item.attr('timeslotitemid', undefined);
@@ -179,7 +179,7 @@ function initialiseUI() {
              op: 'MoveItem',
              id: parseInt(inc[i]),
              oldchannel: parseInt(obj.attr('channel')),
-             oldweight: obj.attr('weight')-1,
+             oldweight: parseInt(obj.attr('weight')-1),
              channel: parseInt(obj.attr('channel')),
              weight: parseInt(obj.attr('weight'))
            });
@@ -191,7 +191,7 @@ function initialiseUI() {
              op: 'MoveItem',
              id: parseInt(dec[i]),
              oldchannel: parseInt(obj.attr('channel')),
-             oldweight: obj.attr('weight')+1,
+             oldweight: parseInt(obj.attr('weight')+1),
              channel: parseInt(obj.attr('channel')),
              weight: parseInt(obj.attr('weight'))
            });
@@ -199,11 +199,11 @@ function initialiseUI() {
          
          ops.push({
            op: 'MoveItem',
-           id: ui.item.attr('timeslotitemid'),
-           oldchannel: oldChannel,
-           oldweight: oldWeight,
-           channel: ui.item.attr('channel'),
-           weight: ui.item.attr('weight')
+           id: parseInt(ui.item.attr('timeslotitemid')),
+           oldchannel: parseInt(oldChannel),
+           oldweight: parseInt(oldWeight),
+           channel: parseInt(ui.item.attr('channel')),
+           weight: parseInt(ui.item.attr('weight'))
          });
        }
        console.log(ops);
