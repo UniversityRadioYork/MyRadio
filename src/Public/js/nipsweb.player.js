@@ -81,7 +81,6 @@ function initialiseUI() {
          */
         var ops = [];
         if (oldChannel === 'res' && ui.item.attr('channel') !== 'res') {
-          console.log('AddOp');
           /**
            * This item has just been added to the show plan. Send the server a AddItem operation.
            * This operation will also send a number of MoveItem notifications - one for each item below this one in the
@@ -112,7 +111,6 @@ function initialiseUI() {
           });
           ui.item.attr('timeslotitemid', 'findme');
         } else if (ui.item.attr('channel') === 'res') {
-          console.log('RemoveOp');
           /**
            * This item has just been removed from the Show Plan. Send the server a RemoveItem operation.
            * This operation will also send a number of MoveItem notifications - one for each item below this one in the
@@ -150,7 +148,6 @@ function initialiseUI() {
            * - Each item below its new location must have a MoveItem to increment the weight
            * - The item must have its channel/weight setting updated for its new location
            */
-          console.log('Extended MoveOp');
           var inc = new Array();
           var dec = new Array();
 
@@ -175,9 +172,6 @@ function initialiseUI() {
               current.attr('weight', parseInt(current.attr('weight')) + 1);
             }
           }
-
-          console.log(dec);
-          console.log(inc);
 
           for (i in inc) {
             var obj = $('ul.baps-channel li[timeslotitemid=' + inc[i] + ']');
