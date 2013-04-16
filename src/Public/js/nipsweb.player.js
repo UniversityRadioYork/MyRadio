@@ -91,11 +91,11 @@ function initialiseUI() {
            current.attr('weight', current.attr('weight')+1);
            ops.push({
              op: 'MoveItem',
-             timeslotitemid: current.attr('timeslotitemid'),
-             oldchannel: current.attr('channel'),
-             oldweight: current.attr('weight')-1,
-             channel: current.attr('channel'),
-             weight: current.attr('weight')
+             timeslotitemid: parseInt(current.attr('timeslotitemid')),
+             oldchannel: parseInt(current.attr('channel')),
+             oldweight: parseInt(current.attr('weight')-1),
+             channel: parseInt(current.attr('channel')),
+             weight: parseInt(current.attr('weight'))
            });
          }
          
@@ -103,9 +103,9 @@ function initialiseUI() {
          // This is after the moves to ensure there aren't two items of the same weight
          ops.push({
              op: 'AddItem',
-             id: ui.item.attr('timeslotitemid'),
-             channel: ui.item.attr('channel'),
-             weight: ui.item.attr('weight')
+             id: parseInt(ui.item.attr('timeslotitemid')),
+             channel: parseInt(ui.item.attr('channel')),
+             weight: parseInt(ui.item.attr('weight'))
            });
        } else if (ui.item.attr('channel') === 'res') {
          console.log('RemoveOp');
