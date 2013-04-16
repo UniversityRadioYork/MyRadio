@@ -157,6 +157,8 @@ function initialiseUI() {
               $(this).attr('weight', parseInt($(this).attr('weight')) - 1);
             }
           });
+          
+          console.log(dec);
 
           var current = ui.item;
           while (current.next().length === 1) {
@@ -172,6 +174,9 @@ function initialiseUI() {
               current.attr('weight', parseInt(current.attr('weight')) + 1);
             }
           }
+          
+          console.log(dec);
+          console.log(inc);
 
           for (i in inc) {
             var obj = $('ul.baps-channel li[timeslotitemid=' + inc[i] + ']');
@@ -218,6 +223,9 @@ function initialiseUI() {
             for (i in data) {
               if (typeof data[i].timeslotitemid != 'undefined') {
                 $('ul.baps-channel li[timeslotitemid="findme"]').attr('timeslotitemid', data[i].timeslotitemid);
+              }
+              if (!data[i].status) {
+                window.location.reload();
               }
             }
           },
