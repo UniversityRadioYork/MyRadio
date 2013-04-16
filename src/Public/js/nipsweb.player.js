@@ -163,6 +163,8 @@ function initialiseUI() {
            var pos = $.inArray(current.attr('timeslotitemid'), dec);
            //This is actually a no-op move.
            if (pos >= 0) {
+             $('ui.baps-channel li[timeslotitemid='+dec[pos]+']').attr('weight',
+              parseInt($('ui.baps-channel li[timeslotitemid='+dec[pos]+']'))+1)
              dec[pos] = null;
            } else {
              inc.push(current.attr('timeslotitemid'));
