@@ -35,7 +35,7 @@ class NIPSWeb_Token extends ServiceAPI {
   public static function getEditToken() {
     $r = self::$db->fetch_column('INSERT INTO bapsplanner.client_ids (show_season_timeslot_id, session_id)
       VALUES ($1, $2) RETURNING client_id', array($_SESSION['timeslotid'], session_id()));
-    return $r[0];
+    return (int)$r[0];
   }
   
   /**
