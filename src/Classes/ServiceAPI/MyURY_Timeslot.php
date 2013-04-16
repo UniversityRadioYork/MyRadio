@@ -244,7 +244,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
      * Find out if there's a NIPSWeb Schema listing for this timeslot.
      * If not, throw back an empty array
      */
-    $r = self::$db->query('SELECT * FROM bapsplanner.timeslot_items WHERE timeslot_id=$1
+    $r = self::$db->query('SELECT timeslot_item_id, channel_id FROM bapsplanner.timeslot_items WHERE timeslot_id=$1
       ORDER BY weight ASC', array($this->getID()));
 
     if (!$r or pg_num_rows($r) === 0) {
@@ -252,18 +252,10 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
       return array();
     } else {
       $tracks = array();
-      /**
-       * @todo detect definition of multiple track types in an entry and fail out
-       */
       foreach (self::$db->fetch_all($r) as $track) {
-        if ($track['rec_track_id'] != null) {
-          //CentralDB
-          $tracks[$track['channel_id']][] = MyURY_Track::getInstance($track['rec_track_id'])->toDataSource();
-        } elseif ($track['managed_item_id'] != null) {
-          //ManagedDB (Central Beds, Jingles...)
-          $tracks[$track['channel_id']][] = NIPSWeb_ManagedItem::getInstance($track['managed_item_id'])->toDataSource();
-        }
+        $tracks[$track['channel_id']][] = NIPSWeb_TimeslotItem::getInstance($track['timeslot_item_id'])->toDataSource();
       }
+      
       return $tracks;
     }
   }
