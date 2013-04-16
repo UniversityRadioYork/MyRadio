@@ -155,7 +155,7 @@ function initialiseUI() {
              $(this).attr('weight', parseInt($(this).attr('weight'))-1);
            }
          });
-         console.log(dec);
+         console.log($('ul.baps-channel li[channel='+oldChannel+']'));
          
          var current = ui.item;
          while (current.next().length === 1) {
