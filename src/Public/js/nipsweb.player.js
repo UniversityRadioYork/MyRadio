@@ -177,23 +177,23 @@ function initialiseUI() {
            var obj = $('ul.baps-channel li[timeslotitemid='+inc[i]+']');
            ops.push({
              op: 'MoveItem',
-             id: inc[i],
-             oldchannel: obj.attr('channel'),
+             id: parseInt(inc[i]),
+             oldchannel: parseInt(obj.attr('channel')),
              oldweight: obj.attr('weight')-1,
-             channel: obj.attr('channel'),
-             weight: obj.attr('weight')
+             channel: parseInt(obj.attr('channel')),
+             weight: parseInt(obj.attr('weight'))
            });
          }
          
          for (i in dec) {
-           var obj = $('#'+dec[i]);
+           var obj = $('ul.baps-channel li[timeslotitemid='+dec[i]+']');
            ops.push({
              op: 'MoveItem',
-             id: dec[i],
-             oldchannel: obj.attr('channel'),
+             id: parseInt(dec[i]),
+             oldchannel: parseInt(obj.attr('channel')),
              oldweight: obj.attr('weight')+1,
-             channel: obj.attr('channel'),
-             weight: obj.attr('weight')
+             channel: parseInt(obj.attr('channel')),
+             weight: parseInt(obj.attr('weight'))
            });
          }
          
