@@ -147,8 +147,8 @@ function initialiseUI() {
           * - The item must have its channel/weight setting updated for its new location
           */
          console.log('Extended MoveOp');
-         var inc = array();
-         var dec = array();
+         var inc = new Array();
+         var dec = new Array();
          
          $('#baps-channel-'+ui.item.attr('channel')).children().each(function() {
            if ($(this).attr('weight') > oldWeight) {
