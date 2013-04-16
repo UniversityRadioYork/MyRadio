@@ -238,14 +238,14 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
   
   /**
    * This is the server-side implementation of the JSONON system for tracking Show Planner alterations
-   * @param array $ops A JSONON operation set
+   * @param array $set A JSONON operation set
    */
-  public function updateShowPlan($ops) {
+  public function updateShowPlan($set) {
     $result = array();
     //Being a Database Transaction - this all succeeds, or none of it does
     self::$db->query('BEGIN');
     
-    foreach ($ops as $op) {
+    foreach ($set['ops'] as $op) {
       switch ($op['op']) {
         case 'AddItem':
           try {
@@ -253,10 +253,10 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
             $parts = explode('-',$op['id']);
             if ($parts[0] === 'ManagedDB') {
               //This is a managed item
-              NIPSWeb_TimeslotItem::create_managed($this->getID(), $parts[1], $op['channel'], $op['weight']);
+              $i = NIPSWeb_TimeslotItem::create_managed($this->getID(), $parts[1], $op['channel'], $op['weight']);
             } else {
               //This is a rec database track
-              NIPSWeb_TimeslotItem::create_central($this->getID(), $parts[1], $op['channel'], $op['weight']);
+              $i = NIPSWeb_TimeslotItem::create_central($this->getID(), $parts[1], $op['channel'], $op['weight']);
             }
           } catch (MyURYException $e) {
             $result[] = array('status' => false);
@@ -264,7 +264,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
             return $result;
           }
           
-          $result[] = array('status' => true, 'timeslotitemid' => (int)$result[0]);
+          $result[] = array('status' => true, 'timeslotitemid' => $i->getID());
           break;
         
         case 'MoveItem':
@@ -281,7 +281,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
         
         case 'RemoveItem':
           $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
-          if ($i->getChannel() != $op['oldchannel'] or $i->getWeight() != $op['oldweight']) {
+          if ($i->getChannel() != $op['channel'] or $i->getWeight() != $op['weight']) {
             $result[] = array('status' => false);
             self::$db->query('ROLLBACK');
             return $result;
@@ -292,6 +292,12 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
           break;
       }
     }
+    
+    self::$db->query('INSERT INTO bapsplanner.timeslot_change_ops (client_id, change_ops)
+      VALUES ($1, $2)', array($set['client_id'], json_encode($set['ops'])));
+    
+    self::$db->query('COMMIT');
+    return $result;
   }
   
   /**
