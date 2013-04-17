@@ -22,7 +22,7 @@
           <li>{% endif %}<a href="https://ury.york.ac.uk/portal/redir_out.php">Logout</a></li>
           <li><a href="http://ury.org.uk/">ury.org.uk</a></li>
         </ul>
-        <div class="socialBtn">{{ name }}{{ impersonator }}{% if timeslotname is not null %} - <a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</div>
+        <div id="navRight">{{ name }}{{ impersonator }}{% if timeslotname is not null %} - <a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</div>
       </nav>
         {% if phperrors is not null %}
           <ul class="php_error">
