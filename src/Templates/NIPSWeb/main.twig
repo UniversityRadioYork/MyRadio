@@ -15,7 +15,7 @@
 <div id="grid" class="transBG clearfix">
 
   <div id="bapswrapper" class="ui-widget">
-    <div id="baps-channel-container">
+    <div id="baps-channel-container" class="clearfix">
       {% for i in 0..2 %}
         <ul class="box width-1 baps-channel ui-widget-content" channel="{{i+1}}" id="baps-channel-{{i + 1}}">
           {% for track in tracks[i] %}
@@ -29,7 +29,7 @@
             </ul>
       {% endfor %}
   
-      <div id="resource-add-container" class="box width-1 ui-widget ui-widget-content">
+      <div id="resource-add-container" class="box width-2 ui-widget ui-widget-content">
         <div id="resource-add-header" class="ui-widget-header">
           {% include 'NIPSWeb/res_selector.twig' %}
           <a href="ajax.php?action=manage_library" id="a-manage-library" title="Library Manager">Manage Library</a>
@@ -44,7 +44,7 @@
     
     </div>
 
-    <div id="baps-channelaction-container">
+    <div id="baps-channelaction-container"  class="clearfix">
       {% set channels = [1, 2, 3, 'res'] %}
       {% for channel in channels %}
         <div class='box baps-channel channel-footer ui-widget-header{% if channel == 'res' %} width-2 library-footer'>Library{% else %} width-1'>Channel {{channel}}{% endif %}
