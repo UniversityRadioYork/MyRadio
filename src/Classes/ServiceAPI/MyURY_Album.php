@@ -1,25 +1,24 @@
 <?php
 /**
- * Provides the Album class for MyURY
- * Based and bashed around from the Artist class, so if there was a problem with that (12/Aug/2012), then it's likely to be here as well
+ * Provides the MyURY_Album class for MyURY
  * @package MyURY_Core
  */
 
 /**
- * The Album class fetches information about albums in the Cental Databse. It may be expanded to deal with entering and modifying them at some point as well.
- * @version 12082012
+ * The Album class fetches information about albums in the Cental Databse.
+ * @version 18042013
  * @author Anthony Williams <anthony@ury.york.ac.uk>
- * @todo EVERYTHING
+ * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
  * @uses \Database
  * 
  */
 
-class Album extends ServiceAPI {
+class MyURY_Album extends ServiceAPI {
 
   /**
    * The singleton store for Album objects
-   * @var Album[]
+   * @var MyURY_Album[]
    */
   private static $albums = array();
   
@@ -70,6 +69,11 @@ class Album extends ServiceAPI {
       LEFT JOIN public.rec_formatlookup ON t1.format = rec_formatlookup.format_code
       LEFT JOIN public.rec_locationlookup ON t1.location = rec_locationlookup.location_code', array($recordid));
     
+    if (empty($result)) {
+      throw new MyURYException('The specified Record/Album does not seem to exist');
+      return;
+    }
+    
     $this->title = $result['title'];
     $this->artist = $result['artist'];
     $this->status = $result['status_descr'];
@@ -86,9 +90,11 @@ class Album extends ServiceAPI {
     $this->cdid = $result['cdid'];
     $this->location = $result['location_descr'];
     
-    if (empty($result)) {
-      throw new MyURYException('The specified Record/Album does not seem to exist');
-      return;
+    $result = self::$db->fetch_column('SELECT trackid FROM rec_track WHERE recordid=$1', array($this->albumid));
+    
+    foreach ($result as $track) {
+      //Pass Album by reference to prevent circular referencing
+      $this->tracks[] = MyURY_Track::getInstance($track, $this);
     }
   }
 
@@ -115,12 +121,20 @@ class Album extends ServiceAPI {
 
   public static function findByName($title, $limit) {
     $title = trim($title);
-    return self::$db->fetch_all('SELECT DISTINCT rec_record.recordid AS recordid, FROM rec_record WHERE rec_record.title ILIKE \'%\' || $1 || \'%\' LIMIT $2;', array($title, $limit));
+    $result = self::$db->fetch_column('SELECT DISTINCT rec_record.recordid AS recordid FROM rec_record WHERE rec_record.title ILIKE \'%\' || $1 || \'%\' LIMIT $2;', array($title, $limit));
+    
+    $response = array();
+    foreach ($result as $album) {
+      $response[] = MyURY_Album::getInstance($album);
+    }
+    
+    return $response;
   }
-
-  public static function getAlbumDetails($title) {
+  
+  public static function findOrCreate($title, $artist) {
     $title = trim($title);
-    return self::$db->fetch_all('SELECT DISTINCT rec_record.title AS title, rec_record.artist AS artist, rec_record.status AS status FROM rec_record WHERE rec_record.recordid = $1;', array($title, $limit));
+    $artist = trim($artist);
+    print_r(self::$db->fetch_one('SELECT recordid FROM rec_record WHERE title=$1 AND artist=$2 LIMIT 1', array($title, $artist)));
   }
   
   public function toDataSource() {

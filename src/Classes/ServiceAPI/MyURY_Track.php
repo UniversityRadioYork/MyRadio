@@ -84,7 +84,7 @@ class MyURY_Track extends ServiceAPI {
    * @todo Genre class
    * @todo Artist normalisation
    */
-  private function __construct($trackid) {
+  private function __construct($trackid, MyURY_Album $album) {
     $this->trackid = $trackid;
     $result = self::$db->fetch_one('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', array($trackid));
     if (empty($result)) {
@@ -100,15 +100,16 @@ class MyURY_Track extends ServiceAPI {
     $this->intro = strtotime('1970-01-01 '.$result['intro'].'+00');
     $this->length = strtotime('1970-01-01 '.$result['length'].'+00');
     $this->number = (int)$result['intro'];
-    $this->record = Album::getInstance($result['recordid']);
+    $this->record = empty($album) ? Album::getInstance($result['recordid']) : $album;
     $this->title = $result['title'];
   }
   
   /**
    * Returns the current instance of that Track object if there is one, or runs the constructor if there isn't
    * @param int $trackid The ID of the Track to return an object for
+   * @param MyURY_Album If defined, this is a reference to a preexisting album object. Prevents circular referncing.
    */
-  public static function getInstance($trackid = -1) {
+  public static function getInstance($trackid = -1, MyURY_Album $album = null) {
     self::__wakeup();
     if (!is_numeric($trackid)) {
       throw new MyURYException('Invalid Track ID!', MyURYException::FATAL);
@@ -308,19 +309,22 @@ class MyURY_Track extends ServiceAPI {
   private static function identifyUploadedTrack($path) {
     $response = shell_exec('lastfm-fpclient '.$path);
     
-    $lastfm = json_decode($response);
+    $lastfm = json_decode($response, true);
     
     if (empty($lastfm)) {
       return array('FAIL' => 'This track could not be identified. Please email the track to track.requests@ury.org.uk.');
-    }
-    
-    else {
+    } else {
       $tracks = array();
-      foreach ($lastfm['tracks'] as $track) {
+      foreach ($lastfm['tracks']['track'] as $track) {
         $tracks[] = array('title' => $track['name'], 'artist' => $track['artist']['name']);
       }
       return $tracks;
     }
+  }
+  
+  public static function identifyAndStoreTrack($tmpid, $title, $artist) {
+    //Get the album info
+    self::getAlbumFromLastfm($title, $artist);
   }
   
   private static function getAlbumFromLastfm($title, $artist) {
@@ -329,7 +333,10 @@ class MyURY_Track extends ServiceAPI {
             .Config::$lastfm_api_key
             .'&artist='.urlencode($artist)
             .'&track='.urlencode($title)
-            .'&format=json'));
-    return isset($details['album']['title']) ? $details['album']['title'] : 'Unknown';
+            .'&format=json'), true);
+    
+    print_r($details);
+    
+    MyURY_Album::findOrCreate($details['album']['title'], $details['album']['artist']['title']);
   }
 }
