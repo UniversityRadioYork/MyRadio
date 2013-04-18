@@ -33,7 +33,7 @@ class Database {
    * Stores the number of queries executed
    * @var int
    */
-  private $counter;
+  private $counter = 0;
 
   /**
    * Constructs the singleton database connector 
