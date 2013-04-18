@@ -2,9 +2,6 @@
 <html>
   <head>
 {% include 'parts/base_head.twig' %}
-<script type="text/javascript" src="js/ul-sort.js"></script>
-<script type="text/javascript" src="js/nipsweb.player.js"></script>
-<script type="text/javascript" src="js/nipsweb.librarypane.js"></script>
 <script type="text/javascript" src="js/jquery.filedrop.js"></script>
 <script type="text/javascript" src="js/nipsweb.managelibrary.js"></script>
 <link rel="stylesheet" type="text/css" href="{{shiburl}}css/planner.css" />
@@ -24,11 +21,6 @@
   <div id="res-dragdrop" class="ui-widget-header">Drag WAV/MP3 files here to upload</div>
   <div class="ui-state-highlight" id="res-status"></div>
   <div class="ui-widget-content" id="res-result"></div>
-</div>
-<div id="personal-container" class="res-container ui-widget-content ui-helper-hidden">
-  <div class="ui-state-highlight">Personal Playlists are no longer supported by ((URY)). To upload tracks, you must upload them to the Central Database by selecting the option above. For now, you can still use existing personal playlists in shows, but this feature will eventually be disappearing. To add jingles, use the new Show Resources playlist.</div>
-  You can click a file here to download it, or <a href="#" id="personal-download">click here to download all files in this playlist</a><br>The Resources playlists will soon contain a Personal Resources playlist that can be modified
-  <ul id="personal-list"></ul>
 </div>
 <script type="text/javascript">window.memberid = {{memberid}};</script>
 </body></html>
