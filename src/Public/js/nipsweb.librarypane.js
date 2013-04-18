@@ -160,14 +160,16 @@ $(document).ready(function() {
    */
   $('#a-manage-library').click(function() {
     var url = this.href;
-    var dialog = $('<div style="display:none"><iframe src="' + url + '" width="800" height="600" frameborder="0"></iframe></div>').appendTo('body');
+    var dialog = $('<div style="display:none"><iframe src="' + url + '" width="800" height="500" frameborder="0"></iframe></div>').appendTo('body');
     dialog.dialog({
       close: function(event, ui) {
         dialog.remove();
       },
       modal: true,
       title: 'Library Manager',
-      width: 850
+      width: 850,
+      minHeight: 550,
+      position: { my: "center center", at: "center center", of: window }
     });
     return false;
   });

@@ -2,16 +2,7 @@
 <html>
   <head>
     {% block head %}
-      <title>{{ title }} | University Radio York</title>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-      <script type="text/javascript" src="{{shiburl}}js/jquery-1.9.1.js"></script>
-      <script type="text/javascript" src="{{shiburl}}js/jquery-ui-1.10.1.custom.min.js"></script>
-      <script type="text/javascript" src="{{shiburl}}js/jquery-ui-themeswitcher.js"></script>
-      <script type="text/javascript" src="{{shiburl}}js/jquery-ui-init.js"></script>
-      <link rel="Stylesheet" type="text/css" href="{{shiburl}}css/ury-purple/jquery-ui-1.10.1.custom.min.css">
-      <link rel="Stylesheet" type="text/css" href="{{shiburl}}css/jquery-ui-themeswitcher.css">
-      <link rel="stylesheet" type="text/css" href="{{shiburl}}css/main.css">
-      <link rel="Stylesheet" type="text/css" href="{{shiburl}}css/style.css">
+      {% include 'parts/base_head.twig' %}
     {% endblock %}
     </head>
     <body>
@@ -36,7 +27,7 @@
               </div>
               <footer id="pageFooter" class="clearfix">
                 <div id="copyright">
-                  <p>&copy;1967-2013 University Radio York. Maintained by <a href="mailto:webmaster@ury.org.uk">URY Computing Team</a>
+                  <p>&copy;1967-2013 University Radio York. Maintained by <a href="mailto:webmaster@ury.org.uk" title="{{counter}} queries executed to load this page">URY Computing Team</a>
                   </div>
                 </div>
                 <ul>
