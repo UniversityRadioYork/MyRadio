@@ -450,9 +450,13 @@ class MyURY_Track extends ServiceAPI {
             .'&track='.urlencode($title)
             .'&format=json'), true);
     
-    if (empty($details['track']['album']['title']) or empty($details['track']['album']['artist'])) {
-      throw new MyURYException('Unexpected lastfm response: '.print_r($details,true), 500);
-      return;
+    if (!isset($details['track']['album'])) {
+      //Send some defaults for album info
+      return array(
+          'album' => MyURY_Album::findOrCreate('URY Downloads '.date('Y'), 'URY'),
+          'position' => 0,
+          'duration' => intval($details['track']['duration']/1000)
+      );
     }
     
     return array(
