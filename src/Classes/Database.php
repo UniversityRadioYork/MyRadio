@@ -28,6 +28,12 @@ class Database {
    * @var Resource
    */
   private $db;
+  
+  /**
+   * Stores the number of queries executed
+   * @var int
+   */
+  private $counter;
 
   /**
    * Constructs the singleton database connector 
@@ -62,6 +68,7 @@ class Database {
       throw new MyURYException('Query failure: ' . $sql . '<br />'
               . pg_errormessage($this->db));
     }
+    $this->counter++;
     return $result;
   }
 
@@ -184,6 +191,10 @@ class Database {
   
   public function intervalToTime($interval) {
     return strtotime('1970-01-01 '.$interval.'+00');
+  }
+  
+  public function getCounter() {
+    return $this->counter;
   }
 
 }

@@ -84,6 +84,7 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
    * Renders the template
    */
   public function render() {
+    $this->addVariable('query_count', Database::getInstance()->getCounter());
     echo $this->template->render($this->contextVariables);
   }
   
