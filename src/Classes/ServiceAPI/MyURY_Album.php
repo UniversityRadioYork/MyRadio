@@ -118,6 +118,10 @@ class MyURY_Album extends ServiceAPI {
   public function getTitle() {
     return $this->title;
   }
+  
+  public function getFolder() {
+    return Config::$music_central_db_path.'/'.$this->getID();
+  }
 
   public static function findByName($title, $limit) {
     $title = trim($title);
@@ -134,7 +138,63 @@ class MyURY_Album extends ServiceAPI {
   public static function findOrCreate($title, $artist) {
     $title = trim($title);
     $artist = trim($artist);
-    print_r(self::$db->fetch_one('SELECT recordid FROM rec_record WHERE title=$1 AND artist=$2 LIMIT 1', array($title, $artist)));
+    
+    $result = self::$db->fetch_one('SELECT recordid FROM rec_record WHERE title=$1 AND artist=$2 LIMIT 1',
+            array($title, $artist));
+    
+    if (empty($result)) {
+      //Create Album
+      return self::create(array('title' => $title, 'artist' => $artist));
+    } else {
+      //Load Album
+      return self::getInstance($result['recordid']);
+    }
+  }
+  
+  public static function create($options) {
+    if (empty($options['title']) or empty($options['artist'])) {
+      throw new MyURYException('TITLE and ARTIST are required options to create an Album.', 400);
+      return;
+    }
+    //Digitial Only
+    if (!isset($options['status'])) $options['status'] = 'd';
+    //NIPSWeb Upload
+    if (!isset($options['media'])) $options['media'] = 'n';
+    //Album
+    if (!isset($options['format'])) $options['format'] = 'a';
+    //Blank
+    if (!isset($options['recordlabel'])) $options['recordlabel'] = '';
+    //Shelf 0
+    if (!isset($options['shelfnumber'])) $options['shelfnumber'] = 0;
+    //Shelf a
+    if (!isset($options['shelfletter'])) $options['shelfletter'] = 'a';
+    //NULL CDID
+    if (!isset($options['cdid'])) $options['cdid'] = null;
+    //NULL location
+    if (!isset($options['location'])) $options['location'] = null;
+    //NULL promoter
+    if (!isset($options['promoterid'])) $options['promoterid'] = null;
+    
+    $r = self::$db->query('INSERT INTO rec_record (title, artist, status, media, format, recordlabel, shelfnumber,
+      shelfletter, memberid_add, cdid, location, promoterid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+      RETURNING recordid', array(
+          trim($options['title']),
+          trim($options['artist']),
+          $options['status'],
+          $options['media'],
+          $options['format'],
+          $options['recordlabel'],
+          $options['shelfnumber'],
+          $options['shelfletter'],
+          $_SESSION['memberid'],
+          $options['cdid'],
+          $options['location'],
+          $options['promoterid']
+      ));
+    
+    $id = self::$db->fetch_all($r);
+    
+    return self::getInstance($id[0]['recordid']);
   }
   
   public function toDataSource() {

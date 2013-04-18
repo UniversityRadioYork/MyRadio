@@ -100,7 +100,7 @@ class MyURY_Track extends ServiceAPI {
     $this->intro = strtotime('1970-01-01 '.$result['intro'].'+00');
     $this->length = strtotime('1970-01-01 '.$result['length'].'+00');
     $this->number = (int)$result['intro'];
-    $this->record = empty($album) ? Album::getInstance($result['recordid']) : $album;
+    $this->record = empty($album) ? MyURY_Album::getInstance($result['recordid']) : $album;
     $this->title = $result['title'];
   }
   
@@ -116,7 +116,7 @@ class MyURY_Track extends ServiceAPI {
     }
 
     if (!isset(self::$tracks[$trackid])) {
-      self::$tracks[$trackid] = new self($trackid);
+      self::$tracks[$trackid] = new self($trackid, $album);
     }
 
     return self::$tracks[$trackid];
@@ -179,6 +179,20 @@ class MyURY_Track extends ServiceAPI {
   }
   
   /**
+   * Update whether or not the track is digitised
+   */
+  public function setDigitised($digitised) {
+    $this->digitised = $digitised;
+    self::$db->query('UPDATE rec_track SET digitised=$1, digitisedby=$2 WHERE trackid=$3',
+            $digitised ? array(
+                't', $_SESSION['memberid'], $this->getID()
+            ) : array(
+                'f', null, $this->getID()
+            )
+            );
+  }
+  
+  /**
    * Returns an array of key information, useful for Twig rendering and JSON requests
    * @todo Expand the information this returns
    * @return Array
@@ -202,14 +216,15 @@ class MyURY_Track extends ServiceAPI {
    * @param String $artist a partial or total title to search for
    * @param int $limit The maximum number of tracks to return
    * @param bool $digitised Whether the track must be digitised. Default false.
+   * @param bool $exact Only return Exact matches (i.e. no %)
    * @return Array of Track objects
    */
-  private static function findByNameArtist($title, $artist, $limit, $digitised = false) {
+  private static function findByNameArtist($title, $artist, $limit, $digitised = false, $exact = false) {
     $result = self::$db->fetch_column('SELECT trackid
       FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
-      AND rec_track.title ILIKE \'%\' || $1 || \'%\'
-      AND rec_track.artist ILIKE \'%\' || $2 || \'%\'
-      '.($digitised ? ' AND digitised=\'t\'' : '').'
+      AND rec_track.title '.($exact ? '=$1' : 'ILIKE \'%\' || $1 || \'%\'').
+      'AND rec_track.artist '.($exact ? '=$2' : 'ILIKE \'%\' || $1 || \'%\'').
+      ($digitised ? ' AND digitised=\'t\'' : '').'
       LIMIT $3',
             array($title, $artist, $limit));
     
@@ -324,19 +339,120 @@ class MyURY_Track extends ServiceAPI {
   
   public static function identifyAndStoreTrack($tmpid, $title, $artist) {
     //Get the album info
-    self::getAlbumFromLastfm($title, $artist);
+    $ainfo = self::getAlbumDurationAndPositionFromLastfm($title, $artist);
+    $track = self::findByNameArtist($title, $artist, 1, false, true);
+    if (empty($track)) {
+      //Create the track
+      $track = self::create(array(
+          'title' => $title,
+          'artist' => $artist,
+          'digitised' => true,
+          'duration' => $ainfo['duration'],
+          'recordid' => $ainfo['album']->getID(),
+          'number' => $ainfo['position']
+      ));
+    } else {
+      $track = $track[0];
+      //If it's set to digitised, throw an error
+      if ($track->getDigitised()) {
+        return array('status' => 'FAIL', 'error' => 'This track is already in our library.');
+      } else {
+        //Mark it as digitised
+        $track->setDigitised(true);
+      }
+    }
+    
+    /**
+     * Store three versions of the track:
+     * 1- 192kbps MP3 for BAPS and Chrome/IE
+     * 2- 192kbps OGG for Safari/Firefox
+     * 3- Original file for potential future conversions
+     */
+    $tmpfile = Config::$audio_upload_tmp_dir.'/'.$tmpid;
+    $dbfile = $ainfo['album']->getFolder().'/'.$track->getID();
+    shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 - >'{$dbfile}.mp3'");
+    shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k '{$dbfile}.ogg'");
+    move_uploaded_file($tmpfile, $dbfile.'.orig');
+    
+    return array('status' => 'OK');
   }
   
-  private static function getAlbumFromLastfm($title, $artist) {
+  /**
+   * Create a new MyURY_Track with the provided options
+   * @param Array $options
+   * title (required): Title of the track.
+   * artist (required): (string) Artist of the track.
+   * recordid (required): (int)Album of track.
+   * duration (required): Duration of the track, in seconds
+   * number: Position of track on album
+   * genre: Character code genre of track
+   * intro: Length of track intro, in seconds
+   * clean: 'y' yes, 'n' no, 'u' unknown lyric cleanliness status
+   * digitised: boolean digitised status
+   * @return MyURY_Track a shiny new MyURY_Track with the provided options
+   * @throws MyURYException
+   */
+  public static function create($options) {
+    self::__wakeup();
+    
+    $required = array('title', 'artist', 'recordid', 'duration');
+    foreach ($required as $require) {
+      if (empty($options[$require])) throw new MyURYException($require.' is required to create a Track.', 400);
+    }
+    
+    //Number 0
+    if (empty($options['number'])) $options['number'] = 0;
+    //Other Genre
+    if (empty($options['genre'])) $options['genre'] = 'o';
+    //No intro
+    if (empty($options['intro'])) $options['intro'] = 0;
+    //Clean unknown
+    if (empty($options['clean'])) $options['clean'] = 'u';
+    //Not digitised, and formate to t/f
+    if (empty($options['digitised'])) $options['digitised'] = 'f';
+      else $options['digitised'] = $options['digitised'] ? 't' : 'f';
+    
+    $result = self::$db->query('INSERT INTO rec_track (number, title, artist, length, genre, intro, clean, recordid,
+      digitised, digitisedby, duration) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING trackid',
+            array(
+               $options['number'],
+                trim($options['title']),
+                trim($options['artist']),
+                $options['duration'],
+                $options['genre'],
+                CoreUtils::intToTime($options['intro']),
+                $options['clean'],
+                $options['recordid'],
+                $options['digitised'],
+                $_SESSION['memberid'],
+                CoreUtils::intToTime($options['duration'])
+            ));
+    
+    $id = self::$db->fetch_all($result);
+    
+    return self::getInstance($id[0]['trackid']);
+  }
+  
+  /**
+   * Queries the last.fm API to find information about a track with the given title/artist combination
+   * @param String $title track title
+   * @param String $artist track artist
+   * @return array album: MyURY_Album object matching the input
+   *               position: The track number on the album
+   *               duration: The length of the track, in seconds
+   */
+  private static function getAlbumDurationAndPositionFromLastfm($title, $artist) {
     $details = json_decode(file_get_contents(
-            'http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=1d16c0d2f4ff309b58eaa08e8a37ee47'
+            'http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key='
             .Config::$lastfm_api_key
             .'&artist='.urlencode($artist)
             .'&track='.urlencode($title)
             .'&format=json'), true);
     
-    print_r($details);
-    
-    MyURY_Album::findOrCreate($details['album']['title'], $details['album']['artist']['title']);
+    return array(
+        'album' => MyURY_Album::findOrCreate($details['track']['album']['title'], $details['track']['album']['artist']),
+        'position' => (int)$details['track']['album']['@attr']['position'],
+        'duration' => intval($details['track']['duration']/1000)
+            );
   }
 }
