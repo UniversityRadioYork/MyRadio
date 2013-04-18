@@ -8,12 +8,12 @@
     <body>
       <nav id="menu" class="transBG">
         <a id="miniLogo" href="./"><img alt="((ury))" height="20" src="/static/img/logo.png"></a>
-        <span class="navRight">{{ name }}{{ impersonator }}{% if timeslotname is not null %} - <a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</span>
         <ul>
           <li>{% if timeslotname is null %}<a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}">Change Timeslot</a></li>
           <li>{% endif %}<a href="https://ury.york.ac.uk/portal/redir_out.php">Logout</a></li>
           <li><a href="http://ury.org.uk/">ury.org.uk</a></li>
         </ul>
+        <div id="navRight">{{ name }}{{ impersonator }}{% if timeslotname is not null %} - <a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</div>
       </nav>
         {% if phperrors is not null %}
           <ul class="php_error">
