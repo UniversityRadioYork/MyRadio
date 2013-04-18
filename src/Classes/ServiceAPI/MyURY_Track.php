@@ -306,6 +306,14 @@ class MyURY_Track extends ServiceAPI {
    * @return Array A parsed array version of the XML lastfm response
    */
   private static function identifyUploadedTrack($path) {
-    return shell_exec('lastfm-fpclient '.$path);
+    $response = shell_exec('lastfm-fpclient '.$path);
+    
+    $lastfm = json_decode($response);
+    
+    if (empty($lastfm)) {
+      return array('FAIL' => 'This track could not be identified. Please email the track to track.requests@ury.org.uk.');
+    }
+    
+    return $lastfm;
   }
 }
