@@ -120,7 +120,9 @@ class MyURY_Album extends ServiceAPI {
   }
   
   public function getFolder() {
-    return Config::$music_central_db_path.'/'.$this->getID();
+    $dir = Config::$music_central_db_path.'/records/'.$this->getID();
+    if (!is_dir($dir)) mkdir($dir);
+    return $dir;
   }
 
   public static function findByName($title, $limit) {

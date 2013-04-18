@@ -370,9 +370,10 @@ class MyURY_Track extends ServiceAPI {
      */
     $tmpfile = Config::$audio_upload_tmp_dir.'/'.$tmpid;
     $dbfile = $ainfo['album']->getFolder().'/'.$track->getID();
+    
     shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 - >'{$dbfile}.mp3'");
-    shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k '{$dbfile}.ogg'");
-    move_uploaded_file($tmpfile, $dbfile.'.orig');
+    shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
+    rename($tmpfile, $dbfile.'.orig');
     
     return array('status' => 'OK');
   }
