@@ -5,8 +5,10 @@
 <script type="text/javascript" src="js/ul-sort.js"></script>
 <script type="text/javascript" src="js/nipsweb.player.js"></script>
 <script type="text/javascript" src="js/nipsweb.librarypane.js"></script>
+<script type="text/javascript" src="js/jquery.filedrop.js"></script>
+<script type="text/javascript" src="js/nipsweb.managelibrary.js"></script>
 <link rel="stylesheet" type="text/css" href="{{shiburl}}css/planner.css" />
-<style>body{background: none}</style>
+<style>html,body{background: none; box-shadow: none}</style>
 </head>
 <body>
   {% include 'NIPSWeb/res_selector.twig' %}<a href="#" onclick="res_type_sel_change_handler()">Update</a>
@@ -29,6 +31,4 @@
   <ul id="personal-list"></ul>
 </div>
 <script type="text/javascript">window.memberid = {{memberid}};</script>
-<script type="text/javascript" src="js/jquery.filedrop.js"></script>
-<script type="text/javascript" src="js/nipsweb.managelibrary.js"></script>
 </body></html>
