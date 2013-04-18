@@ -77,8 +77,8 @@ $(document).ready(function() {
 
       var select = $('<select></select>')
       .attr('name', response.fileid).attr('id','centralupload-'+i);
-      $.each(response.tracklist.track, function(key, value) {
-        select.append('<option value="'+key+'">'+value.title+' by '+value.artist.name+'</option>');
+      $.each(response.analysis, function(key, value) {
+        select.append('<option value="'+value.title+':-:'+value.artist+'">'+value.title+' by '+value.artist+'</option>');
       });
       var submit = $('<a href="javascript:">Save to Database</a>').click(function() {
         console.log('Saving track to database');
@@ -87,7 +87,11 @@ $(document).ready(function() {
         $(this).hide().parent().append('<div id="confirminator-'+(fileid.replace(/\.mp3/,''))+'">Saving (this may take a few minutes)...</div>');
         $.ajax({
           url: '?service=NIPSWeb&action=confirm_central_upload',
-          data: 'match='+select+'&fileid='+fileid,
+          data: {
+            title: select.replace(/:-:.*$/,''),
+            artist: select.replace(/^.*:-:/,''),
+            fileid: fileid
+          },
           dataType: 'json',
           type: 'get',
           success: function(data) {
