@@ -13,22 +13,6 @@ function res_type_sel_change_handler() {
     $('#managed-container').show();
     return;
   }
-  if ($('#res-type-sel').val().match(/^[0-9]+\/[0-9]+$/)) {
-    $('#personal-container').show();
-    window.auxid = null
-    $('#personal-list').empty();
-    $.ajax({
-      url: 'ajax.php?action=load_aux_lib&libraryid='+$('#res-type-sel').val(),
-      success: function(data) {
-        for (file in data) {
-          $('#personal-list').append(
-            '<li><a href="ajax.php?action=aux_play&download=true&file='+data[file].path+'/'+data[file].filename+'">'+data[file].filename+'</a></li>'
-            );
-        }
-      }
-    });
-    return;
-  }
   window.auxid = $('#res-type-sel').val().replace(/^res-/,'');
   $('#res-container').show();
 };
@@ -42,16 +26,10 @@ function byteSize(size) {
 
 $(document).ready(function() {
   $('#res-type-sel').on('click', function(){res_type_sel_change_handler();});
-
-  $('#personal-download').click(function() {
-    $('#personal-list li a').each(function(){
-      $(this).click()
-      });
-  });
-
+  
   /** Central Database Handler **/
   $('#central-dragdrop').filedrop({
-    url: 'ajax.php?action=upload_central',
+    url: 'service=NIPSWeb&action=upload_central',
     paramname: 'audio',
     error: function(err, file) {
       switch (err) {
@@ -109,7 +87,7 @@ $(document).ready(function() {
         var fileid = $(this).parent().find('select').attr('name');
         $(this).hide().parent().append('<div id="confirminator-'+(fileid.replace(/\.mp3/,''))+'">Saving (this may take a few minutes)...</div>');
         $.ajax({
-          url: 'ajax.php?action=confirm_central_upload',
+          url: 'service=NIPSWeb&action=confirm_central_upload',
           data: 'match='+select+'&fileid='+fileid,
           dataType: 'json',
           type: 'get',
@@ -132,7 +110,7 @@ $(document).ready(function() {
 
   /** Auxillary Database Handler **/
   $('#res-dragdrop').filedrop({
-    url: 'ajax.php?action=upload_aux',
+    url: 'service=NIPSWeb&action=upload_aux',
     paramname: 'audio',
     error: function(err, file) {
       switch (err) {
@@ -198,7 +176,7 @@ $(document).ready(function() {
           var fileid = $(this).parent().find('input.title').attr('name');
           $(this).parent().remove();
           $.ajax({
-            url: 'ajax.php?action=confirm_aux_upload',
+            url: 'service=NIPSWeb&action=confirm_aux_upload',
             data: {auxid: window.auxid, fileid: fileid, title: title, expires: expire},
             dataType: 'json',
             type: 'get',
