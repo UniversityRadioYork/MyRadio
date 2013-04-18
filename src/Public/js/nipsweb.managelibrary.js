@@ -29,7 +29,7 @@ $(document).ready(function() {
   
   /** Central Database Handler **/
   $('#central-dragdrop').filedrop({
-    url: 'service=NIPSWeb&action=upload_central',
+    url: '?service=NIPSWeb&action=upload_central',
     paramname: 'audio',
     error: function(err, file) {
       switch (err) {
@@ -87,7 +87,7 @@ $(document).ready(function() {
         var fileid = $(this).parent().find('select').attr('name');
         $(this).hide().parent().append('<div id="confirminator-'+(fileid.replace(/\.mp3/,''))+'">Saving (this may take a few minutes)...</div>');
         $.ajax({
-          url: 'service=NIPSWeb&action=confirm_central_upload',
+          url: '?service=NIPSWeb&action=confirm_central_upload',
           data: 'match='+select+'&fileid='+fileid,
           dataType: 'json',
           type: 'get',
@@ -110,7 +110,7 @@ $(document).ready(function() {
 
   /** Auxillary Database Handler **/
   $('#res-dragdrop').filedrop({
-    url: 'service=NIPSWeb&action=upload_aux',
+    url: '?service=NIPSWeb&action=upload_aux',
     paramname: 'audio',
     error: function(err, file) {
       switch (err) {
@@ -176,7 +176,7 @@ $(document).ready(function() {
           var fileid = $(this).parent().find('input.title').attr('name');
           $(this).parent().remove();
           $.ajax({
-            url: 'service=NIPSWeb&action=confirm_aux_upload',
+            url: '?service=NIPSWeb&action=confirm_aux_upload',
             data: {auxid: window.auxid, fileid: fileid, title: title, expires: expire},
             dataType: 'json',
             type: 'get',
