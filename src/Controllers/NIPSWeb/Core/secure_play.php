@@ -14,9 +14,15 @@ $trackid = (int) $_REQUEST['trackid'];
 
 if (NIPSWeb_Token::hasToken($trackid)) {
   //Yes, clear the current play session and read the track
-  $path = Config::$music_central_db_path."/records/$recordid/$trackid.mp3";
+  $path = Config::$music_central_db_path."/records/$recordid/$trackid";
   
-  NIPSWeb_Views::serveMP3($path);
+  if (isset($_REQUEST['ogg'])) {
+    $path .= '.ogg';
+    NIPSWeb_Views::serveOGG($path);
+  } else {
+    $path .= '.mp3';
+    NIPSWeb_Views::serveMP3($path);
+  }
 } else {
   throw new MyURYException('Invalid Play Token!', 403);
 }

@@ -25,6 +25,7 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
       $this->enableDebug();
     }
     $this->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : 'Anonymous');
+    $this->addVariable('memberid', isset($_SESSION['memberid']) ? $_SESSION['memberid'] : 0);
     $this->addVariable('impersonator', isset($_SESSION['impersonator']) ? ' - Impersonated by '.$_SESSION['impersonator']['name'] : '');
     $this->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null);
     $this->addVariable('shiburl', Config::$shib_url);
@@ -83,6 +84,7 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
    * Renders the template
    */
   public function render() {
+    $this->addVariable('query_count', Database::getInstance()->getCounter());
     echo $this->template->render($this->contextVariables);
   }
   

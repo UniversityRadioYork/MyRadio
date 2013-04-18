@@ -36,6 +36,31 @@ class NIPSWeb_Views {
     }
   }
   
+  public static function serveOGG($path) {
+    //Set mp3 headers
+    header('Content-Type: audio/ogg');
+
+    /**
+     * Partial content support - this is required to set audio.currentTime
+     * it will also help mitigate some issues with tracks pausing to buffer halfway through
+     */
+    if (!empty($_SERVER['HTTP_RANGE'])) {
+      //Yeah, a byte range has been requested. We only serve part of the file at this time
+      self::rangeDownload($path);
+    } else {
+      //This is a dumb read-whole-file request
+      /**
+       * @todo Investigate whether whole file requests are ever used if partial is available
+       */
+      //Get the size of the file
+      header('Content-Length: ' . filesize($path));
+      //Make sure it doesn't suddently not
+      header('Connection: Keep-Alive');
+      //Read the file
+      readfile($path);
+    }
+  }
+  
   /**
    * Allows Partial Content Downloads - useful for audio and video streaming HTML5 stuff
    * From http://forums.phpfreaks.com/topic/106711-php-code-which-supports-byte-range-downloads-for-iphone/
