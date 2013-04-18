@@ -19,10 +19,8 @@ if (NIPSWeb_Token::hasToken($trackid)) {
   if (isset($_REQUEST['ogg'])) {
     $path .= '.ogg';
     NIPSWeb_Views::serveOGG($path);
-    
   } else {
     $path .= '.mp3';
-  
     NIPSWeb_Views::serveMP3($path);
   }
 } else {
