@@ -373,7 +373,7 @@ class MyURY_Track extends ServiceAPI {
     
     shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 - >'{$dbfile}.mp3'");
     shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
-    rename($tmpfile, $dbfile.'.orig');
+    rename($tmpfile, $dbfile.'.mp3.orig');
     
     return array('status' => 'OK');
   }
