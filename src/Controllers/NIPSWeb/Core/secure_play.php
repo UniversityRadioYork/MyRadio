@@ -11,10 +11,11 @@ if (!isset($_REQUEST['trackid']) or !isset($_REQUEST['recordid'])) {
 }
 $recordid = (int)$_REQUEST['recordid'];
 $trackid = (int) $_REQUEST['trackid'];
+$format = isset($_REQUEST['ogg']) ? 'ogg' : 'mp3';
 
 if (NIPSWeb_Token::hasToken($trackid)) {
   //Yes, clear the current play session and read the track
-  $path = Config::$music_central_db_path."/records/$recordid/$trackid.mp3";
+  $path = Config::$music_central_db_path."/records/$recordid/$trackid.$format";
   
   NIPSWeb_Views::serveMP3($path);
 } else {
