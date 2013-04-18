@@ -290,9 +290,11 @@ function previewLoad(channel) {
       type: 'post',
       data: 'trackid=' + data[1] + '&recordid=' + data[0],
       success: function() {
-        if (audio.canPlayType('audio/mpeg')) {
+        if (playerVariables(channel).canPlayType('audio/mpeg')) {
+          playerVariables(channel).type = 'audio/mpeg';
           playerVariables(channel).src = '?service=NIPSWeb&action=secure_play&recordid=' + data[0] + '&trackid=' + data[1];
-        } else if (audio.canPlayType('audio/ogg')) {
+        } else if (playerVariables(channel).canPlayType('audio/ogg')) {
+          playerVariables(channel).type = 'audio/ogg';
           playerVariables(channel).src = '?service=NIPSWeb&action=secure_play&ogg=true&recordid=' + data[0] + '&trackid=' + data[1];
         } else {
           alert('Sorry, you need to use a modern browser to use Track Preview.');
