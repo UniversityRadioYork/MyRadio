@@ -314,6 +314,22 @@ class MyURY_Track extends ServiceAPI {
       return array('FAIL' => 'This track could not be identified. Please email the track to track.requests@ury.org.uk.');
     }
     
-    return $lastfm;
+    else {
+      $tracks = array();
+      foreach ($lastfm['tracks'] as $track) {
+        $tracks[] = array('title' => $track['name'], 'artist' => $track['artist']['name']);
+      }
+      return $tracks;
+    }
+  }
+  
+  private static function getAlbumFromLastfm($title, $artist) {
+    $details = json_decode(file_get_contents(
+            'http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=1d16c0d2f4ff309b58eaa08e8a37ee47'
+            .Config::$lastfm_api_key
+            .'&artist='.urlencode($artist)
+            .'&track='.urlencode($title)
+            .'&format=json'));
+    return isset($details['album']['title']) ? $details['album']['title'] : 'Unknown';
   }
 }
