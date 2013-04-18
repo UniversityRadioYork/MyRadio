@@ -88,6 +88,13 @@ class CoreUtils {
   public static function happyTime($timestring, $time = true, $date = true) {
     return date(($date ? 'd/m/Y' : '') . ($time && $date ? ' ' : '') . ($time ? 'H:i' : ''), is_numeric($timestring) ? $timestring : strtotime($timestring));
   }
+  
+  public static function intToTime($int) {
+    $hours = $int % 3600;
+    $mins = ($int - ($hours*3600)) % 60;
+    $secs = ($int - ($hours*3600) - ($mins * 60));
+    return "$hours:$mins:$secs";
+  }
 
   /**
    * Returns a postgresql-formatted timestamp
