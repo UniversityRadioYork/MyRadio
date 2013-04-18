@@ -273,4 +273,39 @@ class MyURY_Track extends ServiceAPI {
     return empty($options['itonesplaylistid']) ? $response : array_intersect($response,
       iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks());
   }
+  
+  /**
+   * This method processes an unknown mp3 file that has been uploaded, storing a temporary copy of the file in /tmp/,
+   * then attempting to identify the track by querying it against the last.fm database.
+   * 
+   * @param type $tmp_path
+   */
+  public static function cacheAndIdentifyUploadedTrack($tmp_path) {
+    if (!isset($_SESSION['myury_nipsweb_file_cache_counter'])) $_SESSION['myury_nipsweb_file_cache_counter'] = 0;
+    if (!is_dir(Config::$audio_upload_tmp_dir)) {
+      mkdir(Config::$audio_upload_tmp_dir);
+    }
+    
+    $filename = session_id() . '-' . ++$_SESSION['myury_nipsweb_file_cache_counter'] . '.mp3';
+    
+    move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename);
+    
+    return array(
+        'fileid' => $filename,
+        'analysis' => self::identifyUploadedTrack(Config::$audio_upload_tmp_dir . '/' . $filename)
+    );
+  }
+  
+  /**
+   * Attempts to identify an MP3 file against the last.fm database.
+   * 
+   * !This method requires the external lastfm-fpclient application to be installed on the server. A FreeBSD build
+   * with URY's API key can be found in the fpclient.git URY Git repository.
+   * 
+   * @param String $path The location of the MP3 file
+   * @return Array A parsed array version of the XML lastfm response
+   */
+  private static function identifyUploadedTrack($path) {
+    return shell_exec('lastfm-fpclient '.$path);
+  }
 }

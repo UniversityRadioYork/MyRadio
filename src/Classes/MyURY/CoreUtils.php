@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file provides the CoreUtils class for MyURY
  * @package MyURY_Core
@@ -14,6 +15,7 @@
  * @todo Factor out permission code into a seperate class?
  */
 class CoreUtils {
+
   /**
    * This stores whether the Permissions have been defined to prevent re-defining, causing errors and wasting time
    * Once setUpAuth is run, this is set to true to prevent subsequent runs
@@ -75,7 +77,7 @@ class CoreUtils {
     }
     return true;
   }
-  
+
   /**
    * Formats pretty much anything into a happy, human readable date/time
    * @param string $timestring Some form of time
@@ -84,10 +86,9 @@ class CoreUtils {
    * @assert (40000) == '01/01/1970'
    */
   public static function happyTime($timestring, $time = true, $date = true) {
-    return date(($date ? 'd/m/Y' : '') . ($time && $date ? ' ' : '') . ($time ? 'H:i' : ''),
-            is_numeric($timestring) ? $timestring : strtotime($timestring));
+    return date(($date ? 'd/m/Y' : '') . ($time && $date ? ' ' : '') . ($time ? 'H:i' : ''), is_numeric($timestring) ? $timestring : strtotime($timestring));
   }
-  
+
   /**
    * Returns a postgresql-formatted timestamp
    * @param int $time The time to get the timestamp for. Default right now.
@@ -95,21 +96,24 @@ class CoreUtils {
    * @assert (30) == '01/01/1970 00:00:30'
    */
   public static function getTimestamp($time = null) {
-    if ($time === null) $time = time();
-    
+    if ($time === null)
+      $time = time();
+
     return date('d/m/Y H:i:s', $time);
   }
-  
+
   /**
    * Gives you the starting year of the current academic year
    * @return int year
    * @assert () == 2012
    */
   public static function getAcademicYear() {
-    if (date('m') >= 10) return (int)date('Y');
-    else return (int)date('Y')-1;
+    if (date('m') >= 10)
+      return (int) date('Y');
+    else
+      return (int) date('Y') - 1;
   }
-  
+
   /**
    * Returns a postgresql formatted interval
    * @param int $start The start time
@@ -118,7 +122,7 @@ class CoreUtils {
    * @assert (0, 0) == '0 seconds'
    */
   public static function makeInterval($start, $end) {
-    return $end-$start . ' seconds';
+    return $end - $start . ' seconds';
   }
 
   /**
@@ -131,32 +135,34 @@ class CoreUtils {
    * @throws MyURYException 
    */
   public static function makeURL($module, $action, $params = array()) {
-    if (Config::$rewrite_url) throw new MyURYException('Rewritten URLs not implemented');
+    if (Config::$rewrite_url)
+      throw new MyURYException('Rewritten URLs not implemented');
     $str = Config::$base_url . '?module=' . $module . '&action=' . $action;
-    
+
     foreach ($params as $k => $v) {
       $str .= "&$k=$v";
     }
     return $str;
   }
-  
+
   /**
    * Sets up the Authentication Constants
    * @return void
    * @assert () == null
    */
   public static function setUpAuth() {
-    if (self::$auth_cached) return;
-    
+    if (self::$auth_cached)
+      return;
+
     $db = Database::getInstance();
     $result = $db->fetch_all('SELECT typeid, phpconstant FROM l_action');
     foreach ($result as $row) {
       define($row['phpconstant'], $row['typeid']);
     }
-    
+
     self::$auth_cached = true;
   }
-  
+
   /**
    * Checks using cached Shibbobleh permissions whether the current member has the specified permission
    * @param int $permission The ID of the permission, resolved by using an AUTH_ constant
@@ -165,10 +171,11 @@ class CoreUtils {
    * @deprecated
    */
   public static function hasPermission($permission) {
-    if (!isset($_SESSION['member_permissions'])) return false;
+    if (!isset($_SESSION['member_permissions']))
+      return false;
     return in_array($permission, $_SESSION['member_permissions']);
   }
-  
+
   /**
    * Checks if the user has the given permission
    * @param int $permission A permission constant to check
@@ -181,7 +188,7 @@ class CoreUtils {
       exit;
     }
   }
-  
+
   /**
    * Checks if the user has the given permissions required for the given Service/Module/Action combination
    * 
@@ -210,32 +217,31 @@ class CoreUtils {
       AND (myury.modules.name=$2 OR myury.act_permission.moduleid IS NULL)
       AND (myury.actions.name=$3 OR myury.act_permission.actionid IS NULL)
       AND NOT (myury.act_permission.actionid IS NULL AND myury.act_permission.typeid IS NULL)
-      AND NOT (myury.act_permission.moduleid IS NULL AND myury.act_permission.typeid IS NULL)',
-    array($service, $module, $action));
-    
+      AND NOT (myury.act_permission.moduleid IS NULL AND myury.act_permission.typeid IS NULL)', array($service, $module, $action));
+
     //Don't allow empty result sets - throw an Exception as this is very very bad.
     if (empty($result)) {
-      throw new MyURYException('There are no permissions defined for the '.$service.'/'.$module.'/'.$action.' action!');
+      throw new MyURYException('There are no permissions defined for the ' . $service . '/' . $module . '/' . $action . ' action!');
       return false;
     }
-    
+
     $authorised = false;
     foreach ($result as $permission) {
       //It only needs to match one
-      if ($permission === null || self::hasPermission($permission)) $authorised = true;
+      if ($permission === null || self::hasPermission($permission))
+        $authorised = true;
     }
-    
+
     if (!$authorised && $require) {
       //Fatal error
       require 'Controllers/Errors/403.php';
       exit;
     }
-    
+
     //Return true on required success, or whether authorised otherwise
     return $require || $authorised;
-    
   }
-  
+
   /**
    * Returns a list of all currently defined permissions on MyURY Service/Module/Action combinations.
    *
@@ -253,7 +259,7 @@ class CoreUtils {
    */
   public static function getAllActionPermissions() {
     return Database::getInstance()->fetch_all(
-      'SELECT actpermissionid,
+                    'SELECT actpermissionid,
           myury.services.name AS service,
           myury.modules.name AS module,
           myury.actions.name AS action,
@@ -292,7 +298,7 @@ class CoreUtils {
         
         ORDER BY service, module');
   }
-  
+
   /**
    * Returns a list of Permissions ready for direct use in a select MyURYFormField
    * @return Array A 2D Array matching the MyURYFormField::TYPE_SELECT specification.
@@ -301,7 +307,7 @@ class CoreUtils {
     return Database::getInstance()->fetch_all('SELECT typeid AS value, descr AS text FROM public.l_action
       ORDER BY descr ASC');
   }
-  
+
   /**
    * Returns a list of all MyURY managed Services in a 2D Array.
    * @return Array A 2D Array with each second dimension as follows:<br>
@@ -313,7 +319,7 @@ class CoreUtils {
     return Database::getInstance()->fetch_all('SELECT serviceid AS value, name AS text, enabled
       FROM myury.services ORDER BY name ASC');
   }
-  
+
   /**
    * A simple debug method that only displays output for a specific user.
    * @param int $userid The ID of the user to display for
@@ -321,9 +327,10 @@ class CoreUtils {
    * @assert (7449, 'Test') == null
    */
   public static function debug_for($userid, $message) {
-    if ($_SESSION['memberid'] === $userid) echo '<p>'.$message.'</p>';
+    if ($_SESSION['memberid'] === $userid)
+      echo '<p>' . $message . '</p>';
   }
-  
+
   /**
    * Returns the ID of a Service, creating it if necessary
    * @todo Document this
@@ -334,21 +341,19 @@ class CoreUtils {
    */
   public static function getServiceId($service, $create = false) {
     $db = Database::getInstance();
-    $result = $db->fetch_column('SELECT serviceid FROM myury.services WHERE name=$1',
-            array($service));
-    
+    $result = $db->fetch_column('SELECT serviceid FROM myury.services WHERE name=$1', array($service));
+
     if (empty($result)) {
       if ($create) {
         //The service needs creating
-        $result = $db->fetch_column('INSERT INTO myury.services (name) VALUES ($1) RETURNING serviceid',
-                array($service));
+        $result = $db->fetch_column('INSERT INTO myury.services (name) VALUES ($1) RETURNING serviceid', array($service));
       } else {
-        throw new MyURYException('Service '.$service.' does not exist.');
+        throw new MyURYException('Service ' . $service . ' does not exist.');
       }
     }
     return $result[0];
   }
-  
+
   /**
    * Returns the ID of a Service/Module combination, creating it if necessary
    * @todo Document this
@@ -358,17 +363,15 @@ class CoreUtils {
    */
   public static function getModuleId($service, $module) {
     $db = Database::getInstance();
-    $result = $db->fetch_column('SELECT moduleid FROM myury.modules WHERE serviceid=$1 AND name=$2',
-            array($service, $module));
-    
+    $result = $db->fetch_column('SELECT moduleid FROM myury.modules WHERE serviceid=$1 AND name=$2', array($service, $module));
+
     if (empty($result)) {
       //The module needs creating
-      $result = $db->fetch_column('INSERT INTO myury.modules (serviceid, name) VALUES ($1, $2) RETURNING moduleid',
-              array($service, $module));
+      $result = $db->fetch_column('INSERT INTO myury.modules (serviceid, name) VALUES ($1, $2) RETURNING moduleid', array($service, $module));
     }
     return $result[0];
   }
-  
+
   /**
    * Returns the ID of a Service/Module/Action request, creating it if necessary
    * @todo Document this
@@ -378,17 +381,15 @@ class CoreUtils {
    */
   public static function getActionId($module, $action) {
     $db = Database::getInstance();
-    $result = $db->fetch_column('SELECT actionid FROM myury.actions WHERE moduleid=$1 AND name=$2',
-            array($module, $action));
-    
+    $result = $db->fetch_column('SELECT actionid FROM myury.actions WHERE moduleid=$1 AND name=$2', array($module, $action));
+
     if (empty($result)) {
       //The module needs creating
-      $result = $db->fetch_column('INSERT INTO myury.actions (moduleid, name) VALUES ($1, $2) RETURNING actionid',
-              array($module, $action));
+      $result = $db->fetch_column('INSERT INTO myury.actions (moduleid, name) VALUES ($1, $2) RETURNING actionid', array($module, $action));
     }
     return $result[0];
   }
-  
+
   /**
    * Assigns a permission to a command
    * @todo Document
@@ -402,7 +403,7 @@ class CoreUtils {
     $db->query('INSERT INTO myury.act_permission (serviceid, moduleid, actionid, typeid)
       VALUES ($1, $2, $3, $4)', array($service, $module, $action, $permission));
   }
-  
+
   /**
    * @todo Document this
    * @param type $serviceid
@@ -410,16 +411,19 @@ class CoreUtils {
    */
   public static function getServiceVersionForUser($serviceid, User $user) {
     $db = Database::getInstance();
-    
+
     $result = $db->fetch_one('SELECT version, path FROM myury.services_versions
       WHERE serviceid IN (SELECT serviceid FROM myury.services_versions_member
         WHERE memberid=$2 AND serviceversionid IN (SELECT serviceversionid FROM myury.services_versions
           WHERE serviceid=$1)
          )', array($serviceid, $user->getID()));
-    
-    if (empty($result)) return self::getDefaultServiceVersion($serviceid); else return $result;
+
+    if (empty($result))
+      return self::getDefaultServiceVersion($serviceid);
+    else
+      return $result;
   }
-  
+
   /**
    * @todo Document this.
    * @param type $serviceid
@@ -427,11 +431,11 @@ class CoreUtils {
    */
   public static function getDefaultServiceVersion($serviceid) {
     $db = Database::getInstance();
-    
+
     return $db->fetch_one('SELECT version, path FROM myury.services_versions WHERE serviceid=$1 AND is_default=true
       LIMIT 1', array($serviceid));
   }
-  
+
   /**
    * @todo Document this.
    * @param type $serviceid
@@ -439,10 +443,10 @@ class CoreUtils {
    */
   public static function getServiceVersions($serviceid) {
     $db = Database::getInstance();
-    
+
     return $db->fetch_all('SELECT version, path FROM myury.services_versions WHERE serviceid=$1', array($serviceid));
   }
-  
+
   /**
    * Parses an object or array into client array datasource
    * @param mixed $data
@@ -459,6 +463,44 @@ class CoreUtils {
     } else {
       return $data;
     }
+  }
+
+  //from http://www.php.net/manual/en/function.xml-parse-into-struct.php#109032
+  public static function xml2array($xml) {
+    $opened = array();
+    $opened[1] = 0;
+    $xml_parser = xml_parser_create();
+    xml_parse_into_struct($xml_parser, $xml, $xmlarray);
+    $array = array_shift($xmlarray);
+    unset($array["level"]);
+    unset($array["type"]);
+    $arrsize = sizeof($xmlarray);
+    for ($j = 0; $j < $arrsize; $j++) {
+      $val = $xmlarray[$j];
+      switch ($val["type"]) {
+        case "open":
+          $opened[$val["level"]] = 0;
+        case "complete":
+          $index = "";
+          for ($i = 1; $i < ($val["level"]); $i++)
+            $index .= "[" . $opened[$i] . "]";
+          $path = explode('][', substr($index, 1, -1));
+          $value = &$array;
+          foreach ($path as $segment)
+            $value = &$value[$segment];
+          $value = $val;
+          unset($value["level"]);
+          unset($value["type"]);
+          if ($val["type"] == "complete")
+            $opened[$val["level"] - 1]++;
+          break;
+        case "close":
+          $opened[$val["level"] - 1]++;
+          unset($opened[$val["level"]]);
+          break;
+      }
+    }
+    return $array;
   }
 
 }
