@@ -50,8 +50,7 @@ $(document).ready(function() {
       }
     },
     allowedfiletypes: ['audio/mpeg3', 'audio/x-mpeg-3', 'audio/mpeg', 'audio/x-mpeg',
-    'audio/mp3', 'audio/x-mp3', 'audio/mpg', 'audio/mpg3', 'audio/mpegaudio', 'audio/wav', 'audio/x-wav',
-    'audio/mp4a-latm', 'audio/mp4', 'audio/aac'],
+    'audio/mp3', 'audio/x-mp3', 'audio/mpg', 'audio/mpg3', 'audio/mpegaudio'],
     maxfiles: 20,
     maxfilesize: 100,
     queuefiles: 2,
