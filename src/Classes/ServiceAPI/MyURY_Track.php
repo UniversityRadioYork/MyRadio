@@ -418,14 +418,14 @@ class MyURY_Track extends ServiceAPI {
                $options['number'],
                 trim($options['title']),
                 trim($options['artist']),
-                $options['duration'],
+                CoreUtils::intToTime($options['duration']),
                 $options['genre'],
                 CoreUtils::intToTime($options['intro']),
                 $options['clean'],
                 $options['recordid'],
                 $options['digitised'],
                 $_SESSION['memberid'],
-                CoreUtils::intToTime($options['duration'])
+                $options['duration']
             ));
     
     $id = self::$db->fetch_all($result);

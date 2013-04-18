@@ -90,8 +90,8 @@ class CoreUtils {
   }
   
   public static function intToTime($int) {
-    $hours = $int % 3600;
-    $mins = ($int - ($hours*3600)) % 60;
+    $hours = floor($int / 3600);
+    $mins = floor(($int - ($hours*3600)) / 60);
     $secs = ($int - ($hours*3600) - ($mins * 60));
     return "$hours:$mins:$secs";
   }
