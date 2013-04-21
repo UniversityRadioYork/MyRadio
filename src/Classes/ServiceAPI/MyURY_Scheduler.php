@@ -96,7 +96,14 @@ class MyURY_Scheduler extends MyURY_Scheduler_Common {
   public static function getTermStartDate($term_id = null) {
     if ($term_id === null) $term_id = self::getActiveApplicationTerm();
     $result = self::$db->fetch_one('SELECT start FROM terms WHERE termid=$1', array($term_id));
-    return strtotime($result['start']);
+    /**
+     * An extra hour is added here due to some issues with timezones and public.terms - some
+     * terms are set to start at 11pm Sunday instead of Midnight Monday. It's annoying because then we convert it back.
+     * If we didn't it's not the end of the world - the usage for this does not include time so just the date *should*
+     * be sufficient.
+     * @todo Fix terms database so it isn't silly.
+     */
+    return strtotime('Midnight '.date('d-m-Y',strtotime($result['start'])+3600));
   }
   
   /**

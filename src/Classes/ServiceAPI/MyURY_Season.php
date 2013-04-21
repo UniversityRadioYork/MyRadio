@@ -464,7 +464,7 @@ EOT;
     $m->addServer(Config::$django_cache_server, 11211);
     $m->flush();
 
-    date_default_timezone_set('Europe/London');
+    date_default_timezone_set(Config::$timezone);
   }
 
   /**
