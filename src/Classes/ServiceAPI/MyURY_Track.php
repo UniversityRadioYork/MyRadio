@@ -449,7 +449,7 @@ class MyURY_Track extends ServiceAPI {
   
   public function setPosition($position) {
     $this->position = (int)$position;
-    self::$db->query('UPDATE rec_track SET position=$1 WHERE trackid=$2', array($this->getPosition(), $this->getID()));
+    self::$db->query('UPDATE rec_track SET number=$1 WHERE trackid=$2', array($this->getPosition(), $this->getID()));
   }
   
   public function getPosition() {
@@ -461,7 +461,7 @@ class MyURY_Track extends ServiceAPI {
     self::$db->query('UPDATE rec_track SET length=$1, duration=$2 WHERE trackid=$3', array(
        CoreUtils::intToTime($this->getLength()),
         $this->getLength(),
-        $this->getTitle()
+        $this->getID()
     ));
   }
   
