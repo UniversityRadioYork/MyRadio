@@ -478,7 +478,7 @@ class MyURY_Track extends ServiceAPI {
             'http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key='
             .Config::$lastfm_api_key
             .'&artist='.urlencode($artist)
-            .'&track='.urlencode($title)
+            .'&track='.urlencode(str_replace(' (Radio Edit)', '', $title))
             .'&format=json'), true);
     
     if (!isset($details['track']['album'])) {

@@ -25,5 +25,5 @@ require 'Views/MyURY/Library/bootstrap.php';
 $twig->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.library.gapfiller')
         ->addVariable('title', 'Updated Tracks')
-        ->addVariable('tabledata', $updated)
+        ->addVariable('tabledata', CoreUtils::dataSourceParser($updated))
         ->render();
