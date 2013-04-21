@@ -115,6 +115,10 @@ class MyURY_Album extends ServiceAPI {
     return $this->albumid;
   }
   
+  public function getTracks() {
+    return $this->tracks;
+  }
+  
   public function getTitle() {
     return $this->title;
   }

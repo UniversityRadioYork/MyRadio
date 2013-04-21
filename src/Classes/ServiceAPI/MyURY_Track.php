@@ -434,6 +434,37 @@ class MyURY_Track extends ServiceAPI {
     return self::getInstance($id[0]['trackid']);
   }
   
+  public function updateInfoFromLastfm() {
+    $details = self::getAlbumDurationAndPositionFromLastfm($this->title, $this->artist);
+    
+    $this->setAlbum($details['album']);
+    $this->setPosition($details['position']);
+    $this->setLength($details['duration']);
+  }
+  
+  public function setAlbum(MyURY_Album $album) {
+    $this->album = $album;
+    self::$db->query('UPDATE rec_track SET recordid=$1 WHERE trackid=$2', array($album->getID(), $this->getID()));
+  }
+  
+  public function setPosition($position) {
+    $this->position = (int)$position;
+    self::$db->query('UPDATE rec_track SET position=$1 WHERE trackid=$2', array($this->getPosition(), $this->getID()));
+  }
+  
+  public function getPosition() {
+    return $this->position;
+  }
+  
+  public function setLength($length) {
+    $this->length = (int)$length;
+    self::$db->query('UPDATE rec_track SET length=$1, duration=$2 WHERE trackid=$3', array(
+       CoreUtils::intToTime($this->getLength()),
+        $this->getLength(),
+        $this->getTitle()
+    ));
+  }
+  
   /**
    * Queries the last.fm API to find information about a track with the given title/artist combination
    * @param String $title track title
