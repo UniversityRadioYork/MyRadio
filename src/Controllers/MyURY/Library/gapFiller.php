@@ -8,18 +8,22 @@
 
 $albums = MyURY_Album::findByName('URY Downloads', 10);
 
-$limit = 5000;
-$counter = 0;
+$limit = 50;
+$updated = array();
 foreach ($albums as $album) {
   $tracks = $album->getTracks();
   foreach ($tracks as $track) {
-    
+    if ($limit <= 0) break;
+    $track->updateInfoFromLastfm();
+    $updated[] = $track;
+    usleep(200000);
+    $limit--;
   }
 }
 
 require 'Views/MyURY/Library/bootstrap.php';
 $twig->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.library.gapfiller')
-        ->addVariable('title', 'Members List')
-        ->addVariable('tabledata', $members)
+        ->addVariable('title', 'Updated Tracks')
+        ->addVariable('tabledata', $updated)
         ->render();
