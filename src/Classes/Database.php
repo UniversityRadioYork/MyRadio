@@ -68,6 +68,7 @@ class Database {
       throw new MyURYException('Query failure: ' . $sql . '<br />'
               . pg_errormessage($this->db));
     }
+    echo "<p>$sql</p>";
     $this->counter++;
     return $result;
   }
