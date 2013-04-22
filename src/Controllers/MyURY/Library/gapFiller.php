@@ -6,19 +6,20 @@
  * @package MyURY_Library
  */
 
-$albums = MyURY_Album::findByName('URY Downloads', 10);
+$albums = MyURY_Album::findByName('URY', 10);
 
 $cacher = APCProvider::getInstance();
 
-$checked = $cacher->get('myuryLibraryGapFillerCheckedTracks') || array();
+$checked = $cacher->get('myuryLibraryGapFillerCheckedTracks');
+if (!is_array($checked)) $checked = array();
 
-$limit = 50;
+$limit = 150;
 $updated = array();
 foreach ($albums as $album) {
   $tracks = $album->getTracks();
   foreach ($tracks as $track) {
     if ($limit <= 0) break;
-    if (in_array($track->getID(), $checked));
+    if (in_array($track->getID(), $checked)) continue;
     $track->updateInfoFromLastfm();
     $updated[] = $track;
     $checked[] = $track->getID();
