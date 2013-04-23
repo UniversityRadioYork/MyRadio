@@ -10,10 +10,10 @@
         <a id="miniLogo" href="./"><img alt="((ury))" height="20" src="/static/img/logo.png"></a>
         <ul>
           <li><a href="http://ury.org.uk/">ury.org.uk</a></li>
-          <li>{% endif %}<a href="https://ury.york.ac.uk/portal/redir_out.php">Logout</a></li>
+          <li><a href="https://ury.york.ac.uk/portal/redir_out.php">Logout</a></li>
         </ul>
         <ul id="navRight">
-          <li>{% if timeslotname is null %}<a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}">Pick Timeslot</a>{% endif %}{% if timeslotname is not null %}<a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</li>
+          <li>{% if timeslotname is null %}<a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}">Pick Timeslot</a>{% else %}<a href="https://ury.york.ac.uk/portal/timeslot.php?next={{ uri }}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</li>
           <li>{{ name }}{{ impersonator }}</li></ul>
       </nav>
         {% if phperrors is not null %}
