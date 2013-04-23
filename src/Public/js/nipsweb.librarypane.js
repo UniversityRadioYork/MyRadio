@@ -159,7 +159,7 @@ $(document).ready(function() {
    * Handler for activating the Manage Library link
    */
   $('#a-manage-library').click(function() {
-    var url = this.href;
+    var url = $(this).children('a').attr('href');
     var dialog = $('<div style="display:none"><iframe src="' + url + '" width="800" height="500" frameborder="0"></iframe></div>').appendTo('body');
     dialog.dialog({
       close: function(event, ui) {
