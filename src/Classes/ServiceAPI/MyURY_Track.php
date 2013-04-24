@@ -246,6 +246,7 @@ class MyURY_Track extends ServiceAPI {
    * digitised: Boolean whether or not digitised
    * itonesplaylistid: Tracks that are members of the iTones_Playlist id
    * limit: Maximum number of items to return. 0 = No Limit
+   * recordid: int Record id
    * 
    * @todo Limit not accurate for itonesplaylistid queries
    */
@@ -268,13 +269,14 @@ class MyURY_Track extends ServiceAPI {
     if (!isset($options['digitised'])) $options['digitised'] = true;
     if (!isset($options['itonesplaylistid'])) $options['itonesplaylistid'] = null;
     if (!isset($options['limit'])) $options['limit'] = Config::$ajax_limit_default;
+    if (!isset($options['recordid'])) $options['recordid'] = null;
     
     //Prepare paramaters
     $sql_params = array($options['title'], $options['artist']);
     if ($options['limit'] != 0) $sql_params[] = $options['limit'];
     
     //Do the bulk of the sorting with SQL
-    $result = self::$db->fetch_column('SELECT trackid
+    $result = self::$db->fetch_all('SELECT trackid, rec_track.recordid
       FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
       AND rec_track.title ILIKE \'%\' || $1 || \'%\'
       AND rec_track.artist ILIKE \'%\' || $2 || \'%\'
@@ -284,7 +286,8 @@ class MyURY_Track extends ServiceAPI {
     
     $response = array();
     foreach ($result as $trackid) {
-      $response[] = new MyURY_Track($trackid);
+      if ($options['recordid'] !== null && $trackid['recordid'] != $options['recordid']) continue;
+      $response[] = new MyURY_Track($trackid['trackid']);
     }
     
     //Intersect with iTones if necessary, then return
@@ -499,6 +502,10 @@ class MyURY_Track extends ServiceAPI {
    */
   public function checkForAudioFile($format = 'mp3') {
     return file_exists($this->getPath($format));
+  }
+  
+  public function removeInstance() {
+    unset(self::$tracks[$this->getID()]);
   }
   
   /**
