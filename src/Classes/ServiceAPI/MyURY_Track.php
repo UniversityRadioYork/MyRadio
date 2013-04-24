@@ -108,8 +108,10 @@ class MyURY_Track extends ServiceAPI {
    * Returns the current instance of that Track object if there is one, or runs the constructor if there isn't
    * @param int $trackid The ID of the Track to return an object for
    * @param MyURY_Album If defined, this is a reference to a preexisting album object. Prevents circular referncing.
+   * 
+   * @return MyURY_Track
    */
-  public static function getInstance($trackid = -1, MyURY_Album $album = null) {
+  public static function getInstance($trackid = -1, $album = null) {
     self::__wakeup();
     if (!is_numeric($trackid)) {
       throw new MyURYException('Invalid Track ID!', MyURYException::FATAL);
@@ -463,6 +465,40 @@ class MyURY_Track extends ServiceAPI {
         $this->getLength(),
         $this->getID()
     ));
+  }
+  
+  /**
+   * Returns all Tracks that are marked as digitsed in the library
+   * 
+   * @return MyURY_Track[] An array of digitised Tracks
+   */
+  public static function getAllDigitised() {
+    $ids = self::$db->fetch_column('SELECT trackid FROM rec_track WHERE digitised=\'t\'');
+    
+    $tracks = array();
+    foreach ($ids as $id) {
+      $tracks[] = self::getInstance($id);
+    }
+    
+    return $tracks;
+  }
+  
+  /**
+   * Returns the physical path to the Track
+   * @param String $format Optional file extension - at time of writing this could me "mp3", "ogg" or "mp3.orig"
+   * @return String path to Track file
+   */
+  public function getPath($format = 'mp3') {
+    return Config::$music_central_db_path . '/records/' . $this->getAlbum()->getID() . '/' . $this->getID().'.'.$format;
+  }
+  
+  /**
+   * Returns whether this track's physical file exists
+   * @param String $format Optional file extension - at time of writing this could me "mp3", "ogg" or "mp3.orig"
+   * @return bool If the file exists
+   */
+  public function checkForAudioFile($format = 'mp3') {
+    return file_exists($this->getPath($format));
   }
   
   /**
