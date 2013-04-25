@@ -208,7 +208,19 @@ class MyURY_Track extends ServiceAPI {
         'trackid' => $this->getID(),
         'length' => CoreUtils::happyTime($this->getLength(), true, false),
         'clean' => $this->clean === 'c',
-        'digitised' => $this->getDigitised()
+        'digitised' => $this->getDigitised(),
+        'editlink' => array(
+            'display' => 'icon',
+            'value' => 'script',
+            'title' => 'Edit Track',
+            'url' => CoreUtils::makeURL('Library', 'editTrack', array('trackid' => $this->getID()))
+        ),
+        'deletelink' => array(
+            'display' => 'icon',
+            'value' => 'trash',
+            'title' => 'Delete (Undigitise) Track',
+            'url' => CoreUtils::makeURL('Library', 'deleteTrack', array('trackid' => $this->getID()))
+        )
     );
   }
   
@@ -247,10 +259,16 @@ class MyURY_Track extends ServiceAPI {
    * itonesplaylistid: Tracks that are members of the iTones_Playlist id
    * limit: Maximum number of items to return. 0 = No Limit
    * recordid: int Record id
+   * lastfmverified: Boolean whether or not verified with Last.fm Fingerprinter
+   * random: If true, sort randomly
+   * idsort: If true, sort by trackid
+   * custom: A custom SQL WHERE clause
+   * precise: If true, will only return exact matches for artist/title
    * 
    * @todo Limit not accurate for itonesplaylistid queries
    */
   public static function findByOptions($options) {
+    self::__wakeup();
     
     //Shortcircuit - if itonesplaylistid is the only not-default value, just return the playlist
     $conflict = false;
@@ -270,18 +288,28 @@ class MyURY_Track extends ServiceAPI {
     if (!isset($options['itonesplaylistid'])) $options['itonesplaylistid'] = null;
     if (!isset($options['limit'])) $options['limit'] = Config::$ajax_limit_default;
     if (!isset($options['recordid'])) $options['recordid'] = null;
+    if (!isset($options['lastfmverified'])) $options['lastfmverified'] = null;
+    if (!isset($options['random'])) $options['random'] = null;
+    if (!isset($options['idsort'])) $options['idsort'] = null;
+    if (!isset($options['custom'])) $options['custom'] = null;
+    if (!isset($options['precise'])) $options['precise'] = false;
     
     //Prepare paramaters
-    $sql_params = array($options['title'], $options['artist']);
+    $sql_params = array($options['title'], $options['artist'], $options['precise'] ? '' : '%');
     if ($options['limit'] != 0) $sql_params[] = $options['limit'];
     
     //Do the bulk of the sorting with SQL
     $result = self::$db->fetch_all('SELECT trackid, rec_track.recordid
       FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
-      AND rec_track.title ILIKE \'%\' || $1 || \'%\'
-      AND rec_track.artist ILIKE \'%\' || $2 || \'%\'
+      AND rec_track.title ILIKE $3 || $1 || $3
+      AND rec_track.artist ILIKE $3 || $2 || $3
       '.($options['digitised'] ? ' AND digitised=\'t\'' : '').'
-      '.($options['limit'] == 0 ? '' : ' LIMIT $3'),
+      '.($options['lastfmverified'] === true ? ' AND lastfm_verified=\'t\'' : '')
+      .($options['lastfmverified'] === false ? ' AND lastfm_verified=\'f\'' : '')
+      .($options['custom'] !== null ? ' AND '.$options['custom'] : '')
+      .($options['random'] ? ' ORDER BY RANDOM()' : '')
+      .($options['idsort'] ? ' ORDER BY trackid' : '')
+      .($options['limit'] == 0 ? '' : ' LIMIT $4'),
             $sql_params);
     
     $response = array();
@@ -324,9 +352,9 @@ class MyURY_Track extends ServiceAPI {
    * with URY's API key can be found in the fpclient.git URY Git repository.
    * 
    * @param String $path The location of the MP3 file
-   * @return Array A parsed array version of the XML lastfm response
+   * @return Array A parsed array version of the JSON lastfm response
    */
-  private static function identifyUploadedTrack($path) {
+  public static function identifyUploadedTrack($path) {
     $response = shell_exec('lastfm-fpclient '.$path);
     
     $lastfm = json_decode($response, true);
@@ -334,9 +362,18 @@ class MyURY_Track extends ServiceAPI {
     if (empty($lastfm)) {
       return array('FAIL' => 'This track could not be identified. Please email the track to track.requests@ury.org.uk.');
     } else {
+      if (isset($lastfm['tracks']['track']['mbid'])) {
+        //Only one match
+        return array(
+            array('title' => $lastfm['tracks']['track']['name'],
+                'artist' => $lastfm['tracks']['track']['artist']['name'],
+                'rank' => $lastfm['tracks']['track']['@attr']['rank'])
+        );
+      }
+      
       $tracks = array();
       foreach ($lastfm['tracks']['track'] as $track) {
-        $tracks[] = array('title' => $track['name'], 'artist' => $track['artist']['name']);
+        $tracks[] = array('title' => $track['name'], 'artist' => $track['artist']['name'], 'rank' => $track['@attr']['rank']);
       }
       return $tracks;
     }
@@ -448,8 +485,36 @@ class MyURY_Track extends ServiceAPI {
   }
   
   public function setAlbum(MyURY_Album $album) {
+    //Move the file
+    foreach (Config::$music_central_db_exts as $ext) {
+      if (!file_exists($this->getPath($ext))) continue;
+      if (!copy($this->getPath($ext), Config::$music_central_db_path.'/records/'.$album.'/'.$this->getID().'.'.$ext)) {
+        throw new MyURYException('Failed to move file to new location.');
+        return false;
+      }
+    }
+    
     $this->album = $album;
     self::$db->query('UPDATE rec_track SET recordid=$1 WHERE trackid=$2', array($album->getID(), $this->getID()));
+    
+    //Delete the old files
+    foreach (Config::$music_central_db_exts as $ext) {
+      unlink($this->getPath($ext));
+    }
+  }
+  
+  public function setTitle($title) {
+    if (empty($title)) throw new MyURYException('Track title must not be empty!');
+
+    $this->title = $title;
+    self::$db->query('UPDATE rec_track SET title=$1 WHERE trackid=$2', array($title, $this->getID()));
+  }
+  
+  public function setArtist($artist) {
+    if (empty($artist)) throw new MyURYException('Track artist must not be empty!');
+
+    $this->artist = $artist;
+    self::$db->query('UPDATE rec_track SET artist=$1 WHERE trackid=$2', array($artist, $this->getID()));
   }
   
   public function setPosition($position) {
@@ -538,5 +603,9 @@ class MyURY_Track extends ServiceAPI {
         'position' => (int)$details['track']['album']['@attr']['position'],
         'duration' => intval($details['track']['duration']/1000)
             );
+  }
+  
+  public function setLastfmVerified() {
+    self::$db->query('UPDATE rec_track SET lastfm_verified=\'t\' WHERE trackid=$1', array($this->getID()));
   }
 }
