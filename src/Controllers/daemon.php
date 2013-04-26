@@ -67,6 +67,7 @@ if (empty($classes)) {
 //Run each
 while (true) {
   foreach ($classes as $class) {
+    echo "Running $class\n";
     $class::run();
     sleep(5);
   }
