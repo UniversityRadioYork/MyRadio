@@ -98,7 +98,8 @@ class MyURY_Track extends ServiceAPI {
     $this->digitisedby = empty($result['digitisedby']) ? null : User::getInstance($result['digitisedby']);
     $this->genre = $result['genre'];
     $this->intro = strtotime('1970-01-01 '.$result['intro'].'+00');
-    $this->length = strtotime('1970-01-01 '.$result['length'].'+00');
+    $this->length = $result['length'];
+    $this->duration = (int)$result['duration'];
     $this->number = (int)$result['intro'];
     $this->record = empty($album) ? MyURY_Album::getInstance($result['recordid']) : $album;
     $this->title = $result['title'];
@@ -165,13 +166,21 @@ class MyURY_Track extends ServiceAPI {
   }
   
   /**
-   * Get the length of the Track, in seconds
-   * @return int
+   * Get the length of the Track, in hours:minutes:seconds
+   * @return string
    */
   public function getLength() {
     return $this->length;
   }
   
+  /**
+   * Get the duration of the Track, in seconds
+   * @return int
+   */
+  public function getDuration() {
+    return $this->duration;
+  }
+
   /**
    * Get whether or not the track is digitised
    * @return bool
@@ -206,7 +215,7 @@ class MyURY_Track extends ServiceAPI {
         'type' => 'central', //Tells NIPSWeb Client what this item type is
         'album' => $this->getAlbum()->toDataSource(),
         'trackid' => $this->getID(),
-        'length' => CoreUtils::happyTime($this->getLength(), true, false),
+        'length' => $this->getLength(),
         'clean' => $this->clean === 'c',
         'digitised' => $this->getDigitised()
     );
@@ -441,7 +450,7 @@ class MyURY_Track extends ServiceAPI {
     
     $this->setAlbum($details['album']);
     $this->setPosition($details['position']);
-    $this->setLength($details['duration']);
+    $this->setDuration($details['duration']);
   }
   
   public function setAlbum(MyURY_Album $album) {
@@ -458,11 +467,11 @@ class MyURY_Track extends ServiceAPI {
     return $this->position;
   }
   
-  public function setLength($length) {
-    $this->length = (int)$length;
+  public function setDuration($duration) {
+    $this->duration = (int)$duration;
     self::$db->query('UPDATE rec_track SET length=$1, duration=$2 WHERE trackid=$3', array(
-       CoreUtils::intToTime($this->getLength()),
-        $this->getLength(),
+       CoreUtils::intToTime($this->getDuration()),
+        $this->getDuration(),
         $this->getID()
     ));
   }
