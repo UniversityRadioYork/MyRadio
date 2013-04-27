@@ -8,6 +8,7 @@
  * Search the central library using the input criteria, rendering the response
  * in the search panel
  */
+var searchTimerRef = null;
 function updateCentralSearch() {
   $('#res-loading').show();
   $.ajax({
@@ -152,7 +153,8 @@ $(document).ready(function() {
 
   //Bind the central search function
   $('#res-filter-track').on('keyup', function() {
-    updateCentralSearch()
+    clearTimeout(searchTimerRef);
+    searchTimerRef = setTimeout(updateCentralSearch, 500);
   });
 
   /**
