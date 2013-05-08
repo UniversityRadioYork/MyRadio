@@ -46,13 +46,9 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
 
     $items = self::$db->fetch_all($this->query);
     $this->items = array();
+    
     foreach ($items as $id) {
-      /**
-       * Pass this to the ManagedItem - it's called Dependency Injection and prevents loops and looks pretty
-       * http://stackoverflow.com/questions/4903387/can-2-singleton-classes-reference-each-other
-       * http://www.phparch.com/2010/03/static-methods-vs-singletons-choose-neither/
-       */
-      $this->items[] = NIPSWeb_ManagedItem::getInstance((int)$id, $this);
+      $this->tracks[] = MyURY_Track::getInstance($id);
     }
   }
 
