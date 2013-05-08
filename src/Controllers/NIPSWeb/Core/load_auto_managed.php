@@ -7,6 +7,8 @@
  * @package MyURY_NIPSWeb
  */
 
-  $data = NIPSWeb_AutoPlaylist::getInstance($_REQUEST['playlistid'])->getItems();
+ $playlistid = str_replace('auto-','',$_REQUEST['playlistid']);
+
+ $data = NIPSWeb_AutoPlaylist::getInstance($playlistid)->getItems();
 
 require 'Views/MyURY/Core/datatojson.php';
