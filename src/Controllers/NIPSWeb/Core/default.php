@@ -14,6 +14,7 @@ $twig->setTemplate('NIPSWeb/main.twig')
         ->addVariable('tracks', MyURY_Timeslot::getInstance($_SESSION['timeslotid'])->getShowPlan())
         ->addVariable('reslists', CoreUtils::dataSourceParser(array(
             'managed' => iTones_Playlist::getAlliTonesPlaylists(),
+            'auto' => NIPSWeb_AutoPlaylist::getAllAutoPlaylists(),
             'aux' => NIPSWeb_ManagedPlaylist::getAllManagedPlaylists(),
             'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(User::getInstance())
         )))
