@@ -113,6 +113,7 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
   public function toDataSource() {
     return array(
         'title' => $this->getTitle(),
+        'playlistid' => $this->getID(),
     );
   }
 }
