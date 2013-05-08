@@ -98,7 +98,8 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
     return $this->auto_playlist_id;
   }
 
-  public static function getAllAutoPlaylists() {
+  public static function getAllAutoPlaylists($editable_only = false) {
+    if ($editable_only && !User::getInstance()->hasAuth(AUTH_EDITCENTRALRES)) return array();
     $result = self::$db->fetch_column('SELECT auto_playlist_id FROM bapsplanner.auto_playlists ORDER BY name');
     $response = array();
     foreach ($result as $id) {
@@ -107,3 +108,4 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
     
     return $response;
   }
+}
