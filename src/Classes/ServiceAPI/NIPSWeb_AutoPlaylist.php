@@ -46,8 +46,8 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
 
     $items = self::$db->fetch_all($this->query);
     $this->items = array();
-    
-    foreach ($items as $id) {
+
+    foreach ($items['trackid'] as $id) {
       $this->tracks[] = MyURY_Track::getInstance($id);
     }
   }
