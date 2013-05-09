@@ -27,7 +27,6 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
 
   protected $query;
 
-
   /**
    * Initiates the AutoPlaylist variables
    * @param int $playlistid The ID of the auto playlist to initialise

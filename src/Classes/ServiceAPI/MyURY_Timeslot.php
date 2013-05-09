@@ -309,7 +309,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
   }
   
   private function updateLegacyShowPlan() {
-    
+    NIPSWeb_BAPSUtils::saveListingsForTimeslot($this);
   }
   
   /**
