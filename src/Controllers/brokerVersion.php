@@ -25,7 +25,6 @@ if (isset($_POST['svc_version'])) {
     }
   }
   header('Location: ?service='.$service);
-  exit;
 }
 
 // If the session already has a saved service version, use that
