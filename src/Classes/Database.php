@@ -60,6 +60,8 @@ class Database {
    * @assert ('SELECT * FROM public.member') != false
    */
   public function query($sql, $params = array(), $rollback = false) {
+    if (isset($_REQUEST['dbdbg']) && User::getInstance()->hasAuth(AUTH_SHOWERRORS)) echo $sql.'<br>';
+    
     $result = pg_query_params($this->db, $sql, $params);
     if (!$result) {
       if ($rollback) {

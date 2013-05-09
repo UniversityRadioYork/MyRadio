@@ -85,12 +85,16 @@ class MyURY_Track extends ServiceAPI {
    * @todo Artist normalisation
    */
   private function __construct($trackid, $album = null) {
+    
     $this->trackid = $trackid;
     $result = self::$db->fetch_one('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', array($trackid));
     if (empty($result)) {
       throw new MyURYException('The specified Track does not seem to exist');
       return;
     }
+    
+    //Prevent multiple instances being created by constructor due to Album requesting Track again
+    self::$tracks[$trackid] = $this;
     
     $this->artist = $result['artist'];
     $this->clean = $result['clean'];
