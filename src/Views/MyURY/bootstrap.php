@@ -13,6 +13,14 @@ $twig->addVariable('serviceName', $service)
      ->setTemplate('stripe.twig')
      ->addVariable('title', $module)
      ->addVariable('uri', $_SERVER['REQUEST_URI']);
+
+$cuser = User::getInstance();
+if ($cuser->hasAuth(AUTH_SELECTSERVICEVERSION)) {
+  $twig->addVariable('version_header',
+          '<li><a href="?SelectVersion">'.CoreUtils::getServiceVersionForUser(
+                  CoreUtils::getServiceId($service), $cuser)['name'].'</a></li>');
+}
+
 if(User::getInstance()->hasAuth(AUTH_SHOWERRORS)) {
   $twig->addVariable('phperrors', MyURYError::$php_errorlist);
 }
