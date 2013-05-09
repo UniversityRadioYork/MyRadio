@@ -8,6 +8,8 @@
  */
 require 'Views/MyURY/bootstrap.php';
 
+CoreUtils::requireTimeslot();
+
 $twig->setTemplate('NIPSWeb/main.twig')
         ->addVariable('title', 'Show Planner')
         ->addVariable('heading', 'Show Planner')
