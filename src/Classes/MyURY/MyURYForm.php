@@ -212,7 +212,6 @@ class MyURYForm {
             ->addVariable('frm_method', $this->get ? 'get' : 'post')
             ->addVariable('title', isset($this->title) ? $this->title : $this->name)
             ->addVariable('serviceName', isset($this->module) ? $this->module : $this->name)
-            ->addVariable('serviceVersion', $GLOBALS['service_version'])
             ->addVariable('frm_fields', $fields)
             ->addVariable('frm_custom', $frmcustom)
             ->render();
