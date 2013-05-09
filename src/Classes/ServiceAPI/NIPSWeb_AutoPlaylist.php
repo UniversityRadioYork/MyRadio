@@ -23,7 +23,7 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
 
   protected $name;
 
-  protected $items;
+  protected $tracks;
 
   protected $query;
 
@@ -44,10 +44,10 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
     $this->name = $result['name'];
     $this->query = $result['query'];
 
-    $items = self::$db->fetch_all($this->query);
-    $this->items = array();
+    $tracks = self::$db->fetch_all($this->query);
+    $this->tracks = array();
 
-    foreach ($items['trackid'] as $id) {
+    foreach ($tracks['trackid'] as $id) {
       $this->tracks[] = MyURY_Track::getInstance($id);
     }
   }
@@ -71,11 +71,11 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
   }
 
   /**
-   * Return the NIPSWeb_ManagedItems that belong to this playlist
-   * @return Array of ManagedItems
+   * Return the MyURY_Tracks that belong to this playlist
+   * @return Array of MyURYTracks
    */
-  public function getItems() {
-    return $this->items;
+  public function getTracks() {
+    return $this->tracks;
   }
   
   /**
