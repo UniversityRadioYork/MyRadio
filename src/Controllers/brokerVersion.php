@@ -28,7 +28,7 @@ if (isset($_POST['svc_version'])) {
 }
 
 // If the session already has a saved service version, use that
-elseif (isset($_SESSION['myury_svc_version_'.$service])) {
+if (isset($_SESSION['myury_svc_version_'.$service])) {
   $service_version = $_SESSION['myury_svc_version_'.$service];
   $service_path = $_SESSION['myury_svc_version_'.$service.'_path'];
   set_include_path($service_path.':'.get_include_path());
