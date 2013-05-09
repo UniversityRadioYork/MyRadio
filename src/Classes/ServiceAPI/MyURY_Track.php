@@ -119,10 +119,30 @@ class MyURY_Track extends ServiceAPI {
     }
 
     if (!isset(self::$tracks[$trackid])) {
+      //See if there's one in the cache
+      if (Config::$cache_enable) {
+        $item = self::$cache->get(self::getCacheKey($trackid));
+        if ($item !== false) {
+          self::$tracks[$trackid] = $item;
+          return $item;
+        }
+      }
+      
       self::$tracks[$trackid] = new self($trackid, $album);
+      if (Config::$cache_enable)
+        self::$cache->set(self::getCacheKey($trackid), self::$tracks[$trackid], Config::$cache_track_timeout);
     }
 
     return self::$tracks[$trackid];
+  }
+  
+  private function updateCachedObject() {
+    if (Config::$cache_enable)
+      self::$cache->set(self::getCacheKey($this->getID()), $this, Config::$cache_track_timeout);
+  }
+  
+  private static function getCacheKey($id) {
+    return "MyURY_Track_$id";
   }
   
   /**
@@ -201,6 +221,7 @@ class MyURY_Track extends ServiceAPI {
                 'f', null, $this->getID()
             )
             );
+    $this->updateCachedObject();
   }
   
   /**
@@ -510,6 +531,8 @@ class MyURY_Track extends ServiceAPI {
     foreach (Config::$music_central_db_exts as $ext) {
       unlink($this->getPath($ext));
     }
+    
+    $this->updateCachedObject();
   }
   
   public function setTitle($title) {
@@ -517,6 +540,7 @@ class MyURY_Track extends ServiceAPI {
 
     $this->title = $title;
     self::$db->query('UPDATE rec_track SET title=$1 WHERE trackid=$2', array($title, $this->getID()));
+    $this->updateCachedObject();
   }
   
   public function setArtist($artist) {
@@ -524,11 +548,14 @@ class MyURY_Track extends ServiceAPI {
 
     $this->artist = $artist;
     self::$db->query('UPDATE rec_track SET artist=$1 WHERE trackid=$2', array($artist, $this->getID()));
+    
+    $this->updateCachedObject();
   }
   
   public function setPosition($position) {
     $this->position = (int)$position;
     self::$db->query('UPDATE rec_track SET number=$1 WHERE trackid=$2', array($this->getPosition(), $this->getID()));
+    $this->updateCachedObject();
   }
   
   public function getPosition() {
@@ -542,6 +569,7 @@ class MyURY_Track extends ServiceAPI {
         $this->getDuration(),
         $this->getID()
     ));
+    $this->updateCachedObject();
   }
   
   /**
