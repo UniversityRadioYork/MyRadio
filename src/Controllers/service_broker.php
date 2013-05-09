@@ -21,17 +21,16 @@
  */
 if (CoreUtils::hasPermission(270)) {
   require 'Controllers/brokerVersion.php';
-} else {
-  $path = CoreUtils::getServiceVersionForUser(CoreUtils::getServiceID($service), $member);
-  if ($path === false
-      //MyURY is a special case - *everyone* has this build by default
-      && $service !== 'MyURY') {
-    //This user doesn't have permission to use that Service
-    require 'Controllers/Errors/403.php';
-    exit;
-  }
-  $service_version = $path['version'];
-  set_include_path($path['path'].':'.get_include_path());
-  $service_path = $path['path'];
-  unset($path);
 }
+$path = CoreUtils::getServiceVersionForUser(CoreUtils::getServiceId($service), $member);
+if ($path === false
+    //MyURY is a special case - *everyone* has this Service by default
+    && $service !== 'MyURY') {
+  //This user doesn't have permission to use that Service
+  require 'Controllers/Errors/403.php';
+  exit;
+}
+$service_version = $path['version'];
+set_include_path($path['path'].':'.get_include_path());
+$service_path = $path['path'];
+unset($path);
