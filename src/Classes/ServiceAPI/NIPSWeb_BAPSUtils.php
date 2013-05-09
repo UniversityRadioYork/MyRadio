@@ -16,36 +16,15 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
 
   public static function getBAPSShowIDFromTimeslot(MyURY_Timeslot $timeslot) {
 
-    $result = self::$db->query('SELECT showid FROM baps_show
+    $result = self::$db->fetch_column('SELECT showid FROM baps_show
       WHERE externallinkid=$1 LIMIT 1', array($timeslot->getID()));
 
-    if (!$result)
-      return false;
-
-    if (self::$db->num_rows($result) === 0) {
-      //A show entry does not exist for this timeslot. Do an educated guess for
-      // a legacy bapsplanner one
-      $result = self::$db->fetch_column('SELECT showid FROM baps_show
-        WHERE (userid IN (SELECT userid FROM baps_user_external
-          WHERE externalid=$1 LIMIT 1) OR userid=4)
-            AND broadcastdate < \'2012-04-30\'
-            AND date_trunc(\'day\', broadcastdate)=$2
-          LIMIT 1', array($_SESSION['memberid'], date('Y-m-d', $timeslot->getStartTime())));
-
-      if (empty($result)) {
-        //No match. Create a show
-        $result = self::$db->fetch_column('INSERT INTO baps_show
+    if (empty($result)) {
+      //No match. Create a show
+      $result = self::$db->fetch_column('INSERT INTO baps_show
         (userid, name, broadcastdate, externallinkid, viewable)
-        VALUES (4, $1, $2, $3, true) RETURNING showid', array($timeslot->getName() . '-' . $timeslot->getID(), $timeslot->getStartTime(), $timeslot->getID()));
-
-        return (int) $result[0];
-      } else {
-        //Seems legit. Update the database with this timeslot => show mapping
-        $showid = (int) $result[0];
-        self::$db->query('UPDATE baps_show SET externallinkid=$1
-          WHERE showid=$2', array($timeslot->getID(), $showid));
-        return $showid;
-      }
+        VALUES (4, $1, $2, $3, true) RETURNING showid',
+              array($timeslot->getName() . '-' . $timeslot->getID(), $timeslot->getStartTime(), $timeslot->getID()));
     }
 
     return (int) $result[0];
@@ -116,7 +95,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
         switch ($track['type']) {
           case 'central':
             $file = self::getTrackDetails($track['trackid'], $track['recordid']);
-            $result = self::$db->query('INSERT INTO baps_item (listingid, position, libraryitemid, name1, name2)
+            self::$db->query('INSERT INTO baps_item (listingid, position, libraryitemid, name1, name2)
               VALUES ($1, $2, $3, $4, $5)', array(
                 $listing['listingid'],
                 $position,
@@ -124,19 +103,21 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
                 $file['title'],
                 $file['artist']
                     ), true);
+            
             break;
           case 'aux':
             //Get the LegacyDB ID of the file
             $fileitemid = self::getFileItemFromManagedID($track['managedid']);
-            $managedinfo = self::getManagedFromItem($track['managedid']);
-            $result = self::$db->query('INSERT INTO baps_item (listingid, position, fileitemid, name1)
+            self::$db->query('INSERT INTO baps_item (listingid, position, fileitemid, name1)
               VALUES ($1, $2, $3, $4)', array(
                 (int) $listing['listingid'],
                 (int) $position,
                 (int) $fileitemid,
-                $managedinfo['title']
+                $track['title']
                     ), true);
             break;
+          default:
+            throw new MyURYException('What do I even with this item?');
         }
         $position++;
       }
@@ -173,7 +154,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
    * Returns the FileItemID from a ManagedItemID
    */
   public static function getFileItemFromManagedID($auxid) {
-    $fileinfo = $this->getManagedFromItem($auxid);
+    $fileinfo = self::getManagedFromItem($auxid);
 
     $legacy_path = Config::$music_smb_path . '\\membersmusic\\fileitems\\' . self::sanitisePath($fileinfo['title']) . '_' . $auxid . '.mp3';
     //Make a hard link if it doesn't exist
@@ -194,7 +175,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
     }
     return $id;
   }
-  
+
   /**
    * Returns the ID of an item in the auxillary database based on its samba path
    * @param string $path The Samba Share location of the file to search for
@@ -205,10 +186,10 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
       WHERE filename=$1 LIMIT 1', array($path));
     if (empty($result))
       return false;
-    
+
     return (int) $result[0];
   }
-  
+
   /**
    * Ensure a string can be used as a filename
    * @param type $file
@@ -216,7 +197,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
   public static function sanitisePath($file) {
     return trim(preg_replace("/[^0-9^a-z^,^_^.^\(^\)^-^ ]/i", "", str_replace('..', '.', $file)));
   }
-  
+
   private static function getManagedFromItem($managedid) {
     return self::$db->fetch_one('
       SELECT manageditemid, title, length, folder FROM bapsplanner.managed_items, bapsplanner.managed_playlists
