@@ -85,7 +85,8 @@ $(document).ready(function() {
           for (file in data) {
             $('#baps-channel-res').append(
                     '<li id="' + data[file].bapsclientid +
-                    '" channel="res" weight="0" type="central" length="00:00:00">' + data[file].summary + '</li>'
+                    '" channel="res" weight="0" type="central" length="00:00:00">' 
+                    + data[file].title + ' - ' + data[file].artist + '</li>'
                     );
           }
           $('#res-loading').hide();
