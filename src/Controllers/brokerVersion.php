@@ -25,11 +25,10 @@ if (isset($_POST['svc_version'])) {
     }
   }
   require 'Views/MyURY/Core/back.php';
-  exit;
 }
 
 // If the session already has a saved service version, use that
-if (isset($_SESSION['myury_svc_version_'.$service])) {
+elseif (isset($_SESSION['myury_svc_version_'.$service])) {
   $service_version = $_SESSION['myury_svc_version_'.$service];
   $service_path = $_SESSION['myury_svc_version_'.$service.'_path'];
   set_include_path($service_path.':'.get_include_path());
