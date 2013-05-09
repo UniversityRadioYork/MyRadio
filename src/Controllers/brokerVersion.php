@@ -3,7 +3,7 @@
  * This file lets administrators choose a version of the service to use.
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 15082012
+ * @version 20130509
  * @package MyURY_Core
  * 
  * @uses $service - The current service being requested
@@ -24,6 +24,8 @@ if (isset($_POST['svc_version'])) {
       $_SESSION['myury_svc_version_'.$service.'_path'] = $version['path'];
     }
   }
+  require 'Views/MyURY/Core/back.php';
+  exit;
 }
 
 // If the session already has a saved service version, use that

@@ -106,7 +106,7 @@ class MyURY_Track extends ServiceAPI {
       return;
     }
 
-//Prevent multiple instances being created by constructor due to Album requesting Track again
+    //Prevent multiple instances being created by constructor due to Album requesting Track again
     self::$tracks[$trackid] = $this;
 
     $this->artist = $result['artist'];
@@ -136,15 +136,14 @@ class MyURY_Track extends ServiceAPI {
     }
 
     if (!isset(self::$tracks[$trackid])) {
-//See if there's one in the cache
+      //See if there's one in the cache
       $item = self::$cache->get(self::getCacheKey($trackid));
+      
       if ($item !== false) {
         self::$tracks[$trackid] = $item;
-        return $item;
+      } else {
+        self::$cache->set(self::getCacheKey($trackid), new self($trackid, $album), Config::$cache_track_timeout);
       }
-
-      self::$tracks[$trackid] = new self($trackid, $album);
-      self::$cache->set(self::getCacheKey($trackid), self::$tracks[$trackid], Config::$cache_track_timeout);
     }
 
     return self::$tracks[$trackid];

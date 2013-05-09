@@ -4,7 +4,7 @@
  * user to, with a seamless URL for everyone
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 26072012
+ * @version 20130509
  * @package MyURY_Core
  * 
  * @uses $service - The current service being requested
