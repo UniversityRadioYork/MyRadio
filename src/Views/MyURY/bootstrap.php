@@ -17,7 +17,7 @@ $twig->addVariable('serviceName', $service)
 $cuser = User::getInstance();
 if ($cuser->hasAuth(AUTH_SELECTSERVICEVERSION)) {
   $twig->addVariable('version_header',
-          '<li><a href="?SelectVersion">'.CoreUtils::getServiceVersionForUser(
+          '<li><a href="?select_version='.$service.'" title="Click to change version">'.CoreUtils::getServiceVersionForUser(
                   CoreUtils::getServiceId($service), $cuser)['version'].'</a></li>');
 }
 

@@ -24,4 +24,13 @@ if (isset($_REQUEST['svc_version'])) {
       $_SESSION['myury_svc_version_'.$serviceid.'_path'] = $version['path'];
     }
   }
+  header('Location: ?service='.$_REQUEST['svc_name']);
+  exit;
+}
+
+if (isset($_REQUEST['select_version'])) {
+  $service = $_REQUEST['select_version'];
+  $versions = CoreUtils::getServiceVersions(CoreUtils::getServiceId($_REQUEST['select_version']));
+  require 'Views/MyURY/Core/brokerVersion.php';
+  exit;
 }
