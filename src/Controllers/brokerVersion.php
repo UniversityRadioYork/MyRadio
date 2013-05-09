@@ -17,14 +17,13 @@ $versions = CoreUtils::getServiceVersions(CoreUtils::getServiceID($service));
 
 // If the version selector has just been submitted, update the session
 if (isset($_POST['svc_version'])) {
-  $service = $_POST['svc_name'];
+  $serviceid = CoreUtils::getServiceId($_POST['svc_name']);
   foreach ($versions as $version) {
     if ($version['version'] === $_POST['svc_version']) {
-      $_SESSION['myury_svc_version_'.$service] = $version['version'];
-      $_SESSION['myury_svc_version_'.$service.'_path'] = $version['path'];
+      $_SESSION['myury_svc_version_'.$serviceid] = $version['version'];
+      $_SESSION['myury_svc_version_'.$serviceid.'_path'] = $version['path'];
     }
   }
-  header('Location: ?service='.$service);
 }
 
 // If the session already has a saved service version, use that
@@ -37,4 +36,3 @@ if (isset($_SESSION['myury_svc_version_'.$service])) {
   require 'Views/MyURY/Core/brokerVersion.php';
   exit;
 }
-unset($form, $submitted_data, $versions, $svc);

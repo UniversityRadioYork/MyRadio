@@ -418,6 +418,16 @@ class CoreUtils {
    */
   public static function getServiceVersionForUser($serviceid, User $user) {
     $db = Database::getInstance();
+    
+    if ($user->getID() === User::getInstance()->getID()) {
+      //It's the current user. If they have an override defined in their session, use that.
+      if (isset($_SESSION['myury_svc_version_'.$serviceid])) {
+        return array(
+            'version' => $_SESSION['myury_svc_version_'.$serviceid],
+            'path' => $_SESSION['myury_svc_version_'.$serviceid.'_path']
+        );
+      }
+    }
 
     $result = $db->fetch_one('SELECT version, path FROM myury.services_versions
       WHERE serviceid IN (SELECT serviceid FROM myury.services_versions_member
