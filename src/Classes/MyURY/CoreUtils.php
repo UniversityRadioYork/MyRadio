@@ -530,8 +530,8 @@ class CoreUtils {
   public static function requireTimeslot() {
     if (!isset($_SESSION['timeslotid'])) {
       header('Location: ' . Config::$shib_url . '/timeslot.php?next=' . $_SERVER['REQUEST_URI']);
+      exit;
     }
-    exit;
   }
 
 }
