@@ -24,7 +24,8 @@ if (isset($_POST['svc_version'])) {
       $_SESSION['myury_svc_version_'.$service.'_path'] = $version['path'];
     }
   }
-  require 'Views/MyURY/Core/back.php';
+  header('Location: ?service='.$service);
+  exit;
 }
 
 // If the session already has a saved service version, use that
