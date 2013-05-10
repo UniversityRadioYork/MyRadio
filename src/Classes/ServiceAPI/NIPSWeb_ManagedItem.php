@@ -162,10 +162,10 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
 
     // File quality checks
     if ($fileInfo['audio']['bitrate'] < 192000) {
-      return array('status' => 'FAIL', 'error' => 'Bitrate is below 192kbps.', 'fileid' => $filename);
+      return array('status' => 'FAIL', 'error' => 'Bitrate is below 192kbps.', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']);
     }
-    if ($fileInfo['audio']['channelmode'] != 's') {
-      return array('status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename);
+    if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
+      return array('status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']);
     }
 
     return array(
