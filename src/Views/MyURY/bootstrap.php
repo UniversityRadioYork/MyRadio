@@ -8,11 +8,20 @@
  */
 $twig = CoreUtils::getTemplateObject();
 $twig->addVariable('serviceName', $service)
-     ->addVariable('serviceVersion', $service_version)
      ->addVariable('submenu', (new MyURYMenu())->getSubMenuForUser(CoreUtils::getModuleID(1, $module), User::getInstance()))
      ->setTemplate('stripe.twig')
      ->addVariable('title', $module)
      ->addVariable('uri', $_SERVER['REQUEST_URI']);
+
+$cuser = User::getInstance();
+if ($cuser->hasAuth(AUTH_SELECTSERVICEVERSION)) {
+  $twig->addVariable('version_header',
+          '<li><a href="?select_version='.$service.'" title="Click to change version">'.CoreUtils::getServiceVersionForUser(
+                  CoreUtils::getServiceId($service), $cuser)['version'].'</a></li>');
+} else {
+  $twig->addVariable('version_header','');
+}
+
 if(User::getInstance()->hasAuth(AUTH_SHOWERRORS)) {
   $twig->addVariable('phperrors', MyURYError::$php_errorlist);
 }

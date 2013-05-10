@@ -22,6 +22,7 @@ class CoreUtils {
    * @var boolean
    */
   private static $auth_cached = false;
+  private static $svc_version_cache = array();
 
   /**
    * Checks whether a given Module/Action combination is valid
@@ -88,11 +89,11 @@ class CoreUtils {
   public static function happyTime($timestring, $time = true, $date = true) {
     return date(($date ? 'd/m/Y' : '') . ($time && $date ? ' ' : '') . ($time ? 'H:i' : ''), is_numeric($timestring) ? $timestring : strtotime($timestring));
   }
-  
+
   public static function intToTime($int) {
     $hours = floor($int / 3600);
-    $mins = floor(($int - ($hours*3600)) / 60);
-    $secs = ($int - ($hours*3600) - ($mins * 60));
+    $mins = floor(($int - ($hours * 3600)) / 60);
+    $secs = ($int - ($hours * 3600) - ($mins * 60));
     return "$hours:$mins:$secs";
   }
 
@@ -417,18 +418,34 @@ class CoreUtils {
    * @param User $user
    */
   public static function getServiceVersionForUser($serviceid, User $user) {
-    $db = Database::getInstance();
+    $key = $serviceid . '-' . $user->getID();
 
-    $result = $db->fetch_one('SELECT version, path FROM myury.services_versions
+    if (!isset(self::$svc_version_cache[$key])) {
+      $db = Database::getInstance();
+
+      if ($user->getID() === User::getInstance()->getID()) {
+        //It's the current user. If they have an override defined in their session, use that.
+        if (isset($_SESSION['myury_svc_version_' . $serviceid])) {
+          return array(
+              'version' => $_SESSION['myury_svc_version_' . $serviceid],
+              'path' => $_SESSION['myury_svc_version_' . $serviceid . '_path']
+          );
+        }
+      }
+
+      $result = $db->fetch_one('SELECT version, path FROM myury.services_versions
       WHERE serviceid IN (SELECT serviceid FROM myury.services_versions_member
         WHERE memberid=$2 AND serviceversionid IN (SELECT serviceversionid FROM myury.services_versions
           WHERE serviceid=$1)
          )', array($serviceid, $user->getID()));
 
-    if (empty($result))
-      return self::getDefaultServiceVersion($serviceid);
-    else
-      return $result;
+      if (empty($result)) {
+        self::$svc_version_cache[$key] = self::getDefaultServiceVersion($serviceid);
+      } else {
+        self::$svc_version_cache[$key] = $result;
+      }
+    }
+    return self::$svc_version_cache[$key];
   }
 
   /**
@@ -508,6 +525,13 @@ class CoreUtils {
       }
     }
     return $array;
+  }
+
+  public static function requireTimeslot() {
+    if (!isset($_SESSION['timeslotid'])) {
+      header('Location: ' . Config::$shib_url . '/timeslot.php?next=' . $_SERVER['REQUEST_URI']);
+      exit;
+    }
   }
 
 }

@@ -13,7 +13,8 @@
  */
 spl_autoload_register(function($class){
   $class .= '.php';
-  if (file_exists($_SESSION['myury_svc_version_NIPSWeb_path'].'/Classes/'.$class)) {
-    require_once $_SESSION['myury_svc_version_NIPSWeb_path'].'/Classes/'.$class;
+  $info = CoreUtils::getServiceVersionForUser(CoreUtils::getServiceId('NIPSWeb'), User::getInstance());
+  if (file_exists($info['path'].'/Classes/'.$class)) {
+    require_once $info['path'].'/Classes/'.$class;
   }
 });
