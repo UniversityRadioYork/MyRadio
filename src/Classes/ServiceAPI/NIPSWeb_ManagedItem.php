@@ -243,7 +243,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     if (preg_match('/^membersmusic\/.*$/', $options['path']) !== 0) {
       //This is a personal resource
       $result = self::$db->query('INSERT INTO bapsplanner.managed_user_items (managedplaylistid, title, length, bpm)
-       VALUES ($1, $2) RETURNING manageditemid',
+       VALUES ($1, $2, $3, $4) RETURNING manageditemid',
                array(
                     $options['path'],
                     trim($options['title']),
