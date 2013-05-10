@@ -122,6 +122,10 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
   public function getPath() {
     return Config::$music_central_db_path.'/'.($this->managed_playlist ? $this->managed_playlist->getFolder() : $this->folder).'/'.$this->getID().'.mp3';
   }
+
+  public function getPlaylist() {
+    return NIPSWeb_ManagedPlaylist::getInstance($this->$managed_playlist);
+  }
   
   /**
    * Returns an array of key information, useful for Twig rendering and JSON requests
@@ -151,8 +155,123 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     
     move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename);
     
+    $getID3 = new getID3;
+    $fileInfo = $getID3->analyze($filename);
+
+    // File quality checks
+    if ($fileInfo['audio']['bitrate'] < 192000) {
+      return array('status' => 'FAIL', 'error' => 'Bitrate is below 192kbps.', 'fileid' => $filename);
+    }
+    if ($fileInfo['audio']['channelmode'] != 'stereo') {
+      return array('status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename);
+    }
+
+    $_SESSION['uploadInfo'][$filename] = $fileInfo;
+
     return array(
         'fileid' => $filename,
     );
+  }
+
+  public function storeItem($tmpid, $title) {
+
+    $options = array(
+      'title' => $title,
+      'expires' => $_REQUEST['expires'],
+      'path' => $_REQUEST['auxid'],
+      'duration' => $_SESSION['uploadInfo'][$tmpid]['playtime_seconds'],
+      );
+
+    $item = self::create($options);
+
+    if (!$item) {
+      //Database transaction failed.
+      return array('status' => 'FAIL', 'error' => 'A database kerfuffle occured.', 'fileid' => $_REQUEST['fileid']);
+    }
+
+    $pinfo = $item->getPlaylist();
+
+    /**
+     * Store three versions of the track:
+     * 1- 192kbps MP3 for BAPS and Chrome/IE
+     * 2- 192kbps OGG for Safari/Firefox
+     * 3- Original file for potential future conversions
+     */
+    $tmpfile = Config::$audio_upload_tmp_dir.'/'.$tmpid;
+    $dbfile = $pinfo->getFolder.'/'.$item->getID();
+
+    //Convert it with ffmpeg
+    shell_exec("nice -n 15 ffmpeg -i '$filename' -ab 192k -f mp3 - >'{$dbfile}.mp3'");
+    shell_exec("nice -n 15 ffmpeg -i '$filename' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
+    rename($filename, $dbfile.'.mp3.orig');
+
+    if (!file_exists($dbfile.'.mp3') || !file_exists($dbfile.'.ogg')) {
+      //Conversion failed!
+      return array('status' => 'FAIL', 'error' => 'Conversion with ffmpeg failed.', 'fileid' => $_REQUEST['fileid']);
+    }
+    elseif (!file_exists($dbfile.'.mp3.orig')) {
+      return array('status' => 'FAIL', 'error' => 'Could not move file to library.', 'fileid' => $_REQUEST['fileid']);
+    }
+
+    return array('status' => 'OK');
+  }
+
+  /**
+   * Create a new NIPSWEB_ManagedItem with the provided options
+   * @param Array $options
+   * title (required): Title of the item.
+   * duration (required): Duration of the item, in seconds
+   * path (required): The path of the playlist
+   * bpm: The beats per minute of the item
+   * expires: The expiry date of the item
+   * @return NIPSWEB_ManagedItem a shiny new NIPSWEB_ManagedItem with the provided options
+   * @throws MyURYException
+   */
+  public static function create($options) {
+    self::__wakeup();
+    
+    $required = array('title', 'duration', 'path');
+    foreach ($required as $require) {
+      if (empty($options[$require])) throw new MyURYException($require.' is required to create an Item.', 400);
+    }
+    //BPM null
+    if (empty($options['bpm'])) $options['bpm'] = null;
+    //Expires null
+    if (empty($options['expires'])) $options['expires'] = null;
+    
+    //Decode the path to figure out what/where we're adding
+    if (preg_match('/^membersmusic\/.*$/', $options['path']) !== 0) {
+      //This is a personal resource
+      $result = self::$db->query('INSERT INTO bapsplanner.managed_user_items (managedplaylistid, title, length, bpm)
+       VALUES ($1, $2) RETURNING manageditemid',
+               array(
+                    $options['path'],
+                    trim($options['title']),
+                    CoreUtils::intToTime($options['duration']),
+                    $options['bpm'],
+                ));      
+    } 
+    else {
+      //This is a central resource
+      $result = self::$db->fetch_one('SELECT managedplaylistid FROM bapsplanner.managed_playlists WHERE folder=$1 LIMIT 1', array($options['path']));
+        if (empty($result))
+          return false;
+        $playlistid = $result[0];
+
+      $result = self::$db->query('INSERT INTO bapsplanner.managed_items (managedplaylistid, title, length, bpm, expirydate, memberid)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING manageditemid',
+              array(
+                  $playlistid,
+                  trim($options['title']),
+                  CoreUtils::intToTime($options['duration']),
+                  $options['bpm'],
+                  $options['expires'],
+                  $_SESSION['memberid'],
+              ));
+    }
+    
+    $id = self::$db->fetch_all($result);
+    
+    return self::getInstance($id[0]['manageditemid']);
   }
 }

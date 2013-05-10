@@ -13,6 +13,7 @@ if (!isset($_REQUEST['fileid']) or !isset($_REQUEST['title']) or !isset($_REQUES
   exit;
 }
 
-
+$data = NIPSWeb_ManagedItem::storeItem($_REQUEST['fileid'], $_REQUEST['title']);
+$data['fileid'] = $_REQUEST['fileid'];
 
 require 'Views/MyURY/Core/datatojson.php';
