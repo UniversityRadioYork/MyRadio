@@ -250,7 +250,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
                     CoreUtils::intToTime($options['duration']),
                     $options['bpm'],
                 ));      
-    } 
+    }
     else {
       //This is a central resource
       $result = self::$db->fetch_one('SELECT managedplaylistid FROM bapsplanner.managed_playlists WHERE folder=$1 LIMIT 1', array($options['path']));
