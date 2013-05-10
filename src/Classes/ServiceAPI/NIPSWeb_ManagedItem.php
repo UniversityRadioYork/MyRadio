@@ -158,6 +158,8 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     $getID3 = new getID3;
     $fileInfo = $getID3->analyze($filename);
 
+    $_SESSION['uploadInfo'][$filename] = $fileInfo;
+
     // File quality checks
     if ($fileInfo['audio']['bitrate'] < 192000) {
       return array('status' => 'FAIL', 'error' => 'Bitrate is below 192kbps.', 'fileid' => $filename);
@@ -165,8 +167,6 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     if ($fileInfo['audio']['channelmode'] != 'stereo') {
       return array('status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename);
     }
-
-    $_SESSION['uploadInfo'][$filename] = $fileInfo;
 
     return array(
         'fileid' => $filename,
