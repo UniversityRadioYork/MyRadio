@@ -3,7 +3,7 @@
  * This file lets administrators choose a version of the service to use.
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 15082012
+ * @version 20130509
  * @package MyURY_Core
  * 
  * @uses $service - The current service being requested
@@ -16,24 +16,21 @@
 $versions = CoreUtils::getServiceVersions(CoreUtils::getServiceID($service));
 
 // If the version selector has just been submitted, update the session
-if (isset($_POST['svc_version'])) {
-  $service = $_POST['svc_name'];
+if (isset($_REQUEST['svc_version'])) {
+  $serviceid = CoreUtils::getServiceId($_POST['svc_name']);
   foreach ($versions as $version) {
     if ($version['version'] === $_POST['svc_version']) {
-      $_SESSION['myury_svc_version_'.$service] = $version['version'];
-      $_SESSION['myury_svc_version_'.$service.'_path'] = $version['path'];
+      $_SESSION['myury_svc_version_'.$serviceid] = $version['version'];
+      $_SESSION['myury_svc_version_'.$serviceid.'_path'] = $version['path'];
     }
   }
+  header('Location: ?service='.$_REQUEST['svc_name']);
+  exit;
 }
 
-// If the session already has a saved service version, use that
-if (isset($_SESSION['myury_svc_version_'.$service])) {
-  $service_version = $_SESSION['myury_svc_version_'.$service];
-  $service_path = $_SESSION['myury_svc_version_'.$service.'_path'];
-  set_include_path($service_path.':'.get_include_path());
-} else {
-  // Make a version select form
+if (isset($_REQUEST['select_version'])) {
+  $service = $_REQUEST['select_version'];
+  $versions = CoreUtils::getServiceVersions(CoreUtils::getServiceId($_REQUEST['select_version']));
   require 'Views/MyURY/Core/brokerVersion.php';
   exit;
 }
-unset($form, $submitted_data, $versions, $svc);

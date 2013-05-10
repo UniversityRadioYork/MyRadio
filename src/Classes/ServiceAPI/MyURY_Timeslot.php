@@ -108,6 +108,10 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
     return $this->timeslot_num;
   }
   
+  /**
+   * Get the start time of the Timeslot as an integer since epoch
+   * @return int
+   */
   public function getStartTime() {
     return $this->start_time;
   }
@@ -297,7 +301,15 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
       VALUES ($1, $2)', array($set['clientid'], json_encode($set['ops'])));
     
     self::$db->query('COMMIT');
+    
+    //Update the legacy baps show plans database
+    $this->updateLegacyShowPlan();
+    
     return $result;
+  }
+  
+  private function updateLegacyShowPlan() {
+    NIPSWeb_BAPSUtils::saveListingsForTimeslot($this);
   }
   
   /**
