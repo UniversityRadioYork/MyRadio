@@ -156,7 +156,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename);
     
     $getID3 = new getID3;
-    $fileInfo = $getID3->analyze($filename);
+    $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
 
     $_SESSION['uploadInfo'][$filename] = $fileInfo;
 
