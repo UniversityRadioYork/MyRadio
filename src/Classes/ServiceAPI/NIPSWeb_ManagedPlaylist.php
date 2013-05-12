@@ -107,9 +107,7 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
    * @return String
    */
   public function getFolder() {
-    $dir = Config::$music_central_db_path.$this->folder;
-    if (!is_dir($dir)) mkdir($dir);
-    return $dir;
+    return $this->folder;;
   }
   
   public static function getAllManagedPlaylists($editable_only = false) {
