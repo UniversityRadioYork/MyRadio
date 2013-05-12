@@ -126,6 +126,9 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
   public function getPlaylist() {
     return NIPSWeb_ManagedPlaylist::getInstance($this->$managed_playlist);
   }
+  public function getFolder() {
+    return $this->folder;
+  }
   
   /**
    * Returns an array of key information, useful for Twig rendering and JSON requests
@@ -189,7 +192,13 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
       return array('status' => 'FAIL', 'error' => 'A database kerfuffle occured.', 'fileid' => $_REQUEST['fileid']);
     }
 
-    $pinfo = $item->getPlaylist();
+    if(!empty($pinfo = $item->getPlaylist())) {
+      $folder = $pinfo->getFolder();
+    }
+    else {
+      $folder = $item->getFolder();
+    }
+
 
     /**
      * Store three versions of the track:
@@ -198,18 +207,18 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
      * 3- Original file for potential future conversions
      */
     $tmpfile = Config::$audio_upload_tmp_dir.'/'.$tmpid;
-    $dbfile = $pinfo->getFolder.'/'.$item->getID();
+    $dbfile = $folder.'/'.$item->getID();
 
     //Convert it with ffmpeg
     shell_exec("nice -n 15 ffmpeg -i '$filename' -ab 192k -f mp3 - >'{$dbfile}.mp3'");
     shell_exec("nice -n 15 ffmpeg -i '$filename' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
-    rename($filename, $dbfile.'.mp3.orig');
+    rename($filename, $dbfile.'.'.$_SESSION['uploadInfo'][$tmpid]['fileformat'].'.orig');
 
     if (!file_exists($dbfile.'.mp3') || !file_exists($dbfile.'.ogg')) {
       //Conversion failed!
       return array('status' => 'FAIL', 'error' => 'Conversion with ffmpeg failed.', 'fileid' => $_REQUEST['fileid']);
     }
-    elseif (!file_exists($dbfile.'.mp3.orig')) {
+    elseif (!file_exists($dbfile.'.'.$_SESSION['uploadInfo'][$tmpid]['fileformat'].'.orig')) {
       return array('status' => 'FAIL', 'error' => 'Could not move file to library.', 'fileid' => $_REQUEST['fileid']);
     }
 
