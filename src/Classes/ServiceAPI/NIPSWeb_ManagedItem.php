@@ -123,11 +123,8 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     return Config::$music_central_db_path.'/'.($this->managed_playlist ? $this->managed_playlist->getFolder() : $this->folder).'/'.$this->getID().'.mp3';
   }
 
-  public function getPlaylist() {
-    return NIPSWeb_ManagedPlaylist::getInstance($this->$managed_playlist);
-  }
   public function getFolder() {
-    $dir = Config::$music_central_db_path.$this->folder;
+    $dir = Config::$music_central_db_path.'/'.($this->managed_playlist ? $this->managed_playlist->getFolder() : $this->folder);
     if (!is_dir($dir)) mkdir($dir);
     return $dir;
   }
@@ -194,11 +191,6 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
       return array('status' => 'FAIL', 'error' => 'A database kerfuffle occured.', 'fileid' => $_REQUEST['fileid']);
     }
 
-    $folder = $item->getFolder();
-    if(is_null($folder)) {
-      $folder = $item->getPlaylist()->getFolder();
-    }
-
     /**
      * Store three versions of the track:
      * 1- 192kbps MP3 for BAPS and Chrome/IE
@@ -206,12 +198,12 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
      * 3- Original file for potential future conversions
      */
     $tmpfile = Config::$audio_upload_tmp_dir.'/'.$tmpid;
-    $dbfile = $folder.'/'.$item->getID();
+    $dbfile = $item->getFolder().'/'.$item->getID();
 
     //Convert it with ffmpeg
-    shell_exec("nice -n 15 ffmpeg -i '$filename' -ab 192k -f mp3 - >'{$dbfile}.mp3'");
-    shell_exec("nice -n 15 ffmpeg -i '$filename' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
-    rename($filename, $dbfile.'.'.$_SESSION['uploadInfo'][$tmpid]['fileformat'].'.orig');
+    shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 - >'{$dbfile}.mp3'");
+    shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
+    rename($tmpfile, $dbfile.'.'.$_SESSION['uploadInfo'][$tmpid]['fileformat'].'.orig');
 
     if (!file_exists($dbfile.'.mp3') || !file_exists($dbfile.'.ogg')) {
       //Conversion failed!
