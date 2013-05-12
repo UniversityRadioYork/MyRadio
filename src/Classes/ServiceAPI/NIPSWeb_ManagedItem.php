@@ -192,7 +192,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
       return array('status' => 'FAIL', 'error' => 'A database kerfuffle occured.', 'fileid' => $_REQUEST['fileid']);
     }
 
-    $folder = getFolder();
+    $folder = $item->getFolder();
     if(is_null($folder)) {
       $folder = $item->getPlaylist()->getFolder();
     }
