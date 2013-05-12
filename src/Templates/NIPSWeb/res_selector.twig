@@ -15,7 +15,7 @@
   {% if not reslists['aux'] is empty %}
     <option disabled="disabled">Resources</option>
     {% for list in reslists['aux'] %}
-    <option value='{{list['managedid']}}'>{{list['title']}}</option>
+    <option value='aux-{{list['managedid']}}'>{{list['title']}}</option>
     {% endfor %}
   {% endif %}
 

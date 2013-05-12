@@ -101,7 +101,7 @@ $(document).ready(function() {
       });
       $('#res-filter-artist, #res-filter-track').hide();
       $('#res-filter-name').fadeIn();
-    } else if ($(this).val().match(/^aux-.*|^user-.*/) {
+    } else if ($(this).val().match(/^aux-.*|^user-.*/)) {
       $('#res-loading').show();
       $.ajax({
         url: '?service=NIPSWeb&action=load_aux_lib',
