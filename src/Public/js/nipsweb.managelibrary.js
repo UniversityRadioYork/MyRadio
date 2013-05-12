@@ -166,7 +166,7 @@ $(document).ready(function() {
         return;
       } else {
         $('#res-result').append('<div id="resupload-'+i+'">'+file.name+': <input type="text" class="title" name="'+response.fileid+'" id="resuploadname-'+i+'" placeholder="Enter a helpful name..." /></div>')
-        if (window.auxid.match(/^[a-z]*$/)) {
+        if (window.auxid.match(/^aux-\d+$/)) {
           //This is a central one - it can have an expiry
           $('#resupload-'+i).append(
               $('<input type="text" placeholder="Expiry date" />').addClass('date').attr('id','resuploaddate-'+i).datepicker())

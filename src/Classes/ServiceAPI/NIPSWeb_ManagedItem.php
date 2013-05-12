@@ -178,7 +178,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     $options = array(
       'title' => $title,
       'expires' => $_REQUEST['expires'],
-      'path' => $_REQUEST['auxid'],
+      'auxid' => $_REQUEST['auxid'],
       'duration' => $_SESSION['uploadInfo'][$tmpid]['playtime_seconds'],
       );
 
@@ -221,7 +221,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
    * @param Array $options
    * title (required): Title of the item.
    * duration (required): Duration of the item, in seconds
-   * path (required): The path of the playlist
+   * auxid (required): The auxid of the playlist
    * bpm: The beats per minute of the item
    * expires: The expiry date of the item
    * @return NIPSWEB_ManagedItem a shiny new NIPSWEB_ManagedItem with the provided options
@@ -230,7 +230,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
   public static function create($options) {
     self::__wakeup();
     
-    $required = array('title', 'duration', 'path');
+    $required = array('title', 'duration', 'auxid');
     foreach ($required as $require) {
       if (empty($options[$require])) throw new MyURYException($require.' is required to create an Item.', 400);
     }
@@ -239,13 +239,14 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     //Expires null
     if (empty($options['expires'])) $options['expires'] = null;
     
-    //Decode the path to figure out what/where we're adding
-    if (preg_match('/^membersmusic\/.*$/', $options['path']) !== 0) {
+    //Decode the auxid to figure out what/where we're adding
+    if (strpos($options['auxid'], 'user-') !== false) {
       //This is a personal resource
+      $path = str_replace('user-', '/membersmusic/', $options['auxid']);
       $result = self::$db->query('INSERT INTO bapsplanner.managed_user_items (managedplaylistid, title, length, bpm)
        VALUES ($1, $2, $3, $4) RETURNING manageditemid',
                array(
-                    $options['path'],
+                    $path,
                     trim($options['title']),
                     CoreUtils::intToTime($options['duration']),
                     $options['bpm'],
@@ -253,7 +254,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     }
     else {
       //This is a central resource
-      $result = self::$db->fetch_one('SELECT managedplaylistid FROM bapsplanner.managed_playlists WHERE folder=$1 LIMIT 1', array($options['path']));
+      $result = self::$db->fetch_one('SELECT managedplaylistid FROM bapsplanner.managed_playlists WHERE folder=$1 LIMIT 1', array(str_replace('aux-', '', $options['auxid'])));
         if (empty($result))
           return false;
         $playlistid = $result[0];
