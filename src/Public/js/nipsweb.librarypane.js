@@ -101,12 +101,12 @@ $(document).ready(function() {
       });
       $('#res-filter-artist, #res-filter-track').hide();
       $('#res-filter-name').fadeIn();
-    } else {
+    } else if ($(this).val().match(/^aux-.*|^user-.*/) {
       $('#res-loading').show();
       $.ajax({
         url: '?service=NIPSWeb&action=load_aux_lib',
         type: 'post',
-        data: 'libraryid=' + ($(this).val().replace(/^user-/, '')),
+        data: 'libraryid=' + $(this).val(),
         success: function(data) {
           for (file in data) {
             if (data[file].meta == true) {
