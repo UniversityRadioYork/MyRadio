@@ -94,7 +94,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
       foreach ($tracks[$listing['channel']] as $track) {
         switch ($track['type']) {
           case 'central':
-            $file = self::getTrackDetails($track['trackid'], $track['recordid']);
+            $file = self::getTrackDetails($track['trackid'], $track['album']['recordid']);
             self::$db->query('INSERT INTO baps_item (listingid, position, libraryitemid, name1, name2)
               VALUES ($1, $2, $3, $4, $5)', array(
                 $listing['listingid'],
