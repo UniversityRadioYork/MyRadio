@@ -201,7 +201,8 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     $dbfile = $item->getFolder().'/'.$item->getID();
 
     //Convert it with ffmpeg
-    shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 '{$dbfile}.mp3'");
+    // BAPS needs stdout > to file
+    shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 - > '{$dbfile}.mp3'");
     shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
     rename($tmpfile, $dbfile.'.'.$_SESSION['uploadInfo'][$tmpid]['fileformat'].'.orig');
 
