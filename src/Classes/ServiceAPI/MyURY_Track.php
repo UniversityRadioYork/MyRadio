@@ -426,7 +426,7 @@ class MyURY_Track extends ServiceAPI {
    * @return Array A parsed array version of the JSON lastfm response
    */
   public static function identifyUploadedTrack($path) {
-    $response = shell_exec('lastfm-fpclient ' . $path);
+    $response = shell_exec('lastfm-fpclient -json ' . $path);
     
     $lastfm = json_decode($response, true);
 
