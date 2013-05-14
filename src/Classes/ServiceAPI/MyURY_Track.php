@@ -187,7 +187,7 @@ class MyURY_Track extends ServiceAPI {
    * @return Album
    */
   public function getAlbum() {
-    MyURY_Album::getInstance($this->record);
+    return MyURY_Album::getInstance($this->record);
   }
 
   /**
