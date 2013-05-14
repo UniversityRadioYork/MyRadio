@@ -391,6 +391,19 @@ class MyURY_Track extends ServiceAPI {
 
     move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename);
 
+    $getID3 = new getID3;
+    $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
+
+    $_SESSION['uploadInfo'][$filename] = $fileInfo;
+
+    // File quality checks
+    if ($fileInfo['audio']['bitrate'] < 192000) {
+      return array('status' => 'FAIL', 'error' => 'Bitrate is below 192kbps.', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']);
+    }
+    if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
+      return array('status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']);
+    }
+
     return array(
         'fileid' => $filename,
         'analysis' => self::identifyUploadedTrack(Config::$audio_upload_tmp_dir . '/' . $filename)
