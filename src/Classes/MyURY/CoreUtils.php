@@ -23,6 +23,7 @@ class CoreUtils {
    */
   private static $auth_cached = false;
   private static $svc_version_cache = array();
+  private static $svc_id_cache = array();
 
   /**
    * Checks whether a given Module/Action combination is valid
@@ -348,6 +349,8 @@ class CoreUtils {
    * @assert ('Lady Quackington') throws MyURYException
    */
   public static function getServiceId($service, $create = false) {
+    if (isset(self::$svc_id_cache[$service])) return self::$svc_id_cache[$service];
+    
     $db = Database::getInstance();
     $result = $db->fetch_column('SELECT serviceid FROM myury.services WHERE name=$1', array($service));
 
@@ -359,7 +362,8 @@ class CoreUtils {
         throw new MyURYException('Service ' . $service . ' does not exist.');
       }
     }
-    return $result[0];
+    self::$svc_id_cache[$service] = (int)$result[0];
+    return self::$svc_id_cache[$service];
   }
 
   /**
