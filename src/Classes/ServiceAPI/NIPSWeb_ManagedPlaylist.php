@@ -107,7 +107,7 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
    * @return String
    */
   public function getFolder() {
-    return $this->folder;
+    return $this->folder;;
   }
   
   public static function getAllManagedPlaylists($editable_only = false) {
