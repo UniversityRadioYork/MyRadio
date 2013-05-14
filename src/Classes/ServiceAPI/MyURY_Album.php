@@ -5,7 +5,7 @@
  */
 
 /**
- * The Album class fetches information about albums in the Cental Databse.
+ * The Album class fetches information about albums in the Cental Database.
  * @version 18042013
  * @author Anthony Williams <anthony@ury.york.ac.uk>
  * @author Lloyd Wallis <lpw@ury.org.uk>
@@ -93,8 +93,7 @@ class MyURY_Album extends ServiceAPI {
     $result = self::$db->fetch_column('SELECT trackid FROM rec_track WHERE recordid=$1', array($this->albumid));
     
     foreach ($result as $track) {
-      //Pass Album by reference to prevent circular referencing
-      $this->tracks[] = MyURY_Track::getInstance($track, $this);
+      $this->tracks[] = MyURY_Track::getInstance($track);
     }
   }
 

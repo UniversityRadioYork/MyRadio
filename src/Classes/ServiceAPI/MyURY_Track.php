@@ -97,7 +97,7 @@ class MyURY_Track extends ServiceAPI {
    * @todo Genre class
    * @todo Artist normalisation
    */
-  private function __construct($trackid, $album = null) {
+  private function __construct($trackid) {
 
     $this->trackid = $trackid;
     $result = self::$db->fetch_one('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', array($trackid));
@@ -112,13 +112,13 @@ class MyURY_Track extends ServiceAPI {
     $this->artist = $result['artist'];
     $this->clean = $result['clean'];
     $this->digitised = ($result['digitised'] == 't') ? true : false;
-    $this->digitisedby = empty($result['digitisedby']) ? null : User::getInstance($result['digitisedby']);
+    $this->digitisedby = empty($result['digitisedby']) ? null : (int)$result['digitisedby'];
     $this->genre = $result['genre'];
     $this->intro = strtotime('1970-01-01 ' . $result['intro'] . '+00');
     $this->length = $result['length'];
     $this->duration = (int) $result['duration'];
     $this->number = (int) $result['intro'];
-    $this->record = empty($album) ? MyURY_Album::getInstance($result['recordid']) : $album;
+    $this->record = (int)$result['recordid'];
     $this->title = $result['title'];
   }
 
@@ -130,6 +130,7 @@ class MyURY_Track extends ServiceAPI {
    * @return MyURY_Track
    */
   public static function getInstance($trackid = -1, $album = null) {
+    if ($album === null) trigger_error ('Use of deprecated parameter $album');
     self::__wakeup();
     if (!is_numeric($trackid)) {
       throw new MyURYException('Invalid Track ID!', MyURYException::FATAL);
@@ -142,7 +143,7 @@ class MyURY_Track extends ServiceAPI {
       if ($item !== false) {
         self::$tracks[$trackid] = $item;
       } else {
-        self::$cache->set(self::getCacheKey($trackid), new self($trackid, $album), Config::$cache_track_timeout);
+        self::$cache->set(self::getCacheKey($trackid), new self($trackid), Config::$cache_track_timeout);
       }
     }
 
@@ -186,7 +187,7 @@ class MyURY_Track extends ServiceAPI {
    * @return Album
    */
   public function getAlbum() {
-    return $this->record;
+    MyURY_Album::getInstance($this->record);
   }
 
   /**
@@ -219,6 +220,11 @@ class MyURY_Track extends ServiceAPI {
    */
   public function getDigitised() {
     return $this->digitised;
+  }
+  
+  public function getDigitisedBy() {
+    if ($this->digitisedby === null) return null;
+    else return User::getInstance($this->digitisedby);
   }
 
   /**
