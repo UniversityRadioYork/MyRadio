@@ -7,7 +7,7 @@
 /**
  * The NIPSWeb_ManagedPlaylist class helps provide control and access to managed playlists
  * 
- * @version 07042013
+ * @version 20130511
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_iTones
  * @uses \Database
