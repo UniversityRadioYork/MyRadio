@@ -130,7 +130,7 @@ class MyURY_Track extends ServiceAPI {
    * @return MyURY_Track
    */
   public static function getInstance($trackid = -1, $album = null) {
-    if ($album === null) trigger_error ('Use of deprecated parameter $album');
+    if ($album !== null) trigger_error ('Use of deprecated parameter $album');
     self::__wakeup();
     if (!is_numeric($trackid)) {
       throw new MyURYException('Invalid Track ID!', MyURYException::FATAL);
@@ -427,7 +427,7 @@ class MyURY_Track extends ServiceAPI {
    */
   public static function identifyUploadedTrack($path) {
     $response = shell_exec('lastfm-fpclient ' . $path);
-
+    
     $lastfm = json_decode($response, true);
 
     if (empty($lastfm)) {
