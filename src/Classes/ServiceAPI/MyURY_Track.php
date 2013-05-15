@@ -392,6 +392,7 @@ class MyURY_Track extends ServiceAPI {
     if (!is_dir(Config::$audio_upload_tmp_dir)) {
       mkdir(Config::$audio_upload_tmp_dir);
     }
+    echo "HELLO";
 
     $filename = session_id() . '-' . ++$_SESSION['myury_nipsweb_file_cache_counter'] . '.mp3';
 
