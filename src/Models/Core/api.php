@@ -25,13 +25,11 @@ require_once 'Interfaces/Singleton.php';
 //Create a function to autoload classes when needed
 spl_autoload_register(function($class) {
           $class .= '.php';
-          echo $class;
-          echo "<br>".__DIR__."<br>".get_include_path();
-          if (file_exists('Classes/ServiceAPI/' . $class)) {
+          if (file_exists(__DIR__.'/../../Classes/ServiceAPI/' . $class)) {
             //This path *must* be absolute - differing versions causes it to be reincluded otherwise
             require_once __DIR__ . '/../../Interfaces/MyURY_DataSource.php';
             require_once __DIR__ . '/../../Interfaces/IServiceAPI.php';
-            require_once 'Classes/ServiceAPI/' . $class;
+            require_once __DIR__.'/../../Classes/ServiceAPI/' . $class;
           }
         });
 set_exception_handler(function($e) {
