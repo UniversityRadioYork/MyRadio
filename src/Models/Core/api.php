@@ -25,9 +25,7 @@ require_once 'Interfaces/Singleton.php';
 //Create a function to autoload classes when needed
 spl_autoload_register(function($class) {
           $class .= '.php';
-          if (
-                  (isset($GLOBALS['service_path']) && file_exists($GLOBALS['service_path'] . '/Classes/ServiceAPI/' . $class))
-                  or file_exists('/Classes/ServiceAPI/' . $class)) {
+          if (file_exists('Classes/ServiceAPI/' . $class)) {
             //This path *must* be absolute - differing versions causes it to be reincluded otherwise
             require_once __DIR__ . '/../../Interfaces/MyURY_DataSource.php';
             require_once __DIR__ . '/../../Interfaces/IServiceAPI.php';
