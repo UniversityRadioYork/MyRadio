@@ -14,7 +14,6 @@
 spl_autoload_register(function($class){
   $class .= '.php';
   $info = CoreUtils::getServiceVersionForUser(CoreUtils::getServiceId('NIPSWeb'), User::getInstance());
-  echo $info['path'];
   if (stream_resolve_include_path($info['path'].'/Classes/NIPSWeb/'.$class)) {
     require_once $info['path'].'/Classes/NIPSWeb/'.$class;
   }
