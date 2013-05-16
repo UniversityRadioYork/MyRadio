@@ -399,7 +399,7 @@ class MyURY_Track extends ServiceAPI {
     
     $getID3 = new getID3;
     $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
-    print_r($fileInfo);exit;
+    echo json_encode($fileInfo);exit;
     $_SESSION['uploadInfo'][$filename] = $fileInfo;
 
     // File quality checks
