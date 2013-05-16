@@ -14,7 +14,7 @@ $('.twig-datatable').dataTable({
   },
   //memberid
   {
-    "sTitle": ""
+    "sTitle": "",
     "bVisible": false
   },
   ],
