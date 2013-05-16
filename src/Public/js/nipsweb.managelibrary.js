@@ -28,7 +28,7 @@ $(document).ready(function() {
   $('#res-type-sel').on('click', function(){res_type_sel_change_handler();});
   
   /** Central Database Handler **/
-  $('#central-dragdrop').filedrop({
+  $('#central-dragdrop').dropUpload({
     url: '?service=NIPSWeb&action=upload_central',
     fileParamName: 'audio',
     fileSizeMax: 102400, //100MB
