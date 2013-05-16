@@ -396,7 +396,7 @@ class MyURY_Track extends ServiceAPI {
     $filename = session_id() . '-' . ++$_SESSION['myury_nipsweb_file_cache_counter'] . '.mp3';
 
     move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename);
-    echo "HELLO";exit;
+    
     $getID3 = new getID3;
     $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
 
@@ -409,7 +409,7 @@ class MyURY_Track extends ServiceAPI {
     if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
       return array('status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']);
     }
-
+    echo "HELLO";exit;
     return array(
         'fileid' => $filename,
         'analysis' => self::identifyUploadedTrack(Config::$audio_upload_tmp_dir . '/' . $filename)
