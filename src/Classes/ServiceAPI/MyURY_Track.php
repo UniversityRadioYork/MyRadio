@@ -387,7 +387,6 @@ class MyURY_Track extends ServiceAPI {
    * @param type $tmp_path
    */
   public static function cacheAndIdentifyUploadedTrack($tmp_path) {
-    echo $tmp_path;exit;
     if (!isset($_SESSION['myury_nipsweb_file_cache_counter']))
       $_SESSION['myury_nipsweb_file_cache_counter'] = 0;
     if (!is_dir(Config::$audio_upload_tmp_dir)) {
@@ -397,7 +396,7 @@ class MyURY_Track extends ServiceAPI {
     $filename = session_id() . '-' . ++$_SESSION['myury_nipsweb_file_cache_counter'] . '.mp3';
 
     move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename);
-
+    echo "HELLO";exit;
     $getID3 = new getID3;
     $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
 
