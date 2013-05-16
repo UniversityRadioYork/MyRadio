@@ -399,9 +399,7 @@ class MyURY_Track extends ServiceAPI {
     
     $getID3 = new getID3;
     $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
-    echo json_encode($fileInfo);exit;
-    $_SESSION['uploadInfo'][$filename] = $fileInfo;
-
+    
     // File quality checks
     if ($fileInfo['audio']['bitrate'] < 192000) {
       return array('status' => 'FAIL', 'error' => 'Bitrate is below 192kbps.', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']);
