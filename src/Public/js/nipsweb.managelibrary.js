@@ -57,10 +57,10 @@ $(document).ready(function() {
           $('body').html('<div class="ui-state-error"><span class="ui-icon ui-icon-alert"></span>An unknown error occured: '+err+'</div>');
       }
     },
-    allowedfiletypes: ['audio/mpeg3', 'audio/x-mpeg-3', 'audio/mpeg', 'audio/x-mpeg',
-    'audio/mp3', 'audio/x-mp3', 'audio/mpg', 'audio/mpg3', 'audio/mpegaudio'],
-    maxfiles: 20,
-    queuefiles: 2,
+    //allowedfiletypes: ['audio/mpeg3', 'audio/x-mpeg-3', 'audio/mpeg', 'audio/x-mpeg',
+    //'audio/mp3', 'audio/x-mp3', 'audio/mpg', 'audio/mpg3', 'audio/mpegaudio'],
+    //maxfiles: 20,
+    //queuefiles: 2,
     onFileQueued: function(file) {
       console.log('Upload started (centraldb).');
       $('#central-status').html('Uploading '+file.name+'... ('+byteSize(file.size)+')');
