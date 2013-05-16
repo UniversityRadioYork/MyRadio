@@ -10,7 +10,7 @@
  * @author Andy Durant <aj@ury.org.uk>
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Profile
- * @version 21072012
+ * @version 20130516
  * @uses \Database
  * @uses \CacheProvider
  */
@@ -27,6 +27,12 @@ class Profile extends ServiceAPI {
    * @var Array
    */
   private static $thisYearsMembers = null;
+  /**
+   * Stores an Array representation of the current officers from the getCurrentOfficers function when it is first called
+   * This is also cached using a CacheProvider
+   * @var Array
+   */
+  private static $currentOfficers = null;
   
   /**
    * Returns an Array representation of all URY members. On first run, this is cached locally in the class, and
@@ -44,7 +50,7 @@ class Profile extends ServiceAPI {
     //Return the object if it is cached
     self::$allMembers = self::$cache->get('MyURYProfile_allMembers');
     if (self::$allMembers === false) {
-      self::initDB();
+      self::__wakeup();
       self::$allMembers = 
         self::$db->fetch_all('SELECT member.memberid, sname || \', \' || fname AS name, l_college.descr AS college, paid
         FROM member LEFT JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
@@ -73,7 +79,7 @@ class Profile extends ServiceAPI {
     //Return the object if it is cached
     self::$thisYearsMembers = self::$cache->get('MyURYProfile_thisYearsMembers');
     if (self::$thisYearsMembers === false) {
-      self::initDB();
+      self::__wakeup();
       self::$thisYearsMembers = 
         self::$db->fetch_all('SELECT member.memberid, sname || \', \' || fname AS name, l_college.descr AS college, paid
         FROM member INNER JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
@@ -84,5 +90,33 @@ class Profile extends ServiceAPI {
     }
     
     return self::$thisYearsMembers;
+  }
+
+  /**
+   * Returns an Array representation of the current URY Officers. On first run, this is cached locally in the class, and
+   * shared in the CacheProvider until the Cache is cleared
+   * 
+   * @return Array A two-dimensional Array, each element in the first dimension container the following details about
+   * a member, sorted by their name:
+   * 
+   * team: The team the officer is in
+   * officership: The current position held
+   * name: The user's last and first names formatted as <code>sname, fname</code>
+   * memberid: The user's unique memberid
+   */
+  public static function getCurrentOfficers() {
+    //Return the object if it is cached
+    self::$currentOfficers = self::$cache->get('MyURYProfile_currentOfficers');
+    if (self::$currentOfficers === false) {
+      self::__wakeup();
+      self::$currentOfficers = 
+        self::$db->fetch_all('SELECT team.team_name AS team, officer.officer_name AS officership, sname || \', \' || fname AS name, member.memberid
+        FROM member, officer, member_officer, team
+        WHERE member_officer.memberid = member.memberid AND officer.officerid = member_officer.officerid AND officer.teamid = team.teamid AND member_officer.till_date IS NULL
+        ORDER BY team.ordering, officer.ordering, sname');
+      self::$cache->set('MyURYProfile_currentOfficers', self::$currentOfficers);
+    }
+    
+    return self::$currentOfficers;
   }
 }
