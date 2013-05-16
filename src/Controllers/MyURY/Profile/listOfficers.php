@@ -10,7 +10,7 @@
 
 $officers = Profile::getCurrentOfficers();
 //require 'Views/MyURY/Profile/listOfficers.php';
-
+require 'Views/MyURY/Profile/bootstrap.php';
 $twig->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.profile.listOfficers')
         ->addVariable('title', 'Officers List')
