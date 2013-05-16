@@ -399,7 +399,8 @@ class MyURY_Track extends ServiceAPI {
     
     $getID3 = new getID3;
     $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
-
+    echo "HELLO";exit;
+    
     $_SESSION['uploadInfo'][$filename] = $fileInfo;
 
     // File quality checks
@@ -409,7 +410,7 @@ class MyURY_Track extends ServiceAPI {
     if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
       return array('status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']);
     }
-    echo "HELLO";exit;
+
     return array(
         'fileid' => $filename,
         'analysis' => self::identifyUploadedTrack(Config::$audio_upload_tmp_dir . '/' . $filename)
