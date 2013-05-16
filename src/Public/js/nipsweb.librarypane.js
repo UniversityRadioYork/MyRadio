@@ -58,7 +58,7 @@ $(document).ready(function() {
           for (file in data) {
             $('#baps-channel-res').append(
                     '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
-                    '" channel="res" weight="0" type="central" length="00:00:00">'
+                    '" channel="res" weight="0" type="central" length="' + data[file].length + '">'
                     + data[file].title + ' - ' + data[file].artist + '</li>'
                     );
           }
@@ -84,8 +84,8 @@ $(document).ready(function() {
         success: function(data) {
           for (file in data) {
             $('#baps-channel-res').append(
-                    '<li id="' + data[file].bapsclientid +
-                    '" channel="res" weight="0" type="central" length="00:00:00">' 
+                    '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
+                    '" channel="res" weight="0" type="central" length="' + data[file].length + '">' 
                     + data[file].title + ' - ' + data[file].artist + '</li>'
                     );
           }
