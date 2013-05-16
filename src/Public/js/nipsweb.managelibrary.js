@@ -65,7 +65,7 @@ $(document).ready(function() {
       console.log('Upload started (centraldb).');
       $('#central-status').html('Uploading '+file.name+'... ('+byteSize(file.size)+')');
     },
-    onProgressUpdated: function(file) {
+    onProgressUpdated: function(file, progress) {
       $('#central-status').html('Reading '+file.name+' ('+progress+'%)...');
     },
     onFileSucceeded: function(file, response) {
