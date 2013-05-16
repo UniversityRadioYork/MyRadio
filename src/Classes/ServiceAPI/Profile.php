@@ -113,7 +113,7 @@ class Profile extends ServiceAPI {
         self::$db->fetch_all('SELECT team.team_name AS team, officer.officer_name AS officership, sname || \', \' || fname AS name, member.memberid
         FROM member, officer, member_officer, team
         WHERE member_officer.memberid = member.memberid AND officer.officerid = member_officer.officerid AND officer.teamid = team.teamid AND member_officer.till_date IS NULL
-        ORDER BY team.ordering, officer.ordering, sname'
+        ORDER BY team.ordering, officer.ordering, sname');
       self::$cache->set('MyURYProfile_currentOfficers', self::$currentOfficers);
     }
     
