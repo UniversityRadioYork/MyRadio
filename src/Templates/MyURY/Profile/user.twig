@@ -135,22 +135,22 @@
         {% for train in user.training %}
           <li>
             {% if train.presenterstatusid == 1 %}
-              Studio Trained on {{ train.completeddate|date("j/n/Y") }}. <em>By {{ train.confirmedname }}</em>
+              Studio Trained on {{ train.completeddate|date("j/n/Y") }}. <em>By <a href="{{train.confirmedbyurl}}">{{ train.confirmedname }}</a></em>
             {% endif %}
             {% if train.presenterstatusid == 2 %}
-              Passed Demo on {{ train.completeddate|date("j/n/Y") }}. <em>Assessed by {{ train.confirmedname }}</em>
+              Passed Demo on {{ train.completeddate|date("j/n/Y") }}. <em>Assessed by <a href="{{train.confirmedbyurl}}">{{ train.confirmedname }}</a></em>
             {% endif %}
             {% if train.presenterstatusid == 3 %}
-              Became Trainer on {{ train.completeddate|date("j/n/Y") }}. <em>Approved by {{ train.confirmedname }}</em>
+              Became Trainer on {{ train.completeddate|date("j/n/Y") }}. <em>Approved by <a href="{{train.confirmedbyurl}}">{{ train.confirmedname }}</a></em>
             {% endif %}
             {% if train.presenterstatusid == 10 %}
-              Studio Training Revoked on {{ train.completeddate|date("j/n/Y") }}. <em>By {{ train.confirmedname }}</em>
+              Studio Training Revoked on {{ train.completeddate|date("j/n/Y") }}. <em>By <a href="{{train.confirmedbyurl}}">{{ train.confirmedname }}</a></em>
             {% endif %}
             {% if train.presenterstatusid == 9 %}
-              Demo Revoked on {{ train.completeddate|date("j/n/Y") }}. <em>By {{ train.confirmedname }}</em>
+              Demo Revoked on {{ train.completeddate|date("j/n/Y") }}. <em>By <a href="{{train.confirmedbyurl}}">{{ train.confirmedname }}</a></em>
             {% endif %}
             {% if train.presenterstatusid == 11 %}
-              Trainer Status Revoked on {{ train.completeddate|date("j/n/Y") }}. <em>By {{ train.confirmedname }}</em>
+              Trainer Status Revoked on {{ train.completeddate|date("j/n/Y") }}. <em>By <a href="{{train.confirmedbyurl}}">{{ train.confirmedname }}</a></em>
             {% endif %}
           </li>
         {% else %}

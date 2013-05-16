@@ -8,6 +8,10 @@
  */
 require 'Views/MyURY/Profile/bootstrap.php';
 
+foreach ($userData['training'] as $k => $v) {
+  $userData['training'][$k]['confirmedbyurl'] = CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['confirmedby']));
+}
+
 $twig->setTemplate('MyURY/Profile/user.twig')
         ->addVariable('title', 'View Member')
         ->addVariable('title', 'View Profile')
