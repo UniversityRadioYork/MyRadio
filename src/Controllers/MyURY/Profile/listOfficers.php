@@ -9,8 +9,17 @@
  */
 
 $officers = Profile::getCurrentOfficers();
-//require 'Views/MyURY/Profile/listOfficers.php';
+
 require 'Views/MyURY/Profile/bootstrap.php';
+
+foreach ($officers as $k => $v) {
+  $officers[$k]['name'] = array(
+      'display' => 'text',
+      'url' => CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['memberid'])),
+      'value' => $v['name']
+      );
+}
+
 $twig->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.profile.listOfficers')
         ->addVariable('title', 'Officers List')
