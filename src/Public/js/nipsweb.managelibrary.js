@@ -30,6 +30,91 @@ $(document).ready(function() {
   /** Central Database Handler **/
   $('#central-dragdrop').filedrop({
     url: '?service=NIPSWeb&action=upload_central',
+    fileParamName: 'audio',
+    fileSizeMax: 102400, //100MB
+    onDragEnter: function() {$(this).addClass('ui-state-active');},
+    onDragLeave: function() {$(this).removeClass('ui-state-active');},
+    onDropSuccess: function() {
+      $(this).removeClass('ui-state-active');
+      console.log('Drop detected (centraldb).');
+      $('#central-status').html('Reading file (0%)...');
+    },
+    onFileFailed: function(file, err) {
+      switch (err) {
+        case 'BrowserNotSupported':
+          $('body').html('<div class="ui-state-error"><span class="ui-icon ui-icon-alert"></span>You need to use Google Chrome or Mozilla Firefox 3.6+ to upload files</div>');
+          break;
+        case 'TooManyFiles':
+          $('body').prepend('<div class="ui-state-error"><span class="ui-icon ui-icon-alert"></span>Please don\'t upload too many files at once</div>');
+          break;
+        case 'FileTooLarge':
+          $('body').prepend('<div class="ui-state-error"><span class="ui-icon ui-icon-alert"></span>That file ('+file.name+') is too big. Please upload files smaller than 100MB</div>');
+          break;
+        case 'FileTypeNotAllowed':
+          $('body').prepend('<div class="ui-state-error"><span class="ui-icon ui-icon-alert"></span>That file is not a valid audio file</div>');
+          break;
+        default:
+          $('body').html('<div class="ui-state-error"><span class="ui-icon ui-icon-alert"></span>An unknown error occured: '+err+'</div>');
+      }
+    },
+    allowedfiletypes: ['audio/mpeg3', 'audio/x-mpeg-3', 'audio/mpeg', 'audio/x-mpeg',
+    'audio/mp3', 'audio/x-mp3', 'audio/mpg', 'audio/mpg3', 'audio/mpegaudio'],
+    maxfiles: 20,
+    queuefiles: 2,
+    onFileQueued: function(file) {
+      console.log('Upload started (centraldb).');
+      $('#central-status').html('Uploading '+file.name+'... ('+byteSize(file.size)+')');
+    },
+    onProgressUpdated: function(file) {
+      $('#central-status').html('Reading '+file.name+' ('+progress+'%)...');
+    },
+    onFileSucceeded: function(file, response) {
+      console.log(file.name + ' (id#'+i+') has uploaded in '+time);
+      $('#central-status').html('Uploaded '+file.name);
+
+      if (response['status'] == 'FAIL') {
+        //An error occurred
+        $('#central-result').append('<div class="ui-state-error">'+file.name+': '+response['error']+'</div>');
+        return;
+      }
+
+      var select = $('<select></select>')
+      .attr('name', response.fileid).attr('id','centralupload-'+i);
+      $.each(response.analysis, function(key, value) {
+        select.append('<option value="'+value.title+':-:'+value.artist+'">'+value.title+' by '+value.artist+'</option>');
+      });
+      var submit = $('<a href="javascript:">Save to Database</a>').click(function() {
+        console.log('Saving track to database');
+        var select = $(this).parent().find('select').val();
+        var fileid = $(this).parent().find('select').attr('name');
+        $(this).hide().parent().append('<div id="confirminator-'+(fileid.replace(/\.mp3/,''))+'">Saving (this may take a few minutes)...</div>');
+        $.ajax({
+          url: '?service=NIPSWeb&action=confirm_central_upload',
+          data: {
+            title: select.replace(/:-:.*$/,''),
+            artist: select.replace(/^.*:-:/,''),
+            fileid: fileid
+          },
+          dataType: 'json',
+          type: 'get',
+          success: function(data) {
+            data.fileid = data.fileid.replace(/\.mp3/,'');
+            if (data.status == 'OK') {
+              $('#confirminator-'+data.fileid).html('<span class="ui-icon ui-icon-circle-check" style="float:left"></span>Upload Successful');
+            } else {
+              $('#confirminator-'+data.fileid).html('<span class="ui-icon ui-icon-alert" style="float:left"></span>'+data.error);
+            }
+          }
+        });
+      });
+      var container = $('<div></div>').append('<label for="centralupload-'+i+'">'+file.name+'</label>')
+      .append(select)
+      .append(submit);
+      $('#central-result').append(container);
+    }
+  });
+ /** $('#central-dragdrop').filedrop({
+    url: '?service=NIPSWeb&action=upload_central',
     paramname: 'audio',
     error: function(err, file) {
       switch (err) {
@@ -109,7 +194,7 @@ $(document).ready(function() {
       .append(submit);
       $('#central-result').append(container);
     }
-  });
+  });**/
 
   /** Auxillary Database Handler **/
   $('#res-dragdrop').filedrop({
