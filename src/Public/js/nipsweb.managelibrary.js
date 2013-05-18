@@ -69,9 +69,15 @@ $(document).ready(function() {
       console.log(file.name + ' (id#'+i+') has uploaded in '+time);
       $('#central-status').html('Uploaded '+file.name);
 
-      if (response['status'] == 'FAIL') {
+      if (response['status'] === 'FAIL') {
         //An error occurred
         $('#central-result').append('<div class="ui-state-error">'+file.name+': '+response['error']+'</div>');
+        return;
+      }
+      
+      if (response.analysis.length === 0) {
+        //No matches
+        $('#central-result').append('<div class="ui-state-error">'+file.name+' could not be recognised. Please contact the music team to get this track uploaded.</div>');
         return;
       }
 
