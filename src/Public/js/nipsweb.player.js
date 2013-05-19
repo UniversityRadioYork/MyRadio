@@ -69,6 +69,19 @@ function initialiseUI() {
     },
     stop: function(e, ui) {
       /**
+       * Update the channel timers
+       */
+      $('.baps-channel').each(function() {
+        var time = 0;
+        $(this).children('li').each(function() {
+          var tmp = $(this).attr('length').split(':');
+          time += tmp[0]*60;
+          time += tmp[1];
+        });
+        $('#baps-channel-'+$(this).attr('id')+'-total').val(timeMins(time)+':'+timeSecs(time));
+      });
+      
+      /**
        * Update the position of the item to its new values. If it doesn't have them, set them.
        */
       var oldChannel = ui.item.attr('channel');
