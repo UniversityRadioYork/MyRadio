@@ -77,8 +77,10 @@ function initialiseUI() {
           var tmp = $(this).attr('length').split(':');
           time += tmp[0]*60;
           time += tmp[1];
+          console.log(tmp);
+          console.log(time);
         });
-        $('#baps-channel-'+$(this).attr('id')+'-total').val(timeMins(time)+':'+timeSecs(time));
+        $('#baps-channel-'+$(this).attr('id')+'-total').html(timeMins(time)+':'+timeSecs(time));
       });
       
       /**

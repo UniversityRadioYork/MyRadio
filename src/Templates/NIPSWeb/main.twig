@@ -49,7 +49,7 @@
       {% set channels = [1, 2, 3, 'res'] %}
       {% for channel in channels %}
         <div class='box baps-channel channel-footer ui-widget-header{% if channel == 'res' %} width-2 library-footer'>Library{% else %} width-1'>Channel {{channel}}{% endif %}
-          (Total: <span id='baps-channel-{{channel}}-total'>00:00</span>)
+          (<span id='baps-channel-{{channel}}-total'>00:00</span>)
           <br>
           <button class='play' id='ch{{channel}}-play' onclick='previewPlay("{{channel}}")'></button>
           <button class='pause' id='ch{{channel}}-pause' onclick='previewPause("{{channel}}")'></button>
