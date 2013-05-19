@@ -75,8 +75,8 @@ function initialiseUI() {
         var time = 0;
         $(this).children('li').each(function() {
           var tmp = $(this).attr('length').split(':');
-          time += tmp[1].parseInt()*60;
-          time += tmp[2],parseInt();
+          time += parseInt(tmp[1])*60;
+          time += parseInt(tmp[2]);
           console.log(tmp);
           console.log(time);
         });
