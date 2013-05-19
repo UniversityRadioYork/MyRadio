@@ -78,10 +78,8 @@ function initialiseUI() {
           if (tmp.length !== 3) return;
           time += parseInt(tmp[1])*60;
           time += parseInt(tmp[2]);
-          console.log(tmp);
-          console.log(time);
         });
-        $('#baps-channel-'+$(this).attr('id')+'-total').html(timeMins(time)+':'+timeSecs(time));
+        $('#'+$(this).attr('id')+'-total').html(timeMins(time)+':'+timeSecs(time));
       });
       
       /**
