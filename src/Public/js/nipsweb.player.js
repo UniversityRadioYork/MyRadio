@@ -7,7 +7,9 @@ window.audioNodes = new Array();
 window.clientid;
 window.debug = false;
 //Get a client id to identify this session
-$.post('?service=NIPSWeb&action=get_client_token', null, function(data){window.clientid = parseInt(data);});
+$.post('?service=NIPSWeb&action=get_client_token', null, function(data) {
+  window.clientid = parseInt(data);
+});
 
 function initialiseUI() {
   // Setup UI elements
@@ -71,17 +73,8 @@ function initialiseUI() {
       /**
        * Update the channel timers
        */
-      $('.baps-channel').each(function() {
-        var time = 0;
-        $(this).children('li').each(function() {
-          var tmp = $(this).attr('length').split(':');
-          if (tmp.length !== 3) return;
-          time += parseInt(tmp[1])*60;
-          time += parseInt(tmp[2]);
-        });
-        $('#'+$(this).attr('id')+'-total').html(timeMins(time)+':'+timeSecs(time));
-      });
-      
+      updateChannelTotalTimers();
+
       /**
        * Update the position of the item to its new values. If it doesn't have them, set them.
        */
@@ -173,7 +166,7 @@ function initialiseUI() {
               $(this).attr('weight', parseInt($(this).attr('weight')) - 1);
             }
           });
-          
+
           console.log(dec);
 
           var current = ui.item;
@@ -190,7 +183,7 @@ function initialiseUI() {
               current.attr('weight', parseInt(current.attr('weight')) + 1);
             }
           }
-          
+
           console.log(dec);
           console.log(inc);
 
@@ -207,7 +200,8 @@ function initialiseUI() {
           }
 
           for (i in dec) {
-            if (dec[i] === null) continue;
+            if (dec[i] === null)
+              continue;
             var obj = $('ul.baps-channel li[timeslotitemid=' + dec[i] + ']');
             ops.push({
               op: 'MoveItem',
@@ -259,6 +253,7 @@ function initialiseUI() {
 
   registerItemClicks();
   setupGenericListeners();
+  updateChannelTotalTimers();
 }
 
 function initialisePlayer(channel) {
@@ -537,6 +532,20 @@ function timeSecs(time) {
     secs = '0' + secs;
   }
   return secs;
+}
+
+function updateChannelTotalTimers() {
+  $('.baps-channel').each(function() {
+    var time = 0;
+    $(this).children('li').each(function() {
+      var tmp = $(this).attr('length').split(':');
+      if (tmp.length !== 3)
+        return;
+      time += parseInt(tmp[1]) * 60;
+      time += parseInt(tmp[2]);
+    });
+    $('#' + $(this).attr('id') + '-total').html('(' + timeMins(time) + ':' + timeSecs(time) + ')');
+  });
 }
 
 function registerItemClicks() {
