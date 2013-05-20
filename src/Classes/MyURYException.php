@@ -65,6 +65,9 @@ class MyURYException extends RuntimeException {
           }
         }
       }
+      if (Config::$email_exceptions && class_exists('MyURYEmail')) {
+        MyURYEmail::sendEmailToComputing('Exception Thrown', $error."\r\n".$message."\r\n".print_r($GLOBALS,true));
+      }
     }
     if ($code === self::FATAL) {
       echo '<div class="ui-state-error">A fatal error has occured that has prevented MyURY from performing the action you requested.</div>';
