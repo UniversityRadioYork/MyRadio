@@ -160,7 +160,11 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     $getID3 = new getID3;
     $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
 
-    $_SESSION['uploadInfo'][$filename] = $fileInfo;
+    //The entire $fileInfo array will break Session.
+    $_SESSION['uploadInfo'][$filename] = array(
+        'fileformat' => $fileInfo['fileformat'],
+        'playtime_seconds' => $fileInfo['playtime_seconds']
+    );
 
     // File quality checks
     if ($fileInfo['audio']['bitrate'] < 192000) {
