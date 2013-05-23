@@ -173,7 +173,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
     return $id;
   }
 
-  public static function linkCentralLists(MyURY_ManagedItem $item) {
+  public static function linkCentralLists(NIPSWeb_ManagedItem $item) {
     if (in_array($item->getFolder(), array('jingles', 'beds', 'adverts')) !== false) {
       //Make a hard link if it doesn't exist
       $ln_path = Config::$music_central_db_path . '/membersmusic/'.$item->getFolder().'/' . self::sanitisePath($item->getTitle()).'.mp3';
