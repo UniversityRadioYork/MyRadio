@@ -264,7 +264,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
       //This is a central resource
       $result = self::$db->fetch_one('SELECT managedplaylistid FROM bapsplanner.managed_playlists WHERE folder=$1 LIMIT 1', array(str_replace('aux-', '', $options['auxid'])));
         if (empty($result))
-          return false;
+          throw new MyURYException($options['auxid'].' is not a valid playlist!');
         $playlistid = $result[0];
 
       $result = self::$db->query('INSERT INTO bapsplanner.managed_items (managedplaylistid, title, length, bpm, expirydate, memberid)
