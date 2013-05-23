@@ -160,10 +160,8 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
     //Make a hard link if it doesn't exist
     $ln_path = Config::$music_central_db_path . '/membersmusic/fileitems/' . self::sanitisePath($fileinfo['title']) . '_' . $auxid . '.mp3';
     if (!file_exists($ln_path)) {
-      error_reporting(E_ALL);
-      ini_set('display_errors', 'On');
-      if (!@link($GLOBALS['music_dir'] . $fileinfo['folder'] . '/' . $auxid . '.mp3', $ln_path)) {
-        echo 'Error Linking ' . $GLOBALS['music_dir'] . $fileinfo['folder'] . '/' . $auxid . '.mp3' . ' to ' . $ln_path;
+      if (!@link(Config::$music_central_db_path . '/membersmusic/' . $fileinfo['folder'] . '/' . $auxid . '.mp3', $ln_path)) {
+        trigger_error(Config::$music_central_db_path . '/membersmusic/' . $fileinfo['folder'] . '/' . $auxid . '.mp3' . ' to ' . $ln_path);
       }
     }
     $id = self::getFileItemFromPath($legacy_path);
