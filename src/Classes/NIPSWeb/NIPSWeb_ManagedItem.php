@@ -117,10 +117,11 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
   
   /**
    * Get the path of the ManagedItem
+   * @param String $ext One of the supported file types
    * @return string
    */
-  public function getPath() {
-    return Config::$music_central_db_path.'/'.($this->managed_playlist ? $this->managed_playlist->getFolder() : $this->folder).'/'.$this->getID().'.mp3';
+  public function getPath($extension = 'mp3') {
+    return Config::$music_central_db_path.'/'.($this->managed_playlist ? $this->managed_playlist->getFolder() : $this->folder).'/'.$this->getID().'.'.$extension;
   }
 
   public function getFolder() {
@@ -217,6 +218,8 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     elseif (!file_exists($dbfile.'.'.$_SESSION['uploadInfo'][$tmpid]['fileformat'].'.orig')) {
       return array('status' => 'FAIL', 'error' => 'Could not move file to library.', 'fileid' => $_REQUEST['fileid']);
     }
+    
+    NIPSWeb_BAPSUtils::linkCentralLists($item);
 
     return array('status' => 'OK');
   }
