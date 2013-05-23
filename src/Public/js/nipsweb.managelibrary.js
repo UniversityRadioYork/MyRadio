@@ -5,6 +5,7 @@
 window.auxid = null;
 function res_type_sel_change_handler() {
   $('div.res-container').hide();
+  if ($('#res-type-sel').val() === null) return;
   if ($('#res-type-sel').val() === 'central') {
     $('#central-container').show();
     return;

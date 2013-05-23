@@ -114,6 +114,7 @@ $(document).ready(function() {
             } else {
               $('#baps-channel-res').append(
                       '<li id="ManagedDB-' + data[file].managedid +
+                      '" length="'+data[file].length +
                       '" channel="res" weight="0" type="aux" managedid="' + data[file].managedid + '">'
                       + data[file].title + '</li>'
                       );
