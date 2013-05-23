@@ -262,7 +262,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     }
     else {
       //This is a central resource
-      $result = self::$db->fetch_one('SELECT managedplaylistid FROM bapsplanner.managed_playlists WHERE folder=$1 LIMIT 1', array(str_replace('aux-', '', $options['auxid'])));
+      $result = self::$db->fetch_one('SELECT managedplaylistid FROM bapsplanner.managed_playlists WHERE managedplaylistid=$1 LIMIT 1', array(str_replace('aux-', '', $options['auxid'])));
         if (empty($result))
           throw new MyURYException($options['auxid'].' is not a valid playlist!');
         $playlistid = $result[0];
