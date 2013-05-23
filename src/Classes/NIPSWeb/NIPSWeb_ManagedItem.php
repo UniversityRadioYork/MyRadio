@@ -221,7 +221,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     
     NIPSWeb_BAPSUtils::linkCentralLists($item);
 
-    return array('status' => 'OK');
+    return array('status' => 'OK', 'title' => $title);
   }
 
   /**
