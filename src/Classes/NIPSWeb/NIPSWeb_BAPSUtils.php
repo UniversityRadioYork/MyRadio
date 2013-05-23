@@ -23,8 +23,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
       //No match. Create a show
       $result = self::$db->fetch_column('INSERT INTO baps_show
         (userid, name, broadcastdate, externallinkid, viewable)
-        VALUES (4, $1, $2, $3, true) RETURNING showid',
-              array($timeslot->getName() . '-' . $timeslot->getID(), $timeslot->getStartTime(), $timeslot->getID()));
+        VALUES (4, $1, $2, $3, true) RETURNING showid', array($timeslot->getName() . '-' . $timeslot->getID(), $timeslot->getStartTime(), $timeslot->getID()));
     }
 
     return (int) $result[0];
@@ -103,7 +102,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
                 $file['title'],
                 $file['artist']
                     ), true);
-            
+
             break;
           case 'aux':
             //Get the LegacyDB ID of the file
@@ -161,7 +160,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
     $ln_path = Config::$music_central_db_path . '/membersmusic/fileitems/' . self::sanitisePath($fileinfo['title']) . '_' . $auxid . '.mp3';
     if (!file_exists($ln_path)) {
       if (!@link(Config::$music_central_db_path . '/membersmusic/' . $fileinfo['folder'] . '/' . $auxid . '.mp3', $ln_path)) {
-        trigger_error(Config::$music_central_db_path . '/membersmusic/' . $fileinfo['folder'] . '/' . $auxid . '.mp3' . ' to ' . $ln_path);
+        trigger_error('Could not link ' . Config::$music_central_db_path . '/membersmusic/' . $fileinfo['folder'] . '/' . $auxid . '.mp3' . ' to ' . $ln_path);
       }
     }
     $id = self::getFileItemFromPath($legacy_path);
@@ -172,6 +171,18 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
       return $r[0];
     }
     return $id;
+  }
+
+  public static function linkCentralLists(MyURY_ManagedItem $item) {
+    if (in_array($item->getFolder(), array('jingles', 'beds', 'adverts')) !== false) {
+      //Make a hard link if it doesn't exist
+      $ln_path = Config::$music_central_db_path . '/membersmusic/'.$item->getFolder().'/' . self::sanitisePath($item->getTitle()) . '_' . $item->getID() . '.mp3';
+      if (!file_exists($ln_path)) {
+        if (!@link($item->getPath(), $ln_path)) {
+          trigger_error('Could not link '.$item->getPath() . ' to ' . $ln_path);
+        }
+      }
+    }
   }
 
   /**
