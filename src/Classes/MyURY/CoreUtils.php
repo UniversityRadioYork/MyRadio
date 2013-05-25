@@ -354,7 +354,7 @@ class CoreUtils {
    * @assert (7449, 'Test') == null
    */
   public static function debug_for($userid, $message) {
-    if ($_SESSION['memberid'] === $userid)
+    if ($_SESSION['memberid'] == $userid)
       echo '<p>' . $message . '</p>';
   }
 
