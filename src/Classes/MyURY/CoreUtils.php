@@ -162,11 +162,13 @@ class CoreUtils {
     } else {
       $str = Config::$base_url . '?module=' . $module . (($action !== null) ? '&action=' . $action : '');
 
-      if (is_string($params)) {
-        $str .= $params;
-      } else {
-        foreach ($params as $k => $v) {
-          $str .= "&$k=$v";
+      if (!empty($params)) {
+        if (is_string($params)) {
+          $str .= $params;
+        } else {
+          foreach ($params as $k => $v) {
+            $str .= "&$k=$v";
+          }
         }
       }
     }
