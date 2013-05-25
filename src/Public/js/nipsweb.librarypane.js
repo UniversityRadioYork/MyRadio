@@ -12,7 +12,7 @@ var searchTimerRef = null;
 function updateCentralSearch() {
   $('#res-loading').show();
   $.ajax({
-    url: myury.makeURL('MyURY', 'a-findTrack'),
+    url: myury.makeURL('MyURY', 'a-findtrack'),
     type: 'post',
     data: 'artist=' + $('#res-filter-artist').val() + '&term=' + $('#res-filter-track').val(),
     success: function(data) {
