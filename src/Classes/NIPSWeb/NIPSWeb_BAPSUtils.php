@@ -64,7 +64,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
       if (!$exists) {
         $result = self::$db->query('INSERT INTO baps_listing (showid, name, channel)
           VALUES ($1, \'Channel ' . $channel . '\', $2)', array($showid, $channel));
-        $change = (bool) $result;
+        $change = true;
       }
     }
     //If the show definition has changed, recurse this method
