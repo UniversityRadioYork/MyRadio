@@ -7,7 +7,7 @@ window.audioNodes = new Array();
 window.clientid;
 window.debug = false;
 //Get a client id to identify this session
-$.post('?service=NIPSWeb&action=get_client_token', null, function(data) {
+$.post('?module=NIPSWeb&action=get_client_token', null, function(data) {
   window.clientid = parseInt(data);
 });
 
@@ -31,27 +31,6 @@ function initialiseUI() {
     },
     text: false
   }).addClass('ui-state-disabled');
-  $('button.btn-logout').button({
-    icons: {
-      primary: 'ui-icon-power'
-    },
-    text: false
-  });
-  $('button.btn-help').button({
-    icons: {
-      primary: 'ui-icon-help'
-    },
-    text: false
-  }).on('click', function() {
-    window.open("?service=NIPSWeb&action=faq", "nwfaq", "status = 1, height = 800, width = 400, resizable = 1");
-  });
-  $('button.btn-feedback').button({
-    icons: {
-      primary: 'ui-icon-comment'
-    }
-  }).on('click', function() {
-    window.open("/members/mail/send.php?listid=36", "nwfb", "status = 1, height = 600, width = 820, resizable = 1");
-  });
 
   $('ul.baps-channel').sortable({
     //connectWith allows drag and drop between the channels
@@ -244,7 +223,7 @@ function initialiseUI() {
           data: {clientid: window.clientid, ops: ops},
           dataType: 'json',
           type: 'POST',
-          url: '?service=NIPSWeb&action=recv_ops'
+          url: '?module=NIPSWeb&action=recv_ops'
         });
       }
     }
@@ -295,16 +274,16 @@ function previewLoad(channel) {
   if (type === 'central') {
     //Central Database Track
     $.ajax({
-      url: '?service=NIPSWeb&action=create_token',
+      url: '?module=NIPSWeb&action=create_token',
       type: 'post',
       data: 'trackid=' + data[1] + '&recordid=' + data[0],
       success: function() {
         if (playerVariables(channel).canPlayType('audio/mpeg')) {
           playerVariables(channel).type = 'audio/mpeg';
-          playerVariables(channel).src = '?service=NIPSWeb&action=secure_play&recordid=' + data[0] + '&trackid=' + data[1];
+          playerVariables(channel).src = '?module=NIPSWeb&action=secure_play&recordid=' + data[0] + '&trackid=' + data[1];
         } else if (playerVariables(channel).canPlayType('audio/ogg')) {
           playerVariables(channel).type = 'audio/ogg';
-          playerVariables(channel).src = '?service=NIPSWeb&action=secure_play&ogg=true&recordid=' + data[0] + '&trackid=' + data[1];
+          playerVariables(channel).src = '?module=NIPSWeb&action=secure_play&ogg=true&recordid=' + data[0] + '&trackid=' + data[1];
         } else {
           alert('Sorry, you need to use a modern browser to use Track Preview.');
         }
@@ -325,7 +304,7 @@ function previewLoad(channel) {
       }
     });
   } else if (type === 'aux') {
-    playerVariables(channel).src = '?service=NIPSWeb&action=managed_play&managedid=' + $('#' + audioid).attr('managedid');
+    playerVariables(channel).src = '?module=NIPSWeb&action=managed_play&managedid=' + $('#' + audioid).attr('managedid');
     $(playerVariables(channel)).on('canplay', function() {
       $('#ch' + channel + '-play').removeClass('ui-state-disabled');
     });
