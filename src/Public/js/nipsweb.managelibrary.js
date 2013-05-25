@@ -30,7 +30,7 @@ $(document).ready(function() {
   
   /** Central Database Handler **/
   $('#central-dragdrop').filedrop({
-    url: '?module=NIPSWeb&action=upload_central',
+    url: myury.makeURL('NIPSWeb', 'upload_central'),
     paramname: 'audio',
     error: function(err, file) {
       switch (err) {
