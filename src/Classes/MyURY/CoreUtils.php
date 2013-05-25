@@ -148,17 +148,16 @@ class CoreUtils {
   public static function makeURL($module, $action = null, $params = array()) {
     if (Config::$rewrite_url) {
       $str = Config::$base_url . $module . '/' . ($action !== null) ? $action . '/' : '';
-      if (!empty($params))
-        $str .= '?';
-
-      if (is_string($params)) {
-        $str .= $params;
-      } else {
-
-        foreach ($params as $k => $v) {
-          $str .= "$k=$v&";
+      if (!empty($params)) {
+        if (is_string($params)) {
+          $str .= $params;
+        } else {
+          $str .= '?';
+          foreach ($params as $k => $v) {
+            $str .= "$k=$v&";
+          }
+          $str = substr($str, 0, -1);
         }
-        $str = substr($str, 0, -1);
       }
     } else {
       $str = Config::$base_url . '?module=' . $module . ($action !== null) ? '&action=' . $action : '';
