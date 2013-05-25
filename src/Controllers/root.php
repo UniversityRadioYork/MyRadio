@@ -71,14 +71,6 @@ if (!Config::$display_errors && !CoreUtils::hasPermission(269)) {
 require 'Models/Core/api.php';
 
 /**
- * Set up the Module and Action global variables. These are used by Module/Action controllers as well as this file.
- * Notice how the default Module is MyURY. This is basically the MyURY Menu, and maybe a couple of admin pages.
- * Notice how the default Action is 'default'. This means that the "default" Controller should exist for all Modules.
- */
-$module = (isset($_REQUEST['module']) ? $_REQUEST['module'] : Config::$default_module);
-$action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : Config::$default_action);
-
-/**
  * The Service Broker decides what version of a Service the user has access to. This includes MyURY, so gets added
  * here.
  * @todo Discuss or document the parts of MyURY core that cannot be brokered, see if this can be moved earlier
@@ -86,14 +78,38 @@ $action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : Config::$default_a
 require_once 'Controllers/service_broker.php';
 
 /**
- * Check it exists first
- * a 404 is better than a random 403 for no reason.
+ * Set up the Module and Action global variables. These are used by Module/Action controllers as well as this file.
+ * Notice how the default Module is MyURY. This is basically the MyURY Menu, and maybe a couple of admin pages.
+ * Notice how the default Action is 'default'. This means that the "default" Controller should exist for all Modules.
+ * The top half deals with Rewritten URLs, which get mapped to ?request=
  */
-if (!CoreUtils::isValidController($module, $action)) {
-  //Yep, that doesn't exist.
-  require 'Controllers/Errors/404.php';
-  exit;
+if (isset($_REQUEST['request'])) {
+  $info = explode('/', $_REQUEST['request']);
+  //If both are defined, it's Module/Action
+  if (isset($info[1])) {
+    $module = $info[0];
+    $action = $info[1];
+    //If there's only one, determine if it's the module or action
+  } elseif (CoreUtils::isValidController(Config::$default_module, $info[0])) {
+    $module = CoreUtils::$default_module;
+    $action = $info[0];
+  } elseif (CoreUtils::isValidController($info[0], Config::$default_action)) {
+    $module = $info[0];
+    $action = CoreUtils::$default_action;
+  } else {
+    require 'Controllers/Errors/404.php';
+    exit;
+  }
+} else {
+  $module = (isset($_REQUEST['module']) ? $_REQUEST['module'] : Config::$default_module);
+  $action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : Config::$default_action);
+  if (!CoreUtils::isValidController($module, $action)) {
+    //Yep, that doesn't exist.
+    require 'Controllers/Errors/404.php';
+    exit;
+  }
 }
+
 /**
  * Use the Database authentication data to check whether the use has permission to access that.
  * This method will automatically cause a premature exit if necessary.
