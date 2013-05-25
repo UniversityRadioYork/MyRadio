@@ -12,7 +12,7 @@ var MyURYForm = {
     $('fieldset.myuryfrm input.member-autocomplete').each(function() {
       $(this).autocomplete({
         minLength: 3,
-        source: "index.php?module=Core&action=a-findmember",
+        source: "index.php?action=a-findmember",
         select: function(event, ui) {
         $(this).val(ui.item.fname + ' ' + ui.item.sname);
         $('#'+$(this).attr('id').replace(/-ui$/, '')).val(ui.item.memberid);
@@ -33,7 +33,7 @@ var MyURYForm = {
       console.log($('#'+$(this).attr('id').replace(/-ui$/, '')).val());
       if ($('#'+$(this).attr('id').replace(/-ui$/, '')).val() != '') {
         $.ajax({
-          url: "index.php?module=Core&action=a-membernamefromid&term="+$('#'+$(this).attr('id').replace(/-ui$/, '')).val(),
+          url: "index.php?action=a-membernamefromid&term="+$('#'+$(this).attr('id').replace(/-ui$/, '')).val(),
           context: this,
           success: function(data) {
             console.log($(this));
@@ -50,7 +50,7 @@ var MyURYForm = {
     $('fieldset.myuryfrm input.track-autocomplete').each(function() {
       $(this).autocomplete({
         minLength: 3,
-        source: "index.php?module=Core&action=a-findtrack",
+        source: "index.php?action=a-findtrack",
         select: function(event, ui) {
         $(this).val(ui.item.title);
         $('#'+$(this).attr('id').replace(/-ui$/, '')).val(ui.item.trackid);
@@ -75,7 +75,7 @@ var MyURYForm = {
     $('fieldset.myuryfrm input.artist-autocomplete').each(function() {
       $(this).autocomplete({
         minLength: 3,
-        source: "index.php?module=Core&action=a-findartist",
+        source: "index.php?action=a-findartist",
         select: function(event, ui) {
         $(this).val(ui.item.title);
         $('#'+$(this).attr('id').replace(/-ui$/, '')).val(ui.item.artistid);
