@@ -2,7 +2,7 @@
 /**
  * @todo Proper Documentation
  * @author Andy Durant <aj@ury.org.uk>
- * @version 21072012
+ * @version 20130525
  * @package MyURY_Podcast
  */
-$showlinked = (new Podcasts())->getShowLinkedPodcasts($member);
+$showlinked = (new MyURY_Podcast())->getShowLinkedPodcasts($member);

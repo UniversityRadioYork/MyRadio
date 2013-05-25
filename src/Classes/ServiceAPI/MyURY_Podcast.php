@@ -13,7 +13,7 @@
  * @package MyURY_Podcast
  * @version 21072012
  */
-class Podcast extends ServiceAPI {
+class MyURY_Podcast extends ServiceAPI {
 
   /**
    * Returns the Show Linked Podcasts for the given user
