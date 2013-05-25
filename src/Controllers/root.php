@@ -91,11 +91,11 @@ if (isset($_REQUEST['request'])) {
     $action = $info[1];
     //If there's only one, determine if it's the module or action
   } elseif (CoreUtils::isValidController(Config::$default_module, $info[0])) {
-    $module = CoreUtils::$default_module;
+    $module = Config::$default_module;
     $action = $info[0];
   } elseif (CoreUtils::isValidController($info[0], Config::$default_action)) {
     $module = $info[0];
-    $action = CoreUtils::$default_action;
+    $action = Config::$default_action;
   } else {
     require 'Controllers/Errors/404.php';
     exit;
