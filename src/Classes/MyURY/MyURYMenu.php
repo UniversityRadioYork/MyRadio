@@ -223,10 +223,11 @@ class MyURYMenu {
           //This could be multiple variables separated by &
           $params = $exp[2];
         } else {
-          $params = '';
+          $params = null;
         }
       } else {
         $action = null;
+        $params = null;
       }
       $url = CoreUtils::makeURL($module, $action, $params);
     } else {
