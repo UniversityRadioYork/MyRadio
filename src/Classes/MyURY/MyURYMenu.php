@@ -212,10 +212,10 @@ class MyURYMenu {
    */
   private function parseURL($url, $return = 'url') {
     $exp = explode(',', $url);
-    print_r($exp);
-    if (str_replace('module=', '', $exp[0]) === 1) {
+    
+    $module = str_replace('module=', '', $exp[0], $count);
+    if ($count === 1) {
       //It can be rewritten!
-      $module = $exp[0];
       if (isset($exp[1])) {
         //An action is defined!
         $action = str_replace('action=','',$exp[1]);
