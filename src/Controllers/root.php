@@ -4,15 +4,8 @@
  * This is the Root Controller - it is the backbone of every request, preparing resources and passing the request onto
  * the necessary handler.
  * 
- * Some clarification about the two different 'Core' parts. They both use the package MyURY_Core, but the folders
- * distinguish them. Items in folders such as Models/Core or just Controllers are part of the Core code required
- * to make any of the MyURY system work, including Service access.
- * 
- * Items in Models/MyURY/Core etc. are required to make the MyURY Service work - its module/action system. The
- * Services system should be able to operate without this, but not other modules. I hope this clears things up a bit.
- * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 21072012
+ * @version 20130525
  * @package MyURY_Core
  * @uses Shibbobleh
  * @uses \CacheProvider
