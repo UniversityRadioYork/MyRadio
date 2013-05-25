@@ -88,7 +88,7 @@ class MyURY_Podcast extends ServiceAPI {
       foreach ($podcasts as $key => $podcast) {
         if (!isset($podcast['podid']))
           continue; //Skip twigitems
-        $podcasts[$key]['permissions'] = $db->fetch_column('SELECT typeid FROM myury.menu_auth
+        $podcasts[$key]['permissions'] = self::$db->fetch_column('SELECT typeid FROM myury.menu_auth
           WHERE linkid=$1', array($podcast['podid']));
         $podcasts[$key]['url'] = $this->parseURL($item['url']);
       }
