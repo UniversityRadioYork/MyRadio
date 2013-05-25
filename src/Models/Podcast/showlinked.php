@@ -5,4 +5,4 @@
  * @version 20130525
  * @package MyURY_Podcast
  */
-$showlinked = (new MyURY_Podcast())->getShowLinkedPodcasts($member);
+$showlinked = (new MyURY_Podcast())->getShowLinkedPodcastsForUser($member);
