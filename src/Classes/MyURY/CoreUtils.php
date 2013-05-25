@@ -46,7 +46,7 @@ class CoreUtils {
      * This is better than file_exists because it ensures that the response is valid for a version which has the file
      * when live does not
      */
-    return is_string(stream_resolve_include_path('Controllers/MyURY/' . $module . '/' . $action . '.php'));
+    return is_string(stream_resolve_include_path('Controllers/' . $module . '/' . $action . '.php'));
   }
 
   /**
@@ -199,38 +199,35 @@ class CoreUtils {
   }
 
   /**
-   * Checks if the user has the given permissions required for the given Service/Module/Action combination
+   * Checks if the user has the given permissions required for the given Module/Action combination
    * 
    * The query needs a little bit of explaining.<br>
-   * The first three WHERE clauses just set up foreign key references - we're searching by name, not ID.<br>
-   * The next three WHERE clauses return exact or wildcard matches for this Service/Module/Action combination.<br>
+   * The first two WHERE clauses just set up foreign key references - we're searching by name, not ID.<br>
+   * The next two WHERE clauses return exact or wildcard matches for this Module/Action combination.<br>
    * The final two AND NOT phrases make sure it ignores wildcards that allow any access.
    * 
-   * @param String $service The Service to check permissions for
    * @param String $module The Module to check permissions for
    * @param String $action The Action to check permissions for
    * @param bool $require If true, will die if the user does not have permission. If false, will just return false
    * @return bool True on required or authorised, false on unauthorised
    */
-  public static function requirePermissionAuto($service, $module, $action, $require = true) {
+  public static function requirePermissionAuto($module, $action, $require = true) {
     self::setUpAuth();
     $db = Database::getInstance();
     /**
      * 
      */
-    $result = $db->fetch_column('SELECT typeid FROM myury.act_permission, myury.services, myury.modules, myury.actions
+    $result = $db->fetch_column('SELECT typeid FROM myury.act_permission, myury.modules, myury.actions
       WHERE myury.act_permission.actionid=myury.actions.actionid
       AND myury.act_permission.moduleid=myury.modules.moduleid
-      AND myury.act_permission.serviceid=myury.services.serviceid
-      AND myury.services.name=$1
       AND (myury.modules.name=$2 OR myury.act_permission.moduleid IS NULL)
       AND (myury.actions.name=$3 OR myury.act_permission.actionid IS NULL)
       AND NOT (myury.act_permission.actionid IS NULL AND myury.act_permission.typeid IS NULL)
-      AND NOT (myury.act_permission.moduleid IS NULL AND myury.act_permission.typeid IS NULL)', array($service, $module, $action));
+      AND NOT (myury.act_permission.moduleid IS NULL AND myury.act_permission.typeid IS NULL)', array($module, $action));
 
     //Don't allow empty result sets - throw an Exception as this is very very bad.
     if (empty($result)) {
-      throw new MyURYException('There are no permissions defined for the ' . $service . '/' . $module . '/' . $action . ' action!');
+      throw new MyURYException('There are no permissions defined for the ' . $module . '/' . $action . ' action!');
       return false;
     }
 
@@ -341,45 +338,18 @@ class CoreUtils {
   }
 
   /**
-   * Returns the ID of a Service, creating it if necessary
+   * Returns the ID of a Module, creating it if necessary
    * @todo Document this
-   * @param type $service
-   * @param bool $create Whether to create the service if it doesn't exist
-   * @return type
-   * @assert ('Lady Quackington') throws MyURYException
-   */
-  public static function getServiceId($service, $create = false) {
-    if (isset(self::$svc_id_cache[$service])) return self::$svc_id_cache[$service];
-    
-    $db = Database::getInstance();
-    $result = $db->fetch_column('SELECT serviceid FROM myury.services WHERE name=$1', array($service));
-
-    if (empty($result)) {
-      if ($create) {
-        //The service needs creating
-        $result = $db->fetch_column('INSERT INTO myury.services (name) VALUES ($1) RETURNING serviceid', array($service));
-      } else {
-        throw new MyURYException('Service ' . $service . ' does not exist.');
-      }
-    }
-    self::$svc_id_cache[$service] = (int)$result[0];
-    return self::$svc_id_cache[$service];
-  }
-
-  /**
-   * Returns the ID of a Service/Module combination, creating it if necessary
-   * @todo Document this
-   * @param type $service
    * @param type $module
    * @return type
    */
-  public static function getModuleId($service, $module) {
+  public static function getModuleId($module) {
     $db = Database::getInstance();
-    $result = $db->fetch_column('SELECT moduleid FROM myury.modules WHERE serviceid=$1 AND name=$2', array($service, $module));
+    $result = $db->fetch_column('SELECT moduleid FROM myury.modules WHERE name=$2', array($module));
 
     if (empty($result)) {
       //The module needs creating
-      $result = $db->fetch_column('INSERT INTO myury.modules (serviceid, name) VALUES ($1, $2) RETURNING moduleid', array($service, $module));
+      $result = $db->fetch_column('INSERT INTO myury.modules (serviceid, name) VALUES ($1, $2) RETURNING moduleid', array(Config::$service_id, $module));
     }
     return $result[0];
   }
@@ -405,23 +375,22 @@ class CoreUtils {
   /**
    * Assigns a permission to a command
    * @todo Document
-   * @param type $service
    * @param type $module
    * @param type $action
    * @param type $permission
    */
-  public static function addActionPermission($service, $module, $action, $permission) {
+  public static function addActionPermission($module, $action, $permission) {
     $db = Database::getInstance();
     $db->query('INSERT INTO myury.act_permission (serviceid, moduleid, actionid, typeid)
-      VALUES ($1, $2, $3, $4)', array($service, $module, $action, $permission));
+      VALUES ($1, $2, $3, $4)', array(Config::$service_id, $module, $action, $permission));
   }
 
   /**
    * @todo Document this
-   * @param type $serviceid
    * @param User $user
    */
-  public static function getServiceVersionForUser($serviceid, User $user) {
+  public static function getServiceVersionForUser(User $user) {
+    $serviceid = Config::$service_id;
     $key = $serviceid . '-' . $user->getID();
 
     if (!isset(self::$svc_version_cache[$key])) {
@@ -444,7 +413,7 @@ class CoreUtils {
          )', array($serviceid, $user->getID()));
 
       if (empty($result)) {
-        self::$svc_version_cache[$key] = self::getDefaultServiceVersion($serviceid);
+        self::$svc_version_cache[$key] = self::getDefaultServiceVersion();
       } else {
         self::$svc_version_cache[$key] = $result;
       }
@@ -454,25 +423,23 @@ class CoreUtils {
 
   /**
    * @todo Document this.
-   * @param type $serviceid
    * @return boolean
    */
-  public static function getDefaultServiceVersion($serviceid) {
+  public static function getDefaultServiceVersion() {
     $db = Database::getInstance();
 
     return $db->fetch_one('SELECT version, path FROM myury.services_versions WHERE serviceid=$1 AND is_default=true
-      LIMIT 1', array($serviceid));
+      LIMIT 1', array(Config::$service_id));
   }
 
   /**
    * @todo Document this.
-   * @param type $serviceid
    * @return boolean
    */
-  public static function getServiceVersions($serviceid) {
+  public static function getServiceVersions() {
     $db = Database::getInstance();
 
-    return $db->fetch_all('SELECT version, path FROM myury.services_versions WHERE serviceid=$1', array($serviceid));
+    return $db->fetch_all('SELECT version, path FROM myury.services_versions WHERE serviceid=$1', array(Config::$service_id));
   }
 
   /**

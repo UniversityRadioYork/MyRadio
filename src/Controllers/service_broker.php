@@ -4,11 +4,14 @@
  * user to, with a seamless URL for everyone
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130509
+ * @version 20130525
  * @package MyURY_Core
  * 
  * @uses $service - The current service being requested
  * @uses $member - The current user
+ * 
+ * @deprecated 20130525 There is now only one Service - MyURY. Modules are not seperate.
+ * @todo Remove unneccessary queries for services
  * 
  * Sets the $service_version Global Variable
  */
@@ -22,14 +25,9 @@
 if (CoreUtils::hasPermission(270)) {
   require 'Controllers/brokerVersion.php';
 }
-$path = CoreUtils::getServiceVersionForUser(CoreUtils::getServiceId($service), $member);
-if ($path === false
-    //MyURY is a special case - *everyone* has this Service by default
-    && $service !== 'MyURY') {
-  //This user doesn't have permission to use that Service
-  require 'Controllers/Errors/403.php';
-  exit;
-}
+
+$path = CoreUtils::getServiceVersionForUser($member);
+
 $service_version = $path['version'];
 set_include_path($path['path'].':'.get_include_path());
 $service_path = $path['path'];

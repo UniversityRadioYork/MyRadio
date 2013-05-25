@@ -174,7 +174,7 @@ class MyURYMenu {
    */
   private function userHasPermission($item) {
     return empty($item['action']) or
-              CoreUtils::requirePermissionAuto($item['service'], $item['module'], $item['action'], false);
+              CoreUtils::requirePermissionAuto($item['module'], $item['action'], false);
   }
 
   /**
