@@ -214,7 +214,6 @@ class MyURYMenu {
     $exp = explode(',', $url);
     
     $module = str_replace('module=', '', $exp[0], $count);
-    echo $module;
     if ($count === 1) {
       //It can be rewritten!
       if (isset($exp[1])) {
