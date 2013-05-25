@@ -90,7 +90,7 @@ class MyURY_Podcast extends ServiceAPI {
           continue; //Skip twigitems
         $podcasts[$key]['permissions'] = self::$db->fetch_column('SELECT typeid FROM myury.menu_auth
           WHERE linkid=$1', array($podcast['podid']));
-        $podcasts[$key]['url'] = $this->parseURL($item['url']);
+        $podcasts[$key]['url'] = self::parseURL($item['url']);
       }
 
       //That'll do for now. Time to make $showlinked

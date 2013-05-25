@@ -145,12 +145,19 @@ class CoreUtils {
    * @throws MyURYException 
    */
   public static function makeURL($module, $action, $params = array()) {
-    if (Config::$rewrite_url)
-      throw new MyURYException('Rewritten URLs not implemented');
-    $str = Config::$base_url . '?module=' . $module . '&action=' . $action;
-
-    foreach ($params as $k => $v) {
-      $str .= "&$k=$v";
+    if (Config::$rewrite_url) {
+      $str = Config::$base_url . $module . '/' . $action . '/';
+      if (!empty($params)) $str .= '?';
+      foreach ($params as $k => $v) {
+        $str .= "$k=$v&";
+      }
+      $str = substr($str, 0, -1);
+    } else { 
+      $str = Config::$base_url . '?module=' . $module . '&action=' . $action;
+      
+      foreach ($params as $k => $v) {
+        $str .= "&$k=$v";
+      }
     }
     return $str;
   }
