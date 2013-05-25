@@ -147,8 +147,8 @@ class CoreUtils {
    */
   public static function makeURL($module, $action = null, $params = array()) {
     if (Config::$rewrite_url) {
-      echo $module;
       $str = Config::$base_url . $module . '/' . ($action !== null) ? $action . '/' : '';
+      echo $str;
       if (!empty($params)) {
         if (is_string($params)) {
           $str .= $params;
