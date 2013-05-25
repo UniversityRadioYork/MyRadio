@@ -27,7 +27,7 @@ class MyURY_Podcast extends ServiceAPI {
       return $cache;
 
     //Okay, it isn't cached. Maybe at least the podcast result set is
-    $full = $this->getAllShowLinkedPodcasts();
+    $full = self::getAllShowLinkedPodcasts();
 
     //Iterate over the Full Podcast List, creating a user customised list
     $showlinked = array();
@@ -57,7 +57,7 @@ class MyURY_Podcast extends ServiceAPI {
       }
 
       if (!empty($newColumn['sections'])) $showlinked[] = $newColumn;
-      $this->cache->set('Podcast_ShowLinked_' . $user->getID(), $showlinked, 3600);
+      self::$cache->set('Podcast_ShowLinked_' . $user->getID(), $showlinked, 3600);
     }
 
     return $showlinked;
@@ -67,12 +67,11 @@ class MyURY_Podcast extends ServiceAPI {
    * @todo Andy Durant needs to document the return format
    */
   public function getAllShowLinkedPodcasts() {
-    $showlinked = $this->cache->get('Podcast_ShowLinked_Full');
+    $showlinked = self::$cache->get('Podcast_ShowLinked_Full');
     if ($showlinked === false) {
       //It's not cached. Let's generate it now
-      $db = Database::getInstance();
       //First, shows
-      $shows = $db->fetch_all('SELECT DISTINCT summary, entryid, createddate
+      $shows = self::$db->fetch_all('SELECT DISTINCT summary, entryid, createddate
 						FROM sched_entry
 						INNER JOIN pod_item USING (entryid)
 					UNION
@@ -82,7 +81,7 @@ class MyURY_Podcast extends ServiceAPI {
 						INNER JOIN pod_item USING (entryid)
 					ORDER BY createddate DESC');
       //Now Podcasts for those shows
-      $podcasts = $db->fetch_all('SELECT podid, title, extract(epoch FROM dateadded)
+      $podcasts = self::$db->fetch_all('SELECT podid, title, extract(epoch FROM dateadded)
                                         FROM pod_item
                                     ORDER BY dateadded DESC');
       //Get permissions for each $item
@@ -118,7 +117,7 @@ class MyURY_Podcast extends ServiceAPI {
         $showlinked[] = $newShow;
       }
       //Cache for a long, long while
-      $this->cache->set('Podcast_ShowLinked_Full', $showlinked);
+      self::$cache->set('Podcast_ShowLinked_Full', $showlinked);
     }
     return $showlinked;
   }
