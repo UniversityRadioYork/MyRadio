@@ -160,7 +160,7 @@ class CoreUtils {
         }
       }
     } else {
-      $str = Config::$base_url . '?module=' . $module . ($action !== null) ? '&action=' . $action : '';
+      $str = Config::$base_url . '?module=' . $module . (($action !== null) ? '&action=' . $action : '');
 
       if (is_string($params)) {
         $str .= $params;
