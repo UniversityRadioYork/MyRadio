@@ -67,7 +67,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
         $change = true;
       }
     }
-    CoreUtils::debug_for(7449, print_r($listings,true));
+    CoreUtils::debug_for(7449, print_r($channels,true));
     //If the show definition has changed, recurse this method
     if ($change)
       return $this->getListingsForShow($showid);
