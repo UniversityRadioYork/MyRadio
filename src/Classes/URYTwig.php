@@ -30,7 +30,7 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
     $this->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null);
     $this->addVariable('shiburl', Config::$shib_url);
     $this->addVariable('baseurl', Config::$base_url);
-    
+    $this->addVariable('rewriteurl', Config::$rewrite_url);
   }
   
   /**
