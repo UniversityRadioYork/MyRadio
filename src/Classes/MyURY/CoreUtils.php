@@ -346,7 +346,7 @@ class CoreUtils {
    */
   public static function getModuleId($module) {
     $db = Database::getInstance();
-    $result = $db->fetch_column('SELECT moduleid FROM myury.modules WHERE name=$2', array($module));
+    $result = $db->fetch_column('SELECT moduleid FROM myury.modules WHERE name=$1', array($module));
 
     if (empty($result)) {
       //The module needs creating
