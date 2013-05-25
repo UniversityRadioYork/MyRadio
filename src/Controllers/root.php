@@ -103,7 +103,5 @@ if (!CoreUtils::isValidController($module, $action)) {
  */
 CoreUtils::requirePermissionAuto($module, $action);
 
-//Always include the MyURY Bootstrap
-require 'Controllers/bootstrap.php';
 //Include the requested action
 require 'Controllers/' . $module . '/' . $action . '.php';
