@@ -12,7 +12,7 @@ var searchTimerRef = null;
 function updateCentralSearch() {
   $('#res-loading').show();
   $.ajax({
-    url: '?action=a-findtrack&require_digitised=true&limit=200',
+    url: myury.makeURL('MyURY', 'a-findTrack'),
     type: 'post',
     data: 'artist=' + $('#res-filter-artist').val() + '&term=' + $('#res-filter-track').val(),
     success: function(data) {
@@ -51,9 +51,9 @@ $(document).ready(function() {
       //Load a managed playlist
       $('#res-loading').show();
       $.ajax({
-        url: '?action=a-findtrack&digitised=true&limit=0',
+        url: myury.makeURL('MyURY', 'a-findtrack'),
         type: 'post',
-        data: 'itonesplaylistid=' + $(this).val().replace(/managed-/,''),
+        data: {itonesplaylistid: $(this).val().replace(/managed-/,''), digitised: true, limit: 0},
         success: function(data) {
           for (file in data) {
             $('#baps-channel-res').append(
@@ -78,7 +78,7 @@ $(document).ready(function() {
       //Load an auto playlist
       $('#res-loading').show();
       $.ajax({
-        url: '?module=NIPSWeb&action=load_auto_managed',
+        url: myury.makeURL('NIPSWeb', 'load_auto_managed'),
         type: 'post',
         data: 'playlistid=' + $(this).val(),
         success: function(data) {
@@ -104,7 +104,7 @@ $(document).ready(function() {
     } else if ($(this).val().match(/^aux-\d+|^user-.*/)) {
       $('#res-loading').show();
       $.ajax({
-        url: '?module=NIPSWeb&action=load_aux_lib',
+        url: myury.makeURL('NIPSWeb', 'load_aux_lib'),
         type: 'post',
         data: 'libraryid=' + $(this).val(),
         success: function(data) {
@@ -137,7 +137,8 @@ $(document).ready(function() {
     $('#baps-channel-res').empty();
     //Makes the artist search autocompleting. When an artist is selected it'll filter
     $('#res-filter-artist').autocomplete({
-      source: '?action=a-findartist&limit=50',
+      source: myury.makeURL('MyURY', 'a-findartist'),
+      data: {limit: 50},
       minLength: 2,
       select: function(event, ui) {
         $(this).val(ui.item.title);
