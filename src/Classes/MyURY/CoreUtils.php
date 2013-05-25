@@ -36,7 +36,8 @@ class CoreUtils {
    * @assert ('foo', '../bar') === false
    */
   public static function isValidController($module, $action = null) {
-    if ($action === null) $action = Config::$default_action;
+    if ($action === null)
+      $action = Config::$default_action;
     try {
       self::actionSafe($action);
       self::actionSafe($module);
@@ -144,19 +145,30 @@ class CoreUtils {
    * @return type
    * @throws MyURYException 
    */
-  public static function makeURL($module, $action, $params = array()) {
+  public static function makeURL($module, $action = null, $params = array()) {
     if (Config::$rewrite_url) {
-      $str = Config::$base_url . $module . '/' . $action . '/';
-      if (!empty($params)) $str .= '?';
-      foreach ($params as $k => $v) {
-        $str .= "$k=$v&";
+      $str = Config::$base_url . $module . '/' . ($action !== null) ? $action . '/' : '';
+      if (!empty($params))
+        $str .= '?';
+
+      if (is_string($params)) {
+        $str .= $params;
+      } else {
+
+        foreach ($params as $k => $v) {
+          $str .= "$k=$v&";
+        }
+        $str = substr($str, 0, -1);
       }
-      $str = substr($str, 0, -1);
-    } else { 
-      $str = Config::$base_url . '?module=' . $module . '&action=' . $action;
-      
-      foreach ($params as $k => $v) {
-        $str .= "&$k=$v";
+    } else {
+      $str = Config::$base_url . '?module=' . $module . ($action !== null) ? '&action=' . $action : '';
+
+      if (is_string($params)) {
+        $str .= $params;
+      } else {
+        foreach ($params as $k => $v) {
+          $str .= "&$k=$v";
+        }
       }
     }
     return $str;

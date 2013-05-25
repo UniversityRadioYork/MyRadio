@@ -155,12 +155,11 @@ class MyURYMenu {
   /**
    * Takes a $url database column entry, and breaks it into its components
    * @param String $url A database-fetched menu item URL
-   * @return Array with four keys - 'url', 'service', 'module', 'action'. All are the String names, not IDs.
+   * @return Array with four keys - 'url', 'module', 'action'. All are the String names, not IDs.
    */
   private function breakDownURL($url) {
     return array(
         'url' => $this->parseURL($url),
-        'service' => $this->parseURL($url, 'service'),
         'module' => $this->parseURL($url, 'module'),
         'action' => $this->parseURL($url, 'action')
     );
@@ -213,40 +212,39 @@ class MyURYMenu {
    */
   private function parseURL($url, $return = 'url') {
     $exp = explode(',', $url);
-    if (preg_match('/^(module|service)=/', $exp[0]) == 1) {
+    if (preg_match('/^module=/', $exp[0]) == 1) {
       //It can be rewritten!
-      $url = '?' . $exp[0];
+      $module = $exp[0];
       if (isset($exp[1])) {
         //An action is defined!
-        $url .= '&' . $exp[1];
+        $action = $exp[1];
         if (isset($exp[2])) {
           //An additional query string
           //This could be multiple variables separated by &
-          $url .= '&' . $exp[2];
+          $params = $exp[2];
+        } else {
+          $params = '';
         }
+      } else {
+        $action = null;
       }
+      $url = CoreUtils::makeURL($module, $action, $params);
     } else {
       //It's not a rewritable
       if ($return !== 'url')
         return null;
     }
-    if ($return === 'service') {
-      if (preg_match('/^service=/', $exp[0]) == 1) {
-        return str_replace('service=', '', $exp[0]);
-      } else {
-        return 'MyURY';
-      }
-    } elseif ($return === 'module') {
+    if ($return === 'module') {
       if (preg_match('/^module=/', $exp[0]) == 1) {
         return str_replace('module=', '', $exp[0]);
       } else {
-        return 'Core';
+        return Config::$default_module;
       }
     } elseif ($return === 'action') {
       if (isset($exp[1])) {
         return str_replace('action=', '', $exp[1]);
       } else {
-        return 'default';
+        return Config::$default_action;
       }
     }
     return $url;
