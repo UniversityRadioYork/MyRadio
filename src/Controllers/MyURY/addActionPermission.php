@@ -6,7 +6,7 @@
  * @version 24072012
  */
 
-require 'Models/MyURY/Core/actionPermissionsForm.php';
+require 'Models/MyURY/actionPermissionsForm.php';
 $data = $form->readValues();
-require 'Models/MyURY/Core/addActionPermission.php';
-require 'Views/MyURY/Core/back.php';
+require 'Models/MyURY/addActionPermission.php';
+require 'Views/MyURY/back.php';
