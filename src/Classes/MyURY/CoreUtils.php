@@ -35,7 +35,8 @@ class CoreUtils {
    * @assert ('../foo', 'bar') === false
    * @assert ('foo', '../bar') === false
    */
-  public static function isValidController($module, $action = 'default') {
+  public static function isValidController($module, $action = null) {
+    if ($action === null) $action = Config::$default_action;
     try {
       self::actionSafe($action);
       self::actionSafe($module);

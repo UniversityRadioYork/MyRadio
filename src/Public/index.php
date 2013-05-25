@@ -13,8 +13,7 @@
  * - $action - The action requested
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 22052012
- * @todo Version brokering for MyURY Core Service
+ * @version 20130525
  * @package MyURY_Core
  */
 
