@@ -86,7 +86,7 @@ require_once 'Controllers/service_broker.php';
 if (isset($_REQUEST['request'])) {
   $info = explode('/', $_REQUEST['request']);
   //If both are defined, it's Module/Action
-  if (isset($info[1])) {
+  if (!empty($info[1])) {
     $module = $info[0];
     $action = $info[1];
     //If there's only one, determine if it's the module or action
