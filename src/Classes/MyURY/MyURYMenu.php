@@ -217,7 +217,7 @@ class MyURYMenu {
       $module = $exp[0];
       if (isset($exp[1])) {
         //An action is defined!
-        $action = $exp[1];
+        $action = str_replace('action=','',$exp[1]);
         if (isset($exp[2])) {
           //An additional query string
           //This could be multiple variables separated by &
