@@ -9,7 +9,7 @@ $(document).ready(function() {
     buttons: {
       'Continue': function() {
         $.ajax({
-          url: 'index.php?module=Core&action=a-readnews',
+          url: 'index.php?action=a-readnews',
           type: 'post',
           data: 'newsentryid='+($(this).attr('id').replace(/newsentry\-/,''))
         });

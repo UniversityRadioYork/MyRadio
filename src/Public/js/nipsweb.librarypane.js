@@ -12,7 +12,7 @@ var searchTimerRef = null;
 function updateCentralSearch() {
   $('#res-loading').show();
   $.ajax({
-    url: '?module=Core&action=a-findtrack&require_digitised=true&limit=200',
+    url: '?action=a-findtrack&require_digitised=true&limit=200',
     type: 'post',
     data: 'artist=' + $('#res-filter-artist').val() + '&term=' + $('#res-filter-track').val(),
     success: function(data) {
@@ -51,7 +51,7 @@ $(document).ready(function() {
       //Load a managed playlist
       $('#res-loading').show();
       $.ajax({
-        url: '?module=Core&action=a-findtrack&digitised=true&limit=0',
+        url: '?action=a-findtrack&digitised=true&limit=0',
         type: 'post',
         data: 'itonesplaylistid=' + $(this).val().replace(/managed-/,''),
         success: function(data) {
@@ -78,7 +78,7 @@ $(document).ready(function() {
       //Load an auto playlist
       $('#res-loading').show();
       $.ajax({
-        url: '?service=NIPSWeb&action=load_auto_managed',
+        url: '?module=NIPSWeb&action=load_auto_managed',
         type: 'post',
         data: 'playlistid=' + $(this).val(),
         success: function(data) {
@@ -104,7 +104,7 @@ $(document).ready(function() {
     } else if ($(this).val().match(/^aux-\d+|^user-.*/)) {
       $('#res-loading').show();
       $.ajax({
-        url: '?service=NIPSWeb&action=load_aux_lib',
+        url: '?module=NIPSWeb&action=load_aux_lib',
         type: 'post',
         data: 'libraryid=' + $(this).val(),
         success: function(data) {
@@ -137,7 +137,7 @@ $(document).ready(function() {
     $('#baps-channel-res').empty();
     //Makes the artist search autocompleting. When an artist is selected it'll filter
     $('#res-filter-artist').autocomplete({
-      source: '?module=Core&action=a-findartist&limit=50',
+      source: '?action=a-findartist&limit=50',
       minLength: 2,
       select: function(event, ui) {
         $(this).val(ui.item.title);
