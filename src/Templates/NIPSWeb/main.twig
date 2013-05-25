@@ -1,9 +1,9 @@
 {% extends 'base.twig' %}
 {% block head %}
 {{ parent() }}
-<script type="text/javascript" src="js/ul-sort.js"></script>
-<script type="text/javascript" src="js/nipsweb.player.js"></script>
-<script type="text/javascript" src="js/nipsweb.librarypane.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.player.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.librarypane.js"></script>
 <link rel="stylesheet" type="text/css" href="{{shiburl}}css/planner.css" />
 {% endblock %}
 {% block content %}
