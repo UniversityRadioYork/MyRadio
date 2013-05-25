@@ -4,7 +4,7 @@
  */
 require 'Views/Profile/bootstrap.php';
 
-$twig->setTemplate('Profile/focus.twig')
+$twig->setTemplate('Webcam/focus.twig')
         ->addVariable('streams', $streams)
         ->addVariable('live', $live)
         ->render();

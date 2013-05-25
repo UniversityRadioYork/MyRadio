@@ -2,8 +2,8 @@
 /**
  * @todo Document
  */
-require 'Views/Profile/bootstrap.php';
+require 'Views/Webcam/bootstrap.php';
 
-$twig->setTemplate('Profile/grid.twig')
+$twig->setTemplate('Webcam/grid.twig')
         ->addVariable('streams', $streams)
         ->render();
