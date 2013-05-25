@@ -212,7 +212,8 @@ class MyURYMenu {
    */
   private function parseURL($url, $return = 'url') {
     $exp = explode(',', $url);
-    if (preg_match('/^module=/', $exp[0]) == 1) {
+    print_r($exp);
+    if (str_replace('module=', '', $exp[0]) === 1) {
       //It can be rewritten!
       $module = $exp[0];
       if (isset($exp[1])) {
@@ -236,11 +237,7 @@ class MyURYMenu {
         return null;
     }
     if ($return === 'module') {
-      if (preg_match('/^module=/', $exp[0]) == 1) {
-        return str_replace('module=', '', $exp[0]);
-      } else {
-        return Config::$default_module;
-      }
+      return $module;
     } elseif ($return === 'action') {
       if (isset($exp[1])) {
         return str_replace('action=', '', $exp[1]);
