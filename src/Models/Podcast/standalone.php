@@ -2,7 +2,7 @@
 /**
  * @todo Proper Documentation
  * @author Andy Durant <aj@ury.org.uk>
- * @version 21072012
+ * @version 20130525
  * @package MyURY_Podcast
  */
-$standalone = (new Podcasts())->getStandalonePodcasts($member);
+$standalone = (new MyURY_Podcast())->getStandalonePodcasts($member);
