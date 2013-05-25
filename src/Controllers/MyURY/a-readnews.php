@@ -10,4 +10,4 @@
  * @package MyURY_Core
  */
 MyURYNews::markNewsAsRead((int)$_REQUEST['newsentryid'], $member);
-require 'Views/MyURY/Core/nocontent.php';
+require 'Views/MyURY/nocontent.php';

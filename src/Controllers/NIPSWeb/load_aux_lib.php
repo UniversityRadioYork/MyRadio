@@ -17,4 +17,4 @@ else {
   $data = NIPSWeb_ManagedUserPlaylist::getInstance($libraryid)->getItems();
 }
 
-require 'Views/MyURY/Core/datatojson.php';
+require 'Views/MyURY/datatojson.php';

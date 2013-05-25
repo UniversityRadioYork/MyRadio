@@ -8,4 +8,4 @@
  */
 $data = NIPSWeb_Token::getEditToken();
 
-require 'Views/MyURY/Core/datatojson.php';
+require 'Views/MyURY/datatojson.php';

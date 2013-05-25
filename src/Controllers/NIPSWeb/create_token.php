@@ -8,4 +8,4 @@
  */
 NIPSWeb_Token::createToken($_REQUEST['trackid']);
 
-require 'Views/MyURY/Core/nocontent.php';
+require 'Views/MyURY/nocontent.php';
