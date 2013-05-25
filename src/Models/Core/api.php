@@ -30,6 +30,17 @@ spl_autoload_register(function($class) {
             require_once __DIR__ . '/../../Interfaces/MyURY_DataSource.php';
             require_once __DIR__ . '/../../Interfaces/IServiceAPI.php';
             require_once 'Classes/ServiceAPI/' . $class;
+            return;
+          }
+          
+          /**
+           * @todo Is there a better way of doing this?
+           */
+          foreach (array('MyURY','NIPSWeb') as $dir) {
+            if (stream_resolve_include_path('Classes/'.$dir.'/' . $class)) {
+              require_once 'Classes/'.$dir.'/' . $class;
+              return;
+            }
           }
         });
 set_exception_handler(function($e) {
@@ -45,6 +56,7 @@ require_once 'Interfaces/CacheProvider.php';
 require_once 'Classes/' . Config::$cache_provider . '.php';
 
 //Initiate User
-if (isset($_SESSION['memberid'])) $member = User::getInstance();
+if (isset($_SESSION['memberid']))
+  $member = User::getInstance();
 //Initialise the permission constants
 CoreUtils::setUpAuth();

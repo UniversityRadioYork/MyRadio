@@ -20,7 +20,6 @@ $twig->setTemplate('error.twig')
           </ul>
           <details><summary>Detailed Request Information</summary>
           Error: HTTP/1.1 403: Forbidden<br>
-          Service Requested: '.$service.'<br>
           Module Requested: '.$module.'<br>
           Action Requested: '.$action.'<br>
           User Requesting: '.(class_exists('User') ? (User::getInstance()->getName()) : '').'

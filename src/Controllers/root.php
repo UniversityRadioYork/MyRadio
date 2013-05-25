@@ -79,13 +79,11 @@ require 'Models/Core/api.php';
 
 /**
  * Set up the Module and Action global variables. These are used by Module/Action controllers as well as this file.
- * Notice how the default Module is Core. This is basically the MyURY Menu, and maybe a couple of admin pages.
+ * Notice how the default Module is MyURY. This is basically the MyURY Menu, and maybe a couple of admin pages.
  * Notice how the default Action is 'default'. This means that the "default" Controller should exist for all Modules.
- * Notice how the default Service is MyURY. This means that by default MyURY will be used.
  */
-$module = (isset($_REQUEST['module']) ? $_REQUEST['module'] : 'Core');
-$action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : 'default');
-$service = (isset($_REQUEST['service']) ? $_REQUEST['service'] : 'MyURY');
+$module = (isset($_REQUEST['module']) ? $_REQUEST['module'] : Config::$default_module);
+$action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : Config::$default_action);
 
 /**
  * The Service Broker decides what version of a Service the user has access to. This includes MyURY, so gets added
@@ -95,10 +93,10 @@ $service = (isset($_REQUEST['service']) ? $_REQUEST['service'] : 'MyURY');
 require_once 'Controllers/service_broker.php';
 
 /**
- * If it is a MyURY request, check it exists first
+ * Check it exists first
  * a 404 is better than a random 403 for no reason.
  */
-if ($service === 'MyURY' && !CoreUtils::isValidController($module, $action)) {
+if (!CoreUtils::isValidController($module, $action)) {
   //Yep, that doesn't exist.
   require 'Controllers/Errors/404.php';
   exit;
@@ -110,14 +108,9 @@ if ($service === 'MyURY' && !CoreUtils::isValidController($module, $action)) {
  * IMPORTANT: This will cause a fatal error if an action does not have any permissions associated with it.
  * This is to prevent developers from forgetting to assign permissions to an action.
  */
-CoreUtils::requirePermissionAuto($service, $module, $action);
+CoreUtils::requirePermissionAuto($module, $action);
 
 //Always include the MyURY Bootstrap
-require 'Controllers/MyURY/bootstrap.php';
-/**
- * Include the Global Bootstrap for the Service - This just sets up another autoloader and possibly
- * some more variables. Just take a look at it to see more.
- */
-require_once 'Controllers/'.$service.'/bootstrap.php';
+require 'Controllers/bootstrap.php';
 //Include the requested action
-require 'Controllers/'.$service.'/' . $module . '/' . $action . '.php';
+require 'Controllers/' . $module . '/' . $action . '.php';
