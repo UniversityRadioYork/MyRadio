@@ -12,6 +12,7 @@ header('HTTP/1.1 200 OK');
 //Decode to datasource if needed
 $data = CoreUtils::dataSourceParser($data);
 
-$data['myury_errors'] = MyURYError::$php_errorlist;
+if (!empty(MyURYError::$php_errorlist))
+  $data['myury_errors'] = MyURYError::$php_errorlist;
 
 echo json_encode($data);
