@@ -11,7 +11,7 @@ var webcam = {
     $.ajax({
       type: 'get',
       cache: false,
-      url: 'index.php?module=Webcam&action=a-trackViewer',
+      url: myury.makeURL('Webcam', 'a-trackViewer'),
       success: function(data) {
         var sub = 0;
         var time = '';

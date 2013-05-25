@@ -10,7 +10,8 @@ $(document).ready(function() {
     if ($(this).val().length >= 3)
     {
       $.ajax({
-        url: '?module=Scheduler&action=a-findshowbytitle&term='+$(this).val()+'&limit=100',
+        url: myury.makeURL('Scheduler', 'a-findshowbytitle'),
+        data: {term: $(this).val, limit: mConfig.ajax_default_limit},
         success: function(data) {
           if (data.length >= 1) {
             var html = '<span class="ui-icon ui-icon-info fleft"></span>Similar to '+data[0].title;
