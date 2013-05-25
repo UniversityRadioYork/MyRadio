@@ -47,6 +47,7 @@ class CoreUtils {
      * This is better than file_exists because it ensures that the response is valid for a version which has the file
      * when live does not
      */
+    echo 'Controllers/' . $module . '/' . $action . '.php';
     return is_string(stream_resolve_include_path('Controllers/' . $module . '/' . $action . '.php'));
   }
 
