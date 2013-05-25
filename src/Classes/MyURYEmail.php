@@ -116,7 +116,7 @@ class MyURYEmail {
    * @param sting $message email message
    */
   public static function sendEmailToComputing($subject, $message){
-    mail("URY Computing Team <computing@ury.org.uk>", $subject, self::addFooter($message), self::getDefaultHeader());
+    mail("URY Computing Team <alerts.myury@ury.org.uk>", $subject, self::addFooter($message), self::getDefaultHeader());
     return TRUE;
   }
 }
