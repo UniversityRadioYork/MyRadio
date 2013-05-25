@@ -8,4 +8,4 @@
  */
 $streams = MyURY_Webcam::getStreams();
 $live = array_shift($streams);
-require 'Views/Profile//focus.php';
+require 'Views/Webcam/focus.php';

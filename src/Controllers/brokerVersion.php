@@ -29,6 +29,6 @@ if (isset($_REQUEST['svc_version'])) {
 
 if (isset($_REQUEST['select_version'])) {
   $service = $_REQUEST['select_version'];
-  require 'Views/MyURY/Core/brokerVersion.php';
+  require 'Views/MyURY/brokerVersion.php';
   exit;
 }

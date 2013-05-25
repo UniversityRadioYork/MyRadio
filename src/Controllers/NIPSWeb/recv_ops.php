@@ -12,4 +12,4 @@ if (!isset($_POST['clientid']))
 
 $data = MyURY_Timeslot::getInstance(NIPSWeb_Token::getEditTokenTimeslot($_POST['clientid']))->updateShowPlan($_POST);
 
-require 'Views/MyURY/Core/datatojson.php';
+require 'Views/MyURY/datatojson.php';

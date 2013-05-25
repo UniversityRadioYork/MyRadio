@@ -1,7 +1,7 @@
 {% extends 'stripe.twig' %}
 {% block head %}
 {{ parent() }}
-{% include 'Profile//tracker.twig' %}
+{% include 'Webcam/tracker.twig' %}
 {% endblock %}
 {% block stripecontent %}
 <figure class="webcam-focus-stream-container" id="webcam-stream-{{live.streamid}}">

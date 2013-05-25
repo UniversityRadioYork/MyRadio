@@ -16,4 +16,4 @@ if (!isset($_REQUEST['fileid']) or !isset($_REQUEST['title']) or !isset($_REQUES
 $data = NIPSWeb_ManagedItem::storeItem($_REQUEST['fileid'], $_REQUEST['title']);
 $data['fileid'] = $_REQUEST['fileid'];
 
-require 'Views/MyURY/Core/datatojson.php';
+require 'Views/MyURY/datatojson.php';

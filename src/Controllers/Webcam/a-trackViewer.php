@@ -10,4 +10,4 @@ $_SESSION['webcam_lastcounterincrement'] = time();
 
 $data = MyURY_Webcam::incrementViewCounter(User::getInstance());
 
-require 'Views/MyURY/Core/datatojson.php';
+require 'Views/MyURY/datatojson.php';

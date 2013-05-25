@@ -21,4 +21,4 @@ $data = MyURY_Track::findByOptions(array(
         'digitised' => isset($_REQUEST['require_digitised']) ? (bool)$_REQUEST['require_digitised'] : false,
         'itonesplaylistid' => isset($_REQUEST['itonesplaylistid']) ? $_REQUEST['itonesplaylistid'] : ''
   ));
-require 'Views/MyURY/Core/datatojson.php';
+require 'Views/MyURY/datatojson.php';

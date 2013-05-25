@@ -11,4 +11,4 @@
 
  $data = NIPSWeb_AutoPlaylist::getInstance($playlistid)->getTracks();
 
-require 'Views/MyURY/Core/datatojson.php';
+require 'Views/MyURY/datatojson.php';
