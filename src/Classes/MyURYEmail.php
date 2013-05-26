@@ -40,7 +40,9 @@ class MyURYEmail {
   public function __construct($eid) {
     self::$db = Database::getInstance();
 
-    $info = self::$db->fetch_all('SELECT * FROM mail.email WHERE email_id=$1', array($eid));
+    $info = self::$db->fetch_one('SELECT * FROM mail.email WHERE email_id=$1', array($eid));
+    
+    if (empty($info)) throw new MyURYException('Email '.$eid.' does not exist!');
 
     $this->subject = $info['subject'];
     $this->body = $info['body'];
