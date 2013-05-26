@@ -171,11 +171,8 @@ class MyURYEmail {
           if ($user->getReceiveEmail()) {
             $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
             $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-            echo $user->getName()."\r\n";
             if (!mail($user->getName() . ' <' . $user->getEmail() . '>', '[URY] '.$u_subject, $u_message, $this->getHeader()))
               continue;
-          } else {
-            echo "NOT ".$user->getName()."\r\n";
           }
         }
         $this->setSentToList($list);
