@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file provides the MyURYForm class for MyURY
  * @package MyURY_Core
@@ -76,7 +77,7 @@ class MyURYForm {
    * @var Array 
    */
   private $fields = array();
-  
+
   /**
    * The title of the page (the human readable name)
    * @var String
@@ -129,7 +130,7 @@ class MyURYForm {
       $this->$k = $v;
     }
   }
-  
+
   /**
    * Changes the template to use when rendering
    * 
@@ -157,7 +158,7 @@ class MyURYForm {
     $this->fields[] = $field;
     return $this;
   }
-  
+
   /**
    * Allows you to update a MyURYFormField contained within this object with a new value to be used when rendering
    * @param String $fieldname The unique name of the MyURYFormField to edit
@@ -172,10 +173,10 @@ class MyURYForm {
         return $this;
       }
     }
-    throw new MyURYException('Cannot set value for field '.$fieldname.' as it does not exist.');
+    throw new MyURYException('Cannot set value for field ' . $fieldname . ' as it does not exist.');
     return $this;
   }
-  
+
   /**
    * Sets this MyURYForm as an editing form - it will take existing values and render them for editing and updating
    * @param mixed $identifier Usually a primary key, something unique that the receiving controller will use to know
@@ -189,7 +190,7 @@ class MyURYForm {
    */
   public function editMode($identifier, $values) {
     $this->addField(new MyURYFormField('myuryfrmedid', MyURYFormField::TYPE_HIDDEN, array('value' => $identifier)));
-    
+
     foreach ($values as $k => $v) {
       $this->setFieldValue($k, $v);
     }
@@ -205,7 +206,7 @@ class MyURYForm {
     foreach ($this->fields as $field) {
       $fields[] = $field->render();
     }
-    CoreUtils::getTemplateObject()->setTemplate($this->template)
+    $twig = CoreUtils::getTemplateObject()->setTemplate($this->template)
             ->addVariable('frm_name', $this->name)
             ->addVariable('frm_classes', $this->getClasses())
             ->addVariable('frm_action', CoreUtils::makeURL($this->module, $this->action))
@@ -213,8 +214,23 @@ class MyURYForm {
             ->addVariable('title', isset($this->title) ? $this->title : $this->name)
             ->addVariable('serviceName', isset($this->module) ? $this->module : $this->name)
             ->addVariable('frm_fields', $fields)
-            ->addVariable('frm_custom', $frmcustom)
-            ->render();
+            ->addVariable('frm_custom', $frmcustom);
+
+    if (User::getInstance()->hasAuth(AUTH_SELECTSERVICEVERSION)) {
+      $twig->addVariable('version_header', '<li><a href="?select_version=' . Config::$service_id . '" title="Click to change version">' .
+              CoreUtils::getServiceVersionForUser(User::getInstance())['version'] . '</a></li>');
+    } else {
+      $twig->addVariable('version_header', '');
+    }
+    if (User::getInstance()->hasAuth(AUTH_SHOWERRORS) || Config::$display_errors) {
+      $twig->addVariable('phperrors', MyURYError::$php_errorlist);
+    }
+
+    if (isset($_REQUEST['message'])) {
+      $twig->addInfo(base64_decode($_REQUEST['message']));
+    }
+
+    $twig->render();
   }
 
   /**
@@ -229,7 +245,7 @@ class MyURYForm {
 
     return $classes;
   }
-  
+
   /**
    * Processes data submitted from this MyURYForm, returning an Array of the values
    * @return Array An array of form data that was submitted using this form definition
