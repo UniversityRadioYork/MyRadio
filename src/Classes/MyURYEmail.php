@@ -146,7 +146,7 @@ class MyURYEmail {
    */
   public function send() {
     //Don't send if it's scheduled in the future.
-    if ($this->timestamp < time())
+    if ($this->timestamp > time())
       return;
     foreach ($this->r_users as $user) {
       if (!$this->getSentToUser($user)) {
