@@ -10,4 +10,5 @@
 //The Form definition
 require 'Models/Mail/sendfrm.php';
 $form->setFieldValue('list', $_REQUEST['list'])
-                ->render();
+        ->setTemplate('Mail/send.twig')
+        ->render(array('rcpt_str' => MyURY_List::getInstance($_REQUEST['list'])->getName()));
