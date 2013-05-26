@@ -158,10 +158,11 @@ class MyURY_List extends ServiceAPI {
    * @param User $user
    */
   public function hasOptedOutOfAuto(User $user) {
-    if ($this->subscribable)
+    if ($this->optin)
       return false;
 
-    return sizeof(self::$db->query('SELECT memberid FROM public.mail_subscription WHERE memberid=$1 AND listid=$2', array($user->getID(), $this->getID()))) === 1;
+    return sizeof(self::$db->query('SELECT memberid FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
+            array($user->getID(), $this->getID()))) === 1;
   }
 
   /**
@@ -176,9 +177,11 @@ class MyURY_List extends ServiceAPI {
       return false;
 
     if ($this->optin) {
-      self::$db->query('INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)', array($user->getID(), $this->getID()));
+      self::$db->query('INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)',
+              array($user->getID(), $this->getID()));
     } else {
-      self::$db->query('DELETE FROM public.mail_subscription (memberid, listid) WHERE memberid=$1 AND listid=$2', array($user->getID(), $this->getID()));
+      self::$db->query('DELETE FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
+              array($user->getID(), $this->getID()));
     }
 
     $this->members[] = $user;
@@ -197,9 +200,11 @@ class MyURY_List extends ServiceAPI {
       return false;
 
     if (!$this->optin) {
-      self::$db->query('INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)', array($user->getID(), $this->getID()));
+      self::$db->query('INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)',
+              array($user->getID(), $this->getID()));
     } else {
-      self::$db->query('DELETE FROM public.mail_subscription (memberid, listid) WHERE memberid=$1 AND listid=$2', array($user->getID(), $this->getID()));
+      self::$db->query('DELETE FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
+              array($user->getID(), $this->getID()));
     }
 
     $key = array_search($user, $this->members);
@@ -210,7 +215,8 @@ class MyURY_List extends ServiceAPI {
   }
 
   public static function getByName($str) {
-    $r = self::$db->fetch_column('SELECT listid FROM mail_list WHERE listname ILIKE $1 OR listaddress ILIKE $1', array($str));
+    $r = self::$db->fetch_column('SELECT listid FROM mail_list WHERE listname ILIKE $1 OR listaddress ILIKE $1',
+            array($str));
     if (empty($r))
       throw new MyURYException($str . ' is not a valid Mailing List');
     else
