@@ -22,10 +22,9 @@ if ($cuser->hasAuth(AUTH_SELECTSERVICEVERSION)) {
   $twig->addVariable('version_header','');
 }
 
-if(User::getInstance()->hasAuth(AUTH_SHOWERRORS)) {
+if(User::getInstance()->hasAuth(AUTH_SHOWERRORS) || Config::$display_errors) {
   $twig->addVariable('phperrors', MyURYError::$php_errorlist);
 }
 if (isset($_REQUEST['message'])) {
   $twig->addInfo(base64_decode($_REQUEST['message']));
 }
-print_r($_REQUEST);
