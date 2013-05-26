@@ -150,6 +150,7 @@ class CoreUtils {
       $str = Config::$base_url . $module . '/' . (($action !== null) ? $action . '/' : '');
       if (!empty($params)) {
         if (is_string($params)) {
+          if (substr($params,0,1) !== '?') $str .= '?';
           $str .= $params;
         } else {
           $str .= '?';
