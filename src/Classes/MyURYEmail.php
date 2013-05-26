@@ -48,7 +48,7 @@ class MyURYEmail {
     $this->timestamp = strtotime($info['timestamp']);
     $this->email_id = $eid;
 
-    $users = self::$db->fetch_column('SELECT memberid FROM mail.email_recipient_user WHERE email_id=$1', array($eid));
+    $users = self::$db->fetch_column('SELECT memberid FROM mail.email_recipient_member WHERE email_id=$1', array($eid));
     foreach ($users as $user) {
       $this->r_users[] = User::getInstance($user);
     }
