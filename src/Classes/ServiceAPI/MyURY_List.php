@@ -73,6 +73,8 @@ class MyURY_List extends ServiceAPI {
     $this->address = $result['listaddress'];
     $this->optin = $result['subscribable'];
     
+    echo $this->optin;
+    
     if ($this->optin) {
       //Get subscribed members
       $r = self::$db->fetch_column('SELECT memberid FROM mail_subscription WHERE listid=$1', array($listid));
