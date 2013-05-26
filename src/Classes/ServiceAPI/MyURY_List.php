@@ -130,6 +130,10 @@ class MyURY_List extends ServiceAPI {
   public function getAddress() {
     return $this->address;
   }
+  
+  public function isMember(User $user) {
+    return in_array($user, $this->getMembers());
+  }
 
   /**
    * Returns if the user has permission to email this list
@@ -164,24 +168,27 @@ class MyURY_List extends ServiceAPI {
   public function toDataSource() {
     return array(
       'listid' => $this->getID(),
+      'Subscribed' => $this->isMember(User::getInstance()) ? '<span class="ui-icon ui-icon-check" title="You are subscribed to this list"></span>' : '',
       'Name' => $this->getName(),
-      'Address' => $this->getAddress() || 'No public address',
-      'OptIn' => $this->optin ? array('display' => 'icon',
+      'Address' => $this->getAddress() === null ? '<em>Hidden</em>' :
+                        '<a href="mailto:'.$this->getAddress().'@ury.org.uk">'.$this->getAddress().'@ury.org.uk</a>',
+      'Recipients' => sizeof($this->getMembers()),
+      'OptIn' => ($this->optin && !$this->isMember(User::getInstance())) ? array('display' => 'icon',
           'value' => 'circle-plus',
           'title' => 'Subscribe to this mailing list',
-          'url' => CoreUtils::makeURL('Mail','optin', array('listid' => $this->getID()))) : array(),
-      'OptOut' => $this->optin ? array('display' => 'icon',
+          'url' => CoreUtils::makeURL('Mail','optin', array('list' => $this->getID()))) : null,
+      'OptOut' => ($this->isMember(User::getInstance()) ? array('display' => 'icon',
           'value' => 'circle-minus',
           'title' => 'Opt out of this mailing list',
-          'url' => CoreUtils::makeURL('Mail','optout', array('listid' => $this->getID()))) : array(),
+          'url' => CoreUtils::makeURL('Mail','optout', array('list' => $this->getID()))) : null),
       'Mail' => array('display' => 'icon',
           'value' => 'mail-closed',
           'title' => 'Send a message to this mailing list',
-          'url' => CoreUtils::makeURL('Mail','send', array('listid' => $this->getID()))),
+          'url' => CoreUtils::makeURL('Mail','send', array('list' => $this->getID()))),
       'Archive' => array('display' => 'icon',
           'value' => 'disk',
           'title' => 'View archives for this mailing list',
-          'url' => CoreUtils::makeURL('Mail','archive', array('listid' => $this->getID())))
+          'url' => CoreUtils::makeURL('Mail','archive', array('list' => $this->getID())))
     );
   }
 }

@@ -7,6 +7,8 @@
  * @package MyURY_Mail
  */
 
+if (!isset($_REQUEST['list'])) throw new MyURYException('List ID was not provided!', 400);
+
 //The Form definition
 require 'Models/Mail/sendfrm.php';
 $form->setFieldValue('list', $_REQUEST['list'])
