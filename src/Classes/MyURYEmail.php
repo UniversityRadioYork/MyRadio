@@ -127,6 +127,9 @@ class MyURYEmail {
       $headers[] = 'From: University Radio York <no-reply@ury.org.uk>';
     }
     
+    /**
+     * !! Multipart headers must be *last* or things Go Badly
+     */
     if ($this->multipart) {
       $headers[] = 'Content-Type: multipart/alternative;boundary='.self::$multipart_boundary;
     } else {
