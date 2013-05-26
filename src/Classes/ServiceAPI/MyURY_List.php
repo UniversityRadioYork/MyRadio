@@ -153,6 +153,18 @@ class MyURY_List extends ServiceAPI {
   }
 
   /**
+   * Returns true if the user has *actively opted out* of an *automatic* mailing list
+   * Returns false if they are still a member of the list, or if this is subscribable
+   * @param User $user
+   */
+  public function hasOptedOutOfAuto(User $user) {
+    if ($this->subscribable)
+      return false;
+
+    return sizeof(self::$db->query('SELECT memberid FROM public.mail_subscription WHERE memberid=$1 AND listid=$2', array($user->getID(), $this->getID()))) === 1;
+  }
+
+  /**
    * If the mailing list is subscribable, opt the user in if they aren't already.
    * If the mailing list is automatic, but the user has previously opted out, remove this opt-out entry.
    * @param User $user
@@ -224,7 +236,7 @@ class MyURY_List extends ServiceAPI {
         'Address' => $this->getAddress() === null ? '<em>Hidden</em>' :
                 '<a href="mailto:' . $this->getAddress() . '@ury.org.uk">' . $this->getAddress() . '@ury.org.uk</a>',
         'Recipients' => sizeof($this->getMembers()),
-        'OptIn' => ($this->optin && !$this->isMember(User::getInstance())) ? array('display' => 'icon',
+        'OptIn' => (($this->optin && !$this->isMember(User::getInstance())) || $this->hasOptedOutOfAuto(User::getInstance())) ? array('display' => 'icon',
             'value' => 'circle-plus',
             'title' => 'Subscribe to this mailing list',
             'url' => CoreUtils::makeURL('Mail', 'optin', array('list' => $this->getID()))) : null,

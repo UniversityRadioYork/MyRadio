@@ -18,7 +18,7 @@ if (isset($_REQUEST['memberid'])) {
 
 $list = MyURY_List::getInstance($_REQUEST['list']);
 if ($list->optout(User::getInstance($user))) {
-  CoreUtils::backWithMessage('You are now subscribed to '.$list->getName().'.');
+  CoreUtils::backWithMessage('You are now opted-out of '.$list->getName().'.');
 } else {
   CoreUtils::backWithMessage('You could not be opted-out at this time. You may already have opted-out.');
 }
