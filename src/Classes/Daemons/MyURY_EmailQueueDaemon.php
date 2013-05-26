@@ -14,7 +14,7 @@ class MyURY_EmailQueueDaemon {
     
     foreach ($result as $email) {
       echo "Sending email $email\n";
-      MyURY_Email::getInstance($email)->send();
+      MyURYEmail::getInstance($email)->send();
     }
   }
 }
