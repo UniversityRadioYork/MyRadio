@@ -112,6 +112,16 @@ class MyURY_List extends ServiceAPI {
     return $this->name;
   }
   
+  /**
+   * Returns if the user has permission to email this list
+   * @param User $user
+   * @return boolean
+   */
+  public function hasSendPermission(User $user) {
+    if (!$this->public && !$user->hasAuth(AUTH_MAILALLMEMBERS)) return false;
+    return true;
+  }
+  
   public static function getByName($str) {
     $r = self::$db->fetch_column('SELECT listid FROM mail_list WHERE listname ILIKE $1 OR listaddress ILIKE $1',
             array($str));
