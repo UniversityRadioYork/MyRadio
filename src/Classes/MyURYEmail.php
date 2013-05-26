@@ -216,6 +216,7 @@ class MyURYEmail {
    * @todo Check if "Receive Emails" is enabled for the User
    */
   public static function sendEmailToList(MyURY_List $to, $subject, $message, $from = null) {
+    if ($from !== null && !$to->hasSendPermission($from)) return false;
     self::create(array('lists' => array($to)), $subject, $message, $from);
     return true;
   }

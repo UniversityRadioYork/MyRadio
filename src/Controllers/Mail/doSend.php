@@ -9,5 +9,8 @@
 
 //The Form definition
 require 'Models/Mail/sendfrm.php';
-$form->setFieldValue('list', $_REQUEST['list'])
-                ->render();
+$info = $form->readValues();
+
+MyURYEmail::sendEmailToList(MyURY_List::getInstance($info['list']), $info['subject'], $info['body'], User::getInstance());
+
+header('Location: '.$_SERVER['HTTP_REFERER'].'?message='.base64_encode('Message sent!'));
