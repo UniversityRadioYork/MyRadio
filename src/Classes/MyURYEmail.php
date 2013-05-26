@@ -178,23 +178,23 @@ class MyURYEmail {
   }
 
   public function getSentToUser(User $user) {
-    $r = self::$db->fetch_column('SELECT sent FROM email_recipient_member WHERE email_id=$1 AND memberid=$2 LIMIT 1', array($this->email_id, $user->getID()));
+    $r = self::$db->fetch_column('SELECT sent FROM mail.email_recipient_member WHERE email_id=$1 AND memberid=$2 LIMIT 1', array($this->email_id, $user->getID()));
 
     return $r[0] === 't';
   }
 
   public function setSentToUser(User $user) {
-    self::$db->query('UPDATE email_recipient_member SET sent=\'t\' WHERE email_id=$1 AND memberid=$2', array($this->email_id, $user->getID()));
+    self::$db->query('UPDATE mail.email_recipient_member SET sent=\'t\' WHERE email_id=$1 AND memberid=$2', array($this->email_id, $user->getID()));
   }
 
   public function getSentToList(MyURY_List $list) {
-    $r = self::$db->fetch_column('SELECT sent FROM email_recipient_list WHERE email_id=$1 AND listid=$2 LIMIT 1', array($this->email_id, $list->getID()));
+    $r = self::$db->fetch_column('SELECT sent FROM mail.email_recipient_list WHERE email_id=$1 AND listid=$2 LIMIT 1', array($this->email_id, $list->getID()));
 
     return $r[0] === 't';
   }
 
   public function setSentToList(MyURY_List $list) {
-    self::$db->query('UPDATE email_recipient_list SET sent=\'t\' WHERE email_id=$1 AND listid=$2', array($this->email_id, $list->getID()));
+    self::$db->query('UPDATE mail.email_recipient_list SET sent=\'t\' WHERE email_id=$1 AND listid=$2', array($this->email_id, $list->getID()));
   }
 
   /**
