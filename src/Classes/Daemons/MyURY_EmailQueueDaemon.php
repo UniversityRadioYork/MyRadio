@@ -8,7 +8,7 @@ class MyURY_EmailQueueDaemon {
     $db = Database::getInstance();
     
     $result = $db->fetch_column('SELECT email_id FROM mail.email WHERE
-      (email_id IN (SELECT DISTINCT email_id FROM mail.email_recipient_user WHERE sent=\'f\')
+      (email_id IN (SELECT DISTINCT email_id FROM mail.email_recipient_member WHERE sent=\'f\')
       OR email_id IN (SELECT DISTINCT email_id FROM mail.email_recipient_list WHERE sent=\'f\'))
       AND timestamp > NOW() LIMIT 1');
     
