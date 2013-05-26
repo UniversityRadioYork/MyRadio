@@ -25,4 +25,6 @@ $form = (new MyURYForm('mail_send', 'Mail', 'doSend',
                             'label' => ''
                         )
                 )
+        )->addField(
+                new MyURYFormField('list', MyURYFormField::TYPE_HIDDEN)
         );
