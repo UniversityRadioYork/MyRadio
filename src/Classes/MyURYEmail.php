@@ -163,7 +163,6 @@ class MyURYEmail {
 
     foreach ($this->r_lists as $list) {
       if (!$this->getSentToList($list)) {
-        print_r($list->getMembers());
         foreach ($list->getMembers() as $user) {
           //Don't send if the user has opted out
           if ($user->getReceiveEmail()) {
