@@ -71,9 +71,7 @@ class MyURY_List extends ServiceAPI {
     $this->sql = $result['defn'];
     $this->public = $result['toexim'];
     $this->address = $result['listaddress'];
-    $this->optin = $result['subscribable'];
-    
-    echo $this->optin;
+    $this->optin = $result['subscribable'] === 't';
     
     if ($this->optin) {
       //Get subscribed members
