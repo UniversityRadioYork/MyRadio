@@ -9,7 +9,8 @@
  * Provides email functions so that MyURY can send email.
  * 
  * @author Andy Durant <aj@ury.org.uk>
- * @version 20130525
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 20130526
  * @package MyURY_Core
  */
 class MyURYEmail {
@@ -19,16 +20,20 @@ class MyURYEmail {
   private static $headers = 'Content-type: text/plain; charset=utf-8';
   private static $sender = 'From: MyURY <no-reply@ury.org.uk>';
   private static $footer = 'This email was sent automatically from MyURY. You can opt out of URY Emails by visiting https://ury.york.ac.uk/members/memberadmin/edit.php.';
+  private static $html_footer = 'This email was sent automatically from MyURY. You can opt out of URY Emails <a href="https://ury.york.ac.uk/members/memberadmin/edit.php">on your profile page</a>.';
   // Standard
   /**
    * @var string carriage return + newline
    */
   private static $rtnl = "\r\n";
+  private static $multipart_boundary = 'muryp2c6cf41f304e3';
   private $email_id;
   private $r_lists;
   private $r_users;
   private $subject;
   private $body;
+  private $body_transformed;
+  private $html = false;
   private $from;
   private $timestamp;
 
@@ -52,6 +57,24 @@ class MyURYEmail {
       LEFT JOIN public.mail_list ON email_recipient_list.listid = mail_list.listid', array($eid));
     foreach ($lists as $list) {
       $this->r_lists[] = MyURY_List::getInstance($list);
+    }
+    
+    /**
+     * Check if the body needs to be split into multipart.
+     * This creates a string with both Text and HTML parts.
+     */
+    $split = strip_tags($this->body);
+    if ($this->body !== $split) {
+      //There's HTML in there
+      $this->html = true;
+      $this->body_transformed = 'This is a MIME encoded message.'
+              .self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
+              .'Content-Type: text/plain;charset=utf-8'.self::$rtnl.self::$rtnl
+              .self::addFooter($split).self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
+              .'Content-Type: text/html;charset=utf-8'.self::$rtnl.self::$rtnl
+              .self::addHTMLFooter($this->body).self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.'--';
+    } else {
+      $this->body_transformed = self::addFooter($this->body);
     }
   }
 
@@ -93,26 +116,28 @@ class MyURYEmail {
 
     return new self($eid);
   }
-
-  /**
-   * 
-   * @return string default headers for sending email - Plain text and sent from no-reply
-   */
-  private static function getDefaultHeader() {
-    return self::$headers . self::$rtnl . self::$sender;
-  }
-
-  /**
-   * @return string The header line for From:
-   */
-  private static function setSender($from) {
-    if (empty($from))
-      return self::$headers;
-    return self::$headers . self::$rtnl . 'From: ' . $from->getName() . '<' . $from->getEmail() . '>';
+  
+  private function getHeader() {
+    $headers = array('MIME-Version: 1.0');
+    if ($this->multipart) {
+      $headers[] = array('Content/Type: multipart/alternative;boundary='.self::$multipart_boundary);
+    } else {
+      $headers[] = array('Content-Type: text/plain; charset=utf-8');
+    }
+    if ($this->from !== null) {
+      $headers[] = array('From: '.$this->from->getName().' <'.$this->from->getEmail().'>');
+    } else {
+      $headers[] = array('From: University Radio York <no-reply@ury.org.uk>');
+    }
+    return implode(self::$rtnl, $headers);
   }
 
   private static function addFooter($message) {
     return $message . self::$rtnl . self::$rtnl . self::$footer;
+  }
+  
+  private static function addHTMLFooter($message) {
+    return $message . '<hr>' . self::$html_footer;
   }
 
   /**
@@ -127,8 +152,8 @@ class MyURYEmail {
         //Don't send if the user has opted out
         if ($user->getReceiveEmail()) {
           $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
-          $u_message = str_ireplace('#NAME', $user->getFName(), $this->body);
-          mail($user->getName() . '<' . $user->getEmail() . '>', $u_subject, self::addFooter($u_message), self::setSender($this->from));
+          $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
+          mail($user->getName() . '<' . $user->getEmail() . '>', $u_subject, $u_message, $this->getHeader());
         }
         $this->setSentToUser($user);
       }
@@ -141,7 +166,7 @@ class MyURYEmail {
           if (!$this->getSentToUser($user)) {
             $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
             $u_message = str_ireplace('#NAME', $user->getFName(), $this->body);
-            mail($user->getName() . '<' . $user->getEmail() . '>', $u_subject, self::addFooter($u_message), self::setSender($this->from));
+            mail($user->getName() . '<' . $user->getEmail() . '>', $u_subject, $u_message, $this->getHeader());
           }
         }
         $this->setSentToList($user);
@@ -179,7 +204,7 @@ class MyURYEmail {
    * @todo Check if "Receive Emails" is enabled for the User
    */
   public static function sendEmailToUser(User $to, $subject, $message, $from = null) {
-    new self(array('members' => array($to)), $subject, $message, $from);
+    self::create(array('members' => array($to)), $subject, $message, $from);
     return true;
   }
   
@@ -191,7 +216,7 @@ class MyURYEmail {
    * @todo Check if "Receive Emails" is enabled for the User
    */
   public static function sendEmailToList(MyURY_List $to, $subject, $message, $from = null) {
-    new self(array('lists' => array($to)), $subject, $message, $from);
+    self::create(array('lists' => array($to)), $subject, $message, $from);
     return true;
   }
 
@@ -210,21 +235,12 @@ class MyURYEmail {
         throw new MyURYException($user . ' is not an instance of User or a derivative!');
       }
 
-      new self(array('members' => $to), $subject, $message, $from);
+      self::create(array('members' => $to), $subject, $message, $from);
     }
   }
 
-  /**
-   * 
-   * @param string $to email address or "Name <email>"
-   * @param string $subject email subject
-   * @param sting $message email message
-   */
-  public static function sendEmailFromComputing($to, $subject, $message) {
-    mail($to, $subject, $message, self::setSender('URY Computing Team <computing@ury.org.uk>'));
-    return TRUE;
-  }
-
+  /** BELOW HERE IS FOR IF STUFF BREAKS REALLY EARLY BEFORE ^ WILL WORK **/
+  
   /**
    * 
    * @param string $subject email subject
@@ -233,6 +249,14 @@ class MyURYEmail {
   public static function sendEmailToComputing($subject, $message) {
     mail("URY Computing Team <alerts.myury@ury.org.uk>", $subject, self::addFooter($message), self::getDefaultHeader());
     return TRUE;
+  }
+  
+  /**
+   * 
+   * @return string default headers for sending email - Plain text and sent from no-reply
+   */
+  private static function getDefaultHeader() {
+    return self::$headers . self::$rtnl . self::$sender;
   }
 
 }

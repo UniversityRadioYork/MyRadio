@@ -1,6 +1,5 @@
 {% extends 'form.twig' %}
 {% block stripecontent %}
-<p>You're sending an email to {{frm_custom.rcpt_str}}</p>
+<p>You're sending an email to "{{frm_custom.rcpt_str}}". Whatever that means.</p>
 {{ parent() }}
-<iframe src="http://ury.york.ac.uk/schedule/" style="width:100%; height: 500px"></iframe>
 {% endblock %}

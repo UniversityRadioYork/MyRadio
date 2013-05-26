@@ -22,6 +22,8 @@ class MyURYFormField {
    * minlength: The minimum number of characters the user must enter for this to be valid input
    * 
    * maxlength: The maximum number of characters the user can enter for this to be valid input
+   * 
+   * placeholder: Placeholder text that is cleared when the input takes focus.
    */
   const TYPE_TEXT      = 0x00;
   /**
