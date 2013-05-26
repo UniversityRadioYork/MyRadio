@@ -8,6 +8,7 @@
  */
 
 if (!isset($_REQUEST['list'])) throw new MyURYException('List ID was not provided!', 400);
+if (!MyURY_List::getInstance($_REQUEST['list'])->isPublic()) CoreUtils::requirePermission(AUTH_MAILALLMEMBERS);
 
 //The Form definition
 require 'Models/Mail/sendfrm.php';

@@ -109,9 +109,11 @@ class MyURY_List extends ServiceAPI {
   }
 
   private function parseSQL($sql) {
-    $sql = str_replace('%LISTID', $this->getID(), $sql);
-    $sql = str_replace('%Y', CoreUtils::getAcademicYear(), $sql);
-    $sql = str_replace('%BOY', '\'' . CoreUtils::getAcademicYear() . '-10-01 00:00:00\'', $sql);
+    $sql = str_replace(array('%LISTID', '%Y', '%BOY'), array(
+        $this->getID(),
+        CoreUtils::getAcademicYear(),
+        '\'' . CoreUtils::getAcademicYear() . '-10-01 00:00:00\''
+            ), $sql);
     return $sql;
   }
 
@@ -126,11 +128,15 @@ class MyURY_List extends ServiceAPI {
   public function getName() {
     return $this->name;
   }
-  
+
   public function getAddress() {
     return $this->address;
   }
-  
+
+  public function isPublic() {
+    return $this->public;
+  }
+
   public function isMember(User $user) {
     return in_array($user, $this->getMembers());
   }
@@ -146,6 +152,49 @@ class MyURY_List extends ServiceAPI {
     return true;
   }
 
+  /**
+   * If the mailing list is subscribable, opt the user in if they aren't already.
+   * If the mailing list is automatic, but the user has previously opted out, remove this opt-out entry.
+   * @param User $user
+   * @return boolean True if the user is now opted in, false if they could not be opted in.
+   */
+  public function optin(User $user) {
+    if ($this->isMember($user))
+      return false;
+
+    if ($this->optin) {
+      self::$db->query('INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)', array($user->getID(), $this->getID()));
+    } else {
+      self::$db->query('DELETE FROM public.mail_subscription (memberid, listid) WHERE memberid=$1 AND listid=$2', array($user->getID(), $this->getID()));
+    }
+
+    $this->members[] = $user;
+    return true;
+  }
+
+  /**
+   * If the mailing list is subscribable, opt the user out if they are currently subscribed.
+   * If the mailing list is automatic, opt-the user out of the list.
+   * @param User $user
+   * @return boolean True if the user is now opted out, false if they could not be opted out.
+   */
+  public function optout(User $user) {
+    if (!$this->isMember($user))
+      return false;
+
+    if (!$this->optin) {
+      self::$db->query('INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)', array($user->getID(), $this->getID()));
+    } else {
+      self::$db->query('DELETE FROM public.mail_subscription (memberid, listid) WHERE memberid=$1 AND listid=$2', array($user->getID(), $this->getID()));
+    }
+
+    $key = array_search($user, $this->members);
+    if ($key !== false) {
+      unset($this->members[$key]);
+    }
+    return true;
+  }
+
   public static function getByName($str) {
     $r = self::$db->fetch_column('SELECT listid FROM mail_list WHERE listname ILIKE $1 OR listaddress ILIKE $1', array($str));
     if (empty($r))
@@ -153,42 +202,43 @@ class MyURY_List extends ServiceAPI {
     else
       return self::getInstance($r[0]);
   }
-  
+
   public static function getAllLists() {
     $r = self::$db->fetch_column('SELECT listid FROM mail_list');
-    
+
     $lists = array();
     foreach ($r as $list) {
       $lists[] = self::getInstance($list);
     }
-    
+
     return $lists;
   }
 
   public function toDataSource() {
     return array(
-      'listid' => $this->getID(),
-      'Subscribed' => $this->isMember(User::getInstance()) ? '<span class="ui-icon ui-icon-check" title="You are subscribed to this list"></span>' : '',
-      'Name' => $this->getName(),
-      'Address' => $this->getAddress() === null ? '<em>Hidden</em>' :
-                        '<a href="mailto:'.$this->getAddress().'@ury.org.uk">'.$this->getAddress().'@ury.org.uk</a>',
-      'Recipients' => sizeof($this->getMembers()),
-      'OptIn' => ($this->optin && !$this->isMember(User::getInstance())) ? array('display' => 'icon',
-          'value' => 'circle-plus',
-          'title' => 'Subscribe to this mailing list',
-          'url' => CoreUtils::makeURL('Mail','optin', array('list' => $this->getID()))) : null,
-      'OptOut' => ($this->isMember(User::getInstance()) ? array('display' => 'icon',
-          'value' => 'circle-minus',
-          'title' => 'Opt out of this mailing list',
-          'url' => CoreUtils::makeURL('Mail','optout', array('list' => $this->getID()))) : null),
-      'Mail' => array('display' => 'icon',
-          'value' => 'mail-closed',
-          'title' => 'Send a message to this mailing list',
-          'url' => CoreUtils::makeURL('Mail','send', array('list' => $this->getID()))),
-      'Archive' => array('display' => 'icon',
-          'value' => 'disk',
-          'title' => 'View archives for this mailing list',
-          'url' => CoreUtils::makeURL('Mail','archive', array('list' => $this->getID())))
+        'listid' => $this->getID(),
+        'Subscribed' => $this->isMember(User::getInstance()) ? '<span class="ui-icon ui-icon-check" title="You are subscribed to this list"></span>' : '',
+        'Name' => $this->getName(),
+        'Address' => $this->getAddress() === null ? '<em>Hidden</em>' :
+                '<a href="mailto:' . $this->getAddress() . '@ury.org.uk">' . $this->getAddress() . '@ury.org.uk</a>',
+        'Recipients' => sizeof($this->getMembers()),
+        'OptIn' => ($this->optin && !$this->isMember(User::getInstance())) ? array('display' => 'icon',
+            'value' => 'circle-plus',
+            'title' => 'Subscribe to this mailing list',
+            'url' => CoreUtils::makeURL('Mail', 'optin', array('list' => $this->getID()))) : null,
+        'OptOut' => ($this->isMember(User::getInstance()) ? array('display' => 'icon',
+            'value' => 'circle-minus',
+            'title' => 'Opt out of this mailing list',
+            'url' => CoreUtils::makeURL('Mail', 'optout', array('list' => $this->getID()))) : null),
+        'Mail' => array('display' => 'icon',
+            'value' => 'mail-closed',
+            'title' => 'Send a message to this mailing list',
+            'url' => CoreUtils::makeURL('Mail', 'send', array('list' => $this->getID()))),
+        'Archive' => array('display' => 'icon',
+            'value' => 'disk',
+            'title' => 'View archives for this mailing list',
+            'url' => CoreUtils::makeURL('Mail', 'archive', array('list' => $this->getID())))
     );
   }
+
 }

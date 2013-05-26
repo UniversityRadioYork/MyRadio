@@ -10,7 +10,7 @@
  * No database accessing etc should be setup here.
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 06042013
+ * @version 20130527
  * @package MyURY_Core
  * @todo Factor out permission code into a seperate class?
  */
@@ -525,6 +525,10 @@ class CoreUtils {
       header('Location: ' . Config::$shib_url . '/timeslot.php?next=' . $_SERVER['REQUEST_URI']);
       exit;
     }
+  }
+  
+  public static function backWithMessage($message) {
+    header('Location: '.$_SERVER['HTTP_REFERER'] . (strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?') . 'message='.base64_encode($message));
   }
 
 }
