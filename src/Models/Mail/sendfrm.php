@@ -14,8 +14,9 @@ $form = (new MyURYForm('mail_send', 'Mail', 'doSend',
         ))->addField(
                 new MyURYFormField('subject', MyURYFormField::TYPE_TEXT,
                         array(
-                            'explanation' => 'Subject of the email',
-                            'label' => 'Subject'
+                            'explanation' => '',
+                            'label' => '',
+                            'options' => array('placeholder' => 'Subject ([URY] is prefixed automatically)')
                         )
                 )
         )->addField(
