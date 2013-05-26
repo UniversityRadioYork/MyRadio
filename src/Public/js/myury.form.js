@@ -122,6 +122,13 @@ var MyURYForm = {
 
 $(document).ready(function() {
   /**
+   * Initialises TinyMCE fields
+   */
+  tinymce.init({
+    selector: "textarea.myury-form-tinymce",
+    plugins: "anchor autolink charmap code contextmenu fullscreen hr image link lists media tabfocus table wordcount"
+  });
+  /**
    * Initialises the Date pickers where necessary
    */
   $('fieldset.myuryfrm input.date').datepicker({
