@@ -95,7 +95,7 @@ class MyURYEmail {
     if ($from !== null)
       $params[] = $from->getID();
 
-    $eid = $db->fetch_column('INSERT INTO mail.email (subject, body'
+    $eid = self::$db->fetch_column('INSERT INTO mail.email (subject, body'
             . ($timestamp !== null ? ', timestamp' : '') . ($from !== null ? ', sender' : '') . ')
               VALUES ($1, $2' . ($timestamp !== null or $from !== null ? ', $3' : '')
             . ($timestamp !== null && $from !== null ? ', $4' : '') . ') RETURNING email_id'
@@ -106,12 +106,12 @@ class MyURYEmail {
     foreach ($to['lists'] as $list) {
       if (is_object($list))
         $list = $list->getID();
-      $db->query('INSERT INTO mail.email_recipient_list (email_id, list_id) VALUES ($1, $2)', array($eid, $listid));
+      self::$db->query('INSERT INTO mail.email_recipient_list (email_id, list_id) VALUES ($1, $2)', array($eid, $listid));
     }
     foreach ($to['members'] as $member) {
       if (is_object($member))
         $member = $member->getID();
-      $db->query('INSERT INTO mail.email_recipient_member (email_id, member_id) VALUES ($1, $2)', array($eid, $member));
+      self::$db->query('INSERT INTO mail.email_recipient_member (email_id, member_id) VALUES ($1, $2)', array($eid, $member));
     }
 
     return new self($eid);
