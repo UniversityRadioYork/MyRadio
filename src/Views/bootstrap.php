@@ -28,3 +28,4 @@ if(User::getInstance()->hasAuth(AUTH_SHOWERRORS)) {
 if (isset($_REQUEST['message'])) {
   $twig->addInfo(base64_decode($_REQUEST['message']));
 }
+print_r($_REQUEST);
