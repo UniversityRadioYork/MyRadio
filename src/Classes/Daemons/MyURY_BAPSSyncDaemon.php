@@ -1,7 +1,7 @@
 <?php
 
 class MyURY_BAPSSyncDaemon {
-  public static function isEnabled() { return true; }
+  public static function isEnabled() { return false; }
   
   /**
    * Takes each of the NIPSWebs Managed and Resource Lists, and converts them into BAPS Recommended Audio shows
