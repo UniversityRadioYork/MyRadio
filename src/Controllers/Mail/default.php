@@ -8,7 +8,7 @@
  * @package MyURY_Mail
  */
 
-$twig->setTemplate('table.twig')
+CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.datatable.default')
         ->addVariable('title', 'All Mailing Lists')
         ->addVariable('tabledata', CoreUtils::dataSourceParser(MyURY_List::getAllLists()))
