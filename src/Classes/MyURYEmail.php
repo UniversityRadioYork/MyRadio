@@ -97,8 +97,8 @@ class MyURYEmail {
 
     $eid = self::$db->fetch_column('INSERT INTO mail.email (subject, body'
             . ($timestamp !== null ? ', timestamp' : '') . ($from !== null ? ', sender' : '') . ')
-              VALUES ($1, $2' . ($timestamp !== null or $from !== null ? ', $3' : '')
-            . ($timestamp !== null && $from !== null ? ', $4' : '') . ') RETURNING email_id'
+              VALUES ($1, $2' . (($timestamp !== null or $from !== null) ? ', $3' : '')
+            . (($timestamp !== null && $from !== null) ? ', $4' : '') . ') RETURNING email_id'
             , $params);
 
     $eid = $eid[0];
