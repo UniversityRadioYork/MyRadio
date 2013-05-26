@@ -69,7 +69,7 @@ while (true) {
   foreach ($classes as $class) {
     echo "Running $class\n";
     $class::run();
-    sleep(5);
+    if (!$once) sleep(5);
   }
   
   if ($once) break;
