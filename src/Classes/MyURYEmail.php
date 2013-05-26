@@ -120,16 +120,19 @@ class MyURYEmail {
   
   private function getHeader() {
     $headers = array('MIME-Version: 1.0');
-    if ($this->multipart) {
-      $headers[] = 'Content/Type: multipart/alternative;boundary='.self::$multipart_boundary;
-    } else {
-      $headers[] = 'Content-Type: text/plain; charset=utf-8';
-    }
+    
     if ($this->from !== null) {
       $headers[] = 'From: '.$this->from->getName().' <'.$this->from->getEmail().'>';
     } else {
       $headers[] = 'From: University Radio York <no-reply@ury.org.uk>';
     }
+    
+    if ($this->multipart) {
+      $headers[] = 'Content-Type: multipart/alternative;boundary='.self::$multipart_boundary;
+    } else {
+      $headers[] = 'Content-Type: text/plain; charset=utf-8';
+    }
+    
     return implode(self::$rtnl, $headers);
   }
 
@@ -154,7 +157,7 @@ class MyURYEmail {
         if ($user->getReceiveEmail()) {
           $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
           $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-          if (!mail($user->getName() . '<' . $user->getEmail() . '>', $u_subject, $u_message, $this->getHeader()))
+          if (!mail($user->getName() . ' <' . $user->getEmail() . '>', $u_subject, $u_message, $this->getHeader()))
             continue;
         }
         $this->setSentToUser($user);
@@ -168,7 +171,7 @@ class MyURYEmail {
           if ($user->getReceiveEmail()) {
             $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
             $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-            if (!mail($user->getName() . '<' . $user->getEmail() . '>', $u_subject, $u_message, $this->getHeader()))
+            if (!mail($user->getName() . ' <' . $user->getEmail() . '>', $u_subject, $u_message, $this->getHeader()))
               continue;
           }
         }
