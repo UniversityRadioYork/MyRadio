@@ -117,7 +117,6 @@ class User extends ServiceAPI {
    */
   private $lastlogin;
 
-
   /**
    * Initiates the User variables
    * @param int $memberid The ID of the member to initialise
