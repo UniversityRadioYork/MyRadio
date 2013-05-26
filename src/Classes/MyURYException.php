@@ -66,7 +66,8 @@ class MyURYException extends RuntimeException {
         }
       }
       if (Config::$email_exceptions && class_exists('MyURYEmail')) {
-        MyURYEmail::sendEmailToComputing('[MyURY] Exception Thrown', $error."\r\n".$message."\r\n".print_r($_SESSION,true)."\r\n".print_r($_REQUEST,true));
+        MyURYEmail::sendEmailToComputing('[MyURY] Exception Thrown',
+                $error."\r\n".$message."\r\n".(isset($_SESSION) ? print_r($_SESSION,true) : '')."\r\n".print_r($_REQUEST,true));
       }
     }
     if ($code === self::FATAL) {
