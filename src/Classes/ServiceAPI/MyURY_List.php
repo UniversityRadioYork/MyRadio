@@ -126,6 +126,10 @@ class MyURY_List extends ServiceAPI {
   public function getName() {
     return $this->name;
   }
+  
+  public function getAddress() {
+    return $this->address;
+  }
 
   /**
    * Returns if the user has permission to email this list
@@ -145,5 +149,39 @@ class MyURY_List extends ServiceAPI {
     else
       return self::getInstance($r[0]);
   }
+  
+  public static function getAllLists() {
+    $r = self::$db->fetch_column('SELECT listid FROM mail_list');
+    
+    $lists = array();
+    foreach ($r as $list) {
+      $lists[] = self::getInstance($list);
+    }
+    
+    return $lists;
+  }
 
+  public function toDataSource() {
+    return array(
+      'listid' => $this->getID(),
+      'Name' => $this->getName(),
+      'Address' => $this->getAddress() || 'No public address',
+      'OptIn' => $this->optin ? array('display' => 'icon',
+          'value' => 'circle-plus',
+          'title' => 'Subscribe to this mailing list',
+          'url' => CoreUtils::makeURL('Mail','optin', array('listid' => $this->getID()))) : array(),
+      'OptOut' => $this->optin ? array('display' => 'icon',
+          'value' => 'circle-minus',
+          'title' => 'Opt out of this mailing list',
+          'url' => CoreUtils::makeURL('Mail','optout', array('listid' => $this->getID()))) : array(),
+      'Mail' => array('display' => 'icon',
+          'value' => 'mail-closed',
+          'title' => 'Send a message to this mailing list',
+          'url' => CoreUtils::makeURL('Mail','send', array('listid' => $this->getID()))),
+      'Archive' => array('display' => 'icon',
+          'value' => 'disk',
+          'title' => 'View archives for this mailing list',
+          'url' => CoreUtils::makeURL('Mail','archive', array('listid' => $this->getID())))
+    );
+  }
 }

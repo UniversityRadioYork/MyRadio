@@ -44,5 +44,5 @@ $form->addField(
                                       access.',
                             'label' => 'Permission',
                             'required' => false,
-                            'options' => CoreUtils::getAllPermissions()
+                            'options' => array_merge(array(array('value' => null, 'text' => 'GLOBAL ACCESS')),CoreUtils::getAllPermissions())
                 )));
