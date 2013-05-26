@@ -4,7 +4,6 @@ class MyURY_EmailQueueDaemon {
   public static function isEnabled() { return true; }
   
   public static function run() {
-    echo "Checking for unsent emails...\n";
     //Get up to 5 unsent emails
     $db = Database::getInstance();
     
