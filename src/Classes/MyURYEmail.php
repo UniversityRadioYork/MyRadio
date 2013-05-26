@@ -55,7 +55,7 @@ class MyURYEmail {
       $this->r_users[] = User::getInstance($user);
     }
 
-    $lists = self::$db->fetch_all('SELECT listid FROM mail.email_recipient_list WHERE email_id=$1', array($eid));
+    $lists = self::$db->fetch_column('SELECT listid FROM mail.email_recipient_list WHERE email_id=$1', array($eid));
     foreach ($lists as $list) {
       $this->r_lists[] = MyURY_List::getInstance($list);
     }
