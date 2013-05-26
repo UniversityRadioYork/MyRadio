@@ -453,7 +453,7 @@ $times
   ~ URY Scheduling Wizard
 EOT;
     if (!empty($times))
-      MyURYEmail::sendEmail($this->owner->getEmail(), $this->getMeta('title') . ' Scheduled', $message);
+      MyURYEmail::sendEmailToUser($this->owner, $this->getMeta('title') . ' Scheduled', $message);
 
     /**
      * Flush Memcached - there will be stale schedule entries for the website
@@ -486,7 +486,7 @@ EOT;
 
     foreach ($this->getShow()->getCredits() as $credit) {
       $u = User::getInstance($credit);
-      MyURYEmail::sendEmail($u->getName() . ' <' . $u->getEmail() . '>', 'Show Cancelled', $email);
+      MyURYEmail::sendEmailToUser($u, 'Show Cancelled', $email);
     }
 
     $r = (bool) self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_id=$1 AND start_time >= NOW()', array($this->getID()));
