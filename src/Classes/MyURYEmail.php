@@ -28,12 +28,12 @@ class MyURYEmail {
   private static $rtnl = "\r\n";
   private static $multipart_boundary = 'muryp2c6cf41f304e3';
   private $email_id;
-  private $r_lists;
-  private $r_users;
+  private $r_lists = array();
+  private $r_users = array();
   private $subject;
   private $body;
   private $body_transformed;
-  private $html = false;
+  private $multipart = false;
   private $from;
   private $timestamp;
 
@@ -67,7 +67,7 @@ class MyURYEmail {
     $split = strip_tags($this->body);
     if ($this->body !== $split) {
       //There's HTML in there
-      $this->html = true;
+      $this->multipart = true;
       $this->body_transformed = 'This is a MIME encoded message.'
               .self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
               .'Content-Type: text/plain;charset=utf-8'.self::$rtnl.self::$rtnl
@@ -170,7 +170,7 @@ class MyURYEmail {
             mail($user->getName() . '<' . $user->getEmail() . '>', $u_subject, $u_message, $this->getHeader());
           }
         }
-        $this->setSentToList($user);
+        $this->setSentToList($list);
       }
     }
 
