@@ -108,6 +108,10 @@ class MyURY_List extends ServiceAPI {
     return $this->listid;
   }
   
+  public function getName() {
+    return $this->name;
+  }
+  
   public static function getByName($str) {
     $r = self::$db->fetch_column('SELECT listid FROM mail_list WHERE listname ILIKE $1 OR listaddress ILIKE $1',
             array($str));
