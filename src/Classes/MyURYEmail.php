@@ -121,14 +121,14 @@ class MyURYEmail {
   private function getHeader() {
     $headers = array('MIME-Version: 1.0');
     if ($this->multipart) {
-      $headers[] = array('Content/Type: multipart/alternative;boundary='.self::$multipart_boundary);
+      $headers[] = 'Content/Type: multipart/alternative;boundary='.self::$multipart_boundary;
     } else {
-      $headers[] = array('Content-Type: text/plain; charset=utf-8');
+      $headers[] = 'Content-Type: text/plain; charset=utf-8';
     }
     if ($this->from !== null) {
-      $headers[] = array('From: '.$this->from->getName().' <'.$this->from->getEmail().'>');
+      $headers[] = 'From: '.$this->from->getName().' <'.$this->from->getEmail().'>';
     } else {
-      $headers[] = array('From: University Radio York <no-reply@ury.org.uk>');
+      $headers[] = 'From: University Radio York <no-reply@ury.org.uk>';
     }
     return implode(self::$rtnl, $headers);
   }
@@ -164,7 +164,7 @@ class MyURYEmail {
       if (!$this->getSentToList($list)) {
         foreach ($list->getMembers() as $user) {
           //Don't send if the user has opted out
-          if (!$this->getSentToUser($user)) {
+          if ($user->getReceiveEmail()) {
             $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
             $u_message = str_ireplace('#NAME', $user->getFName(), $this->body);
             mail($user->getName() . '<' . $user->getEmail() . '>', $u_subject, $u_message, $this->getHeader());
