@@ -242,7 +242,7 @@ class MyURY_List extends ServiceAPI {
         'Address' => $this->getAddress() === null ? '<em>Hidden</em>' :
                 '<a href="mailto:' . $this->getAddress() . '@ury.org.uk">' . $this->getAddress() . '@ury.org.uk</a>',
         'Recipients' => sizeof($this->getMembers()),
-        'OptIn' => (($this->optin && !$this->isMember(User::getInstance())) || $this->hasOptedOutOfAuto(User::getInstance())) ? array('display' => 'icon',
+        'OptIn' => (!$this->isMember(User::getInstance())) && ($this->optin || $this->hasOptedOutOfAuto(User::getInstance())) ? array('display' => 'icon',
             'value' => 'circle-plus',
             'title' => 'Subscribe to this mailing list',
             'url' => CoreUtils::makeURL('Mail', 'optin', array('list' => $this->getID()))) : null,
