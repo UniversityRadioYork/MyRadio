@@ -46,7 +46,7 @@ class MyURYEmail {
 
     $this->subject = $info['subject'];
     $this->body = $info['body'];
-    $this->from = (empty($info['sender']) ? null : User::getInstance($info['from']));
+    $this->from = (empty($info['sender']) ? null : User::getInstance($info['sender']));
     $this->timestamp = strtotime($info['timestamp']);
     $this->email_id = $eid;
 
