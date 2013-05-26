@@ -157,6 +157,7 @@ class MyURY_List extends ServiceAPI {
    * If the mailing list is automatic, but the user has previously opted out, remove this opt-out entry.
    * @param User $user
    * @return boolean True if the user is now opted in, false if they could not be opted in.
+   * @todo Auto-rebuild Exim routing after change
    */
   public function optin(User $user) {
     if ($this->isMember($user))
@@ -177,6 +178,7 @@ class MyURY_List extends ServiceAPI {
    * If the mailing list is automatic, opt-the user out of the list.
    * @param User $user
    * @return boolean True if the user is now opted out, false if they could not be opted out.
+   * @todo Auto-rebuild Exim routing after change
    */
   public function optout(User $user) {
     if (!$this->isMember($user))
