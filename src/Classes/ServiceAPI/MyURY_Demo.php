@@ -100,8 +100,8 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
     $time = self::getDemoTime($demoid);
     $user = self::getDemoer($demoid);
     $attendee = User::getInstance();
-    MyURYEmail::sendEmail($user->getEmail(), 'New Demo Attendee', $attendee->getName().' has joined your demo at '.$time.'.');
-    MyURYEmail::sendEmail($attendee->getEmail(), 'Attending Demo', 'Hi '.$attendee->getFName().
+    MyURYEmail::sendEmailToUser($user, 'New Demo Attendee', $attendee->getName().' has joined your demo at '.$time.'.');
+    MyURYEmail::sendEmailToUser($attendee, 'Attending Demo', 'Hi '.$attendee->getFName().
             ",\r\n\r\nThanks for joining a demo at $time. You will be demoed by ".$user->getName().
             '. Just head over to the station in Vanbrugh College just before your demo and the trainer will be waiting for you.'
             ."\r\n\r\nSee you on air soon!\r\nURY Training");

@@ -33,7 +33,7 @@ define('PHP_ERROR_LOCK', $log_dir.'/php-error-logging-lock');
 define('ONE_DAY', 86400);  // one whole day, in seconds
 define('TESTING_ONLY', 10); // ten seconds, for test purposes
 
-define('SEND_ERROR_EMAIL_TO', 'computing@ury.york.ac.uk');
+define('SEND_ERROR_EMAIL_TO', 'alerts.myury');
 
 class MyURYError {
   
@@ -237,7 +237,7 @@ class MyURYError {
                     'types may occur but not generate email '.
                     'alerts. Check the'.$rtnl.
                     'live error log.)';
-            $sent = MyURYEmail::sendEmail(SEND_ERROR_EMAIL_TO, 'PHP error alert', $message);
+            $sent = MyURYEmail::sendEmailToList(MyURY_List::getByName(SEND_ERROR_EMAIL_TO), 'PHP error alert', $message);
             if (!$sent) {
                 error_log('FAIL: mail failed to send error alert email.');
                 // Good chance that if the mail command failed,

@@ -207,7 +207,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
     $email2 .= "\r\n\r\nIt was cancelled automatically as more than required notice was given.";
 
     MyURYEmail::sendEmailToUserSet($this->getSeason()->getShow()->getCreditObjects(), 'Episode of '.$this->getMeta('title').' Cancelled', $email1);
-    MyURYEmail::sendEmail('programming@ury.org.uk', 'Episode of '.$this->getMeta('title').' Cancelled', $email2);
+    MyURYEmail::sendEmailToList(MyURY_List::getByName('programming'), 'Episode of '.$this->getMeta('title').' Cancelled', $email2);
 
     return true;
   }
@@ -217,7 +217,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
     $email .= "\r\n\r\nDue to the short notice, it has been passed to you for consideration. To cancel the timeslot, visit ";
     $email .= CoreUtils::makeURL('Scheduler', 'cancelEpisode', array('show_season_timeslot_id' => $this->getID(), 'reason' => base64_encode($reason)));
     
-    MyURYEmail::sendEmail('programming@ury.org.uk', 'Show Cancellation Request', $email);
+    MyURYEmail::sendEmailToList(MyURY_List::getByName('programming'), 'Show Cancellation Request', $email);
     
     return true;
   }
