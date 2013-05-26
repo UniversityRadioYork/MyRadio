@@ -166,10 +166,11 @@ class MyURYEmail {
           //Don't send if the user has opted out
           if ($user->getReceiveEmail()) {
             $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
-            $u_message = str_ireplace('#NAME', $user->getFName(), $this->body);
+            $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
             mail($user->getName() . '<' . $user->getEmail() . '>', $u_subject, $u_message, $this->getHeader());
           }
         }
+        echo "sending $u_subject $u_message to {$user->getEmail()} with {$this->getHeader()}";
         $this->setSentToList($list);
       }
     }
