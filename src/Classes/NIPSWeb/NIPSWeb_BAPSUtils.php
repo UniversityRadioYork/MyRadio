@@ -86,12 +86,13 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
     self::$db->query('BEGIN');
 
     trigger_error("listings: ".print_r($listings, true));
+    trigger_error("listings: ".print_r($tracks, true));
     foreach ($listings as $listing) {
       //Delete the old format
       self::$db->query('DELETE FROM baps_item WHERE listingid=$1', array($listing['listingid']), true);
       //Add each new entry
       $position = 1;
-      trigger_error("tracks: ".print_r($tracks, true));
+      trigger_error("tracks: ".print_r($tracks[$listing['channel']], true));
       foreach ($tracks[$listing['channel']] as $track) {
         switch ($track['type']) {
           case 'central':
