@@ -175,6 +175,8 @@ class MyURY_List extends ServiceAPI {
   public function optin(User $user) {
     if ($this->isMember($user))
       return false;
+    
+    if (!$this->optin && !$this->hasOptedOutOfAuto($user)) return false;
 
     if ($this->optin) {
       self::$db->query('INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)',
@@ -242,10 +244,10 @@ class MyURY_List extends ServiceAPI {
         'Address' => $this->getAddress() === null ? '<em>Hidden</em>' :
                 '<a href="mailto:' . $this->getAddress() . '@ury.org.uk">' . $this->getAddress() . '@ury.org.uk</a>',
         'Recipients' => sizeof($this->getMembers()),
-        'OptIn' => (!$this->isMember(User::getInstance())) && ($this->optin || $this->hasOptedOutOfAuto(User::getInstance())) ? array('display' => 'icon',
+        'OptIn' => ((!$this->isMember(User::getInstance()) && ($this->optin || $this->hasOptedOutOfAuto(User::getInstance()))) ? array('display' => 'icon',
             'value' => 'circle-plus',
             'title' => 'Subscribe to this mailing list',
-            'url' => CoreUtils::makeURL('Mail', 'optin', array('list' => $this->getID()))) : null,
+            'url' => CoreUtils::makeURL('Mail', 'optin', array('list' => $this->getID()))) : null),
         'OptOut' => ($this->isMember(User::getInstance()) ? array('display' => 'icon',
             'value' => 'circle-minus',
             'title' => 'Opt out of this mailing list',

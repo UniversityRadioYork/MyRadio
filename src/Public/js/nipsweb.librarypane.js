@@ -14,7 +14,11 @@ function updateCentralSearch() {
   $.ajax({
     url: myury.makeURL('MyURY', 'a-findtrack'),
     type: 'post',
-    data: 'artist=' + $('#res-filter-artist').val() + '&term=' + $('#res-filter-track').val(),
+    data: {
+      artist: $('#res-filter-artist').val(),
+      term: $('#res-filter-track').val(),
+      limit: 100
+    },
     success: function(data) {
       $('#baps-channel-res').empty();
       for (file in data) {
@@ -24,8 +28,8 @@ function updateCentralSearch() {
 
         $('#baps-channel-res').append(
                 '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
-                  '" channel="res" weight="0" type="central" class="' + classes + '" length="' + data[file].length + '">'
-                  + data[file].title + ' - ' + data[file].artist + '</li>'
+                '" channel="res" weight="0" type="central" class="' + classes + '" length="' + data[file].length + '">'
+                + data[file].title + ' - ' + data[file].artist + '</li>'
                 );
       }
       registerItemClicks();
@@ -53,7 +57,7 @@ $(document).ready(function() {
       $.ajax({
         url: myury.makeURL('MyURY', 'a-findtrack'),
         type: 'post',
-        data: {itonesplaylistid: $(this).val().replace(/managed-/,''), digitised: true, limit: 0},
+        data: {itonesplaylistid: $(this).val().replace(/managed-/, ''), digitised: true, limit: 0},
         success: function(data) {
           for (file in data) {
             $('#baps-channel-res').append(
@@ -85,7 +89,7 @@ $(document).ready(function() {
           for (file in data) {
             $('#baps-channel-res').append(
                     '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
-                    '" channel="res" weight="0" type="central" length="' + data[file].length + '">' 
+                    '" channel="res" weight="0" type="central" length="' + data[file].length + '">'
                     + data[file].title + ' - ' + data[file].artist + '</li>'
                     );
           }
@@ -114,7 +118,7 @@ $(document).ready(function() {
             } else {
               $('#baps-channel-res').append(
                       '<li id="ManagedDB-' + data[file].managedid +
-                      '" length="'+data[file].length +
+                      '" length="' + data[file].length +
                       '" channel="res" weight="0" type="aux" managedid="' + data[file].managedid + '">'
                       + data[file].title + '</li>'
                       );
@@ -174,7 +178,7 @@ $(document).ready(function() {
       title: 'Library Manager',
       width: 850,
       minHeight: 550,
-      position: { my: "center center", at: "center center", of: window }
+      position: {my: "center center", at: "center center", of: window}
     });
     return false;
   });
