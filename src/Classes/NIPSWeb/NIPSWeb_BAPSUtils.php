@@ -90,7 +90,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
       self::$db->query('DELETE FROM baps_item WHERE listingid=$1', array($listing['listingid']), true);
       //Add each new entry
       $position = 1;
-      trigger_error("tracks: ".var_dump($tracks));
+      trigger_error("tracks: ".print_r($tracks, true));
       foreach ($tracks[$listing['channel']] as $track) {
         switch ($track['type']) {
           case 'central':
