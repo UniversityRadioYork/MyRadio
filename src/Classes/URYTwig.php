@@ -27,7 +27,7 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
     if (Config::$template_debug) {
       $this->enableDebug();
     }
-    
+
     $this->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : 'Anonymous')
             ->addVariable('memberid', isset($_SESSION['memberid']) ? $_SESSION['memberid'] : 0)
             ->addVariable('impersonator', isset($_SESSION['impersonator']) ? ' - Impersonated by ' . $_SESSION['impersonator']['name'] : '')
@@ -36,10 +36,12 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
             ->addVariable('baseurl', Config::$base_url)
             ->addVariable('rewriteurl', Config::$rewrite_url)
             ->addVariable('serviceName', 'MyURY')
-            ->addVariable('submenu', (new MyURYMenu())->getSubMenuForUser(CoreUtils::getModuleID($GLOBALS['module']), User::getInstance()))
             ->setTemplate('stripe.twig')
-            ->addVariable('title', $GLOBALS['module'])
             ->addVariable('uri', $_SERVER['REQUEST_URI']);
+    if (!empty($GLOBALS['module'])) {
+      $this->addVariable('submenu', (new MyURYMenu())->getSubMenuForUser(CoreUtils::getModuleID($GLOBALS['module']), User::getInstance()))
+              ->addVariable('title', $GLOBALS['module']);
+    }
 
     $cuser = User::getInstance();
     if ($cuser->hasAuth(AUTH_SELECTSERVICEVERSION)) {
