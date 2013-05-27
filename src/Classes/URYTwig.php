@@ -27,7 +27,7 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
     if (Config::$template_debug) {
       $this->enableDebug();
     }
-    echo debug_print_backtrace();
+    
     $this->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : 'Anonymous')
             ->addVariable('memberid', isset($_SESSION['memberid']) ? $_SESSION['memberid'] : 0)
             ->addVariable('impersonator', isset($_SESSION['impersonator']) ? ' - Impersonated by ' . $_SESSION['impersonator']['name'] : '')
