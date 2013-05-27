@@ -85,6 +85,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
     //Start a transaction for this change
     self::$db->query('BEGIN');
 
+    trigger_error("listings: ".print_r($listings, true));
     foreach ($listings as $listing) {
       //Delete the old format
       self::$db->query('DELETE FROM baps_item WHERE listingid=$1', array($listing['listingid']), true);
