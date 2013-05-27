@@ -56,5 +56,3 @@ foreach ($recipients[3] as $recipient) {
     $list->archiveMessage($sender, $email);
   }
 }
-
-MyURYEmail::sendEmailToComputing('Received Archive Proposal', $email);
