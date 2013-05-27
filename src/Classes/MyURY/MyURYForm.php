@@ -216,20 +216,6 @@ class MyURYForm {
             ->addVariable('frm_fields', $fields)
             ->addVariable('frm_custom', $frmcustom);
 
-    if (User::getInstance()->hasAuth(AUTH_SELECTSERVICEVERSION)) {
-      $twig->addVariable('version_header', '<li><a href="?select_version=' . Config::$service_id . '" title="Click to change version">' .
-              CoreUtils::getServiceVersionForUser(User::getInstance())['version'] . '</a></li>');
-    } else {
-      $twig->addVariable('version_header', '');
-    }
-    if (User::getInstance()->hasAuth(AUTH_SHOWERRORS) || Config::$display_errors) {
-      $twig->addVariable('phperrors', MyURYError::$php_errorlist);
-    }
-
-    if (isset($_REQUEST['message'])) {
-      $twig->addInfo(base64_decode($_REQUEST['message']));
-    }
-
     $twig->render();
   }
 
