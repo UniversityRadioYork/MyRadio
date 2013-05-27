@@ -41,8 +41,9 @@ class MyURYEmail {
     self::$db = Database::getInstance();
 
     $info = self::$db->fetch_one('SELECT * FROM mail.email WHERE email_id=$1', array($eid));
-    
-    if (empty($info)) throw new MyURYException('Email '.$eid.' does not exist!');
+
+    if (empty($info))
+      throw new MyURYException('Email ' . $eid . ' does not exist!');
 
     $this->subject = $info['subject'];
     $this->body = $info['body'];
@@ -59,7 +60,7 @@ class MyURYEmail {
     foreach ($lists as $list) {
       $this->r_lists[] = MyURY_List::getInstance($list);
     }
-    
+
     /**
      * Check if the body needs to be split into multipart.
      * This creates a string with both Text and HTML parts.
@@ -69,11 +70,11 @@ class MyURYEmail {
       //There's HTML in there
       $this->multipart = true;
       $this->body_transformed = 'This is a MIME encoded message.'
-              .self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
-              .'Content-Type: text/plain;charset=utf-8'.self::$rtnl.self::$rtnl
-              .self::addFooter($split).self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
-              .'Content-Type: text/html;charset=utf-8'.self::$rtnl.self::$rtnl
-              .self::addHTMLFooter($this->body).self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.'--';
+              . self::$rtnl . self::$rtnl . '--' . self::$multipart_boundary . self::$rtnl
+              . 'Content-Type: text/plain;charset=utf-8' . self::$rtnl . self::$rtnl
+              . self::addFooter($split) . self::$rtnl . self::$rtnl . '--' . self::$multipart_boundary . self::$rtnl
+              . 'Content-Type: text/html;charset=utf-8' . self::$rtnl . self::$rtnl
+              . self::addHTMLFooter($this->body) . self::$rtnl . self::$rtnl . '--' . self::$multipart_boundary . '--';
     } else {
       $this->body_transformed = self::addFooter($this->body);
     }
@@ -86,8 +87,9 @@ class MyURYEmail {
    * @param String $subject email subject
    * @param String $body email body
    * @param int $timestamp Send time. If null, use now.
+   * @param bool $already_sent If true, all Recipients will be set to having had the email sent.
    */
-  public static function create($to, $subject, $body, $from = null, $timestamp = null) {
+  public static function create($to, $subject, $body, $from = null, $timestamp = null, $already_sent = false) {
     self::$db = Database::getInstance();
 
     $params = array($subject, $body);
@@ -104,45 +106,49 @@ class MyURYEmail {
 
     $eid = $eid[0];
 
-    foreach ($to['lists'] as $list) {
-      if (is_object($list))
-        $list = $list->getID();
-      self::$db->query('INSERT INTO mail.email_recipient_list (email_id, listid) VALUES ($1, $2)', array($eid, $list));
+    if (!empty($to['lists'])) {
+      foreach ($to['lists'] as $list) {
+        if (is_object($list))
+          $list = $list->getID();
+        self::$db->query('INSERT INTO mail.email_recipient_list (email_id, listid, sent) VALUES ($1, $2, $3)', array($eid, $list, $already_sent));
+      }
     }
-    foreach ($to['members'] as $member) {
-      if (is_object($member))
-        $member = $member->getID();
-      self::$db->query('INSERT INTO mail.email_recipient_member (email_id, memberid) VALUES ($1, $2)', array($eid, $member));
+    if (!empty($to['members'])) {
+      foreach ($to['members'] as $member) {
+        if (is_object($member))
+          $member = $member->getID();
+        self::$db->query('INSERT INTO mail.email_recipient_member (email_id, memberid, sent) VALUES ($1, $2, $3)', array($eid, $member, $already_sent));
+      }
     }
 
     return new self($eid);
   }
-  
+
   private function getHeader() {
     $headers = array('MIME-Version: 1.0');
-    
+
     if ($this->from !== null) {
-      $headers[] = 'From: '.$this->from->getName().' <'.$this->from->getEmail().'>';
+      $headers[] = 'From: ' . $this->from->getName() . ' <' . $this->from->getEmail() . '>';
     } else {
       $headers[] = 'From: University Radio York <no-reply@ury.org.uk>';
     }
-    
+
     /**
      * !! Multipart headers must be *last* or things Go Badly
      */
     if ($this->multipart) {
-      $headers[] = 'Content-Type: multipart/alternative;boundary='.self::$multipart_boundary;
+      $headers[] = 'Content-Type: multipart/alternative;boundary=' . self::$multipart_boundary;
     } else {
       $headers[] = 'Content-Type: text/plain; charset=utf-8';
     }
-    
+
     return implode(self::$rtnl, $headers);
   }
 
   private static function addFooter($message) {
     return $message . self::$rtnl . self::$rtnl . self::$footer;
   }
-  
+
   private static function addHTMLFooter($message) {
     return $message . '<hr>' . self::$html_footer;
   }
@@ -160,7 +166,7 @@ class MyURYEmail {
         if ($user->getReceiveEmail()) {
           $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
           $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-          if (!mail($user->getName() . ' <' . $user->getEmail() . '>', '[URY] '.$u_subject, $u_message, $this->getHeader()))
+          if (!mail($user->getName() . ' <' . $user->getEmail() . '>', '[URY] ' . $u_subject, $u_message, $this->getHeader()))
             continue;
         }
         $this->setSentToUser($user);
@@ -174,7 +180,7 @@ class MyURYEmail {
           if ($user->getReceiveEmail()) {
             $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
             $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-            if (!mail($user->getName() . ' <' . $user->getEmail() . '>', '[URY] '.$u_subject, $u_message, $this->getHeader()))
+            if (!mail($user->getName() . ' <' . $user->getEmail() . '>', '[URY] ' . $u_subject, $u_message, $this->getHeader()))
               continue;
           }
         }
@@ -216,7 +222,7 @@ class MyURYEmail {
     self::create(array('members' => array($to)), $subject, $message, $from);
     return true;
   }
-  
+
   /**
    * Sends an email to the specified MyURY_List
    * @param MyURY_List $to
@@ -225,7 +231,8 @@ class MyURYEmail {
    * @todo Check if "Receive Emails" is enabled for the User
    */
   public static function sendEmailToList(MyURY_List $to, $subject, $message, $from = null) {
-    if ($from !== null && !$to->hasSendPermission($from)) return false;
+    if ($from !== null && !$to->hasSendPermission($from))
+      return false;
     self::create(array('lists' => array($to)), $subject, $message, $from);
     return true;
   }
@@ -249,8 +256,8 @@ class MyURYEmail {
     }
   }
 
-  /** BELOW HERE IS FOR IF STUFF BREAKS REALLY EARLY BEFORE ^ WILL WORK **/
-  
+  /** BELOW HERE IS FOR IF STUFF BREAKS REALLY EARLY BEFORE ^ WILL WORK * */
+
   /**
    * 
    * @param string $subject email subject
@@ -260,7 +267,7 @@ class MyURYEmail {
     mail("URY Computing Team <alerts.myury@ury.org.uk>", $subject, self::addFooter($message), self::getDefaultHeader());
     return TRUE;
   }
-  
+
   /**
    * 
    * @return string default headers for sending email - Plain text and sent from no-reply

@@ -373,7 +373,10 @@ class User extends ServiceAPI {
     self::initCache(); self::initDB();
     //Check the input is an int, and use the session user if not otherwise told
     $memberid = (int) $memberid;
-    if ($memberid === -1) $memberid = $_SESSION['memberid'];
+    if ($memberid === -1) {
+      if (!isset($_SESSION)) $memberid = 779; //Mr Website
+      else $memberid = $_SESSION['memberid'];
+    }
     
     //Check if a user class already exists for this memberid
     //(Each memberid-user combination should only have one initiated instance)
@@ -479,5 +482,15 @@ class User extends ServiceAPI {
     );
     
     return $events;
+  }
+  
+  public static function findByEmail($email) {
+    self::__wakeup();
+    
+    $result = self::$db->fetch_column('SELECT memberid FROM public.member WHERE email ILIKE $1 OR eduroam ILIKE $1
+      OR local_name ILIKE $2 OR local_alias ILIKE $2', array($email, explode('@',$email)[0]));
+    
+    if (empty($result)) return null;
+    else return self::getInstance($result[0]);
   }
 }

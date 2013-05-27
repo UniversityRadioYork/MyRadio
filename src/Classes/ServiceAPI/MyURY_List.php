@@ -215,12 +215,26 @@ class MyURY_List extends ServiceAPI {
     }
     return true;
   }
+  
+  /**
+   * Takes an email and puts it in the online Email Archive
+   * 
+   * @param User $from
+   * @param String $email
+   */
+  public function archiveMessage($from, $email) {
+    $body = preg_split("/\r?\n\r?\n/", $email, 2)[1];
+    preg_match("/(^|\s)Subject:(.*)/i", $email, $subject);
+    $subject = trim($subject[2][0]);
+    
+    MyURYEmail::create(array('lists' => array($this)), $subject, $body, $from, time(), true);
+  }
 
   public static function getByName($str) {
     $r = self::$db->fetch_column('SELECT listid FROM mail_list WHERE listname ILIKE $1 OR listaddress ILIKE $1',
             array($str));
     if (empty($r))
-      throw new MyURYException($str . ' is not a valid Mailing List');
+      return null;
     else
       return self::getInstance($r[0]);
   }
