@@ -90,35 +90,37 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
       self::$db->query('DELETE FROM baps_item WHERE listingid=$1', array($listing['listingid']), true);
       //Add each new entry
       $position = 1;
-      foreach ($tracks[$listing['channel']] as $track) {
-        switch ($track['type']) {
-          case 'central':
-            $file = self::getTrackDetails($track['trackid'], $track['album']['recordid']);
-            self::$db->query('INSERT INTO baps_item (listingid, position, libraryitemid, name1, name2)
-              VALUES ($1, $2, $3, $4, $5)', array(
-                $listing['listingid'],
-                $position,
-                $file['libraryitemid'],
-                $file['title'],
-                $file['artist']
-                    ), true);
+      if (isset($tracks[$listing['channel']])) {
+        foreach ($tracks[$listing['channel']] as $track) {
+          switch ($track['type']) {
+            case 'central':
+              $file = self::getTrackDetails($track['trackid'], $track['album']['recordid']);
+              self::$db->query('INSERT INTO baps_item (listingid, position, libraryitemid, name1, name2)
+                VALUES ($1, $2, $3, $4, $5)', array(
+                  $listing['listingid'],
+                  $position,
+                  $file['libraryitemid'],
+                  $file['title'],
+                  $file['artist']
+                      ), true);
 
-            break;
-          case 'aux':
-            //Get the LegacyDB ID of the file
-            $fileitemid = self::getFileItemFromManagedID($track['managedid']);
-            self::$db->query('INSERT INTO baps_item (listingid, position, fileitemid, name1)
-              VALUES ($1, $2, $3, $4)', array(
-                (int) $listing['listingid'],
-                (int) $position,
-                (int) $fileitemid,
-                $track['title']
-                    ), true);
-            break;
-          default:
-            throw new MyURYException('What do I even with this item?');
+              break;
+            case 'aux':
+              //Get the LegacyDB ID of the file
+              $fileitemid = self::getFileItemFromManagedID($track['managedid']);
+              self::$db->query('INSERT INTO baps_item (listingid, position, fileitemid, name1)
+                VALUES ($1, $2, $3, $4)', array(
+                  (int) $listing['listingid'],
+                  (int) $position,
+                  (int) $fileitemid,
+                  $track['title']
+                      ), true);
+              break;
+            default:
+              throw new MyURYException('What do I even with this item?');
+          }
+          $position++;
         }
-        $position++;
       }
     }
 
