@@ -90,6 +90,7 @@ class MyURYEmail {
    * @param bool $already_sent If true, all Recipients will be set to having had the email sent.
    */
   public static function create($to, $subject, $body, $from = null, $timestamp = null, $already_sent = false) {
+    if (!is_bool($already_sent)) $already_sent = false;
     self::$db = Database::getInstance();
 
     $params = array($subject, $body);
