@@ -19,7 +19,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
   private $show_id;
   private $meta;
   private $owner;
-  private $credits;
+  private $credits = array();
   private $genres;
   private $show_type;
   private $submitted_time;
@@ -212,7 +212,8 @@ class MyURY_Show extends MyURY_Scheduler_Common {
   }
 
   public function getMeta($meta_string) {
-    return $this->meta[self::getMetadataKey($meta_string)];
+    return isset($this->meta[self::getMetadataKey($meta_string)]) ?
+      $this->meta[self::getMetadataKey($meta_string)] : null;
   }
 
   public function getNumberOfSeasons() {
