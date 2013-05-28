@@ -111,14 +111,16 @@ class MyURYEmail {
       foreach ($to['lists'] as $list) {
         if (is_object($list))
           $list = $list->getID();
-        self::$db->query('INSERT INTO mail.email_recipient_list (email_id, listid, sent) VALUES ($1, $2, $3)', array($eid, $list, $already_sent));
+        self::$db->query('INSERT INTO mail.email_recipient_list (email_id, listid, sent) VALUES ($1, $2, $3)',
+                array($eid, $list, $already_sent));
       }
     }
     if (!empty($to['members'])) {
       foreach ($to['members'] as $member) {
         if (is_object($member))
           $member = $member->getID();
-        self::$db->query('INSERT INTO mail.email_recipient_member (email_id, memberid, sent) VALUES ($1, $2, $3)', array($eid, $member, $already_sent));
+        self::$db->query('INSERT INTO mail.email_recipient_member (email_id, memberid, sent) VALUES ($1, $2, $3)',
+                array($eid, $member, $already_sent));
       }
     }
 

@@ -60,6 +60,11 @@ class Database {
    * @assert ('SELECT * FROM public.member') != false
    */
   public function query($sql, $params = array(), $rollback = false) {
+    
+    foreach ($params as $k => $v) {
+      if (is_bool($v)) $params[$k] = ($v? 't' : 'f');
+    }
+    
     if (isset($_REQUEST['dbdbg'])) echo $sql.'&nbsp;'.print_r($params,true).'<br>';
     
     $result = pg_query_params($this->db, $sql, $params);
