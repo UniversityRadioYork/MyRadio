@@ -233,6 +233,22 @@ function initialiseUI() {
   registerItemClicks();
   setupGenericListeners();
   updateChannelTotalTimers();
+  configureContextMenus();
+}
+
+function configureContextMenus() {
+  $(document).contextmenu({
+    delegage: '.baps-channel',
+    menu: [
+      {title: "Automatic Advance", cmd: "autoAdv", uiIcon: ""},
+      {title: "Play on Load", cmd: "autoPlay", uiIcon: ""},
+      {title: "Repeat None", cmd: "rptNone", uiIcon: "ui-icon-check"},
+      {title: "Repeat One", cmd: "rptOne", uiIcon: ""},
+      {title: "Repeat All", cmd: "rptAll", uiIcon: ""},
+      {title: "Reset Channel", cmd: "reset", uiIcon: "ui-icon-trash"},
+      {title: "Save Channel As...", cmd: "savePreset", uiIcon: "ui-icon-disk"}
+    ]
+  });
 }
 
 function initialisePlayer(channel) {
