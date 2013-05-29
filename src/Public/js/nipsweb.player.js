@@ -249,6 +249,7 @@ function configureContextMenus() {
       {title: "Reset Channel", cmd: "reset", uiIcon: "ui-icon-trash"},
       {title: "Save Channel As...", cmd: "savePreset", uiIcon: "ui-icon-disk"}
     ],
+    position: {my: "left top", at: "center"},
     beforeOpen: function(event) {
       //Enable/disable Delete item depending on if it's an li - lis are items, ul would be container
       $(document).contextmenu("enableEntry", "itemDel", $(event.relatedTarget).is('li'));
