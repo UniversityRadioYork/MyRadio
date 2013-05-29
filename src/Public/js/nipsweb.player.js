@@ -254,7 +254,7 @@ function configureContextMenus() {
     var menuId = ui.item.find(">a").attr("href"),
             target = event.relatedTarget;
     console.log("select " + menuId + " on " + $(target).text());
-  }
+  });
 }
 
 function initialisePlayer(channel) {
