@@ -276,7 +276,15 @@ function initialisePlayer(channel) {
     min: 0
   });
 
-  window.audioNodes[(channel === 'res') ? 0 : channel] = new Audio();
+  var a = new Audio();
+  
+  $(a).on('ended', function() {
+    if ($('#baps-channel-'+channel).attr('autoadvance') == 1) {
+      $('#'+$('#baps-channel-'+channel+' li.selected').removeClass('selected').attr('nextselect')).click();
+    }
+  });
+
+  window.audioNodes[(channel === 'res') ? 0 : channel] = a;
 
   setupListeners(channel);
 }
