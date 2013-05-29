@@ -248,15 +248,17 @@ function configureContextMenus() {
       {title: "Repeat All", cmd: "rptAll", uiIcon: ""},
       {title: "Reset Channel", cmd: "reset", uiIcon: "ui-icon-trash"},
       {title: "Save Channel As...", cmd: "savePreset", uiIcon: "ui-icon-disk"}
-    ]
+    ],
+    beforeOpen: function(event) {
+      //Enable/disable Delete item depending on if it's an li - lis are items, ul would be container
+      $(document).contextmenu("enableEntry", "itemDel", $(event.relatedTarget).is('li'));
+    }
   });
 
   $(document).bind("contextmenuselect", function(event, ui) {
     var menuId = ui.item.find(">a").attr("href"),
             target = event.relatedTarget;
-    //Enable/disable Delete item depending on if it's an li
-    $(document).contextmenu("enableEntry", "itemDel", $(target).is('li'));
-    
+
     console.log("select " + menuId + " on " + $(target).attr('id'));
   });
 }
@@ -306,10 +308,10 @@ function previewLoad(channel) {
       success: function() {
         if (playerVariables(channel).canPlayType('audio/mpeg')) {
           playerVariables(channel).type = 'audio/mpeg';
-          playerVariables(channel).src = mConfig.base_url+'?module=NIPSWeb&action=secure_play&recordid=' + data[0] + '&trackid=' + data[1];
+          playerVariables(channel).src = mConfig.base_url + '?module=NIPSWeb&action=secure_play&recordid=' + data[0] + '&trackid=' + data[1];
         } else if (playerVariables(channel).canPlayType('audio/ogg')) {
           playerVariables(channel).type = 'audio/ogg';
-          playerVariables(channel).src =  mConfig.base_url+'?module=NIPSWeb&action=secure_play&ogg=true&recordid=' + data[0] + '&trackid=' + data[1];
+          playerVariables(channel).src = mConfig.base_url + '?module=NIPSWeb&action=secure_play&ogg=true&recordid=' + data[0] + '&trackid=' + data[1];
         } else {
           alert('Sorry, you need to use a modern browser to use Track Preview.');
         }
@@ -330,7 +332,7 @@ function previewLoad(channel) {
       }
     });
   } else if (type === 'aux') {
-    playerVariables(channel).src =  mConfig.base_url+'?module=NIPSWeb&action=managed_play&managedid=' + $('#' + audioid).attr('managedid');
+    playerVariables(channel).src = mConfig.base_url + '?module=NIPSWeb&action=managed_play&managedid=' + $('#' + audioid).attr('managedid');
     $(playerVariables(channel)).on('canplay', function() {
       $('#ch' + channel + '-play').removeClass('ui-state-disabled');
     });
