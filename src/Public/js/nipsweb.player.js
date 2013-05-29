@@ -256,7 +256,7 @@ function configureContextMenus() {
       //Enable/disable Delete item depending on if it's an li - lis are items, ul would be container
       $(document).contextmenu("enableEntry", "itemDel", $(event.relatedTarget).is('li'));
       $(document).contextmenu("setEntry", "autoAdv",
-            {title: "Automatic Advance", uiIcon: $(ul).attr('autoadvance') == 1 ? "ui-icon-check" : ""})
+            {title: "Automatic Advance", cmd: "autoAdv", uiIcon: $(ul).attr('autoadvance') == 1 ? "ui-icon-check" : ""})
     },
     show: { effect: "slideDown", duration: 100}
   });
