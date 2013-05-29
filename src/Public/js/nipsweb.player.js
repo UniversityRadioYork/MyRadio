@@ -250,7 +250,7 @@ function configureContextMenus() {
     ]
   });
 
-  $("#container").bind("contextmenuselect", function(event, ui) {
+  $(document).bind("contextmenuselect", function(event, ui) {
     var menuId = ui.item.find(">a").attr("href"),
             target = event.relatedTarget;
     console.log("select " + menuId + " on " + $(target).text());
