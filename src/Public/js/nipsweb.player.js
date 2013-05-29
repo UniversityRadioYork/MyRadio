@@ -240,6 +240,7 @@ function configureContextMenus() {
   $(document).contextmenu({
     delegate: '.baps-channel',
     menu: [
+      {title: "Delete Item", cmd: "itemDel", uiIcon: ""},
       {title: "Automatic Advance", cmd: "autoAdv", uiIcon: ""},
       {title: "Play on Load", cmd: "autoPlay", uiIcon: ""},
       {title: "Repeat None", cmd: "rptNone", uiIcon: "ui-icon-check"},
@@ -253,7 +254,10 @@ function configureContextMenus() {
   $(document).bind("contextmenuselect", function(event, ui) {
     var menuId = ui.item.find(">a").attr("href"),
             target = event.relatedTarget;
-    console.log("select " + menuId + " on " + $(target).text());
+    //Enable/disable Delete item depending on if it's an li
+    $(document).contextmenu("enableEntry", "itemDel", $(target).is('li'));
+    
+    console.log("select " + menuId + " on " + $(target).attr('id'));
   });
 }
 
