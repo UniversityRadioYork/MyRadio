@@ -247,7 +247,8 @@ function configureContextMenus() {
       {title: "Repeat One", cmd: "rptOne", uiIcon: ""},
       {title: "Repeat All", cmd: "rptAll", uiIcon: ""},
       {title: "Reset Channel", cmd: "reset", uiIcon: "ui-icon-trash"},
-      {title: "Save Channel As...", cmd: "savePreset", uiIcon: "ui-icon-disk"}
+      {title: "Save Channel As...", cmd: "savePreset", uiIcon: "ui-icon-disk"},
+      {title: "Load Channel", cmd: "loadPreset", uiIcon: "ui-icon-folder-open"}
     ],
     position: {my: "left top", at: "center"},
     beforeOpen: function(event) {
