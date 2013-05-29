@@ -251,7 +251,7 @@ function configureContextMenus() {
     ],
     position: {my: "left top", at: "center"},
     beforeOpen: function(event) {
-      var ul = $(event.relatedTarget).is('li') ? event.relatedTarget : $(event.relatedTarget).parent();
+      var ul = $(event.relatedTarget).is('li') ? $(event.relatedTarget).parent('ul') : event.relatedTarget;
       //Enable/disable Delete item depending on if it's an li - lis are items, ul would be container
       $(document).contextmenu("enableEntry", "itemDel", $(event.relatedTarget).is('li'));
       $(document).contextmenu("setEntry", "autoAdv",
