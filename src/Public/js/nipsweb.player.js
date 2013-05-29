@@ -242,7 +242,7 @@ function configureContextMenus() {
     menu: [
       {title: "Delete Item", cmd: "itemDel", uiIcon: ""},
       {title: "Automatic Advance", cmd: "autoAdv", uiIcon: ""},
-      {title: "Play on Load", cmd: "autoPlay", uiIcon: ""},
+      {title: "Play On Load", cmd: "autoPlay", uiIcon: ""},
       {title: "Repeat None", cmd: "rptNone", uiIcon: "ui-icon-check"},
       {title: "Repeat One", cmd: "rptOne", uiIcon: ""},
       {title: "Repeat All", cmd: "rptAll", uiIcon: ""},
@@ -256,7 +256,9 @@ function configureContextMenus() {
       //Enable/disable Delete item depending on if it's an li - lis are items, ul would be container
       $(document).contextmenu("enableEntry", "itemDel", $(event.relatedTarget).is('li'));
       $(document).contextmenu("setEntry", "autoAdv",
-            {title: "Automatic Advance", cmd: "autoAdv", uiIcon: $(ul).attr('autoadvance') == 1 ? "ui-icon-check" : ""})
+            {title: "Automatic Advance", cmd: "autoAdv", uiIcon: $(ul).attr('autoadvance') == 1 ? "ui-icon-check" : ""}),
+      $(document).contextmenu("setEntry", "autoPlay",
+            {title: "Play On Load", cmd: "autoPlay", uiIcon: $(ul).attr('playonload') == 1 ? "ui-icon-check" : ""})
     },
     show: { effect: "slideDown", duration: 100}
   });
@@ -268,6 +270,8 @@ function configureContextMenus() {
     
     if (menuId === "#autoAdv") {
       if ($(ul).attr('autoadvance') == 1) $(ul).attr('autoadvance',0); else $(ul).attr('autoadvance',1);
+    } else if (menuId === "#autoPlay") {
+      if ($(ul).attr('playonload') == 1) $(ul).attr('playonload',0); else $(ul).attr('playonload',1);
     }
     console.log("select " + menuId + " on " + $(target).attr('id'));
   });
@@ -345,6 +349,9 @@ function previewLoad(channel) {
           setTimeout(function() {
             that.pause();
             that.volume = 1;
+            if ($('#baps-channel-'+channel).attr('playonload') == 1) {
+              that.play();
+            }
           }, 10);
         });
       }
