@@ -238,7 +238,7 @@ function initialiseUI() {
 
 function configureContextMenus() {
   $(document).contextmenu({
-    delegate: '.baps-channel',
+    delegate: 'ul.baps-channel',
     menu: [
       {title: "Delete Item", cmd: "itemDel", uiIcon: ""},
       {title: "Automatic Advance", cmd: "autoAdv", uiIcon: ""},
