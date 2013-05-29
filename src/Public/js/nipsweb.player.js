@@ -251,7 +251,8 @@ function configureContextMenus() {
     ],
     position: {my: "left top", at: "center"},
     beforeOpen: function(event) {
-      var ul = $(event.relatedTarget).is('li') ? $(event.relatedTarget).parent('ul') : event.relatedTarget;
+      var ul = ($(event.relatedTarget).is('li') ? $(event.relatedTarget).parent('ul') : event.relatedTarget);
+      console.log(ul);
       //Enable/disable Delete item depending on if it's an li - lis are items, ul would be container
       $(document).contextmenu("enableEntry", "itemDel", $(event.relatedTarget).is('li'));
       $(document).contextmenu("setEntry", "autoAdv",
@@ -262,8 +263,12 @@ function configureContextMenus() {
 
   $(document).bind("contextmenuselect", function(event, ui) {
     var menuId = ui.item.find(">a").attr("href"),
-            target = event.relatedTarget;
-
+            target = event.relatedTarget,
+            ul = ($(event.relatedTarget).is('li') ? $(event.relatedTarget).parent('ul') : event.relatedTarget);
+    
+    if (menuId === "#autoAdv") {
+      if ($(ul).attr('autoadvance') == 1) $(ul).attr('autoadvance',0); else $(ul).attr('autoadvance',1);
+    }
     console.log("select " + menuId + " on " + $(target).attr('id'));
   });
 }
