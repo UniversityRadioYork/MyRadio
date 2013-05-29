@@ -285,7 +285,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
             array($_SESSION['memberid'], MyURY_Scheduler_Common::getMetadataKey('player_image'), 'tmp', $this->getID()))[0];
     
     $suffix = 'image_meta/ShowImageMetadata/'.$result.'.png';
-    $path = Config::$show_images_path.'/'.$suffix;
+    $path = Config::$public_media_path.'/'.$suffix;
     move_uploaded_file($tmp_path, $path);
     
     self::$db->query('UPDATE schedule.show_image_metadata SET effective_to=NOW() WHERE metadata_key_id=$1 AND show_id=$2
