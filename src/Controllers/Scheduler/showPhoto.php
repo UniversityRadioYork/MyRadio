@@ -12,9 +12,9 @@ $show = MyURY_Show::getInstance($_REQUEST['show_id']);
 
 //Require this is the user's show or the user can edit any show
 if (!$show->isCurrentUserAnOwner()) {
-  CoreUtils::requirePermission(AUTH_EDITSHOW);
+  CoreUtils::requirePermission(AUTH_EDITSHOWS);
 }
 
 //The Form definition
 require 'Models/Scheduler/showphotofrm.php';
-$form->render();
+$form->setFieldValue('show_id', $show->getID())->render();
