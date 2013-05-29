@@ -184,7 +184,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
     $r = $this->deleteTimeslot();
     if (!$r) return false;
 
-    $email = "Hi #NAME, \r\n\r\n Please note that an episode your show, " . $this->getMeta('title') .
+    $email = "Hi #NAME, \r\n\r\n Please note that an episode of your show, " . $this->getMeta('title') .
             ' has been cancelled by our Programming Team. The affected episode was at '.CoreUtils::happyTime($this->getStartTime());
     $email .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\nURY Programming Team";
     self::$cache->purge();
