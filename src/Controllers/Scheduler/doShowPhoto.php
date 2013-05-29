@@ -9,7 +9,6 @@
 
 //The Form definition
 require 'Models/Scheduler/showphotofrm.php';
-$form->render();
 
 $data = $form->readValues();
 
@@ -20,3 +19,5 @@ if (!$show->isCurrentUserAnOwner()) {
 }
 
 $show->setShowPhoto($data['image_file']['tmp_name']);
+
+CoreUtils::backWithMessage('Show Photo updated!');
