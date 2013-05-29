@@ -237,8 +237,8 @@ function initialiseUI() {
 }
 
 function configureContextMenus() {
-  $('.baps-channel').contextmenu({
-    delegate: 'li',
+  $(document).contextmenu({
+    delegate: '.baps-channel',
     menu: [
       {title: "Automatic Advance", cmd: "autoAdv", uiIcon: ""},
       {title: "Play on Load", cmd: "autoPlay", uiIcon: ""},
@@ -249,6 +249,12 @@ function configureContextMenus() {
       {title: "Save Channel As...", cmd: "savePreset", uiIcon: "ui-icon-disk"}
     ]
   });
+
+  $("#container").bind("contextmenuselect", function(event, ui) {
+    var menuId = ui.item.find(">a").attr("href"),
+            target = event.relatedTarget;
+    console.log("select " + menuId + " on " + $(target).text());
+  }
 }
 
 function initialisePlayer(channel) {
