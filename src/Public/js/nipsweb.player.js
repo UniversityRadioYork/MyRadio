@@ -238,7 +238,7 @@ function initialiseUI() {
 
 function configureContextMenus() {
   $(document).contextmenu({
-    delegage: '.baps-channel',
+    delegate: '.baps-channel',
     menu: [
       {title: "Automatic Advance", cmd: "autoAdv", uiIcon: ""},
       {title: "Play on Load", cmd: "autoPlay", uiIcon: ""},
