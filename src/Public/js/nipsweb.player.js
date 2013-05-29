@@ -253,7 +253,7 @@ function configureContextMenus() {
       //Enable/disable Delete item depending on if it's an li - lis are items, ul would be container
       $(document).contextmenu("enableEntry", "itemDel", $(event.relatedTarget).is('li'));
     },
-    show: { effect: "slideDown", duration: "fast"}
+    show: { effect: "slideDown", duration: 100}
   });
 
   $(document).bind("contextmenuselect", function(event, ui) {
