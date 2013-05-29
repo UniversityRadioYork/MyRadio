@@ -9,7 +9,7 @@
  * A collection of these is automatically created when building a MyURYForm
  * 
  * @package MyURY_Core
- * @version 28072012
+ * @version 20130509
  * @author Lloyd Wallis <lpw@ury.org.uk>
  */
 class MyURYFormField {
@@ -198,6 +198,13 @@ class MyURYFormField {
    * and may have... interesting... results.
    */
   const TYPE_TABULARSET = 0x11;
+  /**
+   * The constant used to specify this MyURYFormField should be a container for a set of repeating MyURYFormFields.
+   * By default these render in a tabular layout.
+   * 
+   * This MyURYFormField does not support any Custom Options
+   */
+  const TYPE_FILE = 0x12;
 
   /**
    * The name/id of the Form Field
@@ -444,8 +451,12 @@ class MyURYFormField {
         }
         return $return;
         break;
+      case self::TYPE_FILE:
+        return $_FILES[$name];
+        break;
       case self::TYPE_SECTION:
         return null;
+        break;
       default:
         throw new MyURYException('Field type ' . $this->type . ' does not have a valid value interpreter definition.');
     }
