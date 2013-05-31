@@ -8,7 +8,7 @@
  * @package MyURY_Profile
  */
 
-$officers = Profile::getCurrentOfficers();
+$officers = Profile::getOfficers();
 
 require 'Views/Profile/bootstrap.php';
 
