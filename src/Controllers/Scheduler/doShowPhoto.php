@@ -7,14 +7,17 @@
  * @package MyURY_Scheduler
  */
 
-//Require this is the user's show or the user can edit any show
-if (!$show->isCurrentUserAnOwner()) {
-  CoreUtils::requirePermission(AUTH_EDITSHOW);
-}
-
 //The Form definition
 require 'Models/Scheduler/showphotofrm.php';
-$form->render();
 
 $data = $form->readValues();
-print_r($data);
+
+$show = MyURY_Show::getInstance($data['show_id']);
+//Require this is the user's show or the user can edit any show
+if (!$show->isCurrentUserAnOwner()) {
+  CoreUtils::requirePermission(AUTH_EDITSHOWS);
+}
+
+$show->setShowPhoto($data['image_file']['tmp_name']);
+
+CoreUtils::backWithMessage('Show Photo updated!');
