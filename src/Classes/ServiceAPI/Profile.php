@@ -38,7 +38,7 @@ class Profile extends ServiceAPI {
    * This is also cached using a CacheProvider
    * @var Array
    */
-  private static $currentOfficers = null;
+  private static $officers = null;
   
   /**
    * Returns an Array representation of all URY members. On first run, this is cached locally in the class, and
