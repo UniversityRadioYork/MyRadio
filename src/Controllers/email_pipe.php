@@ -6,11 +6,14 @@
  * - if it's sent to a certain mailing list, it'll put it in the archives
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130527
+ * @version 20130530
  * @package MyURY_Mail
  * @uses \Database
  * @uses \CoreUtils
  */
+
+ini_set("log_errors", 1);
+ini_set("error_log", "/tmp/php-mailparser-error.log");
 
 //Set up environment
 date_default_timezone_get('Europe/London');
@@ -52,6 +55,7 @@ foreach ($recipients[3] as $recipient) {
   }
   
   $list = MyURY_List::getByName(explode('@',$addr)[0]);
+  if (empty($list)) exit(0);
   if ($list->getID() == 52 && $sender == null) return; //Prevent loops
   if ($list !== null) {
     $list->archiveMessage($sender, $email);
