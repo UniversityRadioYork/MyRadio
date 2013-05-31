@@ -71,7 +71,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
     }
     //If the show definition has changed, recurse this method
     if ($change)
-      return $this->getListingsForShow($showid);
+      return self::getListingsForShow($showid);
     else
       return $listings;
   }
