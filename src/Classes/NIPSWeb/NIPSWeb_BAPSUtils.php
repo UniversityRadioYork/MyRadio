@@ -23,7 +23,9 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
       //No match. Create a show
       $result = self::$db->fetch_column('INSERT INTO baps_show
         (userid, name, broadcastdate, externallinkid, viewable)
-        VALUES (4, $1, $2, $3, true) RETURNING showid', array($timeslot->getMeta('title') . '-' . $timeslot->getID(), $timeslot->getStartTime(), $timeslot->getID()));
+        VALUES (4, $1, $2, $3, true) RETURNING showid', array($timeslot->getMeta('title') . '-' . $timeslot->getID(),
+            CoreUtils::getTimestamp($timeslot->getStartTime()),
+            $timeslot->getID()));
     }
 
     return (int) $result[0];
