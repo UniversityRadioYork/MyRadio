@@ -233,6 +233,49 @@ function initialiseUI() {
   registerItemClicks();
   setupGenericListeners();
   updateChannelTotalTimers();
+  configureContextMenus();
+}
+
+function configureContextMenus() {
+  $(document).contextmenu({
+    delegate: 'ul.baps-channel',
+    menu: [
+      {title: "Delete Item", cmd: "itemDel", uiIcon: ""},
+      {title: "Automatic Advance", cmd: "autoAdv", uiIcon: ""},
+      {title: "Play On Load", cmd: "autoPlay", uiIcon: ""},
+      {title: "Repeat None", cmd: "rptNone", uiIcon: "ui-icon-check"},
+      {title: "Repeat One", cmd: "rptOne", uiIcon: ""},
+      {title: "Repeat All", cmd: "rptAll", uiIcon: ""},
+      {title: "Reset Channel", cmd: "reset", uiIcon: "ui-icon-trash"},
+      {title: "Save Channel As...", cmd: "savePreset", uiIcon: "ui-icon-disk"},
+      {title: "Load Channel", cmd: "loadPreset", uiIcon: "ui-icon-folder-open"}
+    ],
+    position: {my: "left top", at: "center"},
+    beforeOpen: function(event) {
+      var ul = ($(event.relatedTarget).is('li') ? $(event.relatedTarget).parent('ul') : event.relatedTarget);
+      console.log(ul);
+      //Enable/disable Delete item depending on if it's an li - lis are items, ul would be container
+      $(document).contextmenu("enableEntry", "itemDel", $(event.relatedTarget).is('li'));
+      $(document).contextmenu("setEntry", "autoAdv",
+            {title: "Automatic Advance", cmd: "autoAdv", uiIcon: $(ul).attr('autoadvance') == 1 ? "ui-icon-check" : ""}),
+      $(document).contextmenu("setEntry", "autoPlay",
+            {title: "Play On Load", cmd: "autoPlay", uiIcon: $(ul).attr('playonload') == 1 ? "ui-icon-check" : ""})
+    },
+    show: { effect: "slideDown", duration: 100}
+  });
+
+  $(document).bind("contextmenuselect", function(event, ui) {
+    var menuId = ui.item.find(">a").attr("href"),
+            target = event.relatedTarget,
+            ul = ($(event.relatedTarget).is('li') ? $(event.relatedTarget).parent('ul') : event.relatedTarget);
+    
+    if (menuId === "#autoAdv") {
+      if ($(ul).attr('autoadvance') == 1) $(ul).attr('autoadvance',0); else $(ul).attr('autoadvance',1);
+    } else if (menuId === "#autoPlay") {
+      if ($(ul).attr('playonload') == 1) $(ul).attr('playonload',0); else $(ul).attr('playonload',1);
+    }
+    console.log("select " + menuId + " on " + $(target).attr('id'));
+  });
 }
 
 function initialisePlayer(channel) {
@@ -246,7 +289,15 @@ function initialisePlayer(channel) {
     min: 0
   });
 
-  window.audioNodes[(channel === 'res') ? 0 : channel] = new Audio();
+  var a = new Audio();
+  
+  $(a).on('ended', function() {
+    if ($('#baps-channel-'+channel).attr('autoadvance') == 1) {
+      $('#'+$('#baps-channel-'+channel+' li.selected').removeClass('selected').attr('nextselect')).click();
+    }
+  });
+
+  window.audioNodes[(channel === 'res') ? 0 : channel] = a;
 
   setupListeners(channel);
 }
@@ -280,10 +331,10 @@ function previewLoad(channel) {
       success: function() {
         if (playerVariables(channel).canPlayType('audio/mpeg')) {
           playerVariables(channel).type = 'audio/mpeg';
-          playerVariables(channel).src = mConfig.base_url+'?module=NIPSWeb&action=secure_play&recordid=' + data[0] + '&trackid=' + data[1];
+          playerVariables(channel).src = mConfig.base_url + '?module=NIPSWeb&action=secure_play&recordid=' + data[0] + '&trackid=' + data[1];
         } else if (playerVariables(channel).canPlayType('audio/ogg')) {
           playerVariables(channel).type = 'audio/ogg';
-          playerVariables(channel).src =  mConfig.base_url+'?module=NIPSWeb&action=secure_play&ogg=true&recordid=' + data[0] + '&trackid=' + data[1];
+          playerVariables(channel).src = mConfig.base_url + '?module=NIPSWeb&action=secure_play&ogg=true&recordid=' + data[0] + '&trackid=' + data[1];
         } else {
           alert('Sorry, you need to use a modern browser to use Track Preview.');
         }
@@ -299,12 +350,15 @@ function previewLoad(channel) {
           setTimeout(function() {
             that.pause();
             that.volume = 1;
+            if ($('#baps-channel-'+channel).attr('playonload') == 1) {
+              that.play();
+            }
           }, 10);
         });
       }
     });
   } else if (type === 'aux') {
-    playerVariables(channel).src =  mConfig.base_url+'?module=NIPSWeb&action=managed_play&managedid=' + $('#' + audioid).attr('managedid');
+    playerVariables(channel).src = mConfig.base_url + '?module=NIPSWeb&action=managed_play&managedid=' + $('#' + audioid).attr('managedid');
     $(playerVariables(channel)).on('canplay', function() {
       $('#ch' + channel + '-play').removeClass('ui-state-disabled');
     });

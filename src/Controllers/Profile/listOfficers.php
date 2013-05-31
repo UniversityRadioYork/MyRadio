@@ -8,16 +8,24 @@
  * @package MyURY_Profile
  */
 
-$officers = Profile::getCurrentOfficers();
+$officers = Profile::getOfficers();
 
 require 'Views/Profile/bootstrap.php';
 
 foreach ($officers as $k => $v) {
-  $officers[$k]['name'] = array(
-      'display' => 'text',
-      'url' => CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['memberid'])),
-      'value' => $v['name']
-      );
+  if (!empty($officers[$k]['name'])) {
+	  $officers[$k]['name'] = array(
+	      'display' => 'text',
+	      'url' => CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['memberid'])),
+	      'value' => $v['name']
+	      );
+	}
+	$officers[$k]['editlink'] = array(
+		'display' => 'icon',
+        'value' => 'wrench',
+        'title' => 'Edit Officer',
+        'url' => CoreUtils::makeURL('Profile', 'editOfficer', array('officerid' => $v['officerid'])),
+        );
 }
 
 $twig->setTemplate('table.twig')
