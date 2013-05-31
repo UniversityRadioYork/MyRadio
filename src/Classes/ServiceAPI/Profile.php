@@ -33,6 +33,12 @@ class Profile extends ServiceAPI {
    * @var Array
    */
   private static $currentOfficers = null;
+  /**
+   * Stores an Array representation of the current officerships and members holding them from the getOfficers function when it is first called
+   * This is also cached using a CacheProvider
+   * @var Array
+   */
+  private static $currentOfficers = null;
   
   /**
    * Returns an Array representation of all URY members. On first run, this is cached locally in the class, and
@@ -97,7 +103,7 @@ class Profile extends ServiceAPI {
    * shared in the CacheProvider until the Cache is cleared
    * 
    * @return Array A two-dimensional Array, each element in the first dimension container the following details about
-   * a member, sorted by their name:
+   * officer, sorted by their officer ordering:
    * 
    * team: The team the officer is in
    * officership: The current position held
@@ -118,5 +124,35 @@ class Profile extends ServiceAPI {
     }
     
     return self::$currentOfficers;
+  }
+  /**
+   * Returns an Array representation of the current URY officerships and the member holding them. On first run, this is cached locally in the class, and
+   * shared in the CacheProvider until the Cache is cleared
+   * 
+   * @return Array A two-dimensional Array, each element in the first dimension container the following details about
+   * a member, sorted by their name:
+   * 
+   * team: The team the officer is in
+   * officership: The current position held
+   * name: The user's last and first names formatted as <code>fname sname</code> (If officership is filled else NULL)
+   * memberid: The user's unique memberid (If officership is filled else NULL)
+   */
+  public static function getOfficers() {
+    //Return the object if it is cached
+    self::$officers = self::$cache->get('MyURYProfile_officers');
+    if (self::$officers === false) {
+      self::__wakeup();
+      self::$officers = 
+        self::$db->fetch_all('SELECT team.team_name AS team, officer.officer_name AS officership, fname || \' \' || sname AS name, member.memberid, officer.officerid
+                              FROM team 
+                                LEFT JOIN officer ON team.teamid = officer.teamid AND officer.status = \'c\'
+                                LEFT JOIN member_officer ON officer.officerid = member_officer.officerid AND member_officer.till_date IS NULL
+                                LEFT JOIN member ON member_officer.memberid = member.memberid
+                              WHERE team.status = \'c\'
+                              ORDER BY team.ordering, officer.ordering, sname');
+      self::$cache->set('MyURYProfile_officers', self::$officers);
+    }
+    
+    return self::$officers;
   }
 }
