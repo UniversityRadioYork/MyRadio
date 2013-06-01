@@ -212,14 +212,4 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
     return trim(preg_replace("/[^0-9^a-z^,^_^.^\(^\)^-^ ]/i", "", str_replace('..', '.', $file)));
   }
 
-  private static function getManagedFromItem($managedid) {
-    return self::$db->fetch_one('
-      SELECT manageditemid, title, length, folder FROM bapsplanner.managed_items, bapsplanner.managed_playlists
-        WHERE managed_items.managedplaylistid=managed_playlists.managedplaylistid AND manageditemid=$1
-      UNION
-        SELECT manageditemid, title, length, managedplaylistid AS folder FROM bapsplanner.managed_user_items WHERE manageditemid=$1
-      LIMIT 1'
-                    , array($managedid));
-  }
-
 }
