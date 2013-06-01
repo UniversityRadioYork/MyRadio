@@ -23,7 +23,9 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
       //No match. Create a show
       $result = self::$db->fetch_column('INSERT INTO baps_show
         (userid, name, broadcastdate, externallinkid, viewable)
-        VALUES (4, $1, $2, $3, true) RETURNING showid', array($timeslot->getName() . '-' . $timeslot->getID(), $timeslot->getStartTime(), $timeslot->getID()));
+        VALUES (4, $1, $2, $3, true) RETURNING showid', array($timeslot->getMeta('title') . '-' . $timeslot->getID(),
+            CoreUtils::getTimestamp($timeslot->getStartTime()),
+            $timeslot->getID()));
     }
 
     return (int) $result[0];
@@ -69,7 +71,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
     }
     //If the show definition has changed, recurse this method
     if ($change)
-      return $this->getListingsForShow($showid);
+      return self::getListingsForShow($showid);
     else
       return $listings;
   }

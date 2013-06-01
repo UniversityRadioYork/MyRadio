@@ -10,7 +10,7 @@
  * 
  * This is a Critical include! - It is loaded before MyURY Brokers into versions so only the live one is used!
  * 
- * @version 22052012
+ * @version 20130531
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @depends Config
  * @package MyURY_Core
@@ -72,8 +72,8 @@ class Database {
       if ($rollback) {
         pg_query($this->db, 'ROLLBACK');
       }
-      throw new MyURYException('Query failure: ' . $sql . '<br />'
-              . pg_errormessage($this->db));
+      throw new MyURYException('Query failure: ' . $sql . '<br>'
+              . pg_errormessage($this->db).'<br>Params: '.print_r($params,true));
     }
     $this->counter++;
     return $result;

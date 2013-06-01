@@ -17,6 +17,15 @@ $('.twig-datatable').dataTable({
     "sTitle": "",
     "bVisible": false
   },
+  //officerrid
+  {
+    "sTitle": "",
+    "bVisible": false
+  },
+  //edit
+  {
+    "sTitle": "Edit"
+  },
   ],
   "bJQueryUI": true,
   "bSort": false,
