@@ -608,6 +608,8 @@ function registerItemClicks() {
   });
   $('ul.baps-channel').tooltip({
     items: "li",
+    show: {delay: 500},
+    hide: false,
     content: function() {
       return $(this).html() + ' (' + $(this).attr('length') + ')';
     }
