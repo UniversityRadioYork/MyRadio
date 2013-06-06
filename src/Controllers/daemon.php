@@ -72,5 +72,20 @@ while (true) {
     if (!$once) sleep(5);
   }
   
+  //Every once in a while, check database connection. If it's lost, routinely try to reconnect.
+  if (!Database::getInstance()->status()) {
+    echo "CRITICAL: Database server connection lost. Attempting to reconnect...";
+    $db_fail_start = time();
+    while (!Database::getInstance()->reconnect()) {
+      if (time() - $db_fail_start > 900) {
+        //Connection has been lost for more than 15 minutes. Give up.
+        MyURYEmail::sendEmailToComputing('[MyURY] Background Service Failure', "MyURY's connection to the Database Server has been lost. Attempts to reconnect for the last 15 minutes have proved futile, so the service has stopped.\r\n\Please investigate Database connectivity and restart the service one access is restored.");
+      }
+      echo "FAILED!\nWill retry in 30 second intervals.";
+      sleep(30);
+    }
+    echo "RECONNECTED\n";
+  }
+  
   if ($once) break;
 }
