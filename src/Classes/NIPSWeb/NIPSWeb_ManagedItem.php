@@ -8,7 +8,7 @@
 /**
  * The NIPSWeb_ManagedItem class helps provide control and access to Beds and Jingles and similar not-PPL resources
  * 
- * @version 13032013
+ * @version 20130601
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_NIPSWeb
  * @uses \Database

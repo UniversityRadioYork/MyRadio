@@ -158,14 +158,14 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
    * Returns the FileItemID from a ManagedItemID
    */
   public static function getFileItemFromManagedID($auxid) {
-    $fileinfo = self::getManagedFromItem($auxid);
+    $item = NIPSWeb_ManagedItem::getInstance($auxid);
 
-    $legacy_path = Config::$music_smb_path . '\\membersmusic\\fileitems\\' . self::sanitisePath($fileinfo['title']) . '_' . $auxid . '.mp3';
+    $legacy_path = Config::$music_smb_path . '\\membersmusic\\fileitems\\' . self::sanitisePath($item->getTitle()) . '_' . $auxid . '.mp3';
     //Make a hard link if it doesn't exist
-    $ln_path = Config::$music_central_db_path . '/membersmusic/fileitems/' . self::sanitisePath($fileinfo['title']) . '_' . $auxid . '.mp3';
+    $ln_path = Config::$music_central_db_path . '/membersmusic/fileitems/' . self::sanitisePath($item->getTitle()) . '_' . $auxid . '.mp3';
     if (!file_exists($ln_path)) {
-      if (!@link(Config::$music_central_db_path . '/membersmusic/' . $fileinfo['folder'] . '/' . $auxid . '.mp3', $ln_path)) {
-        trigger_error('Could not link ' . Config::$music_central_db_path . '/membersmusic/' . $fileinfo['folder'] . '/' . $auxid . '.mp3' . ' to ' . $ln_path);
+      if (!@link($item->getPath('mp3'), $ln_path)) {
+        trigger_error('Could not link ' . $item->getPath('mp3') . ' to ' . $ln_path);
       }
     }
     $id = self::getFileItemFromPath($legacy_path);
@@ -210,16 +210,6 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
    */
   public static function sanitisePath($file) {
     return trim(preg_replace("/[^0-9^a-z^,^_^.^\(^\)^-^ ]/i", "", str_replace('..', '.', $file)));
-  }
-
-  private static function getManagedFromItem($managedid) {
-    return self::$db->fetch_one('
-      SELECT manageditemid, title, length, folder FROM bapsplanner.managed_items, bapsplanner.managed_playlists
-        WHERE managed_items.managedplaylistid=managed_playlists.managedplaylistid AND manageditemid=$1
-      UNION
-        SELECT manageditemid, title, length, managedplaylistid AS folder FROM bapsplanner.managed_user_items WHERE manageditemid=$1
-      LIMIT 1'
-                    , array($managedid));
   }
 
 }
