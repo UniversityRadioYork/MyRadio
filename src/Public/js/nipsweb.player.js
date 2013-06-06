@@ -38,6 +38,8 @@ function initialiseUI() {
     //A distance dragged of 15 before entering the dragging state
     //Prevents accidentally dragging when clicking
     distance: 15,
+    //Adds a placeholder highlight where the item will be dropped
+    placeholder: "ui-state-highlight",
     //Remove the "selected" class from the item - prevent multiple selected items in a channel
     //Also activate the next/previous item, if there is one
     start: function(e, ui) {
@@ -608,6 +610,8 @@ function registerItemClicks() {
   });
   $('ul.baps-channel').tooltip({
     items: "li",
+    show: {delay: 500},
+    hide: false,
     content: function() {
       return $(this).html() + ' (' + $(this).attr('length') + ')';
     }
