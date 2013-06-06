@@ -60,7 +60,7 @@ class Database {
    * @return boolean Whether the connection is OK.
    */
   public function status() {
-    return pg_connection_status($this->db) === PGSQL_COMMAND_OK;
+    return pg_connection_status($this->db) === PGSQL_CONNECTION_OK;
   }
 
   /**
