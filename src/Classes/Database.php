@@ -47,6 +47,21 @@ class Database {
               MyURYException::FATAL);
     }
   }
+  
+  /**
+   * Attempts to reset connection to the database server
+   */
+  public function reconnect() {
+    return pg_connection_reset($this->db);
+  }
+  
+  /**
+   * Check if the connection to the database server is still alive.
+   * @return boolean Whether the connection is OK.
+   */
+  public function status() {
+    return pg_connection_status($this->db) === PGSQL_COMMAND_OK;
+  }
 
   /**
    * Generic function that just runs a pg_query_params

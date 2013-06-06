@@ -7,7 +7,7 @@
 /**
  * The Artist class provides and stores information about a Artist
  * 
- * @version 27062012
+ * @version 20130605
  * @author Lloyd Wallis <lpw@ury.york.ac.uk>
  * @todo The completion of this module is impossible as Artists do not have
  * unique identifiers. For this to happen, BAPS needs to be replaced/updated
@@ -27,7 +27,7 @@ class Artist extends ServiceAPI {
    */
   private function __construct($artistid) {
     $this->artistid = $artistid;
-    throw new MyURYException('Not implemented ARtist::__construct');
+    throw new MyURYException('Not implemented Artist::__construct');
   }
   
   /**
