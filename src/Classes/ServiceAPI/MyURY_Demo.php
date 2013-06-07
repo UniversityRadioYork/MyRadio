@@ -8,7 +8,7 @@
  * Abstractor for the Demo utilities
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 24102012
+ * @version 20130607
  * @package MyURY_Demo
  * @uses \Database
  */
@@ -16,7 +16,9 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
 
   public static function registerDemo($time) {
     self::initDB();
-
+    $prev = date_default_timezone_get();
+    date_default_timezone_set('UTC');
+    
     /**
      * Check for conflicts
      */
@@ -32,6 +34,7 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
      */
     self::$db->query('INSERT INTO schedule.show_season_timeslot (show_season_id, start_time, memberid, approvedid, duration)
     VALUES (0, $1, $2, $2, \'01:00:00\')', array(CoreUtils::getTimestamp($time), $_SESSION['memberid']));
+    date_default_timezone_set($prev);
     return true;
   }
   
