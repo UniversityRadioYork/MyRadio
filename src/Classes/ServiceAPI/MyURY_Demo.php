@@ -16,7 +16,6 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
 
   public static function registerDemo($time) {
     self::initDB();
-    $prev = date_default_timezone_get();
     date_default_timezone_set('UTC');
     
     /**
@@ -34,7 +33,7 @@ class MyURY_Demo extends MyURY_Scheduler_Common {
      */
     self::$db->query('INSERT INTO schedule.show_season_timeslot (show_season_id, start_time, memberid, approvedid, duration)
     VALUES (0, $1, $2, $2, \'01:00:00\')', array(CoreUtils::getTimestamp($time), $_SESSION['memberid']));
-    date_default_timezone_set($prev);
+    date_default_timezone_set(Config::$timezone);
     return true;
   }
   
