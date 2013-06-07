@@ -420,8 +420,17 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     $times = '';
     for ($i = 1; $i <= 10; $i++) {
       if (isset($params['weeks']['wk' . $i]) && $params['weeks']['wk' . $i] == 1) {
-        $show_time = date('d-m-Y ', $start_day + (($i - 1) * 7 * 86400)) . $start_time;
+        $day_start = $start_day + (($i - 1) * 7 * 86400);
+        $show_time = date('d-m-Y ', $day_start) . $start_time;
         echo $show_time . '<br>';
+        
+        $conflict = MyURY_Scheduler_Common::getScheduleConflict($day_start+$req_time['start_time'], $day_start+$start_time+$req_time['duration']);
+        if (!empty($conflict)) {
+          self::$db->query('ROLLBACK');
+          throw new MyURYException('A show is already scheduled for this time: '.print_r($conflict, true));
+          exit;
+        }
+        
         //This week is due to be scheduled! QUERY! QUERY!
         self::$db->query('INSERT INTO schedule.show_season_timeslot
           (show_season_id, start_time, duration, memberid, approvedid)
