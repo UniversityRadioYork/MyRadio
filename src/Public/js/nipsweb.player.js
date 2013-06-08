@@ -8,7 +8,7 @@ window.clientid;
 window.debug = false;
 //Get a client id to identify this session
 $.post(myury.makeURL('NIPSWeb', 'get_client_token'), null, function(data) {
-  window.clientid = parseInt(data);
+  window.clientid = parseInt(data.token);
 });
 
 function initialiseUI() {
