@@ -8,7 +8,7 @@
  * The Artist class provides and stores information about a Artist
  * 
  * @version 20130605
- * @author Lloyd Wallis <lpw@ury.york.ac.uk>
+ * @author Lloyd Wallis <lpw@ury.org.uk>
  * @todo The completion of this module is impossible as Artists do not have
  * unique identifiers. For this to happen, BAPS needs to be replaced/updated
  * @package MyURY_Core

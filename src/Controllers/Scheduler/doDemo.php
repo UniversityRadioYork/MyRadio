@@ -14,4 +14,4 @@ require 'Models/Scheduler/demofrm.php';
  */
 $demoinfo = $form->readValues();
 MyURY_Demo::registerDemo($demoinfo['demo-datetime']);
-header('Location: https://ury.york.ac.uk/myury/?module=Scheduler&action=listDemos');
+header('Location: '.CoreUtils::makeURL('Scheduler','listDemos'));

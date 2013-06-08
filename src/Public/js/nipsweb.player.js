@@ -148,8 +148,6 @@ function initialiseUI() {
             }
           });
 
-          console.log(dec);
-
           var current = ui.item;
           while (current.next().length === 1) {
             current = current.next();
@@ -164,9 +162,6 @@ function initialiseUI() {
               current.attr('weight', parseInt(current.attr('weight')) + 1);
             }
           }
-
-          console.log(dec);
-          console.log(inc);
 
           for (i in inc) {
             var obj = $('ul.baps-channel li[timeslotitemid=' + inc[i] + ']');
@@ -213,6 +208,7 @@ function initialiseUI() {
           success: function(data) {
             $('#notice').hide();
             for (i in data) {
+              if (i === 'myury_errors') continue;
               if (typeof data[i].timeslotitemid != 'undefined') {
                 //@todo multiple AddItem ops in a jsonon set will make this break
                 $('ul.baps-channel li[timeslotitemid="findme"]').attr('timeslotitemid', data[i].timeslotitemid);
