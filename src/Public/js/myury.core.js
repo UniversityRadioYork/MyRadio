@@ -30,7 +30,7 @@ $(document).ajaxError(function(e, xhr, settings, error) {
 });
 
 $(document).ajaxSuccess(function(e, xhr, settings) {
-  var data = $.httpData(xhr, settings.dataType);
+  var data = $.parseJSON(xhr);
   if (data.myury_errors != null) {
     console.log(data.myury_errors);
     $('<div></div>').attr('title', 'Notice')
