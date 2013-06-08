@@ -20,7 +20,7 @@ $(document).ajaxError(function(e, xhr, settings, error) {
         $(this).dialog("close");
       },
       Report: function() {
-        $(this).addClass('ui-state-disabled');
+        $(".ui-dialog-buttonpane button:contains('Report') span").text("Reporting...").addClass('ui-state-disabled');
         $.post(myury.makeURL('MyURY', 'errorReport'), [xhr, settings, error], function() {
           $(this).dialog("close");
         });
@@ -47,7 +47,7 @@ $(document).ajaxSuccess(function(e, xhr, settings) {
           $(this).dialog("close");
         },
         Report: function() {
-          $(this).addClass('ui-state-disabled');
+          $(".ui-dialog-buttonpane button:contains('Report') span").text("Reporting...").addClass('ui-state-disabled');
           $.post(myury.makeURL('MyURY', 'errorReport'), [xhr, settings, data.myury_errors], function() {
             $(this).dialog("close");
           });
