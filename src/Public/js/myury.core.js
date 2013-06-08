@@ -7,7 +7,7 @@ window.myury = {
   }
 };
 
-$.ajaxError(function(e, xhr, settings, error) {
+$(document).ajaxError(function(e, xhr, settings, error) {
   console.log(error);
   console.log(e);
   $('<div></div>').attr('title', 'Error')
@@ -29,7 +29,7 @@ $.ajaxError(function(e, xhr, settings, error) {
   });
 });
 
-$.ajaxSuccess(function(e, xhr, settings) {
+$(document).ajaxSuccess(function(e, xhr, settings) {
   var data = $.httpData(xhr, settings.dataType);
   if (data.myury_errors != null) {
     console.log(data.myury_errors);
