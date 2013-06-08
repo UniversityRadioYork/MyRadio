@@ -10,7 +10,7 @@ window.myury = {
 $(document).ajaxError(function(e, xhr, settings, error) {
   console.log(error);
   console.log(e);
-  $('<div></div>').attr('title', 'Error')
+  $('<div></div>').attr('title', 'Error').attr('id','error-dialog')
           .append('<p>Sorry, something just went a bit wrong.</p>')
           .append('<details>' + error + '</details>')
           .dialog({
@@ -22,7 +22,7 @@ $(document).ajaxError(function(e, xhr, settings, error) {
       Report: function() {
         $(".ui-dialog-buttonpane button:contains('Report') span").text("Reporting...").addClass('ui-state-disabled');
         $.post(myury.makeURL('MyURY', 'errorReport'), [xhr, settings, error], function() {
-          $(this).parent('.ui-dialog').dialog("close");
+          $('#error-dialog').dialog("close");
         });
       }
     }
@@ -37,7 +37,7 @@ $(document).ajaxSuccess(function(e, xhr, settings) {
   }
   if (data.myury_errors != null) {
     console.log(data.myury_errors);
-    $('<div></div>').attr('title', 'Notice')
+    $('<div></div>').attr('title', 'Notice').attr('id','error-dialog')
             .append('<p>It looks like that request works, but I got an error in the response.</p>')
             .append('<details>' + data.myury_errors + '</details>')
             .dialog({
@@ -49,7 +49,7 @@ $(document).ajaxSuccess(function(e, xhr, settings) {
         Report: function() {
           $(".ui-dialog-buttonpane button:contains('Report') span").text("Reporting...").addClass('ui-state-disabled');
           $.post(myury.makeURL('MyURY', 'errorReport'), [xhr, settings, data.myury_errors], function() {
-            $(this).parent('.ui-dialog').dialog("close");
+            $('#error-dialog').dialog("close");
           });
         }
       }
