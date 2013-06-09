@@ -456,7 +456,7 @@ class MyURY_Track extends ServiceAPI {
     $ainfo = self::getAlbumDurationAndPositionFromLastfm($title, $artist);
     if (empty($ainfo['duration'])) {
       $getID3 = new getID3;
-      $ainfo['duration'] = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $tmpid)['playtime_seconds'];
+      $ainfo['duration'] = intval($getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $tmpid)['playtime_seconds']);
     }
     $track = self::findByNameArtist($title, $artist, 1, false, true);
     if (empty($track)) {
