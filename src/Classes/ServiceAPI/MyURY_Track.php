@@ -8,7 +8,7 @@
 /**
  * The MyURY_Track class provides and stores information about a Track
  * 
- * @version 06042013
+ * @version 20130609
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
  * @uses \Database
@@ -112,13 +112,13 @@ class MyURY_Track extends ServiceAPI {
     $this->artist = $result['artist'];
     $this->clean = $result['clean'];
     $this->digitised = ($result['digitised'] == 't') ? true : false;
-    $this->digitisedby = empty($result['digitisedby']) ? null : (int)$result['digitisedby'];
+    $this->digitisedby = empty($result['digitisedby']) ? null : (int) $result['digitisedby'];
     $this->genre = $result['genre'];
     $this->intro = strtotime('1970-01-01 ' . $result['intro'] . '+00');
     $this->length = $result['length'];
     $this->duration = (int) $result['duration'];
     $this->number = (int) $result['intro'];
-    $this->record = (int)$result['recordid'];
+    $this->record = (int) $result['recordid'];
     $this->title = $result['title'];
   }
 
@@ -130,7 +130,8 @@ class MyURY_Track extends ServiceAPI {
    * @return MyURY_Track
    */
   public static function getInstance($trackid = -1, $album = null) {
-    if ($album !== null) trigger_error ('Use of deprecated parameter $album');
+    if ($album !== null)
+      trigger_error('Use of deprecated parameter $album');
     self::__wakeup();
     if (!is_numeric($trackid)) {
       throw new MyURYException('Invalid Track ID!', MyURYException::FATAL);
@@ -139,7 +140,7 @@ class MyURY_Track extends ServiceAPI {
     if (!isset(self::$tracks[$trackid])) {
       //See if there's one in the cache
       $item = self::$cache->get(self::getCacheKey($trackid));
-      
+
       if ($item !== false) {
         self::$tracks[$trackid] = $item;
       } else {
@@ -221,10 +222,12 @@ class MyURY_Track extends ServiceAPI {
   public function getDigitised() {
     return $this->digitised;
   }
-  
+
   public function getDigitisedBy() {
-    if ($this->digitisedby === null) return null;
-    else return User::getInstance($this->digitisedby);
+    if ($this->digitisedby === null)
+      return null;
+    else
+      return User::getInstance($this->digitisedby);
   }
 
   /**
@@ -396,10 +399,10 @@ class MyURY_Track extends ServiceAPI {
     $filename = session_id() . '-' . ++$_SESSION['myury_nipsweb_file_cache_counter'] . '.mp3';
 
     move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename);
-    
+
     $getID3 = new getID3;
     $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
-    
+
     // File quality checks
     if ($fileInfo['audio']['bitrate'] < 192000) {
       return array('status' => 'FAIL', 'error' => 'Bitrate is below 192kbps.', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']);
@@ -425,7 +428,7 @@ class MyURY_Track extends ServiceAPI {
    */
   public static function identifyUploadedTrack($path) {
     $response = shell_exec('lastfm-fpclient -json ' . $path);
-    
+
     $lastfm = json_decode($response, true);
 
     if (empty($lastfm)) {
@@ -449,11 +452,15 @@ class MyURY_Track extends ServiceAPI {
   }
 
   public static function identifyAndStoreTrack($tmpid, $title, $artist) {
-//Get the album info
+    //Get the album info
     $ainfo = self::getAlbumDurationAndPositionFromLastfm($title, $artist);
+    if (empty($ainfo['duration'])) {
+      $getID3 = new getID3;
+      $ainfo['duration'] = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $tmpid)['playtime_seconds'];
+    }
     $track = self::findByNameArtist($title, $artist, 1, false, true);
     if (empty($track)) {
-//Create the track
+      //Create the track
       $track = self::create(array(
                   'title' => $title,
                   'artist' => $artist,
@@ -464,11 +471,11 @@ class MyURY_Track extends ServiceAPI {
       ));
     } else {
       $track = $track[0];
-//If it's set to digitised, throw an error
+      //If it's set to digitised, throw an error
       if ($track->getDigitised()) {
         return array('status' => 'FAIL', 'error' => 'This track is already in our library.');
       } else {
-//Mark it as digitised
+        //Mark it as digitised
         $track->setDigitised(true);
       }
     }
