@@ -331,27 +331,27 @@ class MyURY_Track extends ServiceAPI {
     if (!$conflict && !empty($options['itonesplaylistid']))
       return iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks();
 
-    if (!isset($options['title']))
+    if (empty($options['title']))
       $options['title'] = '';
-    if (!isset($options['artist']))
+    if (empty($options['artist']))
       $options['artist'] = '';
-    if (!isset($options['digitised']))
+    if (empty($options['digitised']))
       $options['digitised'] = true;
-    if (!isset($options['itonesplaylistid']))
+    if (empty($options['itonesplaylistid']))
       $options['itonesplaylistid'] = null;
-    if (!isset($options['limit']))
+    if (empty($options['limit']))
       $options['limit'] = Config::$ajax_limit_default;
-    if (!isset($options['recordid']))
+    if (empty($options['recordid']))
       $options['recordid'] = null;
-    if (!isset($options['lastfmverified']))
+    if (empty($options['lastfmverified']))
       $options['lastfmverified'] = null;
-    if (!isset($options['random']))
+    if (empty($options['random']))
       $options['random'] = null;
-    if (!isset($options['idsort']))
+    if (empty($options['idsort']))
       $options['idsort'] = null;
-    if (!isset($options['custom']))
+    if (empty($options['custom']))
       $options['custom'] = null;
-    if (!isset($options['precise']))
+    if (empty($options['precise']))
       $options['precise'] = false;
 
 //Prepare paramaters

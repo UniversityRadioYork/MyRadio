@@ -69,7 +69,7 @@ class iTones_Playlist extends ServiceAPI {
    */
   public static function getInstance($resid = -1) {
     self::__wakeup();
-    if (!is_string($resid)) {
+    if (!is_string($resid) or empty($resid)) {
       throw new MyURYException('Invalid iTonesPlaylistID!');
     }
 
