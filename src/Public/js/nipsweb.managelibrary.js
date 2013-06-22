@@ -176,7 +176,7 @@ $(document).ready(function() {
         if (window.auxid.match(/^aux-\d+$/)) {
           //This is a central one - it can have an expiry
           $('#resupload-'+i).append(
-              $('<input type="text" placeholder="Expiry date" />').addClass('date').attr('id','resuploaddate-'+i).datepicker({dateFormat: 'yyyy-mm-dd'}))
+              $('<input type="text" placeholder="Expiry date" />').addClass('date').attr('id','resuploaddate-'+i).datepicker({dateFormat: 'dd/mm/yy'}))
               .append('<em>Leave blank to never expire</em>&nbsp;&nbsp;');
         }
         $('#res-result').append('<div id="confirminator-'+(response.fileid.replace(/\.mp3/,''))+'"></div>');
