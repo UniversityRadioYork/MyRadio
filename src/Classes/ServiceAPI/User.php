@@ -8,7 +8,7 @@
  * The user object provides and stores information about a user
  * It is not a singleton for Impersonate purposes
  * 
- * @version 09062012
+ * @version 20130624
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
  * @uses \Database
@@ -201,6 +201,21 @@ class User extends ServiceAPI {
   }
   
   /**
+   * Returns the last User that trained this User. Still returns them if the Training status was revoked.
+   * @return User|null
+   */
+  public function getStudioTrainedBy() {
+    $trainer = null;
+    foreach ($this->training as $value) {
+      if ($value['presenterstatusid'] == 1) {
+        $trainer = User::getInstance($value['confirmedby']);
+      }
+    }
+    
+    return $trainer;
+  }
+  
+  /**
    * Returns if the user is Studio Demoed
    * @return boolean
    */
@@ -218,6 +233,21 @@ class User extends ServiceAPI {
   }
   
   /**
+   * Returns the last User that demoed this User. Still returns them if the Demoed status was revoked.
+   * @return User|null
+   */
+  public function getStudioDemoedBy() {
+    $trainer = null;
+    foreach ($this->training as $value) {
+      if ($value['presenterstatusid'] == 2) {
+        $trainer = User::getInstance($value['confirmedby']);
+      }
+    }
+    
+    return $trainer;
+  }
+  
+  /**
    * Returns if the user is a Trainer
    * @return boolean
    */
@@ -231,6 +261,21 @@ class User extends ServiceAPI {
         $trainer = false;
       }
     }
+    return $trainer;
+  }
+  
+  /**
+   * Returns the last User that trainer trained this User. Still returns them if the Trainer status was revoked.
+   * @return User|null
+   */
+  public function getTrainerTrainedBy() {
+    $trainer = null;
+    foreach ($this->training as $value) {
+      if ($value['presenterstatusid'] == 3) {
+        $trainer = User::getInstance($value['confirmedby']);
+      }
+    }
+    
     return $trainer;
   }
   
@@ -492,5 +537,44 @@ class User extends ServiceAPI {
     
     if (empty($result)) return null;
     else return self::getInstance($result[0]);
+  }
+  
+  public static function findAllTrained() {
+    self::__wakeup();
+    
+    $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=1');
+    $members = array();
+    foreach ($trained as $mid) {
+      $member = User::getInstance($mid);
+      if ($member->isStudioTrained()) $members[] = $member;
+    }
+    
+    return $members;
+  }
+  
+  public static function findAllDemoed() {
+    self::__wakeup();
+    
+    $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=2');
+    $members = array();
+    foreach ($trained as $mid) {
+      $member = User::getInstance($mid);
+      if ($member->isStudioDemoed()) $members[] = $member;
+    }
+    
+    return $members;
+  }
+  
+  public static function findAllTrainers() {
+    self::__wakeup();
+    
+    $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=3');
+    $members = array();
+    foreach ($trained as $mid) {
+      $member = User::getInstance($mid);
+      if ($member->isTrainer()) $members[] = $member;
+    }
+    
+    return $members;
   }
 }
