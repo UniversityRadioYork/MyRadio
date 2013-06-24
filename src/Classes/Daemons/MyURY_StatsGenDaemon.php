@@ -10,6 +10,10 @@ class MyURY_StatsGenDaemon {
     
     //Generate Training Graph
     self::generateTrainingGraph();
+    
+    
+    //Done
+    self::$lastrun = time();
   }
   
   public static function generateTrainingGraph() {
@@ -39,6 +43,6 @@ class MyURY_StatsGenDaemon {
     
     $dotstr .= '}';
     
-    passthru("echo '$dotstr' | /usr/local/bin/sfdp -Tpng > ".__DIR__.'/../../Public/img/stats_training.png');
+    passthru("echo '$dotstr' | /usr/local/bin/sfdp -Tsvg > ".__DIR__.'/../../Public/img/stats_training.svg');
   }
 }
