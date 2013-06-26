@@ -239,9 +239,9 @@ class CoreUtils {
     /**
      * 
      */
-    $result = $db->fetch_column('SELECT typeid FROM myury.act_permission, myury.modules, myury.actions
-      WHERE myury.act_permission.actionid=myury.actions.actionid
-      AND myury.act_permission.moduleid=myury.modules.moduleid
+    $result = $db->fetch_column('SELECT * FROM myury.act_permission
+      LEFT OUTER JOIN myury.modules ON act_permission.moduleid=modules.moduleid
+      LEFT OUTER JOIN myury.actions ON act_permission.actionid=actions.actionid
       AND (myury.modules.name=$1 OR myury.act_permission.moduleid IS NULL)
       AND (myury.actions.name=$2 OR myury.act_permission.actionid IS NULL)
       AND NOT (myury.act_permission.actionid IS NULL AND myury.act_permission.typeid IS NULL)

@@ -317,6 +317,30 @@ class MyURY_Show extends MyURY_Scheduler_Common {
 
     return $shows;
   }
+  
+  /**
+   * Find the most messaged shows
+   * @param int $date If specified, only messages for timeslots since $date are counted.
+   * @return array An array of 30 Shows that have been put through toDataSource, with the addition of a msg_count key,
+   * referring to the number of messages sent to that show.
+   */
+  public static function getMostMessaged($date = 0) {
+    $result = self::$db->fetch_all('SELECT show.show_id, count(*) as msg_count FROM sis2.messages
+      LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid = show_season_timeslot.show_season_timeslot_id
+      LEFT JOIN schedule.show_season ON show_season_timeslot.show_season_id = show_season.show_season_id
+      LEFT JOIN schedule.show ON show_season.show_id = show.show_id
+      WHERE show_season_timeslot.start_time > $1 GROUP BY show.show_id ORDER BY msg_count DESC LIMIT 30', 
+            array(CoreUtils::getTimestamp($date)));
+    
+    $top = array();
+    foreach ($result as $r) {
+      $show = self::getInstance($r['show_id'])->toDataSource();
+      $show['msg_count'] = intval($r['msg_count']);
+      $top[] = $show;
+    }
+    
+    return $top;
+  }
 
   public function toDataSource() {
     return array(
