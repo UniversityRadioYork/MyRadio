@@ -143,14 +143,14 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
    * referring to the number of messages sent to that show.
    */
   public static function getMostMessaged($date = 0) {
-    $result = self::$db->fetch_all('SELECT show.show_season_timeslot_id, count(*) as msg_count FROM sis2.messages
+    $result = self::$db->fetch_all('SELECT messages.timeslotid, count(*) as msg_count FROM sis2.messages
       LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid = show_season_timeslot.show_season_timeslot_id
-      WHERE show_season_timeslot.start_time > $1 GROUP BY show.show_season_timeslot_id ORDER BY msg_count DESC LIMIT 30', 
+      WHERE show_season_timeslot.start_time > $1 GROUP BY messages.timeslotid ORDER BY msg_count DESC LIMIT 30', 
             array(CoreUtils::getTimestamp($date)));
     
     $top = array();
     foreach ($result as $r) {
-      $show = self::getInstance($r['show_season_timeslot_id'])->toDataSource();
+      $show = self::getInstance($r['timeslotid'])->toDataSource();
       $show['msg_count'] = intval($r['msg_count']);
       $top[] = $show;
     }
