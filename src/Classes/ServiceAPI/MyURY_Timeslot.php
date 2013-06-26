@@ -166,7 +166,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
    */
   public static function getMostListened($date = 0) {
     $key = 'stats_timeslot_mostlistened';
-    if (($top = self::$cache->get($key)) !== false) return $key;
+    if (($top = self::$cache->get($key)) !== false) return $top;
     
     $result = self::$db->fetch_all('SELECT show_season_timeslot_id,
       (SELECT COUNT(*) FROM strm_log WHERE (starttime < start_time AND endtime >= start_time)

@@ -350,7 +350,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
    */
   public static function getMostListened($date = 0) {
     $key = 'stats_show_mostlistened';
-    if (($top = self::$cache->get($key)) !== false) return $key;
+    if (($top = self::$cache->get($key)) !== false) return $top;
     
     $result = self::$db->fetch_all('SELECT show.show_id,
       (SELECT COUNT(*) FROM strm_log
