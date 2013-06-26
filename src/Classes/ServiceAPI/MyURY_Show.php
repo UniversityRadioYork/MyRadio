@@ -352,7 +352,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     $key = 'stats_show_mostlistened';
     if (($top = self::$cache->get($key)) !== false) return $key;
     
-    $result = self::$db->fetch_all('SELECT show_id,
+    $result = self::$db->fetch_all('SELECT show.show_id,
       (SELECT COUNT(*) FROM strm_log WHERE (starttime < start_time AND endtime >= start_time)
         OR (starttime >= start_time AND starttime < start_time + duration)) AS listeners
         FROM schedule.show_season_timeslot
