@@ -10,7 +10,7 @@
  * 'itonesplaylistid': The ID if an itones playlist the tracks must be in
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 07042013
+ * @version 20130626
  * @package MyURY_Core
  */
 
