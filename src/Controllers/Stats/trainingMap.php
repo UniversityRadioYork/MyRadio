@@ -14,5 +14,5 @@ $twig->setTemplate('MyURY/image.twig')
         ->addVariable('title', 'Member Training Graph')
         ->addVariable('heading', 'Member Training Graph')
         ->addVariable('text', 'This screen, updated hourly, provides a complete map of who has trained who. Ever.')
-        ->addVariable('image', '/img/stats_training.png')
+        ->addVariable('image', '/img/stats_training.svg')
         ->render();
