@@ -325,7 +325,6 @@ class MyURY_Show extends MyURY_Scheduler_Common {
    * referring to the number of messages sent to that show.
    */
   public static function getMostMessaged($date = 0) {
-    echo CoreUtils::getTimestamp($date);
     $result = self::$db->fetch_all('SELECT show.show_id, count(*) as msg_count FROM sis2.messages
       LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid = show_season_timeslot.show_season_timeslot_id
       LEFT JOIN schedule.show_season ON show_season_timeslot.show_season_id = show_season.show_season_id

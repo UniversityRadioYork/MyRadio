@@ -13,5 +13,6 @@ CoreUtils::requireTimeslot();
 $twig->setTemplate('table.twig')
         ->addVariable('title', 'Most messaged shows this academic year')
         ->addVariable('heading', 'Most messaged shows this academic year')
-        ->addVariable('data', MyURY_Show::getMostMessaged(strtotime(CoreUtils::getAcademicYear().'-09-01')))
+        ->addVariable('tabledata', MyURY_Show::getMostMessaged(strtotime(CoreUtils::getAcademicYear().'-09-01')))
+        ->addVariable('tablescript', 'myury.datatable.default')
         ->render();
