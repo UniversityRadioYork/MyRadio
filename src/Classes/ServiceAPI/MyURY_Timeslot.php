@@ -172,7 +172,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
       (SELECT COUNT(*) FROM strm_log WHERE (starttime < start_time AND endtime >= start_time)
         OR (starttime >= start_time AND starttime < start_time + duration)) AS listeners
         FROM schedule.show_season_timeslot WHERE start_time > $1
-        LIMIT 30',
+        ORDER BY listeners DESC LIMIT 30',
             array(CoreUtils::getTimestamp($date)));
     
     $top = array();
