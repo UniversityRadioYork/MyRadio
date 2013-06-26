@@ -10,7 +10,7 @@ require 'Views/bootstrap.php';
 
 CoreUtils::requireTimeslot();
 
-$twig->setTemplate('MyURY/image.twig')
+$twig->setTemplate('MyURY/fullimage.twig')
         ->addVariable('title', 'Member Training Graph')
         ->addVariable('heading', 'Member Training Graph')
         ->addVariable('text', 'This screen, updated hourly, provides a complete map of who has trained who. Ever.')

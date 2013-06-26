@@ -10,7 +10,7 @@ require 'Views/bootstrap.php';
 
 CoreUtils::requireTimeslot();
 
-$twig->setTemplate('MyURY/table.twig')
+$twig->setTemplate('table.twig')
         ->addVariable('title', 'Most messaged shows this academic year')
         ->addVariable('heading', 'Most messaged shows this academic year')
         ->addVariable('data', MyURY_Show::getMostMessaged(strtotime(CoreUtils::getAcademicYear().'-09-01')))
