@@ -353,12 +353,14 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     if (($top = self::$cache->get($key)) !== false) return $key;
     
     $result = self::$db->fetch_all('SELECT show.show_id,
-      (SELECT COUNT(*) FROM strm_log WHERE (starttime < start_time AND endtime >= start_time)
-        OR (starttime >= start_time AND starttime < start_time + duration)) AS listeners
+      (SELECT COUNT(*) FROM strm_log
+        WHERE (starttime < show_season_timeslot.start_time AND endtime >= show_season_timeslot.start_time)
+        OR (starttime >= show_season_timeslot.start_time
+            AND starttime < show_season_timeslot.start_time + show_season_timeslot.duration)) AS listeners
         FROM schedule.show_season_timeslot
         LEFT JOIN schedule.show_season ON show_season_timeslot.show_season_id = show_season.show_season_id
         LEFT JOIN schedule.show ON show_season.show_id = show.show_id
-        WHERE start_time > $1 GROUP BY show_id ORDER BY listeners DESC LIMIT 30',
+        WHERE start_time > $1 GROUP BY show.show_id ORDER BY listeners DESC LIMIT 30',
             array(CoreUtils::getTimestamp($date)));
     
     $top = array();
