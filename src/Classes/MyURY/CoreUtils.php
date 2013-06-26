@@ -239,7 +239,7 @@ class CoreUtils {
     /**
      * 
      */
-    $result = $db->fetch_column('SELECT * FROM myury.act_permission
+    $result = $db->fetch_column('SELECT typeid FROM myury.act_permission
       LEFT OUTER JOIN myury.modules ON act_permission.moduleid=modules.moduleid
       LEFT OUTER JOIN myury.actions ON act_permission.actionid=actions.actionid
       AND (myury.modules.name=$1 OR myury.act_permission.moduleid IS NULL)
@@ -256,8 +256,10 @@ class CoreUtils {
     $authorised = false;
     foreach ($result as $permission) {
       //It only needs to match one
-      if ($permission === null || self::hasPermission($permission))
+      if ($permission === null || self::hasPermission($permission)) {
         $authorised = true;
+        break;
+      }
     }
 
     if (!$authorised && $require) {
