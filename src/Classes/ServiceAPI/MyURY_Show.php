@@ -352,21 +352,20 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     $key = 'stats_show_mostlistened';
     if (($top = self::$cache->get($key)) !== false) return $top;
     
-    $result = self::$db->fetch_all('SELECT show.show_id,
+    $result = self::$db->fetch_all('SELECT show_id, SUM(listeners) AS listeners_sum FROM (SELECT show_season_id,
       (SELECT COUNT(*) FROM strm_log
         WHERE (starttime < show_season_timeslot.start_time AND endtime >= show_season_timeslot.start_time)
         OR (starttime >= show_season_timeslot.start_time
             AND starttime < show_season_timeslot.start_time + show_season_timeslot.duration)) AS listeners
         FROM schedule.show_season_timeslot
-        LEFT JOIN schedule.show_season ON show_season_timeslot.show_season_id = show_season.show_season_id
-        LEFT JOIN schedule.show ON show_season.show_id = show.show_id
-        WHERE start_time > $1 GROUP BY show.show_id ORDER BY listeners DESC LIMIT 30',
+        WHERE start_time > $1) AS t1 LEFT JOIN schedule.show_season ON t1.show_season_id = show_season. show_season_id
+        GROUP BY show_id ORDER BY listeners_sum DESC LIMIT 30',
             array(CoreUtils::getTimestamp($date)));
     
     $top = array();
     foreach ($result as $r) {
       $show = self::getInstance($r['show_id'])->toDataSource();
-      $show['listeners'] = intval($r['listeners']);
+      $show['listeners'] = intval($r['listeners_sum']);
       $top[] = $show;
     }
     
