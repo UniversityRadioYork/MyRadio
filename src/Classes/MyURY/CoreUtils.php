@@ -276,6 +276,7 @@ class CoreUtils {
    * This has multiple UNIONS with similar queries so it gracefully deals with NULL values - the joins lose them.
    * 
    * @todo Is there a nicer way of doing this?
+   * @todo Won't do null fields. Requires outer joins.
    * 
    * @return Array A 2D Array, where each second dimensions is as follows:<br>
    * action: The name of the Action page<br>
