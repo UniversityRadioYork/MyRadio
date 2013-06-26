@@ -358,7 +358,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
         FROM schedule.show_season_timeslot
         LEFT JOIN schedule.show_season ON show_season_timeslot.show_season_id = show_season.show_season_id
         LEFT JOIN schedule.show ON show_season.show_id = show.show_id
-        WHERE start_time > $1 GROUP BY show_id LIMIT 30',
+        WHERE start_time > $1 GROUP BY show_id ORDER BY listeners DESC LIMIT 30',
             array(CoreUtils::getTimestamp($date)));
     
     $top = array();
