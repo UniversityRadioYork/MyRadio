@@ -341,6 +341,36 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     
     return $top;
   }
+  
+  /**
+   * Find the most listened Shows
+   * @param int $date If specified, only messages for timeslots since $date are counted.
+   * @return array An array of 30 Timeslots that have been put through toDataSource, with the addition of a msg_count key,
+   * referring to the number of messages sent to that show.
+   */
+  public static function getMostListened($date = 0) {
+    $key = 'stats_show_mostlistened';
+    if (($top = self::$cache->get($key)) !== false) return $key;
+    
+    $result = self::$db->fetch_all('SELECT show_id,
+      (SELECT COUNT(*) FROM strm_log WHERE (starttime < start_time AND endtime >= start_time)
+        OR (starttime >= start_time AND starttime < start_time + duration)) AS listeners
+        FROM schedule.show_season_timeslot
+        LEFT JOIN schedule.show_season ON show_season_timeslot.show_season_id = show_season.show_season_id
+        LEFT JOIN schedule.show ON show_season.show_id = show.show_id
+        WHERE start_time > $1 GROUP BY show_id LIMIT 30',
+            array(CoreUtils::getTimestamp($date)));
+    
+    $top = array();
+    foreach ($result as $r) {
+      $show = self::getInstance($r['show_id'])->toDataSource();
+      $show['listeners'] = intval($r['listeners']);
+      $top[] = $show;
+    }
+    
+    self::$cache->set($key, $top, 86400);
+    return $top;
+  }
 
   public function toDataSource() {
     return array(
