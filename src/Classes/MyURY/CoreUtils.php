@@ -119,7 +119,7 @@ class CoreUtils {
    * @assert () == 2012
    */
   public static function getAcademicYear() {
-    if (date('m') >= 10)
+    if (date('m') >= 9)
       return (int) date('Y');
     else
       return (int) date('Y') - 1;
