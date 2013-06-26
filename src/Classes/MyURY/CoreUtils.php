@@ -104,13 +104,13 @@ class CoreUtils {
    * Returns a postgresql-formatted timestamp
    * @param int $time The time to get the timestamp for. Default right now.
    * @return String a timestamp
-   * @assert (30) == '01/01/1970 00:00:30'
+   * @assert (30) == '1970-01-01 00:00:30'
    */
   public static function getTimestamp($time = null) {
     if ($time === null)
       $time = time();
 
-    return date('d/m/Y H:i:s', $time);
+    return date('Y-m-d H:i:s', $time);
   }
 
   /**
