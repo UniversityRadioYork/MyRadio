@@ -5,10 +5,10 @@
  * 
  * @todo Proper Documentation
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 21072012
+ * @version 20130629
  * @package MyURY_Core
  */
-if (!isset($_REQUEST['term'])) throw new MyURYException('Parameter \'term\' is required but was not provided');
-
-$data = Artist::findByName($_REQUEST['term'], isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default);
+if (!isset($_REQUEST['term'])) $data = array(); else {
+  $data = Artist::findByName($_REQUEST['term'], isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default);
+}
 require 'Views/MyURY/datatojson.php';

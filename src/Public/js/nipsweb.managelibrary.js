@@ -54,7 +54,7 @@ $(document).ready(function() {
     'audio/mp3', 'audio/x-mp3', 'audio/mpg', 'audio/mpg3', 'audio/mpegaudio'],
     maxfiles: 20,
     maxfilesize: 100,
-    queuefiles: 2,
+    queuefiles: 1,
     drop: function() {
       console.log('Drop detected (centraldb).');
       $('#central-status').html('Reading file (0%)...');
@@ -151,7 +151,7 @@ $(document).ready(function() {
     'audio/mp4a-latm', 'audio/mp4', 'audio/aac'],
     maxfiles: 20,
     maxfilesize: 100,
-    queuefiles: 2,
+    queuefiles: 1,
     drop: function() {
       console.log('Drop detected (auxdb).');
       $('#res-status').html('Reading file (0%)...');
