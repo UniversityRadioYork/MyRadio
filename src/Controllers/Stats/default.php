@@ -8,8 +8,6 @@
  */
 require 'Views/bootstrap.php';
 
-CoreUtils::requireTimeslot();
-
 $twig->setTemplate('MyURY/text.twig')
         ->addVariable('title', 'URY Statistics')
         ->addVariable('heading', 'URY Statistics')
