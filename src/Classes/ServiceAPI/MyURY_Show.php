@@ -68,6 +68,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     $credits = self::$db->decodeArray($result['credits']);
 
     for ($i = 0; $i < sizeof($credits); $i++) {
+      if (empty($credits[$i])) continue;
       $this->credits[] = array('type' => $credit_types[$i], 'memberid' => $credits[$i],
           'User' => User::getInstance($credits[$i]));
     }
