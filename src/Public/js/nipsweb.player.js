@@ -1,14 +1,52 @@
 /**
  * This file contains the necessary functions for the NIPSWeb audio player
  */
+NIPSWeb = {
+  //Stores the queue pointer for this object
+  ajaxQueue: $({}),
+  //Stores the client ID to enable multiple editors
+  clientid: null,
+  
+  /**
+   * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
+   */
+  shipChanges: function(ops) {
+    NIPSWeb.ajaxQueue.queue(function(next) {
+    $('#notice').show();
+    $.ajax({
+      cache: false,
+      success: function(data) {
+        $('#notice').hide();
+        for (i in data) {
+          if (i === 'myury_errors')
+            continue;
+          if (typeof data[i].timeslotitemid != 'undefined') {
+            //@todo multiple AddItem ops in a jsonon set will make this break
+            $('ul.baps-channel li[timeslotitemid="findme"]').attr('timeslotitemid', data[i].timeslotitemid);
+          }
+          if (!data[i].status && !window.debug) {
+            window.location.reload();
+          }
+        }
+      },
+      complete: function() {
+        next();
+      },
+      data: {clientid: NIPSWeb.clientid, ops: ops},
+      dataType: 'json',
+      type: 'POST',
+      url: myury.makeURL('NIPSWeb', 'recv_ops')
+    });
+    });
+  }
+}
 
 manualSeek = true;
 window.audioNodes = new Array();
-window.clientid;
 window.debug = false;
 //Get a client id to identify this session
 $.post(myury.makeURL('NIPSWeb', 'get_client_token'), null, function(data) {
-  window.clientid = parseInt(data.token);
+  NIPSWeb.clientid = parseInt(data.token);
 });
 
 function initialiseUI() {
@@ -202,27 +240,7 @@ function initialiseUI() {
          * The important bit - ship the change operations over to the server to update the remote datastructure,
          * the change log, and to propogate the changes to any other clients that may be active.
          */
-        $('#notice').show();
-        $.ajax({
-          cache: false,
-          success: function(data) {
-            $('#notice').hide();
-            for (i in data) {
-              if (i === 'myury_errors') continue;
-              if (typeof data[i].timeslotitemid != 'undefined') {
-                //@todo multiple AddItem ops in a jsonon set will make this break
-                $('ul.baps-channel li[timeslotitemid="findme"]').attr('timeslotitemid', data[i].timeslotitemid);
-              }
-              if (!data[i].status && !window.debug) {
-                window.location.reload();
-              }
-            }
-          },
-          data: {clientid: window.clientid, ops: ops},
-          dataType: 'json',
-          type: 'POST',
-          url: myury.makeURL('NIPSWeb', 'recv_ops')
-        });
+        NIPSWeb.shipChanges(ops);
       }
     }
 
@@ -255,22 +273,28 @@ function configureContextMenus() {
       //Enable/disable Delete item depending on if it's an li - lis are items, ul would be container
       $(document).contextmenu("enableEntry", "itemDel", $(event.relatedTarget).is('li'));
       $(document).contextmenu("setEntry", "autoAdv",
-            {title: "Automatic Advance", cmd: "autoAdv", uiIcon: $(ul).attr('autoadvance') == 1 ? "ui-icon-check" : ""}),
+              {title: "Automatic Advance", cmd: "autoAdv", uiIcon: $(ul).attr('autoadvance') == 1 ? "ui-icon-check" : ""}),
       $(document).contextmenu("setEntry", "autoPlay",
-            {title: "Play On Load", cmd: "autoPlay", uiIcon: $(ul).attr('playonload') == 1 ? "ui-icon-check" : ""})
+              {title: "Play On Load", cmd: "autoPlay", uiIcon: $(ul).attr('playonload') == 1 ? "ui-icon-check" : ""})
     },
-    show: { effect: "slideDown", duration: 100}
+    show: {effect: "slideDown", duration: 100}
   });
 
   $(document).bind("contextmenuselect", function(event, ui) {
     var menuId = ui.item.find(">a").attr("href"),
             target = event.relatedTarget,
             ul = ($(event.relatedTarget).is('li') ? $(event.relatedTarget).parent('ul') : event.relatedTarget);
-    
+
     if (menuId === "#autoAdv") {
-      if ($(ul).attr('autoadvance') == 1) $(ul).attr('autoadvance',0); else $(ul).attr('autoadvance',1);
+      if ($(ul).attr('autoadvance') == 1)
+        $(ul).attr('autoadvance', 0);
+      else
+        $(ul).attr('autoadvance', 1);
     } else if (menuId === "#autoPlay") {
-      if ($(ul).attr('playonload') == 1) $(ul).attr('playonload',0); else $(ul).attr('playonload',1);
+      if ($(ul).attr('playonload') == 1)
+        $(ul).attr('playonload', 0);
+      else
+        $(ul).attr('playonload', 1);
     }
     console.log("select " + menuId + " on " + $(target).attr('id'));
   });
@@ -288,10 +312,10 @@ function initialisePlayer(channel) {
   });
 
   var a = new Audio();
-  
+
   $(a).on('ended', function() {
-    if ($('#baps-channel-'+channel).attr('autoadvance') == 1) {
-      $('#'+$('#baps-channel-'+channel+' li.selected').removeClass('selected').attr('nextselect')).click();
+    if ($('#baps-channel-' + channel).attr('autoadvance') == 1) {
+      $('#' + $('#baps-channel-' + channel + ' li.selected').removeClass('selected').attr('nextselect')).click();
     }
   });
 
@@ -348,7 +372,7 @@ function previewLoad(channel) {
           setTimeout(function() {
             that.pause();
             that.volume = 1;
-            if ($('#baps-channel-'+channel).attr('playonload') == 1) {
+            if ($('#baps-channel-' + channel).attr('playonload') == 1) {
               that.play();
             }
           }, 10);
