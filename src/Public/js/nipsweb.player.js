@@ -164,10 +164,10 @@ NIPSWeb = {
   /**
    * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
    * ops: JSONON to send
-   * arg[1]: Optional. Parent queue to process on completion.
+   * pNext: Optional. Parent queue to process on completion.
    */
-  shipChanges: function() {
-    var ops = arguments[0];
+  shipChanges: function(ops, pNext) {
+    
     NIPSWeb.ajaxQueue.queue(function(next) {
     $('#notice').show();
     $.ajax({
@@ -177,7 +177,7 @@ NIPSWeb = {
         for (i in data) {
           if (i === 'myury_errors')
             continue;
-          if (typeof data[i].timeslotitemid != 'undefined') {
+          if (typeof data[i].timeslotitemid !== 'undefined') {
             //@todo multiple AddItem ops in a jsonon set will make this break
             $('ul.baps-channel li[timeslotitemid="findme"]').attr('timeslotitemid', data[i].timeslotitemid);
           }
@@ -187,9 +187,8 @@ NIPSWeb = {
         }
       },
       complete: function() {
-        console.log(arguments);
-        if (arguments.length > 1) {arguments[1]();};
         next();
+        if (typeof pNext !== 'undefined') pNext();
       },
       data: {clientid: NIPSWeb.clientid, ops: ops},
       dataType: 'json',
