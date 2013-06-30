@@ -2,98 +2,14 @@
  * This file contains the necessary functions for the NIPSWeb audio player
  */
 NIPSWeb = {
-  //Stores the queue pointer for this object
+  //Stores the change queue pointer for this object
+  changeQueue: $({}),
   ajaxQueue: $({}),
   //Stores the client ID to enable multiple editors
   clientid: null,
-  
-  /**
-   * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
-   */
-  shipChanges: function(ops) {
-    NIPSWeb.ajaxQueue.queue(function(next) {
-    $('#notice').show();
-    $.ajax({
-      cache: false,
-      success: function(data) {
-        $('#notice').hide();
-        for (i in data) {
-          if (i === 'myury_errors')
-            continue;
-          if (typeof data[i].timeslotitemid != 'undefined') {
-            //@todo multiple AddItem ops in a jsonon set will make this break
-            $('ul.baps-channel li[timeslotitemid="findme"]').attr('timeslotitemid', data[i].timeslotitemid);
-          }
-          if (!data[i].status && !window.debug) {
-            window.location.reload();
-          }
-        }
-      },
-      complete: function() {
-        next();
-      },
-      data: {clientid: NIPSWeb.clientid, ops: ops},
-      dataType: 'json',
-      type: 'POST',
-      url: myury.makeURL('NIPSWeb', 'recv_ops')
-    });
-    });
-  }
-}
-
-manualSeek = true;
-window.audioNodes = new Array();
-window.debug = false;
-//Get a client id to identify this session
-$.post(myury.makeURL('NIPSWeb', 'get_client_token'), null, function(data) {
-  NIPSWeb.clientid = parseInt(data.token);
-});
-
-function initialiseUI() {
-  // Setup UI elements
-  $('button.play').button({
-    icons: {
-      primary: 'ui-icon-play'
-    },
-    text: false
-  }).addClass('ui-state-disabled');
-  $('button.pause').button({
-    icons: {
-      primary: 'ui-icon-pause'
-    },
-    text: false
-  }).addClass('ui-state-disabled');
-  $('button.stop').button({
-    icons: {
-      primary: 'ui-icon-stop'
-    },
-    text: false
-  }).addClass('ui-state-disabled');
-
-  $('ul.baps-channel').sortable({
-    //connectWith allows drag and drop between the channels
-    connectWith: 'ul.baps-channel',
-    //A distance dragged of 15 before entering the dragging state
-    //Prevents accidentally dragging when clicking
-    distance: 15,
-    //Adds a placeholder highlight where the item will be dropped
-    placeholder: "ui-state-highlight",
-    //Remove the "selected" class from the item - prevent multiple selected items in a channel
-    //Also activate the next/previous item, if there is one
-    start: function(e, ui) {
-      if (ui.item.hasClass('selected')) {
-        ui.item.removeClass('selected');
-        if (ui.item.attr('nextSelect') != null)
-          $('#' + ui.item.attr('nextSelect')).click();
-      }
-      ui.item.nextSelect = null;
-    },
-    stop: function(e, ui) {
-      /**
-       * Update the channel timers
-       */
-      updateChannelTotalTimers();
-
+          
+  calcChanges: function (e, ui) {
+    NIPSWeb.changeQueue.queue(function(next) {
       /**
        * Update the position of the item to its new values. If it doesn't have them, set them.
        */
@@ -240,8 +156,103 @@ function initialiseUI() {
          * The important bit - ship the change operations over to the server to update the remote datastructure,
          * the change log, and to propogate the changes to any other clients that may be active.
          */
-        NIPSWeb.shipChanges(ops);
+        NIPSWeb.shipChanges(ops, next);
       }
+    });
+  },
+  
+  /**
+   * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
+   * ops: JSONON to send
+   * arg[1]: Optional. Parent queue to process on completion.
+   */
+  shipChanges: function() {
+    var ops = arguments[0];
+    NIPSWeb.ajaxQueue.queue(function(next) {
+    $('#notice').show();
+    $.ajax({
+      cache: false,
+      success: function(data) {
+        $('#notice').hide();
+        for (i in data) {
+          if (i === 'myury_errors')
+            continue;
+          if (typeof data[i].timeslotitemid != 'undefined') {
+            //@todo multiple AddItem ops in a jsonon set will make this break
+            $('ul.baps-channel li[timeslotitemid="findme"]').attr('timeslotitemid', data[i].timeslotitemid);
+          }
+          if (!data[i].status && !window.debug) {
+            window.location.reload();
+          }
+        }
+      },
+      complete: function() {
+        next();
+        if (arguments.length > 1) {arguments[1]()};
+      },
+      data: {clientid: NIPSWeb.clientid, ops: ops},
+      dataType: 'json',
+      type: 'POST',
+      url: myury.makeURL('NIPSWeb', 'recv_ops')
+    });
+    });
+  }
+}
+
+manualSeek = true;
+window.audioNodes = new Array();
+window.debug = false;
+//Get a client id to identify this session
+$.post(myury.makeURL('NIPSWeb', 'get_client_token'), null, function(data) {
+  NIPSWeb.clientid = parseInt(data.token);
+});
+
+function initialiseUI() {
+  // Setup UI elements
+  $('button.play').button({
+    icons: {
+      primary: 'ui-icon-play'
+    },
+    text: false
+  }).addClass('ui-state-disabled');
+  $('button.pause').button({
+    icons: {
+      primary: 'ui-icon-pause'
+    },
+    text: false
+  }).addClass('ui-state-disabled');
+  $('button.stop').button({
+    icons: {
+      primary: 'ui-icon-stop'
+    },
+    text: false
+  }).addClass('ui-state-disabled');
+
+  $('ul.baps-channel').sortable({
+    //connectWith allows drag and drop between the channels
+    connectWith: 'ul.baps-channel',
+    //A distance dragged of 15 before entering the dragging state
+    //Prevents accidentally dragging when clicking
+    distance: 15,
+    //Adds a placeholder highlight where the item will be dropped
+    placeholder: "ui-state-highlight",
+    //Remove the "selected" class from the item - prevent multiple selected items in a channel
+    //Also activate the next/previous item, if there is one
+    start: function(e, ui) {
+      if (ui.item.hasClass('selected')) {
+        ui.item.removeClass('selected');
+        if (ui.item.attr('nextSelect') != null)
+          $('#' + ui.item.attr('nextSelect')).click();
+      }
+      ui.item.nextSelect = null;
+    },
+    stop: function(e, ui) {
+      /**
+       * Update the channel timers
+       */
+      updateChannelTotalTimers();
+
+      
     }
 
   });
