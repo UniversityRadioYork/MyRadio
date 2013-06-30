@@ -251,7 +251,7 @@ function initialiseUI() {
        * Update the channel timers
        */
       updateChannelTotalTimers();
-      calcChanges();
+      NIPSWeb.calcChanges();
       
     }
 
