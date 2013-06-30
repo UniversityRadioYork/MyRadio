@@ -187,8 +187,9 @@ NIPSWeb = {
         }
       },
       complete: function() {
+        console.log(arguments);
+        if (arguments.length > 1) {arguments[1]();};
         next();
-        if (arguments.length > 1) {arguments[1]()};
       },
       data: {clientid: NIPSWeb.clientid, ops: ops},
       dataType: 'json',
