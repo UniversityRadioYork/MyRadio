@@ -23,7 +23,9 @@ NIPSWeb = {
          * This item definitely isn't where it was before. Notify the server of the potential actions.
          */
         var ops = [];
+        var addOp = false;
         if (oldChannel === 'res' && ui.item.attr('channel') !== 'res') {
+          addOp = true;
           /**
            * This item has just been added to the show plan. Send the server a AddItem operation.
            * This operation will also send a number of MoveItem notifications - one for each item below this one in the
@@ -156,7 +158,7 @@ NIPSWeb = {
          * The important bit - ship the change operations over to the server to update the remote datastructure,
          * the change log, and to propogate the changes to any other clients that may be active.
          */
-        NIPSWeb.shipChanges(ops, next);
+        NIPSWeb.shipChanges(ops, addOp, next);
       }
     });
   },
@@ -164,13 +166,15 @@ NIPSWeb = {
   /**
    * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
    * ops: JSONON to send
+   * addOp: If true, there has been an add operation. We currently make these syncronous.
    * pNext: Optional. Parent queue to process on completion.
    */
-  shipChanges: function(ops, pNext) {
+  shipChanges: function(ops, addOp, pNext) {
     
     NIPSWeb.ajaxQueue.queue(function(next) {
     $('#notice').show();
     $.ajax({
+      async: !addOp,
       cache: false,
       success: function(data) {
         $('#notice').hide();
