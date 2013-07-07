@@ -1,22 +1,30 @@
 <?php
 
 class MyURY_StatsGenDaemon {
-  private static $lastrun = 0;
+  private static $lastrunhourly = 0;
+  private static $lastrundaily = 0;
   
   public static function isEnabled() { return true; }
   
   public static function run() {
-    if (self::$lastrun > time() - 3600) return;
+    if (self::$lastrunhourly > time() - 3600) return;
     
     //Generate Training Graph
     self::generateTrainingGraph();
     
+    //Do dailies?
+    if (self::$lastrundaily <= time() - 86400) {
+      
+      self::generateJukeboxReport();
+      
+      self::$lastrundaily = time();
+    }
     
     //Done
-    self::$lastrun = time();
+    self::$lastrunhourly = time();
   }
   
-  public static function generateTrainingGraph() {
+  private static function generateTrainingGraph() {
     $trained = User::findAllTrained();
     $demoed = User::findAllDemoed();
     $trainers = User::findAllTrainers();
@@ -44,5 +52,20 @@ class MyURY_StatsGenDaemon {
     $dotstr .= '}';
     
     passthru("echo '$dotstr' | /usr/local/bin/sfdp -Tsvg > ".__DIR__.'/../../Public/img/stats_training.svg');
+  }
+  
+  private static function generateJukeboxReport() {
+    $info = MyURY_TracklistItem::getTracklistStatsForJukebox(time()-86400);
+    
+    $table = '<table><tr><th>Number of Plays</th><th>Title</th><th>Total Playtime</th><th>Playlist Membership</th></tr>';
+    
+    foreach ($info as $row) {
+      $table .= '<tr><td>'.$row['num_plays'].'</td><td>'.$row['title'].'</td><td>'.$row['total_playtime'].'</td><td>'
+              . $row['in_playlists'] .'</td></tr>';
+    }
+    
+    $table .= '</table>';
+    
+    MyURYEmail::sendEmailToList(MyURY_List::getByName(Config::$reporting_list), 'Jukebox Playout Report', $table);
   }
 }
