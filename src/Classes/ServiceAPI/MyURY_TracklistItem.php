@@ -149,7 +149,7 @@ class MyURY_TracklistItem extends ServiceAPI {
     $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
     $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
     
-    $result = self::$db->fetch_column('SELECT COUNT(trackid) AS num_plays, trackid FROM tracklist.tracklist
+    $result = self::$db->fetch_all('SELECT COUNT(trackid) AS num_plays, trackid FROM tracklist.tracklist
       LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
       WHERE timestart >= $1 AND timestart <= $2 GROUP BY trackid ORDER BY num_plays DESC', array($start, $end));
     
