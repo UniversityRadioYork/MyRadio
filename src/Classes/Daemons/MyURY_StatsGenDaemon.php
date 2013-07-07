@@ -57,13 +57,16 @@ class MyURY_StatsGenDaemon {
   private static function generateJukeboxReport() {
     $info = MyURY_TracklistItem::getTracklistStatsForJukebox(time()-86400);
     
+    $total = 0;
     $table = '<table><tr><th>Number of Plays</th><th>Title</th><th>Total Playtime</th><th>Playlist Membership</th></tr>';
     
     foreach ($info as $row) {
       $table .= '<tr><td>'.$row['num_plays'].'</td><td>'.$row['title'].'</td><td>'.$row['total_playtime'].'</td><td>'
               . $row['in_playlists'] .'</td></tr>';
+      $total += $row['num_plays'];
     }
     
+    $table .= '<tr><td><strong>'.$total.'</strong></td></tr>';
     $table .= '</table>';
     
     MyURYEmail::sendEmailToList(MyURY_List::getByName(Config::$reporting_list), 'Jukebox Playout Report', $table);
