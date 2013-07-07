@@ -142,4 +142,30 @@ class MyURY_TracklistItem extends ServiceAPI {
     
     return $items;
   }
+  
+  public static function getTracklistStatsForJukebox($start = null, $end = null) {
+    self::__wakeup();
+    
+    $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
+    $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
+    
+    $result = self::$db->fetch_column('SELECT COUNT(trackid) AS num_plays, trackid FROM tracklist.tracklist
+      LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
+      WHERE timestart >= $1 AND timestart <= $2 GROUP BY trackid ORDER BY num_plays DESC', array($start, $end));
+    
+    $data = array();
+    foreach ($result as $row) {
+      $trackobj = MyURY_Track::getInstance($row['trackid']);
+      $track = $trackobj->toDataSource();
+      $track['num_plays'] = $row['num_plays'];
+      $track['total_playtime'] = $track['num_plays'] * $track['length'];
+      
+      $playlistobjs = iTones_Playlist::getPlaylistsWithTrack($trackobj);
+      $track['in_playlists'] = '';
+      foreach ($playlistobjs as $playlist) {
+        $track['in_playlists'] .= $playlist->getTitle().', ';
+      }
+    }
+    return $data;
+  }
 }

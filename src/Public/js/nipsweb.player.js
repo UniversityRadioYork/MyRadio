@@ -170,6 +170,7 @@ NIPSWeb = {
    * pNext: Optional. Parent queue to process on completion.
    */
   shipChanges: function(ops, addOp, pNext) {
+    if (typeof addOp === 'undefined') addOp = false;
     
     NIPSWeb.ajaxQueue.queue(function(next) {
     $('#notice').show();
