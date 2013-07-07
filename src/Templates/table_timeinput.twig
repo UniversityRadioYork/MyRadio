@@ -1,0 +1,20 @@
+{% extends 'table.twig' %}
+{% block head %}
+{{ parent() }}
+<script type="text/javascript" src="{{shiburl}}js/jquery-ui-timepicker.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/myury.form.js"></script>
+{% endblock %}
+{% block stripecontent %}
+<form method="GET">
+{% set frm_name = 'rangesel' %}
+{% set field = {'name': 'starttime', 'label': 'From Time', 'value' : null, 'enabled': true, 'explanation': '',
+  'required': false} %}
+{% set sfieldname = field.name %}
+{% include ('FormFields/FieldType_4.twig') %}
+{% set field = {'name': 'endtime', 'label': 'To Time', 'value' : null, 'enabled': true, 'explanation': '',
+  'required': false} %}
+{% set sfieldname = field.name %}
+{% include ('FormFields/FieldType_4.twig') %}
+</form>
+{{ parent() }}
+{% endblock %}
