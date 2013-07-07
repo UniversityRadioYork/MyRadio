@@ -83,7 +83,7 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
   }
   
   public function __toString() {
-    return __CLASS__.'-'.$this->getID();
+    return get_called_class().'-'.$this->getID();
   }
   
   /**
@@ -93,8 +93,9 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
    */
   protected static function resultSetToObjArray($ids) {
     $response = array();
+    $child = get_called_class();
     foreach ($ids as $id) {
-      $response[] = self::getInstance($id);
+      $response[] = $child::getInstance($id);
     }
     
     return $response;
