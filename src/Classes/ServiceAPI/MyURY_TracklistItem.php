@@ -143,6 +143,16 @@ class MyURY_TracklistItem extends ServiceAPI {
     return $items;
   }
   
+  /**
+   * Get an amalgamation of all tracks played by Jukebox. This looks at all played tracks within the proposed timeframe,
+   * and outputs the play count of each Track, including the total time played.
+   * @param int $start Period to start log from. Default 0.
+   * @param int $end Period to end log from. Default time().
+   * @return Array, 2D, with the inner dimension being a MyURY_Track Datasource output, with the addition of:
+   * num_plays: The number of times the track was played
+   * total_playtime: The total number of seconds the track has been on air
+   * in_playlists: A CSV of playlists the Track is in
+   */
   public static function getTracklistStatsForJukebox($start = null, $end = null) {
     self::__wakeup();
     
