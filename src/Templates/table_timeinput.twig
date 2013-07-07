@@ -5,7 +5,8 @@
 <script type="text/javascript" src="{{baseurl}}js/myury.form.js"></script>
 {% endblock %}
 {% block stripecontent %}
-<form method="GET" action="./">
+<fieldset class="myuryfrm">
+  <form method="GET" action="{{ uri }}">
 {% set frm_name = 'rangesel' %}
 {% set field = {'name': 'starttime', 'label': 'From Time', 'value' : null, 'enabled': true, 'explanation': '',
   'required': false} %}
@@ -15,7 +16,8 @@
   'required': false} %}
 {% set sfieldname = field.name %}
 {% include ('FormFields/FieldType_4.twig') %}
-    <input type="submit" value="Submit" />
-  </form>
+      <input type="submit" value="Submit" />
+    </form>
+  </fieldset>
 {{ parent() }}
 {% endblock %}
