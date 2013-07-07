@@ -144,27 +144,14 @@ class MyURY_TracklistItem extends ServiceAPI {
   }
   
   /**
-   * Get an amalgamation of all tracks played by Jukebox. This looks at all played tracks within the proposed timeframe,
-   * and outputs the play count of each Track, including the total time played.
-   * @param int $start Period to start log from. Default 0.
-   * @param int $end Period to end log from. Default time().
+   * Takes as input a result set of num_plays and trackid, and generates the extended Datasource output used by
+   * getTracklistStats(.*)()
    * @return Array, 2D, with the inner dimension being a MyURY_Track Datasource output, with the addition of:
    * num_plays: The number of times the track was played
    * total_playtime: The total number of seconds the track has been on air
    * in_playlists: A CSV of playlists the Track is in
    */
-  public static function getTracklistStatsForJukebox($start = null, $end = null) {
-    self::__wakeup();
-    
-    $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
-    $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
-    
-    $result = self::$db->fetch_all('SELECT COUNT(trackid) AS num_plays, trackid FROM tracklist.tracklist
-      LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
-      WHERE source=\'j\' AND timestart >= $1 AND timestart <= $2 AND trackid IS NOT NULL
-      GROUP BY trackid ORDER BY num_plays DESC',
-      array($start, $end));
-    
+  private static function trackAmalgamator($result) {
     $data = array();
     foreach ($result as $row) {
       /**
@@ -186,5 +173,55 @@ class MyURY_TracklistItem extends ServiceAPI {
       $data[] = $track;
     }
     return $data;
+  }
+  
+  /**
+   * Get an amalgamation of all tracks played by Jukebox. This looks at all played tracks within the proposed timeframe,
+   * and outputs the play count of each Track, including the total time played.
+   * @param int $start Period to start log from. Default 0.
+   * @param int $end Period to end log from. Default time().
+   * @return Array, 2D, with the inner dimension being a MyURY_Track Datasource output, with the addition of:
+   * num_plays: The number of times the track was played
+   * total_playtime: The total number of seconds the track has been on air
+   * in_playlists: A CSV of playlists the Track is in
+   */
+  public static function getTracklistStatsForJukebox($start = null, $end = null) {
+    self::__wakeup();
+    
+    $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
+    $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
+    
+    $result = self::$db->fetch_all('SELECT COUNT(trackid) AS num_plays, trackid FROM tracklist.tracklist
+      LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
+      WHERE source=\'j\' AND timestart >= $1 AND timestart <= $2 AND trackid IS NOT NULL
+      GROUP BY trackid ORDER BY num_plays DESC',
+      array($start, $end));
+    
+    return self::trackAmalgamator($result);
+  }
+  
+  /**
+   * Get an amalgamation of all tracks played by BAPS. This looks at all played tracks within the proposed timeframe,
+   * and outputs the play count of each Track, including the total time played.
+   * @param int $start Period to start log from. Default 0.
+   * @param int $end Period to end log from. Default time().
+   * @return Array, 2D, with the inner dimension being a MyURY_Track Datasource output, with the addition of:
+   * num_plays: The number of times the track was played
+   * total_playtime: The total number of seconds the track has been on air
+   * in_playlists: A CSV of playlists the Track is in
+   */
+  public static function getTracklistStatsForBAPS($start = null, $end = null) {
+    self::__wakeup();
+    
+    $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
+    $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
+    
+    $result = self::$db->fetch_all('SELECT COUNT(trackid) AS num_plays, trackid FROM tracklist.tracklist
+      LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
+      WHERE source=\'b\' AND timestart >= $1 AND timestart <= $2 AND trackid IS NOT NULL
+      GROUP BY trackid ORDER BY num_plays DESC',
+      array($start, $end));
+    
+    return self::trackAmalgamator($result);
   }
 }
