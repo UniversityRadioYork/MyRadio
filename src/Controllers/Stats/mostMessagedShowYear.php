@@ -8,8 +8,6 @@
  */
 require 'Views/bootstrap.php';
 
-CoreUtils::requireTimeslot();
-
 $twig->setTemplate('table.twig')
         ->addVariable('title', 'Most messaged shows this academic year')
         ->addVariable('heading', 'Most messaged shows this academic year')

@@ -43,7 +43,7 @@ class MyURYException extends RuntimeException {
           //Output to the browser
           header('HTTP/1.1 ' . $code . ' Internal Server Error');
           $error = "<p>MyURY has encountered a problem processing this request.</p>
-            <table class='errortable' style='color:#CCC'>
+            <table class='errortable' style='color:#633'>
               <tr><td>Message</td><td>{$this->getMessage()}</td></tr>
               <tr><td>Location</td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
               <tr><td>Trace</td><td>" . nl2br($this->getTraceAsString()) . "</td></tr>
