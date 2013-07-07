@@ -59,7 +59,9 @@ class MyURY_StatsGenDaemon {
    * It's useful to see if it's got into bad habits such as playing the same song 3 million times.
    */
   private static function generateJukeboxReport() {
-    $info = MyURY_TracklistItem::getTracklistStatsForJukebox(time()-86400);
+    //Review of whole week on Sundays
+    if (date('N') == 7) $info = MyURY_TracklistItem::getTracklistStatsForJukebox(time()-(86400*7));
+    else $info = MyURY_TracklistItem::getTracklistStatsForJukebox(time()-86400);
     
     $totalplays = 0;
     $totaltracks = 0;
