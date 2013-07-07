@@ -161,7 +161,7 @@ class MyURY_TracklistItem extends ServiceAPI {
     
     $result = self::$db->fetch_all('SELECT COUNT(trackid) AS num_plays, trackid FROM tracklist.tracklist
       LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
-      WHERE source=\'j\ AND timestart >= $1 AND timestart <= $2 GROUP BY trackid ORDER BY num_plays DESC',
+      WHERE source=\'j\' AND timestart >= $1 AND timestart <= $2 GROUP BY trackid ORDER BY num_plays DESC',
       array($start, $end));
     
     $data = array();
