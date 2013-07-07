@@ -15,5 +15,5 @@ $twig->setTemplate('table_timeinput.twig')
         ->addVariable('title', 'Jukebox Track Play Counter')
         ->addVariable('heading', 'Jukebox Track Play Counter')
         ->addVariable('tabledata', MyURY_TracklistItem::getTracklistStatsForJukebox($start, $end))
-        ->addVariable('tablescript', 'myury.datatable.default')
+        ->addVariable('tablescript', 'myury.stats.jukeboxplaycounter')
         ->render();
