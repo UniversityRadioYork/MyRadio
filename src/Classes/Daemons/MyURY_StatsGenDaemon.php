@@ -54,6 +54,10 @@ class MyURY_StatsGenDaemon {
     passthru("echo '$dotstr' | /usr/local/bin/sfdp -Tsvg > ".__DIR__.'/../../Public/img/stats_training.svg');
   }
   
+  /**
+   * Once a day, this emails the Reporting List with a table of all tracks iTones has played in the last 24 hours
+   * It's useful to see if it's got into bad habits such as playing the same song 3 million times.
+   */
   private static function generateJukeboxReport() {
     $info = MyURY_TracklistItem::getTracklistStatsForJukebox(time()-86400);
     
