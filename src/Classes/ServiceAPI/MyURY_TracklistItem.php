@@ -158,13 +158,15 @@ class MyURY_TracklistItem extends ServiceAPI {
       $trackobj = MyURY_Track::getInstance($row['trackid']);
       $track = $trackobj->toDataSource();
       $track['num_plays'] = $row['num_plays'];
-      $track['total_playtime'] = $track['num_plays'] * $track['length'];
+      $track['total_playtime'] = $row['num_plays'] * $track['length'];
       
       $playlistobjs = iTones_Playlist::getPlaylistsWithTrack($trackobj);
       $track['in_playlists'] = '';
       foreach ($playlistobjs as $playlist) {
         $track['in_playlists'] .= $playlist->getTitle().', ';
       }
+      
+      $data[] = $track;
     }
     return $data;
   }
