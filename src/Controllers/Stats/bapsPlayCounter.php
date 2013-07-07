@@ -1,6 +1,6 @@
 <?php
 /**
- * The most played jukebox tracks in the given timeframe
+ * The most played BAPS tracks for the given timeframe
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130708
@@ -12,9 +12,9 @@ $start = isset($_GET['rangesel-starttime']) ? strtotime($_GET['rangesel-starttim
 $end = isset($_GET['rangesel-endtime']) ? strtotime($_GET['rangesel-endtime']) : time();
 
 $twig->setTemplate('table_timeinput.twig')
-        ->addVariable('title', 'Jukebox Track Play Counter')
-        ->addVariable('heading', 'Jukebox Track Play Counter')
-        ->addVariable('tabledata', MyURY_TracklistItem::getTracklistStatsForJukebox($start, $end))
+        ->addVariable('title', 'BAPS Track Statistics')
+        ->addVariable('heading', 'BAPS Track Statistics')
+        ->addVariable('tabledata', MyURY_TracklistItem::getTracklistStatsForBAPS($start, $end))
         ->addVariable('tablescript', 'myury.stats.jukeboxplaycounter')
         ->addVariable('starttime', CoreUtils::happyTime($start))
         ->addVariable('endtime', CoreUtils::happyTime($end))
