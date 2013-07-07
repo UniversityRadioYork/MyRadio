@@ -9,7 +9,7 @@
  * base functionality for full MyURY integration
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 21072012
+ * @version 20130707
  * @package MyURY_Core
  * @uses \Database
  * @uses \CacheProvider
@@ -84,5 +84,19 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
   
   public function __toString() {
     return __CLASS__.'-'.$this->getID();
+  }
+  
+  /**
+   * Takes an array of IDs, and creates an array of the relevant objects
+   * @param int[] $ids
+   * @return ServiceAPI[]
+   */
+  protected static function resultSetToObjArray($ids) {
+    $response = array();
+    foreach ($ids as $id) {
+      $response[] = self::getInstance($id);
+    }
+    
+    return $response;
   }
 }

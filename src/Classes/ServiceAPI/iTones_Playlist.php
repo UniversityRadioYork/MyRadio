@@ -118,12 +118,15 @@ class iTones_Playlist extends ServiceAPI {
    */
   public static function getAlliTonesPlaylists() {
     $result = self::$db->fetch_column('SELECT playlistid FROM jukebox.playlists ORDER BY title');
-    $response = array();
-    foreach ($result as $id) {
-      $response[] = self::getInstance($id);
-    }
     
-    return $response;
+    return self::resultSetToObjArray($result);
+  }
+  
+  public static function getPlaylistsWithTrack(MyURY_Track $track) {
+    $result = self::$db->fetch_column('SELECT playlistid FROM jukebox.playlist_entries WHERE trackid=$1
+      AND revision_removed IS NULL', array($track->getID()));
+    
+    return self::resultSetToObjArray($result);
   }
   
   /**
