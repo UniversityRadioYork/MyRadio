@@ -165,7 +165,12 @@ class MyURY_TracklistItem extends ServiceAPI {
     
     $data = array();
     foreach ($result as $row) {
-      $trackobj = MyURY_Track::getInstance($row['trackid']);
+      /**
+       * @todo Temporary hack due to lack of fkey on tracklist.track_rec
+       */
+      try {
+        $trackobj = MyURY_Track::getInstance($row['trackid']);
+      } catch (MyURYException $e) {continue;}
       $track = $trackobj->toDataSource();
       $track['num_plays'] = $row['num_plays'];
       $track['total_playtime'] = $row['num_plays'] * $trackobj->getDuration();
