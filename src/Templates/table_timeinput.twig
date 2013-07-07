@@ -1,4 +1,8 @@
-{% extends 'table.twig' %}
+{#
+This extends table.twig by adding a Start and End time select Form. This gets sent back to the server as GET parameters
+rangesel-starttime and rangesel-endtime. Passing starttime and endtime as values to the Template fills in the input
+values.
+#}{% extends 'table.twig' %}
 {% block head %}
 {{ parent() }}
 <script type="text/javascript" src="{{shiburl}}js/jquery-ui-timepicker.js"></script>
