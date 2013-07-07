@@ -9,14 +9,14 @@
   <form method="GET" action="{{ uri }}">
 {% set frm_name = 'rangesel' %}
 {% set field = {'name': 'starttime', 'label': 'From Time', 'value' : null, 'enabled': true, 'explanation': '',
-  'required': false} %}
+  'required': false, 'value': starttime} %}
 {% set sfieldname = field.name %}
 {% include ('FormFields/FieldType_4.twig') %}
 {% set field = {'name': 'endtime', 'label': 'To Time', 'value' : null, 'enabled': true, 'explanation': '',
-  'required': false} %}
+  'required': false, 'value': endtime} %}
 {% set sfieldname = field.name %}
 {% include ('FormFields/FieldType_4.twig') %}
-      <input type="submit" value="Submit" />
+      <input type="submit" value="Update" />
     </form>
   </fieldset>
 {{ parent() }}
