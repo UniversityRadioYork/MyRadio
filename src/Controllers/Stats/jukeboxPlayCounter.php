@@ -8,7 +8,7 @@
  */
 require 'Views/bootstrap.php';
 
-$start = isset($_GET['rangesel-starttime']) ? strtotime($_GET['rangesel-starttime']) : null;
+$start = isset($_GET['rangesel-starttime']) ? strtotime($_GET['rangesel-starttime']) : time()-(86400*28);
 $end = isset($_GET['rangesel-endtime']) ? strtotime($_GET['rangesel-endtime']) : null;
 
 $twig->setTemplate('table_timeinput.twig')
