@@ -93,11 +93,18 @@ class CoreUtils {
     return date(($date ? 'd/m/Y' : '') . ($time && $date ? ' ' : '') . ($time ? 'H:i' : ''), is_numeric($timestring) ? $timestring : strtotime($timestring));
   }
 
+  /**
+   * Formats a number into h:m:s format.
+   * @param int $int
+   * @return String
+   */
   public static function intToTime($int) {
     $hours = floor($int / 3600);
+    if ($hours === 0) $hours = null; else $hours = $hours.':';
+    
     $mins = floor(($int - ($hours * 3600)) / 60);
     $secs = ($int - ($hours * 3600) - ($mins * 60));
-    return "$hours:$mins:$secs";
+    return "$hours$mins:$secs";
   }
 
   /**
