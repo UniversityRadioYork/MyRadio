@@ -8,8 +8,6 @@
  */
 require 'Views/bootstrap.php';
 
-CoreUtils::requireTimeslot();
-
 $twig->setTemplate('MyURY/fullimage.twig')
         ->addVariable('title', 'Member Training Graph')
         ->addVariable('heading', 'Member Training Graph')

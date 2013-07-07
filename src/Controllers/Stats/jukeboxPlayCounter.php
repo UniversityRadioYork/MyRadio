@@ -8,8 +8,6 @@
  */
 require 'Views/bootstrap.php';
 
-CoreUtils::requireTimeslot();
-
 $start = isset($_GET['rangesel-starttime']) ? strtotime($_GET['rangesel-starttime']) : null;
 $end = isset($_GET['rangesel-endtime']) ? strtotime($_GET['rangesel-endtime']) : null;
 
