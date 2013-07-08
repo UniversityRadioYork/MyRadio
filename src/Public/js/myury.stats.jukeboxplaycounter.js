@@ -65,6 +65,6 @@ $('.twig-datatable').dataTable({
   ],
   "bJQueryUI": true,
   "bPaginate": false,
-  aaSort: [[10, "desc"]]
+  aaSorting: [[10, "desc"]]
 }
 );
