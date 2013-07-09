@@ -30,7 +30,7 @@ class MyURYException extends RuntimeException {
       //Configuration is available, use this to decide what to do
       if (Config::$display_errors or (class_exists('CoreUtils') && CoreUtils::hasPermission(AUTH_SHOWERRORS))) {
         if ((isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
-                or empty($_SERVER['HTTP_REFERER'])) {
+                or empty($_SERVER['REMOTE_ADDR'])) {
           //This is an Ajax/CLI request. Return JSON
           header('HTTP/1.1 ' . $code . ' Internal Server Error');
           header('Content-Type: text/json');
