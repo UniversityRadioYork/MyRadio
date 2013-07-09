@@ -551,7 +551,7 @@ class CoreUtils {
     
     foreach ($data as $ball) {
       for (;$ball['weight'] > 0; $ball['weight']--) {
-        $bag[] = $data['item'];
+        $bag[] = $ball['item'];
       }
     }
     
