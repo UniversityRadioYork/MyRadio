@@ -19,15 +19,15 @@
 
 // Determine path to the directory one level above doc root.
 // CHANGE THIS TO A PATH WHERE YOU WANT LOG FILES TO BE PLACED!
-$log_dir = realpath('/var/log');
+$log_dir = realpath('/var/log/ury-org-uk');
 
 // We want all errors logged outside of the public directory tree
 // so specify a suitable error log path here.
-define('PHP_ERROR_LOG', $log_dir.'/php_errors.log');
+define('PHP_ERROR_LOG', $log_dir.'/myury_errors.log');
 ini_set('error_log', PHP_ERROR_LOG);
 
 // Define a lock file location (used by log_all_errors, below)
-define('PHP_ERROR_LOCK', $log_dir.'/php-error-logging-lock');
+define('PHP_ERROR_LOCK', $log_dir.'/myury_errors.lock');
 
 // For use within log_all_errors, stage two.
 define('ONE_DAY', 86400);  // one whole day, in seconds
