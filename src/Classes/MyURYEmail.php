@@ -163,6 +163,7 @@ class MyURYEmail {
     //Don't send if it's scheduled in the future.
     if ($this->timestamp > time())
       return;
+    $this->body_transformed = utf8_encode($this->body_transformed);
     foreach ($this->r_users as $user) {
       if (!$this->getSentToUser($user)) {
         //Don't send if the user has opted out
