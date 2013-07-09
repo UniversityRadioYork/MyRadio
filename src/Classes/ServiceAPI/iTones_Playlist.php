@@ -133,6 +133,18 @@ class iTones_Playlist extends ServiceAPI {
     return self::resultSetToObjArray($result);
   }
   
+  /**
+   * Uses weighted playout values to select a random Playlist, returning it.
+   * @return iTones_Playlist
+   */
+  public static function getPlaylistFromWeights() {
+    self::__wakeup();
+    
+    $result = self::$db->fetch_all('SELECT playlistid AS item, weight FROM jukebox.playlists ORDER BY title');
+    
+    return self::getInstance(CoreUtils::biased_random($result));
+  }
+  
   public static function getPlaylistsWithTrack(MyURY_Track $track) {
     $result = self::$db->fetch_column('SELECT playlistid FROM jukebox.playlist_entries WHERE trackid=$1
       AND revision_removed IS NULL', array($track->getID()));
