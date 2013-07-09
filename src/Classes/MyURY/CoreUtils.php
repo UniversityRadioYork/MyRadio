@@ -145,14 +145,19 @@ class CoreUtils {
 
   /**
    * Builds a module/action URL
-   * @todo Finish and document.
-   * @param type $module
-   * @param type $action
-   * @param type $params
-   * @return type
-   * @throws MyURYException 
+   * @param string $module
+   * @param string $action
+   * @param array $params Additional GET variables
+   * @return String URL to Module/Action
    */
   public static function makeURL($module, $action = null, $params = array()) {
+    //Check if there is a custom URL configured
+    if ($action !== null) {
+      $result = self::$db->fetch_one('SELECT custom_uri FROM myury.actions
+        WHERE actionid=$1', array(self::getActionId(self::getModuleId($module),$action)));
+      if (!empty($result[0])) return $result[0];
+    }
+    
     if (Config::$rewrite_url) {
       $str = Config::$base_url . $module . '/' . (($action !== null) ? $action . '/' : '');
       if (!empty($params)) {
@@ -388,9 +393,8 @@ class CoreUtils {
 
   /**
    * Returns the ID of a Service/Module/Action request, creating it if necessary
-   * @todo Document this
-   * @param type $module
-   * @param type $action
+   * @param int $module
+   * @param string $action
    * @return type
    */
   public static function getActionId($module, $action) {
