@@ -127,6 +127,7 @@ class iTones_Playlist extends ServiceAPI {
    * @return Array of iTones_Playlist objects
    */
   public static function getAlliTonesPlaylists() {
+    self::__wakeup();
     $result = self::$db->fetch_column('SELECT playlistid FROM jukebox.playlists ORDER BY title');
     
     return self::resultSetToObjArray($result);
