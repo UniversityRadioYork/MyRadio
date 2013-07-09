@@ -9,7 +9,7 @@
  * The Tracklist Item class provides information about URY's track playing
  * history.
  * 
- * @version 20130705
+ * @version 20130709
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Tracklist
  * @uses \Database
@@ -223,5 +223,19 @@ class MyURY_TracklistItem extends ServiceAPI {
       array($start, $end));
     
     return self::trackAmalgamator($result);
+  }
+  
+  /**
+   * Returns if the given track has been played in the last $time seconds
+   * 
+   * @param MyURY_Track $track
+   * @param int $time Optional. Default 10800 (3 hours)
+   */
+  public static function getIfPlayedRecently(MyURY_Track $track, $time = 10800) {
+    $result = $db->fetch_column('SELECT COUNT(*) FROM tracklist.tracklist
+      LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
+      WHERE timestart >= $1 AND trackid = $2', array(CoreUtils::getTimestamp(time()-$time), $track->getID()));
+    
+    return $result[0] != 0;
   }
 }
