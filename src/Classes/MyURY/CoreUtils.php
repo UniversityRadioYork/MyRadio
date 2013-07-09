@@ -10,7 +10,7 @@
  * No database accessing etc should be setup here.
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130527
+ * @version 20130709
  * @package MyURY_Core
  * @todo Factor out permission code into a seperate class?
  */
@@ -539,6 +539,23 @@ class CoreUtils {
   
   public static function backWithMessage($message) {
     header('Location: '.$_SERVER['HTTP_REFERER'] . (strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?') . 'message='.base64_encode($message));
+  }
+  
+  /**
+   * Returns a randomly selected item from the list, in a biased manner
+   * Weighted should be an integer - how many times to put the item into the bag
+   * @param Array $data 2D of Format [['item' => mixed, 'weight' => n], ...]
+   */
+  public static function biased_random($data) {
+    $bag = array();
+    
+    foreach ($data as $ball) {
+      for (;$ball['weight'] > 0; $ball['weight']--) {
+        $bag[] = $data['item'];
+      }
+    }
+    
+    return $bag[array_rand($bag)];
   }
 
 }

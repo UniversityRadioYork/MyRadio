@@ -5,9 +5,9 @@
  */
 
 /**
- * The NIPSWeb_ManagedPlaylist class helps provide control and access to managed playlists
+ * The iTones_Playlist class helps provide control and access to managed playlists
  * 
- * @version 20130511
+ * @version 20130709
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_iTones
  * @uses \Database
@@ -33,10 +33,11 @@ class iTones_Playlist extends ServiceAPI {
   
   private $tracks = array();
   
+  private $weight = 0;
+  
   /**
    * Initiates the ManagedPlaylist variables
    * @param int $playlistid The ID of the managed playlist to initialise
-   * @todo Items
    * Note: Only links *non-expired* items
    */
   private function __construct($playlistid) {
@@ -53,6 +54,7 @@ class iTones_Playlist extends ServiceAPI {
     $this->description = $result['description'];
     $this->lock = User::getInstance($result['lock']);
     $this->locktime = (int)$result['locktime'];
+    $this->weight = (int)$result['weight'];
     
     $items = self::$db->fetch_column('SELECT trackid FROM jukebox.playlist_entries WHERE playlistid=$1
       AND revision_removed IS NULL
@@ -110,6 +112,14 @@ class iTones_Playlist extends ServiceAPI {
    */
   public function getDescription() {
     return $this->description;
+  }
+  
+  /**
+   * Get the jukebox weight of the Playlist
+   * @return int
+   */
+  public function getWeight() {
+    return $this->weight;
   }
   
   /**
