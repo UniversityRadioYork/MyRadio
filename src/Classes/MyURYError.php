@@ -113,6 +113,7 @@ class MyURYError {
    * @param string $errline The line number where the error was generated (within the file identified by $errfile).
    */
   public static function errorsToEmail($errno, $errstr, $errfile, $errline) {
+    $errstr = utf8_encode($errstr);
     $error_name = self::getErrorName($errno);
     // Log errors to file for permenance
     self::errorsToLog($errno, $errstr, $errfile, $errline);
