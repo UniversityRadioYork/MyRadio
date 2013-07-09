@@ -100,8 +100,11 @@ class CoreUtils {
    */
   public static function intToTime($int) {
     $hours = floor($int / 3600);
-    if ($hours === 0) $hours = null; else $hours = $hours.':';
-    
+    if ($hours === 0)
+      $hours = null;
+    else
+      $hours = $hours . ':';
+
     $mins = floor(($int - ($hours * 3600)) / 60);
     $secs = ($int - ($hours * 3600) - ($mins * 60));
     return "$hours$mins:$secs";
@@ -152,17 +155,19 @@ class CoreUtils {
    */
   public static function makeURL($module, $action = null, $params = array()) {
     //Check if there is a custom URL configured
-    if ($action !== null && class_exists('Database')) {
-      $result = Database::getInstance()->fetch_one('SELECT custom_uri FROM myury.actions
-        WHERE actionid=$1', array(self::getActionId(self::getModuleId($module),$action)));
-      if (!empty($result[0])) return $result[0];
+    if (class_exists('Database')) {
+      $result = Database::getInstance()->fetch_one('SELECT custom_uri FROM myury.actions WHERE actionid=$1',
+              array(self::getActionId(self::getModuleId($module), empty($action) ? 'default' : $action)));
+      if (!empty($result[0]))
+        return $result[0];
     }
-    
+
     if (Config::$rewrite_url) {
       $str = Config::$base_url . $module . '/' . (($action !== null) ? $action . '/' : '');
       if (!empty($params)) {
         if (is_string($params)) {
-          if (substr($params,0,1) !== '?') $str .= '?';
+          if (substr($params, 0, 1) !== '?')
+            $str .= '?';
           $str .= $params;
         } else {
           $str .= '?';
@@ -540,11 +545,11 @@ class CoreUtils {
       exit;
     }
   }
-  
+
   public static function backWithMessage($message) {
-    header('Location: '.$_SERVER['HTTP_REFERER'] . (strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?') . 'message='.base64_encode($message));
+    header('Location: ' . $_SERVER['HTTP_REFERER'] . (strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?') . 'message=' . base64_encode($message));
   }
-  
+
   /**
    * Returns a randomly selected item from the list, in a biased manner
    * Weighted should be an integer - how many times to put the item into the bag
@@ -552,13 +557,13 @@ class CoreUtils {
    */
   public static function biased_random($data) {
     $bag = array();
-    
+
     foreach ($data as $ball) {
-      for (;$ball['weight'] > 0; $ball['weight']--) {
+      for (; $ball['weight'] > 0; $ball['weight']--) {
         $bag[] = $ball['item'];
       }
     }
-    
+
     return $bag[array_rand($bag)];
   }
 
