@@ -12,7 +12,7 @@
  * needs the APC PHP plugin installed on the server. It will throw an Exception if it is not.
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 21072012
+ * @version 20130709
  * @package MyURY_Core
  */
 class APCProvider implements CacheProvider {
