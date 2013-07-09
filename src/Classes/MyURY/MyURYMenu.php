@@ -88,7 +88,8 @@ class MyURYMenu {
         ORDER BY position ASC');
       //And finally, items
       $items = array_merge(
-              $db->fetch_all('SELECT itemid, sectionid, title, url, description FROM myury.menu_links ORDER BY title ASC'), $db->fetch_all('SELECT sectionid, template FROM myury.menu_twigitems')
+              $db->fetch_all('SELECT itemid, sectionid, title, url, description FROM myury.menu_links ORDER BY title ASC'),
+              $db->fetch_all('SELECT sectionid, template FROM myury.menu_twigitems')
       );
       //Get permissions for each $item
       foreach ($items as $key => $item) {
@@ -205,7 +206,7 @@ class MyURYMenu {
   }
 
   /**
-   * Detects module/action/service links and rewrites
+   * Detects module/action links and rewrites
    * This is a method so it can easily be changed if Apache rewrites
    * @param String $url The URL to parse
    * @todo Rewrite this to make sense
@@ -230,7 +231,6 @@ class MyURYMenu {
         $action = null;
         $params = null;
       }
-      $url = CoreUtils::makeURL($module, $action, $params);
     } else {
       //It's not a rewritable
       if ($return !== 'url')
@@ -245,6 +245,8 @@ class MyURYMenu {
         return Config::$default_action;
       }
     }
+    
+    $url = $count === 1 ? CoreUtils::makeURL($module, $action, $params) : $url;
     return $url;
   }
 
