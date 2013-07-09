@@ -167,7 +167,8 @@ class MyURYError {
                 error_log('FAIL: date_create could not create a date object'.
                         'from the last alert date in '. __FUNCTION__ .' in '.
                         __FILE__ .'.');
-                error_log(__FUNCTION__ .' failed! Check server logs!', 1, SEND_ERROR_EMAIL_TO);
+                $e = new Exception();
+                error_log(__FUNCTION__ .' failed! Check server logs!'."\r\n".  $e->getTraceAsString(), 1, SEND_ERROR_EMAIL_TO);
                 echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
                 die();
             }
