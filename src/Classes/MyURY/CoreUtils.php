@@ -152,8 +152,8 @@ class CoreUtils {
    */
   public static function makeURL($module, $action = null, $params = array()) {
     //Check if there is a custom URL configured
-    if ($action !== null) {
-      $result = self::$db->fetch_one('SELECT custom_uri FROM myury.actions
+    if ($action !== null && class_exists('Database')) {
+      $result = Database::getInstance()->fetch_one('SELECT custom_uri FROM myury.actions
         WHERE actionid=$1', array(self::getActionId(self::getModuleId($module),$action)));
       if (!empty($result[0])) return $result[0];
     }
