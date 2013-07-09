@@ -232,7 +232,7 @@ class MyURY_TracklistItem extends ServiceAPI {
    * @param int $time Optional. Default 10800 (3 hours)
    */
   public static function getIfPlayedRecently(MyURY_Track $track, $time = 10800) {
-    $result = $db->fetch_column('SELECT COUNT(*) FROM tracklist.tracklist
+    $result = self::$db->fetch_column('SELECT COUNT(*) FROM tracklist.tracklist
       LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
       WHERE timestart >= $1 AND trackid = $2', array(CoreUtils::getTimestamp(time()-$time), $track->getID()));
     
