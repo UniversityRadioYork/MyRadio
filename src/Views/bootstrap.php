@@ -6,4 +6,5 @@
  * @version 20130526
  * @package MyURY_Core
  */
+trigger_error('Use of deprecated View bootstrap');
 $twig = CoreUtils::getTemplateObject();
