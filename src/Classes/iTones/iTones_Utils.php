@@ -85,7 +85,7 @@ class iTones_Utils extends ServiceAPI {
     $response = '';
     do {
       $response .= $line."\n";
-      $line .= fgets(self::$telnet_handle, 1048576); //Read a max of 1MB of data
+      $line = fgets(self::$telnet_handle, 1048576); //Read a max of 1MB of data
     } while ($line !== 'END');
     
     
