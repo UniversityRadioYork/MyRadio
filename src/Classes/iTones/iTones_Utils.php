@@ -44,7 +44,7 @@ class iTones_Utils extends ServiceAPI {
       if (is_numeric($item)) {
         $tid = preg_replace('/^.*\"'.str_replace('/','\\/', Config::$music_central_db_path)
                 .'\/records\/[0-9]+\/([0-9]+)\.mp3.*$/is', '$1', self::telnetOp('request.trace '.$item));
-        $items[] = array('requestid' => $item, 'trackid' => $tid);
+        $items[] = array('requestid' => (int)$item, 'trackid' => (int)$tid);
       }
     }
     return $items;
@@ -77,7 +77,7 @@ class iTones_Utils extends ServiceAPI {
   private static function telnetStart() {
     self::$telnet_handle = fsockopen('tcp://'.Config::$itones_telnet_host, Config::$itones_telnet_port, $errno,
             $errstr, 10);
-    register_shutdown_function(__CLASS__.'::telnetEnd');
+    register_shutdown_function(array(__CLASS__,'telnetEnd'));
   }
   
   private static function telnetEnd() {
