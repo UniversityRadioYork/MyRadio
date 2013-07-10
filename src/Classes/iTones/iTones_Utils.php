@@ -80,7 +80,7 @@ class iTones_Utils extends ServiceAPI {
       self::telnetStart();
     }
 
-    fwrite(self::$telnet_handle, $command . "\n");
+    fwrite(self::$telnet_handle, $command . "\n", 1048576);
     usleep(100);
     
     $response = fread(self::$telnet_handle); //Read a max of 1MB of data
