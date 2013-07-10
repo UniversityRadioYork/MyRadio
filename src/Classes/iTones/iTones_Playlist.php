@@ -52,7 +52,7 @@ class iTones_Playlist extends ServiceAPI {
     $this->title = $result['title'];
     $this->image = $result['image'];
     $this->description = $result['description'];
-    $this->lock = User::getInstance($result['lock']);
+    $this->lock = empty($result['lock']) ? null : User::getInstance($result['lock']);
     $this->locktime = (int)$result['locktime'];
     $this->weight = (int)$result['weight'];
     
