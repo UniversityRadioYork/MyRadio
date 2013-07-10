@@ -103,6 +103,14 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
     
     return $response;
   }
+  
+  public static function findByName($name) {
+    $result = self::$db->fetch_column('SELECT auto_playlist_id FROM bapsplanner.auto_playlists WHERE name=$1',
+            array($name));
+    
+    if (empty($result)) throw new MyURYException ('That auto playlist does not exist!');
+    else return self::getInstance($result[0]);
+  }
 
   /**
    * Returns an array of key information, useful for Twig rendering and JSON requests
