@@ -28,7 +28,6 @@ class iTones_Utils extends ServiceAPI {
   public static function requestTrack(MyURY_Track $track, $queue = 'requests') {
     self::verifyQueue($queue);
     $r = self::telnetOp('jukebox_'.$queue.'.push '.$track->getPath());
-    echo $r;
     return is_numeric($r);
   }
   
