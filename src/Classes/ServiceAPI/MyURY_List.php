@@ -223,7 +223,7 @@ class MyURY_List extends ServiceAPI {
    * @param String $email
    */
   public function archiveMessage($from, $email) {
-    $body = str_replace("=\r\n",'',preg_split("/\r?\n\r?\n/", $email, 2)[1]);
+    $body = str_replace("=\r\n",'',preg_split("/\r?\n\r?\n/", utf8_encode($email), 2)[1]);
     preg_match("/(^|\s)Subject:([^\r\n]*)/i", $email, $subject);
     $subject = trim($subject[2][0]);
     
