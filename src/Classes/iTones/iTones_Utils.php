@@ -81,13 +81,13 @@ class iTones_Utils extends ServiceAPI {
     }
 
     fwrite(self::$telnet_handle, $command . "\n");
-    
+    echo $command."\n";
     $response = '';
     $line = '';
     do {
       $response .= $line;
       $line = fgets(self::$telnet_handle, 1048576); //Read a max of 1MB of data
-      echo "$line\n";
+      echo "$line";
     } while ($line !== "END\n");
     
     
