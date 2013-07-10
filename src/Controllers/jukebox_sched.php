@@ -1,4 +1,4 @@
-#!/usr/local/bin/php
+#!/usr/bin/php
 <?php
 /**
  * This is the Jukebox Scheduler Controller - when triggered, it will inject a track into the iTones playout queue
@@ -28,9 +28,9 @@ do {
     $tracks = $playlist->getTracks();
   }
   $track = $tracks[array_rand($tracks)];
-} while (!MyURY_TracklistItem::getIfPlayedRecently($track));
+} while (MyURY_TracklistItem::getIfPlayedRecently($track) or iTones_Utils::getIfQueued($track));
 
-if (!iTones_Utils::requestTrack($track)) throw new MyURYException('Track Request Failed!');
+if (!iTones_Utils::requestTrack($track, 'main')) throw new MyURYException('Track Request Failed!');
 
 exit(0);
 
