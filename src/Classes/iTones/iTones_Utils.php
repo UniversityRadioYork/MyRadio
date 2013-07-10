@@ -16,6 +16,7 @@
 class iTones_Utils extends ServiceAPI {
   
   private static $telnet_handle;
+  private static $queues = array('requests', 'main');
 
   /**
    * Push a track into the iTones request queue.
@@ -50,8 +51,22 @@ class iTones_Utils extends ServiceAPI {
     return $items;
   }
   
+  /**
+   * Check if a track is currently queued to be played in any queue.
+   * @return boolean
+   */
+  public static function getIfQueued(MyURY_Track $track) {
+    foreach (self::$queues as $queue) {
+      $r = self::getTracksInQueue($queue);
+      foreach ($r as $req) {
+        if ($req['trackid'] === $track->getID()) return true;
+      }
+    }
+    return false;
+  }
+  
   private static function verifyQueue($queue) {
-    if ($queue !== 'requests' && $queue !== 'main') throw new MyURYException('Invalid Queue!');
+    if (!in_array($queue, self::$queues)) throw new MyURYException('Invalid Queue!');
   }
   
   /**
