@@ -7,7 +7,7 @@
 /**
  * The iTones_Playlist class helps provide control and access to managed playlists
  * 
- * @version 20130709
+ * @version 20130711
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_iTones
  * @uses \Database

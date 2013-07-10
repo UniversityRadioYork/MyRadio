@@ -88,7 +88,7 @@ class MyURY_TracklistItem extends ServiceAPI {
    * @return Array
    */
   public static function getTracklistForTimeslot(MyURY_Timeslot $timeslot) {
-    $result = self::$db->fetch_column('SELECT audiologid FROM tracklist.tracklist WHERE timeslotid=$1',
+    $result = self::$db->fetch_column('SELECT audiologid FROM tracklist.tracklist WHERE timeslotid=$1 AND state!=\'o\'',
             array($timeslot->getID()));
     
     $items = array();
@@ -103,15 +103,18 @@ class MyURY_TracklistItem extends ServiceAPI {
    * Find all tracks played by Jukebox
    * @param int $start Period to start log from. Default 0.
    * @param int $end Period to end log from. Default time().
+   * @param bool $include_playout Optional. Default true. If true, include statistics from when jukebox was not on air,
+   * i.e. when it was only feeding campus bars.
    */
-  public static function getTracklistForJukebox($start = null, $end = null) {
+  public static function getTracklistForJukebox($start = null, $end = null, $include_playout = true) {
     self::__wakeup();
     
     $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
     $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
     
     $result = self::$db->fetch_column('SELECT audiologid FROM tracklist.tracklist WHERE source=\'j\'
-      AND timestart >= $1 AND timestart <= $2', array($start, $end));
+      AND timestart >= $1 AND timestart <= $2' . ($include_playout ? '' : ' AND state!=\'u\''),
+            array($start, $end));
     
     $items = array();
     foreach ($result as $item) {
@@ -133,7 +136,7 @@ class MyURY_TracklistItem extends ServiceAPI {
     $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
     
     $result = self::$db->fetch_column('SELECT audiologid FROM tracklist.tracklist
-      WHERE timestart >= $1 AND timestart <= $2', array($start, $end));
+      WHERE timestart >= $1 AND timestart <= $2 AND state!=\'u\'', array($start, $end));
     
     $items = array();
     foreach ($result as $item) {
@@ -180,12 +183,14 @@ class MyURY_TracklistItem extends ServiceAPI {
    * and outputs the play count of each Track, including the total time played.
    * @param int $start Period to start log from. Default 0.
    * @param int $end Period to end log from. Default time().
+   * @param bool $include_playout Optional. Default true. If true, include statistics from when jukebox was not on air,
+   * i.e. when it was only feeding campus bars.
    * @return Array, 2D, with the inner dimension being a MyURY_Track Datasource output, with the addition of:
    * num_plays: The number of times the track was played
    * total_playtime: The total number of seconds the track has been on air
    * in_playlists: A CSV of playlists the Track is in
    */
-  public static function getTracklistStatsForJukebox($start = null, $end = null) {
+  public static function getTracklistStatsForJukebox($start = null, $end = null, $include_playout = true) {
     self::__wakeup();
     
     $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
@@ -194,6 +199,7 @@ class MyURY_TracklistItem extends ServiceAPI {
     $result = self::$db->fetch_all('SELECT COUNT(trackid) AS num_plays, trackid FROM tracklist.tracklist
       LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
       WHERE source=\'j\' AND timestart >= $1 AND timestart <= $2 AND trackid IS NOT NULL
+      ' . ($include_playout ? '' : 'AND state != \'o\'') . '
       GROUP BY trackid ORDER BY num_plays DESC',
       array($start, $end));
     
@@ -221,7 +227,6 @@ class MyURY_TracklistItem extends ServiceAPI {
       WHERE source=\'b\' AND timestart >= $1 AND timestart <= $2 AND trackid IS NOT NULL
       GROUP BY trackid ORDER BY num_plays DESC',
       array($start, $end));
-    
     return self::trackAmalgamator($result);
   }
   
