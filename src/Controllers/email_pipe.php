@@ -56,8 +56,13 @@ foreach ($recipients[3] as $recipient) {
   
   $list = MyURY_List::getByName(explode('@',$addr)[0]);
   if (empty($list)) exit(0);
-  if ($list->getID() == 52 && $sender == null) return; //Prevent loops
+  if ($list->getID() == 52 && $sender == null) continue; //Prevent loops
   if ($list !== null) {
-    $list->archiveMessage($sender, $email);
+    try {
+      $list->archiveMessage($sender, $email);
+    } catch (MyURYException $e) {
+      //Yes, it failed, but we don't want bounce messages
+      exit(0);
+    }
   }
 }
