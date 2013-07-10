@@ -66,7 +66,7 @@ class iTones_Utils extends ServiceAPI {
   }
   
   private static function verifyQueue($queue) {
-    if (!in_array($queue, self::$queues)) throw new MyURYException('Invalid Queue!');
+    if (in_array($queue, self::$queues) === false) throw new MyURYException('Invalid Queue!');
   }
   
   /**
