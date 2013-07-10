@@ -106,6 +106,8 @@ class MyURYEmail {
             , $params);
 
     $eid = $eid[0];
+    
+    if (empty($eid)) throw new MyURYException('Failed to create email. See previous error.');
 
     if (!empty($to['lists'])) {
       foreach ($to['lists'] as $list) {
