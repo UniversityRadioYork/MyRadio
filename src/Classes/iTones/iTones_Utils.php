@@ -77,10 +77,10 @@ class iTones_Utils extends ServiceAPI {
   private static function telnetStart() {
     self::$telnet_handle = fsockopen('tcp://'.Config::$itones_telnet_host, Config::$itones_telnet_port, $errno,
             $errstr, 10);
-    register_shutdown_function(array(__CLASS__,'telnetEnd'));
+    register_shutdown_function(array(__CLASS__, 'telnetEnd'));
   }
   
-  private static function telnetEnd() {
+  public static function telnetEnd() {
     fwrite(self::$telnet_handle, "quit\n");
     fclose(self::$telnet_handle);
   }

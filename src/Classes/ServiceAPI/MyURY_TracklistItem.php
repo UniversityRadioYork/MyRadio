@@ -235,7 +235,7 @@ class MyURY_TracklistItem extends ServiceAPI {
     $result = self::$db->fetch_column('SELECT timestart FROM tracklist.tracklist
       LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
       WHERE timestart >= $1 AND trackid = $2', array(CoreUtils::getTimestamp(time()-$time), $track->getID()));
-    print_r($result);
+    
     return sizeof($result) !== 0;
   }
 }
