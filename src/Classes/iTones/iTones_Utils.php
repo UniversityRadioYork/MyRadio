@@ -81,14 +81,17 @@ class iTones_Utils extends ServiceAPI {
     }
 
     fwrite(self::$telnet_handle, $command . "\n");
-    usleep(100);
     
-    $response = fread(self::$telnet_handle, 1048576); //Read a max of 1MB of data
+    $response = '';
+    do {
+      $response .= $line."\n";
+      $line .= fgets(self::$telnet_handle, 1048576); //Read a max of 1MB of data
+    } while ($line !== 'END');
     
     
     
     //Remove the END
-    return trim(str_replace('END', "\n", $response));
+    return trim($response);
   }
   
   private static function telnetStart() {
