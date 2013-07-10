@@ -14,6 +14,8 @@
  * @uses \Database
  */
 class iTones_Utils extends ServiceAPI {
+  
+  private static $telnet_handle;
 
   /**
    * Push a track into the iTones request queue.
@@ -23,22 +25,64 @@ class iTones_Utils extends ServiceAPI {
    * @return bool Whether the operation was successful
    */
   public static function requestTrack(MyURY_Track $track, $queue = 'requests') {
-    if ($queue !== 'requests' && $queue !== 'main') throw new MyURYException('Invalid Queue!');
+    self::verifyQueue($queue);
     $r = self::telnetOp('jukebox_'.$queue.'.push '.$track->getPath());
     return is_numeric($r);
   }
   
-  private static function telnetOp($command) {
-    $h = fsockopen('tcp://'.Config::$itones_telnet_host, Config::$itones_telnet_port, $errno, $errstr, 10);
-
-    fwrite($h, $command . "\n");
-
-    $response = fread($h, 1048576); //Read a max of 1MB of data
+  /**
+   * Returns Request IDs and Track IDs currently in the queue
+   * @param String $queue Optional, as per definition in requestTrack()
+   * @return Array 2D, such as [['requestid' => 1, 'trackid' => 72830], ...]
+   */
+  public static function getTracksInQueue($queue = 'requests') {
+    self::verifyQueue($queue);
+    $info = explode(' ', self::telnetOp('jukebox_'.$queue.'.queue'));
     
-    fwrite($h, "quit\n");
+    $items = array();
+    foreach ($info as $item) {
+      if (is_numeric($item)) {
+        $tid = preg_replace('/^.*\"'.str_replace('/','\\/', Config::$music_central_db_path)
+                .'\/records\/[0-9]+\/([0-9]+)\.mp3.*$/is', '$1', self::telnetOp('request.trace '.$item));
+        $items[] = array('requestid' => $item, 'trackid' => $tid);
+      }
+    }
+    return $items;
+  }
+  
+  private static function verifyQueue($queue) {
+    if ($queue !== 'requests' && $queue !== 'main') throw new MyURYException('Invalid Queue!');
+  }
+  
+  /**
+   * Runs a telnet command
+   * @param String $command
+   * @return String
+   */
+  private static function telnetOp($command) {
+    if (empty(self::$telnet_handle)) {
+      self::telnetStart();
+    }
+
+    fwrite(self::$telnet_handle, $command . "\n");
+
+    $response = fread(self::$telnet_handle, 1048576); //Read a max of 1MB of data
+    
+    
     
     //Remove the END
     return trim(str_replace('END', "\n", $response));
+  }
+  
+  private static function telnetStart() {
+    self::$telnet_handle = fsockopen('tcp://'.Config::$itones_telnet_host, Config::$itones_telnet_port, $errno,
+            $errstr, 10);
+    register_shutdown_function(__CLASS__.'::telnetEnd');
+  }
+  
+  private static function telnetEnd() {
+    fwrite(self::$telnet_handle, "quit\n");
+    fclose(self::$telnet_handle);
   }
 
 }
