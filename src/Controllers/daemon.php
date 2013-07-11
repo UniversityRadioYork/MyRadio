@@ -26,14 +26,7 @@ $handle = opendir($path);
 if (!$handle) die('PATH DOES NOT EXIST '.$path."\n");
 $classes = array();
 
-//Set up environment
-date_default_timezone_get('Europe/London');
-ini_set('include_path', str_replace('Controllers', '', __DIR__) . ':' . ini_get('include_path'));
-define('SHIBBOBLEH_ALLOW_READONLY', true);
-require_once 'Classes/MyURY/CoreUtils.php';
-require_once 'Classes/Config.php';
-require_once 'Classes/MyURYEmail.php';
-require 'Models/Core/api.php';
+require_once __DIR__.'/cli_common.php';
 
 //Should this run once or loop forever?
 $once = in_array('--once', $argv);
