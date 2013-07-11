@@ -133,7 +133,7 @@ class iTones_Playlist extends ServiceAPI {
    * @return int
    */
   public function getRevisionID() {
-    return $this->getRevisionID();
+    return $this->revisionid;
   }
   
   /**
