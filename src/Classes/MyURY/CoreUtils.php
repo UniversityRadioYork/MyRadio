@@ -10,7 +10,7 @@
  * No database accessing etc should be setup here.
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130709
+ * @version 20130711
  * @package MyURY_Core
  * @todo Factor out permission code into a seperate class?
  */
@@ -563,6 +563,20 @@ class CoreUtils {
     }
 
     return $bag[array_rand($bag)];
+  }
+  
+  //Reports some things
+  public static function shutdown() {
+    //Don't let the client wait for us
+    flush();
+    ob_flush();
+    
+    $errors = MyURYError::getErrorCount();
+    $exceptions = MyURYException::getExceptionCount();
+    $host = $_SERVER['SERVER_ADDR'];
+    
+    Database::getInstance()->query('INSERT INTO myury.error_rate (server_ip, error_count, exception_count)
+      VALUES ($1, $2, $3)', array($host, $errors, $exceptions));
   }
 
 }
