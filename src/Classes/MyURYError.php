@@ -228,7 +228,7 @@ class MyURYError {
                 '(Errors of more serious' . $rtnl .
                 'types may occur but not generate email ' .
                 'alerts. Check the' . $rtnl .
-                'live error log.)';
+                'live error log.)' . $rtnl . $rtnl . $errstr;
         $sent = MyURYEmail::sendEmailToList(MyURY_List::getByName(Config::$error_report_email), 'MyURY error alert', $message);
         if (!$sent) {
           error_log('FAIL: mail failed to send error alert email.');
