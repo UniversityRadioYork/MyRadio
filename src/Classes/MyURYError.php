@@ -167,10 +167,10 @@ class MyURYError {
         $diff_seconds = $current_timestamp -
                 $alert_timestamp;
         // Change this to TESTING_ONLY to check that it works
-        // but remember to change it back to ONE_DAY (or some
+        // but remember to change it back to One Day (or some
         // other value you deem suitable) when testing is
         // completed.
-        if ($diff_seconds < ONE_DAY) {
+        if ($diff_seconds < 86400) {
           // Last alert for this $errfile was less than
           // twenty-four hours ago, so we don't need to
           // send out another email alert. (Nor do we need
