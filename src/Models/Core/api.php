@@ -43,12 +43,14 @@ spl_autoload_register(function($class) {
             }
           }
         });
+
+require_once 'Classes/MyURYException.php';
+require_once 'Classes/MyURYError.php';
 set_exception_handler(function($e) {
           
         });
 set_error_handler('MyURYError::errorsToEmail');
 register_shutdown_function('CoreUtils::shutdown');
-require_once 'Classes/MyURYException.php';
 
 //Initiate Database
 require_once 'Classes/Database.php';
