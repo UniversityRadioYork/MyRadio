@@ -58,7 +58,7 @@ class iTones_Playlist extends ServiceAPI {
     $this->locktime = (int)$result['locktime'];
     $this->weight = (int)$result['weight'];
     
-    $this->revisionid = (int)self::$db->fetch_column('SELECT revisionid FROM jukebox.playlist_versions WHERE playlistid=$1
+    $this->revisionid = (int)self::$db->fetch_column('SELECT revisionid FROM jukebox.playlist_revisions WHERE playlistid=$1
       ORDER BY revisionid DESC LIMIT 1', array($this->getID()))[0];
     
     $items = self::$db->fetch_column('SELECT trackid FROM jukebox.playlist_entries WHERE playlistid=$1
