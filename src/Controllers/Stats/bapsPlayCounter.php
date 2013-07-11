@@ -13,7 +13,6 @@ $end = isset($_GET['rangesel-endtime']) ? strtotime($_GET['rangesel-endtime']) :
 
 $twig->setTemplate('table_timeinput.twig')
         ->addVariable('title', 'BAPS Track Statistics')
-        ->addVariable('heading', 'BAPS Track Statistics')
         ->addVariable('tabledata', MyURY_TracklistItem::getTracklistStatsForBAPS($start, $end))
         ->addVariable('tablescript', 'myury.stats.jukeboxplaycounter')
         ->addVariable('starttime', CoreUtils::happyTime($start))

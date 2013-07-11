@@ -57,7 +57,6 @@ class MyURYException extends RuntimeException {
                     ->addVariable('serviceName', 'Error')
                     ->addVariable('serviceVersion', $GLOBALS['service_version'])
                     ->addVariable('title', 'Internal Server Error')
-                    ->addVariable('heading', 'Internal Server Error')
                     ->addVariable('body', $error)
                     ->addVariable('uri', $_SERVER['REQUEST_URI'])
                     ->render();
