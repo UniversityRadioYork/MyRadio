@@ -10,7 +10,6 @@ require 'Views/bootstrap.php';
 
 $twig->setTemplate('table.twig')
         ->addVariable('title', 'Most listened to shows this academic year')
-        ->addVariable('heading', 'Most listened to shows this academic year')
         ->addVariable('tabledata', MyURY_Show::getMostListened(strtotime(CoreUtils::getAcademicYear().'-09-01')))
         ->addVariable('tablescript', 'myury.datatable.default')
         ->render();

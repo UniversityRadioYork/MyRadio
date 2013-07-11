@@ -12,7 +12,6 @@ CoreUtils::requireTimeslot();
 
 $twig->setTemplate('NIPSWeb/main.twig')
         ->addVariable('title', 'Show Planner')
-        ->addVariable('heading', 'Show Planner')
         ->addVariable('tracks', MyURY_Timeslot::getInstance($_SESSION['timeslotid'])->getShowPlan())
         ->addVariable('reslists', CoreUtils::dataSourceParser(array(
             'managed' => iTones_Playlist::getAlliTonesPlaylists(),

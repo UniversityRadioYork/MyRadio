@@ -12,6 +12,5 @@ $twig->addVariable('serviceName', 'MyURY')
         ->setTemplate('MyURY/brokerVersion.twig')
         ->addVariable('uri', $_SERVER['REQUEST_URI'])
         ->addVariable('title', 'Version Selector')
-        ->addVariable('heading', 'Version Selector')
         ->addVariable('versions', $versions)
         ->render();
