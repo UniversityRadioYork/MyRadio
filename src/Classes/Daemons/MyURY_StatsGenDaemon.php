@@ -4,7 +4,7 @@ class MyURY_StatsGenDaemon {
   private static $lastrunhourly = 0;
   private static $lastrundaily = 0;
   
-  public static function isEnabled() { return false; }
+  public static function isEnabled() { return true; }
   
   public static function run() {
     if (self::$lastrunhourly > time() - 3600) return;
