@@ -567,13 +567,15 @@ class CoreUtils {
   
   //Reports some things
   public static function shutdown() {
-    //Don't let the client wait for us
-    flush();
-    ob_flush();
+    if (!empty($_SERVER['SERVER_ADDR'])) {
+      //Don't let the client wait for us
+      flush();
+      ob_flush();
+    }
     
     $errors = MyURYError::getErrorCount();
     $exceptions = MyURYException::getExceptionCount();
-    $host = $_SERVER['SERVER_ADDR'];
+    $host = gethostbyname(gethostname());
     
     Database::getInstance()->query('INSERT INTO myury.error_rate (server_ip, error_count, exception_count)
       VALUES ($1, $2, $3)', array($host, $errors, $exceptions));
