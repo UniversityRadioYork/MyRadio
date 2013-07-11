@@ -96,7 +96,7 @@ class MyURY_List extends ServiceAPI {
   }
 
   public static function getInstance($listid = -1) {
-    self::__wakeup();
+    self::wakeup();
     if (!is_numeric($listid)) {
       throw new MyURYException('Invalid List ID!');
     }

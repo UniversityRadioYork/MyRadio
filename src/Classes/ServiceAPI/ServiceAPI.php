@@ -49,6 +49,10 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
    * A magic function that will reload the Database and CacheProvider after the object has been loaded from Cache
    */
   public function __wakeup() {
+    self::wakeup();
+  }
+  
+  public static function wakeup() {
     self::initDB();
     self::initCache();
   }

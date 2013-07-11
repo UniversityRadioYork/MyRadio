@@ -56,7 +56,7 @@ class Profile extends ServiceAPI {
     //Return the object if it is cached
     self::$allMembers = self::$cache->get('MyURYProfile_allMembers');
     if (self::$allMembers === false) {
-      self::__wakeup();
+      self::wakeup();
       self::$allMembers = 
         self::$db->fetch_all('SELECT member.memberid, sname || \', \' || fname AS name, l_college.descr AS college, paid
         FROM member LEFT JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
@@ -85,7 +85,7 @@ class Profile extends ServiceAPI {
     //Return the object if it is cached
     self::$thisYearsMembers = self::$cache->get('MyURYProfile_thisYearsMembers');
     if (self::$thisYearsMembers === false) {
-      self::__wakeup();
+      self::wakeup();
       self::$thisYearsMembers = 
         self::$db->fetch_all('SELECT member.memberid, sname || \', \' || fname AS name, l_college.descr AS college, paid
         FROM member INNER JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
@@ -114,7 +114,7 @@ class Profile extends ServiceAPI {
     //Return the object if it is cached
     self::$currentOfficers = self::$cache->get('MyURYProfile_currentOfficers');
     if (self::$currentOfficers === false) {
-      self::__wakeup();
+      self::wakeup();
       self::$currentOfficers = 
         self::$db->fetch_all('SELECT team.team_name AS team, officer.officer_name AS officership, sname || \', \' || fname AS name, member.memberid
         FROM member, officer, member_officer, team
@@ -141,7 +141,7 @@ class Profile extends ServiceAPI {
     //Return the object if it is cached
     self::$officers = self::$cache->get('MyURYProfile_officers');
     if (self::$officers === false) {
-      self::__wakeup();
+      self::wakeup();
       self::$officers = 
         self::$db->fetch_all('SELECT team.team_name AS team, officer.officer_name AS officership, fname || \' \' || sname AS name, member.memberid, officer.officerid
                               FROM team 

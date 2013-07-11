@@ -62,7 +62,6 @@ set_error_handler('MyURYError::errorsToArray');
  */
 if (!Config::$display_errors && !CoreUtils::hasPermission(269)) {
   ini_set('display_errors', 'Off');
-  set_error_handler('MyURYError::errorsToEmail');
 }
 ini_set('error_log', Config::$log_file); // Set error log file
 

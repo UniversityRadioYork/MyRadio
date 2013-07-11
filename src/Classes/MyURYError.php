@@ -250,9 +250,4 @@ class MyURYError {
   public static function getErrorCount() {
     return self::$count;
   }
-
-  /**
-   * @todo handleError() - the MyURYError class should decide how to actually handle the error
-   * handleError() would deal with it as it saw fit using the previously defined methods
-   */
 }

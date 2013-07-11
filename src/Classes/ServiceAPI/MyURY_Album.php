@@ -98,7 +98,7 @@ class MyURY_Album extends ServiceAPI {
   }
 
   public static function getInstance($recordid = -1) {
-    self::__wakeup();
+    self::wakeup();
     if (!is_numeric($recordid)) {
       throw new MyURYException('Invalid Record/Album ID!', MyURYException::FATAL);
     }

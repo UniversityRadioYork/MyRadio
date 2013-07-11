@@ -70,7 +70,7 @@ class iTones_Playlist extends ServiceAPI {
    * @param String $resid The ID of the Playlist to return an object for
    */
   public static function getInstance($resid = -1) {
-    self::__wakeup();
+    self::wakeup();
     if (!is_string($resid) or empty($resid)) {
       throw new MyURYException('Invalid iTonesPlaylistID!');
     }
@@ -127,7 +127,7 @@ class iTones_Playlist extends ServiceAPI {
    * @return Array of iTones_Playlist objects
    */
   public static function getAlliTonesPlaylists() {
-    self::__wakeup();
+    self::wakeup();
     $result = self::$db->fetch_column('SELECT playlistid FROM jukebox.playlists ORDER BY title');
     
     return self::resultSetToObjArray($result);
@@ -138,7 +138,7 @@ class iTones_Playlist extends ServiceAPI {
    * @return iTones_Playlist
    */
   public static function getPlaylistFromWeights() {
-    self::__wakeup();
+    self::wakeup();
     
     $result = self::$db->fetch_all('SELECT playlistid AS item, weight FROM jukebox.playlists ORDER BY title');
     

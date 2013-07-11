@@ -132,7 +132,7 @@ class MyURY_Track extends ServiceAPI {
   public static function getInstance($trackid = -1, $album = null) {
     if ($album !== null)
       trigger_error('Use of deprecated parameter $album');
-    self::__wakeup();
+    self::wakeup();
     if (!is_numeric($trackid)) {
       throw new MyURYException('Invalid Track ID!', MyURYException::FATAL);
     }
@@ -317,7 +317,7 @@ class MyURY_Track extends ServiceAPI {
    * @todo Limit not accurate for itonesplaylistid queries
    */
   public static function findByOptions($options) {
-    self::__wakeup();
+    self::wakeup();
 
 //Shortcircuit - if itonesplaylistid is the only not-default value, just return the playlist
     $conflict = false;
@@ -512,7 +512,7 @@ class MyURY_Track extends ServiceAPI {
    * @throws MyURYException
    */
   public static function create($options) {
-    self::__wakeup();
+    self::wakeup();
 
     $required = array('title', 'artist', 'recordid', 'duration');
     foreach ($required as $require) {

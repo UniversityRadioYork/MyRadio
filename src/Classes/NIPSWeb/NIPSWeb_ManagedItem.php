@@ -235,7 +235,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
    * @throws MyURYException
    */
   public static function create($options) {
-    self::__wakeup();
+    self::wakeup();
     
     $required = array('title', 'duration', 'auxid');
     foreach ($required as $require) {

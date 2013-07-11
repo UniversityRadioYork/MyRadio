@@ -64,7 +64,7 @@ class NIPSWeb_TimeslotItem extends ServiceAPI {
    * itself as a reference to prevent cyclic dependencies.
    */
   public static function getInstance($resid = -1, $playlistref = null) {
-    self::__wakeup();
+    self::wakeup();
     if (!is_numeric($resid)) {
       throw new MyURYException('Invalid TimeslotItemID!');
     }

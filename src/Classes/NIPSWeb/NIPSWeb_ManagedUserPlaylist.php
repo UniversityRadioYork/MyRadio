@@ -44,7 +44,7 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist {
    * @param String $resid The String ID of the ManagedUserPlaylist to return an object for
    */
   public static function getInstance($resid = -1) {
-    self::__wakeup();
+    self::wakeup();
     if (!is_string($resid)) {
       throw new MyURYException('Invalid ManagedUserPlaylistID!');
     }
