@@ -64,7 +64,7 @@ if (!Config::$display_errors && !CoreUtils::hasPermission(269)) {
   ini_set('display_errors', 'Off');
   set_error_handler('MyURYError::errorsToEmail');
 }
-ini_set('error_log', PHP_ERROR_LOG); // Set error log file
+ini_set('error_log', Config::$log_file); // Set error log file
 
 /**
  * Call the model that prepares the Database and the Global Abstraction API 
