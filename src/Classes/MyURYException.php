@@ -10,12 +10,13 @@
  * and logging
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 22052012
+ * @version 20130711
  * @package MyURY_Core
  */
 class MyURYException extends RuntimeException {
 
   const FATAL = -1;
+  private static $count;
 
   /**
    * Extends the default session by enabling useful output
@@ -24,6 +25,7 @@ class MyURYException extends RuntimeException {
    * @param \Exception $previous 
    */
   public function __construct($message, $code = 500, Exception $previous = null) {
+    self::$count++;
     //Set up the Exception
     parent::__construct($message, $code, $previous);
     if (class_exists('Config')) {
@@ -73,6 +75,14 @@ class MyURYException extends RuntimeException {
     if ($code === self::FATAL) {
       echo '<div class="ui-state-error">A fatal error has occured that has prevented MyURY from performing the action you requested.</div>';
     }
+  }
+  
+  /**
+   * Get the number of MyURYExceptions that have been fired.
+   * @return int
+   */
+  public static function getExceptionCount() {
+    return self::$count;
   }
 
 }

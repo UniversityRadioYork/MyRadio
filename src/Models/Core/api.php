@@ -46,6 +46,7 @@ spl_autoload_register(function($class) {
 set_exception_handler(function($e) {
           
         });
+register_shutdown_function('CoreUtils::shutdown()');
 require_once 'Classes/MyURYException.php';
 
 //Initiate Database
