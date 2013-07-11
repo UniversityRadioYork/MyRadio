@@ -16,7 +16,7 @@
 class MyURYException extends RuntimeException {
 
   const FATAL = -1;
-  private static $count;
+  private static $count = 0;
 
   /**
    * Extends the default session by enabling useful output
