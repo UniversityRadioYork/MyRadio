@@ -82,7 +82,7 @@ class Database {
     
     if (isset($_REQUEST['dbdbg'])) echo $sql.'&nbsp;'.print_r($params,true).'<br>';
     
-    $result = pg_query_params($this->db, $sql, $params);
+    $result = @pg_query_params($this->db, $sql, $params);
     if (!$result) {
       if ($rollback) {
         pg_query($this->db, 'ROLLBACK');
