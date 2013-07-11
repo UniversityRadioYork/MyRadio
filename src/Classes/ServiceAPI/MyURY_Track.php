@@ -99,8 +99,8 @@ class MyURY_Track extends ServiceAPI {
    */
   private function __construct($trackid) {
 
-    $this->trackid = $trackid;
-    $result = self::$db->fetch_one('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', array($trackid));
+    $this->trackid = (int)$trackid;
+    $result = self::$db->fetch_one('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', array($this->trackid));
     if (empty($result)) {
       throw new MyURYException('The specified Track does not seem to exist');
       return;

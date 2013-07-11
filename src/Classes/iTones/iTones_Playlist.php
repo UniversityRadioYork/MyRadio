@@ -35,6 +35,8 @@ class iTones_Playlist extends ServiceAPI {
   
   private $weight = 0;
   
+  private $revisionid;
+  
   /**
    * Initiates the ManagedPlaylist variables
    * @param int $playlistid The ID of the managed playlist to initialise
@@ -55,6 +57,9 @@ class iTones_Playlist extends ServiceAPI {
     $this->lock = empty($result['lock']) ? null : User::getInstance($result['lock']);
     $this->locktime = (int)$result['locktime'];
     $this->weight = (int)$result['weight'];
+    
+    $this->revisionid = (int)self::$db->fetch_column('SELECT revisionid FROM jukebox.playlist_versions WHERE playlistid=$1
+      ORDER BY revisionid DESC LIMIT 1', array($this->getID()))[0];
     
     $items = self::$db->fetch_column('SELECT trackid FROM jukebox.playlist_entries WHERE playlistid=$1
       AND revision_removed IS NULL
@@ -123,6 +128,135 @@ class iTones_Playlist extends ServiceAPI {
   }
   
   /**
+   * Get the current Revision ID of the Playlist
+   * @return int
+   */
+  public function getRevisionID() {
+    return $this->getRevisionID();
+  }
+  
+  /**
+   * Takes a lock on this playlist - stores a notification to all other systems that it should not be edited.
+   * 
+   * @param String $lockstr If you already have a lock, put it here. It will be renewed if it is still valid.
+   * @param User $user The user that has acquired the lock. Defaults to current user. Required for CLI requests.
+   * This String will be invalidated by the update.
+   * 
+   * @return bool|String false if the lock is not available, or a sha1 that proves ownership of the lock.
+   * No, the hash isn't all that fancy, but it prevents people being stupid. Write operations require this String.
+   */
+  public function acquireOrRenewLock($lockstr = null, User $user = null) {
+    //Acquire a lock on the lock row - we don't want someone else acquiring a lock while we are!
+    self::$db->query('BEGIN');
+    self::$db->query('SELECT * FROM jukebox.playlists WHERE playlistid=$1 FOR UPDATE', array($this->getID()), true);
+    
+    //Refresh the local lock information - threads using this could have been running for a *while*
+    $this->refreshLockInformation();
+    
+    if ($this->locktime >= time() - Config::$playlist_lock_time) {
+      //There's a lock in place. Is it held by this client?
+      if ($lockstr !== $this->generateLockKey($this->lock, $this->locktime)) {
+        //It is not. Return false.
+        return false;
+      }
+      //It's held by this user, we can update it.
+    }
+    //Or, if there isn't an active lock
+    $locktime = time();
+    self::$db->query('UPDATE jukebox.playlists SET lock=$1, locktime=$2 WHERE playlistid=$3',
+            array($user->getID(), $locktime, $this->getID()), true);
+    self::$db->query('COMMIT'); //This releases the lock
+    $this->refreshLockInformation();
+    return $this->generateLockKey($user, $locktime);
+  }
+  
+  /**
+   * Updates the locally stored Lock information to ensure it is up to date
+   */
+  private function refreshLockInformation() {
+    $result = self::$db->fetch_one('SELECT lock, locktime FROM jukebox.playlists WHERE playlistid=$1',
+            array($this->getID()));
+    $this->lock = empty($result['lock']) ? null : User::getInstance($result['lock']);
+    $this->locktime = (int)$result['locktime'];
+  }
+  
+  /**
+   * Generates a key to the provided lock
+   * @param User $lock
+   * @param int $locktime
+   * @return String
+   */
+  private function generateLockKey(User $lock, $locktime) {
+    return sha1('myuryitoneslockkey'.$lock->__toString().$locktime.$this->getID());
+  }
+  
+  /**
+   * Returns if the provided Lock string is valid for this Playlist
+   * @param String $lockstr
+   * @return bool
+   */
+  private function validateLock($lockstr) {
+    $this->refreshLockInformation();
+    return $lockstr === $this->generateLockKey($this->lock, $this->locktime);
+  }
+  
+  /**
+   * Update the Tracks that belong to this playlist.
+   * 
+   * It gets a list of all tracks in the Playlist, then iterates over each Track in $tracks
+   * - If the Track is in the existing list, remove it from the temporary list
+   * - If the Track is not in the list, INSERT it into the database from the current revision
+   * 
+   * Once that's done, go over every Track still in the temporary list and remove them from the Playlist
+   * 
+   * @param MyURY_Track[] $tracks Tracks to put in the playlist.
+   * @param String $lockstr The string that provides Write access to this Playlist. Acquired from acquireLock();
+   */
+  public function setTracks($tracks, $lockstr = null) {
+    $old_list = $this->getTracks();
+    
+    //Check if anything has actually changed
+    if ($tracks == $old_list) return;
+    
+    //Okay, it has. They'll need a lock to go any further
+    if (!$this->validateLock($lockstr)) throw new MyURYException('You do not have a valid lock on this playlist.');
+    
+    $new_additions = array();
+    
+    foreach ($tracks as $track) {
+      $key = array_search($track, $old_list);
+      if ($key === false) {
+        //This is a new addition
+        $new_additions[] = $track;
+      } else {
+        //This is an existing item
+        unset($old_list[$key]);
+      }
+    }
+    
+    //Cool, now we know what needs to be done.
+    self::$db->query('BEGIN');
+    $revisionid = $this->getRevisionID()+1;
+    //Get the new revision ID
+    self::$db->query('INSERT INTO jukebox.playlist_revisions (playlistid, revisionid, author)
+      VALUES ($1, $2, $3) RETURNING revisionid', array($this->getID(), $revisionid, User::getInstance()->getID()), true);
+    //Add new tracks
+    foreach ($new_additions as $track) {
+      self::$db->query('INSERT INTO jukebox.playlist_entries (playlistid, trackid, revision_added) VALUES ($1, $2, $3)',
+              array($this->getID(), $track->getID(), $revisionid), true);
+    }
+    //Remove old tracks
+    foreach ($old_list as $track) {
+      self::$db->query('UPDATE jukebox.playlist_entries SET revision_removed=$1 WHERE playlistid=$2 AND trackid=$3
+        AND revision_removed IS NULL', array($revisionid, $this->getID(), $track->getID()), true);
+    }
+    //All is happy. Commit!
+    self::$db->query('COMMIT');
+    $this->tracks = $tracks;
+    $this->revisionid = $revisionid;
+  }
+  
+  /**
    * Get an array of all Playlists
    * @return Array of iTones_Playlist objects
    */
@@ -145,6 +279,11 @@ class iTones_Playlist extends ServiceAPI {
     return self::getInstance(CoreUtils::biased_random($result));
   }
   
+  /**
+   * Find out what Playlists have this Track in them, if any
+   * @param MyURY_Track $track The track to search for
+   * @return Array One or more iTones_Playlists, each of which contain $track
+   */
   public static function getPlaylistsWithTrack(MyURY_Track $track) {
     $result = self::$db->fetch_column('SELECT playlistid FROM jukebox.playlist_entries WHERE trackid=$1
       AND revision_removed IS NULL', array($track->getID()));
