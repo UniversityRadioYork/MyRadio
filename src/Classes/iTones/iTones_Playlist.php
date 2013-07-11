@@ -7,7 +7,7 @@
 /**
  * The iTones_Playlist class helps provide control and access to managed playlists
  * 
- * @version 20130711
+ * @version 20130712
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_iTones
  * @uses \Database
@@ -73,6 +73,7 @@ class iTones_Playlist extends ServiceAPI {
   /**
    * Returns the current instance of that Playlist object if there is one, or runs the constructor if there isn't
    * @param String $resid The ID of the Playlist to return an object for
+   * @return iTones_Playlist
    */
   public static function getInstance($resid = -1) {
     self::wakeup();
@@ -146,6 +147,7 @@ class iTones_Playlist extends ServiceAPI {
    * No, the hash isn't all that fancy, but it prevents people being stupid. Write operations require this String.
    */
   public function acquireOrRenewLock($lockstr = null, User $user = null) {
+    if ($user === null) $user = User::getInstance();
     //Acquire a lock on the lock row - we don't want someone else acquiring a lock while we are!
     self::$db->query('BEGIN');
     self::$db->query('SELECT * FROM jukebox.playlists WHERE playlistid=$1 FOR UPDATE', array($this->getID()), true);
@@ -168,6 +170,16 @@ class iTones_Playlist extends ServiceAPI {
     self::$db->query('COMMIT'); //This releases the lock
     $this->refreshLockInformation();
     return $this->generateLockKey($user, $locktime);
+  }
+  
+  /**
+   * Release your lock on this Playlist
+   * @param String $lockstr
+   */
+  public function releaseLock($lockstr) {
+    if ($this->validateLock($lockstr)) {
+      self::$db->query('UPDATE jukebox.playlists SET locktime=NULL WHERE playlistid=$1', array($this->getID()));
+    }
   }
   
   /**
@@ -211,6 +223,9 @@ class iTones_Playlist extends ServiceAPI {
    * 
    * @param MyURY_Track[] $tracks Tracks to put in the playlist.
    * @param String $lockstr The string that provides Write access to this Playlist. Acquired from acquireLock();
+   * 
+   * @todo Push these changes to the playlist files on playoutsvc.ury.york.ac.uk. This should probably be a MyURYDaemon
+   * configured to run only on that server.
    */
   public function setTracks($tracks, $lockstr = null) {
     $old_list = $this->getTracks();

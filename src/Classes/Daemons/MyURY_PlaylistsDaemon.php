@@ -29,6 +29,9 @@ class MyURY_PlaylistsDaemon {
   }
   
   private static function updateMostPlayedPlaylist() {
+    $pobj = iTones_Playlist::getInstance('semantic-auto');
+    $lockstr = $pobj->acquireOrRenewLock(null, User::getInstance(Config::$system_user));
+    
     $most_played = MyURY_TracklistItem::getTracklistStatsForBAPS(time() - (86400 * 7)); //Track play stats for last week
     
     $playlist = array();
@@ -37,12 +40,17 @@ class MyURY_PlaylistsDaemon {
       $playlist[] = MyURY_Track::getInstance($most_played[$i]['trackid']);
     }
     
-    var_dump($playlist);
+    $pobj->setTracks($playlist, $lockstr);
+    $pobj->releaseLock($lockstr);
   }
   
   private static function updateNewestUploadsPlaylist() {
+    $pobj = iTones_Playlist::getInstance('newest-auto');
+    $lockstr = $pobj->acquireOrRenewLock(null, User::getInstance(Config::$system_user));
+    
     $newest_tracks = NIPSWeb_AutoPlaylist::findByName('Newest Tracks')->getTracks();
     
-    var_dump($newest_tracks);
+    $pobj->setTracks($newest_tracks, $lockstr);
+    $pobj->releaseLock($lockstr);
   }
 }
