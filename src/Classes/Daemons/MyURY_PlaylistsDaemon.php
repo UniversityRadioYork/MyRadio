@@ -32,7 +32,10 @@ class MyURY_PlaylistsDaemon {
     $pobj = iTones_Playlist::getInstance('semantic-auto');
     $lockstr = $pobj->acquireOrRenewLock(null, User::getInstance(Config::$system_user));
     
-    $most_played = MyURY_TracklistItem::getTracklistStatsForBAPS(time() - (86400 * 7)); //Track play stats for last week
+    /**
+     * @todo This is 70 days for testing (It was Summer when I wrote this...)
+     */
+    $most_played = MyURY_TracklistItem::getTracklistStatsForBAPS(time() - (86400 * 70)); //Track play stats for last week
     
     $playlist = array();
     for ($i = 0; $i < 100; $i++) {
