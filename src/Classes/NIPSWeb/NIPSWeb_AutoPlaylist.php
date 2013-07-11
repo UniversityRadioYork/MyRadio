@@ -57,7 +57,7 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
    * @param int $resid The ID of the AutoPlaylist to return an object for
    */
   public static function getInstance($resid = -1) {
-    self::__wakeup();
+    self::wakeup();
     if (!is_numeric($resid)) {
       throw new MyURYException('Invalid AutoPlaylistID!');
     }

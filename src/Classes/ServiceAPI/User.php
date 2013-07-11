@@ -530,7 +530,7 @@ class User extends ServiceAPI {
   }
   
   public static function findByEmail($email) {
-    self::__wakeup();
+    self::wakeup();
     
     $result = self::$db->fetch_column('SELECT memberid FROM public.member WHERE email ILIKE $1 OR eduroam ILIKE $1
       OR local_name ILIKE $2 OR local_alias ILIKE $2', array($email, explode('@',$email)[0]));
@@ -540,7 +540,7 @@ class User extends ServiceAPI {
   }
   
   public static function findAllTrained() {
-    self::__wakeup();
+    self::wakeup();
     
     $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=1');
     $members = array();
@@ -553,7 +553,7 @@ class User extends ServiceAPI {
   }
   
   public static function findAllDemoed() {
-    self::__wakeup();
+    self::wakeup();
     
     $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=2');
     $members = array();
@@ -566,7 +566,7 @@ class User extends ServiceAPI {
   }
   
   public static function findAllTrainers() {
-    self::__wakeup();
+    self::wakeup();
     
     $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=3');
     $members = array();

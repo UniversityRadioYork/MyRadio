@@ -36,7 +36,7 @@ class Artist extends ServiceAPI {
    * @throws MyURYException Not implemented - throws a fatal exception
    */
   public static function getInstance($trackid = -1) {
-    self::__wakeup();
+    self::wakeup();
     throw new MyURYException('Not implemented Artist::getInstance');
   }
   

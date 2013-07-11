@@ -69,7 +69,7 @@ class MyURY_TracklistItem extends ServiceAPI {
    * @return MyURY_TracklistItem
    */
   public static function getInstance($trackid = -1) {
-    self::__wakeup();
+    self::wakeup();
     if (!is_numeric($trackid)) {
       throw new MyURYException('Invalid TracklistItem ID!', 400);
     }
@@ -107,7 +107,7 @@ class MyURY_TracklistItem extends ServiceAPI {
    * i.e. when it was only feeding campus bars.
    */
   public static function getTracklistForJukebox($start = null, $end = null, $include_playout = true) {
-    self::__wakeup();
+    self::wakeup();
     
     $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
     $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
@@ -130,7 +130,7 @@ class MyURY_TracklistItem extends ServiceAPI {
    * @param int $end Period to end log from. Default time().
    */
   public static function getTracklistForTime($start, $end = null) {
-    self::__wakeup();
+    self::wakeup();
     
     $start = CoreUtils::getTimestamp($start);
     $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
@@ -191,7 +191,7 @@ class MyURY_TracklistItem extends ServiceAPI {
    * in_playlists: A CSV of playlists the Track is in
    */
   public static function getTracklistStatsForJukebox($start = null, $end = null, $include_playout = true) {
-    self::__wakeup();
+    self::wakeup();
     
     $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
     $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
@@ -217,7 +217,7 @@ class MyURY_TracklistItem extends ServiceAPI {
    * in_playlists: A CSV of playlists the Track is in
    */
   public static function getTracklistStatsForBAPS($start = null, $end = null) {
-    self::__wakeup();
+    self::wakeup();
     
     $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
     $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
