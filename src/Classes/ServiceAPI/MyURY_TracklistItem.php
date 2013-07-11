@@ -41,7 +41,7 @@ class MyURY_TracklistItem extends ServiceAPI {
     $result = self::$db->fetch_one('SELECT * FROM tracklist.tracklist
       LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
       LEFT JOIN tracklist.track_notrec ON tracklist.audiologid = track_notrec.audiologid
-      WHERE tracklist.audiologid=$1 LIMIT 1');
+      WHERE tracklist.audiologid=$1 LIMIT 1', array($id));
     if (empty($result)) throw new MyURYException('The requested TracklistItem does not appear to exist!', 400);
     
     $this->source = $result['source'];
@@ -60,6 +60,14 @@ class MyURY_TracklistItem extends ServiceAPI {
           'title' => $result['track'],
           'length' => $result['length']
       );
+  }
+  
+  public function getTrack() {
+    return $this->track;
+  }
+  
+  public function getStartTime() {
+    return $this->starttime;
   }
   
   /**
@@ -118,7 +126,7 @@ class MyURY_TracklistItem extends ServiceAPI {
     
     $items = array();
     foreach ($result as $item) {
-      $items[] = self::getInstance($item);
+      $items[] = self::getInstance((int)$item);
     }
     
     return $items;
