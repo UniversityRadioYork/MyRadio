@@ -214,6 +214,9 @@ class MyURYError {
     // if necessary.
     if ($need_to_email_alert) {
       if (Config::$error_report_email) {
+        ob_start();
+        debug_print_backtrace();
+        $trace = ob_get_clean();
         $rtnl = "\r\n";  // carriage return + newline
         $message = 'An error of type "' . $error_name . '" has ' .
                 'occurred on the page ' . $rtnl .
@@ -228,7 +231,7 @@ class MyURYError {
                 '(Errors of more serious' . $rtnl .
                 'types may occur but not generate email ' .
                 'alerts. Check the' . $rtnl .
-                'live error log.)' . $rtnl . $rtnl . $errstr;
+                'live error log.)' . $rtnl . $rtnl . $errstr . $rtnl . $rtnl . $trace;
         $sent = MyURYEmail::sendEmailToList(MyURY_List::getByName(Config::$error_report_email), 'MyURY error alert', $message);
         if (!$sent) {
           error_log('FAIL: mail failed to send error alert email.');
