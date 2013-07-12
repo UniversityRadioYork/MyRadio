@@ -208,7 +208,7 @@ window.MyURYForm = {
     });
 
     //Set up tabular repeating sets
-    $('.myury-form-add-row-button').click(function() {
+    $('.myury-form-add-row-button').on('click', function() {
       var new_id = $(this).attr('nextvalue');
 
       $('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody tr:first').clone().find('input').each(function() {
@@ -216,8 +216,9 @@ window.MyURYForm = {
           return id.replace(/0/, new_id)
         });
       }).end().appendTo('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody');
+      MyURYForm.init();
     });
-    $('button.myuryfrm-remove-row').button({icons: {primary: "ui-icon-trash"}, text: false}).click(function() {
+    $('button.myuryfrm-remove-row').button({icons: {primary: "ui-icon-trash"}, text: false}).on('click', function() {
       $(this).closest('tr').remove();
       return false;
     });
@@ -225,8 +226,7 @@ window.MyURYForm = {
     $('table.myuryfrm-repeaterset-container').dataTable({
       bSort: true,
       bJQueryUI: true,
-      bPaginate: false,
-      bSearch: true
+      bPaginate: false
     }
     );
   }
