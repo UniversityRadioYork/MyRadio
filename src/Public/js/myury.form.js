@@ -215,7 +215,10 @@ window.MyURYForm = {
         $(this).val('').attr('id', function(_, id) {return id.replace(/0/, new_id)});
       }).end().appendTo('#'+$(this).attr('id').replace(/add-to-/,'')+' tbody');
     });
-    $('button.myuryfrm-remove-row').button({icons:{primary: "ui-icon-trash"}, text: false});
+    $('button.myuryfrm-remove-row').button({icons:{primary: "ui-icon-trash"}, text: false}).click(function() {
+      $(this).parent('tr').remove();
+      return false;
+    });
   }
 };
 
