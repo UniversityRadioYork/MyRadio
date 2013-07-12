@@ -24,7 +24,7 @@ if ($count !== 0) trigger_error("Removed $count duplicate items in queues.");
 $current_queue_length = sizeof(iTones_Utils::getTracksInQueue('main'));
 if ($current_queue_length > 5) exit(0); //There's enough there for now, I think.
 
-while ($current_queue_length < 3) {
+do {
   //We limit the number of attempts (to 10 ^ number of tracks needed), after which we'll try again later
   $i = 10^(5-$current_queue_length);
   do {
@@ -38,7 +38,7 @@ while ($current_queue_length < 3) {
 
   if (!iTones_Utils::requestTrack($track, 'main')) throw new MyURYException('Track Request Failed!');
   $current_queue_length++;
-}
+} while ($current_queue_length < 3);
 
 exit(0);
 
