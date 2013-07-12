@@ -212,7 +212,7 @@ window.MyURYForm = {
       var new_id = $(this).attr('nextvalue');
       
       $('#'+$(this).attr('id').replace(/add-to-/,'')+' tbody tr:first').clone().find('input').each(function() {
-        $(this).val().attr('id', function(_, id) {return id.replace(/0/, new_id)});
+        $(this).val('').attr('id', function(_, id) {return id.replace(/0/, new_id)});
       }).end().appendTo('#'+$(this).attr('id').replace(/add-to-/,'')+' tbody');
     });
   }
