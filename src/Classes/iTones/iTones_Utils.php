@@ -34,7 +34,7 @@ class iTones_Utils extends ServiceAPI {
   /**
    * Returns Request IDs and Track IDs currently in the queue
    * @param String $queue Optional, as per definition in requestTrack()
-   * @return Array 2D, such as [['requestid' => 1, 'trackid' => 72830], ...]
+   * @return Array 2D, such as [['requestid' => 1, 'trackid' => 72830, 'queue' => 'requests'], ...]
    */
   public static function getTracksInQueue($queue = 'requests') {
     self::verifyQueue($queue);
@@ -45,7 +45,7 @@ class iTones_Utils extends ServiceAPI {
       if (is_numeric($item)) {
         $tid = preg_replace('/^.*\"'.str_replace('/','\\/', Config::$music_central_db_path)
                 .'\/records\/[0-9]+\/([0-9]+)\.mp3.*$/is', '$1', self::telnetOp('request.trace '.$item));
-        $items[] = array('requestid' => (int)$item, 'trackid' => (int)$tid);
+        $items[] = array('requestid' => (int)$item, 'trackid' => (int)$tid, 'queue' => $queue);
       }
     }
     return $items;
@@ -63,6 +63,39 @@ class iTones_Utils extends ServiceAPI {
       }
     }
     return false;
+  }
+  
+  /**
+   * Goes through the Queues, removing duplicate items
+   * 
+   * @return int The number of tracks that were removed from queues
+   */
+  public static function removeDuplicateItemsInQueues() {
+    //Get the tracks in all the queues
+    $tracks = array();
+    foreach (self::$queues as $queue) {
+      $tracks = array_merge($tracks, self::getTracksInQueue($queue));
+    }
+    
+    //Go over each track, marking it as identified. If it's encountered a second time, kill it.
+    $found = array();
+    $removed = 0;
+    foreach ($tracks as $track) {
+      if (in_array($track['trackid'], $found)) {
+        self::removeRequestFromQueue($track['queue'], $track['requestid']);
+        $removed++;
+      } else {
+        $found[] = $track['trackid'];
+      }
+    }
+    
+    return $removed;
+  }
+  
+  private static function removeRequestFromQueue($queue, $requestid) {
+    self::verifyQueue($queue);
+    
+    self::telnetOp('jukebox_'.$queue.'.ignore '.$requestid);
   }
   
   private static function verifyQueue($queue) {

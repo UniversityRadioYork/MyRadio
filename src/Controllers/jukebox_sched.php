@@ -4,7 +4,7 @@
  * This is the Jukebox Scheduler Controller - when triggered, it will inject a track into the iTones playout queue
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130709
+ * @version 20130712
  * @package MyURY_iTones
  * @uses \Database
  * @uses \CoreUtils
@@ -25,6 +25,10 @@ do {
 } while (MyURY_TracklistItem::getIfPlayedRecently($track) or iTones_Utils::getIfQueued($track));
 
 if (!iTones_Utils::requestTrack($track, 'main')) throw new MyURYException('Track Request Failed!');
+
+//Do an extra check here for duplicate tracks in the queue - the seem to manage to weasel themselves in somehow.
+//I think it may be this script running more than once or something similar.
+iTones_Utils::removeDuplicateItemsInQueues();
 
 exit(0);
 
