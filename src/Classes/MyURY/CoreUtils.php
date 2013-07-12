@@ -468,8 +468,9 @@ class CoreUtils {
   public static function getDefaultServiceVersion() {
     $db = Database::getInstance();
 
-    return $db->fetch_one('SELECT version, path FROM myury.services_versions WHERE serviceid=$1 AND is_default=true
-      LIMIT 1', array(Config::$service_id));
+    $r = $db->fetch_one('SELECT version, path, proxy_static FROM myury.services_versions WHERE serviceid=$1
+      AND is_default=true LIMIT 1', array(Config::$service_id));
+    $r['proxy_static'] = $r['proxy_static'] === 't';
   }
 
   /**
