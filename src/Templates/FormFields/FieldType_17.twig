@@ -12,7 +12,7 @@
         <tr>
     {% for field in thisfield.options %}
       {% set sfieldname = field.name ~ '[]' %}
-      {% set field = field|merge({'value': field.value[i], 'name': field.name~i}) %}
+      {% set field = field|merge({'value': field.value[i], 'name': field.name~i, 'required': false}) %}
             <td><div id="{{frm_name}}-{{field.name}}-container" class="{{field.class}}">
         {% include ('FormFields/FieldType_'~field.type~'.twig') %}
                   </div></td>
