@@ -1,4 +1,4 @@
-{% set thisfield, display_labels = field, false %}<table class="repeaterset-container">
+{% set thisfield, display_labels = field, false %}<table class="repeaterset-container" id="{{thisfield.name}}">
   <thead>
     <tr>
     {% for field in thisfield.options %}
@@ -20,4 +20,5 @@
               </tr>
               {% endfor %}
           </table>
-<a href="javascript:" title="Add another row to this set" id="add-to-{{thisfield.name}}" class="myury-form-add-row-button">Add Another...</a>
+<a href="javascript:" title="Add another row to this set" id="add-to-{{thisfield.name}}"
+   class="myury-form-add-row-button" nextvalue="{{thisfield.options[0].value|length}}">Add Another...</a>
