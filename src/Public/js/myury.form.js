@@ -216,7 +216,8 @@ window.MyURYForm = {
           return id.replace(/0/, new_id)
         });
       }).end().appendTo('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody');
-      MyURYForm.init();
+      
+      $(this).attr('nextvalue', new_id+1);
     });
     $('button.myuryfrm-remove-row').button({icons: {primary: "ui-icon-trash"}, text: false}).on('click', function() {
       $(this).closest('tr').remove();
