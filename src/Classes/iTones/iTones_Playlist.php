@@ -317,7 +317,14 @@ class iTones_Playlist extends ServiceAPI {
         'title' => $this->getTitle(),
         'playlistid' => $this->getID(),
         'description' => $this->getDescription(),
-        'tracks' => $this->getTracks()
+        'edittrackslink' => array('display' => 'icon',
+            'value' => 'folder-open',
+            'title' => 'Edit Tracks in this playlist',
+            'url' => CoreUtils::makeURL('iTones', 'editPlaylist', array('playlistid'=>$this->getID()))),
+        'configurelink' => array('display' => 'icon',
+            'value' => 'wrench',
+            'title' => 'Alter playlist settings',
+            'url' => CoreUtils::makeURL('iTones', 'configurePlaylist', array('playlistid'=>$this->getID())))
     );
   }
 }

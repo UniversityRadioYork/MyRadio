@@ -9,6 +9,6 @@
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('title', 'Campus Jukebox Playlists')
-        ->addVariable('tabledata', iTones_Playlist::getAlliTonesPlaylists())
-        ->addVariable('tablescript', 'myury.datatable.default.js')
+        ->addVariable('tabledata', CoreUtils::dataSourceParser(iTones_Playlist::getAlliTonesPlaylists()))
+        ->addVariable('tablescript', 'myury.datatable.default')
         ->render();
