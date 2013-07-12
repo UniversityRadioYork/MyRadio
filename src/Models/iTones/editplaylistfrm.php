@@ -17,8 +17,7 @@ $form->addField(
         new MyURYFormField('tracks', MyURYFormField::TYPE_TABULARSET,
                 array('options' => array(
                     new MyURYFormField('track', MyURYFormField::TYPE_TRACK, array(
-                        'label' => 'Tracks',
-                        'value' => array(75416, 68305)
+                        'label' => 'Tracks'
                     )),
                     new MyURYFormField('artist', MyURYFormField::TYPE_ARTIST, array(
                         'label' => 'Artists'
