@@ -29,7 +29,6 @@ if ($lock === false) {
   foreach ($tracks as $track) {$artists[] = $track->getArtist();}
   $form->setFieldValue('tracks.track', $tracks)
         ->setFieldValue('tracks.artist', $artists)
+        ->setFieldValue('playlistid', $playlist->getID())
         ->render();
 }
-
-var_dump($form->readValues());

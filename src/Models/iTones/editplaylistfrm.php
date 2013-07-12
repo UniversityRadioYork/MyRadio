@@ -25,4 +25,4 @@ $form->addField(
                     )
                 )
         )
-);
+)->addField(new MyURYFormField('playlistid', MyURYFormField::TYPE_HIDDEN));
