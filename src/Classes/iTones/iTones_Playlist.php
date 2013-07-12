@@ -207,7 +207,7 @@ class iTones_Playlist extends ServiceAPI {
    * @param String $lockstr
    * @return bool
    */
-  private function validateLock($lockstr) {
+  public function validateLock($lockstr) {
     $this->refreshLockInformation();
     return $lockstr === $this->generateLockKey($this->lock, $this->locktime);
   }
@@ -257,6 +257,7 @@ class iTones_Playlist extends ServiceAPI {
       VALUES ($1, $2, $3) RETURNING revisionid', array($this->getID(), $revisionid, User::getInstance()->getID()), true);
     //Add new tracks
     foreach ($new_additions as $track) {
+      if (empty($track)) continue;
       self::$db->query('INSERT INTO jukebox.playlist_entries (playlistid, trackid, revision_added) VALUES ($1, $2, $3)',
               array($this->getID(), $track->getID(), $revisionid), true);
     }

@@ -27,7 +27,8 @@ if ($lock === false) {
   $tracks = $playlist->getTracks();
   $artists = array();
   foreach ($tracks as $track) {$artists[] = $track->getArtist();}
-  $form->setFieldValue('tracks.track', $tracks)
+  $form->setTemplate('iTones/editPlaylist.twig')
+        ->setFieldValue('tracks.track', $tracks)
         ->setFieldValue('tracks.artist', $artists)
         ->setFieldValue('playlistid', $playlist->getID())
         ->render();

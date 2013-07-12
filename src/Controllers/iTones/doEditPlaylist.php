@@ -15,20 +15,15 @@ if (empty($data['playlistid'])) throw new MyURYException('No Playlist ID provide
 
 $playlist = iTones_Playlist::getInstance($data['playlistid']);
 
-$lock = $playlist->acquireOrRenewLock(empty($_SESSION['itones_lock_'.$playlist->getID()])
-        ? null : $_SESSION['itones_lock_'.$playlist->getID()]);
-
-if ($lock === false) {
+if ($playlist->validateLock($_SESSION['itones_lock_'.$playlist->getID()]) === false) {
   CoreUtils::getTemplateObject()
           ->setTemplate('error.twig')
           ->addVariable('body', 'You do not have a valid lock for this playlist or the lock has expired.')
           ->render();
 } else {
-  $_SESSION['itones_lock_'.$playlist->getID()] = $lock;
+  $playlist->setTracks($data['tracks']['track'], $_SESSION['itones_lock_'.$playlist->getID()]);
   
-  $playlist->setTracks($data['tracks']['track'], $lock);
-  
-  $playlist->releaseLock($lock);
+  $playlist->releaseLock($_SESSION['itones_lock_'.$playlist->getID()]);
   
   CoreUtils::backWithMessage('The playlist has been updated.');
 }
