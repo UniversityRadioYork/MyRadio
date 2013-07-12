@@ -10,4 +10,7 @@
 //The Form definition
 require 'Models/iTones/editplaylistfrm.php';
 
-$form->render();
+$tracks = iTones_Playlist::getInstance($_REQUEST['playlistid'])->getTracks();
+$value = array();
+foreach ($tracks as $track) $value[] = $track->getID();
+$form->setFieldValue('tracks.track', $value)->render();

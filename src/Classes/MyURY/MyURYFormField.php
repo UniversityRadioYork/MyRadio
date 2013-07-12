@@ -287,6 +287,7 @@ class MyURYFormField {
    * Set up a new MyURY Form Field with the new parameters, returning the new field.
    * This method is only useful practically when the MyURYFormField is inserted to a MyURYForm
    * @param String $name The name and id of the field, as used in the HTML properties - should be unique to the form
+   *  '.' IS A RESERVED CHARACTER!
    * @param int $type The MyURYFormField Field Type to use. See the constants defined in this class for details
    * @param Array $options A set of additional settings for the MyURYFormField as follows (all optional):<br>
    *   required: Whether the field is required (default true)<br>
@@ -325,11 +326,26 @@ class MyURYFormField {
   }
   
   /**
-   * Sets the value that will be set in this MyURYFormField
+   * Sets the value that will be set in this MyURYFormField.
+   * 
+   * In the case of TABULARSETs, $value may be an array of multiple existing values. You must also provide an extended
+   * field name, which is the name of this field, a period '.', and the name of the inner field.
+   * 
    * @param mixed $value The value that this MyURYFormField will be set to. Type depends on $type parameter.
+   * @param String $subfield For TABULARSETs, this is fieldname.innerfieldname.
    */
-  public function setValue($value) {
-    $this->value = $value;
+  public function setValue($value, $subField = null) {
+    $subField = explode('.', $subField)[1];
+    if ($this->type !== self::TYPE_TABULARSET) {
+      $this->value = $value;
+      return;
+    } else {
+      foreach ($this->options as $field) {
+        if ($field->getName() === $subField) {
+          $field->setValue($value);
+        }
+      }
+    }
   }
 
   /**

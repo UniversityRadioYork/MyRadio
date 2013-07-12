@@ -167,9 +167,10 @@ class MyURYForm {
    * @throws MyURYException When trying to update a MyURYFormField that is not attached to this MyURYForm
    */
   public function setFieldValue($fieldname, $value) {
+    $name = explode('.', $fieldname)[0];
     foreach ($this->fields as $k => $field) {
-      if ($field->getName() === $fieldname) {
-        $this->fields[$k]->setValue($value);
+      if ($field->getName() === $name) {
+        $this->fields[$k]->setValue($value, $fieldname);
         return $this;
       }
     }
