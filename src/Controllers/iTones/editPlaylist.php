@@ -7,6 +7,8 @@
  * @package MyURY_iTones
  */
 
+if (empty($_REQUEST['playlistid'])) throw new MyURYException('No Playlist ID provided.', 400);
+
 $playlist = iTones_Playlist::getInstance($_REQUEST['playlistid']);
 
 $lock = $playlist->acquireOrRenewLock(empty($_SESSION['itones_lock_'.$playlist->getID()])
@@ -29,3 +31,5 @@ if ($lock === false) {
         ->setFieldValue('tracks.artist', $artists)
         ->render();
 }
+
+var_dump($form->readValues());

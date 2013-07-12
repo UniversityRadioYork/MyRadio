@@ -508,6 +508,13 @@ class MyURYFormField {
       case self::TYPE_FILE:
         return $_FILES[$name];
         break;
+      case self::TYPE_TABULARSET:
+        $return = array();
+        foreach ($this->options as $option) {
+          $return[$option->getName()] = $option->readValue($prefix);
+        }
+        return $return;
+        break;
       case self::TYPE_SECTION:
         return null;
         break;
