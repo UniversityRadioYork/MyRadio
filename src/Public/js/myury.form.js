@@ -225,8 +225,7 @@ window.MyURYForm = {
     $('table.myuryfrm-repeaterset-container').dataTable({
       bSort: true,
       bJQueryUI: true,
-      bPaginate: false,
-      aaSorting: [[10, "desc"]]
+      bPaginate: false
     }
     );
   }
