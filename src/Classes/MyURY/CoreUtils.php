@@ -249,11 +249,10 @@ class CoreUtils {
    * @return bool True on required or authorised, false on unauthorised
    */
   public static function requirePermissionAuto($module, $action, $require = true) {
+    echo "REQUESTING AUTH FOR $module $action with $require FLAG";
     self::setUpAuth();
     $db = Database::getInstance();
-    /**
-     * 
-     */
+    
     $result = $db->fetch_column('SELECT typeid FROM myury.act_permission
       LEFT OUTER JOIN myury.modules ON act_permission.moduleid=modules.moduleid
       LEFT OUTER JOIN myury.actions ON act_permission.actionid=actions.actionid

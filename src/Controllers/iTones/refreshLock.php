@@ -17,6 +17,7 @@ $lock = $playlist->acquireOrRenewLock(empty($_SESSION['itones_lock_'.$playlist->
 if ($lock === false) {
   $data = array('FAIL','Locked for editing by another user');
 } else {
+  $_SESSION['itones_lock_'.$playlist->getID()] = $lock;
   $data = array('SUCCESS', $lock);
 }
 
