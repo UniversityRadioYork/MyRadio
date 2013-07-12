@@ -7,4 +7,4 @@
  * @package MyURY_iTones
  */
 
-CoreUtils::getTemplateObject()->setTemplate('iTones/default.twig')->render();
+CoreUtils::getTemplateObject()->setTemplate('iTones/default.twig')->addVariable('title', 'Campus Jukebox Manager')->render();
