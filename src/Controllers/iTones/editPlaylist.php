@@ -23,7 +23,9 @@ if ($lock === false) {
   require 'Models/iTones/editplaylistfrm.php';
 
   $tracks = $playlist->getTracks();
-  $value = array();
-  foreach ($tracks as $track) $value[] = $track->getID();
-  $form->setFieldValue('tracks.track', $value)->render();
+  $artists = array();
+  foreach ($tracks as $track) {$artists[] = $track->getArtist();}
+  $form->setFieldValue('tracks.track', $tracks)
+        ->setFieldValue('tracks.artist', $artists)
+        ->render();
 }
