@@ -6,7 +6,7 @@
  * - if it's sent to a certain mailing list, it'll put it in the archives
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130530
+ * @version 20130712
  * @package MyURY_Mail
  * @uses \Database
  * @uses \CoreUtils
@@ -16,6 +16,8 @@ ini_set("log_errors", 1);
 ini_set("error_log", "/tmp/php-mailparser-error.log");
 
 require_once __DIR__.'/cli_common.php';
+
+set_exception_handler(function() {exit(0);}); //We do not want bounce messages from this!
 
 //Read in email
 $fd = fopen('php://stdin', 'r');
