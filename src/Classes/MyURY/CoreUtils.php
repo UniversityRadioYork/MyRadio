@@ -426,24 +426,26 @@ class CoreUtils {
    * @todo Document this
    * @param User $user
    */
-  public static function getServiceVersionForUser(User $user) {
+  public static function getServiceVersionForUser(User $user = null) {
+    if ($user === null) $user = User::getInstance();
     $serviceid = Config::$service_id;
     $key = $serviceid . '-' . $user->getID();
 
-    if (!isset(self::$svc_version_cache[$key])) {
-      $db = Database::getInstance();
-
-      if ($user->getID() === User::getInstance()->getID()) {
+    if ($user->getID() === User::getInstance()->getID()) {
         //It's the current user. If they have an override defined in their session, use that.
         if (isset($_SESSION['myury_svc_version_' . $serviceid])) {
           return array(
               'version' => $_SESSION['myury_svc_version_' . $serviceid],
-              'path' => $_SESSION['myury_svc_version_' . $serviceid . '_path']
+              'path' => $_SESSION['myury_svc_version_' . $serviceid . '_path'],
+              'proxy_static' => $_SESSION['myury_svc_version_' . $serviceid . '_proxy_static']
           );
         }
       }
+    
+    if (!isset(self::$svc_version_cache[$key])) {
+      $db = Database::getInstance();
 
-      $result = $db->fetch_one('SELECT version, path FROM myury.services_versions
+      $result = $db->fetch_one('SELECT version, path, proxy_static FROM myury.services_versions
       WHERE serviceid IN (SELECT serviceid FROM myury.services_versions_member
         WHERE memberid=$2 AND serviceversionid IN (SELECT serviceversionid FROM myury.services_versions
           WHERE serviceid=$1)
@@ -452,6 +454,7 @@ class CoreUtils {
       if (empty($result)) {
         self::$svc_version_cache[$key] = self::getDefaultServiceVersion();
       } else {
+        $result['proxy_static'] = $result['proxy_static'] === 't';
         self::$svc_version_cache[$key] = $result;
       }
     }
@@ -476,7 +479,8 @@ class CoreUtils {
   public static function getServiceVersions() {
     $db = Database::getInstance();
 
-    return $db->fetch_all('SELECT version, path FROM myury.services_versions WHERE serviceid=$1', array(Config::$service_id));
+    return $db->fetch_all('SELECT version, path, proxy_static FROM myury.services_versions WHERE serviceid=$1',
+            array(Config::$service_id));
   }
 
   /**

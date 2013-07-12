@@ -21,6 +21,7 @@ if (isset($_REQUEST['svc_version'])) {
     if ($version['version'] === $_POST['svc_version']) {
       $_SESSION['myury_svc_version_'.$serviceid] = $version['version'];
       $_SESSION['myury_svc_version_'.$serviceid.'_path'] = $version['path'];
+      $_SESSION['myury_svc_version_'.$serviceid.'_proxy_static'] = ($version['proxy_static'] === 't');
     }
   }
   header('Location: ?service='.$_REQUEST['svc_name']);
