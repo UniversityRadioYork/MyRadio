@@ -15,9 +15,17 @@ require_once __DIR__.'/cli_common.php';
 
 Config::$display_errors = true;
 
-if (sizeof(iTones_Utils::getTracksInQueue('main')) > 5) exit(0); //There's enough there for now, I think.
+//Do an extra check here for duplicate tracks in the queue - the seem to manage to weasel themselves in somehow.
+//I think it may be this script running more than once or something similar.
+$count = iTones_Utils::removeDuplicateItemsInQueues();
 
-$i = 20; //We limit the number of attempts (to 20), after which we'll try again later
+if ($count !== 0) trigger_error("Removed $count duplicate items in queues.");
+
+$current_queue_length = sizeof(iTones_Utils::getTracksInQueue('main'));
+if ($current_queue_length > 5) exit(0); //There's enough there for now, I think.
+
+//We limit the number of attempts (to 20 ^ number of tracks needed), after which we'll try again later
+$i = 20^(5-$current_queue_length);
 do {
   $tracks = null;
   while (empty($tracks)) {
@@ -28,12 +36,6 @@ do {
 } while ((MyURY_TracklistItem::getIfPlayedRecently($track) or iTones_Utils::getIfQueued($track)) && --$i > 0);
 
 if (!iTones_Utils::requestTrack($track, 'main')) throw new MyURYException('Track Request Failed!');
-
-//Do an extra check here for duplicate tracks in the queue - the seem to manage to weasel themselves in somehow.
-//I think it may be this script running more than once or something similar.
-$count = iTones_Utils::removeDuplicateItemsInQueues();
-
-if ($count !== 0) echo "Notice: Removed $count duplicate items in queues.";
 
 exit(0);
 
