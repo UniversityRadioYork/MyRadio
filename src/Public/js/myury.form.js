@@ -216,7 +216,7 @@ window.MyURYForm = {
       }).end().appendTo('#'+$(this).attr('id').replace(/add-to-/,'')+' tbody');
     });
     $('button.myuryfrm-remove-row').button({icons:{primary: "ui-icon-trash"}, text: false}).click(function() {
-      $(this).parent('tr').remove();
+      $(this).closest('tr').remove();
       return false;
     });
   }
