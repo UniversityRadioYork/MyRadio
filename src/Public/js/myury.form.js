@@ -206,19 +206,29 @@ window.MyURYForm = {
         MyURYForm.setUpTimePickers();
       }
     });
-    
+
     //Set up tabular repeating sets
-    $('.myury-form-add-row-button').click(function () {
+    $('.myury-form-add-row-button').click(function() {
       var new_id = $(this).attr('nextvalue');
-      
-      $('#'+$(this).attr('id').replace(/add-to-/,'')+' tbody tr:first').clone().find('input').each(function() {
-        $(this).val('').attr('id', function(_, id) {return id.replace(/0/, new_id)});
-      }).end().appendTo('#'+$(this).attr('id').replace(/add-to-/,'')+' tbody');
+
+      $('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody tr:first').clone().find('input').each(function() {
+        $(this).val('').attr('id', function(_, id) {
+          return id.replace(/0/, new_id)
+        });
+      }).end().appendTo('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody');
     });
-    $('button.myuryfrm-remove-row').button({icons:{primary: "ui-icon-trash"}, text: false}).click(function() {
+    $('button.myuryfrm-remove-row').button({icons: {primary: "ui-icon-trash"}, text: false}).click(function() {
       $(this).closest('tr').remove();
       return false;
     });
+    //And the dataTable that contains them
+    $('table.myuryfrm-repeaterset-container').dataTable({
+      bSort: true,
+      bJQueryUI: true,
+      bPaginate: false,
+      aaSorting: [[10, "desc"]]
+    }
+    );
   }
 };
 
