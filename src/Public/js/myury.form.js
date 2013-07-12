@@ -67,6 +67,20 @@ var MyURYForm = {
         .append('<a>' + item.title + '<br><span style="font-size:.8em">' + item.artist + '</span></a>')
         .appendTo(ul);
       };
+      
+      //If there's an existing ID value, load it in
+      console.log($('#'+$(this).attr('id').replace(/-ui$/, '')).val());
+      if ($(this).val() !== '' && $('#'+$(this).attr('id').replace(/-ui$/, '')).val() !== '') {
+        $.ajax({
+          url: myury.makeURL('MyURY', 'a-findtrack'),
+          data: {id: $('#'+$(this).attr('id').replace(/-ui$/, '')).val()},
+          context: this,
+          success: function(data) {
+            console.log($(this));
+            $(this).val(data);
+          }
+        });
+      }
     });
   },
   setUpArtistFields: function() {

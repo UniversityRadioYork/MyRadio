@@ -16,7 +16,13 @@ $form = new MyURYForm('itones_playlistedit', $module, 'editPlaylist',
 $form->addField(
         new MyURYFormField('tracks', MyURYFormField::TYPE_TABULARSET,
                 array('options' => array(
-                    new MyURYFormField('track', MyURYFormField::TYPE_TRACK)
+                    new MyURYFormField('track', MyURYFormField::TYPE_TRACK, array(
+                        'label' => 'Tracks',
+                        'value' => array(75416, 68305)
+                    )),
+                    new MyURYFormField('artist', MyURYFormField::TYPE_ARTIST, array(
+                        'label' => 'Artists'
+                    ))
                     )
                 )
         )

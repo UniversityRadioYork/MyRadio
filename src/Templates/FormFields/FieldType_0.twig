@@ -1,4 +1,4 @@
-<label for="{{frm_name}}-{{field.name}}">{{field.label}}</label>
+{% if display_labels %}<label for="{{frm_name}}-{{field.name}}">{{field.label}}</label>{% endif %}
 <input type="text" class="{{field.class}}{% if field.required %} required{% endif %}"
        value="{{field.value}}" name="{{frm_name}}-{{sfieldname}}"
        id="{{frm_name}}-{{field.name}}"

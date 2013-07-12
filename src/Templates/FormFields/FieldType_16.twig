@@ -1,6 +1,6 @@
 {% if myury_form_section_exists is defined %}
 </div>
 {% endif %}
-<h3 class="form-section-header">{{field.label}}</h3>
+{% if display_labels %}<h3 class="form-section-header">{{field.label}}</h3>{% endif %}
 <div class="form-section-content">
 {% set myury_form_section_exists = '1' %}

@@ -1,5 +1,5 @@
 <input type="hidden" name="{{frm_name}}-{{sfieldname}}" id="{{frm_name}}-{{field.name}}" value="{{field.value}}" />
-<label for="{{frm_name}}-{{sfieldname}}-ui">{{field.label}}</label>
+{% if display_labels %}<label for="{{frm_name}}-{{field.name}}-ui">{{field.label}}</label>{% endif %}
 <input type="text" class="{{field.class}}{% if field.required %} required{% endif %} text member-autocomplete"
        name="{{frm_name}}-{{field.name}}-ui" id="{{frm_name}}-{{field.name}}-ui" value="{{field.options.membername}}"
        {% if not field.enabled %} readonly="readonly"{% endif %} />
