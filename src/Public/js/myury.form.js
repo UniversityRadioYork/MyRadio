@@ -215,6 +215,9 @@ window.MyURYForm = {
         $(this).val('').attr('id', function(_, id) {return id.replace(/0/, new_id)});
       }).end().appendTo('#'+$(this).attr('id').replace(/add-to-/,'')+' tbody');
     });
+    $('.myury-form-remove-row-container').click(function() {
+      $(this).parent('tr').remove();
+    });
   }
 };
 
