@@ -76,8 +76,7 @@ var MyURYForm = {
           data: {id: $('#'+$(this).attr('id').replace(/-ui$/, '')).val()},
           context: this,
           success: function(data) {
-            console.log($(this));
-            $(this).val(data);
+            $(this).val(data.title);
           }
         });
       }
