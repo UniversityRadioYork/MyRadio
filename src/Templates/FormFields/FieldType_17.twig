@@ -1,22 +1,23 @@
-<table class="repeaterset-container">
+{% set thisfield, display_labels = field, false %}<table class="repeaterset-container">
   <thead>
     <tr>
-    {% for subfield in field.options %}
-        <th>{{subfield.label}}</th>
+    {% for field in thisfield.options %}
+        <th>{{field.label}}</th>
     {% endfor %}
-    </tr>
-  </thead>
-    {% for subfield in field.options %}
-      {% if field.repeating %}{% set sfieldname = field.name ~ '[]' %}{% else %}{% set sfieldname = field.name %}{% endif %}
-    <div id="{{frm_name}}-{{field.name}}-container" class="{{field.class}}">
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in range(0, thisfield.options[0].value|length) %}
+        <tr>
+    {% for field in thisfield.options %}
+      {% set sfieldname = field.name ~ '[]' %}
+      {% set field = field|merge({'value': field.value[i], 'name': field.name~i}) %}
+            <td><div id="{{frm_name}}-{{field.name}}-container" class="{{field.class}}">
         {% include ('FormFields/FieldType_'~field.type~'.twig') %}
-          {% if field.repeating %}
-        <div class="formfield-add-link"><a href="javascript:" id="{{frm_name}}-{{field.name}}-repeater">Add another...</a></div>
-        <input type="hidden" id="{{frm_name}}-{{field.name}}-counter" value="0" />
-          {% endif %}
-      </div>
-      {% if myury_form_section_exists is defined %}
-    </div>
-      {% endif %}
+                  </div></td>
     {% endfor %}
-  </table>
+                  <td><div class="myury-form-remove-row-container"><span class="ui-icon ui-icon-trash"></span></div></td>
+              </tr>
+              {% endfor %}
+          </table>
+<a href="javascript:" title="Add another row to this set" id="add-to-{{thisfield.name}}" class="myury-form-add-row-button">Add Another...</a>

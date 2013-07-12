@@ -1,5 +1,5 @@
 <fieldset>
-  <legend>{{field.label}}</legend>
+  {% if display_labels %}<legend>{{field.label}}</legend>{% endif %}
   <div class="myuryfrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</div>
 {% for item in field.options %}
   <label for="{{frm_name}}-{{field.name}}-{{item.name}}">{{item.label}}

@@ -14,6 +14,8 @@
  * @package MyURY_Core
  */
 
+if (isset($_REQUEST['id'])) $data = MyURY_Track::getInstance((int)$_REQUEST['id']); else
+
 $data = MyURY_Track::findByOptions(array(
         'title' => isset($_REQUEST['term']) ? $_REQUEST['term'] : '',
         'artist' => isset($_REQUEST['artist']) ? $_REQUEST['artist'] : '',

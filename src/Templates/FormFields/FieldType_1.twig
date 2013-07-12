@@ -1,4 +1,4 @@
-<label for="{{frm_name}}-{{field.name}}">{{field.label}}</label>
+{% if display_labels %}<label for="{{frm_name}}-{{field.name}}">{{field.label}}</label>{% endif %}
 <input type="number" class="{{field.class}}{% if field.required %} required{% endif %} number" value="{{field.value}}"
        name="{{frm_name}}-{{sfieldname}}" id="{{frm_name}}-{{field.name}}"
        {% if field.options.min is defined %} min="{{field.options.min}}"{% endif %}
