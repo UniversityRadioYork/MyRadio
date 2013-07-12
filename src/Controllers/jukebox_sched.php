@@ -28,7 +28,9 @@ if (!iTones_Utils::requestTrack($track, 'main')) throw new MyURYException('Track
 
 //Do an extra check here for duplicate tracks in the queue - the seem to manage to weasel themselves in somehow.
 //I think it may be this script running more than once or something similar.
-iTones_Utils::removeDuplicateItemsInQueues();
+$count = iTones_Utils::removeDuplicateItemsInQueues();
+
+if ($count !== 0) echo "Notice: Removed $count duplicate items in queues.";
 
 exit(0);
 
