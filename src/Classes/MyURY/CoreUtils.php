@@ -249,7 +249,6 @@ class CoreUtils {
    * @return bool True on required or authorised, false on unauthorised
    */
   public static function requirePermissionAuto($module, $action, $require = true) {
-    echo "REQUESTING AUTH FOR $module $action with $require FLAG";
     self::setUpAuth();
     $db = Database::getInstance();
     
@@ -260,6 +259,8 @@ class CoreUtils {
       AND (myury.actions.name=$2 OR myury.act_permission.actionid IS NULL)
       AND NOT (myury.act_permission.actionid IS NULL AND myury.act_permission.typeid IS NULL)
       AND NOT (myury.act_permission.moduleid IS NULL AND myury.act_permission.typeid IS NULL)', array($module, $action));
+    
+    echo "PERMISSIONS FOR $module/$action:"; var_dump($result);
 
     //Don't allow empty result sets - throw an Exception as this is very very bad.
     if (empty($result)) {
