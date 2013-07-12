@@ -15,6 +15,9 @@ require_once __DIR__.'/cli_common.php';
 
 Config::$display_errors = true;
 
+if (sizeof(iTones_Utils::getTracksInQueue('main')) > 5) exit(0); //There's enough there for now, I think.
+
+$i = 20; //We limit the number of attempts (to 20), after which we'll try again later
 do {
   $tracks = null;
   while (empty($tracks)) {
@@ -22,7 +25,7 @@ do {
     $tracks = $playlist->getTracks();
   }
   $track = $tracks[array_rand($tracks)];
-} while (MyURY_TracklistItem::getIfPlayedRecently($track) or iTones_Utils::getIfQueued($track));
+} while ((MyURY_TracklistItem::getIfPlayedRecently($track) or iTones_Utils::getIfQueued($track)) && --$i > 0);
 
 if (!iTones_Utils::requestTrack($track, 'main')) throw new MyURYException('Track Request Failed!');
 

@@ -89,9 +89,9 @@ $('.twig-datatable').dataTable({
   {
     "sTitle": "Length"
   },
-  //msg_count
+  //listeners
   {
-    "sTitle": "Message Count"
+    "sTitle": "Listener Count"
   }
   ],
   "bJQueryUI": true,

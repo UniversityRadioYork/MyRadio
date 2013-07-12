@@ -77,6 +77,8 @@ class iTones_Utils extends ServiceAPI {
       $tracks = array_merge($tracks, self::getTracksInQueue($queue));
     }
     
+    print_r($tracks);
+    
     //Go over each track, marking it as identified. If it's encountered a second time, kill it.
     $found = array();
     $removed = 0;
