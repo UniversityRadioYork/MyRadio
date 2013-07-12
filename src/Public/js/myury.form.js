@@ -217,6 +217,11 @@ window.MyURYForm = {
         });
       }).end().appendTo('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody');
       
+      MyURYForm.setUpArtistFields();
+      MyURYForm.setUpMemberFields();
+      MyURYForm.setUpTrackFields();
+      MyURYForm.setUpTimePickers();
+      
       $(this).attr('nextvalue', parseInt(new_id)+1);
     });
     $('button.myuryfrm-remove-row').button({icons: {primary: "ui-icon-trash"}, text: false}).on('click', function() {
