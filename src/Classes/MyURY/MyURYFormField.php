@@ -202,7 +202,7 @@ class MyURYFormField {
    * The constant used to specify this MyURYFormField should be a container for a set of repeating MyURYFormFields.
    * By default these render in a tabular layout.
    * 
-   * This MyURYFormField does not support any Custom Options
+   * This MyURYFormField type does not support any Custom Options
    */
   const TYPE_FILE = 0x12;
 
