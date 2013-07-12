@@ -2,6 +2,10 @@
 /**
  * For versions other than the default, static content is not linked directly to the web.
  * This provides access to these, at the cost of a substantial overhead.
+ * 
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 20130712
+ * @package MyURY_Core
  */
 
 if (empty($_GET[0])) {
