@@ -99,7 +99,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
    * description: The description of the show<br>
    * genres: An array of 0 or more genre ids this Show is a member of<br>
    * tags: A string of 0 or more space-seperated tags this Show relates to<br>
-   * credits: An array of 1 or more memberids of people related to the Show<br>
+   * credits: An array of 1 or more User objects of people related to the Show<br>
    * credittypes: An array of identical size to credits, identifying the type of relation to the Show<br>
    * showtypeid: The ID of the type of show (see schedule.show_type). Defaults to "Show"
    * location: The ID of the location the show will be in
@@ -163,7 +163,9 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     $tags = explode(' ', $params['tags']);
     foreach ($tags as $tag) {
       self::$db->query('INSERT INTO schedule.show_metadata
-              (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)', array(self::getMetadataKey('tag'), $show_id, $tag, $_SESSION['memberid']), true);
+              (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid)
+              VALUES ($1, $2, $3, NOW(), $4, $4)',
+              array(self::getMetadataKey('tag'), $show_id, $tag, $_SESSION['memberid']), true);
     }
 
     //Set a location
@@ -181,7 +183,8 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     //And now all that's left is who's on the show
     for ($i = 0; $i < sizeof($params['credits']); $i++) {
       self::$db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from,
-              memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)', array($show_id, (int) $params['credittypes'][$i], $params['credits'][$i], $_SESSION['memberid']), true);
+              memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)',
+        array($show_id, (int) $params['credittypes'][$i],$params['credits'][$i]->getID(), $_SESSION['memberid']), true);
     }
 
     //Actually commit the show to the database!

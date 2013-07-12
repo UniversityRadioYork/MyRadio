@@ -79,7 +79,7 @@ class MyURYFormField {
   /**
    * The constant used to specify this MyURYFormField must be a valid track, providing a Track autocomplete for it.
    * This actually renders two fields - the visible one the user can enter a track into, and a hidden one that will
-   * store the ID once it has been selected.
+   * store the ID once it has been selected. The value option takes a MyURY_Track object.
    * 
    * The track field takes the following custom options:
    * 
@@ -380,6 +380,22 @@ class MyURYFormField {
       }
     }
     
+    $value = $this->value;
+    
+    if ($this->type === MyURYFormField::TYPE_ARTIST) $options['artistname'] = $this->value;
+    if ($this->type === MyURYFormField::TYPE_TRACK && !empty($this->value)) {
+      if (is_array($this->value)) { //Deal with TABULARSETs
+        foreach ($this->value as $k => $v) {
+          if (empty($v)) continue;
+          $options['trackname'][$k] = $v->getTitle();
+          $value[$k] = $v->getID();
+        }
+      } else {
+        $options['trackname'] = $this->value->getTitle();
+        $value[$k] = $this->value->getID();
+      }
+    }
+    
     return array(
         'name'        => $this->name,
         'label'       => ($this->label === null ? $this->name : $this->label),
@@ -388,7 +404,7 @@ class MyURYFormField {
         'explanation' => $this->explanation,
         'class'       => $this->getClasses(),
         'options'     => $options,
-        'value'       => $this->value,
+        'value'       => $value,
         'enabled'     => $this->enabled,
         'repeating'   => $this->repeating
     );
@@ -418,9 +434,31 @@ class MyURYFormField {
         }
         return (string)$_REQUEST[$name];
         break;
-      case self::TYPE_NUMBER:
       case self::TYPE_MEMBER:
+        //Deal with Arrays for repeated elements
+        if (is_array($_REQUEST[$name])) {
+          for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
+            if (empty($_REQUEST[$name][$i])) continue;
+            $_REQUEST[$name][$i] = User::getInstance($_REQUEST[$name][$i]);
+          }
+          return $_REQUEST[$name];
+        } else {
+          return User::getInstance($_REQUEST[$name]);
+        }
+        break;
       case self::TYPE_TRACK:
+        //Deal with Arrays for repeated elements
+        if (is_array($_REQUEST[$name])) {
+          for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
+            if (empty($_REQUEST[$name][$i])) continue;
+            $_REQUEST[$name][$i] = MyURY_Track::getInstance($_REQUEST[$name][$i]);
+          }
+          return $_REQUEST[$name];
+        } else {
+          return MyURY_Track::getInstance($_REQUEST[$name]);
+        }
+        break;
+      case self::TYPE_NUMBER:
       case self::TYPE_SELECT:
       case self::TYPE_RADIO:
       case self::TYPE_DAY:

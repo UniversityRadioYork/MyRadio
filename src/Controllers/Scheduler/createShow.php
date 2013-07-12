@@ -9,5 +9,5 @@
 
 //The Form definition
 require 'Models/Scheduler/showfrm.php';
-$form->setFieldValue('credits', User::getInstance()->getID())->setFieldValue('credittypes', 1);
+$form->setFieldValue('credits', User::getInstance())->setFieldValue('credittypes', 1);
 require 'Views/Scheduler/createShow.php';
