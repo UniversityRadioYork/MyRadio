@@ -34,7 +34,7 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
             ->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null)
             ->addVariable('shiburl', Config::$shib_url)
             ->addVariable('baseurl', CoreUtils::getServiceVersionForUser()['proxy_static'] ?
-                    CoreUtils::makeURL('MyURY', 'StaticProxy') : Config::$base_url)
+                    CoreUtils::makeURL('MyURY', 'StaticProxy', array('0' => null)) : Config::$base_url)
             ->addVariable('rewriteurl', Config::$rewrite_url)
             ->addVariable('serviceName', 'MyURY')
             ->setTemplate('stripe.twig')
