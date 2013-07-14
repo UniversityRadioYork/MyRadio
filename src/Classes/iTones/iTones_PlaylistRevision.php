@@ -76,15 +76,16 @@ class iTones_PlaylistRevision extends iTones_Playlist {
    */
   public static function getInstance($resid = -1, $revisionid = -1) {
     self::wakeup();
+    $key = $resid.':'.$revisionid;
     if (!is_string($resid) or empty($resid)) {
       throw new MyURYException('Invalid iTonesPlaylistID!');
     }
 
-    if (!isset(self::$playlists[$resid])) {
-      self::$playlists[$resid] = new self($resid, $revisionid);
+    if (!isset(self::$playlists[$key])) {
+      self::$playlists[$key] = new self($resid, $revisionid);
     }
 
-    return self::$playlists[$resid];
+    return self::$playlists[$key];
   }
   
   /**
@@ -105,6 +106,10 @@ class iTones_PlaylistRevision extends iTones_Playlist {
   
   public function getTimestamp() {
     return $this->timestamp;
+  }
+  
+  public function getRevisionID() {
+    return $this->revisionid;
   }
   
   /**
@@ -138,7 +143,7 @@ class iTones_PlaylistRevision extends iTones_Playlist {
   public function toDataSource() {
     return array(
         'revisionid' => $this->getRevisionID(),
-        'timestamp' => $this->getTimestamp(),
+        'timestamp' => CoreUtils::happyTime($this->getTimestamp()),
         'notes' => $this->getNotes(),
         'author' => $this->getAuthor()->getName(),
         'viewtrackslink' => array('display' => 'icon',
