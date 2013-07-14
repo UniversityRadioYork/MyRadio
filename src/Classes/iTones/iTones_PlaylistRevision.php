@@ -1,69 +1,68 @@
 <?php
 /**
- * This file provides the iTones_Playlist class for MyURY - Contains a predefined list of Central tracks
+ * This file provides the iTones_PlaylistRevision class for MyURY - Contains history of an iTones_Playlist
  * @package MyURY_iTones
  */
 
 /**
- * The iTones_Playlist class helps provide control and access to managed playlists
+ * The iTones_PlaylistRevision class helps to manage previous versions of an iTones_Playlist
  * 
- * @version 20130712
+ * @version 20130714
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_iTones
  * @uses \Database
  */
-class iTones_Playlist extends ServiceAPI {
+class iTones_PlaylistRevision extends iTones_Playlist {
   /**
-   * The Singleton store for AudioResource objects
-   * @var iTones_Playlist
+   * The Singleton store for PlaylistRevision objects
+   * @var iTones_PlaylistRevision
    */
   private static $playlists = array();
   
-  private $playlistid;
-  
-  private $title;
-  
-  private $image;
-  
-  private $description;
-  
-  private $lock;
-  
-  private $locktime;
-  
-  protected $tracks = array();
-  
-  private $weight = 0;
-  
-  protected $revisionid;
+  /**
+   * The playlist this is a revision of
+   * @var iTones_Playlist
+   */
+  private $playlist;
   
   /**
-   * Initiates the ManagedPlaylist variables
-   * @param int $playlistid The ID of the managed playlist to initialise
-   * Note: Only links *non-expired* items
+   * When this revision was created
+   * @var int
    */
-  private function __construct($playlistid) {
-    $this->playlistid = $playlistid;
-    $result = self::$db->fetch_one('SELECT * FROM jukebox.playlists WHERE playlistid=$1 LIMIT 1',
-            array($playlistid));
+  private $timestamp;
+  
+  /**
+   * Who created this revision
+   * @var User
+   */
+  private $author;
+  
+  /**
+   * A commit message about the change
+   * @var String
+   */
+  private $notes;
+  
+  /**
+   * Initiates the PlaylistRevision variables
+   * @param int $playlistid The ID of the managed playlist to initialise
+   * @param int $revisionid The Revision of the managed playlist to initialise
+   */
+  private function __construct($playlistid, $revisionid) {
+    $this->playlist = iTones_Playlist::getInstance($playlistid);
+    $result = self::$db->fetch_one('SELECT * FROM jukebox.playlist_revisions
+      WHERE playlistid=$1 AND revisionid=$2 LIMIT 1',
+            array($playlistid, $revisionid));
     if (empty($result)) {
-      throw new MyURYException('The specified iTones Playlist does not seem to exist');
+      throw new MyURYException('The specified iTones Playlist Revision does not seem to exist');
       return;
     }
     
-    $this->title = $result['title'];
-    $this->image = $result['image'];
-    $this->description = $result['description'];
-    $this->lock = empty($result['lock']) ? null : User::getInstance($result['lock']);
-    $this->locktime = (int)$result['locktime'];
-    $this->weight = (int)$result['weight'];
-    
-    $this->revisionid = (int)self::$db->fetch_one('SELECT revisionid FROM jukebox.playlist_revisions
-      WHERE playlistid=$1 ORDER BY revisionid DESC LIMIT 1', array($this->getID()))['revisionid'];
+    $this->revisionid = $revisionid;
     
     $items = self::$db->fetch_column('SELECT trackid FROM jukebox.playlist_entries WHERE playlistid=$1
-      AND revision_removed IS NULL
-      ORDER BY entryid', array($this->playlistid));
+      AND revision_added <= $2 AND (revision_removed >= $2 OR revision_removed IS NULL)
+      ORDER BY entryid', array($this->playlist->getID(), $this->revisionid));
     
     foreach ($items as $id) {
       $this->tracks[] = MyURY_Track::getInstance($id);
@@ -223,12 +222,11 @@ class iTones_Playlist extends ServiceAPI {
    * 
    * @param MyURY_Track[] $tracks Tracks to put in the playlist.
    * @param String $lockstr The string that provides Write access to this Playlist. Acquired from acquireLock();
-   * @param String $notes Optional. A textual commit message about the change.
    * 
    * @todo Push these changes to the playlist files on playoutsvc.ury.york.ac.uk. This should probably be a MyURYDaemon
    * configured to run only on that server.
    */
-  public function setTracks($tracks, $lockstr, $notes = null) {
+  public function setTracks($tracks, $lockstr = null) {
     $old_list = $this->getTracks();
     
     //Check if anything has actually changed
@@ -254,9 +252,8 @@ class iTones_Playlist extends ServiceAPI {
     self::$db->query('BEGIN');
     $revisionid = $this->getRevisionID()+1;
     //Get the new revision ID
-    self::$db->query('INSERT INTO jukebox.playlist_revisions (playlistid, revisionid, author, notes)
-      VALUES ($1, $2, $3, $4) RETURNING revisionid',
-            array($this->getID(), $revisionid, User::getInstance()->getID(), $notes), true);
+    self::$db->query('INSERT INTO jukebox.playlist_revisions (playlistid, revisionid, author)
+      VALUES ($1, $2, $3) RETURNING revisionid', array($this->getID(), $revisionid, User::getInstance()->getID()), true);
     //Add new tracks
     foreach ($new_additions as $track) {
       if (empty($track)) continue;

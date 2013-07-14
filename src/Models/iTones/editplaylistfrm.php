@@ -7,22 +7,26 @@
  * @version 20130712
  * @package MyURY_iTones
  */
-$form = new MyURYForm('itones_playlistedit', $module, 'doEditPlaylist',
-                array(
-                    'debug' => true,
-                    'title' => 'Edit Campus Jukebox Playlist'
+$form = new MyURYForm('itones_playlistedit', $module, 'doEditPlaylist', array(
+    'debug' => true,
+    'title' => 'Edit Campus Jukebox Playlist'
         ));
 
 $form->addField(
-        new MyURYFormField('tracks', MyURYFormField::TYPE_TABULARSET,
-                array('options' => array(
-                    new MyURYFormField('track', MyURYFormField::TYPE_TRACK, array(
-                        'label' => 'Tracks'
-                    )),
-                    new MyURYFormField('artist', MyURYFormField::TYPE_ARTIST, array(
-                        'label' => 'Artists'
-                    ))
-                    )
-                )
+        new MyURYFormField('tracks', MyURYFormField::TYPE_TABULARSET, array('options' => array(
+        new MyURYFormField('track', MyURYFormField::TYPE_TRACK, array(
+            'label' => 'Tracks'
+                )),
+        new MyURYFormField('artist', MyURYFormField::TYPE_ARTIST, array(
+            'label' => 'Artists'
+                ))
+    )
+        )
+        )
+)->addField(new MyURYFormField('notes', MyURYFormField::TYPE_TEXT, array(
+    'label' => 'Notes',
+    'explanation' => 'Optional. Enter notes aboout this change.',
+    'required' => false
+        )
         )
 )->addField(new MyURYFormField('playlistid', MyURYFormField::TYPE_HIDDEN));

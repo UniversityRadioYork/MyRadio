@@ -9,7 +9,7 @@
  * The Tracklist Item class provides information about URY's track playing
  * history.
  * 
- * @version 20130709
+ * @version 20130713
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Tracklist
  * @uses \Database
@@ -96,7 +96,8 @@ class MyURY_TracklistItem extends ServiceAPI {
    * @return Array
    */
   public static function getTracklistForTimeslot(MyURY_Timeslot $timeslot) {
-    $result = self::$db->fetch_column('SELECT audiologid FROM tracklist.tracklist WHERE timeslotid=$1 AND state!=\'o\'',
+    $result = self::$db->fetch_column('SELECT audiologid FROM tracklist.tracklist
+      WHERE timeslotid=$1 AND state!=\'o\' ADN state!=\'d\'',
             array($timeslot->getID()));
     
     $items = array();
@@ -121,7 +122,7 @@ class MyURY_TracklistItem extends ServiceAPI {
     $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
     
     $result = self::$db->fetch_column('SELECT audiologid FROM tracklist.tracklist WHERE source=\'j\'
-      AND timestart >= $1 AND timestart <= $2' . ($include_playout ? '' : ' AND state!=\'u\''),
+      AND timestart >= $1 AND timestart <= $2' . ($include_playout ? '' : ' AND state!=\'u\' AND state!=\'d\''),
             array($start, $end));
     
     $items = array();
@@ -136,15 +137,17 @@ class MyURY_TracklistItem extends ServiceAPI {
    * Find all tracks played in the given timeframe
    * @param int $start Period to start log from. Required.
    * @param int $end Period to end log from. Default time().
+   * @param bool $include_playout If true, includes tracks played on /jukebox or /campus_playout while a show was on.
    */
-  public static function getTracklistForTime($start, $end = null) {
+  public static function getTracklistForTime($start, $end = null, $include_playout = false) {
     self::wakeup();
     
     $start = CoreUtils::getTimestamp($start);
     $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
     
     $result = self::$db->fetch_column('SELECT audiologid FROM tracklist.tracklist
-      WHERE timestart >= $1 AND timestart <= $2 AND state!=\'u\'', array($start, $end));
+      WHERE timestart >= $1 AND timestart <= $2 AND state!=\'u\' AND state!=\'d\''
+            .($include_playout ? '' : ' AND state!=\'o\''), array($start, $end));
     
     $items = array();
     foreach ($result as $item) {
