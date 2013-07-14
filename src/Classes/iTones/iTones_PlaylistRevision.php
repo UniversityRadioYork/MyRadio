@@ -117,7 +117,7 @@ class iTones_PlaylistRevision extends iTones_Playlist {
   /**
    * Prevents idiots attempting to edit this revision.
    */
-  public function setTracks($tracks, $lockstr = null) {
+  public function setTracks($tracks, $lockstr = null, $notes = null) {
     throw new MyURYException('You can\'t lock an archived playlist revision, poopyhead!');
   }
   
