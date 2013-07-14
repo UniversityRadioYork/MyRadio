@@ -43,7 +43,7 @@ class iTones_PlaylistRevision extends iTones_Playlist {
    * @param int $revisionid The Revision of the managed playlist to initialise
    */
   protected function __construct($playlistid, $revisionid) {
-    parent::__construct();
+    parent::__construct($playlistid);
     
     $result = self::$db->fetch_one('SELECT * FROM jukebox.playlist_revisions
       WHERE playlistid=$1 AND revisionid=$2 LIMIT 1',
