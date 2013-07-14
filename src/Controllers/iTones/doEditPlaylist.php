@@ -21,7 +21,7 @@ if ($playlist->validateLock($_SESSION['itones_lock_'.$playlist->getID()]) === fa
           ->addVariable('body', 'You do not have a valid lock for this playlist or the lock has expired.')
           ->render();
 } else {
-  $playlist->setTracks($data['tracks']['track'], $_SESSION['itones_lock_'.$playlist->getID()]);
+  $playlist->setTracks($data['tracks']['track'], $_SESSION['itones_lock_'.$playlist->getID()], $data['notes']);
   
   $playlist->releaseLock($_SESSION['itones_lock_'.$playlist->getID()]);
   
