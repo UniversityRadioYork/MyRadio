@@ -43,6 +43,8 @@ class iTones_PlaylistRevision extends iTones_Playlist {
    * @param int $revisionid The Revision of the managed playlist to initialise
    */
   protected function __construct($playlistid, $revisionid) {
+    parent::__construct();
+    
     $result = self::$db->fetch_one('SELECT * FROM jukebox.playlist_revisions
       WHERE playlistid=$1 AND revisionid=$2 LIMIT 1',
             array($playlistid, $revisionid));
@@ -58,13 +60,12 @@ class iTones_PlaylistRevision extends iTones_Playlist {
     
     $items = self::$db->fetch_column('SELECT trackid FROM jukebox.playlist_entries WHERE playlistid=$1
       AND revision_added <= $2 AND (revision_removed >= $2 OR revision_removed IS NULL)
-      ORDER BY entryid', array($this->playlist->getID(), $this->revisionid));
+      ORDER BY entryid', array($this->getID(), $this->getRevisionID()));
     
     foreach ($items as $id) {
       $this->tracks[] = MyURY_Track::getInstance($id);
     }
-    
-    parent::__construct();
+
   }
   
   /**
