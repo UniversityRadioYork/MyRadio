@@ -42,7 +42,7 @@ class iTones_Playlist extends ServiceAPI {
    * @param int $playlistid The ID of the managed playlist to initialise
    * Note: Only links *non-expired* items
    */
-  private function __construct($playlistid) {
+  protected function __construct($playlistid) {
     $this->playlistid = $playlistid;
     $result = self::$db->fetch_one('SELECT * FROM jukebox.playlists WHERE playlistid=$1 LIMIT 1',
             array($playlistid));
