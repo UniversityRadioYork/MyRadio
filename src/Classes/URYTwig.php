@@ -47,8 +47,8 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
     $cuser = User::getInstance();
     if ($cuser->hasAuth(AUTH_SELECTSERVICEVERSION)) {
       $this->addVariable('version_header', '<li><a href="?select_version=' . Config::$service_id . '" title="Click to change version">' .
-              empty(CoreUtils::getServiceVersionForUser($cuser)['version']) ?
-              'Select Version' : CoreUtils::getServiceVersionForUser($cuser)['version'] . '</a></li>');
+              (empty(CoreUtils::getServiceVersionForUser($cuser)['version']) ?
+              'Select Version' : CoreUtils::getServiceVersionForUser($cuser)['version']) . '</a></li>');
     } else {
       $this->addVariable('version_header', '');
     }
