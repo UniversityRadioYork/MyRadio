@@ -17,9 +17,9 @@ $versions = CoreUtils::getServiceVersions();
 // If the version selector has just been submitted, update the session
 if (isset($_REQUEST['svc_version'])) {
   $serviceid = Config::$service_id;
-  print_r($versions);exit;
   foreach ($versions as $version) {
-    if ($version['version'] === $_POST['svc_version']) {
+    if ($version['version'] === $_REQUEST['svc_version']) {
+      exit("MATCH");
       $_SESSION['myury_svc_version_'.$serviceid] = $version['version'];
       $_SESSION['myury_svc_version_'.$serviceid.'_path'] = $version['path'];
       $_SESSION['myury_svc_version_'.$serviceid.'_proxy_static'] = ($version['proxy_static'] === 't');
