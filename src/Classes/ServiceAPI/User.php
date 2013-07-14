@@ -152,7 +152,6 @@ class User extends ServiceAPI {
         WHERE memberid=$1 AND from_date < now()- interval \'1 month\' AND
         (till_date IS NULL OR till_date > now()- interval \'1 month\'))',
             array($memberid));
-    print_r($this->permissions);
     
     $this->payment = self::$db->fetch_all('SELECT year, paid 
       FROM member_year 
@@ -406,7 +405,7 @@ class User extends ServiceAPI {
    * @return boolean Whether this user has the requested permission 
    */
   public function hasAuth($authid) {
-    return (in_array($authid, $this->permissions));
+    return in_array($authid, $this->permissions);
   }
   
   /**
