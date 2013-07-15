@@ -8,7 +8,6 @@
  * @package MyURY_iTones
  */
 $form = new MyURYForm('itones_playlistedit', $module, 'doEditPlaylist', array(
-    'debug' => true,
     'title' => 'Edit Campus Jukebox Playlist'
         ));
 

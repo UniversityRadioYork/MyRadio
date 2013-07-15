@@ -185,8 +185,6 @@ class MyURYForm {
    * @param Array $values A key=>value array of input names and their values. These will literally be sent to setFieldValue
    * iteratively
    * 
-   * @todo Support for repeating fields with this
-   * 
    * Note: This method should only be called once in the object's lifetime
    */
   public function editMode($identifier, $values) {
