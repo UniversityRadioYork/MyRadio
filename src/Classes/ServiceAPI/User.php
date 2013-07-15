@@ -617,7 +617,7 @@ class User extends ServiceAPI {
             )));
     
     //Contact details
-    $form->addField(new MyURYFormField('contact', MyURYFormField::TYPE_SECTION,
+    $form->addField(new MyURYFormField('sec_contact', MyURYFormField::TYPE_SECTION,
             array(
                 'label' => 'Contact Details'
             )))
