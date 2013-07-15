@@ -642,16 +642,16 @@ class User extends ServiceAPI {
             )))
             ->addField(new MyURYFormField('receive_email', MyURYFormField::TYPE_CHECK,
             array(
-                'required' => true,
+                'required' => false,
                 'label' => 'Receive Email?',
-                'value' => $this->getReceiveEmail(),
+                'options' => array('checked' => $this->getReceiveEmail()),
                 'explanation' => 'If unchecked, you will receive no emails, even if you are subscribed to mailing lists.'
             )))
             ->addField(new MyURYFormField('eduroam', MyURYFormField::TYPE_TEXT,
             array(
-                'required' => true,
+                'required' => false,
                 'label' => 'University Email',
-                'value' => $this->getUniAccount(),
+                'value' => str_replace('@york.ac.uk','',$this->getUniAccount()),
                 'explanation' => '@york.ac.uk'
             )));
             
