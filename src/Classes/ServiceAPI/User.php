@@ -675,7 +675,8 @@ class User extends ServiceAPI {
                 'required' => false,
                 'label' => '@ury.org.uk Alias',
                 'value' => $this->getLocalAlias(),
-                'explanation' => 'Usually, this is firstname.lastname (i.e. '.$this->getFName().'.'.$this->getSName().')'
+                'explanation' => 'Usually, this is firstname.lastname (i.e. '.
+                strtolower($this->getFName().'.'.$this->getSName()).')'
             )));
     }
             
