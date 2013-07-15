@@ -229,6 +229,8 @@ class iTones_Playlist extends ServiceAPI {
    * configured to run only on that server.
    */
   public function setTracks($tracks, $lockstr, $notes = null) {
+    //Remove duplicates
+    $tracks = array_unique($tracks);
     $old_list = $this->getTracks();
     
     //Check if anything has actually changed

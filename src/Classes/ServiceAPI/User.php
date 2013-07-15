@@ -8,7 +8,7 @@
  * The user object provides and stores information about a user
  * It is not a singleton for Impersonate purposes
  * 
- * @version 20130624
+ * @version 20130715
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
  * @uses \Database
@@ -576,5 +576,43 @@ class User extends ServiceAPI {
     }
     
     return $members;
+  }
+  
+  /**
+   * Gets the edit form for this User, with the permissions available for the current User
+   */
+  public function getEditForm() {
+    if ($this !== User::getInstance() && !User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
+      throw new MyURYException(User::getInstance().' tried to edit '.$this.'!');
+    }
+    
+    $form = new MyURYForm('profileedit', 'Profile', 'doEdit', array('title' => 'Edit Profile'));
+    $form->addField(new MyURYFormField('sec_personal', MyURYFormField::TYPE_SECTION,
+            array(
+                'label' => 'Personal Details'
+            )))
+            ->addField(new MyURYFormField('fname', MyURYFormField::TYPE_TEXT,
+            array(
+                'required' => true,
+                'label' => 'First Name',
+                'value' => $this->getFName()
+            )))
+            ->addField(new MyURYFormField('sname', MyURYFormField::TYPE_TEXT,
+            array(
+                'required' => true,
+                'label' => 'Last Name',
+                'value' => $this->getSName()
+            )))
+            ->addField(new MyURYFormField('gender', MyURYFormField::TYPE_SELECT,
+            array(
+                'required' => true,
+                'label' => 'Gender',
+                'value' => $this->getSex(),
+                'options' => array(
+                    array('value' => 'm', 'text' => 'Male'),
+                    array('value' => 'f', 'text' => 'Female'),
+                    array('value' => 'o', 'text' => 'Other')
+                )
+            )));
   }
 }
