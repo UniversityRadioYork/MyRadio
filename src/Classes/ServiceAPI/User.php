@@ -660,6 +660,6 @@ class User extends ServiceAPI {
   }
   
   public static function getColleges() {
-    return self::$db->fetch_all('SELECT collegeid AS value, descr AS label FROM public.l_college');
+    return self::$db->fetch_all('SELECT collegeid AS value, descr AS text FROM public.l_college');
   }
 }
