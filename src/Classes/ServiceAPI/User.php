@@ -654,6 +654,29 @@ class User extends ServiceAPI {
                 'value' => str_replace('@york.ac.uk','',$this->getUniAccount()),
                 'explanation' => '@york.ac.uk'
             )));
+    
+    //Mailbox
+    if (User::getInstance()->hasAuth(AUTH_CHANGESERVERACCOUNT)) {
+      $form->addField(new MyURYFormField('sec_server', MyURYFormField::TYPE_SECTION,
+              array(
+                  'label' => 'URY Mailbox Account',
+                  'explanation' => 'Before changing these settings, please ensure you understand the guidelines and'
+                  .' documentation on URY\'s Internal Email Service'
+              )))
+            ->addField(new MyURYFormField('local_name', MyURYFormField::TYPE_TEXT,
+            array(
+                'required' => false,
+                'label' => 'Server Account (Mailbox Name)',
+                'value' => $this->getLocalName()
+            )))
+            ->addField(new MyURYFormField('local_alias', MyURYFormField::TYPE_TEXT,
+            array(
+                'required' => false,
+                'label' => '@ury.org.uk Alias',
+                'value' => $this->getLocalAlias(),
+                'explanation' => 'Usually, this is firstname.lastname (i.e. '.$this->getFName().'.'.$this->getSName().')'
+            )));
+    }
             
     
     return $form;
