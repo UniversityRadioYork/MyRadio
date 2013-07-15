@@ -614,5 +614,7 @@ class User extends ServiceAPI {
                     array('value' => 'o', 'text' => 'Other')
                 )
             )));
+    
+    return $form;
   }
 }
