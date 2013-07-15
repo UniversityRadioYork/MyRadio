@@ -666,8 +666,9 @@ class User extends ServiceAPI {
             ->addField(new MyURYFormField('local_name', MyURYFormField::TYPE_TEXT,
             array(
                 'required' => false,
-                'label' => 'Server Account (Mailbox Name)',
-                'value' => $this->getLocalName()
+                'label' => 'Server Account (Mailbox)',
+                'value' => $this->getLocalName(),
+                'explanation' => 'Best practice is their ITS Username'
             )))
             ->addField(new MyURYFormField('local_alias', MyURYFormField::TYPE_TEXT,
             array(
