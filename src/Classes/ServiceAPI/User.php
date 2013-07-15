@@ -587,6 +587,7 @@ class User extends ServiceAPI {
     }
     
     $form = new MyURYForm('profileedit', 'Profile', 'doEdit', array('title' => 'Edit Profile'));
+    //Personal details
     $form->addField(new MyURYFormField('sec_personal', MyURYFormField::TYPE_SECTION,
             array(
                 'label' => 'Personal Details'
@@ -615,6 +616,50 @@ class User extends ServiceAPI {
                 )
             )));
     
+    //Contact details
+    $form->addField(new MyURYFormField('contact', MyURYFormField::TYPE_SECTION,
+            array(
+                'label' => 'Contact Details'
+            )))
+            ->addField(new MyURYFormField('college', MyURYFormField::TYPE_SELECT,
+            array(
+               'required' => true,
+               'label' => 'College',
+               'options' => self::getColleges(),
+               'value' => $this->getCollegeID()
+            )))
+            ->addField(new MyURYFormField('phone', MyURYFormField::TYPE_TEXT,
+            array(
+                'required' => false,
+                'label' => 'Phone Number',
+                'value' => $this->getPhone()
+            )))
+            ->addField(new MyURYFormField('email', MyURYFormField::TYPE_EMAIL,
+            array(
+                'required' => true,
+                'label' => 'Email',
+                'value' => $this->getEmail()
+            )))
+            ->addField(new MyURYFormField('receive_email', MyURYFormField::TYPE_CHECK,
+            array(
+                'required' => true,
+                'label' => 'Receive Email?',
+                'value' => $this->getReceiveEmail(),
+                'explanation' => 'If unchecked, you will receive no emails, even if you are subscribed to mailing lists.'
+            )))
+            ->addField(new MyURYFormField('eduroam', MyURYFormField::TYPE_TEXT,
+            array(
+                'required' => true,
+                'label' => 'University Email',
+                'value' => $this->getUniAccount(),
+                'explanation' => '@york.ac.uk'
+            )));
+            
+    
     return $form;
+  }
+  
+  public static function getColleges() {
+    return self::$db->fetch_all('SELECT collegeid AS value, descr AS label FROM public.l_college');
   }
 }
