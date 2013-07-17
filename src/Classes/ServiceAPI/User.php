@@ -136,7 +136,7 @@ class User extends ServiceAPI {
    * Stores the datetime the User last logged in on.
    * @var String timestamp with timezone
    */
-  private $lastlogin;
+  private $last_login;
   
   /**
    * URL to the User's Profile Photo
@@ -363,7 +363,7 @@ class User extends ServiceAPI {
   }
   
   public function getLastLogin() {
-    return $this->lastlogin;
+    return $this->last_login;
   }
   
   /**
