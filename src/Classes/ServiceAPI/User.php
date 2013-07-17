@@ -803,7 +803,7 @@ class User extends ServiceAPI {
      */
     $uname = empty($params['eduroam']) ? $params['email'] : str_replace('@york.ac.uk','',$params['eduroam']);
     $welcome_email = <<<EOT
-<p>Hi $fname!</p>
+<p>Hi {$params['fname']}!</p>
 
 <p>Thanks for showing an interest in URY, your official student radio station.</p>
 
