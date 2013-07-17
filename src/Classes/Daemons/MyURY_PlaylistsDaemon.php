@@ -14,18 +14,17 @@
  * 
  */
 class MyURY_PlaylistsDaemon {
-  private static $lastrun = 0;
-  
   public static function isEnabled() { return true; }
   
   public static function run() {
-    if (self::$lastrun > time() - 3600) return;
+    $hourkey = __CLASS__.'_last_run_hourly';
+    if (self::getCache($hourkey) > time() - 3500) return;
     
     self::updateMostPlayedPlaylist();
     self::updateNewestUploadsPlaylist();
     
     //Done
-    self::$lastrun = time();
+    self::setCache($hourkey, time());
   }
   
   private static function updateMostPlayedPlaylist() {
