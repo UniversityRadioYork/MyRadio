@@ -153,7 +153,7 @@ class User extends ServiceAPI {
     //Get the base data
     $data = self::$db->fetch_one(
             'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college, phone, email,
-              receive_email, local_name, local_alias, eduroam, account_locked, last_login, joined 
+              receive_email, local_name, local_alias, eduroam, account_locked, last_login, joined, profile_photo
               FROM member, l_college
               WHERE memberid=$1 
               AND member.college = l_college.collegeid
@@ -168,7 +168,7 @@ class User extends ServiceAPI {
       if ($key === 'joined')
         $this->$key = (int) strtotime($value);
       elseif ($key === 'profile_photo')
-        $this->$key = empty($value) ? null : MyURY_Photo::getInstance($value);
+        $this->$key = is_numeric($value) ? MyURY_Photo::getInstance($value) : null;
       elseif (filter_var($value, FILTER_VALIDATE_INT))
         $this->$key = (int) $value;
       elseif ($value === 't')

@@ -4,9 +4,11 @@
 {# @todo: put the user data into a nice format, implementation depends on sending in array or individual variables #}
   <table>
     <tr>
-      <td>{{editurl | raw}}</td>
-      <td>{{impersonateurl | raw}}</td>
-      <td>{{lockurl | raw}}</td>
+      <td colspan="2">
+        {% if editurl %}{{editurl | raw}}{% endif %}
+        {% if impersonateurl %}&nbsp;|&nbsp;&nbsp;{{impersonateurl | raw}}{% endif %}
+        {% if lockurl %}&nbsp;|&nbsp;&nbsp;{{lockurl | raw}}{% endif %}
+      </td>
     </tr>
     <tr>
       <td><b>Name:</b></td>

@@ -53,7 +53,7 @@ if ($user === $visitor or $visitor->hasAuth(AUTH_EDITANYPROFILE)) {
           array('memberid' => $user->getID())).'">Edit Profile</a>');
 }
 if ($visitor->hasAuth(AUTH_IMPERSONATE) &&
-        (!$user->hasAuth(AUTH_BLOCKIMPERSONATE or $visitor->hasAuth(AUTH_IMPERSONATE_BLOCKED_USERS)))) {
+        ($user->hasAuth(AUTH_BLOCKIMPERSONATE) === false or $visitor->hasAuth(AUTH_IMPERSONATE_BLOCKED_USERS))) {
   $template->addVariable('impersonateurl',
           '<a href="'.Config::$shib_url.'/impersonate.php?memberid='.$user->getID().'">Impersonate User</a>');
 }
