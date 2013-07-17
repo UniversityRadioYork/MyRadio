@@ -874,20 +874,17 @@ EOT;
             ->addField(new MyURYFormField('fname', MyURYFormField::TYPE_TEXT,
             array(
                 'required' => true,
-                'label' => 'First Name',
-                'value' => $this->getFName()
+                'label' => 'First Name'
             )))
             ->addField(new MyURYFormField('sname', MyURYFormField::TYPE_TEXT,
             array(
                 'required' => true,
-                'label' => 'Last Name',
-                'value' => $this->getSName()
+                'label' => 'Last Name'
             )))
             ->addField(new MyURYFormField('sex', MyURYFormField::TYPE_SELECT,
             array(
                 'required' => true,
                 'label' => 'Gender',
-                'value' => $this->getSex(),
                 'options' => array(
                     array('value' => 'm', 'text' => 'Male'),
                     array('value' => 'f', 'text' => 'Female'),
@@ -904,14 +901,12 @@ EOT;
             array(
                'required' => true,
                'label' => 'College',
-               'options' => self::getColleges(),
-               'value' => $this->getCollegeID()
+               'options' => self::getColleges()
             )))
             ->addField(new MyURYFormField('eduroam', MyURYFormField::TYPE_TEXT,
             array(
                 'required' => true,
                 'label' => 'University Email',
-                'value' => str_replace('@york.ac.uk','',$this->getUniAccount()),
                 'explanation' => '@york.ac.uk'
             )));
     
