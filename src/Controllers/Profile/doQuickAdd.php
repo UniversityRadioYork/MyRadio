@@ -6,7 +6,7 @@
  * @version 20130717
  * @package MyURY_Profile
  */
-$params = User::getQuickAddFormForm()->readValues();
+$params = User::getQuickAddForm()->readValues();
 
 $user = User::create($params);
 
