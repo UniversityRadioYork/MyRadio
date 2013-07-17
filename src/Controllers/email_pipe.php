@@ -14,8 +14,10 @@
 
 ini_set("log_errors", 1);
 ini_set("error_log", "/tmp/php-mailparser-error.log");
+ini_set('display_errors','Off');
 
 require_once __DIR__.'/cli_common.php';
+ini_set('display_errors','Off');
 
 set_exception_handler(function() {exit(0);}); //We do not want bounce messages from this!
 
