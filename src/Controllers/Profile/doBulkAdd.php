@@ -14,8 +14,12 @@ for ($i = 0; $i < sizeof($data['bulkaddrepeater']['fname']); $i++) {
   foreach ($data['bulkaddrepeater'] as $key => $v) {
     $params[$key] = $data['bulkaddrepeater'][$key][$i];
   }
-  $user = User::create($params);
-  $template->addInfo('Added Member with ID '.$user->getID());
+  try {
+    $user = User::create($params);
+    $template->addInfo('Added Member with ID '.$user->getID());
+  } catch (MyURYException $e) {
+    $template->addError('Could not add '.$params['eduroam'].': '.$e->getMessage());
+  }
 }
 
 $template->setTemplate('MyURY/text.twig')->render();
