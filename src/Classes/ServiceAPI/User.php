@@ -168,7 +168,7 @@ class User extends ServiceAPI {
       if ($key === 'joined')
         $this->$key = (int) strtotime($value);
       elseif ($key === 'profile_photo')
-        $this->$key = MyURY_Photo::getInstance($value);
+        $this->$key = empty($value) ? null : MyURY_Photo::getInstance($value);
       elseif (filter_var($value, FILTER_VALIDATE_INT))
         $this->$key = (int) $value;
       elseif ($value === 't')
