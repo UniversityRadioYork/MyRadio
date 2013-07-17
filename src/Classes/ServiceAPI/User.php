@@ -178,7 +178,9 @@ class User extends ServiceAPI {
     
   }
   
-  
+  /**
+   * @todo Replace with implementation of toDataSource
+   */
   public function getData() {
     return get_object_vars($this);
   }
@@ -619,7 +621,7 @@ class User extends ServiceAPI {
                 'label' => 'Last Name',
                 'value' => $this->getSName()
             )))
-            ->addField(new MyURYFormField('gender', MyURYFormField::TYPE_SELECT,
+            ->addField(new MyURYFormField('sex', MyURYFormField::TYPE_SELECT,
             array(
                 'required' => true,
                 'label' => 'Gender',
@@ -636,7 +638,7 @@ class User extends ServiceAPI {
             array(
                 'label' => 'Contact Details'
             )))
-            ->addField(new MyURYFormField('college', MyURYFormField::TYPE_SELECT,
+            ->addField(new MyURYFormField('collegeid', MyURYFormField::TYPE_SELECT,
             array(
                'required' => true,
                'label' => 'College',
@@ -709,15 +711,15 @@ class User extends ServiceAPI {
    * At least one of Email OR eduroam must be filled in. Password will be generated
    * automatically and emailed to the user.
    * 
-   * @param array $params As follows:
-   * collegeid: Optional. College ID of the member. Default 10 (Unknown).
-   * eduroam: Optional. User's @york.ac.uk email address, if they have one.
-   * email: Optional. The User's email address. If not set, eduroam is used.
-   * fname: Required. The User's first name.
-   * phone: Optional. The User's phone number.
-   * receive_email: Optional. Default true. Whether or not the user will receive emails
-   * sex: Required. 'm' Male, 'f' Female or 'o' Other.
-   * sname: Required. The User's last name.
+   * @param array $params As follows:<br>
+   * collegeid: Optional. College ID of the member. Default 10 (Unknown).<br>
+   * eduroam: Optional. User's @york.ac.uk email address, if they have one.<br>
+   * email: Optional. The User's email address. If not set, eduroam is used.<br>
+   * fname: Required. The User's first name.<br>
+   * phone: Optional. The User's phone number.<br>
+   * receive_email: Optional. Default true. Whether or not the user will receive emails<br>
+   * sex: Required. 'm' Male, 'f' Female or 'o' Other.<br>
+   * sname: Required. The User's last name.<br>
    * paid: Optional. How much the user has paid for the current membership year. Default 0.00.
    */
   public static function create($params) {
@@ -735,6 +737,11 @@ class User extends ServiceAPI {
       $params['email'] = null;
     } elseif (empty($params['eduroam'])) {
       $params['eduroam'] = null;
+    }
+    
+    //Ensure the suffix is there
+    if (!empty($params['eduroam']) && !strstr($params['eduroam'], '@')) {
+      $params['eduroam'] = $params['eduroam'] . '@york.ac.uk';
     }
     
     if (empty($params['fname'])) {
@@ -846,5 +853,68 @@ EOT;
             'Welcome to URY - Getting Involved and Your Account', $welcome_email, User::getInstance(7449));
     
     return User::getInstance($memberid);
+  }
+  
+  /**
+   * Generates the form needed to bulk-add URY members
+   * @throws MyURYException
+   * @return MyURYForm
+   */
+  public static function getQuickAddForm() {
+    if ($this !== User::getInstance() && !User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
+      throw new MyURYException(User::getInstance().' tried to add members!');
+    }
+    
+    $form = new MyURYForm('profilequickadd', 'Profile', 'doQuickAdd', array('title' => 'Add Member (Quick)'));
+    //Personal details
+    $form->addField(new MyURYFormField('sec_personal', MyURYFormField::TYPE_SECTION,
+            array(
+                'label' => 'Personal Details'
+            )))
+            ->addField(new MyURYFormField('fname', MyURYFormField::TYPE_TEXT,
+            array(
+                'required' => true,
+                'label' => 'First Name',
+                'value' => $this->getFName()
+            )))
+            ->addField(new MyURYFormField('sname', MyURYFormField::TYPE_TEXT,
+            array(
+                'required' => true,
+                'label' => 'Last Name',
+                'value' => $this->getSName()
+            )))
+            ->addField(new MyURYFormField('sex', MyURYFormField::TYPE_SELECT,
+            array(
+                'required' => true,
+                'label' => 'Gender',
+                'value' => $this->getSex(),
+                'options' => array(
+                    array('value' => 'm', 'text' => 'Male'),
+                    array('value' => 'f', 'text' => 'Female'),
+                    array('value' => 'o', 'text' => 'Other')
+                )
+            )));
+    
+    //Contact details
+    $form->addField(new MyURYFormField('sec_contact', MyURYFormField::TYPE_SECTION,
+            array(
+                'label' => 'Contact Details'
+            )))
+            ->addField(new MyURYFormField('collegeid', MyURYFormField::TYPE_SELECT,
+            array(
+               'required' => true,
+               'label' => 'College',
+               'options' => self::getColleges(),
+               'value' => $this->getCollegeID()
+            )))
+            ->addField(new MyURYFormField('eduroam', MyURYFormField::TYPE_TEXT,
+            array(
+                'required' => true,
+                'label' => 'University Email',
+                'value' => str_replace('@york.ac.uk','',$this->getUniAccount()),
+                'explanation' => '@york.ac.uk'
+            )));
+    
+    return $form;
   }
 }

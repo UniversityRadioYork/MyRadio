@@ -101,11 +101,11 @@ class MyURYForm {
    * @param string $name The name/id of the form
    * @param string $module The module the form submits to
    * @param string $action The action the form submits to
-   * @param array $params One or more of the following additional settings
-   * debug - Verbose logging output - default false
-   * classes - An array of additional classes to apply to the form - default empty
-   * validate - Whether to validate the field input client-side - default true
-   * get - Whether to use the GET submission method - default false
+   * @param array $params One or more of the following additional settings<br>
+   * debug - Verbose logging output - default false<br>
+   * classes - An array of additional classes to apply to the form - default empty<br>
+   * validate - Whether to validate the field input client-side - default true<br>
+   * get - Whether to use the GET submission method - default false<br>
    * template - The Twig template to use for the form - default form.twig
    * 
    * @throws MyURYException Thrown on failure of a sanity check
