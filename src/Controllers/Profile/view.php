@@ -42,7 +42,12 @@ foreach ($userData['training'] as $k => $v) {
   $userData['training'][$k]['confirmedbyurl'] = CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['confirmedby']));
 }
 
-CoreUtils::getTemplateObject()->setTemplate('Profile/user.twig')
+$template = CoreUtils::getTemplateObject()->setTemplate('Profile/user.twig')
         ->addVariable('title', 'View Profile')
-        ->addVariable('user', $userData)
-        ->render();
+        ->addVariable('user', $userData);
+
+if ($user === User::getInstance() or User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
+  $template->addInfo('<a href="'.CoreUtils::makeURL('Profile', 'edit',
+          array('memberid' => $user->getID())).'">Click here to update this profile</a>');
+}
+$template->render();
