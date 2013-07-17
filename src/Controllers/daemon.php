@@ -61,7 +61,9 @@ if (empty($classes)) {
 while (true) {
   foreach ($classes as $class) {
     echo "Running $class\n";
-    $class::run();
+    try {
+      $class::run();
+    } catch (MyURYException $e) {}
     if (!$once) sleep(5);
   }
   
