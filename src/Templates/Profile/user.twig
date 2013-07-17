@@ -3,7 +3,11 @@
 <div id="profile">
 {# @todo: put the user data into a nice format, implementation depends on sending in array or individual variables #}
   <table>
-    <tr><td>{{editurl}}</td><td>{{impersonateurl}}</td><td>{{lockurl}}</td></tr>
+    <tr>
+      <td>{{editurl | raw}}</td>
+      <td>{{impersonateurl | raw}}</td>
+      <td>{{lockurl | raw}}</td>
+    </tr>
     <tr>
       <td><b>Name:</b></td>
       <td>{{user.fname}} {{user.sname}}</td>
