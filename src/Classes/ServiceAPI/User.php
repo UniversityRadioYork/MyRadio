@@ -758,10 +758,10 @@ class User extends ServiceAPI {
       throw new MyURYException('User must have a last name!', 400);
     }
     
-    if (!empty($params['paid']) && !is_numeric($params['paid'])) {
-      throw new MyURYException('Invalid Payment Amount!', 400);
-    } else {
+    if (empty($params['paid'])) {
       $params['paid'] = 0.00;
+    } elseif (!is_numeric($params['paid'])) {
+      throw new MyURYException('Invalid payment amount!', 400);
     }
     
     //Check if it looks like the user might already exist
@@ -769,6 +769,7 @@ class User extends ServiceAPI {
       throw new MyURYException('This user already appears to exist. Their eduroam or email is already used.');
     }
     
+    //This next comment explains that password generation is not done in MyURY itself, but an external library.
     //Looks good. Generate a password for them. This is done by Shibbobleh.
     $plain_pass = Shibbobleh_Utils::newPassword();
     $encrypted_pass = Shibbobleh_Utils::encrypt($plain_pass);
