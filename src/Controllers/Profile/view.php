@@ -11,7 +11,7 @@
  */
 // Set if trying to view another member's profile page
 $user = User::getInstance(empty($_REQUEST['memberid']) ? -1 : $_REQUEST['memberid']);
-
+echo nl2br(print_r($user,true));
 //Add global user data
 $userData = array(
     'fname' => $user->getFName(),
@@ -28,7 +28,7 @@ if ($user->isOfficer()) {
   $userData['email'] = $user->getPublicEmail();
 }
 
-if (User::getInstance()->hasAuth(AUTH_VIEWALLMEMBERS)) {
+if (User::getInstance()->hasAuth(AUTH_VIEWOTHERMEMBERS)) {
   $userData['email'] = $user->getEmail();
   $userData['eduroam'] = $user->getEduroam();
   $userData['local_alias'] = $user->getLocalAlias();
@@ -36,15 +36,6 @@ if (User::getInstance()->hasAuth(AUTH_VIEWALLMEMBERS)) {
   $userData['account_locked'] = $user->getAccountLocked();
   $userData['last_login'] = $user->getLastLogin();
   $userData['payment'] = $user->getAllPayments();
-}
-
-// If trying to view another member, and has permissions to, then load that member
-if (isset($getUserId) && $member->hasAuth(AUTH_VIEWOTHERMEMBERS)) {
-  $user = User::getInstance($getUserId);
-}
-// If trying to view another member, and doesn't have permissions to the 403 them
-else if (isset($getUserId) && !$member->hasAuth(AUTH_VIEWOTHERMEMBERS)) {
-  require 'Controllers/Errors/403.php';
 }
 
 foreach ($userData['training'] as $k => $v) {
