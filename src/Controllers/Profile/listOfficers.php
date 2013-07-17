@@ -10,8 +10,6 @@
 
 $officers = Profile::getOfficers();
 
-require 'Views/Profile/bootstrap.php';
-
 foreach ($officers as $k => $v) {
   if (!empty($officers[$k]['name'])) {
 	  $officers[$k]['name'] = array(
@@ -28,7 +26,7 @@ foreach ($officers as $k => $v) {
         );
 }
 
-$twig->setTemplate('table.twig')
+CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.profile.listOfficers')
         ->addVariable('title', 'Officers List')
         ->addVariable('tabledata', $officers)
