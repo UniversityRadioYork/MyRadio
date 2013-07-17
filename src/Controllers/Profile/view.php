@@ -58,7 +58,7 @@ if ($visitor->hasAuth(AUTH_IMPERSONATE) &&
           '<a href="'.Config::$shib_url.'/impersonate.php?memberid='.$user->getID().'">Impersonate User</a>');
 }
 if ($visitor->hasAuth(AUTH_LOCK)) {
-  $template->addVariable('impersonateurl',
+  $template->addVariable('lockurl',
           '<a href="'.CoreUtils::makeURL('Profile', 'lock',
           array('memberid' => $user->getID())).'/impersonate.php?memberid='.$user->getID().'">Disable Account</a>');
 }
