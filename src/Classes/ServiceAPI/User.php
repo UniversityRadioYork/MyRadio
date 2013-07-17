@@ -944,7 +944,7 @@ EOT;
    * @return MyURYForm
    */
   public static function getQuickAddForm() {
-    if ($this !== User::getInstance() && !User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
+    if (!User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
       throw new MyURYException(User::getInstance() . ' tried to add members!');
     }
 
@@ -995,7 +995,7 @@ EOT;
    * @return MyURYForm
    */
   public static function getBulkAddForm() {
-    if ($this !== User::getInstance() && !User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
+    if (!User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
       throw new MyURYException(User::getInstance() . ' tried to add members!');
     }
 

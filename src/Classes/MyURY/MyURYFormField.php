@@ -471,7 +471,7 @@ class MyURYFormField {
           }
           return $_REQUEST[$name];
         } else {
-          if (is_numeric($_REQUEST[$name][$i])) {
+          if (is_numeric($_REQUEST[$name])) {
             return (int)$_REQUEST[$name];
           } else {
             return $_REQUEST[$name];
