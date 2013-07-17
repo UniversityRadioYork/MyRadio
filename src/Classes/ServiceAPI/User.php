@@ -797,6 +797,7 @@ class User extends ServiceAPI {
     //Send a welcome email (this will not send if receive_email is not enabled!)
     /**
      * @todo Make this easier to change
+     * @todo Link to Facebook events
      */
     $uname = empty($params['eduroam']) ? $params['email'] : str_replace('@york.ac.uk','',$params['eduroam']);
     $welcome_email = <<<EOT
