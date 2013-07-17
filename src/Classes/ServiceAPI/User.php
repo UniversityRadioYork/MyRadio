@@ -139,8 +139,8 @@ class User extends ServiceAPI {
   private $last_login;
   
   /**
-   * URL to the User's Profile Photo
-   * @var MyURY_Photo
+   * Photoid of the User's profile photo
+   * @var int
    */
   private $profile_photo;
 
@@ -167,8 +167,6 @@ class User extends ServiceAPI {
     foreach ($data as $key => $value) {
       if ($key === 'joined')
         $this->$key = (int) strtotime($value);
-      elseif ($key === 'profile_photo')
-        $this->$key = is_numeric($value) ? MyURY_Photo::getInstance($value) : null;
       elseif (filter_var($value, FILTER_VALIDATE_INT))
         $this->$key = (int) $value;
       elseif ($value === 't')
@@ -371,7 +369,10 @@ class User extends ServiceAPI {
    * @return MyURY_Photo
    */
   public function getProfilePhoto() {
-    return $this->profile_photo;
+    if (!empty($this->profile_photo)) {
+      return MyURY_Photo::getInstance($this->profile_photo);
+    } else P
+      return null;
   }
 
   /**
