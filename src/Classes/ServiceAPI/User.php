@@ -960,7 +960,7 @@ EOT;
                     'label' => 'University Email',
                     'explanation' => '@york.ac.uk'
                         ))
-                    )),
+                    ))
         )
     )));
 
