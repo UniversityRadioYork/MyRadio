@@ -779,7 +779,7 @@ class User extends ServiceAPI {
     $r = self::$db->fetch_column('INSERT INTO public.member
       (fname, sname, sex, college, phone, email, receive_email, password, eduroam, require_password_change)
       VALUES
-      ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid', array(
+      ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING memberid', array(
           $params['fname'],
           $params['sname'],
           $params['sex'],
