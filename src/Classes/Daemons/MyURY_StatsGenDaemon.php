@@ -1,27 +1,27 @@
 <?php
 
-class MyURY_StatsGenDaemon {
-  private static $lastrunhourly = 0;
-  private static $lastrundaily = 0;
+class MyURY_StatsGenDaemon extends MyURY_Daemon {
   
   public static function isEnabled() { return true; }
   
   public static function run() {
-    if (self::$lastrunhourly > time() - 3600) return;
+    $hourkey = __CLASS__.'_last_run_hourly';
+    $daykey = __CLASS__.'_last_run_daily';
+    if (self::getCache($hourkey) > time() - 3500) return;
     
     //Generate Training Graph
     self::generateTrainingGraph();
     
     //Do dailies?
-    if (self::$lastrundaily <= time() - 86400) {
+    if (self::getCache($daykey) <= time() - 86300) {
       
       self::generateJukeboxReport();
       
-      self::$lastrundaily = time();
+      self::setCache($daykey, time());
     }
     
     //Done
-    self::$lastrunhourly = time();
+    self::setCache($hourkey, time());
   }
   
   private static function generateTrainingGraph() {

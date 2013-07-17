@@ -7,7 +7,7 @@ class MyURY_BAPSSyncDaemon {
    * Takes each of the NIPSWebs Managed and Resource Lists, and converts them into BAPS Recommended Audio shows
    */
   public static function run() {
-    $special_date = '2034-05-06 07:08:09';
+    $special_date = '2034-05-06 07:08:09'; //All shows created by this are identified by this time.
     $db = Database::getInstance();
     
     //This needs to appear atomic to end users
