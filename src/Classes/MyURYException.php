@@ -16,6 +16,7 @@
 class MyURYException extends RuntimeException {
 
   const FATAL = -1;
+
   private static $count = 0;
 
   /**
@@ -38,8 +39,7 @@ class MyURYException extends RuntimeException {
       //Configuration is available, use this to decide what to do
       if (Config::$display_errors or (class_exists('CoreUtils') &&
               defined(AUTH_SHOWERRORS) && CoreUtils::hasPermission(AUTH_SHOWERRORS))) {
-        if ((isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
-                or empty($_SERVER['REMOTE_ADDR'])) {
+        if ((isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') or empty($_SERVER['REMOTE_ADDR'])) {
           //This is an Ajax/CLI request. Return JSON
           header('HTTP/1.1 ' . $code . ' Internal Server Error');
           header('Content-Type: text/json');
@@ -48,7 +48,7 @@ class MyURYException extends RuntimeException {
               'error' => $message,
               'code' => $code,
               'trace' => $this->getTrace()
-              ));
+          ));
         } else {
           //Output to the browser
           header('HTTP/1.1 ' . $code . ' Internal Server Error');
@@ -68,15 +68,31 @@ class MyURYException extends RuntimeException {
           }
         }
       } else {
-        echo '<div class="ui-state-error">A fatal error has occured that has prevented MyURY from performing the action you requested.</div>';
+        $error = '<div class="ui-state-error">A fatal error has occured that has prevented MyURY from performing the action you requested.</div>';
+        //Output limited info to the browser
+        header('HTTP/1.1 ' . $code . ' Internal Server Error');
+
+        if (class_exists('CoreUtils') && !headers_sent()) {
+          //We can use a pretty full-page output
+          $twig = CoreUtils::getTemplateObject();
+          $twig->setTemplate('error.twig')
+                  ->addVariable('serviceName', 'Error')
+                  ->addVariable('title', 'Internal Server Error')
+                  ->addVariable('body', $error)
+                  ->addVariable('uri', $_SERVER['REQUEST_URI'])
+                  ->render();
+        } else {
+          echo $error;
+        }
       }
       if (Config::$email_exceptions && class_exists('MyURYEmail')) {
-        MyURYEmail::sendEmailToComputing('[MyURY] Exception Thrown',
-                $error."\r\n".$message."\r\n".(isset($_SESSION) ? print_r($_SESSION,true) : '')."\r\n".print_r($_REQUEST,true));
+        MyURYEmail::sendEmailToComputing('[MyURY] Exception Thrown', $error . "\r\n" . $message . "\r\n" . (isset($_SESSION) ? print_r($_SESSION, true) : '') . "\r\n" . print_r($_REQUEST, true));
       }
+    } else {
+      echo 'A fatal error has occured that has prevented MyURY from performing the action you requested. Please contact computing@ury.org.uk.';
     }
   }
-  
+
   /**
    * Get the number of MyURYExceptions that have been fired.
    * @return int
