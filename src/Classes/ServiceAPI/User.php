@@ -544,6 +544,7 @@ class User extends ServiceAPI {
    * @return null|User
    */
   public static function findByEmail($email) {
+    if (empty($email)) return null;
     self::wakeup();
     
     $result = self::$db->fetch_column('SELECT memberid FROM public.member WHERE email ILIKE $1 OR eduroam ILIKE $1
@@ -765,7 +766,7 @@ class User extends ServiceAPI {
     }
     
     //Check if it looks like the user might already exist
-    if (User::findByEmail($params['eduroam']) !== null or User::findByEmail($params['email']) !== null) {
+    if (!empty(User::findByEmail($params['eduroam'])) or !empty(User::findByEmail($params['email']))) {
       throw new MyURYException('This user already appears to exist. Their eduroam or email is already used.');
     }
     
@@ -823,7 +824,7 @@ join in. We've also got a live event straight after so you can see us in action!
 <p>Username: $uname<br>
 Password: $plain_pass</p>
 
-<p>If you have any questions, feel free to ask by emails <a href="mailto:training@ury.org.uk">training@ury.org.uk</a>.</p>
+<p>If you have any questions, feel free to ask by emailing <a href="mailto:training@ury.org.uk">training@ury.org.uk</a>.</p>
 
 Hope to see you soon.
 <br><br>
