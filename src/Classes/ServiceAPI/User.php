@@ -766,8 +766,7 @@ class User extends ServiceAPI {
     }
     
     //Check if it looks like the user might already exist
-    if (!empty(User::findByEmail($params['eduroam'])) or !empty(User::findByEmail($params['email']))) {
-      print_r(User::findByEmail($params['email']));
+    if (User::findByEmail($params['eduroam']) !== null or User::findByEmail($params['email']) !== null) {
       throw new MyURYException('This user already appears to exist. Their eduroam or email is already used.');
     }
     
