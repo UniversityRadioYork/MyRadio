@@ -842,8 +842,8 @@ On Air | Online | On Demand<br>
 EOT;
     
     //Send the email
-    MyURYEmail::create(User::getInstance($memberid), 'Welcome to URY - Getting Involved and Your Account',
-            $welcome_email, User::getInstance(7449));
+    MyURYEmail::create(array('members' => array(User::getInstance($memberid))),
+            'Welcome to URY - Getting Involved and Your Account', $welcome_email, User::getInstance(7449));
     
     return User::getInstance($memberid);
   }
