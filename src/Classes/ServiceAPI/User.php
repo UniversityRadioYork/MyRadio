@@ -389,7 +389,12 @@ class User extends ServiceAPI {
    * to the @ury.org.uk prefix, and email to their personal address.
    */
   public function getPublicEmail() {
-    return empty($this->getLocalAlias()) ? $this->getEmail() : $this->getLocalAlias().'@ury.org.uk';
+    /**
+     * This works around a PHP bug:
+     * Fatal error: Can't use method return value in write context is thrown if the getter is used directly in empty()
+     */
+    $alias = $this->getLocalAlias();
+    return empty($alias) ? $this->getEmail() : $alias .'@ury.org.uk';
   }
 
   /**
