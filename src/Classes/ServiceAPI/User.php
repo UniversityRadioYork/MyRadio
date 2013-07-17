@@ -433,7 +433,7 @@ class User extends ServiceAPI {
    * Gets every year the member has paid
    */
   public function getAllPayments() {
-    return $this->payments;
+    return $this->payment;
   }
 
   /**
