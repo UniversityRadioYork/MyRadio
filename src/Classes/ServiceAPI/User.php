@@ -137,6 +137,12 @@ class User extends ServiceAPI {
    * @var String timestamp with timezone
    */
   private $lastlogin;
+  
+  /**
+   * URL to the User's Profile Photo
+   * @var MyURY_Photo
+   */
+  private $profile_photo;
 
   /**
    * Initiates the User variables
@@ -161,6 +167,8 @@ class User extends ServiceAPI {
     foreach ($data as $key => $value) {
       if ($key === 'joined')
         $this->$key = (int) strtotime($value);
+      elseif ($key === 'profile_photo')
+        $this->$key = MyURY_Photo::getInstance($value);
       elseif (filter_var($value, FILTER_VALIDATE_INT))
         $this->$key = (int) $value;
       elseif ($value === 't')
@@ -197,12 +205,17 @@ class User extends ServiceAPI {
       WHERE pres.memberid=$1
       ORDER BY completeddate ASC', array($this->memberid));
   }
-
+  
   /**
-   * @todo Replace with implementation of toDataSource
+   * Returns if the User is currently an Officer
    */
-  public function getData() {
-    return get_object_vars($this);
+  public function isOfficer() {
+    foreach ($this->getOfficerships() as $officership) {
+      if (empty($officership['till_date']) or $officership['till_date'] >= time()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -348,6 +361,18 @@ class User extends ServiceAPI {
   public function getSex() {
     return $this->sex;
   }
+  
+  public function getLastLogin() {
+    return $this->lastlogin;
+  }
+  
+  /**
+   * Returns the User's profile Photo (or null if there is not one)
+   * @return MyURY_Photo
+   */
+  public function getProfilePhoto() {
+    return $this->profile_photo;
+  }
 
   /**
    * Returns the User's email address. If the email address is null, it is assumed their eduroam address is the
@@ -356,6 +381,15 @@ class User extends ServiceAPI {
    */
   public function getEmail() {
     return empty($this->email) ? $this->getEduroam() : $this->email;
+  }
+  
+  /**
+   * Used for Officers. If they have an @ury.org.uk Alias, display that. Otherwise, display their default email.
+   * This is because if a user wants an official @ury.org.uk, but wants it fowarded, then you set the local_alias
+   * to the @ury.org.uk prefix, and email to their personal address.
+   */
+  public function getPublicEmail() {
+    return empty($this->getLocalAlias()) ? $this->getEmail() : $this->getLocalAlias().'@ury.org.uk';
   }
 
   /**
@@ -388,6 +422,13 @@ class User extends ServiceAPI {
    */
   public function getPhone() {
     return $this->phone;
+  }
+  
+  /**
+   * Gets every year the member has paid
+   */
+  public function getAllPayments() {
+    return $this->payments;
   }
 
   /**
@@ -428,6 +469,20 @@ class User extends ServiceAPI {
    */
   public function getAccountLocked() {
     return $this->account_locked;
+  }
+  
+  /**
+   * Get all the User's past, present and future officerships
+   */
+  public function getOfficerships() {
+    return $this->officerships;
+  }
+  
+  /**
+   * Get all the User's training events
+   */
+  public function getTraining() {
+    return $this->training;
   }
 
   /**

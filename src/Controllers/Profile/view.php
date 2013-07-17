@@ -10,8 +10,32 @@
  * @package MyURY_Profile
  */
 // Set if trying to view another member's profile page
-if (isset($_GET['memberid'])) {
-  $getUserId = $_GET['memberid'];
+$user = User::getInstance(empty($_REQUEST['memberid']) ? -1 : $_REQUEST['memberid']);
+
+//Add global user data
+$userData = array(
+    'fname' => $user->getFName(),
+    'sname' => $user->getSName(),
+    'sex' => $user->getSex(),
+    'college' => $user->getCollege(),
+    'officerships' => $user->getOfficerships(),
+    'training' => $user->getTraining(),
+    'photo' => $user->getProfilePhoto()->getURL()
+);
+
+if ($user->isOfficer()) {
+  $userData['phone'] = $user->getPhone();
+  $userData['email'] = $user->getPublicEmail();
+}
+
+if (User::getInstance()->hasAuth(AUTH_VIEWALLMEMBERS)) {
+  $userData['email'] = $user->getEmail();
+  $userData['eduroam'] = $user->getEduroam();
+  $userData['local_alias'] = $user->getLocalAlias();
+  $userData['local_name'] = $user->getLocalName();
+  $userData['account_locked'] = $user->getAccountLocked();
+  $userData['last_login'] = $user->getLastLogin();
+  $userData['payment'] = $user->getAllPayments();
 }
 
 // If trying to view another member, and has permissions to, then load that member
@@ -22,13 +46,6 @@ if (isset($getUserId) && $member->hasAuth(AUTH_VIEWOTHERMEMBERS)) {
 else if (isset($getUserId) && !$member->hasAuth(AUTH_VIEWOTHERMEMBERS)) {
   require 'Controllers/Errors/403.php';
 }
-// Or just load their own profile
-else {
-  $user = User::getInstance();
-}
-
-// Get the selected users data
-$userData = $user->getData();
 
 foreach ($userData['training'] as $k => $v) {
   $userData['training'][$k]['confirmedbyurl'] = CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['confirmedby']));
@@ -37,5 +54,4 @@ foreach ($userData['training'] as $k => $v) {
 CoreUtils::getTemplateObject()->setTemplate('Profile/user.twig')
         ->addVariable('title', 'View Profile')
         ->addVariable('user', $userData)
-        // @todo User.php class needs more to give twig more.
         ->render();

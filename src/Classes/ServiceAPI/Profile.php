@@ -9,6 +9,7 @@
  *
  * @author Andy Durant <aj@ury.org.uk>
  * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @todo Merge into User?
  * @package MyURY_Profile
  * @version 20130516
  * @uses \Database
