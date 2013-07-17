@@ -844,9 +844,9 @@ join in. We've also got a live event straight after so you can see us in action!
 
 <p>For more information about these, and everything else we do, you can:
 <ul>
-  <li><a href="https://www.facebook.com/groups/ury1350/">join the URY Members Facebook Group,</a></li>
-  <li><a href="https://www.facebook.com/URY1350">like our Facebook Page,</a></li>
-  <li><a href="https://twitter.com/ury1350">or follow us on Twitter</a></li>
+  <li>join the <a href="https://www.facebook.com/groups/ury1350/">URY Members</a> Facebook group,</li>
+  <li>like our <a href="https://www.facebook.com/URY1350">Facebook page</a>,</li>
+  <li>or <a href="https://twitter.com/ury1350">Follow @ury1350</a> on Twitter</li>
 </ul>
 
 <p>Finally, URY has a lot of <a href="https://ury.org.uk/myury/">online resources</a> that are useful for all sorts of things, so you'll need your login details:</p>
