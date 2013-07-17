@@ -842,6 +842,13 @@ join in. We've also got a live event straight after so you can see us in action!
 
 <p>We'll also be giving away free entry, queue jumps and a bottle of champagne for up to 10 people for Kuda on Tuesday and Tokyo on Thursday in our Warm Up shows.</p>
 
+<p>For more information about these, and everything else we do, you can:
+<ul>
+  <li><a href="https://www.facebook.com/groups/ury1350/">join the URY Members Facebook Group,</a></li>
+  <li><a href="https://www.facebook.com/URY1350">like our Facebook Page,</a></li>
+  <li><a href="https://twitter.com/ury1350">or follow us on Twitter</a></li>
+</ul>
+
 <p>Finally, URY has a lot of <a href="https://ury.org.uk/myury/">online resources</a> that are useful for all sorts of things, so you'll need your login details:</p>
 <p>Username: $uname<br>
 Password: $plain_pass</p>

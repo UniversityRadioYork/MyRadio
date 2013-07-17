@@ -99,7 +99,7 @@ class MyURY_Track extends ServiceAPI {
    */
   private function __construct($trackid) {
 
-    $this->trackid = (int)$trackid;
+    $this->trackid = (int) $trackid;
     $result = self::$db->fetch_one('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', array($this->trackid));
     if (empty($result)) {
       throw new MyURYException('The specified Track does not seem to exist');
@@ -567,7 +567,7 @@ class MyURY_Track extends ServiceAPI {
   }
 
   public function setAlbum(MyURY_Album $album) {
-//Move the file
+    //Move the file
     foreach (Config::$music_central_db_exts as $ext) {
       if (!file_exists($this->getPath($ext)))
         continue;
@@ -580,7 +580,7 @@ class MyURY_Track extends ServiceAPI {
     $this->album = $album;
     self::$db->query('UPDATE rec_track SET recordid=$1 WHERE trackid=$2', array($album->getID(), $this->getID()));
 
-//Delete the old files
+    //Delete the old files
     foreach (Config::$music_central_db_exts as $ext) {
       unlink($this->getPath($ext));
     }
