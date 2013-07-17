@@ -722,10 +722,10 @@ class User extends ServiceAPI {
   public static function create($params) {
     CoreUtils::requirePermission(AUTH_ADDMEMBER);
     //Validate input
-    if (!empty($params['collegeid']) && !is_numeric($params['collegeid'])) {
-      throw new MyURYException('Invalid College ID!', 400);
-    } elseif (empty($params['collegeid'])) {
+    if (empty($params['collegeid'])) {
       $params['collegeid'] = Config::$default_college;
+    } elseif (!is_numeric($params['collegeid'])) {
+      throw new MyURYException('Invalid College ID!', 400);
     }
     
     if (empty($params['eduroam']) && empty($params['email'])) {
