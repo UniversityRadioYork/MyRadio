@@ -6,4 +6,4 @@
  * @version 20130717
  * @package MyURY_Profile
  */
-User::getQuickAddFormForm()->render();
+User::getQuickAddForm()->render();
