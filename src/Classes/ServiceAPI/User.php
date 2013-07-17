@@ -373,6 +373,7 @@ class User extends ServiceAPI {
       return MyURY_Photo::getInstance($this->profile_photo);
     } else {
       return null;
+    }
   }
 
   /**
