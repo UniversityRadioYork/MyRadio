@@ -723,13 +723,13 @@ class User extends ServiceAPI {
     CoreUtils::requirePermission(AUTH_ADDMEMBER);
     //Validate input
     if (!empty($params['collegeid']) && !is_numeric($params['collegeid'])) {
-      throw new MyURYException('Invalid College ID!', 500);
-    } else {
+      throw new MyURYException('Invalid College ID!', 400);
+    } elseif (empty($params['collegeid'])) {
       $params['collegeid'] = Config::$default_college;
     }
     
     if (empty($params['eduroam']) && empty($params['email'])) {
-      throw new MyURYException('At least one of eduroam or email must be provided.', 500);
+      throw new MyURYException('At least one of eduroam or email must be provided.', 400);
     } elseif (empty($params['email'])) {
       $params['email'] = null;
     } elseif (empty($params['eduroam'])) {
@@ -737,7 +737,7 @@ class User extends ServiceAPI {
     }
     
     if (empty($params['fname'])) {
-      throw new MyURYException('User must have a first name!');
+      throw new MyURYException('User must have a first name!', 400);
     }
     
     if (empty($params['phone'])) {
@@ -751,15 +751,15 @@ class User extends ServiceAPI {
     if (empty($params['sex'])) {
       throw new MyURYException('User must have a gender!');
     } elseif ($params['sex'] !== 'm' && $params['sex'] !== 'f' && $params['sex'] !== 'o') {
-      throw new MyURYException('User gender must be m, f or o!');
+      throw new MyURYException('User gender must be m, f or o!', 400);
     }
     
     if (empty($params['sname'])) {
-      throw new MyURYException('User must have a last name!');
+      throw new MyURYException('User must have a last name!', 400);
     }
     
     if (!empty($params['paid']) && !is_numeric($params['paid'])) {
-      throw new MyURYException('Invalid Payment Amount!', 500);
+      throw new MyURYException('Invalid Payment Amount!', 400);
     } else {
       $params['paid'] = 0.00;
     }
