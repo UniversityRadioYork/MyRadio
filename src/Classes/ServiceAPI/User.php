@@ -949,17 +949,16 @@ EOT;
                     array('value' => 'm', 'text' => 'Male'),
                     array('value' => 'f', 'text' => 'Female'),
                     array('value' => 'o', 'text' => 'Other')
-                ),
-                new MyURYFormField('collegeid', MyURYFormField::TYPE_SELECT, array(
-                    'required' => true,
-                    'label' => 'College',
-                    'options' => self::getColleges()
-                        )),
-                new MyURYFormField('eduroam', MyURYFormField::TYPE_TEXT, array(
-                    'required' => true,
-                    'label' => 'University Email',
-                    'explanation' => '@york.ac.uk'
-                        ))
+                ))),
+            new MyURYFormField('collegeid', MyURYFormField::TYPE_SELECT, array(
+                'required' => true,
+                'label' => 'College',
+                'options' => self::getColleges()
+                    )),
+            new MyURYFormField('eduroam', MyURYFormField::TYPE_TEXT, array(
+                'required' => true,
+                'label' => 'University Email',
+                'explanation' => '@york.ac.uk'
                     ))
         )
     )));
