@@ -371,7 +371,7 @@ class User extends ServiceAPI {
   public function getProfilePhoto() {
     if (!empty($this->profile_photo)) {
       return MyURY_Photo::getInstance($this->profile_photo);
-    } else P
+    } else {
       return null;
   }
 
