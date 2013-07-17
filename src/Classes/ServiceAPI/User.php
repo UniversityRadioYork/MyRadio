@@ -8,7 +8,7 @@
  * The user object provides and stores information about a user
  * It is not a singleton for Impersonate purposes
  * 
- * @version 20130715
+ * @version 20130716
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
  * @uses \Database
@@ -328,11 +328,20 @@ class User extends ServiceAPI {
   }
   
   /**
-   * Returns the User's email address
+   * Returns the User's email address. If the email address is null, it is assumed their eduroam address is the
+   * preferred contact method.
    * @return string The User's email 
    */
   public function getEmail() {
-    return $this->email;
+    return empty($this->email) ? $this->getEduroam() : $this->email;
+  }
+  
+  /**
+   * Returns the User's eduroam ID, i.e. their @york.ac.uk email address.
+   * @return String
+   */
+  public function getEduroam() {
+    return $this->eduroam;
   }
   
   /**
@@ -529,6 +538,11 @@ class User extends ServiceAPI {
     return $events;
   }
   
+  /**
+   * Searched for the user with the given email address, returning the User if they exist, or null if it fails.
+   * @param String $email
+   * @return null|User
+   */
   public static function findByEmail($email) {
     self::wakeup();
     
@@ -686,5 +700,148 @@ class User extends ServiceAPI {
   
   public static function getColleges() {
     return self::$db->fetch_all('SELECT collegeid AS value, descr AS text FROM public.l_college');
+  }
+  
+  /**
+   * Create a new User, returning the user.
+   * 
+   * At least one of Email OR eduroam must be filled in. Password will be generated
+   * automatically and emailed to the user.
+   * 
+   * @param array $params As follows:
+   * collegeid: Optional. College ID of the member. Default 10 (Unknown).
+   * eduroam: Optional. User's @york.ac.uk email address, if they have one.
+   * email: Optional. The User's email address. If not set, eduroam is used.
+   * fname: Required. The User's first name.
+   * phone: Optional. The User's phone number.
+   * receive_email: Optional. Default true. Whether or not the user will receive emails
+   * sex: Required. 'm' Male, 'f' Female or 'o' Other.
+   * sname: Required. The User's last name.
+   * paid: Optional. How much the user has paid for the current membership year. Default 0.00.
+   */
+  public static function create($params) {
+    CoreUtils::requirePermission(AUTH_ADDMEMBER);
+    //Validate input
+    if (!empty($params['collegeid']) && !is_numeric($params['collegeid'])) {
+      throw new MyURYException('Invalid College ID!', 500);
+    } else {
+      $params['collegeid'] = Config::$default_college;
+    }
+    
+    if (empty($params['eduroam']) && empty($params['email'])) {
+      throw new MyURYException('At least one of eduroam or email must be provided.', 500);
+    } elseif (empty($params['email'])) {
+      $params['email'] = null;
+    } elseif (empty($params['eduroam'])) {
+      $params['eduroam'] = null;
+    }
+    
+    if (empty($params['fname'])) {
+      throw new MyURYException('User must have a first name!');
+    }
+    
+    if (empty($params['phone'])) {
+      $params['phone'] = null;
+    }
+    
+    if (empty($params['receive_email'])) {
+      $params['receive_email'] = true;
+    }
+    
+    if (empty($params['sex'])) {
+      throw new MyURYException('User must have a gender!');
+    } elseif ($params['sex'] !== 'm' && $params['sex'] !== 'f' && $params['sex'] !== 'o') {
+      throw new MyURYException('User gender must be m, f or o!');
+    }
+    
+    if (empty($params['sname'])) {
+      throw new MyURYException('User must have a last name!');
+    }
+    
+    if (!empty($params['paid']) && !is_numeric($params['paid'])) {
+      throw new MyURYException('Invalid Payment Amount!', 500);
+    } else {
+      $params['paid'] = 0.00;
+    }
+    
+    //Check if it looks like the user might already exist
+    if (User::findByEmail($params['eduroam']) !== null or User::findByEmail($params['email']) !== null) {
+      throw new MyURYException('This user already appears to exist. Their eduroam or email is already used.');
+    }
+    
+    //Looks good. Generate a password for them. This is done by Shibbobleh.
+    $plain_pass = Shibbobleh_Utils::newPassword();
+    $encrypted_pass = Shibbobleh_Utils::encrypt($plain_pass);
+    
+    //Actually create the member!
+    $r = self::$db->fetch_column('INSERT INTO public.member
+      (fname, sname, sex, college, phone, email, receive_email, password, eduroam, require_password_change)
+      VALUES
+      ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid', array(
+          $params['fname'],
+          $params['sname'],
+          $params['sex'],
+          $params['collegeid'],
+          $params['phone'],
+          $params['email'],
+          $params['receive_email'],
+          $encrypted_pass,
+          $params['eduroam'],
+          true
+      ));
+    
+    $memberid = $r[0];
+    //Activate the member's account for the current academic year
+    Shibbobleh_Utils::activateMemberThisYear($memberid, $params['paid']);
+    
+    //Send a welcome email (this will not send if receive_email is not enabled!)
+    /**
+     * @todo Make this easier to change
+     */
+    $uname = empty($params['eduroam']) ? $params['email'] : str_replace('@york.ac.uk','',$params['eduroam']);
+    $welcome_email = <<<EOT
+<p>Hi $fname!</p>
+
+<p>Thanks for showing an interest in URY, your official student radio station.</p>
+
+<p>My name's Lloyd, and I'm the Head of Training here. It's my job to make it as easy as possible to get on the air or
+join any of our other teams.</p>
+
+<p>Coming up in Week 2 we have two Get Involved sessions where we tell you about all the things we do and how you can
+join in. We've also got a live event straight after so you can see us in action!</p>
+
+<ul>
+  <li>7pm Tuesday Week 2 (8th October), RCH/037 (Heslington East), followed by a live panel show broadcast in The Glasshouse.</li>
+  <li>7pm Thursday Week 2 (10th October), V/045 (Vanbrugh College), followed by a live session show broadcast in The Courtyard.</li>
+</ul>
+
+<p>We'll also be giving away free entry, queue jumps and a bottle of champagne for up to 10 people for Kuda on Tuesday and Tokyo on Thursday in our Warm Up shows.</p>
+
+<p>Finally, URY has a lot of <a href="https://ury.org.uk/myury/">online resources</a> that are useful for all sorts of things, so you'll need your login details:</p>
+<p>Username: $uname<br>
+Password: $plain_pass</p>
+
+<p>If you have any questions, feel free to ask by emails <a href="mailto:training@ury.org.uk">training@ury.org.uk</a>.</p>
+
+Hope to see you soon.
+<br><br>
+--<br>
+Lloyd Wallis<br>
+Head of Training<br>
+<br>
+University Radio York 1350AM<br>
+Silver Best Student Radio Station 2012<br>
+---------------------------------------------<br>
+07968011154 <a href="mailto:lloyd.wallis@ury.org.uk">lloyd.wallis@ury.org.uk</a><br>
+---------------------------------------------<br>
+On Air | Online | On Demand<br>
+<a href="http://ury.org.uk/">ury.org.uk</a>
+EOT;
+    
+    //Send the email
+    MyURYEmail::create(User::getInstance($memberid), 'Welcome to URY - Getting Involved and Your Account',
+            $welcome_email, User::getInstance(7449));
+    
+    return true;
   }
 }

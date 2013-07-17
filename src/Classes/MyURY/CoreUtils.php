@@ -223,11 +223,12 @@ class CoreUtils {
   }
 
   /**
-   * Checks if the user has the given permission
+   * Checks if the user has the given permission. Or, alternatiely, if we are currently running CLI, reutrns true.
    * @param int $permission A permission constant to check
    * @return void Will Fatal error if the user does not have the permission
    */
   public static function requirePermission($permission) {
+    if (php_sapi_name() === 'cli') return true; //Non-interactive version has God Rights.
     if (!self::hasPermission($permission)) {
       //Load the 403 controller and exit
       require 'Controllers/Errors/403.php';
@@ -584,4 +585,26 @@ class CoreUtils {
       VALUES ($1, $2, $3)', array($host, $errors, $exceptions));
   }
 
+  /**
+   * Ring YUSU's API and ask how it's doing
+   * 
+   * Currently, ListMembers is the only function available. Dan Bishop has plans for more at a later date.
+   * 
+   * @return Array JSON Response, forced to assoc array
+   */
+  public static function callYUSU($function = 'ListMembers') {
+    return json_decode(file_get_contents('https://www.yusu.org/api/api.php?apikey='.Config::$yusu_api_key.'&function='.$function), true);
+    /**
+     * @todo php5-curl not installed, pkg broken (20130716)
+     */
+    $ch = curl_init();
+	$timeout = 5;
+	curl_setopt($ch, CURLOPT_URL, 'https://www.yusu.org/api/api.php?apikey='.Config::$yusu_api_key.'&function='.$function);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+    curl_setopt($ch,CURLOPT_USERAGENT,'Mozilla/5.0 (Unix; en-GB) MyURY/2013.07.16 (cURL)');
+	$data = curl_exec($ch);
+	curl_close($ch);
+	return json_decode($data, true);
+  }
 }
