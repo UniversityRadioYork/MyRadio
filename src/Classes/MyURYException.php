@@ -28,6 +28,12 @@ class MyURYException extends RuntimeException {
     self::$count++;
     //Set up the Exception
     parent::__construct($message, $code, $previous);
+    $error = "<p>MyURY has encountered a problem processing this request.</p>
+            <table class='errortable' style='color:#633'>
+              <tr><td>Message</td><td>{$this->getMessage()}</td></tr>
+              <tr><td>Location</td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
+              <tr><td>Trace</td><td>" . nl2br($this->getTraceAsString()) . "</td></tr>
+            </table>";
     if (class_exists('Config')) {
       //Configuration is available, use this to decide what to do
       if (Config::$display_errors or (class_exists('CoreUtils') &&
@@ -46,12 +52,6 @@ class MyURYException extends RuntimeException {
         } else {
           //Output to the browser
           header('HTTP/1.1 ' . $code . ' Internal Server Error');
-          $error = "<p>MyURY has encountered a problem processing this request.</p>
-            <table class='errortable' style='color:#633'>
-              <tr><td>Message</td><td>{$this->getMessage()}</td></tr>
-              <tr><td>Location</td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
-              <tr><td>Trace</td><td>" . nl2br($this->getTraceAsString()) . "</td></tr>
-            </table>";
 
           if (class_exists('CoreUtils') && !headers_sent()) {
             //We can use a pretty full-page output
@@ -70,7 +70,7 @@ class MyURYException extends RuntimeException {
       }
       if (Config::$email_exceptions && class_exists('MyURYEmail')) {
         MyURYEmail::sendEmailToComputing('[MyURY] Exception Thrown',
-                $code."\r\n".$message."\r\n".(isset($_SESSION) ? print_r($_SESSION,true) : '')."\r\n".print_r($_REQUEST,true));
+                $error."\r\n".$message."\r\n".(isset($_SESSION) ? print_r($_SESSION,true) : '')."\r\n".print_r($_REQUEST,true));
       }
     }
     if ($code === self::FATAL) {
