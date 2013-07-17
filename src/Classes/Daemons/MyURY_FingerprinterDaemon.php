@@ -1,7 +1,7 @@
 <?php
 
 class MyURY_FingerprinterDaemon {
-  public static function isEnabled() { return true; }
+  public static function isEnabled() { return false; }
   
   public static function run() {
     //Get 5 unverified tracks
