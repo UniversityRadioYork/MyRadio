@@ -114,7 +114,7 @@ class MyURYFormField {
    * The Custom Options property for this MyURYFormField type is an Array of items in the select list, each defined as
    * follows:
    * 
-   * value: The value of the select option. This MUST be an integer.
+   * value: The value of the select option.
    * 
    * disabled: If true, this option cannot be selected (default false)
    * 
@@ -127,7 +127,7 @@ class MyURYFormField {
    * The Custom Options property for this MyURYFormField type is an Array of items in the Radio list, each defined as
    * follows:
    * 
-   * value: The value of the radio option. This MUSt be an integer.
+   * value: The value of the radio option.
    * 
    * disabled: If true, this option cannot be selected (default false)
    * 
@@ -465,11 +465,17 @@ class MyURYFormField {
         //Deal with Arrays for repeated elements
         if (is_array($_REQUEST[$name])) {
           for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
-            $_REQUEST[$name][$i] = (int)$_REQUEST[$name][$i];
+            if (is_numeric($_REQUEST[$name][$i])) {
+              $_REQUEST[$name][$i] = (int)$_REQUEST[$name][$i];
+            }
           }
           return $_REQUEST[$name];
         } else {
-          return (int)$_REQUEST[$name];
+          if (is_numeric($_REQUEST[$name][$i])) {
+            return (int)$_REQUEST[$name];
+          } else {
+            return $_REQUEST[$name];
+          }
         }
         break;
       case self::TYPE_DATE:
