@@ -30,7 +30,8 @@ class MyURYException extends RuntimeException {
     parent::__construct($message, $code, $previous);
     if (class_exists('Config')) {
       //Configuration is available, use this to decide what to do
-      if (Config::$display_errors or (class_exists('CoreUtils') && CoreUtils::hasPermission(AUTH_SHOWERRORS))) {
+      if (Config::$display_errors or (class_exists('CoreUtils') &&
+              defined(AUTH_SHOWERRORS) && CoreUtils::hasPermission(AUTH_SHOWERRORS))) {
         if ((isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
                 or empty($_SERVER['REMOTE_ADDR'])) {
           //This is an Ajax/CLI request. Return JSON
