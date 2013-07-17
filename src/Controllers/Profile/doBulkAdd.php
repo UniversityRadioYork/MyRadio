@@ -6,7 +6,7 @@
  * @version 20130717
  * @package MyURY_Profile
  */
-$data = User::getQuickAddForm()->readValues();
+$data = User::getBulkAddForm()->readValues();
 $template = CoreUtils::getTemplateObject();
 
 for ($i = 0; $i < sizeof($data['bulkaddrepeater']['fname']); $i++) {
@@ -18,4 +18,4 @@ for ($i = 0; $i < sizeof($data['bulkaddrepeater']['fname']); $i++) {
   $template->addInfo('Added Member with ID '.$user->getID());
 }
 
-$template->setTemplate('text.twig')->render();
+$template->setTemplate('MyURY/text.twig')->render();
