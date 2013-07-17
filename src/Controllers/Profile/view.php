@@ -11,7 +11,7 @@
  */
 // Set if trying to view another member's profile page
 $user = User::getInstance(empty($_REQUEST['memberid']) ? -1 : $_REQUEST['memberid']);
-echo nl2br(print_r($user,true));
+
 //Add global user data
 $userData = array(
     'fname' => $user->getFName(),
