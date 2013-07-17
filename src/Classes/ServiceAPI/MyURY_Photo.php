@@ -45,7 +45,7 @@ class MyURY_Photo extends ServiceAPI {
   private function __construct($photoid) {
     $this->photoid = $photoid;
 
-    $result = self::$db->fetch_one('SELECT * FROM myury.photo WHERE photoid=$1', array($photoid));
+    $result = self::$db->fetch_one('SELECT * FROM myury.photos WHERE photoid=$1', array($photoid));
     if (empty($result)) {
       throw new MyURYException('Photo ' . $photoid . ' does not exist!');
       return null;
