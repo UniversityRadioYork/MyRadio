@@ -20,7 +20,7 @@ $userData = array(
     'college' => $user->getCollege(),
     'officerships' => $user->getOfficerships(),
     'training' => $user->getTraining(),
-    'photo' => $user->getProfilePhoto() === null ? null : $user->getProfilePhoto()->getURL()
+    'photo' => $user->getProfilePhoto() === null ? Config::$default_person_uri : $user->getProfilePhoto()->getURL()
 );
 
 if ($user->isOfficer()) {
