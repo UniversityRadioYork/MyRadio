@@ -843,6 +843,6 @@ EOT;
     MyURYEmail::create(User::getInstance($memberid), 'Welcome to URY - Getting Involved and Your Account',
             $welcome_email, User::getInstance(7449));
     
-    return true;
+    return User::getInstance($memberid);
   }
 }
