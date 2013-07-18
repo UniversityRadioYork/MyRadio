@@ -116,14 +116,14 @@ class MyURYError {
     $lockfile = fopen(Config::$log_file_lock, 'a+');
     if (!$lockfile) {
       error_log('FAIL: fopen failed in ' . __FUNCTION__ . ' in ' . __FILE__ . '');
-      error_log(__FUNCTION__ . ' failed! Check server logs!', 1, Config::$error_report_email);
+      error_log(__FUNCTION__ . ' failed! Check server logs!');
       echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
       die();
     }
     $locked = flock($lockfile, LOCK_EX);
     if (!$locked) {
       error_log('FAIL: flock failed in ' . __FUNCTION__ . ' in ' . __FILE__ . '');
-      error_log(__FUNCTION__ . ' failed! Check server logs!', 1, Config::$error_report_email);
+      error_log(__FUNCTION__ . ' failed! Check server logs!');
       echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
       die();
     }
@@ -160,7 +160,7 @@ class MyURYError {
                   'from the last alert date in ' . __FUNCTION__ . ' in ' .
                   __FILE__ . '.');
           $e = new Exception();
-          error_log(__FUNCTION__ . ' failed! Check server logs!' . "\r\n" . $e->getTraceAsString(), 1, Config::$error_report_email);
+          error_log(__FUNCTION__ . ' failed! Check server logs!' . "\r\n" . $e->getTraceAsString());
           echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
           die();
         }
@@ -207,7 +207,7 @@ class MyURYError {
     if (flock($lockfile, LOCK_UN) == false ||
             fclose($lockfile) == false) {
       error_log('FAIL: flock or fclose failed in ' . __FUNCTION__ . ' in ' . __FILE__);
-      error_log(__FUNCTION__ . ' failed! Check server logs!', 1, Config::$error_report_email);
+      error_log(__FUNCTION__ . ' failed! Check server logs!');
       echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
       die();
     }
@@ -240,7 +240,7 @@ class MyURYError {
           // Good chance that if the mail command failed,
           // then error_log will also fail to send mail,
           // but we have to try.
-          error_log(__FUNCTION__ . ' failed! Check server logs!', 1, Config::$error_report_email);
+          error_log(__FUNCTION__ . ' failed! Check server logs!');
           echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
           die();
         }
