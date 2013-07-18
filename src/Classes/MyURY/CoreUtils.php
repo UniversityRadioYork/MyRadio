@@ -612,13 +612,13 @@ class CoreUtils {
     if ($since === null) $since = time()-86400;
     $result = Database::getInstance()->fetch_all('SELECT
       round(extract(\'epoch\' from timestamp) / 300) * 300 as timestamp,
-      SUM(error_count)/COUNT(error_count) AS errors, SUM(exception_count)/COUNT(exception_count) AS exceptions
+      SUM(error_count)/(COUNT(error_count)/100) AS errors, SUM(exception_count)/(COUNT(exception_count)/100) AS exceptions
       FROM myury.error_rate WHERE timestamp>=$1 GROUP BY round(extract(\'epoch\' from timestamp) / 300)
       ORDER BY timestamp ASC',
             array(self::getTimestamp($since)));
     
     $return = array();
-    $return[] = array('Timestamp', 'Errors', 'Exceptions');
+    $return[] = array('Timestamp', 'Errors per 100 Requests', 'Exceptions per 100 Requests');
     foreach ($result as $row) {
       $return[] = array(date('d/m H:i', $row['timestamp']), (int)$row['errors'], (int)$row['exceptions']);
     }
