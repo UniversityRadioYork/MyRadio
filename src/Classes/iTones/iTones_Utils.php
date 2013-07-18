@@ -45,6 +45,9 @@ class iTones_Utils extends ServiceAPI {
       if (is_numeric($item)) {
         $tid = preg_replace('/^.*\"'.str_replace('/','\\/', Config::$music_central_db_path)
                 .'\/records\/[0-9]+\/([0-9]+)\.mp3.*$/is', '$1', self::telnetOp('request.trace '.$item));
+        //Don't include items that are set to ignore
+        if (stristr(self::telnetOp('request.metadata '.$item), 'skip=true') !== false) continue;
+        //Push the item
         $items[] = array('requestid' => (int)$item, 'trackid' => (int)$tid, 'queue' => $queue);
       }
     }
@@ -59,7 +62,7 @@ class iTones_Utils extends ServiceAPI {
     foreach (self::$queues as $queue) {
       $r = self::getTracksInQueue($queue);
       foreach ($r as $req) {
-        if ($req['trackid'] === $track->getID()) return true;
+        if ((int)$req['trackid'] === (int)$track->getID()) return true;
       }
     }
     return false;
@@ -83,6 +86,7 @@ class iTones_Utils extends ServiceAPI {
     foreach ($tracks as $track) {
       if (in_array($track['trackid'], $found)) {
         self::removeRequestFromQueue($track['queue'], $track['requestid']);
+        echo $track['requestid']."\n";
         $removed++;
       } else {
         $found[] = $track['trackid'];

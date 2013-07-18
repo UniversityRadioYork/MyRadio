@@ -6,8 +6,8 @@
  * @todo proper documentation
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 28072012
+ * @version 20130718
  * @package MyURY_Core
  */
-MyURYNews::markNewsAsRead((int)$_REQUEST['newsentryid'], $member);
+MyURYNews::markNewsAsRead((int)$_REQUEST['newsentryid'], User::getInstance());
 require 'Views/MyURY/nocontent.php';

@@ -29,15 +29,23 @@ do {
   $i = 10^(5-$current_queue_length);
   do {
     $tracks = null;
+    //Pick a playlist at random, until we find one that actually has tracks
     while (empty($tracks)) {
       $playlist = iTones_Playlist::getPlaylistFromWeights();
       $tracks = $playlist->getTracks();
     }
+    //Pick a track at random from the playlist
     $track = $tracks[array_rand($tracks)];
-  } while ((MyURY_TracklistItem::getIfPlayedRecently($track) or iTones_Utils::getIfQueued($track)) && --$i > 0);
+ 
+  //If this track has been played recently or is currently queued, we can't play it. Try again.
+  } while ((MyURY_TracklistItem::getIfPlayedRecently($track) or iTones_Utils::getIfQueued($track)
+          or !MyURY_TracklistItem::getIfAlbumArtistCompliant($track)) && --$i > 0);
 
+  //Actually send the telnet request
   if (!iTones_Utils::requestTrack($track, 'main')) throw new MyURYException('Track Request Failed!');
   $current_queue_length++;
+
+//If the queue length is less than 3, then run again to pad it out some more.
 } while ($current_queue_length < 3);
 
 exit(0);

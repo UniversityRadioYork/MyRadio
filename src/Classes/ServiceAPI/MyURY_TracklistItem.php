@@ -9,7 +9,7 @@
  * The Tracklist Item class provides information about URY's track playing
  * history.
  * 
- * @version 20130713
+ * @version 20130718
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Tracklist
  * @uses \Database
@@ -253,5 +253,22 @@ class MyURY_TracklistItem extends ServiceAPI {
       WHERE timestart >= $1 AND trackid = $2', array(CoreUtils::getTimestamp(time()-$time), $track->getID()));
     
     return sizeof($result) !== 0;
+  }
+  
+  /**
+   * Check whether playing the given Track right now would be a breach of our PPL Licence.
+   * The PPL Licence states that a maximum of two songs from an artist or album in a two hour period may be broadcast.
+   * Anymore is a breach of this licence so we should really stop doing it.
+   * @param MyURY_Track $track
+   */
+  public static function getIfAlbumArtistCompliant(MyURY_Track $track) {
+    $timeout = CoreUtils::getTimestamp(time() - (3600 * 2)); //Two hours ago
+    
+    $result = self::$db->fetch_column('SELECT COUNT(*) FROM tracklist.tracklist
+      LEFT JOIN tracklist.track_rec USING (audiologid) LEFT JOIN public.rec_track USING (trackid)
+      WHERE (rec_track.recordid=$1 OR rec_track.artist=$2)
+      AND timestart >= $3', array($track->getAlbum()->getID(), $track->getArtist(), $timeout));
+    
+    return ($result[0] < 2);
   }
 }
