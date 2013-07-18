@@ -97,7 +97,7 @@ class MyURY_Track extends ServiceAPI {
    * @todo Genre class
    * @todo Artist normalisation
    */
-  private function __construct($trackid) {
+  protected function __construct($trackid) {
 
     $this->trackid = (int) $trackid;
     $result = self::$db->fetch_one('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', array($this->trackid));
