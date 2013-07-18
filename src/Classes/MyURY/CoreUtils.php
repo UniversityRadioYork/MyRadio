@@ -612,7 +612,7 @@ class CoreUtils {
     $result = Database::getInstance()->fetch_all('SELECT
       round(extract(\'epoch\' from timestamp) / 300) * 300 as timestamp,
       SUM(error_count) AS errors, SUM(exception_count) AS exceptions
-      FROM myury.error_rate WHERE timestamp>=NOW() - INTERVAL $1 GROUP BY round(extract(\'epoch\' from timestamp) / 300)',
+      FROM myury.error_rate WHERE timestamp>=NOW() - INTERVAL \'$1\' GROUP BY round(extract(\'epoch\' from timestamp) / 300)',
             array($interval));
     
     $return = array();
