@@ -8,7 +8,8 @@
 /**
  * Description of MyURYNews
  *
- * @author Andy Durant <aj@ury.org.uk
+ * @author Andy Durant <aj@ury.org.uk>
+ * @version 20130718
  * @package MyURY_Core
  * @uses \CacheProvider
  * @uses \Database
@@ -51,8 +52,10 @@ class MyURYNews {
   public static function markNewsAsRead($newsentryid, User $user) {
     $db = Database::getInstance();
     
-    $db->query('INSERT INTO public.member_news_feed (newsentryid, memberid) VALUES ($1, $2)',
+    try {
+      $db->query('INSERT INTO public.member_news_feed (newsentryid, memberid) VALUES ($1, $2)',
             array($newsentryid, $user->getID()));
+    } catch (MyURYException $e) {}; //Can sometimes get duplicate key errors
   }
 }
 
