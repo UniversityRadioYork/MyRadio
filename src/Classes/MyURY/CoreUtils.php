@@ -613,8 +613,8 @@ class CoreUtils {
     if ($since === null) $since = time()-86400;
     $result = Database::getInstance()->fetch_all('SELECT
       round(extract(\'epoch\' from timestamp) / 300) * 300 as timestamp,
-      (SUM(error_count)*10)/COUNT(error_count) AS errors, (SUM(exception_count)*10)/COUNT(exception_count) AS exceptions,
-      (SUM(queries)*10)/COUNT(queries) AS queries
+      SUM(error_count)/COUNT(error_count) AS errors, (UM(exception_count)/COUNT(exception_count) AS exceptions,
+      SUM(queries)/COUNT(queries) AS queries
       FROM myury.error_rate WHERE timestamp>=$1 GROUP BY round(extract(\'epoch\' from timestamp) / 300)
       ORDER BY timestamp ASC',
             array(self::getTimestamp($since)));
@@ -622,7 +622,7 @@ class CoreUtils {
     $return = array();
     $return[] = array('Timestamp', 'Errors per request', 'Exceptions per request', 'Queries per request');
     foreach ($result as $row) {
-      $return[] = array(date('d/m H:i', $row['timestamp']), (int)$row['errors'], (int)$row['exceptions'], (int)$row['queries']);
+      $return[] = array(date('H:i', $row['timestamp']), (int)$row['errors'], (int)$row['exceptions'], (int)$row['queries']);
     }
     return $return;
   }
