@@ -608,12 +608,13 @@ class CoreUtils {
 	return json_decode($data, true);
   }
   
-  public static function getErrorStats($interval = '24 hours') {
+  public static function getErrorStats($since = null) {
+    if ($since === null) $since = time()-86400;
     $result = Database::getInstance()->fetch_all('SELECT
       round(extract(\'epoch\' from timestamp) / 300) * 300 as timestamp,
       SUM(error_count) AS errors, SUM(exception_count) AS exceptions
-      FROM myury.error_rate WHERE timestamp>=NOW() - INTERVAL \'$1\' GROUP BY round(extract(\'epoch\' from timestamp) / 300)',
-            array($interval));
+      FROM myury.error_rate WHERE timestamp>=$1 GROUP BY round(extract(\'epoch\' from timestamp) / 300)',
+            array($since));
     
     $return = array();
     $return[] = array('Timestamp', 'Errors', 'Exceptions');
