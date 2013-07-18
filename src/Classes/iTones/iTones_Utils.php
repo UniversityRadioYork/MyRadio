@@ -17,6 +17,8 @@ class iTones_Utils extends ServiceAPI {
   
   private static $telnet_handle;
   private static $queues = array('requests', 'main');
+  private static $queue_cache = array();
+  public static $ops = array();
 
   /**
    * Push a track into the iTones request queue.
@@ -38,19 +40,26 @@ class iTones_Utils extends ServiceAPI {
    */
   public static function getTracksInQueue($queue = 'requests') {
     self::verifyQueue($queue);
+    if (isset(self::$queue_cache[$queue])) return self::$queue_cache[$queue];
+    
     $info = explode(' ', self::telnetOp('jukebox_'.$queue.'.queue'));
     
     $items = array();
     foreach ($info as $item) {
       if (is_numeric($item)) {
-        $tid = preg_replace('/^.*\"'.str_replace('/','\\/', Config::$music_central_db_path)
-                .'\/records\/[0-9]+\/([0-9]+)\.mp3.*$/is', '$1', self::telnetOp('request.trace '.$item));
+        $meta = self::telnetOp('request.metadata '.$item);
         //Don't include items that are set to ignore
-        if (stristr(self::telnetOp('request.metadata '.$item), 'skip=true') !== false) continue;
-        //Push the item
-        $items[] = array('requestid' => (int)$item, 'trackid' => (int)$tid, 'queue' => $queue);
+        if (stristr($meta, 'skip="true"') === false) {
+          //Get the trackid
+          $tid = preg_replace('/^.*filename=\"'.str_replace('/','\\/', Config::$music_central_db_path)
+                .'\/records\/[0-9]+\/([0-9]+)\.mp3.*$/is', '$1', $meta);
+          //Push the item
+          $items[] = array('requestid' => (int)$item, 'trackid' => (int)$tid, 'queue' => $queue);
+        }
       }
     }
+    
+    self::$queue_cache[$queue] = $items;
     return $items;
   }
   
@@ -86,7 +95,6 @@ class iTones_Utils extends ServiceAPI {
     foreach ($tracks as $track) {
       if (in_array($track['trackid'], $found)) {
         self::removeRequestFromQueue($track['queue'], $track['requestid']);
-        echo $track['requestid']."\n";
         $removed++;
       } else {
         $found[] = $track['trackid'];
@@ -95,10 +103,17 @@ class iTones_Utils extends ServiceAPI {
     return $removed;
   }
   
+  /**
+   * "Deletes" the given request from the given queue. It marks the item as "ignore" but the rid remains in the queue.
+   * @param String $queue
+   * @param int $requestid
+   */
   private static function removeRequestFromQueue($queue, $requestid) {
     self::verifyQueue($queue);
     
     self::telnetOp('jukebox_'.$queue.'.ignore '.$requestid);
+    
+    unset(self::$queue_cache[$queue]);
   }
   
   private static function verifyQueue($queue) {
@@ -111,6 +126,7 @@ class iTones_Utils extends ServiceAPI {
    * @return String
    */
   private static function telnetOp($command) {
+    self::$ops[] = $command;
     if (empty(self::$telnet_handle)) {
       self::telnetStart();
     }

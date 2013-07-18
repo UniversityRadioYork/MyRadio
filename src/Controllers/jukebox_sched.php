@@ -50,7 +50,8 @@ do {
 
 exit(0);
 
-print_r($track);
+//Debug stuff - uncomment the exit to see timing
+print_r(iTones_Utils::$ops);
 
 echo microtime(true) - $s;
 echo "\n".Database::getInstance()->getCounter()."\n";
