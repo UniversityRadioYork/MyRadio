@@ -583,7 +583,7 @@ class CoreUtils {
     $host = gethostbyname(gethostname());
     
     Database::getInstance()->query('INSERT INTO myury.error_rate (server_ip, error_count, exception_count, queries)
-      VALUES ($1, $2, $3)', array($host, $errors, $exceptions, $queries));
+      VALUES ($1, $2, $3, $4)', array($host, $errors, $exceptions, $queries));
   }
 
   /**
