@@ -8,5 +8,5 @@
  */
 CoreUtils::getTemplateObject()->setTemplate('linegraph.twig')
         ->addVariable('title', 'MyURY Error Rates')
-        ->addVariable('data', CoreUtils::getErrorStats())
+        ->addVariable('data', json_encode(CoreUtils::getErrorStats()))
         ->render();

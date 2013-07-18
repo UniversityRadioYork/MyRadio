@@ -609,9 +609,16 @@ class CoreUtils {
   }
   
   public static function getErrorStats() {
-    return Database::getInstance()->fetch_all('SELECT
+    $result = Database::getInstance()->fetch_all('SELECT
       to_timestamp(round(extract(\'epoch\' from timestamp) / 300) * 300) as timestamp,
       SUM(error_count) AS errors, SUM(exception_count) AS exceptions
       FROM myury.error_rate WHERE timestamp>=NOW() - INTERVAL \'24 hours\' GROUP BY round(extract(\'epoch\' from timestamp) / 300)');
+    
+    $return = array();
+    $return[] = array('Timestamp', 'Errors', 'Exceptions');
+    foreach ($result as $row) {
+      $return[] = array($row['timestamp'], $row['errors'], $row['exceptions']);
+    }
+    return $return;
   }
 }
