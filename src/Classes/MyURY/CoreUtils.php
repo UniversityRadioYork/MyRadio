@@ -617,7 +617,7 @@ class CoreUtils {
     $return = array();
     $return[] = array('Timestamp', 'Errors', 'Exceptions');
     foreach ($result as $row) {
-      $return[] = array($row['timestamp'], $row['errors'], $row['exceptions']);
+      $return[] = array($row['timestamp'], (int)$row['errors'], (int)$row['exceptions']);
     }
     return $return;
   }
