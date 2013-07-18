@@ -614,7 +614,7 @@ class CoreUtils {
       round(extract(\'epoch\' from timestamp) / 300) * 300 as timestamp,
       SUM(error_count) AS errors, SUM(exception_count) AS exceptions
       FROM myury.error_rate WHERE timestamp>=$1 GROUP BY round(extract(\'epoch\' from timestamp) / 300)',
-            array($since));
+            array(self::getTimestamp($since)));
     
     $return = array();
     $return[] = array('Timestamp', 'Errors', 'Exceptions');
