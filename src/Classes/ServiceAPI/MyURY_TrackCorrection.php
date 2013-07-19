@@ -16,6 +16,14 @@
  * @todo Cache this
  */
 class MyURY_TrackCorrection extends MyURY_Track {
+  /**
+   * A "recommended" correction proposal is one that is almost certainly correct, e.g. typo
+   */
+  const LEVEL_RECOMMEND = 1;
+  /**
+   * A "suggested" correction proposal is one that is possibly correct, e.g. incorrect information
+   */
+  const LEVEL_SUGGEST = 0;
 
   /**
    * The Singleton store for TrackCorrection objects
@@ -27,29 +35,35 @@ class MyURY_TrackCorrection extends MyURY_Track {
    * The proposed title for the track
    * @var String
    */
-  private static $proposed_title;
+  private $proposed_title;
   /**
    * The proposed artist for the track
    * @var String
    */
-  private static $proposed_artist;
+  private $proposed_artist;
   /**
    * The proposed album name for the track. This is *now* a MyURY_Album - The album may not exist yet.
    * @var String
    */
-  private static $proposed_album_name;
+  private $proposed_album_name;
   
   /**
    * The ID of the Track Correction Proposal.
    * @var int
    */
-  private static $correctionid;
+  private $correctionid;
   
   /**
    * The User that has reviewed this Correction, if any.
    * @var null:User
    */
-  private static $reviewedby;
+  private $reviewedby;
+  
+  /**
+   * The recommendation level - one of the LEVEL_ constants
+   * @var int 
+   */
+  private $level;
 
   /**
    * Initiates the Track variables
@@ -57,9 +71,10 @@ class MyURY_TrackCorrection extends MyURY_Track {
    * @todo Genre class
    * @todo Artist normalisation
    */
-  private function __construct($correctionid) {
+  protected function __construct($correctionid) {
     $this->correctionid = (int) $correctionid;
-    $result = self::$db->fetch_one('SELECT * FROM public.rec_trackcorrection WHERE correctionid=$1 LIMIT 1', array($this->trackid));
+    $result = self::$db->fetch_one('SELECT * FROM public.rec_trackcorrection WHERE correctionid=$1 LIMIT 1',
+            array($this->correctionid));
     if (empty($result)) {
       throw new MyURYException('The specified TrackCorrection does not seem to exist');
       return;
@@ -71,6 +86,7 @@ class MyURY_TrackCorrection extends MyURY_Track {
     $this->proposed_artist = $result['proposed_artist'];
     $this->proposed_album_name = $result['proposed_album_name'];
     $this->reviewedby = empty($result['reviewedby']) ? null : User::getInstance($result['reviewedby']);
+    $this->level = (int)$result['level'];
   }
 
   /**
@@ -92,6 +108,38 @@ class MyURY_TrackCorrection extends MyURY_Track {
 
     return self::$corrections[$correctionid];
   }
+  
+  /**
+   * Creates a new MyURY_TrackCorrection Proposal
+   * @param MyURY_Track $track The Track to correct
+   * @param String $title The proposed Title
+   * @param String $artist The proposed Artist
+   * @param String $album_name The proposed Album
+   * @return MyURY_TrackCorrection The New Correction object
+   */
+  public static function create($track, $title = 'No Suggestion.',
+          $artist = 'No Suggestion.', $album_name = 'No Suggestion.', $level = self::LEVEL_SUGGEST) {
+    $r = self::$db->fetch_column('INSERT INTO public.rec_trackcorrection
+      (trackid, proposed_title, proposed_artist, proposed_album_name, level)
+      VALUES ($1, $2, $3, $4, $5) RETURNING correctionid',
+            array($track->getID(), $title, $artist, $album_name, $level));
+    
+    if (empty($r)) return false;
+    
+    return self::getInstance((int)$r[0]);
+  }
+  
+  public function getProposedTitle() {
+    return $this->proposed_title;
+  }
+  
+  public function getProposedArtist() {
+    return $this->proposed_artist;
+  }
+  
+  public function getProposedAlbumTitle() {
+    return $this->proposed_album_name;
+  }
 
   /**
    * Returns an array of key information, useful for Twig rendering and JSON requests
@@ -102,8 +150,12 @@ class MyURY_TrackCorrection extends MyURY_Track {
     return array(
         'title' => $this->getTitle(),
         'artist' => $this->getArtist(),
-        'album' => $this->getAlbum()->getID(),
+        'album' => $this->getAlbum()->getTitle(),
         'trackid' => $this->getID(),
+        'proposed_title' => $this->getProposedTitle(),
+        'proposed_artist' => $this->getProposedArtist(),
+        'proposed_album' => $this->getProposedAlbum(),
+        'level' => $this->getLevel(),
         'editlink' => array(
             'display' => 'icon',
             'value' => 'script',

@@ -313,6 +313,7 @@ class MyURY_Track extends ServiceAPI {
    * idsort: If true, sort by trackid
    * custom: A custom SQL WHERE clause
    * precise: If true, will only return exact matches for artist/title
+   * nocorrectionproposed: If true, will only return items with no correction proposed.
    * 
    * @todo Limit not accurate for itonesplaylistid queries
    */
@@ -353,6 +354,8 @@ class MyURY_Track extends ServiceAPI {
       $options['custom'] = null;
     if (empty($options['precise']))
       $options['precise'] = false;
+    if (empty($options['nocorrectionproposed']))
+      $options['noorrectionproposed'] = false;
 
 //Prepare paramaters
     $sql_params = array($options['title'], $options['artist'], $options['precise'] ? '' : '%');
@@ -367,6 +370,9 @@ class MyURY_Track extends ServiceAPI {
       ' . ($options['digitised'] ? ' AND digitised=\'t\'' : '') . '
       ' . ($options['lastfmverified'] === true ? ' AND lastfm_verified=\'t\'' : '')
             . ($options['lastfmverified'] === false ? ' AND lastfm_verified=\'f\'' : '')
+            . ($options['nocorrectionproposed'] === true ? ' AND trackid NOT IN (
+              SELECT trackid FROM public.rec_trackcorrection WHERE state=\'p\'
+              )' : '')
             . ($options['custom'] !== null ? ' AND ' . $options['custom'] : '')
             . ($options['random'] ? ' ORDER BY RANDOM()' : '')
             . ($options['idsort'] ? ' ORDER BY trackid' : '')
@@ -444,6 +450,8 @@ class MyURY_Track extends ServiceAPI {
       }
 
       $tracks = array();
+      if (empty($lastfm['tracks']['track'])) return array();
+      
       foreach ($lastfm['tracks']['track'] as $track) {
         $tracks[] = array('title' => $track['name'], 'artist' => $track['artist']['name'], 'rank' => $track['@attr']['rank']);
       }
@@ -673,7 +681,7 @@ class MyURY_Track extends ServiceAPI {
    *               position: The track number on the album
    *               duration: The length of the track, in seconds
    */
-  private static function getAlbumDurationAndPositionFromLastfm($title, $artist) {
+  public static function getAlbumDurationAndPositionFromLastfm($title, $artist) {
     $details = json_decode(file_get_contents(
                     'http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key='
                     . Config::$lastfm_api_key
