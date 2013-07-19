@@ -64,7 +64,7 @@ while (true) {
     try {
       $class::run();
     } catch (MyURYException $e) {}
-    if (!$once) sleep(5);
+    if (!$once) sleep(2);
   }
   
   //Every once in a while, check database connection. If it's lost, routinely try to reconnect.
