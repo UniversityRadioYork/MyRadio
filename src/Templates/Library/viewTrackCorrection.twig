@@ -1,0 +1,35 @@
+{% extends 'stripe.twig' %}
+{% block stripecontent %}
+<table>
+  <thead>
+    <tr><th>Field</th><th>Original Data</th><th>Proposed Data</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Title</td><td>{{correction.title}}</td><td>{{correction.proposed_title}}</td>
+    </tr>
+    <tr>
+      <td>Artist</td><td>{{correction.artist}}</td><td>{{correction.proposed_artist}}</td>
+    </tr>
+    <tr>
+      <td>Album</td><td>{{correction.album}}</td><td>{{correction.proposed_album}}</td>
+    </tr>
+    <tr>
+      <th>Reliability</th><th>{% if correction.state == 1 %}Recommended{% else %}Unsure{% endif %}</th>
+    </tr>
+    <tr>
+      <td>Track</td><td><audio id="trackcorrect_fpreview">You need HTML5, silly!</audio></td>
+    </tr>
+    <tr>
+      <td><a href="{{correction.confirmlink.url}}">Approve</a></td>
+      <td><a href="{{correction.rejectlink.url}}">Reject</a></td>
+      <td><a href="{{correction.editlink.url}}">Edit Manually</a></td>
+    </tr>
+  </tbody>
+</table>
+<script type="text/javascript">
+  $('#trackcorrect_fpreview').attr('src', MyURY.makeURL('NIPSWeb', 'secure_play', {
+      trackid: parseInt({{correction.trackid}})
+    }));
+</script>
+{% endblock %}
