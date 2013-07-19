@@ -4,14 +4,14 @@ abstract class MyURY_Daemon {
   public static function isEnabled() { return false; }
   public static function run() {throw new MyURYException('NO RUN METHOD FOR '.get_called_class().'!');}
   
-  protected static function getCache($key) {
-    $prov = Config::$cache_provider;
-    return $prov::getInstance()->get($key);
+  protected static function getVal($key) {
+    return json_decode(file_get_contents(Config::$daemon_lock_file), true)[$key];
   }
   
-  protected static function setCache($key, $value, $expire = null) {
-    $prov = Config::$cache_provider;
-    echo "SET $key => $value";
-    return $prov::getInstance()->set($key, $value, $expire);
+  protected static function setVal($key, $value) {
+    $data = json_decode(file_get_contents(Config::$daemon_lock_file), true);
+    $data[$key] = $value;
+    
+    file_put_contents(Config::$daemon_lock_file, json_encode($data));
   }
 }

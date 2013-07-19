@@ -7,21 +7,21 @@ class MyURY_StatsGenDaemon extends MyURY_Daemon {
   public static function run() {
     $hourkey = __CLASS__.'_last_run_hourly';
     $daykey = __CLASS__.'_last_run_daily';
-    if (self::getCache($hourkey) > time() - 3500) return;
+    if (self::getVal($hourkey) > time() - 3500) return;
     
     //Generate Training Graph
     self::generateTrainingGraph();
     
     //Do dailies?
-    if (self::getCache($daykey) <= time() - 86300) {
+    if (self::getVal($daykey) <= time() - 86300) {
       
       self::generateJukeboxReport();
       
-      self::setCache($daykey, time());
+      self::setVal($daykey, time());
     }
     
     //Done
-    self::setCache($hourkey, time());
+    self::setVal($hourkey, time());
   }
   
   private static function generateTrainingGraph() {
