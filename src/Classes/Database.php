@@ -218,5 +218,9 @@ class Database {
   public function getCounter() {
     return $this->counter;
   }
+  
+  public function resetCounter() {
+    $this->counter = 0;
+  }
 
 }

@@ -255,4 +255,8 @@ class MyURYError {
   public static function getErrorCount() {
     return self::$count;
   }
+  
+  public static function resetErrorCount() {
+    self::$count = 0;
+  }
 }
