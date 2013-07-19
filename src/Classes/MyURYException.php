@@ -100,5 +100,9 @@ class MyURYException extends RuntimeException {
   public static function getExceptionCount() {
     return self::$count;
   }
+  
+  public static function resetExceptionCount() {
+    self::$count = 0;
+  }
 
 }

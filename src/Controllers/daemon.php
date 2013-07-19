@@ -76,11 +76,18 @@ while (true) {
         //Connection has been lost for more than 15 minutes. Give up.
         MyURYEmail::sendEmailToComputing('[MyURY] Background Service Failure', "MyURY's connection to the Database Server has been lost. Attempts to reconnect for the last 15 minutes have proved futile, so the service has stopped.\r\n\Please investigate Database connectivity and restart the service one access is restored.");
       }
-      echo "FAILED!\nWill retry in 30 second intervals.";
+      echo "FAILED!\nWill retry in 30 seconds.";
       sleep(30);
     }
     echo "RECONNECTED\n";
   }
   
   if ($once) break;
+  
+  //At the end of an interation, commit a query and error count.
+  //This is both nice for statistics, and prevents an entry of several tens of thousands when the server restarts :)
+  CoreUtils::shutdown();
+  Database::getInstance()->resetCounter();
+  MyURYException::resetCounter();
+  MyURYError::resetCounter();
 }
