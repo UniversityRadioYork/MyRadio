@@ -140,6 +140,10 @@ class MyURY_TrackCorrection extends MyURY_Track {
   public function getProposedAlbumTitle() {
     return $this->proposed_album_name;
   }
+  
+  public function getLevel() {
+    return $this->level;
+  }
 
   /**
    * Returns an array of key information, useful for Twig rendering and JSON requests
