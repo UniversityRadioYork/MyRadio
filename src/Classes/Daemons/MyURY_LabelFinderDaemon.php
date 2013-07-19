@@ -18,7 +18,7 @@ class MyURY_LabelFinderDaemon {
       if (!empty($data['results'])) {
         $label = $data['results'][0]['label'][0];
         
-        echo "Recommend setting {$album['recordid']} label to {$label}.\n";
+        echo "Setting {$album['recordid']} label to {$label}.\n";
         Database::getInstance()->query('UPDATE public.rec_record SET recordlabel=$1 WHERE recordid=$2',
                 array($label, $album['recordid']));
       }
