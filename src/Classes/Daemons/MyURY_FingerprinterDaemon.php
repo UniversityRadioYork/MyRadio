@@ -1,11 +1,12 @@
 <?php
 
 class MyURY_FingerprinterDaemon {
-  public static function isEnabled() { return false; }
+  public static function isEnabled() { return true; }
   
   public static function run() {
     //Get 5 unverified tracks
-    $tracks = MyURY_Track::findByOptions(array('lastfmverified' => false, 'random' => true, 'digitised' => true), 5);
+    $tracks = MyURY_Track::findByOptions(array('lastfmverified' => false, 'random' => true, 'digitised' => true,
+        'nocorrectionproposed' => true, 'limit' => 5));
     
     foreach ($tracks as $track) {
       $info = MyURY_Track::identifyUploadedTrack($track->getPath());
@@ -15,9 +16,19 @@ class MyURY_FingerprinterDaemon {
        * 1. Is the rank high (> 0.8)?
        * 2. Does is have a short levenshtein difference from the current value (in this case just log the suggestion)
        */
-      if ($info[0]['rank'] < 0.8) {
-        echo 'Fingerprint data for '.$track->getID()." unreliable. Skipping.\n";
+      if (empty($info[0]) or $info[0]['rank'] < 0.8) {
+        echo 'Fingerprint data for '.$track->getID()." unreliable (p={$info[0]['rank']}). Skipping.\n";
         continue;
+      }
+      
+      if ($info[0]['title'] !== $track->getTitle() && levenshtein($info[0]['title'], $track->getTitle()) <= 2) {
+        echo "Minor title correction made - {$track->getTitle()} to {$info[0]['title']}\n";
+        $track->setTitle($info[0]['title']);
+      }
+      
+      if ($info[0]['artist'] !== $track->getArtist() && levenshtein($info[0]['artist'], $track->getArtist()) <= 2) {
+        echo "Minor artist correction made - {$track->getArtist()} to {$info[0]['artist']}\n";
+        $track->setArtist($info[0]['artist']);
       }
       
       if ($track->getTitle() == $info[0]['title']
@@ -28,17 +39,17 @@ class MyURY_FingerprinterDaemon {
         continue;
       }
       
-      if (levenshtein($info[0]['title'], $track->getTitle()) > 8) {
-        echo "Fingerprint data for {$track->getID()} suggests that current title {$track->getTitle()} should be {$info[0]['title']}. Significantly different, skipping.\n";
-        continue;
-      }
+      $album = MyURY_Track::getAlbumDurationAndPositionFromLastfm($info[0]['title'], $info[0]['artist'])['album']->getTitle();
       
-      if (levenshtein($info[0]['artist'], $track->getArtist()) > 5) {
-        echo "Fingerprint data for {$track->getID()} suggests that current artist {$track->getArtist()} should be {$info[0]['artist']}. Significantly different, skipping.\n";
-        continue;
+      if (levenshtein($info[0]['title'], $track->getTitle()) < 8
+              or levenshtein($info[0]['artist'], $track->getArtist()) < 5
+              or levenshtein($album, $track->getAlbum()->getTitle()) < 5) {
+        MyURY_TrackCorrection::create($track, $info[0]['title'], $info[0]['artist'], $album, MyURY_TrackCorrection::LEVEL_RECOMMEND);
+        echo "Correction recommended for {$track->getID()}.\n";
+      } else {
+        MyURY_TrackCorrection::create($track, $info[0]['title'], $info[0]['artist'], $album, MyURY_TrackCorrection::LEVEL_SUGGEST);
+        echo "Correction suggested {$track->getID()}.\n";
       }
-      
-      echo "Recommend changing {$track->getID()} from {$track->getTitle()} by {$track->getArtist()} to {$info[0]['title']} by {$info[0]['artist']}.\n";
     }
   }
 }

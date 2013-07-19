@@ -8,7 +8,7 @@
       function drawChart() {
         var data = google.visualization.arrayToDataTable({{data | raw}});
 
-        {% if options %}var options = {{options | raw}};{% endif %}
+        var options = {{options | raw}};
 
         var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
         chart.draw(data, options);
