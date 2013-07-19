@@ -6,7 +6,7 @@ class MyURY_FingerprinterDaemon extends MyURY_Daemon {
   public static function run() {
     //Get 5 unverified tracks
     $tracks = MyURY_Track::findByOptions(array('lastfmverified' => false, 'random' => true, 'digitised' => true,
-        'nocorrectionproposed' => true, 'limit' => 5));
+        'nocorrectionproposed' => true, 'limit' => 50));
     
     foreach ($tracks as $track) {
       $info = MyURY_Track::identifyUploadedTrack($track->getPath());
