@@ -18,13 +18,13 @@ class MyURY_PlaylistsDaemon extends MyURY_Daemon {
   
   public static function run() {
     $hourkey = __CLASS__.'_last_run_hourly';
-    if (self::getCache($hourkey) > time() - 3500) return;
+    if (self::getVal($hourkey) > time() - 3500) return;
     
     self::updateMostPlayedPlaylist();
     self::updateNewestUploadsPlaylist();
     
     //Done
-    self::setCache($hourkey, time());
+    self::setVal($hourkey, time());
   }
   
   private static function updateMostPlayedPlaylist() {

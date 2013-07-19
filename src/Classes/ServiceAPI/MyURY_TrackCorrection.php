@@ -9,7 +9,7 @@
  * The MyURY_TrackCorrection class provides information and utilities for dealing with detecting a major issue
  * with the track metadata by the FingerprinterDaemon.
  * 
- * @version 20130609
+ * @version 20130719
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
  * @uses \Database
@@ -154,7 +154,7 @@ class MyURY_TrackCorrection extends MyURY_Track {
         'trackid' => $this->getID(),
         'proposed_title' => $this->getProposedTitle(),
         'proposed_artist' => $this->getProposedArtist(),
-        'proposed_album' => $this->getProposedAlbum(),
+        'proposed_album' => $this->getProposedAlbumTitle(),
         'level' => $this->getLevel(),
         'editlink' => array(
             'display' => 'icon',
