@@ -144,6 +144,10 @@ class MyURY_TrackCorrection extends MyURY_Track {
   public function getLevel() {
     return $this->level;
   }
+  
+  public function getCorrectionID() {
+    return $this->correctionid;
+  }
 
   /**
    * Returns an array of key information, useful for Twig rendering and JSON requests
