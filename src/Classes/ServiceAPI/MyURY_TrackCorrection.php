@@ -129,6 +129,17 @@ class MyURY_TrackCorrection extends MyURY_Track {
     return self::getInstance((int)$r[0]);
   }
   
+  /**
+   * Get a random "Pending" track correction proposal
+   * @return MyURY_TrackCorrection
+   */
+  public static function getRandom() {
+    $result = self::$db->fetch_column('SELECT correctionid FROM public.rec_trackcorrection WHERE state=\'p\'
+      ORDER BY RAND() LIMIT 1');
+    
+    return self::getInstance($result[0]);
+  }
+  
   public function getProposedTitle() {
     return $this->proposed_title;
   }
