@@ -254,7 +254,7 @@ class MyURY_Track extends ServiceAPI {
         'title' => $this->getTitle(),
         'artist' => $this->getArtist(),
         'type' => 'central', //Tells NIPSWeb Client what this item type is
-        'album' => $this->getAlbum(),
+        'album' => $this->getAlbum()->toDataSource(),
         'trackid' => $this->getID(),
         'length' => $this->getLength(),
         'clean' => $this->clean === 'c',
