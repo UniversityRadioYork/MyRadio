@@ -11,6 +11,7 @@ abstract class MyURY_Daemon {
   
   protected static function setCache($key, $value, $expire = null) {
     $prov = Config::$cache_provider;
+    echo "SET $key => $value";
     return $prov::getInstance()->set($key, $value, $expire);
   }
 }
