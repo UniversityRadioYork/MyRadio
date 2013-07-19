@@ -88,6 +88,6 @@ while (true) {
   //This is both nice for statistics, and prevents an entry of several tens of thousands when the server restarts :)
   CoreUtils::shutdown();
   Database::getInstance()->resetCounter();
-  MyURYException::resetCounter();
-  MyURYError::resetCounter();
+  MyURYException::resetExceptionCount();
+  MyURYError::resetErrorCount();
 }
