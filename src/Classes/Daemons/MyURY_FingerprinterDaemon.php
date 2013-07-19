@@ -14,7 +14,7 @@ class MyURY_FingerprinterDaemon extends MyURY_Daemon {
       /**
        * We use two metrics to identify if the information is reliable
        * 1. Is the rank high (> 0.8)?
-       * 2. Does is have a short levenshtein difference from the current value (in this case just log the suggestion)
+       * 2. Does is have a short levenshtein difference from the current value?
        */
       if (empty($info[0]) or $info[0]['rank'] < 0.8) {
         echo 'Fingerprint data for '.$track->getID()." unreliable (p={$info[0]['rank']}). Skipping.\n";
