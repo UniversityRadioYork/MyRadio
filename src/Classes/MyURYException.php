@@ -36,6 +36,9 @@ class MyURYException extends RuntimeException {
               <tr><td>Trace</td><td>" . nl2br($this->getTraceAsString()) . "</td></tr>
             </table>";
     if (class_exists('Config')) {
+      if (Config::$email_exceptions && class_exists('MyURYEmail')) {
+        MyURYEmail::sendEmailToComputing('[MyURY] Exception Thrown', $error . "\r\n" . $message . "\r\n" . (isset($_SESSION) ? print_r($_SESSION, true) : '') . "\r\n" . print_r($_REQUEST, true));
+      }
       //Configuration is available, use this to decide what to do
       if (Config::$display_errors or (class_exists('CoreUtils') &&
               defined(AUTH_SHOWERRORS) && CoreUtils::hasPermission(AUTH_SHOWERRORS))) {
@@ -84,9 +87,6 @@ class MyURYException extends RuntimeException {
         } else {
           echo $error;
         }
-      }
-      if (Config::$email_exceptions && class_exists('MyURYEmail')) {
-        MyURYEmail::sendEmailToComputing('[MyURY] Exception Thrown', $error . "\r\n" . $message . "\r\n" . (isset($_SESSION) ? print_r($_SESSION, true) : '') . "\r\n" . print_r($_REQUEST, true));
       }
     } else {
       echo 'A fatal error has occured that has prevented MyURY from performing the action you requested. Please contact computing@ury.org.uk.';

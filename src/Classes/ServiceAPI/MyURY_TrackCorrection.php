@@ -135,7 +135,7 @@ class MyURY_TrackCorrection extends MyURY_Track {
    */
   public static function getRandom() {
     $result = self::$db->fetch_column('SELECT correctionid FROM public.rec_trackcorrection WHERE state=\'p\'
-      ORDER BY RAND() LIMIT 1');
+      ORDER BY RANDOM() LIMIT 1');
     
     return self::getInstance($result[0]);
   }
