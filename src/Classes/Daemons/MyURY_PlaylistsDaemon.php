@@ -13,7 +13,7 @@
  * @uses \Database
  * 
  */
-class MyURY_PlaylistsDaemon {
+class MyURY_PlaylistsDaemon extends MyURY_Daemon {
   public static function isEnabled() { return true; }
   
   public static function run() {
