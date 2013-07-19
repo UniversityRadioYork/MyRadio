@@ -1,6 +1,6 @@
 <?php
 
-class MyURY_FingerprinterDaemon {
+class MyURY_FingerprinterDaemon extends MyURY_Daemon {
   public static function isEnabled() { return true; }
   
   public static function run() {

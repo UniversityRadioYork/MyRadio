@@ -2,7 +2,7 @@
 
 abstract class MyURY_Daemon {
   public static function isEnabled() { return false; }
-  public abstract static function run();
+  public static function run() {throw new MyURYException('NO RUN METHOD FOR '.get_called_class().'!');}
   
   protected static function getCache($key) {
     $prov = Config::$cache_provider;
