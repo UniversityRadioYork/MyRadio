@@ -25,7 +25,6 @@
  */
 
 $log_level = 2; //0: Critical, 1: Important, 2: Run Process, 3: Info
-$bin = '/usr/local/bin/php'; //Change this to the PHP path for the local system
 function dlog($x, $level = 3) {
   if ($level == 0) {
     //Write to stderr
@@ -51,6 +50,7 @@ if (function_exists('pcntl_signal')) {
   pcntl_signal(SIGTERM, "signal_handler");
 }
 chdir(__DIR__);
+system('export PATH=$PATH:/usr/local/bin');
 
 //Okay, we're done setting up service stuff now.
 $path = '../Classes/Daemons/';
@@ -67,7 +67,7 @@ $once = in_array('--once', $argv);
 while (false !== ($file = readdir($handle))) {
   if ($file === '.' or $file === '..') continue;
   //Is the file valid PHP?
-  system($bin.' -l '.$path.$file, $result);
+  system('php -l '.$path.$file, $result);
   if ($result !== 0) {
     dlog('Not checking '.$file.' - Parse Error', 1);
   } else {
