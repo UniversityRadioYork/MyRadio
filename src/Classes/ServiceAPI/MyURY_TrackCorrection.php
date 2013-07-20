@@ -9,7 +9,7 @@
  * The MyURY_TrackCorrection class provides information and utilities for dealing with detecting a major issue
  * with the track metadata by the FingerprinterDaemon.
  * 
- * @version 20130719
+ * @version 20130720
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
  * @uses \Database
@@ -160,6 +160,20 @@ class MyURY_TrackCorrection extends MyURY_Track {
   
   public function getCorrectionID() {
     return $this->correctionid;
+  }
+  
+  public function apply() {
+    //Don't apply a "URY Downloads" album - that's worse than whatever is already there.
+    if (strstr($this->getProposedAlbumTitle(), 'URY Downloads') === false) {
+      $this->setAlbum(MyURY_Album::findOrCreate($this->getProposedAlbumTitle(), $this->getProposedArtist()));
+    }
+    $this->setArtist($this->getProposedArtist());
+    $this->setTitle($this->getProposedTitle());
+    
+    self::$db->query('UPDATE public.rec_trackcorrection SET state=\'a\' WHERE correctionid=$1',
+            array($this->getCorrectionID()));
+    $this->state = 'a';
+    return true;
   }
 
   /**
