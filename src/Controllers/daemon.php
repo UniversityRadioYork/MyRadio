@@ -66,7 +66,7 @@ $once = in_array('--once', $argv);
 while (false !== ($file = readdir($handle))) {
   if ($file === '.' or $file === '..') continue;
   //Is the file valid PHP?
-  system('php -l '.$path.$file, $result);
+  system('`which php` -l '.$path.$file, $result);
   if ($result !== 0) {
     dlog('Not checking '.$file.' - Parse Error', 1);
   } else {
