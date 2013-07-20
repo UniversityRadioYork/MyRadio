@@ -62,11 +62,12 @@ require_once 'cli_common.php';
 //Should this run once or loop forever?
 $once = in_array('--once', $argv);
 
+$bin = system('which php');
 //Load all classes that should be run
 while (false !== ($file = readdir($handle))) {
   if ($file === '.' or $file === '..') continue;
   //Is the file valid PHP?
-  system('`which php` -l '.$path.$file, $result);
+  system($bin.' -l '.$path.$file, $result);
   if ($result !== 0) {
     dlog('Not checking '.$file.' - Parse Error', 1);
   } else {
