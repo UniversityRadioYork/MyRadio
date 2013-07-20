@@ -576,6 +576,7 @@ class MyURY_Track extends ServiceAPI {
   }
 
   public function setAlbum(MyURY_Album $album) {
+    if ($album === $this->getAlbum()) return;
     //Move the file
     foreach (Config::$music_central_db_exts as $ext) {
       if (!file_exists($this->getPath($ext)))
