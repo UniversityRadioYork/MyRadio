@@ -25,6 +25,9 @@
  */
 
 $log_level = 2; //0: Critical, 1: Important, 2: Run Process, 3: Info
+/**
+ * @todo Make paths nicer. This variable is used in MyURY_Track directly.
+ */
 $syspath = '/usr/local/bin/';
 function dlog($x, $level = 3) {
   if ($level == 0) {
