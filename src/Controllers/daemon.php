@@ -21,6 +21,7 @@
  * @uses \CoreUtils
  * 
  * @todo Make this not use echo in various Daemons
+ * @todo Install the pcntl extension on thunderhorn
  */
 
 $log_level = 2; //0: Critical, 1: Important, 2: Run Process, 3: Info
@@ -44,7 +45,10 @@ function signal_handler($signo) {
       $GLOBALS['once'] = true; //This will kill after next iteration
   }
 }
-pcntl_signal(SIGTERM, "signal_handler");
+//Is the extension installed?
+if (is_defined('pcntl_signal')) {
+  pcntl_signal(SIGTERM, "signal_handler");
+}
 chdir(__DIR__);
 
 //Okay, we're done setting up service stuff now.
