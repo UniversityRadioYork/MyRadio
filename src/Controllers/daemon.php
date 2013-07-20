@@ -62,7 +62,8 @@ require_once 'cli_common.php';
 //Should this run once or loop forever?
 $once = in_array('--once', $argv);
 
-$bin = exec('which php');
+exec('which php', $bin);
+var_dump($bin);
 dlog('Found '.$bin, 1);
 //Load all classes that should be run
 while (false !== ($file = readdir($handle))) {
