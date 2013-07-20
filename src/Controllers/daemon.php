@@ -25,6 +25,7 @@
  */
 
 $log_level = 2; //0: Critical, 1: Important, 2: Run Process, 3: Info
+$bin = '/usr/local/bin/php'; //Change this to the PHP path for the local system
 function dlog($x, $level = 3) {
   if ($level == 0) {
     //Write to stderr
@@ -62,9 +63,6 @@ require_once 'cli_common.php';
 //Should this run once or loop forever?
 $once = in_array('--once', $argv);
 
-exec('which php', $bin);
-var_dump($bin);
-dlog('Found '.$bin, 1);exit;
 //Load all classes that should be run
 while (false !== ($file = readdir($handle))) {
   if ($file === '.' or $file === '..') continue;
