@@ -580,8 +580,9 @@ class MyURY_Track extends ServiceAPI {
     foreach (Config::$music_central_db_exts as $ext) {
       if (!file_exists($this->getPath($ext)))
         continue;
-      if (!copy($this->getPath($ext), Config::$music_central_db_path . '/records/' . $album->getID() . '/' . $this->getID() . '.' . $ext)) {
-        throw new MyURYException('Failed to move file to new location: '.$this->getPath($ext));
+      $new_path = Config::$music_central_db_path . '/records/' . $album->getID() . '/' . $this->getID() . '.' . $ext;
+      if (!copy($this->getPath($ext), $new_path)) {
+        throw new MyURYException('Failed to move file from '.$this->getPath($ext).' to '.$new_path);
         return false;
       }
       unlink($this->getPath($ext));
