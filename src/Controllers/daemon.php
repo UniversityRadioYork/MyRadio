@@ -46,7 +46,7 @@ function signal_handler($signo) {
   }
 }
 //Is the extension installed?
-if (is_defined('pcntl_signal')) {
+if (function_exists('pcntl_signal')) {
   pcntl_signal(SIGTERM, "signal_handler");
 }
 chdir(__DIR__);
