@@ -24,7 +24,7 @@
  */
 
 $log_level = 2; //0: Critical, 1: Important, 2: Run Process, 3: Info
-function log($x, $level = 3) {
+function dlog($x, $level = 3) {
   if ($level == 0) {
     //Write to stderr
     $f = fopen('php://stderr', 'w');
@@ -40,7 +40,7 @@ function signal_handler($signo) {
   switch ($signo) {
     case SIGTERM:
       //Shutdown
-      log('Caught SIGTERM. Shutting down after this loop.', 1);
+      dlog('Caught SIGTERM. Shutting down after this loop.', 1);
       $GLOBALS['once'] = true; //This will kill after next iteration
   }
 }
@@ -64,15 +64,15 @@ while (false !== ($file = readdir($handle))) {
   //Is the file valid PHP?
   system('php -l '.$path.$file, $result);
   if ($result !== 0) {
-    log('Not checking '.$file.' - Parse Error', 1);
+    dlog('Not checking '.$file.' - Parse Error', 1);
   } else {
     require $path.$file;
     $class = str_replace('.php','',$file);
     if (!class_exists($class)) {
-      echo log('Daemon does not exist -'. $class, 1);
+      echo dlog('Daemon does not exist -'. $class, 1);
     } else {
       if (!$class::isEnabled()) {
-        log('Daemon '. $class . ' is not enabled!', 2);
+        dlog('Daemon '. $class . ' is not enabled!', 2);
       } else {
         $classes[] = $class;
       }
@@ -87,7 +87,7 @@ if (empty($classes)) {
 //Run each
 while (true) {
   foreach ($classes as $class) {
-    log('Running '.$class, 2);
+    dlog('Running '.$class, 2);
     try {
       $class::run();
     } catch (MyURYException $e) {}
@@ -96,17 +96,17 @@ while (true) {
   
   //Every once in a while, check database connection. If it's lost, routinely try to reconnect.
   if (!Database::getInstance()->status()) {
-    log('CRITICAL: Database server connection lost. Attempting to reconnect...', 0);
+    dlog('CRITICAL: Database server connection lost. Attempting to reconnect...', 0);
     $db_fail_start = time();
     while (!Database::getInstance()->reconnect()) {
       if (time() - $db_fail_start > 900) {
         //Connection has been lost for more than 15 minutes. Give up.
         MyURYEmail::sendEmailToComputing('[MyURY] Background Service Failure', "MyURY's connection to the Database Server has been lost. Attempts to reconnect for the last 15 minutes have proved futile, so the service has stopped.\r\n\Please investigate Database connectivity and restart the service one access is restored.");
       }
-      log('FAILED! Will retry in 30 seconds.', 0);
+      dlog('FAILED! Will retry in 30 seconds.', 0);
       sleep(30);
     }
-    log('RECONNECTED', 0);
+    dlog('RECONNECTED', 0);
   }
   
   if ($once) break;
