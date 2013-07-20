@@ -1,0 +1,41 @@
+#!/bin/sh
+
+# $FreeBSD$
+#
+# PROVIDE: myury_daemon
+# KEYWORD: shutdown
+#
+# This file enables the MyURY Daemon to run as a service on a FreeBSD system.
+# Modify paths as necessary and install in /usr/local/etc/rc.d/
+#
+# Add the following lines to /etc/rc.conf.local or /etc/rc.conf
+# to enable this service:
+#
+# myury_daemon_enable (bool):	Set to NO by default.
+#			Set it to YES to enable hawk.
+
+. /etc/rc.subr
+
+name=myury_daemon
+rcvar=myury_daemon_enable
+
+load_rc_config myury_daemon_enable
+
+: ${myury_daemon_enable:="NO"}
+
+command=/usr/local/www/myury/src/Controllers/daemon.php
+command_interpreter=`which php`
+command_args='process >/var/log/ury-org-uk/myury_daemon.log 2>&1 &'
+start_precmd=find_pidfile
+stop_precmd=find_pidfile
+
+find_pidfile()
+{
+	if get_pidfile_from_conf pidfile %%PREFIX%%/etc/myury_daemon/daemon.conf; then
+		pidfile="$_pidfile_from_conf"
+	else
+		pidfile='/var/run/myury_daemon.pid'
+	fi
+}
+
+run_rc_command "$1"

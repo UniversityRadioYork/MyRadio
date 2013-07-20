@@ -130,12 +130,14 @@ class MyURY_TrackCorrection extends MyURY_Track {
   }
   
   /**
-   * Get a random "Pending" track correction proposal
-   * @return MyURY_TrackCorrection
+   * Get a random "Pending" track correction proposal, or null if there are no proposals
+   * @return MyURY_TrackCorrection|null
    */
   public static function getRandom() {
     $result = self::$db->fetch_column('SELECT correctionid FROM public.rec_trackcorrection WHERE state=\'p\'
       ORDER BY RANDOM() LIMIT 1');
+    
+    if (empty($result)) return null;
     
     return self::getInstance($result[0]);
   }
@@ -169,7 +171,7 @@ class MyURY_TrackCorrection extends MyURY_Track {
     return array(
         'title' => $this->getTitle(),
         'artist' => $this->getArtist(),
-        'album' => $this->getAlbum()->getTitle(),
+        'album' => $this->getAlbum()->toDataSource(),
         'trackid' => $this->getID(),
         'proposed_title' => $this->getProposedTitle(),
         'proposed_artist' => $this->getProposedArtist(),

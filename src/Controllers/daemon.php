@@ -15,18 +15,45 @@
  * This controller will deal with recursion and timing.
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 24032013
+ * @version 20130720
  * @package MyURY_Deamon
  * @uses \Database
  * @uses \CoreUtils
+ * 
+ * @todo Make this not use echo in various Daemons
  */
 
-$path = __DIR__.'/../Classes/Daemons/';
+$log_level = 2; //0: Critical, 1: Important, 2: Run Process, 3: Info
+function log($x, $level = 3) {
+  if ($level == 0) {
+    //Write to stderr
+    $f = fopen('php://stderr', 'w');
+    fwrite($f, $x);
+    fclose($f);
+  }
+  if ($GLOBALS['log_level'] >= 3)
+    echo $x."\n";
+}
+
+//Gracefully handle stop requests
+function signal_handler($signo) {
+  switch ($signo) {
+    case SIGTERM:
+      //Shutdown
+      log('Caught SIGTERM. Shutting down after this loop.', 1);
+      $GLOBALS['once'] = true; //This will kill after next iteration
+  }
+}
+pcntl_signal(SIGTERM, "signal_handler");
+chdir(__DIR__);
+
+//Okay, we're done setting up service stuff now.
+$path = '../Classes/Daemons/';
 $handle = opendir($path);
 if (!$handle) die('PATH DOES NOT EXIST '.$path."\n");
 $classes = array();
 
-require_once __DIR__.'/cli_common.php';
+require_once 'cli_common.php';
 
 //Should this run once or loop forever?
 $once = in_array('--once', $argv);
@@ -37,15 +64,15 @@ while (false !== ($file = readdir($handle))) {
   //Is the file valid PHP?
   system('php -l '.$path.$file, $result);
   if ($result !== 0) {
-    echo "Not checking $file - Parse Error\n";
+    log('Not checking '.$file.' - Parse Error', 1);
   } else {
     require $path.$file;
     $class = str_replace('.php','',$file);
     if (!class_exists($class)) {
-      echo "Daemon does not exist - $class\n";
+      echo log('Daemon does not exist -'. $class, 1);
     } else {
       if (!$class::isEnabled()) {
-        echo "Daemon $class is not enabled\n";
+        log('Daemon '. $class . ' is not enabled!', 2);
       } else {
         $classes[] = $class;
       }
@@ -60,7 +87,7 @@ if (empty($classes)) {
 //Run each
 while (true) {
   foreach ($classes as $class) {
-    echo "Running $class\n";
+    log('Running '.$class, 2);
     try {
       $class::run();
     } catch (MyURYException $e) {}
@@ -69,17 +96,17 @@ while (true) {
   
   //Every once in a while, check database connection. If it's lost, routinely try to reconnect.
   if (!Database::getInstance()->status()) {
-    echo "CRITICAL: Database server connection lost. Attempting to reconnect...";
+    log('CRITICAL: Database server connection lost. Attempting to reconnect...', 0);
     $db_fail_start = time();
     while (!Database::getInstance()->reconnect()) {
       if (time() - $db_fail_start > 900) {
         //Connection has been lost for more than 15 minutes. Give up.
         MyURYEmail::sendEmailToComputing('[MyURY] Background Service Failure', "MyURY's connection to the Database Server has been lost. Attempts to reconnect for the last 15 minutes have proved futile, so the service has stopped.\r\n\Please investigate Database connectivity and restart the service one access is restored.");
       }
-      echo "FAILED!\nWill retry in 30 seconds.";
+      log('FAILED! Will retry in 30 seconds.', 0);
       sleep(30);
     }
-    echo "RECONNECTED\n";
+    log('RECONNECTED', 0);
   }
   
   if ($once) break;
