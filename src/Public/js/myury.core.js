@@ -1,6 +1,6 @@
 window.myury = {
   makeURL: function(module, action, params) {
-    qstring = (params == '') ? '' : $.param(params);
+    qstring = (params == null) ? '' : $.param(params);
     if (mConfig.rewrite_url)
       return mConfig.base_url + module + '/' + action + '/' + (qstring == '' ? '' : '?' + qstring);
     else
