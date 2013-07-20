@@ -36,7 +36,7 @@ function dlog($x, $level = 3) {
     fwrite($f, $x);
     fclose($f);
   }
-  if ($GLOBALS['log_level'] >= 3)
+  if ($GLOBALS['log_level'] >= $level)
     echo $x."\n";
 }
 
