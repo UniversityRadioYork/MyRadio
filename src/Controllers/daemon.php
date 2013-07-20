@@ -64,7 +64,7 @@ $once = in_array('--once', $argv);
 
 exec('which php', $bin);
 var_dump($bin);
-dlog('Found '.$bin, 1);
+dlog('Found '.$bin, 1);exit;
 //Load all classes that should be run
 while (false !== ($file = readdir($handle))) {
   if ($file === '.' or $file === '..') continue;
