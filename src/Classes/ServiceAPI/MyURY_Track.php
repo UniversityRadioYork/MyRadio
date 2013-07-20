@@ -433,7 +433,8 @@ class MyURY_Track extends ServiceAPI {
    * @return Array A parsed array version of the JSON lastfm response
    */
   public static function identifyUploadedTrack($path) {
-    $response = shell_exec('lastfm-fpclient -json ' . $path);
+    //Syspath is set by Daemons or where $PATH is not sufficent.
+    $response = shell_exec((empty($GLOBALS['syspath']) ? '' : $GLOBALS['syspath']).'lastfm-fpclient -json ' . $path);
 
     $lastfm = json_decode($response, true);
 
