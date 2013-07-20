@@ -62,7 +62,7 @@ require_once 'cli_common.php';
 //Should this run once or loop forever?
 $once = in_array('--once', $argv);
 
-$bin = system('which php');
+$bin = system('echo $PATH');
 dlog('Found '.$bin, 1);
 //Load all classes that should be run
 while (false !== ($file = readdir($handle))) {
@@ -87,7 +87,8 @@ while (false !== ($file = readdir($handle))) {
 }
 
 if (empty($classes)) {
-  die("No daemons to execute\n");
+  dlog('No daemons to execute', 0);
+  exit;
 }
 
 //Run each
