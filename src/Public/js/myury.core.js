@@ -1,9 +1,10 @@
 window.myury = {
-  makeURL: function(module, action) {
+  makeURL: function(module, action, params) {
+    qstring = $.param(params);
     if (mConfig.rewrite_url)
-      return mConfig.base_url + module + '/' + action + '/';
+      return mConfig.base_url + module + '/' + action + '/' + (qstring == '' ? '' : '?' + qstring);
     else
-      return mConfig.base_url + '?module=' + module + '&action=' + action;
+      return mConfig.base_url + '?module=' + module + '&action=' + action + (qstring == '' ? '' : '&' + qstring);
   }
 };
 
