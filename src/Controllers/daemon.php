@@ -67,7 +67,7 @@ $bin = system('which php');
 while (false !== ($file = readdir($handle))) {
   if ($file === '.' or $file === '..') continue;
   //Is the file valid PHP?
-  system($bin.' -l '.$path.$file, $result);
+  system('`'.$bin.' -l '.$path.$file.'`', $result);
   if ($result !== 0) {
     dlog('Not checking '.$file.' - Parse Error', 1);
   } else {
