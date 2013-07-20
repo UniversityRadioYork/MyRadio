@@ -50,6 +50,9 @@ class MyURY_FingerprinterDaemon extends MyURY_Daemon {
         MyURY_TrackCorrection::create($track, $info[0]['title'], $info[0]['artist'], $album, MyURY_TrackCorrection::LEVEL_SUGGEST);
         echo "Correction suggested {$track->getID()}.\n";
       }
+      
+      //The Daemons slowly leaks memory if we don't clean up Track objects here
+      $track->removeInstance();
     }
   }
 }
