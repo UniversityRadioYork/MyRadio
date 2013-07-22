@@ -612,10 +612,10 @@ class CoreUtils {
   public static function getErrorStats($since = null) {
     if ($since === null) $since = time()-86400;
     $result = Database::getInstance()->fetch_all('SELECT
-      round(extract(\'epoch\' from timestamp) / 300) * 300 as timestamp,
+      round(extract(\'epoch\' from timestamp) / 600) * 600 as timestamp,
       SUM(error_count)/COUNT(error_count) AS errors, SUM(exception_count)/COUNT(exception_count) AS exceptions,
       SUM(queries)/COUNT(queries) AS queries
-      FROM myury.error_rate WHERE timestamp>=$1 GROUP BY round(extract(\'epoch\' from timestamp) / 300)
+      FROM myury.error_rate WHERE timestamp>=$1 GROUP BY round(extract(\'epoch\' from timestamp) / 600)
       ORDER BY timestamp ASC',
             array(self::getTimestamp($since)));
     
