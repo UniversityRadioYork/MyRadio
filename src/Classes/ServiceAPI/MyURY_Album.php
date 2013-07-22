@@ -130,7 +130,8 @@ class MyURY_Album extends ServiceAPI {
 
   public static function findByName($title, $limit) {
     $title = trim($title);
-    $result = self::$db->fetch_column('SELECT DISTINCT rec_record.recordid AS recordid FROM rec_record WHERE rec_record.title ILIKE \'%\' || $1 || \'%\' LIMIT $2;', array($title, $limit));
+    $result = self::$db->fetch_column('SELECT DISTINCT rec_record.recordid AS recordid FROM rec_record
+      WHERE rec_record.title ILIKE \'%\' || $1 || \'%\' LIMIT $2;', array($title, $limit));
     
     $response = array();
     foreach ($result as $album) {
