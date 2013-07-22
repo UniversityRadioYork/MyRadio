@@ -69,7 +69,6 @@ window.MyURYForm = {
       };
 
       //If there's an existing ID value, load it in
-      console.log($('#' + $(this).attr('id').replace(/-ui$/, '')).val());
       if ($(this).val() === '' && $('#' + $(this).attr('id').replace(/-ui$/, '')).val() !== '') {
         $.ajax({
           url: myury.makeURL('MyURY', 'a-findtrack'),
@@ -129,7 +128,19 @@ window.MyURYForm = {
         return $('<li></li>').data('item.autocomplete', item)
                 .append('<a>' + item.title + '</a>')
                 .appendTo(ul);
-      };
+      }
+      
+      //If there's an existing ID value, load it in
+      if ($(this).val() === '' && $('#' + $(this).attr('id').replace(/-ui$/, '')).val() !== '') {
+        $.ajax({
+          url: myury.makeURL('MyURY', 'a-findalbum'),
+          data: {id: $('#' + $(this).attr('id').replace(/-ui$/, '')).val()},
+          context: this,
+          success: function(data) {
+            $(this).val(data.title);
+          }
+        });
+      }
     });
   },
   setUpTimePickers: function() {
