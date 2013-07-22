@@ -534,7 +534,7 @@ class MyURYFormField {
       case self::TYPE_SECTION:
         return null;
         break;
-      case self::TYPE_LBUM:
+      case self::TYPE_ALBUM:
         //Deal with Arrays for repeated elements
         if (is_array($_REQUEST[$name])) {
           for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
