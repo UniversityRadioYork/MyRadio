@@ -12,7 +12,8 @@ $options = array(
         array('targetAxisIndex' => 0),
         array('targetAxisIndex' => 0),
         array('targetAxisIndex' => 1)
-    )
+    ),
+    'curveType' => 'function'
 );
 CoreUtils::getTemplateObject()->setTemplate('linegraph.twig')
         ->addVariable('title', 'MyURY Error Rates')
