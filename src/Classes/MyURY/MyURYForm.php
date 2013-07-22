@@ -241,6 +241,10 @@ class MyURYForm {
     foreach ($this->fields as $field) {
       $return[$field->getName()] = $field->readValue($this->name . '-');
     }
+    //Edit Mode requests
+    if (isset($_REQUEST[$this->name.'-myuryfrmedid'])) {
+      $return['id'] = (int)$_REQUEST[$this->name.'-myuryfrmedid'];
+    }
     return $return;
   }
 
