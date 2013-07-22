@@ -16,5 +16,5 @@ $form->editMode($track->getID(),
         array(
             'title' => $track->getTitle(),
             'artist' => $track->getArtist(),
-            'albumid' => $track->getAlbum()->getID()
+            'album' => $track->getAlbum()->getID()
         ))->render();
