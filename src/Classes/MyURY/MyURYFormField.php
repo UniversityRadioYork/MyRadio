@@ -534,6 +534,18 @@ class MyURYFormField {
       case self::TYPE_SECTION:
         return null;
         break;
+      case self::TYPE_LBUM:
+        //Deal with Arrays for repeated elements
+        if (is_array($_REQUEST[$name])) {
+          for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
+            if (empty($_REQUEST[$name][$i])) continue;
+            $_REQUEST[$name][$i] = MyURY_Album::getInstance($_REQUEST[$name][$i]);
+          }
+          return $_REQUEST[$name];
+        } else {
+          return MyURY_Album::getInstance($_REQUEST[$name]);
+        }
+        break;
       default:
         throw new MyURYException('Field type ' . $this->type . ' does not have a valid value interpreter definition.');
     }
