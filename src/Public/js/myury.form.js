@@ -107,6 +107,31 @@ window.MyURYForm = {
       };
     });
   },
+  setUpAlbumFields: function() {
+    /**
+     * Initialises the Album autocomplete pickers where necessary
+     */
+    $('fieldset.myuryfrm input.album-autocomplete').each(function() {
+      $(this).autocomplete({
+        minLength: 3,
+        source: myury.makeURL('MyURY', 'a-findalbum'),
+        select: function(event, ui) {
+          $(this).val(ui.item.title);
+          $('#' + $(this).attr('id').replace(/-ui$/, '')).val(ui.item.recordid);
+          return false;
+        },
+        //Prevent the field blanking out when an item is given focus
+        focus: function(event, ui) {
+          return false;
+        }
+      })
+              .data("ui-autocomplete")._renderItem = function(ul, item) {
+        return $('<li></li>').data('item.autocomplete', item)
+                .append('<a>' + item.title + '</a>')
+                .appendTo(ul);
+      };
+    });
+  },
   setUpTimePickers: function() {
     /**
      * Initialises the Time pickers where necessary
@@ -159,6 +184,8 @@ window.MyURYForm = {
     MyURYForm.setUpTimePickers();
     MyURYForm.setUpMemberFields();
     MyURYForm.setUpTrackFields();
+    MyURYForm.setUpArtistFields();
+    MyURYForm.setUpAlbumFields();
 
     /**
      * Setup Checkbox Group select all / select none

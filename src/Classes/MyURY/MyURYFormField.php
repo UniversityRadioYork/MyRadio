@@ -9,7 +9,7 @@
  * A collection of these is automatically created when building a MyURYForm
  * 
  * @package MyURY_Core
- * @version 20130509
+ * @version 20130722
  * @author Lloyd Wallis <lpw@ury.org.uk>
  */
 class MyURYFormField {
@@ -199,12 +199,22 @@ class MyURYFormField {
    */
   const TYPE_TABULARSET = 0x11;
   /**
-   * The constant used to specify this MyURYFormField should be a container for a set of repeating MyURYFormFields.
-   * By default these render in a tabular layout.
+   * The constant used to specify this MyURYFormField should be a file upload.
    * 
    * This MyURYFormField type does not support any Custom Options
    */
   const TYPE_FILE = 0x12;
+  /**
+   * The constant used to specify this MyURYFormField must be a valid album, providing an Album autocomplete for it.
+   * This actually renders two fields - the visible one the user can enter an artist into, and a hidden one that will
+   * store the ID once it has been selected.
+   * 
+   * The album field takes the following custom options:
+   * 
+   * albumname: Since value will set the hidden integer value, this can be used to set the text value of the visible
+   * element when loading a pre-filled form.
+   */
+  const TYPE_ALBUM = 0x13;
 
   /**
    * The name/id of the Form Field

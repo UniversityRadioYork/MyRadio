@@ -175,6 +175,15 @@ class MyURY_TrackCorrection extends MyURY_Track {
     $this->state = 'a';
     return true;
   }
+  
+  public function reject($permanent = false) {
+    self::$db->query('UPDATE public.rec_trackcorrection SET state=\'r\', reviewedby=$2 WHERE correctionid=$1',
+            array($this->getCorrectionID(), User::getInstance()->getID()));
+    
+    if ($permanent) {
+      $this->setLastfmVerified();
+    }
+  }
 
   /**
    * Returns an array of key information, useful for Twig rendering and JSON requests
