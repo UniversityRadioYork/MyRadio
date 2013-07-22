@@ -12,6 +12,6 @@ $form = (new MyURYForm('lib_edittrack', $module, 'doEditTrack',
                 array(
                     'title' => 'Edit Track'
                 )
-        ))->addField(new MyURYFormField('title', MyURYFormField::TYPE_TEXT, array('label' => 'Title of the Track')))
-          ->addField(new MyURYFormField('artist', MyURYFormField::TYPE_TEXT, array('label' => 'Artist of the Track')))
-          ->addField(new MyURYFormField('album', MyURYFormField::TYPE_ALBUM, array('label' => 'Album of the Track')));
+        ))->addField(new MyURYFormField('title', MyURYFormField::TYPE_TEXT, array('label' => 'Title')))
+          ->addField(new MyURYFormField('artist', MyURYFormField::TYPE_TEXT, array('label' => 'Artist')))
+          ->addField(new MyURYFormField('album', MyURYFormField::TYPE_ALBUM, array('label' => 'Album')));
