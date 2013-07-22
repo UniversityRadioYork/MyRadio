@@ -12,7 +12,7 @@ require 'Models/Library/trackfrm.php';
 
 $data = $form->readValues();
 
-$track = MyURY_Track::getInstance($data['myuryfrmedid']);
+$track = MyURY_Track::getInstance($data['id']);
 $track->setTitle($data['title']);
 $track->setArtist($data['artist']);
 $track->setAlbum($data['album']);
