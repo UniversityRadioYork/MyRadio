@@ -3,7 +3,7 @@
  * Allows URY Librarians  to create edit Tracks
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 25042013
+ * @version 20130722
  * @package MyURY_Library
  */
 
@@ -12,8 +12,9 @@ require 'Models/Library/trackfrm.php';
 
 $track = MyURY_Track::getInstance($_REQUEST['trackid']);
 
-$form->setFieldValue('title', $track->getTitle());
-$form->setFieldValue('artist', $track->getArtist());
-$form->setFieldValue('trackid', $track->getID());
-
-$form->render();
+$form->editMode($track->getID(),
+        array(
+            'title' => $track->getTitle(),
+            'artist' => $track->getArtist(),
+            'albumid' => $track->getAlbum()->getID()
+        ))->render();

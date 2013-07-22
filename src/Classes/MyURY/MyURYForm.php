@@ -193,6 +193,7 @@ class MyURYForm {
     foreach ($values as $k => $v) {
       $this->setFieldValue($k, $v);
     }
+    return $this;
   }
 
   /**
