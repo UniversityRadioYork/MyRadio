@@ -1,6 +1,16 @@
 {% extends 'stripe.twig' %}
 {% block stripecontent %}
-<table>
+<div class="ui-widget">
+  <div class="ui-widget-header">Please read these tips first!</div>
+  <div class="ui-widget-content">
+    <ul>
+      <li>The proposals are generated automatically by our servers by analysing the MP3 files.</li>
+      <li>Accepting a proposal replace the existing data (on the left) with the proposed data (on the right).</li>
+      <li>If a proposal suggests "URY Downloads {{date("Y")}}" the proposed album will not overwrite the existing.</li>
+    </ul>
+  </div>
+</div>
+<table style="width:100%">
   <thead>
     <tr><th>Field</th><th>Original Data</th><th>Proposed Data</th></tr>
   </thead>

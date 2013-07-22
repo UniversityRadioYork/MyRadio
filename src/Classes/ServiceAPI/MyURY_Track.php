@@ -308,7 +308,7 @@ class MyURY_Track extends ServiceAPI {
    * itonesplaylistid: Tracks that are members of the iTones_Playlist id
    * limit: Maximum number of items to return. 0 = No Limit
    * recordid: int Record id
-   * lastfmverified: Boolean whether or not verified with Last.fm Fingerprinter
+   * lastfmverified: Boolean whether or not verified with Last.fm Fingerprinter. Default any.
    * random: If true, sort randomly
    * idsort: If true, sort by trackid
    * custom: A custom SQL WHERE clause

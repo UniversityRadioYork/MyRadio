@@ -170,8 +170,8 @@ class MyURY_TrackCorrection extends MyURY_Track {
     $this->setArtist($this->getProposedArtist());
     $this->setTitle($this->getProposedTitle());
     
-    self::$db->query('UPDATE public.rec_trackcorrection SET state=\'a\' WHERE correctionid=$1',
-            array($this->getCorrectionID()));
+    self::$db->query('UPDATE public.rec_trackcorrection SET state=\'a\', reviewedby=$2 WHERE correctionid=$1',
+            array($this->getCorrectionID(), User::getInstance()->getID()));
     $this->state = 'a';
     return true;
   }
