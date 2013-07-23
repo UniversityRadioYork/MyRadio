@@ -857,13 +857,12 @@ class User extends ServiceAPI {
     //This next comment explains that password generation is not done in MyURY itself, but an external library.
     //Looks good. Generate a password for them. This is done by Shibbobleh.
     $plain_pass = Shibbobleh_Utils::newPassword();
-    $encrypted_pass = Shibbobleh_Utils::encrypt($plain_pass);
 
     //Actually create the member!
     $r = self::$db->fetch_column('INSERT INTO public.member
-      (fname, sname, sex, college, phone, email, receive_email, password, eduroam, require_password_change)
+      (fname, sname, sex, college, phone, email, receive_email, eduroam, require_password_change)
       VALUES
-      ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING memberid', array(
+      ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid', array(
         $params['fname'],
         $params['sname'],
         $params['sex'],
@@ -871,7 +870,6 @@ class User extends ServiceAPI {
         $params['phone'],
         $params['email'],
         $params['receive_email'],
-        $encrypted_pass,
         $params['eduroam'],
         true
     ));
@@ -879,6 +877,8 @@ class User extends ServiceAPI {
     $memberid = $r[0];
     //Activate the member's account for the current academic year
     Shibbobleh_Utils::activateMemberThisYear($memberid, $params['paid']);
+    //Set the user's password
+    Shibbobleh_Utils::setPassword($memberid, $plain_pass);
 
     //Send a welcome email (this will not send if receive_email is not enabled!)
     /**
