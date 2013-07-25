@@ -355,7 +355,7 @@ class MyURY_Track extends ServiceAPI {
     if (empty($options['precise']))
       $options['precise'] = false;
     if (empty($options['nocorrectionproposed']))
-      $options['noorrectionproposed'] = false;
+      $options['nocorrectionproposed'] = false;
 
 //Prepare paramaters
     $sql_params = array($options['title'], $options['artist'], $options['precise'] ? '' : '%');
