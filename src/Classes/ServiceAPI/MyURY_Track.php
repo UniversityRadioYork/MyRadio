@@ -427,7 +427,7 @@ class MyURY_Track extends ServiceAPI {
    * Attempts to identify an MP3 file against the last.fm database.
    * 
    * !This method requires the external lastfm-fpclient application to be installed on the server. A FreeBSD build
-   * with URY's API key can be found in the fpclient.git URY Git repository.
+   * with URY's API key and support for -json can be found in the fpclient.git URY Git repository.
    * 
    * @param String $path The location of the MP3 file
    * @return Array A parsed array version of the JSON lastfm response
