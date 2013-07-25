@@ -13,6 +13,6 @@ if (isset($_REQUEST['correctionid'])) {
   throw new MyURYException('Correctionid is required!', 400);
 }
 
-$correction->apply();
+$correction->apply(empty($_REQUEST['ignorealbum']) ? false : (bool) $_REQUEST['ignorealbum']);
 
 CoreUtils::backWithMessage('The correction was applied succesfully!');

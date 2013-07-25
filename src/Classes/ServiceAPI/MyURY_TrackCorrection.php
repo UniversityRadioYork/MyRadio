@@ -162,9 +162,15 @@ class MyURY_TrackCorrection extends MyURY_Track {
     return $this->correctionid;
   }
   
-  public function apply() {
+  /**
+   * Apply the proposed correction to the original rec_track entry.
+   * @param bool $ignore_album If true, the album will not be changed.
+   * @return boolean
+   * @todo Does the Cache need updating anywhere?
+   */
+  public function apply($ignore_album = false) {
     //Don't apply a "URY Downloads" album - that's worse than whatever is already there.
-    if (strstr($this->getProposedAlbumTitle(), 'URY Downloads') === false) {
+    if (!$ignore_album && strstr($this->getProposedAlbumTitle(), 'URY Downloads') === false) {
       $this->setAlbum(MyURY_Album::findOrCreate($this->getProposedAlbumTitle(), $this->getProposedArtist()));
     }
     $this->setArtist($this->getProposedArtist());
