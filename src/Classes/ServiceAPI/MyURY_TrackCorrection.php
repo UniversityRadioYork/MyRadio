@@ -200,6 +200,7 @@ class MyURY_TrackCorrection extends MyURY_Track {
         'proposed_artist' => $this->getProposedArtist(),
         'proposed_album' => $this->getProposedAlbumTitle(),
         'level' => $this->getLevel(),
+        'correctionid' => $this->getCorrectionID(),
         'editlink' => array(
             'display' => 'icon',
             'value' => 'script',
