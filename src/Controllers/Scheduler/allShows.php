@@ -8,4 +8,9 @@
  */
 
 $shows = MyURY_Show::getAllShows();
-require 'Views/Scheduler/showList.php';
+$twig = CoreUtils::getTemplateObject()->setTemplate('table.twig')
+        ->addVariable('title', 'All Shows')
+        ->addVariable('tabledata', ServiceAPI::setToDataSource($shows))
+        ->addVariable('tablescript', 'myury.scheduler.showlist');
+
+$twig->render();

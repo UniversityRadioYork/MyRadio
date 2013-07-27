@@ -1,10 +1,39 @@
 <?php
+/**
+ * This file provides the MyURY_FingerprinterDaemon class for MyURY
+ * @package MyURY_Daemon
+ */
 
+/**
+ * The Fingerprinter Daemon will scan the digital files in the music library, and log information about potentially
+ * incorrect metadata in the rec database.
+ *
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 20130711
+ * @package MyURY_Daemon
+ */
 class MyURY_FingerprinterDaemon extends MyURY_Daemon {
+  /**
+   * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.
+   * It is currently enabled for a full scan of the music library. Generally, it may often be disabled as it
+   * generates a fare amount of load and actually making the changes is a manual process anyway.
+   * @return boolean
+   */
   public static function isEnabled() { return true; }
   
+  /**
+   * Process a batch of tracks that are currently not verified as correct, and sees if Last.FM has
+   * metadata for it.
+   * 
+   * This function can be have the batch size changed by changing the first line
+   * and can have less reliable proposals stored by modifying the rank comparison.
+   * Change the levenshtein comparisons to tweak what amount of change is
+   * automatically approved.
+   * 
+   * @todo While this logs Last.fm albums, it does not compare them.
+   */
   public static function run() {
-    //Get 5 unverified tracks
+    //Get 50 unverified tracks. Tune the "limit" to change this to a lower value if you are not doing a full library scan
     $tracks = MyURY_Track::findByOptions(array('lastfmverified' => false, 'random' => true, 'digitised' => true,
         'nocorrectionproposed' => true, 'limit' => 50));
     
@@ -51,7 +80,7 @@ class MyURY_FingerprinterDaemon extends MyURY_Daemon {
         echo "Correction suggested {$track->getID()}.\n";
       }
       
-      //The Daemons slowly leaks memory if we don't clean up Track objects here
+      //The Daemons slowly leaks memory if we don't clean up Track objects here - you can have a GB or so in a day
       $track->removeInstance();
     }
   }

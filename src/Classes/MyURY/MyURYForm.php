@@ -18,7 +18,7 @@
  *   and calls getter to interpret them
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 21072012
+ * @version 20130727
  * @package MyURY_Core
  */
 class MyURYForm {
@@ -206,6 +206,7 @@ class MyURYForm {
     foreach ($this->fields as $field) {
       $fields[] = $field->render();
     }
+    
     $twig = CoreUtils::getTemplateObject()->setTemplate($this->template)
             ->addVariable('frm_name', $this->name)
             ->addVariable('frm_classes', $this->getClasses())

@@ -20,8 +20,22 @@ if ($_GET[0] === 'config.js') {
 }
 
 $prefix = __DIR__.'/../../Public/';
+foreach (array(__DIR__.'/../../Public/', __DIR__.'/../../Public/js/skins/lightgray/') as $p) {
+  if (file_exists($p.$_GET[0])) {
+    $prefix = $p;
+    break;
+  }
+}
 
 if (strstr($_GET[0], '..') !== false) exit;
 
-header('Content-Type: '.mime_content_type($prefix.$_GET[0]));
+if (strtolower(substr($_GET[0], -3)) == 'css') {
+  $type = 'text/css';
+} elseif (strtolower(substr($_GET[0], -2)) == 'js') {
+  $type = 'text/javascript';
+} else {
+  $type = mime_content_type($prefix.$_GET[0]);
+}
+
+header('Content-Type: '.$type);
 echo file_get_contents($prefix.$_GET[0]);

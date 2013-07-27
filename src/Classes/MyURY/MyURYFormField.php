@@ -277,15 +277,6 @@ class MyURYFormField {
    * @var bool
    */
   private $enabled = true;
-  
-  /**
-   * Whether this MyURYFormField should be an auto-repeating Array. If this is true, a link is added to allow the
-   * user to create another instance of the element. The name will have [] added to it to make the submitted data
-   * an Array. The processing scripts should be prepared to accomodate for this.
-   * @todo Ensure all MyURYFormField Renderers support this option. Currently implemented on TYPE_MEMBER Only.
-   * @var type 
-   */
-  private $repeating = false;
 
   /**
    * Settings that cannot be altered by the $options parameter
@@ -307,8 +298,7 @@ class MyURYFormField {
    *   classes: An array of additional classes to add to the input field (default empty)<br>
    *   options: An array of additional settings that are specific to the field type (default empty)<br>
    *   value: The default value of the field when it is rendered (default none)<br>
-   *   enabled: Whether the field is enabled when the page is loaded (default true)<br>
-   *   repeating: Whether the MyURYFormField is self-repeatable i.e. can have mutliple values. DEPRECATED.
+   *   enabled: Whether the field is enabled when the page is loaded (default true)
    * @throws MyURYException If an attempt is made to set an $options value other than those listed above
    */
   public function __construct($name, $type, $options = array()) {
@@ -390,10 +380,8 @@ class MyURYFormField {
       }
     }
     
-    $value = $this->value;
-    
     if ($this->type === MyURYFormField::TYPE_ARTIST) $options['artistname'] = $this->value;
-    if ($this->type === MyURYFormField::TYPE_TRACK && !empty($this->value)) {
+    elseif (($this->type === MyURYFormField::TYPE_TRACK) && !empty($this->value)) {
       if (is_array($this->value)) { //Deal with TABULARSETs
         foreach ($this->value as $k => $v) {
           if (empty($v)) continue;
@@ -402,8 +390,21 @@ class MyURYFormField {
         }
       } else {
         $options['trackname'] = $this->value->getTitle();
-        $value[$k] = $this->value->getID();
+        $value = $this->value->getID();
       }
+    } elseif (($this->type === MyURYFormField::TYPE_MEMBER) && !empty($this->value)) {
+      if (is_array($this->value)) { //Deal with TABULARSETs
+        foreach ($this->value as $k => $v) {
+          if (empty($v)) continue;
+          $options['membername'][$k] = $v->getName();
+          $value[$k] = $v->getID();
+        }
+      } else {
+        $options['membername'] = $this->value->getName();
+        $value = $this->value->getID();
+      }
+    } else {
+      $value = $this->value;
     }
     
     return array(
@@ -415,8 +416,7 @@ class MyURYFormField {
         'class'       => $this->getClasses(),
         'options'     => $options,
         'value'       => $value,
-        'enabled'     => $this->enabled,
-        'repeating'   => $this->repeating
+        'enabled'     => $this->enabled
     );
   }
   
@@ -439,10 +439,7 @@ class MyURYFormField {
       case self::TYPE_ARTIST:
       case self::TYPE_HIDDEN:
       case self::TYPE_BLOCKTEXT:
-        if (is_array($_REQUEST[$name])) {
-          return $_REQUEST[$name];
-        }
-        return (string)$_REQUEST[$name];
+        return $_REQUEST[$name];
         break;
       case self::TYPE_MEMBER:
         //Deal with Arrays for repeated elements

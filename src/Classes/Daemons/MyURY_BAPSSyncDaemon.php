@@ -1,12 +1,33 @@
 <?php
+/**
+ * This file provides the MyURY_BAPSSyncDaemon class for MyURY
+ * @package MyURY_Daemon
+ */
 
-class MyURY_BAPSSyncDaemon {
-  public static function isEnabled() { return false; }
+/**
+ * The BAPSSync Daemon will scan the Show Planner playlists, and put them into BAPS.
+ *
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 20130711
+ * @package MyURY_Daemon
+ */
+class MyURY_BAPSSyncDaemon extends MyURY_Daemon {
+  /**
+   * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.
+   * It is currently enabled because it makes the playlists happen in BAPS. We want them to happen.
+   * @return boolean
+   */
+  public static function isEnabled() { return true; }
   
   /**
-   * Takes each of the NIPSWebs Managed and Resource Lists, and converts them into BAPS Recommended Audio shows
+   * Once an hour, this takes each of the NIPSWebs Managed and Resource Lists,
+   * and converts them into BAPS Recommended Audio shows.
+   * This is a Legacy tool to support the old BAPS system. DO NOT TOUCH. BAPS IS SILLY.
    */
   public static function run() {
+    $hourkey = __CLASS__.'_last_run_hourly';
+    if (self::getCache($hourkey) > time() - 3500) return;
+    
     $special_date = '2034-05-06 07:08:09'; //All shows created by this are identified by this time.
     $db = Database::getInstance();
     
@@ -79,5 +100,7 @@ class MyURY_BAPSSyncDaemon {
 
     echo pg_last_error();
     pg_query('COMMIT');
+    
+    self::setCache($hourkey, time());
   }
 }

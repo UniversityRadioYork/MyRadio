@@ -99,8 +99,8 @@ class MyURY_Show extends MyURY_Scheduler_Common {
    * description: The description of the show<br>
    * genres: An array of 0 or more genre ids this Show is a member of<br>
    * tags: A string of 0 or more space-seperated tags this Show relates to<br>
-   * credits: An array of 1 or more User objects of people related to the Show<br>
-   * credittypes: An array of identical size to credits, identifying the type of relation to the Show<br>
+   * credits: a 2D Array with keys member and credittype. member is Array of Users, credittype is Array of<br>
+   * corresponding credittypeids
    * showtypeid: The ID of the type of show (see schedule.show_type). Defaults to "Show"
    * location: The ID of the location the show will be in
    * 
@@ -113,7 +113,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
    */
   public static function create($params = array()) {
     //Validate input
-    $required = array('title', 'description', 'credits', 'credittypes');
+    $required = array('title', 'description', 'credits');
     foreach ($required as $field) {
       if (!isset($params[$field])) {
         throw new MyURYException('Parameter ' . $field . ' was not provided.');
@@ -148,7 +148,9 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     //Right, set the title and description next
     foreach (array('title', 'description') as $key) {
       self::$db->query('INSERT INTO schedule.show_metadata
-              (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)', array(self::getMetadataKey($key), $show_id, $params[$key], $_SESSION['memberid']), true);
+              (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid)
+              VALUES ($1, $2, $3, NOW(), $4, $4)',
+              array(self::getMetadataKey($key), $show_id, $params[$key], $_SESSION['memberid']), true);
     }
 
     //Genre time powers activate!
@@ -172,6 +174,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     if (!is_numeric($params['location'])) {
       /**
        * Hardcoded default to Studio 1
+       * @todo Location support
        */
       $params['location'] = 1;
     }
@@ -181,10 +184,12 @@ class MyURY_Show extends MyURY_Scheduler_Common {
             ), true);
 
     //And now all that's left is who's on the show
-    for ($i = 0; $i < sizeof($params['credits']); $i++) {
+    for ($i = 0; $i < sizeof($params['credits']['member']); $i++) {
+      //Skip blank entries
+      if (empty($params['credits']['member'][$i])) continue;
       self::$db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from,
               memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)',
-        array($show_id, (int) $params['credittypes'][$i],$params['credits'][$i]->getID(), $_SESSION['memberid']), true);
+        array($show_id, (int) $params['credits']['credittype'][$i],$params['credits']['member'][$i]->getID(), $_SESSION['memberid']), true);
     }
 
     //Actually commit the show to the database!
