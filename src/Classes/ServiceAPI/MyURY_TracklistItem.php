@@ -271,4 +271,17 @@ class MyURY_TracklistItem extends ServiceAPI {
     
     return ($result[0] < 2);
   }
+  
+  public function toDataSource() {
+    if (is_array($this->track)) {
+      $return = $this->track;
+    } else {
+      $return = $this->track->toDataSource();
+    }
+    $return['starttime'] = $this->getStartTime();
+    $return['endtime'] = $this->getEndTime();
+    $return['state'] = $this->state();
+    
+    return $return;
+  }
 }

@@ -273,7 +273,7 @@ window.MyURYForm = {
       bSort: true,
       bJQueryUI: true,
       bPaginate: false,
-      bSearch: false
+      bFilter: false
     }
     );
   }

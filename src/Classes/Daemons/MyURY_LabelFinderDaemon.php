@@ -1,10 +1,26 @@
 <?php
+/**
+ * This file provides the MyURY_LabelFinderDaemon class for MyURY
+ * @package MyURY_Daemon
+ */
 
-class MyURY_LabelFinderDaemon {
+/**
+ * The LabelFinder Daemon processes rec_record in batches, and tries to fill in the "label" field.
+ *
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 20130711
+ * @package MyURY_Daemon
+ */
+class MyURY_LabelFinderDaemon extends MyURY_Daemon {
+  /**
+   * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.
+   * It is currently enabled because we have a lot of labels that needed filling in for Tracklisting.
+   * @return boolean
+   */
   public static function isEnabled() { return true; }
   
   /**
-   * THIS API IS RATE LIMITED TO ONE REQUEST PER SECOND.
+   * THE DISCOGS API IS RATE LIMITED TO ONE REQUEST PER SECOND.
    */
   public static function run() {
     //Get 5 albums without labels
@@ -18,7 +34,7 @@ class MyURY_LabelFinderDaemon {
       if (!empty($data['results'])) {
         $label = $data['results'][0]['label'][0];
         
-        echo "Setting {$album['recordid']} label to {$label}.\n";
+        dlog("Setting {$album['recordid']} label to {$label}", 2);
         Database::getInstance()->query('UPDATE public.rec_record SET recordlabel=$1 WHERE recordid=$2',
                 array($label, $album['recordid']));
       }

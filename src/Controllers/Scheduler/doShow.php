@@ -3,7 +3,7 @@
  * 
  * @todo Proper Documentation
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 21072012
+ * @version 20130728
  * @package MyURY_Scheduler
  */
 
