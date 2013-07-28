@@ -2,15 +2,13 @@
 
 /**
  *
- * @todo Proper Documentation
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130727
  * @package MyURY_Scheduler
  */
-$form = (new MyURYForm('sched_show', $module, 'doShow', array(
+$form = (new MyURYForm('sched_show', 'Scheduler', 'doShow', array(
     'debug' => true,
     'title' => 'Edit Show'
-//'template' => 'Scheduler/allocate.twig'
         )
         ))->addField(
                 new MyURYFormField('grp-basics', MyURYFormField::TYPE_SECTION, array('label' => 'About My Show'))
@@ -30,7 +28,7 @@ $form = (new MyURYForm('sched_show', $module, 'doShow', array(
                 new MyURYFormField('genres', MyURYFormField::TYPE_SELECT, array(
             'options' => array_merge(array(array('text' => 'Please select...', 'disabled' => true)), MyURY_Scheduler::getGenres()),
             'repeating' => true,
-            'label' => 'Genres',
+            'label' => 'Genre',
             'explanation' => 'What type of music do you play, if any?'
                 )
                 )

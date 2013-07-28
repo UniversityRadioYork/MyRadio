@@ -1,16 +1,15 @@
 <?php
 /**
- * 
- * @todo Proper Documentation
+ * Reject a season application
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 02012013
+ * @version 20130728
  * @package MyURY_Scheduler
  */
 
-//Model: The Season to be rejected
-$season = MyURY_Season::getInstance((int)$_REQUEST['show_season_id']);
 //Model: The Form definition
 require 'Models/Scheduler/rejectfrm.php';
-$form->setFieldValue('season_id', $season->getID());
-//View: The Form
-$form->render();
+$data = $form->readValues();
+
+MyURY_Season::getInstance($data['season_id'])->reject($data['reason'], $data['notify_user']);
+
+header('Location: '.CoreUtils::makeURL('Scheduler', 'default'));

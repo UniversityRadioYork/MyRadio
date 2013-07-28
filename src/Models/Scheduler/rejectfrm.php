@@ -17,7 +17,10 @@ $form = (new MyURYForm('sched_reject', $module, 'doReject',
         )->addField(
                 new MyURYFormField('reason', MyURYFormField::TYPE_BLOCKTEXT,
                         array(
-                            'label' => 'Reason for Rejection: '
+                            'label' => 'Reason for Rejection: ',
+                            'explanation' => 'You can enter a reason here for the application being rejected.'
+                            .' If you then choose to send this response to the applicant, they can then edit their'
+                            .' application and resubmit.'
                 ))
         )->addField(
         new MyURYFormField('notify_user', MyURYFormField::TYPE_CHECK,

@@ -184,15 +184,19 @@ class MyURYForm {
    * which instance of an entry is being updated
    * @param Array $values A key=>value array of input names and their values. These will literally be sent to setFieldValue
    * iteratively
+   * @param String action If set, will replace the default Form action.
    * 
    * Note: This method should only be called once in the object's lifetime
    */
-  public function editMode($identifier, $values) {
+  public function editMode($identifier, $values, $action = null) {
     $this->addField(new MyURYFormField('myuryfrmedid', MyURYFormField::TYPE_HIDDEN, array('value' => $identifier)));
 
     foreach ($values as $k => $v) {
       $this->setFieldValue($k, $v);
     }
+    
+    if ($action !== null) $this->action = $action;
+    
     return $this;
   }
 
