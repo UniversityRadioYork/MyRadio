@@ -60,6 +60,6 @@ if ($visitor->hasAuth(AUTH_IMPERSONATE) &&
 if ($visitor->hasAuth(AUTH_LOCK)) {
   $template->addVariable('lockurl',
           '<a href="'.CoreUtils::makeURL('Profile', 'lock',
-          array('memberid' => $user->getID())).'/impersonate.php?memberid='.$user->getID().'">Disable Account</a>');
+          array('memberid' => $user->getID())).'">Disable Account</a>');
 }
 $template->render();
