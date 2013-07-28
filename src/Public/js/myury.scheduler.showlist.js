@@ -19,9 +19,9 @@ $('.twig-datatable').dataTable({
   },
   //editlink
   {
-    "sTitle": "",
+    "sTitle": "Edit",
     "bSortable": false,
-    "bVisible": false
+    "bVisible": true
   },
   //applylink
   {
@@ -30,7 +30,7 @@ $('.twig-datatable').dataTable({
   },
   //micrositelink
   {
-    "sTitle": "Microsite",
+    "sTitle": "Site",
     "bSortable": false
   }
   ],

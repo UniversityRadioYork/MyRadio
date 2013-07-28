@@ -9,9 +9,10 @@ $(document).ready(function() {
   $('#sched_show-title').on('input propertychange', function() {
     if ($(this).val().length >= 3)
     {
+      var value = $(this).val();
       $.ajax({
         url: myury.makeURL('Scheduler', 'a-findshowbytitle'),
-        data: {term: $(this).val, limit: mConfig.ajax_default_limit},
+        data: {term: value, limit: 100},
         success: function(data) {
           if (data.length >= 1) {
             var html = '<span class="ui-icon ui-icon-info fleft"></span>Similar to '+data[0].title;

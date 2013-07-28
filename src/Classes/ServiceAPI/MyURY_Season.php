@@ -22,12 +22,17 @@ class MyURY_Season extends MyURY_Scheduler_Common {
   private $term_id;
   private $submitted;
   private $owner;
-  private $metadata;
   private $timeslots;
   private $requested_times;
   private $requested_weeks;
   private $season_num;
 
+  /**
+   * 
+   * @param int $season_id
+   * @return MyURY_Season
+   * @throws MyURYException
+   */
   public static function getInstance($season_id = null) {
     if (!is_numeric($season_id)) {
       throw new MyURYException('Invalid Season ID!', MyURYException::FATAL);
@@ -214,6 +219,50 @@ class MyURY_Season extends MyURY_Scheduler_Common {
 
     return new self($season_id);
   }
+  
+  /**
+   * Rejects the application for the Season, notifying the creditors if asked.
+   * 
+   * Will not reject if already rejected.<br>
+   * A Season is "Rejected" by setting the "Submitted" field in schedule.show_season to NULL,
+   * and adding a "reject-reason" metadata key, with the effective_from set to the time the application
+   * was rejected.<br>
+   * A Season can be reapplied for by setting the "Submitted" field to the re-submit time.
+   * It is also best practice to then set the "reject-reason" key to have the same effective_to.
+   * 
+   * @param String $reason Why the application was rejected
+   * @param bool $notify_user If true, all creditors will be notified about the rejection.
+   */
+  public function reject($reason, $notify_user = true) {
+    if ($this->submitted == null) {
+      return false;
+    }
+    self::$db->query('BEGIN');
+    self::$db->query('UPDATE schedule.show_season SET submitted=NULL WHERE show_season_id=$1',
+            array($this->getID()), true);
+    $this->submitted = null;
+    
+    $this->setMeta('reject-reason', $reason);
+    
+    if ($notify_user) {
+      MyURYEmail::sendEmailToUserSet($this->getShow()->getCreditObjects(),
+              $this->getMeta('title') . ' Application Rejected',
+<<<EOT
+Hi #NAME,
+
+Your application for a season of a show was rejected by our programming team, for the reason given below:
+
+$reason
+
+You can reapply online at any time, or for more information, email pc@ury.org.uk.
+              
+~ URY Scheduling Legume
+EOT
+      );
+    }
+    
+    self::$db->query('COMMIT');
+  }
 
   public function getMeta($meta_string) {
     $key = self::getMetadataKey($meta_string);
@@ -222,6 +271,25 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     } else {
       return $this->getShow()->getMeta($meta_string);
     }
+  }
+  
+  /**
+   * Sets a metadata key to the specified value.
+   * 
+   * If any value is the same as an existing one, no action will be taken.
+   * If the given key has is_multiple, then the value will be added as a new, additional key.
+   * If the key does not have is_multiple, then any existing values will have effective_to
+   * set to the effective_from of this value, effectively replacing the existing value.
+   * This will *not* unset is_multiple values that are not in the new set.
+   * 
+   * @param String $string_key The metadata key
+   * @param mixed $value The metadata value. If key is_multiple and value is an array, will create instance
+   * for value in the array.
+   * @param int $effective_from UTC Time the metavalue is effective from. Default now.
+   * @param int $effective_to UTC Time the metadata value is effective to. Default NULL (does not expire).
+   */
+  public function setMeta($string_key, $value, $effective_from = null, $effective_to = null) {
+   return parent::setMeta($string_key, $value, $effective_from, $effective_to, 'season_metadata', 'show_season_id');
   }
 
   public function getID() {
@@ -459,7 +527,7 @@ $times
   
   If you have any questions about your application, direct them to pc@ury.org.uk
 
-  ~ URY Scheduling Wizard
+  ~ URY Scheduling Legume
 EOT;
     if (!empty($times))
       MyURYEmail::sendEmailToUser($this->owner, $this->getMeta('title') . ' Scheduled', $message);

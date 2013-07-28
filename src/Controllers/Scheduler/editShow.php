@@ -1,14 +1,35 @@
 <?php
 /**
- * This is the magic form that makes URY actually have content - it enables users to apply for shows. And stuff.
+ * This page enables a Users to edit a Show that already exists. It takes one parameter, $_REQUEST['showid']
+ * which should be the ID of the Show to edit.
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130728
  * @package MyURY_Scheduler
  */
 
+//Check the user has permission to edit this show
+$show = MyURY_Show::getInstance($_REQUEST['showid']);
+if (!$show->isCurrentUserAnOwner() && !CoreUtils::hasPermission(AUTH_EDITSHOWS)) {
+  $message = 'You must be a Creditor of a Show or be in the Programming Team to edit this show.';
+  require 'Views/Errors/403.php';
+}
+
 //The Form definition
 require 'Models/Scheduler/showfrm.php';
-$form->editMode($_REQUEST['showid'])
-     ->setTemplate('Scheduler/createShow.twig')
+
+$form->editMode($_REQUEST['showid'], array(
+            'title' => $show->getMeta('title'),
+            'description' => $show->getMeta('description'),
+            'genres' => $show->getGenre(),
+            'tags' => implode(' ', $show->getMeta('tag')),
+            'credits.member' => array_map(function ($ar) {
+                      return $ar['User'];
+                    }, $show->getCredits()),
+            'credits.credittype' => array_map(function ($ar) {
+                      return $ar['type'];
+                    }, $show->getCredits())
+                ),
+          'doEditShow'
+        )
         ->render();

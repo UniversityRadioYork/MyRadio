@@ -120,7 +120,7 @@ class CoreUtils {
     if ($time === null)
       $time = time();
 
-    return date('Y-m-d H:i:s', $time);
+    return gmdate('Y-m-d H:i:s', $time);
   }
 
   /**

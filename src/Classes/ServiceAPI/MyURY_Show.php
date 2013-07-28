@@ -6,7 +6,7 @@
 
 /**
  * The Show class is used to create, view and manupulate Shows within the new MyURY Scheduler Format
- * @version 05012013
+ * @version 20130728
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Scheduler
  * @uses \Database
@@ -17,7 +17,6 @@ class MyURY_Show extends MyURY_Scheduler_Common {
 
   private static $shows = array();
   private $show_id;
-  private $meta;
   private $owner;
   private $credits = array();
   private $genres;
@@ -25,6 +24,12 @@ class MyURY_Show extends MyURY_Scheduler_Common {
   private $submitted_time;
   private $season_ids;
 
+  /**
+   * 
+   * @param int $show_id
+   * @return MyURY_Show
+   * @throws MyURYException
+   */
   public static function getInstance($show_id = null) {
     if (!is_numeric($show_id)) {
       throw new MyURYException('Invalid Show ID!', MyURYException::FATAL);
@@ -81,9 +86,9 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     for ($i = 0; $i < sizeof($metadata); $i++) {
       if (self::isMetadataMultiple($metadata_types[$i])) {
         //Multiples should be an array
-        $this->meta[$metadata_types[$i]][] = $metadata[$i];
+        $this->metadata[$metadata_types[$i]][] = $metadata[$i];
       } else {
-        $this->meta[$metadata_types[$i]] = $metadata[$i];
+        $this->metadata[$metadata_types[$i]] = $metadata[$i];
       }
     }
 
@@ -154,6 +159,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     }
 
     //Genre time powers activate!
+    if (!is_array($params['genres'])) $params['genres'] = array($params['genres']);
     foreach ($params['genres'] as $genre) {
       if (!is_numeric($genre))
         continue;
@@ -221,8 +227,8 @@ class MyURY_Show extends MyURY_Scheduler_Common {
   }
 
   public function getMeta($meta_string) {
-    return isset($this->meta[self::getMetadataKey($meta_string)]) ?
-      $this->meta[self::getMetadataKey($meta_string)] : null;
+    return isset($this->metadata[self::getMetadataKey($meta_string)]) ?
+      $this->metadata[self::getMetadataKey($meta_string)] : null;
   }
 
   public function getNumberOfSeasons() {
@@ -279,6 +285,13 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     return $r;
   }
   
+  /**
+   * Return the primary Genre. Shows generally only have one anyway.
+   */
+  public function getGenre() {
+    return $this->genres[0];
+  }
+  
   public function isCurrentUserAnOwner() {
     foreach ($this->getCreditObjects() as $user) {
       if ($user->getID() === $_SESSION['memberid']) {
@@ -302,6 +315,38 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     
     self::$db->query('UPDATE schedule.show_image_metadata SET effective_from=NOW(), metadata_value=$1
       WHERE show_image_metadata_id=$2', array($suffix, $result));
+  }
+  
+  /**
+   * Sets a metadata key to the specified value.
+   * 
+   * If any value is the same as an existing one, no action will be taken.
+   * If the given key has is_multiple, then the value will be added as a new, additional key.
+   * If the key does not have is_multiple, then any existing values will have effective_to
+   * set to the effective_from of this value, effectively replacing the existing value.
+   * This will *not* unset is_multiple values that are not in the new set.
+   * 
+   * @param String $string_key The metadata key
+   * @param mixed $value The metadata value. If key is_multiple and value is an array, will create instance
+   * for value in the array.
+   * @param int $effective_from UTC Time the metavalue is effective from. Default now.
+   * @param int $effective_to UTC Time the metadata value is effective to. Default NULL (does not expire).
+   */
+  public function setMeta($string_key, $value, $effective_from = null, $effective_to = null) {
+   return parent::setMeta($string_key, $value, $effective_from, $effective_to, 'show_metadata', 'show_id');
+  }
+  
+  /**
+   * Sets the Genre, if it hasn't changed
+   * @param int $genreid
+   */
+  public function setGenre($genreid) {
+    if ($genreid != $this->getGenre()) {
+      self::$db->query('UPDATE schedule.show_genre SET effective_to=NOW() WHERE show_id=$1',
+              array($this->getID()));
+      self::$db->query('INSERT INTO schedule.show_genre (show_id, genre_id, effective_from, memberid, approvedid)
+              VALUES ($1, $2, NOW(), $3, $3)', array($this->getID(), $genre, User::getInstance()->getID()));
+    }
   }
 
   /**

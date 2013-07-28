@@ -23,7 +23,6 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
   private $season_id;
   private $owner;
   private $timeslot_num;
-  private $metadata;
 
   public static function getInstance($timeslot_id = null) {
     if (!is_numeric($timeslot_id)) {
@@ -118,6 +117,26 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
   
   public function getDuration() {
     return $this->duration;
+  }
+  
+  /**
+   * Sets a metadata key to the specified value.
+   * 
+   * If any value is the same as an existing one, no action will be taken.
+   * If the given key has is_multiple, then the value will be added as a new, additional key.
+   * If the key does not have is_multiple, then any existing values will have effective_to
+   * set to the effective_from of this value, effectively replacing the existing value.
+   * This will *not* unset is_multiple values that are not in the new set.
+   * 
+   * @param String $string_key The metadata key
+   * @param mixed $value The metadata value. If key is_multiple and value is an array, will create instance
+   * for value in the array.
+   * @param int $effective_from UTC Time the metavalue is effective from. Default now.
+   * @param int $effective_to UTC Time the metadata value is effective to. Default NULL (does not expire).
+   */
+  public function setMeta($string_key, $value, $effective_from = null, $effective_to = null) {
+   return parent::setMeta($string_key, $value, $effective_from, $effective_to, 'timeslot_metadata',
+           'show_season_timeslot_id');
   }
 
   public function toDataSource() {
