@@ -32,14 +32,16 @@ $form = (new MyURYForm('sched_season', $module, 'doSeason',
                         )
                 )
         )->addField(
-                new MyURYFormField('grp-times', MyURYFormField::TYPE_SECTION,
-                        array('label' => 'Preferred Times'))
-        )->addField(new MyURYFormField('day', MyURYFormField::TYPE_DAY,
-                        array('repeating' => true, 'label' => 'On', 'classes' => array('nobr')))
-        )->addField(new MyURYFormField('stime', MyURYFormField::TYPE_TIME,
-                        array('repeating' => true, 'label' => 'from', 'classes' => array('nobr')))
-        )->addField(new MyURYFormField('etime', MyURYFormField::TYPE_TIME,
-                        array('repeating' => true, 'label' => 'until', 'classes' => array('nobr')))
+                new MyURYFormField('times', MyURYFormField::TYPE_TABULARSET,
+                        array('label' => 'Preferred Times',
+                            'options' => array(
+                                new MyURYFormField('day', MyURYFormField::TYPE_DAY,
+                        array('label' => 'On')),
+                                new MyURYFormField('stime', MyURYFormField::TYPE_TIME,
+                        array('label' => 'from')),
+                                new MyURYFormField('etime', MyURYFormField::TYPE_TIME,
+                        array('label' => 'until'))
+                            )))
         )->addField(
                 new MyURYFormField('grp-adv', MyURYFormField::TYPE_SECTION,
                         array('label' => 'Advanced Options'))

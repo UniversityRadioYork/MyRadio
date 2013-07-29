@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file provides the List class for MyURY
  * @package MyURY_Core

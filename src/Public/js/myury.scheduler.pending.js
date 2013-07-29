@@ -35,7 +35,7 @@ $('.twig-datatable').dataTable({
   },
   //id
   {
-    "bVisible": true
+    "bVisible": false
   },
   //season_num
   {
