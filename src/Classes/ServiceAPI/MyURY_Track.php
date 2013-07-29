@@ -45,6 +45,13 @@ class MyURY_Track extends ServiceAPI {
    * @var int
    */
   private $length;
+  
+  /**
+   * Don't use this.
+   * @deprecated
+   * @var String
+   */
+  private $duration;
 
   /**
    * The genreid of the Track
@@ -246,6 +253,7 @@ class MyURY_Track extends ServiceAPI {
 
   /**
    * Returns an array of key information, useful for Twig rendering and JSON requests
+   * @url GET Track
    * @todo Expand the information this returns
    * @return Array
    */
