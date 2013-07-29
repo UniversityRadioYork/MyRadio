@@ -122,8 +122,10 @@ while (true) {
   
   //At the end of an interation, commit a query and error count.
   //This is both nice for statistics, and prevents an entry of several tens of thousands when the server restarts :)
-  CoreUtils::shutdown();
-  Database::getInstance()->resetCounter();
-  MyURYException::resetExceptionCount();
-  MyURYError::resetErrorCount();
+  try {
+    CoreUtils::shutdown();
+    Database::getInstance()->resetCounter();
+    MyURYException::resetExceptionCount();
+    MyURYError::resetErrorCount();
+  } catch (MyURYException $e) {}
 }

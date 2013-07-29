@@ -26,7 +26,7 @@ class MyURY_BAPSSyncDaemon extends MyURY_Daemon {
    */
   public static function run() {
     $hourkey = __CLASS__.'_last_run_hourly';
-    if (self::getCache($hourkey) > time() - 3500) return;
+    if (self::getVal($hourkey) > time() - 3500) return;
     
     $special_date = '2034-05-06 07:08:09'; //All shows created by this are identified by this time.
     $db = Database::getInstance();
@@ -101,6 +101,6 @@ class MyURY_BAPSSyncDaemon extends MyURY_Daemon {
     echo pg_last_error();
     pg_query('COMMIT');
     
-    self::setCache($hourkey, time());
+    self::setVal($hourkey, time());
   }
 }
