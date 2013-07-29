@@ -348,6 +348,15 @@ class MyURY_Show extends MyURY_Scheduler_Common {
               VALUES ($1, $2, NOW(), $3, $3)', array($this->getID(), $genre, User::getInstance()->getID()));
     }
   }
+  
+  /**
+   * 
+   * @param type $users
+   * @param type $credittypes
+   */
+  public function setCredits($users, $credittypes) {
+    
+  }
 
   /**
    * @todo Document this method

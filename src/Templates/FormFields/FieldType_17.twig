@@ -1,4 +1,5 @@
-{% set thisfield, display_labels = field, false %}<table class="myuryfrm-repeaterset-container" id="{{thisfield.name}}">
+{% set thisfield, display_labels = field, false %}
+<h3>{{thisfield.label}}</h3><table class="myuryfrm-repeaterset-container" id="{{thisfield.name}}">
   <thead>
     <tr>
     {% for field in thisfield.options %}
