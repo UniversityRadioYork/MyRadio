@@ -27,6 +27,11 @@ class MyURYException extends RuntimeException {
    */
   public function __construct($message, $code = 500, Exception $previous = null) {
     self::$count++;
+    
+    if (defined('SILENT_EXCEPTIONS') && SILENT_EXCEPTIONS) {
+      return;
+    }
+    
     //Set up the Exception
     parent::__construct($message, $code, $previous);
     $error = "<p>MyURY has encountered a problem processing this request.</p>
@@ -42,7 +47,8 @@ class MyURYException extends RuntimeException {
       //Configuration is available, use this to decide what to do
       if (Config::$display_errors or (class_exists('CoreUtils') &&
               defined('AUTH_SHOWERRORS') && CoreUtils::hasPermission(AUTH_SHOWERRORS))) {
-        if ((isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') or empty($_SERVER['REMOTE_ADDR'])) {
+        if ((isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+                or empty($_SERVER['REMOTE_ADDR'])) {
           //This is an Ajax/CLI request. Return JSON
           header('HTTP/1.1 ' . $code . ' Internal Server Error');
           header('Content-Type: text/json');

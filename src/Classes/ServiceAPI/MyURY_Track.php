@@ -253,7 +253,6 @@ class MyURY_Track extends ServiceAPI {
 
   /**
    * Returns an array of key information, useful for Twig rendering and JSON requests
-   * @url GET Track
    * @todo Expand the information this returns
    * @return Array
    */

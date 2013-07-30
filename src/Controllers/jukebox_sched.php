@@ -41,9 +41,11 @@ do {
   } while ((MyURY_TracklistItem::getIfPlayedRecently($track) or iTones_Utils::getIfQueued($track)
           or !MyURY_TracklistItem::getIfAlbumArtistCompliant($track)) && --$i > 0);
 
-  //Actually send the telnet request
-  if (!iTones_Utils::requestTrack($track, 'main')) throw new MyURYException('Track Request Failed!');
-  $current_queue_length++;
+  //Actually send the telnet request, if we didn't run out of tries.
+  if ($i > 0) {
+    if (!iTones_Utils::requestTrack($track, 'main')) throw new MyURYException('Track Request Failed!');
+    $current_queue_length++;
+  }
 
 //If the queue length is less than 3, then run again to pad it out some more.
 } while ($current_queue_length < 3);
