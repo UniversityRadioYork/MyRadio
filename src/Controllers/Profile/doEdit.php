@@ -6,12 +6,12 @@
  * @version 20130715
  * @package MyURY_Profile
  */
-
+var_dump($_REQUEST);
 // Set if trying to view another member's profile page
-if (isset($_REQUEST['memberid']) && User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
-  $user = User::getInstance($_REQUEST['memberid']);
+if (isset($_REQUEST['profileedit-memberid']) && User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
+  $user = User::getInstance($_REQUEST['profileedit-memberid']);
 } else {
   $user = User::getInstance();
 }
 
-$user->getEditForm()->render();
+var_dump($user->getEditForm()->readValues());
