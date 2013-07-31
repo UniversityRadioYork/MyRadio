@@ -713,14 +713,14 @@ class User extends ServiceAPI {
   }
   
   public function setLocalAlias($alias) {
-    if ($alias !== $this->local_alias && !empty(self::findByEmail($alias))) {
+    if ($alias !== $this->local_alias && sizeof(self::findByEmail($alias)) !== 0) {
       throw new MyURYException('That Mailbox Name is already in use. Please choose another.', 500);
     }
     $this->setCommonParam('local_alias', $alias);
   }
   
   public function setLocalName($name) {
-    if ($name !== $this->local_name && !empty(self::findByEmail($name))) {
+    if ($name !== $this->local_name && sizeof(self::findByEmail($name)) !== 0) {
       throw new MyURYException('That Mailbox Alias is already in use. Please choose another.', 500);
     }
     $this->setCommonParam('local_name', $name);
