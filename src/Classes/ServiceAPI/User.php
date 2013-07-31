@@ -541,13 +541,14 @@ class User extends ServiceAPI {
   /**
    * Searches for Users with a name starting with $name
    * @param String $name The name to search for. If there is a space, it is assumed the second word is the surname
-   * @param int $limit The maximum number of Users to return
+   * @param int $limit The maximum number of Users to return. -1 uses the ajax_limit_default setting.
    * @return Array A 2D Array where every value of the first dimension is an Array as follows:<br>
    * memberid: The unique id of the User<br>
    * fname: The actual first name of the User<br>
    * sname: The actual last name of the User
    */
-  public static function findByName($name, $limit) {
+  public static function findByName($name, $limit = -1) {
+    if ($limit == -1) $limit = Config::$ajax_limit_default;
     //If there's a space, split into first and last name
     $name = trim($name);
     $names = explode(' ', $name);
@@ -695,7 +696,8 @@ class User extends ServiceAPI {
 
     $form = new MyURYForm('profileedit', 'Profile', 'doEdit', array('title' => 'Edit Profile'));
     //Personal details
-    $form->addField(new MyURYFormField('sec_personal', MyURYFormField::TYPE_SECTION, array(
+    $form->addField(new MyURYFormField('memberid', MyURYFormField::TYPE_HIDDEN, ['value' => $this->getID()]))
+            ->addField(new MyURYFormField('sec_personal', MyURYFormField::TYPE_SECTION, array(
                 'label' => 'Personal Details'
             )))
             ->addField(new MyURYFormField('fname', MyURYFormField::TYPE_TEXT, array(
@@ -1033,6 +1035,18 @@ EOT;
     )));
 
     return $form;
+  }
+  
+  public function toDataSource() {
+    return [
+        'memberid'=> $this->getID(),
+        'locked'=> $this->getAccountLocked(),
+        'paid'=> $this->getAllPayments(),
+        'college'=> $this->getCollege(),
+        'email'=> $this->getEmail(),
+        'fname' => $this->getFName(),
+        'last_login'=> $this->getLastLogin()
+    ];
   }
 
 }
