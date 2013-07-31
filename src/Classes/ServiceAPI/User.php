@@ -555,7 +555,7 @@ class User extends ServiceAPI {
    * This should always be called after a setSomething.
    */
   private function updateCacheObject() {
-    self::$cache->set(self::getCacheKey($memberid), $entry, 3600);
+    self::$cache->set(self::getCacheKey($this->memberid), $this, 3600);
   }
 
   /**
