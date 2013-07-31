@@ -465,6 +465,7 @@ class User extends ServiceAPI {
   /**
    * Returns the User's uni account
    * @return string The User's uni email
+   * @todo This is a duplication of getEduroam.
    */
   public function getUniAccount() {
     return $this->eduroam;
@@ -525,17 +526,36 @@ class User extends ServiceAPI {
       return self::$user[$memberid];
 
     //Return the object if it is cached
-    $entry = self::$cache->get('MyURYUser_' . $memberid);
+    $entry = self::$cache->get(self::getCacheKey($memberid));
     if ($entry === false) {
       //Not cached.
       $entry = new User($memberid);
-      self::$cache->set('MyURYUser_' . $memberid, $entry, 3600);
+      $entry->updateCacheObject();
     } else {
       //Wake up the object
       $entry->__wakeup();
     }
 
     return $entry;
+  }
+  
+  /**
+   * Generates the Key string for caching services
+   * 
+   * @param int $memberid The ID of the member to get the cache key for
+   * @return String
+   */
+  private static function getCacheKey($memberid) {
+    return 'MyURYUser_'.$memberid;
+  }
+  
+  /**
+   * Sets the cache for this object to be the current object state.
+   * 
+   * This should always be called after a setSomething.
+   */
+  private function updateCacheObject() {
+    self::$cache->set(self::getCacheKey($memberid), $entry, 3600);
   }
 
   /**
@@ -624,6 +644,108 @@ class User extends ServiceAPI {
 
     return $events;
   }
+  
+  /**
+   * 
+   * @param String $paramName The key to update, e.g. AccountLocked.
+   * Don't be silly and try to set memberid. Bad things will happen.
+   * @param mixed $value The value to set the param to. Type depends on $paramName.
+   */
+  private function setCommonParam($paramName, $value) {
+    //Maps Class variable names to their databae values, if they mismatch.
+    $param_maps = ['collegeid' => 'college'];
+    
+    if (!isset($this->$paramName)) throw new MyURYException('paramName invalid', 500);
+    $this->$paramName = $value;
+    
+    if (isset($param_maps[$paramName])) $paramName = $param_maps[$paramName];
+    
+    self::$db->query('UPDATE member SET $1=$2 WHERE memberid=$3', array($paramName, $value, $this->getID()));
+    $this->updateCacheObject();
+  }
+  
+  /**
+   * Sets the User's account locked status.
+   * 
+   * If a User's account is locked, access to all URY services is blocked by Shibbobleh and IMAP.
+   * 
+   * @param bool $bool True for Locked, False for Unlocked. Default True.
+   */
+  public function setAccountLocked($bool = true) {
+    $this->setCommonParam('account_locked', $bool);
+  }
+  
+  /**
+   * Set's a User's college ID.
+   * 
+   * College IDs can be acquired using User::getColleges().
+   * 
+   * @param int $college_id The ID of the college.
+   */
+  public function setCollegeID($college_id) {
+    $this->setCommonParam('collegeid', $college_id);
+  }
+  
+  /**
+   * Set the user's eduroam address
+   * 
+   * @param type $eduroam The User's UoY address, i.e. abc123@york.ac.uk
+   */
+  public function setEduroam($eduroam) {
+    if (empty($eduroam) && empty($this->email)) {
+      throw new MyURYExcecption('Can\'t set both Email and Eduroam to null.', 400);
+    }
+    $this->setCommonParam('eduroam', $eduroam);
+  }
+  
+  public function setEmail($email) {
+    if (empty($email) && empty($this->eduroam)) {
+      throw new MyURYExcecption('Can\'t set both Email and Eduroam to null.', 400);
+    }
+    $this->setCommonParam('email', $email);
+  }
+  
+  public function setFName($fname) {
+    if (empty($fname)) {
+      throw new MyURYException('Oh come on, everybody has a name.', 400);
+    }
+    $this->setCommonParam('fname', $fname);
+  }
+  
+  public function setLocalAlias($alias) {
+    if ($alias !== $this->local_alias && !empty(self::findByEmail($alias))) {
+      throw new MyURYException('That Mailbox Name is already in use. Please choose another.', 500);
+    }
+    $this->setCommonParam('local_alias', $alias);
+  }
+  
+  public function setLocalName($name) {
+    if ($name !== $this->local_name && !empty(self::findByEmail($name))) {
+      throw new MyURYException('That Mailbox Alias is already in use. Please choose another.', 500);
+    }
+    $this->setCommonParam('local_name', $name);
+  }
+  
+  public function setPhone($phone) {
+    //Clear whitespace
+    $phone = preg_replace('/\s/', '', $phone);
+    if (strlen($phone) !== 11) {
+      throw new MyURYException('A phone number should have 11 digits.', 400);
+    }
+    $this->setCommonParam('phone', $phone);
+  }
+  
+  public function setProfilePhoto(MyURY_Photo $photo);
+  
+  public function setReceiveEmail($bool = true);
+  
+  public function setSName($sname);
+  
+  public function setSex($initial = 'o');
+  
+  public function addTrainingStatus(MyURY_TrainingStatus $status);
+  
+  public function applyOfficership(MyURY_Officer $officer);
 
   /**
    * Searched for the user with the given email address, returning the User if they exist, or null if it fails.
