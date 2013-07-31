@@ -734,7 +734,7 @@ class User extends ServiceAPI {
     }
     $this->setCommonParam('phone', $phone);
   }
-  
+  /*
   public function setProfilePhoto(MyURY_Photo $photo);
   
   public function setReceiveEmail($bool = true);
@@ -746,7 +746,7 @@ class User extends ServiceAPI {
   public function addTrainingStatus(MyURY_TrainingStatus $status);
   
   public function applyOfficership(MyURY_Officer $officer);
-
+*/
   /**
    * Searched for the user with the given email address, returning the User if they exist, or null if it fails.
    * @param String $email
