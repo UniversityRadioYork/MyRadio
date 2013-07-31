@@ -14,10 +14,10 @@
 class MyURY_BAPSSyncDaemon extends MyURY_Daemon {
   /**
    * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.
-   * It is currently enabled because it makes the playlists happen in BAPS. We want them to happen.
+   * It is currently disabled because it hasn't actuall finished being ported from NIPSWeb 1.
    * @return boolean
    */
-  public static function isEnabled() { return true; }
+  public static function isEnabled() { return false; }
   
   /**
    * Once an hour, this takes each of the NIPSWebs Managed and Resource Lists,
