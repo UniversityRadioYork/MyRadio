@@ -64,7 +64,7 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
    * @param int $statusid The ID of the UserTrainingStatus.
    * @throws MyURYException
    */
-  private function __construct($statusid) {
+  protected function __construct($statusid) {
     $this->memberpresenterstatusid = (int)$statusid;
     
     $result = self::$db->fetch_one('SELECT * FROM public.member_presenterstatus
