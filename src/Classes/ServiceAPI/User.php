@@ -176,6 +176,8 @@ class User extends ServiceAPI {
       else
         $this->$key = $value;
     }
+    
+    if (!isset(self::$users[$memberid])) self::$users[$memberid] = $this;
 
     //Get the user's permissions
     $this->permissions = self::$db->fetch_column('SELECT lookupid FROM auth_officer
@@ -197,15 +199,15 @@ class User extends ServiceAPI {
        ORDER BY from_date,till_date;', array($memberid));
 
     // Get Training info all into array
-    $this->training = self::$db->fetch_all('SELECT presenterstatusid, completeddate, confirmedby, mem.fname||\' \'||mem.sname AS confirmedname
-      FROM public.member_presenterstatus pres
-      INNER JOIN member mem ON (confirmedby = mem.memberid)
-      WHERE pres.memberid=$1
-      ORDER BY completeddate ASC', array($this->memberid));
+    $this->training = MyURY_UserTrainingStatus::resultSetToObjArray(self::$db->fetch_column('SELECT memberpresenterstatusid
+      FROM public.member_presenterstatus WHERE memberid=$1
+      ORDER BY completeddate ASC', array($this->memberid)));
   }
   
   /**
    * Returns if the User is currently an Officer
+   * 
+   * @return bool
    */
   public function isOfficer() {
     foreach ($this->getOfficerships() as $officership) {
@@ -221,31 +223,11 @@ class User extends ServiceAPI {
    * @return boolean
    */
   public function isStudioTrained() {
-    $trained = false;
-    foreach ($this->training as $key => $value) {
-      if ($value['presenterstatusid'] == 1) {
-        $trained = true;
-      }
-      if ($value['presenterstatusid'] == 10) {
-        $trained = false;
-      }
+    foreach ($this->training as $train) {
+      if ($train->getID() == 1 && $train->getRevokedBy() == null) return true;
     }
-    return $trained;
-  }
-
-  /**
-   * Returns the last User that trained this User. Still returns them if the Training status was revoked.
-   * @return User|null
-   */
-  public function getStudioTrainedBy() {
-    $trainer = null;
-    foreach ($this->training as $value) {
-      if ($value['presenterstatusid'] == 1) {
-        $trainer = User::getInstance($value['confirmedby']);
-      }
-    }
-
-    return $trainer;
+    
+    return false;
   }
 
   /**
@@ -253,31 +235,11 @@ class User extends ServiceAPI {
    * @return boolean
    */
   public function isStudioDemoed() {
-    $demoed = false;
-    foreach ($this->training as $key => $value) {
-      if ($value['presenterstatusid'] == 2) {
-        $demoed = true;
-      }
-      if ($value['presenterstatusid'] == 9) {
-        $demoed = false;
-      }
+    foreach ($this->training as $train) {
+      if ($train->getID() == 2 && $train->getRevokedBy() == null) return true;
     }
-    return $demoed;
-  }
-
-  /**
-   * Returns the last User that demoed this User. Still returns them if the Demoed status was revoked.
-   * @return User|null
-   */
-  public function getStudioDemoedBy() {
-    $trainer = null;
-    foreach ($this->training as $value) {
-      if ($value['presenterstatusid'] == 2) {
-        $trainer = User::getInstance($value['confirmedby']);
-      }
-    }
-
-    return $trainer;
+    
+    return false;
   }
 
   /**
@@ -285,31 +247,29 @@ class User extends ServiceAPI {
    * @return boolean
    */
   public function isTrainer() {
-    $trainer = false;
-    foreach ($this->training as $key => $value) {
-      if ($value['presenterstatusid'] == 3) {
-        $trainer = true;
-      }
-      if ($value['presenterstatusid'] == 11) {
-        $trainer = false;
-      }
+    foreach ($this->training as $train) {
+      if ($train->getID() == 3 && $train->getRevokedBy() == null) return true;
     }
-    return $trainer;
+    
+    return false;
   }
-
+  
   /**
-   * Returns the last User that trainer trained this User. Still returns them if the Trainer status was revoked.
-   * @return User|null
+   * Get all types of training the User has.
+   * 
+   * @param bool $ignore_revoked If true, Revoked statuses will not be included.
+   * @return Array[MyURY_UserTrainingStatus]
    */
-  public function getTrainerTrainedBy() {
-    $trainer = null;
-    foreach ($this->training as $value) {
-      if ($value['presenterstatusid'] == 3) {
-        $trainer = User::getInstance($value['confirmedby']);
+  public function getAllTraining($ignore_revoked = false) {
+    if ($ignore_revoked) {
+      $data = [];
+      foreach ($this->training as $train) {
+        if ($train->getRevokedBy() == null) $data[] = $train;
       }
+      return $data;
+    } else {
+      return $this->training;
     }
-
-    return $trainer;
   }
 
   /**
@@ -487,10 +447,10 @@ class User extends ServiceAPI {
   }
   
   /**
-   * Get all the User's training events
+   * Get's the User's MyURY Profile page URL
    */
-  public function getTraining() {
-    return $this->training;
+  public function getURL() {
+    return CoreUtils::makeURL('Profile','View',array('memberid' => $this->getID()));
   }
 
   /**
@@ -734,19 +694,31 @@ class User extends ServiceAPI {
     }
     $this->setCommonParam('phone', $phone);
   }
-  /*
-  public function setProfilePhoto(MyURY_Photo $photo);
   
-  public function setReceiveEmail($bool = true);
+  public function setProfilePhoto(MyURY_Photo $photo) {
+    $this->setCommonParam('profile_photo', $photo->getID());
+  }
   
-  public function setSName($sname);
+  public function setReceiveEmail($bool = true) {
+    $this->setCommonParam('receive_email', $bool);
+  }
   
-  public function setSex($initial = 'o');
+  public function setSName($sname) {
+    if (empty($sname)) {
+      throw new MyURYException('Yes, your last name is a thing.', 400);
+    }
+    $this->setCommonParam('sname', $sname);
+  }
   
-  public function addTrainingStatus(MyURY_TrainingStatus $status);
-  
-  public function applyOfficership(MyURY_Officer $officer);
-*/
+  public function setSex($initial = 'o') {
+    $initial = strtolower($initial);
+    if (!in_array($initial, array('m', 'f', 'o'))) {
+      throw new MyURYException('You can be either "(M)ale", "(F)emale", or "(O)ther". You can\'t be none of these,'
+       .' or more than one of these. Sorry.');
+    }
+    $this->setCommonParam('sex', $initial);
+  }
+
   /**
    * Searched for the user with the given email address, returning the User if they exist, or null if it fails.
    * @param String $email
@@ -766,9 +738,16 @@ class User extends ServiceAPI {
       return self::getInstance($result[0]);
   }
 
+  /**
+   * Please use MyURY_TrainingStatus.
+   * 
+   * @deprecated
+   * @return User[]
+   */
   public static function findAllTrained() {
     self::wakeup();
-
+    trigger_error('Use of deprecated method User::findAllTrained.', E_USER_WARNING);
+    
     $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=1');
     $members = array();
     foreach ($trained as $mid) {
@@ -780,9 +759,16 @@ class User extends ServiceAPI {
     return $members;
   }
 
+  /**
+   * Please use MyURY_TrainingStatus.
+   * 
+   * @deprecated
+   * @return User[]
+   */
   public static function findAllDemoed() {
     self::wakeup();
-
+    trigger_error('Use of deprecated method User::findAllDemoed.', E_USER_WARNING);
+    
     $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=2');
     $members = array();
     foreach ($trained as $mid) {
@@ -794,9 +780,16 @@ class User extends ServiceAPI {
     return $members;
   }
 
+  /**
+   * Please use MyURY_TrainingStatus.
+   * 
+   * @deprecated
+   * @return User[]
+   */
   public static function findAllTrainers() {
     self::wakeup();
-
+    trigger_error('Use of deprecated method User::findAllTrainers.', E_USER_WARNING);
+    
     $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=3');
     $members = array();
     foreach ($trained as $mid) {
@@ -1165,9 +1158,14 @@ EOT;
         'locked'=> $this->getAccountLocked(),
         'paid'=> $this->getAllPayments(),
         'college'=> $this->getCollege(),
-        'email'=> $this->getEmail(),
         'fname' => $this->getFName(),
-        'last_login'=> $this->getLastLogin()
+        'sname' => $this->getSName(),
+        'last_login'=> $this->getLastLogin(),
+        'url' => $this->getURL(),
+        'sex' => $this->getSex(),
+        'officerships' => $this->getOfficerships(),
+        'training' => CoreUtils::dataSourceParser($this->getAllTraining(true)),
+        'photo' => $this->getProfilePhoto() === null ? Config::$default_person_uri : $this->getProfilePhoto()->getURL()
     ];
   }
 
