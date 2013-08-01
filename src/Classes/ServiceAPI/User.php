@@ -200,8 +200,8 @@ class User extends ServiceAPI {
 
     // Get Training info all into array
     $this->training = MyURY_UserTrainingStatus::resultSetToObjArray(self::$db->fetch_column('SELECT memberpresenterstatusid
-      FROM public.member_presenterstatus WHERE memberid=$1
-      ORDER BY completeddate ASC', array($this->memberid)));
+      FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
+      WHERE memberid=$1 ORDER BY ordering, completeddate ASC', array($this->memberid)));
   }
   
   /**
