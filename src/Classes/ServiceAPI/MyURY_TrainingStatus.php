@@ -98,13 +98,9 @@ class MyURY_TrainingStatus extends ServiceAPI {
     $this->ordering = (int)$result['ordering'];
     $this->detail = $result['detail'];
     
-    //!Cyclic dependencies will break this
-    /**
-     * @todo fix this breaking things.
-     */
-    $this->depends = empty($result['depends']) ? null : self::getInstance($result['depends']);
-    
     if (!isset(self::$ts[$statusid])) self::$ts[$statusid] = $this;
+    
+    $this->depends = empty($result['depends']) ? null : self::getInstance($result['depends']);
     $this->can_award = empty($result['can_award']) ? null : self::getInstance($result['can_award']);
   }
 
