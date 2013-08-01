@@ -80,7 +80,10 @@ class Database {
       if (is_bool($v)) $params[$k] = ($v? 't' : 'f');
     }
     
-    if (isset($_REQUEST['dbdbg'])) echo $sql.'&nbsp;'.print_r($params,true).'<br>';
+    if (isset($_REQUEST['dbdbg']) && CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
+      //Debug output
+      echo $sql.'&nbsp;'.print_r($params,true).'<br>';
+    }
     
     $result = @pg_query_params($this->db, $sql, $params);
     if (!$result) {
