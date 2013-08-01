@@ -140,26 +140,8 @@
       <td>
         <ul id="training">
         {% for train in user.training %}
-          <li>{{train.title}} on {{train.awarded_time|date("j/n/Y")}} <em>By <a href="{{train.awarded_by.url}}">{{train.awarded_by.fname}} {{train.awarded_by.sname}}</a></em>
-            
-            {% if train.presenterstatusid == 1 %}
-              Studio Trained on {{ train.completeddate|date("j/n/Y") }}. <em>By <a href="{{train.confirmedbyurl}}">{{ train.confirmedname }}</a></em>
-            {% endif %}
-            {% if train.presenterstatusid == 2 %}
-              Passed Demo on {{ train.completeddate|date("j/n/Y") }}. <em>Assessed by <a href="{{train.confirmedbyurl}}">{{ train.confirmedname }}</a></em>
-            {% endif %}
-            {% if train.presenterstatusid == 3 %}
-              Became Trainer on {{ train.completeddate|date("j/n/Y") }}. <em>Approved by <a href="{{train.confirmedbyurl}}">{{ train.confirmedname }}</a></em>
-            {% endif %}
-            {% if train.presenterstatusid == 10 %}
-              Studio Training Revoked on {{ train.completeddate|date("j/n/Y") }}. <em>By <a href="{{train.confirmedbyurl}}">{{ train.confirmedname }}</a></em>
-            {% endif %}
-            {% if train.presenterstatusid == 9 %}
-              Demo Revoked on {{ train.completeddate|date("j/n/Y") }}. <em>By <a href="{{train.confirmedbyurl}}">{{ train.confirmedname }}</a></em>
-            {% endif %}
-            {% if train.presenterstatusid == 11 %}
-              Trainer Status Revoked on {{ train.completeddate|date("j/n/Y") }}. <em>By <a href="{{train.confirmedbyurl}}">{{ train.confirmedname }}</a></em>
-            {% endif %}
+          <li>{{train.title}} on {{train.awarded_time|date("j/n/Y")}}
+            <em>by <a href="{{train.awarded_by.url}}">{{train.awarded_by.fname}} {{train.awarded_by.sname}}</a></em>
           </li>
         {% else %}
           <li>No Training Data Available</li>

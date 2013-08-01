@@ -450,7 +450,7 @@ class User extends ServiceAPI {
    * Get's the User's MyURY Profile page URL
    */
   public function getURL() {
-    return CoreUtils::makeURL('Profile','View',array('memberid' => $this->getID()));
+    return CoreUtils::makeURL('Profile','view',array('memberid' => $this->getID()));
   }
 
   /**
