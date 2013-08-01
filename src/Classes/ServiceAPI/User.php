@@ -620,7 +620,7 @@ class User extends ServiceAPI {
     
     if (isset($param_maps[$paramName])) $paramName = $param_maps[$paramName];
     
-    self::$db->query('UPDATE member SET $1=$2 WHERE memberid=$3', array($paramName, $value, $this->getID()));
+    self::$db->query('UPDATE member SET '.$paramName.'=$1 WHERE memberid=$2', array($value, $this->getID()));
     $this->updateCacheObject();
   }
   
