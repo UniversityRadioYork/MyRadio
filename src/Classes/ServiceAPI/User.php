@@ -483,7 +483,7 @@ class User extends ServiceAPI {
     //Check if a user class already exists for this memberid
     //(Each memberid-user combination should only have one initiated instance)
     if (isset(self::$users[$memberid]))
-      return self::$user[$memberid];
+      return self::$users[$memberid];
 
     //Return the object if it is cached
     $entry = self::$cache->get(self::getCacheKey($memberid));
