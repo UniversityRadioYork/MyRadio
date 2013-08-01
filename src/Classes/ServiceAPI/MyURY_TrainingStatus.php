@@ -98,9 +98,13 @@ class MyURY_TrainingStatus extends ServiceAPI {
     $this->ordering = (int)$result['ordering'];
     $this->detail = $result['detail'];
     
-    if (!isset(self::$ts[$statusid])) self::$ts[$statusid] = $this;
-    
+    //!Cyclic dependencies will break this
+    /**
+     * @todo fix this breaking things.
+     */
     $this->depends = empty($result['depends']) ? null : self::getInstance($result['depends']);
+    
+    if (!isset(self::$ts[$statusid])) self::$ts[$statusid] = $this;
     $this->can_award = empty($result['can_award']) ? null : self::getInstance($result['can_award']);
   }
 
@@ -198,9 +202,7 @@ class MyURY_TrainingStatus extends ServiceAPI {
         'title' => $this->getTitle(),
         'detail' => $this->getDetail(),
         'depends' => $this->getDepends(),
-        'awarded_by' => $this->getAwarder(),
-        //Converts to IDs. If we don't do this, and User::toDataSource outputs this training status, recursion!
-        'awarded_to' => $this->getAwardedTo(true)
+        'awarded_by' => $this->getAwarder()
     );
   }
 
