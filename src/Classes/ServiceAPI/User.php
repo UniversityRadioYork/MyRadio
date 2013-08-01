@@ -612,7 +612,7 @@ class User extends ServiceAPI {
    * @param mixed $value The value to set the param to. Type depends on $paramName.
    */
   private function setCommonParam($paramName, $value) {
-    //Maps Class variable names to their databae values, if they mismatch.
+    //Maps Class variable names to their database values, if they mismatch.
     $param_maps = ['collegeid' => 'college'];
     
     if (!isset($this->$paramName)) throw new MyURYException('paramName invalid', 500);
@@ -622,6 +622,8 @@ class User extends ServiceAPI {
     
     self::$db->query('UPDATE member SET '.$paramName.'=$1 WHERE memberid=$2', array($value, $this->getID()));
     $this->updateCacheObject();
+    
+    return true;
   }
   
   /**
@@ -632,7 +634,7 @@ class User extends ServiceAPI {
    * @param bool $bool True for Locked, False for Unlocked. Default True.
    */
   public function setAccountLocked($bool = true) {
-    $this->setCommonParam('account_locked', $bool);
+    return $this->setCommonParam('account_locked', $bool);
   }
   
   /**
@@ -643,7 +645,7 @@ class User extends ServiceAPI {
    * @param int $college_id The ID of the college.
    */
   public function setCollegeID($college_id) {
-    $this->setCommonParam('collegeid', $college_id);
+    return $this->setCommonParam('collegeid', $college_id);
   }
   
   /**
@@ -654,36 +656,45 @@ class User extends ServiceAPI {
   public function setEduroam($eduroam) {
     if (empty($eduroam) && empty($this->email)) {
       throw new MyURYExcecption('Can\'t set both Email and Eduroam to null.', 400);
+      return false;
+    } elseif (User::findByEmail($eduroam) != $this) {
+      throw new MyURYException('The eduroam account '.$eduroam.' is already allocated to another User.', 500);
     }
-    $this->setCommonParam('eduroam', $eduroam);
+    return $this->setCommonParam('eduroam', $eduroam);
   }
   
   public function setEmail($email) {
     if (empty($email) && empty($this->eduroam)) {
       throw new MyURYExcecption('Can\'t set both Email and Eduroam to null.', 400);
+      return false;
+    } elseif (User::findByEmail($email) != $this) {
+      throw new MyURYException('The email account '.$email.' is already allocated to another User.', 500);
     }
-    $this->setCommonParam('email', $email);
+    return $this->setCommonParam('email', $email);
   }
   
   public function setFName($fname) {
     if (empty($fname)) {
       throw new MyURYException('Oh come on, everybody has a name.', 400);
+      return false;
     }
-    $this->setCommonParam('fname', $fname);
+    return $this->setCommonParam('fname', $fname);
   }
   
   public function setLocalAlias($alias) {
     if ($alias !== $this->local_alias && sizeof(self::findByEmail($alias)) !== 0) {
       throw new MyURYException('That Mailbox Name is already in use. Please choose another.', 500);
+      return false;
     }
-    $this->setCommonParam('local_alias', $alias);
+    return $this->setCommonParam('local_alias', $alias);
   }
   
   public function setLocalName($name) {
     if ($name !== $this->local_name && sizeof(self::findByEmail($name)) !== 0) {
       throw new MyURYException('That Mailbox Alias is already in use. Please choose another.', 500);
+      return false;
     }
-    $this->setCommonParam('local_name', $name);
+    return $this->setCommonParam('local_name', $name);
   }
   
   public function setPhone($phone) {
@@ -691,23 +702,25 @@ class User extends ServiceAPI {
     $phone = preg_replace('/\s/', '', $phone);
     if (strlen($phone) !== 11) {
       throw new MyURYException('A phone number should have 11 digits.', 400);
+      return false;
     }
-    $this->setCommonParam('phone', $phone);
+    return $this->setCommonParam('phone', $phone);
   }
   
   public function setProfilePhoto(MyURY_Photo $photo) {
-    $this->setCommonParam('profile_photo', $photo->getID());
+    return $this->setCommonParam('profile_photo', $photo->getID());
   }
   
   public function setReceiveEmail($bool = true) {
-    $this->setCommonParam('receive_email', $bool);
+    return $this->setCommonParam('receive_email', $bool);
   }
   
   public function setSName($sname) {
     if (empty($sname)) {
       throw new MyURYException('Yes, your last name is a thing.', 400);
+      return false;
     }
-    $this->setCommonParam('sname', $sname);
+    return $this->setCommonParam('sname', $sname);
   }
   
   public function setSex($initial = 'o') {
@@ -715,8 +728,9 @@ class User extends ServiceAPI {
     if (!in_array($initial, array('m', 'f', 'o'))) {
       throw new MyURYException('You can be either "(M)ale", "(F)emale", or "(O)ther". You can\'t be none of these,'
        .' or more than one of these. Sorry.');
+      return false;
     }
-    $this->setCommonParam('sex', $initial);
+    return $this->setCommonParam('sex', $initial);
   }
 
   /**
