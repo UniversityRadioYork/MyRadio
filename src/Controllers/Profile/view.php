@@ -32,7 +32,7 @@ if ($visitor->hasAuth(AUTH_VIEWOTHERMEMBERS)) {
   $userData['receive_email'] = $user->getReceiveEmail();
 }
 
-var_dump($userData);
+var_dump($userData['training']);
 
 $template = CoreUtils::getTemplateObject()->setTemplate('Profile/user.twig')
         ->addVariable('title', 'View Profile')
