@@ -179,7 +179,8 @@ class MyURY_TrainingStatus extends ServiceAPI {
    */
   public function getAwardedTo() {
     if ($this->awarded_to === null) {
-      $this->awarded_to = self::resultSetToObjArray(self::$db->fetch_column('SELECT memberid FROM member_presenterstatus
+      $this->awarded_to = self::resultSetToObjArray(self::$db->fetch_column('SELECT memperpresenterstatusid
+        FROM member_presenterstatus
         WHERE presenterstatusid=$1 AND revokedtime IS NULL', array($this->getID())));
     }
     return $this->awarded_to;
