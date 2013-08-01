@@ -6,7 +6,7 @@
 
 /**
  * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/
- * @version 20130730
+ * @version 20130731
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_API
  * @uses \Database

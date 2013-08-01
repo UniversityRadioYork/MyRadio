@@ -8,7 +8,7 @@
 /**
  * The Photo class stores and manages information about a URY Photo
  * 
- * @version 20130717
+ * @version 20130731
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
  * @uses \Database

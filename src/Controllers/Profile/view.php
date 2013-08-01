@@ -14,15 +14,7 @@ $user = User::getInstance(empty($_REQUEST['memberid']) ? -1 : $_REQUEST['memberi
 $visitor = User::getInstance();
 
 //Add global user data
-$userData = array(
-    'fname' => $user->getFName(),
-    'sname' => $user->getSName(),
-    'sex' => $user->getSex(),
-    'college' => $user->getCollege(),
-    'officerships' => $user->getOfficerships(),
-    'training' => $user->getTraining(),
-    'photo' => $user->getProfilePhoto() === null ? Config::$default_person_uri : $user->getProfilePhoto()->getURL()
-);
+$userData = $user->toDataSource();
 
 if ($user->isOfficer()) {
   $userData['phone'] = $user->getPhone();
@@ -40,9 +32,7 @@ if ($visitor->hasAuth(AUTH_VIEWOTHERMEMBERS)) {
   $userData['receive_email'] = $user->getReceiveEmail();
 }
 
-foreach ($userData['training'] as $k => $v) {
-  $userData['training'][$k]['confirmedbyurl'] = CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['confirmedby']));
-}
+var_dump($userData);
 
 $template = CoreUtils::getTemplateObject()->setTemplate('Profile/user.twig')
         ->addVariable('title', 'View Profile')
