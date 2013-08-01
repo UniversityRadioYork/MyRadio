@@ -118,7 +118,7 @@ class MyURY_TrainingStatus extends ServiceAPI {
     }
 
     if (!isset(self::$ts[$statusid])) {
-      new self($statusid);
+      self::$ts[$statusid] = new self($statusid);
     }
 
     return self::$ts[$statusid];
@@ -179,11 +179,11 @@ class MyURY_TrainingStatus extends ServiceAPI {
    */
   public function getAwardedTo() {
     if ($this->awarded_to === null) {
-      $this->awarded_to = MyURY_UserTrainingStatus::resultSetToObjArray(self::$db->fetch_column(
+      $this->awarded_to = self::$db->fetch_column(
         'SELECT memberpresenterstatusid FROM member_presenterstatus
-        WHERE presenterstatusid=$1 AND revokedtime IS NULL', array($this->getID())));
+        WHERE presenterstatusid=$1 AND revokedtime IS NULL', array($this->getID()));
     }
-    return $this->awarded_to;
+    return User::resultSetToObjArray($this->awarded_to);
   }
   
   /**
@@ -199,7 +199,7 @@ class MyURY_TrainingStatus extends ServiceAPI {
         'depends' => $this->getDepends(),
         'awarded_by' => $this->getAwarder(),
         //Converts to IDs. If we don't do this, and User::toDataSource outputs this training status, recursion!
-        'awarded_to' => array_map(function ($x) {return $x->getID();}, $this->getAwardedTo())
+        //'awarded_to' => array_map(function ($x) {return $x->getID();}, $this->getAwardedTo())
     );
   }
 
