@@ -150,7 +150,7 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
     $data['user_status_id'] = $this->getUserTrainingStatusID();
     $data['awarded_by'] = $this->getAwardedBy()->toDataSource();
     $data['awarded_time'] = $this->getAwardedTime();
-    $data['revoked_by'] = ($this->getRevokedBy() === null ? null : $this->getRevokedBy()->getID());
+    $data['revoked_by'] = ($this->getRevokedBy() === null ? null : $this->getRevokedBy()->toDataSource());
     $data['revoked_time'] = $this->getRevokedTime();
     return $data;
   }
