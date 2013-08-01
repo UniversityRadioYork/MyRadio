@@ -140,7 +140,8 @@
       <td>
         <ul id="training">
         {% for train in user.training %}
-          <li>
+          <li>{{train.title}} on {{train.awarded_time|date("j/n/Y")}} <em>By <a href="{{train.awarded_by.url}}">{{train.awarded_by.fname}} {{train.awarded_by.sname}}</a></em>
+            
             {% if train.presenterstatusid == 1 %}
               Studio Trained on {{ train.completeddate|date("j/n/Y") }}. <em>By <a href="{{train.confirmedbyurl}}">{{ train.confirmedname }}</a></em>
             {% endif %}
