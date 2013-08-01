@@ -94,14 +94,10 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
   public static function getInstance($statusid = -1) {
     self::wakeup();
     if (!is_numeric($statusid)) {
-      throw new MyURYException('Invalid Training Status ID! ('.$statusid.')', 400);
+      throw new MyURYException('Invalid User Training Status ID! ('.$statusid.')', 400);
     }
 
-    if (!isset(self::$ts[$statusid])) {
-      new self($statusid);
-    }
-
-    return self::$ts[$statusid];
+    return new self($statusid);
   }
   
   /**
