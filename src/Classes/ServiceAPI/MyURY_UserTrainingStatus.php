@@ -79,7 +79,7 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
     $this->awarded_time = strtotime($result['completeddate']);
     $this->awarded_by = User::getInstance($result['confirmedby']);
     $this->revoked_time = strtotime($result['revokedtime']);
-    $this->revoked_by = User::getInstance($result['revokedby']);
+    $this->revoked_by = (empty($result['revokedby']) ? null : User::getInstance($result['revokedby']));
     
     parent::__construct($result['presenterstatusid']);
   }
