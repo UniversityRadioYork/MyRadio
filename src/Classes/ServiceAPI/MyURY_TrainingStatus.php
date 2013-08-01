@@ -175,15 +175,16 @@ class MyURY_TrainingStatus extends ServiceAPI {
   /**
    * Get an array of all Users this TrainingStatus has been awarded to, and hasn't been revoked from.
    * 
-   * @return User[]
+   * @param int $ids If true, just returns IDs instead of Users.
+   * @return User[]|int
    */
-  public function getAwardedTo() {
+  public function getAwardedTo($ids = false) {
     if ($this->awarded_to === null) {
       $this->awarded_to = self::$db->fetch_column(
         'SELECT memberpresenterstatusid FROM member_presenterstatus
         WHERE presenterstatusid=$1 AND revokedtime IS NULL', array($this->getID()));
     }
-    return User::resultSetToObjArray($this->awarded_to);
+    return $ids ? $this->awarded_to : User::resultSetToObjArray($this->awarded_to);
   }
   
   /**
@@ -199,7 +200,7 @@ class MyURY_TrainingStatus extends ServiceAPI {
         'depends' => $this->getDepends(),
         'awarded_by' => $this->getAwarder(),
         //Converts to IDs. If we don't do this, and User::toDataSource outputs this training status, recursion!
-        //'awarded_to' => array_map(function ($x) {return $x->getID();}, $this->getAwardedTo())
+        'awarded_to' => $this->getAwardedTo()
     );
   }
 
