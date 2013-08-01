@@ -1164,7 +1164,6 @@ EOT;
         'url' => $this->getURL(),
         'sex' => $this->getSex(),
         'officerships' => $this->getOfficerships(),
-        'training' => CoreUtils::dataSourceParser($this->getAllTraining(true)),
         'photo' => $this->getProfilePhoto() === null ? Config::$default_person_uri : $this->getProfilePhoto()->getURL()
     ];
   }

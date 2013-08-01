@@ -15,6 +15,7 @@ $visitor = User::getInstance();
 
 //Add global user data
 $userData = $user->toDataSource();
+$userData['training'] = $user->getAllTraining(true);
 
 if ($user->isOfficer()) {
   $userData['phone'] = $user->getPhone();
