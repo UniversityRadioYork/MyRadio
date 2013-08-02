@@ -744,7 +744,7 @@ class User extends ServiceAPI {
     self::wakeup();
 
     $result = self::$db->fetch_column('SELECT memberid FROM public.member WHERE email ILIKE $1 OR eduroam ILIKE $1
-      OR local_name ILIKE $2 OR local_alias ILIKE $2', array($email, explode('@', $email)[0]));
+      OR local_name ILIKE $2 OR local_alias ILIKE $2 OR eduroam ILIKE $2', array($email, explode('@', $email)[0]));
 
     if (empty($result))
       return null;
