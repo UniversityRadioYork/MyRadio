@@ -434,7 +434,7 @@ class CoreUtils {
    */
   public static function getActionId($module, $action) {
     if (empty(self::$action_ids)) {
-      $result = Database::getInstance()->fetch_all('SELECT name, moduleid, actionid FROM myury.modules');
+      $result = Database::getInstance()->fetch_all('SELECT name, moduleid, actionid FROM myury.actions');
       foreach ($result as $row) {
         self::$action_ids[$row['name'].'-'.$row['moduleid']] = $row['actionid'];
       }
