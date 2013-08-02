@@ -37,6 +37,12 @@ class MyURY_Photo extends ServiceAPI {
    * @var int
    */
   private $date_added;
+  
+  /**
+   * The file extension of the photo
+   * @var String
+   */
+  private $format;
 
   /**
    * Initiates the MyURY_Photo object
@@ -89,7 +95,7 @@ class MyURY_Photo extends ServiceAPI {
    * @return String
    */
   public function getURL() {
-    return Config::$public_media_uri.'/image_meta/MyURYImageMetadata/'.$this->getID().'.png';
+    return Config::$public_media_uri.'/image_meta/MyURYImageMetadata/'.$this->getID().'.'.$this->format;
   }
   
   /**
@@ -97,7 +103,7 @@ class MyURY_Photo extends ServiceAPI {
    * @return String
    */
   public function getURI() {
-    return Config::$public_media_path.'/image_meta/MyURYImageMetadata/'.$this->getID().'.png';
+    return Config::$public_media_path.'/image_meta/MyURYImageMetadata/'.$this->getID().'.'.$this->format;
   }
   
   /**
@@ -106,12 +112,19 @@ class MyURY_Photo extends ServiceAPI {
    * @return MyURY_Photo
    */
   public static function create($tmp_file) {
-    $result = self::$db->fetch_one('INSERT INTO myury.photos (owner) VALUES ($1) RETURNING photoid',
-      [User::getInstance()->getID()]);
+    if (!file_exists($tmp_file)) {
+      throw new MyURYException('Photo path '.$tmp_file.' does not exist!', 400);
+    }
+    
+    $format = explode('/',finfo_file(finfo_open(FILEINFO_MIME_TYPE), $tmp_file))[1];
+    
+    $result = self::$db->fetch_column('INSERT INTO myury.photos (owner, format) VALUES ($1, $2) RETURNING photoid',
+      [User::getInstance()->getID(), $format]);
     $id = $result[0];
     $photo = self::getInstance($id);
-    if (!move_uploaded_file($tmp_file, $this->getURI())) {
-      throw new MyURYException('Failed to move new Photo from '.$tmp_file.' to '.$this->getURI().'. Are permissions for the destination right?', 500);
+    if (!move_uploaded_file($tmp_file, $photo->getURI())) {
+      self::$db->query('DELETE FROM myury.photos WHERE photoid=$1', [$id]);
+      throw new MyURYException('Failed to move new Photo from '.$tmp_file.' to '.$photo->getURI().'. Are permissions for the destination right?', 500);
     }
     return $photo;
   }

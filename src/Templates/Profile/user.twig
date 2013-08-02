@@ -2,7 +2,7 @@
 {% block stripecontent %}
 <div id="profile">
 {# @todo: put the user data into a nice format, implementation depends on sending in array or individual variables #}
-  <table>
+  <table width="100%">
     <tr>
       <td colspan="2">
         {% if editurl %}{{editurl | raw}}{% endif %}
@@ -13,7 +13,7 @@
     <tr>
       <td><b>Name:</b></td>
       <td>{{user.fname}} {{user.sname}}</td>
-      <td rowspan="15"><img src="{{user.photo}}" width="300"></td>
+      <td rowspan="15" style="vertical-align:top"><img src="{{user.photo}}" width="150"></td>
     </tr>
     <tr>
       <td><b>Sex:</b></td>
@@ -39,7 +39,7 @@
         <td>{{user.phone}}</td>
       </tr>
     {% endif %}
-    <tr><td>{{user.bio}}</td></tr>
+    <tr><td colspan="2">{{user.bio | raw}}</td></tr>
     <tr>
       <td colspan="2">&nbsp;</td>
     </tr>
