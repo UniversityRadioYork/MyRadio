@@ -11,7 +11,7 @@
  * @uses \Database
  * @uses \CoreUtils
  */
-
+define('SILENT_EXCEPTIONS', true);
 ini_set("log_errors", 1);
 ini_set("error_log", "/tmp/php-mailparser-error.log");
 ini_set('display_errors','Off');
