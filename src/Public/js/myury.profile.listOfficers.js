@@ -4,6 +4,10 @@ $('.twig-datatable').dataTable({
   {
     "sTitle" : "Team",
   },
+  //type
+  {
+    bVisible: false
+  },
   //officership
   {
     "sTitle": "Officership",
