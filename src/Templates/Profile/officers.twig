@@ -14,11 +14,11 @@ These are the people you'll want to contact about pretty much anything.</p>
     <div class="officer-team">
   {% endif %}
   <div class="officer{% if officer.type == "h" %} head-officer{% elseif officer.type == "a"%} assistant-officer{% endif %}">
-    <a href="{{officer.url}}">
+    {% if officer.url %}<a href="{{officer.url}}">{% endif %}
       <img src="{{officer.image}}">
       {% if officer.name %}{{officer.name}}{% else %}Vacant{% endif %}
       <div class="officer-title">{{officer.officership}}</div>
-    </a>
+    {% if officer.url %}</a>{% endif %}
   </div>
 {% endfor %}
 </div>
