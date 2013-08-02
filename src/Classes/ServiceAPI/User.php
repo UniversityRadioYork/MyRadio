@@ -657,7 +657,7 @@ class User extends ServiceAPI {
     if (empty($eduroam) && empty($this->email)) {
       throw new MyURYExcecption('Can\'t set both Email and Eduroam to null.', 400);
       return false;
-    } elseif (User::findByEmail($eduroam)[0] != $this) {
+    } elseif ($this->getEduroam() !== $eduroam && User::findByEmail($eduroam) !== null) {
       throw new MyURYException('The eduroam account '.$eduroam.' is already allocated to another User.', 500);
     }
     return $this->setCommonParam('eduroam', $eduroam);
@@ -667,7 +667,7 @@ class User extends ServiceAPI {
     if (empty($email) && empty($this->eduroam)) {
       throw new MyURYExcecption('Can\'t set both Email and Eduroam to null.', 400);
       return false;
-    } elseif (User::findByEmail($email)[0] != $this) {
+    } elseif ($email !== $this->getEmail() && User::findByEmail($email) !== null) {
       throw new MyURYException('The email account '.$email.' is already allocated to another User.', 500);
     }
     return $this->setCommonParam('email', $email);
@@ -682,7 +682,7 @@ class User extends ServiceAPI {
   }
   
   public function setLocalAlias($alias) {
-    if ($alias !== $this->local_alias && sizeof(self::findByEmail($alias)) !== 0) {
+    if ($alias !== $this->local_alias && self::findByEmail($alias) !== null) {
       throw new MyURYException('That Mailbox Name is already in use. Please choose another.', 500);
       return false;
     }
@@ -690,7 +690,7 @@ class User extends ServiceAPI {
   }
   
   public function setLocalName($name) {
-    if ($name !== $this->local_name && sizeof(self::findByEmail($name)) !== 0) {
+    if ($name !== $this->local_name && self::findByEmail($name) !== null) {
       throw new MyURYException('That Mailbox Alias is already in use. Please choose another.', 500);
       return false;
     }
