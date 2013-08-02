@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file provides the NIPSWeb_AutoPlaylist class for MyURY - Contains Jingles etc.
  * @package MyURY_NIPSWeb
@@ -13,18 +14,15 @@
  * @uses \Database
  */
 class NIPSWeb_AutoPlaylist extends ServiceAPI {
+
   /**
    * The Singleton store for AutoPlaylist objects
    * @var NIPSWeb_AutoPlaylist
    */
   private static $playlists = array();
-
   private $auto_playlist_id;
-
   protected $name;
-
   protected $tracks;
-
   protected $query;
 
   /**
@@ -33,24 +31,15 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
    */
   private function __construct($playlistid) {
     $this->auto_playlist_id = $playlistid;
-    $result = self::$db->fetch_one('SELECT * FROM bapsplanner.auto_playlists WHERE auto_playlist_id=$1 LIMIT 1',
-            array($playlistid));
+    $result = self::$db->fetch_one('SELECT * FROM bapsplanner.auto_playlists WHERE auto_playlist_id=$1 LIMIT 1', array($playlistid));
     if (empty($result)) {
       throw new MyURYException('The specified NIPSWeb Auto Playlist does not seem to exist');
       return;
     }
-    
+
     $this->name = $result['name'];
     $this->query = $result['query'];
-
-    $tracks = self::$db->fetch_all($this->query);
-    $this->tracks = array();
-
-    foreach ($tracks as $id) {
-      $this->tracks[] = MyURY_Track::getInstance($id['trackid']);
-    }
   }
-
 
   /**
    * Returns the current instance of that AutoPlaylist object if there is one, or runs the constructor if there isn't
@@ -71,12 +60,23 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
 
   /**
    * Return the MyURY_Tracks that belong to this playlist
-   * @return Array of MyURYTracks
+   * 
+   * Lazily evaluated - Tracks will not be loaded until the method is called
+   * 
+   * @return Array[MyURY_Track]
    */
   public function getTracks() {
+    if (empty($this->tracks)) {
+      $tracks = self::$db->fetch_all($this->query);
+      $this->tracks = array();
+
+      foreach ($tracks as $id) {
+        $this->tracks[] = MyURY_Track::getInstance($id['trackid']);
+      }
+    }
     return $this->tracks;
   }
-  
+
   /**
    * Get the Title of the AutoPlaylist
    * @return String
@@ -84,7 +84,7 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
   public function getTitle() {
     return $this->name;
   }
-  
+
   /**
    * Get the unique manageditemid of the AutoPlaylist
    * @return int
@@ -94,22 +94,24 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
   }
 
   public static function getAllAutoPlaylists($editable_only = false) {
-    if ($editable_only && !User::getInstance()->hasAuth(AUTH_EDITCENTRALRES)) return array();
+    if ($editable_only && !User::getInstance()->hasAuth(AUTH_EDITCENTRALRES))
+      return array();
     $result = self::$db->fetch_column('SELECT auto_playlist_id FROM bapsplanner.auto_playlists ORDER BY name');
     $response = array();
     foreach ($result as $id) {
       $response[] = self::getInstance($id);
     }
-    
+
     return $response;
   }
-  
+
   public static function findByName($name) {
-    $result = self::$db->fetch_column('SELECT auto_playlist_id FROM bapsplanner.auto_playlists WHERE name=$1',
-            array($name));
-    
-    if (empty($result)) throw new MyURYException ('That auto playlist does not exist!');
-    else return self::getInstance($result[0]);
+    $result = self::$db->fetch_column('SELECT auto_playlist_id FROM bapsplanner.auto_playlists WHERE name=$1', array($name));
+
+    if (empty($result))
+      throw new MyURYException('That auto playlist does not exist!');
+    else
+      return self::getInstance($result[0]);
   }
 
   /**
@@ -123,4 +125,5 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
         'playlistid' => $this->getID(),
     );
   }
+
 }
