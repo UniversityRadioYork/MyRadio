@@ -30,6 +30,18 @@ class CoreUtils {
    * @var Array
    */
   private static $custom_uris = array();
+  
+  /**
+   * Stores module name => id mappings to reduce query load - they are initialised once and stored
+   * @var Array
+   */
+  private static $module_ids = array();
+  
+  /**
+   * Stores action name => id mappings to reduce query load - they are initialised once and stored
+   * @var Array
+   */
+  private static $action_ids = array();
 
   /**
    * Checks whether a given Module/Action combination is valid
@@ -390,36 +402,51 @@ class CoreUtils {
 
   /**
    * Returns the ID of a Module, creating it if necessary
-   * @todo Document this
-   * @param type $module
-   * @return type
+   *
+   * This method first caches all module IDs, if they aren't already available. It then checks
+   * if the given module exists, and if not it creates one, generating an ID.
+   * 
+   * @param String $module
+   * @return int
    */
   public static function getModuleId($module) {
-    $db = Database::getInstance();
-    $result = $db->fetch_column('SELECT moduleid FROM myury.modules WHERE name=$1', array($module));
-
-    if (empty($result)) {
-      //The module needs creating
-      $result = $db->fetch_column('INSERT INTO myury.modules (serviceid, name) VALUES ($1, $2) RETURNING moduleid', array(Config::$service_id, $module));
+    if (empty(self::$module_ids)) {
+      $result = Database::getInstance()->fetch_all('SELECT name, moduleid FROM myury.modules');
+      foreach ($result as $row) {
+        self::$module_ids[$row['name']] = $row['moduleid'];
+      }
     }
-    return $result[0];
+
+    if (empty(self::$module_ids[$module])) {
+      //The module needs creating
+      $result = Database::getInstance()->fetch_column('INSERT INTO myury.modules (serviceid, name)
+        VALUES ($1, $2) RETURNING moduleid', array(Config::$service_id, $module));
+      self::$module_ids[$module] = $result[0];
+    }
+    return self::$module_ids[$module];
   }
 
   /**
    * Returns the ID of a Service/Module/Action request, creating it if necessary
    * @param int $module
-   * @param string $action
-   * @return type
+   * @param String $action
+   * @return int
    */
   public static function getActionId($module, $action) {
-    $db = Database::getInstance();
-    $result = $db->fetch_column('SELECT actionid FROM myury.actions WHERE moduleid=$1 AND name=$2', array($module, $action));
-
-    if (empty($result)) {
-      //The module needs creating
-      $result = $db->fetch_column('INSERT INTO myury.actions (moduleid, name) VALUES ($1, $2) RETURNING actionid', array($module, $action));
+    if (empty(self::$action_ids)) {
+      $result = Database::getInstance()->fetch_all('SELECT name, moduleid, actionid FROM myury.modules');
+      foreach ($result as $row) {
+        self::$action_ids[$row['name'].'-'.$row['moduleid']] = $row['actionid'];
+      }
     }
-    return $result[0];
+
+    if (empty(self::$action_ids[$action.'-'.$module])) {
+      //The action needs creating
+      $result = Database::getInstance()->fetch_column('INSERT INTO myury.actions (moduleid, name)
+        VALUES ($1, $2) RETURNING actionid', array($module, $action));
+      self::$action_ids[$action.'-'.$module] = $result[0];
+    }
+    return self::$action_ids[$action.'-'.$module];
   }
 
   /**
