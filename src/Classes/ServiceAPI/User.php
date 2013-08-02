@@ -633,6 +633,10 @@ class User extends ServiceAPI {
    * @param mixed $value The value to set the param to. Type depends on $paramName.
    */
   private function setCommonParam($paramName, $value) {
+    /**
+     * You won't believe how annoying psql can be about '' already being used on a unique key.
+     */
+    if ($value == '') $value = null;
     //Maps Class variable names to their database values, if they mismatch.
     $param_maps = ['collegeid' => 'college'];
 
@@ -995,7 +999,7 @@ class User extends ServiceAPI {
     //About Me
     $form->addField(new MyURYFormField('sec_about', MyURYFormField::TYPE_SECTION, array(
         'label' => 'About Me',
-        'explanation' => 'If you\'d like to share a little more about yourself, then I\' happy to listen!'
+        'explanation' => 'If you\'d like to share a little more about yourself, then I\'m happy to listen!'
     )))->addField(
             new MyURYFormField('photo', MyURYFormField::TYPE_FILE, array(
         'required' => false,
