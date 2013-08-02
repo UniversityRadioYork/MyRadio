@@ -1,0 +1,22 @@
+<?php
+/**
+ * CML Digitisation Status
+ * 
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 20130803
+ * @package MyURY_Stats
+ */
+$options = array(
+    'title' => 'Central Music Library',
+    'series' => array(
+        array('targetAxisIndex' => 0),
+        array('targetAxisIndex' => 0),
+        array('targetAxisIndex' => 1)
+    )
+);
+CoreUtils::getTemplateObject()->setTemplate('bargraph.twig')
+        ->addVariable('title', 'Central Music Library Content Stats')
+        ->addVariable('data', json_encode(MyURY_Track::getLibraryStats()))
+        ->addVariable('options', json_encode($options))
+        ->addVariable('caption', 'This graph show aggregate statistics about the contents of URY\'s Central Music Library.')
+        ->render();

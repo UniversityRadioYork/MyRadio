@@ -721,5 +721,31 @@ class MyURY_Track extends ServiceAPI {
   public function setLastfmVerified() {
     self::$db->query('UPDATE rec_track SET lastfm_verified=\'t\' WHERE trackid=$1', array($this->getID()));
   }
+  
+  /**
+   * Returns various numbers that look pretty on a graph, which concern the Central Music Library.
+   * @return Array
+   */
+  public static function getLibraryStats() {
+    $num_digitised = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\'')[0];
+    $num_undigitised = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\'')[0];
+    $num_clean = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE clean=\'y\'')[0];
+    $num_unclean = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE clean=\'n\'')[0];
+    $num_cleanunknown = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE clean=\'u\'')[0];
+    
+    $num_singles = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE format=\'s\'')[0];
+    $num_albums = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE format=\'a\'')[0];
+    
+    return [
+        ['Statistic', 'Number of Tracks'],
+        ['Digitised', $num_digitised],
+        ['Undigitised', $num_undigitised],
+        ['Clean Lyrics', $num_clean],
+        ['Dirty Lyrics', $num_unclean],
+        ['Unverified Lyrics', $num_cleanunknown],
+        ['Singles', $num_singles],
+        ['Albums', $num_albums]
+    ];
+  }
 
 }
