@@ -159,7 +159,7 @@ class User extends ServiceAPI {
     //Get the base data
     $data = self::$db->fetch_one(
             'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college, phone, email,
-              receive_email, local_name, local_alias, eduroam, account_locked, last_login, joined, profile_photo
+              receive_email, local_name, local_alias, eduroam, account_locked, last_login, joined, profile_photo, bio
               FROM member, l_college
               WHERE memberid=$1 
               AND member.college = l_college.collegeid
