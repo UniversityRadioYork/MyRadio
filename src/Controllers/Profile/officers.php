@@ -18,7 +18,7 @@ foreach ($officers as $k => $v) {
     $image = User::getInstance($officers[$k]['memberid'])->getProfilePhoto();
     $officers[$k]['image'] = $image !== null ? $image->getURL() : Config::$default_person_uri;
   } else {
-    $officers[$k]['image'] = Config::$default_person_uri;
+    $officers[$k]['image'] = Config::$vacant_officer_uri;
   }
 }
 
