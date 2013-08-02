@@ -6,14 +6,7 @@
  * @version 20130803
  * @package MyURY_Stats
  */
-$options = array(
-    'title' => 'Central Music Library',
-    'series' => array(
-        array('targetAxisIndex' => 0),
-        array('targetAxisIndex' => 0),
-        array('targetAxisIndex' => 1)
-    )
-);
+$options = null;
 CoreUtils::getTemplateObject()->setTemplate('bargraph.twig')
         ->addVariable('title', 'Central Music Library Content Stats')
         ->addVariable('data', json_encode(MyURY_Track::getLibraryStats()))
