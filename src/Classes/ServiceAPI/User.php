@@ -148,7 +148,7 @@ class User extends ServiceAPI {
    * Stores a User's biography. HTML, so ensure you | raw if outputting!
    * @var String
    */
-  private $bio;
+  private $bio = '';
 
   /**
    * Initiates the User variables
@@ -1302,7 +1302,8 @@ EOT;
         'url' => $this->getURL(),
         'sex' => $this->getSex(),
         'officerships' => $this->getOfficerships(),
-        'photo' => $this->getProfilePhoto() === null ? Config::$default_person_uri : $this->getProfilePhoto()->getURL()
+        'photo' => $this->getProfilePhoto() === null ? Config::$default_person_uri : $this->getProfilePhoto()->getURL(),
+        'bio' => $this->getBio()
     ];
   }
 
