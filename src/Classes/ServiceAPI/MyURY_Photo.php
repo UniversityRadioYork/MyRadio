@@ -59,6 +59,7 @@ class MyURY_Photo extends ServiceAPI {
 
     $this->owner = User::getInstance($result['owner']);
     $this->date_added = strtotime($result['date_added']);
+    $this->format = $result['format'];
   }
 
   public static function getInstance($photoid = -1) {
