@@ -24,6 +24,12 @@ class CoreUtils {
   private static $auth_cached = false;
   private static $svc_version_cache = array();
   private static $svc_id_cache = array();
+  
+  /**
+   * Stores actionid => uri mappings of custom web addresses (e.g. /myury/iTones/default gets mapped to /itones)
+   * @var Array
+   */
+  private static $custom_uris = array();
 
   /**
    * Checks whether a given Module/Action combination is valid
@@ -154,11 +160,17 @@ class CoreUtils {
    * @return String URL to Module/Action
    */
   public static function makeURL($module, $action = null, $params = array()) {
+    if (empty(self::$custom_uris)) {
+      $result = Database::getInstance()->fetch_all('SELECT actionid, custom_uri FROM myury.actions');
+      
+      foreach ($result as $row) {
+        self::$custom_uris[$row['actionid']] = $row['custom_uri'];
+      }
+    }
     //Check if there is a custom URL configured
-    $result = Database::getInstance()->fetch_column('SELECT custom_uri FROM myury.actions WHERE actionid=$1',
-            array(self::getActionId(self::getModuleId($module), empty($action) ? Config::$default_action : $action)));
-    if (!empty($result[0]))
-      return $result[0];
+    $key = self::getActionId(self::getModuleId($module), empty($action) ? Config::$default_action : $action);
+    if (!empty(self::$custom_uris[$key]))
+      return self::$custom_uris[$key];
 
     if (Config::$rewrite_url) {
       $str = Config::$base_url . $module . '/' . (($action !== null) ? $action . '/' : '');
