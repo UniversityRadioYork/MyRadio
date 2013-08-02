@@ -1189,7 +1189,6 @@ EOT;
         'college'=> $this->getCollege(),
         'fname' => $this->getFName(),
         'sname' => $this->getSName(),
-        'last_login'=> $this->getLastLogin(),
         'url' => $this->getURL(),
         'sex' => $this->getSex(),
         'officerships' => $this->getOfficerships(),
