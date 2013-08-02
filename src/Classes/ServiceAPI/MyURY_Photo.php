@@ -81,7 +81,7 @@ class MyURY_Photo extends ServiceAPI {
    * @return User
    */
   public function getOwner() {
-    return $this->owner();
+    return $this->owner;
   }
 
   /**
@@ -98,6 +98,22 @@ class MyURY_Photo extends ServiceAPI {
    */
   public function getURI() {
     return Config::$public_media_path.'/image_meta/MyURYImageMetadata/'.$this->getID().'.png';
+  }
+  
+  /**
+   * Add a Photo
+   * @param String $tmp_file The path to the temporary file that is the image.
+   * @return MyURY_Photo
+   */
+  public static function create($tmp_file) {
+    $result = self::$db->fetch_one('INSERT INTO myury.photos (owner) VALUES ($1) RETURNING photoid',
+      [User::getInstance()->getID()]);
+    $id = $result[0];
+    $photo = self::getInstance($id);
+    if (!move_uploaded_file($tmp_file, $this->getURI())) {
+      throw new MyURYException('Failed to move new Photo from '.$tmp_file.' to '.$this->getURI().'. Are permissions for the destination right?', 500);
+    }
+    return $photo;
   }
 
 }

@@ -9,7 +9,7 @@
  * The user object provides and stores information about a user
  * It is not a singleton for Impersonate purposes
  * 
- * @version 20130716
+ * @version 20130802
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
  * @uses \Database
@@ -137,12 +137,18 @@ class User extends ServiceAPI {
    * @var String timestamp with timezone
    */
   private $last_login;
-  
+
   /**
    * Photoid of the User's profile photo
    * @var int
    */
   private $profile_photo;
+  
+  /**
+   * Stores a User's biography. HTML, so ensure you | raw if outputting!
+   * @var String
+   */
+  private $bio;
 
   /**
    * Initiates the User variables
@@ -176,8 +182,9 @@ class User extends ServiceAPI {
       else
         $this->$key = $value;
     }
-    
-    if (!isset(self::$users[$memberid])) self::$users[$memberid] = $this;
+
+    if (!isset(self::$users[$memberid]))
+      self::$users[$memberid] = $this;
 
     //Get the user's permissions
     $this->permissions = self::$db->fetch_column('SELECT lookupid FROM auth_officer
@@ -203,7 +210,7 @@ class User extends ServiceAPI {
       FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
       WHERE memberid=$1 ORDER BY ordering, completeddate ASC', array($this->memberid)));
   }
-  
+
   /**
    * Returns if the User is currently an Officer
    * 
@@ -224,9 +231,10 @@ class User extends ServiceAPI {
    */
   public function isStudioTrained() {
     foreach ($this->training as $train) {
-      if ($train->getID() == 1 && $train->getRevokedBy() == null) return true;
+      if ($train->getID() == 1 && $train->getRevokedBy() == null)
+        return true;
     }
-    
+
     return false;
   }
 
@@ -236,9 +244,10 @@ class User extends ServiceAPI {
    */
   public function isStudioDemoed() {
     foreach ($this->training as $train) {
-      if ($train->getID() == 2 && $train->getRevokedBy() == null) return true;
+      if ($train->getID() == 2 && $train->getRevokedBy() == null)
+        return true;
     }
-    
+
     return false;
   }
 
@@ -248,12 +257,13 @@ class User extends ServiceAPI {
    */
   public function isTrainer() {
     foreach ($this->training as $train) {
-      if ($train->getID() == 3 && $train->getRevokedBy() == null) return true;
+      if ($train->getID() == 3 && $train->getRevokedBy() == null)
+        return true;
     }
-    
+
     return false;
   }
-  
+
   /**
    * Get all types of training the User has.
    * 
@@ -264,7 +274,8 @@ class User extends ServiceAPI {
     if ($ignore_revoked) {
       $data = [];
       foreach ($this->training as $train) {
-        if ($train->getRevokedBy() == null) $data[] = $train;
+        if ($train->getRevokedBy() == null)
+          $data[] = $train;
       }
       return $data;
     } else {
@@ -319,11 +330,11 @@ class User extends ServiceAPI {
   public function getSex() {
     return $this->sex;
   }
-  
+
   public function getLastLogin() {
     return $this->last_login;
   }
-  
+
   /**
    * Returns the User's profile Photo (or null if there is not one)
    * @return MyURY_Photo
@@ -344,7 +355,7 @@ class User extends ServiceAPI {
   public function getEmail() {
     return empty($this->email) ? $this->getEduroam() : $this->email;
   }
-  
+
   /**
    * Used for Officers. If they have an @ury.org.uk Alias, display that. Otherwise, display their default email.
    * This is because if a user wants an official @ury.org.uk, but wants it fowarded, then you set the local_alias
@@ -356,7 +367,7 @@ class User extends ServiceAPI {
      * Fatal error: Can't use method return value in write context is thrown if the getter is used directly in empty()
      */
     $alias = $this->getLocalAlias();
-    return empty($alias) ? $this->getEmail() : $alias .'@ury.org.uk';
+    return empty($alias) ? $this->getEmail() : $alias . '@ury.org.uk';
   }
 
   /**
@@ -390,7 +401,7 @@ class User extends ServiceAPI {
   public function getPhone() {
     return $this->phone;
   }
-  
+
   /**
    * Gets every year the member has paid
    */
@@ -432,25 +443,34 @@ class User extends ServiceAPI {
   }
 
   /**
-   * Returns if the user's account is locked
+   * Returns if the User's account is locked
    * @return bool if the account is locked
    */
   public function getAccountLocked() {
     return $this->account_locked;
   }
-  
+
   /**
    * Get all the User's past, present and future officerships
    */
   public function getOfficerships() {
     return $this->officerships;
   }
-  
+
   /**
-   * Get's the User's MyURY Profile page URL
+   * Gets the User's MyURY Profile page URL
+   * @return String
    */
   public function getURL() {
-    return CoreUtils::makeURL('Profile','view',array('memberid' => $this->getID()));
+    return CoreUtils::makeURL('Profile', 'view', array('memberid' => $this->getID()));
+  }
+  
+  /**
+   * Gets the User's bio
+   * @return String
+   */
+  public function getBio() {
+    return $this->bio;
   }
 
   /**
@@ -498,7 +518,7 @@ class User extends ServiceAPI {
 
     return $entry;
   }
-  
+
   /**
    * Generates the Key string for caching services
    * 
@@ -506,9 +526,9 @@ class User extends ServiceAPI {
    * @return String
    */
   private static function getCacheKey($memberid) {
-    return 'MyURYUser_'.$memberid;
+    return 'MyURYUser_' . $memberid;
   }
-  
+
   /**
    * Sets the cache for this object to be the current object state.
    * 
@@ -528,7 +548,8 @@ class User extends ServiceAPI {
    * sname: The actual last name of the User
    */
   public static function findByName($name, $limit = -1) {
-    if ($limit == -1) $limit = Config::$ajax_limit_default;
+    if ($limit == -1)
+      $limit = Config::$ajax_limit_default;
     //If there's a space, split into first and last name
     $name = trim($name);
     $names = explode(' ', $name);
@@ -604,7 +625,7 @@ class User extends ServiceAPI {
 
     return $events;
   }
-  
+
   /**
    * 
    * @param String $paramName The key to update, e.g. AccountLocked.
@@ -614,44 +635,51 @@ class User extends ServiceAPI {
   private function setCommonParam($paramName, $value) {
     //Maps Class variable names to their database values, if they mismatch.
     $param_maps = ['collegeid' => 'college'];
-    
-    if (!isset($this->$paramName)) throw new MyURYException('paramName invalid', 500);
+
+    if (!isset($this->$paramName))
+      throw new MyURYException('paramName invalid', 500);
     $this->$paramName = $value;
-    
-    if (isset($param_maps[$paramName])) $paramName = $param_maps[$paramName];
-    
-    self::$db->query('UPDATE member SET '.$paramName.'=$1 WHERE memberid=$2', array($value, $this->getID()));
+
+    if (isset($param_maps[$paramName]))
+      $paramName = $param_maps[$paramName];
+
+    self::$db->query('UPDATE member SET ' . $paramName . '=$1 WHERE memberid=$2', array($value, $this->getID()));
     $this->updateCacheObject();
-    
+
     return true;
   }
-  
+
   /**
    * Sets the User's account locked status.
    * 
    * If a User's account is locked, access to all URY services is blocked by Shibbobleh and IMAP.
    * 
    * @param bool $bool True for Locked, False for Unlocked. Default True.
+   * @return User
    */
   public function setAccountLocked($bool = true) {
-    return $this->setCommonParam('account_locked', $bool);
+    $this->setCommonParam('account_locked', $bool);
+    return $this;
   }
-  
+
   /**
    * Set's a User's college ID.
    * 
    * College IDs can be acquired using User::getColleges().
    * 
    * @param int $college_id The ID of the college.
+   * @return User
    */
   public function setCollegeID($college_id) {
-    return $this->setCommonParam('collegeid', $college_id);
+    $this->setCommonParam('collegeid', $college_id);
+    return $this;
   }
-  
+
   /**
    * Set the user's eduroam address
    * 
    * @param type $eduroam The User's UoY address, i.e. abc123@york.ac.uk (@york.ac.uk optional)
+   * @return User
    */
   public function setEduroam($eduroam) {
     //Automatically add '@york.ac.uk' if it is missing
@@ -661,91 +689,154 @@ class User extends ServiceAPI {
       throw new MyURYException('Eduroam account should be @york.ac.uk! Use of other eduroam accounts is blocked.
         This is basic validation filter, so if there is a valid reason for another account to be hear, this check
         can be removed.', 400);
-      return false;
     }
-    
+
     if (empty($eduroam) && empty($this->email)) {
-      throw new MyURYExcecption('Can\'t set both Email and Eduroam to null.', 400);
-      return false;
-    } elseif ($this->getEduroam().'@york.ac.uk' !== $eduroam && User::findByEmail($eduroam) !== null) {
-      throw new MyURYException('The eduroam account '.$eduroam.' is already allocated to another User.', 500);
+      throw new MyURYException('Can\'t set both Email and Eduroam to null.', 400);
+    } elseif ($this->getEduroam() . '@york.ac.uk' !== $eduroam && User::findByEmail($eduroam) !== null) {
+      throw new MyURYException('The eduroam account ' . $eduroam . ' is already allocated to another User.', 500);
     }
-    return $this->setCommonParam('eduroam', $eduroam);
+    $this->setCommonParam('eduroam', $eduroam);
+    return $this;
   }
-  
+
+  /**
+   * Sets the User's primary contact Email. If null, eduroam is used.
+   * @param String $email
+   * @return User
+   * @throws MyURYException
+   */
   public function setEmail($email) {
     if (strstr($email, '@') === false) {
       throw new MyURYException('That email address doesn\'t look right. It needs to have an @.', 400);
-      return false;
     }
-    
+
     if (empty($email) && empty($this->eduroam)) {
-      throw new MyURYExcecption('Can\'t set both Email and Eduroam to null.', 400);
-      return false;
+      throw new MyURYException('Can\'t set both Email and Eduroam to null.', 400);
     } elseif ($email !== $this->getEmail() && User::findByEmail($email) !== null) {
-      throw new MyURYException('The email account '.$email.' is already allocated to another User.', 500);
+      throw new MyURYException('The email account ' . $email . ' is already allocated to another User.', 500);
     }
-    return $this->setCommonParam('email', $email);
+    $this->setCommonParam('email', $email);
+    return $this;
   }
-  
+
+  /**
+   * Sets the User's first name
+   * @param String $fname
+   * @return User
+   * @throws MyURYException
+   */
   public function setFName($fname) {
     if (empty($fname)) {
       throw new MyURYException('Oh come on, everybody has a name.', 400);
-      return false;
     }
-    return $this->setCommonParam('fname', $fname);
+    $this->setCommonParam('fname', $fname);
+    return $this;
   }
-  
+
+  /**
+   * Set the User's official @ury.org.uk prefix. Usually fname.sname
+   * @param String $alias
+   * @return User
+   * @throws MyURYException
+   */
   public function setLocalAlias($alias) {
     if ($alias !== $this->local_alias && self::findByEmail($alias) !== null) {
       throw new MyURYException('That Mailbox Name is already in use. Please choose another.', 500);
-      return false;
     }
-    return $this->setCommonParam('local_alias', $alias);
+    $this->setCommonParam('local_alias', $alias);
+    return $this;
   }
-  
+
+  /**
+   * Set the User's server account name
+   * @param String $name
+   * @return User
+   * @throws MyURYException
+   */
   public function setLocalName($name) {
     if ($name !== $this->local_name && self::findByEmail($name) !== null) {
       throw new MyURYException('That Mailbox Alias is already in use. Please choose another.', 500);
-      return false;
     }
-    return $this->setCommonParam('local_name', $name);
+    $this->setCommonParam('local_name', $name);
+    return $this;
   }
-  
+
+  /**
+   * Set the User's phone number
+   * @param String $phone A string of numbers (because leading 0)
+   * @return User
+   * @throws MyURYException
+   */
   public function setPhone($phone) {
     //Clear whitespace
     $phone = preg_replace('/\s/', '', $phone);
     if (strlen($phone) !== 11) {
       throw new MyURYException('A phone number should have 11 digits.', 400);
-      return false;
     }
-    return $this->setCommonParam('phone', $phone);
+    $this->setCommonParam('phone', $phone);
+    return $this;
   }
-  
+
+  /**
+   * Set the User's profile photo
+   * @param MyURY_Photo $photo
+   * @return User
+   */
   public function setProfilePhoto(MyURY_Photo $photo) {
-    return $this->setCommonParam('profile_photo', $photo->getID());
+    $this->setCommonParam('profile_photo', $photo->getID());
+    return $this;
   }
-  
+
+  /**
+   * Set whether the User should receive Emails
+   * @param boolean $bool
+   * @return User
+   */
   public function setReceiveEmail($bool = true) {
-    return $this->setCommonParam('receive_email', $bool);
+    $this->setCommonParam('receive_email', $bool);
+    return $this;
   }
-  
+
+  /**
+   * Set the User's last name.
+   * @param String $sname
+   * @return User
+   * @throws MyURYException
+   */
   public function setSName($sname) {
     if (empty($sname)) {
       throw new MyURYException('Yes, your last name is a thing.', 400);
-      return false;
     }
-    return $this->setCommonParam('sname', $sname);
+    $this->setCommonParam('sname', $sname);
+    return $this;
   }
-  
+
+  /**
+   * Set the User's Gender
+   * @param char $initial (m)ale, (f)emale or (o)ther
+   * @return User
+   * @throws MyURYException
+   */
   public function setSex($initial = 'o') {
     $initial = strtolower($initial);
     if (!in_array($initial, array('m', 'f', 'o'))) {
       throw new MyURYException('You can be either "(M)ale", "(F)emale", or "(O)ther". You can\'t be none of these,'
-       .' or more than one of these. Sorry.');
-      return false;
+      . ' or more than one of these. Sorry.');
     }
-    return $this->setCommonParam('sex', $initial);
+    $this->setCommonParam('sex', $initial);
+    
+    return $this;
+  }
+  
+  /**
+   * Set the User's HTML biography.
+   * @param String $bio
+   * @return User
+   */
+  public function setBio($bio) {
+    $this->setCommonParam('bio', $bio);
+    return $this;
   }
 
   /**
@@ -776,7 +867,7 @@ class User extends ServiceAPI {
   public static function findAllTrained() {
     self::wakeup();
     trigger_error('Use of deprecated method User::findAllTrained.', E_USER_WARNING);
-    
+
     $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=1');
     $members = array();
     foreach ($trained as $mid) {
@@ -797,7 +888,7 @@ class User extends ServiceAPI {
   public static function findAllDemoed() {
     self::wakeup();
     trigger_error('Use of deprecated method User::findAllDemoed.', E_USER_WARNING);
-    
+
     $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=2');
     $members = array();
     foreach ($trained as $mid) {
@@ -818,7 +909,7 @@ class User extends ServiceAPI {
   public static function findAllTrainers() {
     self::wakeup();
     trigger_error('Use of deprecated method User::findAllTrainers.', E_USER_WARNING);
-    
+
     $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=3');
     $members = array();
     foreach ($trained as $mid) {
@@ -897,6 +988,25 @@ class User extends ServiceAPI {
                 'value' => str_replace('@york.ac.uk', '', $this->getUniAccount()),
                 'explanation' => '@york.ac.uk'
     )));
+
+    //About Me
+    $form->addField(new MyURYFormField('sec_about', MyURYFormField::TYPE_SECTION, array(
+        'label' => 'About Me',
+        'explanation' => 'If you\'d like to share a little more about yourself, then I\' happy to listen!'
+    )))->addField(
+            new MyURYFormField('photo', MyURYFormField::TYPE_FILE, array(
+        'required' => false,
+        'label' => 'Profile Photo',
+        'explanation' => 'Share your Radio Face with all our members. If we ever launch presenter pages on the website, we\'ll use this there too.'
+            ))
+    )->addField(
+            new MyURYFormField('bio', MyURYFormField::TYPE_BLOCKTEXT, array(
+        'required' => false,
+        'label' => 'Bio',
+        'explanation' => 'Tell use about yourself - if you\'re a committee member please introduce yourself!',
+        'value' => $this->getBio()
+            ))
+    );
 
     //Mailbox
     if (User::getInstance()->hasAuth(AUTH_CHANGESERVERACCOUNT)) {
@@ -1180,13 +1290,13 @@ EOT;
 
     return $form;
   }
-  
+
   public function toDataSource() {
     return [
-        'memberid'=> $this->getID(),
-        'locked'=> $this->getAccountLocked(),
-        'paid'=> $this->getAllPayments(),
-        'college'=> $this->getCollege(),
+        'memberid' => $this->getID(),
+        'locked' => $this->getAccountLocked(),
+        'paid' => $this->getAllPayments(),
+        'college' => $this->getCollege(),
         'fname' => $this->getFName(),
         'sname' => $this->getSName(),
         'url' => $this->getURL(),
