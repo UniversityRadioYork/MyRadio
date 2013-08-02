@@ -628,7 +628,7 @@ class User extends ServiceAPI {
 
   /**
    * 
-   * @param String $paramName The key to update, e.g. AccountLocked.
+   * @param String $paramName The key to update, e.g. account_locked.
    * Don't be silly and try to set memberid. Bad things will happen.
    * @param mixed $value The value to set the param to. Type depends on $paramName.
    */
@@ -636,7 +636,7 @@ class User extends ServiceAPI {
     //Maps Class variable names to their database values, if they mismatch.
     $param_maps = ['collegeid' => 'college'];
 
-    if (!isset($this->$paramName))
+    if (!property_exists($this, $paramName))
       throw new MyURYException('paramName invalid', 500);
     $this->$paramName = $value;
 
