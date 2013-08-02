@@ -26,7 +26,7 @@ $user->setFName($data['fname'])
         ->setEduroam($data['eduroam'])
         ->setBio($data['bio']);
 
-if (!empty($data['photo'])) {
+if (!empty($data['photo']['tmp_name'])) {
   $user->setProfilePhoto(MyURY_Photo::create($data['photo']['tmp_name']));
 }
 
