@@ -1,7 +1,7 @@
 <?php
 /**
  * Provides the MyURY_Swagger class for MyURY
- * @package MyURY_Core
+ * @package MyURY_API
  */
 
 /**
@@ -23,6 +23,7 @@ class MyURY_Swagger {
       'apiVersion' => 0.1,
       'swaggerVersion' => 1.2,
       'basePath' => Config::$api_url,
+      'authorizations' => ['apiKey' => ['type' => 'api_key', 'passAs' => 'query']],
       'apis' => []
     ];
     
@@ -143,6 +144,19 @@ class MyURY_Swagger {
     while (isset($lines[$i]) && substr($lines[$i],0,1) !== '@') {
       $long_desc .= $lines[$i].' ';
       $i++;
+    }
+    
+    //We append the auth requirements to the long description
+    $requirements = MyURY_APIKey::getCallRequirements($this->class, $method->getName());
+    if ($requirements === null) {
+      $long_desc .= '<br>This API Call requires a Full API Access Key.';
+    } elseif (empty($requirements)) {
+      $long_desc .= '<br>Any API Key can Call this method.';
+    } else {
+      $long_desc .= '<br>The following permissions enable access to this method:';
+      foreach ($requirements as $typeid) {
+        $long_desc .= '<br> - ' . CoreUtils::getAuthDescription($typeid);
+      }
     }
     
     //Now parse for docblock things

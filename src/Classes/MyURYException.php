@@ -27,13 +27,13 @@ class MyURYException extends RuntimeException {
    */
   public function __construct($message, $code = 500, Exception $previous = null) {
     self::$count++;
+    parent::__construct($message, $code, $previous);
     
     if (defined('SILENT_EXCEPTIONS') && SILENT_EXCEPTIONS) {
       return;
     }
     
     //Set up the Exception
-    parent::__construct($message, $code, $previous);
     $error = "<p>MyURY has encountered a problem processing this request.</p>
             <table class='errortable' style='color:#633'>
               <tr><td>Message</td><td>{$this->getMessage()}</td></tr>
