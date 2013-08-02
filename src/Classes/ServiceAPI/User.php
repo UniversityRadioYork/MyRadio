@@ -771,7 +771,7 @@ class User extends ServiceAPI {
   public function setPhone($phone) {
     //Clear whitespace
     $phone = preg_replace('/\s/', '', $phone);
-    if (strlen($phone) !== 11) {
+    if (!empty($phone) && strlen($phone) !== 11) {
       throw new MyURYException('A phone number should have 11 digits.', 400);
     }
     $this->setCommonParam('phone', $phone);
