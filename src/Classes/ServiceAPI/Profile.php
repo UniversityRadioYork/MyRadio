@@ -9,7 +9,7 @@
  *
  * @author Andy Durant <aj@ury.org.uk>
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @todo Merge into User?
+ * @todo Merge into User
  * @package MyURY_Profile
  * @version 20130516
  * @uses \Database
@@ -126,6 +126,8 @@ class Profile extends ServiceAPI {
     
     return self::$currentOfficers;
   }
+  
+  
   /**
    * Returns an Array representation of the current URY officerships and the member holding them. On first run, this is cached locally in the class, and
    * shared in the CacheProvider until the Cache is cleared
@@ -144,7 +146,8 @@ class Profile extends ServiceAPI {
     if (self::$officers === false) {
       self::wakeup();
       self::$officers = 
-        self::$db->fetch_all('SELECT team.team_name AS team, officer.officer_name AS officership, fname || \' \' || sname AS name, member.memberid, officer.officerid
+        self::$db->fetch_all('SELECT team.team_name AS team, officer.type, officer.officer_name AS officership,
+          fname || \' \' || sname AS name, member.memberid, officer.officerid
                               FROM team 
                                 LEFT JOIN officer ON team.teamid = officer.teamid AND officer.status = \'c\'
                                 LEFT JOIN member_officer ON officer.officerid = member_officer.officerid AND member_officer.till_date IS NULL

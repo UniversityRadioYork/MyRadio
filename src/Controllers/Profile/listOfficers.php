@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @todo Proper Documentation
  * @todo Permissions
  * @author Andy Durant <aj@ury.org.uk>
@@ -12,14 +12,14 @@ $officers = Profile::getOfficers();
 
 foreach ($officers as $k => $v) {
   if (!empty($officers[$k]['name'])) {
-	  $officers[$k]['name'] = array(
-	      'display' => 'text',
-	      'url' => CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['memberid'])),
-	      'value' => $v['name']
-	      );
-	}
-	$officers[$k]['editlink'] = array(
-		'display' => 'icon',
+          $officers[$k]['name'] = array(
+              'display' => 'text',
+              'url' => CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['memberid'])),
+              'value' => $v['name']
+              );
+        }
+        $officers[$k]['editlink'] = array(
+                'display' => 'icon',
         'value' => 'wrench',
         'title' => 'Edit Officer',
         'url' => CoreUtils::makeURL('Profile', 'editOfficer', array('officerid' => $v['officerid'])),
