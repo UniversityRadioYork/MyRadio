@@ -638,6 +638,9 @@ class User extends ServiceAPI {
 
     if (!property_exists($this, $paramName))
       throw new MyURYException('paramName invalid', 500);
+    
+    if ($this->$paramName == $value) return false;
+    
     $this->$paramName = $value;
 
     if (isset($param_maps[$paramName]))
