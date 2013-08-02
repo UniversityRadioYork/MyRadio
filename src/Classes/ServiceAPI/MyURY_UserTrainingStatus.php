@@ -41,8 +41,8 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
   private $awarded_time;
   
   /**
-   * The User that granted this UserTrainingStatus
-   * @var User
+   * The memberid of the User that granted this UserTrainingStatus
+   * @var int
    */
   private $awarded_by;
   
@@ -53,8 +53,8 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
   private $revoked_time;
   
   /**
-   * The User that revoked this UserTrainingStatus
-   * @var User
+   * The memberid of the User that revoked this UserTrainingStatus
+   * @var int
    */
   private $revoked_by;
   
@@ -77,9 +77,9 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
     
     $this->user = User::getInstance($result['memberid']);
     $this->awarded_time = strtotime($result['completeddate']);
-    $this->awarded_by = User::getInstance($result['confirmedby']);
+    $this->awarded_by = $result['confirmedby'];
     $this->revoked_time = strtotime($result['revokedtime']);
-    $this->revoked_by = (empty($result['revokedby']) ? null : User::getInstance($result['revokedby']));
+    $this->revoked_by = $result['revokedby'];
     
     parent::__construct($result['presenterstatusid']);
   }
@@ -110,10 +110,10 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
   
   /**
    * Get the User that Awarded this Training Status
-   * @return type
+   * @return User
    */
   public function getAwardedBy() {
-    return $this->awarded_by;
+    return User::getInstance($this->awarded_by);
   }
   
   /**
@@ -129,7 +129,7 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
    * @return User|null
    */
   public function getRevokedBy() {
-    return $this->revoked_by;
+    return empty($this->revoked_by) null : User::getInstance($this->revoked_by);
   }
   
   /**
