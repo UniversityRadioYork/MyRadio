@@ -364,7 +364,7 @@ class User extends ServiceAPI {
    * @return String
    */
   public function getEduroam() {
-    return $this->eduroam;
+    return str_replace('@york.ac.uk', '', $this->eduroam);
   }
 
   /**
@@ -661,6 +661,7 @@ class User extends ServiceAPI {
       throw new MyURYException('Eduroam account should be @york.ac.uk! Use of other eduroam accounts is blocked.
         This is basic validation filter, so if there is a valid reason for another account to be hear, this check
         can be removed.', 400);
+      return false;
     }
     
     if (empty($eduroam) && empty($this->email)) {
@@ -673,6 +674,11 @@ class User extends ServiceAPI {
   }
   
   public function setEmail($email) {
+    if (strstr($email, '@') === false) {
+      throw new MyURYException('That email address doesn\'t look right. It needs to have an @.', 400);
+      return false;
+    }
+    
     if (empty($email) && empty($this->eduroam)) {
       throw new MyURYExcecption('Can\'t set both Email and Eduroam to null.', 400);
       return false;
