@@ -6,9 +6,9 @@
       google.load("visualization", "1", {packages:["corechart"]});
       google.setOnLoadCallback(drawChart);
       function drawChart() {
-        var data = google.visualization.arrayToDataTable({{data | raw}});
+        var data = google.visualization.arrayToDataTable({{data|raw}});
 
-        var options = {{options | raw}};
+        var options = {% if options %}{{options | raw}}{% else %}[]{% endif %};
 
         var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
         chart.draw(data, options);

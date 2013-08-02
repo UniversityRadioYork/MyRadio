@@ -724,24 +724,27 @@ class MyURY_Track extends ServiceAPI {
   
   /**
    * Returns various numbers that look pretty on a graph, which concern the Central Music Library.
+   * 
+   * The format is compatible with Google Charts.
+   * 
    * @return Array
    */
   public static function getLibraryStats() {
-    $num_digitised = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\'')[0];
-    $num_undigitised = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\'')[0];
-    $num_clean = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'y\'')[0];
-    $num_unclean = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'n\'')[0];
-    $num_cleanunknown = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'u\'')[0];
+    $num_digitised = (int)self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\'')[0];
+    $num_undigitised = (int)self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\'')[0];
+    $num_clean = (int)self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'y\'')[0];
+    $num_unclean = (int)self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'n\'')[0];
+    $num_cleanunknown = (int)self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'u\'')[0];
     
-    $num_singles = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE format=\'s\'')[0];
-    $num_albums = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE format=\'a\'')[0];
+    $num_singles = (int)self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE format=\'s\'')[0];
+    $num_albums = (int)self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE format=\'a\'')[0];
     
     return [
-        ['Statistic', 'Number of Tracks'],
+        ['Key', 'Value'],
         ['Digitised', $num_digitised],
         ['Undigitised', $num_undigitised],
-        ['Clean Lyrics', $num_clean],
-        ['Dirty Lyrics', $num_unclean],
+        ['Clean Lyrics', $num_clean], 
+        ['Unclean Lyrics', $num_unclean],
         ['Unverified Lyrics', $num_cleanunknown],
         ['Singles', $num_singles],
         ['Albums', $num_albums]
