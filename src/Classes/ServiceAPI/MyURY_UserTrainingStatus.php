@@ -129,7 +129,7 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
    * @return User|null
    */
   public function getRevokedBy() {
-    return empty($this->revoked_by) null : User::getInstance($this->revoked_by);
+    return empty($this->revoked_by) ? null : User::getInstance($this->revoked_by);
   }
   
   /**
