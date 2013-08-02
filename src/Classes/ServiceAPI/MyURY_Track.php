@@ -729,9 +729,9 @@ class MyURY_Track extends ServiceAPI {
   public static function getLibraryStats() {
     $num_digitised = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\'')[0];
     $num_undigitised = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\'')[0];
-    $num_clean = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE clean=\'y\'')[0];
-    $num_unclean = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE clean=\'n\'')[0];
-    $num_cleanunknown = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE clean=\'u\'')[0];
+    $num_clean = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'y\'')[0];
+    $num_unclean = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'n\'')[0];
+    $num_cleanunknown = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'u\'')[0];
     
     $num_singles = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE format=\'s\'')[0];
     $num_albums = self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE format=\'a\'')[0];
