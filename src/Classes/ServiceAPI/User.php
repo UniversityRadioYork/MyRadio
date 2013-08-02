@@ -834,7 +834,7 @@ class User extends ServiceAPI {
    * Gets the edit form for this User, with the permissions available for the current User
    */
   public function getEditForm() {
-    if ($this !== User::getInstance() && !User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
+    if ($this->getID() !== User::getInstance()->getID() && !User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
       throw new MyURYException(User::getInstance() . ' tried to edit ' . $this . '!');
     }
 
