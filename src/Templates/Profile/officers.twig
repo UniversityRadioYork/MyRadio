@@ -3,19 +3,23 @@
 <p>URY's Committee is the group of people that make sure our student radio station keeps on running - all day, every day.
 These are the people you'll want to contact about pretty much anything.</p>
 <p><em>See a vacant position that interests you? It's easy to join the committee at any time througout the year. Just ask anyone in the Management Team for more information.</em></p>
+<div class="officer-team">
 {% set current_team = null %}
 {% for officer in officers %}
   {# If Team has changed, new heading time! #}
   {% if officer.team != current_team %}
     {% set current_team = officer.team %}
+    </div>
     <h3>{{officer.team}}</h3>
+    <div class="officer-team">
   {% endif %}
   <div class="officer{% if officer.type == "h" %} head-officer{% elseif officer.type == "a"%} assistant-officer{% endif %}">
     <a href="{{officer.url}}">
       <img src="{{officer.image}}">
-      {{officer.officership}}<br>
       {% if officer.name %}{{officer.name}}{% else %}Vacant{% endif %}
+      <div class="officer-title">{{officer.officership}}</div>
     </a>
   </div>
 {% endfor %}
+</div>
 {% endblock %}
