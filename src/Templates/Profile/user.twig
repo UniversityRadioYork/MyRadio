@@ -76,6 +76,7 @@
       </td>
     </tr>
     {% endif %}
+    {% if user.account_locked is defined %}
     <tr>
       <td><b>Account Locked:</b></td>
       <td>
@@ -86,11 +87,12 @@
         {% endif %}
       </td>
     </tr>
+    {% endif %}
     <tr>
       <td><b>Last Login:</b></td>
       <td>
         {% if user.last_login %}
-          {{ user.last_login|date("j/n/Y H:i:s") }}
+          {{ user.last_login|date("j/n/Y H:i") }}
         {% else %}
           Never
         {% endif %}
@@ -99,6 +101,7 @@
     <tr>
       <td colspan="2">&nbsp;</td>
     </tr>
+    {% if user.payment is defined %}
     <tr>
       <td valign="top"><b>Paid:</b></td>
       <td>
@@ -113,6 +116,7 @@
         </ul>
       </td>
     </tr>
+    {% endif %}
     {% if user.officerships %}
       <tr><td colspan="2">&nbsp;</td></tr>
       <tr>
