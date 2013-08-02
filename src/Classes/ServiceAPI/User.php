@@ -667,7 +667,7 @@ class User extends ServiceAPI {
     if (empty($eduroam) && empty($this->email)) {
       throw new MyURYExcecption('Can\'t set both Email and Eduroam to null.', 400);
       return false;
-    } elseif ($this->getEduroam() !== $eduroam && User::findByEmail($eduroam) !== null) {
+    } elseif ($this->getEduroam().'@york.ac.uk' !== $eduroam && User::findByEmail($eduroam) !== null) {
       throw new MyURYException('The eduroam account '.$eduroam.' is already allocated to another User.', 500);
     }
     return $this->setCommonParam('eduroam', $eduroam);
