@@ -37,7 +37,7 @@ $template = CoreUtils::getTemplateObject()->setTemplate('Profile/user.twig')
         ->addVariable('title', 'View Profile')
         ->addVariable('user', $userData);
 
-if ($user === $visitor or $visitor->hasAuth(AUTH_EDITANYPROFILE)) {
+if ($user->getID() === $visitor->getID() or $visitor->hasAuth(AUTH_EDITANYPROFILE)) {
   $template->addVariable('editurl', '<a href="'.CoreUtils::makeURL('Profile', 'edit',
           array('memberid' => $user->getID())).'">Edit Profile</a>');
 }
