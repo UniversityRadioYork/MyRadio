@@ -137,7 +137,7 @@ class MyURY_List extends ServiceAPI {
   }
 
   public function isMember(User $user) {
-    return in_array($user, $this->getMembers());
+    return in_array($user, $this->getMembers(), true);
   }
 
   /**
