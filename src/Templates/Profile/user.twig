@@ -64,6 +64,7 @@
         <td>{{user.local_name}}</td>
       </tr>
     {% endif %}
+    {% if user.receive_email is defined %}
     <tr>
       <td><b>Receive Email:</b></td>
       <td>
@@ -74,6 +75,7 @@
         {% endif %}
       </td>
     </tr>
+    {% endif %}
     <tr>
       <td><b>Account Locked:</b></td>
       <td>
