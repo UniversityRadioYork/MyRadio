@@ -651,9 +651,18 @@ class User extends ServiceAPI {
   /**
    * Set the user's eduroam address
    * 
-   * @param type $eduroam The User's UoY address, i.e. abc123@york.ac.uk
+   * @param type $eduroam The User's UoY address, i.e. abc123@york.ac.uk (@york.ac.uk optional)
    */
   public function setEduroam($eduroam) {
+    //Automatically add '@york.ac.uk' if it is missing
+    if (strstr($eduroam, '@') === false) {
+      $eduroam .= '@york.ac.uk';
+    } elseif (strstr($eduroam, '@york.ac.uk') === false) {
+      throw new MyURYException('Eduroam account should be @york.ac.uk! Use of other eduroam accounts is blocked.
+        This is basic validation filter, so if there is a valid reason for another account to be hear, this check
+        can be removed.', 400);
+    }
+    
     if (empty($eduroam) && empty($this->email)) {
       throw new MyURYExcecption('Can\'t set both Email and Eduroam to null.', 400);
       return false;
