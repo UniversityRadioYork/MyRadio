@@ -26,6 +26,12 @@ class CoreUtils {
   private static $svc_id_cache = array();
   
   /**
+   * Stores permission typeid => description mappings
+   * @var Array
+   */
+  private static $typeid_descr = [];
+  
+  /**
    * Stores actionid => uri mappings of custom web addresses (e.g. /myury/iTones/default gets mapped to /itones)
    * @var Array
    */
@@ -225,12 +231,18 @@ class CoreUtils {
       return;
 
     $db = Database::getInstance();
-    $result = $db->fetch_all('SELECT typeid, phpconstant FROM l_action');
+    $result = $db->fetch_all('SELECT typeid, phpconstant, descr FROM l_action');
     foreach ($result as $row) {
       define($row['phpconstant'], $row['typeid']);
+      self::$typeid_descr[$row['typeid']] = $row['descr'];
     }
 
     self::$auth_cached = true;
+  }
+  
+  public static function getAuthDescription($typeid) {
+    self::setUpAuth();
+    return self::$typeid_descr[$typeid];
   }
 
   /**
