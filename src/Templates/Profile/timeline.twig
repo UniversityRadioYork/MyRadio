@@ -7,7 +7,7 @@
   {% for event in timeline %}
     <dl class="timelineMinor">
       <dt id="{{ loop.index }}">
-        <a>{{event.timestamp}}</a>
+        <a>{{event.timestamp | date('j/m/y')}}</a>
       </dt>
       <dd class="timelineEvent" id="{{ loop.index }}EX" style="display: none; ">
         {{profile_name}} {{event.message}}
