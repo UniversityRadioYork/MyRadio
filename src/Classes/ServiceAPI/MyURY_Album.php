@@ -6,7 +6,7 @@
 
 /**
  * The Album class fetches information about albums in the Cental Database.
- * @version 18042013
+ * @version 20130803
  * @author Anthony Williams <anthony@ury.york.ac.uk>
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
@@ -205,8 +205,22 @@ class MyURY_Album extends ServiceAPI {
   
   public function toDataSource() {
     return array(
-      'title' => $this->getTitle(),
-      'recordid' => $this->getID()
+        'title' => $this->getTitle(),
+        'recordid' => $this->getID(),
+        'artist' => $this->artist,
+        'cdid' => $this->cdid,
+        'date_added' => $this->date_added,
+        'date_released' => $this->date_released,
+        'format' => $this->format,
+        'last_modified' => $this->last_modified,
+        'location' => $this->location,
+        'media' => $this->media,
+        'member_add' => CoreUtils::dataSourceParser($this->member_add),
+        'member_edit' => CoreUtils::dataSourceParser($this->member_edit),
+        'record_label' => $this->record_label,
+        'shelf_letter' => $this->shelf_letter,
+        'shelf_number' => $this->shelf_number,
+        'status' => $this->status,'
     );
   }
 
