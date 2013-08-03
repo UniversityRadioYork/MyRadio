@@ -591,7 +591,7 @@ class User extends ServiceAPI {
     }
     
     foreach (MyURY_Show::getShowsAttachedToUser($this->getID()) as $show) {
-      $credit = null;
+      $credit = 'Owner';
       foreach ($show->getCreditsNames(true) as $c) {
         if ($c['name'] === $this->getName()) {
           $credit = $c['type_name'];
