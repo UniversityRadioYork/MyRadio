@@ -1,15 +1,19 @@
 {% extends 'stripe.twig' %}
-
+{% set cyear = 0 %}
 {% block stripecontent %}
   <h2>{{profile_name}}</h2>
   <div id="timelineContainer" class="clearfix">
     <div class="timelineToggle"><a class="expandAll">+ expand all</a></div>
   {% for event in timeline %}
+    {% if event.timestamp | date('Y') != cyear %}
+    {% set cyear = event.timestamp | date('Y') %}
+    <h2 class="timelineMajorMarker">{{ cyear }}</h2>
+    {% endif %}
     <dl class="timelineMinor">
       <dt id="{{ loop.index }}">
-        <a>{{event.timestamp | date('j/m/y')}}</a>
+        <a>{{event.timestamp | date('j/m/Y')}}</a>
       </dt>
-      <dd class="timelineEvent" id="{{ loop.index }}EX" style="display: none; ">
+      <dd class="timelineEvent" id="{{ loop.index }}EX">
         {{profile_name}} {{event.message}}
       </dd>
     </dl>
