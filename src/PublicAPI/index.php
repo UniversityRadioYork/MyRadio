@@ -47,6 +47,7 @@ if (empty($class)) {
  * If accessing Resources, then we give it an API Key with no permissions
  * in order to access it.
  */
+if (isset($_REQUEST['apiKey'])) $_REQUEST['api_key'] = $_REQUEST['apiKey'];
 if (empty($_REQUEST['api_key'])) {
   if ($class === 'resources') {
     $_REQUEST['api_key'] = 'IUrnsb8AMkjqDRdfXvOMe3DqHLW8HJ1RNBPNJq3H1FQpiwQDs7Ufoxmsf5xZE9XEbQErRO97DG4xfyVAO7LuS2dOiVNZYoxkk4fEhDt8wR4sLXbghidtM5rLHcgkzO10';
