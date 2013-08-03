@@ -46,7 +46,7 @@ class MyURY_FingerprinterDaemon extends MyURY_Daemon {
        * 2. Does is have a short levenshtein difference from the current value?
        */
       if (empty($info[0]) or $info[0]['rank'] < 0.8) {
-        echo 'Fingerprint data for '.$track->getID().' unreliable (p='.(empty($info[0]) ? '0' : $info[0]['rank']).". Skipping.\n";
+        echo 'Fingerprint data for '.$track->getID().' unreliable (p='.(empty($info[0]) ? '0' : $info[0]['rank'])."). Skipping.\n";
         continue;
       }
       
