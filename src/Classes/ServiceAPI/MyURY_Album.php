@@ -210,7 +210,7 @@ class MyURY_Album extends ServiceAPI {
         'artist' => $this->artist,
         'cdid' => $this->cdid,
         'date_added' => CoreUtils::happyTime($this->date_added),
-        'date_released' => CoreUtils::happyTime($this->date_released),
+        'date_released' => CoreUtils::happyTime($this->date_released, false),
         'format' => $this->format,
         'last_modified' => CoreUtils::happyTime($this->last_modified),
         'location' => $this->location,
