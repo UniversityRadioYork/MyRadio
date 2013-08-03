@@ -99,7 +99,10 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     /**
      * @todo Support general photo attachment?
      */
-    $this->photo_url = Config::$public_media_uri.'/'.$result['image_metadata'][0];
+    $this->photo_url = Config::$default_person_uri;
+    if ($result['image_metadata'] !== '{}') {
+      $this->photo_url = Config::$public_media_uri.'/'.self::$db->decodeArray($result['image_metadata'])[0];
+    }
 
     //Get information about Seasons
     $this->season_ids = self::$db->fetch_column('SELECT show_season_id
