@@ -14,7 +14,7 @@
         <a>{{event.timestamp | date('j/m/Y')}}</a>
       </dt>
       <dd class="timelineEvent" id="{{ loop.index }}EX">
-        {{profile_name}} {{event.message}}
+        <img src="{{event.photo}}">{{profile_name}} {{event.message}}
       </dd>
     </dl>
   {% endfor %}
