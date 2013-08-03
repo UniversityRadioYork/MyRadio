@@ -8,4 +8,8 @@
  * @package MyURY_Profile
  */
 $data = User::getInstance(isset($_GET['memberid']) ? $_GET['memberid'] : $_SESSION['memberid'])->getTimeline();
-require 'Views/Profile/timeline.php';
+
+CoreUtils::getTemplateObject()->setTemplate('Profile/timeline.twig')
+        ->addVariable('title', 'Timeline')
+        ->addVariable('timeline', $data)
+        ->render();

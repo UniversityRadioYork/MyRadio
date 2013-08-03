@@ -573,9 +573,25 @@ class User extends ServiceAPI {
    */
   public function getTimeline() {
     $events = array();
+    
+    //Get Officership history
+    foreach ($this->getOfficerships() as $officer) {
+      $events[] = [
+          'message' => 'Started as '.$officer['officer_name'],
+          'timestamp' => strtotime($officer['from_date']),
+          'photo' => Config::$photo_officership_get
+      ];
+      if ($officer['till_date'] != null) {
+        $events[] = [
+            'message' => 'Stepped down as '.$officer['officer_name'],
+            'timestamp' => strtotime($officer['till_date']),
+            'photo' => Config::$photo_officership_down
+        ];
+      }
+    }
 
     //Get their officership history, show history and awards
-    $result = self::$db->fetch_all(
+    /*$result = self::$db->fetch_all(
             'SELECT \'got Elected as \' || officer_name AS message, from_date AS timestamp,
         \'photo_officership_get\' AS photo
       FROM member_officer, officer WHERE member_officer.officerid = officer.officerid
@@ -614,11 +630,11 @@ class User extends ServiceAPI {
           'message' => $row['message'],
           'photo' => Config::$$row['photo']
       );
-    }
+    }*/
 
     //Get when they joined URY
     $events[] = array(
-        'timestamp' => date('d/m/Y', strtotime($this->joined)),
+        'timestamp' => strtotime($this->joined),
         'message' => 'Joined URY',
         'photo' => Config::$photo_joined
     );
