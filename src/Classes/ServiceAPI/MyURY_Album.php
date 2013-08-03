@@ -220,7 +220,7 @@ class MyURY_Album extends ServiceAPI {
         'record_label' => $this->record_label,
         'shelf_letter' => $this->shelf_letter,
         'shelf_number' => $this->shelf_number,
-        'status' => $this->status,'
+        'status' => $this->status,
     );
   }
 
