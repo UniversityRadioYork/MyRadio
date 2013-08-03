@@ -335,7 +335,7 @@ class MyURYFormField {
    * @param String $subfield For TABULARSETs, this is fieldname.innerfieldname.
    */
   public function setValue($value, $subField = null) {
-    if (!empty($subField)) $subField = explode('.', $subField)[1];
+    if (strpos($subField, '.') !== false) $subField = explode('.', $subField)[1];
     if ($this->type !== self::TYPE_TABULARSET) {
       $this->value = $value;
       return;

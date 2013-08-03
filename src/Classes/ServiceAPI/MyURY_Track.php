@@ -735,6 +735,8 @@ class MyURY_Track extends ServiceAPI {
     $num_clean = (int)self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'y\'')[0];
     $num_unclean = (int)self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'n\'')[0];
     $num_cleanunknown = (int)self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'u\'')[0];
+    $num_verified = (int)self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'t\'')[0];
+    $num_unverified = (int)self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'f\'')[0];
     
     $num_singles = (int)self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE format=\'s\'')[0];
     $num_albums = (int)self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE format=\'a\'')[0];
@@ -747,7 +749,9 @@ class MyURY_Track extends ServiceAPI {
         ['Unclean Lyrics', $num_unclean],
         ['Unverified Lyrics', $num_cleanunknown],
         ['Singles', $num_singles],
-        ['Albums', $num_albums]
+        ['Albums', $num_albums],
+        ['Verified Metadata', $num_verified],
+        ['Unverified Metadata', $num_unverified]
     ];
   }
 
