@@ -599,7 +599,7 @@ class User extends ServiceAPI {
         }
       }
       foreach ($show->getAllSeasons() as $season) {
-        if (empty($season->getTimeslots())) continue;
+        if (sizeof($season->getTimeslots()) === 0) continue;
         if ($season->getSeasonNumber() == 1) {
           $events[] = [
               'message' => 'started a new Show as '.$credit.' of '.$season->getMeta('title'),
