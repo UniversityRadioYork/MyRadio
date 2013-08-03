@@ -577,16 +577,42 @@ class User extends ServiceAPI {
     //Get Officership history
     foreach ($this->getOfficerships() as $officer) {
       $events[] = [
-          'message' => 'Started as '.$officer['officer_name'],
+          'message' => 'became '.$officer['officer_name'],
           'timestamp' => strtotime($officer['from_date']),
           'photo' => Config::$photo_officership_get
       ];
       if ($officer['till_date'] != null) {
         $events[] = [
-            'message' => 'Stepped down as '.$officer['officer_name'],
+            'message' => 'stepped down as '.$officer['officer_name'],
             'timestamp' => strtotime($officer['till_date']),
             'photo' => Config::$photo_officership_down
         ];
+      }
+    }
+    
+    foreach (MyURY_Show::getShowsAttachedToUser($this->getID()) as $show) {
+      $credit = null;
+      foreach ($show->getCreditsNames(true) as $c) {
+        if ($c['name'] === $this->getName()) {
+          $credit = $c['type_name'];
+          break;
+        }
+      }
+      foreach ($show->getAllSeasons() as $season) {
+        if (empty($season->getTimeslots())) continue;
+        if ($season->getSeasonNumber() == 1) {
+          $events[] = [
+              'message' => 'started a new Show as '.$credit.' of '.$season->getMeta('title'),
+              'timestamp' => strtotime($season->getAllTimeslots()[0]->getStartTime()),
+              'photo' => $show->getShowPhoto()
+          ];
+        } else {
+          $events[] = [
+              'message' => 'was '.$credit.' on Season '.$season->getSeasonNumber().' of '.$season->getMeta('title'),
+              'timestamp' => strtotime($season->getAllTimeslots()[0]->getStartTime()),
+              'photo' => $show->getShowPhoto()
+          ];
+        }
       }
     }
 
@@ -635,7 +661,7 @@ class User extends ServiceAPI {
     //Get when they joined URY
     $events[] = array(
         'timestamp' => strtotime($this->joined),
-        'message' => 'Joined URY',
+        'message' => 'joined URY',
         'photo' => Config::$photo_joined
     );
 

@@ -23,6 +23,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
   private $show_type;
   private $submitted_time;
   private $season_ids;
+  private $photo_url;
 
   /**
    * 
@@ -51,6 +52,8 @@ class MyURY_Show extends MyURY_Scheduler_Common {
         ORDER BY effective_from, show_metadata_id)) AS metadata_types,
       (SELECT array(SELECT metadata_value FROM schedule.show_metadata WHERE show_id=$1 AND effective_from <= NOW()
         ORDER BY effective_from, show_metadata_id)) AS metadata,
+      (SELECT array(SELECT metadata_value FROM schedule.show_image_metadata WHERE show_id=$1 AND effective_from <= NOW()
+        ORDER BY effective_from, show_metadata_id)) AS image_metadata,
       (SELECT array(SELECT credit_type_id FROM schedule.show_credit
          WHERE show_id=$1 AND effective_from <= NOW() AND (effective_to IS NULL OR effective_to >= NOW()) AND approvedid IS NOT NULL
          ORDER BY show_credit_id)) AS credit_types,
@@ -91,6 +94,12 @@ class MyURY_Show extends MyURY_Scheduler_Common {
         $this->metadata[$metadata_types[$i]] = $metadata[$i];
       }
     }
+    
+    //Deal with Show Photo
+    /**
+     * @todo Support general photo attachment?
+     */
+    $this->photo_url = Config::$public_media_uri.'/'.$result['image_metadata'][0];
 
     //Get information about Seasons
     $this->season_ids = self::$db->fetch_column('SELECT show_season_id
@@ -283,6 +292,14 @@ class MyURY_Show extends MyURY_Scheduler_Common {
       $r[] = $credit['User'];
     }
     return $r;
+  }
+  
+  /**
+   * Get the web url for the Show Photo
+   * @return String
+   */
+  public function getShowPhoto() {
+    return $this->photo_url;
   }
   
   /**
