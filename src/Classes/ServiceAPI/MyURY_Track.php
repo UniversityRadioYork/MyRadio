@@ -583,7 +583,7 @@ class MyURY_Track extends ServiceAPI {
   }
 
   public function setAlbum(MyURY_Album $album) {
-    if ($album === $this->getAlbum()) return;
+    if ($album->getID() === $this->getAlbum()->getID()) return;
     //Move the file
     foreach (Config::$music_central_db_exts as $ext) {
       if (!file_exists($this->getPath($ext)))
@@ -598,7 +598,7 @@ class MyURY_Track extends ServiceAPI {
       unlink($this->getPath($ext));
     }
 
-    $this->album = $album;
+    $this->record = $album->getID();
     self::$db->query('UPDATE rec_track SET recordid=$1 WHERE trackid=$2', array($album->getID(), $this->getID()));
 
     //Delete the old files
