@@ -167,12 +167,26 @@ class MyURY_Album extends ServiceAPI {
     return $this;
   }
   
-  public function setArtist($artist) {
+  /**
+   * Update the Artist for this Album
+   * @param String $artist The Artist name
+   * @param bool $applyToTracks If true, this will update the Artist for each individual Track in the Album.
+   * Default false.
+   * @return \MyURY_Album
+   * @throws MyURYException
+   */
+  public function setArtist($artist, $applyToTracks = false) {
     if (empty($artist)) {
       throw new MyURYException('Artist must not be empty.', 400);
     }
     
     $this->setCommonParam('artist', $artist);
+    
+    if ($applyToTracks) {
+      foreach ($this->getTracks() as $track) {
+        $track->setArtist($artist);
+      }
+    }
     
     return $this;
   }
