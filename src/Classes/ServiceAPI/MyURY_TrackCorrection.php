@@ -190,6 +190,7 @@ class MyURY_TrackCorrection extends MyURY_Track {
     self::$db->query('UPDATE public.rec_trackcorrection SET state=\'a\', reviewedby=$2 WHERE correctionid=$1',
             array($this->getCorrectionID(), User::getInstance()->getID()));
     $this->state = 'a';
+    $this->setLastfmVerified();
     return true;
   }
   
