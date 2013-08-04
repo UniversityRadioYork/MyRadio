@@ -64,6 +64,12 @@ class MyURY_TrackCorrection extends MyURY_Track {
    * @var int 
    */
   private $level;
+  
+  /**
+   * The state of the correction (p)ending, (a)pproved or (r)ejected
+   * @var String
+   */
+  private $state;
 
   /**
    * Initiates the Track variables
@@ -87,6 +93,7 @@ class MyURY_TrackCorrection extends MyURY_Track {
     $this->proposed_album_name = $result['proposed_album_name'];
     $this->reviewedby = empty($result['reviewedby']) ? null : User::getInstance($result['reviewedby']);
     $this->level = (int)$result['level'];
+    $this->state = $result['state'];
   }
 
   /**
@@ -162,6 +169,10 @@ class MyURY_TrackCorrection extends MyURY_Track {
     return $this->correctionid;
   }
   
+  public function getState() {
+    return $this->state;
+  }
+  
   /**
    * Apply the proposed correction to the original rec_track entry.
    * @param bool $ignore_album If true, the album will not be changed.
@@ -207,6 +218,7 @@ class MyURY_TrackCorrection extends MyURY_Track {
         'proposed_album' => $this->getProposedAlbumTitle(),
         'level' => $this->getLevel(),
         'correctionid' => $this->getCorrectionID(),
+        'state' => $this->getState(),
         'editlink' => array(
             'display' => 'icon',
             'value' => 'script',
