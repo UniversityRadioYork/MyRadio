@@ -166,6 +166,16 @@ class MyURY_Album extends ServiceAPI {
     
     return $this;
   }
+  
+  public function setArtist($artist) {
+    if (empty($artist)) {
+      throw new MyURYException('Artist must not be empty.', 400);
+    }
+    
+    $this->setCommonParam('artist', $artist);
+    
+    return $this;
+  }
 
   public static function findByName($title, $limit) {
     $title = trim($title);
