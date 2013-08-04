@@ -127,6 +127,46 @@ class MyURY_Album extends ServiceAPI {
     if (!is_dir($dir)) mkdir($dir);
     return $dir;
   }
+  
+  /**
+   * 
+   * @param String $paramName The key to update, e.g. title.
+   * Don't be silly and try to set recordid. Bad things will happen.
+   * @param mixed $value The value to set the param to. Type depends on $paramName.
+   */
+  private function setCommonParam($paramName, $value) {
+    /**
+     * You won't believe how annoying psql can be about '' already being used on a unique key.
+     */
+    if ($value == '') $value = null;
+    //Maps Class variable names to their database values, if they mismatch.
+    $param_maps = ['albumid' => 'recordid'];
+
+    if (!property_exists($this, $paramName))
+      throw new MyURYException('paramName invalid', 500);
+    
+    if ($this->$paramName == $value) return false;
+    
+    $this->$paramName = $value;
+
+    if (isset($param_maps[$paramName]))
+      $paramName = $param_maps[$paramName];
+
+    self::$db->query('UPDATE public.rec_record SET ' . $paramName . '=$1 WHERE recordid=$2', array($value, $this->getID()));
+    $this->updateCacheObject();
+
+    return true;
+  }
+  
+  public function setTitle($title) {
+    if (empty($title)) {
+      throw new MyURYException('Title must not be empty.', 400);
+    }
+    
+    $this->setCommonParam('title', $title);
+    
+    return $this;
+  }
 
   public static function findByName($title, $limit) {
     $title = trim($title);

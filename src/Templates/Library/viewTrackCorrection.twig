@@ -22,7 +22,7 @@
       <td>Artist</td><td>{{correction.artist}}</td><td>{{correction.proposed_artist}}</td>
     </tr>
     <tr>
-      <td>Album</td><td>{{correction.album.title}}</td><td>{{correction.proposed_album}}</td>
+      <td>Album</td><td>{{correction.album.title}} (ID: {{correction.album.recordid}})</td><td>{{correction.proposed_album}}</td>
     </tr>
     <tr>
       <th>Reliability</th><th>{% if correction.state == 1 %}Recommended{% else %}Unsure{% endif %}</th>
