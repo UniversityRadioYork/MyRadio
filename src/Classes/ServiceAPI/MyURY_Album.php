@@ -153,7 +153,6 @@ class MyURY_Album extends ServiceAPI {
       $paramName = $param_maps[$paramName];
 
     self::$db->query('UPDATE public.rec_record SET ' . $paramName . '=$1 WHERE recordid=$2', array($value, $this->getID()));
-    $this->updateCacheObject();
 
     return true;
   }
