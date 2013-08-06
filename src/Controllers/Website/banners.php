@@ -7,7 +7,7 @@
  * @package MyURY_Website
  */
 
-CoreUtils::getTemplateObject()->setTemplate('MyURY/text.twig')->addVariable('title', 'Website Banners')
+CoreUtils::getTemplateObject()->setTemplate('Website/banners.twig')->addVariable('title', 'Website Banners')
         ->addVariable('newbannerurl', CoreUtils::makeURL('Website', 'createBanner'))
         ->addVariable('tabledata', MyURY_Banner::getAllBanners())
         ->addVariable('tablescript', 'myury.datatable.default')
