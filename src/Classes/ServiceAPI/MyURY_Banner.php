@@ -53,7 +53,7 @@ class MyURY_Banner extends MyURY_Photo {
    * Initiates the MyURY_Banner object
    * @param int $banner_id The ID of the Banner to initialise
    */
-  private function __construct($banner_id) {
+  protected function __construct($banner_id) {
     $this->banner_id = (int) $banner_id;
 
     $result = self::$db->fetch_one('SELECT * FROM website.banner WHERE banner_id=$1', array($banner_id));
