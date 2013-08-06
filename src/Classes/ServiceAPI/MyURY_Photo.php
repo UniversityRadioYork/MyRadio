@@ -46,9 +46,9 @@ class MyURY_Photo extends ServiceAPI {
 
   /**
    * Initiates the MyURY_Photo object
-   * @param int $photo The ID of the Photo to initialise
+   * @param int $photoid The ID of the Photo to initialise
    */
-  private function __construct($photoid) {
+  protected function __construct($photoid) {
     $this->photoid = $photoid;
 
     $result = self::$db->fetch_one('SELECT * FROM myury.photos WHERE photoid=$1', array($photoid));
@@ -60,6 +60,19 @@ class MyURY_Photo extends ServiceAPI {
     $this->owner = User::getInstance($result['owner']);
     $this->date_added = strtotime($result['date_added']);
     $this->format = $result['format'];
+  }
+  
+  /**
+   * Get array of information about the object.
+   * @return Array
+   */
+  public function toDataSource() {
+    return [
+        'photoid' => $this->getID(),
+        'date_added' => CoreUtils::happyTime($this->getDateAdded()),
+        'format' => $this->getFormat(),
+        'owner' => $this->getOwner()->getID()
+    ];
   }
 
   public static function getInstance($photoid = -1) {
@@ -73,6 +86,22 @@ class MyURY_Photo extends ServiceAPI {
     }
 
     return self::$photos[$photoid];
+  }
+  
+  /**
+   * Get the time the Photo was created
+   * @return int
+   */
+  public function getDateAdded() {
+    return $this->date_added;
+  }
+  
+  /**
+   * Get the format (file extension) of the Photo.
+   * @return String
+   */
+  public function getFormat() {
+    return $this->format;
   }
   
   /**
