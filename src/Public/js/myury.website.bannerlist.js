@@ -30,7 +30,8 @@ $('.twig-datatable').dataTable({
   },
   //num_campaigns
   {
-    sTitle: '# of Campaigns'
+    sTitle: '# of Campaigns',
+    bVisible: false
   },
   //is_active
   {
