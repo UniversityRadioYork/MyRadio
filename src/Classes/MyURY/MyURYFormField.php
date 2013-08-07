@@ -326,6 +326,30 @@ class MyURYFormField {
   }
   
   /**
+   * Get if this needs a value
+   * @return bool
+   */
+  public function getRequired() {
+    return $this->required;
+  }
+  
+  /**
+   * Get the type of form field
+   * @return int
+   */
+  public function getType() {
+    return $this->type;
+  }
+  
+  /**
+   * Set whether this field needs a value.
+   * @param bool $bool
+   */
+  public function setRequired($bool) {
+    $this->required = $bool;
+  }
+  
+  /**
    * Sets the value that will be set in this MyURYFormField.
    * 
    * In the case of TABULARSETs, $value may be an array of multiple existing values. You must also provide an extended

@@ -65,11 +65,37 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
    * @return \URYTwig This for chaining
    */
   public function addVariable($name, $value) {
+    /**
+     * This is a hack for datatables, as there's no easy way for Twig to know booleans.
+     * It's slow.
+     * @todo Is there a better way of casting true/false to Yes/No?
+     */
+    if ($name === 'tabledata') {
+      $value = $this->boolParser($value);
+    }
+    
     if ($name === 'notices') {
       throw new MyURYException('Notices cannot be directly set via the Template Engine');
     }
     $this->contextVariables[$name] = $value;
     return $this;
+  }
+  
+  /**
+   * Recursively iterates over an array of any depth, replacing all booleans with "Yes" or "No".
+   * Used for the datatable hack.
+   * @param Array $value
+   * @return Array
+   */
+  private function boolParser($value) {
+    foreach ($value as $k=>$v) {
+      if (is_bool($v)) {
+        $value[$k] = $v ? 'Yes' : 'No';
+      } elseif (is_array($v)) {
+        $value[$k] = $this->boolParser($v);
+      }
+    }
+    return $value;
   }
 
   public function addInfo($message, $icon = 'info') {
