@@ -96,7 +96,7 @@ class MyURY_BannerCampaign extends ServiceAPI {
     $this->effective_to = empty($result['effective_to']) ? null : strtotime($result['effective_to']);
     $this->banner_location_id = (int)$result['banner_location_id'];
 
-    $this->timeslots = self::$db->fetch_all('SELECT id, day, start_time, end_time, orderFROM website.banner_campaign
+    $this->timeslots = self::$db->fetch_all('SELECT id, day, start_time, end_time, \'order\' FROM website.banner_timeslot
       WHERE banner_campaign_id=$1', [$this->banner_campaign_id]);
   }
 
@@ -118,6 +118,15 @@ class MyURY_BannerCampaign extends ServiceAPI {
    */
   public function getID() {
     return $this->banner_campaign_id;
+  }
+  
+  /**
+   * Return if this Banner Campaign is currently active. That is, it has started and has not expired.
+   * It returns true even when there isn't currently a Banner Timeslot for the Campaign running.
+   * @return boolean
+   */
+  public function isActive() {
+    return $this->effective_from <= time() && ($this->effective_to == null or $this->effective_to > time());
   }
 
   /**

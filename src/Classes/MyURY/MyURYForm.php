@@ -179,7 +179,10 @@ class MyURYForm {
   }
 
   /**
-   * Sets this MyURYForm as an editing form - it will take existing values and render them for editing and updating
+   * Sets this MyURYForm as an editing form - it will take existing values and render them for editing and updating.
+   * 
+   * This methods sets all TYPE_FILE fields to not required - it is assumed that they are not needed for editing.
+   * 
    * @param mixed $identifier Usually a primary key, something unique that the receiving controller will use to know
    * which instance of an entry is being updated
    * @param Array $values A key=>value array of input names and their values. These will literally be sent to setFieldValue
@@ -196,6 +199,13 @@ class MyURYForm {
     }
     
     if ($action !== null) $this->action = $action;
+    
+    //File fields are not required when editing.
+    foreach ($this->fields as $f => $v) {
+      if ($v->getType() === MyURYFormField::TYPE_FILE) {
+        $this->fields[$f]->setRequired(false);
+      }
+    }
     
     return $this;
   }
