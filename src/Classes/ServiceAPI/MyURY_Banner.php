@@ -60,7 +60,6 @@ class MyURY_Banner extends MyURY_Photo {
     $result = self::$db->fetch_one('SELECT * FROM website.banner WHERE banner_id=$1', array($banner_id));
     if (empty($result)) {
       throw new MyURYException('Banner ' . $banner_id . ' does not exist!');
-      return null;
     }
 
     $this->alt = $result['alt'];
@@ -89,6 +88,12 @@ class MyURY_Banner extends MyURY_Photo {
             'value' => 'pencil',
             'title' => 'Click here to edit this Banner',
             'url' => CoreUtils::makeURL('Website', 'editBanner', array('bannerid' => $this->getBannerID()))
+        ],
+        'campaigns_link' => [
+            'display' => 'icon',
+            'value' => 'calendar',
+            'title' => 'Click here to view the Campaigns for this Banner',
+            'url' => CoreUtils::makeURL('Website', 'viewCampaigns', array('bannerid' => $this->getBannerID()))
         ]
     ];
 
@@ -141,8 +146,9 @@ class MyURY_Banner extends MyURY_Photo {
    */
   public function isActive() {
     foreach ($this->getCampaigns() as $campaign) {
-      if ($campaign->isActive())
+      if ($campaign->isActive()) {
         return true;
+      }
     }
 
     return false;
@@ -268,7 +274,7 @@ class MyURY_Banner extends MyURY_Photo {
    * @return MyURY_Form
    */
   public static function getBannerForm() {
-    return (new MyURYForm('bannerfrm', 'Website', 'doCreateBanner'))
+    return (new MyURYForm('bannerfrm', 'Website', 'doCreateBanner', ['title' => 'Edit Banner']))
             ->addField(new MyURYFormField('alt', MyURYFormField::TYPE_TEXT, [
                 'label' => 'Title',
                 'explanation' => 'This is used on the backpages to identify the Banner, and also on the main website as mouseover text.'

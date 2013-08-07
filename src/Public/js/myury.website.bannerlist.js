@@ -39,6 +39,10 @@ $('.twig-datatable').dataTable({
   //edit_link
   {
     sTitle: "Edit"
+  },
+  //campaigns_link
+  {
+    sTitle: "View Campaigns"
   }
   ],
   "bJQueryUI": true,
