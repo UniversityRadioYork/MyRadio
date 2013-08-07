@@ -93,7 +93,7 @@ class MyURY_Banner extends MyURY_Photo {
             'display' => 'icon',
             'value' => 'calendar',
             'title' => 'Click here to view the Campaigns for this Banner',
-            'url' => CoreUtils::makeURL('Website', 'viewCampaigns', array('bannerid' => $this->getBannerID()))
+            'url' => CoreUtils::makeURL('Website', 'campaigns', array('bannerid' => $this->getBannerID()))
         ]
     ];
 
