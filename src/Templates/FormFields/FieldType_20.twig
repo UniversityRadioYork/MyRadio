@@ -1,6 +1,6 @@
 {#
 This is an experimental field type that I'm currently playing around with.
-It uses a mixture of custom CSS3 checkbox styling and https://github.com/scarlac/jquery-drag-check
+It uses a mixture of custom CSS3 checkbox styling and https://github.com/aleximplode/dragcheck
 to enable selecting a time range within a week.
 
 The initial plan is to use it for banner campaigns, but if it turns out to work well,
@@ -9,22 +9,83 @@ it *could* replace the time selection for Season applications.
 Each "box" is a checkbox, styled so that it looks like a filled in box when checked. Well, the label for a checkbox.
 As such, each individual one is its own input field, so putting it together server-side is confusing.
 
-The format is 'giveninputname'-daynum-starttime, e.g. mytimeselect-1-0800 is 8-8:30am Monday.
+The format is 'giveninputname'-daynum-starttime, where starttime is seconds since midnight
+e.g. mytimeselect-1-28800 is 8-8:30am Monday.
 This field is not designed to support being in a tabular set. Can you imagine how ugly that would look?
 
 Times are arranged 7am-7am to be compatible with The URY Day
 #}
-<table>
+<style>
+div.myuryfrmfield label.myuryfrmfield-weeklycheck {
+  width: 100%;
+  height: 25px;
+  padding: 0;
+  margin: 0;
+  display: block;
+}
+
+input.myuryfrmfield-weeklycheck {
+  display: none;
+}
+
+input.myuryfrmfield-weeklycheck:checked + label {
+  background-color: #363d5f;
+}
+
+table.myuryfrmfield-weeklycheck {
+  border-collapse: collapse;
+  margin: auto;
+}
+
+table.myuryfrmfield-weeklycheck th.hour {
+  font-size: .8em;
+}
+
+table.myuryfrmfield-weeklycheck td {
+  border: 1px solid #000;
+  width: 15px;
+  margin: 0;
+  padding: 0;
+}
+</style>
+<table class="myuryfrmfield myuryfrmfield-weeklycheck">
   {# Prepare the Header row #}
   <thead>
     <tr>
-      <td>&nbsp;</td>
+      <th>Day/Hour</th>
       {% for i in 0..47 %}
-      <td>{{ i/2 }}</td>
+      <th class="hour">{{ i % 2 == 0 ? i/2 : "" }}</th>
       {% endfor %}
     </tr>
   </thead>
+  <tbody>
+    {# Now do a row for each day #}
+    {% for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] %}
+    <tr>
+      <th>{{ day }}</th>
+      {% for i in 0..47 %}
+      <td>
+        {% set timename = field.name ~ '-' ~ day ~ '-' ~ (i*1800)%}
+        <input type="checkbox" name="{{timename}}" id="{{timename}}" class="myuryfrmfield myuryfrmfield-weeklycheck">
+        <label for="{{timename}}" class="myuryfrmfield-weeklycheck">&nbsp;</label>
+      </td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
+<script type="text/javascript" src="{{ baseurl }}/js/jquery.dragcheck.js"></script>
+<script type="text/javascript">
+  $('table.myuryfrmfield-weeklycheck tbody tr').dragcheck({
+    container: 'td',
+    labelSelect: true,
+    onSelect: function(obj, state) {
+        obj.prop('checked', state);
+    }
+  });
+  $('table.myuryfrmfield-weeklycheck').disableSelection();
+</script>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 <input type="hidden" name="{{frm_name}}-{{sfieldname}}" id="{{frm_name}}-{{field.name}}" value="{{field.value}}" />
 {% if display_labels %}<label for="{{frm_name}}-{{field.name}}-ui">{{field.label}}</label>{% endif %}
 <input type="text" class="{{field.class}}{% if field.required %} required{% endif %} text album-autocomplete"
