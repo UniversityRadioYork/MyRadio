@@ -28,4 +28,4 @@ foreach ($data['test'] as $value) {
   echo $days[$value['day']].' '.gmdate('H:i', $value['start_time']).'-'.gmdate('H:i', $value['end_time']).'<br>';
 }
 
-$form->editMode(0, $data)->render();
+$form->editMode(0, ['test' => $data['test']])->render();
