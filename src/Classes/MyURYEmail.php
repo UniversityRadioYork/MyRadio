@@ -42,8 +42,9 @@ class MyURYEmail {
 
     $info = self::$db->fetch_one('SELECT * FROM mail.email WHERE email_id=$1', array($eid));
 
-    if (empty($info))
+    if (empty($info)) {
       throw new MyURYException('Email ' . $eid . ' does not exist!');
+    }
 
     $this->subject = $info['subject'];
     $this->body = $info['body'];
@@ -90,14 +91,18 @@ class MyURYEmail {
    * @param bool $already_sent If true, all Recipients will be set to having had the email sent.
    */
   public static function create($to, $subject, $body, $from = null, $timestamp = null, $already_sent = false) {
-    if (!is_bool($already_sent)) $already_sent = false;
+    if (!is_bool($already_sent)) {
+      $already_sent = false;
+    }
     self::$db = Database::getInstance();
 
     $params = array($subject, $body);
-    if ($timestamp !== null)
+    if ($timestamp !== null) {
       $params[] = CoreUtils::getTimestamp($timestamp);
-    if ($from !== null)
+    }
+    if ($from !== null) {
       $params[] = $from->getID();
+    }
 
     $eid = self::$db->fetch_column('INSERT INTO mail.email (subject, body'
             . ($timestamp !== null ? ', timestamp' : '') . ($from !== null ? ', sender' : '') . ')
@@ -107,20 +112,24 @@ class MyURYEmail {
 
     $eid = $eid[0];
     
-    if (empty($eid)) throw new MyURYException('Failed to create email. See previous error.');
+    if (empty($eid)) {
+      throw new MyURYException('Failed to create email. See previous error.');
+    }
 
     if (!empty($to['lists'])) {
       foreach ($to['lists'] as $list) {
-        if (is_object($list))
+        if (is_object($list)) {
           $list = $list->getID();
+        }
         self::$db->query('INSERT INTO mail.email_recipient_list (email_id, listid, sent) VALUES ($1, $2, $3)',
                 array($eid, $list, $already_sent));
       }
     }
     if (!empty($to['members'])) {
       foreach ($to['members'] as $member) {
-        if (is_object($member))
+        if (is_object($member)) {
           $member = $member->getID();
+        }
         self::$db->query('INSERT INTO mail.email_recipient_member (email_id, memberid, sent) VALUES ($1, $2, $3)',
                 array($eid, $member, $already_sent));
       }
@@ -163,8 +172,9 @@ class MyURYEmail {
    */
   public function send() {
     //Don't send if it's scheduled in the future.
-    if ($this->timestamp > time())
+    if ($this->timestamp > time()) {
       return;
+    }
     $this->body_transformed = utf8_encode($this->body_transformed);
     foreach ($this->r_users as $user) {
       if (!$this->getSentToUser($user)) {
@@ -172,8 +182,9 @@ class MyURYEmail {
         if ($user->getReceiveEmail()) {
           $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
           $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-          if (!mail($user->getName() . ' <' . $user->getEmail() . '>', '[URY] ' . $u_subject, $u_message, $this->getHeader()))
+          if (!mail($user->getName() . ' <' . $user->getEmail() . '>', '[URY] ' . $u_subject, $u_message, $this->getHeader())) {
             continue;
+          }
         }
         $this->setSentToUser($user);
       }
@@ -186,8 +197,9 @@ class MyURYEmail {
           if ($user->getReceiveEmail()) {
             $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
             $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-            if (!mail($user->getName() . ' <' . $user->getEmail() . '>', '[URY] ' . $u_subject, $u_message, $this->getHeader()))
+            if (!mail($user->getName() . ' <' . $user->getEmail() . '>', '[URY] ' . $u_subject, $u_message, $this->getHeader())) {
               continue;
+            }
           }
         }
         $this->setSentToList($list);
@@ -237,8 +249,9 @@ class MyURYEmail {
    * @todo Check if "Receive Emails" is enabled for the User
    */
   public static function sendEmailToList(MyURY_List $to, $subject, $message, $from = null) {
-    if ($from !== null && !$to->hasSendPermission($from))
+    if ($from !== null && !$to->hasSendPermission($from)) {
       return false;
+    }
     self::create(array('lists' => array($to)), $subject, $message, $from);
     return true;
   }

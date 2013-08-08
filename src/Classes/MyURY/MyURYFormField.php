@@ -215,6 +215,14 @@ class MyURYFormField {
    * element when loading a pre-filled form.
    */
   const TYPE_ALBUM = 0x13;
+  
+  /**
+   * The constant used to specify this MyURYFormField should be a checkbox matrix formatted to
+   * generate an appointment selector on a standard week.
+   * 
+   * This field type is currently experimental and therefore not documented.
+   */
+  const TYPE_WEEKSELECT = 0x14;
 
   /**
    * The name/id of the Form Field
