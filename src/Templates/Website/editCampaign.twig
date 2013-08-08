@@ -1,9 +1,9 @@
 {% extends 'form.twig' %}
 {% block stripecontent %}
 {% if frm_custom.campaignStart %}
-<p>You are editing a Campaign starting {{frm_custom.campaignStart}} for {{frm_custom.bannerName}}.</p>
+<p>You are editing a Campaign starting {{frm_custom.campaignStart}} for <em>{{frm_custom.bannerName}}</em>.</p>
 {% else %}
-<p>You are creating a new Campaign for the Banner {{frm_custom.bannerName}}.</p>
+<p>You are creating a new Campaign for the Banner <em>{{frm_custom.bannerName}}</em>.</p>
 {% endif %}
 {{ parent() }}
 {% endblock %}

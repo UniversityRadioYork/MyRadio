@@ -288,7 +288,7 @@ class MyURY_BannerCampaign extends ServiceAPI {
     return (new MyURYForm('Edit Banner Campaign', 'Website', 'doCreateCampaign', [template => 'Website/editCampaign.twig']))
                     ->addField(new MyURYFormField('effective_from', MyURYFormField::TYPE_DATETIME, [
                         required => true,
-                        value => time(),
+                        value => CoreUtils::happyTime(time()),
                         label => 'Start Time',
                         explanation => 'The time from which this Campaign becomes active.'
                     ]))
@@ -306,7 +306,8 @@ class MyURY_BannerCampaign extends ServiceAPI {
                     ->addField(new MyURYFormField('timeslots', MyURYFormField::TYPE_WEEKSELECT, [
                         label => 'Timeslots',
                         explanation => 'All times filled in on this schedule (i.e. are purple) are times during the'
-                        . ' week that this Campaign is considered active, and therefore appears on the website.',
+                        . ' week that this Campaign is considered active, and therefore appears on the website.'
+                        . ' Click a square to toggle it. Click and drag to select lots at once!',
                     ]))
                     ->addField(new MyURYFormField('bannerid', MyURYFormField::TYPE_HIDDEN, [
                         value => $bannerid
