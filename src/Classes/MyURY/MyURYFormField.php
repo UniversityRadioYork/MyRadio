@@ -220,7 +220,13 @@ class MyURYFormField {
    * The constant used to specify this MyURYFormField should be a checkbox matrix formatted to
    * generate an appointment selector on a standard week.
    * 
-   * This field type is currently experimental and therefore not documented.
+   * The value of this form field should be a 2D array of 0 or more time ranges, of the format:<br>
+   * {day: 1, start_time: 3600, end_time: 7200}<br>
+   * Which is Monday, from 1am to 2am (times are seconds since midnight).
+   * 
+   * This field type takes no custom options.
+   * This field type does not support repeating or tabular sets.
+   * This field type does not support the "required" parameter.
    */
   const TYPE_WEEKSELECT = 0x14;
 
