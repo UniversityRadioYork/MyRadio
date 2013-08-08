@@ -323,10 +323,12 @@ class MyURYFormField {
     //Set optional parameters
     foreach ($options as $k => $v) {
       //Sanity checks - is this a valid parameter and is it not blacklisted?
-      if (isset($this->$k) === false && @$this->$k !== null)
+      if (isset($this->$k) === false && @$this->$k !== null) {
         throw new MyURYException('Tried to set MyURYFormField parameter ' . $k . ' but it does not exist.');
-      if (in_array($k, $this->restricted_attributes))
+      }
+      if (in_array($k, $this->restricted_attributes)) {
         throw new MyURYException('Tried to set MyURYFormField parameter ' . $k . ' but it is not editable.');
+      }
       $this->$k = $v;
     }
   }
@@ -373,7 +375,9 @@ class MyURYFormField {
    * @param String $subfield For TABULARSETs, this is fieldname.innerfieldname.
    */
   public function setValue($value, $subField = null) {
-    if (strpos($subField, '.') !== false) $subField = explode('.', $subField)[1];
+    if (strpos($subField, '.') !== false) {
+      $subField = explode('.', $subField)[1];
+    }
     if ($this->type !== self::TYPE_TABULARSET) {
       $this->value = $value;
       return;
@@ -397,7 +401,9 @@ class MyURYFormField {
       $classes .= " $class";
     }
     
-    if (!$this->display) $classes .= ' ui-helper-hidden';
+    if (!$this->display) {
+      $classes .= ' ui-helper-hidden';
+    }
 
     return $classes;
   }
@@ -418,11 +424,15 @@ class MyURYFormField {
       }
     }
     
-    if ($this->type === MyURYFormField::TYPE_ARTIST) $options['artistname'] = $this->value;
+    if ($this->type === MyURYFormField::TYPE_ARTIST) {
+      $options['artistname'] = $this->value;
+    }
     elseif (($this->type === MyURYFormField::TYPE_TRACK) && !empty($this->value)) {
       if (is_array($this->value)) { //Deal with TABULARSETs
         foreach ($this->value as $k => $v) {
-          if (empty($v)) continue;
+          if (empty($v)) {
+            continue;
+          }
           $options['trackname'][$k] = $v->getTitle();
           $value[$k] = $v->getID();
         }
@@ -433,7 +443,9 @@ class MyURYFormField {
     } elseif (($this->type === MyURYFormField::TYPE_MEMBER) && !empty($this->value)) {
       if (is_array($this->value)) { //Deal with TABULARSETs
         foreach ($this->value as $k => $v) {
-          if (empty($v)) continue;
+          if (empty($v)) {
+            continue;
+          }
           $options['membername'][$k] = $v->getName();
           $value[$k] = $v->getID();
         }
@@ -483,7 +495,9 @@ class MyURYFormField {
         //Deal with Arrays for repeated elements
         if (is_array($_REQUEST[$name])) {
           for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
-            if (empty($_REQUEST[$name][$i])) continue;
+            if (empty($_REQUEST[$name][$i])) {
+              continue;
+            }
             $_REQUEST[$name][$i] = User::getInstance($_REQUEST[$name][$i]);
           }
           return $_REQUEST[$name];
@@ -495,7 +509,9 @@ class MyURYFormField {
         //Deal with Arrays for repeated elements
         if (is_array($_REQUEST[$name])) {
           for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
-            if (empty($_REQUEST[$name][$i])) continue;
+            if (empty($_REQUEST[$name][$i])) {
+              continue;
+            }
             $_REQUEST[$name][$i] = MyURY_Track::getInstance($_REQUEST[$name][$i]);
           }
           return $_REQUEST[$name];
@@ -573,12 +589,54 @@ class MyURYFormField {
         //Deal with Arrays for repeated elements
         if (is_array($_REQUEST[$name])) {
           for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
-            if (empty($_REQUEST[$name][$i])) continue;
+            if (empty($_REQUEST[$name][$i])) {
+              continue;
+            }
             $_REQUEST[$name][$i] = MyURY_Album::getInstance($_REQUEST[$name][$i]);
           }
           return $_REQUEST[$name];
         } else {
           return MyURY_Album::getInstance($_REQUEST[$name]);
+        }
+        break;
+      case self::TYPE_WEEKSELECT:
+        /**
+         * Now isn't this fun. The week select is comprised of 336 checkboxes that we need to amalgamate.
+         * Value returned are relative to days starting at midnight, not 7am.
+         * Selections spanning multiple days will return as two seperate selections ('days' here again being midnight)
+         */
+        $times = [];
+        $active_day = null;
+        $active_time = null;
+        for ($i=1; $i<=7; $i++) { //Iterate over each day
+          for ($j=0; $j<86400; $j+=1800) { //Iterate over each 30 minute interval
+            if (strtolower($_REQUEST[$name.'-'.$i.'-'.$j]) === 'on') {
+              //Is there already an active selection? If so, carry on.
+              if ($active_day !== null) {
+                //Yep, nothing to see here.
+                continue;
+              } else {
+                //Ooh, this is the start of a new range
+                $active_day = $i;
+                $active_time = $j;
+              }
+            } else {
+              //Was there an active selection? If so, kill it.
+              if ($active_day !== null) {
+                //Add the current state to times
+                $times[] = ['day' => $active_day, 'start_time' => $active_time, 'end_time' => $j-1];
+                $active_day = null;
+                $active_time = null;
+              }
+              //If there wasn't an active selection, we don't have to do anything.
+            }
+          }
+          //At the end of the day, kill any active selection.
+          if ($active_day !== null) {
+            $times[] = ['day' => $active_day, 'start_time' => $active_time, 'end_time' => 86399];
+            $active_day = null;
+            $active_time = null;
+          }
         }
         break;
       default:
