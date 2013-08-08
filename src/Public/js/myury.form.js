@@ -5,6 +5,7 @@
  */
 
 window.MyURYForm = {
+  gCheckedValue: null,
   setUpMemberFields: function() {
     /**
      * Initialises the Member autocomplete pickers where necessary
@@ -167,6 +168,41 @@ window.MyURYForm = {
       }
     });
   },
+  /**
+   * Sets up those pretty week drag-drop select fields. I wrote it, but don't understand it.
+   */
+  setUpWeekSelectFields: function() {
+    $('table.myuryfrmfield-weeklycheck').disableSelection();
+    $.each($('table.myuryfrmfield-weeklycheck td'), function() {
+      $(this).on('mousedown', function() {
+        if (MyURYForm.gCheckedValue === null) {
+         /**
+          * Start a drag selection. Invert the state of the selected checkbox,
+          * and set a variable define what other checkboxes selected should be
+          * configured to (checked or unchecked). This variable is also
+          * used to mark dragging as active.
+          */
+         var input = $(this).children('input[type=checkbox]').first();
+         input.prop('checked', !input.prop('checked'));
+         MyURYForm.gCheckedValue = input.prop('checked');
+        }
+      }).on('mouseenter', function() {
+        //Is there an active dragging event?
+        if (MyURYForm.gCheckedValue === null) return; //Nope.
+        $(this).children('input[type=checkbox]').prop('checked', MyURYForm.gCheckedValue);
+      }).on('click', function(e) {
+        //Stop the default click handler running - it unselects boxes.
+        e.preventDefault();
+      });
+    }
+    );
+    
+    //Initialise this to the whole page, otherwise mouseup outside the table makes a mess
+    $(document).on('mouseup', function(){
+        //End the dragging event
+        MyURYForm.gCheckedValue = null;
+      })
+  },
   init: function() {
     /**
      * Initialises TinyMCE fields
@@ -197,6 +233,7 @@ window.MyURYForm = {
     MyURYForm.setUpTrackFields();
     MyURYForm.setUpArtistFields();
     MyURYForm.setUpAlbumFields();
+    MyURYForm.setUpWeekSelectFields();
 
     /**
      * Setup Checkbox Group select all / select none

@@ -8,5 +8,7 @@
  */
 
 (new MyURYForm('test', 'Website', 'default'))
-        ->addField(new MyURYFormField('test', MyURYFormField::TYPE_WEEKSELECT))
+        ->addField(new MyURYFormField('test', MyURYFormField::TYPE_WEEKSELECT,[
+            value => MyURY_BannerCampaign::getInstance($_REQUEST['campaignid'])->getTimeslots()
+        ]))
                 ->render();

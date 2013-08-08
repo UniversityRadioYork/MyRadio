@@ -95,8 +95,14 @@ class MyURY_BannerCampaign extends ServiceAPI {
     $this->effective_to = empty($result['effective_to']) ? null : strtotime($result['effective_to']);
     $this->banner_location_id = (int)$result['banner_location_id'];
 
-    $this->timeslots = self::$db->fetch_all('SELECT id, day, start_time, end_time, \'order\' FROM website.banner_timeslot
-      WHERE banner_campaign_id=$1', [$this->banner_campaign_id]);
+    //Make times be in seconds since midnight
+    $this->timeslots = array_map(function($x){
+      return ['id' => $x['id'], 'day' => $x['day'],
+          'start_time' => strtotime($x['start_time'], 0),
+          'end_time' => strtotime($x['end_time'], 0)];
+    },
+            self::$db->fetch_all('SELECT id, day, start_time, end_time, \'order\' FROM website.banner_timeslot
+      WHERE banner_campaign_id=$1', [$this->banner_campaign_id]));
   }
 
   /**

@@ -1,6 +1,5 @@
 {#
-This is an experimental field type that I'm currently playing around with.
-It uses a mixture of custom CSS3 checkbox styling and https://github.com/aleximplode/dragcheck
+This "input" uses a mixture of custom CSS3 checkbox styling and drag-drop checkbox selection
 to enable selecting a time range within a week.
 
 The initial plan is to use it for banner campaigns, but if it turns out to work well,
@@ -11,62 +10,45 @@ As such, each individual one is its own input field, so putting it together serv
 
 The format is 'giveninputname'-daynum-starttime, where starttime is seconds since midnight
 e.g. mytimeselect-1-28800 is 8-8:30am Monday.
+Yes, days start on 1. That's how the database is designed. I didn't do it.
 This field is not designed to support being in a tabular set. Can you imagine how ugly that would look?
 
-Times are arranged 7am-7am to be compatible with The URY Day
+Times are arranged 7am-7am to be compatible with The URY Day.
+Input values are expected to be with days relevant to midnight - the Template handles conversion.
 #}
-<style>
-  div.myuryfrmfield label.myuryfrmfield-weeklycheck {
-    width: 100%;
-    height: 25px;
-    padding: 0;
-    margin: 0;
-    display: block;
-  }
-
-  input.myuryfrmfield-weeklycheck {
-    display: none;
-  }
-
-  input.myuryfrmfield-weeklycheck:checked + label {
-    background-color: #363d5f;
-  }
-
-  table.myuryfrmfield-weeklycheck {
-    border-collapse: collapse;
-    margin: auto;
-  }
-
-  table.myuryfrmfield-weeklycheck th.hour {
-    font-size: .8em;
-  }
-
-  table.myuryfrmfield-weeklycheck td {
-    border: 1px solid #000;
-    width: 15px;
-    margin: 0;
-    padding: 0;
-  }
-</style>
+{% if display_labels %}<h3>{{field.label}}</h3>{% endif %}
 <table class="myuryfrmfield myuryfrmfield-weeklycheck" id="{{frm_name}}-{{ field.name }}">
   {# Prepare the Header row #}
   <thead>
     <tr>
       <th>Day/Hour</th>
-      {% for i in 0..47 %}
+      {% for i in ((14..47)|merge(0..13)) %}
       <th class="hour">{{ i % 2 == 0 ? i/2 : "" }}</th>
       {% endfor %}
     </tr>
   </thead>
   <tbody>
     {# Now do a row for each day #}
-    {% for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] %}
+    {% set days = {1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday", 7: "Sunday"} %}
+    {% for day in days|keys %}
     <tr>
-      <th>{{ day }}</th>
-      {% for i in 0..47 %}
+      <th>{{ days[day] }}</th>
+      {% for i in ((14..47)|merge(0..13)) %}
+      {# Otherwise 0-7 at the end of the scale are for the previous day. Well the same.. you know what I mean. #}
+      {% if i <= 13 %}
+        {% if day == 7 %}{% set dayno = 1 %}{% else %}{% set dayno = day + 1 %}{% endif %}
+      {% else %}
+        {% set dayno = day %}
+      {% endif %}
       <td>
         {% set timename = frm_name ~ '-' ~ field.name ~ '-' ~ day ~ '-' ~ (i*1800) %}
-        <input type="checkbox" name="{{timename}}" id="{{timename}}" class="myuryfrmfield myuryfrmfield-weeklycheck">
+        {% set checked = false %}
+        {% for schedule in field.value %}
+          {% if schedule.day == dayno and schedule.start_time <= i*1800 and schedule.end_time >= i*1800 %}
+            {% set checked = true %}
+          {% endif %}
+        {% endfor %}
+        <input type="checkbox" name="{{timename}}" id="{{timename}}" class="myuryfrmfield myuryfrmfield-weeklycheck" {% if checked %}checked="checked"{% endif %}>
         <label for="{{timename}}" class="myuryfrmfield-weeklycheck">&nbsp;</label>
       </td>
       {% endfor %}
@@ -74,44 +56,3 @@ Times are arranged 7am-7am to be compatible with The URY Day
     {% endfor %}
   </tbody>
 </table>
-<script type="text/javascript">
-  //If true, checking objects. If false, unchecking.
-  MyURYForm.gCheckedValue = null;
-  initCheckBoxes('{{frm_name}}-{{field.name}}');
-  $('table.myuryfrmfield-weeklycheck').disableSelection();
-  /* Click-n-Drag Checkboxes */
-  function initCheckBoxes(sTblId) {
-    $.each($('#'+sTblId + ' td'), function(td) {
-      $(this).on('mousedown', function(e) {
-        if (MyURYForm.gCheckedValue === null) {
-         /**
-          * Start a drag selection. Invert the state of the selected checkbox,
-          * and set a variable define what other checkboxes selected should be
-          * configured to (checked or unchecked). This variable is also
-          * used to mark dragging as active.
-          */
-         var input = $(this).children('input[type=checkbox]').first();
-         input.prop('checked', !input.prop('checked'));
-         MyURYForm.gCheckedValue = input.prop('checked');
-        }
-      }).on('mouseover', function(e) {
-        //Is there an active dragging event?
-        if (MyURYForm.gCheckedValue === null) return; //Nope.
-        $(this).children('input[type=checkbox]').prop('checked', MyURYForm.gCheckedValue);
-      }).on('mouseup', function(e){
-        //End the dragging event
-        MyURYForm.gCheckedValue = null;
-      }).on('click', function(e) {
-        //Stop the default click handler running - it unselects boxes.
-        e.preventDefault();
-      });
-    }
-    );
-  }
-</script>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<input type="hidden" name="{{frm_name}}-{{sfieldname}}" id="{{frm_name}}-{{field.name}}" value="{{field.value}}" />
-{% if display_labels %}<label for="{{frm_name}}-{{field.name}}-ui">{{field.label}}</label>{% endif %}
-<input type="text" class="{{field.class}}{% if field.required %} required{% endif %} text album-autocomplete"
-       name="{{frm_name}}-{{field.name}}-ui" id="{{frm_name}}-{{field.name}}-ui" value="{{field.options.albumname}}" />
-<span class="myuryfrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
