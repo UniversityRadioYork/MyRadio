@@ -86,7 +86,6 @@ class MyURY_BannerCampaign extends ServiceAPI {
             array($banner_campaign_id));
     if (empty($result)) {
       throw new MyURYException('Banner Campaign ' . $banner_campaign_id . ' does not exist!');
-      return null;
     }
 
     $this->banner = MyURY_Banner::getInstance($result['banner_id']);
@@ -100,16 +99,33 @@ class MyURY_BannerCampaign extends ServiceAPI {
       WHERE banner_campaign_id=$1', [$this->banner_campaign_id]);
   }
 
-  public function toDataSource() {
-    return [
+  /**
+   * Returns data about the Campaign
+   * @param bool $full If true, returns full, detailed data about the timeslots in this campaign
+   * @return Array
+   */
+  public function toDataSource($full = false) {
+    $data = [
         'banner_campaign_id' => $this->getID(),
         'created_by' => $this->getCreatedBy()->getID(),
         'approved_by' => ($this->getApprovedBy() == null) ? null : $this->getApprovedBy()->getID(),
         'effective_from' => CoreUtils::happyTime($this->getEffectiveFrom()),
-        'effective_to' => CoreUtils::happyTime($this->getEffectiveTo()),
+        'effective_to' => ($this->getEffectiveTo() === null) ? 'Never' : CoreUtils::happyTime($this->getEffectiveTo()),
         'banner_location_id' => $this->getLocation(),
-        'timeslots' => $this->getTimeslots()
+        'num_timeslots' => sizeof($this->getTimeslots()),
+        'edit_link' => [
+            'display' => 'icon',
+            'value' => 'pencil',
+            'title' => 'Click here to edit this Campaign',
+            'url' => CoreUtils::makeURL('Website', 'editCampaign', ['campaignid', $this->getID()])
+        ]
     ];
+    
+    if ($full) {
+      $data['timeslots'] = $this->getTimeslots();
+    }
+    
+    return $data;
   }
   
   /**
@@ -118,6 +134,30 @@ class MyURY_BannerCampaign extends ServiceAPI {
    */
   public function getID() {
     return $this->banner_campaign_id;
+  }
+  
+  public function getCreatedBy() {
+    return $this->created_by;
+  }
+  
+  public function getApprovedBy() {
+    return $this->approved_by;
+  }
+  
+  public function getEffectiveFrom() {
+    return $this->effective_from;
+  }
+  
+  public function getEffectiveTo() {
+    return $this->effective_to;
+  }
+  
+  public function getLocation() {
+    return $this->banner_location_id;
+  }
+  
+  public function getTimeslots() {
+    return $this->timeslots;
   }
   
   /**
@@ -157,7 +197,9 @@ class MyURY_BannerCampaign extends ServiceAPI {
    * @return MyURY_BannerCampaign The new BannerCampaign
    */
   public static function create(MyURY_Banner $banner, $banner_location_id = 1, $effective_from = null, $effective_to = null) {
-    if ($effective_from == null) $effective_from = time();
+    if ($effective_from == null) {
+      $effective_from = time();
+    }
     
     $result = self::$db->fetch_column('INSERT INTO website.banner_campaign
       (banner_id, banner_location_id, effective_from, effective_to, memberid, approvedid)

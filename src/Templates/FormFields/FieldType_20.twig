@@ -1,0 +1,32 @@
+{#
+This is an experimental field type that I'm currently playing around with.
+It uses a mixture of custom CSS3 checkbox styling and https://github.com/scarlac/jquery-drag-check
+to enable selecting a time range within a week.
+
+The initial plan is to use it for banner campaigns, but if it turns out to work well,
+it *could* replace the time selection for Season applications.
+
+Each "box" is a checkbox, styled so that it looks like a filled in box when checked. Well, the label for a checkbox.
+As such, each individual one is its own input field, so putting it together server-side is confusing.
+
+The format is 'giveninputname'-daynum-starttime, e.g. mytimeselect-1-0800 is 8-8:30am Monday.
+This field is not designed to support being in a tabular set. Can you imagine how ugly that would look?
+
+Times are arranged 7am-7am to be compatible with The URY Day
+#}
+<table>
+  {# Prepare the Header row #}
+  <thead>
+    <tr>
+      <td>&nbsp;</td>
+      {% for i in 0..47 %}
+      <td>{{ i/2 }}</td>
+      {% endfor %}
+    </tr>
+  </thead>
+</table>
+<input type="hidden" name="{{frm_name}}-{{sfieldname}}" id="{{frm_name}}-{{field.name}}" value="{{field.value}}" />
+{% if display_labels %}<label for="{{frm_name}}-{{field.name}}-ui">{{field.label}}</label>{% endif %}
+<input type="text" class="{{field.class}}{% if field.required %} required{% endif %} text album-autocomplete"
+       name="{{frm_name}}-{{field.name}}-ui" id="{{frm_name}}-{{field.name}}-ui" value="{{field.options.albumname}}" />
+<span class="myuryfrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>

@@ -8,7 +8,7 @@
  * - A static factory to create an instance of the ServiceAPI Object
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 21072012
+ * @version 20130808
  * @package MyURY_Core
  */
 interface IServiceAPI {
@@ -16,6 +16,8 @@ interface IServiceAPI {
    * Reestablishes the database connection after being Cached 
    */
   function __wakeup();
+  
+  function toDataSource($full = false);
   
   /**
    * Static Factory method to setup an instance of a ServiceAPI Object
