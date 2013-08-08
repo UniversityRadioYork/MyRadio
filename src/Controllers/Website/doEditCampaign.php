@@ -11,4 +11,19 @@ $data = (new MyURYForm('test', 'Website', 'doEditCampaign'))
         ->addField(new MyURYFormField('test', MyURYFormField::TYPE_WEEKSELECT))
                 ->readValues();
 
-var_dump($data);
+echo "You Selected:<br>";
+
+$days = [
+    '',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+];
+
+foreach ($data['test'] as $value) {
+  echo $days[$value['day']].' '.gmdate('H:i', $value['start_time']).'-'.gmdate('H:i', $value['end_time']).'<br>';
+}
