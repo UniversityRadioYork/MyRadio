@@ -11,4 +11,5 @@ if (!isset($_REQUEST['bannerid'])) {
   throw new MyURYException('You must provide a bannerid', 400);
 }
 
-MyURY_Banner::getInstance($_REQUEST['bannerid'])->getEditForm()->render();
+$banner = MyURY_Banner::getInstance($_REQUEST['bannerid']);
+$banner->getEditForm()->render([bannerName => $banner->getAlt()]);

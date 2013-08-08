@@ -274,7 +274,10 @@ class MyURY_Banner extends MyURY_Photo {
    * @return MyURY_Form
    */
   public static function getBannerForm() {
-    return (new MyURYForm('bannerfrm', 'Website', 'doCreateBanner', ['title' => 'Edit Banner']))
+    return (new MyURYForm('bannerfrm', 'Website', 'doCreateBanner', [
+        title => 'Edit Banner',
+        template => 'Website/bannerfrm.twig'
+        ]))
             ->addField(new MyURYFormField('alt', MyURYFormField::TYPE_TEXT, [
                 'label' => 'Title',
                 'explanation' => 'This is used on the backpages to identify the Banner, and also on the main website as mouseover text.'

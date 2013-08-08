@@ -285,7 +285,10 @@ class MyURY_BannerCampaign extends ServiceAPI {
    * @return MyURYForm
    */
   public static function getBannerCampaignForm($bannerid) {
-    return (new MyURYForm('Edit Banner Campaign', 'Website', 'doCreateCampaign', [template => 'Website/editCampaign.twig']))
+    return (new MyURYForm('bannercampaignfrm', 'Website', 'doCreateCampaign', [
+                template => 'Website/campaignfrm.twig',
+                title => 'Edit Banner Campaign'
+                    ]))
                     ->addField(new MyURYFormField('effective_from', MyURYFormField::TYPE_DATETIME, [
                         required => true,
                         value => CoreUtils::happyTime(time()),
