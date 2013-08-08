@@ -11,4 +11,8 @@ if (!isset($_REQUEST['campaignid'])) {
   throw new MyURYException('You must provide a campaignid', 400);
 }
 
-MyURY_BannerCampaign::getInstance($_REQUEST['campaignid'])->getEditForm()->render();
+$campaign = MyURY_BannerCampaign::getInstance($_REQUEST['campaignid']);
+$campaign->getEditForm()->render([
+    campaignStart=> CoreUtils::happyTime($campaign->getEffectiveFrom()),
+    bannerName=> $campaign->getBanner()->getAlt()
+]);

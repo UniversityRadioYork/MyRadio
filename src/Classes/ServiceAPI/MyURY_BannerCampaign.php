@@ -190,16 +190,24 @@ class MyURY_BannerCampaign extends ServiceAPI {
   }
 
   /**
+   * Get the Banner this is a Campaign for
+   * @return MyURY_Banner
+   */
+  public function getBanner() {
+    return $this->banner;
+  }
+
+  /**
    * Returns a MyURYForm filled in and ripe for being used to edit this Campaign.
    * @return MyURYForm
    */
   public function getEditForm() {
-    return $this->getBannerCampaignForm()
+    return $this->getBannerCampaignForm($this->banner->getID())
                     ->editMode($this->getID(), [
                         timeslots => $this->getTimeslots(),
                         effective_from => CoreUtils::happyTime($this->getEffectiveFrom()),
                         effective_to => $this->getEffectiveTo() === null ? null :
-                                          CoreUtils::happyTime($this->getEffectiveTo()),
+                                CoreUtils::happyTime($this->getEffectiveTo()),
                         location => $this->getLocation()
                             ], 'doEditCampaign');
   }
@@ -261,7 +269,7 @@ class MyURY_BannerCampaign extends ServiceAPI {
   public static function getAllBannerCampaigns() {
     return self::resultSetToObjArray(self::$db->fetch_column('SELECT banner_campaign_id FROM website.banner_campaign'));
   }
-  
+
   /**
    * Get all the possible Banner Campaign Locations.
    * @return Array
@@ -272,10 +280,12 @@ class MyURY_BannerCampaign extends ServiceAPI {
 
   /**
    * Returns the form needed to create or edit Banner Campaigns.
+   * 
+   * @param int $bannerid The ID of the Banner that this Campaign will be/is linked to
    * @return MyURYForm
    */
-  public static function getBannerCampaignForm() {
-    return (new MyURYForm('Edit Banner Campaign', 'Website', 'doCreateCampaign'))
+  public static function getBannerCampaignForm($bannerid) {
+    return (new MyURYForm('Edit Banner Campaign', 'Website', 'doCreateCampaign', [template => 'Website/editCampaign.twig']))
                     ->addField(new MyURYFormField('effective_from', MyURYFormField::TYPE_DATETIME, [
                         required => true,
                         value => time(),
@@ -297,6 +307,9 @@ class MyURY_BannerCampaign extends ServiceAPI {
                         label => 'Timeslots',
                         explanation => 'All times filled in on this schedule (i.e. are purple) are times during the'
                         . ' week that this Campaign is considered active, and therefore appears on the website.',
+                    ]))
+                    ->addField(new MyURYFormField('bannerid', MyURYFormField::TYPE_HIDDEN, [
+                        value => $bannerid
     ]));
   }
 
