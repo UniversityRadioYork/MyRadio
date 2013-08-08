@@ -117,7 +117,7 @@ class MyURY_BannerCampaign extends ServiceAPI {
             'display' => 'icon',
             'value' => 'pencil',
             'title' => 'Click here to edit this Campaign',
-            'url' => CoreUtils::makeURL('Website', 'editCampaign', ['campaignid', $this->getID()])
+            'url' => CoreUtils::makeURL('Website', 'editCampaign', ['campaignid' => $this->getID()])
         ]
     ];
     

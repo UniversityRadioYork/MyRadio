@@ -8,4 +8,5 @@
  */
 
 (new MyURYForm('test', 'Website', 'default'))
-        ->addField(new MyURYFormField('test', MyURYFormField::TYPE_WEEKSELECT));
+        ->addField(new MyURYFormField('test', MyURYFormField::TYPE_WEEKSELECT))
+                ->render();
