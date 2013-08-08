@@ -7,7 +7,7 @@
  * @package MyURY_Website
  */
 
-(new MyURYForm('test', 'Website', 'default'))
+(new MyURYForm('test', 'Website', 'doEditCampaign'))
         ->addField(new MyURYFormField('test', MyURYFormField::TYPE_WEEKSELECT,[
             value => MyURY_BannerCampaign::getInstance($_REQUEST['campaignid'])->getTimeslots()
         ]))
