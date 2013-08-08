@@ -638,6 +638,7 @@ class MyURYFormField {
             $active_time = null;
           }
         }
+        return $times;
         break;
       default:
         throw new MyURYException('Field type ' . $this->type . ' does not have a valid value interpreter definition.');
