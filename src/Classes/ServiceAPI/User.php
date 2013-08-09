@@ -283,13 +283,27 @@ class User extends ServiceAPI {
       return $this->training;
     }
   }
+  
+  /**
+   * Returns whether the User has paid the correct amount to be
+   * a full member in the current year.
+   * @return bool
+   */
+  public function isCurrentlyPaid() {
+    foreach ($this->getAllPayments() as $payment) {
+      if ($payment['year'] == CoreUtils::getAcademicYear()) {
+        return $payment['amount'] >= Config::$membership_fee;
+      }
+    }
+    return false;
+  }
 
   /**
-   * @todo Write this
+   * Return whether the User is currently has any shows.
    * @return boolean
    */
   public function hasShow() {
-    return true;
+    return sizeof(MyURY_Show::getShowsAttachedToUser($this->getID())) !== 0;
   }
 
   /**

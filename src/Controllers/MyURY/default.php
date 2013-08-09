@@ -10,8 +10,22 @@
  * @package MyURY_Core
  */
 
-$menu = (new MyURYMenu())->getMenuForUser(User::getInstance());
+$user = User::getInstance();
+$menu = (new MyURYMenu())->getMenuForUser($user);
 
-$news = MyURYNews::getNewsItem(Config::$news_feed, User::getInstance());
+$news = MyURYNews::getNewsItem(Config::$news_feed, $user);
 
-require 'Views/MyURY/menu.php';
+CoreUtils::getTemplateObject()->setTemplate('MyURY/menu.twig')
+        ->addVariable('title', 'Menu')
+        ->addVariable('menu', $menu)
+        ->addVariable('news', $news)
+        ->addVariable('news_clickthrough', empty($news['seen']))
+        /**
+         * This is some bonus stuff for the Get On Air item
+         */
+        ->addVariable('studio_trained', $user->isStudioTrained())
+        ->addVariable('studio_demoed', $user->isStudioDemoed())
+        ->addVariable('is_trainer', $user->isTrainer())
+        ->addVariable('has_show', $user->hasShow())
+        ->addVariable('paid', $user->isCurrentlyPaid())
+        ->render();
