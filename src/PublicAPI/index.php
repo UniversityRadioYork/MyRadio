@@ -7,7 +7,6 @@
  * It is currently very experimental and should probably not be used for production projects yet.
  * 
  * @todo Management interfaces to configure keys and expose methods
- * @todo Authentication
  */
 // Configure MyURY & Set API Settings
 define('SILENT_EXCEPTIONS', true);
@@ -47,7 +46,9 @@ if (empty($class)) {
  * If accessing Resources, then we give it an API Key with no permissions
  * in order to access it.
  */
-if (isset($_REQUEST['apiKey'])) $_REQUEST['api_key'] = $_REQUEST['apiKey'];
+if (isset($_REQUEST['apiKey'])) {
+  $_REQUEST['api_key'] = $_REQUEST['apiKey'];
+}
 if (empty($_REQUEST['api_key'])) {
   if ($class === 'resources') {
     $_REQUEST['api_key'] = 'IUrnsb8AMkjqDRdfXvOMe3DqHLW8HJ1RNBPNJq3H1FQpiwQDs7Ufoxmsf5xZE9XEbQErRO97DG4xfyVAO7LuS2dOiVNZYoxkk4fEhDt8wR4sLXbghidtM5rLHcgkzO10';
@@ -114,7 +115,17 @@ if (!$api_key->canCall($classes[$class], $method)) {
   $args = [];
   foreach ($methodReflection->getParameters() as $param) {
     if (isset($_REQUEST[$param->getName()])) {
-      $args[$param->getName()] = $_REQUEST[$param->getName()];
+      //If the param has a class hint, initialise the class, assuming the argument is an ID.
+      if ($param->getClass() !== null) {
+        try {
+          $hint = $param->getClass()->getName();
+          $args[$param->getName()] = $hint::getInstance($_REQUEST[$param->getName()]);
+        } catch (MyURYException $ex) {
+          api_error(400, 'Parameter '.$param->getName().' got an invalid ID. Must be an ID for '.$param->getClass().'.');
+        }
+      } else {
+        $args[$param->getName()] = $_REQUEST[$param->getName()];
+      }
     } elseif (!$param->isOptional()) {
       //Uh-oh, required option missing
       api_error(400, 'Parameter '.$param->getName().' is required but not provided.');

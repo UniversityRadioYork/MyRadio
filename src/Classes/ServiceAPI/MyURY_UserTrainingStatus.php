@@ -72,7 +72,6 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
     
     if (empty($result)) {
       throw new MyURYException('The specified UserTrainingStatus ('.$statusid.') does not seem to exist');
-      return;
     }
     
     $this->user = User::getInstance($result['memberid']);
@@ -153,6 +152,31 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
     $data['revoked_by'] = ($this->getRevokedBy() === null ? null : $this->getRevokedBy()->toDataSource());
     $data['revoked_time'] = $this->getRevokedTime();
     return $data;
+  }
+  
+  public static function create(MyURY_TrainingStatus $status, User $awarded_to, User $awarded_by = null) {
+    if ($awarded_by === null) {
+      $awarded_by = User::getInstance();
+    }
+    
+    //Check whether this user can do that.
+    if (!in_array($awarded_by, $status->getAwarder()->getAwardedTo())) {
+      throw new MyURYException($awarded_by .' does not have permission to award '.$awarded_to);
+    }
+    //Check whether the target user has the prerequisites
+    if (!in_array($status->getDepends()->getID(),
+            array_map(function($x){return $x->getID();}, $awarded_to->getAllTraining(true)))) {
+      throw new MyURYException($awarded_to .' does not have the prerequisite training to be awarded '.$status);
+    }
+    
+    $id = self::$db->fetch_column('INSERT INTO (memberid, presenterstatusid, confirmedby) VALUES'
+            . '($1, $2, $3) RETURNING memberpresenterstatusid', [
+                $awarded_to->getID(),
+                $status->getID(),
+                $awarded_by->getID()
+            ])[0];
+    
+    return new self($id);
   }
 
 }

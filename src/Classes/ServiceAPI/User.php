@@ -274,8 +274,9 @@ class User extends ServiceAPI {
     if ($ignore_revoked) {
       $data = [];
       foreach ($this->training as $train) {
-        if ($train->getRevokedBy() == null)
+        if ($train->getRevokedBy() == null) {
           $data[] = $train;
+        }
       }
       return $data;
     } else {
