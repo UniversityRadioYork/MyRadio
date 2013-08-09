@@ -96,7 +96,7 @@ class MyURYEmail {
     }
     self::$db = Database::getInstance();
 
-    $params = array($subject, $body);
+    $params = array($subject, trim($body));
     if ($timestamp !== null) {
       $params[] = CoreUtils::getTimestamp($timestamp);
     }
