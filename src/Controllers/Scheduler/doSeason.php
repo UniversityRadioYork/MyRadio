@@ -17,4 +17,5 @@ try {
   exit;
 }
 
-header('Location: '.CoreUtils::makeURL('Scheduler', 'myShows', array('msg' => 'seasonCreated')));
+header('Location: '.CoreUtils::makeURL('Scheduler', 'listSeasons',
+        array('msg' => 'seasonCreated', 'showid' => $form->readValues()['show_id'])));

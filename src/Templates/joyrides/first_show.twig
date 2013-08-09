@@ -1,8 +1,135 @@
-<ol id="myury-joyride">
+<ol id="myury-joyride" class="ui-helper-hidden">
+  {% if action == 'myShows' and not tabledata %}
   <li>
     <h2>Creating Your First Show</h2>
     <p>Congratulations on completing your demo - you're now all set to get on air.
     I'm here to guide you through applying for your first show. You can shut me up at any time by clicking
     the cross in the corner.</p>
   </li>
+  <li data-id="submenu-CreateaShow">
+    <h2>Creating a Show</h2>
+    <p>It's looking a bit empty here at the moment. Click on the "Create a Show" button to start making a Show.</p>
+  </li>
+  {% endif %}
+  {% if action == 'createShow' %}
+  <li>
+    <h2>What's in a Show?</h2>
+    <p>When you create a Show, you're making a template that we'll use later.</p>
+    <p>Shows can have any number of Seasons, which also contain any number of Episodes.
+    This way we keep things grouped together and it also lets you re-use information without filling it in each time.</p>
+  </li>
+  <li data-id="sched_show-title">
+    <h2>Naming a Show</h2>
+    <p>We all know this is the hardest part. We'll let you know if a name's already in use. No, you can't swear!</p>
+    <p>If you're doing a Flagship Show (9-11am, 12-2pm, 6-8pm), make sure the name starts with "URY Breakfast", "URY Lunch" or "URY:PM".</p>
+  </li>
+  <li data-id="sched_show-description-container">
+    <h2>Talking About Your Show</h2>
+    <p>What you put here appears on the URY Website - try and sell yourself to the listeners.
+    Try to mention things like:</p>
+    <ul>
+      <li>Features you'll have</li>
+      <li>The type of music you play</li>
+      <li>Fun-sounding adjectives</li>
+    </ul>
+    <p>Try and sound professional though, and make your description is at 140 words!
+      You can change this later on, so don't worry too much if you don't quite know everything about your show yet.</p>
+  </li>
+  <li data-id="sched_show-tags">
+    <h2>What's a Google?</h2>
+    <p>Think "If I would describe this Show in one word, what would I use?". Now use all of the answers you have,
+    and put them here. It helps search engines find your pages on the website.</p>
+    <p>Example: lunch rob innuendo quirky awesome</p>
+  </li>
+  <li data-id="credits-wrapper">
+    <h2>This guy sounds hot. Hope he has a face to match!</h2>
+    <p>Finally, fill in a list of all of your presenters, as well as anyone else who is going to regularly contribute.
+    They must all be a URY Member, but you can have as many people in the credits as you want!</p>
+  </li>
+  {% endif %}
+  {% if action == 'myShows' and tabledata %}
+  <li>
+    <h2>Creating Your First Season</h2>
+    <p>Great! You can now see your Show. Any and all Shows you're a part of appear in this list, even if you didn't
+    create them.</p>
+    <p>To get from having a Show on this page to being on air, you next need to apply for a Season.</p>
+  </li>
+  <li data-id="columnheader-applylink">
+    <h2>Creating Your First Season</h2>
+    <p>Go ahead and click the New Season button for your Show to continue.</p>
+  </li>
+  {% endif %}
+  {% if action == 'createSeason' %}
+  <li>
+    <h2>Isn't Season an Americanism?</h2>
+    <p>I'm not sure.</p>
+    <p>I can tell you that a Season is used to group together all the Episodes of your Show within a term.
+    Applications for Seasons typically open up two weeks before the start of term - keep an eye out for an
+    email from our Programme Controller when they open applications.</p>
+  </li>
+  <li data-id="sched_season-weeks-container">
+    <h2>Which Weeks?</h2>
+    <p>Tick the box for each week you want a Show. If you don't tick the box, our Programme Controller will
+    keep that block open for someone else.</p>
+    <p>Please, <em>please</em> don't tick a box if you know you won't be doing your show then. Especially
+    make sure you double-check that you are in York weeks 1 and 10.</p>
+  </li>
+  <li data-id="sched_season-times-container">
+    <h2>Which Times?</h2>
+    <p>Fill in every time you could realistically do here, in order of your preference. The Programme Controller
+    will often only consider an application if you've filled in at least three potential times.</p>
+    <p>Remember:</p>
+    <ul>
+      <li>With the exception of Flagship shows, all Shows last 1 hour.</li>
+      <li>Every day, 9-11am, 12-2pm and 6-8pm are slots for two-hour Flagship shows. Don't apply for a 
+      one hour show during these times.</li>
+      <li>If you are applying for a time after 8pm, you are in Specialist Music territory. It's best if
+      you clear your show with the Head of Music first.</li>
+      <li>If you are applying for a show before 8pm, it's recommended that around 50% of the music you play
+      is from the Chart or Playlists. All music you play must be through BAPS.</li>
+    </ul>
+  </li>
+  <li data-id="sched_season-submit" data-options="tipLocation:right">
+    <h2>This Looks Oddly Familiar</h2>
+    <p>Don't worry - tags and a description for seasons are optional - they usually just use the ones you put
+    in when you created the show earlier. Fill these in if you have something special to say about this specific
+    season. Go ahead and click Submit.</p>
+  </li>
+  {% endif %}
+  {% if action == 'listSeasons' %}
+  <li data-button="Cool">
+    <h2>What Happens Next</h2>
+    <p>Your Season application has now been sent to our Programming team for review. You'll get an email soon
+    letting you know what time you have been given, or if more information is needed from you.</p>
+  </li>
+  <li data-button="Ok, Thanks!">
+    <h2>Programming Tips</h2>
+    <p>Finally, here's some hints on how to make your application look as good to the Programme Controller as possible.</p>
+    <ul>
+      <li><strong>Do pick lots of times</strong> so that it's easier for programming to put you somewhere.
+      Try to pick times on different days, if possible.</li>
+      <li><strong>Don't pick times that are reserved</strong> like 6-7pm on Wednesday (Newshour) or 2-4pm on Sunday (Speech).</li>
+      <li><strong>Do show your capabilities</strong> if applying for a primetime show, especially if you are
+      inexperienced. A couple of freshers once complimented their application by sending an audio sample of their show
+      to programming@ury.org.uk. They won Best Entertainment Show at the National Student Radio Awards a year later.</li>
+      <li><strong>Don't be over-enthusiastic</strong> and apply more than once. It just causes more work.</li>
+    </ul>
+  </li>
+  {% endif %}
 </ol>
+<script type="text/javascript">
+  $('#myury-joyride').joyride({
+    autoStart: true,
+    expose: true,
+    postRideCallback: function(index) {
+      if (index === $('#myury-joyride li').length()-1) {
+        //This was the last element of the page. Unless it's the last page, don't send the kill signal
+        if ('{{action}}' !== 'listSesions') {
+          return;
+        }
+      }
+      
+      $.get({url: MyURY.makeURL('MyURY', 'a-endjoyride')});
+    }
+  });
+</script>

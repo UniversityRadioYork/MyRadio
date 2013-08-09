@@ -38,12 +38,19 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
             ->addVariable('rewriteurl', Config::$rewrite_url)
             ->addVariable('serviceName', 'MyURY')
             ->setTemplate('stripe.twig')
-            ->addVariable('uri', $_SERVER['REQUEST_URI']);
+            ->addVariable('uri', $_SERVER['REQUEST_URI'])
+            ->addVariable('module', $GLOBALS['module'])
+            ->addVariable('action', $GLOBALS['action']);
     if (!empty($GLOBALS['module'])) {
       $this->addVariable('submenu', (new MyURYMenu())->getSubMenuForUser(CoreUtils::getModuleID($GLOBALS['module']), User::getInstance()))
               ->addVariable('title', $GLOBALS['module']);
     }
     
+    
+    if (!empty($_SESSION['joyride'])) {
+      $this->addVariable('joyride', $_SESSION['joyride']);
+    }
+    //Make requests override session-set joyrides
     if (!empty($_REQUEST['joyride'])) {
       $this->addVariable('joyride', $_REQUEST['joyride']);
     }
