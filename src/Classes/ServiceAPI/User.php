@@ -292,7 +292,7 @@ class User extends ServiceAPI {
   public function isCurrentlyPaid() {
     foreach ($this->getAllPayments() as $payment) {
       if ($payment['year'] == CoreUtils::getAcademicYear()) {
-        return $payment['amount'] >= Config::$membership_fee;
+        return $payment['paid'] >= Config::$membership_fee;
       }
     }
     return false;
