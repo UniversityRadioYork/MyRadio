@@ -275,8 +275,8 @@ class MyURY_Banner extends MyURY_Photo {
    */
   public static function getBannerForm() {
     return (new MyURYForm('bannerfrm', 'Website', 'doCreateBanner', [
-        title => 'Edit Banner',
-        template => 'Website/bannerfrm.twig'
+        'title' => 'Edit Banner',
+        'template' => 'Website/bannerfrm.twig'
         ]))
             ->addField(new MyURYFormField('alt', MyURYFormField::TYPE_TEXT, [
                 'label' => 'Title',

@@ -1,31 +1,27 @@
 <?php
+
 /**
  * Edit a Campaign
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130808
+ * @version 20130809
  * @package MyURY_Website
  */
+$data = MyURY_BannerCampaign::getBannerCampaignForm()->readValues();
 
-$form = (new MyURYForm('test', 'Website', 'doEditCampaign'))
-        ->addField(new MyURYFormField('test', MyURYFormField::TYPE_WEEKSELECT));
-$data = $form->readValues();
+$campaign = MyURY_BannerCampaign::getInstance($data['id']);
 
-echo "You Selected:<br>";
+$campaign->clearTimeslots();
 
-$days = [
-    '',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday'
-];
-
-foreach ($data['test'] as $value) {
-  echo $days[$value['day']].' '.gmdate('H:i', $value['start_time']).'-'.gmdate('H:i', $value['end_time']).'<br>';
+foreach ($data['timeslots'] as $timeslot) {
+  $campaign->addTimeslot($timeslot['day'], $timeslot['start_time'], $timeslot['end_time']);
 }
 
-$form->editMode(0, ['test' => $data['test']])->render();
+$campaign->setEffectiveFrom($data['effective_from'])
+        ->setEffectiveTo($data['effective_to'])
+        ->setLocation($data['location']);
+
+header('Location: '.CoreUtils::makeURL('Website', 'campaigns', [
+    'bannerid' => $campaign->getBanner()->getBannerID(),
+    'message' => base64_encode('The Campaign was updated succesfully!')
+    ]));

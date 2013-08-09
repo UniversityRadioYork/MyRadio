@@ -1,1 +1,1 @@
-$('.twig-datatable').dataTable({bSort: false, bJQueryUI: true});
+$('.twig-datatable').dataTable();
