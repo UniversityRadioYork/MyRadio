@@ -33,9 +33,9 @@ class MyURY_FingerprinterDaemon extends MyURY_Daemon {
    * @todo While this logs Last.fm albums, it does not compare them.
    */
   public static function run() {
-    //Get 50 unverified tracks. Tune the "limit" to change this to a lower value if you are not doing a full library scan
+    //Get 5 unverified tracks. Tune the "limit" to change this
     $tracks = MyURY_Track::findByOptions(array('lastfmverified' => false, 'random' => true, 'digitised' => true,
-        'nocorrectionproposed' => true, 'limit' => 50));
+        'nocorrectionproposed' => true, 'limit' => 5));
     
     foreach ($tracks as $track) {
       $info = MyURY_Track::identifyUploadedTrack($track->getPath());
