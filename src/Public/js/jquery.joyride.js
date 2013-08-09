@@ -208,8 +208,8 @@
       return txt;
     },
     button_text: function(txt) {
-      if (settings.nextButton || txt === '_none') {
-        txt = txt === '' ? 'Next' : $.trim(txt);
+      if (settings.nextButton && txt !== '_none') {
+        txt = $.trim(txt) || 'Next';
         txt = methods.outerHTML($(settings.template.button).append(txt)[0]);
       } else {
         txt = '';
