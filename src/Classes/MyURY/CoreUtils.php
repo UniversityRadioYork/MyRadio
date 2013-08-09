@@ -152,14 +152,10 @@ class CoreUtils {
   /**
    * Gives you the starting year of the current academic year
    * @return int year
-   * @assert () == 2012
+   * @assert () == 2013
    */
   public static function getAcademicYear() {
-    if (date('m') >= 9) {
-      return (int) date('Y');
-    } else {
-      return (int) date('Y') - 1;
-    }
+    return Shibbobleh_Utils::getCurrentMembershipYear();
   }
 
   /**

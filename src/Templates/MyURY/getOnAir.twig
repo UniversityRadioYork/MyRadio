@@ -8,10 +8,12 @@
     <a href="javascript:" title="Do a 30 minute off-air demo in the studio to prove your broadcasting prowess. You need to attend a studio training session first.">Get Demoed</a>
   {% endif %}
 </li>
-{% if studio_demoed %}
-<li>
+<li class="{% if paid %}menu-checklist-done{% endif %}">
+  <a href="">Become a Paid Member</a>
+</li>
+<li {% if not (studio_demoed and paid) %} class="menu-checklist-disabled"{% endif %}>
   <a href="?module=Scheduler&action=createShow" title="{% if has_show %}You've passed all the stages of training. Now it's time to apply for your very first show! {%
 else
-%}New term? One show a term not enough? Click here to apply for another show.{% endif %}">Apply for a Show</a>
+%}One show a term not enough? Click here to apply for another show.{% endif %}">Apply for a Show</a>
 </li>
 {% endif %}
