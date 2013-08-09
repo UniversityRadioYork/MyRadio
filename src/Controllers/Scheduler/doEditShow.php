@@ -21,7 +21,7 @@ if (!$show->isCurrentUserAnOwner() && !CoreUtils::hasPermission(AUTH_EDITSHOWS))
 $show->setMeta('title', $data['title']);
 $show->setMeta('description', $data['description']);
 $show->setMeta('tag', explode(' ', $data['tags']));
-$show->setGenre($data['genre']);
+$show->setGenre($data['genres']);
 
 header('Location: '.CoreUtils::makeURL('Scheduler', 'myShows',
         array('message' => base64_encode('Show updated'))));
