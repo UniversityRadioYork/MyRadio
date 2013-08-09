@@ -170,7 +170,8 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
       throw new MyURYException($awarded_to .' does not have the prerequisite training to be awarded '.$status);
     }
     
-    $id = self::$db->fetch_column('INSERT INTO (memberid, presenterstatusid, confirmedby) VALUES'
+    $id = self::$db->fetch_column('INSERT INTO public.member_presenterstatus '
+            . '(memberid, presenterstatusid, confirmedby) VALUES'
             . '($1, $2, $3) RETURNING memberpresenterstatusid', [
                 $awarded_to->getID(),
                 $status->getID(),
