@@ -2,7 +2,7 @@
 
 class MyURY_StatsGenDaemon extends MyURY_Daemon {
   
-  public static function isEnabled() { return true; }
+  public static function isEnabled() { return false; }
   
   public static function run() {
     $hourkey = __CLASS__.'_last_run_hourly';
