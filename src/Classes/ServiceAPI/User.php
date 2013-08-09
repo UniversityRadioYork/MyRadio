@@ -526,7 +526,7 @@ class User extends ServiceAPI {
    * @param int $memberid The ID of the member to get the cache key for
    * @return String
    */
-  private static function getCacheKey($memberid) {
+  public static function getCacheKey($memberid) {
     return 'MyURYUser_' . $memberid;
   }
 

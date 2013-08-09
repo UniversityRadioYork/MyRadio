@@ -154,7 +154,23 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
     return $data;
   }
   
+  /**
+   * Creates a new User - Training Status map, awarding that User the training status.
+   * 
+   * @param MyURY_TrainingStatus $status The status to be awarded
+   * @param User $awarded_to The User to be awarded the training status
+   * @param User $awarded_by The User that is granting the training status
+   * @return \self
+   * @throws MyURYException
+   */
   public static function create(MyURY_TrainingStatus $status, User $awarded_to, User $awarded_by = null) {
+    //Does the User already have this?
+    foreach ($awarded_to->getAllTraining(true) as $training) {
+      if ($training->getID() === $status->getID()) {
+        return $training;
+      }
+    }
+    
     if ($awarded_by === null) {
       $awarded_by = User::getInstance();
     }
@@ -177,6 +193,9 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
                 $status->getID(),
                 $awarded_by->getID()
             ])[0];
+    
+    //Force the User to be updated on next request.
+    self::$cache->delete(User::getCacheKey($awarded_to->getID()));
     
     return new self($id);
   }
