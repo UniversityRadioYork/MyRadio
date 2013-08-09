@@ -123,9 +123,10 @@ class MyURY_Season extends MyURY_Scheduler_Common {
    * @param Array $params An array of Seasons properties compatible with the Models/Scheduler/seasonfrm Form,
    * with a few additional potential customisation options:
    * weeks: An Array of weeks, keyed wk1-10, representing the requested week<br>
-   * day: An Array of one or more requested days, 0 being Monday, 6 being Sunday. Corresponds to (s|e)time<br>
-   * stime: An Array of sizeof(day) times, represeting the time of day the show should start<br>
-   * etime: An Array of sizeof(day) times, represeting the time of day the show should end<br>
+   * times: a 2D Array of:<br>
+   *    day: An Array of one or more requested days, 0 being Monday, 6 being Sunday. Corresponds to (s|e)time<br>
+   *    stime: An Array of sizeof(day) times, represeting the time of day the show should start<br>
+   *    etime: An Array of sizeof(day) times, represeting the time of day the show should end<br>
    * description: A description of this Season of the Show, in addition to the Show description<br>
    * tags: A string of 0 or more space-seperated tags this Season relates to, in addition to the Show tags<br>
    * show_id: The ID of the Show to assign the application to
@@ -133,20 +134,18 @@ class MyURY_Season extends MyURY_Scheduler_Common {
    * 
    * weeks, day, stime, etime, show_id are all required fields
    * 
-   * As this is the initial creation, all tags are <i>approved</i> by the submitted so the show has some initial values
+   * As this is the initial creation, all tags are <i>approved</i> by the submitter so the Season has some initial values
    * 
    * @throws MyURYException
    */
   public static function apply($params = array()) {
     //Validate input
-    $required = array('show_id', 'weeks', 'day', 'stime', 'etime');
+    $required = array('show_id', 'weeks', 'times');
     foreach ($required as $field) {
       if (!isset($params[$field])) {
-        throw new MyURYException('Parameter ' . $field . ' was not provided.', MyURYException::FATAL);
+        throw new MyURYException('Parameter ' . $field . ' was not provided.', 400);
       }
     }
-
-    self::initDB();
 
     /**
      * @todo Perform required checks:
@@ -154,6 +153,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
      * All keys of weeks between 1 and 10 are defined and boolean (set to false if not defined)
      * All values of day are between 0 and 6
      * All values of stime and etime are between 0 and 86399
+     * 
      * Select an appropriate value for $term_id
      */
     $term_id = self::getActiveApplicationTerm();
@@ -162,33 +162,37 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     self::$db->query('BEGIN');
 
     //Right, let's start by getting a Season ID created for this entry
-    $season_create_result = self::$db->fetch_column('INSERT INTO schedule.show_season (show_id, termid, submitted, memberid)
-      VALUES ($1, $2, $3, $4) RETURNING show_season_id', array($params['show_id'], $term_id, CoreUtils::getTimestamp(), User::getInstance()->getID()), true);
+    $season_create_result = self::$db->fetch_column('INSERT INTO schedule.show_season
+      (show_id, termid, submitted, memberid)
+      VALUES ($1, $2, $3, $4) RETURNING show_season_id',
+            array($params['show_id'], $term_id, CoreUtils::getTimestamp(), User::getInstance()->getID()), true);
 
     $season_id = $season_create_result[0];
 
     //Now let's allocate store the requested weeks for a term
     for ($i = 1; $i <= 10; $i++) {
       if ($params['weeks']["wk$i"]) {
-        self::$db->query('INSERT INTO schedule.show_season_requested_week (show_season_id, week) VALUES ($1, $2)', array($season_id, $i), true);
+        self::$db->query('INSERT INTO schedule.show_season_requested_week (show_season_id, week) VALUES ($1, $2)',
+                array($season_id, $i), true);
       }
     }
 
     //Now for requested times
-    for ($i = 0; $i < sizeof($params['day']); $i++) {
+    for ($i = 0; $i < sizeof($params['times']['day']); $i++) {
       //Deal with the possibility of a show from 11pm to midnight etc.
       /**
        * @todo make this not be completely stupid
        */
-      if ($params['stime'][$i] < $params['etime'][$i]) {
-        $interval = CoreUtils::makeInterval($params['stime'][$i], $params['etime'][$i]);
+      if ($params['times']['stime'][$i] < $params['times']['etime'][$i]) {
+        $interval = CoreUtils::makeInterval($params['times']['stime'][$i], $params['times']['etime'][$i]);
       } else {
-        $interval = CoreUtils::makeInterval($params['stime'][$i], $params['etime'][$i] + 86400);
+        $interval = CoreUtils::makeInterval($params['times']['stime'][$i], $params['times']['etime'][$i] + 86400);
       }
 
       //Enter the data
       self::$db->query('INSERT INTO schedule.show_season_requested_time 
-        (requested_day, start_time, preference, duration, show_season_id) VALUES ($1, $2, $3, $4, $5)', array($params['day'][$i], $params['stime'][$i], $i, $interval, $season_id));
+        (requested_day, start_time, preference, duration, show_season_id) VALUES ($1, $2, $3, $4, $5)',
+              array($params['times']['day'][$i], $params['times']['stime'][$i], $i, $interval, $season_id));
     }
 
     //If the description metadata is non-blank, then update that too
@@ -196,7 +200,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
       self::$db->query('INSERT INTO schedule.season_metadata
         (metadata_key_id, show_season_id, metadata_value, effective_from, memberid, approvedid) VALUES
         ($1, $2, $3, NOW(), $4, $4)', array(
-          self::getMetadataKey('description'), $season_id, $params['description'], $_SESSION['memberid']
+          self::getMetadataKey('description'), $season_id, $params['description'], User::getInstance()->getID()
               ), true);
     }
 
@@ -204,12 +208,13 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     if (!empty($params['tags'])) {
       $tags = explode(' ', $params['tags']);
       foreach ($tags as $tag) {
-        if (empty($tag))
+        if (empty($tag)) {
           continue;
+        }
         self::$db->query('INSERT INTO schedule.season_metadata
           (metadata_key_id, show_season_id, metadata_value, effective_from, memberid, approvedid) VALUES
           ($1, $2, $3, NOW(), $4, $4)', array(
-            self::getMetadataKey('tag'), $season_id, $tag, $_SESSION['memberid']
+            self::getMetadataKey('tag'), $season_id, $tag, User::getInstance()->getID()
                 ), true);
       }
     }
@@ -217,7 +222,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     //Actually commit the show to the database!
     self::$db->query('COMMIT');
 
-    return new self($season_id);
+    return self::getInstance($season_id);
   }
   
   /**

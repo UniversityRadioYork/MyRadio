@@ -3,12 +3,12 @@
  * This View renders a HTTP/1.1 403 Error - for when a <code>CoreUtils::requirePermission()</code> call returns false.
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 21072012
+ * @version 20130809
  * @package MyURY_Core
  */
 header('HTTP/1.1 403 Forbidden');
 
-$twig->setTemplate('error.twig')
+CoreUtils::getTemplateObject()->setTemplate('error.twig')
         ->addVariable('serviceName', 'Error')
         ->addVariable('title', 'Forbidden')
         ->addVariable('body', '<p>I\'m sorry, but the Action you are trying to perform requires elevated permissions you do not have.</p>
