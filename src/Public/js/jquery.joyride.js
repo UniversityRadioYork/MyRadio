@@ -1,5 +1,6 @@
 /**
- * NOTE: Be careful when updating - REPLACE ALL position() with position()
+ * NOTE: Be careful when updating - REPLACE ALL position() with position(),
+ * as well as some other minor edits.
  * 
  * jQuery Foundation Joyride Plugin 2.1
  * http://foundation.zurb.com
@@ -207,8 +208,8 @@
       return txt;
     },
     button_text: function(txt) {
-      if (settings.nextButton) {
-        txt = $.trim(txt) || 'Next';
+      if (settings.nextButton || txt === '_none') {
+        txt = txt === '' ? 'Next' : $.trim(txt);
         txt = methods.outerHTML($(settings.template.button).append(txt)[0]);
       } else {
         txt = '';
