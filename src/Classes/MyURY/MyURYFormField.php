@@ -553,7 +553,6 @@ class MyURYFormField {
           }
           return $_REQUEST[$name];
         } else {
-          echo $_REQUEST[$name];
           $time = (int)strtotime($_REQUEST[$name]);
           //Times should be seconds since midnight *any* day
           if ($this->type === self::TYPE_TIME) {

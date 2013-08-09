@@ -3,29 +3,16 @@
  * Edit a Campaign
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130808
+ * @version 20130809
  * @package MyURY_Website
  */
 
-$form = (new MyURYForm('test', 'Website', 'doEditCampaign'))
-        ->addField(new MyURYFormField('test', MyURYFormField::TYPE_WEEKSELECT));
-$data = $form->readValues();
+$data = MyURY_BannerCampaign::getBannerCampaignForm()->readValues();
 
-echo "You Selected:<br>";
+$campaign = MyURY_BannerCampaign::create(MyURY_Banner::getInstance($data['bannerid']),
+        $data['location'], $data['effective_from'], $data['effective_to'], $data['timeslots']);
 
-$days = [
-    '',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday'
-];
-
-foreach ($data['test'] as $value) {
-  echo $days[$value['day']].' '.gmdate('H:i', $value['start_time']).'-'.gmdate('H:i', $value['end_time']).'<br>';
-}
-
-$form->editMode(0, ['test' => $data['test']])->render();
+header('Location: '.CoreUtils::makeURL('Website', 'editCampaign', [
+    'campaignid' => $campaign->getID(),
+    'message' => base64_encode('The new Campaign was created successfully!')
+]));

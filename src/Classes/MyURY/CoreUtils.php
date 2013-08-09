@@ -60,8 +60,9 @@ class CoreUtils {
    * @assert ('foo', '../bar') === false
    */
   public static function isValidController($module, $action = null) {
-    if ($action === null)
+    if ($action === null) {
       $action = Config::$default_action;
+    }
     try {
       self::actionSafe($action);
       self::actionSafe($module);
@@ -101,7 +102,6 @@ class CoreUtils {
     if (strpos($action, '/') !== false) {
       //Someone is trying to traverse directories
       throw new MyURYException('Directory Traversal Thrwated');
-      return false;
     }
     return true;
   }
@@ -124,10 +124,11 @@ class CoreUtils {
    */
   public static function intToTime($int) {
     $hours = floor($int / 3600);
-    if ($hours === 0)
+    if ($hours === 0) {
       $hours = null;
-    else
+    } else {
       $hours = $hours . ':';
+    }
 
     $mins = floor(($int - ($hours * 3600)) / 60);
     $secs = ($int - ($hours * 3600) - ($mins * 60));
@@ -141,8 +142,9 @@ class CoreUtils {
    * @assert (30) == '1970-01-01 00:00:30'
    */
   public static function getTimestamp($time = null) {
-    if ($time === null)
+    if ($time === null) {
       $time = time();
+    }
 
     return gmdate('Y-m-d H:i:s', $time);
   }
@@ -153,10 +155,11 @@ class CoreUtils {
    * @assert () == 2012
    */
   public static function getAcademicYear() {
-    if (date('m') >= 9)
+    if (date('m') >= 9) {
       return (int) date('Y');
-    else
+    } else {
       return (int) date('Y') - 1;
+    }
   }
 
   /**
@@ -187,15 +190,17 @@ class CoreUtils {
     }
     //Check if there is a custom URL configured
     $key = self::getActionId(self::getModuleId($module), empty($action) ? Config::$default_action : $action);
-    if (!empty(self::$custom_uris[$key]))
+    if (!empty(self::$custom_uris[$key])) {
       return self::$custom_uris[$key];
+    }
 
     if (Config::$rewrite_url) {
       $str = Config::$base_url . $module . '/' . (($action !== null) ? $action . '/' : '');
       if (!empty($params)) {
         if (is_string($params)) {
-          if (substr($params, 0, 1) !== '?')
+          if (substr($params, 0, 1) !== '?') {
             $str .= '?';
+          }
           $str .= $params;
         } else {
           $str .= '?';
@@ -227,8 +232,9 @@ class CoreUtils {
    * @assert () == null
    */
   public static function setUpAuth() {
-    if (self::$auth_cached)
+    if (self::$auth_cached) {
       return;
+    }
 
     $db = Database::getInstance();
     $result = $db->fetch_all('SELECT typeid, phpconstant, descr FROM l_action');
@@ -253,8 +259,9 @@ class CoreUtils {
    * @deprecated
    */
   public static function hasPermission($permission) {
-    if (!isset($_SESSION['member_permissions']))
+    if (!isset($_SESSION['member_permissions'])) {
       return false;
+    }
     return in_array($permission, $_SESSION['member_permissions']);
   }
 
@@ -264,7 +271,9 @@ class CoreUtils {
    * @return void Will Fatal error if the user does not have the permission
    */
   public static function requirePermission($permission) {
-    if (php_sapi_name() === 'cli') return true; //Non-interactive version has God Rights.
+    if (php_sapi_name() === 'cli') {
+      return true; //Non-interactive version has God Rights.
+    }
     if (!self::hasPermission($permission)) {
       //Load the 403 controller and exit
       require 'Controllers/Errors/403.php';
@@ -300,7 +309,6 @@ class CoreUtils {
     //Don't allow empty result sets - throw an Exception as this is very very bad.
     if (empty($result)) {
       throw new MyURYException('There are no permissions defined for the ' . $module . '/' . $action . ' action!');
-      return false;
     }
 
     $authorised = false;
@@ -408,8 +416,9 @@ class CoreUtils {
    * @assert (7449, 'Test') == null
    */
   public static function debug_for($userid, $message) {
-    if ($_SESSION['memberid'] == $userid)
+    if ($_SESSION['memberid'] == $userid) {
       echo '<p>' . $message . '</p>';
+    }
   }
 
   /**
@@ -479,7 +488,9 @@ class CoreUtils {
    * @param User $user
    */
   public static function getServiceVersionForUser(User $user = null) {
-    if ($user === null) $user = User::getInstance();
+    if ($user === null) {
+      $user = User::getInstance();
+    }
     $serviceid = Config::$service_id;
     $key = $serviceid . '-' . $user->getID();
 
@@ -571,17 +582,20 @@ class CoreUtils {
           $opened[$val["level"]] = 0;
         case "complete":
           $index = "";
-          for ($i = 1; $i < ($val["level"]); $i++)
+          for ($i = 1; $i < ($val["level"]); $i++) {
             $index .= "[" . $opened[$i] . "]";
+          }
           $path = explode('][', substr($index, 1, -1));
           $value = &$array;
-          foreach ($path as $segment)
+          foreach ($path as $segment) {
             $value = &$value[$segment];
+          }
           $value = $val;
           unset($value["level"]);
           unset($value["type"]);
-          if ($val["type"] == "complete")
+          if ($val["type"] == "complete") {
             $opened[$val["level"] - 1]++;
+          }
           break;
         case "close":
           $opened[$val["level"] - 1]++;
@@ -661,7 +675,9 @@ class CoreUtils {
   }
   
   public static function getErrorStats($since = null) {
-    if ($since === null) $since = time()-86400;
+    if ($since === null) {
+      $since = time()-86400;
+    }
     $result = Database::getInstance()->fetch_all('SELECT
       round(extract(\'epoch\' from timestamp) / 600) * 600 as timestamp,
       SUM(error_count)/COUNT(error_count) AS errors, SUM(exception_count)/COUNT(exception_count) AS exceptions,

@@ -9,4 +9,11 @@
 
 $data = MyURY_Banner::getBannerForm()->readValues();
 
-var_dump($data);
+$photo = MyURY_Photo::create($data['photo']['tmp_name']);
+
+$banner = MyURY_Banner::create($photo, $data['alt'], $data['target'], $data['type']);
+
+header('Location: '.CoreUtils::makeURL('Website', 'campaigns', [
+    'bannerid' => $banner->getBannerID(),
+    'message' => base64_encode('Your new Banner has been created!')
+        ]));

@@ -11,7 +11,7 @@ window.myury = {
 $(document).ajaxError(function(e, xhr, settings, error) {
   console.log(error);
   console.log(e);
-  $('<div></div>').attr('title', 'Error').attr('id','error-dialog')
+  $('<div></div>').attr('title', 'Error').attr('id', 'error-dialog')
           .append('<p>Sorry, something just went a bit wrong.</p>')
           .append('<details>' + error + '</details>')
           .dialog({
@@ -38,7 +38,7 @@ $(document).ajaxSuccess(function(e, xhr, settings) {
   }
   if (data.myury_errors != null) {
     console.log(data.myury_errors);
-    $('<div></div>').attr('title', 'Notice').attr('id','error-dialog')
+    $('<div></div>').attr('title', 'Notice').attr('id', 'error-dialog')
             .append('<p>It looks like that request works, but I got an error in the response.</p>')
             .append('<details>' + data.myury_errors + '</details>')
             .dialog({

@@ -204,11 +204,11 @@ class MyURY_BannerCampaign extends ServiceAPI {
   public function getEditForm() {
     return $this->getBannerCampaignForm($this->banner->getID())
                     ->editMode($this->getID(), [
-                        timeslots => $this->getTimeslots(),
-                        effective_from => CoreUtils::happyTime($this->getEffectiveFrom()),
-                        effective_to => $this->getEffectiveTo() === null ? null :
+                        'timeslots' => $this->getTimeslots(),
+                        'effective_from' => CoreUtils::happyTime($this->getEffectiveFrom()),
+                        'effective_to' => $this->getEffectiveTo() === null ? null :
                                 CoreUtils::happyTime($this->getEffectiveTo()),
-                        location => $this->getLocation()
+                        'location' => $this->getLocation()
                             ], 'doEditCampaign');
   }
 
@@ -219,6 +219,71 @@ class MyURY_BannerCampaign extends ServiceAPI {
    */
   public function isActive() {
     return $this->effective_from <= time() && ($this->effective_to == null or $this->effective_to > time());
+  }
+  
+  /**
+   * Removes all timeslots associated with a Banner Campaign.
+   * 
+   * Used when editing, as they are then immediately added again.
+   */
+  public function clearTimeslots() {
+    self::$db->query('DELETE FROM website.banner_timeslot WHERE banner_campaign_id=$1', [$this->getID()]);
+  }
+  
+  /**
+   * Sets the start time of the Campaign
+   * @param int $time
+   * @return MyURY_BannerCampaign
+   */
+  public function setEffectiveFrom($time) {
+    $this->effective_from = $time;
+    self::$db->query('UPDATE website.banner_campaign SET effective_from=$1 WHERE banner_campaign_id=$2',
+            [CoreUtils::getTimestamp($time), $this->getID()]);
+    
+    return $this;
+  }
+  
+  /**
+   * Sets the end time of the Campaign
+   * @param int $time
+   * @return MyURY_BannerCampaign
+   */
+  public function setEffectiveTo($time) {
+    $this->effective_to = $time;
+    self::$db->query('UPDATE website.banner_campaign SET effective_to=$1 WHERE banner_campaign_id=$2',
+            [CoreUtils::getTimestamp($time), $this->getID()]);
+    
+    return $this;
+  }
+  
+  /**
+   * Sets the location of the Campaign
+   * @param int $location
+   * @return MyURY_BannerCampaign
+   */
+  public function setLocation($location) {
+    $this->banner_location_id = $location;
+    self::$db->query('UPDATE website.banner_campaign SET banner_location_id=$1 WHERE banner_campaign_id=$2',
+            [$location, $this->getID()]);
+    
+    return $this;
+  }
+  
+  /**
+   * Adds an Active Timeslot to the Campaign
+   * 
+   * @param int $day Day the timeslot is on. 1 = Monday, 7 = Sunday. Timeslots cannot span days.
+   * @param int $start Seconds since midnight that the Timeslot starts.
+   * @param int $end Seconds since midnight that the Timeslot ends.
+   * @todo Input validation.
+   */
+  public function addTimeslot($day, $start, $end) {
+    $start = gmdate('H:i:s', $start).'+00';
+    $end = gmdate('H:i:s', $end).'+00';
+    
+    self::$db->query('INSERT INTO website.banner_timeslot'
+            . ' (banner_campaign_id, memberid, approvedid, "order", day, start_time, end_time) VALUES'
+            . ' ($1, $2, $2, $1, $3, $4, $5)', [$this->getID(), User::getInstance()->getID(), $day, $start, $end]);
   }
 
   /**
@@ -246,9 +311,11 @@ class MyURY_BannerCampaign extends ServiceAPI {
    * @param int $banner_location_id The location of the Banner Campaign. Default 1 (index page)
    * @param int $effective_from Epoch time that the campaign is starts at. Default now.
    * @param int $effective_to Epoch time that the campaign ends at. Default never.
+   * @param Array $timeslots An array of Timeslots the Campaign is active during.
    * @return MyURY_BannerCampaign The new BannerCampaign
    */
-  public static function create(MyURY_Banner $banner, $banner_location_id = 1, $effective_from = null, $effective_to = null) {
+  public static function create(MyURY_Banner $banner, $banner_location_id = 1, $effective_from = null,
+          $effective_to = null, $timeslots = array()) {
     if ($effective_from == null) {
       $effective_from = time();
     }
@@ -258,8 +325,14 @@ class MyURY_BannerCampaign extends ServiceAPI {
       VALUES ($1, $2, $3, $4, $5, $5) RETURNING banner_campaign_id', array($banner->getBannerID(), $banner_location_id,
         CoreUtils::getTimestamp($effective_from),
         CoreUtils::getTimestamp($effective_to), User::getInstance()->getID()));
-
-    return self::getInstance($result[0]);
+    
+    $campaign = self::getInstance($result[0]);
+    
+    foreach ($timeslots as $timeslot) {
+      $campaign->addTimeslot($timeslot['day'], $timeslot['start_time'], $timeslot['end_time']);
+    }
+    
+    return $campaign;
   }
 
   /**
@@ -284,36 +357,36 @@ class MyURY_BannerCampaign extends ServiceAPI {
    * @param int $bannerid The ID of the Banner that this Campaign will be/is linked to
    * @return MyURYForm
    */
-  public static function getBannerCampaignForm($bannerid) {
+  public static function getBannerCampaignForm($bannerid = null) {
     return (new MyURYForm('bannercampaignfrm', 'Website', 'doCreateCampaign', [
-                template => 'Website/campaignfrm.twig',
-                title => 'Edit Banner Campaign'
+                'template' => 'Website/campaignfrm.twig',
+                'title' => 'Edit Banner Campaign'
                     ]))
                     ->addField(new MyURYFormField('effective_from', MyURYFormField::TYPE_DATETIME, [
-                        required => true,
-                        value => CoreUtils::happyTime(time()),
-                        label => 'Start Time',
-                        explanation => 'The time from which this Campaign becomes active.'
+                        'required' => true,
+                        'value' => CoreUtils::happyTime(time()),
+                        'label' => 'Start Time',
+                        'explanation' => 'The time from which this Campaign becomes active.'
                     ]))
                     ->addField(new MyURYFormField('effective_to', MyURYFormField::TYPE_DATETIME, [
-                        required => false,
-                        label => 'End Time',
-                        explanation => 'The time at which this Campaign becomes inactive. Leaving this blank means'
+                        'required' => false,
+                        'label' => 'End Time',
+                        'explanation' => 'The time at which this Campaign becomes inactive. Leaving this blank means'
                         . ' the Campaign will continue indefinitely.'
                     ]))
                     ->addField(new MyURYFormField('location', MyURYFormField::TYPE_SELECT, [
-                        label => 'Location',
-                        explanation => 'Choose where on the website this Campaign is run.',
-                        options => self::getCampaignLocations()
+                        'label' => 'Location',
+                        'explanation' => 'Choose where on the website this Campaign is run.',
+                        'options' => self::getCampaignLocations()
                     ]))
                     ->addField(new MyURYFormField('timeslots', MyURYFormField::TYPE_WEEKSELECT, [
-                        label => 'Timeslots',
-                        explanation => 'All times filled in on this schedule (i.e. are purple) are times during the'
+                        'label' => 'Timeslots',
+                        'explanation' => 'All times filled in on this schedule (i.e. are purple) are times during the'
                         . ' week that this Campaign is considered active, and therefore appears on the website.'
                         . ' Click a square to toggle it. Click and drag to select lots at once!',
                     ]))
                     ->addField(new MyURYFormField('bannerid', MyURYFormField::TYPE_HIDDEN, [
-                        value => $bannerid
+                        'value' => $bannerid
     ]));
   }
 
