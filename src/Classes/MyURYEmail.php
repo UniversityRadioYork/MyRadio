@@ -96,6 +96,10 @@ class MyURYEmail {
     }
     self::$db = Database::getInstance();
 
+    if (strlen($body) > 1024000) {
+      trigger_error('Received long email body: '.strlen($body).' bytes. Source: '.$from, E_USER_NOTICE);
+    }
+    
     $params = array($subject, trim($body));
     if ($timestamp !== null) {
       $params[] = CoreUtils::getTimestamp($timestamp);
