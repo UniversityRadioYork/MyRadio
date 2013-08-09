@@ -48,7 +48,8 @@ $form = (new MyURYForm('sched_season', $module, 'doSeason',
         )->addField(
                 new MyURYFormField('description', MyURYFormField::TYPE_BLOCKTEXT,
                         array(
-                            'explanation' => 'Each season of your show can have its own description. You can edit this later.',
+                            'explanation' => 'Each season of your show can have its own description. '
+                            . 'If you leave this blank, the main description for your Show will be used.',
                             'label' => 'Description',
                             'options' => array('minlength' => 140),
                             'required' => false
@@ -58,7 +59,8 @@ $form = (new MyURYForm('sched_season', $module, 'doSeason',
         new MyURYFormField('tags', MyURYFormField::TYPE_TEXT,
                 array(
                     'label' => 'Tags',
-                    'explanation' => 'A set of keywords to describe this season, in addition to the ones for your show in general',
+                    'explanation' => 'A set of keywords to describe this Season. These will be added onto the'
+                    . ' Tags you already have set for the Show.',
                     'required' => false
                 )
         )

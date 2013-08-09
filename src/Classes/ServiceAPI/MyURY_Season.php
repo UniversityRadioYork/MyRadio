@@ -148,12 +148,6 @@ class MyURY_Season extends MyURY_Scheduler_Common {
     }
 
     /**
-     * @todo Perform required checks:
-     * Show ID is a valid Show of the Show Type
-     * All keys of weeks between 1 and 10 are defined and boolean (set to false if not defined)
-     * All values of day are between 0 and 6
-     * All values of stime and etime are between 0 and 86399
-     * 
      * Select an appropriate value for $term_id
      */
     $term_id = self::getActiveApplicationTerm();

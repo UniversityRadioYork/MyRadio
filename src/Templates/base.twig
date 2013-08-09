@@ -38,6 +38,10 @@
                 </ul>
               </footer>
 {% endblock %}
+{% if joyride %}
+{% include 'joyrides/base.twig' %}
+{% include 'joyrides/' ~ joyride ~ '.twig' %}
+{% endif %}
             </body>
           </html>
 {% endspaceless %}

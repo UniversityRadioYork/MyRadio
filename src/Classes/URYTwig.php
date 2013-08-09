@@ -6,7 +6,7 @@ require_once 'Interfaces/TemplateEngine.php';
  * Singleton class for the Twig template engine
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 25072012
+ * @version 20130809
  * @depends Config
  * @package MyURY_Core
  */
@@ -42,6 +42,10 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
     if (!empty($GLOBALS['module'])) {
       $this->addVariable('submenu', (new MyURYMenu())->getSubMenuForUser(CoreUtils::getModuleID($GLOBALS['module']), User::getInstance()))
               ->addVariable('title', $GLOBALS['module']);
+    }
+    
+    if (!empty($_REQUEST['joyride'])) {
+      $this->addVariable('joyride', $_REQUEST['joyride']);
     }
 
     $cuser = User::getInstance();

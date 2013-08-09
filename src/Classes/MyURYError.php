@@ -216,11 +216,11 @@ class MyURYError {
     // if necessary.
     if ($need_to_email_alert) {
       if (Config::$error_report_email) {
+        $rtnl = "</p>\r\n<p>";  // carriage return + newline
         ob_start();
         debug_print_backtrace();
-        $trace = ob_get_clean();
-        $rtnl = "\r\n";  // carriage return + newline
-        $message = $errstr . $rtnl . '<br>' . $rtnl . $trace;
+        $trace = str_replace("\n", $rtnl, ob_get_clean());
+        $message = $errstr . $rtnl . $rtnl . $trace;
         $sent = MyURYEmail::sendEmailToList(MyURY_List::getByName(Config::$error_report_email), 'MyURY error alert', $message);
         if (!$sent) {
           error_log('FAIL: mail failed to send error alert email.');

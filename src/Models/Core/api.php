@@ -60,7 +60,8 @@ require_once 'Interfaces/CacheProvider.php';
 require_once 'Classes/' . Config::$cache_provider . '.php';
 
 //Initiate User
-if (isset($_SESSION['memberid']))
+if (isset($_SESSION['memberid'])) {
   $member = User::getInstance();
+}
 //Initialise the permission constants
 CoreUtils::setUpAuth();
