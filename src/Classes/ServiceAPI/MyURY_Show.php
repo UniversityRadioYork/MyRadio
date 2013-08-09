@@ -361,11 +361,14 @@ class MyURY_Show extends MyURY_Scheduler_Common {
    * @param int $genreid
    */
   public function setGenre($genreid) {
+    if (empty($genreid)) {
+      throw new MyURYException('Genre cannot be empty!', 400);
+    }
     if ($genreid != $this->getGenre()) {
       self::$db->query('UPDATE schedule.show_genre SET effective_to=NOW() WHERE show_id=$1',
               array($this->getID()));
       self::$db->query('INSERT INTO schedule.show_genre (show_id, genre_id, effective_from, memberid, approvedid)
-              VALUES ($1, $2, NOW(), $3, $3)', array($this->getID(), $genre, User::getInstance()->getID()));
+              VALUES ($1, $2, NOW(), $3, $3)', array($this->getID(), $genreid, User::getInstance()->getID()));
     }
   }
   
