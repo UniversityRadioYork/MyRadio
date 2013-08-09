@@ -2,11 +2,16 @@
 /**
  * Controller for outputting a Datatable of Seasons within the specified Show
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 26122012
+ * @version 20130809
  * @package MyURY_Scheduler
  * @todo This requires manual permission checks as it needs interesting things
  */
 
-$show = MyURY_Show::getInstance($_GET['showid']);
+$show = MyURY_Show::getInstance($_REQUEST['showid']);
 $seasons = $show->getAllSeasons();
-require 'Views/Scheduler/seasonList.php';
+
+CoreUtils::getTemplateObject()->setTemplate('table.twig')
+        ->addVariable('tablescript', 'myury.scheduler.seasonlist')
+        ->addVariable('title', 'Seasons of '.$show->getMeta('title'))
+        ->addVariable('tabledata', ServiceAPI::setToDataSource($seasons))
+        ->render();
