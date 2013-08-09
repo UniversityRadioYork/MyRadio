@@ -6,8 +6,12 @@
  * @todo Proper documentation
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 21072012
+ * @version 20130809
  * @package MyURY_Core
  */
-require 'Models/MyURY/menu.php';
+
+$menu = (new MyURYMenu())->getMenuForUser(User::getInstance());
+
+$news = MyURYNews::getNewsItem(Config::$news_feed, User::getInstance());
+
 require 'Views/MyURY/menu.php';

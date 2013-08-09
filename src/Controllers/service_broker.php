@@ -26,7 +26,7 @@ if (CoreUtils::hasPermission(270)) {
   require 'Controllers/brokerVersion.php';
 }
 
-$path = CoreUtils::getServiceVersionForUser($member);
+$path = CoreUtils::getServiceVersionForUser(User::getInstance());
 
 $service_version = $path['version'];
 set_include_path($path['path'].':'.get_include_path());

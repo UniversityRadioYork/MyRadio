@@ -10,7 +10,7 @@
  * 
  * @author Andy Durant <aj@ury.org.uk>
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130526
+ * @version 20130809
  * @package MyURY_Core
  */
 class MyURYEmail {
@@ -91,6 +91,10 @@ class MyURYEmail {
    * @param bool $already_sent If true, all Recipients will be set to having had the email sent.
    */
   public static function create($to, $subject, $body, $from = null, $timestamp = null, $already_sent = false) {
+    //Remove duplicate recipients
+    $to['lists'] = array_unique($to['lists']);
+    $to['members'] = array_unique($to['members']);
+    
     if (!is_bool($already_sent)) {
       $already_sent = false;
     }
