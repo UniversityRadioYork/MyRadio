@@ -160,7 +160,8 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
     }
     
     //Check whether this user can do that.
-    if (in_array($awarded_by->getID(), $status->getAwarder()->getAwardedTo(true)) === false) {
+    if (in_array(array_map(function($x){return $x->getID();}, $awarded_by->getAllTraining(true)),
+            $status->getAwarder()->getID()) === false) {
       throw new MyURYException($awarded_by .' does not have permission to award '.$status);
     }
     //Check whether the target user has the prerequisites
