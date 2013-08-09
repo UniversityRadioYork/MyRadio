@@ -220,20 +220,7 @@ class MyURYError {
         debug_print_backtrace();
         $trace = ob_get_clean();
         $rtnl = "\r\n";  // carriage return + newline
-        $message = 'An error of type "' . $error_name . '" has ' .
-                'occurred on the page ' . $rtnl .
-                "\t" . $errfile . ' (line ' . $errline . ')' . $rtnl .
-                'Check the error log on the server as soon ' .
-                'as possible.' . $rtnl . $rtnl .
-                'NOTE: At most, one email alert per ' .
-                'day will be generated' . $rtnl .
-                'for each page, so this will be the only ' .
-                'error generated' . $rtnl .
-                'by this page in the next 24 hours. ' .
-                '(Errors of more serious' . $rtnl .
-                'types may occur but not generate email ' .
-                'alerts. Check the' . $rtnl .
-                'live error log.)' . $rtnl . $rtnl . $errstr . $rtnl . $rtnl . $trace;
+        $message = $errstr . $rtnl . '<br>' . $rtnl . $trace;
         $sent = MyURYEmail::sendEmailToList(MyURY_List::getByName(Config::$error_report_email), 'MyURY error alert', $message);
         if (!$sent) {
           error_log('FAIL: mail failed to send error alert email.');
