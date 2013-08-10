@@ -402,6 +402,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
       if (empty($users[$i])) {
         continue;
       }
+      
       //Look for an existing credit
       if (!in_array(['type' => $credittypes[$i], 'memberid' => $users[$i]->getID(), 'User' => $users[$i]], 
               $oldcredits)) {
