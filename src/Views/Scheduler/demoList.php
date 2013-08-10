@@ -1,6 +1,6 @@
 <?php
 
-require 'Views/Scheduler/bootstrap.php';
+$twig = CoreUtils::getTemplateObject();
 
 $tabledata = array();
 foreach ($demos as $demo) {
