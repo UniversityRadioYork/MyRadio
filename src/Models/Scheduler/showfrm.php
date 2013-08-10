@@ -49,7 +49,8 @@ $form = (new MyURYForm('sched_show', 'Scheduler', 'doShow', array(
                             )
                     ),
                     new MyURYFormField('credittype', MyURYFormField::TYPE_SELECT, array(
-                        'options' => array_merge(array(array('text' => 'Please select...', 'disabled' => true)), MyURY_Scheduler::getCreditTypes()),
+                        'options' => array_merge(array(array('text' => 'Please select...', 'disabled' => true)),
+                                MyURY_Scheduler::getCreditTypes()),
                         'explanation' => '',
                         'label' => 'Role'
                             )
