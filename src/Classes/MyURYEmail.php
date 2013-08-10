@@ -280,7 +280,7 @@ class MyURYEmail {
   public static function sendEmailToUserSet($to, $subject, $message, $from = null) {
 
     foreach ($to as $user) {
-      if (!is_a($user, User)) {
+      if (!is_a($user, 'User')) {
         throw new MyURYException($user . ' is not an instance of User or a derivative!');
       }
 
