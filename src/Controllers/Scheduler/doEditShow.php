@@ -22,7 +22,7 @@ $show->setMeta('title', $data['title']);
 $show->setMeta('description', $data['description']);
 $show->setMeta('tag', explode(' ', $data['tags']));
 $show->setGenre($data['genres']);
-$show->setCredits($data['credits']['member'], $data['credit']['credittype']);
+$show->setCredits($data['credits']['member'], $data['credits']['credittype']);
 
 header('Location: '.CoreUtils::makeURL('Scheduler', 'myShows',
         array('message' => base64_encode('Show updated'))));
