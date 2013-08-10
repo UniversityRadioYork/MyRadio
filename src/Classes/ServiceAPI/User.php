@@ -278,7 +278,7 @@ class User extends ServiceAPI {
   public function getAllTraining($ignore_revoked = false) {
     if ($ignore_revoked) {
       $data = [];
-      foreach ($this->training as $train) {
+      foreach (MyURY_UserTrainingStatus::resultSetToObjArray($this->training) as $train) {
         if ($train->getRevokedBy() == null) {
           $data[] = $train;
         }
