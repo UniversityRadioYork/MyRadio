@@ -92,8 +92,8 @@ class MyURYEmail {
    */
   public static function create($to, $subject, $body, $from = null, $timestamp = null, $already_sent = false) {
     //Remove duplicate recipients
-    $to['lists'] = array_unique($to['lists']);
-    $to['members'] = array_unique($to['members']);
+    $to['lists'] = empty($to['lists']) ? [] : array_unique($to['lists']);
+    $to['members'] = empty($to['members']) ? [] : array_unique($to['members']);
     
     if (!is_bool($already_sent)) {
       $already_sent = false;
