@@ -373,12 +373,58 @@ class MyURY_Show extends MyURY_Scheduler_Common {
   }
   
   /**
+   * Updates the list of Credits for the Show.
    * 
-   * @param type $users
-   * @param type $credittypes
+   * Existing credits are kept active, ones that are not in the new list are set to effective_to now,
+   * and ones that are in the new list but not exist are created with effective_from now.
+   * 
+   * @param User[] $users An array of Users associated with the show.
+   * @param int[] $credittypes The relevant credittypeid for each User.
    */
   public function setCredits($users, $credittypes) {
+    if (sizeof($users) !== sizeof($credittypes)) {
+      throw new MyURYException('The number of Users and number of Credit Types must be equal.', 400);
+    }
     
+    //Start a transaction, atomic-like.
+    self::$db->query('BEGIN');
+    
+    //Remove old credits
+    foreach ($this->getCredits() as $credit) {
+      if (!(($key = array_search($users, $credit['User']->getID())) === false
+              && $credit['type'] == $credittypes[$key])) {
+        //There's not a match for this. Remove it
+        self::$db->query('UPDATE schedule.show_credit SET effective_to=NOW()'
+                . 'WHERE show_id=$1 AND creditid=$2 AND credit_type_id=$3',
+                [$this->getID(), $credit['User']->getID(), $credit['type']]);
+      }
+    }
+    
+    //Add new credits
+    for ($i = 0; $i < sizeof($users); $i++) {
+      //Look for an existing credit
+      if (!in_array(['type' => $credittypes[$i], 'memberid' => $users[$i]->getID(), 'User' => $users[$i]], 
+              $this->getCredits())) {
+        //Doesn't seem to exist.
+        self::$db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from,'
+                . 'memberid, approvedid) VALUES ($1, $2, $3, NOW(), $5, $5)', [
+                    $this->getID(), $credittypes[$i], $users[$i]->getID(), User::getInstance()->getID()
+                ]);
+      }
+    }
+    
+    //Cool. Update the local credits data
+    $newcredits = [];
+    for ($i = 0; $i < sizeof($users); $i++) {
+      $newcredits[] = ['type' => $credittypes[$i], 'memberid' => $users[$i]->getID(), 'User' => $users[$i]];
+    }
+    
+    $this->credits = $newcredits;
+    
+    //Oh, and commit the transaction. I always forget this.
+    self::$db->query('COMMIT');
+    
+    return $this;
   }
 
   /**
@@ -391,7 +437,9 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     $key = 'scheduler_all_shows_list';
     
     $r = self::$cache->get($key);
-    if ($r !== false) return $r;
+    if ($r !== false) {
+      return $r;
+    }
     
     $shows = array();
     foreach (self::$db->fetch_column('SELECT show_id FROM schedule.show WHERE show_type_id=$1', array($show_type_id))

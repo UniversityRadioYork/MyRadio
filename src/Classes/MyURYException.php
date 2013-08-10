@@ -77,7 +77,9 @@ class MyURYException extends RuntimeException {
           }
         }
       } else {
-        $error = '<div class="errortable">A fatal error has occured that has prevented MyURY from performing the action you requested. The computing team have been notified.</div>';
+        $error = '<div class="errortable"><strong>'.$this->getMessage().'</strong>'
+                . '<p>A fatal error has occured that has prevented MyURY from performing the action you requested. '
+                . 'The computing team have been notified.</p></div>';
         //Output limited info to the browser
         header('HTTP/1.1 ' . $code . ' Internal Server Error');
 

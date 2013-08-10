@@ -39,8 +39,8 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
             ->addVariable('serviceName', 'MyURY')
             ->setTemplate('stripe.twig')
             ->addVariable('uri', $_SERVER['REQUEST_URI'])
-            ->addVariable('module', $GLOBALS['module'])
-            ->addVariable('action', $GLOBALS['action']);
+            ->addVariable('module', empty($GLOBALS['module']) ? Config::$default_module : $GLOBALS['module'])
+            ->addVariable('action', empty($GLOBALS['action']) ? Config::$default_action : $GLOBALS['action']);
     if (!empty($GLOBALS['module'])) {
       $this->addVariable('submenu', (new MyURYMenu())->getSubMenuForUser(CoreUtils::getModuleID($GLOBALS['module']), User::getInstance()))
               ->addVariable('title', $GLOBALS['module']);
