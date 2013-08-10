@@ -101,9 +101,10 @@ class MyURYError {
    */
   public static function errorsToEmail($errno, $errstr, $errfile, $errline) {
     //I don't like this error. It is compatible. Maybe I'll report a PHP bug sometime.
-    if (strstr($errstr, 'should be compatible with Twig_Environment::render') !== false) return;
+    if (strstr($errstr, 'should be compatible with Twig_Environment::render') !== false)
+      return;
     self::$count++; //Increment the error counter
-    
+
     $errstr = utf8_encode($errstr);
     $error_name = self::getErrorName($errno);
     // Log errors to file for permenance
@@ -117,15 +118,13 @@ class MyURYError {
     if (!$lockfile) {
       error_log('FAIL: fopen failed in ' . __FUNCTION__ . ' in ' . __FILE__ . '');
       error_log(__FUNCTION__ . ' failed! Check server logs!');
-      echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
-      die();
+      throw new MyURYException('Failed to open log file.', 500);
     }
     $locked = flock($lockfile, LOCK_EX);
     if (!$locked) {
       error_log('FAIL: flock failed in ' . __FUNCTION__ . ' in ' . __FILE__ . '');
       error_log(__FUNCTION__ . ' failed! Check server logs!');
-      echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
-      die();
+      throw new MyURYException('Failed to open log lock file');
     }
     rewind($lockfile);
 
@@ -159,10 +158,7 @@ class MyURYError {
           error_log('FAIL: date_create could not create a date object' .
                   'from the last alert date in ' . __FUNCTION__ . ' in ' .
                   __FILE__ . '.');
-          $e = new Exception();
-          error_log(__FUNCTION__ . ' failed! Check server logs!' . "\r\n" . $e->getTraceAsString());
-          echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
-          die();
+          throw new MyURYException('Failed to create date object.');
         }
         $alert_timestamp = date_format($alert_date, 'U');
         $current_timestamp = date('U');
@@ -208,8 +204,7 @@ class MyURYError {
             fclose($lockfile) == false) {
       error_log('FAIL: flock or fclose failed in ' . __FUNCTION__ . ' in ' . __FILE__);
       error_log(__FUNCTION__ . ' failed! Check server logs!');
-      echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
-      die();
+      throw new MyURYException('Failed to release lock on log file.', 500);
     }
 
     // Now the lockfile has been released, send the alert email
@@ -228,13 +223,12 @@ class MyURYError {
           // then error_log will also fail to send mail,
           // but we have to try.
           error_log(__FUNCTION__ . ' failed! Check server logs!');
-          echo '<p>A failure occurred, and it\'s not possible to continue.</p>';
-          die();
+          throw new MyURYException('Failed to send email error alert.', 500);
         }
       }
     }
   }
-  
+
   /**
    * Returns the number of errors encountered during execution.
    * @return int
@@ -242,8 +236,9 @@ class MyURYError {
   public static function getErrorCount() {
     return self::$count;
   }
-  
+
   public static function resetErrorCount() {
     self::$count = 0;
   }
+
 }
