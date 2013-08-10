@@ -382,17 +382,13 @@ class MyURY_Show extends MyURY_Scheduler_Common {
    * @param int[] $credittypes The relevant credittypeid for each User.
    */
   public function setCredits($users, $credittypes) {
-    if (sizeof($users) !== sizeof($credittypes)) {
-      throw new MyURYException('The number of Users and number of Credit Types must be equal.', 400);
-    }
-    
     //Start a transaction, atomic-like.
     self::$db->query('BEGIN');
     
     $oldcredits = $this->getCredits();
     //Remove old credits
     foreach ($oldcredits as $credit) {
-      if (!(($key = array_search($users, $credit['User']->getID())) === false
+      if (!(($key = array_search($credit['User']->getID(), $users)) === false
               && $credit['type'] == $credittypes[$key])) {
         //There's not a match for this. Remove it
         self::$db->query('UPDATE schedule.show_credit SET effective_to=NOW()'
@@ -403,12 +399,15 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     
     //Add new credits
     for ($i = 0; $i < sizeof($users); $i++) {
+      if (empty($users[$i])) {
+        continue;
+      }
       //Look for an existing credit
       if (!in_array(['type' => $credittypes[$i], 'memberid' => $users[$i]->getID(), 'User' => $users[$i]], 
               $oldcredits)) {
         //Doesn't seem to exist.
         self::$db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from,'
-                . 'memberid, approvedid) VALUES ($1, $2, $3, NOW(), $5, $5)', [
+                . 'memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)', [
                     $this->getID(), $credittypes[$i], $users[$i]->getID(), User::getInstance()->getID()
                 ]);
       }
@@ -417,6 +416,9 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     //Cool. Update the local credits data
     $newcredits = [];
     for ($i = 0; $i < sizeof($users); $i++) {
+      if (empty($users[$i])) {
+        continue;
+      }
       $newcredits[] = ['type' => $credittypes[$i], 'memberid' => $users[$i]->getID(), 'User' => $users[$i]];
     }
     
