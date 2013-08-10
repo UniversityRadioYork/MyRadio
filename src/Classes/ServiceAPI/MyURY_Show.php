@@ -389,8 +389,9 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     //Start a transaction, atomic-like.
     self::$db->query('BEGIN');
     
+    $oldcredits = $this->getCredits();
     //Remove old credits
-    foreach ($this->getCredits() as $credit) {
+    foreach ($oldcredits as $credit) {
       if (!(($key = array_search($users, $credit['User']->getID())) === false
               && $credit['type'] == $credittypes[$key])) {
         //There's not a match for this. Remove it
@@ -404,7 +405,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     for ($i = 0; $i < sizeof($users); $i++) {
       //Look for an existing credit
       if (!in_array(['type' => $credittypes[$i], 'memberid' => $users[$i]->getID(), 'User' => $users[$i]], 
-              $this->getCredits())) {
+              $oldcredits)) {
         //Doesn't seem to exist.
         self::$db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from,'
                 . 'memberid, approvedid) VALUES ($1, $2, $3, NOW(), $5, $5)', [
