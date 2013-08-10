@@ -101,7 +101,11 @@ class MyURYEmail {
     self::$db = Database::getInstance();
 
     if (strlen($body) > 1024000) {
-      trigger_error('Received long email body: '.strlen($body).' bytes. Source: '.$from, E_USER_NOTICE);
+      //Woah - that's a big email. Where's this coming from?
+      //If its more than a couple MB expect this script/service to shortly die due to RAM usage.
+      $caller =  array_shift(debug_backtrace());
+      trigger_error('Received long email body: '.strlen($body).' bytes. Source: '
+              .$from.'/'.$caller['file'].':'.$caller['line'], E_USER_NOTICE);
     }
     
     $params = array($subject, trim($body));

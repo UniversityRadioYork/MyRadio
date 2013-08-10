@@ -119,7 +119,8 @@ class MyURY_Scheduler extends MyURY_Scheduler_Common {
    */
   public static function getCreditTypes() {
     self::wakeup();
-    return self::$db->fetch_all('SELECT credit_type_id AS value, name AS text FROM people.credit_type ORDER BY name ASC');
+    return self::$db->fetch_all('SELECT credit_type_id AS value, name AS text'
+            . ' FROM people.credit_type ORDER BY name ASC');
   }
   
   /**
