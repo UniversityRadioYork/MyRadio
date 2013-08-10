@@ -119,5 +119,12 @@ if (isset($_REQUEST['request'])) {
  */
 CoreUtils::requirePermissionAuto($module, $action);
 
+/**
+ * If a Joyride is defined, start it
+ */
+if (isset($_REQUEST['joyride'])) {
+  $_SESSION['joyride'] = $_REQUEST['joyride'];
+}
+
 //Include the requested action
 require 'Controllers/' . $module . '/' . $action . '.php';
