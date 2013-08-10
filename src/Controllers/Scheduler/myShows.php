@@ -14,7 +14,7 @@ if (empty($shows) or (sizeof($shows) === 1 and sizeof($shows[0]->getAllSeasons()
   $_SESSION['joyride'] = 'first_show';
 }
 
-$twig = CoreUtils::getTemplateObject()->setTemplate('table.twig')
+$twig = CoreUtils::getTemplateObject()->setTemplate('Scheduler/myShows.twig')
         ->addVariable('title', 'My Shows')
         ->addVariable('tabledata', ServiceAPI::setToDataSource($shows))
         ->addVariable('tablescript', 'myury.scheduler.showlist');
