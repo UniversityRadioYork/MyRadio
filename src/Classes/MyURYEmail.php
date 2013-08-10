@@ -12,6 +12,7 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130809
  * @package MyURY_Core
+ * @todo Footers contain hard-coded URLs. This used to be necessary (when the links went to mint), but isn't now.
  */
 class MyURYEmail {
 
@@ -19,8 +20,8 @@ class MyURYEmail {
   // Defaults
   private static $headers = 'Content-type: text/plain; charset=utf-8';
   private static $sender = 'From: MyURY <no-reply@ury.org.uk>';
-  private static $footer = 'This email was sent automatically from MyURY. You can opt out of URY Emails by visiting https://ury.york.ac.uk/members/memberadmin/edit.php.';
-  private static $html_footer = 'This email was sent automatically from MyURY. You can opt out of URY Emails <a href="https://ury.york.ac.uk/members/memberadmin/edit.php">on your profile page</a>.';
+  private static $footer = 'This email was sent automatically from MyURY. You can opt out of URY Emails by visiting https://ury.org.uk/myury/Profile/edit/.';
+  private static $html_footer = 'This email was sent automatically from MyURY. You can opt out of URY Emails <a href="https://ury.org.uk/myury/Profile/edit/">on your profile page</a>.';
   // Standard
   /**
    * @var string carriage return + newline
