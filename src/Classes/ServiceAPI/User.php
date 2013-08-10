@@ -171,20 +171,22 @@ class User extends ServiceAPI {
     }
     //Set the variables
     foreach ($data as $key => $value) {
-      if ($key === 'joined')
+      if ($key === 'joined') {
         $this->$key = (int) strtotime($value);
-      elseif (filter_var($value, FILTER_VALIDATE_INT))
+      } elseif (filter_var($value, FILTER_VALIDATE_INT)) {
         $this->$key = (int) $value;
-      elseif ($value === 't')
+      } elseif ($value === 't') {
         $this->$key = true;
-      elseif ($value === 'f')
+      } elseif ($value === 'f') {
         $this->$key = false;
-      else
+      } else {
         $this->$key = $value;
+      }
     }
 
-    if (!isset(self::$users[$memberid]))
+    if (!isset(self::$users[$memberid])) {
       self::$users[$memberid] = $this;
+    }
 
     //Get the user's permissions
     $this->permissions = self::$db->fetch_column('SELECT lookupid FROM auth_officer
@@ -206,9 +208,9 @@ class User extends ServiceAPI {
        ORDER BY from_date,till_date;', array($memberid));
 
     // Get Training info all into array
-    $this->training = MyURY_UserTrainingStatus::resultSetToObjArray(self::$db->fetch_column('SELECT memberpresenterstatusid
+    $this->training = self::$db->fetch_column('SELECT memberpresenterstatusid
       FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
-      WHERE memberid=$1 ORDER BY ordering, completeddate ASC', array($this->memberid)));
+      WHERE memberid=$1 ORDER BY ordering, completeddate ASC', array($this->memberid));
   }
 
   /**
@@ -230,9 +232,10 @@ class User extends ServiceAPI {
    * @return boolean
    */
   public function isStudioTrained() {
-    foreach ($this->training as $train) {
-      if ($train->getID() == 1 && $train->getRevokedBy() == null)
+    foreach ($this->getAllTraining(true) as $train) {
+      if ($train->getID() == 1) {
         return true;
+      }
     }
 
     return false;
@@ -243,9 +246,10 @@ class User extends ServiceAPI {
    * @return boolean
    */
   public function isStudioDemoed() {
-    foreach ($this->training as $train) {
-      if ($train->getID() == 2 && $train->getRevokedBy() == null)
+    foreach ($this->getAllTraining(true) as $train) {
+      if ($train->getID() == 2) {
         return true;
+      }
     }
 
     return false;
@@ -256,9 +260,10 @@ class User extends ServiceAPI {
    * @return boolean
    */
   public function isTrainer() {
-    foreach ($this->training as $train) {
-      if ($train->getID() == 3 && $train->getRevokedBy() == null)
+    foreach ($this->getAllTraining(true) as $train) {
+      if ($train->getID() == 3) {
         return true;
+      }
     }
 
     return false;
@@ -280,7 +285,7 @@ class User extends ServiceAPI {
       }
       return $data;
     } else {
-      return $this->training;
+      return MyURY_UserTrainingStatus::resultSetToObjArray($this->training);
     }
   }
   
