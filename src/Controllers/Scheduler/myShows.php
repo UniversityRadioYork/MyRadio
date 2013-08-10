@@ -10,7 +10,7 @@
 $shows = MyURY_Show::getShowsAttachedToUser();
 
 //This is a Joyride start point - if there are no shows, or it's their first season, run the first show joyride.
-if (empty($shows) or (sizeof($shows) === 1 and sizeof($shows[0]->getSeasons()) === 0)) {
+if (empty($shows) or (sizeof($shows) === 1 and sizeof($shows[0]->getAllSeasons()) === 0)) {
   $_SESSION['joyride'] = 'first_show';
 }
 
