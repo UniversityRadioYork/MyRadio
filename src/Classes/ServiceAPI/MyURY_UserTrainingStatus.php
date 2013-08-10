@@ -14,7 +14,7 @@
  * just "presenter" training, and more towards any activity, "Training Status"
  * was adopted.
  * 
- * @version 20130801
+ * @version 20130810
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
  */

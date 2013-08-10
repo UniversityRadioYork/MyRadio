@@ -1,0 +1,9 @@
+{% extends 'table.twig' %}
+{% block head %}
+{{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/myury.scheduler.allocate.js"></script>
+{% endblock %}
+{% block stripecontent %}
+{{ parent() }}
+<a href="?joyride=first_show"><span class="ui-icon ui-icon-help"></span>Help me get started</a>
+{% endblock %}
