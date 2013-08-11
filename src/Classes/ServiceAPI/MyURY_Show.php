@@ -171,10 +171,13 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     }
 
     //Genre time powers activate!
-    if (!is_array($params['genres'])) $params['genres'] = array($params['genres']);
+    if (!is_array($params['genres'])) {
+      $params['genres'] = array($params['genres']);
+    }
     foreach ($params['genres'] as $genre) {
-      if (!is_numeric($genre))
+      if (!is_numeric($genre)) {
         continue;
+      }
       self::$db->query('INSERT INTO schedule.show_genre (show_id, genre_id, effective_from, memberid, approvedid)
               VALUES ($1, $2, NOW(), $3, $3)', array($show_id, $genre, $_SESSION['memberid']), true);
     }
@@ -189,7 +192,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     }
 
     //Set a location
-    if (!is_numeric($params['location'])) {
+    if (empty($params['location'])) {
       /**
        * Hardcoded default to Studio 1
        * @todo Location support
