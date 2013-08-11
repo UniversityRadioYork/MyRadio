@@ -373,7 +373,8 @@ class User extends ServiceAPI {
    * @return string The User's email 
    */
   public function getEmail() {
-    return empty($this->email) ? $this->getEduroam() : $this->email;
+    return empty($this->email) ? $this->getEduroam().'@york.ac.uk'
+            : $this->email;
   }
 
   /**
