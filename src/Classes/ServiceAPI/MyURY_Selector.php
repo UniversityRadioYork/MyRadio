@@ -146,22 +146,26 @@ class MyURY_Selector extends ServiceAPI {
     return $this->sel_status;
   }
 
+  /**
+   * Runs a command against URY's Physical Studio Selector. Be careful.
+   * @param String $cmd (Q)uery, (L)ock, (U)nlock, S[1-8]
+   * @return String Status for Query, or ACK/FLK for other commands.
+   */
   private function cmd($cmd) {
     $h = fsockopen('tcp://' . Config::$selector_telnet_host,
             Config::$selector_telnet_port, $errno, $errstr, 10);
 
-    //Read through the welcome
+    //Read through the welcome "studio selector:" message (16x2bytes)
     fgets($h, 32);
     
     //Run command
     fwrite($h, $cmd . "\n");
     
-    //Read response
+    //Read response (4x2bytes)
     $response = fgets($h, 16);
     
     fclose($h);
 
-    echo 'DATA:' . $response;
     //Remove the END
     return trim($response);
   }
