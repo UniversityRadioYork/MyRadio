@@ -24,7 +24,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
   private $season_id;
   private $owner;
   private $timeslot_num;
-  private $credits;
+  protected $credits;
 
   /**
    *

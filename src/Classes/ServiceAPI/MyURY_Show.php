@@ -18,7 +18,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
   private static $shows = array();
   private $show_id;
   private $owner;
-  private $credits = array();
+  protected $credits = array();
   private $genres;
   private $show_type;
   private $submitted_time;
