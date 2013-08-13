@@ -136,10 +136,10 @@ class MyURY_Selector extends ServiceAPI {
       $state = str_split($data);
 
       $this->sel_status = [
-          'studio' => $state[0],
-          'selectedfrom' => $state[1],
-          'lock' => $state[2],
-          'power' => $state[3]
+          'studio' => (int)$state[0],
+          'selectedfrom' => (int)$state[1],
+          'lock' => (int)$state[2],
+          'power' => (int)$state[3]
       ];
     }
 
