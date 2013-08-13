@@ -272,6 +272,9 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
             . ' schedule.show_season_timeslot WHERE start_time <= $1 AND'
             . ' start_time + duration >= $1', [CoreUtils::getTimestamp($time)]);
 
+    echo 'SELECT show_season_timeslot_id FROM'
+            . ' schedule.show_season_timeslot WHERE start_time <= $1 AND'
+            . ' start_time + duration >='.CoreUtils::getTimestamp($time);
     if (empty($result)) {
       return null;
     } else {
@@ -321,7 +324,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
                 'desc' => $next->getMeta('description')],
             'start_time' => $next->getStartTime(),
             'end_time' => $next->getStartTime() + $next->getDuration(),
-            'presenterss' => $next->getPresenterString()
+            'presenters' => $next->getPresenterString()
         ];
       }
     } else {
