@@ -160,13 +160,11 @@ class MyURY_Selector extends ServiceAPI {
     
     //Read response
     $response = '';
-    $line = '';
     do {
-      $line = fgets($h, 1048576); //Read a max of 1MB of data
-      $response .= $line;
+      $response .= fgets($h, 1048576); //Read a max of 1MB of data
     } while (!feof($h));
 
-    echo $response;
+    echo 'DATA:' . $response;
     //Remove the END
     return trim($response);
   }
