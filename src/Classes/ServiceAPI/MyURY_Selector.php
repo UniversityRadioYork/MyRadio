@@ -107,7 +107,7 @@ class MyURY_Selector extends ServiceAPI {
    * @param null $key
    * @return MyURY_Selector
    */
-  public static function getInstance() {
+  public static function getInstance($key = null) {
     return new self();
   }
 
