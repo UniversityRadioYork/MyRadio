@@ -151,9 +151,7 @@ class MyURY_Selector extends ServiceAPI {
             Config::$selector_telnet_port, $errno, $errstr, 10);
 
     //Read through the welcome
-    do {
-      fgets($h, 32);
-    } while (!feof($h));
+    fgets($h, 32);
     
     //Run command
     fwrite($h, $cmd . "\n");
@@ -162,7 +160,7 @@ class MyURY_Selector extends ServiceAPI {
     usleep(10000);
     
     //Read response
-    $response .= fgets($h, 16);
+    $response = fgets($h, 16);
     
     fclose($h);
 
