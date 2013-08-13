@@ -101,7 +101,7 @@ class MyURY_Swagger {
       //id is a parameter if the method is not static
       //unless the constructor is public and takes no args
       if (!$method->isStatic() &&
-          ($constructor->isPublic() && $constructor->getParameters() == null)) {
+          !($constructor->isPublic() && $constructor->getParameters() == null)) {
         $params[] = [
           "paramType"=> "path",
           "name"=> "id",
