@@ -66,7 +66,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
             WHERE show_season_timeslot_id=$1
           )
          AND effective_from <= NOW() AND (effective_to IS NULL OR effective_to >= NOW()) AND approvedid IS NOT NULL
-         ORDER BY show_credit_id)) AS credits,
+         ORDER BY show_credit_id)) AS credits
       FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', array($timeslot_id));
     if (empty($result)) {
       //Invalid Season
