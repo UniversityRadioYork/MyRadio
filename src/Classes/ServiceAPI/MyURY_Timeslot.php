@@ -361,17 +361,17 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
    * Deletes this Timeslot from the Schedule, and everything associated with it.
    * 
    * 
-   * This is a proxy for several other methods, depending on the User and the current time:
+   * This is a proxy for several other methods, depending on the User and the current time:<br>
    * (1) If the User has Cancel Show Privileges, then they can remove it at any time, notifying Creditors
-   *
+   * 
    * (2) If the User is a Show Credit, and there are 48 hours or more until broadcast, they can remove it,
    *     notifying the PC
-   *
+   * 
    * (3) If the User is a Show Credit, and there are less than 48 hours until broadcast, they can send a request to the
    *     PC for removal, and it will be flagged as hidden from the Schedule - it will still count as a noshow unless (1) occurs
-   *
+   * 
    * @param string $reason, Why the episode was cancelled.
-   *
+   * 
    * @todo Make the smarter - check if it's a programming team person, in which case just do this, if it's not
    *       then if >48hrs away just do it but email programming, but <48hrs should hide it but tell prog to confirm reason
    * @todo Response codes? i.e. error/db or error/403 etc
