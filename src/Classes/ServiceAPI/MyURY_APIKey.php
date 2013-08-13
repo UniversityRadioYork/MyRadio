@@ -77,6 +77,7 @@ class MyURY_APIKey extends ServiceAPI {
     $result = self::getCallRequirements($class, $method);
     var_dump($result);
     if ($result === null) {
+      echo "NULL";
       return false; //No permissions means the method is not accessible
     }
     
@@ -117,7 +118,7 @@ class MyURY_APIKey extends ServiceAPI {
     $result = self::$db->fetch_column('SELECT typeid FROM myury.api_method_auth WHERE class_name=$1 AND 
       (method_name=$2 OR method_name IS NULL)',
             array($class, $method));
-    print_r($result);
+    
     if (empty($result)) {
       return null;
     }
