@@ -28,6 +28,7 @@ class MyURY_LabelFinderDaemon extends MyURY_Daemon {
       WHERE recordlabel=\'\' ORDER BY RANDOM() LIMIT 5');
     
     foreach ($albums as $album) {
+      dlog('Checking record '.$album['recordid'].' for label metadata', 4);
       $data = json_decode(file_get_contents('http://api.discogs.com/database/search?artist='.urlencode($album['artist'])
               .'&release_title='.urlencode($album['title']).'&type=release'), true);
       
@@ -37,6 +38,9 @@ class MyURY_LabelFinderDaemon extends MyURY_Daemon {
         dlog("Setting {$album['recordid']} label to {$label}", 2);
         Database::getInstance()->query('UPDATE public.rec_record SET recordlabel=$1 WHERE recordid=$2',
                 array($label, $album['recordid']));
+      } else {
+        dlog('No record label data improvement available for '
+                .$album['recordid'], 4);
       }
       sleep(1);
     }

@@ -1144,7 +1144,8 @@ class User extends ServiceAPI {
     }
 
     //Check if it looks like the user might already exist
-    if (User::findByEmail($params['eduroam']) !== null or User::findByEmail($params['email']) !== null) {
+    if (User::findByEmail($params['eduroam']) !== null or
+            User::findByEmail($params['email']) !== null) {
       throw new MyURYException('This user already appears to exist. Their eduroam or email is already used.');
     }
 
@@ -1153,8 +1154,8 @@ class User extends ServiceAPI {
     $plain_pass = Shibbobleh_Utils::newPassword();
 
     //Actually create the member!
-    $r = self::$db->fetch_column('INSERT INTO public.member
-      (fname, sname, sex, college, phone, email, receive_email, eduroam, require_password_change)
+    $r = self::$db->fetch_column('INSERT INTO public.member (fname, sname, sex,
+      college, phone, email, receive_email, eduroam, require_password_change)
       VALUES
       ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid', array(
         $params['fname'],
@@ -1179,37 +1180,50 @@ class User extends ServiceAPI {
      * @todo Make this easier to change
      * @todo Link to Facebook events
      */
-    $uname = empty($params['eduroam']) ? $params['email'] : str_replace('@york.ac.uk', '', $params['eduroam']);
+    $uname = empty($params['eduroam']) ? $params['email'] 
+            : str_replace('@york.ac.uk', '', $params['eduroam']);
     $welcome_email = <<<EOT
 <p>Hi {$params['fname']}!</p>
 
 <p>Thanks for showing an interest in URY, your official student radio station.</p>
 
-<p>My name's Lloyd, and I'm the Head of Training here. It's my job to make it as easy as possible to get on the air or
-join any of our other teams.</p>
+<p>My name's Lloyd, and I'm the Head of Training here. It's my job to make it as
+easy as possible to get on the air or join any of our other teams.</p>
 
-<p>Coming up in Week 2 we have two Get Involved sessions where we tell you about all the things we do and how you can
-join in. We've also got a live event straight after so you can see us in action!</p>
+<p>Coming up in Week 2 we have two Get Involved sessions where we tell you about
+all the things we do and how you can join in. We've also got a live event
+straight after so you can see us in action!</p>
 
 <ul>
-  <li>7pm Tuesday Week 2 (8th October), RCH/037 (Heslington East), followed by a live panel show broadcast in The Glasshouse.</li>
-  <li>7pm Thursday Week 2 (10th October), V/045 (Vanbrugh College), followed by a live session show broadcast in The Courtyard.</li>
+  <li><a href="https://www.facebook.com/events/180389522143233/">
+    7pm Tuesday Week 2 (8th October), RCH/037 (Heslington East)</a>, followed by
+    a live panel show broadcast in The Glasshouse.</li>
+  <li><a href="https://www.facebook.com/events/591841944201277/">
+    7pm Thursday Week 2 (10th October), V/045 (Vanbrugh College)</a>, followed
+    by a live session show broadcast in The Courtyard.</li>
 </ul>
 
-<p>We'll also be giving away free entry, queue jumps and a bottle of champagne for up to 10 people for Kuda on Tuesday and Tokyo on Thursday in our Warm Up shows.</p>
+<p>We'll also be giving away free entry, queue jumps and a bottle of champagne
+for up to 10 people for Kuda on Tuesday and Tokyo on Thursday in our Warm Up
+shows.</p>
 
 <p>For more information about these, and everything else we do, you can:
 <ul>
-  <li>join the <a href="https://www.facebook.com/groups/ury1350/">URY Members</a> Facebook group,</li>
-  <li>like our <a href="https://www.facebook.com/URY1350">Facebook page</a>,</li>
-  <li>or <a href="https://twitter.com/ury1350">Follow @ury1350</a> on Twitter</li>
+<li>join the <a href="https://www.facebook.com/groups/ury1350/">URY Members</a>
+ Facebook group,</li>
+<li>like our <a href="https://www.facebook.com/URY1350">Facebook page</a>,</li>
+<li>or <a href="https://twitter.com/ury1350">Follow @ury1350</a> on Twitter</li>
 </ul>
 
-<p>Finally, URY has a lot of <a href="https://ury.org.uk/myury/">online resources</a> that are useful for all sorts of things, so you'll need your login details:</p>
+<p>Finally, URY has a lot of <a href="https://ury.org.uk/myury/">online
+resources</a> that are useful for all sorts of things, so you'll need your login
+ details:</p>
 <p>Username: $uname<br>
 Password: $plain_pass</p>
 
-<p>If you have any questions, feel free to ask by emailing <a href="mailto:training@ury.org.uk">training@ury.org.uk</a>.</p>
+<p>If you have any questions, feel free to ask by visiting us at our station in
+Vanbrugh, or emailing <a
+href="mailto:training@ury.org.uk">training@ury.org.uk</a>.</p>
 
 Hope to see you soon.
 <br><br>
@@ -1220,14 +1234,17 @@ Head of Training<br>
 University Radio York 1350AM<br>
 Silver Best Student Radio Station 2012<br>
 ---------------------------------------------<br>
-07968011154 <a href="mailto:lloyd.wallis@ury.org.uk">lloyd.wallis@ury.org.uk</a><br>
+07968011154 <a href="mailto:lloyd.wallis@ury.org.uk">lloyd.wallis@ury.org.uk</a>
+<br>
 ---------------------------------------------<br>
 On Air | Online | On Demand<br>
 <a href="http://ury.org.uk/">ury.org.uk</a>
 EOT;
 
     //Send the email
-    MyURYEmail::create(array('members' => array(User::getInstance($memberid))), 'Welcome to URY - Getting Involved and Your Account', $welcome_email, User::getInstance(7449));
+    MyURYEmail::create(array('members' => array(User::getInstance($memberid))),
+            'Welcome to URY - Getting Involved and Your Account',
+            $welcome_email, User::getInstance(7449));
 
     return User::getInstance($memberid);
   }

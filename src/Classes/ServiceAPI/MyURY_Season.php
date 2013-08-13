@@ -94,6 +94,7 @@ class MyURY_Season extends MyURY_Scheduler_Common {
 
     //Requested Weeks
     $requested_weeks = self::$db->decodeArray($result['requested_weeks']);
+    $this->requested_weeks = array();
     foreach ($requested_weeks as $requested_week) {
       $this->requested_weeks[] = intval($requested_week);
     }

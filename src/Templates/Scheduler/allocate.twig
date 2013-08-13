@@ -6,7 +6,7 @@
 {% block stripecontent %}
 <p>You are allocating Timeslots for a Season of <strong>{{frm_custom.name}}</strong> in the current term.</p>
 <div class="ui-widget-content">
-{{frm_custom.description}}
+{{frm_custom.description|raw}}
 </div>
 <ul id="allocate_credits">
 {% for credit in frm_custom.credits %}
