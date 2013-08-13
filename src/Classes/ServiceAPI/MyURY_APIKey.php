@@ -71,15 +71,23 @@ class MyURY_APIKey extends ServiceAPI {
    */
   public function canCall($class, $method) {
     
-    if (in_array(AUTH_APISUDO, $this->permissions)) return true;
+    if (in_array(AUTH_APISUDO, $this->permissions)) {
+      return true;
+    }
     
     $result = self::getCallRequirements($class, $method);
     
-    if (empty($result)) return true;
+    if (empty($result)) {
+      return false; //No permissions means the method is not accessible
+    }
     
     foreach ($result as $type) {
-      if (empty($type)) return true; //NULL permissions allow any key
-      if (in_array($type, $this->permissions)) return true; //The Key has that permission
+      if (empty($type)) {
+        return true; //NULL permissions allow any key
+      }
+      if (in_array($type, $this->permissions)) {
+        return true; //The Key has that permission
+      }
     }
     
     return false; //Didn't match anything...
