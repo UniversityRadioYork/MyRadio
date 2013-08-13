@@ -75,7 +75,7 @@ class MyURY_APIKey extends ServiceAPI {
     }
     
     $result = self::getCallRequirements($class, $method);
-    
+    var_dump($result);
     if ($result === null) {
       return false; //No permissions means the method is not accessible
     }
@@ -119,7 +119,6 @@ class MyURY_APIKey extends ServiceAPI {
             array($class, $method));
     print_r($result);
     if (empty($result)) {
-      echo "EMPTY";
       return null;
     }
     
