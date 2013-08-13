@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Provides the Scheduler Common class for MyURY
  * @package MyURY_Scheduler
@@ -12,13 +13,12 @@
  * @uses \Database
  * 
  */
-
 abstract class MyURY_Scheduler_Common extends ServiceAPI {
 
   protected static $metadata_keys = array();
-  
   protected $metadata;
-  
+  protected static $credit_names;
+
   /**
    * Gets the id for the string representation of a type of metadata
    */
@@ -54,11 +54,15 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
   }
 
   protected static function getCreditName($credit_id) {
-    self::initDB();
-    $r = self::$db->fetch_one('SELECT name FROM people.credit_type WHERE credit_type_id=$1 LIMIT 1', array((int) $credit_id));
-    if (empty($r))
-      return 'Contrib';
-    return $r['name'];
+    if (empty(self::$credit_names)) {
+      $r = self::$db->fetch_all('SELECT credit_type_id, name FROM people.credit_type');
+
+      foreach ($r as $v) {
+        self::$credit_names[$v['credit_type_id']] = $v['name'];
+      }
+    }
+
+    return empty(self::$credit_names[$credit_id]) ? 'Contrib' : self::$credit_names[$credit_id];
   }
 
   protected static function formatTimeHuman($time) {
@@ -112,16 +116,17 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
       $end = $date + $time['start_time'] + $time['duration'];
       //Query for conflicts
       $r = self::getScheduleConflict($start, $end);
-      
+
       //If there's a conflict, log it
-      if (!empty($r)) $conflicts[$i] = $r['show_season_id'];
-      
+      if (!empty($r))
+        $conflicts[$i] = $r['show_season_id'];
+
       //Increment week
-      $date += 3600*24*7;
+      $date += 3600 * 24 * 7;
     }
     return $conflicts;
   }
-  
+
   /**
    * Returns a schedule conflict between the given times, if one exists
    * @param int $start Start time
@@ -131,13 +136,12 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
   protected static function getScheduleConflict($start, $end) {
     $start = CoreUtils::getTimestamp($start);
     $end = CoreUtils::getTimestamp($end);
-    
+
     return self::$db->fetch_one('SELECT show_season_id FROM schedule.show_season_timeslot
         WHERE (start_time <= $1 AND start_time + duration > $1)
         OR (start_time > $1 AND start_time < $2)', array($start, $end));
-    
   }
-  
+
   /**
    * Returns the Term currently available for Season applications.
    * Users can only apply to the current term, or one week before the next one
@@ -147,11 +151,10 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
    */
   public static function getActiveApplicationTerm() {
     $return = self::$db->fetch_column('SELECT termid FROM terms
-      WHERE start <= $1 AND finish >= NOW() LIMIT 1',
-            array(CoreUtils::getTimestamp(strtotime('+28 Days'))));
+      WHERE start <= $1 AND finish >= NOW() LIMIT 1', array(CoreUtils::getTimestamp(strtotime('+28 Days'))));
     return $return[0];
   }
-  
+
   /**
    * Sets a *text* metadata key to the specified value. Does not work for image metadata.
    * 
@@ -171,22 +174,18 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
    * @param String $id_field The ID field in the metadata table.<br>
    * Should be one of show_id, show_season_id or show_season_timeslot_id.
    */
-  public function setMeta($string_key, $value, $effective_from = null, $effective_to = null,
-          $table = null, $id_field = null) {
-    if ($table != 'show_metadata'
-            && $table != 'season_metadata'
-            && $table != 'timeslot_metadata') {
+  public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $id_field = null) {
+    if ($table != 'show_metadata' && $table != 'season_metadata' && $table != 'timeslot_metadata') {
       throw new MyURYException('Table must be specified and valid!');
     }
-    if ($id_field != 'show_id'
-            && $id_field != 'show_season_id'
-            && $id_field != 'show_season_timeslot_id') {
+    if ($id_field != 'show_id' && $id_field != 'show_season_id' && $id_field != 'show_season_timeslot_id') {
       throw new MyURYException('ID Field must be specified and valid!');
     }
     $meta_id = self::getMetadataKey($string_key); //Integer meta key
     $multiple = self::isMetadataMultiple($meta_id); //Bool whether multiple values are allowed
-    if ($effective_from === null) $effective_from = time();
-    
+    if ($effective_from === null)
+      $effective_from = time();
+
     //Check if value is different
     if ($multiple) {
       if (is_array($value)) {
@@ -217,20 +216,19 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
         return false;
       }
       //Okay, expire old value.
-      self::$db->query('UPDATE schedule.'.$table.' SET effective_to = $1
-        WHERE metadata_key_id=$2 AND '.$id_field.'=$3',
-              array(CoreUtils::getTimestamp($effective_from), $meta_id, $this->getID()));
+      self::$db->query('UPDATE schedule.' . $table . ' SET effective_to = $1
+        WHERE metadata_key_id=$2 AND ' . $id_field . '=$3', array(CoreUtils::getTimestamp($effective_from), $meta_id, $this->getID()));
     }
-    
-    $sql = 'INSERT INTO schedule.'.$table
-      .' (metadata_key_id, '.$id_field.', memberid, approvedid, metadata_value, effective_from, effective_to) VALUES ';
+
+    $sql = 'INSERT INTO schedule.' . $table
+            . ' (metadata_key_id, ' . $id_field . ', memberid, approvedid, metadata_value, effective_from, effective_to) VALUES ';
     $params = array($meta_id, $this->getID(), User::getInstance()->getID(), CoreUtils::getTimestamp($effective_from),
         $effective_to == null ? null : CoreUtils::getTimestamp($effective_to));
-    
+
     if (is_array($value)) {
       $param_counter = 6;
       foreach ($value as $v) {
-        $sql .= '($1, $2, $3, $3, $'.$param_counter.', $4, $5),';
+        $sql .= '($1, $2, $3, $3, $' . $param_counter . ', $4, $5),';
         $params[] = $v;
         $param_counter++;
       }
@@ -240,9 +238,9 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
       $sql .= '($1, $2, $3, $3, $6, $4, $5)';
       $params[] = $value;
     }
-    
+
     self::$db->query($sql, $params);
-    
+
     if ($multiple && is_array($value)) {
       foreach ($value as $v) {
         if (!in_array($v, $this->metadata[$meta_id])) {
@@ -252,8 +250,60 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
     } else {
       $this->metadata[$meta_id] = $value;
     }
-    
+
     return true;
+  }
+
+  /**
+   * Returns an Array of Arrays containing Credit names and roles, or just name.
+   * @param boolean $types If true return an array with the role as well. Otherwise just return the credit.
+   * @return type
+   */
+  public function getCreditsNames($types = true) {
+    $return = array();
+    foreach ($this->credits as $credit) {
+      if ($types) {
+        $credit['name'] = User::getInstance($credit['memberid'])->getName();
+        $credit['type_name'] = self::getCreditName($credit['type']);
+      } else {
+        $credit = User::getInstance($credit['memberid'])->getName();
+      }
+      $return[] = $credit;
+    }
+    return $return;
+  }
+
+  public function getCredits() {
+    return $this->credits;
+  }
+
+  /**
+   * Similar to getCredits, but only returns the User objects. This means the loss of the credit type in the result.
+   */
+  public function getCreditObjects() {
+    $r = array();
+    foreach ($this->getCredits() as $credit) {
+      $r[] = $credit['User'];
+    }
+    return $r;
+  }
+
+  /**
+   * Gets the presenter credits for as a comma-delimited string.
+   * 
+   * @return String
+   */
+  public function getPresenterString() {
+    $str = '';
+    foreach ($this->getCredits() as $credit) {
+      if ($credit['type'] !== 1) {
+        continue;
+      } else {
+        $str .= $credit['User']->getName().', ';
+      }
+    }
+    
+    return substr($str, 0, -2);
   }
 
 }
