@@ -76,7 +76,9 @@ class MyURY_Show extends MyURY_Scheduler_Common {
     $credits = self::$db->decodeArray($result['credits']);
 
     for ($i = 0; $i < sizeof($credits); $i++) {
-      if (empty($credits[$i])) continue;
+      if (empty($credits[$i])) {
+        continue;
+      }
       $this->credits[] = array('type' => $credit_types[$i], 'memberid' => $credits[$i],
           'User' => User::getInstance($credits[$i]));
     }
@@ -264,40 +266,6 @@ class MyURY_Show extends MyURY_Scheduler_Common {
 
   public function getWebpage() {
     return 'http://ury.org.uk/schedule/shows/' . $this->getID();
-  }
-
-  /**
-   * Returns an Array of Arrays containing Credit names and roles, or just name.
-   * @param boolean $types If true return an array with the role as well. Otherwise just return the credit.
-   * @return type
-   */
-  public function getCreditsNames($types = true) {
-    $return = array();
-    foreach ($this->credits as $credit) {
-      if ($types) {
-        $credit['name'] = User::getInstance($credit['memberid'])->getName();
-        $credit['type_name'] = self::getCreditName($credit['type']);
-      } else {
-        $credit = User::getInstance($credit['memberid'])->getName();
-      }
-      $return[] = $credit;
-    }
-    return $return;
-  }
-
-  public function getCredits() {
-    return $this->credits;
-  }
-  
-  /**
-   * Similar to getCredits, but only returns the User objects. This means the loss of the credit type in the result.
-   */
-  public function getCreditObjects() {
-    $r = array();
-    foreach ($this->getCredits() as $credit) {
-      $r[] = $credit['User'];
-    }
-    return $r;
   }
   
   /**
@@ -488,24 +456,17 @@ class MyURY_Show extends MyURY_Scheduler_Common {
   }
   
   /**
-   * Returns the current show, if there is one.
+   * Returns the current Show on air, if there is one.
    * @param int $time Optional integer timestamp
    * 
    * @return MyURY_Show|null
    */
   public static function getCurrentShow($time = null) {
-    if ($time === null) {
-      $time = time();
-    }
-    
-    $result = self::$db->fetch_column('SELECT show_season_timeslot_id FROM'
-            . ' schedule.show_season_timeslot WHERE start_time <= $1 AND'
-            . ' start_time + INTERVAL(duration) >= $1', array($time));
-    
-    if (empty($result)) {
+    $timeslot = MyURY_Timeslot::getCurrentTimeslot($time);
+    if (empty($timeslot)) {
       return null;
     } else {
-      return MyURY_Timeslot::getInstance($result[0])->getSeason()->getShow();
+      return $timeslot->getSeason()->getShow();
     }
   }
   
