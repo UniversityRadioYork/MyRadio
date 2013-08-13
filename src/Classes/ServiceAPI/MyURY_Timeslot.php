@@ -271,10 +271,7 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
     $result = self::$db->fetch_column('SELECT show_season_timeslot_id FROM'
             . ' schedule.show_season_timeslot WHERE start_time <= $1 AND'
             . ' start_time + duration >= $1', [CoreUtils::getTimestamp($time)]);
-
-    echo 'SELECT show_season_timeslot_id FROM'
-            . ' schedule.show_season_timeslot WHERE start_time <= $1 AND'
-            . ' start_time + duration >='.CoreUtils::getTimestamp($time);
+    
     if (empty($result)) {
       return null;
     } else {
