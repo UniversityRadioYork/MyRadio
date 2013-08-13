@@ -255,5 +255,7 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
     
     return true;
   }
+  
+  private function __construct(){}
 
 }
