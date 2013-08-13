@@ -157,6 +157,6 @@ if (!$api_key->canCall($classes[$class], $method)) {
     api_error(500, $e->getMessage());
   }
 
-  header('Content/Type: text/json');
+  header('Content/Type: application/json');
   echo json_encode(CoreUtils::dataSourceParser($result));
 }
