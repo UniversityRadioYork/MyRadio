@@ -125,6 +125,7 @@ class MyURY_APIKey extends ServiceAPI {
     foreach ($result as $row) {
       if (empty($row)) {
         return array(); //There's a global auth option
+      }
     }
     
     return $result;
