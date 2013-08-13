@@ -21,7 +21,7 @@ function api_error($code, $message = null) {
       403 => "Forbidden", 404 => "File Not Found",
       500 => "Internal Server Error"];
   header("HTTP/1.1 $code {$messages[$code]}");
-  header("Content-Type: text/json");
+  header("Content-Type: application/json");
   echo json_encode([
       "status" => $code,
       "message" => $message
