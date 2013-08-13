@@ -89,7 +89,8 @@ class MyURY_Swagger {
       
       //Build the API URL
       $path = '/';
-      if (!$method->isStatic()) {
+      if (!$method->isStatic() &&
+          !($constructor->isPublic() && $constructor->getParameters() == null)) {
         $path .= '{id}/';
       }
       if ($method->getName() !== 'toDataSource') {
