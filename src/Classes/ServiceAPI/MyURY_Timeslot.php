@@ -24,6 +24,12 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
   private $owner;
   private $timeslot_num;
 
+  /**
+   * 
+   * @param int $timeslot_id
+   * @return MyURY_Timeslot
+   * @throws MyURYException
+   */
   public static function getInstance($timeslot_id = null) {
     if (!is_numeric($timeslot_id)) {
       throw new MyURYException('Invalid Timeslot ID!', MyURYException::FATAL);

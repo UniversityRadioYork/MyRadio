@@ -488,6 +488,28 @@ class MyURY_Show extends MyURY_Scheduler_Common {
   }
   
   /**
+   * Returns the current show, if there is one.
+   * @param int $time Optional integer timestamp
+   * 
+   * @return MyURY_Show|null
+   */
+  public static function getCurrentShow($time = null) {
+    if ($time === null) {
+      $time = time();
+    }
+    
+    $result = self::$db->fetch_column('SELECT show_season_timeslot_id FROM'
+            . ' schedule.show_season_timeslot WHERE start_time <= $1 AND'
+            . ' start_time + INTERVAL(duration) >= $1', array($time));
+    
+    if (empty($result)) {
+      return null;
+    } else {
+      return MyURY_Timeslot::getInstance($result[0])->getSeason()->getShow();
+    }
+  }
+  
+  /**
    * Find the most listened Shows
    * @param int $date If specified, only messages for timeslots since $date are counted.
    * @return array An array of 30 Timeslots that have been put through toDataSource, with the addition of a msg_count key,

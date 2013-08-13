@@ -8,7 +8,7 @@
  * Abstractor for the Scheduler Module
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 03082012
+ * @version 20130813
  * @package MyURY_Scheduler
  * @uses \Database
  * @todo Dedicated Term class
