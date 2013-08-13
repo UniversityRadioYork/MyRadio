@@ -25,3 +25,4 @@ CoreUtils::getTemplateObject()->setTemplate('error.twig')
           User Requesting: '.(class_exists('User') ? (User::getInstance()->getName()) : '').'
           </details>')
         ->render();
+exit;

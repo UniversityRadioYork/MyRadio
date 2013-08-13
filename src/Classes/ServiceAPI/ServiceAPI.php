@@ -74,6 +74,9 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
    * @throws MyURYException Throws an Exception if a provided object is not a DataSource
    */
   public static function setToDataSource($array, $full = false) {
+    if (!is_array($array)) {
+      return $array;
+    }
     $result = array();
     foreach ($array as $element) {
       //It must implement the toDataSource method!

@@ -2,18 +2,23 @@
 /**
  * This Daemon creates new URY Member accounts based on data from the YUSU API
  */
-class MyURY_MemberSyncDaemon {
-  public static function isEnabled() { return false; }
+class MyURY_MemberSyncDaemon extends MyURY_Daemon {
+  public static function isEnabled() { return true; }
   
   public static function run() {
     $hourkey = __CLASS__.'_last_run_hourly';
-    if (self::getCache($hourkey) > time() - 3500) return;
+    if (self::getVal($hourkey) > time() - 3500) {
+      return;
+    }
     
     $members = CoreUtils::callYUSU('ListMembers');
     
-    print_r($members);
+    foreach ($members as $member) {
+      dlog('Checking YUSU Member '.$member['name'], 4);
+      print_r($member);
+    }
     
     //Done
-    self::setCache($hourkey, time());
+    self::setVal($hourkey, time());
   }
 }

@@ -24,7 +24,7 @@
  * @todo Install the pcntl extension on thunderhorn
  */
 
-$log_level = 2; //0: Critical, 1: Important, 2: Run Process, 3: Info
+$log_level = 4; //0: Critical, 1: Important, 2: Run Process, 3: Info, 4: Debug
 /**
  * @todo Make paths nicer. This variable is used in MyURY_Track directly.
  */
@@ -36,8 +36,9 @@ function dlog($x, $level = 3) {
     fwrite($f, $x);
     fclose($f);
   }
-  if ($GLOBALS['log_level'] >= $level)
+  if ($GLOBALS['log_level'] >= $level) {
     echo $x."\n";
+  }
 }
 
 //Gracefully handle stop requests
@@ -58,7 +59,9 @@ chdir(__DIR__);
 //Okay, we're done setting up service stuff now.
 $path = '../Classes/Daemons/';
 $handle = opendir($path);
-if (!$handle) die('PATH DOES NOT EXIST '.$path."\n");
+if (!$handle) {
+  die('PATH DOES NOT EXIST '.$path."\n");
+}
 $classes = array();
 
 require_once 'cli_common.php';
