@@ -119,6 +119,7 @@ class MyURY_APIKey extends ServiceAPI {
             array($class, $method));
     print_r($result);
     if (empty($result)) {
+      echo "EMPTY";
       return null;
     }
     
