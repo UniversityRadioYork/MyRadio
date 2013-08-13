@@ -358,8 +358,9 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
   }
 
   /**
-   * Deletes this Timeslot from the Schedule, and everything associated with it
-   *
+   * Deletes this Timeslot from the Schedule, and everything associated with it.
+   * 
+   * 
    * This is a proxy for several other methods, depending on the User and the current time:
    * (1) If the User has Cancel Show Privileges, then they can remove it at any time, notifying Creditors
    *
