@@ -155,7 +155,7 @@ class MyURY_Selector extends ServiceAPI {
     $line = '';
     do {
       $response .= $line;
-      $line = fgets(self::$telnet_handle, 1048576); //Read a max of 1MB of data
+      $line = fgets($h, 1048576); //Read a max of 1MB of data
     } while (!feof($h));
 
     //Remove the END
