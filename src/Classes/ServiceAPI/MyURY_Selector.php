@@ -156,9 +156,6 @@ class MyURY_Selector extends ServiceAPI {
     //Run command
     fwrite($h, $cmd . "\n");
     
-    //Let it think for a moment
-    usleep(10000);
-    
     //Read response
     $response = fgets($h, 16);
     
