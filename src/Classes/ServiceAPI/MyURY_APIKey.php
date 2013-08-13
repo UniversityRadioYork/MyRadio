@@ -70,7 +70,7 @@ class MyURY_APIKey extends ServiceAPI {
    * @return boolean
    */
   public function canCall($class, $method) {
-    
+    echo $class;
     if (in_array(AUTH_APISUDO, $this->permissions)) {
       return true;
     }
@@ -118,7 +118,7 @@ class MyURY_APIKey extends ServiceAPI {
     $result = self::$db->fetch_column('SELECT typeid FROM myury.api_method_auth WHERE class_name=$1 AND 
       (method_name=$2 OR method_name IS NULL)',
             array($class, $method));
-    echo $class;
+    
     if (empty($result)) return null;
     
     foreach ($result as $row) {
