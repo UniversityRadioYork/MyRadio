@@ -132,7 +132,7 @@ class MyURY_Selector extends ServiceAPI {
   public function query() {
     if (empty($this->sel_status)) {
       $data = $this->cmd('Q');
-
+echo $data;
       $state = explode('', $data);
 
       $this->sel_status = [
