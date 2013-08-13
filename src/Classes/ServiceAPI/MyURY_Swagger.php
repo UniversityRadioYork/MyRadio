@@ -168,7 +168,7 @@ class MyURY_Swagger {
     
     //We append the auth requirements to the long description
     $requirements = MyURY_APIKey::getCallRequirements($this->class, $method->getName());
-    
+    echo $this->class.'/'.$method->getName();
     if ($requirements === null) {
       $long_desc .= '<br>This API Call requires a Full API Access Key.';
     } elseif (empty($requirements)) {
