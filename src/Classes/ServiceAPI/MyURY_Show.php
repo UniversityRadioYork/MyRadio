@@ -79,7 +79,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
       if (empty($credits[$i])) {
         continue;
       }
-      $this->credits[] = array('type' => $credit_types[$i], 'memberid' => $credits[$i],
+      $this->credits[] = array('type' => (int)$credit_types[$i], 'memberid' => $credits[$i],
           'User' => User::getInstance($credits[$i]));
     }
 
