@@ -70,14 +70,13 @@ class MyURY_APIKey extends ServiceAPI {
    * @return boolean
    */
   public function canCall($class, $method) {
-    echo $class;
     if (in_array(AUTH_APISUDO, $this->permissions)) {
       return true;
     }
     
     $result = self::getCallRequirements($class, $method);
     
-    if (empty($result)) {
+    if ($result === null) {
       return false; //No permissions means the method is not accessible
     }
     
@@ -119,10 +118,13 @@ class MyURY_APIKey extends ServiceAPI {
       (method_name=$2 OR method_name IS NULL)',
             array($class, $method));
     
-    if (empty($result)) return null;
+    if (empty($result)) {
+      return null;
+    }
     
     foreach ($result as $row) {
-      if (empty($row)) return array(); //There's a global auth option
+      if (empty($row)) {
+        return array(); //There's a global auth option
     }
     
     return $result;
