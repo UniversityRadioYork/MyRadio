@@ -28,7 +28,9 @@ class MyURY_Swagger {
     ];
     
     foreach (self::getApiClasses() as $api => $myury) {
-      if ($myury == __CLASS__) continue;
+      if ($myury == __CLASS__) {
+        continue;
+      }
       $class = new ReflectionClass($myury);
       $data['apis'][] = ['path' => '/resources/'.$api, 'description' => $class->getDocComment()];
     }
@@ -59,7 +61,13 @@ class MyURY_Swagger {
   }
   
   public function toDataSource() {
-    $blocked_methods = ['getInstance', 'wakeup', '__wakeup', 'removeInstance', '__toString', 'setToDataSource'];
+    $blocked_methods = ['getInstance',
+        'wakeup',
+        '__wakeup',
+        'removeInstance',
+        '__toString',
+        'setToDataSource',
+        '__construct'];
     $data = [
       'apiVersion' => 0.1,
       'swaggerVersion' => 1.2,
@@ -69,20 +77,31 @@ class MyURY_Swagger {
     ];
     
     $ref = new ReflectionClass($this->getApiClasses()[$this->class]);
+    $constructor = new ReflectionMethod($this->getApiClasses()[$this->class],
+            '__construct');
     
     foreach ($ref->getMethods() as $method) {
-      if (!$method->isPublic() or in_array($method->getName(), $blocked_methods)) continue;
+      if (!$method->isPublic()
+              or in_array($method->getName(), $blocked_methods)) {
+        continue;
+      }
       $meta = $this->getMethodDoc($method);
       
       //Build the API URL
       $path = '/';
-      if (!$method->isStatic()) $path .= '{id}/';
-      if ($method->getName() !== 'toDataSource') $path .= $method->getName().'/';
+      if (!$method->isStatic()) {
+        $path .= '{id}/';
+      }
+      if ($method->getName() !== 'toDataSource') {
+        $path .= $method->getName().'/';
+      }
       
       //Build the paramaters list
       $params = [];
       //id is a parameter if the method is not static
-      if (!$method->isStatic()) {
+      //unless the constructor is public and takes no args
+      if (!$method->isStatic() &&
+          ($constructor->isPublic() && $constructor->getParameters() == null)) {
         $params[] = [
           "paramType"=> "path",
           "name"=> "id",

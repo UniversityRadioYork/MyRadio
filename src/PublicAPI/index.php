@@ -17,7 +17,9 @@ require_once __DIR__.'/../Controllers/cli_common.php';
  * Handle API errors
  */
 function api_error($code, $message = null) {
-  $messages = [400 => "Bad Request",  401 => "Unauthorized", 403 => "Forbidden", 404 => "File Not Found", 500 => "Internal Server Error"];
+  $messages = [400 => "Bad Request",  401 => "Unauthorized",
+      403 => "Forbidden", 404 => "File Not Found",
+      500 => "Internal Server Error"];
   header("HTTP/1.1 $code {$messages[$code]}");
   header("Content-Type: text/json");
   echo json_encode([
