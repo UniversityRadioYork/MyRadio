@@ -152,7 +152,7 @@ class MyURY_Selector extends ServiceAPI {
 
     //Read through the welcome
     do {
-      fgets($h, 1048576);
+      fgets($h, 32);
     } while (!feof($h));
     
     //Run command
@@ -162,10 +162,9 @@ class MyURY_Selector extends ServiceAPI {
     usleep(10000);
     
     //Read response
-    $response = '';
-    do {
-      $response .= fgets($h, 1048576); //Read a max of 1MB of data
-    } while (!feof($h));
+    $response .= fgets($h, 16);
+    
+    fclose($h);
 
     echo 'DATA:' . $response;
     //Remove the END
