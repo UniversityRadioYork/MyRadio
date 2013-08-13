@@ -309,12 +309,12 @@ class MyURY_Timeslot extends MyURY_Scheduler_Common {
       if (empty($next)) {
         //There's currently not a show on, and there never will be.
         $response = [
-            'current' => ['title' => 'Jukebox', 'desc' => 'Non-stop Music']
+            'current' => ['title' => 'URY Jukebox', 'desc' => 'Non-stop Music']
         ];
       } else {
         //There's currently not a show on, but there will be.
         $response = [
-            'current' => ['title' => 'Jukebox',
+            'current' => ['title' => 'URY Jukebox',
                 'desc' => 'Non-stop Music',
                 'end_time' => $next->getStartTime()],
             'next' => ['title' => $next->getMeta('title'),
