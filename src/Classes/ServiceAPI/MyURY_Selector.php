@@ -132,7 +132,7 @@ class MyURY_Selector extends ServiceAPI {
   public function query() {
     if (empty($this->sel_status)) {
       $data = $this->cmd('Q');
-echo $data;
+      
       $state = explode('', $data);
 
       $this->sel_status = [
@@ -150,7 +150,15 @@ echo $data;
     $h = fsockopen('tcp://' . Config::$selector_telnet_host,
             Config::$selector_telnet_port, $errno, $errstr, 10);
 
+    //Read through the welcome
+    do {
+      fgets($h, 1048576);
+    } while (!feof($h));
+    
+    //Run command
     fwrite($h, $cmd . "\n");
+    
+    //Read response
     $response = '';
     $line = '';
     do {
