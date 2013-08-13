@@ -689,4 +689,6 @@ class CoreUtils {
     }
     return $return;
   }
+  
+  private function __construct(){}
 }
