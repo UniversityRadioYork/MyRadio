@@ -133,7 +133,7 @@ class MyURY_Selector extends ServiceAPI {
     if (empty($this->sel_status)) {
       $data = $this->cmd('Q');
       
-      $state = explode('', $data);
+      $state = str_split($data);
 
       $this->sel_status = [
           'studio' => $state[0],
