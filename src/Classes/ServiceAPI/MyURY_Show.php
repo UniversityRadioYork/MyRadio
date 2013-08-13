@@ -542,6 +542,7 @@ class MyURY_Show extends MyURY_Scheduler_Common {
 
   public function toDataSource() {
     return array(
+        'show_id' => $this->getID(),
         'title' => $this->getMeta('title'),
         'credits' => implode(', ', $this->getCreditsNames(false)),
         'description' => $this->getMeta('description'),
