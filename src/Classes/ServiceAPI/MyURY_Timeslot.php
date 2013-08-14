@@ -15,7 +15,7 @@
  * @uses \MyURY_Show
  *
  */
-class MyURY_Timeslot extends MyURY_Scheduler_Common {
+class MyURY_Timeslot extends MyURY_Metadata_Common {
 
   private static $timeslots = array();
   private $timeslot_id;

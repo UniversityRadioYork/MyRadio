@@ -12,7 +12,7 @@
  * @package MyURY_Demo
  * @uses \Database
  */
-class MyURY_Demo extends MyURY_Scheduler_Common {
+class MyURY_Demo extends MyURY_Metadata_Common {
 
   public static function registerDemo($time) {
     self::initDB();

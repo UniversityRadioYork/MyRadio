@@ -14,7 +14,7 @@
  * 
  */
 
-class MyURY_Season extends MyURY_Scheduler_Common {
+class MyURY_Season extends MyURY_Metadata_Common {
 
   private static $seasons = array();
   private $season_id;
@@ -495,7 +495,7 @@ EOT
         $show_time = date('d-m-Y ', $day_start) . $start_time;
         echo $show_time . '<br>';
         
-        $conflict = MyURY_Scheduler_Common::getScheduleConflict($day_start+$req_time['start_time'], $day_start+$start_time+$req_time['duration']);
+        $conflict = self::getScheduleConflict($day_start+$req_time['start_time'], $day_start+$start_time+$req_time['duration']);
         if (!empty($conflict)) {
           self::$db->query('ROLLBACK');
           throw new MyURYException('A show is already scheduled for this time: '.print_r($conflict, true));

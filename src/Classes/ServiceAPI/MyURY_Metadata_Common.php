@@ -1,19 +1,25 @@
 <?php
 
 /**
- * Provides the Scheduler Common class for MyURY
- * @package MyURY_Scheduler
+ * Provides the Metadata Common class for MyURY
+ * @package MyURY_Core
  */
 
 /**
- * The Scheduler_Common class is used to provide common resources for the MyURY Scheduler classes
+ * The Metadata_Common class is used to provide common resources for
+ * URY assets that utilise the Metadata system.
+ * 
+ * The metadata system is a used to attach common attributes to an item,
+ * such as a title or description. It includes versioning in the form of
+ * effective_from and effective_to field, storing a history of previous values.
+ * 
  * @version 04092012
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Scheduler
  * @uses \Database
  * 
  */
-abstract class MyURY_Scheduler_Common extends ServiceAPI {
+abstract class MyURY_Metadata_Common extends ServiceAPI {
 
   protected static $metadata_keys = array();
   protected $metadata;
@@ -36,8 +42,9 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
   public static function isMetadataMultiple($id) {
     self::cacheMetadataKeys();
     foreach (self::$metadata_keys as $key) {
-      if ($key['id'] == $id)
+      if ($key['id'] == $id) {
         return $key['multiple'];
+      }
     }
     throw new MyURYException('Metadata Key ID ' . $id . ' does not exist');
   }
@@ -45,7 +52,8 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
   protected static function cacheMetadataKeys() {
     if (empty(self::$metadata_keys)) {
       self::initDB();
-      $r = self::$db->fetch_all('SELECT metadata_key_id AS id, name, allow_multiple AS multiple FROM metadata.metadata_key');
+      $r = self::$db->fetch_all('SELECT metadata_key_id AS id, name,'
+              . ' allow_multiple AS multiple FROM metadata.metadata_key');
       foreach ($r as $key) {
         self::$metadata_keys[$key['name']]['id'] = (int) $key['id'];
         self::$metadata_keys[$key['name']]['multiple'] = ($key['multiple'] === 't');
@@ -65,6 +73,10 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
     return empty(self::$credit_names[$credit_id]) ? 'Contrib' : self::$credit_names[$credit_id];
   }
 
+  /**
+   * @todo This is a duplication of CoreUtils functionality.
+   * @deprecated
+   */
   protected static function formatTimeHuman($time) {
     date_default_timezone_set('UTC');
     $stime = date(' H:i', $time['start_time']);
@@ -73,6 +85,9 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
     return self::getDayNameFromID($time['day']) . $stime . ' - ' . $etime;
   }
 
+  /**
+   * @todo Move this into CoreUtils.
+   */
   protected static function getDayNameFromID($day) {
     switch ($day) {
       case 0:
@@ -89,7 +104,6 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
         return 'Sat';
       case 6:
         return 'Sun';
-        break;
       default:
         throw new MyURYException('Invalid Day ID ' . $day);
     }
@@ -104,6 +118,8 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
    * duration: The duration in seconds
    * 
    * Return: Array of conflicts with week # as key and show as value
+   * 
+   * @todo Move this into the relevant scheduler class
    */
   protected static function getScheduleConflicts($term_id, $time) {
     self::initDB();
@@ -118,8 +134,9 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
       $r = self::getScheduleConflict($start, $end);
 
       //If there's a conflict, log it
-      if (!empty($r))
+      if (!empty($r)) {
         $conflicts[$i] = $r['show_season_id'];
+      }
 
       //Increment week
       $date += 3600 * 24 * 7;
@@ -132,6 +149,8 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
    * @param int $start Start time
    * @param int $end End time
    * @return Array empty if no conflict, show information otherwise
+   * 
+   * @todo Move this into the relevant scheduler class
    */
   protected static function getScheduleConflict($start, $end) {
     $start = CoreUtils::getTimestamp($start);
@@ -148,6 +167,8 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
    * starts.
    * 
    * @return int|null Returns the id of the term or null if no active term
+   * 
+   * @todo Move this into the relevant scheduler class or CoreUtils
    */
   public static function getActiveApplicationTerm() {
     $return = self::$db->fetch_column('SELECT termid FROM terms
@@ -169,22 +190,15 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
    * for value in the array.
    * @param int $effective_from UTC Time the metavalue is effective from. Default now.
    * @param int $effective_to UTC Time the metadata value is effective to. Default NULL (does not expire).
-   * @param String $table The metadata table.<br>
-   * Should be one of show_metadata, season_metadata or timeslot_metadata
-   * @param String $id_field The ID field in the metadata table.<br>
-   * Should be one of show_id, show_season_id or show_season_timeslot_id.
+   * @param String $table The metadata table, *including* the schema.
+   * @param String $id_field The ID field in the metadata table.
    */
   public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $id_field = null) {
-    if ($table != 'show_metadata' && $table != 'season_metadata' && $table != 'timeslot_metadata') {
-      throw new MyURYException('Table must be specified and valid!');
-    }
-    if ($id_field != 'show_id' && $id_field != 'show_season_id' && $id_field != 'show_season_timeslot_id') {
-      throw new MyURYException('ID Field must be specified and valid!');
-    }
     $meta_id = self::getMetadataKey($string_key); //Integer meta key
     $multiple = self::isMetadataMultiple($meta_id); //Bool whether multiple values are allowed
-    if ($effective_from === null)
+    if ($effective_from === null) {
       $effective_from = time();
+    }
 
     //Check if value is different
     if ($multiple) {
@@ -216,11 +230,11 @@ abstract class MyURY_Scheduler_Common extends ServiceAPI {
         return false;
       }
       //Okay, expire old value.
-      self::$db->query('UPDATE schedule.' . $table . ' SET effective_to = $1
+      self::$db->query('UPDATE ' . $table . ' SET effective_to = $1
         WHERE metadata_key_id=$2 AND ' . $id_field . '=$3', array(CoreUtils::getTimestamp($effective_from), $meta_id, $this->getID()));
     }
 
-    $sql = 'INSERT INTO schedule.' . $table
+    $sql = 'INSERT INTO ' . $table
             . ' (metadata_key_id, ' . $id_field . ', memberid, approvedid, metadata_value, effective_from, effective_to) VALUES ';
     $params = array($meta_id, $this->getID(), User::getInstance()->getID(), CoreUtils::getTimestamp($effective_from),
         $effective_to == null ? null : CoreUtils::getTimestamp($effective_to));
