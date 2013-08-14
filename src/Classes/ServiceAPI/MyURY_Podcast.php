@@ -113,7 +113,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
            AND approvedid IS NOT NULL
          ORDER BY podcast_credit_id)) AS credits
       FROM uryplayer.podcast
-      LEFT JOIN scheduler.show_podcast_link USING (podcast_id)
+      LEFT JOIN schedule.show_podcast_link USING (podcast_id)
       WHERE podcast_id=$1', array($podcast_id));
 
     if (empty($result)) {
