@@ -53,6 +53,12 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
    * @var int
    */
   private $approvedid;
+  
+  /**
+   * Array of Users and their relation to the Podcast.
+   * @var Array
+   */
+  protected $credits = array();
 
   /**
    * Get the object for the given Podcast
