@@ -1,5 +1,9 @@
 $('.twig-datatable').dataTable({
   "aoColumns": [
+  //show_id
+  {
+    bVisible: false
+  },
   //title
   {
     "sTitle" : "Title"
