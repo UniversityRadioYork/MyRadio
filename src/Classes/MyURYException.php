@@ -27,7 +27,7 @@ class MyURYException extends RuntimeException {
    */
   public function __construct($message, $code = 500, Exception $previous = null) {
     self::$count++;
-    parent::__construct($message, $code, $previous);
+    parent::__construct((string)$message, (int)$code, $previous);
     
     if (defined('SILENT_EXCEPTIONS') && SILENT_EXCEPTIONS) {
       return;
