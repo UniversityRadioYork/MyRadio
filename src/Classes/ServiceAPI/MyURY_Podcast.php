@@ -29,7 +29,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
    * @var int
    */
   private $podcast_id;
-  
+
   /**
    * The path to the file, relative to Config::$public_media_uri
    * @var String
@@ -37,11 +37,17 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
   private $file;
 
   /**
+   * The Time the Podcast was uploaded
+   * @var int
+   */
+  private $submitted;
+
+  /**
    * The ID of the User that uploaded the Podcast
    * @var int
    */
   private $memberid;
-  
+
   /**
    * The ID of the User that approved the Podcast
    * @var int
@@ -73,8 +79,8 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
    */
   private function __construct($podcast_id) {
     $this->podcast_id = $podcast_id;
-    
-    $result = self::$db->fetch_one('SELECT file, memberid, approvedid,
+
+    $result = self::$db->fetch_one('SELECT file, memberid, approvedid, submitted,
       (SELECT array(SELECT metadata_key_id FROM uryplayer.podcast_metadata
         WHERE podcast_id=$1 AND effective_from <= NOW()
         ORDER BY effective_from, podcast_metadata_id)) AS metadata_types,
@@ -95,9 +101,82 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
            AND approvedid IS NOT NULL
          ORDER BY podcast_credit_id)) AS credits
       FROM uryplayer.podcast WHERE podcast_id=$1', array($podcast_id));
+
+    if (empty($result)) {
+      throw new MyURYException('Podcast ' . $podcast_id, ' does not exist.', 404);
+    }
+
+    $this->file = $result['file'];
+    $this->memberid = (int) $result['memberid'];
+    $this->approvedid = (int) $result['approvedid'];
+    $this->submitted = strtotime($result['submitted']);
+
+    //Deal with the Credits arrays
+    $credit_types = self::$db->decodeArray($result['credit_types']);
+    $credits = self::$db->decodeArray($result['credits']);
+
+    for ($i = 0; $i < sizeof($credits); $i++) {
+      if (empty($credits[$i])) {
+        continue;
+      }
+      $this->credits[] = array('type' => (int) $credit_types[$i],
+          'memberid' => $credits[$i],
+          'User' => User::getInstance($credits[$i]));
+    }
+
+
+    //Deal with the Metadata arrays
+    $metadata_types = self::$db->decodeArray($result['metadata_types']);
+    $metadata = self::$db->decodeArray($result['metadata']);
+
+    for ($i = 0; $i < sizeof($metadata); $i++) {
+      if (self::isMetadataMultiple($metadata_types[$i])) {
+        //Multiples should be an array
+        $this->metadata[$metadata_types[$i]][] = $metadata[$i];
+      } else {
+        $this->metadata[$metadata_types[$i]] = $metadata[$i];
+      }
+    }
+  }
+
+  /**
+   * Get all the Podcasts that the User is Owner of Creditor of.
+   * @param User $user Default current user.
+   * @return MyURY_Podcast[]
+   */
+  public static function getPodcastsAttachedToUser(User $user = null) {
+    if ($user === null) {
+      $user = User::getInstance();
+    }
+
+    $r = self::$db->fetch_column('SELECT podcast_id FROM uryplayer.podcast
+      WHERE memberid=$1 OR podcast_id IN
+        (SELECT podcast_id FROM uryplayer.podcast_credit
+          WHERE creditid=$1 AND effective_from <= NOW() AND
+          (effective_to >= NOW() OR effective_to IS NULL))',
+          [$user->getID()]);
+
+    return self::resultSetToObjArray($r);
+  }
+  
+  public function toDataSource($full = true) {
+    $data = array(
+        'podcast' => $this->getID(),
+        'title' => $this->getMeta('title'),
+        'description' => $this->getMeta('description'),
+        'editlink' => array(
+            'display' => 'icon',
+            'value' => 'script',
+            'title' => 'Edit Podcast',
+            'url' => CoreUtils::makeURL('Podcast', 'editPodcast', 
+                    array('podcastid' => $this->getID())))
+    );
     
-    var_dump($result);
+    if ($full) {
+      $data['credits'] = implode(', ', $this->getCreditsNames(false));
+    }
     
+    return $data;
   }
 
 }
