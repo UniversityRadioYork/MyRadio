@@ -32,7 +32,9 @@ function api_error($code, $message = null) {
 /**
  * Break up the URL. URLs are of the form /api/ExposedClassName[/id][/method]
  */
-$params = explode('/', str_ireplace(Config::$api_uri, '', explode('?', $_SERVER['REQUEST_URI'])[0]));
+//Remove double-slashes that occassionally appear.
+$cleaned = str_replace('//','/',$_SERVER['REQUEST_URI']);
+$params = explode('/', str_ireplace(Config::$api_uri, '', explode('?', $cleaned)[0]));
 $class = $params[0];
 
 if (empty($class)) {
