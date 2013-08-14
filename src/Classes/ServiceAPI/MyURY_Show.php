@@ -497,7 +497,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
     return $top;
   }
 
-  public function toDataSource() {
+  public function toDataSource($full = true) {
     return array(
         'show_id' => $this->getID(),
         'title' => $this->getMeta('title'),

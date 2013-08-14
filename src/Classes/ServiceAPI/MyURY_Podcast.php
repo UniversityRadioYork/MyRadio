@@ -59,6 +59,12 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
    * @var Array
    */
   protected $credits = array();
+  
+  /**
+   * The ID of the show this is linked to, if any.
+   * @var int
+   */
+  private $show_id;
 
   /**
    * Get the object for the given Podcast
@@ -106,7 +112,9 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
            AND (effective_to IS NULL OR effective_to >= NOW())
            AND approvedid IS NOT NULL
          ORDER BY podcast_credit_id)) AS credits
-      FROM uryplayer.podcast WHERE podcast_id=$1', array($podcast_id));
+      FROM uryplayer.podcast
+      LEFT JOIN scheduler.show_podcast_link USING (podcast_id)
+      WHERE podcast_id=$1', array($podcast_id));
 
     if (empty($result)) {
       throw new MyURYException('Podcast ' . $podcast_id, ' does not exist.', 404);
@@ -116,6 +124,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
     $this->memberid = (int) $result['memberid'];
     $this->approvedid = (int) $result['approvedid'];
     $this->submitted = strtotime($result['submitted']);
+    $this->show_id = (int)$result['show_id'];
 
     //Deal with the Credits arrays
     $credit_types = self::$db->decodeArray($result['credit_types']);
@@ -173,6 +182,14 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
     return $this->podcast_id;
   }
   
+  public function getShow() {
+    if (!empty($this->show_id)) {
+      return MyURY_Show::getInstance($this->show_id);
+    } else {
+      return null;
+    }
+  }
+  
   /**
    * Get data in array format
    * @param boolean $full If true, returns more data.
@@ -193,6 +210,8 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
     
     if ($full) {
       $data['credits'] = implode(', ', $this->getCreditsNames(false));
+      $data['show'] = $this->getShow() ?
+              $this->getShow()->toDataSource(false) : null;
     }
     
     return $data;
