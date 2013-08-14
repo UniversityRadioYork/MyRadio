@@ -146,7 +146,7 @@ class CoreUtils {
       $time = time();
     }
 
-    return gmdate('Y-m-d H:i:s', $time);
+    return gmdate('Y-m-d H:i:s+00', $time);
   }
 
   /**
