@@ -6,7 +6,7 @@
 
 /**
  * The Season class is used to create, view and manupulate Seasons within the new MyURY Scheduler Format
- * @version 12082012
+ * @version 20130814
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Scheduler
  * @uses \Database
@@ -23,8 +23,8 @@ class MyURY_Season extends MyURY_Scheduler_Common {
   private $submitted;
   private $owner;
   private $timeslots;
-  private $requested_times;
-  private $requested_weeks;
+  private $requested_times = [];
+  private $requested_weeks = [];
   private $season_num;
 
   /**
