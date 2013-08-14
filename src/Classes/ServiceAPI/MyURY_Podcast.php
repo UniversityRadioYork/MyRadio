@@ -84,7 +84,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
    * @param String $key
    */
   private function __construct($podcast_id) {
-    $this->podcast_id = $podcast_id;
+    $this->podcast_id = (int)$podcast_id;
 
     $result = self::$db->fetch_one('SELECT file, memberid, approvedid, submitted,
       (SELECT array(SELECT metadata_key_id FROM uryplayer.podcast_metadata
@@ -180,7 +180,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
    */
   public function toDataSource($full = true) {
     $data = array(
-        'podcast' => $this->getID(),
+        'podcast_id' => $this->getID(),
         'title' => $this->getMeta('title'),
         'description' => $this->getMeta('description'),
         'editlink' => array(
