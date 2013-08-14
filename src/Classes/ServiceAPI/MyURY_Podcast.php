@@ -93,6 +93,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
     $this->podcast_id = (int)$podcast_id;
 
     $result = self::$db->fetch_one('SELECT file, memberid, approvedid, submitted,
+      show_id,
       (SELECT array(SELECT metadata_key_id FROM uryplayer.podcast_metadata
         WHERE podcast_id=$1 AND effective_from <= NOW()
         ORDER BY effective_from, podcast_metadata_id)) AS metadata_types,
