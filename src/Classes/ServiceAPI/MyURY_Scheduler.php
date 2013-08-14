@@ -13,7 +13,7 @@
  * @uses \Database
  * @todo Dedicated Term class
  */
-class MyURY_Scheduler extends MyURY_Scheduler_Common {
+class MyURY_Scheduler extends MyURY_Metadata_Common {
   /**
    * This provides a temporary cache of the result from pendingAllocationsQuery
    * @var Array

@@ -13,7 +13,7 @@
  * 
  */
 
-class MyURY_Show extends MyURY_Scheduler_Common {
+class MyURY_Show extends MyURY_Metadata_Common {
 
   private static $shows = array();
   private $show_id;
@@ -295,14 +295,14 @@ class MyURY_Show extends MyURY_Scheduler_Common {
   public function setShowPhoto($tmp_path) {
     $result = self::$db->fetch_column('INSERT INTO schedule.show_image_metadata (memberid, approvedid,
       metadata_key_id, metadata_value, show_id) VALUES ($1, $1, $2, $3, $4) RETURNING show_image_metadata_id',
-            array($_SESSION['memberid'], MyURY_Scheduler_Common::getMetadataKey('player_image'), 'tmp', $this->getID()))[0];
+            array($_SESSION['memberid'], self::getMetadataKey('player_image'), 'tmp', $this->getID()))[0];
     
     $suffix = 'image_meta/ShowImageMetadata/'.$result.'.png';
     $path = Config::$public_media_path.'/'.$suffix;
     move_uploaded_file($tmp_path, $path);
     
     self::$db->query('UPDATE schedule.show_image_metadata SET effective_to=NOW() WHERE metadata_key_id=$1 AND show_id=$2
-      AND effective_from IS NOT NULL', array(MyURY_Scheduler_Common::getMetadataKey('player_image'), $this->getID()));
+      AND effective_from IS NOT NULL', array(self::getMetadataKey('player_image'), $this->getID()));
     
     self::$db->query('UPDATE schedule.show_image_metadata SET effective_from=NOW(), metadata_value=$1
       WHERE show_image_metadata_id=$2', array($suffix, $result));
