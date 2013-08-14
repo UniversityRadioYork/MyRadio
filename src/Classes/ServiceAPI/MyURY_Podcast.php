@@ -159,6 +159,19 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
     return self::resultSetToObjArray($r);
   }
   
+  /**
+   * Get the Podcast ID
+   * @return int
+   */
+  public function getID() {
+    return $this->podcast_id;
+  }
+  
+  /**
+   * Get data in array format
+   * @param boolean $full If true, returns more data.
+   * @return Array
+   */
   public function toDataSource($full = true) {
     $data = array(
         'podcast' => $this->getID(),
