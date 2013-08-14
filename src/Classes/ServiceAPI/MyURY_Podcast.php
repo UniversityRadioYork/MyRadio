@@ -80,7 +80,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
         ORDER BY effective_from, podcast_metadata_id)) AS metadata_types,
       (SELECT array(SELECT metadata_value FROM uryplayer.podcast_metadata
         WHERE podcast_id=$1 AND effective_from <= NOW()
-        ORDER BY effective_from, show_metadata_id)) AS metadata,
+        ORDER BY effective_from, podcast_metadata_id)) AS metadata,
       (SELECT array(SELECT metadata_value FROM uryplayer.podcast_image_metadata
         WHERE podcast_id=$1 AND effective_from <= NOW()
         ORDER BY effective_from, podcast_image_metadata_id)) AS image_metadata,
