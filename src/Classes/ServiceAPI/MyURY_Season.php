@@ -292,7 +292,8 @@ EOT
    */
   public function setMeta($string_key, $value, $effective_from = null, $effective_to = null,
           $table = null, $pkey = null) {
-   return parent::setMeta($string_key, $value, $effective_from, $effective_to, 'season_metadata', 'show_season_id');
+   return parent::setMeta($string_key, $value, $effective_from, $effective_to,
+           'schedule.season_metadata', 'show_season_id');
   }
 
   public function getID() {

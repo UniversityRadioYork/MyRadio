@@ -188,7 +188,8 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
    * @param null $pkey No action. Used for compatibility with parent.
    */
   public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null) {
-    return parent::setMeta($string_key, $value, $effective_from, $effective_to, 'timeslot_metadata', 'show_season_timeslot_id');
+    return parent::setMeta($string_key, $value, $effective_from, $effective_to,
+            'schedule.timeslot_metadata', 'show_season_timeslot_id');
   }
 
   public function toDataSource() {

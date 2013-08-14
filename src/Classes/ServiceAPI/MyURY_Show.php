@@ -327,7 +327,8 @@ class MyURY_Show extends MyURY_Metadata_Common {
    */
   public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, 
           $table = null, $pkey = null) {
-   return parent::setMeta($string_key, $value, $effective_from, $effective_to, 'show_metadata', 'show_id');
+   return parent::setMeta($string_key, $value, $effective_from, $effective_to, 
+           'schedule.show_metadata', 'show_id');
   }
   
   /**
