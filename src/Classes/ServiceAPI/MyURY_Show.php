@@ -243,11 +243,6 @@ class MyURY_Show extends MyURY_Metadata_Common {
     return $return;
   }
 
-  public function getMeta($meta_string) {
-    return isset($this->metadata[self::getMetadataKey($meta_string)]) ?
-      $this->metadata[self::getMetadataKey($meta_string)] : null;
-  }
-
   public function getNumberOfSeasons() {
     return sizeof($this->season_ids);
   }

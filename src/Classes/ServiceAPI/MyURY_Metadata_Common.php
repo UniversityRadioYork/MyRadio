@@ -13,7 +13,7 @@
  * such as a title or description. It includes versioning in the form of
  * effective_from and effective_to field, storing a history of previous values.
  * 
- * @version 04092012
+ * @version 20130815
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Scheduler
  * @uses \Database
@@ -318,6 +318,11 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
     }
     
     return substr($str, 0, -2);
+  }
+  
+  public function getMeta($meta_string) {
+    return isset($this->metadata[self::getMetadataKey($meta_string)]) ?
+      $this->metadata[self::getMetadataKey($meta_string)] : null;
   }
 
 }
