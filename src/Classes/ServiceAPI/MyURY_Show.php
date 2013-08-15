@@ -269,7 +269,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
   }
 
   public function getWebpage() {
-    return 'http://ury.org.uk/schedule/shows/' . $this->getID();
+    return '//ury.org.uk/schedule/shows/' . $this->getID();
   }
   
   /**
