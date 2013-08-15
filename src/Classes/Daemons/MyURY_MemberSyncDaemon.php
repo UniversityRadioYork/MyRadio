@@ -14,8 +14,17 @@ class MyURY_MemberSyncDaemon extends MyURY_Daemon {
     $members = CoreUtils::callYUSU('ListMembers');
     
     foreach ($members as $member) {
-      dlog('Checking YUSU Member '.$member['name'], 4);
+      dlog('Checking YUSU Member '.$member['EmailAddress'], 4);
       print_r($member);
+      $result = User::findByEmail($member['EmailAddress']);
+      
+      if (empty($result)) {
+        dlog('Member '.$member['EmailAddress'].' does not exist.', 3);
+      } else {
+        dlog('Member '.$member['EmailAddress'].' matches '.$result->getID().'.', 3);
+        dlog('Setting '.$result->getID().' payment to '.(float)$member['Paid'].'.');
+        $result->setPayment($member['Paid']);
+      }
     }
     
     //Done
