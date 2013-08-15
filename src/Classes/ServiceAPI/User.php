@@ -1109,23 +1109,25 @@ class User extends ServiceAPI {
   }
 
   /**
-   * Create a new User, returning the user.
+   * Create a new User, returning the user. At least one of Email OR eduroam
+   * must be filled in. Password will be generated automatically and emailed to
+   * the user.
    * 
-   * At least one of Email OR eduroam must be filled in. Password will be generated
-   * automatically and emailed to the user.
-   * 
-   * @param array $params As follows:<br>
-   * collegeid: Optional. College ID of the member. Default 10 (Unknown).<br>
-   * eduroam: Optional. User's @york.ac.uk email address, if they have one.<br>
-   * email: Optional. The User's email address. If not set, eduroam is used.<br>
-   * fname: Required. The User's first name.<br>
-   * phone: Optional. The User's phone number.<br>
-   * receive_email: Optional. Default true. Whether or not the user will receive emails<br>
-   * sex: Required. 'm' Male, 'f' Female or 'o' Other.<br>
-   * sname: Required. The User's last name.<br>
-   * paid: Optional. How much the user has paid for the current membership year. Default 0.00.
+   * @param string $fname The User's first name.
+   * @param string $sname The User's last name.
+   * @param string $eduroam The User's @york.ac.uk address.
+   * @param char $sex The User's gender.
+   * @param int $collegeid The User's college.
+   * @param string $email The User's non @york.ac.uk address.
+   * @param string $phone The User's phone number.
+   * @param bool $receive_email Whether the User should receive emails.
+   * @param float $paid How much the User has paid this Membership Year
+   * @return User
+   * @throws MyURYException
    */
-  public static function create($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00) {
+  public static function create($fname, $sname, $eduroam = null, $sex = 'o',
+          $collegeid = null, $email = null, $phone = null,
+          $receive_email = true, $paid = 0.00) {
     CoreUtils::requirePermission(AUTH_ADDMEMBER);
     //Validate input
     if (empty($collegeid)) {
