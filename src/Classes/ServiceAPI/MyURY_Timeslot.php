@@ -50,10 +50,15 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
     self::initDB();
 
     //Get the basic info about the season
-    $result = self::$db->fetch_one('SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid,
-      (SELECT array(SELECT metadata_key_id FROM schedule.timeslot_metadata WHERE show_season_timeslot_id=$1 AND effective_from <= NOW()
+    $result = self::$db->fetch_one('SELECT show_season_timeslot_id,
+      show_season_id, start_time, duration, memberid,
+      (SELECT array(SELECT metadata_key_id FROM schedule.timeslot_metadata
+        WHERE show_season_timeslot_id=$1 AND effective_from <= NOW() AND
+          (effective_to IS NULL OR effective_to >= NOW())
         ORDER BY effective_from, show_season_timeslot_id)) AS metadata_types,
-      (SELECT array(SELECT metadata_value FROM schedule.timeslot_metadata WHERE show_season_timeslot_id=$1 AND effective_from <= NOW()
+      (SELECT array(SELECT metadata_value FROM schedule.timeslot_metadata
+        WHERE show_season_timeslot_id=$1 AND effective_from <= NOW() AND
+          (effective_to IS NULL OR effective_to >= NOW())
         ORDER BY effective_from, show_season_timeslot_id)) AS metadata,
       (SELECT COUNT(*) FROM schedule.show_season_timeslot
         WHERE show_season_id=(SELECT show_season_id FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1)

@@ -48,20 +48,29 @@ class MyURY_Show extends MyURY_Metadata_Common {
     self::initDB();
 
     $result = self::$db->fetch_one('SELECT show_type_id, submitted, memberid,
-      (SELECT array(SELECT metadata_key_id FROM schedule.show_metadata WHERE show_id=$1 AND effective_from <= NOW()
+      (SELECT array(SELECT metadata_key_id FROM schedule.show_metadata
+        WHERE show_id=$1 AND effective_from <= NOW() AND
+          (effective_to IS NULL OR effective_to >= NOW())
         ORDER BY effective_from, show_metadata_id)) AS metadata_types,
-      (SELECT array(SELECT metadata_value FROM schedule.show_metadata WHERE show_id=$1 AND effective_from <= NOW()
+      (SELECT array(SELECT metadata_value FROM schedule.show_metadata
+        WHERE show_id=$1 AND effective_from <= NOW() AND
+          (effective_to IS NULL OR effective_to >= NOW())
         ORDER BY effective_from, show_metadata_id)) AS metadata,
-      (SELECT array(SELECT metadata_value FROM schedule.show_image_metadata WHERE show_id=$1 AND effective_from <= NOW()
+      (SELECT array(SELECT metadata_value FROM schedule.show_image_metadata
+        WHERE show_id=$1 AND effective_from <= NOW() AND
+          (effective_to IS NULL OR effective_to >= NOW())
         ORDER BY effective_from, show_image_metadata_id)) AS image_metadata,
       (SELECT array(SELECT credit_type_id FROM schedule.show_credit
-         WHERE show_id=$1 AND effective_from <= NOW() AND (effective_to IS NULL OR effective_to >= NOW()) AND approvedid IS NOT NULL
+         WHERE show_id=$1 AND effective_from <= NOW() AND
+           (effective_to IS NULL OR effective_to >= NOW()) AND approvedid IS NOT NULL
          ORDER BY show_credit_id)) AS credit_types,
       (SELECT array(SELECT creditid FROM schedule.show_credit
-         WHERE show_id=$1 AND effective_from <= NOW() AND (effective_to IS NULL OR effective_to >= NOW()) AND approvedid IS NOT NULL
+         WHERE show_id=$1 AND effective_from <= NOW() AND
+           (effective_to IS NULL OR effective_to >= NOW()) AND approvedid IS NOT NULL
          ORDER BY show_credit_id)) AS credits,
       (SELECT array(SELECT genre_id FROM schedule.show_genre
-         WHERE show_id=$1 AND effective_from <= NOW() AND (effective_to IS NULL OR effective_to >= NOW()) AND approvedid IS NOT NULL
+         WHERE show_id=$1 AND effective_from <= NOW() AND
+           (effective_to IS NULL OR effective_to >= NOW()) AND approvedid IS NOT NULL
          ORDER BY show_genre_id)) AS genres
       FROM schedule.show WHERE show_id=$1', array($show_id));
 
