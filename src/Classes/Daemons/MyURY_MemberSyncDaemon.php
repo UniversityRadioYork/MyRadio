@@ -22,7 +22,7 @@ class MyURY_MemberSyncDaemon extends MyURY_Daemon {
         dlog('Member '.$member['EmailAddress'].' does not exist.', 3);
       } else {
         dlog('Member '.$member['EmailAddress'].' matches '.$result->getID().'.', 3);
-        dlog('Setting '.$result->getID().' payment to '.(float)$member['Paid'].'.');
+        dlog('Setting '.$result->getID().' payment to '.(float)$member['Paid'].'.', 2);
         $result->setPayment($member['Paid']);
       }
     }
