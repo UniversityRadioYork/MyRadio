@@ -876,6 +876,34 @@ class User extends ServiceAPI {
     $this->setCommonParam('bio', $bio);
     return $this;
   }
+  
+  public function setPayment($amount, $year = null) {
+    if ($year === null) {
+      $year = CoreUtils::getAcademicYear();
+    }
+    
+    foreach ($this->payment as $k=>$v) {
+      if ($v['year'] == $year && $v['paid'] == $amount) {
+        //No change.
+        return;
+      } else {
+        //Change payment.
+        self::$db->query('UPDATE member_year SET paid=$1'
+                . ' WHERE year=$2 AND memberid=$3',
+                [(float)$amount, $year, $this->getID()]);
+        $this->payment[$k]['paid'] = $amount;
+        $this->updateCacheObject();
+        return;
+      }
+    }
+    
+    //Not a member this year
+    self::$db->query('INSERT INTO member_year (paid, year, memberid)'
+            . ' VALUES ($1, $2, $3)', [(float)$amount, $year, $this->getID()]);
+    $this->payment[] = ['year' => $year, 'amount' => (float)$amount];
+    $this->updateCacheObject();
+    return;
+  }
 
   /**
    * Searched for the user with the given email address, returning the User if they exist, or null if it fails.
@@ -883,17 +911,19 @@ class User extends ServiceAPI {
    * @return null|User
    */
   public static function findByEmail($email) {
-    if (empty($email))
+    if (empty($email)) {
       return null;
+    }
     self::wakeup();
 
     $result = self::$db->fetch_column('SELECT memberid FROM public.member WHERE email ILIKE $1 OR eduroam ILIKE $1
       OR local_name ILIKE $2 OR local_alias ILIKE $2 OR eduroam ILIKE $2', array($email, explode('@', $email)[0]));
 
-    if (empty($result))
+    if (empty($result)) {
       return null;
-    else
+    } else {
       return self::getInstance($result[0]);
+    }
   }
 
   /**
