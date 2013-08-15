@@ -1209,7 +1209,7 @@ straight after so you can see us in action!</p>
 
 <ul>
   <li><a href="https://www.facebook.com/events/591841944201277/">
-    7pm Tuesday Week 2 (8th October), P/L/001 (Vanbrugh College)</a>, followed
+    7pm Tuesday Week 2 (8th October), P/L/001 (Physics)</a>, followed
     by a live session show broadcast in The Courtyard.</li>
   <li><a href="https://www.facebook.com/events/180389522143233/">
     7pm Wednesday Week 2 (9th October), RCH/037 (Heslington East)</a>, followed
