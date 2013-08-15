@@ -217,5 +217,28 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
     
     return $data;
   }
+  
+  /**
+   * Sets a metadata key to the specified value.
+   * 
+   * If any value is the same as an existing one, no action will be taken.
+   * If the given key has is_multiple, then the value will be added as a new, additional key.
+   * If the key does not have is_multiple, then any existing values will have effective_to
+   * set to the effective_from of this value, effectively replacing the existing value.
+   * This will *not* unset is_multiple values that are not in the new set.
+   * 
+   * @param String $string_key The metadata key
+   * @param mixed $value The metadata value. If key is_multiple and value is an array, will create instance
+   * for value in the array.
+   * @param int $effective_from UTC Time the metavalue is effective from. Default now.
+   * @param int $effective_to UTC Time the metadata value is effective to. Default NULL (does not expire).
+   * @param null $table Used for compatibility with parent.
+   * @param null $pkey Used for compatibility with parent.
+   */
+  public function setMeta($string_key, $value, $effective_from = null,
+          $effective_to = null, $table = null, $pkey = null) {
+    parent::setMeta($string_key, $value, $effective_from, $effective_to,
+            'uryplayer.podcast_metadata', 'podcast_id');
+  }
 
 }

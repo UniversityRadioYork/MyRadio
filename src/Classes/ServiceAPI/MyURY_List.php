@@ -172,10 +172,13 @@ class MyURY_List extends ServiceAPI {
    * @todo Auto-rebuild Exim routing after change
    */
   public function optin(User $user) {
-    if ($this->isMember($user))
+    if ($this->isMember($user)) {
       return false;
+    }
     
-    if (!$this->optin && !$this->hasOptedOutOfAuto($user)) return false;
+    if (!$this->optin && !$this->hasOptedOutOfAuto($user)) {
+      return false;
+    }
 
     if ($this->optin) {
       self::$db->query('INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)',
