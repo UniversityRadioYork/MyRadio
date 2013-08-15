@@ -1128,7 +1128,6 @@ class User extends ServiceAPI {
   public static function create($fname, $sname, $eduroam = null, $sex = 'o',
           $collegeid = null, $email = null, $phone = null,
           $receive_email = true, $paid = 0.00) {
-    CoreUtils::requirePermission(AUTH_ADDMEMBER);
     //Validate input
     if (empty($collegeid)) {
       $collegeid = Config::$default_college;
@@ -1143,6 +1142,10 @@ class User extends ServiceAPI {
     //Ensure the suffix is there
     if (!empty($eduroam) && !strstr($eduroam, '@')) {
       $eduroam .= '@york.ac.uk';
+    } elseif (!empty($eduroam)) {
+      if (strtolower(substr($eduroam, -11)) !== '@york.ac.uk') {
+        throw new MyURYException('An eduroam address must end with @york.ac.uk', 400);
+      }
     }
 
     if ($sex !== 'm' && $sex !== 'f' && $sex !== 'o') {
