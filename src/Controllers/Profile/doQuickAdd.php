@@ -7,6 +7,7 @@
  * @package MyURY_Profile
  */
 $params = User::getQuickAddForm()->readValues();
-$user = User::create($params);
+$user = User::create($params['fname'], $params['sname'], $params['eduroam'],
+            $params['sex'], $params['collegeid']);
 
 CoreUtils::backWithMessage('New Member has been created with ID '.$user->getID());

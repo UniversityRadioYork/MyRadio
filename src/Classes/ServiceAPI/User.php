@@ -143,7 +143,7 @@ class User extends ServiceAPI {
    * @var int
    */
   private $profile_photo;
-  
+
   /**
    * Stores a User's biography. HTML, so ensure you | raw if outputting!
    * @var String
@@ -288,7 +288,7 @@ class User extends ServiceAPI {
       return MyURY_UserTrainingStatus::resultSetToObjArray($this->training);
     }
   }
-  
+
   /**
    * Returns whether the User has paid the correct amount to be
    * a full member in the current year.
@@ -373,8 +373,7 @@ class User extends ServiceAPI {
    * @return string The User's email 
    */
   public function getEmail() {
-    return empty($this->email) ? $this->getEduroam().'@york.ac.uk'
-            : $this->email;
+    return empty($this->email) ? $this->getEduroam() . '@york.ac.uk' : $this->email;
   }
 
   /**
@@ -485,7 +484,7 @@ class User extends ServiceAPI {
   public function getURL() {
     return CoreUtils::makeURL('Profile', 'view', array('memberid' => $this->getID()));
   }
-  
+
   /**
    * Gets the User's bio
    * @return String
@@ -594,23 +593,23 @@ class User extends ServiceAPI {
    */
   public function getTimeline() {
     $events = array();
-    
+
     //Get Officership history
     foreach ($this->getOfficerships() as $officer) {
       $events[] = [
-          'message' => 'became '.$officer['officer_name'],
+          'message' => 'became ' . $officer['officer_name'],
           'timestamp' => strtotime($officer['from_date']),
           'photo' => Config::$photo_officership_get
       ];
       if ($officer['till_date'] != null) {
         $events[] = [
-            'message' => 'stepped down as '.$officer['officer_name'],
+            'message' => 'stepped down as ' . $officer['officer_name'],
             'timestamp' => strtotime($officer['till_date']),
             'photo' => Config::$photo_officership_down
         ];
       }
     }
-    
+
     foreach (MyURY_Show::getShowsAttachedToUser($this->getID()) as $show) {
       $credit = 'Owner';
       foreach ($show->getCreditsNames(true) as $c) {
@@ -620,16 +619,17 @@ class User extends ServiceAPI {
         }
       }
       foreach ($show->getAllSeasons() as $season) {
-        if (sizeof($season->getAllTimeslots()) === 0) continue;
+        if (sizeof($season->getAllTimeslots()) === 0)
+          continue;
         if ($season->getSeasonNumber() == 1) {
           $events[] = [
-              'message' => 'started a new Show as '.$credit.' of '.$season->getMeta('title'),
+              'message' => 'started a new Show as ' . $credit . ' of ' . $season->getMeta('title'),
               'timestamp' => strtotime($season->getAllTimeslots()[0]->getStartTime()),
               'photo' => $show->getShowPhoto()
           ];
         } else {
           $events[] = [
-              'message' => 'was '.$credit.' on Season '.$season->getSeasonNumber().' of '.$season->getMeta('title'),
+              'message' => 'was ' . $credit . ' on Season ' . $season->getSeasonNumber() . ' of ' . $season->getMeta('title'),
               'timestamp' => strtotime($season->getAllTimeslots()[0]->getStartTime()),
               'photo' => $show->getShowPhoto()
           ];
@@ -638,14 +638,14 @@ class User extends ServiceAPI {
     }
 
     //Get their officership history, show history and awards
-    /*$result = self::$db->fetch_all(
+    /* $result = self::$db->fetch_all(
       SELECT \'won an award: \' || name AS message, awarded AS timestamp,
-        \'photo_award_get\' AS photo
+      \'photo_award_get\' AS photo
       FROM myury.award_categories, myury.award_member
       WHERE myury.award_categories.awardid = myury.award_member.awardid
       AND memberid = $1
-      
-    }*/
+
+      } */
 
     //Get when they joined URY
     $events[] = array(
@@ -667,15 +667,17 @@ class User extends ServiceAPI {
     /**
      * You won't believe how annoying psql can be about '' already being used on a unique key.
      */
-    if ($value == '') $value = null;
+    if ($value == '')
+      $value = null;
     //Maps Class variable names to their database values, if they mismatch.
     $param_maps = ['collegeid' => 'college'];
 
     if (!property_exists($this, $paramName))
       throw new MyURYException('paramName invalid', 500);
-    
-    if ($this->$paramName == $value) return false;
-    
+
+    if ($this->$paramName == $value)
+      return false;
+
     $this->$paramName = $value;
 
     if (isset($param_maps[$paramName]))
@@ -863,10 +865,10 @@ class User extends ServiceAPI {
       . ' or more than one of these. Sorry.');
     }
     $this->setCommonParam('sex', $initial);
-    
+
     return $this;
   }
-  
+
   /**
    * Set the User's HTML biography.
    * @param String $bio
@@ -876,31 +878,30 @@ class User extends ServiceAPI {
     $this->setCommonParam('bio', $bio);
     return $this;
   }
-  
+
   public function setPayment($amount, $year = null) {
     if ($year === null) {
       $year = CoreUtils::getAcademicYear();
     }
-    
-    foreach ($this->payment as $k=>$v) {
+
+    foreach ($this->payment as $k => $v) {
       if ($v['year'] == $year && $v['paid'] == $amount) {
         //No change.
         return;
       } else {
         //Change payment.
         self::$db->query('UPDATE member_year SET paid=$1'
-                . ' WHERE year=$2 AND memberid=$3',
-                [(float)$amount, $year, $this->getID()]);
+                . ' WHERE year=$2 AND memberid=$3', [(float) $amount, $year, $this->getID()]);
         $this->payment[$k]['paid'] = $amount;
         $this->updateCacheObject();
         return;
       }
     }
-    
+
     //Not a member this year
     self::$db->query('INSERT INTO member_year (paid, year, memberid)'
-            . ' VALUES ($1, $2, $3)', [(float)$amount, $year, $this->getID()]);
-    $this->payment[] = ['year' => $year, 'amount' => (float)$amount];
+            . ' VALUES ($1, $2, $3)', [(float) $amount, $year, $this->getID()]);
+    $this->payment[] = ['year' => $year, 'amount' => (float) $amount];
     $this->updateCacheObject();
     return;
   }
@@ -982,8 +983,9 @@ class User extends ServiceAPI {
     $members = array();
     foreach ($trained as $mid) {
       $member = User::getInstance($mid);
-      if ($member->isTrainer())
+      if ($member->isTrainer()) {
         $members[] = $member;
+      }
     }
 
     return $members;
@@ -1123,60 +1125,37 @@ class User extends ServiceAPI {
    * sname: Required. The User's last name.<br>
    * paid: Optional. How much the user has paid for the current membership year. Default 0.00.
    */
-  public static function create($params) {
+  public static function create($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00) {
     CoreUtils::requirePermission(AUTH_ADDMEMBER);
     //Validate input
-    if (empty($params['collegeid'])) {
-      $params['collegeid'] = Config::$default_college;
-    } elseif (!is_numeric($params['collegeid'])) {
+    if (empty($collegeid)) {
+      $collegeid = Config::$default_college;
+    } elseif (!is_numeric($collegeid)) {
       throw new MyURYException('Invalid College ID!', 400);
     }
 
-    if (empty($params['eduroam']) && empty($params['email'])) {
+    if (empty($eduroam) && empty($email)) {
       throw new MyURYException('At least one of eduroam or email must be provided.', 400);
-    } elseif (empty($params['email'])) {
-      $params['email'] = null;
-    } elseif (empty($params['eduroam'])) {
-      $params['eduroam'] = null;
     }
 
     //Ensure the suffix is there
-    if (!empty($params['eduroam']) && !strstr($params['eduroam'], '@')) {
-      $params['eduroam'] = $params['eduroam'] . '@york.ac.uk';
+    if (!empty($eduroam) && !strstr($eduroam, '@')) {
+      $eduroam .= '@york.ac.uk';
     }
 
-    if (empty($params['fname'])) {
-      throw new MyURYException('User must have a first name!', 400);
-    }
-
-    if (empty($params['phone'])) {
-      $params['phone'] = null;
-    }
-
-    if (empty($params['receive_email'])) {
-      $params['receive_email'] = true;
-    }
-
-    if (empty($params['sex'])) {
-      throw new MyURYException('User must have a gender!');
-    } elseif ($params['sex'] !== 'm' && $params['sex'] !== 'f' && $params['sex'] !== 'o') {
+    if ($sex !== 'm' && $sex !== 'f' && $sex !== 'o') {
       throw new MyURYException('User gender must be m, f or o!', 400);
     }
 
-    if (empty($params['sname'])) {
-      throw new MyURYException('User must have a last name!', 400);
-    }
-
-    if (empty($params['paid'])) {
-      $params['paid'] = 0.00;
-    } elseif (!is_numeric($params['paid'])) {
+    if (!is_numeric($paid)) {
       throw new MyURYException('Invalid payment amount!', 400);
     }
 
     //Check if it looks like the user might already exist
-    if (User::findByEmail($params['eduroam']) !== null or
-            User::findByEmail($params['email']) !== null) {
-      throw new MyURYException('This user already appears to exist. Their eduroam or email is already used.');
+    if (User::findByEmail($eduroam) !== null or
+            User::findByEmail($email) !== null) {
+      throw new MyURYException('This User already appears to exist. '
+      . 'Their eduroam or email is already used.');
     }
 
     //This next comment explains that password generation is not done in MyURY itself, but an external library.
@@ -1188,20 +1167,20 @@ class User extends ServiceAPI {
       college, phone, email, receive_email, eduroam, require_password_change)
       VALUES
       ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid', array(
-        $params['fname'],
-        $params['sname'],
-        $params['sex'],
-        $params['collegeid'],
-        $params['phone'],
-        $params['email'],
-        $params['receive_email'],
-        $params['eduroam'],
+        $fname,
+        $sname,
+        $sex,
+        $collegeid,
+        $phone,
+        $email,
+        $receive_email,
+        $eduroam,
         true
     ));
 
     $memberid = $r[0];
     //Activate the member's account for the current academic year
-    Shibbobleh_Utils::activateMemberThisYear($memberid, $params['paid']);
+    Shibbobleh_Utils::activateMemberThisYear($memberid, $paid);
     //Set the user's password
     Shibbobleh_Utils::setPassword($memberid, $plain_pass);
 
@@ -1210,10 +1189,9 @@ class User extends ServiceAPI {
      * @todo Make this easier to change
      * @todo Link to Facebook events
      */
-    $uname = empty($params['eduroam']) ? $params['email'] 
-            : str_replace('@york.ac.uk', '', $params['eduroam']);
+    $uname = empty($eduroam) ? $email : str_replace('@york.ac.uk', '', $eduroam);
     $welcome_email = <<<EOT
-<p>Hi {$params['fname']}!</p>
+<p>Hi {$fname}!</p>
 
 <p>Thanks for showing an interest in URY, your official student radio station.</p>
 
@@ -1273,8 +1251,8 @@ EOT;
 
     //Send the email
     MyURYEmail::create(array('members' => array(User::getInstance($memberid))),
-            'Welcome to URY - Getting Involved and Your Account',
-            $welcome_email, User::getInstance(7449));
+            'Welcome to URY - Getting Involved and Your Account', $welcome_email,
+            User::getInstance(7449));
 
     return User::getInstance($memberid);
   }
