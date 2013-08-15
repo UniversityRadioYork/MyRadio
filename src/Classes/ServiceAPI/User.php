@@ -1208,12 +1208,12 @@ all the things we do and how you can join in. We've also got a live event
 straight after so you can see us in action!</p>
 
 <ul>
-  <li><a href="https://www.facebook.com/events/180389522143233/">
-    7pm Tuesday Week 2 (8th October), RCH/037 (Heslington East)</a>, followed by
-    a live panel show broadcast in The Glasshouse.</li>
   <li><a href="https://www.facebook.com/events/591841944201277/">
-    7pm Thursday Week 2 (10th October), V/045 (Vanbrugh College)</a>, followed
+    7pm Tuesday Week 2 (8th October), P/L/001 (Vanbrugh College)</a>, followed
     by a live session show broadcast in The Courtyard.</li>
+  <li><a href="https://www.facebook.com/events/180389522143233/">
+    7pm Wednesday Week 2 (9th October), RCH/037 (Heslington East)</a>, followed
+    by a live panel show broadcast in The Glasshouse.</li>
 </ul>
 
 <p>We'll also be giving away free entry, queue jumps and a bottle of champagne
