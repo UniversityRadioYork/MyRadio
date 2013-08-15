@@ -52,12 +52,16 @@ class MyURY_Season extends MyURY_Metadata_Common {
 
     //Get the basic info about the season
     $result = self::$db->fetch_one('SELECT show_id, termid, submitted, memberid,
-      (SELECT array(SELECT metadata_key_id FROM schedule.season_metadata WHERE show_season_id=$1 AND effective_from <= NOW()
+      (SELECT array(SELECT metadata_key_id FROM schedule.season_metadata
+        WHERE show_season_id=$1 AND effective_from <= NOW() AND
+          (effective_to IS NULL OR effective_to >= NOW())
         ORDER BY effective_from, season_metadata_id)) AS metadata_types,
-      (SELECT array(SELECT metadata_value FROM schedule.season_metadata WHERE show_season_id=$1 AND effective_from <= NOW()
+      (SELECT array(SELECT metadata_value FROM schedule.season_metadata
+        WHERE show_season_id=$1 AND effective_from <= NOW() AND
+          (effective_to IS NULL OR effective_to >= NOW())
         ORDER BY effective_from, season_metadata_id)) AS metadata,
-      (SELECT array(SELECT requested_day FROM schedule.show_season_requested_time WHERE show_season_id=$1
-        ORDER BY preference ASC)) AS requested_days,
+      (SELECT array(SELECT requested_day FROM schedule.show_season_requested_time
+        WHERE show_season_id=$1 ORDER BY preference ASC)) AS requested_days,
       (SELECT array(SELECT start_time FROM schedule.show_season_requested_time WHERE show_season_id=$1
         ORDER BY preference ASC)) AS requested_start_times,
       (SELECT array(SELECT duration FROM schedule.show_season_requested_time WHERE show_season_id=$1
