@@ -31,8 +31,9 @@ window.MyURYForm = {
       };
 
       //If there's an existing value, load it in
-      console.log($('#' + $(this).attr('id').replace(/-ui$/, '')).val());
-      if ($('#' + $(this).attr('id').replace(/-ui$/, '')).val() != '') {
+      val = $('#' + $(this).attr('id').replace(/-ui$/, '')).val();
+      console.log(val);
+      if (typeof val != 'undefined' && val != '') {
         $.ajax({
           url: myury.makeURL('MyURY', 'a-membernamefromid'),
           data: {term: $('#' + $(this).attr('id').replace(/-ui$/, '')).val()},
@@ -203,7 +204,7 @@ window.MyURYForm = {
         MyURYForm.gCheckedValue = null;
       })
   },
-  init: function() {
+  setUpTinyMCEFields: function() {
     /**
      * Initialises TinyMCE fields
      */
@@ -219,6 +220,8 @@ window.MyURYForm = {
         dateFormat: "dd/mm/yy"
       });
     }
+  },
+  setUpDateTimePickerFields: function() {
     /**
      * Initialises the Datetime pickers where necessary
      * @todo Make stepminute customisable?
@@ -228,13 +231,8 @@ window.MyURYForm = {
       timeFormat: "hh:mm:ss",
       stepMinute: 15
     });
-    MyURYForm.setUpTimePickers();
-    MyURYForm.setUpMemberFields();
-    MyURYForm.setUpTrackFields();
-    MyURYForm.setUpArtistFields();
-    MyURYForm.setUpAlbumFields();
-    MyURYForm.setUpWeekSelectFields();
-
+  },
+  setUpCheckboxGroups: function() {
     /**
      * Setup Checkbox Group select all / select none
      */
@@ -248,40 +246,8 @@ window.MyURYForm = {
         $(this).attr('checked', null);
       });
     });
-
-    MyURYForm.validate();
-
-    /**
-     * Repeating elements
-     */
-    $('div.formfield-add-link a').click(function() {
-
-      var origid = $(this).attr('id').replace(/-repeater$/, '');
-      var newid = origid + $('#' + origid + '-counter').val();
-      $('#' + origid + '-counter').val(parseInt($('#' + origid + '-counter').val()) + 1);
-
-      var origobj = $('#' + origid).clone().attr('id', newid).val('');
-
-      if (!$(origobj).parent('div').hasClass('nobr'))
-        origobj.append('<br>');
-
-      $(origobj).addClass('repeatedfield').removeClass('required').removeClass('hasDatepicker').insertBefore($(this).parent());
-
-      //For autocomplete fields, they have a ui field which is what is very visible. This needs cloning and setting up
-      var autocomplete = $('#' + origid + '-ui').clone().attr('id', newid + '-ui').val('').insertBefore($(this).parent());
-
-      if (!$(origobj).parent('div').hasClass('nobr'))
-        $('<br>').insertBefore($(this).parent());
-
-      if ($(autocomplete).hasClass('member-autocomplete')) {
-        MyURYForm.setUpMemberFields();
-      }
-
-      if ($('#' + newid).hasClass('time')) {
-        MyURYForm.setUpTimePickers();
-      }
-    });
-
+  },
+  setUpRepeatingSets: function() {
     //Set up tabular repeating sets
     $('.myury-form-add-row-button').on('click', function() {
       var new_id = $(this).attr('nextvalue');
@@ -313,6 +279,42 @@ window.MyURYForm = {
       bFilter: false
     }
     );
+  },
+  setUpFileProgress: function() {
+    /**
+     * Sets up the progress bar for file upload progress
+     */
+    if ($('.myuryfrm-file-upload-progress').length !== 0) {
+      $('form').on('submit', function() {
+        $('.myuryfrm-file-upload-progress').progressbar({value:false});
+        //Poke the server for upload progress status
+        setInterval(MyURYForm.pollFileProgress, 2500);
+      });
+    }
+  },
+  pollFileProgress: function() {
+    $.ajax({
+      url: myury.makeURL('MyURY', 'a-getuploadprogress', {
+        id: $('#APC_UPLOAD_PROGRESS').val()
+      }),
+      success: function(data) {
+        console.log(data);
+      }
+    });
+  },
+  init: function() {
+    MyURYForm.setUpRepeatingSets();
+    MyURYForm.setUpTinyMCEFields();
+    MyURYForm.setUpDateTimePickerFields();
+    MyURYForm.setUpTimePickers();
+    MyURYForm.setUpMemberFields();
+    MyURYForm.setUpTrackFields();
+    MyURYForm.setUpArtistFields();
+    MyURYForm.setUpAlbumFields();
+    MyURYForm.setUpWeekSelectFields();
+    MyURYForm.setUpCheckboxGroups();
+    MyURYForm.setUpFileProgress();
+    MyURYForm.validate();
   }
 };
 

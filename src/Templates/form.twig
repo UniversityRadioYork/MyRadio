@@ -9,6 +9,7 @@
 {% endblock %}
 {% block stripecontent %}
 {% set myury_form_section_exists = false %}
+{% set myury_form_file_progress = false %}
 <fieldset class="{{frm_classes}}">
   <form action="{{frm_action | raw}}" method="{{frm_method}}" name="{{frm_name}}" id="{{frm_name}}" enctype="multipart/form-data">
     {% for field in frm_fields %}
@@ -23,5 +24,8 @@
       {% endif %}
         <input type="submit" id="{{frm_name}}-submit" value="Submit" />
       </form>
+{% if myury_form_file_progress %}
+  <div class="myuryfrm-file-upload-progress"></div>
+{% endif %}
     </fieldset>
 {% endblock %}
