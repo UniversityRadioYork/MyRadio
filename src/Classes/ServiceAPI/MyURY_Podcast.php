@@ -11,7 +11,7 @@
  * Reminder: Podcasts may not include any copyrighted content. This includes
  * all songs and *beds*.
  * 
- * @version 20130814
+ * @version 20130815
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Podcast
  * @uses \Database
@@ -53,13 +53,13 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
    * @var int
    */
   private $approvedid;
-  
+
   /**
    * Array of Users and their relation to the Podcast.
    * @var Array
    */
   protected $credits = array();
-  
+
   /**
    * The ID of the show this is linked to, if any.
    * @var int
@@ -90,7 +90,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
    * @param String $key
    */
   private function __construct($podcast_id) {
-    $this->podcast_id = (int)$podcast_id;
+    $this->podcast_id = (int) $podcast_id;
 
     $result = self::$db->fetch_one('SELECT file, memberid, approvedid, submitted,
       show_id,
@@ -125,7 +125,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
     $this->memberid = (int) $result['memberid'];
     $this->approvedid = (int) $result['approvedid'];
     $this->submitted = strtotime($result['submitted']);
-    $this->show_id = (int)$result['show_id'];
+    $this->show_id = (int) $result['show_id'];
 
     //Deal with the Credits arrays
     $credit_types = self::$db->decodeArray($result['credit_types']);
@@ -169,12 +169,43 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
       WHERE memberid=$1 OR podcast_id IN
         (SELECT podcast_id FROM uryplayer.podcast_credit
           WHERE creditid=$1 AND effective_from <= NOW() AND
-          (effective_to >= NOW() OR effective_to IS NULL))',
-          [$user->getID()]);
+          (effective_to >= NOW() OR effective_to IS NULL))', [$user->getID()]);
 
     return self::resultSetToObjArray($r);
   }
-  
+
+  public static function getCreateForm() {
+    return (new MyURYForm('createpodcast', 'Podcast', 'doCreatePodcast'))
+            ->addField(new MyURYFormField('title', MyURYFormField::TYPE_TEXT, [
+                'label' => 'Title'
+            ]))->addField(new MyURYFormField('description', MyURYFormField::TYPE_BLOCKTEXT, [
+                'label' => 'Description'
+            ]))->addField(new MyURYFormField('tags', MyURYFormField::TYPE_TEXT, [
+                'label' => 'Tags',
+                'explanation' => 'A set of keywords to describe your show '
+                . 'generally, seperated with spaces.'
+            ]))->addField(new MyURYFormField('credits', MyURYFormField::TYPE_TABULARSET, [
+                'label' => 'Credits', 'options' => [
+                    new MyURYFormField('member', MyURYFormField::TYPE_MEMBER, [
+                        'explanation' => '',
+                        'label' => 'Person'
+                            ]),
+                    new MyURYFormField('credittype', MyURYFormField::TYPE_SELECT, [
+                        'options' => array_merge([['text' => 'Please select...',
+                        'disabled' => true]], MyURY_Scheduler::getCreditTypes()),
+                        'explanation' => '',
+                        'label' => 'Role'
+              ])]]))->addField(new MyURYFormField('file', MyURYFormField::TYPE_FILE, [
+                'label' => 'Audio',
+                'explanation' => 'Upload the original, high-quality audio for'
+                  . ' this podcast. We\'ll publish a version optimised for the web'
+                  . ' and archive the original. Max size 500MB.'
+            ]))->addField(new MyURYFormField('terms', MyURYFormField::TYPE_CHECK, [
+                'label' => 'I have read and confirm that this audio file complies'
+                . ' with URY\'s Podcasting Policy.'
+            ]));
+  }
+
   /**
    * Get the Podcast ID
    * @return int
@@ -182,7 +213,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
   public function getID() {
     return $this->podcast_id;
   }
-  
+
   public function getShow() {
     if (!empty($this->show_id)) {
       return MyURY_Show::getInstance($this->show_id);
@@ -190,7 +221,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
       return null;
     }
   }
-  
+
   /**
    * Get data in array format
    * @param boolean $full If true, returns more data.
@@ -205,19 +236,18 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
             'display' => 'icon',
             'value' => 'script',
             'title' => 'Edit Podcast',
-            'url' => CoreUtils::makeURL('Podcast', 'editPodcast', 
-                    array('podcastid' => $this->getID())))
+            'url' => CoreUtils::makeURL('Podcast', 'editPodcast', array('podcastid' => $this->getID())))
     );
-    
+
     if ($full) {
       $data['credits'] = implode(', ', $this->getCreditsNames(false));
       $data['show'] = $this->getShow() ?
               $this->getShow()->toDataSource(false) : null;
     }
-    
+
     return $data;
   }
-  
+
   /**
    * Sets a metadata key to the specified value.
    * 
@@ -235,10 +265,8 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
    * @param null $table Used for compatibility with parent.
    * @param null $pkey Used for compatibility with parent.
    */
-  public function setMeta($string_key, $value, $effective_from = null,
-          $effective_to = null, $table = null, $pkey = null) {
-    parent::setMeta($string_key, $value, $effective_from, $effective_to,
-            'uryplayer.podcast_metadata', 'podcast_id');
+  public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null) {
+    parent::setMeta($string_key, $value, $effective_from, $effective_to, 'uryplayer.podcast_metadata', 'podcast_id');
   }
 
 }
