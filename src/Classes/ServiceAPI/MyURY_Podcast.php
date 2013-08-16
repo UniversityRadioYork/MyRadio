@@ -203,7 +203,8 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
                 'options' => ['progress' => true]
             ]))->addField(new MyURYFormField('terms', MyURYFormField::TYPE_CHECK, [
                 'label' => 'I have read and confirm that this audio file complies'
-                . ' with URY\'s Podcasting Policy.'
+                . ' with <a href="/wiki/Podcasting_Policy" target="_blank">'
+                . 'URY\'s Podcasting Policy</a>.'
             ]));
   }
 
