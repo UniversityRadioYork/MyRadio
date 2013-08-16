@@ -6,4 +6,4 @@
  * @package MyURY_Podcast
  */
 
-MyURY_Podcast::getCreateForm()->render();
+$data = MyURY_Podcast::getCreateForm()->readValues();
