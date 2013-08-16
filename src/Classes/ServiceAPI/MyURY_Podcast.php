@@ -175,7 +175,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
   }
 
   public static function getCreateForm() {
-    return (new MyURYForm('createpodcast', 'Podcast', 'doCreatePodcast'))
+    return (new MyURYForm('Create Podcast', 'Podcast', 'doCreatePodcast'))
             ->addField(new MyURYFormField('title', MyURYFormField::TYPE_TEXT, [
                 'label' => 'Title'
             ]))->addField(new MyURYFormField('description', MyURYFormField::TYPE_BLOCKTEXT, [
