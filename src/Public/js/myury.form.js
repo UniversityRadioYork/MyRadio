@@ -202,7 +202,7 @@ window.MyURYForm = {
     $(document).on('mouseup', function(){
         //End the dragging event
         MyURYForm.gCheckedValue = null;
-      })
+      });
   },
   setUpTinyMCEFields: function() {
     /**
@@ -284,23 +284,35 @@ window.MyURYForm = {
     /**
      * Sets up the progress bar for file upload progress
      */
-    if ($('#APC_UPLOAD_PROGRESS').length !== 0) {
+    if ($('#UPLOAD_IDENTIFIER').length !== 0) {
       $('form').on('submit', function() {
         $('.myuryfrm-file-upload-progress').progressbar({value:false});
         //Poke the server for upload progress status
         setInterval(MyURYForm.pollFileProgress, 2500);
       });
+      
+      $('#myuryfrm-file-upload-iframe').on('load', function() {
+        //data = $.parseJSON($(this).contents());
+        data = $.parseJSON($($(this).contents().find('body').children()[0]).html());
+        console.log(data);
+        percent = data['bytes_uploaded']/data['bytes_total']*100;
+        $('.myuryfrm-file-upload-progress').progressbar('value', percent);
+        
+        $('.progress-label').html(Math.floor(percent)+'% ('+
+                Math.floor(data['speed_average']/1024)+'Kbps)');
+      });
     }
   },
   pollFileProgress: function() {
-    $.ajax({
-      url: myury.makeURL('MyURY', 'a-getuploadprogress', {
-        id: $('#APC_UPLOAD_PROGRESS').val()
-      }),
-      success: function(data) {
-        console.log(data);
-      }
-    });
+    /**
+     * You could ask "Why not use $.ajax?" Well the answer is that WebKit
+     * won't let you start a new XHR once the form is submitted. YAAY iFrames!
+     */
+    $('#myuryfrm-file-upload-iframe').attr('src',
+     myury.makeURL('MyURY', 'a-getuploadprogress', {
+        id: $('#UPLOAD_IDENTIFIER').val(),
+        1: (new Date).getTime()
+      }));
   },
   init: function() {
     MyURYForm.setUpRepeatingSets();
