@@ -24,6 +24,7 @@
       {% endif %}
         <input type="submit" id="{{frm_name}}-submit" value="Submit" />
       </form>
-      <div class="myuryfrm-file-upload-progress"></div>
+      <div class="myuryfrm-file-upload-progress"><div class="progress-label">Starting Upload...</div></div>
+      <iframe class="ui-helper-hidden" id="myuryfrm-file-upload-iframe"></iframe>
     </fieldset>
 {% endblock %}
