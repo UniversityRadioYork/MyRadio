@@ -201,7 +201,10 @@ class MyURYFormField {
   /**
    * The constant used to specify this MyURYFormField should be a file upload.
    * 
-   * This MyURYFormField type does not support any Custom Options
+   * The file field takes the following custom options:
+   * 
+   * progress: If true, will display an upload progress bar.
+   * 
    */
   const TYPE_FILE = 0x12;
   /**
@@ -426,8 +429,9 @@ class MyURYFormField {
     
     if ($this->type === MyURYFormField::TYPE_ARTIST) {
       $options['artistname'] = $this->value;
-    }
-    elseif (($this->type === MyURYFormField::TYPE_TRACK) && !empty($this->value)) {
+    } elseif ($this->type === MyURYFormField::TYPE_FILE) {
+      $options['progress_id'] = uniqid();
+    } elseif (($this->type === MyURYFormField::TYPE_TRACK) && !empty($this->value)) {
       if (is_array($this->value)) { //Deal with TABULARSETs
         foreach ($this->value as $k => $v) {
           if (empty($v)) {
