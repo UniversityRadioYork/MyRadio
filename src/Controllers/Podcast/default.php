@@ -10,5 +10,6 @@ CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.datatable.default')
         ->addVariable('title', 'My Podcasts')
         ->addVariable('tabledata', 
-                ServiceAPI::setToDataSource(MyURY_Podcast::getPodcastsAttachedToUser()))
+                ServiceAPI::setToDataSource(
+                        MyURY_Podcast::getPodcastsAttachedToUser(), false))
         ->render();
