@@ -199,7 +199,8 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
                 'label' => 'Audio',
                 'explanation' => 'Upload the original, high-quality audio for'
                   . ' this podcast. We\'ll publish a version optimised for the web'
-                  . ' and archive the original. Max size 500MB.'
+                  . ' and archive the original. Max size 500MB.',
+                'options' => ['progress' => true]
             ]))->addField(new MyURYFormField('terms', MyURYFormField::TYPE_CHECK, [
                 'label' => 'I have read and confirm that this audio file complies'
                 . ' with URY\'s Podcasting Policy.'

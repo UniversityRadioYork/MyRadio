@@ -164,7 +164,7 @@ window.MyURYForm = {
         error.addClass('label-nofloat').appendTo(element.parent('div'));
       },
       submitHandler: function(form) {
-        form.children('input[type=submit]').attr('disabled', 'disabled');
+        $(form).children('input[type=submit]').attr('disabled', 'disabled');
         form.submit();
       }
     });
@@ -284,7 +284,7 @@ window.MyURYForm = {
     /**
      * Sets up the progress bar for file upload progress
      */
-    if ($('.myuryfrm-file-upload-progress').length !== 0) {
+    if ($('#APC_UPLOAD_PROGRESS').length !== 0) {
       $('form').on('submit', function() {
         $('.myuryfrm-file-upload-progress').progressbar({value:false});
         //Poke the server for upload progress status
