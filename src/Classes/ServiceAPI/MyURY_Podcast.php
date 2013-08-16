@@ -175,7 +175,8 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
   }
 
   public static function getCreateForm() {
-    $form = (new MyURYForm('Create Podcast', 'Podcast', 'doCreatePodcast'))
+    $form = (new MyURYForm('createpodcastfrm', 'Podcast', 'doCreatePodcast',
+            ['title' => 'Create Podcast']))
             ->addField(new MyURYFormField('title', MyURYFormField::TYPE_TEXT, [
                 'label' => 'Title'
             ]))->addField(new MyURYFormField('description', MyURYFormField::TYPE_BLOCKTEXT, [
@@ -229,6 +230,38 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
     
     return $form;
   }
+  
+  /**
+   * Create a new Podcast
+   * @param String $title The Podcast's title
+   * @param String $description The Podcast's description
+   * @param Array $tags An array of String tags
+   * @param String $file The local filesystem path to the Podcast file
+   * @param MyURY_Show $show The show to attach the Podcast to
+   * @param Array $credits Credit data. Format compatible with a credit
+   * TABULARSET (see Scheduler)
+   */
+  public static function create($title, $description, $tags, $file,
+          MyURY_Show $show = null, $credits = null) {
+    
+    //Get an ID for the new Podcast
+    $id = (int)self::$db->fetch_column('INSERT INTO uryplayer.podcast '
+            . '(memberid, approvedid, submitted) VALUES ($1, $1, NULL) '
+            . 'RETURNING podcast_id', [User::getInstance()->getID()])[0];
+    
+    $podcast = self::getInstance($id);
+    
+    $podcast->setMeta('title', $title);
+    $podcast->setMeta('description', $description);
+    $podcast->setMeta('tags', $tags);
+    $podcast->setCredits($credits['member'], $credits['credittype']);
+    if (!empty($show)) {
+      $podcast->setShow($show);
+    }
+    
+    //Ship the file off to the archive location to be converted
+    move_uploaded_file($file, Config::$podcast_archive_path.'/'.$id.'.orig');
+  }
 
   /**
    * Get the Podcast ID
@@ -238,12 +271,35 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
     return $this->podcast_id;
   }
 
+  /**
+   * Get the Show this Podcast is linked to, if there is one.
+   * @return MyURY_Show
+   */
   public function getShow() {
     if (!empty($this->show_id)) {
       return MyURY_Show::getInstance($this->show_id);
     } else {
       return null;
     }
+  }
+  
+  /**
+   * Set the Show this Podcast is linked to. If null, removes any link.
+   * @param MyURY_Show $show
+   */
+  public function setShow(MyURY_Show $show) {
+    self::$db->query('DELETE FROM schedule.show_podcast_link '
+            . 'WHERE podcastid=$1', [$this->getID()]);
+    
+    if (!empty($show)) {
+      self::$db->query('INSERT INTO schedule.show_podcast_link '
+              . '(show_id, podcast_id) VALUES ($1, $2)',
+              [$show->getID(), $this->getID()]);
+      $this->show_id = $show->getID();
+    } else {
+      $this->show_id = null;
+    }
+    
   }
 
   /**
@@ -291,6 +347,19 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
    */
   public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null) {
     parent::setMeta($string_key, $value, $effective_from, $effective_to, 'uryplayer.podcast_metadata', 'podcast_id');
+  }
+  
+  /**
+   * Updates the list of Credits.
+   * 
+   * Existing credits are kept active, ones that are not in the new list are set to effective_to now,
+   * and ones that are in the new list but not exist are created with effective_from now.
+   * 
+   * @param User[] $users An array of Users associated.
+   * @param int[] $credittypes The relevant credittypeid for each User.
+   */
+  public function setCredits($users, $credittypes, $table = null) {
+    parent::setCredits($users, $credittypes, 'schedule.show_credit');
   }
 
 }

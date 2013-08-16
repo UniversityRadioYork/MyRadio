@@ -23,6 +23,7 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
 
   protected static $metadata_keys = array();
   protected $metadata;
+  protected $credits;
   protected static $credit_names;
 
   /**
@@ -323,6 +324,66 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
   public function getMeta($meta_string) {
     return isset($this->metadata[self::getMetadataKey($meta_string)]) ?
       $this->metadata[self::getMetadataKey($meta_string)] : null;
+  }
+  
+  /**
+   * Updates the list of Credits.
+   * 
+   * Existing credits are kept active, ones that are not in the new list are set to effective_to now,
+   * and ones that are in the new list but not exist are created with effective_from now.
+   * 
+   * @param User[] $users An array of Users associated.
+   * @param int[] $credittypes The relevant credittypeid for each User.
+   */
+  public function setCredits($users, $credittypes, $table) {
+    //Start a transaction, atomic-like.
+    self::$db->query('BEGIN');
+    
+    $oldcredits = $this->getCredits();
+    //Remove old credits
+    foreach ($oldcredits as $credit) {
+      if (!(($key = array_search($credit['User']->getID(),
+              array_map(function($x){return $x->getID();}, $users))) === false
+              && $credit['type'] == $credittypes[$key])) {
+        //There's not a match for this. Remove it
+        self::$db->query('UPDATE '.$table.' SET effective_to=NOW()'
+                . 'WHERE show_id=$1 AND creditid=$2 AND credit_type_id=$3',
+                [$this->getID(), $credit['User']->getID(), $credit['type']]);
+      }
+    }
+    
+    //Add new credits
+    for ($i = 0; $i < sizeof($users); $i++) {
+      if (empty($users[$i])) {
+        continue;
+      }
+      
+      //Look for an existing credit
+      if (!in_array(['type' => $credittypes[$i], 'memberid' => $users[$i]->getID(), 'User' => $users[$i]], 
+              $oldcredits)) {
+        //Doesn't seem to exist.
+        self::$db->query('INSERT INTO '.$table.' (show_id, credit_type_id, creditid, effective_from,'
+                . 'memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)', [
+                    $this->getID(), $credittypes[$i], $users[$i]->getID(), User::getInstance()->getID()
+                ]);
+      }
+    }
+    
+    //Cool. Update the local credits data
+    $newcredits = [];
+    for ($i = 0; $i < sizeof($users); $i++) {
+      if (empty($users[$i])) {
+        continue;
+      }
+      $newcredits[] = ['type' => $credittypes[$i], 'memberid' => $users[$i]->getID(), 'User' => $users[$i]];
+    }
+    
+    $this->credits = $newcredits;
+    
+    //Oh, and commit the transaction. I always forget this.
+    self::$db->query('COMMIT');
+    
+    return $this;
   }
 
 }
