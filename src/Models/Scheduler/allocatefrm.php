@@ -11,7 +11,6 @@
  */
 $form = new MyURYForm('sched_allocate', $module, 'doAllocate',
                 array(
-                    'debug' => true,
                     'title' => 'Allocate Timeslots to Season',
                     'template' => 'Scheduler/allocate.twig',
         ));

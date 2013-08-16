@@ -107,6 +107,7 @@ class MyURYForm {
    * validate - Whether to validate the field input client-side - default true<br>
    * get - Whether to use the GET submission method - default false<br>
    * template - The Twig template to use for the form - default form.twig
+   * title - Form Title
    * 
    * @throws MyURYException Thrown on failure of a sanity check
    */

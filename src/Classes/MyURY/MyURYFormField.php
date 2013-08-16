@@ -508,6 +508,9 @@ class MyURYFormField {
           }
           return $_REQUEST[$name];
         } else {
+          if (empty($_REQUEST[$name])) {
+            return null;
+          }
           return User::getInstance($_REQUEST[$name]);
         }
         break;

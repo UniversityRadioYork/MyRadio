@@ -7,3 +7,6 @@
  */
 
 $data = MyURY_Podcast::getCreateForm()->readValues();
+
+var_dump($data);
+
