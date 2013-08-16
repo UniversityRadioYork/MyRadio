@@ -288,7 +288,7 @@ window.MyURYForm = {
       $('form').on('submit', function() {
         $('.myuryfrm-file-upload-progress').progressbar({value:false});
         //Poke the server for upload progress status
-        setInterval(MyURYForm.pollFileProgress, 2500);
+        setInterval(MyURYForm.pollFileProgress, 1000);
       });
       
       $('#myuryfrm-file-upload-iframe').on('load', function() {
