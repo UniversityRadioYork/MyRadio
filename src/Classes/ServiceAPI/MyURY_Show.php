@@ -237,8 +237,9 @@ class MyURY_Show extends MyURY_Metadata_Common {
    * @return Array an array of Show objects attached to the given user
    */
   public static function getShowsAttachedToUser($memberid = null) {
-    if ($memberid === null)
+    if ($memberid === null) {
       $memberid = $_SESSION['memberid'];
+    }
     self::initDB();
 
     $r = self::$db->fetch_column('SELECT show_id FROM schedule.show WHERE memberid=$1 OR show_id IN

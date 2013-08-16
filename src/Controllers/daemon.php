@@ -103,7 +103,9 @@ while (true) {
     try {
       $class::run();
     } catch (MyURYException $e) {}
-    if (!$once) sleep(2);
+    if (!$once) {
+      sleep(2);
+    }
   }
   
   //Every once in a while, check database connection. If it's lost, routinely try to reconnect.
@@ -121,7 +123,9 @@ while (true) {
     dlog('RECONNECTED', 0);
   }
   
-  if ($once) break;
+  if ($once) {
+    break;
+  }
   
   //At the end of an interation, commit a query and error count.
   //This is both nice for statistics, and prevents an entry of several tens of thousands when the server restarts :)

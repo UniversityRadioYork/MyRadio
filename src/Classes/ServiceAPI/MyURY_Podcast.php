@@ -175,16 +175,36 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
   }
 
   public static function getCreateForm() {
-    return (new MyURYForm('Create Podcast', 'Podcast', 'doCreatePodcast'))
+    $form = (new MyURYForm('Create Podcast', 'Podcast', 'doCreatePodcast'))
             ->addField(new MyURYFormField('title', MyURYFormField::TYPE_TEXT, [
                 'label' => 'Title'
             ]))->addField(new MyURYFormField('description', MyURYFormField::TYPE_BLOCKTEXT, [
                 'label' => 'Description'
             ]))->addField(new MyURYFormField('tags', MyURYFormField::TYPE_TEXT, [
                 'label' => 'Tags',
-                'explanation' => 'A set of keywords to describe your show '
+                'explanation' => 'A set of keywords to describe your podcast '
                 . 'generally, seperated with spaces.'
-            ]))->addField(new MyURYFormField('credits', MyURYFormField::TYPE_TABULARSET, [
+            ]));
+    
+    //Get User's shows, or all shows if they have AUTH_PODCASTANYSHOW
+    //Format them into a select field format.
+    $shows = array_map(function($x) {
+      return ['text' => $x->getMeta('title'), 'value' => $x->getID()];
+    }, User::getInstance()->hasAuth(AUTH_PODCASTANYSHOW) ? 
+            MyURY_Show::getAllShows()
+            : MyURY_Show::getShowsAttachedToUser());
+    
+    //Add an option for not attached to a show
+    if (User::getInstance()->hasAuth(AUTH_STANDALONEPODCAST)) {
+      $shows = array_merge([['text' => 'Standalone']], $shows);
+    }
+    
+    $form->addField(new MyURYFormField('show', MyURYFormField::TYPE_SELECT, [
+                        'options' => $shows,
+                        'explanation' => 'This Podcast will be attached to the '
+                                          . 'Show you select here.',
+                        'label' => 'Show'
+              ]))->addField(new MyURYFormField('credits', MyURYFormField::TYPE_TABULARSET, [
                 'label' => 'Credits', 'options' => [
                     new MyURYFormField('member', MyURYFormField::TYPE_MEMBER, [
                         'explanation' => '',
@@ -206,6 +226,8 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
                 . ' with <a href="/wiki/Podcasting_Policy" target="_blank">'
                 . 'URY\'s Podcasting Policy</a>.'
             ]));
+    
+    return $form;
   }
 
   /**

@@ -429,8 +429,10 @@ class MyURYFormField {
     
     if ($this->type === MyURYFormField::TYPE_ARTIST) {
       $options['artistname'] = $this->value;
-    } elseif ($this->type === MyURYFormField::TYPE_FILE) {
+    }
+    if ($this->type === MyURYFormField::TYPE_FILE) {
       $options['progress_id'] = uniqid();
+      $value = null;
     } elseif (($this->type === MyURYFormField::TYPE_TRACK) && !empty($this->value)) {
       if (is_array($this->value)) { //Deal with TABULARSETs
         foreach ($this->value as $k => $v) {
