@@ -304,12 +304,28 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
     }
   }
   
+  /**
+   * Get the file system path to where the original file is stored.
+   * @return String
+   */
   public function getArchiveFile() {
     return Config::$podcast_archive_path.'/'.$this->getID().'.orig';
   }
   
+  /**
+   * Get the file system path to where the web file should be stored
+   * @return String
+   */
   public function getWebFile() {
     return Config::$public_media_path.'/podcasts/MyURYPodcast'.$this->getID().'.mp3';
+  }
+  
+  /**
+   * Get the value that *should* be stored in uryplayer.podcast.file
+   * @return String
+   */
+  public function getFile() {
+    return 'podcasts/MyURYPodcast'.$this->getID().'.mp3';
   }
   
   /**
@@ -392,6 +408,10 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
     parent::setCredits($users, $credittypes, 'uryplayer.podcast_credit', 'podcast_id');
   }
   
+  /**
+   * Set the time that the Podcast is submitted as visible on the website.
+   * @param int $time
+   */
   public function setSubmitted($time) {
     $this->submitted = $time;
     self::$db->query('UPDATE uryplayer.podcast SET submitted=$1 '
@@ -408,10 +428,10 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
   public function convert() {
     $tmpfile = $this->getArchiveFile();
     $dbfile = $this->getWebFile();
-    if (!shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 - >'{$dbfile}'")) {
-      dlog('Failed to convert file!', 2);
-      throw new MyURYException('Failed to convert file!');
-    }
+    shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 - >'{$dbfile}'");
+    
+    self::$db->query('UPDATE uryplayer.podcast SET file=$1 WHERE podcast_id=$2',
+            [$this->getWebURI(), $this->getID()]);
     if (empty($this->submitted)) {
       $this->setSubmitted(time());
     }
