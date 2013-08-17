@@ -431,7 +431,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
     shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 - >'{$dbfile}'");
     
     self::$db->query('UPDATE uryplayer.podcast SET file=$1 WHERE podcast_id=$2',
-            [$this->getWebURI(), $this->getID()]);
+            [$this->getFile(), $this->getID()]);
     if (empty($this->submitted)) {
       $this->setSubmitted(time());
     }
