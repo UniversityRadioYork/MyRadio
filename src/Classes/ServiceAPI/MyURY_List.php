@@ -113,7 +113,7 @@ class MyURY_List extends ServiceAPI {
   }
 
   public function getMembers() {
-    return self::resultSetToObjArray($this->members);
+    return User::resultSetToObjArray($this->members);
   }
 
   public function getID() {
