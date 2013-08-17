@@ -15,6 +15,7 @@
 #			Set it to YES to enable hawk.
 
 . /etc/rc.subr
+set PATH=/usr/local/bin:/usr/local/sbin:$PATH
 
 name=myury_daemon
 rcvar=myury_daemon_enable
