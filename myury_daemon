@@ -34,5 +34,5 @@ find_pidfile()
 	pidfile='/var/run/myury_daemon.pid'
 }
 
-set PATH=/usr/local/bin:/usr/local/sbin:$PATH
+export PATH=/usr/local/bin:/usr/local/sbin:$PATH
 run_rc_command "$1"
