@@ -335,7 +335,7 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
    * @param User[] $users An array of Users associated.
    * @param int[] $credittypes The relevant credittypeid for each User.
    */
-  public function setCredits($users, $credittypes, $table) {
+  public function setCredits($users, $credittypes, $table, $pkey) {
     //Start a transaction, atomic-like.
     self::$db->query('BEGIN');
     
@@ -347,14 +347,14 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
               && $credit['type'] == $credittypes[$key])) {
         //There's not a match for this. Remove it
         self::$db->query('UPDATE '.$table.' SET effective_to=NOW()'
-                . 'WHERE show_id=$1 AND creditid=$2 AND credit_type_id=$3',
+                . 'WHERE '.$pkey.'=$1 AND creditid=$2 AND credit_type_id=$3',
                 [$this->getID(), $credit['User']->getID(), $credit['type']]);
       }
     }
     
     //Add new credits
     for ($i = 0; $i < sizeof($users); $i++) {
-      if (empty($users[$i])) {
+      if (empty($users[$i]) or empty($credittypes[$i])) {
         continue;
       }
       
@@ -362,7 +362,7 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
       if (!in_array(['type' => $credittypes[$i], 'memberid' => $users[$i]->getID(), 'User' => $users[$i]], 
               $oldcredits)) {
         //Doesn't seem to exist.
-        self::$db->query('INSERT INTO '.$table.' (show_id, credit_type_id, creditid, effective_from,'
+        self::$db->query('INSERT INTO '.$table.' ('.$pkey.', credit_type_id, creditid, effective_from,'
                 . 'memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)', [
                     $this->getID(), $credittypes[$i], $users[$i]->getID(), User::getInstance()->getID()
                 ]);

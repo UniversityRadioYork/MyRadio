@@ -173,6 +173,11 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
 
     return self::resultSetToObjArray($r);
   }
+  
+  public static function getPending() {
+    return self::resultSetToObjArray(self::$db->fetch_column('SELECT podcast_id '
+            . 'FROM uryplayer.podcast WHERE submitted IS NULL'));
+  }
 
   public static function getCreateForm() {
     $form = (new MyURYForm('createpodcastfrm', 'Podcast', 'doCreatePodcast',
@@ -253,14 +258,16 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
     
     $podcast->setMeta('title', $title);
     $podcast->setMeta('description', $description);
-    $podcast->setMeta('tags', $tags);
+    $podcast->setMeta('tag', $tags);
     $podcast->setCredits($credits['member'], $credits['credittype']);
     if (!empty($show)) {
       $podcast->setShow($show);
     }
     
     //Ship the file off to the archive location to be converted
-    move_uploaded_file($file, Config::$podcast_archive_path.'/'.$id.'.orig');
+    if (!move_uploaded_file($file, $podcast->getArchiveFile())) {
+      throw new MyURYException('Failed to move podcast file!', 500);
+    }
   }
 
   /**
@@ -284,12 +291,34 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
   }
   
   /**
+   * Returns a human-readable explanation of the Podcast's state.
+   * @return String
+   */
+  public function getStatus() {
+    if (empty($this->submitted)) {
+      return 'Processing...';
+    } elseif ($this->submitted > time()) {
+      return 'Scheduled for publication ('.CoreUtils::happyTime($this->submitted).')';
+    } else {
+      return 'Published';
+    }
+  }
+  
+  public function getArchiveFile() {
+    return Config::$podcast_archive_path.'/'.$this->getID().'.orig';
+  }
+  
+  public function getWebFile() {
+    return Config::$public_media_path.'/podcasts/MyURYPodcast'.$this->getID().'.mp3';
+  }
+  
+  /**
    * Set the Show this Podcast is linked to. If null, removes any link.
    * @param MyURY_Show $show
    */
   public function setShow(MyURY_Show $show) {
     self::$db->query('DELETE FROM schedule.show_podcast_link '
-            . 'WHERE podcastid=$1', [$this->getID()]);
+            . 'WHERE podcast_id=$1', [$this->getID()]);
     
     if (!empty($show)) {
       self::$db->query('INSERT INTO schedule.show_podcast_link '
@@ -312,6 +341,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
         'podcast_id' => $this->getID(),
         'title' => $this->getMeta('title'),
         'description' => $this->getMeta('description'),
+        'status' => $this->getStatus(),
         'editlink' => array(
             'display' => 'icon',
             'value' => 'script',
@@ -358,8 +388,33 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
    * @param User[] $users An array of Users associated.
    * @param int[] $credittypes The relevant credittypeid for each User.
    */
-  public function setCredits($users, $credittypes, $table = null) {
-    parent::setCredits($users, $credittypes, 'schedule.show_credit');
+  public function setCredits($users, $credittypes, $table = null, $pkey = null) {
+    parent::setCredits($users, $credittypes, 'uryplayer.podcast_credit', 'podcast_id');
+  }
+  
+  public function setSubmitted($time) {
+    $this->submitted = $time;
+    self::$db->query('UPDATE uryplayer.podcast SET submitted=$1 '
+            . 'WHERE podcast_id=$2',
+            [CoreUtils::getTimestamp($time), $this->getID()]);
+  }
+  
+  /**
+   * Convert the Archive file to the Web format.
+   * 
+   * If the preferred format is changed, re-run this on every Podcast to
+   * reencode them.
+   */
+  public function convert() {
+    $tmpfile = $this->getArchiveFile();
+    $dbfile = $this->getWebFile();
+    if (!shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 - >'{$dbfile}'")) {
+      dlog('Failed to convert file!', 2);
+      throw new MyURYException('Failed to convert file!');
+    }
+    if (empty($this->submitted)) {
+      $this->setSubmitted(time());
+    }
   }
 
 }
