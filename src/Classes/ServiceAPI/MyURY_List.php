@@ -82,15 +82,11 @@ class MyURY_List extends ServiceAPI {
 
     if ($this->optin) {
       //Get subscribed members
-      $r = self::$db->fetch_column('SELECT memberid FROM mail_subscription WHERE listid=$1', array($listid));
+      $this->members = self::$db->fetch_column('SELECT memberid FROM mail_subscription WHERE listid=$1', array($listid));
     } else {
       //Get members joined with opted-out members
-      $r = self::$db->fetch_column('SELECT memberid FROM (' . $this->parseSQL($this->sql) . ') as t1 WHERE memberid NOT IN
+      $this->members = self::$db->fetch_column('SELECT memberid FROM (' . $this->parseSQL($this->sql) . ') as t1 WHERE memberid NOT IN
         (SELECT memberid FROM mail_subscription WHERE listid=$1)', array($listid));
-    }
-
-    foreach ($r as $memberid) {
-      $this->members[] = User::getInstance($memberid);
     }
   }
 
@@ -117,7 +113,7 @@ class MyURY_List extends ServiceAPI {
   }
 
   public function getMembers() {
-    return $this->members;
+    return self::resultSetToObjArray($this->members);
   }
 
   public function getID() {
@@ -179,6 +175,11 @@ class MyURY_List extends ServiceAPI {
     if (!$this->optin && !$this->hasOptedOutOfAuto($user)) {
       return false;
     }
+    
+    //User is already opted in
+    if (in_array($user, $this->getMembers())) {
+      return true;
+    }
 
     if ($this->optin) {
       self::$db->query('INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)',
@@ -188,7 +189,7 @@ class MyURY_List extends ServiceAPI {
               array($user->getID(), $this->getID()));
     }
 
-    $this->members[] = $user;
+    $this->members[] = $user->getID();
     return true;
   }
 
@@ -200,8 +201,9 @@ class MyURY_List extends ServiceAPI {
    * @todo Auto-rebuild Exim routing after change
    */
   public function optout(User $user) {
-    if (!$this->isMember($user))
+    if (!$this->isMember($user)) {
       return false;
+    }
 
     if (!$this->optin) {
       self::$db->query('INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)',
@@ -211,7 +213,7 @@ class MyURY_List extends ServiceAPI {
               array($user->getID(), $this->getID()));
     }
 
-    $key = array_search($user, $this->members);
+    $key = array_search($user->getID(), $this->members);
     if ($key !== false) {
       unset($this->members[$key]);
     }
