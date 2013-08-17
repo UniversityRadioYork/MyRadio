@@ -15,7 +15,6 @@
 #			Set it to YES to enable hawk.
 
 . /etc/rc.subr
-set PATH=/usr/local/bin:/usr/local/sbin:$PATH
 
 name=myury_daemon
 rcvar=myury_daemon_enable
@@ -28,11 +27,17 @@ command=/usr/local/www/myury/src/Controllers/daemon.php
 command_interpreter=`which php`
 command_args='process >/var/log/ury-org-uk/myury_daemon.log 2>&1 &'
 start_precmd=find_pidfile
+start_cmd=${name}_start
 stop_precmd=find_pidfile
 
 find_pidfile()
 {
 	pidfile='/var/run/myury_daemon.pid'
+}
+
+myury_daemon_start() {
+  set PATH=/usr/local/bin:/usr/local/sbin:$PATH
+  run_rc_command "start"
 }
 
 run_rc_command "$1"
