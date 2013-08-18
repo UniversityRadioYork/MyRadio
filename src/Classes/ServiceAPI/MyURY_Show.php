@@ -467,7 +467,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
   }
 
   public function toDataSource($full = true) {
-    return array(
+    $data = array(
         'show_id' => $this->getID(),
         'title' => $this->getMeta('title'),
         'credits' => implode(', ', $this->getCreditsNames(false)),
@@ -491,6 +491,12 @@ class MyURY_Show extends MyURY_Metadata_Common {
             'title' => 'View Show Microsite',
             'url' => $this->getWebpage())
     );
+    
+    if ($full) {
+      $data['credits'] = $this->getCredits();
+    }
+    
+    return $data;
   }
 
 }
