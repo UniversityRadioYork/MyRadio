@@ -28,7 +28,7 @@ function api_error($code, $message = null) {
   ]);
   //Log an API failure so it appears in the status graphs.
   throw new MyURYException('API Error: '.$message.
-          "\nSource: ".$_SERVER['REMOTE_ADDRESS'], $code);
+          "\nSource: ".$_SERVER['REMOTE_ADDR'], $code);
 }
 
 /**
