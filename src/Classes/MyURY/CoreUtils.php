@@ -548,12 +548,12 @@ class CoreUtils {
    * @param mixed $data
    * @return array
    */
-  public static function dataSourceParser($data) {
+  public static function dataSourceParser($data, $full = true) {
     if (is_object($data) && $data instanceof MyURY_DataSource) {
-      return $data->toDataSource();
+      return $data->toDataSource($full);
     } elseif (is_array($data)) {
       foreach ($data as $k => $v) {
-        $data[$k] = self::dataSourceParser($v);
+        $data[$k] = self::dataSourceParser($v, $full);
       }
       return $data;
     } else {
