@@ -1359,8 +1359,8 @@ EOT;
     return $form;
   }
 
-  public function toDataSource() {
-    return [
+  public function toDataSource($full = true) {
+    $data = [
         'memberid' => $this->getID(),
         'locked' => $this->getAccountLocked(),
         'paid' => $this->getAllPayments(),
@@ -1369,10 +1369,18 @@ EOT;
         'sname' => $this->getSName(),
         'url' => $this->getURL(),
         'sex' => $this->getSex(),
-        'officerships' => $this->getOfficerships(),
         'photo' => $this->getProfilePhoto() === null ? Config::$default_person_uri : $this->getProfilePhoto()->getURL(),
         'bio' => $this->getBio()
     ];
+    if ($full) {
+      $data['shows'] = CoreUtils::dataSourceParser(
+              MyURY_Show::getShowsAttachedToUser($this->getID()), false);
+      $data['officerships'] = $this->getOfficerships();
+      $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining(),
+              false);
+    }
+    
+    return $data;
   }
 
 }

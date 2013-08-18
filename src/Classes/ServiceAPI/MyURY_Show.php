@@ -159,10 +159,12 @@ class MyURY_Show extends MyURY_Metadata_Common {
       $params['showtypeid'] = (int) $rtype[0];
     }
 
-    if (!isset($params['genres']))
+    if (!isset($params['genres'])) {
       $params['genres'] = array();
-    if (!isset($params['tags']))
+    }
+    if (!isset($params['tags'])) {
       $params['tags'] = '';
+    }
 
     //We're all or nothing from here on out - transaction time
     self::$db->query('BEGIN');
@@ -218,7 +220,9 @@ class MyURY_Show extends MyURY_Metadata_Common {
     //And now all that's left is who's on the show
     for ($i = 0; $i < sizeof($params['credits']['member']); $i++) {
       //Skip blank entries
-      if (empty($params['credits']['member'][$i])) continue;
+      if (empty($params['credits']['member'][$i])) {
+        continue;
+      }
       self::$db->query('INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from,
               memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)',
         array($show_id, (int) $params['credits']['credittype'][$i],$params['credits']['member'][$i]->getID(), $_SESSION['memberid']), true);
@@ -437,7 +441,9 @@ class MyURY_Show extends MyURY_Metadata_Common {
    */
   public static function getMostListened($date = 0) {
     $key = 'stats_show_mostlistened';
-    if (($top = self::$cache->get($key)) !== false) return $top;
+    if (($top = self::$cache->get($key)) !== false) {
+      return $top;
+    }
     
     $result = self::$db->fetch_all('SELECT show_id, SUM(listeners) AS listeners_sum FROM (SELECT show_season_id,
       (SELECT COUNT(*) FROM strm_log
