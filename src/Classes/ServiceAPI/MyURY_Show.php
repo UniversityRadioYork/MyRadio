@@ -493,7 +493,10 @@ class MyURY_Show extends MyURY_Metadata_Common {
     );
     
     if ($full) {
-      $data['credits'] = $this->getCredits();
+      $data['credits'] = array_map(function($x) {
+        $x['User'] = $x['User']->toDataSource(false);
+        return $x;
+      }, $this->getCredits());
     }
     
     return $data;
