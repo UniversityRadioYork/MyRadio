@@ -89,6 +89,7 @@ class MyURY_List extends ServiceAPI {
       $this->members = self::$db->fetch_column('SELECT memberid FROM (' . $this->parseSQL($this->sql) . ') as t1 WHERE memberid NOT IN
         (SELECT memberid FROM mail_subscription WHERE listid=$1)', array($listid));
     }
+    $this->members = array_map(function($x) {return (int)$x;}, $this->members);
   }
 
   public static function getInstance($listid = -1) {
@@ -134,7 +135,7 @@ class MyURY_List extends ServiceAPI {
   }
 
   public function isMember(User $user) {
-    return in_array($user, $this->getMembers(), true);
+    return in_array($user->getID(), $this->members);
   }
 
   /**
@@ -143,8 +144,9 @@ class MyURY_List extends ServiceAPI {
    * @return boolean
    */
   public function hasSendPermission(User $user) {
-    if (!$this->public && !$user->hasAuth(AUTH_MAILALLMEMBERS))
+    if (!$this->public && !$user->hasAuth(AUTH_MAILALLMEMBERS)) {
       return false;
+    }
     return true;
   }
 
@@ -255,7 +257,7 @@ class MyURY_List extends ServiceAPI {
     return $lists;
   }
 
-  public function toDataSource() {
+  public function toDataSource($full = true) {
     return array(
         'listid' => $this->getID(),
         'subscribed' => $this->isMember(User::getInstance()) ?
