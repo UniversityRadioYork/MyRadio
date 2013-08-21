@@ -1370,7 +1370,8 @@ EOT;
         'url' => $this->getURL(),
         'sex' => $this->getSex(),
         'photo' => $this->getProfilePhoto() === null ? Config::$default_person_uri : $this->getProfilePhoto()->getURL(),
-        'bio' => $this->getBio()
+        'bio' => $this->getBio(),
+        'receive_email' => $this->getReceiveEmail()
     ];
     if ($full) {
       $data['shows'] = CoreUtils::dataSourceParser(
