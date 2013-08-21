@@ -44,7 +44,8 @@ class MyURY_List extends ServiceAPI {
   private $public;
 
   /**
-   * If public, this is the prefix for the email address (i.e. "cactus") would be cactus@ury.org.uk
+   * If public, this is the prefix for the email address (i.e. "cactus")
+   * would be cactus@ury.org.uk
    * @var String
    */
   private $address;
@@ -257,24 +258,24 @@ class MyURY_List extends ServiceAPI {
   public function toDataSource() {
     return array(
         'listid' => $this->getID(),
-        'Subscribed' => $this->isMember(User::getInstance()) ? '<span class="ui-icon ui-icon-check" title="You are subscribed to this list"></span>' : '',
-        'Name' => $this->getName(),
-        'Address' => $this->getAddress() === null ? '<em>Hidden</em>' :
-                '<a href="mailto:' . $this->getAddress() . '@ury.org.uk">' . $this->getAddress() . '@ury.org.uk</a>',
-        'Recipients' => sizeof($this->getMembers()),
-        'OptIn' => ((!$this->isMember(User::getInstance()) && ($this->optin || $this->hasOptedOutOfAuto(User::getInstance()))) ? array('display' => 'icon',
+        'subscribed' => $this->isMember(User::getInstance()) ?
+            '<span class="ui-icon ui-icon-check" title="You are subscribed to this list"></span>' : '',
+        'name' => $this->getName(),
+        'address' => $this->getAddress(),
+        'recipient_count' => sizeof($this->getMembers()),
+        'optIn' => ((!$this->isMember(User::getInstance()) && ($this->optin || $this->hasOptedOutOfAuto(User::getInstance()))) ? array('display' => 'icon',
             'value' => 'circle-plus',
             'title' => 'Subscribe to this mailing list',
             'url' => CoreUtils::makeURL('Mail', 'optin', array('list' => $this->getID()))) : null),
-        'OptOut' => ($this->isMember(User::getInstance()) ? array('display' => 'icon',
+        'optOut' => ($this->isMember(User::getInstance()) ? array('display' => 'icon',
             'value' => 'circle-minus',
             'title' => 'Opt out of this mailing list',
             'url' => CoreUtils::makeURL('Mail', 'optout', array('list' => $this->getID()))) : null),
-        'Mail' => array('display' => 'icon',
+        'mail' => array('display' => 'icon',
             'value' => 'mail-closed',
             'title' => 'Send a message to this mailing list',
             'url' => CoreUtils::makeURL('Mail', 'send', array('list' => $this->getID()))),
-        'Archive' => array('display' => 'icon',
+        'archive' => array('display' => 'icon',
             'value' => 'disk',
             'title' => 'View archives for this mailing list',
             'url' => CoreUtils::makeURL('Mail', 'archive', array('list' => $this->getID())))
