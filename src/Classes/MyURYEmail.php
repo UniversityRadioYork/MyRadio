@@ -11,7 +11,7 @@
  * @author Andy Durant <aj@ury.org.uk>
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130809
- * @package MyURY_Core
+ * @package MyURY_Mail
  * @todo Footers contain hard-coded URLs. This used to be necessary (when the links went to mint), but isn't now.
  */
 class MyURYEmail {
