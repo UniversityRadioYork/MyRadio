@@ -55,7 +55,7 @@ abstract class MyURY_Alias extends ServiceAPI {
   /**
    * Returns all the Aliases available.
    */
-  abstract public function getAllAliases();
+  abstract public static function getAllAliases();
   
   /**
    * Get the ID fo this Alias
