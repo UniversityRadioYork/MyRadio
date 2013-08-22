@@ -41,8 +41,6 @@ abstract class MyURY_Alias extends ServiceAPI {
    * @var mixed
    */
   protected $target;
-  
-  protected function __construct($aliasid);
 
   public function getInstance($id) {
     if (!is_numeric($id)) {
