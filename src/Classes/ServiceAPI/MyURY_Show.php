@@ -472,6 +472,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
         'title' => $this->getMeta('title'),
         'credits' => implode(', ', $this->getCreditsNames(false)),
         'description' => $this->getMeta('description'),
+        'show_type_id' => $this->show_type,
         'seasons' => array(
             'display' => 'text',
             'value' => $this->getNumberOfSeasons(),
