@@ -44,7 +44,7 @@ abstract class MyURY_Alias extends ServiceAPI {
   
   abstract protected function __construct($aliasid);
 
-  public function getInstance($id) {
+  public static function getInstance($id) {
     if (!is_numeric($id)) {
       throw new MyURYException($id.' is not a valid Alias ID!', 400);
     }
