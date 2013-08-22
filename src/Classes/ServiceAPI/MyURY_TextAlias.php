@@ -38,7 +38,7 @@ class MyURY_TextAlias extends MyURY_Alias {
    * Returns all the TextAliases available.
    * @return MyURY_TextAlias[]
    */
-  public function getAllAliases() {
+  public static function getAllAliases() {
     return self::resultSetToObjArray(self::$db->fetch_column(
             'SELECT aliasid FROM public.mail_alias_text'));
   }
