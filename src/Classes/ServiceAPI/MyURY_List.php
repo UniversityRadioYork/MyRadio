@@ -9,7 +9,7 @@
  * 
  * @version 20130526
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @package MyURY_Core
+ * @package MyURY_Mail
  * @uses \Database
  */
 class MyURY_List extends ServiceAPI {
