@@ -47,7 +47,7 @@ abstract class MyURY_Alias extends ServiceAPI {
       throw new MyURYException($id.' is not a valid Alias ID!', 400);
     }
     if (!isset(self::$aliases[$id])) {
-      self::$aliases[$id] = new self($id);
+      self::$aliases[$id] = get_called_class()->__construct($id);
     }
     return self::$aliases[$id];
   }
