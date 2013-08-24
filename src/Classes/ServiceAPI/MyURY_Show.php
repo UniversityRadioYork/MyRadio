@@ -37,7 +37,14 @@ class MyURY_Show extends MyURY_Metadata_Common {
     }
 
     if (!isset(self::$shows[$show_id])) {
-      self::$shows[$show_id] = new self($show_id);
+      $entry = self::$cache->get(self::getCacheKey($show_id));
+      if (!$entry) {
+        $show = new self($show_id);
+        $show->updateCacheObject();
+        self::$shows[$show_id] = $show;
+      } else {
+        self::$shows[$show_id] = $entry;
+      }
     }
 
     return self::$shows[$show_id];
@@ -118,6 +125,15 @@ class MyURY_Show extends MyURY_Metadata_Common {
     //Get information about Seasons
     $this->season_ids = self::$db->fetch_column('SELECT show_season_id
       FROM schedule.show_season WHERE show_id=$1', array($show_id));
+  }
+  
+  /**
+   * Get the cache key for the Show with this ID.
+   * @param int $id
+   * @return String
+   */
+  public static function getCacheKey($id) {
+    return 'MyURY_Show-'.$id;
   }
 
   /**
@@ -384,7 +400,12 @@ class MyURY_Show extends MyURY_Metadata_Common {
     }
     
     $shows = array();
-    foreach (self::$db->fetch_column('SELECT show_id FROM schedule.show WHERE show_type_id=$1', array($show_type_id))
+    foreach (self::$db->fetch_column('SELECT show_id FROM schedule.show '
+            . 'WHERE show_type_id=$1'
+            . 'ORDER BY (SELECT metadata_value FROM schedule.show_metadata '
+            . 'WHERE show_id=show_id AND metadata_key_id=2 '
+            . 'AND effective_to <= NOW() AND (effective_to IS NULL '
+            . 'OR effective_to > NOW()))', array($show_type_id))
     as $show) {
       $shows[] = self::getInstance($show);
     }
