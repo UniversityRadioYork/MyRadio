@@ -113,7 +113,7 @@ class MyURY_Alias extends ServiceAPI {
    * @return array
    */
   public static function getAllAliases() {
-    return self::setToDataSource(self::$db->fetch_column(
+    return self::resultSetToObjArray(self::$db->fetch_column(
             'SELECT alias_id FROM mail.alias'));
   }
   
