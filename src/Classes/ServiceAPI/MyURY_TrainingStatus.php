@@ -98,7 +98,9 @@ class MyURY_TrainingStatus extends ServiceAPI {
     $this->ordering = (int)$result['ordering'];
     $this->detail = $result['detail'];
     
-    if (!isset(self::$ts[$statusid])) self::$ts[$statusid] = $this;
+    if (!isset(self::$ts[$statusid])) {
+      self::$ts[$statusid] = $this;
+    }
     
     $this->depends = empty($result['depends']) ? null : self::getInstance($result['depends']);
     $this->can_award = empty($result['can_award']) ? null : self::getInstance($result['can_award']);
@@ -164,6 +166,19 @@ class MyURY_TrainingStatus extends ServiceAPI {
   }
   
   /**
+   * Checks if the user has the Training Status the one depends on.
+   * 
+   * @param User $user Default current User.
+   * @return bool True if no dependency or dependency gained, false otherwise.
+   */
+  public function hasDependency(User $user = null) {
+    if ($user === null) {
+      $user = User::getInstance();
+    }
+    return (sizeof($this->getDepends()) === 0 or $this->isAwardedTo($user));
+  }
+  
+  /**
    * Gets the TrainingStatus a member must have before awarding this one.
    * 
    * @return MyURY_TrainingStatus
@@ -173,18 +188,50 @@ class MyURY_TrainingStatus extends ServiceAPI {
   }
   
   /**
-   * Get an array of all Users this TrainingStatus has been awarded to, and hasn't been revoked from.
+   * Returns if the User can Award this Training Status
+   * @param User $user
+   * @return bool
+   */
+  public function canAward(User $user = null) {
+    if ($user === null) {
+      $user = User::getInstance();
+    }
+    
+    return $this->getAwarder()->isAwardedTo($user);
+  }
+  
+  /**
+   * Get an array of all UserTrainingStatuses this TrainingStatus has been
+   * awarded to, and hasn't been revoked from.
    * 
-   * @param int $ids If true, just returns IDs instead of Users.
+   * @param int $ids If true, just returns User Training Status IDs instead of
+   * UserTrainingStatuses.
    * @return User[]|int
    */
   public function getAwardedTo($ids = false) {
     if ($this->awarded_to === null) {
       $this->awarded_to = self::$db->fetch_column(
         'SELECT memberpresenterstatusid FROM member_presenterstatus
-        WHERE presenterstatusid=$1 AND revokedtime IS NULL', array($this->getID()));
+        WHERE presenterstatusid=$1 AND revokedtime IS NULL', [$this->getID()]);
     }
-    return $ids ? $this->awarded_to : MyURY_UserTrainingStatus::resultSetToObjArray($this->awarded_to);
+    return $ids ? $this->awarded_to : 
+            MyURY_UserTrainingStatus::resultSetToObjArray($this->awarded_to);
+  }
+  
+  /**
+   * Checks if the User has this Training Status
+   * 
+   * @param User $user
+   * @return bool
+   */
+  public function isAwardedTo(User $user = null) {
+    if ($user === null) {
+      $user = User::getInstance();
+    }
+    
+    return in_array($user->getID(), array_map(function($x){
+      return $x->getAwardedTo()->getID();},
+            $this->getAwardedTo()));
   }
   
   /**
@@ -200,6 +247,44 @@ class MyURY_TrainingStatus extends ServiceAPI {
         'depends' => $this->getDepends(),
         'awarded_by' => $this->getAwarder()
     );
+  }
+  
+  /**
+   * Get all Training Statuses.
+   * @return MyURY_TrainingStatus[]
+   */
+  public static function getAll() {
+    return self::resultSetToObjArray(self::$db->fetch_column(
+            'SELECT presenterstatusid FROM public.l_presenterstatus '
+            . 'ORDER BY presenterstatusid'));
+  }
+  
+  /**
+   * The all the Training Statuses the User can currently be awarded.
+   * 
+   * A User cannot award themselves statuses.
+   * 
+   * @param User $to The User getting the Training Status.
+   * @param User $by The User awarding the Training Status.
+   * @return MyURY_TrainingStatus[]
+   */
+  public static function getAllAwardableTo(User $to, User $by = null) {
+    if ($by === null) {
+      $by = User::getInstance();
+    }
+    if ($to === $by) {
+      return [];
+    }
+    
+    $statuses = [];
+    foreach (self::getAll() as $status) {
+      
+      if ((!$status->isAwardedTo($to)) && $status->hasDependency($to)
+              && $status->canAward($by)) {
+        $statuses[] = $status;
+      }
+    }
+    return $statuses;
   }
 
 }
