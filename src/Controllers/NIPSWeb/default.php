@@ -3,10 +3,9 @@
  * Main renderer for NIPSWeb
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 11032013
+ * @version 20130824
  * @package MyURY_NIPSWeb
  */
-require 'Views/bootstrap.php';
 
 CoreUtils::requireTimeslot();
 
@@ -25,7 +24,7 @@ if (isset($_REQUEST['readonly'])) {
         ));
 }
 
-$twig->setTemplate($template)
+CoreUtils::getTemplateObject()->setTemplate($template)
         ->addVariable('title', $title)
         ->addVariable('tracks', MyURY_Timeslot::getInstance($_SESSION['timeslotid'])->getShowPlan())
         ->addVariable('reslists', $reslists)
