@@ -1,12 +1,15 @@
 /**
  * This file contains the necessary functions for the NIPSWeb audio player
  */
-NIPSWeb = {
+window.NIPSWeb = {
   //Stores the change queue pointer for this object
   changeQueue: $({}),
   ajaxQueue: $({}),
   //Stores the client ID to enable multiple editors
   clientid: null,
+  //Stores whether this Show is writable. If set to false before
+  //initialising, dragdrop/saving will not be enabled.
+  writable: true,
           
   calcChanges: function (e, ui) {
     NIPSWeb.changeQueue.queue(function(next) {
@@ -202,7 +205,7 @@ NIPSWeb = {
     });
     });
   }
-}
+};
 
 manualSeek = true;
 window.audioNodes = new Array();
@@ -233,34 +236,36 @@ function initialiseUI() {
     text: false
   }).addClass('ui-state-disabled');
 
-  $('ul.baps-channel').sortable({
-    //connectWith allows drag and drop between the channels
-    connectWith: 'ul.baps-channel',
-    //A distance dragged of 15 before entering the dragging state
-    //Prevents accidentally dragging when clicking
-    distance: 15,
-    //Adds a placeholder highlight where the item will be dropped
-    placeholder: "ui-state-highlight",
-    //Remove the "selected" class from the item - prevent multiple selected items in a channel
-    //Also activate the next/previous item, if there is one
-    start: function(e, ui) {
-      if (ui.item.hasClass('selected')) {
-        ui.item.removeClass('selected');
-        if (ui.item.attr('nextSelect') != null)
-          $('#' + ui.item.attr('nextSelect')).click();
-      }
-      ui.item.nextSelect = null;
-    },
-    stop: function(e, ui) {
-      /**
-       * Update the channel timers
-       */
-      updateChannelTotalTimers();
-      NIPSWeb.calcChanges(e, ui);
-      
-    }
+  if (NIPSWeb.writable) {
+    $('ul.baps-channel').sortable({
+      //connectWith allows drag and drop between the channels
+      connectWith: 'ul.baps-channel',
+      //A distance dragged of 15 before entering the dragging state
+      //Prevents accidentally dragging when clicking
+      distance: 15,
+      //Adds a placeholder highlight where the item will be dropped
+      placeholder: "ui-state-highlight",
+      //Remove the "selected" class from the item - prevent multiple selected items in a channel
+      //Also activate the next/previous item, if there is one
+      start: function(e, ui) {
+        if (ui.item.hasClass('selected')) {
+          ui.item.removeClass('selected');
+          if (ui.item.attr('nextSelect') != null)
+            $('#' + ui.item.attr('nextSelect')).click();
+        }
+        ui.item.nextSelect = null;
+      },
+      stop: function(e, ui) {
+        /**
+         * Update the channel timers
+         */
+        updateChannelTotalTimers();
+        NIPSWeb.calcChanges(e, ui);
 
-  });
+      }
+
+    });
+  }
 
   registerItemClicks();
   setupGenericListeners();
