@@ -116,6 +116,14 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
   }
   
   /**
+   * Get the User that was Awarded this Training Status
+   * @return User
+   */
+  public function getAwardedTo() {
+    return $this->user;
+  }
+  
+  /**
    * Get the time the User was Awarded this Training Status
    * @return int
    */

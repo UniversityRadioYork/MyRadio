@@ -16,6 +16,8 @@ $visitor = User::getInstance();
 //Add global user data
 $userData = $user->toDataSource();
 $userData['training'] = CoreUtils::dataSourceParser($user->getAllTraining(true));
+$userData['training_avail'] = CoreUtils::dataSourceParser(
+        MyURY_TrainingStatus::getAllAwardableTo($user));
 
 if ($user->isOfficer()) {
   $userData['phone'] = $user->getPhone();
