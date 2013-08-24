@@ -12,7 +12,7 @@ CoreUtils::requireTimeslot();
 
 if (isset($_REQUEST['readonly'])) {
   $template = 'NIPSWeb/readonly.twig';
-  $title = 'URY Preview';
+  $title = MyURY_Timeslot::getInstance($_SESSION['timeslotid'])->getMeta('title');
   $reslists = [];
 } else {
   $template = 'NIPSWeb/main.twig';
