@@ -46,10 +46,7 @@ class MyURY_Alias extends ServiceAPI {
   private function __construct($id) {
     $result = self::$db->fetch_one('SELECT alias_id,'
             . 'source,'
-            . '(SELECT array(destination) FROM mail.alias_list '
-            . 'UNION SELECT array(destination) FROM mail.alias_member '
-            . 'UNION SELECT array(destination) FROM mail.alias_officer '
-            . 'UNION SELECT array(destination) FROM mail.alias_text) '
+            . '(SELECT array(SELECT destionation FROM mail_alias_text)) AS text'
             . 'FROM mail.alias WHERE alias_id=$1',
             [$id]);
     if (empty($result)) {
