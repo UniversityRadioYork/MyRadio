@@ -214,6 +214,7 @@ class MyURY_TrainingStatus extends ServiceAPI {
         'SELECT memberpresenterstatusid FROM member_presenterstatus
         WHERE presenterstatusid=$1 AND revokedtime IS NULL', [$this->getID()]);
     }
+    var_dump(get_called_class());
     return $ids ? $this->awarded_to : 
             MyURY_UserTrainingStatus::resultSetToObjArray($this->awarded_to);
   }
