@@ -131,7 +131,8 @@ class MyURY_Swagger {
           "description"=> $method->getDocComment(),
           "operations"=> [
               [
-                  "httpMethod"=> "GET",
+                  "httpMethod"=> substr($method->getName(),0,3) === 'set'
+                                    ? 'POST' : 'GET',
                   "nickname"=> $method->getName(),
                   "responseClass"=> $meta['return_type'],
                   "parameters"=> $params,
