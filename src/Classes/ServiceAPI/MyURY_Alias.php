@@ -154,7 +154,7 @@ class MyURY_Alias extends ServiceAPI {
   public function toDataSource($full = true) {
     $data = [
         'alias_id' => $this->getID(),
-        'source' => $this->getName(),
+        'source' => $this->getSource(),
         'destinations' => CoreUtils::dataSourceParser($this->getDestinations(), false)
     ];
     
