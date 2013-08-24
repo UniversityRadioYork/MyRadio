@@ -117,7 +117,7 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
    * @return String
    */
   public static function getCacheKey($id) {
-    return get_class . '-' . $id;
+    return get_class() . '-' . $id;
   }
   
   /**
