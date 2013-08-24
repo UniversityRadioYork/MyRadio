@@ -61,28 +61,28 @@ class MyURY_Alias extends ServiceAPI {
       $this->alias_id = (int)$id;
       $this->source = $result['source'];
       
-      foreach ($result['dtext'] as $text) {
+      foreach (self::$db->decodeArray($result['dtext']) as $text) {
         $this->destinations[] = [
             'type' => 'text',
             'value' => $text
         ];
       }
       /*
-      foreach ($result['dofficer'] as $officer) {
+      foreach (self::$db->decodeArray($result['dofficer']) as $officer) {
         $this->destinations[] = [
             'type' => 'officer',
             'value' => MyURY_Officer::getInstance($officer)
         ];
       }
       */
-      foreach ($result['dmember'] as $member) {
+      foreach (self::$db->decodeArray($result['dmember']) as $member) {
         $this->destinations[] = [
             'type' => 'member',
             'value' => User::getInstance($member)
         ];
       }
       
-      foreach ($result['dlist'] as $list) {
+      foreach (self::$db->decodeArray($result['dlist']) as $list) {
         $this->destinations[] = [
             'type' => 'list',
             'value' => MyURY_List::getInstance($list)
