@@ -390,15 +390,6 @@ class MyURY_Show extends MyURY_Metadata_Common {
    * @todo Ajax the All Shows page - this isn't a particularly nice query
    */
   public static function getAllShows($show_type_id = 1) {
-    self::initDB();
-    self::initCache();
-    $key = 'scheduler_all_shows_list';
-    
-    $r = self::$cache->get($key);
-    if ($r !== false) {
-      return $r;
-    }
-    
     $shows = array();
     foreach (self::$db->fetch_column('SELECT show_id FROM schedule.show '
             . 'WHERE show_type_id=$1'
@@ -409,8 +400,6 @@ class MyURY_Show extends MyURY_Metadata_Common {
     as $show) {
       $shows[] = self::getInstance($show);
     }
-    
-    self::$cache->set($key, $shows, 3600);
 
     return $shows;
   }
