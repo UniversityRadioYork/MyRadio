@@ -55,6 +55,7 @@ class MyURY_Alias extends ServiceAPI {
     if (empty($result)) {
       throw new MyURYException('Alias '.$id.' does not exist!', 404);
     } else {
+      print_r($result);
       $this->alias_id = (int)$id;
       $this->source = $result['source'];
     }
