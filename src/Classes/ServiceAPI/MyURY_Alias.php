@@ -1,6 +1,6 @@
 <?php
 /**
- * Provides the Alias Abstract class for MyURY
+ * Provides the Alias class for MyURY
  * @package MyURY_Mail
  */
 
@@ -67,14 +67,14 @@ class MyURY_Alias extends ServiceAPI {
             'value' => $text
         ];
       }
-      /*
+      
       foreach (self::$db->decodeArray($result['dofficer']) as $officer) {
         $this->destinations[] = [
             'type' => 'officer',
             'value' => MyURY_Officer::getInstance($officer)
         ];
       }
-      */
+      
       foreach (self::$db->decodeArray($result['dmember']) as $member) {
         $this->destinations[] = [
             'type' => 'member',
