@@ -109,4 +109,23 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
   }
   
   private function __construct() {}
+  
+  /**
+   * Generates the Key string for caching services
+   * 
+   * @param int $id The ID of the object to get the cache key for
+   * @return String
+   */
+  public static function getCacheKey($id) {
+    return get_class . '-' . $id;
+  }
+  
+  /**
+   * Sets the cache for this object to be the current object state.
+   * 
+   * This should always be called after a setSomething.
+   */
+  protected function updateCacheObject() {
+    self::$cache->set(self::getCacheKey($this->getID()), $this, 3600);
+  }
 }

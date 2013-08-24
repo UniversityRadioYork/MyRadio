@@ -9,7 +9,7 @@
  * The user object provides and stores information about a user
  * It is not a singleton for Impersonate purposes
  * 
- * @version 20130802
+ * @version 20130824
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Core
  * @uses \Database
@@ -514,16 +514,18 @@ class User extends ServiceAPI {
     //Check the input is an int, and use the session user if not otherwise told
     $memberid = (int) $memberid;
     if ($memberid === -1) {
-      if (!isset($_SESSION))
+      if (!isset($_SESSION)) {
         $memberid = 779; //Mr Website
-      else
+      } else {
         $memberid = $_SESSION['memberid'];
+      }
     }
 
     //Check if a user class already exists for this memberid
     //(Each memberid-user combination should only have one initiated instance)
-    if (isset(self::$users[$memberid]))
+    if (isset(self::$users[$memberid])) {
       return self::$users[$memberid];
+    }
 
     //Return the object if it is cached
     $entry = self::$cache->get(self::getCacheKey($memberid));
@@ -537,25 +539,6 @@ class User extends ServiceAPI {
     }
 
     return $entry;
-  }
-
-  /**
-   * Generates the Key string for caching services
-   * 
-   * @param int $memberid The ID of the member to get the cache key for
-   * @return String
-   */
-  public static function getCacheKey($memberid) {
-    return 'MyURYUser_' . $memberid;
-  }
-
-  /**
-   * Sets the cache for this object to be the current object state.
-   * 
-   * This should always be called after a setSomething.
-   */
-  private function updateCacheObject() {
-    self::$cache->set(self::getCacheKey($this->memberid), $this, 3600);
   }
 
   /**
