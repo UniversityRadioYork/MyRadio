@@ -352,8 +352,10 @@ class MyURY_Show extends MyURY_Metadata_Common {
    */
   public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, 
           $table = null, $pkey = null) {
-   return parent::setMeta($string_key, $value, $effective_from, $effective_to, 
+   $r = parent::setMeta($string_key, $value, $effective_from, $effective_to, 
            'schedule.show_metadata', 'show_id');
+   $this->updateCacheObject();
+   return $r;
   }
   
   /**
@@ -369,6 +371,8 @@ class MyURY_Show extends MyURY_Metadata_Common {
               array($this->getID()));
       self::$db->query('INSERT INTO schedule.show_genre (show_id, genre_id, effective_from, memberid, approvedid)
               VALUES ($1, $2, NOW(), $3, $3)', array($this->getID(), $genreid, User::getInstance()->getID()));
+      $this->genres = [$genreid];
+      $this->updateCacheObject();
     }
   }
   
@@ -382,7 +386,9 @@ class MyURY_Show extends MyURY_Metadata_Common {
    * @param int[] $credittypes The relevant credittypeid for each User.
    */
   public function setCredits($users, $credittypes, $table = null) {
-    parent::setCredits($users, $credittypes, 'schedule.show_credit');
+    $r = parent::setCredits($users, $credittypes, 'schedule.show_credit');
+    $this->updateCacheObject();
+    return $r;
   }
 
   /**
