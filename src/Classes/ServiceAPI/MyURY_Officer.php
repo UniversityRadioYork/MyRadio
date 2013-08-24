@@ -74,8 +74,8 @@ class MyURY_Officer extends ServiceAPI {
       throw new MyURYException('Officer '.$id.' does not exist!', 404);
     } else {
       $this->officerid = (int)$id;
-      $this->name = $result['name'];
-      $this->alias = $result['alias'];
+      $this->name = $result['officer_name'];
+      $this->alias = $result['officer_alias'];
       $this->team = (int)$result['team'];
       $this->ordering = (int)$result['ordering'];
       $this->description = $result['description'];
