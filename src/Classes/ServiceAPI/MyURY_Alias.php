@@ -40,13 +40,19 @@ class MyURY_Alias extends ServiceAPI {
    * 
    * @var mixed[]
    */
-  private $destinations;
+  private $destinations = array();
 
   
   private function __construct($id) {
-    $result = self::$db->fetch_one('SELECT alias_id,'
-            . 'source,'
-            . '(SELECT array(SELECT destination FROM mail.alias_text)) AS text'
+    $result = self::$db->fetch_one(' SELECT source, '
+            . '(SELECT array(SELECT destination FROM mail.alias_text '
+            . '  WHERE alias_id=$1)) AS dtext, '
+            . '(SELECT array(SELECT destination FROM mail.alias_officer '
+            . '  WHERE alias_id=$1)) AS dofficer, '
+            . '(SELECT array(SELECT destination FROM mail.alias_member '
+            . '  WHERE alias_id=$1)) AS dmember, '
+            . '(SELECT array(SELECT destination FROM mail.alias_list '
+            . '  WHERE alias_id=$1)) AS dlist '
             . 'FROM mail.alias WHERE alias_id=$1',
             [$id]);
     if (empty($result)) {
@@ -55,6 +61,34 @@ class MyURY_Alias extends ServiceAPI {
       print_r($result);
       $this->alias_id = (int)$id;
       $this->source = $result['source'];
+      
+      foreach ($result['dtext'] as $text) {
+        $this->destinations[] = [
+            'type' => 'text',
+            'value' => $text
+        ];
+      }
+      /*
+      foreach ($result['dofficer'] as $officer) {
+        $this->destinations[] = [
+            'type' => 'officer',
+            'value' => MyURY_Officer::getInstance($officer)
+        ];
+      }
+      */
+      foreach ($result['dmember'] as $member) {
+        $this->destinations[] = [
+            'type' => 'member',
+            'value' => User::getInstance($member)
+        ];
+      }
+      
+      foreach ($result['dlist'] as $list) {
+        $this->destinations[] = [
+            'type' => 'list',
+            'value' => MyURY_List::getInstance($list)
+        ];
+      }
     }
   }
   
