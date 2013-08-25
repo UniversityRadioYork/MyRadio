@@ -162,10 +162,6 @@ class MyURY_Track extends ServiceAPI {
     self::$cache->set(self::getCacheKey($this->getID()), $this, Config::$cache_track_timeout);
   }
 
-  private static function getCacheKey($id) {
-    return "MyURY_Track_$id";
-  }
-
   /**
    * Returns a "summary" string - the title and artist seperated with a dash.
    * @return String
