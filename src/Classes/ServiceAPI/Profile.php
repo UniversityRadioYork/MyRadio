@@ -152,7 +152,7 @@ class Profile extends ServiceAPI {
                                 LEFT JOIN officer ON team.teamid = officer.teamid AND officer.status = \'c\'
                                 LEFT JOIN member_officer ON officer.officerid = member_officer.officerid AND member_officer.till_date IS NULL
                                 LEFT JOIN member ON member_officer.memberid = member.memberid
-                              WHERE team.status = \'c\'
+                              WHERE team.status = \'c\' AND officer.type != \'m\'
                               ORDER BY team.ordering, officer.ordering, sname');
       self::$cache->set('MyURYProfile_officers', self::$officers);
     }

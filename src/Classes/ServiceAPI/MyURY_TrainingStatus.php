@@ -171,7 +171,7 @@ class MyURY_TrainingStatus extends ServiceAPI {
     if ($user === null) {
       $user = User::getInstance();
     }
-    return (sizeof($this->getDepends()) === 0 or $this->isAwardedTo($user));
+    return ($this->getDepends() == null or $this->getDepends()->isAwardedTo($user));
   }
   
   /**

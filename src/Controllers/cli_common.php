@@ -1,7 +1,6 @@
 <?php
 /**
  * Sets up the environment for MyURY non-web Controllers
- * @todo Shouldn't this be a Model... Silly me.
  */
 ini_set('include_path', str_replace('Controllers', '', __DIR__) . ':' . ini_get('include_path'));
 define('SHIBBOBLEH_ALLOW_READONLY', true);

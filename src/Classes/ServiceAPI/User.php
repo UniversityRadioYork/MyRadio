@@ -205,6 +205,7 @@ class User extends ServiceAPI {
        INNER JOIN officer 
        USING (officerid) 
        WHERE memberid = $1 
+       AND type!=\'m\'
        ORDER BY from_date,till_date;', array($memberid));
 
     // Get Training info all into array
