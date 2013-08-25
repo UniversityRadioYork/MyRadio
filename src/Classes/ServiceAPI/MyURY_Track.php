@@ -339,38 +339,52 @@ class MyURY_Track extends ServiceAPI {
       }
     }
 
-    if (!$conflict && !empty($options['itonesplaylistid']))
+    if (!$conflict && !empty($options['itonesplaylistid'])) {
       return iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks();
+    }
 
-    if (empty($options['title']))
+    if (empty($options['title'])) {
       $options['title'] = '';
-    if (empty($options['artist']))
+    }
+    if (empty($options['artist'])) {
       $options['artist'] = '';
-    if (empty($options['digitised']))
+    }
+    if (empty($options['digitised'])) {
       $options['digitised'] = true;
-    if (empty($options['itonesplaylistid']))
+    }
+    if (empty($options['itonesplaylistid'])) {
       $options['itonesplaylistid'] = null;
-    if (empty($options['limit']))
+    }
+    if (empty($options['limit'])) {
       $options['limit'] = Config::$ajax_limit_default;
-    if (empty($options['recordid']))
+    }
+    if (empty($options['recordid'])) {
       $options['recordid'] = null;
-    if (empty($options['lastfmverified']))
+    }
+    if (empty($options['lastfmverified'])) {
       $options['lastfmverified'] = null;
-    if (empty($options['random']))
+    }
+    if (empty($options['random'])) {
       $options['random'] = null;
-    if (empty($options['idsort']))
+    }
+    if (empty($options['idsort'])) {
       $options['idsort'] = null;
-    if (empty($options['custom']))
+    }
+    if (empty($options['custom'])) {
       $options['custom'] = null;
-    if (empty($options['precise']))
+    }
+    if (empty($options['precise'])) {
       $options['precise'] = false;
-    if (empty($options['nocorrectionproposed']))
+    }
+    if (empty($options['nocorrectionproposed'])) {
       $options['nocorrectionproposed'] = false;
+    }
 
 //Prepare paramaters
     $sql_params = array($options['title'], $options['artist'], $options['precise'] ? '' : '%');
-    if ($options['limit'] != 0)
+    if ($options['limit'] != 0) {
       $sql_params[] = $options['limit'];
+    }
 
 //Do the bulk of the sorting with SQL
     $result = self::$db->fetch_all('SELECT trackid, rec_track.recordid
@@ -390,8 +404,9 @@ class MyURY_Track extends ServiceAPI {
 
     $response = array();
     foreach ($result as $trackid) {
-      if ($options['recordid'] !== null && $trackid['recordid'] != $options['recordid'])
+      if ($options['recordid'] !== null && $trackid['recordid'] != $options['recordid']) {
         continue;
+      }
       $response[] = new MyURY_Track($trackid['trackid']);
     }
 
@@ -746,7 +761,10 @@ class MyURY_Track extends ServiceAPI {
     
       foreach ($data['similartracks']['track'] as $r) {
         if ($r['match'] >= 0.25) {
-          $c = self::findByNameArtist($r['name'], $r['artist']['name'], 1, true);
+          $c = self::findByOptions(['title'=>$r['name'], 
+              'artist'=>$r['artist']['name'],
+              'limit'=>1,
+              'digitised'=>true]);
           if (!empty($c)) {
             $this->lastfm_similar[] = $c[0]->getID();
           }
