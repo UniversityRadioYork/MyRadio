@@ -256,7 +256,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
    * @param int $memberid The ID of the member to check. null means current user.
    * @return Array an array of Show objects attached to the given user
    */
-  public static function getShowsAttachedToUser($memberid = null) {
+  public static function getShowsAttachedToUser($memberid = null, $show_type_id = 1) {
     if ($memberid === null) {
       $memberid = $_SESSION['memberid'];
     }
@@ -264,7 +264,9 @@ class MyURY_Show extends MyURY_Metadata_Common {
 
     $r = self::$db->fetch_column('SELECT show_id FROM schedule.show WHERE memberid=$1 OR show_id IN
         (SELECT show_id FROM schedule.show_credit WHERE creditid=$1 AND effective_from <= NOW() AND
-          (effective_to >= NOW() OR effective_to IS NULL))', array($memberid));
+          (effective_to >= NOW() OR effective_to IS NULL))
+          AND show_type_id=$2',
+            array($memberid, $show_type_id));
 
     $return = array();
     foreach ($r as $show_id) {
