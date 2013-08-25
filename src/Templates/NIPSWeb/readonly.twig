@@ -23,7 +23,7 @@ Edit features are disabled.
   <div id="bapswrapper" class="ui-widget">
     <div id="baps-channel-container" class="clearfix">
       {% for i in 0..2 %}
-        <ul class="box width-1 height-2 baps-channel ui-widget-content" channel="{{i+1}}" id="baps-channel-{{i + 1}}">
+        <ul class="box width-1 height-2 baps-channel ui-widget-content" channel="{{i+1}}" id="baps-channel-{{i + 1}}" playonload="1">
           {% for track in tracks[i] %}
             <li id='{% if track['managedid'] is defined %}ManagedDB{% else %}{{track['album']['recordid']}}{% endif %}-{{track['trackid']}}' type='{{track['type']}}'
                 {% if track['managedid'] is defined %}managedid='{{track['managedid']}}'{% endif %}
@@ -36,7 +36,7 @@ Edit features are disabled.
       {% endfor %}
     
     </div>
-
+    
     <div id="baps-channelaction-container"  class="clearfix">
       {% set channels = {1: 'News', 2: 'Speech', 3: 'Music'} %}
       {% for channel in channels|keys %}
@@ -52,6 +52,7 @@ Edit features are disabled.
         </div>
       {% endfor %}
     </div>
+    
   </div>
   
   <div id="footer-tips" class="ui-state-highlight ui-helper-hidden"></div>
