@@ -97,6 +97,12 @@ class MyURY_Track extends ServiceAPI {
    * @var User
    */
   private $digitisedby;
+  
+  /**
+   * Caches Last.fm's Track.getSimilar response.
+   * @var Array
+   */
+  private $lastfm_similar;
 
   /**
    * Initiates the Track variables
@@ -137,8 +143,9 @@ class MyURY_Track extends ServiceAPI {
    * @return MyURY_Track
    */
   public static function getInstance($trackid = -1, $album = null) {
-    if ($album !== null)
+    if ($album !== null) {
       trigger_error('Use of deprecated parameter $album');
+    }
     self::wakeup();
     if (!is_numeric($trackid)) {
       throw new MyURYException('Invalid Track ID!', MyURYException::FATAL);
@@ -692,7 +699,7 @@ class MyURY_Track extends ServiceAPI {
    */
   public static function getAlbumDurationAndPositionFromLastfm($title, $artist) {
     $details = json_decode(file_get_contents(
-                    'http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key='
+                    'https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key='
                     . Config::$lastfm_api_key
                     . '&artist=' . urlencode($artist)
                     . '&track=' . urlencode(str_replace(' (Radio Edit)', '', $title))
@@ -716,6 +723,40 @@ class MyURY_Track extends ServiceAPI {
 
   public function setLastfmVerified() {
     self::$db->query('UPDATE rec_track SET lastfm_verified=\'t\' WHERE trackid=$1', array($this->getID()));
+  }
+  
+  /**
+   * Get similar Tracks from last.fm. Caches on first call.
+   * 
+   * The number of results will vary - the Last.fm API is asked for 50 matches,
+   * of which only ones with a score of 0.25 or higher will be checked,
+   * and then only tracks that are in URY's music library returned.
+   * 
+   * @todo Last.fm API Rate limit checks
+   * @return MyURY_Track[]
+   */
+  public function getSimilar() {
+    if (empty($this->lastfm_similar)) {
+      $data = json_decode(file_get_contents(
+              'https://ws.audioscrobbler.com/2.0/?method=track.getSimilar&api_key='
+              . Config::$lastfm_api_key
+              . '&track='.urlencode($this->getTitle())
+              . '&artist='.urlencode($this->getArtist())
+              . '&limit=50&format=json'), true);
+    
+      foreach ($data['similartracks']['track'] as $r) {
+        if ($r['match'] >= 0.25) {
+          $c = self::findByNameArtist($r['name'], $r['artist']['name'], 1, true);
+          if (!empty($c)) {
+            $this->lastfm_similar[] = $c[0]->getID();
+          }
+        }
+      }
+      
+      $this->updateCachedObject();
+    }
+    
+    return self::resultSetToObjArray($this->lastfm_similar);
   }
   
   /**

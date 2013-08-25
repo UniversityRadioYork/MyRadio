@@ -76,7 +76,9 @@ class Database {
   public function query($sql, $params = array(), $rollback = false) {
     
     foreach ($params as $k => $v) {
-      if (is_bool($v)) $params[$k] = ($v? 't' : 'f');
+      if (is_bool($v)) {
+        $params[$k] = ($v? 't' : 'f');
+      }
     }
     
     if (isset($_REQUEST['dbdbg']) && CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
@@ -123,8 +125,9 @@ class Database {
       } catch (MyURYException $e) {
         return array();
       }
-      if (pg_num_rows($result) === 0)
+      if (pg_num_rows($result) === 0) {
         return array();
+      }
       return pg_fetch_all($result);
     } else {
       throw new MyURYException('Invalid Request for $sql');
@@ -162,8 +165,9 @@ class Database {
     } catch (MyURYException $e) {
       return array();
     }
-    if (pg_num_rows($result) === 0)
+    if (pg_num_rows($result) === 0) {
       return array();
+    }
     return pg_fetch_all_columns($result, 0);
   }
 
@@ -197,19 +201,21 @@ class Database {
     $output = array();
     $offset = 1;
     
-    if ('{}' != $text)
+    if ('{}' != $text) {
       do {
         if ('{' != $text{$offset}) {
           preg_match("/(\\{?\"([^\"\\\\]|\\\\.)*\"|[^,{}]+)+([,}]+)/", $text, $match, 0, $offset);
           $offset += strlen($match[0]);
           $output[] = ( '"' != $match[1]{0} ? $match[1] : stripcslashes(substr($match[1], 1, -1)) );
-          if ('},' == $match[3])
+          if ('},' == $match[3]) {
             return $offset;
-        }
-        else
+          }
+        } else {
           $offset = pg_array_parse($text, $output[], $limit, $offset + 1);
+        }
       }
       while ($limit > $offset);
+    }
     return $output;
   }
   
