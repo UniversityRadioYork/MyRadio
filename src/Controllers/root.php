@@ -77,6 +77,12 @@ require 'Models/Core/api.php';
  * @todo Discuss or document the parts of MyURY core that cannot be brokered, see if this can be moved earlier
  */
 require_once 'Controllers/service_broker.php';
+/**
+ * Load configuration specific to this Version.
+ */
+if (file_exists('MyURY_Config.local.php')) {
+  require_once 'MyURY_Config.local.php';
+}
 
 /**
  * Set up the Module and Action global variables. These are used by Module/Action controllers as well as this file.
