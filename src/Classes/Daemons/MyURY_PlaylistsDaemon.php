@@ -18,7 +18,9 @@ class MyURY_PlaylistsDaemon extends MyURY_Daemon {
   
   public static function run() {
     $hourkey = __CLASS__.'_last_run_hourly';
-    if (self::getVal($hourkey) > time() - 3500) return;
+    if (self::getVal($hourkey) > time() - 3500) {
+      return;
+    }
     
     self::updateMostPlayedPlaylist();
     self::updateNewestUploadsPlaylist();
@@ -38,11 +40,15 @@ class MyURY_PlaylistsDaemon extends MyURY_Daemon {
     
     $playlist = array();
     for ($i = 0; $i < 100; $i++) {
-      if (!isset($most_played[$i])) break; //If there aren't that many, oh well.
-      $playlist[] = MyURY_Track::getInstance($most_played[$i]['trackid']);
+      if (!isset($most_played[$i])) {
+        break; //If there aren't that many, oh well.
+      }
+      $track = MyURY_Track::getInstance($most_played[$i]['trackid']);
+      $playlist = array_merge($playlist, $track->getSimilar());
+      $playlist[] = $track;
     }
     
-    $pobj->setTracks($playlist, $lockstr);
+    $pobj->setTracks(array_unique($playlist), $lockstr);
     $pobj->releaseLock($lockstr);
   }
   
