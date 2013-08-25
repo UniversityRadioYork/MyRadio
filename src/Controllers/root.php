@@ -19,7 +19,8 @@
 error_reporting(E_ALL ^ E_STRICT);
 ini_set('display_errors', 'On');
 /**
- * Set the TimeZone
+ * Set the Default TimeZone.
+ * Once Config is available, this value should be used instead.
  */
 date_default_timezone_get('Europe/London');
 /**
