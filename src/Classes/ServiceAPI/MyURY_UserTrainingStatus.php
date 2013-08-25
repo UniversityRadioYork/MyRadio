@@ -20,6 +20,12 @@
  */
 
 class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
+  
+  /**
+   * The singleton store for UserTrainingStatus objects
+   * @var MyURY_UserTrainingStatus[]
+   */
+  private static $uts = array();
 
   /**
    * The ID of the UserPresenterStatus
@@ -30,7 +36,7 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
   
   /**
    * The User the TrainingStatus was awarded to.
-   * @var User
+   * @var int
    */
   private $user;
   
@@ -74,7 +80,7 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
       throw new MyURYException('The specified UserTrainingStatus ('.$statusid.') does not seem to exist');
     }
     
-    $this->user = User::getInstance($result['memberid']);
+    $this->user = $result['memberid'];
     $this->awarded_time = strtotime($result['completeddate']);
     $this->awarded_by = $result['confirmedby'];
     $this->revoked_time = strtotime($result['revokedtime']);
@@ -87,7 +93,7 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
    * Get an Object for the given Training Status ID, initialising it if necessary.
    * 
    * @param int $statusid
-   * @return MyURY_TrainingStatus
+   * @return MyURY_UserTrainingStatus
    * @throws MyURYException
    */
   public static function getInstance($statusid = -1) {
@@ -96,7 +102,11 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
       throw new MyURYException('Invalid User Training Status ID! ('.$statusid.')', 400);
     }
 
-    return new self($statusid);
+    if (!isset(self::$uts[$statusid])) {
+      self::$uts[$statusid] = new self($statusid);
+    }
+
+    return self::$uts[$statusid];
   }
   
   /**
@@ -120,7 +130,7 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
    * @return User
    */
   public function getAwardedTo() {
-    return $this->user;
+    return User::getInstance($this->user);
   }
   
   /**

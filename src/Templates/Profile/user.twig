@@ -157,11 +157,16 @@
         {% endfor %}
         </ul>
         {% if user.training_avail %}
-        <select name="status_id">
+        <form action="{{myury.makeURL(config, 'Profile', 'addTrainingStatus')}}"
+              method="POST">
+        <select name="status_id" id="status_id">
           {% for train in user.training_avail %}
           <option value="{{train.status_id}}">{{train.title}}</option>
           {% endfor %}
         </select>
+        <input type="hidden" name="memberid" value="{{user.memberid}}">
+        <input type="submit" value="Add">
+        </form>
         {% endif %}
       </td>
     </tr>
