@@ -34,9 +34,9 @@ class MyURY_PlaylistsDaemon extends MyURY_Daemon {
     $lockstr = $pobj->acquireOrRenewLock(null, User::getInstance(Config::$system_user));
     
     /**
-     * @todo This is 70 days for testing (It was Summer when I wrote this...)
+     * @todo This is 700 days for testing (It was Summer when I wrote this...)
      */
-    $most_played = MyURY_TracklistItem::getTracklistStatsForBAPS(time() - (86400 * 70)); //Track play stats for last week
+    $most_played = MyURY_TracklistItem::getTracklistStatsForBAPS(time() - (86400 * 700)); //Track play stats for last week
     
     $playlist = array();
     for ($i = 0; $i < 100; $i++) {
