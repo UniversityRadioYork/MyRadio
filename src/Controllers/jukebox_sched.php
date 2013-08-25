@@ -19,10 +19,14 @@ Config::$display_errors = true;
 //I think it may be this script running more than once or something similar.
 $count = iTones_Utils::removeDuplicateItemsInQueues();
 
-if ($count !== 0) trigger_error("Removed $count duplicate items in queues.");
+if ($count !== 0) {
+  trigger_error("Removed $count duplicate items in queues.");
+}
 
 $current_queue_length = sizeof(iTones_Utils::getTracksInQueue('main'));
-if ($current_queue_length > 5) exit(0); //There's enough there for now, I think.
+if ($current_queue_length > 5) {
+  exit(0); //There's enough there for now, I think.
+}
 
 do {
   //We limit the number of attempts (to 10 ^ number of tracks needed), after which we'll try again later
@@ -43,7 +47,9 @@ do {
 
   //Actually send the telnet request, if we didn't run out of tries.
   if ($i > 0) {
-    if (!iTones_Utils::requestTrack($track, 'main')) throw new MyURYException('Track Request Failed!');
+    if (!iTones_Utils::requestTrack($track, 'main')) {
+      throw new MyURYException('Track Request Failed!');
+    }
     $current_queue_length++;
   }
 

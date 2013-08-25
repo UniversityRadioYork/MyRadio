@@ -256,18 +256,35 @@ class MyURY_TracklistItem extends ServiceAPI {
   }
   
   /**
-   * Check whether playing the given Track right now would be a breach of our PPL Licence.
-   * The PPL Licence states that a maximum of two songs from an artist or album in a two hour period may be broadcast.
-   * Anymore is a breach of this licence so we should really stop doing it.
+   * Check whether queuing the given Track for playout right now would be a
+   * breach of our PPL Licence.
+   * 
+   * The PPL Licence states that a maximum of two songs from an artist or album
+   * in a two hour period may be broadcast. Any more is a breach of this licence
+   * so we should really stop doing it.
+   * 
    * @param MyURY_Track $track
+   * @param bool $include_queue If true, will include the tracks in the iTones
+   * queue.
+   * @return bool
    */
-  public static function getIfAlbumArtistCompliant(MyURY_Track $track) {
+  public static function getIfAlbumArtistCompliant(MyURY_Track $track, $include_queue = true) {
     $timeout = CoreUtils::getTimestamp(time() - (3600 * 2)); //Two hours ago
     
     $result = self::$db->fetch_column('SELECT COUNT(*) FROM tracklist.tracklist
       LEFT JOIN tracklist.track_rec USING (audiologid) LEFT JOIN public.rec_track USING (trackid)
       WHERE (rec_track.recordid=$1 OR rec_track.artist=$2)
       AND timestart >= $3', array($track->getAlbum()->getID(), $track->getArtist(), $timeout));
+    
+    if ($include_queue) {
+      foreach (iTones_Utils::getTracksInAllQueues() as $req) {
+        $t = MyURY_Track::getInstance($track['trackid']);
+        if ($t->getAlbum()->getID() == $track->getAlbum()->getID()
+                or $t->getArtist() === $track->getArtist()) {
+          $result[0]++;
+        }
+      }
+    }
     
     return ($result[0] < 2);
   }

@@ -4,8 +4,6 @@
  * This MyURY Extension exposes some of MyURY's internal classes as a REST API.
  * It aims to be compatible with https://developers.helloreverb.com/swagger/
  * 
- * It is currently very experimental and should probably not be used for production projects yet.
- * 
  * @todo Management interfaces to configure keys and expose methods
  */
 // Configure MyURY & Set API Settings
@@ -36,7 +34,8 @@ function api_error($code, $message = null) {
  */
 //Remove double-slashes that occassionally appear.
 $cleaned = str_replace('//','/',$_SERVER['REQUEST_URI']);
-$params = explode('/', str_ireplace(Config::$api_uri, '', explode('?', $cleaned)[0]));
+$params = explode('/', str_ireplace(Config::$api_uri, '',
+        explode('?', $cleaned)[0]));
 $class = $params[0];
 
 if (empty($class)) {

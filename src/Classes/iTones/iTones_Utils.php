@@ -64,6 +64,19 @@ class iTones_Utils extends ServiceAPI {
   }
   
   /**
+   * Returns all the tracks in all Queues
+   * @return Array compatible with getTracksInQueue
+   */
+  public static function getTracksInAllQueues() {
+    $d = [];
+    foreach (self::$queues as $queue) {
+      $d = array_merge($d, self::getTracksInQueue($queue));
+    }
+    
+    return $d;
+  }
+  
+  /**
    * Check if a track is currently queued to be played in any queue.
    * @return boolean
    */
