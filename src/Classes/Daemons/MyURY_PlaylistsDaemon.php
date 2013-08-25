@@ -44,7 +44,9 @@ class MyURY_PlaylistsDaemon extends MyURY_Daemon {
         break; //If there aren't that many, oh well.
       }
       $track = MyURY_Track::getInstance($most_played[$i]['trackid']);
-      $playlist = array_merge($playlist, $track->getSimilar());
+      $similar = $track->getSimilar();
+      dlog('Found '.sizeof($similar).' similar tracks for '.$track->getID(), 4);
+      $playlist = array_merge($playlist, $similar);
       $playlist[] = $track;
     }
     
