@@ -54,7 +54,7 @@ class APCProvider implements CacheProvider {
    */
   public function set($key, $value, $expires = 0) {
     if (!$this->enable) return false;
-    return apc_store($key, $value, $expires);
+    return apc_store($this->getKeyPrefix().$key, $value, $expires);
   }
   
   /**
@@ -66,7 +66,7 @@ class APCProvider implements CacheProvider {
    */
   public function get($key) {
     if (!$this->enable) return false;
-    return apc_fetch($key);
+    return apc_fetch($this->getKeyPrefix().$key);
   }
   
   /**
@@ -78,7 +78,7 @@ class APCProvider implements CacheProvider {
    */
   public function delete($key) {
     if (!$this->enable) return false;
-    return apc_delete($key);
+    return apc_delete($this->getKeyPrefix().$key);
   }
   
   /**
@@ -109,6 +109,10 @@ class APCProvider implements CacheProvider {
    */
   public function __clone() {
     throw new MyURYException('Attempted to clone a singleton');
+  }
+  
+  public function getKeyPrefix() {
+    return 'MyURYCache_'.$_SESSION['myury_svc_version_1_path'];
   }
 }
 
