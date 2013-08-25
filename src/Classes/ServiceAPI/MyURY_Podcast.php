@@ -175,6 +175,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
   }
   
   public static function getPending() {
+    self::initDB();
     return self::resultSetToObjArray(self::$db->fetch_column('SELECT podcast_id '
             . 'FROM uryplayer.podcast WHERE submitted IS NULL'));
   }
