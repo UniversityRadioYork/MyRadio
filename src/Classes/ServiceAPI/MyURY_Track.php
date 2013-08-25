@@ -759,6 +759,10 @@ class MyURY_Track extends ServiceAPI {
               . '&artist='.urlencode($this->getArtist())
               . '&limit=50&format=json'), true);
     
+      if (!is_array($data['similartracks']['track'])) {
+        trigger_error($this.' had an empty Similar Tracks result.');
+        return [];
+      }
       foreach ($data['similartracks']['track'] as $r) {
         if ($r['match'] >= 0.25) {
           $c = self::findByOptions(['title'=>$r['name'], 
