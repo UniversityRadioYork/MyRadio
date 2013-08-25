@@ -43,6 +43,7 @@ require_once 'Classes/MyURY/CoreUtils.php';
  * to use and whether debug mode is enabled.
  */
 require_once 'Classes/Config.php';
+require_once 'MyURY_Config.local.php';
 
 /**
  * Load in email functions
