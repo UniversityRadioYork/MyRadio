@@ -74,7 +74,7 @@ class MyURY_TrainingStatus extends ServiceAPI {
    * 
    * This array is initialised the first time it is requested.
    * 
-   * @var User[]
+   * @var int[]
    */
   private $awarded_to = null;
 
@@ -98,12 +98,8 @@ class MyURY_TrainingStatus extends ServiceAPI {
     $this->ordering = (int)$result['ordering'];
     $this->detail = $result['detail'];
     
-    if (!isset(self::$ts[$statusid])) {
-      self::$ts[$statusid] = $this;
-    }
-    
-    $this->depends = empty($result['depends']) ? null : self::getInstance($result['depends']);
-    $this->can_award = empty($result['can_award']) ? null : self::getInstance($result['can_award']);
+    $this->depends = empty($result['depends']) ? null : $result['depends'];
+    $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
   }
 
   /**
@@ -162,7 +158,7 @@ class MyURY_TrainingStatus extends ServiceAPI {
    * @return MyURY_TrainingStatus
    */
   public function getDepends() {
-    return $this->depends;
+    return empty($this->depends) ? null : self::getInstance($this->depends);
   }
   
   /**
@@ -184,7 +180,7 @@ class MyURY_TrainingStatus extends ServiceAPI {
    * @return MyURY_TrainingStatus
    */
   public function getAwarder() {
-    return $this->can_award;
+    return self::getInstance($this->can_award);
   }
   
   /**
@@ -279,7 +275,6 @@ class MyURY_TrainingStatus extends ServiceAPI {
     
     $statuses = [];
     foreach (self::getAll() as $status) {
-      
       if ((!$status->isAwardedTo($to)) && $status->hasDependency($to)
               && $status->canAward($by)) {
         $statuses[] = $status;
