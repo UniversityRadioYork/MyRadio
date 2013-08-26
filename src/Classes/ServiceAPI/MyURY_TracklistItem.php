@@ -278,6 +278,9 @@ class MyURY_TracklistItem extends ServiceAPI {
     
     if ($include_queue) {
       foreach (iTones_Utils::getTracksInAllQueues() as $req) {
+        if (empty($req['trackid'])) {
+          continue;
+        }
         $t = MyURY_Track::getInstance($req['trackid']);
         if ($t->getAlbum()->getID() == $track->getAlbum()->getID()
                 or $t->getArtist() === $track->getArtist()) {
