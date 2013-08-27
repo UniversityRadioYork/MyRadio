@@ -84,11 +84,7 @@ class MyURY_Album extends ServiceAPI {
     $this->cdid = $result['cdid'];
     $this->location = $result['location_descr'];
     
-    $result = self::$db->fetch_column('SELECT trackid FROM rec_track WHERE recordid=$1', array($this->albumid));
-    
-    foreach ($result as $track) {
-      $this->tracks[] = MyURY_Track::getInstance($track);
-    }
+    $this->tracks = self::$db->fetch_column('SELECT trackid FROM rec_track WHERE recordid=$1', array($this->albumid));
   }
   
   public function getID() {
@@ -96,7 +92,7 @@ class MyURY_Album extends ServiceAPI {
   }
   
   public function getTracks() {
-    return $this->tracks;
+    return MyURY_Track::resultSetToObjArray($this->tracks);
   }
   
   public function getTitle() {
@@ -105,7 +101,9 @@ class MyURY_Album extends ServiceAPI {
   
   public function getFolder() {
     $dir = Config::$music_central_db_path.'/records/'.$this->getID();
-    if (!is_dir($dir)) mkdir($dir);
+    if (!is_dir($dir)) {
+      mkdir($dir);
+    }
     return $dir;
   }
   
