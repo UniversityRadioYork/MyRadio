@@ -61,7 +61,7 @@ class MyURY_List extends ServiceAPI {
    * Initiates the MyURY_List object
    * @param int $listid The ID of the Mailing List to initialise
    */
-  private function __construct($listid) {
+  protected function __construct($listid) {
     $this->listid = $listid;
 
     $result = self::$db->fetch_one('SELECT * FROM mail_list WHERE listid=$1', array($listid));

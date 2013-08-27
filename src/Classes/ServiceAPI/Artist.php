@@ -20,7 +20,7 @@ class Artist extends ServiceAPI {
    * Initiates the Artist object
    * @param int $artistid The ID of the Artist to initialise
    */
-  private function __construct($artistid) {
+  protected function __construct($artistid) {
     $this->artistid = $artistid;
     throw new MyURYException('Not implemented Artist::__construct');
   }

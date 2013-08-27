@@ -148,7 +148,7 @@ class User extends ServiceAPI {
    * Initiates the User variables
    * @param int $memberid The ID of the member to initialise
    */
-  private function __construct($memberid) {
+  protected function __construct($memberid) {
     $this->memberid = $memberid;
     //Get the base data
     $data = self::$db->fetch_one(

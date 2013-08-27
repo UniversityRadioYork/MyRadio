@@ -74,7 +74,7 @@ class MyURY_BannerCampaign extends ServiceAPI {
    * Initiates the MyURY_BannerCampaign object
    * @param int $banner_campaign_id The ID of the Banner Campaign to initialise
    */
-  private function __construct($banner_campaign_id) {
+  protected function __construct($banner_campaign_id) {
     $this->banner_campaign_id = (int) $banner_campaign_id;
 
     $result = self::$db->fetch_one('SELECT * FROM website.banner_campaign WHERE banner_campaign_id=$1', array($banner_campaign_id));

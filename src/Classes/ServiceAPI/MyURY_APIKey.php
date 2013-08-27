@@ -32,7 +32,7 @@ class MyURY_APIKey extends ServiceAPI {
    * Construct the API Key Object
    * @param String $key
    */
-  private function __construct($key) {
+  protected function __construct($key) {
     $this->key = $key;
     $this->permissions = self::$db->fetch_column('SELECT typeid FROM myury.api_key_auth WHERE key_string=$1', array($key));
   }

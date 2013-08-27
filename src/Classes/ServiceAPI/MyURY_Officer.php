@@ -60,7 +60,7 @@ class MyURY_Officer extends ServiceAPI {
   private $type;
 
   
-  private function __construct($id) {
+  protected function __construct($id) {
     $result = self::$db->fetch_one('SELECT * FROM public.officer '
             . 'WHERE officerid=$1', [$id]);
     

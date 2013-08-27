@@ -130,7 +130,7 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
     return $response;
   }
   
-  private function __construct() {}
+  protected function __construct() {}
   
   /**
    * Generates the Key string for caching services
