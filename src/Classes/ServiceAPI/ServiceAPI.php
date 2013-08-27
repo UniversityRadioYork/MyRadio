@@ -16,6 +16,11 @@
  */
 abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
   /**
+   * The singleton store for classes
+   */
+  protected static $singletons = [];
+  
+  /**
    * All ServiceAPI subclasses will contain a reference to the Database Singleton
    * @var \Database
    */
@@ -58,7 +63,21 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
   }
   
   public static function getInstance($itemid = -1) {
-    throw new MyURYException(get_called_class() . '-'.$itemid.' is not an initialisable Service API!', 500);
+    self::initCache();
+    self::initDB();
+    
+    $class = get_called_class();
+    $key = $class::getCacheKey($itemid);
+    if (!isset(self::$singletons[$key])) {
+      $cache = self::$cache->get($key);
+      if (!$cache) {
+        $cache = new $class($itemid);
+        self::$cache->set($key, $cache, 86400);
+      }
+      self::$singletons[$key] = $cache;
+    }
+    
+    return self::$singletons[$key];
   }
   
   public function toDataSource($full = false) {
