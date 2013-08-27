@@ -11,7 +11,9 @@ require 'Models/iTones/editplaylistfrm.php';
 
 $data = $form->readValues();
 
-if (empty($data['playlistid'])) throw new MyURYException('No Playlist ID provided.', 400);
+if (empty($data['playlistid'])) {
+  throw new MyURYException('No Playlist ID provided.', 400);
+}
 
 $playlist = iTones_Playlist::getInstance($data['playlistid']);
 

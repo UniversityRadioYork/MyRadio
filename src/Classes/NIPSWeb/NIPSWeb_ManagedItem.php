@@ -14,12 +14,6 @@
  * @uses \Database
  */
 class NIPSWeb_ManagedItem extends ServiceAPI {
-  /**
-   * The Singleton store for ManagedItem objects
-   * @var MyURY_Track
-   */
-  private static $resources = array();
-  
   private $managed_item_id;
   
   private $managed_playlist;
@@ -44,7 +38,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
    * @todo Seperate Managed Items and Managed User Items. The way they were implemented was a horrible hack, for which
    * I am to blame. I should go to hell for it, seriously - Lloyd
    */
-  private function __construct($resid, $playlistref = null) {
+  protected function __construct($resid, $playlistref = null) {
     $this->managed_item_id = $resid;
     //*dies*
     $result = self::$db->fetch_one('SELECT manageditemid, title, length, bpm, NULL AS folder, memberid, expirydate,
@@ -69,24 +63,6 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     $this->bpm = (int)$result['bpm'];
     $this->expirydate = strtotime($result['expirydate']);
     $this->member = empty($result['memberid']) ? null : User::getInstance($result['memberid']);
-  }
-  
-  /**
-   * Returns the current instance of that ManagedItem object if there is one, or runs the constructor if there isn't
-   * @param int $resid The ID of the ManagedItem to return an object for
-   * @param NIPSWeb_ManagedPlaylist $playlistref If the playlist is requesting this item, then pass the playlist object
-   * itself as a reference to prevent cyclic dependencies.
-   */
-  public static function getInstance($resid = -1, $playlistref = null) {
-    if (!is_numeric($resid)) {
-      throw new MyURYException('Invalid ManagedResourceID!');
-    }
-
-    if (!isset(self::$resources[$resid])) {
-      self::$resources[$resid] = new self($resid, $playlistref);
-    }
-
-    return self::$resources[$resid];
   }
   
   /**

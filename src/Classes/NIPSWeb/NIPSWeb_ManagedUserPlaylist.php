@@ -15,34 +15,15 @@
  */
 class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist {
 
-  private static $playlists;
-
   /**
    * Initiates the UserPlaylist variables
    * @param int $playlistid The folder of the user playlist to initialise, e.g. 7449/beds
    * Note: Only links *non-expired* items
    */
-  private function __construct($playlistid) {
+  protected function __construct($playlistid) {
     $this->folder = $playlistid;
 
     $this->name = self::getNameFromFolder($this->folder);
-  }
-
-  /**
-   * Returns the current instance of that ManagedUserPlaylist object if there is one, or runs the constructor if there isn't
-   * @param String $resid The String ID of the ManagedUserPlaylist to return an object for
-   */
-  public static function getInstance($resid = -1) {
-    self::wakeup();
-    if (!is_string($resid)) {
-      throw new MyURYException('Invalid ManagedUserPlaylistID!');
-    }
-
-    if (!isset(self::$playlists[$resid])) {
-      self::$playlists[$resid] = new self($resid);
-    }
-
-    return self::$playlists[$resid];
   }
 
   /**

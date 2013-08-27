@@ -138,8 +138,9 @@ class MyURY_List extends ServiceAPI {
    * @param User $user
    */
   public function hasOptedOutOfAuto(User $user) {
-    if ($this->optin)
+    if ($this->optin) {
       return false;
+    }
 
     return sizeof(self::$db->query('SELECT memberid FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
             array($user->getID(), $this->getID()))) === 1;
@@ -175,6 +176,7 @@ class MyURY_List extends ServiceAPI {
     }
 
     $this->members[] = $user->getID();
+    $this->updateCacheObject();
     return true;
   }
 
@@ -202,6 +204,7 @@ class MyURY_List extends ServiceAPI {
     if ($key !== false) {
       unset($this->members[$key]);
     }
+    $this->updateCacheObject();
     return true;
   }
   
@@ -222,10 +225,11 @@ class MyURY_List extends ServiceAPI {
   public static function getByName($str) {
     $r = self::$db->fetch_column('SELECT listid FROM mail_list WHERE listname ILIKE $1 OR listaddress ILIKE $1',
             array($str));
-    if (empty($r))
+    if (empty($r)) {
       return null;
-    else
+    } else {
       return self::getInstance($r[0]);
+    }
   }
 
   public static function getAllLists() {

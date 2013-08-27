@@ -13,12 +13,6 @@
  * @uses \Database
  */
 class NIPSWeb_TimeslotItem extends ServiceAPI {
-  /**
-   * The Singleton store for TimeslotItem objects
-   * @var Array of NIPSWeb_TimeslotItem
-   */
-  private static $resources = array();
-  
   private $timeslot_item_id;
   
   private $item;
@@ -32,7 +26,7 @@ class NIPSWeb_TimeslotItem extends ServiceAPI {
    * @param int $resid The timeslot_item_id of the resource to initialise
    * @param NIPSWeb_ManagedPlaylist $playlistref If the playlist is requesting this item, then pass the playlist object
    */
-  private function __construct($resid, $playlistref = null) {
+  protected function __construct($resid, $playlistref = null) {
     $this->timeslot_item_id = $resid;
     //*dies*
     $result = self::$db->fetch_one('SELECT * FROM bapsplanner.timeslot_items where timeslot_item_id=$1 LIMIT 1',
@@ -55,25 +49,6 @@ class NIPSWeb_TimeslotItem extends ServiceAPI {
     
     $this->channel = (int)$result['channel_id'];
     $this->weight = (int)$result['weight'];
-  }
-  
-  /**
-   * Returns the current instance of that TimeslotItem object if there is one, or runs the constructor if there isn't
-   * @param int $resid The ID of the TimesotItem to return an object for
-   * @param NIPSWeb_ManagedPlaylist $playlistref If the playlist is requesting this item, then pass the playlist object
-   * itself as a reference to prevent cyclic dependencies.
-   */
-  public static function getInstance($resid = -1, $playlistref = null) {
-    self::wakeup();
-    if (!is_numeric($resid)) {
-      throw new MyURYException('Invalid TimeslotItemID!');
-    }
-
-    if (!isset(self::$resources[$resid])) {
-      self::$resources[$resid] = new self($resid, $playlistref);
-    }
-
-    return self::$resources[$resid];
   }
   
   /**
