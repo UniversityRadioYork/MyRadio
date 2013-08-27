@@ -524,7 +524,7 @@ class User extends ServiceAPI {
     if ($itemid === -1) {
       $itemid = $_SESSION['memberid'];
     }
-    parent::getInstance($itemid);
+    return parent::getInstance($itemid);
   }
 
   /**
