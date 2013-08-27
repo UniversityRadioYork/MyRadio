@@ -523,6 +523,13 @@ class User extends ServiceAPI {
       ORDER BY sname, fname LIMIT $2', array($name, $limit));
     }
   }
+  
+  public static function getInstance($itemid = -1) {
+    if ($itemid === -1) {
+      $itemid = $_SESSION['memberid'];
+    }
+    parent::getInstance($itemid);
+  }
 
   /**
    * Runs a super-long pSQL query that returns the information used to generate the Profile Timeline

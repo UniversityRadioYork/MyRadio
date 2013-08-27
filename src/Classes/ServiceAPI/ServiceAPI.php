@@ -62,7 +62,7 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
     self::initCache();
   }
   
-  public static function getInstance($itemid = -1) {
+  public static function getInstance($itemid) {
     self::initCache();
     self::initDB();
     
