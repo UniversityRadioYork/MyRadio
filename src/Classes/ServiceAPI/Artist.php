@@ -15,11 +15,6 @@
  * @uses \Database
  */
 class Artist extends ServiceAPI {
-  /**
-   * When above @todo is completed, this will store cached artist singletons
-   * @var \Artist 
-   */
-  private static $artists = array();
   
   /**
    * Initiates the Artist object
@@ -28,16 +23,6 @@ class Artist extends ServiceAPI {
   private function __construct($artistid) {
     $this->artistid = $artistid;
     throw new MyURYException('Not implemented Artist::__construct');
-  }
-  
-  /**
-   * Does nothing as this isn't implemented. Derp.
-   * @param int $trackid The ID of the Track to return
-   * @throws MyURYException Not implemented - throws a fatal exception
-   */
-  public static function getInstance($trackid = -1) {
-    self::wakeup();
-    throw new MyURYException('Not implemented Artist::getInstance');
   }
   
   /**

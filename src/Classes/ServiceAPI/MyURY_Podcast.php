@@ -17,13 +17,6 @@
  * @uses \Database
  */
 class MyURY_Podcast extends MyURY_Metadata_Common {
-
-  /**
-   * Singleton store.
-   * @var MyURY_Podcast[]
-   */
-  private static $podcasts = [];
-
   /**
    * The Podcast's ID
    * @var int
@@ -65,25 +58,6 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
    * @var int
    */
   private $show_id;
-
-  /**
-   * Get the object for the given Podcast
-   * @param int $podcast_id
-   * @return MyURY_Podcast
-   * @throws MyURYException
-   */
-  public static function getInstance($podcast_id = null) {
-    self::wakeup();
-    if ($podcast_id === null) {
-      throw new MyURYException('Invalid Podcast ID', 400);
-    }
-
-    if (!isset(self::$podcasts[$podcast_id])) {
-      self::$podcasts[$podcast_id] = new self($podcast_id);
-    }
-
-    return self::$podcasts[$podcast_id];
-  }
 
   /**
    * Construct the API Key Object

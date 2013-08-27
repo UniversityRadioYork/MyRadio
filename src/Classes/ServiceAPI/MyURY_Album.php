@@ -15,12 +15,6 @@
  */
 
 class MyURY_Album extends ServiceAPI {
-
-  /**
-   * The singleton store for Album objects
-   * @var MyURY_Album[]
-   */
-  private static $albums = array();
   
   /**
    * The Title of the release
@@ -95,19 +89,6 @@ class MyURY_Album extends ServiceAPI {
     foreach ($result as $track) {
       $this->tracks[] = MyURY_Track::getInstance($track);
     }
-  }
-
-  public static function getInstance($recordid = -1) {
-    self::wakeup();
-    if (!is_numeric($recordid)) {
-      throw new MyURYException('Invalid Record/Album ID!', MyURYException::FATAL);
-    }
-
-    if (!isset(self::$albums[$recordid])) {
-      self::$albums[$recordid] = new self($recordid);
-    }
-
-    return self::$albums[$recordid];
   }
   
   public function getID() {

@@ -18,12 +18,6 @@
 class User extends ServiceAPI {
 
   /**
-   * Stores User Singletons
-   * @var User
-   */
-  private static $users = array();
-
-  /**
    * Stores the user's memberid
    * @var int
    */
@@ -504,45 +498,6 @@ class User extends ServiceAPI {
   }
 
   /**
-   * Returns the Singleton User instance of the given memberid, creating it if necessary
-   * @param int $memberid The ID of the User to return
-   * @return \User
-   */
-  public static function getInstance($memberid = -1) {
-    //__wakeup isn't static.
-    self::initCache();
-    self::initDB();
-    //Check the input is an int, and use the session user if not otherwise told
-    $memberid = (int) $memberid;
-    if ($memberid === -1) {
-      if (!isset($_SESSION)) {
-        $memberid = 779; //Mr Website
-      } else {
-        $memberid = $_SESSION['memberid'];
-      }
-    }
-
-    //Check if a user class already exists for this memberid
-    //(Each memberid-user combination should only have one initiated instance)
-    if (isset(self::$users[$memberid])) {
-      return self::$users[$memberid];
-    }
-
-    //Return the object if it is cached
-    $entry = self::$cache->get(self::getCacheKey($memberid));
-    if ($entry === false) {
-      //Not cached.
-      $entry = new User($memberid);
-      $entry->updateCacheObject();
-    } else {
-      //Wake up the object
-      $entry->__wakeup();
-    }
-
-    return $entry;
-  }
-
-  /**
    * Searches for Users with a name starting with $name
    * @param String $name The name to search for. If there is a space, it is assumed the second word is the surname
    * @param int $limit The maximum number of Users to return. -1 uses the ajax_limit_default setting.
@@ -552,8 +507,9 @@ class User extends ServiceAPI {
    * sname: The actual last name of the User
    */
   public static function findByName($name, $limit = -1) {
-    if ($limit == -1)
+    if ($limit == -1) {
       $limit = Config::$ajax_limit_default;
+    }
     //If there's a space, split into first and last name
     $name = trim($name);
     $names = explode(' ', $name);

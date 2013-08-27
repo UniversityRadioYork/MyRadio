@@ -61,8 +61,7 @@ do {
     break;
 } while (!empty($tracks));
 
-require 'Views/Library/bootstrap.php';
-$twig->setTemplate('table.twig')
+CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.datatable.default')
         ->addVariable('title', 'Duplicate Tracks')
         ->addVariable('tabledata', CoreUtils::dataSourceParser($duplicates))

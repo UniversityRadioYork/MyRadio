@@ -30,8 +30,7 @@ foreach ($albums as $album) {
 
 $cacher->set('myuryLibraryGapFillerCheckedTracks', $checked);
 
-require 'Views/Library/bootstrap.php';
-$twig->setTemplate('table.twig')
+CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.library.gapfiller')
         ->addVariable('title', 'Updated Tracks')
         ->addVariable('tabledata', CoreUtils::dataSourceParser($updated))

@@ -14,12 +14,6 @@
  * 
  */
 class MyURY_Officer extends ServiceAPI {
-
-  /**
-   * Singleton store.
-   * @var MyURY_Officer[]
-   */
-  private static $objs = array();
   /**
    * The ID of the Officer
    * @var int
@@ -82,22 +76,6 @@ class MyURY_Officer extends ServiceAPI {
       $this->status = $result['status'];
       $this->type = $result['type'];
     }
-  }
-  
-  /**
-   * 
-   * @param type $id
-   * @return type
-   * @throws MyURYException
-   */
-  public static function getInstance($id = -1) {
-    if (!is_numeric($id)) {
-      throw new MyURYException($id.' is not a valid Officer ID!', 400);
-    }
-    if (!isset(self::$objs[$id])) {
-      self::$objs[$id] = new self($id);
-    }
-    return self::$objs[$id];
   }
   
   /**

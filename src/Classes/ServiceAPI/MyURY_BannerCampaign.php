@@ -16,11 +16,6 @@
 class MyURY_BannerCampaign extends ServiceAPI {
 
   /**
-   * @var MyURY_BannerCampaign[]
-   */
-  public static $bannerCampaigns = [];
-
-  /**
    * The ID of the BannerCampaign
    * @var int
    */
@@ -284,25 +279,6 @@ class MyURY_BannerCampaign extends ServiceAPI {
     self::$db->query('INSERT INTO website.banner_timeslot'
             . ' (banner_campaign_id, memberid, approvedid, "order", day, start_time, end_time) VALUES'
             . ' ($1, $2, $2, $1, $3, $4, $5)', [$this->getID(), User::getInstance()->getID(), $day, $start, $end]);
-  }
-
-  /**
-   * Get or create the BannerCampaign object
-   * @param int $banner_campaign_id
-   * @return MyURY_BannerCampaign
-   * @throws MyURYException
-   */
-  public static function getInstance($banner_campaign_id = -1) {
-    self::wakeup();
-    if (!is_numeric($banner_campaign_id)) {
-      throw new MyURYException('Invalid Banner Campaign ID!');
-    }
-
-    if (!isset(self::$bannerCampaigns[$banner_campaign_id])) {
-      self::$bannerCampaigns[$banner_campaign_id] = new self($banner_campaign_id);
-    }
-
-    return self::$bannerCampaigns[$banner_campaign_id];
   }
 
   /**

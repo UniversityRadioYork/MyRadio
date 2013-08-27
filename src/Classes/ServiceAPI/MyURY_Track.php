@@ -17,12 +17,6 @@
 class MyURY_Track extends ServiceAPI {
 
   /**
-   * The Singleton store for Track objects
-   * @var MyURY_Track
-   */
-  private static $tracks = array();
-
-  /**
    * The number of the Track on a Record
    * @var int
    */
@@ -133,36 +127,6 @@ class MyURY_Track extends ServiceAPI {
     $this->number = (int) $result['intro'];
     $this->record = (int) $result['recordid'];
     $this->title = $result['title'];
-  }
-
-  /**
-   * Returns the current instance of that Track object if there is one, or runs the constructor if there isn't
-   * @param int $trackid The ID of the Track to return an object for
-   * @param MyURY_Album If defined, this is a reference to a preexisting album object. Prevents circular referncing.
-   * 
-   * @return MyURY_Track
-   */
-  public static function getInstance($trackid = -1, $album = null) {
-    if ($album !== null) {
-      trigger_error('Use of deprecated parameter $album');
-    }
-    self::wakeup();
-    if (!is_numeric($trackid)) {
-      throw new MyURYException('Invalid Track ID!', MyURYException::FATAL);
-    }
-
-    if (!isset(self::$tracks[$trackid])) {
-      //See if there's one in the cache
-      $item = self::$cache->get(self::getCacheKey($trackid));
-
-      if ($item !== false) {
-        self::$tracks[$trackid] = $item;
-      } else {
-        self::$cache->set(self::getCacheKey($trackid), new self($trackid), Config::$cache_track_timeout);
-      }
-    }
-
-    return self::$tracks[$trackid];
   }
 
   private function updateCachedObject() {

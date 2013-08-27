@@ -19,13 +19,6 @@
  */
 
 class MyURY_TrainingStatus extends ServiceAPI {
-
-  /**
-   * The singleton store for TrainingStatus objects
-   * @var MyURY_TrainingStatus[]
-   */
-  private static $ts = array();
-  
   /**
    * The ID of the Training Status
    * @var int
@@ -100,26 +93,6 @@ class MyURY_TrainingStatus extends ServiceAPI {
     
     $this->depends = empty($result['depends']) ? null : $result['depends'];
     $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
-  }
-
-  /**
-   * Get an Object for the given Training Status ID, initialising it if necessary.
-   * 
-   * @param int $statusid
-   * @return MyURY_TrainingStatus
-   * @throws MyURYException
-   */
-  public static function getInstance($statusid = -1) {
-    self::wakeup();
-    if (!is_numeric($statusid)) {
-      throw new MyURYException('Invalid Training Status ID! ('.$statusid.')', 400);
-    }
-
-    if (!isset(self::$ts[$statusid])) {
-      self::$ts[$statusid] = new self($statusid);
-    }
-
-    return self::$ts[$statusid];
   }
   
   /**

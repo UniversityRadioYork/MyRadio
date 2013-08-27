@@ -17,7 +17,7 @@
  * @package MyURY_Core
  * @uses \Database
  */
-class MyURY_Selector extends ServiceAPI {
+class MyURY_Selector {
 
   /**
    * The current studio is Studio 1
@@ -101,15 +101,6 @@ class MyURY_Selector extends ServiceAPI {
    * @var Array
    */
   private $sel_status;
-
-  /**
-   * Get a new Selector object
-   * @param null $key
-   * @return MyURY_Selector
-   */
-  public static function getInstance($key = null) {
-    return new self();
-  }
 
   /**
    * Construct the Selector Object

@@ -50,10 +50,6 @@ class MyURY_Swagger {
     return $result;
   }
   
-  public static function getInstance($class) {
-    return new self($class);
-  }
-  
   /** THIS HALF DEALS WITH API Declarations **/
   private $class;
   public function __construct($class) {

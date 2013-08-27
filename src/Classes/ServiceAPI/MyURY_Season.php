@@ -15,8 +15,6 @@
  */
 
 class MyURY_Season extends MyURY_Metadata_Common {
-
-  private static $seasons = array();
   private $season_id;
   private $show_id;
   private $term_id;
@@ -26,24 +24,6 @@ class MyURY_Season extends MyURY_Metadata_Common {
   private $requested_times = [];
   private $requested_weeks = [];
   private $season_num;
-
-  /**
-   * 
-   * @param int $season_id
-   * @return MyURY_Season
-   * @throws MyURYException
-   */
-  public static function getInstance($season_id = null) {
-    if (!is_numeric($season_id)) {
-      throw new MyURYException('Invalid Season ID!', MyURYException::FATAL);
-    }
-
-    if (!isset(self::$seasons[$season_id])) {
-      self::$seasons[$season_id] = new self($season_id);
-    }
-
-    return self::$seasons[$season_id];
-  }
 
   private function __construct($season_id) {
     $this->season_id = $season_id;
