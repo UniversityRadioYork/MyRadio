@@ -29,7 +29,7 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
    * Initiates the AutoPlaylist variables
    * @param int $playlistid The ID of the auto playlist to initialise
    */
-  private function __construct($playlistid) {
+  protected function __construct($playlistid) {
     $this->auto_playlist_id = $playlistid;
     $result = self::$db->fetch_one('SELECT * FROM bapsplanner.auto_playlists WHERE auto_playlist_id=$1 LIMIT 1', array($playlistid));
     if (empty($result)) {
@@ -39,23 +39,6 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI {
 
     $this->name = $result['name'];
     $this->query = $result['query'];
-  }
-
-  /**
-   * Returns the current instance of that AutoPlaylist object if there is one, or runs the constructor if there isn't
-   * @param int $resid The ID of the AutoPlaylist to return an object for
-   */
-  public static function getInstance($resid = -1) {
-    self::wakeup();
-    if (!is_numeric($resid)) {
-      throw new MyURYException('Invalid AutoPlaylistID!');
-    }
-
-    if (!isset(self::$playlists[$resid])) {
-      self::$playlists[$resid] = new self($resid);
-    }
-
-    return self::$playlists[$resid];
   }
 
   /**

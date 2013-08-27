@@ -13,11 +13,6 @@
  * @uses \Database
  */
 class iTones_PlaylistRevision extends iTones_Playlist {
-  /**
-   * The Singleton store for PlaylistRevision objects
-   * @var iTones_PlaylistRevision
-   */
-  private static $playlists = array();
   
   /**
    * When this revision was created
@@ -66,26 +61,6 @@ class iTones_PlaylistRevision extends iTones_Playlist {
       $this->tracks[] = MyURY_Track::getInstance($id);
     }
 
-  }
-  
-  /**
-   * Returns the current instance of that Playlist object if there is one, or runs the constructor if there isn't
-   * @param String $resid The ID of the Playlist to return an object for
-   * @param int $revisionid The revision to load
-   * @return iTones_Playlist
-   */
-  public static function getInstance($resid = -1, $revisionid = -1) {
-    self::wakeup();
-    $key = $resid.':'.$revisionid;
-    if (!is_string($resid) or empty($resid)) {
-      throw new MyURYException('Invalid iTonesPlaylistID!');
-    }
-
-    if (!isset(self::$playlists[$key])) {
-      self::$playlists[$key] = new self($resid, $revisionid);
-    }
-
-    return self::$playlists[$key];
   }
   
   /**

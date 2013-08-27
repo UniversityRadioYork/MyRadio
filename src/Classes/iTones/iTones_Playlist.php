@@ -14,12 +14,6 @@
  * @uses \Database
  */
 class iTones_Playlist extends ServiceAPI {
-
-  /**
-   * The Singleton store for AudioResource objects
-   * @var iTones_Playlist
-   */
-  private static $playlists = array();
   private $playlistid;
   private $title;
   private $image;
@@ -52,24 +46,6 @@ class iTones_Playlist extends ServiceAPI {
 
     $this->revisionid = (int) self::$db->fetch_one('SELECT revisionid FROM jukebox.playlist_revisions
       WHERE playlistid=$1 ORDER BY revisionid DESC LIMIT 1', array($this->getID()))['revisionid'];
-  }
-
-  /**
-   * Returns the current instance of that Playlist object if there is one, or runs the constructor if there isn't
-   * @param String $resid The ID of the Playlist to return an object for
-   * @return iTones_Playlist
-   */
-  public static function getInstance($resid = -1) {
-    self::wakeup();
-    if (!is_string($resid) or empty($resid)) {
-      throw new MyURYException('Invalid iTonesPlaylistID!');
-    }
-
-    if (!isset(self::$playlists[$resid])) {
-      self::$playlists[$resid] = new self($resid);
-    }
-
-    return self::$playlists[$resid];
   }
 
   /**
