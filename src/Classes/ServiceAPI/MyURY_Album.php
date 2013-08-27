@@ -54,7 +54,7 @@ class MyURY_Album extends ServiceAPI {
   
   private $tracks = array();
 
-  private function __construct($recordid) {
+  protected function __construct($recordid) {
     $this->albumid = $recordid;
     
     $result = self::$db->fetch_one('SELECT * FROM (SELECT * FROM public.rec_record WHERE recordid=$1 LIMIT 1) AS t1

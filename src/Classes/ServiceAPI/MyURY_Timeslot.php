@@ -25,7 +25,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
   private $timeslot_num;
   protected $credits;
 
-  private function __construct($timeslot_id) {
+  protected function __construct($timeslot_id) {
     $this->timeslot_id = $timeslot_id;
     //Init Database
     self::initDB();

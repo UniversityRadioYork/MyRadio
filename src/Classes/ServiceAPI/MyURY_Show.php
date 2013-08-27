@@ -23,7 +23,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
   private $season_ids;
   private $photo_url;
 
-  private function __construct($show_id) {
+  protected function __construct($show_id) {
     $this->show_id = $show_id;
     self::initDB();
 

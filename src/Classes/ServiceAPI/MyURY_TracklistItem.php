@@ -29,7 +29,7 @@ class MyURY_TracklistItem extends ServiceAPI {
    */
   private $track;
   
-  private function __construct($id) {
+  protected function __construct($id) {
     $this->audiologid = (int)$id;
     
     $result = self::$db->fetch_one('SELECT * FROM tracklist.tracklist

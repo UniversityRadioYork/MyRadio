@@ -25,7 +25,7 @@ class MyURY_Season extends MyURY_Metadata_Common {
   private $requested_weeks = [];
   private $season_num;
 
-  private function __construct($season_id) {
+  protected function __construct($season_id) {
     $this->season_id = $season_id;
     //Init Database
     self::initDB();
