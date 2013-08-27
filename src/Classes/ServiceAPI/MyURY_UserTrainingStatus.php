@@ -80,11 +80,11 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
       throw new MyURYException('The specified UserTrainingStatus ('.$statusid.') does not seem to exist');
     }
     
-    $this->user = $result['memberid'];
+    $this->user = (int)$result['memberid'];
     $this->awarded_time = strtotime($result['completeddate']);
-    $this->awarded_by = $result['confirmedby'];
+    $this->awarded_by = (int)$result['confirmedby'];
     $this->revoked_time = strtotime($result['revokedtime']);
-    $this->revoked_by = $result['revokedby'];
+    $this->revoked_by = (int)$result['revokedby'];
     
     parent::__construct($result['presenterstatusid']);
   }
@@ -129,8 +129,8 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
    * Get the User that was Awarded this Training Status
    * @return User
    */
-  public function getAwardedTo() {
-    return User::getInstance($this->user);
+  public function getAwardedTo($id = false) {
+    return $id ? $this->user : User::getInstance($this->user);
   }
   
   /**
@@ -167,7 +167,8 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
     $data['user_status_id'] = $this->getUserTrainingStatusID();
     $data['awarded_by'] = $this->getAwardedBy()->toDataSource($full);
     $data['awarded_time'] = $this->getAwardedTime();
-    $data['revoked_by'] = ($this->getRevokedBy() === null ? null : $this->getRevokedBy()->toDataSource($full));
+    $data['revoked_by'] = ($this->getRevokedBy() === null ? null : 
+            $this->getRevokedBy()->toDataSource($full));
     $data['revoked_time'] = $this->getRevokedTime();
     return $data;
   }
@@ -181,7 +182,8 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
    * @return \self
    * @throws MyURYException
    */
-  public static function create(MyURY_TrainingStatus $status, User $awarded_to, User $awarded_by = null) {
+  public static function create(MyURY_TrainingStatus $status, User $awarded_to,
+          User $awarded_by = null) {
     //Does the User already have this?
     foreach ($awarded_to->getAllTraining(true) as $training) {
       if ($training->getID() === $status->getID()) {
