@@ -16,12 +16,6 @@
  * 
  */
 class MyURY_TracklistItem extends ServiceAPI {
-  /**
-   * The Singleton store for TracklistItem objects
-   * @var MyURY_TracklistItem[]
-   */
-  private static $items = array();
-  
   private $audiologid;
   private $source;
   private $starttime;
@@ -68,26 +62,6 @@ class MyURY_TracklistItem extends ServiceAPI {
   
   public function getStartTime() {
     return $this->starttime;
-  }
-  
-  /**
-   * Returns the current instance of that TracklistItem object if there is one, or runs the constructor if there isn't
-   * @param int $audiologid The ID of the TracklistItem to return an object for
-   * 
-   * @return MyURY_TracklistItem
-   */
-  public static function getInstance($trackid = -1) {
-    self::wakeup();
-    if (!is_numeric($trackid)) {
-      throw new MyURYException('Invalid TracklistItem ID!', 400);
-    }
-
-    if (!isset(self::$items[$trackid])) {
-      //See if there's one in the cache
-      self::$items[$trackid] = new self($trackid);
-    }
-
-    return self::$items[$trackid];
   }
   
   /**

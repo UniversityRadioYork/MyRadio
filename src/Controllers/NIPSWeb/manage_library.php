@@ -6,9 +6,7 @@
  * @version 20130525
  * @package MyURY_NIPSWeb
  */
-require 'Views/bootstrap.php';
-
-$twig->setTemplate('NIPSWeb/manage_library.twig')
+CoreUtils::getTemplateObject()->setTemplate('NIPSWeb/manage_library.twig')
         ->addVariable('reslists', CoreUtils::dataSourceParser(array(
             'managed' => array(),
             'aux' => NIPSWeb_ManagedPlaylist::getAllManagedPlaylists(true),

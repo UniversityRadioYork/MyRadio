@@ -16,11 +16,6 @@
 class MyURY_Banner extends MyURY_Photo {
 
   /**
-   * @var MyURY_Banner[]
-   */
-  public static $banners = [];
-
-  /**
    * The ID of the banner
    * @var int
    */
@@ -220,25 +215,6 @@ class MyURY_Banner extends MyURY_Photo {
             [str_replace(Config::$public_media_uri.'/','',$photo->getURL()), $this->getID(), $this->getBannerID()]);
     
     return $this;
-  }
-
-  /**
-   * Get or create the Banner object
-   * @param int $banner_id
-   * @return MyURY_Banner
-   * @throws MyURYException
-   */
-  public static function getInstance($banner_id = -1) {
-    self::wakeup();
-    if (!is_numeric($banner_id)) {
-      throw new MyURYException('Invalid Banner ID!');
-    }
-
-    if (!isset(self::$banners[$banner_id])) {
-      self::$banners[$banner_id] = new self($banner_id);
-    }
-
-    return self::$banners[$banner_id];
   }
 
   /**

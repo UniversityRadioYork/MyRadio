@@ -14,12 +14,6 @@
  * @uses \Database
  */
 class MyURY_Photo extends ServiceAPI {
-
-  /**
-   * @var MyURY_Photo[]
-   */
-  private static $photos = array();
-
   /**
    * Stores the primary key for the Photo
    * @var int
@@ -73,19 +67,6 @@ class MyURY_Photo extends ServiceAPI {
         'format' => $this->getFormat(),
         'owner' => $this->getOwner()->getID()
     ];
-  }
-
-  public static function getInstance($photoid = -1) {
-    self::wakeup();
-    if (!is_numeric($photoid)) {
-      throw new MyURYException('Invalid Photo ID!');
-    }
-
-    if (!isset(self::$photos[$photoid])) {
-      self::$photos[$photoid] = new self($photoid);
-    }
-
-    return self::$photos[$photoid];
   }
   
   /**

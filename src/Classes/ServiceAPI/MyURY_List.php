@@ -15,11 +15,6 @@
 class MyURY_List extends ServiceAPI {
 
   /**
-   * @var MyURY_List 
-   */
-  private static $lists = array();
-
-  /**
    * Stores the primary key for the list
    * @var int
    */
@@ -90,19 +85,6 @@ class MyURY_List extends ServiceAPI {
         (SELECT memberid FROM mail_subscription WHERE listid=$1)', array($listid));
     }
     $this->members = array_map(function($x) {return (int)$x;}, $this->members);
-  }
-
-  public static function getInstance($listid = -1) {
-    self::wakeup();
-    if (!is_numeric($listid)) {
-      throw new MyURYException('Invalid List ID!');
-    }
-
-    if (!isset(self::$lists[$listid])) {
-      self::$lists[$listid] = new self($listid);
-    }
-
-    return self::$lists[$listid];
   }
 
   private function parseSQL($sql) {

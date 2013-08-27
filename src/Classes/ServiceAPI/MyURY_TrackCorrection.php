@@ -26,12 +26,6 @@ class MyURY_TrackCorrection extends MyURY_Track {
   const LEVEL_SUGGEST = 0;
 
   /**
-   * The Singleton store for TrackCorrection objects
-   * @var MyURY_TrackCorrection
-   */
-  private static $corrections = array();
-
-  /**
    * The proposed title for the track
    * @var String
    */
@@ -94,26 +88,6 @@ class MyURY_TrackCorrection extends MyURY_Track {
     $this->reviewedby = empty($result['reviewedby']) ? null : User::getInstance($result['reviewedby']);
     $this->level = (int)$result['level'];
     $this->state = $result['state'];
-  }
-
-  /**
-   * Returns the current instance of that TrackCorrection object if there is one, or runs the constructor if there isn't
-   * @param int $correctionid The ID of the TrackCorrection to return an object for
-   * 
-   * @return MyURY_Track
-   */
-  public static function getInstance($correctionid = -1) {
-    self::wakeup();
-    if (!is_numeric($correctionid)) {
-      throw new MyURYException('Invalid TrackCorrection ID!', 400);
-    }
-
-    if (!isset(self::$corrections[$correctionid])) {
-      //See if there's one in the cache
-      self::$corrections[$correctionid] = new self($correctionid);
-    }
-
-    return self::$corrections[$correctionid];
   }
   
   /**

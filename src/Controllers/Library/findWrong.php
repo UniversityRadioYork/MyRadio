@@ -35,8 +35,7 @@ foreach (Config::$music_central_db_exts as $ext) {
   }
 }
 
-require 'Views/Library/bootstrap.php';
-$twig->setTemplate('table.twig')
+CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.datatable.default')
         ->addVariable('title', 'Misplaced Tracks')
         ->addVariable('tabledata', CoreUtils::dataSourceParser($wrong))

@@ -20,12 +20,6 @@
  */
 
 class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
-  
-  /**
-   * The singleton store for UserTrainingStatus objects
-   * @var MyURY_UserTrainingStatus[]
-   */
-  private static $uts = array();
 
   /**
    * The ID of the UserPresenterStatus
@@ -87,26 +81,6 @@ class MyURY_UserTrainingStatus extends MyURY_TrainingStatus {
     $this->revoked_by = (int)$result['revokedby'];
     
     parent::__construct($result['presenterstatusid']);
-  }
-
-  /**
-   * Get an Object for the given Training Status ID, initialising it if necessary.
-   * 
-   * @param int $statusid
-   * @return MyURY_UserTrainingStatus
-   * @throws MyURYException
-   */
-  public static function getInstance($statusid = -1) {
-    self::wakeup();
-    if (!is_numeric($statusid)) {
-      throw new MyURYException('Invalid User Training Status ID! ('.$statusid.')', 400);
-    }
-
-    if (!isset(self::$uts[$statusid])) {
-      self::$uts[$statusid] = new self($statusid);
-    }
-
-    return self::$uts[$statusid];
   }
   
   /**

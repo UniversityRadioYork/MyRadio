@@ -16,8 +16,7 @@
  *
  */
 class MyURY_Timeslot extends MyURY_Metadata_Common {
-
-  private static $timeslots = array();
+  
   private $timeslot_id;
   private $start_time;
   private $duration;
@@ -25,24 +24,6 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
   private $owner;
   private $timeslot_num;
   protected $credits;
-
-  /**
-   *
-   * @param int $timeslot_id
-   * @return MyURY_Timeslot
-   * @throws MyURYException
-   */
-  public static function getInstance($timeslot_id = null) {
-    if (!is_numeric($timeslot_id)) {
-      throw new MyURYException('Invalid Timeslot ID!', MyURYException::FATAL);
-    }
-
-    if (!isset(self::$timeslots[$timeslot_id])) {
-      self::$timeslots[$timeslot_id] = new self($timeslot_id);
-    }
-
-    return self::$timeslots[$timeslot_id];
-  }
 
   private function __construct($timeslot_id) {
     $this->timeslot_id = $timeslot_id;

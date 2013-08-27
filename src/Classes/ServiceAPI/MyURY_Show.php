@@ -14,8 +14,6 @@
  */
 
 class MyURY_Show extends MyURY_Metadata_Common {
-
-  private static $shows = array();
   private $show_id;
   private $owner;
   protected $credits = array();
@@ -24,31 +22,6 @@ class MyURY_Show extends MyURY_Metadata_Common {
   private $submitted_time;
   private $season_ids;
   private $photo_url;
-
-  /**
-   * 
-   * @param int $show_id
-   * @return MyURY_Show
-   * @throws MyURYException
-   */
-  public static function getInstance($show_id = null) {
-    if (!is_numeric($show_id)) {
-      throw new MyURYException('Invalid Show ID!', MyURYException::FATAL);
-    }
-
-    if (!isset(self::$shows[$show_id])) {
-      $entry = self::$cache->get(self::getCacheKey($show_id));
-      if (!$entry) {
-        $show = new self($show_id);
-        $show->updateCacheObject();
-        self::$shows[$show_id] = $show;
-      } else {
-        self::$shows[$show_id] = $entry;
-      }
-    }
-
-    return self::$shows[$show_id];
-  }
 
   private function __construct($show_id) {
     $this->show_id = $show_id;

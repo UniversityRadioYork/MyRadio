@@ -14,12 +14,6 @@
  * 
  */
 class MyURY_Alias extends ServiceAPI {
-
-  /**
-   * Singleton store.
-   * @var mixed
-   */
-  private static $aliases = array();
   /**
    * The ID of the Alias
    * @var int
@@ -89,22 +83,6 @@ class MyURY_Alias extends ServiceAPI {
         ];
       }
     }
-  }
-  
-  /**
-   * 
-   * @param type $id
-   * @return type
-   * @throws MyURYException
-   */
-  public static function getInstance($id = -1) {
-    if (!is_numeric($id)) {
-      throw new MyURYException($id.' is not a valid Alias ID!', 400);
-    }
-    if (!isset(self::$aliases[$id])) {
-      self::$aliases[$id] = new self($id);
-    }
-    return self::$aliases[$id];
   }
   
   /**

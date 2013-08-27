@@ -20,8 +20,7 @@ foreach ($tracks as $track) {
 }
 
 
-require 'Views/Library/bootstrap.php';
-$twig->setTemplate('table.twig')
+CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.datatable.default')
         ->addVariable('title', 'Missing Track Files')
         ->addVariable('tabledata', CoreUtils::dataSourceParser($missing))

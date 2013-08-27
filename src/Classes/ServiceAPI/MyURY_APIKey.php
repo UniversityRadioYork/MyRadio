@@ -17,12 +17,6 @@
 class MyURY_APIKey extends ServiceAPI {
 
   /**
-   * Singleton store.
-   * @var MyURY_APIKey[]
-   */
-  private static $keys = [];
-
-  /**
    * The API Key
    * @var String
    */
@@ -33,25 +27,6 @@ class MyURY_APIKey extends ServiceAPI {
    * @var int[]
    */
   private $permissions;
-
-  /**
-   * Get the object for the given API Key
-   * @param String $key
-   * @return MyURY_APIKey
-   * @throws MyURYException
-   */
-  public static function getInstance($key = null) {
-    self::wakeup();
-    if ($key === null) {
-      throw new MyURYException('Invalid API Key', 400);
-    }
-
-    if (!isset(self::$keys[$key])) {
-      self::$keys[$key] = new self($key);
-    }
-
-    return self::$keys[$key];
-  }
 
   /**
    * Construct the API Key Object
