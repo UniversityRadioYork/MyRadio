@@ -178,10 +178,6 @@ class User extends ServiceAPI {
       }
     }
 
-    if (!isset(self::$users[$memberid])) {
-      self::$users[$memberid] = $this;
-    }
-
     //Get the user's permissions
     $this->permissions = self::$db->fetch_column('SELECT lookupid FROM auth_officer
       WHERE officerid IN (SELECT officerid FROM member_officer
