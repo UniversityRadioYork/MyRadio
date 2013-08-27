@@ -113,9 +113,6 @@ class MyURY_Track extends ServiceAPI {
       return;
     }
 
-    //Prevent multiple instances being created by constructor due to Album requesting Track again
-    self::$tracks[$trackid] = $this;
-
     $this->artist = $result['artist'];
     $this->clean = $result['clean'];
     $this->digitised = ($result['digitised'] == 't') ? true : false;
