@@ -511,8 +511,8 @@ class User extends ServiceAPI {
     $return = array();
     foreach ($this->shows as $show_id) {
       $show = MyURY_Show::getInstance($show_id);
-      if ($show->getType() == $show_type_id) {
-        $return[] = self::getInstance($show_id);
+      if ($show->getShowType() == $show_type_id) {
+        $return[] = $show;
       }
     }
     return $return;
