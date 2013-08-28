@@ -52,15 +52,9 @@ class MyURYEmail extends ServiceAPI {
     $this->timestamp = strtotime($info['timestamp']);
     $this->email_id = $eid;
 
-    $users = self::$db->fetch_column('SELECT memberid FROM mail.email_recipient_member WHERE email_id=$1', array($eid));
-    foreach ($users as $user) {
-      $this->r_users[] = User::getInstance($user);
-    }
+    $this->r_users = self::$db->fetch_column('SELECT memberid FROM mail.email_recipient_member WHERE email_id=$1', array($eid));
 
-    $lists = self::$db->fetch_column('SELECT listid FROM mail.email_recipient_list WHERE email_id=$1', array($eid));
-    foreach ($lists as $list) {
-      $this->r_lists[] = MyURY_List::getInstance($list);
-    }
+    $this->r_lists = self::$db->fetch_column('SELECT listid FROM mail.email_recipient_list WHERE email_id=$1', array($eid));
 
     /**
      * Check if the body needs to be split into multipart.
@@ -188,7 +182,7 @@ class MyURYEmail extends ServiceAPI {
       return;
     }
     $this->body_transformed = utf8_encode($this->body_transformed);
-    foreach ($this->r_users as $user) {
+    foreach ($this->getUserRecipients() as $user) {
       if (!$this->getSentToUser($user)) {
         //Don't send if the user has opted out
         if ($user->getReceiveEmail()) {
@@ -202,7 +196,7 @@ class MyURYEmail extends ServiceAPI {
       }
     }
 
-    foreach ($this->r_lists as $list) {
+    foreach ($this->getListRecipients() as $list) {
       if (!$this->getSentToList($list)) {
         foreach ($list->getMembers() as $user) {
           //Don't send if the user has opted out
@@ -300,11 +294,11 @@ class MyURYEmail extends ServiceAPI {
    */
   public function isRecipient(User $user) {
     foreach ($this->r_users as $ruser) {
-      if ($ruser->getID() === $user->getID()) {
+      if ($ruser === $user->getID()) {
         return true;
       }
     }
-    foreach ($this->r_lists as $list) {
+    foreach ($this->getListRecipients() as $list) {
       if ($list->isMember($user)) {
         return true;
       }
@@ -314,6 +308,14 @@ class MyURYEmail extends ServiceAPI {
   
   public function getSubject() {
     return $this->subject;
+  }
+  
+  public function getListRecipients() {
+    return MyURY_List::resultSetToObjArray($this->r_lists);
+  }
+  
+  public function getUserRecipients() {
+    return MyURY_List::resultSetToObjArray($this->r_users);
   }
   
   public function getViewableBody() {
