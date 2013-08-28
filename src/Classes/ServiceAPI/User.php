@@ -143,6 +143,13 @@ class User extends ServiceAPI {
    * @var String
    */
   private $bio = '';
+  
+  /**
+   * Initialised on first request, stores a list of Show IDs the User has.
+   * 
+   * @var int[]
+   */
+  private $shows;
 
   /**
    * Initiates the User variables
@@ -299,7 +306,7 @@ class User extends ServiceAPI {
    * @return boolean
    */
   public function hasShow() {
-    return sizeof(MyURY_Show::getShowsAttachedToUser($this->getID())) !== 0;
+    return sizeof($this->getShows()) !== 0;
   }
 
   /**
@@ -483,6 +490,33 @@ class User extends ServiceAPI {
   public function getBio() {
     return $this->bio;
   }
+  
+  /**
+   * Returns an array of Shows which the User owns or is an active
+   * credit in.
+   * 
+   * @param int $show_type_id
+   * @return Array an array of Show objects attached to the given user
+   */
+  public function getShows($show_type_id = 1) {
+    if ($this->shows === null) {
+      $this->shows = self::$db->fetch_column('SELECT show_id FROM schedule.show 
+        WHERE memberid=$1 OR show_id IN
+          (SELECT show_id FROM schedule.show_credit
+          WHERE creditid=$1 AND effective_from <= NOW() AND
+            (effective_to >= NOW() OR effective_to IS NULL))',
+              array($this->getID()));
+    }
+
+    $return = array();
+    foreach ($this->shows as $show_id) {
+      $show = MyURY_Show::getInstance($show_id);
+      if ($show->getType() == $show_type_id) {
+        $return[] = self::getInstance($show_id);
+      }
+    }
+    return $return;
+  }
 
   /**
    * Returns if the user has the given permission
@@ -553,7 +587,7 @@ class User extends ServiceAPI {
       }
     }
 
-    foreach (MyURY_Show::getShowsAttachedToUser($this->getID()) as $show) {
+    foreach ($this->getShows() as $show) {
       $credit = 'Owner';
       foreach ($show->getCreditsNames(true) as $c) {
         if ($c['name'] === $this->getName()) {
@@ -1312,14 +1346,15 @@ EOT;
         'sname' => $this->getSName(),
         'url' => $this->getURL(),
         'sex' => $this->getSex(),
-        'photo' => $this->getProfilePhoto() === null ? Config::$default_person_uri : $this->getProfilePhoto()->getURL(),
+        'photo' => $this->getProfilePhoto() === null ? 
+            Config::$default_person_uri : $this->getProfilePhoto()->getURL(),
         'bio' => $this->getBio(),
         'receive_email' => $this->getReceiveEmail(),
         'public_email' => $this->getEmail()
     ];
     if ($full) {
       $data['shows'] = CoreUtils::dataSourceParser(
-              MyURY_Show::getShowsAttachedToUser($this->getID()), false);
+              $this->getShows(), false);
       $data['officerships'] = $this->getOfficerships();
       $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining(),
               false);
