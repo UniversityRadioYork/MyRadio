@@ -690,5 +690,12 @@ class CoreUtils {
     return $return;
   }
   
+  public static function getSafeHTML($dirty_html) {
+    require_once 'Classes/Vendor/htmlpurifier/HTMLPurifier.auto.php';
+    $config = HTMLPurifier_Config::createDefault();
+    $purifier = new HTMLPurifier($config);
+    return $purifier->purify($dirty_html);
+  }
+  
   private function __construct(){}
 }
