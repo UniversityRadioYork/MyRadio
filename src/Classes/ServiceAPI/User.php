@@ -506,6 +506,7 @@ class User extends ServiceAPI {
           WHERE creditid=$1 AND effective_from <= NOW() AND
             (effective_to >= NOW() OR effective_to IS NULL))',
               array($this->getID()));
+      $this->updateCacheObject();
     }
 
     $return = array();
