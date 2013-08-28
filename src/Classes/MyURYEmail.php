@@ -345,7 +345,13 @@ class MyURYEmail extends ServiceAPI {
         'email_id' => $this->getID(),
         'from' => empty($this->from) ? null : $this->from->getName(),
         'timestamp' => CoreUtils::happyTime($this->timestamp),
-        'subject' => $this->subject
+        'subject' => $this->subject,
+        'view' => [
+            'display' => 'icon',
+            'value' => 'mail-open',
+            'title' => 'Read this email',
+            'url' => CoreUtils::makeURL('Mail', 'view', ['emailid' => $this->getID()])
+        ]
     ];
     
     if ($full) {
