@@ -517,6 +517,14 @@ class CoreUtils {
         self::$svc_version_cache[$key] = $result;
       }
     }
+    
+    //If it's the current user, store the data in session.
+    if ($user->getID() === User::getInstance()->getID()) {
+      $_SESSION['myury_svc_version_' . $serviceid] = self::$svc_version_cache[$key]['version'];
+      $_SESSION['myury_svc_version_' . $serviceid.'_path'] = self::$svc_version_cache[$key]['path'];
+      $_SESSION['myury_svc_version_' . $serviceid.'_proxy_static'] = self::$svc_version_cache[$key]['proxy_static'];
+    }
+    
     return self::$svc_version_cache[$key];
   }
 
