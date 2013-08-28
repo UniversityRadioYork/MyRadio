@@ -289,6 +289,29 @@ class MyURYEmail extends ServiceAPI {
     }
   }
   
+  /**
+   * Returns if the User received this email.
+   * 
+   * Will return true if the email was sent to a mailing list they were
+   * not a member of at the time.
+   * 
+   * @param User $user
+   * @return boolean
+   */
+  public function isRecipient(User $user) {
+    foreach ($this->r_users as $ruser) {
+      if ($ruser->getID() === $user->getID()) {
+        return true;
+      }
+    }
+    foreach ($this->r_lists as $list) {
+      if ($list->isMember($user)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
   public function getSubject() {
     return $this->subject;
   }
