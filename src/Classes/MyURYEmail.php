@@ -14,9 +14,8 @@
  * @package MyURY_Mail
  * @todo Footers contain hard-coded URLs. This used to be necessary (when the links went to mint), but isn't now.
  */
-class MyURYEmail {
-
-  private static $db;
+class MyURYEmail extends ServiceAPI {
+  
   // Defaults
   private static $headers = 'Content-type: text/plain; charset=utf-8';
   private static $sender = 'From: MyURY <no-reply@ury.org.uk>';
@@ -38,7 +37,7 @@ class MyURYEmail {
   private $from;
   private $timestamp;
 
-  public function __construct($eid) {
+  protected function __construct($eid) {
     self::$db = Database::getInstance();
 
     $info = self::$db->fetch_one('SELECT * FROM mail.email WHERE email_id=$1', array($eid));
@@ -230,6 +229,7 @@ class MyURYEmail {
 
   public function setSentToUser(User $user) {
     self::$db->query('UPDATE mail.email_recipient_member SET sent=\'t\' WHERE email_id=$1 AND memberid=$2', array($this->email_id, $user->getID()));
+    $this->updateCacheObject();
   }
 
   public function getSentToList(MyURY_List $list) {
@@ -240,6 +240,7 @@ class MyURYEmail {
 
   public function setSentToList(MyURY_List $list) {
     self::$db->query('UPDATE mail.email_recipient_list SET sent=\'t\' WHERE email_id=$1 AND listid=$2', array($this->email_id, $list->getID()));
+    $this->updateCacheObject();
   }
 
   /**
@@ -286,6 +287,47 @@ class MyURYEmail {
 
       self::create(array('members' => $to), $subject, $message, $from);
     }
+  }
+  
+  public function getSubject() {
+    return $this->subject;
+  }
+  
+  public function getViewableBody() {
+    if ($this->body) {
+      $data = CoreUtils::getSafeHTML($this->body);
+    } else {
+      /**
+       * @todo Filtering here.
+       */
+      $body = $this->body_transformed;
+      $data = CoreUtils::getSafeHTML($body);
+    }
+    
+    if (strpos($data, '<') === false) {
+      return nl2br($data);
+    } else {
+      return $data;
+    }
+  }
+  
+  public function getID() {
+    return $this->email_id;
+  }
+  
+  public function toDataSource($full = false) {
+    $data = [
+        'email_id' => $this->getID(),
+        'from' => $this->from->getName(),
+        'timestamp' => CoreUtils::happyTime($this->timestamp),
+        'subject' => $this->subject
+    ];
+    
+    if ($full) {
+      $data['body'] = $this->getViewableBody();
+    }
+    
+    return $data;
   }
 
   /** BELOW HERE IS FOR IF STUFF BREAKS REALLY EARLY BEFORE ^ WILL WORK * */

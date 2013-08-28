@@ -53,9 +53,16 @@ class MyURY_List extends ServiceAPI {
 
   /**
    * This is the set of members that receive messages to this list
-   * @var User[]
+   * @var int[]
    */
   private $members = array();
+  
+  /**
+   * Initialised on first request, stores an archive of all the email IDs
+   * sent to this list.
+   * @var int[]
+   */
+  private $archive = [];
 
   /**
    * Initiates the MyURY_List object
@@ -220,6 +227,25 @@ class MyURY_List extends ServiceAPI {
     $subject = trim($subject[2][0]);
     
     MyURYEmail::create(array('lists' => array($this)), $subject, $body, $from, time(), true);
+    $this->archive = [];
+    $this->updateCacheObject();
+  }
+  
+  /**
+   * Return all the emails Archived in this List.
+   * @return MyURYEmail[]
+   */
+  public function getArchive() {
+    if (empty($this->archive)) {
+      $this->archive = self::$db->fetch_column('SELECT email.email_id '
+              . 'FROM mail.email_recipient_list '
+              . 'LEFT JOIN mail.email USING (email_id) '
+              . 'WHERE listid=$1 '
+              . 'ORDER BY timestamp DESC',
+              [$this->getID()]);
+      $this->updateCacheObject();
+    }
+    return MyURYEmail::resultSetToObjArray($this->archive);
   }
 
   public static function getByName($str) {

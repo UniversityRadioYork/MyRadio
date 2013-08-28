@@ -46,11 +46,6 @@ require_once 'Classes/Config.php';
 require_once 'MyURY_Config.local.php';
 
 /**
- * Load in email functions
- */
-require_once 'Classes/MyURYEmail.php';
-
-/**
  * Load the phpError handler class - this has functions to put errors nicely on
  * the page, or to log them elsewhere.
  * And set the error handler to use it
@@ -71,6 +66,11 @@ ini_set('error_log', Config::$log_file); // Set error log file
  * Call the model that prepares the Database and the Global Abstraction API 
  */
 require 'Models/Core/api.php';
+
+/**
+ * Load in email functions
+ */
+require_once 'Classes/MyURYEmail.php';
 
 /**
  * The Service Broker decides what version of a Service the user has access to. This includes MyURY, so gets added
