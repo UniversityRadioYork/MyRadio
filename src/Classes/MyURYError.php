@@ -218,14 +218,14 @@ class MyURYError {
         $message = $errstr . $rtnl . $rtnl . $trace;
         if (class_exists('MyURYEmail')) {
           $sent = MyURYEmail::sendEmailToList(MyURY_List::getByName(Config::$error_report_email), 'MyURY error alert', $message);
-        }
-        if (!$sent) {
-          error_log('FAIL: mail failed to send error alert email.');
-          // Good chance that if the mail command failed,
-          // then error_log will also fail to send mail,
-          // but we have to try.
-          error_log(__FUNCTION__ . ' failed! Check server logs!');
-          throw new MyURYException('Failed to send email error alert.', 500);
+          if (!$sent) {
+            error_log('FAIL: mail failed to send error alert email.');
+            // Good chance that if the mail command failed,
+            // then error_log will also fail to send mail,
+            // but we have to try.
+            error_log(__FUNCTION__ . ' failed! Check server logs!');
+            throw new MyURYException('Failed to send email error alert.', 500);
+          }
         }
       }
     }

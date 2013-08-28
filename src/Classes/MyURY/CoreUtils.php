@@ -23,7 +23,6 @@ class CoreUtils {
    */
   private static $auth_cached = false;
   private static $svc_version_cache = array();
-  private static $svc_id_cache = array();
   
   /**
    * Stores permission typeid => description mappings
@@ -504,7 +503,8 @@ class CoreUtils {
     if (!isset(self::$svc_version_cache[$key])) {
       $db = Database::getInstance();
 
-      $result = $db->fetch_one('SELECT version, path, proxy_static FROM myury.services_versions
+      $result = $db->fetch_one('SELECT version, path, proxy_static
+      FROM myury.services_versions
       WHERE serviceid IN (SELECT serviceid FROM myury.services_versions_member
         WHERE memberid=$2 AND serviceversionid IN (SELECT serviceversionid FROM myury.services_versions
           WHERE serviceid=$1)
@@ -521,15 +521,16 @@ class CoreUtils {
   }
 
   /**
-   * @todo Document this.
-   * @return boolean
+   * 
    */
-  public static function getDefaultServiceVersion() {
+  private static function getDefaultServiceVersion() {
     $db = Database::getInstance();
 
     $r = $db->fetch_one('SELECT version, path, proxy_static FROM myury.services_versions WHERE serviceid=$1
       AND is_default=true LIMIT 1', array(Config::$service_id));
     $r['proxy_static'] = $r['proxy_static'] === 't';
+    
+    return $r;
   }
 
   /**

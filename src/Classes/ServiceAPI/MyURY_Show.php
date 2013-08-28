@@ -225,11 +225,15 @@ class MyURY_Show extends MyURY_Metadata_Common {
 
   /**
    * Returns an array of shows which the given user owns or is an active
-   * credit in
+   * credit in.
+   * 
    * @param int $memberid The ID of the member to check. null means current user.
    * @return Array an array of Show objects attached to the given user
+   * 
+   * @deprecated Use User->getShows($show_type_id) instead.
    */
   public static function getShowsAttachedToUser($memberid = null, $show_type_id = 1) {
+    trigger_error('Use of deprecated getShowsAttachedtoUser');
     if ($memberid === null) {
       $memberid = $_SESSION['memberid'];
     }
@@ -274,6 +278,14 @@ class MyURY_Show extends MyURY_Metadata_Common {
    */
   public function getShowPhoto() {
     return $this->photo_url;
+  }
+  
+  /**
+   * Returns the ID for the type of Show
+   * @return int
+   */
+  public function getShowType() {
+    return $this->show_type;
   }
   
   /**

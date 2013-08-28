@@ -173,7 +173,7 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
       return ['text' => $x->getMeta('title'), 'value' => $x->getID()];
     }, User::getInstance()->hasAuth(AUTH_PODCASTANYSHOW) ? 
             MyURY_Show::getAllShows()
-            : MyURY_Show::getShowsAttachedToUser());
+            : User::getInstance()->getShows());
     
     //Add an option for not attached to a show
     if (User::getInstance()->hasAuth(AUTH_STANDALONEPODCAST)) {
