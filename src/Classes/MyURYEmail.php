@@ -341,7 +341,7 @@ class MyURYEmail extends ServiceAPI {
   public function toDataSource($full = false) {
     $data = [
         'email_id' => $this->getID(),
-        'from' => $this->from->getName(),
+        'from' => empty($this->from) ? null : $this->from->getName(),
         'timestamp' => CoreUtils::happyTime($this->timestamp),
         'subject' => $this->subject
     ];
