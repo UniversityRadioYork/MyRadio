@@ -19,5 +19,5 @@ if (!isset($_SESSION['memberid'])) {
   $_SESSION['shib_allow_access'] = false;
 }
 date_default_timezone_set(Config::$timezone);
-require_once 'Classes/MyURYEmail.php';
 require 'Models/Core/api.php';
+require_once 'Classes/MyURYEmail.php';

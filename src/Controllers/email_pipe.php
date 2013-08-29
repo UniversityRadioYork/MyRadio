@@ -57,8 +57,12 @@ foreach ($recipients[3] as $recipient) {
   }
   
   $list = MyURY_List::getByName(explode('@',$addr)[0]);
-  if (empty($list)) exit(0);
-  if ($list->getID() == 52 && $sender == null) continue; //Prevent loops
+  if (empty($list)) {
+    exit(0);
+  }
+  if ($list->getID() == 52 && $sender == null) {
+    continue; //Prevent loops
+  }
   if ($list !== null) {
     try {
       $list->archiveMessage($sender, $email);
