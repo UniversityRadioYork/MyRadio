@@ -12,4 +12,4 @@ if (!isset($_REQUEST['bannerid'])) {
 }
 
 $banner = MyURY_Banner::getInstance($_REQUEST['bannerid']);
-$banner->getEditForm()->render([bannerName => $banner->getAlt()]);
+$banner->getEditForm()->render(['bannerName' => $banner->getAlt()]);

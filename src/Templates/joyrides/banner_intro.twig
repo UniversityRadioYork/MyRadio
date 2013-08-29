@@ -1,0 +1,105 @@
+<ol id="myury-joyride" class="ui-helper-hidden">
+  {% if action == 'banners' %}
+  <li data-id="createlink">
+    <h2>Banners: A Practical Introduction</h2>
+    <p>Despite Banners just being images that appear on the website's home page,
+    there is actually quite a powerful system to manage these. The best way to
+    talk you through is from the very start - creating a banner.</p>
+    <p>To create a new Banner, click this link. If you've already done so or
+    want to skip this step, click Next.</p>
+  </li>
+  <li data-id="columnheader-campaigns_link" data-button="_none">
+    <h2>Creating a Campaign</h2>
+    <p>So you've got your Banner uploaded, that's great. However, it is only
+      live on the Website when there is an active <em>Campaign</em> associated
+      with it. Click the View Campaigns link next to the Banner you want to
+      configure to continue.</p>
+  </li>
+  {% endif %}
+  {% if action == 'createBanner' %}
+  <li data-id="bannerfrm-submit" data-button="_none">
+    <h2>Creating a Banner</h2>
+    <p>This page is pretty straight forward. Be aware that the Banner Title
+    does appear website and will be picked up by screenreaders and search
+    engines. When you're done, click Submit to move on.</p>
+  </li>
+  {% endif %}
+  {% if action == 'campaigns' %}
+  <li>
+    <h2>Campaigns</h2>
+    <p>In Banner terms, a Campaign is a set of instructions that tell the
+    Website what days and times this Banner should be shown.
+    <p>A Campaign consists of start and end dates, as well as timeslots. A
+    Banner can have any number of Campaigns linked to it.</p>
+  </li>
+  <li data-id='createlink' data-button='_none'>
+    <h2>Creating a Campaign</h2>
+    <p>To create a Campaign for this Banner, click the "Create a new Campaign"
+    link.</p>
+  </li>
+  {% endif %}
+  {% if action == 'createCampaign' %}
+  <li data-id="bannercampaignfrm-effective_to">
+    <h2>Effective Dates</h2>
+    <p>The Start and End Times define when the Campaign first goes live and when
+    it expires and is no longer shown. Go ahead and fill these in.</p>
+  </li>
+  <li data-id="bannercampaignfrm-location">
+    <h2>Location</h2>
+    <p>If you Website has more than one page which hosts Banners, you can tell
+    it which one this Banner is for.</p>
+  </li>
+  <li data-id="bannercampaignfrm-timeslots">
+    <h2>Timeslots</h2>
+    <p>For more precise control over when the Banner is live, you can tell me
+    what times and days of the week you want. For example, if you are
+    advertising a Show that is on Thursday afternoons, you may want to do so on
+    Wednesdays, but Friday morning does not make so much sense.</p>
+    <p>If you don't fill anything in here, your Campaign is active but doesn't
+    have any times to be displayed. These timeslots will also only work between
+    the Start and End Times you filled in before.</p>
+  </li>
+  <li data-id="bannercampaignfrm-submit" data-button="_none">
+    <h2>Create the Campaign</h2>
+    <p>Go ahead and click Submit when you're ready.</p>
+  </li>
+  {% endif %}
+  {% if action == 'editCampaign' %}
+  <li data-button="Cool">
+    <h2>What Happens Next</h2>
+    <p>Your Banner has now been uploaded and a Campaign put on the Website.
+    These changes happen straight away so if the Campaign is running now, go
+    ahead and take a look! You can edit this Campaign at any time just by
+    editing the information here and clicking Submit again.</p>
+  </li>
+  <li data-button="Exit Tutorial">
+    <h2>Banner Admin Tips</h2>
+    <p>Finally, here's some hints on how to make Banners work best.</p>
+    <ul>
+      <li>The best way to remove a banner from the website quickly is to set the
+      end time for all of its active Campaigns to the past.</li>
+      <li>Make Banners suit your website and station branding - but still make
+      it stand out from the rest of the page, as well as any other Banners that
+      may be in rotation.</li>
+      <li>Banners get boring fast. Keep them fresh and changing to keep the
+      interest of your visitors.</li>
+    </ul>
+  </li>
+  {% endif %}
+</ol>
+<script type="text/javascript">
+  $('#myury-joyride').joyride({
+    autoStart: true,
+    expose: true,
+    postRideCallback: function(index) {
+      if (index === $('#myury-joyride li').length-1) {
+        //This was the last element of the page. Unless it's the last page, don't send the kill signal
+        if ('{{action}}' !== 'listSessions') {
+          return;
+        }
+      }
+      
+      $.get(myury.makeURL('MyURY', 'a-endjoyride'));
+    }
+  });
+</script>
