@@ -226,7 +226,7 @@ class MyURY_Banner extends MyURY_Photo {
    * @return MyURY_Banner The new Banner, of course!
    * @throws MyURYException
    */
-  public static function create(MyURY_Photo $photo = null, $alt = 'Unnamed Banner', $target = null, $type = 2) {
+  public static function create(MyURY_Photo $photo, $alt = 'Unnamed Banner', $target = null, $type = 2) {
     $result = self::$db->fetch_column('INSERT INTO website.banner (alt, image, target, banner_type_id, photoid)
       VALUES ($1, $2, $3, $4, $5) RETURNING banner_id', array($alt, $photo->getURL(), $target, $type, $photo->getID()));
 
