@@ -13,5 +13,5 @@ if (!isset($_REQUEST['bannerid'])) {
 $banner = MyURY_Banner::getInstance($_REQUEST['bannerid']);
 
 MyURY_BannerCampaign::getBannerCampaignForm($banner->getBannerID())->render([
-    bannerName => $banner->getAlt()
+    'bannerName' => $banner->getAlt()
 ]);
