@@ -223,8 +223,8 @@ class MyURY_List extends ServiceAPI {
    */
   public function archiveMessage($from, $email) {
     $body = str_replace("=\r\n",'',preg_split("/\r?\n\r?\n/", utf8_encode($email), 2)[1]);
-    preg_match("/(^|\s)Subject:([^\r\n]*)/i", $email, $subject);
-    $subject = trim($subject[2][0]);
+    preg_match('/(^|\s)(Subject):(.*)/i', $email, $subject);
+    $subject = trim($subject[0][0]);
     
     MyURYEmail::create(array('lists' => array($this)), $subject, $body, $from, time(), true);
     $this->archive = [];
