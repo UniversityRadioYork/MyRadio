@@ -157,7 +157,7 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
     if (empty($output)) {
       //That's not right.
       throw new MyURYException('Failed to render page '
-              . '(template '.$this->template.')', 500);
+              . '(template '.$this->template->getTemplateName().')', 500);
     }
     echo $output;
   }
