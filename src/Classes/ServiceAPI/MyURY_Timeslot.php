@@ -16,7 +16,7 @@
  *
  */
 class MyURY_Timeslot extends MyURY_Metadata_Common {
-  
+
   private $timeslot_id;
   private $start_time;
   private $duration;
@@ -84,7 +84,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
         $this->metadata[$metadata_types[$i]] = $metadata[$i];
       }
     }
-    
+
     //Deal with the Credits arrays
     $credit_types = self::$db->decodeArray($result['credit_types']);
     $credits = self::$db->decodeArray($result['credits']);
@@ -93,7 +93,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
       if (empty($credits[$i])) {
         continue;
       }
-      $this->credits[] = array('type' => (int)$credit_types[$i], 'memberid' => $credits[$i],
+      $this->credits[] = array('type' => (int) $credit_types[$i], 'memberid' => $credits[$i],
           'User' => User::getInstance($credits[$i]));
     }
   }
@@ -174,8 +174,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
    * @param null $pkey No action. Used for compatibility with parent.
    */
   public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null) {
-    return parent::setMeta($string_key, $value, $effective_from, $effective_to,
-            'schedule.timeslot_metadata', 'show_season_timeslot_id');
+    return parent::setMeta($string_key, $value, $effective_from, $effective_to, 'schedule.timeslot_metadata', 'show_season_timeslot_id');
   }
 
   public function toDataSource() {
@@ -258,7 +257,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
     $result = self::$db->fetch_column('SELECT show_season_timeslot_id FROM'
             . ' schedule.show_season_timeslot WHERE start_time <= $1 AND'
             . ' start_time + duration >= $1', [CoreUtils::getTimestamp($time)]);
-    
+
     if (empty($result)) {
       return null;
     } else {
@@ -543,6 +542,27 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
 
       return $tracks;
     }
+  }
+
+  /**
+   * Get information about the Users signed into this Timeslot.
+   */
+  public function getSigninInfo() {
+    $result = self::$db->fetch_all('SELECT * FROM (SELECT creditid AS memberid '
+            . 'FROM schedule.show_credit WHERE show_id IN '
+            . '(SELECT show_id FROM schedule.show_season WHERE show_season_id IN '
+            . '(SELECT show_season_id FROM schedule.show_season_timeslot'
+            . '  WHERE show_season_timeslot_id=$1))'
+            . ' AND effective_from <= NOW()'
+            . ' AND (effective_to IS NULL OR effective_to > NOW())) AS t1 '
+            . 'LEFT JOIN (SELECT memberid, signerid FROM sis2.member_signin '
+            . 'WHERE show_season_timeslot_id=$1) AS t2 USING (memberid)',
+    [$this->getID()]);
+    
+    return array_map(function($x) {
+      return ['user' => User::getInstance($x['memberid']),
+          'signedby' => $x['signerid'] ? User::getInstance($x['signerid']) : null];
+    }, $result);
   }
 
 }

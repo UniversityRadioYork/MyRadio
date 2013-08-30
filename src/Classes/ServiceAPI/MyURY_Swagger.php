@@ -102,7 +102,7 @@ class MyURY_Swagger {
         $params[] = [
           "paramType"=> "path",
           "name"=> "id",
-          "description"=> "The unique identifier of the $this->class to be acted on. A string for most Objects, but some are Strings.",
+          "description"=> "The unique identifier of the $this->class to be acted on. An int for most Objects, but some are Strings.",
           "dataType"=> "int",
           "required"=> true,
           "allowMultiple"=> false
