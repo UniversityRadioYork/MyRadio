@@ -16,7 +16,7 @@ $format = isset($_REQUEST['format']) ? $_REQUEST['format'] : 'html';
 
 switch ($format) {
   case 'csv':
-    $file = 'tracklist_'.$start.'-'.$end;
+    $file = 'tracklist_'.$start.'-'.$end.'.csv';
     header('Content-Disposition: inline; filename="'.$file.'"');
     header("Content-Transfer-Encoding: Binary");
     header('Content-Type: text/csv');
