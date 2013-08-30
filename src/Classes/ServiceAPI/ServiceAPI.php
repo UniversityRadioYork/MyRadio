@@ -150,4 +150,12 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
   protected function updateCacheObject() {
     self::$cache->set(self::getCacheKey($this->getID()), $this, 3600);
   }
+  
+  /**
+   * Removes singleton instance. Used for memory optimisation for very large
+   * requests.
+   */
+  public function removeInstance() {
+    unset(self::$singletons[self::getCacheKey($this->getID())]);
+  }
 }

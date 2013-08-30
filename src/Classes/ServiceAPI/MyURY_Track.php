@@ -88,7 +88,7 @@ class MyURY_Track extends ServiceAPI {
 
   /**
    * The member who digitised this track
-   * @var User
+   * @var int
    */
   private $digitisedby;
   
@@ -659,10 +659,6 @@ class MyURY_Track extends ServiceAPI {
    */
   public function checkForAudioFile($format = 'mp3') {
     return file_exists($this->getPath($format));
-  }
-
-  public function removeInstance() {
-    unset(self::$tracks[$this->getID()]);
   }
 
   /**
