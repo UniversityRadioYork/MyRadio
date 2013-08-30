@@ -167,8 +167,7 @@ class User extends ServiceAPI {
               LIMIT 1', array($memberid));
     if (empty($data)) {
       //This user doesn't exist
-      throw new MyURYException('The specified User does not appear to exist.');
-      return;
+      throw new MyURYException('The specified User does not appear to exist.', 404);
     }
     //Set the variables
     foreach ($data as $key => $value) {
