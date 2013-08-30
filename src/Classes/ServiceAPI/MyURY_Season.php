@@ -205,6 +205,30 @@ class MyURY_Season extends MyURY_Metadata_Common {
   }
   
   /**
+   * Get a list of all Seasons that were for the current term, or
+   * if we are not currently in a Term, the most recenly finished term.
+   * 
+   * @return MyURY_Season[]
+   */
+  public static function getAllSeasonsInLatestTerm() {
+    $result = self::$db->fetch_column('SELECT termid FROM public.terms '
+            . 'WHERE start <= NOW() ORDER BY finish DESC LIMIT 1');
+    return self::getAllSeasonsInTerm($result[0]);
+  }
+  
+  /**
+   * Get all the Seasons in the active term.
+   * 
+   * @param int $term_id
+   * @return MyURY_Season[]
+   */
+  public static function getAllSeasonsInTerm($term_id) {
+    return self::resultSetToObjArray(self::$db->fetch_column(
+            'SELECT show_season_id FROM schedule.show_season WHERE termid=$1',
+            [$term_id]));
+  }
+  
+  /**
    * Rejects the application for the Season, notifying the creditors if asked.
    * 
    * Will not reject if already rejected.<br>
@@ -575,8 +599,41 @@ EOT;
       WHERE show_season_id=$1 AND start_time >= NOW()', array($this->getID()));
   }
   
+  /**
+   * Returns all Timeslots for this Season
+   * @return MyURY_Timeslot[]
+   */
   public function getAllTimeslots() {
     return $this->timeslots;
+  }
+  
+  /**
+   * Returns the percentage of Timeslots in this Season that at least one User
+   * has signed into.
+   * 
+   * @return [float, int]
+   */
+  public function getAttendanceInfo() {
+    $signed_in = 0;
+    $total = 0;
+    foreach ($this->getAllTimeslots() as $ts) {
+      if ($ts->getStartTime() > time()) {
+        continue;
+      }
+      $total++;
+      foreach ($ts->getSigninInfo() as $info) {
+        if (!empty($info['signedby'])) {
+          $signed_in++;
+          break;
+        }
+      }
+    }
+    
+    if ($total === 0) {
+      return [100, 0];
+    }
+    
+    return [($signed_in/$total)*100, $total-$signed_in];
   }
 
 }

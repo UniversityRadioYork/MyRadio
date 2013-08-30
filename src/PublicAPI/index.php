@@ -144,7 +144,7 @@ if (!$api_key->canCall($classes[$class], $method)) {
     if (method_exists($classes[$class], 'getInstance')) {
       $object = $classes[$class]::getInstance($id);
     } else {
-      $object = new $classes[$class];
+      $object = new $classes[$class]($id);
     }
   } else {
     $object = null;
