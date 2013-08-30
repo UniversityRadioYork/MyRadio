@@ -28,7 +28,7 @@ switch ($format) {
             ->addVariable('starttime', CoreUtils::happyTime($start))
             ->addVariable('endtime', CoreUtils::happyTime($end));
 
-    if (sizeof($data) >= 50000) {
+    if (sizeof($data) >= 100000) {
       $twig->addError('You have exceeded the maximum number of results for a '
               . 'single query. Please select a smaller timeframe and try again.');
     }
