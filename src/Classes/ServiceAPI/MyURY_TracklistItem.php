@@ -135,7 +135,7 @@ class MyURY_TracklistItem extends ServiceAPI {
     
     $return = [];
     foreach ($result as $id) {
-      if (sizeof($return) == 50000) {
+      if (sizeof($return) == 100000) {
         return $return;
       }
       
