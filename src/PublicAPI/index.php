@@ -137,7 +137,7 @@ if (!$api_key->canCall($classes[$class], $method)) {
   }
 
   /**
-   * From here on out, return a happy error message.
+   * From here on out, return a happy error message. If something goes awry.
    */
   try {
     /**

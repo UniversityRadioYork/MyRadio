@@ -36,7 +36,9 @@ class MyURY_TracklistItem extends ServiceAPI {
       LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
       LEFT JOIN tracklist.track_notrec ON tracklist.audiologid = track_notrec.audiologid
       WHERE tracklist.audiologid=$1 LIMIT 1', array($id));
-    if (empty($result)) throw new MyURYException('The requested TracklistItem does not appear to exist!', 400);
+    if (empty($result)) {
+      throw new MyURYException('The requested TracklistItem does not appear to exist!', 400);
+    }
     
     $this->source = $result['source'];
     $this->starttime = strtotime($result['timestart']);
@@ -45,19 +47,24 @@ class MyURY_TracklistItem extends ServiceAPI {
     $this->timeslot = is_numeric($result['timeslotid']) ? MyURY_Timeslot::getInstance($result['timeslotid']) : null;
     $this->bapsaudioid = is_numeric($result['bapsaudioid']) ? (int)$result['bapsaudioid'] : null;
     
-    $this->track = is_numeric($result['trackid']) ? MyURY_Track::getInstance($result['trackid']) :
+    $this->track = is_numeric($result['trackid']) ? $result['trackid'] :
       array(
+          'title' => $result['track'],
           'artist' => $result['artist'],
           'album' => $result['album'],
-          'label' => $result['label'],
           'trackno' => (int)$result['trackno'],
-          'title' => $result['track'],
-          'length' => $result['length']
+          'length' => $result['length'],
+          'record_label' => $result['label']
       );
   }
   
+  public function getID() {
+    return $this->audiologid;
+  }
+  
   public function getTrack() {
-    return $this->track;
+    return is_array($this->track) ? $this->track : 
+            MyURY_Track::getInstance($this->track);
   }
   
   public function getStartTime() {
@@ -108,7 +115,9 @@ class MyURY_TracklistItem extends ServiceAPI {
   }
   
   /**
-   * Find all tracks played in the given timeframe
+   * Find all tracks played in the given timeframe, as datasources.
+   * Not datasource runs out of RAM pretty quick.
+   * 
    * @param int $start Period to start log from. Required.
    * @param int $end Period to end log from. Default time().
    * @param bool $include_playout If true, includes tracks played on /jukebox or /campus_playout while a show was on.
@@ -120,15 +129,47 @@ class MyURY_TracklistItem extends ServiceAPI {
     $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
     
     $result = self::$db->fetch_column('SELECT audiologid FROM tracklist.tracklist
-      WHERE timestart >= $1 AND timestart <= $2 AND state!=\'u\' AND state!=\'d\''
-            .($include_playout ? '' : ' AND state!=\'o\''), array($start, $end));
+      WHERE timestart >= $1 AND timestart <= $2 AND (state IS NULL OR state=\'c\''
+            .($include_playout ? 'OR state = \'o\')' : ')')
+            . ' ORDER BY timestart ASC', array($start, $end));
     
-    $items = array();
-    foreach ($result as $item) {
-      $items[] = self::getInstance($item);
+    $return = [];
+    foreach ($result as $id) {
+      if (sizeof($return) == 50000) {
+        return $return;
+      }
+      
+      $obj = self::getInstance($id);
+      $data = $obj->toDataSource();
+      
+      unset($data['audiologid']);
+      unset($data['editlink']);
+      unset($data['state']);
+      unset($data['type']);
+      unset($data['trackid']);
+      unset($data['length']);
+      unset($data['clean']);
+      unset($data['digitised']);
+      unset($data['deletelink']);
+      unset($data['trackno']);
+      
+      if (is_array($data['album'])) {
+        $data['label'] = $data['album']['label'];
+        $data['album'] = $data['album']['title'];
+      } else {
+        $data['label'] = $data['record_label'];
+        unset($data['record_label']);
+      }
+      
+      $return[] = $data;
+      if (is_object($obj->getTrack())) {
+        $obj->getTrack()->removeInstance();
+      }
+      $obj->removeInstance();
+      unset($obj);
     }
     
-    return $items;
+    return $return;
   }
   
   /**
@@ -266,15 +307,16 @@ class MyURY_TracklistItem extends ServiceAPI {
     return ($result[0] < 2);
   }
   
-  public function toDataSource() {
+  public function toDataSource($full = false) {
     if (is_array($this->track)) {
       $return = $this->track;
     } else {
-      $return = $this->track->toDataSource();
+      $return = $this->getTrack()->toDataSource($full);
     }
-    $return['starttime'] = $this->getStartTime();
-    $return['endtime'] = $this->getEndTime();
-    $return['state'] = $this->state();
+    $return['starttime'] = CoreUtils::happyTime($this->getStartTime());
+    //$return['endtime'] = $this->getEndTime();
+    $return['state'] = $this->state;
+    $return['audiologid'] = $this->audiologid;
     
     return $return;
   }

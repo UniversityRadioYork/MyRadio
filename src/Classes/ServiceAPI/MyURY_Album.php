@@ -52,6 +52,8 @@ class MyURY_Album extends ServiceAPI {
   
   private $location;
   
+  private $label;
+  
   private $tracks = array();
 
   protected function __construct($recordid) {
@@ -78,8 +80,8 @@ class MyURY_Album extends ServiceAPI {
     $this->date_released = strtotime($result['datereleased']);
     $this->shelf_number = (int)$result['shelfnumber'];
     $this->shelf_letter = $result['shelfletter'];
-    $this->member_add = empty($result['memberid_add']) ? null : User::getInstance($result['memberid_add']);
-    $this->member_edit = empty($result['memberid_edit']) ? null : User::getInstance($result['memberid_edit']);
+    $this->member_add = empty($result['memberid_add']) ? null : (int)$result['memberid_add'];
+    $this->member_edit = empty($result['memberid_edit']) ? null : (int)$result['memberid_edit'];
     $this->last_modified = strtotime($result['datetime_lastedit']);
     $this->cdid = $result['cdid'];
     $this->location = $result['location_descr'];
@@ -257,12 +259,13 @@ class MyURY_Album extends ServiceAPI {
         'last_modified' => CoreUtils::happyTime($this->last_modified),
         'location' => $this->location,
         'media' => $this->media,
-        'member_add' => CoreUtils::dataSourceParser($this->member_add),
-        'member_edit' => CoreUtils::dataSourceParser($this->member_edit),
+        'member_add' => $this->member_add,
+        'member_edit' => $this->member_edit,
         'record_label' => $this->record_label,
         'shelf_letter' => $this->shelf_letter,
         'shelf_number' => $this->shelf_number,
         'status' => $this->status,
+        'label' => $this->record_label
     );
   }
 
