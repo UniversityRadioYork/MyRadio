@@ -16,9 +16,14 @@ $format = isset($_REQUEST['format']) ? $_REQUEST['format'] : 'html';
 
 switch ($format) {
   case 'csv':
+    $file = 'tracklist_'.$start.'-'.$end;
+    header('Content-Disposition: inline; filename="'.$file.'"');
+    header("Content-Transfer-Encoding: Binary");
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename="' . $file . '"');
     $twig = CoreUtils::getTemplateObject()->setTemplate('csv.twig')
-          ->addVariable('data', $data)
-          ->render();
+            ->addVariable('data', $data)
+            ->render();
     break;
   case 'html':
   default:
