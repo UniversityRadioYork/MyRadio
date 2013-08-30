@@ -9,13 +9,13 @@
 // Configure MyURY & Set API Settings
 define('SILENT_EXCEPTIONS', true);
 
-require_once __DIR__.'/../Controllers/cli_common.php';
+require_once __DIR__ . '/../Controllers/cli_common.php';
 
 /**
  * Handle API errors
  */
 function api_error($code, $message = null) {
-  $messages = [400 => "Bad Request",  401 => "Unauthorized",
+  $messages = [400 => "Bad Request", 401 => "Unauthorized",
       403 => "Forbidden", 404 => "File Not Found",
       500 => "Internal Server Error"];
   header("HTTP/1.1 $code {$messages[$code]}");
@@ -25,17 +25,16 @@ function api_error($code, $message = null) {
       "message" => $message
   ]);
   //Log an API failure so it appears in the status graphs.
-  throw new MyURYException('API Error: '.$message.
-          "\nSource: ".$_SERVER['REMOTE_ADDR'], $code);
+  throw new MyURYException('API Error: ' . $message .
+  "\nSource: " . $_SERVER['REMOTE_ADDR'], $code);
 }
 
 /**
  * Break up the URL. URLs are of the form /api/ExposedClassName[/id][/method]
  */
 //Remove double-slashes that occassionally appear.
-$cleaned = str_replace('//','/',$_SERVER['REQUEST_URI']);
-$params = explode('/', str_ireplace(Config::$api_uri, '',
-        explode('?', $cleaned)[0]));
+$cleaned = str_replace('//', '/', $_SERVER['REQUEST_URI']);
+$params = explode('/', str_ireplace(Config::$api_uri, '', explode('?', $cleaned)[0]));
 $class = $params[0];
 
 if (empty($class)) {
@@ -89,7 +88,7 @@ if (is_numeric($params[1])) {
    * If there's two parts, this could be a Static method call *or* the ID of something with
    * a String key. We'll have to ask the class if the method exists.
    */
-   if (method_exists($classes[$class], $params[1])) {
+  if (method_exists($classes[$class], $params[1])) {
     $id = -1;
     $method = $params[1];
   } else {
@@ -112,7 +111,7 @@ try {
  * Okay, the method exists. Does the given API key have access to it?
  */
 if (!$api_key->canCall($classes[$class], $method)) {
-  api_error(403, 'Your API Key ('.$_REQUEST['api_key'].') does not have access to this method.');
+  api_error(403, 'Your API Key (' . $_REQUEST['api_key'] . ') does not have access to this method.');
 } else {
   /**
    * Map the paramaters
@@ -126,38 +125,41 @@ if (!$api_key->canCall($classes[$class], $method)) {
           $hint = $param->getClass()->getName();
           $args[$param->getName()] = $hint::getInstance($_REQUEST[$param->getName()]);
         } catch (MyURYException $ex) {
-          api_error(400, 'Parameter '.$param->getName().' got an invalid ID. Must be an ID for '.$param->getClass().'.');
+          api_error(400, 'Parameter ' . $param->getName() . ' got an invalid ID. Must be an ID for ' . $param->getClass() . '.');
         }
       } else {
         $args[$param->getName()] = $_REQUEST[$param->getName()];
       }
     } elseif (!$param->isOptional()) {
       //Uh-oh, required option missing
-      api_error(400, 'Parameter '.$param->getName().' is required but not provided.');
+      api_error(400, 'Parameter ' . $param->getName() . ' is required but not provided.');
     }
   }
 
   /**
-   * Okay, now if the method is static, then we need to initialise an object.
-   */
-  if (!$methodReflection->isStatic()) {
-    if (method_exists($classes[$class], 'getInstance')) {
-      $object = $classes[$class]::getInstance($id);
-    } else {
-      $object = new $classes[$class]($id);
-    }
-  } else {
-    $object = null;
-  }
-
-  /**
-   * Let's process the request!
+   * From here on out, return a happy error message.
    */
   try {
+    /**
+     * Okay, now if the method is static, then we need to initialise an object.
+     */
+    if (!$methodReflection->isStatic()) {
+      if (method_exists($classes[$class], 'getInstance')) {
+        $object = $classes[$class]::getInstance($id);
+      } else {
+        $object = new $classes[$class]($id);
+      }
+    } else {
+      $object = null;
+    }
+
+    /**
+     * Let's process the request!
+     */
     $api_key->logCall(preg_replace('/(.*)\?(.*)/', '$1', str_replace(Config::$api_uri, '', $_SERVER['REQUEST_URI'])), $args);
     $result = $methodReflection->invokeArgs($object, $args);
   } catch (MyURYException $e) {
-    api_error(500, $e->getMessage());
+    api_error($e->getCode(), $e->getMessage());
   }
 
   header('Content/Type: application/json');
