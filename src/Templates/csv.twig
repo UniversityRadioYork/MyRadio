@@ -1,5 +1,5 @@
-{% for title, column in data[0] %}{{ title }}{% if not loop.last %},{% endif %}{% endfor %}
+{% for title, column in data[0] %}"{{ title }}"{% if not loop.last %},{% endif %}{% endfor %}
 
-{% for row in data %}{% for title, column in row %}{{column|replace({',': '\\,'})}}{% if not loop.last %},{% endif %}{% endfor %}
+{% for row in data %}{% for title, column in row %}"{{column|replace({'"': '\\"'})}}"{% if not loop.last %},{% endif %}{% endfor %}
 
 {% endfor %}
