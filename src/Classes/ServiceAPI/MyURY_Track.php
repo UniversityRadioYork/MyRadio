@@ -562,17 +562,21 @@ class MyURY_Track extends ServiceAPI {
   }
 
   public function setAlbum(MyURY_Album $album) {
-    if ($album->getID() === $this->getAlbum()->getID()) return;
+    if ($album->getID() === $this->getAlbum()->getID()) {
+      return;
+    }
     //Move the file
     foreach (Config::$music_central_db_exts as $ext) {
-      if (!file_exists($this->getPath($ext)))
+      if (!file_exists($this->getPath($ext))) {
         continue;
+      }
       $new_dir = Config::$music_central_db_path . '/records/' . $album->getID();
-      if (!is_dir($new_dir)) mkdir($new_dir);
+      if (!is_dir($new_dir)) {
+        mkdir($new_dir);
+      }
       $new_path = $new_dir . '/' . $this->getID() . '.' . $ext;
       if (!copy($this->getPath($ext), $new_path)) {
         throw new MyURYException('Failed to move file from '.$this->getPath($ext).' to '.$new_path);
-        return false;
       }
       unlink($this->getPath($ext));
     }
@@ -580,17 +584,13 @@ class MyURY_Track extends ServiceAPI {
     $this->record = $album->getID();
     self::$db->query('UPDATE rec_track SET recordid=$1 WHERE trackid=$2', array($album->getID(), $this->getID()));
 
-    //Delete the old files
-    foreach (Config::$music_central_db_exts as $ext) {
-      unlink($this->getPath($ext));
-    }
-
     $this->updateCachedObject();
   }
 
   public function setTitle($title) {
-    if (empty($title))
+    if (empty($title)) {
       throw new MyURYException('Track title must not be empty!');
+    }
 
     $this->title = $title;
     self::$db->query('UPDATE rec_track SET title=$1 WHERE trackid=$2', array($title, $this->getID()));
