@@ -38,6 +38,10 @@ class MyURY_FingerprinterDaemon extends MyURY_Daemon {
         'nocorrectionproposed' => true, 'limit' => 5));
     
     foreach ($tracks as $track) {
+      /**
+       * Run the last.fm Fingerprinter on the Track to see what they think it
+       * is.
+       */
       $info = MyURY_Track::identifyUploadedTrack($track->getPath());
       
       /**
