@@ -7,7 +7,7 @@
  * @package MyURY_Library
  */
 
-if (isset($_REQUEST['correctionid'])) {
+if (isset($_REQUEST['correctionid']) && is_numeric($_REQUEST['correctionid'])) {
   $correction = MyURY_TrackCorrection::getInstance($_REQUEST['correctionid']);
 } else {
   $correction = MyURY_TrackCorrection::getRandom();
