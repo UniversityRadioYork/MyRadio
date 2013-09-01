@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Allows querying the Central Track Database, returning a JSON result
  * 
@@ -13,14 +14,16 @@
  * @version 20130626
  * @package MyURY_Core
  */
+if (isset($_REQUEST['id'])) {
+  $data = MyURY_Track::getInstance((int) $_REQUEST['id']);
+} else {
 
-if (isset($_REQUEST['id'])) $data = MyURY_Track::getInstance((int)$_REQUEST['id']); else
-
-$data = MyURY_Track::findByOptions(array(
-        'title' => isset($_REQUEST['term']) ? $_REQUEST['term'] : '',
-        'artist' => isset($_REQUEST['artist']) ? $_REQUEST['artist'] : '',
-        'limit' => isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default,
-        'digitised' => isset($_REQUEST['require_digitised']) ? (bool)$_REQUEST['require_digitised'] : false,
-        'itonesplaylistid' => isset($_REQUEST['itonesplaylistid']) ? $_REQUEST['itonesplaylistid'] : ''
+  $data = MyURY_Track::findByOptions(array(
+              'title' => isset($_REQUEST['term']) ? $_REQUEST['term'] : '',
+              'artist' => isset($_REQUEST['artist']) ? $_REQUEST['artist'] : '',
+              'limit' => isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default,
+              'digitised' => isset($_REQUEST['require_digitised']) ? (bool) $_REQUEST['require_digitised'] : false,
+              'itonesplaylistid' => isset($_REQUEST['itonesplaylistid']) ? $_REQUEST['itonesplaylistid'] : ''
   ));
+}
 require 'Views/MyURY/datatojson.php';
