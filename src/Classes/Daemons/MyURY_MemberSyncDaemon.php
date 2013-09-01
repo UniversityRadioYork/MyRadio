@@ -3,7 +3,7 @@
  * This Daemon creates new URY Member accounts based on data from the YUSU API
  */
 class MyURY_MemberSyncDaemon extends MyURY_Daemon {
-  public static function isEnabled() { return true; }
+  public static function isEnabled() { return Config::$d_MemberSync_enabled; }
   
   public static function run() {
     $hourkey = __CLASS__.'_last_run_hourly';

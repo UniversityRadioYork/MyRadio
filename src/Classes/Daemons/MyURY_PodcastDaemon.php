@@ -16,7 +16,7 @@ class MyURY_PodcastDaemon extends MyURY_Daemon {
    * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.
    * @return boolean
    */
-  public static function isEnabled() { return true; }
+  public static function isEnabled() { return Config::$d_Podcast_enabled; }
   
   public static function run() {
     dlog('Checking for pending Podcasts...', 4);

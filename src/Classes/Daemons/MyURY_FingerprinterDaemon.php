@@ -19,7 +19,7 @@ class MyURY_FingerprinterDaemon extends MyURY_Daemon {
    * generates a fare amount of load and actually making the changes is a manual process anyway.
    * @return boolean
    */
-  public static function isEnabled() { return false; }
+  public static function isEnabled() { return Config::$d_Fingerprinter_enabled; }
   
   /**
    * Process a batch of tracks that are currently not verified as correct, and sees if Last.FM has

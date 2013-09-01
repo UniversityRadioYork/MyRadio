@@ -14,7 +14,7 @@
  * 
  */
 class MyURY_PlaylistsDaemon extends MyURY_Daemon {
-  public static function isEnabled() { return true; }
+  public static function isEnabled() { return Config::$d_Playlists_enabled; }
   
   public static function run() {
     $hourkey = __CLASS__.'_last_run_hourly';

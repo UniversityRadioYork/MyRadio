@@ -17,7 +17,7 @@ class MyURY_LabelFinderDaemon extends MyURY_Daemon {
    * It is currently enabled because we have a lot of labels that needed filling in for Tracklisting.
    * @return boolean
    */
-  public static function isEnabled() { return true; }
+  public static function isEnabled() { return Config::$d_LabelFinder_enabled; }
   
   /**
    * THE DISCOGS API IS RATE LIMITED TO ONE REQUEST PER SECOND.

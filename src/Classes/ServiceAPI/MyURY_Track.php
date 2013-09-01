@@ -214,6 +214,15 @@ class MyURY_Track extends ServiceAPI {
     );
     $this->updateCachedObject();
   }
+  
+  /**
+   * Update whether or not the track is clean
+   */
+  public function setClean($clean) {
+    $this->clean = $clean;
+    self::$db->query('UPDATE rec_track SET clean=$1 WHERE trackid=$3', [$clean]);
+    $this->updateCachedObject();
+  }
 
   /**
    * Returns an array of key information, useful for Twig rendering and JSON requests
@@ -285,13 +294,14 @@ class MyURY_Track extends ServiceAPI {
    * custom: A custom SQL WHERE clause
    * precise: If true, will only return exact matches for artist/title
    * nocorrectionproposed: If true, will only return items with no correction proposed.
+   * clean: Default any. 'y' for clean tracks, 'n' for dirty, 'u' for unknown.
    * 
    * @todo Limit not accurate for itonesplaylistid queries
    */
   public static function findByOptions($options) {
     self::wakeup();
 
-//Shortcircuit - if itonesplaylistid is the only not-default value, just return the playlist
+    //Shortcircuit - if itonesplaylistid is the only not-default value, just return the playlist
     $conflict = false;
     foreach (array('title', 'artist', 'digitised') as $k) {
       if (!empty($options[$k])) {
@@ -333,6 +343,8 @@ class MyURY_Track extends ServiceAPI {
     }
     if (empty($options['custom'])) {
       $options['custom'] = null;
+    } else {
+      $options['custom'] = self::$db->clean($options['custom']);
     }
     if (empty($options['precise'])) {
       $options['precise'] = false;
@@ -340,14 +352,25 @@ class MyURY_Track extends ServiceAPI {
     if (empty($options['nocorrectionproposed'])) {
       $options['nocorrectionproposed'] = false;
     }
-
-//Prepare paramaters
-    $sql_params = array($options['title'], $options['artist'], $options['precise'] ? '' : '%');
-    if ($options['limit'] != 0) {
-      $sql_params[] = $options['limit'];
+    if (empty($options['clean'])) {
+      $options['clean'] = false;
     }
 
-//Do the bulk of the sorting with SQL
+    //Prepare paramaters
+    $sql_params = array($options['title'], $options['artist'], $options['precise'] ? '' : '%');
+    $count = 3;
+    if ($options['limit'] != 0) {
+      $sql_params[] = $options['limit'];
+      $count++;
+      $limit_param = $count;
+    }
+    if ($options['clean']) {
+      $sql_params[] = $options['clean'];
+      $count++;
+      $clean_param = $count;
+    }
+
+    //Do the bulk of the sorting with SQL
     $result = self::$db->fetch_all('SELECT trackid, rec_track.recordid
       FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
       AND rec_track.title ILIKE $3 || $1 || $3
@@ -358,10 +381,11 @@ class MyURY_Track extends ServiceAPI {
             . ($options['nocorrectionproposed'] === true ? ' AND trackid NOT IN (
               SELECT trackid FROM public.rec_trackcorrection WHERE state=\'p\'
               )' : '')
+            . ($options['clean'] != null ? ' AND clean=$'.$clean_param : '')
             . ($options['custom'] !== null ? ' AND ' . $options['custom'] : '')
             . ($options['random'] ? ' ORDER BY RANDOM()' : '')
             . ($options['idsort'] ? ' ORDER BY trackid' : '')
-            . ($options['limit'] == 0 ? '' : ' LIMIT $4'), $sql_params);
+            . ($options['limit'] == 0 ? '' : ' LIMIT $'.$limit_param), $sql_params);
 
     $response = array();
     foreach ($result as $trackid) {
@@ -633,6 +657,7 @@ class MyURY_Track extends ServiceAPI {
    * @return MyURY_Track[] An array of digitised Tracks
    */
   public static function getAllDigitised() {
+    self::initDB();
     $ids = self::$db->fetch_column('SELECT trackid FROM rec_track WHERE digitised=\'t\'');
 
     $tracks = array();

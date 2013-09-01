@@ -230,5 +230,9 @@ class Database {
   public function resetCounter() {
     $this->counter = 0;
   }
+  
+  public function clean($val) {
+    return pg_escape_string($val);
+  }
 
 }

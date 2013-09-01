@@ -1,7 +1,7 @@
 <?php
 
 class MyURY_EmailQueueDaemon {
-  public static function isEnabled() { return true; }
+  public static function isEnabled() { return Config::$d_EmailQueue_enabled; }
   
   public static function run() {
     //Get up to 5 unsent emails

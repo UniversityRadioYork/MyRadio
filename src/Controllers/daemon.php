@@ -71,7 +71,9 @@ $once = in_array('--once', $argv);
 
 //Load all classes that should be run
 while (false !== ($file = readdir($handle))) {
-  if ($file === '.' or $file === '..') continue;
+  if ($file === '.' or $file === '..') {
+    continue;
+  }
   //Is the file valid PHP?
   system($syspath.'php -l '.$path.$file, $result);
   if ($result !== 0) {
@@ -82,11 +84,7 @@ while (false !== ($file = readdir($handle))) {
     if (!class_exists($class)) {
       echo dlog('Daemon does not exist -'. $class, 1);
     } else {
-      if (!$class::isEnabled()) {
-        dlog('Daemon '. $class . ' is not enabled!', 2);
-      } else {
-        $classes[] = $class;
-      }
+      $classes[] = $class;
     }
   }
 }
@@ -101,7 +99,9 @@ while (true) {
   foreach ($classes as $class) {
     dlog('Running '.$class, 2);
     try {
-      $class::run();
+      if ($class::isEnabled()) {
+        $class::run();
+      }
     } catch (MyURYException $e) {}
     if (!$once) {
       sleep(2);
@@ -135,4 +135,7 @@ while (true) {
     MyURYException::resetExceptionCount();
     MyURYError::resetErrorCount();
   } catch (MyURYException $e) {}
+  
+  //Reload the configuration to see if it has changed
+  include 'MyURY_Config.local.php';
 }
