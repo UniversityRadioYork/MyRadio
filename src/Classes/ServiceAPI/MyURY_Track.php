@@ -220,7 +220,8 @@ class MyURY_Track extends ServiceAPI {
    */
   public function setClean($clean) {
     $this->clean = $clean;
-    self::$db->query('UPDATE rec_track SET clean=$1 WHERE trackid=$3', [$clean]);
+    self::$db->query('UPDATE rec_track SET clean=$1 WHERE trackid=$2',
+      [$clean, $this->getID()]);
     $this->updateCachedObject();
   }
 
