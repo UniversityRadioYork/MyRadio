@@ -42,3 +42,16 @@ Config::$display_errors = true;
 Config::$email_exceptions = true;
 Config::$template_debug = true;
 Config::$membership_fee = 7.00;
+
+/**
+ * Daemon enable
+ */
+Config::$d_BAPSSync_enabled = false;
+Config::$d_EmailQueue_enabled = true;
+Config::$d_Fingerprinter_enabled = false;
+Config::$d_LabelFinder_enabled = false;
+Config::$d_MemberSync_enabled = false;
+Config::$d_Playlists_enabled = true;
+Config::$d_Podcast_enabled = true;
+Config::$d_StatsGen_enabled = true;
+Config::$d_Explicit_enabled = false;
