@@ -23,12 +23,12 @@
  * @todo Make this not use echo in various Daemons
  * @todo Install the pcntl extension on thunderhorn
  */
-
 $log_level = 4; //0: Critical, 1: Important, 2: Run Process, 3: Info, 4: Debug
 /**
  * @todo Make paths nicer. This variable is used in MyURY_Track directly.
  */
 $syspath = '/usr/local/bin/';
+
 function dlog($x, $level = 3) {
   if ($level == 0) {
     //Write to stderr
@@ -37,7 +37,7 @@ function dlog($x, $level = 3) {
     fclose($f);
   }
   if ($GLOBALS['log_level'] >= $level) {
-    echo $x."\n";
+    echo $x . "\n";
   }
 }
 
@@ -50,6 +50,7 @@ function signal_handler($signo) {
       $GLOBALS['once'] = true; //This will kill after next iteration
   }
 }
+
 //Is the extension installed?
 if (function_exists('pcntl_signal')) {
   pcntl_signal(SIGTERM, "signal_handler");
@@ -60,7 +61,7 @@ chdir(__DIR__);
 $path = '../Classes/Daemons/';
 $handle = opendir($path);
 if (!$handle) {
-  die('PATH DOES NOT EXIST '.$path."\n");
+  die('PATH DOES NOT EXIST ' . $path . "\n");
 }
 $classes = array();
 
@@ -75,14 +76,14 @@ while (false !== ($file = readdir($handle))) {
     continue;
   }
   //Is the file valid PHP?
-  system($syspath.'php -l '.$path.$file, $result);
+  system($syspath . 'php -l ' . $path . $file, $result);
   if ($result !== 0) {
-    dlog('Not checking '.$file.' - Parse Error', 1);
+    dlog('Not checking ' . $file . ' - Parse Error', 1);
   } else {
-    require $path.$file;
-    $class = str_replace('.php','',$file);
+    require $path . $file;
+    $class = str_replace('.php', '', $file);
     if (!class_exists($class)) {
-      echo dlog('Daemon does not exist -'. $class, 1);
+      echo dlog('Daemon does not exist -' . $class, 1);
     } else {
       $classes[] = $class;
     }
@@ -97,17 +98,19 @@ if (empty($classes)) {
 //Run each
 while (true) {
   foreach ($classes as $class) {
-    dlog('Running '.$class, 2);
     try {
       if ($class::isEnabled()) {
+        dlog('Running ' . $class, 2);
         $class::run();
+        if (!$once) {
+          sleep(2);
+        }
       }
-    } catch (MyURYException $e) {}
-    if (!$once) {
-      sleep(2);
+    } catch (MyURYException $e) {
+      
     }
   }
-  
+
   //Every once in a while, check database connection. If it's lost, routinely try to reconnect.
   if (!Database::getInstance()->status()) {
     dlog('CRITICAL: Database server connection lost. Attempting to reconnect...', 0);
@@ -122,11 +125,11 @@ while (true) {
     }
     dlog('RECONNECTED', 0);
   }
-  
+
   if ($once) {
     break;
   }
-  
+
   //At the end of an interation, commit a query and error count.
   //This is both nice for statistics, and prevents an entry of several tens of thousands when the server restarts :)
   try {
@@ -134,8 +137,10 @@ while (true) {
     Database::getInstance()->resetCounter();
     MyURYException::resetExceptionCount();
     MyURYError::resetErrorCount();
-  } catch (MyURYException $e) {}
-  
+  } catch (MyURYException $e) {
+    
+  }
+
   //Reload the configuration to see if it has changed
   include 'MyURY_Config.local.php';
 }
