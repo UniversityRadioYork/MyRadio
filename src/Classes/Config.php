@@ -334,6 +334,17 @@ final class Config {
    */
   public static $membership_fee = 7.00;
   
+  /**** DAEMON CONFIGURATION ****/
+  public static $d_BAPSSync_enabled = false;
+  public static $d_EmailQueue_enabled = true;
+  public static $d_Fingerprinter_enabled = false;
+  public static $d_LabelFinder_enabled = false;
+  public static $d_MemberSync_enabled = false;
+  public static $d_Playlists_enabled = true;
+  public static $d_Podcast_enabled = true;
+  public static $d_StatsGen_enabled = true;
+  public static $d_Explicit_enabled = false;
+  
   /**
    * The constructor doesn't do anything practical
    * 

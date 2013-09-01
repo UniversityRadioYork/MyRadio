@@ -2,12 +2,14 @@
 
 class MyURY_StatsGenDaemon extends MyURY_Daemon {
   
-  public static function isEnabled() { return false; }
+  public static function isEnabled() { return Config::$d_StatsGen_enabled; }
   
   public static function run() {
     $hourkey = __CLASS__.'_last_run_hourly';
     $daykey = __CLASS__.'_last_run_daily';
-    if (self::getVal($hourkey) > time() - 3500) return;
+    if (self::getVal($hourkey) > time() - 3500) {
+      return;
+    }
     
     //Generate Training Graph
     self::generateTrainingGraph();

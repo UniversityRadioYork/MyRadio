@@ -17,7 +17,7 @@ class MyURY_BAPSSyncDaemon extends MyURY_Daemon {
    * It is currently disabled because it hasn't actuall finished being ported from NIPSWeb 1.
    * @return boolean
    */
-  public static function isEnabled() { return false; }
+  public static function isEnabled() { return Config::$d_BAPSSync_enabled; }
   
   /**
    * Once an hour, this takes each of the NIPSWebs Managed and Resource Lists,
