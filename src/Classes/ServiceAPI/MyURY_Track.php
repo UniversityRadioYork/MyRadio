@@ -238,7 +238,7 @@ class MyURY_Track extends ServiceAPI {
         'album' => $this->getAlbum()->toDataSource(),
         'trackid' => $this->getID(),
         'length' => $this->getLength(),
-        'clean' => $this->clean === 'c',
+        'clean' => $this->clean !== 'n',
         'digitised' => $this->getDigitised(),
         'editlink' => array(
             'display' => 'icon',

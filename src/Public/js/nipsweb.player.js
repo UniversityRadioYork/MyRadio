@@ -640,8 +640,8 @@ function registerItemClicks() {
     }
     if ($(this).hasClass('unclean')) {
       //This track may have naughty words, but don't block selection
-      $('#footer-tips').html('This track may contain restricted words. Use with caution.').show();
-      setTimeout("$('#footer-tips').fadeOut();", 5000);
+      $('#footer-tips').html('This track is explicit. Do not broadcast before 9pm.').addClass('ui-state-error').show();
+      setTimeout("$('#footer-tips').removeClass('ui-state-error').fadeOut();", 5000);
     }
     //Set this track as the active file for this channel
     //First, we need to remove the active class for any other file in the channel
