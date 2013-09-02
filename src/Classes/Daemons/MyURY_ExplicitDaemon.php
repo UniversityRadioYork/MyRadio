@@ -24,7 +24,8 @@ class MyURY_ExplicitDaemon extends MyURY_Daemon {
   }
 
   static function run() {
-    $tracks = MyURY_Track::findByOptions(['clean' => 'u', 'limit' => 50, 'random' => true]);
+    $tracks = MyURY_Track::findByOptions(['clean' => 'u', 'limit' => 50,
+        'random' => true, 'digitised' => false]);
 
     foreach ($tracks as $track) {
       $q = str_replace(' ', '+', $track->getTitle() . ' ' . $track->getArtist());

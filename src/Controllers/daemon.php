@@ -103,7 +103,7 @@ while (true) {
         dlog('Running ' . $class, 2);
         $class::run();
         if (!$once) {
-          sleep(2);
+          sleep(1);
         }
       }
     } catch (MyURYException $e) {

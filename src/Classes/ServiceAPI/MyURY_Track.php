@@ -285,7 +285,7 @@ class MyURY_Track extends ServiceAPI {
    * @param Array $options One or more of the following:
    * title: String title of the track
    * artist: String artist name of the track
-   * digitised: Boolean whether or not digitised
+   * digitised: If true, only return digitised tracks. If false, return any.
    * itonesplaylistid: Tracks that are members of the iTones_Playlist id
    * limit: Maximum number of items to return. 0 = No Limit
    * recordid: int Record id
@@ -321,13 +321,13 @@ class MyURY_Track extends ServiceAPI {
     if (empty($options['artist'])) {
       $options['artist'] = '';
     }
-    if (empty($options['digitised'])) {
+    if (!isset($options['digitised'])) {
       $options['digitised'] = true;
     }
     if (empty($options['itonesplaylistid'])) {
       $options['itonesplaylistid'] = null;
     }
-    if (empty($options['limit'])) {
+    if (!isset($options['limit'])) {
       $options['limit'] = Config::$ajax_limit_default;
     }
     if (empty($options['recordid'])) {
@@ -344,8 +344,6 @@ class MyURY_Track extends ServiceAPI {
     }
     if (empty($options['custom'])) {
       $options['custom'] = null;
-    } else {
-      $options['custom'] = self::$db->clean($options['custom']);
     }
     if (empty($options['precise'])) {
       $options['precise'] = false;
@@ -396,8 +394,11 @@ class MyURY_Track extends ServiceAPI {
       $response[] = new MyURY_Track($trackid['trackid']);
     }
 
-//Intersect with iTones if necessary, then return
-    return empty($options['itonesplaylistid']) ? $response : array_intersect($response, iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks());
+    //Intersect with iTones if necessary, then return
+    return empty($options['itonesplaylistid']) ? $response :
+            array_intersect($response, 
+                    iTones_Playlist::getInstance($options['itonesplaylistid'])
+                    ->getTracks());
   }
 
   /**

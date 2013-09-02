@@ -53,5 +53,5 @@ Config::$d_LabelFinder_enabled = false;
 Config::$d_MemberSync_enabled = false;
 Config::$d_Playlists_enabled = true;
 Config::$d_Podcast_enabled = true;
-Config::$d_StatsGen_enabled = true;
+Config::$d_StatsGen_enabled = false;
 Config::$d_Explicit_enabled = false;
