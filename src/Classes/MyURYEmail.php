@@ -315,7 +315,7 @@ class MyURYEmail extends ServiceAPI {
   }
   
   public function getUserRecipients() {
-    return MyURY_List::resultSetToObjArray($this->r_users);
+    return MyURY_User::resultSetToObjArray($this->r_users);
   }
   
   public function getViewableBody() {
