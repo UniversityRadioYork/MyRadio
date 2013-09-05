@@ -108,6 +108,39 @@ class MyURY_Selector {
   public function __construct() {
     
   }
+  
+  /**
+   * Returns the state of the remote OB feeds in an associative array.
+   * @return Array
+   */
+  public function remoteStreams() {
+    $data = file(Config::$ob_remote_status_file,
+            FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    
+    $response = [];
+    foreach ($data as $feed) {
+      $state = explode('=',$feed);
+      $response[trim($state[0])] = (bool)trim($state[1]);
+    }
+    
+    return $response;
+  }
+  
+  /**
+   * Returns the length of the current silence, if any.
+   * @return int
+   */
+  public function isSilence() {
+    $result = Database::getInstance()->fetch_one('SELECT starttime, stoptime
+      FROM jukebox.silence_log
+      ORDER BY silenceid DESC LIMIT 1');
+    
+    if (empty($result['stoptime'])) {
+      return time()-strtotime($result['starttime']);
+    } else {
+      return 0;
+    }
+  }
 
   /**
    * Returns the current selector status

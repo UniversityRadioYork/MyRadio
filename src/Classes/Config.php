@@ -266,6 +266,12 @@ final class Config {
    */
   public static $selector_telnet_port = 1354;
   
+  /**
+   * The path to the file that reports the state of the remote OB feeds
+   * @var String
+   */
+  public static $ob_remote_status_file = '/music/ob_state.conf';
+  
   /**** ERROR REPORTING ****/
   
   /**

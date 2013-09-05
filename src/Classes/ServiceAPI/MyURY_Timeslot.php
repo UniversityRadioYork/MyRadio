@@ -283,11 +283,11 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
   }
 
   /**
-   * Returns the current timeslot, and the one after it, in a simplified
+   * Returns the current timeslot, and the n after it, in a simplified
    * datasource format. Mainly intended for API use.
    * @param int $time
    */
-  public static function getCurrentAndNext($time = null) {
+  public static function getCurrentAndNext($time = null, $n = 1) {
     $timeslot = self::getCurrentTimeslot($time);
 
     if (empty($timeslot)) {
@@ -295,7 +295,8 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
       if (empty($next)) {
         //There's currently not a show on, and there never will be.
         $response = [
-            'current' => ['title' => 'URY Jukebox', 'desc' => 'Non-stop Music']
+            'current' => ['title' => 'URY Jukebox', 'desc' => 'Non-stop Music'],
+            'next' => []
         ];
       } else {
         //There's currently not a show on, but there will be.
@@ -319,25 +320,32 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
               'end_time' => $timeslot->getStartTime() + $timeslot->getDuration(),
               'presenters' => $timeslot->getPresenterString()
       ]];
-      $next = $timeslot->getTimeslotAfter();
-      if (empty($next)) {
-        //There's not a next show, but there might be one later
-        $response['next'] = ['title' => 'Jukebox',
-            'desc' => 'Non-stop Music',
-            'start_time' => $timeslot->getStartTime() + $timeslot->getDuration(),
-            'end_time' => self::getNextTimeslot($timeslot->getStartTime() + 1)
-                    ->getStartTime()
-        ];
-      } else {
-        //There's a next show
-        $response['next'] = [
-            'title' => $next->getMeta('title'),
-            'descr' => $next->getMeta('description'),
-            'start_time' => $next->getStartTime(),
-            'end_time' => $next->getStartTime() + $next->getDuration(),
-            'presenters' => $next->getPresenterString()
-        ];
+      $next = $timeslot;
+      for ($i = 0; $i < $n; $i++) {
+        $next = $next->getTimeslotAfter();
+        if (empty($next)) {
+          //There's not a next show, but there might be one later
+          $response['next'][] = ['title' => 'Jukebox',
+              'desc' => 'Non-stop Music',
+              'start_time' => $timeslot->getStartTime() + $timeslot->getDuration(),
+              'end_time' => self::getNextTimeslot($timeslot->getStartTime() + 1)
+                      ->getStartTime()
+          ];
+        } else {
+          //There's a next show
+          $response['next'][] = [
+              'title' => $next->getMeta('title'),
+              'descr' => $next->getMeta('description'),
+              'start_time' => $next->getStartTime(),
+              'end_time' => $next->getStartTime() + $next->getDuration(),
+              'presenters' => $next->getPresenterString()
+          ];
+        }
       }
+    }
+    
+    if (sizeof($response['next']) === 1) {
+      $response['next'] = $response['next'][0];
     }
 
     return $response;
