@@ -3,7 +3,7 @@
 {{ parent() }}
 <script type="text/javascript" src="{{baseurl}}js/jquery.ui-contextmenu.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/nipsweb.player.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.live.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/nipsweb.librarypane.js"></script>
 <link rel="stylesheet" type="text/css" href="{{shiburl}}css/planner.css" />
 <style type="text/css">
@@ -11,8 +11,7 @@
 </style>
 {% endblock %}
 {% block content %}
-<div id="notice" class="ui-state-highlight ui-helper-hidden">Saving...</div>
-{# <div id="head-icons"><button class="btn-feedback">Send Feedback</button>&nbsp;<button class="btn-help"></button><button class="btn-logout" onclick="window.location = '/portal/redir_out.php'"></button></div> #}
+<div id="notice" class="ui-state-highlight ui-helper-hidden">Waiting...</div>
 <header id="content-header">
   <h3 id="a-manage-library"><a href="{{myury.makeURL(config,'NIPSWeb','manage_library')}}" title="Library Manager">Manage Library</a></h3>
   <h2>{{title}}</h2>
@@ -23,13 +22,8 @@
     <div id="baps-channel-container" class="clearfix">
       {% for i in 0..2 %}
         <ul class="box width-1 height-2 baps-channel ui-widget-content" channel="{{i+1}}" id="baps-channel-{{i + 1}}">
-          {% for track in tracks[i] %}
-            <li id='{% if track['managedid'] is defined %}ManagedDB{% else %}{{track['album']['recordid']}}{% endif %}-{{track['trackid']}}' type='{{track['type']}}'
-                {% if track['managedid'] is defined %}managedid='{{track['managedid']}}'{% endif %}
-                {% if track['type'] == 'aux' %}auxid='{{track['auxid']}}'{% endif %}
-                length='{{track['length']}}' timeslotitemid='{{track['timeslotitemid']}}'
-                weight='{{track['weight']}}' channel='{{track['channel']}}'
-                >{{track['title']}}{% if track['artist'] is defined %} - {{track['artist']}}{% endif %}</li>
+          {% for track in tracks[i]['playlist']|keys %}
+            <li id='item-{{i}}-{{track}}'>{{tracks[i]['playlist'][track]['name']}}</li>
           {% endfor %}
         </ul>
       {% endfor %}
@@ -53,7 +47,6 @@
       {% set channels = [1, 2, 3, 'res'] %}
       {% for channel in channels %}
         <div class='box baps-channel channel-footer ui-widget-header{% if channel == 'res' %} width-2 library-footer'>Library{% else %} width-1'>Channel {{channel}}{% endif %}
-          <span id='baps-channel-{{channel}}-total' title="Total time of all tracks in this channel">(00:00)</span>
           <br>
           <button class='play' id='ch{{channel}}-play' onclick='previewPlay("{{channel}}")'></button>
           <button class='pause' id='ch{{channel}}-pause' onclick='previewPause("{{channel}}")'></button>

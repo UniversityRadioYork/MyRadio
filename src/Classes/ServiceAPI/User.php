@@ -1340,19 +1340,19 @@ EOT;
     $data = [
         'memberid' => $this->getID(),
         'locked' => $this->getAccountLocked(),
-        'paid' => $this->getAllPayments(),
         'college' => $this->getCollege(),
         'fname' => $this->getFName(),
         'sname' => $this->getSName(),
-        'url' => $this->getURL(),
         'sex' => $this->getSex(),
-        'photo' => $this->getProfilePhoto() === null ? 
-            Config::$default_person_uri : $this->getProfilePhoto()->getURL(),
-        'bio' => $this->getBio(),
         'receive_email' => $this->getReceiveEmail(),
-        'public_email' => $this->getEmail()
+        'public_email' => $this->getEmail(),
+        'url' => $this->getURL()
     ];
     if ($full) {
+      $data['paid'] = $this->getAllPayments();
+      $data['photo'] = $this->getProfilePhoto() === null ? 
+            Config::$default_person_uri : $this->getProfilePhoto()->getURL();
+      $data['bio'] = $this->getBio();
       $data['shows'] = CoreUtils::dataSourceParser(
               $this->getShows(), false);
       $data['officerships'] = $this->getOfficerships();
