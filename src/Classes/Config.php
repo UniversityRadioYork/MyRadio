@@ -329,6 +329,12 @@ final class Config {
   public static $api_url = 'https://ury.org.uk/api';
   
   /**
+   * BRA Server
+   * @var String
+   */
+  public static $bra_uri = 'https://urybsod.york.ac.uk/bra';
+  
+  /**
    * Relative path to the API. Must have trailing /
    * @var String
    */
@@ -372,7 +378,8 @@ final class Config {
         'shib_url' => self::$shib_url,
         'timezone' => self::$timezone,
         'default_module' => self::$default_module,
-        'default_action' => self::$default_action
+        'default_action' => self::$default_action,
+        'bra_uri' => self::$bra_uri
     );
   }
 }

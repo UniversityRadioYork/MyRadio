@@ -32,8 +32,7 @@ class MyURY_Officer extends ServiceAPI {
   private $alias;
   /**
    * Team the Officership is a member of.
-   * @todo
-   * @var int|MyURY_Team
+   * @var int
    */
   private $team;
   /**
@@ -58,6 +57,11 @@ class MyURY_Officer extends ServiceAPI {
    * @var char
    */
   private $type;
+  /**
+   * Users who have held this position. Cached on first request.
+   * @var Array
+   */
+  private $history;
 
   
   protected function __construct($id) {
@@ -70,16 +74,16 @@ class MyURY_Officer extends ServiceAPI {
       $this->officerid = (int)$id;
       $this->name = $result['officer_name'];
       $this->alias = $result['officer_alias'];
-      $this->team = (int)$result['team'];
+      $this->team = (int)$result['teamid'];
       $this->ordering = (int)$result['ordering'];
-      $this->description = $result['description'];
+      $this->description = $result['descr'];
       $this->status = $result['status'];
       $this->type = $result['type'];
     }
   }
   
   /**
-   * Returns all the Aliases available.
+   * Returns all the Officers available.
    * @return array
    */
   public static function getAllOfficerPositions() {
@@ -96,7 +100,7 @@ class MyURY_Officer extends ServiceAPI {
   }
   
   /**
-   * 
+   * Get the Name of this Officer Position
    * @return String
    */
   public function getName() {
@@ -112,15 +116,15 @@ class MyURY_Officer extends ServiceAPI {
   }
   
   /**
-   * @todo
-   * @return int|MyURY_Team
+   * Returns the Team this Officership is part of
+   * @return MyURY_Team
    */
   public function getTeam() {
-    return $this->team;
+    return MyURY_Team::getInstance($this->team);
   }
   
   /**
-   * 
+   * Returns the weight of the Officer when listing them.
    * @return int
    */
   public function getOrdering() {
@@ -153,13 +157,55 @@ class MyURY_Officer extends ServiceAPI {
   }
   
   /**
+   * Return all Users who held this Officership
+   * @return Array {'User':User, 'from':time, 'to':time|null,
+   *   'memberofficerid': int}
+   */
+  public function getHistory() {
+    if (empty($this->history)) {
+      $result = self::$db->fetch_all('SELECT member_officerid, memberid, '
+              . 'from_date, till_date FROM public.member_officer '
+              . 'WHERE officerid=$1 ORDER BY from_date DESC', [$this->getID()]);
+      
+      $this->history = array_map(function($x) {
+        return ['User'=>$x['memberid'],
+                'from'=>strtotime($x['from_date']),
+                'to'=> empty($x['till_date']) ? null 
+                    : strtotime($x['till_date']),
+                'memberofficerid' => (int)$x['member_officerid']
+        ];
+      }, $result);
+      $this->updateCacheObject();
+    }
+    return array_map(function($x) {
+      $x['User'] = User::getInstance($x['User']);
+      return $x;
+    },$this->history);
+  }
+  
+  /**
+   * Get Users currently in the position
+   * @return User[]
+   */
+  public function getCurrentHolders() {
+    $i = $this->getHistory();
+    $result = array();
+    foreach ($i as $o) {
+      if ($o['to'] === null) {
+        $result[] = $o['User'];
+      }
+    }
+    return $result;
+  }
+  
+  /**
    * Returns data about the Officer.
    * 
    * @todo User who holds or has held position
    * @param bool $full If true, includes info about User who holds position.
    * @return Array
    */
-  public function toDataSource($full = true) {
+  public function toDataSource($full = false) {
     $data = [
         'officerid' => $this->getID(),
         'name' => $this->getName(),
@@ -170,6 +216,11 @@ class MyURY_Officer extends ServiceAPI {
         'status' => $this->getStatus(),
         'type' => $this->getType()
     ];
+    
+    if ($full) {
+      $data['current'] = CoreUtils::dataSourceParser($this->getCurrentHolders(), false);
+      $data['history'] = CoreUtils::dataSourceParser($this->getHistory(), false);
+    }
     
     return $data;
   }

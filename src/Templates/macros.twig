@@ -1,8 +1,12 @@
-{% macro makeURL(config, module, action) %}
+{% macro makeURL(config, module, action, options) %}
 {{config.base_url}}
 {% if config.rewrite_url
 %}{{module|default('default_module')}}/{{action|default('default_action')}}/{%
+if options %}?{% endif %}{%
 else
 %}?module={{module|default(config.default_module)}}&action={{action|default(config.default_action)}}{%
-endif %}
+if options %}&{% endif %}{% endif %}{%
+for i in options|keys %}{%
+if not loop.first %}&{% endif %}{{i}}={{options[i]}}{%
+endfor %}
 {% endmacro %}
