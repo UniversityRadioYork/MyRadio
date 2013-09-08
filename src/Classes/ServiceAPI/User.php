@@ -365,17 +365,44 @@ class User extends ServiceAPI {
   }
 
   /**
-   * Returns the User's email address. If the email address is null, it is assumed their eduroam address is the
-   * preferred contact method.
+   * Returns the User's email address. If the email address is null, it is
+   * assumed their eduroam address is the preferred contact method.
+   * 
+   * This is the address that emails to the User actually *go to*. It is not
+   * the address that should be shown to your standard member.
+   * See getPublicEmail().
+   * 
+   * @todo hardcoded domains here.
    * @return string The User's email 
    */
   public function getEmail() {
-    return empty($this->email) ? $this->getEduroam() . '@york.ac.uk' : $this->email;
+    if (strstr($this->email, '@ury.org.uk') === false
+            or strstr($this->email, '@ury.york.ac.uk') === false) {
+      //The user has set an alias or their local mailbox here.
+      //Return the local mailbox, or, failing that, eduroam
+      $local = $this->getLocalName();
+      if (!empty($local)) {
+        return $local;
+      } else {
+        //ffs, some people don't have an eduroam either.
+        $eduroam = $this->getEduroam();
+        if (empty($eduroam)) {
+          return null;
+        } else {
+          return $eduroam.'@york.ac.uk';
+        }
+      }
+    } elseif (empty($this->email)) {
+      return $this->getEduroam().'@york.ac.uk';
+    } else {
+      return $this->email;
+    }
   }
 
   /**
-   * Used for Officers. If they have an @ury.org.uk Alias, display that. Otherwise, display their default email.
-   * This is because if a user wants an official @ury.org.uk, but wants it fowarded, then you set the local_alias
+   * Used for Officers. If they have an @ury.org.uk Alias, display that.
+   * Otherwise, display their default email. This is because if a user wants an
+   * official @ury.org.uk, but wants it fowarded, then you set the local_alias
    * to the @ury.org.uk prefix, and email to their personal address.
    */
   public function getPublicEmail() {
@@ -644,21 +671,25 @@ class User extends ServiceAPI {
     /**
      * You won't believe how annoying psql can be about '' already being used on a unique key.
      */
-    if ($value == '')
+    if ($value == '') {
       $value = null;
+    }
     //Maps Class variable names to their database values, if they mismatch.
     $param_maps = ['collegeid' => 'college'];
 
-    if (!property_exists($this, $paramName))
+    if (!property_exists($this, $paramName)) {
       throw new MyURYException('paramName invalid', 500);
+    }
 
-    if ($this->$paramName == $value)
+    if ($this->$paramName == $value) {
       return false;
+    } 
 
     $this->$paramName = $value;
 
-    if (isset($param_maps[$paramName]))
+    if (isset($param_maps[$paramName])) {
       $paramName = $param_maps[$paramName];
+    }
 
     self::$db->query('UPDATE member SET ' . $paramName . '=$1 WHERE memberid=$2', array($value, $this->getID()));
     $this->updateCacheObject();
@@ -918,8 +949,9 @@ class User extends ServiceAPI {
     $members = array();
     foreach ($trained as $mid) {
       $member = User::getInstance($mid);
-      if ($member->isStudioTrained())
+      if ($member->isStudioTrained()) {
         $members[] = $member;
+      }
     }
 
     return $members;
@@ -966,6 +998,27 @@ class User extends ServiceAPI {
     }
 
     return $members;
+  }
+  
+  /**
+   * Returns an Array of all mappings for official aliases to emails go to.
+   * @return Array[] [[from, to]]
+   */
+  public static function getAllAliases() {
+    $users = self::resultSetToObjArray(self::$db->fetch_column(
+            'SELECT memberid FROM public.member WHERE local_alias IS NOT NULL'));
+    
+    $data = [];
+    foreach ($users as $user) {
+      $email = $user->getEmail();
+      if (empty($email)) {
+        continue;
+      } else {
+        $data[] = [$user->getLocalAlias(), $email];
+      }
+    }
+    
+    return $data;
   }
 
   /**
@@ -1021,7 +1074,7 @@ class User extends ServiceAPI {
             ->addField(new MyURYFormField('email', MyURYFormField::TYPE_EMAIL, array(
                 'required' => true,
                 'label' => 'Email',
-                'value' => $this->getEmail()
+                'value' => $this->email
             )))
             ->addField(new MyURYFormField('receive_email', MyURYFormField::TYPE_CHECK, array(
                 'required' => false,
