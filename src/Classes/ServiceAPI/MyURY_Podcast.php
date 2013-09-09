@@ -241,7 +241,8 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
     
     //Ship the file off to the archive location to be converted
     if (!move_uploaded_file($file, $podcast->getArchiveFile())) {
-      throw new MyURYException('Failed to move podcast file!', 500);
+      throw new MyURYException("Failed to move podcast file ".
+              "$file to {$podcast->getArchiveFile()}", 500);
     }
   }
 
