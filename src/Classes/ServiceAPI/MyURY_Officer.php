@@ -177,6 +177,7 @@ class MyURY_Officer extends ServiceAPI {
       }, $result);
       $this->updateCacheObject();
     }
+    
     return array_map(function($x) {
       $x['User'] = User::getInstance($x['User']);
       return $x;

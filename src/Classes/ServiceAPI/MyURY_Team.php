@@ -155,10 +155,10 @@ class MyURY_Team extends ServiceAPI {
   public function getHistory() {
     $data = [];
     foreach ($this->getOfficers() as $officer) {
-      $data[] = array_map(function($x) use ($officer) {
+      $data = array_merge($data, array_map(function($x) use ($officer) {
         $x['position'] = $officer;
         return $x;
-      }, $officer->getHistory());
+      }, $officer->getHistory()));
     }
     
     usort($data, function($a, $b) {
@@ -176,6 +176,7 @@ class MyURY_Team extends ServiceAPI {
   public function getCurrentHolders() {
     $i = $this->getHistory();
     $result = array();
+    
     foreach ($i as $o) {
       if (empty($o['to']) or $o['to'] >= time()) {
         unset($o['to']);
