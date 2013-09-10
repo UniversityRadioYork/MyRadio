@@ -74,9 +74,9 @@ class MyURY_Team extends ServiceAPI {
    * Returns all the Teams available.
    * @return array
    */
-  public static function getAllTeams() {
+  public static function getAllTeams($full = true) {
     return self::resultSetToObjArray(self::$db->fetch_column(
-            'SELECT teamid FROM public.team'));
+            'SELECT teamid FROM public.team'), $full);
   }
   
   /**
