@@ -343,7 +343,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
    * @param User[] $users An array of Users associated.
    * @param int[] $credittypes The relevant credittypeid for each User.
    */
-  public function setCredits($users, $credittypes, $table = null) {
+  public function setCredits($users, $credittypes, $table = null, $pkey = null) {
     $r = parent::setCredits($users, $credittypes, 'schedule.show_credit');
     $this->updateCacheObject();
     return $r;

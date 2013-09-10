@@ -376,8 +376,8 @@ class User extends ServiceAPI {
    * @return string The User's email 
    */
   public function getEmail() {
-    if (strstr($this->email, '@ury.org.uk') === false
-            or strstr($this->email, '@ury.york.ac.uk') === false) {
+    if (strstr($this->email, '@ury.org.uk') !== false
+            or strstr($this->email, '@ury.york.ac.uk') !== false) {
       //The user has set an alias or their local mailbox here.
       //Return the local mailbox, or, failing that, eduroam
       $local = $this->getLocalName();

@@ -60,7 +60,7 @@ class MyURY_Team extends ServiceAPI {
     } else {
       $this->teamid = (int)$id;
       $this->name = $result['team_name'];
-      $this->alias = $result['team_alias'];
+      $this->alias = $result['local_alias'];
       $this->ordering = (int)$result['ordering'];
       $this->description = $result['descr'];
       $this->status = $result['status'];
@@ -97,6 +97,9 @@ class MyURY_Team extends ServiceAPI {
   
   /**
    * Gets the Team primary email alias.
+   * 
+   * @todo Database discrepancy - the actual lists themselves are defined
+   * manually. Need to discuss what to do about this.
    * @return String
    */
   public function getAlias() {
