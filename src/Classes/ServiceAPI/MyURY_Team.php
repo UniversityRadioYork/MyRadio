@@ -175,7 +175,7 @@ class MyURY_Team extends ServiceAPI {
     $i = $this->getHistory();
     $result = array();
     foreach ($i as $o) {
-      if ($o['to'] === null) {
+      if (empty($o['to']) or $o['to'] >= time()) {
         unset($o['to']);
         $result[] = $o;
       }
