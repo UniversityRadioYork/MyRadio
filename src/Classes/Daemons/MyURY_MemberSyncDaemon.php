@@ -19,7 +19,7 @@ class MyURY_MemberSyncDaemon extends MyURY_Daemon {
       
       if (empty($result)) {
         dlog('Member '.$member['EmailAddress'].' does not exist.', 3);
-      } else {
+      } elseif ($member['Paid'] != null) {
         dlog('Member '.$member['EmailAddress'].' matches '.$result->getID().'.', 3);
         dlog('Setting '.$result->getID().' payment to '.Config::$membership_fee.'.', 2);
         $result->setPayment(Config::$membership_fee);
