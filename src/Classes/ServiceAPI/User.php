@@ -1074,7 +1074,7 @@ class User extends ServiceAPI {
                 'value' => $this->getPhone()
             )))
             ->addField(new MyURYFormField('email', MyURYFormField::TYPE_EMAIL, array(
-                'required' => true,
+                'required' => false,
                 'label' => 'Email',
                 'value' => $this->email
             )))

@@ -83,20 +83,12 @@ class Profile extends ServiceAPI {
    * paid: How much the member has paid this year
    */
   public static function getThisYearsMembers() {
-    //Return the object if it is cached
-    self::$thisYearsMembers = self::$cache->get('MyURYProfile_thisYearsMembers');
-    if (self::$thisYearsMembers === false) {
-      self::wakeup();
-      self::$thisYearsMembers = 
-        self::$db->fetch_all('SELECT member.memberid, sname || \', \' || fname AS name, l_college.descr AS college, paid
+    self::wakeup();
+      return self::$db->fetch_all('SELECT member.memberid, sname || \', \' || fname AS name, l_college.descr AS college, paid
         FROM member INNER JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
         ON ( member.memberid = member_year.memberid ), l_college
         WHERE member.college = l_college.collegeid
         ORDER BY sname ASC', array(CoreUtils::getAcademicYear()));
-      self::$cache->set('MyURYProfile_thisYearsMembers', self::$thisYearsMembers);
-    }
-    
-    return self::$thisYearsMembers;
   }
 
   /**
