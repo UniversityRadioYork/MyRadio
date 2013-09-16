@@ -6,8 +6,8 @@ class MyURY_MemberSyncDaemon extends MyURY_Daemon {
   public static function isEnabled() { return Config::$d_MemberSync_enabled; }
   
   public static function run() {
-    $hourkey = __CLASS__.'_last_run_hourly';
-    if (self::getVal($hourkey) > time() - 3500) {
+    $hourkey = __CLASS__.'_last_run';
+    if (self::getVal($hourkey) > time() - 300) {
       return;
     }
     
@@ -15,7 +15,6 @@ class MyURY_MemberSyncDaemon extends MyURY_Daemon {
     
     foreach ($members as $member) {
       dlog('Checking YUSU Member '.$member['EmailAddress'], 4);
-      print_r($member);
       $result = User::findByEmail($member['EmailAddress']);
       
       if (empty($result)) {
