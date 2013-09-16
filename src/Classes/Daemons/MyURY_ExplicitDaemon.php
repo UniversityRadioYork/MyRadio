@@ -24,7 +24,7 @@ class MyURY_ExplicitDaemon extends MyURY_Daemon {
   }
 
   static function run() {
-    $tracks = MyURY_Track::findByOptions(['clean' => 'u', 'limit' => 50,
+    $tracks = MyURY_Track::findByOptions(['clean' => 'u', 'limit' => 10,
         'random' => true, 'digitised' => false]);
 
     foreach ($tracks as $track) {
