@@ -163,6 +163,6 @@ if (!$api_key->canCall($classes[$class], $method)) {
   }
 
   header('Content/Type: application/json');
-  $result['status'] = 'OK';
+  $data = ['status' => 'OK', 'payload' => $result];
   echo json_encode(CoreUtils::dataSourceParser($result));
 }
