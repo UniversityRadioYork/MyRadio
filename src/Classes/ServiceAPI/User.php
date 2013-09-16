@@ -899,7 +899,7 @@ class User extends ServiceAPI {
       } elseif ($v['year'] == $year) {
         //Change payment.
         self::$db->query('UPDATE member_year SET paid=$1'
-                . ' WHERE year=$2 AND memberid=$3', [(float) $amount, $year, $this->getID()]);
+                . ' WHERE year=$2 AND memberid=$3', [(float)$amount, $year, $this->getID()]);
         $this->payment[$k]['paid'] = $amount;
         $this->updateCacheObject();
         return;
