@@ -114,7 +114,7 @@ class APCProvider implements CacheProvider {
   public function getKeyPrefix() {
     return 'MyURYCache_'.(isset($_SESSION['myury_svc_version_1_path']) ?
             $_SESSION['myury_svc_version_1_path']
-            : CoreUtils::getServiceVersionForUser()['path']) . '-';
+            : '') . '-';
   }
 }
 
