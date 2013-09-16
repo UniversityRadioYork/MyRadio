@@ -896,7 +896,7 @@ class User extends ServiceAPI {
       if ($v['year'] == $year && $v['paid'] == $amount) {
         //No change.
         return;
-      } else {
+      } elseif ($v['year'] == $year) {
         //Change payment.
         self::$db->query('UPDATE member_year SET paid=$1'
                 . ' WHERE year=$2 AND memberid=$3', [(float) $amount, $year, $this->getID()]);
