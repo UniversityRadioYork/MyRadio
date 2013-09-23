@@ -30,7 +30,7 @@ $('.twig-datatable').dataTable({
   //editlink
   {
     "sTitle": "Edit",
-    "bVisible": false
+    "bVisible": true
   },
   //applylink
   {
