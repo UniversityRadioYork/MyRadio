@@ -201,6 +201,8 @@ class MyURY_Season extends MyURY_Metadata_Common {
     //Actually commit the show to the database!
     self::$db->query('COMMIT');
 
+    $this->getShow()->addSeason($season_id);
+    
     return self::getInstance($season_id);
   }
   
