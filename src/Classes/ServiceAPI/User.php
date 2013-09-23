@@ -143,7 +143,7 @@ class User extends ServiceAPI {
    * @var String
    */
   private $bio = '';
-  
+
   /**
    * Initialised on first request, stores a list of Show IDs the User has.
    * 
@@ -376,8 +376,7 @@ class User extends ServiceAPI {
    * @return string The User's email 
    */
   public function getEmail() {
-    if (strstr($this->email, '@ury.org.uk') !== false
-            or strstr($this->email, '@ury.york.ac.uk') !== false) {
+    if (strstr($this->email, '@ury.org.uk') !== false or strstr($this->email, '@ury.york.ac.uk') !== false) {
       //The user has set an alias or their local mailbox here.
       //Return the local mailbox, or, failing that, eduroam
       $local = $this->getLocalName();
@@ -389,11 +388,11 @@ class User extends ServiceAPI {
         if (empty($eduroam)) {
           return null;
         } else {
-          return $eduroam.'@york.ac.uk';
+          return $eduroam . '@york.ac.uk';
         }
       }
     } elseif (empty($this->email)) {
-      return $this->getEduroam().'@york.ac.uk';
+      return $this->getEduroam() . '@york.ac.uk';
     } else {
       return $this->email;
     }
@@ -516,7 +515,7 @@ class User extends ServiceAPI {
   public function getBio() {
     return $this->bio;
   }
-  
+
   /**
    * Returns an array of Shows which the User owns or is an active
    * credit in.
@@ -525,15 +524,11 @@ class User extends ServiceAPI {
    * @return Array an array of Show objects attached to the given user
    */
   public function getShows($show_type_id = 1) {
-    if ($this->shows === null) {
-      $this->shows = self::$db->fetch_column('SELECT show_id FROM schedule.show 
-        WHERE memberid=$1 OR show_id IN
-          (SELECT show_id FROM schedule.show_credit
-          WHERE creditid=$1 AND effective_from <= NOW() AND
-            (effective_to >= NOW() OR effective_to IS NULL))',
-              array($this->getID()));
-      $this->updateCacheObject();
-    }
+    $this->shows = self::$db->fetch_column('SELECT show_id FROM schedule.show 
+      WHERE memberid=$1 OR show_id IN
+        (SELECT show_id FROM schedule.show_credit
+        WHERE creditid=$1 AND effective_from <= NOW() AND
+          (effective_to >= NOW() OR effective_to IS NULL))', array($this->getID()));
 
     $return = array();
     foreach ($this->shows as $show_id) {
@@ -580,7 +575,7 @@ class User extends ServiceAPI {
       ORDER BY sname, fname LIMIT $2', array($name, $limit));
     }
   }
-  
+
   public static function getInstance($itemid = -1) {
     if ($itemid === -1) {
       $itemid = $_SESSION['memberid'];
@@ -683,7 +678,7 @@ class User extends ServiceAPI {
 
     if ($this->$paramName == $value) {
       return false;
-    } 
+    }
 
     $this->$paramName = $value;
 
@@ -891,9 +886,9 @@ class User extends ServiceAPI {
     if ($year === null) {
       $year = CoreUtils::getAcademicYear();
     }
-    
+
     $amount = number_format($amount, 2);
-    
+
     foreach ($this->payment as $k => $v) {
       if ($v['year'] == $year && $v['paid'] == $amount) {
         //No change.
@@ -901,7 +896,7 @@ class User extends ServiceAPI {
       } elseif ($v['year'] == $year) {
         //Change payment.
         self::$db->query('UPDATE member_year SET paid=$1'
-                . ' WHERE year=$2 AND memberid=$3', [(float)$amount, $year, $this->getID()]);
+                . ' WHERE year=$2 AND memberid=$3', [(float) $amount, $year, $this->getID()]);
         $this->payment[$k]['paid'] = $amount;
         $this->updateCacheObject();
         return;
@@ -1001,15 +996,15 @@ class User extends ServiceAPI {
 
     return $members;
   }
-  
+
   /**
    * Returns an Array of all mappings for official aliases to emails go to.
    * @return Array[] [[from, to]]
    */
   public static function getAllAliases() {
     $users = self::resultSetToObjArray(self::$db->fetch_column(
-            'SELECT memberid FROM public.member WHERE local_alias IS NOT NULL'));
-    
+                            'SELECT memberid FROM public.member WHERE local_alias IS NOT NULL'));
+
     $data = [];
     foreach ($users as $user) {
       $email = $user->getEmail();
@@ -1019,7 +1014,7 @@ class User extends ServiceAPI {
         $data[] = [$user->getLocalAlias(), $email];
       }
     }
-    
+
     return $data;
   }
 
@@ -1157,9 +1152,7 @@ class User extends ServiceAPI {
    * @return User
    * @throws MyURYException
    */
-  public static function create($fname, $sname, $eduroam = null, $sex = 'o',
-          $collegeid = null, $email = null, $phone = null,
-          $receive_email = true, $paid = 0.00) {
+  public static function create($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00) {
     //Validate input
     if (empty($collegeid)) {
       $collegeid = Config::$default_college;
@@ -1287,9 +1280,7 @@ On Air | Online | On Demand<br>
 EOT;
 
     //Send the email
-    MyURYEmail::create(array('members' => array(User::getInstance($memberid))),
-            'Welcome to URY - Getting Involved and Your Account', $welcome_email,
-            User::getInstance(7449));
+    MyURYEmail::create(array('members' => array(User::getInstance($memberid))), 'Welcome to URY - Getting Involved and Your Account', $welcome_email, User::getInstance(7449));
 
     return User::getInstance($memberid);
   }
@@ -1405,16 +1396,15 @@ EOT;
     ];
     if ($full) {
       $data['paid'] = $this->getAllPayments();
-      $data['photo'] = $this->getProfilePhoto() === null ? 
-            Config::$default_person_uri : $this->getProfilePhoto()->getURL();
+      $data['photo'] = $this->getProfilePhoto() === null ?
+              Config::$default_person_uri : $this->getProfilePhoto()->getURL();
       $data['bio'] = $this->getBio();
       $data['shows'] = CoreUtils::dataSourceParser(
-              $this->getShows(), false);
+                      $this->getShows(), false);
       $data['officerships'] = $this->getOfficerships();
-      $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining(),
-              false);
+      $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining(), false);
     }
-    
+
     return $data;
   }
 
