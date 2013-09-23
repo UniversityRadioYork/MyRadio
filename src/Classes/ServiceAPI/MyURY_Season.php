@@ -308,6 +308,10 @@ EOT
     return $this->season_id;
   }
 
+  /**
+   * 
+   * @return MyURY_Show
+   */
   public function getShow() {
     return MyURY_Show::getInstance($this->show_id);
   }
@@ -408,8 +412,8 @@ EOT
     return $this->season_num;
   }
 
-  public function toDataSource() {
-    return array_merge($this->getShow()->toDataSource(), array(
+  public function toDataSource($full = true) {
+    return array_merge($this->getShow()->toDataSource(false), array(
                 'id' => $this->getID(),
                 'season_num' => $this->getSeasonNumber(),
                 'title' => $this->getMeta('title'),
