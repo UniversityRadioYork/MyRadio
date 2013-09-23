@@ -108,6 +108,12 @@ final class Config {
   public static $email_exceptions = true;
   
   /**
+   * Prevent an exception surge by failing if this many are thrown.
+   * @var int
+   */
+  public static $exception_limit = 10;
+  
+  /**
    * Whether template debugging should be enabled
    * Development value: true
    * Production value: false

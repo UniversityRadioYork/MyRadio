@@ -27,12 +27,12 @@ class MyURYException extends RuntimeException {
    */
   public function __construct($message, $code = 500, Exception $previous = null) {
     self::$count++;
-    parent::__construct((string)$message, (int)$code, $previous);
-    
+    parent::__construct((string) $message, (int) $code, $previous);
+
     if (defined('SILENT_EXCEPTIONS') && SILENT_EXCEPTIONS) {
       return;
     }
-    
+
     //Set up the Exception
     $error = "<p>MyURY has encountered a problem processing this request.</p>
             <table class='errortable' style='color:#633'>
@@ -47,8 +47,7 @@ class MyURYException extends RuntimeException {
       //Configuration is available, use this to decide what to do
       if (Config::$display_errors or (class_exists('CoreUtils') &&
               CoreUtils::hasPermission(AUTH_SHOWERRORS))) {
-        if ((isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
-                or empty($_SERVER['REMOTE_ADDR'])) {
+        if ((isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') or empty($_SERVER['REMOTE_ADDR'])) {
           //This is an Ajax/CLI request. Return JSON
           header('HTTP/1.1 ' . $code . ' Internal Server Error');
           header('Content-Type: text/json');
@@ -77,7 +76,7 @@ class MyURYException extends RuntimeException {
           }
         }
       } else {
-        $error = '<div class="errortable"><strong>'.$this->getMessage().'</strong>'
+        $error = '<div class="errortable"><strong>' . $this->getMessage() . '</strong>'
                 . '<p>A fatal error has occured that has prevented MyURY from performing the action you requested. '
                 . 'The computing team have been notified.</p></div>';
         //Output limited info to the browser
@@ -99,6 +98,10 @@ class MyURYException extends RuntimeException {
     } else {
       echo 'A fatal error has occured that has prevented MyURY from performing the action you requested. Please contact computing@ury.org.uk.';
     }
+
+    if (self::$count > Config::$exception_limit) {
+      exit;
+    }
   }
 
   /**
@@ -108,7 +111,7 @@ class MyURYException extends RuntimeException {
   public static function getExceptionCount() {
     return self::$count;
   }
-  
+
   public static function resetExceptionCount() {
     self::$count = 0;
   }

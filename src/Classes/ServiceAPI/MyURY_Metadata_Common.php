@@ -348,7 +348,8 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
         //There's not a match for this. Remove it
         self::$db->query('UPDATE '.$table.' SET effective_to=NOW()'
                 . 'WHERE '.$pkey.'=$1 AND creditid=$2 AND credit_type_id=$3',
-                [$this->getID(), $credit['User']->getID(), $credit['type']]);
+                [$this->getID(), $credit['User']->getID(), $credit['type']],
+                true);
       }
     }
     
@@ -365,7 +366,7 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
         self::$db->query('INSERT INTO '.$table.' ('.$pkey.', credit_type_id, creditid, effective_from,'
                 . 'memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)', [
                     $this->getID(), $credittypes[$i], $users[$i]->getID(), User::getInstance()->getID()
-                ]);
+                ], true);
       }
     }
     
