@@ -149,6 +149,7 @@ class MyURYForm {
    */
   public function setTitle($title) {
     $this->title = $title;
+    return $this;
   }
 
   /**
