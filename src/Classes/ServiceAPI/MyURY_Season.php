@@ -201,6 +201,8 @@ class MyURY_Season extends MyURY_Metadata_Common {
     //Actually commit the show to the database!
     self::$db->query('COMMIT');
 
+    $this->getShow()->addSeason($season_id);
+    
     return self::getInstance($season_id);
   }
   
@@ -308,6 +310,10 @@ EOT
     return $this->season_id;
   }
 
+  /**
+   * 
+   * @return MyURY_Show
+   */
   public function getShow() {
     return MyURY_Show::getInstance($this->show_id);
   }
@@ -408,14 +414,15 @@ EOT
     return $this->season_num;
   }
 
-  public function toDataSource() {
-    return array_merge($this->getShow()->toDataSource(), array(
+  public function toDataSource($full = true) {
+    return array_merge($this->getShow()->toDataSource(false), array(
                 'id' => $this->getID(),
                 'season_num' => $this->getSeasonNumber(),
                 'title' => $this->getMeta('title'),
                 'description' => $this->getMeta('description'),
                 'submitted' => $this->getSubmittedTime(),
-                'requested_time' => $this->getRequestedTimes()[0],
+                'requested_time' => sizeof($this->getRequestedTimes()) === 0
+                                        ? null : $this->getRequestedTimes()[0],
                 'first_time' => (is_object($this->timeslots[0]) ? CoreUtils::happyTime($this->timeslots[0]->getStartTime()) : 'Not Scheduled'),
                 'num_episodes' => array(
                     'display' => 'text',
