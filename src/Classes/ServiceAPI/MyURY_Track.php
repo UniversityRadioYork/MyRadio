@@ -161,6 +161,14 @@ class MyURY_Track extends ServiceAPI {
   public function getAlbum() {
     return MyURY_Album::getInstance($this->record);
   }
+  
+  /**
+   * Get whether the track is clean
+   * @return char
+   */
+  public function getClean() {
+    return $this->clean;
+  }
 
   /**
    * Get the unique trackid of the Track
