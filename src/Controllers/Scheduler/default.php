@@ -12,4 +12,5 @@ CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.scheduler.pending')
         ->addVariable('title', 'Scheduler')
         ->addVariable('tabledata', CoreUtils::dataSourceParser(
-                MyURY_Scheduler::getPendingAllocations()));
+                MyURY_Scheduler::getPendingAllocations()))
+        ->render();
