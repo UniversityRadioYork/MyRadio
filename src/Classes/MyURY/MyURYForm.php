@@ -255,7 +255,12 @@ class MyURYForm {
   public function readValues() {
     $return = array();
     foreach ($this->fields as $field) {
-      $return[$field->getName()] = $field->readValue($this->name . '-');
+      $value = $field->readValue($this->name . '-');
+      if ($field->getRequired() && empty($value)) {
+        throw new MyURYException('Field '.$field->getName().' is required
+          but has not been set.', 400);
+      }
+      $return[$field->getName()] = $value;
     }
     //Edit Mode requests
     if (isset($_REQUEST[$this->name.'-myuryfrmedid'])) {
