@@ -17,6 +17,10 @@ $('.twig-datatable').dataTable({
     "sTitle" : "Description",
     "bVisible": false
   },
+  //show_type_id
+  {
+    bVisible: false
+  },
   //seasons
   {
     "sTitle": "Seasons"

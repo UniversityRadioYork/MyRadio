@@ -234,6 +234,16 @@ class MyURY_Show extends MyURY_Metadata_Common {
     }
     return $seasons;
   }
+  
+  /**
+   * Internally associates a Season with this Show.
+   * Does not persist in database. Used for updating the cache.
+   * @param int $id
+   */
+  public function addSeason($id) {
+    $this->season_ids[] = $id;
+    $this->updateCacheObject();
+  }
 
   public function getID() {
     return $this->show_id;
@@ -344,7 +354,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
    * @param int[] $credittypes The relevant credittypeid for each User.
    */
   public function setCredits($users, $credittypes, $table = null, $pkey = null) {
-    $r = parent::setCredits($users, $credittypes, 'schedule.show_credit');
+    $r = parent::setCredits($users, $credittypes, 'schedule.show_credit', 'show_id');
     $this->updateCacheObject();
     return $r;
   }
