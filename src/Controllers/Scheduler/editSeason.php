@@ -21,7 +21,6 @@ require 'Models/Scheduler/showfrm.php';
 $form->editMode($_REQUEST['seasonid'], array(
             'title' => 'Edit Season: '.$season->getMeta('title'),
             'description' => $season->getMeta('description'),
-            'genres' => $season->getGenre(),
             'tags' => implode(' ', $season->getMeta('tag')),
             'credits.member' => array_map(function ($ar) {
                       return $ar['User'];
