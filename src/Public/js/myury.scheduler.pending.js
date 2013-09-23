@@ -18,6 +18,10 @@ $('.twig-datatable').dataTable({
     "sTitle" : "",
     "bVisible": false
   },
+  //show_type_id
+  {
+    bVisible: false
+  },
   //seasons
   {
     "sTitle": "Seasons"
@@ -46,7 +50,7 @@ $('.twig-datatable').dataTable({
     "sTitle": "Season #",
     "bVisible": false
   },
-  //createddate
+  //submitted
   {
     "sTitle": "Submitted"
   },
