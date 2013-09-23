@@ -13,4 +13,3 @@ CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('title', 'Scheduler')
         ->addVariable('tabledata', CoreUtils::dataSourceParser(
                 MyURY_Scheduler::getPendingAllocations()));
-require 'Views/Scheduler/default.php';
