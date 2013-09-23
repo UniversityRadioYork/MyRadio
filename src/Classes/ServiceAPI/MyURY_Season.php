@@ -415,7 +415,8 @@ EOT
                 'title' => $this->getMeta('title'),
                 'description' => $this->getMeta('description'),
                 'submitted' => $this->getSubmittedTime(),
-                'requested_time' => $this->getRequestedTimes()[0],
+                'requested_time' => sizeof($this->getRequestedTimes()) === 0
+                                        ? null : $this->getRequestedTimes()[0],
                 'first_time' => (is_object($this->timeslots[0]) ? CoreUtils::happyTime($this->timeslots[0]->getStartTime()) : 'Not Scheduled'),
                 'num_episodes' => array(
                     'display' => 'text',
