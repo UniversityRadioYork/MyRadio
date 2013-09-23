@@ -1,10 +1,11 @@
 <?php
 /**
- * This page enables a Users to edit a Show that already exists. It takes one parameter, $_REQUEST['showid']
+ * This page enables a Users to edit a Season that already exists.
+ * It takes one parameter, $_REQUEST['seasonid']
  * which should be the ID of the Show to edit.
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130728
+ * @version 20130923
  * @package MyURY_Scheduler
  */
 
@@ -19,7 +20,7 @@ if (!$season->getShow()->isCurrentUserAnOwner() && !CoreUtils::hasPermission(AUT
 require 'Models/Scheduler/showfrm.php';
 
 $form->editMode($_REQUEST['seasonid'], array(
-            'title' => 'Edit Season: '.$season->getMeta('title'),
+            'title' => $season->getMeta('title'),
             'description' => $season->getMeta('description'),
             'tags' => implode(' ', $season->getMeta('tag')),
             'credits.member' => array_map(function ($ar) {
@@ -31,4 +32,5 @@ $form->editMode($_REQUEST['seasonid'], array(
                 ),
           'doEditSeason'
         )
+        ->setTitle('Edit Season of '.$season->getShow()->getMeta('title'))
         ->render();

@@ -142,6 +142,14 @@ class MyURYForm {
     $this->template = $template;
     return $this;
   }
+  
+  /**
+   * Update the title of the form
+   * @param String $title
+   */
+  public function setTitle($title) {
+    $this->title = $title;
+  }
 
   /**
    * Adds a new MyURYFormField to this MyURYForm. You should initialise a new MyURYFormField and pass the object
