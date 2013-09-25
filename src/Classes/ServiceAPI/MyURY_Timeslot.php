@@ -295,8 +295,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
       if (empty($next)) {
         //There's currently not a show on, and there never will be.
         $response = [
-            'current' => ['title' => 'URY Jukebox', 'desc' => 'Non-stop Music'],
-            'next' => []
+            'current' => ['title' => 'URY Jukebox', 'desc' => 'Non-stop Music']
         ];
       } else {
         //There's currently not a show on, but there will be.
