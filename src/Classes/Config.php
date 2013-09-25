@@ -159,7 +159,13 @@ final class Config {
    * @var int
    */
   public static $news_feed = 1;
-  
+
+  /**
+   * The id of the news feed to use for presenter infomation
+   * @var int
+   */
+  public static $piss_feed = 4;
+
   /**
    * The location of the Memcached server used for the Website.
    * This is so it can be cleared where necessary.
@@ -334,6 +340,14 @@ final class Config {
    */
   public static $api_url = 'https://ury.org.uk/api';
   
+  /**
+   * The URL prefix to URY's webcam
+   * 
+   * Must be absolute. With trailing /
+   * @var String
+   */
+  public static $webcam_prefix = '//ury.org.uk/webcam/';
+
   /**
    * BRA Server
    * @var String
