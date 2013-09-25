@@ -8,10 +8,10 @@
 
     <div class="pluginpane">
     	{% for plugin in plugins %}
-    	<div class="plugin accord{% if !plugin.startOpen %} accordClose{% endif %}">
+    	<div class="plugin accord{% if not plugin.startOpen %} accordClose{% endif %}">
                     <h3 id="plugin_header_{{ plugin.name }}" class="pluginhead">{{ plugin.title }}</h3>
                     <div id="plugin_body_{{ plugin.name }}">
-                        {% include plugin.template %}
+                        {% include plugin.template with plugin.vars %}
                     </div>
 		</div>
 		{% endfor %}

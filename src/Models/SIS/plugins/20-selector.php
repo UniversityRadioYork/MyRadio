@@ -17,3 +17,21 @@ $required_permission = AUTH_MODIFYSELECTOR;
 $required_location = false;
 
 $template = 'SIS/plugins/selector.twig'
+
+$lastmod = @filemtime($selectorStatusFile);
+$status = @file($selectorStatusFile);
+
+$vars = array(
+	'lastmod' => $lastmod,
+	'status' => $status,
+	'onair' => (int)$status[0][0],
+	'power' => (int)$status[0][3],
+	's1power' => (int)(($power & 1) != 0),
+	's2power' => (int)(($power & 2) != 0),
+	's4power' => true,
+	)
+
+  /**
+   * @todo: check if the OB mount is available
+   * @todo: $selectorStatusFile
+   */
