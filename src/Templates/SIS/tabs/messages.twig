@@ -31,7 +31,7 @@
             console.log('Marking message '+id+' as read');
             //This is the first time the message has been opened. Mark as read
             $.ajax({
-              url: myury.makeURL('SIS', 'a-markread', {'id': id})
+              url: myury.makeURL('SIS', 'messages.markread', {'id': id})
             });
             server.decrementUnreadEvents();
             $(this).removeClass('unread');
