@@ -21,11 +21,11 @@
 		<div id="tabs" class="clearfix">
 			<ul>
 				{% for tab in tabs if tab.enabled %}
-					<li><a href="tabs-{{ loop.index }}">{{ tab.title }}</a></li>
+					<li><a href="#tabs-{{ loop.index }}">{{ tab.title }}</a></li>
 				{% endfor %}
 			</ul>
 			{% for tab in tabs if tab.enabled %}
-				<div id="ui-tabs-{{ loop.index }}" style="margin-top: .5em;">
+				<div id="tabs-{{ loop.index }}" style="margin-top: .5em;">
                     {% include tab.template %}
                 </div>
 			{% endfor %}

@@ -361,6 +361,18 @@ final class Config {
   public static $api_uri = '/api/';
   
   /**
+   * Relative path to the SIS plugins.
+   * @var String
+   */
+  public static $sis_plugin_folder = 'Models/SIS/plugins';
+
+  /**
+   * Relative path to the SIS tabs.
+   * @var String
+   */
+  public static $sis_tab_folder = 'Models/SIS/tabs';
+
+  /**
    * URY's Membership Fee
    * @var float
    */
@@ -399,6 +411,7 @@ final class Config {
         'timezone' => self::$timezone,
         'default_module' => self::$default_module,
         'default_action' => self::$default_action,
+        'webcam_prefix' => self::$webcam_prefix,
         'bra_uri' => self::$bra_uri
     );
   }
