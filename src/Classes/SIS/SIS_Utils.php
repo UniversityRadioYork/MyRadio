@@ -46,7 +46,8 @@ class SIS_Utils extends ServiceAPI {
 	private static function getModules($moduleFolder) {
 		$modules = self::file_list($moduleFolder,'php');
 		if ($modules !== false) {
-			foreach ($modules as $key => $module) {
+			$loadedModules = array();
+			foreach ($modules as $module) {
 				include Config::$base_path.'/'.$moduleFolder.'/'.$module;
 				if (!isset($moduleInfo)) {
 					trigger_error('Error with $module: \$moduleInfo must be set for each module.');
@@ -57,7 +58,7 @@ class SIS_Utils extends ServiceAPI {
 				}
 				$loadedModules[] = $moduleInfo;
 			}
-			var_dump($loadedModules);
+			print_r($loadedModules);
 			return $loadedModules;
 		}
 		return false;
@@ -66,7 +67,8 @@ class SIS_Utils extends ServiceAPI {
 	private static function getModulesForUser($moduleFolder) {
 		$modules = self::getModules($moduleFolder);
 		if ($modules !== false) {
-			foreach ($modules as $key => $module) {
+			$loadedModules = array();
+			foreach ($modules as $module) {
 				if (isset($module['required_permission']) && !CoreUtils::hasPermission($module['required_permission'])) {
 					continue;
 				}
