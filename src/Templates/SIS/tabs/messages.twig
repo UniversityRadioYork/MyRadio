@@ -1,0 +1,49 @@
+<script type="text/javascript">
+    var highest_message_id = 0;
+    $(document).ready(function(){
+      server.register_callback(updateMessages, 'messages');
+      server.register_param('messages_highest_id', highest_message_id);
+    });
+                      			
+    var updateMessages = function(data) {
+      console.log('updateMessages triggered by server');
+      for (i in data) {
+        //Add the content dialog div
+        $('#message-data').append('<div id="mc'+data[i]['id']+'">'+data[i]['body']+'</div>');
+        //Set some of the variables
+        var img = "<img src='{{ baseurl }}img/"+data[i]['type']+".png' />";
+        var msgdate = new Date(data[i]['time']*1000);
+        var mins = msgdate.getMinutes(); if (mins < 10) mins = "0" + mins;
+        var time = msgdate.getHours()+':'+mins+' '+msgdate.getDate()+'/'+(msgdate.getMonth()+1);
+        var read = "";
+        var classes = "";
+        if (data[i]['read'] === false) {
+          classes = classes + " unread";
+          server.incrementUnreadEvents();
+        }
+        //Add the new row to the top of the messages table
+        $('#messages table').prepend(
+        '<tr class="td-msgitem'+classes+'" id="m'+data[i]['id']+'"><td>'+img+'</td><td>'+data[i]['title']+'</td><td>'+time+'</td></tr>');
+        //Add the onclick handler for the new row
+        $('#messages table tr:first').click(function() {
+          var id = $(this).attr('id').replace('m', '');
+          if ($(this).hasClass('unread')) {
+            console.log('Marking message '+id+' as read');
+            //This is the first time the message has been opened. Mark as read
+            $.ajax({
+              url: myury.makeURL('SIS', 'messages.markread', {'id': id})
+            });
+            server.decrementUnreadEvents();
+            $(this).removeClass('unread');
+          }
+          $('.ui-dialog-content').dialog('close');
+          $('#mc'+id).dialog({ width:550 });
+        });
+        //Increment the highest message id, if necessary
+        highest_message_id = (highest_message_id < data[i]['id']) ? data[i]['id'] : highest_message_id;
+      }
+      //Update the server's highest id parameter
+      server.register_param('messages_highest_id', highest_message_id);
+    }
+  </script>
+  <div id="messages"><table class="messages"></table><div id="message-data"></div></div>

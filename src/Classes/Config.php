@@ -159,7 +159,13 @@ final class Config {
    * @var int
    */
   public static $news_feed = 1;
-  
+
+  /**
+   * The id of the news feed to use for presenter infomation
+   * @var int
+   */
+  public static $piss_feed = 4;
+
   /**
    * The location of the Memcached server used for the Website.
    * This is so it can be cleared where necessary.
@@ -335,6 +341,14 @@ final class Config {
   public static $api_url = 'https://ury.org.uk/api';
   
   /**
+   * The URL prefix to URY's webcam
+   * 
+   * Must be absolute. With trailing /
+   * @var String
+   */
+  public static $webcam_prefix = '//ury.org.uk/webcam/';
+
+  /**
    * BRA Server
    * @var String
    */
@@ -346,6 +360,18 @@ final class Config {
    */
   public static $api_uri = '/api/';
   
+  /**
+   * Relative path to the SIS plugins.
+   * @var String
+   */
+  public static $sis_plugin_folder = 'Models/SIS/plugins';
+
+  /**
+   * Relative path to the SIS tabs.
+   * @var String
+   */
+  public static $sis_tab_folder = 'Models/SIS/tabs';
+
   /**
    * URY's Membership Fee
    * @var float
@@ -385,6 +411,7 @@ final class Config {
         'timezone' => self::$timezone,
         'default_module' => self::$default_module,
         'default_action' => self::$default_action,
+        'webcam_prefix' => self::$webcam_prefix,
         'bra_uri' => self::$bra_uri
     );
   }
