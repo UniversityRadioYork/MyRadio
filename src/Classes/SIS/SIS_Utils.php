@@ -21,8 +21,13 @@ class SIS_Utils extends ServiceAPI {
 	 * @return Array    List of files
 	 */
 	private static function file_list($d,$x){ 
-       foreach(array_diff(scandir(Config::$base_path.'/'.$d),array('.','..')) as $f)if(is_file($d.'/'.$f)&&(($x)?ereg($x.'$',$f):1))$l[]=$f; 
-       return $l; 
+		$l = array();
+		foreach(array_diff(scandir(Config::$base_path.'/'.$d),array('.','..')) as $f) {
+			if (is_file($d.'/'.$f) && (($x)? ereg($x.'$',$f) : 1)) {
+				array_push($l, $f);
+			}
+		}
+		return $l; 
 	}
 
 	/**
@@ -83,8 +88,8 @@ class SIS_Utils extends ServiceAPI {
 	}
 
 	public static function getPlugins() {
-//		return scandir(Config::$base_path.'/'.Config::$sis_plugin_folder);
-		return self::file_list(Config::$sis_plugin_folder);
+		return array_diff(scandir(Config::$base_path.'/'.$d),array('.','..'));
+//		return self::file_list(Config::$sis_plugin_folder);
 //		return self::getModulesForUser(Config::$sis_plugin_folder);
 	}
 
