@@ -9,12 +9,12 @@
 
 $lastmod = time();
 $status = '3002';
-$power = (int)$status[0][3];
+$power = (int)$status[3];
 
 $vars = array(
 	'lastmod' => $lastmod,
 	'status' => $status,
-	'onair' => (int)$status[0][0],
+	'onair' => (int)$status[0],
 	'power' => $power,
 	's1power' => (int)(($power & 1) != 0),
 	's2power' => (int)(($power & 2) != 0),
