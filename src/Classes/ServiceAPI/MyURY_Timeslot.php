@@ -318,7 +318,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
               'start_time' => $timeslot->getStartTime(),
               'end_time' => $timeslot->getStartTime() + $timeslot->getDuration(),
               'presenters' => $timeslot->getPresenterString()
-      ]];
+      ], 'next' => []];
       $next = $timeslot;
       for ($i = 0; $i < $n; $i++) {
         $next = $next->getTimeslotAfter();
@@ -487,6 +487,9 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
           break;
 
         case 'MoveItem':
+          if (!is_numeric($op['timeslotitemid'])) {
+            throw new MyURYException($op['timeslotitemid'] .' is invalid.', 500);
+          }
           $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
           if ($i->getChannel() != $op['oldchannel'] or $i->getWeight() != $op['oldweight']) {
             $result[] = array('status' => false);
@@ -499,6 +502,9 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
           break;
 
         case 'RemoveItem':
+          if (!is_numeric($op['timeslotitemid'])) {
+            throw new MyURYException($op['timeslotitemid'] .' is invalid.', 500);
+          }
           $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
           if ($i->getChannel() != $op['channel'] or $i->getWeight() != $op['weight']) {
             $result[] = array('status' => false);
