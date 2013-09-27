@@ -48,22 +48,17 @@ class SIS_Utils extends ServiceAPI {
 		$loadedModules = array();
 		if ($modules !== false) {
 			foreach ($modules as $key => $module) {
-				var_dump($module);
 				include Config::$base_path.'/'.$moduleFolder.'/'.$module;
-				var_dump($moduleInfo);
 				if (!isset($moduleInfo)) {
 					trigger_error('Error with $module: \$moduleInfo must be set for each module.');
-					print "skip1";
 					continue;
 				}
 				if (isset($moduleInfo['enabled']) && ($moduleInfo['enabled'] != true)) {
-					print "skip2";
 					continue;
 				}
 				array_push($loadedModules, $moduleInfo);
 				var_dump($loadedModules);
 			}
-			var_dump($modules);
 			return $loadedModules;
 		}
 		return false;
@@ -88,8 +83,6 @@ class SIS_Utils extends ServiceAPI {
 	}
 
 	public static function getPlugins() {
-//		return array_diff(scandir(Config::$base_path.'/'.Config::$sis_plugin_folder),array('.','..'));
-//		return self::file_list(Config::$sis_plugin_folder);
 		return self::getModules(Config::$sis_plugin_folder);
 	}
 
