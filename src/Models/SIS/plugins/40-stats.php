@@ -14,4 +14,4 @@ $moduleInfo = array(
 'startOpen' => true,
 'help' => 'Listenership figures are shown in realtime here. WARNING: Do <b><em>NOT</em></b> announce any listener statistics on-air, it is unprofessional!',
 'template' => 'SIS/plugins/stats.twig'
-)
+);

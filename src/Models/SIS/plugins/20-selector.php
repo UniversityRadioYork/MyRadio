@@ -17,7 +17,7 @@ $moduleInfo = array(
 'vars' => $vars,
 'required_permission' => AUTH_MODIFYSELECTOR,
 'required_location' => false
-)
+);
 
 $lastmod = @filemtime(Config::$selectorStatusFile);
 $status = @file(Config::$selectorStatusFile);
@@ -30,7 +30,7 @@ $vars = array(
 	's1power' => (int)(($power & 1) != 0),
 	's2power' => (int)(($power & 2) != 0),
 	's4power' => true,
-	)
+	);
 
   /**
    * @todo: check if the OB mount is available
