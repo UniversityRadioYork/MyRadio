@@ -45,7 +45,7 @@ class SIS_Utils extends ServiceAPI {
 
 
 	private static function getModules($moduleFolder) {
-		$modules = file_list($moduleFolder,'php');
+		$modules = self::file_list($moduleFolder,'php');
 		$loadedModules = array();
 		if ($modules !== false) {
 			foreach ($modules as $module) {
@@ -65,14 +65,14 @@ class SIS_Utils extends ServiceAPI {
 	}
 
 	private static function getModulesForUser($moduleFolder) {
-		$modules = getModules($moduleFolder);
+		$modules = self::getModules($moduleFolder);
 		$loadedModules = array();
 		if ($modules !== false) {
 			foreach ($modules as $module) {
 				if (isset($module['required_permission']) && !CoreUtils::hasPermission($module['required_permission'])) {
 					continue;
 				}
-				if (isset($module['required_location']) && ($module['required_location'] === True && isAuthenticatedMachine() === False)) {
+				if (isset($module['required_location']) && ($module['required_location'] === True && self::isAuthenticatedMachine() === False)) {
 					continue;
 				}
 				array_push($loadedModules, $module);
@@ -83,10 +83,10 @@ class SIS_Utils extends ServiceAPI {
 	}
 
 	public static function getPlugins() {
-		return getModulesForUser(Config::$sis_plugin_folder);
+		return self::getModulesForUser(Config::$sis_plugin_folder);
 	}
 
 	public static function getTabs() {
-		return getModulesForUser(Config::$sis_tab_folder);
+		return self::getModulesForUser(Config::$sis_tab_folder);
 	}
 }
