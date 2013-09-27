@@ -10,7 +10,7 @@
 $vars = array(
 	'webcam_prefix' => Config::$webcam_prefix,
 	'cameras' => array('jukebox.jpg', 'studio1', 'studio2', null, 'office', 's1-fos'),
-	'current' => explode("\t", file_get_contents($baseURL . "/plugins/webcam/get.php"), 2)[1]
+	'current' => '//ury.york.ac.uk/webcam/jukebox.jpg'
 	);
 
 $moduleInfo = array(
