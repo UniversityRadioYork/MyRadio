@@ -83,7 +83,8 @@ class SIS_Utils extends ServiceAPI {
 	}
 
 	public static function getPlugins() {
-		return self::getModulesForUser(Config::$sis_plugin_folder);
+		return self::file_list(Config::$sis_plugin_folder,'php');
+//		return self::getModulesForUser(Config::$sis_plugin_folder);
 	}
 
 	public static function getTabs() {
