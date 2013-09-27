@@ -88,7 +88,7 @@ class SIS_Utils extends ServiceAPI {
 	}
 
 	public static function getPlugins() {
-		return array_diff(scandir(Config::$base_path.'/'.$d),array('.','..'));
+		return array_diff(scandir(Config::$base_path.'/'.Config::$sis_plugin_folder),array('.','..'));
 //		return self::file_list(Config::$sis_plugin_folder);
 //		return self::getModulesForUser(Config::$sis_plugin_folder);
 	}
