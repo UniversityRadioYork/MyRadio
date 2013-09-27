@@ -48,7 +48,7 @@ class SIS_Utils extends ServiceAPI {
 		$loadedModules = array();
 		if ($modules !== false) {
 			foreach ($modules as $module) {
-				include $module;
+				include Config::$base_path.'/'.$moduleFolder.$module;
 				if (!isset($moduleInfo)) {
 					trigger_error('Error with $module: \$moduleInfo must be set for each module.');
 					continue;
