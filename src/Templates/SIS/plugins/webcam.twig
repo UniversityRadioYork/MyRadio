@@ -1,7 +1,7 @@
 <script type="text/javascript">
-    var wcbase = '{{ webcam_prefix }}';
+    var wcbase = '{{ plugin.vars.webcam_prefix }}';
     var wcurls = {{ cameras|json_encode() }};
-    var wcCurrentStudio = '{{ current }}';
+    var wcCurrentStudio = '{{ plugin.vars.current }}';
         			
     $(document).ready(function(){
       var wcid; //Yay scope.
@@ -48,11 +48,11 @@
   </script>
 
   <div style="float:left; margin-left: 10px;">
-    <img style="width:150px;" id="wccurrent" alt="current webcam" src="{{ webcam_prefix }}current"><br>
+    <img style="width:150px;" id="wccurrent" alt="current webcam" src="{{ plugin.vars.webcam_prefix }}current"><br>
   </div>
-  <img style="width:70px;" id="wc1" alt="Studio 1 Webcam" src="{{ webcam_prefix }}{{ cameras[1] }}">
-  <img style="width:70px;" id="wc5" alt="Studio 1 Alternate Webcam" src="{{ webcam_prefix }}{{ cameras[5] }}">
-  <img style="width:70px;" id="wc2" alt="Studio 2 Webcam" src="{{ webcam_prefix }}{{ cameras[2] }}"><br style="clear:left;">
+  <img style="width:70px;" id="wc1" alt="Studio 1 Webcam" src="{{ plugin.vars.webcam_prefix }}{{ cameras[1] }}">
+  <img style="width:70px;" id="wc5" alt="Studio 1 Alternate Webcam" src="{{ plugin.vars.webcam_prefix }}{{ cameras[5] }}">
+  <img style="width:70px;" id="wc2" alt="Studio 2 Webcam" src="{{ plugin.vars.webcam_prefix }}{{ cameras[2] }}"><br style="clear:left;">
   Activate:
   <button id="setactive1" class="btn">S1</button>
   <button id="setactive2" class="btn">S2</button>
