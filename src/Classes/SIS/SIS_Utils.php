@@ -45,7 +45,6 @@ class SIS_Utils extends ServiceAPI {
 
 	private static function getModules($moduleFolder) {
 		$modules = self::file_list($moduleFolder,'php');
-		$loadedModules = array();
 		if ($modules !== false) {
 			foreach ($modules as $key => $module) {
 				include Config::$base_path.'/'.$moduleFolder.'/'.$module;
@@ -66,7 +65,6 @@ class SIS_Utils extends ServiceAPI {
 
 	private static function getModulesForUser($moduleFolder) {
 		$modules = self::getModules($moduleFolder);
-		$loadedModules = array();
 		if ($modules !== false) {
 			foreach ($modules as $key => $module) {
 				if (isset($module['required_permission']) && !CoreUtils::hasPermission($module['required_permission'])) {
