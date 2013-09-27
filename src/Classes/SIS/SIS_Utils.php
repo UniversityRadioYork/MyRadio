@@ -20,7 +20,7 @@ class SIS_Utils extends ServiceAPI {
 	 * @param  String $x File Extension (optional)
 	 * @return Array    List of files
 	 */
-	private function file_list($d,$x){ 
+	private static function file_list($d,$x){ 
        foreach(array_diff(scandir($d),array('.','..')) as $f)if(is_file($d.'/'.$f)&&(($x)?ereg($x.'$',$f):1))$l[]=$f; 
        return $l; 
 	}
@@ -30,7 +30,7 @@ class SIS_Utils extends ServiceAPI {
 	 * @param  String  $ip The IP address to check. If null, will use the REMOTE_ADDR server property
 	 * @return boolean|int     The studio's ID number or false if unauthorised
 	 */
-	private function isAuthenticatedMachine($ip = null) {
+	private static function isAuthenticatedMachine($ip = null) {
 	  if (is_null($ip))
 	    $ip = $_SERVER['REMOTE_ADDR'];
 
@@ -44,7 +44,7 @@ class SIS_Utils extends ServiceAPI {
 	}
 
 
-	private function getModules($moduleFolder) {
+	private static function getModules($moduleFolder) {
 		$modules = file_list($moduleFolder,'php');
 		$loadedModules = array();
 		if ($modules !== false) {
@@ -64,7 +64,7 @@ class SIS_Utils extends ServiceAPI {
 		return false;
 	}
 
-	private function getModulesForUser($moduleFolder) {
+	private static function getModulesForUser($moduleFolder) {
 		$modules = getModules($moduleFolder);
 		$loadedModules = array();
 		if ($modules !== false) {
