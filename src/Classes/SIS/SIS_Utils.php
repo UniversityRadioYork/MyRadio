@@ -21,7 +21,7 @@ class SIS_Utils extends ServiceAPI {
 	 * @return Array    List of files
 	 */
 	private static function file_list($d,$x){ 
-		return glob(Config::$base_path.'/'.$d.'*.'.$x);
+		return array_diff(scandir(Config::$base_path.'/'.$d),array('.','..'));
 	}
 
 	/**
@@ -82,8 +82,9 @@ class SIS_Utils extends ServiceAPI {
 	}
 
 	public static function getPlugins() {
-		return glob(Config::$base_path.'/'.Config::$sis_plugin_folder.'*.'.'php');
-//		return self::getModulesForUser(Config::$sis_plugin_folder);
+//		return array_diff(scandir(Config::$base_path.'/'.Config::$sis_plugin_folder),array('.','..'));
+//		return self::file_list(Config::$sis_plugin_folder);
+		return self::getModulesForUser(Config::$sis_plugin_folder);
 	}
 
 	public static function getTabs() {
