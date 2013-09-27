@@ -15,4 +15,6 @@ CoreUtils::requireTimeslot();
 
 CoreUtils::getTemplateObject()->setTemplate($template)
         ->addVariable('title', $title)
+        ->addVariable('plugins', SIS_Utils::getPlugins())
+        ->addVariable('tabs', SIS_Utils::getTabs())
         ->render();
