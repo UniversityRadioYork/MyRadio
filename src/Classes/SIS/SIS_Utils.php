@@ -56,8 +56,11 @@ class SIS_Utils extends ServiceAPI {
 				if (isset($moduleInfo['enabled']) && ($moduleInfo['enabled'] != true)) {
 					continue;
 				}
+				var_dump($moduleInfo);
 				array_push($loadedModules, $moduleInfo);
+				var_dump($loadedModules);
 			}
+			var_dump($modules);
 			return $loadedModules;
 		}
 		return false;
