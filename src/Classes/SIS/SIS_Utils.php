@@ -21,7 +21,7 @@ class SIS_Utils extends ServiceAPI {
 	 * @return Array    List of files
 	 */
 	private static function file_list($d,$x){ 
-       foreach(array_diff(scandir($d),array('.','..')) as $f)if(is_file($d.'/'.$f)&&(($x)?ereg($x.'$',$f):1))$l[]=$f; 
+       foreach(array_diff(scandir(Config::$base_path.'/'.$d),array('.','..')) as $f)if(is_file($d.'/'.$f)&&(($x)?ereg($x.'$',$f):1))$l[]=$f; 
        return $l; 
 	}
 

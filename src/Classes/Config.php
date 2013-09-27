@@ -53,6 +53,12 @@ final class Config {
   public static $timezone       = 'Europe/London';
   
   /**
+   * The base path of the MyURY installation
+   * @var String
+   */
+  public static $base_path       = '/usr/local/www/myury/src';
+
+  /**
    * The base URL of the MyURY installation
    * @var String
    */
