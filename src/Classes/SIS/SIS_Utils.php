@@ -49,7 +49,7 @@ class SIS_Utils extends ServiceAPI {
 		if ($modules !== false) {
 			foreach ($modules as $key => $module) {
 				var_dump($module);
-				include Config::$base_path.'/'.$moduleFolder.$module;
+				include Config::$base_path.'/'.$moduleFolder.'/'.$module;
 				var_dump($moduleInfo);
 				if (!isset($moduleInfo)) {
 					trigger_error('Error with $module: \$moduleInfo must be set for each module.');
