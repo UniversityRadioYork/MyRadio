@@ -7,6 +7,10 @@
  * @package MyURY_SIS
  */
 
+$vars = array(
+	'piss' => MyURYNews::getNewsItem(Config::$piss_feed, User::getInstance());
+	);
+
 $moduleInfo = array(
 'name' => 'piss',
 'title' => 'Presenter Information',
@@ -15,7 +19,3 @@ $moduleInfo = array(
 'template' => 'SIS/tabs/piss.twig',
 'vars' => $vars
 );
-
-$vars = array(
-	'piss' => MyURYNews::getNewsItem(Config::$piss_feed, User::getInstance());
-	);
