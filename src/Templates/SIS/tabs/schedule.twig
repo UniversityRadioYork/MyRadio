@@ -1,0 +1,12 @@
+<script type="text/javascript">
+	$(document).ready(function(){
+		setInterval('updateSchedule()', 60000);
+	});
+			
+	function updateSchedule() {
+		$('div#schedule').load(myury.makeURL('SIS','schedule.get'));
+	}
+</script>
+<div id="schedule">
+	
+</div>
