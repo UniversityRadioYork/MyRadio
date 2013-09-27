@@ -7,8 +7,8 @@
  * @package MyURY_SIS
  */
 
-$lastmod = @filemtime(Config::$selectorStatusFile);
-$status = @file(Config::$selectorStatusFile);
+$lastmod = date();
+$status = '3002';
 
 $vars = array(
 	'lastmod' => $lastmod,
