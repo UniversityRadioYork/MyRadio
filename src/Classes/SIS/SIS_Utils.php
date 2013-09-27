@@ -58,7 +58,6 @@ class SIS_Utils extends ServiceAPI {
 				}
 				$loadedModules[] = $moduleInfo;
 			}
-			print_r($loadedModules);
 			return $loadedModules;
 		}
 		return false;
