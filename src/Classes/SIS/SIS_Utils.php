@@ -57,8 +57,8 @@ class SIS_Utils extends ServiceAPI {
 					continue;
 				}
 				array_push($loadedModules, $moduleInfo);
-				var_dump($loadedModules);
 			}
+			var_dump($loadedModules);
 			return $loadedModules;
 		}
 		return false;
