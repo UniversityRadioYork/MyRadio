@@ -59,7 +59,7 @@ class SIS_Utils extends ServiceAPI {
 				}
 				array_push($loadedModules, $moduleInfo);
 			}
-			return $loadedModules;
+			return $modules;
 		}
 		return false;
 	}
@@ -77,7 +77,7 @@ class SIS_Utils extends ServiceAPI {
 				}
 				array_push($loadedModules, $module);
 			}
-			return $loadedModules;
+			return $modules;
 		}
 		return false;
 	}
