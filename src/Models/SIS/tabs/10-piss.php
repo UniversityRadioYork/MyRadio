@@ -8,7 +8,7 @@
  */
 
 $vars = array(
-	'piss' => MyURYNews::getNewsItem(Config::$piss_feed, User::getInstance());
+	'piss' => MyURYNews::getNewsItem(Config::$piss_feed, User::getInstance())
 	);
 
 $moduleInfo = array(
