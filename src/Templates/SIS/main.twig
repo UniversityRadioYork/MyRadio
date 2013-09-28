@@ -11,6 +11,7 @@
     	<div class="plugin accord{% if not plugin.startOpen %} accordClose{% endif %}">
                     <h3 id="plugin_header_{{ plugin.name }}" class="pluginhead">{{ plugin.title }}</h3>
                     <div id="plugin_body_{{ plugin.name }}">
+                    	{{ plugin.template }}
                         {# {% include plugin.template %} #}
                     </div>
 		</div>
@@ -26,6 +27,7 @@
 			</ul>
 			{% for tab in tabs %}
 				<div id="tabs-{{ loop.index }}" style="margin-top: .5em;">
+					{{ tab.template }}
                     {# {% include tab.template %} #}
                 </div>
 			{% endfor %}
