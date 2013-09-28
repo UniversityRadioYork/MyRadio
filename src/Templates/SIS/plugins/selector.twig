@@ -1,6 +1,6 @@
 <script type="text/javascript">
     var selectorLastChange = '{{ plugin.vars.lastmod }}';
-    var selectorLocked = '{{ plugin.vars.status[0][1] }}';
+    var selectorLocked = '{{ plugin.vars.status[1] }}';
     var selectorPower = {'s1':'{{ plugin.vars.s1power }}', 's2':'{{ plugin.vars.s2power }}'};
     var selectorOnAir = '{{ plugin.vars.onair }}';
     			
@@ -108,7 +108,7 @@
     {% else %}
       "Source {{ plugin.vars.onair }} On Air"
     {% endif %}
-    {% if plugin.vars.status[0][1] != '0' %}
+    {% if plugin.vars.status[1] != '0' %}
       "<small> &mdash; Locked</small>"
     {% endif %}
     </span><br>
