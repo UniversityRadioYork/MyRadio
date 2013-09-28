@@ -12,8 +12,7 @@
                     <h3 id="plugin_header_{{ plugin.name }}" class="pluginhead">{{ plugin.title }}</h3>
                     <div id="plugin_body_{{ plugin.name }}">
                     	{{ plugin.template }}
-                        {# {% include plugin.template %} #}
-                        {% include 'SIS/plugins/webcam.twig' %}
+                        {% include plugin.template %}
                     </div>
 		</div>
 		{% endfor %}
