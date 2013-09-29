@@ -1,0 +1,10 @@
+<script type="text/javascript">
+    $(document).ready(function() { setInterval('updateStats()', 20000); });
+    function updateStats() {
+      if (!$('div#plugin_body_stats').is(':visible')) return;
+      $('img#urystats').attr('src', myury.makeURL('SIS','graph',{'date':(new Date().toString())});
+    }
+</script>
+
+<span>WARNING: Do <b><em>NOT</em></b> announce any listener statistics on-air, it is unprofessional</span>
+<img id="urystats" alt="URY listener stats graph" src="{{myury.makeURL(config,'SIS','stats.graph')}}">

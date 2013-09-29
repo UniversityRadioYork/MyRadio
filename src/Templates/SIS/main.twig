@@ -1,0 +1,36 @@
+{% extends 'base.twig' %}
+{% block head %}
+{{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/sis.plugin.js"></script>
+<link rel="stylesheet" type="text/css" href="{{shiburl}}css/sis.css" />
+{% endblock %}
+{% block content %}
+
+    <div class="pluginpane">
+    	{% for plugin in plugins %}
+    	<div class="plugin accord{% if not plugin.startOpen %} accordClose{% endif %}">
+                    <h3 id="plugin_header_{{ plugin.name }}" class="pluginhead">{{ plugin.title }}</h3>
+                    <div id="plugin_body_{{ plugin.name }}">
+                    	{{ plugin.template }}
+                        {{ include(plugin.template) }}
+                    </div>
+		</div>
+		{% endfor %}
+	</div>
+
+	<div class="maincontainer">
+		<div id="tabs" class="clearfix">
+			<ul>
+				{% for tab in tabs %}
+					<li><a href="#tabs-{{ loop.index }}">{{ tab.title }}</a></li>
+				{% endfor %}
+			</ul>
+			{% for tab in tabs %}
+				<div id="tabs-{{ loop.index }}" style="margin-top: .5em;">
+					{{ tab.template }}
+                    {# {% include tab.template %} #}
+                </div>
+			{% endfor %}
+		</div>
+    </div>
+{% endblock %}

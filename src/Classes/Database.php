@@ -33,6 +33,12 @@ class Database {
    * @var int
    */
   private $counter = 0;
+  
+  /**
+   * Rememebers if a transaction is in progress.
+   * @var bool
+   */
+  private $in_transaction = false;
 
   /**
    * Constructs the singleton database connector 
@@ -74,6 +80,11 @@ class Database {
    * @assert ('SELECT * FROM public.member') != false
    */
   public function query($sql, $params = array(), $rollback = false) {
+    if ($sql === 'BEGIN') {
+      $this->in_transaction = true;
+    } elseif ($sql === 'COMMIT' or $sql === 'ROLLBACK') {
+      $this->in_transaction = false;
+    }
     
     foreach ($params as $k => $v) {
       if (is_bool($v)) {
@@ -88,7 +99,7 @@ class Database {
     
     $result = @pg_query_params($this->db, $sql, $params);
     if (!$result) {
-      if ($rollback) {
+      if ($rollback or $this->in_transaction) {
         pg_query($this->db, 'ROLLBACK');
       }
       throw new MyURYException('Query failure: ' . $sql . '<br>'

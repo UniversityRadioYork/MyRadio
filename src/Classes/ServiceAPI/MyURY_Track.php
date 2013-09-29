@@ -161,6 +161,14 @@ class MyURY_Track extends ServiceAPI {
   public function getAlbum() {
     return MyURY_Album::getInstance($this->record);
   }
+  
+  /**
+   * Get whether the track is clean
+   * @return char
+   */
+  public function getClean() {
+    return $this->clean;
+  }
 
   /**
    * Get the unique trackid of the Track
@@ -408,8 +416,9 @@ class MyURY_Track extends ServiceAPI {
    * @param type $tmp_path
    */
   public static function cacheAndIdentifyUploadedTrack($tmp_path) {
-    if (!isset($_SESSION['myury_nipsweb_file_cache_counter']))
+    if (!isset($_SESSION['myury_nipsweb_file_cache_counter'])) {
       $_SESSION['myury_nipsweb_file_cache_counter'] = 0;
+    }
     if (!is_dir(Config::$audio_upload_tmp_dir)) {
       mkdir(Config::$audio_upload_tmp_dir);
     }
@@ -447,6 +456,7 @@ class MyURY_Track extends ServiceAPI {
   public static function identifyUploadedTrack($path) {
     //Syspath is set by Daemons or where $PATH is not sufficent.
     $response = shell_exec((empty($GLOBALS['syspath']) ? '' : $GLOBALS['syspath']).'lastfm-fpclient -json ' . $path);
+    echo (empty($GLOBALS['syspath']) ? '' : $GLOBALS['syspath']).'lastfm-fpclient -json ' . $path;
 
     $lastfm = json_decode($response, true);
 
