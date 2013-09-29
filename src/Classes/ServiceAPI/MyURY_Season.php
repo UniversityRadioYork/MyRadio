@@ -284,6 +284,16 @@ EOT
   }
   
   /**
+   * Alias for getCredits($this->getShow()), which enables credits to be
+   * automatically inherited from the show.
+   * 
+   * @return Array[]
+   */
+  public function getCredits() {
+    return parent::getCredits($this->getShow());
+  }
+  
+  /**
    * Sets a metadata key to the specified value.
    * 
    * If any value is the same as an existing one, no action will be taken.
