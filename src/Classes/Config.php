@@ -53,6 +53,12 @@ final class Config {
   public static $timezone       = 'Europe/London';
   
   /**
+   * The base path of the MyURY installation
+   * @var String
+   */
+  public static $base_path       = '/usr/local/www/myury/src';
+
+  /**
    * The base URL of the MyURY installation
    * @var String
    */
@@ -371,6 +377,36 @@ final class Config {
    * @var String
    */
   public static $sis_tab_folder = 'Models/SIS/tabs';
+
+/**
+ * Studio data
+ * name is the name that is shown if it is detected as the current output
+ * authenticated_machines is an array of IP addresses which will have all rights in SIS, even if they are non-officer
+ * colour is the colour of any alements identifying the studio. Any valid CSS color will work here
+ * @var Array
+ */
+  public static $studios = array(
+      array(
+          'name' => 'Campus Jukebox',
+          'authenticated_machines' => array(),
+          'colour' => '#0F0'
+      ),
+      array(
+          'name' => 'Studio 1',
+          'authenticated_machines' => array('144.32.64.181', '144.32.64.183'),
+          'colour' => 'red'
+      ),
+      array(
+          'name' => 'Studio 2',
+          'authenticated_machines' => array('144.32.64.184', '144.32.64.185'),
+          'colour' => '#0044BA'
+      ),
+      array(
+          'name' => 'Outside Broadcast',
+          'authenticated_machines' => array(), //TODO: Add the OB Machines here
+          'colour' => '#bb00dc'
+      ),
+  );
 
   /**
    * URY's Membership Fee

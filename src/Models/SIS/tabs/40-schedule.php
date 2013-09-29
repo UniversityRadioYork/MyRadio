@@ -8,9 +8,9 @@
  */
 
 $moduleInfo = array(
-'name' = 'sched',
-'title' = 'Schedule',
-'enabled' = true,
-'help' = 'Schedule tab lets you see what\'s on URY for the rest of the day',
-'template' = 'SIS/tabs/schedule.twig',
-)
+'name' => 'sched',
+'title' => 'Schedule',
+'enabled' => true,
+'help' => 'Schedule tab lets you see what\'s on URY for the rest of the day',
+'template' => 'SIS/tabs/schedule.twig',
+);

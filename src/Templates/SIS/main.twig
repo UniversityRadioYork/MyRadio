@@ -11,7 +11,8 @@
     	<div class="plugin accord{% if not plugin.startOpen %} accordClose{% endif %}">
                     <h3 id="plugin_header_{{ plugin.name }}" class="pluginhead">{{ plugin.title }}</h3>
                     <div id="plugin_body_{{ plugin.name }}">
-                        {% include plugin.template with plugin.vars %}
+                    	{{ plugin.template }}
+                        {{ include(plugin.template) }}
                     </div>
 		</div>
 		{% endfor %}
@@ -20,13 +21,14 @@
 	<div class="maincontainer">
 		<div id="tabs" class="clearfix">
 			<ul>
-				{% for tab in tabs if tab.enabled %}
+				{% for tab in tabs %}
 					<li><a href="#tabs-{{ loop.index }}">{{ tab.title }}</a></li>
 				{% endfor %}
 			</ul>
-			{% for tab in tabs if tab.enabled %}
+			{% for tab in tabs %}
 				<div id="tabs-{{ loop.index }}" style="margin-top: .5em;">
-                    {% include tab.template %}
+					{{ tab.template }}
+                    {# {% include tab.template %} #}
                 </div>
 			{% endfor %}
 		</div>
