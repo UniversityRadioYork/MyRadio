@@ -41,4 +41,3 @@ if (isset($_REQUEST['msg'])) {
 }
 
 $twig->render();
-require 'Views/Scheduler/demoList.php';
