@@ -304,10 +304,10 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
                 'desc' => 'Non-stop Music',
                 'end_time' => $next->getStartTime()],
             'next' => ['title' => $next->getMeta('title'),
-                'desc' => $next->getMeta('description')],
-            'start_time' => $next->getStartTime(),
-            'end_time' => $next->getStartTime() + $next->getDuration(),
-            'presenters' => $next->getPresenterString()
+                'desc' => $next->getMeta('description'),
+                'start_time' => $next->getStartTime(),
+                'end_time' => $next->getStartTime() + $next->getDuration(),
+                'presenters' => $next->getPresenterString()]
         ];
       }
     } else {
