@@ -288,16 +288,23 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
     return $return;
   }
 
-  public function getCredits() {
-    return $this->credits;
+  /**
+   * Get all credits
+   * @param MyURY_Metadata_Common $parent Used when there is inheritance enabled
+   * for this object. In this case credits are merged.
+   * @return type
+   */
+  public function getCredits($parent = null) {
+    $parent = $parent === null ? [] : $parent->getCredits();
+    return array_unique(array_merge($this->credits, $parent), SORT_REGULAR);
   }
 
   /**
    * Similar to getCredits, but only returns the User objects. This means the loss of the credit type in the result.
    */
-  public function getCreditObjects() {
+  public function getCreditObjects($parent = null) {
     $r = array();
-    foreach ($this->getCredits() as $credit) {
+    foreach ($this->getCredits($parent) as $credit) {
       $r[] = $credit['User'];
     }
     return $r;
