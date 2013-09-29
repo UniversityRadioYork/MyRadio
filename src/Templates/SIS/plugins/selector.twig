@@ -1,8 +1,8 @@
 <script type="text/javascript">
-    var selectorLastChange = '{{ lastmod }}';
-    var selectorLocked = '{{ status[0][1] }}';
-    var selectorPower = {'s1':'{{ s1power }}', 's2':'{{ s2power }}'};
-    var selectorOnAir = '{{ onair }}';
+    var selectorLastChange = '{{ plugin.vars.lastmod }}';
+    var selectorLocked = '{{ plugin.vars.status[1] }}';
+    var selectorPower = {'s1':'{{ plugin.vars.s1power }}', 's2':'{{ plugin.vars.s2power }}'};
+    var selectorOnAir = '{{ plugin.vars.onair }}';
     			
     $(document).ready(function() {
       setInterval('updateSelector()', 3000);
@@ -66,31 +66,31 @@
 
 
   <table id="selector-buttons"><tr>
-    {% if not s1power %}
+    {% if not plugin.vars.s1power %}
       <td class="selbtn poweredoff" id="s1" title="Studio 1 Powered Off"></td>
-    {% elseif onair == 1 %}
+    {% elseif plugin.vars.onair == 1 %}
       <td class="selbtn poweredon s1on" id="s1" title="Studio 1"></td>
     {% else %}
       <td class="selbtn poweredon s1off" id="s1" title="Studio 1"></td>
     {% endif %}
 
-    {% if not s2power %}
+    {% if not plugin.vars.s2power %}
       <td class="selbtn poweredoff" id="s2" title="Studio 2 Powered Off"></td>
-    {% elseif onair == 2 %}
+    {% elseif plugin.vars.onair == 2 %}
       <td class="selbtn poweredon s2on" id="s2" title="Studio 2"></td>
     {% else %}
       <td class="selbtn poweredon s2off" id="s2" title="Studio 2"></td>
     {% endif %}
 
-    {% if onair == 3 %}
+    {% if plugin.vars.onair == 3 %}
       <td class="selbtn poweredon s3on" id="s3" title="Jukebox"></td>
     {% else %}
       <td class="selbtn poweredon s3off" id="s3" title="Jukebox"></td>
     {% endif %}
 
-    {% if not s4power %}
+    {% if not plugin.vars.s4power %}
       <td class="selbtn poweredoff" id="s4" title="Outside Broadcast"></td>
-    {% elseif onair == 4 %}
+    {% elseif plugin.vars.onair == 4 %}
       <td class="selbtn poweredon s4on" id="s4" title="Outside Broadcast"></td>
     {% else %}
       <td class="selbtn poweredon s4off" id="s4" title="Outside Broadcast"></td>
@@ -99,16 +99,16 @@
     </tr>
   </table>
   <span id="onair">
-    {% if onair == 1 or onair == 2 %}
-      "Studio {{ onair }} On Air"
-    {% elseif onair == 3 %}
+    {% if plugin.vars.onair == 1 or plugin.vars.onair == 2 %}
+      "Studio {{ plugin.vars.onair }} On Air"
+    {% elseif plugin.vars.onair == 3 %}
       "Jukebox On Air"
-    {% elseif onair == 4 %}
+    {% elseif plugin.vars.onair == 4 %}
       "Outside Broadcast On Air"
     {% else %}
-      "Source {{ onair }} On Air"
+      "Source {{ plugin.vars.onair }} On Air"
     {% endif %}
-    {% if status[0][1] != '0' %}
+    {% if plugin.vars.status[1] != '0' %}
       "<small> &mdash; Locked</small>"
     {% endif %}
     </span><br>
