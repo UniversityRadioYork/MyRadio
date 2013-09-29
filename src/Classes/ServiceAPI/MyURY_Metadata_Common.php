@@ -349,6 +349,9 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
     $oldcredits = $this->getCredits();
     //Remove old credits
     foreach ($oldcredits as $credit) {
+      if (empty($credit['User'])) {
+        continue;
+      }
       if (!(($key = array_search($credit['User']->getID(),
               array_map(function($x){return $x->getID();}, $users))) === false
               && $credit['type'] == $credittypes[$key])) {

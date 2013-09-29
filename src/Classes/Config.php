@@ -53,6 +53,12 @@ final class Config {
   public static $timezone       = 'Europe/London';
   
   /**
+   * The base path of the MyURY installation
+   * @var String
+   */
+  public static $base_path       = '/usr/local/www/myury/src';
+
+  /**
    * The base URL of the MyURY installation
    * @var String
    */
@@ -159,7 +165,13 @@ final class Config {
    * @var int
    */
   public static $news_feed = 1;
-  
+
+  /**
+   * The id of the news feed to use for presenter infomation
+   * @var int
+   */
+  public static $piss_feed = 4;
+
   /**
    * The location of the Memcached server used for the Website.
    * This is so it can be cleared where necessary.
@@ -335,6 +347,14 @@ final class Config {
   public static $api_url = 'https://ury.org.uk/api';
   
   /**
+   * The URL prefix to URY's webcam
+   * 
+   * Must be absolute. With trailing /
+   * @var String
+   */
+  public static $webcam_prefix = '//ury.org.uk/webcam/';
+
+  /**
    * BRA Server
    * @var String
    */
@@ -346,6 +366,48 @@ final class Config {
    */
   public static $api_uri = '/api/';
   
+  /**
+   * Relative path to the SIS plugins.
+   * @var String
+   */
+  public static $sis_plugin_folder = 'Models/SIS/plugins';
+
+  /**
+   * Relative path to the SIS tabs.
+   * @var String
+   */
+  public static $sis_tab_folder = 'Models/SIS/tabs';
+
+/**
+ * Studio data
+ * name is the name that is shown if it is detected as the current output
+ * authenticated_machines is an array of IP addresses which will have all rights in SIS, even if they are non-officer
+ * colour is the colour of any alements identifying the studio. Any valid CSS color will work here
+ * @var Array
+ */
+  public static $studios = array(
+      array(
+          'name' => 'Campus Jukebox',
+          'authenticated_machines' => array(),
+          'colour' => '#0F0'
+      ),
+      array(
+          'name' => 'Studio 1',
+          'authenticated_machines' => array('144.32.64.181', '144.32.64.183'),
+          'colour' => 'red'
+      ),
+      array(
+          'name' => 'Studio 2',
+          'authenticated_machines' => array('144.32.64.184', '144.32.64.185'),
+          'colour' => '#0044BA'
+      ),
+      array(
+          'name' => 'Outside Broadcast',
+          'authenticated_machines' => array(), //TODO: Add the OB Machines here
+          'colour' => '#bb00dc'
+      ),
+  );
+
   /**
    * URY's Membership Fee
    * @var float
@@ -385,6 +447,7 @@ final class Config {
         'timezone' => self::$timezone,
         'default_module' => self::$default_module,
         'default_action' => self::$default_action,
+        'webcam_prefix' => self::$webcam_prefix,
         'bra_uri' => self::$bra_uri
     );
   }

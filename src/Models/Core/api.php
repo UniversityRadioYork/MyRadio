@@ -36,7 +36,7 @@ spl_autoload_register(function($class) {
           /**
            * @todo Is there a better way of doing this?
            */
-          foreach (array('MyURY','NIPSWeb','iTones','Vendor', 'BRA') as $dir) {
+          foreach (array('MyURY','NIPSWeb','SIS','iTones','Vendor','BRA') as $dir) {
             if (stream_resolve_include_path('Classes/'.$dir.'/' . $class)) {
               require_once 'Classes/'.$dir.'/' . $class;
               return;

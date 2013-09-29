@@ -1,0 +1,65 @@
+<script type="text/javascript">
+    var wcbase = '{{ plugin.vars.webcam_prefix }}';
+    var wcurls = {{ cameras|json_encode() }};
+    var wcCurrentStudio = '{{ plugin.vars.current }}';
+        			
+    $(document).ready(function(){
+      var wcid; //Yay scope.
+      for (wcid in wcurls) {
+        $('button#setactive'+wcid).attr('wcid',wcid).click(function(){setCam(this);});
+        console.log('Enabling Webcam Selector Option '+wcid);
+      }
+      $('button#setactive'+wcCurrentStudio).button("disable");
+      setInterval('updateCurrentWebcam()', 2600);
+        
+      $('button#setactive6').click(function(){$('div#customcam').toggle('blind',200);});
+      $('button#setcustomcam').click(function(){setCam(6,$('input#camurl').val());});
+    });
+    function setCam(element) {
+      var newcam = $(element).attr('wcid');
+      if (newcam == wcCurrentStudio) {
+        console.log('Ignoring setCam - Already current webcam.');
+        return;
+      }
+      console.log('Updating webcam to '+newcam);
+      $.get(myury.makeURL('SIS', 'webcam.set'), {'src':newcam, 'url':null}, function(data){updateCurrentWebcam()});
+    }
+        			
+    function updateCurrentWebcam() {
+      if (!$('div#plugin_body_webcam').is(':visible')) return;
+      $.get(myury.makeURL('SIS', 'webcam.get'), function(data) {
+        if (data == 'error') return;
+        data = data.split("\t");
+        if (wcCurrentStudio != data[0]) {
+          wcCurrentStudio = data[0];
+          $('button[id^=setactive]:not([id=setactive'+wcCurrentStudio+'])').button("enable");
+          $('button#setactive'+wcCurrentStudio).button("disable");
+        }
+              
+        //Only show side images for not-active cameras, or all for jukebox
+        if (wcCurrentStudio === 0) {
+          $('#plugin_body_webcam img').show();
+        } else {
+          $('#plugin_body_webcam img').hide();
+          $('#plugin_body_webcam img:not(#wc'+wcCurrentStudio+')').show();
+        }
+      });
+    }
+  </script>
+
+  <div style="float:left; margin-left: 10px;">
+    <img style="width:150px;" id="wccurrent" alt="current webcam" src="{{ plugin.vars.webcam_prefix }}current"><br>
+  </div>
+  <img style="width:70px;" id="wc1" alt="Studio 1 Webcam" src="{{ plugin.vars.webcam_prefix }}{{ cameras[1] }}">
+  <img style="width:70px;" id="wc5" alt="Studio 1 Alternate Webcam" src="{{ plugin.vars.webcam_prefix }}{{ cameras[5] }}">
+  <img style="width:70px;" id="wc2" alt="Studio 2 Webcam" src="{{ plugin.vars.webcam_prefix }}{{ cameras[2] }}"><br style="clear:left;">
+  Activate:
+  <button id="setactive1" class="btn">S1</button>
+  <button id="setactive2" class="btn">S2</button>
+  <button id="setactive5" class="btn">FC</button>
+  <button id="setactive0" class="btn">JB</button>
+
+  <!--<button id="setactive6" class="btn">Custom</button>
+  <div style="margin-top: .5em;" class="invisible" id="customcam">
+    <label for="camurl">File:</label> <input type="text" style="width:150px; border:1px solid black;" id="camurl"> <span id="setcustomcam" class="btn btnenabled">Set</span>
+  </div>-->

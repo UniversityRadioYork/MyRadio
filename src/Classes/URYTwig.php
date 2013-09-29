@@ -32,6 +32,7 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
             ->addVariable('memberid', isset($_SESSION['memberid']) ? $_SESSION['memberid'] : 0)
             ->addVariable('impersonator', isset($_SESSION['impersonator']) ? ' - Impersonated by ' . $_SESSION['impersonator']['name'] : '')
             ->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null)
+            ->addVariable('timeslotid', isset($_SESSION['timeslotid']) ? $_SESSION['timeslotid'] : null)
             ->addVariable('shiburl', Config::$shib_url)
             ->addVariable('baseurl', CoreUtils::getServiceVersionForUser()['proxy_static'] ?
                     CoreUtils::makeURL('MyURY', 'StaticProxy', array('0' => null)) : Config::$base_url)

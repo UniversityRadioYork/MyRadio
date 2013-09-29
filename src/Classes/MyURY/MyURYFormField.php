@@ -322,6 +322,10 @@ class MyURYFormField {
     //Set essential parameters
     $this->name = $name;
     $this->type = $type;
+    
+    if ($type === self::TYPE_SECTION) {
+      $this->required = false;
+    }
 
     //Set optional parameters
     foreach ($options as $k => $v) {
