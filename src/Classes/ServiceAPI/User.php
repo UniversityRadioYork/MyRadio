@@ -893,6 +893,7 @@ class User extends ServiceAPI {
       if ($v['year'] == $year && $v['paid'] == $amount) {
         echo self::getCacheKey($this->getID());
         print_r($this->payment);
+        echo Config::$cache_enable;
         $this->updateCacheObject();
         return;
       } elseif ($v['year'] == $year) {
