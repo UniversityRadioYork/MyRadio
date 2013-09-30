@@ -456,7 +456,7 @@ class MyURY_Track extends ServiceAPI {
   public static function identifyUploadedTrack($path) {
     //Syspath is set by Daemons or where $PATH is not sufficent.
     $response = shell_exec((empty($GLOBALS['syspath']) ? '' : $GLOBALS['syspath']).'lastfm-fpclient -json ' . $path);
-    echo (empty($GLOBALS['syspath']) ? '' : $GLOBALS['syspath']).'lastfm-fpclient -json ' . $path;
+    //echo (empty($GLOBALS['syspath']) ? '' : $GLOBALS['syspath']).'lastfm-fpclient -json ' . $path;
 
     $lastfm = json_decode($response, true);
 

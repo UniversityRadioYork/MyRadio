@@ -18,7 +18,7 @@ window.NIPSWeb = {
        */
       var oldChannel = ui.item.attr('channel');
       var oldWeight = ui.item.attr('weight');
-      ui.item.attr('channel', ui.item.parent().attr('channel') === 'res' ? 'res' : ui.item.parent().attr('channel') - 1);
+      ui.item.attr('channel', ui.item.parent('ul').attr('channel') === 'res' ? 'res' : ui.item.parent().attr('channel') - 1);
       ui.item.attr('weight', ui.item.index());
 
       if (oldChannel !== ui.item.attr('channel') || oldWeight !== ui.item.attr('weight')) {

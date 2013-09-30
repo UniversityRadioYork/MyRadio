@@ -890,8 +890,10 @@ class User extends ServiceAPI {
     $amount = number_format($amount, 2);
 
     foreach ($this->payment as $k => $v) {
-      if ($v['year'] == $year && $v['amount'] == $amount) {
-        //No change.
+      if ($v['year'] == $year && $v['paid'] == $amount) {
+        echo self::getCacheKey($this->getID());
+        print_r($this->payment);
+        $this->updateCacheObject();
         return;
       } elseif ($v['year'] == $year) {
         //Change payment.
