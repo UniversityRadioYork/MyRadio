@@ -306,7 +306,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
             'next' => ['title' => $next->getMeta('title'),
                 'desc' => $next->getMeta('description'),
                 'start_time' => $next->getStartTime(),
-                'end_time' => $next->getStartTime() + $next->getDuration(),
+                'end_time' => $next->getStartTime() + ($next->getDuration() * 3600),
                 'presenters' => $next->getPresenterString()]
         ];
       }
@@ -316,7 +316,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
               'title' => $timeslot->getMeta('title'),
               'desc' => $timeslot->getMeta('description'),
               'start_time' => $timeslot->getStartTime(),
-              'end_time' => $timeslot->getStartTime() + $timeslot->getDuration(),
+              'end_time' => $timeslot->getStartTime() + ($timeslot->getDuration() * 3600),
               'presenters' => $timeslot->getPresenterString()
       ], 'next' => []];
       $next = $timeslot;
@@ -326,7 +326,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
           //There's not a next show, but there might be one later
           $response['next'][] = ['title' => 'Jukebox',
               'desc' => 'Non-stop Music',
-              'start_time' => $timeslot->getStartTime() + $timeslot->getDuration(),
+              'start_time' => $timeslot->getStartTime() + ($timeslot->getDuration() * 3600),
               'end_time' => self::getNextTimeslot($timeslot->getStartTime() + 1)
                       ->getStartTime()
           ];
@@ -336,7 +336,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
               'title' => $next->getMeta('title'),
               'descr' => $next->getMeta('description'),
               'start_time' => $next->getStartTime(),
-              'end_time' => $next->getStartTime() + $next->getDuration(),
+              'end_time' => $next->getStartTime() + ($next->getDuration() * 3600),
               'presenters' => $next->getPresenterString()
           ];
         }
