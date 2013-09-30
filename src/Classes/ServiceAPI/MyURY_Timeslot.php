@@ -314,7 +314,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
       //There's a show on!
       $response = ['current' => [
               'title' => $timeslot->getMeta('title'),
-              'descr' => $timeslot->getMeta('description'),
+              'desc' => $timeslot->getMeta('description'),
               'start_time' => $timeslot->getStartTime(),
               'end_time' => $timeslot->getStartTime() + $timeslot->getDuration(),
               'presenters' => $timeslot->getPresenterString()
