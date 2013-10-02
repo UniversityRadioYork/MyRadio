@@ -578,4 +578,31 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
     }, $result);
   }
 
+  public function getMessages($offset = 0) {
+    $result = self::$db->fetch_all('SELECT c.commid AS id,
+                commtypeid AS type,
+                EXTRACT (EPOCH FROM date) AS time,
+                subject AS title,
+                content AS body,
+                (statusid = 2) AS read,
+                comm_source AS source
+              FROM sis2.messages c
+              INNER JOIN schedule.show_season_timeslot ts ON (c.timeslotid = ts.show_season_timeslot_id)
+              WHERE  statusid <= 2 AND c.timeslotid = $1
+               AND c.commid > $2
+              ORDER BY c.commid ASC',
+              [$this->getID(), $offset]);
+
+    foreach ($result as $k => $v) {
+      $result[$k]['read'] = ($v['read'] === 't');
+      $result[$k]['time'] = intval($v['time']);
+      $result[$k]['id'] = intval($v['id']);
+      //Add the IP metadata
+      if ($v['type'] == 3) {
+        $result[$k]['location'] = SIS_Utils::ipLookup($v['source']);
+      }
+    }
+    return $result;
+  }
+
 }
