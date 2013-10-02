@@ -62,8 +62,7 @@ class MyURY_ChartRow extends ServiceAPI {
     }
 
     $this->position = intval($chart_row_data['position']);
-    $track_id_str = $chart_row_data['trackid'];
-    $this->trackid = $track_id_str === '' ? null : intval($track_id_str);
+    $this->trackid = intval($chart_row_data['trackid']);
   }
 
   /**
