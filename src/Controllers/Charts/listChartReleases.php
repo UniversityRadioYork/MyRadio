@@ -8,7 +8,8 @@
 
 require 'Views/Charts/bootstrap.php';
 
-$twig->setTemplate(
+CoreUtils::getTemplateObject(
+)->setTemplate(
   'table.twig'
 )->addVariable(
   'tablescript',
