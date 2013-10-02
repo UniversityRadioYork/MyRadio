@@ -40,7 +40,7 @@ class MyURY_ChartType extends MyURY_Type {
    *
    * @return The chart type with the given ID.
    */
-  private function __construct($chart_type_id) {
+  protected function __construct($chart_type_id) {
     $this->chart_type_id = $chart_type_id;
 
     $chart_type_data = self::$db->fetch_one(

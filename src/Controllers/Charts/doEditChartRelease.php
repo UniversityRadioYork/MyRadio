@@ -11,9 +11,9 @@ $form = MyURY_JsonFormLoader::loadFromModule(
   ['chart_types' => []]
 );
 
-$data = $form->editMode(null, null)->readValues();
+$data = $form->readValues();
 
-if ($data['myuryfrmedid'] === '') {
+if (empty($data['myuryfrmedid'])) {
   // Create a new chart release
   MyURY_ChartRelease::create($data);
   $chart_release_id = MyURY_ChartRelease::findReleaseIDOn(
@@ -26,7 +26,7 @@ if ($data['myuryfrmedid'] === '') {
       [
         'chart_release_id' => $chart_release_id,
         'position' => $i,
-        'trackid' => $data['track' . $i]
+        'trackid' => $data['track' . $i]->getID()
       ]
     );
   }

@@ -28,7 +28,7 @@ if ($_REQUEST['chart_release_id']) {
   $chart_rows_form = [];
   for ($i = 0; $i < 10; $i++) {
     $row = $chart_rows[$i]; 
-    $chart_rows_form['track' . ($i + 1)] = $row->getTrackID();
+    $chart_rows_form['track' . ($i + 1)] = $row->getTrack();
   }
 
   $form->editMode(

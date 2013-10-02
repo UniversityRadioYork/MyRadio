@@ -62,7 +62,7 @@ class MyURY_ChartRelease extends ServiceAPI {
    *
    * @return The chart type with the given ID.
    */
-  private function __construct($chart_release_id, $chart_type=null) {
+  protected function __construct($chart_release_id, $chart_type=null) {
     $this->chart_release_id = $chart_release_id;
     $this->chart_type = $chart_type;
 

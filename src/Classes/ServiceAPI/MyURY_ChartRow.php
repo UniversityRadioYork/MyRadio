@@ -46,7 +46,7 @@ class MyURY_ChartRow extends ServiceAPI {
    *
    * @return The chart row with the given ID.
    */
-  private function __construct($chart_row_id, $chart_release=null) {
+  protected function __construct($chart_row_id, $chart_release=null) {
     $this->chart_row_id = $chart_row_id;
     $this->chart_release = $chart_release;
 
@@ -102,6 +102,17 @@ class MyURY_ChartRow extends ServiceAPI {
    */
   public function getTrackID() {
     return $this->trackid;
+  }
+
+  /**
+   * Returns the chart row's track.
+   *
+   * Will perform one database query, most likely.
+   *
+   * @return MyURY_Track The track this chart row represents.
+   */
+  public function getTrack() {
+    return MyURY_Track::getInstance($this->getTrackID());
   }
 
   /**

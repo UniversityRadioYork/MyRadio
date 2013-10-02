@@ -6,8 +6,6 @@
  * @package MyURY_Charts
  */
 
-require 'Views/Charts/bootstrap.php';
-
 CoreUtils::getTemplateObject(
 )->setTemplate(
   'table.twig'
