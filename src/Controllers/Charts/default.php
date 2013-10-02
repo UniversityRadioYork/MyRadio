@@ -1,5 +1,5 @@
 <?php
-require 'Views/MyURY/Charts/bootstrap.php';
+require 'Views/Charts/bootstrap.php';
 
 $twig->setTemplate(
   'table.twig'

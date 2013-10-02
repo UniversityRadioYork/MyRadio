@@ -1,7 +1,7 @@
 <?php
 /**
  * Performs the actual editing of chart releases.
- * @version 20130426
+ * @version 20131002
  * @author Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyURY_Charts
  */
@@ -42,4 +42,4 @@ if ($data['myuryfrmedid'] === '') {
   }
 }
 
-require 'Views/MyURY/Core/back.php';
+require 'Views/MyURY/back.php';

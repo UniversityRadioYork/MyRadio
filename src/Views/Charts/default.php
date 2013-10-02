@@ -1,4 +1,4 @@
 <?php
-require 'Views/MyURY/Library/bootstrap.php';
+require 'Views/Charts/bootstrap.php';
 
 $twig->render();
