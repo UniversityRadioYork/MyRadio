@@ -1,7 +1,6 @@
 <?php
-require 'Views/Charts/bootstrap.php';
-
-$twig->setTemplate(
+CoreUtils::getTemplateObject(
+)->setTemplate(
   'table.twig'
 )->addVariable(
   'tablescript',
@@ -13,5 +12,4 @@ $twig->setTemplate(
   'tabledata',
   ServiceAPI::setToDataSource(MyURY_ChartType::getAll())
 )->render();
-
 ?>
