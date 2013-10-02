@@ -558,20 +558,11 @@ class MyURYFormField {
         //Deal with repeated elements
         if (is_array($_REQUEST[$name])) {
           for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
-            $_REQUEST[$name][$i] = (int)strtotime($_REQUEST[$name][$i]);
-            //Times should be seconds since midnight *any* day
-            if ($this->type === self::TYPE_TIME) {
-              $_REQUEST[$name][$i] -= strtotime('Midnight');
-            }
-          }
+            $_REQUEST[$name][$i] = $this->convertTime($_REQUEST[$name][$i]);
+	  }
           return $_REQUEST[$name];
         } else {
-          $time = (int)strtotime($_REQUEST[$name]);
-          //Times should be seconds since midnight *any* day
-          if ($this->type === self::TYPE_TIME) {
-            $time -= strtotime('Midnight');
-          }
-          return $time;
+          return $this->convertTime($_REQUEST[$name]);
         }
         break;
       case self::TYPE_CHECK:
@@ -657,4 +648,18 @@ class MyURYFormField {
     }
   }
 
+  private function convertTime($timeString) {
+    /* For why we need to do this, consult the notes at
+     * http://php.net/manual/en/function.strtotime.php.
+     * YES, PHP IS RETARDED.
+     */
+    $timeString = str_replace('/', '-', $timeString);
+    $time = (int)strtotime($timeString);
+    //Times should be seconds since midnight *any* day
+    if ($this->type === self::TYPE_TIME) {
+      $time -= strtotime('Midnight');
+    }
+
+    return $time;
+  }
 }
