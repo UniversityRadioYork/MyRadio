@@ -1,2 +1,2 @@
 <?php
-require 'Views/MyURY/bootstrap.php';
+require 'Views/bootstrap.php';

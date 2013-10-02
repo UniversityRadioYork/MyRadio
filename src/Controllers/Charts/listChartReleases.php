@@ -1,12 +1,12 @@
 <?php
 /**
  * Controller for listing all releases made for a given chart type.
- * @version 20130426
+ * @version 20131002
  * @author Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyURY_Charts
  */
 
-require 'Views/MyURY/Charts/bootstrap.php';
+require 'Views/Charts/bootstrap.php';
 
 $twig->setTemplate(
   'table.twig'
