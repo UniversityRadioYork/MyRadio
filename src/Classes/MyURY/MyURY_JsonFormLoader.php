@@ -1,7 +1,7 @@
 <?php
 /**
  * MyURY_JsonFormLoader class.
- * @version 20130428
+ * @version 20131002
  * @author Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyURY_Core
  */
@@ -74,7 +74,7 @@ class MyURY_JsonFormLoader {
    * @return int  The type constant.
    */
   private function getTypeConstant($name) {
-    return $this->rc->getconstant('TYPE_' . strtoupper($name ));
+    return $this->rc->getconstant('TYPE_' . strtoupper($name));
   }
 
   /**
@@ -260,7 +260,7 @@ class MyURY_JsonFormLoader {
    */
   public function fromName($name) {
     return $this->fromPath(
-      'Models/MyURY/' . $this->module . '/' . $name . '.json'
+      'Models/' . $this->module . '/' . $name . '.json'
     );
   }
 
