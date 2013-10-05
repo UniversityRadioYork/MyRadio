@@ -8,6 +8,6 @@
  */
 $params = User::getQuickAddForm()->readValues();
 $user = User::create($params['fname'], $params['sname'], $params['eduroam'],
-            $params['sex'], $params['collegeid']);
+            $params['sex'], $params['collegeid'], null, $params['phone']);
 
 CoreUtils::backWithMessage('New Member has been created with ID '.$user->getID());
