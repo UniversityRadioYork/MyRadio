@@ -9,7 +9,7 @@
  * Abstractor for the MyURY Menu
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 21072012
+ * @version 20130930
  * @package MyURY_Core
  * @uses \CacheProvider
  * @uses \Database
@@ -18,31 +18,11 @@
 class MyURYMenu {
 
   /**
-   * A reference pointer to the current MyURY CacheProvider
-   * @var \CacheProvider 
-   */
-  private $cache;
-
-  /**
-   * Create a MyURYMenu Object
-   */
-  public function __construct() {
-    $obj = Config::$cache_provider;
-    $this->cache = $obj::getInstance();
-  }
-
-  /**
    * Returns a customised MyURY menu for the *currently logged in* user
    * @param \User $user The currently logged in User's User object
    * @return Array A complex Menu array array array array array
    */
   public function getMenuForUser(User $user) {
-    //Check if it's cached
-    $cache = $this->cache->get('MyURYMenu_Menu_' . $user->getID());
-    if ($cache !== false)
-      return $cache;
-
-    //Okay, it isn't cached. Maybe at least the menu result set is
     $full = $this->getFullMenu();
 
     //Iterate over the Full Menu, creating a user menu
@@ -64,7 +44,6 @@ class MyURYMenu {
 
       if (!empty($newColumn['sections']))
         $menu[] = $newColumn;
-      $this->cache->set('MyURYMenu_Menu_' . $user->getID(), $menu, 3600);
     }
 
     return $menu;
@@ -75,54 +54,46 @@ class MyURYMenu {
    * @todo Better Documentation
    */
   private function getFullMenu() {
-    $cache_key = 'MyURYMenu_Menu_Full';
-    $menu = $this->cache->get($cache_key);
-    if ($menu === false) {
-      //It's not cached. Let's generate it now
-      $db = Database::getInstance();
-      //First, columns
-      $columns = $db->fetch_all('SELECT columnid, title FROM myury.menu_columns
+    $db = Database::getInstance();
+    //First, columns
+    $columns = $db->fetch_all('SELECT columnid, title FROM myury.menu_columns
         ORDER BY position ASC');
-      //Now, sections
-      $sections = $db->fetch_all('SELECT sectionid, columnid, title FROM myury.menu_sections
+    //Now, sections
+    $sections = $db->fetch_all('SELECT sectionid, columnid, title FROM myury.menu_sections
         ORDER BY position ASC');
-      //And finally, items
-      $items = array_merge(
-              $db->fetch_all('SELECT itemid, sectionid, title, url, description FROM myury.menu_links ORDER BY title ASC'),
-              $db->fetch_all('SELECT sectionid, template FROM myury.menu_twigitems')
-      );
-      //Get permissions for each $item
-      foreach ($items as $key => $item) {
-        if (!isset($item['itemid']))
-          continue; //Skip twigitems
-        $items[$key] = array_merge($items[$key], $this->breakDownURL($item['url']));
-      }
+    //And finally, items
+    $items = array_merge(
+            $db->fetch_all('SELECT itemid, sectionid, title, url, description FROM myury.menu_links ORDER BY title ASC'), $db->fetch_all('SELECT sectionid, template FROM myury.menu_twigitems')
+    );
+    //Get permissions for each $item
+    foreach ($items as $key => $item) {
+      if (!isset($item['itemid']))
+        continue; //Skip twigitems
+      $items[$key] = array_merge($items[$key], $this->breakDownURL($item['url']));
+    }
 
-      //That'll do for now. Time to make the $menu
-      $menu = array();
-      foreach ($columns as $column) {
-        $newColumn = array('title' => $column['title'], 'sections' => array());
+    //That'll do for now. Time to make the $menu
+    $menu = array();
+    foreach ($columns as $column) {
+      $newColumn = array('title' => $column['title'], 'sections' => array());
 
-        //Iterate over each section
-        foreach ($sections as $section) {
-          if ($section['columnid'] != $column['columnid'])
+      //Iterate over each section
+      foreach ($sections as $section) {
+        if ($section['columnid'] != $column['columnid'])
+          continue;
+        //This section is for this column
+        $newItems = array();
+        //Iterate over each item
+        foreach ($items as $item) {
+          if ($item['sectionid'] != $section['sectionid'])
             continue;
-          //This section is for this column
-          $newItems = array();
-          //Iterate over each item
-          foreach ($items as $item) {
-            if ($item['sectionid'] != $section['sectionid'])
-              continue;
-            //Item is for this section
-            $newItems[] = $item;
-          }
-          $newColumn['sections'][] = array('title' => $section['title'], 'items' => $newItems);
+          //Item is for this section
+          $newItems[] = $item;
         }
-
-        $menu[] = $newColumn;
+        $newColumn['sections'][] = array('title' => $section['title'], 'items' => $newItems);
       }
-      //Cache for a long, long while
-      $this->cache->set($cache_key, $menu);
+
+      $menu[] = $newColumn;
     }
     return $menu;
   }
@@ -134,21 +105,13 @@ class MyURYMenu {
    * @todo Caching here breaks submenus
    */
   private function getFullSubMenu($moduleid) {
-    $cache_key = 'MyURYMenu_Menu_' . $moduleid . '_' . $_SESSION['memberid'] . '_Full';
-    $items = $this->cache->get($cache_key);
-    if ($items === false) {
-      //It's not cached. Let's generate it now
-      $db = Database::getInstance();
+    $db = Database::getInstance();
 
-      $items = $db->fetch_all('SELECT menumoduleid, title, url, description FROM myury.menu_module
+    $items = $db->fetch_all('SELECT menumoduleid, title, url, description FROM myury.menu_module
         WHERE moduleid=$1 ORDER BY title ASC', array($moduleid));
-      //Get permissions for each $item
-      foreach ($items as $key => $item) {
-        $items[$key] = array_merge($items[$key], $this->breakDownURL($item['url']));
-      }
-
-      //Cache for a long, long while
-      $this->cache->set($cache_key, $items);
+    //Get permissions for each $item
+    foreach ($items as $key => $item) {
+      $items[$key] = array_merge($items[$key], $this->breakDownURL($item['url']));
     }
     return $items;
   }
@@ -165,7 +128,7 @@ class MyURYMenu {
         'action' => $this->parseURL($url, 'action')
     );
   }
-  
+
   /**
    * Check if user has permission to see this menu item
    * @param Array $item A MyURYMenu Menu Item to check permissions for. Should have been passed through
@@ -174,7 +137,7 @@ class MyURYMenu {
    */
   private function userHasPermission($item) {
     return empty($item['action']) or
-              CoreUtils::requirePermissionAuto($item['module'], $item['action'], false);
+            CoreUtils::requirePermissionAuto($item['module'], $item['action'], false);
   }
 
   /**
@@ -184,13 +147,6 @@ class MyURYMenu {
    * @return array
    */
   public function getSubMenuForUser($moduleid, User $user) {
-    $cache_key = 'MyURYMenu_Menu_' . $moduleid . '_' . $user->getID();
-    //Check if it's cached
-    $cache = $this->cache->get($cache_key);
-    if ($cache !== false)
-      return $cache;
-
-    //Okay, it isn't cached. Maybe at least the menu result set is
     $full = $this->getFullSubMenu($moduleid);
 
     //Iterate over the Full Menu, creating a user menu
@@ -200,8 +156,6 @@ class MyURYMenu {
         $menu[] = $item;
       }
     }
-    $this->cache->set($cache_key, $menu, 3600);
-
     return $menu;
   }
 
@@ -213,13 +167,13 @@ class MyURYMenu {
    */
   private function parseURL($url, $return = 'url') {
     $exp = explode(',', $url);
-    
+
     $module = str_replace('module=', '', $exp[0], $count);
     if ($count === 1) {
       //It can be rewritten!
       if (isset($exp[1])) {
         //An action is defined!
-        $action = str_replace('action=','',$exp[1]);
+        $action = str_replace('action=', '', $exp[1]);
         if (isset($exp[2])) {
           //An additional query string
           //This could be multiple variables separated by &
@@ -245,7 +199,7 @@ class MyURYMenu {
         return Config::$default_action;
       }
     }
-    
+
     $url = $count === 1 ? CoreUtils::makeURL($module, $action, $params) : $url;
     return $url;
   }

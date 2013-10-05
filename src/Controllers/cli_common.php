@@ -7,7 +7,7 @@ define('SHIBBOBLEH_ALLOW_READONLY', true);
 require_once 'shibbobleh_client.php';
 require_once 'Classes/MyURY/CoreUtils.php';
 require_once 'Classes/Config.php';
-require_once 'MyURY_Config.local.php';
+require 'MyURY_Config.local.php';
 
 /*
  * If there definitely isn't a logged-in session, then set the System user.

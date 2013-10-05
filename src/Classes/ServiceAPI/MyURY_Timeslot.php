@@ -306,7 +306,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
             'next' => ['title' => $next->getMeta('title'),
                 'desc' => $next->getMeta('description'),
                 'start_time' => $next->getStartTime(),
-                'end_time' => $next->getStartTime() + $next->getDuration(),
+                'end_time' => $next->getStartTime() + ($next->getDuration() * 3600),
                 'presenters' => $next->getPresenterString()]
         ];
       }
@@ -314,9 +314,9 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
       //There's a show on!
       $response = ['current' => [
               'title' => $timeslot->getMeta('title'),
-              'descr' => $timeslot->getMeta('description'),
+              'desc' => $timeslot->getMeta('description'),
               'start_time' => $timeslot->getStartTime(),
-              'end_time' => $timeslot->getStartTime() + $timeslot->getDuration(),
+              'end_time' => $timeslot->getStartTime() + ($timeslot->getDuration() * 3600),
               'presenters' => $timeslot->getPresenterString()
       ], 'next' => []];
       $next = $timeslot;
@@ -329,8 +329,14 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
           //There's not a next show, but there might be one later
           $response['next'][] = ['title' => 'Jukebox',
               'desc' => 'Non-stop Music',
+<<<<<<< HEAD
               'start_time' => $timeslot->getStartTime() + $timeslot->getDuration(),
               'end_time' => $end
+=======
+              'start_time' => $timeslot->getStartTime() + ($timeslot->getDuration() * 3600),
+              'end_time' => self::getNextTimeslot($timeslot->getStartTime() + 1)
+                      ->getStartTime()
+>>>>>>> c531ce218e9fc5c41b135a3b5b035c8301c1bda3
           ];
         } else {
           //There's a next show
@@ -338,7 +344,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
               'title' => $next->getMeta('title'),
               'descr' => $next->getMeta('description'),
               'start_time' => $next->getStartTime(),
-              'end_time' => $next->getStartTime() + $next->getDuration(),
+              'end_time' => $next->getStartTime() + ($next->getDuration() * 3600),
               'presenters' => $next->getPresenterString()
           ];
         }
@@ -578,6 +584,33 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
       return ['user' => User::getInstance($x['memberid']),
           'signedby' => $x['signerid'] ? User::getInstance($x['signerid']) : null];
     }, $result);
+  }
+
+  public function getMessages($offset = 0) {
+    $result = self::$db->fetch_all('SELECT c.commid AS id,
+                commtypeid AS type,
+                EXTRACT (EPOCH FROM date) AS time,
+                subject AS title,
+                content AS body,
+                (statusid = 2) AS read,
+                comm_source AS source
+              FROM sis2.messages c
+              INNER JOIN schedule.show_season_timeslot ts ON (c.timeslotid = ts.show_season_timeslot_id)
+              WHERE  statusid <= 2 AND c.timeslotid = $1
+               AND c.commid > $2
+              ORDER BY c.commid ASC',
+              [$this->getID(), $offset]);
+
+    foreach ($result as $k => $v) {
+      $result[$k]['read'] = ($v['read'] === 't');
+      $result[$k]['time'] = intval($v['time']);
+      $result[$k]['id'] = intval($v['id']);
+      //Add the IP metadata
+      if ($v['type'] == 3) {
+        $result[$k]['location'] = SIS_Utils::ipLookup($v['source']);
+      }
+    }
+    return $result;
   }
 
 }
