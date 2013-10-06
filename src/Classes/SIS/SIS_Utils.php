@@ -31,18 +31,22 @@ class SIS_Utils extends ServiceAPI {
 	 */
 	private static function isAuthenticatedMachine($ip = null) {
 	  if (is_null($ip))
-	    $ip = $_SERVER['REMOTE_ADDR'];
+		$ip = $_SERVER['REMOTE_ADDR'];
 
 	  foreach (Config::$studios as $key => $studio) {
-	    if (in_array($ip, $studio['authenticated_machines'])) {
-	      //This client is authorised
-	      return $key;
-	    }
+		if (in_array($ip, $studio['authenticated_machines'])) {
+		  //This client is authorised
+		  return $key;
+		}
 	  }
 	  return false;
 	}
 
-
+	/**
+	 * Gets module data (tabs or plugins) that are enabled
+	 * @param  String $moduleFolder The folder to read the modules from
+	 * @return Array                moduleInfo
+	 */
 	private static function getModules($moduleFolder) {
 		$modules = self::file_list($moduleFolder,'php');
 		$loadedModules = array();
@@ -63,6 +67,11 @@ class SIS_Utils extends ServiceAPI {
 		return false;
 	}
 
+	/**
+	 * Gets the module data (tabs or plugins) based on the active users permissions
+	 * @param  String $moduleFolder The folder to read the modules from
+	 * @return Array                moduleInfo
+	 */
 	private static function getModulesForUser($moduleFolder) {
 		$modules = self::getModules($moduleFolder);
 		$loadedModules = array();
@@ -81,11 +90,51 @@ class SIS_Utils extends ServiceAPI {
 		return false;
 	}
 
+	/**
+	 * Gets the plugin data from the configured sis_plugin_folder
+	 * @return Array pluginInfo
+	 */
 	public static function getPlugins() {
 		return self::getModulesForUser(Config::$sis_plugin_folder);
 	}
 
+	/**
+	 * Gets the tab data from the configured sis_tab_folder
+	 * @return Array tabInfo
+	 */
 	public static function getTabs() {
 		return self::getModulesForUser(Config::$sis_tab_folder);
+	}
+
+	/**
+	 * Looks up IP location from Campus Network Data or GeoIP
+	 * @param  String $ip IP address to lookup
+	 * @return String     Location
+	 */
+	public static function ipLookup($ip) {
+		$query = 'SELECT iscollege, description FROM l_subnet WHERE subnet >> $1 ORDER BY description ASC';
+		$query = pg_query_params($this->db, $query, array($ip));
+		if (($query === null) or (pg_num_rows($query) == 0)) {
+			$location = @geoip_record_by_name($ip);
+			$location = ($location === FALSE) ? 'Unknown' : " {$location['city']}, {$location['country_name']}";
+			return "From: " . $location;
+		}
+		if (pg_num_rows($query) !== 1) {
+			$q = pg_fetch_all($query);
+			$x = 'There are multiple sources of this message:<br><br>';
+			foreach ($q as $k) {
+				$x .= "Location: ";
+				$x .= $k['description'] . "<br>\n";
+				$x .= ($k['iscollege'] == 't') ? 'Type: Bedroom' : 'Type: Study Room / Labs / Wifi';
+				$x .= "<br><br>\n\n";
+			}
+			return $x;
+		}
+		$k = pg_fetch_assoc($query);
+		$x = "Location: ";
+		$x .= $k['description'] . "<br>\n";
+		$x .= ($k['iscollege'] == 't') ? 'College Bedroom' : 'Study Room / Labs / Wifi';
+		$x .= "<br><br>\n\n";
+		return $x;
 	}
 }
