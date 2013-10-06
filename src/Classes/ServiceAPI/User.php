@@ -1326,6 +1326,10 @@ EOT;
                 'required' => true,
                 'label' => 'University Email',
                 'explanation' => '@york.ac.uk'
+            )))
+            ->addField(new MyURYFormField('phone', MyURYFormField::TYPE_TEXT, array(
+                'required' => false,
+                'label' => 'Phone Number'
     )));
 
     return $form;
