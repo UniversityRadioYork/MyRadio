@@ -70,7 +70,7 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
       self::$cache->set($key, $cache, 86400);
     }
     
-    return self::$singletons[$key];
+    $cache;
   }
   
   public function toDataSource($full = false) {
