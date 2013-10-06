@@ -184,7 +184,8 @@ class MyURY_Podcast extends MyURY_Metadata_Common {
                         'options' => $shows,
                         'explanation' => 'This Podcast will be attached to the '
                                           . 'Show you select here.',
-                        'label' => 'Show'
+                        'label' => 'Show',
+			'required' => false
               ]))->addField(new MyURYFormField('credits', MyURYFormField::TYPE_TABULARSET, [
                 'label' => 'Credits', 'options' => [
                     new MyURYFormField('member', MyURYFormField::TYPE_MEMBER, [
