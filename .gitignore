@@ -1,3 +1,4 @@
 /nbproject
 *.LCK*
 MyURY_Config.local.php
+*.sw[a-z]
