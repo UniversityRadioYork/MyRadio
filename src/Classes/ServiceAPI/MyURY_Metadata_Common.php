@@ -158,7 +158,8 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
     $end = CoreUtils::getTimestamp($end-1);
 
     return self::$db->fetch_one('SELECT show_season_timeslot_id,
-        show_season_id, start_time, start_time+duration AS end_time
+        show_season_id, start_time, start_time+duration AS end_time,
+        $1 AS requested_start, $2 AS requested_end
         FROM schedule.show_season_timeslot
         WHERE (start_time <= $1 AND start_time + duration > $1)
         OR (start_time > $1 AND start_time < $2)', array($start, $end));
