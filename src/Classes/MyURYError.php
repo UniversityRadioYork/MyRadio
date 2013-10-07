@@ -101,7 +101,7 @@ class MyURYError {
    */
   public static function errorsToEmail($errno, $errstr, $errfile, $errline) {
     //I don't like this error. It is compatible. Maybe I'll report a PHP bug sometime.
-    if (strstr($errstr, 'should be compatible with Twig_Environment::render') !== false)
+    if (strstr($errstr, 'should be compatible with') !== false)
       return;
     self::$count++; //Increment the error counter
 

@@ -521,7 +521,13 @@ EOT
         $show_time = date('d-m-Y ', $day_start) . $start_time;
         echo $show_time . '<br>';
         
-        $conflict = self::getScheduleConflict($day_start+$req_time['start_time'], $day_start+$start_time+$req_time['duration']);
+        /**
+         * @todo 1 is subtracted from the duration in the conflict checker here,
+         * as shows last precisely an hour, not 59m59s. Should we do something
+         * nicer here?
+         */
+        $conflict = self::getScheduleConflict($day_start+$req_time['start_time'],
+                $day_start+$start_time+$req_time['duration']-1);
         if (!empty($conflict)) {
           self::$db->query('ROLLBACK');
           throw new MyURYException('A show is already scheduled for this time: '.print_r($conflict, true));
