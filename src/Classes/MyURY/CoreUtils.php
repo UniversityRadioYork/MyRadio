@@ -177,7 +177,7 @@ class CoreUtils {
    * @return null Nothing.
    */
   public static function redirect($module, $action = null, $params = array()) {
-    header('Location: ' . makeURL($module, $action, $params);
+    header('Location: ' . makeURL($module, $action, $params));
   }
 
   /**
