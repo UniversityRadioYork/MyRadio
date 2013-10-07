@@ -526,7 +526,8 @@ EOT
          * as shows last precisely an hour, not 59m59s. Should we do something
          * nicer here?
          */
-        $conflict = self::getScheduleConflict($day_start+$req_time['start_time'], $day_start+$start_time+$req_time['duration']-1);
+        $conflict = self::getScheduleConflict($day_start+$req_time['start_time'],
+                $day_start+$start_time+$req_time['duration']-1);
         if (!empty($conflict)) {
           self::$db->query('ROLLBACK');
           throw new MyURYException('A show is already scheduled for this time: '.print_r($conflict, true));
