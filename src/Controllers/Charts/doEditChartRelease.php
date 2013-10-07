@@ -13,7 +13,7 @@ $form = MyURY_JsonFormLoader::loadFromModule(
 
 $data = $form->readValues();
 
-if (empty($data['myuryfrmedid'])) {
+if (empty($data['id'])) {
   // Create a new chart release
   MyURY_ChartRelease::create($data);
   $chart_release_id = MyURY_ChartRelease::findReleaseIDOn(
@@ -33,12 +33,12 @@ if (empty($data['myuryfrmedid'])) {
 } else {
   // Edit an existing one
 
-  $chart_release = MyURY_ChartRelease::getInstance($data['myuryfrmedid']);
+  $chart_release = MyURY_ChartRelease::getInstance($data['id']);
 
   $chart_release->setChartTypeID($data['chart_type_id'])->setReleaseTime($data['submitted_time']);
 
   foreach($chart_release->getChartRows() as $chart_row) {
-    $chart_row->setTrackID($data['track' . $chart_row->getPosition()]);
+    $chart_row->setTrackID($data['track' . $chart_row->getPosition()]->getID());
   }
 }
 
