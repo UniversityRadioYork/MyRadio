@@ -15,10 +15,6 @@
  * @uses \CacheProvider
  */
 abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
-  /**
-   * The singleton store for classes
-   */
-  protected static $singletons = [];
   
   /**
    * All ServiceAPI subclasses will contain a reference to the Database Singleton
@@ -68,16 +64,13 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
     
     $class = get_called_class();
     $key = $class::getCacheKey($itemid);
-    if (!isset(self::$singletons[$key])) {
-      $cache = self::$cache->get($key);
-      if (!$cache) {
-        $cache = new $class($itemid);
-        self::$cache->set($key, $cache, 86400);
-      }
-      self::$singletons[$key] = $cache;
+    $cache = self::$cache->get($key);
+    if (!$cache) {
+      $cache = new $class($itemid);
+      self::$cache->set($key, $cache, 86400);
     }
     
-    return self::$singletons[$key];
+    return $cache;
   }
   
   public function toDataSource($full = false) {
@@ -154,8 +147,10 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
   /**
    * Removes singleton instance. Used for memory optimisation for very large
    * requests.
+   * @deprecated
    */
   public function removeInstance() {
+    return true;
     unset(self::$singletons[self::getCacheKey($this->getID())]);
   }
 }

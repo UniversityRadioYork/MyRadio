@@ -323,12 +323,13 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
       for ($i = 0; $i < $n; $i++) {
         $next = ($next instanceof MyURY_Timeslot) ? $next->getTimeslotAfter() : [];
         if (empty($next)) {
+          $nextshow = self::getNextTimeslot($timeslot->getStartTime() + 1);
+          $end = $next === null ? null : $nextshow->getStartTime();
           //There's not a next show, but there might be one later
           $response['next'][] = ['title' => 'Jukebox',
               'desc' => 'Non-stop Music',
-              'start_time' => $timeslot->getStartTime() + ($timeslot->getDuration() * 3600),
-              'end_time' => self::getNextTimeslot($timeslot->getStartTime() + 1)
-                      ->getStartTime()
+              'start_time' => $timeslot->getStartTime() + $timeslot->getDuration(),
+              'end_time' => $end
           ];
         } else {
           //There's a next show
