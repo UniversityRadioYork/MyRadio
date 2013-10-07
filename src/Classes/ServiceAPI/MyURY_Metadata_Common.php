@@ -156,7 +156,10 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
   protected static function getScheduleConflict($start, $end) {
     $start = CoreUtils::getTimestamp($start);
     $end = CoreUtils::getTimestamp($end-1);
-    print_r($start);print_r($end);
+    print_r($start);
+    echo '<br>';
+    print_r($end);
+    echo '<br>';
 
     return self::$db->fetch_one('SELECT show_season_timeslot_id,
         show_season_id, start_time, start_time+duration AS end_time,
