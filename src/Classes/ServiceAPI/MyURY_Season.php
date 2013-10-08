@@ -528,11 +528,13 @@ EOT
          */
         $conflict = self::getScheduleConflict($day_start+$req_time['start_time'],
                 $day_start+$start_time+$req_time['duration']-1);
-        if (!empty($conflict)) {
+        print_r($conflict);
+        //Disable because it doesn't fucking work.
+        /**if (!empty($conflict)) {
           self::$db->query('ROLLBACK');
           throw new MyURYException('A show is already scheduled for this time: '.print_r($conflict, true));
           exit;
-        }
+        }*/
         
         //This week is due to be scheduled! QUERY! QUERY!
         self::$db->query('INSERT INTO schedule.show_season_timeslot
