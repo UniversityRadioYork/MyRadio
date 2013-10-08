@@ -49,11 +49,11 @@ $form->addField(
         )
 )->addField(
         new MyURYFormField('time', MyURYFormField::TYPE_RADIO,
-                array('options' => $times, 'label' => 'Timeslot')
+                array('options' => $times, 'label' => 'Timeslot', 'required' => false)
         )
 )->addField(
         new MyURYFormField('timecustom_day', MyURYFormField::TYPE_DAY,
-                array('label' => 'Other Day: '))
+                array('label' => 'Other Day: ', 'required' => false))
 )->addField(
         new MyURYFormField('timecustom_stime', MyURYFormField::TYPE_TIME,
                 array('label' => 'from', 'required' => false))

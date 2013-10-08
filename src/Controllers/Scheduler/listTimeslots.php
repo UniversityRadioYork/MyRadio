@@ -8,5 +8,9 @@
  */
 
 $season = MyURY_Season::getInstance($_GET['show_season_id']);
-$timeslots = $season->getAllTimeslots();
-require 'Views/Scheduler/timeslotList.php';
+
+CoreUtils::getTemplateObject()->setTemplate('table.twig')
+        ->addVariable('tablescript', 'myury.scheduler.timeslotlist')
+        ->addVariable('title', 'Episodes of '.$season->getMeta('title'))
+        ->addVariable('tabledata', ServiceAPI::setToDataSource($season->getAllTimeslots()))
+        ->render();
