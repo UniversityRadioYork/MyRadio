@@ -277,6 +277,9 @@ class MyURY_Show extends MyURY_Metadata_Common {
   }
   
   public function isCurrentUserAnOwner() {
+    if ($this->owner === $_SESSION['memberid']) {
+      return true;
+    }
     foreach ($this->getCreditObjects() as $user) {
       if ($user->getID() === $_SESSION['memberid']) {
         return true;

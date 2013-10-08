@@ -169,6 +169,18 @@ class CoreUtils {
   }
 
   /**
+   * Redirects to another page.
+   *
+   * @param string $module  The module to which we should redirect.
+   * @param string $action  The optional action inside the module to target.
+   * @param array  $params  Additional GET variables
+   * @return null Nothing.
+   */
+  public static function redirect($module, $action = null, $params = array()) {
+    header('Location: ' . self::makeURL($module, $action, $params));
+  }
+
+  /**
    * Builds a module/action URL
    * @param string $module
    * @param string $action
