@@ -117,7 +117,7 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
    * @param int[] $ids
    * @return ServiceAPI[]
    */
-  protected static function resultSetToObjArray($ids) {
+  public static function resultSetToObjArray($ids) {
     $response = array();
     $child = get_called_class();
     if (!is_array($ids) or empty($ids)) {
