@@ -750,7 +750,10 @@ class User extends ServiceAPI {
    * @throws MyURYException
    */
   public function setEmail($email) {
-    if ($email !== null && strstr($email, '@') === false) {
+    if ($email === '') {
+      $email = null;
+    }
+    if (!empty($email) && strstr($email, '@') === false) {
       throw new MyURYException('That email address doesn\'t look right. It needs to have an @.', 400);
     }
 
