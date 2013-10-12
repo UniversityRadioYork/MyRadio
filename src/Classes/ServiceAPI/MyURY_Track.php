@@ -97,6 +97,11 @@ class MyURY_Track extends ServiceAPI {
    * @var Array
    */
   private $lastfm_similar;
+  
+  /**
+   * Whether this track is iTones blacklisted
+   */
+  private $itones_blacklist = null;
 
   /**
    * Initiates the Track variables
@@ -773,6 +778,20 @@ class MyURY_Track extends ServiceAPI {
     }
     
     return self::resultSetToObjArray($this->lastfm_similar);
+  }
+  
+  /**
+   * Returns whether the Track is iTones Blacklisted
+   * @return bool
+   */
+  public function isBlacklisted() {
+    if ($this->itones_blacklist === null) {
+      $this->itones_blacklist = (bool)self::$db->num_rows(
+              self::$db->query('SELECT * FROM jukebox.track_blacklist '
+                      . 'WHERE trackid=$1'), [$this->getID()]);
+      $this->updateCachedObject();
+    }
+    return $this->itones_blacklist;
   }
   
   /**

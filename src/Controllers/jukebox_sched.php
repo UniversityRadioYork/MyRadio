@@ -24,6 +24,7 @@ do {
   //If this track has been played recently or is currently queued, we can't play it. Try again.
   } while ($track->getClean() === 'n' or
           (MyURY_TracklistItem::getIfPlayedRecently($track) or iTones_Utils::getIfQueued($track)
-          or !MyURY_TracklistItem::getIfAlbumArtistCompliant($track)));
+          or !MyURY_TracklistItem::getIfAlbumArtistCompliant($track))
+          or $track->isBlacklisted());
   
 echo $track->getPath()."\n";
