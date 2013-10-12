@@ -788,7 +788,7 @@ class MyURY_Track extends ServiceAPI {
     if ($this->itones_blacklist === null) {
       $this->itones_blacklist = (bool)self::$db->num_rows(
               self::$db->query('SELECT * FROM jukebox.track_blacklist '
-                      . 'WHERE trackid=$1'), [$this->getID()]);
+                      . 'WHERE trackid=$1', [$this->getID()]));
       $this->updateCachedObject();
     }
     return $this->itones_blacklist;
