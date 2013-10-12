@@ -12,7 +12,6 @@ require_once 'Interfaces/TemplateEngine.php';
  */
 class URYTwig implements TemplateEngine {
 
-  private static $me;
   private $contextVariables = array();
   private $template;
   private $twig;
@@ -165,10 +164,7 @@ class URYTwig implements TemplateEngine {
   }
 
   public static function getInstance() {
-    if (!self::$me) {
-      self::$me = new self();
-    }
-    return self::$me;
+    return new self();
   }
 
 }
