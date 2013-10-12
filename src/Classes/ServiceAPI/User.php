@@ -1230,20 +1230,24 @@ class User extends ServiceAPI {
 <p>My name's Lloyd, and I'm the Head of Training here. It's my job to make it as
 easy as possible to get on the air or join any of our other teams.</p>
 
-<p>Coming up in Week 2 we have two Get Involved sessions where we tell you about
-all the things we do and how you can join in. We've also got a live event
-straight after so you can see us in action!</p>
+<p>If you're interested in presenting on URY, then in Week 3 we are holding
+two training lectures, where I explain how to use the studio. After the training
+lecture, you'll then need to do a demo in our studios. It isn't scary and I'll
+explain all about them in the training lectures.</p>
+
+<p>If you're interested in getting involved in any of our teams (there's 11 of 
+them!), then reply to this email and I'll sort you out, or email the address
+listed for that team <a href="http://ury.org.uk/getinvolved">on our website</a>.
+</p>
+
+<p>Our training lectures are:</p>
 
 <ul>
-  <li><a href="https://www.facebook.com/events/591841944201277/">
-    7pm Tuesday Week 2 (8th October), P/L/001 (Physics)</a>, followed
-    by <a href="https://www.facebook.com/events/1420081244879364/">
-    URY Presents: York Rhythms</a> in The Courtyard.</li>
-  <li><a href="https://www.facebook.com/events/180389522143233/">
-    7pm Friday Week 2 (11th October), RCH/037 (Heslington East)</a>, followed
-    by <a href="https://www.facebook.com/events/212455912262941/">
-    URY Presents: Top Dog</a> in The Glasshouse.</li>
+  <li>7pm Tuesday Week 3 (8th October), P/L/001 (Physics)</li>
+  <li>7pm Friday Week 3 (11th October), RCH/037 (Heslington East)</li>
 </ul>
+
+<p>If you can't make these, just let me know and I'll sort you out!</p>
 
 <p>For more information about these, and everything else we do, you can:
 <ul>
