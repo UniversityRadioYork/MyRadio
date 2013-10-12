@@ -16,8 +16,7 @@
 	    	<div class="plugin accord{% if not plugin.startOpen %} accordClose{% endif %}">
 	                    <h3 id="plugin_header_{{ plugin.name }}" class="pluginhead">{{ plugin.title }}</h3>
 	                    <div id="plugin_body_{{ plugin.name }}" class="pluginbody">
-	                    	{{ plugin.template }}
-	                        {# {{ include(plugin.template) }} #}
+	                        {% include 'SIS/plugins/' ~ plugin.name ~ '.twig' %}
 	                    </div>
 			</div>
 			{% endfor %}
