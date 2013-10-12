@@ -6,15 +6,16 @@ require_once 'Interfaces/TemplateEngine.php';
  * Singleton class for the Twig template engine
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130809
+ * @version 20131012
  * @depends Config
  * @package MyURY_Core
  */
-class URYTwig extends Twig_Environment implements TemplateEngine {
+class URYTwig implements TemplateEngine {
 
   private static $me;
   private $contextVariables = array();
   private $template;
+  private $twig;
 
   /**
    * Cannot be private - parent does not allow it
@@ -23,9 +24,9 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
   public function __construct() {
     $twig_loader = new Twig_Loader_Filesystem(__DIR__ . '/../Templates/');
     $this->contextVariables['notices'] = '';
-    parent::__construct($twig_loader, array('auto_reload' => true));
+    $this->twig = new Twig_Environment($twig_loader, array('auto_reload' => true));
     if (Config::$template_debug) {
-      $this->enableDebug();
+      $this->twig->enableDebug();
     }
 
     $this->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : 'Anonymous')
@@ -134,14 +135,14 @@ class URYTwig extends Twig_Environment implements TemplateEngine {
 
     //Validate template
     try {
-      $this->parse($this->tokenize(file_get_contents(__DIR__ . '/../Templates/' . $template), $template));
+      $this->twig->parse($this->twig->tokenize(file_get_contents(__DIR__ . '/../Templates/' . $template), $template));
 
       // the $template is valid
     } catch (Twig_Error_Syntax $e) {
       throw new MyURYException('Twig Parse Error' . $e->getMessage(), $e->getCode(), $e);
     }
 
-    $this->template = $this->loadTemplate($template);
+    $this->template = $this->twig->loadTemplate($template);
     return $this;
   }
 
