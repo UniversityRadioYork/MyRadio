@@ -202,12 +202,14 @@ class iTones_Playlist extends ServiceAPI {
     $old_list = $this->getTracks();
 
     //Check if anything has actually changed
-    if ($tracks == $old_list)
+    if ($tracks == $old_list) {
       return;
+    }
 
     //Okay, it has. They'll need a lock to go any further
-    if (!$this->validateLock($lockstr))
+    if (!$this->validateLock($lockstr)) {
       throw new MyURYException('You do not have a valid lock on this playlist.');
+    }
 
     $new_additions = array();
 
@@ -230,8 +232,9 @@ class iTones_Playlist extends ServiceAPI {
       VALUES ($1, $2, $3, $4) RETURNING revisionid', array($this->getID(), $revisionid, User::getInstance()->getID(), $notes), true);
     //Add new tracks
     foreach ($new_additions as $track) {
-      if (empty($track))
+      if (empty($track)) {
         continue;
+      }
       self::$db->query('INSERT INTO jukebox.playlist_entries (playlistid, trackid, revision_added) VALUES ($1, $2, $3)', array($this->getID(), $track->getID(), $revisionid), true);
     }
     //Remove old tracks
@@ -243,6 +246,7 @@ class iTones_Playlist extends ServiceAPI {
     self::$db->query('COMMIT');
     $this->tracks = $tracks;
     $this->revisionid = $revisionid;
+    $this->updateCacheObject();
   }
 
   /**
