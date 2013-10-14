@@ -1215,6 +1215,10 @@ class User extends ServiceAPI {
         $eduroam,
         true
     ));
+    
+    if (empty($r)) {
+      throw new MyURYException('Failed to create User!', 500);
+    }
 
     $memberid = $r[0];
     //Activate the member's account for the current academic year
