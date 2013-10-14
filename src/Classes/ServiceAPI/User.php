@@ -1209,8 +1209,8 @@ class User extends ServiceAPI {
         $sname,
         $sex,
         $collegeid,
-        $phone,
         $email,
+        $phone,
         $receive_email,
         $eduroam,
         true
