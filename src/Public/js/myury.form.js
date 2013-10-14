@@ -3,7 +3,25 @@
  * This file initialises jQuery validation, autocompletes and other resources
  * needed for a MyURY Form
  */
-
+jQuery.validator.addMethod("dateITA", function(value, element) {
+	var check = false;
+	var re = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+	if( re.test(value)) {
+		var adata = value.split('/');
+		var gg = parseInt(adata[0],10);
+		var mm = parseInt(adata[1],10);
+		var aaaa = parseInt(adata[2],10);
+		var xdata = new Date(aaaa,mm-1,gg);
+		if ( ( xdata.getFullYear() === aaaa ) && ( xdata.getMonth() === mm - 1 ) && ( xdata.getDate() === gg ) ){
+			check = true;
+		} else {
+			check = false;
+		}
+	} else {
+		check = false;
+	}
+	return this.optional(element) || check;
+}, "Please enter a valid date.");
 window.MyURYForm = {
   gCheckedValue: null,
   setUpMemberFields: function() {
@@ -156,7 +174,7 @@ window.MyURYForm = {
     /**
      * Initialises the Date pickers where necessary
      */
-    $('fieldset.myuryfrm input.date').datepicker({
+    $('fieldset.myuryfrm input.dateITA').datepicker({
       dateFormat: "dd/mm/yy"
     });
   },
@@ -313,6 +331,7 @@ window.MyURYForm = {
     MyURYForm.setUpRepeatingSets();
     MyURYForm.setUpTinyMCEFields();
     MyURYForm.setUpDateTimePickerFields();
+    MyURYForm.setUpDatePickers();
     MyURYForm.setUpTimePickers();
     MyURYForm.setUpMemberFields();
     MyURYForm.setUpTrackFields();
