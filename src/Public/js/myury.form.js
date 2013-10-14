@@ -29,7 +29,6 @@ window.MyURYForm = {
                 .append('<a>' + item.fname + ' ' + item.sname + '</a>')
                 .appendTo(ul);
       };
-
       //If there's an existing value, load it in
       val = $('#' + $(this).attr('id').replace(/-ui$/, '')).val();
       console.log(val);
@@ -69,7 +68,6 @@ window.MyURYForm = {
                 .append('<a>' + item.title + '<br><span style="font-size:.8em">' + item.artist + '</span></a>')
                 .appendTo(ul);
       };
-
       //If there's an existing ID value, load it in
       if ($(this).val() === '' && $('#' + $(this).attr('id').replace(/-ui$/, '')).val() !== '') {
         $.ajax({
@@ -131,7 +129,7 @@ window.MyURYForm = {
                 .append('<a>' + item.title + '</a>')
                 .appendTo(ul);
       }
-      
+
       //If there's an existing ID value, load it in
       if ($(this).val() === '' && $('#' + $(this).attr('id').replace(/-ui$/, '')).val() !== '') {
         $.ajax({
@@ -152,6 +150,14 @@ window.MyURYForm = {
      */
     $('fieldset.myuryfrm input.time').timepicker({
       stepMinute: 15
+    });
+  },
+  setUpDatePickers: function() {
+    /**
+     * Initialises the Date pickers where necessary
+     */
+    $('fieldset.myuryfrm input.date').datepicker({
+      dateFormat: "dd/mm/yy"
     });
   },
   validate: function() {
@@ -177,19 +183,20 @@ window.MyURYForm = {
     $.each($('table.myuryfrmfield-weeklycheck td'), function() {
       $(this).on('mousedown', function() {
         if (MyURYForm.gCheckedValue === null) {
-         /**
-          * Start a drag selection. Invert the state of the selected checkbox,
-          * and set a variable define what other checkboxes selected should be
-          * configured to (checked or unchecked). This variable is also
-          * used to mark dragging as active.
-          */
-         var input = $(this).children('input[type=checkbox]').first();
-         input.prop('checked', !input.prop('checked'));
-         MyURYForm.gCheckedValue = input.prop('checked');
+          /**
+           * Start a drag selection. Invert the state of the selected checkbox,
+           * and set a variable define what other checkboxes selected should be
+           * configured to (checked or unchecked). This variable is also
+           * used to mark dragging as active.
+           */
+          var input = $(this).children('input[type=checkbox]').first();
+          input.prop('checked', !input.prop('checked'));
+          MyURYForm.gCheckedValue = input.prop('checked');
         }
       }).on('mouseenter', function() {
         //Is there an active dragging event?
-        if (MyURYForm.gCheckedValue === null) return; //Nope.
+        if (MyURYForm.gCheckedValue === null)
+          return; //Nope.
         $(this).children('input[type=checkbox]').prop('checked', MyURYForm.gCheckedValue);
       }).on('click', function(e) {
         //Stop the default click handler running - it unselects boxes.
@@ -197,12 +204,11 @@ window.MyURYForm = {
       });
     }
     );
-    
     //Initialise this to the whole page, otherwise mouseup outside the table makes a mess
-    $(document).on('mouseup', function(){
-        //End the dragging event
-        MyURYForm.gCheckedValue = null;
-      });
+    $(document).on('mouseup', function() {
+      //End the dragging event
+      MyURYForm.gCheckedValue = null;
+    });
   },
   setUpTinyMCEFields: function() {
     /**
@@ -212,12 +218,6 @@ window.MyURYForm = {
       tinymce.init({
         selector: "textarea.myury-form-tinymce",
         plugins: "anchor autolink charmap code contextmenu fullscreen hr image link lists media tabfocus table wordcount"
-      });
-      /**
-       * Initialises the Date pickers where necessary
-       */
-      $('fieldset.myuryfrm input.date').datepicker({
-        dateFormat: "dd/mm/yy"
       });
     }
   },
@@ -251,21 +251,18 @@ window.MyURYForm = {
     //Set up tabular repeating sets
     $('.myury-form-add-row-button').on('click', function() {
       var new_id = $(this).attr('nextvalue');
-
       $('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody tr:first').clone()
-        .addClass(parseInt(new_id) % 2 == 0 ? 'odd' : 'even')
-        .find('input').each(function() {
+              .addClass(parseInt(new_id) % 2 == 0 ? 'odd' : 'even')
+              .find('input').each(function() {
         $(this).val('').attr('id', function(_, id) {
           return id.replace(/0/, new_id)
         });
       }).end().appendTo('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody');
-      
       MyURYForm.setUpArtistFields();
       MyURYForm.setUpMemberFields();
       MyURYForm.setUpTrackFields();
       MyURYForm.setUpTimePickers();
-      
-      $(this).attr('nextvalue', parseInt(new_id)+1);
+      $(this).attr('nextvalue', parseInt(new_id) + 1);
     });
     $('button.myuryfrm-remove-row').button({icons: {primary: "ui-icon-trash"}, text: false}).on('click', function() {
       $(this).closest('tr').remove();
@@ -286,20 +283,18 @@ window.MyURYForm = {
      */
     if ($('#UPLOAD_IDENTIFIER').length !== 0) {
       $('form').on('submit', function() {
-        $('.myuryfrm-file-upload-progress').progressbar({value:false});
+        $('.myuryfrm-file-upload-progress').progressbar({value: false});
         //Poke the server for upload progress status
         setInterval(MyURYForm.pollFileProgress, 1000);
       });
-      
       $('#myuryfrm-file-upload-iframe').on('load', function() {
         //data = $.parseJSON($(this).contents());
         data = $.parseJSON($($(this).contents().find('body').children()[0]).html());
         console.log(data);
-        percent = data['bytes_uploaded']/data['bytes_total']*100;
+        percent = data['bytes_uploaded'] / data['bytes_total'] * 100;
         $('.myuryfrm-file-upload-progress').progressbar('value', percent);
-        
-        $('.progress-label').html(Math.floor(percent)+'% ('+
-                Math.floor(data['speed_average']/1024)+'Kbps)');
+        $('.progress-label').html(Math.floor(percent) + '% (' +
+                Math.floor(data['speed_average'] / 1024) + 'Kbps)');
       });
     }
   },
@@ -309,10 +304,10 @@ window.MyURYForm = {
      * won't let you start a new XHR once the form is submitted. YAAY iFrames!
      */
     $('#myuryfrm-file-upload-iframe').attr('src',
-     myury.makeURL('MyURY', 'a-getuploadprogress', {
-        id: $('#UPLOAD_IDENTIFIER').val(),
-        1: (new Date).getTime()
-      }));
+            myury.makeURL('MyURY', 'a-getuploadprogress', {
+              id: $('#UPLOAD_IDENTIFIER').val(),
+              1: (new Date).getTime()
+            }));
   },
   init: function() {
     MyURYForm.setUpRepeatingSets();
@@ -329,7 +324,6 @@ window.MyURYForm = {
     MyURYForm.validate();
   }
 };
-
 $(document).ready(function() {
   MyURYForm.init();
 });
