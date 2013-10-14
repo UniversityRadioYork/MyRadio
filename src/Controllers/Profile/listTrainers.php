@@ -7,10 +7,11 @@
  * @package MyURY_Profile
  */
 
-$officers = CoreUtils::dataSourceParser(User::findAllTrainers(),false);
+$officers = CoreUtils::dataSourceParser(
+        MyURY_TrainingStatus::getInstance(3)->getAwardedTo());
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-        ->addVariable('tablescript', 'myury.profile.listTrainers')
+        ->addVariable('tablescript', 'myury.datatable.default')
         ->addVariable('title', 'Trainers List')
         ->addVariable('tabledata', $officers)
         ->render();
