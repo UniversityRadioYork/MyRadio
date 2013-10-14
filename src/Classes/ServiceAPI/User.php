@@ -1155,6 +1155,12 @@ class User extends ServiceAPI {
    * @throws MyURYException
    */
   public static function create($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00) {
+    /**
+     * Deal with the UNIQUE constraint on the DB table.
+     */
+    if ($phone === '') {
+      $phone = null;
+    }
     //Validate input
     if (empty($collegeid)) {
       $collegeid = Config::$default_college;
@@ -1284,7 +1290,9 @@ On Air | Online | On Demand<br>
 EOT;
 
     //Send the email
-    MyURYEmail::create(array('members' => array(User::getInstance($memberid))), 'Welcome to URY - Getting Involved and Your Account', $welcome_email, User::getInstance(7449));
+    MyURYEmail::create(array('members' => array(User::getInstance($memberid))),
+            'Welcome to URY - Getting Involved and Your Account',
+            $welcome_email, User::getInstance(7449));
 
     return User::getInstance($memberid);
   }
