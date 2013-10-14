@@ -7,20 +7,10 @@
  * @package MyURY_Profile
  */
 
-$officers = User::findAllTrainers();
-
-foreach ($officers as $k => $v) {
-  if (!empty($officers[$k]['name'])) {
-          $officers[$k]['name'] = array(
-              'display' => 'text',
-              'url' => CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['memberid'])),
-              'value' => $v['name']
-              );
-        }
-}
+$officers = CoreUtils::dataSourceParser(User::findAllTrainers(),false);
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-        ->addVariable('tablescript', 'myury.profile.listOfficers')
+        ->addVariable('tablescript', 'myury.profile.listTrainers')
         ->addVariable('title', 'Trainers List')
         ->addVariable('tabledata', $officers)
         ->render();
