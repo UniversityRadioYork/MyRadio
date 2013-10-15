@@ -8,16 +8,16 @@
 /**
  * The Metadata_Common class is used to provide common resources for
  * URY assets that utilise the Metadata system.
- * 
+ *
  * The metadata system is a used to attach common attributes to an item,
  * such as a title or description. It includes versioning in the form of
  * effective_from and effective_to field, storing a history of previous values.
- * 
+ *
  * @version 20130815
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Scheduler
  * @uses \Database
- * 
+ *
  */
 abstract class MyURY_Metadata_Common extends ServiceAPI {
 
@@ -111,15 +111,15 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
   }
 
   /**
-   * 
+   *
    * @param int $term_id The term to check for
    * @param Array $time:
    * day: The day ID (0-6) to check for
    * start_time: The start time in seconds since midnight
    * duration: The duration in seconds
-   * 
+   *
    * Return: Array of conflicts with week # as key and show as value
-   * 
+   *
    * @todo Move this into the relevant scheduler class
    */
   protected static function getScheduleConflicts($term_id, $time) {
@@ -150,7 +150,7 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
    * @param int $start Start time
    * @param int $end End time
    * @return Array empty if no conflict, show information otherwise
-   * 
+   *
    * @todo Move this into the relevant scheduler class
    */
   protected static function getScheduleConflict($start, $end) {
@@ -173,9 +173,9 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
    * Returns the Term currently available for Season applications.
    * Users can only apply to the current term, or one week before the next one
    * starts.
-   * 
+   *
    * @return int|null Returns the id of the term or null if no active term
-   * 
+   *
    * @todo Move this into the relevant scheduler class or CoreUtils
    */
   public static function getActiveApplicationTerm() {
@@ -186,13 +186,13 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
 
   /**
    * Sets a *text* metadata key to the specified value. Does not work for image metadata.
-   * 
+   *
    * If any value is the same as an existing one, no action will be taken.
    * If the given key has is_multiple, then the value will be added as a new, additional key.
    * If the key does not have is_multiple, then any existing values will have effective_to
    * set to the effective_from of this value, effectively replacing the existing value.
    * This will *not* unset is_multiple values that are not in the new set.
-   * 
+   *
    * @param String $string_key The metadata key
    * @param mixed $value The metadata value. If key is_multiple and value is an array, will create instance
    * for value in the array.
@@ -319,7 +319,7 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
 
   /**
    * Gets the presenter credits for as a comma-delimited string.
-   * 
+   *
    * @return String
    */
   public function getPresenterString() {
@@ -331,77 +331,126 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
         $str .= $credit['User']->getName().', ';
       }
     }
-    
+
     return substr($str, 0, -2);
   }
-  
+
   public function getMeta($meta_string) {
     return isset($this->metadata[self::getMetadataKey($meta_string)]) ?
       $this->metadata[self::getMetadataKey($meta_string)] : null;
   }
-  
+
   /**
    * Updates the list of Credits.
-   * 
+   *
    * Existing credits are kept active, ones that are not in the new list are set to effective_to now,
    * and ones that are in the new list but not exist are created with effective_from now.
-   * 
+   *
    * @param User[] $users An array of Users associated.
    * @param int[] $credittypes The relevant credittypeid for each User.
    */
   public function setCredits($users, $credittypes, $table, $pkey) {
     //Start a transaction, atomic-like.
     self::$db->query('BEGIN');
-    
+
+    $newcredits = $this->mergeCreditArrays($users, $credittypes);
     $oldcredits = $this->getCredits();
-    //Remove old credits
-    foreach ($oldcredits as $credit) {
-      if (empty($credit['User'])) {
-        continue;
-      }
-      if (!(($key = array_search($credit['User']->getID(),
-              array_map(function($x){return $x->getID();}, $users))) === false
-              && $credit['type'] == $credittypes[$key])) {
-        //There's not a match for this. Remove it
-        self::$db->query('UPDATE '.$table.' SET effective_to=NOW()'
-                . 'WHERE '.$pkey.'=$1 AND creditid=$2 AND credit_type_id=$3',
-                [$this->getID(), $credit['User']->getID(), $credit['type']],
-                true);
-      }
-    }
-    
-    //Add new credits
-    for ($i = 0; $i < sizeof($users); $i++) {
-      if (empty($users[$i]) or empty($credittypes[$i])) {
-        continue;
-      }
-      
-      //Look for an existing credit
-      if (!in_array(['type' => $credittypes[$i], 'memberid' => $users[$i]->getID(), 'User' => $users[$i]], 
-              $oldcredits)) {
-        //Doesn't seem to exist.
-        self::$db->query('INSERT INTO '.$table.' ('.$pkey.', credit_type_id, creditid, effective_from,'
-                . 'memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)', [
-                    $this->getID(), $credittypes[$i], $users[$i]->getID(), User::getInstance()->getID()
-                ], true);
-      }
-    }
-    
-    //Cool. Update the local credits data
-    $newcredits = [];
-    for ($i = 0; $i < sizeof($users); $i++) {
-      if (empty($users[$i])) {
-        continue;
-      }
-      $newcredits[] = ['type' => $credittypes[$i], 'memberid' => $users[$i]->getID(), 'User' => $users[$i]];
-    }
-    
-    $this->credits = $newcredits;
-    
+
+    $this->removeOldCredits($oldcredits, $newcredits, $table, $pkey);
+    $this->addNewCredits($oldcredits, $newcredits, $table, $pkey);
+    $this->updateLocalCredits($newcredits);
+
     //Oh, and commit the transaction. I always forget this.
     self::$db->query('COMMIT');
-    
+
     return $this;
   }
 
+  /*
+   * Merges two parallel credit arrays into one array of credits.
+   *
+   * @param array  $users  The array of incoming credit users.
+   * @param array  $types  The array of incoming credit types.
+   *
+   * @return array The merged credit array.
+   */
+  private function mergeCreditArrays($users, $types) {
+    return array_filter(
+      array_map(
+        function($user, $type) {
+          return (empty($user) || empty($type))
+          ? null
+          : [ 'User' => $user, 'type' => $type, 'memberid' => $user->getID() ];
+        },
+        $users,
+        $types
+      ),
+      function($credit) { return !empty($credit); }
+    );
+  }
+
+  /**
+   * De-activates any credits that are not in the incoming credits set.
+   *
+   * @param array  $old    The array of existing credits.
+   * @param array  $new    The array of incoming credits.
+   * @param string $table  The database table to update.
+   * @param string $pkey   The primary key of the object to update.
+   *
+   * @return null Nothing.
+   */
+  private function removeOldCredits($old, $new, $table, $pkey) {
+    foreach ($old as $credit) {
+      if (!in_array($credit, $new)) {
+        self::$db->query(
+          'UPDATE '.$table.' SET effective_to=NOW()'
+          . 'WHERE '.$pkey.'=$1 AND creditid=$2 AND credit_type_id=$3',
+          [$this->getID(), $credit['User']->getID(), $credit['type']],
+          true
+        );
+      }
+    }
+  }
+
+  /**
+   * Creates any new credits that are not in the existing credits set.
+   *
+   * @param array  $old    The array of existing credits.
+   * @param array  $new    The array of incoming credits.
+   * @param string $table  The database table to update.
+   * @param string $pkey   The primary key of the object to update.
+   *
+   * @return null Nothing.
+   */
+  private function addNewCredits($old, $new, $table, $pkey) {
+    foreach ($new as $credit) {
+      //Look for an existing credit
+      if (!in_array($credit, $old)) {
+        //Doesn't seem to exist.
+        self::$db->query(
+          'INSERT INTO '.$table.' ('.$pkey.', credit_type_id, creditid, effective_from,'
+          . 'memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)',
+          [
+            $this->getID(),
+            $credit['type'],
+            $credit['memberid'],
+            User::getInstance()->getID()
+          ],
+          true
+        );
+      }
+    }
+  }
+
+  /**
+   * Updates the local credits cache for this object.
+   *
+   * @param array  $new  The array of incoming credits
+   * @param array  $types  The array of incoming credit types.
+   *
+   * @return null Nothing.
+   */
+  private function updateLocalCredits($new) {
+    $this->credits = $new;
+  }
 }
