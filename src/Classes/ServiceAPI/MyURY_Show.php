@@ -10,7 +10,7 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyURY_Scheduler
  * @uses \Database
- * 
+ *
  */
 
 class MyURY_Show extends MyURY_Metadata_Common {
@@ -85,7 +85,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
         $this->metadata[$metadata_types[$i]] = $metadata[$i];
       }
     }
-    
+
     //Deal with Show Photo
     /**
      * @todo Support general photo attachment?
@@ -99,7 +99,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
     $this->season_ids = self::$db->fetch_column('SELECT show_season_id
       FROM schedule.show_season WHERE show_id=$1', array($show_id));
   }
-  
+
   /**
    * Get the cache key for the Show with this ID.
    * @param int $id
@@ -120,11 +120,11 @@ class MyURY_Show extends MyURY_Metadata_Common {
    * corresponding credittypeids
    * showtypeid: The ID of the type of show (see schedule.show_type). Defaults to "Show"
    * location: The ID of the location the show will be in
-   * 
+   *
    * title, description, credits and credittypes are required fields.
-   * 
+   *
    * As this is the initial creation, all tags are <i>approved</i> by the submitted so the show has some initial values
-   * 
+   *
    * @todo location (above) Is not in the Show creation form
    * @throws MyURYException
    */
@@ -226,7 +226,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
   public function getNumberOfSeasons() {
     return sizeof($this->season_ids);
   }
-  
+
   public function getAllSeasons() {
     $seasons = array();
     foreach ($this->season_ids as $season_id) {
@@ -234,7 +234,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
     }
     return $seasons;
   }
-  
+
   /**
    * Internally associates a Season with this Show.
    * Does not persist in database. Used for updating the cache.
@@ -252,7 +252,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
   public function getWebpage() {
     return '//ury.org.uk/schedule/shows/' . $this->getID();
   }
-  
+
   /**
    * Get the web url for the Show Photo
    * @return String
@@ -260,7 +260,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
   public function getShowPhoto() {
     return $this->photo_url;
   }
-  
+
   /**
    * Returns the ID for the type of Show
    * @return int
@@ -268,14 +268,14 @@ class MyURY_Show extends MyURY_Metadata_Common {
   public function getShowType() {
     return $this->show_type;
   }
-  
+
   /**
    * Return the primary Genre. Shows generally only have one anyway.
    */
   public function getGenre() {
     return $this->genres[0];
   }
-  
+
   public function isCurrentUserAnOwner() {
     if ($this->owner === $_SESSION['memberid']) {
       return true;
@@ -287,32 +287,32 @@ class MyURY_Show extends MyURY_Metadata_Common {
     }
     return false;
   }
-  
+
   public function setShowPhoto($tmp_path) {
     $result = self::$db->fetch_column('INSERT INTO schedule.show_image_metadata (memberid, approvedid,
       metadata_key_id, metadata_value, show_id) VALUES ($1, $1, $2, $3, $4) RETURNING show_image_metadata_id',
             array($_SESSION['memberid'], self::getMetadataKey('player_image'), 'tmp', $this->getID()))[0];
-    
+
     $suffix = 'image_meta/ShowImageMetadata/'.$result.'.png';
     $path = Config::$public_media_path.'/'.$suffix;
     move_uploaded_file($tmp_path, $path);
-    
+
     self::$db->query('UPDATE schedule.show_image_metadata SET effective_to=NOW() WHERE metadata_key_id=$1 AND show_id=$2
       AND effective_from IS NOT NULL', array(self::getMetadataKey('player_image'), $this->getID()));
-    
+
     self::$db->query('UPDATE schedule.show_image_metadata SET effective_from=NOW(), metadata_value=$1
       WHERE show_image_metadata_id=$2', array($suffix, $result));
   }
-  
+
   /**
    * Sets a metadata key to the specified value.
-   * 
+   *
    * If any value is the same as an existing one, no action will be taken.
    * If the given key has is_multiple, then the value will be added as a new, additional key.
    * If the key does not have is_multiple, then any existing values will have effective_to
    * set to the effective_from of this value, effectively replacing the existing value.
    * This will *not* unset is_multiple values that are not in the new set.
-   * 
+   *
    * @param String $string_key The metadata key
    * @param mixed $value The metadata value. If key is_multiple and value is an array, will create instance
    * for value in the array.
@@ -321,14 +321,14 @@ class MyURY_Show extends MyURY_Metadata_Common {
    * @param null $table Used for compatibility with parent.
    * @param null $pkey Used for compatibility with parent.
    */
-  public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, 
+  public function setMeta($string_key, $value, $effective_from = null, $effective_to = null,
           $table = null, $pkey = null) {
-   $r = parent::setMeta($string_key, $value, $effective_from, $effective_to, 
+   $r = parent::setMeta($string_key, $value, $effective_from, $effective_to,
            'schedule.show_metadata', 'show_id');
    $this->updateCacheObject();
    return $r;
   }
-  
+
   /**
    * Sets the Genre, if it hasn't changed
    * @param int $genreid
@@ -346,13 +346,13 @@ class MyURY_Show extends MyURY_Metadata_Common {
       $this->updateCacheObject();
     }
   }
-  
+
   /**
    * Updates the list of Credits.
-   * 
+   *
    * Existing credits are kept active, ones that are not in the new list are set to effective_to now,
    * and ones that are in the new list but not exist are created with effective_from now.
-   * 
+   *
    * @param User[] $users An array of Users associated.
    * @param int[] $credittypes The relevant credittypeid for each User.
    */
@@ -372,7 +372,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
             . 'WHERE show_type_id=$1'
             . 'ORDER BY (SELECT metadata_value FROM schedule.show_metadata '
             . 'WHERE show_id=show_id AND metadata_key_id=2 '
-            . 'AND effective_to <= NOW() AND (effective_to IS NULL '
+            . 'AND effective_from <= NOW() AND (effective_to IS NULL '
             . 'OR effective_to > NOW()))', array($show_type_id))
     as $show) {
       $shows[] = self::getInstance($show);
@@ -380,7 +380,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
 
     return $shows;
   }
-  
+
   /**
    * Find the most messaged shows
    * @param int $date If specified, only messages for timeslots since $date are counted.
@@ -392,23 +392,23 @@ class MyURY_Show extends MyURY_Metadata_Common {
       LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid = show_season_timeslot.show_season_timeslot_id
       LEFT JOIN schedule.show_season ON show_season_timeslot.show_season_id = show_season.show_season_id
       LEFT JOIN schedule.show ON show_season.show_id = show.show_id
-      WHERE show_season_timeslot.start_time > $1 GROUP BY show.show_id ORDER BY msg_count DESC LIMIT 30', 
+      WHERE show_season_timeslot.start_time > $1 GROUP BY show.show_id ORDER BY msg_count DESC LIMIT 30',
             array(CoreUtils::getTimestamp($date)));
-    
+
     $top = array();
     foreach ($result as $r) {
       $show = self::getInstance($r['show_id'])->toDataSource();
       $show['msg_count'] = intval($r['msg_count']);
       $top[] = $show;
     }
-    
+
     return $top;
   }
-  
+
   /**
    * Returns the current Show on air, if there is one.
    * @param int $time Optional integer timestamp
-   * 
+   *
    * @return MyURY_Show|null
    */
   public static function getCurrentShow($time = null) {
@@ -419,7 +419,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
       return $timeslot->getSeason()->getShow();
     }
   }
-  
+
   /**
    * Find the most listened Shows
    * @param int $date If specified, only messages for timeslots since $date are counted.
@@ -431,7 +431,7 @@ class MyURY_Show extends MyURY_Metadata_Common {
     if (($top = self::$cache->get($key)) !== false) {
       return $top;
     }
-    
+
     $result = self::$db->fetch_all('SELECT show_id, SUM(listeners) AS listeners_sum FROM (SELECT show_season_id,
       (SELECT COUNT(*) FROM strm_log
         WHERE (starttime < show_season_timeslot.start_time AND endtime >= show_season_timeslot.start_time)
@@ -441,14 +441,14 @@ class MyURY_Show extends MyURY_Metadata_Common {
         WHERE start_time > $1) AS t1 LEFT JOIN schedule.show_season ON t1.show_season_id = show_season. show_season_id
         GROUP BY show_id ORDER BY listeners_sum DESC LIMIT 30',
             array(CoreUtils::getTimestamp($date)));
-    
+
     $top = array();
     foreach ($result as $r) {
       $show = self::getInstance($r['show_id'])->toDataSource();
       $show['listeners'] = intval($r['listeners_sum']);
       $top[] = $show;
     }
-    
+
     self::$cache->set($key, $top, 86400);
     return $top;
   }
@@ -479,14 +479,14 @@ class MyURY_Show extends MyURY_Metadata_Common {
             'title' => 'View Show Microsite',
             'url' => $this->getWebpage())
     );
-    
+
     if ($full) {
       $data['credits'] = array_map(function($x) {
         $x['User'] = $x['User']->toDataSource(false);
         return $x;
       }, $this->getCredits());
     }
-    
+
     return $data;
   }
 
