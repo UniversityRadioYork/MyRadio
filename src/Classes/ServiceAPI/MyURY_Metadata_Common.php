@@ -209,23 +209,34 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
     }
 
     //Check if value is different
+    $current_meta = $this->getMeta($string_key);
+
     if ($multiple) {
-      if (is_array($value)) {
-        foreach ($value as $k => $v) {
-          if (in_array($v, $this->getMeta($string_key)) !== false) {
-            //This is a pre-existing value
-            unset($value[$k]);
-          }
-        }
-        if (empty($value)) {
-          //Nothing's changed
-          return false;
-        }
-      } else {
-        if (in_array($value, $this->getMeta($string_key)) !== false) {
-          //This is a pre-existing value
-          return false;
-        }
+      if (empty($current_meta)) {
+        $current_meta = [];
+      }
+      // Normalise incoming value to be an array.
+      if (!is_array($value)) {
+        $value = [$value];
+      }
+
+      // Don't add existing metadata again.
+      $all_values = $value;
+      $value = array_diff($value, $current_meta);
+
+      // Expire any metadata that is no longer current.
+      // TODO: use only one query.
+      foreach (array_diff($current_meta, $all_values) as $dead) {
+        self::$db->query('UPDATE ' . $table . ' SET effective_to = $1
+          WHERE metadata_key_id=$2 AND ' . $id_field . '=$3 AND metadata_value=$4
+          AND (effective_to IS NULL OR effective_to > $1)',
+          [
+            CoreUtils::getTimestamp($effective_from),
+            $meta_id,
+            $this->getID(),
+            $dead
+          ]
+        );
       }
     } else {
       //Not multiple key
@@ -233,7 +244,7 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
         //Can't have an array for a single value
         throw new MyURYException('Tried to set multiple values for a single-instance metadata key!');
       }
-      if ($value == $this->getMeta($string_key)) {
+      if ($value == $current_meta) {
         //Value not changed
         return false;
       }
@@ -242,26 +253,29 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
         WHERE metadata_key_id=$2 AND ' . $id_field . '=$3', array(CoreUtils::getTimestamp($effective_from), $meta_id, $this->getID()));
     }
 
-    $sql = 'INSERT INTO ' . $table
-            . ' (metadata_key_id, ' . $id_field . ', memberid, approvedid, metadata_value, effective_from, effective_to) VALUES ';
-    $params = array($meta_id, $this->getID(), User::getInstance()->getID(), CoreUtils::getTimestamp($effective_from),
-        $effective_to == null ? null : CoreUtils::getTimestamp($effective_to));
+    // Bail out if we're about to insert nothing.
+    if (!empty($value)) {
+      $sql = 'INSERT INTO ' . $table
+              . ' (metadata_key_id, ' . $id_field . ', memberid, approvedid, metadata_value, effective_from, effective_to) VALUES ';
+      $params = array($meta_id, $this->getID(), User::getInstance()->getID(), CoreUtils::getTimestamp($effective_from),
+          $effective_to == null ? null : CoreUtils::getTimestamp($effective_to));
 
-    if (is_array($value)) {
-      $param_counter = 6;
-      foreach ($value as $v) {
-        $sql .= '($1, $2, $3, $3, $' . $param_counter . ', $4, $5),';
-        $params[] = $v;
-        $param_counter++;
+      if (is_array($value)) {
+        $param_counter = 6;
+        foreach ($value as $v) {
+          $sql .= '($1, $2, $3, $3, $' . $param_counter . ', $4, $5),';
+          $params[] = $v;
+          $param_counter++;
+        }
+        //Remove the extra comma
+        $sql = substr($sql, 0, -1);
+      } else {
+        $sql .= '($1, $2, $3, $3, $6, $4, $5)';
+        $params[] = $value;
       }
-      //Remove the extra comma
-      $sql = substr($sql, 0, -1);
-    } else {
-      $sql .= '($1, $2, $3, $3, $6, $4, $5)';
-      $params[] = $value;
-    }
 
-    self::$db->query($sql, $params);
+      self::$db->query($sql, $params);
+    }
 
     if ($multiple && is_array($value)) {
       foreach ($value as $v) {
