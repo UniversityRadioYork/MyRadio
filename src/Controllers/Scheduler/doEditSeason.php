@@ -2,7 +2,7 @@
 /**
  * This action handles the submission of a form from Scheduler/editSeason.
  * Uses standard Forms API for values.
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130923
  * @package MyURY_Scheduler
@@ -24,6 +24,11 @@ $season->setMeta('description', $data['description']);
 $season->setMeta('tag', explode(' ', $data['tags']));
 $season->setCredits($data['credits']['member'], $data['credits']['credittype']);
 
-header('Location: '.CoreUtils::makeURL('Scheduler', 'listSeasons',
-        array('showid' => $season->getShow()->getID(),
-            'message' => base64_encode('Season updated'))));
+CoreUtils::redirect(
+  'Scheduler',
+  'listSeasons',
+  [
+    'showid' => $season->getShow()->getID(),
+    'message' => base64_encode('Season updated')
+  ]
+);

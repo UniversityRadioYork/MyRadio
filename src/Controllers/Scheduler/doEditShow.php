@@ -1,7 +1,7 @@
 <?php
 /**
  * This action handles the submission of a form from Scheduler/editShow. Uses standard Forms API for values.
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130810
  * @package MyURY_Scheduler
@@ -24,5 +24,10 @@ $show->setMeta('tag', explode(' ', $data['tags']));
 $show->setGenre($data['genres']);
 $show->setCredits($data['credits']['member'], $data['credits']['credittype']);
 
-header('Location: '.CoreUtils::makeURL('Scheduler', 'myShows',
-        array('message' => base64_encode('Show updated'))));
+CoreUtils::redirect(
+  'Scheduler',
+  'myShows',
+  [
+    'message' => base64_encode('Show updated')
+  ]
+);
