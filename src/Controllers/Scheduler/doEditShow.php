@@ -20,7 +20,12 @@ if (!$show->isCurrentUserAnOwner() && !CoreUtils::hasPermission(AUTH_EDITSHOWS))
 
 $show->setMeta('title', $data['title']);
 $show->setMeta('description', $data['description']);
-$show->setMeta('tag', explode(' ', $data['tags']));
+// We want to handle the case when people delimit with commas, or commas and
+// spaces, as well as handling extended spaces.
+$show->setMeta(
+  'tag',
+  preg_split('/[, ] */', $data['tags'], NULL, PREG_SPLIT_NO_EMPTY)
+);
 $show->setGenre($data['genres']);
 $show->setCredits($data['credits']['member'], $data['credits']['credittype']);
 
