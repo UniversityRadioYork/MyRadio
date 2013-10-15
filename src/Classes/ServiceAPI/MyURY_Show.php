@@ -367,18 +367,22 @@ class MyURY_Show extends MyURY_Metadata_Common {
    * @todo Ajax the All Shows page - this isn't a particularly nice query
    */
   public static function getAllShows($show_type_id = 1) {
-    $shows = array();
-    foreach (self::$db->fetch_column('SELECT show_id FROM schedule.show '
-            . 'WHERE show_type_id=$1'
-            . 'ORDER BY (SELECT metadata_value FROM schedule.show_metadata '
-            . 'WHERE show_id=show_id AND metadata_key_id=2 '
-            . 'AND effective_from <= NOW() AND (effective_to IS NULL '
-            . 'OR effective_to > NOW()))', array($show_type_id))
-    as $show) {
-      $shows[] = self::getInstance($show);
-    }
-
-    return $shows;
+    $show_ids = self::$db->fetch_column(
+      'SELECT show_id FROM schedule.show '
+      . 'WHERE show_type_id=$1 '
+      . 'ORDER BY ('
+      . '  SELECT metadata_value FROM schedule.show_metadata '
+      . '  WHERE show_id=show_id AND metadata_key_id=2 '
+      . '  AND effective_from <= NOW() '
+      . '  AND (effective_to IS NULL OR effective_to > NOW()) '
+      . '  ORDER BY effective_from DESC LIMIT 1'
+      . ');',
+      [$show_type_id]
+    );
+    return array_map(
+      function($show_id) { return self::getInstance($show_id); },
+      array_values($show_ids)
+    );
   }
 
   /**
