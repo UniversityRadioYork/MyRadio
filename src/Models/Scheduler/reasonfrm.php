@@ -18,4 +18,4 @@ $form = (new MyURYForm('sched_cancel', $module, 'doCancelEpisode',
                         array('label' => 'Please explain why this Episode should be removed from the Schedule'))
         )->addField(
                 new MyURYFormField('show_season_timeslot_id', MyURYFormField::TYPE_HIDDEN,
-                        array('value' => $_GET['show_season_timeslot_id'])));
+                        array('value' => $_REQUEST['show_season_timeslot_id'])));
