@@ -72,8 +72,7 @@ class Database {
    * Generic function that just runs a pg_query_params
    * @param String $sql The query string to execute
    * @param Array $params Parameters for the query
-   * @param bool $rollback If true, an error will automatically execute a rollback before throwing an Exception
-   * Use for transactions.
+   * @param bool $rollback Deprecated.
    * @return A pg result reference
    * @throws MyURYException If the query fails
    * @assert ('SELECT * FROM public.tableethatreallydoesntexist') throws MyURYException
@@ -99,7 +98,7 @@ class Database {
     
     $result = @pg_query_params($this->db, $sql, $params);
     if (!$result) {
-      if ($rollback or $this->in_transaction) {
+      if ($this->in_transaction) {
         pg_query($this->db, 'ROLLBACK');
       }
       throw new MyURYException('Query failure: ' . $sql . '<br>'
@@ -165,8 +164,7 @@ class Database {
    * Equates to a pg_fetch_all_columns(pg_query,0). Returns all first column entries
    * @param String $sql The query string to execute
    * @param Array $params Paramaters for the query
-   * @param bool $rollback If true, an error will automatically execute a rollback before throwing an Exception
-   * Use for transactions.
+   * @param bool $rollback deprecated.
    * @return Array The requested result column, or an empty array on failure
    * @throws MyURYException 
    */
