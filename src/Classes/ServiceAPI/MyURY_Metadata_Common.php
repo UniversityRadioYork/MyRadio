@@ -23,7 +23,7 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
 
   protected static $metadata_keys = array();
   protected $metadata;
-  protected $credits;
+  protected $credits = array();
   protected static $credit_names;
 
   /**

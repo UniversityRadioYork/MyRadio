@@ -101,6 +101,9 @@ class URYTwig implements TemplateEngine {
    * @return Array
    */
   private function boolParser($value) {
+    if (!is_array($value)) {
+      return $value;
+    }
     foreach ($value as $k=>$v) {
       if (is_bool($v)) {
         $value[$k] = $v ? 'Yes' : 'No';
