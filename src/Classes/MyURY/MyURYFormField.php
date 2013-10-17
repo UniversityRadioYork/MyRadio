@@ -492,29 +492,9 @@ class MyURYFormField {
    */
   public function readValue($prefix) {
     $name = $prefix . str_replace(' ', '_', $this->name);
+    echo $name;
     //The easiest ones can just be returned
     switch ($this->type) {
-      case self::TYPE_TEXT:
-      case self::TYPE_EMAIL:
-      case self::TYPE_ARTIST:
-      case self::TYPE_HIDDEN:
-      case self::TYPE_BLOCKTEXT:
-      case self::TYPE_MEMBER:
-      case self::TYPE_TRACK:
-      case self::TYPE_NUMBER:
-      case self::TYPE_SELECT:
-      case self::TYPE_RADIO:
-      case self::TYPE_DAY:
-      case self::TYPE_DATE:
-      case self::TYPE_DATETIME:
-      case self::TYPE_TIME:
-      case self::TYPE_CHECK:
-      case self::TYPE_ALBUM:
-        if (!isset($_REQUEST[$name])) {
-          throw new MyURYException('Field '.$_REQUEST[$name].
-                  ' missing from request!', 400);
-        }
-        break;
       case self::TYPE_TEXT:
       case self::TYPE_EMAIL:
       case self::TYPE_ARTIST:
