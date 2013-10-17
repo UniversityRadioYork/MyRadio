@@ -267,7 +267,7 @@ class MyURYForm {
       $value = $field->readValue($this->name . '-');
       if ($field->getRequired() && empty($value)) {
         throw new MyURYException('Field '.$field->getName().' is required
-          but has not been set. ' . $field->getType, 400);
+          but has not been set. ' . $field->getType(), 400);
       }
       $return[$field->getName()] = $value;
     }

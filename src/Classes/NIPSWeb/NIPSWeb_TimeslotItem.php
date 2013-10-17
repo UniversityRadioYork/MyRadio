@@ -76,11 +76,13 @@ class NIPSWeb_TimeslotItem extends ServiceAPI {
     $this->weight = (int) $weight;
     self::$db->query('UPDATE bapsplanner.timeslot_items SET channel_id=$1, weight=$2 WHERE timeslot_item_id=$3',
             array($this->channel, $this->weight, $this->getID()));
+    $this->updateCacheObject();
   }
   
   public function remove() {
     self::$db->query('DELETE FROM bapsplanner.timeslot_items WHERE timeslot_item_id=$1',
             array($this->getID()));
+    $this->removeInstance();
     unset($this);
   }
   

@@ -489,7 +489,9 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
 
         case 'MoveItem':
           if (!is_numeric($op['timeslotitemid'])) {
-            throw new MyURYException($op['timeslotitemid'] .' is invalid.', 500);
+            $result[] = array('status' => false);
+            self::$db->query('ROLLBACK');
+            return $result;
           }
           $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
           if ($i->getChannel() != $op['oldchannel'] or $i->getWeight() != $op['oldweight']) {
