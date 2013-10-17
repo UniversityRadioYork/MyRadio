@@ -13,6 +13,10 @@ $('.twig-datatable').dataTable({
   {
     "sTitle": "Album"
   },
+  //trackid
+  {
+    bVisible: 0
+  },
   //starttime
   {
     "sTitle": "Start Time"
