@@ -41,7 +41,7 @@ class MyURYException extends RuntimeException {
               <tr><td>Trace</td><td>" . nl2br($this->getTraceAsString()) . "</td></tr>
             </table>";
     if (class_exists('Config')) {
-      if (Config::$email_exceptions && class_exists('MyURYEmail')) {
+      if (Config::$email_exceptions && class_exists('MyURYEmail') && $code !== 400) {
         MyURYEmail::sendEmailToComputing('[MyURY] Exception Thrown', $error . "\r\n" . $message . "\r\n" . (isset($_SESSION) ? print_r($_SESSION, true) : '') . "\r\n" . print_r($_REQUEST, true));
       }
       //Configuration is available, use this to decide what to do
