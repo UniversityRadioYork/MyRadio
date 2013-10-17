@@ -203,12 +203,12 @@ window.timelord = {
    */
   newsWarn: function() {
     var date = new Date();
-    if ((date.getMinutes() === 59 && date.getSeconds() >= 20)
-            || (date.getMinutes === 25 && date.getSeconds() <= 5)) {
+    if ((date.getMinutes() === 59 && date.getSeconds() >= 15)
+            || (date.getMinutes() === 0 && date.getSeconds() <= 5)) {
       timelord.news = true;
-      if (date.getSeconds() < 00 && date.getSeconds() >= 20) {
+      if (date.getSeconds() < 0 && date.getSeconds() >= 15) {
         timelord.showMsg('<span class="news">News intro in '
-                +(50-date.getSeconds())+'...</span>');
+                +(45-date.getSeconds())+'...</span>');
         $('#next-show').show();
       } else {
         timelord.showMsg('<span class="news">Online at ury.org.uk and across'
