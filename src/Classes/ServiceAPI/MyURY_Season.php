@@ -98,6 +98,7 @@ class MyURY_Season extends MyURY_Metadata_Common {
 
     //And now initiate timeslots
     $timeslots = self::$db->decodeArray($result['timeslots']);
+    $this->timeslots = [];
     foreach ($timeslots as $timeslot) {
       $this->timeslots[] = MyURY_Timeslot::getInstance($timeslot);
     }
@@ -537,21 +538,22 @@ EOT
         }*/
         
         //This week is due to be scheduled! QUERY! QUERY!
-        self::$db->query('INSERT INTO schedule.show_season_timeslot
+        $r = self::$db->fetch_column('INSERT INTO schedule.show_season_timeslot
           (show_season_id, start_time, duration, memberid, approvedid)
-          VALUES ($1, $2, $3, $4, $5)
+          VALUES ($1, $2, $3, $4, $5) RETURNING show_season_timeslot_id
           ', array(
             $this->season_id,
             $show_time,
             $req_time['duration'],
             $this->owner->getID(),
             $_SESSION['memberid']
-                ), true);
-        $times .= $show_time . "\r\n";
+                ));
+        $this->timeslots[] = MyURY_Timeslot::getInstance($r);
       }
     }
     //COMMIT
     self::$db->query('COMMIT');
+    $this->updateCacheObject();
     //Email the user
     $message = <<<EOT
 Hello,
@@ -566,17 +568,9 @@ $times
 
   ~ URY Scheduling Legume
 EOT;
-    if (!empty($times))
+    if (!empty($times)) {
       MyURYEmail::sendEmailToUser($this->owner, $this->getMeta('title') . ' Scheduled', $message);
-
-    /**
-     * Flush Memcached - there will be stale schedule entries for the website
-     * This is for Django as the MyURY Cache system is currently APCProvider
-     * @todo Consider setting up Memcached as an alternative CacheProvider implementation
-     */
-    $m = new Memcached();
-    $m->addServer(Config::$django_cache_server, 11211);
-    $m->flush();
+    }
 
     date_default_timezone_set(Config::$timezone);
   }
