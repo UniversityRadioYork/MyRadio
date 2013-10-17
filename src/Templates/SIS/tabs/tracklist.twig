@@ -87,7 +87,7 @@ function submitTrackNoLib(){
 	var tname = $("#trackpick-tname").val();
 	var album = $("#trackpick-album").val();
 	var artist = $("#trackpick-artist").val();
-	var timeslotid = <?php echo $_SESSION['timeslotid']; ?>;
+	var timeslotid = {{timeslotid}};
 	$.ajax({
 		url: myury.makeURL('SIS','tracklist.checkTrack'),
 		data: {tname: tname, album: album, artist: artist, timeslotid: timeslotid, where: "notrec"},
