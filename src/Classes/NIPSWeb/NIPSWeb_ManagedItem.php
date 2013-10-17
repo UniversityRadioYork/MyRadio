@@ -123,7 +123,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     );
   }
 
-  public function cacheItem($tmp_path) {
+  public static function cacheItem($tmp_path) {
     if (!isset($_SESSION['myury_nipsweb_file_cache_counter'])) $_SESSION['myury_nipsweb_file_cache_counter'] = 0;
     if (!is_dir(Config::$audio_upload_tmp_dir)) {
       mkdir(Config::$audio_upload_tmp_dir);
@@ -155,7 +155,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     );
   }
 
-  public function storeItem($tmpid, $title) {
+  public static function storeItem($tmpid, $title) {
 
     $options = array(
       'title' => $title,
