@@ -148,7 +148,8 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
   public function getTimeslotAfter() {
     $result = self::$db->fetch_column('SELECT show_season_timeslot_id'
             . ' FROM schedule.show_season_timeslot'
-            . ' WHERE start_time >= $1 AND start_time <= $2',
+            . ' WHERE start_time >= $1 AND start_time <= $2'
+            . ' ORDER BY start_time ASC LIMIT 1',
     [CoreUtils::getTimestamp($this->getStartTime() + $this->getDuration()-300),
         CoreUtils::getTimestamp($this->getStartTime() + $this->getDuration()+300)]);
     if (empty($result)) {
