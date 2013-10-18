@@ -139,6 +139,15 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
   public function getDuration() {
     return $this->duration;
   }
+  
+  /**
+   * Returns when the timeslot ends in epoch number form
+   * @return int
+   */
+  public function getEndTime() {
+    $duration = strtotime('1970-01-01 '.$this->getDuration().'+00');
+    return $this->getStartTime()+$duration;
+  }
 
   /**
    * Gets the Timeslot that is on after this.
@@ -146,12 +155,13 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
    * @return MyURY_Timeslot|null If null, Jukebox is next.
    */
   public function getTimeslotAfter() {
+    echo $this->getEndTime().'<br>';
     $result = self::$db->fetch_column('SELECT show_season_timeslot_id'
             . ' FROM schedule.show_season_timeslot'
             . ' WHERE start_time >= $1 AND start_time <= $2'
             . ' ORDER BY start_time ASC LIMIT 1',
-    [CoreUtils::getTimestamp($this->getStartTime() + $this->getDuration()-300),
-        CoreUtils::getTimestamp($this->getStartTime() + $this->getDuration()+300)]);
+    [CoreUtils::getTimestamp($this->getEndTime()-300),
+        CoreUtils::getTimestamp($this->getEndTime()+300)]);
     if (empty($result)) {
       return null;
     } else {
