@@ -317,7 +317,8 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
    */
   public function getCredits($parent = null) {
     $parent = $parent === null ? [] : $parent->getCredits();
-    return array_unique(array_merge($this->credits, $parent), SORT_REGULAR);
+    $current = empty($this->credits) ? [] : $this->credits;
+    return array_unique(array_merge($current, $parent), SORT_REGULAR);
   }
 
   /**
