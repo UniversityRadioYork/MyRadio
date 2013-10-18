@@ -101,8 +101,12 @@ window.timelord = {
     if (next[0] == null) {
       $('#next-show').html('');
     } else {
-      $('#next-show').html('Up Next: ' + next[0].title + ' @ ' + next[0].start_time + '<br>'
-              + next[1].title + ' @ ' + next[1].start_time);
+      d0 = (new Date(next[0].start_time*1000));
+      start0 = timelord.pad(d0.getHours())+':'+timelord.pad(d0.getMinutes());
+      d1 = (new Date(next[0].start_time*1000));
+      start1 = timelord.pad(d1.getHours())+':'+timelord.pad(d1.getMinutes());
+      $('#next-show').html('Up Next: ' + next[0].title + ' @ ' + start0 + '<br>'
+              + next[1].title + ' @ ' + start1);
     }
 
     return this;
