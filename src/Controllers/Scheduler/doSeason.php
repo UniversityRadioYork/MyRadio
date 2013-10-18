@@ -11,11 +11,10 @@
 require 'Models/Scheduler/seasonfrm.php';
 
 try {
-  MyURY_Season::apply($form->readValues());
+  $values = $form->readValues();
+  MyURY_Season::apply($values);
+  header('Location: '.CoreUtils::makeURL('Scheduler', 'listSeasons',
+        array('msg' => 'seasonCreated', 'showid' => $values['show_id'])));
 } catch (MyURYException $e) {
   require 'Views/Errors/500.php';
-  exit;
 }
-
-header('Location: '.CoreUtils::makeURL('Scheduler', 'listSeasons',
-        array('msg' => 'seasonCreated', 'showid' => $form->readValues()['show_id'])));
