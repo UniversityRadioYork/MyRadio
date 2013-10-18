@@ -548,7 +548,7 @@ EOT
             $this->owner->getID(),
             $_SESSION['memberid']
                 ));
-        $this->timeslots[] = MyURY_Timeslot::getInstance($r);
+        $this->timeslots[] = MyURY_Timeslot::getInstance($r[0]);
       }
     }
     //COMMIT
