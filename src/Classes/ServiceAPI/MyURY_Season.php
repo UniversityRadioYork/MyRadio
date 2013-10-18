@@ -538,17 +538,16 @@ EOT
         }*/
         
         //This week is due to be scheduled! QUERY! QUERY!
-        $r = self::$db->fetch_column('INSERT INTO schedule.show_season_timeslot
+        $r = self::$db->fetch_all('INSERT INTO schedule.show_season_timeslot
           (show_season_id, start_time, duration, memberid, approvedid)
-          VALUES ($1, $2, $3, $4, $5) RETURNING show_season_timeslot_id
-          ', array(
+          VALUES ($1, $2, $3, $4, $5) RETURNING show_season_timeslot_id', array(
             $this->season_id,
             $show_time,
             $req_time['duration'],
             $this->owner->getID(),
             $_SESSION['memberid']
                 ));
-        $this->timeslots[] = MyURY_Timeslot::getInstance($r[0]);
+        $this->timeslots[] = MyURY_Timeslot::getInstance($r[0]['show_season_timeslot_id']);
       }
     }
     //COMMIT
