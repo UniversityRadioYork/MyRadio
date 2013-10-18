@@ -155,7 +155,6 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
    * @return MyURY_Timeslot|null If null, Jukebox is next.
    */
   public function getTimeslotAfter() {
-    echo $this->getEndTime().'<br>';
     $result = self::$db->fetch_column('SELECT show_season_timeslot_id'
             . ' FROM schedule.show_season_timeslot'
             . ' WHERE start_time >= $1 AND start_time <= $2'
