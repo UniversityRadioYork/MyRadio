@@ -147,8 +147,10 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
    */
   public function getTimeslotAfter() {
     $result = self::$db->fetch_column('SELECT show_season_timeslot_id'
-            . ' FROM schedule.show_season_timeslot WHERE start_time=$1', [CoreUtils::getTimestamp(
-                $this->getStartTime() + $this->getDuration())]);
+            . ' FROM schedule.show_season_timeslot'
+            . ' WHERE start_time >= $1 AND start_time <= $2',
+    [CoreUtils::getTimestamp($this->getStartTime() + $this->getDuration()-300),
+        CoreUtils::getTimestamp($this->getStartTime() + $this->getDuration()+300)]);
     if (empty($result)) {
       return null;
     } else {
@@ -323,7 +325,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
       for ($i = 0; $i < $n; $i++) {
         $next = ($next instanceof MyURY_Timeslot) ? $next->getTimeslotAfter() : [];
         if (empty($next)) {
-          $nextshow = self::getNextTimeslot($timeslot->getStartTime() + 1);
+          $nextshow = self::getNextTimeslot($timeslot->getStartTime());
           $end = $next === null ? null : $nextshow->getStartTime();
           //There's not a next show, but there might be one later
           $response['next'][] = ['title' => 'Jukebox',

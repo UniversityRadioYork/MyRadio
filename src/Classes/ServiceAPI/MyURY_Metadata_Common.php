@@ -347,7 +347,7 @@ abstract class MyURY_Metadata_Common extends ServiceAPI {
       }
     }
 
-    return substr($str, 0, -2);
+    return empty($str) ? '' : substr($str, 0, -2);
   }
 
   public function getMeta($meta_string) {
