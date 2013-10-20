@@ -11,7 +11,7 @@
  * @package MyURY_Scheduler
  * @uses \Database
  * @uses \MyURY_Show
- * 
+ *
  */
 
 class MyURY_Season extends MyURY_Metadata_Common {
@@ -116,11 +116,11 @@ class MyURY_Season extends MyURY_Metadata_Common {
    * tags: A string of 0 or more space-seperated tags this Season relates to, in addition to the Show tags<br>
    * show_id: The ID of the Show to assign the application to
    * termid: The ID of the term being applied for. Defaults to the current Term
-   * 
+   *
    * weeks, day, stime, etime, show_id are all required fields
-   * 
+   *
    * As this is the initial creation, all tags are <i>approved</i> by the submitter so the Season has some initial values
-   * 
+   *
    * @throws MyURYException
    */
   public static function apply($params = array()) {
@@ -169,7 +169,7 @@ class MyURY_Season extends MyURY_Metadata_Common {
       }
 
       //Enter the data
-      self::$db->query('INSERT INTO schedule.show_season_requested_time 
+      self::$db->query('INSERT INTO schedule.show_season_requested_time
         (requested_day, start_time, preference, duration, show_season_id) VALUES ($1, $2, $3, $4, $5)',
               array($params['times']['day'][$i], $params['times']['stime'][$i], $i, $interval, $season_id));
     }
@@ -202,14 +202,14 @@ class MyURY_Season extends MyURY_Metadata_Common {
     self::$db->query('COMMIT');
 
     MyURY_Show::getInstance($params['show_id'])->addSeason($season_id);
-    
+
     return self::getInstance($season_id);
   }
-  
+
   /**
    * Get a list of all Seasons that were for the current term, or
    * if we are not currently in a Term, the most recenly finished term.
-   * 
+   *
    * @return MyURY_Season[]
    */
   public static function getAllSeasonsInLatestTerm() {
@@ -217,10 +217,10 @@ class MyURY_Season extends MyURY_Metadata_Common {
             . 'WHERE start <= NOW() ORDER BY finish DESC LIMIT 1');
     return self::getAllSeasonsInTerm($result[0]);
   }
-  
+
   /**
    * Get all the Seasons in the active term.
-   * 
+   *
    * @param int $term_id
    * @return MyURY_Season[]
    */
@@ -229,17 +229,17 @@ class MyURY_Season extends MyURY_Metadata_Common {
             'SELECT show_season_id FROM schedule.show_season WHERE termid=$1',
             [$term_id]));
   }
-  
+
   /**
    * Rejects the application for the Season, notifying the creditors if asked.
-   * 
+   *
    * Will not reject if already rejected.<br>
    * A Season is "Rejected" by setting the "Submitted" field in schedule.show_season to NULL,
    * and adding a "reject-reason" metadata key, with the effective_from set to the time the application
    * was rejected.<br>
    * A Season can be reapplied for by setting the "Submitted" field to the re-submit time.
    * It is also best practice to then set the "reject-reason" key to have the same effective_to.
-   * 
+   *
    * @param String $reason Why the application was rejected
    * @param bool $notify_user If true, all creditors will be notified about the rejection.
    */
@@ -251,9 +251,9 @@ class MyURY_Season extends MyURY_Metadata_Common {
     self::$db->query('UPDATE schedule.show_season SET submitted=NULL WHERE show_season_id=$1',
             array($this->getID()), true);
     $this->submitted = null;
-    
+
     $this->setMeta('reject-reason', $reason);
-    
+
     if ($notify_user) {
       MyURYEmail::sendEmailToUserSet($this->getShow()->getCreditObjects(),
               $this->getMeta('title') . ' Application Rejected',
@@ -265,12 +265,12 @@ Your application for a season of a show was rejected by our programming team, fo
 $reason
 
 You can reapply online at any time, or for more information, email pc@ury.org.uk.
-              
+
 ~ URY Scheduling Legume
 EOT
       );
     }
-    
+
     self::$db->query('COMMIT');
   }
 
@@ -282,26 +282,26 @@ EOT
       return $this->getShow()->getMeta($meta_string);
     }
   }
-  
+
   /**
    * Alias for getCredits($this->getShow()), which enables credits to be
    * automatically inherited from the show.
-   * 
+   *
    * @return Array[]
    */
   public function getCredits() {
     return parent::getCredits($this->getShow());
   }
-  
+
   /**
    * Sets a metadata key to the specified value.
-   * 
+   *
    * If any value is the same as an existing one, no action will be taken.
    * If the given key has is_multiple, then the value will be added as a new, additional key.
    * If the key does not have is_multiple, then any existing values will have effective_to
    * set to the effective_from of this value, effectively replacing the existing value.
    * This will *not* unset is_multiple values that are not in the new set.
-   * 
+   *
    * @param String $string_key The metadata key
    * @param mixed $value The metadata value. If key is_multiple and value is an array, will create instance
    * for value in the array.
@@ -321,7 +321,7 @@ EOT
   }
 
   /**
-   * 
+   *
    * @return MyURY_Show
    */
   public function getShow() {
@@ -464,7 +464,7 @@ EOT
    * If time = -1, this is the start time to schedule for
    * timecustom_etime: Ignored if time is >-1
    * If time = -1, this is the *duration* to schedule for (not end time)
-   * 
+   *
    * @todo Validate timeslots are available before scheduling
    * @todo Email the user notifying them of scheduling
    * @todo Verify the timeslot is free before scheduling
@@ -520,7 +520,7 @@ EOT
         $day_start = $start_day + (($i - 1) * 7 * 86400);
         $show_time = date('d-m-Y ', $day_start) . $start_time;
         echo $show_time . '<br>';
-        
+
         /**
          * @todo 1 is subtracted from the duration in the conflict checker here,
          * as shows last precisely an hour, not 59m59s. Should we do something
@@ -535,7 +535,7 @@ EOT
           throw new MyURYException('A show is already scheduled for this time: '.print_r($conflict, true));
           exit;
         }*/
-        
+
         //This week is due to be scheduled! QUERY! QUERY!
         self::$db->query('INSERT INTO schedule.show_season_timeslot
           (show_season_id, start_time, duration, memberid, approvedid)
@@ -555,13 +555,13 @@ EOT
     //Email the user
     $message = <<<EOT
 Hello,
-  
+
   Please note that one of your shows has been allocated the following timeslots on the URY Schedule:
-  
+
 $times
-    
+
   Remember that except in exceptional circumstances, you must give at least 48 hours notice for cancelling your show as part of your presenter contract. If you do not do this for two shows in one season, all other shows are forfeit and may be cancelled.
-  
+
   If you have any questions about your application, direct them to pc@ury.org.uk
 
   ~ URY Scheduling Legume
@@ -623,7 +623,7 @@ EOT;
     return self::$db->fetch_all('SELECT show_season_timeslot_id, start_time, duration FROM schedule.show_season_timeslot
       WHERE show_season_id=$1 AND start_time >= NOW()', array($this->getID()));
   }
-  
+
   /**
    * Returns all Timeslots for this Season
    * @return MyURY_Timeslot[]
@@ -631,11 +631,11 @@ EOT;
   public function getAllTimeslots() {
     return $this->timeslots;
   }
-  
+
   /**
    * Returns the percentage of Timeslots in this Season that at least one User
    * has signed into.
-   * 
+   *
    * @return [float, int]
    */
   public function getAttendanceInfo() {
@@ -653,11 +653,11 @@ EOT;
         }
       }
     }
-    
+
     if ($total === 0) {
       return [100, 0];
     }
-    
+
     return [($signed_in/$total)*100, $total-$signed_in];
   }
 
