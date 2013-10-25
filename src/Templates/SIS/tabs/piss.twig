@@ -1,3 +1,4 @@
 <div id="piss">
-	{{ dump (plugin.vars.piss) }}
+	{{piss.content | raw}}
+    <footer><author>{{piss.author}}</author> on {{piss.posted}}</footer>
 </div>
