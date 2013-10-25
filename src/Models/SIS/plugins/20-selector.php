@@ -8,7 +8,7 @@
  */
 
 $lastmod = time();
-$status = '3002';
+$status = MyURY_Selector::query();
 $power = (int)$status[3];
 
 $vars = array(
