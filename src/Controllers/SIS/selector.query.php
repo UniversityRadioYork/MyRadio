@@ -6,7 +6,9 @@ if ($lastmod <= $lastmoduser) {
   return;
 }
 
-$status = MyURY_Selector::query();
+$sel = new MyURY_Selector();
+
+$status = $sel->query();
 $onair = (int) $status[0][0];
 $locked = (int) $status[0][1];
 $power = (int) $status[0][3];

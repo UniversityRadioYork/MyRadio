@@ -7,8 +7,10 @@
  * @package MyURY_SIS
  */
 
+$sel = new MyURY_Selector();
+
 $lastmod = time();
-$status = MyURY_Selector::query();
+$status = $sel->query();
 $power = (int)$status[3];
 
 $vars = array(
