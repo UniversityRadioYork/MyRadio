@@ -2,11 +2,10 @@
 $sel = new MyURY_Selector();
 
 $status = $sel->query();
-$onair = (int) $status[0];
-$locked = (int) $status[1];
-$power = (int) $status[3];
+
+$power = $status['power'];
 $s1power = ($power & 1);
 $s2power = ($power & 2) >> 1;
-var_dump($status);
-print "$lastmod $s1power $s2power $onair $locked";
+
+print "$lastmod $s1power $s2power $status['studio'] $status['lock']";
 return;
