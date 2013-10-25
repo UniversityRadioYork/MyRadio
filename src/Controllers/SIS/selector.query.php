@@ -1,11 +1,4 @@
 <?php
-$lastmoduser = (isset($_REQUEST['lastchange'])) ? (int) $_REQUEST['lastchange'] : 0;
-$lastmod = filemtime($selectorStatusFile);
-if ($lastmod <= $lastmoduser) {
-  print "not modified";
-  return;
-}
-
 $sel = new MyURY_Selector();
 
 $status = $sel->query();
