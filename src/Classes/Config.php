@@ -359,6 +359,8 @@ final class Config {
    * @var String
    */
   public static $bra_uri = 'https://urybsod.york.ac.uk/bra';
+  public static $bra_user = '';
+  public static $bra_pass = '';
   
   /**
    * Relative path to the API. Must have trailing /
@@ -448,7 +450,9 @@ final class Config {
         'default_module' => self::$default_module,
         'default_action' => self::$default_action,
         'webcam_prefix' => self::$webcam_prefix,
-        'bra_uri' => self::$bra_uri
+        'bra_uri' => self::$bra_uri,
+        'bra_user' => self::$bra_user,
+        'bra_pass' => self::$bra_pass
     );
   }
 }

@@ -92,7 +92,7 @@ class MyURY_Selector {
   const ON_S2 = 2;
 
   /**
-   * Bot studios are switched on.
+   * Both studios are switched on.
    */
   const ON_BOTH = 3;
 
@@ -161,8 +161,8 @@ class MyURY_Selector {
 
       $this->sel_status = [
           'studio' => (int)$state[0],
-          'selectedfrom' => (int)$state[1],
-          'lock' => (int)$state[2],
+          'lock' => (int)$state[1],
+          'selectedfrom' => (int)$state[2],
           'power' => (int)$state[3]
       ];
     }

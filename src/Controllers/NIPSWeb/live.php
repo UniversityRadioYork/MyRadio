@@ -18,6 +18,6 @@ $reslists = CoreUtils::dataSourceParser(array(
 
 CoreUtils::getTemplateObject()->setTemplate($template)
         ->addVariable('title', $title)
-        ->addVariable('tracks', (new BRA_Utils())->getAllChannelInfo())
+        ->addVariable('tracks', [])//(new BRA_Utils())->getAllChannelInfo())
         ->addVariable('reslists', $reslists)
         ->render();

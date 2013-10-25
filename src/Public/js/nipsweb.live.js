@@ -12,6 +12,8 @@ window.NIPSWeb = {
    */
   writable: false,
   server: mConfig.bra_uri,
+  user: mConfig.bra_user,
+  pass: mConfig.bra_pass,
   audioNodes: [],
   /**
    * @todo Rewrite for BRA
@@ -21,158 +23,6 @@ window.NIPSWeb = {
    */
   calcChanges: function(e, ui) {
     return;
-    NIPSWeb.changeQueue.queue(function(next) {
-      /**
-       * Update the position of the item to its new values. If it doesn't have them, set them.
-       */
-      var oldChannel = ui.item.attr('channel');
-      var oldWeight = ui.item.attr('weight');
-      ui.item.attr('channel', ui.item.parent().attr('channel') === 'res' ? 'res' : ui.item.parent().attr('channel') - 1);
-      ui.item.attr('weight', ui.item.index());
-
-      if (oldChannel !== ui.item.attr('channel') || oldWeight !== ui.item.attr('weight')) {
-        /**
-         * This item definitely isn't where it was before. Notify the server of the potential actions.
-         */
-        var ops = [];
-        var addOp = false;
-        if (oldChannel === 'res' && ui.item.attr('channel') !== 'res') {
-          addOp = true;
-          /**
-           * This item has just been added to the show plan. Send the server a AddItem operation.
-           * This operation will also send a number of MoveItem notifications - one for each item below this one in the
-           * channel, as their weights have now been increased to accomodate the new item.
-           * It will return a timeslotitemid from the server which then gets attached to the item.
-           */
-          var current = ui.item;
-          while (current.next().length === 1) {
-            current = current.next();
-            current.attr('weight', parseInt(current.attr('weight')) + 1);
-            ops.push({
-              op: 'MoveItem',
-              timeslotitemid: parseInt(current.attr('timeslotitemid')),
-              oldchannel: parseInt(current.attr('channel')),
-              oldweight: parseInt(current.attr('weight')) - 1,
-              channel: parseInt(current.attr('channel')),
-              weight: parseInt(current.attr('weight'))
-            });
-          }
-
-          //Push the actual Add Operation
-          // This is after the moves to ensure there aren't two items of the same weight
-          ops.push({
-            op: 'AddItem',
-            id: ui.item.attr('id'),
-            channel: parseInt(ui.item.attr('channel')),
-            weight: parseInt(ui.item.attr('weight'))
-          });
-          ui.item.attr('timeslotitemid', 'findme');
-        } else if (ui.item.attr('channel') === 'res') {
-          /**
-           * This item has just been removed from the Show Plan. Send the server a RemoveItem operation.
-           * This operation will also send a number of MoveItem notifications - one for each item below this one in the
-           * channel, as their weights have now been decreased to accomodate the removed item.
-           */
-          $('ul.baps-channel li[channel=' + oldChannel + ']').each(function() {
-            if (oldWeight - $(this).attr('weight') < 0) {
-              $(this).attr('weight', parseInt($(this).attr('weight')) - 1);
-              ops.push({
-                op: 'MoveItem',
-                timeslotitemid: parseInt($(this).attr('timeslotitemid')),
-                oldchannel: parseInt($(this).attr('channel')),
-                oldweight: parseInt($(this).attr('weight')) + 1,
-                channel: parseInt($(this).attr('channel')),
-                weight: parseInt($(this).attr('weight'))
-              });
-            }
-          });
-
-          //Push the actual Remove Operation
-          // This is after the moves to ensure there aren't two items of the same weight
-          ops.push({
-            op: 'RemoveItem',
-            timeslotitemid: parseInt(ui.item.attr('timeslotitemid')),
-            channel: parseInt(oldChannel),
-            weight: parseInt(oldWeight)
-          });
-
-          ui.item.attr('timeslotitemid', null);
-        } else {
-          /**
-           * This item has just been moved from one position to another.
-           * This involves a large number of MoveItem ops being sent to the server:
-           * - Each item below its previous location must have a MoveItem to decrement the weight
-           * - Each item below its new location must have a MoveItem to increment the weight
-           * - The item must have its channel/weight setting updated for its new location
-           */
-          var inc = new Array();
-          var dec = new Array();
-
-          $('ul.baps-channel li[channel=' + oldChannel + ']').each(function() {
-            if (oldWeight - $(this).attr('weight') < 0
-                    && $(this).attr('timeslotitemid') !== ui.item.attr('timeslotitemid')) {
-              dec.push($(this).attr('timeslotitemid'));
-              $(this).attr('weight', parseInt($(this).attr('weight')) - 1);
-            }
-          });
-
-          var current = ui.item;
-          while (current.next().length === 1) {
-            current = current.next();
-            var pos = $.inArray(current.attr('timeslotitemid'), dec);
-            //This is actually a no-op move.
-            if (pos >= 0) {
-              $('ui.baps-channel li[timeslotitemid=' + dec[pos] + ']').attr('weight',
-                      parseInt($('ui.baps-channel li[timeslotitemid=' + dec[pos] + ']')) + 1)
-              dec[pos] = null;
-            } else {
-              inc.push(current.attr('timeslotitemid'));
-              current.attr('weight', parseInt(current.attr('weight')) + 1);
-            }
-          }
-
-          for (i in inc) {
-            var obj = $('ul.baps-channel li[timeslotitemid=' + inc[i] + ']');
-            ops.push({
-              op: 'MoveItem',
-              timeslotitemid: parseInt(inc[i]),
-              oldchannel: parseInt(obj.attr('channel')),
-              oldweight: parseInt(obj.attr('weight')) - 1,
-              channel: parseInt(obj.attr('channel')),
-              weight: parseInt(obj.attr('weight'))
-            });
-          }
-
-          for (i in dec) {
-            if (dec[i] === null)
-              continue;
-            var obj = $('ul.baps-channel li[timeslotitemid=' + dec[i] + ']');
-            ops.push({
-              op: 'MoveItem',
-              timeslotitemid: parseInt(dec[i]),
-              oldchannel: parseInt(obj.attr('channel')),
-              oldweight: parseInt(obj.attr('weight')) + 1,
-              channel: parseInt(obj.attr('channel')),
-              weight: parseInt(obj.attr('weight'))
-            });
-          }
-
-          ops.push({
-            op: 'MoveItem',
-            timeslotitemid: parseInt(ui.item.attr('timeslotitemid')),
-            oldchannel: parseInt(oldChannel),
-            oldweight: parseInt(oldWeight),
-            channel: parseInt(ui.item.attr('channel')),
-            weight: parseInt(ui.item.attr('weight'))
-          });
-        }
-        /**
-         * The important bit - ship the change operations over to the server to update the remote datastructure,
-         * the change log, and to propogate the changes to any other clients that may be active.
-         */
-        NIPSWeb.shipChanges(ops, addOp, next);
-      }
-    });
   },
   /**
    * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
@@ -183,39 +33,31 @@ window.NIPSWeb = {
    */
   shipChanges: function(ops, addOp, pNext) {
     return;
-    if (typeof addOp === 'undefined')
-      addOp = false;
-
-    NIPSWeb.ajaxQueue.queue(function(next) {
-      $('#notice').show();
-      $.ajax({
-        async: !addOp,
-        cache: false,
-        success: function(data) {
-          $('#notice').hide();
-          for (i in data) {
-            if (i === 'myury_errors')
-              continue;
-            if (typeof data[i].timeslotitemid !== 'undefined') {
-              //@todo multiple AddItem ops in a jsonon set will make this break
-              $('ul.baps-channel li[timeslotitemid="findme"]').attr('timeslotitemid', data[i].timeslotitemid);
-            }
-            if (!data[i].status && !window.debug) {
-              window.location.reload();
-            }
-          }
-        },
-        complete: function() {
-          next();
-          if (typeof pNext !== 'undefined')
-            pNext();
-        },
-        data: {clientid: NIPSWeb.clientid, ops: ops},
-        dataType: 'json',
-        type: 'POST',
-        url: myury.makeURL('NIPSWeb', 'recv_ops')
-      });
-    });
+  },
+  /**
+   * Initialises with latest data from BRA
+   */
+  initData: function() {
+    options = NIPSWeb.baseReq('channels');
+    options.success = function(data) {
+      console.log(data);
+    };
+    $.ajax(options);
+  },
+  baseReq: function(command) {
+    return {
+      url: NIPSWeb.server+'/'+command,
+      accept: 'application/json',
+      beforeSend: function(request) {
+        b64 = window.btoa(NIPSWeb.user+':'+NIPSWeb.pass);
+        request.withCredentials = true;
+        request.setRequestHeader("Authorization", "Basic "+b64);
+      },
+      cache: false,
+      dataType: 'json',
+      password: NIPSWeb.pass,
+      username: NIPSWeb.user
+    };
   }
 };
 
