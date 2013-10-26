@@ -10,7 +10,8 @@
 $vars = array(
 	'webcam_prefix' => Config::$webcam_prefix,
 	'cameras' => array('jukebox.jpg', 'studio1', 'studio2', null, 'office', 's1-fos'),
-	'current' => '//ury.york.ac.uk/webcam/jukebox.jpg'
+	'current' => '//ury.org.uk/webcam/jukebox.jpg',
+	'streams' => MyURY_Webcam::getStreams()
 	);
 
 $moduleInfo = array(
