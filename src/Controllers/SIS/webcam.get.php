@@ -33,4 +33,4 @@ $data = array(
   'webcam' => $location
   );
 
-require require 'Views/MyURY/datatojson.php';
+require 'Views/MyURY/datatojson.php';
