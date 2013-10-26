@@ -52,7 +52,7 @@
       <figcaption>Live</figcaption>
     </figure>
 
-  {% for stream in plugin.vars.streams %}
+  {% for stream in plugin.vars.streams if stream.streamid in 2..4 %}
     <figure class="webcam-stream-container" id="webcam-stream-{{stream.streamid}}">
       <img src="{{stream.liveurl}}" class="webcam-stream" width="70px">
       <figcaption>{{stream.streamname}}</figcaption>
