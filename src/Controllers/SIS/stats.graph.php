@@ -28,10 +28,10 @@ $image = imagecreatetruecolor($imagewidth, $imageheight);
 $black = imagecolorallocate($image, 0, 0, 0);
 imagecolortransparent($image, $black);
 
-$coltext = imagecolorallocate($image, 0x00, 0x00, 0x00);
+$coltext = imagecolorallocate($image, 0xFF, 0xFF, 0xFF);
 $coledge = imagecolorallocate($image, 0xDD, 0xDD, 0xDD);
 $colfill = imagecolorallocate($image, 0x36, 0x3D, 0x5F);
-//$colstrm = imagecolorallocate($image, 0xFF, 0x99, 0x33);
+$colstrm = imagecolorallocate($image, 0xFF, 0x99, 0x33);
 
 imageline($image, $left, $padding, $left, $imageheight - 2 * $padding, $coledge);
 imagestring($image, 4, 5, $padding - 5, $max, $coltext);
@@ -63,7 +63,7 @@ imagestring($image, 2, $maxleft - 14, $maxheight - 5, date("H:i", (int) $maxdate
 imageline($image, $maxleft, $padding, $maxleft, $maxheight + $padding, $coledge);
 imagestring($image, 2, $imagewidth - 2 * $padding + 4, (($maxheight * ($max - (int) $f[count($f) - 1][1])) / $max) - 5 + $padding, $f[count($f) - 1][1], $coltext);
 
-//imagestring($image, 2, $padding*2+40, $maxheight+$padding, $fname, $colstrm);
+imagestring($image, 2, $padding*2+40, $maxheight+$padding, $fname, $colstrm);
 
 header('Content-type: image/png');
 imagepng($image);
