@@ -1,7 +1,7 @@
 <script type="text/javascript">
     var wcbase = '{{ plugin.vars.webcam_prefix }}';
     var wcurls = {{ cameras|json_encode() }};
-    var wcCurrentStudio = '{{ plugin.vars.current }}';
+    var wcCurrent = '{{ plugin.vars.current }}';
         			
     $(document).ready(function(){
       var wcid; //Yay scope.
@@ -9,7 +9,7 @@
         $('button#setactive'+wcid).attr('wcid',wcid).click(function(){setCam(this);});
         console.log('Enabling Webcam Selector Option '+wcid);
       }
-      $('button#setactive'+wcCurrentStudio).button("disable");
+      $('button#setactive'+wcCurrent).button("disable");
       setInterval('updateCurrentWebcam()', 2600);
         
       $('button#setactive6').click(function(){$('div#customcam').toggle('blind',200);});
@@ -17,7 +17,7 @@
     });
     function setCam(element) {
       var newcam = $(element).attr('wcid');
-      if (newcam == wcCurrentStudio) {
+      if (newcam == wcCurrent) {
         console.log('Ignoring setCam - Already current webcam.');
         return;
       }
@@ -30,24 +30,24 @@
       $.get(myury.makeURL('SIS', 'webcam.get'), function(data) {
         if (data == 'error') return;
         data = data.split("\t");
-        if (wcCurrentStudio != data[0]) {
-          wcCurrentStudio = data[0];
+        if (wcCurrent != data[0]) {
+          wcCurrent = data[0];
           $('button[id^=setactive]:not([id=setactive'+wcCurrentStudio+'])').button("enable");
           $('button#setactive'+wcCurrentStudio).button("disable");
         }
               
         //Only show side images for not-active cameras, or all for jukebox
         if (wcCurrentStudio === 0) {
-          $('#plugin_body_webcam img').show();
+          $('#plugin_body_webcam figure').show();
         } else {
-          $('#plugin_body_webcam img').hide();
-          $('#plugin_body_webcam img:not(#wc'+wcCurrentStudio+')').show();
+          $('#plugin_body_webcam figure').hide();
+          $('#plugin_body_webcam figure:not(#webcam-stream-'+wcCurrent+')').show();
         }
       });
     }
   </script>
 
-  <figure class="webcam-stream-container" id="webcam-stream-{{stream.streamid}}">
+  <figure class="webcam-stream-container live" id="webcam-stream-live">
       <img src="{{ plugin.vars.webcam_prefix }}current" class="webcam-stream" width="150px" id="wccurrent" alt="current webcam">
       <figcaption>Live</figcaption>
     </figure>
@@ -59,10 +59,10 @@
     </figure>
   {% endfor %}
   Activate:
-  <button id="setactive1" class="btn">S1</button>
-  <button id="setactive2" class="btn">S2</button>
-  <button id="setactive5" class="btn">FC</button>
-  <button id="setactive0" class="btn">JB</button>
+  <button id="setactive2" class="btn">S1</button>
+  <button id="setactive3" class="btn">FC</button>
+  <button id="setactive4" class="btn">S2</button>
+  <button id="setactive1" class="btn">JB</button>
 
   <!--<button id="setactive6" class="btn">Custom</button>
   <div style="margin-top: .5em;" class="invisible" id="customcam">
