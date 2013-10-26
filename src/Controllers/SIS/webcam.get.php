@@ -1,5 +1,6 @@
 <?php
 
+// @todo: remove the need for this function after migration to sis4 by makeig camserver use streamids
 function cam_to_stream($id) {
 	switch ($id) {
 		case '0': return 1;
