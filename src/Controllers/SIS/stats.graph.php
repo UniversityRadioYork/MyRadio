@@ -20,9 +20,17 @@ $left = $imagewidth - ($barwidth * (count($f) - 1)) - 2 * $padding;
 //print $left;
 
 $image = imagecreatetruecolor($imagewidth, $imageheight);
-$coltext = imagecolorallocate($image, 0xFF, 0xFF, 0xFF);
-$coledge = imagecolorallocate($image, 0x90, 0x28, 0x28);
-$colfill = imagecolorallocate($image, 0x66, 0x33, 0x33);
+
+// Turn off alpha blending and set alpha flag
+//imagealphablending($image, false);
+//imagesavealpha($image, true);
+
+$black = imagecolorallocate($image, 0, 0, 0);
+imagecolortransparent($image, $black);
+
+$coltext = imagecolorallocate($image, 0x00, 0x00, 0x00);
+$coledge = imagecolorallocate($image, 0xDD, 0xDD, 0xDD);
+$colfill = imagecolorallocate($image, 0x36, 0x3D, 0x5F);
 //$colstrm = imagecolorallocate($image, 0xFF, 0x99, 0x33);
 
 imageline($image, $left, $padding, $left, $imageheight - 2 * $padding, $coledge);
