@@ -2,7 +2,7 @@
     $(document).ready(function() { setInterval('updateStats()', 20000); });
     function updateStats() {
       if (!$('div#plugin_body_stats').is(':visible')) return;
-      $('img#urystats').attr('src', myury.makeURL('SIS','graph',{'date':(new Date().valueOf())}));
+      $('img#urystats').attr('src', myury.makeURL('SIS','stats.graph',{'date':(new Date().valueOf())}));
     }
 </script>
 
