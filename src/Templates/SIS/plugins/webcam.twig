@@ -47,12 +47,17 @@
     }
   </script>
 
-  <div style="float:left; margin-left: 10px;">
-    <img style="width:150px;" id="wccurrent" alt="current webcam" src="{{ plugin.vars.webcam_prefix }}current"><br>
-  </div>
-  <img style="width:70px;" id="wc1" alt="Studio 1 Webcam" src="{{ plugin.vars.webcam_prefix }}{{ cameras[1] }}">
-  <img style="width:70px;" id="wc5" alt="Studio 1 Alternate Webcam" src="{{ plugin.vars.webcam_prefix }}{{ cameras[5] }}">
-  <img style="width:70px;" id="wc2" alt="Studio 2 Webcam" src="{{ plugin.vars.webcam_prefix }}{{ cameras[2] }}"><br style="clear:left;">
+  <figure class="webcam-stream-container" id="webcam-stream-{{stream.streamid}}">
+      <img src="{{ plugin.vars.webcam_prefix }}current" class="webcam-stream" width="150px" id="wccurrent" alt="current webcam">
+      <figcaption>Live</figcaption>
+    </figure>
+
+  {% for stream in plugin.vars.streams %}
+    <figure class="webcam-stream-container" id="webcam-stream-{{stream.streamid}}">
+      <img src="{{stream.liveurl}}" class="webcam-stream" width="70px">
+      <figcaption>{{stream.streamname}}</figcaption>
+    </figure>
+  {% endfor %}
   Activate:
   <button id="setactive1" class="btn">S1</button>
   <button id="setactive2" class="btn">S2</button>
