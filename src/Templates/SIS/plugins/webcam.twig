@@ -1,6 +1,6 @@
 <script type="text/javascript">
     var wcbase = '{{ plugin.vars.webcam_prefix }}';
-    var wcurls = {{ plugin.vars.cameras|json_encode() }};
+    var wcurls = {{ plugin.vars.cameras|json_encode()|raw }};
     var wcCurrentCam = '{{ plugin.vars.current }}';
         			
     $(document).ready(function(){
