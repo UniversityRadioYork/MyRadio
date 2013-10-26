@@ -1,6 +1,6 @@
 <?php
 error_reporting(0);
-$fname = (isset($_REQUEST['f'])) ? $_REQUEST['f'] : '/var/www/sis2/streamstats-ury.txt';
+$fname = (isset($_REQUEST['f'])) ? $_REQUEST['f'] : 'https://ury.org.uk/sis2/streamstats-ury.txt';
 $f = file($fname);
 
 $max = 0;
