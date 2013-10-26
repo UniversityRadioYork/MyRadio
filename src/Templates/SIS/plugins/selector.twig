@@ -69,10 +69,10 @@
       }
     				
       switch(data['studio']) {
-        case '1':
-        case '2': s = 'Studio '+data['studio']+' On Air'; break;
-        case '3': s = 'Jukebox On Air'; break;
-        case '4': s = 'Outside Broadcast On Air'; break;
+        case 1:
+        case 2: s = 'Studio '+data['studio']+' On Air'; break;
+        case 3: s = 'Jukebox On Air'; break;
+        case 4: s = 'Outside Broadcast On Air'; break;
         default:  s = 'Source '+data['studio']+' On Air'; break;
       }
       if (data['lock'] != '0') s = s + '<small> &mdash; Locked</small>';
