@@ -307,16 +307,20 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
       if (empty($next)) {
         //There's currently not a show on, and there never will be.
         $response = [
-            'current' => ['title' => 'URY Jukebox', 'desc' => 'Non-stop Music']
+            'current' => ['title' => 'URY Jukebox', 
+                          'desc' => 'Non-stop Music',
+                          'photo' => 'http://ury.org.uk/media/image_meta/ShowImageMetadata/22.png']
         ];
       } else {
         //There's currently not a show on, but there will be.
         $response = [
             'current' => ['title' => 'URY Jukebox',
                 'desc' => 'Non-stop Music',
+                'photo' => 'http://ury.org.uk/media/image_meta/ShowImageMetadata/22.png',
                 'end_time' => $next->getStartTime()],
             'next' => ['title' => $next->getMeta('title'),
                 'desc' => $next->getMeta('description'),
+                'photo' => $next->getShowPhoto(),
                 'start_time' => $next->getStartTime(),
                 'end_time' => $next->getStartTime() + ($next->getDuration() * 3600),
                 'presenters' => $next->getPresenterString()]
@@ -327,6 +331,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
       $response = ['current' => [
               'title' => $timeslot->getMeta('title'),
               'desc' => $timeslot->getMeta('description'),
+              'photo' => $timeslot->getShowPhoto(),
               'start_time' => $timeslot->getStartTime(),
               'end_time' => $timeslot->getStartTime() + ($timeslot->getDuration() * 3600),
               'presenters' => $timeslot->getPresenterString()
@@ -340,6 +345,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
           //There's not a next show, but there might be one later
           $response['next'][] = ['title' => 'Jukebox',
               'desc' => 'Non-stop Music',
+              'photo' => 'http://ury.org.uk/media/image_meta/ShowImageMetadata/22.png',
               'start_time' => $timeslot->getStartTime() + $timeslot->getDuration(),
               'end_time' => $end
           ];
@@ -348,6 +354,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
           $response['next'][] = [
               'title' => $next->getMeta('title'),
               'descr' => $next->getMeta('description'),
+              'photo' => $next->getShowPhoto(),
               'start_time' => $next->getStartTime(),
               'end_time' => $next->getStartTime() + ($next->getDuration() * 3600),
               'presenters' => $next->getPresenterString()
