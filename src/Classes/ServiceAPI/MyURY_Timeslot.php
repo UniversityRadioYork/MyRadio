@@ -120,6 +120,10 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
     return 'http://ury.org.uk/show/' . $season->getShow()->getID() . '/' . $season->getSeasonNumber() . '/' . $this->getTimeslotNumber();
   }
 
+  public function getPhoto() {
+    return $this->getSeason()->getShow()->getShowPhoto();
+  }
+
   /**
    * Get the Timeslot number - for the first Timeslot of a Season, this is 1, for the second it's 2 etc.
    * @return int
@@ -320,7 +324,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
                 'end_time' => $next->getStartTime()],
             'next' => ['title' => $next->getMeta('title'),
                 'desc' => $next->getMeta('description'),
-                'photo' => $next->getShowPhoto(),
+                'photo' => $next->getPhoto(),
                 'start_time' => $next->getStartTime(),
                 'end_time' => $next->getStartTime() + ($next->getDuration() * 3600),
                 'presenters' => $next->getPresenterString()]
@@ -331,7 +335,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
       $response = ['current' => [
               'title' => $timeslot->getMeta('title'),
               'desc' => $timeslot->getMeta('description'),
-              'photo' => $timeslot->getShowPhoto(),
+              'photo' => $timeslot->getPhoto(),
               'start_time' => $timeslot->getStartTime(),
               'end_time' => $timeslot->getStartTime() + ($timeslot->getDuration() * 3600),
               'presenters' => $timeslot->getPresenterString()
@@ -354,7 +358,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
           $response['next'][] = [
               'title' => $next->getMeta('title'),
               'descr' => $next->getMeta('description'),
-              'photo' => $next->getShowPhoto(),
+              'photo' => $next->getPhoto(),
               'start_time' => $next->getStartTime(),
               'end_time' => $next->getStartTime() + ($next->getDuration() * 3600),
               'presenters' => $next->getPresenterString()
