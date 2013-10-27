@@ -357,7 +357,7 @@ class MyURY_Timeslot extends MyURY_Metadata_Common {
           //There's a next show
           $response['next'][] = [
               'title' => $next->getMeta('title'),
-              'descr' => $next->getMeta('description'),
+              'desc' => $next->getMeta('description'),
               'photo' => $next->getPhoto(),
               'start_time' => $next->getStartTime(),
               'end_time' => $next->getStartTime() + ($next->getDuration() * 3600),
