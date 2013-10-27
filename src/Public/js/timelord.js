@@ -223,6 +223,8 @@ window.timelord = {
         } else if (date.getSeconds() <= 52) {
           timelord.setCurrentShow('<span class="news">Jingle in ' +
                   (52 - date.getSeconds()) + '...</span>');
+        } else {
+          timelord.setCurrentShow('<span class="news">URY News</span>');
         }
       } else if (date.getMinutes() === 0) {
         timelord.setCurrentShow('<span class="news">URY News</span>');
