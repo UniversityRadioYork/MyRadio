@@ -203,6 +203,14 @@ final class Config {
    * @var String
    */
   public static $public_media_uri = '/media';
+  
+  /**
+   * The full web address to the image that will be served for a show if there
+   * is not a photo for that show.
+   * @var String
+   */
+  public static $default_show_uri = '/media/image_meta/ShowImageMetadata/22.png';
+  
   /**
    * The full web address to the image that will be served on a member's profile page if they do not have a profile
    * photo. The original value, /static/img/default_show_player.png is the main website's placeholder for shows
