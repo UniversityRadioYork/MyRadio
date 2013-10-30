@@ -222,7 +222,7 @@ final class Config {
    * The full web address of the image that will be shown for a vacant officer position
    * @var String
    */
-  public static $vacant_officer_uri = '/media/image_meta/MyURYImageMetadata/32.jpeg';
+  public static $vacant_officer_uri = '/media/image_meta/MyRadioImageMetadata/32.jpeg';
   
   /**
    * The file system path to the Central Database. Must be absolute. Can not be smb://, but may be a network share
