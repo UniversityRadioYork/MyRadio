@@ -31,8 +31,7 @@
 				</ul>
 				{% for tab in tabs %}
 					<div id="tabs-{{ loop.index }}" style="margin-top: .5em;">
-						{{ tab.template }}
-	                    {# {% include tab.template %} #}
+	                    {% include tab.template %}
 	                </div>
 				{% endfor %}
 			</div>

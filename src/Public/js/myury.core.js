@@ -22,7 +22,7 @@ $(document).ajaxError(function(e, xhr, settings, error) {
       },
       Report: function() {
         $(".ui-dialog-buttonpane button:contains('Report') span").text("Reporting...").addClass('ui-state-disabled');
-        $.post(myury.makeURL('MyURY', 'errorReport'), JSON.stringify({xhr: xhr, settings: settings, error: error}), function() {
+        $.post(myury.makeURL('MyRadio', 'errorReport'), JSON.stringify({xhr: xhr, settings: settings, error: error}), function() {
           $('#error-dialog').dialog("close");
         });
       }
@@ -49,7 +49,7 @@ $(document).ajaxSuccess(function(e, xhr, settings) {
         },
         Report: function() {
           $(".ui-dialog-buttonpane button:contains('Report') span").text("Reporting...").addClass('ui-state-disabled');
-          $.post(myury.makeURL('MyURY', 'errorReport'), JSON.stringify({xhr: xhr, settings: settings, error: data.myury_errors}), function() {
+          $.post(myury.makeURL('MyRadio', 'errorReport'), JSON.stringify({xhr: xhr, settings: settings, error: data.myury_errors}), function() {
             $('#error-dialog').dialog("close");
           });
         }

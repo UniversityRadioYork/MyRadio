@@ -4,9 +4,9 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 18042013
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
-$data = MyURY_Track::identifyAndStoreTrack($_REQUEST['fileid'], $_REQUEST['title'], $_REQUEST['artist']);
+$data = MyRadio_Track::identifyAndStoreTrack($_REQUEST['fileid'], $_REQUEST['title'], $_REQUEST['artist']);
 $data['fileid'] = $_REQUEST['fileid'];
 
-require 'Views/MyURY/datatojson.php';
+require 'Views/MyRadio/datatojson.php';

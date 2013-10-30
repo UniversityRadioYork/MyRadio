@@ -4,11 +4,11 @@
  * 
  * @author Andy Durant <lpw@ury.org.uk>
  * @version 20130508
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
 
  $playlistid = str_replace('auto-','',$_REQUEST['playlistid']);
 
  $data = NIPSWeb_AutoPlaylist::getInstance($playlistid)->getTracks();
 
-require 'Views/MyURY/datatojson.php';
+require 'Views/MyRadio/datatojson.php';

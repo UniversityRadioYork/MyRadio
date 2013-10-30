@@ -1,12 +1,12 @@
 <?php
 
 /**
- * This MyURY Extension exposes some of MyURY's internal classes as a REST API.
+ * This MyRadio Extension exposes some of MyRadio's internal classes as a REST API.
  * It aims to be compatible with https://developers.helloreverb.com/swagger/
  * 
  * @todo Management interfaces to configure keys and expose methods
  */
-// Configure MyURY & Set API Settings
+// Configure MyRadio & Set API Settings
 define('SILENT_EXCEPTIONS', true);
 
 require_once __DIR__ . '/../Controllers/cli_common.php';
@@ -25,7 +25,7 @@ function api_error($code, $message = null) {
       "message" => $message
   ]);
   //Log an API failure so it appears in the status graphs.
-  throw new MyURYException('API Error: ' . $message .
+  throw new MyRadioException('API Error: ' . $message .
   "\nSource: " . $_SERVER['REMOTE_ADDR'], $code);
 }
 
@@ -60,12 +60,12 @@ if (empty($_REQUEST['api_key'])) {
     api_error(401, 'An API Key must be provided.');
   }
 }
-$api_key = MyURY_APIKey::getInstance($_REQUEST['api_key']);
+$api_key = MyRadio_APIKey::getInstance($_REQUEST['api_key']);
 
 /**
  * Available API Classes
  */
-$classes = MyURY_Swagger::getApiClasses();
+$classes = MyRadio_Swagger::getApiClasses();
 if (!isset($classes[$class])) {
   api_error(404);
 }
@@ -124,7 +124,7 @@ if (!$api_key->canCall($classes[$class], $method)) {
         try {
           $hint = $param->getClass()->getName();
           $args[$param->getName()] = $hint::getInstance($_REQUEST[$param->getName()]);
-        } catch (MyURYException $ex) {
+        } catch (MyRadioException $ex) {
           api_error(400, 'Parameter ' . $param->getName() . ' got an invalid ID. Must be an ID for ' . $param->getClass() . '.');
         }
       } else {
@@ -158,7 +158,7 @@ if (!$api_key->canCall($classes[$class], $method)) {
      */
     $api_key->logCall(preg_replace('/(.*)\?(.*)/', '$1', str_replace(Config::$api_uri, '', $_SERVER['REQUEST_URI'])), $args);
     $result = $methodReflection->invokeArgs($object, $args);
-  } catch (MyURYException $e) {
+  } catch (MyRadioException $e) {
     api_error($e->getCode(), $e->getMessage());
   }
 

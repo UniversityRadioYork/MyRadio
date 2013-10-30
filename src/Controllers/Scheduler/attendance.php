@@ -5,11 +5,11 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130829
- * @package MyURY_Scheduler
+ * @package MyRadio_Scheduler
  */
 $data = [];
 
-foreach (MyURY_Season::getAllSeasonsInLatestTerm() as $season) {
+foreach (MyRadio_Season::getAllSeasonsInLatestTerm() as $season) {
   $info = $season->getAttendanceInfo();
   $data[] = [
       'title' => $season->getMeta('title'),

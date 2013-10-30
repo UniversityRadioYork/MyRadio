@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file provides the iTones_Playlist class for MyURY - Contains a predefined list of Central tracks
- * @package MyURY_iTones
+ * This file provides the iTones_Playlist class for MyRadio - Contains a predefined list of Central tracks
+ * @package MyRadio_iTones
  */
 
 /**
@@ -10,7 +10,7 @@
  * 
  * @version 20130712
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @package MyURY_iTones
+ * @package MyRadio_iTones
  * @uses \Database
  */
 class iTones_Playlist extends ServiceAPI {
@@ -33,7 +33,7 @@ class iTones_Playlist extends ServiceAPI {
     $this->playlistid = $playlistid;
     $result = self::$db->fetch_one('SELECT * FROM jukebox.playlists WHERE playlistid=$1 LIMIT 1', array($playlistid));
     if (empty($result)) {
-      throw new MyURYException('The specified iTones Playlist does not seem to exist');
+      throw new MyRadioException('The specified iTones Playlist does not seem to exist');
       return;
     }
 
@@ -49,8 +49,8 @@ class iTones_Playlist extends ServiceAPI {
   }
 
   /**
-   * Return the MyURY_Tracks that belong to this playlist
-   * @return Array of MyURY_Track objects
+   * Return the MyRadio_Tracks that belong to this playlist
+   * @return Array of MyRadio_Track objects
    */
   public function getTracks() {
     if (empty($this->tracks)) {
@@ -59,7 +59,7 @@ class iTones_Playlist extends ServiceAPI {
       ORDER BY entryid', array($this->playlistid));
 
       foreach ($items as $id) {
-        $this->tracks[] = MyURY_Track::getInstance($id);
+        $this->tracks[] = MyRadio_Track::getInstance($id);
       }
     }
     return $this->tracks;
@@ -189,11 +189,11 @@ class iTones_Playlist extends ServiceAPI {
    * 
    * Once that's done, go over every Track still in the temporary list and remove them from the Playlist
    * 
-   * @param MyURY_Track[] $tracks Tracks to put in the playlist.
+   * @param MyRadio_Track[] $tracks Tracks to put in the playlist.
    * @param String $lockstr The string that provides Write access to this Playlist. Acquired from acquireLock();
    * @param String $notes Optional. A textual commit message about the change.
    * 
-   * @todo Push these changes to the playlist files on playoutsvc.ury.york.ac.uk. This should probably be a MyURYDaemon
+   * @todo Push these changes to the playlist files on playoutsvc.ury.york.ac.uk. This should probably be a MyRadioDaemon
    * configured to run only on that server.
    */
   public function setTracks($tracks, $lockstr, $notes = null) {
@@ -208,7 +208,7 @@ class iTones_Playlist extends ServiceAPI {
 
     //Okay, it has. They'll need a lock to go any further
     if (!$this->validateLock($lockstr)) {
-      throw new MyURYException('You do not have a valid lock on this playlist.');
+      throw new MyRadioException('You do not have a valid lock on this playlist.');
     }
 
     $new_additions = array();
@@ -274,10 +274,10 @@ class iTones_Playlist extends ServiceAPI {
 
   /**
    * Find out what Playlists have this Track in them, if any
-   * @param MyURY_Track $track The track to search for
+   * @param MyRadio_Track $track The track to search for
    * @return Array One or more iTones_Playlists, each of which contain $track
    */
-  public static function getPlaylistsWithTrack(MyURY_Track $track) {
+  public static function getPlaylistsWithTrack(MyRadio_Track $track) {
     $result = self::$db->fetch_column('SELECT playlistid FROM jukebox.playlist_entries WHERE trackid=$1
       AND revision_removed IS NULL', array($track->getID()));
 

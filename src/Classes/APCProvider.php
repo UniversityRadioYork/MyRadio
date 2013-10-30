@@ -7,13 +7,13 @@
 /**
  * APCProvider provides in-memory caching for PHP resources to increase page load times
  * 
- * APCProvider was the first CacheProvider implementation in MyURY. It enables Models to send cache commands to it
+ * APCProvider was the first CacheProvider implementation in MyRadio. It enables Models to send cache commands to it
  * which are then stored using the APC plugin automatically. In order for this class to work correctly, the server
  * needs the APC PHP plugin installed on the server. It will throw an Exception if it is not.
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130709
- * @package MyURY_Core
+ * @package MyRadio_Core
  */
 class APCProvider implements CacheProvider {
   /**
@@ -32,13 +32,13 @@ class APCProvider implements CacheProvider {
    * Constructs the Unique instance of the CacheProvider for use. Private so that instances cannot be used in ways
    * other than those intended
    * @param boolean $enable Whether caching is actually enabled in this request. Default true
-   * @throws MyURYException Will throw a MyURYException if the APC extension is not loaded
+   * @throws MyRadioException Will throw a MyRadioException if the APC extension is not loaded
    */
   private function __construct($enable = true) {
     $this->enable = $enable;
     if ($enable && !function_exists('apc_store')) {
       //Functions not available. If this is caught upstream, just disable
-      throw new MyURYException('Cache is enabled but selected CacheProvider does not have required prerequisites (Is APC Extension installed and loaded?)');
+      throw new MyRadioException('Cache is enabled but selected CacheProvider does not have required prerequisites (Is APC Extension installed and loaded?)');
       $this->enable = false;
     }
   }
@@ -50,7 +50,7 @@ class APCProvider implements CacheProvider {
    * @param mixed $value The data to store
    * @param int $expires The number of seconds this cache entry is valid for. Default is to last forever (0)
    * @return boolean Whether the operation was successful (returns false if caching disabled)
-   * @assert ('myury_core_test', 'test value', 0) == true
+   * @assert ('myradio_core_test', 'test value', 0) == true
    */
   public function set($key, $value, $expires = 0) {
     if (!$this->enable) return false;
@@ -62,7 +62,7 @@ class APCProvider implements CacheProvider {
    * 
    * @param String $key The unique name of the object to fetch
    * @return mixed The value of the store, or false on failure
-   * @assert ('myury_core_test') == 'test value'
+   * @assert ('myradio_core_test') == 'test value'
    */
   public function get($key) {
     if (!$this->enable) return false;
@@ -74,7 +74,7 @@ class APCProvider implements CacheProvider {
    * 
    * @param String $key The unique name of the object to delete
    * @return boolean Returns whether the operaion was a success
-   * @assert ('myury_core_test') == true
+   * @assert ('myradio_core_test') == true
    */
   public function delete($key) {
     if (!$this->enable) return false;
@@ -105,14 +105,14 @@ class APCProvider implements CacheProvider {
   
   /**
    * Prevent copies being unintentionally made
-   * @throws MyURYException
+   * @throws MyRadioException
    */
   public function __clone() {
-    throw new MyURYException('Attempted to clone a singleton');
+    throw new MyRadioException('Attempted to clone a singleton');
   }
   
   public function getKeyPrefix() {
-    return 'MyURYCache-';
+    return 'MyRadioCache-';
   }
 }
 

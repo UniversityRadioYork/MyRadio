@@ -1,7 +1,7 @@
 /**
- * The MyURY Standard Form JavaScript Tools
+ * The MyRadio Standard Form JavaScript Tools
  * This file initialises jQuery validation, autocompletes and other resources
- * needed for a MyURY Form
+ * needed for a MyRadio Form
  */
 jQuery.validator.addMethod("dateITA", function(value, element) {
 	var check = false;
@@ -22,7 +22,7 @@ jQuery.validator.addMethod("dateITA", function(value, element) {
 	}
 	return this.optional(element) || check;
 }, "Please enter a valid date.");
-window.MyURYForm = {
+window.MyRadioForm = {
   gCheckedValue: null,
   setUpMemberFields: function() {
     /**
@@ -31,7 +31,7 @@ window.MyURYForm = {
     $('fieldset.myuryfrm input.member-autocomplete').each(function() {
       $(this).autocomplete({
         minLength: 3,
-        source: myury.makeURL('MyURY', 'a-findmember'),
+        source: myury.makeURL('MyRadio', 'a-findmember'),
         select: function(event, ui) {
           $(this).val(ui.item.fname + ' ' + ui.item.sname);
           $('#' + $(this).attr('id').replace(/-ui$/, '')).val(ui.item.memberid);
@@ -52,7 +52,7 @@ window.MyURYForm = {
       console.log(val);
       if (typeof val != 'undefined' && val != '') {
         $.ajax({
-          url: myury.makeURL('MyURY', 'a-membernamefromid'),
+          url: myury.makeURL('MyRadio', 'a-membernamefromid'),
           data: {term: $('#' + $(this).attr('id').replace(/-ui$/, '')).val()},
           context: this,
           success: function(data) {
@@ -70,7 +70,7 @@ window.MyURYForm = {
     $('fieldset.myuryfrm input.track-autocomplete').each(function() {
       $(this).autocomplete({
         minLength: 3,
-        source: myury.makeURL('MyURY', 'a-findtrack'),
+        source: myury.makeURL('MyRadio', 'a-findtrack'),
         select: function(event, ui) {
           $(this).val(ui.item.title);
           $('#' + $(this).attr('id').replace(/-ui$/, '')).val(ui.item.trackid);
@@ -89,7 +89,7 @@ window.MyURYForm = {
       //If there's an existing ID value, load it in
       if ($(this).val() === '' && $('#' + $(this).attr('id').replace(/-ui$/, '')).val() !== '') {
         $.ajax({
-          url: myury.makeURL('MyURY', 'a-findtrack'),
+          url: myury.makeURL('MyRadio', 'a-findtrack'),
           data: {id: $('#' + $(this).attr('id').replace(/-ui$/, '')).val()},
           context: this,
           success: function(data) {
@@ -106,7 +106,7 @@ window.MyURYForm = {
     $('fieldset.myuryfrm input.artist-autocomplete').each(function() {
       $(this).autocomplete({
         minLength: 3,
-        source: myury.makeURL('MyURY', 'a-findartist'),
+        source: myury.makeURL('MyRadio', 'a-findartist'),
         select: function(event, ui) {
           $(this).val(ui.item.title);
           $('#' + $(this).attr('id').replace(/-ui$/, '')).val(ui.item.artistid);
@@ -131,7 +131,7 @@ window.MyURYForm = {
     $('fieldset.myuryfrm input.album-autocomplete').each(function() {
       $(this).autocomplete({
         minLength: 3,
-        source: myury.makeURL('MyURY', 'a-findalbum'),
+        source: myury.makeURL('MyRadio', 'a-findalbum'),
         select: function(event, ui) {
           $(this).val(ui.item.title);
           $('#' + $(this).attr('id').replace(/-ui$/, '')).val(ui.item.recordid);
@@ -151,7 +151,7 @@ window.MyURYForm = {
       //If there's an existing ID value, load it in
       if ($(this).val() === '' && $('#' + $(this).attr('id').replace(/-ui$/, '')).val() !== '') {
         $.ajax({
-          url: myury.makeURL('MyURY', 'a-findalbum'),
+          url: myury.makeURL('MyRadio', 'a-findalbum'),
           data: {id: $('#' + $(this).attr('id').replace(/-ui$/, '')).val()},
           context: this,
           success: function(data) {
@@ -200,7 +200,7 @@ window.MyURYForm = {
     $('table.myuryfrmfield-weeklycheck').disableSelection();
     $.each($('table.myuryfrmfield-weeklycheck td'), function() {
       $(this).on('mousedown', function() {
-        if (MyURYForm.gCheckedValue === null) {
+        if (MyRadioForm.gCheckedValue === null) {
           /**
            * Start a drag selection. Invert the state of the selected checkbox,
            * and set a variable define what other checkboxes selected should be
@@ -209,13 +209,13 @@ window.MyURYForm = {
            */
           var input = $(this).children('input[type=checkbox]').first();
           input.prop('checked', !input.prop('checked'));
-          MyURYForm.gCheckedValue = input.prop('checked');
+          MyRadioForm.gCheckedValue = input.prop('checked');
         }
       }).on('mouseenter', function() {
         //Is there an active dragging event?
-        if (MyURYForm.gCheckedValue === null)
+        if (MyRadioForm.gCheckedValue === null)
           return; //Nope.
-        $(this).children('input[type=checkbox]').prop('checked', MyURYForm.gCheckedValue);
+        $(this).children('input[type=checkbox]').prop('checked', MyRadioForm.gCheckedValue);
       }).on('click', function(e) {
         //Stop the default click handler running - it unselects boxes.
         e.preventDefault();
@@ -225,7 +225,7 @@ window.MyURYForm = {
     //Initialise this to the whole page, otherwise mouseup outside the table makes a mess
     $(document).on('mouseup', function() {
       //End the dragging event
-      MyURYForm.gCheckedValue = null;
+      MyRadioForm.gCheckedValue = null;
     });
   },
   setUpTinyMCEFields: function() {
@@ -276,10 +276,10 @@ window.MyURYForm = {
           return id.replace(/0/, new_id)
         });
       }).end().appendTo('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody');
-      MyURYForm.setUpArtistFields();
-      MyURYForm.setUpMemberFields();
-      MyURYForm.setUpTrackFields();
-      MyURYForm.setUpTimePickers();
+      MyRadioForm.setUpArtistFields();
+      MyRadioForm.setUpMemberFields();
+      MyRadioForm.setUpTrackFields();
+      MyRadioForm.setUpTimePickers();
       $(this).attr('nextvalue', parseInt(new_id) + 1);
     });
     $('button.myuryfrm-remove-row').button({icons: {primary: "ui-icon-trash"}, text: false}).on('click', function() {
@@ -303,7 +303,7 @@ window.MyURYForm = {
       $('form').on('submit', function() {
         $('.myuryfrm-file-upload-progress').progressbar({value: false});
         //Poke the server for upload progress status
-        setInterval(MyURYForm.pollFileProgress, 1000);
+        setInterval(MyRadioForm.pollFileProgress, 1000);
       });
       $('#myuryfrm-file-upload-iframe').on('load', function() {
         //data = $.parseJSON($(this).contents());
@@ -322,27 +322,27 @@ window.MyURYForm = {
      * won't let you start a new XHR once the form is submitted. YAAY iFrames!
      */
     $('#myuryfrm-file-upload-iframe').attr('src',
-            myury.makeURL('MyURY', 'a-getuploadprogress', {
+            myury.makeURL('MyRadio', 'a-getuploadprogress', {
               id: $('#UPLOAD_IDENTIFIER').val(),
               1: (new Date).getTime()
             }));
   },
   init: function() {
-    MyURYForm.setUpRepeatingSets();
-    MyURYForm.setUpTinyMCEFields();
-    MyURYForm.setUpDateTimePickerFields();
-    MyURYForm.setUpDatePickers();
-    MyURYForm.setUpTimePickers();
-    MyURYForm.setUpMemberFields();
-    MyURYForm.setUpTrackFields();
-    MyURYForm.setUpArtistFields();
-    MyURYForm.setUpAlbumFields();
-    MyURYForm.setUpWeekSelectFields();
-    MyURYForm.setUpCheckboxGroups();
-    MyURYForm.setUpFileProgress();
-    MyURYForm.validate();
+    MyRadioForm.setUpRepeatingSets();
+    MyRadioForm.setUpTinyMCEFields();
+    MyRadioForm.setUpDateTimePickerFields();
+    MyRadioForm.setUpDatePickers();
+    MyRadioForm.setUpTimePickers();
+    MyRadioForm.setUpMemberFields();
+    MyRadioForm.setUpTrackFields();
+    MyRadioForm.setUpArtistFields();
+    MyRadioForm.setUpAlbumFields();
+    MyRadioForm.setUpWeekSelectFields();
+    MyRadioForm.setUpCheckboxGroups();
+    MyRadioForm.setUpFileProgress();
+    MyRadioForm.validate();
   }
 };
 $(document).ready(function() {
-  MyURYForm.init();
+  MyRadioForm.init();
 });

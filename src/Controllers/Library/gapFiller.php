@@ -3,14 +3,14 @@
  * Scan music library, filling in blanks or changing default values
  * @author Lloyd Wallis <lpw@ury.york.ac.uk>
  * @version 21042013
- * @package MyURY_Library
+ * @package MyRadio_Library
  */
 
-$albums = MyURY_Album::findByName('URY', 10);
+$albums = MyRadio_Album::findByName(Config::$short_name, 10);
 
 $cacher = APCProvider::getInstance();
 
-$checked = $cacher->get('myuryLibraryGapFillerCheckedTracks');
+$checked = $cacher->get('myradioLibraryGapFillerCheckedTracks');
 if (!is_array($checked)) $checked = array();
 
 $limit = 150;
@@ -28,7 +28,7 @@ foreach ($albums as $album) {
   }
 }
 
-$cacher->set('myuryLibraryGapFillerCheckedTracks', $checked);
+$cacher->set('myradioLibraryGapFillerCheckedTracks', $checked);
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.library.gapfiller')

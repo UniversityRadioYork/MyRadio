@@ -4,7 +4,7 @@
  * 
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130923
- * @package MyURY_SIS
+ * @package MyRadio_SIS
  */
 
 $moduleInfo = array(

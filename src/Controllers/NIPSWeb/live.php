@@ -5,7 +5,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130907
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
 $template = 'NIPSWeb/live.twig';
 $title = 'Broadcasting and Presenting Suite';
@@ -18,6 +18,6 @@ $reslists = CoreUtils::dataSourceParser(array(
 
 CoreUtils::getTemplateObject()->setTemplate($template)
         ->addVariable('title', $title)
-        ->addVariable('tracks', (new BRA_Utils())->getAllChannelInfo())
+        ->addVariable('tracks', [])//(new BRA_Utils())->getAllChannelInfo())
         ->addVariable('reslists', $reslists)
         ->render();

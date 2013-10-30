@@ -4,11 +4,11 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20131014
- * @package MyURY_Profile
+ * @package MyRadio_Profile
  */
 
 $officers = CoreUtils::dataSourceParser(
-        MyURY_TrainingStatus::getInstance(3)->getAwardedTo());
+        MyRadio_TrainingStatus::getInstance(3)->getAwardedTo());
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.datatable.default')
