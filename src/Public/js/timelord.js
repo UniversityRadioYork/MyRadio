@@ -30,7 +30,7 @@ window.timelord = {
     var date = new Date();
     $('#time').html(timelord.pad(date.getHours()) + ':' + timelord.pad(date.getMinutes()) +
             ':' + timelord.pad(date.getSeconds()));
-    $('#date').html(date.getDate() + timelord.getDateSuffix(date.getDate()) + ' ' +
+    $('#date').html(date.getDate() +''+ timelord.getDateSuffix(date.getDate()) + ' ' +
             timelord.months[date.getMonth()] + ' ' + date.getFullYear());
 
     return this;
@@ -57,13 +57,13 @@ window.timelord = {
     day = day.toString();
     day = day.split("");
     var last = day.length - 1;
-    if (day[last] > 3 || day[last] === 0)
+    if (day[last] > 3 || day[last] === '0')
       return 'th';
-    if (day[last] === 1)
+    if (day[last] === '1')
       return 'st';
-    if (day[last] === 2)
+    if (day[last] === '2')
       return 'nd';
-    if (day[last] === 3)
+    if (day[last] === '3')
       return 'rd';
   },
   /**
