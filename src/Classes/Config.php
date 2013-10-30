@@ -1,7 +1,7 @@
 <?php
 /**
- * This file provides the Config class for MyURY
- * @package MyURY_Core
+ * This file provides the Config class for MyRadio
+ * @package MyRadio_Core
  */
 
 /**
@@ -9,21 +9,21 @@
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130711
- * @package MyURY_Core
+ * @package MyRadio_Core
  */
 final class Config {
   /**
-   * The ID of the "MyURY" Service. This *should* be the only Service, and therefore never change.
+   * The ID of the "MyRadio" Service. This *should* be the only Service, and therefore never change.
    * It's technically a remnant of the originally slightly overengineered modularisation structure.
    * @var int
    */
   public static $service_id = 1;
   /**
-   * The Module to assume if one is not explicitly provided. This is usually the MyURY module, but if you're feeling
+   * The Module to assume if one is not explicitly provided. This is usually the MyRadio module, but if you're feeling
    * special, you can make Stats or Library the default...
    * @var String
    */
-  public static $default_module = 'MyURY';
+  public static $default_module = 'MyRadio';
   /**
    * The Action to assume if one is not explicitly provided. This is usually default, but if you're feeling special,
    * you could make it index or home, but it'd break a lot of stuff.
@@ -53,19 +53,19 @@ final class Config {
   public static $timezone       = 'Europe/London';
   
   /**
-   * The base path of the MyURY installation
+   * The base path of the MyRadio installation
    * @var String
    */
   public static $base_path       = '/usr/local/www/myury/src';
 
   /**
-   * The base URL of the MyURY installation
+   * The base URL of the MyRadio installation
    * @var String
    */
   public static $base_url       = '//ury.org.uk/myury/';
   
   /**
-   * The base URL of Shibbobleh - it has CSS and JS resources used by MyURY
+   * The base URL of Shibbobleh - it has CSS and JS resources used by MyRadio
    * @var String
    */
   public static $shib_url       = '//ury.org.uk/portal/';
@@ -86,20 +86,20 @@ final class Config {
    */
   public static $cache_enable   = true;
   /**
-   * The name of the class that will provide the MyURY Caching mechanism.
+   * The name of the class that will provide the MyRadio Caching mechanism.
    * Must be the name of a valid class located in classes/[classname].php and implements CacheProvider
    * @var String
    */
   public static $cache_provider = 'APCProvider';
   /**
-   * How long MyURY_Track items should be cached before the data is invalidated. This is Configurable as due to a lot
+   * How long MyRadio_Track items should be cached before the data is invalidated. This is Configurable as due to a lot
    * of external edit sources, it is reasonable to asssume the cache may become stale due to other systems.
    * @var int
    */
   public static $cache_track_timeout = 7200; //2 hours
   
   /**
-   * Whether MyURY errors should be displayed in the browser. If this is set to false, users with the
+   * Whether MyRadio errors should be displayed in the browser. If this is set to false, users with the
    * AUTH_SHOWERRORS permission will still see errors.
    * Development value: true
    * Production value: false
@@ -108,7 +108,7 @@ final class Config {
   public static $display_errors = false;
   
   /**
-   * Whether MyURY Exceptions should be emailed to Computing
+   * Whether MyRadio Exceptions should be emailed to Computing
    * @var boolean
    */
   public static $email_exceptions = true;
@@ -203,6 +203,14 @@ final class Config {
    * @var String
    */
   public static $public_media_uri = '/media';
+  
+  /**
+   * The full web address to the image that will be served for a show if there
+   * is not a photo for that show.
+   * @var String
+   */
+  public static $default_show_uri = '/media/image_meta/ShowImageMetadata/22.png';
+  
   /**
    * The full web address to the image that will be served on a member's profile page if they do not have a profile
    * photo. The original value, /static/img/default_show_player.png is the main website's placeholder for shows
@@ -214,7 +222,7 @@ final class Config {
    * The full web address of the image that will be shown for a vacant officer position
    * @var String
    */
-  public static $vacant_officer_uri = '/media/image_meta/MyURYImageMetadata/32.jpeg';
+  public static $vacant_officer_uri = '/media/image_meta/MyRadioImageMetadata/32.jpeg';
   
   /**
    * The file system path to the Central Database. Must be absolute. Can not be smb://, but may be a network share
@@ -230,10 +238,10 @@ final class Config {
   public static $music_smb_path = '\\\\musicstore.ury.york.ac.uk';
   
   /**
-   * A path to temporarially store uploaded audio files. Recommend somewhere in /tmp, MyURY needs full r/w access to it.
+   * A path to temporarially store uploaded audio files. Recommend somewhere in /tmp, MyRadio needs full r/w access to it.
    * @var String
    */
-  public static $audio_upload_tmp_dir = '/tmp/myuryaudiouploadcache';
+  public static $audio_upload_tmp_dir = '/tmp/myradioaudiouploadcache';
   
   /**
    * The API key to access last.fm's resources.
@@ -257,7 +265,7 @@ final class Config {
   /**
    * Mailing list to send reporting info to
    * @var String
-   * @todo Make this point to a MyURY_List ID?
+   * @todo Make this point to a MyRadio_List ID?
    */
   public static $reporting_list = 'alerts.myury';
   
@@ -293,15 +301,15 @@ final class Config {
   /**** ERROR REPORTING ****/
   
   /**
-   * The file to store MyURY Error Logs
+   * The file to store MyRadio Error Logs
    * @var String
    */
-  public static $log_file = '/var/log/ury-org-uk/myury_errors.log';
+  public static $log_file = '/var/log/ury-org-uk/myradio_errors.log';
   /**
-   * A lock file on the MyURY Error Logs. Prevents email spam.
+   * A lock file on the MyRadio Error Logs. Prevents email spam.
    * @var String
    */
-  public static $log_file_lock = '/var/log/ury-org-uk/myury_errors.lock';
+  public static $log_file_lock = '/var/log/ury-org-uk/myradio_errors.lock';
   /**
    * The email to send error reports to. This is different from reporting_email, which does statistical reports.
    * @var String
@@ -315,7 +323,7 @@ final class Config {
   public static $playlist_lock_time = 30;
   
   /**
-   * The User that MyURY assumes when doing things as a background task
+   * The User that MyRadio assumes when doing things as a background task
    * @var int Mr Website
    */
   public static $system_user = 779;
@@ -332,11 +340,11 @@ final class Config {
   public static $default_college = 10;
   
   /**
-   * A path to the file system (preferably in /tmp) that the MyURY Daemon tools can have write access to. It stores
+   * A path to the file system (preferably in /tmp) that the MyRadio Daemon tools can have write access to. It stores
    * state information about the service that should not be permanent but presist after a reload of the service.
    * @var String
    */
-  public static $daemon_lock_file = '/tmp/myury_daemon.lock';
+  public static $daemon_lock_file = '/tmp/myradio_daemon.lock';
   
   /**
    * The root URL to URY's API
@@ -359,6 +367,8 @@ final class Config {
    * @var String
    */
   public static $bra_uri = 'https://urybsod.york.ac.uk/bra';
+  public static $bra_user = '';
+  public static $bra_pass = '';
   
   /**
    * Relative path to the API. Must have trailing /
@@ -425,6 +435,10 @@ final class Config {
   public static $d_StatsGen_enabled = true;
   public static $d_Explicit_enabled = false;
   
+  /**** STRINGS ****/
+  public static $short_name = 'URY';
+  public static $long_name = 'University Radio York';
+  
   /**
    * The constructor doesn't do anything practical
    * 
@@ -448,7 +462,9 @@ final class Config {
         'default_module' => self::$default_module,
         'default_action' => self::$default_action,
         'webcam_prefix' => self::$webcam_prefix,
-        'bra_uri' => self::$bra_uri
+        'bra_uri' => self::$bra_uri,
+        'bra_user' => self::$bra_user,
+        'bra_pass' => self::$bra_pass
     );
   }
 }

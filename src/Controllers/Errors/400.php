@@ -4,7 +4,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20131016
- * @package MyURY_Core
+ * @package MyRadio_Core
  */
 
 $twig = CoreUtils::getTemplateObject();

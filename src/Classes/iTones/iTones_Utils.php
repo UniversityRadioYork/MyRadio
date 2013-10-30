@@ -2,7 +2,7 @@
 
 /**
  * This file provides the iTones_Utils class
- * @package MyURY_iTones
+ * @package MyRadio_iTones
  */
 
 /**
@@ -10,7 +10,7 @@
  * 
  * @version 20130710
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @package MyURY_iTones
+ * @package MyRadio_iTones
  * @uses \Database
  */
 class iTones_Utils extends ServiceAPI {
@@ -22,12 +22,12 @@ class iTones_Utils extends ServiceAPI {
 
   /**
    * Push a track into the iTones request queue.
-   * @param MyURY_Track $track
+   * @param MyRadio_Track $track
    * @param $queue The jukebox_[x] queue to push to. Default requests. "main" is the queue used for the main track
    * scheduler, i.e. non-user entries.
    * @return bool Whether the operation was successful
    */
-  public static function requestTrack(MyURY_Track $track, $queue = 'requests') {
+  public static function requestTrack(MyRadio_Track $track, $queue = 'requests') {
     self::verifyQueue($queue);
     $r = self::telnetOp('jukebox_'.$queue.'.push '.$track->getPath());
     return is_numeric($r);
@@ -80,7 +80,7 @@ class iTones_Utils extends ServiceAPI {
    * Check if a track is currently queued to be played in any queue.
    * @return boolean
    */
-  public static function getIfQueued(MyURY_Track $track) {
+  public static function getIfQueued(MyRadio_Track $track) {
     foreach (self::$queues as $queue) {
       $r = self::getTracksInQueue($queue);
       foreach ($r as $req) {
@@ -130,7 +130,7 @@ class iTones_Utils extends ServiceAPI {
   }
   
   private static function verifyQueue($queue) {
-    if (in_array($queue, self::$queues) === false) throw new MyURYException('Invalid Queue!');
+    if (in_array($queue, self::$queues) === false) throw new MyRadioException('Invalid Queue!');
   }
   
   /**

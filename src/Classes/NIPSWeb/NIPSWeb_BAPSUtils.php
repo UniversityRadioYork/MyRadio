@@ -1,8 +1,8 @@
 <?php
 
 /*
- * This file provides the NIPSWeb_BAPSUtils class for MyURY
- * @package MyURY_NIPSWeb
+ * This file provides the NIPSWeb_BAPSUtils class for MyRadio
+ * @package MyRadio_NIPSWeb
  */
 
 /**
@@ -10,11 +10,11 @@
  * 
  * @version 20130508
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
 class NIPSWeb_BAPSUtils extends ServiceAPI {
 
-  public static function getBAPSShowIDFromTimeslot(MyURY_Timeslot $timeslot) {
+  public static function getBAPSShowIDFromTimeslot(MyRadio_Timeslot $timeslot) {
 
     $result = self::$db->fetch_column('SELECT showid FROM baps_show
       WHERE externallinkid=$1 LIMIT 1', array($timeslot->getID()));
@@ -76,7 +76,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
       return $listings;
   }
 
-  public static function saveListingsForTimeslot(MyURY_Timeslot $timeslot) {
+  public static function saveListingsForTimeslot(MyRadio_Timeslot $timeslot) {
     //Get the timeslot's show plan
     $tracks = $timeslot->getShowPlan();
 
@@ -120,7 +120,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI {
                       ), true);
               break;
             default:
-              throw new MyURYException('What do I even with this item?');
+              throw new MyRadioException('What do I even with this item?');
           }
           $position++;
         }

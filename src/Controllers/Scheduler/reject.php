@@ -4,11 +4,11 @@
  * @todo Proper Documentation
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 02012013
- * @package MyURY_Scheduler
+ * @package MyRadio_Scheduler
  */
 
 //Model: The Season to be rejected
-$season = MyURY_Season::getInstance((int)$_REQUEST['show_season_id']);
+$season = MyRadio_Season::getInstance((int)$_REQUEST['show_season_id']);
 //Model: The Form definition
 require 'Models/Scheduler/rejectfrm.php';
 $form->setFieldValue('season_id', $season->getID());

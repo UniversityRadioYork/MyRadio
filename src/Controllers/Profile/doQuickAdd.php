@@ -4,7 +4,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130717
- * @package MyURY_Profile
+ * @package MyRadio_Profile
  */
 $params = User::getQuickAddForm()->readValues();
 $user = User::create($params['fname'], $params['sname'], $params['eduroam'],

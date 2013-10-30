@@ -5,17 +5,17 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 05012013
- * @package MyURY_Scheduler
+ * @package MyRadio_Scheduler
  */
 
-$form = (new MyURYForm('sched_cancel', $module, 'doCancelEpisode',
+$form = (new MyRadioForm('sched_cancel', $module, 'doCancelEpisode',
                 array(
                     'debug' => false,
                     'title' => 'Cancel Episode'
                 )
         ))->addField(
-                new MyURYFormField('reason', MyURYFormField::TYPE_BLOCKTEXT,
+                new MyRadioFormField('reason', MyRadioFormField::TYPE_BLOCKTEXT,
                         array('label' => 'Please explain why this Episode should be removed from the Schedule'))
         )->addField(
-                new MyURYFormField('show_season_timeslot_id', MyURYFormField::TYPE_HIDDEN,
+                new MyRadioFormField('show_season_timeslot_id', MyRadioFormField::TYPE_HIDDEN,
                         array('value' => $_REQUEST['show_season_timeslot_id'])));

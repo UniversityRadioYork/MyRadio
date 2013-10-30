@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file provides the NIPSWeb_ManagedUserPlaylist class for MyURY - Contains My Jingles and My Beds
- * @package MyURY_NIPSWeb
+ * This file provides the NIPSWeb_ManagedUserPlaylist class for MyRadio - Contains My Jingles and My Beds
+ * @package MyRadio_NIPSWeb
  */
 
 /**
@@ -10,7 +10,7 @@
  * 
  * @version 20130802
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  * @uses \Database
  */
 class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist {

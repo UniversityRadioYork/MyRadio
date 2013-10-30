@@ -1,13 +1,13 @@
 #!/usr/local/bin/php -q
 <?php
 /**
- * This is the Email Pipe Controller - it will read in emails piped to it and do MyURY things with them
+ * This is the Email Pipe Controller - it will read in emails piped to it and do MyRadio things with them
  * 
  * - if it's sent to a certain mailing list, it'll put it in the archives
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130712
- * @package MyURY_Mail
+ * @package MyRadio_Mail
  * @uses \Database
  * @uses \CoreUtils
  */
@@ -56,7 +56,7 @@ foreach ($recipients[3] as $recipient) {
     $addr = trim($recipient);
   }
   
-  $list = MyURY_List::getByName(explode('@',$addr)[0]);
+  $list = MyRadio_List::getByName(explode('@',$addr)[0]);
   if (empty($list)) {
     exit(0);
   }
@@ -66,7 +66,7 @@ foreach ($recipients[3] as $recipient) {
   if ($list !== null) {
     try {
       $list->archiveMessage($sender, $email);
-    } catch (MyURYException $e) {
+    } catch (MyRadioException $e) {
       //Yes, it failed, but we don't want bounce messages
       exit(0);
     }

@@ -1,16 +1,16 @@
 <?php
 /**
- * This file is for services other than MyURY (for now...). It decides what version of a URY Web Service to point a
+ * This file is for services other than MyRadio (for now...). It decides what version of a URY Web Service to point a
  * user to, with a seamless URL for everyone
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130525
- * @package MyURY_Core
+ * @package MyRadio_Core
  * 
  * @uses $service - The current service being requested
  * @uses $member - The current user
  * 
- * @deprecated 20130525 There is now only one Service - MyURY. Modules are not seperate.
+ * @deprecated 20130525 There is now only one Service - MyRadio. Modules are not seperate.
  * @todo Remove unneccessary queries for services
  * 
  * Sets the $service_version Global Variable

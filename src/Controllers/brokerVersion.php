@@ -4,7 +4,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130525
- * @package MyURY_Core
+ * @package MyRadio_Core
  * 
  * @uses $member - The current user
  * 
@@ -31,6 +31,6 @@ if (isset($_REQUEST['svc_version'])) {
 
 if (isset($_REQUEST['select_version'])) {
   $service = $_REQUEST['select_version'];
-  require 'Views/MyURY/brokerVersion.php';
+  require 'Views/MyRadio/brokerVersion.php';
   exit;
 }

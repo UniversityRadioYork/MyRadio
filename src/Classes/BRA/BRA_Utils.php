@@ -1,8 +1,8 @@
 <?php
 
 /*
- * This file provides the BRA_Utils class for MyURY
- * @package MyURY_BRA
+ * This file provides the BRA_Utils class for MyRadio
+ * @package MyRadio_BRA
  */
 
 /**
@@ -10,7 +10,7 @@
  * 
  * @version 20130907
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @package MyURY_BRA
+ * @package MyRadio_BRA
  */
 class BRA_Utils extends ServiceAPI {
 

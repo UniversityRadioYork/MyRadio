@@ -101,10 +101,10 @@ window.timelord = {
     if (next[0] == null) {
       $('#next-show').html('');
     } else {
-      d0 = (new Date(next[0].start_time*1000));
-      start0 = timelord.pad(d0.getHours())+':'+timelord.pad(d0.getMinutes());
-      d1 = (new Date(next[1].start_time*1000));
-      start1 = timelord.pad(d1.getHours())+':'+timelord.pad(d1.getMinutes());
+      d0 = (new Date(next[0].start_time * 1000));
+      start0 = timelord.pad(d0.getHours()) + ':' + timelord.pad(d0.getMinutes());
+      d1 = (new Date(next[1].start_time * 1000));
+      start1 = timelord.pad(d1.getHours()) + ':' + timelord.pad(d1.getMinutes());
       $('#next-show').html('Up Next: ' + next[0].title + ' @ ' + start0 + '<br>'
               + next[1].title + ' @ ' + start1);
     }
@@ -137,13 +137,18 @@ window.timelord = {
    */
   updateState: function() {
     $.ajax({url: myury.makeURL('Timelord', 'a-update'),
+      global: false,
+      error: function() {
+        //Refresh on failure
+        window.location = window.location.href;
+      },
       success: function(data) {
         timelord.setStudio(data.selector.studio)
-                .setCurrentShow(data.shows.current.title)
                 .setNextShows(data.shows.next);
-
-        //Update info message
         if (!timelord.news) {
+          timelord.setCurrentShow(data.shows.current.title);
+
+          //Update info message
           if (data.breaking !== null) {
             timelord.showMsg(data.breaking.content);
           } else {
@@ -207,18 +212,25 @@ window.timelord = {
    */
   newsWarn: function() {
     var date = new Date();
-    if (date.getMinutes() === 59 && date.getSeconds() >= 15
-            && date.getSeconds() <= 53) {
+    if ((date.getMinutes() === 59 && (date.getSeconds() >= 15
+            && date.getSeconds() <= 52)) || date.getMinutes() < 2) {
       timelord.news = true;
-      if (date.getSeconds() <= 45) {
-        console.log('Happening');
-        timelord.showMsg('<span class="news">News intro in '
-                +(45-date.getSeconds())+'...</span>');
-        $('#next-show').show();
+      if (date.getMinutes() === 59) {
+        if (date.getSeconds() < 45) {
+          timelord.setCurrentShow('<span class="news">News intro in ' +
+                  (45 - date.getSeconds()) + '...</span>');
+          $('#next-show').show();
+        } else if (date.getSeconds() <= 52) {
+          timelord.setCurrentShow('<span class="news">Jingle in ' +
+                  (52 - date.getSeconds()) + '...</span>');
+        } else {
+          timelord.setCurrentShow('<span class="news">URY News</span>');
+        }
+      } else if (date.getMinutes() === 0) {
+        timelord.setCurrentShow('<span class="news">URY News</span>');
       } else {
-        timelord.showMsg('<span class="news">Jingle in '
-                +(52-date.getSeconds())+'...</span>');
-        $('#next-show').show();
+        timelord.setCurrentShow('<span class="news">News ends in ' +
+                  (60 - date.getSeconds()) + '...</span>');
       }
     } else {
       timelord.news = false;

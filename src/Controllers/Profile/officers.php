@@ -5,7 +5,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130802
- * @package MyURY_Profile
+ * @package MyRadio_Profile
  */
 $officers = Profile::getOfficers();
 
@@ -23,6 +23,6 @@ foreach ($officers as $k => $v) {
 }
 
 CoreUtils::getTemplateObject()->setTemplate('Profile/officers.twig')
-        ->addVariable('title', 'URY Committee')
+        ->addVariable('title', Config::$short_name.' Committee')
         ->addVariable('officers', $officers)
         ->render();

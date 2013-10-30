@@ -4,10 +4,10 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 30032013
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
 if (!isset($_REQUEST['managedid'])) {
-  throw new MyURYException('Bad Request - managedid required.', 400);
+  throw new MyRadioException('Bad Request - managedid required.', 400);
 }
 $managedid = (int)$_REQUEST['managedid'];
 

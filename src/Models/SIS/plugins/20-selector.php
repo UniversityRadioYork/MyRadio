@@ -4,20 +4,20 @@
  * 
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130923
- * @package MyURY_SIS
+ * @package MyRadio_SIS
  */
 
+$sel = new MyRadio_Selector();
+
 $lastmod = time();
-$status = '3002';
-$power = (int)$status[3];
+$status = $sel->query();
+$power = $status['power'];
 
 $vars = array(
 	'lastmod' => $lastmod,
 	'status' => $status,
-	'onair' => (int)$status[0],
-	'power' => $power,
-	's1power' => (int)(($power & 1) != 0),
-	's2power' => (int)(($power & 2) != 0),
+	's1power' => ($power & 1),
+	's2power' => ($power & 2) >> 1,
 	's4power' => true,
 	);
 
@@ -35,5 +35,5 @@ $moduleInfo = array(
 
   /**
    * @todo: check if the OB mount is available
-   * @todo: $selectorStatusFile - use MyURY_Selector
+   * @todo: $selectorStatusFile - use MyRadio_Selector
    */

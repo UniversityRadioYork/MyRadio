@@ -7,7 +7,7 @@
  * 
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130717
- * @package MyURY_Profile
+ * @package MyRadio_Profile
  */
 // Set if trying to view another member's profile page
 $user = User::getInstance(empty($_REQUEST['memberid']) ? -1 : $_REQUEST['memberid']);
@@ -17,7 +17,7 @@ $visitor = User::getInstance();
 $userData = $user->toDataSource();
 $userData['training'] = CoreUtils::dataSourceParser($user->getAllTraining(true));
 $userData['training_avail'] = CoreUtils::dataSourceParser(
-        MyURY_TrainingStatus::getAllAwardableTo($user));
+        MyRadio_TrainingStatus::getAllAwardableTo($user));
 
 if ($user->isOfficer()) {
   $userData['phone'] = $user->getPhone();

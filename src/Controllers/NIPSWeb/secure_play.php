@@ -4,10 +4,10 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 17032013
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
 if (!isset($_REQUEST['trackid']) or !isset($_REQUEST['recordid'])) {
-  throw new MyURYException('Bad Request - trackid and recordid required.', 400);
+  throw new MyRadioException('Bad Request - trackid and recordid required.', 400);
 }
 $recordid = (int)$_REQUEST['recordid'];
 $trackid = (int) $_REQUEST['trackid'];
@@ -24,5 +24,5 @@ if (NIPSWeb_Token::hasToken($trackid)) {
     NIPSWeb_Views::serveMP3($path);
   }
 } else {
-  throw new MyURYException('Invalid Play Token!', 403);
+  throw new MyRadioException('Invalid Play Token!', 403);
 }

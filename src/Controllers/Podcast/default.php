@@ -3,7 +3,7 @@
  * List a User's Podcasts
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130815
- * @package MyURY_Podcast
+ * @package MyRadio_Podcast
  */
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
@@ -11,5 +11,5 @@ CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('title', 'My Podcasts')
         ->addVariable('tabledata', 
                 ServiceAPI::setToDataSource(
-                        MyURY_Podcast::getPodcastsAttachedToUser(), false))
+                        MyRadio_Podcast::getPodcastsAttachedToUser(), false))
         ->render();
