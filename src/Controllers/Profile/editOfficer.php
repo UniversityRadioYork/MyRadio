@@ -4,10 +4,10 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130809
- * @package MyURY_Profile
+ * @package MyRadio_Profile
  */
 
-$officer = MyURY_Officer::getInstance($_REQUEST['officerid']);
+$officer = MyRadio_Officer::getInstance($_REQUEST['officerid']);
 
 CoreUtils::getTemplateObject()
         ->setTemplate('Profile/officer.twig')

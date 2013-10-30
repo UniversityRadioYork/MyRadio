@@ -10,6 +10,6 @@ CoreUtils::getTemplateObject(
   'Charts'
 )->addVariable(
   'tabledata',
-  ServiceAPI::setToDataSource(MyURY_ChartType::getAll())
+  ServiceAPI::setToDataSource(MyRadio_ChartType::getAll())
 )->render();
 ?>

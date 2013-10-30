@@ -5,7 +5,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130727
- * @package MyURY_Scheduler
+ * @package MyRadio_Scheduler
  */
 //The Form definition
 require 'Models/Scheduler/showfrm.php';

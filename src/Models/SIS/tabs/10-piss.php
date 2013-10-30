@@ -4,11 +4,11 @@
  * 
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130925
- * @package MyURY_SIS
+ * @package MyRadio_SIS
  */
 
 $vars = array(
-	'piss' => MyURYNews::getNewsItem(Config::$piss_feed, User::getInstance())
+	'piss' => MyRadioNews::getNewsItem(Config::$piss_feed, User::getInstance())
 	);
 
 $moduleInfo = array(

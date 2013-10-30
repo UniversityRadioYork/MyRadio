@@ -5,7 +5,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130712
- * @package MyURY_iTones
+ * @package MyRadio_iTones
  * @uses \Database
  * @uses \CoreUtils
  */
@@ -23,8 +23,8 @@ do {
  
   //If this track has been played recently or is currently queued, we can't play it. Try again.
   } while ($track->getClean() === 'n' or
-          (MyURY_TracklistItem::getIfPlayedRecently($track) or iTones_Utils::getIfQueued($track)
-          or !MyURY_TracklistItem::getIfAlbumArtistCompliant($track))
+          (MyRadio_TracklistItem::getIfPlayedRecently($track) or iTones_Utils::getIfQueued($track)
+          or !MyRadio_TracklistItem::getIfAlbumArtistCompliant($track))
           or $track->isBlacklisted());
   
 echo $track->getPath()."\n";

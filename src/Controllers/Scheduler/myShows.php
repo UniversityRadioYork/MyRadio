@@ -4,7 +4,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130828
- * @package MyURY_Scheduler
+ * @package MyRadio_Scheduler
  */
 
 $shows = User::getInstance()->getShows();

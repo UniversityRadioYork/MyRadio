@@ -3,16 +3,16 @@
  * Form to compose an email to a mailing list
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130526
- * @package MyURY_Mail
+ * @package MyRadio_Mail
  */
 
-$form = (new MyURYForm('mail_send', 'Mail', 'doSend',
+$form = (new MyRadioForm('mail_send', 'Mail', 'doSend',
                 array(
                     'debug' => true,
                     'title' => 'Send Email'
                 )
         ))->addField(
-                new MyURYFormField('subject', MyURYFormField::TYPE_TEXT,
+                new MyRadioFormField('subject', MyRadioFormField::TYPE_TEXT,
                         array(
                             'explanation' => '',
                             'label' => '',
@@ -20,12 +20,12 @@ $form = (new MyURYForm('mail_send', 'Mail', 'doSend',
                         )
                 )
         )->addField(
-                new MyURYFormField('body', MyURYFormField::TYPE_BLOCKTEXT,
+                new MyRadioFormField('body', MyRadioFormField::TYPE_BLOCKTEXT,
                         array(
                             'explanation' => '',
                             'label' => ''
                         )
                 )
         )->addField(
-                new MyURYFormField('list', MyURYFormField::TYPE_HIDDEN)
+                new MyRadioFormField('list', MyRadioFormField::TYPE_HIDDEN)
         );

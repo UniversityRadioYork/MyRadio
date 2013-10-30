@@ -1,8 +1,8 @@
 <?php
 /**
- * This file provides the NIPSWeb_ManagedItem class for MyURY - these are Jingles, Beds, Adverts and others of a similar
+ * This file provides the NIPSWeb_ManagedItem class for MyRadio - these are Jingles, Beds, Adverts and others of a similar
  * ilk
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
 
 /**
@@ -10,7 +10,7 @@
  * 
  * @version 20130601
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  * @uses \Database
  */
 class NIPSWeb_ManagedItem extends ServiceAPI {
@@ -50,7 +50,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
       LIMIT 1',
             array($resid));
     if (empty($result)) {
-      throw new MyURYException('The specified NIPSWeb Managed Item or Managed User Item does not seem to exist');
+      throw new MyRadioException('The specified NIPSWeb Managed Item or Managed User Item does not seem to exist');
       return;
     }
     
@@ -208,14 +208,14 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
    * bpm: The beats per minute of the item
    * expires: The expiry date of the item
    * @return NIPSWEB_ManagedItem a shiny new NIPSWEB_ManagedItem with the provided options
-   * @throws MyURYException
+   * @throws MyRadioException
    */
   public static function create($options) {
     self::wakeup();
     
     $required = array('title', 'duration', 'auxid');
     foreach ($required as $require) {
-      if (empty($options[$require])) throw new MyURYException($require.' is required to create an Item.', 400);
+      if (empty($options[$require])) throw new MyRadioException($require.' is required to create an Item.', 400);
     }
     //BPM null
     if (empty($options['bpm'])) $options['bpm'] = null;
@@ -239,7 +239,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
       //This is a central resource
       $result = self::$db->fetch_column('SELECT managedplaylistid FROM bapsplanner.managed_playlists WHERE managedplaylistid=$1 LIMIT 1', array(str_replace('aux-', '', $options['auxid'])));
         if (empty($result))
-          throw new MyURYException($options['auxid'].' is not a valid playlist!');
+          throw new MyRadioException($options['auxid'].' is not a valid playlist!');
         $playlistid = $result[0];
 
       $result = self::$db->query('INSERT INTO bapsplanner.managed_items (managedplaylistid, title, length, bpm, expirydate, memberid)

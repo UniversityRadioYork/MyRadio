@@ -4,14 +4,14 @@
  * 
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130923
- * @package MyURY_SIS
+ * @package MyRadio_SIS
  */
 
 $vars = array(
 	'webcam_prefix' => Config::$webcam_prefix,
 	'cameras' => array('jukebox.jpg', 'studio1', 's1-fos', 'studio2'),
 	'current' => 1,
-	'streams' => MyURY_Webcam::getStreams()
+	'streams' => MyRadio_Webcam::getStreams()
 	);
 
 $moduleInfo = array(

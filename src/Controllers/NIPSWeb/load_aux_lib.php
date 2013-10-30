@@ -5,7 +5,7 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130512
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
 
 if (preg_match('/^aux-.*$/', $_REQUEST['libraryid']) === 1) {
@@ -17,4 +17,4 @@ else {
   $data = NIPSWeb_ManagedUserPlaylist::getInstance($libraryid)->getItems();
 }
 
-require 'Views/MyURY/datatojson.php';
+require 'Views/MyRadio/datatojson.php';

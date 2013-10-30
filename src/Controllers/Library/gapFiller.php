@@ -3,10 +3,10 @@
  * Scan music library, filling in blanks or changing default values
  * @author Lloyd Wallis <lpw@ury.york.ac.uk>
  * @version 21042013
- * @package MyURY_Library
+ * @package MyRadio_Library
  */
 
-$albums = MyURY_Album::findByName('URY', 10);
+$albums = MyRadio_Album::findByName('URY', 10);
 
 $cacher = APCProvider::getInstance();
 

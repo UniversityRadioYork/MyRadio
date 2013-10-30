@@ -34,4 +34,4 @@ $data = array(
   'webcam' => $location
   );
 
-require 'Views/MyURY/datatojson.php';
+require 'Views/MyRadio/datatojson.php';

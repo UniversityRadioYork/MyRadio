@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file provides the User class for MyURY
- * @package MyURY_Core
+ * This file provides the User class for MyRadio
+ * @package MyRadio_Core
  */
 
 /**
@@ -11,7 +11,7 @@
  * 
  * @version 20130824
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @package MyURY_Core
+ * @package MyRadio_Core
  * @uses \Database
  * @uses \CacheProvider
  */
@@ -167,7 +167,7 @@ class User extends ServiceAPI {
               LIMIT 1', array($memberid));
     if (empty($data)) {
       //This user doesn't exist
-      throw new MyURYException('The specified User does not appear to exist.', 404);
+      throw new MyRadioException('The specified User does not appear to exist.', 404);
     }
     //Set the variables
     foreach ($data as $key => $value) {
@@ -270,19 +270,19 @@ class User extends ServiceAPI {
    * Get all types of training the User has.
    * 
    * @param bool $ignore_revoked If true, Revoked statuses will not be included.
-   * @return Array[MyURY_UserTrainingStatus]
+   * @return Array[MyRadio_UserTrainingStatus]
    */
   public function getAllTraining($ignore_revoked = false) {
     if ($ignore_revoked) {
       $data = [];
-      foreach (MyURY_UserTrainingStatus::resultSetToObjArray($this->training) as $train) {
+      foreach (MyRadio_UserTrainingStatus::resultSetToObjArray($this->training) as $train) {
         if ($train->getRevokedBy() == null) {
           $data[] = $train;
         }
       }
       return $data;
     } else {
-      return MyURY_UserTrainingStatus::resultSetToObjArray($this->training);
+      return MyRadio_UserTrainingStatus::resultSetToObjArray($this->training);
     }
   }
 
@@ -354,11 +354,11 @@ class User extends ServiceAPI {
 
   /**
    * Returns the User's profile Photo (or null if there is not one)
-   * @return MyURY_Photo
+   * @return MyRadio_Photo
    */
   public function getProfilePhoto() {
     if (!empty($this->profile_photo)) {
-      return MyURY_Photo::getInstance($this->profile_photo);
+      return MyRadio_Photo::getInstance($this->profile_photo);
     } else {
       return null;
     }
@@ -501,7 +501,7 @@ class User extends ServiceAPI {
   }
 
   /**
-   * Gets the User's MyURY Profile page URL
+   * Gets the User's MyRadio Profile page URL
    * @return String
    */
   public function getURL() {
@@ -532,7 +532,7 @@ class User extends ServiceAPI {
 
     $return = array();
     foreach ($this->shows as $show_id) {
-      $show = MyURY_Show::getInstance($show_id);
+      $show = MyRadio_Show::getInstance($show_id);
       if ($show->getShowType() == $show_type_id) {
         $return[] = $show;
       }
@@ -673,7 +673,7 @@ class User extends ServiceAPI {
     $param_maps = ['collegeid' => 'college'];
 
     if (!property_exists($this, $paramName)) {
-      throw new MyURYException('paramName invalid', 500);
+      throw new MyRadioException('paramName invalid', 500);
     }
 
     if ($this->$paramName == $value) {
@@ -729,15 +729,15 @@ class User extends ServiceAPI {
     if (strstr($eduroam, '@') === false) {
       $eduroam .= '@york.ac.uk';
     } elseif (strstr($eduroam, '@york.ac.uk') === false) {
-      throw new MyURYException('Eduroam account should be @york.ac.uk! Use of other eduroam accounts is blocked.
+      throw new MyRadioException('Eduroam account should be @york.ac.uk! Use of other eduroam accounts is blocked.
         This is basic validation filter, so if there is a valid reason for another account to be hear, this check
         can be removed.', 400);
     }
 
     if (empty($eduroam) && empty($this->email)) {
-      throw new MyURYException('Can\'t set both Email and Eduroam to null.', 400);
+      throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
     } elseif ($this->getEduroam() . '@york.ac.uk' !== $eduroam && User::findByEmail($eduroam) !== null) {
-      throw new MyURYException('The eduroam account ' . $eduroam . ' is already allocated to another User.', 500);
+      throw new MyRadioException('The eduroam account ' . $eduroam . ' is already allocated to another User.', 500);
     }
     $this->setCommonParam('eduroam', $eduroam);
     return $this;
@@ -747,20 +747,20 @@ class User extends ServiceAPI {
    * Sets the User's primary contact Email. If null, eduroam is used.
    * @param String $email
    * @return User
-   * @throws MyURYException
+   * @throws MyRadioException
    */
   public function setEmail($email) {
     if ($email === '') {
       $email = null;
     }
     if (!empty($email) && strstr($email, '@') === false) {
-      throw new MyURYException('That email address doesn\'t look right. It needs to have an @.', 400);
+      throw new MyRadioException('That email address doesn\'t look right. It needs to have an @.', 400);
     }
 
     if (empty($email) && empty($this->eduroam)) {
-      throw new MyURYException('Can\'t set both Email and Eduroam to null.', 400);
+      throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
     } elseif ($email !== $this->email && User::findByEmail($email) !== null) {
-      throw new MyURYException('The email account ' . $email . ' is already allocated to another User.', 500);
+      throw new MyRadioException('The email account ' . $email . ' is already allocated to another User.', 500);
     }
     $this->setCommonParam('email', $email);
     return $this;
@@ -770,11 +770,11 @@ class User extends ServiceAPI {
    * Sets the User's first name
    * @param String $fname
    * @return User
-   * @throws MyURYException
+   * @throws MyRadioException
    */
   public function setFName($fname) {
     if (empty($fname)) {
-      throw new MyURYException('Oh come on, everybody has a name.', 400);
+      throw new MyRadioException('Oh come on, everybody has a name.', 400);
     }
     $this->setCommonParam('fname', $fname);
     return $this;
@@ -784,11 +784,11 @@ class User extends ServiceAPI {
    * Set the User's official @ury.org.uk prefix. Usually fname.sname
    * @param String $alias
    * @return User
-   * @throws MyURYException
+   * @throws MyRadioException
    */
   public function setLocalAlias($alias) {
     if ($alias !== $this->local_alias && self::findByEmail($alias) !== null) {
-      throw new MyURYException('That Mailbox Name is already in use. Please choose another.', 500);
+      throw new MyRadioException('That Mailbox Name is already in use. Please choose another.', 500);
     }
     $this->setCommonParam('local_alias', $alias);
     return $this;
@@ -798,11 +798,11 @@ class User extends ServiceAPI {
    * Set the User's server account name
    * @param String $name
    * @return User
-   * @throws MyURYException
+   * @throws MyRadioException
    */
   public function setLocalName($name) {
     if ($name !== $this->local_name && self::findByEmail($name) !== null) {
-      throw new MyURYException('That Mailbox Alias is already in use. Please choose another.', 500);
+      throw new MyRadioException('That Mailbox Alias is already in use. Please choose another.', 500);
     }
     $this->setCommonParam('local_name', $name);
     return $this;
@@ -812,13 +812,13 @@ class User extends ServiceAPI {
    * Set the User's phone number
    * @param String $phone A string of numbers (because leading 0)
    * @return User
-   * @throws MyURYException
+   * @throws MyRadioException
    */
   public function setPhone($phone) {
     //Clear whitespace
     $phone = preg_replace('/\s/', '', $phone);
     if (!empty($phone) && strlen($phone) !== 11) {
-      throw new MyURYException('A phone number should have 11 digits.', 400);
+      throw new MyRadioException('A phone number should have 11 digits.', 400);
     }
     $this->setCommonParam('phone', $phone);
     return $this;
@@ -826,10 +826,10 @@ class User extends ServiceAPI {
 
   /**
    * Set the User's profile photo
-   * @param MyURY_Photo $photo
+   * @param MyRadio_Photo $photo
    * @return User
    */
-  public function setProfilePhoto(MyURY_Photo $photo) {
+  public function setProfilePhoto(MyRadio_Photo $photo) {
     $this->setCommonParam('profile_photo', $photo->getID());
     return $this;
   }
@@ -848,11 +848,11 @@ class User extends ServiceAPI {
    * Set the User's last name.
    * @param String $sname
    * @return User
-   * @throws MyURYException
+   * @throws MyRadioException
    */
   public function setSName($sname) {
     if (empty($sname)) {
-      throw new MyURYException('Yes, your last name is a thing.', 400);
+      throw new MyRadioException('Yes, your last name is a thing.', 400);
     }
     $this->setCommonParam('sname', $sname);
     return $this;
@@ -862,12 +862,12 @@ class User extends ServiceAPI {
    * Set the User's Gender
    * @param char $initial (m)ale, (f)emale or (o)ther
    * @return User
-   * @throws MyURYException
+   * @throws MyRadioException
    */
   public function setSex($initial = 'o') {
     $initial = strtolower($initial);
     if (!in_array($initial, array('m', 'f', 'o'))) {
-      throw new MyURYException('You can be either "(M)ale", "(F)emale", or "(O)ther". You can\'t be none of these,'
+      throw new MyRadioException('You can be either "(M)ale", "(F)emale", or "(O)ther". You can\'t be none of these,'
       . ' or more than one of these. Sorry.');
     }
     $this->setCommonParam('sex', $initial);
@@ -935,7 +935,7 @@ class User extends ServiceAPI {
   }
 
   /**
-   * Please use MyURY_TrainingStatus.
+   * Please use MyRadio_TrainingStatus.
    * 
    * @deprecated
    * @return User[]
@@ -957,7 +957,7 @@ class User extends ServiceAPI {
   }
 
   /**
-   * Please use MyURY_TrainingStatus.
+   * Please use MyRadio_TrainingStatus.
    * 
    * @deprecated
    * @return User[]
@@ -978,7 +978,7 @@ class User extends ServiceAPI {
   }
 
   /**
-   * Please use MyURY_TrainingStatus.
+   * Please use MyRadio_TrainingStatus.
    * 
    * @deprecated
    * @return User[]
@@ -1025,26 +1025,26 @@ class User extends ServiceAPI {
    */
   public function getEditForm() {
     if ($this->getID() !== User::getInstance()->getID() && !User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
-      throw new MyURYException(User::getInstance() . ' tried to edit ' . $this . '!');
+      throw new MyRadioException(User::getInstance() . ' tried to edit ' . $this . '!');
     }
 
-    $form = new MyURYForm('profileedit', 'Profile', 'doEdit', array('title' => 'Edit Profile'));
+    $form = new MyRadioForm('profileedit', 'Profile', 'doEdit', array('title' => 'Edit Profile'));
     //Personal details
-    $form->addField(new MyURYFormField('memberid', MyURYFormField::TYPE_HIDDEN, ['value' => $this->getID()]))
-            ->addField(new MyURYFormField('sec_personal', MyURYFormField::TYPE_SECTION, array(
+    $form->addField(new MyRadioFormField('memberid', MyRadioFormField::TYPE_HIDDEN, ['value' => $this->getID()]))
+            ->addField(new MyRadioFormField('sec_personal', MyRadioFormField::TYPE_SECTION, array(
                 'label' => 'Personal Details'
             )))
-            ->addField(new MyURYFormField('fname', MyURYFormField::TYPE_TEXT, array(
+            ->addField(new MyRadioFormField('fname', MyRadioFormField::TYPE_TEXT, array(
                 'required' => true,
                 'label' => 'First Name',
                 'value' => $this->getFName()
             )))
-            ->addField(new MyURYFormField('sname', MyURYFormField::TYPE_TEXT, array(
+            ->addField(new MyRadioFormField('sname', MyRadioFormField::TYPE_TEXT, array(
                 'required' => true,
                 'label' => 'Last Name',
                 'value' => $this->getSName()
             )))
-            ->addField(new MyURYFormField('sex', MyURYFormField::TYPE_SELECT, array(
+            ->addField(new MyRadioFormField('sex', MyRadioFormField::TYPE_SELECT, array(
                 'required' => true,
                 'label' => 'Gender',
                 'value' => $this->getSex(),
@@ -1056,32 +1056,32 @@ class User extends ServiceAPI {
     )));
 
     //Contact details
-    $form->addField(new MyURYFormField('sec_contact', MyURYFormField::TYPE_SECTION, array(
+    $form->addField(new MyRadioFormField('sec_contact', MyRadioFormField::TYPE_SECTION, array(
                 'label' => 'Contact Details'
             )))
-            ->addField(new MyURYFormField('collegeid', MyURYFormField::TYPE_SELECT, array(
+            ->addField(new MyRadioFormField('collegeid', MyRadioFormField::TYPE_SELECT, array(
                 'required' => true,
                 'label' => 'College',
                 'options' => self::getColleges(),
                 'value' => $this->getCollegeID()
             )))
-            ->addField(new MyURYFormField('phone', MyURYFormField::TYPE_TEXT, array(
+            ->addField(new MyRadioFormField('phone', MyRadioFormField::TYPE_TEXT, array(
                 'required' => false,
                 'label' => 'Phone Number',
                 'value' => $this->getPhone()
             )))
-            ->addField(new MyURYFormField('email', MyURYFormField::TYPE_EMAIL, array(
+            ->addField(new MyRadioFormField('email', MyRadioFormField::TYPE_EMAIL, array(
                 'required' => false,
                 'label' => 'Email',
                 'value' => $this->email
             )))
-            ->addField(new MyURYFormField('receive_email', MyURYFormField::TYPE_CHECK, array(
+            ->addField(new MyRadioFormField('receive_email', MyRadioFormField::TYPE_CHECK, array(
                 'required' => false,
                 'label' => 'Receive Email?',
                 'options' => array('checked' => $this->getReceiveEmail()),
                 'explanation' => 'If unchecked, you will receive no emails, even if you are subscribed to mailing lists.'
             )))
-            ->addField(new MyURYFormField('eduroam', MyURYFormField::TYPE_TEXT, array(
+            ->addField(new MyRadioFormField('eduroam', MyRadioFormField::TYPE_TEXT, array(
                 'required' => false,
                 'label' => 'University Email',
                 'value' => str_replace('@york.ac.uk', '', $this->getUniAccount()),
@@ -1089,17 +1089,17 @@ class User extends ServiceAPI {
     )));
 
     //About Me
-    $form->addField(new MyURYFormField('sec_about', MyURYFormField::TYPE_SECTION, array(
+    $form->addField(new MyRadioFormField('sec_about', MyRadioFormField::TYPE_SECTION, array(
         'label' => 'About Me',
         'explanation' => 'If you\'d like to share a little more about yourself, then I\'m happy to listen!'
     )))->addField(
-            new MyURYFormField('photo', MyURYFormField::TYPE_FILE, array(
+            new MyRadioFormField('photo', MyRadioFormField::TYPE_FILE, array(
         'required' => false,
         'label' => 'Profile Photo',
         'explanation' => 'Share your Radio Face with all our members. If we ever launch presenter pages on the website, we\'ll use this there too.'
             ))
     )->addField(
-            new MyURYFormField('bio', MyURYFormField::TYPE_BLOCKTEXT, array(
+            new MyRadioFormField('bio', MyRadioFormField::TYPE_BLOCKTEXT, array(
         'required' => false,
         'label' => 'Bio',
         'explanation' => 'Tell use about yourself - if you\'re a committee member please introduce yourself!',
@@ -1109,18 +1109,18 @@ class User extends ServiceAPI {
 
     //Mailbox
     if (User::getInstance()->hasAuth(AUTH_CHANGESERVERACCOUNT)) {
-      $form->addField(new MyURYFormField('sec_server', MyURYFormField::TYPE_SECTION, array(
+      $form->addField(new MyRadioFormField('sec_server', MyRadioFormField::TYPE_SECTION, array(
                   'label' => 'URY Mailbox Account',
                   'explanation' => 'Before changing these settings, please ensure you understand the guidelines and'
                   . ' documentation on URY\'s Internal Email Service'
               )))
-              ->addField(new MyURYFormField('local_name', MyURYFormField::TYPE_TEXT, array(
+              ->addField(new MyRadioFormField('local_name', MyRadioFormField::TYPE_TEXT, array(
                   'required' => false,
                   'label' => 'Server Account (Mailbox)',
                   'value' => $this->getLocalName(),
                   'explanation' => 'Best practice is their ITS Username'
               )))
-              ->addField(new MyURYFormField('local_alias', MyURYFormField::TYPE_TEXT, array(
+              ->addField(new MyRadioFormField('local_alias', MyRadioFormField::TYPE_TEXT, array(
                   'required' => false,
                   'label' => '@ury.org.uk Alias',
                   'value' => $this->getLocalAlias(),
@@ -1152,7 +1152,7 @@ class User extends ServiceAPI {
    * @param bool $receive_email Whether the User should receive emails.
    * @param float $paid How much the User has paid this Membership Year
    * @return User
-   * @throws MyURYException
+   * @throws MyRadioException
    */
   public static function create($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00) {
     /**
@@ -1165,11 +1165,11 @@ class User extends ServiceAPI {
     if (empty($collegeid)) {
       $collegeid = Config::$default_college;
     } elseif (!is_numeric($collegeid)) {
-      throw new MyURYException('Invalid College ID!', 400);
+      throw new MyRadioException('Invalid College ID!', 400);
     }
 
     if (empty($eduroam) && empty($email)) {
-      throw new MyURYException('At least one of eduroam or email must be provided.', 400);
+      throw new MyRadioException('At least one of eduroam or email must be provided.', 400);
     }
 
     //Ensure the suffix is there
@@ -1177,26 +1177,26 @@ class User extends ServiceAPI {
       $eduroam .= '@york.ac.uk';
     } elseif (!empty($eduroam)) {
       if (strtolower(substr($eduroam, -11)) !== '@york.ac.uk') {
-        throw new MyURYException('An eduroam address must end with @york.ac.uk', 400);
+        throw new MyRadioException('An eduroam address must end with @york.ac.uk', 400);
       }
     }
 
     if ($sex !== 'm' && $sex !== 'f' && $sex !== 'o') {
-      throw new MyURYException('User gender must be m, f or o!', 400);
+      throw new MyRadioException('User gender must be m, f or o!', 400);
     }
 
     if (!is_numeric($paid)) {
-      throw new MyURYException('Invalid payment amount!', 400);
+      throw new MyRadioException('Invalid payment amount!', 400);
     }
 
     //Check if it looks like the user might already exist
     if (User::findByEmail($eduroam) !== null or
             User::findByEmail($email) !== null) {
-      throw new MyURYException('This User already appears to exist. '
+      throw new MyRadioException('This User already appears to exist. '
       . 'Their eduroam or email is already used.');
     }
 
-    //This next comment explains that password generation is not done in MyURY itself, but an external library.
+    //This next comment explains that password generation is not done in MyRadio itself, but an external library.
     //Looks good. Generate a password for them. This is done by Shibbobleh.
     $plain_pass = Shibbobleh_Utils::newPassword();
 
@@ -1217,7 +1217,7 @@ class User extends ServiceAPI {
     ));
     
     if (empty($r)) {
-      throw new MyURYException('Failed to create User!', 500);
+      throw new MyRadioException('Failed to create User!', 500);
     }
 
     $memberid = $r[0];
@@ -1294,7 +1294,7 @@ On Air | Online | On Demand<br>
 EOT;
 
     //Send the email
-    MyURYEmail::create(array('members' => array(User::getInstance($memberid))),
+    MyRadioEmail::create(array('members' => array(User::getInstance($memberid))),
             'Welcome to URY - Getting Involved and Your Account',
             $welcome_email, User::getInstance(7449));
 
@@ -1303,28 +1303,28 @@ EOT;
 
   /**
    * Generates the form needed to quick-add URY members
-   * @throws MyURYException
-   * @return MyURYForm
+   * @throws MyRadioException
+   * @return MyRadioForm
    */
   public static function getQuickAddForm() {
     if (!User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
-      throw new MyURYException(User::getInstance() . ' tried to add members!');
+      throw new MyRadioException(User::getInstance() . ' tried to add members!');
     }
 
-    $form = new MyURYForm('profilequickadd', 'Profile', 'doQuickAdd', array('title' => 'Add Member (Quick)'));
+    $form = new MyRadioForm('profilequickadd', 'Profile', 'doQuickAdd', array('title' => 'Add Member (Quick)'));
     //Personal details
-    $form->addField(new MyURYFormField('sec_personal', MyURYFormField::TYPE_SECTION, array(
+    $form->addField(new MyRadioFormField('sec_personal', MyRadioFormField::TYPE_SECTION, array(
                 'label' => 'Personal Details'
             )))
-            ->addField(new MyURYFormField('fname', MyURYFormField::TYPE_TEXT, array(
+            ->addField(new MyRadioFormField('fname', MyRadioFormField::TYPE_TEXT, array(
                 'required' => true,
                 'label' => 'First Name'
             )))
-            ->addField(new MyURYFormField('sname', MyURYFormField::TYPE_TEXT, array(
+            ->addField(new MyRadioFormField('sname', MyRadioFormField::TYPE_TEXT, array(
                 'required' => true,
                 'label' => 'Last Name'
             )))
-            ->addField(new MyURYFormField('sex', MyURYFormField::TYPE_SELECT, array(
+            ->addField(new MyRadioFormField('sex', MyRadioFormField::TYPE_SELECT, array(
                 'required' => true,
                 'label' => 'Gender',
                 'options' => array(
@@ -1335,20 +1335,20 @@ EOT;
     )));
 
     //Contact details
-    $form->addField(new MyURYFormField('sec_contact', MyURYFormField::TYPE_SECTION, array(
+    $form->addField(new MyRadioFormField('sec_contact', MyRadioFormField::TYPE_SECTION, array(
                 'label' => 'Contact Details'
             )))
-            ->addField(new MyURYFormField('collegeid', MyURYFormField::TYPE_SELECT, array(
+            ->addField(new MyRadioFormField('collegeid', MyRadioFormField::TYPE_SELECT, array(
                 'required' => true,
                 'label' => 'College',
                 'options' => self::getColleges()
             )))
-            ->addField(new MyURYFormField('eduroam', MyURYFormField::TYPE_TEXT, array(
+            ->addField(new MyRadioFormField('eduroam', MyRadioFormField::TYPE_TEXT, array(
                 'required' => true,
                 'label' => 'University Email',
                 'explanation' => '@york.ac.uk'
             )))
-            ->addField(new MyURYFormField('phone', MyURYFormField::TYPE_TEXT, array(
+            ->addField(new MyRadioFormField('phone', MyRadioFormField::TYPE_TEXT, array(
                 'required' => false,
                 'label' => 'Phone Number'
     )));
@@ -1358,27 +1358,27 @@ EOT;
 
   /**
    * Generates the form needed to bulk-add URY members
-   * @throws MyURYException
-   * @return MyURYForm
+   * @throws MyRadioException
+   * @return MyRadioForm
    */
   public static function getBulkAddForm() {
     if (!User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
-      throw new MyURYException(User::getInstance() . ' tried to add members!');
+      throw new MyRadioException(User::getInstance() . ' tried to add members!');
     }
 
-    $form = new MyURYForm('profilebulkadd', 'Profile', 'doBulkAdd', array('title' => 'Add Member (Bulk)'));
+    $form = new MyRadioForm('profilebulkadd', 'Profile', 'doBulkAdd', array('title' => 'Add Member (Bulk)'));
     //Personal details
-    $form->addField(new MyURYFormField('bulkaddrepeater', MyURYFormField::TYPE_TABULARSET, array(
+    $form->addField(new MyRadioFormField('bulkaddrepeater', MyRadioFormField::TYPE_TABULARSET, array(
         'options' => array(
-            new MyURYFormField('fname', MyURYFormField::TYPE_TEXT, array(
+            new MyRadioFormField('fname', MyRadioFormField::TYPE_TEXT, array(
                 'required' => true,
                 'label' => 'First Name'
                     )),
-            new MyURYFormField('sname', MyURYFormField::TYPE_TEXT, array(
+            new MyRadioFormField('sname', MyRadioFormField::TYPE_TEXT, array(
                 'required' => true,
                 'label' => 'Last Name'
                     )),
-            new MyURYFormField('sex', MyURYFormField::TYPE_SELECT, array(
+            new MyRadioFormField('sex', MyRadioFormField::TYPE_SELECT, array(
                 'required' => true,
                 'label' => 'Gender',
                 'options' => array(
@@ -1386,12 +1386,12 @@ EOT;
                     array('value' => 'f', 'text' => 'Female'),
                     array('value' => 'o', 'text' => 'Other')
                 ))),
-            new MyURYFormField('collegeid', MyURYFormField::TYPE_SELECT, array(
+            new MyRadioFormField('collegeid', MyRadioFormField::TYPE_SELECT, array(
                 'required' => true,
                 'label' => 'College',
                 'options' => self::getColleges()
                     )),
-            new MyURYFormField('eduroam', MyURYFormField::TYPE_TEXT, array(
+            new MyRadioFormField('eduroam', MyRadioFormField::TYPE_TEXT, array(
                 'required' => true,
                 'label' => 'University Email',
                 'explanation' => '@york.ac.uk'

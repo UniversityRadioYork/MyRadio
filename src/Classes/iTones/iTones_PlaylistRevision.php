@@ -1,7 +1,7 @@
 <?php
 /**
- * This file provides the iTones_PlaylistRevision class for MyURY - Contains history of an iTones_Playlist
- * @package MyURY_iTones
+ * This file provides the iTones_PlaylistRevision class for MyRadio - Contains history of an iTones_Playlist
+ * @package MyRadio_iTones
  */
 
 /**
@@ -9,7 +9,7 @@
  * 
  * @version 20130714
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @package MyURY_iTones
+ * @package MyRadio_iTones
  * @uses \Database
  */
 class iTones_PlaylistRevision extends iTones_Playlist {
@@ -44,7 +44,7 @@ class iTones_PlaylistRevision extends iTones_Playlist {
       WHERE playlistid=$1 AND revisionid=$2 LIMIT 1',
             array($playlistid, $revisionid));
     if (empty($result)) {
-      throw new MyURYException('The specified iTones Playlist Revision does not seem to exist');
+      throw new MyRadioException('The specified iTones Playlist Revision does not seem to exist');
       return;
     }
     
@@ -58,14 +58,14 @@ class iTones_PlaylistRevision extends iTones_Playlist {
       ORDER BY entryid', array($this->getID(), $this->getRevisionID()));
     
     foreach ($items as $id) {
-      $this->tracks[] = MyURY_Track::getInstance($id);
+      $this->tracks[] = MyRadio_Track::getInstance($id);
     }
 
   }
   
   /**
-   * Return the MyURY_Tracks that belong to this playlist
-   * @return Array of MyURY_Track objects
+   * Return the MyRadio_Tracks that belong to this playlist
+   * @return Array of MyRadio_Track objects
    */
   public function getTracks() {
     return $this->tracks;
@@ -91,14 +91,14 @@ class iTones_PlaylistRevision extends iTones_Playlist {
    * Prevents idiots attempting to edit this revision.
    */
   public function acquireOrRenewLock($lockstr = null, User $user = null) {
-    throw new MyURYException('You can\'t lock an archived playlist revision, poopyhead!');
+    throw new MyRadioException('You can\'t lock an archived playlist revision, poopyhead!');
   }
   
   /**
    * Prevents idiots attempting to edit this revision.
    */
   public function setTracks($tracks, $lockstr = null, $notes = null) {
-    throw new MyURYException('You can\'t lock an archived playlist revision, poopyhead!');
+    throw new MyRadioException('You can\'t lock an archived playlist revision, poopyhead!');
   }
   
   public static function getAllRevisions($playlistid) {

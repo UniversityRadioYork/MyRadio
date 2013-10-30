@@ -4,8 +4,8 @@
  * 
  * @author Andy Durant <aj@ury.org.uk>
  * @version 02082012
- * @package MyURY_Webcam
+ * @package MyRadio_Webcam
  */
-$streams = MyURY_Webcam::getStreams();
+$streams = MyRadio_Webcam::getStreams();
 $live = array_shift($streams);
 require 'Views/Webcam/focus.php';

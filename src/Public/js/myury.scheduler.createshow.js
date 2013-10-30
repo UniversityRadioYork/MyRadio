@@ -1,5 +1,5 @@
 /* 
- * This file is a supplement to the default forms system for the MyURY Scheduler Shows System
+ * This file is a supplement to the default forms system for the MyRadio Scheduler Shows System
  */
 $(document).ready(function() {
   /*

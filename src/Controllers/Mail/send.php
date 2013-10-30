@@ -4,13 +4,13 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130526
- * @package MyURY_Mail
+ * @package MyRadio_Mail
  */
 
 if (!isset($_REQUEST['list'])) {
-  throw new MyURYException('List ID was not provided!', 400);
+  throw new MyRadioException('List ID was not provided!', 400);
 }
-if (!MyURY_List::getInstance($_REQUEST['list'])->isPublic()) {
+if (!MyRadio_List::getInstance($_REQUEST['list'])->isPublic()) {
   CoreUtils::requirePermission(AUTH_MAILALLMEMBERS);
 }
 
@@ -18,4 +18,4 @@ if (!MyURY_List::getInstance($_REQUEST['list'])->isPublic()) {
 require 'Models/Mail/sendfrm.php';
 $form->setFieldValue('list', $_REQUEST['list'])
         ->setTemplate('Mail/send.twig')
-        ->render(array('rcpt_str' => MyURY_List::getInstance($_REQUEST['list'])->getName()));
+        ->render(array('rcpt_str' => MyRadio_List::getInstance($_REQUEST['list'])->getName()));

@@ -5,7 +5,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130731
- * @package MyURY_Profile
+ * @package MyRadio_Profile
  */
 // Set if trying to view another member's profile page
 if (isset($_REQUEST['profileedit-memberid']) && User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
@@ -27,7 +27,7 @@ $user->setFName($data['fname'])
         ->setBio($data['bio']);
 
 if (!empty($data['photo']['tmp_name'])) {
-  $user->setProfilePhoto(MyURY_Photo::create($data['photo']['tmp_name']));
+  $user->setProfilePhoto(MyRadio_Photo::create($data['photo']['tmp_name']));
 }
 
 if (isset($data['local_name'])) {

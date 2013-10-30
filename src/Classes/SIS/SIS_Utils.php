@@ -1,8 +1,8 @@
 <?php
 
 /*
- * This file provides the SIS_Utils class for MyURY
- * @package MyURY_SIS
+ * This file provides the SIS_Utils class for MyRadio
+ * @package MyRadio_SIS
  */
 
 /**
@@ -10,7 +10,7 @@
  * 
  * @version 20130926
  * @author Andy Durant <aj@ury.org.uk>
- * @package MyURY_SIS
+ * @package MyRadio_SIS
  */
 class SIS_Utils extends ServiceAPI {
 

@@ -4,7 +4,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 05012013
- * @package MyURY_Scheduler
+ * @package MyRadio_Scheduler
  */
 
 //The Form definition
@@ -12,7 +12,7 @@ require 'Models/Scheduler/reasonfrm.php';
 //Get data
 $data = $form->readValues();
 //Cancel
-$timeslot = MyURY_Timeslot::getInstance($data['show_season_timeslot_id']);
+$timeslot = MyRadio_Timeslot::getInstance($data['show_season_timeslot_id']);
 $result = $timeslot->cancelTimeslot($data['reason']);
 
 if (!$result) {
