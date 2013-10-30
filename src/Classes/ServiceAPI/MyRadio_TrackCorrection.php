@@ -155,7 +155,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track {
    */
   public function apply($ignore_album = false) {
     //Don't apply a "URY Downloads" album - that's worse than whatever is already there.
-    if (!$ignore_album && strstr($this->getProposedAlbumTitle(), 'URY Downloads') === false) {
+    if (!$ignore_album && strstr($this->getProposedAlbumTitle(), Config::$short_name.' Downloads') === false) {
       $this->setAlbum(MyRadio_Album::findOrCreate($this->getProposedAlbumTitle(), $this->getProposedArtist()));
     }
     $this->setArtist($this->getProposedArtist());

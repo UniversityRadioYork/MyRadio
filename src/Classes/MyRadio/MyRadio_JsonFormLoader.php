@@ -131,7 +131,7 @@ class MyRadio_JsonFormLoader {
     $end = intval($options[2]);
 
     if ($start >= $end) {
-      throw new MyUryException(
+      throw new MyRadioException(
         'Start and end wrong way around on !repeat: start=' .
         $start .
         ', end=' .
@@ -165,7 +165,7 @@ class MyRadio_JsonFormLoader {
           if (array_key_exists($matches[1], $binds)) {
             $value = $binds[$matches[1]];
           } else {
-            throw new MyUryException(
+            throw new MyRadioException(
               'Tried to !bind to unbound form variable: ' . $matches[1] . '.'
             );
           }
@@ -206,7 +206,7 @@ class MyRadio_JsonFormLoader {
     }
 
     if (!$done) {
-      throw new MyUryException('Illegal special field name: ' . $name . '.');
+      throw new MyRadioException('Illegal special field name: ' . $name . '.');
     }
   }
 
@@ -285,7 +285,7 @@ class MyRadio_JsonFormLoader {
   public function fromString($str) {
     $this->form_array = json_decode($str, true);
     if ($this->form_array === null) {
-      throw new MyUryException(
+      throw new MyRadioException(
         'Failed to load form from JSON: Code ' .
         json_last_error() 
       );

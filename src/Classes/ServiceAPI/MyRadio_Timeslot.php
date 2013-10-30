@@ -311,14 +311,14 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
       if (empty($next)) {
         //There's currently not a show on, and there never will be.
         $response = [
-            'current' => ['title' => 'URY Jukebox', 
+            'current' => ['title' => Config::$short_name.' Jukebox', 
                           'desc' => 'Non-stop Music',
                           'photo' => Config::$default_show_uri]
         ];
       } else {
         //There's currently not a show on, but there will be.
         $response = [
-            'current' => ['title' => 'URY Jukebox',
+            'current' => ['title' => Config::$short_name.' Jukebox',
                 'desc' => 'Non-stop Music',
                 'photo' => Config::$default_show_uri,
                 'end_time' => $next->getStartTime()],
@@ -435,7 +435,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
 
     $email = "Hi #NAME, \r\n\r\n Please note that an episode of your show, " . $this->getMeta('title') .
             ' has been cancelled by our Programming Team. The affected episode was at ' . CoreUtils::happyTime($this->getStartTime());
-    $email .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\nURY Programming Team";
+    $email .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\n".Config::$long_name." Programming Team";
     self::$cache->purge();
 
     MyRadioEmail::sendEmailToUserSet($this->getSeason()->getShow()->getCreditObjects(), 'Episode of ' . $this->getMeta('title') . ' Cancelled', $email);
@@ -451,7 +451,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
 
     $email1 = "Hi #NAME, \r\n\r\n You have requested that an episode of " . $this->getMeta('title') .
             ' is cancelled. The affected episode was at ' . CoreUtils::happyTime($this->getStartTime());
-    $email1 .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\nURY Scheduler Robot";
+    $email1 .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\n".Config::$long_name." Scheduler Robot";
 
     $email2 = $this->getMeta('title') . ' on ' . CoreUtils::happyTime($this->getStartTime()) . ' was cancelled by a presenter because ' . $reason;
     $email2 .= "\r\n\r\nIt was cancelled automatically as more than required notice was given.";

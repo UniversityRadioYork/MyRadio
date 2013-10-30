@@ -23,6 +23,6 @@ foreach ($officers as $k => $v) {
 }
 
 CoreUtils::getTemplateObject()->setTemplate('Profile/officers.twig')
-        ->addVariable('title', 'URY Committee')
+        ->addVariable('title', Config::$short_name.' Committee')
         ->addVariable('officers', $officers)
         ->render();

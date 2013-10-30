@@ -1,6 +1,6 @@
 <?php
 /**
- * This Daemon creates new URY Member accounts based on data from the YUSU API
+ * This Daemon creates new Member accounts based on data from the YUSU API
  */
 class MyRadio_MemberSyncDaemon extends MyRadio_Daemon {
   public static function isEnabled() { return Config::$d_MemberSync_enabled; }

@@ -50,7 +50,7 @@ class APCProvider implements CacheProvider {
    * @param mixed $value The data to store
    * @param int $expires The number of seconds this cache entry is valid for. Default is to last forever (0)
    * @return boolean Whether the operation was successful (returns false if caching disabled)
-   * @assert ('myury_core_test', 'test value', 0) == true
+   * @assert ('myradio_core_test', 'test value', 0) == true
    */
   public function set($key, $value, $expires = 0) {
     if (!$this->enable) return false;
@@ -62,7 +62,7 @@ class APCProvider implements CacheProvider {
    * 
    * @param String $key The unique name of the object to fetch
    * @return mixed The value of the store, or false on failure
-   * @assert ('myury_core_test') == 'test value'
+   * @assert ('myradio_core_test') == 'test value'
    */
   public function get($key) {
     if (!$this->enable) return false;
@@ -74,7 +74,7 @@ class APCProvider implements CacheProvider {
    * 
    * @param String $key The unique name of the object to delete
    * @return boolean Returns whether the operaion was a success
-   * @assert ('myury_core_test') == true
+   * @assert ('myradio_core_test') == true
    */
   public function delete($key) {
     if (!$this->enable) return false;

@@ -104,7 +104,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common {
     MyRadioEmail::sendEmailToUser($attendee, 'Attending Demo', 'Hi '.$attendee->getFName().
             ",\r\n\r\nThanks for joining a demo at $time. You will be demoed by ".$user->getName().
             '. Just head over to the station in Vanbrugh College just before your demo and the trainer will be waiting for you.'
-            ."\r\n\r\nSee you on air soon!\r\nURY Training");
+            ."\r\n\r\nSee you on air soon!\r\n".Config::$long_name." Training");
     return 0;
   }
   

@@ -50,7 +50,7 @@ class MyRadio_ChartType extends MyRadio_Type {
       [$chart_type_id]
     );
     if (empty($chart_type_data)) {
-      throw new MyUryException('The specified Chart Type does not seem to exist.');
+      throw new MyRadioException('The specified Chart Type does not seem to exist.');
       return;
     }
 

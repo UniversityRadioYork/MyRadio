@@ -16,7 +16,7 @@ $form = (new MyRadioForm('mail_send', 'Mail', 'doSend',
                         array(
                             'explanation' => '',
                             'label' => '',
-                            'options' => array('placeholder' => 'Subject ([URY] is prefixed automatically)')
+                            'options' => array('placeholder' => 'Subject (['.Config::$short_name.'] is prefixed automatically)')
                         )
                 )
         )->addField(

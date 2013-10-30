@@ -267,7 +267,7 @@ $reason
 
 You can reapply online at any time, or for more information, email pc@ury.org.uk.
               
-~ URY Scheduling Legume
+~ {Config::$short_name} Scheduling Legume
 EOT
       );
     }
@@ -557,7 +557,7 @@ EOT
     $message = <<<EOT
 Hello,
   
-  Please note that one of your shows has been allocated the following timeslots on the URY Schedule:
+  Please note that one of your shows has been allocated the following timeslots on the {Config::$short_name} Schedule:
   
 $times
     
@@ -565,7 +565,7 @@ $times
   
   If you have any questions about your application, direct them to pc@ury.org.uk
 
-  ~ URY Scheduling Legume
+  ~ {Config::$short_name} Scheduling Legume
 EOT;
     if (!empty($times)) {
       MyRadioEmail::sendEmailToUser($this->owner, $this->getMeta('title') . ' Scheduled', $message);
@@ -589,7 +589,7 @@ EOT;
     }
 
     $email = 'Please note that your show, ' . $this->getMeta('title') . ' has been cancelled for the rest of the current Season. This is the following timeslots: ' . $timeslot_str;
-    $email .= "\r\n\r\nRegards\r\nURY Programming Team";
+    $email .= "\r\n\r\nRegards\r\n".Config::$long_name." Programming Team";
 
     foreach ($this->getShow()->getCredits() as $credit) {
       $u = User::getInstance($credit);

@@ -73,7 +73,7 @@ class MyRadio_ChartRelease extends ServiceAPI {
       [$chart_release_id]
     );
     if (empty($chart_release_data)) {
-      throw new MyUryException('The specified Chart Release does not seem to exist.');
+      throw new MyRadioException('The specified Chart Release does not seem to exist.');
       return;
     }
 

@@ -57,7 +57,7 @@ class MyRadio_ChartRow extends ServiceAPI {
       [$chart_row_id]
     );
     if (empty($chart_row_data)) {
-      throw new MyUryException('The specified Chart Row does not seem to exist.');
+      throw new MyRadioException('The specified Chart Row does not seem to exist.');
       return;
     }
 

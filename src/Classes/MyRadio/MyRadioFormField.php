@@ -403,7 +403,7 @@ class MyRadioFormField {
    * @return string A space-separated string of classes that apply to this MyRadioFormField
    */
   private function getClasses() {
-    $classes = 'myuryfrmfield';
+    $classes = 'myradiofrmfield';
     foreach ($this->classes as $class) {
       $classes .= " $class";
     }

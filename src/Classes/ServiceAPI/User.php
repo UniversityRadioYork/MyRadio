@@ -649,7 +649,7 @@ class User extends ServiceAPI {
     //Get when they joined URY
     $events[] = array(
         'timestamp' => strtotime($this->joined),
-        'message' => 'joined URY',
+        'message' => 'joined '.Config::$short_name,
         'photo' => Config::$photo_joined
     );
 
@@ -1110,9 +1110,9 @@ class User extends ServiceAPI {
     //Mailbox
     if (User::getInstance()->hasAuth(AUTH_CHANGESERVERACCOUNT)) {
       $form->addField(new MyRadioFormField('sec_server', MyRadioFormField::TYPE_SECTION, array(
-                  'label' => 'URY Mailbox Account',
+                  'label' => Config::$short_name.' Mailbox Account',
                   'explanation' => 'Before changing these settings, please ensure you understand the guidelines and'
-                  . ' documentation on URY\'s Internal Email Service'
+                  . ' documentation on '.Config::$long_name.'\'s Internal Email Service'
               )))
               ->addField(new MyRadioFormField('local_name', MyRadioFormField::TYPE_TEXT, array(
                   'required' => false,
