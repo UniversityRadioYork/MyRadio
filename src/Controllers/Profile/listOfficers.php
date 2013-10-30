@@ -5,7 +5,7 @@
  * @todo Permissions
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130516
- * @package MyURY_Profile
+ * @package MyRadio_Profile
  */
 
 $officers = Profile::getOfficers();

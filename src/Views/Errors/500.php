@@ -4,7 +4,7 @@
  * @todo Proper Documentation
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130809
- * @package MyURY_Core
+ * @package MyRadio_Core
  */
 header('HTTP/1.1 500 Internal Server Error');
 

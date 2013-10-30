@@ -24,4 +24,4 @@ $data = array(
   'status' => 'ok',
   'payload' => null
   );
-require 'Views/MyURY/datatojson.php';
+require 'Views/MyRadio/datatojson.php';

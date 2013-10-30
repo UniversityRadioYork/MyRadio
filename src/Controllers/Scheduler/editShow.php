@@ -5,11 +5,11 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130728
- * @package MyURY_Scheduler
+ * @package MyRadio_Scheduler
  */
 
 //Check the user has permission to edit this show
-$show = MyURY_Show::getInstance($_REQUEST['showid']);
+$show = MyRadio_Show::getInstance($_REQUEST['showid']);
 if (!$show->isCurrentUserAnOwner() && !CoreUtils::hasPermission(AUTH_EDITSHOWS)) {
   $message = 'You must be a Creditor of a Show or be in the Programming Team to edit this show.';
   require 'Views/Errors/403.php';

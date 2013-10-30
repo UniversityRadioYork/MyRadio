@@ -5,11 +5,11 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130809
- * @package MyURY_Website
+ * @package MyRadio_Website
  */
-$data = MyURY_BannerCampaign::getBannerCampaignForm()->readValues();
+$data = MyRadio_BannerCampaign::getBannerCampaignForm()->readValues();
 
-$campaign = MyURY_BannerCampaign::getInstance($data['id']);
+$campaign = MyRadio_BannerCampaign::getInstance($data['id']);
 
 $campaign->clearTimeslots();
 

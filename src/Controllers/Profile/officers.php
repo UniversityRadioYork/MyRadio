@@ -5,7 +5,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130802
- * @package MyURY_Profile
+ * @package MyRadio_Profile
  */
 $officers = Profile::getOfficers();
 

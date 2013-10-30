@@ -5,7 +5,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130907
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
 $template = 'NIPSWeb/live.twig';
 $title = 'Broadcasting and Presenting Suite';

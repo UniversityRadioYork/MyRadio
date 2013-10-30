@@ -4,10 +4,10 @@
  * 
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20131026
- * @package MyURY_SIS
+ * @package MyRadio_SIS
  */
 
-$sel = new MyURY_Selector();
+$sel = new MyRadio_Selector();
 $data = $sel->query();
 
-require 'Views/MyURY/datatojson.php';
+require 'Views/MyRadio/datatojson.php';

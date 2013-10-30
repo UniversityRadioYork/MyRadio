@@ -4,13 +4,13 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130722
- * @package MyURY_Library
+ * @package MyRadio_Library
  */
 
 //The Form definition
 require 'Models/Library/trackfrm.php';
 
-$track = MyURY_Track::getInstance($_REQUEST['trackid']);
+$track = MyRadio_Track::getInstance($_REQUEST['trackid']);
 
 $form->editMode($track->getID(),
         array(

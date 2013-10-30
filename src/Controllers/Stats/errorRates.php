@@ -4,10 +4,10 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130624
- * @package MyURY_Stats
+ * @package MyRadio_Stats
  */
 $options = array(
-    'title' => 'MyURY Service Stats',
+    'title' => 'MyRadio Service Stats',
     'series' => array(
         array('targetAxisIndex' => 0),
         array('targetAxisIndex' => 0),
@@ -15,7 +15,7 @@ $options = array(
     )
 );
 CoreUtils::getTemplateObject()->setTemplate('linegraph.twig')
-        ->addVariable('title', 'MyURY Error Rates')
+        ->addVariable('title', 'MyRadio Error Rates')
         ->addVariable('data', json_encode(CoreUtils::getErrorStats()))
         ->addVariable('options', json_encode($options))
         ->addVariable('caption', 'This graph shows information error rate statistics for the last 24 hours.

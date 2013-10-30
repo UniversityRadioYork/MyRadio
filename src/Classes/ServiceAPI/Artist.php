@@ -1,7 +1,7 @@
 <?php
 /**
- * This file provides the Artist class for MyURY
- * @package MyURY_Core
+ * This file provides the Artist class for MyRadio
+ * @package MyRadio_Core
  */
 
 /**
@@ -11,7 +11,7 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @todo The completion of this module is impossible as Artists do not have
  * unique identifiers. For this to happen, BAPS needs to be replaced/updated
- * @package MyURY_Core
+ * @package MyRadio_Core
  * @uses \Database
  */
 class Artist extends ServiceAPI {
@@ -22,7 +22,7 @@ class Artist extends ServiceAPI {
    */
   protected function __construct($artistid) {
     $this->artistid = $artistid;
-    throw new MyURYException('Not implemented Artist::__construct');
+    throw new MyRadioException('Not implemented Artist::__construct');
   }
   
   /**

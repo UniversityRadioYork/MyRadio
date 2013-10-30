@@ -5,7 +5,7 @@
  * @todo Permissions
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130803
- * @package MyURY_Profile
+ * @package MyRadio_Profile
  */
 $user = User::getInstance(isset($_GET['memberid']) ? $_GET['memberid'] : $_SESSION['memberid']);
 $data = $user->getTimeline();

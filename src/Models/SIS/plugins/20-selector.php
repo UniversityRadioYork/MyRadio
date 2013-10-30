@@ -4,10 +4,10 @@
  * 
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130923
- * @package MyURY_SIS
+ * @package MyRadio_SIS
  */
 
-$sel = new MyURY_Selector();
+$sel = new MyRadio_Selector();
 
 $lastmod = time();
 $status = $sel->query();
@@ -35,5 +35,5 @@ $moduleInfo = array(
 
   /**
    * @todo: check if the OB mount is available
-   * @todo: $selectorStatusFile - use MyURY_Selector
+   * @todo: $selectorStatusFile - use MyRadio_Selector
    */

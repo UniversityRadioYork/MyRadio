@@ -4,10 +4,10 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130712
- * @package MyURY_iTones
+ * @package MyRadio_iTones
  */
 
-if (empty($_REQUEST['playlistid'])) throw new MyURYException('No Playlist ID provided.', 400);
+if (empty($_REQUEST['playlistid'])) throw new MyRadioException('No Playlist ID provided.', 400);
 
 $playlist = iTones_Playlist::getInstance($_REQUEST['playlistid']);
 

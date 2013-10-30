@@ -4,7 +4,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130715
- * @package MyURY_Profile
+ * @package MyRadio_Profile
  */
 
 // Set if trying to view another member's profile page

@@ -4,7 +4,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130525
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
 CoreUtils::getTemplateObject()->setTemplate('NIPSWeb/manage_library.twig')
         ->addVariable('reslists', CoreUtils::dataSourceParser(array(

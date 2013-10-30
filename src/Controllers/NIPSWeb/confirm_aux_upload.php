@@ -5,7 +5,7 @@
  * 
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130509
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
 
 if (!isset($_REQUEST['fileid']) or !isset($_REQUEST['title']) or !isset($_REQUEST['expires']) or !isset($_REQUEST['auxid'])) {
@@ -16,4 +16,4 @@ if (!isset($_REQUEST['fileid']) or !isset($_REQUEST['title']) or !isset($_REQUES
 $data = NIPSWeb_ManagedItem::storeItem($_REQUEST['fileid'], $_REQUEST['title']);
 $data['fileid'] = $_REQUEST['fileid'];
 
-require 'Views/MyURY/datatojson.php';
+require 'Views/MyRadio/datatojson.php';

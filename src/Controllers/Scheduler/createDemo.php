@@ -4,7 +4,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 24102012
- * @package MyURY_Scheduler
+ * @package MyRadio_Scheduler
  */
 
 //The Form definition

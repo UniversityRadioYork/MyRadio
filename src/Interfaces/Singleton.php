@@ -4,7 +4,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 21072012
- * @package MyURY_Core
+ * @package MyRadio_Core
  */
 interface Singleton {
   public static function getInstance();

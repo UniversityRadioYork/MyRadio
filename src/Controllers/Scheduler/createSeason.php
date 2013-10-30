@@ -6,11 +6,11 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 23082012
- * @package MyURY_Scheduler
+ * @package MyRadio_Scheduler
  */
 
 //The Form definition
-$current_term_info = MyURY_Scheduler::getActiveApplicationTermInfo();
+$current_term_info = MyRadio_Scheduler::getActiveApplicationTermInfo();
 $current_term = $current_term_info['descr'];
 require 'Models/Scheduler/seasonfrm.php';
 $form->setFieldValue('show_id', (int)$_REQUEST['showid'])

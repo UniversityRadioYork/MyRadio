@@ -7,9 +7,9 @@
  * @todo Proper Documentation
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 21072012
- * @package MyURY_Scheduler
+ * @package MyRadio_Scheduler
  */
-$form = new MyURYForm('sched_allocate', $module, 'doAllocate',
+$form = new MyRadioForm('sched_allocate', $module, 'doAllocate',
                 array(
                     'title' => 'Allocate Timeslots to Season',
                     'template' => 'Scheduler/allocate.twig',
@@ -18,7 +18,7 @@ $form = new MyURYForm('sched_allocate', $module, 'doAllocate',
 //Set up the weeks checkboxes
 $weeks = array();
 for ($i = 1; $i <= 10; $i++) {
-  $weeks[] = new MyURYFormField('wk' . $i, MyURYFormField::TYPE_CHECK,
+  $weeks[] = new MyRadioFormField('wk' . $i, MyRadioFormField::TYPE_CHECK,
                   array(
                       'label' => 'Week ' . $i,
                       'required' => false,
@@ -42,22 +42,22 @@ foreach ($season->getRequestedTimesAvail() as $time) {
 $times[] = array('value' => -1, 'text' => 'Other (Choose below)');
 
 $form->addField(
-        new MyURYFormField('weeks', MyURYFormField::TYPE_CHECKGRP,
+        new MyRadioFormField('weeks', MyRadioFormField::TYPE_CHECKGRP,
                 array('options' => $weeks,
                     'label' => 'Schedule for Weeks'
                 )
         )
 )->addField(
-        new MyURYFormField('time', MyURYFormField::TYPE_RADIO,
+        new MyRadioFormField('time', MyRadioFormField::TYPE_RADIO,
                 array('options' => $times, 'label' => 'Timeslot', 'required' => false)
         )
 )->addField(
-        new MyURYFormField('timecustom_day', MyURYFormField::TYPE_DAY,
+        new MyRadioFormField('timecustom_day', MyRadioFormField::TYPE_DAY,
                 array('label' => 'Other Day: ', 'required' => false))
 )->addField(
-        new MyURYFormField('timecustom_stime', MyURYFormField::TYPE_TIME,
+        new MyRadioFormField('timecustom_stime', MyRadioFormField::TYPE_TIME,
                 array('label' => 'from', 'required' => false))
 )->addField(
-        new MyURYFormField('timecustom_etime', MyURYFormField::TYPE_TIME,
+        new MyRadioFormField('timecustom_etime', MyRadioFormField::TYPE_TIME,
                 array('label' => 'duration', 'required' => false, 'value' => '01:00'))
 );
