@@ -202,7 +202,7 @@ class MyRadioForm {
    * Note: This method should only be called once in the object's lifetime
    */
   public function editMode($identifier, $values, $action = null) {
-    $this->addField(new MyRadioFormField('myuryfrmedid', MyRadioFormField::TYPE_HIDDEN, array('value' => $identifier)));
+    $this->addField(new MyRadioFormField('myradiofrmedid', MyRadioFormField::TYPE_HIDDEN, array('value' => $identifier)));
 
     foreach ($values as $k => $v) {
       $this->setFieldValue($k, $v);
@@ -249,7 +249,7 @@ class MyRadioForm {
    * @return String a space-seperated list of classes
    */
   private function getClasses() {
-    $classes = 'myuryfrm';
+    $classes = 'myradiofrm';
     foreach ($this->classes as $class) {
       $classes .= " $class";
     }
@@ -272,8 +272,8 @@ class MyRadioForm {
       $return[$field->getName()] = $value;
     }
     //Edit Mode requests
-    if (isset($_REQUEST[$this->name.'-myuryfrmedid'])) {
-      $return['id'] = (int)$_REQUEST[$this->name.'-myuryfrmedid'];
+    if (isset($_REQUEST[$this->name.'-myradiofrmedid'])) {
+      $return['id'] = (int)$_REQUEST[$this->name.'-myradiofrmedid'];
     }
     return $return;
   }

@@ -241,7 +241,7 @@ final class Config {
    * A path to temporarially store uploaded audio files. Recommend somewhere in /tmp, MyRadio needs full r/w access to it.
    * @var String
    */
-  public static $audio_upload_tmp_dir = '/tmp/myuryaudiouploadcache';
+  public static $audio_upload_tmp_dir = '/tmp/myradioaudiouploadcache';
   
   /**
    * The API key to access last.fm's resources.
@@ -304,12 +304,12 @@ final class Config {
    * The file to store MyRadio Error Logs
    * @var String
    */
-  public static $log_file = '/var/log/ury-org-uk/myury_errors.log';
+  public static $log_file = '/var/log/ury-org-uk/myradio_errors.log';
   /**
    * A lock file on the MyRadio Error Logs. Prevents email spam.
    * @var String
    */
-  public static $log_file_lock = '/var/log/ury-org-uk/myury_errors.lock';
+  public static $log_file_lock = '/var/log/ury-org-uk/myradio_errors.lock';
   /**
    * The email to send error reports to. This is different from reporting_email, which does statistical reports.
    * @var String
@@ -344,7 +344,7 @@ final class Config {
    * state information about the service that should not be permanent but presist after a reload of the service.
    * @var String
    */
-  public static $daemon_lock_file = '/tmp/myury_daemon.lock';
+  public static $daemon_lock_file = '/tmp/myradio_daemon.lock';
   
   /**
    * The root URL to URY's API
@@ -434,6 +434,10 @@ final class Config {
   public static $d_Podcast_enabled = true;
   public static $d_StatsGen_enabled = true;
   public static $d_Explicit_enabled = false;
+  
+  /**** STRINGS ****/
+  public static $short_name = 'URY';
+  public static $long_name = 'University Radio York';
   
   /**
    * The constructor doesn't do anything practical

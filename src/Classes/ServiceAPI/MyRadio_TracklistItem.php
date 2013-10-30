@@ -302,7 +302,7 @@ class MyRadio_TracklistItem extends ServiceAPI {
       WHERE (rec_track.recordid=$1 OR rec_track.artist=$2)
       AND timestart >= $3
       AND timestart < $4
-      AND album NOT ILIKE \'URY Downloads%\'', array($track->getAlbum()->getID(),
+      AND album NOT ILIKE \''.Config::$short_name.' Downloads%\'', array($track->getAlbum()->getID(),
         $track->getArtist(), $timeout, CoreUtils::getTimestamp($time)));
     
     if ($include_queue) {
@@ -316,7 +316,7 @@ class MyRadio_TracklistItem extends ServiceAPI {
          * The title check is a hack to work around our default album
          * being URY Downloads
          */
-        if (($t->getAlbum()->getID() == $track->getAlbum()->getID() && stristr($t->getAlbum()->getTitle(), 'URY Downloads') === false) or $t->getArtist() === $track->getArtist()) {
+        if (($t->getAlbum()->getID() == $track->getAlbum()->getID() && stristr($t->getAlbum()->getTitle(), Config::$short_name.' Downloads') === false) or $t->getArtist() === $track->getArtist()) {
           $result[0] ++;
         }
       }

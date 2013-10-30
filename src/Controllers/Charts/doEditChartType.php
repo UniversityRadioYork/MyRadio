@@ -11,7 +11,7 @@ $form = MyRadio_JsonFormLoader::loadFromModule(
 );
 
 $data = $form->editMode(null, null)->readValues();
-$chart_type = MyRadio_ChartType::getInstance($data['myuryfrmedid']);
+$chart_type = MyRadio_ChartType::getInstance($data['myradiofrmedid']);
 $chart_type->setName($data['name'])->setDescription($data['description']);
 
 require 'Views/MyRadio/back.php';

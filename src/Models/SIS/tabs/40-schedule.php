@@ -11,6 +11,6 @@ $moduleInfo = array(
 'name' => 'sched',
 'title' => 'Schedule',
 'enabled' => true,
-'help' => 'Schedule tab lets you see what\'s on URY for the rest of the day',
+'help' => 'Schedule tab lets you see what\'s on for the rest of the day',
 'template' => 'SIS/tabs/schedule.twig',
 );

@@ -17,6 +17,9 @@
 class MyRadioEmail extends ServiceAPI {
   
   // Defaults
+  /**
+   * @todo Hardcoded URLs
+   */
   private static $headers = 'Content-type: text/plain; charset=utf-8';
   private static $sender = 'From: MyRadio <no-reply@ury.org.uk>';
   private static $footer = 'This email was sent automatically from MyRadio. You can opt out of URY Emails by visiting https://ury.org.uk/myury/Profile/edit/.';

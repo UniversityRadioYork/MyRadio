@@ -722,7 +722,7 @@ class MyRadio_Track extends ServiceAPI {
     if (!isset($details['track']['album'])) {
 //Send some defaults for album info
       return array(
-          'album' => MyRadio_Album::findOrCreate('URY Downloads ' . date('Y'), 'URY'),
+          'album' => MyRadio_Album::findOrCreate(Config::$short_name.' Downloads ' . date('Y'), Config::$short_name),
           'position' => 0,
           'duration' => intval($details['track']['duration'] / 1000)
       );

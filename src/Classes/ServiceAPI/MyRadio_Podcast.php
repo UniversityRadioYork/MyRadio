@@ -206,7 +206,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
             ]))->addField(new MyRadioFormField('terms', MyRadioFormField::TYPE_CHECK, [
                 'label' => 'I have read and confirm that this audio file complies'
                 . ' with <a href="/wiki/Podcasting_Policy" target="_blank">'
-                . 'URY\'s Podcasting Policy</a>.'
+                . Config::$short_name . '\'s Podcasting Policy</a>.'
             ]));
     
     return $form;
