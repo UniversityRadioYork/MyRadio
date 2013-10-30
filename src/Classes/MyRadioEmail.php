@@ -152,8 +152,10 @@ class MyRadioEmail extends ServiceAPI {
 
     if ($this->from !== null) {
       $headers[] = 'From: ' . $this->from->getName() . ' <' . $this->from->getEmail() . '>';
+      $headers[] = 'Return-Path: ' . $this->from->getEmail();
     } else {
       $headers[] = 'From: University Radio York <no-reply@ury.org.uk>';
+      $headers[] = 'Return-Path: no-reply@ury.org.uk';
     }
 
     /**
