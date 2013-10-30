@@ -207,16 +207,18 @@ window.timelord = {
    */
   newsWarn: function() {
     var date = new Date();
-    if ((date.getMinutes() === 59 && date.getSeconds() >= 15)
-            || (date.getMinutes() === 0 && date.getSeconds() <= 5)) {
+    if (date.getMinutes() === 59 && date.getSeconds() >= 15
+            && date.getSeconds() <= 53) {
       timelord.news = true;
-      if (date.getSeconds() < 0 && date.getSeconds() >= 15) {
+      if (date.getSeconds() <= 45) {
+        console.log('Happening');
         timelord.showMsg('<span class="news">News intro in '
                 +(45-date.getSeconds())+'...</span>');
         $('#next-show').show();
       } else {
-        timelord.showMsg('<span class="news">Online at ury.org.uk and across'
-                        +' campus on 1350am, <em>this</em> is URY News</span>');
+        timelord.showMsg('<span class="news">Jingle in '
+                +(52-date.getSeconds())+'...</span>');
+        $('#next-show').show();
       }
     } else {
       timelord.news = false;
