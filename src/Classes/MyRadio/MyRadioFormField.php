@@ -492,7 +492,6 @@ class MyRadioFormField {
    */
   public function readValue($prefix) {
     $name = $prefix . str_replace(' ', '_', $this->name);
-    echo $name;
     //The easiest ones can just be returned
     switch ($this->type) {
       case self::TYPE_TEXT:
