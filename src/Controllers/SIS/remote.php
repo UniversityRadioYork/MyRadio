@@ -21,6 +21,6 @@ $data = array();
 	$count++;
 } while (empty($data) && $count < 50);*/
 $data[] = $pollFuncs;
-var_dump(array_merge(SIS_Utils::getPlugins(), SIS_Utils::getTabs()));
+$data[] = array_merge(SIS_Utils::getPlugins(), SIS_Utils::getTabs());
 //Return the response data
-//require 'Views/MyRadio/datatojson.php';
+require 'Views/MyRadio/datatojson.php';
