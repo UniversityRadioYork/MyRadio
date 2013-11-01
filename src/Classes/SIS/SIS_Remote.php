@@ -20,6 +20,6 @@ class SIS_Remote extends ServiceAPI {
 		// if (!empty($response) && $response !== false) {
 		// 	return array('messages' => $response);
 		// }
-		return MyRadio_Timeslot::getInstance($session['timeslotid'])->getMessages();
+		return SIS_Messages::getMessages($session['timeslotid'], $_REQUEST['messages_highest_id']);
 	}
 }
