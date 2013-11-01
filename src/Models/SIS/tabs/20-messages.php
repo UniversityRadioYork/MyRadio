@@ -14,7 +14,7 @@ function query_messages($session) {
   if (!empty($response) && $response !== false) {
     return array('messages' => $response);
   }
-}
+};
 
 $moduleInfo = array(
 'name' => 'messages',

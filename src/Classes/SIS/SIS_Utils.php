@@ -60,7 +60,7 @@ class SIS_Utils extends ServiceAPI {
 				if (isset($moduleInfo['enabled']) && ($moduleInfo['enabled'] != true)) {
 					continue;
 				}
-				array_push($loadedModules, $moduleInfo);
+				$loadedModules[] = $moduleInfo);
 			}
 			return $loadedModules;
 		}
@@ -83,7 +83,7 @@ class SIS_Utils extends ServiceAPI {
 				if (isset($module['required_location']) && ($module['required_location'] === True && self::isAuthenticatedMachine() === False)) {
 					continue;
 				}
-				array_push($loadedModules, $module);
+				$loadedModules[] = $module);
 			}
 			return $modules;
 		}
@@ -136,5 +136,23 @@ class SIS_Utils extends ServiceAPI {
 		$x .= ($k['iscollege'] == 't') ? 'College Bedroom' : 'Study Room / Labs / Wifi';
 		$x .= "<br><br>\n\n";
 		return $x;
+	}
+
+	/**
+	 * Read the loaded modules and returns the poll functions, if configured
+	 * @param array $modules the loaded modules
+	 * @return array $pollFuncs functions to run for LongPolling
+	 */
+	private static function readPolls($modules=array_merge(getPlugins(), getTabs())) {
+		if ($modules !== false) {
+			$pollFuncs = array();
+			foreach ($modules as $key => $module) {
+				if (isset($module['pollfunc'])) {
+					$poll_funcs[] = $module['pollfunc'];
+				}
+			}
+			return $pollFuncs;
+		}
+		return false;
 	}
 }
