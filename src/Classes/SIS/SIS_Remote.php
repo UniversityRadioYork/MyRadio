@@ -20,6 +20,6 @@ class SIS_Remote extends ServiceAPI {
 		// if (!empty($response) && $response !== false) {
 		// 	return array('messages' => $response);
 		// }
-		return $_REQUEST['messages_highest_id'];
+		return SIS_Messages::getMessages($session['timeslotid'], isset($_REQUEST['messages_highest_id']) ? $_REQUEST['messages_highest_id'] : 0);
 	}
 }
