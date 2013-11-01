@@ -634,9 +634,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
       $result[$k]['time'] = intval($v['time']);
       $result[$k]['id'] = intval($v['id']);
       //Add the IP metadata
-      //if ($v['type'] == 3) {
-      //  $result[$k]['location'] = SIS_Utils::ipLookup($v['source']);
-      //}
+      if ($v['type'] == 3) {
+        $result[$k]['location'] = SIS_Utils::ipLookup($v['source']);
+      }
     }
     return $result;
   }

@@ -9,7 +9,10 @@
       console.log('updateMessages triggered by server');
       for (i in data) {
         //Add the content dialog div
-        $('#message-data').append('<div id="mc'+data[i]['id']+'">'+data[i]['body']+'<footer>'+data[i]['location']+'</footer></div>');
+        $('#message-data').append('<div id="mc'+data[i]['id']+'">'+data[i]['body']+'<footer></footer></div>');
+        for (l in data[i]['location']) {
+          $('#mc'+data[i]['id']+' footer').append(l+'<br>');
+        };
         //Set some of the variables
         var img = "<img src='{{ baseurl }}img/sis/"+data[i]['type']+".png' />";
         var msgdate = new Date(data[i]['time']*1000);
