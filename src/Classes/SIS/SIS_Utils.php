@@ -146,7 +146,7 @@ class SIS_Utils extends ServiceAPI {
 	public static function readPolls($modules) {
 		if ($modules !== false) {
 			$pollFuncs = array();
-			foreach ($modules as $key => $module) {
+			foreach ($modules as $module) {
 				if (isset($module['pollfunc'])) {
 					$poll_funcs[] = $module['pollfunc'];
 				}
