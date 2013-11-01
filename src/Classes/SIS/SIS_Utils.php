@@ -60,7 +60,7 @@ class SIS_Utils extends ServiceAPI {
 				if (isset($moduleInfo['enabled']) && ($moduleInfo['enabled'] != true)) {
 					continue;
 				}
-				$loadedModules[] = $moduleInfo);
+				$loadedModules[] = $moduleInfo;
 			}
 			return $loadedModules;
 		}
@@ -83,7 +83,7 @@ class SIS_Utils extends ServiceAPI {
 				if (isset($module['required_location']) && ($module['required_location'] === True && self::isAuthenticatedMachine() === False)) {
 					continue;
 				}
-				$loadedModules[] = $module);
+				$loadedModules[] = $module;
 			}
 			return $modules;
 		}
