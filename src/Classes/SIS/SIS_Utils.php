@@ -143,7 +143,7 @@ class SIS_Utils extends ServiceAPI {
 	 * @param array $modules the loaded modules
 	 * @return array $pollFuncs functions to run for LongPolling
 	 */
-	private static function readPolls($modules=array_merge(getPlugins(), getTabs())) {
+	public static function readPolls($modules) {
 		if ($modules !== false) {
 			$pollFuncs = array();
 			foreach ($modules as $key => $module) {
