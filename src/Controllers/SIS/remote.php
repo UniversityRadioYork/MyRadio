@@ -4,7 +4,7 @@
 $session = $_SESSION;
 session_write_close();
 
-$pollFuncs = SIS_Utils::readPolls();
+$pollFuncs = SIS_Utils::readPolls(array_merge(SIS_Utils::getPlugins(), SIS_Utils::getTabs()));
 
 $data = array();
 do {
