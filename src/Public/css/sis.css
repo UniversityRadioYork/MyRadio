@@ -1,36 +1,72 @@
-html, body { 
-  height: 100%; 
-  overflow: hidden; 
-}
-body { 
-  text-align:center; 
-  font-family:Helvetica, Arial, sans-serif; 
-  margin:0px; 
-  background: #222; 
-  color: #fff;
-  padding: 22px 0 0;
-}
-a { 
-  color: #fff; 
+body {
+  width: 98%;
+  min-width: 1200px;
+  height: calc(100% - 22px);
 }
 
-div.maincontainer { overflow: hidden}
-div.pluginpane { float: left; width: 300px; }
+#notice {
+  position: fixed;
+  top: 22px;
+  left: 0;
+}
 
-div.pluginhead { font-weight:bold; cursor:pointer; height:1.5em; }
-div[id^="plugin_body"] { font-size: 12px; }
-div.plugin div[id^="plugin_body"] { overflow-x: hidden; }
+#grid {
+  height: calc(100% - 150px);
+  min-height: 580px;
+  min-width: 1188px;
+  position: relative;
+}
 
-div.tabbar { margin:0px; text-align: left; height: 1.5em; padding-left: 2em; }
-.ui-tabs-panel { overflow-y: auto; overflow-x: hidden; height: 450px; }
-div.tab { cursor:pointer; display: inline; margin-right: 0.5em; padding: 0 1em .2em 1em; }
-div.ui-resizable-s { height: 10px; bottom: 0px; }
+.pluginpane { 
+  float: left; 
+  width: 300px;
+  margin-right: 5px
+}
+.pluginpane .plugin:first-of-type .pluginhead {
+    margin-top: 0;
+}
+.pluginhead {
+  font-weight:bold;
+  cursor:pointer;
+  height:1.5em
+}
+.pluginbody { 
+  overflow-x: hidden;
+  font-size: 12px
+}
+.ui-accordion .ui-accordion-content {
+  padding: 1em 2em;
+  overflow-x: hidden;
+}
+
+
+.maincontainer {
+  overflow: hidden;
+  height: 100%;
+  margin-right: 10px;
+}
+.ui-tabs {
+  height: calc(100% - .4em - 2px);
+  padding: 0;
+}
+.ui-tabs .ui-tabs-panel {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100% - 2em - 0.5em - 48px);
+}
+
+.ui-resizable-s { height: 10px; bottom: 0; }
 
 .list { text-align:left; list-style-position:outside; list-style-type:none; }
 .infobox {  width:350px; margin:auto; padding:1em; font-size:0.8em; text-align:justify; font-style:italic; }
 
 .errorbox {  margin:auto; padding-bottom:1em; font-size:0.8em; font-style:italic; }
 .hr { margin:.5em 0 0 0; }
+
+#piss footer {
+  text-align: right;
+  font-style: italic;
+}
 
 #messages {
   text-align: center;
@@ -79,66 +115,20 @@ table.messages td {
 .s1off { background-color: #600; }
 .poweredoff { background-color: #333; }
 
-div#message-data {
+#message-data {
     display: none;
 }
 .td-msgitem {
     cursor: pointer;
 }
 
-footer { margin-top: 10px; font-size: 14px }
-
-/** temp until integrated into myury **/
-.bar {
-  position: fixed;
-  left: 0;
-  width: 100%;
-  height: 22px;
-  background-color: black;
-  z-index: 9999;
+/** Webcam **/
+figure {
+  margin: 0;
 }
-
-/** Header **/
-header {
-  top: 0;
-  color: white;
-  text-align: center;
+.webcam-stream-container {
+  display: block;
 }
-header a,
-header a:visited,
-header a:active {
-  color: white;
-  text-decoration: none;
-}
-header a:hover {
-  color: #17a;
-}
-
-/** Generic Classes **/
-/* Style */
-.r,
-.logotype {
-  font-family: roundabout;
-}
-.left {
-  text-align: left;
-}
-
-/* Layout */
-.fleft {
-  float: left;
-}
-.fright {
+.webcam-stream-container.live {
   float: right;
-}
-.clearfix:before,
-.clearfix:after {
-    content: "";
-    display: table;
-}
-.clearfix:after {
-    clear: both;
-}
-.clearfix {
-    *zoom: 1;
 }
