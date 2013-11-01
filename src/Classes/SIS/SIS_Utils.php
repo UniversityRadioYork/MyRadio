@@ -148,7 +148,7 @@ class SIS_Utils extends ServiceAPI {
 			$pollFuncs = array();
 			foreach ($modules as $module) {
 				if (isset($module['pollfunc'])) {
-					$poll_funcs[] = $module['pollfunc'];
+					$pollFuncs[] = $module['pollfunc'];
 				}
 			}
 			return $pollFuncs;
