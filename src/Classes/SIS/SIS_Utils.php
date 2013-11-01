@@ -112,15 +112,14 @@ class SIS_Utils extends ServiceAPI {
 	 * @return String     Location
 	 */
 	public static function ipLookup($ip) {
-		$query = 'SELECT iscollege, description FROM l_subnet WHERE subnet >> $1 ORDER BY description ASC';
-		$query = pg_query_params($this->db, $query, array($ip));
+		$query = self::$db->query('SELECT iscollege, description FROM l_subnet WHERE subnet >> $1 ORDER BY description ASC', array($ip));
 		if (($query === null) or (pg_num_rows($query) == 0)) {
 			$location = @geoip_record_by_name($ip);
 			$location = ($location === FALSE) ? 'Unknown' : " {$location['city']}, {$location['country_name']}";
 			return "From: " . $location;
 		}
 		if (pg_num_rows($query) !== 1) {
-			$q = pg_fetch_all($query);
+			$q = self::$db->fetch_all($query);
 			$x = 'There are multiple sources of this message:<br><br>';
 			foreach ($q as $k) {
 				$x .= "Location: ";
