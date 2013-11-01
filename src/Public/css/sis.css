@@ -75,22 +75,22 @@ body {
 
 table.messages { 
     font-size: 16px;
-    padding: 5px;
     margin: auto;
-    width: 800px;
+    width: 80%;
+    border-collapse: separate;
+    border-spacing: 0 0.75em;
 }
 table.messages tr {
-    margin: 10px 5px;
     height: 25px;
 }
 table.messages tr.unread td:first-child {
   background-image: url(../img/sis/6.png);
   background-repeat: no-repeat;
+  background-position-y: 50%;
   width: 50px;
 }
-table.messages td {
-    margin: 0 5px;
-    background: none;
+table.messages tr td:last-child {
+  width: 100px;
 }
 
 .invisible { display:none; }
