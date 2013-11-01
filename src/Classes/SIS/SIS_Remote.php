@@ -20,5 +20,5 @@ class SIS_Remote extends ServiceAPI {
 		if (!empty($response) && $response !== false) {
 			return array('messages' => $response);
 		}
-	};
+	}
 }
