@@ -10,7 +10,7 @@ $pollFuncs = SIS_Utils::readPolls(array_merge(SIS_Utils::getPlugins(), SIS_Utils
 //Times out after 50 cycles to prevent infinites or something like that
 $count = 0;
 $data = array();
-/*do {
+do {
 	foreach ($pollFuncs as $function) {
 		$temp = call_user_func($function, $session);
 		if (!empty($temp)) {
@@ -19,10 +19,7 @@ $data = array();
 	}
 	sleep(1);
 	$count++;
-} while (empty($data) && $count < 50);*/
-
-$function = 'SIS_Remote::query_messages';
-$data[] = call_user_func($function, $session);
+} while (empty($data) && $count < 50);
 
 //Return the response data
 require 'Views/MyRadio/datatojson.php';
