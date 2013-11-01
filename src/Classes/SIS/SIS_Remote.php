@@ -15,10 +15,11 @@
 class SIS_Remote extends ServiceAPI {
 
 	public static function query_messages($session) {
-		$response = SIS_Messages::getMessages($session['timeslotid'], $_REQUEST['messages_highest_id']);
+		// $response = SIS_Messages::getMessages($session['timeslotid'], $_REQUEST['messages_highest_id']);
 
-		if (!empty($response) && $response !== false) {
-			return array('messages' => $response);
-		}
+		// if (!empty($response) && $response !== false) {
+		// 	return array('messages' => $response);
+		// }
+		return 'beans';
 	}
 }
