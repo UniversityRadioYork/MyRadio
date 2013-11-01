@@ -31,7 +31,7 @@
 				</ul>
 				{% for tab in tabs %}
 					<div id="tabs-{{ loop.index }}" style="margin-top: .5em;">
-	                    {% include tab.template %}
+	                    {% include ('SIS/tabs/'~tab.name~'.twig') %}
 	                </div>
 				{% endfor %}
 			</div>
