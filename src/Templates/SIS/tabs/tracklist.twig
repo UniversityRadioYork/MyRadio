@@ -63,7 +63,9 @@
 			width: 350,
 			modal: true,
 			buttons: {
-				"Submit": submitTrack(),
+				"Submit": function() {
+					submitTrack();
+				},
 			},
 			close: function() {
 				submitTrackCancel();
@@ -75,10 +77,10 @@
 			modal: true,
 			buttons: {
 				"Yes": function() {
-					submitTrackNoLib()
+					submitTrackNoLib();
 				},
 				"No": function() {
-					submitTrackCancel()
+					submitTrackCancel();
 				}
 			}
 		});
