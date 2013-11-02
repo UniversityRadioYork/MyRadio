@@ -154,10 +154,9 @@ function submitTrackNoLib() {
 	var tname = $("#trackpick-tname").val();
 	var album = $("#trackpick-album").val();
 	var artist = $("#trackpick-artist").val();
-	var timeslotid = {{timeslotid}};
 	$.ajax({
 		url: myury.makeURL('SIS','tracklist.checkTrack'),
-		data: {tname: tname, album: album, artist: artist, timeslotid: timeslotid, where: "notrec"},
+		data: {tname: tname, album: album, artist: artist, where: "notrec"},
 		type: 'get',
 		dataType: 'json',
 		success: function(output) {
@@ -172,10 +171,9 @@ function submitTrack() {
 	var tname = $("#trackpick-tname").val();
 	var album = $("#trackpick-album").val();
 	var artist = $("#trackpick-artist").val();
-	var timeslotid = {{ timeslotid }};
 	$.ajax({
 	    	url: myury.makeURL('SIS','tracklist.checkTrack'),
-		data: {tname: tname, album: album, artist: artist, timeslotid: timeslotid, where: 'rec'},
+		data: {tname: tname, album: album, artist: artist, where: 'rec'},
 		type: 'get',
 		dataType: 'json',
 		success: function(output){

@@ -10,8 +10,9 @@
 $artist = $_GET['artist'];
 $album = $_GET['album'];
 $tname = $_GET['tname'];
-$timeslotid = $_GET['timeslotid'];
 $where = $_GET['where'];
+
+$timeslotid = $_SESSION['timeslotid'];
 
 if ($where == "notrec"){
 	SIS_Tracklist::insertTrackNoRec($tname, $artist, $album, time(), "m", $timeslotid);
@@ -21,7 +22,7 @@ if ($where == "notrec"){
 else if($where == 'rec'){
 	$result = SIS_Tracklist::checkTrackOK($artist, $album, $tname);
 	$numrow = sizeof($result);
-	$row = $result;
+	$row = $result[0];
 	$return = 0;
 	if ($numrow != 1){
 		if($numrow == 0){
@@ -32,7 +33,7 @@ else if($where == 'rec'){
 		}
 	}
 	elseif ($numrow == 1){
-//		SIS_Tracklist::insertTrackRec($row[3], $row[4], time(), "m", $timeslotid);
+		SIS_Tracklist::insertTrackRec($row['trackid'], $row['recordid'], time(), "m", $timeslotid);
 		$return = 0;
 	}
 
