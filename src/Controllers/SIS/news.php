@@ -12,7 +12,7 @@
 */
 
 $dest_host = Config::$news_provider;
-$proxy_base_url = str_replace($_SERVER['HTTP_HOST'], '', CoreUtils::makeURL('SIS', 'news'));
+$proxy_base_url = '/' . ltrim(str_replace($_SERVER['HTTP_HOST'], '', CoreUtils::makeURL('SIS', 'news')), '/');
 $proxying_url = Config::$news_proxy;
 
 
