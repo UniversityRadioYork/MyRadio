@@ -105,7 +105,7 @@ class SIS_Tracklist extends ServiceAPI {
 	 	return $result;
 	}
 
-	public function insertTrackRec($trackid, $recid, $time, $source, $timeslotid) {
+	public static function insertTrackRec($trackid, $recid, $time, $source, $timeslotid) {
 		$trackid = pg_escape_string($trackid);
 		$recid = pg_escape_string($recid);
 		$time = pg_escape_string($time);
@@ -132,5 +132,9 @@ class SIS_Tracklist extends ServiceAPI {
 		}
 		self::$db->query($query);
 	}
-	
+
+	public static function markTrackDeleted($tracklistid){
+		$query = "UPDATE tracklist.tracklist SET state = 'd' WHERE audiologid = $1";
+		self::$db->query($query, array($tracklistid));
+	}
 }
