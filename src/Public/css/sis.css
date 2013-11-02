@@ -93,6 +93,10 @@ table.messages tr td:last-child {
   width: 100px;
 }
 
+#tracklist label, #tracklist input { display:block; }
+#tracklist input.text { margin-bottom:12px; width:95%; padding: .4em; }
+#tracklist fieldset { padding:0; border:0; margin-top:25px; }
+
 .invisible { display:none; }
 .goright { text-align:right; }
 
