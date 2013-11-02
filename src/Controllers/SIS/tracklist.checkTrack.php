@@ -19,9 +19,9 @@ if ($where == "notrec"){
 }
 
 else if($where == 'rec'){
-	$data = SIS_Tracklist::checkTrackOK($artist, $album, $tname);
-	$numrow = sizeof($data);
-	$row = Database::getInstance()->fetch_one($data);
+	$result = SIS_Tracklist::checkTrackOK($artist, $album, $tname);
+	$numrow = sizeof($result);
+	$row = $result;
 	$return = 0;
 	if ($numrow != 1){
 		if($numrow == 0){
