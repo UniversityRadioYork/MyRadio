@@ -422,7 +422,7 @@ final class Config {
    * URL of the URY news provider
    * @var string
    */
-  public static $news_provider = "http://www.irn.co.uk/"
+  public static $news_provider = "http://www.irn.co.uk/";
 
   /**
    * Host that the news provider must be accessed from
