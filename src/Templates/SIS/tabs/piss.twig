@@ -2,3 +2,94 @@
 	{{tab.vars.piss.content | raw}}
     <footer><author>{{tab.vars.piss.author}}</author> on {{tab.vars.piss.posted}}</footer>
 </div>
+
+<script type="text/javascript">
+// http://yelotofu.com/2008/08/jquery-shuffle-plugin/
+(function ($) {
+	$.fn.shuffle = function () {
+		return this.each(function () {
+			var items = $(this).children();
+			return (items.length) ? $(this).html($.shuffle(items)) : this;
+		});
+	};
+	$.shuffle = function (arr) {
+		for (
+		var j, x, i = arr.length; i;
+		j = parseInt(Math.random() * i), x = arr[--i], arr[i] = arr[j], arr[j] = x);
+		return arr;
+	};
+})(jQuery);
+
+$(function() {
+
+	changeSource();
+
+	$("#reload, #count-up, #count-down, #ltags, #htags, label").disableTextSelect();
+	$("#reload, #ltags, #htags").click(function () {
+		generate();
+	});
+	$("#count").change(function () {
+		generate();
+	});
+	$("#showlist").change(function () {
+		changeSource();
+	});
+	$("#filler").click(function () {
+		$(this).selectText();
+	});
+
+	function generate() {
+		count = $('#count').val();
+		output = "";
+		current = 0;
+		$.shuffle(q);
+		$.shuffle(h);
+
+		// Output content		
+		for (var i = 0; i < count; i++) {
+			num = Math.floor(Math.random() * 4) + 3;
+			last = 0;
+
+			// Output a paragraph
+			p = "";
+			for (var z = 1; z <= num; z++) {
+				p += q[++current % q.length][1];
+				if (z != num) p += " ";
+			}
+			// Output a list
+			list = "";
+			if ((i == 2 || i == 4) && $('#ltags').attr('checked')) {
+				for (var l = 0; l < Math.floor(Math.random() * 4) + 2; l++) {
+					list += "<li>" + q[Math.floor(Math.random() * q.length)][1] + "</li>\n";
+				}
+				if (i == 2) output += "<ul>\n" + list + "</ul>\n";
+				else output += "<ol>\n" + list + "</ol>\n";
+			}
+			// Output a header
+			if ($('#htags').attr('checked') && i < 6) {
+				length = Math.floor(Math.random() * 5) + 2;
+				s = h[Math.floor(Math.random() * h.length)][0];
+				output += "<h" + (i + 1) + ">" + s + "</h" + (i + 1) + ">\n";
+			}
+			output += "<p>" + p + "</p>\n";
+		}
+		$("#piss").html(output);
+	}
+
+	function changeSource() {
+		q = []; // Quote array
+		h = []; // Header array
+		$("#fillerama").removeClass().addClass(val);
+		$.getJSON("http://api.chrisvalleskey.com/fillerama/get.php?show=futurama&format=json&jsoncallback=?",
+		function(data){
+			$.each(data.db, function (key, value) {
+				q.push([value.source, value.quote]);
+			});
+			$.each(data.headers, function (key, value) {
+				h.push([value.header]);
+			});
+			generate();
+		});
+	}	
+});
+</script>
