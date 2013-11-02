@@ -32,18 +32,13 @@ if( strpos($_SERVER['REQUEST_URI'], $proxy_base_url) !== 0 )
 //remove base_url and optional news from request_uri
 $proxy_request_url = substr($_SERVER['REQUEST_URI'], strlen($proxy_base_url_canonical));
 
-if( strpos($proxy_request_url, 'news') === 0 )
-{
-    $proxy_request_url = ltrim(substr($proxy_request_url, strlen('news')), '/');
-}
-
 //final proxied request url
-$proxy_request_url = rtrim($dest_host, '/ ') . '/' . $proxy_request_url;
+$request_url = rtrim($dest_host, '/ ') . '/' . $proxy_request_url;
 
 
 /* Init CURL */
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $proxy_request_url);
+curl_setopt($ch, CURLOPT_URL, $request_url);
 curl_setopt($ch, CURLOPT_PROXY, $proxying_url);
 curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -115,6 +110,6 @@ foreach($proxied_headers as $hname)
     }
 }
 
-die($body);
-
+//die($body);
+var_dump($_SERVER['REQUEST_URI']);
 
