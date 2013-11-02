@@ -60,10 +60,10 @@ var server = {
     var first = true;
     for (var key in server.params) {
       if (!first) {
-        qString = qString + "&";
+        qString += "&";
         first = false;
       }
-      qString = qString+key+"="+server.params[key];
+      qString += key + "=" + server.params[key];
     }
     return qString;
   },
