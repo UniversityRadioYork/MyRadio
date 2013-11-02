@@ -29,12 +29,12 @@ if( strpos($_SERVER['REQUEST_URI'], $proxy_base_url) !== 0 )
         $_SERVER['REQUEST_URI']);
 }
 
-//remove base_url and optional news.php from request_uri
+//remove base_url and optional news from request_uri
 $proxy_request_url = substr($_SERVER['REQUEST_URI'], strlen($proxy_base_url_canonical));
 
-if( strpos($proxy_request_url, 'news.php') === 0 )
+if( strpos($proxy_request_url, 'news') === 0 )
 {
-    $proxy_request_url = ltrim(substr($proxy_request_url, strlen('news.php')), '/');
+    $proxy_request_url = ltrim(substr($proxy_request_url, strlen('news')), '/');
 }
 
 //final proxied request url
