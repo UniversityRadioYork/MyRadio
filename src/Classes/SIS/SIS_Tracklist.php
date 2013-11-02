@@ -33,7 +33,7 @@ class SIS_Tracklist extends ServiceAPI {
 					'playtime' => $tracklistitem->getStartTime(),
 					'title' => $track->getTitle(),
 					'artist' => $track->getArtist(),
-					'album' => $track->getAlbum(),
+					'album' => $track->getAlbum()->getTitle(),
 					'id' => $tracklistitem->getID()
 				 );
 			}

@@ -1,29 +1,30 @@
 <script type="text/javascript">
-	var tracklist_highest_id =0;
+	var tracklist_highest_id = 0;
 	$(document).ready(function(){
 		server.register_callback(updateTrackListing, 'tracklist');
-		server.register_param('&tracklist_highest_id', tracklist_highest_id);
+		server.register_param('tracklist_highest_id', tracklist_highest_id);
 	});
 	
 	var updateTrackListing = function(data) {
 		console.log('updateTrackListing triggered by server');
 		for (i in data) {
-			$('#tracklist table').append('<div id="delsure'+data[i]['id']+'" title="Delete Track?">Are you sure you want to delete this track?</div>')
+			$('#tracklist table').append('<div id="delsure'+data[i]['id']+'" title="Delete Track?">Are you sure you want to delete this track?</div>');
+
+			var trackDate = new Date(data[i]['playtime']*1000);
+			var mins = trackDate.getMinutes(); if (mins < 10) mins = "0" + mins;
+        	var time = trackDate.getHours()+':'+mins+' '+trackDate.getDate()+'/'+(trackDate.getMonth()+1);
+        	//Add the new row to the top of the tracklist table
 			$('#tracklist table').prepend(
-				'<tr class="tlist-item" id="t'+data[i]['id']+'"><td>'+data[i]['playtime']+'</td><td>'+data[i]['title']+'</td><td>'+data[i]['artist']+'</td><td>'+data[i]['album']+'</td><td><div id="delbutton"><span class="ui-icon ui-icon-trash" style="display:inline-block"></span></div></td></tr>');
+				'<tr class="tlist-item" id="t'+data[i]['id']+'">
+					<td>'+time+'</td>
+					<td>'+data[i]['title']+'</td>
+					<td>'+data[i]['artist']+'</td>
+					<td>'+data[i]['album']+'</td>
+					<td><div class="delbutton"><span class="ui-icon ui-icon-trash" style="display:inline-block"></span></div></td></tr>');
 			
 			tracklist_highest_id = (tracklist_highest_id < data[i]['id']) ? data[i]['id'] : tracklist_highest_id;
-			
-			$('#delbutton').click(function() {
-				
-	  				var id = $(this).closest('tr').attr('id').replace('t', '');
-				$('#delsure'+id).dialog("open");
 
-				
-					
-
-			});
-			$( '#delsure'+data[i]['id'] ).dialog({
+			$('#delsure'+data[i]['id'] ).dialog({
 				autoOpen: false,
 				resizable: false,
 				modal: true,
@@ -44,46 +45,104 @@
 					}
 				}
 			});
+
+			$('.delbutton').click(function() {
+				$('#delsure'+data[i]['id']).dialog("open");
+			});
 		
-		server.register_param('&tracklist_highest_id', tracklist_highest_id);
+			server.register_param('tracklist_highest_id', tracklist_highest_id);
 		}	
 	}
 </script>
 
-<script type="text/javascript">	
+<script>	
 	$(function() {
-		$( "#tracklist-insert" ).dialog({ autoOpen: false});
+		$('#tracklist-insert').dialog({
+			autoOpen: false,
+			height: 300,
+			width: 350,
+			modal: true,
+			buttons: {
+				"Submit": submitTrack(),
+			},
+			close: function() {
+				submitTrackCancel();
+			};
+		});
+
+		$('#tracklist-insert-check').dialog({
+			autoOpen: false,
+			modal: true,
+			buttons: {
+				"Yes": submitTrackNoLib(),
+				"No": submitTrackCancel()
+			}
+		});
+
+		$( "#trackpick-artist" ).autocomplete({	
+			source: function (request, response) {
+				var tname = $("#trackpick-tname").val();
+				var album = $("#trackpick-album").val();
+				var artist = $("#trackpick-artist").val();
+				var box = "artist";
+				$.getJSON(myury.makeURL('SIS','tracklist.findTrack'),
+				{
+					tname: tname,
+					album: album,
+					artist: artist,
+					box: box
+				}, response);
+			}
+		});
+
+		$( "#trackpick-album" ).autocomplete({	
+			source: function (request, response) {
+				var tname = $("#trackpick-tname").val();
+				var album = $("#trackpick-album").val();
+				var artist = $("#trackpick-artist").val();
+				var box = "album";
+				$.getJSON(myury.makeURL('SIS','tracklist.findTrack'),
+				{
+					tname: tname,
+					album: album,
+					artist: artist,
+					box: box
+				}, response);
+			}
+		});
+
+		$( "#trackpick-tname" ).autocomplete({	
+			source: function (request, response) {
+				var tname = $("#trackpick-tname").val();
+				var album = $("#trackpick-album").val();
+				var artist = $("#trackpick-artist").val();
+				var box = "tname";
+				$.getJSON(myury.makeURL('SIS','tracklist.findTrack'),
+				{
+					tname: tname,
+					album: album,
+					artist: artist,
+					box: box
+				}, response);
+			}
+		});
+
+		$('#add-track').click(function() {
+			$('#tracklist-insert').dialog("open");
+		};
+
 	});
 
-	$(function() {
-		$( "#tracklist-insert-check" ).dialog({ autoOpen: false});
-	});
 
-	function showTrackInsert(){
-		$("#tracklist-insert").dialog("open");
-	};
-
-
-/*	function insertTrack(){
-var tname = $("#trackpick-tname").val();
-var album = $("#trackpick-album").val();
-var artist = $("#trackpick-artist").val();
-
-
-    $.ajax({
-    	url: myury.makeURL('SIS','tracklist.checkTrack'),
-	data: {tname: tname, album: album, artist: artist, }
-	type: 'post'
-	success: function(output){
-		alert(output);
-
-		}
-	});
-
-    
+function submitTrackCancel() {
+	$("#trackpick-tname").val("");
+	$("#trackpick-album").val("");
+	$("#trackpick-artist").val("");
+	$("#tracklist-insert").dialog("close");
+	$("#tracklist-insert-check").dialog("close");
 };
-*/
-function submitTrackNoLib(){
+
+function submitTrackNoLib() {
 	var tname = $("#trackpick-tname").val();
 	var album = $("#trackpick-album").val();
 	var artist = $("#trackpick-artist").val();
@@ -93,18 +152,14 @@ function submitTrackNoLib(){
 		data: {tname: tname, album: album, artist: artist, timeslotid: timeslotid, where: "notrec"},
 		type: 'get',
 		dataType: 'json',
-		success: function(output){
+		success: function(output) {
 			console.log(output);
-				$("#trackpick-tname").val("");
-				$("#trackpick-album").val("");
-				$("#trackpick-artist").val("");
-				$("#tracklist-insert").dialog("close");
-				$("#tracklist-insert-check").dialog("close");
+			submitTrackCancel();
 		}
 	});
 };
 
-function submitTrack(){
+function submitTrack() {
 	//	event.preventDefault();
 	var tname = $("#trackpick-tname").val();
 	var album = $("#trackpick-album").val();
@@ -117,99 +172,43 @@ function submitTrack(){
 		dataType: 'json',
 		success: function(output){
 			console.log(output);
-			if(output.return == '1'){
+			if(output.return == '1') {
 				$("#tracklist-insert-check").dialog("open");
 				$("#warntitle").text(tname);
 				$("#warnartist").text(artist);
-
 			}
-			if(output.return == '2'){
+			if(output.return == '2') {
 				
 			}
-			if(output.return == '0'){
-				$("#trackpick-tname").val("");
-				$("#trackpick-album").val("");
-				$("#trackpick-artist").val("");
-				$("#tracklist-insert").dialog("close");
-				
+			if(output.return == '0') {
+				submitTrackCancel();
 			}
 		}
 	});
 	return false;
 };
 
-
-
-$(function() {
-	$( "#trackpick-artist" ).autocomplete({	
-		source: function (request, response) {
-			var tname = $("#trackpick-tname").val();
-			var album = $("#trackpick-album").val();
-			var artist = $("#trackpick-artist").val();
-			var box = "artist";
-			$.getJSON(myury.makeURL('SIS','tracklist.findTrack'),
-			{
-				tname: tname,
-				album: album,
-				artist: artist,
-				box: box
-			}, response);
-		}
-	});
-});
-
-$(function() {
-	$( "#trackpick-album" ).autocomplete({	
-		source: function (request, response) {
-			var tname = $("#trackpick-tname").val();
-			var album = $("#trackpick-album").val();
-			var artist = $("#trackpick-artist").val();
-			var box = "album";
-			$.getJSON(myury.makeURL('SIS','tracklist.findTrack'),
-			{
-				tname: tname,
-				album: album,
-				artist: artist,
-				box: box
-			}, response);
-		}
-	});
-});
-
-$(function() {
-	$( "#trackpick-tname" ).autocomplete({	
-		source: function (request, response) {
-			var tname = $("#trackpick-tname").val();
-			var album = $("#trackpick-album").val();
-			var artist = $("#trackpick-artist").val();
-			var box = "tname";
-			$.getJSON(myury.makeURL('SIS','tracklist.findTrack'),
-			{
-				tname: tname,
-				album: album,
-				artist: artist,
-				box: box
-			}, response);
-		}
-	});
-});
 </script>
 
 <div id="tracklist">
-	<button onclick="showTrackInsert()">Add Track</button>
+	<button id="add-track">Add Track</button>
 	<table class="tracklist"></table>
 	<div id="tracklist-entry" title="Track Details"></div>
+
 	<div id="tracklist-insert" title="Insert Track">
 		<form id="trackPick-Form">
-			<label>Artist: <input id="trackpick-artist" ></label><br>
-			<label>Album: <input id="trackpick-album" ></label><br>
-			<label>Track: <input id="trackpick-tname" ></label><br>
+			<fieldset>
+				<label for"trackpick-artist">Artist:</label>
+				<input type="text" name="trackpick-artist" id="trackpick-artist" >
+				<label for="trackpick-album">Album:</label>
+				<input type="text" name="trackpick-album" id="trackpick-album" >
+				<label for="trackpick-tname">Track:</label>
+				<input type="text" name="trackpick-tname" id="trackpick-tname" >
+			</fieldset>
 		</form>
-			<button onclick="submitTrack()">Submit</button>
 		<div id="tracklist-insert-check" title="SIS Warning">
 			SIS could not find <b id="warntitle"> --- </b> by <b id="warnartist"> --- </b> in the library. Continue?<br>
-			<button onclick="submitTrackNoLib()">Yes</button><button onclick="submitTrackCancel()">No</button>
 		</div>
-			
 	</div>
+
 </div>
