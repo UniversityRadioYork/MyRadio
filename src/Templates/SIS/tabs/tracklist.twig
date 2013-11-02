@@ -74,8 +74,12 @@
 			autoOpen: false,
 			modal: true,
 			buttons: {
-				"Yes": submitTrackNoLib(),
-				"No": submitTrackCancel()
+				"Yes": function() {
+					submitTrackNoLib()
+				},
+				"No": function() {
+					submitTrackCancel()
+				}
 			}
 		});
 
