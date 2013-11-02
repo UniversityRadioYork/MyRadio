@@ -61,8 +61,8 @@ var server = {
     for (var key in server.params) {
       if (!first) {
         qString += "&";
-        first = false;
       }
+      first = false;
       qString += key + "=" + server.params[key];
     }
     return qString;
