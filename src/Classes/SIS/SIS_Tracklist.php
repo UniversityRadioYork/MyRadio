@@ -82,9 +82,9 @@ class SIS_Tracklist extends ServiceAPI {
 	 	$result = self::$db->fetch_all('SELECT DISTINCT trk.title AS track, rec.title AS album, trk.artist AS artist, trk.trackid AS trackid, rec.recordid AS recordid
 	 		FROM rec_track trk
 	 		INNER JOIN rec_record rec ON ( rec.recordid = trk.recordid )
-	 		WHERE trk.artist ILIKE \'%$1%\'
-	 		AND rec.title ILIKE \'%$2%\'
-	 		AND trk.title ILIKE \'%$3%\'
+	 		WHERE trk.artist ILIKE %$1%
+	 		AND rec.title ILIKE %$2%
+	 		AND trk.title ILIKE %$3%
 	 		ORDER BY trk.title ASC LIMIT 10',
 	 		array($artist, $album, $tname));
 	 	return $result;
