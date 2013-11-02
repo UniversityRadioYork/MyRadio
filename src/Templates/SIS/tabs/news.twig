@@ -1,9 +1,11 @@
 <script type="text/javascript">
   $(function(){
-    $('#ury-irn').contents().find('#NewsRoomFrame').attr('src','IRNPortal/Newsroom.html')
+    setTimeout(function() {
+      $('#ury-irn').contents().find('#NewsRoomFrame').attr('src','IRNPortal/Newsroom.html');
+    }, 5000);
   });
-
 </script>
+
   <div id="news">
     <iframe id="ury-irn" src="https://ury.org.uk/~aj/proxy/index.php/NewsRoom.aspx" width="100%" height="680px"></iframe>
   </div>
