@@ -419,6 +419,18 @@ final class Config {
   );
 
   /**
+   * URL of the URY news provider
+   * @var string
+   */
+  public static $news_provider = "http://www.irn.co.uk/"
+
+  /**
+   * Host that the news provider must be accessed from
+   * @var string
+   */
+  public static $news_proxy = "wc10.york.ac.uk:8080";
+
+  /**
    * URY's Membership Fee
    * @var float
    */
