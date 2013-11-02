@@ -69,6 +69,8 @@ class SIS_Tracklist extends ServiceAPI {
 			VALUES ($1, $2) RETURNING audiologid',
 			array($source, $timeslotid));
 
+		$audiologid = pg_fetch_row($audiologid);
+
 		$r = self::$db->query('INSERT INTO tracklist.track_notrec (audiologid, artist, album, track) 
 			VALUES ($1, $2, $3, $4)',
 			array($audiologid[0], $artist, $album, $tname));
