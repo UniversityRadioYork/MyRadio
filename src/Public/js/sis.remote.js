@@ -62,7 +62,7 @@ var server = {
       if (!first) {
         qString += "&";
       }
-      first = false;
+      else {first = false;}
       qString += key + "=" + server.params[key];
     }
     return qString;
