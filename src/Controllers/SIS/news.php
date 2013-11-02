@@ -112,4 +112,4 @@ foreach($proxied_headers as $hname)
 
 //die($body);
 var_dump($_SERVER['REQUEST_URI']);
-
+var_dump($_REQUEST);
