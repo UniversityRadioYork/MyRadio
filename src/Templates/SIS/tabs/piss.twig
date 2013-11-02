@@ -79,8 +79,8 @@ $(function() {
 	function changeSource() {
 		q = []; // Quote array
 		h = []; // Header array
-		$("#fillerama").removeClass().addClass(val);
-		$.getJSON("http://api.chrisvalleskey.com/fillerama/get.php?show=futurama&format=json&jsoncallback=?",
+		var val = 'futurama';
+		$.getJSON("http://api.chrisvalleskey.com/fillerama/get.php?show=" + val + "&format=json&jsoncallback=?",
 		function(data){
 			$.each(data.db, function (key, value) {
 				q.push([value.source, value.quote]);
