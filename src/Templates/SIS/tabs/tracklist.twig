@@ -11,8 +11,10 @@
 			$('#tracklist table').append('<div id="delsure'+data[i]['id']+'" title="Delete Track?">Are you sure you want to delete this track?</div>');
 
 			var trackDate = new Date(data[i]['playtime']*1000);
+			var secs = trackDate.getSeconds(); if (secs < 10) secs = "0" + secs;
 			var mins = trackDate.getMinutes(); if (mins < 10) mins = "0" + mins;
-        	var time = trackDate.getHours()+':'+mins+' '+trackDate.getDate()+'/'+(trackDate.getMonth()+1);
+			var month = trackDate.getMonth()+1; if (month < 10) month = "0" + month;
+        	var time = trackDate.getHours()+':'+mins+':'+secs+' '+trackDate.getDate()+'/'+month;
         	//Add the new row to the top of the tracklist table
 			$('#tracklist table').prepend(
 				'<tr class="tlist-item" id="t'+data[i]['id']+'">
