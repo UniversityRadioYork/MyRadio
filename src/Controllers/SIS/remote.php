@@ -21,5 +21,6 @@ $data = array();
 	$count++;
 } while (empty($data) && $count < 50);*/
 $data[] = SIS_Tracklist::getTrackListing($session['timeslotid'], isset($_REQUEST['tracklist_highest_id']) ? $_REQUEST['tracklist_highest_id'] : 0);
+$data[] = MyRadio_TracklistItem::getTracklistForTimeslot($session['timeslotid'], 0);
 //Return the response data
 require 'Views/MyRadio/datatojson.php';
