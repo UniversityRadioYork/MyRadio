@@ -99,7 +99,7 @@ class SIS_Tracklist extends ServiceAPI {
 
 		self::$db->query('INSERT INTO tracklist.track_rec (audiologid, recordid, trackid) 
 			VALUES ($1, $2, $3)',
-			array($audiologid, $recid, $trackid));
+			array($audiologid['audiologid'], $recid, $trackid));
 
 		self::$db->query('COMMIT');
 	}
