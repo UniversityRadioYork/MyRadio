@@ -24,20 +24,6 @@ $(function() {
 
 	changeSource();
 
-	$("#reload, #count-up, #count-down, #ltags, #htags, label").disableTextSelect();
-	$("#reload, #ltags, #htags").click(function () {
-		generate();
-	});
-	$("#count").change(function () {
-		generate();
-	});
-	$("#showlist").change(function () {
-		changeSource();
-	});
-	$("#filler").click(function () {
-		$(this).selectText();
-	});
-
 	function generate() {
 		count = $('#count').val();
 		output = "";
