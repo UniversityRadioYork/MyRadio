@@ -14,11 +14,26 @@
  */
 class SIS_Remote extends ServiceAPI {
 
+	/**
+	 * Gets the latest messages for the selected timeslot
+	 * @param  array $session phpSession variable
+	 * @return array          message data
+	 */
 	public static function query_messages($session) {
 		$response = SIS_Messages::getMessages($session['timeslotid'], isset($_REQUEST['messages_highest_id']) ? $_REQUEST['messages_highest_id'] : 0);
 
 		 if (!empty($response) && $response !== false) {
 		 	return array('messages' => $response);
 		 }
+	}
+
+
+	public static function query_bapslog($session) {
+		$response = SIS_Tracklist::getTrackListing($session['timeslotid'], isset($_REQUEST['tracklist_highest_id']) ? $_REQUEST['tracklist_highest_id'] : 0);
+
+		if (!empty($response) && $response !== false) {
+			return array('tracklist' => $response);
+		}
+	
 	}
 }
