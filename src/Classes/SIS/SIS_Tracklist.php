@@ -66,7 +66,7 @@ class SIS_Tracklist extends ServiceAPI {
 
 		self::$db->query('INSERT INTO tracklist.track_notrec (audiologid, artist, album, track) 
 			VALUES ($1, $2, $3, $4)',
-			array($audiologid[0], $artist, $album, $tname));
+			array($audiologid['audiologid'], $artist, $album, $tname));
 
 		self::$db->query('COMMIT');
 	}
