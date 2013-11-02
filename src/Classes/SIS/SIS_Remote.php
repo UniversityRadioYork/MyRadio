@@ -28,7 +28,7 @@ class SIS_Remote extends ServiceAPI {
 	}
 
 
-	public static function query_bapslog($session) {
+	public static function query_tracklist($session) {
 		$response = SIS_Tracklist::getTrackListing($session['timeslotid'], isset($_REQUEST['tracklist_highest_id']) ? $_REQUEST['tracklist_highest_id'] : 0);
 
 		if (!empty($response) && $response !== false) {
