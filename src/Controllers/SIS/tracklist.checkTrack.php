@@ -32,7 +32,7 @@ else if($where == 'rec'){
 		}
 	}
 	elseif ($numrow == 1){
-		SIS_Tracklist::insertTrackRec($row[3], $row[4], time(), "m", $timeslotid);
+//		SIS_Tracklist::insertTrackRec($row[3], $row[4], time(), "m", $timeslotid);
 		$return = 0;
 	}
 
