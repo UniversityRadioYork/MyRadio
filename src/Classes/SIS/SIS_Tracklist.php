@@ -79,7 +79,7 @@ class SIS_Tracklist extends ServiceAPI {
 	 * @return array          result of db query
 	 */
 	public static function checkTrackOK($artist, $album, $tname) {
-	 	$result = self::$db->query('SELECT DISTINCT trk.title AS track, rec.title AS album, trk.artist AS artist, trk.trackid AS trackid, rec.recordid AS recordid
+	 	$result = self::$db->fetch_all('SELECT DISTINCT trk.title AS track, rec.title AS album, trk.artist AS artist, trk.trackid AS trackid, rec.recordid AS recordid
 	 		FROM rec_track trk
 	 		INNER JOIN rec_record rec ON ( rec.recordid = trk.recordid )
 	 		WHERE trk.artist ILIKE \'%$1%\'
