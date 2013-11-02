@@ -20,8 +20,8 @@ if ($where == "notrec"){
 
 else if($where == 'rec'){
 	$data = SIS_Tracklist::checkTrackOK($artist, $album, $tname);
-	$numrow = pg_num_rows($data);
-	$row = pg_fetch_row($data);
+	$numrow = sizeof($data);
+	$row = self::$db->fetch_one($data);
 	$return = 0;
 	if ($numrow != 1){
 		if($numrow == 0){
