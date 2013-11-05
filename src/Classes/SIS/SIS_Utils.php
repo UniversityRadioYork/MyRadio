@@ -118,7 +118,7 @@ class SIS_Utils extends ServiceAPI {
 
 		if (($query === null) or (pg_num_rows($query) == 0)) {
 			$geoip = geoip_record_by_name($ip);
-			$location[0] = ($geoip === FALSE) ? 'Unknown' : empty($geoip['city']) ? "{$geoip['country_name']}" : "{utf8_encode($geoip['city'])}, {$geoip['country_name']}";
+			$location[0] = ($geoip === FALSE) ? 'Unknown' : empty($geoip['city']) ? "{$geoip['country_name']}" : utf8_encode($geoip['city']).", {$geoip['country_name']}";
 			return $location;
 		}
 		$q = self::$db->fetch_all($query);
