@@ -199,6 +199,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
         'timeslot_num' => $this->getTimeslotNumber(),
         'title' => $this->getMeta('title'),
         'description' => $this->getMeta('description'),
+        'tags' => $this->getMeta('tags'),
         'start_time' => CoreUtils::happyTime($this->getStartTime()),
         'duration' => $this->getDuration(),
         'rejectlink' => array(
