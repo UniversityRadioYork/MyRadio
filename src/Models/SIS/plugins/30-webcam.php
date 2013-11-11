@@ -20,7 +20,6 @@ $moduleInfo = array(
 'enabled' => true,
 'startOpen' => false,
 'help' => 'You may have noticed that Studio 1 now has two webcams. The Webcam section over to the left lets you choose which of the station\'s cameras can be seen by listeners.',
-'template' => 'SIS/plugins/webcam.twig',
 'vars' => $vars,
 'required_permission' => AUTH_MODIFYWEBCAM,
 'required_location' => true,

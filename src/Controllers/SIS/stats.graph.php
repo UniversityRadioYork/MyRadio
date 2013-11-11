@@ -1,4 +1,12 @@
 <?php
+/**
+ * Listener Stats Graph for SIS
+ * 
+ * @author Andy Durant <aj@ury.org.uk>
+ * @version 20131101
+ * @package MyRadio_SIS
+ */
+
 error_reporting(0);
 $fname = (isset($_REQUEST['f'])) ? $_REQUEST['f'] : 'https://ury.org.uk/sis2/streamstats-ury.txt';
 $f = file($fname);

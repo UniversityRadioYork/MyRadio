@@ -287,9 +287,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
    * @return MyRadio_Timeslot
    */
   public static function getNextTimeslot($time = null) {
-    $result = self::$db->fetch_column('SELECT show_season_timeslot_id FROM'
-            . ' schedule.show_season_timeslot WHERE start_time >= $1'
-            . ' LIMIT 1', [CoreUtils::getTimestamp($time)]);
+    $result = self::$db->fetch_column('SELECT show_season_timeslot_id FROM
+      schedule.show_season_timeslot WHERE start_time >= $1
+      ORDER BY start_time ASC
+      LIMIT 1', [CoreUtils::getTimestamp($time)]);
 
     if (empty($result)) {
       return null;

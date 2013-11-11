@@ -1,21 +1,3 @@
-<script type="text/javascript">
-    $(document).ready(function(){
-      setInterval('updateNews()', 30000);
-    });
-  			
-    var newsLastUpdate = 'NA';
-    function updateNews() {
-      $.ajax({ url: myury.makeURL('SIS','news.parse'),
-        settings:{'headers':{'SIS_LASTUPDATE':newsLastUpdate}},
-        complete:function(XHR, status) {
-          if (XHR.getResponseHeader('LastUpdate') != newsLastUpdate) {
-            $('div#news').html(XHR.responseText);
-            newsLastUpdate = XHR.getResponseHeader('LastUpdate');
-          }
-        }
-      });
-    }
-  </script>
   <div id="news">
-    
+    <iframe id="ury-irn" src="{{myury.makeURL(config, 'SIS','news')}}/NewsRoom.aspx" width="100%" height="680px"></iframe>
   </div>

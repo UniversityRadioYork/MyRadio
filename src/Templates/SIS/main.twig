@@ -1,8 +1,8 @@
 {% extends 'base.twig' %}
 {% block head %}
 {{ parent() }}
-<script type="text/javascript" src="{{baseurl}}js/sis.plugin.js"></script>
-<link rel="stylesheet" type="text/css" href="{{shiburl}}css/sis.css" />
+<script type="text/javascript" src="{{baseurl}}js/sis.remote.js"></script>
+<link rel="stylesheet" type="text/css" href="{{baseurl}}css/sis.css" />
 {% endblock %}
 {% block content %}
 
@@ -31,7 +31,7 @@
 				</ul>
 				{% for tab in tabs %}
 					<div id="tabs-{{ loop.index }}" style="margin-top: .5em;">
-	                    {% include tab.template %}
+	                    {% include ('SIS/tabs/'~tab.name~'.twig') %}
 	                </div>
 				{% endfor %}
 			</div>
