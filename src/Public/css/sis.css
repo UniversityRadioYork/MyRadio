@@ -1,0 +1,134 @@
+body {
+  width: 98%;
+  min-width: 1200px;
+  height: calc(100% - 22px);
+}
+
+#notice {
+  position: fixed;
+  top: 22px;
+  left: 0;
+}
+
+#grid {
+  height: calc(100% - 150px);
+  min-height: 580px;
+  min-width: 1188px;
+  position: relative;
+}
+
+.pluginpane { 
+  float: left; 
+  width: 300px;
+  margin-right: 5px
+}
+.pluginpane .plugin:first-of-type .pluginhead {
+    margin-top: 0;
+}
+.pluginhead {
+  font-weight:bold;
+  cursor:pointer;
+  height:1.5em
+}
+.pluginbody { 
+  overflow-x: hidden;
+  font-size: 12px
+}
+.ui-accordion .ui-accordion-content {
+  padding: 1em 2em;
+  overflow-x: hidden;
+}
+
+
+.maincontainer {
+  overflow: hidden;
+  height: 100%;
+  margin-right: 10px;
+}
+.ui-tabs {
+  height: calc(100% - .4em - 2px);
+  padding: 0;
+}
+.ui-tabs .ui-tabs-panel {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100% - 2em - 0.5em - 48px);
+}
+
+.ui-resizable-s { height: 10px; bottom: 0; }
+
+.list { text-align:left; list-style-position:outside; list-style-type:none; }
+.infobox {  width:350px; margin:auto; padding:1em; font-size:0.8em; text-align:justify; font-style:italic; }
+
+.errorbox {  margin:auto; padding-bottom:1em; font-size:0.8em; font-style:italic; }
+.hr { margin:.5em 0 0 0; }
+
+#piss footer {
+  text-align: right;
+  font-style: italic;
+}
+
+#messages {
+  text-align: center;
+  width: 100%;
+}
+table.messages tr.unread td:first-child {
+  background-image: url(../img/sis/6.png);
+  background-repeat: no-repeat;
+  background-position-y: 50%;
+  width: 50px;
+}
+table.messages tr td:last-child {
+  width: 100px;
+}
+
+table { 
+    margin: auto;
+    width: 90%;
+    border-collapse: separate;
+    border-spacing: 1em 0.5em;
+}
+
+label, input { display:block; }
+input.text { margin-bottom:12px; width:95%; padding: .4em; }
+fieldset { padding:0; border:0; margin-top:25px; }
+
+.invisible { display:none; }
+.goright { text-align:right; }
+
+/** Selector **/
+#selector-buttons { 
+  margin: 0 auto; 
+  border-spacing:2em 0; 
+  margin-bottom: .5em;
+  border-collapse: separate;
+}
+.selbtn { height:2em; width:2em; }
+.poweredon { cursor:pointer; }
+.s4on { background-color: #6b00a3; }
+.s4off { background-color: #5f0093; }
+.s3on { background-color: #0f0; }
+.s3off { background-color: #080; }
+.s2on { background-color: #0044ba; }
+.s2off { background-color: #003c76; }
+.s1on { background-color: #f00; }
+.s1off { background-color: #600; }
+.poweredoff { background-color: #333; }
+
+#message-data {
+    display: none;
+}
+.td-msgitem, .delbutton {
+    cursor: pointer;
+}
+
+/** Webcam **/
+figure {
+  margin: 0;
+}
+.webcam-stream-container {
+  display: block;
+}
+.webcam-stream-container.live {
+  float: right;
+}

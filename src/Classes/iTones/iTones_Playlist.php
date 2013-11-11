@@ -239,8 +239,10 @@ class iTones_Playlist extends ServiceAPI {
     }
     //Remove old tracks
     foreach ($old_list as $track) {
-      self::$db->query('UPDATE jukebox.playlist_entries SET revision_removed=$1 WHERE playlistid=$2 AND trackid=$3
-        AND revision_removed IS NULL', array($revisionid, $this->getID(), $track->getID()), true);
+      if ($track instanceof MyRadio_Track) {
+        self::$db->query('UPDATE jukebox.playlist_entries SET revision_removed=$1 WHERE playlistid=$2 AND trackid=$3
+          AND revision_removed IS NULL', array($revisionid, $this->getID(), $track->getID()), true);
+      }
     }
     //All is happy. Commit!
     self::$db->query('COMMIT');

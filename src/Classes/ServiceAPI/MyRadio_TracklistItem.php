@@ -75,12 +75,15 @@ class MyRadio_TracklistItem extends ServiceAPI {
 
   /**
    * Returns an array of all TracklistItems played during the given Timeslot
-   * @param MyRadio_Timeslot $timeslot
+   * @param int $timeslotid
    * @return Array
    */
-  public static function getTracklistForTimeslot(MyRadio_Timeslot $timeslot) {
+  public static function getTracklistForTimeslot($timeslotid, $offset = 0) {
     $result = self::$db->fetch_column('SELECT audiologid FROM tracklist.tracklist
-      WHERE timeslotid=$1 AND state!=\'o\' ADN state!=\'d\'', array($timeslot->getID()));
+      WHERE timeslotid=$1 
+      AND (state ISNULL OR state != \'d\')
+      AND audiologid > $2', 
+      array($timeslotid, $offset));
 
     $items = array();
     foreach ($result as $item) {

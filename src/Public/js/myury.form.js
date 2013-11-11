@@ -28,7 +28,7 @@ window.MyRadioForm = {
     /**
      * Initialises the Member autocomplete pickers where necessary
      */
-    $('fieldset.myuryfrm input.member-autocomplete').each(function() {
+    $('fieldset.myradiofrm input.member-autocomplete').each(function() {
       $(this).autocomplete({
         minLength: 3,
         source: myury.makeURL('MyRadio', 'a-findmember'),
@@ -67,7 +67,7 @@ window.MyRadioForm = {
     /**
      * Initialises the Track autocomplete pickers where necessary
      */
-    $('fieldset.myuryfrm input.track-autocomplete').each(function() {
+    $('fieldset.myradiofrm input.track-autocomplete').each(function() {
       $(this).autocomplete({
         minLength: 3,
         source: myury.makeURL('MyRadio', 'a-findtrack'),
@@ -103,7 +103,7 @@ window.MyRadioForm = {
     /**
      * Initialises the Artist autocomplete pickers where necessary
      */
-    $('fieldset.myuryfrm input.artist-autocomplete').each(function() {
+    $('fieldset.myradiofrm input.artist-autocomplete').each(function() {
       $(this).autocomplete({
         minLength: 3,
         source: myury.makeURL('MyRadio', 'a-findartist'),
@@ -128,7 +128,7 @@ window.MyRadioForm = {
     /**
      * Initialises the Album autocomplete pickers where necessary
      */
-    $('fieldset.myuryfrm input.album-autocomplete').each(function() {
+    $('fieldset.myradiofrm input.album-autocomplete').each(function() {
       $(this).autocomplete({
         minLength: 3,
         source: myury.makeURL('MyRadio', 'a-findalbum'),
@@ -166,7 +166,7 @@ window.MyRadioForm = {
      * Initialises the Time pickers where necessary
      * @todo Make stepminute customisable?
      */
-    $('fieldset.myuryfrm input.time').timepicker({
+    $('fieldset.myradiofrm input.time').timepicker({
       stepMinute: 15
     });
   },
@@ -174,7 +174,7 @@ window.MyRadioForm = {
     /**
      * Initialises the Date pickers where necessary
      */
-    $('fieldset.myuryfrm input.dateITA').datepicker({
+    $('fieldset.myradiofrm input.dateITA').datepicker({
       dateFormat: "dd/mm/yy"
     });
   },
@@ -182,7 +182,7 @@ window.MyRadioForm = {
     /**
      * Validation
      */
-    $('fieldset.myuryfrm form').validate({
+    $('fieldset.myradiofrm form').validate({
       errorClass: 'ui-state-error',
       errorPlacement: function(error, element) {
         error.addClass('label-nofloat').appendTo(element.parent('div'));
@@ -244,7 +244,7 @@ window.MyRadioForm = {
      * Initialises the Datetime pickers where necessary
      * @todo Make stepminute customisable?
      */
-    $('fieldset.myuryfrm input.datetime').datetimepicker({
+    $('fieldset.myradiofrm input.datetime').datetimepicker({
       dateFormat: "yy-mm-dd",
       timeFormat: "hh:mm:ss",
       stepMinute: 15
