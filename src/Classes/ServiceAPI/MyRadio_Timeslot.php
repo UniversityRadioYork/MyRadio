@@ -79,9 +79,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
     //Deal with the metadata
     for ($i = 0; $i < sizeof($metadata_types); $i++) {
       if (self::isMetadataMultiple($metadata_types[$i])) {
-        $this->metadata[$metadata_types[$i]][] = $metadata[$i];
+        $this->meta[$metadata_types[$i]][] = $metadata[$i];
       } else {
-        $this->metadata[$metadata_types[$i]] = $metadata[$i];
+        $this->meta[$metadata_types[$i]] = $metadata[$i];
       }
     }
 
