@@ -202,8 +202,8 @@ class MyRadio_Selector {
   public function getStudioAtTime($time) {
     $result = Database::getInstance()->fetch_column(
             'SELECT action FROM public.selector WHERE time <= $1'
-            .' AND action >= 4 AND action <= 11 ORDER BY time DESC LIMIT 1',
-            CoreUtils::getTimestamp($time));
+            .' AND action >= 4 AND action <= 11 LIMIT 1',
+            [CoreUtils::getTimestamp($time)]);
     return $result[0]-3;
   }
 
