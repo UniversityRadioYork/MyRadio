@@ -155,6 +155,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
 
   /**
    * Gets the Timeslot that is on after this.
+   * 
    * @param MyRadio_Timeslot $timeslot
    * @return MyRadio_Timeslot|null If null, Jukebox is next.
    */
