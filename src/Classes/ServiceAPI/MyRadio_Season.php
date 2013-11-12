@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Provides the Season class for MyRadio
  * @package MyRadio_Scheduler
@@ -13,8 +14,8 @@
  * @uses \MyRadio_Show
  * 
  */
-
 class MyRadio_Season extends MyRadio_Metadata_Common {
+
   private $season_id;
   private $show_id;
   private $term_id;
@@ -144,16 +145,14 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
     //Right, let's start by getting a Season ID created for this entry
     $season_create_result = self::$db->fetch_column('INSERT INTO schedule.show_season
       (show_id, termid, submitted, memberid)
-      VALUES ($1, $2, $3, $4) RETURNING show_season_id',
-            array($params['show_id'], $term_id, CoreUtils::getTimestamp(), User::getInstance()->getID()), true);
+      VALUES ($1, $2, $3, $4) RETURNING show_season_id', array($params['show_id'], $term_id, CoreUtils::getTimestamp(), User::getInstance()->getID()), true);
 
     $season_id = $season_create_result[0];
 
     //Now let's allocate store the requested weeks for a term
     for ($i = 1; $i <= 10; $i++) {
       if ($params['weeks']["wk$i"]) {
-        self::$db->query('INSERT INTO schedule.show_season_requested_week (show_season_id, week) VALUES ($1, $2)',
-                array($season_id, $i), true);
+        self::$db->query('INSERT INTO schedule.show_season_requested_week (show_season_id, week) VALUES ($1, $2)', array($season_id, $i), true);
       }
     }
 
@@ -171,8 +170,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
 
       //Enter the data
       self::$db->query('INSERT INTO schedule.show_season_requested_time 
-        (requested_day, start_time, preference, duration, show_season_id) VALUES ($1, $2, $3, $4, $5)',
-              array($params['times']['day'][$i], $params['times']['stime'][$i], $i, $interval, $season_id));
+        (requested_day, start_time, preference, duration, show_season_id) VALUES ($1, $2, $3, $4, $5)', array($params['times']['day'][$i], $params['times']['stime'][$i], $i, $interval, $season_id));
     }
 
     //If the description metadata is non-blank, then update that too
@@ -203,10 +201,10 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
     self::$db->query('COMMIT');
 
     MyRadio_Show::getInstance($params['show_id'])->addSeason($season_id);
-    
+
     return self::getInstance($season_id);
   }
-  
+
   /**
    * Get a list of all Seasons that were for the current term, or
    * if we are not currently in a Term, the most recenly finished term.
@@ -218,7 +216,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
             . 'WHERE start <= NOW() ORDER BY finish DESC LIMIT 1');
     return self::getAllSeasonsInTerm($result[0]);
   }
-  
+
   /**
    * Get all the Seasons in the active term.
    * 
@@ -227,10 +225,9 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
    */
   public static function getAllSeasonsInTerm($term_id) {
     return self::resultSetToObjArray(self::$db->fetch_column(
-            'SELECT show_season_id FROM schedule.show_season WHERE termid=$1',
-            [$term_id]));
+                            'SELECT show_season_id FROM schedule.show_season WHERE termid=$1', [$term_id]));
   }
-  
+
   /**
    * Rejects the application for the Season, notifying the creditors if asked.
    * 
@@ -249,16 +246,13 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
       return false;
     }
     self::$db->query('BEGIN');
-    self::$db->query('UPDATE schedule.show_season SET submitted=NULL WHERE show_season_id=$1',
-            array($this->getID()), true);
+    self::$db->query('UPDATE schedule.show_season SET submitted=NULL WHERE show_season_id=$1', array($this->getID()), true);
     $this->submitted = null;
-    
+
     $this->setMeta('reject-reason', $reason);
-    
+
     if ($notify_user) {
-      MyRadioEmail::sendEmailToUserSet($this->getShow()->getCreditObjects(),
-              $this->getMeta('title') . ' Application Rejected',
-<<<EOT
+      MyRadioEmail::sendEmailToUserSet($this->getShow()->getCreditObjects(), $this->getMeta('title') . ' Application Rejected', <<<EOT
 Hi #NAME,
 
 Your application for a season of a show was rejected by our programming team, for the reason given below:
@@ -271,7 +265,7 @@ You can reapply online at any time, or for more information, email pc@ury.org.uk
 EOT
       );
     }
-    
+
     self::$db->query('COMMIT');
   }
 
@@ -283,7 +277,7 @@ EOT
       return $this->getShow()->getMeta($meta_string);
     }
   }
-  
+
   /**
    * Alias for getCredits($this->getShow()), which enables credits to be
    * automatically inherited from the show.
@@ -293,7 +287,7 @@ EOT
   public function getCredits() {
     return parent::getCredits($this->getShow());
   }
-  
+
   /**
    * Sets a metadata key to the specified value.
    * 
@@ -311,10 +305,10 @@ EOT
    * @param null $table No action. Used for compatibility with parent.
    * @param null $pkey No action. Used for compatibility with parent.
    */
-  public function setMeta($string_key, $value, $effective_from = null, $effective_to = null,
-          $table = null, $pkey = null) {
-   return parent::setMeta($string_key, $value, $effective_from, $effective_to,
-           'schedule.season_metadata', 'show_season_id');
+  public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null) {
+    $r = parent::setMeta($string_key, $value, $effective_from, $effective_to, 'schedule.season_metadata', 'show_season_id');
+    $this->updateCacheObject();
+    return $r;
   }
 
   public function getID() {
@@ -427,29 +421,28 @@ EOT
 
   public function toDataSource($full = true) {
     return array_merge($this->getShow()->toDataSource(false), array(
-                'id' => $this->getID(),
-                'season_num' => $this->getSeasonNumber(),
-                'title' => $this->getMeta('title'),
-                'description' => $this->getMeta('description'),
-                'submitted' => $this->getSubmittedTime(),
-                'requested_time' => sizeof($this->getRequestedTimes()) === 0
-                                        ? null : $this->getRequestedTimes()[0],
-                'first_time' => (is_object($this->timeslots[0]) ? CoreUtils::happyTime($this->timeslots[0]->getStartTime()) : 'Not Scheduled'),
-                'num_episodes' => array(
-                    'display' => 'text',
-                    'value' => sizeof($this->timeslots),
-                    'url' => CoreUtils::makeURL('Scheduler', 'listTimeslots', array('show_season_id' => $this->getID()))),
-                'allocatelink' => array(
-                    'display' => 'icon',
-                    'value' => 'script',
-                    'title' => 'Edit Application or Allocate Season',
-                    'url' => CoreUtils::makeURL('Scheduler', 'allocate', array('show_season_id' => $this->getID()))),
-                'rejectlink' => array(
-                    'display' => 'icon',
-                    'value' => 'trash',
-                    'title' => 'Reject Application',
-                    'url' => CoreUtils::makeURL('Scheduler', 'reject', array('show_season_id' => $this->getID())))
-            ));
+        'id' => $this->getID(),
+        'season_num' => $this->getSeasonNumber(),
+        'title' => $this->getMeta('title'),
+        'description' => $this->getMeta('description'),
+        'submitted' => $this->getSubmittedTime(),
+        'requested_time' => sizeof($this->getRequestedTimes()) === 0 ? null : $this->getRequestedTimes()[0],
+        'first_time' => (is_object($this->timeslots[0]) ? CoreUtils::happyTime($this->timeslots[0]->getStartTime()) : 'Not Scheduled'),
+        'num_episodes' => array(
+            'display' => 'text',
+            'value' => sizeof($this->timeslots),
+            'url' => CoreUtils::makeURL('Scheduler', 'listTimeslots', array('show_season_id' => $this->getID()))),
+        'allocatelink' => array(
+            'display' => 'icon',
+            'value' => 'script',
+            'title' => 'Edit Application or Allocate Season',
+            'url' => CoreUtils::makeURL('Scheduler', 'allocate', array('show_season_id' => $this->getID()))),
+        'rejectlink' => array(
+            'display' => 'icon',
+            'value' => 'trash',
+            'title' => 'Reject Application',
+            'url' => CoreUtils::makeURL('Scheduler', 'reject', array('show_season_id' => $this->getID())))
+    ));
   }
 
   /**
@@ -474,20 +467,17 @@ EOT
     date_default_timezone_set('UTC');
     //Verify that the input time is valid
     if (!isset($params['time']) or !is_numeric($params['time'])) {
-      throw new MyRadioException('No valid Time was sent to the Scheduling Mapper.',
-              MyRadioException::FATAL);
+      throw new MyRadioException('No valid Time was sent to the Scheduling Mapper.', MyRadioException::FATAL);
     }
     if ($params['time'] != -1 && !isset($this->requested_times[$params['time']])) {
-      throw new MyRadioException('The Time value sent is not a valid Requested Time Reference.',
-              MyRadioException::FATAL);
+      throw new MyRadioException('The Time value sent is not a valid Requested Time Reference.', MyRadioException::FATAL);
     }
     //Verify the custom times are valid
     if ($params['time'] == -1 && (
             !isset($params['timecustom_day']) or //0 (monday) would fail an empty() test
             !isset($params['timecustom_stime']) or //Same again with midnight (00:00)
             empty($params['timecustom_etime']))) {
-      throw new MyRadioException('The Custom Time value sent is invalid.',
-              MyRadioException::FATAL);
+      throw new MyRadioException('The Custom Time value sent is invalid.', MyRadioException::FATAL);
     }
     //Okay, let's get to business
     //First, figure out what time things are happening
@@ -521,22 +511,21 @@ EOT
         $day_start = $start_day + (($i - 1) * 7 * 86400);
         $show_time = date('d-m-Y ', $day_start) . $start_time;
         echo $show_time . '<br>';
-        
+
         /**
          * @todo 1 is subtracted from the duration in the conflict checker here,
          * as shows last precisely an hour, not 59m59s. Should we do something
          * nicer here?
          */
-        $conflict = self::getScheduleConflict($day_start+$req_time['start_time'],
-                $day_start+$start_time+$req_time['duration']-1);
+        $conflict = self::getScheduleConflict($day_start + $req_time['start_time'], $day_start + $start_time + $req_time['duration'] - 1);
         print_r($conflict);
         //Disable because it doesn't fucking work.
-        /**if (!empty($conflict)) {
+        /*         * if (!empty($conflict)) {
           self::$db->query('ROLLBACK');
           throw new MyRadioException('A show is already scheduled for this time: '.print_r($conflict, true));
           exit;
-        }*/
-        
+          } */
+
         //This week is due to be scheduled! QUERY! QUERY!
         $r = self::$db->fetch_all('INSERT INTO schedule.show_season_timeslot
           (show_season_id, start_time, duration, memberid, approvedid)
@@ -546,7 +535,7 @@ EOT
             $req_time['duration'],
             $this->owner->getID(),
             $_SESSION['memberid']
-                ));
+        ));
         $this->timeslots[] = MyRadio_Timeslot::getInstance($r[0]['show_season_timeslot_id']);
       }
     }
@@ -589,7 +578,7 @@ EOT;
     }
 
     $email = 'Please note that your show, ' . $this->getMeta('title') . ' has been cancelled for the rest of the current Season. This is the following timeslots: ' . $timeslot_str;
-    $email .= "\r\n\r\nRegards\r\n".Config::$long_name." Programming Team";
+    $email .= "\r\n\r\nRegards\r\n" . Config::$long_name . " Programming Team";
 
     foreach ($this->getShow()->getCredits() as $credit) {
       $u = User::getInstance($credit);
@@ -616,7 +605,7 @@ EOT;
     return self::$db->fetch_all('SELECT show_season_timeslot_id, start_time, duration FROM schedule.show_season_timeslot
       WHERE show_season_id=$1 AND start_time >= NOW()', array($this->getID()));
   }
-  
+
   /**
    * Returns all Timeslots for this Season
    * @return MyRadio_Timeslot[]
@@ -624,7 +613,7 @@ EOT;
   public function getAllTimeslots() {
     return $this->timeslots;
   }
-  
+
   /**
    * Returns the percentage of Timeslots in this Season that at least one User
    * has signed into.
@@ -646,12 +635,12 @@ EOT;
         }
       }
     }
-    
+
     if ($total === 0) {
       return [100, 0];
     }
-    
-    return [($signed_in/$total)*100, $total-$signed_in];
+
+    return [($signed_in / $total) * 100, $total - $signed_in];
   }
 
 }
