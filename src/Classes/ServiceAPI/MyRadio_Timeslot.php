@@ -79,9 +79,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
     //Deal with the metadata
     for ($i = 0; $i < sizeof($metadata_types); $i++) {
       if (self::isMetadataMultiple($metadata_types[$i])) {
-        $this->meta[$metadata_types[$i]][] = $metadata[$i];
+        $this->metadata[$metadata_types[$i]][] = $metadata[$i];
       } else {
-        $this->meta[$metadata_types[$i]] = $metadata[$i];
+        $this->metadata[$metadata_types[$i]] = $metadata[$i];
       }
     }
 
@@ -100,8 +100,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
 
   public function getMeta($meta_string) {
     $key = self::getMetadataKey($meta_string);
-    if (isset($this->meta[$key])) {
-      return $this->meta[$key];
+    if (isset($this->metadata[$key])) {
+      return $this->metadata[$key];
     } else {
       return $this->getSeason()->getMeta($meta_string);
     }
@@ -190,7 +190,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
    * @param null $pkey No action. Used for compatibility with parent.
    */
   public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null) {
-    return parent::setMeta($string_key, $value, $effective_from, $effective_to, 'schedule.timeslot_metadata', 'show_season_timeslot_id');
+    $r = parent::setMeta($string_key, $value, $effective_from, $effective_to, 'schedule.timeslot_metadata', 'show_season_timeslot_id');
+    $this->updateCacheObject();
+    return $r;
   }
 
   public function toDataSource() {
