@@ -43,6 +43,10 @@ $('.twig-datatable').dataTable({
     "sTitle": "View Microsite",
     "bVisible": false
   },
+  //photo
+  {
+    bVisible: false
+  },
   //id
   {
     "bVisible": false
