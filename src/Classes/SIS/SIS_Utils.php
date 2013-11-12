@@ -60,7 +60,7 @@ class SIS_Utils extends ServiceAPI {
 				if (isset($moduleInfo['enabled']) && ($moduleInfo['enabled'] != true)) {
 					continue;
 				}
-				array_push($loadedModules, $moduleInfo);
+				$loadedModules[] = $moduleInfo;
 			}
 			return $loadedModules;
 		}
@@ -83,7 +83,7 @@ class SIS_Utils extends ServiceAPI {
 				if (isset($module['required_location']) && ($module['required_location'] === True && self::isAuthenticatedMachine() === False)) {
 					continue;
 				}
-				array_push($loadedModules, $module);
+				$loadedModules[] = $module;
 			}
 			return $modules;
 		}
@@ -112,29 +112,38 @@ class SIS_Utils extends ServiceAPI {
 	 * @return String     Location
 	 */
 	public static function ipLookup($ip) {
-		$query = 'SELECT iscollege, description FROM l_subnet WHERE subnet >> $1 ORDER BY description ASC';
-		$query = pg_query_params($this->db, $query, array($ip));
+		$query = self::$db->query('SELECT iscollege, description FROM l_subnet WHERE subnet >> $1 ORDER BY description ASC', array($ip));
+
+		$location = array();
+
 		if (($query === null) or (pg_num_rows($query) == 0)) {
-			$location = @geoip_record_by_name($ip);
-			$location = ($location === FALSE) ? 'Unknown' : " {$location['city']}, {$location['country_name']}";
-			return "From: " . $location;
+			$geoip = geoip_record_by_name($ip);
+			$location[0] = ($geoip === FALSE) ? 'Unknown' : empty($geoip['city']) ? "{$geoip['country_name']}" : utf8_encode($geoip['city']).", {$geoip['country_name']}";
+			return $location;
 		}
-		if (pg_num_rows($query) !== 1) {
-			$q = pg_fetch_all($query);
-			$x = 'There are multiple sources of this message:<br><br>';
-			foreach ($q as $k) {
-				$x .= "Location: ";
-				$x .= $k['description'] . "<br>\n";
-				$x .= ($k['iscollege'] == 't') ? 'Type: Bedroom' : 'Type: Study Room / Labs / Wifi';
-				$x .= "<br><br>\n\n";
+		$q = self::$db->fetch_all($query);
+		foreach ($q as $k) {
+			$location[] = $k['description'];
+			$location[] = ($k['iscollege'] == 't') ? 'College Bedroom' : 'Study Room / Labs / Wifi';
+		}
+		return $location;
+	}
+
+	/**
+	 * Read the loaded modules and returns the poll functions, if configured
+	 * @param array $modules the loaded modules
+	 * @return array $pollFuncs functions to run for LongPolling
+	 */
+	public static function readPolls($modules) {
+		if ($modules !== false) {
+			$pollFuncs = array();
+			foreach ($modules as $module) {
+				if (isset($module['pollfunc'])) {
+					$pollFuncs[] = $module['pollfunc'];
+				}
 			}
-			return $x;
+			return $pollFuncs;
 		}
-		$k = pg_fetch_assoc($query);
-		$x = "Location: ";
-		$x .= $k['description'] . "<br>\n";
-		$x .= ($k['iscollege'] == 't') ? 'College Bedroom' : 'Study Room / Labs / Wifi';
-		$x .= "<br><br>\n\n";
-		return $x;
+		return false;
 	}
 }

@@ -1,4 +1,11 @@
 <?php
+/**
+ * Webcam Getter for SIS
+ * 
+ * @author Andy Durant <aj@ury.org.uk>
+ * @version 20131101
+ * @package MyRadio_SIS
+ */
 
 // @todo: remove the need for this function after migration to sis4 by makeig camserver use streamids
 function cam_to_stream($id) {
