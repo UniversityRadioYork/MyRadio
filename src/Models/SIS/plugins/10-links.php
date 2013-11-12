@@ -13,5 +13,4 @@ $moduleInfo = array(
 'enabled' => true,
 'startOpen' => true,
 'help' => 'Provides some handy links for getting in contact with people and reporting problems.',
-'template' => 'SIS/plugins/links.twig',
 );

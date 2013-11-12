@@ -79,9 +79,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
     //Deal with the metadata
     for ($i = 0; $i < sizeof($metadata_types); $i++) {
       if (self::isMetadataMultiple($metadata_types[$i])) {
-        $this->metadata[$metadata_types[$i]][] = $metadata[$i];
+        $this->meta[$metadata_types[$i]][] = $metadata[$i];
       } else {
-        $this->metadata[$metadata_types[$i]] = $metadata[$i];
+        $this->meta[$metadata_types[$i]] = $metadata[$i];
       }
     }
 
@@ -155,7 +155,6 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
 
   /**
    * Gets the Timeslot that is on after this.
-   * 
    * @param MyRadio_Timeslot $timeslot
    * @return MyRadio_Timeslot|null If null, Jukebox is next.
    */
@@ -200,8 +199,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
         'timeslot_num' => $this->getTimeslotNumber(),
         'title' => $this->getMeta('title'),
         'description' => $this->getMeta('description'),
+        'tags' => $this->getMeta('tag'),
         'start_time' => CoreUtils::happyTime($this->getStartTime()),
         'duration' => $this->getDuration(),
+        'mixcloud_status' => $this->getMeta('upload_state'),
         'rejectlink' => array(
             'display' => 'icon',
             'value' => 'trash',
@@ -288,9 +289,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
    * @return MyRadio_Timeslot
    */
   public static function getNextTimeslot($time = null) {
-    $result = self::$db->fetch_column('SELECT show_season_timeslot_id FROM'
-            . ' schedule.show_season_timeslot WHERE start_time >= $1'
-            . ' LIMIT 1', [CoreUtils::getTimestamp($time)]);
+    $result = self::$db->fetch_column('SELECT show_season_timeslot_id FROM
+      schedule.show_season_timeslot WHERE start_time >= $1
+      ORDER BY start_time ASC
+      LIMIT 1', [CoreUtils::getTimestamp($time)]);
 
     if (empty($result)) {
       return null;

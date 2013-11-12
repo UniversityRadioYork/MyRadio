@@ -12,7 +12,6 @@ $moduleInfo = array(
 'title' => 'News',
 'enabled' => true,
 'help' => 'Do you like talking about the news on your show? The news tab shows the latest news from the University, YUSU and BBC Yorkshire. Great way to keep up to date on what\'s happening at the University.',
-'template' => 'SIS/tabs/news.twig'
 );
 
   /**

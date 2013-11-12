@@ -481,7 +481,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
         'micrositelink' => array('display' => 'icon',
             'value' => 'extlink',
             'title' => 'View Show Microsite',
-            'url' => $this->getWebpage())
+            'url' => $this->getWebpage()),
+        'photo' => $this->getShowPhoto()
     );
 
     if ($full) {
