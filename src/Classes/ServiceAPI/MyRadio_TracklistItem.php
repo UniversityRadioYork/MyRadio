@@ -82,7 +82,8 @@ class MyRadio_TracklistItem extends ServiceAPI {
     $result = self::$db->fetch_column('SELECT audiologid FROM tracklist.tracklist
       WHERE timeslotid=$1 
       AND (state ISNULL OR state != \'d\')
-      AND audiologid > $2', 
+      AND audiologid > $2
+      ORDER BY timestart ASC', 
       array($timeslotid, $offset));
 
     $items = array();
