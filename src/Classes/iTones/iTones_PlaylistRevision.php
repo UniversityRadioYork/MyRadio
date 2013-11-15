@@ -34,10 +34,10 @@ class iTones_PlaylistRevision extends iTones_Playlist {
   
   /**
    * Initiates the PlaylistRevision variables
-   * @param int $playlistid The ID of the managed playlist to initialise
-   * @param int $revisionid The Revision of the managed playlist to initialise
+   * @param string $id $playlistid~$revisionid
    */
-  protected function __construct($playlistid, $revisionid) {
+  protected function __construct($id) {
+    list($playlistid, $revisionid) = explode('~', $id);
     parent::__construct($playlistid);
     
     $result = self::$db->fetch_one('SELECT * FROM jukebox.playlist_revisions
@@ -105,7 +105,7 @@ class iTones_PlaylistRevision extends iTones_Playlist {
     $data = array();
     foreach (self::$db->fetch_column('SELECT revisionid FROM jukebox.playlist_revisions WHERE playlistid=$1',
             array($playlistid)) as $revisionid) {
-      $data[] = self::getInstance($playlistid, $revisionid);
+      $data[] = self::getInstance($playlistid.'~'.$revisionid);
     }
     return $data;
   }

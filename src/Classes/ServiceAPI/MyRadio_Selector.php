@@ -193,5 +193,18 @@ class MyRadio_Selector {
     //Remove the END
     return trim($response);
   }
+  
+  /**
+   * Returns what studio was on air at the time given
+   * @param int $time
+   * @return int
+   */
+  public function getStudioAtTime($time) {
+    $result = Database::getInstance()->fetch_column(
+            'SELECT action FROM public.selector WHERE time <= $1'
+            .' AND action >= 4 AND action <= 11 LIMIT 1',
+            [CoreUtils::getTimestamp($time)]);
+    return $result[0]-3;
+  }
 
 }
