@@ -335,7 +335,7 @@ class MyRadio_TracklistItem extends ServiceAPI {
     } else {
       $return = $this->getTrack()->toDataSource($full);
     }
-    $return['starttime'] = CoreUtils::happyTime($this->getStartTime());
+    $return['starttime'] = date('d/m/Y H:i:s', $this->getStartTime());
     //$return['endtime'] = $this->getEndTime();
     $return['state'] = $this->state;
     $return['audiologid'] = $this->audiologid;
