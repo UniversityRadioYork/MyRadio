@@ -86,7 +86,7 @@ table {
     margin: auto;
     width: 90%;
     border-collapse: separate;
-    border-spacing: 1em 0.5em;
+    border-spacing: 0.7em 0.5em;
 }
 
 label, input { display:block; }
