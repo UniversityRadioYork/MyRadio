@@ -11,5 +11,6 @@ $moduleInfo = array(
 'name' => 'schedule',
 'title' => 'Schedule',
 'enabled' => true,
+'pollfunc' => 'SIS_Remote::query_schedule',
 'help' => 'Schedule tab lets you see what\'s on for the rest of the day',
 );
