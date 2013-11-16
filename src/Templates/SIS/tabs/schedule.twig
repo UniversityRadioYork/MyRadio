@@ -14,6 +14,19 @@
 			$(".showDesc").html(data.current.desc);
 		});
 	}
+
+	function formatTime(d) {
+		var HH = d.getHours();
+		if ( HH < 10 ) HH = '0' + HH;
+
+		var MM = d.getMinutes();
+		if ( MM < 10 ) MM = '0' + MM;
+
+		if (isNaN(HH) || isNaN(MM)) {
+			return "";
+		}
+		return HH+':'+MM;
+	}
 </script>
 <div id="schedule">
 	<div id="shedule-onair">
