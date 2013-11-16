@@ -366,8 +366,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
           $next = $next->getTimeslotAfter();
         } else {
           if ($lastnext instanceof MyRadio_Timeslot) {
-            $lastnext = $next;
+            $last = $next;
             $next = self::getNextTimeslot($lastnext->getEndTime());
+            $lastnext = $last;
           } else {
             $lastnext = $next;
             $next = [];
