@@ -1,12 +1,27 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 		setInterval('updateSchedule()', 60000);
+		updateSchedule();
 	});
 			
 	function updateSchedule() {
-		$('div#schedule').load(myury.makeURL('SIS','schedule.get'));
+		$.getJSON(myury.makeURL('SIS','schedule.get'), function(data) {
+			currentStart = new Date(data.current.start_time*1000);
+			currentEnd = new Date(data.current.end_time*1000);
+			$("#showLive .showTime").text(formatTime(currentStart)+' - '+formatTime(currentEnd));
+			$("#showLive .showName").text(data.current.title);
+			$("#showLive .showPeople").text(data.current.presenters);
+			$(".showDesc").html(data.current.desc);
+		}
 	}
 </script>
 <div id="schedule">
-	
+	<div id="shedule-onair">
+		<hgroup id="showLive" class="clearfix">
+			<h2 class="showName"></h2>
+			<h3 class="showPeople"></h3>
+		</hgroup>
+		<div class="showDesc"></div>
+	</div>
+
 </div>
