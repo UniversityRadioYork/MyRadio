@@ -332,7 +332,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
             'end_time' => $timeslot->getEndTime(),
             'presenters' => $timeslot->getPresenterString()]
       ];
-      $next = $timeslot->getTimeslotAfter());
+      $next = $timeslot->getTimeslotAfter();
     }
 
     $lastnext = $timeslot;
