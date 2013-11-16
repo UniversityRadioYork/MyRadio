@@ -20,12 +20,12 @@
 						<h5 class="showPeople"></h5>
 					</hgroup>
 					<div class="showDesc"></div></div>')
-				var nextStart = new Date(data.i.start_time*1000);
-				var nextEnd = new Date(data.i.end_time*1000);
+				var nextStart = new Date(data[i].start_time*1000);
+				var nextEnd = new Date(data[i].end_time*1000);
 				$("#schedule-item-"+i+" .showTime").text(formatTime(nextStart)+' - '+formatTime(nextEnd));
-				$("#schedule-item-"+i+" .showName").text(data.i.title);
-				$("#schedule-item-"+i+" .showPeople").text(data.i.presenters);
-				$("#schedule-item-"+i+" .showDesc").html(data.i.desc);
+				$("#schedule-item-"+i+" .showName").text(data[i].title);
+				$("#schedule-item-"+i+" .showPeople").text(data[i].presenters);
+				$("#schedule-item-"+i+" .showDesc").html(data[i].desc);
 			});
 		});
 	}
