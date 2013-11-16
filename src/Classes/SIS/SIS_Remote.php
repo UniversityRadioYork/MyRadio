@@ -37,12 +37,4 @@ class SIS_Remote extends ServiceAPI {
 	
 	}
 
-	public static function query_schedule($session) {
-		$response = MyRadio_Timeslot::getCurrentAndNext(null, 10);
-
-		if (!empty($response) && $response !== false) {
-			return array('schedule' => $response);
-		}
-	
-	}
 }
