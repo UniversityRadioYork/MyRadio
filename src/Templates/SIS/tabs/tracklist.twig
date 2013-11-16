@@ -8,7 +8,7 @@
 	var updateTrackListing = function(data) {
 		console.log('updateTrackListing triggered by server');
 		for (i in data) {
-			$('#tracklist table').append('<div id="delsure'+data[i]['id']+'" title="Delete Track?">Are you sure you want to delete this track?</div>');
+			$('#tracklist-data').append('<div id="delsure'+data[i]['id']+'" title="Delete Track?">Are you sure you want to delete this track?</div>');
 
 			var trackDate = new Date(data[i]['playtime']*1000);
 			var secs = trackDate.getSeconds(); if (secs < 10) secs = "0" + secs;
@@ -26,30 +26,27 @@
 			
 			tracklist_highest_id = (tracklist_highest_id < data[i]['id']) ? data[i]['id'] : tracklist_highest_id;
 
-			$('#delsure'+data[i]['id'] ).dialog({
-				autoOpen: false,
-				resizable: false,
-				modal: true,
-				buttons: {
-					"Yes": function(){
-	  						var id = $(this).attr('id').replace('delsure', '');
-						console.log('Marking tracklog '+id+' as deleted ');
-						$.ajax({
-							url: myury.makeURL('SIS','tracklist.delTrack', {'id': id})
-						});
-						$('#t'+id).hide();
-						$('#delsure'+id).dialog("close");
-					
-					},
-					Cancel: function(){
-	  						var id = $(this).attr('id').replace('delsure', '');
-						$('#delsure'+id).dialog("close");
-					}
-				}
-			});
-
 			$('.delbutton').click(function() {
-				$('#delsure'+data[i]['id']).dialog("open");
+				$('#delsure'+data[i]['id']).dialog({
+					resizable: false,
+					modal: true,
+					buttons: {
+						"Yes": function(){
+		  						var id = $(this).attr('id').replace('delsure', '');
+								console.log('Marking tracklog '+id+' as deleted ');
+								$.ajax({
+									url: myury.makeURL('SIS','tracklist.delTrack', {'id': id})
+								});
+								$('#t'+id).hide();
+								$('#delsure'+id).dialog("close");
+						
+						},
+						Cancel: function(){
+		  						var id = $(this).attr('id').replace('delsure', '');
+								$('#delsure'+id).dialog("close");
+						}
+					}
+				});
 			});
 		
 			server.register_param('tracklist_highest_id', tracklist_highest_id);
@@ -216,5 +213,5 @@ function submitTrack() {
 			SIS could not find <b id="warntitle"> --- </b> by <b id="warnartist"> --- </b> in the library. Continue?<br>
 		</div>
 	</div>
-
+	<div id="tracklist-data"></div>
 </div>
