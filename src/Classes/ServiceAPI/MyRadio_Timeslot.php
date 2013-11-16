@@ -362,7 +362,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
           $nextshow = self::getNextTimeslot($timeslot->getStartTime());
           $end = $nextshow->getStartTime();
           //There's not a next show, but there might be one later
-          $response['next'][] = ['title' => 'Jukebox',
+          $response['next'][] = ['title' => Config::$short_name.' Jukebox',
               'desc' => 'Non-stop Music',
               'photo' => Config::$default_show_uri,
               'start_time' => $lastnext->getEndTime(),
