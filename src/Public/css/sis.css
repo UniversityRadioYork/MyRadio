@@ -115,7 +115,7 @@ fieldset { padding:0; border:0; margin-top:25px; }
 .s1off { background-color: #600; }
 .poweredoff { background-color: #333; }
 
-#message-data {
+#message-data, #tracklist-data {
     display: none;
 }
 .td-msgitem, .delbutton {
@@ -131,4 +131,8 @@ figure {
 }
 .webcam-stream-container.live {
   float: right;
+}
+
+#schedule hgroup>* {
+  margin: 0;
 }
