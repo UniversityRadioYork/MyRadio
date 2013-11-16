@@ -274,9 +274,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
       $time = time();
     }
 
-    $result = self::$db->fetch_column('SELECT show_season_timeslot_id FROM'
-            . ' schedule.show_season_timeslot WHERE start_time <= $1 AND'
-            . ' start_time + duration >= $1', [CoreUtils::getTimestamp($time)]);
+    $result = self::$db->fetch_column('SELECT show_season_timeslot_id FROM
+            schedule.show_season_timeslot WHERE start_time <= $1 AND
+            start_time + duration >= $1', [CoreUtils::getTimestamp($time)]);
 
     if (empty($result)) {
       return null;
@@ -310,63 +310,44 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
    */
   public static function getCurrentAndNext($time = null, $n = 1) {
     $timeslot = self::getCurrentTimeslot($time);
+    $next = self::getNextTimeslot($time);
 
     if (empty($timeslot)) {
-      $next = self::getNextTimeslot($time);
-      if (empty($next)) {
-        //There's currently not a show on, and there never will be.
-        $response = [
-            'current' => ['title' => Config::$short_name.' Jukebox', 
-                          'desc' => 'Non-stop Music',
-                          'photo' => Config::$default_show_uri]
-        ];
-      } else {
-        //There's currently not a show on, but there will be.
-        $response = [
-            'current' => ['title' => Config::$short_name.' Jukebox',
-                'desc' => 'Non-stop Music',
-                'photo' => Config::$default_show_uri,
-                'end_time' => $next->getStartTime()],
-            'next' => ['title' => $next->getMeta('title'),
-                'desc' => $next->getMeta('description'),
-                'photo' => $next->getPhoto(),
-                'start_time' => $next->getStartTime(),
-                'end_time' => $next->getStartTime() + ($next->getDuration() * 3600),
-                'presenters' => $next->getPresenterString()]
-        ];
-      }
+      //There's currently not a show on.
+      $response = [
+        'current' => [
+            'title' => Config::$short_name.' Jukebox', 
+            'desc' => 'Non-stop Music',
+            'photo' => Config::$default_show_uri,
+            'end_time' => $next->getStartTime()]
+      ];
     } else {
       //There's a show on!
-      $response = ['current' => [
-              'title' => $timeslot->getMeta('title'),
-              'desc' => $timeslot->getMeta('description'),
-              'photo' => $timeslot->getPhoto(),
-              'start_time' => $timeslot->getStartTime(),
-              'end_time' => $timeslot->getStartTime() + ($timeslot->getDuration() * 3600),
-              'presenters' => $timeslot->getPresenterString()
-      ], 'next' => []];
-      $next = $timeslot;
-      for ($i = 0; $i < $n; $i++) {
-        if ($next instanceof MyRadio_Timeslot) {
-          $lastnext = $next;
-          $next = $next->getTimeslotAfter();
-        } else {
-          if ($lastnext instanceof MyRadio_Timeslot) {
-            $next = self::getNextTimeslot($lastnext->getEndTime());
-          } else {
-            $next = [];
-          }
-        }
-        
-        if (empty($next)) {
-          $nextshow = self::getNextTimeslot($timeslot->getStartTime());
-          $end = $nextshow->getStartTime();
-          //There's not a next show, but there might be one later
-          $response['next'][] = ['title' => Config::$short_name.' Jukebox',
+      $response = [
+        'current' => [
+            'title' => $timeslot->getMeta('title'),
+            'desc' => $timeslot->getMeta('description'),
+            'photo' => $timeslot->getPhoto(),
+            'start_time' => $timeslot->getStartTime(),
+            'end_time' => $timeslot->getEndTime(),
+            'presenters' => $timeslot->getPresenterString()]
+      ];
+      $next = $timeslot->getTimeslotAfter());
+    }
+
+    $lastnext = $timeslot;
+
+    for ($i = 0; $i < $n; $i++) {
+      if (empty($next)) {
+        //There's not a next show, but there might be one later
+          $nextshow = self::getNextTimeslot($lastnext->getStartTime());
+
+          $response['next'][] = [
+              'title' => Config::$short_name.' Jukebox',
               'desc' => 'Non-stop Music',
               'photo' => Config::$default_show_uri,
               'start_time' => $lastnext->getEndTime(),
-              'end_time' => $end
+              'end_time' => $nextshow->getStartTime()
           ];
         } else {
           //There's a next show
@@ -375,12 +356,25 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
               'desc' => $next->getMeta('description'),
               'photo' => $next->getPhoto(),
               'start_time' => $next->getStartTime(),
-              'end_time' => $next->getStartTime() + ($next->getDuration() * 3600),
+              'end_time' => $next->getEndTime(),
               'presenters' => $next->getPresenterString()
           ];
         }
+
+        if ($next instanceof MyRadio_Timeslot) {
+          $lastnext = $next;
+          $next = $next->getTimeslotAfter();
+        } else {
+          if ($lastnext instanceof MyRadio_Timeslot) {
+            $lastnext = $next;
+            $next = self::getNextTimeslot($lastnext->getEndTime());
+          } else {
+            $lastnext = $next;
+            $next = [];
+          }
+        }
+
       }
-    }
     
     if (sizeof($response['next']) === 1) {
       $response['next'] = $response['next'][0];
