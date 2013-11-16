@@ -6,12 +6,27 @@
 			
 	function updateSchedule() {
 		$.getJSON(myury.makeURL('SIS','schedule.get'), function(data) {
-			currentStart = new Date(data.current.start_time*1000);
-			currentEnd = new Date(data.current.end_time*1000);
-			$("#showLive .showTime").text(formatTime(currentStart)+' - '+formatTime(currentEnd));
-			$("#showLive .showName").text(data.current.title);
-			$("#showLive .showPeople").text(data.current.presenters);
-			$(".showDesc").html(data.current.desc);
+			var currentStart = new Date(data.current.start_time*1000);
+			var currentEnd = new Date(data.current.end_time*1000);
+			$("#schedule-onair .showTime").text(formatTime(currentStart)+' - '+formatTime(currentEnd));
+			$("#schedule-onair .showName").text(data.current.title);
+			$("#schedule-onair .showPeople").text(data.current.presenters);
+			$("#schedule-onair .showDesc").html(data.current.desc);
+
+			data.next.forEach(function(e, i, data) {
+				$('#schedule-next').append('<div id="schedule-item-'+i+'" class="schedule-item">
+					<hgroup class="clearfix">
+						<h2 class="showName"></h2>
+						<h5 class="showPeople"></h5>
+					</hgroup>
+					<div class="showDesc"></div></div>')
+				var nextStart = new Date(data.i.start_time*1000);
+				var nextEnd = new Date(data.i.end_time*1000);
+				$("#schedule-item-"+i+" .showTime").text(formatTime(nextStart)+' - '+formatTime(nextEnd));
+				$("#schedule-item-"+i+" .showName").text(data.i.title);
+				$("#schedule-item-"+i+" .showPeople").text(data.i.presenters);
+				$("#schedule-item-"+i+" .showDesc").html(data.i.desc);
+			});
 		});
 	}
 
@@ -29,12 +44,13 @@
 	}
 </script>
 <div id="schedule">
-	<div id="shedule-onair">
+	<div id="schedule-onair">
 		<hgroup id="showLive" class="clearfix">
 			<h2 class="showName"></h2>
-			<h3 class="showPeople"></h3>
+			<h5 class="showPeople"></h5>
 		</hgroup>
 		<div class="showDesc"></div>
 	</div>
+	<div id="schedule-next"></div>
 
 </div>
