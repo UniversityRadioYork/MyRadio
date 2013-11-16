@@ -136,3 +136,6 @@ figure {
 #schedule hgroup>* {
   margin: 0;
 }
+#schedule-onair, .schedule-item {
+  margin-bottom: 2em;
+}
