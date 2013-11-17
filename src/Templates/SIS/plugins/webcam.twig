@@ -4,13 +4,15 @@
     var wcCurrentCam = '{{ plugin.vars.current }}';
         			
     $(document).ready(function(){
+      server.register_callback(updateWebcam, 'webcam');
+      server.register_param('webcamid', wcCurrentCam);
+
       var wcid; //Yay scope.
       for (wcid in wcurls) {
         $('button#setactive'+wcid).attr('wcid',wcid).click(function(){setCam(this);});
         console.log('Enabling Webcam Selector Option '+wcid);
       }
       $('button#setactive'+wcCurrentCam).button("disable");
-      setInterval('updateCurrentWebcam()', 2600);
         
       $('button#setactive6').click(function(){$('div#customcam').toggle('blind',200);});
       $('button#setcustomcam').click(function(){setCam(6,$('input#camurl').val());});
@@ -23,27 +25,29 @@
         return;
       }
       console.log('Updating webcam to '+newcam);
-      $.get(myury.makeURL('SIS', 'webcam.set'), {'src':newcam, 'url':null}, function(data){updateCurrentWebcam()});
+      $.get(myury.makeURL('SIS', 'webcam.set'), {'src':newcam, 'url':null});
     }
-        			
-    function updateCurrentWebcam() {
-      if (!$('div#plugin_body_webcam').is(':visible')) return;
-      $.get(myury.makeURL('SIS', 'webcam.get'), function(data) {
-        if (wcCurrentCam != data['current']) {
-          wcCurrentCam = data['current'];
-          $('button[id^=setactive]:not([id=setactive'+wcCurrentCam+'])').button("enable");
-          $('button#setactive'+wcCurrentCam).button("disable");
-        }
-              
-        //Only show side images for not-active cameras, or all for jukebox
-        if (wcCurrentCam === 1) {
-          $('#plugin_body_webcam figure').show();
-        } else {
-          $('#plugin_body_webcam figure').hide();
-          $('#plugin_body_webcam figure:not(#webcam-stream-'+wcCurrentCam+')').show();
-        }
-      });
+
+    var updateWebcam = function(data) {
+      console.log('updateWebcam triggered by server');
+      
+      $('button[id^=setactive]:not([id=setactive'+ data['current']+'])').button("enable");
+      $('button#setactive'+ data['current']).button("disable");
+            
+      //Only show side images for not-active cameras, or all for jukebox
+      if ( data['current'] === 1) {
+        $('#plugin_body_webcam figure').show();
+      } else {
+        $('#plugin_body_webcam figure').hide();
+        $('#plugin_body_webcam figure:not(#webcam-stream-'+ data['current']+')').show();
+      }
+
+      //Update current webcam data
+      wcCurrentCam = data['current'];
+      //Update the server's lastmod parameter
+      server.register_param('webcamid', wcCurrentCam);
     }
+
   </script>
 
   <figure class="webcam-stream-container live" id="webcam-stream-live">

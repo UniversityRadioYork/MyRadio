@@ -54,4 +54,17 @@ class SIS_Remote extends ServiceAPI {
 		}
 	}
 
+	/**
+	 * Gets the latest webcam status
+	 * @param  array $session phpSession variable
+	 * @return array          webcam status
+	 */
+	public static function query_webcam($session) {
+		$response = MyRadio_Webcam::getCurrentWebcam();
+
+		if ($response['current'] != $_REQUEST['webcam_id']) {
+			return array('webcam' => $response);
+		}
+	}
+
 }
