@@ -113,7 +113,7 @@ class MyRadio_Selector {
    * Returns the state of the remote OB feeds in an associative array.
    * @return Array
    */
-  public function remoteStreams() {
+  public static function remoteStreams() {
     $data = file(Config::$ob_remote_status_file,
             FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     
@@ -295,7 +295,7 @@ class MyRadio_Selector {
       'selectedfrom' => self::getSetbyAtTime($time),
       's1power' => self::getStudio1PowerAtTime($time),
       's2power' => self::getStudio2PowerAtTime($time),
-      's4power' => true,
+      's4power' => (self::remoteStreams()['s1']) ? true : false,
       'lastmod' => self::getLastModAtTime($time)
       );
   }

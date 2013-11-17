@@ -12,7 +12,7 @@ $data = [
   'selector' => $sel->query(),
   'shows' => MyRadio_Timeslot::getCurrentAndNext(null, 2),
   'breaking' => MyRadioNews::getNewsItem(3),
-  'ob' => $sel->remoteStreams(),
+  'ob' => MyRadio_Selector::remoteStreams(),
   'silence' => $sel->isSilence()
 ];
 
