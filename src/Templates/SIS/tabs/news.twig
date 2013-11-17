@@ -5,8 +5,10 @@
   <script>
     var news_url = myury.makeURL('SIS','news')+"NewsRoom.aspx";
     $(document).ready(function(){
-        setTimeout(function(){
-            $('#ury-irn').attr('src', news_url);
-        }, 2000);
+        $(window).load(function() {
+            setTimeout(function(){
+                $('#ury-irn').attr('src', news_url);
+            }, 2000);
+        });
     });
   </script>
