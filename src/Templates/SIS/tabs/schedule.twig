@@ -13,6 +13,7 @@
 			$("#schedule-onair .showPeople").text(data.current.presenters);
 			$("#schedule-onair .showDesc").html(data.current.desc);
 
+			$('#schedule-next').html('');
 			data.next.forEach(function(e, i, data) {
 				$('#schedule-next').append('<div id="schedule-item-'+i+'" class="schedule-item">
 					<hgroup class="clearfix">
@@ -45,12 +46,14 @@
 </script>
 <div id="schedule">
 	<div id="schedule-onair">
+		<h2>On Air:</h2>
 		<hgroup id="showLive" class="clearfix">
 			<h3 class="showName"></h3>
 			<h5 class="showPeople"></h5>
 		</hgroup>
 		<div class="showDesc"></div>
 	</div>
+	<h2>Coming Up:</h2>
 	<div id="schedule-next"></div>
 
 </div>
