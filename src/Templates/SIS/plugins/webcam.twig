@@ -1,7 +1,7 @@
 <script type="text/javascript">
     var wcbase = '{{ plugin.vars.webcam_prefix }}';
     var wcurls = {{ plugin.vars.cameras|json_encode()|raw }};
-    var wcCurrentCam = '{{ plugin.vars.current }}';
+    var wcCurrentCam = 0;
         			
     $(document).ready(function(){
       server.register_callback(updateWebcam, 'webcam');
@@ -20,7 +20,7 @@
 
     function setCam(element) {
       var newcam = $(element).attr('wcid');
-      if (newcam == wcCurrentCam) {
+      if (newcam === wcCurrentCam) {
         console.log('Ignoring setCam - Already current webcam.');
         return;
       }
@@ -39,7 +39,7 @@
         $('#plugin_body_webcam figure').show();
       } else {
         $('#plugin_body_webcam figure').hide();
-        $('#plugin_body_webcam figure:not(#webcam-stream-'+ data['current']+')').show();
+        $('#plugin_body_webcam figure:not(#webcam-stream-'+data['current']+')').show();
       }
 
       //Update current webcam data
