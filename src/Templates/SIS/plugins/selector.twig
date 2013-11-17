@@ -1,82 +1,87 @@
 <script type="text/javascript">
-    var selectorLocked = '{{ plugin.vars.status.lock }}';
-    var selectorPower = {'s1':'{{ plugin.vars.s1power }}', 's2':'{{ plugin.vars.s2power }}'};
-    var selectorOnAir = '{{ plugin.vars.status.studio }}';
-    			
-    $(document).ready(function() {
-      setInterval('updateSelector()', 3000);
-      $('#s1').click(function(){selectStudio(1);});
-      $('#s2').click(function(){selectStudio(2);});
-      $('#s3').click(function(){selectStudio(3);});
-      $('#s4').click(function(){selectStudio(4);});
-    });
-    			
-    function selectStudio(s) {
-      if ((s == 1) && (selectorPower['s1'] == '0')) return;
-      if ((s == 2) && (selectorPower['s2'] == '0')) return;
-      if ((s == 4) && (selectorPower['s4'] == '0')) return;
-      if (selectorLocked != '0') { alert('Could not change studio.\nStudio selector is currently locked out.'); return; }
-    				
-      $.get(myury.makeURL('SIS', 'selector.set'), {src: s}, function(data) {
-        if (data == 'locked') { alert('Could not change studio; studio selector is currently locked out.'); return; }
-        if (data.search('Error') != -1) { alert(data); return; }
-        updateSelectorState(data);
-      });
+  var selectorLastMod = 0;
+  $(document).ready(function(){
+    server.register_callback(updateSelector, 'selector');
+    server.register_param('selector_lastmod', selectorLastMod);
+    $('#s1').click(function(){selectStudio(1);});
+    $('#s2').click(function(){selectStudio(2);});
+    $('#s3').click(function(){selectStudio(3);});
+    $('#s4').click(function(){selectStudio(4);});
+  });
+   			
+  var updateSelector = function(data) {
+    console.log('updateSelector triggered by server');
+    
+    selectorLocked = data['lock'];
+    selectorPower = {
+      's1': data['s1power'],
+      's2': data['s2power'],
+      's4': data['s4power']
+    };
+          
+    if (!data['s1power']) {
+      $('#s1').attr('title', 'Studio 1 Powered Off')
+      .removeClass('s1on s1off poweredon')
+      .addClass('poweredoff');
     }
-    			
-    function updateSelector() {
-      if (!$('div#plugin_body_selector').is(':visible')) return;
-      $.get(myury.makeURL('SIS', 'selector.query'), updateSelectorState);
+    else {
+      $('#s1').attr('title', 'Studio 1').removeClass('poweredoff').addClass('poweredon');
+
+      if (data['studio'] == 1) {
+        $('#s1').removeClass('s1off').addClass('s1on');
+      }
+      else {
+        $('#s1').removeClass('s1on').addClass('s1off');
+      }
     }
-    			
-    function updateSelectorState(data) {
-      selectorLocked = data['lock'];
-    				
-      if (!data['s1power']) {
-        $('#s1').attr('title', 'Studio 1 Powered Off')
-        .removeClass('s1on s1off poweredon')
-        .addClass('poweredoff');
-      }
-      else {
-        $('#s1').attr('title', 'Studio 1').removeClass('poweredoff').addClass('poweredon');
 
-        if (data['studio'] == 1) {
-          $('#s1').removeClass('s1off').addClass('s1on');
-        }
-        else {
-          $('#s1').removeClass('s1on').addClass('s1off');
-        }
-      }
-
-      if (!data['s2power']) {
-        $('#s2').attr('title', 'Studio 2 Powered Off').removeClass('s2on s2off poweredon').addClass('poweredoff');
+    if (!data['s2power']) {
+      $('#s2').attr('title', 'Studio 2 Powered Off').removeClass('s2on s2off poweredon').addClass('poweredoff');
+    }
+    else {
+      $('#s2').attr('title', 'Studio 2').removeClass('poweredoff').addClass('poweredon');
+      if (data['studio'] == 2) {
+        $('#s2').removeClass('s2off').addClass('s2on');
       }
       else {
-        $('#s2').attr('title', 'Studio 2').removeClass('poweredoff').addClass('poweredon');
-        if (data['studio'] == 2) {
-          $('#s2').removeClass('s2off').addClass('s2on');
-        }
-        else {
-          $('#s2').removeClass('s2on').addClass('s2off');
-        }
+        $('#s2').removeClass('s2on').addClass('s2off');
       }
-      if (data['studio'] == 3) {
-        $('#s3').removeClass('s3off').addClass('s3on');
-      }
-      else {
-        $('#s3').removeClass('s3on').addClass('s3off');
-      }
-    				
-      switch(data['studio']) {
-        case 1:
-        case 2: s = 'Studio '+data['studio']+' On Air'; break;
-        case 3: s = 'Jukebox On Air'; break;
-        case 4: s = 'Outside Broadcast On Air'; break;
-        default:  s = 'Source '+data['studio']+' On Air'; break;
-      }
-      if (data['lock'] != '0') s = s + '<small> &mdash; Locked</small>';
+    }
+    if (data['studio'] == 3) {
+      $('#s3').removeClass('s3off').addClass('s3on');
+    }
+    else {
+      $('#s3').removeClass('s3on').addClass('s3off');
+    }
+          
+    switch(data['studio']) {
+      case 1:
+      case 2: s = 'Studio '+data['studio']+' On Air'; break;
+      case 3: s = 'Jukebox On Air'; break;
+      case 4: s = 'Outside Broadcast On Air'; break;
+      default:  s = 'Source '+data['studio']+' On Air'; break;
+    }
+    if (data['lock'] != '0') s = s + '<small> &mdash; Locked</small>';
       $('span#onair').html(s);
-    }
+
+    //Update the lastmod time
+    selectorLastMod = data['lastmod'];
+    //Update the server's lastmod parameter
+    server.register_param('selector_lastmod', selectorLastMod);
+  }
+
+  function selectStudio(s) {
+    if ((s == 1) && (selectorPower['s1'] == '0')) return;
+    if ((s == 2) && (selectorPower['s2'] == '0')) return;
+    if ((s == 4) && (selectorPower['s4'] == '0')) return;
+    if (selectorLocked != '0') { alert('Could not change studio.\nStudio selector is currently locked out.'); return; }
+          
+    $.get(myury.makeURL('SIS', 'selector.set'), {src: s}, function(data) {
+      if (data == 'locked') { alert('Could not change studio; studio selector is currently locked out.'); return; }
+      if (data.search('Error') != -1) { alert(data); return; }
+      updateSelectorState(data);
+    });
+  }
   </script>
 
 
