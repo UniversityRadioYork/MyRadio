@@ -22,11 +22,11 @@
 					<td>'+data[i]['title']+'</td>
 					<td>'+data[i]['artist']+'</td>
 					<td>'+data[i]['album']+'</td>
-					<td><div class="delbutton"><span class="ui-icon ui-icon-trash" style="display:inline-block"></span></div></td></tr>');
+					<td class="delbutton"><span class="ui-icon ui-icon-trash" style="display:inline-block"></span></td></tr>');
 			
 			tracklist_highest_id = (tracklist_highest_id < data[i]['id']) ? data[i]['id'] : tracklist_highest_id;
 
-			$('t'+data[i]['id']+' .delbutton').click(function() {
+			$('#t'+data[i]['id']+' .delbutton').click(function() {
 				$('#delsure'+data[i]['id']).dialog({
 					resizable: false,
 					modal: true,
