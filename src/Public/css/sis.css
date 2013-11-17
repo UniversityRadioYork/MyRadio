@@ -140,9 +140,6 @@ figure {
   margin-bottom: 2em;
   position: relative;
 }
-.schedule-item:not(:last-child):after {
-  content: '<hr>';
-}
 #schedule h2 {
   margin-top: 0;
   text-align: left;
