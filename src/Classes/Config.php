@@ -184,6 +184,12 @@ final class Config {
    * @var String
    */
   public static $webcam_archive_path = '/home/motion/videos';
+
+  /**
+   * The url of the webcam server status
+   * @var String
+   */
+  public static $webcam_current_url = "http://copperbox.york.ac.uk:9090/current?noprotocol=true";
   
   /**
    * The path to store the original, unencoded copies of URYPlayer Podcasts.

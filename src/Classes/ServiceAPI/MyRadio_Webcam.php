@@ -49,4 +49,43 @@ class MyRadio_Webcam extends ServiceAPI {
     echo $earliest.'='.$latest;
   }
   
+  /**
+   * Returns the id and location of the currentl selected webcam
+   * @return array webcam id and location
+   */
+  public static function getCurrentWebcam() {
+    $current = file_get_contents(Config::$webcam_current_url);
+        
+    switch ($current) {
+      case '0': $location = 'Jukebox';
+        break;
+      case '1': $location = 'Studio 1';
+        break;
+      case '2': $location = 'Studio 2';
+        break;
+      case '4': $location = 'Office';
+        break;
+      case '5': $location = 'Studio 1 Secondary';
+        break;
+      default: $location = $current;
+        $current = 6;
+        break;
+    }
+
+    return [
+      'current' => self::cam_to_stream($current),
+      'webcam' => $location
+      ];
+  }
+
+  // @todo: remove the need for this function after migration to new by makeing camserver use streamids
+  private static function cam_to_stream($id) {
+    switch ($id) {
+      case '0': return 1;
+      case '1': return 2;
+      case '2': return 4;
+      case '4': return 5;
+      case '5': return 3;
+    };
+  }
 }
