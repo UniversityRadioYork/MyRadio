@@ -1,3 +1,12 @@
   <div id="news">
-    <iframe id="ury-irn" src="{{myury.makeURL(config, 'SIS','news')}}/NewsRoom.aspx" width="100%" height="680px"></iframe>
+    <iframe id="ury-irn" src="" width="100%" height="680px"></iframe>
   </div>
+
+  <script>
+  	var news_url = "{{myury.makeURL(config, 'SIS','news')}}/NewsRoom.aspx";
+  	$(document).ready(function(){
+  		setTimeout(function(){
+  			$('#ury-irn').attr('src', news_url);
+  		}, 2000);
+  	}
+  </script>
