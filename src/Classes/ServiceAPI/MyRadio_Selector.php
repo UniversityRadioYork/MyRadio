@@ -280,7 +280,7 @@ class MyRadio_Selector {
              ORDER BY time DESC
              LIMIT 1',
             [CoreUtils::getTimestamp($time)]);
-    return $result[0]-1;
+    return $result[0];
   }
 
   /**
