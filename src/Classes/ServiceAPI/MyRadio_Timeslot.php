@@ -340,7 +340,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
     for ($i = 0; $i < $n; $i++) {
       if (empty($next)) {
         //There's not a next show, but there might be one later
-          $nextshow = self::getNextTimeslot($lastnext->getStartTime());
+          $nextshow = self::getNextTimeslot($lastnext->getEndTime());
 
           $response['next'][] = [
               'title' => Config::$short_name.' Jukebox',
