@@ -139,3 +139,10 @@ figure {
 #schedule-onair, .schedule-item {
   margin-bottom: 2em;
 }
+#schedule h2 {
+    margin-top: 0;
+    text-align: left;
+}
+#schedule {
+    text-align: center;
+}
