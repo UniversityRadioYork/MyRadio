@@ -1,5 +1,4 @@
 <script type="text/javascript">
-    var selectorLastChange = '{{ plugin.vars.lastmod }}';
     var selectorLocked = '{{ plugin.vars.status.lock }}';
     var selectorPower = {'s1':'{{ plugin.vars.s1power }}', 's2':'{{ plugin.vars.s2power }}'};
     var selectorOnAir = '{{ plugin.vars.status.studio }}';
@@ -27,13 +26,13 @@
     			
     function updateSelector() {
       if (!$('div#plugin_body_selector').is(':visible')) return;
-      $.get(myury.makeURL('SIS', 'selector.query'), {lastchange: selectorLastChange}, updateSelectorState);
+      $.get(myury.makeURL('SIS', 'selector.query'), updateSelectorState);
     }
     			
     function updateSelectorState(data) {
       selectorLocked = data['lock'];
     				
-      if (data['power'] == 0 || data['power'] == 2) {
+      if (!data['s1power']) {
         $('#s1').attr('title', 'Studio 1 Powered Off')
         .removeClass('s1on s1off poweredon')
         .addClass('poweredoff');
@@ -49,7 +48,7 @@
         }
       }
 
-      if (data['power'] == 0 || data['power'] == 1) {
+      if (!data['s2power']) {
         $('#s2').attr('title', 'Studio 2 Powered Off').removeClass('s2on s2off poweredon').addClass('poweredoff');
       }
       else {

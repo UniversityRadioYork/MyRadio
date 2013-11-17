@@ -199,12 +199,79 @@ class MyRadio_Selector {
    * @param int $time
    * @return int
    */
-  public function getStudioAtTime($time) {
+  public static function getStudioAtTime($time) {
     $result = Database::getInstance()->fetch_column(
             'SELECT action FROM public.selector WHERE time <= $1'
             .' AND action >= 4 AND action <= 11 LIMIT 1',
             [CoreUtils::getTimestamp($time)]);
     return $result[0]-3;
+  }
+
+  /**
+   * Returns where the selector was set from at the time given
+   * @param int $time
+   * @return int
+   */
+  public static function getSetbyAtTime($time) {
+    $result = Database::getInstance()->fetch_column(
+            'SELECT setby FROM public.selector WHERE time <= $1'
+            .' AND action >= 4 AND action <= 11 LIMIT 1',
+            [CoreUtils::getTimestamp($time)]);
+    return $result[0];
+  }
+
+  /**
+   * Returns the power state of studio1 at the time given
+   * @param int $time
+   * @return bool
+   */
+  public static function getStudio1PowerAtTime($time) {
+    $result = Database::getInstance()->fetch_column(
+            'SELECT action FROM public.selector WHERE time <= $1'
+            .' AND action >= 13 AND action <= 14 LIMIT 1',
+            [CoreUtils::getTimestamp($time)]);
+    return ($result[0] == 13) ? true : false;
+  }
+
+  /**
+   * Returns the power state of studio2 at the time given
+   * @param int $time
+   * @return bool
+   */
+  public static function getStudio2PowerAtTime($time) {
+    $result = Database::getInstance()->fetch_column(
+            'SELECT action FROM public.selector WHERE time <= $1'
+            .' AND action >= 15 AND action <= 16 LIMIT 1',
+            [CoreUtils::getTimestamp($time)]);
+    return ($result[0] == 15) ? true : false;
+  }
+
+  /**
+   * Returns the lock state at the time given
+   * @param int $time
+   * @return int
+   */
+  public static function getLockAtTime($time) {
+    $result = Database::getInstance()->fetch_column(
+            'SELECT action FROM public.selector WHERE time <= $1'
+            .' AND action >= 1 AND action <= 3 LIMIT 1',
+            [CoreUtils::getTimestamp($time)]);
+    return $result[0]-1;
+  }
+
+  /**
+   * Returns the selector status at the time given
+   * @param int $time
+   * @return array
+   */
+  public static function getStatusAtTime($time) {
+    return array(
+      'studio' => getStudioAtTime($time),
+      'lock' => getLockAtTime($time),
+      'selectedfrom' => getSetbyAtTime($time),
+      's1power' => getStudio1PowerAtTime($time),
+      's2power' => getStudio2PowerAtTime($time)
+      );
   }
 
 }
