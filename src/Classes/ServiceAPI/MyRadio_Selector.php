@@ -266,11 +266,11 @@ class MyRadio_Selector {
    */
   public static function getStatusAtTime($time) {
     return array(
-      'studio' => getStudioAtTime($time),
-      'lock' => getLockAtTime($time),
-      'selectedfrom' => getSetbyAtTime($time),
-      's1power' => getStudio1PowerAtTime($time),
-      's2power' => getStudio2PowerAtTime($time)
+      'studio' => self::getStudioAtTime($time),
+      'lock' => self::getLockAtTime($time),
+      'selectedfrom' => self::getSetbyAtTime($time),
+      's1power' => self::getStudio1PowerAtTime($time),
+      's2power' => self::getStudio2PowerAtTime($time)
       );
   }
 
