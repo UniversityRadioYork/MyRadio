@@ -83,10 +83,10 @@ table.messages tr td:last-child {
 }
 
 table { 
-    margin: auto;
-    width: 90%;
-    border-collapse: separate;
-    border-spacing: 0.7em 0.5em;
+  margin: auto;
+  width: 90%;
+  border-collapse: separate;
+  border-spacing: 0.7em 0.5em;
 }
 
 label, input { display:block; }
@@ -116,10 +116,10 @@ fieldset { padding:0; border:0; margin-top:25px; }
 .poweredoff { background-color: #333; }
 
 #message-data, #tracklist-data {
-    display: none;
+  display: none;
 }
 .td-msgitem, .delbutton {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 /** Webcam **/
@@ -138,11 +138,18 @@ figure {
 }
 #schedule-onair, .schedule-item {
   margin-bottom: 2em;
+  position: relative;
 }
 #schedule h2 {
-    margin-top: 0;
-    text-align: left;
+  margin-top: 0;
+  text-align: left;
 }
 #schedule {
-    text-align: center;
+  text-align: center;
+}
+.showTime {
+  position: absolute;
+  left: 2em;
+  font-size: larger;
+  font-weight: 700;
 }
