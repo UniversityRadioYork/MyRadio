@@ -29,7 +29,7 @@
 				$("#schedule-item-"+i+" .showPeople").text(data[i].presenters);
 				$("#schedule-item-"+i+" .showDesc").html(data[i].desc);
 			});
-			$('.schedule-item:not(:last-child)').append('<hr>');
+			$('.schedule-item:not(:first-child)').prepend('<hr>');
 		});
 	}
 
