@@ -221,7 +221,7 @@ class MyRadio_Selector {
              ORDER BY time DESC
              LIMIT 1',
             [CoreUtils::getTimestamp($time)]);
-    return $result[0];
+    return (int)$result[0];
   }
 
   /**
@@ -280,7 +280,7 @@ class MyRadio_Selector {
              ORDER BY time DESC
              LIMIT 1',
             [CoreUtils::getTimestamp($time)]);
-    return $result[0];
+    return strtotime($result[0]);
   }
 
   /**
@@ -295,6 +295,7 @@ class MyRadio_Selector {
       'selectedfrom' => self::getSetbyAtTime($time),
       's1power' => self::getStudio1PowerAtTime($time),
       's2power' => self::getStudio2PowerAtTime($time),
+      's4power' => true,
       'lastmod' => self::getLastModAtTime($time)
       );
   }

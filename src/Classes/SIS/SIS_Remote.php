@@ -27,7 +27,11 @@ class SIS_Remote extends ServiceAPI {
 		 }
 	}
 
-
+	/**
+	 * Gets the latest tracklist data for the selected timeslot
+	 * @param  array $session phpSession variable
+	 * @return array          tracklist data
+	 */
 	public static function query_tracklist($session) {
 		$response = SIS_Tracklist::getTrackListing($session['timeslotid'], isset($_REQUEST['tracklist_highest_id']) ? $_REQUEST['tracklist_highest_id'] : 0);
 
@@ -35,6 +39,19 @@ class SIS_Remote extends ServiceAPI {
 			return array('tracklist' => $response);
 		}
 	
+	}
+
+	/**
+	 * Gets the latest selector status
+	 * @param  array $session phpSession variable
+	 * @return array          selector status
+	 */
+	public static function query_selector($session) {
+		$response = MyRadio_Selector::getStatusAtTime(time());
+
+		if ($response['lastmod'] > $_REQUEST['selector_lastmod']) {
+			return array('selector' => $response);
+		}
 	}
 
 }
