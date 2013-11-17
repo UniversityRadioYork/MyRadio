@@ -194,6 +194,35 @@ class MyRadio_Selector {
     return trim($response);
   }
   
+  public static function setStudio($studio) {
+    if (($studio <= 0) || ($studio > 8)) {
+      return ['myury_errors' => 'Invalid Studio ID'];;
+    }
+    $status = self::getStatusAtTime(time());
+
+    if ($studio == $status['studio']) {
+      return ['myury_errors' => 'Already Selected'];
+    }
+    if ((($studio == 1) && (!$status['s1power'])) ||
+        (($studio == 2) && (!$status['s2power'])) ||
+        (($studio == 4) && (!$status['s4power']))) {
+      return ['myury_errors' => 'Source '.$studio.' is not powered'];
+    }
+    if ($status['locked'] != 0) {
+      return ['myury_errors' => 'Selector Locked'];
+    }
+
+    $sel = new MyRadio_Selector();
+    $response = $sel->cmd($studio);
+
+    if ($response === 'FLK') {
+      return ['myury_errors' => 'Selector Locked'];
+    }
+    elseif ($response === 'ACK') {
+      return;
+    }
+  }
+
   /**
    * Returns what studio was on air at the time given
    * @param int $time
