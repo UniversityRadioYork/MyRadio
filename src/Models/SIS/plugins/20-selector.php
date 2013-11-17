@@ -9,12 +9,10 @@
 
 $sel = new MyRadio_Selector();
 
-$lastmod = time();
 $status = $sel->query();
 $power = $status['power'];
 
 $vars = array(
-	'lastmod' => $lastmod,
 	'status' => $status,
 	's1power' => ($power & 1),
 	's2power' => ($power & 2) >> 1,

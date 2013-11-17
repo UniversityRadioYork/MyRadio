@@ -7,7 +7,6 @@
  * @package MyRadio_SIS
  */
 
-$sel = new MyRadio_Selector();
-$data = $sel->query();
+$data = MyRadio_Selector::getStatusAtTime(time());
 
 require 'Views/MyRadio/datatojson.php';
