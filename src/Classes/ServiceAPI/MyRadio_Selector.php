@@ -201,8 +201,10 @@ class MyRadio_Selector {
    */
   public static function getStudioAtTime($time) {
     $result = Database::getInstance()->fetch_column(
-            'SELECT action FROM public.selector WHERE time <= $1'
-            .' AND action >= 4 AND action <= 11 LIMIT 1',
+            'SELECT action FROM public.selector WHERE time <= $1
+             AND action >= 4 AND action <= 11 
+             ORDER BY time DESC
+             LIMIT 1',
             [CoreUtils::getTimestamp($time)]);
     return $result[0]-3;
   }
@@ -214,8 +216,10 @@ class MyRadio_Selector {
    */
   public static function getSetbyAtTime($time) {
     $result = Database::getInstance()->fetch_column(
-            'SELECT setby FROM public.selector WHERE time <= $1'
-            .' AND action >= 4 AND action <= 11 LIMIT 1',
+            'SELECT setby FROM public.selector WHERE time <= $1
+             AND action >= 4 AND action <= 11 
+             ORDER BY time DESC
+             LIMIT 1',
             [CoreUtils::getTimestamp($time)]);
     return $result[0];
   }
@@ -227,8 +231,10 @@ class MyRadio_Selector {
    */
   public static function getStudio1PowerAtTime($time) {
     $result = Database::getInstance()->fetch_column(
-            'SELECT action FROM public.selector WHERE time <= $1'
-            .' AND action >= 13 AND action <= 14 LIMIT 1',
+            'SELECT action FROM public.selector WHERE time <= $1
+             AND action >= 13 AND action <= 14 
+             ORDER BY time DESC
+             LIMIT 1',
             [CoreUtils::getTimestamp($time)]);
     return ($result[0] == 13) ? true : false;
   }
@@ -240,8 +246,10 @@ class MyRadio_Selector {
    */
   public static function getStudio2PowerAtTime($time) {
     $result = Database::getInstance()->fetch_column(
-            'SELECT action FROM public.selector WHERE time <= $1'
-            .' AND action >= 15 AND action <= 16 LIMIT 1',
+            'SELECT action FROM public.selector WHERE time <= $1
+             AND action >= 15 AND action <= 16 
+             ORDER BY time DESC
+             LIMIT 1',
             [CoreUtils::getTimestamp($time)]);
     return ($result[0] == 15) ? true : false;
   }
@@ -253,8 +261,24 @@ class MyRadio_Selector {
    */
   public static function getLockAtTime($time) {
     $result = Database::getInstance()->fetch_column(
-            'SELECT action FROM public.selector WHERE time <= $1'
-            .' AND action >= 1 AND action <= 3 LIMIT 1',
+            'SELECT action FROM public.selector WHERE time <= $1
+             AND action >= 1 AND action <= 3 
+             ORDER BY time DESC
+             LIMIT 1',
+            [CoreUtils::getTimestamp($time)]);
+    return $result[0]-1;
+  }
+
+  /**
+   * Returns the time last modified before the time given
+   * @param int $time
+   * @return int
+   */
+  public static function getLastModAtTime($time) {
+    $result = Database::getInstance()->fetch_column(
+            'SELECT time FROM public.selector WHERE time <= $1
+             ORDER BY time DESC
+             LIMIT 1',
             [CoreUtils::getTimestamp($time)]);
     return $result[0]-1;
   }
@@ -270,7 +294,8 @@ class MyRadio_Selector {
       'lock' => self::getLockAtTime($time),
       'selectedfrom' => self::getSetbyAtTime($time),
       's1power' => self::getStudio1PowerAtTime($time),
-      's2power' => self::getStudio2PowerAtTime($time)
+      's2power' => self::getStudio2PowerAtTime($time),
+      'lastmod' => slef::getLastModAtTime($time)
       );
   }
 
