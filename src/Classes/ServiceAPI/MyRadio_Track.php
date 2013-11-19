@@ -373,7 +373,7 @@ class MyRadio_Track extends ServiceAPI {
 
     //Prepare paramaters
     $sql_params = array($options['title'], $options['artist'], $options['album'], $options['precise'] ? '' : '%');
-    $count = 3;
+    $count = 4;
     if ($options['limit'] != 0) {
       $sql_params[] = $options['limit'];
       $count++;
