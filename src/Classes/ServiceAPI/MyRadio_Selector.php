@@ -213,7 +213,7 @@ class MyRadio_Selector {
     }
 
     $sel = new MyRadio_Selector();
-    $response = $sel->cmd($studio);
+    $response = $sel->cmd('S'.$studio);
 
     if ($response === 'FLK') {
       throw new MyRadioException('Selector Locked');
