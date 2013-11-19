@@ -77,8 +77,8 @@
     if (selectorLocked != '0') { alert('Could not change studio.\nStudio selector is currently locked out.'); return; }
           
     $.get(myury.makeURL('SIS', 'selector.set'), {src: s}, function(data) {
-      if (data['error'] == 'locked') { $("<div>Could not change studio; studio selector is currently locked out.</div>").dialog({modal: true}); return; }
-      if (data['error']) { $("<div>"+data['error']+"</div>").dialog({modal: true}); return; }
+      if (data['error'] == 'locked') { $('<div title="Selector Error">Could not change studio; studio selector is currently locked out.</div>').dialog({modal: true}); return; }
+      if (data['error']) { $('<div title="Selector Error">'+data['error']+'</div>').dialog({modal: true}); return; }
       updateSelectorState(data);
     });
   }

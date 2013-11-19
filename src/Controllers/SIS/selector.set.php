@@ -15,13 +15,13 @@ if (($src <= 0) || ($src > 8)) {
   require 'Views/MyRadio/datatojson.php';
 }
 elseif ($src == $status['studio']) {
-  $data = ['error' => 'Already Selected'];
+  $data = ['error' => 'Source '.$src.' already selected'];
   require 'Views/MyRadio/datatojson.php';
 }
 elseif ((($src == 1) && (!$status['s1power'])) ||
 	(($src == 2) && (!$status['s2power'])) ||
 	(($src == 4) && (!$status['s4power']))) {
-  $data = ['error' => 'Source not powered'];
+  $data = ['error' => 'Source '.$src.' not powered'];
   require 'Views/MyRadio/datatojson.php';
 }
 elseif ($status['locked'] != 0) {
