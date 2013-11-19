@@ -201,22 +201,22 @@ class MyRadio_Selector {
     $status = self::getStatusAtTime(time());
 
     if ($studio == $status['studio']) {
-      return ['myury_errors' => 'Already Selected'];
+      throw new MyRadioException('Source '.$studio.' is already selected');
     }
     if ((($studio == 1) && (!$status['s1power'])) ||
         (($studio == 2) && (!$status['s2power'])) ||
         (($studio == 4) && (!$status['s4power']))) {
-      return ['myury_errors' => 'Source '.$studio.' is not powered'];
+      throw new MyRadioException('Source '.$studio.' is not powered');
     }
     if ($status['locked'] != 0) {
-      return ['myury_errors' => 'Selector Locked'];
+      throw new MyRadioException('Selector Locked');
     }
 
     $sel = new MyRadio_Selector();
     $response = $sel->cmd($studio);
 
     if ($response === 'FLK') {
-      return ['myury_errors' => 'Selector Locked'];
+      throw new MyRadioException('Selector Locked');
     }
     elseif ($response === 'ACK') {
       return;

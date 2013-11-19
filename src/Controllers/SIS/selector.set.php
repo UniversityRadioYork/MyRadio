@@ -11,21 +11,21 @@ $src = (isset($_REQUEST['src'])) ? (int) $_REQUEST['src'] : 0;
 $status = MyRadio_Selector::getStatusAtTime(time());
 
 if (($src <= 0) || ($src > 8)) {
-  $data = ['myury_errors' => 'Invalid Studio ID'];
+  $data = ['error' => 'Invalid Selection'];
   require 'Views/MyRadio/datatojson.php';
 }
 elseif ($src == $status['studio']) {
-  $data = ['myury_errors' => 'Already Selected'];
+  $data = ['error' => 'Already Selected'];
   require 'Views/MyRadio/datatojson.php';
 }
 elseif ((($src == 1) && (!$status['s1power'])) ||
 	(($src == 2) && (!$status['s2power'])) ||
 	(($src == 4) && (!$status['s4power']))) {
-  $data = ['myury_errors' => 'Source '.$src.' is not powered'];
+  $data = ['error' => 'Source not powered'];
   require 'Views/MyRadio/datatojson.php';
 }
 elseif ($status['locked'] != 0) {
-  $data = ['myury_errors' => 'Selector Locked'];
+  $data = ['error' => 'locked'];
   require 'Views/MyRadio/datatojson.php';
 }
 else {
