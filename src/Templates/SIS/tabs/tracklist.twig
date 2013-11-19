@@ -27,7 +27,7 @@
 			tracklist_highest_id = (tracklist_highest_id < data[i]['id']) ? data[i]['id'] : tracklist_highest_id;
 
 			$('#t'+data[i]['id']+' .delbutton').click(function() {
-				var id = $(this).attr('id').replace('t', '');
+				var id = $(this).parent().attr('id').replace('t', '');
 				$('#delsure'+id).dialog({
 					resizable: false,
 					modal: true,
