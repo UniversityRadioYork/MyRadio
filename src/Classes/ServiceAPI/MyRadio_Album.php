@@ -274,9 +274,10 @@ class MyRadio_Album extends ServiceAPI {
     }
 
     //Do the bulk of the sorting with SQL
-    $result = self::$db->fetch_all('SELECT DISTINCT rec_record.recordid, trackid
-      FROM rec_record, rec_track WHERE rec_track.recordid=rec_record.recordid
-      AND rec_track.title ILIKE $4 || $1 || $4
+    $result = self::$db->fetch_all('SELECT DISTINCT rec.recordid 
+      FROM rec_record rec
+      INNER JOIN rec_track trk ON ( rec.recordid = trk.recordid )
+      WHERE rec_track.title ILIKE $4 || $1 || $4
       AND rec_track.artist ILIKE $4 || $2 || $4
       AND rec_record.title ILIKE $4 || $3 || $4
       ' . ($options['digitised'] ? ' AND digitised=\'t\'' : '') . '
