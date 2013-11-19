@@ -191,9 +191,8 @@ class MyRadio_Album extends ServiceAPI {
    * title: String title of the track
    * artist: String artist name of the track
    * digitised: If true, only return digitised tracks. If false, return any.
-   * itonesplaylistid: Tracks that are members of the iTones_Playlist id
    * limit: Maximum number of items to return. 0 = No Limit
-   * recordid: int Record id
+   * trackid: int Track id
    * lastfmverified: Boolean whether or not verified with Last.fm Fingerprinter. Default any.
    * random: If true, sort randomly
    * idsort: If true, sort by trackid
@@ -202,19 +201,9 @@ class MyRadio_Album extends ServiceAPI {
    * nocorrectionproposed: If true, will only return items with no correction proposed.
    * clean: Default any. 'y' for clean tracks, 'n' for dirty, 'u' for unknown.
    * 
-   * @todo Limit not accurate for itonesplaylistid queries
    */
   public static function findByOptions($options) {
     self::wakeup();
-
-    //Shortcircuit - if itonesplaylistid is the only not-default value, just return the playlist
-    $conflict = false;
-    foreach (array('title', 'artist', 'digitised') as $k) {
-      if (!empty($options[$k])) {
-        $conflict = true;
-        break;
-      }
-    }
 
     if (empty($options['title'])) {
       $options['title'] = '';
@@ -299,8 +288,6 @@ class MyRadio_Album extends ServiceAPI {
       }
       $response[] = new MyRadio_Album($recordid['recordid']);
     }
-
-    //Intersect with iTones if necessary, then return
     return $response;
   }
 

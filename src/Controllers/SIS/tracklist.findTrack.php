@@ -12,7 +12,12 @@ $album = $_GET['album'];
 $tname = $_GET['tname'];
 $box = $_GET['box'];
 
-
+$artistResult = Artist::findByOptions(
+	['title' => $tname,
+	'artist' => $artist,
+	'album' => $album,
+	'digitised' => false]
+	);
 $trackResult = MyRadio_Track::findByOptions(
 	['title' => $tname,
 	'artist' => $artist,
@@ -29,8 +34,8 @@ $albumResult = MyRadio_Album::findByOptions(
 $dataout = array();
 
 if ($box == "artist"){
-	foreach ($trackResult as $track) {
-		$dataout[] = "{$track->getArtist()}";
+	foreach ($artistResult as $artist) {
+		$dataout[] = "{$artist}";
 	}
 }
 else if ($box == "album"){
