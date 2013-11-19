@@ -185,6 +185,124 @@ class MyRadio_Album extends ServiceAPI {
     return $response;
   }
   
+  /**
+   * 
+   * @param Array $options One or more of the following:
+   * title: String title of the track
+   * artist: String artist name of the track
+   * digitised: If true, only return digitised tracks. If false, return any.
+   * itonesplaylistid: Tracks that are members of the iTones_Playlist id
+   * limit: Maximum number of items to return. 0 = No Limit
+   * recordid: int Record id
+   * lastfmverified: Boolean whether or not verified with Last.fm Fingerprinter. Default any.
+   * random: If true, sort randomly
+   * idsort: If true, sort by trackid
+   * custom: A custom SQL WHERE clause
+   * precise: If true, will only return exact matches for artist/title
+   * nocorrectionproposed: If true, will only return items with no correction proposed.
+   * clean: Default any. 'y' for clean tracks, 'n' for dirty, 'u' for unknown.
+   * 
+   * @todo Limit not accurate for itonesplaylistid queries
+   */
+  public static function findByOptions($options) {
+    self::wakeup();
+
+    //Shortcircuit - if itonesplaylistid is the only not-default value, just return the playlist
+    $conflict = false;
+    foreach (array('title', 'artist', 'digitised') as $k) {
+      if (!empty($options[$k])) {
+        $conflict = true;
+        break;
+      }
+    }
+
+    if (empty($options['title'])) {
+      $options['title'] = '';
+    }
+    if (empty($options['artist'])) {
+      $options['artist'] = '';
+    }
+    if (empty($options['album'])) {
+      $options['album'] = '';
+    }
+    if (!isset($options['digitised'])) {
+      $options['digitised'] = true;
+    }
+    if (empty($options['itonesplaylistid'])) {
+      $options['itonesplaylistid'] = null;
+    }
+    if (!isset($options['limit'])) {
+      $options['limit'] = Config::$ajax_limit_default;
+    }
+    if (empty($options['trackid'])) {
+      $options['trackid'] = null;
+    }
+    if (empty($options['lastfmverified'])) {
+      $options['lastfmverified'] = null;
+    }
+    if (empty($options['random'])) {
+      $options['random'] = null;
+    }
+    if (empty($options['idsort'])) {
+      $options['idsort'] = null;
+    }
+    if (empty($options['custom'])) {
+      $options['custom'] = null;
+    }
+    if (empty($options['precise'])) {
+      $options['precise'] = false;
+    }
+    if (empty($options['nocorrectionproposed'])) {
+      $options['nocorrectionproposed'] = false;
+    }
+    if (empty($options['clean'])) {
+      $options['clean'] = false;
+    }
+
+    //Prepare paramaters
+    $sql_params = array($options['title'], $options['artist'], $options['album'], $options['precise'] ? '' : '%');
+    $count = 4;
+    if ($options['limit'] != 0) {
+      $sql_params[] = $options['limit'];
+      $count++;
+      $limit_param = $count;
+    }
+    if ($options['clean']) {
+      $sql_params[] = $options['clean'];
+      $count++;
+      $clean_param = $count;
+    }
+
+    //Do the bulk of the sorting with SQL
+    $result = self::$db->fetch_all('SELECT DISTINCT rec_track.recordid, trackid
+      FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
+      AND rec_track.title ILIKE $4 || $1 || $4
+      AND rec_track.artist ILIKE $4 || $2 || $4
+      AND rec_record.title ILIKE $4 || $3 || $4
+      ' . ($options['digitised'] ? ' AND digitised=\'t\'' : '') . '
+      ' . ($options['lastfmverified'] === true ? ' AND lastfm_verified=\'t\'' : '')
+            . ($options['lastfmverified'] === false ? ' AND lastfm_verified=\'f\'' : '')
+            . ($options['nocorrectionproposed'] === true ? ' AND trackid NOT IN (
+              SELECT trackid FROM public.rec_trackcorrection WHERE state=\'p\'
+              )' : '')
+            . ($options['clean'] != null ? ' AND clean=$'.$clean_param : '')
+            . ($options['custom'] !== null ? ' AND ' . $options['custom'] : '')
+            . ($options['random'] ? ' ORDER BY RANDOM()' : '')
+            . ($options['idsort'] ? ' ORDER BY trackid' : '')
+            . ($options['limit'] == 0 ? '' : ' LIMIT $'.$limit_param), $sql_params);
+
+    $response = array();
+    foreach ($result as $recordid) {
+      if ($options['trackid'] !== null && $recordid['trackid'] != $options['trackid']) {
+        continue;
+      }
+      $response[] = new MyRadio_Album($recordid['recordid']);
+    }
+
+    //Intersect with iTones if necessary, then return
+    return $response;
+  }
+
   public static function findOrCreate($title, $artist) {
     $title = trim($title);
     $artist = trim($artist);

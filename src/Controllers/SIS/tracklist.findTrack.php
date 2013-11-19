@@ -12,13 +12,19 @@ $album = $_GET['album'];
 $tname = $_GET['tname'];
 $box = $_GET['box'];
 
+
 $trackResult = MyRadio_Track::findByOptions(
 	['title' => $tname,
 	'artist' => $artist,
 	'album' => $album,
 	'digitised' => false]
 	);
-$albumResult = MyRadio_Album::findByName($album, Config::$ajax_limit_default);
+$albumResult = MyRadio_Album::findByOptions(
+	['title' => $tname,
+	'artist' => $artist,
+	'album' => $album,
+	'digitised' => false]
+	);
 
 $dataout = array();
 
