@@ -118,7 +118,7 @@ class Artist extends ServiceAPI {
     }
 
     //Do the bulk of the sorting with SQL
-    $result = self::$db->fetch_all('SELECT DISTINCT rec_track.artist AS TrackArtist
+    $result = self::$db->fetch_all('SELECT DISTINCT rec_track.artist
       FROM rec_track
       INNER JOIN rec_record ON ( rec_track.recordid = rec_record.recordid )
       WHERE rec_track.title ILIKE $4 || $1 || $4
