@@ -334,6 +334,9 @@ class MyRadio_Track extends ServiceAPI {
     if (empty($options['artist'])) {
       $options['artist'] = '';
     }
+    if (empty($options['album'])) {
+      $options['album'] = '';
+    }
     if (!isset($options['digitised'])) {
       $options['digitised'] = true;
     }
@@ -369,7 +372,7 @@ class MyRadio_Track extends ServiceAPI {
     }
 
     //Prepare paramaters
-    $sql_params = array($options['title'], $options['artist'], $options['precise'] ? '' : '%');
+    $sql_params = array($options['title'], $options['artist'], $options['album'], $options['precise'] ? '' : '%');
     $count = 3;
     if ($options['limit'] != 0) {
       $sql_params[] = $options['limit'];
@@ -385,8 +388,9 @@ class MyRadio_Track extends ServiceAPI {
     //Do the bulk of the sorting with SQL
     $result = self::$db->fetch_all('SELECT trackid, rec_track.recordid
       FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
-      AND rec_track.title ILIKE $3 || $1 || $3
-      AND rec_track.artist ILIKE $3 || $2 || $3
+      AND rec_track.title ILIKE $4 || $1 || $4
+      AND rec_track.artist ILIKE $4 || $2 || $4
+      AND rec_record.title ILIKE $4 || $3 || $4
       ' . ($options['digitised'] ? ' AND digitised=\'t\'' : '') . '
       ' . ($options['lastfmverified'] === true ? ' AND lastfm_verified=\'t\'' : '')
             . ($options['lastfmverified'] === false ? ' AND lastfm_verified=\'f\'' : '')
