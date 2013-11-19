@@ -35,7 +35,7 @@ $dataout = array();
 
 if ($box == "artist"){
 	foreach ($artistResult as $artist) {
-		$dataout[] = "{$artist}";
+		$dataout[] = "{$artist[0]}";
 	}
 }
 else if ($box == "album"){
