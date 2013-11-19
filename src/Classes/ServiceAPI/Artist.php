@@ -138,3 +138,4 @@ class Artist extends ServiceAPI {
 
     return $result;
   }
+}
