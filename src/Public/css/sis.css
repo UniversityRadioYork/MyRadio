@@ -153,3 +153,7 @@ figure {
   font-size: larger;
   font-weight: 700;
 }
+
+#switcher {
+  height: 230px;
+}
