@@ -11,6 +11,6 @@ $moduleInfo = array(
 'name' => 'themeswitcher',
 'title' => 'Theme Switcher',
 'enabled' => true,
-'startOpen' => true,
+'startOpen' => false,
 'help' => '',
 );
