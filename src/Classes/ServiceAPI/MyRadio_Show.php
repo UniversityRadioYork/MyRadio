@@ -120,6 +120,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
    * corresponding credittypeids
    * showtypeid: The ID of the type of show (see schedule.show_type). Defaults to "Show"
    * location: The ID of the location the show will be in
+   * mixclouder: If true, the show will be published to Mixcloud after broadcast.
+   * Requires https://github.com/UniversityRadioYork/mixclouder.
    *
    * title, description, credits and credittypes are required fields.
    *
@@ -220,7 +222,16 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
     //Actually commit the show to the database!
     self::$db->query('COMMIT');
 
-    return new self($show_id);
+    $show = new self($show_id);
+    
+    /**
+     * Enable mixcloud upload if requested
+     */
+    if ($params['mixclouder']) {
+      $show->setMeta('upload_state', 'Requested');
+    }
+    
+    return $show;
   }
 
   public function getNumberOfSeasons() {
