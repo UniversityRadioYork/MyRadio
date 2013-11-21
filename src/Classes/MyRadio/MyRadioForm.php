@@ -215,6 +215,10 @@ class MyRadioForm {
       if ($v->getType() === MyRadioFormField::TYPE_FILE) {
         $this->fields[$f]->setRequired(false);
       }
+      if ($v->getType() === MyRadioFormField::TYPE_CHECK
+              && isset($values[$v->getName()])) {
+        $this->fields[$f]->setOptions(['checked'=>$values[$v->getName()]]);
+      }
     }
     
     return $this;

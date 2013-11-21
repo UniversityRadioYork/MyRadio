@@ -57,7 +57,7 @@ $form = (new MyRadioForm('sched_show', 'Scheduler', 'doShow', array(
         new MyRadioFormField('mixclouder', MyRadioFormField::TYPE_CHECK, array(
     'explanation' => 'If ticked, your shows will automatically be uploaded to mixcloud',
     'label' => 'Enable Mixcloud',
-    'value' => true
+    'options' => ['checked' => true]
         )
         )
 );

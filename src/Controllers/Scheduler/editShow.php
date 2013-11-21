@@ -29,7 +29,7 @@ $form->editMode($_REQUEST['showid'], array(
             'credits.credittype' => array_map(function ($ar) {
                       return $ar['type'];
                     }, $show->getCredits()),
-            'mixclouder' => $show->getMeta('upload_state') === 'Requested'
+            'mixclouder' => ($show->getMeta('upload_state') === 'Requested')
                 ),
           'doEditShow'
         )
