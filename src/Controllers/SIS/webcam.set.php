@@ -12,8 +12,4 @@ if (!isset($_REQUEST['src']))
 
 MyRadio_Webcam::setWebcam($_REQUEST['src']);
 
-$data = array(
-  'status' => 'ok',
-  'payload' => null
-  );
-require 'Views/MyRadio/datatojson.php';
+header('HTTP/1.1 204 No Content');
