@@ -137,7 +137,7 @@ class MyRadioFormField {
   /**
    * The constant used to specify this MyRadioFormField must be a check box.
    * 
-   * This field type does *not* use the value field.
+   * This field type does *not* use the value field, due to the way defaults work.
    * 
    * The Custom Options this MyRadioFormField uses are:
    * 
@@ -370,6 +370,14 @@ class MyRadioFormField {
    */
   public function setRequired($bool) {
     $this->required = $bool;
+  }
+  
+  /**
+   * Merges the given options to the original ones.
+   * @param Array $options
+   */
+  public function setOptions($options) {
+    $this->options = array_merge($this->options, $options);
   }
   
   /**
