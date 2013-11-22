@@ -26,8 +26,7 @@ $form = (new MyRadioForm('sched_show', 'Scheduler', 'doShow', array(
                 )
         )->addField(
                 new MyRadioFormField('genres', MyRadioFormField::TYPE_SELECT, array(
-            'options' => array_merge(array(array('text' => 'Please select...', 'disabled' => true)),
-                    MyRadio_Scheduler::getGenres()),
+            'options' => array_merge(array(array('text' => 'Please select...', 'disabled' => true)), MyRadio_Scheduler::getGenres()),
             'label' => 'Genre',
             'explanation' => 'What type of music do you play, if any?'
                 )
@@ -42,17 +41,23 @@ $form = (new MyRadioForm('sched_show', 'Scheduler', 'doShow', array(
                 new MyRadioFormField('grp-credits', MyRadioFormField::TYPE_SECTION, array('label' => 'Who\'s On My Show'))
         )->addField(
                 new MyRadioFormField('credits', MyRadioFormField::TYPE_TABULARSET, array(
-                    'options' => array(
-                    new MyRadioFormField('member', MyRadioFormField::TYPE_MEMBER, array(
-                        'explanation' => '',
-                        'label' => 'Credit'
-                            )
-                    ),
-                    new MyRadioFormField('credittype', MyRadioFormField::TYPE_SELECT, array(
-                        'options' => array_merge(array(array('text' => 'Please select...', 'disabled' => true)),
-                                MyRadio_Scheduler::getCreditTypes()),
-                        'explanation' => '',
-                        'label' => 'Role'
-                            )
-    ))))
+            'options' => array(
+                new MyRadioFormField('member', MyRadioFormField::TYPE_MEMBER, array(
+                    'explanation' => '',
+                    'label' => 'Credit'
+                        )
+                ),
+                new MyRadioFormField('credittype', MyRadioFormField::TYPE_SELECT, array(
+                    'options' => array_merge(array(array('text' => 'Please select...', 'disabled' => true)), MyRadio_Scheduler::getCreditTypes()),
+                    'explanation' => '',
+                    'label' => 'Role'
+                        )
+        )))))
+        ->addField(
+        new MyRadioFormField('mixclouder', MyRadioFormField::TYPE_CHECK, array(
+    'explanation' => 'If ticked, your shows will automatically be uploaded to mixcloud',
+    'label' => 'Enable Mixcloud',
+    'options' => ['checked' => true]
+        )
+        )
 );

@@ -29,6 +29,12 @@ $show->setMeta(
 $show->setGenre($data['genres']);
 $show->setCredits($data['credits']['member'], $data['credits']['credittype']);
 
+if ($data['mixclouder']) {
+  $show->setMeta('upload_state', 'Requested');
+} else {
+  $show->setMeta('upload_state', 'Opted Out');
+}
+
 CoreUtils::redirect(
   'Scheduler',
   'myShows',
