@@ -36,6 +36,7 @@ else {
   	require 'Views/MyRadio/datatojson.php';
   }
   else {
-  	header('HTTP/1.1 204 No Content');
+    $data = MyRadio_Selector::getStatusAtTime(time());
+    require 'Views/MyRadio/datatojson.php';
   }
 }
