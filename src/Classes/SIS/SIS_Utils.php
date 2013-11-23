@@ -158,7 +158,7 @@ class SIS_Utils extends ServiceAPI {
 			self::setHelpTab($memberid);
 			return true;
 		}
-		return ($result[0] === 'TRUE');
+		return ($result[0]);
 	}
 
 	/**
@@ -171,7 +171,7 @@ class SIS_Utils extends ServiceAPI {
 
 	private static function setHelpTab($memberid) {
 		self::$db->query('INSERT INTO sis2.member_options (memberid, helptab)
-			VALUES ($1, true)',
+			VALUES ($1, false)',
 			[$memberid]);
 	}
 }
