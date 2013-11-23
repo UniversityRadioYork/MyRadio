@@ -146,4 +146,32 @@ class SIS_Utils extends ServiceAPI {
 		}
 		return false;
 	}
+
+	/**
+	 * Check whether to load the Getting Started tab
+	 * @return boolean 
+	 */
+	public static function getShowHelpTab($memberid) {
+		$result = self::$db->fetch_column('SELECT helptab FROM sis2.member_options WHERE memberid=$1 LIMIT 1',
+			[$memberid]);
+		if (empty($result)) {
+			self::setHelpTab($memberid);
+			return true;
+		}
+		return ($result[0] === 'TRUE');
+	}
+
+	/**
+	 * Prevent showing the getting started tab at startup
+	 */
+	public static function hideHelpTab($memberid) {
+		$result = self::$db->query('UPDATE sis2.member_options SET helptab=false WHERE memberid=$1',
+			[$memberid]);
+	}
+
+	private static function setHelpTab($memberid) {
+		self::$db->query('INSERT INTO sis2.member_options (memberid, helptab)
+			VALUES ($1, true)',
+			[$memberid]);
+	}
 }
