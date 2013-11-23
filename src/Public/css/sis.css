@@ -26,6 +26,10 @@ body {
   top: 0.7em;
 }
 
+#hide-help {
+  float: right;
+}
+
 .pluginpane { 
   float: left; 
   width: 300px;
