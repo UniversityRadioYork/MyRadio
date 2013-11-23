@@ -158,7 +158,7 @@ class SIS_Utils extends ServiceAPI {
 			self::setHelpTab($memberid);
 			return true;
 		}
-		return ($result[0]);
+		return ($result[0] === 't');
 	}
 
 	/**
