@@ -233,12 +233,10 @@
             .addClass("jquery-ui-switcher-list-hldr")
             .addClass("ui-widget-content")
             .css({
-                "width": eval(settings.width+8)+"px",
+                "width": eval(settings.width+11)+"px",
                 "z-index": "999999",
                 "position": "absolute",
-                "top": eval(settings.buttonheight+3)+"px",
                 "left": "0px",
-                "padding": "3px 3px 3px 0",
                 "display": "none"
             })
             .bind({
@@ -260,7 +258,7 @@
                 "padding": "0",
                 "overflow-y": "auto",
                 "overflow-x": "hidden",
-                "height": settings.height+"px"
+                "max-height": settings.height+"px"
             })
             .appendTo(switcherListHldr);
         
