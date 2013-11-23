@@ -274,7 +274,8 @@
                     "text-decoration": "none",
                     "float": "left",
                     "width": "100%",
-                    "clear": "left"
+                    "clear": "left",
+                    "border": "none"
                 })
                 .bind({
                     mouseenter: function(){
