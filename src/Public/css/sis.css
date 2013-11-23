@@ -22,8 +22,8 @@ body {
   float: right;
   margin: 0;
   position: relative;
-  right: 20px;
-  top: 0.5em;
+  right: 15px;
+  top: 0.7em;
 }
 
 .pluginpane { 
@@ -161,8 +161,4 @@ figure {
   left: 2em;
   font-size: larger;
   font-weight: 700;
-}
-
-#switcher {
-  height: 230px;
 }
