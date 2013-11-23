@@ -167,7 +167,7 @@
                     name: "vader",
                     icon: "theme_90_black_matte.png"
                 }
-            ]
+            ];
         }else{
             var themes = settings.themes;
         }
@@ -187,7 +187,7 @@
             "height": settings.buttonheight+"px",
             "outline": "0px" ,
             "line-height": settings.buttonheight+"px"
-        }
+        };
         
         if( settings.rounded ){
             switcherLinkStyle['border-radius'] = "6px";
@@ -231,7 +231,7 @@
         
         var switcherListHldr = $("<div/>")
             .addClass("jquery-ui-switcher-list-hldr")
-            .addClass("ui-widget-content");
+            .addClass("ui-widget-content")
             .css({
                 "width": eval(settings.width+8)+"px",
                 "z-index": "999999",
@@ -326,7 +326,7 @@
             style.appendTo("head");
         }
             
-            $.cookie(settings.cookiename, data.name, 
+            $.cookie(settings.cookiename, data.name,
                 { expires: settings.cookieexpires, path: settings.cookiepath }
             );
             
@@ -381,7 +381,7 @@
         this.append(switcherListHldr);
         
         return this;
-    }
+    };
     
 })( jQuery );
 
