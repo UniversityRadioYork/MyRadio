@@ -356,10 +356,7 @@
             if( settings.onopen !== null )
                 settings.onopen();
                 
-            switcherDiv.find(".jquery-ui-switcher-link").css({
-                "color": "#AAA",
-                "background": "#000"
-            });
+            switcherDiv.find(".jquery-ui-switcher-link").addClass("ui-state-active");
             switcherDiv.find(".jquery-ui-switcher-list-hldr").slideDown("fast");
         }
         
@@ -368,10 +365,7 @@
                 settings.onclose();
             
             switcherDiv.find(".jquery-ui-switcher-list-hldr").slideUp("fast", function(){
-                switcherDiv.find(".jquery-ui-switcher-link").css({
-                    "color":"#666",
-                    "background": "#eee"
-                });
+                switcherDiv.find(".jquery-ui-switcher-link").removeClass("ui-state-active");
             });
         }
             
