@@ -1,0 +1,129 @@
+body {
+  width: 98%;
+  min-width: 1200px;
+  height: calc(100% - 22px);
+}
+
+#notice {
+  position: fixed;
+  top: 22px;
+  left: 0;
+}
+
+#grid {
+  height: calc(100% - 150px);
+  min-height: 580px;
+  min-width: 1188px;
+  position: relative;
+}
+#bapswrapper {
+  height: calc(100% - 30px);
+  min-width: 1200px;
+}
+#baps-channel-container {
+  height: 90%;
+}
+#resource-add-header {
+  height: 88px;
+}
+#central-dragdrop, #res-dragdrop {
+  height: 300px;
+}
+#lastfm-attr {
+  position: relative;
+  top: calc(100% - 60px);
+  right: 1em;
+  text-align: right;
+}
+#baps-channel-res {
+  width: calc(100% - 11px);
+  height: calc(100% - 90px);
+}
+#a-manage-library {
+  float: right;
+  margin: 0;
+  position: relative;
+  right: 20px;
+  top: 0.5em;
+}
+
+#res-loading {
+  float: right;
+  font-size: smaller;
+  padding: 1px;
+  margin: 2px;
+}
+#res-filter-artist,  #res-filter-track,  #res-filter-name {
+  padding: 0;
+  width: calc(100% - 12px);
+}
+#footer-tips {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+
+.box.width-1 {
+  width: calc(23% - 10px);
+}
+.box.width-2 {
+  width: calc(30% - 10px);
+}
+.box.height-1 {
+  height: 75%;
+}
+.box.height-2 {
+  height: 100%;
+  margin-bottom: 0;
+}
+
+ul.baps-channel {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+div.baps-channel {
+  text-align: center;
+}
+
+ul.baps-channel li {
+  list-style: none;
+  cursor: pointer;
+  height: 1.4em;
+  overflow: hidden;
+}
+
+ul.baps-channel li:hover {
+  background-color: burlywood;
+}
+
+ul.baps-channel li.selected {
+  background-color: #0070a3;
+}
+
+
+
+div[id^=progress-bar] {
+  margin: 0 0.4em 0.2em;
+}
+/** Thin handled slider **/
+.ui-slider .ui-slider-handle {
+  width: .2em;
+}
+.ui-slider-horizontal .ui-slider-handle {
+  margin-left: -.1em;
+}
+
+a, a:active, a:visited {
+  color: #FFF;
+}
+
+.ui-state-error{
+	display : block;
+}
+
+.ui-contextmenu {
+  z-index: 10000;
+}
