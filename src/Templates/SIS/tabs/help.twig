@@ -1,0 +1,38 @@
+<div id="gettingstarted">
+  <h2>Welcome to SIS 2!</h2>
+    <p>This page is here to help you know the basics of SIS. If you want to get the most out of it or become the best presenter ever, it's highly advisable you read this information.</p>
+    <a href="#" onclick="gs_noshow()">Don't show me this in future</a>
+  <div id="gs_disabled" class="ui-state-highlight ui-helper-hidden">You won't see this tab next time you sign in unless a new feature is added to SIS2.</div>
+
+  <h2>Plugins</h2>
+
+  {% for plugin in plugins %}
+      <h3>{{ plugin.title }}</h3>
+      <p>{{ plugin.help }}</p>
+  {% endfor %}
+
+  <h2>Tabs</h2>
+
+  {% for tab in tabs %}
+      <h3>{{ tab.title }}</h3>
+      <p>{{ tab.help }}</p>
+  {% endfor %}
+
+  <h2>And much more...</h2>
+  <ul>
+    <li>Schedule tab lets you see what's on URY for the rest of the day</li>
+    <li>Simplified, refreshed Messages tab that you know and love</li>
+    <li>More contact links - get in touch with who you need to, right when you need to</li>
+    <li>Sign in an hour before and after your show - just login as normal and select your show from the list</li>
+  </ul>
+  </div>
+  <script type="text/javascript">
+    function gs_noshow() {
+      $.ajax({
+        url: myury.makeURL('SIS','help.hide'),
+        success: function() {
+          $('#gs_disabled').show();
+        }
+      });
+    }
+  </script>
