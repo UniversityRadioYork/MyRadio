@@ -85,11 +85,13 @@ body {
   text-align: center;
   width: 100%;
 }
+.td-msgitem td:first-child {
+  width: 50px;
+}
 table.messages tr.unread td:first-child {
   background-image: url(../img/sis/6.png);
   background-repeat: no-repeat;
   background-position-y: 50%;
-  width: 50px;
 }
 table.messages tr td:last-child {
   width: 100px;
