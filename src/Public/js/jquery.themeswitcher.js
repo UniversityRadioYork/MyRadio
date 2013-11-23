@@ -363,7 +363,7 @@
                 settings.onclose();
             
             switcherDiv.find(".jquery-ui-switcher-list-hldr").slideUp("fast", function(){
-                switcherDiv.find(".jquery-ui-switcher-link").removeClass("ui-state-active");
+                switcherDiv.find(".jquery-ui-switcher-link").removeClass("ui-state-active").removeClass("ui-state-hover");
             });
         }
             
