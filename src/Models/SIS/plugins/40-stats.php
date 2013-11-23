@@ -12,5 +12,5 @@ $moduleInfo = array(
 'title' => 'Statistics',
 'enabled' => true,
 'startOpen' => true,
-'help' => 'Listenership figures are shown in realtime here. WARNING: Do <b><em>NOT</em></b> announce any listener statistics on-air, it is unprofessional!',
+'help' => 'Listenership figures are shown in realtime here. WARNING: Do NOT announce any listener statistics on-air, it is unprofessional!',
 );
