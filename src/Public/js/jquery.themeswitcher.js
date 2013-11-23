@@ -12,6 +12,8 @@
     
     $.fn.themeswitcher = function( options ) {
         var switcherDiv = this, switcherOptions = {};
+        switcherDiv.addClass("ui-widget");
+
         var settings = {
             loadtheme : "",
             height: 200,
@@ -178,9 +180,6 @@
         var switcherLinkStyle = {
             "cursor": "pointer",
             "font-size": "11px",
-            "color": "#666",
-            "background": "#eee",
-            "border": "1px solid #CCC",
             "text-decoration": "none",
             "padding": "3px 3px 3px 8px",
             "width": settings.width+"px",
@@ -198,18 +197,15 @@
         
         var switcherLink = $("<a/>")
             .addClass("jquery-ui-switcher-link")
+            .addClass("ui-widget-header")
             .css(switcherLinkStyle)
             .bind({
                 mouseenter: function(){
-                    $(this).css({
-                        "background": "#eee"
-                    })
+                    $(this).addClass("ui-state-hover");
                 },
                 mouseleave: function(){
                     if( ! switcherDiv.find(".jquery-ui-switcher-list-hldr").is(":visible") ){
-                        $(this).css({
-                            "background":"#eee"
-                        })
+                        $(this).removeClass("ui-state-hover");
                     }
                 },
                 click: function(){
@@ -218,14 +214,8 @@
             });
         
         // Title & Icon for switcher link   
-        var switcherTitle = $("<span/>").addClass("jquery-ui-switcher-title").appendTo(switcherLink);
-        $("<span/>").addClass("jquery-ui-switcher-arrow")
-            .css({
-                "float": "right",
-                "width": "16px",
-                "height": "16px",
-                "background": ""
-            })
+        var switcherTitle = $("<span/>")
+            .addClass("jquery-ui-switcher-title")
             .appendTo(switcherLink);
             
         // load the default theme or the theme stored in the cookie
@@ -241,12 +231,9 @@
         
         var switcherListHldr = $("<div/>")
             .addClass("jquery-ui-switcher-list-hldr")
+            .addClass("ui-widget-content");
             .css({
                 "width": eval(settings.width+8)+"px",
-                "background": "#000",
-                "color": "#FFF",
-                "border": "1px solid #CCC",
-                "border-top": "none",
                 "z-index": "999999",
                 "position": "absolute",
                 "top": eval(settings.buttonheight+3)+"px",
