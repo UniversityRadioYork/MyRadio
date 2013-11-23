@@ -18,6 +18,14 @@ body {
   position: relative;
 }
 
+.h-link {
+  float: right;
+  margin: 0;
+  position: relative;
+  right: 20px;
+  top: 0.5em;
+}
+
 .pluginpane { 
   float: left; 
   width: 300px;
