@@ -40,5 +40,9 @@
   </tbody>
 </table>
 <a href="?correctionid={{correction.correctionid}}">Permalink</a>
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
 <script type="text/javascript" src="{{baseurl}}js/myury.library.viewtrackcorrection.js"></script>
 {% endblock %}
