@@ -57,13 +57,7 @@ Edit features are disabled.
 </div>
 
 <script type="text/javascript">
-  $(document).ready(function() {
     NIPSWeb.writable = false;
-    initialiseUI();
-  {% for i in 1..3 %}
-      initialisePlayer({{i}});
-  {% endfor %}
-    });
 </script>
 {% endblock %}
 
@@ -72,4 +66,5 @@ Edit features are disabled.
 <script type="text/javascript" src="{{baseurl}}js/jquery.ui-contextmenu.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/nipsweb.player.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.init.js"></script>
 {% endblock %}
