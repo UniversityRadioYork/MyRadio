@@ -63,14 +63,6 @@
 
 </div>
 
-        <script type="text/javascript">
-  $(document).ready(function() {
-    initialiseUI();
-            {% for i in 0..3 %}
-                initialisePlayer('{{i}}');
-            {% endfor %}
-              });
-          </script>
 {% endblock %}
 
 {% block foot %}
@@ -79,4 +71,5 @@
 <script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/nipsweb.player.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/nipsweb.librarypane.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.init.js"></script>
 {% endblock %}
