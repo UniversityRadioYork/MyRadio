@@ -2,6 +2,14 @@
 {% block head %}
 {{ parent() }}
  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+{% endblock %}
+{% block stripecontent %}
+<div id="chart_div" style="width: 900px; height: 500px;"></div>
+{{caption}}
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
     <script type="text/javascript">
       google.load("visualization", "1", {packages:["corechart"]});
       google.setOnLoadCallback(drawChart);
@@ -14,8 +22,4 @@
         chart.draw(data, options);
       }
     </script>
-{% endblock %}
-{% block stripecontent %}
-<div id="chart_div" style="width: 900px; height: 500px;"></div>
-{{caption}}
 {% endblock %}
