@@ -1,8 +1,5 @@
 {% extends 'stripe.twig' %}
-{% block head %}
-{{ parent() }}
-{% include 'Webcam/tracker.twig' %}
-{% endblock %}
+
 {% block stripecontent %}
 <figure class="webcam-focus-stream-container" id="webcam-stream-{{live.streamid}}">
       <img src="{{live.liveurl}}" class="webcam-stream" />
@@ -19,4 +16,9 @@
 <div class="ui-state-highlight" id="webcam-time-counter">
   <span class="ui-icon ui-icon-clock fleft"></span>You've been watching the webcams for <span id="webcam-time-counter-value">not very long</span>
 </div>
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
+{% include 'Webcam/tracker.twig' %}
 {% endblock %}
