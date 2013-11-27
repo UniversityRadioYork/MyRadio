@@ -40,6 +40,11 @@
                 </ul>
               </footer>
 {% endblock %}
+
+{% block foot %}
+{% include 'parts/base_foot.twig' %}
+{% endblock %}
+
 {% if joyride %}
 {% include 'joyrides/base.twig' %}
 {% include 'joyrides/' ~ joyride ~ '.twig' %}

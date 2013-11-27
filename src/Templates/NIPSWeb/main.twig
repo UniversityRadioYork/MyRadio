@@ -2,10 +2,6 @@
 {% block head %}
 {{ parent() }}
 <link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css" />
-<script type="text/javascript" src="{{baseurl}}js/jquery.ui-contextmenu.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/nipsweb.player.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/nipsweb.librarypane.js"></script>
 {% endblock %}
 {% block content %}
 <div id="notice" class="ui-state-highlight ui-helper-hidden">Saving...</div>
@@ -75,4 +71,12 @@
             {% endfor %}
               });
           </script>
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/jquery.ui-contextmenu.min.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.player.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.librarypane.js"></script>
 {% endblock %}

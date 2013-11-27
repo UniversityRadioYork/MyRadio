@@ -7,11 +7,7 @@ This also adds shortcut links for "Last Day", "Last Week", "Last Fortnight", "La
 
 @TODO: Last Term is currently -70 days. This could be more precise.
 #}{% extends 'table.twig' %}
-{% block head %}
-{{ parent() }}
-<script type="text/javascript" src="{{shiburl}}js/jquery-ui-timepicker.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/myury.form.js"></script>
-{% endblock %}
+
 {% block stripecontent %}
 <fieldset class="myuryfrm">
   <div>
@@ -68,4 +64,10 @@ This also adds shortcut links for "Last Day", "Last Week", "Last Fortnight", "La
     });
     </script>
 {{ parent() }}
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
+<script type="text/javascript" src="{{shiburl}}js/jquery-ui-timepicker.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/myury.form.js"></script>
 {% endblock %}

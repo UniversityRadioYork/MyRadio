@@ -13,3 +13,7 @@
 {% set tablescript = frm_custom.tablescript %}
 {% include 'parts/table-content.twig' %}
 {% endblock %}
+{% block foot %}
+{{ parent() }}
+{% include 'parts/table-footer.twig' %}
+{% endblock %}

@@ -2,8 +2,6 @@
 <html>
   <head>
 {% include 'parts/base_head.twig' %}
-      <script type="text/javascript" src="{{baseurl}}js/jquery.filedrop.js"></script>
-      <script type="text/javascript" src="{{baseurl}}js/nipsweb.managelibrary.js"></script>
       <link rel="stylesheet" type="text/css" href="{{shiburl}}css/planner.css" />
       <style>html,body{background: none; box-shadow: none; width: 800px; min-width: 800px; height: auto;}</style>
     </head>
@@ -25,4 +23,7 @@
           <div class="ui-widget-content" id="res-result"></div>
         </div>
         <script type="text/javascript">window.memberid = parseInt({{memberid}});</script>
+  {% include 'parts/base_foot.twig' %}
+      <script type="text/javascript" src="{{baseurl}}js/jquery.filedrop.js"></script>
+      <script type="text/javascript" src="{{baseurl}}js/nipsweb.managelibrary.js"></script>
       </body></html>

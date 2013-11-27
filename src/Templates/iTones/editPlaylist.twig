@@ -1,9 +1,11 @@
 {% extends 'form.twig' %}
-{% block head %}
-{{ parent() }}
-<script type="text/javascript" src="{{baseurl}}js/myury.itones.editplaylist.js"></script>
-{% endblock %}
+
 {% block stripecontent %}
 <p>You're currently editing this playlist. Whilst this page is open nobody else can edit this playlist.</p>
 {{ parent() }}
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/myury.itones.editplaylist.js"></script>
 {% endblock %}

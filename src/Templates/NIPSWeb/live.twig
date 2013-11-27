@@ -1,10 +1,6 @@
 {% extends 'base.twig' %}
 {% block head %}
 {{ parent() }}
-<script type="text/javascript" src="{{baseurl}}js/jquery.ui-contextmenu.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/nipsweb.live.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/nipsweb.librarypane.js"></script>
 <link rel="stylesheet" type="text/css" href="{{shiburl}}css/planner.css" />
 <style type="text/css">
 .ui-contextmenu {z-index: 10000}
@@ -71,4 +67,12 @@
             {% endfor %}
               });
           </script>
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/jquery.ui-contextmenu.min.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.live.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.librarypane.js"></script>
 {% endblock %}
