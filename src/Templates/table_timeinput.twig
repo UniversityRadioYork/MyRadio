@@ -7,11 +7,7 @@ This also adds shortcut links for "Last Day", "Last Week", "Last Fortnight", "La
 
 @TODO: Last Term is currently -70 days. This could be more precise.
 #}{% extends 'table.twig' %}
-{% block head %}
-{{ parent() }}
-<script type="text/javascript" src="{{shiburl}}js/jquery-ui-timepicker.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/myury.form.js"></script>
-{% endblock %}
+
 {% block stripecontent %}
 <fieldset class="myuryfrm">
   <div>
@@ -34,38 +30,12 @@ This also adds shortcut links for "Last Day", "Last Week", "Last Fortnight", "La
       <input type="submit" value="Update" />
     </form>
   </fieldset>
-  <script type="text/javascript">
-    var date = new Date();
-    $('#shortcut-lastday').on('click', function() {
-      $('#rangesel-endtime').val(date.toUTCString());
-      date.setDate(date.getDate() - 1);
-      $('#rangesel-starttime').val(date.toUTCString());
-      $('#timeselfrm').submit();
-    });
-    $('#shortcut-lastweek').on('click', function() {
-      $('#rangesel-endtime').val(date.toUTCString());
-      date.setDate(date.getDate() - 7);
-      $('#rangesel-starttime').val(date.toUTCString());
-      $('#timeselfrm').submit();
-    });
-    $('#shortcut-lastfortnight').on('click', function() {
-      $('#rangesel-endtime').val(date.toUTCString());
-      date.setDate(date.getDate() - 14);
-      $('#rangesel-starttime').val(date.toUTCString());
-      $('#timeselfrm').submit();
-    });
-    $('#shortcut-lastmonth').on('click', function() {
-      $('#rangesel-endtime').val(date.toUTCString());
-      date.setDate(date.getDate() - 28);
-      $('#rangesel-starttime').val(date.toUTCString());
-      $('#timeselfrm').submit();
-    });
-    $('#shortcut-lastterm').on('click', function() {
-      $('#rangesel-endtime').val(date.toUTCString());
-      date.setDate(date.getDate() - 70);
-      $('#rangesel-starttime').val(date.toUTCString());
-      $('#timeselfrm').submit();
-    });
-    </script>
 {{ parent() }}
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
+<script type="text/javascript" src="{{shiburl}}js/jquery-ui-timepicker.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/myury.form.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/myury.table_timeinput.js"></script>
 {% endblock %}
