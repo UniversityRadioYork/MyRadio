@@ -78,6 +78,16 @@ class MyRadio_Webcam extends ServiceAPI {
       ];
   }
 
+  /**
+   * [setWebcam description]
+   * @param [type] $id [description]
+   */
+  public static function setWebcam($id) {
+    if (($id === 0) || ($id === 1) || ($id === 2) || ($id === 4) || ($id === 5)) {
+      file_get_contents(Config::$webcam_set_url.stream_to_cam($id));
+    }
+  }
+
   // @todo: remove the need for this function after migration to new by makeing camserver use streamids
   private static function cam_to_stream($id) {
     switch ($id) {
@@ -86,6 +96,17 @@ class MyRadio_Webcam extends ServiceAPI {
       case '2': return 4;
       case '4': return 5;
       case '5': return 3;
+    };
+  }
+
+  // @todo: remove the need for this function after migration to sis4 by makeig camserver use streamids
+  private static function stream_to_cam($id) {
+    switch ($id) {
+      case '1': return 0;
+      case '2': return 1;
+      case '3': return 5;
+      case '4': return 2;
+      case '5': return 4;
     };
   }
 }

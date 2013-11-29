@@ -1,8 +1,5 @@
 {% extends 'form.twig' %}
-{% block head %}
-{{ parent() }}
-<script type="text/javascript" src="{{baseurl}}js/myury.scheduler.allocate.js"></script>
-{% endblock %}
+
 {% block stripecontent %}
 <p>You are allocating Timeslots for a Season of <strong>{{frm_custom.name}}</strong> in the current term.</p>
 <div class="ui-widget-content">
@@ -15,4 +12,9 @@
 </ul>
 {{ parent() }}
 <iframe src="https://ury.org.uk/schedule/" style="width:100%; height: 500px"></iframe>
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/myury.scheduler.allocate.js"></script>
 {% endblock %}
