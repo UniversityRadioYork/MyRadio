@@ -347,7 +347,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
               'desc' => 'Non-stop Music',
               'photo' => Config::$default_show_uri,
               'start_time' => $lastnext->getEndTime(),
-              'end_time' => $nextshow->getStartTime()
+              'end_time' => $nextshow ? $nextshow->getStartTime() : 'The End of Time'
           ];
         } else {
           //There's a next show
