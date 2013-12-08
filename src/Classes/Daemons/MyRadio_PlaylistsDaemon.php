@@ -39,7 +39,7 @@ class MyRadio_PlaylistsDaemon extends MyRadio_Daemon {
     $most_played = MyRadio_TracklistItem::getTracklistStatsForBAPS(time() - (86400 * 120)); //Track play stats for last week
     
     $playlist = array();
-    for ($i = 0; $i < 100; $i++) {
+    for ($i = 0; $i < 20; $i++) {
       if (!isset($most_played[$i])) {
         break; //If there aren't that many, oh well.
       }

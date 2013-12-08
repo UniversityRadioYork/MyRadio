@@ -1,23 +1,18 @@
-<div id="switcher"></div>
-<script type="text/javascript">
-    $(document).ready(function(){
-            $("#switcher").themeswitcher({
+$(document).ready(function() {
+	$("#switcher").themeswitcher({
                     imgpath: "",
-                    width: 235,
                     themepath: "//ury.org.uk/portal/css",
                     jqueryuiversion: "",
+                    rounded: false,
                     themes: [
                         {
                             title: "MyURY",
                             name: "ury-purple",
-                            icon: null
                         },
                         {
                             title: "SIS2",
                             name: "ury-red",
-                            icon: null
                         }
                     ]
             });
-        });
-</script>
+});
