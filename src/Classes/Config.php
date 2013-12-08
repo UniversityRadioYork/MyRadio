@@ -190,6 +190,12 @@ final class Config {
    * @var String
    */
   public static $webcam_current_url = "http://copperbox.york.ac.uk:9090/current?noprotocol=true";
+
+  /**
+   * The url of the webcam server setter
+   * @var String
+   */
+  public static $webcam_set_url = "http://copperbox.york.ac.uk:9090/set?newcam=";
   
   /**
    * The path to store the original, unencoded copies of URYPlayer Podcasts.

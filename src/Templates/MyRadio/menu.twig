@@ -1,11 +1,5 @@
 {% extends 'stripe.twig' %}
-{% block head %}
-{{ parent() }}
-<script type="text/javascript" src="{{baseurl}}js/myury.menu.js"></script>
-{% if news_clickthrough %}
-<script type="text/javascript" src="{{baseurl}}js/myury.news.clickthrough.js"></script>
-{% endif %}
-{% endblock %}
+
 {% block stripecontent %}
 <div class="myury-news-alert ui-widget-content ui-corner-all" title="Latest News" id="newsentry-{{news.newsentryid}}">
   {{news.content | raw}}
@@ -28,4 +22,12 @@
     {% endfor %}
   </div>
 {% endfor %}
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/myury.menu.js"></script>
+{% if news_clickthrough %}
+<script type="text/javascript" src="{{baseurl}}js/myury.news.clickthrough.js"></script>
+{% endif %}
 {% endblock %}

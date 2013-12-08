@@ -1,11 +1,13 @@
 {% extends 'form.twig' %}
-{% block head %}
-{{ parent() }}
-<script type="text/javascript" src="{{baseurl}}js/myury.scheduler.createshow.js"></script>
-{% endblock %}
+
 {% block stripecontent %}
 <h2>Create a New Show</h2>
 <p>Fill out the form below to create a new <em>Show</em>. A Show comes with its own microsite and a range of settings that let you make it truely yours.</p>
 <p>On the next page, you'll be given the opportunity to apply to have the first Season of your Show scheduled. If you already have a show and want to renew it for another term, please do not create a new show here.</p>
 {{ parent() }}
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/myury.scheduler.createshow.js"></script>
 {% endblock %}

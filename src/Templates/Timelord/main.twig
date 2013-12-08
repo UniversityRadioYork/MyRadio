@@ -6,7 +6,6 @@
     <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
     {% include 'parts/base_head.twig' %}
     <link rel="stylesheet" type="text/css" href="{{baseurl}}css/timelord.css">
-    <script type="text/javascript" src="{{baseurl}}/js/timelord.js"></script>
   </head>
   <body>
     <div id="studio" class="studio1">Studio <span id="studio-id">X</span> is On Air</div>
@@ -26,6 +25,8 @@
       <div id="obit">OBIT</div>
       <div id="silence">DEAD AIR</div>
     </div>
+    {% include 'parts/base_foot.twig' %}
+    <script type="text/javascript" src="{{baseurl}}/js/timelord.js"></script>
   </body>
 </html>
 {% endspaceless %}

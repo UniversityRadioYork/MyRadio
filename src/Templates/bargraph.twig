@@ -1,5 +1,11 @@
 {% extends 'stripe.twig' %}
-{% block head %}
+
+{% block stripecontent %}
+<div id="chart_div" style="width: 900px; height: 500px;"></div>
+{{caption}}
+{% endblock %}
+
+{% block foot %}
 {{ parent() }}
  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
@@ -14,8 +20,4 @@
         chart.draw(data, options);
       }
     </script>
-{% endblock %}
-{% block stripecontent %}
-<div id="chart_div" style="width: 900px; height: 500px;"></div>
-{{caption}}
 {% endblock %}
