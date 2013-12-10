@@ -371,6 +371,20 @@ class MyRadio_Selector {
                 'Urgent: Initiated Obit procedure for station as requested by '
                 . User::getInstance()->getName() . ' - ' 
                 . User::getInstance()->getEmail());
+        
+        //Store the event for Timelord
+        file_put_contents('/tmp/myradio-obit', 1);
+    }
+    
+    /**
+     * Returns if an obit event is happening.
+     */
+    public function isObitHappening() {
+        if (file_exists('/tmp/myradio-obit')) {
+            return (bool)file_get_contents('/tmp/myradio-obit');
+        } else {
+            return false;
+        }
     }
 
 }

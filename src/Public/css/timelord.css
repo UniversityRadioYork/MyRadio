@@ -109,6 +109,14 @@ body {
   font-size: 2.5em;
 }
 
+#alert-status div.worse {
+  border: 3px solid #F00;
+  color: #F00;
+  width: 60%;
+  font-weight: bold;
+  font-size: 6em;
+}
+
 #alert-status div.bad {
   border: 3px solid #F00;
   color: #F00;
