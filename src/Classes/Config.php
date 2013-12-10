@@ -244,6 +244,12 @@ final class Config {
   public static $music_central_db_path = '/music';
   
   /**
+   * The file to be played if the obit procedure is triggered.
+   * @var String
+   */
+  public static $jukebox_obit_file = '/jukebox/OBIT.mp3';
+  
+  /**
    * The Samba File Share path to the Central Database. This is used for BAPS compatibility features.
    * @var String
    */
