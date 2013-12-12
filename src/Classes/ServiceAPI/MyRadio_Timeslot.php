@@ -339,43 +339,44 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
 
     for ($i = 0; $i < $n; $i++) {
       if (empty($next)) {
-        //There's not a next show, but there might be one later
-          $nextshow = self::getNextTimeslot($lastnext->getEndTime());
+        if ($lastnext instanceof MyRadio_Timeslot) {
+          //There's not a next show, but there might be one later
+            $nextshow = self::getNextTimeslot($lastnext->getEndTime());
 
-          $response['next'][] = [
-              'title' => Config::$short_name.' Jukebox',
-              'desc' => 'Non-stop Music',
-              'photo' => Config::$default_show_uri,
-              'start_time' => $lastnext->getEndTime(),
-              'end_time' => $nextshow ? $nextshow->getStartTime() : 'The End of Time'
-          ];
-        } else {
-          //There's a next show
-          $response['next'][] = [
-              'title' => $next->getMeta('title'),
-              'desc' => $next->getMeta('description'),
-              'photo' => $next->getPhoto(),
-              'start_time' => $next->getStartTime(),
-              'end_time' => $next->getEndTime(),
-              'presenters' => $next->getPresenterString()
-          ];
-        }
-
-        if ($next instanceof MyRadio_Timeslot) {
-          $lastnext = $next;
-          $next = $next->getTimeslotAfter();
-        } else {
-          if ($lastnext instanceof MyRadio_Timeslot) {
-            $last = $next;
-            $next = self::getNextTimeslot($lastnext->getEndTime());
-            $lastnext = $last;
-          } else {
-            $lastnext = $next;
-            $next = [];
+            $response['next'][] = [
+                'title' => Config::$short_name.' Jukebox',
+                'desc' => 'Non-stop Music',
+                'photo' => Config::$default_show_uri,
+                'start_time' => $lastnext->getEndTime(),
+                'end_time' => $nextshow ? $nextshow->getStartTime() : 'The End of Time'
+            ];
           }
-        }
-
+      } else {
+        //There's a next show
+        $response['next'][] = [
+            'title' => $next->getMeta('title'),
+            'desc' => $next->getMeta('description'),
+            'photo' => $next->getPhoto(),
+            'start_time' => $next->getStartTime(),
+            'end_time' => $next->getEndTime(),
+            'presenters' => $next->getPresenterString()
+        ];
       }
+
+      if ($next instanceof MyRadio_Timeslot) {
+        $lastnext = $next;
+        $next = $next->getTimeslotAfter();
+      } else {
+        if ($lastnext instanceof MyRadio_Timeslot) {
+          $last = $next;
+          $next = self::getNextTimeslot($lastnext->getEndTime());
+          $lastnext = $last;
+        } else {
+          $lastnext = $next;
+          $next = [];
+        }
+      }
+    }
     
     if (sizeof($response['next']) === 1) {
       $response['next'] = $response['next'][0];
