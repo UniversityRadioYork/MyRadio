@@ -25,13 +25,3 @@
     <li>Style &amp; Layout fixes</li>
   </ul>
   </div>
-  <script type="text/javascript">
-    $('#hide-help').button().click(function() {
-        $.ajax({
-          url: myury.makeURL('SIS','help.hide'),
-          success: function() {
-            $('#gs_disabled').show();
-          }
-        });
-      });
-  </script>

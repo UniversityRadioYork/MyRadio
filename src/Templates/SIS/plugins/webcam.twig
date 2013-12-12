@@ -1,74 +1,22 @@
-<script type="text/javascript">
-    var wcbase = '{{ plugin.vars.webcam_prefix }}';
-    var wcurls = {{ plugin.vars.cameras|json_encode()|raw }};
-    var wcCurrentCam = 0;
-        			
-    $(document).ready(function(){
-      server.register_callback(updateWebcam, 'webcam');
-      server.register_param('webcam_id', wcCurrentCam);
+<figure class="webcam-stream-container live" id="webcam-stream-live">
+    <img src="{{ plugin.vars.webcam_prefix }}current" class="webcam-stream" width="150px" id="wccurrent" alt="current webcam">
+    <figcaption>Live</figcaption>
+  </figure>
 
-      var wcid; //Yay scope.
-      for (wcid in wcurls) {
-        $('button#setactive'+wcid).attr('wcid',wcid).click(function(){setCam(this);});
-        console.log('Enabling Webcam Selector Option '+wcid);
-      }
-      $('button#setactive'+wcCurrentCam).button("disable");
-        
-      $('button#setactive6').click(function(){$('div#customcam').toggle('blind',200);});
-      $('button#setcustomcam').click(function(){setCam(6,$('input#camurl').val());});
-    });
+{% for stream in plugin.vars.streams if stream.streamid in 2..4 %}
+  <figure class="webcam-stream-container" id="webcam-stream-{{stream.streamid}}">
+    <img src="{{stream.liveurl}}" class="webcam-stream" width="70px">
+    <figcaption>{{stream.streamname}}</figcaption>
+  </figure>
+{% endfor %}
+<br>
+Activate:
+<button id="setactive1" class="btn">JB</button>
+<button id="setactive2" class="btn">S1</button>
+<button id="setactive3" class="btn">FC</button>
+<button id="setactive4" class="btn">S2</button>
 
-    function setCam(element) {
-      var newcam = $(element).attr('wcid');
-      if (newcam === wcCurrentCam) {
-        console.log('Ignoring setCam - Already current webcam.');
-        return;
-      }
-      console.log('Updating webcam to '+newcam);
-      $.get(myury.makeURL('SIS', 'webcam.set'), {'src':newcam, 'url':null});
-    }
-
-    var updateWebcam = function(data) {
-      console.log('updateWebcam triggered by server');
-      
-      $('button[id^=setactive]:not([id=setactive'+ data['current']+'])').button("enable");
-      $('button#setactive'+ data['current']).button("disable");
-            
-      //Only show side images for not-active cameras, or all for jukebox
-      if ( data['current'] === 1) {
-        $('#plugin_body_webcam figure').show();
-      } else {
-        $('#plugin_body_webcam figure').hide();
-        $('#plugin_body_webcam figure:not(#webcam-stream-'+data['current']+')').show();
-      }
-
-      //Update current webcam data
-      wcCurrentCam = data['current'];
-      //Update the server's lastmod parameter
-      server.register_param('webcam_id', wcCurrentCam);
-    }
-
-  </script>
-
-  <figure class="webcam-stream-container live" id="webcam-stream-live">
-      <img src="{{ plugin.vars.webcam_prefix }}current" class="webcam-stream" width="150px" id="wccurrent" alt="current webcam">
-      <figcaption>Live</figcaption>
-    </figure>
-
-  {% for stream in plugin.vars.streams if stream.streamid in 2..4 %}
-    <figure class="webcam-stream-container" id="webcam-stream-{{stream.streamid}}">
-      <img src="{{stream.liveurl}}" class="webcam-stream" width="70px">
-      <figcaption>{{stream.streamname}}</figcaption>
-    </figure>
-  {% endfor %}
-  <br>
-  Activate:
-  <button id="setactive1" class="btn">JB</button>
-  <button id="setactive2" class="btn">S1</button>
-  <button id="setactive3" class="btn">FC</button>
-  <button id="setactive4" class="btn">S2</button>
-
-  <!--<button id="setactive6" class="btn">Custom</button>
-  <div style="margin-top: .5em;" class="invisible" id="customcam">
-    <label for="camurl">File:</label> <input type="text" style="width:150px; border:1px solid black;" id="camurl"> <span id="setcustomcam" class="btn btnenabled">Set</span>
-  </div>-->
+<!--<button id="setactive6" class="btn">Custom</button>
+<div style="margin-top: .5em;" class="invisible" id="customcam">
+  <label for="camurl">File:</label> <input type="text" style="width:150px; border:1px solid black;" id="camurl"> <span id="setcustomcam" class="btn btnenabled">Set</span>
+</div>-->
