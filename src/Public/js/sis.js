@@ -128,7 +128,7 @@
           $('#mc'+data[i]['id']+' footer').append('<br>'+data[i]['location'][l]);
         }
         //Set some of the variables
-        var img = "<img src='{{ baseurl }}img/sis/"+data[i]['type']+".png' />";
+        var img = "<img src='"+mConfig.base_url+"img/sis/"+data[i]['type']+".png' />";
         var msgdate = new Date(data[i]['time']*1000);
         var mins = msgdate.getMinutes(); if (mins < 10) mins = "0" + mins;
         var time = msgdate.getHours()+':'+mins+' '+msgdate.getDate()+'/'+(msgdate.getMonth()+1);
