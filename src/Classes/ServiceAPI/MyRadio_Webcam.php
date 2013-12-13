@@ -59,21 +59,25 @@ class MyRadio_Webcam extends ServiceAPI {
     switch ($current) {
       case '0': $location = 'Jukebox';
         break;
-      case '1': $location = 'Studio 1';
+      case '2': $location = 'Studio 1';
         break;
-      case '2': $location = 'Studio 2';
+      case '3': $location = 'Studio 1 Secondary';
         break;
-      case '4': $location = 'Office';
+      case '4': $location = 'Studio 2';
         break;
-      case '5': $location = 'Studio 1 Secondary';
+      case '5': $location = 'Office';
+        break;
+      case '6': $location = 'Hall';
+        break;
+      case '8': $location = 'OB';
         break;
       default: $location = $current;
-        $current = 6;
+        $current = 7;
         break;
     }
 
     return [
-      'current' => self::cam_to_stream($current),
+      'current' => $current,
       'webcam' => $location
       ];
   }
@@ -83,30 +87,9 @@ class MyRadio_Webcam extends ServiceAPI {
    * @param [type] $id [description]
    */
   public static function setWebcam($id) {
-    if (($id === 0) || ($id === 1) || ($id === 2) || ($id === 4) || ($id === 5)) {
-      file_get_contents(Config::$webcam_set_url.stream_to_cam($id));
+    if (($id === 0) || ($id === 2) || ($id === 3) || ($id === 4) || ($id === 8)) {
+      file_get_contents(Config::$webcam_set_url.$id);
     }
   }
 
-  // @todo: remove the need for this function after migration to new by makeing camserver use streamids
-  private static function cam_to_stream($id) {
-    switch ($id) {
-      case '0': return 1;
-      case '1': return 2;
-      case '2': return 4;
-      case '4': return 5;
-      case '5': return 3;
-    };
-  }
-
-  // @todo: remove the need for this function after migration to sis4 by makeig camserver use streamids
-  private static function stream_to_cam($id) {
-    switch ($id) {
-      case '1': return 0;
-      case '2': return 1;
-      case '3': return 5;
-      case '4': return 2;
-      case '5': return 4;
-    };
-  }
 }

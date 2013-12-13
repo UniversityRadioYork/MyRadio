@@ -355,10 +355,10 @@ $(document).ready(function() {
     server.register_callback(updateWebcam, 'webcam');
     server.register_param('webcam_id', wcCurrentCam);
 
-    $('button#setactive0').click(function(){selectStudio(0);});
-    $('button#setactive1').click(function(){selectStudio(1);});
-    $('button#setactive2').click(function(){selectStudio(2);});
-    $('button#setactive3').click(function(){selectStudio(3);});
+    $('button#setactive0').click(function(){setCam(0);});
+    $('button#setactive2').click(function(){setCam(2);});
+    $('button#setactive3').click(function(){setCam(3);});
+    $('button#setactive4').click(function(){setCam(4);});
 
     $('button#setactive'+wcCurrentCam).button("disable");
       
