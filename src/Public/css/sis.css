@@ -104,12 +104,9 @@ table {
   border-spacing: 0.7em 0.5em;
 }
 
-label, input { display:block; }
 input.text { margin-bottom:12px; width:95%; padding: .4em; }
 fieldset { padding:0; border:0; margin-top:25px; }
 
-.invisible { display:none; }
-.goright { text-align:right; }
 
 /** Selector **/
 #selector-buttons { 
@@ -147,6 +144,14 @@ figure {
 .webcam-stream-container.live {
   float: right;
 }
+
+#customcam {
+  margin-top: 0.5em;
+}
+#customcam label {
+  margin-right: 0.5em;
+}
+
 
 #schedule hgroup>* {
   margin: 0;
