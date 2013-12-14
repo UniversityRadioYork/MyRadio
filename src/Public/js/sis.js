@@ -92,7 +92,7 @@
         return;
       }
       console.log('Updating webcam to '+newcam);
-      $.get(myury.makeURL('SIS', 'webcam.set'), {'src':newcam, 'url':null});
+      $.get(myury.makeURL('SIS', 'webcam.set'), {'src':newcam});
     }
 
     var updateWebcam = function(data) {
@@ -102,7 +102,7 @@
       $('button#setactive'+ data['current']).button("disable");
             
       //Only show side images for not-active cameras, or all for jukebox
-      if ( data['current'] === 1) {
+      if ( data['current'] === 0) {
         $('#plugin_body_webcam figure').show();
       } else {
         $('#plugin_body_webcam figure').hide();
@@ -362,8 +362,8 @@ $(document).ready(function() {
 
     $('button#setactive'+wcCurrentCam).button("disable");
       
-    $('button#setactive6').click(function(){$('div#customcam').toggle('blind',200);});
-    $('button#setcustomcam').click(function(){setCam(6,$('input#camurl').val());});
+    $('button#setactive7').click(function(){$('div#customcam').toggle('blind',200);});
+    $('button#setcustomcam').click(function(){setCam($('input#camurl').val());});
 
 
     // Help

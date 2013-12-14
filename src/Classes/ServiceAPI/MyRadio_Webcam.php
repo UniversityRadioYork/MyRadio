@@ -87,7 +87,12 @@ class MyRadio_Webcam extends ServiceAPI {
    * @param [type] $id [description]
    */
   public static function setWebcam($id) {
-    if (($id === 0) || ($id === 2) || ($id === 3) || ($id === 4) || ($id === 8)) {
+    if (($id === 0) || 
+        ($id === 2) || 
+        ($id === 3) || 
+        ($id === 4) || 
+        ($id === 8) ||
+        (!strncmp($id, "http://", strlen("http://")))) {
       file_get_contents(Config::$webcam_set_url.$id);
     }
   }
