@@ -367,10 +367,10 @@ class MyRadio_Selector {
         $this->lock();
         
         //Email people
-        /**MyRadioEmail::sendEmailToComputing('OBIT INITIATED', 
+        MyRadioEmail::sendEmailToComputing('OBIT INITIATED', 
                 'Urgent: Initiated Obit procedure for station as requested by '
                 . User::getInstance()->getName() . ' - ' 
-                . User::getInstance()->getEmail());*/
+                . User::getInstance()->getEmail());
         
         //Store the event for Timelord
         file_put_contents('/tmp/myradio-obit', 1);
