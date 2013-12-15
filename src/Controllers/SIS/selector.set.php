@@ -5,6 +5,7 @@
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20131117
  * @package MyRadio_SIS
+ * @todo Lots of duplication with MyRadio_Selector here
  */
 
 $src = (isset($_REQUEST['src'])) ? (int) $_REQUEST['src'] : 0;
@@ -24,7 +25,7 @@ elseif ((($src == 1) && (!$status['s1power'])) ||
   $data = ['error' => 'Source '.$src.' not powered'];
   require 'Views/MyRadio/datatojson.php';
 }
-elseif ($status['locked'] != 0) {
+elseif ($status['lock'] != 0) {
   $data = ['error' => 'locked'];
   require 'Views/MyRadio/datatojson.php';
 }
