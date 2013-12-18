@@ -384,7 +384,7 @@ final class Config {
    * BRA Server
    * @var String
    */
-  public static $bra_uri = 'https://urybsod.york.ac.uk/bra';
+  public static $bra_uri = 'ury.org.uk/bra';
   public static $bra_user = '';
   public static $bra_pass = '';
   
