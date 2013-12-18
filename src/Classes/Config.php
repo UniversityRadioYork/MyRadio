@@ -468,6 +468,69 @@ final class Config {
   /**** STRINGS ****/
   public static $short_name = 'URY';
   public static $long_name = 'University Radio York';
+  public static $founded = '1967';
+  public static $email_domain = 'ury.org.uk';
+  public static $welcome_email = <<<EOT
+<p>Hi #NAME!</p>
+
+<p>Thanks for showing an interest in URY, your official student radio station.</p>
+
+<p>My name's Lloyd, and I'm the Head of Training here. It's my job to make it as
+easy as possible to get on the air or join any of our other teams.</p>
+
+<p>If you're interested in presenting on URY, then in Week 3 we are holding
+two training lectures, where I explain how to use the studio. After the training
+lecture, you'll then need to do a demo in our studios. It isn't scary and I'll
+explain all about them in the training lectures.</p>
+
+<p>If you're interested in getting involved in any of our teams (there's 11 of 
+them!), then reply to this email and I'll sort you out, or email the address
+listed for that team <a href="http://ury.org.uk/getinvolved">on our website</a>.
+</p>
+
+<p>Our training lectures are:</p>
+
+<ul>
+  <li>7pm Tuesday Week 3 (8th October), P/L/001 (Physics)</li>
+  <li>7pm Friday Week 3 (11th October), RCH/037 (Heslington East)</li>
+</ul>
+
+<p>If you can't make these, just let me know and I'll sort you out!</p>
+
+<p>For more information about these, and everything else we do, you can:
+<ul>
+<li>join the <a href="https://www.facebook.com/groups/ury1350/">URY Members</a>
+ Facebook group,</li>
+<li>like our <a href="https://www.facebook.com/URY1350">Facebook page</a>,</li>
+<li>or <a href="https://twitter.com/ury1350">Follow @ury1350</a> on Twitter</li>
+</ul>
+
+<p>Finally, URY has a lot of <a href="https://ury.org.uk/myury/">online
+resources</a> that are useful for all sorts of things, so you'll need your login
+ details:</p>
+<p>Username: #USER<br>
+Password: #PASS</p>
+
+<p>If you have any questions, feel free to ask by visiting us at our station in
+Vanbrugh, or emailing <a
+href="mailto:training@ury.org.uk">training@ury.org.uk</a>.</p>
+
+Hope to see you soon.
+<br><br>
+--<br>
+Al Riddell<br>
+Station Manager<br>
+<br>
+University Radio York 1350AM<br>
+Most Awarded Student Radio Station 2013<br>
+---------------------------------------------<br>
+<a href="mailto:al.riddell@ury.org.uk">al.riddell@ury.org.uk</a>
+<br>
+---------------------------------------------<br>
+On Air | Online | On Demand<br>
+<a href="http://ury.org.uk/">ury.org.uk</a>
+EOT;
+  public static $facebook = 'https://www.facebook.com/URY1350';
   
   /**
    * The constructor doesn't do anything practical
@@ -494,7 +557,11 @@ final class Config {
         'webcam_prefix' => self::$webcam_prefix,
         'bra_uri' => self::$bra_uri,
         'bra_user' => self::$bra_user,
-        'bra_pass' => self::$bra_pass
+        'bra_pass' => self::$bra_pass,
+        'short_name' => self::$short_name,
+        'long_name' => self::$long_name,
+        'founded' => self::$founded,
+        'facebook' => self::$facebook
     );
   }
 }

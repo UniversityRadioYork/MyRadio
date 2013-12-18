@@ -8,6 +8,21 @@
  */
 
 /**
+ * String Settings
+ */
+Config::$short_name = 'ACRONYM OR ABBREVIATION HERE';
+Config::$long_name = 'FULL STATION NAME HERE';
+Config::$email_domain = 'EMAIL DOMAIN HERE';
+Config::$founded = 'FOUNDED YEAR HERE';
+Config::$facebook = 'FACEBOOK PAGE ADDRESS HERE (inc https://facebook.com)';
+Config::$welcome_email = <<<EOT
+   
+   This is a welcome email. You can use #NAME to get the user's first name,
+   and include #UNAME and #PASS to tell them their newly created login details.
+   
+EOT;
+
+/**
  * Database connection settings.
  */
 Config::$db_hostname = 'YOUR HOSTNAME HERE';

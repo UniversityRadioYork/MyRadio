@@ -5,7 +5,7 @@
  * 
  * @version 24072012
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @package URY_Core
+ * @package MyRadio_Config
  */
 for ($i = 0; $i < sizeof($data); $i++) {
   $data[$i]['del'] = array(
