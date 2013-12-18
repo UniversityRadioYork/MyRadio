@@ -475,27 +475,13 @@ final class Config {
 
 <p>Thanks for showing an interest in URY, your official student radio station.</p>
 
-<p>My name's Lloyd, and I'm the Head of Training here. It's my job to make it as
+<p>My name's Al, and I'm the Station Manager here at URY. It's my job to make it as
 easy as possible to get on the air or join any of our other teams.</p>
-
-<p>If you're interested in presenting on URY, then in Week 3 we are holding
-two training lectures, where I explain how to use the studio. After the training
-lecture, you'll then need to do a demo in our studios. It isn't scary and I'll
-explain all about them in the training lectures.</p>
 
 <p>If you're interested in getting involved in any of our teams (there's 11 of 
 them!), then reply to this email and I'll sort you out, or email the address
 listed for that team <a href="http://ury.org.uk/getinvolved">on our website</a>.
 </p>
-
-<p>Our training lectures are:</p>
-
-<ul>
-  <li>7pm Tuesday Week 3 (8th October), P/L/001 (Physics)</li>
-  <li>7pm Friday Week 3 (11th October), RCH/037 (Heslington East)</li>
-</ul>
-
-<p>If you can't make these, just let me know and I'll sort you out!</p>
 
 <p>For more information about these, and everything else we do, you can:
 <ul>
