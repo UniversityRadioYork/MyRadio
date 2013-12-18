@@ -7,6 +7,12 @@ window.NIPSWeb = {
     ajaxQueue: $({}),
     //Stores an internal ID counter - since BAPSs are somewhat... variable
     idCounter: 0,
+    //Store the number of times the WebSocket has needed to be reset.
+    //Suggests falling back to REST mode after multiple failures.
+    resetCounter: 0,
+    resetLimit: 10,
+    //The reference to the WebSocket connection check interval
+    streamChecker: null,
     //Stores whether this Show is writable. If set to false before
     //initialising, dragdrop/saving will not be enabled.
     /**
@@ -54,6 +60,7 @@ window.NIPSWeb = {
      * Initialises the connection to the BRA WebSocket Stream
      */
     initStream: function() {
+        NIPSWeb.resetCounter++;
         if (NIPSWeb.braStream) {
             NIPSWeb.braStream.close();
         }
@@ -62,10 +69,110 @@ window.NIPSWeb = {
                 );
         NIPSWeb.braStream.onopen = function(e) {
             NIPSWeb.braStream.send('{"type":"auth","username":"' + NIPSWeb.user + '","password":"' + NIPSWeb.pass + '"}');
+            //Populate with initial data
+            //Don't do this first - what happens to events in between?
+            NIPSWeb.initData();
         };
         NIPSWeb.braStream.onmessage = function(data) {
             NIPSWeb.processStream(data);
         };
+
+        /**
+         * Automatically recover the WebSocket connection if something goes fishy.
+         */
+        if (!NIPSWeb.streamChecker) {
+            NIPSWeb.streamChecker = setInterval(function() {
+                if (NIPSWeb.braStream.readyState !== 1) {
+                    if (NIPSWeb.resetCounter == NIPSWeb.resetLimit) {
+                        console.log(NIPSWeb.resetLimit + ' WebSocket retries exceeded. Suggesting REST fallback.');
+                        $('<div></div>').attr('title', 'Wonky Connection').attr('id', 'error-dialog')
+                                .append('<p>Sorry, I seem to be having some trouble connecting to the server right now. Would you like me to try a slower connection, or keep trying with the faster one?</p>')
+                                .dialog({
+                            modal: true,
+                            buttons: {
+                                'Try a Slower Connection': function() {
+                                    NIPSWeb.initFallback(0);
+                                    $(this).dialog("close");
+                                },
+                                'Keep Trying': function() {
+                                    NIPSWeb.initStream();
+                                    $('#init-overlay-fallback').show();
+                                    $(this).dialog("close");
+                                }
+                            },
+                            width: 600,
+                            closeOnEscape: false,
+                            open: function(e, ui) {
+                                $(".ui-dialog-titlebar-close", ui.dialog).hide()
+                            }
+                        });
+                        $('#init-overlay').hide();
+                        clearInterval(NIPSWeb.streamChecker);
+                        NIPSWeb.streamChecker = null;
+                    } else {
+                        //Connection hasn't happened yet, or is dead
+                        console.log('WebSocket connection lost. Reconnecting...');
+                        $('#init-overlay').show();
+                        NIPSWeb.initStream();
+                    }
+                }
+            }, 1500);
+        }
+    },
+    /**
+     * If WebSockets don't seem to be working, this uses REST polling to update
+     * state repeatedly. This can be stopped by resetting NIPSWeb.resetCounter
+     * to 0.
+     */
+    initFallback: function(part) {
+        //Stop if we're trying sockets again
+        if (NIPSWeb.resetCounter != NIPSWeb.resetLimit) {
+            return false;
+        }
+        if (part === 1) {
+            //First we get the contents of all playlists
+            coptions = NIPSWeb.baseReq('playlists');
+            coptions.done = function(x) {
+                setTimeout("NIPSWeb.initFallback(1)", 2500);
+                NIPSWeb.drawChannels(x);
+            };
+            coptions.error = NIPSWeb.fallbackFail;
+            $.ajax(coptions);
+        } else if (part === 2) {
+            //Now we get the status of the players
+            poptions = NIPSWeb.baseReq('players');
+            poptions.done = function(x) {
+                setTimeout("NIPSWeb.initFallback(2)", 500);
+                NIPSWeb.updatePlayers(x);
+
+            };
+            poptions.error = NIPSWeb.fallbackFail;
+            $.ajax(poptions);
+        } else {
+            NIPSWeb.initFallback(1);
+            NIPSWeb.initFallback(2);
+            $('#notice').show();
+        }
+    },
+    /**
+     * Deals with the REST Fallback Mode not working
+     */
+    fallbackFail: function() {
+        $('<div></div>').attr('title', 'Server Unavailable').attr('id', 'error-dialog')
+                .append('<p>I have tried as hard as I can, but it looks like there\'s currently a problem with the playout system in this studio. Please contact faults to report this.</p>')
+                .dialog({
+            modal: true,
+            buttons: {
+                'Go Back': function() {
+                    window.location = myury.makeURL(mConfig.default_module, mConfig.default_action);
+                }
+            },
+            width: 600,
+            closeOnEscape: false,
+            open: function(e, ui) {
+                $(".ui-dialog-titlebar-close", ui.dialog).hide()
+            }
+        });
     },
     /**
      * Handles changes to client state over the BRA WebSocket Stream
@@ -138,6 +245,7 @@ window.NIPSWeb = {
                 } else {
                     //Adding item.
                     $('#baps-channel-' + cid).append(NIPSWeb.makeItem(obj[key]));
+                    NIPSWeb.initListClick();
                 }
             } else {
                 console.log('Invalid UPDATE response (3).');
@@ -168,6 +276,7 @@ window.NIPSWeb = {
                 channel.append(NIPSWeb.makeItem(data[i][j]));
             }
         }
+        NIPSWeb.initListClick();
     },
     /**
      * Updates player state based on the result of a players REST request.
@@ -188,6 +297,7 @@ window.NIPSWeb = {
                 NIPSWeb.setChannelPosition(cid, 0);
                 $('#baps-channel-' + cid).children().removeClass('selected');
             }
+            NIPSWeb.setChannelState(cid, data[i].state);
         }
     },
     /**
@@ -207,15 +317,17 @@ window.NIPSWeb = {
                 /**
                  * @todo Handle 'status' parameter
                  */
-                this.done(data['value']);
+                return this.done(data['value']);
             },
             //Custom parameter - called by success once response handled
             done: function(data) {
+                return true;
             },
             cache: false,
             dataType: 'json',
             password: NIPSWeb.pass,
-            username: NIPSWeb.user
+            username: NIPSWeb.user,
+            global: false //It's better if you don't know how the global handlers respond to BRA
         };
     },
     /**
@@ -289,9 +401,59 @@ window.NIPSWeb = {
             $('#ch' + cid + '-stop').button('disable');
         }
     },
+    /**
+     * Sets up UI elements such as dialogs and progressbars
+     */
     initUI: function() {
         //Loading bar
         $('#init-progressbar').progressbar({value: false});
+
+        //Fallback notice dialog
+        $('#notice').on('click', function() {
+            $('<div></div>').attr('title', 'Fallback Mode Enabled').attr('id', 'error-dialog')
+                    .append('<p>I\'ve put you into Fallback Mode right now because of problems connected to our Live server, or because you\'re using an old web browser. You will still be able to use BAPS, but the screen will update slower and things may just generally not work as well.</p>')
+                    .dialog({
+                modal: true,
+                buttons: {
+                    'Stay in Fallback Mode': function() {
+                        $(this).dialog("close");
+                    },
+                    'Switch back to Live Mode': function() {
+                        NIPSWeb.resetCounter = 0;
+                        NIPSWeb.initStream();
+                        $('#notice').hide();
+                        $(this).dialog("close");
+                    }
+                },
+                width: 600
+            });
+        });
+        //Fallback button on loading dialog
+        $('#init-overlay-fallback button').on('click', function() {
+            clearTimeout(NIPSWeb.streamChecker);
+            NIPSWeb.streamChecker = null;
+            NIPSWeb.resetCounter = NIPSWeb.resetLimit;
+            NIPSWeb.initFallback(0);
+            $('#init-overlay').hide();
+        });
+    },
+    initListClick: function() {
+        $('ul.baps-channel li').off('click.playerLoad').on('click.playerLoad', function(e) {
+            if ($(this).hasClass('unclean')) {
+                //This track may have naughty words, but don't block selection
+                $('#footer-tips').html('This track is explicit. Do not broadcast before 9pm.').addClass('ui-state-error').show();
+                setTimeout("$('#footer-tips').removeClass('ui-state-error').fadeOut();", 5000);
+            }
+
+            //Send a load request to BRA
+            var cid = parseInt($(this).parent('ul').attr('channel')) - 1;
+            var pid = $(this).index();
+            options = NIPSWeb.baseReq('players/' + cid);
+            options.method = 'POST';
+            options.data = '{"item":"playlist://' + cid + '/' + pid + '"}';
+            $.ajax(options);
+        });
+
     },
     makeItem: function(data) {
         var li = $('<li></li>');
@@ -303,19 +465,7 @@ window.NIPSWeb = {
 };
 
 $(document).ready(NIPSWeb.initUI);
-$(document).ready(NIPSWeb.initData);
 $(document).ready(NIPSWeb.initStream);
-/**
- * Automatically recover the WebSocket connection if something goes fishy.
- */
-setInterval(function() {
-    if (NIPSWeb.braStream.readyState !== 1) {
-        //Connection hasn't happened yet, or is dead
-        console.log('WebSocket connection lost. Reconnecting...');
-        $('#init-overlay').show();
-        NIPSWeb.initStream();
-    }
-}, 1500);
 
 manualSeek = true;
 window.debug = true;
@@ -449,135 +599,6 @@ function playerVariables(channel) {
     return NIPSWeb.audioNodes[channel];
 }
 
-
-
-/**
- * Player Functions
- * @param channel 1, 2, 3 or res
- */
-// Loads the selected track into the player for the designated channel
-function previewLoad(channel) {
-    if (channel !== 'res') {
-
-    } else {
-        $('#ch' + channel + '-play, #ch' + channel + '-pause, #ch' + channel + '-stop').addClass('ui-state-disabled');
-        //Find the active track for this channel
-        var audioid = $('#baps-channel-' + channel + ' li.selected').attr('id');
-        var data = getRecTrackFromID(audioid);
-        var type = $('#baps-channel-' + channel + ' li.selected').attr('type');
-        if (type === 'central') {
-//Central Database Track
-            $.ajax({
-                url: myury.makeURL('NIPSWeb', 'create_token'),
-                type: 'post',
-                data: 'trackid=' + data[1] + '&recordid=' + data[0],
-                success: function() {
-                    if (playerVariables(channel).canPlayType('audio/mpeg')) {
-                        playerVariables(channel).type = 'audio/mpeg';
-                        playerVariables(channel).src = mConfig.base_url + '?module=NIPSWeb&action=secure_play&recordid=' + data[0] + '&trackid=' + data[1];
-                    } else if (playerVariables(channel).canPlayType('audio/ogg')) {
-                        playerVariables(channel).type = 'audio/ogg';
-                        playerVariables(channel).src = mConfig.base_url + '?module=NIPSWeb&action=secure_play&ogg=true&recordid=' + data[0] + '&trackid=' + data[1];
-                    } else {
-                        alert('Sorry, you need to use a modern browser to use Track Preview.');
-                    }
-                    $(playerVariables(channel)).on("canplay", function() {
-                        $('#ch' + channel + '-play').removeClass('ui-state-disabled');
-                        /**
-                         * Briefly play the track once it has started loading
-                         * Workaround for http://code.google.com/p/chromium/issues/detail?id=111281
-                         */
-                        this.play();
-                        var that = this; //Hack so that timeout is in context
-                        this.volume = 0;
-                        setTimeout(function() {
-                            that.pause();
-                            that.volume = 1;
-                            if ($('#baps-channel-' + channel).attr('playonload') == 1) {
-                                that.play();
-                            }
-                        }, 10);
-                    });
-                }
-            });
-        } else if (type === 'aux') {
-            playerVariables(channel).src = mConfig.base_url + '?module=NIPSWeb&action=managed_play&managedid=' + $('#' + audioid).attr('managedid');
-            $(playerVariables(channel)).on('canplay', function() {
-                $('#ch' + channel + '-play').removeClass('ui-state-disabled');
-            });
-        }
-    }
-}
-// Plays the loaded track from the designated channel
-function previewPlay(channel) {
-    var audio = playerVariables(channel);
-    audio.play();
-    playing(channel);
-}
-// Pauses the currently playing track from the designated channel
-function previewPause(channel) {
-    var audio = playerVariables(channel);
-    if (audio.readyState) {
-        if (audio.paused) {
-            audio.play();
-            playing(channel);
-        }
-        else {
-            audio.pause();
-            pausing(channel);
-        }
-    }
-}
-// Stops the currently playing track from the designated channel
-function previewStop(channel) {
-    var audio = playerVariables(channel);
-    audio.pause();
-    audio.currentTime = 0;
-    stopping(channel);
-}
-
-/**
- * UI Functions
- * @param channel 1, 2, 3 or res
- */
-function playing(channel) {
-    $('#ch' + channel + '-play').addClass('ui-state-active').removeClass('ui-state-disabled');
-    $('#ch' + channel + '-pause').removeClass('ui-state-disabled');
-    $('#ch' + channel + '-stop').removeClass('ui-state-disabled');
-}
-function pausing(channel) {
-    $('#ch' + channel + '-play');
-    $('#ch' + channel + '-pause').addClass('ui-state-active');
-    $('#ch' + channel + '-stop');
-}
-function stopping(channel) {
-    $('#ch' + channel + '-play').removeClass('ui-state-active');
-    $('#ch' + channel + '-pause').removeClass('ui-state-active').addClass('ui-state-disabled');
-    $('#ch' + channel + '-stop').addClass('ui-state-disabled');
-}
-
-// Gets the duration of the current track in channel
-function getDuration(channel) {
-    var audio = playerVariables(channel);
-    var duration = audio.duration; //Get the duration of the track
-    //duration returns a value in seconds. Convert to minutes+seconds, pad zeros where appropriate.
-    var mindur = timeMins(duration);
-    var secdur = timeSecs(duration);
-    // Sets the duration label
-    $('#ch' + channel + '-duration').html(mindur + ':' + secdur);
-}
-// Gets the time of the current track in channel
-function getTime(channel) {
-    var audio = playerVariables(channel);
-    var elapsed = audio.currentTime; //Get the current playing position of the track
-    //currentTime returns a value in seconds. Convert to minutes+seconds, pad zeros where appropriate.
-    var minelap = timeMins(elapsed);
-    var secelap = timeSecs(elapsed);
-    // Sets the current time label
-    $('#ch' + channel + '-elapsed').html(minelap + ':' + secelap);
-}
-
-
 /**
  * Event Listeners
  */
@@ -696,18 +717,6 @@ function registerItemClicks() {
         $(this).attr('nextSelect',
                 typeof $(this).next().attr('id') !== 'undefined' ? $(this).next().attr('id') : $(this).prev().attr('id'));
     });
-    $('ul.baps-channel li').off('click.playactivator').on('click.playactivator', function(e) {
-        if ($(this).hasClass('unclean')) {
-//This track may have naughty words, but don't block selection
-            $('#footer-tips').html('This track is explicit. Do not broadcast before 9pm.').addClass('ui-state-error').show();
-            setTimeout("$('#footer-tips').removeClass('ui-state-error').fadeOut();", 5000);
-        }
-//Set this track as the active file for this channel
-//First, we need to remove the active class for any other file in the channel
-        $(this).parent('ul').children().removeClass('selected');
-        $(this).addClass('selected');
-        previewLoad($(this).parent('.baps-channel').attr('channel'));
-    });
     $('ul.baps-channel').tooltip({
         items: "li",
         show: {delay: 500},
@@ -716,15 +725,4 @@ function registerItemClicks() {
             return $(this).html() + ($(this).attr('length') == null ? '' : ' (' + $(this).attr('length') + ')');
         }
     });
-}
-function getRecTrackFromID(id) {
-    id = id.split('-');
-    var data = [];
-    data[0] = id[0];
-    data[1] = id[1];
-    for (i = 2; i < id.length; i++) {
-        data[1] = data[1] + '-' + id[i];
-    }
-
-    return data;
 }
