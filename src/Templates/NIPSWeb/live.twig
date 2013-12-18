@@ -12,7 +12,6 @@
     Sorry, you need to have JavaScript enabled to use BAPS.
 </p>
 </noscript>
-<div id="notice" class="ui-state-highlight ui-helper-hidden">Waiting...</div>
 <div id="init-overlay">
     <div class="ui-widget-overlay" style="z-index: 9985"></div>
     <div class="ui-dialog ui-widget ui-widget-content ui-corner-all"
@@ -23,6 +22,11 @@
         <div class="ui-dialog-content ui-widget-content">
             <p>Connecting to server...</p>
             <div id="init-progressbar"></div>
+        </div>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-hidden" id="init-overlay-fallback">
+            <div class="ui-dialog-buttonset">
+                <button type="button">Fallback Mode</button>
+            </div>
         </div>
     </div>
 </div>
@@ -76,7 +80,7 @@
     <div id="footer-tips" class="ui-state-highlight ui-helper-hidden"></div>
 
 </div>
-
+<div id="notice" class="ui-state-highlight ui-helper-hidden">Running in Fallback Mode. <a href="javascript:">What's this?</a></div>
 {% endblock %}
 
 {% block foot %}
