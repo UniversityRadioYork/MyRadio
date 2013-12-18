@@ -54,6 +54,9 @@ window.NIPSWeb = {
      * Initialises the connection to the BRA WebSocket Stream
      */
     initStream: function() {
+        if (NIPSWeb.braStream) {
+            NIPSWeb.braStream.close();
+        }
         NIPSWeb.braStream = new WebSocket(
                 "wss://" + NIPSWeb.server + "/stream/"
                 );
@@ -97,12 +100,12 @@ window.NIPSWeb = {
                     //Changing position
                     NIPSWeb.setChannelPosition(cid, obj[key]);
                 } else if (component[3] === "state"
-                            || component[3] === "load_state") {
+                        || component[3] === "load_state") {
                     //Changing play state
-                    NIPSWeb.setChannelState(cid,obj[key]);
+                    NIPSWeb.setChannelState(cid, obj[key]);
                 } else if (component[3] === "item") {
                     //Changing the loaded item
-                    $('#baps-channel-'+cid).children().removeClass('active');
+                    $('#baps-channel-' + cid).children().removeClass('selected');
                     if (obj[key] !== null) {
                         var bidx = obj[key].origin.replace(/^playlist:\/\/[0-9]\//, '');
                         $($('#baps-channel-' + cid).children()[bidx]).addClass('selected');
@@ -114,11 +117,38 @@ window.NIPSWeb = {
                     return false;
                 }
 
+            } else if (component[1] === "playlists") {
+                //Something's changed, in the BAPS playlist
+                //Who you gonna call?
+                var cid = parseInt(component[2]) + 1;
+                var pid = parseInt(component[3]);
+                var items = $('#baps-channel-' + cid).children();
+                //Are we changing an item, or adding?
+                if (items.length > pid + 1) {
+                    //Changing/removing item.
+                    if (obj[key] === null) {
+                        //Removing.
+                        $(items[pid]).remove();
+                    } else {
+                        //Changing
+                        $(items[pid]).attr('id', 'bapsidx-' + NIPSWeb.getID())
+                                .html(NIPSWeb.parseItemName(obj[key].name))
+                                .attr('duration', NIPSWeb.parseTime(obj[key].duration));
+                    }
+                } else {
+                    //Adding item.
+                    $('#baps-channel-' + cid).append(NIPSWeb.makeItem(obj[key]));
+                }
             } else {
                 console.log('Invalid UPDATE response (3).');
                 console.log(obj);
                 return false;
             }
+        } else if (obj.type === "auth") {
+            /**
+             * @todo Verify response was success
+             */
+            $('#init-overlay').hide();
         } else {
             console.log('Invalid STREAM response (4).');
             console.log(obj);
@@ -135,11 +165,7 @@ window.NIPSWeb = {
         for (i in data) {
             var channel = $('#baps-channel-' + (parseInt(i) + 1));
             for (j = 0; j < data[i].length; j++) {
-                var li = $('<li></li>');
-                li.attr('id', 'bapsidx-' + NIPSWeb.getID());
-                li.attr('duration', NIPSWeb.parseTime(data[i][j].duration))
-                li.html(NIPSWeb.parseItemName(data[i][j].name));
-                channel.append(li);
+                channel.append(NIPSWeb.makeItem(data[i][j]));
             }
         }
     },
@@ -150,7 +176,7 @@ window.NIPSWeb = {
         for (i in data) {
             //Update the player state
             var cid = parseInt(i) + 1;
-            if (data.item) {
+            if (data[i].item) {
                 NIPSWeb.setChannelDuration(cid, data[i].item.duration);
                 NIPSWeb.setChannelPosition(cid, data[i].position);
                 //Highlight the current item
@@ -234,11 +260,11 @@ window.NIPSWeb = {
         return t ? NIPSWeb.timeMins(t) + ':' + NIPSWeb.timeSecs(t) : '--:--';
     },
     setChannelDuration: function(cid, time) {
-        $('#ch'+cid+'-duration').html(NIPSWeb.parseTime(time));
+        $('#ch' + cid + '-duration').html(NIPSWeb.parseTime(time));
         $('#progress-bar-' + cid).slider({max: time});
     },
     setChannelPosition: function(cid, time) {
-        $('#ch'+cid+'-elapsed').html(NIPSWeb.parseTime(time));
+        $('#ch' + cid + '-elapsed').html(NIPSWeb.parseTime(time));
         $('#progress-bar-' + cid).slider({value: time});
     },
     /**
@@ -246,32 +272,50 @@ window.NIPSWeb = {
      */
     setChannelState: function(cid, state) {
         if (state === "playing") {
-            $('#ch'+cid+'-play').button('enable').addClass('ui-state-highlight');
-            $('#ch'+cid+'-pause').button('enable').removeClass('ui-state-highlight');
-            $('#ch'+cid+'-stop').button('enable');
+            $('#ch' + cid + '-play').button('enable').addClass('ui-state-highlight');
+            $('#ch' + cid + '-pause').button('enable').removeClass('ui-state-highlight');
+            $('#ch' + cid + '-stop').button('enable');
         } else if (state === "stopped" || state === "ok") {
-            $('#ch'+cid+'-play').button('enable').removeClass('ui-state-highlight');
-            $('#ch'+cid+'-pause').button('disable').removeClass('ui-state-highlight');
-            $('#ch'+cid+'-stop').button('disable');
+            $('#ch' + cid + '-play').button('enable').removeClass('ui-state-highlight');
+            $('#ch' + cid + '-pause').button('disable').removeClass('ui-state-highlight');
+            $('#ch' + cid + '-stop').button('disable');
         } else if (state === "paused") {
-            $('#ch'+cid+'-play').button('disable').removeClass('ui-state-highlight');
-            $('#ch'+cid+'-pause').button('enable').addClass('ui-state-highlight');
-            $('#ch'+cid+'-stop').button('enable');
+            $('#ch' + cid + '-play').button('disable').removeClass('ui-state-highlight');
+            $('#ch' + cid + '-pause').button('enable').addClass('ui-state-highlight');
+            $('#ch' + cid + '-stop').button('enable');
         } else if (state === "loading") {
-            $('#ch'+cid+'-play').button('disable');
-            $('#ch'+cid+'-pause').button('disable').removeClass('ui-state-highlight');
-            $('#ch'+cid+'-stop').button('disable');
+            $('#ch' + cid + '-play').button('disable');
+            $('#ch' + cid + '-pause').button('disable').removeClass('ui-state-highlight');
+            $('#ch' + cid + '-stop').button('disable');
         }
+    },
+    initUI: function() {
+        //Loading bar
+        $('#init-progressbar').progressbar({value: false});
+    },
+    makeItem: function(data) {
+        var li = $('<li></li>');
+        li.attr('id', 'bapsidx-' + NIPSWeb.getID());
+        li.attr('duration', NIPSWeb.parseTime(data.duration))
+        li.html(NIPSWeb.parseItemName(data.name));
+        return li;
     }
 };
 
-
+$(document).ready(NIPSWeb.initUI);
 $(document).ready(NIPSWeb.initData);
+$(document).ready(NIPSWeb.initStream);
 /**
- * The stream needs a delay to make it slightly more reliable at starting
- * Not saying it's reliable at starting at all, mind
+ * Automatically recover the WebSocket connection if something goes fishy.
  */
-setTimeout(NIPSWeb.initStream, 1000);
+setInterval(function() {
+    if (NIPSWeb.braStream.readyState !== 1) {
+        //Connection hasn't happened yet, or is dead
+        console.log('WebSocket connection lost. Reconnecting...');
+        $('#init-overlay').show();
+        NIPSWeb.initStream();
+    }
+}, 1500);
 
 manualSeek = true;
 window.debug = true;
