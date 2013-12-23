@@ -63,8 +63,7 @@ class MyRadioMenu {
         ORDER BY position ASC');
         //And finally, items
         $items = array_merge(
-                $db->fetch_all('SELECT itemid, sectionid, title, url, description FROM myury.menu_links ORDER BY title ASC'),
-                $db->fetch_all('SELECT sectionid, template FROM myury.menu_twigitems')
+                $db->fetch_all('SELECT itemid, sectionid, title, url, description FROM myury.menu_links ORDER BY title ASC'), $db->fetch_all('SELECT sectionid, template FROM myury.menu_twigitems')
         );
         //Get permissions for each $item
         foreach ($items as $key => $item) {
@@ -72,23 +71,25 @@ class MyRadioMenu {
              * Secret: Some descriptions always reference the officer that *previously*
              * held the position, not currently.
              */
-            if (strstr($items[$key]['description'], '#MACRO_SM-1') !== false) {
-                $hist = MyRadio_Officer::getInstance(1)->getHistory();
-                $n = 0;
-                while (sizeof($hist)-1 > $n && $hist[$n]['User']->getName() === $hist[0]['User']->getName()) {
-                    $n++;
+            if (isset($items[$key]['description'])) {
+                if (strstr($items[$key]['description'], '#MACRO_SM-1') !== false) {
+                    $hist = MyRadio_Officer::getInstance(1)->getHistory();
+                    $n = 0;
+                    while (sizeof($hist) - 1 > $n && $hist[$n]['User']->getName() === $hist[0]['User']->getName()) {
+                        $n++;
+                    }
+                    $items[$key]['description'] = str_replace(['#MACRO_SM-1'], [$hist[$n]['User']->getName()], $items[$key]['description']);
                 }
-                $items[$key]['description'] = str_replace(['#MACRO_SM-1'], [$hist[$n]['User']->getName()], $items[$key]['description']);
-            }
-            if (strstr($items[$key]['description'], '#MACRO_PC-1') !== false) {
-                $hist = MyRadio_Officer::getInstance(106)->getHistory();
-                $n = 0;
-                while (sizeof($hist)-1 > $n && $hist[$n]['User']->getName() === $hist[0]['User']->getName()) {
-                    $n++;
+                if (strstr($items[$key]['description'], '#MACRO_PC-1') !== false) {
+                    $hist = MyRadio_Officer::getInstance(106)->getHistory();
+                    $n = 0;
+                    while (sizeof($hist) - 1 > $n && $hist[$n]['User']->getName() === $hist[0]['User']->getName()) {
+                        $n++;
+                    }
+                    $items[$key]['description'] = str_replace(['#MACRO_PC-1'], [$hist[$n]['User']->getName()], $items[$key]['description']);
                 }
-                $items[$key]['description'] = str_replace(['#MACRO_PC-1'], [$hist[$n]['User']->getName()], $items[$key]['description']);
             }
-            
+
             if (!isset($item['itemid']))
                 continue; //Skip twigitems
             $items[$key] = array_merge($items[$key], $this->breakDownURL($item['url']));
