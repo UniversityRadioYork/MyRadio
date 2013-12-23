@@ -132,7 +132,7 @@ final class Config {
    * This can be overriden on a per-request basis
    * @var int
    */
-  public static $ajax_limit_default = 10;
+  public static $ajax_limit_default = 25;
   
   /**
    * The photoid to use for a Joined URY Timeline Event
