@@ -17,7 +17,6 @@
 if (isset($_REQUEST['id'])) {
   $data = MyRadio_Track::getInstance((int) $_REQUEST['id']);
 } else {
-
   $data = MyRadio_Track::findByOptions(array(
               'title' => isset($_REQUEST['term']) ? $_REQUEST['term'] : '',
               'artist' => isset($_REQUEST['artist']) ? $_REQUEST['artist'] : '',
