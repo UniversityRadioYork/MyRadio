@@ -31,7 +31,7 @@
     </div>
 </div>
 <header id="content-header">
-    <h3 id="a-manage-library"><a href="{{myury.makeURL(config,'NIPSWeb','manage_library')}}" title="Library Manager">Manage Library</a></h3>
+    <!--<h3 id="a-manage-library"><a href="{{myury.makeURL(config,'NIPSWeb','manage_library')}}" title="Library Manager">Manage Library</a></h3>-->
     <h2>{{title}}</h2>
 </header>
 <div id="grid" class="transBG clearfix">
@@ -66,12 +66,14 @@
       {% for channel in channels %}
             <div class='box baps-channel channel-footer ui-widget-header{% if channel == 'res' %} width-2 library-footer'>Library{% else %} width-1'>Channel {{channel}}{% endif %}
                 <br>
-                <button class='play' id='ch{{channel}}-play' onclick='previewPlay("{{channel}}")'></button>
-                <button class='pause' id='ch{{channel}}-pause' onclick='previewPause("{{channel}}")'></button>
-                <button class='stop' id='ch{{channel}}-stop' class='ui-state-disabled' onclick='previewStop("{{channel}}")'></button><br>
-                <div id='progress-bar-{{channel}}'></div>
+                {% if channel != 'res' %}
+                <button class='play' id='ch{{channel}}-play' onclick='NIPSWeb.play("{{channel}}")'></button>
+                <button class='pause' id='ch{{channel}}-pause' onclick='NIPSWeb.pause("{{channel}}")'></button>
+                <button class='stop' id='ch{{channel}}-stop' class='ui-state-disabled' onclick='NIPSWeb.stop("{{channel}}")'></button><br>
+                <div id='progress-bar-{{channel}}' class="channel-position-slider"></div>
                 <label id='ch{{channel}}-elapsed'>--:--</label> / 
                 <label id='ch{{channel}}-duration'>--:--</label>
+                {% endif %}
             </div>
       {% endfor %}
         </div>
@@ -89,5 +91,4 @@
 <script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/nipsweb.live.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/nipsweb.librarypane.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/nipsweb.init.js"></script>
 {% endblock %}

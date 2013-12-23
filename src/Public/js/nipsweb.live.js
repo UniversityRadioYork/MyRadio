@@ -2,7 +2,21 @@
  * This file contains the necessary functions for the NIPSWeb BAPS Live Client
  */
 window.NIPSWeb = {
-//Stores the change queue pointer for this object
+    //Key bindings
+    keys: {
+        F1: 112,
+        F2: 113,
+        F3: 114,
+        F4: 115,
+        F5: 116,
+        F6: 117,
+        F7: 118,
+        F8: 119,
+        F9: 120,
+        F10: 121,
+        F11: 122
+    },
+    //Stores the change queue pointer for this object
     changeQueue: $({}),
     ajaxQueue: $({}),
     //Stores an internal ID counter - since BAPSs are somewhat... variable
@@ -76,7 +90,6 @@ window.NIPSWeb = {
         NIPSWeb.braStream.onmessage = function(data) {
             NIPSWeb.processStream(data);
         };
-
         /**
          * Automatically recover the WebSocket connection if something goes fishy.
          */
@@ -88,24 +101,24 @@ window.NIPSWeb = {
                         $('<div></div>').attr('title', 'Wonky Connection').attr('id', 'error-dialog')
                                 .append('<p>Sorry, I seem to be having some trouble connecting to the server right now. Would you like me to try a slower connection, or keep trying with the faster one?</p>')
                                 .dialog({
-                            modal: true,
-                            buttons: {
-                                'Try a Slower Connection': function() {
-                                    NIPSWeb.initFallback(0);
-                                    $(this).dialog("close");
-                                },
-                                'Keep Trying': function() {
-                                    NIPSWeb.initStream();
-                                    $('#init-overlay-fallback').show();
-                                    $(this).dialog("close");
-                                }
-                            },
-                            width: 600,
-                            closeOnEscape: false,
-                            open: function(e, ui) {
-                                $(".ui-dialog-titlebar-close", ui.dialog).hide()
-                            }
-                        });
+                                    modal: true,
+                                    buttons: {
+                                        'Try a Slower Connection': function() {
+                                            NIPSWeb.initFallback(0);
+                                            $(this).dialog("close");
+                                        },
+                                        'Keep Trying': function() {
+                                            NIPSWeb.initStream();
+                                            $('#init-overlay-fallback').show();
+                                            $(this).dialog("close");
+                                        }
+                                    },
+                                    width: 600,
+                                    closeOnEscape: false,
+                                    open: function(e, ui) {
+                                        $(".ui-dialog-titlebar-close", ui.dialog).hide()
+                                    }
+                                });
                         $('#init-overlay').hide();
                         clearInterval(NIPSWeb.streamChecker);
                         NIPSWeb.streamChecker = null;
@@ -144,7 +157,6 @@ window.NIPSWeb = {
             poptions.done = function(x) {
                 setTimeout("NIPSWeb.initFallback(2)", 500);
                 NIPSWeb.updatePlayers(x);
-
             };
             poptions.error = NIPSWeb.fallbackFail;
             $.ajax(poptions);
@@ -161,18 +173,18 @@ window.NIPSWeb = {
         $('<div></div>').attr('title', 'Server Unavailable').attr('id', 'error-dialog')
                 .append('<p>I have tried as hard as I can, but it looks like there\'s currently a problem with the playout system in this studio. Please contact faults to report this.</p>')
                 .dialog({
-            modal: true,
-            buttons: {
-                'Go Back': function() {
-                    window.location = myury.makeURL(mConfig.default_module, mConfig.default_action);
-                }
-            },
-            width: 600,
-            closeOnEscape: false,
-            open: function(e, ui) {
-                $(".ui-dialog-titlebar-close", ui.dialog).hide()
-            }
-        });
+                    modal: true,
+                    buttons: {
+                        'Go Back': function() {
+                            window.location = myury.makeURL(mConfig.default_module, mConfig.default_action);
+                        }
+                    },
+                    width: 600,
+                    closeOnEscape: false,
+                    open: function(e, ui) {
+                        $(".ui-dialog-titlebar-close", ui.dialog).hide()
+                    }
+                });
     },
     /**
      * Handles changes to client state over the BRA WebSocket Stream
@@ -231,7 +243,7 @@ window.NIPSWeb = {
                 var pid = parseInt(component[3]);
                 var items = $('#baps-channel-' + cid).children();
                 //Are we changing an item, or adding?
-                if (items.length > pid + 1) {
+                if (items.length >= pid + 1) {
                     //Changing/removing item.
                     if (obj[key] === null) {
                         //Removing.
@@ -403,30 +415,30 @@ window.NIPSWeb = {
     },
     /**
      * Sets up UI elements such as dialogs and progressbars
+     * @todo Currently assumes 3 broadcast channels
      */
     initUI: function() {
         //Loading bar
         $('#init-progressbar').progressbar({value: false});
-
         //Fallback notice dialog
         $('#notice').on('click', function() {
             $('<div></div>').attr('title', 'Fallback Mode Enabled').attr('id', 'error-dialog')
                     .append('<p>I\'ve put you into Fallback Mode right now because of problems connected to our Live server, or because you\'re using an old web browser. You will still be able to use BAPS, but the screen will update slower and things may just generally not work as well.</p>')
                     .dialog({
-                modal: true,
-                buttons: {
-                    'Stay in Fallback Mode': function() {
-                        $(this).dialog("close");
-                    },
-                    'Switch back to Live Mode': function() {
-                        NIPSWeb.resetCounter = 0;
-                        NIPSWeb.initStream();
-                        $('#notice').hide();
-                        $(this).dialog("close");
-                    }
-                },
-                width: 600
-            });
+                        modal: true,
+                        buttons: {
+                            'Stay in Fallback Mode': function() {
+                                $(this).dialog("close");
+                            },
+                            'Switch back to Live Mode': function() {
+                                NIPSWeb.resetCounter = 0;
+                                NIPSWeb.initStream();
+                                $('#notice').hide();
+                                $(this).dialog("close");
+                            }
+                        },
+                        width: 600
+                    });
         });
         //Fallback button on loading dialog
         $('#init-overlay-fallback button').on('click', function() {
@@ -436,9 +448,96 @@ window.NIPSWeb = {
             NIPSWeb.initFallback(0);
             $('#init-overlay').hide();
         });
+        /** Initialise player boxes */
+        //Play/Pause/Stop (clicks handled by onClick in DOM)
+        $('button.play').button({
+            icons: {
+                primary: 'ui-icon-play'
+            },
+            text: false
+        }).addClass('ui-state-disabled');
+        $('button.pause').button({
+            icons: {
+                primary: 'ui-icon-pause'
+            },
+            text: false
+        }).addClass('ui-state-disabled');
+        $('button.stop').button({
+            icons: {
+                primary: 'ui-icon-stop'
+            },
+            text: false
+        }).addClass('ui-state-disabled');
+
+        //Progress Slider
+        $('.channel-position-slider').slider({
+            range: "min",
+            value: 0,
+            min: 0
+        }).on("slidestop", function(e, ui) {
+            var cid = parseInt($(this).attr('id').replace(/^progress\-bar\-/,''))-1;
+            var options = NIPSWeb.baseReq('players/'+cid);
+            options.method = 'POST';
+            options.data = '{"position":"'+ui.value+'"}';
+            $.ajax(options);
+        });
+
+        //Funtion key press
+        $(document).on('keydown.bapsplayers', function(e) {
+            var trigger = false;
+            switch (e.which) {
+                case NIPSWeb.keys.F1:
+                    //Play channel 1
+                    NIPSWeb.play(1);
+                    trigger = true;
+                    break;
+                case NIPSWeb.keys.F2:
+                    NIPSWeb.pause(1);
+                    trigger = true;
+                    break;
+                case NIPSWeb.keys.F3:
+                    NIPSWeb.stop(1);
+                    trigger = true;
+                    break;
+                case NIPSWeb.keys.F5:
+                    //Play channel 2
+                    NIPSWeb.play(2);
+                    trigger = true;
+                    break;
+                case NIPSWeb.keys.F6:
+                    NIPSWeb.pause(2);
+                    trigger = true;
+                    break;
+                case NIPSWeb.keys.F7:
+                    NIPSWeb.stop(2);
+                    trigger = true;
+                    break;
+                case NIPSWeb.keys.F9:
+                    //Play channel 3
+                    NIPSWeb.play(3);
+                    trigger = true;
+                    break;
+                case NIPSWeb.keys.F10:
+                    NIPSWeb.pause(3);
+                    trigger = true;
+                    break;
+                case NIPSWeb.keys.F11:
+                    NIPSWeb.stop(3);
+                    trigger = true;
+                    break;
+            }
+            if (trigger) {
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
+            }
+        });
     },
     initListClick: function() {
         $('ul.baps-channel li').off('click.playerLoad').on('click.playerLoad', function(e) {
+            /**
+             * @todo Look into implementing this cool stuff
+             */
             if ($(this).hasClass('unclean')) {
                 //This track may have naughty words, but don't block selection
                 $('#footer-tips').html('This track is explicit. Do not broadcast before 9pm.').addClass('ui-state-error').show();
@@ -448,12 +547,11 @@ window.NIPSWeb = {
             //Send a load request to BRA
             var cid = parseInt($(this).parent('ul').attr('channel')) - 1;
             var pid = $(this).index();
-            options = NIPSWeb.baseReq('players/' + cid);
+            var options = NIPSWeb.baseReq('players/' + cid);
             options.method = 'POST';
             options.data = '{"item":"playlist://' + cid + '/' + pid + '"}';
             $.ajax(options);
         });
-
     },
     makeItem: function(data) {
         var li = $('<li></li>');
@@ -461,67 +559,77 @@ window.NIPSWeb = {
         li.attr('duration', NIPSWeb.parseTime(data.duration))
         li.html(NIPSWeb.parseItemName(data.name));
         return li;
+    },
+    //Handles a play request for (ch-1)
+    play: function(ch) {
+        var cid = parseInt(ch) - 1;
+        var options = NIPSWeb.baseReq('players/' + cid);
+        options.method = 'POST';
+        options.data = '{"state":"playing"}';
+        $.ajax(options);
+    },
+    //Handles a pause request for (ch-1)
+    pause: function(ch) {
+        var cid = parseInt(ch) - 1;
+        var options = NIPSWeb.baseReq('players/' + cid);
+        options.method = 'POST';
+        if ($('#ch' + ch + '-pause').hasClass('ui-state-highlight')) {
+            options.data = '{"state":"playing"}';
+        } else {
+            options.data = '{"state":"paused"}';
+        }
+        $.ajax(options);
+    },
+    //Handles a stop request for (ch-1)
+    stop: function(ch) {
+        var cid = parseInt(ch) - 1;
+        var options = NIPSWeb.baseReq('players/' + cid);
+        options.method = 'POST';
+        options.data = '{"state":"stopped"}';
+        $.ajax(options);
     }
 };
 
 $(document).ready(NIPSWeb.initUI);
 $(document).ready(NIPSWeb.initStream);
-
 manualSeek = true;
 window.debug = true;
-function initialiseUI() {
-    // Setup UI elements
-    $('button.play').button({
-        icons: {
-            primary: 'ui-icon-play'
-        },
-        text: false
-    }).addClass('ui-state-disabled');
-    $('button.pause').button({
-        icons: {
-            primary: 'ui-icon-pause'
-        },
-        text: false
-    }).addClass('ui-state-disabled');
-    $('button.stop').button({
-        icons: {
-            primary: 'ui-icon-stop'
-        },
-        text: false
-    }).addClass('ui-state-disabled');
-    if (NIPSWeb.writable) {
-        $('ul.baps-channel').sortable({
-            //connectWith allows drag and drop between the channels
-            connectWith: 'ul.baps-channel',
-            //A distance dragged of 15 before entering the dragging state
-            //Prevents accidentally dragging when clicking
-            distance: 15,
-            //Adds a placeholder highlight where the item will be dropped
-            placeholder: "ui-state-highlight",
-            //Remove the "selected" class from the item - prevent multiple selected items in a channel
-            //Also activate the next/previous item, if there is one
-            start: function(e, ui) {
-                if (ui.item.hasClass('selected')) {
-                    ui.item.removeClass('selected');
-                    if (ui.item.attr('nextSelect') != null)
-                        $('#' + ui.item.attr('nextSelect')).click();
-                }
-                ui.item.nextSelect = null;
-            },
-            stop: function(e, ui) {
-                /**
-                 * Update the channel timers
-                 */
-                NIPSWeb.calcChanges(e, ui);
-            }
-
-        });
-    }
-
-    registerItemClicks();
-    setupGenericListeners();
-    configureContextMenus();
-}
+/**
+ function initialiseUI() {
+ if (NIPSWeb.writable) {
+ $('ul.baps-channel').sortable({
+ //connectWith allows drag and drop between the channels
+ connectWith: 'ul.baps-channel',
+ //A distance dragged of 15 before entering the dragging state
+ //Prevents accidentally dragging when clicking
+ distance: 15,
+ //Adds a placeholder highlight where the item will be dropped
+ placeholder: "ui-state-highlight",
+ //Remove the "selected" class from the item - prevent multiple selected items in a channel
+ //Also activate the next/previous item, if there is one
+ start: function(e, ui) {
+ if (ui.item.hasClass('selected')) {
+ ui.item.removeClass('selected');
+ if (ui.item.attr('nextSelect') != null)
+ $('#' + ui.item.attr('nextSelect')).click();
+ }
+ ui.item.nextSelect = null;
+ },
+ stop: function(e, ui) {
+ /**
+ * Update the channel timers
+ *//*
+  NIPSWeb.calcChanges(e, ui);
+  }
+  
+  });
+  }
+  
+  registerItemClicks();
+  setupGenericListeners();
+  configureContextMenus();
+  }
+  */
 
 function configureContextMenus() {
     return;
@@ -568,143 +676,6 @@ function configureContextMenus() {
         }
         console.log("select " + menuId + " on " + $(target).attr('id'));
     });
-}
-
-function initialisePlayer(channel) {
-
-    if (channel == 0)
-        channel = 'res';
-    $("#progress-bar-" + channel).slider({
-        range: "min",
-        value: 0,
-        min: 0
-    });
-    if (channel === 'res') {
-        var a = new Audio();
-        $(a).on('ended', function() {
-            if ($('#baps-channel-' + channel).attr('autoadvance') == 1) {
-                $('#' + $('#baps-channel-' + channel + ' li.selected').removeClass('selected').attr('nextselect')).click();
-            }
-        });
-        NIPSWeb.audioNodes[(channel === 'res') ? 0 : channel] = a;
-    }
-
-    setupListeners(channel);
-}
-
-// Initialises Variables for functions - This is called at the start of each function
-function playerVariables(channel) {
-    if (channel === 'res')
-        channel = 0;
-    return NIPSWeb.audioNodes[channel];
-}
-
-/**
- * Event Listeners
- */
-
-// Sets up generic listeners
-function setupGenericListeners() {
-// Setup key bindings
-    var keys = {
-        F1: 112,
-        F2: 113,
-        F3: 114,
-        F4: 115,
-        F5: 116,
-        F6: 117,
-        F7: 118,
-        F8: 119,
-        F9: 120,
-        F10: 121,
-        F11: 122
-    };
-    // Sets up key press triggers
-    $(document).on('keydown.bapscontrol', function(e) {
-        var trigger = false;
-        switch (e.which) {
-            case keys.F1:
-                //Play channel 1
-                previewPlay(1);
-                trigger = true;
-                break;
-            case keys.F2:
-                previewPause(1);
-                trigger = true;
-                break;
-            case keys.F3:
-                previewStop(1);
-                trigger = true;
-                break;
-            case keys.F5:
-                //Play channel 2
-                previewPlay(2);
-                trigger = true;
-                break;
-            case keys.F6:
-                previewPause(2);
-                trigger = true;
-                break;
-            case keys.F7:
-                previewStop(2);
-                trigger = true;
-                break;
-            case keys.F9:
-                //Play channel 3
-                previewPlay(3);
-                trigger = true;
-                break;
-            case keys.F10:
-                previewPause(3);
-                trigger = true;
-                break;
-            case keys.F11:
-                previewStop(3);
-                trigger = true;
-                break;
-        }
-        if (trigger) {
-            e.stopPropagation();
-            e.preventDefault();
-            return false;
-        }
-    });
-}
-// Sets up listeners per channel
-function setupListeners(channel) {
-    if (channel !== 'res') {
-
-    } else {
-        /**
-         * Use local play for Library pane
-         */
-        var audio = playerVariables(channel);
-        $(playerVariables(channel)).on('timeupdate', function() {
-            getTime(channel);
-            $('#progress-bar-' + channel).slider({value: audio.currentTime});
-            //A mouse-over click doesn't set this properly on play
-            if (audio.currentTime > 0.1)
-                $('#ch' + channel + '-play').addClass('ui-state-active');
-        });
-        $('#progress-bar-' + channel).slider({
-            value: 0,
-            step: 0.01,
-            orientation: "horizontal",
-            range: "min",
-            max: audio.duration,
-            animate: true,
-            stop: function(e, ui) {
-                audio.currentTime = ui.value;
-            }
-        });
-        $(playerVariables(channel)).on('durationchange', function() {
-            getDuration(channel);
-            $('#progress-bar-' + channel).slider({max: audio.duration});
-        });
-        $("#progress-bar-" + channel).on("slide", function(event, ui) {
-            $('#previewer' + channel).currentTime = ui.value;
-        });
-    }
 }
 
 /**
