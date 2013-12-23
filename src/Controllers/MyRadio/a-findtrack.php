@@ -17,35 +17,12 @@
 if (isset($_REQUEST['id'])) {
   $data = MyRadio_Track::getInstance((int) $_REQUEST['id']);
 } else {
-    //Will use AND if multiple options set, otherwise OR and use 'term' for
-    //both title and artist
-    $options = [];
-    $others = false;
-    if (isset($_REQUEST['term'])) {
-        $options['title'] = $_REQUEST['term'];
-    }
-    if (isset($_REQUEST['artist'])) {
-        $options['artist'] = $_REQUEST['artist'];
-        $others = true;
-    }
-    if (isset($_REQUEST['limit'])) {
-        $options['limit'] = intval($_REQUEST['limit']);
-        $others = true;
-    }
-    if (isset($_REQUEST['require_digitised'])) {
-        $options['digitised'] = (bool)$_REQUEST['require_digitised'];
-        $others = true;
-    }
-    if (isset($_REQUEST['itonesplaylistid'])) {
-        $options['itonesplaylistid'] = $_REQUEST['itonesplaylistid'];
-        $others = true;
-    }
-    
-    if (!$others) {
-        $options['artist'] = $_REQUEST['term'];
-        $options['operator'] = 'OR';
-    }
-    
-  $data = MyRadio_Track::findByOptions($options);
+  $data = MyRadio_Track::findByOptions(array(
+              'title' => isset($_REQUEST['term']) ? $_REQUEST['term'] : '',
+              'artist' => isset($_REQUEST['artist']) ? $_REQUEST['artist'] : '',
+              'limit' => isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default,
+              'digitised' => isset($_REQUEST['require_digitised']) ? (bool) $_REQUEST['require_digitised'] : false,
+              'itonesplaylistid' => isset($_REQUEST['itonesplaylistid']) ? $_REQUEST['itonesplaylistid'] : ''
+  ));
 }
 require 'Views/MyRadio/datatojson.php';
