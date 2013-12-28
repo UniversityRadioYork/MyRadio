@@ -1,0 +1,5 @@
+{% extends 'table.twig' %}
+{% block stripecontent %}
+<a href='{{myury.makeURL(config, 'MyRadio', 'addNews', {'feed': feedid})}}'>Add Item</a>
+{{ parent() }}
+{% endblock %}
