@@ -30,7 +30,7 @@ window.NIPSWeb = {
     //Stores whether this Show is writable. If set to false before
     //initialising, dragdrop/saving will not be enabled.
     /**
-     * @todo BRA is currently read only
+     * @todo Make this variable do something
      */
     writable: false,
     server: mConfig.bra_uri,
@@ -38,27 +38,9 @@ window.NIPSWeb = {
     pass: mConfig.bra_pass,
     audioNodes: [],
     braStream: null,
+    
     /**
-     * @todo Rewrite for BRA
-     * @param {type} e
-     * @param {type} ui
-     * @returns {undefined}
-     */
-    calcChanges: function(e, ui) {
-        return;
-    },
-    /**
-     * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
-     * ops: JSONON to send
-     * addOp: If true, there has been an add operation. We currently make these syncronous.
-     * pNext: Optional. Parent queue to process on completion.
-     * @todo Rewrite for BRA
-     */
-    shipChanges: function(ops, addOp, pNext) {
-        return;
-    },
-    /**
-     * Initialises with latest data from BRA
+     * Initialises with latest data from BRA using POST.
      */
     initData: function() {
         //First we get the contents of all playlists
@@ -532,6 +514,9 @@ window.NIPSWeb = {
                 return false;
             }
         });
+        
+        /** Initialise Movement Operations **/
+        $('ul.baps-channel').not('#baps-channel-res').sortable();
     },
     initListClick: function() {
         $('ul.baps-channel li').off('click.playerLoad').on('click.playerLoad', function(e) {
