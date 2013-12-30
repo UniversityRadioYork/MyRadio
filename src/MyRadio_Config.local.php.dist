@@ -26,8 +26,11 @@ EOT;
  * Database connection settings.
  */
 Config::$db_hostname = 'YOUR HOSTNAME HERE';
+Config::$db_name = 'membership';
 Config::$db_user = 'YOUR USERNAME HERE';
 Config::$db_pass = 'YOUR PASSWORD HERE';
+Config::$auth_db_user = 'YOUR USERNAME HERE';
+Config::$auth_db_pass = 'YOUR PASSWORD HERE';
 
 /**
  * Last.fm connection settings.

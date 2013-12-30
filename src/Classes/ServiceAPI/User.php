@@ -363,6 +363,14 @@ class User extends ServiceAPI {
       return null;
     }
   }
+  
+  /**
+   * Returns all the user's active permission flags
+   * @return Array
+   */
+  public function getPermissions() {
+      return $this->permissions;
+  }
 
   /**
    * Returns the User's email address. If the email address is null, it is
@@ -418,7 +426,7 @@ class User extends ServiceAPI {
    * @return String
    */
   public function getEduroam() {
-    return str_replace('@york.ac.uk', '', $this->eduroam);
+    return str_replace('@'.Config::$eduroam_domain, '', $this->eduroam);
   }
 
   /**
@@ -583,7 +591,11 @@ class User extends ServiceAPI {
 
   public static function getInstance($itemid = -1) {
     if ($itemid === -1) {
-      $itemid = $_SESSION['memberid'];
+        if (isset($_SESSION['memberid'])) {
+            $itemid = $_SESSION['memberid'];
+        } else {
+            throw new MyRadioException('Trying to get current user info with no current user');
+        }
     }
     return parent::getInstance($itemid);
   }
@@ -917,6 +929,17 @@ class User extends ServiceAPI {
     $this->updateCacheObject();
     return;
   }
+  
+  /**
+   * Sets the User's last login time to right now.
+   * Use this when they're being logged in (weird that)
+   */
+  public function updateLastLogin() {
+      $this->last_login = CoreUtils::getTimestamp();
+      self::$db->query('UPDATE public.member SET last_login=$1'
+              . ' WHERE memberid=$2', [$this->last_login, $this->getID()]);
+      $this->updateCacheObject();
+  }
 
   /**
    * Searched for the user with the given email address, returning the User if they exist, or null if it fails.
@@ -928,7 +951,7 @@ class User extends ServiceAPI {
       return null;
     }
     self::wakeup();
-
+    
     $result = self::$db->fetch_column('SELECT memberid FROM public.member WHERE email ILIKE $1 OR eduroam ILIKE $1
       OR local_name ILIKE $2 OR local_alias ILIKE $2 OR eduroam ILIKE $2', array($email, explode('@', $email)[0]));
 
@@ -1203,7 +1226,7 @@ class User extends ServiceAPI {
 
     //This next comment explains that password generation is not done in MyRadio itself, but an external library.
     //Looks good. Generate a password for them. This is done by Shibbobleh.
-    $plain_pass = Shibbobleh_Utils::newPassword();
+    $plain_pass = CoreUtils::newPassword();
 
     //Actually create the member!
     $r = self::$db->fetch_column('INSERT INTO public.member (fname, sname, sex,
@@ -1226,6 +1249,9 @@ class User extends ServiceAPI {
     }
 
     $memberid = $r[0];
+    /**
+     * @todo Move away from Shibbobleh
+     */
     //Activate the member's account for the current academic year
     Shibbobleh_Utils::activateMemberThisYear($memberid, $paid);
     //Set the user's password

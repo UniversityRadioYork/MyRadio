@@ -35,6 +35,7 @@ final class Config {
    * @var String
    */
   public static $db_hostname    = 'localhost';
+  public static $db_name        = 'membership';
   /**
    * The username to use connecting to the PostgreSQL database server
    * @var String
@@ -453,6 +454,24 @@ final class Config {
    * @var float
    */
   public static $membership_fee = 7.00;
+  
+  /**
+   * Authentication
+   * LDAP requires the ldap plugin (net/php5-ldap)
+   * The Authenticators are tried in order when completing user authentication
+   * operations.
+   */
+  public static $authenticators = ['MyRadioLDAPAuthenticator', 'MyRadioDefaultAuthenticator'];
+  public static $auth_ldap_server = 'ldap.york.ac.uk';
+  public static $auth_ldap_root = 'ou=people,ou=csrv,ou=nos,dc=york,dc=ac,dc=uk';
+  public static $auth_db_user = 'shibbobleh';
+  public static $auth_db_pass = '';
+  public static $eduroam_domain = 'york.ac.uk';
+  /**
+   * The number of days before the start of the academic year when accounts are inactivated
+   * The current choice should mean it resets results week.
+   */
+  public static $account_expiry_before = 49;
   
   /**** DAEMON CONFIGURATION ****/
   public static $d_BAPSSync_enabled = false;

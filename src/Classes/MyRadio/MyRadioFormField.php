@@ -232,6 +232,12 @@ class MyRadioFormField {
    * This field type does not support the "required" parameter.
    */
   const TYPE_WEEKSELECT = 0x14;
+  
+  /**
+   * The constant used to specify this MyRadioFormField should be a password field.
+   * This MyRadioFormField type does not support any Custom Options
+   */
+  const TYPE_PASSWORD = 0x15;
 
   /**
    * The name/id of the Form Field
@@ -507,6 +513,7 @@ class MyRadioFormField {
       case self::TYPE_ARTIST:
       case self::TYPE_HIDDEN:
       case self::TYPE_BLOCKTEXT:
+      case self::TYPE_PASSWORD:
         return $_REQUEST[$name];
         break;
       case self::TYPE_MEMBER:

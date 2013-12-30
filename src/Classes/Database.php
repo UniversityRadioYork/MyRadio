@@ -26,7 +26,7 @@ class Database {
    * Stores the resource id of the connection to the PostgreSQL database
    * @var Resource
    */
-  private $db;
+  protected $db;
   
   /**
    * Stores the number of queries executed
@@ -44,7 +44,7 @@ class Database {
    * Constructs the singleton database connector 
    */
   private function __construct() {
-    $this->db = pg_connect('host=' . Config::$db_hostname . ' port=5432 dbname=membership
+    $this->db = pg_connect('host=' . Config::$db_hostname . ' port=5432 dbname='.Config::$db_name.'
             user=' . Config::$db_user . ' password=' . Config::$db_pass);
     if (!$this->db) {
       //Database isn't working. Throw an EVERYTHING IS BROKEN Exception
