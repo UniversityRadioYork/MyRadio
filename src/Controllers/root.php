@@ -5,21 +5,20 @@
  * the necessary handler.
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130525
+ * @version 20131230
  * @package MyRadio_Core
- * @uses Shibbobleh
  * @uses \CacheProvider
  * @uses \Database
  * @uses \CoreUtils
  */
 /**
- * Turn on Error Reporting for the base start. Once the Config object is loaded this is altered based on the
- * Config::$debug setting
+ * Turn on Error Reporting for the start. Once the Config object is loaded
+ * this is updated to reflect Config.
  */
 error_reporting(E_ALL ^ E_STRICT);
 ini_set('display_errors', 'On');
 /**
- * Set the Default TimeZone.
+ * Set the Default Timezone.
  * Once Config is available, this value should be used instead.
  */
 date_default_timezone_get('Europe/London');
@@ -28,11 +27,6 @@ date_default_timezone_get('Europe/London');
  */
 ini_set('include_path', str_replace('Controllers', '', __DIR__) . ':' . ini_get('include_path'));
 
-/**
- * The Shibbobleh Client checks whether the user is authenticated, asking them to login via its captive portal
- * if necessary. See the Shibbobleh project documentation for more information about what it provides.
- */
-require_once 'shibbobleh_client.php';
 /**
  * The CoreUtils static class provides some useful standard functions for MyRadio. Take a look at it before you start
  * developing - it may just save you some head scratching.
@@ -44,6 +38,16 @@ require_once 'Classes/MyRadio/CoreUtils.php';
  */
 require_once 'Classes/Config.php';
 require_once 'MyRadio_Config.local.php';
+
+/**
+ * Call the model that prepares the Database and the Global Abstraction API 
+ */
+require 'Models/Core/api.php';
+
+/**
+ * Load in email functions
+ */
+require_once 'Classes/MyRadioEmail.php';
 
 /**
  * Load the phpError handler class - this has functions to put errors nicely on
@@ -61,16 +65,7 @@ if (!Config::$display_errors && !CoreUtils::hasPermission(269)) {
   ini_set('display_errors', 'Off');
 }
 ini_set('error_log', Config::$log_file); // Set error log file
-
-/**
- * Call the model that prepares the Database and the Global Abstraction API 
- */
-require 'Models/Core/api.php';
-
-/**
- * Load in email functions
- */
-require_once 'Classes/MyRadioEmail.php';
+date_default_timezone_set(Config::$timezone); //Set timezone
 
 /**
  * The Service Broker decides what version of a Service the user has access to. This includes MyRadio, so gets added

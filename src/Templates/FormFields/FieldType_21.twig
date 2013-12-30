@@ -1,0 +1,6 @@
+{% if display_labels %}<label for="{{frm_name}}-{{field.name}}">{{field.label}}</label>{% endif %}
+<input type="password" class="{{field.class}}{% if field.required %} required{% endif %}"
+       value="{{field.value}}" name="{{frm_name}}-{{sfieldname}}"
+       id="{{frm_name}}-{{field.name}}"
+       {% if not field.enabled %} readonly="readonly"{% endif %}/>
+<span class="myuryfrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>

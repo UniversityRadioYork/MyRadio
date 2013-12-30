@@ -13,11 +13,11 @@
         <ul>
           {{ version_header | raw }}
           <li><a href="http://ury.org.uk/">ury.org.uk</a></li>
-          <li><a href="/portal/redir_out.php">Logout</a></li>
+          {% if memberid %}<li><a href="{{myury.makeURL(config,'MyRadio', 'logout')}}">Logout</a></li>{% endif %}
         </ul>
         <ul id="navRight">
-          <li>{% if timeslotname is null %}<a href="/portal/timeslot.php?next={{ uri }}">Pick Timeslot</a>{% else %}<a href="/portal/timeslot.php?next={{ uri }}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</li>
-          <li>{{ name }}{{ impersonator }}</li></ul>
+          <li>{% if timeslotname is null and memberid %}<a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}">Pick Timeslot</a>{% else %}<a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</li>
+          <li>{{ name | raw }}{{ impersonator }}</li></ul>
       </nav>
         {% if phperrors is not null %}
           <ul class="php_error">
