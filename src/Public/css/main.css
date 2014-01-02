@@ -1,0 +1,1628 @@
+/*
+ * HTML5 Boilerplate
+ *
+ * What follows is the result of much research on cross-browser styling.
+ * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
+ * Kroc Camen, and the H5BP dev community and team.
+ */
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
+html,
+button,
+input,
+select,
+textarea {
+  color: #222;
+}
+body {
+  font-size: 1em;
+  line-height: 1.4;
+}
+/*
+ * Remove text-shadow in selection highlight: h5bp.com/i
+ * These selection declarations have to be separate.
+ * Customize the background color to match your design.
+ */
+::-moz-selection {
+  background: #b3d4fc;
+  text-shadow: none;
+}
+::selection {
+  background: #b3d4fc;
+  text-shadow: none;
+}
+/*
+ * A better looking default horizontal rule
+ */
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 1em 0;
+  padding: 0;
+}
+/*
+ * Remove the gap between images and the bottom of their containers: h5bp.com/i/440
+ */
+img {
+  vertical-align: middle;
+}
+/*
+ * Remove default fieldset styles.
+ */
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+/*
+ * Allow only vertical resizing of textareas.
+ */
+textarea {
+  resize: vertical;
+}
+/*
+ * Smaller margin for boxes
+ */
+dl {
+  margin: 0.4em 0;
+}
+/* ==========================================================================
+   Chrome Frame prompt
+   ========================================================================== */
+.chromeframe {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}
+/* ==========================================================================
+   Plugin styles
+   ========================================================================== */
+.countdownHolder {
+  width: 450px;
+  margin: 0 auto;
+  font: 40px/1.5 'Open Sans Condensed', sans-serif;
+  text-align: center;
+  letter-spacing: -3px;
+}
+.position {
+  display: inline-block;
+  height: 1.6em;
+  overflow: hidden;
+  position: relative;
+  width: 1.05em;
+}
+.digit {
+  position: absolute;
+  display: block;
+  width: 1em;
+  background-color: #444;
+  border-radius: 0.2em;
+  text-align: center;
+  color: #fff;
+  letter-spacing: -1px;
+}
+.digit.static {
+  box-shadow: 1px 1px 1px rgba(4, 4, 4, 0.35);
+  background-image: linear-gradient(bottom, #3a3a3a 50%, #444444 50%);
+  background-image: -o-linear-gradient(bottom, #3a3a3a 50%, #444444 50%);
+  background-image: -moz-linear-gradient(bottom, #3a3a3a 50%, #444444 50%);
+  background-image: -webkit-linear-gradient(bottom, #3a3a3a 50%, #444444 50%);
+  background-image: -ms-linear-gradient(bottom, #3a3a3a 50%, #444444 50%);
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.5, #3a3a3a), color-stop(0.5, #444444));
+}
+/**
+ * You can use these classes to hide parts
+ * of the countdown that you don't need.
+ */
+.countDays {
+  /* display:none !important;*/
+}
+.countDiv0 {
+  /* display:none !important;*/
+}
+.countDiv {
+  display: inline-block;
+  width: 16px;
+  height: 1.6em;
+  position: relative;
+}
+.countDiv:before,
+.countDiv:after {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background-color: #444;
+  border-radius: 50%;
+  left: 50%;
+  margin-left: -3px;
+  top: 0.5em;
+  box-shadow: 1px 1px 1px rgba(4, 4, 4, 0.5);
+  content: '';
+}
+.countDiv:after {
+  top: 0.9em;
+}
+/* ==========================================================================
+   URY custom styles
+   ========================================================================== */
+.colour-links a {
+  color: #feb93a;
+  text-decoration: none;
+  -webkit-text-shadow: 1px 2px black;
+  -khtml-text-shadow: 1px 2px black;
+  -moz-text-shadow: 1px 2px black;
+  text-shadow: 1px 2px black;
+}
+.colour-links a:hover {
+  color: #ffd758;
+  text-decoration: underline;
+}
+.colour-links a:visited {
+  color: #f4af30;
+}
+.colour-links a:active {
+  color: #f4af30;
+}
+html {
+  height: 100%;
+  margin: 0px;
+  font-family: helvetica, arial, sans-serif;
+  background: #dddddd;
+}
+body {
+  margin: 22px auto 0;
+  width: 1050px;
+  background: url('/static/img/bg.png') #5c67a0 no-repeat center -170px;
+  -webkit-box-shadow: 0 0 15px 4px #333;
+  -moz-box-shadow: 0 0 15px 4px #333;
+  box-shadow: 0 0 15px 4px #333;
+}
+a {
+  color: #074dab;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+#pageHeader a,
+#pageFooter a {
+  color: #feb93a;
+  text-decoration: none;
+  -webkit-text-shadow: 1px 2px black;
+  -khtml-text-shadow: 1px 2px black;
+  -moz-text-shadow: 1px 2px black;
+  text-shadow: 1px 2px black;
+}
+#pageHeader a:hover,
+#pageFooter a:hover {
+  color: #ffd758;
+  text-decoration: underline;
+}
+#pageHeader a:visited,
+#pageFooter a:visited {
+  color: #f4af30;
+}
+#pageHeader a:active,
+#pageFooter a:active {
+  color: #f4af30;
+}
+#pageHeader a,
+#pageFooter a {
+  color: #feb93a;
+  text-decoration: none;
+  -webkit-text-shadow: 1px 2px black;
+  -khtml-text-shadow: 1px 2px black;
+  -moz-text-shadow: 1px 2px black;
+  text-shadow: 1px 2px black;
+}
+#pageHeader a:hover,
+#pageFooter a:hover {
+  color: #ffd758;
+  text-decoration: underline;
+}
+#pageHeader a:visited,
+#pageFooter a:visited {
+  color: #f4af30;
+}
+#pageHeader a:active,
+#pageFooter a:active {
+  color: #f4af30;
+}
+dl {
+  margin: 0;
+}
+#pageHeader {
+  height: 230px;
+  padding: 0 15px 0 0;
+  -webkit-text-shadow: 1px 2px black;
+  -khtml-text-shadow: 1px 2px black;
+  -moz-text-shadow: 1px 2px black;
+  text-shadow: 1px 2px black;
+  color: #ffffff;
+}
+#pageHeader #logo {
+  width: 430px;
+  display: inline-block;
+  text-align: center;
+  color: #fff;
+  text-decoration: none;
+}
+#pageHeader #showOnUp {
+  padding: 30px 20px 0;
+  width: 430px;
+}
+#pageHeader #showOnUp div {
+  float: none;
+}
+#pageHeader #showOnUp dl {
+  margin-top: 0;
+}
+#pageHeader .showPerson {
+  display: inline-block;
+}
+#pageHeader #countup {
+  margin-top: 20px;
+}
+#pageHeader #webcam {
+  display: inline-block;
+  width: 150px;
+  float: right;
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+}
+#pageHeader h1,
+header h2 {
+  text-transform: uppercase;
+  margin: 0;
+}
+#pageFooter {
+  margin: 10px 0;
+  padding: 10px 10px;
+  color: #ffffff;
+}
+#pageFooter h4 {
+  margin: 0;
+}
+#pageFooter #copyright {
+  float: right;
+}
+#pageFooter #copyright p {
+  margin-top: 0;
+}
+#pageFooter ul {
+  list-style: none;
+  margin-top: 0;
+  float: left;
+}
+#pageFooter ul li {
+  display: inline-block;
+}
+#pageFooter ul li:after {
+  content: "|";
+}
+#pageFooter ul li:last-of-type:after {
+  content: "";
+}
+#pageFooter ul li a {
+  padding: 0 5px;
+}
+#pageFooter ul li:first-of-type a,
+#pageFooter ul li:last-of-type a {
+  padding-left: 0;
+}
+#menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 22px;
+  width: 100%;
+  text-align: center;
+  z-index: 9999;
+}
+#menu ul {
+  position: relative;
+  margin: 0 auto;
+  padding: 0;
+}
+#menu ul li {
+  display: inline-block;
+  padding: 0;
+}
+#menu ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 100%;
+  display: block;
+  padding: 0 20px;
+}
+#menu ul li a:visited {
+  color: #eee;
+}
+#menu ul li a:hover {
+  color: #fff;
+  background: #9da3c6;
+  background: rgba(255, 255, 255, 0.4);
+}
+#menu ul li a:active {
+  color: #f4af30;
+  background: #9da3c6;
+  background: rgba(255, 255, 255, 0.4);
+}
+#menu #miniLogo {
+  float: left;
+  position: relative;
+  left: 3px;
+  top: -1px;
+  z-index: 10;
+}
+#menu #socialBtn {
+  float: right;
+  position: relative;
+  top: -23px;
+  left: -2px;
+}
+#menu #socialBtn a {
+  text-decoration: none;
+}
+#socialBtn a:link,
+#socialBtn a:visited {
+  opacity: 0.8;
+}
+#socialBtn a:active,
+#socialBtn a:hover {
+  opacity: 1;
+}
+#grid {
+  padding: 15px 0 15px 12px;
+}
+#grid section,
+#grid nav {
+  position: relative;
+}
+#grid section ul,
+#grid nav ul,
+#grid section ol,
+#grid nav ol,
+#grid section dl,
+#grid nav dl {
+  overflow: auto;
+}
+#grid section h1,
+#grid nav h1 {
+  font-size: 150%;
+  margin: 0;
+}
+#grid section h2,
+#grid nav h2 {
+  font-size: 120%;
+  margin: 0;
+}
+#grid section h3,
+#grid nav h3 {
+  margin: 0;
+}
+#grid section footer,
+#grid nav footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+#grid section footer .more,
+#grid nav footer .more {
+  position: absolute;
+  bottom: 0;
+  right: 10px;
+  display: block;
+  width: 70px;
+  height: 20px;
+  text-align: center;
+  text-decoration: none;
+  color: #fff;
+  -moz-border-radius-topleft: 10px;
+  border-top-left-radius: 10px;
+}
+#grid > article,
+#grid > header,
+#grid #content-body {
+  margin-right: 12px;
+}
+/*
+ *  Grid layout
+ */
+.box {
+  float: left;
+  margin: 0 10px 10px 0;
+  padding: 0;
+}
+.box > * {
+  padding: 0 5px;
+}
+.box.height-1 {
+  height: 225px;
+}
+.box.width-1 {
+  width: 325px;
+}
+.box.width-1#banner {
+  width: 335px;
+}
+.box.height-2 {
+  height: 465px;
+}
+.box.width-2 {
+  width: 670px;
+}
+.box.width-2#banner {
+  width: 680px;
+}
+.box.width-3 {
+  width: 1015px;
+}
+.box.width-3#banner {
+  width: 1025px;
+}
+/*
+ *  Boxes
+ */
+/*.box {
+  background: #dddddd;
+  border: solid 5px #787c91;
+  border-top: none;
+}*/
+.box h1 {
+  color: white;
+}
+#message {
+  border-color: #787c91;
+}
+#message h1 {
+  background: #787c91;
+}
+#message h1 {
+  background: #787c91;
+}
+#message #comments {
+  margin-left: 3px;
+  resize: none;
+  width: 304px;
+  height: 72px;
+}
+#message input[type="submit"] {
+  margin-left: 98px;
+}
+#message dt {
+  float: left;
+}
+#message dd {
+  margin-left: 50px;
+}
+#banner {
+  background: #874e81;
+  padding: 0;
+  border: none;
+  margin-bottom: 15px;
+}
+#banner .box-view {
+  padding: 0;
+}
+#schedule {
+  border-color: #2d5d9f;
+}
+#schedule h1 {
+  background: #2d5d9f;
+}
+#schedule h1 {
+  background: #2d5d9f;
+}
+#schedule dt {
+  float: left;
+}
+#schedule dd,
+#schedule span {
+  margin-left: 70px;
+}
+#news {
+  border-color: #683146;
+}
+#news h1 {
+  background: #683146;
+}
+#news h1 {
+  background: #683146;
+}
+#speech {
+  border-color: #396c66;
+}
+#speech h1 {
+  background: #396c66;
+}
+#speech h1 {
+  background: #396c66;
+}
+#music,
+#chart {
+  border-color: #57246f;
+}
+#music h1,
+#chart h1 {
+  background: #57246f;
+}
+#music h1,
+#chart h1 {
+  background: #57246f;
+}
+table.musicChart {
+  font-size: 13px;
+  width: 100%;
+}
+#photo {
+  background: #787c91;
+  height: 90px;
+  border-color: #787c91;
+}
+#podcast {
+  border-color: #2d5d9f;
+}
+#podcast h1 {
+  background: #2d5d9f;
+}
+#podcast h1 {
+  background: #2d5d9f;
+}
+#podcast .box-view h1 {
+  background: none;
+}
+#podcast .podTitle {
+  clear: both;
+  padding-top: 5px;
+}
+#podcast .podImg {
+  float: left;
+  width: 65px;
+  height: 65px;
+  margin: 0 5px 0 0;
+}
+#podcast .podImg img {
+  width: 65px;
+  height: 65px;
+}
+#video {
+  border-color: #683146;
+}
+#video h1 {
+  background: #683146;
+}
+#video h1 {
+  background: #683146;
+}
+#video .box-view {
+  padding: 0;
+}
+#video #youtube-footer {
+  position: relative;
+  margin: 0 10px;
+}
+#video #youtube-footer #youtube-pic {
+  display: inline-block;
+  text-align: center;
+  vertical-align: bottom;
+  width: 88px;
+}
+#video #youtube-footer #youtube-sub {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+#video #youtube-footer #youtube-lnk {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+#social {
+  border-color: #396c66;
+}
+#social h1 {
+  background: #396c66;
+}
+#social h1 {
+  background: #396c66;
+}
+#on_air {
+  width: 225px;
+  border: none;
+  background: none;
+  display: inline-block;
+  vertical-align: top;
+}
+.background-team-generic {
+  border-color: #c8d2ee;
+}
+.background-team-generic h1 {
+  background: #c8d2ee;
+}
+.background-team-filler {
+  border-color: #787c91;
+}
+.background-team-filler h1 {
+  background: #787c91;
+}
+.background-team-presenters {
+  border-color: #2d5d9f;
+}
+.background-team-presenters h1 {
+  background: #2d5d9f;
+}
+.background-team-music {
+  border-color: #57246f;
+}
+.background-team-music h1 {
+  background: #57246f;
+}
+.background-team-news {
+  border-color: #683146;
+}
+.background-team-news h1 {
+  background: #683146;
+}
+.background-team-speech {
+  border-color: #396c66;
+}
+.background-team-speech h1 {
+  background: #396c66;
+}
+.media-list-common {
+  list-style-type: none;
+  list-style-position: outside;
+  padding: 0;
+  padding-top: 5px;
+  margin: 0;
+}
+.media-list-common ul {
+  padding: 0;
+  margin: 0;
+}
+.media-list-common ul li {
+  /* Use this and the first/last-child stuff to separate items. */
+
+  margin-bottom: 5px;
+  position: relative;
+  top: 0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.media-list-common ul li > a {
+  display: block;
+  background: #363d5f;
+  padding: 5px;
+  text-decoration: none;
+  border: none;
+  color: #ffffff;
+}
+.media-list-common ul li > a:hover {
+  background: #5c67a0;
+}
+.media-list-common ul li:first-child {
+  margin-top: 0;
+}
+.media-list-common ul li:last-child {
+  margin-bottom: 0;
+}
+.media-list-common ul li h1 {
+  font-size: 120%;
+  margin: 0px;
+}
+.media-list-common ul li p.media-description {
+  margin-bottom: 17px;
+}
+.media-list-common ul li p.media-time {
+  position: absolute;
+  font-size: 12px;
+  bottom: 5px;
+  right: 5px;
+  margin: 0;
+  opacity: 0.7;
+}
+.media-list {
+  list-style-type: none;
+  list-style-position: outside;
+  padding: 0;
+  padding-top: 5px;
+  margin: 0;
+}
+.media-list ul {
+  padding: 0;
+  margin: 0;
+}
+.media-list ul li {
+  /* Use this and the first/last-child stuff to separate items. */
+
+  margin-bottom: 5px;
+  position: relative;
+  top: 0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.media-list ul li > a {
+  display: block;
+  background: #363d5f;
+  padding: 5px;
+  text-decoration: none;
+  border: none;
+  color: #ffffff;
+}
+.media-list ul li > a:hover {
+  background: #5c67a0;
+}
+.media-list ul li:first-child {
+  margin-top: 0;
+}
+.media-list ul li:last-child {
+  margin-bottom: 0;
+}
+.media-list ul li h1 {
+  font-size: 120%;
+  margin: 0px;
+}
+.media-list ul li p.media-description {
+  margin-bottom: 17px;
+}
+.media-list ul li p.media-time {
+  position: absolute;
+  font-size: 12px;
+  bottom: 5px;
+  right: 5px;
+  margin: 0;
+  opacity: 0.7;
+}
+.media-list .thumbnail {
+  width: 120px;
+  height: 120px;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+.media-list .thumbnail-flush {
+  min-height: 120px;
+  padding-left: 130px;
+}
+.mini-media-list {
+  list-style-type: none;
+  list-style-position: outside;
+  padding: 0;
+  padding-top: 5px;
+  margin: 0;
+}
+.mini-media-list ul {
+  padding: 0;
+  margin: 0;
+}
+.mini-media-list ul li {
+  /* Use this and the first/last-child stuff to separate items. */
+
+  margin-bottom: 5px;
+  position: relative;
+  top: 0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.mini-media-list ul li > a {
+  display: block;
+  background: #363d5f;
+  padding: 5px;
+  text-decoration: none;
+  border: none;
+  color: #ffffff;
+}
+.mini-media-list ul li > a:hover {
+  background: #5c67a0;
+}
+.mini-media-list ul li:first-child {
+  margin-top: 0;
+}
+.mini-media-list ul li:last-child {
+  margin-bottom: 0;
+}
+.mini-media-list ul li h1 {
+  font-size: 120%;
+  margin: 0px;
+}
+.mini-media-list ul li p.media-description {
+  margin-bottom: 17px;
+}
+.mini-media-list ul li p.media-time {
+  position: absolute;
+  font-size: 12px;
+  bottom: 5px;
+  right: 5px;
+  margin: 0;
+  opacity: 0.7;
+}
+.mini-media-list li h1 {
+  font-size: 100% !important;
+}
+.mini-media-list .thumbnail {
+  width: 48px;
+  height: 48px;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+.mini-media-list .thumbnail-flush {
+  min-height: 48px;
+  padding-left: 58px;
+}
+.media-list-background-text {
+  position: absolute;
+  bottom: -16px;
+  right: 0px;
+  z-index: 0;
+  font-size: 60px;
+  opacity: 0.2;
+  padding: 0;
+  margin: 0;
+}
+/* LISTS */
+aside nav ul,
+section.actions ul {
+  list-style-type: none;
+  list-style-position: outside;
+  margin: 0;
+  padding: 0;
+}
+aside nav li,
+section.actions li {
+  margin-bottom: 5px;
+}
+aside nav li > *,
+section.actions li > * {
+  display: block;
+  padding: 5px;
+}
+aside nav li > *:before,
+section.actions li > *:before {
+  content: "\00BB ";
+}
+aside nav li:last-child,
+section.actions li:last-child {
+  margin-bottom: 0;
+}
+#podcast-area {
+  padding-top: 12px;
+  text-align: center;
+}
+form.embed {
+  display: inline;
+}
+.schedule-header {
+  position: relative;
+  top: 0;
+  left: 0;
+  height: 30px;
+  display: block;
+}
+.schedule-header nav {
+  height: 100%;
+}
+.schedule-header h2 {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  margin: 0;
+}
+.schedule-header-quicklinks {
+  position: absolute;
+  right: 0;
+  text-align: right;
+  top: -60px;
+}
+.schedule-header-quicklinks li {
+  padding: 0 5px;
+  display: inline;
+}
+.schedule-header-quicklinks li.rsep {
+  margin-right: 12px;
+}
+.schedule-header-prev {
+  position: absolute;
+  left: 5px;
+  bottom: 0px;
+}
+.schedule-header-next {
+  position: absolute;
+  right: 5px;
+  bottom: 0px;
+}
+.schedule-common {
+  color: #ffffff;
+}
+.schedule-common a {
+  color: #feb93a;
+  text-decoration: none;
+  -webkit-text-shadow: 1px 2px black;
+  -khtml-text-shadow: 1px 2px black;
+  -moz-text-shadow: 1px 2px black;
+  text-shadow: 1px 2px black;
+}
+.schedule-common a:hover {
+  color: #ffd758;
+  text-decoration: underline;
+}
+.schedule-common a:visited {
+  color: #f4af30;
+}
+.schedule-common a:active {
+  color: #f4af30;
+}
+.schedule-common a {
+  color: #feb93a;
+  text-decoration: none;
+  -webkit-text-shadow: 1px 2px black;
+  -khtml-text-shadow: 1px 2px black;
+  -moz-text-shadow: 1px 2px black;
+  text-shadow: 1px 2px black;
+}
+.schedule-common a:hover {
+  color: #ffd758;
+  text-decoration: underline;
+}
+.schedule-common a:visited {
+  color: #f4af30;
+}
+.schedule-common a:active {
+  color: #f4af30;
+}
+/* -- DAY SCHEDULE */
+ol#schedule-day {
+  list-style-type: none;
+  list-style-position: outside;
+  padding: 0;
+  padding-top: 5px;
+  margin: 0;
+  color: #ffffff;
+}
+ol#schedule-day ul {
+  padding: 0;
+  margin: 0;
+}
+ol#schedule-day ul li {
+  /* Use this and the first/last-child stuff to separate items. */
+
+  margin-bottom: 5px;
+  position: relative;
+  top: 0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+ol#schedule-day ul li > a {
+  display: block;
+  background: #363d5f;
+  padding: 5px;
+  text-decoration: none;
+  border: none;
+  color: #ffffff;
+}
+ol#schedule-day ul li > a:hover {
+  background: #5c67a0;
+}
+ol#schedule-day ul li:first-child {
+  margin-top: 0;
+}
+ol#schedule-day ul li:last-child {
+  margin-bottom: 0;
+}
+ol#schedule-day ul li h1 {
+  font-size: 120%;
+  margin: 0px;
+}
+ol#schedule-day ul li p.media-description {
+  margin-bottom: 17px;
+}
+ol#schedule-day ul li p.media-time {
+  position: absolute;
+  font-size: 12px;
+  bottom: 5px;
+  right: 5px;
+  margin: 0;
+  opacity: 0.7;
+}
+ol#schedule-day .thumbnail {
+  width: 120px;
+  height: 120px;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+ol#schedule-day .thumbnail-flush {
+  min-height: 120px;
+  padding-left: 130px;
+}
+ol#schedule-day a {
+  color: #feb93a;
+  text-decoration: none;
+  -webkit-text-shadow: 1px 2px black;
+  -khtml-text-shadow: 1px 2px black;
+  -moz-text-shadow: 1px 2px black;
+  text-shadow: 1px 2px black;
+}
+ol#schedule-day a:hover {
+  color: #ffd758;
+  text-decoration: underline;
+}
+ol#schedule-day a:visited {
+  color: #f4af30;
+}
+ol#schedule-day a:active {
+  color: #f4af30;
+}
+ol#schedule-day a {
+  color: #feb93a;
+  text-decoration: none;
+  -webkit-text-shadow: 1px 2px black;
+  -khtml-text-shadow: 1px 2px black;
+  -moz-text-shadow: 1px 2px black;
+  text-shadow: 1px 2px black;
+}
+ol#schedule-day a:hover {
+  color: #ffd758;
+  text-decoration: underline;
+}
+ol#schedule-day a:visited {
+  color: #f4af30;
+}
+ol#schedule-day a:active {
+  color: #f4af30;
+}
+#schedule-day li {
+  position: relative;
+}
+#schedule-day li:first-child {
+  margin-top: 0;
+}
+#schedule-day li:last-child {
+  margin-bottom: 0;
+}
+#schedule-day li {
+  /* Colouring is done by the block-xyz classes. */
+
+}
+#schedule-day li p {
+  margin: 5px;
+}
+.schedule-day-show-time {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  margin: 0;
+  font-size: 24pt;
+  opacity: 0.8;
+}
+.schedule-day-show-title {
+  margin: 0;
+  font-size: 20pt;
+}
+.schedule-day-show-by-line {
+  margin: 0;
+  margin-top: -4px;
+  margin-left: 20px;
+  font-size: 18px;
+  font-style: italic;
+  opacity: 0.8;
+}
+.schedule-day-block-name {
+  position: absolute;
+  bottom: -16px;
+  right: 0px;
+  z-index: 0;
+  font-size: 60px;
+  opacity: 0.2;
+  padding: 0;
+  margin: 0;
+}
+/* -- WEEK SCHEDULE */
+table#schedule-week-table {
+  background: none repeat scroll 0% 0% rgba(0, 0, 0, 0.4);
+  table-layout: fixed;
+  margin: 0 auto;
+  padding-bottom: 5px;
+  position: relative;
+  right: 12px;
+  top: 15px;
+  width: 1050px;
+  border-collapse: separate;
+  border-spacing: 5px 1px;
+  color: #ffffff;
+}
+table#schedule-week-table thead tr th {
+  padding: 5px;
+}
+table#schedule-week-table td {
+  padding: 5px;
+  font-size: 14px;
+  text-align: left;
+  vertical-align: top;
+  width: 130px;
+}
+table#schedule-week-table a {
+  color: #feb93a;
+  text-decoration: none;
+  -webkit-text-shadow: 1px 2px black;
+  -khtml-text-shadow: 1px 2px black;
+  -moz-text-shadow: 1px 2px black;
+  text-shadow: 1px 2px black;
+}
+table#schedule-week-table a:hover {
+  color: #ffd758;
+  text-decoration: underline;
+}
+table#schedule-week-table a:visited {
+  color: #f4af30;
+}
+table#schedule-week-table a:active {
+  color: #f4af30;
+}
+table#schedule-week-table a {
+  color: #feb93a;
+  text-decoration: none;
+  -webkit-text-shadow: 1px 2px black;
+  -khtml-text-shadow: 1px 2px black;
+  -moz-text-shadow: 1px 2px black;
+  text-shadow: 1px 2px black;
+}
+table#schedule-week-table a:hover {
+  color: #ffd758;
+  text-decoration: underline;
+}
+table#schedule-week-table a:visited {
+  color: #f4af30;
+}
+table#schedule-week-table a:active {
+  color: #f4af30;
+}
+.schedule-week-time {
+  width: 30px;
+  padding: 5px;
+  vertical-align: top;
+}
+.schedule-week-hour {
+  border-top: 2px solid rgba(0, 0, 0, 0.4);
+  font-size: 20px;
+}
+.schedule-week-non-hour {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.4);
+}
+.schedule-week-continued {
+  display: none;
+}
+/* BLOCKS */
+.background-team-generic {
+  border-color: #c8d2ee;
+}
+.background-team-generic h1 {
+  background: #c8d2ee;
+}
+.background-team-filler {
+  border-color: #787c91;
+}
+.background-team-filler h1 {
+  background: #787c91;
+}
+.background-team-presenters {
+  border-color: #2d5d9f;
+}
+.background-team-presenters h1 {
+  background: #2d5d9f;
+}
+.background-team-music {
+  border-color: #57246f;
+}
+.background-team-music h1 {
+  background: #57246f;
+}
+.background-team-news {
+  border-color: #683146;
+}
+.background-team-news h1 {
+  background: #683146;
+}
+.background-team-speech {
+  border-color: #396c66;
+}
+.background-team-speech h1 {
+  background: #396c66;
+}
+.block-default {
+  background: #71737C;
+}
+.block-jukebox {
+  background: #191C2C;
+}
+.block-special {
+  background: #34A5AD;
+}
+.block-flagship {
+  background: #2d5d9f;
+}
+.block-music {
+  background: #57246f;
+}
+.block-news {
+  background: #683146;
+}
+.block-speech {
+  background: #396c66;
+}
+/* SHOWDB */
+.schedule-showdb-hgroup > h2 {
+  margin: 0 0 0 0;
+}
+.schedule-showdb-hgroup > h3 {
+  margin: 0 0 0 20px;
+}
+/* BANNERS */
+img.banner-img {
+  width: 100%;
+  height: 100%;
+}
+/*******************************************************************
+ *                                                                 *
+ * LESS for home page Twitter feed                                 *
+ *                                                                 *
+ * Please respect those coders that come after you by keeping this *
+ * tidy and consistent, and your class names meaningful even if    *
+ * their style completely changes later.                           *
+ *                                                                 *
+ * Based on the seaofclouds.com Twitter script CSS                 *
+ *                                                                 *
+ * Thanks!                                                         *
+ *                                                                 *
+ *******************************************************************/
+/* See main LESS file (main.less) for variables. */
+.colour-links a {
+  color: #feb93a;
+  text-decoration: none;
+  -webkit-text-shadow: 1px 2px black;
+  -khtml-text-shadow: 1px 2px black;
+  -moz-text-shadow: 1px 2px black;
+  text-shadow: 1px 2px black;
+}
+.colour-links a:hover {
+  color: #ffd758;
+  text-decoration: underline;
+}
+.colour-links a:visited {
+  color: #f4af30;
+}
+.colour-links a:active {
+  color: #f4af30;
+}
+.tweet .tweet_list,
+.query .tweet_list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: hidden;
+}
+.tweet .tweet_list li,
+.query .tweet_list li {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+}
+.tweet .tweet_list .awesome,
+.query .tweet_list .awesome,
+.tweet .tweet_list .epic,
+.query .tweet_list .epic {
+  text-transform: uppercase;
+}
+.tweet .tweet_list .tweet_even,
+.query .tweet_list .tweet_even {
+  background-color: #363d5f;
+}
+.tweet .tweet_list .tweet_avatar,
+.query .tweet_list .tweet_avatar {
+  padding-right: .5em;
+  float: left;
+}
+.tweet .tweet_list .tweet_avatar img,
+.query .tweet_list .tweet_avatar img {
+  vertical-align: middle;
+}
+/*
+ *  Blogs
+ */
+nav ul.breadcrumbs {
+  margin: 0;
+  padding: 0;
+}
+nav ul.breadcrumbs li {
+  display: inline-block;
+}
+nav ul.breadcrumbs li:after {
+  content: "\00BB";
+}
+nav ul.breadcrumbs li:last-of-type:after {
+  content: "";
+}
+.blog #sidebar {
+  padding: 0;
+}
+.pluginBoxContainer {
+  border: none !important;
+}
+#content-header h2,
+article > header h1 {
+  font-size: 2em;
+  text-transform: none;
+  margin: 0;
+  border-bottom: 5px solid #363d5f;
+}
+article header,
+article aside {
+  color: #ffffff;
+}
+article header a,
+article aside a {
+  color: #feb93a;
+  text-decoration: none;
+  -webkit-text-shadow: 1px 2px black;
+  -khtml-text-shadow: 1px 2px black;
+  -moz-text-shadow: 1px 2px black;
+  text-shadow: 1px 2px black;
+}
+article header a:hover,
+article aside a:hover {
+  color: #ffd758;
+  text-decoration: underline;
+}
+article header a:visited,
+article aside a:visited {
+  color: #f4af30;
+}
+article header a:active,
+article aside a:active {
+  color: #f4af30;
+}
+article header a,
+article aside a {
+  color: #feb93a;
+  text-decoration: none;
+  -webkit-text-shadow: 1px 2px black;
+  -khtml-text-shadow: 1px 2px black;
+  -moz-text-shadow: 1px 2px black;
+  text-shadow: 1px 2px black;
+}
+article header a:hover,
+article aside a:hover {
+  color: #ffd758;
+  text-decoration: underline;
+}
+article header a:visited,
+article aside a:visited {
+  color: #f4af30;
+}
+article header a:active,
+article aside a:active {
+  color: #f4af30;
+}
+#content-header {
+  color: #ffffff;
+}
+#content-body {
+  background: #dddddd;
+  padding: 10px 15px;
+}
+.article-body {
+  background: #dddddd;
+}
+/* ==========================================================================
+   URY layout classes
+   ========================================================================== */
+div.pageAside {
+  float: left;
+  width: 800px;
+}
+aside.rightAside {
+  float: right;
+  width: 200px;
+  padding-left: 25px;
+}
+div#left,
+div#right {
+  display: table-cell;
+  width: 500px;
+}
+div#left {
+  margin-left: 0;
+  margin-right: auto;
+  padding-right: 10px;
+}
+div#right {
+  margin-left: auto;
+  margin-right: 0;
+  padding-left: 10px;
+}
+/* ==========================================================================
+   URY style classes
+   ========================================================================== */
+.transBG {
+  background: #363d5f;
+}
+.transHovBG {
+  background: #363d5f;
+}
+.transHovBG:hover {
+  background: #5c67a0;
+}
+a.transHovBG:hover {
+  text-decoration: none;
+  border: none;
+}
+.roundy {
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+.image-heading {
+  margin: 0;
+}
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+/*
+ * Image replacement
+ */
+.ir {
+  background-color: transparent;
+  border: 0;
+  overflow: hidden;
+  /* IE 6/7 fallback */
+
+  *text-indent: -9999px;
+}
+.ir:before {
+  content: "";
+  display: block;
+  width: 0;
+  height: 100%;
+}
+/*
+ * Hide from both screenreaders and browsers: h5bp.com/u
+ */
+.hidden {
+  display: none !important;
+  visibility: hidden;
+}
+/*
+ * Hide only visually, but have it available for screenreaders: h5bp.com/v
+ */
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+/*
+ * Extends the .visuallyhidden class to allow the element to be focusable
+ * when navigated to via the keyboard: h5bp.com/p
+ */
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  width: auto;
+}
+/*
+ * Hide visually and from screenreaders, but maintain layout
+ */
+.invisible {
+  visibility: hidden;
+}
+/*
+ * Clearfix: contain floats
+ *
+ * For modern browsers
+ * 1. The space content is one way to avoid an Opera bug when the
+ *    `contenteditable` attribute is included anywhere else in the document.
+ *    Otherwise it causes space to appear at the top and bottom of elements
+ *    that receive the `clearfix` class.
+ * 2. The use of `table` rather than `block` is only necessary if using
+ *    `:before` to contain the top-margins of child elements.
+ */
+.clearfix:before,
+.clearfix:after {
+  content: " ";
+  /* 1 */
+
+  display: table;
+  /* 2 */
+
+}
+.clearfix:after {
+  clear: both;
+}
+/*
+ * For IE 6/7 only
+ * Include this rule to trigger hasLayout and contain floats.
+ */
+.clearfix {
+  *zoom: 1;
+}
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   Theses examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+@media print {
+  * {
+    background: transparent !important;
+    color: #000 !important;
+    /* Black prints faster: h5bp.com/s */
+  
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+  abbr[title]:after {
+    content: " (" attr(title) ")";
+  }
+  /*
+       * Don't show links for images, or javascript/internal links
+       */
+  .ir a:after,
+  a[href^="javascript:"]:after,
+  a[href^="#"]:after {
+    content: "";
+  }
+  pre,
+  blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+  thead {
+    display: table-header-group;
+    /* h5bp.com/t */
+  
+  }
+  tr,
+  img {
+    page-break-inside: avoid;
+  }
+  img {
+    max-width: 100% !important;
+  }
+  @page  {
+    margin: 0.5cm;
+  }
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+}

@@ -4,4 +4,4 @@
        {% if field.options.minlength is defined %} minlength="{{field.options.minlength}}"{% endif %}
        {% if field.options.maxlength is defined %} maxlength="{{field.options.maxlength}}"{% endif %}
        {% if not field.enabled %} readonly="readonly"{% endif %}>{{field.value}}</textarea>
-<span class="myuryfrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
+<span class="myradiofrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>

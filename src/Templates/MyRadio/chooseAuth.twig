@@ -1,27 +1,25 @@
 {% extends 'stripe.twig' %}
 {% block head %}
 {{ parent() }}
-<style type="text/css">
-    label {display:block;padding:1em}
-    input {float:left}
-</style>
 {% endblock %}
 {% block stripecontent %}
 <p>Hey there!</p>
 <p>We've made some changes to the way you can log in to {{config.short_name}},
 and want to let you choose how you do it from now on. Select your preferred option
 from the list below. We've highlighted the one we think is best for you.</p>
-<form action='{{myury.makeURL(config,"MyRadio","chooseAuth")}}' method='post'>
+<form action='{{myury.makeURL(config,"MyRadio","chooseAuth")}}' method='post' class='chooseAuth'>
     <input type='hidden' name='next' value='{{next}}'>
     {% for a in methods %}
-    <label for="{{a.value}}" {% if a.default %}class="ui-widget-content"{% endif %}{% if a.different %}class="ui-state-disabled"{% endif %}>
-    <input type="radio" name="authenticator" value="{{a.value}}" id="{{a.value}}" {% if a.default %}checked{% endif %}>
-    <h3>Use my {{a.name}} password to login</h3>
-    <p>{{a.description}}</p>
-    {% if a.different %}
-    <p><em>We couldn't verify you have {{a.name}} credentials. If you choose this option, your username and password will change.</em></p>
-    {% endif %}
-    </label>
+    <div class='myradiofrmfield-container'>
+        <label for="{{a.value}}" {% if a.default %}class="ui-widget-content"{% endif %}{% if a.different %}class=""{% endif %}>
+        <input type="radio" name="authenticator" value="{{a.value}}" id="{{a.value}}" {% if a.default %}checked{% endif %}>
+        <h3>Use my {{a.name}} password to login</h3>
+        <p>{{a.description}}</p>
+        {% if a.different %}
+        <p><em>We couldn't verify you have {{a.name}} credentials. If you choose this option, your username and password will change.</em></p>
+        {% endif %}
+        </label>
+    </div>
     {% endfor %}
     <br>
     <input type='submit' value="Select Option">

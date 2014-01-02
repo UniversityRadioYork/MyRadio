@@ -17,7 +17,7 @@ Times are arranged 7am-7am to be compatible with The URY Day.
 Input values are expected to be with days relevant to midnight - the Template handles conversion.
 #}
 {% if display_labels %}<h3>{{field.label}}</h3>{% endif %}
-<table class="myuryfrmfield myuryfrmfield-weeklycheck" id="{{frm_name}}-{{ field.name }}">
+<table class="myradiofrmfield myradiofrmfield-weeklycheck" id="{{frm_name}}-{{ field.name }}">
   {# Prepare the Header row #}
   <thead>
     <tr>
@@ -48,8 +48,8 @@ Input values are expected to be with days relevant to midnight - the Template ha
             {% set checked = true %}
           {% endif %}
         {% endfor %}
-        <input type="checkbox" name="{{timename}}" id="{{timename}}" class="myuryfrmfield myuryfrmfield-weeklycheck" {% if checked %}checked="checked"{% endif %}>
-        <label for="{{timename}}" class="myuryfrmfield-weeklycheck">&nbsp;</label>
+        <input type="checkbox" name="{{timename}}" id="{{timename}}" class="myradiofrmfield myradiofrmfield-weeklycheck" {% if checked %}checked="checked"{% endif %}>
+        <label for="{{timename}}" class="myradiofrmfield-weeklycheck">&nbsp;</label>
       </td>
       {% endfor %}
     </tr>
