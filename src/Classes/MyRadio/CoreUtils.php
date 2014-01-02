@@ -23,6 +23,15 @@ class CoreUtils {
      */
     private static $auth_cached = false;
     private static $svc_version_cache = array();
+    
+    /**
+     * Stores the result of CoreUtils::getAcademicYear
+     * 
+     * This cut 8k queries off of loading one test page...
+     * 
+     * @var int
+     */
+    private static $academicYear;
 
     /**
      * Stores permission typeid => description mappings
@@ -154,13 +163,16 @@ class CoreUtils {
      * @assert () == 2013
      */
     public static function getAcademicYear() {
-        $term = Database::getInstance()->fetch_column('SELECT start FROM public.terms WHERE descr=\'Autumn\'
+        if (empty(CoreUtils::$academicYear)) {
+            $term = Database::getInstance()->fetch_column('SELECT start FROM public.terms WHERE descr=\'Autumn\'
       AND EXTRACT(year FROM start) = $1', array(date('Y')));
-        if (strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days')) {
-            return date('Y');
-        } else {
-            return date('Y') - 1;
+            if (strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days')) {
+                CoreUtils::$academicYear = date('Y');
+            } else {
+                CoreUtils::$academicYear = date('Y') - 1;
+            }
         }
+        return CoreUtils::$academicYear;
     }
 
     /**
@@ -796,4 +808,5 @@ class CoreUtils {
         'Vinyl',
         'Broadcasting'
     );
+
 }

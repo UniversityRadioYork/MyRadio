@@ -24,7 +24,7 @@ if ($user->isOfficer()) {
   $userData['email'] = $user->getPublicEmail();
 }
 
-if ($visitor->hasAuth(AUTH_VIEWOTHERMEMBERS)) {
+if (CoreUtils::hasPermission(AUTH_VIEWOTHERMEMBERS)) {
   $userData['email'] = $user->getEmail();
   $userData['eduroam'] = $user->getEduroam();
   $userData['local_alias'] = $user->getLocalAlias();
@@ -43,12 +43,12 @@ if ($user->getID() === $visitor->getID() or $visitor->hasAuth(AUTH_EDITANYPROFIL
   $template->addVariable('editurl', '<a href="'.CoreUtils::makeURL('Profile', 'edit',
           array('memberid' => $user->getID())).'">Edit Profile</a>');
 }
-if ($visitor->hasAuth(AUTH_IMPERSONATE) &&
-        ($user->hasAuth(AUTH_BLOCKIMPERSONATE) === false or $visitor->hasAuth(AUTH_IMPERSONATE_BLOCKED_USERS))) {
+if (CoreUtils::hasPermission(AUTH_IMPERSONATE) &&
+        ($user->hasAuth(AUTH_BLOCKIMPERSONATE) === false or CoreUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS))) {
   $template->addVariable('impersonateurl',
-          '<a href="'.Config::$shib_url.'/impersonate.php?memberid='.$user->getID().'">Impersonate User</a>');
+          '<a href="'.CoreUtils::makeURL('MyRadio', 'impersonate', ['memberid' => $user->getID()]).'">Impersonate User</a>');
 }
-if ($visitor->hasAuth(AUTH_LOCK)) {
+if (CoreUtils::hasPermission(AUTH_LOCK)) {
   $template->addVariable('lockurl',
           '<a href="'.CoreUtils::makeURL('Profile', 'lock',
           array('memberid' => $user->getID())).'">Disable Account</a>');
