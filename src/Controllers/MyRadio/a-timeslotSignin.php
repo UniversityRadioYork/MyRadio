@@ -1,0 +1,17 @@
+<?php
+/**
+ * Just empties out the active Joyride, marking it as done.
+ * 
+ * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @version 20140102
+ * @package MyRadio_Core
+ */
+
+$ts = MyRadio_Timeslot::getInstance($_REQUEST['timeslotid']);
+if ($ts->getSeason()->getShow()->isCurrentUserAnOwner()
+        or CoreUtils::hasPermission(AUTH_EDITSHOWS)) {
+    $data = $ts->getSigninInfo();
+    require_once 'Views/MyRadio/datatojson.php';
+} else {
+    require_once 'Controllers/Errors/403.php';
+}

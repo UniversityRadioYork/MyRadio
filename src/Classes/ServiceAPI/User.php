@@ -150,6 +150,21 @@ class User extends ServiceAPI {
    * @var int[]
    */
   private $shows;
+  
+  /**
+   * The Authentication Provider that should be used when logging this user in
+   * default Null (any)
+   * 
+   * @var String|null
+   */
+  private $auth_provider;
+  
+  /**
+   * If true, this user needs to change their password at next logon.
+   * 
+   * @var boolean
+   */
+  private $require_password_change;
 
   /**
    * Initiates the User variables
@@ -159,8 +174,10 @@ class User extends ServiceAPI {
     $this->memberid = $memberid;
     //Get the base data
     $data = self::$db->fetch_one(
-            'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college, phone, email,
-              receive_email, local_name, local_alias, eduroam, account_locked, last_login, joined, profile_photo, bio
+            'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college,
+                phone, email, receive_email, local_name, local_alias, eduroam,
+                account_locked, last_login, joined, profile_photo, bio,
+                auth_provider, require_password_change
               FROM member, l_college
               WHERE memberid=$1 
               AND member.college = l_college.collegeid
@@ -523,6 +540,24 @@ class User extends ServiceAPI {
   public function getBio() {
     return $this->bio;
   }
+  
+  /**
+   * Get the User's auth provider
+   * 
+   * @return String
+   */
+  public function getAuthProvider() {
+      return $this->auth_provider;
+  }
+  
+  /**
+   * Get whether the user needs to change their password
+   * 
+   * @return boolean
+   */
+  public function getRequirePasswordChange() {
+      return $this->require_password_change;
+  }
 
   /**
    * Returns an array of Shows which the User owns or is an active
@@ -712,7 +747,8 @@ class User extends ServiceAPI {
   /**
    * Sets the User's account locked status.
    * 
-   * If a User's account is locked, access to all URY services is blocked by Shibbobleh and IMAP.
+   * If a User's account is locked, access to all URY services is blocked by
+   * MyRadio and IMAP.
    * 
    * @param bool $bool True for Locked, False for Unlocked. Default True.
    * @return User
@@ -858,6 +894,16 @@ class User extends ServiceAPI {
    */
   public function setReceiveEmail($bool = true) {
     $this->setCommonParam('receive_email', $bool);
+    return $this;
+  }
+  
+  /**
+   * Set the User's preferred Auth provider
+   * @param String $provider
+   * @return User
+   */
+  public function setAuthProvider($provider = null) {
+    $this->setCommonParam('auth_provider', $provider);
     return $this;
   }
 
@@ -1224,8 +1270,7 @@ class User extends ServiceAPI {
       . 'Their eduroam or email is already used.');
     }
 
-    //This next comment explains that password generation is not done in MyRadio itself, but an external library.
-    //Looks good. Generate a password for them. This is done by Shibbobleh.
+    //Looks good. Generate a password for them.
     $plain_pass = CoreUtils::newPassword();
 
     //Actually create the member!
@@ -1249,11 +1294,10 @@ class User extends ServiceAPI {
     }
 
     $memberid = $r[0];
-    /**
-     * @todo Move away from Shibbobleh
-     */
+    $user = User::getInstance($memberid);
+    
     //Activate the member's account for the current academic year
-    Shibbobleh_Utils::activateMemberThisYear($memberid, $paid);
+    $user->activateMemberThisYear($paid);
     //Set the user's password
     Shibbobleh_Utils::setPassword($memberid, $plain_pass);
 
@@ -1271,6 +1315,21 @@ class User extends ServiceAPI {
             $welcome_email, 'getinvolved@'.Config::$email_domain);
 
     return User::getInstance($memberid);
+  }
+  
+  /**
+   * Update a User's account so that they are active for the current academic year.
+   * 
+   * Activating a membership re-activates basic access to web services, and
+   * renews their mailing list subscriptions.
+   * 
+   * @param int $paid
+   * @return boolean
+   */
+  public function activateMemberThisYear($paid = 0) {
+      self::$db->query('INSERT INTO public.member_year (memberid, year, paid) VALUES ($1, $2, $3)',
+            array($this->getID(), CoreUtils::getAcademicYear(), $paid));
+      return true;
   }
 
   /**

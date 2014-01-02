@@ -29,4 +29,14 @@ interface MyRadioAuthenticator {
      * attempting resets once one Authenticator has return true.
      */
     public function resetAccount($user);
+    
+    /**
+     * A friendly name to explain to users what the login method is
+     */
+    public function getFriendlyName();
+    
+    /**
+     * A friendly description to explain to users what selecting this authenticator does
+     */
+    public function getDescription();
 }

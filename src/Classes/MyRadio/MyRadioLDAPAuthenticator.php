@@ -36,6 +36,9 @@ class MyRadioLDAPAuthenticator implements MyRadioAuthenticator {
         }
     }
     /**
+     * This authenticator does not add any extra permissions to the ones already
+     * defined internally.
+     * 
      * @param String $user The username (a full email address, or the prefix
      * if it matches Config::$eduroam_domain).
      * @return Array A list of IDs for the permission flags this user should be
@@ -55,5 +58,13 @@ class MyRadioLDAPAuthenticator implements MyRadioAuthenticator {
      */
     public function resetAccount($user) {
         return false;
+    }
+    
+    public function getFriendlyName() {
+        return Config::$auth_ldap_friendly_name;
+    }
+    
+    public function getDescription() {
+        return 'By choosing this option, we will always use your '.$this->getFriendlyName().' username and password to log you in. Whenever you change your '.$this->getFriendlyName().' password, your '.Config::$short_name.' password will also change.';
     }
 }

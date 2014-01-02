@@ -22,35 +22,89 @@ $form = (new MyRadioForm('myradio_login', 'MyRadio', 'login', array(
             'explanation' => '',
             'label' => 'Password:'
                 ))
+        )->addField(
+                new MyRadioFormField('next', MyRadioFormField::TYPE_HIDDEN, array(
+            'value' => isset($_REQUEST['next']) ? $_REQUEST['next'] : Config::$base_url
+                ))
         )->setTemplate('MyRadio/login.twig');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])) {
     //Submitted
     $status = null;
     $data = $form->readValues();
 
     $raw_uname = str_replace('@' . Config::$eduroam_domain, '', $data['user']);
 
+    $authenticators = [];
     foreach (Config::$authenticators as $i) {
         $authenticator = new $i();
         $user = $authenticator->validateCredentials($raw_uname, $data['password']);
 
         if ($user) {
-            $_SESSION['memberid'] = $user->getID();
-            $_SESSION['member_permissions'] = array_merge($user->getPermissions(),
-                    $authenticator->getPermissions($raw_uname));
-            $_SESSION['name'] = $user->getName();
-            $_SESSION['email'] = $user->getEmail();
-            $user->updateLastLogin();
-            $status = 'success';
-            break;
+            if ($user->getAccountLocked()) {
+                //The user's account is disabled
+                $status = 'locked';
+                break;
+            } elseif (Config::$single_authenticator &&
+                    $user->getAuthProvider() != null && $user->getAuthProvider() != $i) {
+                //They can only authenticate with the right provider once they've set one
+                //(if they haven't yet, we'll ask them to choose one)
+                $status = 'wrongAuthProvider';
+            } else {
+                $_SESSION['memberid'] = $user->getID();
+                $_SESSION['member_permissions'] = array_merge($user->getPermissions(), $authenticator->getPermissions($raw_uname));
+                $_SESSION['name'] = $user->getName();
+                $_SESSION['email'] = $user->getEmail();
+                $_SESSION['auth_use_locked'] = false;
+                $_SESSION['auth_hash'] = sha1(session_id().$_SESSION['name'].$_SESSION['email'].$_SESSION['memberid']);
+                $user->updateLastLogin();
+                $status = 'success';
+                $authenticators[$i] = true;
+                if ($user->getRequirePasswordChange()) {
+                    //The user needs to change their password
+                    $_SESSION['auth_use_locked'] = 'changePassword';
+                    $status = 'change';
+                }
+
+                //If the user needs to specify an auth provider, go through all login mechanisms
+                if (Config::$single_authenticator && !$user->getAuthProvider()) {
+                    $_SESSION['auth_use_locked'] = 'chooseAuth';
+                    $status = 'choose';
+                } else {
+                    break;
+                }
+            }
+        } else {
+            $authenticators[$i] = false;
         }
     }
 
-    if ($status !== 'success') {
+    if ($status === 'choose') {
+        //The user needs to set a login provider
+        $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/chooseAuth.twig')
+                ->addVariable('title', 'Choose Login Method');
+        $options = [];
+        $chosen_default = false;
+        foreach ($authenticators as $authenticator => $success) {
+            $a = new $authenticator();
+            $option = ['value' => $authenticator,
+                'name' => $a->getFriendlyName(),
+                'description' => $a->getDescription(),
+                'different' => !$success,
+                'default' => false];
+            if ($success && !$chosen_default) {
+                $option['default'] = true;
+                $chosen_default = true;
+            }
+            $options[] = $option;
+        }
+        $twig->addVariable('methods', $options)
+                ->addVariable('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL(Config::$default_module))
+                ->render();
+    } elseif ($status !== 'success') {
         $form->render(['error' => true]);
     } else {
-        if ($data['next']) {
+        if (isset($data['next'])) {
             header('Location: ' . $data['next']);
         } else {
             header('Location: ' . CoreUtils::makeURL(Config::$default_module));

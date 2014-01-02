@@ -596,6 +596,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
 
   /**
    * Get information about the Users signed into this Timeslot.
+   * @todo Cache this data?
    */
   public function getSigninInfo() {
     $result = self::$db->fetch_all('SELECT * FROM (SELECT creditid AS memberid '
@@ -640,6 +641,18 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
       }
     }
     return $result;
+  }
+  
+  /**
+   * Signs the given user into the timeslot to say they were on air at this time.
+   * 
+   * @param User $member
+   */
+  public function signIn(User $member) {
+      self::$db->query('INSERT INTO sis2.member_signin'
+              . ' (show_season_timeslot_id, memberid, signerid)'
+              . ' VALUES ($1, $2, $3)',
+              [$this->getID(), $member->getID(), User::getInstance()->getID()]);
   }
 
 }

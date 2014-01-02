@@ -9,7 +9,7 @@
 class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticator {
 
     /**
-     * Sets up the LDAP connection
+     * Sets up the DB connection
      */
     public function __construct() {
         $this->db = pg_connect('host=' . Config::$db_hostname . ' port=5432 dbname=' . Config::$db_name . '
@@ -21,7 +21,7 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
     }
 
     /**
-     * Tears down the LDAP connection
+     * Tears down the DB connection
      */
     public function __destruct() {
         pg_close($this->db);
@@ -35,8 +35,13 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
      * return false on failure.
      * @todo Require change password
      * @todo Account lock
+     * @todo Make timing consistent
      */
     public function validateCredentials($user, $password) {
+        //If local passwords are disabled, don't even try.
+        if (!Config::$enable_local_passwords) {
+            return false;
+        }
         //Find the member in our DB
         $user = User::findByEmail($user);
         if (!$user) {
@@ -50,13 +55,13 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
                 //Validate the password
                 if (crypt($password, $r[0]) === $r[0]) {
                     //Check if the password is legacy MD5
-                    if (substr($row[0], 0, 3) === '$1$') {
+                    if (substr($r[0], 0, 3) === '$1$') {
                         //Upgrade password
-                        $new_password = $this->encrypt($r[0]);
-                        $this->query('UPDATE member SET password=$1 WHERE memberid=$2', [$new_password, $user->getID()]);
-                        log_entry('Password hash set to ' . $new_password);
+                        $new_password = $this->encrypt($password);
+                        $this->query('UPDATE member_pass SET password=$1 WHERE memberid=$2',
+                                    [$new_password, $user->getID()]);
                     }
-                    unset($new_password, $r); //Just to be safe.
+                    unset($password, $new_password, $r); //Just to be safe.
                     return $user;
                 } else {
                     return false;
@@ -66,6 +71,9 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
     }
 
     /**
+     * This authenticator does not add any extra permissions to the ones already
+     * defined internally.
+     * 
      * @param String $user The username (a full email address, or the prefix
      * if it matches Config::$eduroam_domain).
      * @return Array A list of IDs for the permission flags this user should be
@@ -77,7 +85,7 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
     }
 
     /**
-     * This authenticator can not process password resets.
+     * This authenticator will reset the password in the MyRadio database.
      * 
      * @param String $user The username (a full email address, or the prefix
      * if it matches Config::$eduroam_domain).
@@ -106,6 +114,14 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
      */
     private function randomString($pwdLen = 32) {
         return openssl_random_pseudo_bytes($pwdLen);
+    }
+    
+    public function getFriendlyName() {
+        return Config::$short_name.'-only';
+    }
+    
+    public function getDescription() {
+        return 'By choosing this option, we will always use your unique '.$this->getFriendlyName().' username and password to log you in. This password is completely seperate to any other details you may have.';
     }
 
 }

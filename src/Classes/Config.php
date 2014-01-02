@@ -438,7 +438,7 @@ final class Config {
   );
 
   /**
-   * URL of the URY news provider
+   * URL of the news provider
    * @var string
    */
   public static $news_provider = "http://www.irn.co.uk/";
@@ -461,12 +461,34 @@ final class Config {
    * The Authenticators are tried in order when completing user authentication
    * operations.
    */
+  //public static $authenticators = ['MyRadioLDAPAuthenticator', 'MyRadioDefaultAuthenticator'];
   public static $authenticators = ['MyRadioLDAPAuthenticator', 'MyRadioDefaultAuthenticator'];
-  public static $auth_ldap_server = 'ldap.york.ac.uk';
+  public static $auth_ldap_server = 'ldap://ldap.york.ac.uk';
   public static $auth_ldap_root = 'ou=people,ou=csrv,ou=nos,dc=york,dc=ac,dc=uk';
   public static $auth_db_user = 'shibbobleh';
   public static $auth_db_pass = '';
   public static $eduroam_domain = 'york.ac.uk';
+  public static $auth_ldap_friendly_name = 'IT Services (e.g. abc123)';
+  
+  /**
+   * If true, users will be bound to a single Authenticator. Users whose
+   * authenticator is NULL will be asked to set an Authenticator after login.
+   * 
+   * If it is false, all authenticators will be valid for all users.
+   * 
+   * @var boolean
+   */
+  public static $single_authenticator = true;
+  
+  /**
+   * If false, MyRadioDefaultAuthenticator will never pass, passwords will not
+   * be set for new users, and the Change Password functionality will not be
+   * available.
+   * 
+   * @var boolean
+   */
+  public static $enable_local_passwords = true;
+  
   /**
    * The number of days before the start of the academic year when accounts are inactivated
    * The current choice should mean it resets results week.
