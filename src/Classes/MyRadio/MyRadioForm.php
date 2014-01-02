@@ -244,7 +244,6 @@ class MyRadioForm {
             ->addVariable('serviceName', isset($this->module) ? $this->module : $this->name)
             ->addVariable('frm_fields', $fields)
             ->addVariable('frm_custom', $frmcustom);
-
     $twig->render();
   }
 

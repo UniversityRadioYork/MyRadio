@@ -328,7 +328,7 @@ class CoreUtils {
         $authorised = false;
         foreach ($result as $permission) {
             //It only needs to match one
-            if ($permission === AUTH_NOLOGIN || self::hasPermission($permission)) {
+            if ($permission === AUTH_NOLOGIN || (self::hasPermission($permission) && $_SESSION['auth_use_locked'] === false)) {
                 $authorised = true;
                 break;
             }
@@ -336,7 +336,7 @@ class CoreUtils {
 
         if (!$authorised && $require) {
             //Requires login
-            if (!isset($_SESSION['memberid'])) {
+            if (!isset($_SESSION['memberid']) || $_SESSION['auth_use_locked'] !== false) {
                 require 'Controllers/MyRadio/login.php';
             } else {
                 //Authenticated, but not authorized
@@ -671,6 +671,11 @@ class CoreUtils {
 
     //Reports some things
     public static function shutdown() {
+        try {
+            $db = Database::getInstance();
+        } catch (MyRadioException $e) {
+            return;
+        }
         if (!empty($_SERVER['SERVER_ADDR'])) {
             //Don't let the client wait for us
             flush();
@@ -679,10 +684,10 @@ class CoreUtils {
 
         $errors = MyRadioError::getErrorCount();
         $exceptions = MyRadioException::getExceptionCount();
-        $queries = Database::getInstance()->getCounter();
+        $queries = $db->getCounter();
         $host = gethostbyname(gethostname());
 
-        Database::getInstance()->query('INSERT INTO myury.error_rate (server_ip, error_count, exception_count, queries)
+        $db->query('INSERT INTO myury.error_rate (server_ip, error_count, exception_count, queries)
       VALUES ($1, $2, $3, $4)', array($host, $errors, $exceptions, $queries));
     }
 
@@ -740,10 +745,56 @@ class CoreUtils {
     }
     
     /**
-     * @todo Implement
+     * Generates a new password consisting of two words and a two-digit number
+     * @todo Make this crypto secure random?
+     * @return String
      */
     public static function newPassword() {
-        
+        return self::$words[array_rand(self::$words)] . rand(10, 99)
+                . self::$words[array_rand(self::$words)];
     }
+    
+    /**
+     * Words used by CoreUtils::newPassword
+     * @var String[]
+     */
+    private static $words = array(
+      'Radio',
+      'Microphone',
+      'Studio',
+      'Speaker',
+      'Headphone',
+      'Compressor',
+      'Fader',
+      'Schedule',
+      'Podcast',
+      'Music',
+      'Track',
+      'Record',
+      'Artist',
+      'Publisher',
+      'Album',
+      'Broadcast',
+      'Transmitter',
+      'Silence',
+      'Selector',
+      'Management',
+      'Engineering',
+      'Computing',
+      'Business',
+      'Events',
+      'Speech',
+      'Training',
+      'Presenting',
+      'Stores',
+      'Tardis',
+      'Relay',
+      'Jingle',
+      'Advert',
+      'Frequency',
+      'Modulation',
+      'Vinyl',
+      'Broadcasting'
+  );
 
 }

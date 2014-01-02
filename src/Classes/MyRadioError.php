@@ -56,7 +56,7 @@ class MyRadioError {
    * @param string $errline The line number where the error was generated (within the file identified by $errfile).
    */
   public static function errorsToArray($errno, $errstr, $errfile, $errline) {
-    if ($errno === E_STRICT)
+    if ($errno === E_STRICT or error_reporting() === 0)
       return;
     $error_name = self::getErrorName($errno);
     $php_error = array(
@@ -101,8 +101,9 @@ class MyRadioError {
    */
   public static function errorsToEmail($errno, $errstr, $errfile, $errline) {
     //I don't like this error. It is compatible. Maybe I'll report a PHP bug sometime.
-    if (strstr($errstr, 'should be compatible with') !== false)
-      return;
+    if (strstr($errstr, 'should be compatible with') !== false) {
+        return;
+    }
     self::$count++; //Increment the error counter
 
     $errstr = utf8_encode($errstr);

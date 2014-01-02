@@ -102,7 +102,7 @@ class Database {
         pg_query($this->db, 'ROLLBACK');
       }
       throw new MyRadioException('Query failure: ' . $sql . '<br>'
-              . pg_errormessage($this->db).'<br>Params: '.print_r($params,true));
+              . pg_errormessage($this->db).'<br>Params: '.print_r($params,true), 500);
     }
     $this->counter++;
     return $result;

@@ -19,6 +19,7 @@ class MyRadioTwig implements TemplateEngine {
     /**
      * Cannot be private - parent does not allow it
      * @todo Better Documentation
+     * @todo We this should NOT make any database calls. As a result, MyRadio currently doesn't handle DB connection errors.
      */
     public function __construct() {
         $twig_loader = new Twig_Loader_Filesystem(__DIR__ . '/../Templates/');
@@ -28,14 +29,12 @@ class MyRadioTwig implements TemplateEngine {
             $this->twig->enableDebug();
         }
 
-        $this->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : '<a href="'.CoreUtils::makeURL('MyRadio','login').'">Login</a>')
-                ->addVariable('memberid', isset($_SESSION['memberid']) ? $_SESSION['memberid'] : 0)
+        $this->addVariable('memberid', isset($_SESSION['memberid']) ? $_SESSION['memberid'] : 0)
                 ->addVariable('impersonator', isset($_SESSION['impersonator']) ? ' - Impersonated by ' . $_SESSION['impersonator']['name'] : '')
                 ->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null)
                 ->addVariable('timeslotid', isset($_SESSION['timeslotid']) ? $_SESSION['timeslotid'] : null)
                 ->addVariable('shiburl', Config::$shib_url)
-                ->addVariable('baseurl', CoreUtils::getServiceVersionForUser()['proxy_static'] ?
-                                CoreUtils::makeURL('MyRadio', 'StaticProxy', array('0' => null)) : Config::$base_url)
+                ->addVariable('baseurl', Config::$base_url)
                 ->addVariable('rewriteurl', Config::$rewrite_url)
                 ->addVariable('serviceName', 'MyRadio')
                 ->setTemplate('stripe.twig')
@@ -43,9 +42,20 @@ class MyRadioTwig implements TemplateEngine {
                 ->addVariable('module', empty($GLOBALS['module']) ? Config::$default_module : $GLOBALS['module'])
                 ->addVariable('action', empty($GLOBALS['action']) ? Config::$default_action : $GLOBALS['action'])
                 ->addVariable('config', Config::getPublicConfig());
-        if (!empty($GLOBALS['module']) && isset($_SESSION['memberid'])) {
-            $this->addVariable('submenu', (new MyRadioMenu())->getSubMenuForUser(CoreUtils::getModuleID($GLOBALS['module']), User::getInstance()))
-                    ->addVariable('title', $GLOBALS['module']);
+
+
+        //We override the defaults later so we don't depend on the database.
+        //If the session is set, we can assume database access is available
+        //as it is read from the database
+        if (isset($_SESSION)) {
+            $this->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : '<a href="' . CoreUtils::makeURL('MyRadio', 'login') . '">Login</a>')
+                    ->addVariable('baseurl', CoreUtils::getServiceVersionForUser()['proxy_static'] ?
+                                    CoreUtils::makeURL('MyRadio', 'StaticProxy', array('0' => null)) : Config::$base_url);
+
+            if (!empty($GLOBALS['module']) && isset($_SESSION['memberid'])) {
+                $this->addVariable('submenu', (new MyRadioMenu())->getSubMenuForUser(CoreUtils::getModuleID($GLOBALS['module']), User::getInstance()))
+                        ->addVariable('title', $GLOBALS['module']);
+            }
         }
 
 
@@ -151,9 +161,11 @@ class MyRadioTwig implements TemplateEngine {
      * Renders the template
      */
     public function render() {
-        $this->addVariable('query_count', Database::getInstance()->getCounter());
         if (CoreUtils::hasPermission(AUTH_SHOWERRORS) || Config::$display_errors) {
             $this->addVariable('phperrors', MyRadioError::$php_errorlist);
+            if (isset($_SESSION)) { //Is the DB working?
+                $this->addVariable('query_count', Database::getInstance()->getCounter());
+            }  
         }
 
         $output = $this->template->render($this->contextVariables);
