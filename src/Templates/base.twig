@@ -17,7 +17,9 @@
         </ul>
         <ul id="navRight">
           <li>{% if timeslotname is null and memberid %}<a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}">Pick Timeslot</a>{% else %}<a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</li>
-          <li>{{ name | raw }}{{ impersonator }}</li></ul>
+          <li><a href="{{myury.makeURL(config, 'Profile')}}">{{ name | raw }}</a></li>
+          {% if impersonator %}<li>{{ impersonator | raw }}</li>{% endif %}
+        </ul>
       </nav>
         {% if phperrors is not null %}
           <ul class="php_error">

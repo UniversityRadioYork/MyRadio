@@ -29,7 +29,9 @@ class MyRadioTwig implements TemplateEngine {
         }
 
         $this->addVariable('memberid', isset($_SESSION['memberid']) ? $_SESSION['memberid'] : 0)
-                ->addVariable('impersonator', isset($_SESSION['impersonator']) ? ' - Impersonated by ' . $_SESSION['impersonator']['name'] : '')
+                ->addVariable('impersonator', !empty($_SESSION['myradio-impersonating']) ? 
+                        ('<a href="'.CoreUtils::makeURL('MyRadio','impersonate', ['next' => $_SERVER['REQUEST_URI']]).
+                            '">Impersonated by ' . $_SESSION['myradio-impersonating']['name']).'</a>' : '')
                 ->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null)
                 ->addVariable('timeslotid', isset($_SESSION['timeslotid']) ? $_SESSION['timeslotid'] : null)
                 ->addVariable('shiburl', Config::$shib_url)

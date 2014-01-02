@@ -162,8 +162,9 @@ class MyRadioForm {
     public function addField(MyRadioFormField $field) {
         //Sanity check - is this name in use
         foreach ($this->fields as $f) {
-            if ($f->getName() === $field->getName())
+            if ($f->getName() === $field->getName()) {
                 throw new MyRadioException('Tried to create a duplicate MyRadioFormField ' . $f->getName());
+            }
         }
         $this->fields[] = $field;
         return $this;
@@ -238,7 +239,7 @@ class MyRadioForm {
         if (!isset($_SESSION['myradio-xsrf-token'])) {
             $_SESSION['myradio-xsrf-token'] = bin2hex(openssl_random_pseudo_bytes(128));
         }
-        $this->addField('__xsrf-token', new MyRadioFormField(MyRadioFormField::TYPE_HIDDEN, ['value' => $_SESSION['myradio-xsrf-token']]));
+        $this->addField(new MyRadioFormField('__xsrf-token', MyRadioFormField::TYPE_HIDDEN, ['value' => $_SESSION['myradio-xsrf-token']]));
 
         $fields = array();
         foreach ($this->fields as $field) {
@@ -289,10 +290,9 @@ class MyRadioForm {
             $return['id'] = (int) $_REQUEST[$this->name . '-myradiofrmedid'];
         }
         //XSRF check
-        if ($return['__xsrf-token'] !== $_SESSION['myradio-xsrf-token']) {
+        if ($_REQUEST[$this->name.'-__xsrf-token'] !== $_SESSION['myradio-xsrf-token']) {
             throw new MyRadioException('Invalid submission token. Possible XSRF attack.', 500);
         }
-        unset($return['__xsrf-token']);
         return $return;
     }
 
