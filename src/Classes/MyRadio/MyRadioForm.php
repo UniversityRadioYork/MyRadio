@@ -18,7 +18,7 @@
  *   and calls getter to interpret them
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130727
+ * @version 20140102
  * @package MyRadio_Core
  */
 class MyRadioForm {
