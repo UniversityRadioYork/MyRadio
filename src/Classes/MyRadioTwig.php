@@ -19,7 +19,6 @@ class MyRadioTwig implements TemplateEngine {
     /**
      * Cannot be private - parent does not allow it
      * @todo Better Documentation
-     * @todo We this should NOT make any database calls. As a result, MyRadio currently doesn't handle DB connection errors.
      */
     public function __construct() {
         $twig_loader = new Twig_Loader_Filesystem(__DIR__ . '/../Templates/');

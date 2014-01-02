@@ -70,6 +70,13 @@ class MyRadio_TrainingStatus extends ServiceAPI {
    * @var int[]
    */
   private $awarded_to = null;
+  
+  /**
+   * Permissions granted to Users with this Training Status.
+   * 
+   * @var int[]
+   */
+  private $permissions;
 
   /**
    * Create a new TrainingStatus object. Generally, you should use getInstance.
@@ -93,6 +100,8 @@ class MyRadio_TrainingStatus extends ServiceAPI {
     
     $this->depends = empty($result['depends']) ? null : $result['depends'];
     $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
+    
+    $this->permissions = self::$db->fetch_column('SELECT typeid FROM public.auth_trainingstatus WHERE presenterstatusid=$1', [$statusid]);
   }
   
   /**
@@ -121,6 +130,15 @@ class MyRadio_TrainingStatus extends ServiceAPI {
    */
   public function getDetail() {
     return $this->detail;
+  }
+  
+  /**
+   * Get the permissions this Training Status grants
+   * 
+   * @return int[]
+   */
+  public function getPermissions() {
+      return $this->permissions;
   }
   
   /**
