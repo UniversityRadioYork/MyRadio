@@ -225,6 +225,11 @@ class User extends ServiceAPI {
     $this->training = self::$db->fetch_column('SELECT memberpresenterstatusid
       FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
       WHERE memberid=$1 ORDER BY ordering, completeddate ASC', array($this->memberid));
+    
+    //Add training permissions
+    foreach ($this->getAllTraining() as $training) {
+        $this->permissions = array_merge($this->permissions, $training->getPermissions());
+    }
   }
 
   /**

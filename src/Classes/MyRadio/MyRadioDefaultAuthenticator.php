@@ -123,5 +123,9 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
     public function getDescription() {
         return 'By choosing this option, we will always use your unique '.$this->getFriendlyName().' username and password to log you in. This password is completely seperate to any other details you may have.';
     }
+    
+    public function removePassword($memberid) {
+        $this->query('DELETE FROM member_pass WHERE memberid=$1', [$memberid]);
+    }
 
 }
