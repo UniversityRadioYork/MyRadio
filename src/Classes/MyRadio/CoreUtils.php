@@ -10,7 +10,7 @@
  * No database accessing etc should be setup here.
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130711
+ * @version 20140102
  * @package MyRadio_Core
  * @todo Factor out permission code into a seperate class?
  */
@@ -750,6 +750,37 @@ class CoreUtils {
         $config = HTMLPurifier_Config::createDefault();
         $purifier = new HTMLPurifier($config);
         return $purifier->purify($dirty_html);
+    }
+    
+    /**
+     * Tests whether the given username or password are valid against a provider
+     * (and the right provider if needed).
+     * 
+     * This is a far more basic version of the full Controllers/login.php system,
+     * not verifying if the user needs to take an action first.
+     * It does, however, update the User's last login time.
+     * 
+     * @param String $user
+     * @param String $pass
+     * @return User|false
+     */
+    public static function testCredentials($user, $pass) {
+        foreach (Config::$authenticators as $authenticator) {
+            $a = new $authenticator();
+            $result = $authenticator->validateCredentials($user, $pass);
+            if ($result instanceof User) {
+                if (Config::$single_authenticator &&
+                        $user->getAuthProvider() !== null &&
+                        $user->getAuthProvider() !== $authenticator) {
+                    //This is the wrong authenticator for the user
+                    continue;
+                } else {
+                    $result->updateLastLogin();
+                    return $result;
+                }
+            }
+        }
+        return false;
     }
 
     private function __construct() {
