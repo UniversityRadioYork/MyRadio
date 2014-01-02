@@ -115,6 +115,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
         $twig->addVariable('methods', $options)
                 ->addVariable('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL(Config::$default_module))
                 ->render();
+    } elseif ($status === 'change') {
+        /**
+         * @todo Handle this eventuality
+         */
     } elseif ($status !== 'success') {
         $form->render(['error' => true]);
     } else {

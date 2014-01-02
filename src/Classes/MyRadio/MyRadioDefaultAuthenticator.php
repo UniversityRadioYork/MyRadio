@@ -125,7 +125,7 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
     }
     
     public function removePassword($memberid) {
-        $this->query('DELETE FROM member_pass WHERE memberid=$1', [$memberid]);
+        $this->query('UPDATE member_pass SET password=NULL WHERE memberid=$1', [$memberid]);
     }
 
 }
