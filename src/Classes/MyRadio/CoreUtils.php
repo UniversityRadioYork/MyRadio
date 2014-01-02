@@ -743,7 +743,7 @@ class CoreUtils {
     private function __construct() {
         
     }
-    
+
     /**
      * Generates a new password consisting of two words and a two-digit number
      * @todo Make this crypto secure random?
@@ -753,48 +753,47 @@ class CoreUtils {
         return self::$words[array_rand(self::$words)] . rand(10, 99)
                 . self::$words[array_rand(self::$words)];
     }
-    
+
     /**
      * Words used by CoreUtils::newPassword
      * @var String[]
      */
     private static $words = array(
-      'Radio',
-      'Microphone',
-      'Studio',
-      'Speaker',
-      'Headphone',
-      'Compressor',
-      'Fader',
-      'Schedule',
-      'Podcast',
-      'Music',
-      'Track',
-      'Record',
-      'Artist',
-      'Publisher',
-      'Album',
-      'Broadcast',
-      'Transmitter',
-      'Silence',
-      'Selector',
-      'Management',
-      'Engineering',
-      'Computing',
-      'Business',
-      'Events',
-      'Speech',
-      'Training',
-      'Presenting',
-      'Stores',
-      'Tardis',
-      'Relay',
-      'Jingle',
-      'Advert',
-      'Frequency',
-      'Modulation',
-      'Vinyl',
-      'Broadcasting'
-  );
-
+        'Radio',
+        'Microphone',
+        'Studio',
+        'Speaker',
+        'Headphone',
+        'Compressor',
+        'Fader',
+        'Schedule',
+        'Podcast',
+        'Music',
+        'Track',
+        'Record',
+        'Artist',
+        'Publisher',
+        'Album',
+        'Broadcast',
+        'Transmitter',
+        'Silence',
+        'Selector',
+        'Management',
+        'Engineering',
+        'Computing',
+        'Business',
+        'Events',
+        'Speech',
+        'Training',
+        'Presenting',
+        'Stores',
+        'Tardis',
+        'Relay',
+        'Jingle',
+        'Advert',
+        'Frequency',
+        'Modulation',
+        'Vinyl',
+        'Broadcasting'
+    );
 }
