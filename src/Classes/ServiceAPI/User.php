@@ -226,9 +226,11 @@ class User extends ServiceAPI {
       FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
       WHERE memberid=$1 ORDER BY ordering, completeddate ASC', array($this->memberid));
 
-        //Add training permissions
-        foreach ($this->getAllTraining() as $training) {
-            $this->permissions = array_merge($this->permissions, $training->getPermissions());
+        if ($this->isCurrentlyPaid()) {
+            //Add training permissions, but only if currently paid
+            foreach ($this->getAllTraining() as $training) {
+                $this->permissions = array_merge($this->permissions, $training->getPermissions());
+            }
         }
     }
 
