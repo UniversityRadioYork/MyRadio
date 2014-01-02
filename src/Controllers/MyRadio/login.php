@@ -56,11 +56,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
                  * Add in permissions granted by the remote IP
                  * Contains or equals: >>=
                  */
-                $ip_auth = Database::getInstance()->fetch_column('SELECT typeid FROM auth_subnet WHERE subnet >>= $1', [$_SERVER['REMOVE_ADDR']]);
+                $ip_auth = Database::getInstance()->fetch_column('SELECT typeid FROM auth_subnet WHERE subnet >>= $1', [$_SERVER['REMOTE_ADDR']]);
                 $_SESSION['member_permissions'] = array_merge($ip_auth, $user->getPermissions(), $authenticator->getPermissions($raw_uname));
                 $_SESSION['name'] = $user->getName();
                 $_SESSION['email'] = $user->getEmail();
+                /*
+                 * If anything other than false, the user will be kicked out if
+                 * they try to access anything other than pages with AUTH_NOACCESS
+                 */
                 $_SESSION['auth_use_locked'] = false;
+                /**
+                 * If this hash no longer matches on a request, the user is
+                 * logged out. A rudimentary attempt to prevent things tampering
+                 * with the bits of the session they shouldn't.
+                 */
                 $_SESSION['auth_hash'] = sha1(session_id().$_SESSION['name'].$_SESSION['email'].$_SESSION['memberid']);
                 $user->updateLastLogin();
                 $status = 'success';
