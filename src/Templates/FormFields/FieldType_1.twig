@@ -4,4 +4,4 @@
        {% if field.options.min is defined %} min="{{field.options.min}}"{% endif %}
        {% if field.options.max is defined %} max="{{field.options.max}}"{% endif %}
        {% if not field.enabled %} readonly="readonly"{% endif %} />
-<span class="myuryfrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
+<span class="myradiofrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>

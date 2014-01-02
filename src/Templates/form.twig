@@ -11,7 +11,7 @@
     {% for field in frm_fields %}
       {% set display_labels = true %}
       {% set sfieldname = field.name %}
-      {% if field.type != 16 %}<div id="{{frm_name}}-{{field.name}}-container" class="{{field.class}}">{% endif %}
+      {% if field.type != 16 %}<div id="{{frm_name}}-{{field.name}}-container" class="{{field.class}}-container">{% endif %}
         {% include ('FormFields/FieldType_'~field.type~'.twig') %}
         {% if field.type != 16 %}</div>{% endif %}
     {% endfor %}
