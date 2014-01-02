@@ -1,8 +1,5 @@
-{% if myury_form_section_exists %}
-</div>
-{% set myury_form_section_exists = false %}
-{% endif %}
-{% if display_labels %}<h3 class="form-section-header">{{field.label}}</h3>{% endif %}
-<span>{{field.explanation}}</span>
-<div class="form-section-content">
-{% set myury_form_section_exists = true %}
+<fieldset class="form-section">
+	{% if display_labels %}
+		<legend>{{field.label}}</legend>
+		<span>{{field.explanation}}</span>
+	{% endif %}

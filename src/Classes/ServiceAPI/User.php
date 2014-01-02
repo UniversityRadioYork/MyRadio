@@ -1137,7 +1137,9 @@ class User extends ServiceAPI {
                         array('value' => 'f', 'text' => 'Female'),
                         array('value' => 'o', 'text' => 'Other')
                     )
-        )));
+                )))
+                ->addField(new MyRadioFormField('sec_personal_close', MyRadioFormField::TYPE_SECTION_CLOSE)
+                );
 
         //Contact details
         $form->addField(new MyRadioFormField('sec_contact', MyRadioFormField::TYPE_SECTION, array(
@@ -1170,7 +1172,9 @@ class User extends ServiceAPI {
                     'label' => 'University Email',
                     'value' => str_replace('@york.ac.uk', '', $this->getUniAccount()),
                     'explanation' => '@york.ac.uk'
-        )));
+                )))
+                ->addField(new MyRadioFormField('sec_contact_close', MyRadioFormField::TYPE_SECTION_CLOSE)
+                );
 
         //About Me
         $form->addField(new MyRadioFormField('sec_about', MyRadioFormField::TYPE_SECTION, array(
@@ -1189,7 +1193,7 @@ class User extends ServiceAPI {
             'explanation' => 'Tell use about yourself - if you\'re a committee member please introduce yourself!',
             'value' => $this->getBio()
                 ))
-        );
+        )->addField(new MyRadioFormField('sec_about_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
         //Mailbox
         if (User::getInstance()->hasAuth(AUTH_CHANGESERVERACCOUNT)) {
@@ -1210,7 +1214,8 @@ class User extends ServiceAPI {
                         'value' => $this->getLocalAlias(),
                         'explanation' => 'Usually, this is firstname.lastname (i.e. ' .
                         strtolower($this->getFName() . '.' . $this->getSName()) . ')'
-            )));
+                    )))
+                    ->addField(new MyRadioFormField('sec_server_close', MyRadioFormField::TYPE_SECTION_CLOSE));
         }
 
 
