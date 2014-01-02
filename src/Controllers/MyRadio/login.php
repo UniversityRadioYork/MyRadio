@@ -52,7 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
                 $status = 'wrongAuthProvider';
             } else {
                 $_SESSION['memberid'] = $user->getID();
-                $_SESSION['member_permissions'] = array_merge($user->getPermissions(), $authenticator->getPermissions($raw_uname));
+                /**
+                 * Add in permissions granted by the remote IP
+                 * Contains or equals: >>=
+                 */
+                $ip_auth = Database::getInstance()->fetch_column('SELECT typeid FROM auth_subnet WHERE subnet >>= $1', [$_SERVER['REMOVE_ADDR']]);
+                $_SESSION['member_permissions'] = array_merge($ip_auth, $user->getPermissions(), $authenticator->getPermissions($raw_uname));
                 $_SESSION['name'] = $user->getName();
                 $_SESSION['email'] = $user->getEmail();
                 $_SESSION['auth_use_locked'] = false;

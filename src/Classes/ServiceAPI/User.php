@@ -594,7 +594,10 @@ class User extends ServiceAPI {
     }
 
     /**
-     * Returns if the user has the given permission
+     * Returns if the user has the given permission.
+     * 
+     * Always use CoreUtils::hasAuth when working with the current user.
+     * 
      * @param int $authid The permission to test for
      * @return boolean Whether this user has the requested permission 
      */
