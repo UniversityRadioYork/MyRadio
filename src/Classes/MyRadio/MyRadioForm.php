@@ -208,7 +208,9 @@ class MyRadioForm {
       $this->setFieldValue($k, $v);
     }
     
-    if ($action !== null) $this->action = $action;
+    if ($action !== null) {
+        $this->action = $action;
+    }
     
     //File fields are not required when editing.
     foreach ($this->fields as $f => $v) {
@@ -230,6 +232,15 @@ class MyRadioForm {
    * template which needs additional data.
    */
   public function render($frmcustom = array()) {
+      /**
+       * Prevent XSRF attacks with this token - if this isn't present or is
+       * different, then the request is invalid.
+       */
+      if (!isset($_SESSION['myradio-xsrf-token'])) {
+          $_SESSION['myradio-xsrf-token'] = bin2hex(openssl_random_pseudo_bytes(128));
+      }
+      $this->addField('__xsrf-token', new MyRadioFormField(MyRadioFormField::TYPE_HIDDEN, ['value' => $_SESSION['myradio-xsrf-token']]));
+      
     $fields = array();
     foreach ($this->fields as $field) {
       $fields[] = $field->render();
@@ -278,6 +289,11 @@ class MyRadioForm {
     if (isset($_REQUEST[$this->name.'-myradiofrmedid'])) {
       $return['id'] = (int)$_REQUEST[$this->name.'-myradiofrmedid'];
     }
+    //XSRF check
+    if ($return['__xsrf-token'] !== $_SESSION['myradio-xsrf-token']) {
+        throw new MyRadioException('Invalid submission token. Possible XSRF attack.', 500);
+    }
+    unset($return['__xsrf-token']);
     return $return;
   }
 
