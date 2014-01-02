@@ -5,4 +5,4 @@
 <input type="text" class="{{field.class}}{% if field.required %} required{% endif %} dateITA"
        value="{{field.value}}" name="{{frm_name}}-{{sfieldname}}" id="{{frm_name}}-{{field.name}}"
        {% if not field.enabled %} readonly="readonly"{% endif %} placeholder="Day/Month/Year" />
-<span class="myuryfrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
+<span class="myradiofrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
