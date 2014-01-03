@@ -7,6 +7,7 @@
  */
 // Configure MyRadio & Set API Settings
 define('SILENT_EXCEPTIONS', true);
+define('DISABLE_SESSION', true);
 
 require_once __DIR__ . '/../Controllers/cli_common.php';
 

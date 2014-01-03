@@ -768,7 +768,16 @@ class CoreUtils {
      * @api POST
      */
     public static function testCredentials($user, $pass) {
-        foreach (Config::$authenticators as $authenticator) {
+        //Make a best guess at the user account
+        //This way we can skip authenticators if they have one set
+        $u = User::findByEmail($user);
+        if ($u instanceof User && $u->getAuthProvider() !== null) {
+            $authenticators = [$u->getAuthProvider()];
+        } else {
+            $authenticators = Config::$authenticators;
+        }
+        //Iterate over each authenticator
+        foreach ($authenticators as $authenticator) {
             $a = new $authenticator();
             $result = $a->validateCredentials($user, $pass);
             if ($result instanceof User) {

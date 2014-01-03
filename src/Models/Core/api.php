@@ -24,31 +24,31 @@
 require_once 'Interfaces/Singleton.php';
 //Create a function to autoload classes when needed
 spl_autoload_register(function($class) {
-    $class .= '.php';
-    if (stream_resolve_include_path('Classes/ServiceAPI/' . $class)) {
-        //This path *must* be absolute - differing versions causes it to be reincluded otherwise
-        require_once __DIR__ . '/../../Interfaces/MyRadio_DataSource.php';
-        require_once __DIR__ . '/../../Interfaces/IServiceAPI.php';
-        require_once 'Classes/ServiceAPI/' . $class;
-        return;
-    }
+            $class .= '.php';
+            if (stream_resolve_include_path('Classes/ServiceAPI/' . $class)) {
+                //This path *must* be absolute - differing versions causes it to be reincluded otherwise
+                require_once __DIR__ . '/../../Interfaces/MyRadio_DataSource.php';
+                require_once __DIR__ . '/../../Interfaces/IServiceAPI.php';
+                require_once 'Classes/ServiceAPI/' . $class;
+                return;
+            }
 
-    /**
-     * @todo Is there a better way of doing this?
-     */
-    foreach (array('MyRadio', 'NIPSWeb', 'SIS', 'iTones', 'Vendor', 'BRA') as $dir) {
-        if (stream_resolve_include_path('Classes/' . $dir . '/' . $class)) {
-            require_once 'Classes/' . $dir . '/' . $class;
-            return;
-        }
-    }
-});
+            /**
+             * @todo Is there a better way of doing this?
+             */
+            foreach (array('MyRadio', 'NIPSWeb', 'SIS', 'iTones', 'Vendor', 'BRA') as $dir) {
+                if (stream_resolve_include_path('Classes/' . $dir . '/' . $class)) {
+                    require_once 'Classes/' . $dir . '/' . $class;
+                    return;
+                }
+            }
+        });
 
 require_once 'Classes/MyRadioException.php';
 require_once 'Classes/MyRadioError.php';
 set_exception_handler(function($e) {
-    
-});
+            
+        });
 set_error_handler('MyRadioError::errorsToEmail');
 
 //Initiate Database
@@ -68,25 +68,29 @@ register_shutdown_function('CoreUtils::shutdown');
 /**
  * Sets up a session stored in the database - uesful for sharing between more
  * than one server.
+ * We disable this for the API using the DISABLE_SESSION constant.
  */
-$session_handler = MyRadioSession::factory();
-session_set_save_handler(
-        array($session_handler, 'open'),
-        array($session_handler, 'close'),
-        array($session_handler, 'read'),
-        array($session_handler, 'write'),
-        array($session_handler, 'destroy'),
-        array($session_handler, 'gc')
-);
-session_start();
+if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
+    $session_handler = MyRadioSession::factory();
+    session_set_save_handler(
+            array($session_handler, 'open'),
+            array($session_handler, 'close'),
+            array($session_handler, 'read'),
+            array($session_handler, 'write'),
+            array($session_handler, 'destroy'),
+            array($session_handler, 'gc')
+    );
+    session_start();
+}
 
 //If there's evidence a user is supposed to be logged in, validate the session
 //data doesn't look like it's been tampered with
 if (isset($_SESSION['memberid'])) {
     $user = User::getInstance($_SESSION['memberid']);
-    if (!isset($_SESSION['auth_use_locked']) || $_SESSION['auth_hash'] !== sha1(session_id() . $_SESSION['name'] . $_SESSION['email'] . $_SESSION['memberid'])) {
+    if (!isset($_SESSION['auth_use_locked']) || 
+            $_SESSION['auth_hash'] !== sha1(session_id() . $_SESSION['name'] . $_SESSION['email'] . $_SESSION['memberid'])) {
         session_destroy();
-        header('Location: '.CoreUtils::makeURL('MyRadio', 'login'));
+        header('Location: ' . CoreUtils::makeURL('MyRadio', 'login'));
         exit;
     }
 

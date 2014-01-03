@@ -462,7 +462,7 @@ final class Config {
    * operations.
    */
   //public static $authenticators = ['MyRadioLDAPAuthenticator', 'MyRadioDefaultAuthenticator'];
-  public static $authenticators = ['MyRadioLDAPAuthenticator', 'MyRadioDefaultAuthenticator'];
+  public static $authenticators = ['MyRadioDefaultAuthenticator'];
   public static $auth_ldap_server = 'ldap://ldap.york.ac.uk';
   public static $auth_ldap_root = 'ou=people,ou=csrv,ou=nos,dc=york,dc=ac,dc=uk';
   public static $auth_db_user = 'shibbobleh';
@@ -478,7 +478,7 @@ final class Config {
    * 
    * @var boolean
    */
-  public static $single_authenticator = true;
+  public static $single_authenticator = false;
   
   /**
    * If false, MyRadioDefaultAuthenticator will never pass, passwords will not
