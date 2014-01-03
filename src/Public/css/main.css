@@ -330,7 +330,7 @@ header h2 {
   text-decoration: none;
   font-size: 100%;
   display: block;
-  padding: 0 20px;
+  padding: 1px 20px 0;
 }
 #menu ul li a:visited {
   color: #eee;
@@ -349,7 +349,7 @@ header h2 {
   float: left;
   position: relative;
   left: 3px;
-  top: -1px;
+  top: 0;
   z-index: 10;
 }
 #menu #socialBtn {
