@@ -42,6 +42,7 @@ $form = (new MyRadioForm('sched_season', $module, 'doSeason',
                                 new MyRadioFormField('etime', MyRadioFormField::TYPE_TIME,
                         array('label' => 'until'))
                             )))
+        )->addField(new MyRadioFormField('grp-basics_close', MyRadioFormField::TYPE_SECTION_CLOSE)
         )->addField(
                 new MyRadioFormField('grp-adv', MyRadioFormField::TYPE_SECTION,
                         array('label' => 'Advanced Options'))
@@ -56,12 +57,13 @@ $form = (new MyRadioForm('sched_season', $module, 'doSeason',
                         )
                 )
         )->addField(
-        new MyRadioFormField('tags', MyRadioFormField::TYPE_TEXT,
-                array(
-                    'label' => 'Tags',
-                    'explanation' => 'A set of keywords to describe this Season. These will be added onto the'
-                    . ' Tags you already have set for the Show.',
-                    'required' => false
+                new MyRadioFormField('tags', MyRadioFormField::TYPE_TEXT,
+                        array(
+                            'label' => 'Tags',
+                            'explanation' => 'A set of keywords to describe this Season. These will be added onto the'
+                            . ' Tags you already have set for the Show.',
+                            'required' => false
+                        )
                 )
-        )
-);
+        )->addField(new MyRadioFormField('grp-adv_close', MyRadioFormField::TYPE_SECTION_CLOSE)
+        );
