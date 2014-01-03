@@ -182,8 +182,8 @@ class MyRadioFormField {
    */
   const TYPE_CHECKGRP  = 0x0F;
   /**
-   * The constant used to specify this MyRadioFormField should be a section header - it is literally a pretty header
-   * that can be used to separate groups of fields.
+   * The constant used to specify this MyRadioFormField creates a fieldset.
+   * This should be closed with a TYPE_SECTION_CLOSE.
    * 
    * This MyRadioFormField type does not support any Custom Options
    * @todo Collapsible?
@@ -238,6 +238,13 @@ class MyRadioFormField {
    * This MyRadioFormField type does not support any Custom Options
    */
   const TYPE_PASSWORD = 0x15;
+
+  /**
+   * The constant used to specify this MyRadioFormField closes a fieldset.
+   * 
+   * This MyRadioFormField type does not support any Custom Options
+   */
+  const TYPE_SECTION_CLOSE = 0x16;
 
   /**
    * The name/id of the Form Field

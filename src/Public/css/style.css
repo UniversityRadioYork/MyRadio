@@ -292,8 +292,7 @@ label.label-nofloat {
     width: 300px;
     vertical-align: top;
 }
-.myradiofrmfield-container input[type=checkbox] {
-    width: initial;
+.myradiofrmfield-container input[type="checkbox"] {
     float: none;
 }
 .myradiofrmhint {
