@@ -11,13 +11,14 @@
     {% for field in frm_fields %}
       {% set display_labels = true %}
       {% set sfieldname = field.name %}
-      {% if field.type != 16 %}<div id="{{frm_name}}-{{field.name}}-container" class="{{field.class}}-container">{% endif %}
-        {% include ('FormFields/FieldType_'~field.type~'.twig') %}
-        {% if field.type != 16 %}</div>{% endif %}
-    {% endfor %}
-      {% if myury_form_section_exists %}
+      {% if field.type != 16 and field.type != 22 %}
+        <div id="{{frm_name}}-{{field.name}}-container" class="{{field.class}}-container">
+      {% endif %}
+          {% include ('FormFields/FieldType_'~field.type~'.twig') %}
+      {% if field.type != 16 and field.type != 22 %}
         </div>
       {% endif %}
+    {% endfor %}
         <input type="submit" id="{{frm_name}}-submit" value="Submit" />
       </form>
       <div class="myuryfrm-file-upload-progress"><div class="progress-label">Starting Upload...</div></div>
