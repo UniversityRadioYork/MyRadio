@@ -54,7 +54,7 @@ class MyRadio_PlaylistsDaemon extends MyRadio_Daemon {
             $playlist[] = $track;
         }
 
-        $pobj->setTracks(array_unique($playlist), $lockstr, null, Config::$system_user);
+        $pobj->setTracks(array_unique($playlist), $lockstr, null, User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
     }
 
@@ -64,7 +64,7 @@ class MyRadio_PlaylistsDaemon extends MyRadio_Daemon {
 
         $newest_tracks = NIPSWeb_AutoPlaylist::findByName('Newest Tracks')->getTracks();
 
-        $pobj->setTracks($newest_tracks, $lockstr);
+        $pobj->setTracks($newest_tracks, $lockstr, null, User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
     }
 
