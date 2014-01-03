@@ -758,20 +758,23 @@ class CoreUtils {
      * 
      * This is a far more basic version of the full Controllers/login.php system,
      * not verifying if the user needs to take an action first.
-     * It does, however, update the User's last login time.
+     * It does, however, update the User's last login time..
+     * You MUST use POST with this - otherwise the credentials will turn up in
+     * access logs.
      * 
      * @param String $user
      * @param String $pass
      * @return User|false
+     * @api POST
      */
     public static function testCredentials($user, $pass) {
         foreach (Config::$authenticators as $authenticator) {
             $a = new $authenticator();
-            $result = $authenticator->validateCredentials($user, $pass);
+            $result = $a->validateCredentials($user, $pass);
             if ($result instanceof User) {
                 if (Config::$single_authenticator &&
-                        $user->getAuthProvider() !== null &&
-                        $user->getAuthProvider() !== $authenticator) {
+                        $result->getAuthProvider() !== null &&
+                        $result->getAuthProvider() !== $authenticator) {
                     //This is the wrong authenticator for the user
                     continue;
                 } else {

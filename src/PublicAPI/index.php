@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This MyRadio Extension exposes some of MyRadio's internal classes as a REST API.
  * It aims to be compatible with https://developers.helloreverb.com/swagger/
@@ -141,7 +140,7 @@ if (!$api_key->canCall($classes[$class], $method)) {
    */
   try {
     /**
-     * Okay, now if the method is static, then we need to initialise an object.
+     * Okay, now if the method isn't static, then we need to initialise an object.
      */
     if (!$methodReflection->isStatic()) {
       if (method_exists($classes[$class], 'getInstance')) {
