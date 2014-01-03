@@ -614,6 +614,7 @@ class MyRadioFormField {
                 return $return;
                 break;
             case self::TYPE_SECTION:
+            case self::TYPE_SECTION_CLOSE:
                 return null;
                 break;
             case self::TYPE_ALBUM:
