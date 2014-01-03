@@ -196,7 +196,10 @@ class iTones_Playlist extends ServiceAPI {
    * @todo Push these changes to the playlist files on playoutsvc.ury.york.ac.uk. This should probably be a MyRadioDaemon
    * configured to run only on that server.
    */
-  public function setTracks($tracks, $lockstr, $notes = null) {
+  public function setTracks($tracks, $lockstr, $notes = null, User $user = null) {
+      if ($user === null) {
+          $user = User::getInstance();
+      }
     //Remove duplicates
     $tracks = array_unique($tracks);
     $old_list = $this->getTracks();
@@ -229,7 +232,7 @@ class iTones_Playlist extends ServiceAPI {
     $revisionid = $this->getRevisionID() + 1;
     //Get the new revision ID
     self::$db->query('INSERT INTO jukebox.playlist_revisions (playlistid, revisionid, author, notes)
-      VALUES ($1, $2, $3, $4) RETURNING revisionid', array($this->getID(), $revisionid, User::getInstance()->getID(), $notes), true);
+      VALUES ($1, $2, $3, $4) RETURNING revisionid', array($this->getID(), $revisionid, $user->getID(), $notes), true);
     //Add new tracks
     foreach ($new_additions as $track) {
       if (empty($track)) {
