@@ -655,7 +655,7 @@ class CoreUtils {
 
     public static function requireTimeslot() {
         if (!isset($_SESSION['timeslotid'])) {
-            header('Location: ' . Config::makeURL('MyRadio','timeslot',['next' => $_SERVER['REQUEST_URI']]));
+            header('Location: ' . CoreUtils::makeURL('MyRadio','timeslot',['next' => $_SERVER['REQUEST_URI']]));
             exit;
         }
     }
