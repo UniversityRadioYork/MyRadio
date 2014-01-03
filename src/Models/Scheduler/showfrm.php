@@ -43,6 +43,7 @@ $form = (new MyRadioForm('sched_show', 'Scheduler', 'doShow', array(
         )->addField(
                 new MyRadioFormField('credits', MyRadioFormField::TYPE_TABULARSET, array(
             'options' => array(
+                'label' => 'Credits',
                 new MyRadioFormField('member', MyRadioFormField::TYPE_MEMBER, array(
                     'explanation' => '',
                     'label' => 'Credit'
