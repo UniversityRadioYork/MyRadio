@@ -420,11 +420,11 @@ class User extends ServiceAPI {
                 if (empty($eduroam)) {
                     return null;
                 } else {
-                    return $eduroam . '@york.ac.uk';
+                    return $eduroam . '@'.Config::$eduroam_domain;
                 }
             }
         } elseif (empty($this->email)) {
-            return $this->getEduroam() . '@york.ac.uk';
+            return $this->getEduroam() . '@'.Config::$eduroam_domain;
         } else {
             return $this->email;
         }
@@ -1265,8 +1265,8 @@ class User extends ServiceAPI {
         if (!empty($eduroam) && !strstr($eduroam, '@')) {
             $eduroam .= '@york.ac.uk';
         } elseif (!empty($eduroam)) {
-            if (strtolower(substr($eduroam, -11)) !== '@york.ac.uk') {
-                throw new MyRadioException('An eduroam address must end with @york.ac.uk', 400);
+            if (strtolower(substr($eduroam, -11)) !== '@'.Config::$eduroam_domain) {
+                throw new MyRadioException('An eduroam address must end with @'.Config::$eduroam_domain, 400);
             }
         }
 

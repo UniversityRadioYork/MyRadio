@@ -50,7 +50,7 @@ class MyRadio_PlaylistsDaemon extends MyRadio_Daemon {
       $playlist[] = $track;
     }
     
-    $pobj->setTracks(array_unique($playlist), $lockstr);
+    $pobj->setTracks(array_unique($playlist), $lockstr, null, Config::$system_user);
     $pobj->releaseLock($lockstr);
   }
   
