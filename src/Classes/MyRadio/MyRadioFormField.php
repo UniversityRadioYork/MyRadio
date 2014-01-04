@@ -337,7 +337,7 @@ class MyRadioFormField {
         $this->name = $name;
         $this->type = $type;
 
-        if ($type === self::TYPE_SECTION) {
+        if ($type === self::TYPE_SECTION || $type === self::TYPE_SECTION_CLOSE) {
             $this->required = false;
         }
 
