@@ -257,7 +257,7 @@ abstract class MyRadio_Metadata_Common extends ServiceAPI {
     if (!empty($value)) {
       $sql = 'INSERT INTO ' . $table
               . ' (metadata_key_id, ' . $id_field . ', memberid, approvedid, metadata_value, effective_from, effective_to) VALUES ';
-      $params = array($meta_id, $this->getID(), User::getInstance()->getID(), CoreUtils::getTimestamp($effective_from),
+      $params = array($meta_id, $this->getID(), MyRadio_User::getInstance()->getID(), CoreUtils::getTimestamp($effective_from),
           $effective_to == null ? null : CoreUtils::getTimestamp($effective_to));
 
       if (is_array($value)) {
@@ -299,10 +299,10 @@ abstract class MyRadio_Metadata_Common extends ServiceAPI {
     $return = array();
     foreach ($this->credits as $credit) {
       if ($types) {
-        $credit['name'] = User::getInstance($credit['memberid'])->getName();
+        $credit['name'] = MyRadio_User::getInstance($credit['memberid'])->getName();
         $credit['type_name'] = self::getCreditName($credit['type']);
       } else {
-        $credit = User::getInstance($credit['memberid'])->getName();
+        $credit = MyRadio_User::getInstance($credit['memberid'])->getName();
       }
       $return[] = $credit;
     }
@@ -361,7 +361,7 @@ abstract class MyRadio_Metadata_Common extends ServiceAPI {
    * Existing credits are kept active, ones that are not in the new list are set to effective_to now,
    * and ones that are in the new list but not exist are created with effective_from now.
    *
-   * @param User[] $users An array of Users associated.
+   * @param MyRadio_User[] $users An array of Users associated.
    * @param int[] $credittypes The relevant credittypeid for each User.
    */
   public function setCredits($users, $credittypes, $table, $pkey) {
@@ -449,7 +449,7 @@ abstract class MyRadio_Metadata_Common extends ServiceAPI {
             $this->getID(),
             $credit['type'],
             $credit['memberid'],
-            User::getInstance()->getID()
+            MyRadio_User::getInstance()->getID()
           ],
           true
         );

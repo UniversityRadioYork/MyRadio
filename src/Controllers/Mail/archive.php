@@ -9,7 +9,7 @@
 
 $list = MyRadio_List::getInstance($_REQUEST['list']);
 
-if (!$list->isMember(User::getInstance())) {
+if (!$list->isMember(MyRadio_User::getInstance())) {
   throw new MyRadioException('You can only view archives for Lists you are a'
           . ' member of.', 403);
 }

@@ -92,7 +92,7 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
   }
 
   public static function getAllManagedPlaylists($editable_only = false) {
-    if ($editable_only && !User::getInstance()->hasAuth(AUTH_EDITCENTRALRES))
+    if ($editable_only && !MyRadio_User::getInstance()->hasAuth(AUTH_EDITCENTRALRES))
       return array();
     $result = self::$db->fetch_column('SELECT managedplaylistid FROM bapsplanner.managed_playlists ORDER BY name');
     $response = array();

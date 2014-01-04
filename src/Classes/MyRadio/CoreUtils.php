@@ -517,22 +517,22 @@ class CoreUtils {
     /**
      * Returns the service version allocated to the given user.
      * 
-     * @param User $user If given this is the user to check. By default,
+     * @param MyRadio_User $user If given this is the user to check. By default,
      * it uses the currently logged-in user.
      * 
      * If there is no user logged in, then the default version is returned.
      */
-    public static function getServiceVersionForUser(User $user = null) {
+    public static function getServiceVersionForUser(MyRadio_User $user = null) {
         if ($user === null) {
             if (!isset($_SESSION['memberid'])) {
                 return self::getDefaultServiceVersion();
             }
-            $user = User::getInstance();
+            $user = MyRadio_User::getInstance();
         }
         $serviceid = Config::$service_id;
         $key = $serviceid . '-' . $user->getID();
 
-        if ($user->getID() === User::getInstance()->getID()) {
+        if ($user->getID() === MyRadio_User::getInstance()->getID()) {
             //It's the current user. If they have an override defined in their session, use that.
             if (isset($_SESSION['myury_svc_version_' . $serviceid])) {
                 return array(
@@ -562,7 +562,7 @@ class CoreUtils {
         }
 
         //If it's the current user, store the data in session.
-        if ($user->getID() === User::getInstance()->getID()) {
+        if ($user->getID() === MyRadio_User::getInstance()->getID()) {
             $_SESSION['myury_svc_version_' . $serviceid] = self::$svc_version_cache[$key]['version'];
             $_SESSION['myury_svc_version_' . $serviceid . '_path'] = self::$svc_version_cache[$key]['path'];
             $_SESSION['myury_svc_version_' . $serviceid . '_proxy_static'] = self::$svc_version_cache[$key]['proxy_static'];
@@ -763,14 +763,14 @@ class CoreUtils {
      * 
      * @param String $user
      * @param String $pass
-     * @return User|false
+     * @return MyRadio_User|false
      * @api POST
      */
     public static function testCredentials($user, $pass) {
         //Make a best guess at the user account
         //This way we can skip authenticators if they have one set
-        $u = User::findByEmail($user);
-        if ($u instanceof User && $u->getAuthProvider() !== null) {
+        $u = MyRadio_User::findByEmail($user);
+        if ($u instanceof MyRadio_User && $u->getAuthProvider() !== null) {
             $authenticators = [$u->getAuthProvider()];
         } else {
             $authenticators = Config::$authenticators;
@@ -779,7 +779,7 @@ class CoreUtils {
         foreach ($authenticators as $authenticator) {
             $a = new $authenticator();
             $result = $a->validateCredentials($user, $pass);
-            if ($result instanceof User) {
+            if ($result instanceof MyRadio_User) {
                 if (Config::$single_authenticator &&
                         $result->getAuthProvider() !== null &&
                         $result->getAuthProvider() !== $authenticator) {

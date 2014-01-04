@@ -15,7 +15,7 @@
  * @uses \Database
  * @uses \CacheProvider
  */
-class User extends ServiceAPI {
+class MyRadio_User extends ServiceAPI {
 
     /**
      * Stores the user's memberid
@@ -761,7 +761,7 @@ class User extends ServiceAPI {
      * MyRadio and IMAP.
      * 
      * @param bool $bool True for Locked, False for Unlocked. Default True.
-     * @return User
+     * @return MyRadio_User
      */
     public function setAccountLocked($bool = true) {
         $this->setCommonParam('account_locked', $bool);
@@ -774,7 +774,7 @@ class User extends ServiceAPI {
      * College IDs can be acquired using User::getColleges().
      * 
      * @param int $college_id The ID of the college.
-     * @return User
+     * @return MyRadio_User
      */
     public function setCollegeID($college_id) {
         $this->setCommonParam('collegeid', $college_id);
@@ -785,7 +785,7 @@ class User extends ServiceAPI {
      * Set the user's eduroam address
      * 
      * @param type $eduroam The User's UoY address, i.e. abc123@york.ac.uk (@york.ac.uk optional)
-     * @return User
+     * @return MyRadio_User
      */
     public function setEduroam($eduroam) {
         //Automatically add '@york.ac.uk' if it is missing
@@ -799,7 +799,7 @@ class User extends ServiceAPI {
 
         if (empty($eduroam) && empty($this->email)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
-        } elseif ($this->getEduroam() . '@york.ac.uk' !== $eduroam && User::findByEmail($eduroam) !== null) {
+        } elseif ($this->getEduroam() . '@york.ac.uk' !== $eduroam && MyRadio_User::findByEmail($eduroam) !== null) {
             throw new MyRadioException('The eduroam account ' . $eduroam . ' is already allocated to another User.', 500);
         }
         $this->setCommonParam('eduroam', $eduroam);
@@ -809,7 +809,7 @@ class User extends ServiceAPI {
     /**
      * Sets the User's primary contact Email. If null, eduroam is used.
      * @param String $email
-     * @return User
+     * @return MyRadio_User
      * @throws MyRadioException
      */
     public function setEmail($email) {
@@ -822,7 +822,7 @@ class User extends ServiceAPI {
 
         if (empty($email) && empty($this->eduroam)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
-        } elseif ($email !== $this->email && User::findByEmail($email) !== null) {
+        } elseif ($email !== $this->email && MyRadio_User::findByEmail($email) !== null) {
             throw new MyRadioException('The email account ' . $email . ' is already allocated to another User.', 500);
         }
         $this->setCommonParam('email', $email);
@@ -832,7 +832,7 @@ class User extends ServiceAPI {
     /**
      * Sets the User's first name
      * @param String $fname
-     * @return User
+     * @return MyRadio_User
      * @throws MyRadioException
      */
     public function setFName($fname) {
@@ -846,7 +846,7 @@ class User extends ServiceAPI {
     /**
      * Set the User's official @ury.org.uk prefix. Usually fname.sname
      * @param String $alias
-     * @return User
+     * @return MyRadio_User
      * @throws MyRadioException
      */
     public function setLocalAlias($alias) {
@@ -860,7 +860,7 @@ class User extends ServiceAPI {
     /**
      * Set the User's server account name
      * @param String $name
-     * @return User
+     * @return MyRadio_User
      * @throws MyRadioException
      */
     public function setLocalName($name) {
@@ -874,7 +874,7 @@ class User extends ServiceAPI {
     /**
      * Set the User's phone number
      * @param String $phone A string of numbers (because leading 0)
-     * @return User
+     * @return MyRadio_User
      * @throws MyRadioException
      */
     public function setPhone($phone) {
@@ -890,7 +890,7 @@ class User extends ServiceAPI {
     /**
      * Set the User's profile photo
      * @param MyRadio_Photo $photo
-     * @return User
+     * @return MyRadio_User
      */
     public function setProfilePhoto(MyRadio_Photo $photo) {
         $this->setCommonParam('profile_photo', $photo->getID());
@@ -900,7 +900,7 @@ class User extends ServiceAPI {
     /**
      * Set whether the User should receive Emails
      * @param boolean $bool
-     * @return User
+     * @return MyRadio_User
      */
     public function setReceiveEmail($bool = true) {
         $this->setCommonParam('receive_email', $bool);
@@ -910,7 +910,7 @@ class User extends ServiceAPI {
     /**
      * Set the User's preferred Auth provider
      * @param String $provider
-     * @return User
+     * @return MyRadio_User
      */
     public function setAuthProvider($provider = null) {
         $this->setCommonParam('auth_provider', $provider);
@@ -920,7 +920,7 @@ class User extends ServiceAPI {
     /**
      * Set the User's last name.
      * @param String $sname
-     * @return User
+     * @return MyRadio_User
      * @throws MyRadioException
      */
     public function setSName($sname) {
@@ -934,7 +934,7 @@ class User extends ServiceAPI {
     /**
      * Set the User's Gender
      * @param char $initial (m)ale, (f)emale or (o)ther
-     * @return User
+     * @return MyRadio_User
      * @throws MyRadioException
      */
     public function setSex($initial = 'o') {
@@ -951,7 +951,7 @@ class User extends ServiceAPI {
     /**
      * Set the User's HTML biography.
      * @param String $bio
-     * @return User
+     * @return MyRadio_User
      */
     public function setBio($bio) {
         $this->setCommonParam('bio', $bio);
@@ -1000,7 +1000,7 @@ class User extends ServiceAPI {
     /**
      * Searched for the user with the given email address, returning the User if they exist, or null if it fails.
      * @param String $email
-     * @return null|User
+     * @return null|MyRadio_User
      */
     public static function findByEmail($email) {
         if (empty($email)) {
@@ -1022,7 +1022,7 @@ class User extends ServiceAPI {
      * Please use MyRadio_TrainingStatus.
      * 
      * @deprecated
-     * @return User[]
+     * @return MyRadio_User[]
      */
     public static function findAllTrained() {
         self::wakeup();
@@ -1031,7 +1031,7 @@ class User extends ServiceAPI {
         $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=1');
         $members = array();
         foreach ($trained as $mid) {
-            $member = User::getInstance($mid);
+            $member = MyRadio_User::getInstance($mid);
             if ($member->isStudioTrained()) {
                 $members[] = $member;
             }
@@ -1044,7 +1044,7 @@ class User extends ServiceAPI {
      * Please use MyRadio_TrainingStatus.
      * 
      * @deprecated
-     * @return User[]
+     * @return MyRadio_User[]
      */
     public static function findAllDemoed() {
         self::wakeup();
@@ -1053,7 +1053,7 @@ class User extends ServiceAPI {
         $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=2');
         $members = array();
         foreach ($trained as $mid) {
-            $member = User::getInstance($mid);
+            $member = MyRadio_User::getInstance($mid);
             if ($member->isStudioDemoed())
                 $members[] = $member;
         }
@@ -1065,7 +1065,7 @@ class User extends ServiceAPI {
      * Please use MyRadio_TrainingStatus.
      * 
      * @deprecated
-     * @return User[]
+     * @return MyRadio_User[]
      */
     public static function findAllTrainers() {
         self::wakeup();
@@ -1074,7 +1074,7 @@ class User extends ServiceAPI {
         $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=3');
         $members = array();
         foreach ($trained as $mid) {
-            $member = User::getInstance($mid);
+            $member = MyRadio_User::getInstance($mid);
             if ($member->isTrainer()) {
                 $members[] = $member;
             }
@@ -1108,8 +1108,8 @@ class User extends ServiceAPI {
      * Gets the edit form for this User, with the permissions available for the current User
      */
     public function getEditForm() {
-        if ($this->getID() !== User::getInstance()->getID() && !User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
-            throw new MyRadioException(User::getInstance() . ' tried to edit ' . $this . '!');
+        if ($this->getID() !== MyRadio_User::getInstance()->getID() && !MyRadio_User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
+            throw new MyRadioException(MyRadio_User::getInstance() . ' tried to edit ' . $this . '!');
         }
 
         $form = new MyRadioForm('profileedit', 'Profile', 'doEdit', array('title' => 'Edit Profile'));
@@ -1196,7 +1196,7 @@ class User extends ServiceAPI {
         )->addField(new MyRadioFormField('sec_about_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
         //Mailbox
-        if (User::getInstance()->hasAuth(AUTH_CHANGESERVERACCOUNT)) {
+        if (MyRadio_User::getInstance()->hasAuth(AUTH_CHANGESERVERACCOUNT)) {
             $form->addField(new MyRadioFormField('sec_server', MyRadioFormField::TYPE_SECTION, array(
                         'label' => Config::$short_name . ' Mailbox Account',
                         'explanation' => 'Before changing these settings, please ensure you understand the guidelines and'
@@ -1240,7 +1240,7 @@ class User extends ServiceAPI {
      * @param string $phone The User's phone number.
      * @param bool $receive_email Whether the User should receive emails.
      * @param float $paid How much the User has paid this Membership Year
-     * @return User
+     * @return MyRadio_User
      * @throws MyRadioException
      */
     public static function create($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00) {
@@ -1279,8 +1279,8 @@ class User extends ServiceAPI {
         }
 
         //Check if it looks like the user might already exist
-        if (User::findByEmail($eduroam) !== null or
-                User::findByEmail($email) !== null) {
+        if (MyRadio_User::findByEmail($eduroam) !== null or
+                MyRadio_User::findByEmail($email) !== null) {
             throw new MyRadioException('This User already appears to exist. '
             . 'Their eduroam or email is already used.');
         }
@@ -1309,7 +1309,7 @@ class User extends ServiceAPI {
         }
 
         $memberid = $r[0];
-        $user = User::getInstance($memberid);
+        $user = MyRadio_User::getInstance($memberid);
 
         //Activate the member's account for the current academic year
         $user->activateMemberThisYear($paid);
@@ -1325,9 +1325,9 @@ class User extends ServiceAPI {
         $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$fname, $uname, $plain_pass], Config::$welcome_email);
 
         //Send the email
-        MyRadioEmail::create(array('members' => array(User::getInstance($memberid))), 'Welcome to ' . Config::$short_name . ' - Getting Involved and Your Account', $welcome_email, 'getinvolved@' . Config::$email_domain);
+        MyRadioEmail::create(array('members' => array(MyRadio_User::getInstance($memberid))), 'Welcome to ' . Config::$short_name . ' - Getting Involved and Your Account', $welcome_email, 'getinvolved@' . Config::$email_domain);
 
-        return User::getInstance($memberid);
+        return MyRadio_User::getInstance($memberid);
     }
 
     /**
@@ -1350,8 +1350,8 @@ class User extends ServiceAPI {
      * @return MyRadioForm
      */
     public static function getQuickAddForm() {
-        if (!User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
-            throw new MyRadioException(User::getInstance() . ' tried to add members!');
+        if (!MyRadio_User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
+            throw new MyRadioException(MyRadio_User::getInstance() . ' tried to add members!');
         }
 
         $form = new MyRadioForm('profilequickadd', 'Profile', 'doQuickAdd', array('title' => 'Add Member (Quick)'));
@@ -1405,8 +1405,8 @@ class User extends ServiceAPI {
      * @return MyRadioForm
      */
     public static function getBulkAddForm() {
-        if (!User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
-            throw new MyRadioException(User::getInstance() . ' tried to add members!');
+        if (!MyRadio_User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
+            throw new MyRadioException(MyRadio_User::getInstance() . ' tried to add members!');
         }
 
         $form = new MyRadioForm('profilebulkadd', 'Profile', 'doBulkAdd', array('title' => 'Add Member (Bulk)'));

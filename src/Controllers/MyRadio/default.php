@@ -10,7 +10,7 @@
  * @package MyRadio_Core
  */
 
-$user = User::getInstance();
+$user = MyRadio_User::getInstance();
 $menu = (new MyRadioMenu())->getMenuForUser($user);
 
 $news = MyRadioNews::getLatestNewsItem(Config::$news_feed, $user);

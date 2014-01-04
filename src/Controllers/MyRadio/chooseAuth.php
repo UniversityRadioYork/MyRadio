@@ -17,7 +17,7 @@ if (!in_array($_REQUEST['authenticator'], Config::$authenticators)) {
 }
 
 //Set the authenticator
-User::getInstance()->setAuthProvider($_REQUEST['authenticator']);
+MyRadio_User::getInstance()->setAuthProvider($_REQUEST['authenticator']);
 
 //If it's not the Default authenticator, delete the password
 if ($_REQUEST['authenticator'] !== 'MyRadioDefaultAuthenticator') {

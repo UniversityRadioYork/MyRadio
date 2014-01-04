@@ -15,7 +15,7 @@ class MyRadio_MemberSyncDaemon extends MyRadio_Daemon {
     
     foreach ($members as $member) {
       dlog('Checking YUSU Member '.$member['EmailAddress'], 4);
-      $result = User::findByEmail($member['EmailAddress']);
+      $result = MyRadio_User::findByEmail($member['EmailAddress']);
       
       if (empty($result)) {
         dlog('Member '.$member['EmailAddress'].' does not exist.', 3);

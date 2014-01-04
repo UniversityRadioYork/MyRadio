@@ -54,7 +54,7 @@ class MyRadioTwig implements TemplateEngine {
                                     CoreUtils::makeURL('MyRadio', 'StaticProxy', array('0' => null)) : Config::$base_url);
 
             if (!empty($GLOBALS['module']) && isset($_SESSION['memberid'])) {
-                $this->addVariable('submenu', (new MyRadioMenu())->getSubMenuForUser(CoreUtils::getModuleID($GLOBALS['module']), User::getInstance()))
+                $this->addVariable('submenu', (new MyRadioMenu())->getSubMenuForUser(CoreUtils::getModuleID($GLOBALS['module']), MyRadio_User::getInstance()))
                         ->addVariable('title', $GLOBALS['module']);
             }
         }

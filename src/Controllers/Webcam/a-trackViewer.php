@@ -8,6 +8,6 @@ if (isset($_SESSION['webcam_lastcounterincrement']) && $_SESSION['webcam_lastcou
 }
 $_SESSION['webcam_lastcounterincrement'] = time();
 
-$data = MyRadio_Webcam::incrementViewCounter(User::getInstance());
+$data = MyRadio_Webcam::incrementViewCounter(MyRadio_User::getInstance());
 
 require 'Views/MyRadio/datatojson.php';

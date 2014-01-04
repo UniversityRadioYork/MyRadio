@@ -536,14 +536,14 @@ class MyRadioFormField {
                         if (empty($_REQUEST[$name][$i])) {
                             continue;
                         }
-                        $_REQUEST[$name][$i] = User::getInstance($_REQUEST[$name][$i]);
+                        $_REQUEST[$name][$i] = MyRadio_User::getInstance($_REQUEST[$name][$i]);
                     }
                     return $_REQUEST[$name];
                 } else {
                     if (empty($_REQUEST[$name])) {
                         return null;
                     }
-                    return User::getInstance($_REQUEST[$name]);
+                    return MyRadio_User::getInstance($_REQUEST[$name]);
                 }
                 break;
             case self::TYPE_TRACK:

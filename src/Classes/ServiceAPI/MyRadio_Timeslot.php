@@ -71,7 +71,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
         $this->season_id = (int) $result['show_season_id'];
         $this->start_time = strtotime($result['start_time']);
         $this->duration = $result['duration'];
-        $this->owner = User::getInstance($result['memberid']);
+        $this->owner = MyRadio_User::getInstance($result['memberid']);
         $this->timeslot_num = (int) $result['timeslot_num'];
 
         $metadata_types = self::$db->decodeArray($result['metadata_types']);
@@ -94,7 +94,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
                 continue;
             }
             $this->credits[] = array('type' => (int) $credit_types[$i], 'memberid' => $credits[$i],
-                'User' => User::getInstance($credits[$i]));
+                'User' => MyRadio_User::getInstance($credits[$i]));
         }
     }
 
@@ -406,7 +406,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
     public function cancelTimeslot($reason) {
 
         //Get if the User has permission to drop the episode
-        if (User::getInstance()->hasAuth(AUTH_DELETESHOWS)) {
+        if (MyRadio_User::getInstance()->hasAuth(AUTH_DELETESHOWS)) {
             //Yep, do an administrative drop
             $r = $this->cancelTimeslotAdmin($reason);
         }
@@ -609,8 +609,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
                 . 'WHERE show_season_timeslot_id=$1) AS t2 USING (memberid)', [$this->getID()]);
 
         return array_map(function($x) {
-            return ['user' => User::getInstance($x['memberid']),
-                'signedby' => $x['signerid'] ? User::getInstance($x['signerid']) : null];
+            return ['user' => MyRadio_User::getInstance($x['memberid']),
+                'signedby' => $x['signerid'] ? MyRadio_User::getInstance($x['signerid']) : null];
         }, $result);
     }
 
@@ -643,12 +643,12 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
     /**
      * Signs the given user into the timeslot to say they were on air at this time.
      * 
-     * @param User $member
+     * @param MyRadio_User $member
      */
-    public function signIn(User $member) {
+    public function signIn(MyRadio_User $member) {
         self::$db->query('INSERT INTO sis2.member_signin'
                 . ' (show_season_timeslot_id, memberid, signerid)'
-                . ' VALUES ($1, $2, $3)', [$this->getID(), $member->getID(), User::getInstance()->getID()]);
+                . ' VALUES ($1, $2, $3)', [$this->getID(), $member->getID(), MyRadio_User::getInstance()->getID()]);
     }
 
 }

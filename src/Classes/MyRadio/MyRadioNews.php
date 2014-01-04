@@ -26,7 +26,7 @@ class MyRadioNews {
      * Returns all items in the given feed
      * @param int $newsfeedid
      */
-    public static function getFeed($newsfeedid, User $user = null, $revoked = false) {
+    public static function getFeed($newsfeedid, MyRadio_User $user = null, $revoked = false) {
         $data = [];
         foreach (Database::getInstance()->fetch_column(
                 'SELECT newsentryid FROM public.news_feed'
@@ -40,10 +40,10 @@ class MyRadioNews {
     /**
      * Returns the latest news item for the given feed, and if given a user, the timestamp of when they saw it
      * @param id $newsfeedid The ID of the newsfeed to check
-     * @param User $user The User object to check if seen. Default null, won't return a seen column.
+     * @param MyRadio_User $user The User object to check if seen. Default null, won't return a seen column.
      * @return Array
      */
-    public static function getLatestNewsItem($newsfeedid, User $user = null) {
+    public static function getLatestNewsItem($newsfeedid, MyRadio_User $user = null) {
         return self::getNewsItem(
                 Database::getInstance()->fetch_column('SELECT newsentryid FROM public.news_feed
                     WHERE public.news_feed.feedid=$1 AND revoked=false
@@ -51,7 +51,7 @@ class MyRadioNews {
                 );
     }
     
-    public static function getNewsItem($newsentryid, User $user = null) {
+    public static function getNewsItem($newsentryid, MyRadio_User $user = null) {
         $db = Database::getInstance();
 
         $news = $db->fetch_one('SELECT newsentryid, fname || \' \' || sname AS author, timestamp AS posted, content
@@ -72,9 +72,9 @@ class MyRadioNews {
     /**
      * @todo Document this
      * @param type $newsentryid
-     * @param User $user
+     * @param MyRadio_User $user
      */
-    public static function markNewsAsRead($newsentryid, User $user) {
+    public static function markNewsAsRead($newsentryid, MyRadio_User $user) {
         $db = Database::getInstance();
 
         try {

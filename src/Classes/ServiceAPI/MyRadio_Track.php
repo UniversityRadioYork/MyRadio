@@ -211,7 +211,7 @@ class MyRadio_Track extends ServiceAPI {
         if ($this->digitisedby === null)
             return null;
         else
-            return User::getInstance($this->digitisedby);
+            return MyRadio_User::getInstance($this->digitisedby);
     }
 
     /**

@@ -22,7 +22,7 @@ class iTones_PlaylistRevision extends iTones_Playlist {
   
   /**
    * Who created this revision
-   * @var User
+   * @var MyRadio_User
    */
   private $author;
   
@@ -49,7 +49,7 @@ class iTones_PlaylistRevision extends iTones_Playlist {
     }
     
     $this->revisionid = $revisionid;
-    $this->author = User::getInstance($result['author']);
+    $this->author = MyRadio_User::getInstance($result['author']);
     $this->notes = $result['notes'];
     $this->timestamp = strtotime($result['timestamp']);
     
@@ -90,7 +90,7 @@ class iTones_PlaylistRevision extends iTones_Playlist {
   /**
    * Prevents idiots attempting to edit this revision.
    */
-  public function acquireOrRenewLock($lockstr = null, User $user = null) {
+  public function acquireOrRenewLock($lockstr = null, MyRadio_User $user = null) {
     throw new MyRadioException('You can\'t lock an archived playlist revision, poopyhead!');
   }
   

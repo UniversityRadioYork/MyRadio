@@ -19,7 +19,7 @@ CoreUtils::getTemplateObject()->setTemplate('error.twig')
           Error: HTTP/1.1 403: Forbidden<br>
           Module Requested: '.$module.'<br>
           Action Requested: '.$action.'<br>
-          User Requesting: '.(class_exists('User') ? (User::getInstance()->getName()) : '').'
+          User Requesting: '.(class_exists('User') ? (MyRadio_User::getInstance()->getName()) : '').'
           </details>')
         ->render();
 exit;

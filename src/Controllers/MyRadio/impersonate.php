@@ -10,7 +10,7 @@
 
 if (isset($_REQUEST['memberid'])) {
     //Impersonate
-    $impersonatee = User::getInstance($_REQUEST['memberid']);
+    $impersonatee = MyRadio_User::getInstance($_REQUEST['memberid']);
     if ((!CoreUtils::hasPermission(AUTH_IMPERSONATE)) ||
             ($impersonatee->hasAuth(AUTH_BLOCKIMPERSONATE) &&
             !CoreUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS))) {
