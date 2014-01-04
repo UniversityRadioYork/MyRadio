@@ -691,7 +691,6 @@ class CoreUtils {
         if (!empty($_SERVER['SERVER_ADDR'])) {
             //Don't let the client wait for us
             flush();
-            ob_flush();
         }
 
         $errors = MyRadioError::getErrorCount();
