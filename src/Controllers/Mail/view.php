@@ -10,7 +10,7 @@
 
 $email = MyRadioEmail::getInstance($_REQUEST['emailid']);
 
-if (!$email->isRecipient(User::getInstance())) {
+if (!$email->isRecipient(MyRadio_User::getInstance())) {
   throw new MyRadioException('You can only view emails you are a recipient of.', 403);
 }
 

@@ -20,7 +20,7 @@ if (isset($_REQUEST['readonly'])) {
             'managed' => iTones_Playlist::getAlliTonesPlaylists(),
             'auto' => NIPSWeb_AutoPlaylist::getAllAutoPlaylists(),
             'aux' => NIPSWeb_ManagedPlaylist::getAllManagedPlaylists(),
-            'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(User::getInstance())
+            'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(MyRadio_User::getInstance())
         ));
 }
 

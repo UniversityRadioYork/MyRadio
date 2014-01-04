@@ -31,7 +31,7 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
      * @param String $user The username (a full email address, or the prefix
      * if it matches Config::$eduroam_domain).
      * @param String $password The provided password.
-     * @return User|false Map the credentials to a MyRadio User on success, or
+     * @return MyRadio_User|false Map the credentials to a MyRadio User on success, or
      * return false on failure.
      * @todo Require change password
      * @todo Account lock
@@ -43,7 +43,7 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
             return false;
         }
         //Find the member in our DB
-        $user = User::findByEmail($user);
+        $user = MyRadio_User::findByEmail($user);
         if (!$user) {
             return false;
         } else {

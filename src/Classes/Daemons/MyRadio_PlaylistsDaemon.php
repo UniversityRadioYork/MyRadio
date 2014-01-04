@@ -35,7 +35,7 @@ class MyRadio_PlaylistsDaemon extends MyRadio_Daemon {
 
     private static function updateMostPlayedPlaylist() {
         $pobj = iTones_Playlist::getInstance('semantic-auto');
-        $lockstr = $pobj->acquireOrRenewLock(null, User::getInstance(Config::$system_user));
+        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
 
         /**
          * @todo This is 120 days for testing (It was Summer when I wrote this...)
@@ -54,17 +54,17 @@ class MyRadio_PlaylistsDaemon extends MyRadio_Daemon {
             $playlist[] = $track;
         }
 
-        $pobj->setTracks(array_unique($playlist), $lockstr, null, User::getInstance(Config::$system_user));
+        $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
     }
 
     private static function updateNewestUploadsPlaylist() {
         $pobj = iTones_Playlist::getInstance('newest-auto');
-        $lockstr = $pobj->acquireOrRenewLock(null, User::getInstance(Config::$system_user));
+        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
 
         $newest_tracks = NIPSWeb_AutoPlaylist::findByName('Newest Tracks')->getTracks();
 
-        $pobj->setTracks($newest_tracks, $lockstr, null, User::getInstance(Config::$system_user));
+        $pobj->setTracks($newest_tracks, $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
     }
 

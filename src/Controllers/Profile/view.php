@@ -10,8 +10,8 @@
  * @package MyRadio_Profile
  */
 // Set if trying to view another member's profile page
-$user = User::getInstance(empty($_REQUEST['memberid']) ? -1 : $_REQUEST['memberid']);
-$visitor = User::getInstance();
+$user = MyRadio_User::getInstance(empty($_REQUEST['memberid']) ? -1 : $_REQUEST['memberid']);
+$visitor = MyRadio_User::getInstance();
 
 //Add global user data
 $userData = $user->toDataSource();

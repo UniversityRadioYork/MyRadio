@@ -9,7 +9,7 @@
  */
 //The Form definition
 require 'Models/Scheduler/showfrm.php';
-$form->setFieldValue('credits.member', array(User::getInstance()))
+$form->setFieldValue('credits.member', array(MyRadio_User::getInstance()))
         ->setFieldValue('credits.credittype', array(1))
         ->setTemplate('Scheduler/createShow.twig')
         ->render();

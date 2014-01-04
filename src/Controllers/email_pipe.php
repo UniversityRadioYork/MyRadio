@@ -46,7 +46,7 @@ if (!isset($sender[2][0])) {
   } else {
     $addr = trim($sender[2][0]);
   }
-  $sender = User::findByEmail($addr);
+  $sender = MyRadio_User::findByEmail($addr);
 }
 
 foreach ($recipients[3] as $recipient) {

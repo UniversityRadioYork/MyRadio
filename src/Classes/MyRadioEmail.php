@@ -51,7 +51,7 @@ class MyRadioEmail extends ServiceAPI {
 
     $this->subject = $info['subject'];
     $this->body = $info['body'];
-    $this->from = (empty($info['sender']) ? null : User::getInstance($info['sender']));
+    $this->from = (empty($info['sender']) ? null : MyRadio_User::getInstance($info['sender']));
     $this->timestamp = strtotime($info['timestamp']);
     $this->email_id = $eid;
 
@@ -80,7 +80,7 @@ class MyRadioEmail extends ServiceAPI {
 
   /**
    * Create a new email
-   * @param User $from The User who sent the email. If null, uses no-reply
+   * @param MyRadio_User $from The User who sent the email. If null, uses no-reply
    * @param array $to A 2D array of 'lists' = [l1, l2], 'members' = [m1, m2]
    * @param String $subject email subject
    * @param String $body email body
@@ -220,13 +220,13 @@ class MyRadioEmail extends ServiceAPI {
     return;
   }
 
-  public function getSentToUser(User $user) {
+  public function getSentToUser(MyRadio_User $user) {
     $r = self::$db->fetch_column('SELECT sent FROM mail.email_recipient_member WHERE email_id=$1 AND memberid=$2 LIMIT 1', array($this->email_id, $user->getID()));
 
     return $r[0] === 't';
   }
 
-  public function setSentToUser(User $user) {
+  public function setSentToUser(MyRadio_User $user) {
     self::$db->query('UPDATE mail.email_recipient_member SET sent=\'t\' WHERE email_id=$1 AND memberid=$2', array($this->email_id, $user->getID()));
     $this->updateCacheObject();
   }
@@ -244,12 +244,12 @@ class MyRadioEmail extends ServiceAPI {
 
   /**
    * Sends an email to the specified User
-   * @param User $to
+   * @param MyRadio_User $to
    * @param string $subject email subject
    * @param sting $message email message
    * @todo Check if "Receive Emails" is enabled for the User
    */
-  public static function sendEmailToUser(User $to, $subject, $message, $from = null) {
+  public static function sendEmailToUser(MyRadio_User $to, $subject, $message, $from = null) {
     self::create(array('members' => array($to)), $subject, $message, $from);
     return true;
   }
@@ -294,10 +294,10 @@ class MyRadioEmail extends ServiceAPI {
    * Will return true if the email was sent to a mailing list they were
    * not a member of at the time.
    * 
-   * @param User $user
+   * @param MyRadio_User $user
    * @return boolean
    */
-  public function isRecipient(User $user) {
+  public function isRecipient(MyRadio_User $user) {
     foreach ($this->r_users as $ruser) {
       if ($ruser === $user->getID()) {
         return true;
@@ -320,7 +320,7 @@ class MyRadioEmail extends ServiceAPI {
   }
   
   public function getUserRecipients() {
-    return User::resultSetToObjArray($this->r_users);
+    return MyRadio_User::resultSetToObjArray($this->r_users);
   }
   
   public function getViewableBody() {

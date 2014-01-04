@@ -13,7 +13,7 @@ $stage = isset($_POST['stage']) ? $_POST['stage'] : 1;
 
 if ($stage == 3) {
     $title = $_POST['show-name'];
-    $shows = User::getInstance()->getShows();
+    $shows = MyRadio_User::getInstance()->getShows();
     if (empty($shows)) {
         $result = false;
         $stage--;
@@ -22,7 +22,7 @@ if ($stage == 3) {
             $result = false;
             $stage--;
         } else {
-            $result = User::getInstance()->getEduroam();
+            $result = MyRadio_User::getInstance()->getEduroam();
         }
     }
 }

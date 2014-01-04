@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['timeslotname'] = CoreUtils::happyTime($timeslot->getStartTime());
         //Handle sign-ins
         foreach ($_REQUEST['signin'] as $memberid) {
-            $timeslot->signIn(User::getInstance($memberid));
+            $timeslot->signIn(MyRadio_User::getInstance($memberid));
         }
         header('Location: '.($_POST['next'] !== '' ? $_POST['next'] : Config::$base_url));
     }
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     /**
      * People with AUTH_EDITSHOWS can see all timeslots here
      */
-    $shows = User::getInstance()->getShows();
+    $shows = MyRadio_User::getInstance()->getShows();
     if (CoreUtils::hasPermission(AUTH_EDITSHOWS)) {
         if (isset($_GET['all'])) {
             $shows = MyRadio_Show::getAllShows();

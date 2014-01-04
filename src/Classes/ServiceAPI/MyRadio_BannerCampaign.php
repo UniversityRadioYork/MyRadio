@@ -29,13 +29,13 @@ class MyRadio_BannerCampaign extends ServiceAPI {
 
   /**
    * The User that created this Banner Campaign
-   * @var User
+   * @var MyRadio_User
    */
   private $created_by;
 
   /**
    * The User that approved this Banner Campaign
-   * @var User
+   * @var MyRadio_User
    */
   private $approved_by;
 
@@ -83,8 +83,8 @@ class MyRadio_BannerCampaign extends ServiceAPI {
     }
 
     $this->banner = MyRadio_Banner::getInstance($result['banner_id']);
-    $this->created_by = User::getInstance($result['memberid']);
-    $this->approved_by = empty($result['approvedid']) ? null : User::getInstance($result['approvedid']);
+    $this->created_by = MyRadio_User::getInstance($result['memberid']);
+    $this->approved_by = empty($result['approvedid']) ? null : MyRadio_User::getInstance($result['approvedid']);
     $this->effective_from = strtotime($result['effective_from']);
     $this->effective_to = empty($result['effective_to']) ? null : strtotime($result['effective_to']);
     $this->banner_location_id = (int) $result['banner_location_id'];
@@ -137,7 +137,7 @@ class MyRadio_BannerCampaign extends ServiceAPI {
 
   /**
    * Get the User that created this Campaign
-   * @return User
+   * @return MyRadio_User
    */
   public function getCreatedBy() {
     return $this->created_by;
@@ -145,7 +145,7 @@ class MyRadio_BannerCampaign extends ServiceAPI {
 
   /**
    * Get the User that approved this Campaign
-   * @return User
+   * @return MyRadio_User
    */
   public function getApprovedBy() {
     return $this->approved_by;
@@ -278,7 +278,7 @@ class MyRadio_BannerCampaign extends ServiceAPI {
     
     self::$db->query('INSERT INTO website.banner_timeslot'
             . ' (banner_campaign_id, memberid, approvedid, "order", day, start_time, end_time) VALUES'
-            . ' ($1, $2, $2, $1, $3, $4, $5)', [$this->getID(), User::getInstance()->getID(), $day, $start, $end]);
+            . ' ($1, $2, $2, $1, $3, $4, $5)', [$this->getID(), MyRadio_User::getInstance()->getID(), $day, $start, $end]);
   }
 
   /**
@@ -300,7 +300,7 @@ class MyRadio_BannerCampaign extends ServiceAPI {
       (banner_id, banner_location_id, effective_from, effective_to, memberid, approvedid)
       VALUES ($1, $2, $3, $4, $5, $5) RETURNING banner_campaign_id', array($banner->getBannerID(), $banner_location_id,
         CoreUtils::getTimestamp($effective_from),
-        CoreUtils::getTimestamp($effective_to), User::getInstance()->getID()));
+        CoreUtils::getTimestamp($effective_to), MyRadio_User::getInstance()->getID()));
     
     $campaign = self::getInstance($result[0]);
     

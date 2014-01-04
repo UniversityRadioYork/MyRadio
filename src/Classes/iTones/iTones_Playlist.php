@@ -40,7 +40,7 @@ class iTones_Playlist extends ServiceAPI {
     $this->title = $result['title'];
     $this->image = $result['image'];
     $this->description = $result['description'];
-    $this->lock = empty($result['lock']) ? null : User::getInstance($result['lock']);
+    $this->lock = empty($result['lock']) ? null : MyRadio_User::getInstance($result['lock']);
     $this->locktime = (int) $result['locktime'];
     $this->weight = (int) $result['weight'];
 
@@ -109,15 +109,15 @@ class iTones_Playlist extends ServiceAPI {
    * Takes a lock on this playlist - stores a notification to all other systems that it should not be edited.
    * 
    * @param String $lockstr If you already have a lock, put it here. It will be renewed if it is still valid.
-   * @param User $user The user that has acquired the lock. Defaults to current user. Required for CLI requests.
+   * @param MyRadio_User $user The user that has acquired the lock. Defaults to current user. Required for CLI requests.
    * This String will be invalidated by the update.
    * 
    * @return bool|String false if the lock is not available, or a sha1 that proves ownership of the lock.
    * No, the hash isn't all that fancy, but it prevents people being stupid. Write operations require this String.
    */
-  public function acquireOrRenewLock($lockstr = null, User $user = null) {
+  public function acquireOrRenewLock($lockstr = null, MyRadio_User $user = null) {
     if ($user === null)
-      $user = User::getInstance();
+      $user = MyRadio_User::getInstance();
     //Acquire a lock on the lock row - we don't want someone else acquiring a lock while we are!
     self::$db->query('BEGIN');
     self::$db->query('SELECT * FROM jukebox.playlists WHERE playlistid=$1 FOR UPDATE', array($this->getID()), true);
@@ -156,17 +156,17 @@ class iTones_Playlist extends ServiceAPI {
    */
   private function refreshLockInformation() {
     $result = self::$db->fetch_one('SELECT lock, locktime FROM jukebox.playlists WHERE playlistid=$1', array($this->getID()));
-    $this->lock = empty($result['lock']) ? null : User::getInstance($result['lock']);
+    $this->lock = empty($result['lock']) ? null : MyRadio_User::getInstance($result['lock']);
     $this->locktime = (int) $result['locktime'];
   }
 
   /**
    * Generates a key to the provided lock
-   * @param User $lock
+   * @param MyRadio_User $lock
    * @param int $locktime
    * @return String
    */
-  private function generateLockKey(User $lock, $locktime) {
+  private function generateLockKey(MyRadio_User $lock, $locktime) {
     return sha1('myuryitoneslockkey' . $lock->__toString() . $locktime . $this->getID());
   }
 
@@ -196,9 +196,9 @@ class iTones_Playlist extends ServiceAPI {
    * @todo Push these changes to the playlist files on playoutsvc.ury.york.ac.uk. This should probably be a MyRadioDaemon
    * configured to run only on that server.
    */
-  public function setTracks($tracks, $lockstr, $notes = null, User $user = null) {
+  public function setTracks($tracks, $lockstr, $notes = null, MyRadio_User $user = null) {
       if ($user === null) {
-          $user = User::getInstance();
+          $user = MyRadio_User::getInstance();
       }
     //Remove duplicates
     $tracks = array_unique($tracks);

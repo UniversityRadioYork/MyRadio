@@ -19,10 +19,10 @@ class MyRadioMenu {
 
     /**
      * Returns a customised MyRadio menu for the *currently logged in* user
-     * @param \User $user The currently logged in User's User object
+     * @param \MyRadio_User $user The currently logged in User's User object
      * @return Array A complex Menu array array array array array
      */
-    public function getMenuForUser(User $user) {
+    public function getMenuForUser(MyRadio_User $user) {
         $full = $this->getFullMenu();
 
         //Iterate over the Full Menu, creating a user menu
@@ -166,10 +166,10 @@ class MyRadioMenu {
     /**
      * @todo Document
      * @param type $moduleid
-     * @param \User $user The currently logged in User's User object
+     * @param \MyRadio_User $user The currently logged in User's User object
      * @return array
      */
-    public function getSubMenuForUser($moduleid, User $user) {
+    public function getSubMenuForUser($moduleid, MyRadio_User $user) {
         $full = $this->getFullSubMenu($moduleid);
 
         //Iterate over the Full Menu, creating a user menu

@@ -6,4 +6,4 @@
  * @version 20130717
  * @package MyRadio_Profile
  */
-User::getQuickAddForm()->render();
+MyRadio_User::getQuickAddForm()->render();
