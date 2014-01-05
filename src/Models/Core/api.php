@@ -82,14 +82,3 @@ if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
     );
     session_start();
 }
-
-//If there's evidence a user is supposed to be logged in, validate the session
-//data doesn't look like it's been tampered with
-if (isset($_SESSION['memberid'])) {
-    if (!isset($_SESSION['auth_use_locked']) || 
-            $_SESSION['auth_hash'] !== sha1(session_id() . $_SESSION['name'] . $_SESSION['email'] . $_SESSION['memberid'])) {
-        session_destroy();
-        header('Location: ' . CoreUtils::makeURL('MyRadio', 'login'));
-        exit;
-    }
-}
