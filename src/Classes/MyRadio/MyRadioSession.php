@@ -41,21 +41,17 @@ class MyRadioSession {
     if (empty($id)) {
         return false;
     }
-    $result = $this->db->query('SELECT data FROM sso_session
+    $result = $this->db->fetch_column('SELECT data FROM sso_session
       WHERE id=$1 LIMIT 1',
             array($id));
-    if (!$result) {
-        return false;
-    }
     
-    if ($this->db->num_rows($result) === 0) {
+    if (empty($result)) {
       $this->db->query('INSERT INTO sso_session (id, data, timestamp)
         VALUES ($1, \'\', $2)', array($id, CoreUtils::getTimestamp()));
       return '';
     }
     
-    $row = pg_fetch_row($result);
-    return $row[0];
+    return $result[0];
   }
   
   /**

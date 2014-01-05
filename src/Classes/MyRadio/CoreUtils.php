@@ -683,6 +683,7 @@ class CoreUtils {
 
     //Reports some things
     public static function shutdown() {
+        session_write_close(); //It doesn't seem to do this itself sometimes.
         try {
             $db = Database::getInstance();
         } catch (MyRadioException $e) {
