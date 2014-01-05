@@ -65,12 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
                  * they try to access anything other than pages with AUTH_NOACCESS
                  */
                 $_SESSION['auth_use_locked'] = false;
-                /**
-                 * If this hash no longer matches on a request, the user is
-                 * logged out. A rudimentary attempt to prevent things tampering
-                 * with the bits of the session they shouldn't.
-                 */
-                $_SESSION['auth_hash'] = sha1(session_id().$_SESSION['name'].$_SESSION['email'].$_SESSION['memberid']);
                 $user->updateLastLogin();
                 $status = 'success';
                 $authenticators[$i] = true;

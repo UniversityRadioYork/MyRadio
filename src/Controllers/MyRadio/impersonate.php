@@ -23,7 +23,6 @@ if (isset($_REQUEST['memberid'])) {
         $_SESSION['name'] = $impersonatee->getName();
         $_SESSION['email'] = $impersonatee->getEmail();
         $_SESSION['auth_use_locked'] = false;
-        $_SESSION['auth_hash'] = sha1(session_id().$_SESSION['name'].$_SESSION['email'].$_SESSION['memberid']);
     }
 } else {
     /**
