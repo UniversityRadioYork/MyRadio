@@ -510,7 +510,6 @@ EOT
       if (isset($params['weeks']['wk' . $i]) && $params['weeks']['wk' . $i] == 1) {
         $day_start = $start_day + (($i - 1) * 7 * 86400);
         $show_time = date('d-m-Y ', $day_start) . $start_time;
-        echo $show_time . '<br>';
 
         /**
          * @todo 1 is subtracted from the duration in the conflict checker here,
@@ -518,7 +517,7 @@ EOT
          * nicer here?
          */
         $conflict = self::getScheduleConflict($day_start + $req_time['start_time'], $day_start + $start_time + $req_time['duration'] - 1);
-        print_r($conflict);
+        //print_r($conflict);
         //Disable because it doesn't fucking work.
         /*         * if (!empty($conflict)) {
           self::$db->query('ROLLBACK');
@@ -537,6 +536,7 @@ EOT
             $_SESSION['memberid']
         ));
         $this->timeslots[] = MyRadio_Timeslot::getInstance($r[0]['show_season_timeslot_id']);
+        $times .= CoreUtils::happyTime($show_time)."\n"; //Times for the email
       }
     }
     //COMMIT
