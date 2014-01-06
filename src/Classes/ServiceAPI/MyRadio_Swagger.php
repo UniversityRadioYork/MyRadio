@@ -97,12 +97,23 @@ class MyRadio_Swagger {
                     !($constructor->isPublic() && $constructor->getParameters() == null)) {
                 $path .= '{id}/';
             }
+            
+            $params = [];
             if ($method->getName() !== 'toDataSource') {
                 $path .= $method->getName() . '/';
+                //toDataSource has a full option
+                $params[] = [
+                    "paramType" => "query",
+                    "name" => 'full',
+                    "description" => "Some objects can optionally return a small or large response. By default, a full response is on, although it is intended for this to change.",
+                    "dataType" => "boolean",
+                    "required" => false,
+                    "allowMultiple" => false,
+                    "defaultValue" => true
+                ];
             }
 
-            //Build the paramaters list
-            $params = [];
+            //Build the parameters list
             //id is a parameter if the method is not static
             //unless the constructor is public and takes no args
             if (!$method->isStatic() &&

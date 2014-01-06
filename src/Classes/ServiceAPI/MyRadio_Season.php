@@ -543,6 +543,9 @@ EOT
     self::$db->query('COMMIT');
     $this->updateCacheObject();
     //Email the user
+    /**
+     * @todo Make this nicer and configurable and stuff
+     */
     $message = "
 Hello,
   

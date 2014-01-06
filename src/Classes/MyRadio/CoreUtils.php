@@ -770,12 +770,13 @@ class CoreUtils {
     public static function testCredentials($user, $pass) {
         //Make a best guess at the user account
         //This way we can skip authenticators if they have one set
-        $u = MyRadio_User::findByEmail($user);
+        $u = MyRadio_User::findByEmail($user); 
         if ($u instanceof MyRadio_User && $u->getAuthProvider() !== null) {
             $authenticators = [$u->getAuthProvider()];
         } else {
             $authenticators = Config::$authenticators;
         }
+        
         //Iterate over each authenticator
         foreach ($authenticators as $authenticator) {
             $a = new $authenticator();
