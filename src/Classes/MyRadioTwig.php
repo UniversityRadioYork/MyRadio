@@ -25,6 +25,7 @@ class MyRadioTwig implements TemplateEngine {
         $this->contextVariables['notices'] = '';
         $this->twig = new Twig_Environment($twig_loader, array('auto_reload' => true));
         if (Config::$template_debug) {
+            $this->twig->addExtension(new Twig_Extension_Debug());
             $this->twig->enableDebug();
         }
 
