@@ -543,10 +543,10 @@ EOT
     self::$db->query('COMMIT');
     $this->updateCacheObject();
     //Email the user
-    $message = <<<EOT
+    $message = "
 Hello,
   
-  Please note that one of your shows has been allocated the following timeslots on the {Config::$short_name} Schedule:
+  Please note that one of your shows has been allocated the following timeslots on the ".Config::$short_name." Schedule:
   
 $times
     
@@ -554,8 +554,8 @@ $times
   
   If you have any questions about your application, direct them to pc@ury.org.uk
 
-  ~ {Config::$short_name} Scheduling Legume
-EOT;
+  ~ ".Config::$short_name." Scheduling Legume";
+
     if (!empty($times)) {
       MyRadioEmail::sendEmailToUser($this->owner, $this->getMeta('title') . ' Scheduled', $message);
     }
