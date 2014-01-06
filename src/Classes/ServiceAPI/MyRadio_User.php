@@ -1006,10 +1006,11 @@ class MyRadio_User extends ServiceAPI {
         if (empty($email)) {
             return null;
         }
+        //Doing this instead of ILIKE halves the query time
+        $email = strtolower($email);
         self::wakeup();
-
-        $result = self::$db->fetch_column('SELECT memberid FROM public.member WHERE email ILIKE $1 OR eduroam ILIKE $1
-      OR local_name ILIKE $2 OR local_alias ILIKE $2 OR eduroam ILIKE $2', array($email, explode('@', $email)[0]));
+        $result = self::$db->fetch_column('SELECT memberid FROM public.member WHERE email LIKE $1 OR eduroam LIKE $1
+      OR local_name LIKE $2 OR local_alias LIKE $2 OR eduroam LIKE $2', array($email, explode('@', $email)[0]));
 
         if (empty($result)) {
             return null;
