@@ -17,7 +17,7 @@
  * - Provides the <code>$member</code> global variable - this contains the current User<br>
  * - Calls CoreUtils::setUpAuth, which configures the MyRadio authentication constants
  * 
- * @version 20130515
+ * @version 20130106
  * @author Lloyd Wallis <lpw@ury.org.uk> 
  * @package MyRadio_Core
  */
@@ -68,6 +68,11 @@ register_shutdown_function('CoreUtils::shutdown');
  * We disable this for the API using the DISABLE_SESSION constant.
  */
 if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
+    //Override any existing session
+    if (isset($_SESSION)) {
+        session_write_close();
+        session_id($_COOKIE['PHPSESSID']);
+    }
     $session_handler = MyRadioSession::factory();
     session_set_save_handler(
             array($session_handler, 'open'),
