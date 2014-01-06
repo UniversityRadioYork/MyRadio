@@ -46,9 +46,6 @@ spl_autoload_register(function($class) {
 
 require_once 'Classes/MyRadioException.php';
 require_once 'Classes/MyRadioError.php';
-set_exception_handler(function($e) {
-            
-        });
 set_error_handler('MyRadioError::errorsToEmail');
 
 //Initiate Database
