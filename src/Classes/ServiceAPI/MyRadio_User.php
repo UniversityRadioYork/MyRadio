@@ -1455,7 +1455,8 @@ class MyRadio_User extends ServiceAPI {
             'sex' => $this->getSex(),
             'receive_email' => $this->getReceiveEmail(),
             'public_email' => $this->getEmail(),
-            'url' => $this->getURL()
+            'url' => $this->getURL(),
+            'local_name' => $this->getLocalName()
         ];
         if ($full) {
             $data['paid'] = $this->getAllPayments();
