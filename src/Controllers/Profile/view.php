@@ -13,6 +13,8 @@
 $user = MyRadio_User::getInstance(empty($_REQUEST['memberid']) ? -1 : $_REQUEST['memberid']);
 $visitor = MyRadio_User::getInstance();
 
+var_dump($_SESSION);exit;
+
 //Add global user data
 $userData = $user->toDataSource();
 $userData['training'] = CoreUtils::dataSourceParser($user->getAllTraining(true));
