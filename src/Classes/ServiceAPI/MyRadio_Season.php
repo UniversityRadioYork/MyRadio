@@ -60,7 +60,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
     }
 
     //Deal with the easy bits
-    $this->owner = User::getInstance($result['memberid']);
+    $this->owner = MyRadio_User::getInstance($result['memberid']);
     $this->show_id = (int) $result['show_id'];
     $this->submitted = strtotime($result['submitted']);
     $this->term_id = (int) $result['termid'];
@@ -145,7 +145,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
     //Right, let's start by getting a Season ID created for this entry
     $season_create_result = self::$db->fetch_column('INSERT INTO schedule.show_season
       (show_id, termid, submitted, memberid)
-      VALUES ($1, $2, $3, $4) RETURNING show_season_id', array($params['show_id'], $term_id, CoreUtils::getTimestamp(), User::getInstance()->getID()), true);
+      VALUES ($1, $2, $3, $4) RETURNING show_season_id', array($params['show_id'], $term_id, CoreUtils::getTimestamp(), MyRadio_User::getInstance()->getID()), true);
 
     $season_id = $season_create_result[0];
 
@@ -178,7 +178,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
       self::$db->query('INSERT INTO schedule.season_metadata
         (metadata_key_id, show_season_id, metadata_value, effective_from, memberid, approvedid) VALUES
         ($1, $2, $3, NOW(), $4, $4)', array(
-          self::getMetadataKey('description'), $season_id, $params['description'], User::getInstance()->getID()
+          self::getMetadataKey('description'), $season_id, $params['description'], MyRadio_User::getInstance()->getID()
               ), true);
     }
 
@@ -192,7 +192,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
         self::$db->query('INSERT INTO schedule.season_metadata
           (metadata_key_id, show_season_id, metadata_value, effective_from, memberid, approvedid) VALUES
           ($1, $2, $3, NOW(), $4, $4)', array(
-            self::getMetadataKey('tag'), $season_id, $tag, User::getInstance()->getID()
+            self::getMetadataKey('tag'), $season_id, $tag, MyRadio_User::getInstance()->getID()
                 ), true);
       }
     }
@@ -427,7 +427,7 @@ EOT
         'description' => $this->getMeta('description'),
         'submitted' => $this->getSubmittedTime(),
         'requested_time' => sizeof($this->getRequestedTimes()) === 0 ? null : $this->getRequestedTimes()[0],
-        'first_time' => (is_object($this->timeslots[0]) ? CoreUtils::happyTime($this->timeslots[0]->getStartTime()) : 'Not Scheduled'),
+        'first_time' => (isset($this->timeslots[0]) && is_object($this->timeslots[0]) ? CoreUtils::happyTime($this->timeslots[0]->getStartTime()) : 'Not Scheduled'),
         'num_episodes' => array(
             'display' => 'text',
             'value' => sizeof($this->timeslots),
@@ -510,7 +510,6 @@ EOT
       if (isset($params['weeks']['wk' . $i]) && $params['weeks']['wk' . $i] == 1) {
         $day_start = $start_day + (($i - 1) * 7 * 86400);
         $show_time = date('d-m-Y ', $day_start) . $start_time;
-        echo $show_time . '<br>';
 
         /**
          * @todo 1 is subtracted from the duration in the conflict checker here,
@@ -518,7 +517,7 @@ EOT
          * nicer here?
          */
         $conflict = self::getScheduleConflict($day_start + $req_time['start_time'], $day_start + $start_time + $req_time['duration'] - 1);
-        print_r($conflict);
+        //print_r($conflict);
         //Disable because it doesn't fucking work.
         /*         * if (!empty($conflict)) {
           self::$db->query('ROLLBACK');
@@ -537,16 +536,20 @@ EOT
             $_SESSION['memberid']
         ));
         $this->timeslots[] = MyRadio_Timeslot::getInstance($r[0]['show_season_timeslot_id']);
+        $times .= CoreUtils::happyTime($show_time)."\n"; //Times for the email
       }
     }
     //COMMIT
     self::$db->query('COMMIT');
     $this->updateCacheObject();
     //Email the user
-    $message = <<<EOT
+    /**
+     * @todo Make this nicer and configurable and stuff
+     */
+    $message = "
 Hello,
   
-  Please note that one of your shows has been allocated the following timeslots on the {Config::$short_name} Schedule:
+  Please note that one of your shows has been allocated the following timeslots on the ".Config::$short_name." Schedule:
   
 $times
     
@@ -554,8 +557,8 @@ $times
   
   If you have any questions about your application, direct them to pc@ury.org.uk
 
-  ~ {Config::$short_name} Scheduling Legume
-EOT;
+  ~ ".Config::$short_name." Scheduling Legume";
+
     if (!empty($times)) {
       MyRadioEmail::sendEmailToUser($this->owner, $this->getMeta('title') . ' Scheduled', $message);
     }
@@ -581,7 +584,7 @@ EOT;
     $email .= "\r\n\r\nRegards\r\n" . Config::$long_name . " Programming Team";
 
     foreach ($this->getShow()->getCredits() as $credit) {
-      $u = User::getInstance($credit);
+      $u = MyRadio_User::getInstance($credit);
       MyRadioEmail::sendEmailToUser($u, 'Show Cancelled', $email);
     }
 

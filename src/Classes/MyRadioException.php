@@ -27,6 +27,11 @@ class MyRadioException extends RuntimeException {
    */
   public function __construct($message, $code = 500, Exception $previous = null) {
     self::$count++;
+    if (self::$count > Config::$exception_limit) {
+        trigger_error('Exception limit exceeded. Futher exceptions will not be reported.');
+        return;
+    }
+    
     parent::__construct((string) $message, (int) $code, $previous);
 
     if (defined('SILENT_EXCEPTIONS') && SILENT_EXCEPTIONS) {
@@ -40,6 +45,7 @@ class MyRadioException extends RuntimeException {
               <tr><td>Location</td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
               <tr><td>Trace</td><td>" . nl2br($this->getTraceAsString()) . "</td></tr>
             </table>";
+    
     if (class_exists('Config')) {
       if (Config::$email_exceptions && class_exists('MyRadioEmail') && $code !== 400) {
         MyRadioEmail::sendEmailToComputing('[MyRadio] Exception Thrown', $error . "\r\n" . $message . "\r\n" . (isset($_SESSION) ? print_r($_SESSION, true) : '') . "\r\n" . print_r($_REQUEST, true));
@@ -66,7 +72,6 @@ class MyRadioException extends RuntimeException {
             $twig = CoreUtils::getTemplateObject();
             $twig->setTemplate('error.twig')
                     ->addVariable('serviceName', 'Error')
-                    ->addVariable('serviceVersion', $GLOBALS['service_version'])
                     ->addVariable('title', 'Internal Server Error')
                     ->addVariable('body', $error)
                     ->addVariable('uri', $_SERVER['REQUEST_URI'])
@@ -97,10 +102,6 @@ class MyRadioException extends RuntimeException {
       }
     } else {
       echo 'A fatal error has occured that has prevented MyRadio from performing the action you requested. Please contact computing@ury.org.uk.';
-    }
-
-    if (self::$count > Config::$exception_limit) {
-      exit;
     }
   }
 

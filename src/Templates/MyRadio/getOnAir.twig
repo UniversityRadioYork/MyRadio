@@ -1,9 +1,9 @@
 <li{% if studio_trained %} class="menu-checklist-done"{% endif %}>
-  <a href="https://www.facebook.com/URY1350/events" title="The first stage to getting on air is going to a short lecture about using the studio.">Get Studio Trained</a>
+  <a href="{{config.facebook}}/events" title="The first stage to getting on air is going to a short lecture about using the studio.">Get Studio Trained</a>
 </li>
 <li class="{% if studio_demoed %}menu-checklist-done {% elseif not studio_trained %} menu-checklist-disabled{% endif %}">
   {% if studio_trained %}
-    <a href="{{myury.makeURL(config, 'Scheduler','listDemos')}}" title="Once you know how to use the studio, you need to do a 30 minute demonstration of your knowledge to a URY Trainer.">Get Demoed</a>
+    <a href="{{myury.makeURL(config, 'Scheduler','listDemos')}}" title="Once you know how to use the studio, you need to do a 30 minute demonstration of your knowledge to a Trainer.">Get Demoed</a>
   {% else %}
     <a href="{{myury.makeURL(config, 'Scheduler','listDemos')}}" title="Do a 30 minute off-air demo in the studio to prove your broadcasting prowess. Ideally, you should have gone to a Studio Training session first.">Get Demoed</a>
   {% endif %}

@@ -18,11 +18,15 @@ if (!$show->isCurrentUserAnOwner() && !CoreUtils::hasPermission(AUTH_EDITSHOWS))
 //The Form definition
 require 'Models/Scheduler/showfrm.php';
 
+$meta = $show->getMeta('tag');
+if ($meta === null) {
+    $meta = array();
+}
 $form->editMode($_REQUEST['showid'], array(
             'title' => $show->getMeta('title'),
             'description' => $show->getMeta('description'),
             'genres' => $show->getGenre(),
-            'tags' => implode(' ', $show->getMeta('tag')),
+            'tags' => implode(' ', $meta),
             'credits.member' => array_map(function ($ar) {
                       return $ar['User'];
                     }, $show->getCredits()),

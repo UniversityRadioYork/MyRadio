@@ -179,14 +179,14 @@ class MyRadio_Officer extends ServiceAPI {
     }
     
     return array_map(function($x) {
-      $x['User'] = User::getInstance($x['User']);
+      $x['User'] = MyRadio_User::getInstance($x['User']);
       return $x;
     },$this->history);
   }
   
   /**
    * Get Users currently in the position
-   * @return User[]
+   * @return MyRadio_User[]
    */
   public function getCurrentHolders() {
     $i = $this->getHistory();

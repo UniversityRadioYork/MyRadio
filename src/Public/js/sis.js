@@ -327,7 +327,7 @@ $(document).ready(function() {
                     rounded: false,
                     themes: [
                         {
-                            title: "MyURY",
+                            title: "MyRadio",
                             name: "ury-purple",
                         },
                         {

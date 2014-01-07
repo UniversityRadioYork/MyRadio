@@ -13,6 +13,6 @@ if (!isset($_REQUEST['campaignid'])) {
 
 $campaign = MyRadio_BannerCampaign::getInstance($_REQUEST['campaignid']);
 $campaign->getEditForm()->render([
-    campaignStart=> CoreUtils::happyTime($campaign->getEffectiveFrom()),
-    bannerName=> $campaign->getBanner()->getAlt()
+    'campaignStart'=> CoreUtils::happyTime($campaign->getEffectiveFrom()),
+    'bannerName'=> $campaign->getBanner()->getAlt()
 ]);

@@ -70,6 +70,13 @@ class MyRadio_TrainingStatus extends ServiceAPI {
    * @var int[]
    */
   private $awarded_to = null;
+  
+  /**
+   * Permissions granted to Users with this Training Status.
+   * 
+   * @var int[]
+   */
+  private $permissions;
 
   /**
    * Create a new TrainingStatus object. Generally, you should use getInstance.
@@ -93,6 +100,8 @@ class MyRadio_TrainingStatus extends ServiceAPI {
     
     $this->depends = empty($result['depends']) ? null : $result['depends'];
     $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
+    
+    $this->permissions = self::$db->fetch_column('SELECT typeid FROM public.auth_trainingstatus WHERE presenterstatusid=$1', [$statusid]);
   }
   
   /**
@@ -124,6 +133,15 @@ class MyRadio_TrainingStatus extends ServiceAPI {
   }
   
   /**
+   * Get the permissions this Training Status grants
+   * 
+   * @return int[]
+   */
+  public function getPermissions() {
+      return $this->permissions;
+  }
+  
+  /**
    * Get the TrainingStatus a member must have before being awarded this one, if any.
    * 
    * Returns null if there is no dependency.
@@ -137,12 +155,12 @@ class MyRadio_TrainingStatus extends ServiceAPI {
   /**
    * Checks if the user has the Training Status the one depends on.
    * 
-   * @param User $user Default current User.
+   * @param MyRadio_User $user Default current User.
    * @return bool True if no dependency or dependency gained, false otherwise.
    */
-  public function hasDependency(User $user = null) {
+  public function hasDependency(MyRadio_User $user = null) {
     if ($user === null) {
-      $user = User::getInstance();
+      $user = MyRadio_User::getInstance();
     }
     return ($this->getDepends() == null or $this->getDepends()->isAwardedTo($user));
   }
@@ -158,12 +176,12 @@ class MyRadio_TrainingStatus extends ServiceAPI {
   
   /**
    * Returns if the User can Award this Training Status
-   * @param User $user
+   * @param MyRadio_User $user
    * @return bool
    */
-  public function canAward(User $user = null) {
+  public function canAward(MyRadio_User $user = null) {
     if ($user === null) {
-      $user = User::getInstance();
+      $user = MyRadio_User::getInstance();
     }
     
     return $this->getAwarder()->isAwardedTo($user);
@@ -175,7 +193,7 @@ class MyRadio_TrainingStatus extends ServiceAPI {
    * 
    * @param int $ids If true, just returns User Training Status IDs instead of
    * UserTrainingStatuses.
-   * @return User[]|int
+   * @return MyRadio_User[]|int
    */
   public function getAwardedTo($ids = false) {
     if ($this->awarded_to === null) {
@@ -191,12 +209,12 @@ class MyRadio_TrainingStatus extends ServiceAPI {
   /**
    * Checks if the User has this Training Status
    * 
-   * @param User $user
+   * @param MyRadio_User $user
    * @return bool
    */
-  public function isAwardedTo(User $user = null) {
+  public function isAwardedTo(MyRadio_User $user = null) {
     if ($user === null) {
-      $user = User::getInstance();
+      $user = MyRadio_User::getInstance();
     }
     
     return in_array($user->getID(), array_map(function($x){
@@ -234,13 +252,13 @@ class MyRadio_TrainingStatus extends ServiceAPI {
    * 
    * A User cannot award themselves statuses.
    * 
-   * @param User $to The User getting the Training Status.
-   * @param User $by The User awarding the Training Status.
+   * @param MyRadio_User $to The User getting the Training Status.
+   * @param MyRadio_User $by The User awarding the Training Status.
    * @return MyRadio_TrainingStatus[]
    */
-  public static function getAllAwardableTo(User $to, User $by = null) {
+  public static function getAllAwardableTo(MyRadio_User $to, MyRadio_User $by = null) {
     if ($by === null) {
-      $by = User::getInstance();
+      $by = MyRadio_User::getInstance();
     }
     if ($to === $by) {
       return [];

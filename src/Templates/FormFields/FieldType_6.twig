@@ -2,4 +2,4 @@
 {% if display_labels %}<label for="{{frm_name}}-{{field.name}}-ui">{{field.label}}</label>{% endif %}
 <input type="text" class="{{field.class}}{% if field.required %} required{% endif %} text track-autocomplete"
        name="{{frm_name}}-{{field.name}}-ui" id="{{frm_name}}-{{field.name}}-ui" value="{{field.options.trackname}}" />
-<span class="myuryfrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
+<span class="myradiofrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>

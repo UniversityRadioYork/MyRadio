@@ -15,7 +15,7 @@ foreach ($officers as $k => $v) {
   }
   
   if (!empty($officers[$k]['memberid'])) {
-    $image = User::getInstance($officers[$k]['memberid'])->getProfilePhoto();
+    $image = MyRadio_User::getInstance($officers[$k]['memberid'])->getProfilePhoto();
     $officers[$k]['image'] = $image !== null ? $image->getURL() : Config::$default_person_uri;
   } else {
     $officers[$k]['image'] = Config::$vacant_officer_uri;

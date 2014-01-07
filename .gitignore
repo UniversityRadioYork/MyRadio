@@ -2,3 +2,4 @@
 *.LCK*
 MyRadio_Config.local.php
 *.sw[a-z]
+sftp-*.json

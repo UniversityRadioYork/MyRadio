@@ -69,7 +69,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
         continue;
       }
       $this->credits[] = array('type' => (int)$credit_types[$i], 'memberid' => $credits[$i],
-          'User' => User::getInstance($credits[$i]));
+          'User' => MyRadio_User::getInstance($credits[$i]));
     }
 
 
@@ -352,7 +352,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
       self::$db->query('UPDATE schedule.show_genre SET effective_to=NOW() WHERE show_id=$1',
               array($this->getID()));
       self::$db->query('INSERT INTO schedule.show_genre (show_id, genre_id, effective_from, memberid, approvedid)
-              VALUES ($1, $2, NOW(), $3, $3)', array($this->getID(), $genreid, User::getInstance()->getID()));
+              VALUES ($1, $2, NOW(), $3, $3)', array($this->getID(), $genreid, MyRadio_User::getInstance()->getID()));
       $this->genres = [$genreid];
       $this->updateCacheObject();
     }
@@ -364,7 +364,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
    * Existing credits are kept active, ones that are not in the new list are set to effective_to now,
    * and ones that are in the new list but not exist are created with effective_from now.
    *
-   * @param User[] $users An array of Users associated.
+   * @param MyRadio_User[] $users An array of Users associated.
    * @param int[] $credittypes The relevant credittypeid for each User.
    */
   public function setCredits($users, $credittypes, $table = null, $pkey = null) {

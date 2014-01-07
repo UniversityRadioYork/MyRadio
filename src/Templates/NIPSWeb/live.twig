@@ -3,62 +3,86 @@
 {{ parent() }}
 <link rel="stylesheet" type="text/css" href="{{shiburl}}css/planner.css" />
 <style type="text/css">
-.ui-contextmenu {z-index: 10000}
+    .ui-contextmenu {z-index: 10000}
 </style>
 {% endblock %}
 {% block content %}
-<div id="notice" class="ui-state-highlight ui-helper-hidden">Waiting...</div>
+<noscript style="z-index:9998;position:fixed;top:0;left:0;width:100%;height:100%;background-color: #5c67a0">
+<br><br><p style="text-align: center;vertical-align:middle;color:#FFF;">
+    Sorry, you need to have JavaScript enabled to use BAPS.
+</p>
+</noscript>
+<div id="init-overlay">
+    <div class="ui-widget-overlay" style="z-index: 9985"></div>
+    <div class="ui-dialog ui-widget ui-widget-content ui-corner-all"
+         style="width: 300px; left: calc(50% - 150px); top: 40%; z-index: 9990; position: absolute; display:block;">
+        <div class="ui-dialog-titlebar ui-widget-header ui-corner-all">
+            Welcome to BAPS
+        </div>
+        <div class="ui-dialog-content ui-widget-content">
+            <p>Connecting to server...</p>
+            <div id="init-progressbar"></div>
+        </div>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-hidden" id="init-overlay-fallback">
+            <div class="ui-dialog-buttonset">
+                <button type="button">Fallback Mode</button>
+            </div>
+        </div>
+    </div>
+</div>
 <header id="content-header">
-  <h3 id="a-manage-library"><a href="{{myury.makeURL(config,'NIPSWeb','manage_library')}}" title="Library Manager">Manage Library</a></h3>
-  <h2>{{title}}</h2>
+    <!--<h3 id="a-manage-library"><a href="{{myury.makeURL(config,'NIPSWeb','manage_library')}}" title="Library Manager">Manage Library</a></h3>-->
+    <h2>{{title}}</h2>
 </header>
 <div id="grid" class="transBG clearfix">
 
-  <div id="bapswrapper" class="ui-widget">
-    <div id="baps-channel-container" class="clearfix">
+    <div id="bapswrapper" class="ui-widget">
+        <div id="baps-channel-container" class="clearfix">
       {% for i in 0..2 %}
-        <ul class="box width-1 height-2 baps-channel ui-widget-content" channel="{{i+1}}" id="baps-channel-{{i + 1}}">
+            <ul class="box width-1 height-2 baps-channel ui-widget-content" channel="{{i+1}}" id="baps-channel-{{i + 1}}">
           {% for track in tracks[i]['playlist']|keys %}
-            <li id='item-{{i}}-{{track}}'>{{tracks[i]['playlist'][track]['name']}}</li>
+                <li id='item-{{i}}-{{track}}'>{{tracks[i]['playlist'][track]['name']}}</li>
           {% endfor %}
-        </ul>
+            </ul>
       {% endfor %}
-  
-      <div id="resource-add-container" class="box width-2 height-2 ui-widget ui-widget-content">
-        <div id="resource-add-header" class="ui-widget-header">
-          {% include 'NIPSWeb/res_selector.twig' %}
-          <span id="res-loading" class="ui-state-highlight ui-helper-hidden">Loading...</span>
-          <br>
-          <input type="text" placeholder="Filter by artist..." id="res-filter-artist" class="ui-widget-content ui-helper-hidden" />
-          <input type="text" placeholder="Filter by track..." id="res-filter-track" class="ui-widget-content ui-helper-hidden" />
-          <input type="text" placeholder="Filter by name..." id="res-filter-name" class="ui-widget-content ui-helper-hidden" />
-        </div>
-        <ul class="box baps-channel ui-widget-content" id="baps-channel-res" channel="res">
-        </ul>
-      </div>
-    
-    </div>
 
-    <div id="baps-channelaction-container"  class="clearfix">
+            <div id="resource-add-container" class="box width-2 height-2 ui-widget ui-widget-content">
+                <div id="resource-add-header" class="ui-widget-header">
+          {% include 'NIPSWeb/res_selector.twig' %}
+                    <span id="res-loading" class="ui-state-highlight ui-helper-hidden">Loading...</span>
+                    <br>
+                    <input type="text" placeholder="Filter by artist..." id="res-filter-artist" class="ui-widget-content ui-helper-hidden" />
+                    <input type="text" placeholder="Filter by track..." id="res-filter-track" class="ui-widget-content ui-helper-hidden" />
+                    <input type="text" placeholder="Filter by name..." id="res-filter-name" class="ui-widget-content ui-helper-hidden" />
+                </div>
+                <ul class="box baps-channel ui-widget-content" id="baps-channel-res" channel="res">
+                </ul>
+            </div>
+
+        </div>
+
+        <div id="baps-channelaction-container"  class="clearfix">
       {% set channels = [1, 2, 3, 'res'] %}
       {% for channel in channels %}
-        <div class='box baps-channel channel-footer ui-widget-header{% if channel == 'res' %} width-2 library-footer'>Library{% else %} width-1'>Channel {{channel}}{% endif %}
-          <br>
-          <button class='play' id='ch{{channel}}-play' onclick='previewPlay("{{channel}}")'></button>
-          <button class='pause' id='ch{{channel}}-pause' onclick='previewPause("{{channel}}")'></button>
-          <button class='stop' id='ch{{channel}}-stop' class='ui-state-disabled' onclick='previewStop("{{channel}}")'></button><br>
-          <div id='progress-bar-{{channel}}'></div>
-          <label id='ch{{channel}}-elapsed'>--:--</label> / 
-          <label id='ch{{channel}}-duration'>--:--</label>
-        </div>
+            <div class='box baps-channel channel-footer ui-widget-header{% if channel == 'res' %} width-2 library-footer'>Library{% else %} width-1'>Channel {{channel}}{% endif %}
+                <br>
+                {% if channel != 'res' %}
+                <button class='play' id='ch{{channel}}-play' onclick='NIPSWeb.play("{{channel}}")'></button>
+                <button class='pause' id='ch{{channel}}-pause' onclick='NIPSWeb.pause("{{channel}}")'></button>
+                <button class='stop' id='ch{{channel}}-stop' class='ui-state-disabled' onclick='NIPSWeb.stop("{{channel}}")'></button><br>
+                <div id='progress-bar-{{channel}}' class="channel-position-slider"></div>
+                <label id='ch{{channel}}-elapsed'>--:--</label> / 
+                <label id='ch{{channel}}-duration'>--:--</label>
+                {% endif %}
+            </div>
       {% endfor %}
+        </div>
     </div>
-  </div>
-  
-  <div id="footer-tips" class="ui-state-highlight ui-helper-hidden"></div>
+
+    <div id="footer-tips" class="ui-state-highlight ui-helper-hidden"></div>
 
 </div>
-
+<div id="notice" class="ui-state-highlight ui-helper-hidden">Running in Fallback Mode. <a href="javascript:">What's this?</a></div>
 {% endblock %}
 
 {% block foot %}
@@ -67,5 +91,4 @@
 <script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/nipsweb.live.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/nipsweb.librarypane.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/nipsweb.init.js"></script>
 {% endblock %}

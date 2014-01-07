@@ -21,14 +21,20 @@ class iTones_Utils extends ServiceAPI {
     public static $ops = array();
 
     /**
-     * Push a track into the iTones request queue.
+     * Push a track into the iTones request queue, if it hasn't been played
+     * recently.
+     * 
      * @param MyRadio_Track $track
-     * @param $queue The jukebox_[x] queue to push to. Default requests. "main" is the queue used for the main track
-     * scheduler, i.e. non-user entries.
+     * @param $queue The jukebox_[x] queue to push to. Default requests.
+     * "main" is the queue used for the main track scheduler, i.e. non-user entries.
      * @return bool Whether the operation was successful
      */
     public static function requestTrack(MyRadio_Track $track, $queue = 'requests') {
-        return self::requestFile($track->getPath(), $queue);
+        if (MyRadio_TracklistItem::getIfPlayedRecently($track)) {
+            return false;
+        } else {
+            return self::requestFile($track->getPath(), $queue);
+        }
     }
     
     /**

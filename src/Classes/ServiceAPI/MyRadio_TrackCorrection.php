@@ -85,7 +85,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track {
     $this->proposed_title = $result['proposed_title'];
     $this->proposed_artist = $result['proposed_artist'];
     $this->proposed_album_name = $result['proposed_album_name'];
-    $this->reviewedby = empty($result['reviewedby']) ? null : User::getInstance($result['reviewedby']);
+    $this->reviewedby = empty($result['reviewedby']) ? null : MyRadio_User::getInstance($result['reviewedby']);
     $this->level = (int)$result['level'];
     $this->state = $result['state'];
   }
@@ -162,7 +162,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track {
     $this->setTitle($this->getProposedTitle());
     
     self::$db->query('UPDATE public.rec_trackcorrection SET state=\'a\', reviewedby=$2 WHERE correctionid=$1',
-            array($this->getCorrectionID(), User::getInstance()->getID()));
+            array($this->getCorrectionID(), MyRadio_User::getInstance()->getID()));
     $this->state = 'a';
     $this->setLastfmVerified();
     return true;
@@ -170,7 +170,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track {
   
   public function reject($permanent = false) {
     self::$db->query('UPDATE public.rec_trackcorrection SET state=\'r\', reviewedby=$2 WHERE correctionid=$1',
-            array($this->getCorrectionID(), User::getInstance()->getID()));
+            array($this->getCorrectionID(), MyRadio_User::getInstance()->getID()));
     
     if ($permanent) {
       $this->setLastfmVerified();

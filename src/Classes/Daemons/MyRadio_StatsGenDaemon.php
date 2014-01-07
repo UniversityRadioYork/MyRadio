@@ -27,9 +27,9 @@ class MyRadio_StatsGenDaemon extends MyRadio_Daemon {
   }
   
   private static function generateTrainingGraph() {
-    $trained = User::findAllTrained();
-    $demoed = User::findAllDemoed();
-    $trainers = User::findAllTrainers();
+    $trained = MyRadio_User::findAllTrained();
+    $demoed = MyRadio_User::findAllDemoed();
+    $trainers = MyRadio_User::findAllTrainers();
     
     $dotstr = 'digraph { overlap=false; splines=false; ';
     

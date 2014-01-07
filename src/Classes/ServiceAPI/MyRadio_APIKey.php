@@ -73,8 +73,11 @@ class MyRadio_APIKey extends ServiceAPI {
    * 
    * @param String $uri
    * @param Array $args
+   * @deprecated
+   * @todo A better way of doing this
    */
   public function logCall($uri, $args) {
+      return;
     self::$db->query('INSERT INTO myury.api_key_log (key_string, remote_ip, request_path, request_params)
       VALUES ($1, $2, $3, $4)', array($this->key, $_SERVER['REMOTE_ADDR'], $uri, json_encode($args)));
   }

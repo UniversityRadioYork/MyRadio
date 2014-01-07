@@ -3,4 +3,4 @@
 <input type="text" class="{{field.class}}{% if field.required %} required{% endif %} text member-autocomplete"
        name="{{frm_name}}-{{field.name}}-ui" id="{{frm_name}}-{{field.name}}-ui" value="{{field.options.membername}}"
        {% if not field.enabled %} readonly="readonly"{% endif %} />
-<span class="myuryfrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
+<span class="myradiofrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>

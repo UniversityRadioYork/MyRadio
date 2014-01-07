@@ -111,7 +111,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
       }
       $this->credits[] = array('type' => (int) $credit_types[$i],
           'memberid' => $credits[$i],
-          'User' => User::getInstance($credits[$i]));
+          'User' => MyRadio_User::getInstance($credits[$i]));
     }
 
 
@@ -131,12 +131,12 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
 
   /**
    * Get all the Podcasts that the User is Owner of Creditor of.
-   * @param User $user Default current user.
+   * @param MyRadio_User $user Default current user.
    * @return MyRadio_Podcast[]
    */
-  public static function getPodcastsAttachedToUser(User $user = null) {
+  public static function getPodcastsAttachedToUser(MyRadio_User $user = null) {
     if ($user === null) {
-      $user = User::getInstance();
+      $user = MyRadio_User::getInstance();
     }
 
     $r = self::$db->fetch_column('SELECT podcast_id FROM uryplayer.podcast
@@ -171,12 +171,12 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
     //Format them into a select field format.
     $shows = array_map(function($x) {
       return ['text' => $x->getMeta('title'), 'value' => $x->getID()];
-    }, User::getInstance()->hasAuth(AUTH_PODCASTANYSHOW) ? 
+    }, MyRadio_User::getInstance()->hasAuth(AUTH_PODCASTANYSHOW) ? 
             MyRadio_Show::getAllShows()
-            : User::getInstance()->getShows());
+            : MyRadio_User::getInstance()->getShows());
     
     //Add an option for not attached to a show
-    if (User::getInstance()->hasAuth(AUTH_STANDALONEPODCAST)) {
+    if (MyRadio_User::getInstance()->hasAuth(AUTH_STANDALONEPODCAST)) {
       $shows = array_merge([['text' => 'Standalone']], $shows);
     }
     
@@ -228,7 +228,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
     //Get an ID for the new Podcast
     $id = (int)self::$db->fetch_column('INSERT INTO uryplayer.podcast '
             . '(memberid, approvedid, submitted) VALUES ($1, $1, NULL) '
-            . 'RETURNING podcast_id', [User::getInstance()->getID()])[0];
+            . 'RETURNING podcast_id', [MyRadio_User::getInstance()->getID()])[0];
     
     $podcast = self::getInstance($id);
     
@@ -378,7 +378,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
    * Existing credits are kept active, ones that are not in the new list are set to effective_to now,
    * and ones that are in the new list but not exist are created with effective_from now.
    * 
-   * @param User[] $users An array of Users associated.
+   * @param MyRadio_User[] $users An array of Users associated.
    * @param int[] $credittypes The relevant credittypeid for each User.
    */
   public function setCredits($users, $credittypes, $table = null, $pkey = null) {

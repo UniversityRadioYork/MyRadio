@@ -235,10 +235,10 @@ window.timelord = {
                     timelord.setCurrentShow('<span class="news">Jingle in ' +
                             (52 - date.getSeconds()) + '...</span>');
                 } else {
-                    timelord.setCurrentShow('<span class="news">URY News</span>');
+                    timelord.setCurrentShow('<span class="news">'+mConfig.short_name+' News</span>');
                 }
             } else if (date.getMinutes() === 0) {
-                timelord.setCurrentShow('<span class="news">URY News</span>');
+                timelord.setCurrentShow('<span class="news">'+mConfig.short_name+' News</span>');
             } else {
                 timelord.setCurrentShow('<span class="news">News ends in ' +
                         (60 - date.getSeconds()) + '...</span>');

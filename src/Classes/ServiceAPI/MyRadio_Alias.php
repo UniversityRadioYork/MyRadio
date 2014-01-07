@@ -72,7 +72,7 @@ class MyRadio_Alias extends ServiceAPI {
       foreach (self::$db->decodeArray($result['dmember']) as $member) {
         $this->destinations[] = [
             'type' => 'member',
-            'value' => User::getInstance($member)
+            'value' => MyRadio_User::getInstance($member)
         ];
       }
       

@@ -6,7 +6,7 @@
  * @version 20130717
  * @package MyRadio_Profile
  */
-$data = User::getBulkAddForm()->readValues();
+$data = MyRadio_User::getBulkAddForm()->readValues();
 $template = CoreUtils::getTemplateObject();
 
 for ($i = 0; $i < sizeof($data['bulkaddrepeater']['fname']); $i++) {
@@ -15,7 +15,7 @@ for ($i = 0; $i < sizeof($data['bulkaddrepeater']['fname']); $i++) {
     $params[$key] = $data['bulkaddrepeater'][$key][$i];
   }
   try {
-    $user = User::create($params['fname'], $params['sname'], $params['eduroam'],
+    $user = MyRadio_User::create($params['fname'], $params['sname'], $params['eduroam'],
             $params['sex'], $params['collegeid']);
     $template->addInfo('Added Member with ID '.$user->getID());
   } catch (MyRadioException $e) {

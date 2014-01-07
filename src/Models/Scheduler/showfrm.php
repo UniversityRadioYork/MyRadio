@@ -37,6 +37,7 @@ $form = (new MyRadioForm('sched_show', 'Scheduler', 'doShow', array(
             'explanation' => 'A set of keywords to describe your show generally, seperated with spaces.'
                 )
                 )
+        )->addField(new MyRadioFormField('grp-basics_close', MyRadioFormField::TYPE_SECTION_CLOSE)
         )->addField(
                 new MyRadioFormField('grp-credits', MyRadioFormField::TYPE_SECTION, array('label' => 'Who\'s On My Show'))
         )->addField(
@@ -52,8 +53,9 @@ $form = (new MyRadioForm('sched_show', 'Scheduler', 'doShow', array(
                     'explanation' => '',
                     'label' => 'Role'
                         )
-        )))))
-        ->addField(
+        ))))
+        )->addField(new MyRadioFormField('grp-credits_close', MyRadioFormField::TYPE_SECTION_CLOSE)
+        )->addField(
         new MyRadioFormField('mixclouder', MyRadioFormField::TYPE_CHECK, array(
     'explanation' => 'If ticked, your shows will automatically be uploaded to mixcloud',
     'label' => 'Enable Mixcloud',

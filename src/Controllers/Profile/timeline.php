@@ -7,7 +7,7 @@
  * @version 20130803
  * @package MyRadio_Profile
  */
-$user = User::getInstance(isset($_GET['memberid']) ? $_GET['memberid'] : $_SESSION['memberid']);
+$user = MyRadio_User::getInstance(isset($_GET['memberid']) ? $_GET['memberid'] : $_SESSION['memberid']);
 $data = $user->getTimeline();
 
 CoreUtils::getTemplateObject()->setTemplate('Profile/timeline.twig')

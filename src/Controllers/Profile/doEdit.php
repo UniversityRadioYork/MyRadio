@@ -8,10 +8,10 @@
  * @package MyRadio_Profile
  */
 // Set if trying to view another member's profile page
-if (isset($_REQUEST['profileedit-memberid']) && User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
-  $user = User::getInstance($_REQUEST['profileedit-memberid']);
+if (isset($_REQUEST['profileedit-memberid']) && MyRadio_User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
+  $user = MyRadio_User::getInstance($_REQUEST['profileedit-memberid']);
 } else {
-  $user = User::getInstance();
+  $user = MyRadio_User::getInstance();
 }
 
 $data = $user->getEditForm()->readValues();
