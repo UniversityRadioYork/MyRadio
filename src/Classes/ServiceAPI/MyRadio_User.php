@@ -171,7 +171,7 @@ class MyRadio_User extends ServiceAPI {
      * @param int $memberid The ID of the member to initialise
      */
     protected function __construct($memberid) {
-        $this->memberid = $memberid;
+        $this->memberid = (int)$memberid;
         //Get the base data
         $data = self::$db->fetch_one(
                 'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college,
