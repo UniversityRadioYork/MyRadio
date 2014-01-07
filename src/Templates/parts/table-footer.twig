@@ -7,4 +7,6 @@
   });
   $.fn.dataTableExt.sErrMode = 'throw';
 </script>
+{% if tablescript is defined %}
 <script type="text/javascript" src="{{baseurl}}js/{{tablescript}}.js"></script>
+{% endif %}

@@ -104,7 +104,7 @@ class MyRadio_List extends ServiceAPI {
   }
 
   public function getMembers() {
-    return User::resultSetToObjArray($this->members);
+    return MyRadio_User::resultSetToObjArray($this->members);
   }
 
   public function getID() {
@@ -123,16 +123,16 @@ class MyRadio_List extends ServiceAPI {
     return $this->public;
   }
 
-  public function isMember(User $user) {
+  public function isMember(MyRadio_User $user) {
     return in_array($user->getID(), $this->members);
   }
 
   /**
    * Returns if the user has permission to email this list
-   * @param User $user
+   * @param MyRadio_User $user
    * @return boolean
    */
-  public function hasSendPermission(User $user) {
+  public function hasSendPermission(MyRadio_User $user) {
     if (!$this->public && !$user->hasAuth(AUTH_MAILALLMEMBERS)) {
       return false;
     }
@@ -142,9 +142,9 @@ class MyRadio_List extends ServiceAPI {
   /**
    * Returns true if the user has *actively opted out* of an *automatic* mailing list
    * Returns false if they are still a member of the list, or if this is subscribable
-   * @param User $user
+   * @param MyRadio_User $user
    */
-  public function hasOptedOutOfAuto(User $user) {
+  public function hasOptedOutOfAuto(MyRadio_User $user) {
     if ($this->optin) {
       return false;
     }
@@ -156,11 +156,11 @@ class MyRadio_List extends ServiceAPI {
   /**
    * If the mailing list is subscribable, opt the user in if they aren't already.
    * If the mailing list is automatic, but the user has previously opted out, remove this opt-out entry.
-   * @param User $user
+   * @param MyRadio_User $user
    * @return boolean True if the user is now opted in, false if they could not be opted in.
    * @todo Auto-rebuild Exim routing after change
    */
-  public function optin(User $user) {
+  public function optin(MyRadio_User $user) {
     if ($this->isMember($user)) {
       return false;
     }
@@ -190,11 +190,11 @@ class MyRadio_List extends ServiceAPI {
   /**
    * If the mailing list is subscribable, opt the user out if they are currently subscribed.
    * If the mailing list is automatic, opt-the user out of the list.
-   * @param User $user
+   * @param MyRadio_User $user
    * @return boolean True if the user is now opted out, false if they could not be opted out.
    * @todo Auto-rebuild Exim routing after change
    */
-  public function optout(User $user) {
+  public function optout(MyRadio_User $user) {
     if (!$this->isMember($user)) {
       return false;
     }
@@ -218,7 +218,7 @@ class MyRadio_List extends ServiceAPI {
   /**
    * Takes an email and puts it in the online Email Archive
    * 
-   * @param User $from
+   * @param MyRadio_User $from
    * @param String $email
    */
   public function archiveMessage($from, $email) {
@@ -273,16 +273,16 @@ class MyRadio_List extends ServiceAPI {
   public function toDataSource($full = true) {
     return array(
         'listid' => $this->getID(),
-        'subscribed' => $this->isMember(User::getInstance()) ?
+        'subscribed' => $this->isMember(MyRadio_User::getInstance()) ?
             '<span class="ui-icon ui-icon-check" title="You are subscribed to this list"></span>' : '',
         'name' => $this->getName(),
         'address' => $this->getAddress(),
         'recipient_count' => sizeof($this->getMembers()),
-        'optIn' => ((!$this->isMember(User::getInstance()) && ($this->optin || $this->hasOptedOutOfAuto(User::getInstance()))) ? array('display' => 'icon',
+        'optIn' => ((!$this->isMember(MyRadio_User::getInstance()) && ($this->optin || $this->hasOptedOutOfAuto(MyRadio_User::getInstance()))) ? array('display' => 'icon',
             'value' => 'circle-plus',
             'title' => 'Subscribe to this mailing list',
             'url' => CoreUtils::makeURL('Mail', 'optin', array('list' => $this->getID()))) : null),
-        'optOut' => ($this->isMember(User::getInstance()) ? array('display' => 'icon',
+        'optOut' => ($this->isMember(MyRadio_User::getInstance()) ? array('display' => 'icon',
             'value' => 'circle-minus',
             'title' => 'Opt out of this mailing list',
             'url' => CoreUtils::makeURL('Mail', 'optout', array('list' => $this->getID()))) : null),

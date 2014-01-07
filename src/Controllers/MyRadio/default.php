@@ -10,10 +10,10 @@
  * @package MyRadio_Core
  */
 
-$user = User::getInstance();
+$user = MyRadio_User::getInstance();
 $menu = (new MyRadioMenu())->getMenuForUser($user);
 
-$news = MyRadioNews::getNewsItem(Config::$news_feed, $user);
+$news = MyRadioNews::getLatestNewsItem(Config::$news_feed, $user);
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/menu.twig')
         ->addVariable('title', 'Menu')

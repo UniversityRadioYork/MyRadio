@@ -77,7 +77,7 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist {
 
   /**
    * Returns the managed user playlists for the given user
-   * @param User $user
+   * @param MyRadio_User $user
    * @return array of My Beds and My Jingles playlists for the user
    */
   public static function getAllManagedUserPlaylistsFor($user) {

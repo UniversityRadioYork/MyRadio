@@ -8,7 +8,7 @@
  */
 
 $vars = array(
-	'piss' => MyRadioNews::getNewsItem(Config::$piss_feed, User::getInstance())
+	'piss' => MyRadioNews::getLatestNewsItem(Config::$piss_feed, MyRadio_User::getInstance())
 	);
 
 $moduleInfo = array(

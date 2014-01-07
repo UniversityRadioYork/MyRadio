@@ -22,8 +22,8 @@ class MyRadioEmail extends ServiceAPI {
    */
   private static $headers = 'Content-type: text/plain; charset=utf-8';
   private static $sender = 'From: MyRadio <no-reply@ury.org.uk>';
-  private static $footer = 'This email was sent automatically from MyRadio. You can opt out of URY Emails by visiting https://ury.org.uk/myury/Profile/edit/.';
-  private static $html_footer = 'This email was sent automatically from MyRadio. You can opt out of URY Emails <a href="https://ury.org.uk/myury/Profile/edit/">on your profile page</a>.';
+  private static $footer = 'This email was sent automatically from MyRadio. You can opt out of emails by visiting https://ury.org.uk/myury/Profile/edit/.';
+  private static $html_footer = 'This email was sent automatically from MyRadio. You can opt out of emails <a href="https://ury.org.uk/myury/Profile/edit/">on your profile page</a>.';
   // Standard
   /**
    * @var string carriage return + newline
@@ -51,7 +51,7 @@ class MyRadioEmail extends ServiceAPI {
 
     $this->subject = $info['subject'];
     $this->body = $info['body'];
-    $this->from = (empty($info['sender']) ? null : User::getInstance($info['sender']));
+    $this->from = (empty($info['sender']) ? null : MyRadio_User::getInstance($info['sender']));
     $this->timestamp = strtotime($info['timestamp']);
     $this->email_id = $eid;
 
@@ -80,7 +80,7 @@ class MyRadioEmail extends ServiceAPI {
 
   /**
    * Create a new email
-   * @param User $from The User who sent the email. If null, uses myury@ury.org.uk
+   * @param MyRadio_User $from The User who sent the email. If null, uses no-reply
    * @param array $to A 2D array of 'lists' = [l1, l2], 'members' = [m1, m2]
    * @param String $subject email subject
    * @param String $body email body
@@ -154,8 +154,8 @@ class MyRadioEmail extends ServiceAPI {
       $headers[] = 'From: ' . $this->from->getName() . ' <' . $this->from->getEmail() . '>';
       $headers[] = 'Return-Path: ' . $this->from->getEmail();
     } else {
-      $headers[] = 'From: University Radio York <no-reply@ury.org.uk>';
-      $headers[] = 'Return-Path: no-reply@ury.org.uk';
+      $headers[] = 'From: '.Config::$long_name.' <no-reply@'.Config::$email_domain.'>';
+      $headers[] = 'Return-Path: no-reply@'.Config::$email_domain;
     }
 
     /**
@@ -193,7 +193,7 @@ class MyRadioEmail extends ServiceAPI {
         if ($user->getReceiveEmail()) {
           $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
           $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-          if (!mail($user->getName() . ' <' . $user->getEmail() . '>', '[URY] ' . $u_subject, $u_message, $this->getHeader())) {
+          if (!mail($user->getName() . ' <' . $user->getEmail() . '>', '['.Config::$short_name.'] ' . $u_subject, $u_message, $this->getHeader())) {
             continue;
           }
         }
@@ -208,7 +208,7 @@ class MyRadioEmail extends ServiceAPI {
           if ($user->getReceiveEmail()) {
             $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
             $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-            if (!mail($list->getName() . ' <' . $user->getEmail() . '>', '[URY] ' . $u_subject, $u_message, $this->getHeader())) {
+            if (!mail($list->getName() . ' <' . $user->getEmail() . '>', '['.Config::$short_name.'] ' . $u_subject, $u_message, $this->getHeader())) {
               continue;
             }
           }
@@ -220,13 +220,13 @@ class MyRadioEmail extends ServiceAPI {
     return;
   }
 
-  public function getSentToUser(User $user) {
+  public function getSentToUser(MyRadio_User $user) {
     $r = self::$db->fetch_column('SELECT sent FROM mail.email_recipient_member WHERE email_id=$1 AND memberid=$2 LIMIT 1', array($this->email_id, $user->getID()));
 
     return $r[0] === 't';
   }
 
-  public function setSentToUser(User $user) {
+  public function setSentToUser(MyRadio_User $user) {
     self::$db->query('UPDATE mail.email_recipient_member SET sent=\'t\' WHERE email_id=$1 AND memberid=$2', array($this->email_id, $user->getID()));
     $this->updateCacheObject();
   }
@@ -244,12 +244,12 @@ class MyRadioEmail extends ServiceAPI {
 
   /**
    * Sends an email to the specified User
-   * @param User $to
+   * @param MyRadio_User $to
    * @param string $subject email subject
    * @param sting $message email message
    * @todo Check if "Receive Emails" is enabled for the User
    */
-  public static function sendEmailToUser(User $to, $subject, $message, $from = null) {
+  public static function sendEmailToUser(MyRadio_User $to, $subject, $message, $from = null) {
     self::create(array('members' => array($to)), $subject, $message, $from);
     return true;
   }
@@ -294,10 +294,10 @@ class MyRadioEmail extends ServiceAPI {
    * Will return true if the email was sent to a mailing list they were
    * not a member of at the time.
    * 
-   * @param User $user
+   * @param MyRadio_User $user
    * @return boolean
    */
-  public function isRecipient(User $user) {
+  public function isRecipient(MyRadio_User $user) {
     foreach ($this->r_users as $ruser) {
       if ($ruser === $user->getID()) {
         return true;
@@ -320,7 +320,7 @@ class MyRadioEmail extends ServiceAPI {
   }
   
   public function getUserRecipients() {
-    return User::resultSetToObjArray($this->r_users);
+    return MyRadio_User::resultSetToObjArray($this->r_users);
   }
   
   public function getViewableBody() {
@@ -374,7 +374,7 @@ class MyRadioEmail extends ServiceAPI {
    * @param sting $message email message
    */
   public static function sendEmailToComputing($subject, $message) {
-    mail("URY Computing Team <alerts.myury@ury.org.uk>", $subject, self::addFooter($message), self::getDefaultHeader());
+    mail("MyRadio Service <alerts.myury@ury.org.uk>", $subject, self::addFooter($message), self::getDefaultHeader());
     return TRUE;
   }
 

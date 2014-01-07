@@ -38,12 +38,12 @@ class MyRadio_Demo extends MyRadio_Metadata_Common {
   }
   
   public static function attendingDemo($demoid) {
-    if (User::getInstance()->hasAuth(AUTH_ADDDEMOS)) {
+    if (MyRadio_User::getInstance()->hasAuth(AUTH_ADDDEMOS)) {
       $r = self::$db->fetch_column('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', array(self::getDemoTime($demoid)));
       if (empty($r)) return 'Nobody';
-      $str = User::getInstance($r[0])->getName();
+      $str = MyRadio_User::getInstance($r[0])->getName();
       if (isset($r[1])) {
-        $str .= ', '.User::getInstance($r[1])->getName();
+        $str .= ', '.MyRadio_User::getInstance($r[1])->getName();
       }
       return $str;
     } else {
@@ -71,7 +71,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common {
     $demos = array();
     foreach ($result as $demo) {
       $demo['start_time'] = date('d M H:i', strtotime($demo['start_time']));
-      $demo['memberid'] = User::getInstance($demo['memberid'])->getName();
+      $demo['memberid'] = MyRadio_User::getInstance($demo['memberid'])->getName();
       $demos[] = array_merge($demo, array('attending' => self::attendingDemo($demo['show_season_timeslot_id'])));
     }
     
@@ -99,7 +99,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common {
       (0, 7, $1, $2, $2, $1, $1)', array($_SESSION['memberid'], self::getDemoTime($demoid)));
     $time = self::getDemoTime($demoid);
     $user = self::getDemoer($demoid);
-    $attendee = User::getInstance();
+    $attendee = MyRadio_User::getInstance();
     MyRadioEmail::sendEmailToUser($user, 'New Demo Attendee', $attendee->getName().' has joined your demo at '.$time.'.');
     MyRadioEmail::sendEmailToUser($attendee, 'Attending Demo', 'Hi '.$attendee->getFName().
             ",\r\n\r\nThanks for joining a demo at $time. You will be demoed by ".$user->getName().
@@ -117,7 +117,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common {
   public static function getDemoer($demoid) {
     self::initDB();
     $r = self::$db->fetch_column('SELECT memberid FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', array($demoid));
-    return User::getInstance($r[0]);
+    return MyRadio_User::getInstance($r[0]);
   }
 
 }

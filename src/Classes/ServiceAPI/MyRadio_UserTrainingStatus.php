@@ -93,18 +93,18 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus {
   
   /**
    * Get the User that Awarded this Training Status
-   * @return User
+   * @return MyRadio_User
    */
   public function getAwardedBy() {
-    return User::getInstance($this->awarded_by);
+    return MyRadio_User::getInstance($this->awarded_by);
   }
   
   /**
    * Get the User that was Awarded this Training Status
-   * @return User
+   * @return MyRadio_User
    */
   public function getAwardedTo($id = false) {
-    return $id ? $this->user : User::getInstance($this->user);
+    return $id ? $this->user : MyRadio_User::getInstance($this->user);
   }
   
   /**
@@ -117,10 +117,10 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus {
   
   /**
    * Get the User that Revoked this Training Status
-   * @return User|null
+   * @return MyRadio_User|null
    */
   public function getRevokedBy() {
-    return empty($this->revoked_by) ? null : User::getInstance($this->revoked_by);
+    return empty($this->revoked_by) ? null : MyRadio_User::getInstance($this->revoked_by);
   }
   
   /**
@@ -156,13 +156,13 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus {
    * Creates a new User - Training Status map, awarding that User the training status.
    * 
    * @param MyRadio_TrainingStatus $status The status to be awarded
-   * @param User $awarded_to The User to be awarded the training status
-   * @param User $awarded_by The User that is granting the training status
+   * @param MyRadio_User $awarded_to The User to be awarded the training status
+   * @param MyRadio_User $awarded_by The User that is granting the training status
    * @return \self
    * @throws MyRadioException
    */
-  public static function create(MyRadio_TrainingStatus $status, User $awarded_to,
-          User $awarded_by = null) {
+  public static function create(MyRadio_TrainingStatus $status, MyRadio_User $awarded_to,
+          MyRadio_User $awarded_by = null) {
     //Does the User already have this?
     foreach ($awarded_to->getAllTraining(true) as $training) {
       if ($training->getID() === $status->getID()) {
@@ -171,7 +171,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus {
     }
     
     if ($awarded_by === null) {
-      $awarded_by = User::getInstance();
+      $awarded_by = MyRadio_User::getInstance();
     }
     
     //Check whether this user can do that.
@@ -194,7 +194,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus {
             ])[0];
     
     //Force the User to be updated on next request.
-    self::$cache->delete(User::getCacheKey($awarded_to->getID()));
+    self::$cache->delete(MyRadio_User::getCacheKey($awarded_to->getID()));
     
     return new self($id);
   }

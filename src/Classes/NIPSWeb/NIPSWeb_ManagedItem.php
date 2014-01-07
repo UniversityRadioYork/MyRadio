@@ -62,7 +62,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
     $this->length = strtotime('1970-01-01 '.$result['length']);
     $this->bpm = (int)$result['bpm'];
     $this->expirydate = strtotime($result['expirydate']);
-    $this->member = empty($result['memberid']) ? null : User::getInstance($result['memberid']);
+    $this->member = empty($result['memberid']) ? null : MyRadio_User::getInstance($result['memberid']);
   }
   
   /**

@@ -10,10 +10,9 @@
 <p>This programmatic method is not a complete replacement as it will not handle inline permissions.</p>
 {{ parent() }}
 {% set tabledata = frm_custom.tabledata %}
-{% set tablescript = frm_custom.tablescript %}
 {% include 'parts/table-content.twig' %}
 {% endblock %}
 {% block foot %}
 {{ parent() }}
-{% include 'parts/table-footer.twig' %}
+<script type="text/javascript" src="{{baseurl}}js/{{frm_custom.tablescript}}.js"></script>
 {% endblock %}

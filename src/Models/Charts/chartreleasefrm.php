@@ -75,6 +75,8 @@ for ($i = 1; $i <= 10; $i++) {
   );
 }
 
+$form->addField(new MyRadioFormField('zillyhoo_close', MyRadioFormField::TYPE_SECTION_CLOSE));
+
 $form->addField(
   new MyRadioFormField(
     'chart_release_id',

@@ -216,7 +216,7 @@ class MyRadio_Selector {
                 (($studio == 4) && (!$status['s4power']))) {
             throw new MyRadioException('Source ' . $studio . ' is not powered');
         }
-        if ($status['locked'] != 0) {
+        if ($status['lock'] != 0) {
             throw new MyRadioException('Selector Locked');
         }
 
@@ -369,8 +369,8 @@ class MyRadio_Selector {
         //Email people
         MyRadioEmail::sendEmailToComputing('OBIT INITIATED', 
                 'Urgent: Initiated Obit procedure for station as requested by '
-                . User::getInstance()->getName() . ' - ' 
-                . User::getInstance()->getEmail());
+                . MyRadio_User::getInstance()->getName() . ' - ' 
+                . MyRadio_User::getInstance()->getEmail());
         
         //Store the event for Timelord
         file_put_contents('/tmp/myradio-obit', 1);

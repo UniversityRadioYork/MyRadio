@@ -8,6 +8,6 @@
  */
 MyRadio_UserTrainingStatus::create(
         MyRadio_TrainingStatus::getInstance($_POST['status_id']), 
-        User::getInstance($_POST['memberid']));
+        MyRadio_User::getInstance($_POST['memberid']));
 
 CoreUtils::backWithMessage('Training data updated');

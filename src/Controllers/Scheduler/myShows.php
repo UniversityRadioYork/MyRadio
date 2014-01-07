@@ -7,7 +7,7 @@
  * @package MyRadio_Scheduler
  */
 
-$shows = User::getInstance()->getShows();
+$shows = MyRadio_User::getInstance()->getShows();
 
 //This is a Joyride start point - if there are no shows, or it's their first season, run the first show joyride.
 if (empty($shows) or (sizeof($shows) === 1 and sizeof($shows[0]->getAllSeasons()) === 0)) {

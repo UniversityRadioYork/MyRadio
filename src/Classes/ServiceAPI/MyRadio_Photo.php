@@ -22,7 +22,7 @@ class MyRadio_Photo extends ServiceAPI {
 
   /**
    * Stores the User that created this Photo
-   * @var User
+   * @var MyRadio_User
    */
   private $owner;
 
@@ -51,7 +51,7 @@ class MyRadio_Photo extends ServiceAPI {
       return null;
     }
 
-    $this->owner = User::getInstance($result['owner']);
+    $this->owner = MyRadio_User::getInstance($result['owner']);
     $this->date_added = strtotime($result['date_added']);
     $this->format = $result['format'];
   }
@@ -95,7 +95,7 @@ class MyRadio_Photo extends ServiceAPI {
   
   /**
    * Get the User that owns this Photo
-   * @return User
+   * @return MyRadio_User
    */
   public function getOwner() {
     return $this->owner;
@@ -130,7 +130,7 @@ class MyRadio_Photo extends ServiceAPI {
     $format = explode('/',finfo_file(finfo_open(FILEINFO_MIME_TYPE), $tmp_file))[1];
     
     $result = self::$db->fetch_column('INSERT INTO myury.photos (owner, format) VALUES ($1, $2) RETURNING photoid',
-      [User::getInstance()->getID(), $format]);
+      [MyRadio_User::getInstance()->getID(), $format]);
     $id = $result[0];
     $photo = self::getInstance($id);
     if (!move_uploaded_file($tmp_file, $photo->getURI())) {

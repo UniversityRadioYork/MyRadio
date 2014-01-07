@@ -35,6 +35,7 @@ final class Config {
    * @var String
    */
   public static $db_hostname    = 'localhost';
+  public static $db_name        = 'membership';
   /**
    * The username to use connecting to the PostgreSQL database server
    * @var String
@@ -132,7 +133,7 @@ final class Config {
    * This can be overriden on a per-request basis
    * @var int
    */
-  public static $ajax_limit_default = 10;
+  public static $ajax_limit_default = 25;
   
   /**
    * The photoid to use for a Joined URY Timeline Event
@@ -384,7 +385,7 @@ final class Config {
    * BRA Server
    * @var String
    */
-  public static $bra_uri = 'https://urybsod.york.ac.uk/bra';
+  public static $bra_uri = 'ury.org.uk/bra';
   public static $bra_user = '';
   public static $bra_pass = '';
   
@@ -437,7 +438,7 @@ final class Config {
   );
 
   /**
-   * URL of the URY news provider
+   * URL of the news provider
    * @var string
    */
   public static $news_provider = "http://www.irn.co.uk/";
@@ -454,6 +455,46 @@ final class Config {
    */
   public static $membership_fee = 7.00;
   
+  /**
+   * Authentication
+   * LDAP requires the ldap plugin (net/php5-ldap)
+   * The Authenticators are tried in order when completing user authentication
+   * operations.
+   */
+  //public static $authenticators = ['MyRadioLDAPAuthenticator', 'MyRadioDefaultAuthenticator'];
+  public static $authenticators = ['MyRadioDefaultAuthenticator'];
+  public static $auth_ldap_server = 'ldap://ldap.york.ac.uk';
+  public static $auth_ldap_root = 'ou=people,ou=csrv,ou=nos,dc=york,dc=ac,dc=uk';
+  public static $auth_db_user = 'shibbobleh';
+  public static $auth_db_pass = '';
+  public static $eduroam_domain = 'york.ac.uk';
+  public static $auth_ldap_friendly_name = 'IT Services (e.g. abc123)';
+  
+  /**
+   * If true, users will be bound to a single Authenticator. Users whose
+   * authenticator is NULL will be asked to set an Authenticator after login.
+   * 
+   * If it is false, all authenticators will be valid for all users.
+   * 
+   * @var boolean
+   */
+  public static $single_authenticator = false;
+  
+  /**
+   * If false, MyRadioDefaultAuthenticator will never pass, passwords will not
+   * be set for new users, and the Change Password functionality will not be
+   * available.
+   * 
+   * @var boolean
+   */
+  public static $enable_local_passwords = true;
+  
+  /**
+   * The number of days before the start of the academic year when accounts are inactivated
+   * The current choice should mean it resets results week.
+   */
+  public static $account_expiry_before = 49;
+  
   /**** DAEMON CONFIGURATION ****/
   public static $d_BAPSSync_enabled = false;
   public static $d_EmailQueue_enabled = true;
@@ -468,6 +509,55 @@ final class Config {
   /**** STRINGS ****/
   public static $short_name = 'URY';
   public static $long_name = 'University Radio York';
+  public static $founded = '1967';
+  public static $email_domain = 'ury.org.uk';
+  public static $welcome_email = <<<EOT
+<p>Hi #NAME!</p>
+
+<p>Thanks for showing an interest in URY, your official student radio station.</p>
+
+<p>My name's Al, and I'm the Station Manager here at URY. It's my job to make it as
+easy as possible to get on the air or join any of our other teams.</p>
+
+<p>If you're interested in getting involved in any of our teams (there's 11 of 
+them!), then reply to this email and I'll sort you out, or email the address
+listed for that team <a href="http://ury.org.uk/getinvolved">on our website</a>.
+</p>
+
+<p>For more information about these, and everything else we do, you can:
+<ul>
+<li>join the <a href="https://www.facebook.com/groups/ury1350/">URY Members</a>
+ Facebook group,</li>
+<li>like our <a href="https://www.facebook.com/URY1350">Facebook page</a>,</li>
+<li>or <a href="https://twitter.com/ury1350">Follow @ury1350</a> on Twitter</li>
+</ul>
+
+<p>Finally, URY has a lot of <a href="https://ury.org.uk/myury/">online
+resources</a> that are useful for all sorts of things, so you'll need your login
+ details:</p>
+<p>Username: #USER<br>
+Password: #PASS</p>
+
+<p>If you have any questions, feel free to ask by visiting us at our station in
+Vanbrugh, or emailing <a
+href="mailto:training@ury.org.uk">training@ury.org.uk</a>.</p>
+
+Hope to see you soon.
+<br><br>
+--<br>
+Al Riddell<br>
+Station Manager<br>
+<br>
+University Radio York 1350AM<br>
+Most Awarded Student Radio Station 2013<br>
+---------------------------------------------<br>
+<a href="mailto:al.riddell@ury.org.uk">al.riddell@ury.org.uk</a>
+<br>
+---------------------------------------------<br>
+On Air | Online | On Demand<br>
+<a href="http://ury.org.uk/">ury.org.uk</a>
+EOT;
+  public static $facebook = 'https://www.facebook.com/URY1350';
   
   /**
    * The constructor doesn't do anything practical
@@ -494,7 +584,11 @@ final class Config {
         'webcam_prefix' => self::$webcam_prefix,
         'bra_uri' => self::$bra_uri,
         'bra_user' => self::$bra_user,
-        'bra_pass' => self::$bra_pass
+        'bra_pass' => self::$bra_pass,
+        'short_name' => self::$short_name,
+        'long_name' => self::$long_name,
+        'founded' => self::$founded,
+        'facebook' => self::$facebook
     );
   }
 }
