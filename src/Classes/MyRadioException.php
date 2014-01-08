@@ -32,6 +32,13 @@ class MyRadioException extends RuntimeException {
         return;
     }
     
+    $trace = $this->getTrace();
+    $traceStr = $this->getTraceAsString();
+    if ($previous) {
+        $trace = array_merge($trace, $previous->getTrace());
+        $traceStr .= "\n\n".$this->getTraceAsString();
+    }
+    
     parent::__construct((string) $message, (int) $code, $previous);
 
     if (defined('SILENT_EXCEPTIONS') && SILENT_EXCEPTIONS) {
@@ -43,7 +50,7 @@ class MyRadioException extends RuntimeException {
             <table class='errortable' style='color:#633'>
               <tr><td>Message</td><td>{$this->getMessage()}</td></tr>
               <tr><td>Location</td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
-              <tr><td>Trace</td><td>" . nl2br($this->getTraceAsString()) . "</td></tr>
+              <tr><td>Trace</td><td>" . nl2br($traceStr) . "</td></tr>
             </table>";
     
     if (class_exists('Config')) {
@@ -61,7 +68,7 @@ class MyRadioException extends RuntimeException {
               'status' => 'MyRadioException',
               'error' => $message,
               'code' => $code,
-              'trace' => $this->getTrace()
+              'trace' => $trace
           ));
         } else {
           //Output to the browser
