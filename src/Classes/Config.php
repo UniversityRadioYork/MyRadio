@@ -574,6 +574,7 @@ EOT;
    */
   public static function getPublicConfig() {
     return array(
+        'api_url' => self::$api_url,
         'ajax_limit_default' => self::$ajax_limit_default,
         'base_url' => self::$base_url,
         'rewrite_url' => self::$rewrite_url,
