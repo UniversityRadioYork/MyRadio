@@ -644,6 +644,19 @@ class MyRadio_User extends ServiceAPI {
         }
         return parent::getInstance($itemid);
     }
+    
+    /**
+     * Returns the current logged in user, or failing that, the System User.
+     * 
+     * @return MyRadio_User
+     */
+    public static function getCurrentOrSystemUser() {
+        if (isset($_SESSION['memberid'])) {
+            return self::getInstance();
+        } else {
+            return self::getInstance(Config::$system_user);
+        }
+    }
 
     /**
      * Runs a super-long pSQL query that returns the information used to generate the Profile Timeline
