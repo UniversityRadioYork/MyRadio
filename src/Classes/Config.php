@@ -52,12 +52,6 @@ final class Config {
    * @var String
    */
   public static $timezone       = 'Europe/London';
-  
-  /**
-   * The base path of the MyRadio installation
-   * @var String
-   */
-  public static $base_path       = '/usr/local/www/myury/src';
 
   /**
    * The base URL of the MyRadio installation
