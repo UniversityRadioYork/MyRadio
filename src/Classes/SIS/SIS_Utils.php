@@ -21,7 +21,7 @@ class SIS_Utils extends ServiceAPI {
 	 * @return Array    List of files
 	 */
 	private static function file_list($d,$x){ 
-		return array_diff(scandir(Config::$base_path.'/'.$d),array('.','..'));
+		return array_diff(scandir(__DIR__.'/../../'.$d),array('.','..'));
 	}
 
 	/**
@@ -52,7 +52,7 @@ class SIS_Utils extends ServiceAPI {
 		$loadedModules = array();
 		if ($modules !== false) {
 			foreach ($modules as $key => $module) {
-				include Config::$base_path.'/'.$moduleFolder.'/'.$module;
+				include $moduleFolder.'/'.$module;
 				if (!isset($moduleInfo)) {
 					trigger_error('Error with $module: \$moduleInfo must be set for each module.');
 					continue;
@@ -80,12 +80,15 @@ class SIS_Utils extends ServiceAPI {
 				if (isset($module['required_permission']) && !CoreUtils::hasPermission($module['required_permission'])) {
 					continue;
 				}
+                /**
+                 * @todo Replace with MyRadio build in location Auth
+                 */
 				if (isset($module['required_location']) && ($module['required_location'] === True && self::isAuthenticatedMachine() === False)) {
 					continue;
 				}
 				$loadedModules[] = $module;
 			}
-			return $modules;
+			return $loadedModules;
 		}
 		return false;
 	}
