@@ -13,7 +13,7 @@ $moduleInfo = array(
 'enabled' => true,
 'startOpen' => false,
 'pollfunc' => 'SIS_Remote::query_selector',
-'help' => 'To the right, you can see a Studio Selector button. This contains a digital version of the magic buttons you can see in each studio. Don\'t worry - most members can\'t see this so they won\'t go messing with your show from the comfort of their own homes. You must have special priveleges if you can see this! Please use it carefully - it includes a fourth button, Outside Broadcast, which usually plays placeholder noises, which are a terrible substitute for a radio show.',
+'help' => 'To the left, you can see a Studio Selector button. This contains a digital version of the magic buttons you can see in each studio. Don\'t worry - most members can\'t see this so they won\'t go messing with your show from the comfort of their own homes. You must have special priveleges if you can see this! Please use it carefully - it includes a fourth button, Outside Broadcast, which usually plays placeholder noises, which are a terrible substitute for a radio show.',
 'required_permission' => AUTH_MODIFYSELECTOR,
 'required_location' => false
 );
