@@ -29,16 +29,19 @@ $('#timeslots').on('change', function() {
     if ($(this).val() !== null) {
         $('#signin-submit').show();
         //Okay, now if the show is <> 2hours, let them sign in
-        timeslots = window.showdata[$('#shows').val()][$('#series').val()];
+        timeslots = window.showdata[$('#shows').val()][$('#seasons').val()];
         var start = 0;
+        var end = 0;
         for (id in timeslots) {
             if (timeslots[id][0] == $(this).val()) {
-                start = show[id][1];
+                console.log(timeslots[id]);
+                start = timeslots[id][1] * 1000;
+                end = timeslots[id][2] * 1000;
                 break;
             }
         }
         var now = (new Date).getTime();
-        if (start > now - 3600000 * 2 && show['endtime'] < now + (3600000 * 2)) {
+        if (start > now - (3600000 * 2) && end < now + (3600000 * 2)) {
             $('#signin-list').show().html('Loading...');
             $.ajax({
                 url: myury.makeURL('MyRadio', 'a-timeslotSignin'),
