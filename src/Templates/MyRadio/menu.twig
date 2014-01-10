@@ -1,10 +1,12 @@
 {% extends 'stripe.twig' %}
 
 {% block stripecontent %}
+{% if news %}
 <div class="myury-news-alert ui-widget-content ui-corner-all" title="Latest News" id="newsentry-{{news.newsentryid}}">
   {{news.content | raw}}
     <footer><author>{{news.author}}</author> on {{news.posted}}</footer>
 </div>
+{% endif %}
 {% for column in menu %}
 <div class="menu-column">
   <h2>{{ column.title }}</h2>

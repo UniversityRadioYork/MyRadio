@@ -450,6 +450,11 @@ final class Config {
   public static $membership_fee = 7.00;
   
   /**
+   * If enabled, the Members' News feature on the home page is active
+   */
+  public static $members_news_enable = false;
+  
+  /**
    * Authentication
    * LDAP requires the ldap plugin (net/php5-ldap)
    * The Authenticators are tried in order when completing user authentication
