@@ -81,7 +81,7 @@ class SIS_Utils extends ServiceAPI {
 					continue;
 				}
                 /**
-                 * @todo Replace with MyRadio build in location Auth
+                 * @todo Replace with MyRadio built in location Auth
                  */
 				if (isset($module['required_location']) && ($module['required_location'] === True && self::isAuthenticatedMachine() === False)) {
 					continue;
