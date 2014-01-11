@@ -269,7 +269,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common {
      * @return MyRadio_Timeslot|null
      */
     public static function getCurrentTimeslot($time = null) {
-        self::__wakeup(); //First DB access for Timelord
+        self::initDB(); //First DB access for Timelord
         if ($time === null) {
             $time = time();
         }
