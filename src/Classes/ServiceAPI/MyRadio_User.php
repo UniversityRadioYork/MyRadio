@@ -644,6 +644,19 @@ class MyRadio_User extends ServiceAPI {
         }
         return parent::getInstance($itemid);
     }
+    
+    /**
+     * Returns the current logged in user, or failing that, the System User.
+     * 
+     * @return MyRadio_User
+     */
+    public static function getCurrentOrSystemUser() {
+        if (isset($_SESSION['memberid'])) {
+            return self::getInstance();
+        } else {
+            return self::getInstance(Config::$system_user);
+        }
+    }
 
     /**
      * Runs a super-long pSQL query that returns the information used to generate the Profile Timeline
@@ -788,18 +801,20 @@ class MyRadio_User extends ServiceAPI {
      * @return MyRadio_User
      */
     public function setEduroam($eduroam) {
-        //Automatically add '@york.ac.uk' if it is missing
-        if (strstr($eduroam, '@') === false) {
-            $eduroam .= '@york.ac.uk';
-        } elseif (strstr($eduroam, '@york.ac.uk') === false) {
-            throw new MyRadioException('Eduroam account should be @york.ac.uk! Use of other eduroam accounts is blocked.
-        This is basic validation filter, so if there is a valid reason for another account to be hear, this check
+        //Require the user to be part of this eduroam domain
+        if (strstr($eduroam, '@') !== false &&
+                strstr($eduroam, '@'.Config::$eduroam_domain) === false) {
+            throw new MyRadioException('Eduroam account should be @'.Config::$eduroam_domain.'! Use of other eduroam accounts is blocked.
+        This is a basic validation filter, so if there is a valid reason for another account to be here, this check
         can be removed.', 400);
         }
+        
+        //Remove the domain if it is set
+        $eduroam = str_replace('@'.Config::$eduroam_domain, '', $eduroam);
 
         if (empty($eduroam) && empty($this->email)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
-        } elseif ($this->getEduroam() . '@york.ac.uk' !== $eduroam && MyRadio_User::findByEmail($eduroam) !== null) {
+        } elseif ($this->getEduroam() !== $eduroam && MyRadio_User::findByEmail($eduroam) !== null) {
             throw new MyRadioException('The eduroam account ' . $eduroam . ' is already allocated to another User.', 500);
         }
         $this->setCommonParam('eduroam', $eduroam);

@@ -477,6 +477,10 @@ $(document).ready(function() {
     $('#add-track').click(function() {
         $('#tracklist-insert').dialog("open");
     });
+    
+    $('#obit-button').on('click', function() {
+        window.open(myury.makeURL('Scheduler', 'stop'), 'Stop Broadcast');
+    });
 
 
 });

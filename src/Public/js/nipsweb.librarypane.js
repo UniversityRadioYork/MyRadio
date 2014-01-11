@@ -17,7 +17,8 @@ function updateCentralSearch() {
     data: {
       artist: $('#res-filter-artist').val(),
       term: $('#res-filter-track').val(),
-      limit: 100
+      limit: 100,
+      require_digitised: true
     },
     success: function(data) {
       $('#baps-channel-res').empty();

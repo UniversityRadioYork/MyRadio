@@ -253,7 +253,7 @@ abstract class MyRadio_Metadata_Common extends ServiceAPI {
     if (!empty($value)) {
       $sql = 'INSERT INTO ' . $table
               . ' (metadata_key_id, ' . $id_field . ', memberid, approvedid, metadata_value, effective_from, effective_to) VALUES ';
-      $params = array($meta_id, $this->getID(), MyRadio_User::getInstance()->getID(), CoreUtils::getTimestamp($effective_from),
+      $params = array($meta_id, $this->getID(), MyRadio_User::getCurrentOrSystemUser()->getID(), CoreUtils::getTimestamp($effective_from),
           $effective_to == null ? null : CoreUtils::getTimestamp($effective_to));
 
       if (is_array($value)) {
@@ -445,7 +445,7 @@ abstract class MyRadio_Metadata_Common extends ServiceAPI {
             $this->getID(),
             $credit['type'],
             $credit['memberid'],
-            MyRadio_User::getInstance()->getID()
+            MyRadio_User::getCurrentOrSystemUser()->getID()
           ],
           true
         );

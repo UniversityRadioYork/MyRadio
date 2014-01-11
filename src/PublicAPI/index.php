@@ -16,7 +16,7 @@ require_once __DIR__ . '/../Controllers/cli_common.php';
 /**
  * Handle API errors
  */
-function api_error($code, $message = null) {
+function api_error($code, $message = null, $previous = null) {
     $messages = [400 => "Bad Request", 401 => "Unauthorized",
         403 => "Forbidden", 404 => "File Not Found",
         500 => "Internal Server Error"];
@@ -29,7 +29,7 @@ function api_error($code, $message = null) {
     ]);
     //Log an API failure so it appears in the status graphs.
     throw new MyRadioException('API Error: ' . $message .
-    "\nSource: " . $_SERVER['REMOTE_ADDR'], $code);
+    "\nSource: " . $_SERVER['REMOTE_ADDR'], $code, $previous);
 }
 
 /**
@@ -162,7 +162,7 @@ if (!$api_key->canCall($classes[$class], $method)) {
         $api_key->logCall(preg_replace('/(.*)\?(.*)/', '$1', str_replace(Config::$api_uri, '', $_SERVER['REQUEST_URI'])), $args);
         $result = $methodReflection->invokeArgs($object, $args);
     } catch (MyRadioException $e) {
-        api_error($e->getCode(), $e->getMessage());
+        api_error($e->getCode(), $e->getMessage(), $e);
     }
 
     header('Content/Type: application/json');
