@@ -101,7 +101,11 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
 
   public function getFolder() {
     $dir = Config::$music_central_db_path.'/'.($this->managed_playlist ? $this->managed_playlist->getFolder() : $this->folder);
-    if (!is_dir($dir)) mkdir($dir);
+    if (!is_dir($dir)) {
+      if (!mkdir($dir, 0777, true)) {
+        return false;
+      }
+    } 
     return $dir;
   }
   
@@ -178,6 +182,11 @@ class NIPSWeb_ManagedItem extends ServiceAPI {
      * 3- Original file for potential future conversions
      */
     $tmpfile = Config::$audio_upload_tmp_dir.'/'.$tmpid;
+
+    if (!$item->getFolder()) {
+      //Creating folders failed.
+      return array('status' => 'FAIL', 'error' => 'Folders could not be created.', 'fileid' => $_REQUEST['fileid']);
+    }
     $dbfile = $item->getFolder().'/'.$item->getID();
 
     //Convert it with ffmpeg
