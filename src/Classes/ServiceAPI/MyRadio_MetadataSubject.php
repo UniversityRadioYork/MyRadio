@@ -20,6 +20,11 @@ trait MyRadio_MetadataSubject {
   protected static $metadata_keys = array();
   protected $metadata;
 
+  public function getMeta($meta_string) {
+    return isset($this->metadata[self::getMetadataKey($meta_string)]) ?
+      $this->metadata[self::getMetadataKey($meta_string)] : null;
+  }
+
   /**
    * Gets the id for the string representation of a type of metadata
    */
