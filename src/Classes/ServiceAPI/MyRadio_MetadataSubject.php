@@ -156,7 +156,7 @@ trait MyRadio_MetadataSubject {
   private function addMulti($key, $values, $from, $to, $table, $id_field) {
     $sql = 'INSERT INTO ' . $table
       . ' (metadata_key_id, ' . $id_field . ', memberid, approvedid, metadata_value, effective_from, effective_to) VALUES ';
-    $params = array($key, $this->getID(), User::getInstance()->getID(), CoreUtils::getTimestamp($time),
+    $params = array($key, $this->getID(), MyRadio_User::getCurrentOrSystemUser()->getID(), CoreUtils::getTimestamp($time),
       $effective_to == null ? null : CoreUtils::getTimestamp($effective_to));
 
     $param_counter = 6;

@@ -45,10 +45,10 @@ trait MyRadio_Creditable {
     $return = array();
     foreach ($this->credits as $credit) {
       if ($types) {
-        $credit['name'] = User::getInstance($credit['memberid'])->getName();
+        $credit['name'] = MyRadio_User::getInstance($credit['memberid'])->getName();
         $credit['type_name'] = self::getCreditName($credit['type']);
       } else {
-        $credit = User::getInstance($credit['memberid'])->getName();
+        $credit = MyRadio_User::getInstance($credit['memberid'])->getName();
       }
       $return[] = $credit;
     }
