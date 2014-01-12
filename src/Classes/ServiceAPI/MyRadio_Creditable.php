@@ -1,28 +1,28 @@
 <?php
 /**
- * Provides the Creditable trait for MyURY
- * @package MyURY_Core
+ * Provides the Creditable trait for MyRadio
+ * @package MyRadio_Core
  */
 
 /**
- * The MyURY_Creditable trait adds credits functionality to an object.
+ * The MyRadio_Creditable trait adds credits functionality to an object.
  *
  * The object obviously needs to have a credits table in the database for this
  * to work.
  *
- * @version 20131016
+ * @version 20140112
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @author Matt Windsor <matt.windsor@ury.org.uk>
- * @package MyURY_Core
+ * @package MyRadio_Core
  * @uses \Database
  */
-trait MyURY_Creditable {
+trait MyRadio_Creditable {
   protected $credits;
   protected static $credit_names;
 
   /**
    * Get all credits
-   * @param MyURY_Metadata_Common $parent Used when there is inheritance enabled
+   * @param MyRadio_Metadata_Common $parent Used when there is inheritance enabled
    * for this object. In this case credits are merged.
    * @return type
    */
