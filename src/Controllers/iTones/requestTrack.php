@@ -12,5 +12,6 @@ MyRadio_JsonFormLoader::loadFromModule(
     $module,
     'requesttrackfrm',
     'requestTrack',
-    []
+    [ 'remaining_requests' => iTones_Utils::getRemainingRequests()
+    ]
 )->render();

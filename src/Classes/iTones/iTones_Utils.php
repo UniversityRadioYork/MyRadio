@@ -37,6 +37,41 @@ class iTones_Utils extends ServiceAPI {
             ($1, $2, $3, NOW())
         ;';
 
+    const REQUESTS_REMAINING_SQL = '
+        SELECT
+            GREATEST(0, ($1 - COUNT(trackid))) AS remaining
+        FROM
+            jukebox.request
+        WHERE
+            memberid = $2 AND
+            (NOW() - date) < $3
+        ;';
+
+    /**
+     * Gets the number of tracks the current user can currently request
+     *
+     * @return int  The number of tracks requestable as of now.
+     */
+    public static function getRemainingRequests() {
+        return self::$db->fetch_one(
+            self::REQUESTS_REMAINING_SQL,
+            self::getRemainingRequestsParams()
+        )['remaining'];
+    }
+
+    /**
+     * Creates the parameter list for a requests-remaining query.
+     *
+     * @return array  The parameter list.
+     */
+    private static function getRemainingRequestsParams() {
+      return [
+          Config::$itones_request_maximum,
+          MyRadio_User::getInstance()->getID(),
+          Config::$itones_request_period
+      ];
+    }
+
     /**
      * Push a track into the iTones request queue, if it hasn't been played
      * recently.
