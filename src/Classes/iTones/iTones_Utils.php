@@ -63,7 +63,7 @@ class iTones_Utils extends ServiceAPI {
      *
      * @return bool  Whether the track can be requested.
      */
-    public static function canRequestTrack(MyRadio_Track $track) {
+    private static function canRequestTrack(MyRadio_Track $track) {
         return (
             self::trackCanBePlayed($track) &&
             self::userCanMakeRequests()
@@ -79,7 +79,7 @@ class iTones_Utils extends ServiceAPI {
      *
      * @return bool  Whether the track can be played.
      */
-    public static function trackCanBePlayed(MyRadio_Track $track) {
+    private static function trackCanBePlayed(MyRadio_Track $track) {
         return !(MyRadio_TracklistItem::getIfPlayedRecently($track));
     }
 
