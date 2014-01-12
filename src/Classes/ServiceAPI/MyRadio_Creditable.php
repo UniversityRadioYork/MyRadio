@@ -32,11 +32,6 @@ trait MyRadio_Creditable {
     return array_unique(array_merge($current, $parent), SORT_REGULAR);
   }
 
-  public function getMeta($meta_string) {
-    return isset($this->metadata[self::getMetadataKey($meta_string)]) ?
-      $this->metadata[self::getMetadataKey($meta_string)] : null;
-  }
-
   /**
    * Returns an Array of Arrays containing Credit names and roles, or just
    * name.
