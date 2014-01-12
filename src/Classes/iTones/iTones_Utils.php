@@ -33,7 +33,7 @@ class iTones_Utils extends ServiceAPI {
         $success = false;
 
         if (self::canRequestTrack($track)) {
-            $success = self::requestFileAndLog($track->getPath(), $queue);
+            $success = self::requestTrackAndLog($track, $queue);
         }
 
         return $success;
@@ -74,20 +74,30 @@ class iTones_Utils extends ServiceAPI {
      * @return bool  Whether the current user can make a request.
      */
     public static function userCanMakeRequests() {
-        // TODO: implement this
-        return true;
+        return self::$db->fetch_one(
+            'SELECT'
+            . ' (COUNT(trackid) <= $1) AS allowed'
+            . ' FROM jukebox.request'
+            . ' WHERE memberid = $2'
+            . ' AND (NOW() - date) < $3;',
+            [ Config::$itones_request_maximum,
+              MyRadio_User::getInstance()->getID(),
+              Config::$itones_request_period
+            ]
+        )['allowed'] == 't';
     }
 
     /**
      * Requests a file, and logs the request if successful.
      *
-     * @param String $file Path to file on iTones server.
-     * @return bool Whether the operation was successful
+     * @param MyRadio_Track $track  The track to request and log.
+     *
+     * @return bool Whether the request was successful.
      */
-    public static function requestFileAndLog($file, $queue) {
-        $success = self::requestFile($file, $queue);
+    public static function requestTrackAndLog(MyRadio_Track $track, $queue) {
+        $success = self::requestFile($track->getPath(), $queue);
         if ($success) {
-            self::logRequest();
+            self::logRequest($track, $queue);
         }
         return $success;
     }
@@ -95,10 +105,20 @@ class iTones_Utils extends ServiceAPI {
     /**
      * Logs that the current user has made a request.
      *
+     * @param MyRadio_Track $track  The track to log in the database.
+     *
      * @return null Nothing.
      */
-    public static function logRequest() {
-        // TODO: implement
+    public static function logRequest($track, $queue) {
+        self::$db->query(
+            'INSERT'
+            . ' INTO jukebox.request(memberid, trackid, queue, date)'
+            . ' VALUES ($1, $2, $3, NOW());',
+            [ MyRadio_User::getInstance()->getID(),
+              $track->getID(),
+              $queue
+            ]
+        );
     }
     
     /**
