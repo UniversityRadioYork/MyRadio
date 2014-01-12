@@ -91,10 +91,30 @@ class iTones_Utils extends ServiceAPI {
      * @return bool  Whether the current user can make a request.
      */
     public static function userCanMakeRequests() {
+        return self::areRequestsAllowedBy(self::userCanMakeRequestsQuery());
+    }
+
+    /**
+     * Runs a query to see if the current user can make requests at the oment.
+     *
+     * @return object  The database query results.
+     */
+    public static function userCanMakeRequestsQuery() {
         return self::$db->fetch_one(
             self::CAN_MAKE_REQUEST_SQL,
-            self::userCanMakeRequestsParams();
-        )['allowed'] == 't';
+            self::userCanMakeRequestsParams()
+        );
+    }
+
+    /**
+     * Checks to see if the database said the current user can make requests.
+     *
+     * @param object $results  The results from a can-make-requests query.
+     *
+     * @return bool  Whether the current user can make a request.
+     */
+    public static function areRequestsAllowedBy($results) {
+        return $results['allowed'] == 't';
     }
 
     /**
@@ -107,7 +127,7 @@ class iTones_Utils extends ServiceAPI {
           Config::$itones_request_maximum,
           MyRadio_User::getInstance()->getID(),
           Config::$itones_request_period
-      ]
+      ];
     }
 
     /**
@@ -151,7 +171,7 @@ class iTones_Utils extends ServiceAPI {
             MyRadio_User::getInstance()->getID(),
             $track->getID(),
             $queue
-        ]
+        ];
     }
     
     /**
