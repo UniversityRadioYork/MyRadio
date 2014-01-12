@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file provides the MyURY_Quote class for MyRadio
- * @package MyURY_Core
+ * This file provides the MyRadio_Quote class for MyRadio
+ * @package MyRadio_Core
  */
 
 /**
@@ -10,10 +10,10 @@
  * 
  * @version 20131020
  * @author Matt Windsor <matt.windsor@ury.org.uk>
- * @package MyURY_Core
+ * @package MyRadio_Core
  * @uses \Database
  */
-class MyURY_Quote extends ServiceAPI {
+class MyRadio_Quote extends ServiceAPI {
   /**
    * The quote ID.
    * @var int
@@ -40,13 +40,13 @@ class MyURY_Quote extends ServiceAPI {
 
 
   /**
-   * Constructs a new MyURY_Quote from the database.
+   * Constructs a new MyRadio_Quote from the database.
    *
-   * You should generally use MyURY_Quote::getInstance instead.
+   * You should generally use MyRadio_Quote::getInstance instead.
    *
    * @param int $quote_id  The numeric ID of the quote.
    *
-   * @return MyURY_Quote  The quote with the given ID.
+   * @return MyRadio_Quote  The quote with the given ID.
    */
   protected function __construct($quote_id) {
     $quote_data = self::$db->fetch_one(
@@ -134,7 +134,7 @@ class MyURY_Quote extends ServiceAPI {
   /**
    * Sets this chart's quote text.
    * @param string $text  the quote text.
-   * @return MyURY_Quote  This object, for method chaining.
+   * @return MyRadio_Quote  This object, for method chaining.
    */
   public function setText($text) {
     self::$db->query(
@@ -149,7 +149,7 @@ class MyURY_Quote extends ServiceAPI {
   /**
    * Sets this chart's quote source.
    * @param User $source  the quote source.
-   * @return MyURY_Quote  This object, for method chaining.
+   * @return MyRadio_Quote  This object, for method chaining.
    */
   public function setSource($source) {
     self::$db->query(
@@ -164,7 +164,7 @@ class MyURY_Quote extends ServiceAPI {
   /**
    * Sets this chart's quote time.
    * @param int|string $date  the date, as a UNIX timestamp or date string.
-   * @return MyURY_Quote  This object, for method chaining.
+   * @return MyRadio_Quote  This object, for method chaining.
    */
   public function setDate($date) {
     self::$db->query(
