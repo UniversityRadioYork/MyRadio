@@ -1,11 +1,11 @@
 <?php
 /**
- * Provides the MetadataSubject trait for MyURY
- * @package MyURY_Core
+ * Provides the MetadataSubject trait for MyRadio
+ * @package MyRadio_Core
  */
 
 /**
- * The MyURY_MetadataSubject trait adds metadata functionality to an object.
+ * The MyRadio_MetadataSubject trait adds metadata functionality to an object.
  *
  * The object obviously needs to have metadata tables in the database for this
  * to work.
@@ -13,10 +13,10 @@
  * @version 20131016
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @author Matt Windsor <matt.windsor@ury.org.uk>
- * @package MyURY_Core
+ * @package MyRadio_Core
  * @uses \Database
  */
-trait MyURY_MetadataSubject {
+trait MyRadio_MetadataSubject {
   protected static $metadata_keys = array();
   protected $metadata;
 
@@ -26,7 +26,7 @@ trait MyURY_MetadataSubject {
   public static function getMetadataKey($string) {
     self::cacheMetadataKeys();
     if (!isset(self::$metadata_keys[$string])) {
-      throw new MyURYException('Metadata Key ' . $string . ' does not exist');
+      throw new MyRadioException('Metadata Key ' . $string . ' does not exist');
     }
     return self::$metadata_keys[$string]['id'];
   }
@@ -41,7 +41,7 @@ trait MyURY_MetadataSubject {
         return $key['multiple'];
       }
     }
-    throw new MyURYException('Metadata Key ID ' . $id . ' does not exist');
+    throw new MyRadioException('Metadata Key ID ' . $id . ' does not exist');
   }
 
   /**
@@ -72,7 +72,7 @@ trait MyURY_MetadataSubject {
     $new = $this->normaliseMeta($value);
 
     if (!$multiple && 1 < count($new)) {
-        throw new MyURYException(
+        throw new MyRadioException(
           'Tried to set multiple values for a single-instance metadata key!'
         );
       }
