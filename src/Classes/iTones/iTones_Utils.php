@@ -95,11 +95,22 @@ class iTones_Utils extends ServiceAPI {
     }
 
     /**
+     * Checks to see if the database said the current user can make requests.
+     *
+     * @param object $results  The results from a can-make-requests query.
+     *
+     * @return bool  Whether the current user can make a request.
+     */
+    private static function areRequestsAllowedBy($results) {
+        return $results['allowed'] == 't';
+    }
+
+    /**
      * Runs a query to see if the current user can make requests at the oment.
      *
      * @return object  The database query results.
      */
-    public static function userCanMakeRequestsQuery() {
+    private static function userCanMakeRequestsQuery() {
         return self::$db->fetch_one(
             self::CAN_MAKE_REQUEST_SQL,
             self::userCanMakeRequestsParams()
@@ -107,22 +118,11 @@ class iTones_Utils extends ServiceAPI {
     }
 
     /**
-     * Checks to see if the database said the current user can make requests.
-     *
-     * @param object $results  The results from a can-make-requests query.
-     *
-     * @return bool  Whether the current user can make a request.
-     */
-    public static function areRequestsAllowedBy($results) {
-        return $results['allowed'] == 't';
-    }
-
-    /**
      * Creates the parameter list for a can-make-requests query.
      *
      * @return array  The parameter list.
      */
-    public static function userCanMakeRequestsParams() {
+    private static function userCanMakeRequestsParams() {
       return [
           Config::$itones_request_maximum,
           MyRadio_User::getInstance()->getID(),
@@ -137,7 +137,7 @@ class iTones_Utils extends ServiceAPI {
      *
      * @return bool Whether the request was successful.
      */
-    public static function requestTrackAndLog(MyRadio_Track $track, $queue) {
+    private static function requestTrackAndLog(MyRadio_Track $track, $queue) {
         $success = self::requestFile($track->getPath(), $queue);
         if ($success) {
             self::logRequest($track, $queue);
@@ -152,7 +152,7 @@ class iTones_Utils extends ServiceAPI {
      *
      * @return null Nothing.
      */
-    public static function logRequest($track, $queue) {
+    private static function logRequest($track, $queue) {
         self::$db->query(
             self::LOG_REQUEST_SQL,
             self::logRequestParams($track, $queue)
@@ -166,7 +166,7 @@ class iTones_Utils extends ServiceAPI {
      *
      * @return array  The parameters array.
      */
-    public static function logRequestParams($track, $queue) {
+    private static function logRequestParams($track, $queue) {
         return [
             MyRadio_User::getInstance()->getID(),
             $track->getID(),
