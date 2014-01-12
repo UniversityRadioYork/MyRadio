@@ -33,7 +33,7 @@ class iTones_Utils extends ServiceAPI {
         $success = false;
 
         if (self::canRequestTrack($track)) {
-            $success = self::requestFile($track->getPath(), $queue);
+            $success = self::requestFileAndLog($track->getPath(), $queue);
         }
 
         return $success;
@@ -76,6 +76,29 @@ class iTones_Utils extends ServiceAPI {
     public static function userCanMakeRequests() {
         // TODO: implement this
         return true;
+    }
+
+    /**
+     * Requests a file, and logs the request if successful.
+     *
+     * @param String $file Path to file on iTones server.
+     * @return bool Whether the operation was successful
+     */
+    public static function requestFileAndLog($file, $queue) {
+        $success = self::requestFile($file, $queue);
+        if ($success) {
+            self::logRequest();
+        }
+        return $success;
+    }
+
+    /**
+     * Logs that the current user has made a request.
+     *
+     * @return null Nothing.
+     */
+    public static function logRequest() {
+        // TODO: implement
     }
     
     /**
