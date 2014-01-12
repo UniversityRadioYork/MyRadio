@@ -30,12 +30,26 @@ class iTones_Utils extends ServiceAPI {
      * @return bool Whether the operation was successful
      */
     public static function requestTrack(MyRadio_Track $track, $queue = 'requests') {
-        if (MyRadio_TracklistItem::getIfPlayedRecently($track)) {
-            return false;
-        } else {
-            return self::requestFile($track->getPath(), $queue);
+        $success = false;
+
+        if (self::canRequestTrack($track)) {
+            $success = self::requestFile($track->getPath(), $queue);
         }
+
+        return $success;
     }
+
+    /**
+     * Checks whether the given track can be requested by the current user.
+     *
+     * @param MyRadio_Track $track  The track to check for requestability.
+     *
+     * @return bool  Whether the track can be requested.
+     */
+    public static function canRequestTrack(MyRadio_Track $track) {
+        return MyRadio_TracklistItem::getIfPlayedRecently($track);
+    }
+
     
     /**
      * Pushes the file at the given path to the iTones request queue.
