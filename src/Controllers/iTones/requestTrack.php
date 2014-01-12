@@ -4,14 +4,15 @@
  * Allows a User to request a track on the jukebox
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130712
+ * @author Matt Windsor <mattbw@ury.org.uk>
+ * @version 20140112
  * @package MyRadio_iTones
  */
 
 MyRadio_JsonFormLoader::loadFromModule(
     $module,
     'requesttrackfrm',
-    'requestTrack',
+    'doRequestTrack',
     [ 'remaining_requests' => iTones_Utils::getRemainingRequests()
     ]
 )->render();
