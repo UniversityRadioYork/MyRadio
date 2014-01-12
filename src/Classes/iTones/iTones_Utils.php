@@ -20,6 +20,23 @@ class iTones_Utils extends ServiceAPI {
     private static $queue_cache = array();
     public static $ops = array();
 
+    const CAN_MAKE_REQUEST_SQL = '
+        SELECT
+            (COUNT(trackid) <= $1) AS allowed
+        FROM
+            jukebox.request
+        WHERE
+            memberid = $2 AND
+            (NOW() - date) < $3
+        ;';
+
+    const LOG_REQUEST_SQL = '
+        INSERT INTO
+            jukebox.request(memberid, trackid, queue, date)
+        VALUES
+            ($1, $2, $3, NOW())
+        ;';
+
     /**
      * Push a track into the iTones request queue, if it hasn't been played
      * recently.
@@ -75,16 +92,22 @@ class iTones_Utils extends ServiceAPI {
      */
     public static function userCanMakeRequests() {
         return self::$db->fetch_one(
-            'SELECT'
-            . ' (COUNT(trackid) <= $1) AS allowed'
-            . ' FROM jukebox.request'
-            . ' WHERE memberid = $2'
-            . ' AND (NOW() - date) < $3;',
-            [ Config::$itones_request_maximum,
-              MyRadio_User::getInstance()->getID(),
-              Config::$itones_request_period
-            ]
+            self::CAN_MAKE_REQUEST_SQL,
+            self::userCanMakeRequestsParams();
         )['allowed'] == 't';
+    }
+
+    /**
+     * Creates the parameter list for a can-make-requests query.
+     *
+     * @return array  The parameter list.
+     */
+    public static function userCanMakeRequestsParams() {
+      return [
+          Config::$itones_request_maximum,
+          MyRadio_User::getInstance()->getID(),
+          Config::$itones_request_period
+      ]
     }
 
     /**
@@ -111,14 +134,24 @@ class iTones_Utils extends ServiceAPI {
      */
     public static function logRequest($track, $queue) {
         self::$db->query(
-            'INSERT'
-            . ' INTO jukebox.request(memberid, trackid, queue, date)'
-            . ' VALUES ($1, $2, $3, NOW());',
-            [ MyRadio_User::getInstance()->getID(),
-              $track->getID(),
-              $queue
-            ]
+            self::LOG_REQUEST_SQL,
+            self::logRequestParams($track, $queue)
         );
+    }
+
+    /**
+     * Creates the parameter list for a log-request query.
+     *
+     * @param MyRadio_Track $track  The track to log in the database.
+     *
+     * @return array  The parameters array.
+     */
+    public static function logRequestParams($track, $queue) {
+        return [
+            MyRadio_User::getInstance()->getID(),
+            $track->getID(),
+            $queue
+        ]
     }
     
     /**
