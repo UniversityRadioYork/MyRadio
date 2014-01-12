@@ -17,7 +17,7 @@
  * @uses \Database
  */
 trait MyRadio_Creditable {
-  protected $credits;
+  protected $credits = array();
   protected static $credit_names;
 
   /**
@@ -28,7 +28,8 @@ trait MyRadio_Creditable {
    */
   public function getCredits($parent = null) {
     $parent = $parent === null ? [] : $parent->getCredits();
-    return array_unique(array_merge($this->credits, $parent), SORT_REGULAR);
+    $current = empty($this->credits) ? [] : $this->credits;
+    return array_unique(array_merge($current, $parent), SORT_REGULAR);
   }
 
   public function getMeta($meta_string) {
@@ -86,7 +87,7 @@ trait MyRadio_Creditable {
       }
     }
 
-    return substr($str, 0, -2);
+    return empty($str) ? '' : substr($str, 0, -2);
   }
 
   /**
@@ -184,7 +185,7 @@ trait MyRadio_Creditable {
             $this->getID(),
             $credit['type'],
             $credit['memberid'],
-            User::getInstance()->getID()
+            MyRadio_User::getCurrentOrSystemUser()->getID()
           ],
           true
         );
