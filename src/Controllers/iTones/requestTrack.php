@@ -7,7 +7,10 @@
  * @version 20130712
  * @package MyRadio_iTones
  */
-//The Form definition
-require 'Models/iTones/requesttrackfrm.php';
 
-$form->render();
+MyRadio_JsonFormLoader::loadFromModule(
+    $module,
+    'requesttrackfrm',
+    'requestTrack',
+    []
+)->render();
