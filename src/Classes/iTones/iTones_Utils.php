@@ -47,9 +47,36 @@ class iTones_Utils extends ServiceAPI {
      * @return bool  Whether the track can be requested.
      */
     public static function canRequestTrack(MyRadio_Track $track) {
-        return MyRadio_TracklistItem::getIfPlayedRecently($track);
+        return (
+            self::trackCanBePlayed($track) &&
+            self::userCanMakeRequests()
+        );
     }
 
+    /**
+     * Checks whether the given track can be played at the moment.
+     *
+     * This generally means playing it won't trip licencing quotae.
+     *
+     * @param MyRadio_Track $track  The track to check for playability.
+     *
+     * @return bool  Whether the track can be played.
+     */
+    public static function trackCanBePlayed(MyRadio_Track $track) {
+        return !(MyRadio_TracklistItem::getIfPlayedRecently($track));
+    }
+
+    /**
+     * Checks whether the current user can make requests at the moment.
+     *
+     * This generally means requesting won't trip the user's request quota.
+     *
+     * @return bool  Whether the current user can make a request.
+     */
+    public static function userCanMakeRequests() {
+        // TODO: implement this
+        return true;
+    }
     
     /**
      * Pushes the file at the given path to the iTones request queue.
