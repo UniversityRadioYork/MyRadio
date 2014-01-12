@@ -4,7 +4,7 @@
  * 
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130923
- * @package MyURY_SIS
+ * @package MyRadio_SIS
  */
 
 $moduleInfo = array(
@@ -12,6 +12,5 @@ $moduleInfo = array(
 'title' => 'Statistics',
 'enabled' => true,
 'startOpen' => true,
-'help' => 'Listenership figures are shown in realtime here. WARNING: Do <b><em>NOT</em></b> announce any listener statistics on-air, it is unprofessional!',
-'template' => 'SIS/plugins/stats.twig'
+'help' => 'Listenership figures are shown in realtime here. WARNING: Do NOT announce any listener statistics on-air, it is unprofessional!',
 );

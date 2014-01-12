@@ -4,17 +4,13 @@
  * 
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130925
- * @package MyURY_SIS
+ * @package MyRadio_SIS
  */
 
 $moduleInfo = array(
 'name' => 'tracklist',
 'title' => 'Track Listing',
 'enabled' => true,
-'help' => 'Tracklisting is a legal requirement for URY to broadcast, so you must fill this in. If you use BAPS this will be done automatically, but if you use other sources you must fill this in yourself',
-'template' => 'SIS/tabs/tracklist.twig',
+'pollfunc' => 'SIS_Remote::query_tracklist',
+'help' => 'Tracklisting is a legal requirement for '.Config::$short_name.' to broadcast, so you must fill this in. If you use BAPS this will be done automatically, but if you use other sources you must fill this in yourself',
 );
-
-/**
- * @todo: query_bapslog
- */

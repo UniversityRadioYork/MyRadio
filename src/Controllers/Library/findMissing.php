@@ -3,10 +3,10 @@
  * Scan music library, filling in blanks or changing default values
  * @author Lloyd Wallis <lpw@ury.york.ac.uk>
  * @version 24042013
- * @package MyURY_Library
+ * @package MyRadio_Library
  */
 
-$tracks = MyURY_Track::getAllDigitised();
+$tracks = MyRadio_Track::getAllDigitised();
 
 $missing = array();
 

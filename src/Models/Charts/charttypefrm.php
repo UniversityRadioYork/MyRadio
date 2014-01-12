@@ -4,12 +4,12 @@
  *
  * @version 20130426
  * @author Matt Windsor <matt.windsor@ury.org.uk>
- * @package MyURY_Charts
+ * @package MyRadio_Charts
  */
 
 var_dump($module);
 $form = (
-  new MyURYForm(
+  new MyRadioForm(
     'charts_editcharttype',
     $module,
     'doEditChartType',
@@ -18,9 +18,9 @@ $form = (
     ]
   )
 )->addField(
-  new MyURYFormField(
+  new MyRadioFormField(
     'name',
-    MyURYFormField::TYPE_TEXT,
+    MyRadioFormField::TYPE_TEXT,
     [
       'label' => 'Identifier',
       'explanation' =>
@@ -28,9 +28,9 @@ $form = (
     ]
   )
 )->addField(
-  new MyURYFormField(
+  new MyRadioFormField(
     'description',
-    MyURYFormField::TYPE_TEXT,
+    MyRadioFormField::TYPE_TEXT,
     [
       'label' => 'Name',
       'explanation' =>
@@ -38,9 +38,9 @@ $form = (
     ]
   )
 )->addField(
-  new MyURYFormField(
+  new MyRadioFormField(
     'chart_type_id',
-    MyURYFormField::TYPE_HIDDEN
+    MyRadioFormField::TYPE_HIDDEN
   )
 );
 ?>

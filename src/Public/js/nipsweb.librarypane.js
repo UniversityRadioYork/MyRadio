@@ -12,12 +12,13 @@ var searchTimerRef = null;
 function updateCentralSearch() {
   $('#res-loading').show();
   $.ajax({
-    url: myury.makeURL('MyURY', 'a-findtrack'),
+    url: myury.makeURL('MyRadio', 'a-findtrack'),
     type: 'post',
     data: {
       artist: $('#res-filter-artist').val(),
       term: $('#res-filter-track').val(),
-      limit: 100
+      limit: 100,
+      require_digitised: true
     },
     success: function(data) {
       $('#baps-channel-res').empty();
@@ -55,7 +56,7 @@ $(document).ready(function() {
       //Load a managed playlist
       $('#res-loading').show();
       $.ajax({
-        url: myury.makeURL('MyURY', 'a-findtrack'),
+        url: myury.makeURL('MyRadio', 'a-findtrack'),
         type: 'post',
         data: {itonesplaylistid: $(this).val().replace(/managed-/, ''), digitised: true, limit: 0},
         success: function(data) {
@@ -141,7 +142,7 @@ $(document).ready(function() {
     $('#baps-channel-res').empty();
     //Makes the artist search autocompleting. When an artist is selected it'll filter
     $('#res-filter-artist').autocomplete({
-      source: myury.makeURL('MyURY', 'a-findartist'),
+      source: myury.makeURL('MyRadio', 'a-findartist'),
       data: {limit: 50},
       minLength: 2,
       select: function(event, ui) {

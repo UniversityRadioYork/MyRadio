@@ -3,7 +3,7 @@
  * Scan music library, finding tracks that don't seem to be where they should be
  * @author Lloyd Wallis <lpw@ury.york.ac.uk>
  * @version 24042013
- * @package MyURY_Library
+ * @package MyRadio_Library
  */
 
 $wrong = array();
@@ -14,7 +14,7 @@ foreach (Config::$music_central_db_exts as $ext) {
     $trackid = preg_replace('/^.*\/([0-9]+)\.'.$ext.'$/', '$1', $file);
 
     try {
-      $track = MyURY_Track::getInstance($trackid);
+      $track = MyRadio_Track::getInstance($trackid);
       if ($track->getAlbum()->getID() != $recordid) {
         $wrong[] = array($file, $track->getAlbum()->getID());
 
@@ -29,7 +29,7 @@ foreach (Config::$music_central_db_exts as $ext) {
 
       $track->removeInstance();
       unset($track);
-    } catch (MyURYException $e) {
+    } catch (MyRadioException $e) {
       $wrong[] = array($file, 0);
     }
   }

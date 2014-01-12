@@ -3,7 +3,7 @@
  * Performs the actual editing of chart releases.
  * @version 20131002
  * @author Matt Windsor <matt.windsor@ury.org.uk>
- * @package MyURY_Charts
+ * @package MyRadio_Charts
  */
 
 /*
@@ -12,12 +12,12 @@
  * @param $chart_release_id  The numeric ID of the chart release to which this
  *                           row belongs.
  * @param $position          The position in the chart of this row (from 1).
- * @param $track             The MyURY_Track this row contains.
+ * @param $track             The MyRadio_Track this row contains.
  *
  * @return Nothing.  This function writes directly to the database.
  */
 function create_chart_row($chart_release_id, $position, $track) {
-  MyURY_ChartRow::create(
+  MyRadio_ChartRow::create(
     [
       'chart_release_id' => $chart_release_id,
       'position' => $position,
@@ -34,8 +34,8 @@ function create_chart_row($chart_release_id, $position, $track) {
  * @return Nothing.  This function writes directly to the database.
  */
 function create_chart_release($data) {
-  MyURY_ChartRelease::create($data);
-  $chart_release_id = MyURY_ChartRelease::findReleaseIDOn(
+  MyRadio_ChartRelease::create($data);
+  $chart_release_id = MyRadio_ChartRelease::findReleaseIDOn(
     $data['submitted_time'],
     $data['chart_type_id']
   );
@@ -66,7 +66,7 @@ function edit_chart_row($chart_row, $track) {
  * @return Nothing.  This function writes directly to the database.
  */
 function edit_chart_release($id, $data) {
-  $chart_release = MyURY_ChartRelease::getInstance($id);
+  $chart_release = MyRadio_ChartRelease::getInstance($id);
   $chart_release->setChartTypeID(
     $data['chart_type_id']
   )->setReleaseTime($data['submitted_time']);
@@ -84,7 +84,7 @@ function edit_chart_release($id, $data) {
  * @param $position  The position whose track is sought (starting from 1).
  * @param $data      The dataset containing the tracks.
  *
- * @return MyURY_Track the track at the given position.
+ * @return MyRadio_Track the track at the given position.
  */
 function track_at($position, $data) {
   return $data['track' . $position];
@@ -95,7 +95,7 @@ function track_at($position, $data) {
  * END OF HELPER FUNCTIONS
  */
 
-$form = MyURY_JsonFormLoader::loadFromModule(
+$form = MyRadio_JsonFormLoader::loadFromModule(
   $module, 'chartreleasefrm', 'doEditChartRelease',
   ['chart_types' => []]
 );

@@ -4,8 +4,8 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130517
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
-$data = MyURY_Track::cacheAndIdentifyUploadedTrack($_FILES['audio']['tmp_name']);
+$data = MyRadio_Track::cacheAndIdentifyUploadedTrack($_FILES['audio']['tmp_name']);
 
-require 'Views/MyURY/datatojson.php';
+require 'Views/MyRadio/datatojson.php';

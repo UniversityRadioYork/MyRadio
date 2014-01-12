@@ -1,12 +1,14 @@
-<script type="text/javascript">
-	$(document).ready(function(){
-		setInterval('updateSchedule()', 60000);
-	});
-			
-	function updateSchedule() {
-		$('div#schedule').load(myury.makeURL('SIS','schedule.get'));
-	}
-</script>
 <div id="schedule">
-	
+	<div id="schedule-onair">
+		<h2>On Air:</h2>
+		<hgroup id="showLive" class="clearfix">
+			<h3 class="showTime"></h3>
+			<h3 class="showName"></h3>
+			<h5 class="showPeople"></h5>
+		</hgroup>
+		<div class="showDesc"></div>
+	</div>
+	<h2>Coming Up:</h2>
+	<div id="schedule-next"></div>
+
 </div>

@@ -1,6 +1,6 @@
 <fieldset>
 {% if display_labels %}<legend>{{field.label}}</legend>{% endif %}
-<div class="myuryfrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</div>
+<div class="myradiofrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</div>
 {% for option in field.options %}
 <label for="{{frm_name}}-{{field.name}}-{{option.value}}" class="{{option.class}}">
 <input type="radio" name="{{frm_name}}-{{field.name}}" id="{{frm_name}}-{{field.name}}-{{option.value}}"

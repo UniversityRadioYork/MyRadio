@@ -4,12 +4,12 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 16042013
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
 
 if (!isset($_POST['clientid']))
-  throw new MyURYException('ClientID Required', 400);
+  throw new MyRadioException('ClientID Required', 400);
 
-$data = MyURY_Timeslot::getInstance(NIPSWeb_Token::getEditTokenTimeslot($_POST['clientid']))->updateShowPlan($_POST);
+$data = MyRadio_Timeslot::getInstance(NIPSWeb_Token::getEditTokenTimeslot($_POST['clientid']))->updateShowPlan($_POST);
 
-require 'Views/MyURY/datatojson.php';
+require 'Views/MyRadio/datatojson.php';

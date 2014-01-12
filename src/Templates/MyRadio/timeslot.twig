@@ -1,0 +1,50 @@
+{% extends 'stripe.twig' %}
+{% block head %}
+{{ parent() }}
+<style type='text/css'>
+    .timeslot select {
+        width: 33%;
+    }
+</style>
+{% endblock %}
+{% block stripecontent %}
+<p>Pick an episode below to work with it. If it's time for your show to be on air,
+    please also tick the sign in boxes to register your presenters.</p>
+{% if allTimeslots == 'on' %}
+<p>
+    You are currently listing <strong>all</strong> shows.
+    <a href="{{myury.makeURL(config, 'MyRadio', 'timeslot', {next: next})}}">
+        Click here to only see your shows</a>.
+</p>
+{% elseif allTimeslots == 'off' %}
+<p>
+    You are currently listing <strong>your</strong> shows.
+    <a href="{{myury.makeURL(config, 'MyRadio', 'timeslot', {next: next, all: true})}}">
+        Click here to see all shows</a>.
+</p>
+{% endif %}
+<form action='{{myury.makeURL(config,"MyRadio","timeslot")}}' method='post'>
+    <fieldset class="timeslot">
+        <select id="shows" size="20">
+            {% for show in timeslots|keys %}
+            <option value='{{show}}'>{{show}}</option>
+            {% endfor %}
+        </select>
+        <select id='seasons' size='20'></select>
+        <select id='timeslots' name="timeslotid" size='20'></select>
+        <input type='hidden' name='next' value='{{next}}' />
+    </fieldset>
+    <fieldset id="signin-list">
+
+    </fieldset>
+    <input type="submit" id="signin-submit" value="Continue" class="ui-helper-hidden" />
+</form>
+{% endblock %}
+{% block foot %}
+{{ parent() }}
+<script type='text/javascript'>
+    window.showdata = {{timeslots|json_encode|raw}};
+    window.memberid = {{memberid}};
+</script>
+<script type='text/javascript' src='{{baseurl}}js/myradio.timeslot.js'></script>
+{% endblock %}

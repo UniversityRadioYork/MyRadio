@@ -1,7 +1,7 @@
 <?php
 /**
  * This file provides the NIPSWeb_Token class
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
 
 /**
@@ -10,7 +10,7 @@
  * 
  * @version 17032013
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  * @uses \Database
  */
 class NIPSWeb_Token extends ServiceAPI {

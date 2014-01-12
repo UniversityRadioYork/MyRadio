@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file provides the NIPSWeb_ManagedUserPlaylist class for MyURY - Contains My Jingles and My Beds
- * @package MyURY_NIPSWeb
+ * This file provides the NIPSWeb_ManagedUserPlaylist class for MyRadio - Contains My Jingles and My Beds
+ * @package MyRadio_NIPSWeb
  */
 
 /**
@@ -10,7 +10,7 @@
  * 
  * @version 20130802
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  * @uses \Database
  */
 class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist {
@@ -77,7 +77,7 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist {
 
   /**
    * Returns the managed user playlists for the given user
-   * @param User $user
+   * @param MyRadio_User $user
    * @return array of My Beds and My Jingles playlists for the user
    */
   public static function getAllManagedUserPlaylistsFor($user) {

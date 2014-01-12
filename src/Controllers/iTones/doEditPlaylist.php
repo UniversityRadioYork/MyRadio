@@ -4,7 +4,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130712
- * @package MyURY_iTones
+ * @package MyRadio_iTones
  */
 
 require 'Models/iTones/editplaylistfrm.php';
@@ -12,7 +12,7 @@ require 'Models/iTones/editplaylistfrm.php';
 $data = $form->readValues();
 
 if (empty($data['playlistid'])) {
-  throw new MyURYException('No Playlist ID provided.', 400);
+  throw new MyRadioException('No Playlist ID provided.', 400);
 }
 
 $playlist = iTones_Playlist::getInstance($data['playlistid']);

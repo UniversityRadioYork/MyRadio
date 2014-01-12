@@ -4,9 +4,9 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130717
- * @package MyURY_Profile
+ * @package MyRadio_Profile
  */
-$data = User::getBulkAddForm()->readValues();
+$data = MyRadio_User::getBulkAddForm()->readValues();
 $template = CoreUtils::getTemplateObject();
 
 for ($i = 0; $i < sizeof($data['bulkaddrepeater']['fname']); $i++) {
@@ -15,12 +15,12 @@ for ($i = 0; $i < sizeof($data['bulkaddrepeater']['fname']); $i++) {
     $params[$key] = $data['bulkaddrepeater'][$key][$i];
   }
   try {
-    $user = User::create($params['fname'], $params['sname'], $params['eduroam'],
+    $user = MyRadio_User::create($params['fname'], $params['sname'], $params['eduroam'],
             $params['sex'], $params['collegeid']);
     $template->addInfo('Added Member with ID '.$user->getID());
-  } catch (MyURYException $e) {
+  } catch (MyRadioException $e) {
     $template->addError('Could not add '.$params['eduroam'].': '.$e->getMessage());
   }
 }
 
-$template->setTemplate('MyURY/text.twig')->render();
+$template->setTemplate('MyRadio/text.twig')->render();

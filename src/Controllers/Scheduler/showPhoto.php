@@ -4,11 +4,11 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130529
- * @package MyURY_Scheduler
+ * @package MyRadio_Scheduler
  */
 
-if (!isset($_REQUEST['show_id'])) throw new MyURYException('Show ID is required', 400);
-$show = MyURY_Show::getInstance($_REQUEST['show_id']);
+if (!isset($_REQUEST['show_id'])) throw new MyRadioException('Show ID is required', 400);
+$show = MyRadio_Show::getInstance($_REQUEST['show_id']);
 
 //Require this is the user's show or the user can edit any show
 if (!$show->isCurrentUserAnOwner()) {

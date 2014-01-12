@@ -9,7 +9,7 @@ $(document).ready(function() {
     buttons: {
       'Continue': function() {
         $.ajax({
-          url: myury.makeURL('MyURY', 'a-readnews'),
+          url: myury.makeURL('MyRadio', 'a-readnews'),
           type: 'post',
           data: 'newsentryid='+($(this).attr('id').replace(/newsentry\-/,''))
         });

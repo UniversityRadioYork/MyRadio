@@ -2,8 +2,6 @@
 <html>
   <head>
 {% include 'parts/base_head.twig' %}
-      <script type="text/javascript" src="{{baseurl}}js/jquery.filedrop.js"></script>
-      <script type="text/javascript" src="{{baseurl}}js/nipsweb.managelibrary.js"></script>
       <link rel="stylesheet" type="text/css" href="{{shiburl}}css/planner.css" />
       <style>html,body{background: none; box-shadow: none; width: 800px; min-width: 800px; height: auto;}</style>
     </head>
@@ -17,7 +15,7 @@
           <div class="ui-state-highlight" id="central-status"></div>
           <div class="ui-widget-content" id="central-result"></div>
         </div>
-        <div id="managed-container" class="res-container ui-widget-content ui-helper-hidden">Managed playlists are controlled using <a href="/members/jukebox/" target="_blank">((URY))'s Campus Playout Manager</a>. Entering them there also adds them to the wonderful Campus Jukebox</div>
+        <div id="managed-container" class="res-container ui-widget-content ui-helper-hidden">Managed playlists are controlled using <a href="/itones/" target="_blank">Campus Playout Manager</a>. Entering them there also adds them to the wonderful Campus Jukebox</div>
         <div id="res-container" class="res-container ui-widget-content ui-helper-hidden">
           <p>You can upload track to this resource library by dragging them into the box below. Tracks uploaded must not return a match against our music analysis software.</p>
           <div id="res-dragdrop" class="ui-widget-header">Drag WAV/MP3 files here to upload</div>
@@ -25,4 +23,7 @@
           <div class="ui-widget-content" id="res-result"></div>
         </div>
         <script type="text/javascript">window.memberid = parseInt({{memberid}});</script>
+  {% include 'parts/base_foot.twig' %}
+      <script type="text/javascript" src="{{baseurl}}js/jquery.filedrop.js"></script>
+      <script type="text/javascript" src="{{baseurl}}js/nipsweb.managelibrary.js"></script>
       </body></html>

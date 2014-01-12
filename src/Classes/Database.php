@@ -1,18 +1,18 @@
 <?php
 /**
- * This file provides the Database class for MyURY
- * @package MyURY_Core
+ * This file provides the Database class for MyRadio
+ * @package MyRadio_Core
  */
 
 /**
  * This singleton class handles actual database connection
  * 
- * This is a Critical include! - It is loaded before MyURY Brokers into versions so only the live one is used!
+ * This is a Critical include! - It is loaded before MyRadio Brokers into versions so only the live one is used!
  * 
  * @version 20130531
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @depends Config
- * @package MyURY_Core
+ * @package MyRadio_Core
  */
 class Database {
 
@@ -26,7 +26,7 @@ class Database {
    * Stores the resource id of the connection to the PostgreSQL database
    * @var Resource
    */
-  private $db;
+  protected $db;
   
   /**
    * Stores the number of queries executed
@@ -44,12 +44,12 @@ class Database {
    * Constructs the singleton database connector 
    */
   private function __construct() {
-    $this->db = pg_connect('host=' . Config::$db_hostname . ' port=5432 dbname=membership
+    $this->db = pg_connect('host=' . Config::$db_hostname . ' port=5432 dbname='.Config::$db_name.'
             user=' . Config::$db_user . ' password=' . Config::$db_pass);
     if (!$this->db) {
       //Database isn't working. Throw an EVERYTHING IS BROKEN Exception
-      throw new MyURYException('Database Connection Failed!',
-              MyURYException::FATAL);
+      throw new MyRadioException('Database Connection Failed!',
+              MyRadioException::FATAL);
     }
   }
   
@@ -72,11 +72,10 @@ class Database {
    * Generic function that just runs a pg_query_params
    * @param String $sql The query string to execute
    * @param Array $params Parameters for the query
-   * @param bool $rollback If true, an error will automatically execute a rollback before throwing an Exception
-   * Use for transactions.
+   * @param bool $rollback Deprecated.
    * @return A pg result reference
-   * @throws MyURYException If the query fails
-   * @assert ('SELECT * FROM public.tableethatreallydoesntexist') throws MyURYException
+   * @throws MyRadioException If the query fails
+   * @assert ('SELECT * FROM public.tableethatreallydoesntexist') throws MyRadioException
    * @assert ('SELECT * FROM public.member') != false
    */
   public function query($sql, $params = array(), $rollback = false) {
@@ -99,11 +98,11 @@ class Database {
     
     $result = @pg_query_params($this->db, $sql, $params);
     if (!$result) {
-      if ($rollback or $this->in_transaction) {
+      if ($this->in_transaction) {
         pg_query($this->db, 'ROLLBACK');
       }
-      throw new MyURYException('Query failure: ' . $sql . '<br>'
-              . pg_errormessage($this->db).'<br>Params: '.print_r($params,true));
+      throw new MyRadioException('Query failure: ' . $sql . '<br>'
+              . pg_errormessage($this->db).'<br>Params: '.print_r($params,true), 500);
     }
     $this->counter++;
     return $result;
@@ -125,7 +124,7 @@ class Database {
    * or a psql result resource
    * @param Array $params Parameters for the query
    * @return Array An array of result rows (potentially empty)
-   * @throws MyURYException 
+   * @throws MyRadioException 
    */
   public function fetch_all($sql, $params = array()) {
     if (is_resource($sql)) {
@@ -133,7 +132,7 @@ class Database {
     } elseif (is_string($sql)) {
       try {
         $result = $this->query($sql, $params);
-      } catch (MyURYException $e) {
+      } catch (MyRadioException $e) {
         return array();
       }
       if (pg_num_rows($result) === 0) {
@@ -141,7 +140,7 @@ class Database {
       }
       return pg_fetch_all($result);
     } else {
-      throw new MyURYException('Invalid Request for $sql');
+      throw new MyRadioException('Invalid Request for $sql');
     }
   }
 
@@ -150,12 +149,12 @@ class Database {
    * @param String $sql The query string to execute
    * @param Array $params Paramaters for the query
    * @return Array The requested result row, or an empty array on failure
-   * @throws MyURYException 
+   * @throws MyRadioException 
    */
   public function fetch_one($sql, $params = array()) {
     try {
       $result = $this->query($sql, $params);
-    } catch (MyURYException $e) {
+    } catch (MyRadioException $e) {
       return array();
     }
     return pg_fetch_assoc($result);
@@ -165,15 +164,14 @@ class Database {
    * Equates to a pg_fetch_all_columns(pg_query,0). Returns all first column entries
    * @param String $sql The query string to execute
    * @param Array $params Paramaters for the query
-   * @param bool $rollback If true, an error will automatically execute a rollback before throwing an Exception
-   * Use for transactions.
+   * @param bool $rollback deprecated.
    * @return Array The requested result column, or an empty array on failure
-   * @throws MyURYException 
+   * @throws MyRadioException 
    */
   public function fetch_column($sql, $params = array(), $rollback = false) {
     try {
       $result = $this->query($sql, $params, $rollback);
-    } catch (MyURYException $e) {
+    } catch (MyRadioException $e) {
       return array();
     }
     if (pg_num_rows($result) === 0) {
@@ -195,10 +193,10 @@ class Database {
 
   /**
    * Prevent copies being unintentionally made
-   * @throws MyURYException
+   * @throws MyRadioException
    */
   public function __clone() {
-    throw new MyURYException('Attempted to clone a singleton');
+    throw new MyRadioException('Attempted to clone a singleton');
   }
 
   /**

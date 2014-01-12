@@ -1,7 +1,7 @@
 <?php
 /**
- * This file provides the Profile class for MyURY
- * @package MyURY_Profile
+ * This file provides the Profile class for MyRadio
+ * @package MyRadio_Profile
  */
 
 /**
@@ -10,7 +10,7 @@
  * @author Andy Durant <aj@ury.org.uk>
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @todo Merge into User
- * @package MyURY_Profile
+ * @package MyRadio_Profile
  * @version 20130516
  * @uses \Database
  * @uses \CacheProvider
@@ -55,7 +55,7 @@ class Profile extends ServiceAPI {
    */
   public static function getAllMembers() {
     //Return the object if it is cached
-    self::$allMembers = self::$cache->get('MyURYProfile_allMembers');
+    self::$allMembers = self::$cache->get('MyRadioProfile_allMembers');
     if (self::$allMembers === false) {
       self::wakeup();
       self::$allMembers = 
@@ -64,7 +64,7 @@ class Profile extends ServiceAPI {
         ON ( member.memberid = member_year.memberid ), l_college
         WHERE member.college = l_college.collegeid
         ORDER BY sname ASC', array(CoreUtils::getAcademicYear()));
-      self::$cache->set('MyURYProfile_allMembers', self::$allMembers);
+      self::$cache->set('MyRadioProfile_allMembers', self::$allMembers);
     }
     
     return self::$allMembers;
@@ -105,7 +105,7 @@ class Profile extends ServiceAPI {
    */
   public static function getCurrentOfficers() {
     //Return the object if it is cached
-    self::$currentOfficers = self::$cache->get('MyURYProfile_currentOfficers');
+    self::$currentOfficers = self::$cache->get('MyRadioProfile_currentOfficers');
     if (self::$currentOfficers === false) {
       self::wakeup();
       self::$currentOfficers = 
@@ -113,7 +113,7 @@ class Profile extends ServiceAPI {
         FROM member, officer, member_officer, team
         WHERE member_officer.memberid = member.memberid AND officer.officerid = member_officer.officerid AND officer.teamid = team.teamid AND member_officer.till_date IS NULL
         ORDER BY team.ordering, officer.ordering, sname');
-      self::$cache->set('MyURYProfile_currentOfficers', self::$currentOfficers);
+      self::$cache->set('MyRadioProfile_currentOfficers', self::$currentOfficers);
     }
     
     return self::$currentOfficers;
@@ -134,7 +134,7 @@ class Profile extends ServiceAPI {
    */
   public static function getOfficers() {
     //Return the object if it is cached
-    self::$officers = self::$cache->get('MyURYProfile_officers');
+    self::$officers = self::$cache->get('MyRadioProfile_officers');
     if (self::$officers === false) {
       self::wakeup();
       self::$officers = 
@@ -146,7 +146,7 @@ class Profile extends ServiceAPI {
                                 LEFT JOIN member ON member_officer.memberid = member.memberid
                               WHERE team.status = \'c\' AND officer.type != \'m\'
                               ORDER BY team.ordering, officer.ordering, sname');
-      self::$cache->set('MyURYProfile_officers', self::$officers);
+      self::$cache->set('MyRadioProfile_officers', self::$officers);
     }
     
     return self::$officers;

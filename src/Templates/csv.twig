@@ -1,4 +1,8 @@
-{% for title, column in data[0] %}"{{ title|raw }}"{% if not loop.last %},{% endif %}{% endfor %}
+{#
+# Transforms an array of data into a CSV file. Input format:
+# data[0]['column header']: content
+# The first row of output will contain column headers.
+#}{% for title, column in data[0] %}"{{ title|raw }}"{% if not loop.last %},{% endif %}{% endfor %}
 
 {% for row in data %}{% for title, column in row %}"{{column|replace({'"': '\\"'})|raw}}"{% if not loop.last %},{% endif %}{% endfor %}
 

@@ -1,3 +1,0 @@
-
-var ApiGen = ApiGen || {};
-ApiGen.elements = [["c","APCProvider"],["c","Artist"],["c","CacheProvider"],["c","Config"],["c","CoreUtils"],["c","Database"],["c","Exception"],["c","IServiceAPI"],["c","MyURY_DataSource"],["c","MyURY_Demo"],["c","MyURY_Scheduler"],["c","MyURY_Scheduler_Common"],["c","MyURY_Season"],["c","MyURY_Show"],["c","MyURY_Timeslot"],["c","MyURY_Webcam"],["c","MyURYEmail"],["c","MyURYError"],["c","MyURYException"],["c","MyURYForm"],["c","MyURYFormField"],["c","MyURYMenu"],["c","MyURYNews"],["c","Podcast"],["c","Profile"],["c","ServiceAPI"],["c","Singleton"],["c","TemplateEngine"],["c","Track"],["c","URYTwig"],["c","User"]];

@@ -3,7 +3,7 @@
  * Controller for listing all releases made for a given chart type.
  * @version 20131002
  * @author Matt Windsor <matt.windsor@ury.org.uk>
- * @package MyURY_Charts
+ * @package MyRadio_Charts
  */
 
 CoreUtils::getTemplateObject(
@@ -18,7 +18,7 @@ CoreUtils::getTemplateObject(
 )->addVariable(
   'tabledata',
   ServiceAPI::setToDataSource(
-    MyURY_ChartType::getInstance(
+    MyRadio_ChartType::getInstance(
       $_REQUEST['chart_type_id']
     )->getReleases()
   )

@@ -1,7 +1,7 @@
 <?php
 /**
- * This file provides the NIPSWeb_TimeslotItem class for MyURY - a Show Plan wrapper for all items
- * @package MyURY_NIPSWeb
+ * This file provides the NIPSWeb_TimeslotItem class for MyRadio - a Show Plan wrapper for all items
+ * @package MyRadio_NIPSWeb
  */
 
 /**
@@ -9,7 +9,7 @@
  * 
  * @version 16042013
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  * @uses \Database
  */
 class NIPSWeb_TimeslotItem extends ServiceAPI {
@@ -32,7 +32,7 @@ class NIPSWeb_TimeslotItem extends ServiceAPI {
     $result = self::$db->fetch_one('SELECT * FROM bapsplanner.timeslot_items where timeslot_item_id=$1 LIMIT 1',
             array($resid));
     if (empty($result)) {
-      throw new MyURYException('The specified Timeslot Item does not seem to exist');
+      throw new MyRadioException('The specified Timeslot Item does not seem to exist');
       return;
     }
     
@@ -41,7 +41,7 @@ class NIPSWeb_TimeslotItem extends ServiceAPI {
     */
      if ($result['rec_track_id'] != null) {
        //CentralDB
-       $this->item = MyURY_Track::getInstance($result['rec_track_id']);
+       $this->item = MyRadio_Track::getInstance($result['rec_track_id']);
      } elseif ($result['managed_item_id'] != null) {
        //ManagedDB (Central Beds, Jingles...)
        $this->item = NIPSWeb_ManagedItem::getInstance($result['managed_item_id'], $playlistref);
@@ -76,11 +76,13 @@ class NIPSWeb_TimeslotItem extends ServiceAPI {
     $this->weight = (int) $weight;
     self::$db->query('UPDATE bapsplanner.timeslot_items SET channel_id=$1, weight=$2 WHERE timeslot_item_id=$3',
             array($this->channel, $this->weight, $this->getID()));
+    $this->updateCacheObject();
   }
   
   public function remove() {
     self::$db->query('DELETE FROM bapsplanner.timeslot_items WHERE timeslot_item_id=$1',
             array($this->getID()));
+    $this->removeInstance();
     unset($this);
   }
   

@@ -4,10 +4,10 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130712
- * @package MyURY_iTones
+ * @package MyRadio_iTones
  */
 
-if (empty($_REQUEST['playlistid'])) throw new MyURYException('No Playlist ID provided.', 400);
+if (empty($_REQUEST['playlistid'])) throw new MyRadioException('No Playlist ID provided.', 400);
 
 $playlist = iTones_Playlist::getInstance($_REQUEST['playlistid']);
 
@@ -26,7 +26,11 @@ if ($lock === false) {
 
   $tracks = $playlist->getTracks();
   $artists = array();
-  foreach ($tracks as $track) {$artists[] = $track->getArtist();}
+  foreach ($tracks as $track) {
+    if ($track instanceof MyRadio_Track) {
+      $artists[] = $track->getArtist();
+    }
+  }
   $form->setTemplate('iTones/editPlaylist.twig')
         ->setFieldValue('tracks.track', $tracks)
         ->setFieldValue('tracks.artist', $artists)
