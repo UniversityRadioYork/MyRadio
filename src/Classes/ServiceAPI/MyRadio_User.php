@@ -1276,14 +1276,20 @@ class MyRadio_User extends ServiceAPI {
         if (empty($eduroam) && empty($email)) {
             throw new MyRadioException('At least one of eduroam or email must be provided.', 400);
         }
+        
+        //Require the user to be part of this eduroam domain
+        if (strstr($eduroam, '@') !== false &&
+                strstr($eduroam, '@'.Config::$eduroam_domain) === false) {
+            throw new MyRadioException('Eduroam account should be @'.Config::$eduroam_domain.'! Use of other eduroam accounts is blocked.
+        This is a basic validation filter, so if there is a valid reason for another account to be here, this check
+        can be removed.', 400);
+        }
+        
+        //Remove the domain if it is set
+        $eduroam = str_replace('@'.Config::$eduroam_domain, '', $eduroam);
 
-        //Ensure the suffix is there
-        if (!empty($eduroam) && !strstr($eduroam, '@')) {
-            $eduroam .= '@york.ac.uk';
-        } elseif (!empty($eduroam)) {
-            if (strtolower(substr($eduroam, -11)) !== '@'.Config::$eduroam_domain) {
-                throw new MyRadioException('An eduroam address must end with @'.Config::$eduroam_domain, 400);
-            }
+        if (empty($eduroam) && empty($this->email)) {
+            throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
         }
 
         if ($sex !== 'm' && $sex !== 'f' && $sex !== 'o') {
