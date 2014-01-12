@@ -1,12 +1,12 @@
 {% extends 'base.twig' %}
 {% block head %}
 {{ parent() }}
-<script type="text/javascript" src="{{baseurl}}js/sis.plugin.js"></script>
-<link rel="stylesheet" type="text/css" href="{{shiburl}}css/sis.css" />
+<link rel="stylesheet" type="text/css" href="{{baseurl}}css/sis.css">
 {% endblock %}
 {% block content %}
 
 	<header id="content-header">
+		<div id="switcher" class="h-link"></div>
 		<h2>{{title}}</h2>
 	</header>
 
@@ -16,7 +16,7 @@
 	    	<div class="plugin accord{% if not plugin.startOpen %} accordClose{% endif %}">
 	                    <h3 id="plugin_header_{{ plugin.name }}" class="pluginhead">{{ plugin.title }}</h3>
 	                    <div id="plugin_body_{{ plugin.name }}" class="pluginbody">
-	                        {% include 'SIS/plugins/' ~ plugin.name ~ '.twig' %}
+	                        {% include ('SIS/plugins/'~plugin.name~'.twig') %}
 	                    </div>
 			</div>
 			{% endfor %}
@@ -31,11 +31,16 @@
 				</ul>
 				{% for tab in tabs %}
 					<div id="tabs-{{ loop.index }}" style="margin-top: .5em;">
-						{{ tab.template }}
-	                    {# {% include tab.template %} #}
+	                    {% include ('SIS/tabs/'~tab.name~'.twig') %}
 	                </div>
 				{% endfor %}
 			</div>
 	    </div>
 	</div>
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/sis.remote.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/sis.js"></script>
 {% endblock %}

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>MyURYpi Documentation</title>
+    <title>MyRadiopi Documentation</title>
     <link href='//fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'/>
     <link href='css/hightlight.default.css' media='screen' rel='stylesheet' type='text/css'/>
     <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
@@ -79,7 +79,7 @@
 
         </div>
         <div class="swagger-ui-wrap">
-          Hello and welcome to MyURYpi, URY's basic REST Service. It's a very basic system at the moment,
+          Hello and welcome to MyRadiopi, URY's basic REST Service. It's a very basic system at the moment,
           and this documentation is all updated automatically, so may sometimes appear a bit wonky.
           <p>Questions? Email lpw [at] ury.org.uk</p>
         </div>
@@ -108,7 +108,7 @@
   
       </div>
       <div class="swagger-ui-wrap">
-        Hello and welcome to MyURYpi, URY's basic REST Service. It's a very basic system at the moment,
+        Hello and welcome to MyRadiopi, URY's basic REST Service. It's a very basic system at the moment,
         and this documentation is all updated automatically, so may sometimes appear a bit wonky.
         <p>Questions? Email lpw [at] ury.org.uk</p>
       </div>

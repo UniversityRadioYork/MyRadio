@@ -6,7 +6,7 @@
     <ul>
       <li>The proposals are generated automatically by our servers by analysing the MP3 files.</li>
       <li>Accepting a proposal replace the existing data (on the left) with the proposed data (on the right).</li>
-      <li>If a proposal suggests "URY Downloads {{date("Y")}}" the proposed album will not overwrite the existing.</li>
+      <li>If a proposal suggests "{{config.short_name}} Downloads {{date("Y")}}" the proposed album will not overwrite the existing.</li>
     </ul>
   </div>
 </div>
@@ -40,10 +40,9 @@
   </tbody>
 </table>
 <a href="?correctionid={{correction.correctionid}}">Permalink</a>
-<script type="text/javascript">
-  $('#trackcorrect_fpreview').attr('src', myury.makeURL('NIPSWeb', 'secure_play', {
-      trackid: parseInt({{correction.trackid}}),
-      recordid: parseInt({{correction.album.recordid}})
-    }));
-</script>
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/myury.library.viewtrackcorrection.js"></script>
 {% endblock %}

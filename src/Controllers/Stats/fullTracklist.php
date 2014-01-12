@@ -5,12 +5,12 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130830
- * @package MyURY_Stats
+ * @package MyRadio_Stats
  */
 $start = !empty($_GET['rangesel-starttime']) ? strtotime($_GET['rangesel-starttime']) : time() - (86400 * 28);
 $end = !empty($_GET['rangesel-endtime']) ? strtotime($_GET['rangesel-endtime']) : time();
 
-$data = MyURY_TracklistItem::getTracklistForTime($start, $end);
+$data = MyRadio_TracklistItem::getTracklistForTime($start, $end);
 
 $format = isset($_REQUEST['format']) ? $_REQUEST['format'] : 'html';
 

@@ -1,5 +1,5 @@
 {% set thisfield, display_labels = field, false %}
-<h3>{{thisfield.label}}</h3><table class="myuryfrm-repeaterset-container" id="{{thisfield.name}}">
+<table class="myuryfrm-repeaterset-container" id="{{thisfield.name}}">
   <thead>
     <tr>
     {% for field in thisfield.options %}
@@ -13,7 +13,6 @@
     <tr>
     {% for field in thisfield.options %}
       {% set sfieldname = field.name ~ '[]' %}
-
       {% set field = field|merge({'value': field.value[i], 'name': field.name~i, 'required': false}) %}
           {% if field.type != 9 %}
       {# Setting these on a select breaks it. I *should* just set if for artist/track/member respectively,

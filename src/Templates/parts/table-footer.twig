@@ -1,0 +1,12 @@
+<script type="text/javascript" src="{{shiburl}}js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+  //Set DataTable defaults
+  $.extend($.fn.dataTable.defaults, {
+    bJQueryUI: true,
+    sEmptyTable: "There are no records"
+  });
+  $.fn.dataTableExt.sErrMode = 'throw';
+</script>
+{% if tablescript is defined %}
+<script type="text/javascript" src="{{baseurl}}js/{{tablescript}}.js"></script>
+{% endif %}

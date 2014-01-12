@@ -4,10 +4,10 @@
  *
  * @version 20130427
  * @author Matt Windsor <matt.windsor@ury.org.uk>
- * @package MyURY_Charts
+ * @package MyRadio_Charts
  */
 
-$types = MyURY_ChartType::getAll();
+$types = MyRadio_ChartType::getAll();
 $type_select = [];
 foreach($types as $type) {
   $type_select[] = [
@@ -17,7 +17,7 @@ foreach($types as $type) {
 }
 
 $form = (
-  new MyURYForm(
+  new MyRadioForm(
     'charts_editchartrelease',
     $module,
     'doEditChartRelease',
@@ -26,9 +26,9 @@ $form = (
     ]
   )
 )->addField(
-  new MyURYFormField(
+  new MyRadioFormField(
     'chart_type_id',
-    MyURYFormField::TYPE_SELECT,
+    MyRadioFormField::TYPE_SELECT,
     [
       'label' => 'Chart Type',
       'explanation' =>
@@ -40,9 +40,9 @@ $form = (
     ]
   )
 )->addField(
-  new MyURYFormField(
+  new MyRadioFormField(
     'submitted_time',
-    MyURYFormField::TYPE_DATE,
+    MyRadioFormField::TYPE_DATE,
     [
       'label' => 'Release Date',
       'explanation' =>
@@ -50,9 +50,9 @@ $form = (
     ]
   )
 )->addField(
-  new MyURYFormField(
+  new MyRadioFormField(
     'zillyhoo',
-    MyURYFormField::TYPE_SECTION,
+    MyRadioFormField::TYPE_SECTION,
     [
       'label' => 'Tracks'
     ]
@@ -62,9 +62,9 @@ $form = (
 // Temporary hack until tabular stuff appears.
 for ($i = 1; $i <= 10; $i++) {
   $form->addField(
-    new MyURYFormField(
+    new MyRadioFormField(
       'track' . $i,
-      MyURYFormField::TYPE_TRACK,
+      MyRadioFormField::TYPE_TRACK,
       [
         'label' => $i,
         'options' => [
@@ -75,10 +75,12 @@ for ($i = 1; $i <= 10; $i++) {
   );
 }
 
+$form->addField(new MyRadioFormField('zillyhoo_close', MyRadioFormField::TYPE_SECTION_CLOSE));
+
 $form->addField(
-  new MyURYFormField(
+  new MyRadioFormField(
     'chart_release_id',
-    MyURYFormField::TYPE_HIDDEN
+    MyRadioFormField::TYPE_HIDDEN
   )
 );
 ?>

@@ -4,7 +4,7 @@
  * 
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130923
- * @package MyURY_SIS
+ * @package MyRadio_SIS
  */
 
 $moduleInfo = array(
@@ -13,5 +13,4 @@ $moduleInfo = array(
 'enabled' => true,
 'startOpen' => true,
 'help' => 'Provides some handy links for getting in contact with people and reporting problems.',
-'template' => 'SIS/plugins/links.twig',
 );

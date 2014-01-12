@@ -4,7 +4,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130714
- * @package MyURY_iTones
+ * @package MyRadio_iTones
  */
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')

@@ -5,9 +5,6 @@ Edit features are disabled.
 {% extends 'base.twig' %}
 {% block head %}
 {{ parent() }}
-<script type="text/javascript" src="{{baseurl}}js/jquery.ui-contextmenu.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/nipsweb.player.js"></script>
 <link rel="stylesheet" type="text/css" href="{{shiburl}}css/planner.css" />
 <style type="text/css">
 .ui-contextmenu {z-index: 10000}
@@ -60,12 +57,14 @@ Edit features are disabled.
 </div>
 
 <script type="text/javascript">
-  $(document).ready(function() {
     NIPSWeb.writable = false;
-    initialiseUI();
-  {% for i in 1..3 %}
-      initialisePlayer({{i}});
-  {% endfor %}
-    });
 </script>
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/jquery.ui-contextmenu.min.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.player.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.init.js"></script>
 {% endblock %}

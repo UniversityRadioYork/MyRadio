@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file provides the NIPSWeb_ManagedPlaylist class for MyURY - Contains Jingles etc.
- * @package MyURY_NIPSWeb
+ * This file provides the NIPSWeb_ManagedPlaylist class for MyRadio - Contains Jingles etc.
+ * @package MyRadio_NIPSWeb
  */
 
 /**
@@ -10,7 +10,7 @@
  * 
  * @version 20130802
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  * @uses \Database
  */
 class NIPSWeb_ManagedPlaylist extends ServiceAPI {
@@ -35,7 +35,7 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
     $this->managed_playlist_id = $playlistid;
     $result = self::$db->fetch_one('SELECT * FROM bapsplanner.managed_playlists WHERE managedplaylistid=$1 LIMIT 1', array($playlistid));
     if (empty($result)) {
-      throw new MyURYException('The specified NIPSWeb Managed Playlist does not seem to exist');
+      throw new MyRadioException('The specified NIPSWeb Managed Playlist does not seem to exist');
       return;
     }
 
@@ -92,7 +92,7 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI {
   }
 
   public static function getAllManagedPlaylists($editable_only = false) {
-    if ($editable_only && !User::getInstance()->hasAuth(AUTH_EDITCENTRALRES))
+    if ($editable_only && !MyRadio_User::getInstance()->hasAuth(AUTH_EDITCENTRALRES))
       return array();
     $result = self::$db->fetch_column('SELECT managedplaylistid FROM bapsplanner.managed_playlists ORDER BY name');
     $response = array();

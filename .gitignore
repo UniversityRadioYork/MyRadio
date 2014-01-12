@@ -1,4 +1,5 @@
 /nbproject
 *.LCK*
-MyURY_Config.local.php
+MyRadio_Config.local.php
 *.sw[a-z]
+sftp-*.json

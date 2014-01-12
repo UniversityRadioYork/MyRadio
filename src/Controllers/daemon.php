@@ -2,7 +2,7 @@
 <?php
 /**
  * This is the Daemon Controller - it handles all "background" processing - sending emails, consistency checks
- * and anything else you might like to routinely happen related to MyURY or using the APIs it provides.
+ * and anything else you might like to routinely happen related to MyRadio or using the APIs it provides.
  * 
  * This is designed to run on a command line - no auth required! It has one command line option, --once,
  * which is set, will run a single iteration of all the registered background systems, not loop continuously.
@@ -16,7 +16,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130720
- * @package MyURY_Deamon
+ * @package MyRadio_Deamon
  * @uses \Database
  * @uses \CoreUtils
  * 
@@ -25,7 +25,7 @@
  */
 $log_level = 4; //0: Critical, 1: Important, 2: Run Process, 3: Info, 4: Debug
 /**
- * @todo Make paths nicer. This variable is used in MyURY_Track directly.
+ * @todo Make paths nicer. This variable is used in MyRadio_Track directly.
  */
 $syspath = '/usr/local/bin/';
 
@@ -106,7 +106,7 @@ while (true) {
           sleep(1);
         }
       }
-    } catch (MyURYException $e) {
+    } catch (MyRadioException $e) {
       
     }
   }
@@ -118,7 +118,7 @@ while (true) {
     while (!Database::getInstance()->reconnect()) {
       if (time() - $db_fail_start > 900) {
         //Connection has been lost for more than 15 minutes. Give up.
-        MyURYEmail::sendEmailToComputing('[MyURY] Background Service Failure', "MyURY's connection to the Database Server has been lost. Attempts to reconnect for the last 15 minutes have proved futile, so the service has stopped.\r\n\Please investigate Database connectivity and restart the service one access is restored.");
+        MyRadioEmail::sendEmailToComputing('[MyRadio] Background Service Failure', "MyRadio's connection to the Database Server has been lost. Attempts to reconnect for the last 15 minutes have proved futile, so the service has stopped.\r\n\Please investigate Database connectivity and restart the service one access is restored.");
       }
       dlog('FAILED! Will retry in 30 seconds.', 0);
       sleep(30);
@@ -135,12 +135,12 @@ while (true) {
   try {
     CoreUtils::shutdown();
     Database::getInstance()->resetCounter();
-    MyURYException::resetExceptionCount();
-    MyURYError::resetErrorCount();
-  } catch (MyURYException $e) {
+    MyRadioException::resetExceptionCount();
+    MyRadioError::resetErrorCount();
+  } catch (MyRadioException $e) {
     
   }
 
   //Reload the configuration to see if it has changed
-  include 'MyURY_Config.local.php';
+  include 'MyRadio_Config.local.php';
 }

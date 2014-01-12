@@ -4,9 +4,9 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130624
- * @package MyURY_Stats
+ * @package MyRadio_Stats
  */
-CoreUtils::getTemplateObject()->setTemplate('MyURY/text.twig')
-        ->addVariable('title', 'URY Statistics')
-        ->addVariable('text', 'This part of MyURY shows you some interesting statistics about the station, from training maps to college breakdowns.')
+CoreUtils::getTemplateObject()->setTemplate('MyRadio/text.twig')
+        ->addVariable('title', 'Statistics')
+        ->addVariable('text', 'This part of MyRadio shows you some interesting statistics about the station, from training maps to college breakdowns.')
         ->render();

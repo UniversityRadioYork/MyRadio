@@ -4,17 +4,17 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130720
- * @package MyURY_Library
+ * @package MyRadio_Library
  */
 
 if (isset($_REQUEST['correctionid']) && is_numeric($_REQUEST['correctionid'])) {
-  $correction = MyURY_TrackCorrection::getInstance($_REQUEST['correctionid']);
+  $correction = MyRadio_TrackCorrection::getInstance($_REQUEST['correctionid']);
 } else {
-  $correction = MyURY_TrackCorrection::getRandom();
+  $correction = MyRadio_TrackCorrection::getRandom();
 }
 
 if (empty($correction)) {
-  CoreUtils::getTemplateObject()->setTemplate('MyURY/text.twig')
+  CoreUtils::getTemplateObject()->setTemplate('MyRadio/text.twig')
           ->addVariable('title', 'Central Database Metadata Correction Proposal Review')
           ->addVariable('text', 'There are no proposals to review right now.')
           ->render();

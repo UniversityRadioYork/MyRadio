@@ -6,7 +6,6 @@
     <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
     {% include 'parts/base_head.twig' %}
     <link rel="stylesheet" type="text/css" href="{{baseurl}}css/timelord.css">
-    <script type="text/javascript" src="{{baseurl}}/js/timelord.js"></script>
   </head>
   <body>
     <div id="studio" class="studio1">Studio <span id="studio-id">X</span> is On Air</div>
@@ -15,9 +14,9 @@
     <div id="breaking-container"></div>
     <div id="current-show">
       <span class="bracket1">(</span><span class="bracket2">(</span>
-      <span id="current-show-title">URY Jukebox</span>
+      <span id="current-show-title">Jukebox</span>
       <span class="bracket2">)</span><span class="bracket1">)</span></div>
-    <div id="next-show">Up Next: <span id="next-show-titles">URY Jukebox @ 00:00am<br>URY Jukebox @ 00:00am</span></div>
+    <div id="next-show">Up Next: <span id="next-show-titles">Jukebox @ 00:00am<br>Jukebox @ 00:00am</span></div>
     <div id="alert-status">
       <div id="power-s1">Studio 1</div>
       <div id="power-s2">Studio 2</div>
@@ -26,6 +25,8 @@
       <div id="obit">OBIT</div>
       <div id="silence">DEAD AIR</div>
     </div>
+    {% include 'parts/base_foot.twig' %}
+    <script type="text/javascript" src="{{baseurl}}/js/timelord.js"></script>
   </body>
 </html>
 {% endspaceless %}

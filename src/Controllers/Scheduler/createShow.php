@@ -5,11 +5,11 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130727
- * @package MyURY_Scheduler
+ * @package MyRadio_Scheduler
  */
 //The Form definition
 require 'Models/Scheduler/showfrm.php';
-$form->setFieldValue('credits.member', array(User::getInstance()))
+$form->setFieldValue('credits.member', array(MyRadio_User::getInstance()))
         ->setFieldValue('credits.credittype', array(1))
         ->setTemplate('Scheduler/createShow.twig')
         ->render();

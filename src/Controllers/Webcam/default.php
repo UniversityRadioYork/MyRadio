@@ -4,7 +4,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 28072012
- * @package MyURY_Webcam
+ * @package MyRadio_Webcam
  */
-$streams = MyURY_Webcam::getStreams();
+$streams = MyRadio_Webcam::getStreams();
 require 'Views/Webcam/streams.php';

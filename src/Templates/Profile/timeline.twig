@@ -19,8 +19,12 @@
     </dl>
   {% endfor %}
   </div>
+{% endblock %}
+  
+{% block foot %}
+  {{ parent() }}
   <script src="{{baseurl}}js/myury.timeline.js"></script>
   <script>$.timeliner({baseSpeed:100});</script>
 {% endblock %}
-  
+
 {# http://www.technotarek.com/timeliner/ #}

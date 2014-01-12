@@ -5,7 +5,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130802
- * @package MyURY_Profile
+ * @package MyRadio_Profile
  */
 $officers = Profile::getOfficers();
 
@@ -15,7 +15,7 @@ foreach ($officers as $k => $v) {
   }
   
   if (!empty($officers[$k]['memberid'])) {
-    $image = User::getInstance($officers[$k]['memberid'])->getProfilePhoto();
+    $image = MyRadio_User::getInstance($officers[$k]['memberid'])->getProfilePhoto();
     $officers[$k]['image'] = $image !== null ? $image->getURL() : Config::$default_person_uri;
   } else {
     $officers[$k]['image'] = Config::$vacant_officer_uri;
@@ -23,6 +23,6 @@ foreach ($officers as $k => $v) {
 }
 
 CoreUtils::getTemplateObject()->setTemplate('Profile/officers.twig')
-        ->addVariable('title', 'URY Committee')
+        ->addVariable('title', Config::$short_name.' Committee')
         ->addVariable('officers', $officers)
         ->render();

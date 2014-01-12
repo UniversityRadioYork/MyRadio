@@ -4,13 +4,12 @@
  * 
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130925
- * @package MyURY_SIS
+ * @package MyRadio_SIS
  */
 
 $moduleInfo = array(
-'name' => 'sched',
+'name' => 'schedule',
 'title' => 'Schedule',
 'enabled' => true,
-'help' => 'Schedule tab lets you see what\'s on URY for the rest of the day',
-'template' => 'SIS/tabs/schedule.twig',
+'help' => 'Schedule tab lets you see what\'s on for the rest of the day',
 );

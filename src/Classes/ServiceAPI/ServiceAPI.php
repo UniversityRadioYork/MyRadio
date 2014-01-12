@@ -1,20 +1,20 @@
 <?php
 /**
- * This file provides the ServiceAPI abstract class for MyURY
- * @package MyURY_Core
+ * This file provides the ServiceAPI abstract class for MyRadio
+ * @package MyRadio_Core
  */
 
 /**
  * An Abstract superclass for ServiceAPI classes that implements essential
- * base functionality for full MyURY integration
+ * base functionality for full MyRadio integration
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130707
- * @package MyURY_Core
+ * @package MyRadio_Core
  * @uses \Database
  * @uses \CacheProvider
  */
-abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
+abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource {
   
   /**
    * All ServiceAPI subclasses will contain a reference to the Database Singleton
@@ -74,7 +74,7 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
   }
   
   public function toDataSource($full = false) {
-    throw new MyURYException(get_called_class() . ' has not had a DataSource Conversion Method Defined!', 500);
+    throw new MyRadioException(get_called_class() . ' has not had a DataSource Conversion Method Defined!', 500);
   }
   
   /**
@@ -83,7 +83,7 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
    * @param Array $array
    * @param bool $full If true, will return expanded data if available.
    * @return Array
-   * @throws MyURYException Throws an Exception if a provided object is not a DataSource
+   * @throws MyRadioException Throws an Exception if a provided object is not a DataSource
    */
   public static function setToDataSource($array, $full = false) {
     if (!is_array($array)) {
@@ -93,7 +93,7 @@ abstract class ServiceAPI implements IServiceAPI, MyURY_DataSource {
     foreach ($array as $element) {
       //It must implement the toDataSource method!
       if (!method_exists($element, 'toDataSource')) {
-        throw new MyURYException('Attempted to convert '.get_class($element).' to a DataSource but it not a valid Data Object!', 500);
+        throw new MyRadioException('Attempted to convert '.get_class($element).' to a DataSource but it not a valid Data Object!', 500);
       } else {
         $result[] = $element->toDataSource($full);
       }

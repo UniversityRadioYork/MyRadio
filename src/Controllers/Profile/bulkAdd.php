@@ -4,6 +4,6 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130717
- * @package MyURY_Profile
+ * @package MyRadio_Profile
  */
-User::getBulkAddForm()->render();
+MyRadio_User::getBulkAddForm()->render();

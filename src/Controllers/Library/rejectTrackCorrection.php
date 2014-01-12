@@ -7,13 +7,13 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130722
- * @package MyURY_Library
+ * @package MyRadio_Library
  */
 
 if (isset($_REQUEST['correctionid'])) {
-  $correction = MyURY_TrackCorrection::getInstance($_REQUEST['correctionid']);
+  $correction = MyRadio_TrackCorrection::getInstance($_REQUEST['correctionid']);
 } else {
-  throw new MyURYException('Correctionid is required!', 400);
+  throw new MyRadioException('Correctionid is required!', 400);
 }
 
 $correction->reject(empty($_REQUEST['permanent']) ? false : (bool)$_REQUEST['permanent']);

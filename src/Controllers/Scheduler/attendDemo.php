@@ -4,8 +4,8 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 24102012
- * @package MyURY_Scheduler
+ * @package MyRadio_Scheduler
  */
 
-$result = MyURY_Demo::attend($_REQUEST['demoid']);
+$result = MyRadio_Demo::attend($_REQUEST['demoid']);
 header('Location: '.CoreUtils::makeURL($module, 'listDemos', array('msg'=>$result)));

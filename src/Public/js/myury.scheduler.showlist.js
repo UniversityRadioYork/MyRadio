@@ -40,6 +40,10 @@ $('.twig-datatable').dataTable({
   {
     "sTitle": "Site",
     "bSortable": false
+  },
+  //photo
+  {
+    bVisible: false
   }
   ],
   "bJQueryUI": true,

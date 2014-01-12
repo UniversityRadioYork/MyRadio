@@ -1,8 +1,8 @@
 <?php
 
 /*
- * This file provides the SIS_Utils class for MyURY
- * @package MyURY_SIS
+ * This file provides the SIS_Utils class for MyRadio
+ * @package MyRadio_SIS
  */
 
 /**
@@ -10,7 +10,7 @@
  * 
  * @version 20130926
  * @author Andy Durant <aj@ury.org.uk>
- * @package MyURY_SIS
+ * @package MyRadio_SIS
  */
 class SIS_Utils extends ServiceAPI {
 
@@ -21,7 +21,7 @@ class SIS_Utils extends ServiceAPI {
 	 * @return Array    List of files
 	 */
 	private static function file_list($d,$x){ 
-		return array_diff(scandir(Config::$base_path.'/'.$d),array('.','..'));
+		return array_diff(scandir(__DIR__.'/../../'.$d),array('.','..'));
 	}
 
 	/**
@@ -52,7 +52,7 @@ class SIS_Utils extends ServiceAPI {
 		$loadedModules = array();
 		if ($modules !== false) {
 			foreach ($modules as $key => $module) {
-				include Config::$base_path.'/'.$moduleFolder.'/'.$module;
+				include $moduleFolder.'/'.$module;
 				if (!isset($moduleInfo)) {
 					trigger_error('Error with $module: \$moduleInfo must be set for each module.');
 					continue;
@@ -60,7 +60,7 @@ class SIS_Utils extends ServiceAPI {
 				if (isset($moduleInfo['enabled']) && ($moduleInfo['enabled'] != true)) {
 					continue;
 				}
-				array_push($loadedModules, $moduleInfo);
+				$loadedModules[] = $moduleInfo;
 			}
 			return $loadedModules;
 		}
@@ -80,12 +80,15 @@ class SIS_Utils extends ServiceAPI {
 				if (isset($module['required_permission']) && !CoreUtils::hasPermission($module['required_permission'])) {
 					continue;
 				}
+                /**
+                 * @todo Replace with MyRadio built in location Auth
+                 */
 				if (isset($module['required_location']) && ($module['required_location'] === True && self::isAuthenticatedMachine() === False)) {
 					continue;
 				}
-				array_push($loadedModules, $module);
+				$loadedModules[] = $module;
 			}
-			return $modules;
+			return $loadedModules;
 		}
 		return false;
 	}
@@ -112,29 +115,66 @@ class SIS_Utils extends ServiceAPI {
 	 * @return String     Location
 	 */
 	public static function ipLookup($ip) {
-		$query = 'SELECT iscollege, description FROM l_subnet WHERE subnet >> $1 ORDER BY description ASC';
-		$query = pg_query_params($this->db, $query, array($ip));
+		$query = self::$db->query('SELECT iscollege, description FROM l_subnet WHERE subnet >> $1 ORDER BY description ASC', array($ip));
+
+		$location = array();
+
 		if (($query === null) or (pg_num_rows($query) == 0)) {
-			$location = @geoip_record_by_name($ip);
-			$location = ($location === FALSE) ? 'Unknown' : " {$location['city']}, {$location['country_name']}";
-			return "From: " . $location;
+			$geoip = geoip_record_by_name($ip);
+			$location[0] = ($geoip === FALSE) ? 'Unknown' : empty($geoip['city']) ? "{$geoip['country_name']}" : utf8_encode($geoip['city']).", {$geoip['country_name']}";
+			return $location;
 		}
-		if (pg_num_rows($query) !== 1) {
-			$q = pg_fetch_all($query);
-			$x = 'There are multiple sources of this message:<br><br>';
-			foreach ($q as $k) {
-				$x .= "Location: ";
-				$x .= $k['description'] . "<br>\n";
-				$x .= ($k['iscollege'] == 't') ? 'Type: Bedroom' : 'Type: Study Room / Labs / Wifi';
-				$x .= "<br><br>\n\n";
+		$q = self::$db->fetch_all($query);
+		foreach ($q as $k) {
+			$location[] = $k['description'];
+			$location[] = ($k['iscollege'] == 't') ? 'College Bedroom' : 'Study Room / Labs / Wifi';
+		}
+		return $location;
+	}
+
+	/**
+	 * Read the loaded modules and returns the poll functions, if configured
+	 * @param array $modules the loaded modules
+	 * @return array $pollFuncs functions to run for LongPolling
+	 */
+	public static function readPolls($modules) {
+		if ($modules !== false) {
+			$pollFuncs = array();
+			foreach ($modules as $module) {
+				if (isset($module['pollfunc'])) {
+					$pollFuncs[] = $module['pollfunc'];
+				}
 			}
-			return $x;
+			return $pollFuncs;
 		}
-		$k = pg_fetch_assoc($query);
-		$x = "Location: ";
-		$x .= $k['description'] . "<br>\n";
-		$x .= ($k['iscollege'] == 't') ? 'College Bedroom' : 'Study Room / Labs / Wifi';
-		$x .= "<br><br>\n\n";
-		return $x;
+		return false;
+	}
+
+	/**
+	 * Check whether to load the Getting Started tab
+	 * @return boolean 
+	 */
+	public static function getShowHelpTab($memberid) {
+		$result = self::$db->fetch_column('SELECT helptab FROM sis2.member_options WHERE memberid=$1 LIMIT 1',
+			[$memberid]);
+		if (empty($result)) {
+			self::setHelpTab($memberid);
+			return true;
+		}
+		return ($result[0] === 't');
+	}
+
+	/**
+	 * Prevent showing the getting started tab at startup
+	 */
+	public static function hideHelpTab($memberid) {
+		$result = self::$db->query('UPDATE sis2.member_options SET helptab=false WHERE memberid=$1',
+			[$memberid]);
+	}
+
+	private static function setHelpTab($memberid) {
+		self::$db->query('INSERT INTO sis2.member_options (memberid, helptab)
+			VALUES ($1, false)',
+			[$memberid]);
 	}
 }

@@ -4,7 +4,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130809
- * @package MyURY_Website
+ * @package MyRadio_Website
  */
 
-MyURY_Banner::getBannerForm()->render();
+MyRadio_Banner::getBannerForm()->render();

@@ -1,114 +1,47 @@
-<script type="text/javascript">
-    var selectorLastChange = '{{ plugin.vars.lastmod }}';
-    var selectorLocked = '{{ plugin.vars.status[1] }}';
-    var selectorPower = {'s1':'{{ plugin.vars.s1power }}', 's2':'{{ plugin.vars.s2power }}'};
-    var selectorOnAir = '{{ plugin.vars.onair }}';
-    			
-    $(document).ready(function() {
-      setInterval('updateSelector()', 3000);
-      $('#s1').click(function(){selectStudio(1);});
-      $('#s2').click(function(){selectStudio(2);});
-      $('#s3').click(function(){selectStudio(3);});
-      $('#s4').click(function(){selectStudio(4);});
-    });
-    			
-    function selectStudio(s) {
-      if ((s == 1) && (selectorPower['s1'] == '0')) return;
-      if ((s == 2) && (selectorPower['s2'] == '0')) return;
-      if ((s == 4) && (selectorPower['s4'] == '0')) return;
-      if (selectorLocked != '0') { alert('Could not change studio.\nStudio selector is currently locked out.'); return; }
-    				
-      $.get(myury.makeURL('SIS', 'selector.set'), {src: s}, function(data) {
-        if (data == 'locked') { alert('Could not change studio; studio selector is currently locked out.'); return; }
-        if (data.search('Error') != -1) { alert(data); return; }
-        updateSelectorState(data);
-      });
-    }
-    			
-    function updateSelector() {
-      if (!$('div#plugin_body_selector').is(':visible')) return;
-      $.get(myury.makeURL('SIS', 'selector.query'), {lastchange: selectorLastChange}, updateSelectorState);
-    }
-    			
-    function updateSelectorState(data) {
-      if (data == 'not modified') return;
-      data = data.split(" ");
-      // 0:lastmod, 1:s1power, 2:s2power, 3:onair, 4:locked
-    				
-      selectorLastChange = data[0];
-      selectorLocked = data[4];
-    				
-      if (data[1] == 0) {
-        $('#s1').attr('title', 'Studio 1 Powered Off')
-        .removeClass('s1on s1off poweredon')
-        .addClass('poweredoff');
-      }
-      else {$('#s1').attr('title', 'Studio 1').removeClass('poweredoff').addClass('poweredon');
-        if (data[3] == 1) $('#s1').removeClass('s1off').addClass('s1on'); else $('#s1').removeClass('s1on').addClass('s1off');
-      }
-      if (data[2] == 0) $('#s2').attr('title', 'Studio 2 Powered Off').removeClass('s2on s2off poweredon').addClass('poweredoff');
-      else {$('#s2').attr('title', 'Studio 2').removeClass('poweredoff').addClass('poweredon');
-        if (data[3] == 2) $('#s2').removeClass('s2off').addClass('s2on'); else $('#s2').removeClass('s2on').addClass('s2off');
-      }
-      if (data[3] == 3) $('#s3').removeClass('s3off').addClass('s3on'); else $('#s3').removeClass('s3on').addClass('s3off');
-    				
-      switch(data[3]) {
-        case '1':
-        case '2': s = 'Studio '+data[3]+' On Air'; break;
-        case '3': s = 'Jukebox On Air'; break;
-        case '4': s = 'Outside Broadcast On Air'; break;
-        default:  s = 'Source '+data[3]+' On Air'; break;
-      }
-      if (data[4] != '0') s = s + '<small> &mdash; Locked</small>';
-      $('span#onair').html(s);
-    }
-  </script>
+<table id="selector-buttons"><tr>
+  {% if not plugin.vars.s1power %}
+    <td class="selbtn poweredoff" id="s1" title="Studio 1 Powered Off"></td>
+  {% elseif plugin.vars.status.studio == 1 %}
+    <td class="selbtn poweredon s1on" id="s1" title="Studio 1"></td>
+  {% else %}
+    <td class="selbtn poweredon s1off" id="s1" title="Studio 1"></td>
+  {% endif %}
 
+  {% if not plugin.vars.s2power %}
+    <td class="selbtn poweredoff" id="s2" title="Studio 2 Powered Off"></td>
+  {% elseif plugin.vars.status.studio == 2 %}
+    <td class="selbtn poweredon s2on" id="s2" title="Studio 2"></td>
+  {% else %}
+    <td class="selbtn poweredon s2off" id="s2" title="Studio 2"></td>
+  {% endif %}
 
-  <table id="selector-buttons"><tr>
-    {% if not plugin.vars.s1power %}
-      <td class="selbtn poweredoff" id="s1" title="Studio 1 Powered Off"></td>
-    {% elseif plugin.vars.onair == 1 %}
-      <td class="selbtn poweredon s1on" id="s1" title="Studio 1"></td>
-    {% else %}
-      <td class="selbtn poweredon s1off" id="s1" title="Studio 1"></td>
-    {% endif %}
+  {% if plugin.vars.status.studio == 3 %}
+    <td class="selbtn poweredon s3on" id="s3" title="Jukebox"></td>
+  {% else %}
+    <td class="selbtn poweredon s3off" id="s3" title="Jukebox"></td>
+  {% endif %}
 
-    {% if not plugin.vars.s2power %}
-      <td class="selbtn poweredoff" id="s2" title="Studio 2 Powered Off"></td>
-    {% elseif plugin.vars.onair == 2 %}
-      <td class="selbtn poweredon s2on" id="s2" title="Studio 2"></td>
-    {% else %}
-      <td class="selbtn poweredon s2off" id="s2" title="Studio 2"></td>
-    {% endif %}
+  {% if not plugin.vars.s4power %}
+    <td class="selbtn poweredoff" id="s4" title="Outside Broadcast"></td>
+  {% elseif plugin.vars.status.studio == 4 %}
+    <td class="selbtn poweredon s4on" id="s4" title="Outside Broadcast"></td>
+  {% else %}
+    <td class="selbtn poweredon s4off" id="s4" title="Outside Broadcast"></td>
+  {% endif %}
 
-    {% if plugin.vars.onair == 3 %}
-      <td class="selbtn poweredon s3on" id="s3" title="Jukebox"></td>
-    {% else %}
-      <td class="selbtn poweredon s3off" id="s3" title="Jukebox"></td>
-    {% endif %}
-
-    {% if not plugin.vars.s4power %}
-      <td class="selbtn poweredoff" id="s4" title="Outside Broadcast"></td>
-    {% elseif plugin.vars.onair == 4 %}
-      <td class="selbtn poweredon s4on" id="s4" title="Outside Broadcast"></td>
-    {% else %}
-      <td class="selbtn poweredon s4off" id="s4" title="Outside Broadcast"></td>
-    {% endif %}
-
-    </tr>
-  </table>
-  <span id="onair">
-    {% if plugin.vars.onair == 1 or plugin.vars.onair == 2 %}
-      "Studio {{ plugin.vars.onair }} On Air"
-    {% elseif plugin.vars.onair == 3 %}
-      "Jukebox On Air"
-    {% elseif plugin.vars.onair == 4 %}
-      "Outside Broadcast On Air"
-    {% else %}
-      "Source {{ plugin.vars.onair }} On Air"
-    {% endif %}
-    {% if plugin.vars.status[1] != '0' %}
-      "<small> &mdash; Locked</small>"
-    {% endif %}
-    </span><br>
+  </tr>
+</table>
+<span id="onair">
+  {% if plugin.vars.status.studio == 1 or plugin.vars.status.studio == 2 %}
+    Studio {{ plugin.vars.status.studio }} On Air
+  {% elseif plugin.vars.status.studio == 3 %}
+    Jukebox On Air
+  {% elseif plugin.vars.status.studio == 4 %}
+    Outside Broadcast On Air
+  {% else %}
+    Source {{ plugin.vars.status.studio }} On Air
+  {% endif %}
+  {% if plugin.vars.status.lock != '0' %}
+    <small> &mdash; Locked</small>
+  {% endif %}
+</span><br>

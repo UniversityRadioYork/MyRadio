@@ -7,24 +7,24 @@
  * 
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130717
- * @package MyURY_Profile
+ * @package MyRadio_Profile
  */
 // Set if trying to view another member's profile page
-$user = User::getInstance(empty($_REQUEST['memberid']) ? -1 : $_REQUEST['memberid']);
-$visitor = User::getInstance();
+$user = MyRadio_User::getInstance(empty($_REQUEST['memberid']) ? -1 : $_REQUEST['memberid']);
+$visitor = MyRadio_User::getInstance();
 
 //Add global user data
 $userData = $user->toDataSource();
 $userData['training'] = CoreUtils::dataSourceParser($user->getAllTraining(true));
 $userData['training_avail'] = CoreUtils::dataSourceParser(
-        MyURY_TrainingStatus::getAllAwardableTo($user));
+        MyRadio_TrainingStatus::getAllAwardableTo($user));
 
 if ($user->isOfficer()) {
   $userData['phone'] = $user->getPhone();
   $userData['email'] = $user->getPublicEmail();
 }
 
-if ($visitor->hasAuth(AUTH_VIEWOTHERMEMBERS)) {
+if (CoreUtils::hasPermission(AUTH_VIEWOTHERMEMBERS)) {
   $userData['email'] = $user->getEmail();
   $userData['eduroam'] = $user->getEduroam();
   $userData['local_alias'] = $user->getLocalAlias();
@@ -43,12 +43,12 @@ if ($user->getID() === $visitor->getID() or $visitor->hasAuth(AUTH_EDITANYPROFIL
   $template->addVariable('editurl', '<a href="'.CoreUtils::makeURL('Profile', 'edit',
           array('memberid' => $user->getID())).'">Edit Profile</a>');
 }
-if ($visitor->hasAuth(AUTH_IMPERSONATE) &&
-        ($user->hasAuth(AUTH_BLOCKIMPERSONATE) === false or $visitor->hasAuth(AUTH_IMPERSONATE_BLOCKED_USERS))) {
+if (CoreUtils::hasPermission(AUTH_IMPERSONATE) &&
+        ($user->hasAuth(AUTH_BLOCKIMPERSONATE) === false or CoreUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS))) {
   $template->addVariable('impersonateurl',
-          '<a href="'.Config::$shib_url.'/impersonate.php?memberid='.$user->getID().'">Impersonate User</a>');
+          '<a href="'.CoreUtils::makeURL('MyRadio', 'impersonate', ['memberid' => $user->getID()]).'">Impersonate User</a>');
 }
-if ($visitor->hasAuth(AUTH_LOCK)) {
+if (CoreUtils::hasPermission(AUTH_LOCK)) {
   $template->addVariable('lockurl',
           '<a href="'.CoreUtils::makeURL('Profile', 'lock',
           array('memberid' => $user->getID())).'">Disable Account</a>');

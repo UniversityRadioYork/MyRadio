@@ -5,12 +5,12 @@
  * @todo Proper Documentation
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 21072012
- * @package MyURY_Scheduler
+ * @package MyRadio_Scheduler
  */
 
-$form = (new MyURYForm('sched_demo', $module, 'doDemo',
+$form = (new MyRadioForm('sched_demo', $module, 'doDemo',
                 array(
                     'title' => 'Create Demo'
                 )
-        ))->addField(new MyURYFormField('demo-datetime', MyURYFormField::TYPE_DATETIME, array('label' => 'Date and Time of the Demo'))
+        ))->addField(new MyRadioFormField('demo-datetime', MyRadioFormField::TYPE_DATETIME, array('label' => 'Date and Time of the Demo'))
 );

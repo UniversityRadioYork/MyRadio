@@ -8,6 +8,6 @@ if (isset($_SESSION['webcam_lastcounterincrement']) && $_SESSION['webcam_lastcou
 }
 $_SESSION['webcam_lastcounterincrement'] = time();
 
-$data = MyURY_Webcam::incrementViewCounter(User::getInstance());
+$data = MyRadio_Webcam::incrementViewCounter(MyRadio_User::getInstance());
 
-require 'Views/MyURY/datatojson.php';
+require 'Views/MyRadio/datatojson.php';

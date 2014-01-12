@@ -9,7 +9,7 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130808
- * @package MyURY_Core
+ * @package MyRadio_Core
  */
 interface IServiceAPI {
   /**

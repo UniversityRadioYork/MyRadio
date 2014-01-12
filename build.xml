@@ -1,6 +1,6 @@
 <?xml version="1.0"  encoding="UTF-8" ?>
 <?xml-model href="/usr/local/share/pear/data/phing/etc/phing-grammar.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0" ?>
-<project name="MyURY" basedir="." default="clean">
+<project name="MyRadio" basedir="." default="clean">
   <property file="./build.properties" />
 
   <property name="package"  value="${phing.project.name}" override="true" />
@@ -40,7 +40,7 @@
     source="${srcdir}/Classes"
     destination="docs"
     exclude="*/tests/*"
-    title="MyURY Documentation"
+    title="MyRadio Documentation"
     deprecated="true"
     todo="true"/>
   </target>

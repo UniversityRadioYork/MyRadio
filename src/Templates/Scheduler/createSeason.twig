@@ -1,8 +1,5 @@
 {% extends 'form.twig' %}
-{% block head %}
-{{ parent() }}
-<script type="text/javascript" src="{{baseurl}}js/myury.scheduler.createseason.js"></script>
-{% endblock %}
+
 {% block stripecontent %}
 {% if frm_custom.current_term is null %}
 <div class="ui-state-error"><span class="ui-icon ui-icon-alert fleft"></span>Season applications are currently <strong>closed</strong>. You can apply for a season 28 days before the start of term.</div>
@@ -12,4 +9,9 @@
 <p>Fill out the form below to apply for a new season of {{frm_custom.show_title}}. Please provide at least three possible times for your show, and don't tick a week if you know you can't do it!</p>
 {{ parent() }}
 {% endif %}
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/myury.scheduler.createseason.js"></script>
 {% endblock %}

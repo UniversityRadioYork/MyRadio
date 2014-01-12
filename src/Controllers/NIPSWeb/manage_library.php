@@ -4,12 +4,12 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130525
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
 CoreUtils::getTemplateObject()->setTemplate('NIPSWeb/manage_library.twig')
         ->addVariable('reslists', CoreUtils::dataSourceParser(array(
             'managed' => array(),
             'aux' => NIPSWeb_ManagedPlaylist::getAllManagedPlaylists(true),
-            'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(User::getInstance())
+            'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(MyRadio_User::getInstance())
         )))
         ->render();

@@ -1,8 +1,8 @@
 <?php
 
 /*
- * This file provides the SIS_Utils class for MyURY
- * @package MyURY_SIS
+ * This file provides the SIS_Utils class for MyRadio
+ * @package MyRadio_SIS
  */
 
 /**
@@ -10,7 +10,7 @@
  * 
  * @version 20130930
  * @author Andy Durant <aj@ury.org.uk>
- * @package MyURY_SIS
+ * @package MyRadio_SIS
  */
 class SIS_Messages extends ServiceAPI {
 
@@ -27,7 +27,7 @@ class SIS_Messages extends ServiceAPI {
    * @return array An array of SIS messages
    */
   public static function getMessages($timeslotid, $offset = 0) {
-    return MyURY_Timeslot::getInstance($timeslotid)->getMessages($offset);
+    return MyRadio_Timeslot::getInstance($timeslotid)->getMessages($offset);
   }
 
   /**
@@ -39,3 +39,4 @@ class SIS_Messages extends ServiceAPI {
   	self::$db->query('UPDATE sis2.messages SET statusid=$1 WHERE commid=$2', 
   		array($status, $id));
   }
+}

@@ -5,17 +5,17 @@
  * @todo Proper Documentation
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 02012013
- * @package MyURY_Scheduler
+ * @package MyRadio_Scheduler
  */
-$form = (new MyURYForm('sched_reject', $module, 'doReject',
+$form = (new MyRadioForm('sched_reject', $module, 'doReject',
                 array(
                     'debug' => false,
                     'title' => 'Reject Season Application'
                 )
         ))->addField(
-                new MyURYFormField('season_id', MyURYFormField::TYPE_HIDDEN)
+                new MyRadioFormField('season_id', MyRadioFormField::TYPE_HIDDEN)
         )->addField(
-                new MyURYFormField('reason', MyURYFormField::TYPE_BLOCKTEXT,
+                new MyRadioFormField('reason', MyRadioFormField::TYPE_BLOCKTEXT,
                         array(
                             'label' => 'Reason for Rejection: ',
                             'explanation' => 'You can enter a reason here for the application being rejected.'
@@ -23,7 +23,7 @@ $form = (new MyURYForm('sched_reject', $module, 'doReject',
                             .' application and resubmit.'
                 ))
         )->addField(
-        new MyURYFormField('notify_user', MyURYFormField::TYPE_CHECK,
+        new MyRadioFormField('notify_user', MyRadioFormField::TYPE_CHECK,
                 array(
                     'label' => 'Notify the Applicant via Email?',
                     'options' => array('checked' => true),

@@ -4,10 +4,10 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130527
- * @package MyURY_Mail
+ * @package MyRadio_Mail
  */
 
-if (!isset($_REQUEST['list'])) throw new MyURYException('List ID was not provided!', 400);
+if (!isset($_REQUEST['list'])) throw new MyRadioException('List ID was not provided!', 400);
 
 if (isset($_REQUEST['memberid'])) {
   CoreUtils::requirePermission(AUTH_EDITANYPROFILE);
@@ -16,8 +16,8 @@ if (isset($_REQUEST['memberid'])) {
   $user = -1;
 }
 
-$list = MyURY_List::getInstance($_REQUEST['list']);
-if ($list->optout(User::getInstance($user))) {
+$list = MyRadio_List::getInstance($_REQUEST['list']);
+if ($list->optout(MyRadio_User::getInstance($user))) {
   CoreUtils::backWithMessage('You are now opted-out of '.$list->getName().'.');
 } else {
   CoreUtils::backWithMessage('You could not be opted-out at this time. You may already have opted-out.');

@@ -1,7 +1,7 @@
 <?php
 /**
- * This file provides the Config class for MyURY
- * @package MyURY_Core
+ * This file provides the Config class for MyRadio
+ * @package MyRadio_Core
  */
 
 /**
@@ -9,21 +9,21 @@
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130711
- * @package MyURY_Core
+ * @package MyRadio_Core
  */
 final class Config {
   /**
-   * The ID of the "MyURY" Service. This *should* be the only Service, and therefore never change.
+   * The ID of the "MyRadio" Service. This *should* be the only Service, and therefore never change.
    * It's technically a remnant of the originally slightly overengineered modularisation structure.
    * @var int
    */
   public static $service_id = 1;
   /**
-   * The Module to assume if one is not explicitly provided. This is usually the MyURY module, but if you're feeling
+   * The Module to assume if one is not explicitly provided. This is usually the MyRadio module, but if you're feeling
    * special, you can make Stats or Library the default...
    * @var String
    */
-  public static $default_module = 'MyURY';
+  public static $default_module = 'MyRadio';
   /**
    * The Action to assume if one is not explicitly provided. This is usually default, but if you're feeling special,
    * you could make it index or home, but it'd break a lot of stuff.
@@ -35,6 +35,7 @@ final class Config {
    * @var String
    */
   public static $db_hostname    = 'localhost';
+  public static $db_name        = 'membership';
   /**
    * The username to use connecting to the PostgreSQL database server
    * @var String
@@ -51,21 +52,15 @@ final class Config {
    * @var String
    */
   public static $timezone       = 'Europe/London';
-  
-  /**
-   * The base path of the MyURY installation
-   * @var String
-   */
-  public static $base_path       = '/usr/local/www/myury/src';
 
   /**
-   * The base URL of the MyURY installation
+   * The base URL of the MyRadio installation
    * @var String
    */
   public static $base_url       = '//ury.org.uk/myury/';
   
   /**
-   * The base URL of Shibbobleh - it has CSS and JS resources used by MyURY
+   * The base URL of Shibbobleh - it has CSS and JS resources used by MyRadio
    * @var String
    */
   public static $shib_url       = '//ury.org.uk/portal/';
@@ -86,20 +81,20 @@ final class Config {
    */
   public static $cache_enable   = true;
   /**
-   * The name of the class that will provide the MyURY Caching mechanism.
+   * The name of the class that will provide the MyRadio Caching mechanism.
    * Must be the name of a valid class located in classes/[classname].php and implements CacheProvider
    * @var String
    */
   public static $cache_provider = 'APCProvider';
   /**
-   * How long MyURY_Track items should be cached before the data is invalidated. This is Configurable as due to a lot
+   * How long MyRadio_Track items should be cached before the data is invalidated. This is Configurable as due to a lot
    * of external edit sources, it is reasonable to asssume the cache may become stale due to other systems.
    * @var int
    */
   public static $cache_track_timeout = 7200; //2 hours
   
   /**
-   * Whether MyURY errors should be displayed in the browser. If this is set to false, users with the
+   * Whether MyRadio errors should be displayed in the browser. If this is set to false, users with the
    * AUTH_SHOWERRORS permission will still see errors.
    * Development value: true
    * Production value: false
@@ -108,7 +103,7 @@ final class Config {
   public static $display_errors = false;
   
   /**
-   * Whether MyURY Exceptions should be emailed to Computing
+   * Whether MyRadio Exceptions should be emailed to Computing
    * @var boolean
    */
   public static $email_exceptions = true;
@@ -132,7 +127,7 @@ final class Config {
    * This can be overriden on a per-request basis
    * @var int
    */
-  public static $ajax_limit_default = 10;
+  public static $ajax_limit_default = 25;
   
   /**
    * The photoid to use for a Joined URY Timeline Event
@@ -184,6 +179,18 @@ final class Config {
    * @var String
    */
   public static $webcam_archive_path = '/home/motion/videos';
+
+  /**
+   * The url of the webcam server status
+   * @var String
+   */
+  public static $webcam_current_url = "http://copperbox.york.ac.uk:9090/current?noprotocol=true";
+
+  /**
+   * The url of the webcam server setter
+   * @var String
+   */
+  public static $webcam_set_url = "http://copperbox.york.ac.uk:9090/set?newcam=";
   
   /**
    * The path to store the original, unencoded copies of URYPlayer Podcasts.
@@ -203,6 +210,14 @@ final class Config {
    * @var String
    */
   public static $public_media_uri = '/media';
+  
+  /**
+   * The full web address to the image that will be served for a show if there
+   * is not a photo for that show.
+   * @var String
+   */
+  public static $default_show_uri = '/media/image_meta/ShowImageMetadata/22.png';
+  
   /**
    * The full web address to the image that will be served on a member's profile page if they do not have a profile
    * photo. The original value, /static/img/default_show_player.png is the main website's placeholder for shows
@@ -214,7 +229,7 @@ final class Config {
    * The full web address of the image that will be shown for a vacant officer position
    * @var String
    */
-  public static $vacant_officer_uri = '/media/image_meta/MyURYImageMetadata/32.jpeg';
+  public static $vacant_officer_uri = '/media/image_meta/MyRadioImageMetadata/32.jpeg';
   
   /**
    * The file system path to the Central Database. Must be absolute. Can not be smb://, but may be a network share
@@ -224,16 +239,22 @@ final class Config {
   public static $music_central_db_path = '/music';
   
   /**
+   * The file to be played if the obit procedure is triggered.
+   * @var String
+   */
+  public static $jukebox_obit_file = '/jukebox/OBIT.mp3';
+  
+  /**
    * The Samba File Share path to the Central Database. This is used for BAPS compatibility features.
    * @var String
    */
   public static $music_smb_path = '\\\\musicstore.ury.york.ac.uk';
   
   /**
-   * A path to temporarially store uploaded audio files. Recommend somewhere in /tmp, MyURY needs full r/w access to it.
+   * A path to temporarially store uploaded audio files. Recommend somewhere in /tmp, MyRadio needs full r/w access to it.
    * @var String
    */
-  public static $audio_upload_tmp_dir = '/tmp/myuryaudiouploadcache';
+  public static $audio_upload_tmp_dir = '/tmp/myradioaudiouploadcache';
   
   /**
    * The API key to access last.fm's resources.
@@ -257,7 +278,7 @@ final class Config {
   /**
    * Mailing list to send reporting info to
    * @var String
-   * @todo Make this point to a MyURY_List ID?
+   * @todo Make this point to a MyRadio_List ID?
    */
   public static $reporting_list = 'alerts.myury';
   
@@ -293,15 +314,15 @@ final class Config {
   /**** ERROR REPORTING ****/
   
   /**
-   * The file to store MyURY Error Logs
+   * The file to store MyRadio Error Logs
    * @var String
    */
-  public static $log_file = '/var/log/ury-org-uk/myury_errors.log';
+  public static $log_file = '/var/log/ury-org-uk/myradio_errors.log';
   /**
-   * A lock file on the MyURY Error Logs. Prevents email spam.
+   * A lock file on the MyRadio Error Logs. Prevents email spam.
    * @var String
    */
-  public static $log_file_lock = '/var/log/ury-org-uk/myury_errors.lock';
+  public static $log_file_lock = '/var/log/ury-org-uk/myradio_errors.lock';
   /**
    * The email to send error reports to. This is different from reporting_email, which does statistical reports.
    * @var String
@@ -315,7 +336,7 @@ final class Config {
   public static $playlist_lock_time = 30;
   
   /**
-   * The User that MyURY assumes when doing things as a background task
+   * The User that MyRadio assumes when doing things as a background task
    * @var int Mr Website
    */
   public static $system_user = 779;
@@ -332,11 +353,11 @@ final class Config {
   public static $default_college = 10;
   
   /**
-   * A path to the file system (preferably in /tmp) that the MyURY Daemon tools can have write access to. It stores
+   * A path to the file system (preferably in /tmp) that the MyRadio Daemon tools can have write access to. It stores
    * state information about the service that should not be permanent but presist after a reload of the service.
    * @var String
    */
-  public static $daemon_lock_file = '/tmp/myury_daemon.lock';
+  public static $daemon_lock_file = '/tmp/myradio_daemon.lock';
   
   /**
    * The root URL to URY's API
@@ -358,7 +379,9 @@ final class Config {
    * BRA Server
    * @var String
    */
-  public static $bra_uri = 'https://urybsod.york.ac.uk/bra';
+  public static $bra_uri = 'ury.org.uk/bra';
+  public static $bra_user = '';
+  public static $bra_pass = '';
   
   /**
    * Relative path to the API. Must have trailing /
@@ -409,10 +432,67 @@ final class Config {
   );
 
   /**
+   * URL of the news provider
+   * @var string
+   */
+  public static $news_provider = "http://www.irn.co.uk/";
+
+  /**
+   * Host that the news provider must be accessed from
+   * @var string
+   */
+  public static $news_proxy = "wc10.york.ac.uk:8080";
+
+  /**
    * URY's Membership Fee
    * @var float
    */
   public static $membership_fee = 7.00;
+  
+  /**
+   * If enabled, the Members' News feature on the home page is active
+   */
+  public static $members_news_enable = false;
+  
+  /**
+   * Authentication
+   * LDAP requires the ldap plugin (net/php5-ldap)
+   * The Authenticators are tried in order when completing user authentication
+   * operations.
+   */
+  //public static $authenticators = ['MyRadioLDAPAuthenticator', 'MyRadioDefaultAuthenticator'];
+  public static $authenticators = ['MyRadioDefaultAuthenticator'];
+  public static $auth_ldap_server = 'ldap://ldap.york.ac.uk';
+  public static $auth_ldap_root = 'ou=people,ou=csrv,ou=nos,dc=york,dc=ac,dc=uk';
+  public static $auth_db_user = 'shibbobleh';
+  public static $auth_db_pass = '';
+  public static $eduroam_domain = 'york.ac.uk';
+  public static $auth_ldap_friendly_name = 'IT Services (e.g. abc123)';
+  
+  /**
+   * If true, users will be bound to a single Authenticator. Users whose
+   * authenticator is NULL will be asked to set an Authenticator after login.
+   * 
+   * If it is false, all authenticators will be valid for all users.
+   * 
+   * @var boolean
+   */
+  public static $single_authenticator = false;
+  
+  /**
+   * If false, MyRadioDefaultAuthenticator will never pass, passwords will not
+   * be set for new users, and the Change Password functionality will not be
+   * available.
+   * 
+   * @var boolean
+   */
+  public static $enable_local_passwords = true;
+  
+  /**
+   * The number of days before the start of the academic year when accounts are inactivated
+   * The current choice should mean it resets results week.
+   */
+  public static $account_expiry_before = 49;
   
   /**** DAEMON CONFIGURATION ****/
   public static $d_BAPSSync_enabled = false;
@@ -424,6 +504,59 @@ final class Config {
   public static $d_Podcast_enabled = true;
   public static $d_StatsGen_enabled = true;
   public static $d_Explicit_enabled = false;
+  
+  /**** STRINGS ****/
+  public static $short_name = 'URY';
+  public static $long_name = 'University Radio York';
+  public static $founded = '1967';
+  public static $email_domain = 'ury.org.uk';
+  public static $welcome_email = <<<EOT
+<p>Hi #NAME!</p>
+
+<p>Thanks for showing an interest in URY, your official student radio station.</p>
+
+<p>My name's Al, and I'm the Station Manager here at URY. It's my job to make it as
+easy as possible to get on the air or join any of our other teams.</p>
+
+<p>If you're interested in getting involved in any of our teams (there's 11 of 
+them!), then reply to this email and I'll sort you out, or email the address
+listed for that team <a href="http://ury.org.uk/getinvolved">on our website</a>.
+</p>
+
+<p>For more information about these, and everything else we do, you can:
+<ul>
+<li>join the <a href="https://www.facebook.com/groups/ury1350/">URY Members</a>
+ Facebook group,</li>
+<li>like our <a href="https://www.facebook.com/URY1350">Facebook page</a>,</li>
+<li>or <a href="https://twitter.com/ury1350">Follow @ury1350</a> on Twitter</li>
+</ul>
+
+<p>Finally, URY has a lot of <a href="https://ury.org.uk/myury/">online
+resources</a> that are useful for all sorts of things, so you'll need your login
+ details:</p>
+<p>Username: #USER<br>
+Password: #PASS</p>
+
+<p>If you have any questions, feel free to ask by visiting us at our station in
+Vanbrugh, or emailing <a
+href="mailto:training@ury.org.uk">training@ury.org.uk</a>.</p>
+
+Hope to see you soon.
+<br><br>
+--<br>
+Al Riddell<br>
+Station Manager<br>
+<br>
+University Radio York 1350AM<br>
+Most Awarded Student Radio Station 2013<br>
+---------------------------------------------<br>
+<a href="mailto:al.riddell@ury.org.uk">al.riddell@ury.org.uk</a>
+<br>
+---------------------------------------------<br>
+On Air | Online | On Demand<br>
+<a href="http://ury.org.uk/">ury.org.uk</a>
+EOT;
+  public static $facebook = 'https://www.facebook.com/URY1350';
   
   /**
    * The constructor doesn't do anything practical
@@ -440,6 +573,7 @@ final class Config {
    */
   public static function getPublicConfig() {
     return array(
+        'api_url' => self::$api_url,
         'ajax_limit_default' => self::$ajax_limit_default,
         'base_url' => self::$base_url,
         'rewrite_url' => self::$rewrite_url,
@@ -448,7 +582,13 @@ final class Config {
         'default_module' => self::$default_module,
         'default_action' => self::$default_action,
         'webcam_prefix' => self::$webcam_prefix,
-        'bra_uri' => self::$bra_uri
+        'bra_uri' => self::$bra_uri,
+        'bra_user' => self::$bra_user,
+        'bra_pass' => self::$bra_pass,
+        'short_name' => self::$short_name,
+        'long_name' => self::$long_name,
+        'founded' => self::$founded,
+        'facebook' => self::$facebook
     );
   }
 }

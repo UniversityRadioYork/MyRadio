@@ -4,8 +4,8 @@
  * 
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 17032013
- * @package MyURY_NIPSWeb
+ * @package MyRadio_NIPSWeb
  */
 NIPSWeb_Token::createToken($_REQUEST['trackid']);
 
-require 'Views/MyURY/nocontent.php';
+require 'Views/MyRadio/nocontent.php';
