@@ -294,6 +294,22 @@ final class Config {
   public static $itones_telnet_port = 1234;
   
   /**
+   * The maximum number of requests in one $itones_request_period per user.
+   * @var int
+   */
+  public static $itones_request_maximum = 5;
+
+  /**
+   * The period in which a user can use up to $itones_request_maximum requests.
+   *
+   * This is evaluated as a PostgreSQL INTERVAL: examples of valid values are
+   * '1 hour', '5 minutes' or '10:00:00'.
+   *
+   * @var String
+   */
+  public static $itones_request_period = '1 hour';
+
+  /**
    * The IP/hostname of the Studio Selector Telnet Service
    * @var String
    */
