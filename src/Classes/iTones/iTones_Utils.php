@@ -20,23 +20,6 @@ class iTones_Utils extends ServiceAPI {
     private static $queue_cache = array();
     public static $ops = array();
 
-    const CAN_MAKE_REQUEST_SQL = '
-        SELECT
-            (COUNT(trackid) <= $1) AS allowed
-        FROM
-            jukebox.request
-        WHERE
-            memberid = $2 AND
-            (NOW() - date) < $3
-        ;';
-
-    const LOG_REQUEST_SQL = '
-        INSERT INTO
-            jukebox.request(memberid, trackid, queue, date)
-        VALUES
-            ($1, $2, $3, NOW())
-        ;';
-
     const REQUESTS_REMAINING_SQL = '
         SELECT
             GREATEST(0, ($1 - COUNT(trackid))) AS remaining
@@ -82,133 +65,15 @@ class iTones_Utils extends ServiceAPI {
      * @return bool Whether the operation was successful
      */
     public static function requestTrack(MyRadio_Track $track, $queue = 'requests') {
-        $success = false;
-
-        if (self::canRequestTrack($track)) {
-            $success = self::requestTrackAndLog($track, $queue);
-        }
-
-        return $success;
-    }
-
-    /**
-     * Checks whether the given track can be requested by the current user.
-     *
-     * @param MyRadio_Track $track  The track to check for requestability.
-     *
-     * @return bool  Whether the track can be requested.
-     */
-    private static function canRequestTrack(MyRadio_Track $track) {
-        return (
-            self::trackCanBePlayed($track) &&
-            self::userCanMakeRequests()
-        );
-    }
-
-    /**
-     * Checks whether the given track can be played at the moment.
-     *
-     * This generally means playing it won't trip licencing quotae.
-     *
-     * @param MyRadio_Track $track  The track to check for playability.
-     *
-     * @return bool  Whether the track can be played.
-     */
-    private static function trackCanBePlayed(MyRadio_Track $track) {
-        return !(MyRadio_TracklistItem::getIfPlayedRecently($track));
-    }
-
-    /**
-     * Checks whether the current user can make requests at the moment.
-     *
-     * This generally means requesting won't trip the user's request quota.
-     *
-     * @return bool  Whether the current user can make a request.
-     */
-    public static function userCanMakeRequests() {
-        return self::areRequestsAllowedBy(self::userCanMakeRequestsQuery());
-    }
-
-    /**
-     * Checks to see if the database said the current user can make requests.
-     *
-     * @param object $results  The results from a can-make-requests query.
-     *
-     * @return bool  Whether the current user can make a request.
-     */
-    private static function areRequestsAllowedBy($results) {
-        return $results['allowed'] == 't';
-    }
-
-    /**
-     * Runs a query to see if the current user can make requests at the oment.
-     *
-     * @return object  The database query results.
-     */
-    private static function userCanMakeRequestsQuery() {
-        return self::$db->fetch_one(
-            self::CAN_MAKE_REQUEST_SQL,
-            self::userCanMakeRequestsParams()
-        );
-    }
-
-    /**
-     * Creates the parameter list for a can-make-requests query.
-     *
-     * @return array  The parameter list.
-     */
-    private static function userCanMakeRequestsParams() {
-      return [
-          Config::$itones_request_maximum,
-          MyRadio_User::getInstance()->getID(),
-          Config::$itones_request_period
-      ];
-    }
-
-    /**
-     * Requests a file, and logs the request if successful.
-     *
-     * @param MyRadio_Track $track  The track to request and log.
-     *
-     * @return bool Whether the request was successful.
-     */
-    private static function requestTrackAndLog(MyRadio_Track $track, $queue) {
-        $success = self::requestFile($track->getPath(), $queue);
-        if ($success) {
-            self::logRequest($track, $queue);
-        }
-        return $success;
-    }
-
-    /**
-     * Logs that the current user has made a request.
-     *
-     * @param MyRadio_Track $track  The track to log in the database.
-     *
-     * @return null Nothing.
-     */
-    private static function logRequest($track, $queue) {
-        self::$db->query(
-            self::LOG_REQUEST_SQL,
-            self::logRequestParams($track, $queue)
-        );
-    }
-
-    /**
-     * Creates the parameter list for a log-request query.
-     *
-     * @param MyRadio_Track $track  The track to log in the database.
-     *
-     * @return array  The parameters array.
-     */
-    private static function logRequestParams($track, $queue) {
-        return [
-            MyRadio_User::getInstance()->getID(),
-            $track->getID(),
+        $track_request = new iTones_TrackRequest(
+            $track,
+            MyRadio_User::getInstance(),
+            self::$db,
             $queue
-        ];
+        );
+        return $track_request->request();
     }
-    
+   
     /**
      * Pushes the file at the given path to the iTones request queue.
      * 
