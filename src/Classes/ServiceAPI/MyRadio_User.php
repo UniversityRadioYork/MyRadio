@@ -204,7 +204,7 @@ class MyRadio_User extends ServiceAPI {
         //Get the user's permissions
         $this->permissions = self::$db->fetch_column('SELECT lookupid FROM auth_officer
       WHERE officerid IN (SELECT officerid FROM member_officer
-        WHERE memberid=$1 AND from_date < now()- interval \'1 month\' AND
+        WHERE memberid=$1 AND from_date <= now() AND
         (till_date IS NULL OR till_date > now()- interval \'1 month\'))
       UNION SELECT lookupid FROM auth WHERE memberid=$1 AND
       starttime < now() AND (endtime IS NULL OR endtime >= now())',
