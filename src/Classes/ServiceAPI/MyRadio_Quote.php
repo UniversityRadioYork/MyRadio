@@ -105,7 +105,7 @@ class MyRadio_Quote extends ServiceAPI {
             [$quote_id]
         );
         if (empty($quote_data)) {
-            throw new MyUryException('The specified Quote does not seem to exist.');
+            throw new MyRadioException('The specified Quote does not seem to exist.');
             return;
         }
 
@@ -124,7 +124,7 @@ class MyRadio_Quote extends ServiceAPI {
             self::GET_ALL_SQL,
             []
         );
-        return array_map(self::getInstance, $chart_type_ids);
+        return array_map(self::getInstance(), $chart_type_ids);
     }
 
     /**
