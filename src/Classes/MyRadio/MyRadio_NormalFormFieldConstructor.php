@@ -39,23 +39,35 @@ class MyRadio_NormalFormFieldConstructor extends MyRadio_FormFieldConstructor {
      * Performs binding of !bind(foo) strings in a field description to their
      * entries in the binding array.
      *
-     * @param array $this->field  The field description array to bind on.
+     * @return null  Nothing.
      */
     private function doBinding() {
         foreach($this->field as $key => &$value) {
             if ($this->fc->isSpecialFieldName($value)) {
-                $matches = [];
-                if (preg_match('/^!bind\( *(\w+) *\)$/', $value, $matches)) {
-                    if (array_key_exists($matches[1], $this->bindings)) {
-                        $value = $this->bindings[$matches[1]];
-                    } else {
-                        throw new MyRadioException(
-                            'Tried to !bind to unbound form variable: ' . $matches[1] . '.'
-                        );
-                    }
-                }
+                $value = $this->handlePotentialBinding($value);
             }
         }
+    }
+
+    /**
+     * Handles a potential instance of !bind(foo).
+     *
+     * @param string $input  The incoming value.
+     *
+     * @return object  The value after expanding any bindings.
+     */
+    private function handlePotentialBinding($input) {
+        $matches = [];
+        if (preg_match('/^!bind\( *(\w+) *\)$/', $input, $matches)) {
+            if (!array_key_exists($matches[1], $this->bindings)) {
+                throw new MyRadioException(
+                    'Tried to !bind to unbound form variable: ' . $matches[1] . '.'
+                );
+            }
+            $output = $this->bindings[$matches[1]];
+        }
+
+        return $output;
     }
 
     /**
