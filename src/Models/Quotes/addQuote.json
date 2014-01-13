@@ -1,0 +1,27 @@
+{
+    "name": "quotes_addQuote",
+    "options": {
+        "title": "Add Quote"
+    },
+
+    "fields": {
+        "source": {
+            "type": "member",
+            "label": "Source",
+            "explanation": "Which member said it?"
+        },
+
+        "date": {
+            "type": "date",
+            "label": "Date",
+            "explanation": "When did they say it?"
+        },
+
+        "text": {
+            "type": "blocktext",
+            "label": "Text",
+            "explanation": "What was said?"
+        }
+    }
+}
+
