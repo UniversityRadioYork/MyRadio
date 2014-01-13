@@ -14,7 +14,7 @@
         "submitted_time": {
             "type": "date",
             "label": "Release Date",
-            "explanation": "The date the chart is released on."
+            "explanation": "The date on which the chart is released."
         },
         "!section(Tracks)": {
             "!repeat(1, 10)": {
