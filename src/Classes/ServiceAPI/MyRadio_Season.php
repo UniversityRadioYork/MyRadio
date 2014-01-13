@@ -12,7 +12,6 @@
  * @package MyRadio_Scheduler
  * @uses \Database
  * @uses \MyRadio_Show
- * 
  */
 class MyRadio_Season extends MyRadio_Metadata_Common {
 
@@ -118,12 +117,12 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
    * tags: A string of 0 or more space-seperated tags this Season relates to, in addition to the Show tags<br>
    * show_id: The ID of the Show to assign the application to
    * termid: The ID of the term being applied for. Defaults to the current Term
-   * 
+   *
    * weeks, day, stime, etime, show_id are all required fields
-   * 
+   *
    * As this is the initial creation, all tags are <i>approved</i> by the submitter so the Season has some initial values
-   * 
-   * @throws MyRadioException
+   *
+   * @throws MyURYException
    */
   public static function apply($params = array()) {
     //Validate input
@@ -169,8 +168,9 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
       }
 
       //Enter the data
-      self::$db->query('INSERT INTO schedule.show_season_requested_time 
-        (requested_day, start_time, preference, duration, show_season_id) VALUES ($1, $2, $3, $4, $5)', array($params['times']['day'][$i], $params['times']['stime'][$i], $i, $interval, $season_id));
+      self::$db->query('INSERT INTO schedule.show_season_requested_time
+        (requested_day, start_time, preference, duration, show_season_id) VALUES ($1, $2, $3, $4, $5)',
+              array($params['times']['day'][$i], $params['times']['stime'][$i], $i, $interval, $season_id));
     }
 
     //If the description metadata is non-blank, then update that too
@@ -219,7 +219,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
 
   /**
    * Get all the Seasons in the active term.
-   * 
+   *
    * @param int $term_id
    * @return MyRadio_Season[]
    */
@@ -230,14 +230,14 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
 
   /**
    * Rejects the application for the Season, notifying the creditors if asked.
-   * 
+   *
    * Will not reject if already rejected.<br>
    * A Season is "Rejected" by setting the "Submitted" field in schedule.show_season to NULL,
    * and adding a "reject-reason" metadata key, with the effective_from set to the time the application
    * was rejected.<br>
    * A Season can be reapplied for by setting the "Submitted" field to the re-submit time.
    * It is also best practice to then set the "reject-reason" key to have the same effective_to.
-   * 
+   *
    * @param String $reason Why the application was rejected
    * @param bool $notify_user If true, all creditors will be notified about the rejection.
    */
@@ -281,7 +281,7 @@ EOT
   /**
    * Alias for getCredits($this->getShow()), which enables credits to be
    * automatically inherited from the show.
-   * 
+   *
    * @return Array[]
    */
   public function getCredits() {
@@ -290,13 +290,13 @@ EOT
 
   /**
    * Sets a metadata key to the specified value.
-   * 
+   *
    * If any value is the same as an existing one, no action will be taken.
    * If the given key has is_multiple, then the value will be added as a new, additional key.
    * If the key does not have is_multiple, then any existing values will have effective_to
    * set to the effective_from of this value, effectively replacing the existing value.
    * This will *not* unset is_multiple values that are not in the new set.
-   * 
+   *
    * @param String $string_key The metadata key
    * @param mixed $value The metadata value. If key is_multiple and value is an array, will create instance
    * for value in the array.
@@ -316,7 +316,6 @@ EOT
   }
 
   /**
-   * 
    * @return MyRadio_Show
    */
   public function getShow() {
@@ -458,7 +457,7 @@ EOT
    * If time = -1, this is the start time to schedule for
    * timecustom_etime: Ignored if time is >-1
    * If time = -1, this is the *duration* to schedule for (not end time)
-   * 
+   *
    * @todo Validate timeslots are available before scheduling
    * @todo Email the user notifying them of scheduling
    * @todo Verify the timeslot is free before scheduling
@@ -552,9 +551,9 @@ Hello,
   Please note that one of your shows has been allocated the following timeslots on the ".Config::$short_name." Schedule:
   
 $times
-    
+
   Remember that except in exceptional circumstances, you must give at least 48 hours notice for cancelling your show as part of your presenter contract. If you do not do this for two shows in one season, all other shows are forfeit and may be cancelled.
-  
+
   If you have any questions about your application, direct them to pc@ury.org.uk
 
   ~ ".Config::$short_name." Scheduling Legume";
@@ -620,7 +619,7 @@ $times
   /**
    * Returns the percentage of Timeslots in this Season that at least one User
    * has signed into.
-   * 
+   *
    * @return [float, int]
    */
   public function getAttendanceInfo() {

@@ -20,6 +20,41 @@ class iTones_Utils extends ServiceAPI {
     private static $queue_cache = array();
     public static $ops = array();
 
+    const REQUESTS_REMAINING_SQL = '
+        SELECT
+            GREATEST(0, ($1 - COUNT(trackid))) AS remaining
+        FROM
+            jukebox.request
+        WHERE
+            memberid = $2 AND
+            (NOW() - date) < $3
+        ;';
+
+    /**
+     * Gets the number of tracks the current user can currently request
+     *
+     * @return int  The number of tracks requestable as of now.
+     */
+    public static function getRemainingRequests() {
+        return self::$db->fetch_one(
+            self::REQUESTS_REMAINING_SQL,
+            self::getRemainingRequestsParams()
+        )['remaining'];
+    }
+
+    /**
+     * Creates the parameter list for a requests-remaining query.
+     *
+     * @return array  The parameter list.
+     */
+    private static function getRemainingRequestsParams() {
+      return [
+          Config::$itones_request_maximum,
+          MyRadio_User::getInstance()->getID(),
+          Config::$itones_request_period
+      ];
+    }
+
     /**
      * Push a track into the iTones request queue, if it hasn't been played
      * recently.
@@ -30,13 +65,15 @@ class iTones_Utils extends ServiceAPI {
      * @return bool Whether the operation was successful
      */
     public static function requestTrack(MyRadio_Track $track, $queue = 'requests') {
-        if (MyRadio_TracklistItem::getIfPlayedRecently($track)) {
-            return false;
-        } else {
-            return self::requestFile($track->getPath(), $queue);
-        }
+        $track_request = new iTones_TrackRequest(
+            $track,
+            MyRadio_User::getInstance(),
+            self::$db,
+            $queue
+        );
+        return $track_request->request();
     }
-    
+   
     /**
      * Pushes the file at the given path to the iTones request queue.
      * 

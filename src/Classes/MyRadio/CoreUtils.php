@@ -270,7 +270,37 @@ class CoreUtils {
 
         self::$auth_cached = true;
     }
-
+    
+    /**
+     * Returns the Actions and API Endpoints that utilise a given type.
+     * 
+     * @param int $typeid
+     * @return [[action,...], [api method,...]]
+     */
+    public static function getAuthUsage($typeid) {
+        $db = Database::getInstance();
+        $actions = $db->fetch_all(
+                'SELECT modules.name AS module, actions.name AS action
+                    FROM myury.act_permission
+                    LEFT JOIN myury.modules USING (moduleid)
+                    LEFT JOIN myury.actions USING (actionid)
+                    WHERE typeid=$1', [$typeid]);
+        
+        $apis = $db->fetch_all(
+                'SELECT api_name, method_name
+                    FROM myury.api_method_auth
+                    LEFT JOIN myury.api_class_map USING (class_name)
+                    WHERE typeid=$1', [$typeid]);
+        
+        return [$actions, $apis];
+    }
+    
+    /**
+     * Gets the description (friendly name) of the given permission.
+     * 
+     * @param int $typeid
+     * @return String
+     */
     public static function getAuthDescription($typeid) {
         self::setUpAuth();
         return self::$typeid_descr[$typeid];
