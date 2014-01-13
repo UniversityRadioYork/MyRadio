@@ -269,7 +269,7 @@ class MyRadio_JsonFormLoader {
      * @return boolean  True if the field is special; false otherwise.
      */
     private function isSpecialFieldName($name) {
-        return strpos($name, self::SPECIAL_PREFIX) === 0;
+        return is_string($name) && (strpos($name, self::SPECIAL_PREFIX) === 0);
     }
 
     /**
