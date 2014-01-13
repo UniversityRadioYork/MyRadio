@@ -191,11 +191,11 @@ class MyRadio_JsonFormLoader {
      * Compiles a special field description into a field and adds it to the given
      * form.
      *
-     * @param string    $name   The special field directive stored as field name.
-     * @param array     $field  The field description array to compile.
+     * @param string      $name   The special field directive stored as field name.
+     * @param array       $field  The field description array to compile.
      * @param MyRadioForm $form   The form to add the compiled field to.
-     * @param array     $binds  The current variable bindings, for use with the
-     *                          !bind directive.
+     * @param array       $binds  The current variable bindings, for use with the
+     *                            !bind directive.
      * @return Nothing.
      */
     private function addSpecialFieldToForm($name, $field, $form, $binds) {
