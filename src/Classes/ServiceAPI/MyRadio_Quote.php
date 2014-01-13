@@ -166,7 +166,7 @@ class MyRadio_Quote extends ServiceAPI {
         self::$db->query(
             self::INSERT_SQL,
             [
-                $text,
+                $data['text'],
                 $data['source']->getID(),    
                 date('%c', intval($data['date'])) // Expecting UNIX timestamp
             ],
