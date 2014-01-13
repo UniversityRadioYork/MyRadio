@@ -251,10 +251,10 @@ class MyRadio_Quote extends ServiceAPI {
      */
     public function toDataSource() {
         return [
-            'source' => $this->getSource(),
-            'text' => $this->getText(),
+            'source' => $this->getSource()->getName(),
             'date' => strftime('%c', $this->getDate()),
-            'editlink' => [
+            'text' => $this->getText(),
+            /*'editlink' => [
                 'display' => 'icon',
                 'value' => 'script',
                 'title' => 'Edit Quote',
@@ -263,7 +263,7 @@ class MyRadio_Quote extends ServiceAPI {
                     'editQuote',
                     ['quote_id' => $this->getID()]
                 )
-            ],
+            ],*/
         ];
     }
 }
