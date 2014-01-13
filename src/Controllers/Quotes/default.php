@@ -10,6 +10,6 @@ CoreUtils::getTemplateObject(
   'Quotes'
 )->addVariable(
   'tabledata',
-  ServiceAPI::setToDataSource(MyURY_Quote::getAll())
+  ServiceAPI::setToDataSource(MyRadio_Quote::getAll())
 )->render();
 ?>
