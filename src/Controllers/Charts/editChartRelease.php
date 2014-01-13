@@ -1,8 +1,8 @@
 <?php
 /**
  * Allows the editing of chart releases.
- * @version 20130427
- * @author Matt Windsor <matt.windsor@ury.org.uk>
+ * @version 20140113
+ * @author  Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Charts
  */
 
@@ -16,7 +16,7 @@ foreach ($types as $type) {
 }
 
 $form = MyRadio_JsonFormLoader::loadFromModule(
-  $module, 'chartreleasefrm', 'doEditChartRelease',
+  $module, 'editChartRelease', 'doEditChartRelease',
   ['chart_types' => $type_select]
 );
 
