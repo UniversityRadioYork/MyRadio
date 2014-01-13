@@ -91,6 +91,12 @@ class MyRadio_Quote extends ServiceAPI {
     private $date;
 
     /**
+     * The singleton store of all Quotes.
+     * @var array
+     */
+    private static $quotes = [];
+
+    /**
      * Constructs a new MyRadio_Quote from the database.
      *
      * You should generally use MyRadio_Quote::getInstance instead.
@@ -115,6 +121,32 @@ class MyRadio_Quote extends ServiceAPI {
     }
 
     /**
+     * Retrieves the quite with the given numeric ID.
+     *
+     * @param $quote_id  The numeric ID of the quote.
+     *
+     * @return The quote release with the given ID.
+     */
+    public static function getInstance($quote_id=-1) {
+      self::__wakeup();
+
+      if (!is_numeric($quote_id)) {
+        throw new MyRadioException(
+          'Invalid Quote ID!',
+          MyRadioException::FATAL
+        );
+      }
+
+      if (!isset(self::$quotes[$quote_id])) {
+        self::$quotes[$quote_id] = new self(
+          $quote_id,
+          $quote_type
+        );
+      }
+      return self::$quotes[$quote_id];
+    }
+
+    /**
      * Retrieves all current quotes.
      *
      * @return array  An array of all active quotes.
@@ -124,7 +156,7 @@ class MyRadio_Quote extends ServiceAPI {
             self::GET_ALL_SQL,
             []
         );
-        return array_map(self::getInstance(), $chart_type_ids);
+        return array_map('MyRadio_Quote::getInstance', $chart_type_ids);
     }
 
     /**
