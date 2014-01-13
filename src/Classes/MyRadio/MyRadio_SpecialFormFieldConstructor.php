@@ -132,7 +132,7 @@ class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor {
      */
     private function addSectionHeader(/* string */ $name) {
         $this->fc->addFieldToForm(
-            $this->generateValidName($name),
+            $this->sectionHeaderName($name),
             [
                 'type' => 'section',
                 'label' => $name,
@@ -145,14 +145,11 @@ class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor {
     /**
      * Generates a valid name for a section header form field.
      *
-     * @param string $title  The section title, which may contain characters
-     *                       not valid in a field name.
-     *
-     * @return string  A name that should be unique to the section, but
-     *                 contains no invalid characters.
+     * @return string $name  A name that should be unique to the section, but
+     *                       contains no invalid characters.
      */
-    private function generateValidName($title) {
-        return base64_encode($title);
+    private function sectionHeaderName($name) {
+        return base64_encode($name);
     }
 }
 
