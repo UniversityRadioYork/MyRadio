@@ -98,23 +98,40 @@ class MyRadio_JsonFormLoader {
               array $options,
               array $binds
     ) {
-        // Section header
-        $this->addFieldToForm(
-            $this->generateValidName($options[1]),
-            [
-                'type' => 'section',
-                'label' => $options[1],
-                'options' => []
-            ], 
-            $form,
-            $binds
-        );
+        $this->addSectionHeader($options[1], $form, $binds);
 
         // There isn't any section nesting, so just add the section contents in
         // below the header.
         foreach($field as $name => $infield) {
             $this->addFieldToForm($name, $infield, $form, $binds);
         }
+    }
+
+    /**
+     * Adds a section header to a form.
+     *
+     * @param string      $name     The human-readable name of the section.
+     * @param MyRadioForm $form     The form to add the compiled field to.
+     * @param array       $binds    The current variable bindings, for use with
+     *                              the !bind directive.
+     *
+     * @return null  Nothing.
+     */
+    private function addSectionHeader(
+        /* string */ $name,
+         MyRadioForm $form,
+               array $binds
+    ) {
+        $this->addFieldToForm(
+            $this->generateValidName($name),
+            [
+                'type' => 'section',
+                'label' => $name,
+                'options' => []
+            ], 
+            $form,
+            $binds
+        );
     }
 
     /**
