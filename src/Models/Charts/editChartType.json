@@ -3,6 +3,7 @@
     "options": {
         "title": "Edit Chart Type"
     },
+
     "fields": {
         "name": {
             "type": "text",
