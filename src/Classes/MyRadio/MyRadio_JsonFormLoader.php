@@ -172,7 +172,7 @@ class MyRadio_JsonFormLoader {
      */
     private function doBinding(&$field, $binds) {
         foreach($field as $key => &$value) {
-            if (isSpecialFieldName($value)) {
+            if ($this->isSpecialFieldName($value)) {
                 $matches = [];
                 if (preg_match('/^!bind\( *(\w+) *\)$/', $value, $matches)) {
                     if (array_key_exists($matches[1], $binds)) {
@@ -254,7 +254,7 @@ class MyRadio_JsonFormLoader {
      * @return Nothing.
      */
     private function addFieldToForm($name, $field, $form, $binds) {
-        if (isSpecialFieldName($name)) {
+        if ($this->isSpecialFieldName($name)) {
             $this->addSpecialFieldToForm($name, $field, $form, $binds);
         } else {
             $this->addNormalFieldToForm($name, $field, $form, $binds);
