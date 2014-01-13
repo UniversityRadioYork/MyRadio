@@ -80,18 +80,24 @@ class MyRadio_JsonFormLoader {
     /**
      * Adds a section to a form.
      *
-     * @param array     $field    The field description array to compile.
-     *                            This should be an array of form items in this
-     *                            section.
+     * @param array       $field    The field description array to compile.
+     *                              This should be an array of form items in
+     *                              this section.
      * @param MyRadioForm $form     The form to add the compiled field to.
-     * @param array     $options  The array of options to the !section directive.
-     *                            This should contain two numeric indices:
-     *                            the repeat directive and the section name.
-     * @param array     $binds    The current variable bindings, for use with the
-     *                            !bind directive.
+     * @param array       $options  The array of options to the !section
+     *                              directive.  This should contain two numeric
+     *                              indices: the repeat directive and the
+     *                              section name.
+     * @param array       $binds    The current variable bindings, for use with
+     *                              the !bind directive.
      * @return Nothing.
      */
-    private function addSectionToForm($field, $form, $options, $binds) {
+    private function addSectionToForm(
+              array $field,
+        MyRadioForm $form,
+              array $options,
+              array $binds
+    ) {
         // Section header
         $this->addFieldToForm(
             $this->generateValidName($options[1]),
@@ -117,8 +123,8 @@ class MyRadio_JsonFormLoader {
      * @param string $title  The section title, which may contain characters
      *                       not valid in a field name.
      *
-     * @return $string  A name that should be unique to the section, but
-     *                  contains no invalid characters.
+     * @return string  A name that should be unique to the section, but
+     *                 contains no invalid characters.
      */
     private function generateValidName($title) {
         return base64_encode($title);
@@ -127,19 +133,24 @@ class MyRadio_JsonFormLoader {
     /**
      * Adds a repeated field block to a form.
      *
-     * @param array     $field    The field description array to compile.
-     *                            This should be an array of form items to
-     *                            repeat.
+     * @param array       $field    The field description array to compile.
+     *                              This should be an array of form items to
+     *                              repeat.
      * @param MyRadioForm $form     The form to add the compiled field to.
-     * @param array     $options  The array of options to the !repeat directive.
-     *                            This should contain three numeric indices:
-     *                            the repeat directive, the repetition ID start,
-     *                            and end.
-     * @param array     $binds    The current variable bindings, for use with the
-     *                            !bind directive.
+     * @param array       $options  The array of options to the !repeat
+     *                              directive.  This should contain three
+     *                              numeric indices: the repeat directive, the
+     *                              repetition ID start, and end.
+     * @param array       $binds    The current variable bindings, for use with
+     *                              the !bind directive.
      * @return Nothing.
      */
-    private function addRepeatedFieldsToForm($field, $form, $options, $binds) {
+    private function addRepeatedFieldsToForm(
+        array       $field,
+        MyRadioForm $form,
+        array       $options,
+        array       $binds
+    ) {
         $start = intval($options[1]);
         $end = intval($options[2]);
 
@@ -170,7 +181,7 @@ class MyRadio_JsonFormLoader {
      * @param array $field  The field description array to bind on.
      * @param array $binds  The current variable bindings, for use with the
      */
-    private function doBinding(&$field, $binds) {
+    private function doBinding(array &$field, array $binds) {
         foreach($field as $key => &$value) {
             if ($this->isSpecialFieldName($value)) {
                 $matches = [];
@@ -198,7 +209,12 @@ class MyRadio_JsonFormLoader {
      *                            !bind directive.
      * @return Nothing.
      */
-    private function addSpecialFieldToForm($name, $field, $form, $binds) {
+    private function addSpecialFieldToForm(
+        /* string */ $name,
+        array        $field,
+        MyRadioForm  $form,
+        array        $binds
+    ) {
         $matches = [];
         // TODO: Replace regexes with something a bit less awful.
         $operators = [
@@ -246,14 +262,19 @@ class MyRadio_JsonFormLoader {
     /**
      * Compiles a field description into a field and adds it to the given form.
      *
-     * @param string    $name   The name of the field.
-     * @param array     $field  The field description array to compile.
+     * @param string      $name   The name of the field.
+     * @param array       $field  The field description array to compile.
      * @param MyRadioForm $form   The form to add the compiled field to.
-     * @param array     $binds  The current variable bindings, for use with the
-     *                          !bind directive.
+     * @param array       $binds  The current variable bindings, for use with
+     *                            the !bind directive.
      * @return Nothing.
      */
-    private function addFieldToForm($name, $field, $form, $binds) {
+    private function addFieldToForm(
+        /* string */ $name,
+               array $field,
+         MyRadioForm $form,
+               array $binds
+    ) {
         if ($this->isSpecialFieldName($name)) {
             $this->addSpecialFieldToForm($name, $field, $form, $binds);
         } else {
@@ -322,7 +343,7 @@ class MyRadio_JsonFormLoader {
      *
      * @return MyRadioForm  The processed form.
      */
-    public function toForm($action, $binds=[]) {
+    public function toForm($action, array $binds=[]) {
         // TODO: Complain if no form is loaded.
         $f = $this->form_array;
 
