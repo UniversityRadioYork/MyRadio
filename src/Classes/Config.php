@@ -52,12 +52,6 @@ final class Config {
    * @var String
    */
   public static $timezone       = 'Europe/London';
-  
-  /**
-   * The base path of the MyRadio installation
-   * @var String
-   */
-  public static $base_path       = '/usr/local/www/myury/src';
 
   /**
    * The base URL of the MyRadio installation
@@ -300,6 +294,22 @@ final class Config {
   public static $itones_telnet_port = 1234;
   
   /**
+   * The maximum number of requests in one $itones_request_period per user.
+   * @var int
+   */
+  public static $itones_request_maximum = 5;
+
+  /**
+   * The period in which a user can use up to $itones_request_maximum requests.
+   *
+   * This is evaluated as a PostgreSQL INTERVAL: examples of valid values are
+   * '1 hour', '5 minutes' or '10:00:00'.
+   *
+   * @var String
+   */
+  public static $itones_request_period = '1 hour';
+
+  /**
    * The IP/hostname of the Studio Selector Telnet Service
    * @var String
    */
@@ -456,6 +466,11 @@ final class Config {
   public static $membership_fee = 7.00;
   
   /**
+   * If enabled, the Members' News feature on the home page is active
+   */
+  public static $members_news_enable = false;
+  
+  /**
    * Authentication
    * LDAP requires the ldap plugin (net/php5-ldap)
    * The Authenticators are tried in order when completing user authentication
@@ -574,6 +589,7 @@ EOT;
    */
   public static function getPublicConfig() {
     return array(
+        'api_url' => self::$api_url,
         'ajax_limit_default' => self::$ajax_limit_default,
         'base_url' => self::$base_url,
         'rewrite_url' => self::$rewrite_url,

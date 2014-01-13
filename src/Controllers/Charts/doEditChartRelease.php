@@ -34,7 +34,6 @@ function create_chart_row($chart_release_id, $position, $track) {
  * @return Nothing.  This function writes directly to the database.
  */
 function create_chart_release($data) {
-  // Create a new chart release
   MyRadio_ChartRelease::create($data);
   $chart_release_id = MyRadio_ChartRelease::findReleaseIDOn(
     $data['submitted_time'],
