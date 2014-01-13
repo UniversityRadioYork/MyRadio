@@ -16,6 +16,64 @@
  * @uses    \Database
  */
 class MyRadio_ChartRelease extends ServiceAPI {
+    const GET_INSTANCE_SQL = '
+        SELECT
+            *
+        FROM
+            music.chart_release
+        WHERE
+            chart_release_id = $1
+        ;';
+
+    const GET_CHART_ROWS_SQL = '
+        SELECT
+            chart_row_id
+        FROM
+            music.chart_row
+        WHERE
+            chart_release_id = $1
+        ORDER BY
+            position ASC
+        ;';
+
+    const FIND_RELEASE_ID_ON_SQL = '
+        SELECT
+            chart_release_id
+        FROM
+            music.chart_release
+        WHERE
+            chart_type_id = $1 AND
+            submitted     = $2
+        LIMIT
+            1
+        ;';
+
+    const INSERT_SQL = '
+        INSERT INTO
+            music.chart_release(chart_type_id, submitted)
+        VALUES
+            ($1, $2)
+        ;';
+
+    const SET_RELEASE_TIME_SQL = '
+        UPDATE
+            music.chart_release
+        SET
+            submitted = $1
+        WHERE
+            chart_release_id = $2
+        ;';
+
+    const SET_CHART_TYPE_ID_SQL = '
+        UPDATE
+            music.chart_release
+        SET
+            chart_type_id = $1
+        WHERE
+            chart_release_id = $2
+        ;';
+
+
     /**
      * The singleton store for ChartRelease objects
      * @var MyRadio_ChartRelease[]
@@ -67,9 +125,7 @@ class MyRadio_ChartRelease extends ServiceAPI {
         $this->chart_type = $chart_type;
 
         $chart_release_data = self::$db->fetch_one(
-            'SELECT *
-             FROM music.chart_release
-             WHERE chart_release_id = $1;',
+            self::GET_INSTANCE_SQL,
             [$chart_release_id]
         );
         if (empty($chart_release_data)) {
@@ -81,10 +137,7 @@ class MyRadio_ChartRelease extends ServiceAPI {
         $this->chart_type_id = $chart_release_data['chart_type_id'];
 
         $this->chart_row_ids = self::$db->fetch_column(
-            'SELECT chart_row_id
-             FROM music.chart_row
-             WHERE chart_release_id = $1
-             ORDER BY position ASC;',
+            self::GET_CHART_ROWS_SQL,
             [$chart_release_id]
         );
     }
@@ -130,11 +183,7 @@ class MyRadio_ChartRelease extends ServiceAPI {
     public function findReleaseIDOn($release_time, $chart_type_id) {
         return array_pop(
             self::$db->fetch_column(
-                'SELECT chart_release_id
-                 FROM music.chart_release
-                 WHERE chart_type_id = $1
-                 AND submitted = $2
-                 LIMIT 1;',
+                self::FIND_RELEASE_ID_ON_SQL,
                 [
                     $chart_type_id,
                     date('c', $release_time)
@@ -202,10 +251,9 @@ class MyRadio_ChartRelease extends ServiceAPI {
      *                     Must contain 'chart_type_id' and 'submitted_time'.
      * @return null  nothing.
      */
-    public function create($data) {
+    public static function create($data) {
         self::$db->query(
-            'INSERT INTO music.chart_release(chart_type_id, submitted)
-             VALUES ($1, $2);',
+            self::INSERT_SQL,
             [
                 intval($data['chart_type_id']),    
                 date('%c', intval($data['submitted_time'])) // Expecting UNIX timestamp
@@ -219,38 +267,35 @@ class MyRadio_ChartRelease extends ServiceAPI {
      *
      * @param int $release_time  The new time, as a UNIX timestamp.
      *
-     * @return  This object, for method chaining.
+     * @return MyRadio_ChartRelease  This object, for method chaining.
      */
     public function setReleaseTime($release_time) {
         $this->release_time = strtotime($release_time);
-
-        self::$db->query(
-            'UPDATE music.chart_release
-             SET submitted = $1
-             WHERE chart_release_id = $2;',
-            [date('c', $release_time), $this->getID()]
-        );
-
-        return $this;
+        return $this->set_db(SET_RELEASE_TIME_SQL, date('c', $release_time));
     }
 
     /**
      * Sets this chart release's type ID.
      *
-     * @param int $chart_type_id    The new ID.
+     * @param int $chart_type_id  The new ID.
      *
-     * @return This object, for method chaining.
+     * @return MyRadio_ChartRelease This object, for method chaining.
      */
     public function setChartTypeID($chart_type_id) {
         $this->chart_type_id = intval($chart_type_id);
+        return $this->set_db(SET_CHART_TYPE_ID_SQL, intval($chart_type_id));
+    }
 
-        self::$db->query(
-            'UPDATE music.chart_release
-             SET chart_type_id = $1
-             WHERE chart_release_id = $2;',
-            [$chart_type_id, $this->getID()]
-        );
-
+    /**
+     * Sets a property on the database representation of this chart release.
+     *
+     * @param string $sql  The SQL to use for setting this property.
+     * @param $value  The value of the property to set on this chart release.
+     *
+     * @return MyRadio_ChartRelease  This object, for method chaining.
+     */
+    private function set_db($sql, $value) {
+        self::$db->query($sql, [$value, $this->getID()]);
         return $this;
     }
 
