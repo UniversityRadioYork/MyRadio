@@ -138,10 +138,7 @@ class MyRadio_Quote extends ServiceAPI {
       }
 
       if (!isset(self::$quotes[$quote_id])) {
-        self::$quotes[$quote_id] = new self(
-          $quote_id,
-          $quote_type
-        );
+        self::$quotes[$quote_id] = new self($quote_id);
       }
       return self::$quotes[$quote_id];
     }
