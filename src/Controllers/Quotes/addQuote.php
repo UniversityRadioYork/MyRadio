@@ -12,4 +12,4 @@ MyRadio_JsonFormLoader::loadFromModule(
     'addQuote',
     'doAddQuote',
     []
-)->render;
+)->render();
