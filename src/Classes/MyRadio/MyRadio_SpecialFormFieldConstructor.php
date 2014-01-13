@@ -79,13 +79,28 @@ class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor {
             );
         }
         for ($i = $start; $i <= $end; $i++) {
-            foreach ($this->field as $name => $infield) {
-                $new_bindings = array_merge(
-                    ['repeater' => strval($i)],
-                    $this->bindings
-                );
-                $this->fc->addFieldToForm($name . $i, $infield, $new_bindings);
-            }
+            $this->addRepeatedFieldsInstanceToForm($i);
+        }
+    }
+
+    /**
+     * Adds an instance of a repeated field block to a form.
+     *
+     * The fields inside the block have the variable 'repeater' bound to the
+     * current iteration of the repeater.
+     *
+     * @param int $iteration  The current iteration of the repeater.
+     *
+     * @return null  Nothing.
+     */
+    private function addRepeatedFieldsInstanceToForm($iteration) {
+        foreach ($this->field as $name => $infield) {
+            $new_bindings = array_merge(
+                ['repeater' => strval($iteration)],
+                $this->bindings
+            );
+            $new_name = $name . $iteration;
+            $this->fc->addFieldToForm($new_name, $infield, $new_bindings);
         }
     }
 
