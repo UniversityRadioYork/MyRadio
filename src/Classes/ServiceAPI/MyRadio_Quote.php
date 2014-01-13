@@ -184,7 +184,7 @@ class MyRadio_Quote extends ServiceAPI {
      * @return int  The quote time, as a UNIX timestamp.
      */
     public function getDate() {
-        return $this->$date;
+        return $this->date;
     }
 
     /**
