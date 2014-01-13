@@ -44,15 +44,19 @@ class MyRadio_Quote extends ServiceAPI {
      *
      * You should generally use MyRadio_Quote::getInstance instead.
      *
-     * @param int $quote_id    The numeric ID of the quote.
+     * @param int $quote_id  The numeric ID of the quote.
      *
-     * @return MyRadio_Quote    The quote with the given ID.
+     * @return MyRadio_Quote  The quote with the given ID.
      */
     protected function __construct($quote_id) {
-        $quote_data = self::$db->fetch_one(
-            'SELECT *
-             FROM     people.quote
-             WHERE    quote_id = $1;',
+        $quote_data = self::$db->fetch_one('
+            SELECT
+                *
+            FROM
+                people.quote
+            WHERE
+                quote_id = $1
+            ;',
             [$quote_id]
         );
         if (empty($quote_data)) {
@@ -68,13 +72,17 @@ class MyRadio_Quote extends ServiceAPI {
     /**
      * Retrieves all current quotes.
      *
-     * @return array    An array of all active quotes.
+     * @return array  An array of all active quotes.
      */
     public function getAll() {
-        $chart_type_ids = self::$db->fetch_column(
-            'SELECT quote_id
-             FROM people.quote
-             ORDER BY date DESC;',
+        $chart_type_ids = self::$db->fetch_column('
+            SELECT
+                quote_id
+            FROM
+                people.quote
+            ORDER BY
+                date DESC
+            ;',
             []
         );
         return array_map(self::getInstance, $chart_type_ids);
@@ -82,28 +90,28 @@ class MyRadio_Quote extends ServiceAPI {
 
 
     /**
-     * @return int The quote ID.
+     * @return int  The quote ID.
      */
     public function getID() {
         return $this->id;
     }
 
     /**
-     * @return string The quote text.
+     * @return string  The quote text.
      */
     public function getText() {
         return $this->$text;
     }
 
     /**
-     * @return User The quote source.
+     * @return User  The quote source.
      */
     public function getSource() {
         return $this->$source;
     }
 
     /**
-     * @return int The quote time, as a UNIX timestamp.
+     * @return int  The quote time, as a UNIX timestamp.
      */
     public function getDate() {
         return $this->$date;
@@ -113,14 +121,17 @@ class MyRadio_Quote extends ServiceAPI {
     /**
      * Creates a new quote in the database.
      *
-     * @param $data array    An array of data to populate the row with.
-     *                                         Must contain 'text', 'source' and 'date'.
+     * @param $data array  An array of data to populate the row with.
+     *                     Must contain 'text', 'source' and 'date'.
      * @return nothing.
      */
     public function create($data) {
-        self::$db->query(
-            'INSERT INTO people.quote(text, source, date)
-             VALUES ($1, $2, $3);',
+        self::$db->query('
+            INSERT INTO
+                people.quote(text, source, date)
+            VALUES
+                ($1, $2, $3);
+            ;',
             [
                 $text,
                 $data['source']->getID(),    
@@ -133,14 +144,18 @@ class MyRadio_Quote extends ServiceAPI {
 
     /**
      * Sets this chart's quote text.
-     * @param string $text    the quote text.
-     * @return MyRadio_Quote    This object, for method chaining.
+     * @param string $text  The quote text.
+     * @return MyRadio_Quote  This object, for method chaining.
      */
     public function setText($text) {
-        self::$db->query(
-            'UPDATE people.quote
-             SET        text         = $1
-             WHERE    quote_id = $2;',
+        self::$db->query('
+            UPDATE
+                people.quote
+            SET
+                text = $1
+            WHERE
+                quote_id = $2;
+            ;',
             [$text, $this->getID()]
         );
         return $this;
@@ -148,8 +163,8 @@ class MyRadio_Quote extends ServiceAPI {
 
     /**
      * Sets this chart's quote source.
-     * @param User $source    the quote source.
-     * @return MyRadio_Quote    This object, for method chaining.
+     * @param User $source  The quote source.
+     * @return MyRadio_Quote  This object, for method chaining.
      */
     public function setSource($source) {
         self::$db->query(
@@ -163,8 +178,8 @@ class MyRadio_Quote extends ServiceAPI {
 
     /**
      * Sets this chart's quote time.
-     * @param int|string $date    the date, as a UNIX timestamp or date string.
-     * @return MyRadio_Quote    This object, for method chaining.
+     * @param int|string $date  The date, as a UNIX timestamp or date string.
+     * @return MyRadio_Quote  This object, for method chaining.
      */
     public function setDate($date) {
         self::$db->query(
@@ -180,7 +195,7 @@ class MyRadio_Quote extends ServiceAPI {
     /**
      * Converts this quote to a table data source.
      *
-     * @return array    The object as a data source.
+     * @return array  The object as a data source.
      */
     public function toDataSource() {
         return [
