@@ -94,7 +94,7 @@ class MyRadio_JsonFormLoader {
     private function addSectionToForm($field, $form, $options, $binds) {
         // Section header
         $this->addFieldToForm(
-            base64_encode($options[1]), // Lazy way of generating valid name
+            $this->generateValidName($options[1]),
             [
                 'type' => 'section',
                 'label' => $options[1],
@@ -109,6 +109,19 @@ class MyRadio_JsonFormLoader {
         foreach($field as $name => $infield) {
             $this->addFieldToForm($name, $infield, $form, $binds);
         }
+    }
+
+    /**
+     * Generates a valid name for a section header form field.
+     *
+     * @param string $title  The section title, which may contain characters
+     *                       not valid in a field name.
+     *
+     * @return $string  A name that should be unique to the section, but
+     *                  contains no invalid characters.
+     */
+    private function generateValidName($title) {
+        return base64_encode($title);
     }
 
     /**
