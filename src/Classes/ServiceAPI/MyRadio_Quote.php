@@ -115,9 +115,9 @@ class MyRadio_Quote extends ServiceAPI {
             return;
         }
 
-        $this->text = $quote_data['text'];
-        $this->source = User::getInstance($quote_data['source']);
-        $this->date = strtotime($quote_data['date']);
+        $this->text   = $quote_data['text'];
+        $this->source = MyRadio_User::getInstance($quote_data['source']);
+        $this->date   = strtotime($quote_data['date']);
     }
 
     /**
