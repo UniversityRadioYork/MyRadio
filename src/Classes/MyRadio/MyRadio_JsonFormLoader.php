@@ -165,14 +165,14 @@ class MyRadio_JsonFormLoader {
 
     /**
      * Performs binding of !bind(foo) strings in a field description to their
-     * entries in the binding arry.
+     * entries in the binding array.
      *
      * @param array $field  The field description array to bind on.
      * @param array $binds  The current variable bindings, for use with the
      */
     private function doBinding(&$field, $binds) {
         foreach($field as $key => &$value) {
-            if (strpos($value, self::SPECIAL_PREFIX) === 0) {
+            if (isSpecialFieldName($value)) {
                 $matches = [];
                 if (preg_match('/^!bind\( *(\w+) *\)$/', $value, $matches)) {
                     if (array_key_exists($matches[1], $binds)) {
@@ -254,11 +254,22 @@ class MyRadio_JsonFormLoader {
      * @return Nothing.
      */
     private function addFieldToForm($name, $field, $form, $binds) {
-        if (strpos($name, self::SPECIAL_PREFIX) === 0) {
+        if (isSpecialFieldName($name)) {
             $this->addSpecialFieldToForm($name, $field, $form, $binds);
         } else {
             $this->addNormalFieldToForm($name, $field, $form, $binds);
         }
+    }
+
+    /**
+     * Determines whether a field name denotes a special field.
+     *
+     * @param string $name  The field name.
+     *
+     * @return boolean  True if the field is special; false otherwise.
+     */
+    private function isSpecialFieldName($name) {
+        return strpos($name, self::SPECIAL_PREFIX) === 0);
     }
 
     /**
