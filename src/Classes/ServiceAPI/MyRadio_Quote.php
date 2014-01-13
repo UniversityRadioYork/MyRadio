@@ -90,7 +90,6 @@ class MyRadio_Quote extends ServiceAPI {
      */
     private $date;
 
-
     /**
      * Constructs a new MyRadio_Quote from the database.
      *
@@ -128,7 +127,6 @@ class MyRadio_Quote extends ServiceAPI {
         return array_map(self::getInstance, $chart_type_ids);
     }
 
-
     /**
      * @return int  The quote ID.
      */
@@ -157,7 +155,6 @@ class MyRadio_Quote extends ServiceAPI {
         return $this->$date;
     }
 
-
     /**
      * Creates a new quote in the database.
      *
@@ -177,43 +174,43 @@ class MyRadio_Quote extends ServiceAPI {
         );
     }
 
-
     /**
-     * Sets this chart's quote text.
+     * Sets this quote's text.
      * @param string $text  The quote text.
      * @return MyRadio_Quote  This object, for method chaining.
      */
     public function setText($text) {
-        self::$db->query(
-            self::SET_TEXT_SQL,
-            [$text, $this->getID()]
-        );
-        return $this;
+        return $this->set(SET_SOURCE_SQL, $text);
     }
 
     /**
-     * Sets this chart's quote source.
+     * Sets this quote's source.
      * @param User $source  The quote source.
      * @return MyRadio_Quote  This object, for method chaining.
      */
     public function setSource($source) {
-        self::$db->query(
-            self::SET_SOURCE_SQL,
-            [$source->getID(), $this->getID()]
-        );
-        return $this;
+        return $this->set(SET_SOURCE_SQL, $source->getID());
     }
 
     /**
-     * Sets this chart's quote time.
+     * Sets this quote's date.
      * @param int|string $date  The date, as a UNIX timestamp or date string.
      * @return MyRadio_Quote  This object, for method chaining.
      */
     public function setDate($date) {
-        self::$db->query(
-            self::SET_DATE_SQL,
-            [strtotime($date), $this->getID()]
-        );
+        return $this->set(SET_DATE_SQL, strtotime($date));
+    }
+
+    /**
+     * Sets a property on this quote.
+     *
+     * @param string $sql  The SQL to use for setting this property.
+     * @param $value  The value of the property to set on this quote.
+     *
+     * @return MyRadio_Quote  This object, for method chaining.
+     */
+    private function set($sql, $value) {
+        self::$db->query($sql, [$value, $this->getID()]);
         return $this;
     }
 
