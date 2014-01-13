@@ -10,10 +10,10 @@
  * A chart release is a chart for a given week, and is associated with a chart
  * and an arbitrary number of rows (traditionally 10).
  *
- * @version 20130426
- * @author Matt Windsor <matt.windsor@ury.org.uk>
+ * @version 20140113
+ * @author  Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Charts
- * @uses \Database
+ * @uses    \Database
  */
 class MyRadio_ChartRelease extends ServiceAPI {
     /**
@@ -57,8 +57,8 @@ class MyRadio_ChartRelease extends ServiceAPI {
      *
      * You should generally use MyRadio_ChartRelease::getInstance instead.
      *
-     * @param $chart_release_id    The numeric ID of the chart release.
-     * @param $chart_type    The parent chart type, if any.
+     * @param $chart_release_id  The numeric ID of the chart release.
+     * @param $chart_type        The parent chart type, if any.
      *
      * @return The chart type with the given ID.
      */
@@ -92,8 +92,8 @@ class MyRadio_ChartRelease extends ServiceAPI {
     /**
      * Retrieves the MyRadio_ChartRelease with the given numeric ID.
      *
-     * @param $chart_release_id    The numeric ID of the chart release.
-     * @param $chart_type                The parent chart type, if any.
+     * @param $chart_release_id  The numeric ID of the chart release.
+     * @param $chart_type        The parent chart type, if any.
      *
      * @return The chart release with the given ID.
      */
@@ -117,14 +117,15 @@ class MyRadio_ChartRelease extends ServiceAPI {
     }
 
     /**
-     * Retrieves the ID of the (first) chart released on the given date on the given chart type.
+     * Retrieves the ID of the (first) chart released on the given date on the
+     * given chart type.
      *
      * This is mainly useful for finding a newly created chart type's ID.
      *
-     * @param int $release_time    The release time, as a UNIX timestamp.
-     * @param int $chart_type_id    The ID of the chart type to search in.
-     * @return int    The first chart released on the given time for
-     *                                                         the given type.
+     * @param int $release_time   The release time, as a UNIX timestamp.
+     * @param int $chart_type_id  The ID of the chart type to search in.
+     * @return int  The first chart released on the given time for
+     *              the given type.
      */
     public function findReleaseIDOn($release_time, $chart_type_id) {
         return array_pop(
@@ -145,7 +146,7 @@ class MyRadio_ChartRelease extends ServiceAPI {
     /**
      * Retrieves the time of release of this chart release.
      *
-     * @return    the submission time as a UNIX timestamp.
+     * @return int  the submission time as a UNIX timestamp.
      */
     public function getReleaseTime() {
         return $this->release_time;
@@ -154,7 +155,7 @@ class MyRadio_ChartRelease extends ServiceAPI {
     /**
      * Retrieves the unique ID of this chart release.
      *
-     * @return The chart release ID.
+     * @return int  The chart release ID.
      */
     public function getID() {
         return $this->chart_release_id;
@@ -163,7 +164,7 @@ class MyRadio_ChartRelease extends ServiceAPI {
     /**
      * Retrieves the unique ID of this chart release's type.
      *
-     * @return The chart type ID.
+     * @return int  The chart type ID.
      */
     public function getChartTypeID() {
         return $this->chart_type_id;
@@ -172,7 +173,7 @@ class MyRadio_ChartRelease extends ServiceAPI {
     /**
      * Retrieves the type this chart release falls under.
      *
-     * @return MyRadio_ChartType The chart type object.
+     * @return MyRadio_ChartType  The chart type object.
      */
     public function getChartType() {
         if ($this->chart_type === null) {
@@ -184,7 +185,7 @@ class MyRadio_ChartRelease extends ServiceAPI {
     /**
      * Retrieves the rows that make up this chart release.
      *
-     * @return The chart rows.
+     * @return array  The chart rows.
      */
     public function getChartRows() {
         $chart_rows = [];
@@ -197,9 +198,9 @@ class MyRadio_ChartRelease extends ServiceAPI {
     /**
      * Creates a new chart release in the database.
      *
-     * @param $data array    An array of data to populate the row with.
-     *                                         Must contain 'chart_type_id' and 'submitted_time'.
-     * @return nothing.
+     * @param $data array  An array of data to populate the row with.
+     *                     Must contain 'chart_type_id' and 'submitted_time'.
+     * @return null  nothing.
      */
     public function create($data) {
         self::$db->query(
@@ -216,9 +217,9 @@ class MyRadio_ChartRelease extends ServiceAPI {
     /**
      * Sets this chart release's release time.
      *
-     * @param int $release_time    The new time, as a UNIX timestamp.
+     * @param int $release_time  The new time, as a UNIX timestamp.
      *
-     * @return This object, for method chaining.
+     * @return  This object, for method chaining.
      */
     public function setReleaseTime($release_time) {
         $this->release_time = strtotime($release_time);
