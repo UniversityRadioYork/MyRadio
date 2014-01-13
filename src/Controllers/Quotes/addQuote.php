@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Allows the addition of new quotes.
  *
@@ -13,3 +14,5 @@ MyRadio_JsonFormLoader::loadFromModule(
     'doAddQuote',
     []
 )->render();
+
+?>
