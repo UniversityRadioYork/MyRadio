@@ -14,6 +14,58 @@
  * @uses \Database
  */
 class MyRadio_Quote extends ServiceAPI {
+    const GET_INSTANCE_SQL = '
+        SELECT
+            *
+        FROM
+            people.quote
+        WHERE
+            quote_id = $1
+        ;';
+
+    const GET_ALL_SQL = '
+        SELECT
+            quote_id
+        FROM
+            people.quote
+        ORDER BY
+            date DESC
+        ;';
+
+    const INSERT_SQL = '
+        INSERT INTO
+            people.quote(text, source, date)
+        VALUES
+            ($1, $2, $3);
+        ;';
+
+    const SET_TEXT_SQL = '
+        UPDATE
+            people.quote
+        SET
+            text = $1
+        WHERE
+            quote_id = $2;
+        ;';
+
+    const SET_SOURCE_SQL = '
+        UPDATE
+            people.quote
+        SET
+            source = $1
+        WHERE
+            quote_id = $2
+        ;';
+
+    const SET_DATE_SQL = '
+        UPDATE
+            people.quote
+        SET
+            date = $1
+        WHERE
+            quote_id = $2
+        ;';
+
     /**
      * The quote ID.
      * @var int
@@ -49,14 +101,8 @@ class MyRadio_Quote extends ServiceAPI {
      * @return MyRadio_Quote  The quote with the given ID.
      */
     protected function __construct($quote_id) {
-        $quote_data = self::$db->fetch_one('
-            SELECT
-                *
-            FROM
-                people.quote
-            WHERE
-                quote_id = $1
-            ;',
+        $quote_data = self::$db->fetch_one(
+            self::GET_INSTANCE_SQL,
             [$quote_id]
         );
         if (empty($quote_data)) {
@@ -75,14 +121,8 @@ class MyRadio_Quote extends ServiceAPI {
      * @return array  An array of all active quotes.
      */
     public function getAll() {
-        $chart_type_ids = self::$db->fetch_column('
-            SELECT
-                quote_id
-            FROM
-                people.quote
-            ORDER BY
-                date DESC
-            ;',
+        $chart_type_ids = self::$db->fetch_column(
+            self::GET_ALL_SQL,
             []
         );
         return array_map(self::getInstance, $chart_type_ids);
@@ -126,12 +166,8 @@ class MyRadio_Quote extends ServiceAPI {
      * @return nothing.
      */
     public function create($data) {
-        self::$db->query('
-            INSERT INTO
-                people.quote(text, source, date)
-            VALUES
-                ($1, $2, $3);
-            ;',
+        self::$db->query(
+            self::INSERT_SQL,
             [
                 $text,
                 $data['source']->getID(),    
@@ -148,14 +184,8 @@ class MyRadio_Quote extends ServiceAPI {
      * @return MyRadio_Quote  This object, for method chaining.
      */
     public function setText($text) {
-        self::$db->query('
-            UPDATE
-                people.quote
-            SET
-                text = $1
-            WHERE
-                quote_id = $2;
-            ;',
+        self::$db->query(
+            self::SET_TEXT_SQL,
             [$text, $this->getID()]
         );
         return $this;
@@ -168,9 +198,7 @@ class MyRadio_Quote extends ServiceAPI {
      */
     public function setSource($source) {
         self::$db->query(
-            'UPDATE people.quote
-             SET        source     = $1
-             WHERE    quote_id = $2;',
+            self::SET_SOURCE_SQL,
             [$source->getID(), $this->getID()]
         );
         return $this;
@@ -183,9 +211,7 @@ class MyRadio_Quote extends ServiceAPI {
      */
     public function setDate($date) {
         self::$db->query(
-            'UPDATE people.quote
-             SET        date         = $1
-             WHERE    quote_id = $2;',
+            self::SET_DATE_SQL,
             [strtotime($date), $this->getID()]
         );
         return $this;
