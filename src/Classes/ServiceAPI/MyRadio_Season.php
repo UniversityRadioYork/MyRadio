@@ -136,7 +136,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
     /**
      * Select an appropriate value for $term_id
      */
-    $term_id = self::getActiveApplicationTerm();
+    $term_id = MyRadio_Scheduler::getActiveApplicationTerm();
 
     //Start a transaction
     self::$db->query('BEGIN');
@@ -333,12 +333,12 @@ EOT
   public function getRequestedTimes() {
     $return = array();
     foreach ($this->requested_times as $time) {
-      $return[] = $this->formatRequestedTime($time);
+      $return[] = $this->formatTimeHuman($time);
     }
     return $return;
   }
 
-  private function formatRequestedTime($time) {
+  private function formatTimeHuman($time) {
     date_default_timezone_set('UTC');
     $stime = date(' H:i', $time['start_time']);
     $etime = date('H:i', $time['start_time'] + $time['duration']);
@@ -417,6 +417,62 @@ EOT
     }
     return $return;
   }
+
+  /**
+   *
+   * @param int $term_id The term to check for
+   * @param Array $time:
+   * day: The day ID (0-6) to check for
+   * start_time: The start time in seconds since midnight
+   * duration: The duration in seconds
+   *
+   * Return: Array of conflicts with week # as key and show as value
+   *
+   * @todo Move this into the relevant scheduler class
+   */
+  protected static function getScheduleConflicts($term_id, $time) {
+    self::initDB();
+    $conflicts = array();
+    $date = MyRadio_Scheduler::getTermStartDate($term_id);
+    //Iterate over each week
+    for ($i = 1; $i <= 10; $i++) {
+      //Get the start and end times
+      $start = $date + $time['start_time'];
+      $end = $date + $time['start_time'] + $time['duration'];
+      //Query for conflicts
+      $r = self::getScheduleConflict($start, $end);
+
+      //If there's a conflict, log it
+      if (!empty($r)) {
+        $conflicts[$i] = $r['show_season_id'];
+      }
+
+      //Increment week
+      $date += 3600 * 24 * 7;
+    }
+    return $conflicts;
+  }
+
+  /**
+   * Returns a schedule conflict between the given times, if one exists
+   * @param int $start Start time
+   * @param int $end End time
+   * @return Array empty if no conflict, show information otherwise
+   *
+   * @todo Move this into the relevant scheduler class
+   */
+  protected static function getScheduleConflict($start, $end) {
+    $start = CoreUtils::getTimestamp($start);
+    $end = CoreUtils::getTimestamp($end-1);
+
+    return self::$db->fetch_one('SELECT show_season_timeslot_id,
+        show_season_id, start_time, start_time+duration AS end_time,
+        \'$1\' AS requested_start, \'$2\' AS requested_end
+        FROM schedule.show_season_timeslot
+        WHERE (start_time <= $1 AND start_time + duration > $1)
+        OR (start_time > $1 AND start_time < $2)', array($start, $end));
+  }
+
 
   public function getRequestedWeeks() {
     return $this->requested_weeks;
@@ -507,7 +563,7 @@ EOT
      * Since terms start on the Monday, we just +1 day to it
      */
     $start_day = MyRadio_Scheduler::getTermStartDate(
-                    self::getActiveApplicationTerm()) + ($req_time['day'] * 86400);
+                    MyRadio_Scheduler::getActiveApplicationTerm()) + ($req_time['day'] * 86400);
 
     $start_time = date('H:i:s', $req_time['start_time']);
 
