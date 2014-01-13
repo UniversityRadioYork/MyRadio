@@ -146,4 +146,19 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common {
   public function getID() {
     return 0;
   }
+
+  /**
+   * Returns the Term currently available for Season applications.
+   * Users can only apply to the current term, or one week before the next one
+   * starts.
+   *
+   * @return int|null Returns the id of the term or null if no active term
+   *
+   * @todo Move this into the relevant scheduler class or CoreUtils
+   */
+  public static function getActiveApplicationTerm() {
+    $return = self::$db->fetch_column('SELECT termid FROM terms
+      WHERE start <= $1 AND finish >= NOW() LIMIT 1', array(CoreUtils::getTimestamp(strtotime('+28 Days'))));
+    return $return[0];
+  }
 }
