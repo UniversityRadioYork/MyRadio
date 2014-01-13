@@ -30,12 +30,6 @@
  */
 class MyRadio_JsonFormLoader {
     /**
-     * The prefix for strings that signify special processing directives.
-     * @const string
-     */
-    const SPECIAL_PREFIX = '!';
-
-    /**
      * The name of the current MyRadio module.
      * @var string
      */
@@ -48,13 +42,6 @@ class MyRadio_JsonFormLoader {
     private $form_array;
 
     /**
-     * A ReflectionClass used to introspect the form field class.
-     * @var ReflectionClass
-     */
-    private $rc;
-
-
-    /**
      * Constructs a new MyRadio_JsonFormLoader.
      *
      * @param string $module  The name of the calling MyRadio module.
@@ -64,252 +51,8 @@ class MyRadio_JsonFormLoader {
     public function __construct($module) {
         $this->module = $module;
         $this->form_array = null;
-        $this->rc = new ReflectionClass('MyRadioFormField');
     }
-
-    /**
-     * Infers a type constant (TYPE_XYZ) from a case insensitive name.
-     *
-     * @param string $name  The name of the type constant.
-     * @return int  The type constant.
-     */
-    private function getTypeConstant($name) {
-        return $this->rc->getconstant('TYPE_' . strtoupper($name));
-    }
-
-    /**
-     * Adds a section to a form.
-     *
-     * @param array       $field    The field description array to compile.
-     *                              This should be an array of form items in
-     *                              this section.
-     * @param MyRadioForm $form     The form to add the compiled field to.
-     * @param array       $options  The array of options to the !section
-     *                              directive.  This should contain two numeric
-     *                              indices: the repeat directive and the
-     *                              section name.
-     * @param array       $binds    The current variable bindings, for use with
-     *                              the !bind directive.
-     * @return Nothing.
-     */
-    private function addSectionToForm(
-              array $field,
-        MyRadioForm $form,
-              array $options,
-              array $binds
-    ) {
-        $this->addSectionHeader($options[1], $form, $binds);
-
-        // There isn't any section nesting, so just add the section contents in
-        // below the header.
-        foreach($field as $name => $infield) {
-            $this->addFieldToForm($name, $infield, $form, $binds);
-        }
-    }
-
-    /**
-     * Adds a section header to a form.
-     *
-     * @param string      $name     The human-readable name of the section.
-     * @param MyRadioForm $form     The form to add the compiled field to.
-     * @param array       $binds    The current variable bindings, for use with
-     *                              the !bind directive.
-     *
-     * @return null  Nothing.
-     */
-    private function addSectionHeader(
-        /* string */ $name,
-         MyRadioForm $form,
-               array $binds
-    ) {
-        $this->addFieldToForm(
-            $this->generateValidName($name),
-            [
-                'type' => 'section',
-                'label' => $name,
-                'options' => []
-            ], 
-            $form,
-            $binds
-        );
-    }
-
-    /**
-     * Generates a valid name for a section header form field.
-     *
-     * @param string $title  The section title, which may contain characters
-     *                       not valid in a field name.
-     *
-     * @return string  A name that should be unique to the section, but
-     *                 contains no invalid characters.
-     */
-    private function generateValidName($title) {
-        return base64_encode($title);
-    }
-
-    /**
-     * Adds a repeated field block to a form.
-     *
-     * @param array       $field    The field description array to compile.
-     *                              This should be an array of form items to
-     *                              repeat.
-     * @param MyRadioForm $form     The form to add the compiled field to.
-     * @param array       $options  The array of options to the !repeat
-     *                              directive.  This should contain three
-     *                              numeric indices: the repeat directive, the
-     *                              repetition ID start, and end.
-     * @param array       $binds    The current variable bindings, for use with
-     *                              the !bind directive.
-     * @return Nothing.
-     */
-    private function addRepeatedFieldsToForm(
-        array       $field,
-        MyRadioForm $form,
-        array       $options,
-        array       $binds
-    ) {
-        $start = intval($options[1]);
-        $end = intval($options[2]);
-
-        if ($start >= $end) {
-            throw new MyRadioException(
-                'Start and end wrong way around on !repeat: start=' .
-                $start .
-                ', end=' .
-                $end .
-                '.'
-            );
-        }
-        for ($i = $start; $i <= $end; $i++) {
-            foreach ($field as $name => $infield) {
-                $inbinds = array_merge(
-                    ['repeater' => strval($i)],
-                    $binds
-                );
-                $this->addFieldToForm($name . $i, $infield, $form, $inbinds);
-            }
-        }
-    }
-
-    /**
-     * Performs binding of !bind(foo) strings in a field description to their
-     * entries in the binding array.
-     *
-     * @param array $field  The field description array to bind on.
-     * @param array $binds  The current variable bindings, for use with the
-     */
-    private function doBinding(array &$field, array $binds) {
-        foreach($field as $key => &$value) {
-            if ($this->isSpecialFieldName($value)) {
-                $matches = [];
-                if (preg_match('/^!bind\( *(\w+) *\)$/', $value, $matches)) {
-                    if (array_key_exists($matches[1], $binds)) {
-                        $value = $binds[$matches[1]];
-                    } else {
-                        throw new MyRadioException(
-                            'Tried to !bind to unbound form variable: ' . $matches[1] . '.'
-                        );
-                    }
-                }
-            }
-        }
-    }
-    
-    /**
-     * Compiles a special field description into a field and adds it to the given
-     * form.
-     *
-     * @param string      $name   The special field directive stored as field name.
-     * @param array       $field  The field description array to compile.
-     * @param MyRadioForm $form   The form to add the compiled field to.
-     * @param array       $binds  The current variable bindings, for use with the
-     *                            !bind directive.
-     * @return Nothing.
-     */
-    private function addSpecialFieldToForm(
-        /* string */ $name,
-        array        $field,
-        MyRadioForm  $form,
-        array        $binds
-    ) {
-        $matches = [];
-        // TODO: Replace regexes with something a bit less awful.
-        $operators = [
-            '/^!repeat\( *([0-9]+) *, *([0-9]+) *\)$/' => 'addRepeatedFieldsToForm',
-            '/^!section\((.*)\)$/' => 'addSectionToForm'
-        ];
-        $done = false;
-
-        foreach ($operators as $regex => $callback) {
-            if (preg_match($regex, $name, $matches)) {
-                call_user_func([$this, $callback], $field, $form, $matches, $binds);
-                $done = true;
-            }
-        }
-
-        if (!$done) {
-            throw new MyRadioException('Illegal special field name: ' . $name . '.');
-        }
-    }
-
-    /**
-     * Compiles a regular field description into a field and adds it to the given
-     * form.
-     *
-     * @param string    $name   The name of the field.
-     * @param array     $field  The field description array to compile.
-     * @param MyRadioForm $form   The form to add the compiled field to.
-     * @param array     $binds  The current variable bindings, for use with the
-     *                          !bind directive.
-     * @return Nothing.
-     */
-    private function addNormalFieldToForm($name, $field, $form, $binds) {
-        $type = $this->getTypeConstant($field['type']);
-
-        // The constructor will complain if these are passed into the parameters
-        // array.
-        unset($field['name']);
-        unset($field['type']);
-
-        $this->doBinding($field, $binds);
-
-        $form->addField(new MyRadioFormField($name, $type, $field));
-    }
-
-    /**
-     * Compiles a field description into a field and adds it to the given form.
-     *
-     * @param string      $name   The name of the field.
-     * @param array       $field  The field description array to compile.
-     * @param MyRadioForm $form   The form to add the compiled field to.
-     * @param array       $binds  The current variable bindings, for use with
-     *                            the !bind directive.
-     * @return Nothing.
-     */
-    private function addFieldToForm(
-        /* string */ $name,
-               array $field,
-         MyRadioForm $form,
-               array $binds
-    ) {
-        if ($this->isSpecialFieldName($name)) {
-            $this->addSpecialFieldToForm($name, $field, $form, $binds);
-        } else {
-            $this->addNormalFieldToForm($name, $field, $form, $binds);
-        }
-    }
-
-    /**
-     * Determines whether a field name denotes a special field.
-     *
-     * @param string $name  The field name.
-     *
-     * @return boolean  True if the field is special; false otherwise.
-     */
-    private function isSpecialFieldName($name) {
-        return is_string($name) && (strpos($name, self::SPECIAL_PREFIX) === 0);
-    }
-
+  
     /**
      * Loads a form from its filename, from the module's forms directory.
      *
@@ -361,21 +104,13 @@ class MyRadio_JsonFormLoader {
      * @return MyRadioForm  The processed form.
      */
     public function toForm($action, array $binds=[]) {
-        // TODO: Complain if no form is loaded.
-        $f = $this->form_array;
-
-        $form = new MyRadioForm(
-            $f['name'],
+        $fc = new MyRadio_FormConstructor(
+            $this->form_array,
+            $binds,
             $this->module,
-            $action,
-            $f['options']
+            $action
         );
-
-        foreach($f['fields'] as $name => $field) {
-            $this->addFieldToForm($name, $field, $form, $binds);
-        }
-
-        return $form;
+        return $fc->toForm();
     }
 
     /**
