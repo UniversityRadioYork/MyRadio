@@ -12,8 +12,6 @@
  * The format is thus:
  * {
  *   'name': 'form_name',
- *   'module': 'module_name',
- *   'action': 'form_completion_action',
  *   'options': { ... },
  *   'fields': {
  *     'field_name': {
