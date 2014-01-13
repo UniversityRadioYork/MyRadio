@@ -17,5 +17,12 @@ $data = MyRadio_JsonFormLoader::loadFromModule(
     ]
 )->readValues();
 
-iTones_Utils::requestTrack($data['track']);
-CoreUtils::backWithMessage('Your track request was sent to the legumes for review.');
+$success = iTones_Utils::requestTrack($data['track']);
+if ($success === true) {
+    $message = 'Track request submitted.';
+} else {
+    $message = 'Sorry, but this track cannot be requested right now.'
+    . ' Please try again later.';
+}
+
+CoreUtils::backWithMessage($message);

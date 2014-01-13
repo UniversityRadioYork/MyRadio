@@ -60,7 +60,7 @@ class iTones_TrackRequest {
     public function request() {
         $success = false;
 
-        if ($this->canRequestTrack()) {
+        if ($this->canRequestTrack() === true) {
             $success = $this->requestTrackAndLog();
         }
 
