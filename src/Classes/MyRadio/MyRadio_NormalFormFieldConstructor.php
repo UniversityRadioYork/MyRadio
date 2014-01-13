@@ -31,6 +31,7 @@ class MyRadio_NormalFormFieldConstructor extends MyRadio_FormFieldConstructor {
         unset($this->field['type']);
 
         $this->doBinding();
+        $this->doMacros();
 
         $this->fc->constructAndAddField($this->name, $type, $this->field);
     }
@@ -45,6 +46,30 @@ class MyRadio_NormalFormFieldConstructor extends MyRadio_FormFieldConstructor {
         foreach($this->field as $key => &$value) {
             if ($this->fc->isSpecialFieldName($value)) {
                 $value = $this->handlePotentialBinding($value);
+            }
+        }
+    }
+
+    /**
+     * Performs macro substitution on any string value in the field array.
+     *
+     * @return null  Nothing.
+     */
+    private function doMacros() {
+        $index = '#ERROR';
+        if (array_key_exists('repeater', $this->bindings)) { 
+            $index = $this->bindings['repeater'];
+        }
+
+        $macros = [
+            '%!SHORTNAME%' => Config::$short_name,
+            '%!INDEX%'     => $index,
+            '%!%'          => '%!'
+        ];
+
+        foreach($this->field as $key => &$value) {
+            foreach($macros as $lhs => $rhs) {
+                $value = str_replace($lhs, $rhs, $value); 
             }
         }
     }
