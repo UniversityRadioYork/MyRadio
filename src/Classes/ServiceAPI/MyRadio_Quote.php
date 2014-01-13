@@ -206,6 +206,7 @@ class MyRadio_Quote extends ServiceAPI {
      * @return MyRadio_Quote  This object, for method chaining.
      */
     public function setText($text) {
+        $this->text = $text;
         return $this->set(SET_SOURCE_SQL, $text);
     }
 
@@ -215,6 +216,7 @@ class MyRadio_Quote extends ServiceAPI {
      * @return MyRadio_Quote  This object, for method chaining.
      */
     public function setSource($source) {
+        $this->source = $source;
         return $this->set(SET_SOURCE_SQL, $source->getID());
     }
 
@@ -224,6 +226,7 @@ class MyRadio_Quote extends ServiceAPI {
      * @return MyRadio_Quote  This object, for method chaining.
      */
     public function setDate($date) {
+        $this->date = $date;
         return $this->set(SET_DATE_SQL, strtotime($date));
     }
 
