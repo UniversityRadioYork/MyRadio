@@ -138,14 +138,14 @@ class MyRadio_Quote extends ServiceAPI {
      * @return string  The quote text.
      */
     public function getText() {
-        return $this->$text;
+        return $this->text;
     }
 
     /**
      * @return User  The quote source.
      */
     public function getSource() {
-        return $this->$source;
+        return $this->source;
     }
 
     /**
