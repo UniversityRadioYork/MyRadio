@@ -21,7 +21,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common {
     /**
      * Check for conflicts
      */
-    $r = self::getScheduleConflict($time, $time+3600);
+    $r = MyRadio_Scheduler::getScheduleConflict($time, $time+3600);
     if (!empty($r)) {
       //There's a conflict
       throw new MyRadioException('There is already something scheduled at that time', MyRadioException::FATAL);

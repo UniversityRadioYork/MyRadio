@@ -161,4 +161,62 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common {
       WHERE start <= $1 AND finish >= NOW() LIMIT 1', array(CoreUtils::getTimestamp(strtotime('+28 Days'))));
     return $return[0];
   }
+
+  /**
+   *
+   * @param int $term_id The term to check for
+   * @param Array $time:
+   * day: The day ID (0-6) to check for
+   * start_time: The start time in seconds since midnight
+   * duration: The duration in seconds
+   *
+   * Return: Array of conflicts with week # as key and show as value
+   *
+   * @todo Move this into the relevant scheduler class
+   */
+  public static function getScheduleConflicts($term_id, $time) {
+    self::initDB();
+    $conflicts = array();
+    $date = MyRadio_Scheduler::getTermStartDate($term_id);
+    //Iterate over each week
+    for ($i = 1; $i <= 10; $i++) {
+      //Get the start and end times
+      $start = $date + $time['start_time'];
+      $end = $date + $time['start_time'] + $time['duration'];
+      //Query for conflicts
+      $r = self::getScheduleConflict($start, $end);
+
+      //If there's a conflict, log it
+      if (!empty($r)) {
+        $conflicts[$i] = $r['show_season_id'];
+      }
+
+      //Increment week
+      $date += 3600 * 24 * 7;
+    }
+    return $conflicts;
+  }
+
+  /**
+   * Returns a schedule conflict between the given times, if one exists
+   * @param int $start Start time
+   * @param int $end End time
+   * @return Array empty if no conflict, show information otherwise
+   *
+   * @todo Move this into the relevant scheduler class
+   */
+  public static function getScheduleConflict($start, $end) {
+    $start = CoreUtils::getTimestamp($start);
+    $end = CoreUtils::getTimestamp($end-1);
+
+    return self::$db->fetch_one('SELECT show_season_timeslot_id,
+        show_season_id, start_time, start_time+duration AS end_time,
+        \'$1\' AS requested_start, \'$2\' AS requested_end
+        FROM schedule.show_season_timeslot
+        WHERE (start_time <= $1 AND start_time + duration > $1)
+        OR (start_time > $1 AND start_time < $2)', array($start, $end));
+  }
+
+
+
 }
