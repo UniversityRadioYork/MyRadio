@@ -333,9 +333,22 @@ EOT
   public function getRequestedTimes() {
     $return = array();
     foreach ($this->requested_times as $time) {
-      $return[] = self::formatTimeHuman($time);
+      $return[] = $this->formatRequestedTime($time);
     }
     return $return;
+  }
+
+  private function formatRequestedTime($time) {
+    date_default_timezone_set('UTC');
+    $stime = date(' H:i', $time['start_time']);
+    $etime = date('H:i', $time['start_time'] + $time['duration']);
+    date_default_timezone_set('Europe/London');
+    return self::getDayNameFromID($time['day']) . $stime . ' - ' . $etime;
+  }
+
+  private function getDayNameFromID($dow) {
+    $days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return $days[$dow];
   }
 
   /**
