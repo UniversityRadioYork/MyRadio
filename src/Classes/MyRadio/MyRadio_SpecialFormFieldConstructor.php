@@ -23,6 +23,20 @@ class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor {
      * @return null  Nothing.
      */
     public function make() {
+        $done = $this->dispatchSpecialFieldHandler();
+        if (!$done) {
+            throw new MyRadioException(
+                'Illegal special field name: ' . $this->name . '.'
+            );
+        }
+    }
+
+    /**
+     * Attempts to handle the special field by dispatching on its name.
+     *
+     * @return boolean  True if the field was handled; false otherwise.
+     */
+    private function dispatchSpecialFieldHandler() {
         $matches = [];
         // TODO: Replace regexes with something a bit less awful.
         $operators = [
@@ -38,11 +52,7 @@ class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor {
             }
         }
 
-        if (!$done) {
-            throw new MyRadioException(
-                'Illegal special field name: ' . $this->name . '.'
-            );
-        }
+        return $done;
     }
 
     /**
