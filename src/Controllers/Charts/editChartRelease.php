@@ -20,6 +20,10 @@ $form = MyRadio_JsonFormLoader::loadFromModule(
   ['chart_types' => $type_select]
 );
 
+if (empty($_REQUEST['chart_release_id'])) {
+  $_REQUEST['chart_release_id'] = null;
+}
+
 if ($_REQUEST['chart_release_id']) {
   $chart_release = MyRadio_ChartRelease::getInstance($_REQUEST['chart_release_id']);
 
