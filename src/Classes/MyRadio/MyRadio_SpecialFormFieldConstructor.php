@@ -108,19 +108,14 @@ class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor {
      * Adds a section to a form.
      *
      * @param array $options  The array of options to the !section directive.
-     *                        This should contain two numeric indices: the
-     *                        repeat directive and the section name.
+     *                        This should contain one numeric index: the
+     *                        section name.
      *
      * @return null  Nothing.
      */
     private function addSectionToForm(array $options) {
         $this->addSectionHeader($options[1]);
-
-        // There isn't any section nesting, so just add the section contents in
-        // below the header.
-        foreach($this->field as $name => $infield) {
-            $this->fc->addFieldToForm($name, $infield, $this->bindings);
-        }
+        $this->addSectionBody();
     }
 
     /**
@@ -140,6 +135,17 @@ class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor {
             ],
             $this->bindings
         );
+    }
+
+    /**
+     * Adds a section body to a form.
+     *
+     * @return null  Nothing.
+     */
+    private function addSectionBody() {
+        foreach($this->field as $name => $infield) {
+            $this->fc->addFieldToForm($name, $infield, $this->bindings);
+        }
     }
 
     /**
