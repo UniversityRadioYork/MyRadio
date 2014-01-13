@@ -7,60 +7,60 @@
   */
 
 /**
-  * A loader for forms written declaratively in JSON format.
-  *
-  * The format is thus:
-  * {
-  *   'name': 'form_name',
-  *   'module': 'module_name',
-  *   'action': 'form_completion_action',
-  *   'options': { ... },
-  *   'fields': {
-  *     'field_name': {
-  *       'type': 'constant name without TYPE_, case insensitive',
-  *       'label': 'etc etc',
-  *       'options': { ... }
-  *     }
-  *   }
-  * }
-  *
-  * @version 20130428
-  * @author Matt Windsor <matt.windsor@ury.org.uk>
-  * @package MyRadio_Core
-  */
+ * A loader for forms written declaratively in JSON format.
+ *
+ * The format is thus:
+ * {
+ *   'name': 'form_name',
+ *   'module': 'module_name',
+ *   'action': 'form_completion_action',
+ *   'options': { ... },
+ *   'fields': {
+ *     'field_name': {
+ *       'type': 'constant name without TYPE_, case insensitive',
+ *       'label': 'etc etc',
+ *       'options': { ... }
+ *     }
+ *   }
+ * }
+ *
+ * @version 20130428
+ * @author Matt Windsor <matt.windsor@ury.org.uk>
+ * @package MyRadio_Core
+ */
 class MyRadio_JsonFormLoader {
     /**
-      * The prefix for strings that signify special processing directives.
-      * @const string
-      */
+     * The prefix for strings that signify special processing directives.
+     * @const string
+     */
     const SPECIAL_PREFIX = '!';
 
     /**
-      * The name of the current MyRadio module.
-      * @var string
-      */
+     * The name of the current MyRadio module.
+     * @var string
+     */
     private $module;
 
     /**
-      * The internal form representation, ready to render to a form.
-      * @var array
-      */
+     * The internal form representation, ready to render to a form.
+     * @var array
+     */
     private $form_array;
 
     /**
-      * A ReflectionClass used to introspect the form field class.
-      * @var ReflectionClass
-      */
+     * A ReflectionClass used to introspect the form field class.
+     * @var ReflectionClass
+     */
     private $rc;
 
 
     /**
-      * Constructs a new MyRadio_JsonFormLoader.
-      *
-      * @param string $module  The name of the calling MyRadio module.
-      *
-      * @return MyRadio_JsonFormLoader
-      */
+     * Constructs a new MyRadio_JsonFormLoader.
+     *
+     * @param string $module  The name of the calling MyRadio module.
+     *
+     * @return MyRadio_JsonFormLoader
+     */
     public function __construct($module) {
         $this->module = $module;
         $this->form_array = null;
@@ -68,29 +68,29 @@ class MyRadio_JsonFormLoader {
     }
 
     /**
-      * Infers a type constant (TYPE_XYZ) from a case insensitive name.
-      *
-      * @param string $name  The name of the type constant.
-      * @return int  The type constant.
-      */
+     * Infers a type constant (TYPE_XYZ) from a case insensitive name.
+     *
+     * @param string $name  The name of the type constant.
+     * @return int  The type constant.
+     */
     private function getTypeConstant($name) {
         return $this->rc->getconstant('TYPE_' . strtoupper($name));
     }
 
     /**
-      * Adds a section to a form.
-      *
-      * @param array     $field    The field description array to compile.
-      *                            This should be an array of form items in this
-      *                            section.
-      * @param MyRadioForm $form     The form to add the compiled field to.
-      * @param array     $options  The array of options to the !section directive.
-      *                            This should contain two numeric indices:
-      *                            the repeat directive and the section name.
-      * @param array     $binds    The current variable bindings, for use with the
-      *                            !bind directive.
-      * @return Nothing.
-      */
+     * Adds a section to a form.
+     *
+     * @param array     $field    The field description array to compile.
+     *                            This should be an array of form items in this
+     *                            section.
+     * @param MyRadioForm $form     The form to add the compiled field to.
+     * @param array     $options  The array of options to the !section directive.
+     *                            This should contain two numeric indices:
+     *                            the repeat directive and the section name.
+     * @param array     $binds    The current variable bindings, for use with the
+     *                            !bind directive.
+     * @return Nothing.
+     */
     private function addSectionToForm($field, $form, $options, $binds) {
         // Section header
         $this->addFieldToForm(
@@ -112,20 +112,20 @@ class MyRadio_JsonFormLoader {
     }
 
     /**
-      * Adds a repeated field block to a form.
-      *
-      * @param array     $field    The field description array to compile.
-      *                            This should be an array of form items to
-      *                            repeat.
-      * @param MyRadioForm $form     The form to add the compiled field to.
-      * @param array     $options  The array of options to the !repeat directive.
-      *                            This should contain three numeric indices:
-      *                            the repeat directive, the repetition ID start,
-      *                            and end.
-      * @param array     $binds    The current variable bindings, for use with the
-      *                            !bind directive.
-      * @return Nothing.
-      */
+     * Adds a repeated field block to a form.
+     *
+     * @param array     $field    The field description array to compile.
+     *                            This should be an array of form items to
+     *                            repeat.
+     * @param MyRadioForm $form     The form to add the compiled field to.
+     * @param array     $options  The array of options to the !repeat directive.
+     *                            This should contain three numeric indices:
+     *                            the repeat directive, the repetition ID start,
+     *                            and end.
+     * @param array     $binds    The current variable bindings, for use with the
+     *                            !bind directive.
+     * @return Nothing.
+     */
     private function addRepeatedFieldsToForm($field, $form, $options, $binds) {
         $start = intval($options[1]);
         $end = intval($options[2]);
@@ -151,12 +151,12 @@ class MyRadio_JsonFormLoader {
     }
 
     /**
-      * Performs binding of !bind(foo) strings in a field description to their
-      * entries in the binding arry.
-      *
-      * @param array $field  The field description array to bind on.
-      * @param array $binds  The current variable bindings, for use with the
-      */
+     * Performs binding of !bind(foo) strings in a field description to their
+     * entries in the binding arry.
+     *
+     * @param array $field  The field description array to bind on.
+     * @param array $binds  The current variable bindings, for use with the
+     */
     private function doBinding(&$field, $binds) {
         foreach($field as $key => &$value) {
             if (strpos($value, self::SPECIAL_PREFIX) === 0) {
@@ -175,16 +175,16 @@ class MyRadio_JsonFormLoader {
     }
     
     /**
-      * Compiles a special field description into a field and adds it to the given
-      * form.
-      *
-      * @param string    $name   The special field directive stored as field name.
-      * @param array     $field  The field description array to compile.
-      * @param MyRadioForm $form   The form to add the compiled field to.
-      * @param array     $binds  The current variable bindings, for use with the
-      *                          !bind directive.
-      * @return Nothing.
-      */
+     * Compiles a special field description into a field and adds it to the given
+     * form.
+     *
+     * @param string    $name   The special field directive stored as field name.
+     * @param array     $field  The field description array to compile.
+     * @param MyRadioForm $form   The form to add the compiled field to.
+     * @param array     $binds  The current variable bindings, for use with the
+     *                          !bind directive.
+     * @return Nothing.
+     */
     private function addSpecialFieldToForm($name, $field, $form, $binds) {
         $matches = [];
         // TODO: Replace regexes with something a bit less awful.
@@ -207,16 +207,16 @@ class MyRadio_JsonFormLoader {
     }
 
     /**
-      * Compiles a regular field description into a field and adds it to the given
-      * form.
-      *
-      * @param string    $name   The name of the field.
-      * @param array     $field  The field description array to compile.
-      * @param MyRadioForm $form   The form to add the compiled field to.
-      * @param array     $binds  The current variable bindings, for use with the
-      *                          !bind directive.
-      * @return Nothing.
-      */
+     * Compiles a regular field description into a field and adds it to the given
+     * form.
+     *
+     * @param string    $name   The name of the field.
+     * @param array     $field  The field description array to compile.
+     * @param MyRadioForm $form   The form to add the compiled field to.
+     * @param array     $binds  The current variable bindings, for use with the
+     *                          !bind directive.
+     * @return Nothing.
+     */
     private function addNormalFieldToForm($name, $field, $form, $binds) {
         $type = $this->getTypeConstant($field['type']);
 
@@ -231,15 +231,15 @@ class MyRadio_JsonFormLoader {
     }
 
     /**
-      * Compiles a field description into a field and adds it to the given form.
-      *
-      * @param string    $name   The name of the field.
-      * @param array     $field  The field description array to compile.
-      * @param MyRadioForm $form   The form to add the compiled field to.
-      * @param array     $binds  The current variable bindings, for use with the
-      *                          !bind directive.
-      * @return Nothing.
-      */
+     * Compiles a field description into a field and adds it to the given form.
+     *
+     * @param string    $name   The name of the field.
+     * @param array     $field  The field description array to compile.
+     * @param MyRadioForm $form   The form to add the compiled field to.
+     * @param array     $binds  The current variable bindings, for use with the
+     *                          !bind directive.
+     * @return Nothing.
+     */
     private function addFieldToForm($name, $field, $form, $binds) {
         if (strpos($name, self::SPECIAL_PREFIX) === 0) {
             $this->addSpecialFieldToForm($name, $field, $form, $binds);
@@ -249,11 +249,11 @@ class MyRadio_JsonFormLoader {
     }
 
     /**
-      * Loads a form from its filename, from the module's forms directory.
-      *
-      * @param string $name  The (file)name of the form, without the '.json'.
-      * @return MyRadio_JsonFormLoader  this.
-      */
+     * Loads a form from its filename, from the module's forms directory.
+     *
+     * @param string $name  The (file)name of the form, without the '.json'.
+     * @return MyRadio_JsonFormLoader  this.
+     */
     public function fromName($name) {
         return $this->fromPath(
             'Models/' . $this->module . '/' . $name . '.json'
@@ -261,11 +261,11 @@ class MyRadio_JsonFormLoader {
     }
 
     /**
-      * Loads a form from its file path.
-      *
-      * @param string $path  The path to load from.
-      * @return MyRadio_JsonFormLoader  this.
-      */
+     * Loads a form from its file path.
+     *
+     * @param string $path  The path to load from.
+     * @return MyRadio_JsonFormLoader  this.
+     */
     public function fromPath($path) {
         return $this->fromString(
             file_get_contents($path, true)
@@ -273,11 +273,11 @@ class MyRadio_JsonFormLoader {
     }
     
     /**
-      * Loads a form from a JSON string.
-      *
-      * @param string $str  The string to load from.
-      * @return MyRadio_JsonFormLoader  this.
-      */
+     * Loads a form from a JSON string.
+     *
+     * @param string $str  The string to load from.
+     * @return MyRadio_JsonFormLoader  this.
+     */
     public function fromString($str) {
         $this->form_array = json_decode($str, true);
         if ($this->form_array === null) {
@@ -290,14 +290,14 @@ class MyRadio_JsonFormLoader {
     }
 
     /**
-      * Compiles a previously loaded form to a form object.
-      *
-      * @param string    $action  The name of the action to trigger on submission.
-      * @param array     $binds   The mapping of names used in !bind directives to
-      *                           variables.
-      *
-      * @return MyRadioForm  The processed form.
-      */
+     * Compiles a previously loaded form to a form object.
+     *
+     * @param string    $action  The name of the action to trigger on submission.
+     * @param array     $binds   The mapping of names used in !bind directives to
+     *                           variables.
+     *
+     * @return MyRadioForm  The processed form.
+     */
     public function toForm($action, $binds=[]) {
         // TODO: Complain if no form is loaded.
         $f = $this->form_array;
@@ -317,15 +317,15 @@ class MyRadio_JsonFormLoader {
     }
 
     /**
-      * Loads and renders a form from its MyRadio module and name.
-      *
-      * This is a convenience wrapper for 'fromPath'.
-      *
-      * @param string $module  The name of the calling MyRadio module.
-      * @param string $name    The (file)name of the form, without the '.json'.
-      * @param string $action  The name of the action to trigger on submission.
-      * @return MyRadioForm  The processed form.
-      */
+     * Loads and renders a form from its MyRadio module and name.
+     *
+     * This is a convenience wrapper for 'fromPath'.
+     *
+     * @param string $module  The name of the calling MyRadio module.
+     * @param string $name    The (file)name of the form, without the '.json'.
+     * @param string $action  The name of the action to trigger on submission.
+     * @return MyRadioForm  The processed form.
+     */
     public static function loadFromModule($module, $name, $action, $binds=[]) {
         return (
             new MyRadio_JsonFormLoader($module)
