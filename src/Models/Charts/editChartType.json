@@ -1,18 +1,18 @@
 {
-  "name": "charts_editcharttype",
-  "options": {
-    "title": "Edit Chart Type"
-  },
-  "fields": {
-    "name": {
-      "type": "text",
-      "label": "Identifier",
-      "explanation": "What the chart will be referred to in the website code."
+    "name": "charts_editcharttype",
+    "options": {
+        "title": "Edit Chart Type"
     },
-    "description": {
-      "type": "text",
-      "label": "Name",
-      "explanation": "What the chart will be called on the website itself."
+    "fields": {
+        "name": {
+            "type": "text",
+            "label": "Identifier",
+            "explanation": "What the chart will be referred to in the website code."
+        },
+        "description": {
+            "type": "text",
+            "label": "Name",
+            "explanation": "What the chart will be called on the website itself."
+        }
     }
-  }
 }
