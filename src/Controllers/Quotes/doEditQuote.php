@@ -44,6 +44,6 @@ $form = MyURY_JsonFormLoader::loadFromModule(
 
 $data = $form->readValues();
 
-empty($data['id'])) ? create_quote($data) : edit_quote($data['id'], $data);
+empty($data['id']) ? create_quote($data) : edit_quote($data['id'], $data);
 
 CoreUtils::redirect($module);
