@@ -114,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
         /**
          * @todo Handle this eventuality
          */
+         throw new MyRadioException("I need to implement this.");
     } elseif ($status !== 'success') {
         $form->render(['error' => true]);
     } else {
