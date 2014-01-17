@@ -482,5 +482,6 @@ $(document).ready(function() {
         window.open(myury.makeURL('Scheduler', 'stop'), 'Stop Broadcast');
     });
 
+    server.register_callback(myury.errorReport, 'myury_errors');
 
 });
