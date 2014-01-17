@@ -21,7 +21,7 @@ if (!currentUserCanEditPodcast($podcast)) {
 MyRadio_JsonFormLoader::loadFromModule(
     $module, 'setCover', 'doSetCover'
 )->setFieldValue(
-    'podcast', $podcast->getID()
+    'podcastid', $podcast->getID()
 )->render();
 
 //
