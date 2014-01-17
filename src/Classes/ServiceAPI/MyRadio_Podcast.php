@@ -135,17 +135,24 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
    * @return MyRadio_Podcast[]
    */
   public static function getPodcastsAttachedToUser(MyRadio_User $user = null) {
+  return self::resultSetToObjArray(self::getPodcastIDsAttachedToUser($user));
+}
+
+  /**
+   * Get the IDs of all the Podcasts that the User is Owner of Creditor of.
+   * @param MyRadio_User $user Default current user.
+   * @return int[]
+   */
+  public static function getPodcastIDsAttachedToUser(MyRadio_User $user = null) {
     if ($user === null) {
       $user = MyRadio_User::getInstance();
     }
 
-    $r = self::$db->fetch_column('SELECT podcast_id FROM uryplayer.podcast
+    return self::$db->fetch_column('SELECT podcast_id FROM uryplayer.podcast
       WHERE memberid=$1 OR podcast_id IN
         (SELECT podcast_id FROM uryplayer.podcast_credit
           WHERE creditid=$1 AND effective_from <= NOW() AND
           (effective_to >= NOW() OR effective_to IS NULL))', [$user->getID()]);
-
-    return self::resultSetToObjArray($r);
   }
   
   public static function getPending() {
