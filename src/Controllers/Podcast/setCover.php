@@ -34,10 +34,9 @@ MyRadio_JsonFormLoader::loadFromModule(
  * @return boolean  True if the user can edit this podcast; false otherwise.
  */
 function currentUserCanEditPodcast($podcast) {
-    // This takes a database query, so a more efficient way of doing this
-    // would be helpful.
-    $user_podcasts = MyRadio_Podcast::getPodcastsAttachedToUser();
-    return in_array($podcast, $user_podcasts);
+    // Doing this by ID saves having to query for all of the user's podcasts.
+    $user_podcast_ids = MyRadio_Podcast::getPodcastIDsAttachedToUser();
+    return in_array($podcast->getID(), $user_podcast_ids);
 }
 
 ?>
