@@ -16,10 +16,10 @@ raisePermissionsIfCannotEdit($podcast);
 
 switch($values['cover_method']) {
 case 'existing':
-    existingCoverFile($values);
+    existingCoverFile($podcast, $values);
     break;
 case 'new':
-    uploadNewCoverFile($values);
+    uploadNewCoverFile($podcast, $values);
     break;
 default:
     throw new MyRadioException('Unknown cover upload method.', 400);
@@ -30,71 +30,54 @@ default:
 // Helper functions
 //
 
-function existingCoverFile($values) {
-    setCoverMetadata($values['podcastid'], $url);
+function existingCoverFile($podcast, $values) {
+    $podcast->setCover($values['existing_cover']);
 }
 
-function setCoverMetadata($podcastid, $url) {
-    if (empty($url)) {
-        throw new MyRadioException('URL is blank.');
-    }
-
-    self::$db->query('
-        INSERT INTO
-            uryplayer.podcast_image_metadata(
-                metadata_key_id, podcast_id, memberid, approvedid,
-                metadata_value, effective_from, effective_to
-            )
-        VALUES
-            (10, $1, $2, $2, $3, NOW(), NULL),
-            (11, $1, $2, $2, $3, NOW(), NULL)
-        ',
-        [
-            $podcastid,
-            MyRadio_User::getInstance(),
-            $url
-        ]
-    );
-}
-
-function uploadNewCoverFile($values) {
-    $temporary = $values['new_cover']['tmp_file'];
+function uploadNewCoverFile($podcast, $values) {
+    $temporary = $values['new_cover']['tmp_name'];
     if (empty($temporary)) {
         throw new MyRadioException('No new cover file uploaded.', 400);
     }
 
-    $url = moveCoverFile($values['podcastid'], $temporary);
+    $url = moveCoverFile($podcast, $temporary);
 
-    setCoverMetadata($values['podcastid'], $url);
+    $podcast->setCover($url);
 }
 
-function moveCoverFile($podcastid, $temporary_file) {
-    $new_path = makeCoverFilePath($temporary_file);
-    checkCoverFileUnique($new_path);
-    return moveCoverFileTo($new_path, $temporary_file);
+function moveCoverFile($podcast, $temporary_file) {
+    $path = makeCoverFilePath($podcast, $temporary_file);
+    $file_path = Config::$public_media_path . $path;
+    checkCoverFileUnique($file_path);
+    moveCoverFileTo($file_path, $temporary_file);
+    return $path;
 }
 
-function makeCoverFilePath($podcastid, $temporary_file) {
+function makeCoverFilePath($podcast, $temporary_file) {
     return (
         coverFileDirectory() .
         'podcast' .
-        $podcastid .
+        $podcast->getID() .
         '-' .
         time() .
-        coverFileFormat()
+        '.' .
+        coverFileFormat($temporary_file)
     );
 }
 
 function coverFileDirectory() {
-    return Config::$public_media_uri.'/image_meta/MyRadioImageMetadata/';
+    return '/image_meta/MyRadioImageMetadata/';
 }
 
 function coverFileFormat($temporary_file) {
-    return explode('/',finfo_file(finfo_open(FILEINFO_MIME_TYPE), $tmp_file))[1];
+    return explode(
+        '/',
+        finfo_file(finfo_open(FILEINFO_MIME_TYPE), $temporary_file)
+    )[1];
 }
 
 function checkCoverFileUnique($path) {
-    if (!file_exists($path)) {
+    if (file_exists($path)) {
         throw new MyRadioException('The cover filename chosen already exists.', 500);
     }
 }
@@ -105,5 +88,7 @@ function moveCoverFileTo($path, $temporary_file) {
         throw new MyRadioException('File move failed.', 500);
     }
 }
+
+coreUtils::backWithMessage('Cover set.');
 
 ?>
