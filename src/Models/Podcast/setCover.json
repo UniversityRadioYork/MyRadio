@@ -23,6 +23,9 @@
             "label": "Upload New Cover File",
             "explanation": "If you selected Upload New below, add the file here.",
             "required": false
+        },
+        "podcast": {
+            "type": "hidden"
         }
     }
 }
