@@ -16,7 +16,8 @@
         "existing_cover": {
             "type": "text",
             "label": "Existing Cover File",
-            "explanation": "To use an existing cover file, copy the Existing Cover File of a podcast with that file into here."
+            "explanation": "To use an existing cover file, copy the Existing Cover File of a podcast with that file into here.",
+            "required": false
         },
         "new_cover": {
             "type": "file",
