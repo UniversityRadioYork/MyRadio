@@ -43,12 +43,7 @@ var server = {
       dataType: 'json',
       //The timeout here is to prevent stack overflow
       complete: function() {setTimeout('server.connect()', 100);},
-      success: server.handleResponse,
-      error: function(event) {
-        if (event.code == '403') {
-          window.location='https://ury.org.uk/portal/?next='+myury.makeURL('SIS');
-        }
-      }
+      success: server.handleResponse
     });
   },
   /**
@@ -79,7 +74,7 @@ var server = {
         for (var message in data[namespace]) {console.log(data[namespace][message]);}
         continue;
       }
-      else if (typeof(server.callbacks[namespace] != 'undefined')) {
+      else if (typeof(server.callbacks[namespace]) != 'undefined') {
         console.log('Callback for '+namespace+' found');
         //This namespace is registered. Execute the callback function
         server.callbacks[namespace](data[namespace]);
@@ -112,4 +107,6 @@ var server = {
 };
 
 //The timeout give functions time to register
-$(document).ready(function(){setTimeout("server.connect()", 1000);});
+$(document).ready(function() {
+  setTimeout("server.connect()", 1000);
+});
