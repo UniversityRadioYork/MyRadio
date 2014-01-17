@@ -1,18 +1,18 @@
 <?php
 
-$values = MyRadio_JsonFormLoader::loadFromModule(
-    $module, 'setCover', 'doSetCover'
-)->readValues();
+/**
+ * Sets a podcast's cover.
+ *
+ * @author  Matt Windsor <matt.windsor@ury.org.uk>
+ * @version 20140117
+ * @package MyRadio_Podcasts
+ */
 
-if (!isset($values['podcastid'])) {
-    throw new MyRadioException('Podcast ID was not provided.', 400);
-}
+require_once 'common.php';
 
-$podcast = MyRadio_Podcast::getInstance($values['podcastid']);
-
-if (!currentUserCanEditPodcast($podcast)) {
-    CoreUtils::requirePermission(AUTH_PODCASTANYSHOW);
-}
+$values = podcastCoverForm()->readValues();
+$podcast = currentPodcast($values);
+raisePermissionsIfCannotEdit($podcast);
 
 switch($values['cover_method']) {
 case 'existing':
@@ -31,7 +31,6 @@ default:
 //
 
 function existingCoverFile($values) {
-
     setCoverMetadata($values['podcastid'], $url);
 }
 
@@ -87,7 +86,7 @@ function makeCoverFilePath($podcastid, $temporary_file) {
 }
 
 function coverFileDirectory() {
-    return Config::$public_media_uri.'/image_meta/MyRadioImageMetadata/'
+    return Config::$public_media_uri.'/image_meta/MyRadioImageMetadata/';
 }
 
 function coverFileFormat($temporary_file) {

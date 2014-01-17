@@ -3,23 +3,17 @@
 /**
  * Allows a podcast's cover to be set.
  *
- * @author  Matt Windsor <mattbw@ury.org.uk>
+ * @author  Matt Windsor <matt.windsor@ury.org.uk>
  * @version 20140117
  * @package MyRadio_Podcasts
  */
 
-if (!isset($_REQUEST['podcastid'])) {
-    throw new MyRadioException('Podcast ID was not provided.', 400);
-}
+require_once 'common.php';
 
-$podcast = MyRadio_Podcast::getInstance($_REQUEST['podcastid']);
+$podcast = currentPodcast();
+raisePermissionsIfCannotEdit($podcast);
 
-if (!currentUserCanEditPodcast($podcast)) {
-    CoreUtils::requirePermission(AUTH_PODCASTANYSHOW);
-}
-
-MyRadio_JsonFormLoader::loadFromModule(
-    $module, 'setCover', 'doSetCover'
+podcastCoverForm(
 )->setFieldValue(
     'podcastid', $podcast->getID()
 )->setFieldValue(
