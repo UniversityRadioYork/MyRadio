@@ -359,6 +359,64 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
   }
 
   /**
+   * Sets the current podcast cover for this podcast.
+   *
+   * @param string $url  The URL of the incoming podcast cover.
+   */
+  public function setCover($url) {
+    // TODO: Plumb this into the metadata system.
+    //       At time of writing, MyRadio's metadata system doesn't do images.
+    if (empty($url)) {
+      throw new MyRadioException('URL is blank.');
+    }
+
+    self::$db->query('
+      INSERT INTO
+        uryplayer.podcast_image_metadata(
+          metadata_key_id, podcast_id, memberid, approvedid,
+          metadata_value, effective_from, effective_to
+        )
+      VALUES
+        (10, $1, $2, $2, $3, NOW(), NULL),
+        (11, $1, $2, $2, $3, NOW(), NULL)
+      ',
+      [
+        $this->getID(),
+        MyRadio_User::getInstance()->getID(),
+        $url
+      ]
+    );
+  }
+
+  /**
+   * Gets the current podcast cover for this podcast.
+   *
+   * @return string  The URL of the current podcast cover.
+   */
+  public function getCover() {
+    // TODO: Plumb this into the metadata system.
+    //       At time of writing, MyRadio's metadata system doesn't do images.
+    return self::$db->fetch_one('
+      SELECT
+        metadata_value AS url
+      FROM
+        uryplayer.podcast_image_metadata
+      WHERE
+        podcast_id = $1
+      AND
+        effective_from <= NOW()
+      AND
+        (effective_to IS NULL OR effective_to > NOW())
+      ORDER BY
+        effective_from DESC
+      LIMIT 1
+      ;',
+      [$this->getID()]
+    )['url'];
+  }
+
+
+  /**
    * Sets a metadata key to the specified value.
    * 
    * If any value is the same as an existing one, no action will be taken.
