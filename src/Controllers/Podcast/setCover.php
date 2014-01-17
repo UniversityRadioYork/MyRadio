@@ -8,11 +8,11 @@
  * @package MyRadio_Podcasts
  */
 
-if (!isset($_REQUEST['podcast_id'])) {
+if (!isset($_REQUEST['podcastid'])) {
     throw new MyRadioException('Podcast ID was not provided.', 400);
 }
 
-$podcast = MyRadio_Podcast::getInstance($_REQUEST['podcast_id']);
+$podcast = MyRadio_Podcast::getInstance($_REQUEST['podcastid']);
 
 if (!currentUserCanEditPodcast($podcast)) {
     CoreUtils::requirePermission(AUTH_PODCASTANYSHOW);
