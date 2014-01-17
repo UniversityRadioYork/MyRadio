@@ -30,16 +30,17 @@ class SIS_Utils extends ServiceAPI {
 	 * @return boolean|int     The studio's ID number or false if unauthorised
 	 */
 	private static function isAuthenticatedMachine($ip = null) {
-	  if (is_null($ip))
-		$ip = $_SERVER['REMOTE_ADDR'];
-
-	  foreach (Config::$studios as $key => $studio) {
-		if (in_array($ip, $studio['authenticated_machines'])) {
-		  //This client is authorised
-		  return $key;
+		if (is_null($ip)) {
+			$ip = $_SERVER['REMOTE_ADDR'];
 		}
-	  }
-	  return false;
+
+		foreach (Config::$studios as $key => $studio) {
+			if (in_array($ip, $studio['authenticated_machines'])) {
+				//This client is authorised
+				return $key;
+			}
+		}
+		return False;
 	}
 
 	/**
@@ -77,16 +78,16 @@ class SIS_Utils extends ServiceAPI {
 		$loadedModules = array();
 		if ($modules !== false) {
 			foreach ($modules as $key => $module) {
-				if (isset($module['required_permission']) && !CoreUtils::hasPermission($module['required_permission'])) {
-					continue;
-				}
-                /**
+				$notAuth = (isset($module['required_permission']) && !CoreUtils::hasPermission($module['required_permission']));
+				/**
                  * @todo Replace with MyRadio built in location Auth
                  */
-				if (isset($module['required_location']) && ($module['required_location'] === True && self::isAuthenticatedMachine() === False)) {
+				$notStudio = (isset($module['required_location']) && ($module['required_location'] === True && self::isAuthenticatedMachine() === False));
+				
+				if ($notAuth || ($notAuth && $notStudio)) {
 					continue;
 				}
-				$loadedModules[] = $module;
+                $loadedModules[] = $module;
 			}
 			return $loadedModules;
 		}
