@@ -22,6 +22,8 @@ MyRadio_JsonFormLoader::loadFromModule(
     $module, 'setCover', 'doSetCover'
 )->setFieldValue(
     'podcastid', $podcast->getID()
+)->setFieldValue(
+    'existing_cover', $podcast->getCover()
 )->render();
 
 //
