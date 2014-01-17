@@ -84,7 +84,7 @@ class SIS_Utils extends ServiceAPI {
                  */
 				$notStudio = (isset($module['required_location']) && ($module['required_location'] === True && self::isAuthenticatedMachine() === False));
 				
-				if ($notAuth || ($notAuth && $notStudio)) {
+				if ($notAuth && $notStudio) {
 					continue;
 				}
                 $loadedModules[] = $module;
