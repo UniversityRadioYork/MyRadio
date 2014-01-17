@@ -6,7 +6,7 @@ window.myury = {
         else
             return mConfig.base_url + '?module=' + module + '&action=' + action + (qstring === '' ? '' : '&' + qstring);
     },
-    errorReport: function(myradio_errors) {
+    errorReport: function(myradio_errors, e, xhr, settings) {
         console.log(myradio_errors);
         $('<div></div>').attr('title', 'Notice').attr('id', 'error-dialog')
                 .append('<p>It looks like that request works, but I got an error in the response.</p>')
@@ -57,10 +57,10 @@ $(document).ajaxSuccess(function(e, xhr, settings) {
     }
     try {
         data = $.parseJSON(xhr);
-    } catch (e) {
+    } catch (error) {
         return; //Not JSON
     }
     if (data.myury_errors !== null) {
-        myury.errorReport(data.myury_errors);
+        myury.errorReport(data.myury_errors, e, xhr, settings);
     }
 });
