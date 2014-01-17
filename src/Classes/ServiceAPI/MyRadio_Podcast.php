@@ -359,6 +359,34 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
   }
 
   /**
+   * Gets the current podcast cover for a podcast.
+   *
+   * @return string  The URL of the current podcast cover.
+   */
+  function getCover() {
+    // TODO: Plumb this into the metadata system.
+    //       At time of writing, MyRadio's metadata system doesn't do images.
+    return self::$db->fetch_one('
+      SELECT
+        metadata_value AS url
+      FROM
+        uryplayer.podcast_image_metadata
+      WHERE
+        podcast_id = $1
+      AND
+        effective_from <= NOW()
+      AND
+        (effective_to IS NULL OR effective_to > NOW())
+      ORDER BY
+        effective_from DESC
+      LIMIT 1
+      ;',
+      [$this->getID()]
+    )['url'];
+  }
+
+
+  /**
    * Sets a metadata key to the specified value.
    * 
    * If any value is the same as an existing one, no action will be taken.
