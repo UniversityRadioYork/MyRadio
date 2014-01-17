@@ -7,9 +7,9 @@
  * @package MyRadio_Mail
  */
 
-//The Form definition
-require 'Models/Mail/sendfrm.php';
-$info = $form->readValues();
+$info = MyRadio_JsonFormLoader::loadFromModule(
+    $module, 'send', 'doSend'
+)->readValues();
 
 MyRadioEmail::sendEmailToList(MyRadio_List::getInstance($info['list']), $info['subject'], $info['body'], MyRadio_User::getInstance());
 
