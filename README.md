@@ -10,3 +10,5 @@ MyRadio is part of a suite of upcoming public projects, including:
 - iTones, our liquidsoap sustainer system
 - loggerng, our python audio logging and retriving system
 - Bootstrapping scripts for setting up and configuring all the dependencies
+
+MyRadio uses Git-Flow as a development workflow: https://github.com/nvie/gitflow/
