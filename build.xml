@@ -40,6 +40,7 @@
 
    <fileset dir="${basedir}/src">
     <include name="**/*.php" />
+    <exclude name="**/Vendor/**" />
     <modified />
    </fileset>
 
