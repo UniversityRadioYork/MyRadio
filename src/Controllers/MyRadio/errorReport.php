@@ -6,4 +6,5 @@
  * @package MyRadio_Core
  */
 
-MyRadioEmail::sendEmailToComputing('Error Report', print_r(array($_REQUEST, $_SESSION), true));
+MyRadioEmail::sendEmailToComputing('Error Report',
+        CoreUtils::getRequestInfo() . "\n" . print_r($_SESSION, true));

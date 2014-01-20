@@ -825,6 +825,32 @@ class CoreUtils {
         }
         return false;
     }
+    
+    /**
+     * Returns information about the $_REQUEST array.
+     * 
+     * This *MUST* be used instead of print_r($_REQUEST) or var_dump($_REQUEST)
+     * in debug output.
+     * 
+     * @return String var_dump output
+     */
+    public static function getRequestInfo() {
+        ob_start();
+        if (isset($_REQUEST['redact'])) {
+            $info = array();
+            foreach ($_REQUEST as $k=>$v) {
+                if (!in_array($k, $_REQUEST['redact'])) {
+                    $info[$k] = $v;
+                } else {
+                    $info[$k] = '**REDACTED**';
+                }
+            }
+            var_dump($info);
+        } else {
+            var_dump($_REQUEST);
+        }
+        return ob_get_clean();
+    }
 
     private function __construct() {
         

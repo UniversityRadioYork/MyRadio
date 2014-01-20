@@ -308,6 +308,12 @@ class MyRadioFormField {
      * @var bool
      */
     private $enabled = true;
+    
+    /**
+     * Whether the field is redacted by default.
+     * @var bool
+     */
+    private $redacted = false;
 
     /**
      * Settings that cannot be altered by the $options parameter
@@ -329,7 +335,8 @@ class MyRadioFormField {
      *   classes: An array of additional classes to add to the input field (default empty)<br>
      *   options: An array of additional settings that are specific to the field type (default empty)<br>
      *   value: The default value of the field when it is rendered (default none)<br>
-     *   enabled: Whether the field is enabled when the page is loaded (default true)
+     *   enabled: Whether the field is enabled when the page is loaded (default true)<br>
+     *   redacted: If true, this field is hidden in debug output (default false)
      * @throws MyRadioException If an attempt is made to set an $options value other than those listed above
      */
     public function __construct($name, $type, $options = array()) {
@@ -376,6 +383,14 @@ class MyRadioFormField {
      */
     public function getType() {
         return $this->type;
+    }
+    
+    /**
+     * Get if this field is redacted
+     * @return bool
+     */
+    public function getRedacted() {
+        return $this->redacted;
     }
 
     /**

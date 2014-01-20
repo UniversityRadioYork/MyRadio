@@ -7,7 +7,7 @@
 {% set myury_form_section_exists = false %}
 {% set myury_form_file_progress = false %}
 <fieldset class="{{frm_classes}}">
-  <form action="{{frm_action | raw}}" method="{{frm_method}}" name="{{frm_name}}" id="{{frm_name}}" enctype="multipart/form-data">
+    <form action="{{frm_action | raw}}" method="{{frm_method}}" name="{{frm_name}}" id="{{frm_name}}" enctype="multipart/form-data">
     {% for field in frm_fields %}
       {% set display_labels = true %}
       {% set sfieldname = field.name %}
@@ -19,11 +19,14 @@
         </div>
       {% endif %}
     {% endfor %}
+      {% for field in redact %}
+        <input type="hidden" name="redact[]" value="{{field}}" />
+      {% endfor %}
         <input type="submit" id="{{frm_name}}-submit" value="Submit" />
-      </form>
-      <div class="myuryfrm-file-upload-progress"><div class="progress-label">Starting Upload...</div></div>
-      <iframe class="ui-helper-hidden" id="myuryfrm-file-upload-iframe"></iframe>
-    </fieldset>
+    </form>
+    <div class="myuryfrm-file-upload-progress"><div class="progress-label">Starting Upload...</div></div>
+    <iframe class="ui-helper-hidden" id="myuryfrm-file-upload-iframe"></iframe>
+</fieldset>
 {% endblock %}
 
 {% block foot %}
