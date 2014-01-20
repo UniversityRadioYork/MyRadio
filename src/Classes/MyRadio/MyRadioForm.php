@@ -242,8 +242,18 @@ class MyRadioForm {
         $this->addField(new MyRadioFormField('__xsrf-token', MyRadioFormField::TYPE_HIDDEN, ['value' => $_SESSION['myradio-xsrf-token']]));
 
         $fields = array();
+        $redact = array();
         foreach ($this->fields as $field) {
             $fields[] = $field->render();
+            /**
+             * Password fields should be redacted from any
+             * logging output. Printing request data should use
+             * CoreUtils::getRequestInfo
+             */
+            if ($field->getType() === MyRadioFormField::TYPE_PASSWORD or
+                    $field->getRedacted()) {
+                $redact[] = $this->getPrefix() . $field->getName();
+            }
         }
 
         $twig = CoreUtils::getTemplateObject()->setTemplate($this->template)
@@ -254,6 +264,7 @@ class MyRadioForm {
                 ->addVariable('title', isset($this->title) ? $this->title : $this->name)
                 ->addVariable('serviceName', isset($this->module) ? $this->module : $this->name)
                 ->addVariable('frm_fields', $fields)
+                ->addVariable('redact', $redact)
                 ->addVariable('frm_custom', $frmcustom);
         $twig->render();
     }
@@ -270,6 +281,13 @@ class MyRadioForm {
 
         return $classes;
     }
+    
+    /**
+     * Get the field name prefix
+     */
+    private function getPrefix() {
+        return $this->name . '-';
+    }
 
     /**
      * Processes data submitted from this MyRadioForm, returning an Array of the values
@@ -278,7 +296,7 @@ class MyRadioForm {
     public function readValues() {
         $return = array();
         foreach ($this->fields as $field) {
-            $value = $field->readValue($this->name . '-');
+            $value = $field->readValue($this->getPrefix());
             if ($field->getRequired() && empty($value)) {
                 throw new MyRadioException('Field ' . $field->getName() . ' is required
           but has not been set.', 400);
@@ -286,11 +304,11 @@ class MyRadioForm {
             $return[$field->getName()] = $value;
         }
         //Edit Mode requests
-        if (isset($_REQUEST[$this->name . '-myradiofrmedid'])) {
-            $return['id'] = (int) $_REQUEST[$this->name . '-myradiofrmedid'];
+        if (isset($_REQUEST[$this->getPrefix() . 'myradiofrmedid'])) {
+            $return['id'] = (int) $_REQUEST[$this->getPrefix() . 'myradiofrmedid'];
         }
         //XSRF check
-        if ($_REQUEST[$this->name.'-__xsrf-token'] !== $_SESSION['myradio-xsrf-token']) {
+        if ($_REQUEST[$this->getPrefix().'__xsrf-token'] !== $_SESSION['myradio-xsrf-token']) {
             throw new MyRadioException('Invalid submission token. Possible XSRF attack.', 500);
         }
         return $return;
