@@ -96,6 +96,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
         $db->query('UPDATE myury.password_reset_token SET used=NOW()'
                 . ' WHERE token=$1', [$token['token']]);
     }
+    
+    //If the user was locked out for a password change, unlock them
+    if (isset($_SESSION['auth_use_locked']) &&
+            $_SESSION['auth_use_locked'] === 'chooseAuth') {
+        unset($_SESSION['auth_use_locked']);
+    }
 
     header('Location: '.CoreUtils::makeURL('MyRadio', 'login'));
 } else {

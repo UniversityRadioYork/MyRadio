@@ -111,10 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
                 ->addVariable('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL(Config::$default_module))
                 ->render();
     } elseif ($status === 'change') {
-        /**
-         * @todo Handle this eventuality
-         */
-         throw new MyRadioException("I need to implement this.");
+        header('Location: '.CoreUtils::makeURL('MyRadio', 'pwChange'));
     } elseif ($status !== 'success') {
         $form->render(['error' => true]);
     } else {
