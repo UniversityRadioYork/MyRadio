@@ -127,5 +127,25 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
     public function removePassword($memberid) {
         $this->query('UPDATE member_pass SET password=NULL WHERE memberid=$1', [$memberid]);
     }
+    
+    public function getResetFormMessage() {
+        //If this is not the only authenticator, mention this will create a
+        //MyRadio specific login.
+        if (sizeof(Config::$authenticators) > 1) {
+            $others = '';
+            foreach (Config::$authenticators as $auth) {
+                if ($auth !== __CLASS__) {
+                    $a = new $auth;
+                    $others .= (empty($others) ? '' : ', ') . $a->getFriendlyName();
+                }
+            }
+            return 'If you do not currently have a '.Config::$short_name.
+                    ' password, this will enable you to set one up which is'
+                    . ' seperate to your '.$others.' password.';
+        } else {
+            return 'If you\'ve forgotten your '.Config::$short_name.' password, you'
+                 . ' can fill in this form to have a reset email sent to you.';
+        }
+    }
 
 }

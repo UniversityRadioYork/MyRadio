@@ -65,6 +65,17 @@ class MyRadioLDAPAuthenticator implements MyRadioAuthenticator {
     }
     
     public function getDescription() {
-        return 'By choosing this option, we will always use your '.$this->getFriendlyName().' username and password to log you in. Whenever you change your '.$this->getFriendlyName().' password, your '.Config::$short_name.' password will also change.';
+        return 'By choosing this option, we will always use your '.
+                $this->getFriendlyName().' username and password to log you in.'
+                . ' Whenever you change your '.$this->getFriendlyName().
+                ' password, your '.Config::$short_name.
+                ' password will also change.';
+    }
+    
+    public function getResetFormMessage() {
+        return '<div class="ui-state-highlight">Have you tried using your '.
+                $this->getFriendlyName().' username and password? <a href="'.
+                Config::$auth_ldap_reset_url.'">If you can\'t remember your '.
+                $this->getFriendlyName().' login, please click here.</a></div>';
     }
 }
