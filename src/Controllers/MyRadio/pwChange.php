@@ -89,8 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
     unset($data);
     
     //Reset the User's authenticator preferences - they may be locking them out
-    $db->query('UPDATE member SET auth_provider=NULL WHERE memberid=$1',
-            [$user->getID()]);
+    $user->setAuthProvider(null);
     
     //Set the token as used
     if (isset($token)) {
