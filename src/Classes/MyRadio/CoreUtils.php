@@ -23,7 +23,7 @@ class CoreUtils {
      */
     private static $auth_cached = false;
     private static $svc_version_cache = array();
-    
+
     /**
      * Stores the result of CoreUtils::getAcademicYear
      * 
@@ -270,7 +270,7 @@ class CoreUtils {
 
         self::$auth_cached = true;
     }
-    
+
     /**
      * Returns the Actions and API Endpoints that utilise a given type.
      * 
@@ -285,16 +285,16 @@ class CoreUtils {
                     LEFT JOIN myury.modules USING (moduleid)
                     LEFT JOIN myury.actions USING (actionid)
                     WHERE typeid=$1', [$typeid]);
-        
+
         $apis = $db->fetch_all(
                 'SELECT api_name, method_name
                     FROM myury.api_method_auth
                     LEFT JOIN myury.api_class_map USING (class_name)
                     WHERE typeid=$1', [$typeid]);
-        
+
         return [$actions, $apis];
     }
-    
+
     /**
      * Gets the description (friendly name) of the given permission.
      * 
@@ -685,7 +685,7 @@ class CoreUtils {
 
     public static function requireTimeslot() {
         if (!isset($_SESSION['timeslotid'])) {
-            header('Location: ' . CoreUtils::makeURL('MyRadio','timeslot',['next' => $_SERVER['REQUEST_URI']]));
+            header('Location: ' . CoreUtils::makeURL('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]));
             exit;
         }
     }
@@ -781,7 +781,7 @@ class CoreUtils {
         $purifier = new HTMLPurifier($config);
         return $purifier->purify($dirty_html);
     }
-    
+
     /**
      * Tests whether the given username or password are valid against a provider
      * (and the right provider if needed).
@@ -800,13 +800,13 @@ class CoreUtils {
     public static function testCredentials($user, $pass) {
         //Make a best guess at the user account
         //This way we can skip authenticators if they have one set
-        $u = MyRadio_User::findByEmail($user); 
+        $u = MyRadio_User::findByEmail($user);
         if ($u instanceof MyRadio_User && $u->getAuthProvider() !== null) {
             $authenticators = [$u->getAuthProvider()];
         } else {
             $authenticators = Config::$authenticators;
         }
-        
+
         //Iterate over each authenticator
         foreach ($authenticators as $authenticator) {
             $a = new $authenticator();
@@ -825,7 +825,7 @@ class CoreUtils {
         }
         return false;
     }
-    
+
     /**
      * Returns information about the $_REQUEST array.
      * 
@@ -838,7 +838,7 @@ class CoreUtils {
         ob_start();
         if (isset($_REQUEST['redact'])) {
             $info = array();
-            foreach ($_REQUEST as $k=>$v) {
+            foreach ($_REQUEST as $k => $v) {
                 if (!in_array($k, $_REQUEST['redact'])) {
                     $info[$k] = $v;
                 } else {
@@ -850,6 +850,22 @@ class CoreUtils {
             var_dump($_REQUEST);
         }
         return ob_get_clean();
+    }
+
+    /**
+     * Generates a completely pseudorandom string, aimed for Salt purposes.
+     * @param int $pwdLen The length of the string to generate
+     * @return String a random string of length $pwdLen
+     */
+    public static function randomString($pwdLen = 8) {
+        $result = '';
+        $pwdSource = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        srand((double) microtime() * 1000000);
+        while ($pwdLen) {
+            $result .= substr($pwdSource, rand(0, strlen($pwdSource) - 1), 1);
+            $pwdLen--;
+        }
+        return( $result );
     }
 
     private function __construct() {

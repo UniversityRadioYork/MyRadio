@@ -89,6 +89,12 @@ class MyRadioForm {
      * @var Array 
      */
     private $debug_log = array();
+    
+    /**
+     * Enable recaptcha requirement
+     * @var boolean
+     */
+    private $captcha = false;
 
     /**
      * Fields that cannot be edited by params
@@ -106,8 +112,9 @@ class MyRadioForm {
      * classes - An array of additional classes to apply to the form - default empty<br>
      * validate - Whether to validate the field input client-side - default true<br>
      * get - Whether to use the GET submission method - default false<br>
-     * template - The Twig template to use for the form - default form.twig
-     * title - Form Title
+     * template - The Twig template to use for the form - default form.twig<br>
+     * title - Form Title<br>
+     * captcha - Whether to require a captcha for this form - default false
      * 
      * @throws MyRadioException Thrown on failure of a sanity check
      */
@@ -240,6 +247,16 @@ class MyRadioForm {
             $_SESSION['myradio-xsrf-token'] = bin2hex(openssl_random_pseudo_bytes(128));
         }
         $this->addField(new MyRadioFormField('__xsrf-token', MyRadioFormField::TYPE_HIDDEN, ['value' => $_SESSION['myradio-xsrf-token']]));
+        
+        /**
+         * If we need to do a captcha, load the requirements
+         */
+        if ($this->captcha) {
+            require_once 'Classes/Vendor/recaptchalib.php';
+            $captcha = recaptcha_get_html(Config::$recaptcha_public_key, null, true);
+        } else {
+            $captcha = null;
+        }
 
         $fields = array();
         $redact = array();
@@ -265,6 +282,7 @@ class MyRadioForm {
                 ->addVariable('serviceName', isset($this->module) ? $this->module : $this->name)
                 ->addVariable('frm_fields', $fields)
                 ->addVariable('redact', $redact)
+                ->addVariable('captcha', $captcha)
                 ->addVariable('frm_custom', $frmcustom);
         $twig->render();
     }
@@ -292,8 +310,21 @@ class MyRadioForm {
     /**
      * Processes data submitted from this MyRadioForm, returning an Array of the values
      * @return Array An array of form data that was submitted using this form definition
+     *          or false if a captcha was requested and is incorrect.
      */
     public function readValues() {
+        //If there was a captcha, verify it
+        if ($this->captcha) {
+            require_once 'Classes/Vendor/recaptchalib.php';
+            if (!recaptcha_check_answer(Config::$recaptcha_private_key,
+                                    $_SERVER['REMOTE_ADDR'],
+                                    $_REQUEST['recaptcha_challenge_field'],
+                                    $_REQUEST['recaptcha_response_field']
+                    )->is_valid) {
+                return false;
+            }
+        }
+        
         $return = array();
         foreach ($this->fields as $field) {
             $value = $field->readValue($this->getPrefix());

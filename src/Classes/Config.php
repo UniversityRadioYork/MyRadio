@@ -406,6 +406,13 @@ final class Config {
   public static $api_uri = '/api/';
   
   /**
+   * Recaptcha settings
+   * http://recaptcha.net
+   */
+  public static $recaptcha_public_key = 'YOUR_API_KEY';
+  public static $recaptcha_private_key = 'YOUR_PRIVATE_KEY';
+  
+  /**
    * Relative path to the SIS plugins.
    * @var String
    */
@@ -483,7 +490,8 @@ final class Config {
   public static $auth_db_user = 'shibbobleh';
   public static $auth_db_pass = '';
   public static $eduroam_domain = 'york.ac.uk';
-  public static $auth_ldap_friendly_name = 'IT Services (e.g. abc123)';
+  public static $auth_ldap_friendly_name = 'IT Services';
+  public static $auth_ldap_reset_url = 'https://idm.york.ac.uk/';
   
   /**
    * If true, users will be bound to a single Authenticator. Users whose

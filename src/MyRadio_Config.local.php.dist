@@ -52,6 +52,12 @@ Config::$api_url = '//ury.org.uk/api';
 Config::$shib_url = '//ury.org.uk/portal';
 
 /**
+ * Recaptcha Settings
+ */
+Config::$recaptcha_public_key = 'YOUR KEY HERE';
+Config::$recaptcha_private_key = 'YOUR KEY HERE';
+
+/**
  * Feature enable
  */
 Config::$rewrite_url = true;
