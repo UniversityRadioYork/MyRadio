@@ -94,7 +94,36 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
      * @todo implement password resets
      */
     public function resetAccount($user) {
-        return false;
+        $result = MyRadio_User::findByEmail($user);
+        if (!$result) {
+            return false;
+        }
+        
+        $db = Database::getInstance();
+        
+        //Create a reset token
+        do {
+            $token = CoreUtils::randomString(64);
+        } while ($db->num_rows(
+                $db->query('SELECT * FROM myury.password_reset_token '
+                        . 'WHERE token=$1', [$token])) > 0);
+        
+        //Add the reset token to the database (expires in 48h)
+        $expires = CoreUtils::getTimestamp(time() + 86400*2);
+        $db->query('INSERT INTO myury.password_reset_token '
+                . '(token, memberid, expires) VALUES ($1, $2, $3)',
+                [$token, $result->getID(), $expires]);
+        
+        //Email the user
+        MyRadioEmail::sendEmailToUser($result, 'Password reset', 'Hello,'
+            .'<p>A password reset has been requested for the '.Config::$short_name
+            .' account associated with this email address. If you did not request'
+            . ' this email, please ignore it.</p>'
+            . '<p><a href="'.CoreUtils::makeURL('MyRadio', 'pwChange', ['token' => $token])
+            . '">Click here to finish resetting your password.</a></p>'
+        );
+        
+        return true;
     }
 
     /**
