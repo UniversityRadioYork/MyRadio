@@ -22,6 +22,9 @@
       {% for field in redact %}
         <input type="hidden" name="redact[]" value="{{field}}" />
       {% endfor %}
+        {% if captcha %}
+        <div class="captcha">{{ captcha | raw }}</div>
+        {% endif %}
         <input type="submit" id="{{frm_name}}-submit" value="Submit" />
     </form>
     <div class="myuryfrm-file-upload-progress"><div class="progress-label">Starting Upload...</div></div>
