@@ -59,7 +59,7 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
                         //Upgrade password
                         $new_password = $this->encrypt($password);
                         $this->query('UPDATE member_pass SET password=$1 WHERE memberid=$2',
-                                    [$new_password, $user->getID()]);
+                                [$new_password, $user->getID()]);
                     }
                     unset($password, $new_password, $r); //Just to be safe.
                     return $user;
@@ -98,31 +98,30 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
         if (!$result) {
             return false;
         }
-        
+
         $db = Database::getInstance();
-        
+
         //Create a reset token
         do {
             $token = CoreUtils::randomString(64);
         } while ($db->num_rows(
                 $db->query('SELECT * FROM myury.password_reset_token '
                         . 'WHERE token=$1', [$token])) > 0);
-        
+
         //Add the reset token to the database (expires in 48h)
-        $expires = CoreUtils::getTimestamp(time() + 86400*2);
+        $expires = CoreUtils::getTimestamp(time() + 86400 * 2);
         $db->query('INSERT INTO myury.password_reset_token '
-                . '(token, memberid, expires) VALUES ($1, $2, $3)',
-                [$token, $result->getID(), $expires]);
-        
+                . '(token, memberid, expires) VALUES ($1, $2, $3)', [$token, $result->getID(), $expires]);
+
         //Email the user
         MyRadioEmail::sendEmailToUser($result, 'Password reset', 'Hello,'
-            .'<p>A password reset has been requested for the '.Config::$short_name
-            .' account associated with this email address. If you did not request'
-            . ' this email, please ignore it.</p>'
-            . '<p><a href="'.CoreUtils::makeURL('MyRadio', 'pwChange', ['token' => $token])
-            . '">Click here to finish resetting your password.</a></p>'
+                . '<p>A password reset has been requested for the ' . Config::$short_name
+                . ' account associated with this email address. If you did not request'
+                . ' this email, please ignore it.</p>'
+                . '<p><a href="' . CoreUtils::makeURL('MyRadio', 'pwChange', ['token' => $token])
+                . '">Click here to finish resetting your password.</a></p>'
         );
-        
+
         return true;
     }
 
@@ -142,21 +141,42 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
      * @return String a random string of length $pwdLen
      */
     private function randomString($pwdLen = 32) {
-        return openssl_random_pseudo_bytes($pwdLen);
+        return base64_encode(openssl_random_pseudo_bytes($pwdLen));
     }
-    
+
     public function getFriendlyName() {
-        return Config::$short_name.'-only';
+        return Config::$short_name . '-only';
     }
-    
+
     public function getDescription() {
-        return 'By choosing this option, we will always use your unique '.$this->getFriendlyName().' username and password to log you in. This password is completely seperate to any other details you may have.';
+        return 'By choosing this option, we will always use your unique '
+        . $this->getFriendlyName() . ' username and password to log you in. '
+                . 'This password is completely seperate to any other details '
+                . 'you may have.';
     }
-    
+
     public function removePassword($memberid) {
         $this->query('UPDATE member_pass SET password=NULL WHERE memberid=$1', [$memberid]);
     }
-    
+
+    /**
+     * Sets a User's password.
+     * 
+     * @param User $user
+     * @param String $password
+     */
+    public function setPassword(MyRadio_User $user, $password) {
+        $password = $this->encrypt($password);
+        //Insert or Update
+        $result = $this->query('UPDATE member_pass SET password=$1 WHERE memberid=$2', 
+    [$password, $user->getID()]);
+
+        if (pg_affected_rows($result) === 0) {
+            $this->query('INSERT INTO member_pass (memberid, password) VALUES ($1, $2)', 
+    [$user->getID(), $password]);
+        }
+    }
+
     public function getResetFormMessage() {
         //If this is not the only authenticator, mention this will create a
         //MyRadio specific login.
@@ -168,12 +188,12 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
                     $others .= (empty($others) ? '' : ', ') . $a->getFriendlyName();
                 }
             }
-            return 'If you do not currently have a '.Config::$short_name.
+            return 'If you do not currently have a ' . Config::$short_name .
                     ' password, this will enable you to set one up which is'
-                    . ' seperate to your '.$others.' password.';
+                    . ' seperate to your ' . $others . ' password.';
         } else {
-            return 'If you\'ve forgotten your '.Config::$short_name.' password, you'
-                 . ' can fill in this form to have a reset email sent to you.';
+            return 'If you\'ve forgotten your ' . Config::$short_name . ' password, you'
+                    . ' can fill in this form to have a reset email sent to you.';
         }
     }
 
