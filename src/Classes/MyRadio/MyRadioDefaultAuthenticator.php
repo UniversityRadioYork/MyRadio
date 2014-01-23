@@ -172,9 +172,7 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
     [$password, $user->getID()]);
         
         //Set require_password_change to false
-        
-        $this->query('UPDATE member SET require_password_change=FALSE WHERE memberid=$1', 
-            [$user->getID()]);
+        $user->setRequirePasswordChange(false); 
         
         if (pg_affected_rows($result) === 0) {
             $this->query('INSERT INTO member_pass (memberid, password) VALUES ($1, $2)', 
