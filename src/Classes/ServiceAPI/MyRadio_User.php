@@ -783,6 +783,19 @@ class MyRadio_User extends ServiceAPI {
         $this->setCommonParam('account_locked', $bool);
         return $this;
     }
+    
+    /**
+     * Sets the user's require password change status.
+     * If a user has requested a new password, this should be set to true.
+     * Should be set to false when the user actually changes their password.
+     *
+     * @param bool $bool True for change required, False otherwise. Default T.
+     * @return MyRadio_User
+     */
+    public function setRequirePasswordChange($bool = true) {
+        $this->setCommonParam('require_password_change', $bool);
+        return $this;
+    }
 
     /**
      * Set's a User's college ID.
