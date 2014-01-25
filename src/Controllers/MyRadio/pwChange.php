@@ -69,7 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
     //Logged in user change?
     if (isset($data['pwold'])) {
         //Is the old password correct?
-        if (CoreUtils::testCredentials(User::getInstance()->getEmail(), $data['pwold']) === false) {
+        if (CoreUtils::testCredentials(MyRadio_User::getInstance()->getEmail(),
+                $data['pwold']) === false) {
             $form->render(['messages' => 'Your old password was invalid.']);
             exit;
         }
