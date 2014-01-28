@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Common functions for the podcast controllers.
  *
