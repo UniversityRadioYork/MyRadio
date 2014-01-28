@@ -280,8 +280,8 @@ class MyRadioEmail extends ServiceAPI {
   public static function sendEmailToUserSet($to, $subject, $message, $from = null) {
 
     foreach ($to as $user) {
-      if (!is_a($user, 'User')) {
-        throw new MyRadioException($user . ' is not an instance of User or a derivative!');
+      if (!($user instanceof MyRadio_User)) {
+        throw new MyRadioException($user . ' is not an instance or derivative of the user class!');
       }
 
       self::create(array('members' => $to), $subject, $message, $from);
