@@ -53,4 +53,7 @@ if (CoreUtils::hasPermission(AUTH_LOCK)) {
           '<a href="'.CoreUtils::makeURL('Profile', 'lock',
           array('memberid' => $user->getID())).'">Disable Account</a>');
 }
+if (CoreUtils::hasPermission(AUTH_MARKPAYMENT)) {
+  $template->addVariable('canmarkpayments', true);
+}
 $template->render();
