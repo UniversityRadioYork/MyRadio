@@ -117,6 +117,12 @@
           <li>No Payment Data Available</li>
         {% endfor %}
         </ul>
+        {% if canmarkpayments %}
+        <form type="post" action="{{myury.makeURL(config, 'Profile', 'markPaid')}}">
+          <input type="hidden" name="memberid" value="{{user.memberid}}">
+          <input type="submit" value="Mark Paid">
+        </form>
+        {% endif %}
       </td>
     </tr>
     {% endif %}

@@ -271,18 +271,23 @@ class MyRadio_List extends ServiceAPI {
   }
 
   public function toDataSource($full = true) {
+    if (isset($_SESSION['memberid'])) {
+      $subscribed = $this->isMember(MyRadio_User::getInstance());
+    } else {
+      $subscribed = false;
+    }
     return array(
         'listid' => $this->getID(),
-        'subscribed' => $this->isMember(MyRadio_User::getInstance()) ?
-            '<span class="ui-icon ui-icon-check" title="You are subscribed to this list"></span>' : '',
+        'subscribed' => $subscribed,
         'name' => $this->getName(),
         'address' => $this->getAddress(),
         'recipient_count' => sizeof($this->getMembers()),
-        'optIn' => ((!$this->isMember(MyRadio_User::getInstance()) && ($this->optin || $this->hasOptedOutOfAuto(MyRadio_User::getInstance()))) ? array('display' => 'icon',
+        'optIn' => ((!$subscribed && ($this->optin || $this->hasOptedOutOfAuto(MyRadio_User::getCurrentOrSystemUser()))) ? 
+        array('display' => 'icon',
             'value' => 'circle-plus',
             'title' => 'Subscribe to this mailing list',
             'url' => CoreUtils::makeURL('Mail', 'optin', array('list' => $this->getID()))) : null),
-        'optOut' => ($this->isMember(MyRadio_User::getInstance()) ? array('display' => 'icon',
+        'optOut' => ($subscribed ? array('display' => 'icon',
             'value' => 'circle-minus',
             'title' => 'Opt out of this mailing list',
             'url' => CoreUtils::makeURL('Mail', 'optout', array('list' => $this->getID()))) : null),
