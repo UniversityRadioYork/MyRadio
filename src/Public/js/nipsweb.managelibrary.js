@@ -77,8 +77,9 @@ $(document).ready(function() {
       }
       
       if (response.analysis.length === 0) {
-        //No matches
-        $('#central-result').append('<div class="ui-state-error">'+file.name+' could not be recognised. Please contact the music team to get this track uploaded.</div>');
+        // No matches, but let the user supply the data themselves by showing
+        // the manual entry block.
+        document.getElementById('track-manual-entry').style.display = 'block';
         return;
       }
 
