@@ -75,13 +75,20 @@ $(document).ready(function() {
         $('#central-result').append('<div class="ui-state-error">'+file.name+': '+response['error']+'</div>');
         return;
       }
-      
+
+      var manual_track = false;
       if (response.analysis.length === 0) {
         // No matches, but let the user supply the data themselves by showing
         // the manual entry block.
+        manual_track = true;
         document.getElementById('track-manual-entry').style.display = 'block';
         return;
       }
+
+      // Track info
+      var manual_title = "";
+      var manual_artist = "";
+      var manual_album = "";
 
       var select = $('<select></select>')
       .attr('name', response.fileid).attr('id','centralupload-'+i);
