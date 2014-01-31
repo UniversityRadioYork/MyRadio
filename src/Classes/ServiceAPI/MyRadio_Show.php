@@ -13,7 +13,8 @@
  *
  */
 
-class MyRadio_Show extends MyRadio_Metadata_Common {
+class MyRadio_Show extends MyRadio_Metadata_Common
+{
   private $show_id;
   private $owner;
   protected $credits = array();
@@ -23,7 +24,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
   private $season_ids;
   private $photo_url;
 
-  protected function __construct($show_id) {
+  protected function __construct($show_id)
+  {
     $this->show_id = $show_id;
     self::initDB();
 
@@ -68,10 +70,9 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
       if (empty($credits[$i])) {
         continue;
       }
-      $this->credits[] = array('type' => (int)$credit_types[$i], 'memberid' => $credits[$i],
+      $this->credits[] = array('type' => (int) $credit_types[$i], 'memberid' => $credits[$i],
           'User' => MyRadio_User::getInstance($credits[$i]));
     }
-
 
     //Deal with the Metadata arrays
     $metadata_types = self::$db->decodeArray($result['metadata_types']);
@@ -105,7 +106,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
    * @param int $id
    * @return String
    */
-  public static function getCacheKey($id) {
+  public static function getCacheKey($id)
+  {
     return 'MyRadio_Show-'.$id;
   }
 
@@ -130,7 +132,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
    * @todo location (above) Is not in the Show creation form
    * @throws MyRadioException
    */
-  public static function create($params = array()) {
+  public static function create($params = array())
+  {
     //Validate input
     $required = array('title', 'description', 'credits');
     foreach ($required as $field) {
@@ -223,26 +226,29 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
     self::$db->query('COMMIT');
 
     $show = new self($show_id);
-    
+
     /**
      * Enable mixcloud upload if requested
      */
     if ($params['mixclouder']) {
       $show->setMeta('upload_state', 'Requested');
     }
-    
+
     return $show;
   }
 
-  public function getNumberOfSeasons() {
+  public function getNumberOfSeasons()
+  {
     return sizeof($this->season_ids);
   }
 
-  public function getAllSeasons() {
+  public function getAllSeasons()
+  {
     $seasons = array();
     foreach ($this->season_ids as $season_id) {
       $seasons[] = MyRadio_Season::getInstance($season_id);
     }
+
     return $seasons;
   }
 
@@ -251,16 +257,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
    * Does not persist in database. Used for updating the cache.
    * @param int $id
    */
-  public function addSeason($id) {
+  public function addSeason($id)
+  {
     $this->season_ids[] = $id;
     $this->updateCacheObject();
   }
 
-  public function getID() {
+  public function getID()
+  {
     return $this->show_id;
   }
 
-  public function getWebpage() {
+  public function getWebpage()
+  {
     return '//ury.org.uk/schedule/shows/' . $this->getID();
   }
 
@@ -268,7 +277,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
    * Get the web url for the Show Photo
    * @return String
    */
-  public function getShowPhoto() {
+  public function getShowPhoto()
+  {
     return $this->photo_url;
   }
 
@@ -276,18 +286,21 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
    * Returns the ID for the type of Show
    * @return int
    */
-  public function getShowType() {
+  public function getShowType()
+  {
     return $this->show_type;
   }
 
   /**
    * Return the primary Genre. Shows generally only have one anyway.
    */
-  public function getGenre() {
+  public function getGenre()
+  {
     return $this->genres[0];
   }
 
-  public function isCurrentUserAnOwner() {
+  public function isCurrentUserAnOwner()
+  {
     if ($this->owner === $_SESSION['memberid']) {
       return true;
     }
@@ -296,10 +309,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
         return true;
       }
     }
+
     return false;
   }
 
-  public function setShowPhoto($tmp_path) {
+  public function setShowPhoto($tmp_path)
+  {
     $result = self::$db->fetch_column('INSERT INTO schedule.show_image_metadata (memberid, approvedid,
       metadata_key_id, metadata_value, show_id) VALUES ($1, $1, $2, $3, $4) RETURNING show_image_metadata_id',
             array($_SESSION['memberid'], self::getMetadataKey('player_image'), 'tmp', $this->getID()))[0];
@@ -337,6 +352,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
    $r = parent::setMeta($string_key, $value, $effective_from, $effective_to,
            'schedule.show_metadata', 'show_id');
    $this->updateCacheObject();
+
    return $r;
   }
 
@@ -344,7 +360,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
    * Sets the Genre, if it hasn't changed
    * @param int $genreid
    */
-  public function setGenre($genreid) {
+  public function setGenre($genreid)
+  {
     if (empty($genreid)) {
       throw new MyRadioException('Genre cannot be empty!', 400);
     }
@@ -367,9 +384,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
    * @param MyRadio_User[] $users An array of Users associated.
    * @param int[] $credittypes The relevant credittypeid for each User.
    */
-  public function setCredits($users, $credittypes, $table = null, $pkey = null) {
+  public function setCredits($users, $credittypes, $table = null, $pkey = null)
+  {
     $r = parent::setCredits($users, $credittypes, 'schedule.show_credit', 'show_id');
     $this->updateCacheObject();
+
     return $r;
   }
 
@@ -377,7 +396,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
    * @todo Document this method
    * @todo Ajax the All Shows page - this isn't a particularly nice query
    */
-  public static function getAllShows($show_type_id = 1) {
+  public static function getAllShows($show_type_id = 1)
+  {
     $show_ids = self::$db->fetch_column(
       'SELECT show_id FROM schedule.show '
       . 'WHERE show_type_id=$1 '
@@ -390,8 +410,9 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
       . ');',
       [$show_type_id]
     );
+
     return array_map(
-      function($show_id) { return self::getInstance($show_id); },
+      function ($show_id) { return self::getInstance($show_id); },
       array_values($show_ids)
     );
   }
@@ -402,7 +423,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
    * @return array An array of 30 Shows that have been put through toDataSource, with the addition of a msg_count key,
    * referring to the number of messages sent to that show.
    */
-  public static function getMostMessaged($date = 0) {
+  public static function getMostMessaged($date = 0)
+  {
     $result = self::$db->fetch_all('SELECT show.show_id, count(*) as msg_count FROM sis2.messages
       LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid = show_season_timeslot.show_season_timeslot_id
       LEFT JOIN schedule.show_season ON show_season_timeslot.show_season_id = show_season.show_season_id
@@ -426,7 +448,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
    *
    * @return MyRadio_Show|null
    */
-  public static function getCurrentShow($time = null) {
+  public static function getCurrentShow($time = null)
+  {
     $timeslot = MyRadio_Timeslot::getCurrentTimeslot($time);
     if (empty($timeslot)) {
       return null;
@@ -441,7 +464,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
    * @return array An array of 30 Timeslots that have been put through toDataSource, with the addition of a msg_count key,
    * referring to the number of messages sent to that show.
    */
-  public static function getMostListened($date = 0) {
+  public static function getMostListened($date = 0)
+  {
     $key = 'stats_show_mostlistened';
     if (($top = self::$cache->get($key)) !== false) {
       return $top;
@@ -465,10 +489,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
     }
 
     self::$cache->set($key, $top, 86400);
+
     return $top;
   }
 
-  public function toDataSource($full = true) {
+  public function toDataSource($full = true)
+  {
     $data = array(
         'show_id' => $this->getID(),
         'title' => $this->getMeta('title'),
@@ -497,8 +523,9 @@ class MyRadio_Show extends MyRadio_Metadata_Common {
     );
 
     if ($full) {
-      $data['credits'] = array_map(function($x) {
+      $data['credits'] = array_map(function ($x) {
         $x['User'] = $x['User']->toDataSource(false);
+
         return $x;
       }, $this->getCredits());
     }

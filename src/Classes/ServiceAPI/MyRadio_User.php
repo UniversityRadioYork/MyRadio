@@ -8,15 +8,15 @@
 /**
  * The user object provides and stores information about a user
  * It is not a singleton for Impersonate purposes
- * 
+ *
  * @version 20130824
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  * @uses \Database
  * @uses \CacheProvider
  */
-class MyRadio_User extends ServiceAPI {
-
+class MyRadio_User extends ServiceAPI
+{
     /**
      * Stores the user's memberid
      * @var int
@@ -146,7 +146,7 @@ class MyRadio_User extends ServiceAPI {
 
     /**
      * Initialised on first request, stores a list of Show IDs the User has.
-     * 
+     *
      * @var int[]
      */
     private $shows;
@@ -154,14 +154,14 @@ class MyRadio_User extends ServiceAPI {
     /**
      * The Authentication Provider that should be used when logging this user in
      * default Null (any)
-     * 
+     *
      * @var String|null
      */
     private $auth_provider;
 
     /**
      * If true, this user needs to change their password at next logon.
-     * 
+     *
      * @var boolean
      */
     private $require_password_change;
@@ -170,8 +170,9 @@ class MyRadio_User extends ServiceAPI {
      * Initiates the User variables
      * @param int $memberid The ID of the member to initialise
      */
-    protected function __construct($memberid) {
-        $this->memberid = (int)$memberid;
+    protected function __construct($memberid)
+    {
+        $this->memberid = (int) $memberid;
         //Get the base data
         $data = self::$db->fetch_one(
                 'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college,
@@ -179,7 +180,7 @@ class MyRadio_User extends ServiceAPI {
                 account_locked, last_login, joined, profile_photo, bio,
                 auth_provider, require_password_change
               FROM member, l_college
-              WHERE memberid=$1 
+              WHERE memberid=$1
               AND member.college = l_college.collegeid
               LIMIT 1', array($memberid));
         if (empty($data)) {
@@ -210,17 +211,17 @@ class MyRadio_User extends ServiceAPI {
       starttime < now() AND (endtime IS NULL OR endtime >= now())',
                 array($memberid));
 
-        $this->payment = self::$db->fetch_all('SELECT year, paid 
-      FROM member_year 
-      WHERE memberid = $1 
+        $this->payment = self::$db->fetch_all('SELECT year, paid
+      FROM member_year
+      WHERE memberid = $1
       ORDER BY year ASC;', array($memberid));
 
         // Get the User's officerships
         $this->officerships = self::$db->fetch_all('SELECT officerid,officer_name,teamid,from_date,till_date
-			 FROM member_officer 
-       INNER JOIN officer 
-       USING (officerid) 
-       WHERE memberid = $1 
+             FROM member_officer
+       INNER JOIN officer
+       USING (officerid)
+       WHERE memberid = $1
        AND type!=\'m\'
        ORDER BY from_date,till_date;', array($memberid));
 
@@ -239,15 +240,17 @@ class MyRadio_User extends ServiceAPI {
 
     /**
      * Returns if the User is currently an Officer
-     * 
+     *
      * @return bool
      */
-    public function isOfficer() {
+    public function isOfficer()
+    {
         foreach ($this->getOfficerships() as $officership) {
             if (empty($officership['till_date']) or $officership['till_date'] >= time()) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -255,7 +258,8 @@ class MyRadio_User extends ServiceAPI {
      * Returns if the user is Studio Trained
      * @return boolean
      */
-    public function isStudioTrained() {
+    public function isStudioTrained()
+    {
         foreach ($this->getAllTraining(true) as $train) {
             if ($train->getID() == 1) {
                 return true;
@@ -269,7 +273,8 @@ class MyRadio_User extends ServiceAPI {
      * Returns if the user is Studio Demoed
      * @return boolean
      */
-    public function isStudioDemoed() {
+    public function isStudioDemoed()
+    {
         foreach ($this->getAllTraining(true) as $train) {
             if ($train->getID() == 2) {
                 return true;
@@ -283,7 +288,8 @@ class MyRadio_User extends ServiceAPI {
      * Returns if the user is a Trainer
      * @return boolean
      */
-    public function isTrainer() {
+    public function isTrainer()
+    {
         foreach ($this->getAllTraining(true) as $train) {
             if ($train->getID() == 3) {
                 return true;
@@ -295,11 +301,12 @@ class MyRadio_User extends ServiceAPI {
 
     /**
      * Get all types of training the User has.
-     * 
-     * @param bool $ignore_revoked If true, Revoked statuses will not be included.
+     *
+     * @param  bool                              $ignore_revoked If true, Revoked statuses will not be included.
      * @return Array[MyRadio_UserTrainingStatus]
      */
-    public function getAllTraining($ignore_revoked = false) {
+    public function getAllTraining($ignore_revoked = false)
+    {
         if ($ignore_revoked) {
             $data = [];
             foreach (MyRadio_UserTrainingStatus::resultSetToObjArray($this->training) as $train) {
@@ -307,6 +314,7 @@ class MyRadio_User extends ServiceAPI {
                     $data[] = $train;
                 }
             }
+
             return $data;
         } else {
             return MyRadio_UserTrainingStatus::resultSetToObjArray($this->training);
@@ -318,12 +326,14 @@ class MyRadio_User extends ServiceAPI {
      * a full member in the current year.
      * @return bool
      */
-    public function isCurrentlyPaid() {
+    public function isCurrentlyPaid()
+    {
         foreach ($this->getAllPayments() as $payment) {
             if ($payment['year'] == CoreUtils::getAcademicYear()) {
                 return $payment['paid'] >= Config::$membership_fee;
             }
         }
+
         return false;
     }
 
@@ -331,7 +341,8 @@ class MyRadio_User extends ServiceAPI {
      * Return whether the User is currently has any shows.
      * @return boolean
      */
-    public function hasShow() {
+    public function hasShow()
+    {
         return sizeof($this->getShows()) !== 0;
     }
 
@@ -339,43 +350,49 @@ class MyRadio_User extends ServiceAPI {
      * Returns the User's memberid
      * @return int The User's memberid
      */
-    public function getID() {
+    public function getID()
+    {
         return $this->memberid;
     }
 
     /**
      * Returns the User's first name
-     * @return string The User's first name 
+     * @return string The User's first name
      */
-    public function getFName() {
+    public function getFName()
+    {
         return $this->fname;
     }
 
     /**
      * Returns the User's surname
-     * @return string The User's surname 
+     * @return string The User's surname
      */
-    public function getSName() {
+    public function getSName()
+    {
         return $this->sname;
     }
 
     /**
      * Returns the User's full name as one string
-     * @return string The User's name 
+     * @return string The User's name
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->fname . ' ' . $this->sname;
     }
 
     /**
      * Returns the User's sex
-     * @return string The User's sex 
+     * @return string The User's sex
      */
-    public function getSex() {
+    public function getSex()
+    {
         return $this->sex;
     }
 
-    public function getLastLogin() {
+    public function getLastLogin()
+    {
         return $this->last_login;
     }
 
@@ -383,7 +400,8 @@ class MyRadio_User extends ServiceAPI {
      * Returns the User's profile Photo (or null if there is not one)
      * @return MyRadio_Photo
      */
-    public function getProfilePhoto() {
+    public function getProfilePhoto()
+    {
         if (!empty($this->profile_photo)) {
             return MyRadio_Photo::getInstance($this->profile_photo);
         } else {
@@ -395,22 +413,24 @@ class MyRadio_User extends ServiceAPI {
      * Returns all the user's active permission flags
      * @return Array
      */
-    public function getPermissions() {
+    public function getPermissions()
+    {
         return $this->permissions;
     }
 
     /**
      * Returns the User's email address. If the email address is null, it is
      * assumed their eduroam address is the preferred contact method.
-     * 
+     *
      * This is the address that emails to the User actually *go to*. It is not
      * the address that should be shown to your standard member.
      * See getPublicEmail().
-     * 
+     *
      * @todo hardcoded domains here.
-     * @return string The User's email 
+     * @return string The User's email
      */
-    public function getEmail() {
+    public function getEmail()
+    {
         if (strstr($this->email, '@ury.org.uk') !== false or strstr($this->email, '@ury.york.ac.uk') !== false) {
             //The user has set an alias or their local mailbox here.
             //Return the local mailbox, or, failing that, eduroam
@@ -439,12 +459,14 @@ class MyRadio_User extends ServiceAPI {
      * official @ury.org.uk, but wants it fowarded, then you set the local_alias
      * to the @ury.org.uk prefix, and email to their personal address.
      */
-    public function getPublicEmail() {
+    public function getPublicEmail()
+    {
         /**
          * This works around a PHP bug:
          * Fatal error: Can't use method return value in write context is thrown if the getter is used directly in empty()
          */
         $alias = $this->getLocalAlias();
+
         return empty($alias) ? $this->getEmail() : $alias . '@ury.org.uk';
     }
 
@@ -452,7 +474,8 @@ class MyRadio_User extends ServiceAPI {
      * Returns the User's eduroam ID, i.e. their @york.ac.uk email address.
      * @return String
      */
-    public function getEduroam() {
+    public function getEduroam()
+    {
         return str_replace('@' . Config::$eduroam_domain, '', $this->eduroam);
     }
 
@@ -460,7 +483,8 @@ class MyRadio_User extends ServiceAPI {
      * Returns the User's college id
      * @return int The User's college id
      */
-    public function getCollegeID() {
+    public function getCollegeID()
+    {
         return $this->collegeid;
     }
 
@@ -468,7 +492,8 @@ class MyRadio_User extends ServiceAPI {
      * Returns the User's college name
      * @return string The User's college
      */
-    public function getCollege() {
+    public function getCollege()
+    {
         return $this->college;
     }
 
@@ -476,22 +501,25 @@ class MyRadio_User extends ServiceAPI {
      * Returns the User's phone number
      * @return int The User's phone
      */
-    public function getPhone() {
+    public function getPhone()
+    {
         return $this->phone;
     }
 
     /**
      * Gets every year the member has paid
      */
-    public function getAllPayments() {
+    public function getAllPayments()
+    {
         return $this->payment;
     }
 
     /**
      * Returns if the User is set to recive email
-     * @return bool if receive_email is set 
+     * @return bool if receive_email is set
      */
-    public function getReceiveEmail() {
+    public function getReceiveEmail()
+    {
         return $this->receive_email;
     }
 
@@ -499,7 +527,8 @@ class MyRadio_User extends ServiceAPI {
      * Returns the User's local server account
      * @return string The User's local_name
      */
-    public function getLocalName() {
+    public function getLocalName()
+    {
         return $this->local_name;
     }
 
@@ -507,7 +536,8 @@ class MyRadio_User extends ServiceAPI {
      * Returns the User's email alias
      * @return string The User's local_alias
      */
-    public function getLocalAlias() {
+    public function getLocalAlias()
+    {
         return $this->local_alias;
     }
 
@@ -516,7 +546,8 @@ class MyRadio_User extends ServiceAPI {
      * @return string The User's uni email
      * @todo This is a duplication of getEduroam.
      */
-    public function getUniAccount() {
+    public function getUniAccount()
+    {
         return $this->eduroam;
     }
 
@@ -524,14 +555,16 @@ class MyRadio_User extends ServiceAPI {
      * Returns if the User's account is locked
      * @return bool if the account is locked
      */
-    public function getAccountLocked() {
+    public function getAccountLocked()
+    {
         return $this->account_locked;
     }
 
     /**
      * Get all the User's past, present and future officerships
      */
-    public function getOfficerships() {
+    public function getOfficerships()
+    {
         return $this->officerships;
     }
 
@@ -539,7 +572,8 @@ class MyRadio_User extends ServiceAPI {
      * Gets the User's MyRadio Profile page URL
      * @return String
      */
-    public function getURL() {
+    public function getURL()
+    {
         return CoreUtils::makeURL('Profile', 'view', array('memberid' => $this->getID()));
     }
 
@@ -547,37 +581,41 @@ class MyRadio_User extends ServiceAPI {
      * Gets the User's bio
      * @return String
      */
-    public function getBio() {
+    public function getBio()
+    {
         return $this->bio;
     }
 
     /**
      * Get the User's auth provider
-     * 
+     *
      * @return String
      */
-    public function getAuthProvider() {
+    public function getAuthProvider()
+    {
         return $this->auth_provider;
     }
 
     /**
      * Get whether the user needs to change their password
-     * 
+     *
      * @return boolean
      */
-    public function getRequirePasswordChange() {
+    public function getRequirePasswordChange()
+    {
         return $this->require_password_change;
     }
 
     /**
      * Returns an array of Shows which the User owns or is an active
      * credit in. Guaranteed order by first broadcast date of the show.
-     * 
-     * @param int $show_type_id
+     *
+     * @param  int   $show_type_id
      * @return Array an array of Show objects attached to the given user
      */
-    public function getShows($show_type_id = 1) {
-        $this->shows = self::$db->fetch_column('SELECT show_id FROM schedule.show 
+    public function getShows($show_type_id = 1)
+    {
+        $this->shows = self::$db->fetch_column('SELECT show_id FROM schedule.show
       WHERE memberid=$1 OR show_id IN
         (SELECT show_id FROM schedule.show_credit
         WHERE creditid=$1 AND effective_from <= NOW() AND
@@ -595,31 +633,34 @@ class MyRadio_User extends ServiceAPI {
                 $return[] = $show;
             }
         }
+
         return $return;
     }
 
     /**
      * Returns if the user has the given permission.
-     * 
+     *
      * Always use CoreUtils::hasAuth when working with the current user.
-     * 
-     * @param int $authid The permission to test for
-     * @return boolean Whether this user has the requested permission 
+     *
+     * @param  int     $authid The permission to test for
+     * @return boolean Whether this user has the requested permission
      */
-    public function hasAuth($authid) {
+    public function hasAuth($authid)
+    {
         return in_array($authid, $this->permissions);
     }
 
     /**
      * Searches for Users with a name starting with $name
-     * @param String $name The name to search for. If there is a space, it is assumed the second word is the surname
-     * @param int $limit The maximum number of Users to return. -1 uses the ajax_limit_default setting.
-     * @return Array A 2D Array where every value of the first dimension is an Array as follows:<br>
-     * memberid: The unique id of the User<br>
-     * fname: The actual first name of the User<br>
-     * sname: The actual last name of the User
+     * @param  String $name  The name to search for. If there is a space, it is assumed the second word is the surname
+     * @param  int    $limit The maximum number of Users to return. -1 uses the ajax_limit_default setting.
+     * @return Array  A 2D Array where every value of the first dimension is an Array as follows:<br>
+     *                      memberid: The unique id of the User<br>
+     *                      fname: The actual first name of the User<br>
+     *                      sname: The actual last name of the User
      */
-    public static function findByName($name, $limit = -1) {
+    public static function findByName($name, $limit = -1)
+    {
         if ($limit == -1) {
             $limit = Config::$ajax_limit_default;
         }
@@ -637,7 +678,8 @@ class MyRadio_User extends ServiceAPI {
         }
     }
 
-    public static function getInstance($itemid = -1) {
+    public static function getInstance($itemid = -1)
+    {
         if ($itemid === -1) {
             if (isset($_SESSION['memberid'])) {
                 $itemid = $_SESSION['memberid'];
@@ -645,15 +687,17 @@ class MyRadio_User extends ServiceAPI {
                 throw new MyRadioException('Trying to get current user info with no current user');
             }
         }
+
         return parent::getInstance($itemid);
     }
-    
+
     /**
      * Returns the current logged in user, or failing that, the System User.
-     * 
+     *
      * @return MyRadio_User
      */
-    public static function getCurrentOrSystemUser() {
+    public static function getCurrentOrSystemUser()
+    {
         if (isset($_SESSION['memberid'])) {
             return self::getInstance();
         } else {
@@ -664,11 +708,12 @@ class MyRadio_User extends ServiceAPI {
     /**
      * Runs a super-long pSQL query that returns the information used to generate the Profile Timeline
      * @return Array A 2D Array where every value of the first dimension is an Array as follows:<br>
-     * timestamp: When the event occurred, formatted as d/m/Y<br>
-     * message: A text description of the event<br>
-     * photo: The photoid of a thumbnail to render with the event
+     *               timestamp: When the event occurred, formatted as d/m/Y<br>
+     *               message: A text description of the event<br>
+     *               photo: The photoid of a thumbnail to render with the event
      */
-    public function getTimeline() {
+    public function getTimeline()
+    {
         $events = array();
 
         //Get Officership history
@@ -735,12 +780,13 @@ class MyRadio_User extends ServiceAPI {
     }
 
     /**
-     * 
+     *
      * @param String $paramName The key to update, e.g. account_locked.
-     * Don't be silly and try to set memberid. Bad things will happen.
-     * @param mixed $value The value to set the param to. Type depends on $paramName.
+     *                          Don't be silly and try to set memberid. Bad things will happen.
+     * @param mixed  $value     The value to set the param to. Type depends on $paramName.
      */
-    private function setCommonParam($paramName, $value) {
+    private function setCommonParam($paramName, $value)
+    {
         /**
          * You won't believe how annoying psql can be about '' already being used on a unique key.
          */
@@ -772,38 +818,43 @@ class MyRadio_User extends ServiceAPI {
 
     /**
      * Sets the User's account locked status.
-     * 
+     *
      * If a User's account is locked, access to all URY services is blocked by
      * MyRadio and IMAP.
-     * 
-     * @param bool $bool True for Locked, False for Unlocked. Default True.
+     *
+     * @param  bool         $bool True for Locked, False for Unlocked. Default True.
      * @return MyRadio_User
      */
-    public function setAccountLocked($bool = true) {
+    public function setAccountLocked($bool = true)
+    {
         $this->setCommonParam('account_locked', $bool);
+
         return $this;
     }
 
     /**
      * Set's a User's college ID.
-     * 
+     *
      * College IDs can be acquired using User::getColleges().
-     * 
-     * @param int $college_id The ID of the college.
+     *
+     * @param  int          $college_id The ID of the college.
      * @return MyRadio_User
      */
-    public function setCollegeID($college_id) {
+    public function setCollegeID($college_id)
+    {
         $this->setCommonParam('collegeid', $college_id);
+
         return $this;
     }
 
     /**
      * Set the user's eduroam address
-     * 
-     * @param type $eduroam The User's UoY address, i.e. abc123@york.ac.uk (@york.ac.uk optional)
+     *
+     * @param  type         $eduroam The User's UoY address, i.e. abc123@york.ac.uk (@york.ac.uk optional)
      * @return MyRadio_User
      */
-    public function setEduroam($eduroam) {
+    public function setEduroam($eduroam)
+    {
         //Require the user to be part of this eduroam domain
         if (strstr($eduroam, '@') !== false &&
                 strstr($eduroam, '@'.Config::$eduroam_domain) === false) {
@@ -811,7 +862,7 @@ class MyRadio_User extends ServiceAPI {
         This is a basic validation filter, so if there is a valid reason for another account to be here, this check
         can be removed.', 400);
         }
-        
+
         //Remove the domain if it is set
         $eduroam = str_replace('@'.Config::$eduroam_domain, '', $eduroam);
 
@@ -821,16 +872,18 @@ class MyRadio_User extends ServiceAPI {
             throw new MyRadioException('The eduroam account ' . $eduroam . ' is already allocated to another User.', 500);
         }
         $this->setCommonParam('eduroam', $eduroam);
+
         return $this;
     }
 
     /**
      * Sets the User's primary contact Email. If null, eduroam is used.
-     * @param String $email
+     * @param  String           $email
      * @return MyRadio_User
      * @throws MyRadioException
      */
-    public function setEmail($email) {
+    public function setEmail($email)
+    {
         if ($email === '') {
             $email = null;
         }
@@ -844,118 +897,136 @@ class MyRadio_User extends ServiceAPI {
             throw new MyRadioException('The email account ' . $email . ' is already allocated to another User.', 500);
         }
         $this->setCommonParam('email', $email);
+
         return $this;
     }
 
     /**
      * Sets the User's first name
-     * @param String $fname
+     * @param  String           $fname
      * @return MyRadio_User
      * @throws MyRadioException
      */
-    public function setFName($fname) {
+    public function setFName($fname)
+    {
         if (empty($fname)) {
             throw new MyRadioException('Oh come on, everybody has a name.', 400);
         }
         $this->setCommonParam('fname', $fname);
+
         return $this;
     }
 
     /**
      * Set the User's official @ury.org.uk prefix. Usually fname.sname
-     * @param String $alias
+     * @param  String           $alias
      * @return MyRadio_User
      * @throws MyRadioException
      */
-    public function setLocalAlias($alias) {
+    public function setLocalAlias($alias)
+    {
         if ($alias !== $this->local_alias && self::findByEmail($alias) !== null) {
             throw new MyRadioException('That Mailbox Name is already in use. Please choose another.', 500);
         }
         $this->setCommonParam('local_alias', $alias);
+
         return $this;
     }
 
     /**
      * Set the User's server account name
-     * @param String $name
+     * @param  String           $name
      * @return MyRadio_User
      * @throws MyRadioException
      */
-    public function setLocalName($name) {
+    public function setLocalName($name)
+    {
         if ($name !== $this->local_name && self::findByEmail($name) !== null) {
             throw new MyRadioException('That Mailbox Alias is already in use. Please choose another.', 500);
         }
         $this->setCommonParam('local_name', $name);
+
         return $this;
     }
 
     /**
      * Set the User's phone number
-     * @param String $phone A string of numbers (because leading 0)
+     * @param  String           $phone A string of numbers (because leading 0)
      * @return MyRadio_User
      * @throws MyRadioException
      */
-    public function setPhone($phone) {
+    public function setPhone($phone)
+    {
         //Clear whitespace
         $phone = preg_replace('/\s/', '', $phone);
         if (!empty($phone) && strlen($phone) !== 11) {
             throw new MyRadioException('A phone number should have 11 digits.', 400);
         }
         $this->setCommonParam('phone', $phone);
+
         return $this;
     }
 
     /**
      * Set the User's profile photo
-     * @param MyRadio_Photo $photo
+     * @param  MyRadio_Photo $photo
      * @return MyRadio_User
      */
-    public function setProfilePhoto(MyRadio_Photo $photo) {
+    public function setProfilePhoto(MyRadio_Photo $photo)
+    {
         $this->setCommonParam('profile_photo', $photo->getID());
+
         return $this;
     }
 
     /**
      * Set whether the User should receive Emails
-     * @param boolean $bool
+     * @param  boolean      $bool
      * @return MyRadio_User
      */
-    public function setReceiveEmail($bool = true) {
+    public function setReceiveEmail($bool = true)
+    {
         $this->setCommonParam('receive_email', $bool);
+
         return $this;
     }
 
     /**
      * Set the User's preferred Auth provider
-     * @param String $provider
+     * @param  String       $provider
      * @return MyRadio_User
      */
-    public function setAuthProvider($provider = null) {
+    public function setAuthProvider($provider = null)
+    {
         $this->setCommonParam('auth_provider', $provider);
+
         return $this;
     }
 
     /**
      * Set the User's last name.
-     * @param String $sname
+     * @param  String           $sname
      * @return MyRadio_User
      * @throws MyRadioException
      */
-    public function setSName($sname) {
+    public function setSName($sname)
+    {
         if (empty($sname)) {
             throw new MyRadioException('Yes, your last name is a thing.', 400);
         }
         $this->setCommonParam('sname', $sname);
+
         return $this;
     }
 
     /**
      * Set the User's Gender
-     * @param char $initial (m)ale, (f)emale or (o)ther
+     * @param  char             $initial (m)ale, (f)emale or (o)ther
      * @return MyRadio_User
      * @throws MyRadioException
      */
-    public function setSex($initial = 'o') {
+    public function setSex($initial = 'o')
+    {
         $initial = strtolower($initial);
         if (!in_array($initial, array('m', 'f', 'o'))) {
             throw new MyRadioException('You can be either "(M)ale", "(F)emale", or "(O)ther". You can\'t be none of these,'
@@ -968,15 +1039,18 @@ class MyRadio_User extends ServiceAPI {
 
     /**
      * Set the User's HTML biography.
-     * @param String $bio
+     * @param  String       $bio
      * @return MyRadio_User
      */
-    public function setBio($bio) {
+    public function setBio($bio)
+    {
         $this->setCommonParam('bio', $bio);
+
         return $this;
     }
 
-    public function setPayment($amount, $year = null) {
+    public function setPayment($amount, $year = null)
+    {
         if ($year === null) {
             $year = CoreUtils::getAcademicYear();
         }
@@ -992,6 +1066,7 @@ class MyRadio_User extends ServiceAPI {
                         . ' WHERE year=$2 AND memberid=$3', [(float) $amount, $year, $this->getID()]);
                 $this->payment[$k]['paid'] = $amount;
                 $this->updateCacheObject();
+
                 return;
             }
         }
@@ -1001,6 +1076,7 @@ class MyRadio_User extends ServiceAPI {
                 . ' VALUES ($1, $2, $3)', [(float) $amount, $year, $this->getID()]);
         $this->payment[] = ['year' => $year, 'amount' => (float) $amount];
         $this->updateCacheObject();
+
         return;
     }
 
@@ -1008,7 +1084,8 @@ class MyRadio_User extends ServiceAPI {
      * Sets the User's last login time to right now.
      * Use this when they're being logged in (weird that)
      */
-    public function updateLastLogin() {
+    public function updateLastLogin()
+    {
         $this->last_login = CoreUtils::getTimestamp();
         self::$db->query('UPDATE public.member SET last_login=$1'
                 . ' WHERE memberid=$2', [$this->last_login, $this->getID()]);
@@ -1017,10 +1094,11 @@ class MyRadio_User extends ServiceAPI {
 
     /**
      * Searched for the user with the given email address, returning the User if they exist, or null if it fails.
-     * @param String $email
+     * @param  String            $email
      * @return null|MyRadio_User
      */
-    public static function findByEmail($email) {
+    public static function findByEmail($email)
+    {
         if (empty($email)) {
             return null;
         }
@@ -1039,11 +1117,12 @@ class MyRadio_User extends ServiceAPI {
 
     /**
      * Please use MyRadio_TrainingStatus.
-     * 
+     *
      * @deprecated
      * @return MyRadio_User[]
      */
-    public static function findAllTrained() {
+    public static function findAllTrained()
+    {
         self::wakeup();
         trigger_error('Use of deprecated method User::findAllTrained.', E_USER_WARNING);
 
@@ -1061,11 +1140,12 @@ class MyRadio_User extends ServiceAPI {
 
     /**
      * Please use MyRadio_TrainingStatus.
-     * 
+     *
      * @deprecated
      * @return MyRadio_User[]
      */
-    public static function findAllDemoed() {
+    public static function findAllDemoed()
+    {
         self::wakeup();
         trigger_error('Use of deprecated method User::findAllDemoed.', E_USER_WARNING);
 
@@ -1082,11 +1162,12 @@ class MyRadio_User extends ServiceAPI {
 
     /**
      * Please use MyRadio_TrainingStatus.
-     * 
+     *
      * @deprecated
      * @return MyRadio_User[]
      */
-    public static function findAllTrainers() {
+    public static function findAllTrainers()
+    {
         self::wakeup();
         trigger_error('Use of deprecated method User::findAllTrainers.', E_USER_WARNING);
 
@@ -1106,7 +1187,8 @@ class MyRadio_User extends ServiceAPI {
      * Returns an Array of all mappings for official aliases to emails go to.
      * @return Array[] [[from, to]]
      */
-    public static function getAllAliases() {
+    public static function getAllAliases()
+    {
         $users = self::resultSetToObjArray(self::$db->fetch_column(
                                 'SELECT memberid FROM public.member WHERE local_alias IS NOT NULL'));
 
@@ -1126,7 +1208,8 @@ class MyRadio_User extends ServiceAPI {
     /**
      * Gets the edit form for this User, with the permissions available for the current User
      */
-    public function getEditForm() {
+    public function getEditForm()
+    {
         if ($this->getID() !== MyRadio_User::getInstance()->getID() && !MyRadio_User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
             throw new MyRadioException(MyRadio_User::getInstance() . ' tried to edit ' . $this . '!');
         }
@@ -1237,11 +1320,11 @@ class MyRadio_User extends ServiceAPI {
                     ->addField(new MyRadioFormField('sec_server_close', MyRadioFormField::TYPE_SECTION_CLOSE));
         }
 
-
         return $form;
     }
 
-    public static function getColleges() {
+    public static function getColleges()
+    {
         return self::$db->fetch_all('SELECT collegeid AS value, descr AS text FROM public.l_college');
     }
 
@@ -1249,20 +1332,21 @@ class MyRadio_User extends ServiceAPI {
      * Create a new User, returning the user. At least one of Email OR eduroam
      * must be filled in. Password will be generated automatically and emailed to
      * the user.
-     * 
-     * @param string $fname The User's first name.
-     * @param string $sname The User's last name.
-     * @param string $eduroam The User's @york.ac.uk address.
-     * @param char $sex The User's gender.
-     * @param int $collegeid The User's college.
-     * @param string $email The User's non @york.ac.uk address.
-     * @param string $phone The User's phone number.
-     * @param bool $receive_email Whether the User should receive emails.
-     * @param float $paid How much the User has paid this Membership Year
+     *
+     * @param  string           $fname         The User's first name.
+     * @param  string           $sname         The User's last name.
+     * @param  string           $eduroam       The User's @york.ac.uk address.
+     * @param  char             $sex           The User's gender.
+     * @param  int              $collegeid     The User's college.
+     * @param  string           $email         The User's non @york.ac.uk address.
+     * @param  string           $phone         The User's phone number.
+     * @param  bool             $receive_email Whether the User should receive emails.
+     * @param  float            $paid          How much the User has paid this Membership Year
      * @return MyRadio_User
      * @throws MyRadioException
      */
-    public static function create($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00) {
+    public static function create($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00)
+    {
         /**
          * Deal with the UNIQUE constraint on the DB table.
          */
@@ -1279,7 +1363,7 @@ class MyRadio_User extends ServiceAPI {
         if (empty($eduroam) && empty($email)) {
             throw new MyRadioException('At least one of eduroam or email must be provided.', 400);
         }
-        
+
         //Require the user to be part of this eduroam domain
         if (strstr($eduroam, '@') !== false &&
                 strstr($eduroam, '@'.Config::$eduroam_domain) === false) {
@@ -1287,7 +1371,7 @@ class MyRadio_User extends ServiceAPI {
         This is a basic validation filter, so if there is a valid reason for another account to be here, this check
         can be removed.', 400);
         }
-        
+
         //Remove the domain if it is set
         $eduroam = str_replace('@'.Config::$eduroam_domain, '', $eduroam);
 
@@ -1357,15 +1441,17 @@ class MyRadio_User extends ServiceAPI {
 
     /**
      * Update a User's account so that they are active for the current academic year.
-     * 
+     *
      * Activating a membership re-activates basic access to web services, and
      * renews their mailing list subscriptions.
-     * 
-     * @param int $paid
+     *
+     * @param  int     $paid
      * @return boolean
      */
-    public function activateMemberThisYear($paid = 0) {
+    public function activateMemberThisYear($paid = 0)
+    {
         self::$db->query('INSERT INTO public.member_year (memberid, year, paid) VALUES ($1, $2, $3)', array($this->getID(), CoreUtils::getAcademicYear(), $paid));
+
         return true;
     }
 
@@ -1374,7 +1460,8 @@ class MyRadio_User extends ServiceAPI {
      * @throws MyRadioException
      * @return MyRadioForm
      */
-    public static function getQuickAddForm() {
+    public static function getQuickAddForm()
+    {
         if (!MyRadio_User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
             throw new MyRadioException(MyRadio_User::getInstance() . ' tried to add members!');
         }
@@ -1429,7 +1516,8 @@ class MyRadio_User extends ServiceAPI {
      * @throws MyRadioException
      * @return MyRadioForm
      */
-    public static function getBulkAddForm() {
+    public static function getBulkAddForm()
+    {
         if (!MyRadio_User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
             throw new MyRadioException(MyRadio_User::getInstance() . ' tried to add members!');
         }
@@ -1470,7 +1558,8 @@ class MyRadio_User extends ServiceAPI {
         return $form;
     }
 
-    public function toDataSource($full = true) {
+    public function toDataSource($full = true)
+    {
         $data = [
             'memberid' => $this->getID(),
             'locked' => $this->getAccountLocked(),

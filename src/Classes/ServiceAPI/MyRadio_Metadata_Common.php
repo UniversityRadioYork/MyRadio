@@ -19,7 +19,8 @@
  * @uses \Database
  *
  */
-abstract class MyRadio_Metadata_Common extends ServiceAPI {
-  use MyRadio_Creditable;
-  use MyRadio_MetadataSubject;
+abstract class MyRadio_Metadata_Common extends ServiceAPI
+{
+	use MyRadio_Creditable;
+	use MyRadio_MetadataSubject;
 }

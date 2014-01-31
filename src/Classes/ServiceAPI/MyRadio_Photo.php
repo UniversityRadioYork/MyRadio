@@ -7,13 +7,14 @@
 
 /**
  * The Photo class stores and manages information about a URY Photo
- * 
+ *
  * @version 20130731
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  * @uses \Database
  */
-class MyRadio_Photo extends ServiceAPI {
+class MyRadio_Photo extends ServiceAPI
+{
   /**
    * Stores the primary key for the Photo
    * @var int
@@ -31,7 +32,7 @@ class MyRadio_Photo extends ServiceAPI {
    * @var int
    */
   private $date_added;
-  
+
   /**
    * The file extension of the photo
    * @var String
@@ -42,12 +43,14 @@ class MyRadio_Photo extends ServiceAPI {
    * Initiates the MyRadio_Photo object
    * @param int $photoid The ID of the Photo to initialise
    */
-  protected function __construct($photoid) {
+  protected function __construct($photoid)
+  {
     $this->photoid = $photoid;
 
     $result = self::$db->fetch_one('SELECT * FROM myury.photos WHERE photoid=$1', array($photoid));
     if (empty($result)) {
       throw new MyRadioException('Photo ' . $photoid . ' does not exist!');
+
       return null;
     }
 
@@ -55,12 +58,13 @@ class MyRadio_Photo extends ServiceAPI {
     $this->date_added = strtotime($result['date_added']);
     $this->format = $result['format'];
   }
-  
+
   /**
    * Get array of information about the object.
    * @return Array
    */
-  public function toDataSource() {
+  public function toDataSource()
+  {
     return [
         'photoid' => $this->getID(),
         'date_added' => CoreUtils::happyTime($this->getDateAdded()),
@@ -68,36 +72,40 @@ class MyRadio_Photo extends ServiceAPI {
         'owner' => $this->getOwner()->getID()
     ];
   }
-  
+
   /**
    * Get the time the Photo was created
    * @return int
    */
-  public function getDateAdded() {
+  public function getDateAdded()
+  {
     return $this->date_added;
   }
-  
+
   /**
    * Get the format (file extension) of the Photo.
    * @return String
    */
-  public function getFormat() {
+  public function getFormat()
+  {
     return $this->format;
   }
-  
+
   /**
    * Get the unique ID of this Photo
    * @return int
    */
-  public function getID() {
+  public function getID()
+  {
     return $this->photoid;
   }
-  
+
   /**
    * Get the User that owns this Photo
    * @return MyRadio_User
    */
-  public function getOwner() {
+  public function getOwner()
+  {
     return $this->owner;
   }
 
@@ -105,30 +113,33 @@ class MyRadio_Photo extends ServiceAPI {
    * Get the web URL for loading this Photo
    * @return String
    */
-  public function getURL() {
+  public function getURL()
+  {
     return Config::$public_media_uri.'/image_meta/MyRadioImageMetadata/'.$this->getID().'.'.$this->format;
   }
-  
+
   /**
    * Get the file system path to the Photo
    * @return String
    */
-  public function getURI() {
+  public function getURI()
+  {
     return Config::$public_media_path.'/image_meta/MyRadioImageMetadata/'.$this->getID().'.'.$this->format;
   }
-  
+
   /**
    * Add a Photo
    * @param String $tmp_file The path to the temporary file that is the image.
    * @return MyRadio_Photo
    */
-  public static function create($tmp_file) {
+  public static function create($tmp_file)
+  {
     if (!file_exists($tmp_file)) {
       throw new MyRadioException('Photo path '.$tmp_file.' does not exist!', 400);
     }
-    
+
     $format = explode('/',finfo_file(finfo_open(FILEINFO_MIME_TYPE), $tmp_file))[1];
-    
+
     $result = self::$db->fetch_column('INSERT INTO myury.photos (owner, format) VALUES ($1, $2) RETURNING photoid',
       [MyRadio_User::getInstance()->getID(), $format]);
     $id = $result[0];
@@ -137,6 +148,7 @@ class MyRadio_Photo extends ServiceAPI {
       self::$db->query('DELETE FROM myury.photos WHERE photoid=$1', [$id]);
       throw new MyRadioException('Failed to move new Photo from '.$tmp_file.' to '.$photo->getURI().'. Are permissions for the destination right?', 500);
     }
+
     return $photo;
   }
 

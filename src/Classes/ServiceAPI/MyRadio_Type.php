@@ -8,13 +8,14 @@
  * The Type abstract class implements the URY database 'type' pattern, wherein
  * items describing types/categories of other items have a machine-readable
  * name and human-readable description.
- * 
+ *
  * @version 20130426
  * @author Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Core
  * @uses \Database
  */
-abstract class MyRadio_Type extends ServiceAPI {
+abstract class MyRadio_Type extends ServiceAPI
+{
   /**
    * The machine-readable name of the type.
    * @var String
@@ -34,7 +35,8 @@ abstract class MyRadio_Type extends ServiceAPI {
    * @param $description  The human-readable description/descriptive name of
    *                      the type.
    */
-  protected function construct_type($name, $description) {
+  protected function construct_type($name, $description)
+  {
     $this->name = $name;
     $this->description = $description;
   }
@@ -44,7 +46,8 @@ abstract class MyRadio_Type extends ServiceAPI {
    *
    * @return The name.
    */
-  public function getName() {
+  public function getName()
+  {
     return $this->name;
   }
 
@@ -53,7 +56,8 @@ abstract class MyRadio_Type extends ServiceAPI {
    *
    * @return The description.
    */
-  public function getDescription() {
+  public function getDescription()
+  {
     return $this->description;
   }
 }
