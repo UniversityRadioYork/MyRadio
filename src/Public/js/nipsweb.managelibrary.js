@@ -97,26 +97,32 @@ $(document).ready(function() {
 
       // Build a list of tracks from the lastfm responses and store it in a drop
       // down list
-      var select = $('<select></select>')
-      .attr('name', response.fileid).attr('id','centralupload-'+i);
-      $.each(response.analysis, function(key, value) {
-        select.append('<option value="'+value.title+':-:'+value.artist+'">'+value.title+' by '+value.artist+'</option>');
-      });
+      var select = "";
+      if (!manual_track) {
+          select = $('<select></select>')    
+          .attr('name', response.fileid).attr('id','centralupload-'+i);        
+          $.each(response.analysis, function(key, value) {        
+          select.append('<option value="'+value.title+':-:'+value.artist+'">'+value.title+' by '+value.artist+'</option>');        
+          });        
+      }
 
       // The submit part
       var submit = $('<a href="javascript:">Save to Database</a>').click(function() {
         console.log('Saving track to database');
 
-        // Get track info from select box or manual entry div
-        var select = null;
-
         if (!manual_track) {
-            select = $(this).parent().find('select').val();
+            var select = $(this).parent().find('select').val();
             track_fileid = $(this).parent().find('select').attr('name');
             track_title = select.replace(/:-:.*$/,'');
             track_artist = select.replace(/^.*:-:/,'');
             track_album = "FROM_LASTFM";
             track_position = "FROM_LASTFM";
+        } else {
+            track_fileid = response.fileid;
+            track_title = document.getElementById('track-manual-entry-title').val();
+            track_artist = document.getElementById('track-manual-entry-artist').val();
+            track_album = document.getElementById('track-manual-entry-album').val();
+            track_position = document.getElementById('track-manual-entry-position').val();
         }
  
         $(this).hide().parent().append('<div id="confirminator-'+(fileid.replace(/\.mp3/,''))+'">Saving (this may take a few minutes)...</div>');
