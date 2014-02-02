@@ -93,6 +93,7 @@ $(document).ready(function() {
       var track_title = "";
       var track_artist = "";
       var track_album = "";
+      var track_position = "";
 
       // Build a list of tracks from the lastfm responses and store it in a drop
       // down list
@@ -115,6 +116,7 @@ $(document).ready(function() {
             track_title = select.replace(/:-:.*$/,'');
             track_artist = select.replace(/^.*:-:/,'');
             track_album = "FROM_LASTFM";
+            track_position = "FROM_LASTFM";
         }
  
         $(this).hide().parent().append('<div id="confirminator-'+(fileid.replace(/\.mp3/,''))+'">Saving (this may take a few minutes)...</div>');
@@ -124,6 +126,7 @@ $(document).ready(function() {
             title: track_title,
             artist: track_artist,
             album: track_album 
+            position: track_position 
             fileid: track_fileid
           },
           dataType: 'json',
