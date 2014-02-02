@@ -13,8 +13,8 @@
  * @uses \Database
  * @uses \MyRadio_Show
  */
-class MyRadio_Season extends MyRadio_Metadata_Common {
-
+class MyRadio_Season extends MyRadio_Metadata_Common
+{
   private $season_id;
   private $show_id;
   private $term_id;
@@ -25,7 +25,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
   private $requested_weeks = [];
   private $season_num;
 
-  protected function __construct($season_id) {
+  protected function __construct($season_id)
+  {
     $this->season_id = $season_id;
     //Init Database
     self::initDB();
@@ -124,7 +125,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
    *
    * @throws MyURYException
    */
-  public static function apply($params = array()) {
+  public static function apply($params = array())
+  {
     //Validate input
     $required = array('show_id', 'weeks', 'times');
     foreach ($required as $field) {
@@ -208,12 +210,14 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
   /**
    * Get a list of all Seasons that were for the current term, or
    * if we are not currently in a Term, the most recenly finished term.
-   * 
+   *
    * @return MyRadio_Season[]
    */
-  public static function getAllSeasonsInLatestTerm() {
+  public static function getAllSeasonsInLatestTerm()
+  {
     $result = self::$db->fetch_column('SELECT termid FROM public.terms '
             . 'WHERE start <= NOW() ORDER BY finish DESC LIMIT 1');
+
     return self::getAllSeasonsInTerm($result[0]);
   }
 
@@ -223,7 +227,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
    * @param int $term_id
    * @return MyRadio_Season[]
    */
-  public static function getAllSeasonsInTerm($term_id) {
+  public static function getAllSeasonsInTerm($term_id)
+  {
     return self::resultSetToObjArray(self::$db->fetch_column(
                             'SELECT show_season_id FROM schedule.show_season WHERE termid=$1', [$term_id]));
   }
@@ -241,7 +246,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common {
    * @param String $reason Why the application was rejected
    * @param bool $notify_user If true, all creditors will be notified about the rejection.
    */
-  public function reject($reason, $notify_user = true) {
+  public function reject($reason, $notify_user = true)
+  {
     if ($this->submitted == null) {
       return false;
     }
@@ -260,7 +266,7 @@ Your application for a season of a show was rejected by our programming team, fo
 $reason
 
 You can reapply online at any time, or for more information, email pc@ury.org.uk.
-              
+
 ~ {Config::$short_name} Scheduling Legume
 EOT
       );
@@ -269,7 +275,8 @@ EOT
     self::$db->query('COMMIT');
   }
 
-  public function getMeta($meta_string) {
+  public function getMeta($meta_string)
+  {
     $key = self::getMetadataKey($meta_string);
     if (isset($this->meta[$key])) {
       return $this->meta[$key];
@@ -284,7 +291,8 @@ EOT
    *
    * @return Array[]
    */
-  public function getCredits() {
+  public function getCredits()
+  {
     return parent::getCredits($this->getShow());
   }
 
@@ -305,49 +313,61 @@ EOT
    * @param null $table No action. Used for compatibility with parent.
    * @param null $pkey No action. Used for compatibility with parent.
    */
-  public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null) {
+  public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null)
+  {
     $r = parent::setMeta($string_key, $value, $effective_from, $effective_to, 'schedule.season_metadata', 'show_season_id');
     $this->updateCacheObject();
+
     return $r;
   }
 
-  public function getID() {
+  public function getID()
+  {
     return $this->season_id;
   }
 
   /**
    * @return MyRadio_Show
    */
-  public function getShow() {
+  public function getShow()
+  {
     return MyRadio_Show::getInstance($this->show_id);
   }
 
-  public function getSubmittedTime() {
+  public function getSubmittedTime()
+  {
     return CoreUtils::happyTime($this->submitted);
   }
 
-  public function getWebpage() {
+  public function getWebpage()
+  {
     return 'http://ury.org.uk/show/' . $this->getShow()->getID() . '/' . $this->getID();
   }
 
-  public function getRequestedTimes() {
+  public function getRequestedTimes()
+  {
     $return = array();
     foreach ($this->requested_times as $time) {
       $return[] = $this->formatTimeHuman($time);
     }
+
     return $return;
   }
 
-  private function formatTimeHuman($time) {
+  private function formatTimeHuman($time)
+  {
     date_default_timezone_set('UTC');
     $stime = date(' H:i', $time['start_time']);
     $etime = date('H:i', $time['start_time'] + $time['duration']);
     date_default_timezone_set('Europe/London');
+
     return self::getDayNameFromID($time['day']) . $stime . ' - ' . $etime;
   }
 
-  private function getDayNameFromID($dow) {
+  private function getDayNameFromID($dow)
+  {
     $days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
     return $days[$dow];
   }
 
@@ -360,7 +380,8 @@ EOT
    * @todo The Warnings part above
    * @todo Discuss efficiency of this algorithm
    */
-  public function getRequestedTimesAvail() {
+  public function getRequestedTimesAvail()
+  {
     $return = array();
     foreach ($this->requested_times as $time) {
       //Check for existence of shows in requested times
@@ -415,10 +436,12 @@ EOT
         $return[] = array('time' => self::formatTimeHuman($time), 'conflict' => false, 'info' => '');
       }
     }
+
     return $return;
   }
 
-  public function getRequestedWeeks() {
+  public function getRequestedWeeks()
+  {
     return $this->requested_weeks;
   }
 
@@ -427,11 +450,13 @@ EOT
    * Seasons that don't have any timeslots scheduled do not count toward this value.
    * @return int
    */
-  public function getSeasonNumber() {
+  public function getSeasonNumber()
+  {
     return $this->season_num;
   }
 
-  public function toDataSource($full = true) {
+  public function toDataSource($full = true)
+  {
     return array_merge($this->getShow()->toDataSource(false), array(
         'id' => $this->getID(),
         'season_num' => $this->getSeasonNumber(),
@@ -475,7 +500,8 @@ EOT
    * @todo Email the user notifying them of scheduling
    * @todo Verify the timeslot is free before scheduling
    */
-  public function schedule($params) {
+  public function schedule($params)
+  {
     date_default_timezone_set('UTC');
     //Verify that the input time is valid
     if (!isset($params['time']) or !is_numeric($params['time'])) {
@@ -560,9 +586,9 @@ EOT
      */
     $message = "
 Hello,
-  
+
   Please note that one of your shows has been allocated the following timeslots on the ".Config::$short_name." Schedule:
-  
+
 $times
 
   Remember that except in exceptional circumstances, you must give at least 48 hours notice for cancelling your show as part of your presenter contract. If you do not do this for two shows in one season, all other shows are forfeit and may be cancelled.
@@ -581,7 +607,8 @@ $times
   /**
    * Deletes all future occurances of a Timeslot for this Season
    */
-  public function cancelRestOfSeason() {
+  public function cancelRestOfSeason()
+  {
     //Get a list of timeslots that will be cancelled and email the creditors
     $timeslots = $this->getFutureTimeslots();
     if (empty($timeslots))
@@ -616,7 +643,8 @@ $times
    * duration
    * @todo Refactor to return MyRadio_Timeslot objects
    */
-  public function getFutureTimeslots() {
+  public function getFutureTimeslots()
+  {
     return self::$db->fetch_all('SELECT show_season_timeslot_id, start_time, duration FROM schedule.show_season_timeslot
       WHERE show_season_id=$1 AND start_time >= NOW()', array($this->getID()));
   }
@@ -625,7 +653,8 @@ $times
    * Returns all Timeslots for this Season
    * @return MyRadio_Timeslot[]
    */
-  public function getAllTimeslots() {
+  public function getAllTimeslots()
+  {
     return $this->timeslots;
   }
 
@@ -635,7 +664,8 @@ $times
    *
    * @return [float, int]
    */
-  public function getAttendanceInfo() {
+  public function getAttendanceInfo()
+  {
     $signed_in = 0;
     $total = 0;
     foreach ($this->getAllTimeslots() as $ts) {

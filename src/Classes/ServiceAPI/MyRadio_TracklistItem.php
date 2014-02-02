@@ -8,15 +8,15 @@
 /**
  * The Tracklist Item class provides information about URY's track playing
  * history.
- * 
+ *
  * @version 20130718
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Tracklist
  * @uses \Database
- * 
+ *
  */
-class MyRadio_TracklistItem extends ServiceAPI {
-
+class MyRadio_TracklistItem extends ServiceAPI
+{
   private $audiologid;
   private $source;
   private $starttime;
@@ -30,7 +30,8 @@ class MyRadio_TracklistItem extends ServiceAPI {
    */
   private $track;
 
-  protected function __construct($id) {
+  protected function __construct($id)
+  {
     $this->audiologid = (int) $id;
 
     $result = self::$db->fetch_one('SELECT * FROM tracklist.tracklist
@@ -60,16 +61,19 @@ class MyRadio_TracklistItem extends ServiceAPI {
     );
   }
 
-  public function getID() {
+  public function getID()
+  {
     return $this->audiologid;
   }
 
-  public function getTrack() {
+  public function getTrack()
+  {
     return is_array($this->track) ? $this->track :
             MyRadio_Track::getInstance($this->track);
   }
 
-  public function getStartTime() {
+  public function getStartTime()
+  {
     return $this->starttime;
   }
 
@@ -78,12 +82,13 @@ class MyRadio_TracklistItem extends ServiceAPI {
    * @param int $timeslotid
    * @return Array
    */
-  public static function getTracklistForTimeslot($timeslotid, $offset = 0) {
+  public static function getTracklistForTimeslot($timeslotid, $offset = 0)
+  {
     $result = self::$db->fetch_column('SELECT audiologid FROM tracklist.tracklist
-      WHERE timeslotid=$1 
+      WHERE timeslotid=$1
       AND (state ISNULL OR state != \'d\')
       AND audiologid > $2
-      ORDER BY timestart ASC', 
+      ORDER BY timestart ASC',
       array($timeslotid, $offset));
 
     $items = array();
@@ -101,7 +106,8 @@ class MyRadio_TracklistItem extends ServiceAPI {
    * @param bool $include_playout Optional. Default true. If true, include statistics from when jukebox was not on air,
    * i.e. when it was only feeding campus bars.
    */
-  public static function getTracklistForJukebox($start = null, $end = null, $include_playout = true) {
+  public static function getTracklistForJukebox($start = null, $end = null, $include_playout = true)
+  {
     self::wakeup();
 
     $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
@@ -121,12 +127,13 @@ class MyRadio_TracklistItem extends ServiceAPI {
   /**
    * Find all tracks played in the given timeframe, as datasources.
    * Not datasource runs out of RAM pretty quick.
-   * 
+   *
    * @param int $start Period to start log from. Required.
    * @param int $end Period to end log from. Default time().
    * @param bool $include_playout If true, includes tracks played on /jukebox or /campus_playout while a show was on.
    */
-  public static function getTracklistForTime($start, $end = null, $include_playout = false) {
+  public static function getTracklistForTime($start, $end = null, $include_playout = false)
+  {
     self::wakeup();
 
     $start = CoreUtils::getTimestamp($start);
@@ -183,7 +190,8 @@ class MyRadio_TracklistItem extends ServiceAPI {
    * total_playtime: The total number of seconds the track has been on air
    * in_playlists: A CSV of playlists the Track is in
    */
-  private static function trackAmalgamator($result) {
+  private static function trackAmalgamator($result)
+  {
     $data = array();
     foreach ($result as $row) {
       /**
@@ -206,6 +214,7 @@ class MyRadio_TracklistItem extends ServiceAPI {
 
       $data[] = $track;
     }
+
     return $data;
   }
 
@@ -221,7 +230,8 @@ class MyRadio_TracklistItem extends ServiceAPI {
    * total_playtime: The total number of seconds the track has been on air
    * in_playlists: A CSV of playlists the Track is in
    */
-  public static function getTracklistStatsForJukebox($start = null, $end = null, $include_playout = true) {
+  public static function getTracklistStatsForJukebox($start = null, $end = null, $include_playout = true)
+  {
     self::wakeup();
 
     $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
@@ -246,7 +256,8 @@ class MyRadio_TracklistItem extends ServiceAPI {
    * total_playtime: The total number of seconds the track has been on air
    * in_playlists: A CSV of playlists the Track is in
    */
-  public static function getTracklistStatsForBAPS($start = null, $end = null) {
+  public static function getTracklistStatsForBAPS($start = null, $end = null)
+  {
     self::wakeup();
 
     $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
@@ -256,16 +267,18 @@ class MyRadio_TracklistItem extends ServiceAPI {
       LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
       WHERE source=\'b\' AND timestart >= $1 AND timestart <= $2 AND trackid IS NOT NULL
       GROUP BY trackid ORDER BY num_plays DESC', array($start, $end));
+
     return self::trackAmalgamator($result);
   }
 
   /**
    * Returns if the given track has been played in the last $time seconds
-   * 
+   *
    * @param MyRadio_Track $track
    * @param int $time Optional. Default 21600 (6 hours)
    */
-  public static function getIfPlayedRecently(MyRadio_Track $track, $time = 21600) {
+  public static function getIfPlayedRecently(MyRadio_Track $track, $time = 21600)
+  {
     $result = self::$db->fetch_column('SELECT timestart FROM tracklist.tracklist
       LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
       WHERE timestart >= $1 AND trackid = $2', array(CoreUtils::getTimestamp(time() - $time), $track->getID()));
@@ -276,11 +289,11 @@ class MyRadio_TracklistItem extends ServiceAPI {
   /**
    * Check whether queuing the given Track for playout right now would be a
    * breach of our PPL Licence.
-   * 
+   *
    * The PPL Licence states that a maximum of two songs from an artist or album
    * in a two hour period may be broadcast. Any more is a breach of this licence
    * so we should really stop doing it.
-   * 
+   *
    * @param MyRadio_Track $track
    * @param bool $include_queue If true, will include the tracks in the iTones
    * queue.
@@ -288,7 +301,8 @@ class MyRadio_TracklistItem extends ServiceAPI {
    * a breach. No, this isn't magic and know the future accurately.
    * @return bool
    */
-  public static function getIfAlbumArtistCompliant(MyRadio_Track $track, $include_queue = true, $time = null) {
+  public static function getIfAlbumArtistCompliant(MyRadio_Track $track, $include_queue = true, $time = null)
+  {
     if ($time == null) {
       $time = time();
     }
@@ -308,7 +322,7 @@ class MyRadio_TracklistItem extends ServiceAPI {
       AND timestart < $4
       AND album NOT ILIKE \''.Config::$short_name.' Downloads%\'', array($track->getAlbum()->getID(),
         $track->getArtist(), $timeout, CoreUtils::getTimestamp($time)));
-    
+
     if ($include_queue) {
       foreach (iTones_Utils::getTracksInAllQueues() as $req) {
         if (empty($req['trackid'])) {
@@ -329,7 +343,8 @@ class MyRadio_TracklistItem extends ServiceAPI {
     return ($result[0] < 2);
   }
 
-  public function toDataSource($full = false) {
+  public function toDataSource($full = false)
+  {
     if (is_array($this->track)) {
       $return = $this->track;
     } else {

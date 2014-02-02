@@ -239,8 +239,10 @@ class MyRadioError {
                 $message = $errstr . $rtnl . $rtnl . $trace;
                 if (class_exists('MyRadioEmail') && class_exists('Config')) {
                     $sent = MyRadioEmail::sendEmailToList(
-                            MyRadio_List::getByName(Config::$error_report_email),
-                            'MyRadio error alert', $message);
+                                MyRadio_List::getByName(Config::$error_report_email),
+                                'MyRadio error alert',
+                                $message
+                            );
                     if (!$sent) {
                         error_log('FAIL: mail failed to send error alert email.');
                         // Good chance that if the mail command failed,

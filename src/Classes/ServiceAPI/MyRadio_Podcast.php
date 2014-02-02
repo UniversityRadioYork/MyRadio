@@ -7,16 +7,17 @@
 
 /**
  * Podcasts. For the website.
- * 
+ *
  * Reminder: Podcasts may not include any copyrighted content. This includes
  * all songs and *beds*.
- * 
+ *
  * @version 20130815
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Podcast
  * @uses \Database
  */
-class MyRadio_Podcast extends MyRadio_Metadata_Common {
+class MyRadio_Podcast extends MyRadio_Metadata_Common
+{
   /**
    * The Podcast's ID
    * @var int
@@ -63,7 +64,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
    * Construct the API Key Object
    * @param String $key
    */
-  protected function __construct($podcast_id) {
+  protected function __construct($podcast_id)
+  {
     $this->podcast_id = (int) $podcast_id;
 
     $result = self::$db->fetch_one('SELECT file, memberid, approvedid, submitted,
@@ -134,7 +136,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
    * @param MyRadio_User $user Default current user.
    * @return MyRadio_Podcast[]
    */
-  public static function getPodcastsAttachedToUser(MyRadio_User $user = null) {
+  public static function getPodcastsAttachedToUser(MyRadio_User $user = null)
+  {
   return self::resultSetToObjArray(self::getPodcastIDsAttachedToUser($user));
 }
 
@@ -143,7 +146,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
    * @param MyRadio_User $user Default current user.
    * @return int[]
    */
-  public static function getPodcastIDsAttachedToUser(MyRadio_User $user = null) {
+  public static function getPodcastIDsAttachedToUser(MyRadio_User $user = null)
+  {
     if ($user === null) {
       $user = MyRadio_User::getInstance();
     }
@@ -154,14 +158,17 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
           WHERE creditid=$1 AND effective_from <= NOW() AND
           (effective_to >= NOW() OR effective_to IS NULL))', [$user->getID()]);
   }
-  
-  public static function getPending() {
+
+  public static function getPending()
+  {
     self::initDB();
+
     return self::resultSetToObjArray(self::$db->fetch_column('SELECT podcast_id '
             . 'FROM uryplayer.podcast WHERE submitted IS NULL'));
   }
 
-  public static function getCreateForm() {
+  public static function getCreateForm()
+  {
     $form = (new MyRadioForm('createpodcastfrm', 'Podcast', 'doCreatePodcast',
             ['title' => 'Create Podcast']))
             ->addField(new MyRadioFormField('title', MyRadioFormField::TYPE_TEXT, [
@@ -173,26 +180,26 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
                 'explanation' => 'A set of keywords to describe your podcast '
                 . 'generally, seperated with spaces.'
             ]));
-    
+
     //Get User's shows, or all shows if they have AUTH_PODCASTANYSHOW
     //Format them into a select field format.
-    $shows = array_map(function($x) {
+    $shows = array_map(function ($x) {
       return ['text' => $x->getMeta('title'), 'value' => $x->getID()];
-    }, MyRadio_User::getInstance()->hasAuth(AUTH_PODCASTANYSHOW) ? 
+    }, MyRadio_User::getInstance()->hasAuth(AUTH_PODCASTANYSHOW) ?
             MyRadio_Show::getAllShows()
             : MyRadio_User::getInstance()->getShows());
-    
+
     //Add an option for not attached to a show
     if (MyRadio_User::getInstance()->hasAuth(AUTH_STANDALONEPODCAST)) {
       $shows = array_merge([['text' => 'Standalone']], $shows);
     }
-    
+
     $form->addField(new MyRadioFormField('show', MyRadioFormField::TYPE_SELECT, [
                         'options' => $shows,
                         'explanation' => 'This Podcast will be attached to the '
                                           . 'Show you select here.',
                         'label' => 'Show',
-			'required' => false
+            'required' => false
               ]))->addField(new MyRadioFormField('credits', MyRadioFormField::TYPE_TABULARSET, [
                 'label' => 'Credits', 'options' => [
                     new MyRadioFormField('member', MyRadioFormField::TYPE_MEMBER, [
@@ -215,10 +222,10 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
                 . ' with <a href="/wiki/Podcasting_Policy" target="_blank">'
                 . Config::$short_name . '\'s Podcasting Policy</a>.'
             ]));
-    
+
     return $form;
   }
-  
+
   /**
    * Create a new Podcast
    * @param String $title The Podcast's title
@@ -231,14 +238,14 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
    */
   public static function create($title, $description, $tags, $file,
           MyRadio_Show $show = null, $credits = null) {
-    
+
     //Get an ID for the new Podcast
-    $id = (int)self::$db->fetch_column('INSERT INTO uryplayer.podcast '
+    $id = (int) self::$db->fetch_column('INSERT INTO uryplayer.podcast '
             . '(memberid, approvedid, submitted) VALUES ($1, $1, NULL) '
             . 'RETURNING podcast_id', [MyRadio_User::getInstance()->getID()])[0];
-    
+
     $podcast = self::getInstance($id);
-    
+
     $podcast->setMeta('title', $title);
     $podcast->setMeta('description', $description);
     $podcast->setMeta('tag', $tags);
@@ -246,7 +253,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
     if (!empty($show)) {
       $podcast->setShow($show);
     }
-    
+
     //Ship the file off to the archive location to be converted
     if (!move_uploaded_file($file, $podcast->getArchiveFile())) {
       throw new MyRadioException("Failed to move podcast file ".
@@ -258,7 +265,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
    * Get the Podcast ID
    * @return int
    */
-  public function getID() {
+  public function getID()
+  {
     return $this->podcast_id;
   }
 
@@ -266,19 +274,21 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
    * Get the Show this Podcast is linked to, if there is one.
    * @return MyRadio_Show
    */
-  public function getShow() {
+  public function getShow()
+  {
     if (!empty($this->show_id)) {
       return MyRadio_Show::getInstance($this->show_id);
     } else {
       return null;
     }
   }
-  
+
   /**
    * Returns a human-readable explanation of the Podcast's state.
    * @return String
    */
-  public function getStatus() {
+  public function getStatus()
+  {
     if (empty($this->submitted)) {
       return 'Processing...';
     } elseif ($this->submitted > time()) {
@@ -287,39 +297,43 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
       return 'Published';
     }
   }
-  
+
   /**
    * Get the file system path to where the original file is stored.
    * @return String
    */
-  public function getArchiveFile() {
+  public function getArchiveFile()
+  {
     return Config::$podcast_archive_path.'/'.$this->getID().'.orig';
   }
-  
+
   /**
    * Get the file system path to where the web file should be stored
    * @return String
    */
-  public function getWebFile() {
+  public function getWebFile()
+  {
     return Config::$public_media_path.'/podcasts/MyRadioPodcast'.$this->getID().'.mp3';
   }
-  
+
   /**
    * Get the value that *should* be stored in uryplayer.podcast.file
    * @return String
    */
-  public function getFile() {
+  public function getFile()
+  {
     return 'podcasts/MyRadioPodcast'.$this->getID().'.mp3';
   }
-  
+
   /**
    * Set the Show this Podcast is linked to. If null, removes any link.
    * @param MyRadio_Show $show
    */
-  public function setShow(MyRadio_Show $show) {
+  public function setShow(MyRadio_Show $show)
+  {
     self::$db->query('DELETE FROM schedule.show_podcast_link '
             . 'WHERE podcast_id=$1', [$this->getID()]);
-    
+
     if (!empty($show)) {
       self::$db->query('INSERT INTO schedule.show_podcast_link '
               . '(show_id, podcast_id) VALUES ($1, $2)',
@@ -328,7 +342,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
     } else {
       $this->show_id = null;
     }
-    
+
   }
 
   /**
@@ -336,7 +350,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
    * @param boolean $full If true, returns more data.
    * @return Array
    */
-  public function toDataSource($full = true) {
+  public function toDataSource($full = true)
+  {
     $data = array(
         'podcast_id' => $this->getID(),
         'title' => $this->getMeta('title'),
@@ -363,7 +378,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
    *
    * @param string $url  The URL of the incoming podcast cover.
    */
-  public function setCover($url) {
+  public function setCover($url)
+  {
     // TODO: Plumb this into the metadata system.
     //       At time of writing, MyRadio's metadata system doesn't do images.
     if (empty($url)) {
@@ -393,7 +409,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
    *
    * @return string  The URL of the current podcast cover.
    */
-  public function getCover() {
+  public function getCover()
+  {
     // TODO: Plumb this into the metadata system.
     //       At time of writing, MyRadio's metadata system doesn't do images.
     return self::$db->fetch_one('
@@ -418,13 +435,13 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
 
   /**
    * Sets a metadata key to the specified value.
-   * 
+   *
    * If any value is the same as an existing one, no action will be taken.
    * If the given key has is_multiple, then the value will be added as a new, additional key.
    * If the key does not have is_multiple, then any existing values will have effective_to
    * set to the effective_from of this value, effectively replacing the existing value.
    * This will *not* unset is_multiple values that are not in the new set.
-   * 
+   *
    * @param String $string_key The metadata key
    * @param mixed $value The metadata value. If key is_multiple and value is an array, will create instance
    * for value in the array.
@@ -433,50 +450,53 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common {
    * @param null $table Used for compatibility with parent.
    * @param null $pkey Used for compatibility with parent.
    */
-  public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null) {
+  public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null)
+  {
     parent::setMeta($string_key, $value, $effective_from, $effective_to, 'uryplayer.podcast_metadata', 'podcast_id');
   }
-  
+
   /**
    * Updates the list of Credits.
-   * 
+   *
    * Existing credits are kept active, ones that are not in the new list are set to effective_to now,
    * and ones that are in the new list but not exist are created with effective_from now.
-   * 
+   *
    * @param MyRadio_User[] $users An array of Users associated.
    * @param int[] $credittypes The relevant credittypeid for each User.
    */
-  public function setCredits($users, $credittypes, $table = null, $pkey = null) {
+  public function setCredits($users, $credittypes, $table = null, $pkey = null)
+  {
     parent::setCredits($users, $credittypes, 'uryplayer.podcast_credit', 'podcast_id');
   }
-  
+
   /**
    * Set the time that the Podcast is submitted as visible on the website.
    * @param int $time
    */
-  public function setSubmitted($time) {
+  public function setSubmitted($time)
+  {
     $this->submitted = $time;
     self::$db->query('UPDATE uryplayer.podcast SET submitted=$1 '
             . 'WHERE podcast_id=$2',
             [CoreUtils::getTimestamp($time), $this->getID()]);
   }
-  
+
   /**
    * Convert the Archive file to the Web format.
-   * 
+   *
    * If the preferred format is changed, re-run this on every Podcast to
    * reencode them.
    */
-  public function convert() {
+  public function convert()
+  {
     $tmpfile = $this->getArchiveFile();
     $dbfile = $this->getWebFile();
     shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 - >'{$dbfile}'");
-    
+
     self::$db->query('UPDATE uryplayer.podcast SET file=$1 WHERE podcast_id=$2',
             [$this->getFile(), $this->getID()]);
     if (empty($this->submitted)) {
       $this->setSubmitted(time());
     }
   }
-
 }

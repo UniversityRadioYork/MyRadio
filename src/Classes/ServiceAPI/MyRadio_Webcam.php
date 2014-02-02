@@ -8,13 +8,15 @@
 /**
  * @todo Document
  */
-class MyRadio_Webcam extends ServiceAPI {
-  
-  public static function getStreams() {
+class MyRadio_Webcam extends ServiceAPI
+{
+  public static function getStreams()
+  {
     return self::$db->fetch_all('SELECT * FROM webcam.streams ORDER BY streamid ASC');
   }
-  
-  public static function incrementViewCounter(MyRadio_User $user) {
+
+  public static function incrementViewCounter(MyRadio_User $user)
+  {
     //Get the current view counter. We do this as a separate query in case the row doesn't exist yet
     $counter = self::$db->fetch_one('SELECT timer FROM webcam.memberviews WHERE memberid = $1', array($user->getID()));
     if (empty($counter)) {
@@ -25,15 +27,17 @@ class MyRadio_Webcam extends ServiceAPI {
       $sql = 'UPDATE webcam.memberviews SET timer=$2 WHERE memberid=$1';
     }
     $counter += 15;
-    
+
     self::$db->query($sql, array($user->getID(), $counter));
+
     return $counter;
   }
-  
+
   /**
    * Returns the available range of times for the Webcam Archives
    */
-  public static function getArchiveTimeRange() {
+  public static function getArchiveTimeRange()
+  {
     $files = scandir(Config::$webcam_archive_path);
     $earliest = time();
     $latest = time();
@@ -48,14 +52,15 @@ class MyRadio_Webcam extends ServiceAPI {
     }
     echo $earliest.'='.$latest;
   }
-  
+
   /**
    * Returns the id and location of the currentl selected webcam
    * @return array webcam id and location
    */
-  public static function getCurrentWebcam() {
+  public static function getCurrentWebcam()
+  {
     $current = file_get_contents(Config::$webcam_current_url);
-        
+
     switch ($current) {
       case '0': $location = 'Jukebox';
         break;
@@ -86,11 +91,12 @@ class MyRadio_Webcam extends ServiceAPI {
    * [setWebcam description]
    * @param [type] $id [description]
    */
-  public static function setWebcam($id) {
-    if (($id == 0) || 
-        ($id == 2) || 
-        ($id == 3) || 
-        ($id == 4) || 
+  public static function setWebcam($id)
+  {
+    if (($id == 0) ||
+        ($id == 2) ||
+        ($id == 3) ||
+        ($id == 4) ||
         ($id == 8) ||
         (!strncmp($id, "http://", strlen("http://")))) {
       file_get_contents(Config::$webcam_set_url.$id);

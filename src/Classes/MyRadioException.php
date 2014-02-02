@@ -55,9 +55,12 @@ class MyRadioException extends RuntimeException {
     
     if (class_exists('Config')) {
       if (Config::$email_exceptions && class_exists('MyRadioEmail') && $code !== 400) {
-        MyRadioEmail::sendEmailToComputing('[MyRadio] Exception Thrown',
-                $error . "\r\n" . $message . "\r\n" .
-                (isset($_SESSION) ? print_r($_SESSION, true) : '') . "\r\n" . CoreUtils::getRequestInfo());
+        MyRadioEmail::sendEmailToComputing(
+            '[MyRadio] Exception Thrown',
+            $error . "\r\n" . $message . "\r\n"
+            . (isset($_SESSION) ? print_r($_SESSION, true) : '')
+            . "\r\n" . CoreUtils::getRequestInfo()
+        );
       }
       //Configuration is available, use this to decide what to do
       if (Config::$display_errors or (class_exists('CoreUtils') &&

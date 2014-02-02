@@ -14,7 +14,8 @@
  * @package MyRadio_iTones
  * @uses    \Database
  */
-class iTones_TrackRequest {
+class iTones_TrackRequest
+{
     const CAN_MAKE_REQUEST_SQL = '
         SELECT
             (COUNT(trackid) <= $1) AS allowed
@@ -44,7 +45,7 @@ class iTones_TrackRequest {
         MyRadio_Track $track,
         MyRadio_User  $requester,
         Database      $database,
-                      $queue = 'requests'
+        $queue = 'requests'
     ) {
         $this->track     = $track;
         $this->requester = $requester;
@@ -54,10 +55,11 @@ class iTones_TrackRequest {
 
     /**
      * Performs the track request.
-     * 
+     *
      * @return bool Whether the operation was successful
      */
-    public function request() {
+    public function request()
+    {
         $success = false;
 
         if ($this->canRequestTrack() === true) {
@@ -70,9 +72,10 @@ class iTones_TrackRequest {
     /**
      * Checks whether the given track can be requested by the current user.
      *
-     * @return bool  Whether the track can be requested.
+     * @return bool Whether the track can be requested.
      */
-    private function canRequestTrack() {
+    private function canRequestTrack()
+    {
         return (
             $this->trackCanBePlayed() &&
             $this->userCanMakeRequests()
@@ -84,9 +87,10 @@ class iTones_TrackRequest {
      *
      * This generally means playing it won't trip licencing quotae.
      *
-     * @return bool  Whether the track can be played.
+     * @return bool Whether the track can be played.
      */
-    private function trackCanBePlayed() {
+    private function trackCanBePlayed()
+    {
         return !(MyRadio_TracklistItem::getIfPlayedRecently($this->track));
     }
 
@@ -95,29 +99,32 @@ class iTones_TrackRequest {
      *
      * This generally means requesting won't trip the user's request quota.
      *
-     * @return bool  Whether the current user can make a request.
+     * @return bool Whether the current user can make a request.
      */
-    public function userCanMakeRequests() {
+    public function userCanMakeRequests()
+    {
         return $this->areRequestsAllowedBy($this->userCanMakeRequestsQuery());
     }
 
     /**
      * Checks to see if the database said the current user can make requests.
      *
-     * @param object $results  The results from a can-make-requests query.
+     * @param object $results The results from a can-make-requests query.
      *
-     * @return bool  Whether the current user can make a request.
+     * @return bool Whether the current user can make a request.
      */
-    private function areRequestsAllowedBy($results) {
+    private function areRequestsAllowedBy($results)
+    {
         return $results['allowed'] == 't';
     }
 
     /**
      * Runs a query to see if the current user can make requests at the oment.
      *
-     * @return object  The database query results.
+     * @return object The database query results.
      */
-    private function userCanMakeRequestsQuery() {
+    private function userCanMakeRequestsQuery()
+    {
         return $this->database->fetch_one(
             self::CAN_MAKE_REQUEST_SQL,
             $this->userCanMakeRequestsParams()
@@ -127,14 +134,15 @@ class iTones_TrackRequest {
     /**
      * Creates the parameter list for a can-make-requests query.
      *
-     * @return array  The parameter list.
+     * @return array The parameter list.
      */
-    private function userCanMakeRequestsParams() {
-      return [
-          Config::$itones_request_maximum,
-          $this->requester->getID(),
-          Config::$itones_request_period
-      ];
+    private function userCanMakeRequestsParams()
+    {
+        return [
+            Config::$itones_request_maximum,
+            $this->requester->getID(),
+            Config::$itones_request_period
+        ];
     }
 
     /**
@@ -142,7 +150,8 @@ class iTones_TrackRequest {
      *
      * @return bool Whether the request was successful.
      */
-    private function requestTrackAndLog() {
+    private function requestTrackAndLog()
+    {
         $success = iTones_Utils::requestFile(
             $this->track->getPath(),
             $this->queue
@@ -151,17 +160,19 @@ class iTones_TrackRequest {
         if ($success) {
             $this->logRequest();
         }
+
         return $success;
     }
 
     /**
      * Logs that the current user has made a request.
      *
-     * @param MyRadio_Track $track  The track to log in the database.
+     * @param MyRadio_Track $track The track to log in the database.
      *
      * @return null Nothing.
      */
-    private function logRequest() {
+    private function logRequest()
+    {
         $this->database->query(
             self::LOG_REQUEST_SQL,
             $this->logRequestParams()
@@ -171,11 +182,12 @@ class iTones_TrackRequest {
     /**
      * Creates the parameter list for a log-request query.
      *
-     * @param MyRadio_Track $track  The track to log in the database.
+     * @param MyRadio_Track $track The track to log in the database.
      *
-     * @return array  The parameters array.
+     * @return array The parameters array.
      */
-    private function logRequestParams() {
+    private function logRequestParams()
+    {
         return [
             $this->track->getID(),
             $this->requester->getID(),

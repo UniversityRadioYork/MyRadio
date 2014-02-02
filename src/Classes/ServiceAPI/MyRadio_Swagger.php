@@ -11,14 +11,15 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_API
  * @uses \Database
- * 
+ *
  * @todo Detect Response Types
  * @todo Parse docblocks to get variable information
  */
-class MyRadio_Swagger {
-
+class MyRadio_Swagger
+{
     /** THIS HALF DEALS WITH RESOURCES LISTING * */
-    public static function resources() {
+    public static function resources()
+    {
         $data = [
             'apiVersion' => 0.1,
             'swaggerVersion' => 1.2,
@@ -38,7 +39,8 @@ class MyRadio_Swagger {
         return $data;
     }
 
-    public static function getApiClasses() {
+    public static function getApiClasses()
+    {
         $data = Database::getInstance()->fetch_all('SELECT class_name, api_name FROM myury.api_class_map ORDER BY api_name');
         $result = [];
 
@@ -52,11 +54,13 @@ class MyRadio_Swagger {
     /** THIS HALF DEALS WITH API Declarations * */
     private $class;
 
-    public function __construct($class) {
+    public function __construct($class)
+    {
         $this->class = $class;
     }
 
-    public function toDataSource() {
+    public function toDataSource()
+    {
         $blocked_methods = ['getInstance',
             'wakeup',
             '__wakeup',
@@ -97,7 +101,7 @@ class MyRadio_Swagger {
                     !($constructor->isPublic() && $constructor->getParameters() == null)) {
                 $path .= '{id}/';
             }
-            
+
             $params = [];
             if ($method->getName() !== 'toDataSource') {
                 $path .= $method->getName() . '/';
@@ -160,7 +164,8 @@ class MyRadio_Swagger {
         return $data;
     }
 
-    private function getMethodDoc(ReflectionMethod $method) {
+    private function getMethodDoc(ReflectionMethod $method)
+    {
         $doc = $method->getDocComment();
 
         $lines = explode("\n", trim(preg_replace('/(\/\*\*)|(\n\s+\*\/?\s?)/', "\n", $doc), " \n"));
