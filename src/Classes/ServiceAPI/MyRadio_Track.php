@@ -493,13 +493,27 @@ class MyRadio_Track extends ServiceAPI {
         }
     }
 
-    public static function identifyAndStoreTrack($tmpid, $title, $artist) {
-        //Get the album info
-        $ainfo = self::getAlbumDurationAndPositionFromLastfm($title, $artist);
+    public static function identifyAndStoreTrack($tmpid, $title, $artist, $album, $position) {
+        $ainfo = null;
+        if ($album == "FROM_LASTFM") {
+            // Get the album info if we're getting it from lastfm
+            $ainfo = self::getAlbumDurationAndPositionFromLastfm($title, $artist);
+        } else {
+            // Use the album title the user has provided. Use an existing album
+            // if we already have one of that title. If not, create one.
+            $myradio_album = MyRadio_Album::findOrCreate($album, $artist);
+            $ainfo = array('duration' => null,
+                           'position' => int($position),
+                           'album'    => $myradio_album);
+        }
+        
+        // Get the track duration from the file if it isn't already set    
         if (empty($ainfo['duration'])) {
             $getID3 = new getID3;
             $ainfo['duration'] = intval($getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $tmpid)['playtime_seconds']);
         }
+
+        // Check if the track is already in the library and create it if not
         $track = self::findByNameArtist($title, $artist, 1, false, true);
         if (empty($track)) {
             //Create the track
