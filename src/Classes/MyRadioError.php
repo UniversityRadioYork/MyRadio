@@ -8,13 +8,13 @@
 
 /**
  * Provides error handling so that php errors can be displayed nicely.
- * 
+ *
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130711
  * @package MyRadio_Core
  */
-class MyRadioError {
-
+class MyRadioError
+{
     /**
      * @var int $count Stores the number of errors thrown
      */
@@ -41,9 +41,11 @@ class MyRadioError {
         E_RECOVERABLE_ERROR => 'Recoverable error'
     );
 
-    private static function getErrorName($errno) {
+    private static function getErrorName($errno)
+    {
         return $error_name = (isset(self::$error_type[$errno]) ?
-                self::$error_type[$errno] : 'Unknown error code');
+            self::$error_type[$errno] : 'Unknown error code'
+        );
     }
 
     /**
@@ -54,18 +56,20 @@ class MyRadioError {
 
     /**
      * Places all php errors into the array $php_errorlist
-     * @param string $errno A numeric value which corresponds to the type of
-     *  error (Notice, Fatal Error, User-generated warning, etc).
-     * @param string $errstr A string that contains the error message text,
-     *  ideally including details that identify the cause of the error.
+     * @param string $errno   A numeric value which corresponds to the type of
+     *                        error (Notice, Fatal Error, User-generated warning, etc).
+     * @param string $errstr  A string that contains the error message text,
+     *                        ideally including details that identify the cause of the error.
      * @param string $errfile The full local path of the file which has
-     *  triggered this error (such as /var/www/public_html/badscript.php).
+     *                        triggered this error (such as /var/www/public_html/badscript.php).
      * @param string $errline The line number where the error was generated
-     *  (within the file identified by $errfile).
+     *                        (within the file identified by $errfile).
      */
-    public static function errorsToArray($errno, $errstr, $errfile, $errline) {
-        if ($errno === E_STRICT or error_reporting() === 0)
+    public static function errorsToArray($errno, $errstr, $errfile, $errline)
+    {
+        if ($errno === E_STRICT or error_reporting() === 0) {
             return;
+        }
         $error_name = self::getErrorName($errno);
         $php_error = array(
             'name' => $error_name,
@@ -77,16 +81,17 @@ class MyRadioError {
 
     /**
      * Logs all php errors into the php log file
-     * @param string $errno A numeric value which corresponds to the type of
-     *  error (Notice, Fatal Error, User-generated warning, etc).
-     * @param string $errstr A string that contains the error message text,
-     *  ideally including details that identify the cause of the error.
+     * @param string $errno   A numeric value which corresponds to the type of
+     *                        error (Notice, Fatal Error, User-generated warning, etc).
+     * @param string $errstr  A string that contains the error message text,
+     *                        ideally including details that identify the cause of the error.
      * @param string $errfile The full local path of the file which has
-     *  triggered this error (such as /var/www/public_html/badscript.php).
+     *                        triggered this error (such as /var/www/public_html/badscript.php).
      * @param string $errline The line number where the error was generated
-     *  (within the file identified by $errfile).
+     *                        (within the file identified by $errfile).
      */
-    public static function errorsToLog($errno, $errstr, $errfile, $errline) {
+    public static function errorsToLog($errno, $errstr, $errfile, $errline)
+    {
         /*
          * Stage one: log the error using PHP's error logger.
          */
@@ -94,9 +99,9 @@ class MyRadioError {
 
         // Structure the error message in the same way as PHP logs
         // fatal errors, because they'll be saved in the same file.
-        $error_message = $error_name . ': ' .
-                $errstr . ' in ' .
-                $errfile . ' on line ' . $errline;
+        $error_message = $error_name . ': '
+            . $errstr . ' in '
+            . $errfile . ' on line ' . $errline;
         error_log($error_message);  // log to PHP_ERROR_LOG file
     }
 
@@ -106,16 +111,17 @@ class MyRadioError {
 
     /**
      * Sends the errors to the defined email every 24 hours
-     * @param string $errno A numeric value which corresponds to the type of error
-     *  (Notice, Fatal Error, User-generated warning, etc).
-     * @param string $errstr A string that contains the error message text,
-     *  ideally including details that identify the cause of the error.
+     * @param string $errno   A numeric value which corresponds to the type of error
+     *                        (Notice, Fatal Error, User-generated warning, etc).
+     * @param string $errstr  A string that contains the error message text,
+     *                        ideally including details that identify the cause of the error.
      * @param string $errfile The full local path of the file which has triggered
-     *  this error (such as /var/www/public_html/badscript.php).
+     *                        this error (such as /var/www/public_html/badscript.php).
      * @param string $errline The line number where the error was generated
-     *  (within the file identified by $errfile).
+     *                        (within the file identified by $errfile).
      */
-    public static function errorsToEmail($errno, $errstr, $errfile, $errline) {
+    public static function errorsToEmail($errno, $errstr, $errfile, $errline)
+    {
         //If errors have been supressed, don't throw them.
         if (error_reporting() === 0) {
             return;
@@ -153,15 +159,22 @@ class MyRadioError {
         unset($lockfile_data);
         while (!feof($lockfile)) {
             $buffer = fgets($lockfile);
-            if ($buffer == '')
+            if ($buffer == '') {
                 continue;  // EOF line is empty
-            $match = preg_match('#^([0-9]{4}-[0-9]{2}-[0-9]{2}' .
-                    'T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\+|-)[0-9]{4})' .
-                    '\s+(.+)$#', $buffer, $matches);
+            }
+            $match = preg_match(
+                '#^([0-9]{4}-[0-9]{2}-[0-9]{2}'
+                .'T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\+|-)[0-9]{4})'
+                .'\s+(.+)$#',
+                $buffer,
+                $matches
+            );
             if (!$match) {
-                error_log('FAIL: preg_match could not match ' .
-                        'expected pattern in error log file, in ' .
-                        __FILE__ . '');
+                error_log(
+                    'FAIL: preg_match could not match '
+                    . 'expected pattern in error log file, in '
+                    . __FILE__ . ''
+                );
                 continue;
             }
             $lockfile_data[$matches[2]] = $matches[1];
@@ -176,15 +189,16 @@ class MyRadioError {
             if (isset($lockfile_data[$errfile])) {
                 $alert_date = date_create($lockfile_data[$errfile]);
                 if (!$alert_date) {
-                    error_log('FAIL: date_create could not create a date object' .
-                            'from the last alert date in ' . __FUNCTION__ . ' in ' .
-                            __FILE__ . '.');
+                    error_log(
+                        'FAIL: date_create could not create a date object'
+                        . 'from the last alert date in ' . __FUNCTION__
+                        . ' in ' .  __FILE__ . '.'
+                    );
                     throw new MyRadioException('Failed to create date object.');
                 }
                 $alert_timestamp = date_format($alert_date, 'U');
                 $current_timestamp = date('U');
-                $diff_seconds = $current_timestamp -
-                        $alert_timestamp;
+                $diff_seconds = $current_timestamp - $alert_timestamp;
                 // Change this to TESTING_ONLY to check that it works
                 // but remember to change it back to One Day (or some
                 // other value you deem suitable) when testing is
@@ -198,7 +212,6 @@ class MyRadioError {
                 }
             }
         }
-
 
         /*
          * Stage three: send email and update lockfile, if necessary.
@@ -221,8 +234,9 @@ class MyRadioError {
 
         // Now that lockfile has been updated (if it was necessary)
         // it's time to release the lock, and close the file.
-        if (flock($lockfile, LOCK_UN) == false ||
-                fclose($lockfile) == false) {
+        if (flock($lockfile, LOCK_UN) == false
+            || fclose($lockfile) == false
+        ) {
             error_log('FAIL: flock or fclose failed in ' . __FUNCTION__ . ' in ' . __FILE__);
             error_log(__FUNCTION__ . ' failed! Check server logs!');
             throw new MyRadioException('Failed to release lock on log file.', 500);
@@ -239,10 +253,10 @@ class MyRadioError {
                 $message = $errstr . $rtnl . $rtnl . $trace;
                 if (class_exists('MyRadioEmail') && class_exists('Config')) {
                     $sent = MyRadioEmail::sendEmailToList(
-                                MyRadio_List::getByName(Config::$error_report_email),
-                                'MyRadio error alert',
-                                $message
-                            );
+                        MyRadio_List::getByName(Config::$error_report_email),
+                        'MyRadio error alert',
+                        $message
+                    );
                     if (!$sent) {
                         error_log('FAIL: mail failed to send error alert email.');
                         // Good chance that if the mail command failed,
@@ -260,12 +274,13 @@ class MyRadioError {
      * Returns the number of errors encountered during execution.
      * @return int
      */
-    public static function getErrorCount() {
+    public static function getErrorCount()
+    {
         return self::$count;
     }
 
-    public static function resetErrorCount() {
+    public static function resetErrorCount()
+    {
         self::$count = 0;
     }
-
 }
