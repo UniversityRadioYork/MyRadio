@@ -38,9 +38,9 @@ class MyRadio_PlaylistsDaemon extends MyRadio_Daemon {
         $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
 
         /**
-         * @todo This is 120 days for testing (It was Summer when I wrote this...)
+         * Track play stats for last TWO weeks - not 120 days!!
          */
-        $most_played = MyRadio_TracklistItem::getTracklistStatsForBAPS(time() - (86400 * 120)); //Track play stats for last week
+        $most_played = MyRadio_TracklistItem::getTracklistStatsForBAPS(time() - (86400 * 14));
 
         $playlist = array();
         for ($i = 0; $i < 20; $i++) {
