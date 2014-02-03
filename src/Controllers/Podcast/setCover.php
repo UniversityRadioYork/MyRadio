@@ -20,4 +20,4 @@ podcastCoverForm(
     'existing_cover', $podcast->getCover()
 )->render();
 
-?>
+

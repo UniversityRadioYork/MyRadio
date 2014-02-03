@@ -11,22 +11,27 @@
  * @version 20130817
  * @package MyRadio_Daemon
  */
-class MyRadio_PodcastDaemon extends MyRadio_Daemon {
-  /**
-   * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.
-   * @return boolean
-   */
-  public static function isEnabled() { return Config::$d_Podcast_enabled; }
-  
-  public static function run() {
-    dlog('Checking for pending Podcasts...', 4);
-    $podcasts = MyRadio_Podcast::getPending();
-    
-    if (!empty($podcasts)) {
-      //Encode the first podcast.
-      dlog('Converting Podcast '.$podcasts[0]->getID().'...', 3);
-      $podcasts[0]->convert();
-      dlog('Converstion complete.', 3);
+class MyRadio_PodcastDaemon extends MyRadio_Daemon
+{
+    /**
+     * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.
+     * @return boolean
+     */
+    public static function isEnabled()
+    {
+        return Config::$d_Podcast_enabled;
     }
-  }
+
+    public static function run()
+    {
+        dlog('Checking for pending Podcasts...', 4);
+        $podcasts = MyRadio_Podcast::getPending();
+
+        if (!empty($podcasts)) {
+            //Encode the first podcast.
+            dlog('Converting Podcast '.$podcasts[0]->getID().'...', 3);
+            $podcasts[0]->convert();
+            dlog('Converstion complete.', 3);
+        }
+    }
 }

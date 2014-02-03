@@ -16,13 +16,15 @@
  * @author  Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Core
  */
-class MyRadio_NormalFormFieldConstructor extends MyRadio_FormFieldConstructor {
+class MyRadio_NormalFormFieldConstructor extends MyRadio_FormFieldConstructor
+{
     /**
      * Builds and attaches the field.
      *
-     * @return null  Nothing.
+     * @return null Nothing.
      */
-    public function make() {
+    public function make()
+    {
         $type = $this->getTypeConstant($this->field['type']);
 
         // The constructor will complain if these are passed into the parameters
@@ -40,10 +42,11 @@ class MyRadio_NormalFormFieldConstructor extends MyRadio_FormFieldConstructor {
      * Performs binding of !bind(foo) strings in a field description to their
      * entries in the binding array.
      *
-     * @return null  Nothing.
+     * @return null Nothing.
      */
-    private function doBinding() {
-        foreach($this->field as $key => &$value) {
+    private function doBinding()
+    {
+        foreach ($this->field as $key => &$value) {
             if ($this->fc->isSpecialFieldName($value)) {
                 $value = $this->handlePotentialBinding($value);
             }
@@ -53,11 +56,12 @@ class MyRadio_NormalFormFieldConstructor extends MyRadio_FormFieldConstructor {
     /**
      * Performs macro substitution on any string value in the field array.
      *
-     * @return null  Nothing.
+     * @return null Nothing.
      */
-    private function doMacros() {
+    private function doMacros()
+    {
         $index = '#ERROR';
-        if (array_key_exists('repeater', $this->bindings)) { 
+        if (array_key_exists('repeater', $this->bindings)) {
             $index = $this->bindings['repeater'];
         }
 
@@ -67,9 +71,9 @@ class MyRadio_NormalFormFieldConstructor extends MyRadio_FormFieldConstructor {
             '%!%'          => '%!'
         ];
 
-        foreach($this->field as $key => &$value) {
-            foreach($macros as $lhs => $rhs) {
-                $value = str_replace($lhs, $rhs, $value); 
+        foreach ($this->field as $key => &$value) {
+            foreach ($macros as $lhs => $rhs) {
+                $value = str_replace($lhs, $rhs, $value);
             }
         }
     }
@@ -77,11 +81,12 @@ class MyRadio_NormalFormFieldConstructor extends MyRadio_FormFieldConstructor {
     /**
      * Handles a potential instance of !bind(foo).
      *
-     * @param string $input  The incoming value.
+     * @param string $input The incoming value.
      *
-     * @return object  The value after expanding any bindings.
+     * @return object The value after expanding any bindings.
      */
-    private function handlePotentialBinding($input) {
+    private function handlePotentialBinding($input)
+    {
         $matches = [];
         if (preg_match('/^!bind\( *(\w+) *\)$/', $input, $matches)) {
             if (!array_key_exists($matches[1], $this->bindings)) {
@@ -98,13 +103,12 @@ class MyRadio_NormalFormFieldConstructor extends MyRadio_FormFieldConstructor {
     /**
      * Infers a type constant (TYPE_XYZ) from a case insensitive name.
      *
-     * @param string $name  The name of the type constant.
+     * @param string $name The name of the type constant.
      *
-     * @return int  The type constant.
+     * @return int The type constant.
      */
-    private function getTypeConstant($name) {
+    private function getTypeConstant($name)
+    {
         return $this->rc->getconstant('TYPE_' . strtoupper($name));
     }
 }
-
-?>
