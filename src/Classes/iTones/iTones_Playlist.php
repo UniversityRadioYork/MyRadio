@@ -337,7 +337,6 @@ class iTones_Playlist extends ServiceAPI
      * @todo Expand the information this returns
      * @return Array
      */
-  public function toDataSource() {
     public function toDataSource()
     {
         return array(

@@ -107,8 +107,6 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
      */
     public function resetAccount($user)
     {
-    public function resetAccount($user)
-    {
         $result = MyRadio_User::findByEmail($user);
         if (!$result) {
             return false;
