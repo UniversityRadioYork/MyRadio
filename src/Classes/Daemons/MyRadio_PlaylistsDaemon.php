@@ -28,6 +28,7 @@ class MyRadio_PlaylistsDaemon extends MyRadio_Daemon {
 
         self::updateMostPlayedPlaylist();
         self::updateNewestUploadsPlaylist();
+        self::updateRandomTracksPlaylist();
 
         //Done
         self::setVal($hourkey, time());
@@ -66,6 +67,16 @@ class MyRadio_PlaylistsDaemon extends MyRadio_Daemon {
 
         $pobj->setTracks($newest_tracks, $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
+        
+    private static function updateRandomTracksPlaylist() {
+        $pobj = iTones_Playlist::getInstance('random-auto');
+        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
+
+        $random_tracks = NIPSWeb_AutoPlaylist::findByName('Random Tracks')->getTracks();
+
+        $pobj->setTracks($random_tracks, $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
+        $pobj->releaseLock($lockstr);
+        
     }
 
 }
