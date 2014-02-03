@@ -47,7 +47,7 @@ class MyRadio_ChartRow extends ServiceAPI
      *
      * @return The chart row with the given ID.
      */
-    protected function __construct($chart_row_id, $chart_release=null)
+    protected function __construct($chart_row_id, $chart_release = null)
     {
         $this->chart_row_id = $chart_row_id;
         $this->chart_release = $chart_release;
@@ -73,7 +73,7 @@ class MyRadio_ChartRow extends ServiceAPI
      *
      * @param $chart_row_id  The numeric ID of the chart row.
      */
-    public static function getInstance($chart_row_id=-1)
+    public static function getInstance($chart_row_id = -1)
     {
         self::__wakeup();
 

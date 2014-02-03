@@ -187,7 +187,8 @@ class MyRadio_Officer extends ServiceAPI
                 [$this->getID()]
             );
 
-            $this->history = array_map(function ($x) {
+            $this->history = array_map(
+                function ($x) {
                     return [
                         'User'=>$x['memberid'],
                         'from'=>strtotime($x['from_date']),
@@ -195,7 +196,9 @@ class MyRadio_Officer extends ServiceAPI
                             : strtotime($x['till_date']),
                         'memberofficerid' => (int) $x['member_officerid']
                   ];
-                }, $result);
+                },
+                $result
+            );
             $this->updateCacheObject();
         }
 
@@ -250,5 +253,4 @@ class MyRadio_Officer extends ServiceAPI
 
         return $data;
     }
-
 }

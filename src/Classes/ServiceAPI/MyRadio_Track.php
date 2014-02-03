@@ -220,10 +220,11 @@ class MyRadio_Track extends ServiceAPI
 
     public function getDigitisedBy()
     {
-        if ($this->digitisedby === null)
+        if ($this->digitisedby === null) {
             return null;
-        else
+        } else {
             return MyRadio_User::getInstance($this->digitisedby);
+        }
     }
 
     /**
@@ -232,11 +233,13 @@ class MyRadio_Track extends ServiceAPI
     public function setDigitised($digitised)
     {
         $this->digitised = $digitised;
-        self::$db->query('UPDATE rec_track SET digitised=$1, digitisedby=$2 WHERE trackid=$3', $digitised ? array(
-                    't', $_SESSION['memberid'], $this->getID()
-                        ) : array(
-                    'f', null, $this->getID()
-                        )
+        self::$db->query(
+            'UPDATE rec_track SET digitised=$1, digitisedby=$2 WHERE trackid=$3',
+            $digitised ? array(
+                't', $_SESSION['memberid'], $this->getID()
+            ) : array(
+                'f', null, $this->getID()
+            )
         );
         $this->updateCachedObject();
     }
@@ -293,12 +296,17 @@ class MyRadio_Track extends ServiceAPI
      */
     private static function findByNameArtist($title, $artist, $limit, $digitised = false, $exact = false)
     {
-        $result = self::$db->fetch_column('SELECT trackid
-      FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
-      AND rec_track.title ' . ($exact ? '=$1' : 'ILIKE \'%\' || $1 || \'%\'') .
-                'AND rec_track.artist ' . ($exact ? '=$2' : 'ILIKE \'%\' || $1 || \'%\'') .
-                ($digitised ? ' AND digitised=\'t\'' : '') . '
-      LIMIT $3', array($title, $artist, $limit));
+        $result = self::$db->fetch_column(
+            'SELECT trackid
+            FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
+            AND rec_track.title '
+            . ($exact ? '=$1' : 'ILIKE \'%\' || $1 || \'%\'')
+            . 'AND rec_track.artist '
+            . ($exact ? '=$2' : 'ILIKE \'%\' || $1 || \'%\'')
+            . ($digitised ? ' AND digitised=\'t\'' : '')
+            . ' LIMIT $3',
+            array($title, $artist, $limit)
+        );
 
         $response = array();
         foreach ($result as $trackid) {
@@ -405,22 +413,25 @@ class MyRadio_Track extends ServiceAPI
         }
 
         //Do the bulk of the sorting with SQL
-        $result = self::$db->fetch_all('SELECT trackid, rec_track.recordid
-      FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
-      AND (rec_track.title ILIKE $4 || $1 || $4
-      ' . $firstop . ' rec_track.artist ILIKE $4 || $2 || $4)
-      AND rec_record.title ILIKE $4 || $3 || $4
-      ' . ($options['digitised'] ? ' AND digitised=\'t\'' : '') . '
-      ' . ($options['lastfmverified'] === true ? ' AND lastfm_verified=\'t\'' : '')
-                . ($options['lastfmverified'] === false ? ' AND lastfm_verified=\'f\'' : '')
-                . ($options['nocorrectionproposed'] === true ? ' AND trackid NOT IN (
-              SELECT trackid FROM public.rec_trackcorrection WHERE state=\'p\'
-              )' : '')
-                . ($options['clean'] != null ? ' AND clean=$' . $clean_param : '')
-                . ($options['custom'] !== null ? ' AND ' . $options['custom'] : '')
-                . ($options['random'] ? ' ORDER BY RANDOM()' : '')
-                . ($options['idsort'] ? ' ORDER BY trackid' : '')
-                . ($options['limit'] == 0 ? '' : ' LIMIT $' . $limit_param), $sql_params);
+        $result = self::$db->fetch_all(
+            'SELECT trackid, rec_track.recordid
+            FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
+            AND (rec_track.title ILIKE $4 || $1 || $4'
+            . $firstop
+            . ' rec_track.artist ILIKE $4 || $2 || $4) AND rec_record.title ILIKE $4 || $3 || $4'
+            . ($options['digitised'] ? ' AND digitised=\'t\'' : '')
+            . ' '
+            . ($options['lastfmverified'] === true ? ' AND lastfm_verified=\'t\'' : '')
+            . ($options['lastfmverified'] === false ? ' AND lastfm_verified=\'f\'' : '')
+            . ($options['nocorrectionproposed'] === true ? ' AND trackid NOT IN (
+            SELECT trackid FROM public.rec_trackcorrection WHERE state=\'p\')' : '')
+            . ($options['clean'] != null ? ' AND clean=$' . $clean_param : '')
+            . ($options['custom'] !== null ? ' AND ' . $options['custom'] : '')
+            . ($options['random'] ? ' ORDER BY RANDOM()' : '')
+            . ($options['idsort'] ? ' ORDER BY trackid' : '')
+            . ($options['limit'] == 0 ? '' : ' LIMIT $' . $limit_param),
+            $sql_params
+        );
 
         $response = array();
         foreach ($result as $trackid) {
@@ -432,8 +443,11 @@ class MyRadio_Track extends ServiceAPI
 
         //Intersect with iTones if necessary, then return
         return empty($options['itonesplaylistid']) ? $response :
-                array_intersect($response, iTones_Playlist::getInstance($options['itonesplaylistid'])
-                                ->getTracks());
+            array_intersect(
+                $response,
+                iTones_Playlist::getInstance($options['itonesplaylistid'])
+                ->getTracks()
+            );
     }
 
     /**
@@ -502,8 +516,9 @@ class MyRadio_Track extends ServiceAPI
             }
 
             $tracks = array();
-            if (empty($lastfm['tracks']['track']))
+            if (empty($lastfm['tracks']['track'])) {
                 return array();
+            }
 
             foreach ($lastfm['tracks']['track'] as $track) {
                 $tracks[] = array('title' => $track['name'], 'artist' => $track['artist']['name'], 'rank' => $track['@attr']['rank']);
@@ -580,42 +595,51 @@ class MyRadio_Track extends ServiceAPI
 
         $required = array('title', 'artist', 'recordid', 'duration');
         foreach ($required as $require) {
-            if (empty($options[$require]))
+            if (empty($options[$require])) {
                 throw new MyRadioException($require . ' is required to create a Track.', 400);
+            }
         }
 
 //Number 0
-        if (empty($options['number']))
+        if (empty($options['number'])) {
             $options['number'] = 0;
+        }
 //Other Genre
-        if (empty($options['genre']))
+        if (empty($options['genre'])) {
             $options['genre'] = 'o';
+        }
 //No intro
-        if (empty($options['intro']))
+        if (empty($options['intro'])) {
             $options['intro'] = 0;
+        }
 //Clean unknown
-        if (empty($options['clean']))
+        if (empty($options['clean'])) {
             $options['clean'] = 'u';
+        }
 //Not digitised, and formate to t/f
-        if (empty($options['digitised']))
+        if (empty($options['digitised'])) {
             $options['digitised'] = 'f';
-        else
+        } else {
             $options['digitised'] = $options['digitised'] ? 't' : 'f';
+        }
 
-        $result = self::$db->query('INSERT INTO rec_track (number, title, artist, length, genre, intro, clean, recordid,
-      digitised, digitisedby, duration) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING trackid', array(
-            $options['number'],
-            trim($options['title']),
-            trim($options['artist']),
-            CoreUtils::intToTime($options['duration']),
-            $options['genre'],
-            CoreUtils::intToTime($options['intro']),
-            $options['clean'],
-            $options['recordid'],
-            $options['digitised'],
-            $_SESSION['memberid'],
-            $options['duration']
-        ));
+        $result = self::$db->query(
+            'INSERT INTO rec_track (number, title, artist, length, genre, intro, clean, recordid, digitised, digitisedby, duration)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING trackid',
+            array(
+                $options['number'],
+                trim($options['title']),
+                trim($options['artist']),
+                CoreUtils::intToTime($options['duration']),
+                $options['genre'],
+                CoreUtils::intToTime($options['intro']),
+                $options['clean'],
+                $options['recordid'],
+                $options['digitised'],
+                $_SESSION['memberid'],
+                $options['duration']
+            )
+        );
 
         $id = self::$db->fetch_all($result);
 
@@ -671,8 +695,9 @@ class MyRadio_Track extends ServiceAPI
 
     public function setArtist($artist)
     {
-        if (empty($artist))
+        if (empty($artist)) {
             throw new MyRadioException('Track artist must not be empty!');
+        }
 
         $this->artist = $artist;
         self::$db->query('UPDATE rec_track SET artist=$1 WHERE trackid=$2', array($artist, $this->getID()));
@@ -751,15 +776,19 @@ class MyRadio_Track extends ServiceAPI
      */
     public static function getAlbumDurationAndPositionFromLastfm($title, $artist)
     {
-        $details = json_decode(file_get_contents(
-                        'https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key='
-                        . Config::$lastfm_api_key
-                        . '&artist=' . urlencode($artist)
-                        . '&track=' . urlencode(str_replace(' (Radio Edit)', '', $title))
-                        . '&format=json'), true);
+        $details = json_decode(
+            file_get_contents(
+                'https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key='
+                . Config::$lastfm_api_key
+                . '&artist=' . urlencode($artist)
+                . '&track=' . urlencode(str_replace(' (Radio Edit)', '', $title))
+                . '&format=json'
+            ),
+            true
+        );
 
         if (!isset($details['track']['album'])) {
-//Send some defaults for album info
+            //Send some defaults for album info
             return array(
                 'album' => MyRadio_Album::findOrCreate(Config::$short_name . ' Downloads ' . date('Y'), Config::$short_name),
                 'position' => 0,
@@ -792,12 +821,16 @@ class MyRadio_Track extends ServiceAPI
     public function getSimilar()
     {
         if (empty($this->lastfm_similar)) {
-            $data = json_decode(file_get_contents(
-                            'https://ws.audioscrobbler.com/2.0/?method=track.getSimilar&api_key='
-                            . Config::$lastfm_api_key
-                            . '&track=' . urlencode($this->getTitle())
-                            . '&artist=' . urlencode($this->getArtist())
-                            . '&limit=50&format=json'), true);
+            $data = json_decode(
+                file_get_contents(
+                    'https://ws.audioscrobbler.com/2.0/?method=track.getSimilar&api_key='
+                    . Config::$lastfm_api_key
+                    . '&track=' . urlencode($this->getTitle())
+                    . '&artist=' . urlencode($this->getArtist())
+                    . '&limit=50&format=json'
+                ),
+                true
+            );
 
             if (!is_array($data['similartracks']['track'])) {
                 trigger_error($this . ' had an empty Similar Tracks result.');
@@ -806,10 +839,14 @@ class MyRadio_Track extends ServiceAPI
             }
             foreach ($data['similartracks']['track'] as $r) {
                 if ($r['match'] >= 0.25) {
-                    $c = self::findByOptions(['title' => $r['name'],
-                                'artist' => $r['artist']['name'],
-                                'limit' => 1,
-                                'digitised' => true]);
+                    $c = self::findByOptions(
+                        [
+                            'title' => $r['name'],
+                            'artist' => $r['artist']['name'],
+                            'limit' => 1,
+                            'digitised' => true
+                        ]
+                    );
                     if (!empty($c)) {
                         $this->lastfm_similar[] = $c[0]->getID();
                     }
@@ -830,8 +867,12 @@ class MyRadio_Track extends ServiceAPI
     {
         if ($this->itones_blacklist === null) {
             $this->itones_blacklist = (bool) self::$db->num_rows(
-                            self::$db->query('SELECT * FROM jukebox.track_blacklist '
-                                    . 'WHERE trackid=$1', [$this->getID()]));
+                self::$db->query(
+                    'SELECT * FROM jukebox.track_blacklist
+                    WHERE trackid=$1',
+                    [$this->getID()]
+                )
+            );
             $this->updateCachedObject();
         }
 
@@ -871,5 +912,4 @@ class MyRadio_Track extends ServiceAPI
             ['Unverified Metadata', $num_unverified]
         ];
     }
-
 }

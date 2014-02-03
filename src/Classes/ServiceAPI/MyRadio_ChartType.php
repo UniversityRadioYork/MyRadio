@@ -74,7 +74,7 @@ class MyRadio_ChartType extends MyRadio_Type
      *
      * @return The chart type with the given ID.
      */
-    public static function getInstance($chart_type_id=-1)
+    public static function getInstance($chart_type_id = -1)
     {
         self::__wakeup();
 

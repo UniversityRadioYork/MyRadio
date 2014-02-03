@@ -130,22 +130,22 @@ class MyRadio_Quote extends ServiceAPI
      *
      * @return The quote release with the given ID.
      */
-    public static function getInstance($quote_id=-1)
+    public static function getInstance($quote_id = -1)
     {
-      self::__wakeup();
+        self::__wakeup();
 
-      if (!is_numeric($quote_id)) {
-        throw new MyRadioException(
-          'Invalid Quote ID!',
-          MyRadioException::FATAL
-        );
-      }
+        if (!is_numeric($quote_id)) {
+            throw new MyRadioException(
+                'Invalid Quote ID!',
+                MyRadioException::FATAL
+            );
+        }
 
-      if (!isset(self::$quotes[$quote_id])) {
-        self::$quotes[$quote_id] = new self($quote_id);
-      }
+        if (!isset(self::$quotes[$quote_id])) {
+            self::$quotes[$quote_id] = new self($quote_id);
+        }
 
-      return self::$quotes[$quote_id];
+        return self::$quotes[$quote_id];
     }
 
     /**

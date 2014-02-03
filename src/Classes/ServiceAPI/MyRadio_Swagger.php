@@ -61,13 +61,15 @@ class MyRadio_Swagger
 
     public function toDataSource()
     {
-        $blocked_methods = ['getInstance',
+        $blocked_methods = [
+            'getInstance',
             'wakeup',
             '__wakeup',
             'removeInstance',
             '__toString',
             'setToDataSource',
-            '__construct'];
+            '__construct'
+        ];
         $data = [
             'apiVersion' => 0.1,
             'swaggerVersion' => 1.2,
@@ -187,7 +189,9 @@ class MyRadio_Swagger
 
         //We append the auth requirements to the long description
         $requirements = MyRadio_APIKey::getCallRequirements(
-                        $this->getApiClasses()[$this->class], $method->getName());
+            $this->getApiClasses()[$this->class],
+            $method->getName()
+        );
         if ($requirements === null) {
             $long_desc .= '<br>This API Call requires a Full API Access Key.';
         } elseif (empty($requirements)) {
@@ -209,8 +213,9 @@ class MyRadio_Swagger
                 continue;
             }
             $key = preg_replace('/^\@([a-zA-Z]+)(.*)$/', '$1', $lines[$i]);
-            if (empty($key))
+            if (empty($key)) {
                 continue;
+            }
             switch ($key) {
                 //Deal with $params
                 case 'param':
@@ -226,8 +231,9 @@ class MyRadio_Swagger
                     //For any following lines, if they don't start with @, assume it's a continuation of the description
                     $i++;
                     while (isset($lines[$i]) && substr($lines[$i], 0, 1) !== '@') {
-                        if (empty($lines[$i]))
+                        if (empty($lines[$i])) {
                             $params[$arg]['description'] .= '<br>';
+                        }
                         $params[$arg]['description'] .= ' ' . $lines[$i];
                         $i++;
                     }
@@ -245,5 +251,4 @@ class MyRadio_Swagger
             'return_type' => $return_type
         ];
     }
-
 }

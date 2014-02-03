@@ -96,7 +96,12 @@ class MyRadio_List extends ServiceAPI
                 array($listid)
             );
         }
-        $this->members = array_map(function ($x) {return (int) $x;}, $this->members);
+        $this->members = array_map(
+            function ($x) {
+                return (int) $x;
+            },
+            $this->members
+        );
     }
 
     private function parseSQL($sql)
@@ -257,7 +262,7 @@ class MyRadio_List extends ServiceAPI
      */
     public function archiveMessage($from, $email)
     {
-        $body = str_replace("=\r\n",'',preg_split("/\r?\n\r?\n/", utf8_encode($email), 2)[1]);
+        $body = str_replace("=\r\n", '', preg_split("/\r?\n\r?\n/", utf8_encode($email), 2)[1]);
         preg_match('/(^|\s)Subject:(.*)/i', $email, $subject);
         $subject = trim($subject[2]);
 
@@ -315,39 +320,46 @@ class MyRadio_List extends ServiceAPI
 
     public function toDataSource($full = true)
     {
-  public function toDataSource($full = true)
-  {
-    if (isset($_SESSION['memberid'])) {
-      $subscribed = $this->isMember(MyRadio_User::getInstance());
-    } else {
-      $subscribed = false;
-    }
+        if (isset($_SESSION['memberid'])) {
+            $subscribed = $this->isMember(MyRadio_User::getInstance());
+        } else {
+            $subscribed = false;
+        }
 
         return array(
             'listid' => $this->getID(),
             'subscribed' => $this->isMember(MyRadio_User::getInstance()) ?
                 '<span class="ui-icon ui-icon-check" title="You are subscribed to this list"></span>' : '',
-        'subscribed' => $subscribed,
+            'subscribed' => $subscribed,
             'name' => $this->getName(),
             'address' => $this->getAddress(),
             'recipient_count' => sizeof($this->getMembers()),
             'optIn' => ((!$subscribed && ($this->optin || $this->hasOptedOutOfAuto(MyRadio_User::getCurrentOrSystemUser()))) ?
-                array('display' => 'icon',
-                'value' => 'circle-plus',
-                'title' => 'Subscribe to this mailing list',
-                'url' => CoreUtils::makeURL('Mail', 'optin', array('list' => $this->getID()))) : null),
-            'optOut' => ($subscribed ? array('display' => 'icon',
+                array(
+                    'display' => 'icon',
+                    'value' => 'circle-plus',
+                    'title' => 'Subscribe to this mailing list',
+                    'url' => CoreUtils::makeURL('Mail', 'optin', array('list' => $this->getID()))
+                ) : null
+            ),
+            'optOut' => ($subscribed ? array(
+                'display' => 'icon',
                 'value' => 'circle-minus',
                 'title' => 'Opt out of this mailing list',
-                'url' => CoreUtils::makeURL('Mail', 'optout', array('list' => $this->getID()))) : null),
-            'mail' => array('display' => 'icon',
+                'url' => CoreUtils::makeURL('Mail', 'optout', array('list' => $this->getID()))
+            ) : null),
+            'mail' => array(
+                'display' => 'icon',
                 'value' => 'mail-closed',
                 'title' => 'Send a message to this mailing list',
-                'url' => CoreUtils::makeURL('Mail', 'send', array('list' => $this->getID()))),
-            'archive' => array('display' => 'icon',
+                'url' => CoreUtils::makeURL('Mail', 'send', array('list' => $this->getID()))
+            ),
+            'archive' => array(
+                'display' => 'icon',
                 'value' => 'disk',
                 'title' => 'View archives for this mailing list',
-                'url' => CoreUtils::makeURL('Mail', 'archive', array('list' => $this->getID())))
+                'url' => CoreUtils::makeURL('Mail', 'archive', array('list' => $this->getID()))
+            )
         );
     }
 }

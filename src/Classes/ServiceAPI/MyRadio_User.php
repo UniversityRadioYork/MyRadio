@@ -175,14 +175,16 @@ class MyRadio_User extends ServiceAPI
         $this->memberid = (int) $memberid;
         //Get the base data
         $data = self::$db->fetch_one(
-                'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college,
-                phone, email, receive_email, local_name, local_alias, eduroam,
-                account_locked, last_login, joined, profile_photo, bio,
-                auth_provider, require_password_change
-              FROM member, l_college
-              WHERE memberid=$1
-              AND member.college = l_college.collegeid
-              LIMIT 1', array($memberid));
+            'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college,
+            phone, email, receive_email, local_name, local_alias, eduroam,
+            account_locked, last_login, joined, profile_photo, bio,
+            auth_provider, require_password_change
+            FROM member, l_college
+            WHERE memberid=$1
+            AND member.college = l_college.collegeid
+            LIMIT 1',
+            array($memberid)
+        );
         if (empty($data)) {
             //This user doesn't exist
             throw new MyRadioException('The specified User does not appear to exist.', 404);
@@ -203,32 +205,46 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Get the user's permissions
-        $this->permissions = self::$db->fetch_column('SELECT lookupid FROM auth_officer
-      WHERE officerid IN (SELECT officerid FROM member_officer
-        WHERE memberid=$1 AND from_date <= now() AND
-        (till_date IS NULL OR till_date > now()- interval \'1 month\'))
-      UNION SELECT lookupid FROM auth WHERE memberid=$1 AND
-      starttime < now() AND (endtime IS NULL OR endtime >= now())',
-                array($memberid));
+        $this->permissions = self::$db->fetch_column(
+            'SELECT lookupid FROM auth_officer
+            WHERE officerid IN (SELECT officerid FROM member_officer
+            WHERE memberid=$1 
+            AND from_date <= now()
+            AND (till_date IS NULL OR till_date > now()- interval \'1 month\'))
+            UNION SELECT lookupid FROM auth 
+            WHERE memberid=$1
+            AND starttime < now() 
+            AND (endtime IS NULL OR endtime >= now())',
+            array($memberid)
+        );
 
-        $this->payment = self::$db->fetch_all('SELECT year, paid
-      FROM member_year
-      WHERE memberid = $1
-      ORDER BY year ASC;', array($memberid));
+        $this->payment = self::$db->fetch_all(
+            'SELECT year, paid
+            FROM member_year
+            WHERE memberid = $1
+            ORDER BY year ASC;',
+            array($memberid)
+        );
 
         // Get the User's officerships
-        $this->officerships = self::$db->fetch_all('SELECT officerid,officer_name,teamid,from_date,till_date
-             FROM member_officer
-       INNER JOIN officer
-       USING (officerid)
-       WHERE memberid = $1
-       AND type!=\'m\'
-       ORDER BY from_date,till_date;', array($memberid));
+        $this->officerships = self::$db->fetch_all(
+            'SELECT officerid,officer_name,teamid,from_date,till_date
+            FROM member_officer
+            INNER JOIN officer
+            USING (officerid)
+            WHERE memberid = $1
+            AND type!=\'m\'
+            ORDER BY from_date,till_date;',
+            array($memberid)
+        );
 
         // Get Training info all into array
-        $this->training = self::$db->fetch_column('SELECT memberpresenterstatusid
-      FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
-      WHERE memberid=$1 ORDER BY ordering, completeddate ASC', array($this->memberid));
+        $this->training = self::$db->fetch_column(
+            'SELECT memberpresenterstatusid
+            FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
+            WHERE memberid=$1 ORDER BY ordering, completeddate ASC',
+            array($this->memberid)
+        );
 
         if ($this->isCurrentlyPaid()) {
             //Add training permissions, but only if currently paid
@@ -615,16 +631,19 @@ class MyRadio_User extends ServiceAPI
      */
     public function getShows($show_type_id = 1)
     {
-        $this->shows = self::$db->fetch_column('SELECT show_id FROM schedule.show
-      WHERE memberid=$1 OR show_id IN
-        (SELECT show_id FROM schedule.show_credit
-        WHERE creditid=$1 AND effective_from <= NOW() AND
-          (effective_to >= NOW() OR effective_to IS NULL))
-          ORDER BY (SELECT start_time FROM schedule.show_season_timeslot
-                    WHERE show_season_id IN
-                        (SELECT show_season_id FROM schedule.show_season WHERE show_id=schedule.show.show_id)
-                    ORDER BY start_time LIMIT 1)
-          ASC', array($this->getID())); //Wasn't that ORDER BY fun.
+        $this->shows = self::$db->fetch_column(
+            'SELECT show_id FROM schedule.show
+            WHERE memberid=$1 OR show_id IN
+            (SELECT show_id FROM schedule.show_credit
+            WHERE creditid=$1 AND effective_from <= NOW() AND
+            (effective_to >= NOW() OR effective_to IS NULL))
+            ORDER BY (SELECT start_time FROM schedule.show_season_timeslot
+            WHERE show_season_id IN
+            (SELECT show_season_id FROM schedule.show_season WHERE show_id=schedule.show.show_id)
+            ORDER BY start_time LIMIT 1)
+            ASC',
+            array($this->getID())
+        ); //Wasn't that ORDER BY fun.
 
         $return = array();
         foreach ($this->shows as $show_id) {
@@ -668,13 +687,19 @@ class MyRadio_User extends ServiceAPI
         $name = trim($name);
         $names = explode(' ', $name);
         if (isset($names[1])) {
-            return self::$db->fetch_all('SELECT memberid, fname, sname FROM member
-      WHERE fname ILIKE $1 || \'%\' AND sname ILIKE $2 || \'%\'
-      ORDER BY sname, fname LIMIT $3', array($names[0], $names[1], $limit));
+            return self::$db->fetch_all(
+                'SELECT memberid, fname, sname FROM member
+                WHERE fname ILIKE $1 || \'%\' AND sname ILIKE $2 || \'%\'
+                ORDER BY sname, fname LIMIT $3',
+                array($names[0], $names[1], $limit)
+            );
         } else {
-            return self::$db->fetch_all('SELECT memberid, fname, sname FROM member
-      WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $1 || \'%\'
-      ORDER BY sname, fname LIMIT $2', array($name, $limit));
+            return self::$db->fetch_all(
+                'SELECT memberid, fname, sname FROM member
+                WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $1 || \'%\'
+                ORDER BY sname, fname LIMIT $2',
+                array($name, $limit)
+            );
         }
     }
 
@@ -741,8 +766,9 @@ class MyRadio_User extends ServiceAPI
                 }
             }
             foreach ($show->getAllSeasons() as $season) {
-                if (sizeof($season->getAllTimeslots()) === 0)
+                if (sizeof($season->getAllTimeslots()) === 0) {
                     continue;
+                }
                 if ($season->getSeasonNumber() == 1) {
                     $events[] = [
                         'message' => 'started a new Show as ' . $credit . ' of ' . $season->getMeta('title'),
@@ -869,11 +895,16 @@ class MyRadio_User extends ServiceAPI
     public function setEduroam($eduroam)
     {
         //Require the user to be part of this eduroam domain
-        if (strstr($eduroam, '@') !== false &&
-                strstr($eduroam, '@'.Config::$eduroam_domain) === false) {
-            throw new MyRadioException('Eduroam account should be @'.Config::$eduroam_domain.'! Use of other eduroam accounts is blocked.
-        This is a basic validation filter, so if there is a valid reason for another account to be here, this check
-        can be removed.', 400);
+        if (strstr($eduroam, '@') !== false
+            && strstr($eduroam, '@'.Config::$eduroam_domain) === false) {
+            throw new MyRadioException(
+                'Eduroam account should be @'
+                .Config::$eduroam_domain
+                .'! Use of other eduroam accounts is blocked.
+                This is a basic validation filter, so if there is a valid reason for another account to be here, this check
+                can be removed.',
+                400
+            );
         }
 
         //Remove the domain if it is set
@@ -1042,8 +1073,10 @@ class MyRadio_User extends ServiceAPI
     {
         $initial = strtolower($initial);
         if (!in_array($initial, array('m', 'f', 'o'))) {
-            throw new MyRadioException('You can be either "(M)ale", "(F)emale", or "(O)ther". You can\'t be none of these,'
-            . ' or more than one of these. Sorry.');
+            throw new MyRadioException(
+                'You can be either "(M)ale", "(F)emale", or "(O)ther". You can\'t be none of these,'
+                . ' or more than one of these. Sorry.'
+            );
         }
         $this->setCommonParam('sex', $initial);
 
@@ -1075,8 +1108,11 @@ class MyRadio_User extends ServiceAPI
                 return;
             } elseif ($v['year'] == $year) {
                 //Change payment.
-                self::$db->query('UPDATE member_year SET paid=$1'
-                        . ' WHERE year=$2 AND memberid=$3', [(float) $amount, $year, $this->getID()]);
+                self::$db->query(
+                    'UPDATE member_year SET paid=$1
+                    WHERE year=$2 AND memberid=$3',
+                    [(float) $amount, $year, $this->getID()]
+                );
                 $this->payment[$k]['paid'] = $amount;
                 $this->updateCacheObject();
 
@@ -1085,8 +1121,11 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Not a member this year
-        self::$db->query('INSERT INTO member_year (paid, year, memberid)'
-                . ' VALUES ($1, $2, $3)', [(float) $amount, $year, $this->getID()]);
+        self::$db->query(
+            'INSERT INTO member_year (paid, year, memberid)
+            VALUES ($1, $2, $3)',
+            [(float) $amount, $year, $this->getID()]
+        );
         $this->payment[] = ['year' => $year, 'amount' => (float) $amount];
         $this->updateCacheObject();
 
@@ -1100,8 +1139,11 @@ class MyRadio_User extends ServiceAPI
     public function updateLastLogin()
     {
         $this->last_login = CoreUtils::getTimestamp();
-        self::$db->query('UPDATE public.member SET last_login=$1'
-                . ' WHERE memberid=$2', [$this->last_login, $this->getID()]);
+        self::$db->query(
+            'UPDATE public.member SET last_login=$1
+            WHERE memberid=$2',
+            [$this->last_login, $this->getID()]
+        );
         $this->updateCacheObject();
     }
 
@@ -1118,8 +1160,11 @@ class MyRadio_User extends ServiceAPI
         //Doing this instead of ILIKE halves the query time
         $email = strtolower($email);
         self::wakeup();
-        $result = self::$db->fetch_column('SELECT memberid FROM public.member WHERE email LIKE $1 OR eduroam LIKE $1
-      OR local_name LIKE $2 OR local_alias LIKE $2 OR eduroam LIKE $2', array($email, explode('@', $email)[0]));
+        $result = self::$db->fetch_column(
+            'SELECT memberid FROM public.member WHERE email LIKE $1 OR eduroam LIKE $1
+            OR local_name LIKE $2 OR local_alias LIKE $2 OR eduroam LIKE $2',
+            array($email, explode('@', $email)[0])
+        );
 
         if (empty($result)) {
             return null;
@@ -1166,8 +1211,9 @@ class MyRadio_User extends ServiceAPI
         $members = array();
         foreach ($trained as $mid) {
             $member = MyRadio_User::getInstance($mid);
-            if ($member->isStudioDemoed())
+            if ($member->isStudioDemoed()) {
                 $members[] = $member;
+            }
         }
 
         return $members;
@@ -1203,7 +1249,8 @@ class MyRadio_User extends ServiceAPI
     public static function getAllAliases()
     {
         $users = self::resultSetToObjArray(self::$db->fetch_column(
-                                'SELECT memberid FROM public.member WHERE local_alias IS NOT NULL'));
+            'SELECT memberid FROM public.member WHERE local_alias IS NOT NULL'
+        ));
 
         $data = [];
         foreach ($users as $user) {
@@ -1253,8 +1300,7 @@ class MyRadio_User extends ServiceAPI
                         array('value' => 'o', 'text' => 'Other')
                     )
                 )))
-                ->addField(new MyRadioFormField('sec_personal_close', MyRadioFormField::TYPE_SECTION_CLOSE)
-                );
+                ->addField(new MyRadioFormField('sec_personal_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
         //Contact details
         $form->addField(new MyRadioFormField('sec_contact', MyRadioFormField::TYPE_SECTION, array(
@@ -1288,34 +1334,41 @@ class MyRadio_User extends ServiceAPI
                     'value' => str_replace('@york.ac.uk', '', $this->getUniAccount()),
                     'explanation' => '@york.ac.uk'
                 )))
-                ->addField(new MyRadioFormField('sec_contact_close', MyRadioFormField::TYPE_SECTION_CLOSE)
-                );
+                ->addField(new MyRadioFormField('sec_contact_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
         //About Me
-        $form->addField(new MyRadioFormField('sec_about', MyRadioFormField::TYPE_SECTION, array(
-            'label' => 'About Me',
-            'explanation' => 'If you\'d like to share a little more about yourself, then I\'m happy to listen!'
-        )))->addField(
-                new MyRadioFormField('photo', MyRadioFormField::TYPE_FILE, array(
-            'required' => false,
-            'label' => 'Profile Photo',
-            'explanation' => 'Share your Radio Face with all our members. If we ever launch presenter pages on the website, we\'ll use this there too.'
-                ))
-        )->addField(
-                new MyRadioFormField('bio', MyRadioFormField::TYPE_BLOCKTEXT, array(
-            'required' => false,
-            'label' => 'Bio',
-            'explanation' => 'Tell use about yourself - if you\'re a committee member please introduce yourself!',
-            'value' => $this->getBio()
-                ))
-        )->addField(new MyRadioFormField('sec_about_close', MyRadioFormField::TYPE_SECTION_CLOSE));
+        $form->addField(new MyRadioFormField(
+            'sec_about',
+            MyRadioFormField::TYPE_SECTION,
+            array(
+                'label' => 'About Me',
+                'explanation' => 'If you\'d like to share a little more about yourself, then I\'m happy to listen!'
+            )
+        ))->addField(new MyRadioFormField(
+            'photo',
+            MyRadioFormField::TYPE_FILE,
+            array(
+                'required' => false,
+                'label' => 'Profile Photo',
+                'explanation' => 'Share your Radio Face with all our members. If we ever launch presenter pages on the website, we\'ll use this there too.'
+            )
+        ))->addField(new MyRadioFormField(
+            'bio',
+            MyRadioFormField::TYPE_BLOCKTEXT,
+            array(
+                'required' => false,
+                'label' => 'Bio',
+                'explanation' => 'Tell use about yourself - if you\'re a committee member please introduce yourself!',
+                'value' => $this->getBio()
+            )
+        ))->addField(new MyRadioFormField('sec_about_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
         //Mailbox
         if (MyRadio_User::getInstance()->hasAuth(AUTH_CHANGESERVERACCOUNT)) {
             $form->addField(new MyRadioFormField('sec_server', MyRadioFormField::TYPE_SECTION, array(
                         'label' => Config::$short_name . ' Mailbox Account',
                         'explanation' => 'Before changing these settings, please ensure you understand the guidelines and'
-                        . ' documentation on ' . Config::$long_name . '\'s Internal Email Service'
+                            . ' documentation on ' . Config::$long_name . '\'s Internal Email Service'
                     )))
                     ->addField(new MyRadioFormField('local_name', MyRadioFormField::TYPE_TEXT, array(
                         'required' => false,
@@ -1378,11 +1431,15 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Require the user to be part of this eduroam domain
-        if (strstr($eduroam, '@') !== false &&
-                strstr($eduroam, '@'.Config::$eduroam_domain) === false) {
-            throw new MyRadioException('Eduroam account should be @'.Config::$eduroam_domain.'! Use of other eduroam accounts is blocked.
-        This is a basic validation filter, so if there is a valid reason for another account to be here, this check
-        can be removed.', 400);
+        if (strstr($eduroam, '@') !== false
+            && strstr($eduroam, '@'.Config::$eduroam_domain) === false
+        ) {
+            throw new MyRadioException(
+                'Eduroam account should be @'.Config::$eduroam_domain.'! Use of other eduroam accounts is blocked.
+                This is a basic validation filter, so if there is a valid reason for another account to be here, this check
+                can be removed.',
+                400
+            );
         }
 
         //Remove the domain if it is set
@@ -1401,30 +1458,35 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Check if it looks like the user might already exist
-        if (MyRadio_User::findByEmail($eduroam) !== null or
-                MyRadio_User::findByEmail($email) !== null) {
-            throw new MyRadioException('This User already appears to exist. '
-            . 'Their eduroam or email is already used.');
+        if (MyRadio_User::findByEmail($eduroam) !== null
+            or MyRadio_User::findByEmail($email) !== null
+        ) {
+            throw new MyRadioException(
+                'This User already appears to exist. '
+                . 'Their eduroam or email is already used.'
+            );
         }
 
         //Looks good. Generate a password for them.
         $plain_pass = CoreUtils::newPassword();
 
         //Actually create the member!
-        $r = self::$db->fetch_column('INSERT INTO public.member (fname, sname, sex,
-      college, phone, email, receive_email, eduroam, require_password_change)
-      VALUES
-      ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid', array(
-            $fname,
-            $sname,
-            $sex,
-            $collegeid,
-            $email,
-            $phone,
-            $receive_email,
-            $eduroam,
-            true
-        ));
+        $r = self::$db->fetch_column(
+            'INSERT INTO public.member (fname, sname, sex,
+            college, phone, email, receive_email, eduroam, require_password_change)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid',
+            array(
+                $fname,
+                $sname,
+                $sex,
+                $collegeid,
+                $email,
+                $phone,
+                $receive_email,
+                $eduroam,
+                true
+            )
+        );
 
         if (empty($r)) {
             throw new MyRadioException('Failed to create User!', 500);
@@ -1588,15 +1650,13 @@ class MyRadio_User extends ServiceAPI
         if ($full) {
             $data['paid'] = $this->getAllPayments();
             $data['photo'] = $this->getProfilePhoto() === null ?
-                    Config::$default_person_uri : $this->getProfilePhoto()->getURL();
+                Config::$default_person_uri : $this->getProfilePhoto()->getURL();
             $data['bio'] = $this->getBio();
-            $data['shows'] = CoreUtils::dataSourceParser(
-                            $this->getShows(), false);
+            $data['shows'] = CoreUtils::dataSourceParser($this->getShows(), false);
             $data['officerships'] = $this->getOfficerships();
             $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining(), false);
         }
 
         return $data;
     }
-
 }

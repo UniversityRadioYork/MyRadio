@@ -232,7 +232,7 @@ class MyRadio_Banner extends MyRadio_Photo
         parent::__construct($photo->getID());
         self::$db->query(
             'UPDATE website.banner SET image=$1, photoid=$2 WHERE banner_id=$2',
-            [str_replace(Config::$public_media_uri.'/','',$photo->getURL()), $this->getID(), $this->getBannerID()]
+            [str_replace(Config::$public_media_uri.'/', '', $photo->getURL()), $this->getID(), $this->getBannerID()]
         );
 
         return $this;
@@ -294,9 +294,12 @@ class MyRadio_Banner extends MyRadio_Photo
                 ->addField(new MyRadioFormField('type', MyRadioFormField::TYPE_SELECT, [
                     'label' => 'Type',
                     'explanation' => 'TODO: Ask Matt what this is even supposed to do.',
-                    'options' => array_map(function ($x) {
-                              return ['value' => $x['banner_type_id'], 'text' => $x['description']];
-                            }, self::getBannerTypes())
+                    'options' => array_map(
+                        function ($x) {
+                            return ['value' => $x['banner_type_id'], 'text' => $x['description']];
+                        },
+                        self::getBannerTypes()
+                    )
                 ]))
                 ->addField(new MyRadioFormField('photo', MyRadioFormField::TYPE_FILE, [
                     'label' => 'Image',

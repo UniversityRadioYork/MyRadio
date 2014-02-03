@@ -107,11 +107,14 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
         }
 
         //Check they aren't already attending one in the next week
-        if (self::$db->num_rows(self::$db->query(
-            'SELECT creditid FROM schedule.show_credit WHERE show_id=0 AND creditid=$1
-            AND effective_from >= NOW() AND effective_from <= (NOW() + INTERVAL \'1 week\') LIMIT 1',
-            array($_SESSION['memberid']))) === 1)
-        {
+        if (self::$db->num_rows(
+            self::$db->query(
+                'SELECT creditid FROM schedule.show_credit WHERE show_id=0 AND creditid=$1
+                AND effective_from >= NOW() AND effective_from <= (NOW() + INTERVAL \'1 week\') LIMIT 1',
+                array($_SESSION['memberid'])
+            )
+        ) === 1
+        ) {
             return 2;
         }
 

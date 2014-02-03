@@ -141,7 +141,9 @@ trait MyRadio_Creditable
                 $users,
                 $types
             ),
-            function ($credit) { return !empty($credit); }
+            function ($credit) {
+                return !empty($credit);
+            }
         );
     }
 

@@ -304,7 +304,9 @@ class MyRadio_Album extends ServiceAPI
             . ($options['custom'] !== null ? ' AND ' . $options['custom'] : '')
             . ($options['random'] ? ' ORDER BY RANDOM()' : '')
             . ($options['idsort'] ? ' ORDER BY trackid' : '')
-            . ($options['limit'] == 0 ? '' : ' LIMIT $'.$limit_param), $sql_params);
+            . ($options['limit'] == 0 ? '' : ' LIMIT $'.$limit_param),
+            $sql_params
+        );
 
         $response = array();
         foreach ($result as $recordid) {

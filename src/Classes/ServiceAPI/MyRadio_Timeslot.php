@@ -32,36 +32,66 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         self::initDB();
 
         //Get the basic info about the season
-        $result = self::$db->fetch_one('SELECT show_season_timeslot_id,
-      show_season_id, start_time, duration, memberid,
-      (SELECT array(SELECT metadata_key_id FROM schedule.timeslot_metadata
-        WHERE show_season_timeslot_id=$1 AND effective_from <= NOW() AND
-          (effective_to IS NULL OR effective_to >= NOW())
-        ORDER BY effective_from, show_season_timeslot_id)) AS metadata_types,
-      (SELECT array(SELECT metadata_value FROM schedule.timeslot_metadata
-        WHERE show_season_timeslot_id=$1 AND effective_from <= NOW() AND
-          (effective_to IS NULL OR effective_to >= NOW())
-        ORDER BY effective_from, show_season_timeslot_id)) AS metadata,
-      (SELECT COUNT(*) FROM schedule.show_season_timeslot
-        WHERE show_season_id=(SELECT show_season_id FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1)
-        AND start_time<=(SELECT start_time FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1))
-      AS timeslot_num,
-      (SELECT array(SELECT creditid FROM schedule.show_credit
-         WHERE show_id=(
-          SELECT show_id FROM schedule.show_season_timeslot
-            JOIN schedule.show_season USING (show_season_id)
-            WHERE show_season_timeslot_id=$1
-          )
-         AND effective_from <= NOW() AND (effective_to IS NULL OR effective_to >= NOW()) AND approvedid IS NOT NULL
-         ORDER BY show_credit_id)) AS credits,
-      (SELECT array(SELECT credit_type_id FROM schedule.show_credit
-         WHERE show_id=(
-          SELECT show_id FROM schedule.show_season_timeslot
-            JOIN schedule.show_season USING (show_season_id)
-            WHERE show_season_timeslot_id=$1
-          ) AND effective_from <= NOW() AND (effective_to IS NULL OR effective_to >= NOW()) AND approvedid IS NOT NULL
-         ORDER BY show_credit_id)) AS credit_types
-      FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', array($timeslot_id));
+        $result = self::$db->fetch_one(
+            'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid,
+            (
+                SELECT array(
+                    SELECT metadata_key_id FROM schedule.timeslot_metadata
+                    WHERE show_season_timeslot_id=$1
+                    AND effective_from <= NOW()
+                    AND (effective_to IS NULL OR effective_to >= NOW())
+                    ORDER BY effective_from, show_season_timeslot_id
+                )
+            ) AS metadata_types,
+            (
+                SELECT array(
+                    SELECT metadata_value FROM schedule.timeslot_metadata
+                    WHERE show_season_timeslot_id=$1
+                    AND effective_from <= NOW()
+                    AND (effective_to IS NULL OR effective_to >= NOW())
+                    ORDER BY effective_from, show_season_timeslot_id
+                )
+            ) AS metadata,
+            (
+                SELECT COUNT(*) FROM schedule.show_season_timeslot
+                WHERE show_season_id=(
+                    SELECT show_season_id FROM schedule.show_season_timeslot
+                    WHERE show_season_timeslot_id=$1
+                )
+                AND start_time<=(SELECT start_time FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1)
+            ) AS timeslot_num,
+            (
+                SELECT array(
+                    SELECT creditid FROM schedule.show_credit
+                    WHERE show_id=(
+                        SELECT show_id FROM schedule.show_season_timeslot
+                        JOIN schedule.show_season USING (show_season_id)
+                        WHERE show_season_timeslot_id=$1
+                    )
+                    AND effective_from <= NOW()
+                    AND (effective_to IS NULL OR effective_to >= NOW())
+                    AND approvedid IS NOT NULL
+                    ORDER BY show_credit_id
+                )
+            ) AS credits,
+            (
+                SELECT array(
+                    SELECT credit_type_id FROM schedule.show_credit
+                    WHERE show_id=(
+                        SELECT show_id FROM schedule.show_season_timeslot
+                        JOIN schedule.show_season USING (show_season_id)
+                        WHERE show_season_timeslot_id=$1
+                    )
+                    AND effective_from <= NOW()
+                    AND (effective_to IS NULL OR effective_to >= NOW())
+                    AND approvedid IS NOT NULL
+                    ORDER BY show_credit_id
+                )
+            ) AS credit_types
+            FROM schedule.show_season_timeslot
+            WHERE show_season_timeslot_id=$1',
+            array($timeslot_id)
+        );
         if (empty($result)) {
             //Invalid Season
             throw new MyRadioException('The MyRadio_Timeslot with instance ID #' . $timeslot_id . ' does not exist.');
@@ -172,11 +202,16 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function getTimeslotAfter()
     {
-        $result = self::$db->fetch_column('SELECT show_season_timeslot_id'
-                . ' FROM schedule.show_season_timeslot'
-                . ' WHERE start_time >= $1 AND start_time <= $2'
-                . ' ORDER BY start_time ASC LIMIT 1', [CoreUtils::getTimestamp($this->getEndTime() - 300),
-            CoreUtils::getTimestamp($this->getEndTime() + 300)]);
+        $result = self::$db->fetch_column(
+            'SELECT show_season_timeslot_id
+            FROM schedule.show_season_timeslot
+            WHERE start_time >= $1 AND start_time <= $2
+            ORDER BY start_time ASC LIMIT 1',
+            [
+                CoreUtils::getTimestamp($this->getEndTime() - 300),
+                CoreUtils::getTimestamp($this->getEndTime() + 300)
+            ]
+        );
         if (empty($result)) {
             return null;
         } else {
@@ -236,9 +271,12 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public static function getMostMessaged($date = 0)
     {
-        $result = self::$db->fetch_all('SELECT messages.timeslotid, count(*) as msg_count FROM sis2.messages
-      LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid = show_season_timeslot.show_season_timeslot_id
-      WHERE show_season_timeslot.start_time > $1 GROUP BY messages.timeslotid ORDER BY msg_count DESC LIMIT 30', array(CoreUtils::getTimestamp($date)));
+        $result = self::$db->fetch_all(
+            'SELECT messages.timeslotid, count(*) as msg_count FROM sis2.messages
+            LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid = show_season_timeslot.show_season_timeslot_id
+            WHERE show_season_timeslot.start_time > $1 GROUP BY messages.timeslotid ORDER BY msg_count DESC LIMIT 30',
+            array(CoreUtils::getTimestamp($date))
+        );
 
         $top = array();
         foreach ($result as $r) {
@@ -263,11 +301,18 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             return $top;
         }
 
-        $result = self::$db->fetch_all('SELECT show_season_timeslot_id,
-      (SELECT COUNT(*) FROM strm_log WHERE (starttime < start_time AND endtime >= start_time)
-        OR (starttime >= start_time AND starttime < start_time + duration)) AS listeners
-        FROM schedule.show_season_timeslot WHERE start_time > $1
-        ORDER BY listeners DESC LIMIT 30', array(CoreUtils::getTimestamp($date)));
+        $result = self::$db->fetch_all(
+            'SELECT show_season_timeslot_id,
+            (
+                SELECT COUNT(*) FROM strm_log 
+                WHERE (starttime < start_time 
+                AND endtime >= start_time)
+                OR (starttime >= start_time AND starttime < start_time + duration)
+            ) AS listeners
+            FROM schedule.show_season_timeslot WHERE start_time > $1
+            ORDER BY listeners DESC LIMIT 30',
+            array(CoreUtils::getTimestamp($date))
+        );
 
         $top = array();
         foreach ($result as $r) {
@@ -294,9 +339,12 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $time = time();
         }
 
-        $result = self::$db->fetch_column('SELECT show_season_timeslot_id FROM
+        $result = self::$db->fetch_column(
+            'SELECT show_season_timeslot_id FROM
             schedule.show_season_timeslot WHERE start_time <= $1 AND
-            start_time + duration >= $1', [CoreUtils::getTimestamp($time)]);
+            start_time + duration >= $1',
+            [CoreUtils::getTimestamp($time)]
+        );
 
         if (empty($result)) {
             return null;
@@ -312,10 +360,13 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public static function getNextTimeslot($time = null)
     {
-        $result = self::$db->fetch_column('SELECT show_season_timeslot_id FROM
-      schedule.show_season_timeslot WHERE start_time >= $1
-      ORDER BY start_time ASC
-      LIMIT 1', [CoreUtils::getTimestamp($time)]);
+        $result = self::$db->fetch_column(
+            'SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
+            WHERE start_time >= $1
+            ORDER BY start_time ASC
+            LIMIT 1',
+            [CoreUtils::getTimestamp($time)]
+        );
 
         if (empty($result)) {
             return null;
@@ -341,7 +392,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     'title' => Config::$short_name . ' Jukebox',
                     'desc' => 'Non-stop Music',
                     'photo' => Config::$default_show_uri,
-                    'end_time' => $next->getStartTime()]
+                    'end_time' => $next->getStartTime()
+                ]
             ];
         } else {
             //There's a show on!
@@ -352,7 +404,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     'photo' => $timeslot->getPhoto(),
                     'start_time' => $timeslot->getStartTime(),
                     'end_time' => $timeslot->getEndTime(),
-                    'presenters' => $timeslot->getPresenterString()]
+                    'presenters' => $timeslot->getPresenterString()
+                ]
             ];
             $next = $timeslot->getTimeslotAfter();
         }
@@ -432,10 +485,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         if (MyRadio_User::getInstance()->hasAuth(AUTH_DELETESHOWS)) {
             //Yep, do an administrative drop
             $r = $this->cancelTimeslotAdmin($reason);
-        }
-
-        //Get if the User is a Creditor
+        } 
         elseif ($this->getSeason()->getShow()->isCurrentUserAnOwner()) {
+            //Get if the User is a Creditor
             //Yaay, depending on time they can do an self-service drop or cancellation request
             if ($this->getStartTime() > time() + (48 * 3600)) {
                 //Self-service cancellation
@@ -455,8 +507,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     private function cancelTimeslotAdmin($reason)
     {
         $r = $this->deleteTimeslot();
-        if (!$r)
+        if (!$r) {
             return false;
+        }
 
         $email = "Hi #NAME, \r\n\r\n Please note that an episode of your show, " . $this->getMeta('title') .
                 ' has been cancelled by our Programming Team. The affected episode was at ' . CoreUtils::happyTime($this->getStartTime());
@@ -471,8 +524,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     private function cancelTimeslotSelfService($reason)
     {
         $r = $this->deleteTimeslot();
-        if (!$r)
+        if (!$r) {
             return false;
+        }
 
         $email1 = "Hi #NAME, \r\n\r\n You have requested that an episode of " . $this->getMeta('title') .
                 ' is cancelled. The affected episode was at ' . CoreUtils::happyTime($this->getStartTime());
@@ -586,8 +640,14 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             }
         }
 
-        self::$db->query('INSERT INTO bapsplanner.timeslot_change_ops (client_id, change_ops)
-      VALUES ($1, $2)', array($set['clientid'], json_encode($set['ops'])));
+        self::$db->query(
+            'INSERT INTO bapsplanner.timeslot_change_ops (client_id, change_ops)
+            VALUES ($1, $2)',
+            array(
+                $set['clientid'],
+                json_encode($set['ops'])
+            )
+        );
 
         self::$db->query('COMMIT');
 
@@ -611,8 +671,12 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
          * Find out if there's a NIPSWeb Schema listing for this timeslot.
          * If not, throw back an empty array
          */
-        $r = self::$db->query('SELECT timeslot_item_id, channel_id FROM bapsplanner.timeslot_items WHERE timeslot_id=$1
-      ORDER BY weight ASC', array($this->getID()));
+        $r = self::$db->query(
+            'SELECT timeslot_item_id, channel_id FROM bapsplanner.timeslot_items
+            WHERE timeslot_id=$1
+            ORDER BY weight ASC',
+            array($this->getID())
+        );
 
         if (!$r or pg_num_rows($r) === 0) {
             //No show planned yet
@@ -633,36 +697,54 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function getSigninInfo()
     {
-        $result = self::$db->fetch_all('SELECT * FROM (SELECT creditid AS memberid '
-                . 'FROM schedule.show_credit WHERE show_id IN '
-                . '(SELECT show_id FROM schedule.show_season WHERE show_season_id IN '
-                . '(SELECT show_season_id FROM schedule.show_season_timeslot'
-                . '  WHERE show_season_timeslot_id=$1))'
-                . ' AND effective_from <= NOW()'
-                . ' AND (effective_to IS NULL OR effective_to > NOW())) AS t1 '
-                . 'LEFT JOIN (SELECT memberid, signerid FROM sis2.member_signin '
-                . 'WHERE show_season_timeslot_id=$1) AS t2 USING (memberid)', [$this->getID()]);
+        $result = self::$db->fetch_all(
+            'SELECT * FROM (
+                SELECT creditid AS memberid
+                FROM schedule.show_credit WHERE show_id IN (
+                    SELECT show_id FROM schedule.show_season 
+                    WHERE show_season_id IN (
+                        SELECT show_season_id FROM schedule.show_season_timeslot
+                        WHERE show_season_timeslot_id=$1
+                    )
+                )
+                AND effective_from <= NOW()
+                AND (effective_to IS NULL OR effective_to > NOW())
+            ) AS t1
+            LEFT JOIN (
+                SELECT memberid, signerid FROM sis2.member_signin
+                WHERE show_season_timeslot_id=$1
+            ) AS t2 USING (memberid)',
+            [$this->getID()]
+        );
 
-        return array_map(function ($x) {
-            return ['user' => MyRadio_User::getInstance($x['memberid']),
-                'signedby' => $x['signerid'] ? MyRadio_User::getInstance($x['signerid']) : null];
-        }, $result);
+        return array_map(
+            function ($x) {
+                return [
+                    'user' => MyRadio_User::getInstance($x['memberid']),
+                    'signedby' => $x['signerid'] ? MyRadio_User::getInstance($x['signerid']) : null
+                ];
+            },
+            $result
+        );
     }
 
     public function getMessages($offset = 0)
     {
-        $result = self::$db->fetch_all('SELECT c.commid AS id,
-                commtypeid AS type,
-                EXTRACT (EPOCH FROM date) AS time,
-                subject AS title,
-                content AS body,
-                (statusid = 2) AS read,
-                comm_source AS source
-              FROM sis2.messages c
-              INNER JOIN schedule.show_season_timeslot ts ON (c.timeslotid = ts.show_season_timeslot_id)
-              WHERE  statusid <= 2 AND c.timeslotid = $1
-               AND c.commid > $2
-              ORDER BY c.commid ASC', [$this->getID(), $offset]);
+        $result = self::$db->fetch_all(
+            'SELECT c.commid AS id,
+            commtypeid AS type,
+            EXTRACT (EPOCH FROM date) AS time,
+            subject AS title,
+            content AS body,
+            (statusid = 2) AS read,
+            comm_source AS source
+            FROM sis2.messages c
+            INNER JOIN schedule.show_season_timeslot ts ON (c.timeslotid = ts.show_season_timeslot_id)
+            WHERE  statusid <= 2 AND c.timeslotid = $1
+            AND c.commid > $2
+            ORDER BY c.commid ASC',
+            [$this->getID(), $offset]
+        );
 
         foreach ($result as $k => $v) {
             $result[$k]['read'] = ($v['read'] === 't');
@@ -684,9 +766,14 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function signIn(MyRadio_User $member)
     {
-        self::$db->query('INSERT INTO sis2.member_signin'
-                . ' (show_season_timeslot_id, memberid, signerid)'
-                . ' VALUES ($1, $2, $3)', [$this->getID(), $member->getID(), MyRadio_User::getInstance()->getID()]);
+        self::$db->query(
+            'INSERT INTO sis2.member_signin (show_season_timeslot_id, memberid, signerid)
+            VALUES ($1, $2, $3)',
+            [
+                $this->getID(),
+                $member->getID(),
+                MyRadio_User::getInstance()->getID()
+            ]
+        );
     }
-
 }

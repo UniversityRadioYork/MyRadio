@@ -120,7 +120,7 @@ class MyRadio_ChartRelease extends ServiceAPI
      *
      * @return The chart type with the given ID.
      */
-    protected function __construct($chart_release_id, $chart_type=null)
+    protected function __construct($chart_release_id, $chart_type = null)
     {
         $this->chart_release_id = $chart_release_id;
         $this->chart_type = $chart_type;
@@ -152,7 +152,7 @@ class MyRadio_ChartRelease extends ServiceAPI
      *
      * @return The chart release with the given ID.
      */
-    public static function getInstance($chart_release_id=-1, $chart_type=null)
+    public static function getInstance($chart_release_id = -1, $chart_type = null)
     {
         self::__wakeup();
 

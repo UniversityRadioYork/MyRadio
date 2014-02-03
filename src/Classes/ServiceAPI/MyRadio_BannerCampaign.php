@@ -218,7 +218,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
     {
         return $this->getBannerCampaignForm($this->banner->getID())
             ->editMode(
-                $this->getID(), [
+                $this->getID(),
+                [
                     'timeslots' => $this->getTimeslots(),
                     'effective_from' => CoreUtils::happyTime($this->getEffectiveFrom()),
                     'effective_to' => $this->getEffectiveTo() === null ? null :
@@ -338,8 +339,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
         $banner_location_id = 1,
         $effective_from = null,
         $effective_to = null,
-        $timeslots = array())
-    {
+        $timeslots = array()
+    ) {
         if ($effective_from == null) {
             $effective_from = time();
         }
@@ -406,7 +407,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
         ->addField(
             new MyRadioFormField(
                 'effective_from',
-                MyRadioFormField::TYPE_DATETIME, [
+                MyRadioFormField::TYPE_DATETIME,
+                [
                     'required' => true,
                     'value' => CoreUtils::happyTime(time()),
                     'label' => 'Start Time',
@@ -417,7 +419,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
         ->addField(
             new MyRadioFormField(
                 'effective_to',
-                MyRadioFormField::TYPE_DATETIME, [
+                MyRadioFormField::TYPE_DATETIME,
+                [
                     'required' => false,
                     'label' => 'End Time',
                     'explanation' => 'The time at which this Campaign becomes inactive. Leaving this blank means'
@@ -428,7 +431,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
         ->addField(
             new MyRadioFormField(
                 'location',
-                MyRadioFormField::TYPE_SELECT, [
+                MyRadioFormField::TYPE_SELECT,
+                [
                     'label' => 'Location',
                     'explanation' => 'Choose where on the website this Campaign is run.',
                     'options' => self::getCampaignLocations()
@@ -438,7 +442,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
         ->addField(
             new MyRadioFormField(
                 'timeslots',
-                MyRadioFormField::TYPE_WEEKSELECT, [
+                MyRadioFormField::TYPE_WEEKSELECT,
+                [
                     'label' => 'Timeslots',
                     'explanation' => 'All times filled in on this schedule (i.e. are purple) are times during the'
                     . ' week that this Campaign is considered active, and therefore appears on the website.'
@@ -449,7 +454,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
         ->addField(
             new MyRadioFormField(
                 'bannerid',
-                MyRadioFormField::TYPE_HIDDEN, [
+                MyRadioFormField::TYPE_HIDDEN,
+                [
                     'value' => $bannerid
                 ]
             )

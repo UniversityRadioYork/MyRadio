@@ -141,7 +141,9 @@ class Artist extends ServiceAPI
             . ($options['custom'] !== null ? ' AND ' . $options['custom'] : '')
             . ($options['random'] ? ' ORDER BY RANDOM()' : '')
             . ($options['idsort'] ? ' ORDER BY trackid' : '')
-            . ($options['limit'] == 0 ? '' : ' LIMIT $'.$limit_param), $sql_params);
+            . ($options['limit'] == 0 ? '' : ' LIMIT $'.$limit_param),
+            $sql_params
+        );
 
         return $result;
     }
