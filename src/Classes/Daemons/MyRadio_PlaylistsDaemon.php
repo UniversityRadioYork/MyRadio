@@ -7,20 +7,22 @@
 
 /**
  * This Daemon updates the auto-generated iTones Playlists once an hour.
- * 
+ *
  * @version 20130710
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Tracklist
  * @uses \Database
- * 
+ *
  */
-class MyRadio_PlaylistsDaemon extends MyRadio_Daemon {
-
-    public static function isEnabled() {
+class MyRadio_PlaylistsDaemon extends MyRadio_Daemon
+{
+    public static function isEnabled()
+    {
         return Config::$d_Playlists_enabled;
     }
 
-    public static function run() {
+    public static function run()
+    {
         $hourkey = __CLASS__ . '_last_run_hourly';
         if (self::getVal($hourkey) > time() - 3500) {
             return;
@@ -33,14 +35,15 @@ class MyRadio_PlaylistsDaemon extends MyRadio_Daemon {
         self::setVal($hourkey, time());
     }
 
-    private static function updateMostPlayedPlaylist() {
+    private static function updateMostPlayedPlaylist()
+    {
         $pobj = iTones_Playlist::getInstance('semantic-auto');
         $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
 
         /**
-         * @todo This is 120 days for testing (It was Summer when I wrote this...)
+         * Track play stats for last TWO weeks - not 120 days!!
          */
-        $most_played = MyRadio_TracklistItem::getTracklistStatsForBAPS(time() - (86400 * 120)); //Track play stats for last week
+        $most_played = MyRadio_TracklistItem::getTracklistStatsForBAPS(time() - (86400 * 14));
 
         $playlist = array();
         for ($i = 0; $i < 20; $i++) {
@@ -58,7 +61,8 @@ class MyRadio_PlaylistsDaemon extends MyRadio_Daemon {
         $pobj->releaseLock($lockstr);
     }
 
-    private static function updateNewestUploadsPlaylist() {
+    private static function updateNewestUploadsPlaylist()
+    {
         $pobj = iTones_Playlist::getInstance('newest-auto');
         $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
 
@@ -67,5 +71,4 @@ class MyRadio_PlaylistsDaemon extends MyRadio_Daemon {
         $pobj->setTracks($newest_tracks, $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
     }
-
 }

@@ -26,7 +26,8 @@
  * @author Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Core
  */
-class MyRadio_JsonFormLoader {
+class MyRadio_JsonFormLoader
+{
     /**
      * The name of the current MyRadio module.
      * @var string
@@ -42,22 +43,24 @@ class MyRadio_JsonFormLoader {
     /**
      * Constructs a new MyRadio_JsonFormLoader.
      *
-     * @param string $module  The name of the calling MyRadio module.
+     * @param string $module The name of the calling MyRadio module.
      *
      * @return MyRadio_JsonFormLoader
      */
-    public function __construct($module) {
+    public function __construct($module)
+    {
         $this->module = $module;
         $this->form_array = null;
     }
-  
+
     /**
      * Loads a form from its filename, from the module's forms directory.
      *
-     * @param string $name  The (file)name of the form, without the '.json'.
-     * @return MyRadio_JsonFormLoader  this.
+     * @param  string                 $name The (file)name of the form, without the '.json'.
+     * @return MyRadio_JsonFormLoader this.
      */
-    public function fromName($name) {
+    public function fromName($name)
+    {
         return $this->fromPath(
             'Models/' . $this->module . '/' . $name . '.json'
         );
@@ -66,48 +69,53 @@ class MyRadio_JsonFormLoader {
     /**
      * Loads a form from its file path.
      *
-     * @param string $path  The path to load from.
-     * @return MyRadio_JsonFormLoader  this.
+     * @param  string                 $path The path to load from.
+     * @return MyRadio_JsonFormLoader this.
      */
-    public function fromPath($path) {
+    public function fromPath($path)
+    {
         return $this->fromString(
             file_get_contents($path, true)
         );
     }
-    
+
     /**
      * Loads a form from a JSON string.
      *
-     * @param string $str  The string to load from.
-     * @return MyRadio_JsonFormLoader  this.
+     * @param  string                 $str The string to load from.
+     * @return MyRadio_JsonFormLoader this.
      */
-    public function fromString($str) {
+    public function fromString($str)
+    {
         $this->form_array = json_decode($str, true);
         if ($this->form_array === null) {
             throw new MyRadioException(
                 'Failed to load form from JSON: Code ' .
-                json_last_error() 
+                json_last_error()
             );
         }
+
         return $this;
     }
 
     /**
      * Compiles a previously loaded form to a form object.
      *
-     * @param string    $action  The name of the action to trigger on submission.
-     * @param array     $binds   The mapping of names used in !bind directives to
-     *                           variables.
+     * @param string $action The name of the action to trigger on submission.
+     * @param array  $binds  The mapping of names used in !bind directives to
+     *                       variables.
      *
-     * @return MyRadioForm  The processed form.
+     * @return MyRadioForm The processed form.
      */
-    public function toForm($action, array $binds=[]) {
+    public function toForm($action, array $binds = [])
+    {
         $fc = new MyRadio_FormConstructor(
             $this->form_array,
             $binds,
             $this->module,
             $action
         );
+
         return $fc->toForm();
     }
 
@@ -116,16 +124,15 @@ class MyRadio_JsonFormLoader {
      *
      * This is a convenience wrapper for 'fromPath'.
      *
-     * @param string $module  The name of the calling MyRadio module.
-     * @param string $name    The (file)name of the form, without the '.json'.
-     * @param string $action  The name of the action to trigger on submission.
-     * @return MyRadioForm  The processed form.
+     * @param  string      $module The name of the calling MyRadio module.
+     * @param  string      $name   The (file)name of the form, without the '.json'.
+     * @param  string      $action The name of the action to trigger on submission.
+     * @return MyRadioForm The processed form.
      */
-    public static function loadFromModule($module, $name, $action, $binds=[]) {
+    public static function loadFromModule($module, $name, $action, $binds = [])
+    {
         return (
             new MyRadio_JsonFormLoader($module)
         )->fromName($name)->toForm($action, $binds);
     }
 }
-
-?>

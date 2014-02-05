@@ -7,271 +7,300 @@
 /**
  * The TrainingStatus class provides information about the URY Training States
  * and members who have achieved them.
- * 
+ *
  * Historically, and databasically (that's a word now), Training Statuses have been
  * referred to as Presenter Statuses. With the increasing removal detachment from
  * just "presenter" training, and more towards any activity, "Training Status"
  * was adopted.
- * 
+ *
  * @version 20130801
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 
-class MyRadio_TrainingStatus extends ServiceAPI {
-  /**
-   * The ID of the Training Status
-   * @var int
-   */
-  private $presenterstatusid;
-  
-  /**
-   * The Title of the Training Status
-   * @var String
-   */
-  private $descr;
-  
-  /**
-   * The numerical weight of the Training Status.
-   * 
-   * The bigger the number, the further down the list it appears,
-   * and the more senior the status.
-   * 
-   * @var int
-   */
-  private $ordering;
-  
-  /**
-   * The Training Status a member must have before achieving this one.
-   * 
-   * @var MyRadio_TrainingStatus
-   */
-  private $depends;
-  
-  /**
-   * The Training Status a member must have in order to award this one.
-   * 
-   * @var MyRadio_TrainingStatus
-   */
-  private $can_award;
-  
-  /**
-   * A long description of the capabilities of a member with this Training Status.
-   * 
-   * @var String
-   */
-  private $detail;
-  
-  /**
-   * Users who have achieved this Training Status.
-   * 
-   * This array is initialised the first time it is requested.
-   * 
-   * @var int[]
-   */
-  private $awarded_to = null;
-  
-  /**
-   * Permissions granted to Users with this Training Status.
-   * 
-   * @var int[]
-   */
-  private $permissions;
+class MyRadio_TrainingStatus extends ServiceAPI
+{
+    /**
+     * The ID of the Training Status
+     * @var int
+     */
+    private $presenterstatusid;
 
-  /**
-   * Create a new TrainingStatus object. Generally, you should use getInstance.
-   * 
-   * @param int $statusid The ID of the TrainingStatus.
-   * @throws MyRadioException
-   */
-  protected function __construct($statusid) {
-    $this->presenterstatusid = (int)$statusid;
+    /**
+     * The Title of the Training Status
+     * @var String
+     */
+    private $descr;
+
+    /**
+     * The numerical weight of the Training Status.
+     *
+     * The bigger the number, the further down the list it appears,
+     * and the more senior the status.
+     *
+     * @var int
+     */
+    private $ordering;
+
+    /**
+     * The Training Status a member must have before achieving this one.
+     *
+     * @var MyRadio_TrainingStatus
+     */
+    private $depends;
+
+    /**
+     * The Training Status a member must have in order to award this one.
+     *
+     * @var MyRadio_TrainingStatus
+     */
+    private $can_award;
+
+    /**
+     * A long description of the capabilities of a member with this Training Status.
+     *
+     * @var String
+     */
+    private $detail;
+
+    /**
+     * Users who have achieved this Training Status.
+     *
+     * This array is initialised the first time it is requested.
+     *
+     * @var int[]
+     */
+    private $awarded_to = null;
+
+    /**
+     * Permissions granted to Users with this Training Status.
+     *
+     * @var int[]
+     */
+    private $permissions;
+
+    /**
+     * Create a new TrainingStatus object. Generally, you should use getInstance.
+     *
+     * @param int $statusid The ID of the TrainingStatus.
+     * @throws MyRadioException
+     */
+    protected function __construct($statusid)
+    {
+        $this->presenterstatusid = (int) $statusid;
     
-    $result = self::$db->fetch_one('SELECT * FROM public.l_presenterstatus WHERE presenterstatusid=$1', array($statusid));
+        $result = self::$db->fetch_one('SELECT * FROM public.l_presenterstatus WHERE presenterstatusid=$1', array($statusid));
     
-    if (empty($result)) {
-      throw new MyRadioException('The specified Training Status ('.$statusid.') does not seem to exist');
-      return;
+        if (empty($result)) {
+            throw new MyRadioException('The specified Training Status ('.$statusid.') does not seem to exist');
+            return;
+        }
+    
+        $this->descr = $result['descr'];
+        $this->ordering = (int) $result['ordering'];
+        $this->detail = $result['detail'];
+    
+        $this->depends = empty($result['depends']) ? null : $result['depends'];
+        $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
+    
+        $this->permissions = self::$db->fetch_column('SELECT typeid FROM public.auth_trainingstatus WHERE presenterstatusid=$1', [$statusid]);
     }
-    
-    $this->descr = $result['descr'];
-    $this->ordering = (int)$result['ordering'];
-    $this->detail = $result['detail'];
-    
-    $this->depends = empty($result['depends']) ? null : $result['depends'];
-    $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
-    
-    $this->permissions = self::$db->fetch_column('SELECT typeid FROM public.auth_trainingstatus WHERE presenterstatusid=$1', [$statusid]);
-  }
-  
-  /**
-   * Get the presenterstatusid
-   * @return int
-   */
-  public function getID() {
-    return $this->presenterstatusid;
-  }
-  
-  /**
-   * Get the Title
-   * 
-   * Internally, this is the `descr` field for compatibility.
-   * 
-   * @return String
-   */
-  public function getTitle() {
-    return $this->descr;
-  }
-  
-  /**
-   * Get details about the TrainingStatus' purpose
-   * 
-   * @return String
-   */
-  public function getDetail() {
-    return $this->detail;
-  }
-  
-  /**
-   * Get the permissions this Training Status grants
-   * 
-   * @return int[]
-   */
-  public function getPermissions() {
-      return $this->permissions;
-  }
-  
-  /**
-   * Get the TrainingStatus a member must have before being awarded this one, if any.
-   * 
-   * Returns null if there is no dependency.
-   * 
-   * @return MyRadio_TrainingStatus
-   */
-  public function getDepends() {
-    return empty($this->depends) ? null : self::getInstance($this->depends);
-  }
-  
-  /**
-   * Checks if the user has the Training Status the one depends on.
-   * 
-   * @param MyRadio_User $user Default current User.
-   * @return bool True if no dependency or dependency gained, false otherwise.
-   */
-  public function hasDependency(MyRadio_User $user = null) {
-    if ($user === null) {
-      $user = MyRadio_User::getInstance();
+
+    /**
+     * Get the presenterstatusid
+     * @return int
+     */
+    public function getID()
+    {
+        return $this->presenterstatusid;
     }
-    return ($this->getDepends() == null or $this->getDepends()->isAwardedTo($user));
-  }
-  
-  /**
-   * Gets the TrainingStatus a member must have before awarding this one.
-   * 
-   * @return MyRadio_TrainingStatus
-   */
-  public function getAwarder() {
-    return self::getInstance($this->can_award);
-  }
-  
-  /**
-   * Returns if the User can Award this Training Status
-   * @param MyRadio_User $user
-   * @return bool
-   */
-  public function canAward(MyRadio_User $user = null) {
-    if ($user === null) {
-      $user = MyRadio_User::getInstance();
+
+    /**
+     * Get the Title
+     *
+     * Internally, this is the `descr` field for compatibility.
+     *
+     * @return String
+     */
+    public function getTitle()
+    {
+        return $this->descr;
     }
-    
-    return $this->getAwarder()->isAwardedTo($user);
-  }
-  
-  /**
-   * Get an array of all UserTrainingStatuses this TrainingStatus has been
-   * awarded to, and hasn't been revoked from.
-   * 
-   * @param int $ids If true, just returns User Training Status IDs instead of
-   * UserTrainingStatuses.
-   * @return MyRadio_User[]|int
-   */
-  public function getAwardedTo($ids = false) {
-    if ($this->awarded_to === null) {
-      $this->awarded_to = self::$db->fetch_column(
-        'SELECT memberpresenterstatusid FROM member_presenterstatus
-        WHERE presenterstatusid=$1 AND revokedtime IS NULL', [$this->getID()]);
+
+    /**
+     * Get details about the TrainingStatus' purpose
+     *
+     * @return String
+     */
+    public function getDetail()
+    {
+        return $this->detail;
     }
-    
-    return $ids ? $this->awarded_to : 
+
+    /**
+     * Get the permissions this Training Status grants
+     *
+     * @return int[]
+     */
+    public function getPermissions()
+    {
+        return $this->permissions;
+    }
+
+    /**
+     * Get the TrainingStatus a member must have before being awarded this one, if any.
+     *
+     * Returns null if there is no dependency.
+     *
+     * @return MyRadio_TrainingStatus
+     */
+    public function getDepends()
+    {
+        return empty($this->depends) ? null : self::getInstance($this->depends);
+    }
+
+    /**
+     * Checks if the user has the Training Status the one depends on.
+     *
+     * @param MyRadio_User $user Default current User.
+     * @return bool True if no dependency or dependency gained, false otherwise.
+     */
+    public function hasDependency(MyRadio_User $user = null)
+    {
+        if ($user === null) {
+            $user = MyRadio_User::getInstance();
+        }
+
+        return ($this->getDepends() == null or $this->getDepends()->isAwardedTo($user));
+    }
+
+    /**
+     * Gets the TrainingStatus a member must have before awarding this one.
+     *
+     * @return MyRadio_TrainingStatus
+     */
+    public function getAwarder()
+    {
+        return self::getInstance($this->can_award);
+    }
+
+    /**
+     * Returns if the User can Award this Training Status
+     * @param MyRadio_User $user
+     * @return bool
+     */
+    public function canAward(MyRadio_User $user = null)
+    {
+        if ($user === null) {
+            $user = MyRadio_User::getInstance();
+        }
+
+        return $this->getAwarder()->isAwardedTo($user);
+    }
+
+    /**
+     * Get an array of all UserTrainingStatuses this TrainingStatus has been
+     * awarded to, and hasn't been revoked from.
+     *
+     * @param int $ids If true, just returns User Training Status IDs instead of
+     * UserTrainingStatuses.
+     * @return MyRadio_User[]|int
+     */
+    public function getAwardedTo($ids = false)
+    {
+        if ($this->awarded_to === null) {
+            $this->awarded_to = self::$db->fetch_column(
+                'SELECT memberpresenterstatusid FROM member_presenterstatus
+                WHERE presenterstatusid=$1 AND revokedtime IS NULL',
+                [$this->getID()]
+            );
+        }
+
+        return $ids ? $this->awarded_to :
             MyRadio_UserTrainingStatus::resultSetToObjArray($this->awarded_to);
-  }
-  
-  /**
-   * Checks if the User has this Training Status
-   * 
-   * @param MyRadio_User $user
-   * @return bool
-   */
-  public function isAwardedTo(MyRadio_User $user = null) {
-    if ($user === null) {
-      $user = MyRadio_User::getInstance();
     }
-    
-    return in_array($user->getID(), array_map(function($x){
-      return $x->getAwardedTo()->getID();},
-            $this->getAwardedTo()));
-  }
-  
-  /**
-   * Get an array of properties for this TrainingStatus.
-   * 
-   * @return Array
-   */
-  public function toDataSource() {
-    return array(
-        'status_id' => $this->getID(),
-        'title' => $this->getTitle(),
-        'detail' => $this->getDetail(),
-        'depends' => $this->getDepends(),
-        'awarded_by' => $this->getAwarder()
-    );
-  }
-  
-  /**
-   * Get all Training Statuses.
-   * @return MyRadio_TrainingStatus[]
-   */
-  public static function getAll() {
-    return self::resultSetToObjArray(self::$db->fetch_column(
-            'SELECT presenterstatusid FROM public.l_presenterstatus '
-            . 'ORDER BY presenterstatusid'));
-  }
-  
-  /**
-   * The all the Training Statuses the User can currently be awarded.
-   * 
-   * A User cannot award themselves statuses.
-   * 
-   * @param MyRadio_User $to The User getting the Training Status.
-   * @param MyRadio_User $by The User awarding the Training Status.
-   * @return MyRadio_TrainingStatus[]
-   */
-  public static function getAllAwardableTo(MyRadio_User $to, MyRadio_User $by = null) {
-    if ($by === null) {
-      $by = MyRadio_User::getInstance();
-    }
-    if ($to === $by) {
-      return [];
-    }
-    
-    $statuses = [];
-    foreach (self::getAll() as $status) {
-      if ((!$status->isAwardedTo($to)) && $status->hasDependency($to)
-              && $status->canAward($by)) {
-        $statuses[] = $status;
-      }
-    }
-    return $statuses;
-  }
 
+    /**
+     * Checks if the User has this Training Status
+     *
+     * @param MyRadio_User $user
+     * @return bool
+     */
+    public function isAwardedTo(MyRadio_User $user = null)
+    {
+        if ($user === null) {
+            $user = MyRadio_User::getInstance();
+        }
+
+        return in_array(
+            $user->getID(),
+            array_map(
+                function ($x) {
+                    return $x->getAwardedTo()->getID();
+                },
+                $this->getAwardedTo()
+            )
+        );
+    }
+
+    /**
+     * Get an array of properties for this TrainingStatus.
+     *
+     * @return Array
+     */
+    public function toDataSource()
+    {
+        return array(
+            'status_id' => $this->getID(),
+            'title' => $this->getTitle(),
+            'detail' => $this->getDetail(),
+            'depends' => $this->getDepends(),
+            'awarded_by' => $this->getAwarder()
+        );
+    }
+
+    /**
+     * Get all Training Statuses.
+     * @return MyRadio_TrainingStatus[]
+     */
+    public static function getAll()
+    {
+        return self::resultSetToObjArray(
+            self::$db->fetch_column(
+                'SELECT presenterstatusid FROM public.l_presenterstatus
+                ORDER BY presenterstatusid'
+            )
+        );
+    }
+
+    /**
+     * The all the Training Statuses the User can currently be awarded.
+     *
+     * A User cannot award themselves statuses.
+     *
+     * @param MyRadio_User $to The User getting the Training Status.
+     * @param MyRadio_User $by The User awarding the Training Status.
+     * @return MyRadio_TrainingStatus[]
+     */
+    public static function getAllAwardableTo(MyRadio_User $to, MyRadio_User $by = null)
+    {
+        if ($by === null) {
+            $by = MyRadio_User::getInstance();
+        }
+        if ($to === $by) {
+            return [];
+        }
+
+        $statuses = [];
+        foreach (self::getAll() as $status) {
+            if ((!$status->isAwardedTo($to))
+                && $status->hasDependency($to)
+                && $status->canAward($by)
+            ) {
+                $statuses[] = $status;
+            }
+        }
+    
+        return $statuses;
+    }
 }

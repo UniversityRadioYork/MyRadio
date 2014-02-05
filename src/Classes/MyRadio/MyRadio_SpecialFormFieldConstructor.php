@@ -16,13 +16,15 @@
  * @author  Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Core
  */
-class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor {
+class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor
+{
     /**
      * Builds and attaches the field.
      *
-     * @return null  Nothing.
+     * @return null Nothing.
      */
-    public function make() {
+    public function make()
+    {
         $done = $this->dispatchSpecialFieldHandler();
         if (!$done) {
             throw new MyRadioException(
@@ -34,9 +36,10 @@ class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor {
     /**
      * Attempts to handle the special field by dispatching on its name.
      *
-     * @return boolean  True if the field was handled; false otherwise.
+     * @return boolean True if the field was handled; false otherwise.
      */
-    private function dispatchSpecialFieldHandler() {
+    private function dispatchSpecialFieldHandler()
+    {
         $matches = [];
         // TODO: Replace regexes with something a bit less awful.
         $operators = [
@@ -58,24 +61,25 @@ class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor {
     /**
      * Adds a repeated field block to a form.
      *
-     * @param array       $options  The array of options to the !repeat
-     *                              directive.  This should contain three
-     *                              numeric indices: the repeat directive, the
-     *                              repetition ID start, and end.
+     * @param array $options The array of options to the !repeat
+     *                       directive.  This should contain three
+     *                       numeric indices: the repeat directive, the
+     *                       repetition ID start, and end.
      *
      * @return Nothing.
      */
-    private function addRepeatedFieldsToForm(array $options) {
+    private function addRepeatedFieldsToForm(array $options)
+    {
         $start = intval($options[1]);
         $end = intval($options[2]);
 
         if ($start >= $end) {
             throw new MyRadioException(
-                'Start and end wrong way around on !repeat: start=' .
-                $start .
-                ', end=' .
-                $end .
-                '.'
+                'Start and end wrong way around on !repeat: start='
+                . $start
+                . ', end='
+                . $end
+                . '.'
             );
         }
         for ($i = $start; $i <= $end; $i++) {
@@ -89,11 +93,12 @@ class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor {
      * The fields inside the block have the variable 'repeater' bound to the
      * current iteration of the repeater.
      *
-     * @param int $iteration  The current iteration of the repeater.
+     * @param int $iteration The current iteration of the repeater.
      *
-     * @return null  Nothing.
+     * @return null Nothing.
      */
-    private function addRepeatedFieldsInstanceToForm($iteration) {
+    private function addRepeatedFieldsInstanceToForm($iteration)
+    {
         foreach ($this->field as $name => $infield) {
             $new_bindings = array_merge(
                 ['repeater' => strval($iteration)],
@@ -107,13 +112,14 @@ class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor {
     /**
      * Adds a section to a form.
      *
-     * @param array $options  The array of options to the !section directive.
-     *                        This should contain one numeric index: the
-     *                        section name.
+     * @param array $options The array of options to the !section directive.
+     *                       This should contain one numeric index: the
+     *                       section name.
      *
-     * @return null  Nothing.
+     * @return null Nothing.
      */
-    private function addSectionToForm(array $options) {
+    private function addSectionToForm(array $options)
+    {
         $this->addSectionHeader($options[1]);
         $this->addSectionBody();
     }
@@ -121,11 +127,12 @@ class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor {
     /**
      * Adds a section header to a form.
      *
-     * @param string      $name     The human-readable name of the section.
+     * @param string $name The human-readable name of the section.
      *
-     * @return null  Nothing.
+     * @return null Nothing.
      */
-    private function addSectionHeader(/* string */ $name) {
+    private function addSectionHeader(/* string */ $name)
+    {
         $this->fc->addFieldToForm(
             $this->sectionHeaderName($name),
             [
@@ -140,10 +147,11 @@ class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor {
     /**
      * Adds a section body to a form.
      *
-     * @return null  Nothing.
+     * @return null Nothing.
      */
-    private function addSectionBody() {
-        foreach($this->field as $name => $infield) {
+    private function addSectionBody()
+    {
+        foreach ($this->field as $name => $infield) {
             $this->fc->addFieldToForm($name, $infield, $this->bindings);
         }
     }
@@ -152,11 +160,10 @@ class MyRadio_SpecialFormFieldConstructor extends MyRadio_FormFieldConstructor {
      * Generates a valid name for a section header form field.
      *
      * @return string $name  A name that should be unique to the section, but
-     *                       contains no invalid characters.
+     *                contains no invalid characters.
      */
-    private function sectionHeaderName($name) {
+    private function sectionHeaderName($name)
+    {
         return base64_encode($name);
     }
 }
-
-?>

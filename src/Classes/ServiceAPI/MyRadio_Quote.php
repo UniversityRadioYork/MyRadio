@@ -7,13 +7,14 @@
 
 /**
  * A quote in the radio station Quotes Database.
- * 
+ *
  * @version 20140113
  * @author Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Core
  * @uses \Database
  */
-class MyRadio_Quote extends ServiceAPI {
+class MyRadio_Quote extends ServiceAPI
+{
     const GET_INSTANCE_SQL = '
         SELECT
             *
@@ -85,7 +86,7 @@ class MyRadio_Quote extends ServiceAPI {
     private $source;
 
     /**
-     * The date of the quote, as a UNIX timestamp. 
+     * The date of the quote, as a UNIX timestamp.
      * @var int
      */
     private $date;
@@ -101,17 +102,19 @@ class MyRadio_Quote extends ServiceAPI {
      *
      * You should generally use MyRadio_Quote::getInstance instead.
      *
-     * @param int $quote_id  The numeric ID of the quote.
+     * @param int $quote_id The numeric ID of the quote.
      *
-     * @return MyRadio_Quote  The quote with the given ID.
+     * @return MyRadio_Quote The quote with the given ID.
      */
-    protected function __construct($quote_id) {
+    protected function __construct($quote_id)
+    {
         $quote_data = self::$db->fetch_one(
             self::GET_INSTANCE_SQL,
             [$quote_id]
         );
         if (empty($quote_data)) {
             throw new MyRadioException('The specified Quote does not seem to exist.');
+
             return;
         }
 
@@ -127,57 +130,65 @@ class MyRadio_Quote extends ServiceAPI {
      *
      * @return The quote release with the given ID.
      */
-    public static function getInstance($quote_id=-1) {
-      self::__wakeup();
+    public static function getInstance($quote_id = -1)
+    {
+        self::__wakeup();
 
-      if (!is_numeric($quote_id)) {
-        throw new MyRadioException(
-          'Invalid Quote ID!',
-          MyRadioException::FATAL
-        );
-      }
+        if (!is_numeric($quote_id)) {
+            throw new MyRadioException(
+                'Invalid Quote ID!',
+                MyRadioException::FATAL
+            );
+        }
 
-      if (!isset(self::$quotes[$quote_id])) {
-        self::$quotes[$quote_id] = new self($quote_id);
-      }
-      return self::$quotes[$quote_id];
+        if (!isset(self::$quotes[$quote_id])) {
+            self::$quotes[$quote_id] = new self($quote_id);
+        }
+
+        return self::$quotes[$quote_id];
     }
 
     /**
      * Retrieves all current quotes.
      *
-     * @return array  An array of all active quotes.
+     * @return array An array of all active quotes.
      */
-    public function getAll() {
+    public function getAll()
+    {
         $quote_ids = self::$db->fetch_column(self::GET_ALL_SQL, []);
+
         return array_map('MyRadio_Quote::getInstance', $quote_ids);
     }
 
     /**
-     * @return int  The quote ID.
+     * @return int The quote ID.
      */
-    public function getID() {
+    public function getID()
+    {
         return $this->id;
     }
 
     /**
-     * @return string  The quote text.
+     * @return string The quote text.
      */
-    public function getText() {
+    public function getText()
+    {
         return $this->text;
     }
 
     /**
-     * @return User  The quote source.
+     * @return User The quote source.
      */
-    public function getSource() {
+    public function getSource()
+    {
         return $this->source;
     }
 
     /**
-     * @return int  The quote time, as a UNIX timestamp.
+     * @return int The quote time, as a UNIX timestamp.
      */
-    public function getDate() {
+    public function getDate()
+    {
         return $this->date;
     }
 
@@ -188,12 +199,13 @@ class MyRadio_Quote extends ServiceAPI {
      *                     Must contain 'text', 'source' and 'date'.
      * @return nothing.
      */
-    public function create($data) {
+    public function create($data)
+    {
         self::$db->query(
             self::INSERT_SQL,
             [
                 $data['text'],
-                $data['source']->getID(),    
+                $data['source']->getID(),
                 date('%c', intval($data['date'])) // Expecting UNIX timestamp
             ],
             true
@@ -202,44 +214,52 @@ class MyRadio_Quote extends ServiceAPI {
 
     /**
      * Sets this quote's text.
-     * @param string $text  The quote text.
-     * @return MyRadio_Quote  This object, for method chaining.
+     * @param  string        $text The quote text.
+     * @return MyRadio_Quote This object, for method chaining.
      */
-    public function setText($text) {
+    public function setText($text)
+    {
         $this->text = $text;
+
         return $this->set(SET_SOURCE_SQL, $text);
     }
 
     /**
      * Sets this quote's source.
-     * @param User $source  The quote source.
-     * @return MyRadio_Quote  This object, for method chaining.
+     * @param  User          $source The quote source.
+     * @return MyRadio_Quote This object, for method chaining.
      */
-    public function setSource($source) {
+    public function setSource($source)
+    {
         $this->source = $source;
+
         return $this->set(SET_SOURCE_SQL, $source->getID());
     }
 
     /**
      * Sets this quote's date.
-     * @param int|string $date  The date, as a UNIX timestamp or date string.
-     * @return MyRadio_Quote  This object, for method chaining.
+     * @param  int|string    $date The date, as a UNIX timestamp or date string.
+     * @return MyRadio_Quote This object, for method chaining.
      */
-    public function setDate($date) {
+    public function setDate($date)
+    {
         $this->date = $date;
+
         return $this->set(SET_DATE_SQL, strtotime($date));
     }
 
     /**
      * Sets a property on this quote.
      *
-     * @param string $sql  The SQL to use for setting this property.
+     * @param string $sql The SQL to use for setting this property.
      * @param $value  The value of the property to set on this quote.
      *
-     * @return MyRadio_Quote  This object, for method chaining.
+     * @return MyRadio_Quote This object, for method chaining.
      */
-    private function set($sql, $value) {
+    private function set($sql, $value)
+    {
         self::$db->query($sql, [$value, $this->getID()]);
+
         return $this;
     }
 
@@ -247,12 +267,13 @@ class MyRadio_Quote extends ServiceAPI {
     /**
      * Converts this quote to a table data source.
      *
-     * @return array  The object as a data source.
+     * @return array The object as a data source.
      */
-    public function toDataSource() {
+    public function toDataSource()
+    {
         return [
             'source' => $this->getSource()->getName(),
-            'date' => strftime('%x', $this->getDate()),
+            'date' => strftime('%F', $this->getDate()),
             'text' => $this->getText(),
             /*'editlink' => [
                 'display' => 'icon',
@@ -267,5 +288,3 @@ class MyRadio_Quote extends ServiceAPI {
         ];
     }
 }
-
-?>

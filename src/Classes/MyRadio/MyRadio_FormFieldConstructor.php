@@ -8,7 +8,6 @@
  * @package MyRadio_Core
  */
 
-
 /**
  * A method object that constructs a field given a name and array
  * representation of its specification.
@@ -17,7 +16,8 @@
  * @author  Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Core
  */
-class MyRadio_FormFieldConstructor {
+class MyRadio_FormFieldConstructor
+{
     /**
      * The name of the field being constructed.
      * @var string
@@ -51,22 +51,20 @@ class MyRadio_FormFieldConstructor {
     /**
      * Constructs a new MyRadio_FormFieldConstructor.
      *
-     * @param string                  $name   The field name.
-     * @param array                   $field  The field specification.
-     * @param MyRadio_FormConstructor $fc     The form constructor.
+     * @param string                  $name  The field name.
+     * @param array                   $field The field specification.
+     * @param MyRadio_FormConstructor $fc    The form constructor.
      */
     public function __construct(
-        /* string */            $name,
-        array                   $field,
+        $name,
+        array $field,
         MyRadio_FormConstructor $fc,
-        array                   $bindings
+        array $bindings
     ) {
-        $this->name     = $name;
-        $this->field    = $field;
-        $this->fc       = $fc;
+        $this->name = $name;
+        $this->field = $field;
+        $this->fc = $fc;
         $this->bindings = $bindings;
-        $this->rc       = new ReflectionClass('MyRadioFormField');
+        $this->rc = new ReflectionClass('MyRadioFormField');
     }
 }
-
-?>
