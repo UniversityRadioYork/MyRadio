@@ -273,7 +273,7 @@ class MyRadio_Quote extends ServiceAPI
     {
         return [
             'source' => $this->getSource()->getName(),
-            'date' => strftime('%x', $this->getDate()),
+            'date' => strftime('%F', $this->getDate()),
             'text' => $this->getText(),
             /*'editlink' => [
                 'display' => 'icon',
