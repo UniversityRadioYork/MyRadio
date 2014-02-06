@@ -118,45 +118,13 @@ class MyRadioMenu
             $item = $config['items'][$title];
             $item['title'] = $title;
             if (empty($item['template'])) {
-                $item = array_merge($item, $this->addPermissionsToItem($item));
+                $item = array_merge($item, $this->breakDownURL($item['url']));
             }
 
             $items[] = $item;
         }
 
         return $items;
-    }
-
-    private function addPermissionsToItem($item) {
-        /**
-         * Secret: Some descriptions always reference the officer that *previously*
-         * held the position, not currently.
-         */
-        if (isset($item['description'])) {
-            if (strstr($item['description'], '#MACRO_SM-1') !== false) {
-                $hist = MyRadio_Officer::getInstance(1)->getHistory();
-                $n = 0;
-                while (sizeof($hist) - 1 > $n && $hist[$n]['User']->getName() === $hist[0]['User']->getName()) {
-                    $n++;
-                }
-                $item['description'] = str_replace(['#MACRO_SM-1'], [$hist[$n]['User']->getName()], $item['description']);
-            }
-            if (strstr($item['description'], '#MACRO_PC-1') !== false) {
-                $hist = MyRadio_Officer::getInstance(106)->getHistory();
-                $n = 0;
-                while (sizeof($hist) - 1 > $n && $hist[$n]['User']->getName() === $hist[0]['User']->getName()) {
-                    $n++;
-                }
-                $item['description'] = str_replace(['#MACRO_PC-1'], [$hist[$n]['User']->getName()], $item['description']);
-            }
-        }
-
-        //if (!isset($item['itemid'])) {
-        //    continue; //Skip twigitems
-        //}
-        $item = array_merge($item, $this->breakDownURL($item['url']));
-
-        return $item;
     }
 
     /**
