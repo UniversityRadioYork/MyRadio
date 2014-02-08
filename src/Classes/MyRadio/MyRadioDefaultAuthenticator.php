@@ -15,7 +15,7 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
     {
         $this->db = pg_connect(
             'host=' . Config::$db_hostname . ' port=5432 dbname=' . Config::$db_name
-            . 'user=' . Config::$auth_db_user . ' password=' . Config::$auth_db_pass
+            . ' user=' . Config::$auth_db_user . ' password=' . Config::$auth_db_pass
         );
         if (!$this->db) {
             //Database isn't working. Throw an EVERYTHING IS BROKEN Exception
