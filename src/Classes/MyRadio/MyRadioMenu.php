@@ -53,85 +53,88 @@ class MyRadioMenu
     }
 
     /**
+     * Parses and returns the menu configuration file.
+     *
+     * @return array The array of menu configuration.
+     */
+    private function getMenuConfig()
+    {
+        return yaml_parse_file(Config::$menu_config_file_path);
+    }
+
+    /**
+     * Returns the set of menu columns currently in use.
+     *
+     * @param array $config The raw configuration array.
+     * @return array The array of column names.
+     */
+    private function flattenMenuConfig(array $config)
+    {
+        $columns = [];
+
+        foreach ($config['columns'] as $title => $column) {
+            $columns[] = [
+                "title" => $title,
+                "sections" => $this->getSectionsFromConfig($config, $column)
+            ];
+        }
+
+        return $columns;
+    }
+
+    /**
+     * Returns the set of menu sections in a column.
+     *
+     * @param array $config The menu configuration.
+     * @param array $column The column configuration.
+     * @return array The array of sections.
+     */
+    private function getSectionsFromConfig(array $config, array $column)
+    {
+        $sections = [];
+
+        foreach ($column as $title => $section) {
+            $sections[] = [
+                "title" => $title,
+                "items" => $this->getItemsFromConfig($config, $section)
+            ];
+        }
+
+        return $sections;
+    }
+
+    /**
+     * Returns the set of menu entries in a section.
+     *
+     * @param array $config The menu configuration.
+     * @param array $section The section configuration array.
+     * @return array The array of sections.
+     */
+    function getItemsFromConfig(array $config, array $section)
+    {
+        $items = [];
+
+        foreach ($section as $title) {
+            $item = $config['items'][$title];
+            $item['title'] = $title;
+            if (empty($item['template'])) {
+                $item = array_merge($item, $this->breakDownURL($item['url']));
+            }
+
+            $items[] = $item;
+        }
+
+        return $items;
+    }
+
+    /**
      * Returns the entire MyRadio Main Menu structure
      * @todo Better Documentation
      */
     private function getFullMenu()
     {
-        $db = Database::getInstance();
-        //First, columns
-        $columns = $db->fetch_all(
-            'SELECT columnid, title FROM myury.menu_columns
-            ORDER BY position ASC'
-        );
-        //Now, sections
-        $sections = $db->fetch_all(
-            'SELECT sectionid, columnid, title FROM myury.menu_sections
-            ORDER BY position ASC'
-        );
-        //And finally, items
-        $items = array_merge(
-            $db->fetch_all('SELECT itemid, sectionid, title, url, description FROM myury.menu_links ORDER BY title ASC'),
-            $db->fetch_all('SELECT sectionid, template FROM myury.menu_twigitems')
-        );
-        //Get permissions for each $item
-        foreach ($items as $key => $item) {
-            /**
-             * Secret: Some descriptions always reference the officer that *previously*
-             * held the position, not currently.
-             */
-            if (isset($items[$key]['description'])) {
-                if (strstr($items[$key]['description'], '#MACRO_SM-1') !== false) {
-                    $hist = MyRadio_Officer::getInstance(1)->getHistory();
-                    $n = 0;
-                    while (sizeof($hist) - 1 > $n && $hist[$n]['User']->getName() === $hist[0]['User']->getName()) {
-                        $n++;
-                    }
-                    $items[$key]['description'] = str_replace(['#MACRO_SM-1'], [$hist[$n]['User']->getName()], $items[$key]['description']);
-                }
-                if (strstr($items[$key]['description'], '#MACRO_PC-1') !== false) {
-                    $hist = MyRadio_Officer::getInstance(106)->getHistory();
-                    $n = 0;
-                    while (sizeof($hist) - 1 > $n && $hist[$n]['User']->getName() === $hist[0]['User']->getName()) {
-                        $n++;
-                    }
-                    $items[$key]['description'] = str_replace(['#MACRO_PC-1'], [$hist[$n]['User']->getName()], $items[$key]['description']);
-                }
-            }
-
-            if (!isset($item['itemid'])) {
-                continue; //Skip twigitems
-            }
-            $items[$key] = array_merge($items[$key], $this->breakDownURL($item['url']));
-        }
-
-        //That'll do for now. Time to make the $menu
-        $menu = array();
-        foreach ($columns as $column) {
-            $newColumn = array('title' => $column['title'], 'sections' => array());
-
-            //Iterate over each section
-            foreach ($sections as $section) {
-                if ($section['columnid'] != $column['columnid']) {
-                    continue;
-                }
-                //This section is for this column
-                $newItems = array();
-                //Iterate over each item
-                foreach ($items as $item) {
-                    if ($item['sectionid'] != $section['sectionid']) {
-                        continue;
-                    }
-                    //Item is for this section
-                    $newItems[] = $item;
-                }
-                $newColumn['sections'][] = array('title' => $section['title'], 'items' => $newItems);
-            }
-
-            $menu[] = $newColumn;
-        }
-
-        return $menu;
+        $config = $this->getMenuConfig();
+        return $this->flattenMenuConfig($config);
     }
 
     /**
