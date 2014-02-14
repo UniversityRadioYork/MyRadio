@@ -15,4 +15,4 @@ if (isset($_REQUEST['correctionid'])) {
 
 $correction->apply(empty($_REQUEST['ignorealbum']) ? false : (bool) $_REQUEST['ignorealbum']);
 
-CoreUtils::backWithMessage('The correction was applied succesfully!');
+CoreUtils::backWithMessage('The correction was applied successfully!');

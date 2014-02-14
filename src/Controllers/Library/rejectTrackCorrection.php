@@ -18,4 +18,4 @@ if (isset($_REQUEST['correctionid'])) {
 
 $correction->reject(empty($_REQUEST['permanent']) ? false : (bool)$_REQUEST['permanent']);
 
-CoreUtils::backWithMessage('The correction was applied succesfully!');
+CoreUtils::backWithMessage('The correction was applied successfully!');
