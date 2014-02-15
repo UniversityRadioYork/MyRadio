@@ -822,7 +822,25 @@ class CoreUtils
      */
     public static function callYUSU($function = 'ListMembers')
     {
-        return json_decode(file_get_contents('https://www.yusu.org/api/api.php?apikey=' . Config::$yusu_api_key . '&function=' . $function), true);
+        $options = [
+            'http' => [
+                'method' => "GET",
+                'header' => "User-Agent: MyRadio\r\n"
+            ]
+        ];
+        $context = stream_context_create($options);
+
+        return json_decode(
+            file_get_contents(
+                'https://www.yusu.org/api/api.php?apikey='
+                . Config::$yusu_api_key
+                . '&function='
+                . $function,
+                false,
+                $context
+            ),
+            true
+        );
         /**
          * @todo php5-curl not installed, pkg broken (20130716)
          */
