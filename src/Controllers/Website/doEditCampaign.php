@@ -23,5 +23,5 @@ $campaign->setEffectiveFrom($data['effective_from'])
 
 header('Location: '.CoreUtils::makeURL('Website', 'campaigns', [
     'bannerid' => $campaign->getBanner()->getBannerID(),
-    'message' => base64_encode('The Campaign was updated succesfully!')
+    'message' => base64_encode('The Campaign was updated successfully!')
     ]));
