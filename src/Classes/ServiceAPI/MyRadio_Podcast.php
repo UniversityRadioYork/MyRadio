@@ -457,12 +457,18 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'title' => $this->getMeta('title'),
             'description' => $this->getMeta('description'),
             'status' => $this->getStatus(),
-            'editlink' => array(
+            'editlink' => [
                 'display' => 'icon',
                 'value' => 'script',
                 'title' => 'Edit Podcast',
                 'url' => CoreUtils::makeURL('Podcast', 'editPodcast', array('podcastid' => $this->getID()))
-            )
+            ],
+            'setcoverlink' => [
+                'display' => 'icon',
+                'value' => 'script',
+                'title' => 'Set Cover',
+                'url' => CoreUtils::makeURL('Podcast', 'setCover', array('podcastid' => $this->getID()))
+            ]
         );
 
         if ($full) {
