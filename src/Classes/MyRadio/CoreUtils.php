@@ -841,19 +841,6 @@ class CoreUtils
             ),
             true
         );
-        /**
-         * @todo php5-curl not installed, pkg broken (20130716)
-         */
-        $ch = curl_init();
-        $timeout = 5;
-        curl_setopt($ch, CURLOPT_URL, 'https://www.yusu.org/api/api.php?apikey=' . Config::$yusu_api_key . '&function=' . $function);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Unix; en-GB) MyRadio/2013.07.16 (cURL)');
-        $data = curl_exec($ch);
-        curl_close($ch);
-
-        return json_decode($data, true);
     }
 
     public static function getErrorStats($since = null)
