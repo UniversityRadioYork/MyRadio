@@ -822,20 +822,25 @@ class CoreUtils
      */
     public static function callYUSU($function = 'ListMembers')
     {
-        return json_decode(file_get_contents('https://www.yusu.org/api/api.php?apikey=' . Config::$yusu_api_key . '&function=' . $function), true);
-        /**
-         * @todo php5-curl not installed, pkg broken (20130716)
-         */
-        $ch = curl_init();
-        $timeout = 5;
-        curl_setopt($ch, CURLOPT_URL, 'https://www.yusu.org/api/api.php?apikey=' . Config::$yusu_api_key . '&function=' . $function);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Unix; en-GB) MyRadio/2013.07.16 (cURL)');
-        $data = curl_exec($ch);
-        curl_close($ch);
+        $options = [
+            'http' => [
+                'method' => "GET",
+                'header' => "User-Agent: MyRadio\r\n"
+            ]
+        ];
+        $context = stream_context_create($options);
 
-        return json_decode($data, true);
+        return json_decode(
+            file_get_contents(
+                'https://www.yusu.org/api/api.php?apikey='
+                . Config::$yusu_api_key
+                . '&function='
+                . $function,
+                false,
+                $context
+            ),
+            true
+        );
     }
 
     public static function getErrorStats($since = null)
