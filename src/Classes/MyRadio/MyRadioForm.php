@@ -358,7 +358,7 @@ class MyRadioForm
         }
         //XSRF check
         if ($_REQUEST[$this->getPrefix().'__xsrf-token'] !== $_SESSION['myradio-xsrf-token']) {
-            throw new MyRadioException('Invalid submission token. Possible XSRF attack.', 500);
+            throw new MyRadioException('Session expired (Invalid token). Please refresh the page.', 500);
         }
 
         return $return;

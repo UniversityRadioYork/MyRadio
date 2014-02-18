@@ -33,6 +33,7 @@ if (CoreUtils::hasPermission(AUTH_VIEWOTHERMEMBERS)) {
   $userData['last_login'] = $user->getLastLogin();
   $userData['payment'] = $user->getAllPayments();
   $userData['receive_email'] = $user->getReceiveEmail();
+  $userData['is_currently_paid'] = $user->isCurrentlyPaid();
 }
 
 $template = CoreUtils::getTemplateObject()->setTemplate('Profile/user.twig')
@@ -54,6 +55,6 @@ if (CoreUtils::hasPermission(AUTH_LOCK)) {
           array('memberid' => $user->getID())).'">Disable Account</a>');
 }
 if (CoreUtils::hasPermission(AUTH_MARKPAYMENT)) {
-  $template->addVariable('canmarkpayments', true);
+  $template->addVariable('can_mark_payments', true);
 }
 $template->render();
