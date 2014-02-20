@@ -328,8 +328,6 @@ class MyRadio_List extends ServiceAPI
 
         return array(
             'listid' => $this->getID(),
-            'subscribed' => $this->isMember(MyRadio_User::getInstance()) ?
-                '<span class="ui-icon ui-icon-check" title="You are subscribed to this list"></span>' : '',
             'subscribed' => $subscribed,
             'name' => $this->getName(),
             'address' => $this->getAddress(),
