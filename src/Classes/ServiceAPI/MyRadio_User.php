@@ -815,8 +815,10 @@ class MyRadio_User extends ServiceAPI
     {
         /**
          * You won't believe how annoying psql can be about '' already being used on a unique key.
+	 * You also won't believe that in php, '' == false evaluates to true, so we need ===,
+	 *   otherwise a query to change $value to false will not work as desired. 
          */
-        if ($value == '') {
+        if ($value === '') {
             $value = null;
         }
         //Maps Class variable names to their database values, if they mismatch.
