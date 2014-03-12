@@ -717,16 +717,16 @@ class MyRadio_User extends ServiceAPI
             }
         }
         
-        if ($memberid === -1) {
-            $memberid = $_SESSION['memberid'];
+        if ($itemid === -1) {
+            $itemid = $_SESSION['memberid'];
         }
-        if ($memberid == $_SESSION['memberid']) {
+        if ($itemid == $_SESSION['memberid']) {
             if (!MyRadio_User::$current_user) {
-                MyRadio_User::$current_user = parent::getInstance($memberid);
+                MyRadio_User::$current_user = parent::getInstance($itemid);
             }
             return MyRadio_User::$current_user;
         } else {
-            return parent::getInstance($memberid);
+            return parent::getInstance($itemid);
         }
     }
 
