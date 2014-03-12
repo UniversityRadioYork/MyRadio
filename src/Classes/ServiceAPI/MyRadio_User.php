@@ -18,6 +18,10 @@
 class MyRadio_User extends ServiceAPI
 {
     /**
+     * Stores the currently logged in User's object after first use.
+     */
+    private static $current_user;
+    /**
      * Stores the user's memberid
      * @var int
      */
@@ -165,6 +169,20 @@ class MyRadio_User extends ServiceAPI
      * @var boolean
      */
     private $require_password_change;
+    
+    public function getInstance($memberid = -1) {
+        if ($memberid === -1) {
+            $memberid = $_SESSION['memberid'];
+        }
+        if ($memberid == $_SESSION['memberid']) {
+            if (!$cuser) {
+                $cuser = parent::getInstance($memberid);
+            }
+            return $cuser;
+        } else {
+            return parent::getInstance($memberid);
+        }
+    }
 
     /**
      * Initiates the User variables
