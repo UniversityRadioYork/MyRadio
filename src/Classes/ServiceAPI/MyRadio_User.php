@@ -169,20 +169,6 @@ class MyRadio_User extends ServiceAPI
      * @var boolean
      */
     private $require_password_change;
-    
-    public function getInstance($memberid = -1) {
-        if ($memberid === -1) {
-            $memberid = $_SESSION['memberid'];
-        }
-        if ($memberid == $_SESSION['memberid']) {
-            if (!$cuser) {
-                $cuser = parent::getInstance($memberid);
-            }
-            return $cuser;
-        } else {
-            return parent::getInstance($memberid);
-        }
-    }
 
     /**
      * Initiates the User variables
@@ -730,8 +716,18 @@ class MyRadio_User extends ServiceAPI
                 throw new MyRadioException('Trying to get current user info with no current user');
             }
         }
-
-        return parent::getInstance($itemid);
+        
+        if ($memberid === -1) {
+            $memberid = $_SESSION['memberid'];
+        }
+        if ($memberid == $_SESSION['memberid']) {
+            if (!MyRadio_User::$current_user) {
+                MyRadio_User::$current_user = parent::getInstance($memberid);
+            }
+            return MyRadio_User::$current_user;
+        } else {
+            return parent::getInstance($memberid);
+        }
     }
 
     /**
