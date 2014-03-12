@@ -7,9 +7,9 @@
  * @data 20140102
  * @package MyRadio_Core
  */
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    //Submitted
-    $timeslot = MyRadio_Timeslot::getInstance($_POST['timeslotid']);
+
+function setupTimeslot($timeslot)
+{
     //Can the user access this timeslot?
     if (!($timeslot->getSeason()->getShow()->isCurrentUserAnOwner() or CoreUtils::hasPermission(AUTH_EDITSHOWS))) {
         require_once 'Controllers/Errors/403.php';
@@ -22,6 +22,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         header('Location: '.($_POST['next'] !== '' ? $_POST['next'] : Config::$base_url));
     }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //Submitted
+    setupTimeslot(MyRadio_Timeslot::getInstance($_POST['timeslotid']));
+} elseif ($_GET['current'] && CoreUtils::hasPermission(AUTH_EDITSHOWS)) {
+    setupTimeslot(MyRadio_Timeslot::getCurrentTimeslot());
 } else {
     //Not Submitted
     $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/timeslot.twig')
