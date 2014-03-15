@@ -322,7 +322,7 @@
 $(document).ready(function() {
 	$("#switcher").themeswitcher({
                     imgpath: "",
-                    themepath: "//ury.org.uk/portal/css",
+                    themepath: "//ury.org.uk/myury/css",
                     jqueryuiversion: "",
                     rounded: false,
                     themes: [
