@@ -487,7 +487,7 @@ class MyRadio_Track extends ServiceAPI
         } else {
             return array(
                 'fileid' => $filename,
-                'analysis' => 
+                'analysis' => $analysis
             );
         }
     }
