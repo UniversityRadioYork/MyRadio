@@ -504,7 +504,8 @@ class MyRadio_Track extends ServiceAPI
         $lastfm = json_decode($response, true);
 
         if (empty($lastfm)) {
-            return array('FAIL' => 'This track could not be identified. Please email the track to track.requests@ury.org.uk.');
+            return ['status' => 'FAIL',
+                    'error' => 'This track could not be identified. Please email the track to track.requests@ury.org.uk.'];
         } else {
             if (isset($lastfm['tracks']['track']['mbid'])) {
                 //Only one match
