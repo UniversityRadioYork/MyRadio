@@ -480,10 +480,16 @@ class MyRadio_Track extends ServiceAPI
             return array('status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']);
         }
 
-        return array(
-            'fileid' => $filename,
-            'analysis' => self::identifyUploadedTrack(Config::$audio_upload_tmp_dir . '/' . $filename)
-        );
+        $analysis = self::identifyUploadedTrack(Config::$audio_upload_tmp_dir . '/' . $filename);
+        if (isset($analysis['status']) && $analysis['status'] === 'FAIL') {
+            $analysis['fileid'] = $filename;
+            return $analysis;
+        } else {
+            return array(
+                'fileid' => $filename,
+                'analysis' => 
+            );
+        }
     }
 
     /**
