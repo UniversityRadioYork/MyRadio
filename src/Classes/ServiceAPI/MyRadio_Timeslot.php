@@ -392,7 +392,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     'title' => Config::$short_name . ' Jukebox',
                     'desc' => 'Non-stop Music',
                     'photo' => Config::$default_show_uri,
-                    'end_time' => $next->getStartTime()
+                    'end_time' => $next ? $next->getStartTime() : 'The End of Time'
                 ]
             ];
         } else {
