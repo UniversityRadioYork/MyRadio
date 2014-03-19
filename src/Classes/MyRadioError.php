@@ -248,7 +248,7 @@ class MyRadioError
             if (Config::$error_report_email) {
                 $rtnl = "</p>\r\n<p>";  // carriage return + newline
                 ob_start();
-                debug_print_backtrace();
+                //debug_print_backtrace(); Sometimes these have passwords.
                 $trace = str_replace("\n", $rtnl, ob_get_clean());
                 $message = $errstr . $rtnl . $rtnl . $trace;
                 if (class_exists('MyRadioEmail') && class_exists('Config')) {
