@@ -2,7 +2,7 @@
 
 /**
  * This is the magical file that provides access to URY's backend data services
- * 
+ *
  * This file loads up the crtical Interfaces and Classes for MyRadio<br>
  * - The Singleton for efficiency, as almost every class uses it<br>
  * - The IServiceAPI (including the ServiceAPI abstract class) to provide a standard way of establishing Database and
@@ -12,13 +12,13 @@
  * It also sets the global exception handler as something that does nothing - preventing unwanted output<br>
  * - The Database and CacheProvider Classes/Interfaces to provide access to the MyRadio Data Stores<br>
  * - The MyRadio ServiceAPI Autoloader dynamically loads additional classes as needed
- * 
+ *
  * This file also does the following:<br>
  * - Provides the <code>$member</code> global variable - this contains the current User<br>
  * - Calls CoreUtils::setUpAuth, which configures the MyRadio authentication constants
- * 
+ *
  * @version 20130106
- * @author Lloyd Wallis <lpw@ury.org.uk> 
+ * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 require_once 'Interfaces/Singleton.php';
@@ -67,20 +67,24 @@ register_shutdown_function('CoreUtils::shutdown');
  * than one server.
  * We disable this for the API using the DISABLE_SESSION constant.
  */
-if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
-    //Override any existing session
-    if (isset($_SESSION)) {
-        session_write_close();
-        session_id($_COOKIE['PHPSESSID']);
-    }
-    $session_handler = MyRadioSession::factory();
-    session_set_save_handler(
-            array($session_handler, 'open'),
-            array($session_handler, 'close'),
-            array($session_handler, 'read'),
-            array($session_handler, 'write'),
-            array($session_handler, 'destroy'),
-            array($session_handler, 'gc')
-    );
-    session_start();
+//Override any existing session
+if (isset($_SESSION)) {
+    session_write_close();
+    session_id($_COOKIE['PHPSESSID']);
 }
+
+if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
+    $session_handler = MyRadioSession::factory();
+} else {
+    $session_handler = MyRadioNullSession::factory();
+}
+
+session_set_save_handler(
+        array($session_handler, 'open'),
+        array($session_handler, 'close'),
+        array($session_handler, 'read'),
+        array($session_handler, 'write'),
+        array($session_handler, 'destroy'),
+        array($session_handler, 'gc')
+);
+session_start();

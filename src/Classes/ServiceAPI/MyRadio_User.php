@@ -720,7 +720,7 @@ class MyRadio_User extends ServiceAPI
         if ($itemid === -1) {
             $itemid = $_SESSION['memberid'];
         }
-        if ($itemid == $_SESSION['memberid']) {
+        if (isset($_SESSION['memberid']) && $itemid == $_SESSION['memberid']) {
             if (!MyRadio_User::$current_user) {
                 MyRadio_User::$current_user = parent::getInstance($itemid);
             }
