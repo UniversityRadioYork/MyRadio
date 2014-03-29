@@ -2,7 +2,7 @@
 /**
  * For versions other than the default, static content is not linked directly to the web.
  * This provides access to these, at the cost of a substantial overhead.
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130712
  * @package MyRadio_Core
@@ -20,7 +20,7 @@ if ($_GET[0] === 'config.js') {
 }
 
 $prefix = __DIR__.'/../../Public/';
-foreach (array(__DIR__.'/../../Public/', __DIR__.'/../../Public/js/skins/lightgray/') as $p) {
+foreach (array(__DIR__.'/../../Public/', __DIR__.'/../../Public/js/vendor/skins/lightgray/') as $p) {
   if (file_exists($p.$_GET[0])) {
     $prefix = $p;
     break;
