@@ -1,2 +1,2 @@
 <?php
-require_once 'Classes/Vendor/getid3/getid3.php';
+require_once 'Classes/vendor/getid3/getid3.php';

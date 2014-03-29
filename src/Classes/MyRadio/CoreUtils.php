@@ -869,7 +869,7 @@ class CoreUtils
 
     public static function getSafeHTML($dirty_html)
     {
-        require_once 'Classes/Vendor/htmlpurifier/HTMLPurifier.auto.php';
+        require_once 'Classes/vendor/htmlpurifier/HTMLPurifier.auto.php';
         $config = HTMLPurifier_Config::createDefault();
         $purifier = new HTMLPurifier($config);
 
@@ -923,10 +923,10 @@ class CoreUtils
 
     /**
      * Returns information about the $_REQUEST array.
-     * 
+     *
      * This *MUST* be used instead of print_r($_REQUEST) or var_dump($_REQUEST)
      * in debug output.
-     * 
+     *
      * @return String var_dump output
      */
     public static function getRequestInfo() {
