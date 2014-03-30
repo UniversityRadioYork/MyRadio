@@ -59,13 +59,19 @@ final class Config
      * @var String
      */
     public static $base_url       = '//ury.org.uk/myury/';
-    
+
     /**
      * The base URL of Shibbobleh - it has CSS and JS resources used by MyRadio
      * @var String
      */
     public static $shib_url       = '//ury.org.uk/portal/';
-    
+
+    /**
+     * The base URL of the schedule - has some JS resources from MyRadio
+     * @var String
+     */
+    public static $schedule_url   = '//ury.org.uk/schedule';
+
     /**
      * Whether nice URL rewrites are enabled
      * If true, then urls will be myury/[module]/[action]
@@ -73,7 +79,7 @@ final class Config
      * @var boolean
      */
     public static $rewrite_url    = true;
-    
+
     /**
      * Whether to enable the Caching system
      * Development value: false
@@ -93,7 +99,7 @@ final class Config
      * @var int
      */
     public static $cache_track_timeout = 7200; //2 hours
-    
+
     /**
      * Whether MyRadio errors should be displayed in the browser. If this is set to false, users with the
      * AUTH_SHOWERRORS permission will still see errors.
@@ -102,19 +108,19 @@ final class Config
      * @var boolean
      */
     public static $display_errors = false;
-    
+
     /**
      * Whether MyRadio Exceptions should be emailed to Computing
      * @var boolean
      */
     public static $email_exceptions = true;
-    
+
     /**
      * Prevent an exception surge by failing if this many are thrown.
      * @var int
      */
     public static $exception_limit = 10;
-    
+
     /**
      * Whether template debugging should be enabled
      * Development value: true
@@ -122,14 +128,14 @@ final class Config
      * @var boolean
      */
     public static $template_debug = true;
-    
+
     /**
      * The default number of results from an AJAX Search Query
      * This can be overriden on a per-request basis
      * @var int
      */
     public static $ajax_limit_default = 25;
-    
+
     /**
      * The photoid to use for a Joined URY Timeline Event
      * @var int
@@ -155,7 +161,7 @@ final class Config
      * @var int
      */
     public static $photo_award_get = 5;
-    
+
     /**
      * The id of the news feed to use for news events
      * @var int
@@ -174,7 +180,7 @@ final class Config
      * @var String
      */
     public static $django_cache_server = 'localhost';
-    
+
     /**
      * The path to the motion Webcam logs. This must be a file path, but may be NFS/Samba mounter
      * @var String
@@ -192,14 +198,14 @@ final class Config
      * @var String
      */
     public static $webcam_set_url = "http://copperbox.york.ac.uk:9090/set?newcam=";
-    
+
     /**
      * The path to store the original, unencoded copies of URYPlayer Podcasts.
      * The originals are archived here for future reencoding.
      * @var String
      */
     public static $podcast_archive_path = '/music/podcasts';
-    
+
     /**
      * The URL where media should be stored. Used for podcasts, banners and images.
      * @var String
@@ -211,78 +217,78 @@ final class Config
      * @var String
      */
     public static $public_media_uri = '/media';
-    
+
     /**
      * The full web address to the image that will be served for a show if there
      * is not a photo for that show.
      * @var String
      */
     public static $default_show_uri = '/media/image_meta/ShowImageMetadata/22.png';
-    
+
     /**
      * The full web address to the image that will be served on a member's profile page if they do not have a profile
      * photo. The original value, /static/img/default_show_player.png is the main website's placeholder for shows
      * @var String
      */
     public static $default_person_uri = '/static/img/default_show_player.png';
-    
+
     /**
      * The full web address of the image that will be shown for a vacant officer position
      * @var String
      */
     public static $vacant_officer_uri = '/media/image_meta/MyRadioImageMetadata/32.jpeg';
-    
+
     /**
      * The file system path to the Central Database. Must be absolute. Can not be smb://, but may be a network share
      * mounted to the file system mountpoint.
      * @var String
      */
     public static $music_central_db_path = '/music';
-    
+
     /**
      * The file to be played if the obit procedure is triggered.
      * @var String
      */
     public static $jukebox_obit_file = '/jukebox/OBIT.mp3';
-    
+
     /**
      * The Samba File Share path to the Central Database. This is used for BAPS compatibility features.
      * @var String
      */
     public static $music_smb_path = '\\\\musicstore.ury.york.ac.uk';
-    
+
     /**
      * A path to temporarially store uploaded audio files. Recommend somewhere in /tmp, MyRadio needs full r/w access to it.
      * @var String
      */
     public static $audio_upload_tmp_dir = '/tmp/myradioaudiouploadcache';
-    
+
     /**
      * The API key to access last.fm's resources.
      * @var String
      */
     public static $lastfm_api_key;
-    
+
     /**
      * The API Secret to write last.fm's resources.
      * @var String
      */
     public static $lastfm_api_secret;
-    
+
     /**
      * The array of different versions of tracks one can expect to find in the Central Database. Used for file servers
      * and other systems to ensure the file requested seems legit.
      * @var Array[String]
      */
     public static $music_central_db_exts = array('mp3', 'ogg', 'mp3.orig');
-    
+
     /**
      * Mailing list to send reporting info to
      * @var String
      * @todo Make this point to a MyRadio_List ID?
      */
     public static $reporting_list = 'alerts.myury';
-    
+
     /**
      * The IP/hostname of the iTones Liquidsoap Telnet Service
      * @var String
@@ -293,7 +299,7 @@ final class Config
      * @var int
      */
     public static $itones_telnet_port = 1234;
-    
+
     /**
      * The maximum number of requests in one $itones_request_period per user.
      * @var int
@@ -315,21 +321,21 @@ final class Config
      * @var String
      */
     public static $selector_telnet_host = '144.32.64.167';
-    
+
     /**
      * The port of the Studio Selector Telnet Service
      * @var int
      */
     public static $selector_telnet_port = 1354;
-    
+
     /**
      * The path to the file that reports the state of the remote OB feeds
      * @var String
      */
     public static $ob_remote_status_file = '/music/ob_state.conf';
-    
+
     /**** ERROR REPORTING ****/
-    
+
     /**
      * The file to store MyRadio Error Logs
      * @var String
@@ -345,48 +351,48 @@ final class Config
      * @var String
      */
     public static $error_report_email = 'alerts.myury';
-    
+
     /**
      * The number of seconds an iTones Playlist lock is valid for before it expires.
      * @var int
      */
     public static $playlist_lock_time = 30;
-    
+
     /**
      * The User that MyRadio assumes when doing things as a background task
      * @var int Mr Website
      */
     public static $system_user = 779;
-    
+
     /**
      * This key enables automated access to the YUSU CMS information about URY's members
      */
     public static $yusu_api_key;
-    
+
     /**
      * The default college for new users that do not specify one.
      * 10 is Unknown.
      */
     public static $default_college = 10;
-    
+
     /**
      * A path to the file system (preferably in /tmp) that the MyRadio Daemon tools can have write access to. It stores
      * state information about the service that should not be permanent but presist after a reload of the service.
      * @var String
      */
     public static $daemon_lock_file = '/tmp/myradio_daemon.lock';
-    
+
     /**
      * The root URL to URY's API
-     * 
+     *
      * Must be absolute.
      * @var String
      */
     public static $api_url = 'https://ury.org.uk/api';
-    
+
     /**
      * The URL prefix to URY's webcam
-     * 
+     *
      * Must be absolute. With trailing /
      * @var String
      */
@@ -399,20 +405,20 @@ final class Config
     public static $bra_uri = 'ury.org.uk/bra';
     public static $bra_user = '';
     public static $bra_pass = '';
-    
+
     /**
      * Relative path to the API. Must have trailing /
      * @var String
      */
     public static $api_uri = '/api/';
-    
+
     /**
      * Recaptcha settings
      * http://recaptcha.net
      */
     public static $recaptcha_public_key = 'YOUR_API_KEY';
     public static $recaptcha_private_key = 'YOUR_PRIVATE_KEY';
-    
+
     /**
      * Relative path to the SIS plugins.
      * @var String
@@ -472,12 +478,12 @@ final class Config
      * @var float
      */
     public static $membership_fee = 7.00;
-    
+
     /**
      * If enabled, the Members' News feature on the home page is active
      */
     public static $members_news_enable = false;
-    
+
     /**
      * Authentication
      * LDAP requires the ldap plugin (net/php5-ldap)
@@ -493,32 +499,32 @@ final class Config
     public static $eduroam_domain = 'york.ac.uk';
     public static $auth_ldap_friendly_name = 'IT Services';
     public static $auth_ldap_reset_url = 'https://idm.york.ac.uk/';
-    
+
     /**
      * If true, users will be bound to a single Authenticator. Users whose
      * authenticator is NULL will be asked to set an Authenticator after login.
-     * 
+     *
      * If it is false, all authenticators will be valid for all users.
-     * 
+     *
      * @var boolean
      */
     public static $single_authenticator = false;
-    
+
     /**
      * If false, MyRadioDefaultAuthenticator will never pass, passwords will not
      * be set for new users, and the Change Password functionality will not be
      * available.
-     * 
+     *
      * @var boolean
      */
     public static $enable_local_passwords = true;
-    
+
     /**
      * The number of days before the start of the academic year when accounts are inactivated
      * The current choice should mean it resets results week.
      */
     public static $account_expiry_before = 49;
-    
+
     /**** DAEMON CONFIGURATION ****/
     public static $d_BAPSSync_enabled = false;
     public static $d_EmailQueue_enabled = true;
@@ -529,7 +535,7 @@ final class Config
     public static $d_Podcast_enabled = true;
     public static $d_StatsGen_enabled = true;
     public static $d_Explicit_enabled = false;
-    
+
     /**** CONFIG FILES ****/
     public static $menu_config_file_path = '/usr/local/www/myradio/menu.yaml';
 
@@ -546,7 +552,7 @@ final class Config
 <p>My name's Al, and I'm the Station Manager here at URY. It's my job to make it as
 easy as possible to get on the air or join any of our other teams.</p>
 
-<p>If you're interested in getting involved in any of our teams (there's 11 of 
+<p>If you're interested in getting involved in any of our teams (there's 11 of
 them!), then reply to this email and I'll sort you out, or email the address
 listed for that team <a href="http://ury.org.uk/getinvolved">on our website</a>.
 </p>
@@ -585,18 +591,18 @@ On Air | Online | On Demand<br>
 <a href="http://ury.org.uk/">ury.org.uk</a>
 EOT;
     public static $facebook = 'https://www.facebook.com/URY1350';
-    
+
     /**
      * The constructor doesn't do anything practical
-     * 
+     *
      * By making the constructor private, even though it does not do anything, we are prohibiting code elsewhere from
      * creating instances of this class, making it essentially static
      */
     private function __construct()
     {
-        
+
     }
-    
+
     /**
      * "Public" config is the configuration variables that should be made exposed to JavaScript within the mConfig
      * object.
@@ -610,6 +616,7 @@ EOT;
             'base_url' => self::$base_url,
             'rewrite_url' => self::$rewrite_url,
             'shib_url' => self::$shib_url,
+            'schedule_url' => self::$schedule_url,
             'timezone' => self::$timezone,
             'default_module' => self::$default_module,
             'default_action' => self::$default_action,

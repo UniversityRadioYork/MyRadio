@@ -2,7 +2,7 @@
 
 /**
  * Allows users to select the timeslot they are working with
- * 
+ *
  * @author Lloyd Wallis
  * @data 20140102
  * @package MyRadio_Core
@@ -27,7 +27,7 @@ function setupTimeslot($timeslot)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     setupTimeslot(MyRadio_Timeslot::getInstance($_POST['timeslotid']));
-} elseif ($_GET['current'] && CoreUtils::hasPermission(AUTH_EDITSHOWS)) {
+} elseif (isset($_GET['current']) && $_GET['current'] && CoreUtils::hasPermission(AUTH_EDITSHOWS)) {
     setupTimeslot(MyRadio_Timeslot::getCurrentTimeslot());
 } else {
     //Not Submitted
