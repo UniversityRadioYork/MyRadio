@@ -21,7 +21,7 @@ $form = (new MyRadioForm('myradio_pwReset', 'MyRadio', 'pwReset', array(
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwReset-user'])) {
     //Submitted
     $data = $form->readValues();
-    
+
     if (!$data) {
         //Invalid captcha
         $form->render(['messages' => ['<div class="ui-state-error">Please verify the captcha input and try again.</div>']]);
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwReset-us
                 break;
             }
         }
-        
+
         $form->render(['messages' => ['<div class="ui-state-highlight">Please check your email to finish resetting your password.</div>']]);
     }
 } else {
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwReset-us
         $auth = new $authenticator;
         $messages[] = $auth->getResetFormMessage();
     }
-    
+
     //Not Submitted
     $form->render(['messages' => $messages]);
 }

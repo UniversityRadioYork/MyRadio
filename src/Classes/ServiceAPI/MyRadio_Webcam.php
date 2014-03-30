@@ -27,9 +27,9 @@ class MyRadio_Webcam extends ServiceAPI
             $sql = 'UPDATE webcam.memberviews SET timer=$2 WHERE memberid=$1';
         }
         $counter += 15;
-    
+
         self::$db->query($sql, array($user->getID(), $counter));
-    
+
         return $counter;
     }
 
@@ -66,7 +66,7 @@ class MyRadio_Webcam extends ServiceAPI
     public static function getCurrentWebcam()
     {
         $current = file_get_contents(Config::$webcam_current_url);
-    
+
         switch ($current) {
             case '0': $location = 'Jukebox';
                 break;
@@ -86,7 +86,7 @@ class MyRadio_Webcam extends ServiceAPI
                 $current = 7;
                 break;
         }
-    
+
         return [
             'current' => $current,
             'webcam' => $location

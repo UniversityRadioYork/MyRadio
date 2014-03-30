@@ -6,7 +6,7 @@
 
 /**
  * APCProvider provides in-memory caching for PHP resources to increase page load times
- * 
+ *
  * APCProvider was the first CacheProvider implementation in MyRadio. It enables Models to send cache commands to it
  * which are then stored using the APC plugin automatically. In order for this class to work correctly, the server
  * needs the APC PHP plugin installed on the server. It will throw an Exception if it is not.
@@ -22,13 +22,13 @@ class APCProvider implements CacheProvider
      * @var APCProvider storage for the only APCProvider instance
      */
     private static $me;
-    
+
     /**
      * Stores whether caching should be used. If not, it does not do anything on function calls
      * @var boolean
      */
     private $enable;
-    
+
     /**
      * Constructs the Unique instance of the CacheProvider for use. Private so that instances cannot be used in ways
      * other than those intended
@@ -44,10 +44,10 @@ class APCProvider implements CacheProvider
             $this->enable = false;
         }
     }
-    
+
     /**
      * Stores an object in the APC User Object Cache
-     * 
+     *
      * @param String $key The unique name of the object to store. Ideally, this would use myury_{module}_{name}
      * @param mixed $value The data to store
      * @param int $expires The number of seconds this cache entry is valid for. Default is to last forever (0)
@@ -61,10 +61,10 @@ class APCProvider implements CacheProvider
         }
         return apc_store($this->getKeyPrefix().$key, $value, $expires);
     }
-    
+
     /**
      * Reads a previously stored value from the APC User Object Cache and returns it
-     * 
+     *
      * @param String $key The unique name of the object to fetch
      * @return mixed The value of the store, or false on failure
      * @assert ('myradio_core_test') == 'test value'
@@ -76,10 +76,10 @@ class APCProvider implements CacheProvider
         }
         return apc_fetch($this->getKeyPrefix().$key);
     }
-    
+
     /**
      * Deletes a previously stored value from the APC User Object Cache
-     * 
+     *
      * @param String $key The unique name of the object to delete
      * @return boolean Returns whether the operaion was a success
      * @assert ('myradio_core_test') == true
@@ -91,10 +91,10 @@ class APCProvider implements CacheProvider
         }
         return apc_delete($this->getKeyPrefix().$key);
     }
-    
+
     /**
      * This will completely wipe the APC User Object Cache
-     * 
+     *
      */
     public function purge()
     {
@@ -104,10 +104,10 @@ class APCProvider implements CacheProvider
         apc_clear_cache('user');
         return true;
     }
-    
+
     /**
      * Returns the Singleton instance of this class, creating it if necessary
-     * 
+     *
      * @return APCProvider
      */
     public static function getInstance()
@@ -117,7 +117,7 @@ class APCProvider implements CacheProvider
         }
         return self::$me;
     }
-    
+
     /**
      * Prevent copies being unintentionally made
      * @throws MyRadioException
@@ -126,7 +126,7 @@ class APCProvider implements CacheProvider
     {
         throw new MyRadioException('Attempted to clone a singleton');
     }
-    
+
     public function getKeyPrefix()
     {
         return 'MyRadioCache-';

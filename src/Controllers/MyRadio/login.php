@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
                  * Contains or equals: >>=
                  */
                 $ip_auth = Database::getInstance()->fetch_column('SELECT typeid FROM auth_subnet WHERE subnet >>= $1', [$_SERVER['REMOTE_ADDR']]);
-                $_SESSION['member_permissions'] = array_map(function($x){return (int)$x;}, 
+                $_SESSION['member_permissions'] = array_map(function($x){return (int)$x;},
                         array_merge($ip_auth, $user->getPermissions(), $authenticator->getPermissions($raw_uname)));
                 $_SESSION['name'] = $user->getName();
                 $_SESSION['email'] = $user->getEmail();
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
             $authenticators[$i] = false;
         }
     }
-    
+
     if ($status === 'choose') {
         //The user needs to set a login provider
         $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/chooseAuth.twig')

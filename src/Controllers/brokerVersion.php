@@ -1,13 +1,13 @@
 <?php
 /**
  * This file lets administrators choose a version of the service to use.
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130525
  * @package MyRadio_Core
- * 
+ *
  * @uses $member - The current user
- * 
+ *
  * Sets the $service_version Global Variable
  */
 

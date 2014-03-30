@@ -27,7 +27,7 @@ function byteSize(size) {
 
 $(document).ready(function() {
   $('#res-type-sel').on('click', function(){res_type_sel_change_handler();});
-  
+
   /** Central Database Handler **/
   $('#central-dragdrop').filedrop({
     url: myury.makeURL('NIPSWeb', 'upload_central'),
@@ -75,7 +75,7 @@ $(document).ready(function() {
         $('#central-result').append('<div class="ui-state-error">'+file.name+': '+response['error']+'</div>');
         return;
       }
-      
+
       if (response.analysis.length === 0) {
         //No matches
         $('#central-result').append('<div class="ui-state-error">'+file.name+' could not be recognised. Please contact the music team to get this track uploaded.</div>');

@@ -3,23 +3,23 @@
 /**
  * This is the Daemon Controller - it handles all "background" processing - sending emails, consistency checks
  * and anything else you might like to routinely happen related to MyRadio or using the APIs it provides.
- * 
+ *
  * This is designed to run on a command line - no auth required! It has one command line option, --once,
  * which is set, will run a single iteration of all the registered background systems, not loop continuously.
- * 
+ *
  * The system works by simply reading in all files in Classes/Deamons. It will check the the file is syntactically
  * correct (by passing it to php -l) and then load it. It is expected the file includes a class of the same name as the
  * file, then will call class::isEnabled(), which will enable specific daemons to be disabled.
- * 
+ *
  * Enabled Deamons will then have class:run() executed on them, which should execute the desired task once, then return.
  * This controller will deal with recursion and timing.
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130720
  * @package MyRadio_Deamon
  * @uses \Database
  * @uses \CoreUtils
- * 
+ *
  * @todo Make this not use echo in various Daemons
  * @todo Install the pcntl extension on thunderhorn
  */
@@ -107,7 +107,7 @@ while (true) {
         }
       }
     } catch (MyRadioException $e) {
-      
+
     }
   }
 
@@ -138,7 +138,7 @@ while (true) {
     MyRadioException::resetExceptionCount();
     MyRadioError::resetErrorCount();
   } catch (MyRadioException $e) {
-    
+
   }
 
   //Reload the configuration to see if it has changed

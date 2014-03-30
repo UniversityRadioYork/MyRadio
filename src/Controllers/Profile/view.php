@@ -4,7 +4,7 @@
  * - Any member can view Name, Sex, College, Officership, Training status and photo of any other member
  * - Any member can also view Phone & email alias of any committee member
  * - Members with AUTH_VIEWOTHERMEMBERS can view eduroam/email/locked/last login/paid of any other member
- * 
+ *
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20130717
  * @package MyRadio_Profile

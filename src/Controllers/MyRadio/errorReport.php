@@ -1,7 +1,7 @@
 <?php
 /**
  * Emails data to Computing
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */

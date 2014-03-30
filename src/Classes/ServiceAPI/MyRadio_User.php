@@ -212,12 +212,12 @@ class MyRadio_User extends ServiceAPI
         $this->permissions = self::$db->fetch_column(
             'SELECT lookupid FROM auth_officer
             WHERE officerid IN (SELECT officerid FROM member_officer
-            WHERE memberid=$1 
+            WHERE memberid=$1
             AND from_date <= now()
             AND (till_date IS NULL OR till_date > now()- interval \'1 month\'))
-            UNION SELECT lookupid FROM auth 
+            UNION SELECT lookupid FROM auth
             WHERE memberid=$1
-            AND starttime < now() 
+            AND starttime < now()
             AND (endtime IS NULL OR endtime >= now())',
             array($memberid)
         );
@@ -716,7 +716,7 @@ class MyRadio_User extends ServiceAPI
                 throw new MyRadioException('Trying to get current user info with no current user');
             }
         }
-        
+
         if ($itemid === -1) {
             $itemid = $_SESSION['memberid'];
         }
@@ -830,7 +830,7 @@ class MyRadio_User extends ServiceAPI
         /**
          * You won't believe how annoying psql can be about '' already being used on a unique key.
 	 * You also won't believe that in php, '' == false evaluates to true, so we need ===,
-	 *   otherwise a query to change $value to false will not work as desired. 
+	 *   otherwise a query to change $value to false will not work as desired.
          */
         if ($value === '') {
             $value = null;

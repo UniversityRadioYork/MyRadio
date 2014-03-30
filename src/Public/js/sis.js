@@ -3,14 +3,14 @@
     var selectorLastMod = 0;
     var updateSelector = function(data) {
         console.log('updateSelector triggered by server');
-        
+
         selectorLocked = data['lock'];
         selectorPower = {
           's1': data['s1power'],
           's2': data['s2power'],
           's4': data['s4power']
         };
-              
+
         if (!data['s1power']) {
           $('#s1').attr('title', 'Studio 1 Powered Off')
           .removeClass('s1on s1off poweredon')
@@ -45,7 +45,7 @@
         else {
           $('#s3').removeClass('s3on').addClass('s3off');
         }
-              
+
         switch(data['studio']) {
           case 1:
           case 2: s = 'Studio '+data['studio']+' On Air'; break;
@@ -67,7 +67,7 @@
         if ((s == 2) && (selectorPower['s2'] == '0')) return;
         if ((s == 4) && (selectorPower['s4'] == '0')) return;
         if (selectorLocked != '0') { alert('Could not change studio.\nStudio selector is currently locked out.'); return; }
-              
+
         $.get(myury.makeURL('SIS', 'selector.set'), {src: s}, function(data) {
           if (data['error'] == 'locked') { $('<div title="Selector Error">Could not change studio; studio selector is currently locked out.</div>').dialog({modal: true}); return; }
           if (data['error']) { $('<div title="Selector Error">'+data['error']+'</div>').dialog({modal: true}); return; }
@@ -97,10 +97,10 @@
 
     var updateWebcam = function(data) {
       console.log('updateWebcam triggered by server');
-      
+
       $('button[id^=setactive]:not([id=setactive'+ data['current']+'])').button("enable");
       $('button#setactive'+ data['current']).button("disable");
-            
+
       //Only show side images for not-active cameras, or all for jukebox
       if ( data['current'] === 0) {
         $('#plugin_body_webcam figure').show();
@@ -118,7 +118,7 @@
 
 /* Messages */
     var highest_message_id = 0;
-                                
+
     var updateMessages = function(data) {
       console.log('updateMessages triggered by server');
       for (var i in data) {
@@ -214,7 +214,7 @@
 
 /* Tracklist */
     var tracklist_highest_id = 0;
-    
+
     var updateTrackListing = function(data) {
         console.log('updateTrackListing triggered by server');
         for (var i in data) {
@@ -233,7 +233,7 @@
                     <td>'+data[i]['artist']+'</td> \
                     <td>'+data[i]['album']+'</td> \
                     <td class="delbutton"><span class="ui-icon ui-icon-trash" style="display:inline-block"></span></td></tr>');
-            
+
             tracklist_highest_id = (tracklist_highest_id < data[i]['id']) ? data[i]['id'] : tracklist_highest_id;
 
             $('#t'+data[i]['id']+' .delbutton').click(function() {
@@ -249,7 +249,7 @@
                                 });
                                 $('#t'+id).hide();
                                 $('#delsure'+id).dialog("close");
-                        
+
                         },
                         Cancel: function(){
                                 $('#delsure'+id).dialog("close");
@@ -257,7 +257,7 @@
                     }
                 });
             });
-        
+
             server.register_param('tracklist_highest_id', tracklist_highest_id);
         }
     };
@@ -304,7 +304,7 @@
                     $("#warnartist").text(artist);
                 }
                 if(output.return == '2') {
-                    
+
                 }
                 if(output.return == '0') {
                     submitTrackCancel();
@@ -361,7 +361,7 @@ $(document).ready(function() {
     $('button#setactive4').click(function(){setCam(4);});
 
     $('button#setactive'+wcCurrentCam).button("disable");
-      
+
     $('button#setactive7').click(function(){$('div#customcam').toggle('blind',200);});
     $('button#setcustomcam').click(function(){setCam($('input#camurl').val());});
 
@@ -477,7 +477,7 @@ $(document).ready(function() {
     $('#add-track').click(function() {
         $('#tracklist-insert').dialog("open");
     });
-    
+
     $('#obit-button').on('click', function() {
         window.open(myury.makeURL('Scheduler', 'stop'), 'Stop Broadcast');
     });

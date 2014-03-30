@@ -2,7 +2,7 @@
 <?php
 /**
  * This is the Jukebox Scheduler Controller - when triggered, it will inject a track into the iTones playout queue
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130712
  * @package MyRadio_iTones
@@ -20,11 +20,11 @@ do {
   }
   //Pick a track at random from the playlist
   $track = $tracks[array_rand($tracks)];
- 
+
   //If this track has been played recently or is currently queued, we can't play it. Try again.
   } while ($track->getClean() === 'n' or
           (MyRadio_TracklistItem::getIfPlayedRecently($track) or iTones_Utils::getIfQueued($track)
           or !MyRadio_TracklistItem::getIfAlbumArtistCompliant($track))
           or $track->isBlacklisted());
-  
+
 echo $track->getPath()."\n";

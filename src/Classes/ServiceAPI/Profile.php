@@ -70,7 +70,7 @@ class Profile extends ServiceAPI
             );
             self::$cache->set('MyRadioProfile_allMembers', self::$allMembers);
         }
-    
+
         return self::$allMembers;
     }
 
@@ -160,7 +160,7 @@ class Profile extends ServiceAPI
             );
             self::$cache->set('MyRadioProfile_officers', self::$officers);
         }
-    
+
         return self::$officers;
     }
 }

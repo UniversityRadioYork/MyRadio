@@ -88,21 +88,21 @@ class MyRadio_TrainingStatus extends ServiceAPI
     protected function __construct($statusid)
     {
         $this->presenterstatusid = (int) $statusid;
-    
+
         $result = self::$db->fetch_one('SELECT * FROM public.l_presenterstatus WHERE presenterstatusid=$1', array($statusid));
-    
+
         if (empty($result)) {
             throw new MyRadioException('The specified Training Status ('.$statusid.') does not seem to exist');
             return;
         }
-    
+
         $this->descr = $result['descr'];
         $this->ordering = (int) $result['ordering'];
         $this->detail = $result['detail'];
-    
+
         $this->depends = empty($result['depends']) ? null : $result['depends'];
         $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
-    
+
         $this->permissions = self::$db->fetch_column('SELECT typeid FROM public.auth_trainingstatus WHERE presenterstatusid=$1', [$statusid]);
     }
 
@@ -300,7 +300,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
                 $statuses[] = $status;
             }
         }
-    
+
         return $statuses;
     }
 }

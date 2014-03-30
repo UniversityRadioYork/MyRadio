@@ -1,7 +1,7 @@
 <?php
 /**
  * Saves changes to an iTones Playlist
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130712
  * @package MyRadio_iTones
@@ -24,8 +24,8 @@ if ($playlist->validateLock($_SESSION['itones_lock_'.$playlist->getID()]) === fa
           ->render();
 } else {
   $playlist->setTracks($data['tracks']['track'], $_SESSION['itones_lock_'.$playlist->getID()], $data['notes']);
-  
+
   $playlist->releaseLock($_SESSION['itones_lock_'.$playlist->getID()]);
-  
+
   CoreUtils::backWithMessage('The playlist has been updated.');
 }

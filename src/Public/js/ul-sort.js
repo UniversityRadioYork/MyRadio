@@ -1,8 +1,8 @@
-var ulsort = {}     
+var ulsort = {}
 ulsort.List = {
   Filter : function (inputSelector, listSelector) {
 
-    // Sanity check  
+    // Sanity check
     var inp, rgx = new RegExp(), titles = $(listSelector), keys;
 
     // The list with keys to skip (esc, arrows, return, etc)
@@ -22,7 +22,7 @@ ulsort.List = {
         if (rgx.source !== '' && !rgx.test($(this).html())) {
           $(this).hide();
         } else {
-          $(this).show();    
+          $(this).show();
         }
       });
     });

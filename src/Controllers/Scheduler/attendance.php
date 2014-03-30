@@ -2,7 +2,7 @@
 
 /**
  * Shows statistics about members actually turning up for their shows.
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130829
  * @package MyRadio_Scheduler

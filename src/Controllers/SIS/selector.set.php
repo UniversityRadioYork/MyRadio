@@ -1,7 +1,7 @@
 <?php
 /**
  * Selector setter for SIS
- * 
+ *
  * @author Andy Durant <aj@ury.org.uk>
  * @version 20131117
  * @package MyRadio_SIS

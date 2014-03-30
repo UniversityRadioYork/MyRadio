@@ -304,8 +304,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $result = self::$db->fetch_all(
             'SELECT show_season_timeslot_id,
             (
-                SELECT COUNT(*) FROM strm_log 
-                WHERE (starttime < start_time 
+                SELECT COUNT(*) FROM strm_log
+                WHERE (starttime < start_time
                 AND endtime >= start_time)
                 OR (starttime >= start_time AND starttime < start_time + duration)
             ) AS listeners
@@ -485,7 +485,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         if (MyRadio_User::getInstance()->hasAuth(AUTH_DELETESHOWS)) {
             //Yep, do an administrative drop
             $r = $this->cancelTimeslotAdmin($reason);
-        } 
+        }
         elseif ($this->getSeason()->getShow()->isCurrentUserAnOwner()) {
             //Get if the User is a Creditor
             //Yaay, depending on time they can do an self-service drop or cancellation request
@@ -701,7 +701,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'SELECT * FROM (
                 SELECT creditid AS memberid
                 FROM schedule.show_credit WHERE show_id IN (
-                    SELECT show_id FROM schedule.show_season 
+                    SELECT show_id FROM schedule.show_season
                     WHERE show_season_id IN (
                         SELECT show_season_id FROM schedule.show_season_timeslot
                         WHERE show_season_timeslot_id=$1

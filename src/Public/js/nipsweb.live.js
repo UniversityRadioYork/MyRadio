@@ -38,7 +38,7 @@ window.NIPSWeb = {
     pass: mConfig.bra_pass,
     audioNodes: [],
     braStream: null,
-    
+
     /**
      * Initialises with latest data from BRA using POST.
      */
@@ -514,7 +514,7 @@ window.NIPSWeb = {
                 return false;
             }
         });
-        
+
         /** Initialise Movement Operations **/
         $('ul.baps-channel').not('#baps-channel-res').sortable();
     },
@@ -606,10 +606,10 @@ window.debug = true;
  *//*
   NIPSWeb.calcChanges(e, ui);
   }
-  
+
   });
   }
-  
+
   registerItemClicks();
   setupGenericListeners();
   configureContextMenus();

@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @todo Proper Documentation
  * @todo Permissions
  * @author Andy Durant <aj@ury.org.uk>

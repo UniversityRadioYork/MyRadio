@@ -67,23 +67,23 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
     protected function __construct($statusid)
     {
         $this->memberpresenterstatusid = (int) $statusid;
-    
+
         $result = self::$db->fetch_one(
             'SELECT * FROM public.member_presenterstatus
             WHERE memberpresenterstatusid=$1',
             array($statusid)
         );
-    
+
         if (empty($result)) {
             throw new MyRadioException('The specified UserTrainingStatus ('.$statusid.') does not seem to exist');
         }
-    
+
         $this->user = (int) $result['memberid'];
         $this->awarded_time = strtotime($result['completeddate']);
         $this->awarded_by = (int) $result['confirmedby'];
         $this->revoked_time = strtotime($result['revokedtime']);
         $this->revoked_by = (int) $result['revokedby'];
-    
+
         parent::__construct($result['presenterstatusid']);
     }
 
@@ -160,7 +160,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         $data['revoked_by'] = ($this->getRevokedBy() === null ? null :
                 $this->getRevokedBy()->toDataSource($full));
         $data['revoked_time'] = $this->getRevokedTime();
-    
+
         return $data;
     }
 
@@ -184,17 +184,17 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
                 return $training;
             }
         }
-    
+
         if ($awarded_by === null) {
             $awarded_by = MyRadio_User::getInstance();
         }
-    
+
         //Check whether this user can do that.
         if (in_array(
                 array_map(
                     function ($x) {
                         return $x->getID();
-                    }, 
+                    },
                     $awarded_by->getAllTraining(true)
                 ),
                 $status->getAwarder()->getID()
@@ -217,7 +217,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         ) {
             throw new MyRadioException($awarded_to .' does not have the prerequisite training to be awarded '.$status);
         }
-    
+
         $id = self::$db->fetch_column(
             'INSERT INTO public.member_presenterstatus (memberid, presenterstatusid, confirmedby)
             VALUES ($1, $2, $3) RETURNING memberpresenterstatusid',
@@ -227,10 +227,10 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
                 $awarded_by->getID()
             ]
         )[0];
-    
+
         //Force the User to be updated on next request.
         self::$cache->delete(MyRadio_User::getCacheKey($awarded_to->getID()));
-    
+
         return new self($id);
     }
 }

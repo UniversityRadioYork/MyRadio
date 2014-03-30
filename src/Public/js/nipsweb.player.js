@@ -10,7 +10,7 @@ window.NIPSWeb = {
   //Stores whether this Show is writable. If set to false before
   //initialising, dragdrop/saving will not be enabled.
   writable: true,
-          
+
   calcChanges: function (e, ui) {
     NIPSWeb.changeQueue.queue(function(next) {
       /**
@@ -165,7 +165,7 @@ window.NIPSWeb = {
       }
     });
   },
-  
+
   /**
    * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
    * ops: JSONON to send
@@ -174,7 +174,7 @@ window.NIPSWeb = {
    */
   shipChanges: function(ops, addOp, pNext) {
     if (typeof addOp === 'undefined') addOp = false;
-    
+
     NIPSWeb.ajaxQueue.queue(function(next) {
     $('#notice').show();
     $.ajax({

@@ -2,7 +2,7 @@
 /**
  * Configuration specific to a version or too sensitive to be in the main Config
  * go here.
- * 
+ *
  * Make a copy of this file called MyRadio_Config.local.php and edit it as
  * necessary. It will then override settings in the Config class.
  */
@@ -16,10 +16,10 @@ Config::$email_domain = 'EMAIL DOMAIN HERE';
 Config::$founded = 'FOUNDED YEAR HERE';
 Config::$facebook = 'FACEBOOK PAGE ADDRESS HERE (inc https://facebook.com)';
 Config::$welcome_email = <<<EOT
-   
+
    This is a welcome email. You can use #NAME to get the user's first name,
    and include #UNAME and #PASS to tell them their newly created login details.
-   
+
 EOT;
 
 /**

@@ -9,7 +9,7 @@
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('tablescript', 'myury.datatable.default')
         ->addVariable('title', 'My Podcasts')
-        ->addVariable('tabledata', 
+        ->addVariable('tabledata',
                 ServiceAPI::setToDataSource(
                         MyRadio_Podcast::getPodcastsAttachedToUser(), false))
         ->render();

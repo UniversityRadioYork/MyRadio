@@ -78,7 +78,7 @@ class MyRadioLDAPAuthenticator implements MyRadioAuthenticator
                 . ' password, your '.Config::$short_name
                 . ' password will also change.';
     }
-    
+
     public function getResetFormMessage() {
         return '<div class="ui-state-highlight">Have you tried using your '
                . $this->getFriendlyName()

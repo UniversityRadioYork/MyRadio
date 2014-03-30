@@ -8,7 +8,7 @@ $('#myury-joyride').joyride({
         return;
       }
     }
-    
+
     $.get(myury.makeURL('MyRadio', 'a-endjoyride'));
   }
 });

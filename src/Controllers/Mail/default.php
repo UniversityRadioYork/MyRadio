@@ -1,7 +1,7 @@
 <?php
 /**
  * Lists all mailing lists
- * 
+ *
  * @todo Datatable niceness
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130526

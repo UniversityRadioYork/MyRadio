@@ -3,7 +3,7 @@
 /**
  * This is the Root Controller - it is the backbone of every request, preparing resources and passing the request onto
  * the necessary handler.
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20131230
  * @package MyRadio_Core
@@ -40,7 +40,7 @@ require_once 'Classes/Config.php';
 require_once 'MyRadio_Config.local.php';
 
 /**
- * Call the model that prepares the Database and the Global Abstraction API 
+ * Call the model that prepares the Database and the Global Abstraction API
  */
 require 'Models/Core/api.php';
 
@@ -114,7 +114,7 @@ if (isset($_REQUEST['request'])) {
 /**
  * Use the Database authentication data to check whether the use has permission to access that.
  * This method will automatically cause a premature exit if necessary.
- * 
+ *
  * IMPORTANT: This will cause a fatal error if an action does not have any permissions associated with it.
  * This is to prevent developers from forgetting to assign permissions to an action.
  */

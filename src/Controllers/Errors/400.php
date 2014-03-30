@@ -1,7 +1,7 @@
 <?php
 /**
- * If you don't know what a 403 page is, you have a long way to go 
- * 
+ * If you don't know what a 403 page is, you have a long way to go
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20131016
  * @package MyRadio_Core

@@ -4,7 +4,7 @@ $__start = -microtime(true);
 /**
  * This MyRadio Extension exposes some of MyRadio's internal classes as a REST API.
  * It aims to be compatible with https://developers.helloreverb.com/swagger/
- * 
+ *
  * @todo Management interfaces to configure keys and expose methods
  */
 // Configure MyRadio & Set API Settings
@@ -49,7 +49,7 @@ if (empty($class)) {
 /**
  * Get the API key, or complain if there isn't one.
  * Do this after RTFM.
- * 
+ *
  * If accessing Resources, then we give it an API Key with no permissions
  * in order to access it.
  */

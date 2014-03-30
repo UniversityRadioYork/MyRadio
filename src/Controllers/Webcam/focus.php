@@ -1,7 +1,7 @@
 <?php
 /**
  * Controller for the focus Webcam Module. It's pretty much some webcams.
- * 
+ *
  * @author Andy Durant <aj@ury.org.uk>
  * @version 02082012
  * @package MyRadio_Webcam

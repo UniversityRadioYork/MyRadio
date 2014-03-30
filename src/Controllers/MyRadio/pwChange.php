@@ -3,7 +3,7 @@
 /**
  * Enables a user to change their password, either whilst logged in or by
  * using a password reset token that has been emailed to them.
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @data 20140121
  * @package MyRadio_Core
@@ -37,7 +37,7 @@ if (isset($_SESSION['memberid'])) {
     );
 } else {
     $var = $_SERVER['REQUEST_METHOD'] === 'POST' ? 'myradio_pwChange-token' : 'token';
-    
+
     if (!isset($_REQUEST[$var])) {
         throw new MyRadioException('Password reset token required.', 400);
     } else {
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
         //Token initialised in form definition above.
         $user = MyRadio_User::getInstance($token['memberid']);
     }
-    
+
     //Right, let's update the password
     /**
      * Only works with MyRadioDefaultAuthenticator. Should it allow
@@ -88,16 +88,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
     $authenticator = new MyRadioDefaultAuthenticator();
     $authenticator->setPassword($user, $data['pw1']);
     unset($data);
-    
+
     //Reset the User's authenticator preferences - they may be locking them out
     $user->setAuthProvider(null);
-    
+
     //Set the token as used
     if (isset($token)) {
         $db->query('UPDATE myury.password_reset_token SET used=NOW()'
                 . ' WHERE token=$1', [$token['token']]);
     }
-    
+
     //If the user was locked out for a password change, unlock them
     if (isset($_SESSION['auth_use_locked']) &&
             $_SESSION['auth_use_locked'] === 'chooseAuth') {

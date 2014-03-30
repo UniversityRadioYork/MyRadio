@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @deprecated
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130526

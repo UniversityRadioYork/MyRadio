@@ -16,7 +16,7 @@ interface MyRadioAuthenticator
      *                                     return false on failure.
      */
     public function validateCredentials($user, $password);
-    
+
     /**
      * @param  String $user The username (a full email address, or the prefix
      *                      if it matches Config::$eduroam_domain).
@@ -24,7 +24,7 @@ interface MyRadioAuthenticator
      *                     granted.
      */
     public function getPermissions($user);
-    
+
     /**
      * @param  String  $user The username (a full email address, or the prefix
      *                       if it matches Config::$eduroam_domain).
@@ -42,7 +42,7 @@ interface MyRadioAuthenticator
      * A friendly description to explain to users what selecting this authenticator does
      */
     public function getDescription();
-    
+
     /**
      * A friendly message to display on the "I've forgotten my password" page
      */
