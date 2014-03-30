@@ -3,7 +3,7 @@
  * This page enables a Users to edit a Season that already exists.
  * It takes one parameter, $_REQUEST['seasonid']
  * which should be the ID of the Show to edit.
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130923
  * @package MyRadio_Scheduler

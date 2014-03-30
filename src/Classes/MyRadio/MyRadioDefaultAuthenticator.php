@@ -179,21 +179,21 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
 
     /**
      * Sets a User's password.
-     * 
+     *
      * @param User $user
      * @param String $password
      */
     public function setPassword(MyRadio_User $user, $password) {
         $password = $this->encrypt($password);
         //Insert or Update
-        $result = $this->query('UPDATE member_pass SET password=$1 WHERE memberid=$2', 
+        $result = $this->query('UPDATE member_pass SET password=$1 WHERE memberid=$2',
     [$password, $user->getID()]);
-        
+
         //Set require_password_change to false
-        $user->setRequirePasswordChange(false); 
-        
+        $user->setRequirePasswordChange(false);
+
         if (pg_affected_rows($result) === 0) {
-            $this->query('INSERT INTO member_pass (memberid, password) VALUES ($1, $2)', 
+            $this->query('INSERT INTO member_pass (memberid, password) VALUES ($1, $2)',
     [$user->getID(), $password]);
         }
     }

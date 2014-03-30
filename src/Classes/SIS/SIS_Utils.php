@@ -164,7 +164,7 @@ class SIS_Utils extends ServiceAPI
 
             return $pollFuncs;
         }
-        
+
         return false;
     }
 

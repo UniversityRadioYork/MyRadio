@@ -26,7 +26,7 @@
           {% endfor %}
         </ul>
       {% endfor %}
-  
+
       <div id="resource-add-container" class="box width-2 height-2 ui-widget ui-widget-content">
         <div id="resource-add-header" class="ui-widget-header">
           {% include 'NIPSWeb/res_selector.twig' %}
@@ -39,7 +39,7 @@
         <ul class="box baps-channel ui-widget-content" id="baps-channel-res" channel="res">
         </ul>
       </div>
-    
+
     </div>
 
     <div id="baps-channelaction-container"  class="clearfix">
@@ -52,13 +52,13 @@
           <button class='pause' id='ch{{channel}}-pause' onclick='previewPause("{{channel}}")'></button>
           <button class='stop' id='ch{{channel}}-stop' class='ui-state-disabled' onclick='previewStop("{{channel}}")'></button><br>
           <div id='progress-bar-{{channel}}'></div>
-          <label id='ch{{channel}}-elapsed'>--:--</label> / 
+          <label id='ch{{channel}}-elapsed'>--:--</label> /
           <label id='ch{{channel}}-duration'>--:--</label>
         </div>
       {% endfor %}
     </div>
   </div>
-  
+
   <div id="footer-tips" class="ui-state-highlight ui-helper-hidden"></div>
 
 </div>

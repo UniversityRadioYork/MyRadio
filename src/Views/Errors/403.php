@@ -1,7 +1,7 @@
 <?php
 /**
  * This View renders a HTTP/1.1 403 Error - for when a <code>CoreUtils::requirePermission()</code> call returns false.
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130809
  * @package MyRadio_Core

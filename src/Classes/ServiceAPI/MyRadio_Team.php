@@ -184,7 +184,7 @@ class MyRadio_Team extends ServiceAPI
                 array_map(
                     function ($x) use ($officer) {
                         $x['position'] = $officer;
-        
+
                         return $x;
                     },
                     $officer->getHistory()
@@ -211,14 +211,14 @@ class MyRadio_Team extends ServiceAPI
     {
         $i = $this->getHistory();
         $result = array();
-    
+
         foreach ($i as $o) {
             if (empty($o['to']) or $o['to'] >= time()) {
                 unset($o['to']);
                 $result[] = $o;
             }
         }
-    
+
         return $result;
     }
 
@@ -271,7 +271,7 @@ class MyRadio_Team extends ServiceAPI
                 $data[] = $holder;
             }
         }
-    
+
         return $data;
     }
 
@@ -291,12 +291,12 @@ class MyRadio_Team extends ServiceAPI
             'description' => $this->getDescription(),
             'status' => $this->getStatus()
         ];
-    
+
         if ($full) {
             $data['officers'] = CoreUtils::dataSourceParser($this->getCurrentHolders(), false);
             $data['history'] = CoreUtils::dataSourceParser($this->getHistory(), false);
         }
-    
+
         return $data;
     }
 }

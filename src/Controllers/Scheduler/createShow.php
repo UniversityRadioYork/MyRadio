@@ -2,7 +2,7 @@
 
 /**
  * This is the magic form that makes URY actually have content - it enables users to apply for shows. And stuff.
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130727
  * @package MyRadio_Scheduler

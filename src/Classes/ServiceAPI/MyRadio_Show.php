@@ -434,7 +434,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             'show_id'
         );
         $this->updateCacheObject();
-    
+
         return $r;
     }
 
@@ -475,7 +475,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     {
         $r = parent::setCredits($users, $credittypes, 'schedule.show_credit', 'show_id');
         $this->updateCacheObject();
-    
+
         return $r;
     }
 
@@ -561,7 +561,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         if (($top = self::$cache->get($key)) !== false) {
             return $top;
         }
-    
+
         $result = self::$db->fetch_all(
             'SELECT show_id, SUM(listeners) AS listeners_sum FROM (
                 SELECT show_season_id, (
@@ -574,19 +574,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 ) AS listeners
                 FROM schedule.show_season_timeslot
                 WHERE start_time > $1
-            ) AS t1 
+            ) AS t1
             LEFT JOIN schedule.show_season ON t1.show_season_id = show_season. show_season_id
             GROUP BY show_id ORDER BY listeners_sum DESC LIMIT 30',
             array(CoreUtils::getTimestamp($date))
         );
-    
+
         $top = array();
         foreach ($result as $r) {
             $show = self::getInstance($r['show_id'])->toDataSource();
             $show['listeners'] = intval($r['listeners_sum']);
             $top[] = $show;
         }
-    
+
         self::$cache->set($key, $top, 86400);
 
         return $top;
@@ -631,7 +631,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $data['credits'] = array_map(
                 function ($x) {
                     $x['User'] = $x['User']->toDataSource(false);
-    
+
                     return $x;
                 },
                 $this->getCredits()

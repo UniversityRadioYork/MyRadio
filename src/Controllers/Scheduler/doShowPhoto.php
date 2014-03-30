@@ -1,7 +1,7 @@
 <?php
 /**
  * Set the show photo
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130529
  * @package MyRadio_Scheduler

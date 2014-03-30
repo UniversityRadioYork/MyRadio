@@ -1,7 +1,7 @@
 <?php
 /**
  * Opt out of a mailing list
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130527
  * @package MyRadio_Mail

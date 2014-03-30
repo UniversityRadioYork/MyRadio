@@ -31,9 +31,9 @@ Edit features are disabled.
           {% endfor %}
         </ul>
       {% endfor %}
-    
+
     </div>
-    
+
     <div id="baps-channelaction-container"  class="clearfix">
       {% set channels = {1: 'News', 2: 'Speech', 3: 'Music'} %}
       {% for channel in channels|keys %}
@@ -44,14 +44,14 @@ Edit features are disabled.
           <button class='pause' id='ch{{channel}}-pause' onclick='previewPause({{channel}})'></button>
           <button class='stop' id='ch{{channel}}-stop' class='ui-state-disabled' onclick='previewStop({{channel}})'></button><br>
           <div id='progress-bar-{{channel}}'></div>
-          <label id='ch{{channel}}-elapsed'>--:--</label> / 
+          <label id='ch{{channel}}-elapsed'>--:--</label> /
           <label id='ch{{channel}}-duration'>--:--</label>
         </div>
       {% endfor %}
     </div>
-    
+
   </div>
-  
+
   <div id="footer-tips" class="ui-state-highlight ui-helper-hidden"></div>
 
 </div>

@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @todo Proper Documentation
  * @todo Permissions
  * @author Lloyd Wallis <lpw@ury.org.uk>

@@ -81,12 +81,12 @@ class MyRadio_TrackCorrection extends MyRadio_Track
         );
         if (empty($result)) {
             throw new MyRadioException('The specified TrackCorrection does not seem to exist');
-        
+
             return;
         }
-    
+
         parent::__construct($result['trackid']);
-    
+
         $this->proposed_title = $result['proposed_title'];
         $this->proposed_artist = $result['proposed_artist'];
         $this->proposed_album_name = $result['proposed_album_name'];
@@ -116,7 +116,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
             VALUES ($1, $2, $3, $4, $5) RETURNING correctionid',
             array($track->getID(), $title, $artist, $album_name, $level)
         );
-    
+
         if (empty($r)) {
             return false;
         }
@@ -133,7 +133,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
             'SELECT correctionid FROM public.rec_trackcorrection WHERE state=\'p\'
             ORDER BY RANDOM() LIMIT 1'
         );
-    
+
         if (empty($result)) {
             return null;
         }
@@ -184,14 +184,14 @@ class MyRadio_TrackCorrection extends MyRadio_Track
         }
         $this->setArtist($this->getProposedArtist());
         $this->setTitle($this->getProposedTitle());
-    
+
         self::$db->query(
             'UPDATE public.rec_trackcorrection SET state=\'a\', reviewedby=$2 WHERE correctionid=$1',
             array($this->getCorrectionID(), MyRadio_User::getInstance()->getID())
         );
         $this->state = 'a';
         $this->setLastfmVerified();
-    
+
         return true;
     }
 
@@ -201,7 +201,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
             'UPDATE public.rec_trackcorrection SET state=\'r\', reviewedby=$2 WHERE correctionid=$1',
             array($this->getCorrectionID(), MyRadio_User::getInstance()->getID())
         );
-    
+
         if ($permanent) {
             $this->setLastfmVerified();
         }

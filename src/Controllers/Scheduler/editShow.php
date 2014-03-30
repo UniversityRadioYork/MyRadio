@@ -2,7 +2,7 @@
 /**
  * This page enables a Users to edit a Show that already exists. It takes one parameter, $_REQUEST['showid']
  * which should be the ID of the Show to edit.
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130728
  * @package MyRadio_Scheduler

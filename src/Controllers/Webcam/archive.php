@@ -1,7 +1,7 @@
 <?php
 /**
  * Controller for viewing webcam archives
-* 
+*
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 21112012
  * @package MyRadio_Webcam

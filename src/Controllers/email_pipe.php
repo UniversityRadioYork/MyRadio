@@ -2,9 +2,9 @@
 <?php
 /**
  * This is the Email Pipe Controller - it will read in emails piped to it and do MyRadio things with them
- * 
+ *
  * - if it's sent to a certain mailing list, it'll put it in the archives
- * 
+ *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130712
  * @package MyRadio_Mail
@@ -55,7 +55,7 @@ foreach ($recipients[3] as $recipient) {
   } else {
     $addr = trim($recipient);
   }
-  
+
   $list = MyRadio_List::getByName(explode('@',$addr)[0]);
   if (empty($list)) {
     exit(0);

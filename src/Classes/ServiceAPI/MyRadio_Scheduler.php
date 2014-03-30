@@ -38,13 +38,13 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
                 AND submitted IS NOT NULL
                 ORDER BY submitted ASC'
             );
-        
+
             self::$pendingAllocationsResult = array();
             foreach ($result as $application) {
                 self::$pendingAllocationsResult[] = MyRadio_Season::getInstance($application);
             }
         }
-    
+
         return self::$pendingAllocationsResult;
     }
 
@@ -122,7 +122,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
          * be sufficient.
          * @todo Fix terms database so it isn't silly.
          */
-    
+
         return strtotime('Midnight '.date('d-m-Y', strtotime($result['start'])+3600));
     }
 
@@ -132,7 +132,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     public static function getGenres()
     {
         self::wakeup();
-    
+
         return self::$db->fetch_all('SELECT genre_id AS value, name AS text FROM schedule.genre ORDER BY name ASC');
     }
 
@@ -142,7 +142,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     public static function getCreditTypes()
     {
         self::wakeup();
-    
+
         return self::$db->fetch_all(
             'SELECT credit_type_id AS value, name AS text
             FROM people.credit_type ORDER BY name ASC'
@@ -160,7 +160,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     public static function findShowByTitle($term, $limit)
     {
         self::initDB();
-    
+
         return self::$db->fetch_all(
             'SELECT schedule.show.show_id, metadata_value AS title
             FROM schedule.show, schedule.show_metadata
@@ -222,16 +222,16 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
             $end = $date + $time['start_time'] + $time['duration'];
             //Query for conflicts
             $r = self::getScheduleConflict($start, $end);
-        
+
             //If there's a conflict, log it
             if (!empty($r)) {
                 $conflicts[$i] = $r['show_season_id'];
             }
-        
+
             //Increment week
             $date += 3600 * 24 * 7;
         }
-    
+
         return $conflicts;
     }
 

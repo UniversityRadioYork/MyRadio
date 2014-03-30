@@ -3,7 +3,7 @@
     "options": {
         "title": "Edit Chart Release"
     },
-    
+
     "fields": {
         "chart_type_id": {
             "type": "select",

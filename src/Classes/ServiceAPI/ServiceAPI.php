@@ -66,7 +66,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
     {
         self::initCache();
         self::initDB();
-    
+
         $class = get_called_class();
         $key = $class::getCacheKey($itemid);
         $cache = self::$cache->get($key);
@@ -74,7 +74,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
             $cache = new $class($itemid);
             self::$cache->set($key, $cache, 86400);
         }
-    
+
         return $cache;
     }
 
@@ -105,7 +105,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
                 $result[] = $element->toDataSource($full);
             }
         }
-    
+
         return $result;
     }
 
@@ -129,13 +129,13 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
         foreach ($ids as $id) {
             $response[] = $child::getInstance($id);
         }
-    
+
         return $response;
     }
 
     protected function __construct()
     {
-        
+
     }
 
     /**

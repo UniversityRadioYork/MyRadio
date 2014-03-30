@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is a supplement to the default forms system for the MyRadio Scheduler Shows System
  */
 $(document).ready(function() {

@@ -33,7 +33,7 @@ class MyRadio_TracklistItem extends ServiceAPI
     protected function __construct($id)
     {
         $this->audiologid = (int) $id;
-    
+
         $result = self::$db->fetch_one(
             'SELECT * FROM tracklist.tracklist
             LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
@@ -44,14 +44,14 @@ class MyRadio_TracklistItem extends ServiceAPI
         if (empty($result)) {
             throw new MyRadioException('The requested TracklistItem does not appear to exist!', 400);
         }
-    
+
         $this->source = $result['source'];
         $this->starttime = strtotime($result['timestart']);
         $this->endtime = strtotime($result['timestop']);
         $this->state = $result['state'];
         $this->timeslot = is_numeric($result['timeslotid']) ? MyRadio_Timeslot::getInstance($result['timeslotid']) : null;
         $this->bapsaudioid = is_numeric($result['bapsaudioid']) ? (int) $result['bapsaudioid'] : null;
-    
+
         $this->track = is_numeric($result['trackid']) ? $result['trackid'] :
             array(
                 'title' => $result['track'],
@@ -95,12 +95,12 @@ class MyRadio_TracklistItem extends ServiceAPI
             ORDER BY timestart ASC',
             array($timeslotid, $offset)
         );
-    
+
         $items = array();
         foreach ($result as $item) {
             $items[] = self::getInstance($item);
         }
-    
+
         return $items;
     }
 
@@ -114,22 +114,22 @@ class MyRadio_TracklistItem extends ServiceAPI
     public static function getTracklistForJukebox($start = null, $end = null, $include_playout = true)
     {
         self::wakeup();
-    
+
         $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
         $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
-    
+
         $result = self::$db->fetch_column(
             'SELECT audiologid FROM tracklist.tracklist WHERE source=\'j\'
             AND timestart >= $1 AND timestart <= $2'
             . ($include_playout ? '' : ' AND state!=\'u\' AND state!=\'d\''),
             array($start, $end)
         );
-    
+
         $items = array();
         foreach ($result as $item) {
             $items[] = self::getInstance((int) $item);
         }
-    
+
         return $items;
     }
 
@@ -144,10 +144,10 @@ class MyRadio_TracklistItem extends ServiceAPI
     public static function getTracklistForTime($start, $end = null, $include_playout = false)
     {
         self::wakeup();
-    
+
         $start = CoreUtils::getTimestamp($start);
         $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
-    
+
         $result = self::$db->fetch_column(
             'SELECT audiologid FROM tracklist.tracklist
             WHERE timestart >= $1 AND timestart <= $2 AND (state IS NULL OR state=\'c\''
@@ -155,16 +155,16 @@ class MyRadio_TracklistItem extends ServiceAPI
             . ' ORDER BY timestart ASC',
             array($start, $end)
         );
-    
+
         $return = [];
         foreach ($result as $id) {
             if (sizeof($return) == 100000) {
                 return $return;
             }
-        
+
             $obj = self::getInstance($id);
             $data = $obj->toDataSource();
-        
+
             unset($data['audiologid']);
             unset($data['editlink']);
             unset($data['state']);
@@ -174,7 +174,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             unset($data['digitised']);
             unset($data['deletelink']);
             unset($data['trackno']);
-        
+
             if (is_array($data['album'])) {
                 $data['label'] = $data['album']['label'];
                 $data['album'] = $data['album']['title'];
@@ -182,7 +182,7 @@ class MyRadio_TracklistItem extends ServiceAPI
                 $data['label'] = $data['record_label'];
                 unset($data['record_label']);
             }
-        
+
             $return[] = $data;
             if (is_object($obj->getTrack())) {
                 $obj->getTrack()->removeInstance();
@@ -190,7 +190,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             $obj->removeInstance();
             unset($obj);
         }
-    
+
         return $return;
     }
 
@@ -217,16 +217,16 @@ class MyRadio_TracklistItem extends ServiceAPI
             $track = $trackobj->toDataSource();
             $track['num_plays'] = $row['num_plays'];
             $track['total_playtime'] = $row['num_plays'] * $trackobj->getDuration();
-    
+
             $playlistobjs = iTones_Playlist::getPlaylistsWithTrack($trackobj);
             $track['in_playlists'] = '';
             foreach ($playlistobjs as $playlist) {
                 $track['in_playlists'] .= $playlist->getTitle() . ', ';
             }
-    
+
             $data[] = $track;
         }
-    
+
         return $data;
     }
 
@@ -245,10 +245,10 @@ class MyRadio_TracklistItem extends ServiceAPI
     public static function getTracklistStatsForJukebox($start = null, $end = null, $include_playout = true)
     {
         self::wakeup();
-    
+
         $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
         $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
-    
+
         $result = self::$db->fetch_all(
             'SELECT COUNT(trackid) AS num_plays, trackid FROM tracklist.tracklist
             LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
@@ -257,7 +257,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             . 'GROUP BY trackid ORDER BY num_plays DESC',
             array($start, $end)
         );
-    
+
         return self::trackAmalgamator($result);
     }
 
@@ -303,7 +303,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             WHERE timestart >= $1 AND trackid = $2',
             array(CoreUtils::getTimestamp(time() - $time), $track->getID())
         );
-    
+
         return sizeof($result) !== 0;
     }
 
@@ -328,7 +328,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             $time = time();
         }
         $timeout = CoreUtils::getTimestamp($time - (3600 * 2)); //Two hours ago
-    
+
         /**
          * The title check is a hack to work around our default album
          * being URY Downloads
@@ -350,14 +350,14 @@ class MyRadio_TracklistItem extends ServiceAPI
                 CoreUtils::getTimestamp($time)
             )
         );
-    
+
         if ($include_queue) {
             foreach (iTones_Utils::getTracksInAllQueues() as $req) {
                 if (empty($req['trackid'])) {
                     continue;
                 }
                 $t = MyRadio_Track::getInstance($req['trackid']);
-            
+
                 /**
                  * The title check is a hack to work around our default album
                  * being URY Downloads
@@ -367,7 +367,7 @@ class MyRadio_TracklistItem extends ServiceAPI
                 }
             }
         }
-    
+
         return ($result[0] < 2);
     }
 
@@ -382,7 +382,7 @@ class MyRadio_TracklistItem extends ServiceAPI
         //$return['endtime'] = $this->getEndTime();
         $return['state'] = $this->state;
         $return['audiologid'] = $this->audiologid;
-    
+
         return $return;
     }
 }

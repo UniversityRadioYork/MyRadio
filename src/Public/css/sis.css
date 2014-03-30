@@ -30,8 +30,8 @@ body {
   float: right;
 }
 
-.pluginpane { 
-  float: left; 
+.pluginpane {
+  float: left;
   width: 300px;
   margin-right: 5px
 }
@@ -43,7 +43,7 @@ body {
   cursor:pointer;
   height:1.5em
 }
-.pluginbody { 
+.pluginbody {
   overflow-x: hidden;
   font-size: 12px
 }
@@ -97,7 +97,7 @@ table.messages tr td:last-child {
   width: 100px;
 }
 
-table { 
+table {
   margin: auto;
   width: 90%;
   border-collapse: separate;
@@ -109,9 +109,9 @@ fieldset { padding:0; border:0; margin-top:25px; }
 
 
 /** Selector **/
-#selector-buttons { 
-  margin: 0 auto; 
-  border-spacing:2em 0; 
+#selector-buttons {
+  margin: 0 auto;
+  border-spacing:2em 0;
   margin-bottom: .5em;
   border-collapse: separate;
 }

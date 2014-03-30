@@ -96,16 +96,16 @@
       <div id='header'>
         <div class="swagger-ui-wrap">
           <a id="logo" href="http://swagger.wordnik.com">API Documentation</a>
-  
+
           <form id='api_selector'>
             <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
             <div class='input'><a id="explore" href="#">Explore</a></div>
           </form>
         </div>
       </div>
-  
+
       <div id="message-bar" class="swagger-ui-wrap">
-  
+
       </div>
       <div class="swagger-ui-wrap">
         Hello and welcome to MyRadiopi, URY's basic REST Service. It's a very basic system at the moment,
@@ -113,9 +113,9 @@
         <p>Questions? Email lpw [at] ury.org.uk</p>
       </div>
       <div id="swagger-ui-container" class="swagger-ui-wrap">
-  
+
       </div>
-  
+
     </body>
   -->
 </html>
