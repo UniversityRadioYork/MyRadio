@@ -11,7 +11,7 @@
 {% endfor %}
 </ul>
 {{ parent() }}
-<iframe src="https://ury.org.uk/schedule/" style="width:100%; height: 500px"></iframe>
+<iframe src="{{ config.schedule_url }}" style="width:100%; height: 500px"></iframe>
 {% endblock %}
 
 {% block foot %}

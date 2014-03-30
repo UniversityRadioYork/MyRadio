@@ -616,6 +616,7 @@ EOT;
             'base_url' => self::$base_url,
             'rewrite_url' => self::$rewrite_url,
             'shib_url' => self::$shib_url,
+            'schedule_url' => self::$schedule_url,
             'timezone' => self::$timezone,
             'default_module' => self::$default_module,
             'default_action' => self::$default_action,
