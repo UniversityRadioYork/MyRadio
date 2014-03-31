@@ -7,4 +7,7 @@
  * @package MyRadio_iTones
  */
 
-CoreUtils::getTemplateObject()->setTemplate('iTones/default.twig')->addVariable('title', 'Campus Jukebox Manager')->render();
+CoreUtils::getTemplateObject()
+    ->setTemplate('iTones/default.twig')
+    ->addVariable('title', 'Campus Jukebox Manager')
+    ->render();
