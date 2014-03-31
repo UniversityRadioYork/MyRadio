@@ -18,5 +18,3 @@ $data = MyRadio_JsonFormLoader::loadFromModule(
 MyRadio_Quote::create($data);
 
 CoreUtils::backWithMessage('Quote added.');
-
-?>

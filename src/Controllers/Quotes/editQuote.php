@@ -7,29 +7,30 @@
  */
 
 $form = MyURY_JsonFormLoader::loadFromModule(
-  $module, 'quotefrm', 'doEditQuote',
-  []
+    $module,
+    'quotefrm',
+    'doEditQuote',
+    []
 );
 
 if ($_REQUEST['quote_id']) {
-  $quote = MyURY_ChartRelease::getInstance($_REQUEST['quote_id']);
+    $quote = MyURY_ChartRelease::getInstance($_REQUEST['quote_id']);
 
-  $form->editMode(
-    $quote->getID(),
-    array_merge(
-      [
-        'date'   => CoreUtils::happyTime($quote->getDate(), false),
-        'source' => $quote->getSource(),
-        'text'   => $quote->getText()
-      ],
-      $chart_rows_form
-    )
-  );
+    $form->editMode(
+        $quote->getID(),
+        array_merge(
+            [
+                'date'   => CoreUtils::happyTime($quote->getDate(), false),
+                'source' => $quote->getSource(),
+                'text'   => $quote->getText()
+            ],
+            $chart_rows_form
+        )
+    );
 
 } else {
-  $form->setTitle('Create Quote');
-  $form->setFieldValue('date', CoreUtils::happyTime(time(), false));
+    $form->setTitle('Create Quote');
+    $form->setFieldValue('date', CoreUtils::happyTime(time(), false));
 }
 
 $form->render();
-?>
