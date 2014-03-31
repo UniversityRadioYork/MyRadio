@@ -7,7 +7,14 @@
  * @package MyRadio_Profile
  */
 $params = MyRadio_User::getQuickAddForm()->readValues();
-$user = MyRadio_User::create($params['fname'], $params['sname'], $params['eduroam'],
-            $params['sex'], $params['collegeid'], null, $params['phone']);
+$user = MyRadio_User::create(
+    $params['fname'],
+    $params['sname'],
+    $params['eduroam'],
+    $params['sex'],
+    $params['collegeid'],
+    null,
+    $params['phone']
+);
 
 CoreUtils::backWithMessage('New Member has been created with ID '.$user->getID());

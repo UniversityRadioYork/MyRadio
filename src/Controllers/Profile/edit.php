@@ -9,9 +9,9 @@
 
 // Set if trying to view another member's profile page
 if (isset($_REQUEST['memberid']) && MyRadio_User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
-  $user = MyRadio_User::getInstance($_REQUEST['memberid']);
+    $user = MyRadio_User::getInstance($_REQUEST['memberid']);
 } else {
-  $user = MyRadio_User::getInstance();
+    $user = MyRadio_User::getInstance();
 }
 
 $user->getEditForm()->render();

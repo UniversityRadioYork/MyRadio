@@ -10,7 +10,7 @@
 $officer = MyRadio_Officer::getInstance($_REQUEST['officerid']);
 
 CoreUtils::getTemplateObject()
-        ->setTemplate('Profile/officer.twig')
-        ->addVariable('title', $officer->getName())
-        ->addVariable('officer', $officer->toDataSource(true))
-        ->render();
+    ->setTemplate('Profile/officer.twig')
+    ->addVariable('title', $officer->getName())
+    ->addVariable('officer', $officer->toDataSource(true))
+    ->render();
