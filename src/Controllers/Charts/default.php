@@ -1,15 +1,13 @@
 <?php
-CoreUtils::getTemplateObject(
-)->setTemplate(
-  'table.twig'
+CoreUtils::getTemplateObject()->setTemplate(
+    'table.twig'
 )->addVariable(
-  'tablescript',
-  'myury.datatable.default'
+    'tablescript',
+    'myury.datatable.default'
 )->addVariable(
-  'title',
-  'Charts'
+    'title',
+    'Charts'
 )->addVariable(
-  'tabledata',
-  ServiceAPI::setToDataSource(MyRadio_ChartType::getAll())
+    'tabledata',
+    ServiceAPI::setToDataSource(MyRadio_ChartType::getAll())
 )->render();
-?>
