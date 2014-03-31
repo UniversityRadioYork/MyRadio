@@ -8,4 +8,4 @@
  */
 
 $twig = CoreUtils::getTemplateObject();
-require_once 'Views/Errors/403.php';
+require 'Views/Errors/403.php';
