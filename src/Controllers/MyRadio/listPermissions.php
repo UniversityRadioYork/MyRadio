@@ -7,7 +7,7 @@
  * @package MyRadio_Core
  */
 
-$data = array_map(function($x) {
+$data = array_map(function ($x) {
     $x['usage'] = [
         'display' => 'text',
         'value' => 'Usage',
@@ -18,6 +18,7 @@ $data = array_map(function($x) {
         'value' => 'Assigned To',
         'url' => CoreUtils::makeURL('MyRadio', 'permissionAssigned', ['typeid' => $x['value']])
     ];
+
     return $x;
 }, CoreUtils::getAllPermissions());
 

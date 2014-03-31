@@ -8,7 +8,12 @@
  * @version 20130629
  * @package MyRadio_Core
  */
-if (!isset($_REQUEST['term'])) $data = array(); else {
-  $data = Artist::findByName($_REQUEST['term'], isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default);
+if (!isset($_REQUEST['term'])) {
+    $data = array();
+} else {
+    $data = Artist::findByName(
+        $_REQUEST['term'],
+        isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default
+    );
 }
 require 'Views/MyRadio/datatojson.php';
