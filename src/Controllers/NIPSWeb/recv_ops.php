@@ -7,8 +7,9 @@
  * @package MyRadio_NIPSWeb
  */
 
-if (!isset($_POST['clientid']))
-  throw new MyRadioException('ClientID Required', 400);
+if (!isset($_POST['clientid'])) {
+    throw new MyRadioException('ClientID Required', 400);
+}
 
 $data = MyRadio_Timeslot::getInstance(NIPSWeb_Token::getEditTokenTimeslot($_POST['clientid']))->updateShowPlan($_POST);
 
