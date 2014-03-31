@@ -8,7 +8,7 @@
  */
 
 if (!isset($_REQUEST['show_season_timeslot_id'])) {
-  throw new MyRadioException('No timeslotid provided.', 400);
+    throw new MyRadioException('No timeslotid provided.', 400);
 }
 //The Form definition
 require 'Models/Scheduler/reasonfrm.php';

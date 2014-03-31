@@ -33,7 +33,7 @@ if ($stage == 0) {
 }
 
 CoreUtils::getTemplateObject()->setTemplate('Scheduler/stop.twig')
-        ->addVariable('title', 'Stop Broadcast')
-        ->addVariable('stage', $stage)
-        ->addVariable('result', $result)
-        ->render();
+    ->addVariable('title', 'Stop Broadcast')
+    ->addVariable('stage', $stage)
+    ->addVariable('result', $result)
+    ->render();

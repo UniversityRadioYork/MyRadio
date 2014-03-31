@@ -8,9 +8,8 @@
  */
 
 $shows = MyRadio_Show::getAllShows();
-$twig = CoreUtils::getTemplateObject()->setTemplate('table.twig')
-        ->addVariable('title', 'All Shows')
-        ->addVariable('tabledata', ServiceAPI::setToDataSource($shows))
-        ->addVariable('tablescript', 'myury.scheduler.showlist');
-
-$twig->render();
+CoreUtils::getTemplateObject()->setTemplate('table.twig')
+    ->addVariable('title', 'All Shows')
+    ->addVariable('tabledata', ServiceAPI::setToDataSource($shows))
+    ->addVariable('tablescript', 'myury.scheduler.showlist')
+    ->render();

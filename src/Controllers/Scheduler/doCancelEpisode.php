@@ -16,12 +16,17 @@ $timeslot = MyRadio_Timeslot::getInstance($data['show_season_timeslot_id']);
 $result = $timeslot->cancelTimeslot($data['reason']);
 
 if (!$result) {
-  $message = 'Your cancellation request could not be processed at this time. Please contact programming@ury.org.uk instead.';
+    $message = 'Your cancellation request could not be processed at this time. '
+        .'Please contact programming@ury.org.uk instead.';
 } else {
-  $message = 'Your cancellation request has been sent. You will receive an email informing you of updates.';
+    $message = 'Your cancellation request has been sent. You will receive an email informing you of updates.';
 }
 
-header('Location: '.CoreUtils::makeURL('Scheduler', 'listTimeslots', array(
-    'show_season_id' => $timeslot->getSeason()->getID(),
-    'message' => base64_encode($message))
-        ));
+header('Location: '.CoreUtils::makeURL(
+    'Scheduler',
+    'listTimeslots',
+    array(
+        'show_season_id' => $timeslot->getSeason()->getID(),
+        'message' => base64_encode($message)
+    )
+));

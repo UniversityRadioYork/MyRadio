@@ -10,7 +10,7 @@
 $season = MyRadio_Season::getInstance($_GET['show_season_id']);
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-        ->addVariable('tablescript', 'myury.scheduler.timeslotlist')
-        ->addVariable('title', 'Episodes of '.$season->getMeta('title'))
-        ->addVariable('tabledata', ServiceAPI::setToDataSource($season->getAllTimeslots()))
-        ->render();
+    ->addVariable('tablescript', 'myury.scheduler.timeslotlist')
+    ->addVariable('title', 'Episodes of '.$season->getMeta('title'))
+    ->addVariable('tabledata', ServiceAPI::setToDataSource($season->getAllTimeslots()))
+    ->render();
