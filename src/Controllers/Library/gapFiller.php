@@ -11,27 +11,33 @@ $albums = MyRadio_Album::findByName(Config::$short_name, 10);
 $cacher = APCProvider::getInstance();
 
 $checked = $cacher->get('myradioLibraryGapFillerCheckedTracks');
-if (!is_array($checked)) $checked = array();
+if (!is_array($checked)) {
+    $checked = array();
+}
 
 $limit = 150;
 $updated = array();
 foreach ($albums as $album) {
-  $tracks = $album->getTracks();
-  foreach ($tracks as $track) {
-    if ($limit <= 0) break;
-    if (in_array($track->getID(), $checked)) continue;
-    $track->updateInfoFromLastfm();
-    $updated[] = $track;
-    $checked[] = $track->getID();
-    usleep(200000);
-    $limit--;
-  }
+    $tracks = $album->getTracks();
+    foreach ($tracks as $track) {
+        if ($limit <= 0) {
+            break;
+        }
+        if (in_array($track->getID(), $checked)) {
+            continue;
+        }
+        $track->updateInfoFromLastfm();
+        $updated[] = $track;
+        $checked[] = $track->getID();
+        usleep(200000);
+        $limit--;
+    }
 }
 
 $cacher->set('myradioLibraryGapFillerCheckedTracks', $checked);
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-        ->addVariable('tablescript', 'myury.library.gapfiller')
-        ->addVariable('title', 'Updated Tracks')
-        ->addVariable('tabledata', CoreUtils::dataSourceParser($updated))
-        ->render();
+    ->addVariable('tablescript', 'myury.library.gapfiller')
+    ->addVariable('title', 'Updated Tracks')
+    ->addVariable('tabledata', CoreUtils::dataSourceParser($updated))
+    ->render();
