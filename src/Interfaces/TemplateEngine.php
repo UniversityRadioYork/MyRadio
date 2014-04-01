@@ -7,8 +7,9 @@
  * @version 21072012
  * @package MyRadio_Core
  */
-interface TemplateEngine extends Singleton {
-  public function addVariable($name, $value);
-  public function setTemplate($template);
-  public function render();
+interface TemplateEngine extends Singleton
+{
+    public function addVariable($name, $value);
+    public function setTemplate($template);
+    public function render();
 }
