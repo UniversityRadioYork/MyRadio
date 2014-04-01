@@ -17,7 +17,6 @@
  * Sets the $service_version Global Variable
  */
 
-
 //Check if the user is allowed to select a version of the service
 if (CoreUtils::hasPermission(AUTH_SELECTSERVICEVERSION)) {
     require 'Controllers/brokerVersion.php';
