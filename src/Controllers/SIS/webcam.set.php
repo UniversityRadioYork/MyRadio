@@ -7,8 +7,9 @@
  * @package MyRadio_SIS
  */
 
-if (!isset($_REQUEST['src']))
-  return;
+if (!isset($_REQUEST['src'])) {
+    return;
+}
 
 MyRadio_Webcam::setWebcam($_REQUEST['src']);
 

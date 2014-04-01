@@ -11,16 +11,17 @@
  * @version 20130808
  * @package MyRadio_Core
  */
-interface IServiceAPI {
-  /**
-   * Reestablishes the database connection after being Cached
-   */
-  function __wakeup();
+interface IServiceAPI
+{
+    /**
+     * Reestablishes the database connection after being Cached
+     */
+    public function __wakeup();
 
-  function toDataSource($full = false);
+    public function toDataSource($full = false);
 
-  /**
-   * Static Factory method to setup an instance of a ServiceAPI Object
-   */
-  static function getInstance($serviceObjectId);
+    /**
+     * Static Factory method to setup an instance of a ServiceAPI Object
+     */
+    public static function getInstance($serviceObjectId);
 }

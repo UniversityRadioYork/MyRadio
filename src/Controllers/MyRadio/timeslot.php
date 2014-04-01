@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     foreach ($shows as $show) {
         foreach ($show->getAllSeasons() as $season) {
-            $data[$show->getMeta('title')][] = array_map(function($x) {
+            $data[$show->getMeta('title')][] = array_map(function ($x) {
                 return [$x->getID(), $x->getStartTime(), $x->getEndTime()];
             }, $season->getAllTimeslots());
         }

@@ -7,7 +7,7 @@
  * @package MyRadio_NIPSWeb
  */
 
- $playlistid = str_replace('auto-','',$_REQUEST['playlistid']);
+ $playlistid = str_replace('auto-', '', $_REQUEST['playlistid']);
 
  $data = NIPSWeb_AutoPlaylist::getInstance($playlistid)->getTracks();
 

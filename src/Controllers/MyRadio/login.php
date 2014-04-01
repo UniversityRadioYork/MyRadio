@@ -3,30 +3,48 @@
 /**
  *
  * @author Lloyd Wallis
- * @data 20131230
+ * @date 20131230
  * @package MyRadio_Core
  * @todo Throttle quick attempts from one IP with captcha
  * @todo Refactor login code to support Authentication plugins
  */
-$form = (new MyRadioForm('myradio_login', 'MyRadio', 'login', array(
-    'title' => 'Login'
+$form = (
+    new MyRadioForm(
+        'myradio_login',
+        'MyRadio',
+        'login',
+        array(
+            'title' => 'Login'
         )
-        ))->addField(
-                new MyRadioFormField('user', MyRadioFormField::TYPE_TEXT, array(
+    )
+)->addField(
+    new MyRadioFormField(
+        'user',
+        MyRadioFormField::TYPE_TEXT,
+        array(
             'explanation' => '',
             'label' => 'Username:',
             'options' => ['placeholder' => 'abc123']
-                ))
-        )->addField(
-                new MyRadioFormField('password', MyRadioFormField::TYPE_PASSWORD, array(
+        )
+    )
+)->addField(
+    new MyRadioFormField(
+        'password',
+        MyRadioFormField::TYPE_PASSWORD,
+        array(
             'explanation' => '',
             'label' => 'Password:'
-                ))
-        )->addField(
-                new MyRadioFormField('next', MyRadioFormField::TYPE_HIDDEN, array(
+        )
+    )
+)->addField(
+    new MyRadioFormField(
+        'next',
+        MyRadioFormField::TYPE_HIDDEN,
+        array(
             'value' => isset($_REQUEST['next']) ? $_REQUEST['next'] : Config::$base_url
-                ))
-        )->setTemplate('MyRadio/login.twig');
+        )
+    )
+)->setTemplate('MyRadio/login.twig');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])) {
     //Submitted
@@ -51,14 +69,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
                 //(if they haven't yet, we'll ask them to choose one)
                 $status = 'wrongAuthProvider';
             } else {
-                $_SESSION['memberid'] = (int)$user->getID();
+                $_SESSION['memberid'] = (int) $user->getID();
                 /**
                  * Add in permissions granted by the remote IP
                  * Contains or equals: >>=
                  */
-                $ip_auth = Database::getInstance()->fetch_column('SELECT typeid FROM auth_subnet WHERE subnet >>= $1', [$_SERVER['REMOTE_ADDR']]);
-                $_SESSION['member_permissions'] = array_map(function($x){return (int)$x;},
-                        array_merge($ip_auth, $user->getPermissions(), $authenticator->getPermissions($raw_uname)));
+                $ip_auth = Database::getInstance()->fetch_column(
+                    'SELECT typeid FROM auth_subnet WHERE subnet >>= $1',
+                    [$_SERVER['REMOTE_ADDR']]
+                );
+                $_SESSION['member_permissions'] = array_map(
+                    function ($x) {
+                        return (int) $x;
+                    },
+                    array_merge($ip_auth, $user->getPermissions(), $authenticator->getPermissions($raw_uname))
+                );
                 $_SESSION['name'] = $user->getName();
                 $_SESSION['email'] = $user->getEmail();
                 /*
@@ -91,16 +116,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
     if ($status === 'choose') {
         //The user needs to set a login provider
         $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/chooseAuth.twig')
-                ->addVariable('title', 'Choose Login Method');
+            ->addVariable('title', 'Choose Login Method');
         $options = [];
         $chosen_default = false;
         foreach ($authenticators as $authenticator => $success) {
             $a = new $authenticator();
-            $option = ['value' => $authenticator,
+            $option = [
+                'value' => $authenticator,
                 'name' => $a->getFriendlyName(),
                 'description' => $a->getDescription(),
                 'different' => !$success,
-                'default' => false];
+                'default' => false
+            ];
             if ($success && !$chosen_default) {
                 $option['default'] = true;
                 $chosen_default = true;
@@ -108,8 +135,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
             $options[] = $option;
         }
         $twig->addVariable('methods', $options)
-                ->addVariable('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL(Config::$default_module))
-                ->render();
+            ->addVariable('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL(Config::$default_module))
+            ->render();
     } elseif ($status === 'change') {
         header('Location: '.CoreUtils::makeURL('MyRadio', 'pwChange'));
     } elseif ($status !== 'success') {

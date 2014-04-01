@@ -23,26 +23,28 @@
  */
 require_once 'Interfaces/Singleton.php';
 //Create a function to autoload classes when needed
-spl_autoload_register(function($class) {
-            $class .= '.php';
-            if (stream_resolve_include_path('Classes/ServiceAPI/' . $class)) {
-                //This path *must* be absolute - differing versions causes it to be reincluded otherwise
-                require_once __DIR__ . '/../../Interfaces/MyRadio_DataSource.php';
-                require_once __DIR__ . '/../../Interfaces/IServiceAPI.php';
-                require_once 'Classes/ServiceAPI/' . $class;
-                return;
-            }
+spl_autoload_register(function ($class) {
+    $class .= '.php';
+    if (stream_resolve_include_path('Classes/ServiceAPI/' . $class)) {
+        //This path *must* be absolute - differing versions causes it to be reincluded otherwise
+        require_once __DIR__ . '/../../Interfaces/MyRadio_DataSource.php';
+        require_once __DIR__ . '/../../Interfaces/IServiceAPI.php';
+        require_once 'Classes/ServiceAPI/'. $class;
 
-            /**
-             * @todo Is there a better way of doing this?
-             */
-            foreach (array('MyRadio', 'NIPSWeb', 'SIS', 'iTones', 'vendor', 'BRA') as $dir) {
-                if (stream_resolve_include_path('Classes/' . $dir . '/' . $class)) {
-                    require_once 'Classes/' . $dir . '/' . $class;
-                    return;
-                }
-            }
-        });
+        return;
+    }
+
+    /**
+     * @todo Is there a better way of doing this?
+     */
+    foreach (array('MyRadio', 'NIPSWeb', 'SIS', 'iTones', 'vendor', 'BRA') as $dir) {
+        if (stream_resolve_include_path('Classes/' . $dir . '/' . $class)) {
+            require_once 'Classes/'. $dir . '/' . $class;
+
+            return;
+        }
+    }
+});
 
 require_once 'Classes/MyRadioException.php';
 require_once 'Classes/MyRadioError.php';
@@ -53,7 +55,7 @@ require_once 'Classes/Database.php';
 
 //Initiate Cache
 require_once 'Interfaces/CacheProvider.php';
-require_once 'Classes/' . Config::$cache_provider . '.php';
+require_once 'Classes/'. Config::$cache_provider . '.php';
 
 //Initialise the permission constants
 CoreUtils::setUpAuth();
@@ -80,11 +82,11 @@ if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
 }
 
 session_set_save_handler(
-        array($session_handler, 'open'),
-        array($session_handler, 'close'),
-        array($session_handler, 'read'),
-        array($session_handler, 'write'),
-        array($session_handler, 'destroy'),
-        array($session_handler, 'gc')
+    array($session_handler, 'open'),
+    array($session_handler, 'close'),
+    array($session_handler, 'read'),
+    array($session_handler, 'write'),
+    array($session_handler, 'destroy'),
+    array($session_handler, 'gc')
 );
 session_start();

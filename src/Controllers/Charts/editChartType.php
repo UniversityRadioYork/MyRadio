@@ -7,15 +7,17 @@
  */
 
 $form = MyRadio_JsonFormLoader::loadFromModule(
-  $module, 'editChartType', 'doEditChartType'
+    $module,
+    'editChartType',
+    'doEditChartType'
 );
 
 $chart_type = MyRadio_ChartType::getInstance($_REQUEST['chart_type_id']);
 
 $form->editMode(
-  $chart_type->getID(),
-  [
-    'name' => $chart_type->getName(),
-    'description' => $chart_type->getDescription()
-  ]
+    $chart_type->getID(),
+    [
+        'name' => $chart_type->getName(),
+        'description' => $chart_type->getDescription()
+    ]
 )->render();

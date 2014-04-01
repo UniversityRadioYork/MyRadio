@@ -6,17 +6,27 @@
  * @data 20140120
  * @package MyRadio_Core
  */
-$form = (new MyRadioForm('myradio_pwReset', 'MyRadio', 'pwReset', array(
-    'title' => 'Password Reset',
-    'captcha' => true
+$form = (
+    new MyRadioForm(
+        'myradio_pwReset',
+        'MyRadio',
+        'pwReset',
+        array(
+            'title' => 'Password Reset',
+            'captcha' => true
         )
-        ))->addField(
-                new MyRadioFormField('user', MyRadioFormField::TYPE_TEXT, array(
+    )
+)->addField(
+    new MyRadioFormField(
+        'user',
+        MyRadioFormField::TYPE_TEXT,
+        array(
             'explanation' => '',
             'label' => 'Username:',
             'options' => ['placeholder' => 'abc123']
-                ))
-        )->setTemplate('MyRadio/pwReset.twig');
+        )
+    )
+)->setTemplate('MyRadio/pwReset.twig');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwReset-user'])) {
     //Submitted
@@ -24,7 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwReset-us
 
     if (!$data) {
         //Invalid captcha
-        $form->render(['messages' => ['<div class="ui-state-error">Please verify the captcha input and try again.</div>']]);
+        $form->render(
+            ['messages' => ['<div class="ui-state-error">Please verify the captcha input and try again.</div>']]
+        );
     } else {
         foreach (Config::$authenticators as $i) {
             $authenticator = new $i;
@@ -33,7 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwReset-us
             }
         }
 
-        $form->render(['messages' => ['<div class="ui-state-highlight">Please check your email to finish resetting your password.</div>']]);
+        $form->render(
+            ['messages' => ['<div class="ui-state-highlight">Please check your email to finish resetting your password.</div>']]
+        );
     }
 } else {
     foreach (Config::$authenticators as $authenticator) {

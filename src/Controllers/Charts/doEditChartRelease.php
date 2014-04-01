@@ -16,14 +16,15 @@
  *
  * @return Nothing.  This function writes directly to the database.
  */
-function create_chart_row($chart_release_id, $position, $track) {
-  MyRadio_ChartRow::create(
-    [
-      'chart_release_id' => $chart_release_id,
-      'position' => $position,
-      'trackid' => $track->getID()
-    ]
-  );
+function create_chart_row($chart_release_id, $position, $track)
+{
+    MyRadio_ChartRow::create(
+        [
+              'chart_release_id' => $chart_release_id,
+              'position' => $position,
+              'trackid' => $track->getID()
+        ]
+    );
 }
 
 /*
@@ -33,16 +34,17 @@ function create_chart_row($chart_release_id, $position, $track) {
  *
  * @return Nothing.  This function writes directly to the database.
  */
-function create_chart_release($data) {
-  MyRadio_ChartRelease::create($data);
-  $chart_release_id = MyRadio_ChartRelease::findReleaseIDOn(
-    $data['submitted_time'],
-    $data['chart_type_id']
-  );
+function create_chart_release($data)
+{
+    MyRadio_ChartRelease::create($data);
+    $chart_release_id = MyRadio_ChartRelease::findReleaseIDOn(
+        $data['submitted_time'],
+        $data['chart_type_id']
+    );
 
-  for ($i = 1; $i <= 10; $i++) {
-    create_chart_row($chart_release_id, $i, track_at($i, $data));
-  }
+    for ($i = 1; $i <= 10; $i++) {
+        create_chart_row($chart_release_id, $i, track_at($i, $data));
+    }
 }
 
 /*
@@ -53,8 +55,9 @@ function create_chart_release($data) {
  *
  * @return Nothing.  This function writes directly to the database.
  */
-function edit_chart_row($chart_row, $track) {
-  $chart_row->setTrackID($track->getID());
+function edit_chart_row($chart_row, $track)
+{
+    $chart_row->setTrackID($track->getID());
 }
 
 /*
@@ -65,17 +68,18 @@ function edit_chart_row($chart_row, $track) {
  *
  * @return Nothing.  This function writes directly to the database.
  */
-function edit_chart_release($id, $data) {
-  $chart_release = MyRadio_ChartRelease::getInstance($id);
-  $chart_release->setChartTypeID(
-    $data['chart_type_id']
-  )->setReleaseTime($data['submitted_time']);
+function edit_chart_release($id, $data)
+{
+    $chart_release = MyRadio_ChartRelease::getInstance($id);
+    $chart_release->setChartTypeID(
+        $data['chart_type_id']
+    )->setReleaseTime($data['submitted_time']);
 
-  // TODO: Handle existing chart releases with differing numbers of chart rows.
-  // Currently, this case will explode dramatically.
-  foreach($chart_release->getChartRows() as $chart_row) {
-    edit_chart_row($chart_row, track_at($chart_row->getPosition(), $data));
-  }
+    // TODO: Handle existing chart releases with differing numbers of chart rows.
+    // Currently, this case will explode dramatically.
+    foreach ($chart_release->getChartRows() as $chart_row) {
+        edit_chart_row($chart_row, track_at($chart_row->getPosition(), $data));
+    }
 }
 
 /*
@@ -86,26 +90,28 @@ function edit_chart_release($id, $data) {
  *
  * @return MyRadio_Track the track at the given position.
  */
-function track_at($position, $data) {
-  return $data['track' . $position];
+function track_at($position, $data)
+{
+    return $data['track' . $position];
 }
-
 
 /*
  * END OF HELPER FUNCTIONS
  */
 
 $form = MyRadio_JsonFormLoader::loadFromModule(
-  $module, 'chartreleasefrm', 'doEditChartRelease',
-  ['chart_types' => []]
+    $module,
+    'chartreleasefrm',
+    'doEditChartRelease',
+    ['chart_types' => []]
 );
 
 $data = $form->readValues();
 
 if (empty($data['id'])) {
-  create_chart_release($data);
+    create_chart_release($data);
 } else {
-  edit_chart_release($data['id'], $data);
+    edit_chart_release($data['id'], $data);
 }
 
 CoreUtils::redirect($module);

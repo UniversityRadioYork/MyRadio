@@ -8,16 +8,19 @@
  */
 
 if (!isset($_REQUEST['list'])) {
-  throw new MyRadioException('List ID was not provided!', 400);
+    throw new MyRadioException('List ID was not provided!', 400);
 }
 if (!MyRadio_List::getInstance($_REQUEST['list'])->isPublic()) {
-  CoreUtils::requirePermission(AUTH_MAILALLMEMBERS);
+    CoreUtils::requirePermission(AUTH_MAILALLMEMBERS);
 }
 
 MyRadio_JsonFormLoader::loadFromModule(
-    $module, 'send', 'doSend'
+    $module,
+    'send',
+    'doSend'
 )->setFieldValue(
-    'list', $_REQUEST['list']
+    'list',
+    $_REQUEST['list']
 )->setTemplate(
     'Mail/send.twig'
 )->render(

@@ -7,7 +7,7 @@
  * @package MyRadio_Stats
  */
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-        ->addVariable('title', 'Most messaged shows this academic year')
-        ->addVariable('tabledata', MyRadio_Show::getMostMessaged(strtotime(CoreUtils::getAcademicYear().'-09-01')))
-        ->addVariable('tablescript', 'myury.datatable.default')
-        ->render();
+    ->addVariable('title', 'Most messaged shows this academic year')
+    ->addVariable('tabledata', MyRadio_Show::getMostMessaged(strtotime(CoreUtils::getAcademicYear().'-09-01')))
+    ->addVariable('tablescript', 'myury.datatable.default')
+    ->render();

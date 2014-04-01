@@ -14,15 +14,15 @@ $values = podcastCoverForm()->readValues();
 $podcast = currentPodcast($values);
 raisePermissionsIfCannotEdit($podcast);
 
-switch($values['cover_method']) {
-case 'existing':
-    existingCoverFile($podcast, $values);
-    break;
-case 'new':
-    uploadNewCoverFile($podcast, $values);
-    break;
-default:
-    throw new MyRadioException('Unknown cover upload method.', 400);
+switch ($values['cover_method']) {
+    case 'existing':
+        existingCoverFile($podcast, $values);
+        break;
+    case 'new':
+        uploadNewCoverFile($podcast, $values);
+        break;
+    default:
+        throw new MyRadioException('Unknown cover upload method.', 400);
 }
 
 
@@ -30,11 +30,13 @@ default:
 // Helper functions
 //
 
-function existingCoverFile($podcast, $values) {
+function existingCoverFile($podcast, $values)
+{
     $podcast->setCover($values['existing_cover']);
 }
 
-function uploadNewCoverFile($podcast, $values) {
+function uploadNewCoverFile($podcast, $values)
+{
     $temporary = $values['new_cover']['tmp_name'];
     if (empty($temporary)) {
         throw new MyRadioException('No new cover file uploaded.', 400);
@@ -45,15 +47,18 @@ function uploadNewCoverFile($podcast, $values) {
     $podcast->setCover($url);
 }
 
-function moveCoverFile($podcast, $temporary_file) {
+function moveCoverFile($podcast, $temporary_file)
+{
     $path = makeCoverFilePath($podcast, $temporary_file);
     $file_path = Config::$public_media_path . $path;
     checkCoverFileUnique($file_path);
     moveCoverFileTo($file_path, $temporary_file);
+
     return $path;
 }
 
-function makeCoverFilePath($podcast, $temporary_file) {
+function makeCoverFilePath($podcast, $temporary_file)
+{
     return (
         coverFileDirectory() .
         'podcast' .
@@ -65,24 +70,28 @@ function makeCoverFilePath($podcast, $temporary_file) {
     );
 }
 
-function coverFileDirectory() {
+function coverFileDirectory()
+{
     return '/image_meta/MyRadioImageMetadata/';
 }
 
-function coverFileFormat($temporary_file) {
+function coverFileFormat($temporary_file)
+{
     return explode(
         '/',
         finfo_file(finfo_open(FILEINFO_MIME_TYPE), $temporary_file)
     )[1];
 }
 
-function checkCoverFileUnique($path) {
+function checkCoverFileUnique($path)
+{
     if (file_exists($path)) {
         throw new MyRadioException('The cover filename chosen already exists.', 500);
     }
 }
 
-function moveCoverFileTo($path, $temporary_file) {
+function moveCoverFileTo($path, $temporary_file)
+{
     move_uploaded_file($temporary_file, $path);
     if (!file_exists($path)) {
         throw new MyRadioException('File move failed.', 500);
@@ -90,5 +99,3 @@ function moveCoverFileTo($path, $temporary_file) {
 }
 
 coreUtils::backWithMessage('Cover set.');
-
-?>

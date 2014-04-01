@@ -11,10 +11,10 @@
 require 'Models/Scheduler/showfrm.php';
 
 try {
-  MyRadio_Show::create($form->readValues());
+    MyRadio_Show::create($form->readValues());
 } catch (MyRadioException $e) {
-  require 'Views/Errors/500.php';
-  exit;
+    require 'Views/Errors/500.php';
+    exit;
 }
 
 header('Location: '.CoreUtils::makeURL('Scheduler', 'myShows'));

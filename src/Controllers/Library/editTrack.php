@@ -12,9 +12,11 @@ require 'Models/Library/trackfrm.php';
 
 $track = MyRadio_Track::getInstance($_REQUEST['trackid']);
 
-$form->editMode($track->getID(),
-        array(
-            'title' => $track->getTitle(),
-            'artist' => $track->getArtist(),
-            'album' => $track->getAlbum()->getID()
-        ))->render();
+$form->editMode(
+    $track->getID(),
+    array(
+        'title' => $track->getTitle(),
+        'artist' => $track->getArtist(),
+        'album' => $track->getAlbum()->getID()
+    )
+)->render();

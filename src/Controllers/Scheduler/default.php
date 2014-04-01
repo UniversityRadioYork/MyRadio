@@ -9,8 +9,12 @@
  */
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-        ->addVariable('tablescript', 'myury.scheduler.pending')
-        ->addVariable('title', 'Scheduler')
-        ->addVariable('tabledata', CoreUtils::dataSourceParser(
-                MyRadio_Scheduler::getPendingAllocations(), false))
-        ->render();
+    ->addVariable('tablescript', 'myury.scheduler.pending')
+    ->addVariable('title', 'Scheduler')
+    ->addVariable(
+        'tabledata',
+        CoreUtils::dataSourceParser(
+            MyRadio_Scheduler::getPendingAllocations(),
+            false
+        )
+    )->render();

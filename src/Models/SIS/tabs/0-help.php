@@ -8,7 +8,7 @@
  */
 
 $moduleInfo = array(
-'name' => 'help',
-'title' => 'Getting Started',
-'enabled' => SIS_Utils::getShowHelpTab($_SESSION['memberid'])
+    'name' => 'help',
+    'title' => 'Getting Started',
+    'enabled' => SIS_Utils::getShowHelpTab($_SESSION['memberid'])
 );

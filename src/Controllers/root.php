@@ -62,7 +62,7 @@ set_error_handler('MyRadioError::errorsToArray');
  * 269 is AUTH_SHOWERRORS - the constants aren't initialised yet
  */
 if (!Config::$display_errors && !CoreUtils::hasPermission(269)) {
-  ini_set('display_errors', 'Off');
+    ini_set('display_errors', 'Off');
 }
 ini_set('error_log', Config::$log_file); // Set error log file
 date_default_timezone_set(Config::$timezone); //Set timezone
@@ -85,30 +85,30 @@ require_once 'MyRadio_Config.local.php';
  * The top half deals with Rewritten URLs, which get mapped to ?request=
  */
 if (isset($_REQUEST['request'])) {
-  $info = explode('/', $_REQUEST['request']);
-  //If both are defined, it's Module/Action
-  if (!empty($info[1])) {
-    $module = $info[0];
-    $action = $info[1];
-    //If there's only one, determine if it's the module or action
-  } elseif (CoreUtils::isValidController(Config::$default_module, $info[0])) {
-    $module = Config::$default_module;
-    $action = $info[0];
-  } elseif (CoreUtils::isValidController($info[0], Config::$default_action)) {
-    $module = $info[0];
-    $action = Config::$default_action;
-  } else {
-    require 'Controllers/Errors/404.php';
-    exit;
-  }
+    $info = explode('/', $_REQUEST['request']);
+    //If both are defined, it's Module/Action
+    if (!empty($info[1])) {
+        $module = $info[0];
+        $action = $info[1];
+        //If there's only one, determine if it's the module or action
+    } elseif (CoreUtils::isValidController(Config::$default_module, $info[0])) {
+        $module = Config::$default_module;
+        $action = $info[0];
+    } elseif (CoreUtils::isValidController($info[0], Config::$default_action)) {
+        $module = $info[0];
+        $action = Config::$default_action;
+    } else {
+        require 'Controllers/Errors/404.php';
+        exit;
+    }
 } else {
-  $module = (isset($_REQUEST['module']) ? $_REQUEST['module'] : Config::$default_module);
-  $action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : Config::$default_action);
-  if (!CoreUtils::isValidController($module, $action)) {
-    //Yep, that doesn't exist.
-    require 'Controllers/Errors/404.php';
-    exit;
-  }
+    $module = (isset($_REQUEST['module']) ? $_REQUEST['module'] : Config::$default_module);
+    $action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : Config::$default_action);
+    if (!CoreUtils::isValidController($module, $action)) {
+        //Yep, that doesn't exist.
+        require 'Controllers/Errors/404.php';
+        exit;
+    }
 }
 
 /**
@@ -124,8 +124,8 @@ CoreUtils::requirePermissionAuto($module, $action);
  * If a Joyride is defined, start it
  */
 if (isset($_REQUEST['joyride'])) {
-  $_SESSION['joyride'] = $_REQUEST['joyride'];
+    $_SESSION['joyride'] = $_REQUEST['joyride'];
 }
 
 //Include the requested action
-require 'Controllers/' . $module . '/' . $action . '.php';
+require 'Controllers/'. $module . '/' . $action . '.php';

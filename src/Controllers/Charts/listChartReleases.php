@@ -6,21 +6,19 @@
  * @package MyRadio_Charts
  */
 
-CoreUtils::getTemplateObject(
-)->setTemplate(
-  'table.twig'
+CoreUtils::getTemplateObject()->setTemplate(
+    'table.twig'
 )->addVariable(
-  'tablescript',
-  'myury.datatable.default'
+    'tablescript',
+    'myury.datatable.default'
 )->addVariable(
-  'title',
-  'Chart Releases'
+    'title',
+    'Chart Releases'
 )->addVariable(
-  'tabledata',
-  ServiceAPI::setToDataSource(
-    MyRadio_ChartType::getInstance(
-      $_REQUEST['chart_type_id']
-    )->getReleases()
-  )
+    'tabledata',
+    ServiceAPI::setToDataSource(
+        MyRadio_ChartType::getInstance(
+            $_REQUEST['chart_type_id']
+        )->getReleases()
+    )
 )->render();
-?>

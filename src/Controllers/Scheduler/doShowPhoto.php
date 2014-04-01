@@ -15,7 +15,7 @@ $data = $form->readValues();
 $show = MyRadio_Show::getInstance($data['show_id']);
 //Require this is the user's show or the user can edit any show
 if (!$show->isCurrentUserAnOwner()) {
-  CoreUtils::requirePermission(AUTH_EDITSHOWS);
+    CoreUtils::requirePermission(AUTH_EDITSHOWS);
 }
 
 $show->setShowPhoto($data['image_file']['tmp_name']);

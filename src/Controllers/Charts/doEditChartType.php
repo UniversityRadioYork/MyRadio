@@ -7,7 +7,9 @@
  */
 
 $form = MyRadio_JsonFormLoader::loadFromModule(
-  $module, 'charttypefrm', 'doEditChartType'
+    $module,
+    'charttypefrm',
+    'doEditChartType'
 );
 
 $data = $form->editMode(null, null)->readValues();

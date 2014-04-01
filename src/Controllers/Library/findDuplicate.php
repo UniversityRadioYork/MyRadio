@@ -18,51 +18,62 @@ $db = Database::getInstance();
 $query_limit = 25000;
 
 do {
-  //Get the next batch of tracks from where we left off
-  $tracks = MyRadio_Track::findByOptions(array('limit' => 500, 'digitised' => true, 'idsort' => true,
-              'custom' => 'trackid > ' . $finalid));
-
-  foreach ($tracks as $track) {
-    //If this has already appeared as a duplicate, don't search again or we'll duplicate the duplications
-    if (in_array($track->getID(), $alreadydone))
-      continue;
-
-    //Find tracks that match this name and artist
-    $matches = MyRadio_Track::findByOptions(
-                    array('title' => $track->getTitle(),
-                        'artist' => $track->getArtist(),
-                        'limit' => 0,
-                        'precise' => true)
+    //Get the next batch of tracks from where we left off
+    $tracks = MyRadio_Track::findByOptions(
+        array(
+            'limit' => 500,
+            'digitised' => true,
+            'idsort' => true,
+            'custom' => 'trackid > ' . $finalid
+        )
     );
 
-    //If there's more than one match, then there are duplicates for this item
-    if (sizeof($matches) > 1) {
-      foreach ($matches as $match) {
-        $alreadydone[] = $match->getID();
-        $duplicates[] = $match;
-      }
+    foreach ($tracks as $track) {
+        //If this has already appeared as a duplicate, don't search again or we'll duplicate the duplications
+        if (in_array($track->getID(), $alreadydone)) {
+            continue;
+        }
+
+        //Find tracks that match this name and artist
+        $matches = MyRadio_Track::findByOptions(
+            array(
+                'title' => $track->getTitle(),
+                'artist' => $track->getArtist(),
+                'limit' => 0,
+                'precise' => true
+            )
+        );
+
+        //If there's more than one match, then there are duplicates for this item
+        if (sizeof($matches) > 1) {
+            foreach ($matches as $match) {
+                $alreadydone[] = $match->getID();
+                $duplicates[] = $match;
+            }
+        }
+
+        //Log the latest ID used
+        $finalid = $track->getID();
+
+        //Remove the Singleton store's built in reference to this track to reduce memory usage
+        $track->removeInstance();
+        unset($track);
+
+        //Kill the loop if we've used too many queries
+        if ($db->getCounter() > $query_limit) {
+            break;
+        }
     }
+    echo "$finalid ({$db->getCounter()}/" . sizeof($duplicates) . ")<br>";
+    gc_collect_cycles();
 
-    //Log the latest ID used
-    $finalid = $track->getID();
-
-    //Remove the Singleton store's built in reference to this track to reduce memory usage
-    $track->removeInstance();
-    unset($track);
-
-    //Kill the loop if we've used too many queries
-    if ($db->getCounter() > $query_limit)
-      break;
-  }
-  echo "$finalid ({$db->getCounter()}/" . sizeof($duplicates) . ")<br>";
-  gc_collect_cycles();
-
-  if ($db->getCounter() > $query_limit)
-    break;
+    if ($db->getCounter() > $query_limit) {
+        break;
+    }
 } while (!empty($tracks));
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-        ->addVariable('tablescript', 'myury.datatable.default')
-        ->addVariable('title', 'Duplicate Tracks')
-        ->addVariable('tabledata', CoreUtils::dataSourceParser($duplicates))
-        ->render();
+    ->addVariable('tablescript', 'myury.datatable.default')
+    ->addVariable('title', 'Duplicate Tracks')
+    ->addVariable('tabledata', CoreUtils::dataSourceParser($duplicates))
+    ->render();

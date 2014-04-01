@@ -8,5 +8,7 @@
  */
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/text.twig')->addVariable('title', 'Website Tools')
-        ->addVariable('text', 'This section of MyRadio lets you control some aspects of the Website, such as banners and themes.')
-        ->render();
+    ->addVariable(
+        'text',
+        'This section of MyRadio lets you control some aspects of the Website, such as banners and themes.'
+    )->render();

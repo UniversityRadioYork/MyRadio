@@ -11,11 +11,11 @@
  */
 
 if (isset($_REQUEST['correctionid'])) {
-  $correction = MyRadio_TrackCorrection::getInstance($_REQUEST['correctionid']);
+    $correction = MyRadio_TrackCorrection::getInstance($_REQUEST['correctionid']);
 } else {
-  throw new MyRadioException('Correctionid is required!', 400);
+    throw new MyRadioException('Correctionid is required!', 400);
 }
 
-$correction->reject(empty($_REQUEST['permanent']) ? false : (bool)$_REQUEST['permanent']);
+$correction->reject(empty($_REQUEST['permanent']) ? false : (bool) $_REQUEST['permanent']);
 
 CoreUtils::backWithMessage('The correction was applied successfully!');

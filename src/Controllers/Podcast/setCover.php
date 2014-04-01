@@ -13,11 +13,10 @@ require_once 'common.php';
 $podcast = currentPodcast();
 raisePermissionsIfCannotEdit($podcast);
 
-podcastCoverForm(
+podcastCoverForm()->setFieldValue(
+    'podcastid',
+    $podcast->getID()
 )->setFieldValue(
-    'podcastid', $podcast->getID()
-)->setFieldValue(
-    'existing_cover', $podcast->getCover()
+    'existing_cover',
+    $podcast->getCover()
 )->render();
-
-

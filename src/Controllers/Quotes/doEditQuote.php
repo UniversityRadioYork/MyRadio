@@ -13,8 +13,9 @@
  *
  * @return Nothing.  This function writes directly to the database.
  */
-function create_quote($data) {
-  MyURY_Quote::create($data);
+function create_quote($data)
+{
+    MyURY_Quote::create($data);
 }
 
 /*
@@ -25,21 +26,24 @@ function create_quote($data) {
  *
  * @return Nothing.  This function writes directly to the database.
  */
-function edit_quote($id, $data) {
-  $quote = MyURY_ChartRelease::getInstance($id);
-  $quote
-    ->setSource($data['source'])
-    ->setText($data['text'])
-    ->setDate($data['date']);
+function edit_quote($id, $data)
+{
+    $quote = MyURY_ChartRelease::getInstance($id);
+    $quote
+        ->setSource($data['source'])
+        ->setText($data['text'])
+        ->setDate($data['date']);
 }
-
 
 /*
  * END OF HELPER FUNCTIONS
  */
 
 $form = MyURY_JsonFormLoader::loadFromModule(
-  $module, 'quotefrm', 'doEditQuote', []
+    $module,
+    'quotefrm',
+    'doEditQuote',
+    []
 );
 
 $data = $form->readValues();

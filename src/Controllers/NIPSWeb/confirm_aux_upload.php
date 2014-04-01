@@ -8,9 +8,13 @@
  * @package MyRadio_NIPSWeb
  */
 
-if (!isset($_REQUEST['fileid']) or !isset($_REQUEST['title']) or !isset($_REQUEST['expires']) or !isset($_REQUEST['auxid'])) {
-  header('HTTP/1.1 400 Bad Request');
-  exit;
+if (!isset($_REQUEST['fileid'])
+    or !isset($_REQUEST['title'])
+    or !isset($_REQUEST['expires'])
+    or !isset($_REQUEST['auxid'])
+) {
+    header('HTTP/1.1 400 Bad Request');
+    exit;
 }
 
 $data = NIPSWeb_ManagedItem::storeItem($_REQUEST['fileid'], $_REQUEST['title']);

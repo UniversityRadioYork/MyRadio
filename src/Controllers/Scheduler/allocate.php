@@ -8,7 +8,7 @@
  */
 
 //Model: The Season to be allocated
-$season = MyRadio_Season::getInstance((int)$_REQUEST['show_season_id']);
+$season = MyRadio_Season::getInstance((int) $_REQUEST['show_season_id']);
 /**
  * @todo WHY IS THIS IN THE SESSION
  */

@@ -8,9 +8,16 @@
  */
 
 $info = MyRadio_JsonFormLoader::loadFromModule(
-    $module, 'send', 'doSend'
+    $module,
+    'send',
+    'doSend'
 )->readValues();
 
-MyRadioEmail::sendEmailToList(MyRadio_List::getInstance($info['list']), $info['subject'], $info['body'], MyRadio_User::getInstance());
+MyRadioEmail::sendEmailToList(
+    MyRadio_List::getInstance($info['list']),
+    $info['subject'],
+    $info['body'],
+    MyRadio_User::getInstance()
+);
 
 CoreUtils::backWithMessage('Message sent!');

@@ -11,14 +11,20 @@
 if (isset($_REQUEST['memberid'])) {
     //Impersonate
     $impersonatee = MyRadio_User::getInstance($_REQUEST['memberid']);
-    if ((!CoreUtils::hasPermission(AUTH_IMPERSONATE)) ||
-            ($impersonatee->hasAuth(AUTH_BLOCKIMPERSONATE) &&
-            !CoreUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS))) {
+    if ((!CoreUtils::hasPermission(AUTH_IMPERSONATE))
+        || (
+            $impersonatee->hasAuth(AUTH_BLOCKIMPERSONATE)
+            && !CoreUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS)
+        )
+    ) {
         require_once 'Controllers/Errors/403.php';
     } else {
         $_SESSION['myradio-impersonating'] = $_SESSION;
         $_SESSION['memberid'] = $impersonatee->getID();
-        $ip_auth = Database::getInstance()->fetch_column('SELECT typeid FROM auth_subnet WHERE subnet >>= $1', [$_SERVER['REMOTE_ADDR']]);
+        $ip_auth = Database::getInstance()->fetch_column(
+            'SELECT typeid FROM auth_subnet WHERE subnet >>= $1',
+            [$_SERVER['REMOTE_ADDR']]
+        );
         $_SESSION['member_permissions'] = array_merge($ip_auth, $impersonatee->getPermissions());
         $_SESSION['name'] = $impersonatee->getName();
         $_SESSION['email'] = $impersonatee->getEmail();
@@ -29,7 +35,7 @@ if (isset($_REQUEST['memberid'])) {
      * For some reason I sometimes have to unimpersonate 3 or more times before
      * the impersonating key actually gets reset...
      */
-    while(isset($_SESSION['myradio-impersonating'])) {
+    while (isset($_SESSION['myradio-impersonating'])) {
         //Unimpersonate
         $impersonate = $_SESSION['myradio-impersonating'];
         $_SESSION = $impersonate;

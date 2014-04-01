@@ -8,7 +8,13 @@
  * @version 21072012
  * @package MyRadio_Core
  */
-if (!isset($_REQUEST['term'])) throw new MyRadioException('Parameter \'term\' is required but was not provided');
+if (!isset($_REQUEST['term'])) {
+    throw new MyRadioException('Parameter \'term\' is required but was not provided');
+}
 
-$data = MyRadio_User::findByName($_REQUEST['term'], isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default);
+$data = MyRadio_User::findByName(
+    $_REQUEST['term'],
+    isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default
+);
+
 require 'Views/MyRadio/datatojson.php';

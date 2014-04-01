@@ -6,6 +6,7 @@
  * @version 21072012
  * @package MyRadio_Core
  */
-interface Singleton {
-  public static function getInstance();
+interface Singleton
+{
+    public static function getInstance();
 }

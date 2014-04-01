@@ -9,16 +9,29 @@
  * @data 20131228
  * @package MyRadio_Core
  */
-$form = (new MyRadioForm('myradio_news', 'MyRadio', 'addNews', array(
-    'title' => 'Add news item'
+$form = (
+    new MyRadioForm(
+        'myradio_news',
+        'MyRadio',
+        'addNews',
+        array(
+            'title' => 'Add news item'
         )
-        ))->addField(
-                new MyRadioFormField('body', MyRadioFormField::TYPE_BLOCKTEXT, array(
+    )
+)->addField(
+    new MyRadioFormField(
+        'body',
+        MyRadioFormField::TYPE_BLOCKTEXT,
+        array(
             'explanation' => '',
             'label' => 'Content'
-                ))
-        )->addField(
-        new MyRadioFormField('feedid', MyRadioFormField::TYPE_HIDDEN)
+        )
+    )
+)->addField(
+    new MyRadioFormField(
+        'feedid',
+        MyRadioFormField::TYPE_HIDDEN
+    )
 );
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

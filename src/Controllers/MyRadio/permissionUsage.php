@@ -7,7 +7,6 @@
  * @package MyRadio_Core
  */
 
-
 $usage = CoreUtils::getAuthUsage($_REQUEST['typeid']);
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/permissionUsage.twig')

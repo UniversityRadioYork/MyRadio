@@ -7,12 +7,25 @@
  * @version 20130529
  * @package MyRadio_Scheduler
  */
-$form = (new MyRadioForm('sched_showphoto', $module, 'doShowPhoto', array(
-    'debug' => true,
-    'title' => 'Update Show Photo',
-        )))->addField(
-                new MyRadioFormField('show_id', MyRadioFormField::TYPE_HIDDEN)
-        )->addField(
-        new MyRadioFormField('image_file', MyRadioFormField::TYPE_FILE, array('label' => 'Photo')
+$form = (
+    new MyRadioForm(
+        'sched_showphoto',
+        $module,
+        'doShowPhoto',
+        array(
+            'debug' => true,
+            'title' => 'Update Show Photo',
         )
+    )
+)->addField(
+    new MyRadioFormField(
+        'show_id',
+        MyRadioFormField::TYPE_HIDDEN
+    )
+)->addField(
+    new MyRadioFormField(
+        'image_file',
+        MyRadioFormField::TYPE_FILE,
+        array('label' => 'Photo')
+    )
 );

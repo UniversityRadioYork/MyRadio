@@ -8,9 +8,9 @@
  */
 
 if (isset($_REQUEST['correctionid'])) {
-  $correction = MyRadio_TrackCorrection::getInstance($_REQUEST['correctionid']);
+    $correction = MyRadio_TrackCorrection::getInstance($_REQUEST['correctionid']);
 } else {
-  throw new MyRadioException('Correctionid is required!', 400);
+    throw new MyRadioException('Correctionid is required!', 400);
 }
 
 $correction->apply(empty($_REQUEST['ignorealbum']) ? false : (bool) $_REQUEST['ignorealbum']);

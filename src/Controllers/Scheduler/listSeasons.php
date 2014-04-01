@@ -12,11 +12,11 @@ $seasons = $show->getAllSeasons();
 
 //This page is part of a joyride. We restart it if there's no seasons and this is their first Show.
 if (sizeof(MyRadio_User::getInstance()->getShows()) === 1 && sizeof($seasons) === 1) {
-  $_SESSION['joyride'] = 'first_show';
+    $_SESSION['joyride'] = 'first_show';
 }
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-        ->addVariable('tablescript', 'myury.scheduler.seasonlist')
-        ->addVariable('title', 'Seasons of '.$show->getMeta('title'))
-        ->addVariable('tabledata', ServiceAPI::setToDataSource($seasons))
-        ->render();
+    ->addVariable('tablescript', 'myury.scheduler.seasonlist')
+    ->addVariable('title', 'Seasons of '.$show->getMeta('title'))
+    ->addVariable('tabledata', ServiceAPI::setToDataSource($seasons))
+    ->render();

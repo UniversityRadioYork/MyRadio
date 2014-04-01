@@ -11,10 +11,13 @@
 require 'Models/Scheduler/seasonfrm.php';
 
 try {
-  $values = $form->readValues();
-  MyRadio_Season::apply($values);
-  header('Location: '.CoreUtils::makeURL('Scheduler', 'listSeasons',
-        array('msg' => 'seasonCreated', 'showid' => $values['show_id'])));
+    $values = $form->readValues();
+    MyRadio_Season::apply($values);
+    header('Location: '.CoreUtils::makeURL(
+        'Scheduler',
+        'listSeasons',
+        array('msg' => 'seasonCreated', 'showid' => $values['show_id'])
+    ));
 } catch (MyRadioException $e) {
-  require 'Views/Errors/500.php';
+    require 'Views/Errors/500.php';
 }

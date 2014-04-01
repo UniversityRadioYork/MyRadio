@@ -10,12 +10,15 @@
 $list = MyRadio_List::getInstance($_REQUEST['list']);
 
 if (!$list->isMember(MyRadio_User::getInstance())) {
-  throw new MyRadioException('You can only view archives for Lists you are a'
-          . ' member of.', 403);
+    throw new MyRadioException(
+        'You can only view archives for Lists you are a'
+        .' member of.',
+        403
+    );
 }
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-        ->addVariable('tablescript', 'myury.datatable.default')
-        ->addVariable('title', $list->getName().' Archive')
-        ->addVariable('tabledata', CoreUtils::dataSourceParser($list->getArchive(), false))
-        ->render();
+    ->addVariable('tablescript', 'myury.datatable.default')
+    ->addVariable('title', $list->getName().' Archive')
+    ->addVariable('tabledata', CoreUtils::dataSourceParser($list->getArchive(), false))
+    ->render();

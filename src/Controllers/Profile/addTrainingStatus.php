@@ -7,7 +7,8 @@
  * @package MyRadio_Profile
  */
 MyRadio_UserTrainingStatus::create(
-        MyRadio_TrainingStatus::getInstance($_POST['status_id']),
-        MyRadio_User::getInstance($_POST['memberid']));
+    MyRadio_TrainingStatus::getInstance($_POST['status_id']),
+    MyRadio_User::getInstance($_POST['memberid'])
+);
 
 CoreUtils::backWithMessage('Training data updated');

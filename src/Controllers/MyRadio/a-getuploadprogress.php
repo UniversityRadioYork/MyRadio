@@ -8,10 +8,10 @@
  * @package MyRadio_Core
  */
 if (function_exists("uploadprogress_get_info")) {
-  $data = uploadprogress_get_info($_REQUEST['id']);
+    $data = uploadprogress_get_info($_REQUEST['id']);
 } else {
-  trigger_error('uploadprogress PECL extension is not installed.');
-  $data = false;
+    trigger_error('uploadprogress PECL extension is not installed.');
+    $data = false;
 }
 
 require 'Views/MyRadio/datatojson.php';

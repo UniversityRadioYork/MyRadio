@@ -11,7 +11,7 @@ $user = MyRadio_User::getInstance(isset($_GET['memberid']) ? $_GET['memberid'] :
 $data = $user->getTimeline();
 
 CoreUtils::getTemplateObject()->setTemplate('Profile/timeline.twig')
-        ->addVariable('title', 'Timeline')
-        ->addVariable('timeline', $data)
-        ->addVariable('profile_name', $user->getName())
-        ->render();
+    ->addVariable('title', 'Timeline')
+    ->addVariable('timeline', $data)
+    ->addVariable('profile_name', $user->getName())
+    ->render();

@@ -9,8 +9,13 @@
 
 $data = MyRadio_BannerCampaign::getBannerCampaignForm()->readValues();
 
-$campaign = MyRadio_BannerCampaign::create(MyRadio_Banner::getInstance($data['bannerid']),
-        $data['location'], $data['effective_from'], $data['effective_to'], $data['timeslots']);
+$campaign = MyRadio_BannerCampaign::create(
+    MyRadio_Banner::getInstance($data['bannerid']),
+    $data['location'],
+    $data['effective_from'],
+    $data['effective_to'],
+    $data['timeslots']
+);
 
 header('Location: '.CoreUtils::makeURL('Website', 'editCampaign', [
     'campaignid' => $campaign->getID(),

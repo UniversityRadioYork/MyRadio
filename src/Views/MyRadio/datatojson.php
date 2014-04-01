@@ -13,7 +13,7 @@ header('HTTP/1.1 200 OK');
 $data = CoreUtils::dataSourceParser($data);
 
 if (!empty(MyRadioError::$php_errorlist)) {
-  $data['myury_errors'] = MyRadioError::$php_errorlist;
+    $data['myury_errors'] = MyRadioError::$php_errorlist;
 }
 
 echo json_encode($data);
