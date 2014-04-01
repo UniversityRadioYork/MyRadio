@@ -8,7 +8,7 @@
  */
 
 if (!isset($_REQUEST['bannerid'])) {
-  throw new MyRadioException('You must provide a bannerid', 400);
+    throw new MyRadioException('You must provide a bannerid', 400);
 }
 
 $banner = MyRadio_Banner::getInstance($_REQUEST['bannerid']);
