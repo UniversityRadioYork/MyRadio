@@ -8,5 +8,5 @@
  */
 
 CoreUtils::getTemplateObject()->setTemplate('Timelord/main.twig')
-        ->addVariable('title', 'Studio Clock')
-        ->render();
+    ->addVariable('title', 'Studio Clock')
+    ->render();
