@@ -9,13 +9,13 @@
 
 CoreUtils::requireTimeslot();
 
-  $template = 'SIS/main.twig';
-  $title = 'SIS';
-  $plugins = SIS_Utils::getPlugins();
-  $tabs = SIS_Utils::getTabs();
+$template = 'SIS/main.twig';
+$title = 'SIS';
+$plugins = SIS_Utils::getPlugins();
+$tabs = SIS_Utils::getTabs();
 
 CoreUtils::getTemplateObject()->setTemplate($template)
-        ->addVariable('title', $title)
-        ->addVariable('plugins', $plugins)
-        ->addVariable('tabs', $tabs)
-        ->render();
+    ->addVariable('title', $title)
+    ->addVariable('plugins', $plugins)
+    ->addVariable('tabs', $tabs)
+    ->render();

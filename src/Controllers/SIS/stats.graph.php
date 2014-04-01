@@ -13,9 +13,10 @@ $f = file($fname);
 
 $max = 0;
 foreach ($f as &$l) {
-  $l = explode(' ', $l);
-  if ((int) $l[1] > $max)
-    $max = (int) $l[1];
+    $l = explode(' ', $l);
+    if ((int) $l[1] > $max) {
+        $max = (int) $l[1];
+    }
 }
 
 $barwidth = 3.4;
@@ -44,22 +45,29 @@ imageline($image, $left, $padding, $left, $imageheight - 2 * $padding, $coledge)
 imagestring($image, 4, 5, $padding - 5, $max, $coltext);
 imagestring($image, 4, 5, $imageheight - 2 * $padding - 5, '0', $coltext);
 imagestring($image, 2, $left, $padding + $maxheight + 2, date("H:i", (int) $f[0][0]), $coltext);
-imagestring($image, 2, $imagewidth - 2 * $padding - 30, $padding + $maxheight + 2, date("H:i", (int) $f[count($f) - 1][0]), $coltext);
+imagestring(
+    $image,
+    2,
+    $imagewidth - 2 * $padding - 30,
+    $padding + $maxheight + 2,
+    date("H:i", (int) $f[count($f) - 1][0]),
+    $coltext
+);
 
 $points = array();
 $points[] = $left;
 $points[] = $maxheight + $padding;
-$maxleft = NULL;
-$maxdate = NULL;
+$maxleft = null;
+$maxdate = null;
 
 foreach ($f as $p) {
-  $points[] = $left;
-  $points[] = (($maxheight * ($max - (int) $p[1])) / $max) + $padding;
-  if ((int) $p[1] == $max) {
-    $maxleft = $left;
-    $maxdate = $p[0];
-  }
-  $left += $barwidth;
+    $points[] = $left;
+    $points[] = (($maxheight * ($max - (int) $p[1])) / $max) + $padding;
+    if ((int) $p[1] == $max) {
+        $maxleft = $left;
+        $maxdate = $p[0];
+    }
+    $left += $barwidth;
 }
 $points[] = $imagewidth - 2 * $padding;
 $points[] = $maxheight + $padding;
@@ -68,10 +76,15 @@ imagefilledpolygon($image, $points, count($points) / 2, $colfill);
 imagepolygon($image, $points, count($points) / 2, $coledge);
 imagestring($image, 2, $maxleft - 14, $maxheight - 5, date("H:i", (int) $maxdate) . " ($max)", $coltext);
 imageline($image, $maxleft, $padding, $maxleft, $maxheight + $padding, $coledge);
-imagestring($image, 2, $imagewidth - 2 * $padding + 4, (($maxheight * ($max - (int) $f[count($f) - 1][1])) / $max) - 5 + $padding, $f[count($f) - 1][1], $coltext);
+imagestring(
+    $image,
+    2,
+    $imagewidth - 2 * $padding + 4,
+    (($maxheight * ($max - (int) $f[count($f) - 1][1])) / $max) - 5 + $padding,
+    $f[count($f) - 1][1],
+    $coltext
+);
 
 header('Content-type: image/png');
 imagepng($image);
 imagedestroy($image);
-
-

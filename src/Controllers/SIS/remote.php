@@ -18,14 +18,14 @@ $pollFuncs = SIS_Utils::readPolls(array_merge(SIS_Utils::getPlugins(), SIS_Utils
 $count = 0;
 $data = array();
 do {
-	foreach ($pollFuncs as $function) {
-		$temp = call_user_func($function, $session);
-		if (!empty($temp)) {
-			$data = array_merge($data, $temp);
-		}
-	}
-	sleep(1);
-	$count++;
+    foreach ($pollFuncs as $function) {
+        $temp = call_user_func($function, $session);
+        if (!empty($temp)) {
+            $data = array_merge($data, $temp);
+        }
+    }
+    sleep(1);
+    $count++;
 } while (empty($data) && $count < 50);
 
 //Return the response data
