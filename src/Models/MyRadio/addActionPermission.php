@@ -10,7 +10,11 @@
 $module = CoreUtils::getModuleId($data['module']);
 $action = CoreUtils::getActionId($module, $data['action']);
 $permission = $data['permission'];
-if (empty($action)) $action = null;
-if (empty($permission)) $permission = null;
+if (empty($action)) {
+    $action = null;
+}
+if (empty($permission)) {
+    $permission = null;
+}
 
 CoreUtils::addActionPermission($module, $action, $permission);
