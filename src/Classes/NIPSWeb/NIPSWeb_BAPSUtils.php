@@ -16,7 +16,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
 {
     public static function getBAPSShowIDFromTimeslot(MyRadio_Timeslot $timeslot)
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT showid FROM baps_show
             WHERE externallinkid=$1 LIMIT 1',
             array($timeslot->getID())
@@ -24,7 +24,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
 
         if (empty($result)) {
             //No match. Create a show
-            $result = self::$db->fetch_column(
+            $result = self::$db->fetchColumn(
                 'INSERT INTO baps_show (userid, name, broadcastdate, externallinkid, viewable)
                 VALUES (4, $1, $2, $3, true) RETURNING showid',
                 array(
@@ -49,7 +49,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
      */
     public static function getListingsForShow($showid)
     {
-        $listings = self::$db->fetch_all(
+        $listings = self::$db->fetchAll(
             'SELECT * FROM baps_listing
             WHERE showid=$1 ORDER BY channel ASC',
             array((int) $showid)
@@ -168,7 +168,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
     {
         $trackid = (int) $trackid;
         $recordid = (int) $recordid;
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT title, artist, libraryitemid
             FROM rec_track, baps_libraryitem
             WHERE rec_track.trackid = baps_libraryitem.trackid
@@ -210,7 +210,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
 
         if (!$id) {
             //Create it
-            $r = self::$db->fetch_column('INSERT INTO public.baps_fileitem (filename) VALUES ($1) RETURNING fileitemid', array($legacy_path));
+            $r = self::$db->fetchColumn('INSERT INTO public.baps_fileitem (filename) VALUES ($1) RETURNING fileitemid', array($legacy_path));
 
             return $r[0];
         }
@@ -239,7 +239,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
      */
     public static function getFileItemFromPath($path)
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT fileitemid FROM baps_fileitem
             WHERE filename=$1 LIMIT 1',
             array($path)

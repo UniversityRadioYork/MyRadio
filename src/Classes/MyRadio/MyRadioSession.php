@@ -58,7 +58,7 @@ class MyRadioSession
         if (empty($id)) {
             return false;
         }
-        $result = $this->db->fetch_column(
+        $result = $this->db->fetchColumn(
             'SELECT data FROM sso_session
             WHERE id=$1 LIMIT 1',
             array($id)

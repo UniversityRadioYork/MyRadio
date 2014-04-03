@@ -29,7 +29,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $this->show_id = $show_id;
         self::initDB();
 
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT show_type_id, submitted, memberid, (
                 SELECT array(
                     SELECT metadata_key_id FROM schedule.show_metadata
@@ -124,7 +124,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         }
 
         //Get information about Seasons
-        $this->season_ids = self::$db->fetch_column(
+        $this->season_ids = self::$db->fetchColumn(
             'SELECT show_season_id
             FROM schedule.show_season WHERE show_id=$1',
             array($show_id)
@@ -176,7 +176,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
         //Get or set the show type id
         if (empty($params['showtypeid'])) {
-            $rtype = self::$db->fetch_column('SELECT show_type_id FROM schedule.show_type WHERE name=\'Show\'');
+            $rtype = self::$db->fetchColumn('SELECT show_type_id FROM schedule.show_type WHERE name=\'Show\'');
             if (empty($rtype[0])) {
                 throw new MyRadioException('There is no Show ShowType Available!', MyRadioException::FATAL);
             }
@@ -195,7 +195,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
         //Add the basic info, getting the show id
 
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'INSERT INTO schedule.show (show_type_id, submitted, memberid)
             VALUES ($1, NOW(), $2) RETURNING show_id',
             array($params['showtypeid'], $_SESSION['memberid']),
@@ -375,7 +375,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     public function setShowPhoto($tmp_path)
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'INSERT INTO schedule.show_image_metadata (memberid, approvedid, metadata_key_id, metadata_value, show_id)
             VALUES ($1, $1, $2, $3, $4) RETURNING show_image_metadata_id',
             array($_SESSION['memberid'], self::getMetadataKey('player_image'), 'tmp', $this->getID())
@@ -485,7 +485,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      */
     public static function getAllShows($show_type_id = 1)
     {
-        $show_ids = self::$db->fetch_column(
+        $show_ids = self::$db->fetchColumn(
             'SELECT show_id FROM schedule.show
             WHERE show_type_id=$1
             ORDER BY (
@@ -514,7 +514,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      */
     public static function getMostMessaged($date = 0)
     {
-        $result = self::$db->fetch_all(
+        $result = self::$db->fetchAll(
             'SELECT show.show_id, count(*) as msg_count FROM sis2.messages
             LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid = show_season_timeslot.show_season_timeslot_id
             LEFT JOIN schedule.show_season ON show_season_timeslot.show_season_id = show_season.show_season_id
@@ -562,7 +562,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             return $top;
         }
 
-        $result = self::$db->fetch_all(
+        $result = self::$db->fetchAll(
             'SELECT show_id, SUM(listeners) AS listeners_sum FROM (
                 SELECT show_season_id, (
                     SELECT COUNT(*) FROM strm_log

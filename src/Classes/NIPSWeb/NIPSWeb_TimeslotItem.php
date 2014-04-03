@@ -31,7 +31,7 @@ class NIPSWeb_TimeslotItem extends ServiceAPI
     {
         $this->timeslot_item_id = $resid;
         //*dies*
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT * FROM bapsplanner.timeslot_items where timeslot_item_id=$1 LIMIT 1',
             array($resid)
         );
@@ -102,9 +102,9 @@ class NIPSWeb_TimeslotItem extends ServiceAPI
         unset($this);
     }
 
-    public static function create_managed($timeslot, $manageditemid, $channel, $weight)
+    public static function createManaged($timeslot, $manageditemid, $channel, $weight)
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'INSERT INTO bapsplanner.timeslot_items (timeslot_id, managed_item_id, channel_id, weight)
             VALUES ($1, $2, $3, $4) RETURNING timeslot_item_id',
             array($timeslot, $manageditemid, $channel, $weight)
@@ -113,9 +113,9 @@ class NIPSWeb_TimeslotItem extends ServiceAPI
         return self::getInstance($result[0]);
     }
 
-    public static function create_central($timeslot, $trackid, $channel, $weight)
+    public static function createCentral($timeslot, $trackid, $channel, $weight)
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'INSERT INTO bapsplanner.timeslot_items (timeslot_id, rec_track_id, channel_id, weight)
             VALUES ($1, $2, $3, $4) RETURNING timeslot_item_id',
             array($timeslot, $trackid, $channel, $weight)

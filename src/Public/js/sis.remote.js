@@ -56,8 +56,9 @@ var server = {
     for (var key in server.params) {
       if (!first) {
         qString += "&";
+      } else {
+        first = false;
       }
-      else {first = false;}
       qString += key + "=" + server.params[key];
     }
     return qString;
@@ -71,10 +72,11 @@ var server = {
     for (var namespace in data) {
       //Handle the Debug namespace - log the message
       if (namespace == 'debug') {
-        for (var message in data[namespace]) {console.log(data[namespace][message]);}
+        for (var message in data[namespace]) {
+          console.log(data[namespace][message]);
+        }
         continue;
-      }
-      else if (typeof(server.callbacks[namespace]) != 'undefined') {
+      } else if (typeof(server.callbacks[namespace]) != 'undefined') {
         console.log('Callback for '+namespace+' found');
         //This namespace is registered. Execute the callback function
         server.callbacks[namespace](data[namespace]);

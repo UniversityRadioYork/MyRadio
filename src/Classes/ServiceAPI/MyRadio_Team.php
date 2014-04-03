@@ -54,7 +54,7 @@ class MyRadio_Team extends ServiceAPI
 
     protected function __construct($id)
     {
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT * FROM public.team
             WHERE teamid=$1',
             [$id]
@@ -73,7 +73,7 @@ class MyRadio_Team extends ServiceAPI
                 function ($x) {
                     return (int) $x;
                 },
-                self::$db->fetch_column(
+                self::$db->fetchColumn(
                     'SELECT officerid FROM officer
                     WHERE teamid=$1 ORDER BY ordering',
                     [$id]
@@ -89,7 +89,7 @@ class MyRadio_Team extends ServiceAPI
     public static function getAllTeams($full = true)
     {
         return self::resultSetToObjArray(
-            self::$db->fetch_column('SELECT teamid FROM public.team'),
+            self::$db->fetchColumn('SELECT teamid FROM public.team'),
             $full
         );
     }

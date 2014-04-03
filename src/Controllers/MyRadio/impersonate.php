@@ -21,7 +21,7 @@ if (isset($_REQUEST['memberid'])) {
     } else {
         $_SESSION['myradio-impersonating'] = $_SESSION;
         $_SESSION['memberid'] = $impersonatee->getID();
-        $ip_auth = Database::getInstance()->fetch_column(
+        $ip_auth = Database::getInstance()->fetchColumn(
             'SELECT typeid FROM auth_subnet WHERE subnet >>= $1',
             [$_SERVER['REMOTE_ADDR']]
         );

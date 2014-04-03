@@ -66,7 +66,7 @@ class MyRadio_Officer extends ServiceAPI
 
     protected function __construct($id)
     {
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT * FROM public.officer '
             . 'WHERE officerid=$1',
             [$id]
@@ -93,7 +93,7 @@ class MyRadio_Officer extends ServiceAPI
     public static function getAllOfficerPositions()
     {
         return self::resultSetToObjArray(
-            self::$db->fetch_column(
+            self::$db->fetchColumn(
                 'SELECT officerid FROM public.officer'
             )
         );
@@ -180,7 +180,7 @@ class MyRadio_Officer extends ServiceAPI
     public function getHistory()
     {
         if (empty($this->history)) {
-            $result = self::$db->fetch_all(
+            $result = self::$db->fetchAll(
                 'SELECT member_officerid, memberid, '
                 . 'from_date, till_date FROM public.member_officer '
                 . 'WHERE officerid=$1 ORDER BY from_date DESC',

@@ -35,7 +35,7 @@ abstract class MyRadio_Type extends ServiceAPI
      * @param $description  The human-readable description/descriptive name of
      *                      the type.
      */
-    protected function construct_type($name, $description)
+    protected function constructType($name, $description)
     {
         $this->name = $name;
         $this->description = $description;

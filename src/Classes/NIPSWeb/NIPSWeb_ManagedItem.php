@@ -43,7 +43,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI
     {
         $this->managed_item_id = $resid;
         //*dies*
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT manageditemid, title, length, bpm, NULL AS folder, memberid, expirydate, managedplaylistid
             FROM bapsplanner.managed_items WHERE manageditemid=$1
             UNION SELECT manageditemid, title, length, bpm, managedplaylistid AS folder, NULL AS memberid, NULL AS expirydate,
@@ -270,7 +270,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI
             );
         } else {
             //This is a central resource
-            $result = self::$db->fetch_column(
+            $result = self::$db->fetchColumn(
                 'SELECT managedplaylistid FROM bapsplanner.managed_playlists WHERE managedplaylistid=$1 LIMIT 1',
                 array(str_replace('aux-', '', $options['auxid']))
             );
@@ -293,7 +293,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI
             );
         }
 
-        $id = self::$db->fetch_all($result);
+        $id = self::$db->fetchAll($result);
 
         return self::getInstance($id[0]['manageditemid']);
     }

@@ -9,7 +9,7 @@ class MyRadioNullSession extends MyRadioSession
 {
     public function __construct()
     {
-        $this->db = NULL;
+        $this->db = null;
     }
 
     /**

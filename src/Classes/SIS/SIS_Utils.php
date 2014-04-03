@@ -20,7 +20,7 @@ class SIS_Utils extends ServiceAPI
      * @param  String $x File Extension (optional)
      * @return Array  List of files
      */
-    private static function file_list($d, $x)
+    private static function fileList($d, $x)
     {
         return array_diff(scandir(__DIR__.'/../../'.$d), array('.','..'));
     }
@@ -53,7 +53,7 @@ class SIS_Utils extends ServiceAPI
      */
     private static function getModules($moduleFolder)
     {
-        $modules = self::file_list($moduleFolder, 'php');
+        $modules = self::fileList($moduleFolder, 'php');
         $loadedModules = array();
         if ($modules !== false) {
             foreach ($modules as $key => $module) {
@@ -138,7 +138,7 @@ class SIS_Utils extends ServiceAPI
 
             return $location;
         }
-        $q = self::$db->fetch_all($query);
+        $q = self::$db->fetchAll($query);
         foreach ($q as $k) {
             $location[] = $k['description'];
             $location[] = ($k['iscollege'] == 't') ? 'College Bedroom' : 'Study Room / Labs / Wifi';
@@ -174,7 +174,7 @@ class SIS_Utils extends ServiceAPI
      */
     public static function getShowHelpTab($memberid)
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT helptab FROM sis2.member_options WHERE memberid=$1 LIMIT 1',
             [$memberid]
         );

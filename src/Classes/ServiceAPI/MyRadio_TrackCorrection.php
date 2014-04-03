@@ -75,7 +75,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
     protected function __construct($correctionid)
     {
         $this->correctionid = (int) $correctionid;
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT * FROM public.rec_trackcorrection WHERE correctionid=$1 LIMIT 1',
             array($this->correctionid)
         );
@@ -110,7 +110,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
         $album_name = 'No Suggestion.',
         $level = self::LEVEL_SUGGEST
     ) {
-        $r = self::$db->fetch_column(
+        $r = self::$db->fetchColumn(
             'INSERT INTO public.rec_trackcorrection
             (trackid, proposed_title, proposed_artist, proposed_album_name, level)
             VALUES ($1, $2, $3, $4, $5) RETURNING correctionid',
@@ -129,7 +129,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
      */
     public static function getRandom()
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT correctionid FROM public.rec_trackcorrection WHERE state=\'p\'
             ORDER BY RANDOM() LIMIT 1'
         );

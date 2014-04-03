@@ -127,7 +127,7 @@ class Database
      * @param Resource $result a reference to a postgres result set
      * @return int The number of rose in the result set
      */
-    public function num_rows($result)
+    public function numRows($result)
     {
         return pg_num_rows($result);
     }
@@ -141,7 +141,7 @@ class Database
      * @return Array An array of result rows (potentially empty)
      * @throws MyRadioException
      */
-    public function fetch_all($sql, $params = array())
+    public function fetchAll($sql, $params = array())
     {
         if (is_resource($sql)) {
             return pg_fetch_all($sql);
@@ -168,7 +168,7 @@ class Database
      * @return Array The requested result row, or an empty array on failure
      * @throws MyRadioException
      */
-    public function fetch_one($sql, $params = array())
+    public function fetchOne($sql, $params = array())
     {
         try {
             $result = $this->query($sql, $params);
@@ -187,7 +187,7 @@ class Database
      * @return Array The requested result column, or an empty array on failure
      * @throws MyRadioException
      */
-    public function fetch_column($sql, $params = array(), $rollback = false)
+    public function fetchColumn($sql, $params = array(), $rollback = false)
     {
         try {
             $result = $this->query($sql, $params, $rollback);

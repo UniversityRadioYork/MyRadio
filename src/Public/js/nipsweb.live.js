@@ -649,15 +649,17 @@ function configureContextMenus() {
                 target = event.relatedTarget,
                 ul = ($(event.relatedTarget).is('li') ? $(event.relatedTarget).parent('ul') : event.relatedTarget);
         if (menuId === "#autoAdv") {
-            if ($(ul).attr('autoadvance') == 1)
+            if ($(ul).attr('autoadvance') == 1) {
                 $(ul).attr('autoadvance', 0);
-            else
+            } else {
                 $(ul).attr('autoadvance', 1);
+            }
         } else if (menuId === "#autoPlay") {
-            if ($(ul).attr('playonload') == 1)
+            if ($(ul).attr('playonload') == 1) {
                 $(ul).attr('playonload', 0);
-            else
+            } else {
                 $(ul).attr('playonload', 1);
+            }
         }
         console.log("select " + menuId + " on " + $(target).attr('id'));
     });

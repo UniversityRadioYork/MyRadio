@@ -121,7 +121,7 @@ a, a:active, a:visited {
 }
 
 .ui-state-error{
-	display : block;
+  display : block;
 }
 
 .ui-contextmenu {

@@ -33,7 +33,7 @@ class iTones_Playlist extends ServiceAPI
     protected function __construct($playlistid)
     {
         $this->playlistid = $playlistid;
-        $result = self::$db->fetch_one('SELECT * FROM jukebox.playlists WHERE playlistid=$1 LIMIT 1', array($playlistid));
+        $result = self::$db->fetchOne('SELECT * FROM jukebox.playlists WHERE playlistid=$1 LIMIT 1', array($playlistid));
         if (empty($result)) {
             throw new MyRadioException('The specified iTones Playlist does not seem to exist');
 
@@ -47,7 +47,7 @@ class iTones_Playlist extends ServiceAPI
         $this->locktime = (int) $result['locktime'];
         $this->weight = (int) $result['weight'];
 
-        $this->revisionid = (int) self::$db->fetch_one(
+        $this->revisionid = (int) self::$db->fetchOne(
             'SELECT revisionid FROM jukebox.playlist_revisions
             WHERE playlistid=$1 ORDER BY revisionid DESC LIMIT 1',
             array($this->getID())
@@ -61,7 +61,7 @@ class iTones_Playlist extends ServiceAPI
     public function getTracks()
     {
         if (empty($this->tracks)) {
-            $items = self::$db->fetch_column(
+            $items = self::$db->fetchColumn(
                 'SELECT trackid FROM jukebox.playlist_entries WHERE playlistid=$1
                 AND revision_removed IS NULL
                 ORDER BY entryid',
@@ -176,7 +176,7 @@ class iTones_Playlist extends ServiceAPI
      */
     private function refreshLockInformation()
     {
-        $result = self::$db->fetch_one('SELECT lock, locktime FROM jukebox.playlists WHERE playlistid=$1', array($this->getID()));
+        $result = self::$db->fetchOne('SELECT lock, locktime FROM jukebox.playlists WHERE playlistid=$1', array($this->getID()));
         $this->lock = empty($result['lock']) ? null : MyRadio_User::getInstance($result['lock']);
         $this->locktime = (int) $result['locktime'];
     }
@@ -298,7 +298,7 @@ class iTones_Playlist extends ServiceAPI
     public static function getAlliTonesPlaylists()
     {
         self::wakeup();
-        $result = self::$db->fetch_column('SELECT playlistid FROM jukebox.playlists ORDER BY title');
+        $result = self::$db->fetchColumn('SELECT playlistid FROM jukebox.playlists ORDER BY title');
 
         return self::resultSetToObjArray($result);
     }
@@ -311,9 +311,9 @@ class iTones_Playlist extends ServiceAPI
     {
         self::wakeup();
 
-        $result = self::$db->fetch_all('SELECT playlistid AS item, weight FROM jukebox.playlists ORDER BY title');
+        $result = self::$db->fetchAll('SELECT playlistid AS item, weight FROM jukebox.playlists ORDER BY title');
 
-        return self::getInstance(CoreUtils::biased_random($result));
+        return self::getInstance(CoreUtils::biasedRandom($result));
     }
 
     /**
@@ -323,7 +323,7 @@ class iTones_Playlist extends ServiceAPI
      */
     public static function getPlaylistsWithTrack(MyRadio_Track $track)
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT playlistid FROM jukebox.playlist_entries WHERE trackid=$1
             AND revision_removed IS NULL',
             array($track->getID())

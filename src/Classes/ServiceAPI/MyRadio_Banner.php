@@ -53,7 +53,7 @@ class MyRadio_Banner extends MyRadio_Photo
     {
         $this->banner_id = (int) $banner_id;
 
-        $result = self::$db->fetch_one('SELECT * FROM website.banner WHERE banner_id=$1', array($banner_id));
+        $result = self::$db->fetchOne('SELECT * FROM website.banner WHERE banner_id=$1', array($banner_id));
         if (empty($result)) {
             throw new MyRadioException('Banner ' . $banner_id . ' does not exist!');
         }
@@ -68,7 +68,7 @@ class MyRadio_Banner extends MyRadio_Photo
             parent::__construct(Config::$photo_joined);
         }
 
-        $this->campaigns = self::$db->fetch_column(
+        $this->campaigns = self::$db->fetchColumn(
             'SELECT banner_campaign_id FROM website.banner_campaign
             WHERE banner_id=$1',
             [$this->banner_id]
@@ -249,7 +249,7 @@ class MyRadio_Banner extends MyRadio_Photo
      */
     public static function create(MyRadio_Photo $photo, $alt = 'Unnamed Banner', $target = null, $type = 2)
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'INSERT INTO website.banner (alt, image, target, banner_type_id, photoid)
             VALUES ($1, $2, $3, $4, $5) RETURNING banner_id',
             array($alt, $photo->getURL(), $target, $type, $photo->getID())
@@ -264,12 +264,12 @@ class MyRadio_Banner extends MyRadio_Photo
      */
     public static function getAllBanners()
     {
-        return self::resultSetToObjArray(self::$db->fetch_column('SELECT banner_id FROM website.banner'));
+        return self::resultSetToObjArray(self::$db->fetchColumn('SELECT banner_id FROM website.banner'));
     }
 
     public static function getBannerTypes()
     {
-        return self::$db->fetch_all('SELECT banner_type_id, description FROM website.banner_type');
+        return self::$db->fetchAll('SELECT banner_type_id, description FROM website.banner_type');
     }
 
     /**

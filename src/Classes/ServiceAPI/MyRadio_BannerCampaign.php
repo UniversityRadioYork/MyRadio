@@ -78,7 +78,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
     {
         $this->banner_campaign_id = (int) $banner_campaign_id;
 
-        $result = self::$db->fetch_one('SELECT * FROM website.banner_campaign WHERE banner_campaign_id=$1', array($banner_campaign_id));
+        $result = self::$db->fetchOne('SELECT * FROM website.banner_campaign WHERE banner_campaign_id=$1', array($banner_campaign_id));
         if (empty($result)) {
             throw new MyRadioException('Banner Campaign ' . $banner_campaign_id . ' does not exist!');
         }
@@ -99,7 +99,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                     'end_time' => strtotime($x['end_time'], 0)
                 ];
             },
-            self::$db->fetch_all(
+            self::$db->fetchAll(
                 'SELECT id, day, start_time, end_time, \'order\' FROM website.banner_timeslot
                 WHERE banner_campaign_id=$1',
                 [$this->banner_campaign_id]
@@ -345,7 +345,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
             $effective_from = time();
         }
 
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'INSERT INTO website.banner_campaign
             (banner_id, banner_location_id, effective_from, effective_to, memberid, approvedid)
             VALUES ($1, $2, $3, $4, $5, $5) RETURNING banner_campaign_id',
@@ -373,7 +373,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
      */
     public static function getAllBannerCampaigns()
     {
-        return self::resultSetToObjArray(self::$db->fetch_column('SELECT banner_campaign_id FROM website.banner_campaign'));
+        return self::resultSetToObjArray(self::$db->fetchColumn('SELECT banner_campaign_id FROM website.banner_campaign'));
     }
 
     /**
@@ -382,7 +382,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
      */
     public static function getCampaignLocations()
     {
-        return self::$db->fetch_all('SELECT banner_location_id AS value, description AS text FROM website.banner_location');
+        return self::$db->fetchAll('SELECT banner_location_id AS value, description AS text FROM website.banner_location');
     }
 
     /**

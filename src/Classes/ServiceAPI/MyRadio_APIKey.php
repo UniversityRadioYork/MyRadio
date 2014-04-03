@@ -35,7 +35,7 @@ class MyRadio_APIKey extends ServiceAPI
     protected function __construct($key)
     {
         $this->key = $key;
-        $this->permissions = self::$db->fetch_column('SELECT typeid FROM myury.api_key_auth WHERE key_string=$1', array($key));
+        $this->permissions = self::$db->fetchColumn('SELECT typeid FROM myury.api_key_auth WHERE key_string=$1', array($key));
     }
 
     /**
@@ -100,7 +100,7 @@ class MyRadio_APIKey extends ServiceAPI
      */
     public static function getCallRequirements($class, $method)
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT typeid FROM myury.api_method_auth WHERE class_name=$1 AND
             (method_name=$2 OR method_name IS NULL)',
             array($class, $method)

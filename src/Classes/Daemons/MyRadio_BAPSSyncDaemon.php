@@ -46,7 +46,7 @@ class MyRadio_BAPSSyncDaemon extends MyRadio_Daemon
             /**
              * Create the playlist. '61' is system, which appears to be how BAPS chooses what shows are recommended listening
              */
-            $r = $db->fetch_column(
+            $r = $db->fetchColumn(
                 'INSERT INTO public.baps_show (userid, name, broadcastdate, viewable)
                 VALUES (61, $1, $2, true) RETURNING showid',
                 array($list->getTitle(), $special_date)
@@ -60,7 +60,7 @@ class MyRadio_BAPSSyncDaemon extends MyRadio_Daemon
             /**
              * Create a single channel for the show, containing the items
              */
-            $r = $db->fetch_one(
+            $r = $db->fetchOne(
                 'INSERT INTO public.baps_listing (showid, name, channel) VALUES ($1, $2, 0) RETURNING listingid',
                 array($showid, $list->getTitle())
             );

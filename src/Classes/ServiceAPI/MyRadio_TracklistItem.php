@@ -34,7 +34,7 @@ class MyRadio_TracklistItem extends ServiceAPI
     {
         $this->audiologid = (int) $id;
 
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT * FROM tracklist.tracklist
             LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
             LEFT JOIN tracklist.track_notrec ON tracklist.audiologid = track_notrec.audiologid
@@ -87,7 +87,7 @@ class MyRadio_TracklistItem extends ServiceAPI
      */
     public static function getTracklistForTimeslot($timeslotid, $offset = 0)
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT audiologid FROM tracklist.tracklist
             WHERE timeslotid=$1
             AND (state ISNULL OR state != \'d\')
@@ -118,7 +118,7 @@ class MyRadio_TracklistItem extends ServiceAPI
         $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
         $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
 
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT audiologid FROM tracklist.tracklist WHERE source=\'j\'
             AND timestart >= $1 AND timestart <= $2'
             . ($include_playout ? '' : ' AND state!=\'u\' AND state!=\'d\''),
@@ -148,7 +148,7 @@ class MyRadio_TracklistItem extends ServiceAPI
         $start = CoreUtils::getTimestamp($start);
         $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
 
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT audiologid FROM tracklist.tracklist
             WHERE timestart >= $1 AND timestart <= $2 AND (state IS NULL OR state=\'c\''
             . ($include_playout ? 'OR state = \'o\')' : ')')
@@ -249,7 +249,7 @@ class MyRadio_TracklistItem extends ServiceAPI
         $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
         $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
 
-        $result = self::$db->fetch_all(
+        $result = self::$db->fetchAll(
             'SELECT COUNT(trackid) AS num_plays, trackid FROM tracklist.tracklist
             LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
             WHERE source=\'j\' AND timestart >= $1 AND timestart <= $2 AND trackid IS NOT NULL'
@@ -278,7 +278,7 @@ class MyRadio_TracklistItem extends ServiceAPI
         $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
         $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
 
-        $result = self::$db->fetch_all(
+        $result = self::$db->fetchAll(
             'SELECT COUNT(trackid) AS num_plays, trackid FROM tracklist.tracklist
             LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
             WHERE source=\'b\' AND timestart >= $1 AND timestart <= $2 AND trackid IS NOT NULL
@@ -297,7 +297,7 @@ class MyRadio_TracklistItem extends ServiceAPI
      */
     public static function getIfPlayedRecently(MyRadio_Track $track, $time = 21600)
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT timestart FROM tracklist.tracklist
             LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
             WHERE timestart >= $1 AND trackid = $2',
@@ -333,7 +333,7 @@ class MyRadio_TracklistItem extends ServiceAPI
          * The title check is a hack to work around our default album
          * being URY Downloads
          */
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT COUNT(*) FROM tracklist.tracklist
             LEFT JOIN tracklist.track_rec USING (audiologid)
             LEFT JOIN (SELECT recordid, title AS album FROM public.rec_record) AS t1

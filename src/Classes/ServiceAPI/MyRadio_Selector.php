@@ -132,7 +132,7 @@ class MyRadio_Selector
      */
     public function isSilence()
     {
-        $result = Database::getInstance()->fetch_one(
+        $result = Database::getInstance()->fetchOne(
             'SELECT starttime, stoptime
             FROM jukebox.silence_log
             ORDER BY silenceid DESC LIMIT 1'
@@ -245,7 +245,7 @@ class MyRadio_Selector
      */
     public static function getStudioAtTime($time)
     {
-        $result = Database::getInstance()->fetch_column(
+        $result = Database::getInstance()->fetchColumn(
             'SELECT action FROM public.selector WHERE time <= $1
             AND action >= 4 AND action <= 11
             ORDER BY time DESC
@@ -263,7 +263,7 @@ class MyRadio_Selector
      */
     public static function getSetbyAtTime($time)
     {
-        $result = Database::getInstance()->fetch_column(
+        $result = Database::getInstance()->fetchColumn(
             'SELECT setby FROM public.selector WHERE time <= $1
             AND action >= 4 AND action <= 11
             ORDER BY time DESC
@@ -281,7 +281,7 @@ class MyRadio_Selector
      */
     public static function getStudio1PowerAtTime($time)
     {
-        $result = Database::getInstance()->fetch_column(
+        $result = Database::getInstance()->fetchColumn(
             'SELECT action FROM public.selector WHERE time <= $1
             AND action >= 13 AND action <= 14
             ORDER BY time DESC
@@ -299,7 +299,7 @@ class MyRadio_Selector
      */
     public static function getStudio2PowerAtTime($time)
     {
-        $result = Database::getInstance()->fetch_column(
+        $result = Database::getInstance()->fetchColumn(
             'SELECT action FROM public.selector WHERE time <= $1
             AND action >= 15 AND action <= 16
             ORDER BY time DESC
@@ -317,7 +317,7 @@ class MyRadio_Selector
      */
     public static function getLockAtTime($time)
     {
-        $result = Database::getInstance()->fetch_column(
+        $result = Database::getInstance()->fetchColumn(
             'SELECT action FROM public.selector WHERE time <= $1
             AND action >= 1 AND action <= 3
             ORDER BY time DESC
@@ -335,7 +335,7 @@ class MyRadio_Selector
      */
     public static function getLastModAtTime($time)
     {
-        $result = Database::getInstance()->fetch_column(
+        $result = Database::getInstance()->fetchColumn(
             'SELECT time FROM public.selector WHERE time <= $1
             ORDER BY time DESC
             LIMIT 1',

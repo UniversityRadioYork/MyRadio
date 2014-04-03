@@ -68,7 +68,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
     {
         $this->memberpresenterstatusid = (int) $statusid;
 
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT * FROM public.member_presenterstatus
             WHERE memberpresenterstatusid=$1',
             array($statusid)
@@ -191,15 +191,14 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
 
         //Check whether this user can do that.
         if (in_array(
-                array_map(
-                    function ($x) {
-                        return $x->getID();
-                    },
-                    $awarded_by->getAllTraining(true)
-                ),
-                $status->getAwarder()->getID()
-            ) === false
-        ) {
+            array_map(
+                function ($x) {
+                    return $x->getID();
+                },
+                $awarded_by->getAllTraining(true)
+            ),
+            $status->getAwarder()->getID()
+            ) === false) {
             throw new MyRadioException($awarded_by .' does not have permission to award '.$status);
         }
 
@@ -213,12 +212,11 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
                     },
                     $awarded_to->getAllTraining(true)
                 )
-            ) === false
-        ) {
+            ) === false) {
             throw new MyRadioException($awarded_to .' does not have the prerequisite training to be awarded '.$status);
         }
 
-        $id = self::$db->fetch_column(
+        $id = self::$db->fetchColumn(
             'INSERT INTO public.member_presenterstatus (memberid, presenterstatusid, confirmedby)
             VALUES ($1, $2, $3) RETURNING memberpresenterstatusid',
             [

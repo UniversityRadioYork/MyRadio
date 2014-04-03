@@ -218,7 +218,7 @@ trait MyRadio_Creditable
     protected static function getCreditName($credit_id)
     {
         if (empty(self::$credit_names)) {
-            $r = self::$db->fetch_all('SELECT credit_type_id, name FROM people.credit_type');
+            $r = self::$db->fetchAll('SELECT credit_type_id, name FROM people.credit_type');
 
             foreach ($r as $v) {
                 self::$credit_names[$v['credit_type_id']] = $v['name'];

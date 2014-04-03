@@ -72,7 +72,7 @@ class MyRadio_List extends ServiceAPI
     {
         $this->listid = $listid;
 
-        $result = self::$db->fetch_one('SELECT * FROM mail_list WHERE listid=$1', array($listid));
+        $result = self::$db->fetchOne('SELECT * FROM mail_list WHERE listid=$1', array($listid));
         if (empty($result)) {
             throw new MyRadioException('List ' . $listid . ' does not exist!');
 
@@ -87,10 +87,10 @@ class MyRadio_List extends ServiceAPI
 
         if ($this->optin) {
             //Get subscribed members
-            $this->members = self::$db->fetch_column('SELECT memberid FROM mail_subscription WHERE listid=$1', array($listid));
+            $this->members = self::$db->fetchColumn('SELECT memberid FROM mail_subscription WHERE listid=$1', array($listid));
         } else {
             //Get members joined with opted-out members
-            $this->members = self::$db->fetch_column(
+            $this->members = self::$db->fetchColumn(
                 'SELECT memberid FROM (' . $this->parseSQL($this->sql) . ') as t1 WHERE memberid NOT IN
                 (SELECT memberid FROM mail_subscription WHERE listid=$1)',
                 array($listid)
@@ -278,7 +278,7 @@ class MyRadio_List extends ServiceAPI
     public function getArchive()
     {
         if (empty($this->archive)) {
-            $this->archive = self::$db->fetch_column(
+            $this->archive = self::$db->fetchColumn(
                 'SELECT email.email_id '
                 . 'FROM mail.email_recipient_list '
                 . 'LEFT JOIN mail.email USING (email_id) '
@@ -295,7 +295,7 @@ class MyRadio_List extends ServiceAPI
     public static function getByName($str)
     {
         self::initDB();
-        $r = self::$db->fetch_column(
+        $r = self::$db->fetchColumn(
             'SELECT listid FROM mail_list WHERE listname ILIKE $1 OR listaddress ILIKE $1',
             array($str)
         );
@@ -308,7 +308,7 @@ class MyRadio_List extends ServiceAPI
 
     public static function getAllLists()
     {
-        $r = self::$db->fetch_column('SELECT listid FROM mail_list');
+        $r = self::$db->fetchColumn('SELECT listid FROM mail_list');
 
         $lists = array();
         foreach ($r as $list) {

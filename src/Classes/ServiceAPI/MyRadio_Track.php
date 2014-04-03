@@ -112,7 +112,7 @@ class MyRadio_Track extends ServiceAPI
     protected function __construct($trackid)
     {
         $this->trackid = (int) $trackid;
-        $result = self::$db->fetch_one('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', array($this->trackid));
+        $result = self::$db->fetchOne('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', array($this->trackid));
         if (empty($result)) {
             throw new MyRadioException('The specified Track does not seem to exist');
 
@@ -296,7 +296,7 @@ class MyRadio_Track extends ServiceAPI
      */
     private static function findByNameArtist($title, $artist, $limit, $digitised = false, $exact = false)
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT trackid
             FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
             AND rec_track.title '
@@ -413,7 +413,7 @@ class MyRadio_Track extends ServiceAPI
         }
 
         //Do the bulk of the sorting with SQL
-        $result = self::$db->fetch_all(
+        $result = self::$db->fetchAll(
             'SELECT trackid, rec_track.recordid
             FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
             AND (rec_track.title ILIKE $4 || $1 || $4'
@@ -648,7 +648,7 @@ class MyRadio_Track extends ServiceAPI
             )
         );
 
-        $id = self::$db->fetch_all($result);
+        $id = self::$db->fetchAll($result);
 
         return self::getInstance($id[0]['trackid']);
     }
@@ -743,7 +743,7 @@ class MyRadio_Track extends ServiceAPI
     public static function getAllDigitised()
     {
         self::initDB();
-        $ids = self::$db->fetch_column('SELECT trackid FROM rec_track WHERE digitised=\'t\'');
+        $ids = self::$db->fetchColumn('SELECT trackid FROM rec_track WHERE digitised=\'t\'');
 
         $tracks = array();
         foreach ($ids as $id) {
@@ -873,7 +873,7 @@ class MyRadio_Track extends ServiceAPI
     public function isBlacklisted()
     {
         if ($this->itones_blacklist === null) {
-            $this->itones_blacklist = (bool) self::$db->num_rows(
+            $this->itones_blacklist = (bool) self::$db->numRows(
                 self::$db->query(
                     'SELECT * FROM jukebox.track_blacklist
                     WHERE trackid=$1',
@@ -895,16 +895,16 @@ class MyRadio_Track extends ServiceAPI
      */
     public static function getLibraryStats()
     {
-        $num_digitised = (int) self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\'')[0];
-        $num_undigitised = (int) self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\'')[0];
-        $num_clean = (int) self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'y\'')[0];
-        $num_unclean = (int) self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'n\'')[0];
-        $num_cleanunknown = (int) self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'u\'')[0];
-        $num_verified = (int) self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'t\'')[0];
-        $num_unverified = (int) self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'f\'')[0];
+        $num_digitised = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\'')[0];
+        $num_undigitised = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\'')[0];
+        $num_clean = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'y\'')[0];
+        $num_unclean = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'n\'')[0];
+        $num_cleanunknown = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'u\'')[0];
+        $num_verified = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'t\'')[0];
+        $num_unverified = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'f\'')[0];
 
-        $num_singles = (int) self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE format=\'s\'')[0];
-        $num_albums = (int) self::$db->fetch_column('SELECT COUNT(*) FROM public.rec_record WHERE format=\'a\'')[0];
+        $num_singles = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_record WHERE format=\'s\'')[0];
+        $num_albums = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_record WHERE format=\'a\'')[0];
 
         return [
             ['Key', 'Value'],

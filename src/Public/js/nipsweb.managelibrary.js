@@ -5,7 +5,9 @@
 window.auxid = null;
 function res_type_sel_change_handler() {
   $('div.res-container').hide();
-  if ($('#res-type-sel').val() === null) return;
+  if ($('#res-type-sel').val() === null) {
+    return;
+  }
   if ($('#res-type-sel').val() === 'central') {
     $('#central-container').show();
     return;
@@ -20,8 +22,12 @@ function res_type_sel_change_handler() {
 
 //Converts bytes to human readable numbers
 function byteSize(size) {
-  if (size > 1048576) return (size/1048576).toFixed(2)+'MB';
-  if (size > 1024) return (size/1024).toFixed(2)+'KB';
+  if (size > 1048576) {
+    return (size/1048576).toFixed(2)+'MB';
+  }
+  if (size > 1024) {
+    return (size/1024).toFixed(2)+'KB';
+  }
   return size+'B';
 }
 

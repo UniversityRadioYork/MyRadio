@@ -32,7 +32,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
             /**
              * Must not be null - otherwise it hasn't been submitted yet
              */
-            $result = self::$db->fetch_column(
+            $result = self::$db->fetchColumn(
                 'SELECT show_season_id FROM schedule.show_season
                 WHERE show_season_id NOT IN (SELECT show_season_id FROM schedule.show_season_timeslot)
                 AND submitted IS NOT NULL
@@ -82,7 +82,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
      */
     public static function getTerms()
     {
-        return self::$db->fetch_all(
+        return self::$db->fetchAll(
             'SELECT termid, EXTRACT(EPOCH FROM start) AS start, descr
             FROM terms
             WHERE finish > now()
@@ -101,7 +101,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
 
     public static function getTermDescr($termid)
     {
-        $return = self::$db->fetch_one(
+        $return = self::$db->fetchOne(
             'SELECT descr, start FROM terms WHERE termid=$1',
             array($termid)
         );
@@ -114,7 +114,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
         if ($term_id === null) {
             $term_id = self::getActiveApplicationTerm();
         }
-        $result = self::$db->fetch_one('SELECT start FROM terms WHERE termid=$1', array($term_id));
+        $result = self::$db->fetchOne('SELECT start FROM terms WHERE termid=$1', array($term_id));
         /**
          * An extra hour is added here due to some issues with timezones and public.terms - some
          * terms are set to start at 11pm Sunday instead of Midnight Monday. It's annoying because then we convert it back.
@@ -133,7 +133,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     {
         self::wakeup();
 
-        return self::$db->fetch_all('SELECT genre_id AS value, name AS text FROM schedule.genre ORDER BY name ASC');
+        return self::$db->fetchAll('SELECT genre_id AS value, name AS text FROM schedule.genre ORDER BY name ASC');
     }
 
     /**
@@ -143,7 +143,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     {
         self::wakeup();
 
-        return self::$db->fetch_all(
+        return self::$db->fetchAll(
             'SELECT credit_type_id AS value, name AS text
             FROM people.credit_type ORDER BY name ASC'
         );
@@ -161,7 +161,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     {
         self::initDB();
 
-        return self::$db->fetch_all(
+        return self::$db->fetchAll(
             'SELECT schedule.show.show_id, metadata_value AS title
             FROM schedule.show, schedule.show_metadata
             WHERE schedule.show.show_id = schedule.show_metadata.show_id
@@ -190,7 +190,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
      */
     public static function getActiveApplicationTerm()
     {
-        $return = self::$db->fetch_column(
+        $return = self::$db->fetchColumn(
             'SELECT termid FROM terms
             WHERE start <= $1 AND finish >= NOW() LIMIT 1',
             array(CoreUtils::getTimestamp(strtotime('+28 Days')))
@@ -248,7 +248,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
         $start = CoreUtils::getTimestamp($start);
         $end = CoreUtils::getTimestamp($end-1);
 
-        return self::$db->fetch_one(
+        return self::$db->fetchOne(
             'SELECT show_season_timeslot_id,
             show_season_id, start_time, start_time+duration AS end_time,
             \'$1\' AS requested_start, \'$2\' AS requested_end

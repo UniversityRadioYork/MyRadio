@@ -46,7 +46,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
     public static function attendingDemo($demoid)
     {
         if (MyRadio_User::getInstance()->hasAuth(AUTH_ADDDEMOS)) {
-            $r = self::$db->fetch_column('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', array(self::getDemoTime($demoid)));
+            $r = self::$db->fetchColumn('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', array(self::getDemoTime($demoid)));
             if (empty($r)) {
                 return 'Nobody';
             }
@@ -67,7 +67,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
 
     public static function attendingDemoCount($demoid)
     {
-        return self::$db->num_rows(self::$db->query('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', array(self::getDemoTime($demoid))));
+        return self::$db->numRows(self::$db->query('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', array(self::getDemoTime($demoid))));
     }
 
     /**
@@ -76,7 +76,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
     public static function listDemos()
     {
         self::initDB();
-        $result = self::$db->fetch_all(
+        $result = self::$db->fetchAll(
             'SELECT show_season_timeslot_id, start_time, memberid FROM schedule.show_season_timeslot
             WHERE show_season_id = 0 AND start_time > NOW() ORDER BY start_time ASC'
         );
@@ -107,7 +107,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
         }
 
         //Check they aren't already attending one in the next week
-        if (self::$db->num_rows(
+        if (self::$db->numRows(
             self::$db->query(
                 'SELECT creditid FROM schedule.show_credit WHERE show_id=0 AND creditid=$1
                 AND effective_from >= NOW() AND effective_from <= (NOW() + INTERVAL \'1 week\') LIMIT 1',
@@ -146,7 +146,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
     public static function getDemoTime($demoid)
     {
         self::initDB();
-        $r = self::$db->fetch_column('SELECT start_time FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', array($demoid));
+        $r = self::$db->fetchColumn('SELECT start_time FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', array($demoid));
 
         return $r[0];
     }
@@ -154,7 +154,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
     public static function getDemoer($demoid)
     {
         self::initDB();
-        $r = self::$db->fetch_column('SELECT memberid FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', array($demoid));
+        $r = self::$db->fetchColumn('SELECT memberid FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', array($demoid));
 
         return MyRadio_User::getInstance($r[0]);
     }

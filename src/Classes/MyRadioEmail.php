@@ -44,7 +44,7 @@ class MyRadioEmail extends ServiceAPI
     {
         self::$db = Database::getInstance();
 
-        $info = self::$db->fetch_one('SELECT * FROM mail.email WHERE email_id=$1', array($eid));
+        $info = self::$db->fetchOne('SELECT * FROM mail.email WHERE email_id=$1', array($eid));
 
         if (empty($info)) {
             throw new MyRadioException('Email ' . $eid . ' does not exist!');
@@ -56,9 +56,9 @@ class MyRadioEmail extends ServiceAPI
         $this->timestamp = strtotime($info['timestamp']);
         $this->email_id = $eid;
 
-        $this->r_users = self::$db->fetch_column('SELECT memberid FROM mail.email_recipient_member WHERE email_id=$1', array($eid));
+        $this->r_users = self::$db->fetchColumn('SELECT memberid FROM mail.email_recipient_member WHERE email_id=$1', array($eid));
 
-        $this->r_lists = self::$db->fetch_column('SELECT listid FROM mail.email_recipient_list WHERE email_id=$1', array($eid));
+        $this->r_lists = self::$db->fetchColumn('SELECT listid FROM mail.email_recipient_list WHERE email_id=$1', array($eid));
 
         /**
          * Check if the body needs to be split into multipart.
@@ -118,7 +118,7 @@ class MyRadioEmail extends ServiceAPI
             $params[] = $from->getID();
         }
 
-        $eid = self::$db->fetch_column(
+        $eid = self::$db->fetchColumn(
             'INSERT INTO mail.email (subject, body'
             . ($timestamp !== null ? ', timestamp' : '') . ($from !== null ? ', sender' : '') . ')
             VALUES ($1, $2' . (($timestamp !== null or $from !== null) ? ', $3' : '')
@@ -237,7 +237,7 @@ class MyRadioEmail extends ServiceAPI
 
     public function getSentToUser(MyRadio_User $user)
     {
-        $r = self::$db->fetch_column('SELECT sent FROM mail.email_recipient_member WHERE email_id=$1 AND memberid=$2 LIMIT 1', array($this->email_id, $user->getID()));
+        $r = self::$db->fetchColumn('SELECT sent FROM mail.email_recipient_member WHERE email_id=$1 AND memberid=$2 LIMIT 1', array($this->email_id, $user->getID()));
 
         return $r[0] === 't';
     }
@@ -250,7 +250,7 @@ class MyRadioEmail extends ServiceAPI
 
     public function getSentToList(MyRadio_List $list)
     {
-        $r = self::$db->fetch_column('SELECT sent FROM mail.email_recipient_list WHERE email_id=$1 AND listid=$2 LIMIT 1', array($this->email_id, $list->getID()));
+        $r = self::$db->fetchColumn('SELECT sent FROM mail.email_recipient_list WHERE email_id=$1 AND listid=$2 LIMIT 1', array($this->email_id, $list->getID()));
 
         return $r[0] === 't';
     }

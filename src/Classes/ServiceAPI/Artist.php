@@ -38,7 +38,7 @@ class Artist extends ServiceAPI
     {
         $title = trim($title);
 
-        return self::$db->fetch_all(
+        return self::$db->fetchAll(
             'SELECT DISTINCT rec_track.artist AS title, 0 AS artistid
             FROM rec_track WHERE rec_track.artist ILIKE \'%\' || $1 || \'%\' LIMIT $2',
             array($title, $limit)
@@ -124,7 +124,7 @@ class Artist extends ServiceAPI
         }
 
         //Do the bulk of the sorting with SQL
-        $result = self::$db->fetch_all(
+        $result = self::$db->fetchAll(
             'SELECT DISTINCT rec_track.artist
             FROM rec_track
             INNER JOIN rec_record ON ( rec_track.recordid = rec_record.recordid )

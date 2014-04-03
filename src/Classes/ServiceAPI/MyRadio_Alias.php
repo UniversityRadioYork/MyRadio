@@ -42,7 +42,7 @@ class MyRadio_Alias extends ServiceAPI
 
     protected function __construct($id)
     {
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT source, '
             . '(SELECT array(SELECT destination FROM mail.alias_text '
             . '  WHERE alias_id=$1)) AS dtext, '
@@ -98,7 +98,7 @@ class MyRadio_Alias extends ServiceAPI
     public static function getAllAliases()
     {
         return self::resultSetToObjArray(
-            self::$db->fetch_column(
+            self::$db->fetchColumn(
                 'SELECT alias_id FROM mail.alias'
             )
         );

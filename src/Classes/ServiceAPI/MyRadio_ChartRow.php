@@ -52,7 +52,7 @@ class MyRadio_ChartRow extends ServiceAPI
         $this->chart_row_id = $chart_row_id;
         $this->chart_release = $chart_release;
 
-        $chart_row_data = self::$db->fetch_one(
+        $chart_row_data = self::$db->fetchOne(
             'SELECT *
             FROM music.chart_row
             WHERE chart_row_id = $1;',
