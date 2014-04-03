@@ -328,15 +328,14 @@
             dataType: 'json',
             success: function(output){
                 console.log(output);
-                if(output.return == '1') {
+                if (output.return == '1') {
                     $("#tracklist-insert-check").dialog("open");
                     $("#warntitle").text(tname);
                     $("#warnartist").text(artist);
                 }
-                if(output.return == '2') {
-
+                if (output.return == '2') {
                 }
-                if(output.return == '0') {
+                if (output.return == '0') {
                     submitTrackCancel();
                 }
             }

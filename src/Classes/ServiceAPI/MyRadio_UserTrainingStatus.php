@@ -201,13 +201,12 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         }
 
         //Check whether the target user has the prerequisites
-        if ($status->getDepends() !== null
-            and in_array(
-                $status->getDepends()->getID(),
-                array_map(
-                    function ($x) {return $x->getID();},
-                    $awarded_to->getAllTraining(true)
-                )
+        if ($status->getDepends() !== null and in_array(
+            array_map(
+                function ($x) {return $x->getID();},
+                $awarded_to->getAllTraining(true)
+            ),
+            $status->getDepends()->getID()
         ) === false) {
             throw new MyRadioException($awarded_to .' does not have the prerequisite training to be awarded '.$status);
         }
