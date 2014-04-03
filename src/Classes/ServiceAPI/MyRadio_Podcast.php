@@ -187,8 +187,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         self::initDB();
 
         return self::resultSetToObjArray(self::$db->fetchColumn(
-            'SELECT podcast_id
-            FROM uryplayer.podcast WHERE submitted IS NULL'
+            'SELECT podcast_id FROM uryplayer.podcast WHERE submitted IS NULL'
         ));
     }
 
@@ -198,13 +197,13 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'title',
             MyRadioFormField::TYPE_TEXT,
             ['label' => 'Title']
-        )
+        );
 
         $descField = new MyRadioFormField(
             'description',
             MyRadioFormField::TYPE_BLOCKTEXT,
             ['label' => 'Description']
-        )
+        );
 
         $tagsField = new MyRadioFormField(
             'tags',
@@ -214,7 +213,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 'explanation' => 'A set of keywords to describe your podcast '
                 . 'generally, seperated with spaces.'
             ]
-        )
+        );
 
         $form = (new MyRadioForm(
             'createpodcastfrm',

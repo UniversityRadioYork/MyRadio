@@ -118,13 +118,13 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
         do {
             $token = CoreUtils::randomString(64);
         } while ($db->numRows(
-            $db->query('SELECT * FROM myury.password_reset_token ' . 'WHERE token=$1', [$token])) > 0
+            $db->query('SELECT * FROM myury.password_reset_token WHERE token=$1', [$token])) > 0
             );
 
         //Add the reset token to the database (expires in 48h)
         $expires = CoreUtils::getTimestamp(time() + 86400 * 2);
         $db->query(
-            'INSERT INTO myury.password_reset_token ' . '(token, memberid, expires) VALUES ($1, $2, $3)',
+            'INSERT INTO myury.password_reset_token (token, memberid, expires) VALUES ($1, $2, $3)',
             [$token, $result->getID(), $expires]
         );
 
