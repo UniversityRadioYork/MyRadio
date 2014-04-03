@@ -108,7 +108,7 @@ class MyRadio_Quote extends ServiceAPI
      */
     protected function __construct($quote_id)
     {
-        $quote_data = self::$db->fetch_one(
+        $quote_data = self::$db->fetchOne(
             self::GET_INSTANCE_SQL,
             [$quote_id]
         );
@@ -156,7 +156,7 @@ class MyRadio_Quote extends ServiceAPI
      */
     public function getAll()
     {
-        $quote_ids = self::$db->fetch_column(self::GET_ALL_SQL, []);
+        $quote_ids = self::$db->fetchColumn(self::GET_ALL_SQL, []);
 
         return array_map('MyRadio_Quote::getInstance', $quote_ids);
     }

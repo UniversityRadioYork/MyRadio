@@ -318,7 +318,8 @@ class MyRadioForm
     /**
      * Get the field name prefix
      */
-    private function getPrefix() {
+    private function getPrefix()
+    {
         return $this->name . '-';
     }
 
@@ -332,10 +333,11 @@ class MyRadioForm
         //If there was a captcha, verify it
         if ($this->captcha) {
             require_once 'Classes/vendor/recaptchalib.php';
-            if (!recaptcha_check_answer(Config::$recaptcha_private_key,
-                                    $_SERVER['REMOTE_ADDR'],
-                                    $_REQUEST['recaptcha_challenge_field'],
-                                    $_REQUEST['recaptcha_response_field']
+            if (!recaptcha_check_answer(
+                    Config::$recaptcha_private_key,
+                    $_SERVER['REMOTE_ADDR'],
+                    $_REQUEST['recaptcha_challenge_field'],
+                    $_REQUEST['recaptcha_response_field']
                     )->is_valid) {
                 return false;
             }

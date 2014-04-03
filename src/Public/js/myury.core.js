@@ -1,10 +1,11 @@
 window.myury = {
     makeURL: function(module, action, params) {
         qstring = (params === undefined) ? '' : $.param(params);
-        if (mConfig.rewrite_url)
+        if (mConfig.rewrite_url) {
             return mConfig.base_url + module + '/' + action + '/' + (qstring === '' ? '' : '?' + qstring);
-        else
+        } else {
             return mConfig.base_url + '?module=' + module + '&action=' + action + (qstring === '' ? '' : '&' + qstring);
+        }
     },
     errorReport: function(myradio_errors, e, xhr, settings) {
         console.log(myradio_errors);

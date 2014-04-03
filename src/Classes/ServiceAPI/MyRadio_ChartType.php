@@ -44,7 +44,7 @@ class MyRadio_ChartType extends MyRadio_Type
     {
         $this->chart_type_id = $chart_type_id;
 
-        $chart_type_data = self::$db->fetch_one(
+        $chart_type_data = self::$db->fetchOne(
             'SELECT *
              FROM music.chart_type
              WHERE chart_type_id = $1;',
@@ -56,9 +56,9 @@ class MyRadio_ChartType extends MyRadio_Type
             return;
         }
 
-        parent::construct_type($chart_type_data['name'], $chart_type_data['description']);
+        parent::constructType($chart_type_data['name'], $chart_type_data['description']);
 
-        $this->chart_release_ids = self::$db->fetch_column(
+        $this->chart_release_ids = self::$db->fetchColumn(
             'SELECT chart_release_id
              FROM music.chart_release
              WHERE chart_type_id = $1
@@ -99,7 +99,7 @@ class MyRadio_ChartType extends MyRadio_Type
      */
     public function getAll()
     {
-        $chart_type_ids = self::$db->fetch_column(
+        $chart_type_ids = self::$db->fetchColumn(
             'SELECT chart_type_id
              FROM music.chart_type
              ORDER BY chart_type_id ASC;',

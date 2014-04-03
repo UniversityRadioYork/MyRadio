@@ -110,7 +110,7 @@ class MyRadioMenu
      * @param array $section The section configuration array.
      * @return array The array of sections.
      */
-    function getItemsFromConfig(array $config, array $section)
+    private function getItemsFromConfig(array $config, array $section)
     {
         $items = [];
 
@@ -147,7 +147,7 @@ class MyRadioMenu
     {
         $db = Database::getInstance();
 
-        $items = $db->fetch_all(
+        $items = $db->fetchAll(
             'SELECT menumoduleid, title, url, description FROM myury.menu_module
             WHERE moduleid=$1 ORDER BY title ASC',
             array($moduleid)

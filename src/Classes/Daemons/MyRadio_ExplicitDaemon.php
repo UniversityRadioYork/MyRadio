@@ -48,10 +48,8 @@ class MyRadio_ExplicitDaemon extends MyRadio_Daemon
                  * explicit (explicit lyrics, possibly explicit album cover), cleaned
                  * (explicit lyrics "bleeped out"), notExplicit (no explicit lyrics)
                  */
-                if (
-                    $data['results'][$i]['trackName'] == $track->getTitle()
-                    && $data['results'][$i]['artistName'] == $track->getArtist()
-                ) {
+                if ($data['results'][$i]['trackName'] == $track->getTitle()
+                    && $data['results'][$i]['artistName'] == $track->getArtist()) {
 
                     $clean = $data['results'][$i]['trackExplicitness'] == 'explicit'
                             ? 'n' : 'y';

@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
                  * Add in permissions granted by the remote IP
                  * Contains or equals: >>=
                  */
-                $ip_auth = Database::getInstance()->fetch_column(
+                $ip_auth = Database::getInstance()->fetchColumn(
                     'SELECT typeid FROM auth_subnet WHERE subnet >>= $1',
                     [$_SERVER['REMOTE_ADDR']]
                 );

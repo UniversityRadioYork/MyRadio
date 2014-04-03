@@ -68,7 +68,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     {
         $this->podcast_id = (int) $podcast_id;
 
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT file, memberid, approvedid, submitted, show_id, (
                 SELECT array(
                     SELECT metadata_key_id FROM uryplayer.podcast_metadata
@@ -171,7 +171,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             $user = MyRadio_User::getInstance();
         }
 
-        return self::$db->fetch_column(
+        return self::$db->fetchColumn(
             'SELECT podcast_id FROM uryplayer.podcast
             WHERE memberid=$1 OR podcast_id IN (
                 SELECT podcast_id FROM uryplayer.podcast_credit
@@ -186,7 +186,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     {
         self::initDB();
 
-        return self::resultSetToObjArray(self::$db->fetch_column(
+        return self::resultSetToObjArray(self::$db->fetchColumn(
             'SELECT podcast_id
             FROM uryplayer.podcast WHERE submitted IS NULL'
         ));
@@ -194,27 +194,19 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     public static function getCreateForm()
     {
-        $form = (new MyRadioForm(
-            'createpodcastfrm',
-            'Podcast',
-            'doCreatePodcast',
-            ['title' => 'Create Podcast']
-        )
-        )->addField(new MyRadioFormField(
+        $titleField = new MyRadioFormField(
             'title',
             MyRadioFormField::TYPE_TEXT,
-            [
-                'label' => 'Title'
-            ]
+            ['label' => 'Title']
         )
-        )->addField(new MyRadioFormField(
+
+        $descField = new MyRadioFormField(
             'description',
             MyRadioFormField::TYPE_BLOCKTEXT,
-            [
-                'label' => 'Description'
-            ]
+            ['label' => 'Description']
         )
-        )->addField(new MyRadioFormField(
+
+        $tagsField = new MyRadioFormField(
             'tags',
             MyRadioFormField::TYPE_TEXT,
             [
@@ -223,7 +215,14 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 . 'generally, seperated with spaces.'
             ]
         )
-        );
+
+        $form = (new MyRadioForm(
+            'createpodcastfrm',
+            'Podcast',
+            'doCreatePodcast',
+            ['title' => 'Create Podcast']
+        )
+        )->addField($titleField)->addField($descField)->addField($tagsField);
 
         //Get User's shows, or all shows if they have AUTH_PODCASTANYSHOW
         //Format them into a select field format.
@@ -330,7 +329,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     ) {
 
         //Get an ID for the new Podcast
-        $id = (int) self::$db->fetch_column(
+        $id = (int) self::$db->fetchColumn(
             'INSERT INTO uryplayer.podcast '
             . '(memberid, approvedid, submitted) VALUES ($1, $1, NULL) '
             . 'RETURNING podcast_id',
@@ -517,7 +516,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     {
         // TODO: Plumb this into the metadata system.
         //       At time of writing, MyRadio's metadata system doesn't do images.
-        return self::$db->fetch_one(
+        return self::$db->fetchOne(
             'SELECT metadata_value AS url
             FROM uryplayer.podcast_image_metadata
             WHERE podcast_id = $1

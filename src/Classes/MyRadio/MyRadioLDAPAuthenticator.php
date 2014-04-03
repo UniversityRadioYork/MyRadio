@@ -71,7 +71,8 @@ class MyRadioLDAPAuthenticator implements MyRadioAuthenticator
         return Config::$auth_ldap_friendly_name;
     }
 
-    public function getDescription() {
+    public function getDescription()
+    {
         return 'By choosing this option, we will always use your '
                 . $this->getFriendlyName().' username and password to log you in.'
                 . ' Whenever you change your '.$this->getFriendlyName()
@@ -79,7 +80,8 @@ class MyRadioLDAPAuthenticator implements MyRadioAuthenticator
                 . ' password will also change.';
     }
 
-    public function getResetFormMessage() {
+    public function getResetFormMessage()
+    {
         return '<div class="ui-state-highlight">Have you tried using your '
                . $this->getFriendlyName()
                . ' username and password? <a href="'

@@ -178,7 +178,7 @@ class MyRadio_User extends ServiceAPI
     {
         $this->memberid = (int) $memberid;
         //Get the base data
-        $data = self::$db->fetch_one(
+        $data = self::$db->fetchOne(
             'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college,
             phone, email, receive_email, local_name, local_alias, eduroam,
             account_locked, last_login, joined, profile_photo, bio,
@@ -209,7 +209,7 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Get the user's permissions
-        $this->permissions = self::$db->fetch_column(
+        $this->permissions = self::$db->fetchColumn(
             'SELECT lookupid FROM auth_officer
             WHERE officerid IN (SELECT officerid FROM member_officer
             WHERE memberid=$1
@@ -222,7 +222,7 @@ class MyRadio_User extends ServiceAPI
             array($memberid)
         );
 
-        $this->payment = self::$db->fetch_all(
+        $this->payment = self::$db->fetchAll(
             'SELECT year, paid
             FROM member_year
             WHERE memberid = $1
@@ -231,7 +231,7 @@ class MyRadio_User extends ServiceAPI
         );
 
         // Get the User's officerships
-        $this->officerships = self::$db->fetch_all(
+        $this->officerships = self::$db->fetchAll(
             'SELECT officerid,officer_name,teamid,from_date,till_date
             FROM member_officer
             INNER JOIN officer
@@ -243,7 +243,7 @@ class MyRadio_User extends ServiceAPI
         );
 
         // Get Training info all into array
-        $this->training = self::$db->fetch_column(
+        $this->training = self::$db->fetchColumn(
             'SELECT memberpresenterstatusid
             FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
             WHERE memberid=$1 ORDER BY ordering, completeddate ASC',
@@ -635,7 +635,7 @@ class MyRadio_User extends ServiceAPI
      */
     public function getShows($show_type_id = 1)
     {
-        $this->shows = self::$db->fetch_column(
+        $this->shows = self::$db->fetchColumn(
             'SELECT show_id FROM schedule.show
             WHERE memberid=$1 OR show_id IN
             (SELECT show_id FROM schedule.show_credit
@@ -691,14 +691,14 @@ class MyRadio_User extends ServiceAPI
         $name = trim($name);
         $names = explode(' ', $name);
         if (isset($names[1])) {
-            return self::$db->fetch_all(
+            return self::$db->fetchAll(
                 'SELECT memberid, fname, sname FROM member
                 WHERE fname ILIKE $1 || \'%\' AND sname ILIKE $2 || \'%\'
                 ORDER BY sname, fname LIMIT $3',
                 array($names[0], $names[1], $limit)
             );
         } else {
-            return self::$db->fetch_all(
+            return self::$db->fetchAll(
                 'SELECT memberid, fname, sname FROM member
                 WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $1 || \'%\'
                 ORDER BY sname, fname LIMIT $2',
@@ -800,7 +800,7 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Get their officership history, show history and awards
-        /* $result = self::$db->fetch_all(
+        /* $result = self::$db->fetchAll(
           SELECT \'won an award: \' || name AS message, awarded AS timestamp,
           \'photo_award_get\' AS photo
           FROM myury.award_categories, myury.award_member
@@ -1176,7 +1176,7 @@ class MyRadio_User extends ServiceAPI
         //Doing this instead of ILIKE halves the query time
         $email = strtolower($email);
         self::wakeup();
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT memberid FROM public.member WHERE email LIKE $1 OR eduroam LIKE $1
             OR local_name LIKE $2 OR local_alias LIKE $2 OR eduroam LIKE $2',
             array($email, explode('@', $email)[0])
@@ -1200,7 +1200,7 @@ class MyRadio_User extends ServiceAPI
         self::wakeup();
         trigger_error('Use of deprecated method User::findAllTrained.', E_USER_WARNING);
 
-        $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=1');
+        $trained = self::$db->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=1');
         $members = array();
         foreach ($trained as $mid) {
             $member = MyRadio_User::getInstance($mid);
@@ -1223,7 +1223,7 @@ class MyRadio_User extends ServiceAPI
         self::wakeup();
         trigger_error('Use of deprecated method User::findAllDemoed.', E_USER_WARNING);
 
-        $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=2');
+        $trained = self::$db->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=2');
         $members = array();
         foreach ($trained as $mid) {
             $member = MyRadio_User::getInstance($mid);
@@ -1246,7 +1246,7 @@ class MyRadio_User extends ServiceAPI
         self::wakeup();
         trigger_error('Use of deprecated method User::findAllTrainers.', E_USER_WARNING);
 
-        $trained = self::$db->fetch_column('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=3');
+        $trained = self::$db->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=3');
         $members = array();
         foreach ($trained as $mid) {
             $member = MyRadio_User::getInstance($mid);
@@ -1264,7 +1264,7 @@ class MyRadio_User extends ServiceAPI
      */
     public static function getAllAliases()
     {
-        $users = self::resultSetToObjArray(self::$db->fetch_column(
+        $users = self::resultSetToObjArray(self::$db->fetchColumn(
             'SELECT memberid FROM public.member WHERE local_alias IS NOT NULL'
         ));
 
@@ -1407,7 +1407,7 @@ class MyRadio_User extends ServiceAPI
 
     public static function getColleges()
     {
-        return self::$db->fetch_all('SELECT collegeid AS value, descr AS text FROM public.l_college');
+        return self::$db->fetchAll('SELECT collegeid AS value, descr AS text FROM public.l_college');
     }
 
     /**
@@ -1487,7 +1487,7 @@ class MyRadio_User extends ServiceAPI
         $plain_pass = CoreUtils::newPassword();
 
         //Actually create the member!
-        $r = self::$db->fetch_column(
+        $r = self::$db->fetchColumn(
             'INSERT INTO public.member (fname, sname, sex,
             college, phone, email, receive_email, eduroam, require_password_change)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid',

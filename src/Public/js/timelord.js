@@ -42,8 +42,9 @@ window.timelord = {
      */
     pad: function(input) {
         input = input.toString();
-        if (input.length === 1)
+        if (input.length === 1) {
             input = '0' + input;
+        }
         return input;
     },
     /**
@@ -52,19 +53,21 @@ window.timelord = {
      * @returns {String}
      */
     getDateSuffix: function(day) {
-        if (day > 10 && day < 14)
+        if (day > 10 && day < 14) {
             return 'th';
+        }
         day = day.toString();
         day = day.split("");
         var last = day.length - 1;
-        if (day[last] > 3 || day[last] === '0')
+        if (day[last] > 3 || day[last] === '0') {
             return 'th';
-        if (day[last] === '1')
+        } else if (day[last] === '1') {
             return 'st';
-        if (day[last] === '2')
+        } else if (day[last] === '2') {
             return 'nd';
-        if (day[last] === '3')
+        } else if (day[last] === '3') {
             return 'rd';
+        }
     },
     /**
      * Update the current studio display

@@ -175,7 +175,7 @@ class CoreUtils
     public static function getAcademicYear()
     {
         if (empty(CoreUtils::$academicYear)) {
-            $term = Database::getInstance()->fetch_column(
+            $term = Database::getInstance()->fetchColumn(
                 'SELECT start FROM public.terms WHERE descr=\'Autumn\'
                 AND EXTRACT(year FROM start) = $1',
                 array(date('Y'))
@@ -225,7 +225,7 @@ class CoreUtils
     public static function makeURL($module, $action = null, $params = array())
     {
         if (empty(self::$custom_uris)) {
-            $result = Database::getInstance()->fetch_all('SELECT actionid, custom_uri FROM myury.actions');
+            $result = Database::getInstance()->fetchAll('SELECT actionid, custom_uri FROM myury.actions');
 
             foreach ($result as $row) {
                 self::$custom_uris[$row['actionid']] = $row['custom_uri'];
@@ -282,7 +282,7 @@ class CoreUtils
         }
 
         $db = Database::getInstance();
-        $result = $db->fetch_all('SELECT typeid, phpconstant, descr FROM l_action');
+        $result = $db->fetchAll('SELECT typeid, phpconstant, descr FROM l_action');
         foreach ($result as $row) {
             define($row['phpconstant'], $row['typeid']);
             self::$typeid_descr[$row['typeid']] = $row['descr'];
@@ -300,7 +300,7 @@ class CoreUtils
     public static function getAuthUsage($typeid)
     {
         $db = Database::getInstance();
-        $actions = $db->fetch_all(
+        $actions = $db->fetchAll(
             'SELECT modules.name AS module, actions.name AS action
             FROM myury.act_permission
             LEFT JOIN myury.modules USING (moduleid)
@@ -309,7 +309,7 @@ class CoreUtils
             [$typeid]
         );
 
-        $apis = $db->fetch_all(
+        $apis = $db->fetchAll(
             'SELECT api_name, method_name
             FROM myury.api_method_auth
             LEFT JOIN myury.api_class_map USING (class_name)
@@ -385,7 +385,7 @@ class CoreUtils
         self::setUpAuth();
         $db = Database::getInstance();
 
-        $result = $db->fetch_column(
+        $result = $db->fetchColumn(
             'SELECT typeid FROM myury.act_permission
             LEFT OUTER JOIN myury.modules ON act_permission.moduleid=modules.moduleid
             LEFT OUTER JOIN myury.actions ON act_permission.actionid=actions.actionid
@@ -443,7 +443,7 @@ class CoreUtils
      */
     public static function getAllActionPermissions()
     {
-        return Database::getInstance()->fetch_all(
+        return Database::getInstance()->fetchAll(
             'SELECT actpermissionid,
             myury.services.name AS service,
             myury.modules.name AS module,
@@ -491,7 +491,7 @@ class CoreUtils
      */
     public static function getAllPermissions()
     {
-        return Database::getInstance()->fetch_all(
+        return Database::getInstance()->fetchAll(
             'SELECT typeid AS value, descr AS text FROM public.l_action
             ORDER BY descr ASC'
         );
@@ -506,7 +506,7 @@ class CoreUtils
      */
     public static function getServices()
     {
-        return Database::getInstance()->fetch_all(
+        return Database::getInstance()->fetchAll(
             'SELECT serviceid AS value, name AS text, enabled
             FROM myury.services ORDER BY name ASC'
         );
@@ -518,7 +518,7 @@ class CoreUtils
      * @param String $message The HTML to display for this user
      * @assert (7449, 'Test') == null
      */
-    public static function debug_for($userid, $message)
+    public static function debugFor($userid, $message)
     {
         if ($_SESSION['memberid'] == $userid) {
             echo '<p>' . $message . '</p>';
@@ -537,7 +537,7 @@ class CoreUtils
     public static function getModuleId($module)
     {
         if (empty(self::$module_ids)) {
-            $result = Database::getInstance()->fetch_all('SELECT name, moduleid FROM myury.modules');
+            $result = Database::getInstance()->fetchAll('SELECT name, moduleid FROM myury.modules');
             foreach ($result as $row) {
                 self::$module_ids[$row['name']] = $row['moduleid'];
             }
@@ -545,7 +545,7 @@ class CoreUtils
 
         if (empty(self::$module_ids[$module])) {
             //The module needs creating
-            $result = Database::getInstance()->fetch_column(
+            $result = Database::getInstance()->fetchColumn(
                 'INSERT INTO myury.modules (serviceid, name)
                 VALUES ($1, $2) RETURNING moduleid',
                 array(Config::$service_id, $module)
@@ -565,7 +565,7 @@ class CoreUtils
     public static function getActionId($module, $action)
     {
         if (empty(self::$action_ids)) {
-            $result = Database::getInstance()->fetch_all('SELECT name, moduleid, actionid FROM myury.actions');
+            $result = Database::getInstance()->fetchAll('SELECT name, moduleid, actionid FROM myury.actions');
             foreach ($result as $row) {
                 self::$action_ids[$row['name'] . '-' . $row['moduleid']] = $row['actionid'];
             }
@@ -573,7 +573,7 @@ class CoreUtils
 
         if (empty(self::$action_ids[$action . '-' . $module])) {
             //The action needs creating
-            $result = Database::getInstance()->fetch_column(
+            $result = Database::getInstance()->fetchColumn(
                 'INSERT INTO myury.actions (moduleid, name)
                 VALUES ($1, $2) RETURNING actionid',
                 array($module, $action)
@@ -634,7 +634,7 @@ class CoreUtils
         if (!isset(self::$svc_version_cache[$key])) {
             $db = Database::getInstance();
 
-            $result = $db->fetch_one(
+            $result = $db->fetchOne(
                 'SELECT version, path, proxy_static
                 FROM myury.services_versions
                 WHERE serviceid IN (
@@ -672,7 +672,7 @@ class CoreUtils
     {
         $db = Database::getInstance();
 
-        $r = $db->fetch_one(
+        $r = $db->fetchOne(
             'SELECT version, path, proxy_static FROM myury.services_versions WHERE serviceid=$1
             AND is_default=true LIMIT 1',
             array(Config::$service_id)
@@ -690,7 +690,7 @@ class CoreUtils
     {
         $db = Database::getInstance();
 
-        return $db->fetch_all('SELECT version, path, proxy_static FROM myury.services_versions WHERE serviceid=$1', array(Config::$service_id));
+        return $db->fetchAll('SELECT version, path, proxy_static FROM myury.services_versions WHERE serviceid=$1', array(Config::$service_id));
     }
 
     /**
@@ -729,6 +729,7 @@ class CoreUtils
             switch ($val["type"]) {
                 case "open":
                     $opened[$val["level"]] = 0;
+                    /* Fall through */
                 case "complete":
                     $index = "";
                     for ($i = 1; $i < ($val["level"]); $i++) {
@@ -774,7 +775,7 @@ class CoreUtils
      * Weighted should be an integer - how many times to put the item into the bag
      * @param Array $data 2D of Format [['item' => mixed, 'weight' => n], ...]
      */
-    public static function biased_random($data)
+    public static function biasedRandom($data)
     {
         $bag = array();
 
@@ -848,7 +849,7 @@ class CoreUtils
         if ($since === null) {
             $since = time() - 86400;
         }
-        $result = Database::getInstance()->fetch_all(
+        $result = Database::getInstance()->fetchAll(
             'SELECT
             round(extract(\'epoch\' from timestamp) / 600) * 600 as timestamp,
             SUM(error_count)/COUNT(error_count) AS errors, SUM(exception_count)/COUNT(exception_count) AS exceptions,
@@ -929,7 +930,8 @@ class CoreUtils
      *
      * @return String var_dump output
      */
-    public static function getRequestInfo() {
+    public static function getRequestInfo()
+    {
         ob_start();
         if (isset($_REQUEST['redact'])) {
             $info = array();
@@ -952,7 +954,8 @@ class CoreUtils
      * @param int $pwdLen The length of the string to generate
      * @return String a random string of length $pwdLen
      */
-    public static function randomString($pwdLen = 8) {
+    public static function randomString($pwdLen = 8)
+    {
         $result = '';
         $pwdSource = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         srand((double) microtime() * 1000000);

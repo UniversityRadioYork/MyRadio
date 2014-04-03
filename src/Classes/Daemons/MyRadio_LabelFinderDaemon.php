@@ -29,7 +29,7 @@ class MyRadio_LabelFinderDaemon extends MyRadio_Daemon
     public static function run()
     {
         //Get 5 albums without labels
-        $albums = Database::getInstance()->fetch_all(
+        $albums = Database::getInstance()->fetchAll(
             'SELECT recordid, title, artist FROM public.rec_record
             WHERE recordlabel=\'\' ORDER BY RANDOM() LIMIT 5'
         );

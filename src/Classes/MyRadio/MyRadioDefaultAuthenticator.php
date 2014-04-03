@@ -52,7 +52,7 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
         if (!$user) {
             return false;
         } else {
-            $r = $this->fetch_column(
+            $r = $this->fetchColumn(
                 'SELECT password FROM '
                 . 'public.member_pass WHERE memberid=$1',
                 [$user->getID()]
@@ -117,22 +117,27 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
         //Create a reset token
         do {
             $token = CoreUtils::randomString(64);
-        } while ($db->num_rows(
-                $db->query('SELECT * FROM myury.password_reset_token '
-                        . 'WHERE token=$1', [$token])) > 0);
+        } while ($db->numRows(
+            $db->query('SELECT * FROM myury.password_reset_token ' . 'WHERE token=$1', [$token])) > 0
+            );
 
         //Add the reset token to the database (expires in 48h)
         $expires = CoreUtils::getTimestamp(time() + 86400 * 2);
-        $db->query('INSERT INTO myury.password_reset_token '
-                . '(token, memberid, expires) VALUES ($1, $2, $3)', [$token, $result->getID(), $expires]);
+        $db->query(
+            'INSERT INTO myury.password_reset_token ' . '(token, memberid, expires) VALUES ($1, $2, $3)',
+            [$token, $result->getID(), $expires]
+        );
 
         //Email the user
-        MyRadioEmail::sendEmailToUser($result, 'Password reset', 'Hello,'
-                . '<p>A password reset has been requested for the ' . Config::$short_name
-                . ' account associated with this email address. If you did not request'
-                . ' this email, please ignore it.</p>'
-                . '<p><a href="' . CoreUtils::makeURL('MyRadio', 'pwChange', ['token' => $token])
-                . '">Click here to finish resetting your password.</a></p>'
+        MyRadioEmail::sendEmailToUser(
+            $result,
+            'Password reset',
+            'Hello,'
+            . '<p>A password reset has been requested for the ' . Config::$short_name
+            . ' account associated with this email address. If you did not request'
+            . ' this email, please ignore it.</p>'
+            . '<p><a href="' . CoreUtils::makeURL('MyRadio', 'pwChange', ['token' => $token])
+            . '">Click here to finish resetting your password.</a></p>'
         );
 
         return true;
@@ -164,7 +169,8 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
         return Config::$short_name . '-only';
     }
 
-    public function getDescription() {
+    public function getDescription()
+    {
         return 'By choosing this option, we will always use your unique '
         . $this->getFriendlyName()
         . ' username and password to log you in. '
@@ -183,22 +189,28 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
      * @param User $user
      * @param String $password
      */
-    public function setPassword(MyRadio_User $user, $password) {
+    public function setPassword(MyRadio_User $user, $password)
+    {
         $password = $this->encrypt($password);
         //Insert or Update
-        $result = $this->query('UPDATE member_pass SET password=$1 WHERE memberid=$2',
-    [$password, $user->getID()]);
+        $result = $this->query(
+            'UPDATE member_pass SET password=$1 WHERE memberid=$2',
+            [$password, $user->getID()]
+        );
 
         //Set require_password_change to false
         $user->setRequirePasswordChange(false);
 
         if (pg_affected_rows($result) === 0) {
-            $this->query('INSERT INTO member_pass (memberid, password) VALUES ($1, $2)',
-    [$user->getID(), $password]);
+            $this->query(
+                'INSERT INTO member_pass (memberid, password) VALUES ($1, $2)',
+                [$user->getID(), $password]
+            );
         }
     }
 
-    public function getResetFormMessage() {
+    public function getResetFormMessage()
+    {
         //If this is not the only authenticator, mention this will create a
         //MyRadio specific login.
         if (sizeof(Config::$authenticators) > 1) {

@@ -126,7 +126,7 @@ trait MyRadio_MetadataSubject
     {
         if (empty(self::$metadata_keys)) {
             self::initDB();
-            $r = self::$db->fetch_all(
+            $r = self::$db->fetchAll(
                 'SELECT metadata_key_id AS id, name,'
                 . ' allow_multiple AS multiple FROM metadata.metadata_key'
             );

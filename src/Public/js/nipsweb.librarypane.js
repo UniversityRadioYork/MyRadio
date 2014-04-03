@@ -24,8 +24,9 @@ function updateCentralSearch() {
       $('#baps-channel-res').empty();
       for (file in data) {
         var classes = '';
-        if (!data[file].clean)
+        if (!data[file].clean) {
           classes = classes + ' unclean';
+        }
 
         $('#baps-channel-res').append(
                 '<li id="' + data[file].album.recordid + '-' + data[file].trackid +

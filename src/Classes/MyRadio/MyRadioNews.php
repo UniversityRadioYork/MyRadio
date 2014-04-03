@@ -29,7 +29,7 @@ class MyRadioNews
     public static function getFeed($newsfeedid, MyRadio_User $user = null, $revoked = false)
     {
         $data = [];
-        foreach (Database::getInstance()->fetch_column(
+        foreach (Database::getInstance()->fetchColumn(
             'SELECT newsentryid FROM public.news_feed'
             . ' WHERE feedid=$1' .($revoked ? '' : ' AND revoked=false'),
             [$newsfeedid]
@@ -50,7 +50,7 @@ class MyRadioNews
     public static function getLatestNewsItem($newsfeedid, MyRadio_User $user = null)
     {
         return self::getNewsItem(
-            Database::getInstance()->fetch_column(
+            Database::getInstance()->fetchColumn(
                 'SELECT newsentryid FROM public.news_feed
                 WHERE public.news_feed.feedid=$1 AND revoked=false
                 ORDER BY timestamp DESC LIMIT 1',
@@ -64,7 +64,7 @@ class MyRadioNews
     {
         $db = Database::getInstance();
 
-        $news = $db->fetch_one(
+        $news = $db->fetchOne(
             'SELECT newsentryid, fname || \' \' || sname AS author, timestamp AS posted, content
             FROM public.news_feed, public.member
             WHERE newsentryid=$1
@@ -79,7 +79,7 @@ class MyRadioNews
         return array_merge(
             $news,
             array(
-                'seen' => $db->fetch_one(
+                'seen' => $db->fetchOne(
                     'SELECT seen FROM public.member_news_feed
                     WHERE newsentryid=$1 AND memberid=$2 LIMIT 1',
                     array(

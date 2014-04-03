@@ -60,7 +60,7 @@ class Profile extends ServiceAPI
         self::$allMembers = self::$cache->get('MyRadioProfile_allMembers');
         if (self::$allMembers === false) {
             self::wakeup();
-            self::$allMembers = self::$db->fetch_all(
+            self::$allMembers = self::$db->fetchAll(
                 'SELECT member.memberid, sname || \', \' || fname AS name, l_college.descr AS college, paid
                 FROM member LEFT JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
                 ON ( member.memberid = member_year.memberid ), l_college
@@ -90,7 +90,7 @@ class Profile extends ServiceAPI
     {
         self::wakeup();
 
-        return self::$db->fetch_all(
+        return self::$db->fetchAll(
             'SELECT member.memberid, sname || \', \' || fname AS name, l_college.descr AS college, paid
             FROM member INNER JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
             ON ( member.memberid = member_year.memberid ), l_college
@@ -118,7 +118,7 @@ class Profile extends ServiceAPI
         self::$currentOfficers = self::$cache->get('MyRadioProfile_currentOfficers');
         if (self::$currentOfficers === false) {
             self::wakeup();
-            self::$currentOfficers = self::$db->fetch_all(
+            self::$currentOfficers = self::$db->fetchAll(
                 'SELECT team.team_name AS team, officer.officer_name AS officership, sname || \', \' || fname AS name, member.memberid
                 FROM member, officer, member_officer, team
                 WHERE member_officer.memberid = member.memberid AND officer.officerid = member_officer.officerid AND officer.teamid = team.teamid AND member_officer.till_date IS NULL
@@ -148,7 +148,7 @@ class Profile extends ServiceAPI
         self::$officers = self::$cache->get('MyRadioProfile_officers');
         if (self::$officers === false) {
             self::wakeup();
-            self::$officers = self::$db->fetch_all(
+            self::$officers = self::$db->fetchAll(
                 'SELECT team.team_name AS team, officer.type, officer.officer_name AS officership,
                 fname || \' \' || sname AS name, member.memberid, officer.officerid
                 FROM team

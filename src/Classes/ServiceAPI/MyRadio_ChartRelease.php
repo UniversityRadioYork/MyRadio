@@ -125,7 +125,7 @@ class MyRadio_ChartRelease extends ServiceAPI
         $this->chart_release_id = $chart_release_id;
         $this->chart_type = $chart_type;
 
-        $chart_release_data = self::$db->fetch_one(
+        $chart_release_data = self::$db->fetchOne(
             self::GET_INSTANCE_SQL,
             [$chart_release_id]
         );
@@ -138,7 +138,7 @@ class MyRadio_ChartRelease extends ServiceAPI
         $this->release_time = strtotime($chart_release_data['submitted']);
         $this->chart_type_id = $chart_release_data['chart_type_id'];
 
-        $this->chart_row_ids = self::$db->fetch_column(
+        $this->chart_row_ids = self::$db->fetchColumn(
             self::GET_CHART_ROWS_SQL,
             [$chart_release_id]
         );
@@ -187,7 +187,7 @@ class MyRadio_ChartRelease extends ServiceAPI
     public function findReleaseIDOn($release_time, $chart_type_id)
     {
         return array_pop(
-            self::$db->fetch_column(
+            self::$db->fetchColumn(
                 self::FIND_RELEASE_ID_ON_SQL,
                 [
                     $chart_type_id,
@@ -286,7 +286,7 @@ class MyRadio_ChartRelease extends ServiceAPI
     {
         $this->release_time = strtotime($release_time);
 
-        return $this->set_db(SET_RELEASE_TIME_SQL, date('c', $release_time));
+        return $this->setDB(SET_RELEASE_TIME_SQL, date('c', $release_time));
     }
 
     /**
@@ -300,7 +300,7 @@ class MyRadio_ChartRelease extends ServiceAPI
     {
         $this->chart_type_id = intval($chart_type_id);
 
-        return $this->set_db(SET_CHART_TYPE_ID_SQL, intval($chart_type_id));
+        return $this->setDB(SET_CHART_TYPE_ID_SQL, intval($chart_type_id));
     }
 
     /**
@@ -311,7 +311,7 @@ class MyRadio_ChartRelease extends ServiceAPI
      *
      * @return MyRadio_ChartRelease This object, for method chaining.
      */
-    private function set_db($sql, $value)
+    private function setDB($sql, $value)
     {
         self::$db->query($sql, [$value, $this->getID()]);
 

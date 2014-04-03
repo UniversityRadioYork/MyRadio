@@ -32,7 +32,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         self::initDB();
 
         //Get the basic info about the season
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT show_id, termid, submitted, memberid, (
                 SELECT array(
                     SELECT metadata_key_id FROM schedule.season_metadata
@@ -173,7 +173,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         self::$db->query('BEGIN');
 
         //Right, let's start by getting a Season ID created for this entry
-        $season_create_result = self::$db->fetch_column(
+        $season_create_result = self::$db->fetchColumn(
             'INSERT INTO schedule.show_season
             (show_id, termid, submitted, memberid)
             VALUES ($1, $2, $3, $4) RETURNING show_season_id',
@@ -276,7 +276,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
      */
     public static function getAllSeasonsInLatestTerm()
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT termid FROM public.terms
             WHERE start <= NOW() ORDER BY finish DESC LIMIT 1'
         );
@@ -292,7 +292,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
      */
     public static function getAllSeasonsInTerm($term_id)
     {
-        return self::resultSetToObjArray(self::$db->fetch_column(
+        return self::resultSetToObjArray(self::$db->fetchColumn(
             'SELECT show_season_id FROM schedule.show_season WHERE termid=$1',
             [$term_id]
         ));
@@ -640,7 +640,7 @@ EOT
                   } */
 
                 //This week is due to be scheduled! QUERY! QUERY!
-                $r = self::$db->fetch_all(
+                $r = self::$db->fetchAll(
                     'INSERT INTO schedule.show_season_timeslot
                     (show_season_id, start_time, duration, memberid, approvedid)
                     VALUES ($1, $2, $3, $4, $5) RETURNING show_season_timeslot_id',
@@ -725,7 +725,7 @@ $times
      */
     public function getFutureTimeslots()
     {
-        return self::$db->fetch_all(
+        return self::$db->fetchAll(
             'SELECT show_season_timeslot_id, start_time, duration FROM schedule.show_season_timeslot
             WHERE show_season_id=$1 AND start_time >= NOW()',
             array($this->getID())

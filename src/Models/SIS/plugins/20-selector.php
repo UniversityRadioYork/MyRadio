@@ -12,7 +12,7 @@ $moduleInfo = array(
     'title' => 'Studio Selector',
     'enabled' => true,
     'startOpen' => false,
-    'pollfunc' => 'SIS_Remote::query_selector',
+    'pollfunc' => 'SIS_Remote::querySelector',
     'help' => 'To the left, you can see a Studio Selector button. '
         .'This contains a digital version of the magic buttons you can see in each studio. '
         .'Don\'t worry - most members can\'t see this so they won\'t go messing with your show from the comfort of '

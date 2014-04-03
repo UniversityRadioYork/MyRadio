@@ -125,7 +125,7 @@ class iTones_TrackRequest
      */
     private function userCanMakeRequestsQuery()
     {
-        return $this->database->fetch_one(
+        return $this->database->fetchOne(
             self::CAN_MAKE_REQUEST_SQL,
             $this->userCanMakeRequestsParams()
         );

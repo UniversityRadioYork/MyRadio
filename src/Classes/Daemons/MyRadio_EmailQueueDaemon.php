@@ -12,7 +12,7 @@ class MyRadio_EmailQueueDaemon
         //Get up to 5 unsent emails
         $db = Database::getInstance();
 
-        $result = $db->fetch_column(
+        $result = $db->fetchColumn(
             'SELECT email_id FROM mail.email WHERE
             (email_id IN (SELECT email_id FROM mail.email_recipient_member WHERE sent=\'f\')
             OR email_id IN (SELECT email_id FROM mail.email_recipient_list WHERE sent=\'f\'))

@@ -74,183 +74,183 @@ fieldset.myuryfrm label {
 /** MyRadio Timeline Styles **/
 
 div#timelineContainer {
-	border-left:2px solid #333;
-	margin:20px auto;
-	width:900px;
+  border-left:2px solid #333;
+  margin:20px auto;
+  width:900px;
     text-align: left;
 }
 div.timelineToggle {
-	float:right;
-	margin-right:0;
-	white-space:nowrap;
+  float:right;
+  margin-right:0;
+  white-space:nowrap;
     position: relative;
     top: -50px;
 }
 a.expandAll {
-	color:#ccc!important;
-	cursor:pointer;
-	background:#000;
-	border:none;
-	-webkit-border-radius:4px;
-	-moz-border-radius:4px;
-	border-radius:4px;
-	font-size:12px;
-	padding:3px 5px;
+  color:#ccc!important;
+  cursor:pointer;
+  background:#000;
+  border:none;
+  -webkit-border-radius:4px;
+  -moz-border-radius:4px;
+  border-radius:4px;
+  font-size:12px;
+  padding:3px 5px;
 }
 a.expandAll:hover {
-	border:none!important;
-	color:#7DBADF!important;
-	cursor:pointer;
+  border:none!important;
+  color:#7DBADF!important;
+  cursor:pointer;
 }
 div.timelineMajor {
-	clear:left;
-	float:left;
-	margin:0 0 12px;
-	width:900px;
+  clear:left;
+  float:left;
+  margin:0 0 12px;
+  width:900px;
 }
-	.timelineMajor h2 {
-		border-left: double #555;
-		color:#7097AF!important;
-		cursor: pointer;
-		font-family:Palatino,"Times New Roman", Times, serif;
-		font-size:3em!important;
-		font-weight:400!important;
-		margin:0 0 10px!important;
-		padding:4px 4px 4px 20px!important;
-	}
-	.timelineMajor h2 span {
-		background:#ccc;
-		border:none;
-		-webkit-border-radius:4px;
-		-moz-border-radius:4px;
-		border-radius:4px;
-		color:#131313;
-		letter-spacing:.1em;
-		line-height:1.7em;
-		padding:3px 5px 1px;
-	}
-	.timelineMajor h2 a:hover {
-		border-bottom:none;
-		color:#00baff!important;
-	}
+  .timelineMajor h2 {
+    border-left: double #555;
+    color:#7097AF!important;
+    cursor: pointer;
+    font-family:Palatino,"Times New Roman", Times, serif;
+    font-size:3em!important;
+    font-weight:400!important;
+    margin:0 0 10px!important;
+    padding:4px 4px 4px 20px!important;
+  }
+  .timelineMajor h2 span {
+    background:#ccc;
+    border:none;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    color:#131313;
+    letter-spacing:.1em;
+    line-height:1.7em;
+    padding:3px 5px 1px;
+  }
+  .timelineMajor h2 a:hover {
+    border-bottom:none;
+    color:#00baff!important;
+  }
 dl.timelineMinor {
-	clear:left;
-	float:left!important;
-	margin:0 12px 0 1px!important;
-	padding:4px 4px 4px 0!important;
-	position:relative;
-	width:880px;
+  clear:left;
+  float:left!important;
+  margin:0 12px 0 1px!important;
+  padding:4px 4px 4px 0!important;
+  position:relative;
+  width:880px;
     top: -15px;
 }
-	.timelineMinor dt {
-		border-left: double #666;
-		clear:left;
-		font-size:1.6em!important;
-		list-style-type:none!important;
-		line-height:1.2em;
-		margin:0 0 12px!important;
-		padding:0 0 0 24px!important;
-		white-space:nowrap;
-	}
-		.timelineMinor dt a {
-			color:#999;
-			cursor:pointer;
-		}
-		.timelineMinor dt a.closed {
-			color:#999;
-			font-size:1em;
-			margin-left:0;
-		}
-		.timelineMinor dt a.open {
-			color:#7DBADF;
-		}
-		.timelineMinor dt a:hover {
-			color:#7DBADF;
-		}
-	.timelineMinor dd {
-		padding-left:24px;
-		width:100%;
-	}
-		.timelineMinor dd h3 {
-			color:#FFF;
-			clear:both;
-			float:left;
-			font-size:1.5em!important;
-			margin:0;
-			white-space:nowrap;
-		}
+  .timelineMinor dt {
+    border-left: double #666;
+    clear:left;
+    font-size:1.6em!important;
+    list-style-type:none!important;
+    line-height:1.2em;
+    margin:0 0 12px!important;
+    padding:0 0 0 24px!important;
+    white-space:nowrap;
+  }
+    .timelineMinor dt a {
+      color:#999;
+      cursor:pointer;
+    }
+    .timelineMinor dt a.closed {
+      color:#999;
+      font-size:1em;
+      margin-left:0;
+    }
+    .timelineMinor dt a.open {
+      color:#7DBADF;
+    }
+    .timelineMinor dt a:hover {
+      color:#7DBADF;
+    }
+  .timelineMinor dd {
+    padding-left:24px;
+    width:100%;
+  }
+    .timelineMinor dd h3 {
+      color:#FFF;
+      clear:both;
+      float:left;
+      font-size:1.5em!important;
+      margin:0;
+      white-space:nowrap;
+    }
 .timelineEvent p {
-	clear:left;
-	float:left;
-	line-height:1.5em!important;
-	margin:6px 0 10px;
-	width:500px;
+  clear:left;
+  float:left;
+  line-height:1.5em!important;
+  margin:6px 0 10px;
+  width:500px;
 }
 .timelineEvent h4 {
-	clear:left;
-	float:left;
-	font-size:1.4em!important;
-	font-weight:400;
-	margin:10px 0 0;
-	padding:0 0 0 20px!important;
+  clear:left;
+  float:left;
+  font-size:1.4em!important;
+  font-weight:400;
+  margin:10px 0 0;
+  padding:0 0 0 20px!important;
 }
 .timelineEvent blockquote {
-	clear:left;
-	float:left;
-	padding:0 30px;
-	width:400px;
+  clear:left;
+  float:left;
+  padding:0 30px;
+  width:400px;
 }
 .timelineEvent blockquote * {
-	float:none;
-	width:400px;
+  float:none;
+  width:400px;
 }
 .timelineEvent ul.moreInfo {
-	clear:left;
-	float:left;
-	line-height:1.2em;
-	list-style-type:none;
-	margin:0!important;
-	padding:0!important;
-	width:100%;
+  clear:left;
+  float:left;
+  line-height:1.2em;
+  list-style-type:none;
+  margin:0!important;
+  padding:0!important;
+  width:100%;
 }
 .timelineEvent ul.moreInfo li {
-	clear:left;
-	background:none!important;
-	font-size:1em!important;
-	line-height:1.5em;
-	margin:8px 0!important;
-	padding:0 0 0 20px!important;
+  clear:left;
+  background:none!important;
+  font-size:1em!important;
+  line-height:1.5em;
+  margin:8px 0!important;
+  padding:0 0 0 20px!important;
 }
-	.timelineEvent ul.moreInfo li a:link,.timelineEvent ul.moreInfo li a:visited {
-		color:#7097af!important;
-	}
-	.timelineEvent ul.moreInfo li a:hover {
-		color:#7DBADF!important;
-	}
+  .timelineEvent ul.moreInfo li a:link,.timelineEvent ul.moreInfo li a:visited {
+    color:#7097af!important;
+  }
+  .timelineEvent ul.moreInfo li a:hover {
+    color:#7DBADF!important;
+  }
 .timelineEvent div.media {
-	float:right;
-	padding:0 0 12px;
-	width:300px;
+  float:right;
+  padding:0 0 12px;
+  width:300px;
 }
-	.timelineEvent .media img {
-		border:2px solid #000;
-		margin:0;
-	}
-	.timelineEvent .media p {
-		font-size:1.2em;
-		margin:0!important;
-		padding:0!important;
-	}
-	.timelineEvent .media a:link,.timelineEvent .media a:visited {
-		border:none!important;
-		color:#ab221b!important;
-	}
-	.timelineEvent .media a:hover {
-		color:#7DBADF!important;
-	}
-	.timelineEvent .media p span.source {
-		font-style:italic;
-	}
+  .timelineEvent .media img {
+    border:2px solid #000;
+    margin:0;
+  }
+  .timelineEvent .media p {
+    font-size:1.2em;
+    margin:0!important;
+    padding:0!important;
+  }
+  .timelineEvent .media a:link,.timelineEvent .media a:visited {
+    border:none!important;
+    color:#ab221b!important;
+  }
+  .timelineEvent .media a:hover {
+    color:#7DBADF!important;
+  }
+  .timelineEvent .media p span.source {
+    font-style:italic;
+  }
 
 /** MyRadio Webcam Styles **/
 .webcam-grid-container .webcam-stream {
@@ -321,7 +321,7 @@ label.label-nofloat {
 }
 
 .myradiofrmfield {
-	margin-left: 1.25em;
+  margin-left: 1.25em;
 }
 
 input.myradiofrmfield-weeklycheck {
@@ -350,15 +350,15 @@ table.myradiofrmfield-weeklycheck td {
 
 /* MyRadio Login Styles */
 .chooseAuth label {
-	padding: 1em;
+  padding: 1em;
 }
 .chooseAuth input {
-	width: auto;
-	vertical-align: baseline;
+  width: auto;
+  vertical-align: baseline;
 }
 .chooseAuth h3 {
-	display: inline-block;
-	margin: 0 0 0 1.25em;
+  display: inline-block;
+  margin: 0 0 0 1.25em;
 }
 
 .ui-progressbar {

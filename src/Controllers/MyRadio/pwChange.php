@@ -60,7 +60,7 @@ if (isset($_SESSION['memberid'])) {
         throw new MyRadioException('Password reset token required.', 400);
     } else {
         $db = Database::getInstance();
-        $token = $db->fetch_one(
+        $token = $db->fetchOne(
             'SELECT * FROM myury.password_reset_token
             WHERE token=$1 AND expires > NOW() AND used IS NULL',
             [$_REQUEST[$var]]

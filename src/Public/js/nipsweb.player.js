@@ -135,8 +135,9 @@ window.NIPSWeb = {
           }
 
           for (i in dec) {
-            if (dec[i] === null)
+            if (dec[i] === null) {
               continue;
+            }
             var obj = $('ul.baps-channel li[timeslotitemid=' + dec[i] + ']');
             ops.push({
               op: 'MoveItem',
@@ -173,7 +174,9 @@ window.NIPSWeb = {
    * pNext: Optional. Parent queue to process on completion.
    */
   shipChanges: function(ops, addOp, pNext) {
-    if (typeof addOp === 'undefined') addOp = false;
+    if (typeof addOp === 'undefined') {
+      addOp = false;
+    }
 
     NIPSWeb.ajaxQueue.queue(function(next) {
     $('#notice').show();
@@ -183,8 +186,9 @@ window.NIPSWeb = {
       success: function(data) {
         $('#notice').hide();
         for (i in data) {
-          if (i === 'myury_errors')
+          if (i === 'myury_errors') {
             continue;
+          }
           if (typeof data[i].timeslotitemid !== 'undefined') {
             //@todo multiple AddItem ops in a jsonon set will make this break
             $('ul.baps-channel li[timeslotitemid="findme"]').attr('timeslotitemid', data[i].timeslotitemid);
@@ -196,7 +200,9 @@ window.NIPSWeb = {
       },
       complete: function() {
         next();
-        if (typeof pNext !== 'undefined') pNext();
+        if (typeof pNext !== 'undefined') {
+          pNext();
+        }
       },
       data: {clientid: NIPSWeb.clientid, ops: ops},
       dataType: 'json',
@@ -250,8 +256,9 @@ function initialiseUI() {
       start: function(e, ui) {
         if (ui.item.hasClass('selected')) {
           ui.item.removeClass('selected');
-          if (ui.item.attr('nextSelect') != null)
+          if (ui.item.attr('nextSelect') != null) {
             $('#' + ui.item.attr('nextSelect')).click();
+          }
         }
         ui.item.nextSelect = null;
       },
@@ -307,15 +314,17 @@ function configureContextMenus() {
             ul = ($(event.relatedTarget).is('li') ? $(event.relatedTarget).parent('ul') : event.relatedTarget);
 
     if (menuId === "#autoAdv") {
-      if ($(ul).attr('autoadvance') == 1)
+      if ($(ul).attr('autoadvance') == 1) {
         $(ul).attr('autoadvance', 0);
-      else
+      } else {
         $(ul).attr('autoadvance', 1);
+      }
     } else if (menuId === "#autoPlay") {
-      if ($(ul).attr('playonload') == 1)
+      if ($(ul).attr('playonload') == 1) {
         $(ul).attr('playonload', 0);
-      else
+      } else {
         $(ul).attr('playonload', 1);
+      }
     }
     console.log("select " + menuId + " on " + $(target).attr('id'));
   });
@@ -323,8 +332,9 @@ function configureContextMenus() {
 
 function initialisePlayer(channel) {
 
-  if (channel == 0)
+  if (channel == 0) {
     channel = 'res';
+  }
 
   $("#progress-bar-" + channel).slider({
     range: "min",
@@ -347,8 +357,9 @@ function initialisePlayer(channel) {
 
 // Initialises Variables for functions - This is called at the start of each function
 function playerVariables(channel) {
-  if (channel === 'res')
+  if (channel === 'res') {
     channel = 0;
+  }
   return window.audioNodes[channel];
 }
 
@@ -422,8 +433,7 @@ function previewPause(channel) {
     if (audio.paused) {
       audio.play();
       playing(channel);
-    }
-    else {
+    } else {
       audio.pause();
       pausing(channel);
     }
@@ -561,8 +571,9 @@ function setupListeners(channel) {
     getTime(channel);
     $('#progress-bar-' + channel).slider({value: audio.currentTime});
     //A mouse-over click doesn't set this properly on play
-    if (audio.currentTime > 0.1)
+    if (audio.currentTime > 0.1) {
       $('#ch' + channel + '-play').addClass('ui-state-active');
+    }
   });
   $('#progress-bar-' + channel).slider({
     value: 0,
@@ -615,8 +626,9 @@ function updateChannelTotalTimers() {
     var time = 0;
     $(this).children('li').each(function() {
       var tmp = $(this).attr('length').split(':');
-      if (tmp.length !== 3)
+      if (tmp.length !== 3) {
         return;
+      }
       time += parseInt(tmp[1]) * 60;
       time += parseInt(tmp[2]);
     });

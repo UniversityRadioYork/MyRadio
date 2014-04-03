@@ -42,7 +42,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
         list($playlistid, $revisionid) = explode('~', $id);
         parent::__construct($playlistid);
 
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT * FROM jukebox.playlist_revisions
             WHERE playlistid=$1 AND revisionid=$2 LIMIT 1',
             array($playlistid, $revisionid)
@@ -58,7 +58,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
         $this->notes = $result['notes'];
         $this->timestamp = strtotime($result['timestamp']);
 
-        $items = self::$db->fetch_column(
+        $items = self::$db->fetchColumn(
             'SELECT trackid FROM jukebox.playlist_entries WHERE playlistid=$1
             AND revision_added <= $2 AND (revision_removed >= $2 OR revision_removed IS NULL)
             ORDER BY entryid',
@@ -119,7 +119,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
     public static function getAllRevisions($playlistid)
     {
         $data = array();
-        foreach (self::$db->fetch_column(
+        foreach (self::$db->fetchColumn(
             'SELECT revisionid FROM jukebox.playlist_revisions WHERE playlistid=$1',
             array($playlistid)
         ) as $revisionid) {

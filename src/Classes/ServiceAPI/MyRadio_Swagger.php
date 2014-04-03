@@ -41,7 +41,7 @@ class MyRadio_Swagger
 
     public static function getApiClasses()
     {
-        $data = Database::getInstance()->fetch_all('SELECT class_name, api_name FROM myury.api_class_map ORDER BY api_name');
+        $data = Database::getInstance()->fetchAll('SELECT class_name, api_name FROM myury.api_class_map ORDER BY api_name');
         $result = [];
 
         foreach ($data as $row) {

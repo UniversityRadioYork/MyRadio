@@ -32,7 +32,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         self::initDB();
 
         //Get the basic info about the season
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid,
             (
                 SELECT array(
@@ -202,7 +202,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function getTimeslotAfter()
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT show_season_timeslot_id
             FROM schedule.show_season_timeslot
             WHERE start_time >= $1 AND start_time <= $2
@@ -271,7 +271,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public static function getMostMessaged($date = 0)
     {
-        $result = self::$db->fetch_all(
+        $result = self::$db->fetchAll(
             'SELECT messages.timeslotid, count(*) as msg_count FROM sis2.messages
             LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid = show_season_timeslot.show_season_timeslot_id
             WHERE show_season_timeslot.start_time > $1 GROUP BY messages.timeslotid ORDER BY msg_count DESC LIMIT 30',
@@ -301,7 +301,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             return $top;
         }
 
-        $result = self::$db->fetch_all(
+        $result = self::$db->fetchAll(
             'SELECT show_season_timeslot_id,
             (
                 SELECT COUNT(*) FROM strm_log
@@ -339,7 +339,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $time = time();
         }
 
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT show_season_timeslot_id FROM
             schedule.show_season_timeslot WHERE start_time <= $1 AND
             start_time + duration >= $1',
@@ -360,7 +360,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public static function getNextTimeslot($time = null)
     {
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
             WHERE start_time >= $1
             ORDER BY start_time ASC
@@ -485,8 +485,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         if (MyRadio_User::getInstance()->hasAuth(AUTH_DELETESHOWS)) {
             //Yep, do an administrative drop
             $r = $this->cancelTimeslotAdmin($reason);
-        }
-        elseif ($this->getSeason()->getShow()->isCurrentUserAnOwner()) {
+        } elseif ($this->getSeason()->getShow()->isCurrentUserAnOwner()) {
             //Get if the User is a Creditor
             //Yaay, depending on time they can do an self-service drop or cancellation request
             if ($this->getStartTime() > time() + (48 * 3600)) {
@@ -588,10 +587,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                         $parts = explode('-', $op['id']);
                         if ($parts[0] === 'ManagedDB') {
                             //This is a managed item
-                            $i = NIPSWeb_TimeslotItem::create_managed($this->getID(), $parts[1], $op['channel'], $op['weight']);
+                            $i = NIPSWeb_TimeslotItem::createManaged($this->getID(), $parts[1], $op['channel'], $op['weight']);
                         } else {
                             //This is a rec database track
-                            $i = NIPSWeb_TimeslotItem::create_central($this->getID(), $parts[1], $op['channel'], $op['weight']);
+                            $i = NIPSWeb_TimeslotItem::createCentral($this->getID(), $parts[1], $op['channel'], $op['weight']);
                         }
                     } catch (MyRadioException $e) {
                         $result[] = array('status' => false);
@@ -678,12 +677,12 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             array($this->getID())
         );
 
-        if (!$r or pg_num_rows($r) === 0) {
+        if (!$r or self::$db->numRows($r) === 0) {
             //No show planned yet
             return array();
         } else {
             $tracks = array();
-            foreach (self::$db->fetch_all($r) as $track) {
+            foreach (self::$db->fetchAll($r) as $track) {
                 $tracks[$track['channel_id']][] = NIPSWeb_TimeslotItem::getInstance($track['timeslot_item_id'])->toDataSource();
             }
 
@@ -697,7 +696,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function getSigninInfo()
     {
-        $result = self::$db->fetch_all(
+        $result = self::$db->fetchAll(
             'SELECT * FROM (
                 SELECT creditid AS memberid
                 FROM schedule.show_credit WHERE show_id IN (
@@ -730,7 +729,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     public function getMessages($offset = 0)
     {
-        $result = self::$db->fetch_all(
+        $result = self::$db->fetchAll(
             'SELECT c.commid AS id,
             commtypeid AS type,
             EXTRACT (EPOCH FROM date) AS time,

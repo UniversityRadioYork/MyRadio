@@ -47,7 +47,7 @@ class MyRadio_Photo extends ServiceAPI
     {
         $this->photoid = $photoid;
 
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT * FROM myury.photos WHERE photoid=$1',
             array($photoid)
         );
@@ -143,7 +143,7 @@ class MyRadio_Photo extends ServiceAPI
 
         $format = explode('/', finfo_file(finfo_open(FILEINFO_MIME_TYPE), $tmp_file))[1];
 
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'INSERT INTO myury.photos (owner, format) VALUES ($1, $2) RETURNING photoid',
             [MyRadio_User::getInstance()->getID(), $format]
         );

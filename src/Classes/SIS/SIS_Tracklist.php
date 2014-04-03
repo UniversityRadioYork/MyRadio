@@ -62,7 +62,7 @@ class SIS_Tracklist extends ServiceAPI
     {
         self::$db->query('BEGIN');
 
-        $audiologid = self::$db->fetch_one(
+        $audiologid = self::$db->fetchOne(
             'INSERT INTO tracklist.tracklist (source, timeslotid) VALUES ($1, $2) RETURNING audiologid',
             array($source, $timeslotid)
         );
@@ -84,7 +84,7 @@ class SIS_Tracklist extends ServiceAPI
      */
     public static function checkTrackOK($artist, $album, $tname)
     {
-        $result = self::$db->fetch_all(
+        $result = self::$db->fetchAll(
             'SELECT DISTINCT trk.title AS track, rec.title AS album, trk.artist AS artist, trk.trackid AS trackid, rec.recordid AS recordid
             FROM rec_track trk
             INNER JOIN rec_record rec ON ( rec.recordid = trk.recordid )
@@ -102,7 +102,7 @@ class SIS_Tracklist extends ServiceAPI
     {
         self::$db->query('BEGIN');
 
-        $audiologid = self::$db->fetch_one(
+        $audiologid = self::$db->fetchOne(
             'INSERT INTO tracklist.tracklist (source, timeslotid)
             VALUES ($1, $2) RETURNING audiologid',
             array($source, $timeslotid)

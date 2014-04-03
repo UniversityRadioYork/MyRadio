@@ -37,7 +37,7 @@ class iTones_Utils extends ServiceAPI
      */
     public static function getRemainingRequests()
     {
-        return self::$db->fetch_one(
+        return self::$db->fetchOne(
             self::REQUESTS_REMAINING_SQL,
             self::getRemainingRequestsParams()
         )['remaining'];

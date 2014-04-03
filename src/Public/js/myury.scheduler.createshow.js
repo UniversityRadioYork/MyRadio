@@ -7,8 +7,7 @@ $(document).ready(function() {
    * but it would be nice
    */
   $('#sched_show-title').on('input propertychange', function() {
-    if ($(this).val().length >= 3)
-    {
+    if ($(this).val().length >= 3) {
       var value = $(this).val();
       $.ajax({
         url: myury.makeURL('Scheduler', 'a-findshowbytitle'),

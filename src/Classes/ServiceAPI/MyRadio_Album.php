@@ -60,7 +60,7 @@ class MyRadio_Album extends ServiceAPI
     {
         $this->albumid = $recordid;
 
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT * FROM (SELECT * FROM public.rec_record WHERE recordid=$1 LIMIT 1) AS t1
             LEFT JOIN public.rec_statuslookup ON t1.status = rec_statuslookup.status_code
             LEFT JOIN public.rec_medialookup ON t1.media = rec_medialookup.media_code
@@ -91,7 +91,7 @@ class MyRadio_Album extends ServiceAPI
         $this->cdid = $result['cdid'];
         $this->location = $result['location_descr'];
 
-        $this->tracks = self::$db->fetch_column('SELECT trackid FROM rec_track WHERE recordid=$1', array($this->albumid));
+        $this->tracks = self::$db->fetchColumn('SELECT trackid FROM rec_track WHERE recordid=$1', array($this->albumid));
     }
 
     public function getID()
@@ -194,7 +194,7 @@ class MyRadio_Album extends ServiceAPI
     public static function findByName($title, $limit)
     {
         $title = trim($title);
-        $result = self::$db->fetch_column(
+        $result = self::$db->fetchColumn(
             'SELECT DISTINCT rec_record.recordid AS recordid FROM rec_record
             WHERE rec_record.title ILIKE \'%\' || $1 || \'%\' LIMIT $2;',
             array($title, $limit)
@@ -287,7 +287,7 @@ class MyRadio_Album extends ServiceAPI
         }
 
         //Do the bulk of the sorting with SQL
-        $result = self::$db->fetch_all(
+        $result = self::$db->fetchAll(
             'SELECT DISTINCT rec_record.recordid
             FROM rec_record
             INNER JOIN rec_track ON ( rec_record.recordid = rec_track.recordid )
@@ -324,7 +324,7 @@ class MyRadio_Album extends ServiceAPI
         $title = trim($title);
         $artist = trim($artist);
 
-        $result = self::$db->fetch_one(
+        $result = self::$db->fetchOne(
             'SELECT recordid FROM rec_record WHERE title=$1 AND artist=$2 LIMIT 1',
             array($title, $artist)
         );
@@ -402,7 +402,7 @@ class MyRadio_Album extends ServiceAPI
             )
         );
 
-        $id = self::$db->fetch_all($r);
+        $id = self::$db->fetchAll($r);
 
         return self::getInstance($id[0]['recordid']);
     }
