@@ -192,13 +192,11 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         //Check whether this user can do that.
         if (in_array(
             array_map(
-                function ($x) {
-                    return $x->getID();
-                },
+                function ($x) {return $x->getID();},
                 $awarded_by->getAllTraining(true)
             ),
             $status->getAwarder()->getID()
-            ) === false) {
+        ) === false) {
             throw new MyRadioException($awarded_by .' does not have permission to award '.$status);
         }
 
@@ -207,12 +205,10 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
             and in_array(
                 $status->getDepends()->getID(),
                 array_map(
-                    function ($x) {
-                        return $x->getID();
-                    },
+                    function ($x) {return $x->getID();},
                     $awarded_to->getAllTraining(true)
                 )
-            ) === false) {
+        ) === false) {
             throw new MyRadioException($awarded_to .' does not have the prerequisite training to be awarded '.$status);
         }
 

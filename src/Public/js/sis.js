@@ -15,34 +15,29 @@
           $('#s1').attr('title', 'Studio 1 Powered Off')
           .removeClass('s1on s1off poweredon')
           .addClass('poweredoff');
-        }
-        else {
+        } else {
           $('#s1').attr('title', 'Studio 1').removeClass('poweredoff').addClass('poweredon');
 
           if (data['studio'] == 1) {
             $('#s1').removeClass('s1off').addClass('s1on');
-          }
-          else {
+          } else {
             $('#s1').removeClass('s1on').addClass('s1off');
           }
         }
 
         if (!data['s2power']) {
           $('#s2').attr('title', 'Studio 2 Powered Off').removeClass('s2on s2off poweredon').addClass('poweredoff');
-        }
-        else {
+        } else {
           $('#s2').attr('title', 'Studio 2').removeClass('poweredoff').addClass('poweredon');
           if (data['studio'] == 2) {
             $('#s2').removeClass('s2off').addClass('s2on');
-          }
-          else {
+          } else {
             $('#s2').removeClass('s2on').addClass('s2off');
           }
         }
         if (data['studio'] == 3) {
           $('#s3').removeClass('s3off').addClass('s3on');
-        }
-        else {
+        } else {
           $('#s3').removeClass('s3on').addClass('s3off');
         }
 
@@ -53,8 +48,10 @@
           case 4: s = 'Outside Broadcast On Air'; break;
           default:  s = 'Source '+data['studio']+' On Air'; break;
         }
-        if (data['lock'] != '0') s = s + '<small> &mdash; Locked</small>';
-          $('span#onair').html(s);
+        if (data['lock'] != '0') {
+          s = s + '<small> &mdash; Locked</small>';
+        }
+        $('span#onair').html(s);
 
         //Update the lastmod time
         selectorLastMod = data['lastmod'];
@@ -63,14 +60,29 @@
     };
 
     function selectStudio(s) {
-        if ((s == 1) && (selectorPower['s1'] == '0')) return;
-        if ((s == 2) && (selectorPower['s2'] == '0')) return;
-        if ((s == 4) && (selectorPower['s4'] == '0')) return;
-        if (selectorLocked != '0') { alert('Could not change studio.\nStudio selector is currently locked out.'); return; }
+        if ((s == 1) && (selectorPower['s1'] == '0')) {
+          return;
+        }
+        if ((s == 2) && (selectorPower['s2'] == '0')) {
+          return;
+        }
+        if ((s == 4) && (selectorPower['s4'] == '0')) {
+          return;
+        }
+        if (selectorLocked != '0') {
+          alert('Could not change studio.\nStudio selector is currently locked out.');
+          return;
+        }
 
         $.get(myury.makeURL('SIS', 'selector.set'), {src: s}, function(data) {
-          if (data['error'] == 'locked') { $('<div title="Selector Error">Could not change studio; studio selector is currently locked out.</div>').dialog({modal: true}); return; }
-          if (data['error']) { $('<div title="Selector Error">'+data['error']+'</div>').dialog({modal: true}); return; }
+          if (data['error'] == 'locked') {
+            $('<div title="Selector Error">Could not change studio; studio selector is currently locked out.</div>').dialog({modal: true});
+            return;
+          }
+          if (data['error']) {
+            $('<div title="Selector Error">'+data['error']+'</div>').dialog({modal: true});
+            return;
+          }
           updateSelector(data);
         });
     }
@@ -78,7 +90,9 @@
 
 /* Stats */
     function updateStats() {
-        if (!$('div#plugin_body_stats').is(':visible')) return;
+        if (!$('div#plugin_body_stats').is(':visible')) {
+            return;
+        }
         $('img#urystats').attr('src', myury.makeURL('SIS','stats.graph',{'date':(new Date().valueOf())}));
     }
 
@@ -130,7 +144,10 @@
         //Set some of the variables
         var img = "<img src='"+mConfig.base_url+"img/sis/"+data[i]['type']+".png' />";
         var msgdate = new Date(data[i]['time']*1000);
-        var mins = msgdate.getMinutes(); if (mins < 10) mins = "0" + mins;
+        var mins = msgdate.getMinutes();
+        if (mins < 10) {
+            mins = "0" + mins;
+        }
         var time = msgdate.getHours()+':'+mins+' '+msgdate.getDate()+'/'+(msgdate.getMonth()+1);
         var read = "";
         var classes = "";
@@ -200,15 +217,19 @@
 
     function formatTime(d) {
         var HH = d.getHours();
-        if ( HH < 10 ) HH = '0' + HH;
+        if (HH < 10) {
+            HH = '0' + HH;
+        }
 
         var MM = d.getMinutes();
-        if ( MM < 10 ) MM = '0' + MM;
+        if (MM < 10) {
+            MM = '0' + MM;
+        }
 
         if (isNaN(HH) || isNaN(MM)) {
             return "";
         }
-        return HH+':'+MM;
+        return HH + ':' + MM;
     }
 
 
@@ -221,9 +242,18 @@
             $('#tracklist-data').append('<div id="delsure'+data[i]['id']+'" title="Delete Track?">Are you sure you want to delete this track?</div>');
 
             var trackDate = new Date(data[i]['playtime']*1000);
-            var secs = trackDate.getSeconds(); if (secs < 10) secs = "0" + secs;
-            var mins = trackDate.getMinutes(); if (mins < 10) mins = "0" + mins;
-            var month = trackDate.getMonth()+1; if (month < 10) month = "0" + month;
+            var secs = trackDate.getSeconds();
+            if (secs < 10) {
+                secs = "0" + secs;
+            }
+            var mins = trackDate.getMinutes();
+            if (mins < 10) {
+                mins = "0" + mins;
+            }
+            var month = trackDate.getMonth()+1;
+            if (month < 10) {
+                month = "0" + month;
+            }
             var time = trackDate.getHours()+':'+mins+':'+secs+' '+trackDate.getDate()+'/'+month;
             //Add the new row to the top of the tracklist table
             $('#tracklist table').prepend(
@@ -315,12 +345,8 @@
     }
 
 
-
-
-
-
 $(document).ready(function() {
-	$("#switcher").themeswitcher({
+    $("#switcher").themeswitcher({
                     imgpath: "",
                     themepath: "//ury.org.uk/myury/css/vendor",
                     jqueryuiversion: "",
