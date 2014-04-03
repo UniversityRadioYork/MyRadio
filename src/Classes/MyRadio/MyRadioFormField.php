@@ -394,7 +394,8 @@ class MyRadioFormField
      * Get if this field is redacted
      * @return bool
      */
-    public function getRedacted() {
+    public function getRedacted()
+    {
         return $this->redacted;
     }
 

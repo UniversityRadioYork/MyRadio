@@ -334,11 +334,11 @@ class MyRadioForm
         if ($this->captcha) {
             require_once 'Classes/vendor/recaptchalib.php';
             if (!recaptcha_check_answer(
-                    Config::$recaptcha_private_key,
-                    $_SERVER['REMOTE_ADDR'],
-                    $_REQUEST['recaptcha_challenge_field'],
-                    $_REQUEST['recaptcha_response_field']
-                    )->is_valid) {
+                Config::$recaptcha_private_key,
+                $_SERVER['REMOTE_ADDR'],
+                $_REQUEST['recaptcha_challenge_field'],
+                $_REQUEST['recaptcha_response_field']
+            )->is_valid) {
                 return false;
             }
         }

@@ -225,13 +225,12 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
         //Get User's shows, or all shows if they have AUTH_PODCASTANYSHOW
         //Format them into a select field format.
+        $auth = MyRadio_User::getInstance()->hasAuth(AUTH_PODCASTANYSHOW);
         $shows = array_map(
             function ($x) {
                 return ['text' => $x->getMeta('title'), 'value' => $x->getID()];
             },
-            MyRadio_User::getInstance()->hasAuth(AUTH_PODCASTANYSHOW) ?
-                MyRadio_Show::getAllShows()
-                : MyRadio_User::getInstance()->getShows()
+            $auth ? MyRadio_Show::getAllShows() : MyRadio_User::getInstance()->getShows()
         );
 
         //Add an option for not attached to a show
@@ -239,70 +238,74 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             $shows = array_merge([['text' => 'Standalone']], $shows);
         }
 
-        $form->addField(new MyRadioFormField(
-            'show',
-            MyRadioFormField::TYPE_SELECT,
-            [
-                'options' => $shows,
-                'explanation' => 'This Podcast will be attached to the '
-                . 'Show you select here.',
-                'label' => 'Show',
-                'required' => false
-            ]
-        )
-        )->addField(new MyRadioFormField(
-            'credits',
-            MyRadioFormField::TYPE_TABULARSET,
-            [
-                'label' => 'Credits', 'options' => [
-                    new MyRadioFormField(
-                        'member',
-                        MyRadioFormField::TYPE_MEMBER,
-                        [
-                            'explanation' => '',
-                            'label' => 'Person'
-                        ]
-                    ),
-                    new MyRadioFormField(
-                        'credittype',
-                        MyRadioFormField::TYPE_SELECT,
-                        [
-                            'options' => array_merge(
-                                [
-                                    [
-                                        'text' => 'Please select...',
-                                        'disabled' => true
-                                    ]
-                                ],
-                                MyRadio_Scheduler::getCreditTypes()
-                            ),
-                            'explanation' => '',
-                            'label' => 'Role'
-                        ]
-                    )
+        $form->addField(
+            new MyRadioFormField(
+                'show',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'options' => $shows,
+                    'explanation' => 'This Podcast will be attached to the '
+                    . 'Show you select here.',
+                    'label' => 'Show',
+                    'required' => false
                 ]
-            ]
-        )
-        )->addField(new MyRadioFormField(
-            'file',
-            MyRadioFormField::TYPE_FILE,
-            [
-                'label' => 'Audio',
-                'explanation' => 'Upload the original, high-quality audio for'
-                . ' this podcast. We\'ll publish a version optimised for the web'
-                . ' and archive the original. Max size 500MB.',
-                'options' => ['progress' => true]
-            ]
-        )
-        )->addField(new MyRadioFormField(
-            'terms',
-            MyRadioFormField::TYPE_CHECK,
-            [
-                'label' => 'I have read and confirm that this audio file complies'
-                . ' with <a href="/wiki/Podcasting_Policy" target="_blank">'
-                . Config::$short_name . '\'s Podcasting Policy</a>.'
-            ]
-        )
+            )
+        )->addField(
+            new MyRadioFormField(
+                'credits',
+                MyRadioFormField::TYPE_TABULARSET,
+                [
+                    'label' => 'Credits', 'options' => [
+                        new MyRadioFormField(
+                            'member',
+                            MyRadioFormField::TYPE_MEMBER,
+                            [
+                                'explanation' => '',
+                                'label' => 'Person'
+                            ]
+                        ),
+                        new MyRadioFormField(
+                            'credittype',
+                            MyRadioFormField::TYPE_SELECT,
+                            [
+                                'options' => array_merge(
+                                    [
+                                        [
+                                            'text' => 'Please select...',
+                                            'disabled' => true
+                                        ]
+                                    ],
+                                    MyRadio_Scheduler::getCreditTypes()
+                                ),
+                                'explanation' => '',
+                                'label' => 'Role'
+                            ]
+                        )
+                    ]
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'file',
+                MyRadioFormField::TYPE_FILE,
+                [
+                    'label' => 'Audio',
+                    'explanation' => 'Upload the original, high-quality audio for'
+                    . ' this podcast. We\'ll publish a version optimised for the web'
+                    . ' and archive the original. Max size 500MB.',
+                    'options' => ['progress' => true]
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'terms',
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    'label' => 'I have read and confirm that this audio file complies'
+                    . ' with <a href="/wiki/Podcasting_Policy" target="_blank">'
+                    . Config::$short_name . '\'s Podcasting Policy</a>.'
+                ]
+            )
         );
 
         return $form;
