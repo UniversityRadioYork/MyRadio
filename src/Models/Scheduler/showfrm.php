@@ -96,7 +96,7 @@ $form = (
 )->addField(
     new MyRadioFormField(
         'mixclouder',
-        MyRadioFormField::TYPE_CHECK
+        MyRadioFormField::TYPE_CHECK,
         array(
             'explanation' => 'If ticked, your shows will automatically be uploaded to mixcloud',
             'label' => 'Enable Mixcloud',
