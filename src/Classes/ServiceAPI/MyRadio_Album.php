@@ -52,6 +52,8 @@ class MyRadio_Album extends ServiceAPI
 
     private $location;
 
+    private $label;
+
     private $tracks = array();
 
     protected function __construct($recordid)
