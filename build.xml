@@ -77,6 +77,8 @@
    <arg path="${basedir}/src" />
    <arg value="text" />
    <arg value="${basedir}/build/phpmd.xml" />
+   <arg value="--exclude" />
+   <arg value="vendor" />
   </exec>
  </target>
 
@@ -87,6 +89,8 @@
    <arg value="${basedir}/build/phpmd.xml" />
    <arg value="--reportfile" />
    <arg value="${basedir}/build/logs/pmd.xml" />
+   <arg value="--exclude" />
+   <arg value="vendor" />
   </exec>
  </target>
 
