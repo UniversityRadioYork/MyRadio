@@ -6,7 +6,12 @@
  * @version 20130525
  * @package MyRadio_NIPSWeb
  */
-CoreUtils::getTemplateObject()->setTemplate('NIPSWeb/manage_library.twig')
+$template = 'NIPSWeb/manage_library.twig';
+if (CoreUtils::hasPermission(AUTH_UPLOADMUSICMANUAL)) {
+    $template = 'NIPSWeb/manage_library_manual.twig';
+}
+
+CoreUtils::getTemplateObject()->setTemplate($template)
     ->addVariable(
         'reslists',
         CoreUtils::dataSourceParser(
