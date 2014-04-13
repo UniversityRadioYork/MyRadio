@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <phpdox xmlns="http://phpdox.net/config">
-  <project name="MyRadio" source="${basedir}/src" workdir="${basedir}/build/api/xml">
-    <collector backend="parser" />
-    <generator output="${basedir}/build/api">
-      <build engine="html" output="html"/>
-    </generator>
-  </project>
+    <project name="MyRadio" source="${basedir}/src" workdir="${basedir}/build/api/xml">
+        <collector backend="parser" />
+        <generator output="${basedir}/build/api">
+            <enrich base="${basedir}/build/logs">
+                <source type="build" />
+                <source type="phploc">
+                    <file name="phploc.xml" />
+                </source>
+                <source type="checkstyle">
+                    <file name="checkstyle.xml" />
+                </source>
+                <source type="pmd">
+                    <file name="pmd.xml" />
+                </source>
+                <source type="clover">
+                    <file name="clover.xml" />
+                </source>
+                <source type="phpunit">
+                    <file name="junit.xml" />
+                </source>
+            </enrich>
+            <build engine="html" output="html"/>
+        </generator>
+    </project>
 </phpdox>
