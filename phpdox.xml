@@ -5,21 +5,9 @@
         <generator output="${basedir}/build/api">
             <enrich base="${basedir}/build/logs">
                 <source type="build" />
-                <source type="phploc">
-                    <file name="phploc.xml" />
-                </source>
-                <source type="checkstyle">
-                    <file name="checkstyle.xml" />
-                </source>
-                <source type="pmd">
-                    <file name="pmd.xml" />
-                </source>
-                <source type="clover">
-                    <file name="clover.xml" />
-                </source>
-                <source type="phpunit">
-                    <file name="junit.xml" />
-                </source>
+                <source type="phploc" />
+                <source type="checkstyle" />
+                <source type="pmd" />
             </enrich>
             <build engine="html" output="html"/>
         </generator>
