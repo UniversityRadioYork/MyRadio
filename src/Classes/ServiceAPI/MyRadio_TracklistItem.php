@@ -254,7 +254,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
             WHERE source=\'j\' AND timestart >= $1 AND timestart <= $2 AND trackid IS NOT NULL'
             . ($include_playout ? '' : 'AND state != \'o\'')
-            . 'GROUP BY trackid ORDER BY num_plays DESC',
+            . ' GROUP BY trackid ORDER BY num_plays DESC',
             array($start, $end)
         );
 
