@@ -19,9 +19,10 @@ if (!in_array($_REQUEST['authenticator'], Config::$authenticators)) {
 //Set the authenticator
 MyRadio_User::getInstance()->setAuthProvider($_REQUEST['authenticator']);
 
-//If it's not the Default authenticator, delete the password
+//If it's not the Default authenticator, delete the password and make require password change false
 if ($_REQUEST['authenticator'] !== 'MyRadioDefaultAuthenticator') {
     (new MyRadioDefaultAuthenticator())->removePassword($_SESSION['memberid']);
+    MyRadio_User::getInstance()->setRequirePasswordChange(false);
 }
 
 //Remove the lock on Session access
