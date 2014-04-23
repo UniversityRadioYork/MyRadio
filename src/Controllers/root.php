@@ -21,7 +21,7 @@ ini_set('display_errors', 'On');
  * Set the Default Timezone.
  * Once Config is available, this value should be used instead.
  */
-date_default_timezone_get('Europe/London');
+date_default_timezone_set('Europe/London');
 /**
  * Sets the include path to include MyRadio at the end - makes for nicer includes
  */
