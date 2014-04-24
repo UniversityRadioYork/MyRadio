@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
         $form->render(['error' => true]);
     } else {
         if (isset($data['next'])) {
-            CoreUtils::redirect($data['next']);
+            header('Location: ' . $data['next']);
         } else {
             CoreUtils::redirect(Config::$default_module);
         }
