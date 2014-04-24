@@ -203,6 +203,15 @@ class CoreUtils
     }
 
     /**
+     * Redirects back to previous page.
+     *
+     */
+    public static function back()
+    {
+        header('Location: '.$_SERVER['HTTP_REFERER']);
+    }
+
+    /**
      * Redirects to another page.
      *
      * @param  string $module The module to which we should redirect.
