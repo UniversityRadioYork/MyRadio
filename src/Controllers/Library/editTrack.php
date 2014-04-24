@@ -8,15 +8,42 @@
  */
 
 //The Form definition
-require 'Models/Library/trackfrm.php';
-
-$track = MyRadio_Track::getInstance($_REQUEST['trackid']);
-
-$form->editMode(
-    $track->getID(),
-    array(
-        'title' => $track->getTitle(),
-        'artist' => $track->getArtist(),
-        'album' => $track->getAlbum()->getID()
+$form = (
+    new MyRadioForm(
+        'lib_edittrack',
+        $module,
+        $action,
+        array(
+            'title' => 'Edit Track'
+        )
     )
-)->render();
+)->addField(new MyRadioFormField('title', MyRadioFormField::TYPE_TEXT, array('label' => 'Title')))
+->addField(new MyRadioFormField('artist', MyRadioFormField::TYPE_TEXT, array('label' => 'Artist')))
+->addField(new MyRadioFormField('album', MyRadioFormField::TYPE_ALBUM, array('label' => 'Album')));
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //Submitted
+    $data = $form->readValues();
+
+    $track = MyRadio_Track::getInstance($data['id']);
+    $track->setTitle($data['title']);
+    $track->setArtist($data['artist']);
+    $track->setAlbum($data['album']);
+
+    CoreUtils::backWithMessage('Track Updated.');
+
+} else {
+    //Not Submitted
+
+    $track = MyRadio_Track::getInstance($_REQUEST['trackid']);
+
+    $form->editMode(
+        $track->getID(),
+        array(
+            'title' => $track->getTitle(),
+            'artist' => $track->getArtist(),
+            'album' => $track->getAlbum()->getID()
+        )
+    )->render();
+}
