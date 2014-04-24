@@ -10,17 +10,17 @@
 /**
  * Form definition for adding permissions.
  */
-$form = new MyRadioForm(
-    'assign_action_permissions',
-    $module,
-    $action,
-    array(
-        'debug' => true,
-        'title' => 'Assign Action Permissions'
+$form = (
+    new MyRadioForm(
+        'assign_action_permissions',
+        $module,
+        $action,
+        array(
+            'debug' => true,
+            'title' => 'Assign Action Permissions'
+        )
     )
-);
-
-$form->addField(
+)->addField(
     new MyRadioFormField(
         'service',
         MyRadioFormField::TYPE_SELECT,

@@ -7,16 +7,16 @@
  * @package MyRadio_iTones
  */
 
-$form = new MyRadioForm(
-    'itones_playlistedit',
-    $module,
-    $action,
-    array(
-        'title' => 'Edit Campus Jukebox Playlist'
+$form = (
+    new MyRadioForm(
+        'itones_playlistedit',
+        $module,
+        $action,
+        array(
+            'title' => 'Edit Campus Jukebox Playlist'
+        )
     )
-);
-
-$form->addField(
+)->addField(
     new MyRadioFormField(
         'tracks',
         MyRadioFormField::TYPE_TABULARSET,
