@@ -138,14 +138,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
             ->addVariable('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL(Config::$default_module))
             ->render();
     } elseif ($status === 'change') {
-        header('Location: '.CoreUtils::makeURL('MyRadio', 'pwChange'));
+        CoreUtils::redirect('MyRadio', 'pwChange');
     } elseif ($status !== 'success') {
         $form->render(['error' => true]);
     } else {
         if (isset($data['next'])) {
-            header('Location: ' . $data['next']);
+            CoreUtils::redirect($data['next']);
         } else {
-            header('Location: ' . CoreUtils::makeURL(Config::$default_module));
+            CoreUtils::redirect(Config::$default_module);
         }
     }
 } else {

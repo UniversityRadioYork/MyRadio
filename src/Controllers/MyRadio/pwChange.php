@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
         unset($_SESSION['auth_use_locked']);
     }
 
-    header('Location: '.CoreUtils::makeURL('MyRadio', 'login'));
+    CoreUtils::redirect('MyRadio', 'login');
 } else {
     foreach (Config::$authenticators as $authenticator) {
         $auth = new $authenticator;

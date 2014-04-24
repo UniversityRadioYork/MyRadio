@@ -17,4 +17,4 @@ MyRadio_Podcast::create(
     $data['credits']
 );
 
-header('Location: '.CoreUtils::makeURL('Podcast', 'default'));
+CoreUtils::redirect('Podcast', 'default');

@@ -22,11 +22,11 @@ if (!$result) {
     $message = 'Your cancellation request has been sent. You will receive an email informing you of updates.';
 }
 
-header('Location: '.CoreUtils::makeURL(
+CoreUtils::redirect(
     'Scheduler',
     'listTimeslots',
     array(
         'show_season_id' => $timeslot->getSeason()->getID(),
         'message' => base64_encode($message)
     )
-));
+);

@@ -8,7 +8,7 @@
  */
 
 if (!isset($_REQUEST['authenticator'])) {
-    header('Location: '.CoreUtils::makeURL('MyRadio', 'login'));
+    CoreUtils::redirect('MyRadio', 'login');
     exit;
 }
 
@@ -28,4 +28,4 @@ if ($_REQUEST['authenticator'] !== 'MyRadioDefaultAuthenticator') {
 //Remove the lock on Session access
 $_SESSION['auth_use_locked'] = false;
 
-header('Location: '.$_REQUEST['next']);
+CoreUtils::redirect($_REQUEST['next']);

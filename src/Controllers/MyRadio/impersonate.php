@@ -43,7 +43,7 @@ if (isset($_REQUEST['memberid'])) {
 }
 
 if (isset($_REQUEST['next'])) {
-    header('Location: '.$_REQUEST['next']);
+    CoreUtils::redirect($_REQUEST['next']);
 } else {
-    header('Location: '.Config::$base_url);
+    CoreUtils::redirect(Config::$base_url);
 }
