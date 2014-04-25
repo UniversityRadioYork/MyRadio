@@ -22,7 +22,7 @@ class SIS_Utils extends ServiceAPI
      */
     private static function fileList($d, $x)
     {
-        return array_diff(scandir(__DIR__.'/../../'.$d), ['.','..']);
+        return array_diff(scandir(__DIR__.'/../../'.$d), ['.', '..']);
     }
 
     /**
