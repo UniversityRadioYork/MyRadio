@@ -162,7 +162,7 @@ class MyRadio_Banner extends MyRadio_Photo
 
     public function getEditForm()
     {
-        return self::getBannerForm()
+        return self::getForm()
             ->editMode(
                 $this->getBannerID(),
                 [
@@ -170,7 +170,7 @@ class MyRadio_Banner extends MyRadio_Photo
                     'target' => $this->getTarget(),
                     'type' => $this->getType()
                 ],
-                'doEditBanner'
+                'editBanner'
             );
     }
 
@@ -276,9 +276,9 @@ class MyRadio_Banner extends MyRadio_Photo
      * Generates the form used to Create and Edit Banners
      * @return MyRadio_Form
      */
-    public static function getBannerForm()
+    public static function getForm()
     {
-        return (new MyRadioForm('bannerfrm', 'Website', 'doCreateBanner', [
+        return (new MyRadioForm('bannerfrm', 'Website', 'createBanner', [
             'title' => 'Edit Banner',
             'template' => 'Website/bannerfrm.twig'
             ]))

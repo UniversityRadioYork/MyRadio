@@ -216,7 +216,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
      */
     public function getEditForm()
     {
-        return $this->getBannerCampaignForm($this->banner->getID())
+        return $this->getForm($this->banner->getID())
             ->editMode(
                 $this->getID(),
                 [
@@ -226,7 +226,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                         CoreUtils::happyTime($this->getEffectiveTo()),
                     'location' => $this->getLocation()
                 ],
-                'doEditCampaign'
+                'editCampaign'
             );
     }
 
@@ -391,13 +391,13 @@ class MyRadio_BannerCampaign extends ServiceAPI
      * @param  int         $bannerid The ID of the Banner that this Campaign will be/is linked to
      * @return MyRadioForm
      */
-    public static function getBannerCampaignForm($bannerid = null)
+    public static function getForm($bannerid = null)
     {
         return (
             new MyRadioForm(
                 'bannercampaignfrm',
                 'Website',
-                'doCreateCampaign',
+                'createCampaign',
                 [
                     'template' => 'Website/campaignfrm.twig',
                     'title' => 'Edit Banner Campaign'

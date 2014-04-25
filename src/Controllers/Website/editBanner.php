@@ -7,9 +7,28 @@
  * @package MyRadio_Website
  */
 
-if (!isset($_REQUEST['bannerid'])) {
-    throw new MyRadioException('You must provide a bannerid', 400);
-}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //Submitted
+    $data = MyRadio_Banner::getForm()->readValues();
 
-$banner = MyRadio_Banner::getInstance($_REQUEST['bannerid']);
-$banner->getEditForm()->render(['bannerName' => $banner->getAlt()]);
+    $banner = MyRadio_Banner::getInstance($data['id'])
+        ->setAlt($data['alt'])
+        ->setTarget($data['target'])
+        ->setType($data['type']);
+
+    if ($data['photo']['error'] == 0) {
+        //Upload replacement Photo
+        $banner->setPhoto(MyRadioPhoto::create($data['photo']['tmp_name']));
+    }
+
+    CoreUtils::redirect('Website', 'banners', ['message' => base64_encode('The Banner was updated successfully!')]);
+
+} else {
+    //Not Submitted
+    if (!isset($_REQUEST['bannerid'])) {
+        throw new MyRadioException('You must provide a bannerid', 400);
+    }
+
+    $banner = MyRadio_Banner::getInstance($_REQUEST['bannerid']);
+    $banner->getEditForm()->render(['bannerName' => $banner->getAlt()]);
+}
