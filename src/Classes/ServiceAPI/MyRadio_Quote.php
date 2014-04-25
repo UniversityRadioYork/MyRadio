@@ -264,6 +264,46 @@ class MyRadio_Quote extends ServiceAPI
         return $this;
     }
 
+    public static function getForm()
+    {
+        $form = (
+            new MyRadioForm(
+                'quotes_editQuote',
+                'Quotes',
+                'editQuote',
+                ['title' => 'Edit Quote']
+            )
+        )->addField(
+            new MyRadioFormField(
+                'source',
+                MyRadioFormField::TYPE_MEMBER,
+                [
+                    'label' => 'Source',
+                    'explanation' => 'Which member said it?'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'date',
+                MyRadioFormField::TYPE_DATE,
+                [
+                    'label' => 'Date',
+                    'explanation' => 'When did they say it?'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'text',
+                MyRadioFormField::TYPE_BLOCKTEXT,
+                [
+                    'label' => 'Text',
+                    'explanation' => 'What was said?'
+                ]
+            )
+        );
+
+        return $form;
+    }
 
     /**
      * Converts this quote to a table data source.
@@ -277,16 +317,16 @@ class MyRadio_Quote extends ServiceAPI
             'source' => $this->getSource()->getName(),
             'date' => strftime('%F', $this->getDate()),
             'text' => $this->getText(),
-            /*'editlink' => [
+            'editlink' => [
                 'display' => 'icon',
                 'value' => 'script',
                 'title' => 'Edit Quote',
                 'url' => CoreUtils::makeURL(
-                    'Charts',
+                    'Quotes',
                     'editQuote',
                     ['quote_id' => $this->getID()]
                 )
-            ],*/
+            ],
         ];
     }
 }
