@@ -1613,7 +1613,7 @@ class MyRadio_User extends ServiceAPI
             throw new MyRadioException(MyRadio_User::getInstance() . ' tried to add members!');
         }
 
-        $form = new MyRadioForm('profilebulkadd', 'Profile', 'doBulkAdd', array('title' => 'Add Member (Bulk)'));
+        $form = new MyRadioForm('profilebulkadd', 'Profile', 'bulkAdd', array('title' => 'Add Member (Bulk)'));
         //Personal details
         $form->addField(new MyRadioFormField('bulkaddrepeater', MyRadioFormField::TYPE_TABULARSET, array(
             'options' => array(
