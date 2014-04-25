@@ -14,18 +14,18 @@ $form = (
         'myradio_news',
         'MyRadio',
         'addNews',
-        array(
+        [
             'title' => 'Add news item'
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'body',
         MyRadioFormField::TYPE_BLOCKTEXT,
-        array(
+        [
             'explanation' => '',
             'label' => 'Content'
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(

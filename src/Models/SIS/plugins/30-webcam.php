@@ -7,14 +7,14 @@
  * @package MyRadio_SIS
  */
 
-$vars = array(
+$vars = [
     'webcam_prefix' => Config::$webcam_prefix,
-    'cameras' => array('jukebox.jpg', 'studio1', 's1-fos', 'studio2'),
+    'cameras' => ['jukebox.jpg', 'studio1', 's1-fos', 'studio2'],
     'current' => MyRadio_Webcam::getCurrentWebcam()['current'],
     'streams' => MyRadio_Webcam::getStreams()
-);
+];
 
-$moduleInfo = array(
+$moduleInfo = [
     'name' => 'webcam',
     'title' => 'Webcam Selector',
     'enabled' => true,
@@ -26,4 +26,4 @@ $moduleInfo = array(
     'vars' => $vars,
     'required_permission' => AUTH_MODIFYWEBCAM,
     'required_location' => true,
-);
+];

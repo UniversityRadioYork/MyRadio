@@ -66,7 +66,7 @@ class Profile extends ServiceAPI
                 ON ( member.memberid = member_year.memberid ), l_college
                 WHERE member.college = l_college.collegeid
                 ORDER BY sname ASC',
-                array(CoreUtils::getAcademicYear())
+                [CoreUtils::getAcademicYear()]
             );
             self::$cache->set('MyRadioProfile_allMembers', self::$allMembers);
         }
@@ -96,7 +96,7 @@ class Profile extends ServiceAPI
             ON ( member.memberid = member_year.memberid ), l_college
             WHERE member.college = l_college.collegeid
             ORDER BY sname ASC',
-            array(CoreUtils::getAcademicYear())
+            [CoreUtils::getAcademicYear()]
         );
     }
 

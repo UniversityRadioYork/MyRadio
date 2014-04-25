@@ -43,7 +43,7 @@ class MyRadioSession
     {
         $this->db->query(
             'DELETE FROM sso_session WHERE timestamp<$1',
-            array(CoreUtils::getTimestamp(time() - $lifetime))
+            [CoreUtils::getTimestamp(time() - $lifetime)]
         );
 
         return true;
@@ -61,14 +61,14 @@ class MyRadioSession
         $result = $this->db->fetchColumn(
             'SELECT data FROM sso_session
             WHERE id=$1 LIMIT 1',
-            array($id)
+            [$id]
         );
 
         if (empty($result)) {
             $this->db->query(
                 'INSERT INTO sso_session (id, data, timestamp)
                 VALUES ($1, \'\', $2)',
-                array($id, CoreUtils::getTimestamp())
+                [$id, CoreUtils::getTimestamp()]
             );
 
             return '';
@@ -91,7 +91,7 @@ class MyRadioSession
         $result = $this->db->query(
             'UPDATE sso_session SET data=$2, timestamp=NOW()
             WHERE id=$1',
-            array($id, $data)
+            [$id, $data]
         );
 
         return ($result !== false);
@@ -105,7 +105,7 @@ class MyRadioSession
         if (empty($id)) {
             return false;
         }
-        $this->db->query('DELETE FROM sso_session WHERE id=$1', array($id));
+        $this->db->query('DELETE FROM sso_session WHERE id=$1', [$id]);
 
         return true;
     }

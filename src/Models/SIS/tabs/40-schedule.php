@@ -7,9 +7,9 @@
  * @package MyRadio_SIS
  */
 
-$moduleInfo = array(
+$moduleInfo = [
     'name' => 'schedule',
     'title' => 'Schedule',
     'enabled' => true,
     'help' => 'Schedule tab lets you see what\'s on for the rest of the day',
-);
+];

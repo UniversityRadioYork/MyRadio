@@ -46,7 +46,7 @@ class MyRadio_PlaylistsDaemon extends MyRadio_Daemon
          */
         $most_played = MyRadio_TracklistItem::getTracklistStatsForBAPS(time() - (86400 * 14));
 
-        $playlist = array();
+        $playlist = [];
         for ($i = 0; $i < 20; $i++) {
             if (!isset($most_played[$i])) {
                 break; //If there aren't that many, oh well.

@@ -25,8 +25,8 @@ if (!$result) {
 CoreUtils::redirect(
     'Scheduler',
     'listTimeslots',
-    array(
+    [
         'show_season_id' => $timeslot->getSeason()->getID(),
         'message' => base64_encode($message)
-    )
+    ]
 );

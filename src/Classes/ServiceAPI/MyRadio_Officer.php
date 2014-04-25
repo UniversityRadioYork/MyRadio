@@ -216,7 +216,7 @@ class MyRadio_Officer extends ServiceAPI
     public function getCurrentHolders()
     {
         $i = $this->getHistory();
-        $result = array();
+        $result = [];
         foreach ($i as $o) {
             if ($o['to'] === null) {
                 $result[] = $o['User'];

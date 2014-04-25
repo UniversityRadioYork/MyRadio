@@ -8,4 +8,4 @@
  */
 
 $result = MyRadio_Demo::attend($_REQUEST['demoid']);
-CoreUtils::redirect($module, 'listDemos', array('msg'=>$result));
+CoreUtils::redirect($module, 'listDemos', ['msg'=>$result]);

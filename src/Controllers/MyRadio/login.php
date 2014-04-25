@@ -13,36 +13,36 @@ $form = (
         'myradio_login',
         'MyRadio',
         'login',
-        array(
+        [
             'title' => 'Login'
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'user',
         MyRadioFormField::TYPE_TEXT,
-        array(
+        [
             'explanation' => '',
             'label' => 'Username:',
             'options' => ['placeholder' => 'abc123']
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'password',
         MyRadioFormField::TYPE_PASSWORD,
-        array(
+        [
             'explanation' => '',
             'label' => 'Password:'
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'next',
         MyRadioFormField::TYPE_HIDDEN,
-        array(
+        [
             'value' => isset($_REQUEST['next']) ? $_REQUEST['next'] : Config::$base_url
-        )
+        ]
     )
 )->setTemplate('MyRadio/login.twig');
 

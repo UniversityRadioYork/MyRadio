@@ -6,7 +6,7 @@
  * @package MyRadio_Library
  */
 
-$wrong = array();
+$wrong = [];
 
 foreach (Config::$music_central_db_exts as $ext) {
     foreach (glob(Config::$music_central_db_path.'/records/*/*.'.$ext) as $file) {
@@ -16,7 +16,7 @@ foreach (Config::$music_central_db_exts as $ext) {
         try {
             $track = MyRadio_Track::getInstance($trackid);
             if ($track->getAlbum()->getID() != $recordid) {
-                $wrong[] = array($file, $track->getAlbum()->getID());
+                $wrong[] = [$file, $track->getAlbum()->getID()];
 
                 if (isset($_GET['fix'])) {
                     if (!is_dir(Config::$music_central_db_path.'/records/'.$track->getAlbum()->getID())) {
@@ -31,7 +31,7 @@ foreach (Config::$music_central_db_exts as $ext) {
             $track->removeInstance();
             unset($track);
         } catch (MyRadioException $e) {
-            $wrong[] = array($file, 0);
+            $wrong[] = [$file, 0];
         }
     }
 }
@@ -42,7 +42,7 @@ CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('tabledata', CoreUtils::dataSourceParser($wrong))
     ->addInfo(
         'Please ensure the information below seems correct, then <a href="'
-        .CoreUtils::makeURL('Library', 'findWrong', array('fix' => 1))
+        .CoreUtils::makeURL('Library', 'findWrong', ['fix' => 1])
         .'">click here</a> to auto-move files that have a guessed correct location.',
         'wrench'
     )->render();

@@ -96,7 +96,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
         if (!is_array($array)) {
             return $array;
         }
-        $result = array();
+        $result = [];
         foreach ($array as $element) {
             //It must implement the toDataSource method!
             if (!method_exists($element, 'toDataSource')) {
@@ -121,7 +121,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
      */
     public static function resultSetToObjArray($ids)
     {
-        $response = array();
+        $response = [];
         $child = get_called_class();
         if (!is_array($ids) or empty($ids)) {
             return [];

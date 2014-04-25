@@ -90,7 +90,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             ) AS credit_types
             FROM schedule.show_season_timeslot
             WHERE show_season_timeslot_id=$1',
-            array($timeslot_id)
+            [$timeslot_id]
         );
         if (empty($result)) {
             //Invalid Season
@@ -124,8 +124,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             if (empty($credits[$i])) {
                 continue;
             }
-            $this->credits[] = array('type' => (int) $credit_types[$i], 'memberid' => $credits[$i],
-                'User' => MyRadio_User::getInstance($credits[$i]));
+            $this->credits[] = ['type' => (int) $credit_types[$i], 'memberid' => $credits[$i],
+                'User' => MyRadio_User::getInstance($credits[$i])];
         }
     }
 
@@ -246,7 +246,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     public function toDataSource()
     {
-        return array_merge($this->getSeason()->toDataSource(), array(
+        return array_merge($this->getSeason()->toDataSource(), [
             'id' => $this->getID(),
             'timeslot_num' => $this->getTimeslotNumber(),
             'title' => $this->getMeta('title'),
@@ -255,12 +255,12 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'start_time' => CoreUtils::happyTime($this->getStartTime()),
             'duration' => $this->getDuration(),
             'mixcloud_status' => $this->getMeta('upload_state'),
-            'rejectlink' => array(
+            'rejectlink' => [
                 'display' => 'icon',
                 'value' => 'trash',
                 'title' => 'Cancel Episode',
-                'url' => CoreUtils::makeURL('Scheduler', 'cancelEpisode', array('show_season_timeslot_id' => $this->getID())))
-        ));
+                'url' => CoreUtils::makeURL('Scheduler', 'cancelEpisode', ['show_season_timeslot_id' => $this->getID()])]
+        ]);
     }
 
     /**
@@ -275,10 +275,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'SELECT messages.timeslotid, count(*) as msg_count FROM sis2.messages
             LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid = show_season_timeslot.show_season_timeslot_id
             WHERE show_season_timeslot.start_time > $1 GROUP BY messages.timeslotid ORDER BY msg_count DESC LIMIT 30',
-            array(CoreUtils::getTimestamp($date))
+            [CoreUtils::getTimestamp($date)]
         );
 
-        $top = array();
+        $top = [];
         foreach ($result as $r) {
             $show = self::getInstance($r['timeslotid'])->toDataSource();
             $show['msg_count'] = intval($r['msg_count']);
@@ -311,10 +311,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             ) AS listeners
             FROM schedule.show_season_timeslot WHERE start_time > $1
             ORDER BY listeners DESC LIMIT 30',
-            array(CoreUtils::getTimestamp($date))
+            [CoreUtils::getTimestamp($date)]
         );
 
-        $top = array();
+        $top = [];
         foreach ($result as $r) {
             $show = self::getInstance($r['show_season_timeslot_id'])->toDataSource();
             $show['listeners'] = intval($r['listeners']);
@@ -544,7 +544,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         $email = $this->getMeta('title') . ' on ' . CoreUtils::happyTime($this->getStartTime()) . ' has requested cancellation because ' . $reason;
         $email .= "\r\n\r\nDue to the short notice, it has been passed to you for consideration. To cancel the timeslot, visit ";
-        $email .= CoreUtils::makeURL('Scheduler', 'cancelEpisode', array('show_season_timeslot_id' => $this->getID(), 'reason' => base64_encode($reason)));
+        $email .= CoreUtils::makeURL('Scheduler', 'cancelEpisode', ['show_season_timeslot_id' => $this->getID(), 'reason' => base64_encode($reason)]);
 
         MyRadioEmail::sendEmailToList(MyRadio_List::getByName('programming'), 'Show Cancellation Request', $email);
 
@@ -557,7 +557,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     private function deleteTimeslot()
     {
-        $r = self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', array($this->getID()));
+        $r = self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', [$this->getID()]);
 
         /**
          * @todo This is massively overkill, isn't it?
@@ -575,7 +575,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function updateShowPlan($set)
     {
-        $result = array();
+        $result = [];
         //Being a Database Transaction - this all succeeds, or none of it does
         self::$db->query('BEGIN');
 
@@ -593,31 +593,31 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                             $i = NIPSWeb_TimeslotItem::createCentral($this->getID(), $parts[1], $op['channel'], $op['weight']);
                         }
                     } catch (MyRadioException $e) {
-                        $result[] = array('status' => false);
+                        $result[] = ['status' => false];
                         self::$db->query('ROLLBACK');
 
                         return $result;
                     }
 
-                    $result[] = array('status' => true, 'timeslotitemid' => $i->getID());
+                    $result[] = ['status' => true, 'timeslotitemid' => $i->getID()];
                     break;
 
                 case 'MoveItem':
                     if (!is_numeric($op['timeslotitemid'])) {
-                        $result[] = array('status' => false);
+                        $result[] = ['status' => false];
                         self::$db->query('ROLLBACK');
 
                         return $result;
                     }
                     $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
                     if ($i->getChannel() != $op['oldchannel'] or $i->getWeight() != $op['oldweight']) {
-                        $result[] = array('status' => false);
+                        $result[] = ['status' => false];
                         self::$db->query('ROLLBACK');
 
                         return $result;
                     } else {
                         $i->setLocation($op['channel'], $op['weight']);
-                        $result[] = array('status' => true);
+                        $result[] = ['status' => true];
                     }
                     break;
 
@@ -627,13 +627,13 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     }
                     $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
                     if ($i->getChannel() != $op['channel'] or $i->getWeight() != $op['weight']) {
-                        $result[] = array('status' => false);
+                        $result[] = ['status' => false];
                         self::$db->query('ROLLBACK');
 
                         return $result;
                     } else {
                         $i->remove();
-                        $result[] = array('status' => true);
+                        $result[] = ['status' => true];
                     }
                     break;
             }
@@ -642,10 +642,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         self::$db->query(
             'INSERT INTO bapsplanner.timeslot_change_ops (client_id, change_ops)
             VALUES ($1, $2)',
-            array(
+            [
                 $set['clientid'],
                 json_encode($set['ops'])
-            )
+            ]
         );
 
         self::$db->query('COMMIT');
@@ -674,14 +674,14 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'SELECT timeslot_item_id, channel_id FROM bapsplanner.timeslot_items
             WHERE timeslot_id=$1
             ORDER BY weight ASC',
-            array($this->getID())
+            [$this->getID()]
         );
 
         if (!$r or self::$db->numRows($r) === 0) {
             //No show planned yet
-            return array();
+            return [];
         } else {
-            $tracks = array();
+            $tracks = [];
             foreach (self::$db->fetchAll($r) as $track) {
                 $tracks[$track['channel_id']][] = NIPSWeb_TimeslotItem::getInstance($track['timeslot_item_id'])->toDataSource();
             }

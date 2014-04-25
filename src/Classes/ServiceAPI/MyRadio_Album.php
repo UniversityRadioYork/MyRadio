@@ -54,7 +54,7 @@ class MyRadio_Album extends ServiceAPI
 
     private $label;
 
-    private $tracks = array();
+    private $tracks = [];
 
     protected function __construct($recordid)
     {
@@ -66,7 +66,7 @@ class MyRadio_Album extends ServiceAPI
             LEFT JOIN public.rec_medialookup ON t1.media = rec_medialookup.media_code
             LEFT JOIN public.rec_formatlookup ON t1.format = rec_formatlookup.format_code
             LEFT JOIN public.rec_locationlookup ON t1.location = rec_locationlookup.location_code',
-            array($recordid)
+            [$recordid]
         );
 
         if (empty($result)) {
@@ -91,7 +91,7 @@ class MyRadio_Album extends ServiceAPI
         $this->cdid = $result['cdid'];
         $this->location = $result['location_descr'];
 
-        $this->tracks = self::$db->fetchColumn('SELECT trackid FROM rec_track WHERE recordid=$1', array($this->albumid));
+        $this->tracks = self::$db->fetchColumn('SELECT trackid FROM rec_track WHERE recordid=$1', [$this->albumid]);
     }
 
     public function getID()
@@ -150,7 +150,7 @@ class MyRadio_Album extends ServiceAPI
             $paramName = $param_maps[$paramName];
         }
 
-        self::$db->query('UPDATE public.rec_record SET ' . $paramName . '=$1 WHERE recordid=$2', array($value, $this->getID()));
+        self::$db->query('UPDATE public.rec_record SET ' . $paramName . '=$1 WHERE recordid=$2', [$value, $this->getID()]);
 
         return true;
     }
@@ -197,10 +197,10 @@ class MyRadio_Album extends ServiceAPI
         $result = self::$db->fetchColumn(
             'SELECT DISTINCT rec_record.recordid AS recordid FROM rec_record
             WHERE rec_record.title ILIKE \'%\' || $1 || \'%\' LIMIT $2;',
-            array($title, $limit)
+            [$title, $limit]
         );
 
-        $response = array();
+        $response = [];
         foreach ($result as $album) {
             $response[] = MyRadio_Album::getInstance($album);
         }
@@ -273,7 +273,7 @@ class MyRadio_Album extends ServiceAPI
         }
 
         //Prepare paramaters
-        $sql_params = array($options['title'], $options['artist'], $options['album'], $options['precise'] ? '' : '%');
+        $sql_params = [$options['title'], $options['artist'], $options['album'], $options['precise'] ? '' : '%'];
         $count = 4;
         if ($options['limit'] != 0) {
             $sql_params[] = $options['limit'];
@@ -308,7 +308,7 @@ class MyRadio_Album extends ServiceAPI
             $sql_params
         );
 
-        $response = array();
+        $response = [];
         foreach ($result as $recordid) {
             if ($options['trackid'] !== null && $recordid['trackid'] != $options['trackid']) {
                 continue;
@@ -326,12 +326,12 @@ class MyRadio_Album extends ServiceAPI
 
         $result = self::$db->fetchOne(
             'SELECT recordid FROM rec_record WHERE title=$1 AND artist=$2 LIMIT 1',
-            array($title, $artist)
+            [$title, $artist]
         );
 
         if (empty($result)) {
             //Create Album
-            return self::create(array('title' => $title, 'artist' => $artist));
+            return self::create(['title' => $title, 'artist' => $artist]);
         } else {
             //Load Album
             return self::getInstance($result['recordid']);
@@ -386,7 +386,7 @@ class MyRadio_Album extends ServiceAPI
             'INSERT INTO rec_record (title, artist, status, media, format, recordlabel, shelfnumber,
             shelfletter, memberid_add, cdid, location, promoterid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
             RETURNING recordid',
-            array(
+            [
                 trim($options['title']),
                 trim($options['artist']),
                 $options['status'],
@@ -399,7 +399,7 @@ class MyRadio_Album extends ServiceAPI
                 $options['cdid'],
                 $options['location'],
                 $options['promoterid']
-            )
+            ]
         );
 
         $id = self::$db->fetchAll($r);
@@ -409,7 +409,7 @@ class MyRadio_Album extends ServiceAPI
 
     public function toDataSource()
     {
-        return array(
+        return [
             'title' => $this->getTitle(),
             'recordid' => $this->getID(),
             'artist' => $this->artist,
@@ -427,6 +427,6 @@ class MyRadio_Album extends ServiceAPI
             'shelf_number' => $this->shelf_number,
             'status' => $this->status,
             'label' => $this->record_label
-        );
+        ];
     }
 }

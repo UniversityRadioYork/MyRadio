@@ -35,4 +35,4 @@ if (isset($data['local_name'])) {
         ->setLocalAlias($data['local_alias']);
 }
 
-CoreUtils::redirect('Profile', 'view', array('memberid' => $data['memberid']));
+CoreUtils::redirect('Profile', 'view', ['memberid' => $data['memberid']]);

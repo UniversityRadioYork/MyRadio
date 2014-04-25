@@ -22,7 +22,7 @@ class SIS_Utils extends ServiceAPI
      */
     private static function fileList($d, $x)
     {
-        return array_diff(scandir(__DIR__.'/../../'.$d), array('.','..'));
+        return array_diff(scandir(__DIR__.'/../../'.$d), ['.','..']);
     }
 
     /**
@@ -54,7 +54,7 @@ class SIS_Utils extends ServiceAPI
     private static function getModules($moduleFolder)
     {
         $modules = self::fileList($moduleFolder, 'php');
-        $loadedModules = array();
+        $loadedModules = [];
         if ($modules !== false) {
             foreach ($modules as $key => $module) {
                 include $moduleFolder.'/'.$module;
@@ -82,7 +82,7 @@ class SIS_Utils extends ServiceAPI
     private static function getModulesForUser($moduleFolder)
     {
         $modules = self::getModules($moduleFolder);
-        $loadedModules = array();
+        $loadedModules = [];
         if ($modules !== false) {
             foreach ($modules as $key => $module) {
                 $notAuth = (isset($module['required_permission']) && !CoreUtils::hasPermission($module['required_permission']));
@@ -128,9 +128,9 @@ class SIS_Utils extends ServiceAPI
      */
     public static function ipLookup($ip)
     {
-        $query = self::$db->query('SELECT iscollege, description FROM l_subnet WHERE subnet >> $1 ORDER BY description ASC', array($ip));
+        $query = self::$db->query('SELECT iscollege, description FROM l_subnet WHERE subnet >> $1 ORDER BY description ASC', [$ip]);
 
-        $location = array();
+        $location = [];
 
         if (($query === null) or (pg_num_rows($query) == 0)) {
             $geoip = geoip_record_by_name($ip);
@@ -155,7 +155,7 @@ class SIS_Utils extends ServiceAPI
     public static function readPolls($modules)
     {
         if ($modules !== false) {
-            $pollFuncs = array();
+            $pollFuncs = [];
             foreach ($modules as $module) {
                 if (isset($module['pollfunc'])) {
                     $pollFuncs[] = $module['pollfunc'];

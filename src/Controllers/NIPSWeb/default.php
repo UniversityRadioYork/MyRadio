@@ -17,12 +17,12 @@ if (isset($_REQUEST['readonly'])) {
     $template = 'NIPSWeb/main.twig';
     $title = 'Show Planner';
     $reslists = CoreUtils::dataSourceParser(
-        array(
+        [
             'managed' => iTones_Playlist::getAlliTonesPlaylists(),
             'auto' => NIPSWeb_AutoPlaylist::getAllAutoPlaylists(),
             'aux' => NIPSWeb_ManagedPlaylist::getAllManagedPlaylists(),
             'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(MyRadio_User::getInstance())
-        )
+        ]
     );
 }
 

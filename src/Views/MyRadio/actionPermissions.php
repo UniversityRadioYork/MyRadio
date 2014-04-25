@@ -8,18 +8,18 @@
  * @package MyRadio_Config
  */
 for ($i = 0; $i < sizeof($data); $i++) {
-    $data[$i]['del'] = array(
+    $data[$i]['del'] = [
         'display' => 'text',
         'url' => CoreUtils::makeURL(
             'Core',
             'removeActionPermission',
-            array('permissionid' => $data[$i]['actpermissionid'])
+            ['permissionid' => $data[$i]['actpermissionid']]
         ),
         'value' => 'Delete'
-    );
+    ];
 }
 $form->setTemplate('MyRadio/actionPermissions.twig')
-    ->render(array(
+    ->render([
         'tabledata' => $data,
         'tablescript' => 'myury.core.actionPermissions'
-    ));
+    ]);

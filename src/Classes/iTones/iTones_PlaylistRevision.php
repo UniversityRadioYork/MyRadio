@@ -45,7 +45,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
         $result = self::$db->fetchOne(
             'SELECT * FROM jukebox.playlist_revisions
             WHERE playlistid=$1 AND revisionid=$2 LIMIT 1',
-            array($playlistid, $revisionid)
+            [$playlistid, $revisionid]
         );
         if (empty($result)) {
             throw new MyRadioException('The specified iTones Playlist Revision does not seem to exist');
@@ -62,7 +62,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
             'SELECT trackid FROM jukebox.playlist_entries WHERE playlistid=$1
             AND revision_added <= $2 AND (revision_removed >= $2 OR revision_removed IS NULL)
             ORDER BY entryid',
-            array($this->getID(), $this->getRevisionID())
+            [$this->getID(), $this->getRevisionID()]
         );
 
         foreach ($items as $id) {
@@ -118,10 +118,10 @@ class iTones_PlaylistRevision extends iTones_Playlist
 
     public static function getAllRevisions($playlistid)
     {
-        $data = array();
+        $data = [];
         foreach (self::$db->fetchColumn(
             'SELECT revisionid FROM jukebox.playlist_revisions WHERE playlistid=$1',
-            array($playlistid)
+            [$playlistid]
         ) as $revisionid) {
             $data[] = self::getInstance($playlistid.'~'.$revisionid);
         }
@@ -136,37 +136,37 @@ class iTones_PlaylistRevision extends iTones_Playlist
     */
     public function toDataSource()
     {
-        return array(
+        return [
             'revisionid' => $this->getRevisionID(),
             'timestamp' => CoreUtils::happyTime($this->getTimestamp()),
             'notes' => $this->getNotes(),
             'author' => $this->getAuthor()->getName(),
-            'viewtrackslink' => array(
+            'viewtrackslink' => [
                 'display' => 'icon',
                 'value' => 'folder-open',
                 'title' => 'View Tracks in this playlist revision',
                 'url' => CoreUtils::makeURL(
                     'iTones',
                     'viewPlaylistRevision',
-                    array(
+                    [
                         'playlistid'=>$this->getID(),
                         'revisionid' => $this->getRevisionID()
-                    )
+                    ]
                 )
-            ),
-            'restorelink' => array(
+            ],
+            'restorelink' => [
                 'display' => 'icon',
                 'value' => 'refresh',
                 'title' => 'Restore this revision',
                 'url' => CoreUtils::makeURL(
                     'iTones',
                     'restorePlaylistRevision',
-                    array(
+                    [
                         'playlistid'=>$this->getID(),
                         'revisionid' => $this->getRevisionID()
-                    )
+                    ]
                 )
-            ),
-        );
+            ],
+        ];
     }
 }

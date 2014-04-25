@@ -6,14 +6,14 @@
  * @version 20130624
  * @package MyRadio_Stats
  */
-$options = array(
+$options = [
     'title' => 'MyRadio Service Stats',
-    'series' => array(
-        array('targetAxisIndex' => 0),
-        array('targetAxisIndex' => 0),
-        array('targetAxisIndex' => 1)
-    )
-);
+    'series' => [
+        ['targetAxisIndex' => 0],
+        ['targetAxisIndex' => 0],
+        ['targetAxisIndex' => 1]
+    ]
+];
 CoreUtils::getTemplateObject()->setTemplate('linegraph.twig')
     ->addVariable('title', 'MyRadio Error Rates')
     ->addVariable('data', json_encode(CoreUtils::getErrorStats()))

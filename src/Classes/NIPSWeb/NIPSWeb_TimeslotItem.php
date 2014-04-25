@@ -33,7 +33,7 @@ class NIPSWeb_TimeslotItem extends ServiceAPI
         //*dies*
         $result = self::$db->fetchOne(
             'SELECT * FROM bapsplanner.timeslot_items where timeslot_item_id=$1 LIMIT 1',
-            array($resid)
+            [$resid]
         );
 
         if (empty($result)) {
@@ -87,7 +87,7 @@ class NIPSWeb_TimeslotItem extends ServiceAPI
         $this->weight = (int) $weight;
         self::$db->query(
             'UPDATE bapsplanner.timeslot_items SET channel_id=$1, weight=$2 WHERE timeslot_item_id=$3',
-            array($this->channel, $this->weight, $this->getID())
+            [$this->channel, $this->weight, $this->getID()]
         );
         $this->updateCacheObject();
     }
@@ -96,7 +96,7 @@ class NIPSWeb_TimeslotItem extends ServiceAPI
     {
         self::$db->query(
             'DELETE FROM bapsplanner.timeslot_items WHERE timeslot_item_id=$1',
-            array($this->getID())
+            [$this->getID()]
         );
         $this->removeInstance();
         unset($this);
@@ -107,7 +107,7 @@ class NIPSWeb_TimeslotItem extends ServiceAPI
         $result = self::$db->fetchColumn(
             'INSERT INTO bapsplanner.timeslot_items (timeslot_id, managed_item_id, channel_id, weight)
             VALUES ($1, $2, $3, $4) RETURNING timeslot_item_id',
-            array($timeslot, $manageditemid, $channel, $weight)
+            [$timeslot, $manageditemid, $channel, $weight]
         );
 
         return self::getInstance($result[0]);
@@ -118,7 +118,7 @@ class NIPSWeb_TimeslotItem extends ServiceAPI
         $result = self::$db->fetchColumn(
             'INSERT INTO bapsplanner.timeslot_items (timeslot_id, rec_track_id, channel_id, weight)
             VALUES ($1, $2, $3, $4) RETURNING timeslot_item_id',
-            array($timeslot, $trackid, $channel, $weight)
+            [$timeslot, $trackid, $channel, $weight]
         );
 
         return self::getInstance($result[0]);
@@ -132,11 +132,11 @@ class NIPSWeb_TimeslotItem extends ServiceAPI
     public function toDataSource()
     {
         return array_merge(
-            array(
+            [
                 'timeslotitemid' => $this->getID(),
                 'channel' => $this->getChannel(),
                 'weight' => $this->getWeight()
-            ),
+            ],
             $this->getItem()->toDataSource()
         );
     }
