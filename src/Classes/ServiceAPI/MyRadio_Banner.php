@@ -169,8 +169,7 @@ class MyRadio_Banner extends MyRadio_Photo
                     'alt' => $this->getAlt(),
                     'target' => $this->getTarget(),
                     'type' => $this->getType()
-                ],
-                'editBanner'
+                ]
             );
     }
 
