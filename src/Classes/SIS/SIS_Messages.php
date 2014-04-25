@@ -40,7 +40,7 @@ class SIS_Messages extends ServiceAPI
     {
         self::$db->query(
             'UPDATE sis2.messages SET statusid=$1 WHERE commid=$2',
-            array($status, $id)
+            [$status, $id]
         );
     }
 }

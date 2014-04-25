@@ -8,7 +8,7 @@
 
 $tracks = MyRadio_Track::getAllDigitised();
 
-$missing = array();
+$missing = [];
 
 foreach ($tracks as $track) {
     if (!$track->checkForAudioFile()) {
@@ -25,7 +25,7 @@ CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('tabledata', CoreUtils::dataSourceParser($missing))
     ->addInfo(
         'Please ensure the information below seems correct, then <a href="'
-        .CoreUtils::makeURL('Library', 'findMissing', array('fix' => 1))
+        .CoreUtils::makeURL('Library', 'findMissing', ['fix' => 1])
         .'">click here</a> to mark these files as undigitised.',
         'wrench'
     )->render();

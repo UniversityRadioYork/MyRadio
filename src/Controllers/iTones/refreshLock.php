@@ -19,10 +19,10 @@ $lock = $playlist->acquireOrRenewLock(
 );
 
 if ($lock === false) {
-    $data = array('FAIL','Locked for editing by another user');
+    $data = ['FAIL','Locked for editing by another user'];
 } else {
     $_SESSION['itones_lock_'.$playlist->getID()] = $lock;
-    $data = array('SUCCESS', $lock);
+    $data = ['SUCCESS', $lock];
 }
 
 require_once 'Views/MyRadio/datatojson.php';

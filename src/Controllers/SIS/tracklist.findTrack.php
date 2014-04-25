@@ -37,7 +37,7 @@ $albumResult = MyRadio_Album::findByOptions(
     ]
 );
 
-$dataout = array();
+$dataout = [];
 
 if ($box == "artist") {
     foreach ($artistResult as $artist) {

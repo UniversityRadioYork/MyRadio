@@ -7,11 +7,11 @@
  * @package MyRadio_SIS
  */
 
-$vars = array(
+$vars = [
     'piss' => MyRadioNews::getLatestNewsItem(Config::$piss_feed, MyRadio_User::getInstance())
-);
+];
 
-$moduleInfo = array(
+$moduleInfo = [
     'name' => 'piss',
     'title' => 'Presenter Information',
     'enabled' => true,
@@ -19,4 +19,4 @@ $moduleInfo = array(
         .'useful information from our great lord and master, <station manager name>. It\'s a great way to find out how '
         .'to get more involved in '.Config::$short_name.' or see what you events you can advertise on your show.',
     'vars' => $vars
-);
+];

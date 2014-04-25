@@ -11,43 +11,43 @@ $form = new MyRadioForm(
     'itones_playlistedit',
     $module,
     'doEditPlaylist',
-    array(
+    [
         'title' => 'Edit Campus Jukebox Playlist'
-    )
+    ]
 );
 
 $form->addField(
     new MyRadioFormField(
         'tracks',
         MyRadioFormField::TYPE_TABULARSET,
-        array(
-            'options' => array(
+        [
+            'options' => [
                 new MyRadioFormField(
                     'track',
                     MyRadioFormField::TYPE_TRACK,
-                    array(
+                    [
                         'label' => 'Tracks'
-                    )
+                    ]
                 ),
                 new MyRadioFormField(
                     'artist',
                     MyRadioFormField::TYPE_ARTIST,
-                    array(
+                    [
                         'label' => 'Artists'
-                    )
+                    ]
                 )
-            )
-        )
+            ]
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'notes',
         MyRadioFormField::TYPE_TEXT,
-        array(
+        [
             'label' => 'Notes',
             'explanation' => 'Optional. Enter notes aboout this change.',
             'required' => false
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(

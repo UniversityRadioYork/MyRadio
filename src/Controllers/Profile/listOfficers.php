@@ -12,18 +12,18 @@ $officers = Profile::getOfficers();
 
 foreach ($officers as $k => $v) {
     if (!empty($officers[$k]['name'])) {
-        $officers[$k]['name'] = array(
+        $officers[$k]['name'] = [
             'display' => 'text',
-            'url' => CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['memberid'])),
+            'url' => CoreUtils::makeURL('Profile', 'view', ['memberid' => $v['memberid']]),
             'value' => $v['name']
-        );
+        ];
     }
-    $officers[$k]['editlink'] = array(
+    $officers[$k]['editlink'] = [
         'display' => 'icon',
         'value' => 'wrench',
         'title' => 'Edit Officer',
-        'url' => CoreUtils::makeURL('Profile', 'editOfficer', array('officerid' => $v['officerid'])),
-    );
+        'url' => CoreUtils::makeURL('Profile', 'editOfficer', ['officerid' => $v['officerid']]),
+    ];
 }
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')

@@ -21,7 +21,7 @@ require 'Models/Scheduler/showfrm.php';
 
 $form->editMode(
     $_REQUEST['seasonid'],
-    array(
+    [
         'title' => $season->getMeta('title'),
         'description' => $season->getMeta('description'),
         'tags' => implode(' ', $season->getMeta('tag')),
@@ -37,7 +37,7 @@ $form->editMode(
             },
             $season->getCredits()
         )
-    ),
+    ],
     'doEditSeason'
 )->setTitle('Edit Season of '.$season->getShow()->getMeta('title'))
 ->render();

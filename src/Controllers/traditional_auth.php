@@ -12,7 +12,7 @@ if ((!isset($_SESSION['memberid']) or $_SESSION['auth_use_locked']) &&
         (!defined('SHIBBOBLEH_ALLOW_READONLY') or SHIBBOBLEH_ALLOW_READONLY === false)) {
     //Authentication is required.
     header('HTTP/1.1 403 Forbidden');
-    header('Location: ' . CoreUtils::makeURL('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]));
+    CoreUtils::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
     exit;
 }
 
@@ -21,6 +21,6 @@ if ((!isset($_SESSION['timeslotid']) or $_SESSION['timeslotid'] === null) &&
         (defined('SHIBBOBLEH_REQUIRE_TIMESLOT') and SHIBBOBLEH_REQUIRE_TIMESLOT)) {
     //Timeslot needs configuring
     header('HTTP/1.1 403 Forbidden');
-    header('Location: ' . CoreUtils::makeURL('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]));
+    CoreUtils::redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
     exit;
 }

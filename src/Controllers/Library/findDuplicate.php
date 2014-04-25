@@ -9,9 +9,9 @@
 //This stores the last ID checked so that we can collect Tracks in batches, preventing us from using ALL the RAM
 $finalid = 0;
 //Stores trackids of tracks that have been searched through already
-$alreadydone = array();
+$alreadydone = [];
 //Stores MyRadio_Tracks that are duplicates
-$duplicates = array();
+$duplicates = [];
 //We use this here to keep track of the query counter
 $db = Database::getInstance();
 //If query count goes over this, bail and show what you've found so far
@@ -20,12 +20,12 @@ $query_limit = 25000;
 do {
     //Get the next batch of tracks from where we left off
     $tracks = MyRadio_Track::findByOptions(
-        array(
+        [
             'limit' => 500,
             'digitised' => true,
             'idsort' => true,
             'custom' => 'trackid > ' . $finalid
-        )
+        ]
     );
 
     foreach ($tracks as $track) {
@@ -36,12 +36,12 @@ do {
 
         //Find tracks that match this name and artist
         $matches = MyRadio_Track::findByOptions(
-            array(
+            [
                 'title' => $track->getTitle(),
                 'artist' => $track->getArtist(),
                 'limit' => 0,
                 'precise' => true
-            )
+            ]
         );
 
         //If there's more than one match, then there are duplicates for this item

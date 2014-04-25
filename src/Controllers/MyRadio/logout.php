@@ -10,4 +10,4 @@
  */
 
 session_destroy();
-header('Location: '.CoreUtils::makeURL('MyRadio', 'login', ['logout' => 1]));
+CoreUtils::redirect('MyRadio', 'login', ['logout' => 1]);

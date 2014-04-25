@@ -12,7 +12,7 @@ require_once 'Interfaces/TemplateEngine.php';
  */
 class MyRadioTwig implements TemplateEngine
 {
-    private $contextVariables = array();
+    private $contextVariables = [];
     private $template;
     private $twig;
 
@@ -24,7 +24,7 @@ class MyRadioTwig implements TemplateEngine
     {
         $twig_loader = new Twig_Loader_Filesystem(__DIR__ . '/../Templates/');
         $this->contextVariables['notices'] = '';
-        $this->twig = new Twig_Environment($twig_loader, array('auto_reload' => true));
+        $this->twig = new Twig_Environment($twig_loader, ['auto_reload' => true]);
         if (Config::$template_debug) {
             $this->twig->addExtension(new Twig_Extension_Debug());
             $this->twig->enableDebug();
@@ -57,7 +57,7 @@ class MyRadioTwig implements TemplateEngine
                 ->addVariable(
                     'baseurl',
                     CoreUtils::getServiceVersionForUser()['proxy_static']
-                    ? CoreUtils::makeURL('MyRadio', 'StaticProxy', array('0' => null)) : Config::$base_url
+                    ? CoreUtils::makeURL('MyRadio', 'StaticProxy', ['0' => null]) : Config::$base_url
                 );
 
             if (!empty($GLOBALS['module']) && isset($_SESSION['memberid'])) {
@@ -141,14 +141,14 @@ class MyRadioTwig implements TemplateEngine
 
     public function addInfo($message, $icon = 'info')
     {
-        $this->contextVariables['notices'][] = array('icon' => $icon, 'message' => $message, 'state' => 'highlight');
+        $this->contextVariables['notices'][] = ['icon' => $icon, 'message' => $message, 'state' => 'highlight'];
 
         return $this;
     }
 
     public function addError($message, $icon = 'alert')
     {
-        $this->contextVariables['notices'][] = array('icon' => $icon, 'message' => $message, 'state' => 'error');
+        $this->contextVariables['notices'][] = ['icon' => $icon, 'message' => $message, 'state' => 'error'];
 
         return $this;
     }

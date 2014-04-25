@@ -17,4 +17,4 @@ try {
     exit;
 }
 
-header('Location: '.CoreUtils::makeURL('Scheduler', 'myShows'));
+CoreUtils::redirect('Scheduler', 'myShows');

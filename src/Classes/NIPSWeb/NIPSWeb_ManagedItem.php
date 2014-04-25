@@ -50,7 +50,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI
             NULL as managedplaylistid
             FROM bapsplanner.managed_user_items WHERE manageditemid=$1
             LIMIT 1',
-            array($resid)
+            [$resid]
         );
 
         if (empty($result)) {
@@ -129,7 +129,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI
      */
     public function toDataSource()
     {
-        return array(
+        return [
             'type' => 'aux', //Legacy NIPSWeb Views
             'summary' => $this->getTitle(), //Again, freaking NIPSWeb
             'title' => $this->getTitle(),
@@ -138,7 +138,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI
             'trackid' => $this->getID(),
             'recordid' => 'ManagedDB', //Legacy NIPSWeb Views
             'auxid' => 'managed:' . $this->getID() //Legacy NIPSWeb Views
-        );
+        ];
     }
 
     public static function cacheItem($tmp_path)
@@ -158,38 +158,38 @@ class NIPSWeb_ManagedItem extends ServiceAPI
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
 
         //The entire $fileInfo array will break Session.
-        $_SESSION['uploadInfo'][$filename] = array(
+        $_SESSION['uploadInfo'][$filename] = [
             'fileformat' => $fileInfo['fileformat'],
             'playtime_seconds' => $fileInfo['playtime_seconds']
-        );
+        ];
 
         // File quality checks
         if ($fileInfo['audio']['bitrate'] < 192000) {
-            return array('status' => 'FAIL', 'error' => 'Bitrate is below 192kbps.', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']);
+            return ['status' => 'FAIL', 'error' => 'Bitrate is below 192kbps.', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']];
         }
         if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
-            return array('status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']);
+            return ['status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
         }
 
-        return array(
+        return [
             'fileid' => $filename,
-        );
+        ];
     }
 
     public static function storeItem($tmpid, $title)
     {
-        $options = array(
+        $options = [
             'title' => $title,
             'expires' => $_REQUEST['expires'],
             'auxid' => $_REQUEST['auxid'],
             'duration' => $_SESSION['uploadInfo'][$tmpid]['playtime_seconds'],
-        );
+        ];
 
         $item = self::create($options);
 
         if (!$item) {
             //Database transaction failed.
-            return array('status' => 'FAIL', 'error' => 'A database kerfuffle occured.', 'fileid' => $_REQUEST['fileid']);
+            return ['status' => 'FAIL', 'error' => 'A database kerfuffle occured.', 'fileid' => $_REQUEST['fileid']];
         }
 
         /**
@@ -202,7 +202,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI
 
         if (!$item->getFolder()) {
             //Creating folders failed.
-            return array('status' => 'FAIL', 'error' => 'Folders could not be created.', 'fileid' => $_REQUEST['fileid']);
+            return ['status' => 'FAIL', 'error' => 'Folders could not be created.', 'fileid' => $_REQUEST['fileid']];
         }
         $dbfile = $item->getFolder().'/'.$item->getID();
 
@@ -214,14 +214,14 @@ class NIPSWeb_ManagedItem extends ServiceAPI
 
         if (!file_exists($dbfile.'.mp3') || !file_exists($dbfile.'.ogg')) {
             //Conversion failed!
-            return array('status' => 'FAIL', 'error' => 'Conversion with ffmpeg failed.', 'fileid' => $_REQUEST['fileid']);
+            return ['status' => 'FAIL', 'error' => 'Conversion with ffmpeg failed.', 'fileid' => $_REQUEST['fileid']];
         } elseif (!file_exists($dbfile.'.'.$_SESSION['uploadInfo'][$tmpid]['fileformat'].'.orig')) {
-            return array('status' => 'FAIL', 'error' => 'Could not move file to library.', 'fileid' => $_REQUEST['fileid']);
+            return ['status' => 'FAIL', 'error' => 'Could not move file to library.', 'fileid' => $_REQUEST['fileid']];
         }
 
         NIPSWeb_BAPSUtils::linkCentralLists($item);
 
-        return array('status' => 'OK', 'title' => $title);
+        return ['status' => 'OK', 'title' => $title];
     }
 
     /**
@@ -239,7 +239,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI
     {
         self::wakeup();
 
-        $required = array('title', 'duration', 'auxid');
+        $required = ['title', 'duration', 'auxid'];
         foreach ($required as $require) {
             if (empty($options[$require])) {
                 throw new MyRadioException($require.' is required to create an Item.', 400);
@@ -261,18 +261,18 @@ class NIPSWeb_ManagedItem extends ServiceAPI
             $result = self::$db->query(
                 'INSERT INTO bapsplanner.managed_user_items (managedplaylistid, title, length, bpm)
                 VALUES ($1, $2, $3, $4) RETURNING manageditemid',
-                array(
+                [
                     $path,
                     trim($options['title']),
                     CoreUtils::intToTime($options['duration']),
                     $options['bpm'],
-                )
+                ]
             );
         } else {
             //This is a central resource
             $result = self::$db->fetchColumn(
                 'SELECT managedplaylistid FROM bapsplanner.managed_playlists WHERE managedplaylistid=$1 LIMIT 1',
-                array(str_replace('aux-', '', $options['auxid']))
+                [str_replace('aux-', '', $options['auxid'])]
             );
             if (empty($result)) {
                 throw new MyRadioException($options['auxid'].' is not a valid playlist!');
@@ -282,14 +282,14 @@ class NIPSWeb_ManagedItem extends ServiceAPI
             $result = self::$db->query(
                 'INSERT INTO bapsplanner.managed_items (managedplaylistid, title, length, bpm, expirydate, memberid)
                 VALUES ($1, $2, $3, $4, $5, $6) RETURNING manageditemid',
-                array(
+                [
                     $playlistid,
                     trim($options['title']),
                     CoreUtils::intToTime($options['duration']),
                     $options['bpm'],
                     $options['expires'],
                     $_SESSION['memberid'],
-                )
+                ]
             );
         }
 

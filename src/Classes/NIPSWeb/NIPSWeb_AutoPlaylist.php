@@ -19,7 +19,7 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI
     * The Singleton store for AutoPlaylist objects
     * @var NIPSWeb_AutoPlaylist
     */
-    private static $playlists = array();
+    private static $playlists = [];
     private $auto_playlist_id;
     protected $name;
     protected $tracks;
@@ -32,7 +32,7 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI
     protected function __construct($playlistid)
     {
         $this->auto_playlist_id = $playlistid;
-        $result = self::$db->fetchOne('SELECT * FROM bapsplanner.auto_playlists WHERE auto_playlist_id=$1 LIMIT 1', array($playlistid));
+        $result = self::$db->fetchOne('SELECT * FROM bapsplanner.auto_playlists WHERE auto_playlist_id=$1 LIMIT 1', [$playlistid]);
         if (empty($result)) {
             throw new MyRadioException('The specified NIPSWeb Auto Playlist does not seem to exist');
 
@@ -54,7 +54,7 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI
     {
         if (empty($this->tracks)) {
             $tracks = self::$db->fetchAll($this->query);
-            $this->tracks = array();
+            $this->tracks = [];
 
             foreach ($tracks as $id) {
                 $this->tracks[] = MyRadio_Track::getInstance($id['trackid']);
@@ -85,10 +85,10 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI
     public static function getAllAutoPlaylists($editable_only = false)
     {
         if ($editable_only && !MyRadio_User::getInstance()->hasAuth(AUTH_EDITCENTRALRES)) {
-            return array();
+            return [];
         }
         $result = self::$db->fetchColumn('SELECT auto_playlist_id FROM bapsplanner.auto_playlists ORDER BY name');
-        $response = array();
+        $response = [];
         foreach ($result as $id) {
             $response[] = self::getInstance($id);
         }
@@ -98,7 +98,7 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI
 
     public static function findByName($name)
     {
-        $result = self::$db->fetchColumn('SELECT auto_playlist_id FROM bapsplanner.auto_playlists WHERE name=$1', array($name));
+        $result = self::$db->fetchColumn('SELECT auto_playlist_id FROM bapsplanner.auto_playlists WHERE name=$1', [$name]);
 
         if (empty($result)) {
             throw new MyRadioException('That auto playlist does not exist!');
@@ -114,9 +114,9 @@ class NIPSWeb_AutoPlaylist extends ServiceAPI
     */
     public function toDataSource()
     {
-        return array(
+        return [
             'title' => $this->getTitle(),
             'playlistid' => $this->getID(),
-        );
+        ];
     }
 }

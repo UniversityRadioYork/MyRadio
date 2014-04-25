@@ -17,7 +17,8 @@ $campaign = MyRadio_BannerCampaign::create(
     $data['timeslots']
 );
 
-header('Location: '.CoreUtils::makeURL('Website', 'editCampaign', [
-    'campaignid' => $campaign->getID(),
-    'message' => base64_encode('The new Campaign was created successfully!')
-]));
+CoreUtils::redirect(
+    'Website',
+    'editCampaign',
+    ['campaignid' => $campaign->getID(), 'message' => base64_encode('The new Campaign was created successfully!')]
+);

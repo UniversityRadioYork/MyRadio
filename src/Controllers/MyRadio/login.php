@@ -13,36 +13,36 @@ $form = (
         'myradio_login',
         'MyRadio',
         'login',
-        array(
+        [
             'title' => 'Login'
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'user',
         MyRadioFormField::TYPE_TEXT,
-        array(
+        [
             'explanation' => '',
             'label' => 'Username:',
             'options' => ['placeholder' => 'abc123']
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'password',
         MyRadioFormField::TYPE_PASSWORD,
-        array(
+        [
             'explanation' => '',
             'label' => 'Password:'
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'next',
         MyRadioFormField::TYPE_HIDDEN,
-        array(
+        [
             'value' => isset($_REQUEST['next']) ? $_REQUEST['next'] : Config::$base_url
-        )
+        ]
     )
 )->setTemplate('MyRadio/login.twig');
 
@@ -138,14 +138,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
             ->addVariable('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL(Config::$default_module))
             ->render();
     } elseif ($status === 'change') {
-        header('Location: '.CoreUtils::makeURL('MyRadio', 'pwChange'));
+        CoreUtils::redirect('MyRadio', 'pwChange');
     } elseif ($status !== 'success') {
         $form->render(['error' => true]);
     } else {
         if (isset($data['next'])) {
             header('Location: ' . $data['next']);
         } else {
-            header('Location: ' . CoreUtils::makeURL(Config::$default_module));
+            CoreUtils::redirect(Config::$default_module);
         }
     }
 } else {

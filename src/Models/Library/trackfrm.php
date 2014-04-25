@@ -13,10 +13,10 @@ $form = (
         'lib_edittrack',
         $module,
         'doEditTrack',
-        array(
+        [
             'title' => 'Edit Track'
-        )
+        ]
     )
-)->addField(new MyRadioFormField('title', MyRadioFormField::TYPE_TEXT, array('label' => 'Title')))
-->addField(new MyRadioFormField('artist', MyRadioFormField::TYPE_TEXT, array('label' => 'Artist')))
-->addField(new MyRadioFormField('album', MyRadioFormField::TYPE_ALBUM, array('label' => 'Album')));
+)->addField(new MyRadioFormField('title', MyRadioFormField::TYPE_TEXT, ['label' => 'Title']))
+->addField(new MyRadioFormField('artist', MyRadioFormField::TYPE_TEXT, ['label' => 'Artist']))
+->addField(new MyRadioFormField('album', MyRadioFormField::TYPE_ALBUM, ['label' => 'Album']));

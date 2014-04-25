@@ -12,11 +12,11 @@ $cacher = APCProvider::getInstance();
 
 $checked = $cacher->get('myradioLibraryGapFillerCheckedTracks');
 if (!is_array($checked)) {
-    $checked = array();
+    $checked = [];
 }
 
 $limit = 150;
-$updated = array();
+$updated = [];
 foreach ($albums as $album) {
     $tracks = $album->getTracks();
     foreach ($tracks as $track) {

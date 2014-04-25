@@ -24,7 +24,7 @@ class SIS_Remote extends ServiceAPI
         $response = SIS_Messages::getMessages($session['timeslotid'], isset($_REQUEST['messages_highest_id']) ? $_REQUEST['messages_highest_id'] : 0);
 
         if (!empty($response) && $response !== false) {
-            return array('messages' => $response);
+            return ['messages' => $response];
         }
     }
 
@@ -38,7 +38,7 @@ class SIS_Remote extends ServiceAPI
         $response = SIS_Tracklist::getTrackListing($session['timeslotid'], isset($_REQUEST['tracklist_highest_id']) ? $_REQUEST['tracklist_highest_id'] : 0);
 
         if (!empty($response) && $response !== false) {
-            return array('tracklist' => $response);
+            return ['tracklist' => $response];
         }
 
     }
@@ -53,7 +53,7 @@ class SIS_Remote extends ServiceAPI
         $response = MyRadio_Selector::getStatusAtTime(time());
 
         if ($response['lastmod'] > $_REQUEST['selector_lastmod']) {
-            return array('selector' => $response);
+            return ['selector' => $response];
         }
     }
 
@@ -67,7 +67,7 @@ class SIS_Remote extends ServiceAPI
         $response = MyRadio_Webcam::getCurrentWebcam();
 
         if ($response['current'] != $_REQUEST['webcam_id']) {
-            return array('webcam' => $response);
+            return ['webcam' => $response];
         }
     }
 }

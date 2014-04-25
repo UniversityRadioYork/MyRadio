@@ -23,25 +23,25 @@ class SIS_Tracklist extends ServiceAPI
     public static function getTrackListing($timeslotid, $offset = 0)
     {
         $tracklist = MyRadio_TracklistItem::getTracklistForTimeslot($timeslotid, $offset);
-        $tracks = array();
+        $tracks = [];
         foreach ($tracklist as $tracklistitem) {
             $track = $tracklistitem->getTrack();
             if (is_array($track)) {
-                $tracks[] = array(
+                $tracks[] = [
                     'playtime' => $tracklistitem->getStartTime(),
                     'title' => $track['title'],
                     'artist' => $track['artist'],
                     'album' => $track['album'],
                     'id' => $tracklistitem->getID()
-                 );
+                 ];
             } else {
-                $tracks[] = array(
+                $tracks[] = [
                     'playtime' => $tracklistitem->getStartTime(),
                     'title' => $track->getTitle(),
                     'artist' => $track->getArtist(),
                     'album' => $track->getAlbum()->getTitle(),
                     'id' => $tracklistitem->getID()
-                 );
+                 ];
             }
         }
 
@@ -64,12 +64,12 @@ class SIS_Tracklist extends ServiceAPI
 
         $audiologid = self::$db->fetchOne(
             'INSERT INTO tracklist.tracklist (source, timeslotid) VALUES ($1, $2) RETURNING audiologid',
-            array($source, $timeslotid)
+            [$source, $timeslotid]
         );
 
         self::$db->query(
             'INSERT INTO tracklist.track_notrec (audiologid, artist, album, track) VALUES ($1, $2, $3, $4)',
-            array($audiologid['audiologid'], $artist, $album, $tname)
+            [$audiologid['audiologid'], $artist, $album, $tname]
         );
 
         self::$db->query('COMMIT');
@@ -92,7 +92,7 @@ class SIS_Tracklist extends ServiceAPI
             AND rec.title ILIKE $4 || $2 || $4
             AND trk.title ILIKE $4 || $3 || $4
             ORDER BY trk.title ASC LIMIT 10',
-            array($artist, $album, $tname, '%')
+            [$artist, $album, $tname, '%']
         );
 
         return $result;
@@ -105,13 +105,13 @@ class SIS_Tracklist extends ServiceAPI
         $audiologid = self::$db->fetchOne(
             'INSERT INTO tracklist.tracklist (source, timeslotid)
             VALUES ($1, $2) RETURNING audiologid',
-            array($source, $timeslotid)
+            [$source, $timeslotid]
         );
 
         self::$db->query(
             'INSERT INTO tracklist.track_rec (audiologid, recordid, trackid)
             VALUES ($1, $2, $3)',
-            array($audiologid['audiologid'], $recid, $trackid)
+            [$audiologid['audiologid'], $recid, $trackid]
         );
 
         self::$db->query('COMMIT');
@@ -122,7 +122,7 @@ class SIS_Tracklist extends ServiceAPI
         self::$db->query(
             'UPDATE tracklist.tracklist SET state = \'d\'
             WHERE audiologid = $1',
-            array($tracklistid)
+            [$tracklistid]
         );
     }
 }

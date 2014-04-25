@@ -33,7 +33,7 @@ if ($where == "notrec") {
         $return = 0;
     }
 
-    $data = array("return"=>$return, "result"=>$row);
+    $data = ["return"=>$return, "result"=>$row];
     //Return the response data
     require 'Views/MyRadio/datatojson.php';
 }
