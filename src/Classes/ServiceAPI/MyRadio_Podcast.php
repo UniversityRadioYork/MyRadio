@@ -218,7 +218,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $form = (new MyRadioForm(
             'createpodcastfrm',
             'Podcast',
-            'doCreatePodcast',
+            'createPodcast',
             ['title' => 'Create Podcast']
         )
         )->addField($titleField)->addField($descField)->addField($tagsField);
