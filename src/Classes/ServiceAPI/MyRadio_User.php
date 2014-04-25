@@ -1290,7 +1290,7 @@ class MyRadio_User extends ServiceAPI
             throw new MyRadioException(MyRadio_User::getInstance() . ' tried to edit ' . $this . '!');
         }
 
-        $form = new MyRadioForm('profileedit', 'Profile', 'doEdit', array('title' => 'Edit Profile'));
+        $form = new MyRadioForm('profileedit', 'Profile', 'edit', array('title' => 'Edit Profile'));
         //Personal details
         $form->addField(new MyRadioFormField('memberid', MyRadioFormField::TYPE_HIDDEN, ['value' => $this->getID()]))
                 ->addField(new MyRadioFormField('sec_personal', MyRadioFormField::TYPE_SECTION, array(
