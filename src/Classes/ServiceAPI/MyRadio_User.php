@@ -1557,7 +1557,7 @@ class MyRadio_User extends ServiceAPI
             throw new MyRadioException(MyRadio_User::getInstance() . ' tried to add members!');
         }
 
-        $form = new MyRadioForm('profilequickadd', 'Profile', 'doQuickAdd', array('title' => 'Add Member (Quick)'));
+        $form = new MyRadioForm('profilequickadd', 'Profile', 'quickAdd', array('title' => 'Add Member (Quick)'));
         //Personal details
         $form->addField(new MyRadioFormField('sec_personal', MyRadioFormField::TYPE_SECTION, array(
                     'label' => 'Personal Details'
