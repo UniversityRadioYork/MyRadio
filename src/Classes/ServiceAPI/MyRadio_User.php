@@ -1547,6 +1547,26 @@ class MyRadio_User extends ServiceAPI
     }
 
     /**
+     * Checks whether the user is an active member (has a record in member_year) for the current year
+     * @return boolean
+     */
+    public function isActiveMemberForYear($year=null)
+    {
+        // Use the current academic year as default if one isn't specified
+        if($year == null)
+        {
+            $year = CoreUtils::getAcademicYear();
+        }
+        // If the current year exists in payments (even with a value of £0, the member is active)
+        foreach ($this->payment as $v) {
+            if ($v['year'] == $year {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Generates the form needed to quick-add URY members
      * @throws MyRadioException
      * @return MyRadioForm
