@@ -1559,7 +1559,7 @@ class MyRadio_User extends ServiceAPI
         }
         // If the current year exists in payments (even with a value of £0, the member is active)
         foreach ($this->payment as $v) {
-            if ($v['year'] == $year {
+            if ($v['year'] === $year) {
                 return true;
             }
         }
