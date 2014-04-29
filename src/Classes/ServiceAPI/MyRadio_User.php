@@ -1553,7 +1553,7 @@ class MyRadio_User extends ServiceAPI
     public function isActiveMemberForYear($year=null)
     {
         // Use the current academic year as default if one isn't specified
-        if($year == null)
+        if($year === null)
         {
             $year = CoreUtils::getAcademicYear();
         }
