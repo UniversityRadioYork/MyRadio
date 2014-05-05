@@ -11,7 +11,6 @@
       <nav id="menu" class="transBG">
         <a id="miniLogo" href="{{baseurl}}"><img alt="((ury))" height="20" src="/static/img/logo.png"></a>
         <ul>
-          {{ version_header | raw }}
           <li><a href="http://ury.org.uk/">ury.org.uk</a></li>
           {% if memberid %}<li><a href="{{myury.makeURL(config,'MyRadio', 'logout')}}">Logout</a></li>{% endif %}
         </ul>
