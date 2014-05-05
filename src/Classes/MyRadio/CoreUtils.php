@@ -547,6 +547,9 @@ class CoreUtils
 
     /**
      * Returns a list of all MyRadio managed Services in a 2D Array.
+     *
+     * This table should now only ever contain MyRadio.
+     * 
      * @return Array A 2D Array with each second dimension as follows:<br>
      *               value: The ID of the Service
      *               text: The Text ID of the Service
@@ -656,98 +659,6 @@ class CoreUtils
             VALUES ($1, $2, $3, $4)',
             [Config::$service_id, $module, $action, $permission]
         );
-    }
-
-    /**
-     * Returns the service version allocated to the given user.
-     *
-     * @param MyRadio_User $user If given this is the user to check. By default,
-     *                           it uses the currently logged-in user.
-     *
-     * If there is no user logged in, then the default version is returned.
-     */
-    public static function getServiceVersionForUser(MyRadio_User $user = null)
-    {
-        if ($user === null) {
-            if (!isset($_SESSION['memberid'])) {
-                return self::getDefaultServiceVersion();
-            }
-            $user = MyRadio_User::getInstance();
-        }
-        $serviceid = Config::$service_id;
-        $key = $serviceid . '-' . $user->getID();
-
-        if ($user->getID() === MyRadio_User::getInstance()->getID()) {
-            //It's the current user. If they have an override defined in their session, use that.
-            if (isset($_SESSION['myury_svc_version_' . $serviceid])) {
-                return [
-                    'version' => $_SESSION['myury_svc_version_' . $serviceid],
-                    'path' => $_SESSION['myury_svc_version_' . $serviceid . '_path'],
-                    'proxy_static' => $_SESSION['myury_svc_version_' . $serviceid . '_proxy_static']
-                ];
-            }
-        }
-
-        if (!isset(self::$svc_version_cache[$key])) {
-            $db = Database::getInstance();
-
-            $result = $db->fetchOne(
-                'SELECT version, path, proxy_static
-                FROM myury.services_versions
-                WHERE serviceid IN (
-                    SELECT serviceid FROM myury.services_versions_member
-                    WHERE memberid=$2 AND serviceversionid IN (
-                        SELECT serviceversionid FROM myury.services_versions
-                        WHERE serviceid=$1
-                    )
-                )',
-                [$serviceid, $user->getID()]
-            );
-
-            if (empty($result)) {
-                self::$svc_version_cache[$key] = self::getDefaultServiceVersion();
-            } else {
-                $result['proxy_static'] = $result['proxy_static'] === 't';
-                self::$svc_version_cache[$key] = $result;
-            }
-        }
-
-        //If it's the current user, store the data in session.
-        if ($user->getID() === MyRadio_User::getInstance()->getID()) {
-            $_SESSION['myury_svc_version_' . $serviceid] = self::$svc_version_cache[$key]['version'];
-            $_SESSION['myury_svc_version_' . $serviceid . '_path'] = self::$svc_version_cache[$key]['path'];
-            $_SESSION['myury_svc_version_' . $serviceid . '_proxy_static'] = self::$svc_version_cache[$key]['proxy_static'];
-        }
-
-        return self::$svc_version_cache[$key];
-    }
-
-    /**
-     *
-     */
-    private static function getDefaultServiceVersion()
-    {
-        $db = Database::getInstance();
-
-        $r = $db->fetchOne(
-            'SELECT version, path, proxy_static FROM myury.services_versions WHERE serviceid=$1
-            AND is_default=true LIMIT 1',
-            [Config::$service_id]
-        );
-        $r['proxy_static'] = $r['proxy_static'] === 't';
-
-        return $r;
-    }
-
-    /**
-     * @todo Document this.
-     * @return boolean
-     */
-    public static function getServiceVersions()
-    {
-        $db = Database::getInstance();
-
-        return $db->fetchAll('SELECT version, path, proxy_static FROM myury.services_versions WHERE serviceid=$1', [Config::$service_id]);
     }
 
     /**
