@@ -272,7 +272,7 @@ class CoreUtils
      */
     public static function makeURL($module, $action = null, $params = [])
     {
-        if (empty(self::$custom_uris)) {
+        if (empty(self::$custom_uris) && class_exists('Database')) {
             $result = Database::getInstance()->fetchAll('SELECT actionid, custom_uri FROM myury.actions');
 
             foreach ($result as $row) {
@@ -598,7 +598,11 @@ class CoreUtils
                 VALUES ($1, $2) RETURNING moduleid',
                 [Config::$service_id, $module]
             );
-            self::$module_ids[$module] = $result[0];
+            if ($result) {
+                self::$module_ids[$module] = $result[0];
+            } else {
+                return null;
+            }
         }
 
         return self::$module_ids[$module];
@@ -626,10 +630,15 @@ class CoreUtils
                 VALUES ($1, $2) RETURNING actionid',
                 [$module, $action]
             );
-            self::$action_ids[$action . '-' . $module] = $result[0];
+            if ($result) {
+                self::$action_ids[$action . '-' . $module] = $result[0];
+            } else {
+                return null;
+            }
         }
 
         return self::$action_ids[$action . '-' . $module];
+        
     }
 
     /**
