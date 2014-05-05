@@ -340,17 +340,17 @@ final class Config
      * The file to store MyRadio Error Logs
      * @var String
      */
-    public static $log_file = '/var/log/ury-org-uk/myradio_errors.log';
+    public static $log_file = '/var/log/myradio/errors.log';
     /**
      * A lock file on the MyRadio Error Logs. Prevents email spam.
      * @var String
      */
-    public static $log_file_lock = '/var/log/ury-org-uk/myradio_errors.lock';
+    public static $log_file_lock = '/tmp/myradio_errors.lock';
     /**
      * The email to send error reports to. This is different from reporting_email, which does statistical reports.
      * @var String
      */
-    public static $error_report_email = 'alerts.myury';
+    public static $error_report_email = 'alerts.myradio';
 
     /**
      * The number of seconds an iTones Playlist lock is valid for before it expires.
