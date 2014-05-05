@@ -52,13 +52,9 @@ class MyRadioTwig implements TemplateEngine
         //We override the defaults later so we don't depend on the database.
         //If the session is set, we can assume database access is available
         //as it is read from the database
-        if (isset($_SESSION)) {
+        if (isset($_SESSION) && class_exists('Database')) {
             $this->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : '<a href="' . CoreUtils::makeURL('MyRadio', 'login') . '">Login</a>')
-                ->addVariable(
-                    'baseurl',
-                    CoreUtils::getServiceVersionForUser()['proxy_static']
-                    ? CoreUtils::makeURL('MyRadio', 'StaticProxy', array('0' => null)) : Config::$base_url
-                );
+                 ->addVariable('baseurl', Config::$base_url);
 
             if (!empty($GLOBALS['module']) && isset($_SESSION['memberid'])) {
                 $this->addVariable('submenu', (new MyRadioMenu())->getSubMenuForUser(CoreUtils::getModuleID($GLOBALS['module']), MyRadio_User::getInstance()))
@@ -73,18 +69,6 @@ class MyRadioTwig implements TemplateEngine
         //Make requests override session-set joyrides
         if (!empty($_REQUEST['joyride'])) {
             $this->addVariable('joyride', $_REQUEST['joyride']);
-        }
-
-        if (CoreUtils::hasPermission(AUTH_SELECTSERVICEVERSION)) {
-            $this->addVariable(
-                'version_header',
-                '<li><a href="?select_version=' . Config::$service_id
-                . '" title="Click to change version">'
-                . (empty(CoreUtils::getServiceVersionForUser()['version']) ?
-                    'Select Version' : CoreUtils::getServiceVersionForUser()['version']) . '</a></li>'
-            );
-        } else {
-            $this->addVariable('version_header', '');
         }
 
         if (isset($_REQUEST['message'])) {
@@ -184,7 +168,8 @@ class MyRadioTwig implements TemplateEngine
      */
     public function render()
     {
-        if (CoreUtils::hasPermission(AUTH_SHOWERRORS) || Config::$display_errors) {
+        if ((defined('AUTH_SHOWERRORS') && CoreUtils::hasPermission(AUTH_SHOWERRORS))
+             || Config::$display_errors) {
             $this->addVariable('phperrors', MyRadioError::$php_errorlist);
             if (isset($_SESSION)) { //Is the DB working?
                 $this->addVariable('query_count', Database::getInstance()->getCounter());
