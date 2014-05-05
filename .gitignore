@@ -4,3 +4,4 @@ MyRadio_Config.local.php
 util/checkpassword.conf
 *.sw[a-z]
 sftp-*.json
+.tags*
