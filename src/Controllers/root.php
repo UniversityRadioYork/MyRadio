@@ -31,6 +31,7 @@ set_include_path(str_replace('Controllers', '', __DIR__) . PATH_SEPARATOR . get_
 /**
  * Sets up the autoloader for all classes
  */
+
 require_once 'Classes/Autoloader.php';
 // instantiate the loader
 $loader = new \MyRadio\Autoloader;
@@ -38,6 +39,15 @@ $loader = new \MyRadio\Autoloader;
 $loader->register();
 // register the base directories for the namespace prefix
 $_basepath = str_replace('Controllers', '', __DIR__) . DIRECTORY_SEPARATOR;
+
+if (stream_resolve_include_path('MyRadio_Config.local.php')) {
+  require_once 'MyRadio_Config.local.php';
+} else {
+  /**
+   * This install hasn't been configured yet. We should do that.
+   */
+  require 'Controllers/Setup/root.php';
+  exit;
 
 $loader->addNamespace('MyRadio', $_basepath . 'Classes');
 $loader->addNamespace('MyRadio\Iface', $_basepath . 'Interfaces');
@@ -53,10 +63,45 @@ require 'MyRadio_Config.local.php';
 date_default_timezone_set(Config::$timezone);
 
 
+<<<<<<< HEAD
 set_error_handler('\MyRadio\MyRadioError::errorsToEmail');
 
 //Prepare ServiceAPI's Database and Cache connections
 ServiceAPI::wakeup();
+=======
+/**
+ * Set up the Module and Action global variables. These are used by Module/Action controllers as well as this file.
+ * Notice how the default Module is MyRadio. This is basically the MyRadio Menu, and maybe a couple of admin pages.
+ * Notice how the default Action is 'default'. This means that the "default" Controller should exist for all Modules.
+ * The top half deals with Rewritten URLs, which get mapped to ?request=
+ */
+if (isset($_REQUEST['request'])) {
+    $info = explode('/', $_REQUEST['request']);
+    //If both are defined, it's Module/Action
+    if (!empty($info[1])) {
+        $module = $info[0];
+        $action = $info[1];
+        //If there's only one, determine if it's the module or action
+    } elseif (CoreUtils::isValidController(Config::$default_module, $info[0])) {
+        $module = Config::$default_module;
+        $action = $info[0];
+    } elseif (CoreUtils::isValidController($info[0], Config::$default_action)) {
+        $module = $info[0];
+        $action = Config::$default_action;
+    } else {
+        require 'Controllers/Errors/404.php';
+        exit;
+    }
+} else {
+    $module = (isset($_REQUEST['module']) ? $_REQUEST['module'] : Config::$default_module);
+    $action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : Config::$default_action);
+    if (!CoreUtils::isValidController($module, $action)) {
+        //Yep, that doesn't exist.
+        require 'Controllers/Errors/404.php';
+        exit;
+    }
+}
+>>>>>>> 9f0eff6... Added progress so far so someone can review it, if they want.
 
 //Initialise the permission constants
 CoreUtils::setUpAuth();

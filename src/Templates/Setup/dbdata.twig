@@ -1,0 +1,25 @@
+{% extends 'minimal.twig' %}
+{% block content %}
+<p>Since you're just getting started with MyRadio, we'd like to know how much you want us to set up for you. There's options from a complete, ready-to-go set of roles and permissions to a completely blank slate.</p>
+<p>When MyRadio is updated, new options will be made available according to the choice you make here.</p>
+<p>
+<form action="?c=dbdata" method="POST"><input type="hidden" name="mode" value="complete">
+<input type="submit" class="ui-widget ui-state-default ui-button" value="Complete starting set"> Start me off with everything I need to get going.
+</form>
+</p>
+<p>
+<form action="?c=dbdata" method="POST"><input type="hidden" name="mode" value="permissions">
+<input type="submit" class="ui-widget ui-state-default ui-button" value="Give me permissions"> Start me off with permissions and mappings to actions, but don't create any roles for me.
+</form>
+</p>
+<p>
+<form action="?c=dbdata" method="POST"><input type="hidden" name="mode" value="sudo">
+<input type="submit" class="ui-widget ui-state-default ui-button" value="Everyone is an admin"> Make all actions available to all logged-in users.
+</form>
+</p>
+<p>
+<form action="?c=dbdata" method="POST"><input type="hidden" name="mode" value="blank">
+<input type="submit" class="ui-widget ui-state-default ui-button" value="Blank slate"> Don't do anything except give me access to the pages I need to set things up myself.
+</form>
+</p>
+{% endblock %}
