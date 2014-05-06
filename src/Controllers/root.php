@@ -37,7 +37,16 @@ require_once 'Classes/MyRadio/CoreUtils.php';
  * to use and whether debug mode is enabled.
  */
 require_once 'Classes/Config.php';
-require_once 'MyRadio_Config.local.php';
+
+if (stream_resolve_include_path('MyRadio_Config.local.php')) {
+  require_once 'MyRadio_Config.local.php';
+} else {
+  /**
+   * This install hasn't been configured yet. We should do that.
+   */
+  require 'Controllers/Setup/root.php';
+  exit;
+}
 
 /**
  * Call the model that prepares the Database and the Global Abstraction API
@@ -66,17 +75,6 @@ if (!Config::$display_errors && !CoreUtils::hasPermission(269)) {
 }
 ini_set('error_log', Config::$log_file); // Set error log file
 date_default_timezone_set(Config::$timezone); //Set timezone
-
-/**
- * The Service Broker decides what version of a Service the user has access to. This includes MyRadio, so gets added
- * here.
- * @todo Discuss or document the parts of MyRadio core that cannot be brokered, see if this can be moved earlier
- */
-require_once 'Controllers/service_broker.php';
-/**
- * Load configuration specific to this Version.
- */
-require_once 'MyRadio_Config.local.php';
 
 /**
  * Set up the Module and Action global variables. These are used by Module/Action controllers as well as this file.

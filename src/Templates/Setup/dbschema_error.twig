@@ -1,0 +1,8 @@
+{% extends 'minimal.twig' %}
+{% block content %}
+<p class="ui-state-error">An error occurred attempting to configure the MyRadio schema. Review the error below, make necessary changes, then retry.</p>
+<p>{{error}}</p>
+<form action="?c=dbschema" method="POST">
+<input type="submit" value="Run task" class="ui-button ui-widget ui-state-default"> (this may take several minutes, depending on the operation)
+</form>
+{% endblock %}

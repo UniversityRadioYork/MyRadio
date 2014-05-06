@@ -21,32 +21,10 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
-require_once 'Interfaces/Singleton.php';
-//Create a function to autoload classes when needed
-spl_autoload_register(function ($class) {
-    $class .= '.php';
-    if (stream_resolve_include_path('Classes/ServiceAPI/' . $class)) {
-        //This path *must* be absolute - differing versions causes it to be reincluded otherwise
-        require_once __DIR__ . '/../../Interfaces/MyRadio_DataSource.php';
-        require_once __DIR__ . '/../../Interfaces/IServiceAPI.php';
-        require_once 'Classes/ServiceAPI/'. $class;
+require_once 'Models/Core/api_nodb.php';
 
-        return;
-    }
 
-    /**
-     * @todo Is there a better way of doing this?
-     */
-    foreach (array('MyRadio', 'NIPSWeb', 'SIS', 'iTones', 'vendor', 'BRA') as $dir) {
-        if (stream_resolve_include_path('Classes/' . $dir . '/' . $class)) {
-            require_once 'Classes/'. $dir . '/' . $class;
-
-            return;
-        }
-    }
-});
-
-require_once 'Classes/MyRadioException.php';
+//Initialise Error Handling
 require_once 'Classes/MyRadioError.php';
 set_error_handler('MyRadioError::errorsToEmail');
 

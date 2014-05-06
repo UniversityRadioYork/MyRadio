@@ -67,6 +67,7 @@ class MyRadioException extends RuntimeException
             //Configuration is available, use this to decide what to do
             if (Config::$display_errors
                 or (class_exists('CoreUtils')
+                && defined('AUTH_SHOWERRORS')
                 && CoreUtils::hasPermission(AUTH_SHOWERRORS))
             ) {
                 if ((isset($_SERVER['HTTP_X_REQUESTED_WITH'])
