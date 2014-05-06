@@ -39,8 +39,8 @@ class MyRadio_FingerprinterDaemon extends MyRadio_Daemon
     public static function run()
     {
         //Get 5 unverified tracks. Tune the "limit" to change this
-        $tracks = MyRadio_Track::findByOptions(array('lastfmverified' => false, 'random' => true, 'digitised' => true,
-            'nocorrectionproposed' => true, 'limit' => 5));
+        $tracks = MyRadio_Track::findByOptions(['lastfmverified' => false, 'random' => true, 'digitised' => true,
+            'nocorrectionproposed' => true, 'limit' => 5]);
 
         foreach ($tracks as $track) {
             /**

@@ -87,7 +87,7 @@ class Database
      * @assert ('SELECT * FROM public.tableethatreallydoesntexist') throws MyRadioException
      * @assert ('SELECT * FROM public.member') != false
      */
-    public function query($sql, $params = array(), $rollback = false)
+    public function query($sql, $params = [], $rollback = false)
     {
         if ($sql === 'BEGIN') {
             $this->in_transaction = true;
@@ -145,7 +145,7 @@ class Database
      * @return Array An array of result rows (potentially empty)
      * @throws MyRadioException
      */
-    public function fetchAll($sql, $params = array())
+    public function fetchAll($sql, $params = [])
     {
         if (is_resource($sql)) {
             return pg_fetch_all($sql);
@@ -153,10 +153,10 @@ class Database
             try {
                 $result = $this->query($sql, $params);
             } catch (MyRadioException $e) {
-                return array();
+                return [];
             }
             if (pg_num_rows($result) === 0) {
-                return array();
+                return [];
             }
 
             return pg_fetch_all($result);
@@ -172,12 +172,12 @@ class Database
      * @return Array The requested result row, or an empty array on failure
      * @throws MyRadioException
      */
-    public function fetchOne($sql, $params = array())
+    public function fetchOne($sql, $params = [])
     {
         try {
             $result = $this->query($sql, $params);
         } catch (MyRadioException $e) {
-            return array();
+            return [];
         }
 
         return pg_fetch_assoc($result);
@@ -191,15 +191,15 @@ class Database
      * @return Array The requested result column, or an empty array on failure
      * @throws MyRadioException
      */
-    public function fetchColumn($sql, $params = array(), $rollback = false)
+    public function fetchColumn($sql, $params = [], $rollback = false)
     {
         try {
             $result = $this->query($sql, $params, $rollback);
         } catch (MyRadioException $e) {
-            return array();
+            return [];
         }
         if (pg_num_rows($result) === 0) {
-            return array();
+            return [];
         }
 
         return pg_fetch_all_columns($result, 0);
@@ -236,7 +236,7 @@ class Database
     public function decodeArray($text)
     {
         $limit = strlen($text) - 1;
-        $output = array();
+        $output = [];
         $offset = 1;
 
         if ('{}' != $text) {

@@ -8,7 +8,7 @@
  */
 
 if (!isset($_REQUEST['authenticator'])) {
-    header('Location: '.CoreUtils::makeURL('MyRadio', 'login'));
+    CoreUtils::redirect('MyRadio', 'login');
     exit;
 }
 

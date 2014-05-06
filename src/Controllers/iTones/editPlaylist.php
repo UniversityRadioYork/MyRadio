@@ -29,7 +29,7 @@ if ($lock === false) {
     require 'Models/iTones/editplaylistfrm.php';
 
     $tracks = $playlist->getTracks();
-    $artists = array();
+    $artists = [];
     foreach ($tracks as $track) {
         if ($track instanceof MyRadio_Track) {
             $artists[] = $track->getArtist();

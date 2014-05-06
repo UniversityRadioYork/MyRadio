@@ -67,9 +67,9 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
             $items = self::$db->fetchColumn(
                 'SELECT manageditemid FROM bapsplanner.managed_user_items
                 WHERE managedplaylistid=$1 ORDER BY title',
-                array('membersmusic/' . $this->folder)
+                ['membersmusic/' . $this->folder]
             );
-            $this->items = array();
+            $this->items = [];
             foreach ($items as $id) {
                 /**
                  * Pass this to the ManagedItem - it's called Dependency Injection and prevents loops and looks pretty
@@ -90,9 +90,9 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
      */
     public static function getAllManagedUserPlaylistsFor($user)
     {
-        return array(
+        return [
             self::getInstance($user->getID() . '/beds'),
             self::getInstance($user->getID() . '/jingles')
-        );
+        ];
     }
 }

@@ -41,7 +41,7 @@ class NIPSWeb_Token extends ServiceAPI
         $r = self::$db->fetchColumn(
             'INSERT INTO bapsplanner.client_ids (show_season_timeslot_id, session_id)
             VALUES ($1, $2) RETURNING client_id',
-            array($_SESSION['timeslotid'], session_id())
+            [$_SESSION['timeslotid'], session_id()]
         );
 
         return (int) $r[0];
@@ -57,7 +57,7 @@ class NIPSWeb_Token extends ServiceAPI
         $r = self::$db->fetchColumn(
             'SELECT show_season_timeslot_id FROM bapsplanner.client_ids
             WHERE client_id=$1 LIMIT 1',
-            array($client_id)
+            [$client_id]
         );
 
         return (int) $r[0];

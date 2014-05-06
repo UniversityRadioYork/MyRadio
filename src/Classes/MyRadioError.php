@@ -25,7 +25,7 @@ class MyRadioError
      *  a short string which names the error type (such as
      *  "User-generated error", or "User-generated warning")
      */
-    private static $error_type = array(
+    private static $error_type = [
         E_ERROR => 'Fatal error',
         E_WARNING => 'Warning',
         E_PARSE => 'Parse error',
@@ -39,7 +39,7 @@ class MyRadioError
         E_USER_NOTICE => 'User-generated notice',
         E_STRICT => 'Runtime notice',
         E_RECOVERABLE_ERROR => 'Recoverable error'
-    );
+    ];
 
     private static function getErrorName($errno)
     {
@@ -52,7 +52,7 @@ class MyRadioError
      * @var array $php_errorlist An array holding all php errors as arrays of
      *  [$error_name,$errstr,$errfile,$errline]
      */
-    public static $php_errorlist = array();
+    public static $php_errorlist = [];
 
     /**
      * Places all php errors into the array $php_errorlist
@@ -71,11 +71,11 @@ class MyRadioError
             return;
         }
         $error_name = self::getErrorName($errno);
-        $php_error = array(
+        $php_error = [
             'name' => $error_name,
             'string' => $errstr,
             'file' => htmlspecialchars($errfile, ENT_NOQUOTES, 'UTF-8'),
-            'line' => $errline);
+            'line' => $errline];
         array_push(self::$php_errorlist, $php_error);
     }
 

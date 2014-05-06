@@ -54,7 +54,7 @@ imagestring(
     $coltext
 );
 
-$points = array();
+$points = [];
 $points[] = $left;
 $points[] = $maxheight + $padding;
 $maxleft = null;

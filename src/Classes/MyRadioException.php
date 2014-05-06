@@ -77,12 +77,12 @@ class MyRadioException extends RuntimeException
                     //This is an Ajax/CLI request. Return JSON
                     header('HTTP/1.1 ' . $code . ' Internal Server Error');
                     header('Content-Type: text/json');
-                    echo json_encode(array(
+                    echo json_encode([
                         'status' => 'MyRadioException',
                         'error' => $message,
                         'code' => $code,
                         'trace' => $trace
-                    ));
+                    ]);
                 } else {
                     //Output to the browser
                     header('HTTP/1.1 ' . $code . ' Internal Server Error');

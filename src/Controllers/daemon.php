@@ -65,7 +65,7 @@ $handle = opendir($path);
 if (!$handle) {
     die('PATH DOES NOT EXIST ' . $path . "\n");
 }
-$classes = array();
+$classes = [];
 
 require_once 'cli_common.php';
 

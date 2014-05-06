@@ -23,7 +23,6 @@
  */
 require_once 'Models/Core/api_nodb.php';
 
-
 //Initialise Error Handling
 require_once 'Classes/MyRadioError.php';
 set_error_handler('MyRadioError::errorsToEmail');
@@ -60,11 +59,11 @@ if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
 }
 
 session_set_save_handler(
-    array($session_handler, 'open'),
-    array($session_handler, 'close'),
-    array($session_handler, 'read'),
-    array($session_handler, 'write'),
-    array($session_handler, 'destroy'),
-    array($session_handler, 'gc')
+    [$session_handler, 'open'],
+    [$session_handler, 'close'],
+    [$session_handler, 'read'],
+    [$session_handler, 'write'],
+    [$session_handler, 'destroy'],
+    [$session_handler, 'gc']
 );
 session_start();

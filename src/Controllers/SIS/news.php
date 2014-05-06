@@ -15,7 +15,7 @@ $dest_host = Config::$news_provider;
 $proxy_base_url = '/' . ltrim(str_replace($_SERVER['HTTP_HOST'], '', CoreUtils::makeURL('SIS', 'news')), '/');
 $proxying_url = Config::$news_proxy;
 
-$proxied_headers = array('Set-Cookie', 'Content-Type', 'Cookie', 'Location');
+$proxied_headers = ['Set-Cookie', 'Content-Type', 'Cookie', 'Location'];
 
 //canonical trailing slash
 $proxy_base_url_canonical = rtrim($proxy_base_url, '/ ') . '/';
@@ -41,7 +41,7 @@ curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_HEADER, 1);
 curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
+curl_setopt($ch, CURLOPT_HTTPHEADER, ['Expect:']);
 curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
 
 /* Collect and pass client request headers */
@@ -67,7 +67,7 @@ curl_close($ch);
 list($headers, $body) = explode("\r\n\r\n", $res, 2);
 
 $headers = explode("\r\n", $headers);
-$hs = array();
+$hs = [];
 
 foreach ($headers as $header) {
     if (false !== strpos($header, ':')) {

@@ -39,7 +39,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
                 ORDER BY submitted ASC'
             );
 
-            self::$pendingAllocationsResult = array();
+            self::$pendingAllocationsResult = [];
             foreach ($result as $application) {
                 self::$pendingAllocationsResult[] = MyRadio_Season::getInstance($application);
             }
@@ -96,14 +96,14 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
         if (empty($termid)) {
             return null;
         }
-        return array('termid' => $termid, 'descr' => self::getTermDescr($termid));
+        return ['termid' => $termid, 'descr' => self::getTermDescr($termid)];
     }
 
     public static function getTermDescr($termid)
     {
         $return = self::$db->fetchOne(
             'SELECT descr, start FROM terms WHERE termid=$1',
-            array($termid)
+            [$termid]
         );
 
         return $return['descr'] . date(' Y', strtotime($return['start']));
@@ -114,7 +114,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
         if ($term_id === null) {
             $term_id = self::getActiveApplicationTerm();
         }
-        $result = self::$db->fetchOne('SELECT start FROM terms WHERE termid=$1', array($term_id));
+        $result = self::$db->fetchOne('SELECT start FROM terms WHERE termid=$1', [$term_id]);
         /**
          * An extra hour is added here due to some issues with timezones and public.terms - some
          * terms are set to start at 11pm Sunday instead of Midnight Monday. It's annoying because then we convert it back.
@@ -167,7 +167,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
             WHERE schedule.show.show_id = schedule.show_metadata.show_id
             AND metadata_key_id IN (SELECT metadata_key_id FROM metadata.metadata_key WHERE name=\'title\')
             AND metadata_value ILIKE \'%\' || $1 || \'%\' LIMIT $2',
-            array($term, $limit)
+            [$term, $limit]
         );
     }
 
@@ -193,7 +193,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
         $return = self::$db->fetchColumn(
             'SELECT termid FROM terms
             WHERE start <= $1 AND finish >= NOW() LIMIT 1',
-            array(CoreUtils::getTimestamp(strtotime('+28 Days')))
+            [CoreUtils::getTimestamp(strtotime('+28 Days'))]
         );
         return $return[0];
     }
@@ -213,7 +213,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     public static function getScheduleConflicts($term_id, $time)
     {
         self::initDB();
-        $conflicts = array();
+        $conflicts = [];
         $date = MyRadio_Scheduler::getTermStartDate($term_id);
         //Iterate over each week
         for ($i = 1; $i <= 10; $i++) {
@@ -255,7 +255,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
             FROM schedule.show_season_timeslot
             WHERE (start_time <= $1 AND start_time + duration > $1)
             OR (start_time > $1 AND start_time < $2)',
-            array($start, $end)
+            [$start, $end]
         );
     }
 }

@@ -31,8 +31,8 @@ class MyRadioEmail extends ServiceAPI
     private static $rtnl = "\r\n";
     private static $multipart_boundary = 'muryp2c6cf41f304e3';
     private $email_id;
-    private $r_lists = array();
-    private $r_users = array();
+    private $r_lists = [];
+    private $r_users = [];
     private $subject;
     private $body;
     private $body_transformed;
@@ -44,7 +44,7 @@ class MyRadioEmail extends ServiceAPI
     {
         self::$db = Database::getInstance();
 
-        $info = self::$db->fetchOne('SELECT * FROM mail.email WHERE email_id=$1', array($eid));
+        $info = self::$db->fetchOne('SELECT * FROM mail.email WHERE email_id=$1', [$eid]);
 
         if (empty($info)) {
             throw new MyRadioException('Email ' . $eid . ' does not exist!');
@@ -56,9 +56,9 @@ class MyRadioEmail extends ServiceAPI
         $this->timestamp = strtotime($info['timestamp']);
         $this->email_id = $eid;
 
-        $this->r_users = self::$db->fetchColumn('SELECT memberid FROM mail.email_recipient_member WHERE email_id=$1', array($eid));
+        $this->r_users = self::$db->fetchColumn('SELECT memberid FROM mail.email_recipient_member WHERE email_id=$1', [$eid]);
 
-        $this->r_lists = self::$db->fetchColumn('SELECT listid FROM mail.email_recipient_list WHERE email_id=$1', array($eid));
+        $this->r_lists = self::$db->fetchColumn('SELECT listid FROM mail.email_recipient_list WHERE email_id=$1', [$eid]);
 
         /**
          * Check if the body needs to be split into multipart.
@@ -110,7 +110,7 @@ class MyRadioEmail extends ServiceAPI
             );
         }
 
-        $params = array($subject, trim($body));
+        $params = [$subject, trim($body)];
         if ($timestamp !== null) {
             $params[] = CoreUtils::getTimestamp($timestamp);
         }
@@ -139,7 +139,7 @@ class MyRadioEmail extends ServiceAPI
                 }
                 self::$db->query(
                     'INSERT INTO mail.email_recipient_list (email_id, listid, sent) VALUES ($1, $2, $3)',
-                    array($eid, $list, $already_sent)
+                    [$eid, $list, $already_sent]
                 );
             }
         }
@@ -150,7 +150,7 @@ class MyRadioEmail extends ServiceAPI
                 }
                 self::$db->query(
                     'INSERT INTO mail.email_recipient_member (email_id, memberid, sent) VALUES ($1, $2, $3)',
-                    array($eid, $member, $already_sent)
+                    [$eid, $member, $already_sent]
                 );
             }
         }
@@ -160,7 +160,7 @@ class MyRadioEmail extends ServiceAPI
 
     private function getHeader()
     {
-        $headers = array('MIME-Version: 1.0');
+        $headers = ['MIME-Version: 1.0'];
 
         if ($this->from !== null) {
             $headers[] = 'From: ' . $this->from->getName() . ' <' . $this->from->getEmail() . '>';
@@ -237,27 +237,27 @@ class MyRadioEmail extends ServiceAPI
 
     public function getSentToUser(MyRadio_User $user)
     {
-        $r = self::$db->fetchColumn('SELECT sent FROM mail.email_recipient_member WHERE email_id=$1 AND memberid=$2 LIMIT 1', array($this->email_id, $user->getID()));
+        $r = self::$db->fetchColumn('SELECT sent FROM mail.email_recipient_member WHERE email_id=$1 AND memberid=$2 LIMIT 1', [$this->email_id, $user->getID()]);
 
         return $r[0] === 't';
     }
 
     public function setSentToUser(MyRadio_User $user)
     {
-        self::$db->query('UPDATE mail.email_recipient_member SET sent=\'t\' WHERE email_id=$1 AND memberid=$2', array($this->email_id, $user->getID()));
+        self::$db->query('UPDATE mail.email_recipient_member SET sent=\'t\' WHERE email_id=$1 AND memberid=$2', [$this->email_id, $user->getID()]);
         $this->updateCacheObject();
     }
 
     public function getSentToList(MyRadio_List $list)
     {
-        $r = self::$db->fetchColumn('SELECT sent FROM mail.email_recipient_list WHERE email_id=$1 AND listid=$2 LIMIT 1', array($this->email_id, $list->getID()));
+        $r = self::$db->fetchColumn('SELECT sent FROM mail.email_recipient_list WHERE email_id=$1 AND listid=$2 LIMIT 1', [$this->email_id, $list->getID()]);
 
         return $r[0] === 't';
     }
 
     public function setSentToList(MyRadio_List $list)
     {
-        self::$db->query('UPDATE mail.email_recipient_list SET sent=\'t\' WHERE email_id=$1 AND listid=$2', array($this->email_id, $list->getID()));
+        self::$db->query('UPDATE mail.email_recipient_list SET sent=\'t\' WHERE email_id=$1 AND listid=$2', [$this->email_id, $list->getID()]);
         $this->updateCacheObject();
     }
 
@@ -270,7 +270,7 @@ class MyRadioEmail extends ServiceAPI
      */
     public static function sendEmailToUser(MyRadio_User $to, $subject, $message, $from = null)
     {
-        self::create(array('members' => array($to)), $subject, $message, $from);
+        self::create(['members' => [$to]], $subject, $message, $from);
 
         return true;
     }
@@ -287,7 +287,7 @@ class MyRadioEmail extends ServiceAPI
         if ($from !== null && !$to->hasSendPermission($from)) {
             return false;
         }
-        self::create(array('lists' => array($to)), $subject, $message, $from);
+        self::create(['lists' => [$to]], $subject, $message, $from);
 
         return true;
     }
@@ -307,7 +307,7 @@ class MyRadioEmail extends ServiceAPI
                 throw new MyRadioException($user . ' is not an instance or derivative of the user class!');
             }
 
-            self::create(array('members' => $to), $subject, $message, $from);
+            self::create(['members' => $to], $subject, $message, $from);
         }
     }
 

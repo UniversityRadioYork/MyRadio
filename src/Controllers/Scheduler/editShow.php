@@ -20,11 +20,11 @@ require 'Models/Scheduler/showfrm.php';
 
 $meta = $show->getMeta('tag');
 if ($meta === null) {
-    $meta = array();
+    $meta = [];
 }
 $form->editMode(
     $_REQUEST['showid'],
-    array(
+    [
         'title' => $show->getMeta('title'),
         'description' => $show->getMeta('description'),
         'genres' => $show->getGenre(),
@@ -42,6 +42,6 @@ $form->editMode(
             $show->getCredits()
         ),
         'mixclouder' => ($show->getMeta('upload_state') === 'Requested')
-    ),
+    ],
     'doEditShow'
 )->render();

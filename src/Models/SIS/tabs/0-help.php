@@ -7,8 +7,8 @@
  * @package MyRadio_SIS
  */
 
-$moduleInfo = array(
+$moduleInfo = [
     'name' => 'help',
     'title' => 'Getting Started',
     'enabled' => SIS_Utils::getShowHelpTab($_SESSION['memberid'])
-);
+];

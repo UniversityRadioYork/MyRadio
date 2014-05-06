@@ -14,4 +14,4 @@ require 'Models/Scheduler/demofrm.php';
  */
 $demoinfo = $form->readValues();
 MyRadio_Demo::registerDemo($demoinfo['demo-datetime']);
-header('Location: '.CoreUtils::makeURL('Scheduler', 'listDemos'));
+CoreUtils::redirect('Scheduler', 'listDemos');

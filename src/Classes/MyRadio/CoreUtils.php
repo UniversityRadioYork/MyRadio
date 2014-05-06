@@ -22,7 +22,7 @@ class CoreUtils
      * @var boolean
      */
     private static $auth_cached = false;
-    private static $svc_version_cache = array();
+    private static $svc_version_cache = [];
 
     /**
      * Stores the result of CoreUtils::getAcademicYear
@@ -43,19 +43,19 @@ class CoreUtils
      * Stores actionid => uri mappings of custom web addresses (e.g. /myury/iTones/default gets mapped to /itones)
      * @var Array
      */
-    private static $custom_uris = array();
+    private static $custom_uris = [];
 
     /**
      * Stores module name => id mappings to reduce query load - they are initialised once and stored
      * @var Array
      */
-    private static $module_ids = array();
+    private static $module_ids = [];
 
     /**
      * Stores action name => id mappings to reduce query load - they are initialised once and stored
      * @var Array
      */
-    private static $action_ids = array();
+    private static $action_ids = [];
 
     /**
      * Checks whether a given Module/Action combination is valid
@@ -178,7 +178,7 @@ class CoreUtils
             $term = Database::getInstance()->fetchColumn(
                 'SELECT start FROM public.terms WHERE descr=\'Autumn\'
                 AND EXTRACT(year FROM start) = $1',
-                array(date('Y'))
+                [date('Y')]
             );
             if (strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days')) {
                 CoreUtils::$academicYear = date('Y');
@@ -210,7 +210,7 @@ class CoreUtils
      * @param  array  $params Additional GET variables
      * @return null   Nothing.
      */
-    public static function redirect($module, $action = null, $params = array())
+    public static function redirect($module, $action = null, $params = [])
     {
         header('Location: ' . self::makeURL($module, $action, $params));
     }
@@ -222,7 +222,7 @@ class CoreUtils
      * @param  array  $params Additional GET variables
      * @return String URL to Module/Action
      */
-    public static function makeURL($module, $action = null, $params = array())
+    public static function makeURL($module, $action = null, $params = [])
     {
         if (empty(self::$custom_uris) && class_exists('Database')) {
             $result = Database::getInstance()->fetchAll('SELECT actionid, custom_uri FROM myury.actions');
@@ -393,7 +393,7 @@ class CoreUtils
             AND (myury.actions.name=$2 OR myury.act_permission.actionid IS NULL)
             AND NOT (myury.act_permission.actionid IS NULL AND myury.act_permission.typeid IS NULL)
             AND NOT (myury.act_permission.moduleid IS NULL AND myury.act_permission.typeid IS NULL)',
-            array($module, $action)
+            [$module, $action]
         );
 
         //Don't allow empty result sets - throw an Exception as this is very very bad.
@@ -551,7 +551,7 @@ class CoreUtils
             $result = Database::getInstance()->fetchColumn(
                 'INSERT INTO myury.modules (serviceid, name)
                 VALUES ($1, $2) RETURNING moduleid',
-                array(Config::$service_id, $module)
+                [Config::$service_id, $module]
             );
             if ($result) {
                 self::$module_ids[$module] = $result[0];
@@ -583,7 +583,7 @@ class CoreUtils
             $result = Database::getInstance()->fetchColumn(
                 'INSERT INTO myury.actions (moduleid, name)
                 VALUES ($1, $2) RETURNING actionid',
-                array($module, $action)
+                [$module, $action]
             );
             if ($result) {
                 self::$action_ids[$action . '-' . $module] = $result[0];
@@ -609,7 +609,7 @@ class CoreUtils
         $db->query(
             'INSERT INTO myury.act_permission (serviceid, moduleid, actionid, typeid)
             VALUES ($1, $2, $3, $4)',
-            array(Config::$service_id, $module, $action, $permission)
+            [Config::$service_id, $module, $action, $permission]
         );
     }
 
@@ -636,7 +636,7 @@ class CoreUtils
     //from http://www.php.net/manual/en/function.xml-parse-into-struct.php#109032
     public static function xml2array($xml)
     {
-        $opened = array();
+        $opened = [];
         $opened[1] = 0;
         $xml_parser = xml_parser_create();
         xml_parse_into_struct($xml_parser, $xml, $xmlarray);
@@ -680,7 +680,7 @@ class CoreUtils
     public static function requireTimeslot()
     {
         if (!isset($_SESSION['timeslotid'])) {
-            header('Location: ' . CoreUtils::makeURL('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]));
+            CoreUtils::redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
             exit;
         }
     }
@@ -697,7 +697,7 @@ class CoreUtils
      */
     public static function biasedRandom($data)
     {
-        $bag = array();
+        $bag = [];
 
         foreach ($data as $ball) {
             for (; $ball['weight'] > 0; $ball['weight'] --) {
@@ -730,7 +730,7 @@ class CoreUtils
         $db->query(
             'INSERT INTO myury.error_rate (server_ip, error_count, exception_count, queries)
             VALUES ($1, $2, $3, $4)',
-            array($host, $errors, $exceptions, $queries)
+            [$host, $errors, $exceptions, $queries]
         );
     }
 
@@ -776,13 +776,13 @@ class CoreUtils
             SUM(queries)/COUNT(queries) AS queries
             FROM myury.error_rate WHERE timestamp>=$1 GROUP BY round(extract(\'epoch\' from timestamp) / 600)
             ORDER BY timestamp ASC',
-            array(self::getTimestamp($since))
+            [self::getTimestamp($since)]
         );
 
-        $return = array();
-        $return[] = array('Timestamp', 'Errors per request', 'Exceptions per request', 'Queries per request');
+        $return = [];
+        $return[] = ['Timestamp', 'Errors per request', 'Exceptions per request', 'Queries per request'];
         foreach ($result as $row) {
-            $return[] = array(date('H:i', $row['timestamp']), (int) $row['errors'], (int) $row['exceptions'], (int) $row['queries']);
+            $return[] = [date('H:i', $row['timestamp']), (int) $row['errors'], (int) $row['exceptions'], (int) $row['queries']];
         }
 
         return $return;
@@ -854,7 +854,7 @@ class CoreUtils
     {
         ob_start();
         if (isset($_REQUEST['redact'])) {
-            $info = array();
+            $info = [];
             foreach ($_REQUEST as $k => $v) {
                 if (!in_array($k, $_REQUEST['redact'])) {
                     $info[$k] = $v;
@@ -905,7 +905,7 @@ class CoreUtils
      * Words used by CoreUtils::newPassword
      * @var String[]
      */
-    private static $words = array(
+    private static $words = [
         'Radio',
         'Microphone',
         'Studio',
@@ -942,5 +942,5 @@ class CoreUtils
         'Modulation',
         'Vinyl',
         'Broadcasting'
-    );
+    ];
 }

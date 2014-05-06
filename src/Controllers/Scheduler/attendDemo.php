@@ -8,4 +8,4 @@
  */
 
 $result = MyRadio_Demo::attend($_REQUEST['demoid']);
-header('Location: '.CoreUtils::makeURL($module, 'listDemos', array('msg'=>$result)));
+CoreUtils::redirect($module, 'listDemos', ['msg'=>$result]);

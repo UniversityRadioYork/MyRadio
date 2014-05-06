@@ -12,10 +12,10 @@ $form = (
         'sched_showphoto',
         $module,
         'doShowPhoto',
-        array(
+        [
             'debug' => true,
             'title' => 'Update Show Photo',
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
@@ -26,6 +26,6 @@ $form = (
     new MyRadioFormField(
         'image_file',
         MyRadioFormField::TYPE_FILE,
-        array('label' => 'Photo')
+        ['label' => 'Photo']
     )
 );

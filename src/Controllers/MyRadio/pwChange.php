@@ -13,27 +13,27 @@ $form = (
         'myradio_pwChange',
         'MyRadio',
         'pwChange',
-        array(
+        [
             'title' => 'Password Change'
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'pw1',
         MyRadioFormField::TYPE_PASSWORD,
-        array(
+        [
             'explanation' => '',
             'label' => 'New Password:'
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'pw2',
         MyRadioFormField::TYPE_PASSWORD,
-        array(
+        [
             'explanation' => '',
             'label' => 'Confirm New Password:'
-        )
+        ]
     )
 )->setTemplate('MyRadio/pwReset.twig');
 
@@ -47,10 +47,10 @@ if (isset($_SESSION['memberid'])) {
         new MyRadioFormField(
             'pwold',
             MyRadioFormField::TYPE_PASSWORD,
-            array(
+            [
                 'explanation' => '',
                 'label' => 'Current Password:'
-            )
+            ]
         )
     );
 } else {
@@ -73,9 +73,9 @@ if (isset($_SESSION['memberid'])) {
                 new MyRadioFormField(
                     'token',
                     MyRadioFormField::TYPE_HIDDEN,
-                    array(
+                    [
                         'value' => $token['token']
-                    )
+                    ]
                 )
             );
         }
@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
         unset($_SESSION['auth_use_locked']);
     }
 
-    header('Location: '.CoreUtils::makeURL('MyRadio', 'login'));
+    CoreUtils::redirect('MyRadio', 'login');
 } else {
     foreach (Config::$authenticators as $authenticator) {
         $auth = new $authenticator;

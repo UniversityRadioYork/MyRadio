@@ -43,7 +43,7 @@ class MyRadio_Banner extends MyRadio_Photo
      * IDs of Campaigns that use this Banner
      * @var int[]
      */
-    private $campaigns = array();
+    private $campaigns = [];
 
     /**
      * Initiates the MyRadio_Banner object
@@ -53,7 +53,7 @@ class MyRadio_Banner extends MyRadio_Photo
     {
         $this->banner_id = (int) $banner_id;
 
-        $result = self::$db->fetchOne('SELECT * FROM website.banner WHERE banner_id=$1', array($banner_id));
+        $result = self::$db->fetchOne('SELECT * FROM website.banner WHERE banner_id=$1', [$banner_id]);
         if (empty($result)) {
             throw new MyRadioException('Banner ' . $banner_id . ' does not exist!');
         }
@@ -87,13 +87,13 @@ class MyRadio_Banner extends MyRadio_Photo
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Click here to edit this Banner',
-                'url' => CoreUtils::makeURL('Website', 'editBanner', array('bannerid' => $this->getBannerID()))
+                'url' => CoreUtils::makeURL('Website', 'editBanner', ['bannerid' => $this->getBannerID()])
             ],
             'campaigns_link' => [
                 'display' => 'icon',
                 'value' => 'calendar',
                 'title' => 'Click here to view the Campaigns for this Banner',
-                'url' => CoreUtils::makeURL('Website', 'campaigns', array('bannerid' => $this->getBannerID()))
+                'url' => CoreUtils::makeURL('Website', 'campaigns', ['bannerid' => $this->getBannerID()])
             ]
         ];
 
@@ -252,7 +252,7 @@ class MyRadio_Banner extends MyRadio_Photo
         $result = self::$db->fetchColumn(
             'INSERT INTO website.banner (alt, image, target, banner_type_id, photoid)
             VALUES ($1, $2, $3, $4, $5) RETURNING banner_id',
-            array($alt, $photo->getURL(), $target, $type, $photo->getID())
+            [$alt, $photo->getURL(), $target, $type, $photo->getID()]
         );
 
         return self::getInstance($result[0]);

@@ -69,7 +69,7 @@ class MyRadioNews
             FROM public.news_feed, public.member
             WHERE newsentryid=$1
             AND news_feed.memberid = member.memberid',
-            array($newsentryid)
+            [$newsentryid]
         );
 
         if (empty($news)) {
@@ -78,17 +78,17 @@ class MyRadioNews
 
         return array_merge(
             $news,
-            array(
+            [
                 'seen' => $db->fetchOne(
                     'SELECT seen FROM public.member_news_feed
                     WHERE newsentryid=$1 AND memberid=$2 LIMIT 1',
-                    array(
+                    [
                         $news['newsentryid'],
                         empty($user) ? 0 : $user->getID()
-                    )
+                    ]
                 ),
                 'posted' => CoreUtils::happyTime($news['posted'])
-            )
+            ]
         );
     }
 
@@ -102,7 +102,7 @@ class MyRadioNews
         $db = Database::getInstance();
 
         try {
-            $db->query('INSERT INTO public.member_news_feed (newsentryid, memberid) VALUES ($1, $2)', array($newsentryid, $user->getID()));
+            $db->query('INSERT INTO public.member_news_feed (newsentryid, memberid) VALUES ($1, $2)', [$newsentryid, $user->getID()]);
         } catch (MyRadioException $e) {
 
         }; //Can sometimes get duplicate key errors

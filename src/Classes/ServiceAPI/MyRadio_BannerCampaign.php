@@ -78,7 +78,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
     {
         $this->banner_campaign_id = (int) $banner_campaign_id;
 
-        $result = self::$db->fetchOne('SELECT * FROM website.banner_campaign WHERE banner_campaign_id=$1', array($banner_campaign_id));
+        $result = self::$db->fetchOne('SELECT * FROM website.banner_campaign WHERE banner_campaign_id=$1', [$banner_campaign_id]);
         if (empty($result)) {
             throw new MyRadioException('Banner Campaign ' . $banner_campaign_id . ' does not exist!');
         }
@@ -339,7 +339,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
         $banner_location_id = 1,
         $effective_from = null,
         $effective_to = null,
-        $timeslots = array()
+        $timeslots = []
     ) {
         if ($effective_from == null) {
             $effective_from = time();
@@ -349,13 +349,13 @@ class MyRadio_BannerCampaign extends ServiceAPI
             'INSERT INTO website.banner_campaign
             (banner_id, banner_location_id, effective_from, effective_to, memberid, approvedid)
             VALUES ($1, $2, $3, $4, $5, $5) RETURNING banner_campaign_id',
-            array(
+            [
                 $banner->getBannerID(),
                 $banner_location_id,
                 CoreUtils::getTimestamp($effective_from),
                 CoreUtils::getTimestamp($effective_to),
                 MyRadio_User::getInstance()->getID()
-            )
+            ]
         );
 
         $campaign = self::getInstance($result[0]);

@@ -280,7 +280,7 @@ final class Config
      * and other systems to ensure the file requested seems legit.
      * @var Array[String]
      */
-    public static $music_central_db_exts = array('mp3', 'ogg', 'mp3.orig');
+    public static $music_central_db_exts = ['mp3', 'ogg', 'mp3.orig'];
 
     /**
      * Mailing list to send reporting info to
@@ -438,28 +438,28 @@ final class Config
      * colour is the colour of any alements identifying the studio. Any valid CSS color will work here
      * @var Array
      */
-    public static $studios = array(
-        array(
+    public static $studios = [
+        [
             'name' => 'Campus Jukebox',
-            'authenticated_machines' => array(),
+            'authenticated_machines' => [],
             'colour' => '#0F0'
-        ),
-        array(
+        ],
+        [
             'name' => 'Studio 1',
-            'authenticated_machines' => array('144.32.64.181', '144.32.64.183'),
+            'authenticated_machines' => ['144.32.64.181', '144.32.64.183'],
             'colour' => 'red'
-        ),
-        array(
+        ],
+        [
             'name' => 'Studio 2',
-            'authenticated_machines' => array('144.32.64.184', '144.32.64.185'),
+            'authenticated_machines' => ['144.32.64.184', '144.32.64.185'],
             'colour' => '#0044BA'
-        ),
-        array(
+        ],
+        [
             'name' => 'Outside Broadcast',
-            'authenticated_machines' => array(), //TODO: Add the OB Machines here
+            'authenticated_machines' => [], //TODO: Add the OB Machines here
             'colour' => '#bb00dc'
-        ),
-    );
+        ],
+    ];
 
     /**
      * URL of the news provider
@@ -610,7 +610,7 @@ EOT;
      */
     public static function getPublicConfig()
     {
-        return array(
+        return [
             'api_url' => self::$api_url,
             'ajax_limit_default' => self::$ajax_limit_default,
             'base_url' => self::$base_url,
@@ -628,6 +628,6 @@ EOT;
             'long_name' => self::$long_name,
             'founded' => self::$founded,
             'facebook' => self::$facebook
-        );
+        ];
     }
 }

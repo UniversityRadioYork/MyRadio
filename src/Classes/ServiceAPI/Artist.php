@@ -41,7 +41,7 @@ class Artist extends ServiceAPI
         return self::$db->fetchAll(
             'SELECT DISTINCT rec_track.artist AS title, 0 AS artistid
             FROM rec_track WHERE rec_track.artist ILIKE \'%\' || $1 || \'%\' LIMIT $2',
-            array($title, $limit)
+            [$title, $limit]
         );
     }
 
@@ -110,7 +110,7 @@ class Artist extends ServiceAPI
         }
 
         //Prepare paramaters
-        $sql_params = array($options['title'], $options['artist'], $options['album'], $options['precise'] ? '' : '%');
+        $sql_params = [$options['title'], $options['artist'], $options['album'], $options['precise'] ? '' : '%'];
         $count = 4;
         if ($options['limit'] != 0) {
             $sql_params[] = $options['limit'];

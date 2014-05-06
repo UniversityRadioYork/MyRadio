@@ -50,7 +50,7 @@ class MyRadio_LabelFinderDaemon extends MyRadio_Daemon
                 dlog("Setting {$album['recordid']} label to {$label}", 2);
                 Database::getInstance()->query(
                     'UPDATE public.rec_record SET recordlabel=$1 WHERE recordid=$2',
-                    array($label, $album['recordid'])
+                    [$label, $album['recordid']]
                 );
             } else {
                 dlog(

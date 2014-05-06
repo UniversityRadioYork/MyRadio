@@ -18,7 +18,7 @@
  */
 trait MyRadio_Creditable
 {
-    protected $credits = array();
+    protected $credits = [];
     protected static $credit_names;
 
     /**
@@ -46,7 +46,7 @@ trait MyRadio_Creditable
      */
     public function getCreditsNames($types = true)
     {
-        $return = array();
+        $return = [];
         foreach ($this->credits as $credit) {
             if ($types) {
                 $credit['name'] = MyRadio_User::getInstance($credit['memberid'])->getName();
@@ -66,7 +66,7 @@ trait MyRadio_Creditable
      */
     public function getCreditObjects($parent = null)
     {
-        $r = array();
+        $r = [];
         foreach ($this->getCredits($parent) as $credit) {
             $r[] = $credit['User'];
         }
