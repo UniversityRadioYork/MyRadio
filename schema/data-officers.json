@@ -1,0 +1,15 @@
+{
+	"teams": [
+		["Station Management", null, "management", 10],
+		["Presenting Team", "The Training and Programming Teams were merged into a Presenting team in November 2013.", "presenting", 15],
+		["Production Team", null, "production", 20],
+		["News Team", null, "news", 25],
+		["Speech Team", null, "speech", 27],
+		["Marketing Team", "Marketing Team replaced the Business Team in November 2013.", "marketing", 30],
+		["Music Team", null, "music", 35],
+		["Engineering Team", null, "engineering", 40],
+		["Computing Team", null, "computing", 50],
+		["Events Team", "Events Team", "events", 99],
+		["Other Officers", "Officers Without Portfolio", null, 200]
+	]
+}

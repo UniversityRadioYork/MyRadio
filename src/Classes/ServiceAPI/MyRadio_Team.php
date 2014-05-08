@@ -261,7 +261,7 @@ class MyRadio_Team extends ServiceAPI
     /**
      * Returns Officer positions that are the given type
      * @param char $type
-     * @return Officer[]
+     * @return MyRadio_Officer[]
      */
     private function getMembersOfType($type)
     {
@@ -273,6 +273,37 @@ class MyRadio_Team extends ServiceAPI
         }
 
         return $data;
+    }
+
+    /**
+     * Returns the team with the given local_alias
+     * @param  String $alias
+     * @return MyRadio_Team
+     */
+    public function getByAlias($alias)
+    {
+        return self::getInstance(
+            self::$db->fetchColumn('SELECT teamid FROM public.team WHERE local_alias=$1', [$alias])
+        );
+    }
+
+    /**
+     * Create a new Team with the given paramaters
+     * @param  String $name The name of the new Team
+     * @param  String $descr A friendly description of the new Team
+     * @param  String $alias /[a-z]+/ used for the mailing list name
+     * @param  int $ordering The larger this number, the further down this Team
+     * @return MyRadio_Team The new Team
+     */
+    public static function createTeam($name, $descr, $alias, $ordering)
+    {
+        return self::getInstance(
+            self::$db->fetchColumn(
+            'INSERT INTO public.team (team_name, descr, alias, ordering)
+            VALUES ($1, $2, $3, $4) RETURNING teamid',
+            [$name, $descr, $alias, $ordering]
+            )[0]
+        );
     }
 
     /**
