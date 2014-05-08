@@ -13,6 +13,11 @@
  */
 
 define('SILENT_EXCEPTIONS', true);
+define('DBDATA_COMPLETE', 0);
+define('DBDATA_PERMISSIONS', 1);
+define('DBDATA_SUDO', 2);
+define('DBDATA_BLANK', 3);
+define('SCHEMA_DIR', __DIR__.'/../../../schema/');
 
 $controller = isset($_REQUEST['c']) ? $_REQUEST['c'] : 'checks';
 

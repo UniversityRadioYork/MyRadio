@@ -546,6 +546,20 @@ class CoreUtils
     }
 
     /**
+     * Add a new permission constant to the database.
+     * @param String $descr A useful friendly description of what this action means.
+     * @param String $constant /AUTH_[A-Z_]+/
+     */
+    public function addPermission($descr, $constant)
+    {
+        $value = (int)Database::getInstance()->fetchColumn(
+            'INSERT INTO public.l_action (descr, phpconstant)
+            VALUES ($1, $2) RETURNING typeid', [$descr, $constant])[0];
+        define($constant, $value);
+        return $value;
+    }
+
+    /**
      * Returns a list of all MyRadio managed Services in a 2D Array.
      *
      * This table should now only ever contain MyRadio.

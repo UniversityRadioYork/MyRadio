@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		case 'NEW':
 			$db = Database::getInstance();
 			try {
-				$db->query(file_get_contents(__DIR__.'/../../../schema/base.sql'));
+				$db->query(file_get_contents(SCHEMA_DIR . 'base.sql'));
 			} catch (MyRadioException $e) {
 				$error = pg_last_error();
 				CoreUtils::getTemplateObject()
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			while ($version < MYRADIO_CURRENT_SCHEMA_VERSION) {
 				$version++;
 				try {
-					$db->query(file_get_contents(__DIR__.'/../../../schema/patches/'.$version.'.sql'));
+					$db->query(file_get_contents(SCHEMA_DIR . 'patches/'.$version.'.sql'));
 					$db->query('UPDATE myradio.schema SET value=$1 WHERE attr=\'version\'', [$version]);
 				} catch (MyRadioException $e) {
 					$error = pg_last_error();
