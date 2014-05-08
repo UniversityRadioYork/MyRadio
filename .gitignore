@@ -1,7 +1,6 @@
 /nbproject
 *.LCK*
 MyRadio_Config.local.php
-menu.yaml
 util/checkpassword.conf
 *.sw[a-z]
 sftp-*.json
