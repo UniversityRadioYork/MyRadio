@@ -16,7 +16,8 @@ $required_modules = [
 		'module' => 'apc',
 		'success' => 'APC will be used to make MyRadio run faster.',
 		'fail' => 'If you had the <a href="http://www.php.net/manual/en/book.apc.php">APC extension</a> MyRadio could use it to run much, much faster.',
-		'required' => false
+		'required' => false,
+		'set_fail' => ['cache_enable', false]
 	],
 	[
 		'module' => 'curl',
@@ -101,6 +102,9 @@ foreach ($required_modules as $module) {
 			$problems[] = $module['fail'];
 		} else {
 			$warnings[] = $module['fail'];
+		}
+		if (isset($module['set_fail'])) {
+			$config_overrides[$module['set_fail'][0]] = $module['set_fail'][1];
 		}
 	} else {
 		$successes[] = $module['success'];

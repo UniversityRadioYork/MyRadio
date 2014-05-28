@@ -195,14 +195,14 @@ final class Config
     public static $webcam_set_url = "http://copperbox.york.ac.uk:9090/set?newcam=";
 
     /**
-     * The path to store the original, unencoded copies of URYPlayer Podcasts.
+     * The path to store the original, unencoded copies of MyRadio Podcasts.
      * The originals are archived here for future reencoding.
      * @var String
      */
     public static $podcast_archive_path = '/music/podcasts';
 
     /**
-     * The URL where media should be stored. Used for podcasts, banners and images.
+     * The file system path where media should be stored. Used for podcasts, banners and images.
      * @var String
      */
     public static $public_media_path = '/home/django/virtualenvs/urysite/assets/media';
@@ -242,24 +242,35 @@ final class Config
 
     /**
      * The file to be played if the obit procedure is triggered.
+     * This is only used if you use the MyRadio iTones Liquidsoap playout tools
      * @var String
      */
     public static $jukebox_obit_file = '/jukebox/OBIT.mp3';
 
     /**
-     * The Samba File Share path to the Central Database. This is used for BAPS compatibility features.
+     * The Samba File Share path to the Central Database.
+     * This is used for BAPS compatibility features.
+     * 
+     * If you are not URY, you will likely not need this setting.
+     * However, if you have a studio audio playout tool that needs
+     * samba paths to files stored in a database, set this here.
+     * This data will then be stored in the public.baps_ table.
      * @var String
      */
     public static $music_smb_path = '\\\\musicstore.ury.york.ac.uk';
 
     /**
-     * A path to temporarially store uploaded audio files. Recommend somewhere in /tmp, MyRadio needs full r/w access to it.
+     * A path to temporarily store uploaded audio files. Recommend somewhere in /tmp,
+     * MyRadio needs full r/w access to it to enable Library management.
      * @var String
      */
     public static $audio_upload_tmp_dir = '/tmp/myradioaudiouploadcache';
 
     /**
      * The API key to access last.fm's resources.
+     *
+     * You will need one of these to enable Library management.
+     * 
      * @var String
      */
     public static $lastfm_api_key;
@@ -271,8 +282,9 @@ final class Config
     public static $lastfm_api_secret;
 
     /**
-     * The array of different versions of tracks one can expect to find in the Central Database. Used for file servers
-     * and other systems to ensure the file requested seems legit.
+     * The array of different versions of tracks one can expect to find in the
+     * Central Database. Used for file servers and other systems to ensure
+     * the file requested seems legit.
      * @var Array[String]
      */
     public static $music_central_db_exts = ['mp3', 'ogg', 'mp3.orig'];
@@ -280,9 +292,9 @@ final class Config
     /**
      * Mailing list to send reporting info to
      * @var String
-     * @todo Make this point to a MyRadio_List ID?
+     * @todo Make this support non-MyRadio managed addresses
      */
-    public static $reporting_list = 'alerts.myury';
+    public static $reporting_list = 'alerts.myradio';
 
     /**
      * The IP/hostname of the iTones Liquidsoap Telnet Service
@@ -342,7 +354,8 @@ final class Config
      */
     public static $log_file_lock = '/tmp/myradio_errors.lock';
     /**
-     * The email to send error reports to. This is different from reporting_email, which does statistical reports.
+     * The email to send error reports to. This is different from reporting_list, 
+     * which does statistical reports, if enabled.
      * @var String
      */
     public static $error_report_email = 'alerts.myradio';
@@ -361,14 +374,16 @@ final class Config
 
     /**
      * This key enables automated access to the YUSU CMS information about URY's members
+     *
+     * This is literally only useful if you are URY.
      */
     public static $yusu_api_key;
 
     /**
      * The default college for new users that do not specify one.
-     * 10 is Unknown.
+     * 1 is Unknown. (Unless you're URY, in which case it's 10 because legacy)
      */
-    public static $default_college = 10;
+    public static $default_college = 1;
 
     /**
      * A path to the file system (preferably in /tmp) that the MyRadio Daemon tools can have write access to. It stores
@@ -408,8 +423,11 @@ final class Config
     public static $api_uri = '/api/';
 
     /**
-     * Recaptcha settings
+     * Recaptcha settings. Used for password resets.
+     * 
      * http://recaptcha.net
+     *
+     * @var String
      */
     public static $recaptcha_public_key = 'YOUR_API_KEY';
     public static $recaptcha_private_key = 'YOUR_PRIVATE_KEY';
@@ -489,7 +507,7 @@ final class Config
     public static $authenticators = ['\MyRadio\MyRadio\MyRadioDefaultAuthenticator'];
     public static $auth_ldap_server = 'ldap://ldap.york.ac.uk';
     public static $auth_ldap_root = 'ou=people,ou=csrv,ou=nos,dc=york,dc=ac,dc=uk';
-    public static $auth_db_user = 'shibbobleh';
+    public static $auth_db_user = '';
     public static $auth_db_pass = '';
     public static $eduroam_domain = 'york.ac.uk';
     public static $auth_ldap_friendly_name = 'IT Services';

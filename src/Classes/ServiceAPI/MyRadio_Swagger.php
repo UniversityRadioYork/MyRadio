@@ -248,26 +248,33 @@ class MyRadio_Swagger
         ];
     }
 
+    public static function parseMethodDoc($doc)
+    {
+        $raw = explode("\n", trim(preg_replace('/(\/\*\*)|(\n*\s+\*\/?\s?)/', "\n", $doc->getDocComment()), " \n"));
+
+        $lines = [''];
+        $keys = [];
+        foreach ($raw as $line) {
+            if (empty($raw)) {
+                $lines[] = '';
+            } elseif (substr($line, 0, 1) === '@') {
+                $key = preg_replace('/^\@([a-zA-Z]+)(.*)$/', '$1', $line);
+                $keys[$key][] = preg_replace('/^\@([a-zA-Z]+) (.*)$/', '$2', $line);
+            } else {
+                $lines[sizeof($lines)-1] .= $line . ' ';
+            }
+        }
+        return ['lines' => $lines, 'keys' => $keys];
+    }
+
     private function getMethodDoc(ReflectionMethod $method)
     {
-        $doc = $method->getDocComment();
+        $doc = self::parseMethodDoc($method);
 
-        $lines = explode("\n", trim(preg_replace('/(\/\*\*)|(\n\s+\*\/?[^\S\r\n]?)/', "\n", $doc), " \n"));
-
-        //Parse for short description. This is up to the first blank line.
-        $i = 0;
-        $short_desc = '';
-        while (isset($lines[$i]) && !empty($lines[$i]) && substr($lines[$i], 0, 1) !== '@') {
-            $short_desc .= $lines[$i] . ' ';
-            $i++;
-        }
+        $short_desc = array_shift($doc['lines']);
 
         //Parse for long description. This is until the first @
-        $long_desc = '';
-        while (isset($lines[$i]) && substr($lines[$i], 0, 1) !== '@') {
-            $long_desc .= $lines[$i] . ' ';
-            $i++;
-        }
+        $long_desc = implode('<br>', $doc['lines']);
 
         //We append the auth requirements to the long description
         $requirements = MyRadio_APIKey::getCallRequirements(
@@ -288,16 +295,7 @@ class MyRadio_Swagger
         //Now parse for docblock things
         $params = [];
         $return_type = 'Set';
-        while (isset($lines[$i])) {
-            //Skip ones that are out of place.
-            if (substr($lines[$i], 0, 1) !== '@') {
-                $i++;
-                continue;
-            }
-            $key = preg_replace('/^\@([a-zA-Z]+)(.*)$/', '$1', $lines[$i]);
-            if (empty($key)) {
-                continue;
-            }
+        foreach ($doc['keys'] as $key => $values) {
             switch ($key) {
                 //Deal with $params
                 case 'param':
@@ -307,18 +305,9 @@ class MyRadio_Swagger
                      * info[2] should be parameter name
                      * info[3] should be the description
                      */
-                    $info = explode(' ', $lines[$i], 4);
+                    $info = explode(' ', $values[0], 4);
                     $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
                     $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
-                    //For any following lines, if they don't start with @, assume it's a continuation of the description
-                    $i++;
-                    while (isset($lines[$i]) && substr($lines[$i], 0, 1) !== '@') {
-                        if (empty($lines[$i])) {
-                            $params[$arg]['description'] .= '<br>';
-                        }
-                        $params[$arg]['description'] .= ' ' . $lines[$i];
-                        $i++;
-                    }
                     break;
                 default:
                     $i++;
