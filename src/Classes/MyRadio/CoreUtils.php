@@ -22,7 +22,6 @@ class CoreUtils
      * @var boolean
      */
     private static $auth_cached = false;
-    private static $svc_version_cache = [];
 
     /**
      * Stores the result of CoreUtils::getAcademicYear
@@ -512,24 +511,6 @@ class CoreUtils
     }
 
     /**
-     * Returns a list of all MyRadio managed Services in a 2D Array.
-     *
-     * This table should now only ever contain MyRadio.
-     * 
-     * @return Array A 2D Array with each second dimension as follows:<br>
-     *               value: The ID of the Service
-     *               text: The Text ID of the Service
-     *               enabeld: Whether the Service is enabled
-     */
-    public static function getServices()
-    {
-        return Database::getInstance()->fetchAll(
-            'SELECT serviceid AS value, name AS text, enabled
-            FROM myury.services ORDER BY name ASC'
-        );
-    }
-
-    /**
      * A simple debug method that only displays output for a specific user.
      * @param int    $userid  The ID of the user to display for
      * @param String $message The HTML to display for this user
@@ -611,11 +592,12 @@ class CoreUtils
     }
 
     /**
-     * Assigns a permission to a command
-     * @todo Document
-     * @param type $module
-     * @param type $action
-     * @param type $permission
+     * Assigns a permission to a command. Note arguments are the integer IDs
+     * NOT the String names
+     * 
+     * @param int $module The module ID
+     * @param int $action The action ID
+     * @param int $permission The permission typeid
      */
     public static function addActionPermission($module, $action, $permission)
     {

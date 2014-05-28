@@ -1,15 +1,65 @@
 {
 	"teams": [
-		["Station Management", null, "management", 10],
-		["Presenting Team", "The Training and Programming Teams were merged into a Presenting team in November 2013.", "presenting", 15],
-		["Production Team", null, "production", 20],
-		["News Team", null, "news", 25],
-		["Speech Team", null, "speech", 27],
-		["Marketing Team", "Marketing Team replaced the Business Team in November 2013.", "marketing", 30],
-		["Music Team", null, "music", 35],
-		["Engineering Team", null, "engineering", 40],
-		["Computing Team", null, "computing", 50],
-		["Events Team", "Events Team", "events", 99],
-		["Other Officers", "Officers Without Portfolio", null, 200]
+		["Station Management", null, "management", 10,
+			["Station Manager", null, "station.manager", 1, "h"],
+			["Assistant Station Manager", null, "assistant.station.manager", 2, "a"],
+			["Secretary", null, "secretary", 3, "o"],,
+			["Treasurer", null, "treasurer", 20, "o"]
+		],
+		["Presenting Team", "The Training and Programming Teams were merged into a Presenting team in November 2013.", "presenting", 15,
+			["Programme Controller", null, "programme.controller", 10, "h"],
+			["Training Coordinator", null, "training.coordinator", 15, "a"]
+		],
+		["Production Team", null, "production", 20,
+			["Head of Production", null, "head.of.production", 10, "h"],
+			["Assistant Head of Production", null, "assistant.head.of.production", 20, "o"]
+		],
+		["News Team", null, "news", 25,
+			["Head of News and Sport", null, "head.of.news", 10, "h"],
+			["News Editor", null, "news.editor", 15, "a"],
+			["Sports Editor", null, "sports", 20, "o"],
+			["Reporter (News and Sport)", null, "reporter", 25, "o"]
+		],
+		["Speech Team", null, "speech", 27,
+			["Head of Speech", null, "head.of.speech", 10, "h"],
+			["Assistant Head of Speech", null, "assistant.head.of.speech", 15, "a"],
+			["Cinema and Theatre Liason", null, "Cinema and Theatre Liason", 20, "o"],
+			["Documentaries and Features Editor", null, "documentaries.editor", 25, "o"],
+			["Speech Officer", null, "speech.officer", 30, "o"]
+		],
+		["Marketing Team", "Marketing Team replaced the Business Team in November 2013.", "marketing", 30,
+			["Head of Marketing", null, "head.of.marketing", 10, "h"],
+			["Assistant Head of Marketing", null, "assistant.head.of.marketing", 15, "a"]
+		],
+		["Music Team", null, "music", 35,
+			["Head of Music", null, "head.of.music", 10, "h"],
+			["Assistant Head of Music", null, "assistant.head.of.music", 15, "a"],
+			["Sessions Manager", null, "sessions.manager", 20, "o"],
+			["Interviewer", null, "interviewer", 20, "o"],
+			["Librarian", null, "librarian", 30, "o"],
+			["Chart Supremo", null, "chart.supremo", 35, "o"]
+		],
+		["Engineering Team", null, "engineering", 40,
+			["Chief Engineer", null, "chief.engineer", 10, "h"],
+			["Assistant Chief Engineer", null, "assistant.chief.engineer", 15, "a"],
+			["Engineering Officer", null, "engineering.officer", 20, "o"],
+			["Engineer", null, null, 100, "o"]
+		],
+		["Computing Team", null, "computing", 50,
+			["Head of Computing", null, "head.of.computing", 10, "h"],
+			["Assistant Head of Computing", null, "assistant.head.of.computing", 15, "a"],
+			["Computing Officer", null, "computing.officer", 20, "o"],
+			["Webmaster", null, "webmaster", 25, "o"],
+			["Computing Member", null, null, 100, "o"]
+		],
+		["Events Team", "Events Team", "events", 99,
+			["Head of Events", "Events Manager", "head.of.events", 10, "h"],
+			["Assistant Head of Events", null, "assistant.head.of.events", 15, "a"]
+		],
+		["Other Officers", "Officers Without Portfolio", null, 200,
+			["Social Secretary", null, "social.secretary", 10, "o"],
+			["Officer Without Portfolio", null, "floater", 20, "o"],
+			["Digital Content Manager", null, "digital.content.manager", 25, "o"]
+		]
 	]
 }

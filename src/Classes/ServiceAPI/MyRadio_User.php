@@ -187,7 +187,7 @@ class MyRadio_User extends ServiceAPI
             WHERE memberid=$1
             AND member.college = l_college.collegeid
             LIMIT 1',
-            [$memberid]
+            [$this->memberid]
         );
         if (empty($data)) {
             //This user doesn't exist
@@ -1427,7 +1427,18 @@ class MyRadio_User extends ServiceAPI
      * @return MyRadio_User
      * @throws MyRadioException
      */
-    public static function create($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00)
+    public static function create(
+        $fname,
+        $sname,
+        $eduroam = null,
+        $sex = 'o',
+        $collegeid = null,
+        $email = null,
+        $phone = null,
+        $receive_email = true,
+        $paid = 0.00,
+        $provided_password = null
+        )
     {
         /**
          * Deal with the UNIQUE constraint on the DB table.
@@ -1461,7 +1472,7 @@ class MyRadio_User extends ServiceAPI
         //Remove the domain if it is set
         $eduroam = str_replace('@'.Config::$eduroam_domain, '', $eduroam);
 
-        if (empty($eduroam) && empty($this->email)) {
+        if (empty($eduroam) && empty($email)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
         }
 
@@ -1484,7 +1495,7 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Looks good. Generate a password for them.
-        $plain_pass = CoreUtils::newPassword();
+        $plain_pass = empty($provided_password) ? CoreUtils::newPassword() : $provided_password;
 
         //Actually create the member!
         $r = self::$db->fetchColumn(
@@ -1514,7 +1525,7 @@ class MyRadio_User extends ServiceAPI
         //Activate the member's account for the current academic year
         $user->activateMemberThisYear($paid);
         //Set the user's password
-        Shibbobleh_Utils::setPassword($memberid, $plain_pass);
+        (new MyRadioDefaultAuthenticator())->setPassword($user, $plain_pass);
 
         //Send a welcome email (this will not send if receive_email is not enabled!)
         /**
@@ -1522,6 +1533,9 @@ class MyRadio_User extends ServiceAPI
          * @todo Link to Facebook events
          */
         $uname = empty($eduroam) ? $email : str_replace('@york.ac.uk', '', $eduroam);
+        if (!empty($provided_pass)) {
+            $plain_pass = '(The password you entered when registering)';
+        }
         $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$fname, $uname, $plain_pass], Config::$welcome_email);
 
         //Send the email

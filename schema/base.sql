@@ -2842,3 +2842,6 @@ CREATE TABLE schema (
 INSERT INTO schema VALUES ('version', 0);
 ALTER TABLE ONLY schema
     ADD CONSTRAINT schema_pkey PRIMARY KEY (attr);
+
+SET search_path = public;
+INSERT INTO public.l_college (descr) VALUES ('Unknown');

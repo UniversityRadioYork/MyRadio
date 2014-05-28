@@ -13,10 +13,17 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
      */
     public function __construct()
     {
-        $this->db = pg_connect(
-            'host=' . Config::$db_hostname . ' port=5432 dbname=' . Config::$db_name
-            . ' user=' . Config::$auth_db_user . ' password=' . Config::$auth_db_pass
-        );
+        if (empty(Config::$auth_db_user)) {
+            $this->db = pg_connect(
+                'host=' . Config::$db_hostname . ' port=5432 dbname=' . Config::$db_name
+                . ' user=' . Config::$db_user . ' password=' . Config::$db_pass
+            );
+        } else {
+            $this->db = pg_connect(
+                'host=' . Config::$db_hostname . ' port=5432 dbname=' . Config::$db_name
+                . ' user=' . Config::$auth_db_user . ' password=' . Config::$auth_db_pass
+            );
+        }
         if (!$this->db) {
             //Database isn't working. Throw an EVERYTHING IS BROKEN Exception
             throw new MyRadioException('Database Connection Failed!', MyRadioException::FATAL);
@@ -28,7 +35,9 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
      */
     public function __destruct()
     {
-        pg_close($this->db);
+        if (!empty(Config::$auth_db_user)) {
+            pg_close($this->db);
+        }
     }
 
     /**

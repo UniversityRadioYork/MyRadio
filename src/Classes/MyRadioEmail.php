@@ -114,14 +114,14 @@ class MyRadioEmail extends ServiceAPI
         if ($timestamp !== null) {
             $params[] = CoreUtils::getTimestamp($timestamp);
         }
-        if ($from !== null) {
+        if ($from instanceof ServiceAPI) {
             $params[] = $from->getID();
         }
 
         $eid = self::$db->fetchColumn(
             'INSERT INTO mail.email (subject, body'
-            . ($timestamp !== null ? ', timestamp' : '') . ($from !== null ? ', sender' : '') . ')
-            VALUES ($1, $2' . (($timestamp !== null or $from !== null) ? ', $3' : '')
+            . ($timestamp !== null ? ', timestamp' : '') . ($from instanceof ServiceAPI ? ', sender' : '') . ')
+            VALUES ($1, $2' . (($timestamp !== null or $from instanceof ServiceAPI) ? ', $3' : '')
             . (($timestamp !== null && $from !== null) ? ', $4' : '') . ') RETURNING email_id',
             $params
         );
