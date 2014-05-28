@@ -1,0 +1,16 @@
+[
+	["MyRadio", "actionPermissions", "AUTH_ALTERPERMISSIONFLAGS"],
+	["MyRadio", "addActionPermission", "AUTH_ALTERPERMISSIONFLAGS"],
+	["MyRadio", "chooseAuth", null],
+	["MyRadio", "config.js", "AUTH_NOLOGIN"],
+	["MyRadio", "default", null],
+	["MyRadio", "listPermissions", "AUTH_ALTERPERMISSIONFLAGS"],
+	["MyRadio", "login", "AUTH_NOLOGIN"],
+	["MyRadio", "logout", "AUTH_NOLOGIN"],
+	["MyRadio", "permissionAssignedTo", "AUTH_ALTERPERMISSIONFLAGS"],
+	["MyRadio", "permissionUsage", "AUTH_ALTERPERMISSIONFLAGS"],
+	["MyRadio", "pwChange", "AUTH_NOLOGIN"],
+	["MyRadio", "pwReset", "AUTH_NOLOGIN"],
+	["MyRadio", "StaticProxy", null],
+	["MyRadio", "errorReport", null]
+]
