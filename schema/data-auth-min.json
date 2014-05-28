@@ -1,0 +1,4 @@
+[
+	["Do not require login","AUTH_NOLOGIN"],
+	["Edit Permission Definitions","AUTH_ALTERPERMISSIONFLAGS"],
+]

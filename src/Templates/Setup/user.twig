@@ -1,0 +1,28 @@
+{% extends 'minimal.twig' %}
+{% block content %}
+<p>To finish up, tell us a little about yourself so we can create you an account.</p>
+<form action="?c=user" method="POST">
+<label for="first-name">First Name</label>
+    <input type="text" name="first-name" id="first-name" required><br>
+    <label for="last-name">Last Name</label>
+    <input type="text" name="last-name" id="last-name" required><br>
+    <label for="text">Email</label>
+    <input type="email"
+           name="email"
+           id="email"
+           placeholder="abc123"
+           required
+           ><br>
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password"><br>
+    <label for="phone">Phone Number (Optional)</label>
+    <input type="text" name="phone" id="phone"><br>
+    <label for="gender">Gender</label>
+    <select name="gender" id="gender">
+        <option value="o">Other</option>
+        <option value="m">Male</option>
+        <option value="f">Female</option>
+    </select><br>
+<input type="submit" value="Create my account & save my settings" class="ui-button ui-widget ui-state-default">
+</form>
+{% endblock %}
