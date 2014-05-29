@@ -59,7 +59,7 @@ class MyRadioMenu
      */
     private function getMenuConfig()
     {
-        return yaml_parse_file(Config::$menu_config_file_path);
+        return yaml_parse_file(__DIR__.'/../../menu.yaml');
     }
 
     /**

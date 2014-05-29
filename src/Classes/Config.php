@@ -561,9 +561,6 @@ final class Config
     public static $d_StatsGen_enabled = true;
     public static $d_Explicit_enabled = false;
 
-    /**** CONFIG FILES ****/
-    public static $menu_config_file_path = '/usr/local/www/myradio/menu.yaml';
-
     /**** STRINGS ****/
     public static $short_name = 'URY';
     public static $long_name = 'University Radio York';
