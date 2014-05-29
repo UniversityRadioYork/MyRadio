@@ -10,11 +10,17 @@ namespace MyRadio;
  * Stores configuration settings
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130711
+ * @version 20140529
  * @package MyRadio_Core
  */
 final class Config
 {
+    /**
+     * If true, MyRadio will open the setup wizard when accessed.
+     * This should be false in production unless you want bad things to happen.
+     * @var boolean
+     */
+    public static $setup = false;
     /**
      * The ID of the "MyRadio" Service. This *should* be the only Service, and therefore never change.
      * It's technically a remnant of the originally slightly overengineered modularisation structure.
@@ -65,6 +71,7 @@ final class Config
     /**
      * The base URL of Shibbobleh - it has CSS and JS resources used by MyRadio
      * @var String
+     * @deprecated
      */
     public static $shib_url       = '//ury.org.uk/portal/';
 
@@ -80,7 +87,7 @@ final class Config
      * If false, then urls will be myury/?module=[module]&action=[action]
      * @var boolean
      */
-    public static $rewrite_url    = true;
+    public static $rewrite_url    = false;
 
     /**
      * Whether to enable the Caching system

@@ -1,6 +1,6 @@
 {#
  This minimal template is mainly used for the setup wizard
- it may not work for many stages of an install.
+ full templates may not work for many stages of an install.
 #}<!DOCTYPE html>
 <html>
 	<head>
@@ -17,6 +17,7 @@
 	  	<header id="content-header"><h2>{{ title }}</h2></header>
 	  	<div id="content-body" class="clearfix">
 	  		{% block content %}
+	  		{{content}}
 	  		{% endblock %}
 	  	</div>
 	  </div>
