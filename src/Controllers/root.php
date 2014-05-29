@@ -40,6 +40,10 @@ require_once 'Classes/Config.php';
 
 if (stream_resolve_include_path('MyRadio_Config.local.php')) {
   require_once 'MyRadio_Config.local.php';
+  if (Config::$setup === true) {
+    require 'Controllers/Setup/root.php';
+    exit;
+  }
 } else {
   /**
    * This install hasn't been configured yet. We should do that.

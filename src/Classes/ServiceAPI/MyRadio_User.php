@@ -1507,8 +1507,8 @@ class MyRadio_User extends ServiceAPI
                 $sname,
                 $sex,
                 $collegeid,
-                $email,
                 $phone,
+                $email,
                 $receive_email,
                 $eduroam,
                 true
@@ -1578,6 +1578,21 @@ class MyRadio_User extends ServiceAPI
             }
         }
         return false;
+    }
+
+    public function grantPermission($authid, $from = null, $to = null) {
+        if ($to !== null) {
+            $tostamp = CoreUtils::getTimestamp($to);
+        } else {
+            $tostamp = null;
+        }
+        self::$db->query('INSERT INTO public.auth
+            (memberid, lookupid, starttime, endtime) VALUES ($1, $2, $3, $4)',
+            [$this->getID(), $authid, CoreUtils::getTimestamp($from), $to]);
+
+        if (($from === null or $from < $time) && ($to === null or $to > time())) {
+            $permissions[] = (int)$authid;
+        }
     }
 
     /**

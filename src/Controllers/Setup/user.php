@@ -14,7 +14,7 @@ require_once 'Classes/APCProvider.php';
 require_once 'Classes/MyRadioEmail.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	MyRadio_User::create(
+	$user = MyRadio_User::create(
 		$_REQUEST['first-name'],
 		$_REQUEST['last-name'],
 		null,
@@ -26,6 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		Config::$membership_fee,
 		$_REQUEST['password']
 	);
+
+	// Give this user every possible permission
+	foreach (CoreUtils::getAllPermissions() as $auth) {
+		$user->grantPermission($auth['value']);
+	}
+
 	header('Location: ?c=save');
 } else {
 	CoreUtils::getTemplateObject()
