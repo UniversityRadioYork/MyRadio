@@ -1496,8 +1496,8 @@ class MyRadio_User extends ServiceAPI
                 $sname,
                 $sex,
                 $collegeid,
-                $email,
                 $phone,
+                $email,
                 $receive_email,
                 $eduroam,
                 true
