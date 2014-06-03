@@ -829,8 +829,8 @@ class MyRadio_User extends ServiceAPI
     {
         /**
          * You won't believe how annoying psql can be about '' already being used on a unique key.
-	 * You also won't believe that in php, '' == false evaluates to true, so we need ===,
-	 *   otherwise a query to change $value to false will not work as desired.
+         * You also won't believe that in php, '' == false evaluates to true, so we need ===,
+         *   otherwise a query to change $value to false will not work as desired.
          */
         if ($value === '') {
             $value = null;
@@ -953,7 +953,7 @@ class MyRadio_User extends ServiceAPI
 
         if (empty($email) && empty($this->eduroam)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
-        } elseif ($email !== $this->email && MyRadio_User::findByEmail($email) !== null) {
+        } elseif ($email !== $this->email && MyRadio_User::findByEmail($email) !== null && MyRadio_User::findByEmail($email) !== $this) {
             throw new MyRadioException('The email account ' . $email . ' is already allocated to another User.', 500);
         }
         $this->setCommonParam('email', $email);
@@ -1001,9 +1001,9 @@ class MyRadio_User extends ServiceAPI
      */
     public function setLocalName($name)
     {
-	if (strstr($name, '@') !== false) {
+        if (strstr($name, '@') !== false) {
             throw new MyRadioException('Mailbox alias may not contain an @ symbol');
-    	}
+        }
         if ($name !== $this->local_name && self::findByEmail($name) !== null) {
             throw new MyRadioException('That Mailbox Alias is already in use. Please choose another.', 500);
         }
@@ -1557,7 +1557,7 @@ class MyRadio_User extends ServiceAPI
      * Checks whether the user is an active member (has a record in member_year) for the current year
      * @return boolean
      */
-    public function isActiveMemberForYear($year=null)
+    public function isActiveMemberForYear($year = null)
     {
         // Use the current academic year as default if one isn't specified
         if($year === null)
@@ -1565,8 +1565,8 @@ class MyRadio_User extends ServiceAPI
             $year = CoreUtils::getAcademicYear();
         }
         // If the current year exists in payments (even with a value of £0, the member is active)
-        foreach ($this->payment as $v) {
-            if ($v['year'] === $year) {
+        foreach ($this->getAllPayments() as $payment) {
+            if ($payment['year'] == $year) {
                 return true;
             }
         }
