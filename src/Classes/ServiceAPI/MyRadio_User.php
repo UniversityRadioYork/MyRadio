@@ -829,8 +829,8 @@ class MyRadio_User extends ServiceAPI
     {
         /**
          * You won't believe how annoying psql can be about '' already being used on a unique key.
-	 * You also won't believe that in php, '' == false evaluates to true, so we need ===,
-	 *   otherwise a query to change $value to false will not work as desired.
+     * You also won't believe that in php, '' == false evaluates to true, so we need ===,
+     *   otherwise a query to change $value to false will not work as desired.
          */
         if ($value === '') {
             $value = null;
@@ -1001,9 +1001,9 @@ class MyRadio_User extends ServiceAPI
      */
     public function setLocalName($name)
     {
-	    if (strstr($name, '@') !== false) {
+        if (strstr($name, '@') !== false) {
             throw new MyRadioException('Mailbox alias may not contain an @ symbol');
-    	}
+        }
         if ($name !== $this->local_name && self::findByEmail($name) !== null) {
             throw new MyRadioException('That Mailbox Alias is already in use. Please choose another.', 500);
         }
