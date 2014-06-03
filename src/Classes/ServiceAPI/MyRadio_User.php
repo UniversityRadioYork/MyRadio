@@ -1184,8 +1184,8 @@ class MyRadio_User extends ServiceAPI
             OR local_name LIKE $3 OR local_alias LIKE $3 OR eduroam LIKE $2',
             [
                 $email,
-                str_ireplace('@' . $Config::$eduroam_domain, '', $email),
-                str_ireplace('@' . $Config::$email_domain, '', $email)
+                str_ireplace('@' . Config::$eduroam_domain, '', $email),
+                str_ireplace('@' . Config::$email_domain, '', $email)
             ]
         );
 
