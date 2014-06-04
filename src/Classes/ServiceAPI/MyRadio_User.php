@@ -1004,7 +1004,7 @@ class MyRadio_User extends ServiceAPI
         if (strstr($name, '@') !== false) {
             throw new MyRadioException('Mailbox alias may not contain an @ symbol');
         }
-        if ($name !== $this->local_name && self::findByEmail($name) !== null) {
+        if ($name !== $this->local_name && self::findByEmail($name) !== null && MyRadio_User::findByEmail($name) !== $this) {
             throw new MyRadioException('That Mailbox Alias is already in use. Please choose another.', 500);
         }
         $this->setCommonParam('local_name', $name);
