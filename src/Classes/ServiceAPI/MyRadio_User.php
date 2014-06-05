@@ -953,7 +953,7 @@ class MyRadio_User extends ServiceAPI
 
         if (empty($email) && empty($this->eduroam)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
-        } elseif ($email !== $this->email && MyRadio_User::findByEmail($email) !== null && MyRadio_User::findByEmail($email) !== $this) {
+        } elseif ($email !== $this->email && self::findByEmail($email) !== null && self::findByEmail($email) !== $this) {
             throw new MyRadioException('The email account ' . $email . ' is already allocated to another User.', 500);
         }
         $this->setCommonParam('email', $email);
@@ -1004,7 +1004,7 @@ class MyRadio_User extends ServiceAPI
         if (strstr($name, '@') !== false) {
             throw new MyRadioException('Mailbox alias may not contain an @ symbol');
         }
-        if ($name !== $this->local_name && self::findByEmail($name) !== null && MyRadio_User::findByEmail($name) !== $this) {
+        if ($name !== $this->local_name && self::findByEmail($name) !== null && self::findByEmail($name) !== $this) {
             throw new MyRadioException('That Mailbox Alias is already in use. Please choose another.', 500);
         }
         $this->setCommonParam('local_name', $name);
