@@ -92,6 +92,10 @@ $('.twig-datatable').dataTable({
   {
     "sTitle": "Episode #"
   },
+  //tags
+  {
+    "sTitle": "Tags"
+  },
   //starttime
   {
     "sTitle": "Time"
