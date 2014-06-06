@@ -94,7 +94,8 @@ $('.twig-datatable').dataTable({
   },
   //tags
   {
-    "sTitle": "Tags"
+    "sTitle": "Tags",
+    "bVisible": false
   },
   //starttime
   {
@@ -103,6 +104,11 @@ $('.twig-datatable').dataTable({
   //duration
   {
     "sTitle": "Length"
+  },
+  //mixcloud status
+  {
+    "sTitle": "Mixcloud Status",
+    "bVisible": false
   }
   ],
   "bJQueryUI": true,
