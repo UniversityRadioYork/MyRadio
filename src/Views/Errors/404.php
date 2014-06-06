@@ -13,6 +13,6 @@ CoreUtils::getTemplateObject()->setTemplate('error.twig')
     ->addVariable('title', '404 - Page not found')
     ->addVariable(
         'body',
-        '<p>That page doesn\'t seem to exist. Sorry about that :/</p>
+        '<p>That page doesn\'t seem to exist. Sorry about that :\</p>'
     )
     ->render();
