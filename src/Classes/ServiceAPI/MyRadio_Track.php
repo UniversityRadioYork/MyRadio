@@ -481,7 +481,7 @@ class MyRadio_Track extends ServiceAPI
         }
 
         $analysis = self::identifyUploadedTrack(Config::$audio_upload_tmp_dir . '/' . $filename);
-        if (isset($analysis['status']) && $analysis['status'] === 'FAIL') {
+        if (isset($analysis['status']) && ($analysis['status'] === 'FAIL' || $analysis['status'] === 'NO_LASTFM_MATCH')) {
             $analysis['fileid'] = $filename;
             return $analysis;
         } else {
@@ -508,10 +508,21 @@ class MyRadio_Track extends ServiceAPI
         //echo (empty($GLOBALS['syspath']) ? '' : $GLOBALS['syspath']).'lastfm-fpclient -json ' . $path;
 
         $lastfm = json_decode($response, true);
+        $lastfm = [];
 
         if (empty($lastfm)) {
-            return ['status' => 'NO_LASTFM_MATCH',
-                    'error' => 'Track not found in Last FM.'];
+            if (CoreUtils::hasPermission(AUTH_UPLOADMUSICMANUAL)) {
+                return [
+                    'status' => 'NO_LASTFM_MATCH',
+                    'error' => 'Track not found in Last FM.'
+                ];
+            }
+            else {
+                return [
+                    'status' => 'FAIL',
+                    'error' => 'This track could not be identified. Please email the track to track.requests@ury.org.uk.'
+                ];
+            }
         } else {
             if (isset($lastfm['tracks']['track']['mbid'])) {
                 //Only one match
@@ -538,14 +549,14 @@ class MyRadio_Track extends ServiceAPI
     public static function identifyAndStoreTrack($tmpid, $title, $artist, $album, $position)
     {
         $ainfo = null;
-        if ($album == "FROM_LASTFM") {
+        if ($album === "FROM_LASTFM") {
             // Get the album info if we're getting it from lastfm
             $ainfo = self::getAlbumDurationAndPositionFromLastfm($title, $artist);
         } else {
             // Use the album title the user has provided. Use an existing album
             // if we already have one of that title. If not, create one.
             $myradio_album = MyRadio_Album::findOrCreate($album, $artist);
-            $ainfo = array('duration' => null, 'position' => int($position), 'album' => $myradio_album);
+            $ainfo = array('duration' => null, 'position' => intval($position), 'album' => $myradio_album);
         }
 
         // Get the track duration from the file if it isn't already set
