@@ -187,7 +187,7 @@ class MyRadio_User extends ServiceAPI
             WHERE memberid=$1
             AND member.college = l_college.collegeid
             LIMIT 1',
-            array($memberid)
+            [$memberid]
         );
         if (empty($data)) {
             //This user doesn't exist
@@ -219,7 +219,7 @@ class MyRadio_User extends ServiceAPI
             WHERE memberid=$1
             AND starttime < now()
             AND (endtime IS NULL OR endtime >= now())',
-            array($memberid)
+            [$memberid]
         );
 
         $this->payment = self::$db->fetchAll(
@@ -227,7 +227,7 @@ class MyRadio_User extends ServiceAPI
             FROM member_year
             WHERE memberid = $1
             ORDER BY year ASC;',
-            array($memberid)
+            [$memberid]
         );
 
         // Get the User's officerships
@@ -239,7 +239,7 @@ class MyRadio_User extends ServiceAPI
             WHERE memberid = $1
             AND type!=\'m\'
             ORDER BY from_date,till_date;',
-            array($memberid)
+            [$memberid]
         );
 
         // Get Training info all into array
@@ -247,7 +247,7 @@ class MyRadio_User extends ServiceAPI
             'SELECT memberpresenterstatusid
             FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
             WHERE memberid=$1 ORDER BY ordering, completeddate ASC',
-            array($this->memberid)
+            [$this->memberid]
         );
 
         if ($this->isCurrentlyPaid()) {
@@ -594,7 +594,7 @@ class MyRadio_User extends ServiceAPI
      */
     public function getURL()
     {
-        return CoreUtils::makeURL('Profile', 'view', array('memberid' => $this->getID()));
+        return CoreUtils::makeURL('Profile', 'view', ['memberid' => $this->getID()]);
     }
 
     /**
@@ -646,10 +646,10 @@ class MyRadio_User extends ServiceAPI
             (SELECT show_season_id FROM schedule.show_season WHERE show_id=schedule.show.show_id)
             ORDER BY start_time LIMIT 1)
             ASC',
-            array($this->getID())
+            [$this->getID()]
         ); //Wasn't that ORDER BY fun.
 
-        $return = array();
+        $return = [];
         foreach ($this->shows as $show_id) {
             $show = MyRadio_Show::getInstance($show_id);
             if ($show->getShowType() == $show_type_id) {
@@ -695,14 +695,14 @@ class MyRadio_User extends ServiceAPI
                 'SELECT memberid, fname, sname FROM member
                 WHERE fname ILIKE $1 || \'%\' AND sname ILIKE $2 || \'%\'
                 ORDER BY sname, fname LIMIT $3',
-                array($names[0], $names[1], $limit)
+                [$names[0], $names[1], $limit]
             );
         } else {
             return self::$db->fetchAll(
                 'SELECT memberid, fname, sname FROM member
                 WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $1 || \'%\'
                 ORDER BY sname, fname LIMIT $2',
-                array($name, $limit)
+                [$name, $limit]
             );
         }
     }
@@ -721,10 +721,10 @@ class MyRadio_User extends ServiceAPI
             $itemid = $_SESSION['memberid'];
         }
         if (isset($_SESSION['memberid']) && $itemid == $_SESSION['memberid']) {
-            if (!MyRadio_User::$current_user) {
-                MyRadio_User::$current_user = parent::getInstance($itemid);
+            if (!self::$current_user) {
+                self::$current_user = parent::getInstance($itemid);
             }
-            return MyRadio_User::$current_user;
+            return self::$current_user;
         } else {
             return parent::getInstance($itemid);
         }
@@ -753,7 +753,7 @@ class MyRadio_User extends ServiceAPI
      */
     public function getTimeline()
     {
-        $events = array();
+        $events = [];
 
         //Get Officership history
         foreach ($this->getOfficerships() as $officer) {
@@ -810,11 +810,11 @@ class MyRadio_User extends ServiceAPI
           } */
 
         //Get when they joined URY
-        $events[] = array(
+        $events[] = [
             'timestamp' => strtotime($this->joined),
             'message' => 'joined ' . Config::$short_name,
             'photo' => Config::$photo_joined
-        );
+        ];
 
         return $events;
     }
@@ -829,8 +829,8 @@ class MyRadio_User extends ServiceAPI
     {
         /**
          * You won't believe how annoying psql can be about '' already being used on a unique key.
-	 * You also won't believe that in php, '' == false evaluates to true, so we need ===,
-	 *   otherwise a query to change $value to false will not work as desired.
+         * You also won't believe that in php, '' == false evaluates to true, so we need ===,
+         *   otherwise a query to change $value to false will not work as desired.
          */
         if ($value === '') {
             $value = null;
@@ -852,7 +852,7 @@ class MyRadio_User extends ServiceAPI
             $paramName = $param_maps[$paramName];
         }
 
-        self::$db->query('UPDATE member SET ' . $paramName . '=$1 WHERE memberid=$2', array($value, $this->getID()));
+        self::$db->query('UPDATE member SET ' . $paramName . '=$1 WHERE memberid=$2', [$value, $this->getID()]);
         $this->updateCacheObject();
 
         return true;
@@ -928,7 +928,7 @@ class MyRadio_User extends ServiceAPI
 
         if (empty($eduroam) && empty($this->email)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
-        } elseif ($this->getEduroam() !== $eduroam && MyRadio_User::findByEmail($eduroam) !== null) {
+        } elseif ($this->getEduroam() !== $eduroam && self::findByEmail($eduroam) !== null) {
             throw new MyRadioException('The eduroam account ' . $eduroam . ' is already allocated to another User.', 500);
         }
         $this->setCommonParam('eduroam', $eduroam);
@@ -953,7 +953,7 @@ class MyRadio_User extends ServiceAPI
 
         if (empty($email) && empty($this->eduroam)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
-        } elseif ($email !== $this->email && MyRadio_User::findByEmail($email) !== null) {
+        } elseif ($email !== $this->email && self::findByEmail($email) !== null && self::findByEmail($email) != $this) {
             throw new MyRadioException('The email account ' . $email . ' is already allocated to another User.', 500);
         }
         $this->setCommonParam('email', $email);
@@ -1001,7 +1001,10 @@ class MyRadio_User extends ServiceAPI
      */
     public function setLocalName($name)
     {
-        if ($name !== $this->local_name && self::findByEmail($name) !== null) {
+        if (strstr($name, '@') !== false) {
+            throw new MyRadioException('Mailbox alias may not contain an @ symbol');
+        }
+        if ($name !== $this->local_name && self::findByEmail($name) !== null && self::findByEmail($name) != $this) {
             throw new MyRadioException('That Mailbox Alias is already in use. Please choose another.', 500);
         }
         $this->setCommonParam('local_name', $name);
@@ -1088,7 +1091,7 @@ class MyRadio_User extends ServiceAPI
     public function setSex($initial = 'o')
     {
         $initial = strtolower($initial);
-        if (!in_array($initial, array('m', 'f', 'o'))) {
+        if (!in_array($initial, ['m', 'f', 'o'])) {
             throw new MyRadioException(
                 'You can be either "(M)ale", "(F)emale", or "(O)ther". You can\'t be none of these,'
                 . ' or more than one of these. Sorry.'
@@ -1178,8 +1181,12 @@ class MyRadio_User extends ServiceAPI
         self::wakeup();
         $result = self::$db->fetchColumn(
             'SELECT memberid FROM public.member WHERE email LIKE $1 OR eduroam LIKE $1
-            OR local_name LIKE $2 OR local_alias LIKE $2 OR eduroam LIKE $2',
-            array($email, explode('@', $email)[0])
+            OR local_name LIKE $3 OR local_alias LIKE $3 OR eduroam LIKE $2',
+            [
+                $email,
+                str_ireplace('@' . Config::$eduroam_domain, '', $email),
+                str_ireplace('@' . Config::$email_domain, '', $email)
+            ]
         );
 
         if (empty($result)) {
@@ -1201,9 +1208,9 @@ class MyRadio_User extends ServiceAPI
         trigger_error('Use of deprecated method User::findAllTrained.', E_USER_WARNING);
 
         $trained = self::$db->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=1');
-        $members = array();
+        $members = [];
         foreach ($trained as $mid) {
-            $member = MyRadio_User::getInstance($mid);
+            $member = self::getInstance($mid);
             if ($member->isStudioTrained()) {
                 $members[] = $member;
             }
@@ -1224,9 +1231,9 @@ class MyRadio_User extends ServiceAPI
         trigger_error('Use of deprecated method User::findAllDemoed.', E_USER_WARNING);
 
         $trained = self::$db->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=2');
-        $members = array();
+        $members = [];
         foreach ($trained as $mid) {
-            $member = MyRadio_User::getInstance($mid);
+            $member = self::getInstance($mid);
             if ($member->isStudioDemoed()) {
                 $members[] = $member;
             }
@@ -1247,9 +1254,9 @@ class MyRadio_User extends ServiceAPI
         trigger_error('Use of deprecated method User::findAllTrainers.', E_USER_WARNING);
 
         $trained = self::$db->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=3');
-        $members = array();
+        $members = [];
         foreach ($trained as $mid) {
-            $member = MyRadio_User::getInstance($mid);
+            $member = self::getInstance($mid);
             if ($member->isTrainer()) {
                 $members[] = $member;
             }
@@ -1286,119 +1293,119 @@ class MyRadio_User extends ServiceAPI
      */
     public function getEditForm()
     {
-        if ($this->getID() !== MyRadio_User::getInstance()->getID() && !MyRadio_User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
-            throw new MyRadioException(MyRadio_User::getInstance() . ' tried to edit ' . $this . '!');
+        if ($this->getID() !== self::getInstance()->getID() && !self::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
+            throw new MyRadioException(self::getInstance() . ' tried to edit ' . $this . '!');
         }
 
-        $form = new MyRadioForm('profileedit', 'Profile', 'doEdit', array('title' => 'Edit Profile'));
+        $form = new MyRadioForm('profileedit', 'Profile', 'doEdit', ['title' => 'Edit Profile']);
         //Personal details
         $form->addField(new MyRadioFormField('memberid', MyRadioFormField::TYPE_HIDDEN, ['value' => $this->getID()]))
-                ->addField(new MyRadioFormField('sec_personal', MyRadioFormField::TYPE_SECTION, array(
+                ->addField(new MyRadioFormField('sec_personal', MyRadioFormField::TYPE_SECTION, [
                     'label' => 'Personal Details'
-                )))
-                ->addField(new MyRadioFormField('fname', MyRadioFormField::TYPE_TEXT, array(
+                ]))
+                ->addField(new MyRadioFormField('fname', MyRadioFormField::TYPE_TEXT, [
                     'required' => true,
                     'label' => 'First Name',
                     'value' => $this->getFName()
-                )))
-                ->addField(new MyRadioFormField('sname', MyRadioFormField::TYPE_TEXT, array(
+                ]))
+                ->addField(new MyRadioFormField('sname', MyRadioFormField::TYPE_TEXT, [
                     'required' => true,
                     'label' => 'Last Name',
                     'value' => $this->getSName()
-                )))
-                ->addField(new MyRadioFormField('sex', MyRadioFormField::TYPE_SELECT, array(
+                ]))
+                ->addField(new MyRadioFormField('sex', MyRadioFormField::TYPE_SELECT, [
                     'required' => true,
                     'label' => 'Gender',
                     'value' => $this->getSex(),
-                    'options' => array(
-                        array('value' => 'm', 'text' => 'Male'),
-                        array('value' => 'f', 'text' => 'Female'),
-                        array('value' => 'o', 'text' => 'Other')
-                    )
-                )))
+                    'options' => [
+                        ['value' => 'm', 'text' => 'Male'],
+                        ['value' => 'f', 'text' => 'Female'],
+                        ['value' => 'o', 'text' => 'Other']
+                    ]
+                ]))
                 ->addField(new MyRadioFormField('sec_personal_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
         //Contact details
-        $form->addField(new MyRadioFormField('sec_contact', MyRadioFormField::TYPE_SECTION, array(
+        $form->addField(new MyRadioFormField('sec_contact', MyRadioFormField::TYPE_SECTION, [
                     'label' => 'Contact Details'
-                )))
-                ->addField(new MyRadioFormField('collegeid', MyRadioFormField::TYPE_SELECT, array(
+                ]))
+                ->addField(new MyRadioFormField('collegeid', MyRadioFormField::TYPE_SELECT, [
                     'required' => true,
                     'label' => 'College',
                     'options' => self::getColleges(),
                     'value' => $this->getCollegeID()
-                )))
-                ->addField(new MyRadioFormField('phone', MyRadioFormField::TYPE_TEXT, array(
+                ]))
+                ->addField(new MyRadioFormField('phone', MyRadioFormField::TYPE_TEXT, [
                     'required' => false,
                     'label' => 'Phone Number',
                     'value' => $this->getPhone()
-                )))
-                ->addField(new MyRadioFormField('email', MyRadioFormField::TYPE_EMAIL, array(
+                ]))
+                ->addField(new MyRadioFormField('email', MyRadioFormField::TYPE_EMAIL, [
                     'required' => false,
                     'label' => 'Email',
                     'value' => $this->email
-                )))
-                ->addField(new MyRadioFormField('receive_email', MyRadioFormField::TYPE_CHECK, array(
+                ]))
+                ->addField(new MyRadioFormField('receive_email', MyRadioFormField::TYPE_CHECK, [
                     'required' => false,
                     'label' => 'Receive Email?',
-                    'options' => array('checked' => $this->getReceiveEmail()),
+                    'options' => ['checked' => $this->getReceiveEmail()],
                     'explanation' => 'If unchecked, you will receive no emails, even if you are subscribed to mailing lists.'
-                )))
-                ->addField(new MyRadioFormField('eduroam', MyRadioFormField::TYPE_TEXT, array(
+                ]))
+                ->addField(new MyRadioFormField('eduroam', MyRadioFormField::TYPE_TEXT, [
                     'required' => false,
                     'label' => 'University Email',
                     'value' => str_replace('@york.ac.uk', '', $this->getUniAccount()),
                     'explanation' => '@york.ac.uk'
-                )))
+                ]))
                 ->addField(new MyRadioFormField('sec_contact_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
         //About Me
         $form->addField(new MyRadioFormField(
             'sec_about',
             MyRadioFormField::TYPE_SECTION,
-            array(
+            [
                 'label' => 'About Me',
                 'explanation' => 'If you\'d like to share a little more about yourself, then I\'m happy to listen!'
-            )
+            ]
         ))->addField(new MyRadioFormField(
             'photo',
             MyRadioFormField::TYPE_FILE,
-            array(
+            [
                 'required' => false,
                 'label' => 'Profile Photo',
                 'explanation' => 'Share your Radio Face with all our members. If we ever launch presenter pages on the website, we\'ll use this there too.'
-            )
+            ]
         ))->addField(new MyRadioFormField(
             'bio',
             MyRadioFormField::TYPE_BLOCKTEXT,
-            array(
+            [
                 'required' => false,
                 'label' => 'Bio',
                 'explanation' => 'Tell use about yourself - if you\'re a committee member please introduce yourself!',
                 'value' => $this->getBio()
-            )
+            ]
         ))->addField(new MyRadioFormField('sec_about_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
         //Mailbox
-        if (MyRadio_User::getInstance()->hasAuth(AUTH_CHANGESERVERACCOUNT)) {
-            $form->addField(new MyRadioFormField('sec_server', MyRadioFormField::TYPE_SECTION, array(
+        if (self::getInstance()->hasAuth(AUTH_CHANGESERVERACCOUNT)) {
+            $form->addField(new MyRadioFormField('sec_server', MyRadioFormField::TYPE_SECTION, [
                         'label' => Config::$short_name . ' Mailbox Account',
                         'explanation' => 'Before changing these settings, please ensure you understand the guidelines and'
                             . ' documentation on ' . Config::$long_name . '\'s Internal Email Service'
-                    )))
-                    ->addField(new MyRadioFormField('local_name', MyRadioFormField::TYPE_TEXT, array(
+                    ]))
+                    ->addField(new MyRadioFormField('local_name', MyRadioFormField::TYPE_TEXT, [
                         'required' => false,
                         'label' => 'Server Account (Mailbox)',
                         'value' => $this->getLocalName(),
                         'explanation' => 'Best practice is their ITS Username'
-                    )))
-                    ->addField(new MyRadioFormField('local_alias', MyRadioFormField::TYPE_TEXT, array(
+                    ]))
+                    ->addField(new MyRadioFormField('local_alias', MyRadioFormField::TYPE_TEXT, [
                         'required' => false,
                         'label' => '@ury.org.uk Alias',
                         'value' => $this->getLocalAlias(),
                         'explanation' => 'Usually, this is firstname.lastname (i.e. ' .
                         strtolower($this->getFName() . '.' . $this->getSName()) . ')'
-                    )))
+                    ]))
                     ->addField(new MyRadioFormField('sec_server_close', MyRadioFormField::TYPE_SECTION_CLOSE));
         }
 
@@ -1474,8 +1481,8 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Check if it looks like the user might already exist
-        if (MyRadio_User::findByEmail($eduroam) !== null
-            or MyRadio_User::findByEmail($email) !== null
+        if (self::findByEmail($eduroam) !== null
+            or self::findByEmail($email) !== null
         ) {
             throw new MyRadioException(
                 'This User already appears to exist. '
@@ -1491,17 +1498,17 @@ class MyRadio_User extends ServiceAPI
             'INSERT INTO public.member (fname, sname, sex,
             college, phone, email, receive_email, eduroam, require_password_change)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid',
-            array(
+            [
                 $fname,
                 $sname,
                 $sex,
                 $collegeid,
-                $email,
                 $phone,
+                $email,
                 $receive_email,
                 $eduroam,
                 true
-            )
+            ]
         );
 
         if (empty($r)) {
@@ -1509,7 +1516,7 @@ class MyRadio_User extends ServiceAPI
         }
 
         $memberid = $r[0];
-        $user = MyRadio_User::getInstance($memberid);
+        $user = self::getInstance($memberid);
 
         //Activate the member's account for the current academic year
         $user->activateMemberThisYear($paid);
@@ -1525,9 +1532,9 @@ class MyRadio_User extends ServiceAPI
         $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$fname, $uname, $plain_pass], Config::$welcome_email);
 
         //Send the email
-        MyRadioEmail::create(array('members' => array(MyRadio_User::getInstance($memberid))), 'Welcome to ' . Config::$short_name . ' - Getting Involved and Your Account', $welcome_email, 'getinvolved@' . Config::$email_domain);
+        MyRadioEmail::create(['members' => [self::getInstance($memberid)]], 'Welcome to ' . Config::$short_name . ' - Getting Involved and Your Account', $welcome_email, 'getinvolved@' . Config::$email_domain);
 
-        return MyRadio_User::getInstance($memberid);
+        return self::getInstance($memberid);
     }
 
     /**
@@ -1541,9 +1548,29 @@ class MyRadio_User extends ServiceAPI
      */
     public function activateMemberThisYear($paid = 0)
     {
-        self::$db->query('INSERT INTO public.member_year (memberid, year, paid) VALUES ($1, $2, $3)', array($this->getID(), CoreUtils::getAcademicYear(), $paid));
+        self::$db->query('INSERT INTO public.member_year (memberid, year, paid) VALUES ($1, $2, $3)', [$this->getID(), CoreUtils::getAcademicYear(), $paid]);
 
         return true;
+    }
+
+    /**
+     * Checks whether the user is an active member (has a record in member_year) for the current year
+     * @return boolean
+     */
+    public function isActiveMemberForYear($year = null)
+    {
+        // Use the current academic year as default if one isn't specified
+        if($year === null)
+        {
+            $year = CoreUtils::getAcademicYear();
+        }
+        // If the current year exists in payments (even with a value of £0, the member is active)
+        foreach ($this->getAllPayments() as $payment) {
+            if ($payment['year'] == $year) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -1553,51 +1580,51 @@ class MyRadio_User extends ServiceAPI
      */
     public static function getQuickAddForm()
     {
-        if (!MyRadio_User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
-            throw new MyRadioException(MyRadio_User::getInstance() . ' tried to add members!');
+        if (!self::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
+            throw new MyRadioException(self::getInstance() . ' tried to add members!');
         }
 
-        $form = new MyRadioForm('profilequickadd', 'Profile', 'doQuickAdd', array('title' => 'Add Member (Quick)'));
+        $form = new MyRadioForm('profilequickadd', 'Profile', 'doQuickAdd', ['title' => 'Add Member (Quick)']);
         //Personal details
-        $form->addField(new MyRadioFormField('sec_personal', MyRadioFormField::TYPE_SECTION, array(
+        $form->addField(new MyRadioFormField('sec_personal', MyRadioFormField::TYPE_SECTION, [
                     'label' => 'Personal Details'
-                )))
-                ->addField(new MyRadioFormField('fname', MyRadioFormField::TYPE_TEXT, array(
+                ]))
+                ->addField(new MyRadioFormField('fname', MyRadioFormField::TYPE_TEXT, [
                     'required' => true,
                     'label' => 'First Name'
-                )))
-                ->addField(new MyRadioFormField('sname', MyRadioFormField::TYPE_TEXT, array(
+                ]))
+                ->addField(new MyRadioFormField('sname', MyRadioFormField::TYPE_TEXT, [
                     'required' => true,
                     'label' => 'Last Name'
-                )))
-                ->addField(new MyRadioFormField('sex', MyRadioFormField::TYPE_SELECT, array(
+                ]))
+                ->addField(new MyRadioFormField('sex', MyRadioFormField::TYPE_SELECT, [
                     'required' => true,
                     'label' => 'Gender',
-                    'options' => array(
-                        array('value' => 'm', 'text' => 'Male'),
-                        array('value' => 'f', 'text' => 'Female'),
-                        array('value' => 'o', 'text' => 'Other')
-                    )
-        )));
+                    'options' => [
+                        ['value' => 'm', 'text' => 'Male'],
+                        ['value' => 'f', 'text' => 'Female'],
+                        ['value' => 'o', 'text' => 'Other']
+                    ]
+        ]));
 
         //Contact details
-        $form->addField(new MyRadioFormField('sec_contact', MyRadioFormField::TYPE_SECTION, array(
+        $form->addField(new MyRadioFormField('sec_contact', MyRadioFormField::TYPE_SECTION, [
                     'label' => 'Contact Details'
-                )))
-                ->addField(new MyRadioFormField('collegeid', MyRadioFormField::TYPE_SELECT, array(
+                ]))
+                ->addField(new MyRadioFormField('collegeid', MyRadioFormField::TYPE_SELECT, [
                     'required' => true,
                     'label' => 'College',
                     'options' => self::getColleges()
-                )))
-                ->addField(new MyRadioFormField('eduroam', MyRadioFormField::TYPE_TEXT, array(
+                ]))
+                ->addField(new MyRadioFormField('eduroam', MyRadioFormField::TYPE_TEXT, [
                     'required' => true,
                     'label' => 'University Email',
                     'explanation' => '@york.ac.uk'
-                )))
-                ->addField(new MyRadioFormField('phone', MyRadioFormField::TYPE_TEXT, array(
+                ]))
+                ->addField(new MyRadioFormField('phone', MyRadioFormField::TYPE_TEXT, [
                     'required' => false,
                     'label' => 'Phone Number'
-        )));
+        ]));
 
         return $form;
     }
@@ -1609,42 +1636,42 @@ class MyRadio_User extends ServiceAPI
      */
     public static function getBulkAddForm()
     {
-        if (!MyRadio_User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
-            throw new MyRadioException(MyRadio_User::getInstance() . ' tried to add members!');
+        if (!self::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
+            throw new MyRadioException(self::getInstance() . ' tried to add members!');
         }
 
-        $form = new MyRadioForm('profilebulkadd', 'Profile', 'doBulkAdd', array('title' => 'Add Member (Bulk)'));
+        $form = new MyRadioForm('profilebulkadd', 'Profile', 'doBulkAdd', ['title' => 'Add Member (Bulk)']);
         //Personal details
-        $form->addField(new MyRadioFormField('bulkaddrepeater', MyRadioFormField::TYPE_TABULARSET, array(
-            'options' => array(
-                new MyRadioFormField('fname', MyRadioFormField::TYPE_TEXT, array(
+        $form->addField(new MyRadioFormField('bulkaddrepeater', MyRadioFormField::TYPE_TABULARSET, [
+            'options' => [
+                new MyRadioFormField('fname', MyRadioFormField::TYPE_TEXT, [
                     'required' => true,
                     'label' => 'First Name'
-                        )),
-                new MyRadioFormField('sname', MyRadioFormField::TYPE_TEXT, array(
+                        ]),
+                new MyRadioFormField('sname', MyRadioFormField::TYPE_TEXT, [
                     'required' => true,
                     'label' => 'Last Name'
-                        )),
-                new MyRadioFormField('sex', MyRadioFormField::TYPE_SELECT, array(
+                        ]),
+                new MyRadioFormField('sex', MyRadioFormField::TYPE_SELECT, [
                     'required' => true,
                     'label' => 'Gender',
-                    'options' => array(
-                        array('value' => 'm', 'text' => 'Male'),
-                        array('value' => 'f', 'text' => 'Female'),
-                        array('value' => 'o', 'text' => 'Other')
-                    ))),
-                new MyRadioFormField('collegeid', MyRadioFormField::TYPE_SELECT, array(
+                    'options' => [
+                        ['value' => 'm', 'text' => 'Male'],
+                        ['value' => 'f', 'text' => 'Female'],
+                        ['value' => 'o', 'text' => 'Other']
+                    ]]),
+                new MyRadioFormField('collegeid', MyRadioFormField::TYPE_SELECT, [
                     'required' => true,
                     'label' => 'College',
                     'options' => self::getColleges()
-                        )),
-                new MyRadioFormField('eduroam', MyRadioFormField::TYPE_TEXT, array(
+                        ]),
+                new MyRadioFormField('eduroam', MyRadioFormField::TYPE_TEXT, [
                     'required' => true,
                     'label' => 'University Email',
                     'explanation' => '@york.ac.uk'
-                        ))
-            )
-        )));
+                        ])
+            ]
+        ]));
 
         return $form;
     }

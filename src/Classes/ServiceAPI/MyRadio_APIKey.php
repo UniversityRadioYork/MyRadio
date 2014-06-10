@@ -35,7 +35,7 @@ class MyRadio_APIKey extends ServiceAPI
     protected function __construct($key)
     {
         $this->key = $key;
-        $this->permissions = self::$db->fetchColumn('SELECT typeid FROM myury.api_key_auth WHERE key_string=$1', array($key));
+        $this->permissions = self::$db->fetchColumn('SELECT typeid FROM myury.api_key_auth WHERE key_string=$1', [$key]);
     }
 
     /**
@@ -84,7 +84,7 @@ class MyRadio_APIKey extends ServiceAPI
         self::$db->query(
             'INSERT INTO myury.api_key_log (key_string, remote_ip, request_path, request_params)
             VALUES ($1, $2, $3, $4)',
-            array($this->key, $_SERVER['REMOTE_ADDR'], $uri, json_encode($args))
+            [$this->key, $_SERVER['REMOTE_ADDR'], $uri, json_encode($args)]
         );
     }
 
@@ -103,7 +103,7 @@ class MyRadio_APIKey extends ServiceAPI
         $result = self::$db->fetchColumn(
             'SELECT typeid FROM myury.api_method_auth WHERE class_name=$1 AND
             (method_name=$2 OR method_name IS NULL)',
-            array($class, $method)
+            [$class, $method]
         );
 
         if (empty($result)) {
@@ -112,7 +112,7 @@ class MyRadio_APIKey extends ServiceAPI
 
         foreach ($result as $row) {
             if (empty($row)) {
-                return array(); //There's a global auth option
+                return []; //There's a global auth option
             }
         }
 

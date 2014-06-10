@@ -288,14 +288,14 @@ class MyRadioFormField
      * Additional classes to add to the field
      * @var array
      */
-    private $classes = array();
+    private $classes = [];
 
     /**
      * For selects, radios and checkboxes only - the options to display
      * @var 2D Array as defined
      * {display: 'Value to Display', enabled: true}
      */
-    private $options = array();
+    private $options = [];
 
     /**
      * The value of the form field
@@ -320,7 +320,7 @@ class MyRadioFormField
      * Settings that cannot be altered by the $options parameter
      * @var array
      */
-    private $restricted_attributes = array('restricted_attributes', 'name', 'type');
+    private $restricted_attributes = ['restricted_attributes', 'name', 'type'];
 
     /**
      * Set up a new MyRadio Form Field with the new parameters, returning the new field.
@@ -340,7 +340,7 @@ class MyRadioFormField
      *                                   redacted: If true, this field is hidden in debug output (default false)
      * @throws MyRadioException If an attempt is made to set an $options value other than those listed above
      */
-    public function __construct($name, $type, $options = array())
+    public function __construct($name, $type, $options = [])
     {
         //Set essential parameters
         $this->name = $name;
@@ -476,7 +476,7 @@ class MyRadioFormField
     public function render()
     {
         // If there are MyRadioFormFields in Options, convert these to their render values
-        $options = array();
+        $options = [];
         foreach ($this->options as $k => $v) {
             if ($v instanceof self) {
                 $options[$k] = $v->render();
@@ -521,7 +521,7 @@ class MyRadioFormField
             $value = $this->value;
         }
 
-        return array(
+        return [
             'name' => $this->name,
             'label' => ($this->label === null ? $this->name : $this->label),
             'type' => $this->type,
@@ -531,7 +531,7 @@ class MyRadioFormField
             'options' => $options,
             'value' => $value,
             'enabled' => $this->enabled
-        );
+        ];
     }
 
     /**
@@ -630,7 +630,7 @@ class MyRadioFormField
                 return (bool) (isset($_REQUEST[$name]) && ($_REQUEST[$name] === 'On' || $_REQUEST[$name] === 'on'));
                 break;
             case self::TYPE_CHECKGRP:
-                $return = array();
+                $return = [];
                 foreach ($this->options as $option) {
                     $return[$option->getName()] = (int) $option->readValue($name . '-');
                 }
@@ -641,7 +641,7 @@ class MyRadioFormField
                 return $_FILES[$name];
                 break;
             case self::TYPE_TABULARSET:
-                $return = array();
+                $return = [];
                 foreach ($this->options as $option) {
                     $return[$option->getName()] = $option->readValue($prefix);
                 }

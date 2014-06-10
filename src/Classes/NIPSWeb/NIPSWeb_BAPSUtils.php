@@ -19,7 +19,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
         $result = self::$db->fetchColumn(
             'SELECT showid FROM baps_show
             WHERE externallinkid=$1 LIMIT 1',
-            array($timeslot->getID())
+            [$timeslot->getID()]
         );
 
         if (empty($result)) {
@@ -27,13 +27,13 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
             $result = self::$db->fetchColumn(
                 'INSERT INTO baps_show (userid, name, broadcastdate, externallinkid, viewable)
                 VALUES (4, $1, $2, $3, true) RETURNING showid',
-                array(
+                [
                     $timeslot->getMeta('title')
                     . '-'
                     . $timeslot->getID(),
                     CoreUtils::getTimestamp($timeslot->getStartTime()),
                     $timeslot->getID()
-                )
+                ]
             );
         }
 
@@ -52,11 +52,11 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
         $listings = self::$db->fetchAll(
             'SELECT * FROM baps_listing
             WHERE showid=$1 ORDER BY channel ASC',
-            array((int) $showid)
+            [(int) $showid]
         );
 
         if (!$listings) {
-            $listings = array();
+            $listings = [];
         }
 
         if (sizeof($listings) === 3) {
@@ -67,7 +67,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
         /**
          * @todo Wow I was lazy here.
          */
-        $channels = array(false, false, false);
+        $channels = [false, false, false];
 
         //Flag existing channels as, well, existing
         foreach ($listings as $listing) {
@@ -81,7 +81,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
                 self::$db->query(
                     'INSERT INTO baps_listing (showid, name, channel)
                     VALUES ($1, \'Channel ' . $channel . '\', $2)',
-                    array($showid, $channel)
+                    [$showid, $channel]
                 );
                 $change = true;
             }
@@ -108,7 +108,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
 
         foreach ($listings as $listing) {
             //Delete the old format
-            self::$db->query('DELETE FROM baps_item WHERE listingid=$1', array($listing['listingid']), true);
+            self::$db->query('DELETE FROM baps_item WHERE listingid=$1', [$listing['listingid']], true);
             //Add each new entry
             $position = 1;
             //if the listing isn't empty then write the tracks that are in there
@@ -120,13 +120,13 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
                             self::$db->query(
                                 'INSERT INTO baps_item (listingid, position, libraryitemid, name1, name2)
                                 VALUES ($1, $2, $3, $4, $5)',
-                                array(
+                                [
                                     $listing['listingid'],
                                     $position,
                                     $file['libraryitemid'],
                                     $file['title'],
                                     $file['artist']
-                                ),
+                                ],
                                 true
                             );
 
@@ -137,12 +137,12 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
                             self::$db->query(
                                 'INSERT INTO baps_item (listingid, position, fileitemid, name1)
                                 VALUES ($1, $2, $3, $4)',
-                                array(
+                                [
                                     (int) $listing['listingid'],
                                     (int) $position,
                                     (int) $fileitemid,
                                     $track['title']
-                                ),
+                                ],
                                 true
                             );
 
@@ -173,7 +173,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
             FROM rec_track, baps_libraryitem
             WHERE rec_track.trackid = baps_libraryitem.trackid
             AND rec_track.trackid=$1 LIMIT 1',
-            array($trackid)
+            [$trackid]
         );
 
         if (empty($result)) {
@@ -181,7 +181,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
             $result = self::$db->query(
                 'INSERT INTO baps_libraryitem
                 (trackid, recordid) VALUES ($1, $2)',
-                array($trackid, $recordid)
+                [$trackid, $recordid]
             );
 
             return self::getTrackDetails($trackid, $recordid);
@@ -210,7 +210,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
 
         if (!$id) {
             //Create it
-            $r = self::$db->fetchColumn('INSERT INTO public.baps_fileitem (filename) VALUES ($1) RETURNING fileitemid', array($legacy_path));
+            $r = self::$db->fetchColumn('INSERT INTO public.baps_fileitem (filename) VALUES ($1) RETURNING fileitemid', [$legacy_path]);
 
             return $r[0];
         }
@@ -220,7 +220,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
 
     public static function linkCentralLists(NIPSWeb_ManagedItem $item)
     {
-        if (in_array($item->getFolder(), array('jingles', 'beds', 'adverts')) !== false) {
+        if (in_array($item->getFolder(), ['jingles', 'beds', 'adverts']) !== false) {
             //Make a hard link if it doesn't exist
             $ln_path = Config::$music_central_db_path . '/membersmusic/'.$item->getFolder().'/' . self::sanitisePath($item->getTitle()).'.mp3';
 
@@ -242,7 +242,7 @@ class NIPSWeb_BAPSUtils extends ServiceAPI
         $result = self::$db->fetchColumn(
             'SELECT fileitemid FROM baps_fileitem
             WHERE filename=$1 LIMIT 1',
-            array($path)
+            [$path]
         );
 
         if (empty($result)) {

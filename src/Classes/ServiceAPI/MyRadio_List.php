@@ -55,7 +55,7 @@ class MyRadio_List extends ServiceAPI
      * This is the set of members that receive messages to this list
      * @var int[]
      */
-    private $members = array();
+    private $members = [];
 
     /**
      * Initialised on first request, stores an archive of all the email IDs
@@ -72,7 +72,7 @@ class MyRadio_List extends ServiceAPI
     {
         $this->listid = $listid;
 
-        $result = self::$db->fetchOne('SELECT * FROM mail_list WHERE listid=$1', array($listid));
+        $result = self::$db->fetchOne('SELECT * FROM mail_list WHERE listid=$1', [$listid]);
         if (empty($result)) {
             throw new MyRadioException('List ' . $listid . ' does not exist!');
 
@@ -87,13 +87,13 @@ class MyRadio_List extends ServiceAPI
 
         if ($this->optin) {
             //Get subscribed members
-            $this->members = self::$db->fetchColumn('SELECT memberid FROM mail_subscription WHERE listid=$1', array($listid));
+            $this->members = self::$db->fetchColumn('SELECT memberid FROM mail_subscription WHERE listid=$1', [$listid]);
         } else {
             //Get members joined with opted-out members
             $this->members = self::$db->fetchColumn(
                 'SELECT memberid FROM (' . $this->parseSQL($this->sql) . ') as t1 WHERE memberid NOT IN
                 (SELECT memberid FROM mail_subscription WHERE listid=$1)',
-                array($listid)
+                [$listid]
             );
         }
         $this->members = array_map(
@@ -107,12 +107,12 @@ class MyRadio_List extends ServiceAPI
     private function parseSQL($sql)
     {
         $sql = str_replace(
-            array('%LISTID', '%Y', '%BOY'),
-            array(
+            ['%LISTID', '%Y', '%BOY'],
+            [
                 $this->getID(),
                 CoreUtils::getAcademicYear(),
                 '\'' . CoreUtils::getAcademicYear() . '-10-01 00:00:00\''
-            ),
+            ],
             $sql
         );
 
@@ -176,7 +176,7 @@ class MyRadio_List extends ServiceAPI
 
         return sizeof(self::$db->query(
             'SELECT memberid FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
-            array($user->getID(), $this->getID())
+            [$user->getID(), $this->getID()]
         )) === 1;
     }
 
@@ -205,12 +205,12 @@ class MyRadio_List extends ServiceAPI
         if ($this->optin) {
             self::$db->query(
                 'INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)',
-                array($user->getID(), $this->getID())
+                [$user->getID(), $this->getID()]
             );
         } else {
             self::$db->query(
                 'DELETE FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
-                array($user->getID(), $this->getID())
+                [$user->getID(), $this->getID()]
             );
         }
 
@@ -236,12 +236,12 @@ class MyRadio_List extends ServiceAPI
         if (!$this->optin) {
             self::$db->query(
                 'INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)',
-                array($user->getID(), $this->getID())
+                [$user->getID(), $this->getID()]
             );
         } else {
             self::$db->query(
                 'DELETE FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
-                array($user->getID(), $this->getID())
+                [$user->getID(), $this->getID()]
             );
         }
 
@@ -266,7 +266,7 @@ class MyRadio_List extends ServiceAPI
         preg_match('/(^|\s)Subject:(.*)/i', $email, $subject);
         $subject = trim($subject[2]);
 
-        MyRadioEmail::create(array('lists' => array($this)), $subject, $body, $from, time(), true);
+        MyRadioEmail::create(['lists' => [$this]], $subject, $body, $from, time(), true);
         $this->archive = [];
         $this->updateCacheObject();
     }
@@ -297,7 +297,7 @@ class MyRadio_List extends ServiceAPI
         self::initDB();
         $r = self::$db->fetchColumn(
             'SELECT listid FROM mail_list WHERE listname ILIKE $1 OR listaddress ILIKE $1',
-            array($str)
+            [$str]
         );
         if (empty($r)) {
             return null;
@@ -310,7 +310,7 @@ class MyRadio_List extends ServiceAPI
     {
         $r = self::$db->fetchColumn('SELECT listid FROM mail_list');
 
-        $lists = array();
+        $lists = [];
         foreach ($r as $list) {
             $lists[] = self::getInstance($list);
         }
@@ -326,38 +326,38 @@ class MyRadio_List extends ServiceAPI
             $subscribed = false;
         }
 
-        return array(
+        return [
             'listid' => $this->getID(),
             'subscribed' => $subscribed,
             'name' => $this->getName(),
             'address' => $this->getAddress(),
             'recipient_count' => sizeof($this->getMembers()),
             'optIn' => ((!$subscribed && ($this->optin || $this->hasOptedOutOfAuto(MyRadio_User::getCurrentOrSystemUser()))) ?
-                array(
+                [
                     'display' => 'icon',
                     'value' => 'circle-plus',
                     'title' => 'Subscribe to this mailing list',
-                    'url' => CoreUtils::makeURL('Mail', 'optin', array('list' => $this->getID()))
-                ) : null
+                    'url' => CoreUtils::makeURL('Mail', 'optin', ['list' => $this->getID()])
+                ] : null
             ),
-            'optOut' => ($subscribed ? array(
+            'optOut' => ($subscribed ? [
                 'display' => 'icon',
                 'value' => 'circle-minus',
                 'title' => 'Opt out of this mailing list',
-                'url' => CoreUtils::makeURL('Mail', 'optout', array('list' => $this->getID()))
-            ) : null),
-            'mail' => array(
+                'url' => CoreUtils::makeURL('Mail', 'optout', ['list' => $this->getID()])
+            ] : null),
+            'mail' => [
                 'display' => 'icon',
                 'value' => 'mail-closed',
                 'title' => 'Send a message to this mailing list',
-                'url' => CoreUtils::makeURL('Mail', 'send', array('list' => $this->getID()))
-            ),
-            'archive' => array(
+                'url' => CoreUtils::makeURL('Mail', 'send', ['list' => $this->getID()])
+            ],
+            'archive' => [
                 'display' => 'icon',
                 'value' => 'disk',
                 'title' => 'View archives for this mailing list',
-                'url' => CoreUtils::makeURL('Mail', 'archive', array('list' => $this->getID()))
-            )
-        );
+                'url' => CoreUtils::makeURL('Mail', 'archive', ['list' => $this->getID()])
+            ]
+        ];
     }
 }

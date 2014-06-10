@@ -13,14 +13,14 @@ $form = (
         'sched_demo',
         $module,
         'doDemo',
-        array(
+        [
             'title' => 'Create Demo'
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'demo-datetime',
         MyRadioFormField::TYPE_DATETIME,
-        array('label' => 'Date and Time of the Demo')
+        ['label' => 'Date and Time of the Demo']
     )
 );

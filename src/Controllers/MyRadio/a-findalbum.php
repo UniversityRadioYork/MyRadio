@@ -11,7 +11,7 @@
 if (isset($_REQUEST['id'])) {
     $data = MyRadio_Album::getInstance($_REQUEST['id']);
 } elseif (!isset($_REQUEST['term'])) {
-    $data = array();
+    $data = [];
 } else {
     $data = MyRadio_Album::findByName(
         $_REQUEST['term'],

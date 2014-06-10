@@ -48,7 +48,7 @@ if ($user->getID() === $visitor->getID() or $visitor->hasAuth(AUTH_EDITANYPROFIL
         .CoreUtils::makeURL(
             'Profile',
             'edit',
-            array('memberid' => $user->getID())
+            ['memberid' => $user->getID()]
         )
         .'">Edit Profile</a>'
     );
@@ -74,7 +74,7 @@ if (CoreUtils::hasPermission(AUTH_LOCK)) {
         .CoreUtils::makeURL(
             'Profile',
             'lock',
-            array('memberid' => $user->getID())
+            ['memberid' => $user->getID()]
         )
         .'">Disable Account</a>'
     );

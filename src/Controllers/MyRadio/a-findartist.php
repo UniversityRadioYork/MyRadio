@@ -9,7 +9,7 @@
  * @package MyRadio_Core
  */
 if (!isset($_REQUEST['term'])) {
-    $data = array();
+    $data = [];
 } else {
     $data = Artist::findByName(
         $_REQUEST['term'],

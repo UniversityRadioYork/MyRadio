@@ -20,7 +20,7 @@ function setupTimeslot($timeslot)
         foreach ($_REQUEST['signin'] as $memberid) {
             $timeslot->signIn(MyRadio_User::getInstance($memberid));
         }
-        header('Location: '.($_POST['next'] !== '' ? $_POST['next'] : Config::$base_url));
+        header('Location: ' . ($_POST['next'] !== '' ? $_POST['next'] : Config::$base_url));
     }
 }
 

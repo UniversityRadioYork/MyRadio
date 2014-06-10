@@ -16,9 +16,9 @@
 class iTones_Utils extends ServiceAPI
 {
     private static $telnet_handle;
-    private static $queues = array('requests', 'main');
-    private static $queue_cache = array();
-    public static $ops = array();
+    private static $queues = ['requests', 'main'];
+    private static $queue_cache = [];
+    public static $ops = [];
 
     const REQUESTS_REMAINING_SQL = '
         SELECT
@@ -106,7 +106,7 @@ class iTones_Utils extends ServiceAPI
 
         $info = explode(' ', self::telnetOp('jukebox_' . $queue . '.queue'));
 
-        $items = array();
+        $items = [];
         foreach ($info as $item) {
             if (is_numeric($item)) {
                 $meta = self::telnetOp('request.metadata ' . $item);
@@ -120,7 +120,7 @@ class iTones_Utils extends ServiceAPI
                         $meta
                     );
                     //Push the item
-                    $items[] = array('requestid' => (int) $item, 'trackid' => (int) $tid, 'queue' => $queue);
+                    $items[] = ['requestid' => (int) $item, 'trackid' => (int) $tid, 'queue' => $queue];
                 }
             }
         }
@@ -170,13 +170,13 @@ class iTones_Utils extends ServiceAPI
     public static function removeDuplicateItemsInQueues()
     {
         //Get the tracks in all the queues
-        $tracks = array();
+        $tracks = [];
         foreach (self::$queues as $queue) {
             $tracks = array_merge($tracks, self::getTracksInQueue($queue));
         }
 
         //Go over each track, marking it as identified. If it's encountered a second time, kill it.
-        $found = array();
+        $found = [];
         $removed = 0;
         foreach ($tracks as $track) {
             if (in_array($track['trackid'], $found)) {
@@ -196,7 +196,7 @@ class iTones_Utils extends ServiceAPI
     public static function emptyQueues()
     {
         //Get the tracks in all the queues
-        $tracks = array();
+        $tracks = [];
         foreach (self::$queues as $queue) {
             $tracks = array_merge($tracks, self::getTracksInQueue($queue));
         }
@@ -266,7 +266,7 @@ class iTones_Utils extends ServiceAPI
     private static function telnetStart()
     {
         self::$telnet_handle = fsockopen('tcp://' . Config::$itones_telnet_host, Config::$itones_telnet_port, $errno, $errstr, 10);
-        register_shutdown_function(array(__CLASS__, 'telnetEnd'));
+        register_shutdown_function([__CLASS__, 'telnetEnd']);
     }
 
     public static function telnetEnd()

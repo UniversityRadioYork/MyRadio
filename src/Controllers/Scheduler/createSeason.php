@@ -15,4 +15,4 @@ $current_term = $current_term_info['descr'];
 require 'Models/Scheduler/seasonfrm.php';
 $form->setFieldValue('show_id', (int) $_REQUEST['showid'])
      ->setTemplate('Scheduler/createSeason.twig')
-     ->render(array('current_term' => $current_term));
+     ->render(['current_term' => $current_term]);

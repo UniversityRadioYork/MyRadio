@@ -21,11 +21,11 @@ ini_set('display_errors', 'On');
  * Set the Default Timezone.
  * Once Config is available, this value should be used instead.
  */
-date_default_timezone_get('Europe/London');
+date_default_timezone_set('Europe/London');
 /**
  * Sets the include path to include MyRadio at the end - makes for nicer includes
  */
-ini_set('include_path', str_replace('Controllers', '', __DIR__) . ':' . ini_get('include_path'));
+set_include_path(str_replace('Controllers', '', __DIR__) . ':' . get_include_path());
 
 /**
  * The CoreUtils static class provides some useful standard functions for MyRadio. Take a look at it before you start

@@ -39,7 +39,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
             LEFT JOIN tracklist.track_notrec ON tracklist.audiologid = track_notrec.audiologid
             WHERE tracklist.audiologid=$1 LIMIT 1',
-            array($id)
+            [$id]
         );
         if (empty($result)) {
             throw new MyRadioException('The requested TracklistItem does not appear to exist!', 400);
@@ -53,7 +53,7 @@ class MyRadio_TracklistItem extends ServiceAPI
         $this->bapsaudioid = is_numeric($result['bapsaudioid']) ? (int) $result['bapsaudioid'] : null;
 
         $this->track = is_numeric($result['trackid']) ? $result['trackid'] :
-            array(
+            [
                 'title' => $result['track'],
                 'artist' => $result['artist'],
                 'album' => $result['album'],
@@ -61,7 +61,7 @@ class MyRadio_TracklistItem extends ServiceAPI
                 'trackno' => (int) $result['trackno'],
                 'length' => $result['length'],
                 'record_label' => $result['label']
-            );
+            ];
     }
 
     public function getID()
@@ -93,10 +93,10 @@ class MyRadio_TracklistItem extends ServiceAPI
             AND (state ISNULL OR state != \'d\')
             AND audiologid > $2
             ORDER BY timestart ASC',
-            array($timeslotid, $offset)
+            [$timeslotid, $offset]
         );
 
-        $items = array();
+        $items = [];
         foreach ($result as $item) {
             $items[] = self::getInstance($item);
         }
@@ -122,10 +122,10 @@ class MyRadio_TracklistItem extends ServiceAPI
             'SELECT audiologid FROM tracklist.tracklist WHERE source=\'j\'
             AND timestart >= $1 AND timestart <= $2'
             . ($include_playout ? '' : ' AND state!=\'u\' AND state!=\'d\''),
-            array($start, $end)
+            [$start, $end]
         );
 
-        $items = array();
+        $items = [];
         foreach ($result as $item) {
             $items[] = self::getInstance((int) $item);
         }
@@ -153,7 +153,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             WHERE timestart >= $1 AND timestart <= $2 AND (state IS NULL OR state=\'c\''
             . ($include_playout ? 'OR state = \'o\')' : ')')
             . ' ORDER BY timestart ASC',
-            array($start, $end)
+            [$start, $end]
         );
 
         $return = [];
@@ -204,7 +204,7 @@ class MyRadio_TracklistItem extends ServiceAPI
      */
     private static function trackAmalgamator($result)
     {
-        $data = array();
+        $data = [];
         foreach ($result as $row) {
             /**
              * @todo Temporary hack due to lack of fkey on tracklist.track_rec
@@ -254,8 +254,8 @@ class MyRadio_TracklistItem extends ServiceAPI
             LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
             WHERE source=\'j\' AND timestart >= $1 AND timestart <= $2 AND trackid IS NOT NULL'
             . ($include_playout ? '' : 'AND state != \'o\'')
-            . 'GROUP BY trackid ORDER BY num_plays DESC',
-            array($start, $end)
+            . ' GROUP BY trackid ORDER BY num_plays DESC',
+            [$start, $end]
         );
 
         return self::trackAmalgamator($result);
@@ -283,7 +283,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
             WHERE source=\'b\' AND timestart >= $1 AND timestart <= $2 AND trackid IS NOT NULL
             GROUP BY trackid ORDER BY num_plays DESC',
-            array($start, $end)
+            [$start, $end]
         );
 
         return self::trackAmalgamator($result);
@@ -301,7 +301,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             'SELECT timestart FROM tracklist.tracklist
             LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
             WHERE timestart >= $1 AND trackid = $2',
-            array(CoreUtils::getTimestamp(time() - $time), $track->getID())
+            [CoreUtils::getTimestamp(time() - $time), $track->getID()]
         );
 
         return sizeof($result) !== 0;
@@ -343,12 +343,12 @@ class MyRadio_TracklistItem extends ServiceAPI
             AND timestart >= $3
             AND timestart < $4
             AND album NOT ILIKE \''.Config::$short_name.' Downloads%\'',
-            array(
+            [
                 $track->getAlbum()->getID(),
                 $track->getArtist(),
                 $timeout,
                 CoreUtils::getTimestamp($time)
-            )
+            ]
         );
 
         if ($include_queue) {

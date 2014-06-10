@@ -19,6 +19,4 @@ if ($data['photo']['error'] == 0) {
     $banner->setPhoto(MyRadioPhoto::create($data['photo']['tmp_name']));
 }
 
-header('Location: '.CoreUtils::makeURL('Website', 'banners', [
-    'message' => base64_encode('The Banner was updated successfully!')
-]));
+CoreUtils::redirect('Website', 'banners', ['message' => base64_encode('The Banner was updated successfully!')]);

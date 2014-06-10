@@ -18,7 +18,7 @@
  */
 trait MyRadio_MetadataSubject
 {
-    protected static $metadata_keys = array();
+    protected static $metadata_keys = [];
     protected $metadata;
 
     public function getMeta($meta_string)
@@ -175,13 +175,13 @@ trait MyRadio_MetadataSubject
             . ' (metadata_key_id, '
             . $id_field
             . ', memberid, approvedid, metadata_value, effective_from, effective_to) VALUES ';
-        $params = array(
+        $params = [
             $key,
             $this->getID(),
             MyRadio_User::getCurrentOrSystemUser()->getID(),
             CoreUtils::getTimestamp($time),
             $effective_to == null ? null : CoreUtils::getTimestamp($effective_to)
-        );
+        ];
 
         $param_counter = 6;
         foreach ($values as $value) {
