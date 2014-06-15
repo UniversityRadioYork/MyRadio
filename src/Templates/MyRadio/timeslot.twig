@@ -23,6 +23,13 @@
         Click here to see all shows</a>.
 </p>
 {% endif %}
+{% if allTimeslots != 'unavailable' %}
+<p>
+    <a href="{{myury.makeURL(config, 'MyRadio', 'timeslot', {next: next, current: true})}}">
+        Click here to load the current show</a>.
+</p>
+{% endif %}
+
 <form action='{{myury.makeURL(config,"MyRadio","timeslot")}}' method='post'>
     <fieldset class="timeslot">
         <select id="shows" size="20">
