@@ -1281,7 +1281,7 @@ CREATE SEQUENCE constants_acl_scope_scopeid_seq
 ALTER SEQUENCE constants_acl_scope_scopeid_seq OWNED BY constants_acl_scope.scopeid;
 CREATE TABLE selector (
     selid integer NOT NULL,
-    "time" timestamp without time zone DEFAULT now() NOT NULL,
+    "time" timestamp with time zone DEFAULT now() NOT NULL,
     action integer NOT NULL,
     setby integer NOT NULL,
     CONSTRAINT setbyinrange CHECK (((setby >= 0) AND (setby <= 3)))
@@ -3080,7 +3080,6 @@ ALTER TABLE ONLY api_key_auth
 
 ALTER TABLE ONLY api_key_log
     ADD CONSTRAINT api_key_log_pkey PRIMARY KEY (api_log_id);
-
 
 --
 -- Name: api_key_pkey; Type: CONSTRAINT; Schema: myury
@@ -7431,3 +7430,5 @@ INSERT INTO metadata_key VALUES (17, 'upload_state', false, 'When uploading data
 --
 
 SELECT pg_catalog.setval('metadata_key_metadata_key_id_seq', 17, true);
+SET search_path = public;
+INSERT INTO public.l_college (descr) VALUES ('Unknown');
