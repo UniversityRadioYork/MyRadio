@@ -94,4 +94,6 @@ foreach ($proxied_headers as $hname) {
     }
 }
 
+$body = str_replace('"/IRNPortal', '"IRNPortal', $body);
+
 die($body);

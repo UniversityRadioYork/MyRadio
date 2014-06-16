@@ -347,7 +347,7 @@
 $(document).ready(function() {
     $("#switcher").themeswitcher({
                     imgpath: "",
-                    themepath: "//ury.org.uk/myury/css/vendor",
+                    themepath: mConfig.base_url + "css/vendor",
                     jqueryuiversion: "",
                     rounded: false,
                     themes: [
