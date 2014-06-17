@@ -16,4 +16,4 @@ if (preg_match('/^aux-.*$/', $_REQUEST['libraryid']) === 1) {
     $data = NIPSWeb_ManagedUserPlaylist::getInstance($libraryid)->getItems();
 }
 
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

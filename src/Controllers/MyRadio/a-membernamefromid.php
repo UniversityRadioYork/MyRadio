@@ -13,4 +13,4 @@ if (!isset($_REQUEST['term'])) {
 }
 
 $data = MyRadio_User::getInstance((int) $_REQUEST['term'])->getName();
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

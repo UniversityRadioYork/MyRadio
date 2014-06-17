@@ -8,4 +8,4 @@
  */
 $data = ['token' => NIPSWeb_Token::getEditToken()];
 
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

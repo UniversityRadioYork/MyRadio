@@ -25,4 +25,4 @@ if ($lock === false) {
     $data = ['SUCCESS', $lock];
 }
 
-require_once 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

@@ -14,4 +14,4 @@ if (function_exists("uploadprogress_get_info")) {
     $data = false;
 }
 
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

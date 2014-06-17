@@ -16,4 +16,4 @@ $data = MyRadio_Scheduler::findShowByTitle(
     $_REQUEST['term'],
     isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default
 );
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

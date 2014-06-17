@@ -222,6 +222,25 @@ class CoreUtils
     }
 
     /**
+     * Responds with JSON data.
+     *
+     */
+    public static function dataToJSON($data)
+    {
+        header('Content-Type: application/json');
+        header('HTTP/1.1 200 OK');
+
+        //Decode to datasource if needed
+        $data = self::dataSourceParser($data);
+
+        if (!empty(MyRadioError::$php_errorlist)) {
+            $data['myury_errors'] = MyRadioError::$php_errorlist;
+        }
+
+        echo json_encode($data);
+    }
+
+    /**
      * Redirects to another page.
      *
      * @param  string $module The module to which we should redirect.

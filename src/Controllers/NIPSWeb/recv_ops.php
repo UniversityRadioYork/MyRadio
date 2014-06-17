@@ -13,4 +13,4 @@ if (!isset($_POST['clientid'])) {
 
 $data = MyRadio_Timeslot::getInstance(NIPSWeb_Token::getEditTokenTimeslot($_POST['clientid']))->updateShowPlan($_POST);
 
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

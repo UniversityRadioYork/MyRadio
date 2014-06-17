@@ -29,4 +29,4 @@ do {
 } while (empty($data) && $count < 50);
 
 //Return the response data
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

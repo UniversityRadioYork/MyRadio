@@ -35,5 +35,5 @@ if ($where == "notrec") {
 
     $data = ["return"=>$return, "result"=>$row];
     //Return the response data
-    require 'Views/MyRadio/datatojson.php';
+    CoreUtils::dataToJSON($data);
 }

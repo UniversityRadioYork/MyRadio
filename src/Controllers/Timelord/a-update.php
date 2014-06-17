@@ -17,4 +17,4 @@ $data = [
     'obit' => $sel->isObitHappening()
 ];
 
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);
