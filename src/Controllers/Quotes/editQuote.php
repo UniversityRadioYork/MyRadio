@@ -6,7 +6,7 @@
  * @package MyURY_Quotes
  */
 
-$form = MyURY_Quote::getForm();
+$form = MyRadio_Quote::getForm();
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($data['id'])) {
         MyRadio_Quote::create($data);
     } else {
-        MyURY_Quote::getInstance($id)
+        MyRadio_Quote::getInstance($id)
             ->setSource($data['source'])
             ->setText($data['text'])
             ->setDate($data['date']);
@@ -27,8 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     //Not Submitted
 
-    if ($_REQUEST['quote_id']) {
-        $quote = MyURY_ChartRelease::getInstance($_REQUEST['quote_id']);
+    if (isset($_REQUEST['quote_id'])) {
+        $quote = MyRadio_Quote::getInstance($_REQUEST['quote_id']);
 
         $form->editMode(
             $quote->getID(),

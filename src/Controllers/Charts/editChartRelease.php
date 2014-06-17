@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 } else {
     //Not Submitted
-    if ($_REQUEST['chart_release_id']) {
+    if (isset($_REQUEST['chart_release_id'])) {
         MyRadio_ChartRelease::getInstance($_REQUEST['chart_release_id'])
             ->getEditForm()
             ->render();
