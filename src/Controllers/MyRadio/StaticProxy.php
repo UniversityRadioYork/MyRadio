@@ -20,7 +20,7 @@ if ($_GET[0] === 'config.js') {
 }
 
 $prefix = __DIR__.'/../../Public/';
-foreach (array(__DIR__.'/../../Public/', __DIR__.'/../../Public/js/vendor/skins/lightgray/') as $p) {
+foreach ([__DIR__.'/../../Public/', __DIR__.'/../../Public/js/vendor/skins/lightgray/'] as $p) {
     if (file_exists($p.$_GET[0])) {
         $prefix = $p;
         break;

@@ -52,7 +52,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      * Array of Users and their relation to the Podcast.
      * @var Array
      */
-    protected $credits = array();
+    protected $credits = [];
 
     /**
      * The ID of the show this is linked to, if any.
@@ -107,7 +107,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             FROM uryplayer.podcast
             LEFT JOIN schedule.show_podcast_link USING (podcast_id)
             WHERE podcast_id=$1',
-            array($podcast_id)
+            [$podcast_id]
         );
 
         if (empty($result)) {
@@ -128,11 +128,11 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             if (empty($credits[$i])) {
                 continue;
             }
-            $this->credits[] = array(
+            $this->credits[] = [
                 'type' => (int) $credit_types[$i],
                 'memberid' => $credits[$i],
                 'User' => MyRadio_User::getInstance($credits[$i])
-            );
+            ];
         }
 
 
@@ -453,7 +453,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      */
     public function toDataSource($full = true)
     {
-        $data = array(
+        $data = [
             'podcast_id' => $this->getID(),
             'title' => $this->getMeta('title'),
             'description' => $this->getMeta('description'),
@@ -462,15 +462,15 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 'display' => 'icon',
                 'value' => 'script',
                 'title' => 'Edit Podcast',
-                'url' => CoreUtils::makeURL('Podcast', 'editPodcast', array('podcastid' => $this->getID()))
+                'url' => CoreUtils::makeURL('Podcast', 'editPodcast', ['podcastid' => $this->getID()])
             ],
             'setcoverlink' => [
                 'display' => 'icon',
                 'value' => 'script',
                 'title' => 'Set Cover',
-                'url' => CoreUtils::makeURL('Podcast', 'setCover', array('podcastid' => $this->getID()))
+                'url' => CoreUtils::makeURL('Podcast', 'setCover', ['podcastid' => $this->getID()])
             ]
-        );
+        ];
 
         if ($full) {
             $data['credits'] = implode(', ', $this->getCreditsNames(false));

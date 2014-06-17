@@ -13,21 +13,21 @@ $form = (
         'sched_cancel',
         $module,
         'doCancelEpisode',
-        array(
+        [
             'debug' => false,
             'title' => 'Cancel Episode'
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'reason',
         MyRadioFormField::TYPE_BLOCKTEXT,
-        array('label' => 'Please explain why this Episode should be removed from the Schedule')
+        ['label' => 'Please explain why this Episode should be removed from the Schedule']
     )
 )->addField(
     new MyRadioFormField(
         'show_season_timeslot_id',
         MyRadioFormField::TYPE_HIDDEN,
-        array('value' => $_REQUEST['show_season_timeslot_id'])
+        ['value' => $_REQUEST['show_season_timeslot_id']]
     )
 );

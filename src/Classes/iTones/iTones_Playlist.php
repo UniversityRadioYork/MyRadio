@@ -21,7 +21,7 @@ class iTones_Playlist extends ServiceAPI
     private $description;
     private $lock;
     private $locktime;
-    protected $tracks = array();
+    protected $tracks = [];
     private $weight = 0;
     protected $revisionid;
 
@@ -33,7 +33,7 @@ class iTones_Playlist extends ServiceAPI
     protected function __construct($playlistid)
     {
         $this->playlistid = $playlistid;
-        $result = self::$db->fetchOne('SELECT * FROM jukebox.playlists WHERE playlistid=$1 LIMIT 1', array($playlistid));
+        $result = self::$db->fetchOne('SELECT * FROM jukebox.playlists WHERE playlistid=$1 LIMIT 1', [$playlistid]);
         if (empty($result)) {
             throw new MyRadioException('The specified iTones Playlist does not seem to exist');
 
@@ -50,7 +50,7 @@ class iTones_Playlist extends ServiceAPI
         $this->revisionid = (int) self::$db->fetchOne(
             'SELECT revisionid FROM jukebox.playlist_revisions
             WHERE playlistid=$1 ORDER BY revisionid DESC LIMIT 1',
-            array($this->getID())
+            [$this->getID()]
         )['revisionid'];
     }
 
@@ -65,7 +65,7 @@ class iTones_Playlist extends ServiceAPI
                 'SELECT trackid FROM jukebox.playlist_entries WHERE playlistid=$1
                 AND revision_removed IS NULL
                 ORDER BY entryid',
-                array($this->playlistid)
+                [$this->playlistid]
             );
 
             foreach ($items as $id) {
@@ -138,7 +138,7 @@ class iTones_Playlist extends ServiceAPI
         }
         //Acquire a lock on the lock row - we don't want someone else acquiring a lock while we are!
         self::$db->query('BEGIN');
-        self::$db->query('SELECT * FROM jukebox.playlists WHERE playlistid=$1 FOR UPDATE', array($this->getID()), true);
+        self::$db->query('SELECT * FROM jukebox.playlists WHERE playlistid=$1 FOR UPDATE', [$this->getID()], true);
 
         //Refresh the local lock information - threads using this could have been running for a *while*
         $this->refreshLockInformation();
@@ -153,7 +153,7 @@ class iTones_Playlist extends ServiceAPI
         }
         //Or, if there isn't an active lock
         $locktime = time();
-        self::$db->query('UPDATE jukebox.playlists SET lock=$1, locktime=$2 WHERE playlistid=$3', array($user->getID(), $locktime, $this->getID()), true);
+        self::$db->query('UPDATE jukebox.playlists SET lock=$1, locktime=$2 WHERE playlistid=$3', [$user->getID(), $locktime, $this->getID()], true);
         self::$db->query('COMMIT'); //This releases the lock
         $this->refreshLockInformation();
 
@@ -167,7 +167,7 @@ class iTones_Playlist extends ServiceAPI
     public function releaseLock($lockstr)
     {
         if ($this->validateLock($lockstr)) {
-            self::$db->query('UPDATE jukebox.playlists SET locktime=NULL WHERE playlistid=$1', array($this->getID()));
+            self::$db->query('UPDATE jukebox.playlists SET locktime=NULL WHERE playlistid=$1', [$this->getID()]);
         }
     }
 
@@ -176,7 +176,7 @@ class iTones_Playlist extends ServiceAPI
      */
     private function refreshLockInformation()
     {
-        $result = self::$db->fetchOne('SELECT lock, locktime FROM jukebox.playlists WHERE playlistid=$1', array($this->getID()));
+        $result = self::$db->fetchOne('SELECT lock, locktime FROM jukebox.playlists WHERE playlistid=$1', [$this->getID()]);
         $this->lock = empty($result['lock']) ? null : MyRadio_User::getInstance($result['lock']);
         $this->locktime = (int) $result['locktime'];
     }
@@ -239,7 +239,7 @@ class iTones_Playlist extends ServiceAPI
             throw new MyRadioException('You do not have a valid lock on this playlist.');
         }
 
-        $new_additions = array();
+        $new_additions = [];
 
         foreach ($tracks as $track) {
             $key = array_search($track, $old_list);
@@ -259,7 +259,7 @@ class iTones_Playlist extends ServiceAPI
         self::$db->query(
             'INSERT INTO jukebox.playlist_revisions (playlistid, revisionid, author, notes)
             VALUES ($1, $2, $3, $4) RETURNING revisionid',
-            array($this->getID(), $revisionid, $user->getID(), $notes),
+            [$this->getID(), $revisionid, $user->getID(), $notes],
             true
         );
         //Add new tracks
@@ -269,7 +269,7 @@ class iTones_Playlist extends ServiceAPI
             }
             self::$db->query(
                 'INSERT INTO jukebox.playlist_entries (playlistid, trackid, revision_added) VALUES ($1, $2, $3)',
-                array($this->getID(), $track->getID(), $revisionid),
+                [$this->getID(), $track->getID(), $revisionid],
                 true
             );
         }
@@ -279,7 +279,7 @@ class iTones_Playlist extends ServiceAPI
                 self::$db->query(
                     'UPDATE jukebox.playlist_entries SET revision_removed=$1 WHERE playlistid=$2 AND trackid=$3
                     AND revision_removed IS NULL',
-                    array($revisionid, $this->getID(), $track->getID()),
+                    [$revisionid, $this->getID(), $track->getID()],
                     true
                 );
             }
@@ -326,7 +326,7 @@ class iTones_Playlist extends ServiceAPI
         $result = self::$db->fetchColumn(
             'SELECT playlistid FROM jukebox.playlist_entries WHERE trackid=$1
             AND revision_removed IS NULL',
-            array($track->getID())
+            [$track->getID()]
         );
 
         return self::resultSetToObjArray($result);
@@ -339,28 +339,28 @@ class iTones_Playlist extends ServiceAPI
      */
     public function toDataSource()
     {
-        return array(
+        return [
             'title' => $this->getTitle(),
             'playlistid' => $this->getID(),
             'description' => $this->getDescription(),
-            'edittrackslink' => array(
+            'edittrackslink' => [
                 'display' => 'icon',
                 'value' => 'folder-open',
                 'title' => 'Edit Tracks in this playlist',
-                'url' => CoreUtils::makeURL('iTones', 'editPlaylist', array('playlistid' => $this->getID()))
-            ),
-            'configurelink' => array(
+                'url' => CoreUtils::makeURL('iTones', 'editPlaylist', ['playlistid' => $this->getID()])
+            ],
+            'configurelink' => [
                 'display' => 'icon',
                 'value' => 'wrench',
                 'title' => 'Alter playlist settings',
-                'url' => CoreUtils::makeURL('iTones', 'configurePlaylist', array('playlistid' => $this->getID()))
-            ),
-            'revisionslink' => array(
+                'url' => CoreUtils::makeURL('iTones', 'configurePlaylist', ['playlistid' => $this->getID()])
+            ],
+            'revisionslink' => [
                 'display' => 'icon',
                 'value' => 'clock',
                 'title' => 'View revision history',
-                'url' => CoreUtils::makeURL('iTones', 'viewPlaylistHistory', array('playlistid' => $this->getID()))
-            )
-        );
+                'url' => CoreUtils::makeURL('iTones', 'viewPlaylistHistory', ['playlistid' => $this->getID()])
+            ]
+        ];
     }
 }

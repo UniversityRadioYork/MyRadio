@@ -7,7 +7,7 @@
  * @package MyRadio_SIS
  */
 
-$moduleInfo = array(
+$moduleInfo = [
     'name' => 'selector',
     'title' => 'Studio Selector',
     'enabled' => true,
@@ -21,7 +21,7 @@ $moduleInfo = array(
         .'which are a terrible substitute for a radio show.',
     'required_permission' => AUTH_MODIFYSELECTOR,
     'required_location' => false
-);
+];
 
   /**
    * @todo: check if the OB mount is available

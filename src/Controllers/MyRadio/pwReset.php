@@ -11,20 +11,20 @@ $form = (
         'myradio_pwReset',
         'MyRadio',
         'pwReset',
-        array(
+        [
             'title' => 'Password Reset',
             'captcha' => true
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'user',
         MyRadioFormField::TYPE_TEXT,
-        array(
+        [
             'explanation' => '',
             'label' => 'Username:',
             'options' => ['placeholder' => 'abc123']
-        )
+        ]
     )
 )->setTemplate('MyRadio/pwReset.twig');
 

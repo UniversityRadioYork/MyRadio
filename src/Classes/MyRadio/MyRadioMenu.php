@@ -27,12 +27,12 @@ class MyRadioMenu
         $full = $this->getFullMenu();
 
         //Iterate over the Full Menu, creating a user menu
-        $menu = array();
+        $menu = [];
         foreach ($full as $column) {
-            $newColumn = array('title' => $column['title'], 'sections' => array());
+            $newColumn = ['title' => $column['title'], 'sections' => []];
 
             foreach ($column['sections'] as $section) {
-                $items = array();
+                $items = [];
                 foreach ($section['items'] as $item) {
                     if ($this->userHasPermission($item)) {
                         $items[] = $item;
@@ -40,7 +40,7 @@ class MyRadioMenu
                 }
                 //Add this section (if it has anything in it)
                 if (!empty($items)) {
-                    $newColumn['sections'][] = array('title' => $section['title'], 'items' => $items);
+                    $newColumn['sections'][] = ['title' => $section['title'], 'items' => $items];
                 }
             }
 
@@ -150,7 +150,7 @@ class MyRadioMenu
         $items = $db->fetchAll(
             'SELECT menumoduleid, title, url, description FROM myury.menu_module
             WHERE moduleid=$1 ORDER BY title ASC',
-            array($moduleid)
+            [$moduleid]
         );
         //Get permissions for each $item
         foreach ($items as $key => $item) {
@@ -167,11 +167,11 @@ class MyRadioMenu
      */
     private function breakDownURL($url)
     {
-        return array(
+        return [
             'url' => $this->parseURL($url),
             'module' => $this->parseURL($url, 'module'),
             'action' => $this->parseURL($url, 'action')
-        );
+        ];
     }
 
     /**
@@ -197,7 +197,7 @@ class MyRadioMenu
         $full = $this->getFullSubMenu($moduleid);
 
         //Iterate over the Full Menu, creating a user menu
-        $menu = array();
+        $menu = [];
         foreach ($full as $item) {
             if ($this->userHasPermission($item)) {
                 $menu[] = $item;

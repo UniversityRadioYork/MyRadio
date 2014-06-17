@@ -11,20 +11,20 @@ $demos = MyRadio_Demo::listDemos();
 
 $twig = CoreUtils::getTemplateObject();
 
-$tabledata = array();
+$tabledata = [];
 foreach ($demos as $demo) {
     $demo['join'] = '<a href="'
         .CoreUtils::makeURL(
             'Scheduler',
             'attendDemo',
-            array('demoid' => $demo['show_season_timeslot_id'])
+            ['demoid' => $demo['show_season_timeslot_id']]
         )
         .'">Join</a>';
     $tabledata[] = $demo;
 }
 
 if (empty($tabledata)) {
-    $tabledata = array(array('','','','','Error' => 'There are currently no demo slots available.'));
+    $tabledata = [['','','','','Error' => 'There are currently no demo slots available.']];
 }
 
 //print_r($tabledata);

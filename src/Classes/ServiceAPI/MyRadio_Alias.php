@@ -37,7 +37,7 @@ class MyRadio_Alias extends ServiceAPI
      *
      * @var mixed[]
      */
-    private $destinations = array();
+    private $destinations = [];
 
 
     protected function __construct($id)

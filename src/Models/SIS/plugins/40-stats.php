@@ -7,11 +7,11 @@
  * @package MyRadio_SIS
  */
 
-$moduleInfo = array(
+$moduleInfo = [
     'name' => 'stats',
     'title' => 'Statistics',
-    'enabled' => true,
+    'enabled' => false,
     'startOpen' => true,
     'help' => 'Listenership figures are shown in realtime here. '
         .'WARNING: Do NOT announce any listener statistics on-air, it is unprofessional!',
-);
+];

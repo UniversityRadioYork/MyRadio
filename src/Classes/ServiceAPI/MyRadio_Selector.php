@@ -352,7 +352,7 @@ class MyRadio_Selector
      */
     public static function getStatusAtTime($time)
     {
-        return array(
+        return [
             'studio' => self::getStudioAtTime($time),
             'lock' => self::getLockAtTime($time),
             'selectedfrom' => self::getSetbyAtTime($time),
@@ -360,7 +360,7 @@ class MyRadio_Selector
             's2power' => self::getStudio2PowerAtTime($time),
             's4power' => (self::remoteStreams()['s1']) ? true : false,
             'lastmod' => self::getLastModAtTime($time)
-        );
+        ];
     }
 
     /**

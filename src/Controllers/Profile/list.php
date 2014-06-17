@@ -11,11 +11,11 @@
 $members = Profile::getThisYearsMembers();
 
 foreach ($members as $k => $v) {
-    $members[$k]['name'] = array(
+    $members[$k]['name'] = [
         'display' => 'text',
-        'url' => CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['memberid'])),
+        'url' => CoreUtils::makeURL('Profile', 'view', ['memberid' => $v['memberid']]),
         'value' => $v['name']
-    );
+    ];
 }
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')

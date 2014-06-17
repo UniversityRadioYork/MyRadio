@@ -77,7 +77,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
         $this->correctionid = (int) $correctionid;
         $result = self::$db->fetchOne(
             'SELECT * FROM public.rec_trackcorrection WHERE correctionid=$1 LIMIT 1',
-            array($this->correctionid)
+            [$this->correctionid]
         );
         if (empty($result)) {
             throw new MyRadioException('The specified TrackCorrection does not seem to exist');
@@ -114,7 +114,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
             'INSERT INTO public.rec_trackcorrection
             (trackid, proposed_title, proposed_artist, proposed_album_name, level)
             VALUES ($1, $2, $3, $4, $5) RETURNING correctionid',
-            array($track->getID(), $title, $artist, $album_name, $level)
+            [$track->getID(), $title, $artist, $album_name, $level]
         );
 
         if (empty($r)) {
@@ -187,7 +187,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
 
         self::$db->query(
             'UPDATE public.rec_trackcorrection SET state=\'a\', reviewedby=$2 WHERE correctionid=$1',
-            array($this->getCorrectionID(), MyRadio_User::getInstance()->getID())
+            [$this->getCorrectionID(), MyRadio_User::getInstance()->getID()]
         );
         $this->state = 'a';
         $this->setLastfmVerified();
@@ -199,7 +199,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
     {
         self::$db->query(
             'UPDATE public.rec_trackcorrection SET state=\'r\', reviewedby=$2 WHERE correctionid=$1',
-            array($this->getCorrectionID(), MyRadio_User::getInstance()->getID())
+            [$this->getCorrectionID(), MyRadio_User::getInstance()->getID()]
         );
 
         if ($permanent) {
@@ -214,7 +214,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
      */
     public function toDataSource()
     {
-        return array(
+        return [
             'title' => $this->getTitle(),
             'artist' => $this->getArtist(),
             'album' => $this->getAlbum()->toDataSource(),
@@ -225,25 +225,25 @@ class MyRadio_TrackCorrection extends MyRadio_Track
             'level' => $this->getLevel(),
             'correctionid' => $this->getCorrectionID(),
             'state' => $this->getState(),
-            'editlink' => array(
+            'editlink' => [
                 'display' => 'icon',
                 'value' => 'script',
                 'title' => 'Edit Track Manually',
-                'url' => CoreUtils::makeURL('Library', 'editTrack', array('trackid' => $this->getID()))
-            ),
-            'confirmlink' => array(
+                'url' => CoreUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()])
+            ],
+            'confirmlink' => [
                 'display' => 'icon',
                 'value' => 'circle-check',
                 'title' => 'Approve Track Correction',
-                'url' => CoreUtils::makeURL('Library', 'acceptTrackCorrection', array('correctionid' => $this->getCorrectionID()))
-            )
+                'url' => CoreUtils::makeURL('Library', 'acceptTrackCorrection', ['correctionid' => $this->getCorrectionID()])
+            ]
             ,
-            'rejectlink' => array(
+            'rejectlink' => [
                 'display' => 'icon',
                 'value' => 'trash',
                 'title' => 'Reject Track Correction',
-                'url' => CoreUtils::makeURL('Library', 'rejectTrackCorrection', array('correctionid' => $this->getCorrectionID()))
-            )
-        );
+                'url' => CoreUtils::makeURL('Library', 'rejectTrackCorrection', ['correctionid' => $this->getCorrectionID()])
+            ]
+        ];
     }
 }

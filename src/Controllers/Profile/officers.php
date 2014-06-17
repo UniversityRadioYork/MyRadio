@@ -11,7 +11,7 @@ $officers = Profile::getOfficers();
 
 foreach ($officers as $k => $v) {
     if (!empty($officers[$k]['name'])) {
-        $officers[$k]['url'] = CoreUtils::makeURL('Profile', 'view', array('memberid' => $v['memberid']));
+        $officers[$k]['url'] = CoreUtils::makeURL('Profile', 'view', ['memberid' => $v['memberid']]);
     }
 
     if (!empty($officers[$k]['memberid'])) {

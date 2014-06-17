@@ -89,7 +89,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
     {
         $this->presenterstatusid = (int) $statusid;
 
-        $result = self::$db->fetchOne('SELECT * FROM public.l_presenterstatus WHERE presenterstatusid=$1', array($statusid));
+        $result = self::$db->fetchOne('SELECT * FROM public.l_presenterstatus WHERE presenterstatusid=$1', [$statusid]);
 
         if (empty($result)) {
             throw new MyRadioException('The specified Training Status ('.$statusid.') does not seem to exist');
@@ -250,13 +250,13 @@ class MyRadio_TrainingStatus extends ServiceAPI
      */
     public function toDataSource()
     {
-        return array(
+        return [
             'status_id' => $this->getID(),
             'title' => $this->getTitle(),
             'detail' => $this->getDetail(),
             'depends' => $this->getDepends(),
             'awarded_by' => $this->getAwarder()
-        );
+        ];
     }
 
     /**

@@ -19,7 +19,7 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI
      * The Singleton store for ManagedPlaylist objects
      * @var NIPSWeb_ManagedPlaylist
      */
-    private static $playlists = array();
+    private static $playlists = [];
     private $managed_playlist_id;
     protected $items;
     protected $name;
@@ -36,7 +36,7 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI
         $this->managed_playlist_id = $playlistid;
         $result = self::$db->fetchOne(
             'SELECT * FROM bapsplanner.managed_playlists WHERE managedplaylistid=$1 LIMIT 1',
-            array($playlistid)
+            [$playlistid]
         );
         if (empty($result)) {
             throw new MyRadioException('The specified NIPSWeb Managed Playlist does not seem to exist');
@@ -60,10 +60,10 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI
                 'SELECT manageditemid FROM bapsplanner.managed_items WHERE managedplaylistid=$1
                 AND (expirydate IS NULL OR expirydate > NOW())
                 ORDER BY title',
-                array($this->managed_playlist_id)
+                [$this->managed_playlist_id]
             );
 
-            $this->items = array();
+            $this->items = [];
             foreach ($items as $id) {
                 /**
                  * Pass this to the ManagedItem - it's called Dependency Injection and prevents loops and looks pretty
@@ -107,10 +107,10 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI
     public static function getAllManagedPlaylists($editable_only = false)
     {
         if ($editable_only && !MyRadio_User::getInstance()->hasAuth(AUTH_EDITCENTRALRES)) {
-            return array();
+            return [];
         }
         $result = self::$db->fetchColumn('SELECT managedplaylistid FROM bapsplanner.managed_playlists ORDER BY name');
-        $response = array();
+        $response = [];
         foreach ($result as $id) {
             $response[] = self::getInstance($id);
         }
@@ -125,10 +125,10 @@ class NIPSWeb_ManagedPlaylist extends ServiceAPI
      */
     public function toDataSource()
     {
-        return array(
+        return [
             'title' => $this->getTitle(),
             'managedid' => $this->getID(),
             'folder' => $this->getFolder(),
-        );
+        ];
     }
 }

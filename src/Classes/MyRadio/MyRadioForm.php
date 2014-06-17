@@ -52,7 +52,7 @@ class MyRadioForm
      * Additional classes to add to the base form element
      * @var Array
      */
-    private $classes = array();
+    private $classes = [];
 
     /**
      * Whether to enable Form Validation
@@ -76,7 +76,7 @@ class MyRadioForm
      * The form fields in the form (an array of MyRadioFormField objects)
      * @var Array
      */
-    private $fields = array();
+    private $fields = [];
 
     /**
      * The title of the page (the human readable name)
@@ -88,7 +88,7 @@ class MyRadioForm
      * Logging output
      * @var Array
      */
-    private $debug_log = array();
+    private $debug_log = [];
 
     /**
      * Enable recaptcha requirement
@@ -100,7 +100,7 @@ class MyRadioForm
      * Fields that cannot be edited by params
      * @var Array
      */
-    private $restricted_fields = array('name', 'module', 'action', 'fields', 'restricted_fields', 'debug_log');
+    private $restricted_fields = ['name', 'module', 'action', 'fields', 'restricted_fields', 'debug_log'];
 
     /**
      * Creates a new MyRadioForm object with the given parameters
@@ -118,7 +118,7 @@ class MyRadioForm
      *
      * @throws MyRadioException Thrown on failure of a sanity check
      */
-    public function __construct($name, $module, $action, $params = array())
+    public function __construct($name, $module, $action, $params = [])
     {
         //Sanity check - does the target exist?
         if (!CoreUtils::isValidController($module, $action)) {
@@ -223,7 +223,7 @@ class MyRadioForm
      */
     public function editMode($identifier, $values, $action = null)
     {
-        $this->addField(new MyRadioFormField('myradiofrmedid', MyRadioFormField::TYPE_HIDDEN, array('value' => $identifier)));
+        $this->addField(new MyRadioFormField('myradiofrmedid', MyRadioFormField::TYPE_HIDDEN, ['value' => $identifier]));
 
         foreach ($values as $k => $v) {
             $this->setFieldValue($k, $v);
@@ -251,7 +251,7 @@ class MyRadioForm
      * @param Array $frmcustom An optional array of custom fields to send to the Renderer. Useful when using a custom
      *                         template which needs additional data.
      */
-    public function render($frmcustom = array())
+    public function render($frmcustom = [])
     {
         /**
          * Prevent XSRF attacks with this token - if this isn't present or is
@@ -272,8 +272,8 @@ class MyRadioForm
             $captcha = null;
         }
 
-        $fields = array();
-        $redact = array();
+        $fields = [];
+        $redact = [];
         foreach ($this->fields as $field) {
             $fields[] = $field->render();
             /**
@@ -343,7 +343,7 @@ class MyRadioForm
             }
         }
 
-        $return = array();
+        $return = [];
         foreach ($this->fields as $field) {
             $value = $field->readValue($this->getPrefix());
             if ($field->getRequired() && empty($value)) {

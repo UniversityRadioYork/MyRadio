@@ -49,7 +49,7 @@ class MyRadio_Photo extends ServiceAPI
 
         $result = self::$db->fetchOne(
             'SELECT * FROM myury.photos WHERE photoid=$1',
-            array($photoid)
+            [$photoid]
         );
         if (empty($result)) {
             throw new MyRadioException('Photo ' . $photoid . ' does not exist!');

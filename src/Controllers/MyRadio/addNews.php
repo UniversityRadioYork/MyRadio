@@ -14,18 +14,18 @@ $form = (
         'myradio_news',
         'MyRadio',
         'addNews',
-        array(
+        [
             'title' => 'Add news item'
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'body',
         MyRadioFormField::TYPE_BLOCKTEXT,
-        array(
+        [
             'explanation' => '',
             'label' => 'Content'
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = $form->readValues();
     MyRadioNews::addItem($data['feedid'], $data['body']);
-    header('Location: '.CoreUtils::makeURL('MyRadio', 'news', ['feed' =>$data['feedid']]));
+    CoreUtils::redirect('MyRadio', 'news', ['feed' =>$data['feedid']]);
 } else {
     //Not Submitted
     $form->setFieldValue('feedid', $_REQUEST['feed'])->render();

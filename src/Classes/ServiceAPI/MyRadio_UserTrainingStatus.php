@@ -71,7 +71,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         $result = self::$db->fetchOne(
             'SELECT * FROM public.member_presenterstatus
             WHERE memberpresenterstatusid=$1',
-            array($statusid)
+            [$statusid]
         );
 
         if (empty($result)) {

@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $banner->setPhoto(MyRadioPhoto::create($data['photo']['tmp_name']));
     }
 
-    CoreUtils::redirect('Website', 'banners', ['message' => base64_encode('The Banner was updated successfully!')]);
+    CoreUtils::backWithMessage('The Banner was updated successfully!');
 
 } else {
     //Not Submitted

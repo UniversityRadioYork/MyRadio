@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $template = CoreUtils::getTemplateObject();
 
     for ($i = 0; $i < sizeof($data['bulkaddrepeater']['fname']); $i++) {
-        $params = array();
+        $params = [];
         foreach ($data['bulkaddrepeater'] as $key => $v) {
             $params[$key] = $data['bulkaddrepeater'][$key][$i];
         }

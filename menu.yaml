@@ -1,0 +1,240 @@
+# MyRadio Main Menu
+#
+# The 'columns' key contains the actual layout of the menu.
+# - To hide items on the menu, prefix them with a comment '#'.
+# - To re-order items, simply move them around in 'columns. 
+# - To rename items, change their name HERE and ALSO in 'items'.
+# - To add items, add the item HERE and ALSO in 'items'.
+# - To remove items permanently, remove the item HERE and ALSO in 'items'.
+columns:
+    My Stuff:
+        About Me:
+            - Change My Password
+            - My Profile
+            - Webmail
+        Get On Air:
+            - Add Demo
+            - Studio 1 Training Video
+            - Get On Air
+        I want to...:
+            - Change/Cancel Show
+            - Contact Management
+            - Get Beds/Jingles
+            - Get Computing/Engineering Support
+    My Services:
+        Show Tools:
+            - Audio Logger
+            - List My Shows
+            - Podcast Manager
+            - Resource Manager
+            - Show Planner
+            - Studio Information Service
+        Management Tools:
+            - Chart Manager
+            - Library Manager
+            - Playlist Manager
+            - Show Scheduler
+            - Website Tools
+        Admin Tools:
+            - Assign Action Permissions
+            - Campus Jukebox Manager
+            - Deployment Tool
+            - Mailing List Manager
+    My Station:
+        General:
+            - Constitution
+            - Members
+            - Officers
+            - Quotes Board
+            - Webcam
+            - Wiki
+        Info:
+            - How to Get Involved
+            - SIS Login Information
+            - Track Statistics
+        Members:
+            - Edit Members News
+            - Edit PIS
+            - Edit Tech News
+
+# The 'items' key contains the actual descriptions, URLs etc. of items.
+#
+# - To create a template item, add:
+#     Name Of Item:
+#       template: Path/To/Template.twig
+# - To create a normal item, add:
+#     Name Of Item:
+#       description: Description of item
+#       url: module=ModuleName OR module=ModuleName,action=ActionName
+#            OR /relative/url OR http://absolute/url
+# - To reorder items in the list, see 'columns'.
+# - To rename items, change their name HERE and ALSO in 'columns'.
+# - To add items, add the item HERE and ALSO in 'columns'.
+# - To remove items permanently, remove the item HERE and ALSO in 'columns'.
+items:
+    Get On Air:
+        template: MyRadio/getOnAir.twig
+    My Profile:
+        description: >
+            Update your contact details, or just find out a little about
+            yourself!
+        url: module=Profile
+    Show Planner:
+        description: >
+            Plan, create and practice BAPS shows in advance.
+        url: module=NIPSWeb
+    Show Scheduler:
+        description: >
+            Schedule outstanding show applications.
+        url: module=Scheduler
+    Deployment Tool:
+        description: >
+            Manage which version of MyURY members are using.
+        url: module=Deploy
+    Website Tools:
+        description: >
+            Edit website banners, navigation and probably other stuff too.
+        url: module=Website
+    Audio Logger:
+        description: >
+            Download a high-quality log.
+        url: /loggerng/
+    BAPS Presenter:
+        description: >
+            "I thought this was a program?" I hear you cry. Maybe, one day,
+            this button will do something that suggests otherwise.   But it is
+            not this day.
+    Webcam:
+        description: >
+            Spy on people in the office.
+        url: module=Webcam
+    Wiki:
+        description: >
+            A huge repository of information about URY.
+        url: /wiki/
+    Constitution:
+        description: >
+            The Constitution is the overarching contract by which we are all
+            bound for life. Worth a skim read.
+        url: /wiki/Constitution
+    Officers:
+        description: >
+            List and manage officerships and their permissions.
+        url: module=Profile,action=officers
+    Members:
+        description: >
+            List and manage members.
+        url: module=Profile,action=list
+    Studio 1 Training Video:
+        description: >
+            Forgotten how to use Studio 1? Want to get ahead of studio
+            training? Here's the place to start.
+        url: http://youtu.be/YN4RGIgFoJk
+    Change/Cancel Show:
+        description: >
+            You signed a contract saying you'd give 48 hours of cancelling a
+            show. Click here to do just that. Or if you want to fix a spelling
+            mistake in the title of your show.
+        url: module=Mail,action=send,list=41
+    Get Computing/Engineering Support:
+        description: >
+            Having a problem? Report it here and Computing and/or Engineering team
+            will fix it for you. Or at least try.
+        url: http://ury.org.uk/support/open.php
+    Contact Management:
+        description: >
+            Management are the people that get the really boring paperwork
+            emails. If that's what you need, then click here. They'd also
+            appreciate a fun random email every once in a while for fun.
+        url: module=Mail,action=send,list=44
+    Get Beds/Jingles:
+        description: >
+            The Production team have a huge library and a little experience -
+            give them a shot if you want that little something that makes your
+            show stand out.
+        url: module=Mail,action=send,list=38
+    Podcast Manager:
+        description: >
+            Upload, edit and manage podcasts.
+        url: module=Podcast
+    Resource Manager:
+        description: >
+            Organise playlists for your shows. Save your favourite jingles and
+            beds in one place.
+        url: module=Resource
+    Playlist Manager:
+        description: >
+            Manage system playlists, these are accessible to everyone, and are
+            played out on the campus jukebox.
+        url: module=iTones,action=listPlaylists
+    Library Manager:
+        description: >
+            Edit, upload and generally maintain the URY library from here.
+        url: module=Library
+    Campus Jukebox Manager:
+        description: >
+            Manage the system that keeps URY on air, even when you aren't.
+        url: module=iTones
+    Mailing List Manager:
+        description: >
+            Manage Mailing lists and email aliases.
+        url: module=Mail
+    Track Statistics:
+        description: >
+            View play count statistics for library tracks.
+        url: module=Stats,action=bapsPlayCounter
+    Edit PIS:
+        description: >
+            Edit the Presenter Information Sheet, give some information to
+            presenters.
+        url: module=MyRadio,action=news,feed=4
+    Edit Members News:
+        description: >
+            Edit the members news feed.
+        url: module=MyRadio,action=news,feed=1
+    Edit Tech News:
+        description: >
+            Edit the Tech News feed.
+        url: module=MyRadio,action=news,feed=2
+    SIS Login Information:
+        description: >
+            Check who's been logging into their shows and if people have
+            actually turned up to do radio.
+        url: module=Scheduler,action=attendance
+    How to Get Involved:
+        description: >
+            Find out how to get involved in URY.
+        url: /wiki/HowTo_Index
+    Assign Action Permissions:
+        description: >
+            Manage the requirements to use MyURY Actions
+        url: module=MyRadio,action=actionPermissions
+    List My Shows:
+        description: >
+            List your applied-for and scheduled shows.
+        url: module=Scheduler,action=myShows
+    Chart Manager:
+        description: >
+            Edit the URY charts and recommended music lists.
+        url: module=Charts
+    Change My Password:
+        description: >
+            Go here to update your URY password.
+        url: module=MyRadio,action=pwChange
+    Webmail:
+        description: >
+            If you have a URY mailbox, click here to access your emails.
+            If you would like one, please contact the Computing Team.
+        url: /roundcube
+    Studio Information Service:
+        description: >
+            Access the Studio Information Service.
+        url: module=SIS
+    Add Demo:
+        description: >
+            Add a demo slot for presenters-to-be to sign up to.
+        url: module=Scheduler,action=createDemo
+    Quotes Board:
+        description: >
+            See the latest "funny" quotes from URY members.
+        url: module=Quotes

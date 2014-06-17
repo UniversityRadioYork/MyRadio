@@ -210,7 +210,7 @@ class MyRadio_Team extends ServiceAPI
     public function getCurrentHolders()
     {
         $i = $this->getHistory();
-        $result = array();
+        $result = [];
 
         foreach ($i as $o) {
             if (empty($o['to']) or $o['to'] >= time()) {

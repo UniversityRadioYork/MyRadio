@@ -40,7 +40,7 @@ class MyRadio_BAPSSyncDaemon extends MyRadio_Daemon
 
         //This needs to appear atomic to end users
         $db->query('BEGIN');
-        $db->query('DELETE FROM public.baps_show WHERE broadcastdate=$1', array($special_date));
+        $db->query('DELETE FROM public.baps_show WHERE broadcastdate=$1', [$special_date]);
         //Start with the Jukebox Playlists
         foreach (iTones_Playlist::getAlliTonesPlaylists() as $list) {
             /**
@@ -49,7 +49,7 @@ class MyRadio_BAPSSyncDaemon extends MyRadio_Daemon
             $r = $db->fetchColumn(
                 'INSERT INTO public.baps_show (userid, name, broadcastdate, viewable)
                 VALUES (61, $1, $2, true) RETURNING showid',
-                array($list->getTitle(), $special_date)
+                [$list->getTitle(), $special_date]
             );
             $showid = $r[0];
 
@@ -62,7 +62,7 @@ class MyRadio_BAPSSyncDaemon extends MyRadio_Daemon
              */
             $r = $db->fetchOne(
                 'INSERT INTO public.baps_listing (showid, name, channel) VALUES ($1, $2, 0) RETURNING listingid',
-                array($showid, $list->getTitle())
+                [$showid, $list->getTitle()]
             );
             $listingid = $r[0];
 
@@ -77,7 +77,7 @@ class MyRadio_BAPSSyncDaemon extends MyRadio_Daemon
                 pg_query_params(
                     'INSERT INTO public.baps_item (listingid, name1, name2, position, libraryitemid)
                     VALUES ($1, $2, $3, $4, $5)',
-                    array($listingid, $item['title'], $item['artist'], $i, $track['libraryitemid'])
+                    [$listingid, $item['title'], $item['artist'], $i, $track['libraryitemid']]
                 );
                 echo pg_last_error();
             }
@@ -91,7 +91,7 @@ class MyRadio_BAPSSyncDaemon extends MyRadio_Daemon
             $r = pg_fetch_row(pg_query_params(
                 'INSERT INTO public.baps_show (userid, name, broadcastdate, viewable)
                 VALUES (61, \'Managed::\'||$1, $2, true) RETURNING showid',
-                array($list['name'], $special_date)
+                [$list['name'], $special_date]
             ));
 
             $showid = $r[0];
@@ -106,7 +106,7 @@ class MyRadio_BAPSSyncDaemon extends MyRadio_Daemon
             $r = pg_fetch_row(pg_query_params(
                 'INSERT INTO public.baps_listing (showid, name, channel) VALUES
                 ($1, $2, 0) RETURNING listingid',
-                array($showid, $list['name'])
+                [$showid, $list['name']]
             ));
 
             $listingid = $r[0];
@@ -122,7 +122,7 @@ class MyRadio_BAPSSyncDaemon extends MyRadio_Daemon
                 pg_query_params(
                     'INSERT INTO public.baps_item (listingid, name1, name2, position, fileitemid)
                     VALUES ($1, $2, $3, $4, $5)',
-                    array($listingid, $item['title'], '', $i, $track)
+                    [$listingid, $item['title'], '', $i, $track]
                 );
                 echo pg_last_error();
             }

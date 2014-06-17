@@ -12,4 +12,4 @@ $data = $form->readValues();
 
 MyRadio_Season::getInstance($data['season_id'])->reject($data['reason'], $data['notify_user']);
 
-header('Location: '.CoreUtils::makeURL('Scheduler', 'default'));
+CoreUtils::redirect('Scheduler', 'default');

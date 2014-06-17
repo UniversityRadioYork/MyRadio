@@ -17,7 +17,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 {
     private $show_id;
     private $owner;
-    protected $credits = array();
+    protected $credits = [];
     private $genres;
     private $show_type;
     private $submitted_time;
@@ -77,7 +77,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 )
             ) AS genres
             FROM schedule.show WHERE show_id=$1',
-            array($show_id)
+            [$show_id]
         );
 
         //Deal with the easy fields
@@ -94,11 +94,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             if (empty($credits[$i])) {
                 continue;
             }
-            $this->credits[] = array(
+            $this->credits[] = [
                 'type' => (int) $credit_types[$i],
                 'memberid' => $credits[$i],
                 'User' => MyRadio_User::getInstance($credits[$i])
-            );
+            ];
         }
 
         //Deal with the Metadata arrays
@@ -127,7 +127,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $this->season_ids = self::$db->fetchColumn(
             'SELECT show_season_id
             FROM schedule.show_season WHERE show_id=$1',
-            array($show_id)
+            [$show_id]
         );
     }
 
@@ -162,10 +162,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * @todo location (above) Is not in the Show creation form
      * @throws MyRadioException
      */
-    public static function create($params = array())
+    public static function create($params = [])
     {
         //Validate input
-        $required = array('title', 'description', 'credits');
+        $required = ['title', 'description', 'credits'];
         foreach ($required as $field) {
             if (!isset($params[$field])) {
                 throw new MyRadioException('Parameter ' . $field . ' was not provided.');
@@ -184,7 +184,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         }
 
         if (!isset($params['genres'])) {
-            $params['genres'] = array();
+            $params['genres'] = [];
         }
         if (!isset($params['tags'])) {
             $params['tags'] = '';
@@ -198,25 +198,25 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $result = self::$db->fetchColumn(
             'INSERT INTO schedule.show (show_type_id, submitted, memberid)
             VALUES ($1, NOW(), $2) RETURNING show_id',
-            array($params['showtypeid'], $_SESSION['memberid']),
+            [$params['showtypeid'], $_SESSION['memberid']],
             true
         );
         $show_id = $result[0];
 
         //Right, set the title and description next
-        foreach (array('title', 'description') as $key) {
+        foreach (['title', 'description'] as $key) {
             self::$db->query(
                 'INSERT INTO schedule.show_metadata
                 (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid)
                 VALUES ($1, $2, $3, NOW(), $4, $4)',
-                array(self::getMetadataKey($key), $show_id, $params[$key], $_SESSION['memberid']),
+                [self::getMetadataKey($key), $show_id, $params[$key], $_SESSION['memberid']],
                 true
             );
         }
 
         //Genre time powers activate!
         if (!is_array($params['genres'])) {
-            $params['genres'] = array($params['genres']);
+            $params['genres'] = [$params['genres']];
         }
         foreach ($params['genres'] as $genre) {
             if (!is_numeric($genre)) {
@@ -225,7 +225,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             self::$db->query(
                 'INSERT INTO schedule.show_genre (show_id, genre_id, effective_from, memberid, approvedid)
                 VALUES ($1, $2, NOW(), $3, $3)',
-                array($show_id, $genre, $_SESSION['memberid']),
+                [$show_id, $genre, $_SESSION['memberid']],
                 true
             );
         }
@@ -237,7 +237,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'INSERT INTO schedule.show_metadata
                 (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid)
                 VALUES ($1, $2, $3, NOW(), $4, $4)',
-                array(self::getMetadataKey('tag'), $show_id, $tag, $_SESSION['memberid']),
+                [self::getMetadataKey('tag'), $show_id, $tag, $_SESSION['memberid']],
                 true
             );
         }
@@ -254,11 +254,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             'INSERT INTO schedule.show_location
             (show_id, location_id, effective_from, memberid, approvedid)
             VALUES ($1, $2, NOW(), $3, $3)',
-            array(
+            [
                 $show_id,
                 $params['location'],
                 $_SESSION['memberid']
-            ),
+            ],
             true
         );
 
@@ -272,12 +272,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'INSERT INTO schedule.show_credit
                 (show_id, credit_type_id, creditid, effective_from, memberid, approvedid)
                 VALUES ($1, $2, $3, NOW(), $4, $4)',
-                array(
+                [
                     $show_id,
                     (int) $params['credits']['credittype'][$i],
                     $params['credits']['member'][$i]->getID(),
                     $_SESSION['memberid']
-                ),
+                ],
                 true
             );
         }
@@ -304,7 +304,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     public function getAllSeasons()
     {
-        $seasons = array();
+        $seasons = [];
         foreach ($this->season_ids as $season_id) {
             $seasons[] = MyRadio_Season::getInstance($season_id);
         }
@@ -378,7 +378,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $result = self::$db->fetchColumn(
             'INSERT INTO schedule.show_image_metadata (memberid, approvedid, metadata_key_id, metadata_value, show_id)
             VALUES ($1, $1, $2, $3, $4) RETURNING show_image_metadata_id',
-            array($_SESSION['memberid'], self::getMetadataKey('player_image'), 'tmp', $this->getID())
+            [$_SESSION['memberid'], self::getMetadataKey('player_image'), 'tmp', $this->getID()]
         )[0];
 
         $suffix = 'image_meta/ShowImageMetadata/'.$result.'.png';
@@ -390,13 +390,13 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             WHERE metadata_key_id=$1
             AND show_id=$2
             AND effective_from IS NOT NULL',
-            array(self::getMetadataKey('player_image'), $this->getID())
+            [self::getMetadataKey('player_image'), $this->getID()]
         );
 
         self::$db->query(
             'UPDATE schedule.show_image_metadata SET effective_from=NOW(), metadata_value=$1
             WHERE show_image_metadata_id=$2',
-            array($suffix, $result)
+            [$suffix, $result]
         );
     }
 
@@ -450,12 +450,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         if ($genreid != $this->getGenre()) {
             self::$db->query(
                 'UPDATE schedule.show_genre SET effective_to=NOW() WHERE show_id=$1',
-                array($this->getID())
+                [$this->getID()]
             );
             self::$db->query(
                 'INSERT INTO schedule.show_genre (show_id, genre_id, effective_from, memberid, approvedid)
                 VALUES ($1, $2, NOW(), $3, $3)',
-                array($this->getID(), $genreid, MyRadio_User::getInstance()->getID())
+                [$this->getID(), $genreid, MyRadio_User::getInstance()->getID()]
             );
             $this->genres = [$genreid];
             $this->updateCacheObject();
@@ -490,7 +490,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             WHERE show_type_id=$1
             ORDER BY (
                 SELECT metadata_value FROM schedule.show_metadata
-                WHERE show_id=show_id AND metadata_key_id=2
+                WHERE show.show_id=show_metadata.show_id AND metadata_key_id=2
                 AND effective_from <= NOW()
                 AND (effective_to IS NULL OR effective_to > NOW())
                 ORDER BY effective_from DESC LIMIT 1
@@ -520,10 +520,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             LEFT JOIN schedule.show_season ON show_season_timeslot.show_season_id = show_season.show_season_id
             LEFT JOIN schedule.show ON show_season.show_id = show.show_id
             WHERE show_season_timeslot.start_time > $1 GROUP BY show.show_id ORDER BY msg_count DESC LIMIT 30',
-            array(CoreUtils::getTimestamp($date))
+            [CoreUtils::getTimestamp($date)]
         );
 
-        $top = array();
+        $top = [];
         foreach ($result as $r) {
             $show = self::getInstance($r['show_id'])->toDataSource();
             $show['msg_count'] = intval($r['msg_count']);
@@ -577,10 +577,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ) AS t1
             LEFT JOIN schedule.show_season ON t1.show_season_id = show_season. show_season_id
             GROUP BY show_id ORDER BY listeners_sum DESC LIMIT 30',
-            array(CoreUtils::getTimestamp($date))
+            [CoreUtils::getTimestamp($date)]
         );
 
-        $top = array();
+        $top = [];
         foreach ($result as $r) {
             $show = self::getInstance($r['show_id'])->toDataSource();
             $show['listeners'] = intval($r['listeners_sum']);
@@ -594,38 +594,38 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     public function toDataSource($full = true)
     {
-        $data = array(
+        $data = [
             'show_id' => $this->getID(),
             'title' => $this->getMeta('title'),
             'credits' => implode(', ', $this->getCreditsNames(false)),
             'description' => $this->getMeta('description'),
             'show_type_id' => $this->show_type,
-            'seasons' => array(
+            'seasons' => [
                 'display' => 'text',
                 'value' => $this->getNumberOfSeasons(),
                 'title' => 'Click to see Seasons for this show',
-                'url' => CoreUtils::makeURL('Scheduler', 'listSeasons', array('showid' => $this->getID()))
-            ),
-            'editlink' => array(
+                'url' => CoreUtils::makeURL('Scheduler', 'listSeasons', ['showid' => $this->getID()])
+            ],
+            'editlink' => [
                 'display' => 'icon',
                 'value' => 'script',
                 'title' => 'Edit Show',
-                'url' => CoreUtils::makeURL('Scheduler', 'editShow', array('showid' => $this->getID()))
-            ),
-            'applylink' => array(
+                'url' => CoreUtils::makeURL('Scheduler', 'editShow', ['showid' => $this->getID()])
+            ],
+            'applylink' => [
                 'display' => 'icon',
                 'value' => 'calendar',
                 'title' => 'Apply for a new Season',
-                'url' => CoreUtils::makeURL('Scheduler', 'createSeason', array('showid' => $this->getID()))
-            ),
-            'micrositelink' => array(
+                'url' => CoreUtils::makeURL('Scheduler', 'createSeason', ['showid' => $this->getID()])
+            ],
+            'micrositelink' => [
                 'display' => 'icon',
                 'value' => 'extlink',
                 'title' => 'View Show Microsite',
                 'url' => $this->getWebpage()
-            ),
+            ],
             'photo' => $this->getShowPhoto()
-        );
+        ];
 
         if ($full) {
             $data['credits'] = array_map(

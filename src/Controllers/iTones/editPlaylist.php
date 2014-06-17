@@ -12,42 +12,42 @@ $form = (
         'itones_playlistedit',
         $module,
         $action,
-        array(
+        [
             'title' => 'Edit Campus Jukebox Playlist'
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'tracks',
         MyRadioFormField::TYPE_TABULARSET,
-        array(
-            'options' => array(
+        [
+            'options' => [
                 new MyRadioFormField(
                     'track',
                     MyRadioFormField::TYPE_TRACK,
-                    array(
+                    [
                         'label' => 'Tracks'
-                    )
+                    ]
                 ),
                 new MyRadioFormField(
                     'artist',
                     MyRadioFormField::TYPE_ARTIST,
-                    array(
+                    [
                         'label' => 'Artists'
-                    )
+                    ]
                 )
-            )
-        )
+            ]
+        ]
     )
 )->addField(
     new MyRadioFormField(
         'notes',
         MyRadioFormField::TYPE_TEXT,
-        array(
+        [
             'label' => 'Notes',
             'explanation' => 'Optional. Enter notes aboout this change.',
             'required' => false
-        )
+        ]
     )
 )->addField(
     new MyRadioFormField(
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['itones_lock_'.$playlist->getID()] = $lock;
 
         $tracks = $playlist->getTracks();
-        $artists = array();
+        $artists = [];
         foreach ($tracks as $track) {
             if ($track instanceof MyRadio_Track) {
                 $artists[] = $track->getArtist();

@@ -8,7 +8,7 @@
  */
 
 
-$moduleInfo = array(
+$moduleInfo = [
     'name' => 'messages',
     'title' => 'Messages',
     'enabled' => true,
@@ -16,4 +16,4 @@ $moduleInfo = array(
         .'The Message tab provides you with all the comunication you can get with the listener, '
         .'whether the message "Via the website" or text the studio it all comes here.',
     'pollfunc' => 'SIS_Remote::queryMessages'
-);
+];

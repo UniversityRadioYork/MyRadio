@@ -37,7 +37,7 @@ spl_autoload_register(function ($class) {
     /**
      * @todo Is there a better way of doing this?
      */
-    foreach (array('MyRadio', 'NIPSWeb', 'SIS', 'iTones', 'vendor', 'BRA') as $dir) {
+    foreach (['MyRadio', 'NIPSWeb', 'SIS', 'iTones', 'vendor', 'BRA'] as $dir) {
         if (stream_resolve_include_path('Classes/' . $dir . '/' . $class)) {
             require_once 'Classes/'. $dir . '/' . $class;
 
@@ -82,11 +82,11 @@ if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
 }
 
 session_set_save_handler(
-    array($session_handler, 'open'),
-    array($session_handler, 'close'),
-    array($session_handler, 'read'),
-    array($session_handler, 'write'),
-    array($session_handler, 'destroy'),
-    array($session_handler, 'gc')
+    [$session_handler, 'open'],
+    [$session_handler, 'close'],
+    [$session_handler, 'read'],
+    [$session_handler, 'write'],
+    [$session_handler, 'destroy'],
+    [$session_handler, 'gc']
 );
 session_start();
