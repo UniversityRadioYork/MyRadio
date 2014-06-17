@@ -9,4 +9,4 @@
 
 unset($_SESSION['joyride']);
 
-require 'Views/MyRadio/nocontent.php';
+CoreUtils::nocontent();

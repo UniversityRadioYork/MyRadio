@@ -212,6 +212,16 @@ class CoreUtils
     }
 
     /**
+     * Responds with nocontent.
+     *
+     */
+    public static function nocontent()
+    {
+        header('HTTP/1.1 204 No Content');
+        exit;
+    }
+
+    /**
      * Redirects to another page.
      *
      * @param  string $module The module to which we should redirect.
