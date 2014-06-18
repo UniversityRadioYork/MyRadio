@@ -1,29 +1,53 @@
 <!DOCTYPE html>
 <html>
-  <head>
-{% include 'parts/base_head.twig' %}
-      <link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css" />
-      <style>html,body{background: none; box-shadow: none; width: 800px; min-width: 800px; height: auto;}</style>
+    <head>
+        {% include 'parts/base_head.twig' %}
+        <link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css" />
+        <style>html,body{background: none; box-shadow: none; width: 800px; min-width: 800px; height: auto;}</style>
     </head>
     <body>
-  {% include 'NIPSWeb/res_selector.twig' %}<a href="#" onclick="res_type_sel_change_handler()">Update</a>
+        {% include 'NIPSWeb/res_selector.twig' %}
+        <a href="#" onclick="res_type_sel_change_handler()">Update</a>
+
         <div id="central-container" class="res-container ui-widget-content ui-helper-hidden">
-          <p>You can upload track to the central database by dragging them into the box below. I'll try to analyse the file and if I can figure out what it is, then I'll upload it for you. If the track is of poor quality or too unknown to be recognised, then this tool will not allow tracks to be uploaded.</p>
-          <div id="central-dragdrop" class="ui-widget-header">Drag MP3 files here to upload<div id="lastfm-attr">
-              <a href="http://www.last.fm/">Powered by <img src="http://cdn.last.fm/flatness/badges/lastfm_black_small.gif" /></a>
-          </div></div>
-          <div class="ui-state-highlight" id="central-status"></div>
-          <div class="ui-widget-content" id="central-result"></div>
+
+            <p>You can upload track to the central database by dragging them into the box below. I'll try to analyse the file and if I can figure out what it is, then I'll upload it for you. If the track is of poor quality {% if AUTH_UPLOADMUSICMANUAL == false %}or too unknown to be recognised, {% endif %}then this tool will not allow tracks to be uploaded.{% if AUTH_UPLOADMUSICMANUAL %} If the track is not recognised, you will be asked to enter the track details manually.{% endif %}</p>
+
+            <div id="central-dragdrop" class="ui-widget-header">
+                Drag MP3 files here to upload
+                <div id="lastfm-attr">
+                    <a href="http://www.last.fm/">Powered by <img src="http://cdn.last.fm/flatness/badges/lastfm_black_small.gif" /></a>
+                </div>
+            </div>
+
+            <div class="ui-state-highlight" id="central-status"></div>
+            <div class="ui-widget-content" id="central-result"></div>
+
+            {% if AUTH_UPLOADMUSICMANUAL %}
+                <div id="track-manual-entry" class="ui-helper-hidden">
+                    <p>Track not found. Please enter the details manually:</p>
+                    <form>
+                        <label>Title: <input type="text" id="track-manual-entry-title"></label>
+                        <label>Artist: <input type="text" id="track-manual-entry-artist"></label>
+                        <label>Album: <input type="text" id="track-manual-entry-album"></label>
+                        <label>Track Position: <input type="text" id="track-manual-entry-position"></label>
+                    </form>
+                </div>
+            {% endif %}
+
         </div>
+
         <div id="managed-container" class="res-container ui-widget-content ui-helper-hidden">Managed playlists are controlled using <a href="/itones/" target="_blank">Campus Playout Manager</a>. Entering them there also adds them to the wonderful Campus Jukebox</div>
+
         <div id="res-container" class="res-container ui-widget-content ui-helper-hidden">
-          <p>You can upload track to this resource library by dragging them into the box below. Tracks uploaded must not return a match against our music analysis software.</p>
-          <div id="res-dragdrop" class="ui-widget-header">Drag WAV/MP3 files here to upload</div>
-          <div class="ui-state-highlight" id="res-status"></div>
-          <div class="ui-widget-content" id="res-result"></div>
+            <p>You can upload track to this resource library by dragging them into the box below. Tracks uploaded must not return a match against our music analysis software.</p>
+            <div id="res-dragdrop" class="ui-widget-header">Drag WAV/MP3 files here to upload</div>
+            <div class="ui-state-highlight" id="res-status"></div>
+            <div class="ui-widget-content" id="res-result"></div>
         </div>
         <script type="text/javascript">window.memberid = parseInt({{memberid}});</script>
-  {% include 'parts/base_foot.twig' %}
-      <script type="text/javascript" src="{{baseurl}}js/vendor/jquery.filedrop.js"></script>
-      <script type="text/javascript" src="{{baseurl}}js/nipsweb.managelibrary.js"></script>
-      </body></html>
+        {% include 'parts/base_foot.twig' %}
+        <script type="text/javascript" src="{{baseurl}}js/vendor/jquery.filedrop.js"></script>
+        <script type="text/javascript" src="{{baseurl}}js/nipsweb.managelibrary.js"></script>
+    </body>
+</html>
