@@ -7319,6 +7319,26 @@ INSERT INTO public.l_college (descr) VALUES ('Unknown');
 INSERT INTO myury.services (name, enabled) VALUES ('MyRadio', true);
 INSERT INTO l_status VALUES ('c', 'Current');
 INSERT INTO l_status VALUES ('h', 'Historic');
+INSERT INTO rec_statuslookup VALUES ('l', 'lost');
+INSERT INTO rec_statuslookup VALUES ('u', 'unknown');
+INSERT INTO rec_statuslookup VALUES ('o', 'OK');
+INSERT INTO rec_statuslookup VALUES ('d', 'digital only');
+INSERT INTO rec_medialookup VALUES ('c', 'CD');
+INSERT INTO rec_medialookup VALUES ('2', 'Vinyl 12"');
+INSERT INTO rec_medialookup VALUES ('7', 'Vinyl 7"');
+INSERT INTO rec_medialookup VALUES ('n', 'NIPSWeb MP3 Import');
+INSERT INTO rec_cleanlookup VALUES ('u', 'unknown');
+INSERT INTO rec_cleanlookup VALUES ('y', 'yes');
+INSERT INTO rec_cleanlookup VALUES ('n', '<b>NO!</b>');
+INSERT INTO rec_formatlookup VALUES ('a', 'Album');
+INSERT INTO rec_formatlookup VALUES ('s', 'Single');
+INSERT INTO rec_genrelookup VALUES ('p', 'Pop');
+INSERT INTO rec_genrelookup VALUES ('r', 'Rock');
+INSERT INTO rec_genrelookup VALUES ('d', 'Dance');
+INSERT INTO rec_genrelookup VALUES ('c', 'Classical');
+INSERT INTO rec_genrelookup VALUES ('z', 'Production');
+INSERT INTO rec_genrelookup VALUES ('h', 'Rap / Hip-Hop');
+INSERT INTO rec_genrelookup VALUES ('o', 'Other');
 
 --------------
 -- Set Credit Types
