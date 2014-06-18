@@ -1718,39 +1718,6 @@ COMMENT ON COLUMN recommended_listening.week IS 'The timestamp of the week whose
 COMMENT ON COLUMN recommended_listening.title IS 'The title of the song that has been recommended.';
 COMMENT ON COLUMN recommended_listening.artist IS 'The artist of the song that has been recommended.';
 COMMENT ON COLUMN recommended_listening."position" IS 'The position of the item in the list.';
-CREATE TABLE sched_blocks (
-    blockid integer NOT NULL,
-    name character(255) NOT NULL,
-    use_timerange boolean DEFAULT false NOT NULL,
-    start_hour integer,
-    end_hour integer,
-    has_slot_tab boolean DEFAULT false NOT NULL,
-    id_string text,
-    is_flagship boolean DEFAULT false NOT NULL,
-    identifier text DEFAULT 'default'::text NOT NULL
-);
-COMMENT ON TABLE sched_blocks IS 'Information about specialist blocks, mainly to help the schedule renderer.
-The scheduler "sees" which shows fall into which blocks in the following ways:
-1) If id_string is provided, any shows with a summary (name) containing id_string as a substring will be marked as part of the block.
-2) If use_timerange is TRUE and a start_hour and end_hour are provided, then all shows between those hours will be marked as part of the block.
-Blocks with no timerange are prioritised over blocks with a timerange, so that eg. a new lunchtime Speech show added to the database will override Flagship show colouring.
-(TODO: Manual linkage between blockid and sched_entry.entryid if the situation with duplicate/redundant blocks gets out of hand.)';
-COMMENT ON COLUMN sched_blocks.blockid IS 'Sequential identification for block.';
-COMMENT ON COLUMN sched_blocks.name IS 'The name of the block.  This is shown on the scheduler tab (if any).';
-COMMENT ON COLUMN sched_blocks.use_timerange IS 'Whether or not the scheduler should use a time-range to identify shows in this block as well as the name.';
-COMMENT ON COLUMN sched_blocks.start_hour IS 'The hour at which this block begins (NB: midnight is hour 25, 1am is hour 26, etc).';
-COMMENT ON COLUMN sched_blocks.end_hour IS 'The hour at which this block ends (NB: midnight is hour 25, 1am is hour 26, etc).';
-COMMENT ON COLUMN sched_blocks.has_slot_tab IS 'If true, a "tab" will appear on the hour marker of the first hour of the block with the block colour and name.';
-COMMENT ON COLUMN sched_blocks.id_string IS 'The (optional) string to use for searching for block members.  If this is non-NULL, any show with this string in its summary (title) will become part of the block.';
-COMMENT ON COLUMN sched_blocks.is_flagship IS 'If true, block is a flagship block and will be emphasised as such in lists etc.';
-COMMENT ON COLUMN sched_blocks.identifier IS 'A string used to identify the block in areas such as the colour coding system.  Many different blocks can share the same identifier.';
-CREATE SEQUENCE sched_blocks_blockid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE sched_blocks_blockid_seq OWNED BY sched_blocks.blockid;
 SET search_path = schedule, pg_catalog;
 CREATE TABLE show (
     show_id integer NOT NULL,
@@ -1783,73 +1750,7 @@ COMMENT ON COLUMN show_metadata.memberid IS 'The ID of the member who submitted 
 COMMENT ON COLUMN show_metadata.approvedid IS 'The ID of the member who approved the change to the show metadata item. A value of NULL means not yet approved or this item does not need to be approved.';
 COMMENT ON COLUMN show_metadata.effective_to IS 'The timestamp of the period at which this metadatum stops being effective.  If NULL, the metadatum is effective indefinitely from effective_from.';
 SET search_path = public, pg_catalog;
-CREATE VIEW sched_entry AS
-    SELECT t0.entryid, t0.entrytypeid, t0.rss, t0.url, t1.summary, t1.createddate, NULL::unknown AS oid, t1.summary AS description FROM ((SELECT show.show_id AS entryid, '3' AS entrytypeid, NULL::unknown AS rss, NULL::unknown AS url FROM schedule.show) t0 LEFT JOIN (SELECT show_metadata.show_id AS entryid, show_metadata.metadata_value AS summary, show_metadata.effective_from AS createddate FROM schedule.show_metadata WHERE ((show_metadata.metadata_key_id = 2) AND ((show_metadata.effective_to IS NULL) OR (show_metadata.effective_to >= now())))) t1 ON ((t0.entryid = t1.entryid)));
 SET default_with_oids = true;
-CREATE TABLE sched_entrytype (
-    entrytypeid integer NOT NULL,
-    entrytypename character varying(30) NOT NULL,
-    causesclash boolean DEFAULT true,
-    takesuptime boolean DEFAULT false
-);
-COMMENT ON COLUMN sched_entrytype.takesuptime IS 'defines if this entrytype appears in a persons schedule';
-CREATE SEQUENCE sched_entrytype_entrytypeid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE sched_entrytype_entrytypeid_seq OWNED BY sched_entrytype.entrytypeid;
-CREATE SEQUENCE sched_genre_genreid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-SET default_with_oids = false;
-CREATE TABLE sched_genre (
-    genreid integer DEFAULT nextval('sched_genre_genreid_seq'::regclass) NOT NULL,
-    genrename character varying(30) NOT NULL
-);
-COMMENT ON COLUMN sched_genre.genreid IS 'The unique ID number of the genre.';
-COMMENT ON COLUMN sched_genre.genrename IS 'The name of the genre.';
-SET default_with_oids = true;
-CREATE TABLE sched_musiccategory (
-    musiccategoryid integer NOT NULL,
-    musiccategoryname character varying(30) NOT NULL,
-    ordering integer
-);
-CREATE SEQUENCE sched_musiccategory_musiccategoryid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE sched_musiccategory_musiccategoryid_seq OWNED BY sched_musiccategory.musiccategoryid;
-CREATE TABLE sched_room (
-    roomid integer NOT NULL,
-    roomname character varying(30) NOT NULL,
-    ordering integer
-);
-CREATE SEQUENCE sched_room_roomid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE sched_room_roomid_seq OWNED BY sched_room.roomid;
-CREATE TABLE sched_speechcategory (
-    speechcategoryid integer NOT NULL,
-    speechcategoryname character varying(30) NOT NULL,
-    ordering integer
-);
-CREATE SEQUENCE sched_speechcategory_speechcategoryid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE sched_speechcategory_speechcategoryid_seq OWNED BY sched_speechcategory.speechcategoryid;
 SET search_path = schedule, pg_catalog;
 SET default_with_oids = false;
 CREATE TABLE show_season (
@@ -2759,11 +2660,6 @@ ALTER TABLE ONLY member_news_feed ALTER COLUMN membernewsfeedid SET DEFAULT next
 ALTER TABLE ONLY member_presenterstatus ALTER COLUMN memberpresenterstatusid SET DEFAULT nextval('member_presenterstatus_memberpresenterstatusid_seq'::regclass);
 ALTER TABLE ONLY news_feed ALTER COLUMN newsentryid SET DEFAULT nextval('news_feed_newsentryid_seq'::regclass);
 ALTER TABLE ONLY rec_trackcorrection ALTER COLUMN correctionid SET DEFAULT nextval('rec_trackcorrection_correctionid_seq'::regclass);
-ALTER TABLE ONLY sched_blocks ALTER COLUMN blockid SET DEFAULT nextval('sched_blocks_blockid_seq'::regclass);
-ALTER TABLE ONLY sched_entrytype ALTER COLUMN entrytypeid SET DEFAULT nextval('sched_entrytype_entrytypeid_seq'::regclass);
-ALTER TABLE ONLY sched_musiccategory ALTER COLUMN musiccategoryid SET DEFAULT nextval('sched_musiccategory_musiccategoryid_seq'::regclass);
-ALTER TABLE ONLY sched_room ALTER COLUMN roomid SET DEFAULT nextval('sched_room_roomid_seq'::regclass);
-ALTER TABLE ONLY sched_speechcategory ALTER COLUMN speechcategoryid SET DEFAULT nextval('sched_speechcategory_speechcategoryid_seq'::regclass);
 ALTER TABLE ONLY selector ALTER COLUMN selid SET DEFAULT nextval('selector_selid_seq'::regclass);
 ALTER TABLE ONLY selector_actions ALTER COLUMN action SET DEFAULT nextval('selector_actions_action_seq'::regclass);
 ALTER TABLE ONLY sis_commtype ALTER COLUMN commtypeid SET DEFAULT nextval('sis_commtype_commtypeid_seq'::regclass);
@@ -2815,8 +2711,6 @@ ALTER TABLE ONLY banner_location ALTER COLUMN banner_location_id SET DEFAULT nex
 ALTER TABLE ONLY banner_timeslot ALTER COLUMN id SET DEFAULT nextval('banner_timeslot_id_seq'::regclass);
 ALTER TABLE ONLY banner_type ALTER COLUMN banner_type_id SET DEFAULT nextval('banner_type_banner_type_id_seq'::regclass);
 SET search_path = myury, pg_catalog;
-ALTER TABLE ONLY api_key
-    ADD CONSTRAINT api_key_pkey PRIMARY KEY (key_string);
 CREATE TABLE api_key_log (
     api_log_id integer NOT NULL,
     key_string character varying NOT NULL,
@@ -2827,12 +2721,4590 @@ CREATE TABLE api_key_log (
 );
 COMMENT ON TABLE api_key_log IS 'Stores a record of API Requests by an API Key';
 ALTER SEQUENCE api_key_log_api_log_id_seq OWNED BY api_key_log.api_log_id;
-ALTER TABLE ONLY api_key_log ALTER COLUMN api_log_id SET DEFAULT nextval('api_key_log_api_log_id_seq'::regclass);
+
+
+--------------
+-- Add constraints and keys
+-- These were missing from the initial dump for some reason
+--------------
+SET search_path = bapsplanner, pg_catalog;
+
+--
+-- Name: auto_playlists_pkey; Type: CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY auto_playlists
+    ADD CONSTRAINT auto_playlists_pkey PRIMARY KEY (auto_playlist_id);
+
+
+--
+-- Name: client_ids_pkey; Type: CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY client_ids
+    ADD CONSTRAINT client_ids_pkey PRIMARY KEY (client_id);
+
+
+--
+-- Name: managed_items_pkey; Type: CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY managed_items
+    ADD CONSTRAINT managed_items_pkey PRIMARY KEY (manageditemid);
+
+
+--
+-- Name: managed_playlists_folder_key; Type: CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY managed_playlists
+    ADD CONSTRAINT managed_playlists_folder_key UNIQUE (folder);
+
+
+--
+-- Name: managed_playlists_name_key; Type: CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY managed_playlists
+    ADD CONSTRAINT managed_playlists_name_key UNIQUE (name);
+
+
+--
+-- Name: managed_playlists_pkey; Type: CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY managed_playlists
+    ADD CONSTRAINT managed_playlists_pkey PRIMARY KEY (managedplaylistid);
+
+
+--
+-- Name: secure_play_token_pkey; Type: CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY secure_play_token
+    ADD CONSTRAINT secure_play_token_pkey PRIMARY KEY (sessionid, memberid, "timestamp", trackid);
+
+
+--
+-- Name: timeslot_change_ops_pkey; Type: CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY timeslot_change_ops
+    ADD CONSTRAINT timeslot_change_ops_pkey PRIMARY KEY (timeslot_change_set_id);
+
+
+--
+-- Name: timeslot_items_pkey; Type: CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY timeslot_items
+    ADD CONSTRAINT timeslot_items_pkey PRIMARY KEY (timeslot_item_id);
+
+SET search_path = jukebox, pg_catalog;
+
+--
+-- Name: playlist_entries_pkey; Type: CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlist_entries
+    ADD CONSTRAINT playlist_entries_pkey PRIMARY KEY (playlistid, trackid, revision_added);
+
+
+--
+-- Name: playlist_revisions_pkey; Type: CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlist_revisions
+    ADD CONSTRAINT playlist_revisions_pkey PRIMARY KEY (playlistid, revisionid);
+
+
+--
+-- Name: playlist_timeslot_pkey; Type: CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlist_timeslot
+    ADD CONSTRAINT playlist_timeslot_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: playlists_pkey; Type: CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlists
+    ADD CONSTRAINT playlists_pkey PRIMARY KEY (playlistid);
+
+
+--
+-- Name: request_pkey; Type: CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY request
+    ADD CONSTRAINT request_pkey PRIMARY KEY (request_id);
+
+
+--
+-- Name: silence_log_pkey; Type: CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY silence_log
+    ADD CONSTRAINT silence_log_pkey PRIMARY KEY (silenceid);
+
+
+--
+-- Name: track_blacklist_pkey; Type: CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY track_blacklist
+    ADD CONSTRAINT track_blacklist_pkey PRIMARY KEY (trackid);
+
+
+SET search_path = mail, pg_catalog;
+
+--
+-- Name: alias_list_pkey; Type: CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY alias_list
+    ADD CONSTRAINT alias_list_pkey PRIMARY KEY (alias_id, destination);
+
+
+--
+-- Name: alias_member_pkey; Type: CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY alias_member
+    ADD CONSTRAINT alias_member_pkey PRIMARY KEY (alias_id, destination);
+
+
+--
+-- Name: alias_officer_pkey; Type: CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY alias_officer
+    ADD CONSTRAINT alias_officer_pkey PRIMARY KEY (alias_id, destination);
+
+
+--
+-- Name: alias_pkey; Type: CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY alias
+    ADD CONSTRAINT alias_pkey PRIMARY KEY (alias_id);
+
+
+--
+-- Name: alias_source_key; Type: CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY alias
+    ADD CONSTRAINT alias_source_key UNIQUE (source);
+
+
+--
+-- Name: alias_text_pkey; Type: CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY alias_text
+    ADD CONSTRAINT alias_text_pkey PRIMARY KEY (alias_id, destination);
+
+
+--
+-- Name: email_recipient_list_pkey; Type: CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY email_recipient_list
+    ADD CONSTRAINT email_recipient_list_pkey PRIMARY KEY (email_id, listid);
+
+
+--
+-- Name: email_recipient_user_pkey; Type: CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY email_recipient_member
+    ADD CONSTRAINT email_recipient_user_pkey PRIMARY KEY (email_id, memberid);
+
+
+--
+-- Name: emails_pkey; Type: CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY email
+    ADD CONSTRAINT emails_pkey PRIMARY KEY (email_id);
+
+
+SET search_path = metadata, pg_catalog;
+
+--
+-- Name: metadata_key_name_key; Type: CONSTRAINT; Schema: metadata
+--
+
+ALTER TABLE ONLY metadata_key
+    ADD CONSTRAINT metadata_key_name_key UNIQUE (name);
+
+
+--
+-- Name: metadata_key_pkey; Type: CONSTRAINT; Schema: metadata
+--
+
+ALTER TABLE ONLY metadata_key
+    ADD CONSTRAINT metadata_key_pkey PRIMARY KEY (metadata_key_id);
+
+
+--
+-- Name: package_image_metadata_pkey; Type: CONSTRAINT; Schema: metadata
+--
+
+ALTER TABLE ONLY package_image_metadata
+    ADD CONSTRAINT package_image_metadata_pkey PRIMARY KEY (package_image_metadata_id);
+
+
+--
+-- Name: package_pkey; Type: CONSTRAINT; Schema: metadata
+--
+
+ALTER TABLE ONLY package
+    ADD CONSTRAINT package_pkey PRIMARY KEY (package_id);
+
+
+--
+-- Name: package_text_metadata_pkey; Type: CONSTRAINT; Schema: metadata
+--
+
+ALTER TABLE ONLY package_text_metadata
+    ADD CONSTRAINT package_text_metadata_pkey PRIMARY KEY (package_text_metadata_id);
+
+
+SET search_path = music, pg_catalog;
+
+--
+-- Name: chart_release_pkey; Type: CONSTRAINT; Schema: music
+--
+
+ALTER TABLE ONLY chart_release
+    ADD CONSTRAINT chart_release_pkey PRIMARY KEY (chart_release_id);
+
+
+--
+-- Name: chart_row_chart_row_id_key; Type: CONSTRAINT; Schema: music
+--
+
+ALTER TABLE ONLY chart_row
+    ADD CONSTRAINT chart_row_chart_row_id_key UNIQUE (chart_row_id, "position");
+
+
+--
+-- Name: chart_row_pkey; Type: CONSTRAINT; Schema: music
+--
+
+ALTER TABLE ONLY chart_row
+    ADD CONSTRAINT chart_row_pkey PRIMARY KEY (chart_row_id);
+
+
+--
+-- Name: chart_type_pkey; Type: CONSTRAINT; Schema: music
+--
+
+ALTER TABLE ONLY chart_type
+    ADD CONSTRAINT chart_type_pkey PRIMARY KEY (chart_type_id);
+
+
+SET search_path = myury, pg_catalog;
+
+--
+-- Name: act_permission_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY act_permission
+    ADD CONSTRAINT act_permission_pkey PRIMARY KEY (actpermissionid);
+
+
+--
+-- Name: act_permission_serviceid_key; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY act_permission
+    ADD CONSTRAINT act_permission_serviceid_key UNIQUE (serviceid, moduleid, actionid, typeid);
+
+
+--
+-- Name: actions_moduleid_key; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY actions
+    ADD CONSTRAINT actions_moduleid_key UNIQUE (moduleid, name);
+
+
+--
+-- Name: actions_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY actions
+    ADD CONSTRAINT actions_pkey PRIMARY KEY (actionid);
+
+
+--
+-- Name: api_class_map_api_name_key; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY api_class_map
+    ADD CONSTRAINT api_class_map_api_name_key UNIQUE (api_name);
+
+
+--
+-- Name: api_class_map_class_name_key; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY api_class_map
+    ADD CONSTRAINT api_class_map_class_name_key UNIQUE (class_name);
+
+
+--
+-- Name: api_class_map_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY api_class_map
+    ADD CONSTRAINT api_class_map_pkey PRIMARY KEY (api_map_id);
+
+
+--
+-- Name: api_key_auth_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY api_key_auth
+    ADD CONSTRAINT api_key_auth_pkey PRIMARY KEY (key_string, typeid);
+
+
+--
+-- Name: api_key_log_pkey; Type: CONSTRAINT; Schema: myury
+--
+
 ALTER TABLE ONLY api_key_log
     ADD CONSTRAINT api_key_log_pkey PRIMARY KEY (api_log_id);
+
+
+--
+-- Name: api_key_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY api_key
+    ADD CONSTRAINT api_key_pkey PRIMARY KEY (key_string);
+
+
+--
+-- Name: api_method_auth_class_name_method_name_typeid_key; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY api_method_auth
+    ADD CONSTRAINT api_method_auth_class_name_method_name_typeid_key UNIQUE (class_name, method_name, typeid);
+
+
+--
+-- Name: api_method_auth_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY api_method_auth
+    ADD CONSTRAINT api_method_auth_pkey PRIMARY KEY (api_method_auth_id);
+
+
+--
+-- Name: award_categories_name_key; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY award_categories
+    ADD CONSTRAINT award_categories_name_key UNIQUE (name);
+
+
+--
+-- Name: award_categories_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY award_categories
+    ADD CONSTRAINT award_categories_pkey PRIMARY KEY (awardid);
+
+
+--
+-- Name: award_member_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY award_member
+    ADD CONSTRAINT award_member_pkey PRIMARY KEY (awardmemberid);
+
+
+--
+-- Name: contract_versions_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY contract_versions
+    ADD CONSTRAINT contract_versions_pkey PRIMARY KEY (contract_version_id);
+
+
+--
+-- Name: error_rate_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY error_rate
+    ADD CONSTRAINT error_rate_pkey PRIMARY KEY (request_id);
+
+
+--
+-- Name: menu_columns_order_key; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY menu_columns
+    ADD CONSTRAINT menu_columns_order_key UNIQUE ("position");
+
+
+--
+-- Name: menu_columns_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY menu_columns
+    ADD CONSTRAINT menu_columns_pkey PRIMARY KEY (columnid);
+
+
+--
+-- Name: menu_columns_title_key; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY menu_columns
+    ADD CONSTRAINT menu_columns_title_key UNIQUE (title);
+
+
+--
+-- Name: menu_links_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY menu_links
+    ADD CONSTRAINT menu_links_pkey PRIMARY KEY (itemid);
+
+
+--
+-- Name: menu_links_title_key; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY menu_links
+    ADD CONSTRAINT menu_links_title_key UNIQUE (title);
+
+
+--
+-- Name: menu_module_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY menu_module
+    ADD CONSTRAINT menu_module_pkey PRIMARY KEY (menumoduleid);
+
+
+--
+-- Name: menu_sections_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY menu_sections
+    ADD CONSTRAINT menu_sections_pkey PRIMARY KEY (sectionid);
+
+
+--
+-- Name: menu_sections_title_key; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY menu_sections
+    ADD CONSTRAINT menu_sections_title_key UNIQUE (title);
+
+
+--
+-- Name: menu_twigitems_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY menu_twigitems
+    ADD CONSTRAINT menu_twigitems_pkey PRIMARY KEY (twigitemid);
+
+
+--
+-- Name: modules_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY modules
+    ADD CONSTRAINT modules_pkey PRIMARY KEY (moduleid);
+
+
+--
+-- Name: modules_serviceid_key; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY modules
+    ADD CONSTRAINT modules_serviceid_key UNIQUE (serviceid, name);
+
+
+--
+-- Name: photos_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY photos
+    ADD CONSTRAINT photos_pkey PRIMARY KEY (photoid);
+
+
+--
+-- Name: services_name_key; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY services
+    ADD CONSTRAINT services_name_key UNIQUE (name);
+
+
+--
+-- Name: services_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY services
+    ADD CONSTRAINT services_pkey PRIMARY KEY (serviceid);
+
+
+--
+-- Name: services_versions_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY services_versions
+    ADD CONSTRAINT services_versions_pkey PRIMARY KEY (serviceversionid);
+
+
+--
+-- Name: services_versions_serviceid_key; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY services_versions
+    ADD CONSTRAINT services_versions_serviceid_key UNIQUE (serviceid, version);
+
+
+--
+-- Name: services_versions_serviceid_key1; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY services_versions
+    ADD CONSTRAINT services_versions_serviceid_key1 UNIQUE (serviceid, path);
+
+
+--
+-- Name: services_versions_users_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY services_versions_member
+    ADD CONSTRAINT services_versions_users_pkey PRIMARY KEY (memberid, serviceversionid);
+
+
+--
+-- Name: single_login_token_pkey; Type: CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY password_reset_token
+    ADD CONSTRAINT single_login_token_pkey PRIMARY KEY (token);
+
+
+SET search_path = people, pg_catalog;
+
+--
+-- Name: group_root_role_pkey; Type: CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY group_root_role
+    ADD CONSTRAINT group_root_role_pkey PRIMARY KEY (group_root_role_id);
+
+
+--
+-- Name: group_root_role_role_id_id_key; Type: CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY group_root_role
+    ADD CONSTRAINT group_root_role_role_id_id_key UNIQUE (role_id_id);
+
+
+--
+-- Name: group_type_pkey; Type: CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY group_type
+    ADD CONSTRAINT group_type_pkey PRIMARY KEY (group_type_id);
+
+
+--
+-- Name: metadata_pkey; Type: CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY metadata
+    ADD CONSTRAINT metadata_pkey PRIMARY KEY (roleid, key);
+
+
+--
+-- Name: quote_pkey; Type: CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY quote
+    ADD CONSTRAINT quote_pkey PRIMARY KEY (quote_id);
+
+
+--
+-- Name: role_inheritance_pkey; Type: CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY role_inheritance
+    ADD CONSTRAINT role_inheritance_pkey PRIMARY KEY (role_inheritance_id);
+
+
+--
+-- Name: role_metadata_pkey; Type: CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY role_text_metadata
+    ADD CONSTRAINT role_metadata_pkey PRIMARY KEY (role_text_metadata_id);
+
+
+--
+-- Name: roles_pkey; Type: CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY role
+    ADD CONSTRAINT roles_pkey PRIMARY KEY (role_id);
+
+
+--
+-- Name: schedule.showcredittype_pkey; Type: CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY credit_type
+    ADD CONSTRAINT "schedule.showcredittype_pkey" PRIMARY KEY (credit_type_id);
+
+
+--
+-- Name: types_name_key; Type: CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY role_visibility
+    ADD CONSTRAINT types_name_key UNIQUE (name);
+
+
+--
+-- Name: types_pkey; Type: CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY role_visibility
+    ADD CONSTRAINT types_pkey PRIMARY KEY (role_visibility_id);
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- Name: auth_group_name_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_group
+    ADD CONSTRAINT auth_group_name_key UNIQUE (name);
+
+
+--
+-- Name: auth_group_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_group
+    ADD CONSTRAINT auth_group_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_officer_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_officer
+    ADD CONSTRAINT auth_officer_pkey PRIMARY KEY (officerid, lookupid);
+
+
+--
+-- Name: auth_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth
+    ADD CONSTRAINT auth_pkey PRIMARY KEY (memberid, lookupid, starttime);
+
+
+--
+-- Name: auth_subnet_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_subnet
+    ADD CONSTRAINT auth_subnet_pkey PRIMARY KEY (typeid, subnet);
+
+
+--
+-- Name: auth_trainingstatus_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_trainingstatus
+    ADD CONSTRAINT auth_trainingstatus_pkey PRIMARY KEY (typeid, presenterstatusid);
+
+
+--
+-- Name: auth_user_groups_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_user_groups_user_id_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_user_id_key UNIQUE (user_id, group_id);
+
+
+--
+-- Name: auth_user_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_user
+    ADD CONSTRAINT auth_user_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_user_username_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_user
+    ADD CONSTRAINT auth_user_username_key UNIQUE (username);
+
+
+--
+-- Name: baps_audio_filename_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_audio
+    ADD CONSTRAINT baps_audio_filename_key UNIQUE (filename);
+
+
+--
+-- Name: baps_audio_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_audio
+    ADD CONSTRAINT baps_audio_pkey PRIMARY KEY (audioid);
+
+
+--
+-- Name: baps_audio_trackid_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_audio
+    ADD CONSTRAINT baps_audio_trackid_key UNIQUE (trackid);
+
+
+--
+-- Name: baps_audiolog_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_audiolog
+    ADD CONSTRAINT baps_audiolog_pkey PRIMARY KEY (audiologid);
+
+
+--
+-- Name: baps_filefolder_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_filefolder
+    ADD CONSTRAINT baps_filefolder_pkey PRIMARY KEY (filefolderid);
+
+ALTER TABLE baps_filefolder CLUSTER ON baps_filefolder_pkey;
+
+
+--
+-- Name: baps_filefolder_workgroup_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_filefolder
+    ADD CONSTRAINT baps_filefolder_workgroup_key UNIQUE (workgroup, server, share);
+
+
+--
+-- Name: baps_fileitem_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_fileitem
+    ADD CONSTRAINT baps_fileitem_pkey PRIMARY KEY (fileitemid);
+
+ALTER TABLE baps_fileitem CLUSTER ON baps_fileitem_pkey;
+
+
+--
+-- Name: baps_item_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_item
+    ADD CONSTRAINT baps_item_pkey PRIMARY KEY (itemid);
+
+ALTER TABLE baps_item CLUSTER ON baps_item_pkey;
+
+
+--
+-- Name: baps_libraryitem_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_libraryitem
+    ADD CONSTRAINT baps_libraryitem_pkey PRIMARY KEY (libraryitemid);
+
+ALTER TABLE baps_libraryitem CLUSTER ON baps_libraryitem_pkey;
+
+
+--
+-- Name: baps_listing_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_listing
+    ADD CONSTRAINT baps_listing_pkey PRIMARY KEY (listingid);
+
+
+--
+-- Name: baps_server_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_server
+    ADD CONSTRAINT baps_server_pkey PRIMARY KEY (serverid);
+
+
+--
+-- Name: baps_server_servername_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_server
+    ADD CONSTRAINT baps_server_servername_key UNIQUE (servername);
+
+
+--
+-- Name: baps_show_name_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_show
+    ADD CONSTRAINT baps_show_name_key UNIQUE (name, userid);
+
+
+--
+-- Name: baps_show_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_show
+    ADD CONSTRAINT baps_show_pkey PRIMARY KEY (showid);
+
+ALTER TABLE baps_show CLUSTER ON baps_show_pkey;
+
+
+--
+-- Name: baps_textitem_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_textitem
+    ADD CONSTRAINT baps_textitem_pkey PRIMARY KEY (textitemid);
+
+ALTER TABLE baps_textitem CLUSTER ON baps_textitem_pkey;
+
+
+--
+-- Name: baps_user_external_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_user_external
+    ADD CONSTRAINT baps_user_external_pkey PRIMARY KEY (userexternalid);
+
+
+--
+-- Name: baps_user_external_userid_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_user_external
+    ADD CONSTRAINT baps_user_external_userid_key UNIQUE (userid, externalid);
+
+
+--
+-- Name: baps_user_filefolder_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_user_filefolder
+    ADD CONSTRAINT baps_user_filefolder_pkey PRIMARY KEY (userfilefolderid);
+
+
+--
+-- Name: baps_user_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_user
+    ADD CONSTRAINT baps_user_pkey PRIMARY KEY (userid);
+
+
+--
+-- Name: baps_user_username_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_user
+    ADD CONSTRAINT baps_user_username_key UNIQUE (username);
+
+ALTER TABLE baps_user CLUSTER ON baps_user_username_key;
+
+
+--
+-- Name: chart_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY chart
+    ADD CONSTRAINT chart_pkey PRIMARY KEY (chartweek, "position");
+
+
+--
+-- Name: l_action_descr_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY l_action
+    ADD CONSTRAINT l_action_descr_key UNIQUE (descr);
+
+
+--
+-- Name: l_action_phpconstant_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY l_action
+    ADD CONSTRAINT l_action_phpconstant_key UNIQUE (phpconstant);
+
+
+--
+-- Name: l_action_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY l_action
+    ADD CONSTRAINT l_action_pkey PRIMARY KEY (typeid);
+
+
+--
+-- Name: l_college_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY l_college
+    ADD CONSTRAINT l_college_pkey PRIMARY KEY (collegeid);
+
+
+--
+-- Name: l_musicinterest_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY l_musicinterest
+    ADD CONSTRAINT l_musicinterest_pkey PRIMARY KEY (typeid);
+
+
+--
+-- Name: l_newsfeeds_feedname_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY l_newsfeed
+    ADD CONSTRAINT l_newsfeeds_feedname_key UNIQUE (feedname);
+
+
+--
+-- Name: l_newsfeeds_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY l_newsfeed
+    ADD CONSTRAINT l_newsfeeds_pkey PRIMARY KEY (feedid);
+
+
+--
+-- Name: l_presenterstatus_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY l_presenterstatus
+    ADD CONSTRAINT l_presenterstatus_pkey PRIMARY KEY (presenterstatusid);
+
+
+--
+-- Name: l_status_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY l_status
+    ADD CONSTRAINT l_status_pkey PRIMARY KEY (statusid);
+
+
+--
+-- Name: l_subnet_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY l_subnet
+    ADD CONSTRAINT l_subnet_pkey PRIMARY KEY (subnet);
+
+
+--
+-- Name: mail_alias_list_name_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_alias_list
+    ADD CONSTRAINT mail_alias_list_name_key UNIQUE (name, listid);
+
+
+--
+-- Name: mail_alias_list_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_alias_list
+    ADD CONSTRAINT mail_alias_list_pkey PRIMARY KEY (aliasid);
+
+
+--
+-- Name: mail_alias_member_name_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_alias_member
+    ADD CONSTRAINT mail_alias_member_name_key UNIQUE (name, memberid);
+
+
+--
+-- Name: mail_alias_member_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_alias_member
+    ADD CONSTRAINT mail_alias_member_pkey PRIMARY KEY (aliasid);
+
+
+--
+-- Name: mail_alias_officer_name_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_alias_officer
+    ADD CONSTRAINT mail_alias_officer_name_key UNIQUE (name, officerid);
+
+
+--
+-- Name: mail_alias_officer_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_alias_officer
+    ADD CONSTRAINT mail_alias_officer_pkey PRIMARY KEY (aliasid);
+
+
+--
+-- Name: mail_alias_text_name_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_alias_text
+    ADD CONSTRAINT mail_alias_text_name_key UNIQUE (name, dest);
+
+
+--
+-- Name: mail_alias_text_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_alias_text
+    ADD CONSTRAINT mail_alias_text_pkey PRIMARY KEY (aliasid);
+
+
+--
+-- Name: mail_list_listaddress_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_list
+    ADD CONSTRAINT mail_list_listaddress_key UNIQUE (listaddress);
+
+
+--
+-- Name: mail_list_listname_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_list
+    ADD CONSTRAINT mail_list_listname_key UNIQUE (listname);
+
+
+--
+-- Name: mail_list_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_list
+    ADD CONSTRAINT mail_list_pkey PRIMARY KEY (listid);
+
+
+--
+-- Name: member_eduroam_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member
+    ADD CONSTRAINT member_eduroam_key UNIQUE (eduroam);
+
+
+--
+-- Name: member_email_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member
+    ADD CONSTRAINT member_email_key UNIQUE (email);
+
+
+--
+-- Name: member_local_alias_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member
+    ADD CONSTRAINT member_local_alias_key UNIQUE (local_alias);
+
+
+--
+-- Name: member_local_name_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member
+    ADD CONSTRAINT member_local_name_key UNIQUE (local_name);
+
+
+--
+-- Name: member_mail_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_subscription
+    ADD CONSTRAINT member_mail_pkey PRIMARY KEY (memberid, listid);
+
+
+--
+-- Name: member_news_feed_memberid_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_news_feed
+    ADD CONSTRAINT member_news_feed_memberid_key UNIQUE (memberid, newsentryid);
+
+
+--
+-- Name: member_news_feed_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_news_feed
+    ADD CONSTRAINT member_news_feed_pkey PRIMARY KEY (membernewsfeedid);
+
+
+--
+-- Name: member_officer_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_officer
+    ADD CONSTRAINT member_officer_pkey PRIMARY KEY (member_officerid);
+
+
+--
+-- Name: member_pass_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_pass
+    ADD CONSTRAINT member_pass_pkey PRIMARY KEY (memberid);
+
+
+--
+-- Name: member_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member
+    ADD CONSTRAINT member_pkey PRIMARY KEY (memberid);
+
+
+--
+-- Name: member_presenterstatus_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_presenterstatus
+    ADD CONSTRAINT member_presenterstatus_pkey PRIMARY KEY (memberpresenterstatusid);
+
+
+--
+-- Name: member_year_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_year
+    ADD CONSTRAINT member_year_pkey PRIMARY KEY (memberid, year);
+
+
+--
+-- Name: net_switchport_tags_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY net_switchport_tags
+    ADD CONSTRAINT net_switchport_tags_pkey PRIMARY KEY (portid, vlanid);
+
+
+--
+-- Name: net_switchports_mac_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY net_switchport
+    ADD CONSTRAINT net_switchports_mac_key UNIQUE (mac);
+
+
+--
+-- Name: net_switchports_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY net_switchport
+    ADD CONSTRAINT net_switchports_pkey PRIMARY KEY (portid);
+
+
+--
+-- Name: net_vlan_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY net_vlan
+    ADD CONSTRAINT net_vlan_pkey PRIMARY KEY (vlanid);
+
+
+--
+-- Name: news_feed_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY news_feed
+    ADD CONSTRAINT news_feed_pkey PRIMARY KEY (newsentryid);
+
+
+--
+-- Name: nipsweb_migrate_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY nipsweb_migrate
+    ADD CONSTRAINT nipsweb_migrate_pkey PRIMARY KEY (memberid);
+
+
+--
+-- Name: officer_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY officer
+    ADD CONSTRAINT officer_pkey PRIMARY KEY (officerid);
+
+
+--
+-- Name: rec_cleanlookup_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_cleanlookup
+    ADD CONSTRAINT rec_cleanlookup_pkey PRIMARY KEY (clean_code);
+
+
+--
+-- Name: rec_formatlookup_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_formatlookup
+    ADD CONSTRAINT rec_formatlookup_pkey PRIMARY KEY (format_code);
+
+
+--
+-- Name: rec_genrelookup_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_genrelookup
+    ADD CONSTRAINT rec_genrelookup_pkey PRIMARY KEY (genre_code);
+
+
+--
+-- Name: rec_itunes_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_itunes
+    ADD CONSTRAINT rec_itunes_pkey PRIMARY KEY (trackid);
+
+
+--
+-- Name: rec_labelqueue_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_labelqueue
+    ADD CONSTRAINT rec_labelqueue_pkey PRIMARY KEY (queueid);
+
+
+--
+-- Name: rec_locationlookup_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_locationlookup
+    ADD CONSTRAINT rec_locationlookup_pkey PRIMARY KEY (location_code);
+
+
+--
+-- Name: rec_lookup_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_lookup
+    ADD CONSTRAINT rec_lookup_pkey PRIMARY KEY (code_type, code);
+
+
+--
+-- Name: rec_medialookup_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_medialookup
+    ADD CONSTRAINT rec_medialookup_pkey PRIMARY KEY (media_code);
+
+
+--
+-- Name: rec_record_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_record
+    ADD CONSTRAINT rec_record_pkey PRIMARY KEY (recordid);
+
+
+--
+-- Name: rec_statuslookup_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_statuslookup
+    ADD CONSTRAINT rec_statuslookup_pkey PRIMARY KEY (status_code);
+
+
+--
+-- Name: rec_track_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_track
+    ADD CONSTRAINT rec_track_pkey PRIMARY KEY (trackid);
+
+
+--
+-- Name: rec_track_trackid_recordid_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_track
+    ADD CONSTRAINT rec_track_trackid_recordid_key UNIQUE (trackid, recordid);
+
+
+--
+-- Name: rec_trackcorrection_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_trackcorrection
+    ADD CONSTRAINT rec_trackcorrection_pkey PRIMARY KEY (correctionid);
+
+
+--
+-- Name: recommended_listening_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY recommended_listening
+    ADD CONSTRAINT recommended_listening_pkey PRIMARY KEY (week, "position");
+
+
+--
+-- Name: selector_actions_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY selector_actions
+    ADD CONSTRAINT selector_actions_pkey PRIMARY KEY (action);
+
+
+--
+-- Name: selector_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY selector
+    ADD CONSTRAINT selector_pkey PRIMARY KEY (selid);
+
+
+--
+-- Name: sis_piss_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY sis_piss
+    ADD CONSTRAINT sis_piss_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sis_status_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY sis_status
+    ADD CONSTRAINT sis_status_pkey PRIMARY KEY (statusid);
+
+
+--
+-- Name: sis_type_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY sis_commtype
+    ADD CONSTRAINT sis_type_pkey PRIMARY KEY (commtypeid);
+
+
+--
+-- Name: sso_session_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY sso_session
+    ADD CONSTRAINT sso_session_pkey PRIMARY KEY (id, "timestamp");
+
+
+--
+-- Name: strm_client_clientname_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY strm_useragent
+    ADD CONSTRAINT strm_client_clientname_key UNIQUE (useragent);
+
+
+--
+-- Name: strm_client_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY strm_useragent
+    ADD CONSTRAINT strm_client_pkey PRIMARY KEY (useragentid);
+
+
+--
+-- Name: strm_log_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY strm_log
+    ADD CONSTRAINT strm_log_pkey PRIMARY KEY (logid);
+
+
+--
+-- Name: strm_logfile_filename_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY strm_logfile
+    ADD CONSTRAINT strm_logfile_filename_key UNIQUE (filename);
+
+
+--
+-- Name: strm_logfile_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY strm_logfile
+    ADD CONSTRAINT strm_logfile_pkey PRIMARY KEY (logfileid);
+
+
+--
+-- Name: strm_stream_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY strm_stream
+    ADD CONSTRAINT strm_stream_pkey PRIMARY KEY (streamid);
+
+
+--
+-- Name: strm_stream_streamname_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY strm_stream
+    ADD CONSTRAINT strm_stream_streamname_key UNIQUE (streamname);
+
+
+--
+-- Name: team_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY team
+    ADD CONSTRAINT team_pkey PRIMARY KEY (teamid);
+
+
+--
+-- Name: terms_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY terms
+    ADD CONSTRAINT terms_pkey PRIMARY KEY (termid);
+
+
+SET search_path = schedule, pg_catalog;
+
+--
+-- Name: block_direct_rules_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY block_show_rule
+    ADD CONSTRAINT block_direct_rules_pkey PRIMARY KEY (block_show_rule_id);
+
+
+--
+-- Name: block_range_rule_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY block_range_rule
+    ADD CONSTRAINT block_range_rule_pkey PRIMARY KEY (block_range_rule_id);
+
+
+--
+-- Name: blocks_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY block
+    ADD CONSTRAINT blocks_pkey PRIMARY KEY (block_id);
+
+
+--
+-- Name: genre_name_key; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY genre
+    ADD CONSTRAINT genre_name_key UNIQUE (name);
+
+
+--
+-- Name: genre_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY genre
+    ADD CONSTRAINT genre_pkey PRIMARY KEY (genre_id);
+
+
+--
+-- Name: location_location_name_key; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY location
+    ADD CONSTRAINT location_location_name_key UNIQUE (location_name);
+
+
+--
+-- Name: location_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY location
+    ADD CONSTRAINT location_pkey PRIMARY KEY (location_id);
+
+
+--
+-- Name: season_metadata_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY season_metadata
+    ADD CONSTRAINT season_metadata_pkey PRIMARY KEY (season_metadata_id);
+
+
+--
+-- Name: show_credit_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_credit
+    ADD CONSTRAINT show_credit_pkey PRIMARY KEY (show_credit_id);
+
+
+--
+-- Name: show_genre_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_genre
+    ADD CONSTRAINT show_genre_pkey PRIMARY KEY (show_genre_id);
+
+
+--
+-- Name: show_image_metadata_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_image_metadata
+    ADD CONSTRAINT show_image_metadata_pkey PRIMARY KEY (show_image_metadata_id);
+
+
+--
+-- Name: show_location_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_location
+    ADD CONSTRAINT show_location_pkey PRIMARY KEY (show_location_id);
+
+
+--
+-- Name: show_metadata_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_metadata
+    ADD CONSTRAINT show_metadata_pkey PRIMARY KEY (show_metadata_id);
+
+
+--
+-- Name: show_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show
+    ADD CONSTRAINT show_pkey PRIMARY KEY (show_id);
+
+
+--
+-- Name: show_podcast_link_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_podcast_link
+    ADD CONSTRAINT show_podcast_link_pkey PRIMARY KEY (podcast_id, show_id);
+
+
+--
+-- Name: show_season_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_season
+    ADD CONSTRAINT show_season_pkey PRIMARY KEY (show_season_id);
+
+
+--
+-- Name: show_season_requested_time_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_season_requested_time
+    ADD CONSTRAINT show_season_requested_time_pkey PRIMARY KEY (show_season_requested_time_id);
+
+
+--
+-- Name: show_season_requested_week_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_season_requested_week
+    ADD CONSTRAINT show_season_requested_week_pkey PRIMARY KEY (show_season_requested_week_id);
+
+
+--
+-- Name: show_season_requested_week_show_season_id_key; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_season_requested_week
+    ADD CONSTRAINT show_season_requested_week_show_season_id_key UNIQUE (show_season_id, week);
+
+
+--
+-- Name: show_season_timeslot_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_season_timeslot
+    ADD CONSTRAINT show_season_timeslot_pkey PRIMARY KEY (show_season_timeslot_id);
+
+
+--
+-- Name: show_season_timeslot_start_time_key; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_season_timeslot
+    ADD CONSTRAINT show_season_timeslot_start_time_key UNIQUE (start_time);
+
+
+--
+-- Name: show_type_name_key; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_type
+    ADD CONSTRAINT show_type_name_key UNIQUE (name);
+
+
+--
+-- Name: show_type_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_type
+    ADD CONSTRAINT show_type_pkey PRIMARY KEY (show_type_id);
+
+
+--
+-- Name: timeslot_metadata_pkey; Type: CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY timeslot_metadata
+    ADD CONSTRAINT timeslot_metadata_pkey PRIMARY KEY (timeslot_metadata_id);
+
+
+SET search_path = sis2, pg_catalog;
+
+--
+-- Name: config_pkey; Type: CONSTRAINT; Schema: sis2
+--
+
+ALTER TABLE ONLY config
+    ADD CONSTRAINT config_pkey PRIMARY KEY (setting);
+
+
+--
+-- Name: member_options_pkey; Type: CONSTRAINT; Schema: sis2
+--
+
+ALTER TABLE ONLY member_options
+    ADD CONSTRAINT member_options_pkey PRIMARY KEY (memberid);
+
+
+--
+-- Name: member_signin_memberid_show_season_timeslot_id_key; Type: CONSTRAINT; Schema: sis2
+--
+
+ALTER TABLE ONLY member_signin
+    ADD CONSTRAINT member_signin_memberid_show_season_timeslot_id_key UNIQUE (memberid, show_season_timeslot_id);
+
+
+--
+-- Name: member_signin_pkey; Type: CONSTRAINT; Schema: sis2
+--
+
+ALTER TABLE ONLY member_signin
+    ADD CONSTRAINT member_signin_pkey PRIMARY KEY (member_signin_id);
+
+
+SET search_path = tracklist, pg_catalog;
+
+--
+-- Name: pri_track_notrec; Type: CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY track_notrec
+    ADD CONSTRAINT pri_track_notrec PRIMARY KEY (audiologid);
+
+
+--
+-- Name: pri_track_rec; Type: CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY track_rec
+    ADD CONSTRAINT pri_track_rec PRIMARY KEY (audiologid);
+
+
+--
+-- Name: source_source_key; Type: CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY source
+    ADD CONSTRAINT source_source_key UNIQUE (source);
+
+
+--
+-- Name: source_sourceid_key; Type: CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY source
+    ADD CONSTRAINT source_sourceid_key UNIQUE (sourceid);
+
+
+--
+-- Name: state_stateid_key; Type: CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY state
+    ADD CONSTRAINT state_stateid_key UNIQUE (stateid);
+
+
+--
+-- Name: tracklist_pkey; Type: CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY tracklist
+    ADD CONSTRAINT tracklist_pkey PRIMARY KEY (audiologid);
+
+
+SET search_path = uryplayer, pg_catalog;
+
+--
+-- Name: podcast_credit_pkey; Type: CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_credit
+    ADD CONSTRAINT podcast_credit_pkey PRIMARY KEY (podcast_credit_id);
+
+
+--
+-- Name: podcast_image_metadata_pkey; Type: CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_image_metadata
+    ADD CONSTRAINT podcast_image_metadata_pkey PRIMARY KEY (podcast_image_metadata_id);
+
+
+--
+-- Name: podcast_metadata_pkey; Type: CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_metadata
+    ADD CONSTRAINT podcast_metadata_pkey PRIMARY KEY (podcast_metadata_id);
+
+
+--
+-- Name: podcast_package_entry_pkey; Type: CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_package_entry
+    ADD CONSTRAINT podcast_package_entry_pkey PRIMARY KEY (podcast_package_entry_id);
+
+
+--
+-- Name: podcast_pkey; Type: CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast
+    ADD CONSTRAINT podcast_pkey PRIMARY KEY (podcast_id);
+
+
+SET search_path = webcam, pg_catalog;
+
+--
+-- Name: memberviews_pkey; Type: CONSTRAINT; Schema: webcam
+--
+
+ALTER TABLE ONLY memberviews
+    ADD CONSTRAINT memberviews_pkey PRIMARY KEY (memberid);
+
+
+--
+-- Name: streams_pkey; Type: CONSTRAINT; Schema: webcam
+--
+
+ALTER TABLE ONLY streams
+    ADD CONSTRAINT streams_pkey PRIMARY KEY (streamid);
+
+
+SET search_path = website, pg_catalog;
+
+--
+-- Name: banner_campaign_pkey; Type: CONSTRAINT; Schema: website
+--
+
+ALTER TABLE ONLY banner_campaign
+    ADD CONSTRAINT banner_campaign_pkey PRIMARY KEY (banner_campaign_id);
+
+
+--
+-- Name: banner_location_pkey; Type: CONSTRAINT; Schema: website
+--
+
+ALTER TABLE ONLY banner_location
+    ADD CONSTRAINT banner_location_pkey PRIMARY KEY (banner_location_id);
+
+
+--
+-- Name: banner_pkey; Type: CONSTRAINT; Schema: website
+--
+
+ALTER TABLE ONLY banner
+    ADD CONSTRAINT banner_pkey PRIMARY KEY (banner_id);
+
+
+--
+-- Name: banner_timeslot_pkey; Type: CONSTRAINT; Schema: website
+--
+
+ALTER TABLE ONLY banner_timeslot
+    ADD CONSTRAINT banner_timeslot_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: banner_type_pkey; Type: CONSTRAINT; Schema: website
+--
+
+ALTER TABLE ONLY banner_type
+    ADD CONSTRAINT banner_type_pkey PRIMARY KEY (banner_type_id);
+
+
+SET search_path = metadata, pg_catalog;
+
+--
+-- Name: package_image_metadata_approvedid; Type: INDEX; Schema: metadata
+--
+
+CREATE INDEX package_image_metadata_approvedid ON package_image_metadata USING btree (approvedid);
+
+
+--
+-- Name: package_image_metadata_element_id; Type: INDEX; Schema: metadata
+--
+
+CREATE INDEX package_image_metadata_element_id ON package_image_metadata USING btree (element_id);
+
+
+--
+-- Name: package_image_metadata_memberid; Type: INDEX; Schema: metadata
+--
+
+CREATE INDEX package_image_metadata_memberid ON package_image_metadata USING btree (memberid);
+
+
+--
+-- Name: package_image_metadata_metadata_key_id; Type: INDEX; Schema: metadata
+--
+
+CREATE INDEX package_image_metadata_metadata_key_id ON package_image_metadata USING btree (metadata_key_id);
+
+
+--
+-- Name: package_name; Type: INDEX; Schema: metadata
+--
+
+CREATE INDEX package_name ON package USING btree (name);
+
+
+--
+-- Name: package_name_like; Type: INDEX; Schema: metadata
+--
+
+CREATE INDEX package_name_like ON package USING btree (name varchar_pattern_ops);
+
+
+--
+-- Name: package_text_metadata_approvedid; Type: INDEX; Schema: metadata
+--
+
+CREATE INDEX package_text_metadata_approvedid ON package_text_metadata USING btree (approvedid);
+
+
+--
+-- Name: package_text_metadata_element_id; Type: INDEX; Schema: metadata
+--
+
+CREATE INDEX package_text_metadata_element_id ON package_text_metadata USING btree (element_id);
+
+
+--
+-- Name: package_text_metadata_memberid; Type: INDEX; Schema: metadata
+--
+
+CREATE INDEX package_text_metadata_memberid ON package_text_metadata USING btree (memberid);
+
+
+--
+-- Name: package_text_metadata_metadata_key_id; Type: INDEX; Schema: metadata
+--
+
+CREATE INDEX package_text_metadata_metadata_key_id ON package_text_metadata USING btree (metadata_key_id);
+
+
+SET search_path = music, pg_catalog;
+
+--
+-- Name: chart_release_chart_type_id; Type: INDEX; Schema: music
+--
+
+CREATE INDEX chart_release_chart_type_id ON chart_release USING btree (chart_type_id);
+
+
+--
+-- Name: chart_row_chart_release_id; Type: INDEX; Schema: music
+--
+
+CREATE INDEX chart_row_chart_release_id ON chart_row USING btree (chart_release_id);
+
+
+--
+-- Name: chart_type_name; Type: INDEX; Schema: music
+--
+
+CREATE INDEX chart_type_name ON chart_type USING btree (name);
+
+
+--
+-- Name: chart_type_name_like; Type: INDEX; Schema: music
+--
+
+CREATE INDEX chart_type_name_like ON chart_type USING btree (name varchar_pattern_ops);
+
+
+SET search_path = myury, pg_catalog;
+
+--
+-- Name: api_key_log_timestamp_index; Type: INDEX; Schema: myury
+--
+
 CREATE INDEX api_key_log_timestamp_index ON api_key_log USING btree ("timestamp");
+
+
+--
+-- Name: error_rate_i_timestamp; Type: INDEX; Schema: myury
+--
+
+CREATE INDEX error_rate_i_timestamp ON error_rate USING btree ("timestamp");
+
+
+SET search_path = people, pg_catalog;
+
+--
+-- Name: group_root_role_group_type_id; Type: INDEX; Schema: people
+--
+
+CREATE INDEX group_root_role_group_type_id ON group_root_role USING btree (group_type_id);
+
+
+--
+-- Name: role_metadata_effective_from_index; Type: INDEX; Schema: people
+--
+
+CREATE INDEX role_metadata_effective_from_index ON role_text_metadata USING btree (effective_from);
+
+
+--
+-- Name: role_metadata_effective_to_index; Type: INDEX; Schema: people
+--
+
+CREATE INDEX role_metadata_effective_to_index ON role_text_metadata USING btree (effective_to);
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- Name: audiolog_timeplayed_index; Type: INDEX; Schema: public
+--
+
+CREATE INDEX audiolog_timeplayed_index ON baps_audiolog USING btree (timeplayed);
+
+
+--
+-- Name: audiolog_timestopped_index; Type: INDEX; Schema: public
+--
+
+CREATE INDEX audiolog_timestopped_index ON baps_audiolog USING btree (timestopped);
+
+
+--
+-- Name: baps_item_fileitemid_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX baps_item_fileitemid_key ON baps_item USING btree (fileitemid);
+
+
+--
+-- Name: baps_item_libraryitemid_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX baps_item_libraryitemid_key ON baps_item USING btree (libraryitemid);
+
+
+--
+-- Name: baps_item_listingid_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX baps_item_listingid_key ON baps_item USING btree (listingid);
+
+
+--
+-- Name: baps_item_position_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX baps_item_position_key ON baps_item USING btree ("position");
+
+
+--
+-- Name: baps_item_textitemid_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX baps_item_textitemid_key ON baps_item USING btree (textitemid);
+
+
+--
+-- Name: baps_item_viewable_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX baps_item_viewable_key ON baps_show USING btree (viewable);
+
+
+--
+-- Name: baps_libraryitem_trackid_index; Type: INDEX; Schema: public
+--
+
+CREATE INDEX baps_libraryitem_trackid_index ON baps_libraryitem USING btree (trackid);
+
+
+--
+-- Name: baps_listing_channel_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX baps_listing_channel_key ON baps_listing USING btree (channel);
+
+
+--
+-- Name: baps_listing_showid_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX baps_listing_showid_key ON baps_listing USING btree (showid);
+
+
+--
+-- Name: baps_show_broadcastdate_index; Type: INDEX; Schema: public
+--
+
+CREATE INDEX baps_show_broadcastdate_index ON baps_show USING btree (broadcastdate);
+
+
+--
+-- Name: baps_show_userid_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX baps_show_userid_key ON baps_show USING btree (userid);
+
+
+--
+-- Name: baps_user_usernamechart_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX baps_user_usernamechart_key ON baps_user USING btree (username) WHERE ((username)::text = 'chart'::text);
+
+
+--
+-- Name: chartweektimestamp; Type: INDEX; Schema: public
+--
+
+CREATE INDEX chartweektimestamp ON chart USING btree (chartweek);
+
+
+--
+-- Name: i_endtime; Type: INDEX; Schema: public
+--
+
+CREATE INDEX i_endtime ON strm_log USING btree (endtime);
+
+
+--
+-- Name: idx_member_eduroam; Type: INDEX; Schema: public
+--
+
+CREATE INDEX idx_member_eduroam ON member USING btree (eduroam);
+
+
+--
+-- Name: idx_member_email; Type: INDEX; Schema: public
+--
+
+CREATE INDEX idx_member_email ON member USING btree (email);
+
+
+--
+-- Name: idx_member_localalias; Type: INDEX; Schema: public
+--
+
+CREATE INDEX idx_member_localalias ON member USING btree (local_alias);
+
+
+--
+-- Name: idx_member_localname; Type: INDEX; Schema: public
+--
+
+CREATE INDEX idx_member_localname ON member USING btree (local_name);
+
+
+--
+-- Name: l_college_collegeid_key; Type: INDEX; Schema: public
+--
+
+CREATE UNIQUE INDEX l_college_collegeid_key ON l_college USING btree (collegeid);
+
+
+--
+-- Name: l_musicinterest_typeid_key; Type: INDEX; Schema: public
+--
+
+CREATE UNIQUE INDEX l_musicinterest_typeid_key ON l_musicinterest USING btree (typeid);
+
+
+--
+-- Name: member_memberid_key; Type: INDEX; Schema: public
+--
+
+CREATE UNIQUE INDEX member_memberid_key ON member USING btree (memberid);
+
+
+--
+-- Name: member_office_member_office_key; Type: INDEX; Schema: public
+--
+
+CREATE UNIQUE INDEX member_office_member_office_key ON member_officer USING btree (member_officerid);
+
+
+--
+-- Name: officer_officerid_key; Type: INDEX; Schema: public
+--
+
+CREATE UNIQUE INDEX officer_officerid_key ON officer USING btree (officerid);
+
+
+--
+-- Name: rec_record_dateadded_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX rec_record_dateadded_key ON rec_record USING btree (dateadded);
+
+
+--
+-- Name: rec_record_format_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX rec_record_format_key ON rec_record USING btree (format) WHERE (format = 's'::bpchar);
+
+
+--
+-- Name: rec_record_recordid_key; Type: INDEX; Schema: public
+--
+
+CREATE UNIQUE INDEX rec_record_recordid_key ON rec_record USING btree (recordid);
+
+
+--
+-- Name: rec_track_artist_index; Type: INDEX; Schema: public
+--
+
+CREATE INDEX rec_track_artist_index ON rec_track USING btree (artist);
+
+
+--
+-- Name: rec_track_recordid_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX rec_track_recordid_key ON rec_track USING btree (recordid);
+
+
+--
+-- Name: rec_track_trackid_key; Type: INDEX; Schema: public
+--
+
+CREATE UNIQUE INDEX rec_track_trackid_key ON rec_track USING btree (trackid);
+
+
+--
+-- Name: rec_unique_recordid; Type: INDEX; Schema: public
+--
+
+CREATE INDEX rec_unique_recordid ON rec_labelqueue USING btree (recordid);
+
+
+--
+-- Name: recommended_listening_chartweek_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX recommended_listening_chartweek_key ON recommended_listening USING btree (week);
+
+
+--
+-- Name: strm_log_starttime_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX strm_log_starttime_key ON strm_log USING btree (starttime);
+
+ALTER TABLE strm_log CLUSTER ON strm_log_starttime_key;
+
+
+--
+-- Name: strm_log_steamid_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX strm_log_steamid_key ON strm_log USING btree (streamid);
+
+
+--
+-- Name: team_teamid_key; Type: INDEX; Schema: public
+--
+
+CREATE UNIQUE INDEX team_teamid_key ON team USING btree (teamid);
+
+
+SET search_path = schedule, pg_catalog;
+
+--
+-- Name: block_range_rule_end_time_index; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX block_range_rule_end_time_index ON block_range_rule USING btree (end_time);
+
+
+--
+-- Name: block_range_rule_start_time_index; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX block_range_rule_start_time_index ON block_range_rule USING btree (start_time);
+
+
+--
+-- Name: duration; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX duration ON show_season_timeslot USING btree (duration);
+
+
+--
+-- Name: season_metadata_effective_from_index; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX season_metadata_effective_from_index ON season_metadata USING btree (effective_from);
+
+
+--
+-- Name: season_metadata_effective_to_index; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX season_metadata_effective_to_index ON season_metadata USING btree (effective_to);
+
+
+--
+-- Name: show_credit_effective_from_index; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX show_credit_effective_from_index ON show_credit USING btree (effective_from);
+
+
+--
+-- Name: show_credit_effective_to_index; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX show_credit_effective_to_index ON show_credit USING btree (effective_to);
+
+
+--
+-- Name: show_id_index; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX show_id_index ON show_credit USING btree (show_id);
+
+
+--
+-- Name: show_image_metadata_approvedid; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX show_image_metadata_approvedid ON show_image_metadata USING btree (approvedid);
+
+
+--
+-- Name: show_image_metadata_memberid; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX show_image_metadata_memberid ON show_image_metadata USING btree (memberid);
+
+
+--
+-- Name: show_image_metadata_metadata_key_id; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX show_image_metadata_metadata_key_id ON show_image_metadata USING btree (metadata_key_id);
+
+
+--
+-- Name: show_image_metadata_show_id; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX show_image_metadata_show_id ON show_image_metadata USING btree (show_id);
+
+
+--
+-- Name: show_metadata_effective_from_index; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX show_metadata_effective_from_index ON show_metadata USING btree (effective_from);
+
+
+--
+-- Name: show_metadata_effective_to_index; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX show_metadata_effective_to_index ON show_metadata USING btree (effective_to);
+
+
+--
+-- Name: show_podcast_link_podcast_id; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX show_podcast_link_podcast_id ON show_podcast_link USING btree (podcast_id);
+
+
+--
+-- Name: show_season_index; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX show_season_index ON show_season_timeslot USING btree (show_season_id);
+
+
+--
+-- Name: start_time_index; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX start_time_index ON show_season_timeslot USING btree (start_time);
+
+
+--
+-- Name: timeslot_metadata_effective_from_index; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX timeslot_metadata_effective_from_index ON timeslot_metadata USING btree (effective_from);
+
+
+--
+-- Name: timeslot_metadata_effective_to_index; Type: INDEX; Schema: schedule
+--
+
+CREATE INDEX timeslot_metadata_effective_to_index ON timeslot_metadata USING btree (effective_to);
+
+
+SET search_path = tracklist, pg_catalog;
+
+--
+-- Name: index_tracklist_tracklist_timeslotid; Type: INDEX; Schema: tracklist
+--
+
+CREATE INDEX index_tracklist_tracklist_timeslotid ON tracklist USING btree (timeslotid);
+
+
+--
+-- Name: index_tracklist_tracklist_timestart; Type: INDEX; Schema: tracklist
+--
+
+CREATE INDEX index_tracklist_tracklist_timestart ON tracklist USING btree (timestart);
+
+
+--
+-- Name: index_tracklist_tracklist_timestop; Type: INDEX; Schema: tracklist
+--
+
+CREATE INDEX index_tracklist_tracklist_timestop ON tracklist USING btree (timestop);
+
+
+--
+-- Name: tracklist_tracklist_timeslotid; Type: INDEX; Schema: tracklist
+--
+
+CREATE INDEX tracklist_tracklist_timeslotid ON tracklist USING btree (timeslotid);
+
+
+SET search_path = uryplayer, pg_catalog;
+
+--
+-- Name: podcast_approvedid; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_approvedid ON podcast USING btree (approvedid);
+
+
+--
+-- Name: podcast_credit_approvedid; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_credit_approvedid ON podcast_credit USING btree (approvedid);
+
+
+--
+-- Name: podcast_credit_credit_type_id; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_credit_credit_type_id ON podcast_credit USING btree (credit_type_id);
+
+
+--
+-- Name: podcast_credit_creditid; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_credit_creditid ON podcast_credit USING btree (creditid);
+
+
+--
+-- Name: podcast_credit_memberid; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_credit_memberid ON podcast_credit USING btree (memberid);
+
+
+--
+-- Name: podcast_credit_podcast_id; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_credit_podcast_id ON podcast_credit USING btree (podcast_id);
+
+
+--
+-- Name: podcast_image_metadata_approvedid; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_image_metadata_approvedid ON podcast_image_metadata USING btree (approvedid);
+
+
+--
+-- Name: podcast_image_metadata_memberid; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_image_metadata_memberid ON podcast_image_metadata USING btree (memberid);
+
+
+--
+-- Name: podcast_image_metadata_metadata_key_id; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_image_metadata_metadata_key_id ON podcast_image_metadata USING btree (metadata_key_id);
+
+
+--
+-- Name: podcast_image_metadata_podcast_id; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_image_metadata_podcast_id ON podcast_image_metadata USING btree (podcast_id);
+
+
+--
+-- Name: podcast_memberid; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_memberid ON podcast USING btree (memberid);
+
+
+--
+-- Name: podcast_metadata_approvedid; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_metadata_approvedid ON podcast_metadata USING btree (approvedid);
+
+
+--
+-- Name: podcast_metadata_memberid; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_metadata_memberid ON podcast_metadata USING btree (memberid);
+
+
+--
+-- Name: podcast_metadata_metadata_key_id; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_metadata_metadata_key_id ON podcast_metadata USING btree (metadata_key_id);
+
+
+--
+-- Name: podcast_metadata_podcast_id; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_metadata_podcast_id ON podcast_metadata USING btree (podcast_id);
+
+
+--
+-- Name: podcast_package_entry_approvedid; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_package_entry_approvedid ON podcast_package_entry USING btree (approvedid);
+
+
+--
+-- Name: podcast_package_entry_memberid; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_package_entry_memberid ON podcast_package_entry USING btree (memberid);
+
+
+--
+-- Name: podcast_package_entry_package_id; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_package_entry_package_id ON podcast_package_entry USING btree (package_id);
+
+
+--
+-- Name: podcast_package_entry_podcast_id; Type: INDEX; Schema: uryplayer
+--
+
+CREATE INDEX podcast_package_entry_podcast_id ON podcast_package_entry USING btree (podcast_id);
+
+
+SET search_path = website, pg_catalog;
+
+--
+-- Name: banner_campaign_approvedid; Type: INDEX; Schema: website
+--
+
+CREATE INDEX banner_campaign_approvedid ON banner_campaign USING btree (approvedid);
+
+
+--
+-- Name: banner_campaign_banner_id; Type: INDEX; Schema: website
+--
+
+CREATE INDEX banner_campaign_banner_id ON banner_campaign USING btree (banner_id);
+
+
+--
+-- Name: banner_campaign_banner_location_id; Type: INDEX; Schema: website
+--
+
+CREATE INDEX banner_campaign_banner_location_id ON banner_campaign USING btree (banner_location_id);
+
+
+--
+-- Name: banner_campaign_effective_from_index; Type: INDEX; Schema: website
+--
+
+CREATE INDEX banner_campaign_effective_from_index ON banner_campaign USING btree (effective_from);
+
+
+--
+-- Name: banner_campaign_effective_to_index; Type: INDEX; Schema: website
+--
+
+CREATE INDEX banner_campaign_effective_to_index ON banner_campaign USING btree (effective_to);
+
+
+--
+-- Name: banner_campaign_memberid; Type: INDEX; Schema: website
+--
+
+CREATE INDEX banner_campaign_memberid ON banner_campaign USING btree (memberid);
+
+
+--
+-- Name: banner_location_name; Type: INDEX; Schema: website
+--
+
+CREATE INDEX banner_location_name ON banner_location USING btree (name);
+
+
+--
+-- Name: banner_location_name_like; Type: INDEX; Schema: website
+--
+
+CREATE INDEX banner_location_name_like ON banner_location USING btree (name varchar_pattern_ops);
+
+
+--
+-- Name: banner_timeslot_approvedid; Type: INDEX; Schema: website
+--
+
+CREATE INDEX banner_timeslot_approvedid ON banner_timeslot USING btree (approvedid);
+
+
+--
+-- Name: banner_timeslot_banner_campaign_id; Type: INDEX; Schema: website
+--
+
+CREATE INDEX banner_timeslot_banner_campaign_id ON banner_timeslot USING btree (banner_campaign_id);
+
+
+--
+-- Name: banner_timeslot_from_time_index; Type: INDEX; Schema: website
+--
+
+CREATE INDEX banner_timeslot_from_time_index ON banner_timeslot USING btree (start_time);
+
+
+--
+-- Name: banner_timeslot_memberid; Type: INDEX; Schema: website
+--
+
+CREATE INDEX banner_timeslot_memberid ON banner_timeslot USING btree (memberid);
+
+
+--
+-- Name: banner_timeslot_to_time_index; Type: INDEX; Schema: website
+--
+
+CREATE INDEX banner_timeslot_to_time_index ON banner_timeslot USING btree (end_time);
+
+
+--
+-- Name: banner_type_name; Type: INDEX; Schema: website
+--
+
+CREATE INDEX banner_type_name ON banner_type USING btree (name);
+
+
+--
+-- Name: banner_type_name_like; Type: INDEX; Schema: website
+--
+
+CREATE INDEX banner_type_name_like ON banner_type USING btree (name varchar_pattern_ops);
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- Name: bapstotracklist; Type: TRIGGER; Schema: public
+--
+
+CREATE TRIGGER bapstotracklist AFTER UPDATE ON baps_audiolog FOR EACH ROW EXECUTE PROCEDURE bapstotracklist();
+
+
+--
+-- Name: clearitem; Type: TRIGGER; Schema: public
+--
+
+CREATE TRIGGER clearitem BEFORE DELETE ON baps_item FOR EACH ROW EXECUTE PROCEDURE clear_item_func();
+
+ALTER TABLE baps_item DISABLE TRIGGER clearitem;
+
+
+--
+-- Name: set_shelfcode_trigger; Type: TRIGGER; Schema: public
+--
+
+CREATE TRIGGER set_shelfcode_trigger BEFORE INSERT ON rec_record FOR EACH ROW EXECUTE PROCEDURE set_shelfcode_func();
+
+
+SET search_path = bapsplanner, pg_catalog;
+
+--
+-- Name: managed_items_managedplaylistid_fkey; Type: FK CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY managed_items
+    ADD CONSTRAINT managed_items_managedplaylistid_fkey FOREIGN KEY (managedplaylistid) REFERENCES managed_playlists(managedplaylistid) ON DELETE CASCADE;
+
+
+--
+-- Name: managed_items_memberid_fkey; Type: FK CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY managed_items
+    ADD CONSTRAINT managed_items_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON DELETE SET NULL;
+
+
+--
+-- Name: secure_play_token_trackid_fkey; Type: FK CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY secure_play_token
+    ADD CONSTRAINT secure_play_token_trackid_fkey FOREIGN KEY (trackid) REFERENCES public.rec_track(trackid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: spt_fk_memberid; Type: FK CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY secure_play_token
+    ADD CONSTRAINT spt_fk_memberid FOREIGN KEY (memberid) REFERENCES public.member(memberid);
+
+
+--
+-- Name: timeslot_change_ops_client_id_fkey; Type: FK CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY timeslot_change_ops
+    ADD CONSTRAINT timeslot_change_ops_client_id_fkey FOREIGN KEY (client_id) REFERENCES client_ids(client_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: timeslot_items_rec_track_id_fkey; Type: FK CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY timeslot_items
+    ADD CONSTRAINT timeslot_items_rec_track_id_fkey FOREIGN KEY (rec_track_id) REFERENCES public.rec_track(trackid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: timeslot_items_timeslot_id_fkey; Type: FK CONSTRAINT; Schema: bapsplanner
+--
+
+ALTER TABLE ONLY timeslot_items
+    ADD CONSTRAINT timeslot_items_timeslot_id_fkey FOREIGN KEY (timeslot_id) REFERENCES schedule.show_season_timeslot(show_season_timeslot_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+SET search_path = jukebox, pg_catalog;
+
+--
+-- Name: jukebox_playlist_lock; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlists
+    ADD CONSTRAINT jukebox_playlist_lock FOREIGN KEY (lock) REFERENCES public.member(memberid);
+
+
+--
+-- Name: playlist_entries_playlistid_fkey; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlist_entries
+    ADD CONSTRAINT playlist_entries_playlistid_fkey FOREIGN KEY (playlistid) REFERENCES playlists(playlistid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: playlist_entries_playlistid_fkey1; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlist_entries
+    ADD CONSTRAINT playlist_entries_playlistid_fkey1 FOREIGN KEY (playlistid, revision_added) REFERENCES playlist_revisions(playlistid, revisionid) ON DELETE CASCADE;
+
+
+--
+-- Name: playlist_entries_playlistid_fkey2; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlist_entries
+    ADD CONSTRAINT playlist_entries_playlistid_fkey2 FOREIGN KEY (playlistid, revision_removed) REFERENCES playlist_revisions(playlistid, revisionid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: playlist_entries_trackid_fkey; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlist_entries
+    ADD CONSTRAINT playlist_entries_trackid_fkey FOREIGN KEY (trackid) REFERENCES public.rec_track(trackid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: playlist_revisions_author_fkey; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlist_revisions
+    ADD CONSTRAINT playlist_revisions_author_fkey FOREIGN KEY (author) REFERENCES public.member(memberid);
+
+
+--
+-- Name: playlist_revisions_playlistid_fkey; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlist_revisions
+    ADD CONSTRAINT playlist_revisions_playlistid_fkey FOREIGN KEY (playlistid) REFERENCES playlists(playlistid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: playlist_timeslot_approvedid_fkey; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlist_timeslot
+    ADD CONSTRAINT playlist_timeslot_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid);
+
+
+--
+-- Name: playlist_timeslot_memberid_fkey; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlist_timeslot
+    ADD CONSTRAINT playlist_timeslot_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid);
+
+
+--
+-- Name: playlist_timeslot_playlistid_fkey; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlist_timeslot
+    ADD CONSTRAINT playlist_timeslot_playlistid_fkey FOREIGN KEY (playlistid) REFERENCES playlists(playlistid);
+
+
+--
+-- Name: request_memberid_fkey; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY request
+    ADD CONSTRAINT request_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid);
+
+
+--
+-- Name: request_trackid_fkey; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY request
+    ADD CONSTRAINT request_trackid_fkey FOREIGN KEY (trackid) REFERENCES public.rec_track(trackid);
+
+
+--
+-- Name: silence_log_handledby_fkey; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY silence_log
+    ADD CONSTRAINT silence_log_handledby_fkey FOREIGN KEY (handledby) REFERENCES public.member(memberid) ON DELETE SET NULL;
+
+
+--
+-- Name: track_blacklist_trackid_fkey; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY track_blacklist
+    ADD CONSTRAINT track_blacklist_trackid_fkey FOREIGN KEY (trackid) REFERENCES public.rec_track(trackid);
+
+
+SET search_path = mail, pg_catalog;
+
+--
+-- Name: alias_list_alias_id_fkey; Type: FK CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY alias_list
+    ADD CONSTRAINT alias_list_alias_id_fkey FOREIGN KEY (alias_id) REFERENCES alias(alias_id);
+
+
+--
+-- Name: alias_list_destination_fkey; Type: FK CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY alias_list
+    ADD CONSTRAINT alias_list_destination_fkey FOREIGN KEY (destination) REFERENCES public.mail_list(listid);
+
+
+--
+-- Name: alias_member_alias_id_fkey; Type: FK CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY alias_member
+    ADD CONSTRAINT alias_member_alias_id_fkey FOREIGN KEY (alias_id) REFERENCES alias(alias_id);
+
+
+--
+-- Name: alias_member_destination_fkey; Type: FK CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY alias_member
+    ADD CONSTRAINT alias_member_destination_fkey FOREIGN KEY (destination) REFERENCES public.member(memberid);
+
+
+--
+-- Name: alias_officer_alias_id_fkey; Type: FK CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY alias_officer
+    ADD CONSTRAINT alias_officer_alias_id_fkey FOREIGN KEY (alias_id) REFERENCES alias(alias_id);
+
+
+--
+-- Name: alias_officer_destination_fkey; Type: FK CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY alias_officer
+    ADD CONSTRAINT alias_officer_destination_fkey FOREIGN KEY (destination) REFERENCES public.officer(officerid);
+
+
+--
+-- Name: alias_text_alias_id_fkey; Type: FK CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY alias_text
+    ADD CONSTRAINT alias_text_alias_id_fkey FOREIGN KEY (alias_id) REFERENCES alias(alias_id);
+
+
+--
+-- Name: email_recipient_list_email_id_fkey; Type: FK CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY email_recipient_list
+    ADD CONSTRAINT email_recipient_list_email_id_fkey FOREIGN KEY (email_id) REFERENCES email(email_id) ON DELETE CASCADE;
+
+
+--
+-- Name: email_recipient_list_listid_fkey; Type: FK CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY email_recipient_list
+    ADD CONSTRAINT email_recipient_list_listid_fkey FOREIGN KEY (listid) REFERENCES public.mail_list(listid) ON DELETE RESTRICT;
+
+
+--
+-- Name: email_recipient_user_email_id_fkey; Type: FK CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY email_recipient_member
+    ADD CONSTRAINT email_recipient_user_email_id_fkey FOREIGN KEY (email_id) REFERENCES email(email_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: email_recipient_user_memberid_fkey; Type: FK CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY email_recipient_member
+    ADD CONSTRAINT email_recipient_user_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON DELETE RESTRICT;
+
+
+--
+-- Name: email_sender_fkey; Type: FK CONSTRAINT; Schema: mail
+--
+
+ALTER TABLE ONLY email
+    ADD CONSTRAINT email_sender_fkey FOREIGN KEY (sender) REFERENCES public.member(memberid) ON DELETE RESTRICT;
+
+
+SET search_path = metadata, pg_catalog;
+
+--
+-- Name: package_image_metadata_approvedid_fkey; Type: FK CONSTRAINT; Schema: metadata
+--
+
+ALTER TABLE ONLY package_image_metadata
+    ADD CONSTRAINT package_image_metadata_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: package_image_metadata_element_id_fkey; Type: FK CONSTRAINT; Schema: metadata
+--
+
+ALTER TABLE ONLY package_image_metadata
+    ADD CONSTRAINT package_image_metadata_element_id_fkey FOREIGN KEY (element_id) REFERENCES package(package_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: package_image_metadata_memberid_fkey; Type: FK CONSTRAINT; Schema: metadata
+--
+
+ALTER TABLE ONLY package_image_metadata
+    ADD CONSTRAINT package_image_metadata_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: package_image_metadata_metadata_key_id_fkey; Type: FK CONSTRAINT; Schema: metadata
+--
+
+ALTER TABLE ONLY package_image_metadata
+    ADD CONSTRAINT package_image_metadata_metadata_key_id_fkey FOREIGN KEY (metadata_key_id) REFERENCES metadata_key(metadata_key_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: package_text_metadata_approvedid_fkey; Type: FK CONSTRAINT; Schema: metadata
+--
+
+ALTER TABLE ONLY package_text_metadata
+    ADD CONSTRAINT package_text_metadata_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: package_text_metadata_element_id_fkey; Type: FK CONSTRAINT; Schema: metadata
+--
+
+ALTER TABLE ONLY package_text_metadata
+    ADD CONSTRAINT package_text_metadata_element_id_fkey FOREIGN KEY (element_id) REFERENCES package(package_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: package_text_metadata_memberid_fkey; Type: FK CONSTRAINT; Schema: metadata
+--
+
+ALTER TABLE ONLY package_text_metadata
+    ADD CONSTRAINT package_text_metadata_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: package_text_metadata_metadata_key_id_fkey; Type: FK CONSTRAINT; Schema: metadata
+--
+
+ALTER TABLE ONLY package_text_metadata
+    ADD CONSTRAINT package_text_metadata_metadata_key_id_fkey FOREIGN KEY (metadata_key_id) REFERENCES metadata_key(metadata_key_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+SET search_path = music, pg_catalog;
+
+--
+-- Name: chart_release_chart_type_id_fkey; Type: FK CONSTRAINT; Schema: music
+--
+
+ALTER TABLE ONLY chart_release
+    ADD CONSTRAINT chart_release_chart_type_id_fkey FOREIGN KEY (chart_type_id) REFERENCES chart_type(chart_type_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: chart_row_chart_release_id_fkey; Type: FK CONSTRAINT; Schema: music
+--
+
+ALTER TABLE ONLY chart_row
+    ADD CONSTRAINT chart_row_chart_release_id_fkey FOREIGN KEY (chart_release_id) REFERENCES chart_release(chart_release_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: chart_row_trackid_fkey; Type: FK CONSTRAINT; Schema: music
+--
+
+ALTER TABLE ONLY chart_row
+    ADD CONSTRAINT chart_row_trackid_fkey FOREIGN KEY (trackid) REFERENCES public.rec_track(trackid);
+
+
+SET search_path = myury, pg_catalog;
+
+--
+-- Name: act_permission_actionid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY act_permission
+    ADD CONSTRAINT act_permission_actionid_fkey FOREIGN KEY (actionid) REFERENCES actions(actionid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: act_permission_moduleid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY act_permission
+    ADD CONSTRAINT act_permission_moduleid_fkey FOREIGN KEY (moduleid) REFERENCES modules(moduleid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: act_permission_serviceid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY act_permission
+    ADD CONSTRAINT act_permission_serviceid_fkey FOREIGN KEY (serviceid) REFERENCES services(serviceid) ON DELETE CASCADE;
+
+
+--
+-- Name: act_permission_typeid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY act_permission
+    ADD CONSTRAINT act_permission_typeid_fkey FOREIGN KEY (typeid) REFERENCES public.l_action(typeid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: actions_moduleid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY actions
+    ADD CONSTRAINT actions_moduleid_fkey FOREIGN KEY (moduleid) REFERENCES modules(moduleid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: api_key_auth_api_key_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY api_key_auth
+    ADD CONSTRAINT api_key_auth_api_key_fkey FOREIGN KEY (key_string) REFERENCES api_key(key_string);
+
+
+--
+-- Name: api_key_auth_auth_id_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY api_key_auth
+    ADD CONSTRAINT api_key_auth_auth_id_fkey FOREIGN KEY (typeid) REFERENCES public.l_action(typeid);
+
+
+--
+-- Name: api_key_log_key_string_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
 ALTER TABLE ONLY api_key_log
     ADD CONSTRAINT api_key_log_key_string_fkey FOREIGN KEY (key_string) REFERENCES api_key(key_string);
+
+
+--
+-- Name: api_method_auth_typeid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY api_method_auth
+    ADD CONSTRAINT api_method_auth_typeid_fkey FOREIGN KEY (typeid) REFERENCES public.l_action(typeid);
+
+
+--
+-- Name: award_member_awardedby_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY award_member
+    ADD CONSTRAINT award_member_awardedby_fkey FOREIGN KEY (awardedby) REFERENCES public.member(memberid) ON DELETE RESTRICT;
+
+
+--
+-- Name: award_member_awardid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY award_member
+    ADD CONSTRAINT award_member_awardid_fkey FOREIGN KEY (awardid) REFERENCES award_categories(awardid) ON DELETE RESTRICT;
+
+
+--
+-- Name: award_member_memberid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY award_member
+    ADD CONSTRAINT award_member_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON DELETE RESTRICT;
+
+
+--
+-- Name: menu_links_sectionid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY menu_links
+    ADD CONSTRAINT menu_links_sectionid_fkey FOREIGN KEY (sectionid) REFERENCES menu_sections(sectionid) ON DELETE CASCADE;
+
+
+--
+-- Name: menu_module_moduleid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY menu_module
+    ADD CONSTRAINT menu_module_moduleid_fkey FOREIGN KEY (moduleid) REFERENCES modules(moduleid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: menu_sections_columnid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY menu_sections
+    ADD CONSTRAINT menu_sections_columnid_fkey FOREIGN KEY (columnid) REFERENCES menu_columns(columnid) ON DELETE CASCADE;
+
+
+--
+-- Name: menu_twigitems_sectionid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY menu_twigitems
+    ADD CONSTRAINT menu_twigitems_sectionid_fkey FOREIGN KEY (sectionid) REFERENCES menu_sections(sectionid) ON DELETE CASCADE;
+
+
+--
+-- Name: modules_serviceid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY modules
+    ADD CONSTRAINT modules_serviceid_fkey FOREIGN KEY (serviceid) REFERENCES services(serviceid) ON DELETE CASCADE;
+
+
+--
+-- Name: password_reset_token_memberid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY password_reset_token
+    ADD CONSTRAINT password_reset_token_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid);
+
+
+--
+-- Name: services_versions_member_memberid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY services_versions_member
+    ADD CONSTRAINT services_versions_member_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid);
+
+
+--
+-- Name: services_versions_member_serviceversionid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY services_versions_member
+    ADD CONSTRAINT services_versions_member_serviceversionid_fkey FOREIGN KEY (serviceversionid) REFERENCES services_versions(serviceversionid);
+
+
+--
+-- Name: services_versions_serviceid_fkey; Type: FK CONSTRAINT; Schema: myury
+--
+
+ALTER TABLE ONLY services_versions
+    ADD CONSTRAINT services_versions_serviceid_fkey FOREIGN KEY (serviceid) REFERENCES services(serviceid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+SET search_path = people, pg_catalog;
+
+--
+-- Name: group_root_role_group_leader_id_fkey; Type: FK CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY group_root_role
+    ADD CONSTRAINT group_root_role_group_leader_id_fkey FOREIGN KEY (group_leader_id) REFERENCES role(role_id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: group_root_role_group_type_id_fkey; Type: FK CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY group_root_role
+    ADD CONSTRAINT group_root_role_group_type_id_fkey FOREIGN KEY (group_type_id) REFERENCES group_type(group_type_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: group_root_role_role_id_id_fkey; Type: FK CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY group_root_role
+    ADD CONSTRAINT group_root_role_role_id_id_fkey FOREIGN KEY (role_id_id) REFERENCES role(role_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: metadata_roleid_fkey; Type: FK CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY metadata
+    ADD CONSTRAINT metadata_roleid_fkey FOREIGN KEY (roleid) REFERENCES role(role_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: parents_childid_fkey; Type: FK CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY role_inheritance
+    ADD CONSTRAINT parents_childid_fkey FOREIGN KEY (child_id) REFERENCES role(role_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: parents_parentid_fkey; Type: FK CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY role_inheritance
+    ADD CONSTRAINT parents_parentid_fkey FOREIGN KEY (parent_id) REFERENCES role(role_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: quote_source_fkey; Type: FK CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY quote
+    ADD CONSTRAINT quote_source_fkey FOREIGN KEY (source) REFERENCES public.member(memberid);
+
+
+--
+-- Name: role_metadata_approvedid_fkey; Type: FK CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY role_text_metadata
+    ADD CONSTRAINT role_metadata_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: role_metadata_memberid_fkey; Type: FK CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY role_text_metadata
+    ADD CONSTRAINT role_metadata_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: role_metadata_metadata_key_id_fkey; Type: FK CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY role_text_metadata
+    ADD CONSTRAINT role_metadata_metadata_key_id_fkey FOREIGN KEY (metadata_key_id) REFERENCES metadata.metadata_key(metadata_key_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: role_metadata_role_id_fkey; Type: FK CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY role_text_metadata
+    ADD CONSTRAINT role_metadata_role_id_fkey FOREIGN KEY (role_id) REFERENCES role(role_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: roles_visibilitylevel_fkey; Type: FK CONSTRAINT; Schema: people
+--
+
+ALTER TABLE ONLY role
+    ADD CONSTRAINT roles_visibilitylevel_fkey FOREIGN KEY (visibilitylevel) REFERENCES role_visibility(role_visibility_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_officer
+    ADD CONSTRAINT "$1" FOREIGN KEY (memberid) REFERENCES member(memberid) ON DELETE RESTRICT;
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY team
+    ADD CONSTRAINT "$1" FOREIGN KEY (status) REFERENCES l_status(statusid) ON DELETE RESTRICT;
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY officer
+    ADD CONSTRAINT "$1" FOREIGN KEY (teamid) REFERENCES team(teamid) ON DELETE RESTRICT;
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_presenterstatus
+    ADD CONSTRAINT "$1" FOREIGN KEY (confirmedby) REFERENCES member(memberid) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_track
+    ADD CONSTRAINT "$1" FOREIGN KEY (recordid) REFERENCES rec_record(recordid) ON DELETE CASCADE;
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_record
+    ADD CONSTRAINT "$1" FOREIGN KEY (status) REFERENCES rec_statuslookup(status_code) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_labelqueue
+    ADD CONSTRAINT "$1" FOREIGN KEY (recordid) REFERENCES rec_record(recordid) ON UPDATE RESTRICT ON DELETE CASCADE;
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_user_external
+    ADD CONSTRAINT "$1" FOREIGN KEY (userid) REFERENCES baps_user(userid) ON UPDATE RESTRICT ON DELETE CASCADE;
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_user_filefolder
+    ADD CONSTRAINT "$1" FOREIGN KEY (userid) REFERENCES baps_user(userid) ON UPDATE RESTRICT ON DELETE CASCADE;
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_filefolder
+    ADD CONSTRAINT "$1" FOREIGN KEY (owner) REFERENCES baps_user(userid) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_audiolog
+    ADD CONSTRAINT "$1" FOREIGN KEY (serverid) REFERENCES baps_server(serverid) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_item
+    ADD CONSTRAINT "$1" FOREIGN KEY (textitemid) REFERENCES baps_textitem(textitemid) ON UPDATE RESTRICT ON DELETE CASCADE;
+
+
+--
+-- Name: $1; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_libraryitem
+    ADD CONSTRAINT "$1" FOREIGN KEY (recordid) REFERENCES rec_record(recordid) ON UPDATE RESTRICT ON DELETE CASCADE;
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member
+    ADD CONSTRAINT "$2" FOREIGN KEY (college) REFERENCES l_college(collegeid) ON DELETE RESTRICT;
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY officer
+    ADD CONSTRAINT "$2" FOREIGN KEY (status) REFERENCES l_status(statusid) ON DELETE RESTRICT;
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_officer
+    ADD CONSTRAINT "$2" FOREIGN KEY (officerid) REFERENCES officer(officerid) ON DELETE RESTRICT;
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_presenterstatus
+    ADD CONSTRAINT "$2" FOREIGN KEY (memberid) REFERENCES member(memberid) ON UPDATE RESTRICT ON DELETE CASCADE;
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY strm_log
+    ADD CONSTRAINT "$2" FOREIGN KEY (streamid) REFERENCES strm_stream(streamid) ON UPDATE RESTRICT ON DELETE CASCADE;
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_track
+    ADD CONSTRAINT "$2" FOREIGN KEY (genre) REFERENCES rec_genrelookup(genre_code) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_record
+    ADD CONSTRAINT "$2" FOREIGN KEY (media) REFERENCES rec_medialookup(media_code) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_user_filefolder
+    ADD CONSTRAINT "$2" FOREIGN KEY (filefolderid) REFERENCES baps_filefolder(filefolderid) ON UPDATE RESTRICT ON DELETE CASCADE;
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_audiolog
+    ADD CONSTRAINT "$2" FOREIGN KEY (audioid) REFERENCES baps_audio(audioid) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_libraryitem
+    ADD CONSTRAINT "$2" FOREIGN KEY (trackid) REFERENCES rec_track(trackid) ON UPDATE RESTRICT ON DELETE CASCADE;
+
+
+--
+-- Name: $2; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_user_external
+    ADD CONSTRAINT "$2" FOREIGN KEY (externalid) REFERENCES member(memberid) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: $3; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY strm_log
+    ADD CONSTRAINT "$3" FOREIGN KEY (useragentid) REFERENCES strm_useragent(useragentid) ON UPDATE RESTRICT ON DELETE CASCADE;
+
+
+--
+-- Name: $3; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_track
+    ADD CONSTRAINT "$3" FOREIGN KEY (clean) REFERENCES rec_cleanlookup(clean_code) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: $3; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_record
+    ADD CONSTRAINT "$3" FOREIGN KEY (format) REFERENCES rec_formatlookup(format_code) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: $6; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_record
+    ADD CONSTRAINT "$6" FOREIGN KEY (memberid_add) REFERENCES member(memberid) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: $7; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_record
+    ADD CONSTRAINT "$7" FOREIGN KEY (memberid_lastedit) REFERENCES member(memberid) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: auth_lookupid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth
+    ADD CONSTRAINT auth_lookupid_fkey FOREIGN KEY (lookupid) REFERENCES l_action(typeid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: auth_memberid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth
+    ADD CONSTRAINT auth_memberid_fkey FOREIGN KEY (memberid) REFERENCES member(memberid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: auth_officer_lookupid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_officer
+    ADD CONSTRAINT auth_officer_lookupid_fkey FOREIGN KEY (lookupid) REFERENCES l_action(typeid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: auth_officer_officerid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_officer
+    ADD CONSTRAINT auth_officer_officerid_fkey FOREIGN KEY (officerid) REFERENCES officer(officerid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: auth_subnet_typeid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_subnet
+    ADD CONSTRAINT auth_subnet_typeid_fkey FOREIGN KEY (typeid) REFERENCES l_action(typeid);
+
+
+--
+-- Name: auth_trainingstatus_typeid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_trainingstatus
+    ADD CONSTRAINT auth_trainingstatus_typeid_fkey FOREIGN KEY (typeid) REFERENCES l_action(typeid);
+
+
+--
+-- Name: auth_user_groups_group_id_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_group_id_fkey FOREIGN KEY (group_id) REFERENCES auth_group(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: baps_item_fileitemid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_item
+    ADD CONSTRAINT baps_item_fileitemid_fkey FOREIGN KEY (fileitemid) REFERENCES baps_fileitem(fileitemid);
+
+
+--
+-- Name: baps_item_libraryitemid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_item
+    ADD CONSTRAINT baps_item_libraryitemid_fkey FOREIGN KEY (libraryitemid) REFERENCES baps_libraryitem(libraryitemid);
+
+
+--
+-- Name: baps_item_listingid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_item
+    ADD CONSTRAINT baps_item_listingid_fkey FOREIGN KEY (listingid) REFERENCES baps_listing(listingid) ON DELETE CASCADE;
+
+
+--
+-- Name: baps_item_textitemid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_item
+    ADD CONSTRAINT baps_item_textitemid_fkey FOREIGN KEY (textitemid) REFERENCES baps_textitem(textitemid) ON DELETE CASCADE;
+
+
+--
+-- Name: baps_show_userid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY baps_show
+    ADD CONSTRAINT baps_show_userid_fkey FOREIGN KEY (userid) REFERENCES baps_user(userid) ON UPDATE RESTRICT ON DELETE CASCADE;
+
+
+--
+-- Name: l_presenterstatus; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_trainingstatus
+    ADD CONSTRAINT l_presenterstatus FOREIGN KEY (presenterstatusid) REFERENCES l_presenterstatus(presenterstatusid);
+
+
+--
+-- Name: l_presenterstatus_can_award_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY l_presenterstatus
+    ADD CONSTRAINT l_presenterstatus_can_award_fkey FOREIGN KEY (can_award) REFERENCES l_presenterstatus(presenterstatusid);
+
+
+--
+-- Name: l_presenterstatus_depends_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY l_presenterstatus
+    ADD CONSTRAINT l_presenterstatus_depends_fkey FOREIGN KEY (depends) REFERENCES l_presenterstatus(presenterstatusid);
+
+
+--
+-- Name: mail_alias_list_listid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_alias_list
+    ADD CONSTRAINT mail_alias_list_listid_fkey FOREIGN KEY (listid) REFERENCES mail_list(listid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: mail_alias_member_memberid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_alias_member
+    ADD CONSTRAINT mail_alias_member_memberid_fkey FOREIGN KEY (memberid) REFERENCES member(memberid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: mail_alias_officer_officerid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_alias_officer
+    ADD CONSTRAINT mail_alias_officer_officerid_fkey FOREIGN KEY (officerid) REFERENCES officer(officerid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: member_mail_listid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_subscription
+    ADD CONSTRAINT member_mail_listid_fkey FOREIGN KEY (listid) REFERENCES mail_list(listid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: member_mail_memberid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY mail_subscription
+    ADD CONSTRAINT member_mail_memberid_fkey FOREIGN KEY (memberid) REFERENCES member(memberid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: member_news_feed_memberid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_news_feed
+    ADD CONSTRAINT member_news_feed_memberid_fkey FOREIGN KEY (memberid) REFERENCES member(memberid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: member_news_feed_newsentryid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_news_feed
+    ADD CONSTRAINT member_news_feed_newsentryid_fkey FOREIGN KEY (newsentryid) REFERENCES news_feed(newsentryid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: member_pass_memberid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_pass
+    ADD CONSTRAINT member_pass_memberid_fkey FOREIGN KEY (memberid) REFERENCES member(memberid) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: member_presenterstatus_presenterstatusid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_presenterstatus
+    ADD CONSTRAINT member_presenterstatus_presenterstatusid_fkey FOREIGN KEY (presenterstatusid) REFERENCES l_presenterstatus(presenterstatusid) ON DELETE RESTRICT;
+
+
+--
+-- Name: member_presenterstatus_revokedby_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_presenterstatus
+    ADD CONSTRAINT member_presenterstatus_revokedby_fkey FOREIGN KEY (revokedby) REFERENCES member(memberid);
+
+
+--
+-- Name: member_profile_photo_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member
+    ADD CONSTRAINT member_profile_photo_fkey FOREIGN KEY (profile_photo) REFERENCES myury.photos(photoid);
+
+
+--
+-- Name: member_year_memberid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY member_year
+    ADD CONSTRAINT member_year_memberid_fkey FOREIGN KEY (memberid) REFERENCES member(memberid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: net_switchport_tags_portid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY net_switchport_tags
+    ADD CONSTRAINT net_switchport_tags_portid_fkey FOREIGN KEY (portid) REFERENCES net_switchport(portid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: net_switchport_tags_vlanid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY net_switchport_tags
+    ADD CONSTRAINT net_switchport_tags_vlanid_fkey FOREIGN KEY (vlanid) REFERENCES net_vlan(vlanid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: net_switchport_vlan_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY net_switchport
+    ADD CONSTRAINT net_switchport_vlan_fkey FOREIGN KEY (vlanid) REFERENCES net_vlan(vlanid) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: news_feed_feedid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY news_feed
+    ADD CONSTRAINT news_feed_feedid_fkey FOREIGN KEY (feedid) REFERENCES l_newsfeed(feedid);
+
+
+--
+-- Name: news_feed_memberid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY news_feed
+    ADD CONSTRAINT news_feed_memberid_fkey FOREIGN KEY (memberid) REFERENCES member(memberid);
+
+
+--
+-- Name: nipsweb_migrate_memberid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY nipsweb_migrate
+    ADD CONSTRAINT nipsweb_migrate_memberid_fkey FOREIGN KEY (memberid) REFERENCES member(memberid);
+
+
+--
+-- Name: rec_itunes_trackid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_itunes
+    ADD CONSTRAINT rec_itunes_trackid_fkey FOREIGN KEY (trackid) REFERENCES rec_track(trackid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: rec_track_digitisedby_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_track
+    ADD CONSTRAINT rec_track_digitisedby_fkey FOREIGN KEY (digitisedby) REFERENCES member(memberid) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: rec_trackcorrection_reviewedby_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_trackcorrection
+    ADD CONSTRAINT rec_trackcorrection_reviewedby_fkey FOREIGN KEY (reviewedby) REFERENCES member(memberid);
+
+
+--
+-- Name: rec_trackcorrection_trackid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY rec_trackcorrection
+    ADD CONSTRAINT rec_trackcorrection_trackid_fkey FOREIGN KEY (trackid) REFERENCES rec_track(trackid);
+
+
+--
+-- Name: selector_action_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY selector
+    ADD CONSTRAINT selector_action_fkey FOREIGN KEY (action) REFERENCES selector_actions(action) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: sis_piss_memberid_fkey; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY sis_piss
+    ADD CONSTRAINT sis_piss_memberid_fkey FOREIGN KEY (memberid) REFERENCES member(memberid) ON DELETE CASCADE;
+
+
+--
+-- Name: user_id_refs_id_831107f1; Type: FK CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT user_id_refs_id_831107f1 FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+SET search_path = schedule, pg_catalog;
+
+--
+-- Name: block_range_rule_block_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY block_range_rule
+    ADD CONSTRAINT block_range_rule_block_id_fkey FOREIGN KEY (block_id) REFERENCES block(block_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: block_show_rule_show_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY block_show_rule
+    ADD CONSTRAINT block_show_rule_show_id_fkey FOREIGN KEY (show_id) REFERENCES show(show_id) ON DELETE CASCADE;
+
+
+--
+-- Name: block_show_rules_block_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY block_show_rule
+    ADD CONSTRAINT block_show_rules_block_id_fkey FOREIGN KEY (block_id) REFERENCES block(block_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: season_metadata_approvedid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY season_metadata
+    ADD CONSTRAINT season_metadata_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: season_metadata_memberid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY season_metadata
+    ADD CONSTRAINT season_metadata_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: season_metadata_metadata_key_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY season_metadata
+    ADD CONSTRAINT season_metadata_metadata_key_id_fkey FOREIGN KEY (metadata_key_id) REFERENCES metadata.metadata_key(metadata_key_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: season_metadata_show_season_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY season_metadata
+    ADD CONSTRAINT season_metadata_show_season_id_fkey FOREIGN KEY (show_season_id) REFERENCES show_season(show_season_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: show_credit_approvedid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_credit
+    ADD CONSTRAINT show_credit_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) ON UPDATE RESTRICT ON DELETE CASCADE;
+
+
+--
+-- Name: show_credit_credit_type_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_credit
+    ADD CONSTRAINT show_credit_credit_type_id_fkey FOREIGN KEY (credit_type_id) REFERENCES people.credit_type(credit_type_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: show_credit_creditid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_credit
+    ADD CONSTRAINT show_credit_creditid_fkey FOREIGN KEY (creditid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: show_credit_memberid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_credit
+    ADD CONSTRAINT show_credit_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: show_credit_show_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_credit
+    ADD CONSTRAINT show_credit_show_id_fkey FOREIGN KEY (show_id) REFERENCES show(show_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: show_genre_approvedid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_genre
+    ADD CONSTRAINT show_genre_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: show_genre_genre_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_genre
+    ADD CONSTRAINT show_genre_genre_id_fkey FOREIGN KEY (genre_id) REFERENCES genre(genre_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: show_genre_memberid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_genre
+    ADD CONSTRAINT show_genre_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: show_genre_show_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_genre
+    ADD CONSTRAINT show_genre_show_id_fkey FOREIGN KEY (show_id) REFERENCES show(show_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: show_image_metadata_approvedid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_image_metadata
+    ADD CONSTRAINT show_image_metadata_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: show_image_metadata_memberid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_image_metadata
+    ADD CONSTRAINT show_image_metadata_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: show_image_metadata_metadata_key_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_image_metadata
+    ADD CONSTRAINT show_image_metadata_metadata_key_id_fkey FOREIGN KEY (metadata_key_id) REFERENCES metadata.metadata_key(metadata_key_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: show_image_metadata_show_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_image_metadata
+    ADD CONSTRAINT show_image_metadata_show_id_fkey FOREIGN KEY (show_id) REFERENCES show(show_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: show_location_approvedid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_location
+    ADD CONSTRAINT show_location_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: show_location_location_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_location
+    ADD CONSTRAINT show_location_location_id_fkey FOREIGN KEY (location_id) REFERENCES location(location_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: show_location_memberid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_location
+    ADD CONSTRAINT show_location_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: show_location_show_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_location
+    ADD CONSTRAINT show_location_show_id_fkey FOREIGN KEY (show_id) REFERENCES show(show_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: show_memberid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show
+    ADD CONSTRAINT show_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON UPDATE RESTRICT ON DELETE CASCADE;
+
+
+--
+-- Name: show_metadata_approvedid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_metadata
+    ADD CONSTRAINT show_metadata_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: show_metadata_memberid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_metadata
+    ADD CONSTRAINT show_metadata_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: show_metadata_metadata_key_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_metadata
+    ADD CONSTRAINT show_metadata_metadata_key_id_fkey FOREIGN KEY (metadata_key_id) REFERENCES metadata.metadata_key(metadata_key_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: show_metadata_show_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_metadata
+    ADD CONSTRAINT show_metadata_show_id_fkey FOREIGN KEY (show_id) REFERENCES show(show_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: show_podcast_link_podcast_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_podcast_link
+    ADD CONSTRAINT show_podcast_link_podcast_id_fkey FOREIGN KEY (podcast_id) REFERENCES uryplayer.podcast(podcast_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: show_podcast_link_show_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_podcast_link
+    ADD CONSTRAINT show_podcast_link_show_id_fkey FOREIGN KEY (show_id) REFERENCES show(show_id);
+
+
+--
+-- Name: show_season_requested_time_show_season_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_season_requested_time
+    ADD CONSTRAINT show_season_requested_time_show_season_id_fkey FOREIGN KEY (show_season_id) REFERENCES show_season(show_season_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: show_season_requested_week_show_season_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_season_requested_week
+    ADD CONSTRAINT show_season_requested_week_show_season_id_fkey FOREIGN KEY (show_season_id) REFERENCES show_season(show_season_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: show_season_show_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_season
+    ADD CONSTRAINT show_season_show_id_fkey FOREIGN KEY (show_id) REFERENCES show(show_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: show_season_termid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_season
+    ADD CONSTRAINT show_season_termid_fkey FOREIGN KEY (termid) REFERENCES public.terms(termid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: show_season_timeslot_approvedid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_season_timeslot
+    ADD CONSTRAINT show_season_timeslot_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: show_season_timeslot_memberid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_season_timeslot
+    ADD CONSTRAINT show_season_timeslot_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: show_season_timeslot_show_season_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show_season_timeslot
+    ADD CONSTRAINT show_season_timeslot_show_season_id_fkey FOREIGN KEY (show_season_id) REFERENCES show_season(show_season_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: show_show_type_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY show
+    ADD CONSTRAINT show_show_type_id_fkey FOREIGN KEY (show_type_id) REFERENCES show_type(show_type_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: timeslot_metadata_approvedid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY timeslot_metadata
+    ADD CONSTRAINT timeslot_metadata_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: timeslot_metadata_memberid_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY timeslot_metadata
+    ADD CONSTRAINT timeslot_metadata_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: timeslot_metadata_metadata_key_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY timeslot_metadata
+    ADD CONSTRAINT timeslot_metadata_metadata_key_id_fkey FOREIGN KEY (metadata_key_id) REFERENCES metadata.metadata_key(metadata_key_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: timeslot_metadata_show_timeslot_id_fkey; Type: FK CONSTRAINT; Schema: schedule
+--
+
+ALTER TABLE ONLY timeslot_metadata
+    ADD CONSTRAINT timeslot_metadata_show_timeslot_id_fkey FOREIGN KEY (show_season_timeslot_id) REFERENCES show_season_timeslot(show_season_timeslot_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+SET search_path = sis2, pg_catalog;
+
+--
+-- Name: member_options_memberid_fkey; Type: FK CONSTRAINT; Schema: sis2
+--
+
+ALTER TABLE ONLY member_options
+    ADD CONSTRAINT member_options_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid);
+
+
+--
+-- Name: member_signin_memberid_fkey; Type: FK CONSTRAINT; Schema: sis2
+--
+
+ALTER TABLE ONLY member_signin
+    ADD CONSTRAINT member_signin_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON DELETE SET NULL;
+
+
+--
+-- Name: member_signin_signerid_fkey; Type: FK CONSTRAINT; Schema: sis2
+--
+
+ALTER TABLE ONLY member_signin
+    ADD CONSTRAINT member_signin_signerid_fkey FOREIGN KEY (signerid) REFERENCES public.member(memberid) ON DELETE SET NULL;
+
+
+--
+-- Name: messages_commtypeid_fkey; Type: FK CONSTRAINT; Schema: sis2
+--
+
+ALTER TABLE ONLY messages
+    ADD CONSTRAINT messages_commtypeid_fkey FOREIGN KEY (commtypeid) REFERENCES public.sis_commtype(commtypeid) ON DELETE SET NULL;
+
+
+--
+-- Name: messages_statusid_fkey; Type: FK CONSTRAINT; Schema: sis2
+--
+
+ALTER TABLE ONLY messages
+    ADD CONSTRAINT messages_statusid_fkey FOREIGN KEY (statusid) REFERENCES public.sis_status(statusid) ON DELETE SET NULL;
+
+
+--
+-- Name: messages_timeslotid_fkey; Type: FK CONSTRAINT; Schema: sis2
+--
+
+ALTER TABLE ONLY messages
+    ADD CONSTRAINT messages_timeslotid_fkey FOREIGN KEY (timeslotid) REFERENCES schedule.show_season_timeslot(show_season_timeslot_id) ON DELETE CASCADE;
+
+
+SET search_path = tracklist, pg_catalog;
+
+--
+-- Name: bapsaudiologid; Type: FK CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY tracklist
+    ADD CONSTRAINT bapsaudiologid FOREIGN KEY (bapsaudioid) REFERENCES public.baps_audiolog(audiologid) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: selbaps_bapsloc_fkey; Type: FK CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY selbaps
+    ADD CONSTRAINT selbaps_bapsloc_fkey FOREIGN KEY (bapsloc) REFERENCES public.baps_server(serverid);
+
+
+--
+-- Name: selbaps_selaction_fkey; Type: FK CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY selbaps
+    ADD CONSTRAINT selbaps_selaction_fkey FOREIGN KEY (selaction) REFERENCES public.selector_actions(action);
+
+
+--
+-- Name: sourceid; Type: FK CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY tracklist
+    ADD CONSTRAINT sourceid FOREIGN KEY (source) REFERENCES source(sourceid) ON UPDATE CASCADE;
+
+
+--
+-- Name: stateid; Type: FK CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY tracklist
+    ADD CONSTRAINT stateid FOREIGN KEY (state) REFERENCES state(stateid) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: timeslotid; Type: FK CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY tracklist
+    ADD CONSTRAINT timeslotid FOREIGN KEY (timeslotid) REFERENCES schedule.show_season_timeslot(show_season_timeslot_id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: track_notrec_audiologid_fkey; Type: FK CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY track_notrec
+    ADD CONSTRAINT track_notrec_audiologid_fkey FOREIGN KEY (audiologid) REFERENCES tracklist(audiologid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: track_rec_audiologid_fkey; Type: FK CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY track_rec
+    ADD CONSTRAINT track_rec_audiologid_fkey FOREIGN KEY (audiologid) REFERENCES tracklist(audiologid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: track_rec_trackid_fkey; Type: FK CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY track_rec
+    ADD CONSTRAINT track_rec_trackid_fkey FOREIGN KEY (trackid) REFERENCES public.rec_track(trackid);
+
+
+SET search_path = uryplayer, pg_catalog;
+
+--
+-- Name: package_id_refs_package_id_f71dbbff; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_package_entry
+    ADD CONSTRAINT package_id_refs_package_id_f71dbbff FOREIGN KEY (package_id) REFERENCES metadata.package(package_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_approvedid_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast
+    ADD CONSTRAINT podcast_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_credit_approvedid_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_credit
+    ADD CONSTRAINT podcast_credit_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_credit_credit_type_id_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_credit
+    ADD CONSTRAINT podcast_credit_credit_type_id_fkey FOREIGN KEY (credit_type_id) REFERENCES people.credit_type(credit_type_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_credit_creditid_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_credit
+    ADD CONSTRAINT podcast_credit_creditid_fkey FOREIGN KEY (creditid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_credit_memberid_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_credit
+    ADD CONSTRAINT podcast_credit_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_credit_podcast_id_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_credit
+    ADD CONSTRAINT podcast_credit_podcast_id_fkey FOREIGN KEY (podcast_id) REFERENCES podcast(podcast_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_image_metadata_approvedid_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_image_metadata
+    ADD CONSTRAINT podcast_image_metadata_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_image_metadata_memberid_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_image_metadata
+    ADD CONSTRAINT podcast_image_metadata_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_image_metadata_metadata_key_id_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_image_metadata
+    ADD CONSTRAINT podcast_image_metadata_metadata_key_id_fkey FOREIGN KEY (metadata_key_id) REFERENCES metadata.metadata_key(metadata_key_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_image_metadata_podcast_id_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_image_metadata
+    ADD CONSTRAINT podcast_image_metadata_podcast_id_fkey FOREIGN KEY (podcast_id) REFERENCES podcast(podcast_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_memberid_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast
+    ADD CONSTRAINT podcast_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_metadata_approvedid_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_metadata
+    ADD CONSTRAINT podcast_metadata_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_metadata_memberid_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_metadata
+    ADD CONSTRAINT podcast_metadata_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_metadata_metadata_key_id_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_metadata
+    ADD CONSTRAINT podcast_metadata_metadata_key_id_fkey FOREIGN KEY (metadata_key_id) REFERENCES metadata.metadata_key(metadata_key_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_metadata_podcast_id_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_metadata
+    ADD CONSTRAINT podcast_metadata_podcast_id_fkey FOREIGN KEY (podcast_id) REFERENCES podcast(podcast_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_package_entry_approvedid_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_package_entry
+    ADD CONSTRAINT podcast_package_entry_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_package_entry_memberid_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_package_entry
+    ADD CONSTRAINT podcast_package_entry_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: podcast_package_entry_podcast_id_fkey; Type: FK CONSTRAINT; Schema: uryplayer
+--
+
+ALTER TABLE ONLY podcast_package_entry
+    ADD CONSTRAINT podcast_package_entry_podcast_id_fkey FOREIGN KEY (podcast_id) REFERENCES podcast(podcast_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+SET search_path = webcam, pg_catalog;
+
+--
+-- Name: memberviews_memberid_fkey; Type: FK CONSTRAINT; Schema: webcam
+--
+
+ALTER TABLE ONLY memberviews
+    ADD CONSTRAINT memberviews_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+SET search_path = website, pg_catalog;
+
+--
+-- Name: banner_banner_type_id_fkey; Type: FK CONSTRAINT; Schema: website
+--
+
+ALTER TABLE ONLY banner
+    ADD CONSTRAINT banner_banner_type_id_fkey FOREIGN KEY (banner_type_id) REFERENCES banner_type(banner_type_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: banner_campaign_approvedid_fkey; Type: FK CONSTRAINT; Schema: website
+--
+
+ALTER TABLE ONLY banner_campaign
+    ADD CONSTRAINT banner_campaign_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: banner_campaign_banner_id_fkey; Type: FK CONSTRAINT; Schema: website
+--
+
+ALTER TABLE ONLY banner_campaign
+    ADD CONSTRAINT banner_campaign_banner_id_fkey FOREIGN KEY (banner_id) REFERENCES banner(banner_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: banner_campaign_banner_location_id_fkey; Type: FK CONSTRAINT; Schema: website
+--
+
+ALTER TABLE ONLY banner_campaign
+    ADD CONSTRAINT banner_campaign_banner_location_id_fkey FOREIGN KEY (banner_location_id) REFERENCES banner_location(banner_location_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: banner_campaign_memberid_fkey; Type: FK CONSTRAINT; Schema: website
+--
+
+ALTER TABLE ONLY banner_campaign
+    ADD CONSTRAINT banner_campaign_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: banner_photo_id_fkey; Type: FK CONSTRAINT; Schema: website
+--
+
+ALTER TABLE ONLY banner
+    ADD CONSTRAINT banner_photo_id_fkey FOREIGN KEY (photoid) REFERENCES myury.photos(photoid);
+
+
+--
+-- Name: banner_timeslot_approvedid_fkey; Type: FK CONSTRAINT; Schema: website
+--
+
+ALTER TABLE ONLY banner_timeslot
+    ADD CONSTRAINT banner_timeslot_approvedid_fkey FOREIGN KEY (approvedid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: banner_timeslot_banner_campaign_id_fkey; Type: FK CONSTRAINT; Schema: website
+--
+
+ALTER TABLE ONLY banner_timeslot
+    ADD CONSTRAINT banner_timeslot_banner_campaign_id_fkey FOREIGN KEY (banner_campaign_id) REFERENCES banner_campaign(banner_campaign_id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: banner_timeslot_memberid_fkey; Type: FK CONSTRAINT; Schema: website
+--
+
+ALTER TABLE ONLY banner_timeslot
+    ADD CONSTRAINT banner_timeslot_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) DEFERRABLE INITIALLY DEFERRED;
+
+
 CREATE SCHEMA myradio;
 SET search_path = myradio, pg_catalog;
 CREATE TABLE schema (
@@ -2845,3 +7317,117 @@ ALTER TABLE ONLY schema
 
 SET search_path = public;
 INSERT INTO public.l_college (descr) VALUES ('Unknown');
+INSERT INTO myury.services (name, enabled) VALUES ('MyRadio', true);
+INSERT INTO l_status VALUES ('c', 'Current');
+INSERT INTO l_status VALUES ('h', 'Historic');
+
+--------------
+-- Set Credit Types
+--------------
+
+SET search_path = people, pg_catalog;
+
+--
+-- Data for Name: credit_type; Type: TABLE DATA; Schema: people
+--
+
+INSERT INTO credit_type VALUES (1, 'Presenter', 'Presenters', true);
+INSERT INTO credit_type VALUES (2, 'Producer', 'Producers', false);
+INSERT INTO credit_type VALUES (3, 'Voice Actor', 'Voice Actors', false);
+INSERT INTO credit_type VALUES (4, 'Director', 'Directors', false);
+INSERT INTO credit_type VALUES (5, 'Editor', 'Editors', false);
+INSERT INTO credit_type VALUES (6, 'Trainer', 'Trainers', false);
+INSERT INTO credit_type VALUES (7, 'Attendee', 'Attendees', false);
+INSERT INTO credit_type VALUES (8, 'Reporter', 'Reporters', false);
+INSERT INTO credit_type VALUES (9, 'Engineer', 'Engineers', false);
+
+
+--
+-- Name: schedule.showcredittype_id_seq; Type: SEQUENCE SET; Schema: people
+--
+
+SELECT pg_catalog.setval('"schedule.showcredittype_id_seq"', 9, true);
+
+--------------
+-- Set Genres
+--------------
+SET search_path = schedule, pg_catalog;
+
+--
+-- Data for Name: genre; Type: TABLE DATA; Schema: schedule
+--
+
+INSERT INTO genre VALUES (1, 'Anything Goes');
+INSERT INTO genre VALUES (2, 'Classical');
+INSERT INTO genre VALUES (3, 'Electronic');
+INSERT INTO genre VALUES (4, 'Experimental');
+INSERT INTO genre VALUES (5, 'Folk');
+INSERT INTO genre VALUES (6, 'Hip-Hop');
+INSERT INTO genre VALUES (7, 'International');
+INSERT INTO genre VALUES (8, 'Jazz');
+INSERT INTO genre VALUES (9, 'Novelty');
+INSERT INTO genre VALUES (10, 'Pop');
+INSERT INTO genre VALUES (11, 'Rock');
+INSERT INTO genre VALUES (12, 'Soul/R&B');
+INSERT INTO genre VALUES (13, 'Speech');
+INSERT INTO genre VALUES (14, 'Indie');
+INSERT INTO genre VALUES (15, 'Dance');
+INSERT INTO genre VALUES (16, 'Metal');
+INSERT INTO genre VALUES (17, 'Retro');
+
+
+--
+-- Name: genre_genre_id_seq; Type: SEQUENCE SET; Schema: schedule
+--
+
+SELECT pg_catalog.setval('genre_genre_id_seq', 17, true);
+
+INSERT INTO show_type VALUES (1, 'Show', true, true, '', true, false);
+INSERT INTO show_type VALUES (2, 'Demo', false, true, '', false, false);
+INSERT INTO show_type VALUES (3, 'Training Lecture', false, true, '', false, false);
+INSERT INTO show_type VALUES (4, 'Meeting', false, true, '', false, false);
+INSERT INTO show_type VALUES (7, 'Interview', false, true, '', false, false);
+INSERT INTO show_type VALUES (6, 'Recording', false, true, '', false, false);
+INSERT INTO show_type VALUES (8, 'Filler', true, false, 'Used by LASS to determine which show is the filler/jukebox/sustainer show.  EXACTLY ONE SHOW AT ANY GIVEN TIME MUST BE OF THIS TYPE', false, true);
+INSERT INTO show_type VALUES (9, 'Show Block', false, true, 'It''s for shows within a show - like the 40 Hour Show breaking down into little blocks.', false, false);
+
+
+--
+-- Name: show_type_show_type_id_seq; Type: SEQUENCE SET; Schema: schedule; Owner: web
+--
+
+SELECT pg_catalog.setval('show_type_show_type_id_seq', 9, true);
+
+INSERT INTO location VALUES (1, 'Studio 1');
+SELECT pg_catalog.setval('location_location_id_seq', 2, true);
+
+SET search_path = metadata, pg_catalog;
+
+--
+-- Data for Name: metadata_key; Type: TABLE DATA; Schema: metadata
+--
+
+INSERT INTO metadata_key VALUES (5, 'guest', true, '', 300, NULL, false);
+INSERT INTO metadata_key VALUES (3, 'ob_location', true, '', 300, NULL, false);
+INSERT INTO metadata_key VALUES (6, 'image', false, '', 300, NULL, false);
+INSERT INTO metadata_key VALUES (13, 'css-normal', true, 'The name of a CSS/HTML class that should be applied to representations of this item on the website.  This class is intended for use in "normal" contexts, such as lists and detail pages, where any branding or styling should be moderated.', 300, NULL, false);
+INSERT INTO metadata_key VALUES (14, 'css-emphasis', false, 'The name of a CSS/HTML class that should be applied to representations of this item on the website.  This class is intended for use in "emphasised" contexts, such as on schedules or headers, where styling and branding should be prominent.', 300, NULL, false);
+INSERT INTO metadata_key VALUES (7, 'singular', false, '(Applicable to group items only.)  When applicable (the item defines a group of other items), the singular noun form of one of those items.  For example, the ''singular'' of ''Station Management'' would be ''Station Manager''.  See also ''title'' and ''plural''.', 300, NULL, false);
+INSERT INTO metadata_key VALUES (8, 'plural', false, '(Applicable to group items only.)  When applicable (the item defines a group of other items), the plural noun form of a subgroup of those items.  For example, the ''plural'' of ''Station Management'' would be ''Station Managers''.  See also ''title'' and ''singular''.', 300, NULL, false);
+INSERT INTO metadata_key VALUES (9, 'title_image', false, 'When applicable and defined, title_image will be used instead of title when displaying the heading for this item.  The expected dimensions of the image depend on the context.', 300, NULL, false);
+INSERT INTO metadata_key VALUES (10, 'thumbnail_image', false, '(Image) When defined and applicable (for example when the item is a show or podcast or other listable), this image will appear as a thumbnail in media lists.', 300, NULL, false);
+INSERT INTO metadata_key VALUES (11, 'player_image', false, '(Image) Image displayed on players (for podcasts this is jwplayer, for shows this is radioplayer).  Dimensions depend on the item and which player it is to be shown on, but as a rule of thumb this is larger than thumbnail_image and square.', 300, NULL, false);
+INSERT INTO metadata_key VALUES (12, 'internal_note', true, 'Metadata with this key will be saved with the item but not shown on the public site; this should be used to attach internal, private notes to items.  For example, notes to the Programme Controller regarding show application detail should be tagged with this key.', 300, NULL, false);
+INSERT INTO metadata_key VALUES (15, 'short_title', false, 'Like title, but shorter.  Use this for abbreviated versions of long titles; on-site it''s used for website TITLE tags and suchlike.', 300, NULL, false);
+INSERT INTO metadata_key VALUES (4, 'tag', true, '', 300, 'Tags', true);
+INSERT INTO metadata_key VALUES (2, 'title', false, 'The publicly available title of the item.  For items defining a group (for example, roles and credits) this is a singular, collective name (''Station Management'', ''Presentership''); see also the ''singular'' and ''plural'' keys.', 300, 'Titles', true);
+INSERT INTO metadata_key VALUES (1, 'description', false, 'A human-readable, general public description of the item.  Where this description is used depends on the item type, but this key usually defines the most detailed publicly available description text associated with the item.', 300, 'Descriptions', true);
+INSERT INTO metadata_key VALUES (16, 'reject-reason', false, 'Reason for Season Application Rejection', 300, 'Reasons for Season Application Rejection', false);
+INSERT INTO metadata_key VALUES (17, 'upload_state', false, 'When uploading data to services, this is a store of the upload state', 300, NULL, false);
+
+
+--
+-- Name: metadata_key_metadata_key_id_seq; Type: SEQUENCE SET; Schema: metadata
+--
+
+SELECT pg_catalog.setval('metadata_key_metadata_key_id_seq', 17, true);

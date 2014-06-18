@@ -11,6 +11,32 @@
  * @todo Check for PostgreSQL >=9.2
  */
 
+/**
+ * Helper function for size checks
+ */
+function convertPHPSizeToBytes($sSize)  
+{  
+    if ( is_numeric( $sSize) ) {
+       return $sSize;
+    }
+    $sSuffix = substr($sSize, -1);  
+    $iValue = substr($sSize, 0, -1);  
+    switch(strtoupper($sSuffix)){  
+    case 'P':  
+        $iValue *= 1024;  
+    case 'T':  
+        $iValue *= 1024;  
+    case 'G':  
+        $iValue *= 1024;  
+    case 'M':  
+        $iValue *= 1024;  
+    case 'K':  
+        $iValue *= 1024;  
+        break;  
+    }  
+    return $iValue;  
+}
+
 $required_modules = [
 	[
 		'module' => 'apc',
@@ -76,6 +102,21 @@ $required_files = [
 		'required' => true
 	]
 ];
+$function_checks = [
+	[
+		//Check that max post size is at least 40MB
+		//this still won't be enough for most podcasts, but it should be for MP3s
+		'function' => function()
+			{
+				return min(
+					convertPHPSizeToBytes(ini_get('post_max_size')), convertPHPSizeToBytes(ini_get('upload_max_filesize'))
+					) > 40960;
+			},
+		'success' => 'Your server is configured to support large file uploads.',
+		'fail' => 'Your server is set to have a small (<40MB) upload limit. Consider tweaking your php.ini to prevent issues using Show Planner, Podcasts and other file upload utilities.',
+		'required' => false
+	]
+];
 
 $ready = true;
 $problems = [];
@@ -120,6 +161,18 @@ foreach ($required_files as $file) {
 		}
 	} else {
 		$successes[] = $file['success'];
+	}
+}
+foreach ($function_checks as $check) {
+	if (!$check['function']()) {
+		if ($check['required']) {
+			$ready = false;
+			$problems[] = $check['fail'];
+		} else {
+			$warnings[] = $check['fail'];
+		}
+	} else {
+		$successes[] = $check['success'];
 	}
 }
 

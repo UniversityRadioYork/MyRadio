@@ -49,13 +49,15 @@ class MyRadioNews
      */
     public static function getLatestNewsItem($newsfeedid, MyRadio_User $user = null)
     {
-        return self::getNewsItem(
-            Database::getInstance()->fetchColumn(
+        $result = Database::getInstance()->fetchColumn(
                 'SELECT newsentryid FROM public.news_feed
                 WHERE public.news_feed.feedid=$1 AND revoked=false
                 ORDER BY timestamp DESC LIMIT 1',
                 [$newsfeedid]
-            )[0],
+            );
+        $item = empty($result) ? null : $result[0];
+        return self::getNewsItem(
+            $item,
             $user
         );
     }

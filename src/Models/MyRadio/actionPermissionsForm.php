@@ -19,16 +19,6 @@ $form = new MyRadioForm(
 
 $form->addField(
     new MyRadioFormField(
-        'service',
-        MyRadioFormField::TYPE_SELECT,
-        [
-            'options' => CoreUtils::getServices(),
-            'explanation' => 'Select a Service to apply permissions to',
-            'label' => 'Service'
-        ]
-    )
-)->addField(
-    new MyRadioFormField(
         'module',
         MyRadioFormField::TYPE_TEXT,
         [

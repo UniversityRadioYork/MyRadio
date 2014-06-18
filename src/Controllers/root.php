@@ -129,5 +129,9 @@ if (isset($_REQUEST['joyride'])) {
     $_SESSION['joyride'] = $_REQUEST['joyride'];
 }
 
+//Wake up ServiceAPI if it isn't already
+//Otherwise ServiceAPI::$db/$cache may not be available and upset controllers
+ServiceAPI::wakeup();
+
 //Include the requested action
 require 'Controllers/'. $module . '/' . $action . '.php';

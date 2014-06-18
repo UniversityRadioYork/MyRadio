@@ -161,6 +161,21 @@ class MyRadioMenu
     }
 
     /**
+     * Adds an item to the submenu for a module
+     * @param int $moduleid       The id of the module that the submenu is for
+     * @param string $title       The title of the link
+     * @param string $url         The URL of the link
+     * @param string $description A description of the link
+     */
+    public function addSubMenuItem($moduleid, $title, $url, $description = null)
+    {
+        $db = Database::getInstance();
+        return $db->query('INSERT INTO myury.menu_module
+            (moduleid, title, url, description)
+            VALUES ($1, $2, $3, $4)', [$moduleid, $title, $url, $description]);
+    }
+
+    /**
      * Takes a $url database column entry, and breaks it into its components
      * @param  String $url A database-fetched menu item URL
      * @return Array  with four keys - 'url', 'module', 'action'. All are the String names, not IDs.
