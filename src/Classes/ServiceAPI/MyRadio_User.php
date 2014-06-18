@@ -1001,6 +1001,9 @@ class MyRadio_User extends ServiceAPI
      */
     public function setLocalName($name)
     {
+	if (strstr($name, '@') !== false) {
+            throw new MyRadioException('Mailbox alias may not contain an @ symbol');
+    	}
         if ($name !== $this->local_name && self::findByEmail($name) !== null) {
             throw new MyRadioException('That Mailbox Alias is already in use. Please choose another.', 500);
         }
@@ -1178,8 +1181,12 @@ class MyRadio_User extends ServiceAPI
         self::wakeup();
         $result = self::$db->fetchColumn(
             'SELECT memberid FROM public.member WHERE email LIKE $1 OR eduroam LIKE $1
-            OR local_name LIKE $2 OR local_alias LIKE $2 OR eduroam LIKE $2',
-            [$email, explode('@', $email)[0]]
+            OR local_name LIKE $3 OR local_alias LIKE $3 OR eduroam LIKE $2',
+            [
+                $email,
+                str_ireplace('@' . Config::$eduroam_domain, '', $email),
+                str_ireplace('@' . Config::$email_domain, '', $email)
+            ]
         );
 
         if (empty($result)) {
