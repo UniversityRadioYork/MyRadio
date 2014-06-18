@@ -191,37 +191,37 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         ));
     }
 
-    public static function getCreateForm()
+    public static function getForm()
     {
-        $titleField = new MyRadioFormField(
-            'title',
-            MyRadioFormField::TYPE_TEXT,
-            ['label' => 'Title']
+        $form = (
+                new MyRadioForm(
+                'createpodcastfrm',
+                'Podcast',
+                'editPodcast',
+                ['title' => 'Create Podcast']
+            )
+        )->addField(
+            new MyRadioFormField(
+                'title',
+                MyRadioFormField::TYPE_TEXT,
+                ['label' => 'Title']
+            )
+        )->addField(
+            new MyRadioFormField(
+                'description',
+                MyRadioFormField::TYPE_BLOCKTEXT,
+                ['label' => 'Description']
+            )
+        )->addField(
+            new MyRadioFormField(
+                'tags',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Tags',
+                    'explanation' => 'A set of keywords to describe your podcast generally, seperated with spaces.'
+                ]
+            )
         );
-
-        $descField = new MyRadioFormField(
-            'description',
-            MyRadioFormField::TYPE_BLOCKTEXT,
-            ['label' => 'Description']
-        );
-
-        $tagsField = new MyRadioFormField(
-            'tags',
-            MyRadioFormField::TYPE_TEXT,
-            [
-                'label' => 'Tags',
-                'explanation' => 'A set of keywords to describe your podcast '
-                . 'generally, seperated with spaces.'
-            ]
-        );
-
-        $form = (new MyRadioForm(
-            'createpodcastfrm',
-            'Podcast',
-            'createPodcast',
-            ['title' => 'Create Podcast']
-        )
-        )->addField($titleField)->addField($descField)->addField($tagsField);
 
         //Get User's shows, or all shows if they have AUTH_PODCASTANYSHOW
         //Format them into a select field format.
@@ -244,8 +244,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_SELECT,
                 [
                     'options' => $shows,
-                    'explanation' => 'This Podcast will be attached to the '
-                    . 'Show you select here.',
+                    'explanation' => 'This Podcast will be attached to the Show you select here.',
                     'label' => 'Show',
                     'required' => false
                 ]
@@ -298,6 +297,38 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             )
         )->addField(
             new MyRadioFormField(
+                'cover_method',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'label' => 'Method',
+                    'options' => [
+                        [ 'value' => 'existing', 'text' => 'Existing Cover File' ],
+                        [ 'value' => 'new', 'text' => 'Upload New Cover File' ]
+                    ]
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'existing_cover',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Existing Cover File',
+                    'explanation' => 'To use an existing cover file, copy the Existing Cover File of a podcast with that file into here.',
+                    'required' => false
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'new_cover',
+                MyRadioFormField::TYPE_FILE,
+                [
+                    'label' => 'Upload New Cover File',
+                    'explanation' => 'If you selected Upload New below, add the file here.',
+                    'required' => false
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
                 'terms',
                 MyRadioFormField::TYPE_CHECK,
                 [
@@ -309,6 +340,26 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         );
 
         return $form;
+    }
+
+    public function getEditForm()
+    {
+        return self::getForm()
+            ->setTitle('Edit Podcast')
+            ->editMode(
+                $this->getID(),
+                [
+                    'title' => $this->getMeta('title'),
+                    'description' => $this->getMeta('description'),
+                    'tags' => implode(' ',$this->getMeta('tag')),
+                    'show' => empty($this->show_id) ? null : $this->show_id,
+                    'credits.member' => array_map(function ($credit) {return $credit['User'];}, $this->getCredits()),
+                    'credits.credittype' => array_map(function ($credit) {return $credit['type'];}, $this->getCredits()),
+                    'cover_method' => 'existing',
+                    'existing_cover' => $this->getCover(),
+                    'terms' => 'on'
+                ]
+            );
     }
 
     /**
@@ -351,11 +402,44 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         //Ship the file off to the archive location to be converted
         if (!move_uploaded_file($file, $podcast->getArchiveFile())) {
             throw new MyRadioException(
-                "Failed to move podcast file "
-                . "$file to {$podcast->getArchiveFile()}",
+                "Failed to move podcast file $file to {$podcast->getArchiveFile()}",
                 500
             );
         }
+
+        return $podcast;
+    }
+
+    /**
+     * Create a new Podcast Cover
+     * @param String $temporary_file The image file uploaded.
+     */
+    public function createCover($temporary_file)
+    {
+        if (empty($temporary_file)) {
+            throw new MyRadioException('No new cover file uploaded.', 400);
+        }
+
+        $path = '/image_meta/MyRadioImageMetadata/'
+            . 'podcast'
+            . $this->getID()
+            . '-'
+            . time()
+            . '.'
+            . explode('/', finfo_file(finfo_open(FILEINFO_MIME_TYPE), $temporary_file))[1];
+
+        $file_path = Config::$public_media_path . $path;
+
+        if (file_exists($file_path)) {
+            throw new MyRadioException('The cover filename chosen already exists.', 500);
+        }
+
+        move_uploaded_file($temporary_file, $file_path);
+        if (!file_exists($file_path)) {
+            throw new MyRadioException('File move failed.', 500);
+        }
+
+        $this->setCover($path);
     }
 
     /**
@@ -444,6 +528,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         } else {
             $this->show_id = null;
         }
+
+        return $this;
     }
 
     /**
@@ -462,13 +548,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 'display' => 'icon',
                 'value' => 'script',
                 'title' => 'Edit Podcast',
-                'url' => CoreUtils::makeURL('Podcast', 'editPodcast', ['podcastid' => $this->getID()])
-            ],
-            'setcoverlink' => [
-                'display' => 'icon',
-                'value' => 'script',
-                'title' => 'Set Cover',
-                'url' => CoreUtils::makeURL('Podcast', 'setCover', ['podcastid' => $this->getID()])
+                'url' => CoreUtils::makeURL('Podcast', 'editPodcast', ['podcast_id' => $this->getID()])
             ]
         ];
 
@@ -507,6 +587,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 $url
             ]
         );
+
+        return $this;
     }
 
     /**
@@ -551,6 +633,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null)
     {
         parent::setMeta($string_key, $value, $effective_from, $effective_to, 'uryplayer.podcast_metadata', 'podcast_id');
+
+        return $this;
     }
 
     /**
@@ -565,6 +649,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     public function setCredits($users, $credittypes, $table = null, $pkey = null)
     {
         parent::setCredits($users, $credittypes, 'uryplayer.podcast_credit', 'podcast_id');
+
+        return $this;
     }
 
     /**
@@ -579,6 +665,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             WHERE podcast_id=$2',
             [CoreUtils::getTimestamp($time), $this->getID()]
         );
+
+        return $this;
     }
 
     /**
