@@ -3,12 +3,15 @@
  * Main renderer for NIPSWeb
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @author Andy Durant <aj@ury.org.uk>
- * @version 20140610
+ * @version 20130525
  * @package MyRadio_NIPSWeb
  */
+$template = 'NIPSWeb/manage_library.twig';
+if (CoreUtils::hasPermission(AUTH_UPLOADMUSICMANUAL)) {
+    $template = 'NIPSWeb/manage_library_manual.twig';
+}
 
-CoreUtils::getTemplateObject()->setTemplate('NIPSWeb/manage_library.twig')
+CoreUtils::getTemplateObject()->setTemplate($template)
     ->addVariable(
         'reslists',
         CoreUtils::dataSourceParser(
@@ -18,7 +21,4 @@ CoreUtils::getTemplateObject()->setTemplate('NIPSWeb/manage_library.twig')
                 'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(MyRadio_User::getInstance())
             ]
         )
-    )->addVariable(
-        'AUTH_UPLOADMUSICMANUAL',
-        true
     )->render();

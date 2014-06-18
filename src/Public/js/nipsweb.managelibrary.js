@@ -79,14 +79,22 @@ $(document).ready(function () {
             console.log(file.name + ' (id#' + i + ') has uploaded in ' + time);
             $('#central-status').html('Uploaded ' + file.name);
 
-            var from_lastfm = true;
-
             if (response['status'] === 'FAIL') {
                 //An error occurred
                 $('#central-result').append('<div class="ui-state-error">' + file.name + ': ' + response['error'] + '</div>');
                 return;
-            } else if (response['status'] === 'NO_LASTFM_MATCH') {
-                from_lastfm = false;
+            }
+
+            var manual_track = false;
+            if (response.analysis.length === 0) {
+                var manual_div = document.getElementById('track-manual-entry');
+                if (manual_div !== null) {
+                    // If the div exists, then the user has permission to upload a track
+                    // manually, so display the div and set manual_track to true.
+                    manual_div.style.display = 'block';
+                    manual_track = true;
+                }
+                return;
             }
 
             // Track info.
@@ -98,34 +106,20 @@ $(document).ready(function () {
 
             // Build a list of tracks from the lastfm responses and store it in a drop
             // down list
-            var track_data = "";
-            if (from_lastfm) {
-                track_data = $('<select></select>')
+            var select = "";
+            if (!manual_track) {
+                select = $('<select></select>')
                     .attr('name', response.fileid).attr('id', 'centralupload-' + i);
                 $.each(response.analysis, function (key, value) {
-                    track_data.append('<option value="' + value.title + ':-:' + value.artist + '">' + value.title + ' by ' + value.artist + '</option>');
+                    select.append('<option value="' + value.title + ':-:' + value.artist + '">' + value.title + ' by ' + value.artist + '</option>');
                 });
-            } else {
-                track_data = $('<fieldset id="manualupload-' + i + '">' +
-                    '<legend>' + file.name + ' - Track not found. Please enter the details manually:</legend>' +
-                    '<div class="myradiofrmfield-container">' +
-                    '   <label for="manualupload-' + i + '-title">Title</label>' +
-                    '   <input type="text" class="myradiofrmfield required" name="manualupload-' + i + '-title" id="manualupload-' + i + '-title">' +
-                    '   <label for="manualupload-' + i + '-artist">Artist</label>' +
-                    '   <input type="text" class="myradiofrmfield required" name="manualupload-' + i + '-artist" id="manualupload-' + i + '-artist">' +
-                    '   <label for="manualupload-' + i + '-album">Album</label>' +
-                    '   <input type="text" class="myradiofrmfield required" name="manualupload-' + i + '-album" id="manualupload-' + i + '-album">' +
-                    '   <label for="manualupload-' + i + '-position">Track Position</label>' +
-                    '   <input type="text" class="myradiofrmfield required" name="manualupload-' + i + '-position" id="manualupload-' + i + '-position">' +
-                    '</div>' +
-                    '</fieldset>');
             }
 
             // The submit part
             var submit = $('<a href="javascript:">Save to Database</a>').click(function () {
                 console.log('Saving track to database');
 
-                if (from_lastfm) {
+                if (!manual_track) {
                     var select = $(this).parent().find('select').val();
                     track_fileid = $(this).parent().find('select').attr('name');
                     track_title = select.replace(/:-:.*$/, '');
@@ -134,13 +128,13 @@ $(document).ready(function () {
                     track_position = "FROM_LASTFM";
                 } else {
                     track_fileid = response.fileid;
-                    track_title = $('#manualupload-' + i + '-title').val();
-                    track_artist = $('#manualupload-' + i + '-artist').val();
-                    track_album = $('#manualupload-' + i + '-album').val();
-                    track_position = $('#manualupload-' + i + '-position').val();
+                    track_title = document.getElementById('track-manual-entry-title').val();
+                    track_artist = document.getElementById('track-manual-entry-artist').val();
+                    track_album = document.getElementById('track-manual-entry-album').val();
+                    track_position = document.getElementById('track-manual-entry-position').val();
                 }
 
-                $(this).hide().parent().append('<div id="confirminator-' + (track_fileid.replace(/\.mp3/, '')) + '">Saving (this may take a few minutes)...</div>');
+                $(this).hide().parent().append('<div id="confirminator-' + (fileid.replace(/\.mp3/, '')) + '">Saving (this may take a few minutes)...</div>');
                 $.ajax({
                     url: myury.makeURL('NIPSWeb', 'confirm_central_upload'),
                     data: {
@@ -163,11 +157,8 @@ $(document).ready(function () {
                 });
             });
 
-            var container = $('<div></div>');
-            if (from_lastfm) {
-                container.append('<label for="centralupload-' + i + '">' + file.name + '</label>');
-            }
-            container.append(track_data)
+            var container = $('<div></div>').append('<label for="centralupload-' + i + '">' + file.name + '</label>')
+                .append(select)
                 .append(submit);
             $('#central-result').append(container);
         }
