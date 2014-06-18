@@ -108,7 +108,7 @@ class MyRadio_Officer extends ServiceAPI
             self::$db->fetchColumn('INSERT INTO public.officer
                 (officer_name, officer_alias, teamid, ordering, descr, type)
                 VALUES ($1, $2, $3, $4, $5, $6) RETURNING officerid',
-                $name, $alias, $team->getID(), $ordering, $descr, $type)[0]
+                [$name, $alias, $team->getID(), $ordering, $descr, $type])[0]
             );
     }
 

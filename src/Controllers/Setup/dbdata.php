@@ -8,6 +8,9 @@
  * @todo Apply patches
  */
 require_once 'Classes/Database.php';
+require_once 'Models/Core/api.php';
+//Make sure ServiceAPI has Database and Cache connections
+ServiceAPI::wakeup();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$mode = strtoupper($_POST['mode']);
@@ -25,33 +28,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	$warnings = [];
 
+	//For all of them, create submenu data
+	foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-submenuitems.json'), true) as $module => $items) {
+		$moduleid = CoreUtils::getModuleId($module);
+		foreach ($items as $item) {
+			MyRadioMenu::addSubMenuItem($moduleid, $item[0], $item[1], $item[2]);
+		}
+	}
+
+	/**
+	 * For some reason, after a break; a further match of the same
+	 * clause, so to avoid code duplication full actionauth is a function
+	 */
+	function setUpFullActionsAuth() {
+		foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actions.json')) as $action) {
+			//The getXxxId method create these if they don't exist
+			$module = CoreUtils::getModuleId($action[0]);
+			CoreUtils::getActionId($module, $action[1]);
+		}
+		foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-auth.json')) as $auth) {
+			try {
+				CoreUtils::addPermission($auth[0], $auth[1]);
+			} catch (MyRadioException $e) {
+				$warnings[] = 'Failed to create Permission "'.$auth[0].'". It may already exist.';
+			}
+		}
+		foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actionsauth.json')) as $actionauth) {
+			$module = CoreUtils::getModuleId($actionauth[0]);
+			$action = CoreUtils::getActionId($module, $actionauth[1]);
+			$auth = $actionauth[2] == null ? null : constant($actionauth[2]);
+			CoreUtils::addActionPermission($module, $action, $auth);
+		}
+	}
+
 	switch ($mode) {
-		case DBDATA_COMPLETE:
 		case DBDATA_PERMISSIONS:
-			foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actions.json')) as $action) {
-				//The getXxxId method create these if they don't exist
-				$module = CoreUtils::getModuleId($action[0]);
-				CoreUtils::getActionId($module, $action[1]);
-			}
-			foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-auth.json')) as $auth) {
-				try {
-					CoreUtils::addPermission($auth[0], $auth[1]);
-				} catch (MyRadioException $e) {
-					$warnings[] = 'Failed to create Permission "'.$auth[0].'". It may already exist.';
-				}
-			}
-			foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actionsauth.json')) as $actionauth) {
-				$module = CoreUtils::getModuleId($actionauth[0]);
-				$action = CoreUtils::getActionId($module, $actionauth[1]);
-				$auth = $actionauth[2] == null ? null : constant($actionauth[2]);
-				CoreUtils::addActionPermission($module, $action, $auth);
-			}
+			setUpFullActionsAuth();
 			break;
 		case DBDATA_COMPLETE:
-			$data = json_decode(file_get_contents(SCHEMA_DIR . 'data-officers.json'));
+			setUpFullActionsAuth();
+			$data = json_decode(file_get_contents(SCHEMA_DIR . 'data-officers.json'), true);
 			foreach ($data['teams'] as $team) {
 				$oTeam = MyRadio_Team::createTeam($team[0], $team[1], $team[2], $team[3]);
-				foreach ($teams[4] as $officer) {
+				foreach ($team[4] as $officer) {
 					MyRadio_Officer::createOfficer(
 						$officer[0],
 						$officer[1],
@@ -62,17 +81,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					);
 				}
 			}
+			break;
 		case DBDATA_SUDO:
 			foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actions.json')) as $action) {
 				if (in_array($action[1], ['actionPermissions', 'addActionPermission', 'listPermissions']) !== false) {
 					//Skip permissions controls
 					continue;
 				}
-				//The getXxxId method create these if they don't exist
+				//The getXxxId method creates an ID if they don't exist
 				$module = CoreUtils::getModuleId($action[0]);
 				$action = CoreUtils::getActionId($module, $action[1]);
 				CoreUtils::addActionPermission($module, $action, null);
 			}
+			break;
 		case DBDATA_BLANK:
 			foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actions-min.json')) as $action) {
 				//The getXxxId method create these if they don't exist
@@ -92,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				$auth = $actionauth[2] == null ? null : constant($actionauth[2]);
 				CoreUtils::addActionPermission($module, $action, $auth);
 			}
+			break;
 		default:
 			die('Invalid mode control sequence.');
 	}
