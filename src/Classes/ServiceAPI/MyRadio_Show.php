@@ -490,7 +490,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             WHERE show_type_id=$1
             ORDER BY (
                 SELECT metadata_value FROM schedule.show_metadata
-                WHERE show_id=show_id AND metadata_key_id=2
+                WHERE show.show_id=show_metadata.show_id AND metadata_key_id=2
                 AND effective_from <= NOW()
                 AND (effective_to IS NULL OR effective_to > NOW())
                 ORDER BY effective_from DESC LIMIT 1

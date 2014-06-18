@@ -721,10 +721,10 @@ class MyRadio_User extends ServiceAPI
             $itemid = $_SESSION['memberid'];
         }
         if (isset($_SESSION['memberid']) && $itemid == $_SESSION['memberid']) {
-            if (!MyRadio_User::$current_user) {
-                MyRadio_User::$current_user = parent::getInstance($itemid);
+            if (!self::$current_user) {
+                self::$current_user = parent::getInstance($itemid);
             }
-            return MyRadio_User::$current_user;
+            return self::$current_user;
         } else {
             return parent::getInstance($itemid);
         }
@@ -829,8 +829,8 @@ class MyRadio_User extends ServiceAPI
     {
         /**
          * You won't believe how annoying psql can be about '' already being used on a unique key.
-	 * You also won't believe that in php, '' == false evaluates to true, so we need ===,
-	 *   otherwise a query to change $value to false will not work as desired.
+         * You also won't believe that in php, '' == false evaluates to true, so we need ===,
+         *   otherwise a query to change $value to false will not work as desired.
          */
         if ($value === '') {
             $value = null;
@@ -928,7 +928,7 @@ class MyRadio_User extends ServiceAPI
 
         if (empty($eduroam) && empty($this->email)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
-        } elseif ($this->getEduroam() !== $eduroam && MyRadio_User::findByEmail($eduroam) !== null) {
+        } elseif ($this->getEduroam() !== $eduroam && self::findByEmail($eduroam) !== null) {
             throw new MyRadioException('The eduroam account ' . $eduroam . ' is already allocated to another User.', 500);
         }
         $this->setCommonParam('eduroam', $eduroam);
@@ -953,7 +953,7 @@ class MyRadio_User extends ServiceAPI
 
         if (empty($email) && empty($this->eduroam)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
-        } elseif ($email !== $this->email && MyRadio_User::findByEmail($email) !== null) {
+        } elseif ($email !== $this->email && self::findByEmail($email) !== null && self::findByEmail($email) != $this) {
             throw new MyRadioException('The email account ' . $email . ' is already allocated to another User.', 500);
         }
         $this->setCommonParam('email', $email);
@@ -1001,10 +1001,10 @@ class MyRadio_User extends ServiceAPI
      */
     public function setLocalName($name)
     {
-	if (strstr($name, '@') !== false) {
+        if (strstr($name, '@') !== false) {
             throw new MyRadioException('Mailbox alias may not contain an @ symbol');
-    	}
-        if ($name !== $this->local_name && self::findByEmail($name) !== null) {
+        }
+        if ($name !== $this->local_name && self::findByEmail($name) !== null && self::findByEmail($name) != $this) {
             throw new MyRadioException('That Mailbox Alias is already in use. Please choose another.', 500);
         }
         $this->setCommonParam('local_name', $name);
@@ -1210,7 +1210,7 @@ class MyRadio_User extends ServiceAPI
         $trained = self::$db->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=1');
         $members = [];
         foreach ($trained as $mid) {
-            $member = MyRadio_User::getInstance($mid);
+            $member = self::getInstance($mid);
             if ($member->isStudioTrained()) {
                 $members[] = $member;
             }
@@ -1233,7 +1233,7 @@ class MyRadio_User extends ServiceAPI
         $trained = self::$db->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=2');
         $members = [];
         foreach ($trained as $mid) {
-            $member = MyRadio_User::getInstance($mid);
+            $member = self::getInstance($mid);
             if ($member->isStudioDemoed()) {
                 $members[] = $member;
             }
@@ -1256,7 +1256,7 @@ class MyRadio_User extends ServiceAPI
         $trained = self::$db->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=3');
         $members = [];
         foreach ($trained as $mid) {
-            $member = MyRadio_User::getInstance($mid);
+            $member = self::getInstance($mid);
             if ($member->isTrainer()) {
                 $members[] = $member;
             }
@@ -1293,8 +1293,8 @@ class MyRadio_User extends ServiceAPI
      */
     public function getEditForm()
     {
-        if ($this->getID() !== MyRadio_User::getInstance()->getID() && !MyRadio_User::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
-            throw new MyRadioException(MyRadio_User::getInstance() . ' tried to edit ' . $this . '!');
+        if ($this->getID() !== self::getInstance()->getID() && !self::getInstance()->hasAuth(AUTH_EDITANYPROFILE)) {
+            throw new MyRadioException(self::getInstance() . ' tried to edit ' . $this . '!');
         }
 
         $form = new MyRadioForm('profileedit', 'Profile', 'doEdit', ['title' => 'Edit Profile']);
@@ -1387,7 +1387,7 @@ class MyRadio_User extends ServiceAPI
         ))->addField(new MyRadioFormField('sec_about_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
         //Mailbox
-        if (MyRadio_User::getInstance()->hasAuth(AUTH_CHANGESERVERACCOUNT)) {
+        if (self::getInstance()->hasAuth(AUTH_CHANGESERVERACCOUNT)) {
             $form->addField(new MyRadioFormField('sec_server', MyRadioFormField::TYPE_SECTION, [
                         'label' => Config::$short_name . ' Mailbox Account',
                         'explanation' => 'Before changing these settings, please ensure you understand the guidelines and'
@@ -1492,8 +1492,8 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Check if it looks like the user might already exist
-        if (MyRadio_User::findByEmail($eduroam) !== null
-            or MyRadio_User::findByEmail($email) !== null
+        if (self::findByEmail($eduroam) !== null
+            or self::findByEmail($email) !== null
         ) {
             throw new MyRadioException(
                 'This User already appears to exist. '
@@ -1527,7 +1527,7 @@ class MyRadio_User extends ServiceAPI
         }
 
         $memberid = $r[0];
-        $user = MyRadio_User::getInstance($memberid);
+        $user = self::getInstance($memberid);
 
         //Activate the member's account for the current academic year
         $user->activateMemberThisYear($paid);
@@ -1546,9 +1546,9 @@ class MyRadio_User extends ServiceAPI
         $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$fname, $uname, $plain_pass], Config::$welcome_email);
 
         //Send the email
-        MyRadioEmail::create(['members' => [MyRadio_User::getInstance($memberid)]], 'Welcome to ' . Config::$short_name . ' - Getting Involved and Your Account', $welcome_email, 'getinvolved@' . Config::$email_domain);
+        MyRadioEmail::create(['members' => [self::getInstance($memberid)]], 'Welcome to ' . Config::$short_name . ' - Getting Involved and Your Account', $welcome_email, 'getinvolved@' . Config::$email_domain);
 
-        return MyRadio_User::getInstance($memberid);
+        return self::getInstance($memberid);
     }
 
     /**
@@ -1571,7 +1571,7 @@ class MyRadio_User extends ServiceAPI
      * Checks whether the user is an active member (has a record in member_year) for the current year
      * @return boolean
      */
-    public function isActiveMemberForYear($year=null)
+    public function isActiveMemberForYear($year = null)
     {
         // Use the current academic year as default if one isn't specified
         if($year === null)
@@ -1579,8 +1579,8 @@ class MyRadio_User extends ServiceAPI
             $year = CoreUtils::getAcademicYear();
         }
         // If the current year exists in payments (even with a value of £0, the member is active)
-        foreach ($this->payment as $v) {
-            if ($v['year'] === $year) {
+        foreach ($this->getAllPayments() as $payment) {
+            if ($payment['year'] == $year) {
                 return true;
             }
         }
@@ -1609,8 +1609,8 @@ class MyRadio_User extends ServiceAPI
      */
     public static function getQuickAddForm()
     {
-        if (!MyRadio_User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
-            throw new MyRadioException(MyRadio_User::getInstance() . ' tried to add members!');
+        if (!self::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
+            throw new MyRadioException(self::getInstance() . ' tried to add members!');
         }
 
         $form = new MyRadioForm('profilequickadd', 'Profile', 'doQuickAdd', ['title' => 'Add Member (Quick)']);
@@ -1665,8 +1665,8 @@ class MyRadio_User extends ServiceAPI
      */
     public static function getBulkAddForm()
     {
-        if (!MyRadio_User::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
-            throw new MyRadioException(MyRadio_User::getInstance() . ' tried to add members!');
+        if (!self::getInstance()->hasAuth(AUTH_ADDMEMBER)) {
+            throw new MyRadioException(self::getInstance() . ' tried to add members!');
         }
 
         $form = new MyRadioForm('profilebulkadd', 'Profile', 'doBulkAdd', ['title' => 'Add Member (Bulk)']);
