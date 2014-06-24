@@ -43,6 +43,33 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
         return true;
     }
 
+//                          ##     #######
+//                          ##     ##
+//       ######   #####   ######   ##        #####   ## ###   ### ##
+//      ##   ##  ##   ##    ##     #####    ##   ##  ###      ## # ##
+//      ##   ##  #######    ##     ##       ##   ##  ##       ## # ##
+//       ######  ##         ##     ##       ##   ##  ##       ## # ##
+//           ##   #####      ###   ##        #####   ##       ##   ##
+//       #####
+
+    public static function getForm()
+    {
+        return new MyRadioForm(
+            'sched_demo',
+            $module,
+            'createDemo',
+            [
+                'title' => 'Create Demo'
+            ]
+        )->addField(
+            new MyRadioFormField(
+                'demo-datetime',
+                MyRadioFormField::TYPE_DATETIME,
+                ['label' => 'Date and Time of the Demo']
+            )
+        );
+    }
+
     public static function attendingDemo($demoid)
     {
         if (MyRadio_User::getInstance()->hasAuth(AUTH_ADDDEMOS)) {

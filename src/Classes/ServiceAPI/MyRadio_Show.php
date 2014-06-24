@@ -141,6 +141,15 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         return 'MyRadio_Show-'.$id;
     }
 
+//                                            ##
+//                                            ##
+//       #####   ## ###    #####    ######  ######    #####
+//      ##       ###      ##   ##  ##   ##    ##     ##   ##
+//      ##       ##       #######  ##   ##    ##     #######
+//      ##       ##       ##       ##  ###    ##     ##
+//       #####   ##        #####    ### ##     ###    #####
+//
+
     /**
      * Creates a new MyRadio Show and returns an object representing it
      * @param Array $params An array of Show properties compatible with the Models/Scheduler/showfrm Form:
@@ -295,6 +304,186 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         }
 
         return $show;
+    }
+
+//                          ##     #######
+//                          ##     ##
+//       ######   #####   ######   ##        #####   ## ###   ### ##
+//      ##   ##  ##   ##    ##     #####    ##   ##  ###      ## # ##
+//      ##   ##  #######    ##     ##       ##   ##  ##       ## # ##
+//       ######  ##         ##     ##       ##   ##  ##       ## # ##
+//           ##   #####      ###   ##        #####   ##       ##   ##
+//       #####
+
+    public static function getForm()
+    {
+        return new MyRadioForm(
+            'sched_show',
+            'Scheduler',
+            'editShow',
+            [
+                'debug' => true,
+                'title' => 'Create Show'
+            ]
+        )->addField(
+            new MyRadioFormField('grp-basics', MyRadioFormField::TYPE_SECTION, ['label' => 'About My Show'])
+        )->addField(
+            new MyRadioFormField(
+                'title',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'explanation' => 'Enter a name for your new show. Try and make it unique.',
+                    'label' => 'Show Name'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'description',
+                MyRadioFormField::TYPE_BLOCKTEXT,
+                [
+                    'explanation' => 'Describe your show as best you can. This goes on the public-facing website.',
+                    'label' => 'Description'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'genres',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'options' => array_merge(
+                        [['text' => 'Please select...', 'disabled' => true]],
+                        MyRadio_Scheduler::getGenres()
+                    ),
+                    'label' => 'Genre',
+                    'explanation' => 'What type of music do you play, if any?'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'tags',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Tags',
+                    'explanation' => 'A set of keywords to describe your show generally, seperated with spaces.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField('grp-basics_close', MyRadioFormField::TYPE_SECTION_CLOSE)
+        )->addField(
+            new MyRadioFormField('grp-credits', MyRadioFormField::TYPE_SECTION, ['label' => 'Who\'s On My Show'])
+        )->addField(
+            new MyRadioFormField(
+                'credits',
+                MyRadioFormField::TYPE_TABULARSET,
+                [
+                    'options' => [
+                        new MyRadioFormField(
+                            'member',
+                            MyRadioFormField::TYPE_MEMBER,
+                            [
+                                'explanation' => '',
+                                'label' => 'Credit'
+                            ]
+                        ),
+                        new MyRadioFormField(
+                            'credittype',
+                            MyRadioFormField::TYPE_SELECT,
+                            [
+                                'options' => array_merge(
+                                    [['text' => 'Please select...', 'disabled' => true]],
+                                    MyRadio_Scheduler::getCreditTypes()
+                                ),
+                                'explanation' => '',
+                                'label' => 'Role'
+                            ]
+                        )
+                    ]
+                ]
+            )
+        )->addField(
+            new MyRadioFormField('grp-credits_close', MyRadioFormField::TYPE_SECTION_CLOSE)
+        )->addField(
+            new MyRadioFormField(
+                'mixclouder',
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    'explanation' => 'If ticked, your shows will automatically be uploaded to mixcloud',
+                    'label' => 'Enable Mixcloud',
+                    'options' => ['checked' => true],
+                    'required' => false
+                ]
+            )
+        );
+    }
+
+//                          ##     #######       ##    ##       ##     #######
+//                          ##     ##            ##             ##     ##
+//       ######   #####   ######   ##        ######  ####     ######   ##        #####   ## ###   ### ##
+//      ##   ##  ##   ##    ##     #####    ##   ##    ##       ##     #####    ##   ##  ###      ## # ##
+//      ##   ##  #######    ##     ##       ##   ##    ##       ##     ##       ##   ##  ##       ## # ##
+//       ######  ##         ##     ##       ##   ##    ##       ##     ##       ##   ##  ##       ## # ##
+//           ##   #####      ###   #######   ######  ######      ###   ##        #####   ##       ##   ##
+//       #####
+
+    public function getEditForm()
+    {
+        return self::getForm()
+            ->setTitle('Edit Show')
+            ->editMode(
+                $this->getID(),
+                [
+                    'title' => $this->getMeta('title'),
+                    'description' => $this->getMeta('description'),
+                    'genres' => $this->getGenre(),
+                    'tags' => implode(' ', $meta),
+                    'credits.member' => array_map(
+                        function ($ar) {
+                            return $ar['User'];
+                        },
+                        $this->getCredits()
+                    ),
+                    'credits.credittype' => array_map(
+                        function ($ar) {
+                            return $ar['type'];
+                        },
+                        $this->getCredits()
+                    ),
+                    'mixclouder' => ($this->getMeta('upload_state') === 'Requested')
+                ]
+            )
+    }
+
+//                          ##     ######   ##                  ##              #######
+//                          ##     ##   ##  ##                  ##              ##
+//       ######   #####   ######   ##   ##  ######    #####   ######    #####   ##        #####   ## ###   ### ##
+//      ##   ##  ##   ##    ##     ######   ##   ##  ##   ##    ##     ##   ##  #####    ##   ##  ###      ## # ##
+//      ##   ##  #######    ##     ##       ##   ##  ##   ##    ##     ##   ##  ##       ##   ##  ##       ## # ##
+//       ######  ##         ##     ##       ##   ##  ##   ##    ##     ##   ##  ##       ##   ##  ##       ## # ##
+//           ##   #####      ###   ##       ##   ##   #####      ###    #####   ##        #####   ##       ##   ##
+//       #####
+
+    public static function getPhotoForm()
+    {
+        return new MyRadioForm(
+            'sched_showphoto',
+            $module,
+            'showPhoto',
+            [
+                'debug' => true,
+                'title' => 'Update Show Photo',
+            ]
+        )->addField(
+            new MyRadioFormField(
+                'show_id',
+                MyRadioFormField::TYPE_HIDDEN
+            )
+        )->addField(
+            new MyRadioFormField(
+                'image_file',
+                MyRadioFormField::TYPE_FILE,
+                ['label' => 'Photo']
+            )
+        );
     }
 
     public function getNumberOfSeasons()
@@ -591,6 +780,15 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
         return $top;
     }
+
+//        ##              #####               ##               #####
+//        ##              ##  ##              ##              ##   ##
+//      ######    #####   ##   ##   ######  ######    ######  ##        #####   ##   ##  ## ###    #####    #####
+//        ##     ##   ##  ##   ##  ##   ##    ##     ##   ##   #####   ##   ##  ##   ##  ###      ##       ##   ##
+//        ##     ##   ##  ##   ##  ##   ##    ##     ##   ##       ##  ##   ##  ##   ##  ##       ##       #######
+//        ##     ##   ##  ##  ##   ##  ###    ##     ##  ###  ##   ##  ##   ##  ##  ###  ##       ##       ##
+//         ###    #####   #####     ### ##     ###    ### ##   #####    #####    ### ##  ##        #####    #####
+//
 
     public function toDataSource($full = true)
     {

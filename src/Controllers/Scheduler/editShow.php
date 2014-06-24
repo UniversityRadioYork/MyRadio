@@ -1,47 +1,76 @@
 <?php
 /**
- * This page enables a Users to edit a Show that already exists. It takes one parameter, $_REQUEST['showid']
+ * This page enables Users to create a new Show or edit a Show that already exists.
+ * It can take one parameter, $_REQUEST['showid']
  * which should be the ID of the Show to edit.
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130728
+ * @author Andy Durant <aj@ury.org.uk>
+ * @version 20140623
  * @package MyRadio_Scheduler
  */
 
-//Check the user has permission to edit this show
-$show = MyRadio_Show::getInstance($_REQUEST['showid']);
-if (!$show->isCurrentUserAnOwner() && !CoreUtils::hasPermission(AUTH_EDITSHOWS)) {
-    $message = 'You must be a Creditor of a Show or be in the Programming Team to edit this show.';
-    require 'Views/Errors/403.php';
-}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //Submitted
+    $data = MyRadio_Show::getForm()->readValues();
 
-//The Form definition
-require 'Models/Scheduler/showfrm.php';
+    if (empty($data['id'])) {
+        //create new
+        MyRadio_Show::create($data);
 
-$meta = $show->getMeta('tag');
-if ($meta === null) {
-    $meta = [];
+    } else {
+        //submit edit
+        $show = MyRadio_Show::getInstance($data['id']);
+
+        //Check the user has permission to edit this show
+        if (!$show->isCurrentUserAnOwner()) {
+            CoreUtils::requirePermission(AUTH_EDITSHOWS);
+        }
+
+        $show->setMeta('title', $data['title']);
+        $show->setMeta('description', $data['description']);
+
+        // We want to handle the case when people delimit with commas, or commas and
+        // spaces, as well as handling extended spaces.
+        $show->setMeta(
+            'tag',
+            preg_split('/[, ] */', $data['tags'], null, PREG_SPLIT_NO_EMPTY)
+        );
+
+        $show->setGenre($data['genres']);
+        $show->setCredits($data['credits']['member'], $data['credits']['credittype']);
+
+        if ($data['mixclouder']) {
+            $show->setMeta('upload_state', 'Requested');
+        } else {
+            $show->setMeta('upload_state', 'Opted Out');
+        }
+    }
+
+    CoreUtils::backWithMessage("Show Updated!");
+
+} else {
+    //Not Submitted
+    if (isset($_REQUEST['showid'])) {
+        //edit form
+        $show = MyRadio_Show::getInstance($_REQUEST['showid']);
+
+        //Check the user has permission to edit this show
+        if (!$show->isCurrentUserAnOwner()) {
+            CoreUtils::requirePermission(AUTH_EDITSHOWS);
+        }
+
+        $meta = $show->getMeta('tag');
+        if ($meta === null) {
+            $meta = [];
+        }
+        MyRadio_Show::getEditForm()->render();
+
+    } else {
+        //create form
+        MyRadio_Show::getForm()
+            ->setFieldValue('credits.member', [MyRadio_User::getInstance()])
+            ->setFieldValue('credits.credittype', [1])
+            ->setTemplate('Scheduler/createShow.twig')
+            ->render();
+    }
 }
-$form->editMode(
-    $_REQUEST['showid'],
-    [
-        'title' => $show->getMeta('title'),
-        'description' => $show->getMeta('description'),
-        'genres' => $show->getGenre(),
-        'tags' => implode(' ', $meta),
-        'credits.member' => array_map(
-            function ($ar) {
-                return $ar['User'];
-            },
-            $show->getCredits()
-        ),
-        'credits.credittype' => array_map(
-            function ($ar) {
-                return $ar['type'];
-            },
-            $show->getCredits()
-        ),
-        'mixclouder' => ($show->getMeta('upload_state') === 'Requested')
-    ],
-    'doEditShow'
-)->render();

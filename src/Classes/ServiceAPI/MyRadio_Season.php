@@ -134,6 +134,15 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         }
     }
 
+//                                            ##
+//                                            ##
+//       #####   ## ###    #####    ######  ######    #####
+//      ##       ###      ##   ##  ##   ##    ##     ##   ##
+//      ##       ##       #######  ##   ##    ##     #######
+//      ##       ##       ##       ##  ###    ##     ##
+//       #####   ##        #####    ### ##     ###    #####
+//
+
     /**
      * Creates a new MyRadio Season Application and returns an object representing it
      * @param Array $params An array of Seasons properties compatible with the Models/Scheduler/seasonfrm Form,
@@ -154,7 +163,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
      *
      * @throws MyURYException
      */
-    public static function apply($params = [])
+    public static function create($params = [])
     {
         //Validate input
         $required = ['show_id', 'weeks', 'times'];
@@ -266,6 +275,302 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         MyRadio_Show::getInstance($params['show_id'])->addSeason($season_id);
 
         return self::getInstance($season_id);
+    }
+
+//                          ##     #######
+//                          ##     ##
+//       ######   #####   ######   ##        #####   ## ###   ### ##
+//      ##   ##  ##   ##    ##     #####    ##   ##  ###      ## # ##
+//      ##   ##  #######    ##     ##       ##   ##  ##       ## # ##
+//       ######  ##         ##     ##       ##   ##  ##       ## # ##
+//           ##   #####      ###   ##        #####   ##       ##   ##
+//       #####
+
+    public static function getForm()
+    {
+        //Set up the weeks checkboxes
+        $weeks = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $weeks[] = new MyRadioFormField(
+                'wk' . $i,
+                MyRadioFormField::TYPE_CHECK,
+                ['label' => 'Week ' . $i, 'required' => false]
+            );
+        }
+
+        return new MyRadioForm(
+            'sched_season',
+            $module,
+            'editSeason',
+            [
+                'debug' => true,
+                'title' => 'Create Season'
+            ]
+        )->addField(
+            new MyRadioFormField('show_id', MyRadioFormField::TYPE_HIDDEN)
+        )->addField(
+            new MyRadioFormField(
+                'grp-basics',
+                MyRadioFormField::TYPE_SECTION,
+                ['label' => '']
+            )
+        )->addField(
+            new MyRadioFormField(
+                'weeks',
+                MyRadioFormField::TYPE_CHECKGRP,
+                [
+                    'options' => $weeks,
+                    'explanation' => 'Select what weeks this term this show will be on air',
+                    'label' => 'Schedule for Weeks'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'times',
+                MyRadioFormField::TYPE_TABULARSET,
+                [
+                    'label' => 'Preferred Times',
+                    'options' => [
+                        new MyRadioFormField(
+                            'day',
+                            MyRadioFormField::TYPE_DAY,
+                            ['label' => 'On']
+                        ),
+                        new MyRadioFormField(
+                            'stime',
+                            MyRadioFormField::TYPE_TIME,
+                            ['label' => 'from']
+                        ),
+                        new MyRadioFormField(
+                            'etime',
+                            MyRadioFormField::TYPE_TIME,
+                            ['label' => 'until']
+                        )
+                    ]
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'grp-basics_close',
+                MyRadioFormField::TYPE_SECTION_CLOSE
+            )
+        )->addField(
+            new MyRadioFormField(
+                'grp-adv',
+                MyRadioFormField::TYPE_SECTION,
+                ['label' => 'Advanced Options']
+            )
+        )->addField(
+            new MyRadioFormField(
+                'description',
+                MyRadioFormField::TYPE_BLOCKTEXT,
+                [
+                    'explanation' => 'Each season of your show can have its own description. '
+                        .'If you leave this blank, the main description for your Show will be used.',
+                    'label' => 'Description',
+                    'options' => ['minlength' => 140],
+                    'required' => false
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'tags',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Tags',
+                    'explanation' => 'A set of keywords to describe this Season. These will be added onto the '
+                        .'Tags you already have set for the Show.',
+                    'required' => false
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'grp-adv_close',
+                MyRadioFormField::TYPE_SECTION_CLOSE
+            )
+        );
+    }
+
+//                          ##     #######       ##    ##       ##     #######
+//                          ##     ##            ##             ##     ##
+//       ######   #####   ######   ##        ######  ####     ######   ##        #####   ## ###   ### ##
+//      ##   ##  ##   ##    ##     #####    ##   ##    ##       ##     #####    ##   ##  ###      ## # ##
+//      ##   ##  #######    ##     ##       ##   ##    ##       ##     ##       ##   ##  ##       ## # ##
+//       ######  ##         ##     ##       ##   ##    ##       ##     ##       ##   ##  ##       ## # ##
+//           ##   #####      ###   #######   ######  ######      ###   ##        #####   ##       ##   ##
+//       #####
+
+    public function getEditForm()
+    {
+        return self::getForm()
+            ->setTitle('Edit Season')
+            ->editMode(
+                $this->getID(),
+                [
+                    'title' => $this->getMeta('title'),
+                    'description' => $this->getMeta('description'),
+                    'tags' => implode(' ', $this->getMeta('tag')),
+                    'credits.member' => array_map(
+                        function ($ar) {
+                            return $ar['User'];
+                        },
+                        $this->getCredits()
+                    ),
+                    'credits.credittype' => array_map(
+                        function ($ar) {
+                            return $ar['type'];
+                        },
+                        $this->getCredits()
+                    )
+                ]
+            )
+    }
+
+//                          ##       ##      ###      ###                                  ##              #######
+//                          ##       ##       ##       ##                                  ##              ##
+//       ######   #####   ######    ####      ##       ##      #####    #####    ######  ######    #####   ##        #####   ## ###   ### ##
+//      ##   ##  ##   ##    ##      ## #      ##       ##     ##   ##  ##       ##   ##    ##     ##   ##  #####    ##   ##  ###      ## # ##
+//      ##   ##  #######    ##     ######     ##       ##     ##   ##  ##       ##   ##    ##     #######  ##       ##   ##  ##       ## # ##
+//       ######  ##         ##     ##   #     ##       ##     ##   ##  ##       ##  ###    ##     ##       ##       ##   ##  ##       ## # ##
+//           ##   #####      ###  ###   ##   ####     ####     #####    #####    ### ##     ###    #####   ##        #####   ##       ##   ##
+//       #####
+
+    public function getAllocateForm()
+    {
+        $form = new MyRadioForm(
+            'sched_allocate',
+            $module,
+            'allocate',
+            [
+                'title' => 'Allocate Timeslots to Season',
+                'template' => 'Scheduler/allocate.twig'
+            ]
+        );
+
+        //Set up the weeks checkboxes
+        $weeks = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $weeks[] = new MyRadioFormField(
+                'wk' . $i,
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    'label' => 'Week ' . $i,
+                    'required' => false,
+                    'options' => ['checked' => in_array($i, $this->getRequestedWeeks())]
+                ]
+            );
+        }
+
+        //Set up the requested times radios
+        $times = [];
+        $i = 0;
+        foreach ($this->getRequestedTimesAvail() as $time) {
+            $times[] = [
+                'value' => $i,
+                'text' => $time['time'] . ' ' . $time['info'],
+                'disabled' => $time['conflict'],
+                'class' => $time['conflict'] ? 'ui-state-error' : ''
+            ];
+            $i++;
+        }
+
+        $times[] = ['value' => -1, 'text' => 'Other (Choose below)'];
+
+        $form->addField(
+            new MyRadioFormField(
+                'weeks',
+                MyRadioFormField::TYPE_CHECKGRP,
+                [
+                    'options' => $weeks,
+                    'label' => 'Schedule for Weeks'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'time',
+                MyRadioFormField::TYPE_RADIO,
+                [
+                    'options' => $times,
+                    'label' => 'Timeslot',
+                    'required' => false
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'timecustom_day',
+                MyRadioFormField::TYPE_DAY,
+                [
+                    'label' => 'Other Day: ',
+                    'required' => false
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'timecustom_stime',
+                MyRadioFormField::TYPE_TIME,
+                [
+                    'label' => 'from',
+                    'required' => false
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'timecustom_etime',
+                MyRadioFormField::TYPE_TIME,
+                [
+                    'label' => 'duration',
+                    'required' => false,
+                    'value' => '01:00'
+                ]
+            )
+        );
+
+        return $form;
+    }
+
+//                          ##     ######                ##                       ##     #######
+//                          ##     ##   ##                                        ##     ##
+//       ######   #####   ######   ##   ##   #####     ####    #####    #####   ######   ##        #####   ## ###   ### ##
+//      ##   ##  ##   ##    ##     ######   ##   ##      ##   ##   ##  ##         ##     #####    ##   ##  ###      ## # ##
+//      ##   ##  #######    ##     ## ##    #######      ##   #######  ##         ##     ##       ##   ##  ##       ## # ##
+//       ######  ##         ##     ##  ##   ##           ##   ##       ##         ##     ##       ##   ##  ##       ## # ##
+//           ##   #####      ###   ##   ##   #####       ##    #####    #####      ###   ##        #####   ##       ##   ##
+//       #####                                        ####
+
+    public static function getRejectForm()
+    {
+        return new MyRadioForm(
+            'sched_reject',
+            $module,
+            'doReject',
+            [
+                'debug' => false,
+                'title' => 'Reject Season Application'
+            ]
+        )->addField(
+            new MyRadioFormField('season_id', MyRadioFormField::TYPE_HIDDEN)
+        )->addField(
+            new MyRadioFormField(
+                'reason',
+                MyRadioFormField::TYPE_BLOCKTEXT,
+                [
+                    'label' => 'Reason for Rejection: ',
+                    'explanation' => 'You can enter a reason here for the application being rejected.'
+                        .' If you then choose to send this response to the applicant, they can then edit their'
+                        .' application and resubmit.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'notify_user',
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    'label' => 'Notify the Applicant via Email?',
+                    'options' => ['checked' => true],
+                    'required' => false
+                ]
+            )
+        );
     }
 
     /**
