@@ -11,8 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = MyRadio_ChartRelease::getForm()->readValues();
 
     if (empty($data['id'])) {
+        //create new
         $chart_release = MyRadio_ChartRelease::create($data);
     } else {
+        //submit edit
         $chart_release = MyRadio_ChartRelease::getInstance($data['id']);
         $chart_release
             ->setChartTypeID($data['chart_type_id'])
@@ -30,11 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     //Not Submitted
     if (isset($_REQUEST['chart_release_id'])) {
+        //edit form
         MyRadio_ChartRelease::getInstance($_REQUEST['chart_release_id'])
             ->getEditForm()
             ->render();
 
     } else {
+        //create form
         MyRadio_ChartRelease::getForm()
             ->setFieldValue('submitted_time', CoreUtils::happyTime(time(), false))
             ->render();

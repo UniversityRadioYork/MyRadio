@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = MyRadio_Podcast::getForm()->readValues();
 
     if (empty($data['id'])) {
+        //create new
         $podcast = MyRadio_Podcast::create(
             $data['title'],
             $data['description'],
@@ -21,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data['credits']
         );
     } else {
+        //submit edit
         $podcast = MyRadio_Podcast::getInstance($data['id']);
 
         // Check if user can edit this podcast
@@ -56,11 +58,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     //Not Submitted
     if (isset($_REQUEST['podcast_id'])) {
-        MyRadio_Podcast::getInstance($_REQUEST['podcast_id'])
+        //edit form
+        $podcast = MyRadio_Podcast::getInstance($_REQUEST['podcast_id']);
+
+        // Check if user can edit this podcast
+        if (!in_array($podcast->getID(), MyRadio_Podcast::getPodcastIDsAttachedToUser())) {
+            CoreUtils::requirePermission(AUTH_PODCASTANYSHOW);
+        }
+
+        $podcast
             ->getEditForm()
             ->render();
 
     } else {
+        //create form
         MyRadio_Podcast::getForm()->render();
     }
 }

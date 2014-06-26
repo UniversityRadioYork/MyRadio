@@ -14,8 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = $form->readValues();
 
     if (empty($data['id'])) {
+        //create new
         MyRadio_Quote::create($data);
     } else {
+        //submit edit
         MyRadio_Quote::getInstance($id)
             ->setSource($data['source'])
             ->setText($data['text'])
@@ -28,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Not Submitted
 
     if (isset($_REQUEST['quote_id'])) {
+        //edit form
         $quote = MyRadio_Quote::getInstance($_REQUEST['quote_id']);
 
         $form->editMode(
@@ -43,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
     } else {
+        //create form
         $form->setFieldValue('date', CoreUtils::happyTime(time(), false));
     }
 

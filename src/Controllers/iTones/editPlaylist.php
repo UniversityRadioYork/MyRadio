@@ -2,70 +2,20 @@
 /**
  * Allows a User to edit an iTones Playlist
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130712
+ * @author Andy Durant <aj@ury.org.uk>
+ * @version 20140636
  * @package MyRadio_iTones
  */
 
-$form = (
-    new MyRadioForm(
-        'itones_playlistedit',
-        $module,
-        $action,
-        [
-            'title' => 'Edit Campus Jukebox Playlist'
-        ]
-    )
-)->addField(
-    new MyRadioFormField(
-        'tracks',
-        MyRadioFormField::TYPE_TABULARSET,
-        [
-            'options' => [
-                new MyRadioFormField(
-                    'track',
-                    MyRadioFormField::TYPE_TRACK,
-                    [
-                        'label' => 'Tracks'
-                    ]
-                ),
-                new MyRadioFormField(
-                    'artist',
-                    MyRadioFormField::TYPE_ARTIST,
-                    [
-                        'label' => 'Artists'
-                    ]
-                )
-            ]
-        ]
-    )
-)->addField(
-    new MyRadioFormField(
-        'notes',
-        MyRadioFormField::TYPE_TEXT,
-        [
-            'label' => 'Notes',
-            'explanation' => 'Optional. Enter notes aboout this change.',
-            'required' => false
-        ]
-    )
-)->addField(
-    new MyRadioFormField(
-        'playlistid',
-        MyRadioFormField::TYPE_HIDDEN
-    )
-);
-
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
-    $data = $form->readValues();
+    $data = iTones_Playlist::getForm()->readValues();
 
-    if (empty($data['playlistid'])) {
+    if (empty($data['id'])) {
         throw new MyRadioException('No Playlist ID provided.', 400);
     }
 
-    $playlist = iTones_Playlist::getInstance($data['playlistid']);
+    $playlist = iTones_Playlist::getInstance($data['id']);
 
     if ($playlist->validateLock($_SESSION['itones_lock_'.$playlist->getID()]) === false) {
         CoreUtils::getTemplateObject()
@@ -107,17 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $_SESSION['itones_lock_'.$playlist->getID()] = $lock;
 
-        $tracks = $playlist->getTracks();
-        $artists = [];
-        foreach ($tracks as $track) {
-            if ($track instanceof MyRadio_Track) {
-                $artists[] = $track->getArtist();
-            }
-        }
-        $form->setTemplate('iTones/editPlaylist.twig')
-            ->setFieldValue('tracks.track', $tracks)
-            ->setFieldValue('tracks.artist', $artists)
-            ->setFieldValue('playlistid', $playlist->getID())
+        iTones_Playlist::getEditForm()->setTemplate('iTones/editPlaylist.twig')
             ->render();
     }
 }

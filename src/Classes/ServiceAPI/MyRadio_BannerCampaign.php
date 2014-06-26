@@ -225,8 +225,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                     'effective_to' => $this->getEffectiveTo() === null ? null :
                         CoreUtils::happyTime($this->getEffectiveTo()),
                     'location' => $this->getLocation()
-                ],
-                'editCampaign'
+                ]
             );
     }
 
@@ -397,7 +396,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
             new MyRadioForm(
                 'bannercampaignfrm',
                 'Website',
-                'createCampaign',
+                'editCampaign',
                 [
                     'template' => 'Website/campaignfrm.twig',
                     'title' => 'Edit Banner Campaign'

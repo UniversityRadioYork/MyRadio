@@ -54,6 +54,92 @@ class iTones_Playlist extends ServiceAPI
         )['revisionid'];
     }
 
+//                          ##     #######
+//                          ##     ##
+//       ######   #####   ######   ##        #####   ## ###   ### ##
+//      ##   ##  ##   ##    ##     #####    ##   ##  ###      ## # ##
+//      ##   ##  #######    ##     ##       ##   ##  ##       ## # ##
+//       ######  ##         ##     ##       ##   ##  ##       ## # ##
+//           ##   #####      ###   ##        #####   ##       ##   ##
+//       #####
+
+    public static function getForm()
+    {
+        return new MyRadioForm(
+            'itones_playlistedit',
+            $module,
+            'editPlaylist',
+            [
+                'title' => 'Edit Campus Jukebox Playlist'
+            ]
+        )->addField(
+            new MyRadioFormField(
+                'tracks',
+                MyRadioFormField::TYPE_TABULARSET,
+                [
+                    'options' => [
+                        new MyRadioFormField(
+                            'track',
+                            MyRadioFormField::TYPE_TRACK,
+                            [
+                                'label' => 'Tracks'
+                            ]
+                        ),
+                        new MyRadioFormField(
+                            'artist',
+                            MyRadioFormField::TYPE_ARTIST,
+                            [
+                                'label' => 'Artists'
+                            ]
+                        )
+                    ]
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'notes',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Notes',
+                    'explanation' => 'Optional. Enter notes aboout this change.',
+                    'required' => false
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'playlistid',
+                MyRadioFormField::TYPE_HIDDEN
+            )
+        );
+    }
+
+//                          ##     #######       ##    ##       ##     #######
+//                          ##     ##            ##             ##     ##
+//       ######   #####   ######   ##        ######  ####     ######   ##        #####   ## ###   ### ##
+//      ##   ##  ##   ##    ##     #####    ##   ##    ##       ##     #####    ##   ##  ###      ## # ##
+//      ##   ##  #######    ##     ##       ##   ##    ##       ##     ##       ##   ##  ##       ## # ##
+//       ######  ##         ##     ##       ##   ##    ##       ##     ##       ##   ##  ##       ## # ##
+//           ##   #####      ###   #######   ######  ######      ###   ##        #####   ##       ##   ##
+//       #####
+
+    public function getEditForm()
+    {
+        return self::getForm()
+            ->setTitle('Edit Playlist')
+            ->editMode(
+                $this->getID(),
+                [
+                    'tracks.track' => $this->getTracks(),
+                    'tracks.artist' => array_map(
+                        function ($track) {
+                            return $track->getArtist();
+                        },
+                        $this->getTracks()
+                    ),
+                ]
+            );
+    }
+
     /**
      * Return the MyRadio_Tracks that belong to this playlist
      * @return Array of MyRadio_Track objects
