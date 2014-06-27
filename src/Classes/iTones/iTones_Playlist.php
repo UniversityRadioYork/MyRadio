@@ -65,13 +65,15 @@ class iTones_Playlist extends ServiceAPI
 
     public static function getForm()
     {
-        return new MyRadioForm(
-            'itones_playlistedit',
-            $module,
-            'editPlaylist',
-            [
-                'title' => 'Edit Campus Jukebox Playlist'
-            ]
+        return (
+            new MyRadioForm(
+                'itones_playlistedit',
+                'iTones',
+                'editPlaylist',
+                [
+                    'title' => 'Edit Campus Jukebox Playlist'
+                ]
+            )
         )->addField(
             new MyRadioFormField(
                 'tracks',

@@ -129,13 +129,15 @@ class MyRadioNews
 
     public static function getForm()
     {
-        return new MyRadioForm(
-            'myradio_news',
-            'MyRadio',
-            'addNews',
-            [
-                'title' => 'Add news item'
-            ]
+        return (
+            new MyRadioForm(
+                'myradio_news',
+                'MyRadio',
+                'addNews',
+                [
+                    'title' => 'Add news item'
+                ]
+            )
         )->addField(
             new MyRadioFormField(
                 'body',

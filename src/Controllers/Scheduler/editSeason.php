@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             CoreUtils::requirePermission(AUTH_EDITSHOWS);
         }
 
-        MyRadio_Season::getEditForm()->render();
+        $season->getEditForm()->render();
 
     } else {
         //create form

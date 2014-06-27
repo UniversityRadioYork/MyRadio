@@ -271,7 +271,7 @@ class MyRadio_Quote extends ServiceAPI
                 'quotes_editQuote',
                 'Quotes',
                 'editQuote',
-                ['title' => 'Edit Quote']
+                ['title' => 'Add Quote']
             )
         )->addField(
             new MyRadioFormField(
@@ -303,6 +303,20 @@ class MyRadio_Quote extends ServiceAPI
         );
 
         return $form;
+    }
+
+    public function getEditForm()
+    {
+        return self::getForm()
+            ->setTitle('Edit Quote')
+            ->editMode(
+                $this->getID(),
+                [
+                    'date'   => CoreUtils::happyTime($this->getDate(), false),
+                    'source' => $this->getSource(),
+                    'text'   => $this->getText()
+                ]
+            );
     }
 
     /**

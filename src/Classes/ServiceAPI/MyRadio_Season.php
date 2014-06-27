@@ -298,14 +298,16 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             );
         }
 
-        return new MyRadioForm(
-            'sched_season',
-            $module,
-            'editSeason',
-            [
-                'debug' => true,
-                'title' => 'Create Season'
-            ]
+        return (
+            new MyRadioForm(
+                'sched_season',
+                'Scheduler',
+                'editSeason',
+                [
+                    'debug' => true,
+                    'title' => 'Create Season'
+                ]
+            )
         )->addField(
             new MyRadioFormField('show_id', MyRadioFormField::TYPE_HIDDEN)
         )->addField(
@@ -423,7 +425,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                         $this->getCredits()
                     )
                 ]
-            )
+            );
     }
 
 //                          ##       ##      ###      ###                                  ##              #######
@@ -439,7 +441,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     {
         $form = new MyRadioForm(
             'sched_allocate',
-            $module,
+            'Scheduler',
             'allocate',
             [
                 'title' => 'Allocate Timeslots to Season',
@@ -539,14 +541,16 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
     public static function getRejectForm()
     {
-        return new MyRadioForm(
-            'sched_reject',
-            $module,
-            'doReject',
-            [
-                'debug' => false,
-                'title' => 'Reject Season Application'
-            ]
+        return (
+            new MyRadioForm(
+                'sched_reject',
+                'Scheduler',
+                'doReject',
+                [
+                    'debug' => false,
+                    'title' => 'Reject Season Application'
+                ]
+            )
         )->addField(
             new MyRadioFormField('season_id', MyRadioFormField::TYPE_HIDDEN)
         )->addField(

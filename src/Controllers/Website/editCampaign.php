@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->setLocation($data['location']);
     }
 
-    CoreUtils::backWithMessage('Campaign Updated!')
+    CoreUtils::backWithMessage('Campaign Updated!');
 
 } else {
     //Not Submitted

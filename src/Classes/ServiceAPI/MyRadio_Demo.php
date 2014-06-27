@@ -54,13 +54,15 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
 
     public static function getForm()
     {
-        return new MyRadioForm(
-            'sched_demo',
-            $module,
-            'createDemo',
-            [
-                'title' => 'Create Demo'
-            ]
+        return (
+            new MyRadioForm(
+                'sched_demo',
+                'Scheduler',
+                'createDemo',
+                [
+                    'title' => 'Create Demo'
+                ]
+            )
         )->addField(
             new MyRadioFormField(
                 'demo-datetime',

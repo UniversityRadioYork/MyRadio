@@ -317,14 +317,16 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     public static function getForm()
     {
-        return new MyRadioForm(
-            'sched_show',
-            'Scheduler',
-            'editShow',
-            [
-                'debug' => true,
-                'title' => 'Create Show'
-            ]
+        return (
+            new MyRadioForm(
+                'sched_show',
+                'Scheduler',
+                'editShow',
+                [
+                    'debug' => true,
+                    'title' => 'Create Show'
+                ]
+            )
         )->addField(
             new MyRadioFormField('grp-basics', MyRadioFormField::TYPE_SECTION, ['label' => 'About My Show'])
         )->addField(
@@ -435,7 +437,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'title' => $this->getMeta('title'),
                     'description' => $this->getMeta('description'),
                     'genres' => $this->getGenre(),
-                    'tags' => implode(' ', $meta),
+                    'tags' => is_null($this->getMeta('tag')) ? null : implode(' ',$this->getMeta('tag')),
                     'credits.member' => array_map(
                         function ($ar) {
                             return $ar['User'];
@@ -450,7 +452,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     ),
                     'mixclouder' => ($this->getMeta('upload_state') === 'Requested')
                 ]
-            )
+            );
     }
 
 //                          ##     ######   ##                  ##              #######
@@ -464,14 +466,16 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     public static function getPhotoForm()
     {
-        return new MyRadioForm(
-            'sched_showphoto',
-            $module,
-            'showPhoto',
-            [
-                'debug' => true,
-                'title' => 'Update Show Photo',
-            ]
+        return (
+            new MyRadioForm(
+                'sched_showphoto',
+                'Scheduler',
+                'showPhoto',
+                [
+                    'debug' => true,
+                    'title' => 'Update Show Photo',
+                ]
+            )
         )->addField(
             new MyRadioFormField(
                 'show_id',
@@ -545,7 +549,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      */
     public function getGenre()
     {
-        return $this->genres[0];
+        return isset($this->genres[0]) ? $this->genres[0] : null;
     }
 
     public function isCurrentUserAnOwner()

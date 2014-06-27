@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     MyRadioNews::addItem($data['feedid'], $data['body']);
 
-    CoreUtils::backWithMessage('News Updated!')
+    CoreUtils::backWithMessage('News Updated!');
 
 } else {
     //Not Submitted

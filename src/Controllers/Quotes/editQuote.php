@@ -6,12 +6,9 @@
  * @package MyURY_Quotes
  */
 
-$form = MyRadio_Quote::getForm();
-
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
-    $data = $form->readValues();
+    $data = MyRadio_Quote::getForm()->readValues();
 
     if (empty($data['id'])) {
         //create new
@@ -24,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->setDate($data['date']);
     }
 
-    CoreUtils::backWithMessage('Quote Updated.');
+    CoreUtils::backWithMessage('Quote Updated!');
 
 } else {
     //Not Submitted
@@ -33,22 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //edit form
         $quote = MyRadio_Quote::getInstance($_REQUEST['quote_id']);
 
-        $form->editMode(
-            $quote->getID(),
-            array_merge(
-                [
-                    'date'   => CoreUtils::happyTime($quote->getDate(), false),
-                    'source' => $quote->getSource(),
-                    'text'   => $quote->getText()
-                ],
-                $chart_rows_form
-            )
-        );
+        $quote->getEditForm()->render();
 
     } else {
         //create form
-        $form->setFieldValue('date', CoreUtils::happyTime(time(), false));
+        MyRadio_Quote::getForm()
+            ->setFieldValue('date', CoreUtils::happyTime(time(), false))
+            ->render();
     }
-
-    $form->render();
 }

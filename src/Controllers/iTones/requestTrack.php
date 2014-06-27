@@ -9,14 +9,16 @@
  * @package MyRadio_iTones
  */
 
-$form = new MyRadioForm(
-    'itones_trackrequest',
-    $module,
-    $action,
-    [
-        'debug' => true,
-        'title' => 'Request Campus Jukebox Track'
-    ]
+$form = (
+    new MyRadioForm(
+        'itones_trackrequest',
+        $module,
+        $action,
+        [
+            'debug' => true,
+            'title' => 'Request Campus Jukebox Track'
+        ]
+    )
 )->addField(
     new MyRadioFormField(
         'track',

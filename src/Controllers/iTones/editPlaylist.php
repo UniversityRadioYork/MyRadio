@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $_SESSION['itones_lock_'.$playlist->getID()] = $lock;
 
-        iTones_Playlist::getEditForm()->setTemplate('iTones/editPlaylist.twig')
+        $playlist->getEditForm()->setTemplate('iTones/editPlaylist.twig')
             ->render();
     }
 }

@@ -148,13 +148,15 @@ class MyRadio_Track extends ServiceAPI
 
     public static function getForm()
     {
-        return new MyRadioForm(
-            'lib_edittrack',
-            'Library',
-            'editTrack',
-            [
-                'title' => 'Edit Track'
-            ]
+        return (
+            new MyRadioForm(
+                'lib_edittrack',
+                'Library',
+                'editTrack',
+                [
+                    'title' => 'Edit Track'
+                ]
+            )
         )->addField(
             new MyRadioFormField('title', MyRadioFormField::TYPE_TEXT, ['label' => 'Title'])
         )->addField(

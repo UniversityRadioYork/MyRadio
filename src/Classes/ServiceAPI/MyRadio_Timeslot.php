@@ -787,14 +787,16 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     public static function getCancelForm()
     {
-        return new MyRadioForm(
-            'sched_cancel',
-            $module,
-            'cancelEpisode',
-            [
-                'debug' => false,
-                'title' => 'Cancel Episode'
-            ]
+        return (
+            new MyRadioForm(
+                'sched_cancel',
+                'Scheduler',
+                'cancelEpisode',
+                [
+                    'debug' => false,
+                    'title' => 'Cancel Episode'
+                ]
+            )
         )->addField(
             new MyRadioFormField(
                 'reason',
