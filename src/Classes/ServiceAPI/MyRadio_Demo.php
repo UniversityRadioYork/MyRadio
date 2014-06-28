@@ -43,15 +43,6 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
         return true;
     }
 
-//                          ##     #######
-//                          ##     ##
-//       ######   #####   ######   ##        #####   ## ###   ### ##
-//      ##   ##  ##   ##    ##     #####    ##   ##  ###      ## # ##
-//      ##   ##  #######    ##     ##       ##   ##  ##       ## # ##
-//       ######  ##         ##     ##       ##   ##  ##       ## # ##
-//           ##   #####      ###   ##        #####   ##       ##   ##
-//       #####
-
     public static function getForm()
     {
         return (

@@ -141,15 +141,6 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         return 'MyRadio_Show-'.$id;
     }
 
-//                                            ##
-//                                            ##
-//       #####   ## ###    #####    ######  ######    #####
-//      ##       ###      ##   ##  ##   ##    ##     ##   ##
-//      ##       ##       #######  ##   ##    ##     #######
-//      ##       ##       ##       ##  ###    ##     ##
-//       #####   ##        #####    ### ##     ###    #####
-//
-
     /**
      * Creates a new MyRadio Show and returns an object representing it
      * @param Array $params An array of Show properties compatible with the Models/Scheduler/showfrm Form:
@@ -306,15 +297,6 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         return $show;
     }
 
-//                          ##     #######
-//                          ##     ##
-//       ######   #####   ######   ##        #####   ## ###   ### ##
-//      ##   ##  ##   ##    ##     #####    ##   ##  ###      ## # ##
-//      ##   ##  #######    ##     ##       ##   ##  ##       ## # ##
-//       ######  ##         ##     ##       ##   ##  ##       ## # ##
-//           ##   #####      ###   ##        #####   ##       ##   ##
-//       #####
-
     public static function getForm()
     {
         return (
@@ -418,15 +400,6 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         );
     }
 
-//                          ##     #######       ##    ##       ##     #######
-//                          ##     ##            ##             ##     ##
-//       ######   #####   ######   ##        ######  ####     ######   ##        #####   ## ###   ### ##
-//      ##   ##  ##   ##    ##     #####    ##   ##    ##       ##     #####    ##   ##  ###      ## # ##
-//      ##   ##  #######    ##     ##       ##   ##    ##       ##     ##       ##   ##  ##       ## # ##
-//       ######  ##         ##     ##       ##   ##    ##       ##     ##       ##   ##  ##       ## # ##
-//           ##   #####      ###   #######   ######  ######      ###   ##        #####   ##       ##   ##
-//       #####
-
     public function getEditForm()
     {
         return self::getForm()
@@ -454,15 +427,6 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 ]
             );
     }
-
-//                          ##     ######   ##                  ##              #######
-//                          ##     ##   ##  ##                  ##              ##
-//       ######   #####   ######   ##   ##  ######    #####   ######    #####   ##        #####   ## ###   ### ##
-//      ##   ##  ##   ##    ##     ######   ##   ##  ##   ##    ##     ##   ##  #####    ##   ##  ###      ## # ##
-//      ##   ##  #######    ##     ##       ##   ##  ##   ##    ##     ##   ##  ##       ##   ##  ##       ## # ##
-//       ######  ##         ##     ##       ##   ##  ##   ##    ##     ##   ##  ##       ##   ##  ##       ## # ##
-//           ##   #####      ###   ##       ##   ##   #####      ###    #####   ##        #####   ##       ##   ##
-//       #####
 
     public static function getPhotoForm()
     {

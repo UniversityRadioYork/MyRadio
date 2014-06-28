@@ -137,15 +137,6 @@ class MyRadio_Track extends ServiceAPI
         self::$cache->set(self::getCacheKey($this->getID()), $this, Config::$cache_track_timeout);
     }
 
-//                          ##     #######
-//                          ##     ##
-//       ######   #####   ######   ##        #####   ## ###   ### ##
-//      ##   ##  ##   ##    ##     #####    ##   ##  ###      ## # ##
-//      ##   ##  #######    ##     ##       ##   ##  ##       ## # ##
-//       ######  ##         ##     ##       ##   ##  ##       ## # ##
-//           ##   #####      ###   ##        #####   ##       ##   ##
-//       #####
-
     public static function getForm()
     {
         return (
@@ -165,15 +156,6 @@ class MyRadio_Track extends ServiceAPI
             new MyRadioFormField('album', MyRadioFormField::TYPE_ALBUM, ['label' => 'Album'])
         );
     }
-
-//                          ##     #######       ##    ##       ##     #######
-//                          ##     ##            ##             ##     ##
-//       ######   #####   ######   ##        ######  ####     ######   ##        #####   ## ###   ### ##
-//      ##   ##  ##   ##    ##     #####    ##   ##    ##       ##     #####    ##   ##  ###      ## # ##
-//      ##   ##  #######    ##     ##       ##   ##    ##       ##     ##       ##   ##  ##       ## # ##
-//       ######  ##         ##     ##       ##   ##    ##       ##     ##       ##   ##  ##       ## # ##
-//           ##   #####      ###   #######   ######  ######      ###   ##        #####   ##       ##   ##
-//       #####
 
     public function getEditForm()
     {
