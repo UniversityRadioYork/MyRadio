@@ -139,22 +139,22 @@ class MyRadioMenu
 
     /**
      * Gets all items for a module's submenu and puts them in an array.
-     * @param  int   $moduleid The id of the module to get items for
+     * @param  String   $module The name of the module to get items for
      * @return Array An array that can be used by getSubMenuForUser() to build a submenu
-     * @todo Caching here breaks submenus
      */
-    private function getFullSubMenu($moduleid)
+    private function getFullSubMenu($module)
     {
-        $db = Database::getInstance();
+        $menu = json_decode(@file_get_contents('Menus/'.$module.'.json', FILE_USE_INCLUDE_PATH), true);
 
-        $items = $db->fetchAll(
-            'SELECT menumoduleid, title, url, description FROM myury.menu_module
-            WHERE moduleid=$1 ORDER BY title ASC',
-            [$moduleid]
-        );
-        //Get permissions for each $item
-        foreach ($items as $key => $item) {
-            $items[$key] = array_merge($items[$key], $this->breakDownURL($item['url']));
+        if (is_null($menu)) {
+            $items = [];
+        } else {
+            $items = $menu['menu'];
+
+            //Get permissions for each $item
+            foreach ($items as $key => $item) {
+                $items[$key] = array_merge($items[$key], $this->breakDownURL($item['url']));
+            }
         }
 
         return $items;
@@ -188,13 +188,12 @@ class MyRadioMenu
 
     /**
      * @todo Document
-     * @param  type          $moduleid
-     * @param  \MyRadio_User $user     The currently logged in User's User object
+     * @param  type          $module
      * @return array
      */
-    public function getSubMenuForUser($moduleid, MyRadio_User $user)
+    public function getSubMenuForUser($module)
     {
-        $full = $this->getFullSubMenu($moduleid);
+        $full = $this->getFullSubMenu($module);
 
         //Iterate over the Full Menu, creating a user menu
         $menu = [];

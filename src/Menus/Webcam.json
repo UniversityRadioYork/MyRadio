@@ -1,0 +1,20 @@
+{
+    "menu":
+    [
+        {
+            "title": "Grid View",
+            "url": "module=Webcam",
+            "description": "View the URY Webcams in a Grid"
+        },
+        {
+            "title": "Focus View",
+            "url": "module=Webcam,action=focus",
+            "description": "An alternative webcam view with thumbnails and a central display"
+        },
+        {
+            "title": "Archives",
+            "url": "module=Webcam,action=archive",
+            "description": "View our video archives to check for coffee spillages and general tomfoolery.<br>Yes, we're looking at you, Mr Edwards."
+        }
+    ]
+}

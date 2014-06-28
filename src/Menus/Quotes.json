@@ -1,0 +1,15 @@
+{
+    "menu":
+        [
+            {
+                "title": "Quote Board",
+                "url": "module=Quotes",
+                "description": "Go to the Quotes Database."
+            },
+            {
+                "title": "Add Quote",
+                "url": "module=Quotes,action=editQuote",
+                "description": "Add a quote to the Quotes Database."
+            }
+        ]
+}

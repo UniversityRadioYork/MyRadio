@@ -1,0 +1,55 @@
+{
+    "menu":
+    [
+        {
+            "title": "Stats",
+            "url": "module=Stats",
+            "desctiption": "This part of MyRadio shows you some interesting statistics about the station, from training maps to college breakdowns."
+        },
+        {
+            "title": "Training Map",
+            "url": "module=Stats,action=trainingMap",
+            "desctiption": "See a digraph of all training, demoes and trainer trainings!"
+        },
+        {
+            "title": "Most Messaged Shows",
+            "url": "module=Stats,action=mostMessagedShowYear",
+            "desctiption": "View the shows that have been most messaged this academic year!"
+        },
+        {
+            "title": "Most Messaged Timeslots",
+            "url": "module=Stats,action=mostMessagedTimeslotYear",
+            "desctiption": "See the Timeslots that have had the most messages this year!"
+        },
+        {
+            "title": "Most Listened Shows",
+            "url": "module=Stats,action=mostListenedShowYear",
+            "desctiption": "See the shows that have had the most listeners this academic year!"
+        },
+        {
+            "title": "Most Listened Timeslots",
+            "url": "module=Stats,action=mostListenedTimeslotYear",
+            "desctiption": "See the shows that have had the most listeners this academic year!"
+        },
+        {
+            "title": "Jukebox Play Stats",
+            "url": "module=Stats,action=jukeboxPlayCounter",
+            "desctiption": "View Jukebox Playout Statistics"
+        },
+        {
+            "title": "BAPS Play Stats",
+            "url": "module=Stats,action=bapsPlayCounter",
+            "desctiption": "View BAPS Playout Statistics"
+        },
+        {
+            "title": "Central Music Library",
+            "url": "module=Stats,action=digitisation",
+            "desctiption": "View stats about the CML."
+        },
+        {
+            "title": "Full Tracklist",
+            "url": "module=Stats,action=fullTracklist",
+            "desctiption": "See every track played within a timeframe."
+        }
+    ]
+}
