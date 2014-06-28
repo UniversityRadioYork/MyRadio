@@ -238,6 +238,7 @@ class CoreUtils
         }
 
         echo json_encode($data);
+        exit;
     }
 
     /**
