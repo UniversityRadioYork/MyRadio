@@ -53,7 +53,7 @@ class MyRadioMenu
 
     /**
      * Returns the entire MyRadio Main Menu structure
-     * @todo Better Documentation
+     * @return Array An array that can be used by getMenuForUser() to build the menu
      */
     private function getFullMenu()
     {
