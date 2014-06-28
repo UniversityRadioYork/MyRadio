@@ -137,6 +137,39 @@ class MyRadio_Track extends ServiceAPI
         self::$cache->set(self::getCacheKey($this->getID()), $this, Config::$cache_track_timeout);
     }
 
+    public static function getForm()
+    {
+        return (
+            new MyRadioForm(
+                'lib_edittrack',
+                'Library',
+                'editTrack',
+                [
+                    'title' => 'Edit Track'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField('title', MyRadioFormField::TYPE_TEXT, ['label' => 'Title'])
+        )->addField(
+            new MyRadioFormField('artist', MyRadioFormField::TYPE_TEXT, ['label' => 'Artist'])
+        )->addField(
+            new MyRadioFormField('album', MyRadioFormField::TYPE_ALBUM, ['label' => 'Album'])
+        );
+    }
+
+    public function getEditForm()
+    {
+        return self::getForm()
+            ->editMode(
+                $this->getID(),
+                [
+                    'title' => $this->getTitle(),
+                    'artist' => $this->getArtist(),
+                    'album' => $this->getAlbum()->getID()
+                ]
+            );
+    }
+
     /**
      * Returns a "summary" string - the title and artist seperated with a dash.
      * @return String

@@ -1297,7 +1297,7 @@ class MyRadio_User extends ServiceAPI
             throw new MyRadioException(self::getInstance() . ' tried to edit ' . $this . '!');
         }
 
-        $form = new MyRadioForm('profileedit', 'Profile', 'doEdit', ['title' => 'Edit Profile']);
+        $form = new MyRadioForm('profileedit', 'Profile', 'edit', ['title' => 'Edit Profile']);
         //Personal details
         $form->addField(new MyRadioFormField('memberid', MyRadioFormField::TYPE_HIDDEN, ['value' => $this->getID()]))
                 ->addField(new MyRadioFormField('sec_personal', MyRadioFormField::TYPE_SECTION, [
@@ -1584,7 +1584,7 @@ class MyRadio_User extends ServiceAPI
             throw new MyRadioException(self::getInstance() . ' tried to add members!');
         }
 
-        $form = new MyRadioForm('profilequickadd', 'Profile', 'doQuickAdd', ['title' => 'Add Member (Quick)']);
+        $form = new MyRadioForm('profilequickadd', 'Profile', 'quickAdd', ['title' => 'Add Member (Quick)']);
         //Personal details
         $form->addField(new MyRadioFormField('sec_personal', MyRadioFormField::TYPE_SECTION, [
                     'label' => 'Personal Details'
@@ -1640,7 +1640,7 @@ class MyRadio_User extends ServiceAPI
             throw new MyRadioException(self::getInstance() . ' tried to add members!');
         }
 
-        $form = new MyRadioForm('profilebulkadd', 'Profile', 'doBulkAdd', ['title' => 'Add Member (Bulk)']);
+        $form = new MyRadioForm('profilebulkadd', 'Profile', 'bulkAdd', ['title' => 'Add Member (Bulk)']);
         //Personal details
         $form->addField(new MyRadioFormField('bulkaddrepeater', MyRadioFormField::TYPE_TABULARSET, [
             'options' => [

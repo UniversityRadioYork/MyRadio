@@ -1,0 +1,30 @@
+{
+    "menu":
+    [
+        {
+            "title": "View Profile",
+            "url": "module=Profile",
+            "description": "Go to your profile"
+        },
+        {
+            "title": "List Members",
+            "url": "module=Profile,action=list",
+            "description": "List this year's members"
+        },
+        {
+            "title": "List Officers",
+            "url": "module=Profile,action=listOfficers",
+            "description": "List the current officers"
+        },
+        {
+            "title": "Add Member",
+            "url": "module=Profile,action=quickAdd",
+            "description": "Add a new Member"
+        },
+        {
+            "title": "Bulk Add Members",
+            "url": "module=Profile,action=bulkAdd",
+            "description": "For when you need to create a lot of user accounts, fast."
+        }
+    ]
+}

@@ -9,4 +9,4 @@
 
 $data = MyRadio_Timeslot::getCurrentAndNext(null, 10);
 
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

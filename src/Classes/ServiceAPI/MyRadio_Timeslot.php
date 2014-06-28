@@ -775,4 +775,32 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             ]
         );
     }
+
+    public static function getCancelForm()
+    {
+        return (
+            new MyRadioForm(
+                'sched_cancel',
+                'Scheduler',
+                'cancelEpisode',
+                [
+                    'debug' => false,
+                    'title' => 'Cancel Episode'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'reason',
+                MyRadioFormField::TYPE_BLOCKTEXT,
+                ['label' => 'Please explain why this Episode should be removed from the Schedule']
+            )
+        )->addField(
+            new MyRadioFormField(
+                'show_season_timeslot_id',
+                MyRadioFormField::TYPE_HIDDEN,
+                ['value' => $_REQUEST['show_season_timeslot_id']]
+            )
+        );
+    }
+
 }

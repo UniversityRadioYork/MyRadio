@@ -13,4 +13,4 @@ $data = MyRadio_Track::identifyAndStoreTrack($_REQUEST['fileid'],
                                              $_REQUEST['position']);
 $data['fileid'] = $_REQUEST['fileid'];
 
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

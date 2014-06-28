@@ -10,4 +10,4 @@
  * @package MyRadio_Core
  */
 MyRadioNews::markNewsAsRead((int) $_REQUEST['newsentryid'], MyRadio_User::getInstance());
-require 'Views/MyRadio/nocontent.php';
+CoreUtils::nocontent();

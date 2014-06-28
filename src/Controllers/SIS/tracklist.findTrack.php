@@ -54,4 +54,4 @@ if ($box == "artist") {
 }
 
 $data = $dataout;
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

@@ -8,4 +8,8 @@
  */
 $streams = MyRadio_Webcam::getStreams();
 $live = array_shift($streams);
-require 'Views/Webcam/focus.php';
+
+CoreUtils::getTemplateObject()->setTemplate('Webcam/focus.twig')
+    ->addVariable('streams', $streams)
+    ->addVariable('live', $live)
+    ->render();

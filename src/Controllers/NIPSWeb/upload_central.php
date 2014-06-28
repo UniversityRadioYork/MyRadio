@@ -8,4 +8,4 @@
  */
 $data = MyRadio_Track::cacheAndIdentifyUploadedTrack($_FILES['audio']['tmp_name']);
 
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

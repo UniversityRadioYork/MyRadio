@@ -11,4 +11,4 @@
 
  $data = NIPSWeb_AutoPlaylist::getInstance($playlistid)->getTracks();
 
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

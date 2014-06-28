@@ -2,12 +2,23 @@
 /**
  * Allows URY Trainers to create demo slots for new members to attend
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 24102012
+ * @author Andy Durant <aj@ury.org.uk>
+ * @version 20140624
  * @package MyRadio_Scheduler
  */
 
-//The Form definition
-require 'Models/Scheduler/demofrm.php';
-//'tis a one line view
-$form->setTemplate('Scheduler/createDemo.twig')->render();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //Submitted
+    MyRadio_Demo::getForm()->readValues();
+
+    MyRadio_Demo::registerDemo($demoinfo['demo-datetime']);
+
+    CoreUtils::backWithMessage('Demo Updated!');
+
+} else {
+    //Not Submitted
+
+    MyRadio_Demo::getForm()
+        ->setTemplate('Scheduler/createDemo.twig')
+        ->render();
+}

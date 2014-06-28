@@ -7,7 +7,7 @@
  */
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-    ->addVariable('tablescript', 'myury.datatable.default')
+    ->addVariable('tablescript', 'myradio.podcasts')
     ->addVariable('title', 'My Podcasts')
     ->addVariable(
         'tabledata',

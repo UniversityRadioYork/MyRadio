@@ -7,4 +7,7 @@
  * @package MyRadio_Webcam
  */
 $streams = MyRadio_Webcam::getStreams();
-require 'Views/Webcam/streams.php';
+
+CoreUtils::getTemplateObject()->setTemplate('Webcam/grid.twig')
+    ->addVariable('streams', $streams)
+    ->render();

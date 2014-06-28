@@ -20,4 +20,4 @@ if (!isset($_REQUEST['fileid'])
 $data = NIPSWeb_ManagedItem::storeItem($_REQUEST['fileid'], $_REQUEST['title']);
 $data['fileid'] = $_REQUEST['fileid'];
 
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);
