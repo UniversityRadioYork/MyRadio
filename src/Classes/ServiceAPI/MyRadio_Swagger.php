@@ -112,7 +112,7 @@ class MyRadio_Swagger
                     "paramType" => "query",
                     "name" => 'full',
                     "description" => "Some objects can optionally return a small or large response. By default, a full response is on, although it is intended for this to change.",
-                    "dataType" => "boolean",
+                    "type" => "boolean",
                     "required" => false,
                     "allowMultiple" => false,
                     "defaultValue" => true
@@ -128,7 +128,7 @@ class MyRadio_Swagger
                     "paramType" => "path",
                     "name" => "id",
                     "description" => "The unique identifier of the $this->class to be acted on. An int for most Objects, but some are Strings.",
-                    "dataType" => "int",
+                    "type" => "int",
                     "required" => true,
                     "allowMultiple" => false
                 ];
@@ -139,7 +139,7 @@ class MyRadio_Swagger
                     "paramType" => "query",
                     "name" => $param->getName(),
                     "description" => (empty($meta['params'][$param->getName()]['description']) ? : $meta['params'][$param->getName()]['description']),
-                    "dataType" => (empty($meta['params'][$param->getName()]['type']) ? 'int' : $meta['params'][$param->getName()]['type']),
+                    "type" => (empty($meta['params'][$param->getName()]['type']) ? 'int' : $meta['params'][$param->getName()]['type']),
                     "required" => !$param->isOptional(),
                     "allowMultiple" => false,
                     "defaultValue" => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null
@@ -152,9 +152,8 @@ class MyRadio_Swagger
                 "description" => $method->getDocComment(),
                 "operations" => [
                     [
-                        "httpMethod" => $meta['api'],
+                        "method" => $meta['api'],
                         "nickname" => $method->getName(),
-                        "responseClass" => $meta['return_type'],
                         "parameters" => $params,
                         "summary" => $meta['short_desc'],
                         "notes" => $meta['long_desc']
