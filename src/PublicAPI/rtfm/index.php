@@ -74,12 +74,12 @@
             <h2 style="color:white;font-family:helvetica,arial,sans-serif;padding:0;font-weight:bold">API Documentation</h2>
         </header>
         <div id="content-body" class="swagger-section">
-            <div id='header'>
+            <div id='header' style="background: none;">
               <div class="swagger-ui-wrap">
                 <form id='api_selector'>
-                  <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text"/></div>
+                  <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="hidden"/></div>
                   <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
-                  <div class='input'><a id="explore" href="#">Explore</a></div>
+                  <div class='input'><a id="explore" href="#" style="background-color: #363d5f;">Explore</a></div>
                 </form>
               </div>
             </div>

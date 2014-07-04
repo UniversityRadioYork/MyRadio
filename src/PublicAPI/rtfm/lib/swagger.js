@@ -57,24 +57,24 @@ Object.keys = Object.keys || (function () {
             'constructor'
         ],
         DontEnumsLength = DontEnums.length;
-  
+
     return function (o) {
         if (typeof o != "object" && typeof o != "function" || o === null)
             throw new TypeError("Object.keys called on a non-object");
-     
+
         var result = [];
         for (var name in o) {
             if (hasOwnProperty.call(o, name))
                 result.push(name);
         }
-     
+
         if (hasDontEnumBug) {
             for (var i = 0; i < DontEnumsLength; i++) {
                 if (hasOwnProperty.call(o, DontEnums[i]))
                     result.push(DontEnums[i]);
-            }   
+            }
         }
-     
+
         return result;
     };
 })();
@@ -133,7 +133,7 @@ SwaggerApi.prototype.build = function() {
       },
       response: function(resp) {
         var responseObj = resp.obj || JSON.parse(resp.data);
-        _this.swaggerVersion = responseObj.swaggerVersion;
+        _this.swaggerVersion = '' + responseObj.swaggerVersion;
         if (_this.swaggerVersion === "1.2") {
           return _this.buildFromSpec(responseObj);
         } else {
@@ -812,7 +812,7 @@ SwaggerOperation.prototype.getSampleJSON = function(type, models) {
       else
         return JSON.stringify(val, null, 2);
     }
-    else 
+    else
       return val;
   }
 };
