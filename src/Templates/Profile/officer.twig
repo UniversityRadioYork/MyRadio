@@ -5,6 +5,7 @@
       {% if officer.type == 'o' %}Officer
       {% elseif officer.type == 'a' %}Assistant Head
       {% elseif officer.type == 'h' %}Head
+      {% elseif officer.type == 'm' %}Member
       {% else %}Unknown{% endif %} of
       {{ officer.team.name }}
   </h3>

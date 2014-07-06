@@ -205,6 +205,45 @@ class CoreUtils
     }
 
     /**
+     * Redirects back to previous page.
+     *
+     */
+    public static function back()
+    {
+        header('Location: '.$_SERVER['HTTP_REFERER']);
+    }
+
+    /**
+     * Responds with nocontent.
+     *
+     */
+    public static function nocontent()
+    {
+        header('HTTP/1.1 204 No Content');
+        exit;
+    }
+
+    /**
+     * Responds with JSON data.
+     *
+     */
+    public static function dataToJSON($data)
+    {
+        header('Content-Type: application/json');
+        header('HTTP/1.1 200 OK');
+
+        //Decode to datasource if needed
+        $data = self::dataSourceParser($data);
+
+        if (!empty(MyRadioError::$php_errorlist)) {
+            $data['myury_errors'] = MyRadioError::$php_errorlist;
+        }
+
+        echo json_encode($data);
+        exit;
+    }
+
+    /**
      * Redirects to another page.
      *
      * @param  string $module The module to which we should redirect.

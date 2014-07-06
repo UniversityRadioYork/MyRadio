@@ -54,6 +54,8 @@ class MyRadio_ChartRelease extends ServiceAPI
             music.chart_release(chart_type_id, submitted)
         VALUES
             ($1, $2)
+        RETURNING
+            chart_release_id
         ;';
 
     const SET_RELEASE_TIME_SQL = '
@@ -118,7 +120,7 @@ class MyRadio_ChartRelease extends ServiceAPI
      * @param $chart_release_id  The numeric ID of the chart release.
      * @param $chart_type        The parent chart type, if any.
      *
-     * @return The chart type with the given ID.
+     * @return The chart release with the given ID.
      */
     protected function __construct($chart_release_id, $chart_type = null)
     {
@@ -257,15 +259,44 @@ class MyRadio_ChartRelease extends ServiceAPI
     }
 
     /**
+     * Sets the chart rows that make up this chart release.
+     *
+     * @param $chart_rows array  An array of trackids in position order.
+     *
+     * @return none.
+     */
+    public function setChartRows($chart_rows)
+    {
+        $old_rows = $this->getChartRows();
+        if (empty($old_rows)) {
+            foreach ($chart_rows as $i => $row) {
+                MyRadio_ChartRow::create(
+                    [
+                          'chart_release_id' => $this->getID(),
+                          'position' => $i,
+                          'trackid' => $row
+                    ]
+                );
+            }
+        } else {
+            foreach ($chart_rows as $i => $row) {
+                if ($old_rows[$i]->getTrackID() !== $row) {
+                    $old_rows[$i]->setTrackID($row);
+                }
+            }
+        }
+    }
+
+    /**
      * Creates a new chart release in the database.
      *
      * @param $data array  An array of data to populate the row with.
      *                     Must contain 'chart_type_id' and 'submitted_time'.
-     * @return null nothing.
+     * @return The chart release with the given ID.
      */
     public static function create($data)
     {
-        self::$db->query(
+        $r = self::$db->fetchColumn(
             self::INSERT_SQL,
             [
                 intval($data['chart_type_id']),
@@ -273,6 +304,8 @@ class MyRadio_ChartRelease extends ServiceAPI
             ],
             true
         );
+
+        return self::getInstance($r[0]);
     }
 
     /**
@@ -316,6 +349,82 @@ class MyRadio_ChartRelease extends ServiceAPI
         self::$db->query($sql, [$value, $this->getID()]);
 
         return $this;
+    }
+
+    public static function getForm()
+    {
+        $types = MyRadio_ChartType::getAll();
+        $type_select = [['text' => 'Please select...', 'disabled' => true]];
+        foreach ($types as $type) {
+            $type_select[] = [
+                'value' => $type->getID(),
+                'text' => $type->getDescription()
+            ];
+        }
+
+        $form = (
+            new MyRadioForm(
+                'charts_editchartrelease',
+                'Charts',
+                'editChartRelease',
+                ['title' => 'Create Chart Release']
+            )
+        )->addField(
+            new MyRadioFormField(
+                'chart_type_id',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'label' => 'Chart Type',
+                    'explanation' => 'The type of chart.',
+                    'options' => $type_select
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'submitted_time',
+                MyRadioFormField::TYPE_DATE,
+                [
+                    'label' => 'Release Date',
+                    'explanation' => 'The date on which the chart is released.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'tracks',
+                MyRadioFormField::TYPE_TABULARSET,
+                array(
+                    'options' => array(
+                        new MyRadioFormField(
+                            'track',
+                            MyRadioFormField::TYPE_TRACK,
+                            [
+                                'label' => 'Tracks',
+                            ]
+                        )
+                    )
+                )
+            )
+        );
+
+        return $form;
+    }
+
+    public function getEditForm()
+    {
+        return self::getForm()
+            ->setTitle('Edit Chart Release')
+            ->editMode(
+                $this->getID(),
+                [
+                    'chart_type_id' => $this->getChartTypeID(),
+                    'submitted_time' => CoreUtils::happyTime($this->getReleaseTime(), false),
+                    'tracks.track' => array_map(
+                        function ($chartRow) {
+                            return $chartRow->getTrack();
+                        }, $this->getChartRows()
+                    )
+                ]
+            );
     }
 
     /**

@@ -31,4 +31,4 @@ if (($src <= 0) || ($src > 8)) {
     }
 }
 
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

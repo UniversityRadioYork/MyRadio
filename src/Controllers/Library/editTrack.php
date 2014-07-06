@@ -1,22 +1,27 @@
 <?php
 /**
- * Allows URY Librarians  to create edit Tracks
+ * Allows URY Librarians to create edit Tracks
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130722
+ * @author Andy Durant <aj@ury.org.uk>
+ * @version 20140626
  * @package MyRadio_Library
  */
 
-//The Form definition
-require 'Models/Library/trackfrm.php';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //Submitted
+    $data = MyRadio_Track::getForm()->readValues();
 
-$track = MyRadio_Track::getInstance($_REQUEST['trackid']);
+    $track = MyRadio_Track::getInstance($data['id']);
+    $track->setTitle($data['title']);
+    $track->setArtist($data['artist']);
+    $track->setAlbum($data['album']);
 
-$form->editMode(
-    $track->getID(),
-    [
-        'title' => $track->getTitle(),
-        'artist' => $track->getArtist(),
-        'album' => $track->getAlbum()->getID()
-    ]
-)->render();
+    CoreUtils::backWithMessage('Track Updated.');
+
+} else {
+    //Not Submitted
+
+    MyRadio_Track::getInstance($_REQUEST['trackid'])
+        ->getEditForm()
+        ->render();
+}

@@ -1,0 +1,260 @@
+{
+    "columns":
+        [
+            {
+                "title": "My Stuff",
+                "sections":
+                    [
+                        {
+                            "title": "About Me",
+                            "items":
+                                [
+                                    {
+                                        "title": "Change My Password",
+                                        "url": "module=MyRadio,action=pwChange",
+                                        "description": "Go here to update your URY password."
+                                    },
+                                    {
+                                        "title": "My Profile",
+                                        "url": "module=Profile",
+                                        "description": "Update your contact details, or just find out a little about yourself!"
+                                    },
+                                    {
+                                        "title": "Webmail",
+                                        "url": "/roundcube",
+                                        "description": "If you have a URY mailbox, click here to access your emails. If you would like one, please contact the Computing Team."
+                                    }
+                                ]
+                        },
+                        {
+                            "title": "Get On Air",
+                            "items":
+                                [
+                                    {
+                                        "title": "Add Demo",
+                                        "url": "module=Scheduler,action=createDemo",
+                                        "description": "Add a demo slot for presenters-to-be to sign up to."
+                                    },
+                                    {
+                                        "title": "Studio 1 Training Video",
+                                        "url": "http://youtu.be/YN4RGIgFoJk",
+                                        "description": "Forgotten how to use Studio 1? Want to get ahead of studio training? Here's the place to start."
+                                    },
+                                    {
+                                        "template": "MyRadio/getOnAir.twig"
+                                    }
+                                ]
+                        },
+                        {
+                            "title": "I want to...",
+                            "items":
+                                [
+                                    {
+                                        "title": "Change/Cancel Show",
+                                        "url": "module=Mail,action=send,list=41",
+                                        "description": "You signed a contract saying you'd give 48 hours of cancelling a show. Click here to do just that. Or if you want to fix a spelling mistake in the title of your show."
+                                    },
+                                    {
+                                        "title": "Contact Management",
+                                        "url": "module=Mail,action=send,list=44",
+                                        "description": "Management are the people that get the really boring paperwork emails. If that's what you need, then click here. They'd also appreciate a fun random email every once in a while for fun."
+                                    },
+                                    {
+                                        "title": "Get Beds/Jingles",
+                                        "url": "module=Mail,action=send,list=38",
+                                        "description": "The Production team have a huge library and a little experience - give them a shot if you want that little something that makes your show stand out."
+                                    },
+                                    {
+                                        "title": "Get Computing/Engineering Support",
+                                        "url": "/support/open.php",
+                                        "description": "Having a problem? Report it here and Computing and/or Engineering team will fix it for you. Or at least try."
+                                    }
+                                ]
+                        }
+                    ]
+            },
+            {
+                "title": "My Services",
+                "sections":
+                    [
+                        {
+                            "title": "Show Tools",
+                            "items":
+                                [
+                                    {
+                                        "title": "Audio Logger",
+                                        "url": "/loggerng/",
+                                        "description": "Download a high-quality log."
+                                    },
+                                    {
+                                        "title": "List My Shows",
+                                        "url": "module=Scheduler,action=myShows",
+                                        "description": "List your applied-for and scheduled shows."
+                                    },
+                                    {
+                                        "title": "Podcast Manager",
+                                        "url": "module=Podcast",
+                                        "description": "Upload, edit and manage podcasts."
+                                    },
+                                    {
+                                        "title": "Resource Manager",
+                                        "url": "module=Resource",
+                                        "description": "Organise playlists for your shows. Save your favourite jingles and beds in one place."
+                                    },
+                                    {
+                                        "title": "Show Planner",
+                                        "url": "module=NIPSWeb",
+                                        "description": "Plan, create and practice BAPS shows in advance."
+                                    },
+                                    {
+                                        "title": "Studio Information Service",
+                                        "url": "module=SIS",
+                                        "description": "Access the Studio Information Service."
+                                    }
+                                ]
+                        },
+                        {
+                            "title": "Management Tools",
+                            "items":
+                                [
+                                    {
+                                        "title": "Chart Manager",
+                                        "url": "module=Charts",
+                                        "description": "Edit the URY charts and recommended music lists."
+                                    },
+                                    {
+                                        "title": "Library Manager",
+                                        "url": "module=Library",
+                                        "description": "Edit, upload and generally maintain the URY library from here."
+                                    },
+                                    {
+                                        "title": "Playlist Manager",
+                                        "url": "module=iTones,action=listPlaylists",
+                                        "description": "Manage system playlists, these are accessible to everyone, and are played out on the campus jukebox."
+                                    },
+                                    {
+                                        "title": "Show Scheduler",
+                                        "url": "module=Scheduler",
+                                        "description": "Schedule outstanding show applications."
+                                    },
+                                    {
+                                        "title": "Website Tools",
+                                        "url": "module=Website",
+                                        "description": "Edit website banners, navigation and probably other stuff too."
+                                    }
+                                ]
+                        },
+                        {
+                            "title": "Admin Tools",
+                            "items":
+                                [
+                                    {
+                                        "title": "Assign Action Permissions",
+                                        "url": "module=MyRadio,action=actionPermissions",
+                                        "description": "Manage the requirements to use MyURY Actions"
+                                    },
+                                    {
+                                        "title": "Campus Jukebox Manager",
+                                        "url": "module=iTones",
+                                        "description": "Manage the system that keeps URY on air, even when you aren't."
+                                    },
+                                    {
+                                        "title": "Deployment Tool",
+                                        "url": "module=Deploy",
+                                        "description": "Manage which version of MyURY members are using."
+                                    },
+                                    {
+                                        "title": "Mailing List Manager",
+                                        "url": "module=Mail",
+                                        "description": "Manage Mailing lists and email aliases."
+                                    }
+                                ]
+                        }
+                    ]
+            },
+            {
+                "title": "My Station",
+                "sections":
+                    [
+                        {
+                            "title": "General",
+                            "items":
+                                [
+                                    {
+                                        "title": "Constitution",
+                                        "url": "/wiki/Constitution",
+                                        "description": "The Constitution is the overarching contract by which we are all bound for life. Worth a skim read."
+                                    },
+                                    {
+                                        "title": "Members",
+                                        "url": "module=Profile,action=list",
+                                        "description": "List and manage members."
+                                    },
+                                    {
+                                        "title": "Officers",
+                                        "url": "module=Profile,action=officers",
+                                        "description": "List and manage officerships and their permissions."
+                                    },
+                                    {
+                                        "title": "Quotes Board",
+                                        "url": "module=Quotes",
+                                        "description": "See the latest 'funny' quotes from URY members."
+                                    },
+                                    {
+                                        "title": "Webcam",
+                                        "url": "module=Webcam",
+                                        "description": "Spy on people in the office."
+                                    },
+                                    {
+                                        "title": "Wiki",
+                                        "url": "/wiki/",
+                                        "description": "A huge repository of information about URY."
+                                    }
+                                ]
+                        },
+                        {
+                            "title": "Info",
+                            "items":
+                                [
+                                    {
+                                        "title": "How to Get Involved",
+                                        "url": "/wiki/HowTo_Index",
+                                        "description": "Find out how to get involved in URY."
+                                    },
+                                    {
+                                        "title": "SIS Login Information",
+                                        "url": "module=Scheduler,action=attendance",
+                                        "description": "Check who's been logging into their shows and if people have actually turned up to do radio."
+                                    },
+                                    {
+                                        "title": "Track Statistics",
+                                        "url": "module=Stats,action=bapsPlayCounter",
+                                        "description": "View play count statistics for library tracks."
+                                    }
+                                ]
+                        },
+                        {
+                            "title": "Members",
+                            "items":
+                                [
+                                    {
+                                        "title": "Edit Members News",
+                                        "url": "module=MyRadio,action=news,feed=1",
+                                        "description": "Edit the members news feed."
+                                    },
+                                    {
+                                        "title": "Edit PIS",
+                                        "url": "module=MyRadio,action=news,feed=4",
+                                        "description": "Edit the Presenter Information Sheet, give some information to presenters."
+                                    },
+                                    {
+                                        "title": "Edit Tech News",
+                                        "url": "module=MyRadio,action=news,feed=2",
+                                        "description": "Edit the Tech News feed."
+                                    }
+                                ]
+                        }
+                    ]
+            }
+        ]
+}

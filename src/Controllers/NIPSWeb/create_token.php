@@ -8,4 +8,4 @@
  */
 NIPSWeb_Token::createToken($_REQUEST['trackid']);
 
-require 'Views/MyRadio/nocontent.php';
+CoreUtils::nocontent();

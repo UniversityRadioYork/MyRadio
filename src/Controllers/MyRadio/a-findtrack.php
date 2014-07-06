@@ -26,4 +26,4 @@ if (isset($_REQUEST['id'])) {
                 'itonesplaylistid' => isset($_REQUEST['itonesplaylistid']) ? $_REQUEST['itonesplaylistid'] : ''
     ]);
 }
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

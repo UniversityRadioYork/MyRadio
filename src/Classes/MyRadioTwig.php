@@ -57,7 +57,7 @@ class MyRadioTwig implements TemplateEngine
                  ->addVariable('baseurl', Config::$base_url);
 
             if (!empty($GLOBALS['module']) && isset($_SESSION['memberid'])) {
-                $this->addVariable('submenu', (new MyRadioMenu())->getSubMenuForUser(CoreUtils::getModuleID($GLOBALS['module']), MyRadio_User::getInstance()))
+                $this->addVariable('submenu', (new MyRadioMenu())->getSubMenuForUser($GLOBALS['module']))
                     ->addVariable('title', $GLOBALS['module']);
             }
         }

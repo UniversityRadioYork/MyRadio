@@ -12,7 +12,7 @@ $ts = MyRadio_Timeslot::getInstance($_REQUEST['timeslotid']);
 if ($ts->getSeason()->getShow()->isCurrentUserAnOwner()
         or CoreUtils::hasPermission(AUTH_EDITSHOWS)) {
     $data = $ts->getSigninInfo();
-    require_once 'Views/MyRadio/datatojson.php';
+    CoreUtils::dataToJSON($data);
 } else {
     require_once 'Controllers/Errors/403.php';
 }

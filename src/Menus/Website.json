@@ -1,0 +1,15 @@
+{
+    "menu":
+    [
+        {
+            "title": "Website Tools",
+            "url": "module=Website",
+            "description": "This section of MyRadio lets you control some aspects of the Website, such as banners and themes."
+        },
+        {
+            "title": "Manage Banners",
+            "url": "module=Website,action=banners",
+            "description": "Create and Modify that Banners that appear on URY's Front website."
+        }
+    ]
+}

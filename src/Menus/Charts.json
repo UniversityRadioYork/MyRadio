@@ -1,0 +1,15 @@
+{
+    "menu":
+    [
+        {
+            "title": "View Charts",
+            "url": "module=Charts",
+            "description": "List the Charts"
+        },
+        {
+            "title": "Publish a Chart",
+            "url": "module=Charts,action=editChartRelease",
+            "description": "Publishes a new chart release."
+        }
+    ]
+}

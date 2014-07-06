@@ -119,4 +119,33 @@ class MyRadioNews
             [$feedid, $_SESSION['memberid'], $content]
         );
     }
+
+    public static function getForm()
+    {
+        return (
+            new MyRadioForm(
+                'myradio_news',
+                'MyRadio',
+                'addNews',
+                [
+                    'title' => 'Add news item'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'body',
+                MyRadioFormField::TYPE_BLOCKTEXT,
+                [
+                    'explanation' => '',
+                    'label' => 'Content'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'feedid',
+                MyRadioFormField::TYPE_HIDDEN
+            )
+        );
+    }
+
 }

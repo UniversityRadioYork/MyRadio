@@ -19,10 +19,9 @@ class MyRadioMenu
 {
     /**
      * Returns a customised MyRadio menu for the *currently logged in* user
-     * @param  \MyRadio_User $user The currently logged in User's User object
      * @return Array         A complex Menu array array array array array
      */
-    public function getMenuForUser(MyRadio_User $user)
+    public function getMenuForUser()
     {
         $full = $this->getFullMenu();
 
@@ -53,108 +52,50 @@ class MyRadioMenu
     }
 
     /**
-     * Parses and returns the menu configuration file.
-     *
-     * @return array The array of menu configuration.
+     * Returns the entire MyRadio Main Menu structure
+     * @return Array An array that can be used by getMenuForUser() to build the menu
      */
-    private function getMenuConfig()
+    private function getFullMenu()
     {
-        return yaml_parse_file(__DIR__.'/../../menu.yaml');
-    }
+        $data = json_decode(@file_get_contents('Menus/menu.json', FILE_USE_INCLUDE_PATH), true);
 
-    /**
-     * Returns the set of menu columns currently in use.
-     *
-     * @param array $config The raw configuration array.
-     * @return array The array of column names.
-     */
-    private function flattenMenuConfig(array $config)
-    {
-        $columns = [];
+        if (is_null($data)) {
+            throw new MyRadioException('Menu file not found', 500);
+        } else {
+            $columns = $data['columns'];
+        }
 
-        foreach ($config['columns'] as $title => $column) {
-            $columns[] = [
-                "title" => $title,
-                "sections" => $this->getSectionsFromConfig($config, $column)
-            ];
+        foreach ($columns as $ckey => $column) {
+            foreach ($column['sections'] as $skey => $section) {
+                foreach ($section['items'] as $key => $item) {
+                    if (empty($item['template'])) {
+                        $columns[$ckey]['sections'][$skey]['items'][$key] = array_merge($section['items'][$key], $this->breakDownURL($item['url']));
+                    }
+                }
+            }
         }
 
         return $columns;
     }
 
     /**
-     * Returns the set of menu sections in a column.
-     *
-     * @param array $config The menu configuration.
-     * @param array $column The column configuration.
-     * @return array The array of sections.
-     */
-    private function getSectionsFromConfig(array $config, array $column)
-    {
-        $sections = [];
-
-        foreach ($column as $title => $section) {
-            $sections[] = [
-                "title" => $title,
-                "items" => $this->getItemsFromConfig($config, $section)
-            ];
-        }
-
-        return $sections;
-    }
-
-    /**
-     * Returns the set of menu entries in a section.
-     *
-     * @param array $config The menu configuration.
-     * @param array $section The section configuration array.
-     * @return array The array of sections.
-     */
-    private function getItemsFromConfig(array $config, array $section)
-    {
-        $items = [];
-
-        foreach ($section as $title) {
-            $item = $config['items'][$title];
-            $item['title'] = $title;
-            if (empty($item['template'])) {
-                $item = array_merge($item, $this->breakDownURL($item['url']));
-            }
-
-            $items[] = $item;
-        }
-
-        return $items;
-    }
-
-    /**
-     * Returns the entire MyRadio Main Menu structure
-     * @todo Better Documentation
-     */
-    private function getFullMenu()
-    {
-        $config = $this->getMenuConfig();
-        return $this->flattenMenuConfig($config);
-    }
-
-    /**
      * Gets all items for a module's submenu and puts them in an array.
-     * @param  int   $moduleid The id of the module to get items for
+     * @param  String   $module The name of the module to get items for
      * @return Array An array that can be used by getSubMenuForUser() to build a submenu
-     * @todo Caching here breaks submenus
      */
-    private function getFullSubMenu($moduleid)
+    private function getFullSubMenu($module)
     {
-        $db = Database::getInstance();
+        $menu = json_decode(@file_get_contents('Menus/'.$module.'.json', FILE_USE_INCLUDE_PATH), true);
 
-        $items = $db->fetchAll(
-            'SELECT menumoduleid, title, url, description FROM myury.menu_module
-            WHERE moduleid=$1 ORDER BY title ASC',
-            [$moduleid]
-        );
-        //Get permissions for each $item
-        foreach ($items as $key => $item) {
-            $items[$key] = array_merge($items[$key], $this->breakDownURL($item['url']));
+        if (is_null($menu)) {
+            $items = [];
+        } else {
+            $items = $menu['menu'];
+
+            //Get permissions for each $item
+            foreach ($items as $key => $item) {
+                $items[$key] = array_merge($items[$key], $this->breakDownURL($item['url']));
+            }
         }
 
         return $items;
@@ -203,13 +144,12 @@ class MyRadioMenu
 
     /**
      * @todo Document
-     * @param  type          $moduleid
-     * @param  \MyRadio_User $user     The currently logged in User's User object
+     * @param  type          $module
      * @return array
      */
-    public function getSubMenuForUser($moduleid, MyRadio_User $user)
+    public function getSubMenuForUser($module)
     {
-        $full = $this->getFullSubMenu($moduleid);
+        $full = $this->getFullSubMenu($module);
 
         //Iterate over the Full Menu, creating a user menu
         $menu = [];

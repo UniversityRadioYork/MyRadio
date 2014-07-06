@@ -1,0 +1,20 @@
+{
+    "menu":
+    [
+        {
+            "title": "iTones",
+            "url": "module=iTones",
+            "description": "Welcome the the Campus Jukebox Manager. These pages allow you to control what the Campus Jukebox plays out on air. This includes editing the playlists, requesting tracks, or scheduling the playout of pre-recorded material."
+        },
+        {
+            "title": "Manage Playlists",
+            "url": "module=iTones,action=listPlaylists",
+            "description": "The Campus Jukebox maintains a list of lots of different playlists. Use this page to make them do cool things."
+        },
+        {
+            "title": "Request Track",
+            "url": "module=iTones,action=requestTrack",
+            "description": "Want to hear a song played right now? Why not request it?"
+        }
+    ]
+}

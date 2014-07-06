@@ -8,4 +8,4 @@
  */
 $data = NIPSWeb_ManagedItem::cacheItem($_FILES['audio']['tmp_name']);
 
-require 'Views/MyRadio/datatojson.php';
+CoreUtils::dataToJSON($data);

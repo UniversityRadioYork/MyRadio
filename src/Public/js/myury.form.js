@@ -302,9 +302,11 @@ window.MyRadioForm = {
      */
     if ($('#UPLOAD_IDENTIFIER').length !== 0) {
       $('form').on('submit', function() {
-        $('.myuryfrm-file-upload-progress').progressbar({value: false});
-        //Poke the server for upload progress status
-        setInterval(MyRadioForm.pollFileProgress, 1000);
+        if ($('#UPLOAD_IDENTIFIER').nextAll('input')[0].value !== "") {
+            $('.myuryfrm-file-upload-progress').progressbar({value: false});
+            //Poke the server for upload progress status
+            setInterval(MyRadioForm.pollFileProgress, 1000);
+        }
       });
       $('#myuryfrm-file-upload-iframe').on('load', function() {
         //data = $.parseJSON($(this).contents());

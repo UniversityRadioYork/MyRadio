@@ -47,12 +47,12 @@ trait MyRadio_Creditable
     public function getCreditsNames($types = true)
     {
         $return = [];
-        foreach ($this->credits as $credit) {
+        foreach ($this->credits as $credits) {
             if ($types) {
-                $credit['name'] = MyRadio_User::getInstance($credit['memberid'])->getName();
-                $credit['type_name'] = self::getCreditName($credit['type']);
+                $credit['name'] = MyRadio_User::getInstance($credits['memberid'])->getName();
+                $credit['type_name'] = self::getCreditName($credits['type']);
             } else {
-                $credit = MyRadio_User::getInstance($credit['memberid'])->getName();
+                $credit = MyRadio_User::getInstance($credits['memberid'])->getName();
             }
             $return[] = $credit;
         }

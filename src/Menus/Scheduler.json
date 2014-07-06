@@ -1,0 +1,30 @@
+{
+    "menu":
+        [
+            {
+                "title": "Pending Allocations",
+                "url": "module=Scheduler",
+                "description": "View Seasons that haven't been allocated a timeslot yet."
+            },
+            {
+                "title": "All Shows",
+                "url": "module=Scheduler,action=allShows",
+                "description": "View a list of all shows in the MyURY database."
+            },
+            {
+                "title": "Create a Show",
+                "url": "module=Scheduler,action=editShow",
+                "description": "Create a new show on the URY Scheduler"
+            },
+            {
+                "title": "My Shows",
+                "url": "module=Scheduler,action=myShows",
+                "description": "View a list of all your shows, where you can edit them and apply for seasons."
+            },
+            {
+                "title": "Add Demo",
+                "url": "module=Scheduler,action=createDemo",
+                "description": "Add a Demo slot that newbies can sign up to"
+            }
+        ]
+}

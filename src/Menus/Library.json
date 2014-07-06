@@ -1,0 +1,45 @@
+{
+    "menu":
+    [
+        {
+            "title": "Library",
+            "url": "module=Library",
+            "description": "This part of MyRadio allows you to do some library management."
+        },
+        {
+            "title": "Gap Filler",
+            "url": "module=Library,action=gapFiller",
+            "description": "Fill gaps in the library, such as unknown lyric clean/dirty, or 'URY' as the Album"
+        },
+        {
+            "title": "Missing Track Files",
+            "url": "module=Library,action=findMissing",
+            "description": "Check the Central Database for tracks that claim to be digitised but don't exist."
+        },
+        {
+            "title": "Misplaced Tracks",
+            "url": "module=Library,action=findWrong",
+            "description": "List tracks that exist in the Central Database filestore, but not in the Record Database."
+        },
+        {
+            "title": "Duplicate Tracks",
+            "url": "module=Library,action=findDuplicate",
+            "description": "Search the URY music library for duplicated tracks"
+        },
+        {
+            "title": "Autocorrect Review",
+            "url": "module=Library,action=viewTrackCorrection",
+            "description": "Review suggestions our system has made to ensure the music library is accurate."
+        },
+        {
+            "title": "Search",
+            "url": "module=Library,action=search",
+            "description": "Search URY's extensive music collection"
+        },
+        {
+            "title": "Upload Track",
+            "url": "module=Library,action=addTrack",
+            "description": "Add music to the BAPS library"
+        }
+    ]
+}

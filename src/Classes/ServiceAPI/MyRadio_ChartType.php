@@ -196,6 +196,50 @@ class MyRadio_ChartType extends MyRadio_Type
         return $this;
     }
 
+    public static function getForm()
+    {
+        $form = (
+            new MyRadioForm(
+                'charts_editcharttype',
+                'Charts',
+                'editChartType',
+                ['title' => 'Edit Chart Type']
+            )
+        )->addField(
+            new MyRadioFormField(
+                'name',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Identifier',
+                    'explanation' => 'What the chart will be referred to in the website code.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'description',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Name',
+                    'explanation' => 'What the chart will be called on the website itself.'
+                ]
+            )
+        );
+
+        return $form;
+    }
+
+    public function getEditForm()
+    {
+        return self::getForm()
+            ->editMode(
+                $this->getID(),
+                [
+                    'name' => $this->getName(),
+                    'description' => $this->getDescription()
+                ]
+            );
+    }
+
     /**
      * Converts this chart type to a table data source.
      *

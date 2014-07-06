@@ -11,7 +11,7 @@
  */
 
 $user = MyRadio_User::getInstance();
-$menu = (new MyRadioMenu())->getMenuForUser($user);
+$menu = (new MyRadioMenu())->getMenuForUser();
 
 $news = MyRadioNews::getLatestNewsItem(Config::$news_feed, $user);
 

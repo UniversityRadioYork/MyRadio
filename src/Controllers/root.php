@@ -25,7 +25,7 @@ date_default_timezone_set('Europe/London');
 /**
  * Sets the include path to include MyRadio at the end - makes for nicer includes
  */
-set_include_path(str_replace('Controllers', '', __DIR__) . ':' . get_include_path());
+set_include_path(str_replace('Controllers', '', __DIR__) . PATH_SEPARATOR . get_include_path());
 
 /**
  * The CoreUtils static class provides some useful standard functions for MyRadio. Take a look at it before you start
