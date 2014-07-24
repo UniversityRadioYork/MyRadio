@@ -1,7 +1,7 @@
 {% macro makeURL(config, module, action, options) %}
 {{config.base_url}}
 {% if config.rewrite_url
-%}{{module|default('default_module')}}/{{action|default('default_action')}}/{%
+%}{{module|default(config.default_module)}}/{{action|default(config.default_action)}}/{%
 if options %}?{% endif %}{%
 else
 %}?module={{module|default(config.default_module)}}&action={{action|default(config.default_action)}}{%
