@@ -16,7 +16,7 @@ $banner = MyRadio_Banner::getInstance($_REQUEST['bannerid']);
 CoreUtils::getTemplateObject()->setTemplate('Website/campaigns.twig')->addVariable('title', 'Banner Campaigns')
     ->addVariable(
         'newcampaignurl',
-        CoreUtils::makeURL('Website', 'createCampaign', ['bannerid' => $_REQUEST['bannerid']])
+        CoreUtils::makeURL('Website', 'editCampaign', ['bannerid' => $_REQUEST['bannerid']])
     )->addVariable('bannersurl', CoreUtils::makeURL('Website', 'banners'))
     ->addVariable('bannerName', $banner->getAlt())
     ->addVariable('tabledata', CoreUtils::dataSourceParser($banner->getCampaigns()))
