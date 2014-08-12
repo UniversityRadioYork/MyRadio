@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($data['photo']['error'] == 0) {
             //Upload replacement Photo
-            $banner->setPhoto(MyRadioPhoto::create($data['photo']['tmp_name']));
+            $banner->setPhoto(MyRadio_Photo::create($data['photo']['tmp_name']));
         }
     }
 
