@@ -15,7 +15,7 @@
  * Turn on Error Reporting for the start. Once the Config object is loaded
  * this is updated to reflect Config.
  */
-error_reporting(E_ALL ^ E_STRICT);
+error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 /**
  * Set the Default Timezone.
