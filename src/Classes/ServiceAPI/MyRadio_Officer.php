@@ -63,6 +63,12 @@ class MyRadio_Officer extends ServiceAPI
      * @var Array
      */
     private $history;
+    /**
+     * Stores the Officer's permissions
+     * @var Array
+     */
+    private $permissions;
+
 
     protected function __construct($id)
     {
@@ -83,6 +89,15 @@ class MyRadio_Officer extends ServiceAPI
             $this->description = $result['descr'];
             $this->status = $result['status'];
             $this->type = $result['type'];
+
+            //Get the officer's permissions
+            $this->permissions = self::$db->fetchAll(
+                'SELECT typeid AS value, descr AS text FROM public.l_action, public.auth_officer
+                WHERE typeid = lookupid
+                AND officerid=$1
+                ORDER BY descr ASC',
+                [$id]
+            );
         }
     }
 
@@ -227,6 +242,15 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
+     * Returns all the officer's active permission flags
+     * @return Array
+     */
+    public function getPermissions()
+    {
+        return $this->permissions;
+    }
+
+    /**
      * Returns data about the Officer.
      *
      * @todo User who holds or has held position
@@ -243,7 +267,8 @@ class MyRadio_Officer extends ServiceAPI
             'ordering' => $this->getOrdering(),
             'description' => $this->getDescription(),
             'status' => $this->getStatus(),
-            'type' => $this->getType()
+            'type' => $this->getType(),
+            'permissions' => $this->getPermissions()
         ];
 
         if ($full) {
@@ -252,5 +277,20 @@ class MyRadio_Officer extends ServiceAPI
         }
 
         return $data;
+    }
+
+    /**
+     * Stands Down the officership provided.
+     *
+     * @param int $memberofficerid The ID of the officership to stand down
+     */
+    public static function standDown($memberofficerid)
+    {
+        self::$db->query(
+            'UPDATE public.member_officer
+            SET till_date = now()
+            WHERE member_officerid = $1',
+            [$memberofficerid]
+        );
     }
 }
