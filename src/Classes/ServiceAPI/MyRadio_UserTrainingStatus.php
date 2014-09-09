@@ -4,6 +4,11 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 /**
  * The UserTrainingStatus class links TrainingStatuses to Users.
  *

@@ -183,7 +183,6 @@ class Autoloader
     protected function requireFile($file)
     {
         if (file_exists($file)) {
-            var_dump(debug_backtrace());
             require_once $file;
             return true;
         }

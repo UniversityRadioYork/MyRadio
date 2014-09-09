@@ -1,5 +1,9 @@
 <?php
 
+namespace MyRadio\MyRadio;
+
+use \MyRadio\Database;
+
 /**
  * Custom session handler.
  *

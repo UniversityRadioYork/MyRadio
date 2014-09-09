@@ -4,6 +4,8 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio;
+
 /**
  * Stores configuration settings
  *
@@ -92,7 +94,7 @@ final class Config
      * Must be the name of a valid class located in classes/[classname].php and implements CacheProvider
      * @var String
      */
-    public static $cache_provider = 'APCProvider';
+    public static $cache_provider = '\MyRadio\APCProvider';
     /**
      * How long MyRadio_Track items should be cached before the data is invalidated. This is Configurable as due to a lot
      * of external edit sources, it is reasonable to asssume the cache may become stale due to other systems.

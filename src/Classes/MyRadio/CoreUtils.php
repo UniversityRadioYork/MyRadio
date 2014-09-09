@@ -5,6 +5,14 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\MyRadio;
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\MyRadioTwig;
+use \MyRadio\MyRadioException, \MyRadio\MyRadioError;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 /**
  * Standard API Utilities. Basically miscellaneous functions for the core system
  * No database accessing etc should be setup here.
@@ -96,8 +104,7 @@ class CoreUtils
     public static function getTemplateObject()
     {
         require_once 'Twig/Autoloader.php';
-        Twig_Autoloader::register();
-        require_once 'Classes/MyRadioTwig.php';
+        \Twig_Autoloader::register();
 
         return new MyRadioTwig();
     }
@@ -174,20 +181,20 @@ class CoreUtils
      */
     public static function getAcademicYear()
     {
-        if (empty(CoreUtils::$academicYear)) {
+        if (empty(self::$academicYear)) {
             $term = Database::getInstance()->fetchColumn(
                 'SELECT start FROM public.terms WHERE descr=\'Autumn\'
                 AND EXTRACT(year FROM start) = $1',
                 [date('Y')]
             );
             if (strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days')) {
-                CoreUtils::$academicYear = date('Y');
+                self::$academicYear = date('Y');
             } else {
-                CoreUtils::$academicYear = date('Y') - 1;
+                self::$academicYear = date('Y') - 1;
             }
         }
 
-        return CoreUtils::$academicYear;
+        return self::$academicYear;
     }
 
     /**
@@ -799,7 +806,7 @@ class CoreUtils
     public static function requireTimeslot()
     {
         if (!isset($_SESSION['timeslotid'])) {
-            CoreUtils::redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
+            self::redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
             exit;
         }
     }

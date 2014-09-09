@@ -4,6 +4,11 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 /**
  * The TrainingStatus class provides information about the URY Training States
  * and members who have achieved them.
@@ -217,7 +222,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
         }
 
         return $ids ? $this->awarded_to :
-            MyRadio_UserTrainingStatus::resultSetToObjArray($this->awarded_to);
+            self::resultSetToObjArray($this->awarded_to);
     }
 
     /**

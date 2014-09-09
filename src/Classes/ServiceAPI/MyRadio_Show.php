@@ -4,6 +4,17 @@
  * @package MyRadio_Scheduler
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\MyRadioException, \MyRadio\MyRadioError;
+use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\ServiceAPI\MyRadio_Season;
+use \MyRadio\ServiceAPI\MyRadio_Scheduler;
+use \MyRadio\ServiceAPI\MyRadio_Timeslot;
+
 /**
  * The Show class is used to create, view and manupulate Shows within the new MyRadio Scheduler Format
  * @version 20130728

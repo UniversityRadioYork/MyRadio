@@ -4,6 +4,10 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 /**
  * The MyRadio_Creditable trait adds credits functionality to an object.
  *

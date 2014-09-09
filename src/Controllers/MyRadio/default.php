@@ -10,12 +10,12 @@
  * @package MyRadio_Core
  */
 
-$user = MyRadio_User::getInstance();
-$menu = (new MyRadioMenu())->getMenuForUser();
+$user = \MyRadio\ServiceAPI\MyRadio_User::getInstance();
+$menu = (new \MyRadio\MyRadio\MyRadioMenu())->getMenuForUser();
 
-$news = MyRadioNews::getLatestNewsItem(Config::$news_feed, $user);
+$news = \MyRadio\MyRadio\MyRadioNews::getLatestNewsItem(\MyRadio\Config::$news_feed, $user);
 
-$twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/menu.twig')
+$twig = \MyRadio\MyRadio\CoreUtils::getTemplateObject()->setTemplate('MyRadio/menu.twig')
         ->addVariable('title', 'Menu')
         ->addVariable('menu', $menu)
         ->addVariable('news_clickthrough', empty($news['seen']))
@@ -28,7 +28,7 @@ $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/menu.twig')
         ->addVariable('has_show', $user->hasShow())
         ->addVariable('paid', $user->isCurrentlyPaid());
 
-if (Config::$members_news_enable) {
+if (\MyRadio\Config::$members_news_enable) {
     $twig->addVariable('news', $news);
 }
 

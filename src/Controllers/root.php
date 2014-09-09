@@ -33,7 +33,7 @@ $loader->register();
 $_basepath = str_replace('Controllers', '', __DIR__) . DIRECTORY_SEPARATOR;
 
 $loader->addNamespace('MyRadio', $_basepath . 'Classes');
-$loader->addNamespace('MyRadio\Interface', $_basepath . 'Interfaces');
+$loader->addNamespace('MyRadio\Iface', $_basepath . 'Interfaces');
 
 require 'MyRadio_Config.local.php';
 

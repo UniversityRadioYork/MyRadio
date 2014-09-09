@@ -1,4 +1,7 @@
 <?php
+
+namespace MyRadio\Iface;
+
 /**
  * A standard interface for cache systems. This should allow them to easily be
  * swapped out later (MemcachedProvider, APCProvider, PsqlProvider, FileProvider...)

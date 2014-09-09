@@ -5,6 +5,8 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio;
+
 /**
  * Provides email functions so that MyRadio can send email.
  *
