@@ -11,7 +11,7 @@ use \MyRadio\ServiceAPI\MyRadio_User;
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  */
-class MyRadioLDAPAuthenticator implements \Myradio\Iface\MyRadioAuthenticator
+class MyRadioLDAPAuthenticator implements \MyRadio\Iface\MyRadioAuthenticator
 {
     private $ldap_handle;
 

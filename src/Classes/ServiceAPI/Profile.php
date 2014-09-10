@@ -4,6 +4,10 @@
  * @package MyRadio_Profile
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadio\CoreUtils;
+
 /**
  * Abstractor for the Profile Module
  *

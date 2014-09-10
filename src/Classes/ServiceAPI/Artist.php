@@ -4,6 +4,10 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+
 /**
  * The Artist class provides and stores information about a Artist
  *

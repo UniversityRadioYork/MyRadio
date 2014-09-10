@@ -14,7 +14,7 @@ use \MyRadio\ServiceAPI\MyRadio_User;
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
  */
-class MyRadioDefaultAuthenticator extends \Myradio\Database implements \Myradio\Iface\MyRadioAuthenticator
+class MyRadioDefaultAuthenticator extends \MyRadio\Database implements \MyRadio\Iface\MyRadioAuthenticator
 {
     /**
      * Sets up the DB connection

@@ -4,6 +4,11 @@
  * @package MyRadio_Mail
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+
 /**
  * The Alias class is used to do stuff with Aliases in URY's mail system.
  *

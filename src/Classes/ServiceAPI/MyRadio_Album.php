@@ -4,6 +4,11 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+
 /**
  * The Album class fetches information about albums in the Cental Database.
  * @version 20130803
@@ -313,7 +318,7 @@ class MyRadio_Album extends ServiceAPI
             if ($options['trackid'] !== null && $recordid['trackid'] != $options['trackid']) {
                 continue;
             }
-            $response[] = new MyRadio_Album($recordid['recordid']);
+            $response[] = new self($recordid['recordid']);
         }
 
         return $response;

@@ -5,6 +5,13 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\iTones\iTones_Playlist;
 /**
  * The MyRadio_Track class provides and stores information about a Track
  *

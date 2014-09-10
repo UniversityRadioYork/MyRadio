@@ -1,5 +1,9 @@
 <?php
 
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+
 /**
  *
  * @author Lloyd Wallis

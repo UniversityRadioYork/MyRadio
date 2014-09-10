@@ -493,7 +493,7 @@ final class Config
      * operations.
      */
     //public static $authenticators = ['MyRadioLDAPAuthenticator', 'MyRadioDefaultAuthenticator'];
-    public static $authenticators = ['MyRadioDefaultAuthenticator'];
+    public static $authenticators = ['\MyRadio\MyRadio\MyRadioDefaultAuthenticator'];
     public static $auth_ldap_server = 'ldap://ldap.york.ac.uk';
     public static $auth_ldap_root = 'ou=people,ou=csrv,ou=nos,dc=york,dc=ac,dc=uk';
     public static $auth_db_user = 'shibbobleh';

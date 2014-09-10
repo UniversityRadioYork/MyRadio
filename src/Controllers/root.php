@@ -6,6 +6,12 @@
  * @package MyRadio_Core
  */
 
+use \MyRadio\Config;
+use \MyRadio\MyRadioError;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioSession;
+use \MyRadio\MyRadio\MyRadioNullSession;
+
 /**
  * Turn on Error Reporting for the start. Once the Config object is loaded
  * this is updated to reflect Config.
@@ -43,13 +49,13 @@ require 'MyRadio_Config.local.php';
 /**
  * Set local timezone.
  */
-date_default_timezone_set(\MyRadio\Config::$timezone);
+date_default_timezone_set(Config::$timezone);
 
 
 set_error_handler('\MyRadio\MyRadioError::errorsToEmail');
 
 //Initialise the permission constants
-\MyRadio\MyRadio\CoreUtils::setUpAuth();
+CoreUtils::setUpAuth();
 
 //Set up a shutdown function
 //AFTER other things to ensure DB is registered
@@ -67,9 +73,9 @@ if (isset($_SESSION)) {
 }
 
 if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
-    $session_handler = \MyRadio\MyRadio\MyRadioSession::factory();
+    $session_handler = MyRadioSession::factory();
 } else {
-    $session_handler = \MyRadio\MyRadio\MyRadioNullSession::factory();
+    $session_handler = MyRadioNullSession::factory();
 }
 
 session_set_save_handler(

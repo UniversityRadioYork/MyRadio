@@ -5,6 +5,14 @@
  * @package MyRadio_Selector
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\iTones\iTones_Utils;
+
 /**
  * The Selector class provies an abstractor to the `sel` service
  * and the Selector logs.
@@ -228,7 +236,7 @@ class MyRadio_Selector
             throw new MyRadioException('Selector Locked');
         }
 
-        $sel = new MyRadio_Selector();
+        $sel = new self();
         $response = $sel->cmd('S' . $studio);
 
         if ($response === 'FLK') {
