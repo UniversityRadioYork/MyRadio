@@ -5,6 +5,10 @@
  * @package MyRadio_SIS
  */
 
+namespace MyRadio\SIS;
+
+use \MyRadio\ServiceAPI\MyRadio_Timeslot;
+
 /**
  * This class has helper functions for building SIS
  *

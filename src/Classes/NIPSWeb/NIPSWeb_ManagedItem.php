@@ -5,6 +5,13 @@
  * @package MyRadio_NIPSWeb
  */
 
+namespace MyRadio\NIPSWeb;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\vendor\getid3\getid3;
+
 /**
  * The NIPSWeb_ManagedItem class helps provide control and access to Beds and Jingles and similar not-PPL resources
  *
@@ -13,7 +20,7 @@
  * @package MyRadio_NIPSWeb
  * @uses \Database
  */
-class NIPSWeb_ManagedItem extends ServiceAPI
+class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
 {
     private $managed_item_id;
 

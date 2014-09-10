@@ -4,6 +4,8 @@
  * @package MyRadio_NIPSWeb
  */
 
+namespace MyRadio\NIPSWeb;
+
 /**
  * The NIPSWeb_Token class
  * @todo Implement Play Token support
@@ -13,7 +15,7 @@
  * @package MyRadio_NIPSWeb
  * @uses \Database
  */
-class NIPSWeb_Token extends ServiceAPI
+class NIPSWeb_Token extends \MyRadio\ServiceAPI\ServiceAPI
 {
     public static function createToken($trackid)
     {

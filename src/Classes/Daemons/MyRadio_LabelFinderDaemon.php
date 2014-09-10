@@ -4,6 +4,11 @@
  * @package MyRadio_Daemon
  */
 
+namespace MyRadio\Daemons;
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+
 /**
  * The LabelFinder Daemon processes rec_record in batches, and tries to fill in the "label" field.
  *
@@ -11,7 +16,7 @@
  * @version 20130711
  * @package MyRadio_Daemon
  */
-class MyRadio_LabelFinderDaemon extends MyRadio_Daemon
+class MyRadio_LabelFinderDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
     /**
      * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.

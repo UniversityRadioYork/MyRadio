@@ -4,6 +4,11 @@
  * @package MyRadio_NIPSWeb
  */
 
+namespace MyRadio\NIPSWeb;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\ServiceAPI\MyRadio_Track;
+
 /**
  * The NIPSWeb_TimeslotItem class helps provide Show Planner with access to all resource types a timeslot item could be
  *
@@ -12,7 +17,7 @@
  * @package MyRadio_NIPSWeb
  * @uses \Database
  */
-class NIPSWeb_TimeslotItem extends ServiceAPI
+class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
 {
     private $timeslot_item_id;
 

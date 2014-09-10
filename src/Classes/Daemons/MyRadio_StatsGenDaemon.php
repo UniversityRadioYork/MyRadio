@@ -1,6 +1,15 @@
 <?php
 
-class MyRadio_StatsGenDaemon extends MyRadio_Daemon
+namespace MyRadio\Daemons;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
+use \MyRadio\ServiceAPI\MyRadio_List;
+use \MyRadio\MyRadioEmail;
+
+class MyRadio_StatsGenDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
     public static function isEnabled()
     {

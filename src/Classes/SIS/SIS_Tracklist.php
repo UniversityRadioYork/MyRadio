@@ -5,6 +5,10 @@
  * @package MyRadio_SIS
  */
 
+namespace MyRadio\SIS;
+
+use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
+
 /**
  * This class has helper functions for SIS tracklisting
  *

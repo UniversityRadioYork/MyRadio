@@ -5,6 +5,11 @@
  * @package MyRadio_SIS
  */
 
+namespace MyRadio\SIS;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+
 /**
  * This class has helper functions for building SIS
  *

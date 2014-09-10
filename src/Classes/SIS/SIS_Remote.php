@@ -5,6 +5,11 @@
  * @package MyRadio_SIS
  */
 
+namespace MyRadio\SIS;
+
+use \MyRadio\ServiceAPI\MyRadio_Selector;
+use \MyRadio\ServiceAPI\MyRadio_Webcam;
+
 /**
  * This class has helper functions for long-polling SIS
  *

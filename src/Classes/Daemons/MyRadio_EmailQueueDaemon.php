@@ -1,5 +1,11 @@
 <?php
 
+namespace MyRadio\Daemons;
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\MyRadioEmail;
+
 class MyRadio_EmailQueueDaemon
 {
     public static function isEnabled()
