@@ -35,8 +35,14 @@ $_basepath = str_replace('Controllers', '', __DIR__) . DIRECTORY_SEPARATOR;
 $loader->addNamespace('MyRadio', $_basepath . 'Classes');
 $loader->addNamespace('MyRadio\Iface', $_basepath . 'Interfaces');
 
+/**
+ * Load configuration specific to this system.
+ */
 require 'MyRadio_Config.local.php';
 
+/**
+ * Set local timezone.
+ */
 date_default_timezone_set(\MyRadio\Config::$timezone);
 
 

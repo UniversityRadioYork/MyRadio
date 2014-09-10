@@ -23,12 +23,9 @@ set_error_handler('MyRadio\MyRadioError::errorsToArray');
 if (!\MyRadio\Config::$display_errors && !\MyRadio\MyRadio\CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
     ini_set('display_errors', 'Off');
 }
-ini_set('error_log', \MyRadio\Config::$log_file); // Set error log file
 
-/**
- * Load configuration specific to this Version.
- */
-require_once 'MyRadio_Config.local.php';
+// Set error log file
+ini_set('error_log', \MyRadio\Config::$log_file);
 
 /**
  * Set up the Module and Action global variables. These are used by Module/Action controllers as well as this file.
