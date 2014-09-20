@@ -134,7 +134,7 @@ $(document).ready(function () {
                     track_position = document.getElementById('track-manual-entry-position').val();
                 }
 
-                $(this).hide().parent().append('<div id="confirminator-' + (fileid.replace(/\.mp3/, '')) + '">Saving (this may take a few minutes)...</div>');
+                $(this).hide().parent().append('<div id="confirminator-' + (track_fileid.replace(/\.mp3/, '')) + '">Saving (this may take a few minutes)...</div>');
                 $.ajax({
                     url: myury.makeURL('NIPSWeb', 'confirm_central_upload'),
                     data: {
