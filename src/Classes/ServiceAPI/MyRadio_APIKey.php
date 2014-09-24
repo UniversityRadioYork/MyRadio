@@ -42,7 +42,7 @@ class MyRadio_APIKey extends ServiceAPI
     {
         $this->key = $key;
         $revoked = self::$db->fetchColumn('SELECT revoked from myury.api_key WHERE key_string=$1', [$key]);
-        $this->revoked = $revoked[0] == 't';
+        $this->revoked = ($revoked[0] == 't');
         $this->permissions = self::$db->fetchColumn('SELECT typeid FROM myury.api_key_auth WHERE key_string=$1', [$key]);
     }
 
