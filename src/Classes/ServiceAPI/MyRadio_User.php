@@ -1521,7 +1521,8 @@ class MyRadio_User extends ServiceAPI
         //Activate the member's account for the current academic year
         $user->activateMemberThisYear($paid);
         //Set the user's password
-        Shibbobleh_Utils::setPassword($memberid, $plain_pass);
+        $authenticator = new MyRadioDefaultAuthenticator();
+        $authenticator->setPassword($user, $plain_pass);
 
         //Send a welcome email (this will not send if receive_email is not enabled!)
         /**
@@ -1532,7 +1533,10 @@ class MyRadio_User extends ServiceAPI
         $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$fname, $uname, $plain_pass], Config::$welcome_email);
 
         //Send the email
-        MyRadioEmail::create(['members' => [self::getInstance($memberid)]], 'Welcome to ' . Config::$short_name . ' - Getting Involved and Your Account', $welcome_email, 'getinvolved@' . Config::$email_domain);
+        /**
+         * @todo Make this be sent from the getinvolved email, rather than no-reply.
+         */
+        MyRadioEmail::sendEmailToUser(self::getInstance($memberid), 'Welcome to ' . Config::$short_name . ' - Getting Involved and Your Account', $welcome_email);
 
         return self::getInstance($memberid);
     }
