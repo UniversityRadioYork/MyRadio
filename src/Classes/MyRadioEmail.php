@@ -87,8 +87,9 @@ class MyRadioEmail extends ServiceAPI
      * @param String $body email body
      * @param int $timestamp Send time. If null, use now.
      * @param bool $already_sent If true, all Recipients will be set to having had the email sent.
+     * @note Use one of the SendToUser* wrapper functions instead of this one.
      */
-    public static function create($to, $subject, $body, $from = null, $timestamp = null, $already_sent = false)
+    private static function create($to, $subject, $body, $from = null, $timestamp = null, $already_sent = false)
     {
         //Remove duplicate recipients
         $to['lists'] = empty($to['lists']) ? [] : array_unique($to['lists']);
@@ -271,7 +272,7 @@ class MyRadioEmail extends ServiceAPI
      * @param sting $message email message
      * @todo Check if "Receive Emails" is enabled for the User
      */
-    public static function sendEmailToUser(MyRadio_User $to, $subject, $message, $from = null)
+    public static function sendEmailToUser(MyRadio_User $to, $subject, $message, MyRadio_User $from = null)
     {
         self::create(['members' => [$to]], $subject, $message, $from);
 
@@ -285,7 +286,7 @@ class MyRadioEmail extends ServiceAPI
      * @param sting $message email message
      * @todo Check if "Receive Emails" is enabled for the User
      */
-    public static function sendEmailToList(MyRadio_List $to, $subject, $message, $from = null)
+    public static function sendEmailToList(MyRadio_List $to, $subject, $message, MyRadio_User $from = null)
     {
         if ($from !== null && !$to->hasSendPermission($from)) {
             return false;
@@ -303,7 +304,7 @@ class MyRadioEmail extends ServiceAPI
      * @param string $subject email subject
      * @param sting $message email message
      */
-    public static function sendEmailToUserSet($to, $subject, $message, $from = null)
+    public static function sendEmailToUserSet($to, $subject, $message, MyRadio_User $from = null)
     {
         foreach ($to as $user) {
             if (!($user instanceof MyRadio_User)) {
