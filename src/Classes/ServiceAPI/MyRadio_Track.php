@@ -539,7 +539,7 @@ class MyRadio_Track extends ServiceAPI
         //Syspath is set by Daemons or where $PATH is not sufficent.
         $response = shell_exec((empty($GLOBALS['syspath']) ? '' : $GLOBALS['syspath']) . 'lastfm-fpclient -json ' . $path);
         
-        if (empty(trim($response))) {
+        if (!trim($response)) {
             return ['status' => 'LASTFM_ERROR',
                     'error' => 'Last.FM doesn\'t seem to be working right now.'];
         }
