@@ -93,7 +93,6 @@ $(document).ready(function () {
                     manual_div.style.display = 'block';
                     manual_track = true;
                 }
-                return;
             }
 
             // Track info.
