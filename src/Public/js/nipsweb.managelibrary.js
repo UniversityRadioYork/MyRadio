@@ -126,10 +126,10 @@ $(document).ready(function () {
                     track_position = "FROM_LASTFM";
                 } else {
                     track_fileid = response.fileid;
-                    track_title = document.getElementById('track-manual-entry-title').val();
-                    track_artist = document.getElementById('track-manual-entry-artist').val();
-                    track_album = document.getElementById('track-manual-entry-album').val();
-                    track_position = document.getElementById('track-manual-entry-position').val();
+                    track_title = document.getElementById('track-manual-entry-title').value;
+                    track_artist = document.getElementById('track-manual-entry-artist').value;
+                    track_album = document.getElementById('track-manual-entry-album').value;
+                    track_position = document.getElementById('track-manual-entry-position').value;
                 }
 
                 $(this).hide().parent().append('<div id="confirminator-' + (track_fileid.replace(/\.mp3/, '')) + '">Saving (this may take a few minutes)...</div>');
