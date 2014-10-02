@@ -514,12 +514,13 @@ class MyRadio_Track extends ServiceAPI
         }
 
         $analysis = self::identifyUploadedTrack(Config::$audio_upload_tmp_dir . '/' . $filename);
-        if (isset($analysis['status']) && $analysis['status'] === 'FAIL') {
+        if (isset($analysis['status'])) {
             $analysis['fileid'] = $filename;
             return $analysis;
         } else {
             return [
                 'fileid' => $filename,
+                'status' => 'OK',
                 'analysis' => $analysis
             ];
         }
@@ -582,7 +583,7 @@ class MyRadio_Track extends ServiceAPI
             // Use the album title the user has provided. Use an existing album
             // if we already have one of that title. If not, create one.
             $myradio_album = MyRadio_Album::findOrCreate($album, $artist);
-            $ainfo = array('duration' => null, 'position' => int($position), 'album' => $myradio_album);
+            $ainfo = array('duration' => null, 'position' => intval($position), 'album' => $myradio_album);
         }
 
         // Get the track duration from the file if it isn't already set

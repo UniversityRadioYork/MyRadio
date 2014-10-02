@@ -79,14 +79,13 @@ $(document).ready(function () {
             console.log(file.name + ' (id#' + i + ') has uploaded in ' + time);
             $('#central-status').html('Uploaded ' + file.name);
 
-            if (response['status'] === 'FAIL') {
+            if (response['status'] !== 'OK') {
                 //An error occurred
                 $('#central-result').append('<div class="ui-state-error">' + file.name + ': ' + response['error'] + '</div>');
-                return;
             }
 
             var manual_track = false;
-            if (response.analysis.length === 0) {
+            if (response['status'] !== 'OK' || response.analysis.length === 0) {
                 var manual_div = document.getElementById('track-manual-entry');
                 if (manual_div !== null) {
                     // If the div exists, then the user has permission to upload a track
@@ -94,7 +93,6 @@ $(document).ready(function () {
                     manual_div.style.display = 'block';
                     manual_track = true;
                 }
-                return;
             }
 
             // Track info.
@@ -128,10 +126,10 @@ $(document).ready(function () {
                     track_position = "FROM_LASTFM";
                 } else {
                     track_fileid = response.fileid;
-                    track_title = document.getElementById('track-manual-entry-title').val();
-                    track_artist = document.getElementById('track-manual-entry-artist').val();
-                    track_album = document.getElementById('track-manual-entry-album').val();
-                    track_position = document.getElementById('track-manual-entry-position').val();
+                    track_title = document.getElementById('track-manual-entry-title').value;
+                    track_artist = document.getElementById('track-manual-entry-artist').value;
+                    track_album = document.getElementById('track-manual-entry-album').value;
+                    track_position = document.getElementById('track-manual-entry-position').value;
                 }
 
                 $(this).hide().parent().append('<div id="confirminator-' + (track_fileid.replace(/\.mp3/, '')) + '">Saving (this may take a few minutes)...</div>');
