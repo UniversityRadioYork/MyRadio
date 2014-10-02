@@ -514,12 +514,13 @@ class MyRadio_Track extends ServiceAPI
         }
 
         $analysis = self::identifyUploadedTrack(Config::$audio_upload_tmp_dir . '/' . $filename);
-        if (isset($analysis['status']) && $analysis['status'] === 'FAIL') {
+        if (isset($analysis['status'])) {
             $analysis['fileid'] = $filename;
             return $analysis;
         } else {
             return [
                 'fileid' => $filename,
+                'status' => 'OK',
                 'analysis' => $analysis
             ];
         }
