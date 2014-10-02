@@ -82,11 +82,10 @@ $(document).ready(function () {
             if (response['status'] !== 'OK') {
                 //An error occurred
                 $('#central-result').append('<div class="ui-state-error">' + file.name + ': ' + response['error'] + '</div>');
-                return;
             }
 
             var manual_track = false;
-            if (response.analysis.length === 0) {
+            if (response['status'] !== 'OK' || response.analysis.length === 0) {
                 var manual_div = document.getElementById('track-manual-entry');
                 if (manual_div !== null) {
                     // If the div exists, then the user has permission to upload a track
