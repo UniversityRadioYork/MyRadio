@@ -79,7 +79,7 @@ $(document).ready(function () {
             console.log(file.name + ' (id#' + i + ') has uploaded in ' + time);
             $('#central-status').html('Uploaded ' + file.name);
 
-            if (response['status'] === 'FAIL') {
+            if (response['status'] !== 'OK') {
                 //An error occurred
                 $('#central-result').append('<div class="ui-state-error">' + file.name + ': ' + response['error'] + '</div>');
                 return;
