@@ -2,6 +2,9 @@
 /**
  * Sets up the environment for MyRadio non-web Controllers
  */
+
+use \MyRadio\Config;
+
 ini_set('include_path', str_replace('Controllers', '', __DIR__) . ':' . ini_get('include_path'));
 require_once 'Classes/MyRadio/CoreUtils.php';
 require_once 'Classes/Config.php';

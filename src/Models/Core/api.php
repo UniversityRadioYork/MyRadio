@@ -21,6 +21,12 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
+
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioSession;
+use \MyRadio\MyRadio\MyRadioNullSession;
+
 require_once 'Interfaces/Singleton.php';
 //Create a function to autoload classes when needed
 spl_autoload_register(function ($class) {

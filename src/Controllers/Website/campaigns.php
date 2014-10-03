@@ -7,6 +7,10 @@
  * @package MyRadio_Website
  */
 
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Banner;
+
 if (!isset($_REQUEST['bannerid'])) {
     throw new MyRadioException('You must provide a bannerid', 400);
 }

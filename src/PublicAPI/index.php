@@ -1,5 +1,10 @@
 <?php
 
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_APIKey;
+use \MyRadio\ServiceAPI\MyRadio_Swagger;
+
 $__start = -microtime(true);
 /**
  * This MyRadio Extension exposes some of MyRadio's internal classes as a REST API.

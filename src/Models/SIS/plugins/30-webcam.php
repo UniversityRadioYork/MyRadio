@@ -7,6 +7,9 @@
  * @package MyRadio_SIS
  */
 
+use \MyRadio\Config;
+use \MyRadio\ServiceAPI\MyRadio_Webcam;
+
 $vars = [
     'webcam_prefix' => Config::$webcam_prefix,
     'cameras' => ['jukebox.jpg', 'studio1', 's1-fos', 'studio2'],

@@ -6,6 +6,9 @@
  * @version 20130624
  * @package MyRadio_Stats
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/text.twig')
     ->addVariable('title', 'Statistics')
     ->addVariable(

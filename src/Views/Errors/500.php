@@ -6,6 +6,9 @@
  * @version 20130809
  * @package MyRadio_Core
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+
 header('HTTP/1.1 500 Internal Server Error');
 
 CoreUtils::getTemplateObject()->setTemplate('error.twig')

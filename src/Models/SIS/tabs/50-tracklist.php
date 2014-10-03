@@ -7,6 +7,8 @@
  * @package MyRadio_SIS
  */
 
+use \MyRadio\Config;
+
 $moduleInfo = [
     'name' => 'tracklist',
     'title' => 'Track Listing',

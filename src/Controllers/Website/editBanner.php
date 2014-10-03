@@ -7,6 +7,10 @@
  * @package MyRadio_Website
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Banner;
+use \MyRadio\ServiceAPI\MyRadio_Photo;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = MyRadio_Banner::getForm()->readValues();

@@ -17,6 +17,8 @@
  * Sets the $service_version Global Variable
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+
 //Check if the user is allowed to select a version of the service
 if (CoreUtils::hasPermission(AUTH_SELECTSERVICEVERSION)) {
     require 'Controllers/brokerVersion.php';

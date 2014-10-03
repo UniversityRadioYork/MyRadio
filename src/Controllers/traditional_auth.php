@@ -5,6 +5,9 @@
  * backwards compatible with the old Shibbobleh system URY use to use
  */
 //Load the basic MyRadio framework
+
+use \MyRadio\MyRadio\CoreUtils;
+
 require_once __DIR__ . '/cli_common.php';
 
 //Check the current authentication status of the user

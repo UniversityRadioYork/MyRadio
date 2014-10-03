@@ -7,6 +7,9 @@
  * @package MyRadio_SIS
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\SIS\SIS_Utils;
+
 //Allow Session writing from other requests
 $session = $_SESSION;
 session_write_close();
