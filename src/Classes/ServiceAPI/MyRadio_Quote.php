@@ -164,7 +164,7 @@ class MyRadio_Quote extends ServiceAPI
     {
         $quote_ids = self::$db->fetchColumn(self::GET_ALL_SQL, []);
 
-        return array_map('MyRadio_Quote::getInstance', $quote_ids);
+        return array_map('self::getInstance', $quote_ids);
     }
 
     /**

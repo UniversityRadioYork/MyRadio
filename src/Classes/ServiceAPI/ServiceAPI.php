@@ -6,6 +6,13 @@
 
 namespace MyRadio\ServiceAPI;
 
+use \MyRadio\Iface\IServiceAPI;
+use \MyRadio\Iface\MyRadio_DataSource;
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\MyRadioException;
+
 /**
  * An Abstract superclass for ServiceAPI classes that implements essential
  * base functionality for full MyRadio integration
@@ -16,7 +23,7 @@ namespace MyRadio\ServiceAPI;
  * @uses \Database
  * @uses \CacheProvider
  */
-abstract class ServiceAPI implements \MyRadio\Iface\IServiceAPI, \MyRadio\Iface\MyRadio_DataSource
+abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
 {
     /**
      * All ServiceAPI subclasses will contain a reference to the Database Singleton
@@ -35,7 +42,7 @@ abstract class ServiceAPI implements \MyRadio\Iface\IServiceAPI, \MyRadio\Iface\
     protected static function initDB()
     {
         if (!self::$db) {
-            self::$db = \MyRadio\Database::getInstance();
+            self::$db = Database::getInstance();
         }
     }
 
@@ -45,7 +52,7 @@ abstract class ServiceAPI implements \MyRadio\Iface\IServiceAPI, \MyRadio\Iface\
     protected static function initCache()
     {
         if (!self::$cache) {
-            $cache = \MyRadio\Config::$cache_provider;
+            $cache = Config::$cache_provider;
             self::$cache = $cache::getInstance();
         }
     }
@@ -82,7 +89,7 @@ abstract class ServiceAPI implements \MyRadio\Iface\IServiceAPI, \MyRadio\Iface\
 
     public function toDataSource($full = false)
     {
-        throw new \MyRadio\MyRadioException(get_called_class() . ' has not had a DataSource Conversion Method Defined!', 500);
+        throw new MyRadioException(get_called_class() . ' has not had a DataSource Conversion Method Defined!', 500);
     }
 
     /**
@@ -102,7 +109,7 @@ abstract class ServiceAPI implements \MyRadio\Iface\IServiceAPI, \MyRadio\Iface\
         foreach ($array as $element) {
             //It must implement the toDataSource method!
             if (!method_exists($element, 'toDataSource')) {
-                throw new \MyRadio\MyRadioException('Attempted to convert '.get_class($element).' to a DataSource but it not a valid Data Object!', 500);
+                throw new MyRadioException('Attempted to convert '.get_class($element).' to a DataSource but it not a valid Data Object!', 500);
             } else {
                 $result[] = $element->toDataSource($full);
             }
