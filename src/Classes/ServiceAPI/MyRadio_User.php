@@ -1663,11 +1663,14 @@ class MyRadio_User extends ServiceAPI
                         ['value' => 'm', 'text' => 'Male'],
                         ['value' => 'f', 'text' => 'Female'],
                         ['value' => 'o', 'text' => 'Other']
-                    ]]),
+                    ],
+                    'value' => 'o'
+                    ]),
                 new MyRadioFormField('collegeid', MyRadioFormField::TYPE_SELECT, [
                     'required' => true,
                     'label' => 'College',
-                    'options' => self::getColleges()
+                    'options' => self::getColleges(),
+                    'value' => Config::$default_college
                         ]),
                 new MyRadioFormField('eduroam', MyRadioFormField::TYPE_TEXT, [
                     'required' => true,
