@@ -6,6 +6,10 @@
  * @version 17032013
  * @package MyRadio_NIPSWeb
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\NIPSWeb_Token;
+
 NIPSWeb_Token::createToken($_REQUEST['trackid']);
 
 CoreUtils::nocontent();

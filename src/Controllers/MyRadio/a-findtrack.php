@@ -14,6 +14,11 @@
  * @version 20130626
  * @package MyRadio_Core
  */
+
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Track;
+
 if (isset($_REQUEST['id'])) {
     $data = MyRadio_Track::getInstance((int) $_REQUEST['id']);
 } else {

@@ -7,6 +7,10 @@
  * @package MyRadio_iTones
  */
 
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\iTones_Playlist;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = iTones_Playlist::getForm()->readValues();

@@ -6,6 +6,11 @@
  * @package MyRadio_Library
  */
 
+use \MyRadio\Config;
+use \MyRadio\APCProvider;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Album;
+
 $albums = MyRadio_Album::findByName(Config::$short_name, 10);
 
 $cacher = APCProvider::getInstance();

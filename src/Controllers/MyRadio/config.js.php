@@ -7,6 +7,8 @@
  * @package MyRadio_Core
  */
 
+use \MyRadio\Config;
+
 header('Content-Type: text/javascript');
 header('Cache-Control: max-age=86400, must-revalidate');
 header('Expires: ', date('r', time()+86400));

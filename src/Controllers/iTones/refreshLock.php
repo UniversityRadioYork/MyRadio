@@ -7,6 +7,10 @@
  * @package MyRadio_iTones
  */
 
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\iTones_Playlist;
+
 if (empty($_REQUEST['playlistid'])) {
     throw new MyRadioException('No Playlist ID provided.', 400);
 }

@@ -7,6 +7,10 @@
  * @package MyRadio_Profile
  */
 
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = MyRadio_User::getBulkAddForm()->readValues();

@@ -8,6 +8,9 @@
  * @package MyRadio_NIPSWeb
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\NIPSWeb_ManagedItem;
+
 if (!isset($_REQUEST['fileid'])
     or !isset($_REQUEST['title'])
     or !isset($_REQUEST['expires'])

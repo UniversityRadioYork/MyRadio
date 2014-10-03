@@ -8,6 +8,12 @@
  * @package MyRadio_Core
  */
 
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\ServiceAPI\MyRadio_Timeslot;
+use \MyRadio\ServiceAPI\MyRadio_Show;
+
 function setupTimeslot($timeslot)
 {
     //Can the user access this timeslot?

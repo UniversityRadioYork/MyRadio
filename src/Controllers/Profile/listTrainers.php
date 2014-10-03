@@ -7,6 +7,9 @@
  * @package MyRadio_Profile
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_TrainingStatus;
+
 $officers = CoreUtils::dataSourceParser(
     MyRadio_TrainingStatus::getInstance(3)->getAwardedTo()
 );

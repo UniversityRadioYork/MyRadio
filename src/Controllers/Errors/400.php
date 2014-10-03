@@ -7,6 +7,9 @@
  * @package MyRadio_Core
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 $twig = CoreUtils::getTemplateObject();
 header('HTTP/1.1 400 Bad Request');
 

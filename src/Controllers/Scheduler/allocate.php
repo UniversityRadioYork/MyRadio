@@ -7,6 +7,9 @@
  * @package MyRadio_Scheduler
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Season;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $season = MyRadio_Season::getInstance($_SESSION['myury_working_with_season']);

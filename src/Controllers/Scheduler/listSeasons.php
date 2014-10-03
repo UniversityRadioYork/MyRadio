@@ -7,6 +7,11 @@
  * @todo This requires manual permission checks as it needs interesting things
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\ServiceAPI;
+use \MyRadio\ServiceAPI\MyRadio_Show;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 $show = MyRadio_Show::getInstance($_REQUEST['showid']);
 $seasons = $show->getAllSeasons();
 

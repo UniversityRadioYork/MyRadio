@@ -9,5 +9,10 @@
  * @version 20130718
  * @package MyRadio_Core
  */
+
+use \MyRadio\MyRadio\MyRadioNews;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 MyRadioNews::markNewsAsRead((int) $_REQUEST['newsentryid'], MyRadio_User::getInstance());
 CoreUtils::nocontent();

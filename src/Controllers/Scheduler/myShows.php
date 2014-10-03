@@ -7,6 +7,10 @@
  * @package MyRadio_Scheduler
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\ServiceAPI;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 $shows = MyRadio_User::getInstance()->getShows();
 
 //This is a Joyride start point - if there are no shows, or it's their first season, run the first show joyride.

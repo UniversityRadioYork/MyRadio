@@ -6,6 +6,11 @@
  * @version 30032013
  * @package MyRadio_NIPSWeb
  */
+
+use \MyRadio\MyRadioException;
+use \MyRadio\NIPSWeb\NIPSWeb_Views;
+use \MyRadio\NIPSWeb\NIPSWeb_ManagedItem;
+
 if (!isset($_REQUEST['managedid'])) {
     throw new MyRadioException('Bad Request - managedid required.', 400);
 }

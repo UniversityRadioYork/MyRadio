@@ -8,6 +8,9 @@
  * @package MyRadio_Profile
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\Profile;
+
 $members = Profile::getThisYearsMembers();
 
 foreach ($members as $k => $v) {
