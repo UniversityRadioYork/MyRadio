@@ -544,59 +544,6 @@ final class Config
     public static $long_name = 'University Radio York';
     public static $founded = '1967';
     public static $email_domain = 'ury.org.uk';
-    public static $welcome_email = <<<EOT
-<p>Hi #NAME!</p>
-
-<p>Thanks for showing an interest in URY, your official student radio station.</p>
-
-<p>My name's Harry, and I'm the Station Manager here at URY. It's my job to make it as
-easy as possible to get on the air or join any of our other teams.</p>
-
-<p>If you're interested in getting involved in any of our teams (there's 11 of
-them!), then reply to this email and I'll sort you out, or email the address
-listed for that team <a href="http://ury.org.uk/getinvolved">on our website</a>.
-</p>
-
-<p>You're probaly receiving this email as you've spoken to use during our freshers'
-week tour of the University, and we're very excited to meet you properly!
-We'll be putting on special get involved lectures during Week 2, and
-training lectures in Week 3. If you live on HesEast these will take place on
-Thursdays, and on HesWest they'll be on Tuesdays. I'll send an email confirming
-the exact room and time in the next couple of days.</p>
-
-<p>For more information about these, and everything else we do, you can:
-<ul>
-<li>join the <a href="https://www.facebook.com/groups/ury1350/">URY Members</a>
- Facebook group,</li>
-<li>like our <a href="https://www.facebook.com/URY1350">Facebook page</a>,</li>
-<li>or <a href="https://twitter.com/ury1350">Follow @ury1350</a> on Twitter</li>
-</ul>
-
-<p>Finally, URY has a lot of <a href="https://ury.org.uk/myury/">online
-resources</a> that are useful for all sorts of things, so you'll need your login
- details:</p>
-<p>Username: #USER<br>
-Password: #PASS</p>
-
-<p>If you have any questions, feel free to ask by visiting us at our station in
-Vanbrugh, or emailing <a
-href="mailto:training@ury.org.uk">training@ury.org.uk</a>.</p>
-
-Hope to see you soon.
-<br><br>
---<br>
-Harry Whittaker<br>
-Station Manager<br>
-<br>
-University Radio York 1350AM<br>
-Most Awarded Student Society 2014<br>
----------------------------------------------<br>
-<a href="mailto:station.manager@ury.org.uk">station.manager@ury.org.uk</a>
-<br>
----------------------------------------------<br>
-On Air | Online | On Demand<br>
-<a href="http://ury.org.uk/">ury.org.uk</a>
-EOT;
     public static $facebook = 'https://www.facebook.com/URY1350';
 
     /**
