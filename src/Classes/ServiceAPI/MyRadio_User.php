@@ -1551,10 +1551,16 @@ class MyRadio_User extends ServiceAPI
      * @return boolean
      */
     public function activateMemberThisYear($paid = 0)
-    {
-        self::$db->query('INSERT INTO public.member_year (memberid, year, paid) VALUES ($1, $2, $3)', [$this->getID(), CoreUtils::getAcademicYear(), $paid]);
-
-        return true;
+    {   
+        if ($this->isActiveMemberForYear()) {
+            return true;
+        } else {
+            $year = CoreUtils::getAcademicYear();
+            self::$db->query('INSERT INTO public.member_year (memberid, year, paid) VALUES ($1, $2, $3)', [$this->getID(), $year, $paid]);
+            $this->payment[] = ['year' => $year, 'paid' => $paid];
+            $this->updateCacheObject();
+            return true;
+        }
     }
 
     /**
