@@ -545,6 +545,7 @@ final class Config
     public static $founded = '1967';
     public static $email_domain = 'ury.org.uk';
     public static $facebook = 'https://www.facebook.com/URY1350';
+    public static $welcome_email = 'Set me';
 
     /**
      * The constructor doesn't do anything practical
