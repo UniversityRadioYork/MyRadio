@@ -1486,7 +1486,8 @@ class MyRadio_User extends ServiceAPI
         ) {
             throw new MyRadioException(
                 'This User already appears to exist. '
-                . 'Their eduroam or email is already used.'
+                . 'Their eduroam or email is already used.',
+                400
             );
         }
 
@@ -1551,7 +1552,7 @@ class MyRadio_User extends ServiceAPI
      * @return boolean
      */
     public function activateMemberThisYear($paid = 0)
-    {   
+    {
         if ($this->isActiveMemberForYear()) {
             return true;
         } else {
@@ -1560,6 +1561,36 @@ class MyRadio_User extends ServiceAPI
             $this->payment[] = ['year' => $year, 'paid' => $paid];
             $this->updateCacheObject();
             return true;
+        }
+    }
+
+    /**
+     * Creates a new User, or activates a user, if it already exists.
+     *
+     * @param  string           $fname         The User's first name.
+     * @param  string           $sname         The User's last name.
+     * @param  string           $eduroam       The User's @york.ac.uk address.
+     * @param  char             $sex           The User's gender.
+     * @param  int              $collegeid     The User's college.
+     * @param  string           $email         The User's non @york.ac.uk address.
+     * @param  string           $phone         The User's phone number.
+     * @param  bool             $receive_email Whether the User should receive emails.
+     * @param  float            $paid          How much the User has paid this Membership Year
+     * @return MyRadio_User
+     */
+    public static function createOrActivate($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00)
+    {
+        $user = self::findByEmail($eduroam);
+        // Fine, we'll try with the email then.
+        if ($user === null) {
+            $user = self::findByEmail($email);
+        }
+
+        if ($user !== null && $user->activateMemberThisYear($paid)) {
+            /** @todo send welcome email to already existing users? */
+            return $user;
+        } else {
+            return self::create($fname, $sname, $eduroam, $sex, $collegeid, $email, $phone, $receive_email, $paid);
         }
     }
 
