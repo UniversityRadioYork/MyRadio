@@ -1580,7 +1580,12 @@ class MyRadio_User extends ServiceAPI
      */
     public static function createOrActivate($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00)
     {
-        $user = self::findByEmail(eduroam);
+        $user = self::findByEmail($eduroam);
+        // Fine, we'll try with the email then.
+        if ($user === null) {
+            $user = self::findByEmail($email);
+        }
+
         if ($user !== null && $user->activateMemberThisYear($paid)) {
             /** @todo send welcome email to already existing users? */
             return $user;
