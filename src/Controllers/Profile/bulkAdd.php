@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $params[$key] = $data['bulkaddrepeater'][$key][$i];
         }
         try {
-            $user = MyRadio_User::create(
+            $user = MyRadio_User::createOrActivate(
                 $params['fname'],
                 $params['sname'],
                 $params['eduroam'],

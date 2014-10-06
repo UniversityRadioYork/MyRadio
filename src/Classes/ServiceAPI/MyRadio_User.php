@@ -1582,6 +1582,7 @@ class MyRadio_User extends ServiceAPI
     {
         $user = self::findByEmail(eduroam);
         if ($user !== null && $user->activateMemberThisYear($paid)) {
+            /** @todo send welcome email to already existing users? */
             return $user;
         } else {
             return self::create($fname, $sname, $eduroam, $sex, $collegeid, $email, $phone, $receive_email, $paid);
