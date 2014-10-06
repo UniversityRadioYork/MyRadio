@@ -168,7 +168,7 @@ class MyRadio_Swagger
         return $data;
     }
 
-    private function getClassDoc(ReflectionClass $class)
+    private static function getClassDoc(ReflectionClass $class)
     {
         $doc = $class->getDocComment();
 
