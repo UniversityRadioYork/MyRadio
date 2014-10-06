@@ -1565,6 +1565,30 @@ class MyRadio_User extends ServiceAPI
     }
 
     /**
+     * Creates a new User, or activates a user, if it already exists.
+     *
+     * @param  string           $fname         The User's first name.
+     * @param  string           $sname         The User's last name.
+     * @param  string           $eduroam       The User's @york.ac.uk address.
+     * @param  char             $sex           The User's gender.
+     * @param  int              $collegeid     The User's college.
+     * @param  string           $email         The User's non @york.ac.uk address.
+     * @param  string           $phone         The User's phone number.
+     * @param  bool             $receive_email Whether the User should receive emails.
+     * @param  float            $paid          How much the User has paid this Membership Year
+     * @return MyRadio_User
+     */
+    public static function createOrActivate($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00)
+    {
+        $user = self::findByEmail(eduroam);
+        if ($user !== null && $user->activateMemberThisYear($paid)) {
+            return $user;
+        } else {
+            return self::create($fname, $sname, $eduroam, $sex, $collegeid, $email, $phone, $receive_email, $paid);
+        }
+    }
+
+    /**
      * Checks whether the user is an active member (has a record in member_year) for the current year
      * @return boolean
      */
