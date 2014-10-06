@@ -1486,7 +1486,8 @@ class MyRadio_User extends ServiceAPI
         ) {
             throw new MyRadioException(
                 'This User already appears to exist. '
-                . 'Their eduroam or email is already used.'
+                . 'Their eduroam or email is already used.',
+                400
             );
         }
 
@@ -1551,7 +1552,7 @@ class MyRadio_User extends ServiceAPI
      * @return boolean
      */
     public function activateMemberThisYear($paid = 0)
-    {   
+    {
         if ($this->isActiveMemberForYear()) {
             return true;
         } else {
