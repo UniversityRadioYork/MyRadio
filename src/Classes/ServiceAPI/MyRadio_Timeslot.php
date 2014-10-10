@@ -571,7 +571,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     /**
      * This is the server-side implementation of the JSONON system for tracking Show Planner alterations
-     * @param array $set A JSONON operation set
+     * @param array[] $set A JSONON operation set
      */
     public function updateShowPlan($set)
     {

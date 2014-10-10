@@ -230,7 +230,7 @@ class MyRadio_Banner extends MyRadio_Photo
     {
         parent::__construct($photo->getID());
         self::$db->query(
-            'UPDATE website.banner SET image=$1, photoid=$2 WHERE banner_id=$2',
+            'UPDATE website.banner SET image=$1, photoid=$2 WHERE banner_id=$3',
             [str_replace(Config::$public_media_uri.'/', '', $photo->getURL()), $this->getID(), $this->getBannerID()]
         );
 

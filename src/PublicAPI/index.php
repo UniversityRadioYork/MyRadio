@@ -33,6 +33,22 @@ function api_error($code, $message = null, $previous = null)
 }
 
 /**
+ * Names the parameters to make sure they're called in the "correct" order.
+ * Adapted from http://stackoverflow.com/q/8649536/995325
+ */
+function invokeArgsNamed(ReflectionMethod $refmethod, $object, Array $args = [])
+{
+    $parameters = $refmethod->getParameters();
+    foreach($parameters as &$param) {
+        $name = $param->getName();
+        $param = isset($args[$name]) ? $args[$name] : $param->getDefaultValue();
+    }
+    unset($param);
+
+    return $refmethod->invokeArgs($object, $parameters);
+}
+
+/**
  * Break up the URL. URLs are of the form /api/ExposedClassName[/id][/method]
  */
 //Remove double-slashes that occassionally appear.
@@ -160,7 +176,7 @@ if (!$api_key->canCall($classes[$class], $method)) {
          * Let's process the request!
          */
         $api_key->logCall(preg_replace('/(.*)\?(.*)/', '$1', str_replace(Config::$api_uri, '', $_SERVER['REQUEST_URI'])), $args);
-        $result = $methodReflection->invokeArgs($object, $args);
+        $result = invokeArgsNamed($methodReflection, $object, $args);
     } catch (MyRadioException $e) {
         api_error($e->getCode(), $e->getMessage(), $e);
     }

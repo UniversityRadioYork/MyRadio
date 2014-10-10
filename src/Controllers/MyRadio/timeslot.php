@@ -11,7 +11,8 @@
 function setupTimeslot($timeslot)
 {
     //Can the user access this timeslot?
-    if (!($timeslot->getSeason()->getShow()->isCurrentUserAnOwner() or CoreUtils::hasPermission(AUTH_EDITSHOWS))) {
+    if (!((!empty($timeslot) and $timeslot->getSeason()->getShow()->isCurrentUserAnOwner())
+          or CoreUtils::hasPermission(AUTH_EDITSHOWS))) {
         require_once 'Controllers/Errors/403.php';
     } else {
         $_SESSION['timeslotid'] = $timeslot->getID();
