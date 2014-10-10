@@ -54,9 +54,6 @@ class MyRadioNews
             WHERE public.news_feed.feedid=$1 AND revoked=false
             ORDER BY timestamp DESC',
             [$newsfeedid]
-        $item = empty($result) ? null : $result[0];
-        return self::getNewsItem(
-            $item,
         );
         
         if (empty($newsentry)) {
