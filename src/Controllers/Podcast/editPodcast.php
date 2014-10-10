@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($data['existing_cover'])) {
         $podcast->setCover($data['existing_cover']);
-    } elseif (!empty($data['new_cover']['tmp_name'])) {
+    } elseif (is_uploaded_file($data['new_cover']['tmp_name'])) {
         $podcast->createCover($data['new_cover']['tmp_name']);
     } else {
         throw new MyRadioException('Unknown cover upload method.', 400);
