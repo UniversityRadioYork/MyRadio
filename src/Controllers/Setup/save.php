@@ -47,6 +47,7 @@ if (!$file) {
 		->setTemplate('minimal.twig')
 		->addVariable('content', 'An error occurred saving your settings. Please make sure I have write access to ' . $path . ' and then reload this page.')
 		->render();
+		exit;
 }
 foreach ($config_overrides as $k => $v) {
 	if (is_numeric($v) != true && is_bool($v) != true) {
