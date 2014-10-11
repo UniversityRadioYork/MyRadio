@@ -11,8 +11,12 @@ $officers = CoreUtils::dataSourceParser(
     MyRadio_TrainingStatus::getInstance(3)->getAwardedTo()
 );
 
+foreach ($officers as $key => $value) {
+    $officers[$key]['awarded_time'] = date('Y/m/d', $officers[$key]['awarded_time']);
+}
+
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-    ->addVariable('tablescript', 'myury.datatable.default')
+    ->addVariable('tablescript', 'myradio.profile.listTrainers')
     ->addVariable('title', 'Trainers List')
     ->addVariable('tabledata', $officers)
     ->render();
