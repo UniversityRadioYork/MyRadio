@@ -175,13 +175,6 @@ final class Config
     public static $piss_feed = 4;
 
     /**
-     * The location of the Memcached server used for the Website.
-     * This is so it can be cleared where necessary.
-     * @var String
-     */
-    public static $django_cache_server = 'localhost';
-
-    /**
      * The path to the motion Webcam logs. This must be a file path, but may be NFS/Samba mounter
      * @var String
      */

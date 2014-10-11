@@ -973,9 +973,7 @@ $times
 
         $r = (bool) self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_id=$1 AND start_time >= NOW()', [$this->getID()]);
 
-        $m = new Memcached();
-        $m->addServer(Config::$django_cache_server, 11211);
-        $m->flush();
+        $this->updateCacheObject();
 
         return $r;
     }
