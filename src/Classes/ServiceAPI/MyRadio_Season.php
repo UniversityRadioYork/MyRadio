@@ -545,6 +545,10 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             WHERE start <= NOW() ORDER BY finish DESC LIMIT 1'
         );
 
+        if (empty($result)) {
+            return [];
+        }
+
         return self::getAllSeasonsInTerm($result[0]);
     }
 

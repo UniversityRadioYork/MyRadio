@@ -12,7 +12,7 @@
                                     {
                                         "title": "Change My Password",
                                         "url": "module=MyRadio,action=pwChange",
-                                        "description": "Go here to update your URY password."
+                                        "description": "Go here to update your MyRadio password."
                                     },
                                     {
                                         "title": "My Profile",
@@ -22,7 +22,7 @@
                                     {
                                         "title": "Webmail",
                                         "url": "/roundcube",
-                                        "description": "If you have a URY mailbox, click here to access your emails. If you would like one, please contact the Computing Team."
+                                        "description": "If you have a mailbox, click here to access your emails. If you would like one, please contact the Computing Team."
                                     }
                                 ]
                         },
@@ -104,7 +104,7 @@
                                     {
                                         "title": "Show Planner",
                                         "url": "module=NIPSWeb",
-                                        "description": "Plan, create and practice BAPS shows in advance."
+                                        "description": "Plan, create and practice shows in advance."
                                     },
                                     {
                                         "title": "Studio Information Service",
@@ -120,7 +120,7 @@
                                     {
                                         "title": "Chart Manager",
                                         "url": "module=Charts",
-                                        "description": "Edit the URY charts and recommended music lists."
+                                        "description": "Edit the chart and recommended music lists."
                                     },
                                     {
                                         "title": "Library Manager",
