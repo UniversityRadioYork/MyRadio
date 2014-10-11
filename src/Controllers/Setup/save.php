@@ -17,7 +17,6 @@ if (file_exists($path)) {
 	$old_config = [];
 }
 
-echo 'Config::$setup is: ';var_dump(Config::$setup);
 foreach ($old_config as $line) {
 	$count = 0;
 	$param = preg_replace('/[ \t]*Config::\$([^ ]*) .*/', '$1', $line, 1, $count);
@@ -39,9 +38,8 @@ if (!empty($_SERVER['HTTP_HOST'])) {
 $config_overrides['base_url'] = '//' . $domain . explode('?',$_SERVER['REQUEST_URI'])[0];
 
 //Actually write the file
-$file = fopen($path, 'w');
-fwrite($file, "<?php\n");
-if (!$file) {
+$file = @fopen($path, 'w');
+if (!$is_writable($path)) {
 	//...or not
 	CoreUtils::getTemplateObject()
 		->setTemplate('minimal.twig')
@@ -49,6 +47,7 @@ if (!$file) {
 		->render();
 		exit;
 }
+fwrite($file, "<?php\n");
 foreach ($config_overrides as $k => $v) {
 	if (is_numeric($v) != true && is_bool($v) != true) {
 		$v = "'" . str_replace("'", "\\'", $v) . "'";
