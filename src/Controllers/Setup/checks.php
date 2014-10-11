@@ -235,7 +235,7 @@ foreach ($function_checks as $check) {
 		  		<h3>Cheating</h3>
 		  		<p>If you're using Ubuntu, the following commands (as root) will get you most of the way:</p>
 		  		<code>
-		  			apt-get install libyaml-dev php-apc php5-curl php5-fileinfo php5-geoip php5-gd php5-ldap php5-mcrypt php5-pgsql php-pear<br>
+		  			apt-get install libyaml-dev php-apc php5-curl php5-fileinfo php5-geoip php5-gd php5-ldap php5-mcrypt php5-pgsql php5-dev php-pear<br>
 		  			pear channel-discover pear.twig-project.org<br>
 		  			pear install twig/Twig<br>
 		  			pear install twig/CTwig<br>
