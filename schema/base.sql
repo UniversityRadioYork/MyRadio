@@ -623,76 +623,6 @@ CREATE SEQUENCE error_rate_request_id_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE error_rate_request_id_seq OWNED BY error_rate.request_id;
-CREATE TABLE menu_columns (
-    columnid integer NOT NULL,
-    title character varying(50),
-    "position" smallint
-);
-COMMENT ON TABLE menu_columns IS 'Stores the column headers for the Menu page';
-CREATE SEQUENCE menu_columns_columnid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE menu_columns_columnid_seq OWNED BY menu_columns.columnid;
-CREATE TABLE menu_links (
-    itemid integer NOT NULL,
-    sectionid integer NOT NULL,
-    title character varying(100) NOT NULL,
-    url character varying(150) NOT NULL,
-    description text
-);
-COMMENT ON TABLE menu_links IS 'Stores simple menu items';
-CREATE SEQUENCE menu_links_itemid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE menu_links_itemid_seq OWNED BY menu_links.itemid;
-CREATE TABLE menu_module (
-    menumoduleid integer NOT NULL,
-    moduleid integer NOT NULL,
-    title character varying NOT NULL,
-    url character varying NOT NULL,
-    description character varying
-);
-COMMENT ON TABLE menu_module IS 'Submenus for modules';
-CREATE SEQUENCE menu_module_menumoduleid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE menu_module_menumoduleid_seq OWNED BY menu_module.menumoduleid;
-CREATE TABLE menu_sections (
-    sectionid integer NOT NULL,
-    columnid integer,
-    title character varying(50),
-    "position" smallint
-);
-COMMENT ON TABLE menu_sections IS 'Stores section headings for the Menu screen';
-CREATE SEQUENCE menu_sections_sectionid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE menu_sections_sectionid_seq OWNED BY menu_sections.sectionid;
-CREATE TABLE menu_twigitems (
-    twigitemid integer NOT NULL,
-    sectionid integer NOT NULL,
-    template character varying(100) NOT NULL
-);
-COMMENT ON TABLE menu_twigitems IS 'Stores twig templates that will appear under menu sections, e.g. for the Get On A Show checklist';
-CREATE SEQUENCE menu_twigitems_twigitemid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE menu_twigitems_twigitemid_seq OWNED BY menu_twigitems.twigitemid;
 CREATE TABLE modules (
     moduleid integer NOT NULL,
     serviceid integer,
@@ -2613,11 +2543,6 @@ ALTER TABLE ONLY award_categories ALTER COLUMN awardid SET DEFAULT nextval('awar
 ALTER TABLE ONLY award_member ALTER COLUMN awardmemberid SET DEFAULT nextval('award_member_awardmemberid_seq'::regclass);
 ALTER TABLE ONLY contract_versions ALTER COLUMN contract_version_id SET DEFAULT nextval('contract_versions_contract_version_id_seq'::regclass);
 ALTER TABLE ONLY error_rate ALTER COLUMN request_id SET DEFAULT nextval('error_rate_request_id_seq'::regclass);
-ALTER TABLE ONLY menu_columns ALTER COLUMN columnid SET DEFAULT nextval('menu_columns_columnid_seq'::regclass);
-ALTER TABLE ONLY menu_links ALTER COLUMN itemid SET DEFAULT nextval('menu_links_itemid_seq'::regclass);
-ALTER TABLE ONLY menu_module ALTER COLUMN menumoduleid SET DEFAULT nextval('menu_module_menumoduleid_seq'::regclass);
-ALTER TABLE ONLY menu_sections ALTER COLUMN sectionid SET DEFAULT nextval('menu_sections_sectionid_seq'::regclass);
-ALTER TABLE ONLY menu_twigitems ALTER COLUMN twigitemid SET DEFAULT nextval('menu_twigitems_twigitemid_seq'::regclass);
 ALTER TABLE ONLY modules ALTER COLUMN moduleid SET DEFAULT nextval('modules_moduleid_seq'::regclass);
 ALTER TABLE ONLY photos ALTER COLUMN photoid SET DEFAULT nextval('photos_photoid_seq'::regclass);
 ALTER TABLE ONLY services ALTER COLUMN serviceid SET DEFAULT nextval('services_serviceid_seq'::regclass);
@@ -3143,78 +3068,6 @@ ALTER TABLE ONLY contract_versions
 
 ALTER TABLE ONLY error_rate
     ADD CONSTRAINT error_rate_pkey PRIMARY KEY (request_id);
-
-
---
--- Name: menu_columns_order_key; Type: CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY menu_columns
-    ADD CONSTRAINT menu_columns_order_key UNIQUE ("position");
-
-
---
--- Name: menu_columns_pkey; Type: CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY menu_columns
-    ADD CONSTRAINT menu_columns_pkey PRIMARY KEY (columnid);
-
-
---
--- Name: menu_columns_title_key; Type: CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY menu_columns
-    ADD CONSTRAINT menu_columns_title_key UNIQUE (title);
-
-
---
--- Name: menu_links_pkey; Type: CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY menu_links
-    ADD CONSTRAINT menu_links_pkey PRIMARY KEY (itemid);
-
-
---
--- Name: menu_links_title_key; Type: CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY menu_links
-    ADD CONSTRAINT menu_links_title_key UNIQUE (title);
-
-
---
--- Name: menu_module_pkey; Type: CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY menu_module
-    ADD CONSTRAINT menu_module_pkey PRIMARY KEY (menumoduleid);
-
-
---
--- Name: menu_sections_pkey; Type: CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY menu_sections
-    ADD CONSTRAINT menu_sections_pkey PRIMARY KEY (sectionid);
-
-
---
--- Name: menu_sections_title_key; Type: CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY menu_sections
-    ADD CONSTRAINT menu_sections_title_key UNIQUE (title);
-
-
---
--- Name: menu_twigitems_pkey; Type: CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY menu_twigitems
-    ADD CONSTRAINT menu_twigitems_pkey PRIMARY KEY (twigitemid);
 
 
 --
@@ -5870,38 +5723,6 @@ ALTER TABLE ONLY award_member
 
 ALTER TABLE ONLY award_member
     ADD CONSTRAINT award_member_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid) ON DELETE RESTRICT;
-
-
---
--- Name: menu_links_sectionid_fkey; Type: FK CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY menu_links
-    ADD CONSTRAINT menu_links_sectionid_fkey FOREIGN KEY (sectionid) REFERENCES menu_sections(sectionid) ON DELETE CASCADE;
-
-
---
--- Name: menu_module_moduleid_fkey; Type: FK CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY menu_module
-    ADD CONSTRAINT menu_module_moduleid_fkey FOREIGN KEY (moduleid) REFERENCES modules(moduleid) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: menu_sections_columnid_fkey; Type: FK CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY menu_sections
-    ADD CONSTRAINT menu_sections_columnid_fkey FOREIGN KEY (columnid) REFERENCES menu_columns(columnid) ON DELETE CASCADE;
-
-
---
--- Name: menu_twigitems_sectionid_fkey; Type: FK CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY menu_twigitems
-    ADD CONSTRAINT menu_twigitems_sectionid_fkey FOREIGN KEY (sectionid) REFERENCES menu_sections(sectionid) ON DELETE CASCADE;
 
 
 --
