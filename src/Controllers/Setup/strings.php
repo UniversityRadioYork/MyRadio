@@ -38,14 +38,14 @@ $rConfig = new ReflectionClass('Config');
 foreach ($shorttext as $key) {
 	$rProperty = $rConfig->getProperty($key);
 	$name = ucwords(str_replace('_', ' ', $key));
-	$desc = implode('<br>', MyRadio_Swagger::parseMethodDoc($rProperty)['lines']);
+	$desc = implode('<br>', MyRadio_Swagger::getMethodDoc($rProperty)['lines']);
 	$short_params[] = [$key, $name, $desc, Config::$$key];
 }
 
 foreach ($longtext as $key) {
 	$rProperty = $rConfig->getProperty($key);
 	$name = ucwords(str_replace('_', ' ', $key));
-	$desc = implode('<br>', MyRadio_Swagger::parseMethodDoc($rProperty)['lines']);
+	$desc = implode('<br>', MyRadio_Swagger::getMethodDoc($rProperty)['lines']);
 	$long_params[] = [$key, $name, $desc, Config::$$key];
 }
 

@@ -30,5 +30,14 @@ Alias /myradio /usr/local/www/myradio/src/Public
 
 Restart Apache2, go to http://hostname/myradio and follow the instructions.
 
+For a new postgresql server, run the following after:
+```
+pg_createcluster [YOUR_POSTGRES_VERSION] myradio
+su postgres
+psql
+CREATE USER myradio WITH password '[A_STRONG_PASSWORD]';
+CREATE DATABASE myradio WITH OWNER=myradio;
+```
+
 MyRadio uses GitHub Flow as a development workflow:
 https://guides.github.com/overviews/flow/
