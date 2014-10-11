@@ -190,7 +190,7 @@ class MyRadio_Swagger
 
     private static function getClassDoc(ReflectionClass $class)
     {
-        $doc = self::parseDoc($method);
+        $doc = self::parseDoc($class);
 
         $short_desc = array_shift($doc['lines']);
 
