@@ -266,6 +266,11 @@ class CoreUtils
         header('Location: ' . self::makeURL($module, $action, $params));
     }
 
+    public static function redirectWithMessage($module, $action = null, $message)
+    {
+        self::redirect($module, $action, ['message' => base64_encode($message)]);
+    }
+
     /**
      * Builds a module/action URL
      * @param  string $module

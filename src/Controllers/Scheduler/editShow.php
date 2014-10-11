@@ -19,8 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($data['id'])) {
         //create new
-        MyRadio_Show::create($data);
-
+        $show = MyRadio_Show::create($data);
+        CoreUtils::redirectWithMessage('Scheduler', 'myShows', 'Your show, ' . $show->getMeta('title') . ' has been created!');
     } else {
         //submit edit
         $show = MyRadio_Show::getInstance($data['id']);
@@ -48,9 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $show->setMeta('upload_state', 'Opted Out');
         }
+        CoreUtils::backWithMessage("Show Updated!");
     }
-
-    CoreUtils::backWithMessage("Show Updated!");
 
 } else {
     //Not Submitted
