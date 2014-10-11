@@ -443,7 +443,7 @@ class CoreUtils
         );
 
         //Don't allow empty result sets - throw an Exception as this is very very bad.
-        if (empty($result)) {
+        if (empty($result) && $require) {
             throw new MyRadioException('There are no permissions defined for the ' . $module . '/' . $action . ' action!');
         }
 
