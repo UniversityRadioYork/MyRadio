@@ -39,7 +39,7 @@ $config_overrides['base_url'] = '//' . $domain . explode('?',$_SERVER['REQUEST_U
 
 //Actually write the file
 $file = @fopen($path, 'w');
-if (!$is_writable($path)) {
+if (!$file) {
 	//...or not
 	CoreUtils::getTemplateObject()
 		->setTemplate('minimal.twig')
