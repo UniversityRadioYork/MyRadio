@@ -195,6 +195,11 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
             WHERE start <= $1 AND finish >= NOW() LIMIT 1',
             [CoreUtils::getTimestamp(strtotime('+28 Days'))]
         );
+
+        if (empty($return)) {
+            return null;
+        }
+
         return $return[0];
     }
 
