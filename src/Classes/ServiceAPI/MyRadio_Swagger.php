@@ -167,80 +167,10 @@ class MyRadio_Swagger
 
         return $data;
     }
-
-    private static function getClassDoc(ReflectionClass $class)
+    
+    private static function parseDoc($doc)
     {
-        $doc = $class->getDocComment();
-
-        $lines = explode("\n", trim(preg_replace('/(\/\*\*)|(\n\s+\*\/?[^\S\r\n]?)/', "\n", $doc), " \n"));
-
-        //Parse for short description. This is up to the first blank line.
-        $i = 0;
-        $short_desc = '';
-        while (isset($lines[$i]) && !empty($lines[$i]) && substr($lines[$i], 0, 1) !== '@') {
-            $short_desc .= $lines[$i] . ' ';
-            $i++;
-        }
-
-        //Parse for long description. This is until the first @
-        $long_desc = '';
-        while (isset($lines[$i]) && substr($lines[$i], 0, 1) !== '@') {
-            $long_desc .= $lines[$i] . ' ';
-            $i++;
-        }
-
-        //Now parse for docblock things
-        $params = [];
-        $return_type = 'Set';
-        while (isset($lines[$i])) {
-            //Skip ones that are out of place.
-            if (substr($lines[$i], 0, 1) !== '@') {
-                $i++;
-                continue;
-            }
-            $key = preg_replace('/^\@([a-zA-Z]+)(.*)$/', '$1', $lines[$i]);
-            if (empty($key)) {
-                continue;
-            }
-            switch ($key) {
-                //Deal with $params
-                case 'param':
-                    /**
-                     * info[0] should be "@param"
-                     * info[1] should be data type
-                     * info[2] should be parameter name
-                     * info[3] should be the description
-                     */
-                    $info = explode(' ', $lines[$i], 4);
-                    $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
-                    $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
-                    //For any following lines, if they don't start with @, assume it's a continuation of the description
-                    $i++;
-                    while (isset($lines[$i]) && substr($lines[$i], 0, 1) !== '@') {
-                        if (empty($lines[$i])) {
-                            $params[$arg]['description'] .= '<br>';
-                        }
-                        $params[$arg]['description'] .= ' ' . $lines[$i];
-                        $i++;
-                    }
-                    break;
-                default:
-                    $i++;
-                    break;
-            }
-        }
-
-        return [
-            'short_desc' => trim($short_desc),
-            'long_desc' => trim($long_desc),
-            'params' => $params,
-            'return_type' => $return_type
-        ];
-    }
-
-    public static function parseMethodDoc($doc)
-    {
-        $raw = explode("\n", trim(preg_replace('/(\/\*\*)|(\n*\s+\*\/?\s?)/', "\n", $doc->getDocComment()), " \n"));
+        $raw = explode("\n", trim(preg_replace('/(\/\*\*)|(\n\s+\*\/?[^\S\r\n]?)/', "\n", $doc->getDocComment()), " \n"));
 
         $lines = [''];
         $keys = [];
@@ -258,9 +188,49 @@ class MyRadio_Swagger
     }         
 
 
+    private static function getClassDoc(ReflectionClass $class)
+    {
+        $doc = self::parseDoc($method);
+
+        $short_desc = array_shift($doc['lines']);
+
+        //Parse for long description. This is until the first @
+        $long_desc = implode('<br>', $doc['lines']);
+
+        //Now parse for docblock things
+        $params = [];
+        $return_type = 'Set';
+        foreach ($doc['keys'] as $key => $values) {
+            switch ($key) {
+                //Deal with $params
+                case 'param':
+                    /**
+                     * info[0] should be "@param"
+                     * info[1] should be data type
+                     * info[2] should be parameter name
+                     * info[3] should be the description
+                     */
+                    $info = explode(' ', $values[0], 4);
+                    $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
+                    $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
+                    break;
+                default:
+                    $i++;
+                    break;
+            }
+        }
+
+        return [
+            'short_desc' => trim($short_desc),
+            'long_desc' => trim($long_desc),
+            'params' => $params,
+            'return_type' => $return_type
+        ];
+    }
+
     private function getMethodDoc(ReflectionMethod $method)
     {
-        $doc = self::parseMethodDoc($method);
+        $doc = self::parseDoc($method);
 
         $short_desc = array_shift($doc['lines']);
 
