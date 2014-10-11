@@ -494,44 +494,6 @@ class CoreUtils
      */
     public static function getAllActionPermissions()
     {
-        echo 'SELECT actpermissionid,
-            myury.services.name AS service,
-            myury.modules.name AS module,
-            myury.actions.name AS action,
-            public.l_action.descr AS permission
-            FROM myury.act_permission, myury.services, myury.modules, myury.actions, public.l_action
-            WHERE myury.act_permission.actionid=myury.actions.actionid
-            AND myury.act_permission.moduleid=myury.modules.moduleid
-            AND myury.act_permission.serviceid=myury.services.serviceid
-            AND myury.act_permission.typeid = public.l_action.typeid
-
-            UNION
-
-            SELECT actpermissionid,
-            myury.services.name AS service,
-            myury.modules.name AS module,
-            \'ALL ACTIONS\' AS action,
-            public.l_action.descr AS permission
-            FROM myury.act_permission, myury.services, myury.modules, public.l_action
-            WHERE myury.act_permission.moduleid=myury.modules.moduleid
-            AND myury.act_permission.serviceid=myury.services.serviceid
-            AND myury.act_permission.typeid = public.l_action.typeid
-            AND myury.act_permission.actionid IS NULL
-
-            UNION
-
-            SELECT actpermissionid,
-            myury.services.name AS service,
-            myury.modules.name AS module,
-            myury.actions.name AS action,
-            \'GLOBAL ACCESS\' AS permission
-            FROM myury.act_permission, myury.services, myury.modules, myury.actions
-            WHERE myury.act_permission.moduleid=myury.modules.moduleid
-            AND myury.act_permission.serviceid=myury.services.serviceid
-            AND myury.act_permission.actionid=myury.actions.actionid
-            AND myury.act_permission.typeid IS NULL
-
-            ORDER BY service, module';
         return Database::getInstance()->fetchAll(
             'SELECT actpermissionid,
             myury.services.name AS service,
