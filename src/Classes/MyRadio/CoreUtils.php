@@ -190,7 +190,7 @@ class CoreUtils
             );
 
             if (
-                empty($terms) or //Default to this year
+                empty($term) or //Default to this year
                 strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days')
                 ) {
                 CoreUtils::$academicYear = date('Y');
