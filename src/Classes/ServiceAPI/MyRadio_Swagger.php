@@ -96,7 +96,7 @@ class MyRadio_Swagger
             if (!$method->isPublic() or in_array($method->getName(), $blocked_methods)) {
                 continue;
             }
-            $meta = $this->getMethodDoc($method);
+            $meta = self::getMethodDoc($method);
             /**
              * Add the custom @api docblock option
              * @api may be GET, POST...
@@ -238,7 +238,7 @@ class MyRadio_Swagger
         ];
     }
 
-    private function getMethodDoc(ReflectionMethod $method)
+    public static function getMethodDoc(ReflectionMethod $method)
     {
         $doc = self::parseDoc($method);
 
