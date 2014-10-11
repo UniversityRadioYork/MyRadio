@@ -452,7 +452,7 @@ class CoreUtils
         if (!$authorised && $require) {
             //Requires login
             if (!isset($_SESSION['memberid']) || $_SESSION['auth_use_locked'] !== false) {
-                require 'Controllers/MyRadio/login.php';
+                self::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
             } else {
                 //Authenticated, but not authorized
                 require 'Controllers/Errors/403.php';
