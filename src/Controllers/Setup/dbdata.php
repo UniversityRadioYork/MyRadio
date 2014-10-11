@@ -28,14 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	$warnings = [];
 
-	//For all of them, create submenu data
-	foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-submenuitems.json'), true) as $module => $items) {
-		$moduleid = CoreUtils::getModuleId($module);
-		foreach ($items as $item) {
-			MyRadioMenu::addSubMenuItem($moduleid, $item[0], $item[1], $item[2]);
-		}
-	}
-
 	/**
 	 * For some reason, after a break; a further match of the same
 	 * clause, so to avoid code duplication full actionauth is a function
