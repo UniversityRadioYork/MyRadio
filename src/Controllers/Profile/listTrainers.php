@@ -8,16 +8,11 @@
  */
 
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_TrainingStatus;
 
-/*
 $trainers = CoreUtils::dataSourceParser(
     MyRadio_TrainingStatus::getInstance(3)->getAwardedTo()
 );
-*/
-
-$trainers = ServiceAPI::setToDataSource(MyRadio_TrainingStatus::getInstance(3)->getAwardedTo());
 
 foreach ($trainers as $key => $value) {
     $trainers[$key]['awarded_time'] = date('Y/m/d', $trainers[$key]['awarded_time']);
