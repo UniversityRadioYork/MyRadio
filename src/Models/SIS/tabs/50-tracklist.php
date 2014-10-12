@@ -13,7 +13,7 @@ $moduleInfo = [
     'name' => 'tracklist',
     'title' => 'Track Listing',
     'enabled' => true,
-    'pollfunc' => 'SIS_Remote::queryTracklist',
+    'pollfunc' => '\MyRadio\SIS\SIS_Remote::queryTracklist',
     'help' => 'Tracklisting is a legal requirement for '
         .Config::$short_name
         .' to broadcast, so you must fill this in. If you use BAPS this will be done automatically, '
