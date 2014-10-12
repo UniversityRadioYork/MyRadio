@@ -9,6 +9,7 @@ namespace MyRadio\ServiceAPI;
 use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadioException, \MyRadio\MyRadioError;
+use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_Season;
@@ -784,7 +785,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'display' => 'icon',
                 'value' => 'calendar',
                 'title' => 'Apply for a new Season',
-                'url' => CoreUtils::makeURL('Scheduler', 'createSeason', ['showid' => $this->getID()])
+                'url' => CoreUtils::makeURL('Scheduler', 'editSeason', ['showid' => $this->getID()])
             ],
             'micrositelink' => [
                 'display' => 'icon',

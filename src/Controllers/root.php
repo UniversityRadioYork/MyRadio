@@ -8,7 +8,7 @@
 
 use \MyRadio\Config;
 use \MyRadio\MyRadioError;
-use \MyRadio\ServiceAPI;
+use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioSession;
 use \MyRadio\MyRadio\MyRadioNullSession;
@@ -56,7 +56,7 @@ date_default_timezone_set(Config::$timezone);
 set_error_handler('\MyRadio\MyRadioError::errorsToEmail');
 
 //Prepare ServiceAPI's Database and Cache connections
-\MyRadio\ServiceAPI\ServiceAPI::wakeup();
+ServiceAPI::wakeup();
 
 //Initialise the permission constants
 CoreUtils::setUpAuth();

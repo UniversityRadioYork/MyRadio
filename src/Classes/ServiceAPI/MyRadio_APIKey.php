@@ -29,6 +29,12 @@ class MyRadio_APIKey extends ServiceAPI
      * @var int[]
      */
     private $permissions;
+    
+    /**
+     * Whether the API key has been revoked
+     * @var bool
+     */
+    private $revoked;
 
     /**
      * Construct the API Key Object
@@ -37,6 +43,8 @@ class MyRadio_APIKey extends ServiceAPI
     protected function __construct($key)
     {
         $this->key = $key;
+        $revoked = self::$db->fetchColumn('SELECT revoked from myury.api_key WHERE key_string=$1', [$key]);
+        $this->revoked = ($revoked[0] == 't');
         $this->permissions = self::$db->fetchColumn('SELECT typeid FROM myury.api_key_auth WHERE key_string=$1', [$key]);
     }
 
@@ -47,8 +55,11 @@ class MyRadio_APIKey extends ServiceAPI
      * @param  String  $method The method being called
      * @return boolean
      */
-    public function canCall($class, $method)
+    public function canCall($class, $method, $ignore_revoked = false)
     {
+        if ($this->revoked && !$ignore_revoked) {
+            return false;
+        }
         if (in_array(AUTH_APISUDO, $this->permissions)) {
             return true;
         }

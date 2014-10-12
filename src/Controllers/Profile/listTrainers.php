@@ -8,14 +8,23 @@
  */
 
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_TrainingStatus;
 
-$officers = CoreUtils::dataSourceParser(
+/*
+$trainers = CoreUtils::dataSourceParser(
     MyRadio_TrainingStatus::getInstance(3)->getAwardedTo()
 );
+*/
+
+$trainers = ServiceAPI::setToDataSource(MyRadio_TrainingStatus::getInstance(3)->getAwardedTo());
+
+foreach ($trainers as $key => $value) {
+    $trainers[$key]['awarded_time'] = date('Y/m/d', $trainers[$key]['awarded_time']);
+}
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-    ->addVariable('tablescript', 'myury.datatable.default')
+    ->addVariable('tablescript', 'myradio.profile.listTrainers')
     ->addVariable('title', 'Trainers List')
-    ->addVariable('tabledata', $officers)
+    ->addVariable('tabledata', $trainers)
     ->render();

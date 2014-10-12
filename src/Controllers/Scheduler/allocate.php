@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $season->schedule($data);
 
-    CoreUtils::backWithMessage('Season Allocated!')
+    CoreUtils::backWithMessage('Season Allocated!');
 
 } else {
     //Not Submitted
