@@ -9,7 +9,7 @@
  */
 
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\NIPSWeb_ManagedItem;
+use \MyRadio\NIPSWeb\NIPSWeb_ManagedItem;
 
 if (!isset($_REQUEST['fileid'])
     or !isset($_REQUEST['title'])

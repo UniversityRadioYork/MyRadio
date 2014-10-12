@@ -15,7 +15,7 @@ use \MyRadio\iTones\iTones_Utils;
 use \MyRadio\iTones\iTones_Playlist;
 use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
 
-require_once __DIR__.'/cli_common.php';
+require_once __DIR__.'/root_cli.php';
 
 do {
     $tracks = null;

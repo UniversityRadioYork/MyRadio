@@ -1,5 +1,10 @@
 <?php
 
+use \ReflectionMethod;
+use \ReflectionClass;
+use \ReflectionException;
+
+use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_APIKey;
@@ -16,7 +21,7 @@ $__start = -microtime(true);
 define('SILENT_EXCEPTIONS', true);
 define('DISABLE_SESSION', true);
 
-require_once __DIR__ . '/../Controllers/cli_common.php';
+require_once __DIR__ . '/../Controllers/root_cli.php';
 
 /**
  * Handle API errors

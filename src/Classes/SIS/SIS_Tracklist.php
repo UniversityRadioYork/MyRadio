@@ -7,6 +7,7 @@
 
 namespace MyRadio\SIS;
 
+use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
 
 /**

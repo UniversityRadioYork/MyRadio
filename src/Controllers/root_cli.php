@@ -2,4 +2,4 @@
 /**
  * Sets up the environment for MyRadio non-web Controllers
  */
-require_once '../root.php';
+require_once __DIR__.'/root.php';

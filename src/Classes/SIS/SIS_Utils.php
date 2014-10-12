@@ -9,6 +9,7 @@ namespace MyRadio\SIS;
 
 use \MyRadio\Config;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\ServiceAPI;
 
 /**
  * This class has helper functions for building SIS

@@ -75,7 +75,7 @@ if (!$handle) {
 }
 $classes = [];
 
-require_once 'cli_common.php';
+require_once 'root_cli.php';
 
 //Should this run once or loop forever?
 $once = in_array('--once', $argv);
