@@ -304,18 +304,6 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             )
         )->addField(
             new MyRadioFormField(
-                'cover_method',
-                MyRadioFormField::TYPE_SELECT,
-                [
-                    'label' => 'Method',
-                    'options' => [
-                        [ 'value' => 'existing', 'text' => 'Existing Cover File' ],
-                        [ 'value' => 'new', 'text' => 'Upload New Cover File' ]
-                    ]
-                ]
-            )
-        )->addField(
-            new MyRadioFormField(
                 'existing_cover',
                 MyRadioFormField::TYPE_TEXT,
                 [
@@ -362,7 +350,6 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                     'show' => empty($this->show_id) ? null : $this->show_id,
                     'credits.member' => array_map(function ($credit) {return $credit['User'];}, $this->getCredits()),
                     'credits.credittype' => array_map(function ($credit) {return $credit['type'];}, $this->getCredits()),
-                    'cover_method' => 'existing',
                     'existing_cover' => $this->getCover(),
                     'terms' => 'on'
                 ]

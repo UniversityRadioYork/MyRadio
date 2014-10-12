@@ -17,6 +17,11 @@
             "description": "List the current officers"
         },
         {
+            "title": "List Trainers",
+            "url": "module=Profile,action=listTrainers",
+            "description": "List the current trainers"
+        },
+        {
             "title": "Add Member",
             "url": "module=Profile,action=quickAdd",
             "description": "Add a new Member"

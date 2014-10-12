@@ -522,12 +522,13 @@ class MyRadio_Track extends ServiceAPI
         }
 
         $analysis = self::identifyUploadedTrack(Config::$audio_upload_tmp_dir . '/' . $filename);
-        if (isset($analysis['status']) && $analysis['status'] === 'FAIL') {
+        if (isset($analysis['status'])) {
             $analysis['fileid'] = $filename;
             return $analysis;
         } else {
             return [
                 'fileid' => $filename,
+                'status' => 'OK',
                 'analysis' => $analysis
             ];
         }
@@ -546,7 +547,11 @@ class MyRadio_Track extends ServiceAPI
     {
         //Syspath is set by Daemons or where $PATH is not sufficent.
         $response = shell_exec((empty($GLOBALS['syspath']) ? '' : $GLOBALS['syspath']) . 'lastfm-fpclient -json ' . $path);
-        //echo (empty($GLOBALS['syspath']) ? '' : $GLOBALS['syspath']).'lastfm-fpclient -json ' . $path;
+        
+        if (!trim($response)) {
+            return ['status' => 'LASTFM_ERROR',
+                    'error' => 'Last.FM doesn\'t seem to be working right now.'];
+        }
 
         $lastfm = json_decode($response, true);
 
@@ -586,7 +591,7 @@ class MyRadio_Track extends ServiceAPI
             // Use the album title the user has provided. Use an existing album
             // if we already have one of that title. If not, create one.
             $myradio_album = MyRadio_Album::findOrCreate($album, $artist);
-            $ainfo = array('duration' => null, 'position' => int($position), 'album' => $myradio_album);
+            $ainfo = array('duration' => null, 'position' => intval($position), 'album' => $myradio_album);
         }
 
         // Get the track duration from the file if it isn't already set
@@ -627,7 +632,7 @@ class MyRadio_Track extends ServiceAPI
         $tmpfile = Config::$audio_upload_tmp_dir . '/' . $tmpid;
         $dbfile = $ainfo['album']->getFolder() . '/' . $track->getID();
 
-        shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 - >'{$dbfile}.mp3'");
+        shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 '{$dbfile}.mp3'");
         shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
         rename($tmpfile, $dbfile . '.mp3.orig');
 

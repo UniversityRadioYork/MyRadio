@@ -12,7 +12,7 @@ use \MyRadio\ServiceAPI\MyRadio_Demo;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
-    MyRadio_Demo::getForm()->readValues();
+    $demoinfo = MyRadio_Demo::getForm()->readValues();
 
     MyRadio_Demo::registerDemo($demoinfo['demo-datetime']);
 

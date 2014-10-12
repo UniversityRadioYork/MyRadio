@@ -101,7 +101,7 @@ window.timelord = {
         return this;
     },
     setNextShows: function(next) {
-        if (next[0] == null) {
+        if (!next || next[0] == null) {
             $('#next-show').html('');
         } else {
             d0 = (new Date(next[0].start_time * 1000));

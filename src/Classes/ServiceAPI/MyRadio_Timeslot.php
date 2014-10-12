@@ -569,19 +569,14 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         $r = self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', [$this->getID()]);
 
-        /**
-         * @todo This is massively overkill, isn't it?
-         */
-        $m = new Memcached();
-        $m->addServer(Config::$django_cache_server, 11211);
-        $m->flush();
+        $this->updateCacheObject();
 
         return $r;
     }
 
     /**
      * This is the server-side implementation of the JSONON system for tracking Show Planner alterations
-     * @param array $set A JSONON operation set
+     * @param array[] $set A JSONON operation set
      */
     public function updateShowPlan($set)
     {

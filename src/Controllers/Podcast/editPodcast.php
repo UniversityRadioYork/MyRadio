@@ -47,15 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    switch ($data['cover_method']) {
-        case 'existing':
-            $podcast->setCover($data['existing_cover']);
-            break;
-        case 'new':
-            $podcast->createCover($data['new_cover']['tmp_name']);
-            break;
-        default:
-            throw new MyRadioException('Unknown cover upload method.', 400);
+    if (!empty($data['existing_cover'])) {
+        $podcast->setCover($data['existing_cover']);
+    } elseif (is_uploaded_file($data['new_cover']['tmp_name'])) {
+        $podcast->createCover($data['new_cover']['tmp_name']);
+    } else {
+        throw new MyRadioException('Unknown cover upload method.', 400);
     }
 
     CoreUtils::backWithMessage('Podcast Updated');
