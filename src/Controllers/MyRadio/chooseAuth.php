@@ -26,7 +26,7 @@ if (!in_array($_REQUEST['authenticator'], Config::$authenticators)) {
 MyRadio_User::getInstance()->setAuthProvider($_REQUEST['authenticator']);
 
 //If it's not the Default authenticator, delete the password and make require password change false
-if ($_REQUEST['authenticator'] !== 'MyRadioDefaultAuthenticator') {
+if ($_REQUEST['authenticator'] !== '\MyRadio\MyRadio\MyRadioDefaultAuthenticator') {
     (new MyRadioDefaultAuthenticator())->removePassword($_SESSION['memberid']);
     MyRadio_User::getInstance()->setRequirePasswordChange(false);
 }
