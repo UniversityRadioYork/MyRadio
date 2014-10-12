@@ -10,6 +10,7 @@ namespace MyRadio\NIPSWeb;
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\vendor\getid3\getid3;
 
 /**
