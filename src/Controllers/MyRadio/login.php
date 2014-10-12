@@ -1,6 +1,6 @@
 <?php
 
-use \MyRadio\Config;
+use \MyRadio\Config, \MyRadio\Database;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
 
@@ -61,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
     foreach (Config::$authenticators as $i) {
         $authenticator = new $i();
         $user = $authenticator->validateCredentials($raw_uname, $data['password']);
-
         if ($user) {
             if ($user->getAccountLocked()) {
                 //The user's account is disabled
