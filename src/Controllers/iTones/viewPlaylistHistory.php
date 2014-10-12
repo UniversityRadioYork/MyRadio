@@ -8,7 +8,7 @@
  */
 
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\iTones_PlaylistRevision;
+use \MyRadio\iTones\iTones_PlaylistRevision;
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('title', 'Playlist History')

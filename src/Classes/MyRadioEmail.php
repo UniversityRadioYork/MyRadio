@@ -7,6 +7,11 @@
 
 namespace MyRadio;
 
+use \MyRadio\ServiceAPI\ServiceAPI;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\ServiceAPI\MyRadio_List;
+
 /**
  * Provides email functions so that MyRadio can send email.
  *
