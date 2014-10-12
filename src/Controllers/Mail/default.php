@@ -8,6 +8,7 @@
  * @package MyRadio_Mail
  */
 
+use \MyRadio\Config;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_List;
 
