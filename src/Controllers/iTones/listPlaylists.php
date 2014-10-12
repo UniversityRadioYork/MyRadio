@@ -8,7 +8,7 @@
  */
 
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\iTones_Playlist;
+use \MyRadio\iTones\iTones_Playlist;
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
         ->addVariable('title', 'Campus Jukebox Playlists')
