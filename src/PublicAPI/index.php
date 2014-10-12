@@ -1,5 +1,10 @@
 <?php
 
+use \ReflectionMethod;
+use \ReflectionClass;
+use \ReflectionException;
+
+use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_APIKey;

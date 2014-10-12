@@ -7,6 +7,10 @@
 
 namespace MyRadio\ServiceAPI;
 
+use \ReflectionMethod;
+use \ReflectionClass;
+use \ReflectionException;
+
 use \MyRadio\Config;
 use \MyRadio\Database;
 
