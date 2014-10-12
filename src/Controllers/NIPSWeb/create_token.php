@@ -8,7 +8,7 @@
  */
 
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\NIPSWeb_Token;
+use \MyRadio\NIPSWeb\NIPSWeb_Token;
 
 NIPSWeb_Token::createToken($_REQUEST['trackid']);
 
