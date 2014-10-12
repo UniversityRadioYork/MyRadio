@@ -6,6 +6,7 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  * @todo Apply patches
+ * @todo there's some duplication in setUpFullActionsAuth and DBDATA_BLANK
  */
 require_once 'Classes/Database.php';
 require_once 'Models/Core/api.php';
@@ -47,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 		foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actionsauth.json')) as $actionauth) {
 			$module = CoreUtils::getModuleId($actionauth[0]);
-			$action = CoreUtils::getActionId($module, $actionauth[1]);
+			$action = $actionauth[1] == null ? null : CoreUtils::getActionId($module, $actionauth[1]);
 			$auth = $actionauth[2] == null ? null : constant($actionauth[2]);
 			CoreUtils::addActionPermission($module, $action, $auth);
 		}
@@ -101,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			}
 			foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actionsauth-min.json')) as $actionauth) {
 				$module = CoreUtils::getModuleId($actionauth[0]);
-				$action = CoreUtils::getActionId($module, $actionauth[1]);
+				$action = $actionauth[1] == null ? null : CoreUtils::getActionId($module, $actionauth[1]);
 				$auth = $actionauth[2] == null ? null : constant($actionauth[2]);
 				CoreUtils::addActionPermission($module, $action, $auth);
 			}
