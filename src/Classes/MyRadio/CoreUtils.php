@@ -12,6 +12,7 @@ use \MyRadio\Database;
 use \MyRadio\MyRadioTwig;
 use \MyRadio\MyRadioException, \MyRadio\MyRadioError;
 use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\Iface;
 
 /**
  * Standard API Utilities. Basically miscellaneous functions for the core system
@@ -746,7 +747,7 @@ class CoreUtils
      */
     public static function dataSourceParser($data, $full = true)
     {
-        if (is_object($data) && $data instanceof MyRadio_DataSource) {
+        if (is_object($data) && $data instanceof \MyRadio\Iface\MyRadio_DataSource) {
             return $data->toDataSource($full);
         } elseif (is_array($data)) {
             foreach ($data as $k => $v) {
