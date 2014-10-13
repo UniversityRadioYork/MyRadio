@@ -26,7 +26,7 @@
   <script type="text/javascript">
     $(function () {
       window.swaggerUi = new SwaggerUi({
-      url: "https://<?php echo $_SERVER['HTTP_HOST'].str_replace('/rtfm','',$_SERVER['REQUEST_URI']); ?>resources/resources",
+      url: "http://<?php echo $_SERVER['HTTP_HOST'].str_replace('/rtfm','',$_SERVER['REQUEST_URI']); ?>resources/resources",
       dom_id: "swagger-ui-container",
       supportedSubmitMethods: ['get', 'post', 'put'],
       onComplete: function(swaggerApi, swaggerUi){
