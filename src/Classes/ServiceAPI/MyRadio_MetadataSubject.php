@@ -179,8 +179,8 @@ trait MyRadio_MetadataSubject
             $key,
             $this->getID(),
             MyRadio_User::getCurrentOrSystemUser()->getID(),
-            CoreUtils::getTimestamp($time),
-            $effective_to == null ? null : CoreUtils::getTimestamp($effective_to)
+            CoreUtils::getTimestamp($from),
+            $to == null ? null : CoreUtils::getTimestamp($to)
         ];
 
         $param_counter = 6;
