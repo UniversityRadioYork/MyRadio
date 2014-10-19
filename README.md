@@ -26,6 +26,17 @@ Alias /myradio /usr/local/www/myradio/src/Public
    Require all granted
    AllowOverride None
 </Directory>
+
+Alias /api /var/www/MyRadio/src/PublicAPI
+<Directory /var/www/MyRadio/src/PublicAPI>
+  Require all granted
+  AllowOverride None
+  RewriteEngine On
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^ /api/index.php [QSA,L]
+</Directory>
+
 ```
 
 Restart Apache2, go to http://hostname/myradio and follow the instructions.
