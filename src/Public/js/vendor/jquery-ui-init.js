@@ -10,5 +10,4 @@ $(document).ready(function() {
         collapsible: true,
         active: false
     });
-    $("input:submit, button").button();
 });

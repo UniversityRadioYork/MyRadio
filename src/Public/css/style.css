@@ -6,6 +6,19 @@
   color: #fff;
 }
 
+.main-container {
+  margin-bottom: 60px;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 0;
+  background-color: #f5f5f5;
+}
+
 /** MyRadio Menu Styles **/
 
 .menu-column {

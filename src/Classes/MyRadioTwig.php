@@ -62,7 +62,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
         //We override the defaults later so we don't depend on the database.
         //If the session is set, we can assume database access is available
         //as it is read from the database
-        if (isset($_SESSION) && class_exists('Database')) {
+        if (isset($_SESSION) && class_exists('\MyRadio\Database')) {
             $this->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : '<a href="' . CoreUtils::makeURL('MyRadio', 'login') . '">Login</a>')
                  ->addVariable('baseurl', Config::$base_url);
 

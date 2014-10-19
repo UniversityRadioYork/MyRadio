@@ -44,6 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			CoreUtils::getActionId($module, $action[1]);
 		}
 		foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-auth.json')) as $auth) {
+			if (!$auth[2]) {
+				continue;
+			}
 			try {
 				CoreUtils::addPermission($auth[0], $auth[1]);
 			} catch (MyRadioException $e) {
@@ -51,9 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			}
 		}
 		foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actionsauth.json')) as $actionauth) {
-			if (!$actionsauth[3]) {
-				continue;
-			}
 			$module = CoreUtils::getModuleId($actionauth[0]);
 			$action = $actionauth[1] == null ? null : CoreUtils::getActionId($module, $actionauth[1]);
 			$auth = $actionauth[2] == null ? null : constant($actionauth[2]);
