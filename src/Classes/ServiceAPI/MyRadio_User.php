@@ -5,6 +5,13 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+
 /**
  * The user object provides and stores information about a user
  * It is not a singleton for Impersonate purposes
@@ -463,11 +470,11 @@ class MyRadio_User extends ServiceAPI
                 if (empty($eduroam)) {
                     return null;
                 } else {
-                    return $eduroam . '@'.Config::$eduroam_domain;
+                    return $eduroam . '@' . Config::$eduroam_domain;
                 }
             }
         } elseif (empty($this->email)) {
-            return $this->getEduroam() . '@'.Config::$eduroam_domain;
+            return $this->getEduroam() . '@' . Config::$eduroam_domain;
         } else {
             return $this->email;
         }
@@ -912,7 +919,7 @@ class MyRadio_User extends ServiceAPI
     {
         //Require the user to be part of this eduroam domain
         if (strstr($eduroam, '@') !== false
-            && strstr($eduroam, '@'.Config::$eduroam_domain) === false) {
+            && strstr($eduroam, '@' . Config::$eduroam_domain) === false) {
             throw new MyRadioException(
                 'Eduroam account should be @'
                 .Config::$eduroam_domain

@@ -6,6 +6,8 @@
  * @todo Andy did this a bit weird....
  */
 
+namespace MyRadio;
+
 /**
  * Provides error handling so that php errors can be displayed nicely.
  *

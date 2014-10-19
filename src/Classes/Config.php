@@ -4,6 +4,8 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio;
+
 /**
  * Stores configuration settings
  *
@@ -99,7 +101,7 @@ final class Config
      * Must be the name of a valid class located in classes/[classname].php and implements CacheProvider
      * @var String
      */
-    public static $cache_provider = 'APCProvider';
+    public static $cache_provider = '\MyRadio\APCProvider';
     /**
      * How long MyRadio_Track items should be cached before the data is invalidated. This is Configurable as due to a lot
      * of external edit sources, it is reasonable to asssume the cache may become stale due to other systems.
@@ -180,13 +182,6 @@ final class Config
      * @var int
      */
     public static $piss_feed = 4;
-
-    /**
-     * The location of the Memcached server used for the Website.
-     * This is so it can be cleared where necessary.
-     * @var String
-     */
-    public static $django_cache_server = 'localhost';
 
     /**
      * The path to the motion Webcam logs. This must be a file path, but may be NFS/Samba mounter
@@ -516,7 +511,7 @@ final class Config
      * operations.
      */
     //public static $authenticators = ['MyRadioLDAPAuthenticator', 'MyRadioDefaultAuthenticator'];
-    public static $authenticators = ['MyRadioDefaultAuthenticator'];
+    public static $authenticators = ['\MyRadio\MyRadio\MyRadioDefaultAuthenticator'];
     public static $auth_ldap_server = 'ldap://ldap.york.ac.uk';
     public static $auth_ldap_root = 'ou=people,ou=csrv,ou=nos,dc=york,dc=ac,dc=uk';
     public static $auth_db_user = '';

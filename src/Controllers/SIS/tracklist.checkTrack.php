@@ -7,6 +7,9 @@
  * @package MyRadio_SIS
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\SIS\SIS_Tracklist;
+
 $artist = $_GET['artist'];
 $album = $_GET['album'];
 $tname = $_GET['tname'];

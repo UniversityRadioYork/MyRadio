@@ -6,6 +6,10 @@
  * @version 20130809
  * @package MyRadio_Core
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 header('HTTP/1.1 403 Forbidden');
 
 CoreUtils::getTemplateObject()->setTemplate('error.twig')

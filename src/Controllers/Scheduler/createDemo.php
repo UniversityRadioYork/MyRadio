@@ -7,6 +7,9 @@
  * @package MyRadio_Scheduler
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Demo;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $demoinfo = MyRadio_Demo::getForm()->readValues();

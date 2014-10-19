@@ -159,11 +159,6 @@
                                         "description": "Manage the system that keeps URY on air, even when you aren't."
                                     },
                                     {
-                                        "title": "Deployment Tool",
-                                        "url": "module=Deploy",
-                                        "description": "Manage which version of MyURY members are using."
-                                    },
-                                    {
                                         "title": "Mailing List Manager",
                                         "url": "module=Mail",
                                         "description": "Manage Mailing lists and email aliases."

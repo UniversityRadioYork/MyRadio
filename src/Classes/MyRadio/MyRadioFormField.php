@@ -1,5 +1,7 @@
 <?php
 
+namespace MyRadio\MyRadio;
+
 /**
  * This file provides the MyRadioFormField class for MyRadio
  * @package MyRadio_Core

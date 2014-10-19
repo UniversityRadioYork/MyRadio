@@ -10,6 +10,8 @@
  * @package MyRadio_Core
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioNews;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted

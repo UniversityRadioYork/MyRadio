@@ -1,16 +1,18 @@
 <?php
 
 /**
- * This is the Root Controller - it is the backbone of every request, preparing resources and passing the request onto
- * the necessary handler.
+ * This is the Root Controller - it is the backbone of everything MyRadio
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20131230
  * @package MyRadio_Core
- * @uses \CacheProvider
- * @uses \Database
- * @uses \CoreUtils
  */
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioError;
+use \MyRadio\ServiceAPI\ServiceAPI;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioSession;
+use \MyRadio\MyRadio\MyRadioNullSession;
+
 /**
  * Turn on Error Reporting for the start. Once the Config object is loaded
  * this is updated to reflect Config.
@@ -26,49 +28,32 @@ date_default_timezone_set('Europe/London');
  * Sets the include path to include MyRadio at the end - makes for nicer includes
  */
 set_include_path(str_replace('Controllers', '', __DIR__) . PATH_SEPARATOR . get_include_path());
+/**
+ * Sets up the autoloader for all classes
+ */
+require_once 'Classes/Autoloader.php';
+// instantiate the loader
+$loader = new \MyRadio\Autoloader;
+// register the autoloader
+$loader->register();
+// register the base directories for the namespace prefix
+$_basepath = str_replace('Controllers', '', __DIR__) . DIRECTORY_SEPARATOR;
+
+$loader->addNamespace('MyRadio', $_basepath . 'Classes');
+$loader->addNamespace('MyRadio\Iface', $_basepath . 'Interfaces');
 
 /**
- * The CoreUtils static class provides some useful standard functions for MyRadio. Take a look at it before you start
- * developing - it may just save you some head scratching.
+ * Load configuration specific to this system.
  */
-require_once 'Classes/MyRadio/CoreUtils.php';
-/**
- * Load up the general Configurables - this includes things like the Database connection settings, the CacheProvider
- * to use and whether debug mode is enabled.
- */
-require_once 'Classes/Config.php';
-
-if (stream_resolve_include_path('MyRadio_Config.local.php')) {
-  require_once 'MyRadio_Config.local.php';
-  if (Config::$setup === true) {
-    require 'Controllers/Setup/root.php';
-    exit;
-  }
-} else {
-  /**
-   * This install hasn't been configured yet. We should do that.
-   */
-  require 'Controllers/Setup/root.php';
-  exit;
-}
+require 'MyRadio_Config.local.php';
 
 /**
- * Call the model that prepares the Database and the Global Abstraction API
+ * Set local timezone.
  */
-require 'Models/Core/api.php';
+date_default_timezone_set(Config::$timezone);
 
-/**
- * Load in email functions
- */
-require_once 'Classes/MyRadioEmail.php';
 
-/**
- * Load the phpError handler class - this has functions to put errors nicely on
- * the page, or to log them elsewhere.
- * And set the error handler to use it
- */
-require_once 'Classes/MyRadioError.php';
-set_error_handler('MyRadioError::errorsToArray');
+set_error_handler('\MyRadio\MyRadioError::errorsToEmail');
 
 /**
  * Turn off visible error reporting, if needed
@@ -133,5 +118,36 @@ if (isset($_REQUEST['joyride'])) {
 //Otherwise ServiceAPI::$db/$cache may not be available and upset controllers
 ServiceAPI::wakeup();
 
-//Include the requested action
-require 'Controllers/'. $module . '/' . $action . '.php';
+//Initialise the permission constants
+CoreUtils::setUpAuth();
+
+//Set up a shutdown function
+//AFTER other things to ensure DB is registered
+register_shutdown_function('\MyRadio\MyRadio\CoreUtils::shutdown');
+
+/**
+ * Sets up a session stored in the database - uesful for sharing between more
+ * than one server.
+ * We disable this for the API using the DISABLE_SESSION constant.
+ */
+//Override any existing session
+if (isset($_SESSION)) {
+    session_write_close();
+    session_id($_COOKIE['PHPSESSID']);
+}
+
+if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
+    $session_handler = MyRadioSession::factory();
+} else {
+    $session_handler = MyRadioNullSession::factory();
+}
+
+session_set_save_handler(
+    [$session_handler, 'open'],
+    [$session_handler, 'close'],
+    [$session_handler, 'read'],
+    [$session_handler, 'write'],
+    [$session_handler, 'destroy'],
+    [$session_handler, 'gc']
+);
+session_start();

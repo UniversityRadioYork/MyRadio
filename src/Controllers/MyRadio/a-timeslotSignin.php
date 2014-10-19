@@ -8,6 +8,9 @@
  * @package MyRadio_Core
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Timeslot;
+
 $ts = MyRadio_Timeslot::getInstance($_REQUEST['timeslotid']);
 if ($ts->getSeason()->getShow()->isCurrentUserAnOwner()
         or CoreUtils::hasPermission(AUTH_EDITSHOWS)) {

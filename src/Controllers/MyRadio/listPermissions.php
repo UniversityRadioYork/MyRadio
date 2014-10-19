@@ -7,6 +7,8 @@
  * @package MyRadio_Core
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+
 $data = array_map(function ($x) {
     $x['usage'] = [
         'display' => 'text',

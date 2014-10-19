@@ -1,8 +1,15 @@
 <?php
+
+namespace MyRadio\Daemons;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 /**
  * This Daemon creates new Member accounts based on data from the YUSU API
  */
-class MyRadio_MemberSyncDaemon extends MyRadio_Daemon
+class MyRadio_MemberSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
     public static function isEnabled()
     {

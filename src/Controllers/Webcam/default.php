@@ -6,6 +6,10 @@
  * @version 28072012
  * @package MyRadio_Webcam
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Webcam;
+
 $streams = MyRadio_Webcam::getStreams();
 
 CoreUtils::getTemplateObject()->setTemplate('Webcam/grid.twig')

@@ -6,6 +6,10 @@
  * @version 18042013
  * @package MyRadio_NIPSWeb
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Track;
+
 $data = MyRadio_Track::identifyAndStoreTrack($_REQUEST['fileid'],
                                              $_REQUEST['title'],
                                              $_REQUEST['artist'],

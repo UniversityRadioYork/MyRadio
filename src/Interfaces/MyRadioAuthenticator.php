@@ -1,5 +1,7 @@
 <?php
 
+namespace MyRadio\Iface;
+
 /**
  * An Authenticator processes login requests for a user against a specific
  * user database.

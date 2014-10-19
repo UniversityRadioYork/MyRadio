@@ -6,6 +6,10 @@
  * @version 20130809
  * @package MyRadio_Core
  */
+
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+
 header('HTTP/1.1 404 File Not Found');
 
 CoreUtils::getTemplateObject()->setTemplate('error.twig')

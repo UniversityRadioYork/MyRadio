@@ -5,6 +5,11 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\MyRadio;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+
 /**
  * Abstractor for the MyRadio Menu
  *

@@ -7,6 +7,8 @@
  * @package MyRadio_SIS
  */
 
+use \MyRadio\ServiceAPI\MyRadio_Webcam;
+
 if (!isset($_REQUEST['src'])) {
     return;
 }

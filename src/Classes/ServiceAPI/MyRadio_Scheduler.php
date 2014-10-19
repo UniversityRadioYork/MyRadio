@@ -4,6 +4,10 @@
  * @package MyRadio_Scheduler
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadio\CoreUtils;
+
 /**
  * Abstractor for the Scheduler Module
  *

@@ -7,6 +7,15 @@
  * @package MyRadio_Mail
  */
 
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadioEmail;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\ServiceAPI\MyRadio_List;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 $form = (
     new MyRadioForm(
         'mail_send',

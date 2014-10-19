@@ -1,6 +1,16 @@
 <?php
 
-require_once 'Interfaces/TemplateEngine.php';
+namespace MyRadio;
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioMenu;
+use \MyRadio\MyRadioException, \MyRadio\MyRadioError;
+
+use \Twig_Loader_Filesystem;
+use \Twig_Environment;
+use \Twig_Extension_Debug;
 
 /**
  * Singleton class for the Twig template engine
@@ -10,7 +20,7 @@ require_once 'Interfaces/TemplateEngine.php';
  * @depends Config
  * @package MyRadio_Core
  */
-class MyRadioTwig implements TemplateEngine
+class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
 {
     private $contextVariables = [];
     private $template;

@@ -5,6 +5,15 @@
  * @package MyRadio_iTones
  */
 
+namespace MyRadio\iTones;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\ServiceAPI\MyRadio_Track;
+use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+
 /**
  * The iTones_Playlist class helps provide control and access to managed playlists
  *
@@ -13,7 +22,7 @@
  * @package MyRadio_iTones
  * @uses \Database
  */
-class iTones_Playlist extends ServiceAPI
+class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
 {
     private $playlistid;
     private $title;

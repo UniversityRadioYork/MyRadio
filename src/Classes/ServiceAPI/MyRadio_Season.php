@@ -5,6 +5,13 @@
  * @package MyRadio_Scheduler
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\MyRadioEmail;
+
 /**
  * The Season class is used to create, view and manupulate Seasons within the new MyRadio Scheduler Format
  * @version 20130814
@@ -977,9 +984,7 @@ $times
 
         $r = (bool) self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_id=$1 AND start_time >= NOW()', [$this->getID()]);
 
-        $m = new Memcached();
-        $m->addServer(Config::$django_cache_server, 11211);
-        $m->flush();
+        $this->updateCacheObject();
 
         return $r;
     }

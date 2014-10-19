@@ -5,6 +5,16 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\MyRadio;
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\MyRadioTwig;
+use \MyRadio\MyRadioException, \MyRadio\MyRadioError;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\Iface\MyRadio_DataSource;
+
+
 /**
  * Standard API Utilities. Basically miscellaneous functions for the core system
  * No database accessing etc should be setup here.
@@ -95,8 +105,7 @@ class CoreUtils
     public static function getTemplateObject()
     {
         require_once 'Twig/Autoloader.php';
-        Twig_Autoloader::register();
-        require_once 'Classes/MyRadioTwig.php';
+        \Twig_Autoloader::register();
 
         return new MyRadioTwig();
     }
@@ -173,7 +182,7 @@ class CoreUtils
      */
     public static function getAcademicYear()
     {
-        if (empty(CoreUtils::$academicYear)) {
+        if (empty(self::$academicYear)) {
             $term = Database::getInstance()->fetchColumn(
                 'SELECT start FROM public.terms WHERE descr=\'Autumn\'
                 AND EXTRACT(year FROM start) = $1',
@@ -185,11 +194,11 @@ class CoreUtils
                 ) {
                 CoreUtils::$academicYear = date('Y');
             } else {
-                CoreUtils::$academicYear = date('Y') - 1;
+                self::$academicYear = date('Y') - 1;
             }
         }
 
-        return CoreUtils::$academicYear;
+        return self::$academicYear;
     }
 
     /**
@@ -459,7 +468,7 @@ class CoreUtils
         if (!$authorised && $require) {
             //Requires login
             if (!isset($_SESSION['memberid']) || $_SESSION['auth_use_locked'] !== false) {
-                require 'Controllers/MyRadio/login.php';
+                self::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
             } else {
                 //Authenticated, but not authorized
                 require 'Controllers/Errors/403.php';
@@ -723,7 +732,7 @@ class CoreUtils
     public static function requireTimeslot()
     {
         if (!isset($_SESSION['timeslotid'])) {
-            CoreUtils::redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
+            self::redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
             exit;
         }
     }

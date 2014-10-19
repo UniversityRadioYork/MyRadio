@@ -8,6 +8,10 @@
  * @package MyRadio_Mail
  */
 
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_List;
+
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('tablescript', 'myury.mail.default')
     ->addVariable('title', 'All Mailing Lists')

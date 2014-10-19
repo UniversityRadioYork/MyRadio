@@ -4,6 +4,10 @@
  * @package MyRadio_Charts
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+
 /**
  * The ChartRow class fetches information about rows of chart releases.
  * @version 20130426

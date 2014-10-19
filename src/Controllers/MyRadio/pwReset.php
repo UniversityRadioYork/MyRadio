@@ -6,6 +6,12 @@
  * @data 20140120
  * @package MyRadio_Core
  */
+
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
+
 $form = (
     new MyRadioForm(
         'myradio_pwReset',

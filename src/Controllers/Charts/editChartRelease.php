@@ -6,6 +6,9 @@
  * @package MyRadio_Charts
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_ChartRelease;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = MyRadio_ChartRelease::getForm()->readValues();

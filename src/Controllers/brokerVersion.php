@@ -11,6 +11,9 @@
  * Sets the $service_version Global Variable
  */
 
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+
 // Get a list of Service Versions for this Service
 $versions = CoreUtils::getServiceVersions();
 

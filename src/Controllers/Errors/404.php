@@ -7,5 +7,7 @@
  * @package MyRadio_Core
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+
 $twig = CoreUtils::getTemplateObject();
 require 'Views/Errors/404.php';

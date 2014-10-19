@@ -7,6 +7,9 @@
  * @package MyRadio_SIS
  */
 
+use \MyRadio\Config;
+use \MyRadio\ServiceAPI\MyRadio_Webcam;
+
 $vars = [
     'webcam_prefix' => Config::$webcam_prefix,
     'cameras' => ['jukebox.jpg', 'studio1', 's1-fos', 'studio2'],
@@ -19,7 +22,7 @@ $moduleInfo = [
     'title' => 'Webcam Selector',
     'enabled' => true,
     'startOpen' => false,
-    'pollfunc' => 'SIS_Remote::queryWebcam',
+    'pollfunc' => '\MyRadio\SIS\SIS_Remote::queryWebcam',
     'help' => 'You may have noticed that Studio 1 now has two webcams. '
         .'The Webcam section over to the left lets you choose which of '
         .'the station\'s cameras can be seen by listeners.',

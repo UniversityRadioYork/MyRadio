@@ -6,6 +6,10 @@
  * @version 20130803
  * @package MyRadio_Stats
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Track;
+
 $options = null;
 CoreUtils::getTemplateObject()->setTemplate('bargraph.twig')
     ->addVariable('title', 'Central Music Library Content Stats')

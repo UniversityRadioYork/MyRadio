@@ -8,6 +8,10 @@
  * @package MyRadio_Scheduler
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Selector;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 $result = true;
 $stage = isset($_POST['stage']) ? $_POST['stage'] : 1;
 

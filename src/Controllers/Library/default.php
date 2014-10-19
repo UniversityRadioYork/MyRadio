@@ -6,6 +6,9 @@
  * @version 25072012
  * @package MyRadio_Library
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/text.twig')
     ->addVariable('title', 'Library')
     ->addVariable(

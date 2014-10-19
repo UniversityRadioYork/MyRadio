@@ -5,6 +5,16 @@
  * @package MyRadio_Scheduler
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadioEmail;
+use \MyRadio\NIPSWeb\NIPSWeb_TimeslotItem;
+use \MyRadio\NIPSWeb\NIPSWeb_BAPSUtils;
+use \MyRadio\SIS\SIS_Utils;
+
 /**
  * The Timeslot class is used to view and manupulate Timeslot within the new MyRadio Scheduler Format
  * @todo Generally the creation of bulk Timeslots is currently handled by the Season/Show classes, but this should change
@@ -559,12 +569,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         $r = self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', [$this->getID()]);
 
-        /**
-         * @todo This is massively overkill, isn't it?
-         */
-        $m = new Memcached();
-        $m->addServer(Config::$django_cache_server, 11211);
-        $m->flush();
+        $this->updateCacheObject();
 
         return $r;
     }
