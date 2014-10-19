@@ -7,6 +7,8 @@
  * @version 20140501
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
+ * @todo The files this is based on have been completely lost to the world
+ * and replaced with a shiny new system by Andy. Should update to reflect this.
  */
 
 /**

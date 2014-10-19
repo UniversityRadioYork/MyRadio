@@ -6,6 +6,7 @@
  */
 
 namespace MyRadio;
+use \MyRadio\MyRadio\CoreUtils;
 
 /**
  * Extends the standard Exception class to provide additional functionality
@@ -57,8 +58,8 @@ class MyRadioException extends \RuntimeException
                   <tr><td>Trace</td><td>" . nl2br($traceStr) . "</td></tr>
                 </table>";
 
-        if (class_exists('Config')) {
-            if (Config::$email_exceptions && class_exists('MyRadioEmail') && $code !== 400) {
+        if (class_exists('\MyRadio\Config')) {
+            if (Config::$email_exceptions && class_exists('\MyRadio\MyRadioEmail') && $code !== 400) {
                 MyRadioEmail::sendEmailToComputing(
                     '[MyRadio] Exception Thrown',
                     $error . "\r\n" . $message . "\r\n"
@@ -68,7 +69,7 @@ class MyRadioException extends \RuntimeException
             }
             //Configuration is available, use this to decide what to do
             if (Config::$display_errors
-                or (class_exists('CoreUtils')
+                or (class_exists('\MyRadio\MyRadio\CoreUtils')
                 && defined('AUTH_SHOWERRORS')
                 && CoreUtils::hasPermission(AUTH_SHOWERRORS))
             ) {
@@ -103,18 +104,16 @@ class MyRadioException extends \RuntimeException
                     }
                 }
             } else {
-                $error = '<div class="errortable"><strong>' . $this->getMessage() . '</strong>'
-                        . '<p>A fatal error has occured that has prevented MyRadio from performing the action you requested. '
-                        . 'The computing team have been notified.</p></div>';
+                $error = '<div class="errortable"><p>This information is unavailable' .
+                            ' at the moment. Please try again later.</p></div>';
                 //Output limited info to the browser
                 header('HTTP/1.1 ' . $code . ' Internal Server Error');
 
-                if (class_exists('CoreUtils') && !headers_sent()) {
+                if (class_exists('\MyRadio\MyRadio\CoreUtils') && !headers_sent()) {
                     //We can use a pretty full-page output
                     $twig = CoreUtils::getTemplateObject();
                     $twig->setTemplate('error.twig')
-                        ->addVariable('serviceName', 'Error')
-                        ->addVariable('title', 'Internal Server Error')
+                        ->addVariable('title', '')
                         ->addVariable('body', $error)
                         ->addVariable('uri', $_SERVER['REQUEST_URI'])
                         ->render();
@@ -123,7 +122,7 @@ class MyRadioException extends \RuntimeException
                 }
             }
         } else {
-            echo 'A fatal error has occured that has prevented MyRadio from performing the action you requested. Please contact computing@ury.org.uk.';
+            echo 'MyRadio is unavailable at the moment. Please try again later. If the problem persists, contact support.';
         }
     }
 

@@ -9,10 +9,9 @@
     </head>
     <body>
       <nav id="menu" class="transBG">
-        <a id="miniLogo" href="{{baseurl}}"><img alt="((ury))" height="20" src="/static/img/logo.png"></a>
+        <a id="miniLogo" href="{{baseurl}}">MyRadio</a>
         <ul>
-          <li><a href="http://ury.org.uk/">ury.org.uk</a></li>
-          {% if memberid %}<li><a href="{{myury.makeURL(config,'MyRadio', 'logout')}}">Logout</a></li>{% endif %}
+          {% if memberid %}<li><a href="{{myury.makeURL(config, 'MyRadio', 'logout')}}">Logout</a></li>{% endif %}
         </ul>
         <ul id="navRight">
           <li>{% if timeslotname is null and memberid %}<a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}">Pick Timeslot</a>{% else %}<a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</li>

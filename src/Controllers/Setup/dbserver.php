@@ -6,6 +6,7 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
+use \MyRadio\MyRadio\CoreUtils;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$config_overrides['db_hostname'] = $_POST['hostname'];

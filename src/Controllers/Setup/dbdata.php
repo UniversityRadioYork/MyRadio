@@ -8,8 +8,12 @@
  * @todo Apply patches
  * @todo there's some duplication in setUpFullActionsAuth and DBDATA_BLANK
  */
-require_once 'Classes/Database.php';
-require_once 'Models/Core/api.php';
+use \MyRadio\Database;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\ServiceAPI;
+use \MyRadio\ServiceAPI\MyRadio_Officer;
+use \MyRadio\ServiceAPI\MyRadio_Team;
+
 //Make sure ServiceAPI has Database and Cache connections
 ServiceAPI::wakeup();
 
@@ -43,10 +47,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			try {
 				CoreUtils::addPermission($auth[0], $auth[1]);
 			} catch (MyRadioException $e) {
-				$warnings[] = 'Failed to create Permission "'.$auth[0].'". It may already exist.';
+				$warnings[] = 'Failed to create Permission "' . $auth[0] . '". It may already exist.';
 			}
 		}
 		foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actionsauth.json')) as $actionauth) {
+			if (!$actionsauth[3]) {
+				continue;
+			}
 			$module = CoreUtils::getModuleId($actionauth[0]);
 			$action = $actionauth[1] == null ? null : CoreUtils::getActionId($module, $actionauth[1]);
 			$auth = $actionauth[2] == null ? null : constant($actionauth[2]);

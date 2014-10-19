@@ -12,6 +12,9 @@
  * @package MyRadio_Core
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\Config;
+
 define('SILENT_EXCEPTIONS', true);
 define('DBDATA_COMPLETE', 0);
 define('DBDATA_PERMISSIONS', 1);

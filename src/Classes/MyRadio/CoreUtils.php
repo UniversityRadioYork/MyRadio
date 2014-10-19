@@ -557,7 +557,7 @@ class CoreUtils
      * @param String $descr A useful friendly description of what this action means.
      * @param String $constant /AUTH_[A-Z_]+/
      */
-    public function addPermission($descr, $constant)
+    public static function addPermission($descr, $constant)
     {
         $value = (int)Database::getInstance()->fetchColumn(
             'INSERT INTO public.l_action (descr, phpconstant)

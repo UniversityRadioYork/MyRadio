@@ -6,6 +6,9 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Swagger;
 
 $shorttext = [
 	'podcast_archive_path',
@@ -33,7 +36,7 @@ $longtext = [
 
 $short_params = [];
 $long_params = [];
-$rConfig = new ReflectionClass('Config');
+$rConfig = new ReflectionClass('\MyRadio\Config');
 
 foreach ($shorttext as $key) {
 	$rProperty = $rConfig->getProperty($key);

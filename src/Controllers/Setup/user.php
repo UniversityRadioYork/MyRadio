@@ -6,12 +6,13 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
-
-//Attempt to Database
-require_once 'Classes/Database.php';
-require_once 'Interfaces/CacheProvider.php';
-require_once 'Classes/APCProvider.php';
-require_once 'Classes/MyRadioEmail.php';
+use \MyRadio\APCProvider;
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\IFace\CacheProvider;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadioEmail;
+use \MyRadio\ServiceAPI\MyRadio_User;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$user = MyRadio_User::create(
