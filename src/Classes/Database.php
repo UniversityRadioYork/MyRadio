@@ -47,7 +47,7 @@ class Database
      */
     private function __construct()
     {
-        $this->db = pg_connect(
+        $this->db = @pg_connect(
             'host='. Config::$db_hostname
             .' port=5432 dbname='.Config::$db_name
             .' user='. Config::$db_user

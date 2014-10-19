@@ -6,9 +6,8 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
-
-//Attempt to Database
-require_once 'Classes/Database.php';
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\Database;
 
 try {
 	Database::getInstance();

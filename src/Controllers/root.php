@@ -40,6 +40,13 @@ $loader->register();
 // register the base directories for the namespace prefix
 $_basepath = str_replace('Controllers', '', __DIR__) . DIRECTORY_SEPARATOR;
 
+$loader->addNamespace('MyRadio', $_basepath . 'Classes');
+$loader->addNamespace('MyRadio\Iface', $_basepath . 'Interfaces');
+
+/**
+ * Load configuration specific to this system.
+ * Or, if it doesn't exist, kick into setup.
+ */
 if (stream_resolve_include_path('MyRadio_Config.local.php')) {
   require_once 'MyRadio_Config.local.php';
   if (Config::$setup === true) {
@@ -52,24 +59,23 @@ if (stream_resolve_include_path('MyRadio_Config.local.php')) {
    */
   require 'Controllers/Setup/root.php';
   exit;
+}
 
-$loader->addNamespace('MyRadio', $_basepath . 'Classes');
-$loader->addNamespace('MyRadio\Iface', $_basepath . 'Interfaces');
-
-/**
- * Load configuration specific to this system.
- */
-require 'MyRadio_Config.local.php';
+set_error_handler('MyRadio\MyRadioError::errorsToArray');
 
 /**
- * Set local timezone.
+ * Turn off visible error reporting, if needed
+ * 269 is AUTH_SHOWERRORS - the constants aren't initialised yet
  */
-date_default_timezone_set(Config::$timezone);
+if (!Config::$display_errors && !CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
+    ini_set('display_errors', 'Off');
+}
 
+// Set error log file
+ini_set('error_log', Config::$log_file);
 
-set_error_handler('\MyRadio\MyRadioError::errorsToEmail');
-
-//Prepare ServiceAPI's Database and Cache connections
+//Wake up ServiceAPI if it isn't already
+//Otherwise ServiceAPI::$db/$cache may not be available and upset controllers
 ServiceAPI::wakeup();
 
 //Initialise the permission constants

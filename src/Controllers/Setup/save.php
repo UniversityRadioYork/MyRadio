@@ -6,6 +6,8 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
 
 $path = __DIR__ . '/../../MyRadio_Config.local.php';
 
@@ -48,6 +50,7 @@ if (!$file) {
 		exit;
 }
 fwrite($file, "<?php\n");
+fwrite($file, "use \\MyRadio\\Config;\n");
 foreach ($config_overrides as $k => $v) {
 	if (is_numeric($v) != true && is_bool($v) != true) {
 		$v = "'" . str_replace("'", "\\'", $v) . "'";

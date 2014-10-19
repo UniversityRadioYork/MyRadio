@@ -308,7 +308,7 @@ window.MyRadioForm = {
             setInterval(MyRadioForm.pollFileProgress, 1000);
         }
       });
-      $('#myuryfrm-file-upload-iframe').on('load', function() {
+      $('#myradiofrm-file-upload-iframe').on('load', function() {
         //data = $.parseJSON($(this).contents());
         data = $.parseJSON($($(this).contents().find('body').children()[0]).html());
         console.log(data);
@@ -324,7 +324,7 @@ window.MyRadioForm = {
      * You could ask "Why not use $.ajax?" Well the answer is that WebKit
      * won't let you start a new XHR once the form is submitted. YAAY iFrames!
      */
-    $('#myuryfrm-file-upload-iframe').attr('src',
+    $('#myradiofrm-file-upload-iframe').attr('src',
             myury.makeURL('MyRadio', 'a-getuploadprogress', {
               id: $('#UPLOAD_IDENTIFIER').val(),
               1: (new Date).getTime()

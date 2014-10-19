@@ -14,19 +14,6 @@ use \MyRadio\MyRadio\CoreUtils;
 
 require_once __DIR__.'/root.php';
 
-set_error_handler('\MyRadio\MyRadioError::errorsToArray');
-
-/**
- * Turn off visible error reporting, if needed
- * 269 is AUTH_SHOWERRORS - the constants aren't initialised yet
- */
-if (!Config::$display_errors && !CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
-    ini_set('display_errors', 'Off');
-}
-
-// Set error log file
-ini_set('error_log', Config::$log_file);
-
 /**
  * Set up the Module and Action global variables. These are used by Module/Action controllers as well as this file.
  * Notice how the default Module is MyRadio. This is basically the MyRadio Menu, and maybe a couple of admin pages.
@@ -61,7 +48,7 @@ if (isset($_REQUEST['request'])) {
 }
 
 /**
- * Use the Database authentication data to check whether the use has permission to access that.
+ * Use the Database authentication data to check whether the user has permission to access that.
  * This method will automatically cause a premature exit if necessary.
  *
  * IMPORTANT: This will cause a fatal error if an action does not have any permissions associated with it.
