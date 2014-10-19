@@ -371,6 +371,7 @@ header h2 {
 }
 #grid {
   padding: 15px 0 15px 12px;
+  min-height: 60%;
 }
 #grid section,
 #grid nav {
