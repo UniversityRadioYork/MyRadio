@@ -82,6 +82,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
 
     /**
      * Returns a list of terms in the present or future
+     * @todo There's currently no caching on this, could be a potential slowdown
      * @return Array[Array] an array of arrays of terms
      */
     public static function getTerms()
@@ -185,7 +186,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
 
     /**
      * Returns the Term currently available for Season applications.
-     * Users can only apply to the current term, or one week before the next one
+     * Users can only apply to the current term, or 28 days before the next one
      * starts.
      *
      * @return int|null Returns the id of the term or null if no active term
