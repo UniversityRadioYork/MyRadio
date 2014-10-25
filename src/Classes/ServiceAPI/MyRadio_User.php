@@ -11,7 +11,6 @@ use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
-use \MyRadio\ServiceAPI\MyRadio_Show;
 
 /**
  * The user object provides and stores information about a user
