@@ -129,6 +129,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                         },
                         $this->getTracks()
                     ),
+                    'playlistid' => $this->getID(),     // TODO: this can possibly be removed from the form entirely
                 ]
             );
     }
