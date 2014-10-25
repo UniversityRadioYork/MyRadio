@@ -2,6 +2,8 @@
 
 namespace MyRadio\MyRadio;
 
+use MyRadio\MyRadioException;
+
 /**
  * This file provides the MyRadioForm class for MyRadio
  * @package MyRadio_Core
@@ -358,7 +360,8 @@ class MyRadioForm
         }
         //Edit Mode requests
         if (isset($_REQUEST[$this->getPrefix() . 'myradiofrmedid'])) {
-            $return['id'] = (int) $_REQUEST[$this->getPrefix() . 'myradiofrmedid'];
+            $tempID = $_REQUEST[$this->getPrefix() . 'myradiofrmedid'];
+            $return['id'] = is_int($tempID) ? (int) $tempID : $tempID;
         }
         //XSRF check
         if ($_REQUEST[$this->getPrefix().'__xsrf-token'] !== $_SESSION['myradio-xsrf-token']) {
