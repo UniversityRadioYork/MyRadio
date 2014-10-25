@@ -22,8 +22,14 @@ if (!$list->isMember(MyRadio_User::getInstance())) {
     );
 }
 
+$archive = CoreUtils::dataSourceParser($list->getArchive(), false);
+
+foreach ($archive as $key => $value) {
+    $archive[$key]['timestamp'] = date('Y/m/d H:i', $archive[$key]['timestamp']);
+}
+
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-    ->addVariable('tablescript', 'myury.datatable.default')
+    ->addVariable('tablescript', 'myradio.Mail.archive')
     ->addVariable('title', $list->getName().' Archive')
-    ->addVariable('tabledata', CoreUtils::dataSourceParser($list->getArchive(), false))
+    ->addVariable('tabledata', $archive)
     ->render();

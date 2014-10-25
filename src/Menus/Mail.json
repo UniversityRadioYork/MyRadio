@@ -1,0 +1,10 @@
+{
+    "menu":
+        [
+            {
+                "title": "Mail",
+                "url": "module=Mail",
+                "description": "Mailing List Manager"
+            }
+        ]
+}
