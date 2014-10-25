@@ -5,6 +5,11 @@
  * @package MyRadio_NIPSWeb
  */
 
+namespace MyRadio\NIPSWeb;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 /**
  * The NIPSWeb_ManagedPlaylist class helps provide control and access to managed playlists
  *
@@ -13,7 +18,7 @@
  * @package MyRadio_NIPSWeb
  * @uses \Database
  */
-class NIPSWeb_ManagedPlaylist extends ServiceAPI
+class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
 {
     /**
      * The Singleton store for ManagedPlaylist objects

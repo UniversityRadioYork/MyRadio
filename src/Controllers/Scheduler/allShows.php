@@ -7,6 +7,10 @@
  * @package MyRadio_Scheduler
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\ServiceAPI;
+use \MyRadio\ServiceAPI\MyRadio_Show;
+
 $shows = MyRadio_Show::getAllShows();
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('title', 'All Shows')

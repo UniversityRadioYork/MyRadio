@@ -7,6 +7,10 @@
  * @package MyRadio_Scheduler
  */
 
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Timeslot;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     //Get data

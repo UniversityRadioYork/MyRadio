@@ -7,6 +7,9 @@
  * @package MyRadio_Library
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_TrackCorrection;
+
 if (isset($_REQUEST['correctionid']) && is_numeric($_REQUEST['correctionid'])) {
     $correction = MyRadio_TrackCorrection::getInstance($_REQUEST['correctionid']);
 } else {

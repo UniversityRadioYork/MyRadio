@@ -6,6 +6,9 @@
  * @version 20130624
  * @package MyRadio_Stats
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+
 $options = [
     'title' => 'MyRadio Service Stats',
     'series' => [

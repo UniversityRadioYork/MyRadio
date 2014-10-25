@@ -7,6 +7,11 @@
  * @package MyRadio_NIPSWeb
  */
 
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Timeslot;
+use \MyRadio\NIPSWeb\NIPSWeb_Token;
+
 if (!isset($_POST['clientid'])) {
     throw new MyRadioException('ClientID Required', 400);
 }

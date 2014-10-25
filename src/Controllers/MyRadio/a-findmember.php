@@ -8,6 +8,12 @@
  * @version 21072012
  * @package MyRadio_Core
  */
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 if (!isset($_REQUEST['term'])) {
     throw new MyRadioException('Parameter \'term\' is required but was not provided');
 }

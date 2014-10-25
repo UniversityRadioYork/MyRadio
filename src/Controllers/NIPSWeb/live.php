@@ -7,6 +7,14 @@
  * @version 20130907
  * @package MyRadio_NIPSWeb
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\iTones\iTones_Playlist;
+use \MyRadio\NIPSWeb\NIPSWeb_AutoPlaylist;
+use \MyRadio\NIPSWeb\NIPSWeb_ManagedPlaylist;
+use \MyRadio\NIPSWeb\NIPSWeb_ManagedUserPlaylist;
+
 $template = 'NIPSWeb/live.twig';
 $title = 'Broadcasting and Presenting Suite';
 $reslists = CoreUtils::dataSourceParser([

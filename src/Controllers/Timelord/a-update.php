@@ -7,6 +7,12 @@
  * @version 20130905
  * @package MyRadio_Timelord
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Selector;
+use \MyRadio\ServiceAPI\MyRadio_Timeslot;
+use \MyRadio\MyRadio\MyRadioNews;
+
 $sel = new MyRadio_Selector();
 $data = [
     'selector' => $sel->query(),

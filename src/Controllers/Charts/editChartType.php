@@ -6,6 +6,10 @@
  * @package MyRadio_Charts
  */
 
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_ChartType;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = MyRadio_ChartType::getform()->readValues();

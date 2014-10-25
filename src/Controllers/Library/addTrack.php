@@ -1,4 +1,7 @@
 <?php
+
+use \MyRadio\MyRadio\CoreUtils;
+
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/text.twig')
     ->addVariable(
         'text',

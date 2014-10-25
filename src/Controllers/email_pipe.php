@@ -11,12 +11,17 @@
  * @uses \Database
  * @uses \CoreUtils
  */
+
+use \MyRadio\MyRadioException;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\ServiceAPI\MyRadio_List;
+
 define('SILENT_EXCEPTIONS', true);
 ini_set("log_errors", 1);
 ini_set("error_log", "/tmp/php-mailparser-error.log");
 ini_set('display_errors', 'Off');
 
-require_once __DIR__.'/cli_common.php';
+require_once __DIR__.'/root_cli.php';
 ini_set('display_errors', 'Off');
 
 set_exception_handler(

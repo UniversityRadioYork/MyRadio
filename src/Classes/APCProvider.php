@@ -4,6 +4,8 @@
  * as configured in the Config
  */
 
+namespace MyRadio;
+
 /**
  * APCProvider provides in-memory caching for PHP resources to increase page load times
  *
@@ -15,7 +17,7 @@
  * @version 20130709
  * @package MyRadio_Core
  */
-class APCProvider implements CacheProvider
+class APCProvider implements \MyRadio\Iface\CacheProvider
 {
     /**
      * A variable to store the singleton instance
@@ -124,7 +126,7 @@ class APCProvider implements CacheProvider
      */
     public function __clone()
     {
-        throw new MyRadioException('Attempted to clone a singleton');
+        throw new \MyRadio\MyRadioException('Attempted to clone a singleton');
     }
 
     public function getKeyPrefix()

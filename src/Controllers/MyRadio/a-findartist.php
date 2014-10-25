@@ -8,6 +8,11 @@
  * @version 20130629
  * @package MyRadio_Core
  */
+
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\Artist;
+
 if (!isset($_REQUEST['term'])) {
     $data = [];
 } else {

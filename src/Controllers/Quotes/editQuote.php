@@ -6,6 +6,11 @@
  * @package MyURY_Quotes
  */
 
+
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Quote;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = MyRadio_Quote::getForm()->readValues();

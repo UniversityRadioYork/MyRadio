@@ -9,6 +9,11 @@
  * @package MyRadio_iTones
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\iTones\iTones_Utils;
+
 $form = (
     new MyRadioForm(
         'itones_trackrequest',

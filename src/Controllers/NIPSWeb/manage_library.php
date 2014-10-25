@@ -6,6 +6,12 @@
  * @version 20130525
  * @package MyRadio_NIPSWeb
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\NIPSWeb\NIPSWeb_ManagedPlaylist;
+use \MyRadio\NIPSWeb\NIPSWeb_ManagedUserPlaylist;
+
 $template = 'NIPSWeb/manage_library.twig';
 if (CoreUtils::hasPermission(AUTH_UPLOADMUSICMANUAL)) {
     $template = 'NIPSWeb/manage_library_manual.twig';

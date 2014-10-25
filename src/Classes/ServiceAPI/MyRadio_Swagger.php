@@ -5,6 +5,15 @@
  * @package MyRadio_API
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \ReflectionMethod;
+use \ReflectionClass;
+use \ReflectionException;
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+
 /**
  * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/
  * @version 20130731

@@ -6,6 +6,11 @@
  * @version 24052013
  * @package MyRadio_Library
  */
+
+use \MyRadio\Database;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Track;
+
 //This stores the last ID checked so that we can collect Tracks in batches, preventing us from using ALL the RAM
 $finalid = 0;
 //Stores trackids of tracks that have been searched through already

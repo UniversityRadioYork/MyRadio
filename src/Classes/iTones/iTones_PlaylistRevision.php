@@ -5,13 +5,19 @@
  * @package MyRadio_iTones
  */
 
+namespace MyRadio\iTones;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\ServiceAPI\MyRadio_Track;
+
 /**
  * The iTones_PlaylistRevision class helps to manage previous versions of an iTones_Playlist
  *
  * @version 20130714
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_iTones
- * @uses \Database
  */
 class iTones_PlaylistRevision extends iTones_Playlist
 {

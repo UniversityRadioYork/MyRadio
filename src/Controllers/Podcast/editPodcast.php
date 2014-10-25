@@ -7,6 +7,11 @@
  * @package MyRadio_Podcast
  */
 
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Podcast;
+use \MyRadio\ServiceAPI\MyRadio_Show;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = MyRadio_Podcast::getForm()->readValues();

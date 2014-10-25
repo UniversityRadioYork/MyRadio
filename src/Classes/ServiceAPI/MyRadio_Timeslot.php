@@ -5,6 +5,16 @@
  * @package MyRadio_Scheduler
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadioEmail;
+use \MyRadio\NIPSWeb\NIPSWeb_TimeslotItem;
+use \MyRadio\NIPSWeb\NIPSWeb_BAPSUtils;
+use \MyRadio\SIS\SIS_Utils;
+
 /**
  * The Timeslot class is used to view and manupulate Timeslot within the new MyRadio Scheduler Format
  * @todo Generally the creation of bulk Timeslots is currently handled by the Season/Show classes, but this should change

@@ -5,6 +5,10 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+
 /**
  * @todo Document
  */

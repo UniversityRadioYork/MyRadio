@@ -6,6 +6,9 @@
  * @package MyRadio_Library
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Track;
+
 $tracks = MyRadio_Track::getAllDigitised();
 
 $missing = [];

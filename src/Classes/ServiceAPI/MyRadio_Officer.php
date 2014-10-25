@@ -4,6 +4,11 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+
 /**
  * The Officer class provides information about Committee Officerships.
  *

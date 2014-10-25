@@ -5,7 +5,10 @@
  * backwards compatible with the old Shibbobleh system URY use to use
  */
 //Load the basic MyRadio framework
-require_once __DIR__ . '/cli_common.php';
+
+use \MyRadio\MyRadio\CoreUtils;
+
+require_once __DIR__ . '/root_cli.php';
 
 //Check the current authentication status of the user
 if ((!isset($_SESSION['memberid']) or $_SESSION['auth_use_locked']) &&

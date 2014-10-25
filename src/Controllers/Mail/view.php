@@ -8,6 +8,11 @@
  * @todo Uses unsanitised HTTP_REFERER
  */
 
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadioEmail;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 $email = MyRadioEmail::getInstance($_REQUEST['emailid']);
 
 if (!$email->isRecipient(MyRadio_User::getInstance())) {

@@ -5,6 +5,8 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio;
+
 /**
  * Extends the standard Exception class to provide additional functionality
  * and logging
@@ -13,7 +15,7 @@
  * @version 20130711
  * @package MyRadio_Core
  */
-class MyRadioException extends RuntimeException
+class MyRadioException extends \RuntimeException
 {
     const FATAL = -1;
 

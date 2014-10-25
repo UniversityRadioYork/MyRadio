@@ -11,6 +11,9 @@
     https://github.com/Alexxz/Simple-php-proxy-script
 */
 
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+
 $dest_host = Config::$news_provider;
 $proxy_base_url = '/' . ltrim(str_replace($_SERVER['HTTP_HOST'], '', CoreUtils::makeURL('SIS', 'news')), '/');
 $proxying_url = Config::$news_proxy;

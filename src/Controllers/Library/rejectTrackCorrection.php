@@ -10,6 +10,10 @@
  * @package MyRadio_Library
  */
 
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_TrackCorrection;
+
 if (isset($_REQUEST['correctionid'])) {
     $correction = MyRadio_TrackCorrection::getInstance($_REQUEST['correctionid']);
 } else {

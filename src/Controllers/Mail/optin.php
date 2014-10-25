@@ -7,6 +7,11 @@
  * @package MyRadio_Mail
  */
 
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_List;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 if (!isset($_REQUEST['list'])) {
     throw new MyRadioException('List ID was not provided!', 400);
 }

@@ -9,6 +9,11 @@
  * @version 20130717
  * @package MyRadio_Profile
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\ServiceAPI\MyRadio_TrainingStatus;
+
 // Set if trying to view another member's profile page
 $user = MyRadio_User::getInstance(empty($_REQUEST['memberid']) ? -1 : $_REQUEST['memberid']);
 $visitor = MyRadio_User::getInstance();

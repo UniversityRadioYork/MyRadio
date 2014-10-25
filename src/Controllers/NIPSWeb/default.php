@@ -7,6 +7,14 @@
  * @package MyRadio_NIPSWeb
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Timeslot;
+use \MyRadio\iTones\iTones_Playlist;
+use \MyRadio\NIPSWeb\NIPSWeb_AutoPlaylist;
+use \MyRadio\NIPSWeb\NIPSWeb_ManagedPlaylist;
+use \MyRadio\NIPSWeb\NIPSWeb_ManagedUserPlaylist;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 CoreUtils::requireTimeslot();
 
 if (isset($_REQUEST['readonly'])) {

@@ -5,6 +5,8 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
 /**
  * The Metadata_Common class is used to provide common resources for
  * URY assets that utilise the Metadata system.

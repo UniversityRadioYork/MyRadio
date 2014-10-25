@@ -1,5 +1,7 @@
 <?php
 
+namespace MyRadio\MyRadio;
+
 /**
 * Null session handler.
 *

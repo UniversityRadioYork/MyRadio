@@ -6,6 +6,11 @@
  * @package MyRadio_Library
  */
 
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Track;
+
 $wrong = [];
 
 foreach (Config::$music_central_db_exts as $ext) {

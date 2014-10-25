@@ -7,6 +7,10 @@
  * @version 20130829
  * @package MyRadio_Scheduler
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Season;
+
 $data = [];
 
 foreach (MyRadio_Season::getAllSeasonsInLatestTerm() as $season) {

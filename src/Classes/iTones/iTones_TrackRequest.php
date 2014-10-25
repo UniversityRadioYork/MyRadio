@@ -5,6 +5,14 @@
  * @package MyRadio_iTones
  */
 
+namespace MyRadio\iTones;
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\ServiceAPI\MyRadio_Track;
+use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
+
 /**
  * Method object for requesting a track be played by iTones.
  *

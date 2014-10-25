@@ -4,6 +4,8 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio;
+
 /**
  * Stores configuration settings
  *
@@ -92,7 +94,7 @@ final class Config
      * Must be the name of a valid class located in classes/[classname].php and implements CacheProvider
      * @var String
      */
-    public static $cache_provider = 'APCProvider';
+    public static $cache_provider = '\MyRadio\APCProvider';
     /**
      * How long MyRadio_Track items should be cached before the data is invalidated. This is Configurable as due to a lot
      * of external edit sources, it is reasonable to asssume the cache may become stale due to other systems.
@@ -484,7 +486,7 @@ final class Config
      * operations.
      */
     //public static $authenticators = ['MyRadioLDAPAuthenticator', 'MyRadioDefaultAuthenticator'];
-    public static $authenticators = ['MyRadioDefaultAuthenticator'];
+    public static $authenticators = ['\MyRadio\MyRadio\MyRadioDefaultAuthenticator'];
     public static $auth_ldap_server = 'ldap://ldap.york.ac.uk';
     public static $auth_ldap_root = 'ou=people,ou=csrv,ou=nos,dc=york,dc=ac,dc=uk';
     public static $auth_db_user = 'shibbobleh';
@@ -528,9 +530,6 @@ final class Config
     public static $d_Podcast_enabled = true;
     public static $d_StatsGen_enabled = true;
     public static $d_Explicit_enabled = false;
-
-    /**** CONFIG FILES ****/
-    public static $menu_config_file_path = '/usr/local/www/myradio/menu.yaml';
 
     /**** STRINGS ****/
     public static $short_name = 'URY';

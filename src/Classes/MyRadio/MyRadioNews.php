@@ -5,6 +5,14 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\MyRadio;
+
+use \MyRadio\Database;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+
 /**
  * Description of MyRadioNews
  *

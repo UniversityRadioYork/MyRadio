@@ -7,6 +7,9 @@
  * @package MyRadio_Scheduler
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Demo;
+
 $demos = MyRadio_Demo::listDemos();
 
 $twig = CoreUtils::getTemplateObject();

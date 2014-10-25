@@ -4,6 +4,12 @@
  * @package MyRadio_Charts
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+
 /**
  * The ChartRelease class fetches information about chart releases.
  *

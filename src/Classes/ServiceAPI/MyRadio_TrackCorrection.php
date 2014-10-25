@@ -5,6 +5,12 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+
 /**
  * The MyRadio_TrackCorrection class provides information and utilities for dealing with detecting a major issue
  * with the track metadata by the FingerprinterDaemon.

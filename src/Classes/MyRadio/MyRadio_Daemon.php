@@ -1,5 +1,9 @@
 <?php
 
+namespace MyRadio\MyRadio;
+
+use \MyRadio\MyRadioException;
+
 abstract class MyRadio_Daemon
 {
     public static function isEnabled()

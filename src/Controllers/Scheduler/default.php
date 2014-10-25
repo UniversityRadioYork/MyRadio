@@ -8,6 +8,9 @@
  * @package MyRadio_Scheduler
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Scheduler;
+
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('tablescript', 'myury.scheduler.pending')
     ->addVariable('title', 'Scheduler')

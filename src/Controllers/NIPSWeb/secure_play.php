@@ -6,6 +6,12 @@
  * @version 17032013
  * @package MyRadio_NIPSWeb
  */
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\NIPSWeb\NIPSWeb_Token;
+use \MyRadio\NIPSWeb\NIPSWeb_Views;
+
 if (!isset($_REQUEST['trackid']) or !isset($_REQUEST['recordid'])) {
     throw new MyRadioException('Bad Request - trackid and recordid required.', 400);
 }

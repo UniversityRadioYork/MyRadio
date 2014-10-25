@@ -4,6 +4,8 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio;
+
 /**
  * This singleton class handles actual database connection
  *

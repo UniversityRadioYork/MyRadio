@@ -7,5 +7,8 @@
  * @package MyRadio_Scheduler
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Demo;
+
 $result = MyRadio_Demo::attend($_REQUEST['demoid']);
 CoreUtils::redirect($module, 'listDemos', ['msg'=>$result]);

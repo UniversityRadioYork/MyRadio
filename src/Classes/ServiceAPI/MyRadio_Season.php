@@ -5,6 +5,13 @@
  * @package MyRadio_Scheduler
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\MyRadioEmail;
+
 /**
  * The Season class is used to create, view and manupulate Seasons within the new MyRadio Scheduler Format
  * @version 20130814

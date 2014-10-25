@@ -7,6 +7,10 @@
  * @todo This requires manual permission checks as it needs interesting things
  */
 
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\ServiceAPI\ServiceAPI;
+use MyRadio\ServiceAPI\MyRadio_Season;
+
 $season = MyRadio_Season::getInstance($_GET['show_season_id']);
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')

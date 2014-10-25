@@ -1,4 +1,7 @@
 <?php
+
+namespace MyRadio\Iface;
+
 /**
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>

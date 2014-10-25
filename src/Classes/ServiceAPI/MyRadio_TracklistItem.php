@@ -5,6 +5,13 @@
  * @package MyRadio_Tracklist
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\iTones\iTones_Playlist;
+use \MyRadio\iTones\iTones_Utils;
+
 /**
  * The Tracklist Item class provides information about URY's track playing
  * history.

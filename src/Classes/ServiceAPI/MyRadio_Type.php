@@ -4,6 +4,8 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
 /**
  * The Type abstract class implements the URY database 'type' pattern, wherein
  * items describing types/categories of other items have a machine-readable
