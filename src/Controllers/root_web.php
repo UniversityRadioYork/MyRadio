@@ -14,7 +14,7 @@ use \MyRadio\MyRadio\CoreUtils;
 
 require_once __DIR__.'/root.php';
 
-set_error_handler('MyRadio\MyRadioError::errorsToArray');
+set_error_handler('\MyRadio\MyRadioError::errorsToArray');
 
 /**
  * Turn off visible error reporting, if needed
