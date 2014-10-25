@@ -15,8 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = iTones_Playlist::getForm()->readValues();
 
-    print_r($data);
-
     if (empty($data['id'])) {
         throw new MyRadioException('No Playlist ID provided.', 400);
     }
