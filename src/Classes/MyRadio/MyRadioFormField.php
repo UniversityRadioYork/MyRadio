@@ -1,6 +1,9 @@
 <?php
 
 namespace MyRadio\MyRadio;
+use MyRadio\ServiceAPI\MyRadio_Album;
+use MyRadio\ServiceAPI\MyRadio_Track;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 /**
  * This file provides the MyRadioFormField class for MyRadio

@@ -13,6 +13,7 @@ use \ReflectionException;
 
 use \MyRadio\Config;
 use \MyRadio\Database;
+use \MyRadio\MyRadio\CoreUtils;
 
 /**
  * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/
