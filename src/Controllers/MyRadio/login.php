@@ -29,7 +29,10 @@ $form = (
         [
             'explanation' => '',
             'label' => 'Username:',
-            'options' => ['placeholder' => 'abc123']
+            'options' => [
+                'placeholder' => 'abc123',
+                'autofocus' => true
+            ]
         ]
     )
 )->addField(
