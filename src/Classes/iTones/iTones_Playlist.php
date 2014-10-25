@@ -107,11 +107,6 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                     'required' => false
                 ]
             )
-        )->addField(
-            new MyRadioFormField(
-                'playlistid',
-                MyRadioFormField::TYPE_HIDDEN
-            )
         );
     }
 
@@ -128,8 +123,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                             return $track->getArtist();
                         },
                         $this->getTracks()
-                    ),
-                    'playlistid' => $this->getID(),     // TODO: this can possibly be removed from the form entirely
+                    )
                 ]
             );
     }
