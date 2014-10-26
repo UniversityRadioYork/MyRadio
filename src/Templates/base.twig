@@ -24,16 +24,24 @@
                 {% endif %}
               </li>
               <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ name | raw }}<span class="caret"></span></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  {% if impersonator %}
+                    <span class="glyphicon glyphicon-eye-open"></span>
+                  {% else %}
+                    <span class="glyphicon glyphicon-user"></span>
+                  {% endif %}
+                   {{ name | raw }}<span class="caret"></span>
+                </a>
                 <ul class="dropdown-menu" role="menu">
-                  <li><a href="{{myury.makeURL(config, 'Profile')}}">My Profile</a></li>
-                  <li><a href="{{myury.makeURL(config, 'MyRadio', 'logout')}}">Logout</a></li>
+                  <li><a href="{{myury.makeURL(config, 'Profile')}}"><span class="glyphicon glyphicon-user"></span> My Profile</a></li>
+                  {% if impersonator %}
+                    <li class="divider"></li>
+                    <li class="dropdown-header">Impersonator: {{impersonator | raw }}</li>
+                    <li><a href="{{myury.makeURL(config, 'MyRadio', 'impersonate')}}"><span class="glyphicon glyphicon-eye-close"></span> Unimpersonate</a></li>
+                  {% endif %}
+                  <li><a href="{{myury.makeURL(config, 'MyRadio', 'logout')}}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
               </li>
-            {% endif %}
-
-            {% if impersonator %}
-              <li>{{ impersonator | raw }}</li>
             {% endif %}
           </ul>
         </div>
