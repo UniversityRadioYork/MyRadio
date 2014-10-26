@@ -57,9 +57,9 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
             ->addVariable('uri', $_SERVER['REQUEST_URI'])
             ->addVariable('module', empty($GLOBALS['module']) ? Config::$default_module : $GLOBALS['module'])
             ->addVariable('action', empty($GLOBALS['action']) ? Config::$default_action : $GLOBALS['action'])
-            ->addVariable('config', Config::getPublicConfig());
+            ->addVariable('config', Config::getPublicConfig())
             ->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : '<a href="' . CoreUtils::makeURL('MyRadio', 'login') . '">Login</a>');
-            
+
 
         if (!empty($GLOBALS['module']) && isset($_SESSION['memberid'])) {
             $this->addVariable('submenu', (new MyRadioMenu())->getSubMenuForUser($GLOBALS['module']))
