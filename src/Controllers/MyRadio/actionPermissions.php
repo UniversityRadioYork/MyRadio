@@ -17,7 +17,7 @@ use \MyRadio\MyRadio\MyRadioFormField;
 $form = new MyRadioForm(
     'assign_action_permissions',
     $module,
-    'addActionPermission',
+    $action,
     [
         'title' => 'Assign Action Permissions'
     ]
