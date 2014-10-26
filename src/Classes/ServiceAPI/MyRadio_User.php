@@ -1540,8 +1540,7 @@ class MyRadio_User extends ServiceAPI
         //Activate the member's account for the current academic year
         $user->activateMemberThisYear($paid);
         //Set the user's password
-        $authenticator = new MyRadioDefaultAuthenticator();
-        $authenticator->setPassword($user, $plain_pass);
+        (new \MyRadio\MyRadio\MyRadioDefaultAuthenticator())->setPassword($user, $plain_pass);
 
         //Send a welcome email (this will not send if receive_email is not enabled!)
         /**

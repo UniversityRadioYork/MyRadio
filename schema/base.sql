@@ -7271,5 +7271,3 @@ INSERT INTO metadata_key VALUES (17, 'upload_state', false, 'When uploading data
 --
 
 SELECT pg_catalog.setval('metadata_key_metadata_key_id_seq', 17, true);
-SET search_path = public;
-INSERT INTO public.l_college (descr) VALUES ('Unknown');

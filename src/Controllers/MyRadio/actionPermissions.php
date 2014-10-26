@@ -14,27 +14,16 @@ use \MyRadio\MyRadio\MyRadioFormField;
 /**
  * Form definition for adding permissions.
  */
-$form = (
-    new MyRadioForm(
-        'assign_action_permissions',
-        $module,
-        $action,
-        [
-            'debug' => true,
-            'title' => 'Assign Action Permissions'
-        ]
-    )
-)->addField(
-    new MyRadioFormField(
-        'service',
-        MyRadioFormField::TYPE_SELECT,
-        [
-            'options' => CoreUtils::getServices(),
-            'explanation' => 'Select a Service to apply permissions to',
-            'label' => 'Service'
-        ]
-    )
-)->addField(
+$form = new MyRadioForm(
+    'assign_action_permissions',
+    $module,
+    'addActionPermission',
+    [
+        'title' => 'Assign Action Permissions'
+    ]
+);
+
+$form->addField(
     new MyRadioFormField(
         'module',
         MyRadioFormField::TYPE_TEXT,
