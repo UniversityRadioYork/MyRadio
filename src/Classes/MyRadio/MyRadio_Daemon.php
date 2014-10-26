@@ -2,6 +2,7 @@
 
 namespace MyRadio\MyRadio;
 
+use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 
 abstract class MyRadio_Daemon
