@@ -65,10 +65,6 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
                 ->addVariable('title', $GLOBALS['module']);
         }
 
-
-        if (!empty($_SESSION['joyride'])) {
-            $this->addVariable('joyride', $_SESSION['joyride']);
-        }
         //Make requests override session-set joyrides
         if (!empty($_REQUEST['joyride'])) {
             $this->addVariable('joyride', $_REQUEST['joyride']);
