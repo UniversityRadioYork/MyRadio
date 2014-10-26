@@ -245,7 +245,10 @@ class CoreUtils
         //Decode to datasource if needed
         $data = self::dataSourceParser($data);
 
-        if (!empty(MyRadioError::$php_errorlist)) {
+        if (
+            !empty(MyRadioError::$php_errorlist) &&
+            (Config::$display_errors || CoreUtils::hasPermission(AUTH_SHOWERRORS))
+            ) {
             $data['myury_errors'] = MyRadioError::$php_errorlist;
         }
 

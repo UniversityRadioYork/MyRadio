@@ -12,7 +12,7 @@ use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\iTones\iTones_Playlist;
-use \MyRadio\vendor\getid3\getid3;
+
 /**
  * The MyRadio_Track class provides and stores information about a Track
  *
@@ -508,9 +508,12 @@ class MyRadio_Track extends ServiceAPI
 
         $filename = session_id() . '-' . ++$_SESSION['myury_nipsweb_file_cache_counter'] . '.mp3';
 
-        move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename);
+        if (!move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename)) {
+            throw new MyRadioException('Failed to move uploaded track to tmp directory.', 500);
+        }
 
-        $getID3 = new getID3;
+        require_once 'Classes/vendor/getid3/getid3.php';
+        $getID3 = new \getID3;
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
 
         // File quality checks
@@ -583,6 +586,9 @@ class MyRadio_Track extends ServiceAPI
 
     public static function identifyAndStoreTrack($tmpid, $title, $artist, $album, $position)
     {
+        // We need to rollback if something goes wrong later
+        self::$db->query('BEGIN');
+
         $ainfo = null;
         if ($album == "FROM_LASTFM") {
             // Get the album info if we're getting it from lastfm
@@ -594,9 +600,10 @@ class MyRadio_Track extends ServiceAPI
             $ainfo = array('duration' => null, 'position' => intval($position), 'album' => $myradio_album);
         }
 
+        require_once 'Classes/vendor/getid3/getid3.php';
         // Get the track duration from the file if it isn't already set
         if (empty($ainfo['duration'])) {
-            $getID3 = new getID3;
+            $getID3 = new \getID3;
             $ainfo['duration'] = intval($getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $tmpid)['playtime_seconds']);
         }
 
@@ -632,9 +639,19 @@ class MyRadio_Track extends ServiceAPI
         $tmpfile = Config::$audio_upload_tmp_dir . '/' . $tmpid;
         $dbfile = $ainfo['album']->getFolder() . '/' . $track->getID();
 
-        shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 '{$dbfile}.mp3'");
-        shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
+        if (`which ffmpeg`) {
+            $bin = 'ffmpeg';
+        } elseif (`which avconv`) {
+            $bin = 'avconv';
+        } else {
+            throw new MyRadioException('Could not find ffmpeg or avconv.', 500);
+        }
+
+        shell_exec("nice -n 15 $bin -i '$tmpfile' -ab 192k -f mp3 '{$dbfile}.mp3'");
+        shell_exec("nice -n 15 $bin -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
         rename($tmpfile, $dbfile . '.mp3.orig');
+
+        self::$db->query('COMMIT');
 
         return ['status' => 'OK'];
     }
