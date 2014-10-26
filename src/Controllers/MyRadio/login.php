@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
                 $authenticators[$i] = true;
                 if ($user->getRequirePasswordChange()) {
                     //The user needs to change their password
-                    $_SESSION['auth_use_locked'] = 'changePassword';
+                    //$_SESSION['auth_use_locked'] = 'changePassword';
                     $status = 'change';
                 }
 

@@ -12,10 +12,10 @@
 </header>
 <div id="grid" class="transBG clearfix">
 
-  <div id="bapswrapper" class="ui-widget">
+  <div id="bapswrapper">
     <div id="baps-channel-container" class="clearfix">
       {% for i in 0..2 %}
-        <ul class="box width-1 height-2 baps-channel ui-widget-content" channel="{{i+1}}" id="baps-channel-{{i + 1}}">
+        <ul class="box col-md-3 height-2 baps-channel" channel="{{i+1}}" id="baps-channel-{{i + 1}}">
           {% for track in tracks[i] %}
             <li id='{% if track['managedid'] is defined %}ManagedDB{% else %}{{track['album']['recordid']}}{% endif %}-{{track['trackid']}}' type='{{track['type']}}'
                 {% if track['managedid'] is defined %}managedid='{{track['managedid']}}'{% endif %}
@@ -27,8 +27,8 @@
         </ul>
       {% endfor %}
 
-      <div id="resource-add-container" class="box width-2 height-2 ui-widget ui-widget-content">
-        <div id="resource-add-header" class="ui-widget-header">
+      <div id="resource-add-container" class="box col-md-3 height-2">
+        <div id="resource-add-header">
           {% include 'NIPSWeb/res_selector.twig' %}
           <span id="res-loading" class="ui-state-highlight ui-helper-hidden">Loading...</span>
           <br>
@@ -45,7 +45,7 @@
     <div id="baps-channelaction-container"  class="clearfix">
       {% set channels = [1, 2, 3, 'res'] %}
       {% for channel in channels %}
-        <div class='box baps-channel channel-footer ui-widget-header{% if channel == 'res' %} width-2 library-footer'>Library{% else %} width-1'>Channel {{channel}}{% endif %}
+        <div class='box col-md-3 baps-channel channel-footer {% if channel == 'res' %} library-footer'>Library{% else %}'>Channel {{channel}}{% endif %}
           <span id='baps-channel-{{channel}}-total' title="Total time of all tracks in this channel">(00:00)</span>
           <br>
           <button class='play' id='ch{{channel}}-play' onclick='previewPlay("{{channel}}")'></button>
