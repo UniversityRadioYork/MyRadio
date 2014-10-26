@@ -73,9 +73,8 @@ set_exception_handler(function($e)
 
 /**
  * Turn off visible error reporting, if needed
- * 269 is AUTH_SHOWERRORS - the constants aren't initialised yet
  */
-if (!Config::$display_errors && !CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
+if (!Config::$display_errors) {
     ini_set('display_errors', 'Off');
 }
 
