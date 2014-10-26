@@ -291,6 +291,10 @@ label.label-nofloat {
 }
 
 /** MyRadio Form Styles **/
+select {
+  color: #222!important;
+}
+
 .myradiofrm {
     padding: 0 10px 10px;
     border: dashed 1px;

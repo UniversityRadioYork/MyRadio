@@ -10,7 +10,7 @@
  */
 var searchTimerRef = null;
 function updateCentralSearch() {
-  $('#res-loading').show();
+  $('#notice').html('Searching...').show();
   $.ajax({
     url: myury.makeURL('MyRadio', 'a-findtrack'),
     type: 'post',
@@ -34,11 +34,11 @@ function updateCentralSearch() {
                 + data[file].title + ' - ' + data[file].artist + '</li>'
                 );
       }
-      registerItemClicks();
-      $('#res-loading').hide();
+      planner.registerItemClicks();
+      $('#notice').hide();
     },
     error: function() {
-      $('#res-loading').html('Error loading library').addClass('ui-state-error');
+      $('#notice').html('Search failed').addClass('notice-danger');
     }
   });
 }
@@ -64,6 +64,7 @@ $(document).ready(function() {
           for (file in data) {
             $('#baps-channel-res').append(
                     '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
+                    '" title="' + data[file].title + '(' + data[file].length + ')' +
                     '" channel="res" weight="0" type="central" length="' + data[file].length + '">'
                     + data[file].title + ' - ' + data[file].artist + '</li>'
                     );
@@ -91,6 +92,7 @@ $(document).ready(function() {
           for (file in data) {
             $('#baps-channel-res').append(
                     '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
+                    '" title="' + data[file].title + '(' + data[file].length + ')' +
                     '" channel="res" weight="0" type="central" length="' + data[file].length + '">'
                     + data[file].title + ' - ' + data[file].artist + '</li>'
                     );
@@ -121,6 +123,7 @@ $(document).ready(function() {
               $('#baps-channel-res').append(
                       '<li id="ManagedDB-' + data[file].managedid +
                       '" length="' + data[file].length +
+                      '" title="' + data[file].title + '(' + data[file].length + ')' +
                       '" channel="res" weight="0" type="aux" managedid="' + data[file].managedid + '">'
                       + data[file].title + '</li>'
                       );
@@ -171,17 +174,7 @@ $(document).ready(function() {
    */
   $('#a-manage-library').click(function() {
     var url = $(this).children('a').attr('href');
-    var dialog = $('<div style="display:none"><iframe src="' + url + '" width="800" height="500" frameborder="0"></iframe></div>').appendTo('body');
-    dialog.dialog({
-      close: function(event, ui) {
-        dialog.remove();
-      },
-      modal: true,
-      title: 'Library Manager',
-      width: 850,
-      minHeight: 550,
-      position: {my: "center center", at: "center center", of: window}
-    });
+    var dialog = myury.createDialog('Manage Library', '<iframe src="' + url + '" width="580" height="500" frameborder="0"></iframe></div>');
     return false;
   });
 });

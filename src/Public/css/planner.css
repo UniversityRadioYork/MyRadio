@@ -11,8 +11,10 @@ body {
 
 #notice {
   position: fixed;
-  top: 22px;
-  left: 0;
+  top: 0;
+  left: -2px;
+  z-index: 1050;
+  height: 51px;
 }
 
 .main-container, #baps-channel-container {
@@ -37,18 +39,36 @@ body {
 }
 #resource-add-header {
   height: 88px;
+  background-color: #777;
 }
 #central-dragdrop, #res-dragdrop {
-  height: 300px;
+  height: 250px;
+  margin-bottom: 0;
+  width: 550px;
+}
+#central-status, #res-status {
+  position: relative;
+  top: calc(100% - 60px);
+  left: -19px;
+  width: calc(100% + 38px);
+  height: 32px;
+  padding-top: 5px;
+}
+.result-container {
+  width: 550px;
+}
+.result-container .alert {
+  width: 100%;
+  padding: 5px 15px 3px 15px;
+  margin: 0;
 }
 #lastfm-attr {
   position: relative;
-  top: calc(100% - 60px);
+  top: calc(100% - 70px);
   right: 1em;
   text-align: right;
 }
 #baps-channel-res {
-  width: calc(100% - 11px);
   height: calc(100% - 90px);
 }
 #a-manage-library {
@@ -69,11 +89,14 @@ body {
   padding: 0;
   width: calc(100% - 12px);
 }
-#footer-tips {
-  position: absolute;
+
+.footer-alert {
+  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
+  z-index: 1050;
+  margin-bottom: 0;
 }
 
 .box.height-1 {
@@ -144,4 +167,8 @@ div[id^=progress-bar] {
 select {
   color: #333;
   width: calc(100% - 13px);
+}
+
+#track-manual-entry label {
+  width: 150px;
 }
