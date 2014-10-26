@@ -87,7 +87,7 @@ body {
 }
 #res-filter-artist,  #res-filter-track,  #res-filter-name {
   padding: 0;
-  width: calc(100% - 12px);
+  width: 100%;
 }
 
 .footer-alert {
@@ -166,7 +166,7 @@ div[id^=progress-bar] {
 
 select {
   color: #333;
-  width: calc(100% - 13px);
+  width: 100%;
 }
 
 #track-manual-entry label {
