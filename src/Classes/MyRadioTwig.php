@@ -58,24 +58,14 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
             ->addVariable('module', empty($GLOBALS['module']) ? Config::$default_module : $GLOBALS['module'])
             ->addVariable('action', empty($GLOBALS['action']) ? Config::$default_action : $GLOBALS['action'])
             ->addVariable('config', Config::getPublicConfig());
+            ->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : '<a href="' . CoreUtils::makeURL('MyRadio', 'login') . '">Login</a>');
+            
 
-        //We override the defaults later so we don't depend on the database.
-        //If the session is set, we can assume database access is available
-        //as it is read from the database
-        if (isset($_SESSION) && class_exists('\MyRadio\Database')) {
-            $this->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : '<a href="' . CoreUtils::makeURL('MyRadio', 'login') . '">Login</a>')
-                 ->addVariable('baseurl', Config::$base_url);
-
-            if (!empty($GLOBALS['module']) && isset($_SESSION['memberid'])) {
-                $this->addVariable('submenu', (new MyRadioMenu())->getSubMenuForUser($GLOBALS['module']))
-                    ->addVariable('title', $GLOBALS['module']);
-            }
+        if (!empty($GLOBALS['module']) && isset($_SESSION['memberid'])) {
+            $this->addVariable('submenu', (new MyRadioMenu())->getSubMenuForUser($GLOBALS['module']))
+                ->addVariable('title', $GLOBALS['module']);
         }
 
-
-        if (!empty($_SESSION['joyride'])) {
-            $this->addVariable('joyride', $_SESSION['joyride']);
-        }
         //Make requests override session-set joyrides
         if (!empty($_REQUEST['joyride'])) {
             $this->addVariable('joyride', $_REQUEST['joyride']);

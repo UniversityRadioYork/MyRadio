@@ -5,6 +5,7 @@
  */
 
 namespace MyRadio\NIPSWeb;
+use \MyRadio\MyRadioException;
 
 /**
  * The NIPSWeb_Token class
@@ -45,6 +46,10 @@ class NIPSWeb_Token extends \MyRadio\ServiceAPI\ServiceAPI
             VALUES ($1, $2) RETURNING client_id',
             [$_SESSION['timeslotid'], session_id()]
         );
+
+        if (empty($r)) {
+            throw new MyRadioException('Failed to generate Show Planner edit token.', 500);
+        }
 
         return (int) $r[0];
     }

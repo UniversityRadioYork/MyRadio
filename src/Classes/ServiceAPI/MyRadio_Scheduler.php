@@ -6,7 +6,10 @@
 
 namespace MyRadio\ServiceAPI;
 
+use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
 
 /**
  * Abstractor for the Scheduler Module
@@ -81,7 +84,33 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     }
 
     /**
+    * Create a new term
+    * @param int $start The term start date
+    * @param String $descr Term description e.g. Autumn 2036
+    * @return int The new termid
+    */
+    public static function addTerm($start, $descr)
+    {
+        if (date('D', $start) !== 'Mon') {
+            throw new MyRadioException('Terms must start on a Monday.', 400);
+        }
+
+        // Let's make this a GMT thing, exactly midnight
+        $ts = gmdate('Y-m-d 00:00:00+00', $start);
+        $end = $start + (86400 * 68); // +68 days, to Friday of the 10th week
+        $te = gmdate('Y-m-d 00:00:00+00', $end);
+
+        echo "INSERT INTO terms (start, finish, descr) VALUES ('$ts', '$te', '$descr') RETURNING termid";
+
+        return self::$db->fetchColumn(
+            'INSERT INTO terms (start, finish, descr) VALUES ($1, $2, $3) RETURNING termid',
+            [$ts, $te, $descr]
+        )[0];
+    }
+
+    /**
      * Returns a list of terms in the present or future
+     * @todo There's currently no caching on this, could be a potential slowdown
      * @return Array[Array] an array of arrays of terms
      */
     public static function getTerms()
@@ -92,6 +121,18 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
             WHERE finish > now()
             ORDER BY start ASC'
         );
+    }
+
+    public static function getTerm($termid)
+    {
+        $terms = self::getTerms();
+        foreach ($terms as $term) {
+            if ($term['termid'] == $termid) {
+                return $term;
+            }
+        }
+
+        throw new MyRadioException('That term could not be found', 400);
     }
 
     public static function getActiveApplicationTermInfo()
@@ -185,7 +226,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
 
     /**
      * Returns the Term currently available for Season applications.
-     * Users can only apply to the current term, or one week before the next one
+     * Users can only apply to the current term, or 28 days before the next one
      * starts.
      *
      * @return int|null Returns the id of the term or null if no active term
@@ -265,6 +306,39 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
             WHERE (start_time <= $1 AND start_time + duration > $1)
             OR (start_time > $1 AND start_time < $2)',
             [$start, $end]
+        );
+    }
+
+    public static function getTermForm()
+    {
+        return (
+            new MyRadioForm(
+                'sched_term',
+                'Scheduler',
+                'editTerm',
+                [
+                    'title' => 'Create Term'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'descr',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'explanation' => 'Name the term. Try and make it unique.',
+                    'label' => 'Term description',
+                    'options' => ['maxlength' => 10]
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'start',
+                MyRadioFormField::TYPE_DATE,
+                [
+                    'explanation' => 'Select a term start date. This must be a Monday.',
+                    'label' => 'Start date'
+                ]
+            )
         );
     }
 }

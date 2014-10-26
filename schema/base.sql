@@ -126,27 +126,16 @@ CREATE TABLE bapsplanner.auto_playlists (
     name character varying(30) NOT NULL,
     query text
 );
-CREATE TABLE bapsplanner.client_ids (
-    client_id integer NOT NULL,
-    show_season_timeslot_id integer,
-    session_id character varying(64)
-);
-COMMENT ON TABLE bapsplanner.client_ids IS 'Enables tracking of individual windows instead of sessions - a session may have more than one window open.';
 CREATE SEQUENCE bapsplanner.client_ids_client_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-ALTER SEQUENCE bapsplanner.client_ids_client_id_seq OWNED BY bapsplanner.client_ids.client_id;
-CREATE TABLE bapsplanner.managed_items (
-    manageditemid integer NOT NULL,
-    managedplaylistid integer NOT NULL,
-    title character varying NOT NULL,
-    length time without time zone,
-    bpm smallint,
-    expirydate date,
-    memberid integer
+CREATE TABLE bapsplanner.client_ids (
+    client_id integer DEFAULT nextval('bapsplanner.client_ids_client_id_seq'::regclass) NOT NULL,
+    show_season_timeslot_id integer,
+    session_id character varying(64)
 );
 CREATE SEQUENCE bapsplanner.managed_items_manageditemid_seq
     START WITH 1
@@ -154,7 +143,15 @@ CREATE SEQUENCE bapsplanner.managed_items_manageditemid_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-ALTER SEQUENCE bapsplanner.managed_items_manageditemid_seq OWNED BY bapsplanner.managed_items.manageditemid;
+CREATE TABLE bapsplanner.managed_items (
+    manageditemid integer nextval('bapsplanner.managed_items_manageditemid_seq'::regclass) NOT NULL,
+    managedplaylistid integer NOT NULL,
+    title character varying NOT NULL,
+    length time without time zone,
+    bpm smallint,
+    expirydate date,
+    memberid integer
+);
 CREATE SEQUENCE bapsplanner.managed_items_managedplaylistid_seq
     START WITH 1
     INCREMENT BY 1
@@ -1163,11 +1160,6 @@ CREATE SEQUENCE baps_user_userid_seq
     CACHE 1;
 ALTER SEQUENCE baps_user_userid_seq OWNED BY baps_user.userid;
 SET default_with_oids = false;
-CREATE TABLE cat_view_promoter (
-    chicken integer,
-    nipples character varying
-);
-COMMENT ON TABLE cat_view_promoter IS 'Don''t delete, or the cataloguer breaks.';
 CREATE TABLE chart (
     chartweek integer NOT NULL,
     lastweek text NOT NULL,
@@ -1178,7 +1170,7 @@ CREATE TABLE chart (
 COMMENT ON TABLE chart IS 'ury chart rundowns';
 COMMENT ON COLUMN chart.chartweek IS 'chart release timestamp';
 CREATE TABLE client (
-    clientid integer NOT NULL,
+    clientid integer DEFAULT nextval(('"client_clientid_seq"'::text)::regclass) NOT NULL,
     name text NOT NULL,
     secrethash text NOT NULL,
     description text

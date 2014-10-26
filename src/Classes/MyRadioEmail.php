@@ -391,7 +391,7 @@ class MyRadioEmail extends ServiceAPI
         $data = [
             'email_id' => $this->getID(),
             'from' => empty($this->from) ? null : $this->from->getName(),
-            'timestamp' => CoreUtils::happyTime($this->timestamp),
+            'timestamp' => $this->timestamp,
             'subject' => $this->subject,
             'view' => [
                 'display' => 'icon',

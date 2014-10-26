@@ -188,6 +188,7 @@ class CoreUtils
                 AND EXTRACT(year FROM start) = $1',
                 [date('Y')]
             );
+
             if (
                 empty($term) or //Default to this year
                 strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days')
@@ -244,7 +245,10 @@ class CoreUtils
         //Decode to datasource if needed
         $data = self::dataSourceParser($data);
 
-        if (!empty(MyRadioError::$php_errorlist)) {
+        if (
+            !empty(MyRadioError::$php_errorlist) &&
+            (Config::$display_errors || CoreUtils::hasPermission(AUTH_SHOWERRORS))
+            ) {
             $data['myury_errors'] = MyRadioError::$php_errorlist;
         }
 
@@ -843,8 +847,8 @@ class CoreUtils
     public static function getSafeHTML($dirty_html)
     {
         require_once 'Classes/vendor/htmlpurifier/HTMLPurifier.auto.php';
-        $config = HTMLPurifier_Config::createDefault();
-        $purifier = new HTMLPurifier($config);
+        $config = \HTMLPurifier_Config::createDefault();
+        $purifier = new \HTMLPurifier($config);
 
         return $purifier->purify($dirty_html);
     }
