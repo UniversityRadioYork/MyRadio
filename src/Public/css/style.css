@@ -1,3 +1,7 @@
+body {
+  margin-top: 50px; /* Bootstrap navbar offset*/
+}
+
 #menu #navRight {
   float: right;
   position: relative;
