@@ -28,9 +28,9 @@ class MyRadioEmail extends ServiceAPI
      * @todo Hardcoded URLs
      */
     private static $headers = 'Content-type: text/plain; charset=utf-8';
-    private static $sender = 'From: MyRadio <no-reply@'.Config::$email_domain.'>';
-    private static $footer = 'This email was sent automatically from MyRadio. You can opt out of emails by visiting '.CoreUtils::makeURL('Profile', 'edit').'.';
-    private static $html_footer = 'This email was sent automatically from MyRadio. You can opt out of emails <a href="'.CoreUtils::makeURL('Profile', 'edit').'">on your profile page</a>.';
+    private static $sender = 'From: MyRadio <no-reply@ury.org.uk>';
+    private static $footer = 'This email was sent automatically from MyRadio. You can opt out of emails by visiting https://ury.org.uk/myury/Profile/edit/.';
+    private static $html_footer = 'This email was sent automatically from MyRadio. You can opt out of emails <a href="https://ury.org.uk/myury/Profile/edit/">on your profile page</a>.';
     // Standard
     /**
      * @var string carriage return + newline
@@ -417,7 +417,7 @@ class MyRadioEmail extends ServiceAPI
      */
     public static function sendEmailToComputing($subject, $message)
     {
-        mail("MyRadio Service <".Config::$error_report_email."@".Config::$email_domain.">", $subject, self::addFooter($message), self::getDefaultHeader());
+        mail("MyRadio Service <alerts.myury@ury.org.uk>", $subject, self::addFooter($message), self::getDefaultHeader());
 
         return true;
     }
