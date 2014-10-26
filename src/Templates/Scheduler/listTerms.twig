@@ -1,0 +1,5 @@
+{% extends 'table.twig' %}
+{% block stripecontent %}
+<a href="{{myury.makeURL(config, 'Scheduler', 'editTerm')}}">Add a new Term</a>
+{{ parent() }}
+{% endblock %}

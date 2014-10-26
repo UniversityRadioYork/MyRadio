@@ -8,7 +8,7 @@ $('.twig-datatable').dataTable(
             },
             //start
             {
-              "sTitle": "Start Date",
+              "sTitle": "Start Date"
             },
             //descr
             {
