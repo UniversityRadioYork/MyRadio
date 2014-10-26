@@ -417,7 +417,7 @@ class MyRadioEmail extends ServiceAPI
      */
     public static function sendEmailToComputing($subject, $message)
     {
-        mail("MyRadio Service <alerts.myury@ury.org.uk>", $subject, self::addFooter($message), self::getDefaultHeader());
+        mail("MyRadio Service <".Config::$error_report_email."@".Config::$email_domain.">", $subject, self::addFooter($message), self::getDefaultHeader());
 
         return true;
     }
