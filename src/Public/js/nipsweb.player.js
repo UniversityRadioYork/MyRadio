@@ -780,7 +780,7 @@ var playoutSlider = function(e) {
     }
 
     var getPixelsPerSecond = function() {
-        return (duration > 0 ? sliderContainer.offsetWidth/duration : 0)
+        return (duration > 0 ? (sliderContainer.offsetWidth - 2)/duration : 0)
     }
 
     var position = function(newPosition) {
@@ -797,7 +797,7 @@ var playoutSlider = function(e) {
     var redraw = function() {
         cueSlider.style.width = cue * getPixelsPerSecond() + 'px';
         introSlider.style.width = intro * getPixelsPerSecond() + 'px';
-        positionSlider.style.width = positionInt * getPixelsPerSecond() + 1 + 'px';
+        positionSlider.style.width = positionInt * getPixelsPerSecond() + 'px';
     }
 
     var addEventListener = function(a, b, c) {
