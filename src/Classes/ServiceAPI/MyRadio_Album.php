@@ -6,6 +6,7 @@
 
 namespace MyRadio\ServiceAPI;
 
+use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 
