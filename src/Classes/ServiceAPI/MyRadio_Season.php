@@ -820,7 +820,7 @@ EOT
             ],
             'allocatelink' => [
                 'display' => 'icon',
-                'value' => 'script',
+                'value' => 'pencil',
                 'title' => 'Edit Application or Allocate Season',
                 'url' => CoreUtils::makeURL('Scheduler', 'allocate', ['show_season_id' => $this->getID()])
             ],

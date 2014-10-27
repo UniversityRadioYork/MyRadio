@@ -540,7 +540,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'status' => $this->getStatus(),
             'editlink' => [
                 'display' => 'icon',
-                'value' => 'script',
+                'value' => 'pencil',
                 'title' => 'Edit Podcast',
                 'url' => CoreUtils::makeURL('Podcast', 'editPodcast', ['podcast_id' => $this->getID()])
             ]

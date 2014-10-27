@@ -313,7 +313,7 @@ class MyRadio_Track extends ServiceAPI
             'digitised' => $this->getDigitised(),
             'editlink' => [
                 'display' => 'icon',
-                'value' => 'script',
+                'value' => 'pencil',
                 'title' => 'Edit Track',
                 'url' => CoreUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()])
             ],

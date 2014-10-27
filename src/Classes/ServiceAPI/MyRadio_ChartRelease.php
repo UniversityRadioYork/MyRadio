@@ -445,7 +445,7 @@ class MyRadio_ChartRelease extends ServiceAPI
             'date' => strftime('%c', $this->getReleaseTime()),
             'editlink' => [
                 'display' => 'icon',
-                'value' => 'script',
+                'value' => 'pencil',
                 'title' => 'Edit Chart Release',
                 'url' => CoreUtils::makeURL(
                     'Charts',

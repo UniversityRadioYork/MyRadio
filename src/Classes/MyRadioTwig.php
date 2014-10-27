@@ -127,14 +127,14 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
         return $value;
     }
 
-    public function addInfo($message, $icon = 'info')
+    public function addInfo($message, $icon = 'info-sign')
     {
         $this->contextVariables['notices'][] = ['icon' => $icon, 'message' => $message, 'state' => 'highlight'];
 
         return $this;
     }
 
-    public function addError($message, $icon = 'alert')
+    public function addError($message, $icon = 'warning-sign')
     {
         $this->contextVariables['notices'][] = ['icon' => $icon, 'message' => $message, 'state' => 'error'];
 
