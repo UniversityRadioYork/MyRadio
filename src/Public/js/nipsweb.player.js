@@ -11,6 +11,8 @@ var NIPSWeb = function() {
     var writable = true;
     // Stores the actual player audio elements
     var players = [];
+    // Store the interactive sliders/seek bars
+    var sliders = [];
 
 
     if (writable) {
@@ -503,11 +505,7 @@ var NIPSWeb = function() {
             channel = 'res';
         }
 
-        $("#progress-bar-" + channel).slider({
-            range: "min",
-            value: 0,
-            min: 0
-        });
+        sliders[(channel === 'res') ? 0 : channel] = playoutSlider(document.getElementById('progress-bar-' + channel));
 
         var a = new Audio();
 
@@ -519,6 +517,8 @@ var NIPSWeb = function() {
     // Sets up listeners per channel
     var setupListeners = function(channel) {
         var player = getPlayer(channel);
+        var slider = sliders[(channel === 'res') ? 0 : channel];
+
         $(player).on('ended', function() {
             stopping(channel);
             if ($('#baps-channel-' + channel).attr('autoadvance') == 1) {
@@ -530,34 +530,26 @@ var NIPSWeb = function() {
         });
         // Chrome sometimes stops playback after seeking
         $(player).on('seeked', function() {
-            console.log('Seek ended');
-            console.log(player.nwIsPlaying);
             if (player.nwIsPlaying) {
                 setTimeout("player.play()", 50);
             }
         });
         $(player).on('timeupdate', function() {
             getTime(channel);
-            $('#progress-bar-' + channel).slider({value: player.currentTime});
-        });
-        $('#progress-bar-' + channel).slider({
-            value: 0,
-            step: 0.01,
-            orientation: "horizontal",
-            range: "min",
-            max: player.duration,
-            animate: true,
-            stop: function(e, ui) {
-                player.currentTime = ui.value;
-            }
-        });
-        $(player).on('durationchange', function() {
-            getDuration(channel);
-            $('#progress-bar-' + channel).slider({max: player.duration});
+            sliders[channel].position(player.currentTime);
         });
 
-        $("#progress-bar-" + channel).on("slide", function(event, ui) {
-            $('#previewer' + channel).currentTime = ui.value;
+        $(player).on('durationchange', function() {
+            getDuration(channel);
+            sliders[channel].reset(
+                player.duration,
+                0,
+                $('#baps-channel-' + channel + ' li.selected').attr('intro')
+            );
+        });
+
+        slider.addEventListener("seeked", function(e) {
+            player.currentTime = e.detail.time;
         });
 
         $('#ch' + channel + '-play').on('click', function() {play(channel)});
@@ -697,4 +689,138 @@ var NIPSWeb = function() {
         registerItemClicks: registerItemClicks
     };
 
+};
+
+var playoutSlider = function(e) {
+    var duration = 0;
+    var cue = 0;
+    var intro = 0;
+    var positionInt = 0;
+    var isSliding = false;
+
+    /** DOM ELEMENTS **/
+    var sliderContainer = document.createElement('div');
+    sliderContainer.className = 'playout-slider';
+
+    var cueSlider = document.createElement('div');
+    cueSlider.className = 'playout-slider-cue';
+    var cueHandle = document.createElement('div');
+    cueHandle.className = 'playout-handle';
+    cueSlider.appendChild(cueHandle);
+    sliderContainer.appendChild(cueSlider);
+
+    var introSlider = document.createElement('div');
+    introSlider.className = 'playout-slider-intro';
+    var introHandle = document.createElement('div');
+    introHandle.className = 'playout-handle';
+    introSlider.appendChild(introHandle);
+    sliderContainer.appendChild(introSlider);
+
+    var positionSlider = document.createElement('div');
+    positionSlider.className = 'playout-slider-position';
+    var positionHandle = document.createElement('div');
+    positionHandle.className = 'playout-handle';
+    positionSlider.appendChild(positionHandle);
+    sliderContainer.appendChild(positionSlider);
+
+    /** HELPER FUNCTIONS **/
+    var calculatePositionFromSeek = function(e) {
+        positionSlider.style.width = e.clientX - getXOffset(e.currentTarget) + 3 + 'px';
+        positionInt = parseInt(positionSlider.style.width.replace(/px$/, '')) / getPixelsPerSecond();
+        sliderContainer.dispatchEvent(new CustomEvent('seeked', {detail: {time: positionInt}}));
+    }
+
+    var getXOffset = function(e) {
+        var x = 0;
+        while (e) {
+            x += e.offsetLeft + e.clientLeft - e.scrollLeft;
+            e = e.offsetParent;
+        }
+        return x;
+    }
+
+    /** EVENT BINDINGS **/
+    var positionHandleDragStart = function() {
+        if (!isSliding) {
+            isSliding = true;
+
+            var dragMove = function(e) {
+                calculatePositionFromSeek(e);
+                return false;
+            }
+            var dragEnd = function(e) {
+                positionInt = parseInt(positionSlider.style.width.replace(/px$/, '')) / getPixelsPerSecond();
+                sliderContainer.dispatchEvent(new CustomEvent('seeked', {detail: {time: positionInt}}));
+
+                sliderContainer.removeEventListener('mousemove', dragMove);
+                window.removeEventListener('mouseup', dragEnd);
+                isSliding = false;
+                return false;
+            }
+            sliderContainer.addEventListener('mousemove', dragMove);
+            window.addEventListener('mouseup', dragEnd);
+            return false;
+        }
+    }
+    positionHandle.addEventListener('mousedown', positionHandleDragStart);
+
+    var clickHandler = function(e) {
+        if (!isSliding) {
+            calculatePositionFromSeek(e);
+        }
+    }
+    sliderContainer.addEventListener('click', clickHandler);
+
+    var reset = function(newDuration, newCue, newIntro) {
+        duration = parseInt(newDuration);
+        cue = parseInt(newCue);
+        intro = parseInt(newIntro);
+        positionInt = 0;
+        redraw();
+    }
+
+    var getPixelsPerSecond = function() {
+        return (duration > 0 ? sliderContainer.offsetWidth/duration : 0)
+    }
+
+    var position = function(newPosition) {
+        if (newPosition !== undefined) {
+            if (!isSliding) {
+                positionInt = newPosition;
+                redraw();
+            }
+        } else {
+            return positionInt;
+        }
+    }
+
+    var redraw = function() {
+        cueSlider.style.width = cue * getPixelsPerSecond() + 'px';
+        introSlider.style.width = intro * getPixelsPerSecond() + 'px';
+        positionSlider.style.width = positionInt * getPixelsPerSecond() + 1 + 'px';
+    }
+
+    var addEventListener = function(a, b, c) {
+        sliderContainer.addEventListener(a, b, c);
+    }
+
+    var removeEventListener = function(a, b, c) {
+        sliderContainer.removeEventListener(a, b, c);
+    }
+
+    //Attach the seekbar to the DOM
+    e.className = 'playout-slider-container';
+    e.appendChild(sliderContainer);
+
+    return {
+        reset: reset,
+        position: position,
+        addEventListener: addEventListener,
+        removeEventListener: removeEventListener
+    }
+
+}
+
+playoutSlider.prototype = {
+    constructor: playoutSlider
 };

@@ -309,6 +309,7 @@ class MyRadio_Track extends ServiceAPI
             'album' => $this->getAlbum()->toDataSource(),
             'trackid' => $this->getID(),
             'length' => $this->getLength(),
+            'intro' => $this->intro,
             'clean' => $this->clean !== 'n',
             'digitised' => $this->getDigitised(),
             'editlink' => [

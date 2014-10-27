@@ -11,7 +11,6 @@
   <h2>{{title}}</h2>
 </header>
 <div id="grid" class="transBG clearfix">
-
   <div id="bapswrapper">
     <div id="baps-channel-container" class="clearfix">
       {% for i in 0..2 %}
@@ -21,7 +20,7 @@
                 {% if track['managedid'] is defined %}managedid='{{track['managedid']}}'{% endif %}
                 {% if track['type'] == 'aux' %}auxid='{{track['auxid']}}'{% endif %}
                 length='{{track['length']}}' timeslotitemid='{{track['timeslotitemid']}}'
-                weight='{{track['weight']}}' channel='{{track['channel']}}'
+                weight='{{track['weight']}}' channel='{{track['channel']}}' intro='{{track['intro']}}'
                 title='{{track['title']}} ({{track['length']}})'
                 >{{track['title']}}{% if track['artist'] is defined %} - {{track['artist']}}{% endif %}</li>
           {% endfor %}

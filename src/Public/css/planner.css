@@ -123,6 +123,7 @@ div.baps-channel {
   color: #FFF;
   border: 1px solid #777;
   border-top: none;
+  cursor: default;
 }
 
 ul.baps-channel li {
@@ -140,9 +141,6 @@ ul.baps-channel li.selected {
   background-color: #428bca;
 }
 
-div[id^=progress-bar] {
-  margin: 0 0.4em 0.2em;
-}
 /** Thin handled slider **/
 .ui-slider .ui-slider-handle {
   width: .2em;
@@ -171,4 +169,64 @@ select {
 
 #track-manual-entry label {
   width: 150px;
+}
+
+.playout-slider-container {
+  margin-top: 5px;
+  width: 100%;
+  height: 26px;
+  text-align: left;
+}
+
+.playout-slider-container .playout-slider {
+  background-color: #eee;
+  border: 1px solid #428bca;
+  border-radius: 3px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+}
+
+.playout-slider div {
+  display: inline-block;
+  position: absolute;
+}
+
+.playout-slider .playout-slider-cue,
+.playout-slider .playout-slier-intro {
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+
+.playout-slider .playout-slider-cue {
+  background-color: #d9534f;
+  top: 0;
+  height: 100%;
+}
+
+.playout-slider .playout-slider-intro {
+  background-color: #5bc85c;
+  top: 3px;
+  height: calc(100% - 6px);
+}
+
+.playout-slider .playout-slider-position {
+  background-color: #428bca;
+  top: 10px;
+  height: 4px;
+}
+
+.playout-slider .playout-slider-position .playout-handle {
+  position: absolute;
+  right: 0;
+  top: -11px;
+  height: 26px;
+  width: 3px;
+  background-color: #0a5a9c;
+}
+
+.playout-slider:hover .playout-slider-position .playout-handle {
+  right: -2px;
+  width: 7px;
 }
