@@ -16,9 +16,11 @@ use \MyRadio\ServiceAPI\MyRadio_Show;
 
 function setupTimeslot($timeslot)
 {
+    // No timeslot (probably jukebox)
+    if (empty($timeslot)) return;
+
     //Can the user access this timeslot?
-    if (!((!empty($timeslot) and $timeslot->getSeason()->getShow()->isCurrentUserAnOwner())
-          or CoreUtils::hasPermission(AUTH_EDITSHOWS))) {
+    if (!($timeslot->getSeason()->getShow()->isCurrentUserAnOwner() or CoreUtils::hasPermission(AUTH_EDITSHOWS))) {
         require_once 'Controllers/Errors/403.php';
     } else {
         $_SESSION['timeslotid'] = $timeslot->getID();
