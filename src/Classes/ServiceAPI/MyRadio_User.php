@@ -8,6 +8,7 @@
 namespace MyRadio\ServiceAPI;
 
 use \MyRadio\Config;
+use \MyRadio\MyRadioEmail;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioDefaultAuthenticator;
