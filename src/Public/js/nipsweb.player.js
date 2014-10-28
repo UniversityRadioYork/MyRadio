@@ -638,6 +638,7 @@ var NIPSWeb = function() {
     };
 
     var playing = function(channel) {
+        getPlayer(channel).nwIsPlaying = true;
         $('#ch' + channel + '-play').removeClass('btn-default').addClass('btn-primary');
         $('#ch' + channel + '-pause, #ch' + channel + '-stop')
                 .removeAttr('disabled')
@@ -646,6 +647,7 @@ var NIPSWeb = function() {
     };
 
     var stopping = function(channel) {
+        getPlayer(channel).nwIsPlaying = false;
         $('#ch' + channel + '-play').removeClass('btn-primary').addClass('btn-default');
         $('#ch' + channel + '-pause').removeClass('btn-warning').addClass('btn-default').attr('disabled', 'disabled');
         $('#ch' + channel + '-stop').attr('disabled', 'disabled');
@@ -662,7 +664,6 @@ var NIPSWeb = function() {
         var player = getPlayer(channel);
         if (player.paused) {
             player.play();
-            player.nwIsPlaying = true;
             playing(channel);
         } else {
             player.pause();
@@ -676,7 +677,6 @@ var NIPSWeb = function() {
     var stop = function(channel) {
         var player = getPlayer(channel);
         player.pause();
-        player.nwIsPlaying = false;
         player.currentTime = 0;
         stopping(channel);
     };
