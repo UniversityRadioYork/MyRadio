@@ -42,7 +42,6 @@ if (isset($_REQUEST['memberid'])) {
         //Unimpersonate
         $impersonate = $_SESSION['myradio-impersonating'];
         $_SESSION = $impersonate;
-    }
 }
 
 if (isset($_REQUEST['next'])) {
