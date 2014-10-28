@@ -10,9 +10,10 @@ namespace MyRadio\ServiceAPI;
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\iTones\iTones_Playlist;
-use \MyRadio\vendor\getid3\getid3;
+
 /**
  * The MyRadio_Track class provides and stores information about a Track
  *
@@ -510,7 +511,8 @@ class MyRadio_Track extends ServiceAPI
 
         move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename);
 
-        $getID3 = new getID3;
+        require_once 'Classes/vendor/getid3/getid3.php';
+        $getID3 = new \getID3;
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
 
         // File quality checks
