@@ -233,13 +233,13 @@ class MyRadio_TrackCorrection extends MyRadio_Track
             'state' => $this->getState(),
             'editlink' => [
                 'display' => 'icon',
-                'value' => 'script',
+                'value' => 'pencil',
                 'title' => 'Edit Track Manually',
                 'url' => CoreUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()])
             ],
             'confirmlink' => [
                 'display' => 'icon',
-                'value' => 'circle-check',
+                'value' => 'ok',
                 'title' => 'Approve Track Correction',
                 'url' => CoreUtils::makeURL('Library', 'acceptTrackCorrection', ['correctionid' => $this->getCorrectionID()])
             ]

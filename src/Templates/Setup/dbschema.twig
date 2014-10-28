@@ -2,13 +2,13 @@
 {% block content %}
 <p>Your database settings are correct, and MyRadio has now looked at the database and decided what to do next. Review the information below before continuing.</p>
 {% if operation == 'ERROR' %}
-<div class="ui-state-error"><span class="ui-icon ui-icon-alert fleft"></span>MyRadio has failed to autodetect what to do with your current database schema. Manual work is likely required.</div>
+<div class="ui-state-error"><span class="glyphicon glyphicon-warning-sign"></span>MyRadio has failed to autodetect what to do with your current database schema. Manual work is likely required.</div>
 {% elseif operation == 'NEW' %}
 <p>It looks like you don't have a current or previous MyRadio schema in the target database. MyRadio will set up a complete new schema.</p>
 {% elseif operation == 'UPGRADE' %}
 <p>There is an existing MyRadio schema in the target database, but it is not the latest version. MyRadio will upgrade this schema. Once the upgrade is complete, older versions of MyRadio may no longer work.</p>
 {% elseif operation == 'NEWER_WARN' %}
-<div class="ui-state-highlight"><span class="ui-icon ui-icon-info fleft"></span>There is already a MyRadio schema in the target database, and it is running a new version of MyRadio than the one you are currently trying to set up. MyRadio will not alter the schema, however it may not work properly. Please consider upgrading to the latest version of MyRadio.</div>
+<div class="ui-state-highlight"><span class="glyphicon glyphicon-info-sign"></span>There is already a MyRadio schema in the target database, and it is running a new version of MyRadio than the one you are currently trying to set up. MyRadio will not alter the schema, however it may not work properly. Please consider upgrading to the latest version of MyRadio.</div>
 {% elseif operation == 'CURRENT' %}
 <p>The target database already contains the latest version of the MyRadio schema. MyRadio setup will not do anything to the database at this stage.</p>
 {% else %}

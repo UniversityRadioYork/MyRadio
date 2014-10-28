@@ -1,7 +1,7 @@
 {% extends 'minimal.twig' %}
 {% block content %}
 {% if db_error %}
-	<div class="ui-state-error"><span class="ui-icon ui-icon-alert fleft"></span>Failed to connect to database server. Please check your settings and try again.</div>
+	<div class="ui-state-error"><span class="glyphicon glyphicon-warning-sign"></span>Failed to connect to database server. Please check your settings and try again.</div>
 {% endif %}
 <p>Currently, MyRadio only supports <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a> as a database server.</p>
 <p>Please fill in the details of your server below, with a login that has full control over the database it will be working in.</p>

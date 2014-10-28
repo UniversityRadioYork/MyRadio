@@ -6,61 +6,82 @@
     {% block head %}
       {% include 'parts/base_head.twig' %}
     {% endblock %}
-    </head>
-    <body>
-      <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="{{baseurl}}">MyRadio</a>
+        </div>
+        <div class="collapse navbar-collapse">
+         <ul class="nav navbar-nav navbar-right">
+            {% if memberid %}
+              <li>
+                {% if timeslotname is null %}
+                  <a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}">Pick Timeslot</a>
+                {% else %}
+                  <a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}" title="Click to change timeslot">{{ timeslotname }}</a>
+                {% endif %}
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  {% if impersonator %}
+                    <span class="glyphicon glyphicon-eye-open"></span>
+                  {% else %}
+                    <span class="glyphicon glyphicon-user"></span>
+                  {% endif %}
+                   {{ name | raw }}<span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="{{myury.makeURL(config, 'Profile')}}"><span class="glyphicon glyphicon-user"></span> My Profile</a></li>
+                  {% if impersonator %}
+                    <li class="divider"></li>
+                    <li class="dropdown-header">Impersonator: {{impersonator | raw }}</li>
+                    <li><a href="{{myury.makeURL(config, 'MyRadio', 'impersonate')}}"><span class="glyphicon glyphicon-eye-close"></span> Unimpersonate</a></li>
+                  {% endif %}
+                  <li><a href="{{myury.makeURL(config, 'MyRadio', 'logout')}}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                </ul>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <br>
+    <div class="container main-container">
+      {% if phperrors is not null %}
+        <ul class="php_error">
+          {% for phperror in phperrors %}
+            <li><strong>{{ phperror.name }}</strong> : {{ phperror.string|raw }} - In <strong>{{ phperror.file }}</strong> on line {{ phperror.line }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </div>
+    {% block footer %}
+      <footer class="footer">
         <div class="container">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="{{baseurl}}">MyRadio</a>
-          </div>
-          <div class="collapse navbar-collapse">
-           <ul class="nav navbar-nav">
-              {% if memberid %}<li><a href="{{myury.makeURL(config, 'MyRadio', 'logout')}}">Logout</a></li>{% endif %}
-
-              <li>{% if timeslotname is null and memberid %}<a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}">Pick Timeslot</a>{% else %}<a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</li>
-
-              <li><a href="{{myury.makeURL(config, 'Profile')}}">{{ name | raw }}</a></li>
-
-              {% if impersonator %}<li>{{ impersonator | raw }}</li>{% endif %}
-            </ul>
+          <div class="row">
+            <div class="col-md-6">
+              &copy;{{config.founded}}-{{"now"|date('Y')}} {{config.long_name}}. MyRadio by <a href="mailto:webmaster@ury.org.uk" title="{{query_count}}">URY Computing Team</a>
+            </div>
+            <div class="col-md-6 text-right">
+              <a href="http://www.york.ac.uk/docs/disclaimer/disclaimer.htm">Disclaimer</a>
+              &nbsp;<a href="http://ury.org.uk/contact/">Contact Us</a>
+            </div>
           </div>
         </div>
-      </nav>
-      <br>
-      <div class="container main-container">
-        {% if phperrors is not null %}
-          <ul class="php_error">
-            {% for phperror in phperrors %}
-              <li><strong>{{ phperror.name }}</strong> : {{ phperror.string|raw }} - In <strong>{{ phperror.file }}</strong> on line {{ phperror.line }}</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-{% block content %}{% endblock %}
-      </div>
-{% block footer %}
-              <footer class="footer">
-                <div class="container">
-                  <div class="row">
-                    <div class="col-md-6">
-                      &copy;{{config.founded}}-{{"now"|date('Y')}} {{config.long_name}}. MyRadio by <a href="mailto:webmaster@ury.org.uk" title="{{query_count}}">URY Computing Team</a>
-                    </div>
-                    <div class="col-md-6 text-right">
-                      <a href="http://www.york.ac.uk/docs/disclaimer/disclaimer.htm">Disclaimer</a>
-                      &nbsp;<a href="http://ury.org.uk/contact/">Contact Us</a>
-                    </div>
-                  </div>
-                </div>
-              </footer>
-{% endblock %}
+      </footer>
+    {% endblock %}
 
-{% block foot %}
-{% include 'parts/base_foot.twig' %}
-{% endblock %}
+    {% block foot %}
+    {% include 'parts/base_foot.twig' %}
+    {% endblock %}
 
-{% if joyride %}
-{% include 'joyrides/base.twig' %}
-{% include 'joyrides/' ~ joyride ~ '.twig' %}
-{% endif %}
-            </body>
-          </html>
+    {% if joyride %}
+      {% include 'joyrides/base.twig' %}
+      {% include 'joyrides/' ~ joyride ~ '.twig' %}
+    {% endif %}
+  </body>
+</html>
 {% endspaceless %}

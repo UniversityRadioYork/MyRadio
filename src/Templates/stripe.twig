@@ -6,7 +6,7 @@
 <div id="grid" class="transBG clearfix">
   <div id="content-body" class="clearfix">
   {% for notice in notices %}
-      <div class="ui-state-{{notice.state}}"><span class="ui-icon ui-icon-{{notice.icon}} fleft"></span>{{notice.message | raw}}</div>
+      <div class="ui-state-{{notice.state}}"><span class="glyphicon glyphicon-{{notice.icon}}"></span>{{notice.message | raw}}</div>
   {% endfor %}
     {% if submenu|length > 0 %}
     {% include 'parts/submenu.twig' %}

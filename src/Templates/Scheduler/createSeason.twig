@@ -2,10 +2,10 @@
 
 {% block stripecontent %}
 {% if frm_custom.current_term is null %}
-<div class="ui-state-error"><span class="ui-icon ui-icon-alert fleft"></span>Season applications are currently <strong>closed</strong>. You can apply for a season 28 days before the start of term.</div>
+<div class="ui-state-error"><span class="glyphicon glyphicon-warning-sign"></span>Season applications are currently <strong>closed</strong>. You can apply for a season 28 days before the start of term.</div>
 {% else %}
 <h2>Apply for a New Season</h2>
-<div class="ui-state-highlight"><span class="ui-icon ui-icon-info fleft"></span>You are applying for a season for the Term {{frm_custom.current_term}}</div>
+<div class="ui-state-highlight"><span class="glyphicon glyphicon-info-sign"></span>You are applying for a season for the Term {{frm_custom.current_term}}</div>
 <p>Fill out the form below to apply for a new season of {{frm_custom.show_title}}. Please provide at least three possible times for your show, and don't tick a week if you know you can't do it!</p>
 {{ parent() }}
 {% endif %}

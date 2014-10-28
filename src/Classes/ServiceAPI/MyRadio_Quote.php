@@ -339,7 +339,7 @@ class MyRadio_Quote extends ServiceAPI
             'text' => $this->getText(),
             'editlink' => [
                 'display' => 'icon',
-                'value' => 'script',
+                'value' => 'pencil',
                 'title' => 'Edit Quote',
                 'url' => CoreUtils::makeURL(
                     'Quotes',
