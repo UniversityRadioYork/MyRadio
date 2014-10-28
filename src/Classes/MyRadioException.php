@@ -25,9 +25,9 @@ class MyRadioException extends \RuntimeException
      * Extends the default session by enabling useful output
      * @param String $message A nice message explaining what is going on
      * @param int $code A number representing the problem. -1 Indicates fatal.
-     * @param \Exception $previous
+     * @param \MyRadioException $previous
      */
-    public function __construct($message, $code = 500, Exception $previous = null)
+    public function __construct($message, $code = 500, MyRadioException $previous = null)
     {
         self::$count++;
         if (self::$count > Config::$exception_limit) {
