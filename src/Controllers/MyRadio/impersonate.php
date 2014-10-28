@@ -39,9 +39,9 @@ if (isset($_REQUEST['memberid'])) {
         $_SESSION['auth_use_locked'] = false;
     }
 } else if (isset($_SESSION['myradio-impersonating'])) {
-        //Unimpersonate
-        $impersonate = $_SESSION['myradio-impersonating'];
-        $_SESSION = $impersonate;
+    //Unimpersonate
+    $impersonate = $_SESSION['myradio-impersonating'];
+    $_SESSION = $impersonate;
 }
 
 if (isset($_REQUEST['next'])) {
