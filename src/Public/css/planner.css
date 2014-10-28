@@ -212,15 +212,24 @@ select {
 }
 
 .playout-slider .playout-slider-position {
-  background-color: #428bca;
-  top: 10px;
+  border-top: 12px solid rgba(66, 139, 202, 0.4);
+  border-bottom: 12px solid rgba(66, 139, 202, 0.4);
+  top: 0;
   height: 4px;
+}
+
+.playout-slider .playout-slider-position .playout-slider-line {
+  background-color: #2376bb;
+  height: 4px;
+  width: 100%;
+  position: absolute;
+  top: -2px;
 }
 
 .playout-slider .playout-slider-position .playout-handle {
   position: absolute;
   right: 0;
-  top: -11px;
+  top: -13px;
   height: 26px;
   width: 3px;
   background-color: #0a5a9c;

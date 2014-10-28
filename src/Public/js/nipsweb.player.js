@@ -718,6 +718,9 @@ var playoutSlider = function(e) {
 
     var positionSlider = document.createElement('div');
     positionSlider.className = 'playout-slider-position';
+    var positionSliderLine = document.createElement('div');
+    positionSliderLine.className = 'playout-slider-line';
+    positionSlider.appendChild(positionSliderLine);
     var positionHandle = document.createElement('div');
     positionHandle.className = 'playout-handle';
     positionSlider.appendChild(positionHandle);
