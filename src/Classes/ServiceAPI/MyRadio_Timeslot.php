@@ -11,6 +11,8 @@ use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadioEmail;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\NIPSWeb\NIPSWeb_TimeslotItem;
 use \MyRadio\NIPSWeb\NIPSWeb_BAPSUtils;
 use \MyRadio\SIS\SIS_Utils;
