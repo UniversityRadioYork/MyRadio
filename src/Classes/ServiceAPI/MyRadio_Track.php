@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file provides the MyRadio_Track class for MyURY
+ * This file provides the MyRadio_Track class for MyRadio
  * @package MyRadio_Core
  */
 
