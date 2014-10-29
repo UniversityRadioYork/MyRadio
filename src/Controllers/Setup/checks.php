@@ -235,17 +235,14 @@ foreach ($function_checks as $check) {
 		  		<h3>Cheating</h3>
 		  		<p>If you're using Ubuntu, the following commands (as root) will get you most of the way:</p>
 		  		<code>
-		  			apt-get install libyaml-dev php-apc php5-curl php5-geoip php5-gd php5-ldap php5-mcrypt php5-pgsql php5-dev php-pear<br>
+		  			apt-get install php-apc php5-curl php5-geoip php5-gd php5-ldap php5-mcrypt php5-pgsql php5-dev php-pear<br>
 		  			pear channel-discover pear.twig-project.org<br>
 		  			pear install twig/Twig<br>
 		  			pear install twig/CTwig<br>
-		  			pear install pecl/yaml<br>
 		  			echo "extension=mcrypt.so" > /etc/php5/mods-available/mcrypt.ini<br>
 		  			ln -s /etc/php5/mods-available/mcrypt.ini /etc/php5/apache2/conf.d/20-mcrypt.ini<br>
 		  			echo "extension=twig.so" > /etc/php5/mods-available/twig.ini<br>
 		  			ln -s /etc/php5/mods-available/twig.ini /etc/php5/apache2/conf.d/20-twig.ini<br>
-		  			echo "extension=yaml.so" > /etc/php5/mods-available/yaml.ini<br>
-		  			ln -s /etc/php5/mods-available/yaml.ini /etc/php5/apache2/conf.d/20-yaml.ini<br>
 		  			service apache2 restart
 		  		</code>
 		  		<?php
