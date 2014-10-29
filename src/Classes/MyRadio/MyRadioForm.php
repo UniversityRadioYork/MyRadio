@@ -3,6 +3,7 @@
 namespace MyRadio\MyRadio;
 
 use MyRadio\MyRadioException;
+use MyRadio\Config;
 
 /**
  * This file provides the MyRadioForm class for MyRadio
