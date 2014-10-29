@@ -14,6 +14,12 @@ use \MyRadio\MyRadio\MyRadioSession;
 use \MyRadio\MyRadio\MyRadioNullSession;
 
 /**
+ * This number is incremented every time a database patch is released.
+ * Patches are scripts in schema/patches.
+ */
+define('MYRADIO_CURRENT_SCHEMA_VERSION', 0);
+
+/**
  * Turn on Error Reporting for the start. Once the Config object is loaded
  * this is updated to reflect Config.
  */
