@@ -527,6 +527,8 @@ var NIPSWeb = function() {
                     .removeClass('selected')
                     .attr('nextselect'))
                 .click();
+            } else {
+                player.currentTime = player.cueTime;
             }
         });
         // Chrome sometimes stops playback after seeking
