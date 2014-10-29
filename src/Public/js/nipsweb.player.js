@@ -508,6 +508,7 @@ var NIPSWeb = function() {
         sliders[(channel === 'res') ? 0 : channel] = playoutSlider(document.getElementById('progress-bar-' + channel));
 
         var a = new Audio();
+        a.cueTime = 0;
 
         players[(channel === 'res') ? 0 : channel] = a;
 
@@ -548,8 +549,19 @@ var NIPSWeb = function() {
             );
         });
 
-        slider.addEventListener("seeked", function(e) {
-            player.currentTime = e.detail.time;
+        $(slider).on("seeked", function(e) {
+            player.currentTime = e.originalEvent.detail.time;
+        });
+
+        $(slider).on("introChanged", function(e) {
+            console.warn('TODO: Send updated intro time to server');
+        });
+
+        $(slider).on("cueChanged", function(e) {
+            if (player.cueTime >= player.currentTime && player.paused) {
+                player.currentTime = e.originalEvent.detail.time;
+            }
+            player.cueTime = e.originalEvent.detail.time;
         });
 
         $('#ch' + channel + '-play').on('click', function() {play(channel)});
@@ -606,7 +618,7 @@ var NIPSWeb = function() {
                     }
                     getPlayer(channel).src = myury.makeURL('NIPSWeb', 'secure_play', params);
 
-                    $(getPlayer(channel)).on("canplaythrough", function() {
+                    $(getPlayer(channel)).on("canplay", function() {
                         $('#ch' + channel + '-play').removeAttr('disabled');
                         /**
                         * Briefly play the track once it has started loading
@@ -635,6 +647,8 @@ var NIPSWeb = function() {
                 $('#ch' + channel + '-play').removeAttr('disabled');
             });
         }
+
+        getPlayer(channel).cueTime = 0;
     };
 
     var playing = function(channel) {
@@ -677,7 +691,7 @@ var NIPSWeb = function() {
     var stop = function(channel) {
         var player = getPlayer(channel);
         player.pause();
-        player.currentTime = 0;
+        player.currentTime = player.cueTime;
         stopping(channel);
     };
 
@@ -706,6 +720,10 @@ var playoutSlider = function(e) {
     cueSlider.className = 'playout-slider-cue';
     var cueHandle = document.createElement('div');
     cueHandle.className = 'playout-handle';
+    var cueHandleCircle = document.createElement('div');
+    cueHandleCircle.className = 'playout-handle-circle';
+    cueHandleCircle.title = 'Drag to set the cue position';
+    cueHandle.appendChild(cueHandleCircle);
     cueSlider.appendChild(cueHandle);
     sliderContainer.appendChild(cueSlider);
 
@@ -713,6 +731,10 @@ var playoutSlider = function(e) {
     introSlider.className = 'playout-slider-intro';
     var introHandle = document.createElement('div');
     introHandle.className = 'playout-handle';
+    var introHandleCircle = document.createElement('div');
+    introHandleCircle.className = 'playout-handle-circle';
+    introHandleCircle.title = 'Drag to set the intro duration';
+    introHandle.appendChild(introHandleCircle);
     introSlider.appendChild(introHandle);
     sliderContainer.appendChild(introSlider);
 
@@ -727,10 +749,14 @@ var playoutSlider = function(e) {
     sliderContainer.appendChild(positionSlider);
 
     /** HELPER FUNCTIONS **/
-    var calculatePositionFromSeek = function(e) {
-        positionSlider.style.width = e.clientX - getXOffset(e.currentTarget) + 3 + 'px';
-        positionInt = parseInt(positionSlider.style.width.replace(/px$/, '')) / getPixelsPerSecond();
-        sliderContainer.dispatchEvent(new CustomEvent('seeked', {detail: {time: positionInt}}));
+    var calculatePositionFromSeek = function(e, slider) {
+        var result = e.clientX - getXOffset(e.currentTarget) + 3;
+        if (result > sliderContainer.offsetWidth) {
+            result = sliderContainer.offsetWidth;
+        }
+
+        slider.style.width = result + 'px';
+        return result / getPixelsPerSecond();
     }
 
     var getXOffset = function(e) {
@@ -744,15 +770,15 @@ var playoutSlider = function(e) {
 
     /** EVENT BINDINGS **/
     var positionHandleDragStart = function() {
+        var positionInt;
         if (!isSliding) {
             isSliding = true;
 
             var dragMove = function(e) {
-                calculatePositionFromSeek(e);
+                positionInt = calculatePositionFromSeek(e, positionSlider);
                 return false;
             }
             var dragEnd = function(e) {
-                positionInt = parseInt(positionSlider.style.width.replace(/px$/, '')) / getPixelsPerSecond();
                 sliderContainer.dispatchEvent(new CustomEvent('seeked', {detail: {time: positionInt}}));
 
                 sliderContainer.removeEventListener('mousemove', dragMove);
@@ -767,12 +793,61 @@ var playoutSlider = function(e) {
     }
     positionHandle.addEventListener('mousedown', positionHandleDragStart);
 
-    var clickHandler = function(e) {
+    var introHandleDragStart = function() {
         if (!isSliding) {
-            calculatePositionFromSeek(e);
+            isSliding = true;
+
+            var dragMove = function(e) {
+                intro = calculatePositionFromSeek({clientX: e.clientX, currentTarget: introSlider}, introSlider);
+                return false;
+            }
+            var dragEnd = function(e) {
+                sliderContainer.dispatchEvent(new CustomEvent('introChanged', {detail: {time: intro}}));
+
+                sliderContainer.parentNode.parentNode.removeEventListener('mousemove', dragMove);
+                window.removeEventListener('mouseup', dragEnd);
+                isSliding = false;
+                return false;
+            }
+            sliderContainer.parentNode.parentNode.addEventListener('mousemove', dragMove);
+            window.addEventListener('mouseup', dragEnd);
+            return false;
         }
     }
-    sliderContainer.addEventListener('click', clickHandler);
+    introHandle.addEventListener('mousedown', introHandleDragStart);
+
+    var cueHandleDragStart = function() {
+        if (!isSliding) {
+            isSliding = true;
+
+            var dragMove = function(e) {
+                cue = calculatePositionFromSeek({clientX: e.clientX, currentTarget: cueSlider}, cueSlider);
+                return false;
+            }
+            var dragEnd = function(e) {
+                sliderContainer.dispatchEvent(new CustomEvent('cueChanged', {detail: {time: cue}}));
+
+                sliderContainer.parentNode.parentNode.removeEventListener('mousemove', dragMove);
+                window.removeEventListener('mouseup', dragEnd);
+                isSliding = false;
+                return false;
+            }
+            sliderContainer.parentNode.parentNode.addEventListener('mousemove', dragMove);
+            window.addEventListener('mouseup', dragEnd);
+            return false;
+        }
+    }
+    cueHandle.addEventListener('mousedown', cueHandleDragStart);
+
+    // Needs to go after drag handlers to ensure they set isSliding first
+    var clickHandler = function(e) {
+        if (!isSliding) {
+            calculatePositionFromSeek(e, positionSlider);
+            sliderContainer.dispatchEvent(new CustomEvent('seeked', {detail: {time: positionInt}}));
+            return false;
+        }
+    }
+    sliderContainer.addEventListener('mousedown', clickHandler);
 
     var reset = function(newDuration, newCue, newIntro) {
         duration = parseInt(newDuration);
