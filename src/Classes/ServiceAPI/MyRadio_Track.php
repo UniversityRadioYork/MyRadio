@@ -598,7 +598,8 @@ class MyRadio_Track extends ServiceAPI
 
         // Get the track duration from the file if it isn't already set
         if (empty($ainfo['duration'])) {
-            $getID3 = new getID3;
+            require_once 'Classes/vendor/getid3/getid3.php';
+            $getID3 = new \getID3;
             $ainfo['duration'] = intval($getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $tmpid)['playtime_seconds']);
         }
 
