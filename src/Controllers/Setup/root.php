@@ -24,8 +24,6 @@ define('SCHEMA_DIR', __DIR__.'/../../../schema/');
 
 $controller = isset($_REQUEST['c']) ? $_REQUEST['c'] : 'checks';
 
-require_once 'Models/Core/api_nodb.php';
-
 session_start();
 if (isset($_SESSION['myradio_setup_config'])) {
 	$config_overrides = $_SESSION['myradio_setup_config'];

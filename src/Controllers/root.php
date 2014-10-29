@@ -49,6 +49,8 @@ $_basepath = str_replace('Controllers', '', __DIR__) . DIRECTORY_SEPARATOR;
 $loader->addNamespace('MyRadio', $_basepath . 'Classes');
 $loader->addNamespace('MyRadio\Iface', $_basepath . 'Interfaces');
 
+unset($_basepath);
+
 /**
  * Load configuration specific to this system.
  * Or, if it doesn't exist, kick into setup.
