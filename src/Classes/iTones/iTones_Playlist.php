@@ -431,7 +431,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
             ],
             'revisionslink' => [
                 'display' => 'icon',
-                'value' => 'clock',
+                'value' => 'time',
                 'title' => 'View revision history',
                 'url' => CoreUtils::makeURL('iTones', 'viewPlaylistHistory', ['playlistid' => $this->getID()])
             ]

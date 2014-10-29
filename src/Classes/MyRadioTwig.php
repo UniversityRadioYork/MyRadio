@@ -41,11 +41,15 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
         }
 
         $this->addVariable('memberid', isset($_SESSION['memberid']) ? $_SESSION['memberid'] : 0)
-            ->addVariable(
-                'impersonator',
+            ->addVariable('impersonatorurl',
                 !empty($_SESSION['myradio-impersonating'])
-                ? ('<a href="'.CoreUtils::makeURL('MyRadio', 'impersonate', ['next' => $_SERVER['REQUEST_URI']])
-                .'">Impersonated by ' . $_SESSION['myradio-impersonating']['name']).'</a>' : ''
+                ? (CoreUtils::makeURL('MyRadio', 'impersonate', ['next' => $_SERVER['REQUEST_URI']]))
+                : ''
+            )
+            ->addVariable('impersonator',
+                !empty($_SESSION['myradio-impersonating'])
+                ? $_SESSION['myradio-impersonating']['name']
+                : ''
             )
             ->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null)
             ->addVariable('timeslotid', isset($_SESSION['timeslotid']) ? $_SESSION['timeslotid'] : null)
@@ -58,7 +62,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
             ->addVariable('module', empty($GLOBALS['module']) ? Config::$default_module : $GLOBALS['module'])
             ->addVariable('action', empty($GLOBALS['action']) ? Config::$default_action : $GLOBALS['action'])
             ->addVariable('config', Config::getPublicConfig())
-            ->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : '<a href="' . CoreUtils::makeURL('MyRadio', 'login') . '">Login</a>');
+            ->addVariable('name', $_SESSION['name'] ?: '');
 
 
         if (!empty($GLOBALS['module']) && isset($_SESSION['memberid'])) {
@@ -123,14 +127,14 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
         return $value;
     }
 
-    public function addInfo($message, $icon = 'info')
+    public function addInfo($message, $icon = 'info-sign')
     {
         $this->contextVariables['notices'][] = ['icon' => $icon, 'message' => $message, 'state' => 'highlight'];
 
         return $this;
     }
 
-    public function addError($message, $icon = 'alert')
+    public function addError($message, $icon = 'warning-sign')
     {
         $this->contextVariables['notices'][] = ['icon' => $icon, 'message' => $message, 'state' => 'error'];
 
