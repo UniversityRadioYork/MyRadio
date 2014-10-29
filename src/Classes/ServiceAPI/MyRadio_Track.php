@@ -10,7 +10,8 @@ namespace MyRadio\ServiceAPI;
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\iTones\iTones_Playlist;
 
 /**
@@ -600,9 +601,9 @@ class MyRadio_Track extends ServiceAPI
             $ainfo = array('duration' => null, 'position' => intval($position), 'album' => $myradio_album);
         }
 
-        require_once 'Classes/vendor/getid3/getid3.php';
         // Get the track duration from the file if it isn't already set
         if (empty($ainfo['duration'])) {
+            require_once 'Classes/vendor/getid3/getid3.php';
             $getID3 = new \getID3;
             $ainfo['duration'] = intval($getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $tmpid)['playtime_seconds']);
         }
@@ -682,23 +683,23 @@ class MyRadio_Track extends ServiceAPI
             }
         }
 
-//Number 0
+        //Number 0
         if (empty($options['number'])) {
             $options['number'] = 0;
         }
-//Other Genre
+        //Other Genre
         if (empty($options['genre'])) {
             $options['genre'] = 'o';
         }
-//No intro
+        //No intro
         if (empty($options['intro'])) {
             $options['intro'] = 0;
         }
-//Clean unknown
+        //Clean unknown
         if (empty($options['clean'])) {
             $options['clean'] = 'u';
         }
-//Not digitised, and formate to t/f
+        //Not digitised, and format to t/f
         if (empty($options['digitised'])) {
             $options['digitised'] = 'f';
         } else {

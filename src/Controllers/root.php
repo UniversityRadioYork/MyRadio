@@ -14,6 +14,12 @@ use \MyRadio\MyRadio\MyRadioSession;
 use \MyRadio\MyRadio\MyRadioNullSession;
 
 /**
+ * This number is incremented every time a database patch is released.
+ * Patches are scripts in schema/patches.
+ */
+define('MYRADIO_CURRENT_SCHEMA_VERSION', 0);
+
+/**
  * Turn on Error Reporting for the start. Once the Config object is loaded
  * this is updated to reflect Config.
  */
@@ -42,6 +48,8 @@ $_basepath = str_replace('Controllers', '', __DIR__) . DIRECTORY_SEPARATOR;
 
 $loader->addNamespace('MyRadio', $_basepath . 'Classes');
 $loader->addNamespace('MyRadio\Iface', $_basepath . 'Interfaces');
+
+unset($_basepath);
 
 /**
  * Load configuration specific to this system.

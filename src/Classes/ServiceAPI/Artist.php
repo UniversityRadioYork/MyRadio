@@ -7,6 +7,7 @@
 namespace MyRadio\ServiceAPI;
 
 use \MyRadio\MyRadioException;
+use \MyRadio\Config;
 
 /**
  * The Artist class provides and stores information about a Artist

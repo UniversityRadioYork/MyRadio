@@ -24,7 +24,10 @@ if (isset($_REQUEST['memberid'])) {
     ) {
         require_once 'Controllers/Errors/403.php';
     } else {
-        $_SESSION['myradio-impersonating'] = $_SESSION;
+        // Yes, this temporary variable is necessary, otherwise recursion happens.
+        // I don't even.
+        $old_sess = $_SESSION;
+        $_SESSION['myradio-impersonating'] = $old_sess;
         $_SESSION['memberid'] = $impersonatee->getID();
         $ip_auth = Database::getInstance()->fetchColumn(
             'SELECT typeid FROM auth_subnet WHERE subnet >>= $1',
@@ -35,16 +38,10 @@ if (isset($_REQUEST['memberid'])) {
         $_SESSION['email'] = $impersonatee->getEmail();
         $_SESSION['auth_use_locked'] = false;
     }
-} else {
-    /**
-     * For some reason I sometimes have to unimpersonate 3 or more times before
-     * the impersonating key actually gets reset...
-     */
-    while (isset($_SESSION['myradio-impersonating'])) {
-        //Unimpersonate
-        $impersonate = $_SESSION['myradio-impersonating'];
-        $_SESSION = $impersonate;
-    }
+} else if (isset($_SESSION['myradio-impersonating'])) {
+    //Unimpersonate
+    $impersonate = $_SESSION['myradio-impersonating'];
+    $_SESSION = $impersonate;
 }
 
 if (isset($_REQUEST['next'])) {
