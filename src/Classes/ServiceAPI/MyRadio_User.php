@@ -1543,7 +1543,7 @@ class MyRadio_User extends ServiceAPI
         //Activate the member's account for the current academic year
         $user->activateMemberThisYear($paid);
         //Set the user's password
-        (new \MyRadio\MyRadio\MyRadioDefaultAuthenticator())->setPassword($user, $plain_pass);
+        (new MyRadioDefaultAuthenticator())->setPassword($user, $plain_pass);
 
         //Send a welcome email (this will not send if receive_email is not enabled!)
         /**
@@ -1560,7 +1560,7 @@ class MyRadio_User extends ServiceAPI
         /**
          * @todo Make this be sent from the getinvolved email, rather than no-reply.
          */
-        \MyRadio\MyRadioEmail::sendEmailToUser(self::getInstance($memberid), 'Welcome to ' . Config::$short_name . ' - Getting Involved and Your Account', $welcome_email);
+        MyRadioEmail::sendEmailToUser(self::getInstance($memberid), 'Welcome to ' . Config::$short_name . ' - Getting Involved and Your Account', $welcome_email);
 
         return self::getInstance($memberid);
     }
