@@ -17,11 +17,9 @@
          <ul class="nav navbar-nav navbar-right">
             {% if memberid %}
               <li>
-                {% if timeslotname is null %}
-                  <a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}">Pick Timeslot</a>
-                {% else %}
-                  <a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}" title="Click to change timeslot">{{ timeslotname }}</a>
-                {% endif %}
+                <a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}">
+                  <span class="glyphicon glyphicon-time"></span> {% if timeslotname is not null %}{{ timeslotname }}{% else %}Select Timeslot{% endif %}
+                </a>
               </li>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
