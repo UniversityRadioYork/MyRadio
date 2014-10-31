@@ -6,8 +6,9 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
-use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\Database;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
 
 try {
 	Database::getInstance();
