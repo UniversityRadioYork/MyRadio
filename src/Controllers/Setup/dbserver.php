@@ -20,9 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$handle = Database::getInstance();
 	} catch (MyRadioException $e) {
 		header('Location: ?c=dbserver&db_error=true');
-	} else {
-		header('Location: ?c=dbschema');
+		exit; //prevent further execution
 	}
+	//else
+	header('Location: ?c=dbschema');
 } else {
 	CoreUtils::getTemplateObject()
 		->setTemplate('Setup/dbserver.twig')
