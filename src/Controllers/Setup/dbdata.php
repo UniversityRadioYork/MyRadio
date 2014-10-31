@@ -9,6 +9,7 @@
  * @todo there's some duplication in setUpFullActionsAuth and DBDATA_BLANK
  */
 use \MyRadio\Database;
+use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_Officer;
