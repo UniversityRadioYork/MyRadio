@@ -7,6 +7,7 @@
  * @package MyRadio_Core
  */
 use \MyRadio\Database;
+use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
