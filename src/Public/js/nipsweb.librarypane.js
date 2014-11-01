@@ -73,7 +73,7 @@ $(document).ready(function() {
           //Enable name filtering
           ulsort.List.Filter('#res-filter-name', '#baps-channel-res>li');
           //Make them activatable
-          registerItemClicks();
+          planner.registerItemClicks();
         },
         error: function() {
           $('#res-loading').html('Error loading library').addClass('ui-state-error');
@@ -101,7 +101,7 @@ $(document).ready(function() {
           //Enable name filtering
           ulsort.List.Filter('#res-filter-name', '#baps-channel-res>li');
           //Make them activatable
-          registerItemClicks();
+          planner.registerItemClicks();
         },
         error: function() {
           $('#res-loading').html('Error loading library').addClass('ui-state-error');
@@ -133,7 +133,7 @@ $(document).ready(function() {
           //Enable name filtering
           ulsort.List.Filter('#res-filter-name', '#baps-channel-res>li');
           //Make them activatable
-          registerItemClicks();
+          planner.registerItemClicks();
         },
         error: function() {
           $('#res-loading').html('Error loading library').addClass('ui-state-error');
