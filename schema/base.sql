@@ -144,7 +144,7 @@ CREATE SEQUENCE bapsplanner.managed_items_manageditemid_seq
     NO MAXVALUE
     CACHE 1;
 CREATE TABLE bapsplanner.managed_items (
-    manageditemid integer nextval('bapsplanner.managed_items_manageditemid_seq'::regclass) NOT NULL,
+    manageditemid integer DEFAULT nextval('bapsplanner.managed_items_manageditemid_seq'::regclass) NOT NULL,
     managedplaylistid integer NOT NULL,
     title character varying NOT NULL,
     length time without time zone,
