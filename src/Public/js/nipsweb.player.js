@@ -499,18 +499,26 @@ var NIPSWeb = function() {
         configureContextMenus();
     };
 
+    var getChannelInt = function(channel) {
+        if (channel == 'res') {
+            return 0;
+        } else {
+            return channel;
+        }
+    };
+
     // Create the player for the given channel
     var initialisePlayer = function (channel) {
         if (channel == 0) {
             channel = 'res';
         }
 
-        sliders[(channel === 'res') ? 0 : channel] = playoutSlider(document.getElementById('progress-bar-' + channel));
+        sliders[getChannelInt(channel)] = playoutSlider(document.getElementById('progress-bar-' + channel));
 
         var a = new Audio();
         a.cueTime = 0;
 
-        players[(channel === 'res') ? 0 : channel] = a;
+        players[getChannelInt(channel)] = a;
 
         setupListeners(channel);
     };
@@ -539,12 +547,12 @@ var NIPSWeb = function() {
         });
         $(player).on('timeupdate', function() {
             getTime(channel);
-            sliders[channel].position(player.currentTime);
+            sliders[getChannelInt(channel)].position(player.currentTime);
         });
 
         $(player).on('durationchange', function() {
             getDuration(channel);
-            sliders[channel].reset(
+            sliders[getChannelInt(channel)].reset(
                 player.duration,
                 0,
                 $('#baps-channel-' + channel + ' li.selected').attr('intro')

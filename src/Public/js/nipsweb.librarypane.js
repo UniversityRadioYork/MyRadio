@@ -30,6 +30,7 @@ function updateCentralSearch() {
 
         $('#baps-channel-res').append(
                 '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
+                '" intro="' + data[file].intro + '"' +
                 '" channel="res" weight="0" type="central" class="' + classes + '" length="' + data[file].length + '">'
                 + data[file].title + ' - ' + data[file].artist + '</li>'
                 );
@@ -65,6 +66,7 @@ $(document).ready(function() {
             $('#baps-channel-res').append(
                     '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
                     '" title="' + data[file].title + '(' + data[file].length + ')' +
+                    '" intro="' + data[file].intro + '"' +
                     '" channel="res" weight="0" type="central" length="' + data[file].length + '">'
                     + data[file].title + ' - ' + data[file].artist + '</li>'
                     );
@@ -93,6 +95,7 @@ $(document).ready(function() {
             $('#baps-channel-res').append(
                     '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
                     '" title="' + data[file].title + '(' + data[file].length + ')' +
+                    '" intro="' + data[file].intro + '"' +
                     '" channel="res" weight="0" type="central" length="' + data[file].length + '">'
                     + data[file].title + ' - ' + data[file].artist + '</li>'
                     );
