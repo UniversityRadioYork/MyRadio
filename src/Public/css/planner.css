@@ -54,6 +54,9 @@ body {
   height: 32px;
   padding-top: 5px;
 }
+#res-status {
+  top: calc(100% - 33px);
+}
 .result-container {
   width: 550px;
 }
