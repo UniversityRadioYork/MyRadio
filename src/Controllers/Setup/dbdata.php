@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			}
 		}
 		foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actionsauth.json')) as $actionauth) {
-			if (!$actionsauth[3]) {
+			if (!$actionauth[3]) {
 				continue;
 			}
 			$module = CoreUtils::getModuleId($actionauth[0]);
