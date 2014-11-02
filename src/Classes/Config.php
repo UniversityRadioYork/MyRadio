@@ -405,7 +405,7 @@ final class Config
      * Must be absolute.
      * @var String
      */
-    public static $api_url = 'https://ury.org.uk/api';
+    public static $api_url = null;
 
     /**
      * The URL prefix to URY's webcam

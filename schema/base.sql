@@ -529,12 +529,36 @@ CREATE SEQUENCE api_class_map_api_map_id_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE api_class_map_api_map_id_seq OWNED BY api_class_map.api_map_id;
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Track', 'Track');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Show', 'Show');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Season', 'Season');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Timeslot', 'Timeslot');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Album', 'Album');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Demo', 'Demo');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_List', 'List');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Photo', 'Photo');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Podcast', 'Podcast');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Scheduler', 'Scheduler');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_TrackCorrection', 'TrackCorrection');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_TrainingStatus', 'Training');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_UserTrainingStatus', 'UserTraining');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Selector', 'Selector');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Alias', 'Alias');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Officer', 'Officer');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Team', 'Team');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_TracklistItem', 'TracklistItem');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_User', 'User');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Swagger', 'resources');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\iTones\iTones_Playlist', 'Playlist');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\iTones\iTones_Utils', 'iTones');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\MyRadio\CoreUtils', 'Utils');
 CREATE TABLE api_key (
     key_string character varying NOT NULL,
     description character varying NOT NULL,
     revoked boolean DEFAULT false NOT NULL
 );
 COMMENT ON TABLE api_key IS 'Access keys for the MyRadiopi';
+INSERT INTO api_key (key_string, description) VALUES ('IUrnsb8AMkjqDRdfXvOMe3DqHLW8HJ1RNBPNJq3H1FQpiwQDs7Ufoxmsf5xZE9XEbQErRO97DG4xfyVAO7LuS2dOiVNZYoxkk4fEhDt8wR4sLXbghidtM5rLHcgkzO10', 'Swagger Documentation Key');
 CREATE TABLE api_key_auth (
     key_string character varying NOT NULL,
     typeid integer NOT NULL
@@ -561,6 +585,7 @@ CREATE SEQUENCE api_method_auth_api_method_auth_id_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE api_method_auth_api_method_auth_id_seq OWNED BY api_method_auth.api_method_auth_id;
+INSERT INTO api_method_auth (class_name, method_name, typeid) VALUES ('\MyRadio\ServiceAPI\MyRadio_Swagger', NULL, NULL);
 CREATE TABLE award_categories (
     awardid integer NOT NULL,
     name character varying NOT NULL
