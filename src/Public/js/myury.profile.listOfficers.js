@@ -31,7 +31,6 @@ $('.twig-datatable').dataTable({
     "sTitle": "Edit"
   },
   ],
-  "bJQueryUI": true,
   "bSort": false,
   "bPaginate": false
 }

@@ -17,7 +17,6 @@ $('.twig-datatable').dataTable({
     sTitle: "Assigned To"
   }
   ],
-  "bJQueryUI": true,
   "bPaginate": false,
   "aaSorting": [[ 1, "asc" ]]
 }

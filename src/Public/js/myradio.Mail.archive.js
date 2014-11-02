@@ -21,7 +21,6 @@ $('.twig-datatable').dataTable({
     "sTitle": "View",
   },
   ],
-  "bJQueryUI": true,
   "bPaginate": true,
   "aaSorting": [[ 2, "desc" ]]
 }

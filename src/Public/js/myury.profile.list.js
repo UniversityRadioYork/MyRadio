@@ -20,7 +20,6 @@ $('.twig-datatable').dataTable({
     "sTitle": "Amount Paid"
   },
   ],
-  "bJQueryUI": true,
   "bPaginate": false
 }
 );
