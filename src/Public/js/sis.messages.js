@@ -47,7 +47,7 @@ var Messages = function() {
                 //Add the new row to the top of the messages table
                 $(table).prepend(newRow);
                 //Add the onclick handler for the new row
-                var that = this;
+                var that = this, message = data[i];
                 $(newRow).click(function() {
                     var id = $(this).attr('id').replace('m', '');
                     if ($(this).hasClass('unread')) {
@@ -59,10 +59,10 @@ var Messages = function() {
                         that.setUnread(unreadMessages);
                         $(this).removeClass('unread');
                     }
-                    myury.createDialog('Message', data[i]['body']);
+                    myury.createDialog('Message', message['body']);
                 });
                 //Increment the highest message id, if necessary
-                highest_message_id = (highest_message_id < data[i]['id']) ? data[i]['id'] : highest_message_id;
+                highest_message_id = (highest_message_id < message['id']) ? message['id'] : highest_message_id;
             }
             //Update the server's highest id parameter
             this.registerParam('messages_highest_id', highest_message_id);
