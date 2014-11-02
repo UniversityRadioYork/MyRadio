@@ -20,15 +20,15 @@ Edit your Apache config as follows (where /usr/local/www/myradio is your
 checkout of this repository):
 
 ```
-Alias /myradio /usr/local/www/myradio/src/Public
+Alias /myradio /usr/local/www/MyRadio/src/Public
 
-<Directory /usr/local/www/myradio/src/Public>
+<Directory /usr/local/www/MyRadio/src/Public>
    Require all granted
    AllowOverride None
 </Directory>
 
-Alias /api /var/www/MyRadio/src/PublicAPI
-<Directory /var/www/MyRadio/src/PublicAPI>
+Alias /api /usr/local/www/MyRadio/src/PublicAPI
+<Directory /usr/local/www/MyRadio/src/PublicAPI>
   Require all granted
   AllowOverride None
   RewriteEngine On

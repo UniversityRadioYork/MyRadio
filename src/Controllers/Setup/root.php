@@ -43,7 +43,11 @@ register_shutdown_function(function()
 		session_start();
 		$_SESSION['myradio_setup_config'] = $GLOBALS['config_overrides'];
 	}
+
+	ob_end_flush();
 });
 
 CoreUtils::actionSafe($controller);
+
+ob_start();
 require_once 'Controllers/Setup/'.$controller.'.php';

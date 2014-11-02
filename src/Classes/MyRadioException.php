@@ -53,7 +53,7 @@ class MyRadioException extends \RuntimeException
                 <table class='errortable' style='color:#633'>
                   <tr><td>Message</td><td>{$this->getMessage()}</td></tr>
                   <tr><td>Location</td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
-                  <tr><td>Trace</td><td>" . nl2br($traceStr) . "</td></tr>
+                  <tr><td>Trace</td><td>" . nl2br($this->traceStr) . "</td></tr>
                 </table>";
 
         if (class_exists('\MyRadio\Config')) {

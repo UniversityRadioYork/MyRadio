@@ -6,8 +6,9 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
-use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\Database;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
 
 try {
 	Database::getInstance();
@@ -48,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					->addVariable('title', 'Database Schema')
 					->addVariable('error', $error)
 					->render();
+					exit;
 			}
 			//Tell the upgrade operation to apply patches
 			$version = 0;
