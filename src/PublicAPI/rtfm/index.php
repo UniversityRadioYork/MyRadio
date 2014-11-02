@@ -60,6 +60,10 @@
       }
     })
     window.swaggerUi.load();
+    $('form').on('submit', function(e) {
+      e.preventDefault();
+      $('#explore').click();
+    });
   });
   </script>
 </head>
@@ -78,7 +82,7 @@
               <div class="swagger-ui-wrap">
                 <form id='api_selector'>
                   <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="hidden"/></div>
-                  <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
+                  <div class='input'><input id="input_apiKey" name="apiKey" type="text" placeholder="Leave blank for MyRadio Session auth" style="width:350px" /></div>
                   <div class='input'><a id="explore" href="#" style="background-color: #363d5f;">Explore</a></div>
                 </form>
               </div>

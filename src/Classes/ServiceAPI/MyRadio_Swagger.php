@@ -248,8 +248,8 @@ class MyRadio_Swagger
         $long_desc = implode('<br>', $doc['lines']);
 
         //We append the auth requirements to the long description
-        $requirements = MyRadio_APIKey::getCallRequirements(
-            $this->getApiClasses()[$this->class],
+        $requirements = self::getCallRequirements(
+            self::getApiClasses()[$method->getDeclaringClass()],
             $method->getName()
         );
         if ($requirements === null) {
@@ -292,5 +292,36 @@ class MyRadio_Swagger
             'params' => $params,
             'return_type' => $return_type
         ];
+    }
+
+    /**
+     * Get the permissions that are needed to access this API Call.
+     *
+     * If the return values is null, this method cannot be called.
+     * If the return value is an empty array, no permissions are needed.
+     *
+     * @param  String $class  The class the method belongs to (actual, not API Alias)
+     * @param  String $method The method being called
+     * @return int[]
+     */
+    public static function getCallRequirements($class, $method)
+    {
+        $result = Database::getInstance()->fetchColumn(
+            'SELECT typeid FROM myury.api_method_auth WHERE class_name=$1 AND
+            (method_name=$2 OR method_name IS NULL)',
+            [$class, $method]
+        );
+
+        if (empty($result)) {
+            return null;
+        }
+
+        foreach ($result as $row) {
+            if (empty($row)) {
+                return []; //There's a global auth option
+            }
+        }
+
+        return $result;
     }
 }
