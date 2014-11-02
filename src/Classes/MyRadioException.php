@@ -57,7 +57,7 @@ class MyRadioException extends \RuntimeException
                 </table>";
 
         if (class_exists('\MyRadio\Config')) {
-            if (Config::$email_exceptions && class_exists('\MyRadio\MyRadioEmail') && $code !== 400) {
+            if (Config::$email_exceptions && class_exists('MyRadioEmail') && $code >= 500) {
                 MyRadioEmail::sendEmailToComputing(
                     '[MyRadio] Exception Thrown',
                     $this->error . "\r\n" . $message . "\r\n"

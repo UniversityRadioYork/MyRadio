@@ -39,6 +39,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     protected function __construct($timeslot_id)
     {
+        if (empty($timeslot_id)) {
+            throw new MyRadioException('Timeslot ID must be provided.');
+        }
+
         $this->timeslot_id = $timeslot_id;
         //Init Database
         self::initDB();
@@ -106,7 +110,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         );
         if (empty($result)) {
             //Invalid Season
-            throw new MyRadioException('The MyRadio_Timeslot with instance ID #' . $timeslot_id . ' does not exist.');
+            throw new MyRadioException('The MyRadio_Timeslot with instance ID #' . $timeslot_id . ' does not exist.', 400);
         }
 
         //Deal with the easy bits
