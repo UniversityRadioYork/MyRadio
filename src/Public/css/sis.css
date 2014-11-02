@@ -76,7 +76,11 @@ body {
 .errorbox {  margin:auto; padding-bottom:1em; font-size:0.8em; font-style:italic; }
 .hr { margin:.5em 0 0 0; }
 
-#piss footer {
+#presenterinfo {
+  padding-top: 15px;
+}
+
+#presenterinfo footer {
   text-align: right;
   font-style: italic;
 }

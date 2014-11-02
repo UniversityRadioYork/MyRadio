@@ -1258,9 +1258,13 @@ CREATE TABLE l_newsfeed (
     feedid integer NOT NULL,
     feedname character varying(30) NOT NULL
 );
+INSERT INTO l_newsfeed (feedid, feedname) VALUES (1, 'Members News');
+INSERT INTO l_newsfeed (feedid, feedname) VALUES (2, 'Tech News');
+INSERT INTO l_newsfeed (feedid, feedname) VALUES (3, 'Breaking News');
+INSERT INTO l_newsfeed (feedid, feedname) VALUES (4, 'Presenter Information');
 COMMENT ON TABLE l_newsfeed IS 'Lookup table for internal news feeds';
 CREATE SEQUENCE l_newsfeeds_feedid_seq
-    START WITH 1
+    START WITH 5
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -1731,6 +1735,11 @@ CREATE TABLE sis_commtype (
     commtypeid integer NOT NULL,
     descr character varying(16) NOT NULL
 );
+INSERT INTO sis_commtype (commtypeid, descr) VALUES (1, 'Email');
+INSERT INTO sis_commtype (commtypeid, descr) VALUES (2, 'SMS');
+INSERT INTO sis_commtype (commtypeid, descr) VALUES (3, 'Website');
+INSERT INTO sis_commtype (commtypeid, descr) VALUES (4, 'Request');
+INSERT INTO sis_commtype (commtypeid, descr) VALUES (5, 'Mobile Site');
 CREATE SEQUENCE sis_commtype_commtypeid_seq
     START WITH 6
     INCREMENT BY 1
@@ -1758,8 +1767,13 @@ CREATE TABLE sis_status (
     statusid integer NOT NULL,
     descr character varying(8)
 );
+INSERT INTO sis_status (statusid, descr) VALUES (1, 'Unread');
+INSERT INTO sis_status (statusid, descr) VALUES (2, 'Read');
+INSERT INTO sis_status (statusid, descr) VALUES (3, 'Deleted');
+INSERT INTO sis_status (statusid, descr) VALUES (4, 'Junk');
+INSERT INTO sis_status (statusid, descr) VALUES (5, 'Abusive');
 CREATE SEQUENCE sis_status_statusid_seq
-    START WITH 1
+    START WITH 6
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE

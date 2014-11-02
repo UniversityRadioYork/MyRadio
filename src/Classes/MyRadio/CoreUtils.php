@@ -317,7 +317,7 @@ class CoreUtils
 
             if (!empty($params)) {
                 if (is_string($params)) {
-                    $str .= $params;
+                    $str .= "&$params";
                 } else {
                     foreach ($params as $k => $v) {
                         $str .= "&$k=$v";

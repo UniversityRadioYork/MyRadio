@@ -35,6 +35,7 @@ class SIS_Utils extends ServiceAPI
      * Checks whether the client IP is a machine authorised for full control
      * @param  String      $ip The IP address to check. If null, will use the REMOTE_ADDR server property
      * @return boolean|int The studio's ID number or false if unauthorised
+     * @deprecated IP Auth should have replaced this.
      */
     private static function isAuthenticatedMachine($ip = null)
     {
@@ -163,8 +164,11 @@ class SIS_Utils extends ServiceAPI
         if ($modules !== false) {
             $pollFuncs = [];
             foreach ($modules as $module) {
-                if (isset($module['pollfunc'])) {
-                    $pollFuncs[] = $module['pollfunc'];
+                if (stream_resolve_include_path('Models/SIS/modules/' . $module . '.php')) {
+                    require 'Models/SIS/modules/' . $module . '.php';
+                    if (isset($moduleInfo['pollfunc'])) {
+                        $pollFuncs[] = $moduleInfo['pollfunc'];
+                    }
                 }
             }
 

@@ -7,9 +7,11 @@
 
 namespace MyRadio\SIS;
 
+use \MyRadio\Config;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_Selector;
 use \MyRadio\ServiceAPI\MyRadio_Webcam;
+use \MyRadio\MyRadio\MyRadioNews;
 
 /**
  * This class has helper functions for long-polling SIS
@@ -20,6 +22,23 @@ use \MyRadio\ServiceAPI\MyRadio_Webcam;
  */
 class SIS_Remote extends ServiceAPI
 {
+
+    /**
+     * Gets the latest presenter info
+     * @param  array $session phpSession variable
+     * @return array presenter info data
+     */
+    public static function queryPresenterInfo($session) {
+        if ($_REQUEST['presenterinfo-lasttime'] < time() - 300) {
+            $response = MyRadioNews::getLatestNewsItem(Config::$presenterinfo_feed);
+            return [
+                'presenterinfo' => ['time' => time(), 'info' => $response]
+            ];
+        } else {
+            return [];
+        }
+    }
+
     /**
      * Gets the latest messages for the selected timeslot
      * @param  array $session phpSession variable

@@ -69,7 +69,7 @@ class MyRadio_Webcam extends ServiceAPI
      */
     public static function getCurrentWebcam()
     {
-        $current = file_get_contents(Config::$webcam_current_url);
+        $current = 0;//file_get_contents(Config::$webcam_current_url);
 
         switch ($current) {
             case '0': $location = 'Jukebox';

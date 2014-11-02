@@ -1,9 +1,148 @@
+var SIS = function(container) {
+    var sisContainer = container,
+        tabContainer = document.createElement('div'),
+        tabTabsContainer = document.createElement('ul'),
+        tabContentContainer = document.createElement('div'),
+        pluginContainer = document.createElement('div'),
+        defaultActiveFound = false,
+        params = {},
+        callbacks = {},
+        /**
+        * Starts the AJAX Comet request to the server. Will call itself after the
+        * first time it is run. When the request is complete, it will call the
+        * required callback functions from plugins.
+        */
+        connect = function() {
+            $.ajax({
+                url: myury.makeURL('SIS', 'remote'),
+                method: 'POST',
+                data: params,
+                cache: false,
+                dataType: 'json',
+                //The timeout here is to prevent stack overflow
+                complete: function() {setTimeout(connect, 100);},
+                success: handleResponse
+            });
+        },
+        /**
+        * Used by connect, this function deals with the JSON object returned from the
+        * server
+        * @param data The JSON object returned from the server
+        */
+        handleResponse = function(data) {
+            for (var namespace in data) {
+                //Handle the Debug namespace - log the message
+                if (namespace == 'debug') {
+                    for (var message in data[namespace]) {
+                        console.log(data[namespace][message]);
+                    }
+                    continue;
+                } else if (typeof(callbacks[namespace]) != 'undefined') {
+                    //This namespace is registered. Execute the callback function
+                    callbacks[namespace](data[namespace]);
+                }
+            }
+        }
 
+        generateTabContainer = function(id, name) {
+            var tabTab = document.createElement('li'),
+                tabLink = document.createElement('a'),
+                tabBadge = document.createElement('span');
+
+            tabTab.setAttribute('role', 'presentation');
+            tabLink.setAttribute('role', 'tab');
+            tabLink.setAttribute('data-toggle', 'tab');
+            tabLink.setAttribute('href', '#' + id);
+            tabLink.innerHTML = name + '&nbsp;';
+            tabBadge.setAttribute('class', 'badge');
+            tabLink.appendChild(tabBadge);
+            tabTab.appendChild(tabLink);
+            tabTabsContainer.appendChild(tabTab);
+
+            var container = document.createElement('div');
+            container.setAttribute('class', 'tab-pane');
+            container.setAttribute('role', 'tabpanel');
+            container.setAttribute('id', id);
+            tabContentContainer.appendChild(container);
+
+            $(tabLink).click(function(e) {
+                e.preventDefault();
+                $(this).tab('show');
+            });
+
+            container.setUnread = function(num) {
+                if (num == 0) {
+                    tabBadge.innerHTML = '';
+                } else {
+                    tabBadge.innerHTML = num;
+                }
+            },
+
+            container.registerParam = function(key, value) {
+                params[key] = value;
+            }
+
+            return {
+                container: container,
+                link: tabLink
+            };
+        };
+
+    tabContainer.setAttribute('class', 'sis-tabcontainer col-md-9');
+    tabTabsContainer.setAttribute('class', 'nav nav-tabs');
+    tabTabsContainer.setAttribute('role', 'tablist');
+    tabContainer.appendChild(tabTabsContainer);
+    tabContentContainer.setAttribute('class', 'tab-content');
+    tabContainer.appendChild(tabContentContainer);
+
+    pluginContainer.setAttribute('class', 'sis-plugincontainer col-md-3');
+    sisContainer.appendChild(pluginContainer);
+    sisContainer.appendChild(tabContainer);
+
+    connect();
+
+    return {
+        registerModule: function(id, module, type) {
+            if (
+                !module.hasOwnProperty('initialise') ||
+                !module.hasOwnProperty('name') ||
+                !module.hasOwnProperty('type')
+            ) {
+                console.error('Cannot load ' + id + ' as it is invalid.');
+                return;
+            }
+
+            var objs;
+            if (module.type == 'tab') {
+                objs = generateTabContainer(id, module.name);
+            } else if (module.type == 'plugin') {
+                objs = generatePluginContainer(id, module.name);
+            }
+            // Make it the active module if it is set to be
+            if (
+                defaultActiveFound === false &&
+                module.hasOwnProperty('activeByDefault') &&
+                module.activeByDefault
+            ) {
+                defaultActiveFound = true;
+                $(objs.link).click();
+            }
+
+            if (module.hasOwnProperty('update')) {
+                callbacks[id] = function(data) {
+                    module.update.call(objs.container, data);
+                }
+            }
+
+            module.initialise.call(objs.container, objs);
+        }
+    };
+};
+
+var dontcallme = function(){
 /* Selector */
     var selectorLastMod = 0;
     var updateSelector = function(data) {
-        console.log('updateSelector triggered by server');
-
         selectorLocked = data['lock'];
         selectorPower = {
           's1': data['s1power'],
@@ -76,11 +215,11 @@
 
         $.get(myury.makeURL('SIS', 'selector.set'), {src: s}, function(data) {
           if (data['error'] == 'locked') {
-            $('<div title="Selector Error">Could not change studio; studio selector is currently locked out.</div>').dialog({modal: true});
+            myury.createDialog('Selector Error', 'Could not change studio; studio selector is currently locked out.');
             return;
           }
           if (data['error']) {
-            $('<div title="Selector Error">'+data['error']+'</div>').dialog({modal: true});
+            myury.createDialog('Selector Error', data['error']);
             return;
           }
           updateSelector(data);
@@ -102,21 +241,17 @@
 
     function setCam(newcam) {
       if (newcam === wcCurrentCam) {
-        console.log('Ignoring setCam - Already current webcam.');
         return;
       }
-      console.log('Updating webcam to '+newcam);
       $.get(myury.makeURL('SIS', 'webcam.set'), {'src':newcam});
     }
 
     var updateWebcam = function(data) {
-      console.log('updateWebcam triggered by server');
-
-      $('button[id^=setactive]:not([id=setactive'+ data['current']+'])').button("enable");
+      $('button[id^=setactive]:not([id=setactive'+ data['current']+'])').removeAttr('disabled');
       $('button#setactive'+ data['current']).button("disable");
 
       //Only show side images for not-active cameras, or all for jukebox
-      if ( data['current'] === 0) {
+      if (data['current'] === 0) {
         $('#plugin_body_webcam figure').show();
       } else {
         $('#plugin_body_webcam figure').hide();
@@ -130,55 +265,7 @@
     };
 
 
-/* Messages */
-    var highest_message_id = 0;
 
-    var updateMessages = function(data) {
-      console.log('updateMessages triggered by server');
-      for (var i in data) {
-        //Add the content dialog div
-        $('#message-data').append('<div id="mc'+data[i]['id']+'">'+data[i]['body']+'<footer></footer></div>');
-        for (var l in data[i]['location']) {
-          $('#mc'+data[i]['id']+' footer').append('<br>'+data[i]['location'][l]);
-        }
-        //Set some of the variables
-        var img = "<img src='"+mConfig.base_url+"img/sis/"+data[i]['type']+".png' />";
-        var msgdate = new Date(data[i]['time']*1000);
-        var mins = msgdate.getMinutes();
-        if (mins < 10) {
-            mins = "0" + mins;
-        }
-        var time = msgdate.getHours()+':'+mins+' '+msgdate.getDate()+'/'+(msgdate.getMonth()+1);
-        var read = "";
-        var classes = "";
-        if (data[i]['read'] === false) {
-          classes = classes + " unread";
-          server.incrementUnreadEvents();
-        }
-        //Add the new row to the top of the messages table
-        $('#messages table').prepend(
-        '<tr class="td-msgitem'+classes+'" id="m'+data[i]['id']+'"><td>'+img+'</td><td>'+data[i]['title']+'</td><td>'+time+'</td></tr>');
-        //Add the onclick handler for the new row
-        $('#messages table tr:first').click(function() {
-          var id = $(this).attr('id').replace('m', '');
-          if ($(this).hasClass('unread')) {
-            console.log('Marking message '+id+' as read');
-            //This is the first time the message has been opened. Mark as read
-            $.ajax({
-              url: myury.makeURL('SIS', 'messages.markread', {'id': id})
-            });
-            server.decrementUnreadEvents();
-            $(this).removeClass('unread');
-          }
-          $('.ui-dialog-content').dialog('close');
-          $('#mc'+id).dialog({ width:550 });
-        });
-        //Increment the highest message id, if necessary
-        highest_message_id = (highest_message_id < data[i]['id']) ? data[i]['id'] : highest_message_id;
-      }
-      //Update the server's highest id parameter
-      server.register_param('messages_highest_id', highest_message_id);
-    };
 
 
 /* News */
@@ -237,7 +324,6 @@
     var tracklist_highest_id = 0;
 
     var updateTrackListing = function(data) {
-        console.log('updateTrackListing triggered by server');
         for (var i in data) {
             $('#tracklist-data').append('<div id="delsure'+data[i]['id']+'" title="Delete Track?">Are you sure you want to delete this track?</div>');
 
@@ -273,7 +359,6 @@
                     modal: true,
                     buttons: {
                         "Yes": function(){
-                                console.log('Marking tracklog '+id+' as deleted ');
                                 $.ajax({
                                     url: myury.makeURL('SIS','tracklist.delTrack', {'id': id})
                                 });
@@ -345,22 +430,6 @@
 
 
 $(document).ready(function() {
-    $("#switcher").themeswitcher({
-                    imgpath: "",
-                    themepath: mConfig.base_url + "css/vendor",
-                    jqueryuiversion: "",
-                    rounded: false,
-                    themes: [
-                        {
-                            title: "MyRadio",
-                            name: "ury-purple",
-                        },
-                        {
-                            title: "SIS2",
-                            name: "ury-red",
-                        }
-                    ]
-            });
 
 
     // Selector
@@ -385,14 +454,14 @@ $(document).ready(function() {
     $('button#setactive3').click(function(){setCam(3);});
     $('button#setactive4').click(function(){setCam(4);});
 
-    $('button#setactive'+wcCurrentCam).button("disable");
+    $('button#setactive'+wcCurrentCam).attr("disabled");
 
     $('button#setactive7').click(function(){$('div#customcam').toggle('blind',200);});
     $('button#setcustomcam').click(function(){setCam($('input#camurl').val());});
 
 
     // Help
-    $('#hide-help').button().click(function() {
+    $('#hide-help').click(function() {
         $.ajax({
           url: myury.makeURL('SIS','help.hide'),
           success: function() {
@@ -510,3 +579,5 @@ $(document).ready(function() {
     server.register_callback(myury.errorReport, 'myury_errors');
 
 });
+
+};

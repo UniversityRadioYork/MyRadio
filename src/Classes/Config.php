@@ -181,7 +181,7 @@ final class Config
      * The id of the news feed to use for presenter infomation
      * @var int
      */
-    public static $piss_feed = 4;
+    public static $presenterinfo_feed = 4;
 
     /**
      * The path to the motion Webcam logs. This must be a file path, but may be NFS/Samba mounter
@@ -450,6 +450,11 @@ final class Config
      * @var String
      */
     public static $sis_tab_folder = 'Models/SIS/tabs';
+
+    /**
+     * Array of tabs and plugins to be used by SIS. They will be loaded in order.
+     */
+    public static $sis_modules = ['presenterinfo', 'messages'];
 
     /**
      * Studio data
