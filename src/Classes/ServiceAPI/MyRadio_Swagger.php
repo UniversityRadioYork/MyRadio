@@ -248,7 +248,7 @@ class MyRadio_Swagger
         $long_desc = implode('<br>', $doc['lines']);
 
         //We append the auth requirements to the long description
-        $requirements = MyRadio_APIKey::getCallRequirements(
+        $requirements = self::getCallRequirements(
             self::getApiClasses()[$method->getDeclaringClass()],
             $method->getName()
         );
