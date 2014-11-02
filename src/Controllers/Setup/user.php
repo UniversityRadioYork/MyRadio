@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		if (!$auth[2] or !defined($auth[1])) {
 			continue;
 		}
-		$user->grantPermission(const($auth[1]));
+		$user->grantPermission(constant($auth[1]));
 	}
 
 	header('Location: ?c=save');
