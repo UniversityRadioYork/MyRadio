@@ -28,9 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$_REQUEST['password']
 	);
 
-	// Give this user every possible permission
-	foreach (CoreUtils::getAllPermissions() as $auth) {
-		$user->grantPermission($auth['value']);
+	// Give this user most possible permissions
+	foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-auth.json')) as $auth) {
+		if (!$auth[2] or !defined($auth[1])) {
+			continue;
+		}
+		$user->grantPermission(const($auth[1]));
 	}
 
 	header('Location: ?c=save');
