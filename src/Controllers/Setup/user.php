@@ -29,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	);
 
 	// Give this user most possible permissions
+	CoreUtils::setUpAuth();
 	foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-auth.json')) as $auth) {
 		if (!$auth[2] or !defined($auth[1])) {
 			continue;
