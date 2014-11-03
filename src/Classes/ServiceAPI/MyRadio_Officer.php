@@ -93,7 +93,7 @@ class MyRadio_Officer extends ServiceAPI
 
     /**
      * Create a new Officer position
-     * 
+     *
      * @param  String       $name     The position name, e.g. "Station Cat"
      * @param  String       $descr    A description of the position "official feline"
      * @param  String       $alias    Email alias (may be NULL) e.g. station.cat
@@ -123,6 +123,17 @@ class MyRadio_Officer extends ServiceAPI
                 'SELECT officerid FROM public.officer'
             )
         );
+    }
+
+    public static function standDown($memberofficerid)
+    {
+        self::$db->query(
+                'UPDATE public.member_officer
+                SET till_date = NOW()
+                WHERE member_officerid = $1',
+                [$memberofficerid]
+            )
+        // TODO update cache object & clear session automatically
     }
 
     /**
