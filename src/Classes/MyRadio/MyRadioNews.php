@@ -63,11 +63,11 @@ class MyRadioNews
             ORDER BY timestamp DESC',
             [$newsfeedid]
         );
-        
+
         if (empty($newsentry)) {
             return null;
         }
-        
+
         return self::getNewsItem($newsentry['newsentryid'], $user);
     }
 
@@ -156,5 +156,4 @@ class MyRadioNews
             )
         );
     }
-
 }
