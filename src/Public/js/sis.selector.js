@@ -6,7 +6,7 @@ var Selector = function() {
             'Jukebox',
             'Outside Broadcast'
         ],
-        buttons,
+        buttons = [],
         onAir = document.createElement('span'),
         lastTime = 0,
         currentStudio,
@@ -96,6 +96,7 @@ var Selector = function() {
                 button.setAttribute('on', 'true');
                 button.addEventListener('click', selectStudio);
                 row.appendChild(button);
+                buttons.push(button);
             }
             
             onAir.innerHTML = 'Selector unavailable &mdash; Locked';
