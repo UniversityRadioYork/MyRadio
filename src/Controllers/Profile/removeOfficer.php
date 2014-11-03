@@ -8,7 +8,7 @@
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Officer;
 
-$memberofficerid = $_REQUEST['memberofficerid']
+$memberofficerid = $_REQUEST['memberofficerid'];
 
 MyRadio_Officer::standDown($memberofficerid);
 
