@@ -15,4 +15,3 @@ header('Expires: ', date('r', time()+86400));
 header('HTTP/1.1 200 OK');
 
 echo 'window.mConfig='. json_encode(Config::getPublicConfig()).';';
-
