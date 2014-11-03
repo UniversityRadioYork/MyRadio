@@ -79,14 +79,6 @@ set_exception_handler(function($e)
   }
 });
 
-/**
- * Turn off visible error reporting, if needed
- * 269 is AUTH_SHOWERRORS - the constants aren't initialised yet
- */
-if (!Config::$display_errors && !CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
-    ini_set('display_errors', 'Off');
-}
-
 // Set error log file
 ini_set('error_log', Config::$log_file);
 
@@ -96,6 +88,14 @@ ServiceAPI::wakeup();
 
 //Initialise the permission constants
 CoreUtils::setUpAuth();
+
+/**
+ * Turn off visible error reporting, if needed
+ * must come after CoreUtils::setUpAuth()
+ */
+if (!Config::$display_errors && !CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
+    ini_set('display_errors', 'Off');
+}
 
 //Set up a shutdown function
 //AFTER other things to ensure DB is registered
