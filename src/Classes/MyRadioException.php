@@ -57,7 +57,7 @@ class MyRadioException extends \RuntimeException
                 </table>";
 
         if (class_exists('\MyRadio\Config')) {
-            if (Config::$email_exceptions && class_exists('MyRadioEmail') && $code >= 500) {
+            if (Config::$email_exceptions && class_exists('\MyRadio\MyRadioEmail') && class_exists('\MyRadio\MyRadio\CoreUtils') && $code >= 500) {
                 MyRadioEmail::sendEmailToComputing(
                     '[MyRadio] Exception Thrown',
                     $this->error . "\r\n" . $message . "\r\n"
@@ -101,7 +101,7 @@ class MyRadioException extends \RuntimeException
                     //Output to the browser
                     header('HTTP/1.1 ' . $this->code . ' Internal Server Error');
 
-                    if (class_exists('CoreUtils') && !headers_sent()) {
+                    if (class_exists('\MyRadio\MyRadio\CoreUtils') && !headers_sent()) {
                         //We can use a pretty full-page output
                         $twig = CoreUtils::getTemplateObject();
                         $twig->setTemplate('error.twig')
