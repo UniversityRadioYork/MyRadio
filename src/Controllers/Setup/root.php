@@ -26,25 +26,25 @@ $controller = isset($_REQUEST['c']) ? $_REQUEST['c'] : 'checks';
 
 session_start();
 if (isset($_SESSION['myradio_setup_config'])) {
-	$config_overrides = $_SESSION['myradio_setup_config'];
-	foreach ($_SESSION['myradio_setup_config'] as $k => $v) {
-		Config::$$k = $v;
-	}
+    $config_overrides = $_SESSION['myradio_setup_config'];
+    foreach ($_SESSION['myradio_setup_config'] as $k => $v) {
+        Config::$$k = $v;
+    }
 }
 
 session_write_close();
 register_shutdown_function(function()
 {
-	if (isset($_SESSION)) {
-		//Something restarts this sometimes, it seems
-		session_write_close();
-	}
-	if (isset($GLOBALS['config_overrides'])) {
-		session_start();
-		$_SESSION['myradio_setup_config'] = $GLOBALS['config_overrides'];
-	}
+    if (isset($_SESSION)) {
+        //Something restarts this sometimes, it seems
+        session_write_close();
+    }
+    if (isset($GLOBALS['config_overrides'])) {
+        session_start();
+        $_SESSION['myradio_setup_config'] = $GLOBALS['config_overrides'];
+    }
 
-	ob_end_flush();
+    ob_end_flush();
 });
 
 CoreUtils::actionSafe($controller);

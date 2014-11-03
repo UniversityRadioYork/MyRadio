@@ -14,6 +14,7 @@ use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioDefaultAuthenticator;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\ServiceAPI\MyRadio_Swagger;
 
 /**
  * The user object provides and stores information about a user
@@ -681,6 +682,38 @@ class MyRadio_User extends ServiceAPI
     public function hasAuth($authid)
     {
         return in_array($authid, $this->permissions);
+    }
+
+    /**
+     * Returns if the user can call a method via the REST API
+     * 
+     */
+    public function canCall($class, $method)
+    {
+        $result = MyRadio_Swagger::getCallRequirements($class, $method);
+        if ($result === null) {
+            return false; //No permissions means the method is not accessible
+        }
+
+        if (empty($result)) {
+            return true; //An empty array means no permissions needed
+        }
+
+        foreach ($result as $type) {
+            if ($this->hasAuth($type)) {
+                return true; //The Key has that permission
+            }
+        }
+
+        return false; //Didn't match anything...
+    }
+
+    /**
+     * @todo...
+     */
+    public function logCall($uri, $args)
+    {
+        return;
     }
 
     /**
