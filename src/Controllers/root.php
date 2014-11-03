@@ -91,6 +91,7 @@ CoreUtils::setUpAuth();
 
 /**
  * Turn off visible error reporting, if needed
+ * must come after CoreUtils::setUpAuth()
  */
 if (!Config::$display_errors && !CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
     ini_set('display_errors', 'Off');
