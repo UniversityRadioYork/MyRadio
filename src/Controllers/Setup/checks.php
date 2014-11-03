@@ -16,12 +16,12 @@
  */
 function convertPHPSizeToBytes($sSize)
 {
-    if ( is_numeric( $sSize) ) {
+    if (is_numeric($sSize)) {
        return $sSize;
     }
     $sSuffix = substr($sSize, -1);
     $iValue = substr($sSize, 0, -1);
-    switch(strtoupper($sSuffix)){
+    switch (strtoupper($sSuffix)) {
     case 'P':
         $iValue *= 1024;
     case 'T':

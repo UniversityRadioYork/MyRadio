@@ -189,10 +189,9 @@ class CoreUtils
                 [date('Y')]
             );
 
-            if (
-                empty($term) or //Default to this year
-                strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days')
-                ) {
+            // Default to this year
+            $beforeAccountExpiry = strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days');
+            if (empty($term) || $beforeAccountExpiry) {
                 CoreUtils::$academicYear = date('Y');
             } else {
                 self::$academicYear = date('Y') - 1;
@@ -245,10 +244,8 @@ class CoreUtils
         //Decode to datasource if needed
         $data = self::dataSourceParser($data);
 
-        if (
-            !empty(MyRadioError::$php_errorlist) &&
-            (Config::$display_errors || CoreUtils::hasPermission(AUTH_SHOWERRORS))
-            ) {
+        $canDisplayErr = Config::$display_errors || CoreUtils::hasPermission(AUTH_SHOWERRORS);
+        if (!empty(MyRadioError::$php_errorlist) && $canDisplayErr) {
             $data['myury_errors'] = MyRadioError::$php_errorlist;
         }
 
@@ -648,13 +645,13 @@ class CoreUtils
         }
 
         return self::$action_ids[$action . '-' . $module];
-        
+
     }
 
     /**
      * Assigns a permission to a command. Note arguments are the integer IDs
      * NOT the String names
-     * 
+     *
      * @param int $module The module ID
      * @param int $action The action ID
      * @param int $permission The permission typeid
