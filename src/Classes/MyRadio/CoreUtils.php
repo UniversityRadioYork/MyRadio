@@ -266,7 +266,7 @@ class CoreUtils
         header('Location: ' . self::makeURL($module, $action, $params));
     }
 
-    public static function redirectWithMessage($module, $action = null, $message)
+    public static function redirectWithMessage($module, $action, $message)
     {
         self::redirect($module, $action, ['message' => base64_encode($message)]);
     }
