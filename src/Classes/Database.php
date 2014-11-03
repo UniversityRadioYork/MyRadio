@@ -48,7 +48,7 @@ class Database
      */
     private function __construct()
     {
-        $this->db = pg_connect(
+        $this->db = @pg_connect(
             'host='. Config::$db_hostname
             .' port=5432 dbname='.Config::$db_name
             .' user='. Config::$db_user
@@ -109,14 +109,18 @@ class Database
             echo $sql . '&nbsp;' . print_r($params, true) . '<br>';
         }
 
-        $result = @pg_query_params($this->db, $sql, $params);
+        if (empty($params)) {
+            $result = @pg_query($this->db, $sql);
+        } else {
+            $result = @pg_query_params($this->db, $sql, $params);
+        }
         if (!$result) {
             if ($this->in_transaction) {
                 pg_query($this->db, 'ROLLBACK');
             }
             throw new MyRadioException(
                 'Query failure: ' . $sql . '<br>'
-                . pg_errormessage($this->db).'<br>Params: '.print_r($params, true),
+                . pg_last_error($this->db).'<br>Params: '.print_r($params, true),
                 500
             );
         }

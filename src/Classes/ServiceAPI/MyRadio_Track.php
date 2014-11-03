@@ -509,7 +509,9 @@ class MyRadio_Track extends ServiceAPI
 
         $filename = session_id() . '-' . ++$_SESSION['myury_nipsweb_file_cache_counter'] . '.mp3';
 
-        move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename);
+        if (!move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename)) {
+            throw new MyRadioException('Failed to move uploaded track to tmp directory.', 500);
+        }
 
         require_once 'Classes/vendor/getid3/getid3.php';
         $getID3 = new \getID3;
@@ -585,6 +587,9 @@ class MyRadio_Track extends ServiceAPI
 
     public static function identifyAndStoreTrack($tmpid, $title, $artist, $album, $position)
     {
+        // We need to rollback if something goes wrong later
+        self::$db->query('BEGIN');
+
         $ainfo = null;
         if ($album == "FROM_LASTFM") {
             // Get the album info if we're getting it from lastfm
@@ -635,9 +640,19 @@ class MyRadio_Track extends ServiceAPI
         $tmpfile = Config::$audio_upload_tmp_dir . '/' . $tmpid;
         $dbfile = $ainfo['album']->getFolder() . '/' . $track->getID();
 
-        shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 '{$dbfile}.mp3'");
-        shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
+        if (`which ffmpeg`) {
+            $bin = 'ffmpeg';
+        } elseif (`which avconv`) {
+            $bin = 'avconv';
+        } else {
+            throw new MyRadioException('Could not find ffmpeg or avconv.', 500);
+        }
+
+        shell_exec("nice -n 15 $bin -i '$tmpfile' -ab 192k -f mp3 '{$dbfile}.mp3'");
+        shell_exec("nice -n 15 $bin -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
         rename($tmpfile, $dbfile . '.mp3.orig');
+
+        self::$db->query('COMMIT');
 
         return ['status' => 'OK'];
     }
@@ -668,23 +683,23 @@ class MyRadio_Track extends ServiceAPI
             }
         }
 
-//Number 0
+        //Number 0
         if (empty($options['number'])) {
             $options['number'] = 0;
         }
-//Other Genre
+        //Other Genre
         if (empty($options['genre'])) {
             $options['genre'] = 'o';
         }
-//No intro
+        //No intro
         if (empty($options['intro'])) {
             $options['intro'] = 0;
         }
-//Clean unknown
+        //Clean unknown
         if (empty($options['clean'])) {
             $options['clean'] = 'u';
         }
-//Not digitised, and formate to t/f
+        //Not digitised, and format to t/f
         if (empty($options['digitised'])) {
             $options['digitised'] = 'f';
         } else {

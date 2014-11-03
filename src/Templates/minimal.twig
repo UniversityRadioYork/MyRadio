@@ -1,0 +1,28 @@
+{#
+ This minimal template is mainly used for the setup wizard
+ full templates may not work for many stages of an install.
+#}<!DOCTYPE html>
+<html>
+	<head>
+		<title>Welcome to MyRadio</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="Stylesheet" type="text/css" href="css/normalise.css">
+		<link rel="Stylesheet" type="text/css" href="css/vendor/themes/ury-purple/jquery-ui.css">
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<link rel="Stylesheet" type="text/css" href="css/style.css">
+		<script type="text/javascript" src="js/vendor/jquery-2.1.0.min.js"></script>
+	</head>
+	<body>
+	  <div id="grid" class="transBG clearfix">
+	  	<header id="content-header"><h2>{{ title }}</h2></header>
+	  	<div id="content-body" class="clearfix">
+	  		{% block content %}
+	  		{{content}}
+	  		{% endblock %}
+	  	</div>
+	  </div>
+	  <footer id="pageFooter" class="clearfix">
+		<div id="copyright"><p>MyRadio by <a href="https://github.com/UniversityRadioYork/">URY Computing Team</a></p></div>
+	  </footer>
+	</body>
+</html>

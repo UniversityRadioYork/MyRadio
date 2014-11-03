@@ -35,7 +35,7 @@ $log_level = 4; //0: Critical, 1: Important, 2: Run Process, 3: Info, 4: Debug
 /**
  * @todo Make paths nicer. This variable is used in MyRadio_Track directly.
  */
-$syspath = '/usr/local/bin/';
+$syspath = '';
 
 function dlog($x, $level = 3)
 {

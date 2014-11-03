@@ -14,6 +14,12 @@ use \MyRadio\MyRadio\MyRadioSession;
 use \MyRadio\MyRadio\MyRadioNullSession;
 
 /**
+ * This number is incremented every time a database patch is released.
+ * Patches are scripts in schema/patches.
+ */
+define('MYRADIO_CURRENT_SCHEMA_VERSION', 0);
+
+/**
  * Turn on Error Reporting for the start. Once the Config object is loaded
  * this is updated to reflect Config.
  */
@@ -31,6 +37,7 @@ set_include_path(str_replace('Controllers', '', __DIR__) . PATH_SEPARATOR . get_
 /**
  * Sets up the autoloader for all classes
  */
+
 require_once 'Classes/Autoloader.php';
 // instantiate the loader
 $loader = new \MyRadio\Autoloader;
@@ -42,20 +49,49 @@ $_basepath = str_replace('Controllers', '', __DIR__) . DIRECTORY_SEPARATOR;
 $loader->addNamespace('MyRadio', $_basepath . 'Classes');
 $loader->addNamespace('MyRadio\Iface', $_basepath . 'Interfaces');
 
+unset($_basepath);
+
 /**
  * Load configuration specific to this system.
+ * Or, if it doesn't exist, kick into setup.
  */
-require 'MyRadio_Config.local.php';
+if (stream_resolve_include_path('MyRadio_Config.local.php')) {
+  require_once 'MyRadio_Config.local.php';
+  if (Config::$setup === true) {
+    require 'Controllers/Setup/root.php';
+    exit;
+  }
+} else {
+  /**
+   * This install hasn't been configured yet. We should do that.
+   */
+  require 'Controllers/Setup/root.php';
+  exit;
+}
+
+set_error_handler('MyRadio\MyRadioError::errorsToArray');
+set_exception_handler(function($e)
+{
+  if (method_exists($e, 'uncaught')) {
+    $e->uncaught();
+  } else {
+    echo 'This information is not available at the moment. Please try again later.';
+  }
+});
 
 /**
- * Set local timezone.
+ * Turn off visible error reporting, if needed
+ * 269 is AUTH_SHOWERRORS - the constants aren't initialised yet
  */
-date_default_timezone_set(Config::$timezone);
+if (!Config::$display_errors && !CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
+    ini_set('display_errors', 'Off');
+}
 
+// Set error log file
+ini_set('error_log', Config::$log_file);
 
-set_error_handler('\MyRadio\MyRadioError::errorsToEmail');
-
-//Prepare ServiceAPI's Database and Cache connections
+//Wake up ServiceAPI if it isn't already
+//Otherwise ServiceAPI::$db/$cache may not be available and upset controllers
 ServiceAPI::wakeup();
 
 //Initialise the permission constants

@@ -14,6 +14,7 @@ use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioDefaultAuthenticator;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\ServiceAPI\MyRadio_Swagger;
 
 /**
  * The user object provides and stores information about a user
@@ -197,7 +198,7 @@ class MyRadio_User extends ServiceAPI
             WHERE memberid=$1
             AND member.college = l_college.collegeid
             LIMIT 1',
-            [$memberid]
+            [$this->memberid]
         );
         if (empty($data)) {
             //This user doesn't exist
@@ -681,6 +682,38 @@ class MyRadio_User extends ServiceAPI
     public function hasAuth($authid)
     {
         return in_array($authid, $this->permissions);
+    }
+
+    /**
+     * Returns if the user can call a method via the REST API
+     * 
+     */
+    public function canCall($class, $method)
+    {
+        $result = MyRadio_Swagger::getCallRequirements($class, $method);
+        if ($result === null) {
+            return false; //No permissions means the method is not accessible
+        }
+
+        if (empty($result)) {
+            return true; //An empty array means no permissions needed
+        }
+
+        foreach ($result as $type) {
+            if ($this->hasAuth($type)) {
+                return true; //The Key has that permission
+            }
+        }
+
+        return false; //Didn't match anything...
+    }
+
+    /**
+     * @todo...
+     */
+    public function logCall($uri, $args)
+    {
+        return;
     }
 
     /**
@@ -1444,7 +1477,18 @@ class MyRadio_User extends ServiceAPI
      * @return MyRadio_User
      * @throws MyRadioException
      */
-    public static function create($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00)
+    public static function create(
+        $fname,
+        $sname,
+        $eduroam = null,
+        $sex = 'o',
+        $collegeid = null,
+        $email = null,
+        $phone = null,
+        $receive_email = true,
+        $paid = 0.00,
+        $provided_password = null
+        )
     {
         /**
          * Deal with the UNIQUE constraint on the DB table.
@@ -1478,7 +1522,7 @@ class MyRadio_User extends ServiceAPI
         //Remove the domain if it is set
         $eduroam = str_replace('@'.Config::$eduroam_domain, '', $eduroam);
 
-        if (empty($eduroam) && empty($this->email)) {
+        if (empty($eduroam) && empty($email)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
         }
 
@@ -1502,7 +1546,7 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Looks good. Generate a password for them.
-        $plain_pass = CoreUtils::newPassword();
+        $plain_pass = empty($provided_password) ? CoreUtils::newPassword() : $provided_password;
 
         //Actually create the member!
         $r = self::$db->fetchColumn(
@@ -1532,8 +1576,7 @@ class MyRadio_User extends ServiceAPI
         //Activate the member's account for the current academic year
         $user->activateMemberThisYear($paid);
         //Set the user's password
-        $authenticator = new MyRadioDefaultAuthenticator();
-        $authenticator->setPassword($user, $plain_pass);
+        (new MyRadioDefaultAuthenticator())->setPassword($user, $plain_pass);
 
         //Send a welcome email (this will not send if receive_email is not enabled!)
         /**
@@ -1541,6 +1584,9 @@ class MyRadio_User extends ServiceAPI
          * @todo Link to Facebook events
          */
         $uname = empty($eduroam) ? $email : str_replace('@york.ac.uk', '', $eduroam);
+        if (!empty($provided_pass)) {
+            $plain_pass = '(The password you entered when registering)';
+        }
         $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$fname, $uname, $plain_pass], Config::$welcome_email);
 
         //Send the email
@@ -1622,6 +1668,21 @@ class MyRadio_User extends ServiceAPI
             }
         }
         return false;
+    }
+
+    public function grantPermission($authid, $from = null, $to = null) {
+        if ($to !== null) {
+            $tostamp = CoreUtils::getTimestamp($to);
+        } else {
+            $tostamp = null;
+        }
+        self::$db->query('INSERT INTO public.auth
+            (memberid, lookupid, starttime, endtime) VALUES ($1, $2, $3, $4)',
+            [$this->getID(), $authid, CoreUtils::getTimestamp($from), $to]);
+
+        if (($from === null or $from < $time) && ($to === null or $to > time())) {
+            $permissions[] = (int)$authid;
+        }
     }
 
     /**

@@ -13,19 +13,42 @@ MyRadio is part of a suite of upcoming public projects, including:
 
 Quickstart
 ----------
-Install Apache2, PHP and PostgreSQL on your prefered *nix distro. MyRadio has been tested with Ubuntu and FreeBSD.
+Install Apache2, PHP and PostgreSQL on your prefered *nix distro. Or Windows,
+if you're into that. MyRadio has been tested with Ubuntu and FreeBSD.
 
-Edit your Apache config as follows (where /usr/local/www/myradio is your checkout of this repository):
+Edit your Apache config as follows (where /usr/local/www/myradio is your
+checkout of this repository):
 
 ```
-Alias /myradio /usr/local/www/myradio/src/Public
+Alias /myradio /usr/local/www/MyRadio/src/Public
 
-<Directory /usr/local/www/myradio/src/Public>
+<Directory /usr/local/www/MyRadio/src/Public>
    Require all granted
    AllowOverride None
 </Directory>
+
+Alias /api /usr/local/www/MyRadio/src/PublicAPI
+<Directory /usr/local/www/MyRadio/src/PublicAPI>
+  Require all granted
+  AllowOverride None
+  RewriteEngine On
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^ /api/index.php [QSA,L]
+</Directory>
+
 ```
 
 Restart Apache2, go to http://hostname/myradio and follow the instructions.
 
-MyRadio uses GitHub Flow as a development workflow: https://guides.github.com/overviews/flow/
+For a new postgresql server, run the following after:
+```
+pg_createcluster [YOUR_POSTGRES_VERSION] myradio
+su postgres
+psql
+CREATE USER myradio WITH password '[A_STRONG_PASSWORD]';
+CREATE DATABASE myradio WITH OWNER=myradio;
+```
+
+MyRadio uses GitHub Flow as a development workflow:
+https://guides.github.com/overviews/flow/

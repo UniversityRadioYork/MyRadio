@@ -553,6 +553,10 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             WHERE start <= NOW() ORDER BY finish DESC LIMIT 1'
         );
 
+        if (empty($result)) {
+            return [];
+        }
+
         return self::getAllSeasonsInTerm($result[0]);
     }
 
@@ -895,7 +899,7 @@ EOT
         for ($i = 1; $i <= 10; $i++) {
             if (isset($params['weeks']['wk' . $i]) && $params['weeks']['wk' . $i] == 1) {
                 $day_start = $start_day + (($i - 1) * 7 * 86400);
-                $show_time = date('d-m-Y ', $day_start) . $start_time;
+                $show_time = date('Y-m-d ', $day_start) . $start_time;
 
                 /**
                  * @todo 1 is subtracted from the duration in the conflict checker here,
@@ -924,6 +928,9 @@ EOT
                         $_SESSION['memberid']
                     ]
                 );
+                if (empty($r)) {
+                    throw new MyRadioException('Failed to schedule timeslot.', 500);
+                }
                 $this->timeslots[] = MyRadio_Timeslot::getInstance($r[0]['show_season_timeslot_id']);
                 $times .= CoreUtils::happyTime($show_time)."\n"; //Times for the email
             }
