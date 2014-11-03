@@ -348,8 +348,18 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                     'description' => $this->getMeta('description'),
                     'tags' => is_null($this->getMeta('tag')) ? null : implode(' ', $this->getMeta('tag')),
                     'show' => empty($this->show_id) ? null : $this->show_id,
-                    'credits.member' => array_map(function ($credit) {return $credit['User'];}, $this->getCredits()),
-                    'credits.credittype' => array_map(function ($credit) {return $credit['type'];}, $this->getCredits()),
+                    'credits.member' => array_map(
+                        function ($credit) {
+                            return $credit['User'];
+                        },
+                        $this->getCredits()
+                    ),
+                    'credits.credittype' => array_map(
+                        function ($credit) {
+                            return $credit['type'];
+                        },
+                        $this->getCredits()
+                    ),
                     'existing_cover' => $this->getCover(),
                     'terms' => 'on'
                 ]
