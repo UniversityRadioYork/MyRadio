@@ -686,7 +686,7 @@ class MyRadio_User extends ServiceAPI
 
     /**
      * Returns if the user can call a method via the REST API
-     * 
+     *
      */
     public function canCall($class, $method)
     {
@@ -1657,8 +1657,7 @@ class MyRadio_User extends ServiceAPI
     public function isActiveMemberForYear($year = null)
     {
         // Use the current academic year as default if one isn't specified
-        if($year === null)
-        {
+        if ($year === null) {
             $year = CoreUtils::getAcademicYear();
         }
         // If the current year exists in payments (even with a value of £0, the member is active)

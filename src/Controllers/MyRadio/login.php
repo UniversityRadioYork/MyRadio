@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
                  * they try to access anything other than pages with AUTH_NOACCESS
                  */
                 $_SESSION['auth_use_locked'] = false;
-                if(!$user->isActiveMemberForYear()) {
+                if (!$user->isActiveMemberForYear()) {
                     $user->activateMemberThisYear();
                 }
                 $user->updateLastLogin();
