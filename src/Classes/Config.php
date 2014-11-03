@@ -454,7 +454,12 @@ final class Config
     /**
      * Array of tabs and plugins to be used by SIS. They will be loaded in order.
      */
-    public static $sis_modules = ['presenterinfo', 'messages'];
+    public static $sis_modules = [
+        'presenterinfo',
+        'messages',
+        'links',
+        'selector'
+    ];
 
     /**
      * Studio data

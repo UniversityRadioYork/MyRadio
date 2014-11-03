@@ -103,9 +103,9 @@ table.messages tr td:last-child {
 
 table {
   margin: auto;
-  width: 90%;
+  width: 100%;
   border-collapse: separate;
-  border-spacing: 0.7em 0.5em;
+  border-spacing: 10px;
 }
 
 input.text { margin-bottom:12px; width:95%; padding: .4em; }
@@ -115,11 +115,11 @@ fieldset { padding:0; border:0; margin-top:25px; }
 /** Selector **/
 #selector-buttons {
   margin: 0 auto;
-  border-spacing:2em 0;
+  border-spacing: 20px 0;
   margin-bottom: .5em;
   border-collapse: separate;
 }
-.selbtn { height:2em; width:2em; }
+.selbtn { height:35px; width:35px; }
 .poweredon { cursor:pointer; }
 .s4on { background-color: #6b00a3; }
 .s4off { background-color: #5f0093; }

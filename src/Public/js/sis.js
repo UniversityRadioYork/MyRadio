@@ -42,8 +42,7 @@ var SIS = function(container) {
                     callbacks[namespace](data[namespace]);
                 }
             }
-        }
-
+        },
         generateTabContainer = function(id, name) {
             var tabTab = document.createElement('li'),
                 tabLink = document.createElement('a'),
@@ -86,6 +85,63 @@ var SIS = function(container) {
                 container: container,
                 link: tabLink
             };
+        },
+        generatePluginContainer = function(id, name) {
+            var panel = document.createElement('div'),
+                heading = document.createElement('div'),
+                title = document.createElement('h4'),
+                titleLink = document.createElement('a'),
+                titleBadge = document.createElement('span'),
+                contentHolder = document.createElement('div'),
+                content = document.createElement('div');
+
+            panel.setAttribute('class', 'panel panel-default');
+
+            // Sets up panel header
+            heading.setAttribute('class', 'panel-heading');
+            heading.setAttribute('role', 'tab');
+            heading.setAttribute('id', 'heading-' + id);
+            title.setAttribute('class', 'panel-title');
+            titleLink.setAttribute('data-toggle', 'collapse');
+            titleLink.setAttribute('data-parent', '#sis-plugincontainer');
+            titleLink.setAttribute('href', '#collapse-' + id);
+            titleLink.setAttribute('aria-expanded', 'false');
+            titleLink.setAttribute('aria-controls', 'collapse-' + id);
+            titleLink.innerHTML = name + '&nbsp;';
+            titleBadge.setAttribute('class', 'badge');
+            titleLink.appendChild(titleBadge);
+            title.appendChild(titleLink);
+            heading.appendChild(title);
+            panel.appendChild(heading);
+
+            // Sets up panel content
+            contentHolder.setAttribute('id', 'collapse-' + id);
+            contentHolder.setAttribute('class', 'panel-collapse collapse');
+            contentHolder.setAttribute('role', 'tabpanel');
+            contentHolder.setAttribute('aria-labelledby', 'heading-' + id);
+            content.setAttribute('class', 'panel-body');
+            contentHolder.appendChild(content);
+            panel.appendChild(contentHolder);
+
+            pluginContainer.appendChild(panel);
+            $(contentHolder).collapse();
+
+            content.setUnread = function(num) {
+                if (num == 0) {
+                    titleBadge.innerHTML = '';
+                } else {
+                    titleBadge.innerHTML = num;
+                }
+            },
+
+            content.registerParam = function(key, value) {
+                params[key] = value;
+            }
+
+            return {
+                container: content,
+                link: titleLink
+            };
         };
 
     tabContainer.setAttribute('class', 'sis-tabcontainer col-md-9');
@@ -95,7 +151,8 @@ var SIS = function(container) {
     tabContentContainer.setAttribute('class', 'tab-content');
     tabContainer.appendChild(tabContentContainer);
 
-    pluginContainer.setAttribute('class', 'sis-plugincontainer col-md-3');
+    pluginContainer.setAttribute('class', 'sis-plugincontainer col-md-3 panel-group');
+    pluginContainer.setAttribute('role', 'tablist');
     sisContainer.appendChild(pluginContainer);
     sisContainer.appendChild(tabContainer);
 
@@ -140,100 +197,6 @@ var SIS = function(container) {
 };
 
 var dontcallme = function(){
-/* Selector */
-    var selectorLastMod = 0;
-    var updateSelector = function(data) {
-        selectorLocked = data['lock'];
-        selectorPower = {
-          's1': data['s1power'],
-          's2': data['s2power'],
-          's4': data['s4power']
-        };
-
-        if (!data['s1power']) {
-          $('#s1').attr('title', 'Studio 1 Powered Off')
-          .removeClass('s1on s1off poweredon')
-          .addClass('poweredoff');
-        } else {
-          $('#s1').attr('title', 'Studio 1').removeClass('poweredoff').addClass('poweredon');
-
-          if (data['studio'] == 1) {
-            $('#s1').removeClass('s1off').addClass('s1on');
-          } else {
-            $('#s1').removeClass('s1on').addClass('s1off');
-          }
-        }
-
-        if (!data['s2power']) {
-          $('#s2').attr('title', 'Studio 2 Powered Off').removeClass('s2on s2off poweredon').addClass('poweredoff');
-        } else {
-          $('#s2').attr('title', 'Studio 2').removeClass('poweredoff').addClass('poweredon');
-          if (data['studio'] == 2) {
-            $('#s2').removeClass('s2off').addClass('s2on');
-          } else {
-            $('#s2').removeClass('s2on').addClass('s2off');
-          }
-        }
-        if (data['studio'] == 3) {
-          $('#s3').removeClass('s3off').addClass('s3on');
-        } else {
-          $('#s3').removeClass('s3on').addClass('s3off');
-        }
-
-        switch(data['studio']) {
-          case 1:
-          case 2: s = 'Studio '+data['studio']+' On Air'; break;
-          case 3: s = 'Jukebox On Air'; break;
-          case 4: s = 'Outside Broadcast On Air'; break;
-          default:  s = 'Source '+data['studio']+' On Air'; break;
-        }
-        if (data['lock'] != '0') {
-          s = s + '<small> &mdash; Locked</small>';
-        }
-        $('span#onair').html(s);
-
-        //Update the lastmod time
-        selectorLastMod = data['lastmod'];
-        //Update the server's lastmod parameter
-        server.register_param('selector_lastmod', selectorLastMod);
-    };
-
-    function selectStudio(s) {
-        if ((s == 1) && (selectorPower['s1'] == '0')) {
-          return;
-        }
-        if ((s == 2) && (selectorPower['s2'] == '0')) {
-          return;
-        }
-        if ((s == 4) && (selectorPower['s4'] == '0')) {
-          return;
-        }
-        if (selectorLocked != '0') {
-          alert('Could not change studio.\nStudio selector is currently locked out.');
-          return;
-        }
-
-        $.get(myury.makeURL('SIS', 'selector.set'), {src: s}, function(data) {
-          if (data['error'] == 'locked') {
-            myury.createDialog('Selector Error', 'Could not change studio; studio selector is currently locked out.');
-            return;
-          }
-          if (data['error']) {
-            myury.createDialog('Selector Error', data['error']);
-            return;
-          }
-          updateSelector(data);
-        });
-    }
-
-
-/* Stats */
-    function updateStats() {
-        if (!$('div#plugin_body_stats').is(':visible')) {
-            return;
-        }
-        $('img#urystats').attr('src', myury.makeURL('SIS','stats.graph',{'date':(new Date().valueOf())}));
-    }
 
 
 /* Webcam */

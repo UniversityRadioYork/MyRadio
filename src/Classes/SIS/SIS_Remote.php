@@ -77,7 +77,7 @@ class SIS_Remote extends ServiceAPI
     {
         $response = MyRadio_Selector::getStatusAtTime(time());
 
-        if ($response['lastmod'] > $_REQUEST['selector_lastmod']) {
+        if ($response['lastmod'] > $_REQUEST['selector-lasttime']) {
             return ['selector' => $response];
         }
     }
