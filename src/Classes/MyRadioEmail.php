@@ -215,7 +215,7 @@ class MyRadioEmail extends ServiceAPI
                 //Don't send if the user has opted out
                 if ($user->getReceiveEmail()) {
                     $u_subject = trim(str_ireplace('#NAME', $user->getFName(), $this->subject));
-                    if (substr($u_subject, 0 , 1) !== '[') {
+                    if (substr($u_subject, 0, 1) !== '[') {
                         $u_subject = '['.Config::$short_name.'] ' . $u_subject;
                     }
                     $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);

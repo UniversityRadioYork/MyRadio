@@ -422,7 +422,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'title' => $this->getMeta('title'),
                     'description' => $this->getMeta('description'),
                     'genres' => $this->getGenre(),
-                    'tags' => is_null($this->getMeta('tag')) ? null : implode(' ',$this->getMeta('tag')),
+                    'tags' => is_null($this->getMeta('tag')) ? null : implode(' ', $this->getMeta('tag')),
                     'credits.member' => array_map(
                         function ($ar) {
                             return $ar['User'];
