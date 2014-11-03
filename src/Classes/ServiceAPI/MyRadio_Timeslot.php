@@ -835,5 +835,4 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             )
         );
     }
-
 }

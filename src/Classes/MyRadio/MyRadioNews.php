@@ -11,7 +11,8 @@ use \MyRadio\Database;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
-use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
 
 /**
  * Description of MyRadioNews
@@ -63,11 +64,11 @@ class MyRadioNews
             ORDER BY timestamp DESC',
             [$newsfeedid]
         );
-        
+
         if (empty($newsentry)) {
             return null;
         }
-        
+
         return self::getNewsItem($newsentry['newsentryid'], $user);
     }
 
@@ -156,5 +157,4 @@ class MyRadioNews
             )
         );
     }
-
 }

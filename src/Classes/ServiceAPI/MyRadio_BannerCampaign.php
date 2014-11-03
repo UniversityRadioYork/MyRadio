@@ -9,7 +9,8 @@ namespace MyRadio\ServiceAPI;
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
 
 /**
  * The BannerCampaign class stores and manages information about a Banner Campaign on the front website

@@ -177,7 +177,7 @@ class MyRadio_Swagger
 
         return $data;
     }
-    
+
     public static function parseDoc($doc)
     {
         $raw = explode("\n", trim(preg_replace('/(\/\*\*)|(\n\s+\*\/?[^\S\r\n]?)/', "\n", $doc->getDocComment()), " \n"));
@@ -195,7 +195,7 @@ class MyRadio_Swagger
             }
         }
         return ['lines' => $lines, 'keys' => $keys];
-    }         
+    }
 
 
     private static function getClassDoc(ReflectionClass $class)

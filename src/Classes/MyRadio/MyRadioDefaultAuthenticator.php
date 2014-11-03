@@ -244,5 +244,4 @@ class MyRadioDefaultAuthenticator extends \MyRadio\Database implements \MyRadio\
                     . ' can fill in this form to have a reset email sent to you.';
         }
     }
-
 }

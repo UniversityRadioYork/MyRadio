@@ -6,6 +6,7 @@
  */
 
 namespace MyRadio;
+
 use \MyRadio\MyRadio\CoreUtils;
 
 /**
@@ -71,7 +72,8 @@ class MyRadioException extends \RuntimeException
     /**
     * Called when the exception is not caught
     */
-    public function uncaught() {
+    public function uncaught()
+    {
         if (defined('SILENT_EXCEPTIONS') && SILENT_EXCEPTIONS) {
             return;
         }

@@ -12,7 +12,8 @@ use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_Track;
-use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
 
 /**
  * The iTones_Playlist class helps provide control and access to managed playlists
