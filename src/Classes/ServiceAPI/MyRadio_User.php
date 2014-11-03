@@ -1675,9 +1675,11 @@ class MyRadio_User extends ServiceAPI
         } else {
             $tostamp = null;
         }
-        self::$db->query('INSERT INTO public.auth
+        self::$db->query(
+            'INSERT INTO public.auth
             (memberid, lookupid, starttime, endtime) VALUES ($1, $2, $3, $4)',
-            [$this->getID(), $authid, CoreUtils::getTimestamp($from), $to]);
+            [$this->getID(), $authid, CoreUtils::getTimestamp($from), $to]
+        );
 
         if (($from === null or $from < $time) && ($to === null or $to > time())) {
             $permissions[] = (int)$authid;

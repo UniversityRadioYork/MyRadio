@@ -109,8 +109,9 @@ $function_checks = [
         'function' => function()
             {
                 return min(
-                    convertPHPSizeToBytes(ini_get('post_max_size')), convertPHPSizeToBytes(ini_get('upload_max_filesize'))
-                    ) > 40960;
+                    convertPHPSizeToBytes(ini_get('post_max_size')),
+                    convertPHPSizeToBytes(ini_get('upload_max_filesize'))
+                ) > 40960;
             },
         'success' => 'Your server is configured to support large file uploads.',
         'fail' => 'Your server is set to have a small (<40MB) upload limit. Consider tweaking your php.ini to prevent issues using Show Planner, Podcasts and other file upload utilities.',

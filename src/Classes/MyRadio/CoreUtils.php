@@ -562,7 +562,9 @@ class CoreUtils
     {
         $value = (int)Database::getInstance()->fetchColumn(
             'INSERT INTO public.l_action (descr, phpconstant)
-            VALUES ($1, $2) RETURNING typeid', [$descr, $constant])[0];
+            VALUES ($1, $2) RETURNING typeid',
+            [$descr, $constant]
+        )[0];
         define($constant, $value);
         return $value;
     }

@@ -201,7 +201,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     public static function getForm()
     {
         $form = (
-                new MyRadioForm(
+            new MyRadioForm(
                 'createpodcastfrm',
                 'Podcast',
                 'editPodcast',

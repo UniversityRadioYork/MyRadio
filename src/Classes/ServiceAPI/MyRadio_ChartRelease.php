@@ -427,7 +427,8 @@ class MyRadio_ChartRelease extends ServiceAPI
                     'tracks.track' => array_map(
                         function ($chartRow) {
                             return $chartRow->getTrack();
-                        }, $this->getChartRows()
+                        },
+                        $this->getChartRows()
                     )
                 ]
             );

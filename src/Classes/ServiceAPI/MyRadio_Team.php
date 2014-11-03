@@ -304,9 +304,9 @@ class MyRadio_Team extends ServiceAPI
     {
         return self::getInstance(
             self::$db->fetchColumn(
-            'INSERT INTO public.team (team_name, descr, local_alias, ordering)
-            VALUES ($1, $2, $3, $4) RETURNING teamid',
-            [$name, $descr, $alias, $ordering]
+                'INSERT INTO public.team (team_name, descr, local_alias, ordering)
+                VALUES ($1, $2, $3, $4) RETURNING teamid',
+                [$name, $descr, $alias, $ordering]
             )[0]
         );
     }
