@@ -17,22 +17,22 @@
 function convertPHPSizeToBytes($sSize)
 {
     if (is_numeric($sSize)) {
-       return $sSize;
+        return $sSize;
     }
     $sSuffix = substr($sSize, -1);
     $iValue = substr($sSize, 0, -1);
     switch (strtoupper($sSuffix)) {
-    case 'P':
-        $iValue *= 1024;
-    case 'T':
-        $iValue *= 1024;
-    case 'G':
-        $iValue *= 1024;
-    case 'M':
-        $iValue *= 1024;
-    case 'K':
-        $iValue *= 1024;
-        break;
+        case 'P':
+            $iValue *= 1024;
+        case 'T':
+            $iValue *= 1024;
+        case 'G':
+            $iValue *= 1024;
+        case 'M':
+            $iValue *= 1024;
+        case 'K':
+            $iValue *= 1024;
+            break;
     }
     return $iValue;
 }
@@ -245,9 +245,9 @@ foreach ($function_checks as $check) {
                       ln -s /etc/php5/mods-available/twig.ini /etc/php5/apache2/conf.d/20-twig.ini<br>
                       service apache2 restart
                   </code>
-                <?php
-                endif;
-                ?>
+              <?php
+              endif;
+              ?>
           </div>
       </div>
       <footer id="pageFooter" class="clearfix">
