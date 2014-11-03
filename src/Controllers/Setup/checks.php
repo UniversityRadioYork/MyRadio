@@ -106,8 +106,7 @@ $function_checks = [
     [
         //Check that max post size is at least 40MB
         //this still won't be enough for most podcasts, but it should be for MP3s
-        'function' => function()
-            {
+        'function' => function() {
                 return min(
                     convertPHPSizeToBytes(ini_get('post_max_size')),
                     convertPHPSizeToBytes(ini_get('upload_max_filesize'))

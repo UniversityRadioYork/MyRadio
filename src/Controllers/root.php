@@ -70,8 +70,7 @@ if (stream_resolve_include_path('MyRadio_Config.local.php')) {
 }
 
 set_error_handler('MyRadio\MyRadioError::errorsToArray');
-set_exception_handler(function($e)
-{
+set_exception_handler(function($e) {
   if (method_exists($e, 'uncaught')) {
     $e->uncaught();
   } else {

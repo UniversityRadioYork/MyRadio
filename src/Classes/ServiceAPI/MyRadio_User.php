@@ -1488,8 +1488,7 @@ class MyRadio_User extends ServiceAPI
         $receive_email = true,
         $paid = 0.00,
         $provided_password = null
-        )
-    {
+    ) {
         /**
          * Deal with the UNIQUE constraint on the DB table.
          */
@@ -1669,7 +1668,8 @@ class MyRadio_User extends ServiceAPI
         return false;
     }
 
-    public function grantPermission($authid, $from = null, $to = null) {
+    public function grantPermission($authid, $from = null, $to = null)
+    {
         if ($to !== null) {
             $tostamp = CoreUtils::getTimestamp($to);
         } else {
