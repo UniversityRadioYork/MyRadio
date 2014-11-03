@@ -132,7 +132,7 @@ class MyRadio_Officer extends ServiceAPI
                 SET till_date = NOW()
                 WHERE member_officerid = $1',
                 [$memberofficerid]
-            )
+            );
         // TODO update cache object & clear session automatically
     }
 
