@@ -8,9 +8,11 @@ namespace MyRadio\ServiceAPI;
 
 use \MyRadio\Config;
 use \MyRadio\Database;
-use \MyRadio\MyRadioException, \MyRadio\MyRadioError;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadioError;
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_Season;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;

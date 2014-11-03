@@ -1,9 +1,10 @@
 <?php
 
-use \MyRadio\Config, \MyRadio\Database;
+use \MyRadio\Config;
+use \MyRadio\Database;
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
-
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
 
 /**
  *
