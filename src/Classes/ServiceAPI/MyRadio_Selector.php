@@ -242,7 +242,15 @@ class MyRadio_Selector
         if ($response === 'FLK') {
             throw new MyRadioException('Selector Locked');
         } elseif ($response === 'ACK') {
-            return;
+            return [
+            'studio' => $studio,
+            'lock' => 0,
+            'selectedfrom' => 1,
+            's1power' => self::getStudio1PowerAtTime($time),
+            's2power' => self::getStudio2PowerAtTime($time),
+            's4power' => (self::remoteStreams()['s1']) ? true : false,
+            'lastmod' => time()
+        ];
         }
     }
 
