@@ -70,10 +70,10 @@ class MyRadioException extends \RuntimeException
                     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
                     or empty($_SERVER['REMOTE_ADDR']);
 
-            if (Config::$email_exceptions && class_exists('\MyRadio\MyRadioEmail') && $code !== 400) {
+            if (Config::$email_exceptions && class_exists('\MyRadio\MyRadioEmail') && $this->code !== 400) {
                 MyRadioEmail::sendEmailToComputing(
                     '[MyRadio] Exception Thrown',
-                    $this->error . "\r\n" . $message . "\r\n"
+                    $this->error . "\r\n" . $this->message . "\r\n"
                     . (isset($_SESSION) ? print_r($_SESSION, true) : '')
                     . "\r\n" . CoreUtils::getRequestInfo()
                 );
@@ -82,7 +82,7 @@ class MyRadioException extends \RuntimeException
             if (Config::$log_file) {
                 file_put_contents(
                     Config::$log_file,
-                    CoreUtils::getTimestamp() . '[' . $this->error . '] ' . $this->message . "\n" . $this->traceStr
+                    CoreUtils::getTimestamp() . '[' . $this->code . '] ' . $this->message . "\n" . $this->traceStr
                 );
             }
 
