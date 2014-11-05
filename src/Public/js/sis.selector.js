@@ -6,6 +6,7 @@ var Selector = function() {
             'Jukebox',
             'Outside Broadcast'
         ],
+        that,
         buttons = [],
         onAir = document.createElement('span'),
         lastTime = 0,
@@ -34,13 +35,15 @@ var Selector = function() {
                     myury.createDialog('Selector Error', data['error']);
                     return;
                 }
-                update(data);
+                update.call(this, data);
             });
         },
         update = function(data) {
             var liveStatus, s;
             lastTime = parseInt(data['lastmod']);
-            this.registerParam('selector-lasttime', lastTime);
+            // When called bet selectStudio, this isn't what I think it is
+            // @todo, see if that can be bound nicer
+            that.registerParam('selector-lasttime', lastTime);
 
             if (!data['s1power']) {
                 buttons[0].setAttribute('title', studios[0] + ' Powered Off');
@@ -85,6 +88,7 @@ var Selector = function() {
             var table = document.createElement('table'),
                 row = document.createElement('tr'),
                 button;
+            that = this;
             table.setAttribute('id', 'selector-buttons');
             table.appendChild(row);
 
