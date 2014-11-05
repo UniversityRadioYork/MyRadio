@@ -39,7 +39,11 @@ var Selector = function() {
             });
         },
         update = function(data) {
-            var liveStatus, s;
+            var liveStatus, s, time = parseInt(data['lastmod']);
+            // Disregard data older than the latest update
+            if (time <= lastTime) {
+                return;
+            }
             lastTime = parseInt(data['lastmod']);
             // When called bet selectStudio, this isn't what I think it is
             // @todo, see if that can be bound nicer
