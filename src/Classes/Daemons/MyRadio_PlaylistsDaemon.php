@@ -14,7 +14,6 @@ use \MyRadio\ServiceAPI\MyRadio_Track;
 use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
 use \MyRadio\NIPSWeb\NIPSWeb_AutoPlaylist;
 
-
 /**
  * This Daemon updates the auto-generated iTones Playlists once an hour.
  *

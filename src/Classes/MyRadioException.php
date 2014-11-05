@@ -6,6 +6,7 @@
  */
 
 namespace MyRadio;
+
 use \MyRadio\MyRadio\CoreUtils;
 
 /**
@@ -55,16 +56,13 @@ class MyRadioException extends \RuntimeException
                   <tr><td>Location</td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
                   <tr><td>Trace</td><td>" . nl2br($this->traceStr) . "</td></tr>
                 </table>";
-
-        if (class_exists('\MyRadio\Config')) {
-            
-        }
     }
 
     /**
     * Called when the exception is not caught
     */
-    public function uncaught() {
+    public function uncaught()
+    {
         if (defined('SILENT_EXCEPTIONS') && SILENT_EXCEPTIONS) {
             return;
         }
@@ -110,7 +108,7 @@ class MyRadioException extends \RuntimeException
                     //Output to the browser
                     header('HTTP/1.1 ' . $this->code . ' Internal Server Error');
 
-                    if (class_exists('CoreUtils') && !headers_sent()) {
+                    if (class_exists('\MyRadio\MyRadio\CoreUtils') && !headers_sent()) {
                         //We can use a pretty full-page output
                         $twig = CoreUtils::getTemplateObject();
                         $twig->setTemplate('error.twig')

@@ -10,10 +10,10 @@ namespace MyRadio\MyRadio;
 use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadioTwig;
-use \MyRadio\MyRadioException, \MyRadio\MyRadioError;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadioError;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\Iface\MyRadio_DataSource;
-
 
 /**
  * Standard API Utilities. Basically miscellaneous functions for the core system
@@ -189,10 +189,9 @@ class CoreUtils
                 [date('Y')]
             );
 
-            if (
-                empty($term) or //Default to this year
-                strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days')
-                ) {
+            // Default to this year
+            $beforeAccountExpiry = strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days');
+            if (empty($term) || $beforeAccountExpiry) {
                 CoreUtils::$academicYear = date('Y');
             } else {
                 self::$academicYear = date('Y') - 1;
@@ -245,10 +244,8 @@ class CoreUtils
         //Decode to datasource if needed
         $data = self::dataSourceParser($data);
 
-        if (
-            !empty(MyRadioError::$php_errorlist) &&
-            (Config::$display_errors || CoreUtils::hasPermission(AUTH_SHOWERRORS))
-            ) {
+        $canDisplayErr = Config::$display_errors || CoreUtils::hasPermission(AUTH_SHOWERRORS);
+        if (!empty(MyRadioError::$php_errorlist) && $canDisplayErr) {
             $data['myury_errors'] = MyRadioError::$php_errorlist;
         }
 
@@ -269,7 +266,7 @@ class CoreUtils
         header('Location: ' . self::makeURL($module, $action, $params));
     }
 
-    public static function redirectWithMessage($module, $action = null, $message)
+    public static function redirectWithMessage($module, $action, $message)
     {
         self::redirect($module, $action, ['message' => base64_encode($message)]);
     }
@@ -565,7 +562,9 @@ class CoreUtils
     {
         $value = (int)Database::getInstance()->fetchColumn(
             'INSERT INTO public.l_action (descr, phpconstant)
-            VALUES ($1, $2) RETURNING typeid', [$descr, $constant])[0];
+            VALUES ($1, $2) RETURNING typeid',
+            [$descr, $constant]
+        )[0];
         define($constant, $value);
         return $value;
     }
@@ -648,13 +647,13 @@ class CoreUtils
         }
 
         return self::$action_ids[$action . '-' . $module];
-        
+
     }
 
     /**
      * Assigns a permission to a command. Note arguments are the integer IDs
      * NOT the String names
-     * 
+     *
      * @param int $module The module ID
      * @param int $action The action ID
      * @param int $permission The permission typeid

@@ -686,7 +686,7 @@ class MyRadio_User extends ServiceAPI
 
     /**
      * Returns if the user can call a method via the REST API
-     * 
+     *
      */
     public function canCall($class, $method)
     {
@@ -1488,8 +1488,7 @@ class MyRadio_User extends ServiceAPI
         $receive_email = true,
         $paid = 0.00,
         $provided_password = null
-        )
-    {
+    ) {
         /**
          * Deal with the UNIQUE constraint on the DB table.
          */
@@ -1657,8 +1656,7 @@ class MyRadio_User extends ServiceAPI
     public function isActiveMemberForYear($year = null)
     {
         // Use the current academic year as default if one isn't specified
-        if($year === null)
-        {
+        if ($year === null) {
             $year = CoreUtils::getAcademicYear();
         }
         // If the current year exists in payments (even with a value of £0, the member is active)
@@ -1670,15 +1668,18 @@ class MyRadio_User extends ServiceAPI
         return false;
     }
 
-    public function grantPermission($authid, $from = null, $to = null) {
+    public function grantPermission($authid, $from = null, $to = null)
+    {
         if ($to !== null) {
             $tostamp = CoreUtils::getTimestamp($to);
         } else {
             $tostamp = null;
         }
-        self::$db->query('INSERT INTO public.auth
+        self::$db->query(
+            'INSERT INTO public.auth
             (memberid, lookupid, starttime, endtime) VALUES ($1, $2, $3, $4)',
-            [$this->getID(), $authid, CoreUtils::getTimestamp($from), $to]);
+            [$this->getID(), $authid, CoreUtils::getTimestamp($from), $to]
+        );
 
         if (($from === null or $from < $time) && ($to === null or $to > time())) {
             $permissions[] = (int)$authid;

@@ -5,6 +5,7 @@
  */
 
 namespace MyRadio\NIPSWeb;
+
 use \MyRadio\MyRadioException;
 
 /**

@@ -6,7 +6,8 @@ use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioMenu;
-use \MyRadio\MyRadioException, \MyRadio\MyRadioError;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadioError;
 
 use \Twig_Loader_Filesystem;
 use \Twig_Environment;

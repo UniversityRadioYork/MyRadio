@@ -37,8 +37,11 @@ function setupTimeslot($timeslot)
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
-    setupTimeslot(MyRadio_Timeslot::getInstance($_POST['timeslotid']));
-
+    if (isset($_POST['timeslotid'])) {
+        setupTimeslot(MyRadio_Timeslot::getInstance($_POST['timeslotid']));
+    } else {
+        CoreUtils::backWithMessage("Cannot select empty timeslot");
+    }
 } elseif (isset($_GET['current']) && $_GET['current'] && CoreUtils::hasPermission(AUTH_EDITSHOWS)) {
     //Submitted Current
     setupTimeslot(MyRadio_Timeslot::getCurrentTimeslot());

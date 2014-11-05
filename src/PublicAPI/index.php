@@ -51,7 +51,7 @@ function api_error($code, $message = null, $previous = null)
 function invokeArgsNamed(ReflectionMethod $refmethod, $object, Array $args = [])
 {
     $parameters = $refmethod->getParameters();
-    foreach($parameters as &$param) {
+    foreach ($parameters as &$param) {
         $name = $param->getName();
         $param = isset($args[$name]) ? $args[$name] : $param->getDefaultValue();
     }
