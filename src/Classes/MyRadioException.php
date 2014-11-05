@@ -57,14 +57,7 @@ class MyRadioException extends \RuntimeException
                 </table>";
 
         if (class_exists('\MyRadio\Config')) {
-            if (Config::$email_exceptions && class_exists('\MyRadio\MyRadioEmail') && $code !== 400) {
-                MyRadioEmail::sendEmailToComputing(
-                    '[MyRadio] Exception Thrown',
-                    $this->error . "\r\n" . $message . "\r\n"
-                    . (isset($_SESSION) ? print_r($_SESSION, true) : '')
-                    . "\r\n" . CoreUtils::getRequestInfo()
-                );
-            }
+            
         }
     }
 
@@ -80,6 +73,22 @@ class MyRadioException extends \RuntimeException
             $is_ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
                     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
                     or empty($_SERVER['REMOTE_ADDR']);
+
+            if (Config::$email_exceptions && class_exists('\MyRadio\MyRadioEmail') && $code !== 400) {
+                MyRadioEmail::sendEmailToComputing(
+                    '[MyRadio] Exception Thrown',
+                    $this->error . "\r\n" . $message . "\r\n"
+                    . (isset($_SESSION) ? print_r($_SESSION, true) : '')
+                    . "\r\n" . CoreUtils::getRequestInfo()
+                );
+            }
+
+            if (Config::$log_file) {
+                file_put_contents(
+                    Config::$logfile,
+                    '[' . $this->error . '] ' . $this->message . "\n" . $this->traceStr
+                );
+            }
 
             //Configuration is available, use this to decide what to do
             if (Config::$display_errors
