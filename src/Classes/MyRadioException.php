@@ -56,17 +56,6 @@ class MyRadioException extends \RuntimeException
                   <tr><td>Location</td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
                   <tr><td>Trace</td><td>" . nl2br($this->traceStr) . "</td></tr>
                 </table>";
-
-        if (class_exists('\MyRadio\Config')) {
-            if (Config::$email_exceptions && class_exists('\MyRadio\MyRadioEmail') && class_exists('\MyRadio\MyRadio\CoreUtils') && $code >= 500) {
-                MyRadioEmail::sendEmailToComputing(
-                    '[MyRadio] Exception Thrown',
-                    $this->error . "\r\n" . $message . "\r\n"
-                    . (isset($_SESSION) ? print_r($_SESSION, true) : '')
-                    . "\r\n" . CoreUtils::getRequestInfo()
-                );
-            }
-        }
     }
 
     /**
@@ -74,17 +63,32 @@ class MyRadioException extends \RuntimeException
     */
     public function uncaught()
     {
-        if (defined('SILENT_EXCEPTIONS') && SILENT_EXCEPTIONS) {
-            return;
-        }
+        $silent = (defined('SILENT_EXCEPTIONS') && SILENT_EXCEPTIONS);
 
         if (class_exists('\MyRadio\Config')) {
             $is_ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
                     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
                     or empty($_SERVER['REMOTE_ADDR']);
 
+            if (Config::$email_exceptions && class_exists('\MyRadio\MyRadioEmail') && $code !== 400) {
+                MyRadioEmail::sendEmailToComputing(
+                    '[MyRadio] Exception Thrown',
+                    $this->error . "\r\n" . $message . "\r\n"
+                    . (isset($_SESSION) ? print_r($_SESSION, true) : '')
+                    . "\r\n" . CoreUtils::getRequestInfo()
+                );
+            }
+
+            if (Config::$log_file) {
+                file_put_contents(
+                    Config::$log_file,
+                    CoreUtils::getTimestamp() . '[' . $this->error . '] ' . $this->message . "\n" . $this->traceStr
+                );
+            }
+
             //Configuration is available, use this to decide what to do
-            if (Config::$display_errors
+            if (!$silent
+                && Config::$display_errors
                 or (class_exists('\MyRadio\MyRadio\CoreUtils')
                 && defined('AUTH_SHOWERRORS')
                 && CoreUtils::hasPermission(AUTH_SHOWERRORS))
@@ -116,7 +120,7 @@ class MyRadioException extends \RuntimeException
                         echo $this->error;
                     }
                 }
-            } else {
+            } elseif (!$silent) {
                 if ($is_ajax) {
                     //This is an Ajax/CLI request. Return JSON
                     header('HTTP/1.1 ' . $this->code . ' Internal Server Error');
@@ -147,7 +151,7 @@ class MyRadioException extends \RuntimeException
                     }
                 }
             }
-        } else {
+        } elseif (!$silent) {
             echo 'MyRadio is unavailable at the moment. Please try again later. If the problem persists, contact support.';
         }
     }
