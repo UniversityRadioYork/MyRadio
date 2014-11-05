@@ -69,9 +69,11 @@ var Selector = function() {
 
             s = studios[data['studio'] - 1] + ' On Air';
             currentStudio = data['studio'];
-            if (data['lock'] != '0') {
+            if (data['lock'] != 0) {
               s = s + '<small> &mdash; Locked</small>';
               locked = true;
+            } else {
+                locked = false;
             }
             onAir.innerHTML = s;
         };
