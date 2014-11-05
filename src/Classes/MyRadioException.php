@@ -82,7 +82,7 @@ class MyRadioException extends \RuntimeException
             if (Config::$log_file) {
                 file_put_contents(
                     Config::$log_file,
-                    '[' . $this->error . '] ' . $this->message . "\n" . $this->traceStr
+                    CoreUtils::getTimestamp() . '[' . $this->error . '] ' . $this->message . "\n" . $this->traceStr
                 );
             }
 
