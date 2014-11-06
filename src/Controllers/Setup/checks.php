@@ -218,7 +218,7 @@ foreach ($function_checks as $check) {
                   if ($ready) {
                       echo '<p><span class="ui-icon ui-icon-circle-check fleft"></span>Amazing! Your server is absolutely <em>perfect</em> for running MyRadio.</p>';
                   }
-              } else:
+              } else {
                   echo '<h3>The following tests failed, but they aren\'t required for MyRadio to run:</h3><ul>';
                   foreach ($warnings as $warning) {
                       echo '<li>'.$warning.'</li>';
