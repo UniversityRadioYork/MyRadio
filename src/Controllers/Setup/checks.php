@@ -199,42 +199,42 @@ foreach ($function_checks as $check) {
               <p>It looks like you're trying to install MyRadio! Would you like some help with that? No? Well too bad, I'm not a paperclip you can hide.</p>
               <p>I'm just running some background checks to see if you're ready to go.</p>
               <?php
-                  if ($ready):
-              ?>
+              if ($ready) {
+                  ?>
                   <p class="ui-state-highlight">Good news! It looks like you're ready to go. <a href="?c=dbserver">Click here to continue</a>.</p>
               <?php
-                  else:
-              ?>
+              } else {
+                  ?>
                   <p class="ui-state-error">Uh oh! It looks like there's some things you'll have to get sorted out before you can continue. Follow the advice below, then <a href=''>refresh this page</a> to try again.</p>
               <?php
                   echo '<h3>The following tests failed and must be fixed before you can proceed:</h3><ul>';
-                  foreach ($problems as $problem):
+                  foreach ($problems as $problem) {
                       echo '<li>'.$problem.'</li>';
-                  endforeach;
+                  }
                   echo '</ul>';
-              endif;
+              }
 
-              if (empty($warnings)):
-                  if ($ready):
+              if (empty($warnings)) {
+                  if ($ready) {
                       echo '<p><span class="ui-icon ui-icon-circle-check fleft"></span>Amazing! Your server is absolutely <em>perfect</em> for running MyRadio.</p>';
-                  endif;
-              else:
+                  }
+              } else:
                   echo '<h3>The following tests failed, but they aren\'t required for MyRadio to run:</h3><ul>';
-                  foreach ($warnings as $warning):
+                  foreach ($warnings as $warning) {
                       echo '<li>'.$warning.'</li>';
-                  endforeach;
+                  }
                   echo '</ul>';
-              endif;
+              }
 
-              if (!empty($successes)):
+              if (!empty($successes)) {
                   echo '<h3>The following tests passed without any issues:</h3><ul>';
-                  foreach ($successes as $success):
+                  foreach ($successes as $success) {
                       echo '<li>'.$success.'</li>';
-                  endforeach;
+                  }
                   echo '</ul>';
-              endif;
+              }
 
-              if ($ready === false or !empty($warnings)):
+              if ($ready === false or !empty($warnings)) {
                   ?>
                   <h3>Cheating</h3>
                   <p>If you're using Ubuntu, the following commands (as root) will get you most of the way:</p>
@@ -250,7 +250,7 @@ foreach ($function_checks as $check) {
                       service apache2 restart
                   </code>
               <?php
-              endif;
+              }
               ?>
           </div>
       </div>
