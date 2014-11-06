@@ -130,11 +130,11 @@ class MyRadio_Officer extends ServiceAPI
     public static function standDown($memberofficerid)
     {
         self::$db->query(
-                'UPDATE public.member_officer
-                SET till_date = NOW()
-                WHERE member_officerid = $1',
-                [$memberofficerid]
-            );
+            'UPDATE public.member_officer
+            SET till_date = NOW()
+            WHERE member_officerid = $1',
+            [$memberofficerid]
+        );
         // TODO update cache object & clear session automatically
     }
 
