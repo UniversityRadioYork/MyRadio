@@ -236,7 +236,7 @@ window.timelord = {
                     $('#next-show').show();
                 } else if (date.getSeconds() <= 52) {
                     timelord.setCurrentShow('<span class="news">' +
-                            (52 - date.getSeconds()) + ' until voice over...</span>');
+                            (52 - date.getSeconds()) + ' until Voice Over...</span>');
                 } else {
                     timelord.setCurrentShow('<span class="news">'+mConfig.short_name+' News</span>');
                 }
