@@ -70,7 +70,7 @@ class MyRadioException extends \RuntimeException
                     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
                 or empty($_SERVER['REMOTE_ADDR']);
 
-            if (Config::$email_exceptions && class_exists('\MyRadio\MyRadioEmail') && $this->code >= 500) {
+            if (Config::$email_exceptions && class_exists('\MyRadio\MyRadioEmail') && $this->code !== 400) {
                 MyRadioEmail::sendEmailToComputing(
                     '[MyRadio] Exception Thrown',
                     'Code: ' . $this->code . "\r\n\r\n"
