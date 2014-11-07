@@ -235,8 +235,8 @@ window.timelord = {
                             (45 - date.getSeconds()) + '...</span>');
                     $('#next-show').show();
                 } else if (date.getSeconds() <= 52) {
-                    timelord.setCurrentShow('<span class="news">Jingle in ' +
-                            (52 - date.getSeconds()) + '...</span>');
+                    timelord.setCurrentShow('<span class="news">' +
+                            (52 - date.getSeconds()) + 's to talk...</span>');
                 } else {
                     timelord.setCurrentShow('<span class="news">'+mConfig.short_name+' News</span>');
                 }
