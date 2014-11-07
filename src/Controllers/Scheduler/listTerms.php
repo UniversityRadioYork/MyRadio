@@ -10,7 +10,7 @@ use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;
 
-$terms = array_map(function($x) {
+$terms = array_map(function ($x) {
     $x['start'] = date('d/m/Y', $x['start']);
     return $x;
 }, MyRadio_Scheduler::getTerms());
