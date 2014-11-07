@@ -30,9 +30,13 @@ require_once __DIR__ . '/../Controllers/root_cli.php';
  */
 function api_error($code, $message = null, $previous = null)
 {
-    $messages = [400 => "Bad Request", 401 => "Unauthorized",
-        403 => "Forbidden", 404 => "File Not Found",
-        500 => "Internal Server Error"];
+    $messages = [
+        400 => "Bad Request",
+        401 => "Unauthorized",
+        403 => "Forbidden",
+        404 => "File Not Found",
+        500 => "Internal Server Error"
+    ];
     header("HTTP/1.1 $code {$messages[$code]}");
     header("Content-Type: application/json");
     echo json_encode([
