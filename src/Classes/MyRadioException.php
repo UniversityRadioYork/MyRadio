@@ -52,9 +52,9 @@ class MyRadioException extends \RuntimeException
         //Set up the Exception
         $this->error = "<p>MyRadio has encountered a problem processing this request.</p>
                 <table class='errortable' style='color:#633'>
-                  <tr><td>Message</td><td>{$this->getMessage()}</td></tr>
-                  <tr><td>Location</td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
-                  <tr><td>Trace</td><td>" . nl2br($this->traceStr) . "</td></tr>
+                  <tr><td>Message: </td><td>{$this->getMessage()}</td></tr>
+                  <tr><td>Location: </td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
+                  <tr><td>Trace: </td><td>" . nl2br($this->traceStr) . "</td></tr>
                 </table>";
     }
 
@@ -68,18 +68,22 @@ class MyRadioException extends \RuntimeException
         if (class_exists('\MyRadio\Config')) {
             $is_ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
                     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
-                    or empty($_SERVER['REMOTE_ADDR']);
+                || empty($_SERVER['REMOTE_ADDR']);
 
             if (Config::$email_exceptions && class_exists('\MyRadio\MyRadioEmail') && $this->code !== 400) {
                 MyRadioEmail::sendEmailToComputing(
                     '[MyRadio] Exception Thrown',
-                    $this->error . "\r\n" . $this->message . "\r\n"
+                    'Code: ' . $this->code . "\r\n\r\n"
+                    . 'Message: ' . $this->message . "\r\n\r\n"
+                    . "Trace: \r\n" . $this->traceStr . "\r\n\r\n"
+                    . "Request: \r\n" . CoreUtils::getRequestInfo() . "\r\n\r\n"
+                    . "Session: \r\n"
                     . (isset($_SESSION) ? print_r($_SESSION, true) : '')
-                    . "\r\n" . CoreUtils::getRequestInfo()
                 );
             }
 
             if (Config::$log_file) {
+                // TODO make this create the dir - maybe use error_log?
                 file_put_contents(
                     Config::$log_file,
                     CoreUtils::getTimestamp() . '[' . $this->code . '] ' . $this->message . "\n" . $this->traceStr
@@ -89,9 +93,10 @@ class MyRadioException extends \RuntimeException
             //Configuration is available, use this to decide what to do
             if (!$silent
                 && Config::$display_errors
-                or (class_exists('\MyRadio\MyRadio\CoreUtils')
-                && defined('AUTH_SHOWERRORS')
-                && CoreUtils::hasPermission(AUTH_SHOWERRORS))
+                || (class_exists('\MyRadio\MyRadio\CoreUtils')
+                    && defined('AUTH_SHOWERRORS')
+                    && CoreUtils::hasPermission(AUTH_SHOWERRORS)
+                )
             ) {
                 if ($is_ajax) {
                     //This is an Ajax/CLI request. Return JSON
@@ -127,14 +132,17 @@ class MyRadioException extends \RuntimeException
                     header('Content-Type: application/json');
                     echo json_encode([
                         'status' => 'MyRadioError',
-                        'error' => 'This information is unavailable at the moment. Please try again later.',
+                        'error' => $this->message,
                         'code' => $this->code
                     ]);
                     //Stick the details in the session in case the user wants to report it
                     $_SESSION['last_ajax_error'] = [$this->error, $this->code, $this->trace];
                 } else {
-                    $error = '<div class="errortable"><p>This information is unavailable' .
-                                ' at the moment. Please try again later.</p></div>';
+                    $error = '<div class="errortable">'
+                        .'<p>Sorry, we have encountered an error and are unable to continue. Please try again later.</p>'
+                        .'<p>' . $this->message . '</p>'
+                        .'<p>Computing Team have been notified.</p>'
+                        .'</div>';
                     //Output limited info to the browser
                     header('HTTP/1.1 ' . $this->code . ' Internal Server Error');
 
@@ -143,11 +151,11 @@ class MyRadioException extends \RuntimeException
                         $twig = CoreUtils::getTemplateObject();
                         $twig->setTemplate('error.twig')
                             ->addVariable('title', '')
-                            ->addVariable('body', $this->error)
+                            ->addVariable('body', $error)
                             ->addVariable('uri', $_SERVER['REQUEST_URI'])
                             ->render();
                     } else {
-                        echo $this->error;
+                        echo $error;
                     }
                 }
             }
