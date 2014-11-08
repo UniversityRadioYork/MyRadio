@@ -16,7 +16,7 @@
             <li>
                 <a href="{{i.User.url}}">{{i.User.fname}} {{i.User.sname}}</a> ({{i.from|date('d/m/Y')}} -
                 {% if i.to %}{{i.to|date('d/m/Y')}}
-                {% else %}Present [<a href="{{myury.makeURL(config,'Profile','removeOfficer', {'memberofficerid':i.memberofficerid})}}">Stand Down</a>]
+                {% else %}Present [<a href="{{myury.API(config,'Officer','standDown', {'memberofficerid':i.memberofficerid})}}">Stand Down</a>]
                 {% endif %})
             </li>
         {% endfor %}
@@ -25,7 +25,7 @@
     <ul>
         {% for perm in officer.permissions %}
             <li>
-                {{ perm.text }}
+                {{ perm.text }} [<a href="{{myury.API(config,'Officer','revokePermission', {'id':officer.officerid, 'permissionid':perm.value})}}">Remove</a>]
             </li>
         {% endfor %}
     </ul>
