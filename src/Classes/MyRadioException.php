@@ -68,7 +68,7 @@ class MyRadioException extends \RuntimeException
         if (class_exists('\MyRadio\Config')) {
             $is_ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
                     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
-                or empty($_SERVER['REMOTE_ADDR']);
+                || empty($_SERVER['REMOTE_ADDR']);
 
             if (Config::$email_exceptions && class_exists('\MyRadio\MyRadioEmail') && $this->code !== 400) {
                 MyRadioEmail::sendEmailToComputing(
@@ -93,7 +93,7 @@ class MyRadioException extends \RuntimeException
             //Configuration is available, use this to decide what to do
             if (!$silent
                 && Config::$display_errors
-                or (class_exists('\MyRadio\MyRadio\CoreUtils')
+                || (class_exists('\MyRadio\MyRadio\CoreUtils')
                     && defined('AUTH_SHOWERRORS')
                     && CoreUtils::hasPermission(AUTH_SHOWERRORS)
                 )
