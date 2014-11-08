@@ -295,6 +295,34 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
+     * Adds a permission flag to the officer
+     * @param $permissionid the permission to add
+     */
+    public function addPermission($permissionid)
+    {
+        self::$db->query(
+            'INSERT INTO public.auth_officer
+            (officerid, lookupid)
+            VALUES ($1, $2)',
+            [$this->getID(), $permissionid]
+        );
+    }
+
+    /**
+     * Removes a permission flag from the officer
+     * @param $permissionid the permission to remove
+     */
+    public function revokePermission($permissionid)
+    {
+        self::$db->query(
+            'DELETE from public.auth_officer
+            WHERE officerid = $1
+            AND lookupid = $2',
+            [$this->getID(), $permissionid]
+        );
+    }
+
+    /**
      * Returns data about the Officer.
      *
      * @todo User who holds or has held position
