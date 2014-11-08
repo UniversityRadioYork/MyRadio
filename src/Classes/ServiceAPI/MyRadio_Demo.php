@@ -4,6 +4,15 @@
  * @package MyRadio_Demo
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\MyRadioEmail;
+
 /**
  * Abstractor for the Demo utilities
  *

@@ -5,6 +5,17 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioEmail;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioDefaultAuthenticator;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\ServiceAPI\MyRadio_Swagger;
+
 /**
  * The user object provides and stores information about a user
  * It is not a singleton for Impersonate purposes
@@ -187,7 +198,7 @@ class MyRadio_User extends ServiceAPI
             WHERE memberid=$1
             AND member.college = l_college.collegeid
             LIMIT 1',
-            [$memberid]
+            [$this->memberid]
         );
         if (empty($data)) {
             //This user doesn't exist
@@ -463,11 +474,11 @@ class MyRadio_User extends ServiceAPI
                 if (empty($eduroam)) {
                     return null;
                 } else {
-                    return $eduroam . '@'.Config::$eduroam_domain;
+                    return $eduroam . '@' . Config::$eduroam_domain;
                 }
             }
         } elseif (empty($this->email)) {
-            return $this->getEduroam() . '@'.Config::$eduroam_domain;
+            return $this->getEduroam() . '@' . Config::$eduroam_domain;
         } else {
             return $this->email;
         }
@@ -671,6 +682,38 @@ class MyRadio_User extends ServiceAPI
     public function hasAuth($authid)
     {
         return in_array($authid, $this->permissions);
+    }
+
+    /**
+     * Returns if the user can call a method via the REST API
+     *
+     */
+    public function canCall($class, $method)
+    {
+        $result = MyRadio_Swagger::getCallRequirements($class, $method);
+        if ($result === null) {
+            return false; //No permissions means the method is not accessible
+        }
+
+        if (empty($result)) {
+            return true; //An empty array means no permissions needed
+        }
+
+        foreach ($result as $type) {
+            if ($this->hasAuth($type)) {
+                return true; //The Key has that permission
+            }
+        }
+
+        return false; //Didn't match anything...
+    }
+
+    /**
+     * @todo...
+     */
+    public function logCall($uri, $args)
+    {
+        return;
     }
 
     /**
@@ -912,7 +955,7 @@ class MyRadio_User extends ServiceAPI
     {
         //Require the user to be part of this eduroam domain
         if (strstr($eduroam, '@') !== false
-            && strstr($eduroam, '@'.Config::$eduroam_domain) === false) {
+            && strstr($eduroam, '@' . Config::$eduroam_domain) === false) {
             throw new MyRadioException(
                 'Eduroam account should be @'
                 .Config::$eduroam_domain
@@ -1434,8 +1477,18 @@ class MyRadio_User extends ServiceAPI
      * @return MyRadio_User
      * @throws MyRadioException
      */
-    public static function create($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00)
-    {
+    public static function create(
+        $fname,
+        $sname,
+        $eduroam = null,
+        $sex = 'o',
+        $collegeid = null,
+        $email = null,
+        $phone = null,
+        $receive_email = true,
+        $paid = 0.00,
+        $provided_password = null
+    ) {
         /**
          * Deal with the UNIQUE constraint on the DB table.
          */
@@ -1468,7 +1521,7 @@ class MyRadio_User extends ServiceAPI
         //Remove the domain if it is set
         $eduroam = str_replace('@'.Config::$eduroam_domain, '', $eduroam);
 
-        if (empty($eduroam) && empty($this->email)) {
+        if (empty($eduroam) && empty($email)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
         }
 
@@ -1486,12 +1539,13 @@ class MyRadio_User extends ServiceAPI
         ) {
             throw new MyRadioException(
                 'This User already appears to exist. '
-                . 'Their eduroam or email is already used.'
+                . 'Their eduroam or email is already used.',
+                400
             );
         }
 
         //Looks good. Generate a password for them.
-        $plain_pass = CoreUtils::newPassword();
+        $plain_pass = empty($provided_password) ? CoreUtils::newPassword() : $provided_password;
 
         //Actually create the member!
         $r = self::$db->fetchColumn(
@@ -1521,7 +1575,7 @@ class MyRadio_User extends ServiceAPI
         //Activate the member's account for the current academic year
         $user->activateMemberThisYear($paid);
         //Set the user's password
-        Shibbobleh_Utils::setPassword($memberid, $plain_pass);
+        (new MyRadioDefaultAuthenticator())->setPassword($user, $plain_pass);
 
         //Send a welcome email (this will not send if receive_email is not enabled!)
         /**
@@ -1529,10 +1583,16 @@ class MyRadio_User extends ServiceAPI
          * @todo Link to Facebook events
          */
         $uname = empty($eduroam) ? $email : str_replace('@york.ac.uk', '', $eduroam);
+        if (!empty($provided_pass)) {
+            $plain_pass = '(The password you entered when registering)';
+        }
         $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$fname, $uname, $plain_pass], Config::$welcome_email);
 
         //Send the email
-        MyRadioEmail::create(['members' => [self::getInstance($memberid)]], 'Welcome to ' . Config::$short_name . ' - Getting Involved and Your Account', $welcome_email, 'getinvolved@' . Config::$email_domain);
+        /**
+         * @todo Make this be sent from the getinvolved email, rather than no-reply.
+         */
+        MyRadioEmail::sendEmailToUser(self::getInstance($memberid), 'Welcome to ' . Config::$short_name . ' - Getting Involved and Your Account', $welcome_email);
 
         return self::getInstance($memberid);
     }
@@ -1548,9 +1608,45 @@ class MyRadio_User extends ServiceAPI
      */
     public function activateMemberThisYear($paid = 0)
     {
-        self::$db->query('INSERT INTO public.member_year (memberid, year, paid) VALUES ($1, $2, $3)', [$this->getID(), CoreUtils::getAcademicYear(), $paid]);
+        if ($this->isActiveMemberForYear()) {
+            return true;
+        } else {
+            $year = CoreUtils::getAcademicYear();
+            self::$db->query('INSERT INTO public.member_year (memberid, year, paid) VALUES ($1, $2, $3)', [$this->getID(), $year, $paid]);
+            $this->payment[] = ['year' => $year, 'paid' => $paid];
+            $this->updateCacheObject();
+            return true;
+        }
+    }
 
-        return true;
+    /**
+     * Creates a new User, or activates a user, if it already exists.
+     *
+     * @param  string           $fname         The User's first name.
+     * @param  string           $sname         The User's last name.
+     * @param  string           $eduroam       The User's @york.ac.uk address.
+     * @param  char             $sex           The User's gender.
+     * @param  int              $collegeid     The User's college.
+     * @param  string           $email         The User's non @york.ac.uk address.
+     * @param  string           $phone         The User's phone number.
+     * @param  bool             $receive_email Whether the User should receive emails.
+     * @param  float            $paid          How much the User has paid this Membership Year
+     * @return MyRadio_User
+     */
+    public static function createOrActivate($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00)
+    {
+        $user = self::findByEmail($eduroam);
+        // Fine, we'll try with the email then.
+        if ($user === null) {
+            $user = self::findByEmail($email);
+        }
+
+        if ($user !== null && $user->activateMemberThisYear($paid)) {
+            /** @todo send welcome email to already existing users? */
+            return $user;
+        } else {
+            return self::create($fname, $sname, $eduroam, $sex, $collegeid, $email, $phone, $receive_email, $paid);
+        }
     }
 
     /**
@@ -1560,8 +1656,7 @@ class MyRadio_User extends ServiceAPI
     public function isActiveMemberForYear($year = null)
     {
         // Use the current academic year as default if one isn't specified
-        if($year === null)
-        {
+        if ($year === null) {
             $year = CoreUtils::getAcademicYear();
         }
         // If the current year exists in payments (even with a value of £0, the member is active)
@@ -1571,6 +1666,24 @@ class MyRadio_User extends ServiceAPI
             }
         }
         return false;
+    }
+
+    public function grantPermission($authid, $from = null, $to = null)
+    {
+        if ($to !== null) {
+            $tostamp = CoreUtils::getTimestamp($to);
+        } else {
+            $tostamp = null;
+        }
+        self::$db->query(
+            'INSERT INTO public.auth
+            (memberid, lookupid, starttime, endtime) VALUES ($1, $2, $3, $4)',
+            [$this->getID(), $authid, CoreUtils::getTimestamp($from), $to]
+        );
+
+        if (($from === null or $from < $time) && ($to === null or $to > time())) {
+            $permissions[] = (int)$authid;
+        }
     }
 
     /**

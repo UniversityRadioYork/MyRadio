@@ -228,7 +228,6 @@ dl {
   margin: 0;
 }
 #pageHeader {
-  height: 230px;
   padding: 0 15px 0 0;
   -webkit-text-shadow: 1px 2px black;
   -khtml-text-shadow: 1px 2px black;
@@ -351,6 +350,7 @@ header h2 {
   left: 3px;
   top: -1px;
   z-index: 10;
+  color: #FFF;
 }
 #menu #socialBtn {
   float: right;
@@ -371,6 +371,7 @@ header h2 {
 }
 #grid {
   padding: 15px 0 15px 12px;
+  min-height: 60%;
 }
 #grid section,
 #grid nav {

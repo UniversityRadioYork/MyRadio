@@ -1,5 +1,11 @@
 <?php
 
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
+
 /**
  *
  * @author Lloyd Wallis
@@ -24,7 +30,10 @@ $form = (
         [
             'explanation' => '',
             'label' => 'Username:',
-            'options' => ['placeholder' => 'abc123']
+            'options' => [
+                'placeholder' => 'abc123',
+                'autofocus' => true
+            ]
         ]
     )
 )->addField(
@@ -57,7 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
     foreach (Config::$authenticators as $i) {
         $authenticator = new $i();
         $user = $authenticator->validateCredentials($raw_uname, $data['password']);
-
         if ($user) {
             if ($user->getAccountLocked()) {
                 //The user's account is disabled
@@ -91,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
                  * they try to access anything other than pages with AUTH_NOACCESS
                  */
                 $_SESSION['auth_use_locked'] = false;
-                if(!$user->isActiveMemberForYear()) {
+                if (!$user->isActiveMemberForYear()) {
                     $user->activateMemberThisYear();
                 }
                 $user->updateLastLogin();

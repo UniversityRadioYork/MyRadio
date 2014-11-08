@@ -7,6 +7,11 @@
  * @package MyRadio_SIS
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\Artist;
+use \MyRadio\ServiceAPI\MyRadio_Track;
+use \MyRadio\ServiceAPI\MyRadio_Album;
+
 $artist = $_GET['artist'];
 $album = $_GET['album'];
 $tname = $_GET['tname'];

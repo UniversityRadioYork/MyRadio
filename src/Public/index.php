@@ -18,4 +18,4 @@
  */
 
 //Refer straight to the root Controller
-require __DIR__.'/../Controllers/root.php';
+require __DIR__.'/../Controllers/root_web.php';

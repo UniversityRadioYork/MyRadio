@@ -5,6 +5,8 @@
  * @package MyRadio_BRA
  */
 
+namespace \MyRadio\Rapid;
+
 /**
  * This class has helper functions for communicating with a BAPS Server over BRA
  *
@@ -12,7 +14,7 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_BRA
  */
-class BRA_Utils extends ServiceAPI
+class BRA_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 {
     public static function getInstance($id = 0)
     {

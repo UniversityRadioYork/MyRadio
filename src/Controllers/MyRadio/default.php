@@ -10,6 +10,12 @@
  * @package MyRadio_Core
  */
 
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\MyRadio\MyRadioMenu;
+use \MyRadio\MyRadio\MyRadioNews;
+
 $user = MyRadio_User::getInstance();
 $menu = (new MyRadioMenu())->getMenuForUser();
 

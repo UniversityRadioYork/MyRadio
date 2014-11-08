@@ -1,0 +1,16 @@
+[
+	["MyRadio", "StaticProxy"],
+	["MyRadio", "default"],
+	["MyRadio", "errorReport"],
+	["MyRadio", "permissionAssignedTo"],
+	["MyRadio", "config.js"],
+	["MyRadio", "login"],
+	["MyRadio", "logout"],
+	["MyRadio", "pwChange"],
+	["MyRadio", "pwReset"],
+	["MyRadio", "chooseAuth"],
+	["MyRadio", "addActionPermission"],
+	["MyRadio", "actionPermissions"],
+	["MyRadio", "listPermissions"],
+	["MyRadio", "permissionUsage"]
+]

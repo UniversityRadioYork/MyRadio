@@ -4,6 +4,13 @@
  * @package MyRadio_Charts
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
+
 /**
  * The ChartRelease class fetches information about chart releases.
  *
@@ -421,7 +428,8 @@ class MyRadio_ChartRelease extends ServiceAPI
                     'tracks.track' => array_map(
                         function ($chartRow) {
                             return $chartRow->getTrack();
-                        }, $this->getChartRows()
+                        },
+                        $this->getChartRows()
                     )
                 ]
             );

@@ -8,8 +8,19 @@
  * @package MyRadio_Core
  */
 
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\ServiceAPI\MyRadio_Timeslot;
+use \MyRadio\ServiceAPI\MyRadio_Show;
+
 function setupTimeslot($timeslot)
 {
+    // No timeslot (probably jukebox)
+    if (empty($timeslot)) {
+        CoreUtils::backWithMessage("Cannot select empty timeslot.");
+    }
+
     //Can the user access this timeslot?
     if (!($timeslot->getSeason()->getShow()->isCurrentUserAnOwner() or CoreUtils::hasPermission(AUTH_EDITSHOWS))) {
         require_once 'Controllers/Errors/403.php';
@@ -26,9 +37,15 @@ function setupTimeslot($timeslot)
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
-    setupTimeslot(MyRadio_Timeslot::getInstance($_POST['timeslotid']));
+    if (isset($_POST['timeslotid'])) {
+        setupTimeslot(MyRadio_Timeslot::getInstance($_POST['timeslotid']));
+    } else {
+        CoreUtils::backWithMessage("Cannot select empty timeslot");
+    }
 } elseif (isset($_GET['current']) && $_GET['current'] && CoreUtils::hasPermission(AUTH_EDITSHOWS)) {
+    //Submitted Current
     setupTimeslot(MyRadio_Timeslot::getCurrentTimeslot());
+
 } else {
     //Not Submitted
     $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/timeslot.twig')
@@ -47,6 +64,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $twig->addVariable('allTimeslots', 'on');
         } else {
             $twig->addVariable('allTimeslots', 'off');
+        }
+
+        if (!is_null(MyRadio_Timeslot::getCurrentTimeslot())) {
+            $twig->addVariable('currentAvaliable', 'true');
         }
     }
 

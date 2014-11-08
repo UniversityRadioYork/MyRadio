@@ -6,6 +6,8 @@
  * @todo Andy did this a bit weird....
  */
 
+namespace MyRadio;
+
 /**
  * Provides error handling so that php errors can be displayed nicely.
  *
@@ -156,7 +158,7 @@ class MyRadioError
         rewind($lockfile);
 
         // Run through the lockfile and grab the date/errfile pairs.
-        unset($lockfile_data);
+        $lockfile_data = [];
         while (!feof($lockfile)) {
             $buffer = fgets($lockfile);
             if ($buffer == '') {

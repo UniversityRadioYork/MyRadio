@@ -5,6 +5,16 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\MyRadio;
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\MyRadioTwig;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadioError;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\Iface\MyRadio_DataSource;
+
 /**
  * Standard API Utilities. Basically miscellaneous functions for the core system
  * No database accessing etc should be setup here.
@@ -22,7 +32,6 @@ class CoreUtils
      * @var boolean
      */
     private static $auth_cached = false;
-    private static $svc_version_cache = [];
 
     /**
      * Stores the result of CoreUtils::getAcademicYear
@@ -96,8 +105,7 @@ class CoreUtils
     public static function getTemplateObject()
     {
         require_once 'Twig/Autoloader.php';
-        Twig_Autoloader::register();
-        require_once 'Classes/MyRadioTwig.php';
+        \Twig_Autoloader::register();
 
         return new MyRadioTwig();
     }
@@ -174,20 +182,23 @@ class CoreUtils
      */
     public static function getAcademicYear()
     {
-        if (empty(CoreUtils::$academicYear)) {
+        if (empty(self::$academicYear)) {
             $term = Database::getInstance()->fetchColumn(
                 'SELECT start FROM public.terms WHERE descr=\'Autumn\'
                 AND EXTRACT(year FROM start) = $1',
                 [date('Y')]
             );
-            if (strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days')) {
+
+            // Default to this year
+            $beforeAccountExpiry = strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days');
+            if (empty($term) || $beforeAccountExpiry) {
                 CoreUtils::$academicYear = date('Y');
             } else {
-                CoreUtils::$academicYear = date('Y') - 1;
+                self::$academicYear = date('Y') - 1;
             }
         }
 
-        return CoreUtils::$academicYear;
+        return self::$academicYear;
     }
 
     /**
@@ -233,7 +244,8 @@ class CoreUtils
         //Decode to datasource if needed
         $data = self::dataSourceParser($data);
 
-        if (!empty(MyRadioError::$php_errorlist)) {
+        $canDisplayErr = Config::$display_errors || CoreUtils::hasPermission(AUTH_SHOWERRORS);
+        if (!empty(MyRadioError::$php_errorlist) && $canDisplayErr) {
             $data['myury_errors'] = MyRadioError::$php_errorlist;
         }
 
@@ -254,6 +266,11 @@ class CoreUtils
         header('Location: ' . self::makeURL($module, $action, $params));
     }
 
+    public static function redirectWithMessage($module, $action, $message)
+    {
+        self::redirect($module, $action, ['message' => base64_encode($message)]);
+    }
+
     /**
      * Builds a module/action URL
      * @param  string $module
@@ -263,7 +280,7 @@ class CoreUtils
      */
     public static function makeURL($module, $action = null, $params = [])
     {
-        if (empty(self::$custom_uris)) {
+        if (empty(self::$custom_uris) && class_exists('Database')) {
             $result = Database::getInstance()->fetchAll('SELECT actionid, custom_uri FROM myury.actions');
 
             foreach ($result as $row) {
@@ -436,7 +453,7 @@ class CoreUtils
         );
 
         //Don't allow empty result sets - throw an Exception as this is very very bad.
-        if (empty($result)) {
+        if (empty($result) && $require) {
             throw new MyRadioException('There are no permissions defined for the ' . $module . '/' . $action . ' action!');
         }
 
@@ -452,7 +469,7 @@ class CoreUtils
         if (!$authorised && $require) {
             //Requires login
             if (!isset($_SESSION['memberid']) || $_SESSION['auth_use_locked'] !== false) {
-                require 'Controllers/MyRadio/login.php';
+                self::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
             } else {
                 //Authenticated, but not authorized
                 require 'Controllers/Errors/403.php';
@@ -537,18 +554,19 @@ class CoreUtils
     }
 
     /**
-     * Returns a list of all MyRadio managed Services in a 2D Array.
-     * @return Array A 2D Array with each second dimension as follows:<br>
-     *               value: The ID of the Service
-     *               text: The Text ID of the Service
-     *               enabeld: Whether the Service is enabled
+     * Add a new permission constant to the database.
+     * @param String $descr A useful friendly description of what this action means.
+     * @param String $constant /AUTH_[A-Z_]+/
      */
-    public static function getServices()
+    public static function addPermission($descr, $constant)
     {
-        return Database::getInstance()->fetchAll(
-            'SELECT serviceid AS value, name AS text, enabled
-            FROM myury.services ORDER BY name ASC'
-        );
+        $value = (int)Database::getInstance()->fetchColumn(
+            'INSERT INTO public.l_action (descr, phpconstant)
+            VALUES ($1, $2) RETURNING typeid',
+            [$descr, $constant]
+        )[0];
+        define($constant, $value);
+        return $value;
     }
 
     /**
@@ -589,7 +607,11 @@ class CoreUtils
                 VALUES ($1, $2) RETURNING moduleid',
                 [Config::$service_id, $module]
             );
-            self::$module_ids[$module] = $result[0];
+            if ($result) {
+                self::$module_ids[$module] = $result[0];
+            } else {
+                return null;
+            }
         }
 
         return self::$module_ids[$module];
@@ -617,18 +639,24 @@ class CoreUtils
                 VALUES ($1, $2) RETURNING actionid',
                 [$module, $action]
             );
-            self::$action_ids[$action . '-' . $module] = $result[0];
+            if ($result) {
+                self::$action_ids[$action . '-' . $module] = $result[0];
+            } else {
+                return null;
+            }
         }
 
         return self::$action_ids[$action . '-' . $module];
+
     }
 
     /**
-     * Assigns a permission to a command
-     * @todo Document
-     * @param type $module
-     * @param type $action
-     * @param type $permission
+     * Assigns a permission to a command. Note arguments are the integer IDs
+     * NOT the String names
+     *
+     * @param int $module The module ID
+     * @param int $action The action ID
+     * @param int $permission The permission typeid
      */
     public static function addActionPermission($module, $action, $permission)
     {
@@ -638,98 +666,6 @@ class CoreUtils
             VALUES ($1, $2, $3, $4)',
             [Config::$service_id, $module, $action, $permission]
         );
-    }
-
-    /**
-     * Returns the service version allocated to the given user.
-     *
-     * @param MyRadio_User $user If given this is the user to check. By default,
-     *                           it uses the currently logged-in user.
-     *
-     * If there is no user logged in, then the default version is returned.
-     */
-    public static function getServiceVersionForUser(MyRadio_User $user = null)
-    {
-        if ($user === null) {
-            if (!isset($_SESSION['memberid'])) {
-                return self::getDefaultServiceVersion();
-            }
-            $user = MyRadio_User::getInstance();
-        }
-        $serviceid = Config::$service_id;
-        $key = $serviceid . '-' . $user->getID();
-
-        if ($user->getID() === MyRadio_User::getInstance()->getID()) {
-            //It's the current user. If they have an override defined in their session, use that.
-            if (isset($_SESSION['myury_svc_version_' . $serviceid])) {
-                return [
-                    'version' => $_SESSION['myury_svc_version_' . $serviceid],
-                    'path' => $_SESSION['myury_svc_version_' . $serviceid . '_path'],
-                    'proxy_static' => $_SESSION['myury_svc_version_' . $serviceid . '_proxy_static']
-                ];
-            }
-        }
-
-        if (!isset(self::$svc_version_cache[$key])) {
-            $db = Database::getInstance();
-
-            $result = $db->fetchOne(
-                'SELECT version, path, proxy_static
-                FROM myury.services_versions
-                WHERE serviceid IN (
-                    SELECT serviceid FROM myury.services_versions_member
-                    WHERE memberid=$2 AND serviceversionid IN (
-                        SELECT serviceversionid FROM myury.services_versions
-                        WHERE serviceid=$1
-                    )
-                )',
-                [$serviceid, $user->getID()]
-            );
-
-            if (empty($result)) {
-                self::$svc_version_cache[$key] = self::getDefaultServiceVersion();
-            } else {
-                $result['proxy_static'] = $result['proxy_static'] === 't';
-                self::$svc_version_cache[$key] = $result;
-            }
-        }
-
-        //If it's the current user, store the data in session.
-        if ($user->getID() === MyRadio_User::getInstance()->getID()) {
-            $_SESSION['myury_svc_version_' . $serviceid] = self::$svc_version_cache[$key]['version'];
-            $_SESSION['myury_svc_version_' . $serviceid . '_path'] = self::$svc_version_cache[$key]['path'];
-            $_SESSION['myury_svc_version_' . $serviceid . '_proxy_static'] = self::$svc_version_cache[$key]['proxy_static'];
-        }
-
-        return self::$svc_version_cache[$key];
-    }
-
-    /**
-     *
-     */
-    private static function getDefaultServiceVersion()
-    {
-        $db = Database::getInstance();
-
-        $r = $db->fetchOne(
-            'SELECT version, path, proxy_static FROM myury.services_versions WHERE serviceid=$1
-            AND is_default=true LIMIT 1',
-            [Config::$service_id]
-        );
-        $r['proxy_static'] = $r['proxy_static'] === 't';
-
-        return $r;
-    }
-
-    /**
-     * @todo Document this.
-     * @return boolean
-     */
-    public static function getServiceVersions()
-    {
-        $db = Database::getInstance();
-
-        return $db->fetchAll('SELECT version, path, proxy_static FROM myury.services_versions WHERE serviceid=$1', [Config::$service_id]);
     }
 
     /**
@@ -799,7 +735,7 @@ class CoreUtils
     public static function requireTimeslot()
     {
         if (!isset($_SESSION['timeslotid'])) {
-            CoreUtils::redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
+            self::redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
             exit;
         }
     }
@@ -910,8 +846,8 @@ class CoreUtils
     public static function getSafeHTML($dirty_html)
     {
         require_once 'Classes/vendor/htmlpurifier/HTMLPurifier.auto.php';
-        $config = HTMLPurifier_Config::createDefault();
-        $purifier = new HTMLPurifier($config);
+        $config = \HTMLPurifier_Config::createDefault();
+        $purifier = new \HTMLPurifier($config);
 
         return $purifier->purify($dirty_html);
     }

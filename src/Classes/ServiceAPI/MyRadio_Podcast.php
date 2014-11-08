@@ -5,6 +5,14 @@
  * @package MyRadio_Podcast
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
+
 /**
  * Podcasts. For the website.
  *
@@ -194,7 +202,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     public static function getForm()
     {
         $form = (
-                new MyRadioForm(
+            new MyRadioForm(
                 'createpodcastfrm',
                 'Podcast',
                 'editPodcast',
@@ -297,18 +305,6 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             )
         )->addField(
             new MyRadioFormField(
-                'cover_method',
-                MyRadioFormField::TYPE_SELECT,
-                [
-                    'label' => 'Method',
-                    'options' => [
-                        [ 'value' => 'existing', 'text' => 'Existing Cover File' ],
-                        [ 'value' => 'new', 'text' => 'Upload New Cover File' ]
-                    ]
-                ]
-            )
-        )->addField(
-            new MyRadioFormField(
                 'existing_cover',
                 MyRadioFormField::TYPE_TEXT,
                 [
@@ -351,11 +347,20 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 [
                     'title' => $this->getMeta('title'),
                     'description' => $this->getMeta('description'),
-                    'tags' => is_null($this->getMeta('tag')) ? null : implode(' ',$this->getMeta('tag')),
+                    'tags' => is_null($this->getMeta('tag')) ? null : implode(' ', $this->getMeta('tag')),
                     'show' => empty($this->show_id) ? null : $this->show_id,
-                    'credits.member' => array_map(function ($credit) {return $credit['User'];}, $this->getCredits()),
-                    'credits.credittype' => array_map(function ($credit) {return $credit['type'];}, $this->getCredits()),
-                    'cover_method' => 'existing',
+                    'credits.member' => array_map(
+                        function ($credit) {
+                            return $credit['User'];
+                        },
+                        $this->getCredits()
+                    ),
+                    'credits.credittype' => array_map(
+                        function ($credit) {
+                            return $credit['type'];
+                        },
+                        $this->getCredits()
+                    ),
                     'existing_cover' => $this->getCover(),
                     'terms' => 'on'
                 ]

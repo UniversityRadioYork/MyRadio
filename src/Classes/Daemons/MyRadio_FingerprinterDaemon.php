@@ -4,6 +4,12 @@
  * @package MyRadio_Daemon
  */
 
+namespace MyRadio\Daemons;
+
+use \MyRadio\Config;
+use \MyRadio\ServiceAPI\MyRadio_Track;
+use \MyRadio\ServiceAPI\MyRadio_TrackCorrection;
+
 /**
  * The Fingerprinter Daemon will scan the digital files in the music library, and log information about potentially
  * incorrect metadata in the rec database.
@@ -12,7 +18,7 @@
  * @version 20130711
  * @package MyRadio_Daemon
  */
-class MyRadio_FingerprinterDaemon extends MyRadio_Daemon
+class MyRadio_FingerprinterDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
     /**
      * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.

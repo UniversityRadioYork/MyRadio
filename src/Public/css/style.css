@@ -26,6 +26,7 @@
 }
 .menu-checklist-disabled a {
   color: #777;
+  text-decoration: line-through
 }
 
 #signin {
@@ -346,6 +347,10 @@ table.myradiofrmfield-weeklycheck td {
   width: 15px;
   margin: 0;
   padding: 0;
+}
+
+.myradiofrm-file-upload-progress {
+  display: none;
 }
 
 /* MyRadio Login Styles */

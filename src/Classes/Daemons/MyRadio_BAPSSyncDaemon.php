@@ -4,6 +4,12 @@
  * @package MyRadio_Daemon
  */
 
+namespace MyRadio\Daemons;
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\iTones\iTones_Playlist;
+
 /**
  * The BAPSSync Daemon will scan the Show Planner playlists, and put them into BAPS.
  *
@@ -11,7 +17,7 @@
  * @version 20130711
  * @package MyRadio_Daemon
  */
-class MyRadio_BAPSSyncDaemon extends MyRadio_Daemon
+class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
     /**
      * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.

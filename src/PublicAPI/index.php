@@ -1,5 +1,17 @@
 <?php
 
+use \ReflectionMethod;
+use \ReflectionClass;
+use \ReflectionException;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioSession;
+use \MyRadio\ServiceAPI\MyRadio_APIKey;
+use \MyRadio\ServiceAPI\MyRadio_Swagger;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 $__start = -microtime(true);
 /**
  * This MyRadio Extension exposes some of MyRadio's internal classes as a REST API.
@@ -11,16 +23,20 @@ $__start = -microtime(true);
 define('SILENT_EXCEPTIONS', true);
 define('DISABLE_SESSION', true);
 
-require_once __DIR__ . '/../Controllers/cli_common.php';
+require_once __DIR__ . '/../Controllers/root_cli.php';
 
 /**
  * Handle API errors
  */
 function api_error($code, $message = null, $previous = null)
 {
-    $messages = [400 => "Bad Request", 401 => "Unauthorized",
-        403 => "Forbidden", 404 => "File Not Found",
-        500 => "Internal Server Error"];
+    $messages = [
+        400 => "Bad Request",
+        401 => "Unauthorized",
+        403 => "Forbidden",
+        404 => "File Not Found",
+        500 => "Internal Server Error"
+    ];
     header("HTTP/1.1 $code {$messages[$code]}");
     header("Content-Type: application/json");
     echo json_encode([
@@ -30,6 +46,22 @@ function api_error($code, $message = null, $previous = null)
     ]);
     //Log an API failure so it appears in the status graphs.
     throw new MyRadioException('API Error: ' . $message . "\nSource: " . $_SERVER['REMOTE_ADDR'], $code, $previous);
+}
+
+/**
+ * Names the parameters to make sure they're called in the "correct" order.
+ * Adapted from http://stackoverflow.com/q/8649536/995325
+ */
+function invokeArgsNamed(ReflectionMethod $refmethod, $object, Array $args = [])
+{
+    $parameters = $refmethod->getParameters();
+    foreach ($parameters as &$param) {
+        $name = $param->getName();
+        $param = isset($args[$name]) ? $args[$name] : $param->getDefaultValue();
+    }
+    unset($param);
+
+    return $refmethod->invokeArgs($object, $parameters);
 }
 
 /**
@@ -60,10 +92,23 @@ if (empty($_REQUEST['api_key'])) {
     if ($class === 'resources') {
         $_REQUEST['api_key'] = 'IUrnsb8AMkjqDRdfXvOMe3DqHLW8HJ1RNBPNJq3H1FQpiwQDs7Ufoxmsf5xZE9XEbQErRO97DG4xfyVAO7LuS2dOiVNZYoxkk4fEhDt8wR4sLXbghidtM5rLHcgkzO10';
     } else {
-        api_error(401, 'An API Key must be provided.');
+        /**
+         * Attempt to use user session
+         * By not using session handler, and resetting $_SESSION after
+         * We are ensuring there are no session-based side effects
+         */
+        $dummysession = $_SESSION;
+        session_decode((new MyRadioSession())->read(session_id()));
+        if (!isset($_SESSION['memberid'])) {
+            api_error(401, 'An API Key must be provided.');
+        }
+        $api_key = MyRadio_User::getInstance($_SESSION['memberid']);
+        $_SESSION = $dummysession;
     }
 }
-$api_key = MyRadio_APIKey::getInstance($_REQUEST['api_key']);
+if (!isset($api_key)) {
+    $api_key = MyRadio_APIKey::getInstance($_REQUEST['api_key']);
+}
 
 /**
  * Available API Classes
@@ -114,7 +159,7 @@ try {
  * Okay, the method exists. Does the given API key have access to it?
  */
 if (!$api_key->canCall($classes[$class], $method)) {
-    api_error(403, 'Your API Key (' . $_REQUEST['api_key'] . ') does not have access to this method.');
+    api_error(403, 'Your API Key (' . $api_key->getID() . ') does not have access to this method.');
 } else {
     /**
      * Map the paramaters
@@ -160,7 +205,7 @@ if (!$api_key->canCall($classes[$class], $method)) {
          * Let's process the request!
          */
         $api_key->logCall(preg_replace('/(.*)\?(.*)/', '$1', str_replace(Config::$api_uri, '', $_SERVER['REQUEST_URI'])), $args);
-        $result = $methodReflection->invokeArgs($object, $args);
+        $result = invokeArgsNamed($methodReflection, $object, $args);
     } catch (MyRadioException $e) {
         api_error($e->getCode(), $e->getMessage(), $e);
     }

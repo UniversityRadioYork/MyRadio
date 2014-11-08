@@ -7,6 +7,9 @@
  * @package MyRadio_SIS
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\SIS\SIS_Utils;
+
 CoreUtils::requireTimeslot();
 
 $template = 'SIS/main.twig';

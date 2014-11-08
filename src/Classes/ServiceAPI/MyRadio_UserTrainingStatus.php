@@ -4,6 +4,11 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 /**
  * The UserTrainingStatus class links TrainingStatuses to Users.
  *
@@ -155,7 +160,11 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
             'url' => $this->getAwardedTo()->getURL(),
             'value' => $this->getAwardedTo()->getName()
         ];
-        $data['awarded_by'] = $this->getAwardedBy()->toDataSource($full);
+        $data['awarded_by'] = [
+            'display' => 'text',
+            'url' => $this->getAwardedBy()->getURL(),
+            'value' => $this->getAwardedBy()->getName()
+        ];
         $data['awarded_time'] = $this->getAwardedTime();
         $data['revoked_by'] = ($this->getRevokedBy() === null ? null :
                 $this->getRevokedBy()->toDataSource($full));

@@ -5,6 +5,14 @@
  * @package MyRadio_Website
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
+
 /**
  * The Banner class stores and manages information about a Banner on the front website
  *

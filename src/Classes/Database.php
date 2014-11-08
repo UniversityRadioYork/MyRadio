@@ -4,10 +4,14 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio;
+
+use \MyRadio\MyRadio\CoreUtils;
+
 /**
  * This singleton class handles actual database connection
  *
- * This is a Critical include! - It is loaded before MyRadio Brokers into versions so only the live one is used!
+ * This is a Critical include!
  *
  * @version 20130531
  * @author Lloyd Wallis <lpw@ury.org.uk>
@@ -45,7 +49,7 @@ class Database
      */
     private function __construct()
     {
-        $this->db = pg_connect(
+        $this->db = @pg_connect(
             'host='. Config::$db_hostname
             .' port=5432 dbname='.Config::$db_name
             .' user='. Config::$db_user
@@ -103,17 +107,21 @@ class Database
 
         if (isset($_REQUEST['dbdbg']) && CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
             //Debug output
-            echo $sql.'&nbsp;'.print_r($params, true).'<br>';
+            echo $sql . '&nbsp;' . print_r($params, true) . '<br>';
         }
 
-        $result = @pg_query_params($this->db, $sql, $params);
+        if (empty($params)) {
+            $result = @pg_query($this->db, $sql);
+        } else {
+            $result = @pg_query_params($this->db, $sql, $params);
+        }
         if (!$result) {
             if ($this->in_transaction) {
                 pg_query($this->db, 'ROLLBACK');
             }
             throw new MyRadioException(
                 'Query failure: ' . $sql . '<br>'
-                . pg_errormessage($this->db).'<br>Params: '.print_r($params, true),
+                . pg_last_error($this->db).'<br>Params: '.print_r($params, true),
                 500
             );
         }

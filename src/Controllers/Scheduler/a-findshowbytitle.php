@@ -8,6 +8,12 @@
  * @version 16082012
  * @package MyRadio_Scheduler
  */
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Scheduler;
+
 if (!isset($_REQUEST['term'])) {
     throw new MyRadioException('Parameter \'term\' is required but was not provided');
 }

@@ -7,6 +7,10 @@
  * @package MyRadio_Website
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Banner;
+use \MyRadio\ServiceAPI\MyRadio_BannerCampaign;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = MyRadio_BannerCampaign::getForm()->readValues();
@@ -51,18 +55,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'bannerName'=> $campaign->getBanner()->getAlt()
                 ]);
 
-        } else {
-            //create form
+    } else {
+        //create form
 
-            if (!isset($_REQUEST['bannerid'])) {
-                throw new MyRadioException('You must provide a bannerid', 400);
-            }
-
-            $banner = MyRadio_Banner::getInstance($_REQUEST['bannerid']);
-
-            MyRadio_BannerCampaign::getForm($banner->getBannerID())
-                ->render([
-                    'bannerName' => $banner->getAlt()
-                ]);
+        if (!isset($_REQUEST['bannerid'])) {
+            throw new MyRadioException('You must provide a bannerid', 400);
         }
+
+        $banner = MyRadio_Banner::getInstance($_REQUEST['bannerid']);
+
+        MyRadio_BannerCampaign::getForm($banner->getBannerID())
+            ->render([
+                'bannerName' => $banner->getAlt()
+            ]);
+    }
 }

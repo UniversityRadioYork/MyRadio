@@ -5,6 +5,13 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio;
+
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\ServiceAPI;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\ServiceAPI\MyRadio_List;
+
 /**
  * Provides email functions so that MyRadio can send email.
  *
@@ -67,6 +74,7 @@ class MyRadioEmail extends ServiceAPI
         $split = strip_tags($this->body);
         if ($this->body !== $split) {
             //There's HTML in there
+            $split = html_entity_decode($split);
             $this->multipart = true;
             $this->body_transformed = 'This is a MIME encoded message.'
                     . self::$rtnl . self::$rtnl . '--' . self::$multipart_boundary . self::$rtnl
@@ -87,8 +95,9 @@ class MyRadioEmail extends ServiceAPI
      * @param String $body email body
      * @param int $timestamp Send time. If null, use now.
      * @param bool $already_sent If true, all Recipients will be set to having had the email sent.
+     * @note Use one of the SendToUser* wrapper functions instead of this one.
      */
-    public static function create($to, $subject, $body, $from = null, $timestamp = null, $already_sent = false)
+    private static function create($to, $subject, $body, $from = null, $timestamp = null, $already_sent = false)
     {
         //Remove duplicate recipients
         $to['lists'] = empty($to['lists']) ? [] : array_unique($to['lists']);
@@ -114,14 +123,14 @@ class MyRadioEmail extends ServiceAPI
         if ($timestamp !== null) {
             $params[] = CoreUtils::getTimestamp($timestamp);
         }
-        if ($from !== null) {
+        if ($from instanceof ServiceAPI) {
             $params[] = $from->getID();
         }
 
         $eid = self::$db->fetchColumn(
             'INSERT INTO mail.email (subject, body'
-            . ($timestamp !== null ? ', timestamp' : '') . ($from !== null ? ', sender' : '') . ')
-            VALUES ($1, $2' . (($timestamp !== null or $from !== null) ? ', $3' : '')
+            . ($timestamp !== null ? ', timestamp' : '') . ($from instanceof ServiceAPI ? ', sender' : '') . ')
+            VALUES ($1, $2' . (($timestamp !== null or $from instanceof ServiceAPI) ? ', $3' : '')
             . (($timestamp !== null && $from !== null) ? ', $4' : '') . ') RETURNING email_id',
             $params
         );
@@ -207,7 +216,7 @@ class MyRadioEmail extends ServiceAPI
                 //Don't send if the user has opted out
                 if ($user->getReceiveEmail()) {
                     $u_subject = trim(str_ireplace('#NAME', $user->getFName(), $this->subject));
-                    if (substr($u_subject, 0 , 1) !== '[') {
+                    if (substr($u_subject, 0, 1) !== '[') {
                         $u_subject = '['.Config::$short_name.'] ' . $u_subject;
                     }
                     $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
@@ -271,7 +280,7 @@ class MyRadioEmail extends ServiceAPI
      * @param sting $message email message
      * @todo Check if "Receive Emails" is enabled for the User
      */
-    public static function sendEmailToUser(MyRadio_User $to, $subject, $message, $from = null)
+    public static function sendEmailToUser(MyRadio_User $to, $subject, $message, MyRadio_User $from = null)
     {
         self::create(['members' => [$to]], $subject, $message, $from);
 
@@ -285,7 +294,7 @@ class MyRadioEmail extends ServiceAPI
      * @param sting $message email message
      * @todo Check if "Receive Emails" is enabled for the User
      */
-    public static function sendEmailToList(MyRadio_List $to, $subject, $message, $from = null)
+    public static function sendEmailToList(MyRadio_List $to, $subject, $message, MyRadio_User $from = null)
     {
         if ($from !== null && !$to->hasSendPermission($from)) {
             return false;
@@ -303,7 +312,7 @@ class MyRadioEmail extends ServiceAPI
      * @param string $subject email subject
      * @param sting $message email message
      */
-    public static function sendEmailToUserSet($to, $subject, $message, $from = null)
+    public static function sendEmailToUserSet($to, $subject, $message, MyRadio_User $from = null)
     {
         foreach ($to as $user) {
             if (!($user instanceof MyRadio_User)) {
@@ -383,7 +392,7 @@ class MyRadioEmail extends ServiceAPI
         $data = [
             'email_id' => $this->getID(),
             'from' => empty($this->from) ? null : $this->from->getName(),
-            'timestamp' => CoreUtils::happyTime($this->timestamp),
+            'timestamp' => $this->timestamp,
             'subject' => $this->subject,
             'view' => [
                 'display' => 'icon',
@@ -409,7 +418,7 @@ class MyRadioEmail extends ServiceAPI
      */
     public static function sendEmailToComputing($subject, $message)
     {
-        mail("MyRadio Service <alerts.myury@ury.org.uk>", $subject, self::addFooter($message), self::getDefaultHeader());
+        mail("MyRadio Service <".Config::$error_report_email."@".Config::$email_domain.">", $subject, self::addFooter($message), self::getDefaultHeader());
 
         return true;
     }

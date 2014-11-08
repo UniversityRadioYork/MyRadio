@@ -7,6 +7,10 @@
  * @version 20130829
  * @package MyRadio_Scheduler
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Season;
+
 $data = [];
 
 foreach (MyRadio_Season::getAllSeasonsInLatestTerm() as $season) {
@@ -21,5 +25,5 @@ foreach (MyRadio_Season::getAllSeasonsInLatestTerm() as $season) {
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('title', 'Show Attendence')
     ->addVariable('tabledata', $data)
-    ->addVariable('tablescript', 'myury.datatable.default')
+    ->addVariable('tablescript', 'myradio.Scheduler.attendance')
     ->render();

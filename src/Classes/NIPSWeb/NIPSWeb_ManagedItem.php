@@ -5,6 +5,13 @@
  * @package MyRadio_NIPSWeb
  */
 
+namespace MyRadio\NIPSWeb;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 /**
  * The NIPSWeb_ManagedItem class helps provide control and access to Beds and Jingles and similar not-PPL resources
  *
@@ -13,7 +20,7 @@
  * @package MyRadio_NIPSWeb
  * @uses \Database
  */
-class NIPSWeb_ManagedItem extends ServiceAPI
+class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
 {
     private $managed_item_id;
 
@@ -154,7 +161,8 @@ class NIPSWeb_ManagedItem extends ServiceAPI
 
         move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename);
 
-        $getID3 = new getID3;
+        require_once 'Classes/vendor/getid3/getid3.php';
+        $getID3 = new \getID3;
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
 
         //The entire $fileInfo array will break Session.

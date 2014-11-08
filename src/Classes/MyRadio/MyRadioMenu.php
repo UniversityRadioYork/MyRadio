@@ -5,6 +5,11 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\MyRadio;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+
 /**
  * Abstractor for the MyRadio Menu
  *
@@ -100,7 +105,7 @@ class MyRadioMenu
 
         return $items;
     }
-
+    
     /**
      * Takes a $url database column entry, and breaks it into its components
      * @param  String $url A database-fetched menu item URL

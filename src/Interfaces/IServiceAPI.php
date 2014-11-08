@@ -1,4 +1,7 @@
 <?php
+
+namespace MyRadio\Iface;
+
 /**
  * A standard interface for all ServiceAPI Classes. Implements the following
  * base functionality:

@@ -8,6 +8,9 @@
  * @package MyRadio_Profile
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\Profile;
+
 $officers = Profile::getOfficers();
 
 foreach ($officers as $k => $v) {

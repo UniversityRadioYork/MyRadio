@@ -6,6 +6,10 @@
  * @version 02082012
  * @package MyRadio_Webcam
  */
+
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Webcam;
+
 $streams = MyRadio_Webcam::getStreams();
 $live = array_shift($streams);
 

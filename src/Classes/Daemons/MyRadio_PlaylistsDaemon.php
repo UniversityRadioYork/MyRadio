@@ -5,6 +5,15 @@
  * @package MyRadio_Daemon
  */
 
+namespace MyRadio\Daemons;
+
+use \MyRadio\Config;
+use \MyRadio\iTones\iTones_Playlist;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\ServiceAPI\MyRadio_Track;
+use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
+use \MyRadio\NIPSWeb\NIPSWeb_AutoPlaylist;
+
 /**
  * This Daemon updates the auto-generated iTones Playlists once an hour.
  *
@@ -14,7 +23,7 @@
  * @uses \Database
  *
  */
-class MyRadio_PlaylistsDaemon extends MyRadio_Daemon
+class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
     public static function isEnabled()
     {

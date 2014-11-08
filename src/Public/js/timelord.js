@@ -101,7 +101,7 @@ window.timelord = {
         return this;
     },
     setNextShows: function(next) {
-        if (next[0] == null) {
+        if (!next || next[0] == null) {
             $('#next-show').html('');
         } else {
             d0 = (new Date(next[0].start_time * 1000));
@@ -235,8 +235,8 @@ window.timelord = {
                             (45 - date.getSeconds()) + '...</span>');
                     $('#next-show').show();
                 } else if (date.getSeconds() <= 52) {
-                    timelord.setCurrentShow('<span class="news">Jingle in ' +
-                            (52 - date.getSeconds()) + '...</span>');
+                    timelord.setCurrentShow('<span class="news">' +
+                            (52 - date.getSeconds()) + ' until voice over...</span>');
                 } else {
                     timelord.setCurrentShow('<span class="news">'+mConfig.short_name+' News</span>');
                 }

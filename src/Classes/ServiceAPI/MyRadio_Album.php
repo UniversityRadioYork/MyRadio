@@ -4,6 +4,12 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+
 /**
  * The Album class fetches information about albums in the Cental Database.
  * @version 20130803
@@ -113,7 +119,9 @@ class MyRadio_Album extends ServiceAPI
     {
         $dir = Config::$music_central_db_path.'/records/'.$this->getID();
         if (!is_dir($dir)) {
-            mkdir($dir);
+            if (!mkdir($dir, 0777, true)) {
+                throw new MyRadioException('Failed to create directory ' . $dir, 500);
+            }
         }
 
         return $dir;
@@ -313,7 +321,7 @@ class MyRadio_Album extends ServiceAPI
             if ($options['trackid'] !== null && $recordid['trackid'] != $options['trackid']) {
                 continue;
             }
-            $response[] = new MyRadio_Album($recordid['recordid']);
+            $response[] = new self($recordid['recordid']);
         }
 
         return $response;

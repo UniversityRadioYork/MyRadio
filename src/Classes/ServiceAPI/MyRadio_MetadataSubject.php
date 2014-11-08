@@ -4,6 +4,12 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 /**
  * The MyRadio_MetadataSubject trait adds metadata functionality to an object.
  *
@@ -179,8 +185,8 @@ trait MyRadio_MetadataSubject
             $key,
             $this->getID(),
             MyRadio_User::getCurrentOrSystemUser()->getID(),
-            CoreUtils::getTimestamp($time),
-            $effective_to == null ? null : CoreUtils::getTimestamp($effective_to)
+            CoreUtils::getTimestamp($from),
+            $to == null ? null : CoreUtils::getTimestamp($to)
         ];
 
         $param_counter = 6;

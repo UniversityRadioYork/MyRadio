@@ -23,11 +23,19 @@
  * @todo Make this not use echo in various Daemons
  * @todo Install the pcntl extension on thunderhorn
  */
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadioError;
+use \MyRadio\MyRadioEmail;
+use \MyRadio\MyRadio\CoreUtils;
+
 $log_level = 4; //0: Critical, 1: Important, 2: Run Process, 3: Info, 4: Debug
 /**
  * @todo Make paths nicer. This variable is used in MyRadio_Track directly.
  */
-$syspath = '/usr/local/bin/';
+$syspath = '';
 
 function dlog($x, $level = 3)
 {
@@ -67,7 +75,7 @@ if (!$handle) {
 }
 $classes = [];
 
-require_once 'cli_common.php';
+require_once 'root_cli.php';
 
 //Should this run once or loop forever?
 $once = in_array('--once', $argv);
@@ -83,9 +91,9 @@ while (false !== ($file = readdir($handle))) {
         dlog('Not checking ' . $file . ' - Parse Error', 1);
     } else {
         require $path . $file;
-        $class = str_replace('.php', '', $file);
+        $class = '\MyRadio\Daemons\\' . str_replace('.php', '', $file); // TODO: php5.5 allows ClassName:class to remove this hack
         if (!class_exists($class)) {
-            echo dlog('Daemon does not exist -' . $class, 1);
+            echo dlog('Daemon does not exist - ' . $class, 1);
         } else {
             $classes[] = $class;
         }

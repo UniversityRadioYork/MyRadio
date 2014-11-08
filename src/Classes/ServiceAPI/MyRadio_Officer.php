@@ -4,6 +4,11 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+
 /**
  * The Officer class provides information about Committee Officerships.
  *
@@ -102,6 +107,29 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
+     * Create a new Officer position
+     *
+     * @param  String       $name     The position name, e.g. "Station Cat"
+     * @param  String       $descr    A description of the position "official feline"
+     * @param  String       $alias    Email alias (may be NULL) e.g. station.cat
+     * @param  int          $ordering Weighting when appearing in lists e.g. 0
+     * @param  MyRadio_Team $team     The Team the Officer is part of
+     * @param  char         $type     'm'ember, 'o'fficer, 'a'ssistant head, 'h'ead
+     * @return MyRadio_Officer        The new Officer position
+     */
+    public static function createOfficer($name, $descr, $alias, $ordering, MyRadio_Team $team, $type = 'o')
+    {
+        return self::getInstance(
+            self::$db->fetchColumn(
+                'INSERT INTO public.officer
+                (officer_name, officer_alias, teamid, ordering, descr, type)
+                VALUES ($1, $2, $3, $4, $5, $6) RETURNING officerid',
+                [$name, $alias, $team->getID(), $ordering, $descr, $type]
+            )[0]
+        );
+    }
+
+    /**
      * Returns all the Officers available.
      * @return array
      */
@@ -112,6 +140,17 @@ class MyRadio_Officer extends ServiceAPI
                 'SELECT officerid FROM public.officer'
             )
         );
+    }
+
+    public static function standDown($memberofficerid)
+    {
+        self::$db->query(
+            'UPDATE public.member_officer
+            SET till_date = NOW()
+            WHERE member_officerid = $1',
+            [$memberofficerid]
+        );
+        // TODO update cache object & clear session automatically
     }
 
     /**

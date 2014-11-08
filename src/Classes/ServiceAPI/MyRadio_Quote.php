@@ -5,6 +5,13 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
+
 /**
  * A quote in the radio station Quotes Database.
  *
@@ -158,7 +165,7 @@ class MyRadio_Quote extends ServiceAPI
     {
         $quote_ids = self::$db->fetchColumn(self::GET_ALL_SQL, []);
 
-        return array_map('MyRadio_Quote::getInstance', $quote_ids);
+        return array_map('self::getInstance', $quote_ids);
     }
 
     /**

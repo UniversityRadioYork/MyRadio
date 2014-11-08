@@ -5,6 +5,11 @@
  * @package MyRadio_Daemon
  */
 
+namespace MyRadio\Daemons;
+
+use \MyRadio\Config;
+use \MyRadio\ServiceAPI\MyRadio_Track;
+
 /**
  * The Explicit Daemon asks iTunes if a Track is Explicit.
  *
@@ -12,7 +17,7 @@
  * @version 20130711
  * @package MyRadio_Daemon
  */
-class MyRadio_ExplicitDaemon extends MyRadio_Daemon
+class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
     /**
      * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.

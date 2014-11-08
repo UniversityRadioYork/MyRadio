@@ -5,6 +5,10 @@
  * @package MyRadio_API
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\ServiceAPI\MyRadio_Swagger;
+
 /**
  * The APIKey Class provies information and management of API Keys for the MyRadio
  * REST API.
@@ -29,12 +33,20 @@ class MyRadio_APIKey extends ServiceAPI
     private $permissions;
 
     /**
+     * Whether the API key has been revoked
+     * @var bool
+     */
+    private $revoked;
+
+    /**
      * Construct the API Key Object
      * @param String $key
      */
     protected function __construct($key)
     {
         $this->key = $key;
+        $revoked = self::$db->fetchColumn('SELECT revoked from myury.api_key WHERE key_string=$1', [$key]);
+        $this->revoked = ($revoked[0] == 't');
         $this->permissions = self::$db->fetchColumn('SELECT typeid FROM myury.api_key_auth WHERE key_string=$1', [$key]);
     }
 
@@ -45,13 +57,16 @@ class MyRadio_APIKey extends ServiceAPI
      * @param  String  $method The method being called
      * @return boolean
      */
-    public function canCall($class, $method)
+    public function canCall($class, $method, $ignore_revoked = false)
     {
+        if ($this->revoked && !$ignore_revoked) {
+            return false;
+        }
         if (in_array(AUTH_APISUDO, $this->permissions)) {
             return true;
         }
 
-        $result = self::getCallRequirements($class, $method);
+        $result = MyRadio_Swagger::getCallRequirements($class, $method);
 
         if ($result === null) {
             return false; //No permissions means the method is not accessible
@@ -77,6 +92,7 @@ class MyRadio_APIKey extends ServiceAPI
      * @param Array  $args
      * @deprecated
      * @todo A better way of doing this
+     * @todo Disabled as user auth checking would log passwords
      */
     public function logCall($uri, $args)
     {
@@ -89,33 +105,10 @@ class MyRadio_APIKey extends ServiceAPI
     }
 
     /**
-     * Get the permissions that are needed to access this API Call.
-     *
-     * If the return values is null, this method cannot be called.
-     * If the return value is an empty array, no permissions are needed.
-     *
-     * @param  String $class  The class the method belongs to (actual, not API Alias)
-     * @param  String $method The method being called
-     * @return int[]
+     * Get the key for this apikey
      */
-    public static function getCallRequirements($class, $method)
+    public function getID()
     {
-        $result = self::$db->fetchColumn(
-            'SELECT typeid FROM myury.api_method_auth WHERE class_name=$1 AND
-            (method_name=$2 OR method_name IS NULL)',
-            [$class, $method]
-        );
-
-        if (empty($result)) {
-            return null;
-        }
-
-        foreach ($result as $row) {
-            if (empty($row)) {
-                return []; //There's a global auth option
-            }
-        }
-
-        return $result;
+        return $this->key;
     }
 }

@@ -7,6 +7,10 @@
  * @package MyRadio_Profile
  */
 
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = MyRadio_User::getBulkAddForm()->readValues();
@@ -18,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $params[$key] = $data['bulkaddrepeater'][$key][$i];
         }
         try {
-            $user = MyRadio_User::create(
+            $user = MyRadio_User::createOrActivate(
                 $params['fname'],
                 $params['sname'],
                 $params['eduroam'],

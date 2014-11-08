@@ -8,6 +8,11 @@
  * @version 20130722
  * @package MyRadio_Core
  */
+
+use \MyRadio\Config;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Album;
+
 if (isset($_REQUEST['id'])) {
     $data = MyRadio_Album::getInstance($_REQUEST['id']);
 } elseif (!isset($_REQUEST['term'])) {

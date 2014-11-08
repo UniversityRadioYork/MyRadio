@@ -6,6 +6,9 @@
  * @version 21112012
  * @package MyRadio_Webcam
  */
+
+use \MyRadio\ServiceAPI\MyRadio_Webcam;
+
 $streams = MyRadio_Webcam::getStreams();
 //Skip "Live"
 /**

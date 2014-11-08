@@ -5,6 +5,15 @@
  * @package MyRadio_Scheduler
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\MyRadioEmail;
+
 /**
  * The Season class is used to create, view and manupulate Seasons within the new MyRadio Scheduler Format
  * @version 20130814
@@ -545,6 +554,10 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             WHERE start <= NOW() ORDER BY finish DESC LIMIT 1'
         );
 
+        if (empty($result)) {
+            return [];
+        }
+
         return self::getAllSeasonsInTerm($result[0]);
     }
 
@@ -887,7 +900,7 @@ EOT
         for ($i = 1; $i <= 10; $i++) {
             if (isset($params['weeks']['wk' . $i]) && $params['weeks']['wk' . $i] == 1) {
                 $day_start = $start_day + (($i - 1) * 7 * 86400);
-                $show_time = date('d-m-Y ', $day_start) . $start_time;
+                $show_time = date('Y-m-d ', $day_start) . $start_time;
 
                 /**
                  * @todo 1 is subtracted from the duration in the conflict checker here,
@@ -916,6 +929,9 @@ EOT
                         $_SESSION['memberid']
                     ]
                 );
+                if (empty($r)) {
+                    throw new MyRadioException('Failed to schedule timeslot.', 500);
+                }
                 $this->timeslots[] = MyRadio_Timeslot::getInstance($r[0]['show_season_timeslot_id']);
                 $times .= CoreUtils::happyTime($show_time)."\n"; //Times for the email
             }
@@ -973,9 +989,7 @@ $times
 
         $r = (bool) self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_id=$1 AND start_time >= NOW()', [$this->getID()]);
 
-        $m = new Memcached();
-        $m->addServer(Config::$django_cache_server, 11211);
-        $m->flush();
+        $this->updateCacheObject();
 
         return $r;
     }

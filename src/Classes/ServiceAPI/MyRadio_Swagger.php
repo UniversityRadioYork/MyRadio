@@ -5,6 +5,16 @@
  * @package MyRadio_API
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \ReflectionMethod;
+use \ReflectionClass;
+use \ReflectionException;
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\MyRadio\CoreUtils;
+
 /**
  * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/
  * @version 20130731
@@ -33,7 +43,8 @@ class MyRadio_Swagger
                 continue;
             }
             $class = new ReflectionClass($myury);
-            $data['apis'][] = ['path' => '/resources/' . $api, 'description' => $class->getDocComment()];
+            $meta = self::getClassDoc($class);
+            $data['apis'][] = ['path' => '/resources/' . $api, 'description' => $meta['short_desc']];
         }
 
         return $data;
@@ -71,21 +82,21 @@ class MyRadio_Swagger
             '__construct'
         ];
         $data = [
-            'apiVersion' => 0.1,
             'swaggerVersion' => 1.2,
+            'apiVersion' => 0.2,
             'basePath' => Config::$api_url . '/' . $this->class,
             'apis' => [],
             'models' => []
         ];
 
-        $ref = new ReflectionClass($this->getApiClasses()[$this->class]);
+        $refClass = new ReflectionClass($this->getApiClasses()[$this->class]);
         $constructor = new ReflectionMethod($this->getApiClasses()[$this->class], '__construct');
 
-        foreach ($ref->getMethods() as $method) {
+        foreach ($refClass->getMethods() as $method) {
             if (!$method->isPublic() or in_array($method->getName(), $blocked_methods)) {
                 continue;
             }
-            $meta = $this->getMethodDoc($method);
+            $meta = self::getMethodDoc($method);
             /**
              * Add the custom @api docblock option
              * @api may be GET, POST...
@@ -107,12 +118,13 @@ class MyRadio_Swagger
             $params = [];
             if ($method->getName() !== 'toDataSource') {
                 $path .= $method->getName() . '/';
+            } else {
                 //toDataSource has a full option
                 $params[] = [
                     "paramType" => "query",
                     "name" => 'full',
                     "description" => "Some objects can optionally return a small or large response. By default, a full response is on, although it is intended for this to change.",
-                    "dataType" => "boolean",
+                    "type" => "boolean",
                     "required" => false,
                     "allowMultiple" => false,
                     "defaultValue" => true
@@ -128,7 +140,7 @@ class MyRadio_Swagger
                     "paramType" => "path",
                     "name" => "id",
                     "description" => "The unique identifier of the $this->class to be acted on. An int for most Objects, but some are Strings.",
-                    "dataType" => "int",
+                    "type" => "int",
                     "required" => true,
                     "allowMultiple" => false
                 ];
@@ -139,7 +151,7 @@ class MyRadio_Swagger
                     "paramType" => "query",
                     "name" => $param->getName(),
                     "description" => (empty($meta['params'][$param->getName()]['description']) ? : $meta['params'][$param->getName()]['description']),
-                    "dataType" => (empty($meta['params'][$param->getName()]['type']) ? 'int' : $meta['params'][$param->getName()]['type']),
+                    "type" => (empty($meta['params'][$param->getName()]['type']) ? 'int' : $meta['params'][$param->getName()]['type']),
                     "required" => !$param->isOptional(),
                     "allowMultiple" => false,
                     "defaultValue" => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null
@@ -149,12 +161,12 @@ class MyRadio_Swagger
             //cool, now add the method in
             $data['apis'][] = [
                 "path" => $path,
-                "description" => $method->getDocComment(),
+                "description" => $meta['short_desc'],
                 "operations" => [
                     [
-                        "httpMethod" => $meta['api'],
+                        "method" => $meta['api'],
                         "nickname" => $method->getName(),
-                        "responseClass" => $meta['return_type'],
+                        "\$ref" => $meta['return_type'],
                         "parameters" => $params,
                         "summary" => $meta['short_desc'],
                         "notes" => $meta['long_desc']
@@ -166,30 +178,78 @@ class MyRadio_Swagger
         return $data;
     }
 
-    private function getMethodDoc(ReflectionMethod $method)
+    public static function parseDoc($doc)
     {
-        $doc = $method->getDocComment();
+        $raw = explode("\n", trim(preg_replace('/(\/\*\*)|(\n\s+\*\/?[^\S\r\n]?)/', "\n", $doc->getDocComment()), " \n"));
 
-        $lines = explode("\n", trim(preg_replace('/(\/\*\*)|(\n\s+\*\/?\s?)/', "\n", $doc), " \n"));
-
-        //Parse for short description. This is up to the first blank line.
-        $i = 0;
-        $short_desc = '';
-        while (isset($lines[$i]) && !empty($lines[$i]) && substr($lines[$i], 0, 1) !== '@') {
-            $short_desc .= $lines[$i] . ' ';
-            $i++;
+        $lines = [''];
+        $keys = [];
+        foreach ($raw as $line) {
+            if (empty($raw)) {
+                $lines[] = '';
+            } elseif (substr($line, 0, 1) === '@') {
+                $key = preg_replace('/^\@([a-zA-Z]+)(.*)$/', '$1', $line);
+                $keys[$key][] = preg_replace('/^\@([a-zA-Z]+) (.*)$/', '$2', $line);
+            } else {
+                $lines[sizeof($lines)-1] .= $line . ' ';
+            }
         }
+        return ['lines' => $lines, 'keys' => $keys];
+    }
+
+
+    private static function getClassDoc(ReflectionClass $class)
+    {
+        $doc = self::parseDoc($class);
+
+        $short_desc = array_shift($doc['lines']);
 
         //Parse for long description. This is until the first @
-        $long_desc = '';
-        while (isset($lines[$i]) && substr($lines[$i], 0, 1) !== '@') {
-            $long_desc .= $lines[$i] . ' ';
-            $i++;
+        $long_desc = implode('<br>', $doc['lines']);
+
+        //Now parse for docblock things
+        $params = [];
+        $return_type = 'Set';
+        foreach ($doc['keys'] as $key => $values) {
+            switch ($key) {
+                //Deal with $params
+                case 'param':
+                    /**
+                     * info[0] should be "@param"
+                     * info[1] should be data type
+                     * info[2] should be parameter name
+                     * info[3] should be the description
+                     */
+                    $info = explode(' ', $values[0], 4);
+                    $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
+                    $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
+                    break;
+                default:
+                    $i++;
+                    break;
+            }
         }
 
+        return [
+            'short_desc' => trim($short_desc),
+            'long_desc' => trim($long_desc),
+            'params' => $params,
+            'return_type' => $return_type
+        ];
+    }
+
+    private static function getMethodDoc(ReflectionMethod $method)
+    {
+        $doc = self::parseDoc($method);
+
+        $short_desc = array_shift($doc['lines']);
+
+        //Parse for long description. This is until the first @
+        $long_desc = implode('<br>', $doc['lines']);
+
         //We append the auth requirements to the long description
-        $requirements = MyRadio_APIKey::getCallRequirements(
-            $this->getApiClasses()[$this->class],
+        $requirements = self::getCallRequirements(
+            self::getApiClasses()[$method->getDeclaringClass()],
             $method->getName()
         );
         if ($requirements === null) {
@@ -206,16 +266,7 @@ class MyRadio_Swagger
         //Now parse for docblock things
         $params = [];
         $return_type = 'Set';
-        while (isset($lines[$i])) {
-            //Skip ones that are out of place.
-            if (substr($lines[$i], 0, 1) !== '@') {
-                $i++;
-                continue;
-            }
-            $key = preg_replace('/^\@([a-zA-Z]+)(.*)$/', '$1', $lines[$i]);
-            if (empty($key)) {
-                continue;
-            }
+        foreach ($doc['keys'] as $key => $values) {
             switch ($key) {
                 //Deal with $params
                 case 'param':
@@ -225,18 +276,9 @@ class MyRadio_Swagger
                      * info[2] should be parameter name
                      * info[3] should be the description
                      */
-                    $info = explode(' ', $lines[$i], 4);
+                    $info = explode(' ', $values[0], 4);
                     $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
                     $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
-                    //For any following lines, if they don't start with @, assume it's a continuation of the description
-                    $i++;
-                    while (isset($lines[$i]) && substr($lines[$i], 0, 1) !== '@') {
-                        if (empty($lines[$i])) {
-                            $params[$arg]['description'] .= '<br>';
-                        }
-                        $params[$arg]['description'] .= ' ' . $lines[$i];
-                        $i++;
-                    }
                     break;
                 default:
                     $i++;
@@ -250,5 +292,36 @@ class MyRadio_Swagger
             'params' => $params,
             'return_type' => $return_type
         ];
+    }
+
+    /**
+     * Get the permissions that are needed to access this API Call.
+     *
+     * If the return values is null, this method cannot be called.
+     * If the return value is an empty array, no permissions are needed.
+     *
+     * @param  String $class  The class the method belongs to (actual, not API Alias)
+     * @param  String $method The method being called
+     * @return int[]
+     */
+    public static function getCallRequirements($class, $method)
+    {
+        $result = Database::getInstance()->fetchColumn(
+            'SELECT typeid FROM myury.api_method_auth WHERE class_name=$1 AND
+            (method_name=$2 OR method_name IS NULL)',
+            [$class, $method]
+        );
+
+        if (empty($result)) {
+            return null;
+        }
+
+        foreach ($result as $row) {
+            if (empty($row)) {
+                return []; //There's a global auth option
+            }
+        }
+
+        return $result;
     }
 }

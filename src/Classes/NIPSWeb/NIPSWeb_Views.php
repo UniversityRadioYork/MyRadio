@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 
+namespace MyRadio\NIPSWeb;
+
 /**
  * Description of NIPSWeb_Views
  *

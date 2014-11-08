@@ -7,10 +7,13 @@
  * @package MyRadio_Profile
  */
 
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $params = MyRadio_User::getQuickAddForm()->readValues();
-    $user = MyRadio_User::create(
+    $user = MyRadio_User::createOrActivate(
         $params['fname'],
         $params['sname'],
         $params['eduroam'],

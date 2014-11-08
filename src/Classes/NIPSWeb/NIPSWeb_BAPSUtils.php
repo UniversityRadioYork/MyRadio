@@ -5,6 +5,13 @@
  * @package MyRadio_NIPSWeb
  */
 
+namespace MyRadio\NIPSWeb;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_Timeslot;
+
 /**
  * This class has helper functions for saving Show Planner show informaiton into legacy BAPS Show layout
  *
@@ -12,7 +19,7 @@
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_NIPSWeb
  */
-class NIPSWeb_BAPSUtils extends ServiceAPI
+class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
 {
     public static function getBAPSShowIDFromTimeslot(MyRadio_Timeslot $timeslot)
     {

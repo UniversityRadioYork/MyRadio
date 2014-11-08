@@ -4,6 +4,20 @@
  * @package MyRadio_Scheduler
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadioError;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\ServiceAPI\MyRadio_Season;
+use \MyRadio\ServiceAPI\MyRadio_Scheduler;
+use \MyRadio\ServiceAPI\MyRadio_Timeslot;
+
 /**
  * The Show class is used to create, view and manupulate Shows within the new MyRadio Scheduler Format
  * @version 20130728
@@ -410,7 +424,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'title' => $this->getMeta('title'),
                     'description' => $this->getMeta('description'),
                     'genres' => $this->getGenre(),
-                    'tags' => is_null($this->getMeta('tag')) ? null : implode(' ',$this->getMeta('tag')),
+                    'tags' => is_null($this->getMeta('tag')) ? null : implode(' ', $this->getMeta('tag')),
                     'credits.member' => array_map(
                         function ($ar) {
                             return $ar['User'];
@@ -773,7 +787,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'display' => 'icon',
                 'value' => 'calendar',
                 'title' => 'Apply for a new Season',
-                'url' => CoreUtils::makeURL('Scheduler', 'createSeason', ['showid' => $this->getID()])
+                'url' => CoreUtils::makeURL('Scheduler', 'editSeason', ['showid' => $this->getID()])
             ],
             'micrositelink' => [
                 'display' => 'icon',

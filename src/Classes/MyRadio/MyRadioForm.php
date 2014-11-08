@@ -1,5 +1,10 @@
 <?php
 
+namespace MyRadio\MyRadio;
+
+use MyRadio\MyRadioException;
+use MyRadio\Config;
+
 /**
  * This file provides the MyRadioForm class for MyRadio
  * @package MyRadio_Core
@@ -356,11 +361,12 @@ class MyRadioForm
         }
         //Edit Mode requests
         if (isset($_REQUEST[$this->getPrefix() . 'myradiofrmedid'])) {
-            $return['id'] = (int) $_REQUEST[$this->getPrefix() . 'myradiofrmedid'];
+            $tempID = $_REQUEST[$this->getPrefix() . 'myradiofrmedid'];
+            $return['id'] = is_numeric($tempID) ? (int) $tempID : $tempID;
         }
         //XSRF check
         if ($_REQUEST[$this->getPrefix().'__xsrf-token'] !== $_SESSION['myradio-xsrf-token']) {
-            throw new MyRadioException('Session expired (Invalid token). Please refresh the page.', 500);
+            throw new MyRadioException('Session expired (Invalid token). Please refresh the page.', 401);
         }
 
         return $return;

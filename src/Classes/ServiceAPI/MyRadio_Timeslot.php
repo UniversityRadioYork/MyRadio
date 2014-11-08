@@ -5,6 +5,18 @@
  * @package MyRadio_Scheduler
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadioEmail;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\NIPSWeb\NIPSWeb_TimeslotItem;
+use \MyRadio\NIPSWeb\NIPSWeb_BAPSUtils;
+use \MyRadio\SIS\SIS_Utils;
+
 /**
  * The Timeslot class is used to view and manupulate Timeslot within the new MyRadio Scheduler Format
  * @todo Generally the creation of bulk Timeslots is currently handled by the Season/Show classes, but this should change
@@ -27,6 +39,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     protected function __construct($timeslot_id)
     {
+        if (empty($timeslot_id)) {
+            throw new MyRadioException('Timeslot ID must be provided.');
+        }
+
         $this->timeslot_id = $timeslot_id;
         //Init Database
         self::initDB();
@@ -94,7 +110,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         );
         if (empty($result)) {
             //Invalid Season
-            throw new MyRadioException('The MyRadio_Timeslot with instance ID #' . $timeslot_id . ' does not exist.');
+            throw new MyRadioException('The MyRadio_Timeslot with instance ID #' . $timeslot_id . ' does not exist.', 400);
         }
 
         //Deal with the easy bits
@@ -197,19 +213,25 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     /**
      * Gets the Timeslot that is on after this.
-     * @param  MyRadio_Timeslot      $timeslot
+     * @param $filter defines a filter of show_type ids
      * @return MyRadio_Timeslot|null If null, Jukebox is next.
      */
-    public function getTimeslotAfter()
+    public function getTimeslotAfter($filter = array(1))
     {
+        $filter = '{' . implode(', ', $filter) . '}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
+
         $result = self::$db->fetchColumn(
             'SELECT show_season_timeslot_id
             FROM schedule.show_season_timeslot
+            INNER JOIN schedule.show_season USING (show_season_id)
+            INNER JOIN schedule.show USING (show_id)
             WHERE start_time >= $1 AND start_time <= $2
+            AND show_type_id = ANY ($3)
             ORDER BY start_time ASC LIMIT 1',
             [
                 CoreUtils::getTimestamp($this->getEndTime() - 300),
-                CoreUtils::getTimestamp($this->getEndTime() + 300)
+                CoreUtils::getTimestamp($this->getEndTime() + 300),
+                $filter
             ]
         );
         if (empty($result)) {
@@ -329,21 +351,28 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     /**
      * Returns the current Timeslot on air, if there is one.
      * @param int $time Optional integer timestamp
+     * @param $filter defines a filter of show_type ids
      *
      * @return MyRadio_Timeslot|null
      */
-    public static function getCurrentTimeslot($time = null)
+    public static function getCurrentTimeslot($time = null, $filter = array(1))
     {
         self::initDB(); //First DB access for Timelord
         if ($time === null) {
             $time = time();
         }
 
+        $filter = '{' . implode(', ', $filter) . '}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
+
         $result = self::$db->fetchColumn(
-            'SELECT show_season_timeslot_id FROM
-            schedule.show_season_timeslot WHERE start_time <= $1 AND
-            start_time + duration >= $1',
-            [CoreUtils::getTimestamp($time)]
+            'SELECT show_season_timeslot_id
+            FROM schedule.show_season_timeslot
+            INNER JOIN schedule.show_season USING (show_season_id)
+            INNER JOIN schedule.show USING (show_id)
+            WHERE start_time <= $1
+            AND start_time + duration >= $1
+            AND show_type_id = ANY ($2)',
+            [CoreUtils::getTimestamp($time), $filter]
         );
 
         if (empty($result)) {
@@ -356,16 +385,23 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     /**
      * Gets the next Timeslot to start after $time
      * @param  int              $time
+     * @param                   $filter defines a filter of show_type ids
      * @return MyRadio_Timeslot
      */
-    public static function getNextTimeslot($time = null)
+    public static function getNextTimeslot($time = null, $filter = array(1))
     {
+        $filter = '{' . implode(', ', $filter) . '}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
+
         $result = self::$db->fetchColumn(
-            'SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
+            'SELECT show_season_timeslot_id
+            FROM schedule.show_season_timeslot
+            INNER JOIN schedule.show_season USING (show_season_id)
+            INNER JOIN schedule.show USING (show_id)
             WHERE start_time >= $1
+            AND show_type_id = ANY ($2)
             ORDER BY start_time ASC
             LIMIT 1',
-            [CoreUtils::getTimestamp($time)]
+            [CoreUtils::getTimestamp($time), $filter]
         );
 
         if (empty($result)) {
@@ -379,11 +415,13 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      * Returns the current timeslot, and the n after it, in a simplified
      * datasource format. Mainly intended for API use.
      * @param int $time
+     * @param int $n number of next shows to return
+     * @param $filter defines a filter of show_type ids
      */
-    public static function getCurrentAndNext($time = null, $n = 1)
+    public static function getCurrentAndNext($time = null, $n = 1, $filter = array(1))
     {
-        $timeslot = self::getCurrentTimeslot($time);
-        $next = self::getNextTimeslot($time);
+        $timeslot = self::getCurrentTimeslot($time, $filter);
+        $next = self::getNextTimeslot($time, $filter);
 
         if (empty($timeslot)) {
             //There's currently not a show on.
@@ -407,7 +445,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     'presenters' => $timeslot->getPresenterString()
                 ]
             ];
-            $next = $timeslot->getTimeslotAfter();
+            $next = $timeslot->getTimeslotAfter($filter);
         }
 
         $lastnext = $timeslot;
@@ -416,7 +454,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             if (empty($next)) {
                 if ($lastnext instanceof MyRadio_Timeslot) {
                     //There's not a next show, but there might be one later
-                    $nextshow = self::getNextTimeslot($lastnext->getEndTime());
+                    $nextshow = self::getNextTimeslot($lastnext->getEndTime(), $filter);
 
                     $response['next'][] = [
                         'title' => Config::$short_name . ' Jukebox',
@@ -440,11 +478,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
             if ($next instanceof MyRadio_Timeslot) {
                 $lastnext = $next;
-                $next = $next->getTimeslotAfter();
+                $next = $next->getTimeslotAfter($filter);
             } else {
                 if ($lastnext instanceof MyRadio_Timeslot) {
                     $last = $next;
-                    $next = self::getNextTimeslot($lastnext->getEndTime());
+                    $next = self::getNextTimeslot($lastnext->getEndTime(), $filter);
                     $lastnext = $last;
                 } else {
                     $lastnext = $next;
@@ -559,19 +597,14 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         $r = self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', [$this->getID()]);
 
-        /**
-         * @todo This is massively overkill, isn't it?
-         */
-        $m = new Memcached();
-        $m->addServer(Config::$django_cache_server, 11211);
-        $m->flush();
+        $this->updateCacheObject();
 
         return $r;
     }
 
     /**
      * This is the server-side implementation of the JSONON system for tracking Show Planner alterations
-     * @param array $set A JSONON operation set
+     * @param array[] $set A JSONON operation set
      */
     public function updateShowPlan($set)
     {
@@ -802,5 +835,4 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             )
         );
     }
-
 }

@@ -5,5 +5,6 @@
        {% if field.options.minlength is defined %} minlength="{{field.options.minlength}}"{% endif %}
        {% if field.options.maxlength is defined %} maxlength="{{field.options.maxlength}}"{% endif %}
        {% if field.options.placeholder is defined %} placeholder="{{field.options.placeholder}}"{% endif %}
+       {% if field.options.autofocus is defined %} autofocus{% endif %}
        {% if not field.enabled %} readonly="readonly"{% endif %}/>
 <span class="myradiofrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>

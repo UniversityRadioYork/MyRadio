@@ -7,6 +7,10 @@
  * @package MyRadio_SIS
  */
 
+use \MyRadio\Config;
+use \MyRadio\MyRadio\MyRadioNews;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 $vars = [
     'piss' => MyRadioNews::getLatestNewsItem(Config::$piss_feed, MyRadio_User::getInstance())
 ];

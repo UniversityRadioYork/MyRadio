@@ -4,6 +4,15 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio\ServiceAPI;
+
+use \MyRadio\Iface\IServiceAPI;
+use \MyRadio\Iface\MyRadio_DataSource;
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\MyRadioException;
+
 /**
  * An Abstract superclass for ServiceAPI classes that implements essential
  * base functionality for full MyRadio integration

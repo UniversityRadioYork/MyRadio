@@ -4,15 +4,23 @@
  * @package MyRadio_Core
  */
 
+namespace MyRadio;
+
 /**
  * Stores configuration settings
  *
  * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130711
+ * @version 20140529
  * @package MyRadio_Core
  */
 final class Config
 {
+    /**
+     * If true, MyRadio will open the setup wizard when accessed.
+     * This should be false in production unless you want bad things to happen.
+     * @var boolean
+     */
+    public static $setup = false;
     /**
      * The ID of the "MyRadio" Service. This *should* be the only Service, and therefore never change.
      * It's technically a remnant of the originally slightly overengineered modularisation structure.
@@ -63,6 +71,7 @@ final class Config
     /**
      * The base URL of Shibbobleh - it has CSS and JS resources used by MyRadio
      * @var String
+     * @deprecated
      */
     public static $shib_url       = '//ury.org.uk/portal/';
 
@@ -78,7 +87,7 @@ final class Config
      * If false, then urls will be myury/?module=[module]&action=[action]
      * @var boolean
      */
-    public static $rewrite_url    = true;
+    public static $rewrite_url    = false;
 
     /**
      * Whether to enable the Caching system
@@ -92,7 +101,7 @@ final class Config
      * Must be the name of a valid class located in classes/[classname].php and implements CacheProvider
      * @var String
      */
-    public static $cache_provider = 'APCProvider';
+    public static $cache_provider = '\MyRadio\APCProvider';
     /**
      * How long MyRadio_Track items should be cached before the data is invalidated. This is Configurable as due to a lot
      * of external edit sources, it is reasonable to asssume the cache may become stale due to other systems.
@@ -175,13 +184,6 @@ final class Config
     public static $piss_feed = 4;
 
     /**
-     * The location of the Memcached server used for the Website.
-     * This is so it can be cleared where necessary.
-     * @var String
-     */
-    public static $django_cache_server = 'localhost';
-
-    /**
      * The path to the motion Webcam logs. This must be a file path, but may be NFS/Samba mounter
      * @var String
      */
@@ -200,14 +202,14 @@ final class Config
     public static $webcam_set_url = "http://copperbox.york.ac.uk:9090/set?newcam=";
 
     /**
-     * The path to store the original, unencoded copies of URYPlayer Podcasts.
+     * The path to store the original, unencoded copies of MyRadio Podcasts.
      * The originals are archived here for future reencoding.
      * @var String
      */
     public static $podcast_archive_path = '/music/podcasts';
 
     /**
-     * The URL where media should be stored. Used for podcasts, banners and images.
+     * The file system path where media should be stored. Used for podcasts, banners and images.
      * @var String
      */
     public static $public_media_path = '/home/django/virtualenvs/urysite/assets/media';
@@ -247,24 +249,35 @@ final class Config
 
     /**
      * The file to be played if the obit procedure is triggered.
+     * This is only used if you use the MyRadio iTones Liquidsoap playout tools
      * @var String
      */
     public static $jukebox_obit_file = '/jukebox/OBIT.mp3';
 
     /**
-     * The Samba File Share path to the Central Database. This is used for BAPS compatibility features.
+     * The Samba File Share path to the Central Database.
+     * This is used for BAPS compatibility features.
+     * 
+     * If you are not URY, you will likely not need this setting.
+     * However, if you have a studio audio playout tool that needs
+     * samba paths to files stored in a database, set this here.
+     * This data will then be stored in the public.baps_ table.
      * @var String
      */
     public static $music_smb_path = '\\\\musicstore.ury.york.ac.uk';
 
     /**
-     * A path to temporarially store uploaded audio files. Recommend somewhere in /tmp, MyRadio needs full r/w access to it.
+     * A path to temporarily store uploaded audio files. Recommend somewhere in /tmp,
+     * MyRadio needs full r/w access to it to enable Library management.
      * @var String
      */
     public static $audio_upload_tmp_dir = '/tmp/myradioaudiouploadcache';
 
     /**
      * The API key to access last.fm's resources.
+     *
+     * You will need one of these to enable Library management.
+     * 
      * @var String
      */
     public static $lastfm_api_key;
@@ -276,8 +289,9 @@ final class Config
     public static $lastfm_api_secret;
 
     /**
-     * The array of different versions of tracks one can expect to find in the Central Database. Used for file servers
-     * and other systems to ensure the file requested seems legit.
+     * The array of different versions of tracks one can expect to find in the
+     * Central Database. Used for file servers and other systems to ensure
+     * the file requested seems legit.
      * @var Array[String]
      */
     public static $music_central_db_exts = ['mp3', 'ogg', 'mp3.orig'];
@@ -285,9 +299,9 @@ final class Config
     /**
      * Mailing list to send reporting info to
      * @var String
-     * @todo Make this point to a MyRadio_List ID?
+     * @todo Make this support non-MyRadio managed addresses
      */
-    public static $reporting_list = 'alerts.myury';
+    public static $reporting_list = 'alerts.myradio';
 
     /**
      * The IP/hostname of the iTones Liquidsoap Telnet Service
@@ -340,17 +354,18 @@ final class Config
      * The file to store MyRadio Error Logs
      * @var String
      */
-    public static $log_file = '/var/log/ury-org-uk/myradio_errors.log';
+    public static $log_file = '/var/log/myradio/errors.log';
     /**
      * A lock file on the MyRadio Error Logs. Prevents email spam.
      * @var String
      */
-    public static $log_file_lock = '/var/log/ury-org-uk/myradio_errors.lock';
+    public static $log_file_lock = '/tmp/myradio_errors.lock';
     /**
-     * The email to send error reports to. This is different from reporting_email, which does statistical reports.
+     * The email to send error reports to. This is different from reporting_list, 
+     * which does statistical reports, if enabled.
      * @var String
      */
-    public static $error_report_email = 'alerts.myury';
+    public static $error_report_email = 'alerts.myradio';
 
     /**
      * The number of seconds an iTones Playlist lock is valid for before it expires.
@@ -366,14 +381,16 @@ final class Config
 
     /**
      * This key enables automated access to the YUSU CMS information about URY's members
+     *
+     * This is literally only useful if you are URY.
      */
     public static $yusu_api_key;
 
     /**
      * The default college for new users that do not specify one.
-     * 10 is Unknown.
+     * 1 is Unknown. (Unless you're URY, in which case it's 10 because legacy)
      */
-    public static $default_college = 10;
+    public static $default_college = 1;
 
     /**
      * A path to the file system (preferably in /tmp) that the MyRadio Daemon tools can have write access to. It stores
@@ -388,7 +405,7 @@ final class Config
      * Must be absolute.
      * @var String
      */
-    public static $api_url = 'https://ury.org.uk/api';
+    public static $api_url = null;
 
     /**
      * The URL prefix to URY's webcam
@@ -413,8 +430,11 @@ final class Config
     public static $api_uri = '/api/';
 
     /**
-     * Recaptcha settings
+     * Recaptcha settings. Used for password resets.
+     * 
      * http://recaptcha.net
+     *
+     * @var String
      */
     public static $recaptcha_public_key = 'YOUR_API_KEY';
     public static $recaptcha_private_key = 'YOUR_PRIVATE_KEY';
@@ -491,10 +511,10 @@ final class Config
      * operations.
      */
     //public static $authenticators = ['MyRadioLDAPAuthenticator', 'MyRadioDefaultAuthenticator'];
-    public static $authenticators = ['MyRadioDefaultAuthenticator'];
+    public static $authenticators = ['\MyRadio\MyRadio\MyRadioDefaultAuthenticator'];
     public static $auth_ldap_server = 'ldap://ldap.york.ac.uk';
     public static $auth_ldap_root = 'ou=people,ou=csrv,ou=nos,dc=york,dc=ac,dc=uk';
-    public static $auth_db_user = 'shibbobleh';
+    public static $auth_db_user = '';
     public static $auth_db_pass = '';
     public static $eduroam_domain = 'york.ac.uk';
     public static $auth_ldap_friendly_name = 'IT Services';
@@ -536,61 +556,18 @@ final class Config
     public static $d_StatsGen_enabled = true;
     public static $d_Explicit_enabled = false;
 
-    /**** CONFIG FILES ****/
-    public static $menu_config_file_path = '/usr/local/www/myradio/menu.yaml';
-
     /**** STRINGS ****/
     public static $short_name = 'URY';
     public static $long_name = 'University Radio York';
     public static $founded = '1967';
     public static $email_domain = 'ury.org.uk';
-    public static $welcome_email = <<<EOT
-<p>Hi #NAME!</p>
-
-<p>Thanks for showing an interest in URY, your official student radio station.</p>
-
-<p>My name's Al, and I'm the Station Manager here at URY. It's my job to make it as
-easy as possible to get on the air or join any of our other teams.</p>
-
-<p>If you're interested in getting involved in any of our teams (there's 11 of
-them!), then reply to this email and I'll sort you out, or email the address
-listed for that team <a href="http://ury.org.uk/getinvolved">on our website</a>.
-</p>
-
-<p>For more information about these, and everything else we do, you can:
-<ul>
-<li>join the <a href="https://www.facebook.com/groups/ury1350/">URY Members</a>
- Facebook group,</li>
-<li>like our <a href="https://www.facebook.com/URY1350">Facebook page</a>,</li>
-<li>or <a href="https://twitter.com/ury1350">Follow @ury1350</a> on Twitter</li>
-</ul>
-
-<p>Finally, URY has a lot of <a href="https://ury.org.uk/myury/">online
-resources</a> that are useful for all sorts of things, so you'll need your login
- details:</p>
-<p>Username: #USER<br>
-Password: #PASS</p>
-
-<p>If you have any questions, feel free to ask by visiting us at our station in
-Vanbrugh, or emailing <a
-href="mailto:training@ury.org.uk">training@ury.org.uk</a>.</p>
-
-Hope to see you soon.
-<br><br>
---<br>
-Al Riddell<br>
-Station Manager<br>
-<br>
-University Radio York 1350AM<br>
-Most Awarded Student Radio Station 2013<br>
----------------------------------------------<br>
-<a href="mailto:al.riddell@ury.org.uk">al.riddell@ury.org.uk</a>
-<br>
----------------------------------------------<br>
-On Air | Online | On Demand<br>
-<a href="http://ury.org.uk/">ury.org.uk</a>
-EOT;
     public static $facebook = 'https://www.facebook.com/URY1350';
+    public static $welcome_email = <<<EOT
+
+   This is a welcome email. You can use #NAME to get the user's first name,
+   and include #UNAME and #PASS to tell them their newly created login details.
+
+EOT;
 
     /**
      * The constructor doesn't do anything practical

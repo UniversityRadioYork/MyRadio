@@ -8,6 +8,16 @@
  * @data 20140121
  * @package MyRadio_Core
  */
+
+use \MyRadio\Config;
+use \MyRadio\Database;
+use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\MyRadio\MyRadioDefaultAuthenticator;
+use \MyRadio\ServiceAPI\MyRadio_User;
+
 $form = (
     new MyRadioForm(
         'myradio_pwChange',

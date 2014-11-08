@@ -4,6 +4,10 @@
  * @package MyRadio_NIPSWeb
  */
 
+namespace MyRadio\NIPSWeb;
+
+use \MyRadio\MyRadioException;
+
 /**
  * The NIPSWeb_Token class
  * @todo Implement Play Token support
@@ -13,7 +17,7 @@
  * @package MyRadio_NIPSWeb
  * @uses \Database
  */
-class NIPSWeb_Token extends ServiceAPI
+class NIPSWeb_Token extends \MyRadio\ServiceAPI\ServiceAPI
 {
     public static function createToken($trackid)
     {
@@ -43,6 +47,10 @@ class NIPSWeb_Token extends ServiceAPI
             VALUES ($1, $2) RETURNING client_id',
             [$_SESSION['timeslotid'], session_id()]
         );
+
+        if (empty($r)) {
+            throw new MyRadioException('Failed to generate Show Planner edit token.', 500);
+        }
 
         return (int) $r[0];
     }

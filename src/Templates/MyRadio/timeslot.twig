@@ -23,7 +23,7 @@
         Click here to see all shows</a>.
 </p>
 {% endif %}
-{% if allTimeslots != 'unavailable' %}
+{% if allTimeslots != 'unavailable' and currentAvaliable %}
 <p>
     <a href="{{myury.makeURL(config, 'MyRadio', 'timeslot', {next: next, current: true})}}">
         Click here to load the current show</a>.
