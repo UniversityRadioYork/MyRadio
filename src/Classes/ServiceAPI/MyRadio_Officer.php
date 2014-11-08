@@ -142,6 +142,11 @@ class MyRadio_Officer extends ServiceAPI
         );
     }
 
+    /**
+     * Stands Down the officership provided.
+     *
+     * @param int $memberofficerid The ID of the officership to stand down
+     */
     public static function standDown($memberofficerid)
     {
         self::$db->query(
@@ -318,18 +323,4 @@ class MyRadio_Officer extends ServiceAPI
         return $data;
     }
 
-    /**
-     * Stands Down the officership provided.
-     *
-     * @param int $memberofficerid The ID of the officership to stand down
-     */
-    public static function standDown($memberofficerid)
-    {
-        self::$db->query(
-            'UPDATE public.member_officer
-            SET till_date = now()
-            WHERE member_officerid = $1',
-            [$memberofficerid]
-        );
-    }
 }
