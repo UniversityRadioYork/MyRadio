@@ -1,5 +1,5 @@
 {% spaceless %}
-{% import 'macros.twig' as myury %}
+{% import 'macros.twig' as MyRadio %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -11,11 +11,11 @@
       <nav id="menu" class="transBG">
         <a id="miniLogo" href="{{baseurl}}">MyRadio</a>
         <ul>
-          {% if memberid %}<li><a href="{{myury.makeURL(config, 'MyRadio', 'logout')}}">Logout</a></li>{% endif %}
+          {% if memberid %}<li><a href="{{MyRadio.makeURL(config, 'MyRadio', 'logout')}}">Logout</a></li>{% endif %}
         </ul>
         <ul id="navRight">
-          <li>{% if timeslotname is null and memberid %}<a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}">Pick Timeslot</a>{% else %}<a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</li>
-          <li><a href="{{myury.makeURL(config, 'Profile')}}">{{ name | raw }}</a></li>
+          <li>{% if timeslotname is null and memberid %}<a href="{{MyRadio.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}">Pick Timeslot</a>{% else %}<a href="{{MyRadio.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}" title="Click to change timeslot">{{ timeslotname }}</a>{% endif %}</li>
+          <li><a href="{{MyRadio.makeURL(config, 'Profile')}}">{{ name | raw }}</a></li>
           {% if impersonator %}<li>{{ impersonator | raw }}</li>{% endif %}
         </ul>
       </nav>

@@ -13,24 +13,24 @@
 {% if allTimeslots == 'on' %}
 <p>
     You are currently listing <strong>all</strong> shows.
-    <a href="{{myury.makeURL(config, 'MyRadio', 'timeslot', {next: next})}}">
+    <a href="{{MyRadio.makeURL(config, 'MyRadio', 'timeslot', {next: next})}}">
         Click here to only see your shows</a>.
 </p>
 {% elseif allTimeslots == 'off' %}
 <p>
     You are currently listing <strong>your</strong> shows.
-    <a href="{{myury.makeURL(config, 'MyRadio', 'timeslot', {next: next, all: true})}}">
+    <a href="{{MyRadio.makeURL(config, 'MyRadio', 'timeslot', {next: next, all: true})}}">
         Click here to see all shows</a>.
 </p>
 {% endif %}
 {% if allTimeslots != 'unavailable' and currentAvaliable %}
 <p>
-    <a href="{{myury.makeURL(config, 'MyRadio', 'timeslot', {next: next, current: true})}}">
+    <a href="{{MyRadio.makeURL(config, 'MyRadio', 'timeslot', {next: next, current: true})}}">
         Click here to load the current show</a>.
 </p>
 {% endif %}
 
-<form action='{{myury.makeURL(config,"MyRadio","timeslot")}}' method='post'>
+<form action='{{MyRadio.makeURL(config,"MyRadio","timeslot")}}' method='post'>
     <fieldset class="timeslot">
         <select id="shows" size="20">
             {% for show in timeslots|keys %}

@@ -28,7 +28,7 @@
       <th>Reliability</th><th>{% if correction.state == 1 %}Recommended{% else %}Unsure{% endif %}</th>
     </tr>
     <tr>
-      <td>Track</td><td><audio id="trackcorrect_fpreview" src="{{ myury.makeURL(config, 'NIPSWeb', 'secure_play', {'trackid': correction.trackid, 'recordid': correction.album.recordid}) }}" controls>You need HTML5, silly!</audio></td>
+      <td>Track</td><td><audio id="trackcorrect_fpreview" src="{{ MyRadio.makeURL(config, 'NIPSWeb', 'secure_play', {'trackid': correction.trackid, 'recordid': correction.album.recordid}) }}" controls>You need HTML5, silly!</audio></td>
     </tr>
     <tr>
       <td colspan="3"><a href="{{correction.confirmlink.url}}">Approve</a> |
