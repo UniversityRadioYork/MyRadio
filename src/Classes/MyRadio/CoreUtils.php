@@ -249,7 +249,7 @@ class CoreUtils
             $data['myury_errors'] = MyRadioError::$php_errorlist;
         }
 
-        echo json_encode($data);
+        echo json_encode($data, JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES);
         exit;
     }
 
