@@ -169,7 +169,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         $season = $this->getSeason();
 
-        return 'http://ury.org.uk/show/' . $season->getShow()->getID() . '/' . $season->getSeasonNumber() . '/' . $this->getTimeslotNumber();
+        return 'http://ury.org.uk/schedule/shows/timeslots/' . $this->timeslot_id;
     }
 
     public function getPhoto()
