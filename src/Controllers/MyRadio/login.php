@@ -151,7 +151,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
     } elseif ($status === 'change') {
         CoreUtils::redirect('MyRadio', 'pwChange');
     } elseif ($status !== 'success') {
-        $form->setFieldValue('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL(Config::$default_module))->render(['error' => true]);
+        $form->setFieldValue('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL(Config::$default_module))
+            ->render(['error' => true]);
     } else {
         if (isset($data['next'])) {
             header('Location: ' . $data['next']);
