@@ -458,7 +458,8 @@ final class Config
         'presenterinfo',
         'messages',
         'links',
-        'selector'
+        'selector',
+        'webcam'
     ];
 
     /**

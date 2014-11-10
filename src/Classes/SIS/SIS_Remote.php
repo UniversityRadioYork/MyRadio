@@ -91,8 +91,13 @@ class SIS_Remote extends ServiceAPI
     {
         $response = MyRadio_Webcam::getCurrentWebcam();
 
-        if ($response['current'] != $_REQUEST['webcam_id']) {
-            return ['webcam' => $response];
+        if ($response['current'] !== $_REQUEST['webcam-id']) {
+            return [
+                'webcam' => [
+                    'status' => $response,
+                    'streams' => MyRadio_Webcam::getStreams()
+                ]
+            ];
         }
     }
 }

@@ -125,6 +125,10 @@ class MyRadio_Selector
     {
         $data = file(Config::$ob_remote_status_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
+        if (!$data) {
+            return ['s1' => false, 's2' => false, 's3' => false];
+        }
+
         $response = [];
         foreach ($data as $feed) {
             $state = explode('=', $feed);
@@ -269,6 +273,10 @@ class MyRadio_Selector
             [CoreUtils::getTimestamp($time)]
         );
 
+        if (!$result) {
+            return 0;
+        }
+
         return $result[0] - 3;
     }
 
@@ -286,6 +294,10 @@ class MyRadio_Selector
             LIMIT 1',
             [CoreUtils::getTimestamp($time)]
         );
+
+        if (empty($result)) {
+            return 0;
+        }
 
         return (int) $result[0];
     }
@@ -305,6 +317,10 @@ class MyRadio_Selector
             [CoreUtils::getTimestamp($time)]
         );
 
+        if (empty($result)) {
+            return false;
+        }
+
         return ($result[0] == 13) ? true : false;
     }
 
@@ -322,6 +338,10 @@ class MyRadio_Selector
             LIMIT 1',
             [CoreUtils::getTimestamp($time)]
         );
+
+        if (empty($result)) {
+            return false;
+        }
 
         return ($result[0] == 15) ? true : false;
     }
@@ -341,6 +361,10 @@ class MyRadio_Selector
             [CoreUtils::getTimestamp($time)]
         );
 
+        if (empty($result)) {
+            return false;
+        }
+
         return ($result[0] == 3) ? 0 : (int) $result[0];
     }
 
@@ -357,6 +381,10 @@ class MyRadio_Selector
             LIMIT 1',
             [CoreUtils::getTimestamp($time)]
         );
+
+        if (!$result) {
+            return 0;
+        }
 
         return strtotime($result[0]);
     }
