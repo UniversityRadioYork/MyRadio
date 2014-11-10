@@ -50,7 +50,7 @@ $form = (
         'next',
         MyRadioFormField::TYPE_HIDDEN,
         [
-            'value' => isset($_REQUEST['next']) ? $_REQUEST['next'] : ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-next']) ? $_POST['myradio_login-next'] : Config::$base_url)
+            'value' => isset($_REQUEST['next']) ? $_REQUEST['next'] : Config::$base_url
         ]
     )
 )->setTemplate('MyRadio/login.twig');
@@ -151,7 +151,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
     } elseif ($status === 'change') {
         CoreUtils::redirect('MyRadio', 'pwChange');
     } elseif ($status !== 'success') {
-        $form->render(['error' => true]);
+        $form->setFieldValue('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL(Config::$default_module))
+            ->render(['error' => true]);
     } else {
         if (isset($data['next'])) {
             header('Location: ' . $data['next']);
