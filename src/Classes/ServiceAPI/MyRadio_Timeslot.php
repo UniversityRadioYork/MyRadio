@@ -169,7 +169,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         $season = $this->getSeason();
 
-        return 'http://ury.org.uk/show/' . $season->getShow()->getID() . '/' . $season->getSeasonNumber() . '/' . $this->getTimeslotNumber();
+        return 'http://ury.org.uk/schedule/shows/timeslots/' . $this->timeslot_id;
     }
 
     public function getPhoto()
@@ -442,7 +442,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     'photo' => $timeslot->getPhoto(),
                     'start_time' => $timeslot->getStartTime(),
                     'end_time' => $timeslot->getEndTime(),
-                    'presenters' => $timeslot->getPresenterString()
+                    'presenters' => $timeslot->getPresenterString(),
+                    'url' => $timeslot->getWebpage()
                 ]
             ];
             $next = $timeslot->getTimeslotAfter($filter);
@@ -472,7 +473,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     'photo' => $next->getPhoto(),
                     'start_time' => $next->getStartTime(),
                     'end_time' => $next->getEndTime(),
-                    'presenters' => $next->getPresenterString()
+                    'presenters' => $next->getPresenterString(),
+                    'url' => $next->getWebpage()
                 ];
             }
 
