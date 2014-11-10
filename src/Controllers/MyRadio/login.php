@@ -50,7 +50,7 @@ $form = (
         'next',
         MyRadioFormField::TYPE_HIDDEN,
         [
-            'value' => isset($_REQUEST['next']) ? $_REQUEST['next'] : ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-next']) ? $_POST['myradio_login-next'] : Config::$base_url)
+            'value' => isset($_REQUEST['next']) ? $_REQUEST['next'] : Config::$base_url
         ]
     )
 )->setTemplate('MyRadio/login.twig');
