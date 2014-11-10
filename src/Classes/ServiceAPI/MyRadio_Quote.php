@@ -9,7 +9,8 @@ namespace MyRadio\ServiceAPI;
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
 
 /**
  * A quote in the radio station Quotes Database.

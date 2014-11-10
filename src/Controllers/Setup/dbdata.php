@@ -38,7 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
      * For some reason, after a break; a further match of the same
      * clause, so to avoid code duplication full actionauth is a function
      */
-    function setUpFullActionsAuth() {
+    function setUpFullActionsAuth()
+    {
         foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actions.json')) as $action) {
             //The getXxxId method creates these if they don't exist
             $module = CoreUtils::getModuleId($action[0]);

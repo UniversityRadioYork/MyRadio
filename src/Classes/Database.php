@@ -5,12 +5,13 @@
  */
 
 namespace MyRadio;
+
 use \MyRadio\MyRadio\CoreUtils;
 
 /**
  * This singleton class handles actual database connection
  *
- * This is a Critical include! - It is loaded before MyRadio Brokers into versions so only the live one is used!
+ * This is a Critical include!
  *
  * @version 20130531
  * @author Lloyd Wallis <lpw@ury.org.uk>

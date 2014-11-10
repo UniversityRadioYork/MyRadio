@@ -74,6 +74,7 @@ class MyRadioEmail extends ServiceAPI
         $split = strip_tags($this->body);
         if ($this->body !== $split) {
             //There's HTML in there
+            $split = html_entity_decode($split);
             $this->multipart = true;
             $this->body_transformed = 'This is a MIME encoded message.'
                     . self::$rtnl . self::$rtnl . '--' . self::$multipart_boundary . self::$rtnl
@@ -215,7 +216,7 @@ class MyRadioEmail extends ServiceAPI
                 //Don't send if the user has opted out
                 if ($user->getReceiveEmail()) {
                     $u_subject = trim(str_ireplace('#NAME', $user->getFName(), $this->subject));
-                    if (substr($u_subject, 0 , 1) !== '[') {
+                    if (substr($u_subject, 0, 1) !== '[') {
                         $u_subject = '['.Config::$short_name.'] ' . $u_subject;
                     }
                     $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);

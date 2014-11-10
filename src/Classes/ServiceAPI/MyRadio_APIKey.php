@@ -31,7 +31,7 @@ class MyRadio_APIKey extends ServiceAPI
      * @var int[]
      */
     private $permissions;
-    
+
     /**
      * Whether the API key has been revoked
      * @var bool
@@ -107,7 +107,8 @@ class MyRadio_APIKey extends ServiceAPI
     /**
      * Get the key for this apikey
      */
-    public function getID() {
+    public function getID()
+    {
         return $this->key;
     }
 }

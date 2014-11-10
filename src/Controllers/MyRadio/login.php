@@ -1,9 +1,10 @@
 <?php
 
-use \MyRadio\Config, \MyRadio\Database;
+use \MyRadio\Config;
+use \MyRadio\Database;
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\MyRadioForm, \MyRadio\MyRadio\MyRadioFormField;
-
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
 
 /**
  *
@@ -49,7 +50,7 @@ $form = (
         'next',
         MyRadioFormField::TYPE_HIDDEN,
         [
-            'value' => isset($_REQUEST['next']) ? $_REQUEST['next'] : Config::$base_url
+            'value' => isset($_REQUEST['next']) ? $_REQUEST['next'] : ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-next']) ? $_POST['myradio_login-next'] : Config::$base_url)
         ]
     )
 )->setTemplate('MyRadio/login.twig');
@@ -98,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
                  * they try to access anything other than pages with AUTH_NOACCESS
                  */
                 $_SESSION['auth_use_locked'] = false;
-                if(!$user->isActiveMemberForYear()) {
+                if (!$user->isActiveMemberForYear()) {
                     $user->activateMemberThisYear();
                 }
                 $user->updateLastLogin();

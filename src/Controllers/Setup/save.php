@@ -37,7 +37,7 @@ if (!empty($_SERVER['HTTP_HOST'])) {
 } else {
     $domain = $_SERVER['SERVER_NAME'];
 }
-$config_overrides['base_url'] = '//' . $domain . explode('?',$_SERVER['REQUEST_URI'])[0];
+$config_overrides['base_url'] = '//' . $domain . explode('?', $_SERVER['REQUEST_URI'])[0];
 
 //Actually write the file
 $file = @fopen($path, 'w');
