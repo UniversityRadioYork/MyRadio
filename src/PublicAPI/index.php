@@ -211,7 +211,7 @@ if (!$api_key->canCall($classes[$class], $method)) {
         api_error($e->getCode(), $e->getMessage(), $e);
     }
 
-    header('Content/Type: application/json');
+    header('Content-Type: application/json');
 
     /**
      * Some objects have really expensive "full" responses. Some systems
