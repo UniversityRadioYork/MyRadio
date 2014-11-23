@@ -723,6 +723,9 @@ class MyRadioFormField
 
     private function convertTime($timeString)
     {
+        if ($timeString === '') {
+            return null;
+        }
         /* For why we need to do this, consult the notes at
          * http://php.net/manual/en/function.strtotime.php.
          * YES, PHP IS RETARDED.
