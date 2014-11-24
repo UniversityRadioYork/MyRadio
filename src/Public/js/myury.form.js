@@ -197,8 +197,8 @@ window.MyRadioForm = {
    * Sets up those pretty week drag-drop select fields. I wrote it, but don't understand it.
    */
   setUpWeekSelectFields: function() {
-    $('table.myuryfrmfield-weeklycheck').disableSelection();
-    $.each($('table.myuryfrmfield-weeklycheck td'), function() {
+    $('table.myradiofrmfield-weeklycheck').disableSelection();
+    $.each($('table.myradiofrmfield-weeklycheck td'), function() {
       $(this).on('mousedown', function() {
         if (MyRadioForm.gCheckedValue === null) {
           /**
