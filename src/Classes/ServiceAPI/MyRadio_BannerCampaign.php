@@ -284,7 +284,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
         if ($time === null) {
             $this->effective_to = $time;
             self::$db->query(
-                'UPDATE website.banner_campaign SET effective_to IS NULL WHERE banner_campaign_id=$2',
+                'UPDATE website.banner_campaign SET effective_to=NULL WHERE banner_campaign_id=$2',
                 [$this->getID()]
             );
         } else {
