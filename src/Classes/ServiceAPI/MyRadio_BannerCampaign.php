@@ -342,7 +342,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
         
         $this->timeslots[] = [
             'id' => $id,
-            'day' => $day
+            'day' => $day,
             'start_time' => strtotime($start, 0),
             'end_time' => strtotime($end, 0)
         ];
