@@ -560,7 +560,9 @@ var NIPSWeb = function() {
         });
 
         $(slider).on("seeked", function(e) {
-            player.currentTime = e.originalEvent.detail.time;
+            if (e.originalEvent.detail.time) {
+                player.currentTime = parseFloat(e.originalEvent.detail.time.toPrecision(12));
+            }
         });
 
         $(slider).on("introChanged", function(e) {
