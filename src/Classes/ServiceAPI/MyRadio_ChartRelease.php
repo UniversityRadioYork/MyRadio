@@ -280,7 +280,7 @@ class MyRadio_ChartRelease extends ServiceAPI
                 MyRadio_ChartRow::create(
                     [
                           'chart_release_id' => $this->getID(),
-                          'position' => $i,
+                          'position' => $i + 1,
                           'trackid' => $row
                     ]
                 );
