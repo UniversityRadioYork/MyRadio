@@ -25,7 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     foreach ($data['tracks']['track'] as $track) {
-        $tracks[] = $track->getID();
+        if (is_object($track)) {
+            $tracks[] = $track->getID();
+        }
     }
 
     $chart_release->setChartRows($tracks);
