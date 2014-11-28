@@ -316,7 +316,10 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
 
         $new_additions = [];
 
-        foreach ($tracks as $track) {
+        foreach ($tracks as $i => $track) {
+            if (empty($track)) {
+                unset($tracks[$i]);
+            }
             $key = array_search($track, $old_list);
             if ($key === false) {
                 //This is a new addition
