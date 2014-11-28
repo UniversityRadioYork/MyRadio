@@ -193,13 +193,13 @@ final class Config
      * The url of the webcam server status
      * @var String
      */
-    public static $webcam_current_url = "http://copperbox.york.ac.uk:9090/current?noprotocol=true";
+    public static $webcam_current_url = "http://motion.ury.york.ac.uk:9090/current?noprotocol=true";
 
     /**
      * The url of the webcam server setter
      * @var String
      */
-    public static $webcam_set_url = "http://copperbox.york.ac.uk:9090/set?newcam=";
+    public static $webcam_set_url = "http://motion.ury.york.ac.uk:9090/set?newcam=";
 
     /**
      * The path to store the original, unencoded copies of MyRadio Podcasts.
@@ -257,7 +257,7 @@ final class Config
     /**
      * The Samba File Share path to the Central Database.
      * This is used for BAPS compatibility features.
-     * 
+     *
      * If you are not URY, you will likely not need this setting.
      * However, if you have a studio audio playout tool that needs
      * samba paths to files stored in a database, set this here.
@@ -277,7 +277,7 @@ final class Config
      * The API key to access last.fm's resources.
      *
      * You will need one of these to enable Library management.
-     * 
+     *
      * @var String
      */
     public static $lastfm_api_key;
@@ -361,7 +361,7 @@ final class Config
      */
     public static $log_file_lock = '/tmp/myradio_errors.lock';
     /**
-     * The email to send error reports to. This is different from reporting_list, 
+     * The email to send error reports to. This is different from reporting_list,
      * which does statistical reports, if enabled.
      * @var String
      */
@@ -431,7 +431,7 @@ final class Config
 
     /**
      * Recaptcha settings. Used for password resets.
-     * 
+     *
      * http://recaptcha.net
      *
      * @var String
