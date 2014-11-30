@@ -64,7 +64,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         )['revisionid'];
     }
 
-    public static function getForm()
+    public static function getTracksForm()
     {
         return (
             new MyRadioForm(
@@ -104,16 +104,16 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Notes',
-                    'explanation' => 'Optional. Enter notes aboout this change.',
+                    'explanation' => 'Optional. Enter notes about this change.',
                     'required' => false
                 ]
             )
         );
     }
 
-    public function getEditForm()
+    public function getTracksEditForm()
     {
-        return self::getForm()
+        return self::getTracksForm()
             ->setTitle('Edit Playlist')
             ->editMode(
                 $this->getID(),
@@ -125,6 +125,53 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                         },
                         $this->getTracks()
                     )
+                ]
+            );
+    }
+
+    public static function getForm()
+    {
+        return (
+            new MyRadioForm(
+                'itones_playlistedit',
+                'iTones',
+                'configurePlaylist',
+                [
+                    'title' => 'Configure Jukebox Playlist'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'title',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Name',
+                    'explanation' => 'Name the playlist. I named my last playlist Scott.',
+                    'required' => true
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'description',
+                MyRadioFormField::TYPE_BLOCKTEXT,
+                [
+                    'label' => 'Description',
+                    'explanation' => 'What is this playlist even for?',
+                    'required' => false
+                ]
+            )
+        );
+    }
+
+    public function getEditForm()
+    {
+        return self::getForm()
+            ->setTitle('Configure Playlist')
+            ->editMode(
+                $this->getID(),
+                [
+                    'title' => $this->getTitle(),
+                    'description' => $this->getDescription()
                 ]
             );
     }
@@ -367,6 +414,28 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
+    * Update the title
+    * @param String $title
+    */
+    public function setTitle($title)
+    {
+        self::$db->query('UPDATE jukebox.playlists SET title=$1 WHERE playlistid=$2', [$title, $this->getID()]);
+        $this->title = $title;
+        $this->updateCacheObject();
+    }
+
+    /**
+    * Update the description
+    * @param String $description
+    */
+    public function setDescription($description)
+    {
+        self::$db->query('UPDATE jukebox.playlists SET description=$1 WHERE playlistid=$2', [$description, $this->getID()]);
+        $this->description = $description;
+        $this->updateCacheObject();
+    }
+
+    /**
      * Get an array of all Playlists
      * @return Array of iTones_Playlist objects
      */
@@ -386,7 +455,15 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     {
         self::wakeup();
 
-        $result = self::$db->fetchAll('SELECT playlistid AS item, weight FROM jukebox.playlists ORDER BY title');
+        $result = self::$db->fetchAll(
+            'SELECT playlists.playlistid AS item, MAX(playlist_availability.weight)
+                FROM jukebox.playlists, jukebox.playlist_availability, jukebox.playlist_timeslot
+                WHERE playlists.playlistid=playlist_availability.playlistid
+                    AND playlist_availability.playlist_availability_id=playlist_timeslot.playlist_availability_id
+                    AND start_time <= "time"(NOW()) AND end_time >= "time"(NOW())
+                    AND (day=EXTRACT(DOW FROM NOW()) OR (EXTRACT(DOW FROM NOW())=0 AND day=7))
+                GROUP BY playlists.playlistid'
+        );
 
         return self::getInstance(CoreUtils::biasedRandom($result));
     }

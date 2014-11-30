@@ -1,0 +1,10 @@
+{% extends 'form.twig' %}
+{% set tabledata = frm_custom.tabledata %}
+{% set tablescript = 'myradio.iTones.configurePlaylist' %}
+{% block stripecontent %}
+{{ parent() }}
+<h3>Availabilities</h3>
+<a href="{{myury.makeURL(config, "iTones", "editAvailability")}}?playlistid={{ frm_custom.playlistid }}">Add an Availability</a>
+<p>This playlist is active on the following schedules:</p>
+{% include 'parts/table-content.twig' %}
+{% endblock %}
