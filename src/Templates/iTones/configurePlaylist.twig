@@ -4,7 +4,11 @@
 {% block stripecontent %}
 {{ parent() }}
 <h3>Availabilities</h3>
+{% if frm_custom.playlistid %}
 <a href="{{myury.makeURL(config, "iTones", "editAvailability")}}?playlistid={{ frm_custom.playlistid }}">Add an Availability</a>
 <p>This playlist is active on the following schedules:</p>
 {% include 'parts/table-content.twig' %}
+{% else %}
+<p>You need to create this playlist before you can edit its Availability.</p>
+{% endif %}
 {% endblock %}

@@ -15,28 +15,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = iTones_Playlist::getForm()->readValues();
 
     if (empty($data['id'])) {
-        throw new MyRadioException('No Playlist ID provided.', 400);
+        //Create
+        $playlist = iTones_Playlist::create($data['title'], $data['description']);
+        CoreUtils::redirect('iTones', 'configurePlaylist', [
+            'playlistid' => $playlist->getID(),
+            'message' => base64_encode('The playlist has been created.')
+        ]);
+    } else {
+        //Edit
+        $playlist = iTones_Playlist::getInstance($data['id']);
+
+        $playlist->setTitle($data['title']);
+        $playlist->setDescription($data['description']);
+        CoreUtils::backWithMessage('The playlist has been updated.');
     }
-
-    $playlist = iTones_Playlist::getInstance($data['id']);
-
-    $playlist->setTitle($data['title']);
-    $playlist->setDescription($data['description']);
-    CoreUtils::backWithMessage('The playlist has been updated.');
 
 } else {
     //Not Submitted
     if (empty($_REQUEST['playlistid'])) {
-        throw new MyRadioException('No Playlist ID provided.', 400);
+        //Create
+        $playlist = iTones_Playlist::getForm()
+                    ->setTemplate('iTones/configurePlaylist.twig')
+                    ->render();
+    } else {
+        //Update
+        $playlist = iTones_Playlist::getInstance($_REQUEST['playlistid']);
+        $playlist->getEditForm()
+                ->setTemplate('iTones/configurePlaylist.twig')
+                ->render(array(
+                    'tabledata' => CoreUtils::dataSourceParser(
+                        iTones_PlaylistAvailability::getAvailabilitiesForPlaylist($playlist->getID())
+                    ),
+                    'playlistid' => $_REQUEST['playlistid']
+                ));
     }
-
-    $playlist = iTones_Playlist::getInstance($_REQUEST['playlistid']);
-    $playlist->getEditForm()
-            ->setTemplate('iTones/configurePlaylist.twig')
-            ->render(array(
-                'tabledata' => CoreUtils::dataSourceParser(
-                    iTones_PlaylistAvailability::getAvailabilitiesForPlaylist($playlist->getID())
-                ),
-                'playlistid' => $_REQUEST['playlistid']
-            ));
 }

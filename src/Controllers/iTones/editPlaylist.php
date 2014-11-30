@@ -1,6 +1,6 @@
 <?php
 /**
- * Allows a User to edit an iTones Playlist
+ * Allows a User to edit the tracks in an iTones Playlist
  *
  * @package MyRadio_iTones
  */

@@ -484,6 +484,19 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         return self::resultSetToObjArray($result);
     }
 
+    public static function create($title, $description)
+    {
+        $id = str_replace(' ', '-', $title);
+        $id = strtolower(preg_replace('/[^a-z0-9-]/i', '', $id));
+        self::$db->query(
+            'INSERT INTO jukebox.playlists (playlistid, title, description)
+            VALUES ($1, $2, $3)',
+            [$id, $title, $description]
+        );
+
+        return self::getInstance($id);
+    }
+
     /**
      * Returns an array of key information, useful for Twig rendering and JSON requests
      * @todo Expand the information this returns
