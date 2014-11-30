@@ -44,25 +44,25 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
     private $id;
 
     /**
-     * The User that created this Banner Campaign
+     * The User that created this Availability
      * @var MyRadio_User
      */
     private $created_by;
 
     /**
-     * The User that approved this Banner Campaign
+     * The User that approved this Availability
      * @var MyRadio_User
      */
     private $approved_by;
 
     /**
-     * The time this Banner Campaign is active from
+     * The time this Availability is active from
      * @var int
      */
     private $effective_from;
 
     /**
-     * The time this Banner Campaign is active to
+     * The time this Availability is active to
      * @var int
      */
     private $effective_to;
@@ -71,8 +71,8 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
      * A 2D array of timeslots where this Availability is visible,
      * with day of week and timeslots. This is repeated every week during an active campaign.
      *
-     * Format:<br>
-     * [[id: 69, day: 1, starttime: "00:00:00", endtime: "00:00:00", order: 5]]<br>
+     * Format:
+     * [[id: 69, day: 1, starttime: "00:00:00", endtime: "00:00:00", order: 5]]
      * Where Monday is 1, and order is the order the banner appears in on the scrolling
      * slideshow. A higher number appears first.
      *
