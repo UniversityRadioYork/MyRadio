@@ -456,7 +456,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         self::wakeup();
 
         $result = self::$db->fetchAll(
-            'SELECT playlists.playlistid AS item, MAX(playlist_availability.weight)
+            'SELECT playlists.playlistid AS item, MAX(playlist_availability.weight) AS weight
                 FROM jukebox.playlists, jukebox.playlist_availability, jukebox.playlist_timeslot
                 WHERE playlists.playlistid=playlist_availability.playlistid
                     AND playlist_availability.playlist_availability_id=playlist_timeslot.playlist_availability_id
