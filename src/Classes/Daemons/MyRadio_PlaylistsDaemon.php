@@ -30,10 +30,10 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         return Config::$d_Playlists_enabled;
     }
 
-    public static function run()
+    public static function run($force = false)
     {
         $hourkey = __CLASS__ . '_last_run_hourly';
-        if (self::getVal($hourkey) > time() - 3500) {
+        if (!$force && self::getVal($hourkey) > time() - 3500) {
             return;
         }
 
@@ -51,16 +51,72 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
 
         /**
-         * Track play stats for last TWO weeks - not 120 days!!
+         * Daytime Track play stats for last 14 days
          */
-        $most_played = MyRadio_TracklistItem::getTracklistStatsForBAPS(time() - (86400 * 14));
+        $most_played = [];
+        for ($i = 0; $i < 14; $i++) {
+            $stats = MyRadio_TracklistItem::getTracklistStatsForBAPS(
+                strtotime("6am -{$i} days"),
+                strtotime("9pm -{$i} days")
+            );
+            foreach ($stats as $track) {
+                if (!isset($most_played[$track['trackid']])) {
+                    $most_played[$track['trackid']] = 0;
+                }
+                $most_played[$track['trackid']] += $track['num_plays'];
+            }
+        }
+
+        arsort($most_played);
+        $keys = array_keys($most_played);
+        $playlist = [];
+        for ($i = 0; $i < 20; $i++) {
+            $lockstr = $pobj->acquireOrRenewLock($lockstr, MyRadio_User::getInstance(Config::$system_user));
+            $key = $keys[$i];
+            if (!$key) {
+                break; //If there aren't that many, oh well.
+            }
+            $track = MyRadio_Track::getInstance($key);
+            $similar = $track->getSimilar();
+            dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
+            $playlist = array_merge($playlist, $similar);
+            $playlist[] = $track;
+        }
+        $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
+        $pobj->releaseLock($lockstr);
+
+        $pobj = iTones_Playlist::getInstance('semantic-spec');
+        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
+
+        /**
+         * Specialist Track play stats for last 14 days
+         */
+        $most_played = [];
+        for ($i = 0; $i < 14; $i++) {
+            $j = $i + 1;
+            $stats = MyRadio_TracklistItem::getTracklistStatsForBAPS(
+                strtotime("9pm -{$j} days"),
+                strtotime("6am -{$i} days")
+            );
+            foreach ($stats as $track) {
+                if (!isset($most_played[$track['trackid']])) {
+                    $most_played[$track['trackid']] = 0;
+                }
+                $most_played[$track['trackid']] += $track['num_plays'];
+            }
+        }
+
+        arsort($most_played);
+        $keys = array_keys($most_played);
 
         $playlist = [];
         for ($i = 0; $i < 20; $i++) {
-            if (!isset($most_played[$i])) {
+            $lockstr = $pobj->acquireOrRenewLock($lockstr, MyRadio_User::getInstance(Config::$system_user));
+            $key = $keys[$i];
+            if (!$key) {
                 break; //If there aren't that many, oh well.
             }
-            $track = MyRadio_Track::getInstance($most_played[$i]['trackid']);
+            $track = MyRadio_Track::getInstance($key);
             $similar = $track->getSimilar();
             dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
             $playlist = array_merge($playlist, $similar);
