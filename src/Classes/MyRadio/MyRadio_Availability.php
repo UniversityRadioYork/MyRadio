@@ -1,7 +1,13 @@
 <?php
 
 /**
- * This file provides the Availability class for MyRadio
+ * This file provides the Availability class for MyRadio.
+ *
+ * Availabilities are generalised ways of providing time ranges where something
+ * is active based on the day of week/time with start and end times (See the
+ * WEEKSELECT FormField). This kind of functionality is used by components such
+ * as Playlists and Banners.
+ *
  * @package MyRadio_Website
  */
 
