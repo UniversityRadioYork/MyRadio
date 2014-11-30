@@ -32,7 +32,6 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     private $lock;
     private $locktime;
     protected $tracks = [];
-    private $weight = 0;
     protected $revisionid;
 
     /**
@@ -55,7 +54,6 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         $this->description = $result['description'];
         $this->lock = empty($result['lock']) ? null : MyRadio_User::getInstance($result['lock']);
         $this->locktime = (int) $result['locktime'];
-        $this->weight = (int) $result['weight'];
 
         $this->revisionid = (int) self::$db->fetchOne(
             'SELECT revisionid FROM jukebox.playlist_revisions
@@ -223,15 +221,6 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     public function getDescription()
     {
         return $this->description;
-    }
-
-    /**
-     * Get the jukebox weight of the Playlist
-     * @return int
-     */
-    public function getWeight()
-    {
-        return $this->weight;
     }
 
     /**
