@@ -54,11 +54,13 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
          * Daytime Track play stats for last 14 days
          */
         $most_played = [];
+        //Get track statistics for every daytime window
         for ($i = 0; $i < 14; $i++) {
             $stats = MyRadio_TracklistItem::getTracklistStatsForBAPS(
                 strtotime("6am -{$i} days"),
                 strtotime("9pm -{$i} days")
             );
+            //Accumulate the results
             foreach ($stats as $track) {
                 if (!isset($most_played[$track['trackid']])) {
                     $most_played[$track['trackid']] = 0;
@@ -67,24 +69,34 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             }
         }
 
+        //Sort array by play count
         arsort($most_played);
+        //Get the trackids out
         $keys = array_keys($most_played);
         $playlist = [];
+        //Take the top 20 from this list
         for ($i = 0; $i < 20; $i++) {
+            //Last.FM's bit can be slow sometimes - make sure this doesn't expire
             $lockstr = $pobj->acquireOrRenewLock($lockstr, MyRadio_User::getInstance(Config::$system_user));
             $key = $keys[$i];
             if (!$key) {
                 break; //If there aren't that many, oh well.
             }
             $track = MyRadio_Track::getInstance($key);
+            //Ask last.fm for similar songs that are in our library
             $similar = $track->getSimilar();
             dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
+            //Add these to the playlist
             $playlist = array_merge($playlist, $similar);
+            //Oh, and at the popular track itself
             $playlist[] = $track;
         }
+        //Actually update the playlist
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
 
+
+        //Aaaand repeat
         $pobj = iTones_Playlist::getInstance('semantic-spec');
         $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
 
