@@ -193,13 +193,13 @@ final class Config
      * The url of the webcam server status
      * @var String
      */
-    public static $webcam_current_url = "http://motion.ury.york.ac.uk:9090/current?noprotocol=true";
+    public static $webcam_current_url;
 
     /**
      * The url of the webcam server setter
      * @var String
      */
-    public static $webcam_set_url = "http://motion.ury.york.ac.uk:9090/set?newcam=";
+    public static $webcam_set_url;
 
     /**
      * The path to store the original, unencoded copies of MyRadio Podcasts.
