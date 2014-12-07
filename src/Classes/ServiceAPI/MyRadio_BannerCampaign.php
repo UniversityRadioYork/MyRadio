@@ -253,7 +253,9 @@ class MyRadio_BannerCampaign extends ServiceAPI
      */
     public function clearTimeslots()
     {
+        $this->timeslots = [];
         self::$db->query('DELETE FROM website.banner_timeslot WHERE banner_campaign_id=$1', [$this->getID()]);
+        $this->updateCacheObject();
     }
 
     /**
@@ -268,7 +270,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
             'UPDATE website.banner_campaign SET effective_from=$1 WHERE banner_campaign_id=$2',
             [CoreUtils::getTimestamp($time), $this->getID()]
         );
-
+        $this->updateCacheObject();
         return $this;
     }
 
@@ -279,12 +281,20 @@ class MyRadio_BannerCampaign extends ServiceAPI
      */
     public function setEffectiveTo($time)
     {
-        $this->effective_to = $time;
-        self::$db->query(
-            'UPDATE website.banner_campaign SET effective_to=$1 WHERE banner_campaign_id=$2',
-            [CoreUtils::getTimestamp($time), $this->getID()]
-        );
-
+        if ($time === null) {
+            $this->effective_to = $time;
+            self::$db->query(
+                'UPDATE website.banner_campaign SET effective_to=NULL WHERE banner_campaign_id=$1',
+                [$this->getID()]
+            );
+        } else {
+            self::$db->query(
+                'UPDATE website.banner_campaign SET effective_to=$1 WHERE banner_campaign_id=$2',
+                [CoreUtils::getTimestamp($time), $this->getID()]
+            );
+        }
+        
+        $this->updateCacheObject();
         return $this;
     }
 
@@ -300,7 +310,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
             'UPDATE website.banner_campaign SET banner_location_id=$1 WHERE banner_campaign_id=$2',
             [$location, $this->getID()]
         );
-
+        $this->updateCacheObject();
         return $this;
     }
 
@@ -317,10 +327,10 @@ class MyRadio_BannerCampaign extends ServiceAPI
         $start = gmdate('H:i:s', $start).'+00';
         $end = gmdate('H:i:s', $end).'+00';
 
-        self::$db->query(
+        $id = self::$db->fetchColumn(
             'INSERT INTO website.banner_timeslot
             (banner_campaign_id, memberid, approvedid, "order", day, start_time, end_time)
-            VALUES ($1, $2, $2, $1, $3, $4, $5)',
+            VALUES ($1, $2, $2, $1, $3, $4, $5) RETURNING id',
             [
                 $this->getID(),
                 MyRadio_User::getInstance()->getID(),
@@ -328,7 +338,16 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 $start,
                 $end
             ]
-        );
+        )[0];
+        
+        $this->timeslots[] = [
+            'id' => $id,
+            'day' => $day,
+            'start_time' => strtotime($start, 0),
+            'end_time' => strtotime($end, 0)
+        ];
+        
+        $this->updateCacheObject();
     }
 
     /**

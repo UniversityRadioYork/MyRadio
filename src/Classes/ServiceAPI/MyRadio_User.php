@@ -690,6 +690,11 @@ class MyRadio_User extends ServiceAPI
      */
     public function canCall($class, $method)
     {
+        # I am become superuser, doer of API calls
+        if ($this->hasAuth(AUTH_APISUDO)) {
+            return true;
+        }
+        
         $result = MyRadio_Swagger::getCallRequirements($class, $method);
         if ($result === null) {
             return false; //No permissions means the method is not accessible

@@ -1,0 +1,5 @@
+{% extends 'table.twig' %}
+{% block stripecontent %}
+<a href="{{myury.makeURL(config, 'iTones', 'configurePlaylist')}}">Add a new Playlist</a>
+{{ parent() }}
+{% endblock %}

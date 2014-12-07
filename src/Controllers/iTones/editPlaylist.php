@@ -1,9 +1,7 @@
 <?php
 /**
- * Allows a User to edit an iTones Playlist
+ * Allows a User to edit the tracks in an iTones Playlist
  *
- * @author Andy Durant <aj@ury.org.uk>
- * @version 20140636
  * @package MyRadio_iTones
  */
 
@@ -13,7 +11,7 @@ use \MyRadio\iTones\iTones_Playlist;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
-    $data = iTones_Playlist::getForm()->readValues();
+    $data = iTones_Playlist::getTracksForm()->readValues();
 
     if (empty($data['id'])) {
         throw new MyRadioException('No Playlist ID provided.', 400);
@@ -61,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $_SESSION['itones_lock_'.$playlist->getID()] = $lock;
 
-        $playlist->getEditForm()->setTemplate('iTones/editPlaylist.twig')
+        $playlist->getTracksEditForm()->setTemplate('iTones/editPlaylist.twig')
             ->render();
     }
 }
