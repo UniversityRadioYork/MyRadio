@@ -685,7 +685,10 @@ class MyRadioFormField
                 $active_time = null;
                 for ($i = 1; $i <= 7; $i++) { //Iterate over each day
                     for ($j = 0; $j < 86400; $j+=1800) { //Iterate over each 30 minute interval
-                        if (strtolower($_REQUEST[$name . '-' . $i . '-' . $j]) === 'on') {
+                        if (
+                            isset($_REQUEST[$name . '-' . $i . '-' . $j]) &&
+                            strtolower($_REQUEST[$name . '-' . $i . '-' . $j]) === 'on'
+                            ) {
                             //Is there already an active selection? If so, carry on.
                             if ($active_day !== null) {
                                 //Yep, nothing to see here.

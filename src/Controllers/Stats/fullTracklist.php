@@ -9,6 +9,7 @@
  */
 
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
 
 $start = !empty($_GET['rangesel-starttime']) ? strtotime($_GET['rangesel-starttime']) : time() - (86400 * 28);
 $end = !empty($_GET['rangesel-endtime']) ? strtotime($_GET['rangesel-endtime']) : time();

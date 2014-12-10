@@ -351,7 +351,7 @@ class MyRadioForm
         $return = [];
         foreach ($this->fields as $field) {
             $value = $field->readValue($this->getPrefix());
-            if ($field->getRequired() && empty($value)) {
+            if ($field->getRequired() && empty($value) && $value !== 0) {
                 throw new MyRadioException(
                     'Field ' . $field->getName() . ' is required but has not been set.',
                     400
