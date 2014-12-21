@@ -85,7 +85,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                             [
                                 'label' => 'Tracks',
                                 'options' => [
-                                    'digitised' => false
+                                    'digitised' => true
                                 ]
                             ]
                         ),
