@@ -70,7 +70,13 @@ window.MyRadioForm = {
     $('fieldset.myradiofrm input.track-autocomplete').each(function() {
       $(this).autocomplete({
         minLength: 3,
-        source: myury.makeURL('MyRadio', 'a-findtrack'),
+        source: function(term, callback) {
+          var data = {'term': term};
+          if ($(this).hasClass('digitisedonly')) {
+            data['require_digitised'] = 'true';
+          }
+          $.getJSON(myury.makeURL('MyRadio', 'a-findtrack'), data, callback);
+        },
         select: function(event, ui) {
           $(this).val(ui.item.title);
           $('#' + $(this).attr('id').replace(/-ui$/, '')).val(ui.item.trackid);
@@ -81,7 +87,7 @@ window.MyRadioForm = {
           return false;
         }
       })
-              .data("ui-autocomplete")._renderItem = function(ul, item) {
+      .data("ui-autocomplete")._renderItem = function(ul, item) {
         return $('<li></li>').data('item.autocomplete', item)
                 .append('<a>' + item.title + '<br><span style="font-size:.8em">' + item.artist + '</span></a>')
                 .appendTo(ul);
@@ -90,7 +96,9 @@ window.MyRadioForm = {
       if ($(this).val() === '' && $('#' + $(this).attr('id').replace(/-ui$/, '')).val() !== '') {
         $.ajax({
           url: myury.makeURL('MyRadio', 'a-findtrack'),
-          data: {id: $('#' + $(this).attr('id').replace(/-ui$/, '')).val()},
+          data: {
+            id: $('#' + $(this).attr('id').replace(/-ui$/, '')).val()
+          },
           context: this,
           success: function(data) {
             $(this).val(data.title);

@@ -1,5 +1,5 @@
 <input type="hidden" name="{{frm_name}}-{{sfieldname}}" id="{{frm_name}}-{{field.name}}" value="{{field.value}}" />
 {% if display_labels %}<label for="{{frm_name}}-{{field.name}}-ui">{{field.label}}</label>{% endif %}
-<input type="text" class="{{field.class}}{% if field.required %} required{% endif %} text track-autocomplete"
+<input type="text" class="{{field.class}}{% if field.required %} required{% endif %}{% if field.digitised %} digitisedonly{% endif %} text track-autocomplete"
        name="{{frm_name}}-{{field.name}}-ui" id="{{frm_name}}-{{field.name}}-ui" value="{{field.options.trackname}}" />
 <span class="myradiofrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>

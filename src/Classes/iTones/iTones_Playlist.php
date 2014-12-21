@@ -83,7 +83,10 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                             'track',
                             MyRadioFormField::TYPE_TRACK,
                             [
-                                'label' => 'Tracks'
+                                'label' => 'Tracks',
+                                'options' => [
+                                    'digitised' => false
+                                ]
                             ]
                         ),
                         new MyRadioFormField(
