@@ -71,7 +71,7 @@ window.MyRadioForm = {
       $(this).autocomplete({
         minLength: 3,
         source: function(term, callback) {
-          var data = {'term': term};
+          var data = term;
           if ($(this).hasClass('digitisedonly')) {
             data['require_digitised'] = 'true';
           }
