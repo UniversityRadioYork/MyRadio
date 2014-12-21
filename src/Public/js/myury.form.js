@@ -68,11 +68,12 @@ window.MyRadioForm = {
      * Initialises the Track autocomplete pickers where necessary
      */
     $('fieldset.myradiofrm input.track-autocomplete').each(function() {
+      var self = this;
       $(this).autocomplete({
         minLength: 3,
         source: function(term, callback) {
           var data = term;
-          if ($(this).hasClass('digitisedonly')) {
+          if ($(self).hasClass('digitisedonly')) {
             data['require_digitised'] = 'true';
           }
           $.getJSON(myury.makeURL('MyRadio', 'a-findtrack'), data, callback);
