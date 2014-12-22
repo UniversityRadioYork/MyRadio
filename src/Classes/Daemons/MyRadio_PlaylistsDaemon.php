@@ -180,12 +180,12 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             
         $keys = []
         
-        foreach ($data['track'] as $r) {
+        foreach ($data['weeklytrackchart']['track'] as $r) {
                 if ($r['playcount'] >= 2) {
                     $c = self::findByOptions(
                         [
-                            'title' => $r['weeklytrackchart']['track'],
-                            'artist' => $r['weeklytrackchart']['artist'],
+                            'title' => $r['track'],
+                            'artist' => $r['artist']['#text'],
                             'limit' => 1,
                             'digitised' => true
                         ]
