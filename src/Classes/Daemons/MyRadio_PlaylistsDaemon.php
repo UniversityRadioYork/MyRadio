@@ -40,6 +40,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         self::updateMostPlayedPlaylist();
         self::updateNewestUploadsPlaylist();
         self::updateRandomTracksPlaylist();
+        self::updateLastFMGroupPlaylist();
 
         //Done
         self::setVal($hourkey, time());
@@ -160,5 +161,54 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 
         $pobj->setTracks($random_tracks, $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
+    }
+    
+    private static function updateLastFMGroupPlaylist()
+    {
+        $pobj = iTones_Playlist::getInstance('lastgroup-auto');
+        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
+        
+        $data = json_decode(
+                file_get_contents(
+                    'https://ws.audioscrobbler.com/2.0/?method=group.getweeklyalbumchart&api_key='
+                    . Config::$lastfm_api_key
+                    . '&group=' . Config::$lastfm_group
+                ),
+                true
+            );
+            
+        foreach ($data['track'] as $r) {
+                if ($r['playcount'] >= 2) {
+                    $c = self::findByOptions(
+                        [
+                            'title' => $r['name'],
+                            'artist' => $r['artist']['name'],
+                            'limit' => 1,
+                            'digitised' => true
+                        ]
+                    );
+                    if (!empty($c)) {
+                        $this->lastfm_group[] = $c[0]->getID();
+                    }
+                }
+            }
+        
+        $playlist = [];
+        for ($i = 0; $i < 20; $i++) {
+            $lockstr = $pobj->acquireOrRenewLock($lockstr, MyRadio_User::getInstance(Config::$system_user));
+            $key = $keys[$i];
+            if (!$key) {
+                break; //If there aren't that many, oh well.
+            }
+            $track = MyRadio_Track::getInstance($key);
+            $similar = $track->getSimilar();
+            dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
+            $playlist = array_merge($playlist, $similar);
+            $playlist[] = $track;
+        }
+        
+        $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
+        $pobj->releaseLock($lockstr);
+        
     }
 }
