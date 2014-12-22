@@ -178,6 +178,8 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 true
             );
             
+        $keys = []
+        
         foreach ($data['track'] as $r) {
                 if ($r['playcount'] >= 2) {
                     $c = self::findByOptions(
@@ -189,7 +191,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                         ]
                     );
                     if (!empty($c)) {
-                        $this->lastfm_group[] = $c[0]->getID();
+                        $this->$keys[] = $c[0]->getID();
                     }
                 }
             }
