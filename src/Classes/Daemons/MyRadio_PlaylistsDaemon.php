@@ -178,7 +178,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 true
             );
             
-        $keys = []
+        $keys = [];
         
         foreach ($data['weeklytrackchart']['track'] as $r) {
                 if ($r['playcount'] >= 2) {
