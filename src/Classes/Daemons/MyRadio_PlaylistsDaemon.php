@@ -184,8 +184,8 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 if ($r['playcount'] >= 2) {
                     $c = self::findByOptions(
                         [
-                            'title' => $r['name'],
-                            'artist' => $r['artist']['name'],
+                            'title' => $r['weeklytrackchart']['track'],
+                            'artist' => $r['weeklytrackchart']['artist'],
                             'limit' => 1,
                             'digitised' => true
                         ]
