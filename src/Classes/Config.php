@@ -287,6 +287,12 @@ final class Config
      * @var String
      */
     public static $lastfm_api_secret;
+    
+    /**
+     * The last.fm group specifically for the University of York. If using
+     * this aspect of the code you probably want to change this bit.
+     */
+    public static $lastfm_group = 'University+of+York';
 
     /**
      * The array of different versions of tracks one can expect to find in the
