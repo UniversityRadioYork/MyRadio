@@ -170,7 +170,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         
         $data = json_decode(
                 file_get_contents(
-                    'https://ws.audioscrobbler.com/2.0/?method=group.getweeklyalbumchart&api_key='
+                    'https://ws.audioscrobbler.com/2.0/?method=group.getweeklytrackchart&api_key='
                     . Config::$lastfm_api_key
                     . '&group=' . Config::$lastfm_group
                 ),
