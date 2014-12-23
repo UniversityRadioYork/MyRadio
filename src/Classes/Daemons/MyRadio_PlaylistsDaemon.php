@@ -250,6 +250,8 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             }
         }
         
+        dlog('Found ' . sizeof($playlist) . ' tracks', 4);
+        
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
         
@@ -287,6 +289,8 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             }
         }
         
+        dlog('Found ' . sizeof($playlist) . ' tracks', 4);
+        
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
         
@@ -323,6 +327,8 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 }
             }
         }
+        
+        dlog('Found ' . sizeof($playlist) . ' tracks', 4);
         
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
