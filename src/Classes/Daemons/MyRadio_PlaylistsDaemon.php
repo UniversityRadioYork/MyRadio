@@ -246,11 +246,10 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 );
                 if (!empty($c)) {
                     $playlist[] = $c[0]->getID();
+                    dlog('Found ' . $track->getID(), 4);
                 }
             }
         }
-        
-        dlog('Found ' . $track->getID(), 4);
         
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
@@ -285,11 +284,10 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 );
                 if (!empty($c)) {
                     $playlist[] = $c[0]->getID();
+                    dlog('Found ' . $track->getID(), 4);
                 }
             }
         }
-        
-        dlog('Found ' . $track->getID(), 4);
         
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
@@ -324,11 +322,10 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 );
                 if (!empty($c)) {
                     $playlist[] = $c[0]->getID();
+                    dlog('Found ' . $track->getID(), 4);
                 }
             }
         }
-        
-        dlog('Found ' . $track->getID(), 4);
         
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
