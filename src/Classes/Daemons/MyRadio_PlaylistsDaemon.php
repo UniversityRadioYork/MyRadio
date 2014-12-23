@@ -92,7 +92,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
             //Add these to the playlist, along with the popular track
             $playlist[] = $track;
-            $playlist[] = array_merge($playlist, $similar);
+            $playlist = array_merge($playlist, $similar);
         }
         //Actually update the playlist
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
@@ -135,7 +135,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             $similar = $track->getSimilar();
             dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
             $playlist[] = $track;
-            $playlist[] = array_merge($playlist, $similar);
+            $playlist = array_merge($playlist, $similar);
         }
 
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
@@ -183,20 +183,20 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $keys = [];
         
         foreach ($data['weeklytrackchart']['track'] as $r) {
-                if ($r['playcount'] >= 2) {
-                    $c = MyRadio_Track::findByOptions(
-                        [
-                            'title' => $r['name'],
-                            'artist' => $r['artist']['#text'],
-                            'limit' => 1,
-                            'digitised' => true
-                        ]
-                    );
-                    if (!empty($c)) {
-                        $keys[] = $c[0]->getID();
-                    }
+            if ($r['playcount'] >= 2) {
+            $c = MyRadio_Track::findByOptions(
+                    [
+                        'title' => $r['name'],
+                        'artist' => $r['artist']['#text'],
+                        'limit' => 1,
+                        'digitised' => true
+                    ]
+                );
+                if (!empty($c)) {
+                    $keys[] = $c[0]->getID();
                 }
             }
+        }
         
         $playlist = [];
         for ($i = 0; $i < 100; $i++) {
@@ -209,7 +209,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             $similar = $track->getSimilar();
             dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
             $playlist[] = $track;
-            $playlist[] = array_merge($playlist, $similar);
+            $playlist = array_merge($playlist, $similar);
         }
         
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
@@ -235,20 +235,20 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $playlist = [];
         
         foreach ($data['toptracks']['track'] as $r) {
-                if ($r['playcount'] >= 2) {
-                    $c = MyRadio_Track::findByOptions(
-                        [
-                            'title' => $r['name'],
-                            'artist' => $r['artist']['name'],
-                            'limit' => 1,
-                            'digitised' => true
-                        ]
-                    );
-                    if (!empty($c)) {
-                        $playlist[] = $c[0]->getID();
-                    }
+            if ($r['playcount'] >= 2) {
+                $c = MyRadio_Track::findByOptions(
+                    [
+                        'title' => $r['name'],
+                        'artist' => $r['artist']['name'],
+                        'limit' => 1,
+                        'digitised' => true
+                    ]
+                );
+                if (!empty($c)) {
+                    $playlist[] = $c[0]->getID();
                 }
             }
+        }
         
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
@@ -272,20 +272,20 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $playlist = [];
         
         foreach ($data['tracks']['track'] as $r) {
-                if ($r['playcount'] >= 2) {
-                    $c = MyRadio_Track::findByOptions(
-                        [
-                            'title' => $r['name'],
-                            'artist' => $r['artist']['name'],
-                            'limit' => 1,
-                            'digitised' => true
-                        ]
-                    );
-                    if (!empty($c)) {
-                        $playlist[] = $c[0]->getID();
-                    }
+            if ($r['playcount'] >= 2) {
+                $c = MyRadio_Track::findByOptions(
+                    [
+                        'title' => $r['name'],
+                        'artist' => $r['artist']['name'],
+                        'limit' => 1,
+                        'digitised' => true
+                    ]
+                );
+                if (!empty($c)) {
+                    $playlist[] = $c[0]->getID();
                 }
             }
+        }
         
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
@@ -309,20 +309,20 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $playlist = [];
         
         foreach ($data['tracks']['track'] as $r) {
-                if ($r['playcount'] >= 2) {
-                    $c = MyRadio_Track::findByOptions(
-                        [
-                            'title' => $r['name'],
-                            'artist' => $r['artist']['name'],
-                            'limit' => 1,
-                            'digitised' => true
-                        ]
-                    );
-                    if (!empty($c)) {
-                        $playlist[] = $c[0]->getID();
-                    }
+            if ($r['playcount'] >= 2) {
+                $c = MyRadio_Track::findByOptions(
+                    [
+                        'title' => $r['name'],
+                        'artist' => $r['artist']['name'],
+                        'limit' => 1,
+                        'digitised' => true
+                    ]
+                );
+                if (!empty($c)) {
+                    $playlist[] = $c[0]->getID();
                 }
             }
+        }
         
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
         $pobj->releaseLock($lockstr);
