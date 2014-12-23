@@ -381,7 +381,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         );
         //Add new tracks
         foreach ($new_additions as $track) {
-            if (empty($track)) {
+            if (!is_a($track, MyRadio_Track)) {
+                trigger_error('Discarding non-track item: ' . print_r($track, true));
                 continue;
             }
             self::$db->query(
