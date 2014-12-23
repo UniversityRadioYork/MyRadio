@@ -90,10 +90,9 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             //Ask last.fm for similar songs that are in our library
             $similar = $track->getSimilar();
             dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
-            //Add these to the playlist
-            $playlist = array_merge($playlist, $similar);
-            //Oh, and at the popular track itself
+            //Add these to the playlist, along with the popular track
             $playlist[] = $track;
+            $playlist[] = array_merge($playlist, $similar);
         }
         //Actually update the playlist
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
@@ -135,8 +134,8 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             $track = MyRadio_Track::getInstance($key);
             $similar = $track->getSimilar();
             dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
-            $playlist = array_merge($playlist, $similar);
             $playlist[] = $track;
+            $playlist[] = array_merge($playlist, $similar);
         }
 
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
@@ -209,8 +208,8 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             $track = MyRadio_Track::getInstance($key);
             $similar = $track->getSimilar();
             dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
-            $playlist = array_merge($playlist, $similar);
             $playlist[] = $track;
+            $playlist[] = array_merge($playlist, $similar);
         }
         
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
