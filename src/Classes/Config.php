@@ -295,6 +295,12 @@ final class Config
     public static $lastfm_group = 'University+of+York';
 
     /**
+     * The last.fm nation of choice, at least for us. Again, you might wish to
+     * change this bit.
+     */
+     public static $lastfm_geo = 'United+Kingdom';
+
+    /**
      * The array of different versions of tracks one can expect to find in the
      * Central Database. Used for file servers and other systems to ensure
      * the file requested seems legit.
