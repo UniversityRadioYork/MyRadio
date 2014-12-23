@@ -235,19 +235,17 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $playlist = [];
         
         foreach ($data['toptracks']['track'] as $r) {
-            if ($r['playcount'] >= 2) {
-                $c = MyRadio_Track::findByOptions(
-                    [
-                        'title' => $r['name'],
-                        'artist' => $r['artist']['name'],
-                        'limit' => 1,
-                        'digitised' => true
-                    ]
-                );
-                if (!empty($c)) {
-                    $playlist[] = $c[0]->getID();
-                    dlog('Found ' . $track->getID(), 4);
-                }
+            $c = MyRadio_Track::findByOptions(
+                [
+                    'title' => $r['name'],
+                    'artist' => $r['artist']['name'],
+                    'limit' => 1,
+                    'digitised' => true
+                ]
+            );
+            if (!empty($c)) {
+                $playlist[] = $c[0]->getID();
+                dlog('Found ' . $track->getID(), 4);
             }
         }
         
@@ -273,19 +271,17 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $playlist = [];
         
         foreach ($data['tracks']['track'] as $r) {
-            if ($r['playcount'] >= 2) {
-                $c = MyRadio_Track::findByOptions(
-                    [
-                        'title' => $r['name'],
-                        'artist' => $r['artist']['name'],
-                        'limit' => 1,
-                        'digitised' => true
-                    ]
-                );
-                if (!empty($c)) {
-                    $playlist[] = $c[0]->getID();
-                    dlog('Found ' . $track->getID(), 4);
-                }
+            $c = MyRadio_Track::findByOptions(
+                [
+                    'title' => $r['name'],
+                    'artist' => $r['artist']['name'],
+                    'limit' => 1,
+                    'digitised' => true
+                ]
+            );
+            if (!empty($c)) {
+                $playlist[] = $c[0]->getID();
+                dlog('Found ' . $track->getID(), 4);
             }
         }
         
@@ -311,19 +307,17 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $playlist = [];
         
         foreach ($data['tracks']['track'] as $r) {
-            if ($r['playcount'] >= 2) {
-                $c = MyRadio_Track::findByOptions(
-                    [
-                        'title' => $r['name'],
-                        'artist' => $r['artist']['name'],
-                        'limit' => 1,
-                        'digitised' => true
-                    ]
-                );
-                if (!empty($c)) {
-                    $playlist[] = $c[0]->getID();
-                    dlog('Found ' . $track->getID(), 4);
-                }
+            $c = MyRadio_Track::findByOptions(
+                [
+                    'title' => $r['name'],
+                    'artist' => $r['artist']['name'],
+                    'limit' => 1,
+                    'digitised' => true
+                ]
+            );
+            if (!empty($c)) {
+                $playlist[] = $c[0]->getID();
+                dlog('Found ' . $track->getID(), 4);
             }
         }
         
