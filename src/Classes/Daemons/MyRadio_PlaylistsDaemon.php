@@ -184,7 +184,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         
         foreach ($data['weeklytrackchart']['track'] as $r) {
             if ($r['playcount'] >= 2) {
-            $c = MyRadio_Track::findByOptions(
+                $c = MyRadio_Track::findByOptions(
                     [
                         'title' => $r['name'],
                         'artist' => $r['artist']['#text'],
@@ -193,7 +193,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                     ]
                 );
                 if (!empty($c)) {
-                    $keys[] = $c[0]->getID();
+                $keys[] = $c[0]->getID();
                 }
             }
         }
@@ -245,7 +245,6 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             );
             if (!empty($c)) {
                 $playlist[] = $c[0]->getID();
-                dlog('Found ' . $track->getID(), 4);
             }
         }
         
@@ -281,7 +280,6 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             );
             if (!empty($c)) {
                 $playlist[] = $c[0]->getID();
-                dlog('Found ' . $track->getID(), 4);
             }
         }
         
@@ -317,7 +315,6 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             );
             if (!empty($c)) {
                 $playlist[] = $c[0]->getID();
-                dlog('Found ' . $track->getID(), 4);
             }
         }
         
