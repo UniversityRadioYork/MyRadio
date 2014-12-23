@@ -41,6 +41,9 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         self::updateNewestUploadsPlaylist();
         self::updateRandomTracksPlaylist();
         self::updateLastFMGroupPlaylist();
+        self::updateLastFMGeoPlaylist();
+        self::updateLastFMTopPlaylist();
+        self::updateLastFMHypePlaylist();
 
         //Done
         self::setVal($hourkey, time());
@@ -214,4 +217,117 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $pobj->releaseLock($lockstr);
         
     }
+    
+    private static function updateLastFMGeoPlaylist()
+    {
+        $pobj = iTones_Playlist::getInstance('lastgeo-auto');
+        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
+        
+        $data = json_decode(
+                file_get_contents(
+                    'https://ws.audioscrobbler.com/2.0/?method=geo.getTopTracks&api_key='
+                    . Config::$lastfm_api_key
+                    . '&country=' . Config::$lastfm_geo
+                    . '&limit=100&format=json'
+                ),
+                true
+            );
+            
+        $playlist = [];
+        
+        foreach ($data['toptracks']['track'] as $r) {
+                if ($r['playcount'] >= 2) {
+                    $c = MyRadio_Track::findByOptions(
+                        [
+                            'title' => $r['name'],
+                            'artist' => $r['artist']['name'],
+                            'limit' => 1,
+                            'digitised' => true
+                        ]
+                    );
+                    if (!empty($c)) {
+                        $playlist[] = $c[0]->getID();
+                    }
+                }
+            }
+        
+        $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
+        $pobj->releaseLock($lockstr);
+        
+    }
+    
+    private static function updateLastFMTopPlaylist()
+    {
+        $pobj = iTones_Playlist::getInstance('lasttop-auto');
+        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
+        
+        $data = json_decode(
+                file_get_contents(
+                    'https://ws.audioscrobbler.com/2.0/?method=chart.getTopTracks&api_key='
+                    . Config::$lastfm_api_key
+                    . '&limit=100&format=json'
+                ),
+                true
+            );
+            
+        $playlist = [];
+        
+        foreach ($data['tracks']['track'] as $r) {
+                if ($r['playcount'] >= 2) {
+                    $c = MyRadio_Track::findByOptions(
+                        [
+                            'title' => $r['name'],
+                            'artist' => $r['artist']['name'],
+                            'limit' => 1,
+                            'digitised' => true
+                        ]
+                    );
+                    if (!empty($c)) {
+                        $playlist[] = $c[0]->getID();
+                    }
+                }
+            }
+        
+        $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
+        $pobj->releaseLock($lockstr);
+        
+    }
+    
+    private static function updateLastFMHypePlaylist()
+    {
+        $pobj = iTones_Playlist::getInstance('lasthype-auto');
+        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
+        
+        $data = json_decode(
+                file_get_contents(
+                    'https://ws.audioscrobbler.com/2.0/?method=chart.getHypedTracks&api_key='
+                    . Config::$lastfm_api_key
+                    . '&limit=100&format=json'
+                ),
+                true
+            );
+            
+        $playlist = [];
+        
+        foreach ($data['tracks']['track'] as $r) {
+                if ($r['playcount'] >= 2) {
+                    $c = MyRadio_Track::findByOptions(
+                        [
+                            'title' => $r['name'],
+                            'artist' => $r['artist']['name'],
+                            'limit' => 1,
+                            'digitised' => true
+                        ]
+                    );
+                    if (!empty($c)) {
+                        $playlist[] = $c[0]->getID();
+                    }
+                }
+            }
+        
+        $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
+        $pobj->releaseLock($lockstr);
+        
+    }
+    
 }
