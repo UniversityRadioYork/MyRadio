@@ -244,7 +244,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 ]
             );
             if (!empty($c)) {
-                $playlist[] = $c[0]->getID();
+                $playlist[] = $c[0];
             }
         }
         
@@ -279,7 +279,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 ]
             );
             if (!empty($c)) {
-                $playlist[] = $c[0]->getID();
+                $playlist[] = $c[0];
             }
         }
         
@@ -314,7 +314,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 ]
             );
             if (!empty($c)) {
-                $playlist[] = $c[0]->getID();
+                $playlist[] = $c[0];
             }
         }
         
