@@ -92,7 +92,11 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
             //Add these to the playlist, along with the popular track
             $playlist[] = $track;
-            $playlist = array_merge($playlist, $similar);
+            for ($j = 0; $j < sizeof($similar); $j++)
+            {
+                $playlist[] = $similar[j];
+            }
+            //$playlist = array_merge($playlist, $similar);
         }
         //Actually update the playlist
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
@@ -135,7 +139,11 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             $similar = $track->getSimilar();
             dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
             $playlist[] = $track;
-            $playlist = array_merge($playlist, $similar);
+            for ($j = 0; $j < sizeof($similar); $j++)
+            {
+                $playlist[] = $similar[j];
+            }
+            //$playlist = array_merge($playlist, $similar);
         }
 
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
@@ -199,7 +207,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         }
         
         $playlist = [];
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < sizeof($keys); $i++) {
             $lockstr = $pobj->acquireOrRenewLock($lockstr, MyRadio_User::getInstance(Config::$system_user));
             $key = $keys[$i];
             if (!$key) {
@@ -209,7 +217,11 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             $similar = $track->getSimilar();
             dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
             $playlist[] = $track;
-            $playlist = array_merge($playlist, $similar);
+            for ($j = 0; $j < sizeof($similar); $j++)
+            {
+                $playlist[] = $similar[j];
+            }
+            //$playlist = array_merge($playlist, $similar);
         }
         
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
