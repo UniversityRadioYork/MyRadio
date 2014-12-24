@@ -197,11 +197,24 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                         'title' => $r['name'],
                         'artist' => $r['artist']['#text'],
                         'limit' => 1,
-                        'digitised' => true
+                        'digitised' => true,
+                        'precise' => true
                     ]
                 );
+                
+                if (empty($c)) {
+                    $c = MyRadio_Track::findByOptions(
+                        [
+                            'title' => $r['name'],
+                            'artist' => $r['artist']['#text'],
+                            'limit' => 1,
+                            'digitised' => true
+                        ]
+                    );
+                }
+                
                 if (!empty($c)) {
-                $keys[] = $c[0]->getID();
+                    $keys[] = $c[0]->getID();
                 }
             }
         }
@@ -252,9 +265,22 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                     'title' => $r['name'],
                     'artist' => $r['artist']['name'],
                     'limit' => 1,
-                    'digitised' => true
+                    'digitised' => true,
+                    'precise' => true
                 ]
             );
+            
+            if (empty($c)) {
+                $c = MyRadio_Track::findByOptions(
+                    [
+                        'title' => $r['name'],
+                        'artist' => $r['artist']['#text'],
+                        'limit' => 1,
+                        'digitised' => true
+                    ]
+                );
+            }
+            
             if (!empty($c)) {
                 $playlist[] = $c[0];
             }
@@ -287,9 +313,22 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                     'title' => $r['name'],
                     'artist' => $r['artist']['name'],
                     'limit' => 1,
-                    'digitised' => true
+                    'digitised' => true,
+                    'precise' => true
                 ]
             );
+            
+            if (empty($c)) {
+                $c = MyRadio_Track::findByOptions(
+                    [
+                        'title' => $r['name'],
+                        'artist' => $r['artist']['#text'],
+                        'limit' => 1,
+                        'digitised' => true
+                    ]
+                );
+            }
+            
             if (!empty($c)) {
                 $playlist[] = $c[0];
             }
@@ -322,9 +361,22 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                     'title' => $r['name'],
                     'artist' => $r['artist']['name'],
                     'limit' => 1,
-                    'digitised' => true
+                    'digitised' => true,
+                    'precise' => true
                 ]
             );
+            
+            if (empty($c)) {
+                $c = MyRadio_Track::findByOptions(
+                    [
+                        'title' => $r['name'],
+                        'artist' => $r['artist']['#text'],
+                        'limit' => 1,
+                        'digitised' => true
+                    ]
+                );
+            }
+            
             if (!empty($c)) {
                 $playlist[] = $c[0];
             }
