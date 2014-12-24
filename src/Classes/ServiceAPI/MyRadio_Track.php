@@ -927,9 +927,22 @@ class MyRadio_Track extends ServiceAPI
                             'title' => $r['name'],
                             'artist' => $r['artist']['name'],
                             'limit' => 1,
-                            'digitised' => true
+                            'digitised' => true,
+                            'precise' => true
                         ]
                     );
+            
+                    if (empty($c)) {
+                        $c = self::findByOptions(
+                            [
+                                'title' => $r['name'],
+                                'artist' => $r['artist']['name'],
+                                'limit' => 1,
+                                'digitised' => true
+                            ]
+                        );
+                    }
+                    
                     if (!empty($c)) {
                         $this->lastfm_similar[] = $c[0]->getID();
                     }
