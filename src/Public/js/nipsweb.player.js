@@ -651,6 +651,7 @@ var NIPSWeb = function() {
                             that.volume = 1;
                             if ($('#baps-channel-' + channel).attr('playonload') == 1) {
                                 that.play();
+                                playing(channel);
                             }
                         }, 10);
                     });
