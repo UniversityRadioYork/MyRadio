@@ -305,6 +305,12 @@ var NIPSWeb = function() {
             typeof $(this).next().attr('id') !== 'undefined' ? $(this).next().attr('id') : $(this).prev().attr('id'));
         });
         $('ul.baps-channel li').off('click.playactivator').on('click.playactivator', function(e) {
+            var channel = $(this).parent('.baps-channel').attr('channel');
+            if (!getPlayer(channel).paused) {
+                showAlert('Cannot load track whilst another is playing.', 'info');
+                e.stopPropagation();
+                return false;
+            }
             if ($(this).hasClass('undigitised')) {
                 //Can't select the track - it isn't digitised
                 showAlert($(this).html() + ' has not been digitised.', 'danger');
@@ -319,7 +325,7 @@ var NIPSWeb = function() {
             //First, we need to remove the active class for any other file in the channel
             $(this).parent('ul').children().removeClass('selected');
             $(this).addClass('selected');
-            loadItem($(this).parent('.baps-channel').attr('channel'));
+            loadItem(channel);
         });
         $('ul.baps-channel li').tooltip({
             delay: 500,
@@ -605,6 +611,7 @@ var NIPSWeb = function() {
 
     var loadItem = function (channel) {
         $('#ch' + channel + '-play, #ch' + channel + '-pause, #ch' + channel + '-stop').attr('disabled', 'disabled');
+        $('#ch' + channel + '-pause').removeClass('btn-warning').addClass('btn-default');
         //Find the active track for this channel
         var audioid = $('#baps-channel-' + channel + ' li.selected').attr('id');
         var data = getRecTrackFromID(audioid);
