@@ -29,6 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     CoreUtils::getTemplateObject()
         ->setTemplate('Setup/dbserver.twig')
         ->addVariable('title', 'Database Server')
-        ->addVariable('db_error', isset($_GET['err']))
+        ->addVariable('db_error', isset($_GET['db_error']))
         ->render();
 }
