@@ -50,7 +50,7 @@
           <div class="btn-group">
               <button type='button' title="Play{%if channel != 'res'%} (F{{channel+((channel-1)*3)}}){%endif%}" class='play btn btn-default' id='ch{{channel}}-play' disabled="disabled"><span class="glyphicon glyphicon-play"></span></button>
               <button type='button' title="Pause{%if channel != 'res'%} (F{{channel+((channel-1)*3)+1}}){%endif%}" class='pause btn btn-default' id='ch{{channel}}-pause' disabled="disabled"><span class="glyphicon glyphicon-pause"></span></button>
-              <button type='button' title="Stop{%if channel != 'res'%} (F{{channel+((channel-1)*3)+2}}){%endif%}" class='stop btn btn-default' id='ch{{channel}}-stop' disabled="disabled" class='ui-state-disabled'><span class="glyphicon glyphicon-stop"></span></button>
+              <button type='button' title="Stop{%if channel != 'res'%} (F{{channel+((channel-1)*3)+2}}){%endif%}" class='stop btn btn-default' id='ch{{channel}}-stop' disabled="disabled"><span class="glyphicon glyphicon-stop"></span></button>
           </div>
           <br>
           <div id='progress-bar-{{channel}}'></div>

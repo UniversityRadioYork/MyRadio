@@ -1,11 +1,11 @@
 {% extends 'form.twig' %}
 {% block stripecontent %}
 {% if frm_custom.error %}
-<div class='ui-state-error'>
+<div class='alert alert-danger'>
     Failed. Please check your details and try again.
 </div>
 {% elseif frm_custom.sent %}
-<div class='ui-state-highlight'>
+<div class='alert alert-info'>
     <span class="glyphicon glyphicon-ok-sign"></span> Please check your email for a password reset link.
 </div>
 {% endif %}
