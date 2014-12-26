@@ -601,7 +601,6 @@ var NIPSWeb = function(d) {
             if (channelDiv.attr('autoadvance') == 1 && !channelDiv.attr('repeat') == 1) {
                 var next = el.next('li');
                 if (!next.length && el.parent().attr('repeat') == 2) {
-                    console.log('Meow');
                     next = el.parent().children()[0];
                 }
                 console.log(next);
