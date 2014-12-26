@@ -1,6 +1,6 @@
-var NIPSWeb = function() {
+var NIPSWeb = function(d) {
     // If enabled, doesn't reload on error
-    var debug = false;
+    var debug = d;
     // Queue up processing client changes one at a time
     var changeQueue = $({});
     // Queue up sending ajax requests one at a time
@@ -13,6 +13,8 @@ var NIPSWeb = function() {
     var players = [];
     // Store the interactive sliders/seek bars
     var sliders = [];
+    // Stores the context menu reference
+    var channelMenu;
 
 
     if (writable) {
@@ -138,23 +140,32 @@ var NIPSWeb = function() {
     /**
     * Detect what changes have been made to the show plan
     */
-    var calcChanges = function (e, ui) {
+    var calcChanges = function (li) {
+        if (!li.hasOwnProperty('attr')) {
+            li = $(li);
+        }
         changeQueue.queue(function(next) {
             /**
             * Update the position of the item to its new values. If it doesn't have them, set them.
             */
-            var oldChannel = ui.item.attr('channel');
-            var oldWeight = ui.item.attr('weight');
-            ui.item.attr('channel', ui.item.parent('ul').attr('channel') === 'res' ? 'res' : ui.item.parent().attr('channel') - 1);
-            ui.item.attr('weight', ui.item.index());
+            var oldChannel = li.attr('channel');
+            var oldWeight = li.attr('weight');
+            var newChannel;
+            if (li.parent('ul').attr('channel') != undefined) {
+                newChannel = li.parent('ul').attr('channel') === 'res' ? 'res' : li.parent('ul').attr('channel') - 1;
+            } else {
+                newChannel = null;
+            }
+            li.attr('channel', newChannel);
+            li.attr('weight', li.index());
 
-            if (oldChannel !== ui.item.attr('channel') || oldWeight !== ui.item.attr('weight')) {
+            if (oldChannel !== li.attr('channel') || oldWeight !== li.attr('weight')) {
                 /**
                 * This item definitely isn't where it was before. Notify the server of the potential actions.
                 */
                 var ops = [];
                 var addOp = false;
-                if (oldChannel === 'res' && ui.item.attr('channel') !== 'res') {
+                if (oldChannel === 'res' && li.attr('channel') !== 'res') {
                     addOp = true;
                     /**
                     * This item has just been added to the show plan. Send the server a AddItem operation.
@@ -162,7 +173,7 @@ var NIPSWeb = function() {
                     * channel, as their weights have now been increased to accomodate the new item.
                     * It will return a timeslotitemid from the server which then gets attached to the item.
                     */
-                    var current = ui.item;
+                    var current = li;
                     while (current.next().length === 1) {
                         current = current.next();
                         current.attr('weight', parseInt(current.attr('weight')) + 1);
@@ -180,13 +191,13 @@ var NIPSWeb = function() {
                     // This is after the moves to ensure there aren't two items of the same weight
                     ops.push({
                         op: 'AddItem',
-                        id: ui.item.attr('id'),
-                        channel: parseInt(ui.item.attr('channel')),
-                        weight: parseInt(ui.item.attr('weight'))
+                        id: li.attr('id'),
+                        channel: parseInt(li.attr('channel')),
+                        weight: parseInt(li.attr('weight'))
                     });
-                    ui.item.attr('timeslotitemid', 'findme');
+                    li.attr('timeslotitemid', 'findme');
 
-                } else if (ui.item.attr('channel') === 'res' || ui.item.attr('channel') === null) {
+                } else if (li.attr('channel') === 'res' || li.attr('channel') == null) {
                     /**
                     * This item has just been removed from the Show Plan. Send the server a RemoveItem operation.
                     * This operation will also send a number of MoveItem notifications - one for each item below this one in the
@@ -210,12 +221,12 @@ var NIPSWeb = function() {
                     // This is after the moves to ensure there aren't two items of the same weight
                     ops.push({
                         op: 'RemoveItem',
-                        timeslotitemid: parseInt(ui.item.attr('timeslotitemid')),
+                        timeslotitemid: parseInt(li.attr('timeslotitemid')),
                         channel: parseInt(oldChannel),
                         weight: parseInt(oldWeight)
                     });
 
-                    ui.item.attr('timeslotitemid', null);
+                    li.attr('timeslotitemid', null);
                 } else {
                     /**
                     * This item has just been moved from one position to another.
@@ -229,14 +240,14 @@ var NIPSWeb = function() {
 
                     $('ul.baps-channel li[channel=' + oldChannel + ']').each(function() {
                         if (oldWeight - $(this).attr('weight') < 0
-                            && $(this).attr('timeslotitemid') !== ui.item.attr('timeslotitemid')) {
+                            && $(this).attr('timeslotitemid') !== li.attr('timeslotitemid')) {
 
                             dec.push($(this).attr('timeslotitemid'));
                             $(this).attr('weight', parseInt($(this).attr('weight')) - 1);
                         }
                     });
 
-                    var current = ui.item;
+                    var current = li;
                     while (current.next().length === 1) {
                         current = current.next();
                         var pos = $.inArray(current.attr('timeslotitemid'), dec);
@@ -281,11 +292,11 @@ var NIPSWeb = function() {
                     // Finally, we can add the item itself
                     ops.push({
                         op: 'MoveItem',
-                        timeslotitemid: parseInt(ui.item.attr('timeslotitemid')),
+                        timeslotitemid: parseInt(li.attr('timeslotitemid')),
                         oldchannel: parseInt(oldChannel),
                         oldweight: parseInt(oldWeight),
-                        channel: parseInt(ui.item.attr('channel')),
-                        weight: parseInt(ui.item.attr('weight'))
+                        channel: parseInt(li.attr('channel')),
+                        weight: parseInt(li.attr('weight'))
                     });
                 }
 
@@ -419,53 +430,98 @@ var NIPSWeb = function() {
     };
 
     var configureContextMenus = function() {
-        $(document).contextmenu({
-            delegate: 'ul.baps-channel',
-            menu: [
-                {title: "Delete Item", cmd: "itemDel", uiIcon: ""},
-                {title: "Automatic Advance", cmd: "autoAdv", uiIcon: ""},
-                {title: "Play On Load", cmd: "autoPlay", uiIcon: ""},
-                {title: "Repeat None", cmd: "rptNone", uiIcon: "ui-icon-check"},
-                {title: "Repeat One", cmd: "rptOne", uiIcon: ""},
-                {title: "Repeat All", cmd: "rptAll", uiIcon: ""},
-                {title: "Reset Channel", cmd: "reset", uiIcon: "ui-icon-trash"},
-                {title: "Save Channel As...", cmd: "savePreset", uiIcon: "ui-icon-disk"},
-                {title: "Load Channel", cmd: "loadPreset", uiIcon: "ui-icon-folder-open"}
-            ],
-            position: {my: "left top", at: "center"},
-            beforeOpen: function(event) {
-                var ul = ($(event.relatedTarget).is('li') ? $(event.relatedTarget).parent('ul') : event.relatedTarget);
-                if (debug) {console.log(ul);}
-                //Enable/disable Delete item depending on if it's an li - lis are items, ul would be container
-                $(document).contextmenu("enableEntry", "itemDel", $(event.relatedTarget).is('li'));
-                $(document).contextmenu("setEntry", "autoAdv",
-                {title: "Automatic Advance", cmd: "autoAdv", uiIcon: $(ul).attr('autoadvance') == 1 ? "ui-icon-check" : ""}),
-                $(document).contextmenu("setEntry", "autoPlay",
-            {title: "Play On Load", cmd: "autoPlay", uiIcon: $(ul).attr('playonload') == 1 ? "ui-icon-check" : ""})
-            },
-            show: {effect: "slideDown", duration: 100}
-        });
-
-        $(document).bind("contextmenuselect", function(event, ui) {
-            var menuId = ui.item.find(">a").attr("href"),
-            target = event.relatedTarget,
-            ul = ($(event.relatedTarget).is('li') ? $(event.relatedTarget).parent('ul') : event.relatedTarget);
-
-            if (menuId === "#autoAdv") {
-                if ($(ul).attr('autoadvance') == 1) {
-                    $(ul).attr('autoadvance', 0);
-                } else {
-                    $(ul).attr('autoadvance', 1);
+        var invert = function(obj, attr) {
+            if (obj.getAttribute(attr) == 1) {
+                obj.setAttribute(attr, 0);
+            } else {
+                obj.setAttribute(attr, 1);
+            }
+        }
+        channelMenu = contextMenu([
+            {
+                icon: 'trash',
+                text: 'Delete item',
+                callback: function(e) {
+                    var toDelete = e.triggeredBy.parentNode.removeChild(e.triggeredBy);
+                    calcChanges(toDelete);
+                },
+                open: function(e) {
+                    if (e.triggeredBy.nodeName == 'LI') {
+                        this.enable();
+                    } else {
+                        this.disable();
+                    }
                 }
-            } else if (menuId === "#autoPlay") {
-                if ($(ul).attr('playonload') == 1) {
-                    $(ul).attr('playonload', 0);
-                } else {
-                    $(ul).attr('playonload', 1);
+            },
+            {
+                icon: '',
+                text: 'Automatic advance',
+                callback: function(e) {
+                    invert(e.boundTo, 'autoadvance');
+                },
+                open: function(e) {
+                    this.setIcon(e.boundTo.getAttribute('autoadvance') == 1 ? 'ok' : '');
+                }
+            },
+            {
+                icon: '',
+                text: 'Play on load',
+                callback: function(e) {
+                    invert(e.boundTo, 'playonload');
+                },
+                open: function(e) {
+                    this.setIcon(e.boundTo.getAttribute('playonload') == 1 ? 'ok' : '');
+                }
+            },
+            {
+                icon: '',
+                text: 'Repeat none',
+                callback: function(e) {
+                    e.boundTo.setAttribute('repeat', 0);
+                },
+                open: function(e) {
+                    this.setIcon(e.boundTo.getAttribute('repeat') == 0 ? 'record' : '');
+                }
+            },
+            {
+                icon: '',
+                text: 'Repeat one',
+                callback: function(e) {
+                    e.boundTo.setAttribute('repeat', 1);
+                },
+                open: function(e) {
+                    this.setIcon(e.boundTo.getAttribute('repeat') == 1 ? 'record' : '');
+                }
+            },
+            {
+                icon: '',
+                text: 'Repeat all',
+                callback: function(e) {
+                    e.boundTo.setAttribute('repeat', 2);
+                },
+                open: function(e) {
+                    this.setIcon(e.boundTo.getAttribute('repeat') == 2 ? 'record' : '');
+                }
+            },
+            {
+                icon: 'refresh',
+                text: 'Reset channel'
+            },
+            {
+                icon: 'save',
+                text: 'Save channel as...',
+                callback: function() {
+                    showAlert('Save/Load channel functionality is not available.', 'danger');
+                }
+            },
+            {
+                icon: 'open',
+                text: 'Load channel',
+                callback: function() {
+                    showAlert('Save/Load channel functionality is not available.', 'danger');
                 }
             }
-            if (debug) {console.log("select " + menuId + " on " + $(target).attr('id'));}
-        });
+        ]);
     };
 
     var initialiseUI = function() {
@@ -494,7 +550,7 @@ var NIPSWeb = function() {
                     * Update the channel timers
                     */
                     updateChannelTotalTimers();
-                    calcChanges(e, ui);
+                    calcChanges(ui.item);
                 }
             });
         }
@@ -527,20 +583,36 @@ var NIPSWeb = function() {
         players[getChannelInt(channel)] = a;
 
         setupListeners(channel);
+
+        var ul = document.getElementById('baps-channel-'+channel)
+        ul.setAttribute('autoadvance', 1);
+        ul.setAttribute('repeat', 0);
     };
 
     // Sets up listeners per channel
     var setupListeners = function(channel) {
         var player = getPlayer(channel);
         var slider = sliders[(channel === 'res') ? 0 : channel];
+        var channelDiv = $('#baps-channel-' + channel);
 
         $(player).on('ended', function() {
+            var el = $('#baps-channel-' + channel + ' li.selected');
             stopping(channel);
-            if ($('#baps-channel-' + channel).attr('autoadvance') == 1) {
-                $('#' + $('#baps-channel-' + channel + ' li.selected')
-                    .removeClass('selected')
-                    .attr('nextselect'))
-                .click();
+            if (channelDiv.attr('autoadvance') == 1 && !channelDiv.attr('repeat') == 1) {
+                var next = el.next('li');
+                if (!next.length && el.parent().attr('repeat') == 2) {
+                    console.log('Meow');
+                    next = el.parent().children()[0];
+                }
+                console.log(next);
+                if (next) {
+                    el.removeClass('selected');
+                    next.click();
+                }
+            } else if (channelDiv.attr('repeat') == 1) {
+                player.currentTime = player.cueTime;
+                player.play();
+                playing(channel);
             } else {
                 player.currentTime = player.cueTime;
             }
@@ -581,6 +653,8 @@ var NIPSWeb = function() {
             }
             player.cueTime = e.originalEvent.detail.time;
         });
+
+        channelDiv.on('contextmenu', channelMenu.show);
 
         $('#ch' + channel + '-play').on('click', function() {play(channel)});
         $('#ch' + channel + '-pause').on('click', function() {pause(channel)});
@@ -723,6 +797,116 @@ var NIPSWeb = function() {
         registerItemClicks: registerItemClicks
     };
 
+};
+
+/**
+* Items options: icon (required), text (required), callback
+*/
+var contextMenu = function(items) {
+    var hideListener;
+    // The element the event that opened the menu is bound to
+    var boundTo;
+    // The element that was activated when the menu was opened
+    var triggeredBy;
+
+    /** DOM ELEMENTS **/
+    var menuContainer = document.createElement('ul');
+    menuContainer.className = 'context-menu dropdown-menu';
+    menuContainer.style.position = 'absolute';
+    menuContainer.style.display = 'none';
+
+    for (var i = 0; i < items.length; i++) {
+        var item = document.createElement('li');
+
+        var itemLink = document.createElement('a');
+        itemLink.setAttribute('href', 'javascript:');
+
+        var itemIcon = document.createElement('span');
+        itemIcon.style.width = '14px';
+        itemIcon.className = 'glyphicon glyphicon-' + items[i].icon;
+
+        var itemText = document.createTextNode(' ' + items[i].text);
+
+        itemLink.appendChild(itemIcon);
+        itemLink.appendChild(itemText);
+        item.appendChild(itemLink);
+
+        var callback = function(item, cb) {
+            if (cb) {
+                return function(e) {
+                    e.boundTo = boundTo;
+                    e.triggeredBy = triggeredBy;
+                    cb.apply(item, [e]);
+                }
+            } else {
+                return function(){};
+            }
+        }(item, items[i].callback);
+
+        item.open = function(item, cb) {
+            if (cb) {
+                return function(e) {
+                    e.boundTo = boundTo;
+                    e.triggeredBy = triggeredBy;
+                    cb.apply(item, [e]);
+                }
+            } else {
+                return function(){};
+            }
+        }(item, items[i].open);
+
+        item.setIcon = function(itemIcon) {
+            return function(icon) {
+                itemIcon.className = 'glyphicon glyphicon-' + icon;
+            }
+        }(itemIcon);
+
+        item.disable = function(item, callback) {
+            return function() {
+                item.style.opacity = "0.5";
+                item.removeEventListener('click', callback);
+            }
+        }(item, callback);
+
+        item.enable = function(item, callback) {
+            return function() {
+                item.style.opacity = "1.0";
+                item.addEventListener('click', callback);
+            }
+        }(item, callback);
+
+        item.addEventListener('click', callback);
+
+        menuContainer.appendChild(item);
+    }
+
+    document.body.appendChild(menuContainer);
+
+    hideListener = function() {
+        menuContainer.style.display = 'none';
+        document.body.removeEventListener('click', hideListener);
+    }
+
+    return {
+        show: function(e) {
+            boundTo = e.currentTarget;
+            triggeredBy = e.target;
+            for (var i = 0; i < menuContainer.children.length; i++) {
+                if (menuContainer.children[i].hasOwnProperty('open')) {
+                    menuContainer.children[i].open.apply(menuContainer.children[i], [e]);
+                }
+            }
+            menuContainer.style.display = "block";
+            menuContainer.style.left = e.pageX + 'px';
+            menuContainer.style.top = e.pageY + 'px';
+            document.body.addEventListener('click', hideListener);
+            e.preventDefault();
+        }
+    }
+}
+
+contextMenu.prototype = {
+    constructor: contextMenu
 };
 
 var playoutSlider = function(e) {

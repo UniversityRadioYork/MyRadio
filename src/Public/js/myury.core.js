@@ -74,3 +74,11 @@ $(document).ajaxSuccess(function(e, xhr, settings) {
         myury.errorReport(data.myury_errors, e, xhr, settings);
     }
 });
+
+/**
+* http://stackoverflow.com/questions/18568736/how-to-hide-element-using-twitter-bootstrap-3-and-show-it-using-jquery
+* @todo Remove the need for this
+*/
+$(document).ready(function() {
+    $('.hidden').hide().removeClass('hidden');
+});
