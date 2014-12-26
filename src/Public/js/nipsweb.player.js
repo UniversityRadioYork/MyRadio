@@ -579,6 +579,7 @@ var NIPSWeb = function(d) {
 
         var a = new Audio();
         a.cueTime = 0;
+        a.justStopped = false;
 
         players[getChannelInt(channel)] = a;
 
@@ -603,7 +604,6 @@ var NIPSWeb = function(d) {
                 if (!next.length && el.parent().attr('repeat') == 2) {
                     next = el.parent().children()[0];
                 }
-                console.log(next);
                 if (next) {
                     el.removeClass('selected');
                     next.click();
@@ -617,7 +617,7 @@ var NIPSWeb = function(d) {
             }
         });
         // Chrome sometimes stops playback after seeking
-        $(player).on('seeked', function() {
+        $(player).on('seeked', function(e) {
             if (player.nwIsPlaying) {
                 setTimeout("player.play()", 50);
             }
@@ -710,23 +710,13 @@ var NIPSWeb = function(d) {
                     }
                     getPlayer(channel).src = myury.makeURL('NIPSWeb', 'secure_play', params);
 
-                    $(getPlayer(channel)).on("canplay", function() {
+                    $(getPlayer(channel)).off("canplay.forloaded").on("canplay.forloaded", function() {
                         $('#ch' + channel + '-play').removeAttr('disabled');
-                        /**
-                        * Briefly play the track once it has started loading
-                        * Workaround for http://code.google.com/p/chromium/issues/detail?id=111281
-                        */
-                        this.play();
-                        var that = this; // That will stay in context for the timout
-                        this.volume = 0;
-                        setTimeout(function() {
-                            that.pause();
-                            that.volume = 1;
-                            if ($('#baps-channel-' + channel).attr('playonload') == 1) {
-                                that.play();
-                                playing(channel);
-                            }
-                        }, 10);
+                        if (this.justStopped == false && $('#baps-channel-' + channel).attr('playonload') == 1) {
+                            this.play();
+                            playing(channel);
+                        }
+                        this.justStopped = false;
                     });
                 }
             });
@@ -782,10 +772,11 @@ var NIPSWeb = function(d) {
     };
 
     var stop = function(channel) {
+        stopping(channel);
         var player = getPlayer(channel);
         player.pause();
+        player.justStopped = true;
         player.currentTime = player.cueTime;
-        stopping(channel);
     };
 
     return {
