@@ -257,9 +257,8 @@ window.MyRadioForm = {
      * @todo Make stepminute customisable?
      */
     $('fieldset.myradiofrm input.datetime').datetimepicker({
-      dateFormat: "yy-mm-dd",
-      timeFormat: "hh:mm:ss",
-      stepMinute: 15
+      minuteStepping: 15,
+      useSeconds: false
     });
   },
   setUpCheckboxGroups: function() {
