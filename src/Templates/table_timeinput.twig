@@ -26,7 +26,7 @@ This also adds shortcut links for "Last Day", "Last Week", "Last Fortnight", "La
   'required': false, 'value': endtime} %}
 {% set sfieldname = field.name %}
 {% include ('FormFields/FieldType_4.twig') %}
-      <input type="submit" value="Update" />
+      <input type="submit" value="Update" class="btn btn-default" />
     </form>
   </fieldset>
 {{ parent() }}
@@ -34,6 +34,7 @@ This also adds shortcut links for "Last Day", "Last Week", "Last Fortnight", "La
 
 {% block foot %}
 {{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/vendor/jquery.validate.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/vendor/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/myury.form.js"></script>
