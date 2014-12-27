@@ -7,7 +7,7 @@
          name="{{frm_name}}-{{field.name}}-{{item.name}}"
          id="{{frm_name}}-{{field.name}}-{{item.name}}"
        {% if item.options.checked is defined and item.options.checked %} checked="checked"{% endif %}
-       data-date-format="hh:mm" />
+       data-date-format="HH:mm" />
   </label>
   <span class="myradiofrmhint" id="{{frm_name}}-{{field.name}}-{{item.name}}-hint">{{item.explanation | raw}}</span>
 {% endfor %}
