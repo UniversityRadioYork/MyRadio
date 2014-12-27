@@ -2,6 +2,7 @@
 {% block head %}
 {{ parent() }}
 {% include 'parts/table-header.twig' %}
+<link type="text/css" rel="stylesheet" src="{{baseurl}}css/vendor/bootstrap-datetimepicker.css">
 {% endblock %}
 {% block stripecontent %}
 {% set myury_form_section_exists = false %}
@@ -35,8 +36,9 @@
 {% block foot %}
 {{ parent() }}
 {% include 'parts/table-footer.twig' %}
-<script type="text/javascript" src="{{baseurl}}js/vendor/jquery-ui-timepicker.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/vendor/jquery.validate.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/vendor/tinymce.min.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/vendor/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/myury.form.js"></script>
 {% endblock %}

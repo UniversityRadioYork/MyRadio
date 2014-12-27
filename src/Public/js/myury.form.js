@@ -166,16 +166,18 @@ window.MyRadioForm = {
      * Initialises the Time pickers where necessary
      * @todo Make stepminute customisable?
      */
-    $('fieldset.myradiofrm input.time').timepicker({
-      stepMinute: 15
+    $('fieldset.myradiofrm input.time').datetimepicker({
+      pickDate: false,
+      minuteStepping: 15,
+      useSeconds: false
     });
   },
   setUpDatePickers: function() {
     /**
      * Initialises the Date pickers where necessary
      */
-    $('fieldset.myradiofrm input.dateITA').datepicker({
-      dateFormat: "dd/mm/yy"
+    $('fieldset.myradiofrm input.dateITA').datetimepicker({
+      pickTime: false
     });
   },
   validate: function() {
