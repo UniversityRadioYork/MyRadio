@@ -533,7 +533,7 @@ var NIPSWeb = function(d) {
                 //Prevents accidentally dragging when clicking
                 distance: 15,
                 //Adds a placeholder highlight where the item will be dropped
-                placeholder: "ui-state-highlight",
+                placeholder: "alert-warning",
                 //Remove the "selected" class from the item - prevent multiple selected items in a channel
                 //Also activate the next/previous item, if there is one
                 start: function(e, ui) {

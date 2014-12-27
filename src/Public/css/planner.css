@@ -119,6 +119,7 @@ ul.baps-channel {
   background-color: #eee;
   border: 1px solid #777;
   border-bottom: none;
+  position: static; /* override bootstrap relative, which breaks sortable */
 }
 
 div.baps-channel {
