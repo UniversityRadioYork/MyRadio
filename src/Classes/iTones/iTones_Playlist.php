@@ -83,7 +83,10 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                             'track',
                             MyRadioFormField::TYPE_TRACK,
                             [
-                                'label' => 'Tracks'
+                                'label' => 'Tracks',
+                                'options' => [
+                                    'digitised' => true
+                                ]
                             ]
                         ),
                         new MyRadioFormField(
@@ -378,7 +381,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         );
         //Add new tracks
         foreach ($new_additions as $track) {
-            if (empty($track)) {
+            if ($track instanceof MyRadio_Track) {
+                trigger_error('Discarding non-track item: ' . print_r($track, true));
                 continue;
             }
             self::$db->query(

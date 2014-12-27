@@ -94,6 +94,7 @@ class MyRadioFormField
      *
      * trackname: Since value will set the hidden integer value, this can be used to set the text value of the visible
      * element when loading a pre-filled form.
+     * digitised: Require that search results are digitised tracks. Default false.
      *
      * @todo Support for filtering to only digitised, clean tracks etc.
      */

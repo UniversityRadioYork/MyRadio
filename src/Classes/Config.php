@@ -193,13 +193,13 @@ final class Config
      * The url of the webcam server status
      * @var String
      */
-    public static $webcam_current_url = "http://motion.ury.york.ac.uk:9090/current?noprotocol=true";
+    public static $webcam_current_url;
 
     /**
      * The url of the webcam server setter
      * @var String
      */
-    public static $webcam_set_url = "http://motion.ury.york.ac.uk:9090/set?newcam=";
+    public static $webcam_set_url;
 
     /**
      * The path to store the original, unencoded copies of MyRadio Podcasts.
@@ -287,6 +287,18 @@ final class Config
      * @var String
      */
     public static $lastfm_api_secret;
+    
+    /**
+     * The last.fm group specifically for the University of York. If using
+     * this aspect of the code you probably want to change this bit.
+     */
+    public static $lastfm_group = 'University+of+York';
+
+    /**
+     * The last.fm nation of choice, at least for us. Again, you might wish to
+     * change this bit.
+     */
+     public static $lastfm_geo = 'United+Kingdom';
 
     /**
      * The array of different versions of tracks one can expect to find in the
