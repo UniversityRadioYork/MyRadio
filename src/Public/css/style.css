@@ -375,6 +375,48 @@ table.myradiofrmfield-weeklycheck td {
   display: none;
 }
 
+.tt-hint {
+    width: 300px;
+    height: 30px;
+    margin-top: -2px;
+    margin-left: 19px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.tt-hint {
+    color: #999
+}
+
+.tt-dropdown-menu {
+    width: 300px;
+    margin-top: 0px;
+    margin-left: 19px;
+    padding: 0 0 8px 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.tt-suggestion {
+    padding: 3px 20px;
+    font-size: 14px;
+    line-height: 20px;
+    cursor: pointer;
+}
+
+.tt-suggestion.tt-cursor {
+    color: #fff;
+    background-color: #0097cf;
+}
+
+.tt-suggestion p {
+    margin: 0;
+}
+
 /* MyRadio Login Styles */
 .chooseAuth label {
   padding: 1em;
