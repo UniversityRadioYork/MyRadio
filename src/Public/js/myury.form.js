@@ -163,7 +163,7 @@ window.MyRadioForm = {
     /**
      * Initialises the Album autocomplete pickers where necessary
      */
-    var albumFields = $('fieldset.myradiofrm input.artist-autocomplete');
+    var albumFields = $('fieldset.myradiofrm input.album-autocomplete');
     if (albumFields.length > 0) {
       var albumLookup = new Bloodhound({
         datumTokenizer: function(i) {
@@ -240,9 +240,8 @@ window.MyRadioForm = {
    * Sets up those pretty week drag-drop select fields. I wrote it, but don't understand it.
    */
   setUpWeekSelectFields: function() {
-    $('table.myradiofrmfield-weeklycheck').disableSelection();
     $.each($('table.myradiofrmfield-weeklycheck td'), function() {
-      $(this).on('mousedown', function() {
+      $(this).on('mousedown', function(e) {
         if (MyRadioForm.gCheckedValue === null) {
           /**
            * Start a drag selection. Invert the state of the selected checkbox,
@@ -254,6 +253,7 @@ window.MyRadioForm = {
           input.prop('checked', !input.prop('checked'));
           MyRadioForm.gCheckedValue = input.prop('checked');
         }
+        e.preventDefault();
       }).on('mouseenter', function() {
         //Is there an active dragging event?
         if (MyRadioForm.gCheckedValue === null) {
