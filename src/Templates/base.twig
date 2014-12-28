@@ -24,6 +24,9 @@
             {% for phperror in phperrors %}
               <li><strong>{{ phperror.name }}</strong> : {{ phperror.string|raw }} - In <strong>{{ phperror.file }}</strong> on line {{ phperror.line }}</li>
             {% endfor %}
+            {% for notice in notices %}
+              <div class="ui-state-{{notice.state}}"><span class="ui-icon ui-icon-{{notice.icon}} fleft"></span>{{notice.message | raw}}</div>
+            {% endfor %}
                 </ul>
         {% endif %}
 {% block content %}{% endblock %}
