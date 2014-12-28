@@ -381,11 +381,6 @@ table.myradiofrmfield-weeklycheck td {
     margin-top: -2px;
     margin-left: 19px;
     font-size: 14px;
-    border: 1px solid #ccc;
-    outline: none;
-}
-
-.tt-hint {
     color: #999
 }
 

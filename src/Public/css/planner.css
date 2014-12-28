@@ -41,6 +41,16 @@ body {
   height: 88px;
   background-color: #777;
 }
+#resource-add-header .tt-hint {
+  margin: 0 0 0 2px;
+  height: 24px;
+  border: none;
+  width: 100%;
+}
+#resource-add-header .tt-dropdown-menu {
+  margin-left: 0;
+}
+
 #central-dragdrop, #res-dragdrop {
   height: 250px;
   margin-bottom: 0;
@@ -88,7 +98,7 @@ body {
   padding: 1px;
   margin: 2px;
 }
-#res-filter-artist,  #res-filter-track,  #res-filter-name {
+#res-filter-artist,  #res-filter-track,  #res-filter-name, #resource-add-header .twitter-typeahead {
   padding: 0;
   width: 100%;
 }
@@ -146,27 +156,6 @@ ul.baps-channel li:hover {
 
 ul.baps-channel li.selected {
   background-color: #428bca;
-}
-
-/** Thin handled slider **/
-.ui-slider .ui-slider-handle {
-  width: .2em;
-}
-
-.ui-slider:hover .ui-slider-handle {
-  width: .6em;
-}
-
-.ui-slider-horizontal .ui-slider-handle {
-  margin-left: -.1em;
-}
-
-.ui-state-error{
-  display : block;
-}
-
-.ui-contextmenu {
-  z-index: 10000;
 }
 
 select {

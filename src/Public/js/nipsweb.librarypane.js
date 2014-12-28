@@ -148,22 +148,29 @@ $(document).ready(function() {
     //Clear the current list
     $('#baps-channel-res').empty();
     //Makes the artist search autocompleting. When an artist is selected it'll filter
-    $('#res-filter-artist').autocomplete({
-      source: myury.makeURL('MyRadio', 'a-findartist'),
-      data: {limit: 50},
-      minLength: 2,
-      select: function(event, ui) {
-        $(this).val(ui.item.title);
-        //Let the autocomplete update the value of the filter
-        setTimeout("updateCentralSearch()", 50);
-        return false;
-      }
-    }).data("ui-autocomplete")._renderItem = function(ul, item) {
-      return $('<li></li>').data('item.autocomplete', item)
-              .append('<a>' + item.title + '</a>')
-              .appendTo(ul);
-    };
-    ;
+    var artistLookup = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('title'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        limit: 5,
+        dupDetector: function(remote, local) {
+          return local.title == remote.title;
+        },
+        prefetch: {
+          url: myury.makeURL('MyRadio', 'a-findartist', {term: null, limit: 500})
+        },
+        remote: myury.makeURL('MyRadio', 'a-findartist', {limit: 5, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+      });
+      artistLookup.initialize();
+      $('#res-filter-artist').typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 1
+      },
+      {
+        displayKey: 'title',
+        source: artistLookup.ttAdapter()
+      })
+      .on('typeahead:selected', updateCentralSearch);
   });
 
   //Bind the central search function
