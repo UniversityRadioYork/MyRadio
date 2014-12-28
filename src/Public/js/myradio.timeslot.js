@@ -26,8 +26,6 @@ $('#seasons').on('change', function() {
     }
 });
 $('#timeslots').on('change', function() {
-    console.log('Hi there.');
-    console.log($(this).val());
     if ($(this).val() !== null) {
         $('#signin-submit').show();
         //Okay, now if the show is <> 2hours, let them sign in
@@ -36,7 +34,6 @@ $('#timeslots').on('change', function() {
         var end = 0;
         for (id in timeslots) {
             if (timeslots[id][0] == $(this).val()) {
-                console.log(timeslots[id]);
                 start = timeslots[id][1] * 1000;
                 end = timeslots[id][2] * 1000;
                 break;
