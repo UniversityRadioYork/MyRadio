@@ -26,6 +26,8 @@ $('#seasons').on('change', function() {
     }
 });
 $('#timeslots').on('change', function() {
+    console.log('Hi there.');
+    console.log($(this).val());
     if ($(this).val() !== null) {
         $('#signin-submit').show();
         //Okay, now if the show is <> 2hours, let them sign in
@@ -76,25 +78,28 @@ $('#timeslots').on('change', function() {
     }
 });
 
-//Now we're going to select the closest timeslot
-var closest = [null, null, null, null];
-var seconds = (new Date).getTime() / 1000;
-shows = window.showdata;
-for (show in shows) {
-    for (season in shows[show]) {
-        for (timeslot in shows[show][season]) {
-            var drift = Math.abs(shows[show][season][timeslot][1] - seconds);
-            if (closest[0] === null || drift < closest[0]) {
-                closest[0] = drift;
-                closest[1] = show;
-                closest[2] = season;
-                closest[3] = shows[show][season][timeslot][0];
+
+$(document).ready(function() {
+    //Now we're going to select the closest timeslot
+    var closest = [null, null, null, null];
+    var seconds = (new Date).getTime() / 1000;
+    shows = window.showdata;
+    for (show in shows) {
+        for (season in shows[show]) {
+            for (timeslot in shows[show][season]) {
+                var drift = Math.abs(shows[show][season][timeslot][1] - seconds);
+                if (closest[0] === null || drift < closest[0]) {
+                    closest[0] = drift;
+                    closest[1] = show;
+                    closest[2] = season;
+                    closest[3] = shows[show][season][timeslot][0];
+                }
             }
         }
     }
-}
-if (closest[0] !== null) {
-    $('#shows').val(closest[1]).trigger('change');
-    $('#seasons').val(closest[2]).trigger('change');
-    $('#timeslots').val(closest[3]).trigger('change');
-}
+    if (closest[0] !== null) {
+        $('#shows').val(closest[1]).trigger('change');
+        $('#seasons').val(closest[2]).trigger('change');
+        $('#timeslots').val(closest[3]).trigger('change');
+    }
+});
