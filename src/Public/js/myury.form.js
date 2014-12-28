@@ -28,7 +28,7 @@ window.MyRadioForm = {
     /**
      * Initialises the Member autocomplete pickers where necessary
      */
-    var memberFields = $('fieldset.myradiofrm input.member-autocomplete');
+    var memberFields = $('fieldset.myradiofrm input.member-autocomplete:not(.tt-hint):not(.tt-input)');
     if (memberFields.length > 0) {
       var memberLookup = new Bloodhound({
         datumTokenizer: function(i) {
@@ -73,7 +73,7 @@ window.MyRadioForm = {
     /**
      * Initialises the Track autocomplete pickers where necessary
      */
-    var trackFields = $('fieldset.myradiofrm input.track-autocomplete');
+    var trackFields = $('fieldset.myradiofrm input.track-autocomplete:not(.tt-hint):not(.tt-input)');
     if (trackFields.length > 0) {
       var trackLookup = new Bloodhound({
         datumTokenizer: function(i) {
@@ -123,7 +123,7 @@ window.MyRadioForm = {
     /**
      * Initialises the Artist autocomplete pickers where necessary
      */
-    var artistFields = $('fieldset.myradiofrm input.artist-autocomplete');
+    var artistFields = $('fieldset.myradiofrm input.artist-autocomplete:not(.tt-hint):not(.tt-input)');
     if (artistFields.length > 0) {
       var artistLookup = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('title'),
@@ -163,7 +163,7 @@ window.MyRadioForm = {
     /**
      * Initialises the Album autocomplete pickers where necessary
      */
-    var albumFields = $('fieldset.myradiofrm input.album-autocomplete');
+    var albumFields = $('fieldset.myradiofrm input.album-autocomplete:not(.tt-hint):not(.tt-input)');
     if (albumFields.length > 0) {
       var albumLookup = new Bloodhound({
         datumTokenizer: function(i) {
@@ -314,14 +314,13 @@ window.MyRadioForm = {
       var new_id = $(this).attr('nextvalue');
       $('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody tr:first').clone()
               .addClass(parseInt(new_id) % 2 == 0 ? 'odd' : 'even')
-              .find('input').each(function() {
-        $(this).val('').attr('id', function(_, id) {
-          return id.replace(/0/, new_id)
-        });
+              .find('input:not(.tt-hint)').each(function() {
+        $(this).val('').removeClass('tt-input').attr('id', $(this).attr('id').replace(/0/, new_id));
       }).end().appendTo('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody');
       MyRadioForm.setUpArtistFields();
       MyRadioForm.setUpMemberFields();
       MyRadioForm.setUpTrackFields();
+      MyRadioForm.setUpAlbumFields();
       MyRadioForm.setUpTimePickers();
       $(this).attr('nextvalue', parseInt(new_id) + 1);
     });
@@ -331,8 +330,7 @@ window.MyRadioForm = {
     });
     //And the dataTable that contains them
     $('table.myuryfrm-repeaterset-container').dataTable({
-      bSort: true,
-      bJQueryUI: true,
+      bSort: false,
       bPaginate: false,
       bFilter: false
     }
