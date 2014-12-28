@@ -94,7 +94,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             $playlist[] = $track;
             for ($j = 0; $j < sizeof($similar); $j++)
             {
-                $playlist[] = $similar[j];
+                $playlist[] = $similar[$j];
             }
             //$playlist = array_merge($playlist, $similar);
         }
@@ -141,7 +141,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             $playlist[] = $track;
             for ($j = 0; $j < sizeof($similar); $j++)
             {
-                $playlist[] = $similar[j];
+                $playlist[] = $similar[$j];
             }
             //$playlist = array_merge($playlist, $similar);
         }
@@ -220,19 +220,15 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         }
         
         $playlist = [];
-        for ($i = 0; $i < sizeof($keys); $i++) {
+        foreach ($keys as $key) {
             $lockstr = $pobj->acquireOrRenewLock($lockstr, MyRadio_User::getInstance(Config::$system_user));
-            $key = $keys[$i];
-            if (!$key) {
-                break; //If there aren't that many, oh well.
-            }
             $track = MyRadio_Track::getInstance($key);
             $similar = $track->getSimilar();
             dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
             $playlist[] = $track;
             for ($j = 0; $j < sizeof($similar); $j++)
             {
-                $playlist[] = $similar[j];
+                $playlist[] = $similar[$j];
             }
             //$playlist = array_merge($playlist, $similar);
         }
