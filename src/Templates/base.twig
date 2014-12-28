@@ -54,6 +54,9 @@
           {% endfor %}
         </ul>
       {% endif %}
+      {% for notice in notices %}
+        <div class="alert alert-{{notice.state}}"><span class="glyphicon glyphicon-{{notice.icon}}"></span> {{notice.message | raw}}</div>
+      {% endfor %}
       {% block content %}{% endblock %}
     </div>
     {% block footer %}
