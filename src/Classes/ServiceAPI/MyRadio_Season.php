@@ -509,7 +509,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             new MyRadioForm(
                 'sched_reject',
                 'Scheduler',
-                'doReject',
+                'reject',
                 [
                     'debug' => false,
                     'title' => 'Reject Season Application'
