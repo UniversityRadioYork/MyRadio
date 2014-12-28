@@ -196,6 +196,10 @@ var SIS = function(container) {
     };
 };
 
+
+/**
+* Old code below - remove when SIS bootstrapping is done
+*/
 var dontcallme = function(){
 
 
