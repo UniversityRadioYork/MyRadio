@@ -59,7 +59,7 @@ $(document).ready(function() {
       $('#res-loading').show();
       $.ajax({
         url: myury.makeURL('MyRadio', 'a-findtrack'),
-        type: 'post',
+        type: 'get',
         data: {itonesplaylistid: $(this).val().replace(/managed-/, ''), digitised: true, limit: 0},
         success: function(data) {
           for (file in data) {
@@ -88,7 +88,7 @@ $(document).ready(function() {
       $('#res-loading').show();
       $.ajax({
         url: myury.makeURL('NIPSWeb', 'load_auto_managed'),
-        type: 'post',
+        type: 'get',
         data: 'playlistid=' + $(this).val(),
         success: function(data) {
           for (file in data) {
@@ -116,7 +116,7 @@ $(document).ready(function() {
       $('#res-loading').show();
       $.ajax({
         url: myury.makeURL('NIPSWeb', 'load_aux_lib'),
-        type: 'post',
+        type: 'get',
         data: 'libraryid=' + $(this).val(),
         success: function(data) {
           for (file in data) {
