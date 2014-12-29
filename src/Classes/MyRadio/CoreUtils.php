@@ -784,6 +784,11 @@ class CoreUtils
             flush();
         }
 
+        //Discard any in-progress transactions
+        if ($db->getInTransaction()) {
+            $db->query('ROLLBACK');
+        }
+
         $errors = MyRadioError::getErrorCount();
         $exceptions = MyRadioException::getExceptionCount();
         $queries = $db->getCounter();
