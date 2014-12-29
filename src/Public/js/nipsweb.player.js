@@ -599,7 +599,7 @@ var NIPSWeb = function(d) {
         $(player).on('ended', function() {
             var el = $('#baps-channel-' + channel + ' li.selected');
             stopping(channel);
-            if (channelDiv.attr('autoadvance') == 1 && !channelDiv.attr('repeat') == 1) {
+            if (channelDiv.attr('autoadvance') == 1 && parseInt(channelDiv.attr('repeat')) !== 1) {
                 var next = el.next('li');
                 if (!next.length && el.parent().attr('repeat') == 2) {
                     next = el.parent().children()[0];
@@ -608,7 +608,7 @@ var NIPSWeb = function(d) {
                     el.removeClass('selected');
                     next.click();
                 }
-            } else if (channelDiv.attr('repeat') == 1) {
+            } else if (parseInt(channelDiv.attr('repeat')) === 1) {
                 player.currentTime = player.cueTime;
                 player.play();
                 playing(channel);
