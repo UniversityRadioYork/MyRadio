@@ -1036,7 +1036,7 @@ var playoutSlider = function(e) {
     // Needs to go after drag handlers to ensure they set isSliding first
     var clickHandler = function(e) {
         if (!isSliding) {
-            calculatePositionFromSeek(e, positionSlider);
+            var positionInt = calculatePositionFromSeek(e, positionSlider);
             sliderContainer.dispatchEvent(new CustomEvent('seeked', {detail: {time: positionInt}}));
             return false;
         }
