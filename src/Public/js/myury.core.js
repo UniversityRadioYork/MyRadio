@@ -9,55 +9,51 @@ window.myury = {
     },
     errorReport: function(myradio_errors, e, xhr, settings) {
         console.log(myradio_errors);
-        $('<div></div>').attr('title', 'Notice').attr('id', 'error-dialog')
-                .append('<p>It looks like that request works, but I got an error in the response.</p>')
-                .append('<details>' + JSON.stringify(myradio_errors) + '</details>')
-                .dialog({
-            modal: true,
-            buttons: {
-                Ok: function() {
-                    $(this).dialog("close");
-                },
-                Report: function() {
-                    $(".ui-dialog-buttonpane button:contains('Report') span").text("Reporting...").addClass('ui-state-disabled');
-                    $.post(myury.makeURL('MyRadio', 'errorReport'), JSON.stringify({xhr: xhr, settings: settings, error: myradio_errors}), function() {
-                        $('#error-dialog').dialog("close");
-                    });
-                }
-            }
-        });
+        myury.createDialog(
+            'Error',
+            '<p>It looks like that request worked, but things might not quite work as expected.</p><details>' + myradio_errors + '</details>',
+            [myury.closeButton(), myury.reportButton(xhr, settings, myradio_errors)]
+        );
     },
     createDialog: function(title, text, buttons) {
         if (!buttons) {
-            buttons = '';
+            buttons = [];
         }
-        var modal = $('<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><h4 class="modal-title">' + title + '</h4></div><div class="modal-body">' + text + '</div><div class="modal-footer">' + buttons + '</div></div></div></div>');
+        var modal = $('<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><h4 class="modal-title">' + title + '</h4></div><div class="modal-body">' + text + '</div><div class="modal-footer"></div></div></div></div>');
+        modal.find('.modal-footer').append(buttons);
         modal.appendTo('body');
         modal.modal();
         return modal;
+    },
+    closeButton: function() {
+        var closeButton = document.createElement('button');
+        closeButton.className = 'btn btn-link';
+        closeButton.innerHTML = 'Close';
+        closeButton.setAttribute('data-dismiss', 'modal');
+        return closeButton;
+    },
+    reportButton: function(xhr, settings, error) {
+        var reportButton = document.createElement('button');
+        reportButton.className = 'btn btn-primary';
+        reportButton.innerHTML = 'Report';
+        reportButton.setAttribute('data-dismiss', 'modal');
+        reportButton.addEventListener('click', function() {
+            $.post(myury.makeURL('MyRadio', 'errorReport'), JSON.stringify({xhr: xhr, settings: settings, error: error}));
+        });
     }
 };
 
 $(document).ajaxError(function(e, xhr, settings, error) {
-    console.log(error);
-    console.log(e);
-    $('<div></div>').attr('title', 'Error').attr('id', 'error-dialog')
-            .append('<p>Sorry, something just went a bit wrong.</p>')
-            .append('<details>' + error + '</details>')
-            .dialog({
-        modal: true,
-        buttons: {
-            Ok: function() {
-                $(this).dialog("close");
-            },
-            Report: function() {
-                $(".ui-dialog-buttonpane button:contains('Report') span").text("Reporting...").addClass('ui-state-disabled');
-                $.post(myury.makeURL('MyRadio', 'errorReport'), JSON.stringify({xhr: xhr, settings: settings, error: error}), function() {
-                    $('#error-dialog').dialog("close");
-                });
-            }
-        }
-    });
+    if (xhr.status == 401) {
+        //Session timed out - need to login
+        window.location = myury.makeURL('MyRadio', 'login', {next: window.location.href, message: window.btoa('Your session has expired and you need to log in again to continue.')});
+    } else {
+        myury.createDialog(
+            'Error',
+            '<p>Sorry, just went a bit wrong and I\'m not sure what to do about it.</p><details>' + error + '</details>',
+            [myury.closeButton(), myury.reportButton(xhr, settings, error)]
+        );
+    }
 });
 
 $(document).ajaxSuccess(function(e, xhr, settings) {

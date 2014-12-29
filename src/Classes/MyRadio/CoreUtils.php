@@ -469,7 +469,14 @@ class CoreUtils
         if (!$authorised && $require) {
             //Requires login
             if (!isset($_SESSION['memberid']) || $_SESSION['auth_use_locked'] !== false) {
-                self::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
+                $is_ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+                                && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+                            || empty($_SERVER['REMOTE_ADDR']);
+                if ($is_ajax) {
+                    throw new MyRadioException('Login required', 401);
+                } else {
+                    self::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
+                }
             } else {
                 //Authenticated, but not authorized
                 require 'Controllers/Errors/403.php';
