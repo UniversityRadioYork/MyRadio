@@ -619,7 +619,7 @@ var NIPSWeb = function(d) {
         // Chrome sometimes stops playback after seeking
         $(player).on('seeked', function(e) {
             if (player.nwIsPlaying) {
-                setTimeout("player.play()", 50);
+                setTimeout(player.play, 50);
             }
         });
         $(player).on('timeupdate', function() {
