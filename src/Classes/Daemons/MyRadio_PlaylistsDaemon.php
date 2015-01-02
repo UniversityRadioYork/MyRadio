@@ -92,7 +92,11 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
             //Add these to the playlist, along with the popular track
             $playlist[] = $track;
-            $playlist = array_merge($playlist, $similar);
+            for ($j = 0; $j < sizeof($similar); $j++)
+            {
+                $playlist[] = $similar[$j];
+            }
+            //$playlist = array_merge($playlist, $similar);
         }
         //Actually update the playlist
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
@@ -135,7 +139,11 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             $similar = $track->getSimilar();
             dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
             $playlist[] = $track;
-            $playlist = array_merge($playlist, $similar);
+            for ($j = 0; $j < sizeof($similar); $j++)
+            {
+                $playlist[] = $similar[$j];
+            }
+            //$playlist = array_merge($playlist, $similar);
         }
 
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
@@ -189,27 +197,40 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                         'title' => $r['name'],
                         'artist' => $r['artist']['#text'],
                         'limit' => 1,
-                        'digitised' => true
+                        'digitised' => true,
+                        'precise' => true
                     ]
                 );
+                
+                if (empty($c)) {
+                    $c = MyRadio_Track::findByOptions(
+                        [
+                            'title' => $r['name'],
+                            'artist' => $r['artist']['#text'],
+                            'limit' => 1,
+                            'digitised' => true
+                        ]
+                    );
+                }
+                
                 if (!empty($c)) {
-                $keys[] = $c[0]->getID();
+                    $keys[] = $c[0]->getID();
                 }
             }
         }
         
         $playlist = [];
-        for ($i = 0; $i < 100; $i++) {
+        foreach ($keys as $key) {
             $lockstr = $pobj->acquireOrRenewLock($lockstr, MyRadio_User::getInstance(Config::$system_user));
-            $key = $keys[$i];
-            if (!$key) {
-                break; //If there aren't that many, oh well.
-            }
             $track = MyRadio_Track::getInstance($key);
             $similar = $track->getSimilar();
             dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
             $playlist[] = $track;
-            $playlist = array_merge($playlist, $similar);
+            for ($j = 0; $j < sizeof($similar); $j++)
+            {
+                $playlist[] = $similar[$j];
+            }
+            //$playlist = array_merge($playlist, $similar);
         }
         
         $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
@@ -240,9 +261,22 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                     'title' => $r['name'],
                     'artist' => $r['artist']['name'],
                     'limit' => 1,
-                    'digitised' => true
+                    'digitised' => true,
+                    'precise' => true
                 ]
             );
+            
+            if (empty($c)) {
+                $c = MyRadio_Track::findByOptions(
+                    [
+                        'title' => $r['name'],
+                        'artist' => $r['artist']['#text'],
+                        'limit' => 1,
+                        'digitised' => true
+                    ]
+                );
+            }
+            
             if (!empty($c)) {
                 $playlist[] = $c[0];
             }
@@ -275,9 +309,22 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                     'title' => $r['name'],
                     'artist' => $r['artist']['name'],
                     'limit' => 1,
-                    'digitised' => true
+                    'digitised' => true,
+                    'precise' => true
                 ]
             );
+            
+            if (empty($c)) {
+                $c = MyRadio_Track::findByOptions(
+                    [
+                        'title' => $r['name'],
+                        'artist' => $r['artist']['#text'],
+                        'limit' => 1,
+                        'digitised' => true
+                    ]
+                );
+            }
+            
             if (!empty($c)) {
                 $playlist[] = $c[0];
             }
@@ -310,9 +357,22 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                     'title' => $r['name'],
                     'artist' => $r['artist']['name'],
                     'limit' => 1,
-                    'digitised' => true
+                    'digitised' => true,
+                    'precise' => true
                 ]
             );
+            
+            if (empty($c)) {
+                $c = MyRadio_Track::findByOptions(
+                    [
+                        'title' => $r['name'],
+                        'artist' => $r['artist']['#text'],
+                        'limit' => 1,
+                        'digitised' => true
+                    ]
+                );
+            }
+            
             if (!empty($c)) {
                 $playlist[] = $c[0];
             }
