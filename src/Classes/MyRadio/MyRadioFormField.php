@@ -650,8 +650,59 @@ class MyRadioFormField
                 break;
             case self::TYPE_TABULARSET:
                 $return = [];
+                $clearNulls = [];
                 foreach ($this->options as $option) {
+                    if ($option->getType() === self::TYPE_DAY) {
+                        $clearNulls[] = $option->getName();
+                    }
                     $return[$option->getName()] = $option->readValue($prefix);
+                }
+
+                $fields = array_keys($return);
+
+                //Explicitly set Days to null if the rest of the row is
+                //0 is treated as empty, so let's clear that up and advise using is_null
+                foreach ($clearNulls as $field) {
+                    foreach ($return[$field] as $i => $v) {
+                        if ($v > 0) {
+                            continue;
+                        }
+                        $hasValue = false;
+                        foreach ($fields as $other) {
+                            if ($other !== $field && !is_null($return[$other][$i])) {
+                                $hasValue = true;
+                                break;
+                            }
+                        }
+                        if (!$hasValue) {
+                            $return[$field][$i] = null;
+                        }
+                    }
+                }
+
+                //Clear rows that are entirely null
+                $removeKeys = [];
+                for ($i = 0; $i < sizeof($return[$fields[0]]); $i++) {
+                    $hasValue = false;
+                    foreach ($fields as $field) {
+                        if (!is_null($return[$field][$i])) {
+                            echo "$fields $i";
+                            $hasValue = true;
+                            break;
+                        }
+                    }
+                    if (!$hasValue) {
+                        $removeKeys[] = $i;
+                    }
+                }
+                if (!empty($removeKeys)) {
+                    foreach ($fields as $field) {
+                        foreach ($removeKeys as $key) {
+                            unset($return[$field][$key]);
+                        }
+                        //Reset indexes
+                        $return[$field] = array_values($return[$field]);
+                    }
                 }
 
                 return $return;
