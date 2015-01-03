@@ -430,6 +430,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $year = int(gmdate('Y'));
         }
 
+        if ($weekno < 10) {
+            $weekno = '0' . $weekno;
+        }
+
         $key = 'MyRadioScheduleFor' . $year . 'W' . $weekno;
         $cache = self::$cache->get($key);
         if (!$cache) {
