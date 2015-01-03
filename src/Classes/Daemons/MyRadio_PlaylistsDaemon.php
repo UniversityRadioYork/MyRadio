@@ -25,6 +25,8 @@ use \MyRadio\NIPSWeb\NIPSWeb_AutoPlaylist;
  */
 class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
+    private static $locks = [];
+
     public static function isEnabled()
     {
         return Config::$d_Playlists_enabled;
@@ -49,278 +51,349 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         self::setVal($hourkey, time());
     }
 
-    private static function updateMostPlayedPlaylist()
+    private static function playlistGenPrepare($playlistid)
     {
-        $pobj = iTones_Playlist::getInstance('semantic-auto');
-        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
+        $playlist = iTones_Playlist::getInstance($playlistid);
+        $lock = $playlist->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
+        self::$locks[$playlistid] = [
+            $playlist,
+            $lock
+        ];
+        if ($lock === false) {
+            dlog('ERROR updating playlist: could not get lock on ' . $playlistid, 3);
+        }
+        return $lock !== false;
+    }
 
-        /**
-         * Daytime Track play stats for last 14 days
-         */
-        $most_played = [];
-        //Get track statistics for every daytime window
-        for ($i = 0; $i < 14; $i++) {
-            $stats = MyRadio_TracklistItem::getTracklistStatsForBAPS(
-                strtotime("6am -{$i} days"),
-                strtotime("9pm -{$i} days")
-            );
-            //Accumulate the results
-            foreach ($stats as $track) {
-                if (!isset($most_played[$track['trackid']])) {
-                    $most_played[$track['trackid']] = 0;
+    private static function playlistGenCommit($playlistid, $data)
+    {
+        if (empty(self::$locks[$playlistid][1])) {
+            dlog('ERROR updating playlist: lock not acquired ' . $playlistid, 3);
+            return false;
+        }
+
+        if (empty($data)) {
+            dlog('Warning: Saving empty playlist ' . $playlistid, 3);
+        } else {
+            dlog('Saving ' . sizeof($data) . ' items to ' . $playlistid, 5);
+        }
+
+        self::$locks[$playlistid][0]->setTracks(
+            array_unique($data),
+            self::$locks[$playlistid][1],
+            null,
+            MyRadio_User::getInstance(Config::$system_user)
+        );
+        self::$locks[$playlistid][0]->releaseLock(self::$locks[$playlistid][1]);
+        self::$locks[$playlistid][1] = false;
+    }
+
+    /**
+    * @param $data array of ['title': title, 'artist': artist, 'count': value]
+    * Where count is only required if $threshold is set
+    * @param $limit int The maximum number of matched tracks to return (0 == no limit)
+    * @param $threshold int The minimum value of `count` to consider
+    * @param $include_similar bool Whether to include similar tracks or just the track itself
+    */
+    private static function dataSimilarIterator(
+        $data,
+        $limit = 0,
+        $threshold = null,
+        $include_similar = true
+    ) {
+        $playlist = [];
+        $count = 0;
+        foreach ($data as $item) {
+            if ($threshold === null or $item['count'] >= $threshold) {
+                $similar = self::getTrackAndSimilar(
+                    $item['title'],
+                    $item['artist'],
+                    $include_similar
+                );
+
+                if (!empty($similar)) {
+                    $playlist = array_merge($playlist, $similar);
+                    $count++;
+                    if ($limit !== 0 && $count >= $limit) {
+                        break;
+                    }
                 }
-                $most_played[$track['trackid']] += $track['num_plays'];
             }
         }
 
+        return $playlist;
+    }
+
+    private static function getTrackAndSimilar($title, $artist, $include_similar)
+    {
+        //Try to find an exact match
+        $c = MyRadio_Track::findByOptions(
+            [
+                'title' => $title,
+                'artist' => $artist,
+                'limit' => 1,
+                'digitised' => true,
+                'precise' => true
+            ]
+        );
+
+        //Try and find a not-so-exact match
+        if (empty($c)) {
+            $c = MyRadio_Track::findByOptions(
+                [
+                    'title' => $title,
+                    'artist' => $artist,
+                    'limit' => 1,
+                    'digitised' => true,
+                    'precise' => false
+                ]
+            );
+        }
+
+        //Whelp, nothing
+        if (empty($c)) {
+            return [];
+        } elseif ($include_similar) {
+            //Whoop, something!
+            $similar = $c[0]->getSimilar();
+            dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $c[0]->getTitle() . ' - ' .$c[0]->getArtist(), 4);
+            // Unshift edits array in-place
+            array_unshift($similar, $c[0]);
+            return $similar;
+        } else {
+            return $c;
+        }
+    }
+
+    private static function trackCountListGenerator($tracks)
+    {
         //Sort array by play count
-        arsort($most_played);
+        arsort($tracks);
         //Get the trackids out
-        $keys = array_keys($most_played);
+        $keys = array_keys($tracks);
         $playlist = [];
         //Take the top 20 from this list
-        for ($i = 0; $i < 20; $i++) {
-            //Last.FM's bit can be slow sometimes - make sure this doesn't expire
-            $lockstr = $pobj->acquireOrRenewLock($lockstr, MyRadio_User::getInstance(Config::$system_user));
+        for ($i = 0; $i < min(20, sizeof($tracks)); $i++) {
             $key = $keys[$i];
-            if (!$key) {
-                break; //If there aren't that many, oh well.
-            }
             $track = MyRadio_Track::getInstance($key);
             //Ask last.fm for similar songs that are in our library
             $similar = $track->getSimilar();
-            dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
+            dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getTitle() . ' - ' .$track->getArtist(), 4);
             //Add these to the playlist, along with the popular track
             $playlist[] = $track;
             $playlist = array_merge($playlist, $similar);
         }
-        //Actually update the playlist
-        $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
-        $pobj->releaseLock($lockstr);
+
+        return $playlist;
+    }
+
+    private static function updateMostPlayedPlaylist()
+    {
+        if (self::playlistGenPrepare('semantic-auto')) {
+            /**
+             * Daytime Track play stats for last 14 days
+             */
+            $most_played = [];
+            //Get track statistics for every daytime window
+            for ($i = 0; $i < 14; $i++) {
+                $stats = MyRadio_TracklistItem::getTracklistStatsForBAPS(
+                    strtotime("6am -{$i} days"),
+                    strtotime("9pm -{$i} days")
+                );
+                //Accumulate the results
+                foreach ($stats as $track) {
+                    if (!isset($most_played[$track['trackid']])) {
+                        $most_played[$track['trackid']] = 0;
+                    }
+                    $most_played[$track['trackid']] += $track['num_plays'];
+                }
+            }
+
+            self::playlistGenCommit(
+                'semantic-auto',
+                self::trackCountListGenerator($most_played)
+            );
+        }
 
 
         //Aaaand repeat
-        $pobj = iTones_Playlist::getInstance('semantic-spec');
-        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
-
-        /**
-         * Specialist Track play stats for last 14 days
-         */
-        $most_played = [];
-        for ($i = 0; $i < 14; $i++) {
-            $j = $i + 1;
-            $stats = MyRadio_TracklistItem::getTracklistStatsForBAPS(
-                strtotime("9pm -{$j} days"),
-                strtotime("6am -{$i} days")
-            );
-            foreach ($stats as $track) {
-                if (!isset($most_played[$track['trackid']])) {
-                    $most_played[$track['trackid']] = 0;
+        if (self::playlistGenPrepare('semantic-spec')) {
+            /**
+             * Specialist Track play stats for last 14 days
+             */
+            $most_played = [];
+            for ($i = 0; $i < 14; $i++) {
+                $j = $i + 1;
+                $stats = MyRadio_TracklistItem::getTracklistStatsForBAPS(
+                    strtotime("9pm -{$j} days"),
+                    strtotime("6am -{$i} days")
+                );
+                foreach ($stats as $track) {
+                    if (!isset($most_played[$track['trackid']])) {
+                        $most_played[$track['trackid']] = 0;
+                    }
+                    $most_played[$track['trackid']] += $track['num_plays'];
                 }
-                $most_played[$track['trackid']] += $track['num_plays'];
             }
+
+            self::playlistGenCommit(
+                'semantic-spec',
+                self::trackCountListGenerator($most_played)
+            );
         }
-
-        arsort($most_played);
-        $keys = array_keys($most_played);
-
-        $playlist = [];
-        for ($i = 0; $i < 20; $i++) {
-            $lockstr = $pobj->acquireOrRenewLock($lockstr, MyRadio_User::getInstance(Config::$system_user));
-            $key = $keys[$i];
-            if (!$key) {
-                break; //If there aren't that many, oh well.
-            }
-            $track = MyRadio_Track::getInstance($key);
-            $similar = $track->getSimilar();
-            dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
-            $playlist[] = $track;
-            $playlist = array_merge($playlist, $similar);
-        }
-
-        $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
-        $pobj->releaseLock($lockstr);
     }
 
     private static function updateNewestUploadsPlaylist()
     {
-        $pobj = iTones_Playlist::getInstance('newest-auto');
-        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
+        if (!self::playlistGenPrepare('newest-auto')) {
+            return;
+        }
 
-        $newest_tracks = NIPSWeb_AutoPlaylist::findByName('Newest Tracks')->getTracks();
-
-        $pobj->setTracks($newest_tracks, $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
-        $pobj->releaseLock($lockstr);
+        self::playlistGenCommit(
+            'newest-auto',
+            NIPSWeb_AutoPlaylist::findByName('Newest Tracks')->getTracks()
+        );
     }
 
 
     private static function updateRandomTracksPlaylist()
     {
-        $pobj = iTones_Playlist::getInstance('random-auto');
-        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
+        if (!self::playlistGenPrepare('random-auto')) {
+            return;
+        }
 
-        $random_tracks = NIPSWeb_AutoPlaylist::findByName('Random Tracks')->getTracks();
-
-        $pobj->setTracks($random_tracks, $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
-        $pobj->releaseLock($lockstr);
+        self::playlistGenCommit(
+            'random-auto',
+            NIPSWeb_AutoPlaylist::findByName('Random Tracks')->getTracks()
+        );
     }
-    
+
     private static function updateLastFMGroupPlaylist()
     {
-        $pobj = iTones_Playlist::getInstance('lastgroup-auto');
-        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
-        
+        if (!self::playlistGenPrepare('lastgroup-auto')) {
+            return;
+        }
+
         $data = json_decode(
-                file_get_contents(
-                    'https://ws.audioscrobbler.com/2.0/?method=group.getweeklytrackchart&api_key='
-                    . Config::$lastfm_api_key
-                    . '&group=' . Config::$lastfm_group
-                    . '&format=json'
-                ),
-                true
-            );
-            
-        $keys = [];
-        
-        foreach ($data['weeklytrackchart']['track'] as $r) {
-            if ($r['playcount'] >= 2) {
-                $c = MyRadio_Track::findByOptions(
-                    [
-                        'title' => $r['name'],
-                        'artist' => $r['artist']['#text'],
-                        'limit' => 1,
-                        'digitised' => true
-                    ]
-                );
-                if (!empty($c)) {
-                $keys[] = $c[0]->getID();
-                }
-            }
-        }
-        
-        $playlist = [];
-        for ($i = 0; $i < 100; $i++) {
-            $lockstr = $pobj->acquireOrRenewLock($lockstr, MyRadio_User::getInstance(Config::$system_user));
-            $key = $keys[$i];
-            if (!$key) {
-                break; //If there aren't that many, oh well.
-            }
-            $track = MyRadio_Track::getInstance($key);
-            $similar = $track->getSimilar();
-            dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getID(), 4);
-            $playlist[] = $track;
-            $playlist = array_merge($playlist, $similar);
-        }
-        
-        $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
-        $pobj->releaseLock($lockstr);
-        
+            file_get_contents(
+                'https://ws.audioscrobbler.com/2.0/?method=group.getweeklytrackchart&api_key='
+                . Config::$lastfm_api_key
+                . '&group=' . Config::$lastfm_group
+                . '&format=json'
+            ),
+            true
+        );
+
+        $items = array_map(
+            function($m) {
+                return [
+                    'count' => $m['playcount'],
+                    'title' => $m['name'],
+                    'artist' => $m['artist']['#text']
+                ];
+            },
+            $data['weeklytrackchart']['track']
+        );
+
+        self::playlistGenCommit(
+            'lastgroup-auto',
+            self::dataSimilarIterator($items, 100, 2)
+        );
     }
-    
+
     private static function updateLastFMGeoPlaylist()
     {
-        $pobj = iTones_Playlist::getInstance('lastgeo-auto');
-        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
-        
-        $data = json_decode(
-                file_get_contents(
-                    'https://ws.audioscrobbler.com/2.0/?method=geo.getTopTracks&api_key='
-                    . Config::$lastfm_api_key
-                    . '&country=' . Config::$lastfm_geo
-                    . '&limit=100&format=json'
-                ),
-                true
-            );
-            
-        $playlist = [];
-        
-        foreach ($data['toptracks']['track'] as $r) {
-            $c = MyRadio_Track::findByOptions(
-                [
-                    'title' => $r['name'],
-                    'artist' => $r['artist']['name'],
-                    'limit' => 1,
-                    'digitised' => true
-                ]
-            );
-            if (!empty($c)) {
-                $playlist[] = $c[0];
-            }
+        if (!self::playlistGenPrepare('lastgeo-auto')) {
+            return;
         }
-        
-        $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
-        $pobj->releaseLock($lockstr);
-        
+
+        $data = json_decode(
+            file_get_contents(
+                'https://ws.audioscrobbler.com/2.0/?method=geo.getTopTracks&api_key='
+                . Config::$lastfm_api_key
+                . '&country=' . Config::$lastfm_geo
+                . '&limit=100&format=json'
+            ),
+            true
+        );
+
+        $items = array_map(
+            function($m) {
+                return [
+                    'title' => $m['title'],
+                    'artist' => $m['artist']['name']
+                ];
+            },
+            $data['toptracks']['track']
+        );
+
+        self::playlistGenCommit(
+            'lastgeo-auto',
+            self::dataSimilarIterator($items, 0, null, false)
+        );
+
     }
-    
+
     private static function updateLastFMTopPlaylist()
     {
-        $pobj = iTones_Playlist::getInstance('lasttop-auto');
-        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
-        
-        $data = json_decode(
-                file_get_contents(
-                    'https://ws.audioscrobbler.com/2.0/?method=chart.getTopTracks&api_key='
-                    . Config::$lastfm_api_key
-                    . '&limit=100&format=json'
-                ),
-                true
-            );
-            
-        $playlist = [];
-        
-        foreach ($data['tracks']['track'] as $r) {
-            $c = MyRadio_Track::findByOptions(
-                [
-                    'title' => $r['name'],
-                    'artist' => $r['artist']['name'],
-                    'limit' => 1,
-                    'digitised' => true
-                ]
-            );
-            if (!empty($c)) {
-                $playlist[] = $c[0];
-            }
+        if (!self::playlistGenPrepare('lasttop-auto')) {
+            return;
         }
-        
-        $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
-        $pobj->releaseLock($lockstr);
-        
+
+        $data = json_decode(
+            file_get_contents(
+                'https://ws.audioscrobbler.com/2.0/?method=chart.getTopTracks&api_key='
+                . Config::$lastfm_api_key
+                . '&limit=100&format=json'
+            ),
+            true
+        );
+
+        $items = array_map(
+            function($m) {
+                return [
+                    'title' => $m['name'],
+                    'artist' => $m['artist']['name']
+                ];
+            },
+            $data['tracks']['track']
+        );
+
+        self::playlistGenCommit(
+            'lasttop-auto',
+            self::dataSimilarIterator($items, 0, null, false)
+        );
     }
-    
+
     private static function updateLastFMHypePlaylist()
     {
-        $pobj = iTones_Playlist::getInstance('lasthype-auto');
-        $lockstr = $pobj->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
-        
-        $data = json_decode(
-                file_get_contents(
-                    'https://ws.audioscrobbler.com/2.0/?method=chart.getHypedTracks&api_key='
-                    . Config::$lastfm_api_key
-                    . '&limit=100&format=json'
-                ),
-                true
-            );
-            
-        $playlist = [];
-        
-        foreach ($data['tracks']['track'] as $r) {
-            $c = MyRadio_Track::findByOptions(
-                [
-                    'title' => $r['name'],
-                    'artist' => $r['artist']['name'],
-                    'limit' => 1,
-                    'digitised' => true
-                ]
-            );
-            if (!empty($c)) {
-                $playlist[] = $c[0];
-            }
+        if (!self::playlistGenPrepare('lasthype-auto')) {
+            return;
         }
-        
-        $pobj->setTracks(array_unique($playlist), $lockstr, null, MyRadio_User::getInstance(Config::$system_user));
-        $pobj->releaseLock($lockstr);
-        
+
+        $data = json_decode(
+            file_get_contents(
+                'https://ws.audioscrobbler.com/2.0/?method=chart.getHypedTracks&api_key='
+                . Config::$lastfm_api_key
+                . '&limit=100&format=json'
+            ),
+            true
+        );
+
+        $items = array_map(
+            function($m) {
+                return [
+                    'title' => $m['name'],
+                    'artist' => $m['artist']['name']
+                ];
+            },
+            $data['tracks']['track']
+        );
+
+        self::playlistGenCommit(
+            'lasthype-auto',
+            self::dataSimilarIterator($items, 0, null, false)
+        );
     }
-    
+
 }
