@@ -12,6 +12,7 @@
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;
 use \MyRadio\ServiceAPI\MyRadio_Season;
+use \MyRadio\ServiceAPI\MyRadio_Show;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
