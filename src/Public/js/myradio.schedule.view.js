@@ -15,11 +15,10 @@ var ScheduleView = function(options) {
 	var loadWeek = function() {
 		startTime = moment(year + '-' + week, 'YYYY-W');
 		$.ajax({
-			url: 'https://ury.org.uk/api-dev' + '/Timeslot/getWeekSchedule',
+			url: mConfig.api_url + '/Timeslot/getWeekSchedule',
 			data: {
 				year: year,
-				weekno: week,
-				apiKey: 'leemCJbTdfjpmcdCUXo97N8XM1NFOGDqt8SnOcBgfHlarGT6yOTy6c72lrdx2GFubmg1O7WpCGApq7y4JD1W7ksF4vnrdeXDyYWXq0tzBXXBazR2YbXc2ZODJzqZMEHd'
+				weekno: week
 			},
 			success: function(data) {
 				var currentDay;
