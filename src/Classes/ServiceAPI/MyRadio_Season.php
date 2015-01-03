@@ -930,7 +930,7 @@ EOT
 
                 // Clear the Schedule cache for this week
                 $weekAndYear = CoreUtils::getYearAndWeekNo($show_time);
-                self::$cache->delete('MyRadioScheduleFor' + $weekAndYear[0] + 'W' + $weekAndYear[1]);
+                self::$cache->delete('MyRadioScheduleFor' . $weekAndYear[0] . 'W' . $weekAndYear[1]);
 
             }
         }

@@ -430,10 +430,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $year = int(gmdate('Y'));
         }
 
-        $key = 'MyRadioScheduleFor' + $year + 'W' + $weekno;
+        $key = 'MyRadioScheduleFor' . $year . 'W' . $weekno;
         $cache = self::$cache->get($key);
         if (!$cache) {
-            $startOfWeek = strtotime(gmdate($year + 'W' + $weekno));
+            $startOfWeek = strtotime($year . 'W' . $weekno);
             $sundayBefore = $startOfWeek - 86400; // 60 * 60 * 24
             $endOfMondayAfter = $startOfWeek + (86400 * 7) -1; //Monday 23:59:59
 
@@ -446,7 +446,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 INNER JOIN schedule.show_season USING (show_season_id)
                 INNER JOIN schedule.show USING (show_id)
                 WHERE (
-                    (end_time >= $1 AND end_time <= $2) OR
+                    (start_time + duration >= $1 AND start_time + duration <= $2) OR
                     (start_time >= $1 AND start_time <= $2)
                 )
                 AND show_type_id = 1
@@ -458,6 +458,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
             self::$cache->set($key, $cache, 3600);
         }
+        return $cache;
     }
 
     /**
