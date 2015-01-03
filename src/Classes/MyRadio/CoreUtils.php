@@ -180,9 +180,9 @@ class CoreUtils
             $time = time();
         }
 
-        $year_absolute = int(gmdate('Y', $time));
-        $week_number = int(gmdate('W', $time));
-        $month = int(gmdate('n', $time));
+        $year_absolute = (int)gmdate('Y', $time);
+        $week_number = (int)gmdate('W', $time);
+        $month = (int)gmdate('n', $time);
 
         if ($month === 1 && $week_number > 50) {
             //This is the final week of *last* year
