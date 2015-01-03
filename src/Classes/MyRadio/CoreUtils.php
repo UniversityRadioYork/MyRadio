@@ -175,6 +175,25 @@ class CoreUtils
         return gmdate('Y-m-d H:i:s+00', $time);
     }
 
+    public static function getYearAndWeekNo($time = null) {
+        if ($time === null) {
+            $time = time();
+        }
+
+        $year_absolute = int(gmdate('Y', $time));
+        $week_number = int(gmdate('W', $time));
+        $month = int(gmdate('n', $time));
+
+        if ($month === 1 && $week_number > 50) {
+            //This is the final week of *last* year
+            $year_adjusted = $year_absolute - 1;
+        } else {
+            $year_adjusted = $year_absolute;
+        }
+
+        return [$year_adjusted, $week_number];
+    }
+
     /**
      * Gives you the starting year of the current academic year
      * @return int year
