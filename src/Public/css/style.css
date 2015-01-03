@@ -517,3 +517,50 @@ div.assistant-officer img {
 div.officer .officer-title {
   height: 45px;
 }
+
+@media (min-width: 1000px) {
+  div.scheduleview.view-day, div.scheduleview.hours-list {
+    display: table-cell;
+    width: calc(100% / 8);
+  }
+  div.scheduleview.view-day div.show time {
+    display: none;
+  }
+  div.scheduleview.hours-list div.hour {
+    height: 50px;
+  }
+}
+
+#schedule-preview {
+  min-height: 300px;
+}
+
+div.scheduleview.header {
+  width: 100%;
+  text-align: center;
+}
+
+@media (max-width: 999px) {
+  div.scheduleview.view-day {
+    display: block;
+    width: 100%;
+  }
+  div.scheduleview.view-day div.show time {
+    margin-right: 10px;
+  }
+  div.scheduleview.hours-list, div.scheduleview.view-day div.filler {
+    display: none;
+  }
+}
+
+div.scheduleview .day-header {
+  text-align: center;
+  height: 50px;
+}
+
+div.scheduleview.view-day div, div.scheduleview.hours-list div {
+  overflow: hidden;
+  border: 1px solid #000;
+  border-collapse: collapse;
+  padding: 5px;
+}
