@@ -586,6 +586,7 @@ CREATE SEQUENCE api_method_auth_api_method_auth_id_seq
     CACHE 1;
 ALTER SEQUENCE api_method_auth_api_method_auth_id_seq OWNED BY api_method_auth.api_method_auth_id;
 INSERT INTO api_method_auth (class_name, method_name, typeid) VALUES ('\MyRadio\ServiceAPI\MyRadio_Swagger', NULL, NULL);
+INSERT INTO api_method_auth (class_name, method_name, typeid) VALUES ('\MyRadio\ServiceAPI\MyRadio_Timeslot', 'getWeekSchedule', NULL);
 CREATE TABLE award_categories (
     awardid integer NOT NULL,
     name character varying NOT NULL
