@@ -916,7 +916,7 @@ EOT
                     VALUES ($1, $2, $3, $4, $5) RETURNING show_season_timeslot_id',
                     [
                         $this->season_id,
-                        $show_time,
+                        CoreUtils::getTimestamp($show_time),
                         $req_time['duration'],
                         $this->owner->getID(),
                         $_SESSION['memberid']
