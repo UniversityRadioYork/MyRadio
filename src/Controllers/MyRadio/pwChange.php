@@ -98,14 +98,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
 
     if ($data['pw1'] !== $data['pw2']) {
         //Passwords do not match
-        $form->render(['messages' => 'Your new passwords did not match.']);
+        $form->render(['error' => 'Your new passwords did not match.']);
     }
 
     //Logged in user change?
     if (isset($data['pwold'])) {
         //Is the old password correct?
         if (CoreUtils::testCredentials(MyRadio_User::getInstance()->getEmail(), $data['pwold']) === false) {
-            $form->render(['messages' => 'Your old password was invalid.']);
+            $form->render(['error' => 'Your old password was invalid.']);
             exit;
         }
         $user = MyRadio_User::getInstance();
@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
         unset($_SESSION['auth_use_locked']);
     }
 
-    CoreUtils::redirect('MyRadio', 'login');
+/CoreUtils::redirect('MyRadio', 'login');
 } else {
     foreach (Config::$authenticators as $authenticator) {
         $auth = new $authenticator;
