@@ -320,7 +320,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $items = array_map(
             function($m) {
                 return [
-                    'title' => $m['title'],
+                    'title' => $m['name'],
                     'artist' => $m['artist']['name']
                 ];
             },
