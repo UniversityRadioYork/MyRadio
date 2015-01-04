@@ -462,7 +462,8 @@ class MyRadio_User extends ServiceAPI
      */
     public function getEmail()
     {
-        if (strstr($this->email, '@ury.org.uk') !== false or strstr($this->email, '@ury.york.ac.uk') !== false) {
+        $domain = $domain = substr(strrchr($this->email, "@"), 1);
+        if (in_array($domain, Config::$local_email_domains)) {
             //The user has set an alias or their local mailbox here.
             //Return the local mailbox, or, failing that, eduroam
             $local = $this->getLocalName();
@@ -498,7 +499,7 @@ class MyRadio_User extends ServiceAPI
          */
         $alias = $this->getLocalAlias();
 
-        return empty($alias) ? $this->getEmail() : $alias . '@ury.org.uk';
+        return empty($alias) ? $this->getEmail() : $alias . '@' . Config::$email_domain;
     }
 
     /**

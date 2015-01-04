@@ -2,7 +2,11 @@
 {% block stripecontent %}
 {% if frm_custom.error %}
 <div class='ui-state-error'>
+    {% if frm_custom.error is empty %}
     Failed. Please check your details and try again.
+    {% else %}
+    {{frm_custom.error}}
+    {% endif %}
 </div>
 {% elseif frm_custom.sent %}
 <div class='ui-state-highlight'>
