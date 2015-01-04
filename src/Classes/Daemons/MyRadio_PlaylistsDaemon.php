@@ -79,7 +79,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         }
 
         self::$locks[$playlistid][0]->setTracks(
-            array_unique($data),
+            $data,
             self::$locks[$playlistid][1],
             null,
             MyRadio_User::getInstance(Config::$system_user)
@@ -297,7 +297,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 
         self::playlistGenCommit(
             'lastgroup-auto',
-            self::dataSimilarIterator($items, 100, 2)
+            self::dataSimilarIterator($items, 10, 2)
         );
     }
 

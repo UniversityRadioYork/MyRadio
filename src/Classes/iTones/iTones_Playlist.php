@@ -303,7 +303,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      */
     private function generateLockKey(MyRadio_User $lock, $locktime)
     {
-        return sha1('myuryitoneslockkey' . $lock->__toString() . $locktime . $this->getID());
+        return sha1('myradioitoneslockkey' . $lock->__toString() . $locktime . $this->getID());
     }
 
     /**
