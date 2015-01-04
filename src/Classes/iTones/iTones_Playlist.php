@@ -456,8 +456,14 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 FROM jukebox.playlists, jukebox.playlist_availability, jukebox.playlist_timeslot
                 WHERE playlists.playlistid=playlist_availability.playlistid
                     AND playlist_availability.playlist_availability_id=playlist_timeslot.playlist_availability_id
-                    AND start_time <= "time"(NOW()) AND end_time >= "time"(NOW())
-                    AND (day=EXTRACT(DOW FROM NOW()) OR (EXTRACT(DOW FROM NOW())=0 AND day=7))
+                    AND effective_from <= NOW()
+                    AND (effective_to IS NULL OR effective_to >= NOW())
+                    AND start_time <= "time"(NOW())
+                    AND end_time >= "time"(NOW())
+                    AND (
+                        day=EXTRACT(DOW FROM NOW())
+                        OR (EXTRACT(DOW FROM NOW())=0 AND day=7)
+                    )
                 GROUP BY playlists.playlistid'
         );
 
