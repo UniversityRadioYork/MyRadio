@@ -297,7 +297,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 
         self::playlistGenCommit(
             'lastgroup-auto',
-            self::dataSimilarIterator($items, 10, 2)
+            self::dataSimilarIterator($items, 100, 2)
         );
     }
 
