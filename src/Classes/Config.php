@@ -533,7 +533,6 @@ final class Config
      * The Authenticators are tried in order when completing user authentication
      * operations.
      */
-    //public static $authenticators = ['MyRadioLDAPAuthenticator', 'MyRadioDefaultAuthenticator'];
     public static $authenticators = ['\MyRadio\MyRadio\MyRadioDefaultAuthenticator'];
     public static $auth_ldap_server = 'ldap://ldap.york.ac.uk';
     public static $auth_ldap_root = 'ou=people,ou=csrv,ou=nos,dc=york,dc=ac,dc=uk';
@@ -542,6 +541,14 @@ final class Config
     public static $eduroam_domain = 'york.ac.uk';
     public static $auth_ldap_friendly_name = 'IT Services';
     public static $auth_ldap_reset_url = 'https://idm.york.ac.uk/';
+
+    /**
+    * Email configuration
+    */
+    //All email domains handled by MyRadio
+    public static $local_email_domains = [];
+    //Primary email domains
+    public static $email_domain = 'ury.org.uk';
 
     /**
      * If true, users will be bound to a single Authenticator. Users whose
@@ -583,7 +590,6 @@ final class Config
     public static $short_name = 'URY';
     public static $long_name = 'University Radio York';
     public static $founded = '1967';
-    public static $email_domain = 'ury.org.uk';
     public static $facebook = 'https://www.facebook.com/URY1350';
     public static $welcome_email = <<<EOT
 
