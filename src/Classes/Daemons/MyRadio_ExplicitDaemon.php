@@ -19,7 +19,7 @@ use \MyRadio\ServiceAPI\MyRadio_Track;
  */
 class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
-    private $digitised_only = true;
+    private static $digitised_only = true;
     /**
      * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.
      * It is currently enabled because we have a lot of labels that needed filling in for Tracklisting.
@@ -36,11 +36,11 @@ class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             ['clean' => 'u',
             'limit' => 25,
             'random' => true,
-            'digitised' => $this->digitised_only]
+            'digitised' => self::digitised_only]
         );
         
         if (empty($tracks)) {
-            $this->digitised_only = false;
+            self::digitised_only = false;
         }
 
         foreach ($tracks as $track) {
