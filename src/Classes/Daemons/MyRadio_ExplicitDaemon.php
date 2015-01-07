@@ -19,6 +19,7 @@ use \MyRadio\ServiceAPI\MyRadio_Track;
  */
 class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
+    private $digitised_only = true;
     /**
      * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.
      * It is currently enabled because we have a lot of labels that needed filling in for Tracklisting.
@@ -33,13 +34,17 @@ class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
     {
         $tracks = MyRadio_Track::findByOptions(
             ['clean' => 'u',
-            'limit' => 10,
+            'limit' => 25,
             'random' => true,
-            'digitised' => false]
+            'digitised' => $this->digitised_only]
         );
+        
+        if (empty($tracks)) {
+            $this->digitised_only = false;
+        }
 
         foreach ($tracks as $track) {
-            $q = str_replace(' ', '+', $track->getTitle() . ' ' . $track->getArtist());
+            $q = str_replace(' ', '+', trim($track->getTitle() . ' ' . $track->getArtist()));
             $data = json_decode(
                 file_get_contents(
                     'http://itunes.apple.com/search?term='
