@@ -36,11 +36,11 @@ class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             ['clean' => 'u',
             'limit' => 25,
             'random' => true,
-            'digitised' => self::digitised_only]
+            'digitised' => self::$digitised_only]
         );
         
         if (empty($tracks)) {
-            self::digitised_only = false;
+            self::$digitised_only = false;
         }
 
         foreach ($tracks as $track) {
