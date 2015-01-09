@@ -15,7 +15,7 @@ var Messages = function() {
                     self.setUnread(unreadMessages);
                     $(this).removeClass('unread');
                 }
-                myury.createDialog('Message', message['body']);
+                myury.createDialog('Message', message['body'], [myury.closeButton()]);
             });
         };
 
@@ -36,7 +36,11 @@ var Messages = function() {
                     time,
                     read,
                     classes,
-                    newRow,
+                    newRow = document.createElement('tr'),
+                    imgTd = document.createElement('td'),
+                    titleTd = document.createElement('td'),
+                    dateTd = document.createElement('td'),
+                    dateDate = document.createElement('date'),
                     handler;
                 //Add the content dialog div
                 locationStr = "";
@@ -54,7 +58,19 @@ var Messages = function() {
                     unreadMessages++;
                     this.setUnread(unreadMessages);
                 }
-                newRow = $('<tr class="td-msgitem'+classes+'" id="m'+data[i]['id']+'"><td>'+img+'</td><td>'+data[i]['title']+'</td><td>'+time+'</td></tr>');
+                newRow.className = 'td-msgitem'+classes
+                newRow.setAttribute('id', 'm'+data[i]['id']);
+
+                imgTd.innerHTML = img;
+                titleTd.innerHTML = data[i]['title'];
+
+                dateDate.innerHTML = time;
+                dateDate.setAttribute('datetime', msgdate.toISOString);
+                dateTd.appendChild(dateDate);
+
+                newRow.appendChild(imgTd);
+                newRow.appendChild(titleTd);
+                newRow.appendChild(dateTd);
                 
                 //Add the new row to the top of the messages table
                 $(table).prepend(newRow);
