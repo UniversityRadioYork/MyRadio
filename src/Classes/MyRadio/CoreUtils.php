@@ -209,8 +209,8 @@ class CoreUtils
             );
 
             // Default to this year
-            $beforeAccountExpiry = strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days');
-            if (empty($term) || $beforeAccountExpiry) {
+            $account_reset_time = strtotime('+' . Config::$account_expiry_before . ' days');
+            if (empty($term) || strtotime($term[0]) <= $account_reset_time) {
                 CoreUtils::$academicYear = date('Y');
             } else {
                 self::$academicYear = date('Y') - 1;
