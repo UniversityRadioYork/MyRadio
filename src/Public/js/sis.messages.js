@@ -45,12 +45,8 @@ var Messages = function() {
                 }
                 //Set some of the variables
                 img = "<div class='glyphicon glyphicon-" + glyphicons[data[i]['type']] + "'></div>";
-                msgdate = new Date(data[i]['time']*1000);
-                mins = msgdate.getMinutes();
-                if (mins < 10) {
-                    mins = "0" + mins;
-                }
-                time = msgdate.getHours()+':'+mins+' '+msgdate.getDate()+'/'+(msgdate.getMonth()+1);
+                msgdate = moment.unix(data[i]['time']);
+                time = msgdate.fromNow();
                 read = "";
                 classes = "";
                 if (data[i]['read'] === false) {
@@ -67,7 +63,7 @@ var Messages = function() {
                 handler = clickHandler(newRow, data[i]);
 
                 //Increment the highest message id, if necessary
-                highest_message_id = (highest_message_id < message['id']) ? message['id'] : highest_message_id;
+                highest_message_id = (highest_message_id < data[i]['id']) ? data[i]['id'] : highest_message_id;
             }
             //Update the server's highest id parameter
             this.registerParam('messages_highest_id', highest_message_id);
