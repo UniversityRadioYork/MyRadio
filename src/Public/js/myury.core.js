@@ -41,18 +41,31 @@ window.myury = {
         reportButton.addEventListener('click', function() {
             $.post(myury.makeURL('MyRadio', 'errorReport'), JSON.stringify({xhr: xhr, settings: settings, error: error}));
         });
+        return reportButton;
     }
 };
 
+var errorVisible = false;
 $(document).ajaxError(function(e, xhr, settings, error) {
     if (xhr.status == 401) {
         //Session timed out - need to login
         window.location = myury.makeURL('MyRadio', 'login', {next: window.location.href, message: window.btoa('Your session has expired and you need to log in again to continue.')});
-    } else {
+    } else if (!errorVisible) {
+        errorVisible = true;
+        var close = myury.closeButton();
+        var report = myury.reportButton(xhr, settings, error);
+
+        var errorVisibleReset = function() {
+            errorVisible = false;
+        }
+
+        close.addEventListener('click', errorVisibleReset);
+        report.addEventListener('click', errorVisibleReset);
+
         myury.createDialog(
             'Error',
             '<p>Sorry, just went a bit wrong and I\'m not sure what to do about it.</p><details>' + error + '</details>',
-            [myury.closeButton(), myury.reportButton(xhr, settings, error)]
+            [close, report]
         );
     }
 });

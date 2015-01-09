@@ -18,5 +18,5 @@ $title = 'SIS';
 
 CoreUtils::getTemplateObject()->setTemplate($template)
     ->addVariable('title', $title)
-    ->addVariable('modules', Config::$sis_modules)
+    ->addVariable('modules', SIS_Utils::getModulesForUser())
     ->render();

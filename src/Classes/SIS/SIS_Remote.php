@@ -29,7 +29,11 @@ class SIS_Remote extends ServiceAPI
      * @return array presenter info data
      */
     public static function queryPresenterInfo($session) {
-        if ($_REQUEST['presenterinfo-lasttime'] < time() - 300) {
+        $time = 0;
+        if (isset($_REQUEST['presenterinfo-lasttime'])) {
+            $time = (int)$_REQUEST['presenterinfo-lasttime'];
+        }
+        if ($time < time() - 300) {
             $response = MyRadioNews::getLatestNewsItem(Config::$presenterinfo_feed);
             return [
                 'presenterinfo' => ['time' => time(), 'info' => $response]
@@ -75,9 +79,14 @@ class SIS_Remote extends ServiceAPI
      */
     public static function querySelector($session)
     {
+        $time = 0;
+        if (isset($_REQUEST['selector-lasttime'])) {
+            $time = (int)$_REQUEST['selector-lasttime'];
+        }
+
         $response = MyRadio_Selector::getStatusAtTime(time());
 
-        if ($response['lastmod'] > $_REQUEST['selector-lasttime']) {
+        if ($response['lastmod'] > $time) {
             return ['selector' => $response];
         }
     }
@@ -90,8 +99,12 @@ class SIS_Remote extends ServiceAPI
     public static function queryWebcam($session)
     {
         $response = MyRadio_Webcam::getCurrentWebcam();
+        $current = null;
+        if (isset($_REQUEST['webcam-id'])) {
+            $current = (int)$_REQUEST['webcam-id'];
+        }
 
-        if ($response['current'] !== $_REQUEST['webcam-id']) {
+        if ($response['current'] !== $current) {
             return [
                 'webcam' => [
                     'status' => $response,

@@ -34,6 +34,7 @@ var Links = function() {
             	ul.appendChild(li);
             }
             this.appendChild(ul);
+            this.show();
         }
     }
 }

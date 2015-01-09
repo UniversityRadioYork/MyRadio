@@ -3,7 +3,21 @@ var Messages = function() {
     var highest_message_id = 0,
         unreadMessages = 0,
         glyphicons = ['question-sign', 'envelope', 'phone', 'globe'],
-        table = document.createElement('table');
+        table = document.createElement('table'),
+        clickHandler = function(row, message) {
+            $(row).click(function() {
+                if ($(this).hasClass('unread')) {
+                    //This is the first time the message has been opened. Mark as read
+                    $.ajax({
+                        url: myury.makeURL('SIS', 'messages.markread', {'id': message['id']})
+                    });
+                    unreadMessages--;
+                    self.setUnread(unreadMessages);
+                    $(this).removeClass('unread');
+                }
+                myury.createDialog('Message', message['body']);
+            });
+        };
 
     table.setAttribute('class', 'messages');
 
@@ -22,7 +36,8 @@ var Messages = function() {
                     time,
                     read,
                     classes,
-                    newRow;
+                    newRow,
+                    handler;
                 //Add the content dialog div
                 locationStr = "";
                 for (var l in data[i]['location']) {
@@ -44,23 +59,13 @@ var Messages = function() {
                     this.setUnread(unreadMessages);
                 }
                 newRow = $('<tr class="td-msgitem'+classes+'" id="m'+data[i]['id']+'"><td>'+img+'</td><td>'+data[i]['title']+'</td><td>'+time+'</td></tr>');
+                
                 //Add the new row to the top of the messages table
                 $(table).prepend(newRow);
+
                 //Add the onclick handler for the new row
-                var that = this, message = data[i];
-                $(newRow).click(function() {
-                    var id = $(this).attr('id').replace('m', '');
-                    if ($(this).hasClass('unread')) {
-                        //This is the first time the message has been opened. Mark as read
-                        $.ajax({
-                            url: myury.makeURL('SIS', 'messages.markread', {'id': id})
-                        });
-                        unreadMessages--;
-                        that.setUnread(unreadMessages);
-                        $(this).removeClass('unread');
-                    }
-                    myury.createDialog('Message', message['body']);
-                });
+                handler = clickHandler(newRow, data[i]);
+
                 //Increment the highest message id, if necessary
                 highest_message_id = (highest_message_id < message['id']) ? message['id'] : highest_message_id;
             }

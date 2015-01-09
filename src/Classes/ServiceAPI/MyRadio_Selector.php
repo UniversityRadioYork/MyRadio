@@ -123,19 +123,23 @@ class MyRadio_Selector
      */
     public static function remoteStreams()
     {
-        $data = file(Config::$ob_remote_status_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (file_exists(Config::$ob_remote_status_file)) {
+            $data = file(Config::$ob_remote_status_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-        if (!$data) {
-            return ['s1' => false, 's2' => false, 's3' => false];
+            if ($data) {
+                $response = ['ready' => true];
+                foreach ($data as $feed) {
+                    $state = explode('=', $feed);
+                    $response[trim($state[0])] = (bool) trim($state[1]);
+                }
+
+                return $response;
+            }
         }
 
-        $response = [];
-        foreach ($data as $feed) {
-            $state = explode('=', $feed);
-            $response[trim($state[0])] = (bool) trim($state[1]);
-        }
-
-        return $response;
+        return [
+            'ready' => false
+        ];
     }
 
     /**
@@ -383,7 +387,7 @@ class MyRadio_Selector
         );
 
         if (!$result) {
-            return 0;
+            return 1;
         }
 
         return strtotime($result[0]);
@@ -396,13 +400,15 @@ class MyRadio_Selector
      */
     public static function getStatusAtTime($time)
     {
+        $status = self::remoteStreams();
         return [
+            'ready' => $status['ready'],
             'studio' => self::getStudioAtTime($time),
             'lock' => self::getLockAtTime($time),
             'selectedfrom' => self::getSetbyAtTime($time),
             's1power' => self::getStudio1PowerAtTime($time),
             's2power' => self::getStudio2PowerAtTime($time),
-            's4power' => (self::remoteStreams()['s1']) ? true : false,
+            's4power' => (isset($status['s1'])) ? $status['s1'] : false,
             'lastmod' => self::getLastModAtTime($time)
         ];
     }

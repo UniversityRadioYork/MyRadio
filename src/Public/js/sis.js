@@ -124,7 +124,7 @@ var SIS = function(container) {
             panel.appendChild(contentHolder);
 
             pluginContainer.appendChild(panel);
-            $(contentHolder).collapse();
+            $(contentHolder).collapse({toggle:false});
 
             content.setUnread = function(num) {
                 if (num == 0) {
@@ -136,6 +136,14 @@ var SIS = function(container) {
 
             content.registerParam = function(key, value) {
                 params[key] = value;
+            }
+
+            content.hide = function() {
+                $(contentHolder).collapse('hide');
+            }
+
+            content.show = function() {
+                $(contentHolder).collapse('show');
             }
 
             return {

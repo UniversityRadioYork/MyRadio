@@ -471,37 +471,8 @@ final class Config
         'messages',
         'links',
         'selector',
-        'webcam'
-    ];
-
-    /**
-     * Studio data
-     * name is the name that is shown if it is detected as the current output
-     * authenticated_machines is an array of IP addresses which will have all rights in SIS, even if they are non-officer
-     * colour is the colour of any alements identifying the studio. Any valid CSS color will work here
-     * @var Array
-     */
-    public static $studios = [
-        [
-            'name' => 'Campus Jukebox',
-            'authenticated_machines' => [],
-            'colour' => '#0F0'
-        ],
-        [
-            'name' => 'Studio 1',
-            'authenticated_machines' => ['144.32.64.181', '144.32.64.183'],
-            'colour' => 'red'
-        ],
-        [
-            'name' => 'Studio 2',
-            'authenticated_machines' => ['144.32.64.184', '144.32.64.185'],
-            'colour' => '#0044BA'
-        ],
-        [
-            'name' => 'Outside Broadcast',
-            'authenticated_machines' => [], //TODO: Add the OB Machines here
-            'colour' => '#bb00dc'
-        ],
+        'webcam',
+        'obit'
     ];
 
     /**
