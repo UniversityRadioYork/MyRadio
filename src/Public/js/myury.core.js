@@ -71,10 +71,15 @@ $(document).ajaxSuccess(function(e, xhr, settings) {
     }
 });
 
-/**
-* http://stackoverflow.com/questions/18568736/how-to-hide-element-using-twitter-bootstrap-3-and-show-it-using-jquery
-* @todo Remove the need for this
-*/
-$(document).ready(function() {
-    $('.hidden').hide().removeClass('hidden');
-});
+/** Use bootstrap show/hide helpers **/
+jQuery.fn.show = function() {
+    $(this).removeClass('hidden')
+        .css('display', 'block')
+        .css('visibility', 'visible');
+    return this;
+}
+
+jQuery.fn.hide = function() {
+    $(this).addClass('hidden');
+    return this;
+}

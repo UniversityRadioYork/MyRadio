@@ -33,7 +33,7 @@ window.MyRadioForm = {
       var memberLookup = new Bloodhound({
         datumTokenizer: function(i) {
           return Bloodhound.tokenizers.whitespace(i.fname)
-            .concat(Bloodhound.tokenizers.whitepsace(i.sname))
+            .concat(Bloodhound.tokenizers.whitespace(i.sname))
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         limit: 5,
@@ -78,7 +78,7 @@ window.MyRadioForm = {
       var trackLookup = new Bloodhound({
         datumTokenizer: function(i) {
           return Bloodhound.tokenizers.whitespace(i.title)
-            .concat(Bloodhound.tokenizers.whitepsace(i.artist))
+            .concat(Bloodhound.tokenizers.whitespace(i.artist))
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         limit: 5,
@@ -168,7 +168,7 @@ window.MyRadioForm = {
       var albumLookup = new Bloodhound({
         datumTokenizer: function(i) {
           return Bloodhound.tokenizers.whitespace(i.title)
-            .concat(Bloodhound.tokenizers.whitepsace(i.artist))
+            .concat(Bloodhound.tokenizers.whitespace(i.artist))
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         limit: 5,
