@@ -5,3 +5,5 @@ util/checkpassword.conf
 *.sw[a-z]
 sftp-*.json
 .tags*
+.phpintel/*
+.varnish/*
