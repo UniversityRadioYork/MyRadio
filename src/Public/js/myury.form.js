@@ -52,7 +52,7 @@ window.MyRadioForm = {
         var defaultVal = idField.val();
 
         $(this).typeahead({
-            hint: true,
+            hint: false,
             highlight: true,
             minLength: 1
           },
@@ -97,7 +97,7 @@ window.MyRadioForm = {
         var defaultVal = idField.val();
 
         $(this).typeahead({
-            hint: true,
+            hint: false,
             highlight: true,
             minLength: 1
           },
@@ -144,7 +144,7 @@ window.MyRadioForm = {
         var defaultVal = idField.val();
 
         $(this).typeahead({
-            hint: true,
+            hint: false,
             highlight: true,
             minLength: 1
           },
@@ -187,7 +187,7 @@ window.MyRadioForm = {
         var defaultVal = idField.val();
 
         $(this).typeahead({
-            hint: true,
+            hint: false,
             highlight: true,
             minLength: 1
           },
@@ -226,9 +226,12 @@ window.MyRadioForm = {
      * Validation
      */
     $('fieldset.myradiofrm form').validate({
-      errorClass: 'ui-state-error',
+      errorClass: 'bg-danger',
       errorPlacement: function(error, element) {
-        error.addClass('label-nofloat').appendTo(element.parent('div'));
+        console.log(element.parents('div.myradiofrmfield-container'));
+        error.css('width', element.css('width'))
+            .css('margin-left', element.css('margin-left'))
+            .appendTo(element.parents('div.myradiofrmfield-container'));
       },
       submitHandler: function(form) {
         $(form).children('input[type=submit]').attr('disabled', 'disabled');
@@ -342,6 +345,7 @@ window.MyRadioForm = {
      */
     if ($('#UPLOAD_IDENTIFIER').length !== 0) {
       $('form').on('submit', function() {
+        console.log('UPLOAD HANDLER');
         if ($('#UPLOAD_IDENTIFIER').nextAll('input')[0].value !== "") {
             $('.myuryfrm-file-upload-progress').progressbar({value: false});
             //Poke the server for upload progress status
