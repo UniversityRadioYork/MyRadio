@@ -10,13 +10,7 @@ var Webcam = function() {
             if (newcam === currentWebcam) {
                 return;
             }
-            $.get(myury.makeURL('SIS', 'webcam.set'), {src: newcam}, function(data) {
-                if (data['error']) {
-                    myury.createDialog('Webcam Error', data['error']);
-                    return;
-                }
-                update.call(this, data);
-            });
+            $.get(myury.makeURL('SIS', 'webcam.set'), {src: newcam});
         },
         update = function(data) {
 
@@ -31,20 +25,36 @@ var Webcam = function() {
                     if (!webcams.hasOwnProperty(data['streams'][i]['streamid'])) {
                         var button = document.createElement('button'),
                             figure = document.createElement('figure'),
-                            streamid = data['streams'][i]['streamid'];
-                        webcams[i['streamid']] = {
+                            caption = document.createElement('figcaption'),
+                            img = document.createElement('img'),
+                            streamid = data['streams'][i]['streamid'],
+                            clickHandler = function(streamid) {
+                                return function() {
+                                    selectWebcam(streamid);
+                                }
+                            }(streamid);
+
+                        webcams[data['streams'][i]['streamid']] = {
                             button: button,
                             figure: figure
                         };
 
-                        button.innerHTML(data['streams'][i]['streamname']);
-                        button.addEventListener('click', function() {
-                            selectWebcam(streamid);
-                        });
+                        button.innerHTML = data['streams'][i]['streamname'];
+                        button.className = 'btn btn-default';
+                        button.addEventListener('click', clickHandler);
                         
-                        figure.setAttribute('src', data['streams'][i]['liveurl']);
+                        img.setAttribute('src', data['streams'][i]['liveurl']);
+                        caption.innerHTML = data['streams'][i]['streamname'];
 
-                        buttonContainer.appendChild(button);
+                        figure.className = 'webcam-stream-container';
+                        if (streamid === 1) {
+                            figure.className = figure.className + ' live';
+                        } else {
+                            buttonContainer.appendChild(button);
+                        }
+                        figure.appendChild(img);
+                        figure.appendChild(caption);
+
                         figureContainer.appendChild(figure);
                     }
                 }
@@ -61,6 +71,7 @@ var Webcam = function() {
             }
 
             currentWebcam = data['status']['current'];
+            onAir.innerHTML = data['streams'][currentWebcam]['streamname'] + ' is On Air';
             this.registerParam('webcam-id', currentWebcam);
         };
 
