@@ -19,13 +19,21 @@ body {
 }
 
 .footer {
-  position: fixed;
-  bottom: 0;
   width: 100%;
-  min-height: 40px;
   padding: 8px 0;
-  background-color: #f5f5f5;
-  z-index: 50;
+  border-top: .5em solid #f5f5f5;
+}
+
+@media (min-height: 800px) and (min-width: 992px) {
+  .footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    min-height: 40px;
+    z-index: 50;
+    background-color: #f5f5f5;
+    border: none;
+  }
 }
 
 /** MyRadio Menu Styles **/
@@ -522,7 +530,7 @@ div.officer .officer-title {
   height: 45px;
 }
 
-@media (min-width: 1000px) {
+@media (min-width: 992px) {
   div.scheduleview.view-day, div.scheduleview.hours-list {
     display: table-cell;
     width: calc(100% / 8);
