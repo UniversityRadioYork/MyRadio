@@ -95,17 +95,15 @@ figure {
 }
 figure.webcam-stream-container {
   width: 70px;
+  display: block;
 }
 figure.webcam-stream-container.live {
   width: 150px;
-}
-.webcam-stream-container {
-  display: block;
-}
-.webcam-stream-container.live {
   float: right;
 }
-
+figure.webcam-stream-container img {
+  width: 100%;
+}
 #customcam {
   margin-top: 0.5em;
 }
