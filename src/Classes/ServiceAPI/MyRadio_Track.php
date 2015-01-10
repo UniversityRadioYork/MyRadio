@@ -361,19 +361,19 @@ class MyRadio_Track extends ServiceAPI
     /**
      *
      * @param Array $options One or more of the following:
-     *                       title: String title of the track
-     *                       artist: String artist name of the track
-     *                       digitised: If true, only return digitised tracks. If false, return any.
-     *                       itonesplaylistid: Tracks that are members of the iTones_Playlist id
-     *                       limit: Maximum number of items to return. 0 = No Limit
-     *                       recordid: int Record id
-     *                       lastfmverified: Boolean whether or not verified with Last.fm Fingerprinter. Default any.
-     *                       random: If true, sort randomly
-     *                       idsort: If true, sort by trackid
-     *                       custom: A custom SQL WHERE clause
-     *                       precise: If true, will only return exact matches for artist/title
-     *                       nocorrectionproposed: If true, will only return items with no correction proposed.
-     *                       clean: Default any. 'y' for clean tracks, 'n' for dirty, 'u' for unknown.
+     *  title: String title of the track
+     *  artist: String artist name of the track
+     *  digitised: If true, only return digitised tracks. If false, return any.
+     *  itonesplaylistid: Tracks that are members of the iTones_Playlist id
+     *  limit: Maximum number of items to return. 0 = No Limit
+     *  recordid: int Record id
+     *  lastfmverified: Boolean whether or not verified with Last.fm Fingerprinter. Default any.
+     *  random: If true, sort randomly
+     *  idsort: If true, sort by trackid
+     *  custom: A custom SQL WHERE clause
+     *  precise: If true, will only return exact matches for artist/title(/album if specified)
+     *  nocorrectionproposed: If true, will only return items with no correction proposed.
+     *  clean: Default any. 'y' for clean tracks, 'n' for dirty, 'u' for unknown.
      *
      * @todo Limit not accurate for itonesplaylistid queries
      */
@@ -441,8 +441,13 @@ class MyRadio_Track extends ServiceAPI
         }
 
         //Prepare paramaters
-        $sql_params = [$options['title'], $options['artist'], $options['album'], $options['precise'] ? '' : '%'];
-        $count = 4;
+        $sql_params = [$options['precise'] ? '' : '%', $options['title'], $options['artist']];
+        $count = 3;
+        if ($options['album']) {
+            $sql_params[] = $options['album'];
+            $count++;
+            $album_param = $count;
+        }
         if ($options['limit'] != 0) {
             $sql_params[] = $options['limit'];
             $count++;
@@ -458,9 +463,10 @@ class MyRadio_Track extends ServiceAPI
         $result = self::$db->fetchAll(
             'SELECT trackid, rec_track.recordid
             FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
-            AND (rec_track.title ILIKE $4 || $1 || $4'
+            AND (rec_track.title ILIKE $1 || $2 || $1'
             . $firstop
-            . ' rec_track.artist ILIKE $4 || $2 || $4) AND rec_record.title ILIKE $4 || $3 || $4'
+            . ' rec_track.artist ILIKE $1 || $3 || $1)'
+            . ($options['album'] ? ' AND rec_record.title ILIKE $1 || $' . $album_param . ' || $1' : '')
             . ($options['digitised'] ? ' AND digitised=\'t\'' : '')
             . ' '
             . ($options['lastfmverified'] === true ? ' AND lastfm_verified=\'t\'' : '')

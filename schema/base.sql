@@ -7303,3 +7303,10 @@ INSERT INTO metadata_key VALUES (17, 'upload_state', false, 'When uploading data
 --
 
 SELECT pg_catalog.setval('metadata_key_metadata_key_id_seq', 17, true);
+
+CREATE TABLE music.explicit_checked (
+    trackid integer NOT NULL
+);
+
+ALTER TABLE ONLY music.explicit_checked ADD CONSTRAINT explicit_checked_pkey PRIMARY KEY (trackid);
+ALTER TABLE music.explicit_checked ADD CONSTRAINT explicit_checked_fkey FOREIGN KEY (trackid) REFERENCES public.rec_track(trackid) ON DELETE CASCADE;

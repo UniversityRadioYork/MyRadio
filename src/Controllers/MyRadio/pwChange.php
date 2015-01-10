@@ -99,6 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
     if ($data['pw1'] !== $data['pw2']) {
         //Passwords do not match
         $form->render(['error' => 'Your new passwords did not match.']);
+        exit;
     }
 
     //Logged in user change?
