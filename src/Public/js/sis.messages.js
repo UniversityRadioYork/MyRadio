@@ -4,6 +4,7 @@ var Messages = function() {
         unreadMessages = 0,
         glyphicons = ['question-sign', 'envelope', 'phone', 'globe'],
         table = document.createElement('table'),
+        self = this,
         clickHandler = function(row, message) {
             $(row).click(function() {
                 if ($(this).hasClass('unread')) {
