@@ -439,7 +439,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         if (!$cache) {
             $startOfWeek = strtotime($year . 'W' . $weekno);
             $sundayBefore = $startOfWeek - 86400; // 60 * 60 * 24
-            $endOfMondayAfter = $startOfWeek + (86400 * 7) -1; //Monday 23:59:59
+            $endOfMondayAfter = $startOfWeek + (86400 * 8) - 1; //Monday 23:59:59
 
             $startTimestamp = CoreUtils::getTimestamp($sundayBefore);
             $endTimestamp = CoreUtils::getTimestamp($endOfMondayAfter);

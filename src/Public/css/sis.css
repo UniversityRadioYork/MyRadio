@@ -110,3 +110,12 @@ figure.webcam-stream-container img {
 #customcam label {
   margin-right: 0.5em;
 }
+
+.scheduleview .show {
+  font-size: 1.5em;
+}
+
+.scheduleview .show-description {
+  font-size: .8em;
+}
+

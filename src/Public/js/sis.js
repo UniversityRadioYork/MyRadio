@@ -211,38 +211,6 @@ var SIS = function(container) {
 var dontcallme = function(){
 
 
-/* Webcam */
-    var wcCurrentCam = 0;
-
-    function setCam(newcam) {
-      if (newcam === wcCurrentCam) {
-        return;
-      }
-      $.get(myury.makeURL('SIS', 'webcam.set'), {'src':newcam});
-    }
-
-    var updateWebcam = function(data) {
-      $('button[id^=setactive]:not([id=setactive'+ data['current']+'])').removeAttr('disabled');
-      $('button#setactive'+ data['current']).button("disable");
-
-      //Only show side images for not-active cameras, or all for jukebox
-      if (data['current'] === 0) {
-        $('#plugin_body_webcam figure').show();
-      } else {
-        $('#plugin_body_webcam figure').hide();
-        $('#plugin_body_webcam figure:not(#webcam-stream-'+data['current']+')').show();
-      }
-
-      //Update current webcam data
-      wcCurrentCam = data['current'];
-      //Update the server's lastmod parameter
-      server.register_param('webcam_id', wcCurrentCam);
-    };
-
-
-
-
-
 /* News */
     var news_url = myury.makeURL('SIS','news')+"NewsRoom.aspx";
 
@@ -406,51 +374,6 @@ var dontcallme = function(){
 
 $(document).ready(function() {
 
-
-    // Selector
-    server.register_callback(updateSelector, 'selector');
-    server.register_param('selector_lastmod', selectorLastMod);
-    $('#s1').click(function(){selectStudio(1);});
-    $('#s2').click(function(){selectStudio(2);});
-    $('#s3').click(function(){selectStudio(3);});
-    $('#s4').click(function(){selectStudio(4);});
-
-
-    // Stats
-    setInterval('updateStats()', 20000);
-
-
-    // Webcam
-    server.register_callback(updateWebcam, 'webcam');
-    server.register_param('webcam_id', wcCurrentCam);
-
-    $('button#setactive0').click(function(){setCam(0);});
-    $('button#setactive2').click(function(){setCam(2);});
-    $('button#setactive3').click(function(){setCam(3);});
-    $('button#setactive4').click(function(){setCam(4);});
-
-    $('button#setactive'+wcCurrentCam).attr("disabled");
-
-    $('button#setactive7').click(function(){$('div#customcam').toggle('blind',200);});
-    $('button#setcustomcam').click(function(){setCam($('input#camurl').val());});
-
-
-    // Help
-    $('#hide-help').click(function() {
-        $.ajax({
-          url: myury.makeURL('SIS','help.hide'),
-          success: function() {
-            $('#gs_disabled').show();
-          }
-        });
-      });
-
-
-    // Messages
-    server.register_callback(updateMessages, 'messages');
-    server.register_param('messages_highest_id', highest_message_id);
-
-
     // News
     $(window).load(function() {
             setTimeout(function(){
@@ -546,12 +469,6 @@ $(document).ready(function() {
     $('#add-track').click(function() {
         $('#tracklist-insert').dialog("open");
     });
-
-    $('#obit-button').on('click', function() {
-        window.open(myury.makeURL('Scheduler', 'stop'), 'Stop Broadcast');
-    });
-
-    server.register_callback(myury.errorReport, 'myury_errors');
 
 });
 

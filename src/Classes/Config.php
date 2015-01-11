@@ -469,6 +469,7 @@ final class Config
     public static $sis_modules = [
         'presenterinfo',
         'messages',
+        'schedule',
         'links',
         'selector',
         'webcam',

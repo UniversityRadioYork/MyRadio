@@ -543,6 +543,24 @@ div.officer .officer-title {
   }
 }
 
+div.scheduleview-view-week div.show-description,
+div.scheduleview-view-week span.show-credits {
+  display: none;
+}
+
+div.scheduleview div.show-description {
+  font-style: italic;
+  text-align: center;
+}
+
+div.scheduleview-view-day div.show-title {
+  padding-left: 10%;
+}
+
+div.scheduleview div.show-title {
+  display: inline-block;
+}
+
 #schedule-preview {
   min-height: 300px;
 }
@@ -575,4 +593,13 @@ div.scheduleview.view-day div, div.scheduleview.hours-list div {
   border: 1px solid #000;
   border-collapse: collapse;
   padding: 5px;
+}
+
+div.scheduleview-view-day div.nownext {
+  padding: 5px;
+}
+
+div.scheduleview div.now-marker {
+  text-align: center;
+  padding: 1px;
 }
