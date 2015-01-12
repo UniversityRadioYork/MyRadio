@@ -103,11 +103,11 @@ final class Config
      */
     public static $cache_provider = '\MyRadio\APCProvider';
     /**
-     * How long MyRadio_Track items should be cached before the data is invalidated. This is Configurable as due to a lot
-     * of external edit sources, it is reasonable to asssume the cache may become stale due to other systems.
+     * How long ServiceAPI items should be cached for by default. Turn this down if you
+     * get a lot of edits from other sources.
      * @var int
      */
-    public static $cache_track_timeout = 7200; //2 hours
+    public static $cache_default_timeout = 86400;
 
     /**
      * Whether MyRadio errors should be displayed in the browser. If this is set to false, users with the
