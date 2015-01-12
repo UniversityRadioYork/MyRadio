@@ -52,7 +52,8 @@ class APCProvider implements \MyRadio\Iface\CacheProvider
      *
      * @param String $key The unique name of the object to store. Ideally, this would use myury_{module}_{name}
      * @param mixed $value The data to store
-     * @param int $expires The number of seconds this cache entry is valid for. Default is to last forever (0)
+     * @param int $expires The number of seconds this cache entry is valid for. Default is value of
+     *            MyRadio_Config::$cache_default_timeout
      * @return boolean Whether the operation was successful (returns false if caching disabled)
      * @assert ('myradio_core_test', 'test value', 0) == true
      */
@@ -60,6 +61,10 @@ class APCProvider implements \MyRadio\Iface\CacheProvider
     {
         if (!$this->enable) {
             return false;
+        }
+
+        if ($expires === 0) {
+            $expires = \MyRadio\Config::$cache_default_timeout;
         }
         return apc_store($this->getKeyPrefix().$key, $value, $expires);
     }
