@@ -141,11 +141,6 @@ class MyRadio_Track extends ServiceAPI
         $this->title = $result['title'];
     }
 
-    private function updateCachedObject()
-    {
-        self::$cache->set(self::getCacheKey($this->getID()), $this, Config::$cache_track_timeout);
-    }
-
     public static function getForm()
     {
         return (
