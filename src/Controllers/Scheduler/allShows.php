@@ -11,7 +11,7 @@ use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_Show;
 
-$shows = MyRadio_Show::getAllShows();
+$shows = MyRadio_Show::getAllShows(1, true);
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('title', 'All Shows')
     ->addVariable('tabledata', ServiceAPI::setToDataSource($shows))
