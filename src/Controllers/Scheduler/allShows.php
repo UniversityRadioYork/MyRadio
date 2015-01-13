@@ -11,7 +11,8 @@ use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_Show;
 
-$shows = MyRadio_Show::getAllShows(1, true); # show_type_id=1, current_term_only=true
+// Get public shows (type 1) from this term only (true)
+$shows = MyRadio_Show::getAllShows(1, true);
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('title', 'All Shows')
     ->addVariable('tabledata', ServiceAPI::setToDataSource($shows))
