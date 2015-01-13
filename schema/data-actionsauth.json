@@ -107,7 +107,7 @@
     ["Resource", "default", "AUTH_PERSONALPLAYLIST"],
     ["Scheduler", "a-findshowbytitle", null],
     ["Scheduler", "allocate", "AUTH_ALLOCATESLOTS"],
-    ["Scheduler", "allShows", "AUTH_VIEWMEMBERSHOWS"],
+    ["Scheduler", "shows", "AUTH_VIEWMEMBERSHOWS"],
     ["Scheduler", "attendance", "AUTH_VIEWSISLOGININFO"],
     ["Scheduler", "attendDemo", "AUTH_ADDDEMOS"],
     ["Scheduler", "attendDemo", "AUTH_ATTENDDEMO"],

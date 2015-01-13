@@ -109,7 +109,7 @@
     ["Scheduler", "listTimeslots"],
     ["Scheduler", "editShow"],
     ["Scheduler", "listSeasons"],
-    ["Scheduler", "allShows"],
+    ["Scheduler", "shows"],
     ["Scheduler", "cancelSeason"],
     ["Scheduler", "attendDemo"],
     ["Scheduler", "listDemos"],
