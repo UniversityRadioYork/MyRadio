@@ -7,6 +7,7 @@
  * @package MyRadio_Core
  */
 
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 
 $data = array_map(function ($x) {
@@ -22,7 +23,7 @@ $data = array_map(function ($x) {
     ];
 
     return $x;
-}, CoreUtils::getAllPermissions());
+}, AuthUtils::getAllPermissions());
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/listPermissions.twig')
         ->addVariable('title', 'Available Permissions')

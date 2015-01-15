@@ -9,6 +9,7 @@
  * @package MyRadio_Scheduler
  */
 
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Show;
 use \MyRadio\ServiceAPI\MyRadio_User;
@@ -27,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         //Check the user has permission to edit this show
         if (!$show->isCurrentUserAnOwner()) {
-            CoreUtils::requirePermission(AUTH_EDITSHOWS);
+            AuthUtils::requirePermission(AUTH_EDITSHOWS);
         }
 
         $show->setMeta('title', $data['title']);
@@ -59,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         //Check the user has permission to edit this show
         if (!$show->isCurrentUserAnOwner()) {
-            CoreUtils::requirePermission(AUTH_EDITSHOWS);
+            AuthUtils::requirePermission(AUTH_EDITSHOWS);
         }
 
         $meta = $show->getMeta('tag');

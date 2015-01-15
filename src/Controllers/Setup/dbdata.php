@@ -10,6 +10,7 @@
  */
 use \MyRadio\Database;
 use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_Officer;
@@ -47,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-auth.json')) as $auth) {
             try {
-                CoreUtils::addPermission($auth[0], $auth[1]);
+                AuthUtils::addPermission($auth[0], $auth[1]);
             } catch (MyRadioException $e) {
                 $warnings[] = 'Failed to create Permission "' . $auth[0] . '". It may already exist.';
             }
@@ -56,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $module = CoreUtils::getModuleId($actionauth[0]);
             $action = $actionauth[1] == null ? null : CoreUtils::getActionId($module, $actionauth[1]);
             $auth = $actionauth[2] == null ? null : constant($actionauth[2]);
-            CoreUtils::addActionPermission($module, $action, $auth);
+            AuthUtils::addActionPermission($module, $action, $auth);
         }
     }
 
@@ -90,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 //The getXxxId method creates an ID if they don't exist
                 $module = CoreUtils::getModuleId($action[0]);
                 $action = CoreUtils::getActionId($module, $action[1]);
-                CoreUtils::addActionPermission($module, $action, null);
+                AuthUtils::addActionPermission($module, $action, null);
             }
             break;
         case DBDATA_BLANK:
@@ -101,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-auth-min.json')) as $auth) {
                 try {
-                    CoreUtils::addPermission($auth[0], $auth[1]);
+                    AuthUtils::addPermission($auth[0], $auth[1]);
                 } catch (MyRadioException $e) {
                     $warnings[] = 'Failed to create Permission "'.$auth[0].'". It may already exist.';
                 }
@@ -110,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $module = CoreUtils::getModuleId($actionauth[0]);
                 $action = $actionauth[1] == null ? null : CoreUtils::getActionId($module, $actionauth[1]);
                 $auth = $actionauth[2] == null ? null : constant($actionauth[2]);
-                CoreUtils::addActionPermission($module, $action, $auth);
+                AuthUtils::addActionPermission($module, $action, $auth);
             }
             break;
         default:

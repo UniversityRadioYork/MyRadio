@@ -13,7 +13,7 @@ use \ReflectionException;
 
 use \MyRadio\Config;
 use \MyRadio\Database;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\AuthUtils;
 
 /**
  * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/
@@ -259,7 +259,7 @@ class MyRadio_Swagger
         } else {
             $long_desc .= '<br>The following permissions enable access to this method:';
             foreach ($requirements as $typeid) {
-                $long_desc .= '<br> - ' . CoreUtils::getAuthDescription($typeid);
+                $long_desc .= '<br> - ' . AuthUtils::getAuthDescription($typeid);
             }
         }
 

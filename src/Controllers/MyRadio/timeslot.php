@@ -9,6 +9,7 @@
  */
 
 use \MyRadio\Config;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
@@ -22,7 +23,7 @@ function setupTimeslot($timeslot)
     }
 
     //Can the user access this timeslot?
-    if (!($timeslot->getSeason()->getShow()->isCurrentUserAnOwner() or CoreUtils::hasPermission(AUTH_EDITSHOWS))) {
+    if (!($timeslot->getSeason()->getShow()->isCurrentUserAnOwner() or AuthUtils::hasPermission(AUTH_EDITSHOWS))) {
         require_once 'Controllers/Errors/403.php';
     } else {
         $_SESSION['timeslotid'] = $timeslot->getID();
@@ -42,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         CoreUtils::backWithMessage("Cannot select empty timeslot");
     }
-} elseif (isset($_GET['current']) && $_GET['current'] && CoreUtils::hasPermission(AUTH_EDITSHOWS)) {
+} elseif (isset($_GET['current']) && $_GET['current'] && AuthUtils::hasPermission(AUTH_EDITSHOWS)) {
     //Submitted Current
     setupTimeslot(MyRadio_Timeslot::getCurrentTimeslot());
 
@@ -58,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
      * People with AUTH_EDITSHOWS can see all timeslots here
      */
     $shows = MyRadio_User::getInstance()->getShows();
-    if (CoreUtils::hasPermission(AUTH_EDITSHOWS)) {
+    if (AuthUtils::hasPermission(AUTH_EDITSHOWS)) {
         if (isset($_GET['all'])) {
             $shows = MyRadio_Show::getAllShows();
             $twig->addVariable('allTimeslots', 'on');
