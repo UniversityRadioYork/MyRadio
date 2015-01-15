@@ -8,7 +8,7 @@
 namespace MyRadio\SIS;
 
 use \MyRadio\Config;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\ServiceAPI\ServiceAPI;
 
 /**
@@ -91,7 +91,7 @@ class SIS_Utils extends ServiceAPI
         $loadedModules = [];
         if ($modules !== false) {
             foreach ($modules as $key => $module) {
-                $notAuth = (isset($module['required_permission']) && !CoreUtils::hasPermission($module['required_permission']));
+                $notAuth = (isset($module['required_permission']) && !AuthUtils::hasPermission($module['required_permission']));
                 /**
                  * @todo Replace with MyRadio built in location Auth
                  */

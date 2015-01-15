@@ -6,7 +6,7 @@
  * @package MyRadio_Scheduler
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Season;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     MyRadio_Season::getInstance($data['season_id'])
         ->reject($data['reason'], $data['notify_user']);
 
-    CoreUtils::backWithMessage("Season Rejected!");
+    URLUtils::backWithMessage("Season Rejected!");
 
 } else {
     //Not Submitted

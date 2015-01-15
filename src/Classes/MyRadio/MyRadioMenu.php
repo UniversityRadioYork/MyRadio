@@ -12,13 +12,7 @@ use \MyRadio\MyRadioException;
 
 /**
  * Abstractor for the MyRadio Menu
- *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130930
  * @package MyRadio_Core
- * @uses \CacheProvider
- * @uses \Database
- * @uses \CoreUtils
  */
 class MyRadioMenu
 {
@@ -105,7 +99,7 @@ class MyRadioMenu
 
         return $items;
     }
-    
+
     /**
      * Takes a $url database column entry, and breaks it into its components
      * @param  String $url A database-fetched menu item URL
@@ -129,7 +123,7 @@ class MyRadioMenu
     private function userHasPermission($item)
     {
         return empty($item['action']) or
-            CoreUtils::requirePermissionAuto($item['module'], $item['action'], false);
+            AuthUtils::requirePermissionAuto($item['module'], $item['action'], false);
     }
 
     /**
@@ -195,7 +189,7 @@ class MyRadioMenu
             }
         }
 
-        $url = $count === 1 ? CoreUtils::makeURL($module, $action, $params) : $url;
+        $url = $count === 1 ? URLUtils::makeURL($module, $action, $params) : $url;
 
         return $url;
     }

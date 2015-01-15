@@ -8,7 +8,8 @@
  */
 
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\AuthUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Podcast;
 use \MyRadio\ServiceAPI\MyRadio_Show;
 
@@ -32,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Check if user can edit this podcast
         if (!in_array($podcast->getID(), MyRadio_Podcast::getPodcastIDsAttachedToUser())) {
-            CoreUtils::requirePermission(AUTH_PODCASTANYSHOW);
+            AuthUtils::requirePermission(AUTH_PODCASTANYSHOW);
         }
 
         $podcast->setMeta('title', $data['title'])
@@ -55,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         throw new MyRadioException('Unknown cover upload method.', 400);
     }
 
-    CoreUtils::backWithMessage('Podcast Updated');
+    URLUtils::backWithMessage('Podcast Updated');
 
 } else {
     //Not Submitted
@@ -65,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Check if user can edit this podcast
         if (!in_array($podcast->getID(), MyRadio_Podcast::getPodcastIDsAttachedToUser())) {
-            CoreUtils::requirePermission(AUTH_PODCASTANYSHOW);
+            AuthUtils::requirePermission(AUTH_PODCASTANYSHOW);
         }
 
         $podcast

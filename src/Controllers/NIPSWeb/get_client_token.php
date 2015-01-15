@@ -7,9 +7,9 @@
  * @package MyRadio_NIPSWeb
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\NIPSWeb\NIPSWeb_Token;
 
 $data = ['token' => NIPSWeb_Token::getEditToken()];
 
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

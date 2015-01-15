@@ -7,7 +7,7 @@
  * @package MyRadio_Scheduler
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Demo;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     MyRadio_Demo::registerDemo($demoinfo['demo-datetime']);
 
-    CoreUtils::backWithMessage('Demo Updated!');
+    URLUtils::backWithMessage('Demo Updated!');
 
 } else {
     //Not Submitted

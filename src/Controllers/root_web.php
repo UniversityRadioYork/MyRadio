@@ -10,6 +10,7 @@
  */
 
 use \MyRadio\Config;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 
 require_once __DIR__.'/root.php';
@@ -54,7 +55,7 @@ if (isset($_REQUEST['request'])) {
  * IMPORTANT: This will cause a fatal error if an action does not have any permissions associated with it.
  * This is to prevent developers from forgetting to assign permissions to an action.
  */
-CoreUtils::requirePermissionAuto($module, $action);
+AuthUtils::requirePermissionAuto($module, $action);
 
 /**
  * If a Joyride is defined, start it

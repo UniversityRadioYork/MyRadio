@@ -8,6 +8,7 @@
  */
 
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Banner;
 use \MyRadio\ServiceAPI\MyRadio_BannerCampaign;
 
@@ -40,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->setLocation($data['location']);
     }
 
-    CoreUtils::backWithMessage('Campaign Updated!');
+    URLUtils::backWithMessage('Campaign Updated!');
 
 } else {
     //Not Submitted

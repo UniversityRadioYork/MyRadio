@@ -8,7 +8,7 @@
  * @package MyRadio_NIPSWeb
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\NIPSWeb\NIPSWeb_ManagedItem;
 
 if (!isset($_REQUEST['fileid'])
@@ -23,4 +23,4 @@ if (!isset($_REQUEST['fileid'])
 $data = NIPSWeb_ManagedItem::storeItem($_REQUEST['fileid'], $_REQUEST['title']);
 $data['fileid'] = $_REQUEST['fileid'];
 
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

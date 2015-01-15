@@ -10,16 +10,16 @@
 
 use \MyRadio\Database;
 use \MyRadio\Config;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
 if (isset($_REQUEST['memberid'])) {
     //Impersonate
     $impersonatee = MyRadio_User::getInstance($_REQUEST['memberid']);
-    if ((!CoreUtils::hasPermission(AUTH_IMPERSONATE))
+    if ((!AuthUtils::hasPermission(AUTH_IMPERSONATE))
         || (
             $impersonatee->hasAuth(AUTH_BLOCKIMPERSONATE)
-            && !CoreUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS)
+            && !AuthUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS)
         )
     ) {
         require_once 'Controllers/Errors/403.php';

@@ -10,7 +10,8 @@
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadioEmail;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\AuthUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\ServiceAPI\MyRadio_List;
@@ -59,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         MyRadio_User::getInstance()
     );
 
-    CoreUtils::backWithMessage('Message sent!');
+    URLUtils::backWithMessage('Message sent!');
 
 } else {
     //Not Submitted
@@ -67,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         throw new MyRadioException('List ID was not provided!', 400);
     }
     if (!MyRadio_List::getInstance($_REQUEST['list'])->isPublic()) {
-        CoreUtils::requirePermission(AUTH_MAILALLMEMBERS);
+        AuthUtils::requirePermission(AUTH_MAILALLMEMBERS);
     }
 
     $form->setFieldValue(

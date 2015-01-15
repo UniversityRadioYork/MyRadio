@@ -9,6 +9,7 @@
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 
 $wrong = [];
@@ -47,7 +48,7 @@ CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('tabledata', CoreUtils::dataSourceParser($wrong))
     ->addInfo(
         'Please ensure the information below seems correct, then <a href="'
-        .CoreUtils::makeURL('Library', 'findWrong', ['fix' => 1])
+        .URLUtils::makeURL('Library', 'findWrong', ['fix' => 1])
         .'">click here</a> to auto-move files that have a guessed correct location.',
         'wrench'
     )->render();

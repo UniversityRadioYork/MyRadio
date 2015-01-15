@@ -10,6 +10,7 @@ namespace MyRadio\ServiceAPI;
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
@@ -553,7 +554,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 'display' => 'icon',
                 'value' => 'script',
                 'title' => 'Edit Podcast',
-                'url' => CoreUtils::makeURL('Podcast', 'editPodcast', ['podcast_id' => $this->getID()])
+                'url' => URLUtils::makeURL('Podcast', 'editPodcast', ['podcast_id' => $this->getID()])
             ]
         ];
 

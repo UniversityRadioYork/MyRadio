@@ -7,7 +7,7 @@
  * @package MyRadio_SIS
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\SIS\SIS_Tracklist;
 
 $artist = $_GET['artist'];
@@ -38,5 +38,5 @@ if ($where == "notrec") {
 
     $data = ["return"=>$return, "result"=>$row];
     //Return the response data
-    CoreUtils::dataToJSON($data);
+    URLUtils::dataToJSON($data);
 }

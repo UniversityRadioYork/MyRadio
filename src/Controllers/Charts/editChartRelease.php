@@ -7,6 +7,7 @@
  */
 
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_ChartRelease;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -32,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $chart_release->setChartRows($tracks);
 
-    CoreUtils::backWithMessage('Chart Release Updated.');
+    URLUtils::backWithMessage('Chart Release Updated.');
 
 } else {
     //Not Submitted

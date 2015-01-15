@@ -2,7 +2,7 @@
 
 use \MyRadio\Config;
 use \MyRadio\Database;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
@@ -146,18 +146,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
             $options[] = $option;
         }
         $twig->addVariable('methods', $options)
-            ->addVariable('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL(Config::$default_module))
+            ->addVariable('next', isset($data['next']) ? $data['next'] : URLUtils::makeURL(Config::$default_module))
             ->render();
     } elseif ($status === 'change') {
-        CoreUtils::redirect('MyRadio', 'pwChange');
+        URLUtils::redirect('MyRadio', 'pwChange');
     } elseif ($status !== 'success') {
-        $form->setFieldValue('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL(Config::$default_module))
+        $form->setFieldValue('next', isset($data['next']) ? $data['next'] : URLUtils::makeURL(Config::$default_module))
             ->render(['error' => true]);
     } else {
         if (isset($data['next'])) {
             header('Location: ' . $data['next']);
         } else {
-            CoreUtils::redirect(Config::$default_module);
+            URLUtils::redirect(Config::$default_module);
         }
     }
 } else {

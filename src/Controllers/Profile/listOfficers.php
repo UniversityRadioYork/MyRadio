@@ -9,6 +9,7 @@
  */
 
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\Profile;
 
 $officers = Profile::getOfficers();
@@ -17,7 +18,7 @@ foreach ($officers as $k => $v) {
     if (!empty($officers[$k]['name'])) {
         $officers[$k]['name'] = [
             'display' => 'text',
-            'url' => CoreUtils::makeURL('Profile', 'view', ['memberid' => $v['memberid']]),
+            'url' => URLUtils::makeURL('Profile', 'view', ['memberid' => $v['memberid']]),
             'value' => $v['name']
         ];
     }
@@ -25,7 +26,7 @@ foreach ($officers as $k => $v) {
         'display' => 'icon',
         'value' => 'wrench',
         'title' => 'Edit Officer',
-        'url' => CoreUtils::makeURL('Profile', 'editOfficer', ['officerid' => $v['officerid']]),
+        'url' => URLUtils::makeURL('Profile', 'editOfficer', ['officerid' => $v['officerid']]),
     ];
 }
 

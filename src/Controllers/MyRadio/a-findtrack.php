@@ -16,7 +16,7 @@
  */
 
 use \MyRadio\Config;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 
 if (isset($_REQUEST['id'])) {
@@ -31,4 +31,4 @@ if (isset($_REQUEST['id'])) {
                 'itonesplaylistid' => isset($_REQUEST['itonesplaylistid']) ? $_REQUEST['itonesplaylistid'] : ''
     ]);
 }
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

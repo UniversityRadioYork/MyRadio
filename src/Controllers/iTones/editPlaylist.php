@@ -7,6 +7,7 @@
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\iTones\iTones_Playlist;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -35,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['itones_lock_'.$playlist->getID()]
         );
 
-        CoreUtils::backWithMessage('The playlist has been updated.');
+        URLUtils::backWithMessage('The playlist has been updated.');
     }
 
 } else {

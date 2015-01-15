@@ -7,6 +7,8 @@ use \MyRadio\Database;
 use \MyRadio\MyRadioEmail;
 use \MyRadio\MyRadioException;
 use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 
 /**
  * An Authenticator processes login requests for a user against a specific
@@ -151,7 +153,7 @@ class MyRadioDefaultAuthenticator extends \MyRadio\Database implements \MyRadio\
             . '<p>A password reset has been requested for the ' . Config::$short_name
             . ' account associated with this email address. If you did not request'
             . ' this email, please ignore it.</p>'
-            . '<p><a href="' . CoreUtils::makeURL('MyRadio', 'pwChange', ['token' => $token])
+            . '<p><a href="' . URLUtils::makeURL('MyRadio', 'pwChange', ['token' => $token])
             . '">Click here to finish resetting your password.</a></p>'
         );
 

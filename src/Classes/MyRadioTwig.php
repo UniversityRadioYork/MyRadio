@@ -4,7 +4,8 @@ namespace MyRadio;
 
 use \MyRadio\Config;
 use \MyRadio\Database;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\MyRadioMenu;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadioError;
@@ -45,7 +46,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
             ->addVariable(
                 'impersonator',
                 !empty($_SESSION['myradio-impersonating'])
-                ? ('<a href="'.CoreUtils::makeURL('MyRadio', 'impersonate', ['next' => $_SERVER['REQUEST_URI']])
+                ? ('<a href="'.URLUtils::makeURL('MyRadio', 'impersonate', ['next' => $_SERVER['REQUEST_URI']])
                 .'">Impersonated by ' . $_SESSION['myradio-impersonating']['name']).'</a>' : ''
             )
             ->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null)
@@ -168,7 +169,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
      */
     public function render()
     {
-        if ((defined('AUTH_SHOWERRORS') && CoreUtils::hasPermission(AUTH_SHOWERRORS))
+        if ((defined('AUTH_SHOWERRORS') && AuthUtils::hasPermission(AUTH_SHOWERRORS))
              || Config::$display_errors) {
             $this->addVariable('phperrors', MyRadioError::$php_errorlist);
             if (isset($_SESSION)) { //Is the DB working?
