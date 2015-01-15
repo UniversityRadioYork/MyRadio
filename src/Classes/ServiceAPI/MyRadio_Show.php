@@ -656,8 +656,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      */
     public static function getAllShows($show_type_id = 1, $current_term_only = false)
     {
-        if($current_term_only)
-        {
+        if($current_term_only) {
             $show_ids = self::$db->fetchColumn(
                 'SELECT show_id FROM schedule.show
                 WHERE show_type_id=$1 AND EXISTS (

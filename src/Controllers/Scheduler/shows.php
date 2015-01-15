@@ -11,8 +11,9 @@ use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_Show;
 
-// Get public shows (type 1) and check if all=true, in which case all shows, not just this term's (false)
-$shows = MyRadio_Show::getAllShows(1, !( isset($_GET["all"]) && ($_GET["all"] == 'true')));
+$all = (isset($_REQUEST["all"]) && $_REQUEST["all"] === 'true');
+// Get public shows (type 1) and get all shows (!$all === false) or just this term's (true)
+$shows = MyRadio_Show::getAllShows(1, !$all);
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('title', 'All Shows')
     ->addVariable('tabledata', ServiceAPI::setToDataSource($shows))
