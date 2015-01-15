@@ -9,6 +9,7 @@
  */
 
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
 
 $start = !empty($_GET['rangesel-starttime']) ? strtotime($_GET['rangesel-starttime']) : time() - (86400 * 28);
@@ -46,7 +47,7 @@ switch ($format) {
 
         $twig->addInfo(
             'It\'s probably easier to download this as a <a href="'
-            .CoreUtils::makeURL(
+            .URLUtils::makeURL(
                 'Stats',
                 'fullTracklist',
                 [

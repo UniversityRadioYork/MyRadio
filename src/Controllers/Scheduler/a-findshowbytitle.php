@@ -11,7 +11,7 @@
 
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;
 
 if (!isset($_REQUEST['term'])) {
@@ -22,4 +22,4 @@ $data = MyRadio_Scheduler::findShowByTitle(
     $_REQUEST['term'],
     isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default
 );
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

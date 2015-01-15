@@ -11,6 +11,7 @@ use \MyRadio\Database;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadioError;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\ServiceAPI\MyRadio_User;
@@ -796,19 +797,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'display' => 'text',
                 'value' => $this->getNumberOfSeasons(),
                 'title' => 'Click to see Seasons for this show',
-                'url' => CoreUtils::makeURL('Scheduler', 'listSeasons', ['showid' => $this->getID()])
+                'url' => URLUtils::makeURL('Scheduler', 'listSeasons', ['showid' => $this->getID()])
             ],
             'editlink' => [
                 'display' => 'icon',
                 'value' => 'script',
                 'title' => 'Edit Show',
-                'url' => CoreUtils::makeURL('Scheduler', 'editShow', ['showid' => $this->getID()])
+                'url' => URLUtils::makeURL('Scheduler', 'editShow', ['showid' => $this->getID()])
             ],
             'applylink' => [
                 'display' => 'icon',
                 'value' => 'calendar',
                 'title' => 'Apply for a new Season',
-                'url' => CoreUtils::makeURL('Scheduler', 'editSeason', ['showid' => $this->getID()])
+                'url' => URLUtils::makeURL('Scheduler', 'editSeason', ['showid' => $this->getID()])
             ],
             'micrositelink' => [
                 'display' => 'icon',

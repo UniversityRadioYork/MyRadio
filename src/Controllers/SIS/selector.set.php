@@ -8,7 +8,7 @@
  * @todo Lots of duplication with MyRadio_Selector here
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Selector;
 
 $src = (isset($_REQUEST['src'])) ? (int) $_REQUEST['src'] : 0;
@@ -34,4 +34,4 @@ if (($src <= 0) || ($src > 8)) {
     }
 }
 
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

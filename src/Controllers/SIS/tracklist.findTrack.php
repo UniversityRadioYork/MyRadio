@@ -7,7 +7,7 @@
  * @package MyRadio_SIS
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\Artist;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 use \MyRadio\ServiceAPI\MyRadio_Album;
@@ -59,4 +59,4 @@ if ($box == "artist") {
 }
 
 $data = $dataout;
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

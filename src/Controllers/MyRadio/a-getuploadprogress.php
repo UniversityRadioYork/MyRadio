@@ -8,7 +8,7 @@
  * @package MyRadio_Core
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 
 if (function_exists("uploadprogress_get_info")) {
     $data = uploadprogress_get_info($_REQUEST['id']);
@@ -17,4 +17,4 @@ if (function_exists("uploadprogress_get_info")) {
     $data = false;
 }
 
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

@@ -7,7 +7,7 @@
  * @package MyRadio_Profile
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_TrainingStatus;
 use \MyRadio\ServiceAPI\MyRadio_UserTrainingStatus;
@@ -17,4 +17,4 @@ MyRadio_UserTrainingStatus::create(
     MyRadio_User::getInstance($_POST['memberid'])
 );
 
-CoreUtils::backWithMessage('Training data updated');
+URLUtils::backWithMessage('Training data updated');

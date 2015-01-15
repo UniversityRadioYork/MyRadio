@@ -7,7 +7,7 @@
  * @package MyRadio_Profile
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $params['phone']
     );
 
-    CoreUtils::backWithMessage('New Member has been created with ID '.$user->getID());
+    URLUtils::backWithMessage('New Member has been created with ID '.$user->getID());
 
 } else {
     //Not Submitted

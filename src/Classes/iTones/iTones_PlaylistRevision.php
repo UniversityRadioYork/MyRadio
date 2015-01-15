@@ -9,6 +9,7 @@ namespace MyRadio\iTones;
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 
@@ -151,7 +152,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
                 'display' => 'icon',
                 'value' => 'folder-open',
                 'title' => 'View Tracks in this playlist revision',
-                'url' => CoreUtils::makeURL(
+                'url' => URLUtils::makeURL(
                     'iTones',
                     'viewPlaylistRevision',
                     [
@@ -164,7 +165,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
                 'display' => 'icon',
                 'value' => 'refresh',
                 'title' => 'Restore this revision',
-                'url' => CoreUtils::makeURL(
+                'url' => URLUtils::makeURL(
                     'iTones',
                     'restorePlaylistRevision',
                     [

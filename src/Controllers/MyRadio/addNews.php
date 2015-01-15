@@ -10,7 +10,7 @@
  * @package MyRadio_Core
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioNews;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     MyRadioNews::addItem($data['feedid'], $data['body']);
 
-    CoreUtils::backWithMessage('News Updated!');
+    URLUtils::backWithMessage('News Updated!');
 
 } else {
     //Not Submitted

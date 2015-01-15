@@ -11,6 +11,7 @@
 use \MyRadio\Config;
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 use \MyRadio\ServiceAPI\MyRadio_Show;
@@ -19,7 +20,7 @@ function setupTimeslot($timeslot)
 {
     // No timeslot (probably jukebox)
     if (empty($timeslot)) {
-        CoreUtils::backWithMessage("Cannot select empty timeslot.");
+        URLUtils::backWithMessage("Cannot select empty timeslot.");
     }
 
     //Can the user access this timeslot?
@@ -41,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['timeslotid'])) {
         setupTimeslot(MyRadio_Timeslot::getInstance($_POST['timeslotid']));
     } else {
-        CoreUtils::backWithMessage("Cannot select empty timeslot");
+        URLUtils::backWithMessage("Cannot select empty timeslot");
     }
 } elseif (isset($_GET['current']) && $_GET['current'] && AuthUtils::hasPermission(AUTH_EDITSHOWS)) {
     //Submitted Current

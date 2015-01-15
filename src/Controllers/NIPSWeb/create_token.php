@@ -7,9 +7,9 @@
  * @package MyRadio_NIPSWeb
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\NIPSWeb\NIPSWeb_Token;
 
 NIPSWeb_Token::createToken($_REQUEST['trackid']);
 
-CoreUtils::nocontent();
+URLUtils::nocontent();

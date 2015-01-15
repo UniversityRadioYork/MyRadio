@@ -4,7 +4,7 @@ namespace MyRadio;
 
 use \MyRadio\Config;
 use \MyRadio\Database;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\MyRadioMenu;
 use \MyRadio\MyRadioException;
@@ -46,7 +46,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
             ->addVariable(
                 'impersonator',
                 !empty($_SESSION['myradio-impersonating'])
-                ? ('<a href="'.CoreUtils::makeURL('MyRadio', 'impersonate', ['next' => $_SERVER['REQUEST_URI']])
+                ? ('<a href="'.URLUtils::makeURL('MyRadio', 'impersonate', ['next' => $_SERVER['REQUEST_URI']])
                 .'">Impersonated by ' . $_SESSION['myradio-impersonating']['name']).'</a>' : ''
             )
             ->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null)

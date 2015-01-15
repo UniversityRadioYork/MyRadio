@@ -7,7 +7,6 @@
 
 namespace MyRadio\MyRadio;
 
-use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\Database;
 use \MyRadio\Config;
 
@@ -174,7 +173,7 @@ class AuthUtils
         if (!$authorised && $require) {
             //Requires login
             if (!isset($_SESSION['memberid']) || $_SESSION['auth_use_locked'] !== false) {
-                CoreUtils::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
+                URLUtils::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
             } else {
                 //Authenticated, but not authorized
                 require 'Controllers/Errors/403.php';

@@ -12,6 +12,7 @@
 
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_TrainingStatus;
 
@@ -51,7 +52,7 @@ if ($user->getID() === $visitor->getID() or $visitor->hasAuth(AUTH_EDITANYPROFIL
     $template->addVariable(
         'editurl',
         '<a href="'
-        .CoreUtils::makeURL('Profile', 'edit', ['memberid' => $user->getID()])
+        .URLUtils::makeURL('Profile', 'edit', ['memberid' => $user->getID()])
         .'">Edit Profile</a>'
     );
 }
@@ -61,7 +62,7 @@ if (AuthUtils::hasPermission(AUTH_IMPERSONATE)
     $template->addVariable(
         'impersonateurl',
         '<a href="'
-        .CoreUtils::makeURL('MyRadio', 'impersonate', ['memberid' => $user->getID()])
+        .URLUtils::makeURL('MyRadio', 'impersonate', ['memberid' => $user->getID()])
         .'">Impersonate User</a>'
     );
 }
@@ -69,7 +70,7 @@ if (AuthUtils::hasPermission(AUTH_LOCK)) {
     $template->addVariable(
         'lockurl',
         '<a href="'
-        .CoreUtils::makeURL('Profile', 'lock', ['memberid' => $user->getID()])
+        .URLUtils::makeURL('Profile', 'lock', ['memberid' => $user->getID()])
         .'">Disable Account</a>'
     );
 }

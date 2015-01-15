@@ -9,8 +9,6 @@ namespace MyRadio\MyRadio;
 
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\AuthUtils;
-use \MyRadio\MyRadio\CoreUtils;
 
 /**
  * Abstractor for the MyRadio Menu
@@ -191,7 +189,7 @@ class MyRadioMenu
             }
         }
 
-        $url = $count === 1 ? CoreUtils::makeURL($module, $action, $params) : $url;
+        $url = $count === 1 ? URLUtils::makeURL($module, $action, $params) : $url;
 
         return $url;
     }

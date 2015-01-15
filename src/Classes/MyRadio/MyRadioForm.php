@@ -2,8 +2,8 @@
 
 namespace MyRadio\MyRadio;
 
-use MyRadio\MyRadioException;
-use MyRadio\Config;
+use \MyRadio\MyRadioException;
+use \MyRadio\Config;
 
 /**
  * This file provides the MyRadioForm class for MyRadio
@@ -295,7 +295,7 @@ class MyRadioForm
         $twig = CoreUtils::getTemplateObject()->setTemplate($this->template)
                 ->addVariable('frm_name', $this->name)
                 ->addVariable('frm_classes', $this->getClasses())
-                ->addVariable('frm_action', CoreUtils::makeURL($this->module, $this->action))
+                ->addVariable('frm_action', URLUtils::makeURL($this->module, $this->action))
                 ->addVariable('frm_method', $this->get ? 'get' : 'post')
                 ->addVariable('title', isset($this->title) ? $this->title : $this->name)
                 ->addVariable('serviceName', isset($this->module) ? $this->module : $this->name)

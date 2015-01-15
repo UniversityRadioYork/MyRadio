@@ -7,6 +7,7 @@
  */
 
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 
 $tracks = MyRadio_Track::getAllDigitised();
@@ -28,7 +29,7 @@ CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('tabledata', CoreUtils::dataSourceParser($missing))
     ->addInfo(
         'Please ensure the information below seems correct, then <a href="'
-        .CoreUtils::makeURL('Library', 'findMissing', ['fix' => 1])
+        .URLUtils::makeURL('Library', 'findMissing', ['fix' => 1])
         .'">click here</a> to mark these files as undigitised.',
         'wrench'
     )->render();

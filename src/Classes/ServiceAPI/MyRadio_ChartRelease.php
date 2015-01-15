@@ -8,6 +8,7 @@ namespace MyRadio\ServiceAPI;
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
@@ -449,7 +450,7 @@ class MyRadio_ChartRelease extends ServiceAPI
                 'display' => 'icon',
                 'value' => 'script',
                 'title' => 'Edit Chart Release',
-                'url' => CoreUtils::makeURL(
+                'url' => URLUtils::makeURL(
                     'Charts',
                     'editChartRelease',
                     ['chart_release_id' => $this->getID()]

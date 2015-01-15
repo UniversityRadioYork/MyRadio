@@ -9,12 +9,12 @@
 
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioDefaultAuthenticator;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
 if (!isset($_REQUEST['authenticator'])) {
-    CoreUtils::redirect('MyRadio', 'login');
+    URLUtils::redirect('MyRadio', 'login');
     exit;
 }
 

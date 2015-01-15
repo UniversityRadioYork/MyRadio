@@ -8,7 +8,7 @@
  */
 
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 
 if (empty($_FILES)) {
@@ -21,4 +21,4 @@ if (isset($_FILES['audio']['error']) && $_FILES['audio']['error'] !== 0) {
 
 $data = MyRadio_Track::cacheAndIdentifyUploadedTrack($_FILES['audio']['tmp_name']);
 
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

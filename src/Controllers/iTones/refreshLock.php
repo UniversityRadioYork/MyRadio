@@ -8,7 +8,7 @@
  */
 
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\iTones\iTones_Playlist;
 
 if (empty($_REQUEST['playlistid'])) {
@@ -29,4 +29,4 @@ if ($lock === false) {
     $data = ['SUCCESS', $lock];
 }
 
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

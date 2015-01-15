@@ -8,6 +8,7 @@ namespace MyRadio\ServiceAPI;
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadioEmail;
 
 /**
@@ -343,26 +344,26 @@ class MyRadio_List extends ServiceAPI
                     'display' => 'icon',
                     'value' => 'circle-plus',
                     'title' => 'Subscribe to this mailing list',
-                    'url' => CoreUtils::makeURL('Mail', 'optin', ['list' => $this->getID()])
+                    'url' => URLUtils::makeURL('Mail', 'optin', ['list' => $this->getID()])
                 ] : null
             ),
             'optOut' => ($subscribed ? [
                 'display' => 'icon',
                 'value' => 'circle-minus',
                 'title' => 'Opt out of this mailing list',
-                'url' => CoreUtils::makeURL('Mail', 'optout', ['list' => $this->getID()])
+                'url' => URLUtils::makeURL('Mail', 'optout', ['list' => $this->getID()])
             ] : null),
             'mail' => [
                 'display' => 'icon',
                 'value' => 'mail-closed',
                 'title' => 'Send a message to this mailing list',
-                'url' => CoreUtils::makeURL('Mail', 'send', ['list' => $this->getID()])
+                'url' => URLUtils::makeURL('Mail', 'send', ['list' => $this->getID()])
             ],
             'archive' => [
                 'display' => 'icon',
                 'value' => 'disk',
                 'title' => 'View archives for this mailing list',
-                'url' => CoreUtils::makeURL('Mail', 'archive', ['list' => $this->getID()])
+                'url' => URLUtils::makeURL('Mail', 'archive', ['list' => $this->getID()])
             ]
         ];
     }

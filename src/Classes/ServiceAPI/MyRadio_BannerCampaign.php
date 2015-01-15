@@ -9,6 +9,7 @@ namespace MyRadio\ServiceAPI;
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
@@ -133,7 +134,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Click here to edit this Campaign',
-                'url' => CoreUtils::makeURL('Website', 'editCampaign', ['campaignid' => $this->getID()])
+                'url' => URLUtils::makeURL('Website', 'editCampaign', ['campaignid' => $this->getID()])
             ]
         ];
 
@@ -293,7 +294,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 [CoreUtils::getTimestamp($time), $this->getID()]
             );
         }
-        
+
         $this->updateCacheObject();
         return $this;
     }
@@ -339,14 +340,14 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 $end
             ]
         )[0];
-        
+
         $this->timeslots[] = [
             'id' => $id,
             'day' => $day,
             'start_time' => strtotime($start, 0),
             'end_time' => strtotime($end, 0)
         ];
-        
+
         $this->updateCacheObject();
     }
 

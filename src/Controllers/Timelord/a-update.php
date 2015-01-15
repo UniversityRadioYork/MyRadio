@@ -8,7 +8,7 @@
  * @package MyRadio_Timelord
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Selector;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 use \MyRadio\MyRadio\MyRadioNews;
@@ -23,4 +23,4 @@ $data = [
     'obit' => $sel->isObitHappening()
 ];
 
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

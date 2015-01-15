@@ -10,7 +10,7 @@
  */
 
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //create new
         $term = MyRadio_Scheduler::addTerm($data['start'], $data['descr']);
         if (is_numeric($term)) {
-            CoreUtils::redirectWithMessage('Scheduler', 'listTerms', 'Term ' . $data['descr'] . ', has been added.');
+            URLUtils::redirectWithMessage('Scheduler', 'listTerms', 'Term ' . $data['descr'] . ', has been added.');
         } else {
             throw new MyRadioException('Error creating term.', 500);
         }
@@ -31,9 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         */
         throw new MyRadioException('Not Implemented');
         //submit edit
-        
 
-        CoreUtils::backWithMessage("Show Updated!");
+
+        URLUtils::backWithMessage("Show Updated!");
     }
 
 } else {

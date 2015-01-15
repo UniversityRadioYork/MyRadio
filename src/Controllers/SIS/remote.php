@@ -7,7 +7,7 @@
  * @package MyRadio_SIS
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\SIS\SIS_Utils;
 
 //Allow Session writing from other requests
@@ -32,4 +32,4 @@ do {
 } while (empty($data) && $count < 50);
 
 //Return the response data
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

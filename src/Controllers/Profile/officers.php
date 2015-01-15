@@ -10,6 +10,7 @@
 
 use \MyRadio\Config;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\Profile;
 
@@ -17,7 +18,7 @@ $officers = Profile::getOfficers();
 
 foreach ($officers as $k => $v) {
     if (!empty($officers[$k]['name'])) {
-        $officers[$k]['url'] = CoreUtils::makeURL('Profile', 'view', ['memberid' => $v['memberid']]);
+        $officers[$k]['url'] = URLUtils::makeURL('Profile', 'view', ['memberid' => $v['memberid']]);
     }
 
     if (!empty($officers[$k]['memberid'])) {
