@@ -654,20 +654,41 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * @todo Document this method
      * @todo Ajax the All Shows page - this isn't a particularly nice query
      */
-    public static function getAllShows($show_type_id = 1)
+    public static function getAllShows($show_type_id = 1, $current_term_only = false)
     {
-        $show_ids = self::$db->fetchColumn(
-            'SELECT show_id FROM schedule.show
-            WHERE show_type_id=$1
-            ORDER BY (
-                SELECT metadata_value FROM schedule.show_metadata
-                WHERE show.show_id=show_metadata.show_id AND metadata_key_id=2
-                AND effective_from <= NOW()
-                AND (effective_to IS NULL OR effective_to > NOW())
-                ORDER BY effective_from DESC LIMIT 1
-            );',
-            [$show_type_id]
-        );
+        if($current_term_only) {
+            $show_ids = self::$db->fetchColumn(
+                'SELECT show_id FROM schedule.show
+                WHERE show_type_id=$1 AND EXISTS (
+                        SELECT * FROM schedule.show_season
+                        WHERE schedule.show_season.show_id=schedule.show.show_id
+                        AND schedule.show_season.termid=$2
+                )
+                ORDER BY (
+                    SELECT metadata_value FROM schedule.show_metadata
+                    WHERE show.show_id=show_metadata.show_id AND metadata_key_id=2
+                    AND effective_from <= NOW()
+                    AND (effective_to IS NULL OR effective_to > NOW())
+                    ORDER BY effective_from DESC LIMIT 1
+                );',
+                [$show_type_id, MyRadio_Scheduler::getActiveApplicationTerm()]
+            );
+        }
+        else
+        {
+            $show_ids = self::$db->fetchColumn(
+                'SELECT show_id FROM schedule.show
+                WHERE show_type_id=$1
+                ORDER BY (
+                    SELECT metadata_value FROM schedule.show_metadata
+                    WHERE show.show_id=show_metadata.show_id AND metadata_key_id=2
+                    AND effective_from <= NOW()
+                    AND (effective_to IS NULL OR effective_to > NOW())
+                    ORDER BY effective_from DESC LIMIT 1
+                );',
+                [$show_type_id]
+            );
+        }
 
         return array_map(
             function ($show_id) {

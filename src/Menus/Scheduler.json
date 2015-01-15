@@ -7,19 +7,24 @@
                 "description": "View Seasons that haven't been allocated a timeslot yet."
             },
             {
+                "title": "My Shows",
+                "url": "module=Scheduler,action=myShows",
+                "description": "View a list of all your shows, where you can edit them and apply for seasons."
+            },
+            {
+                "title": "This Term's Shows",
+                "url": "module=Scheduler,action=shows",
+                "description": "View a list of all shows with a season this term."
+            },
+            {
                 "title": "All Shows",
-                "url": "module=Scheduler,action=allShows",
-                "description": "View a list of all shows in the MyURY database."
+                "url": "module=Scheduler,action=shows,all=true",
+                "description": "View a list of all shows since time began."
             },
             {
                 "title": "Create a Show",
                 "url": "module=Scheduler,action=editShow",
                 "description": "Create a new show on the URY Scheduler"
-            },
-            {
-                "title": "My Shows",
-                "url": "module=Scheduler,action=myShows",
-                "description": "View a list of all your shows, where you can edit them and apply for seasons."
             },
             {
                 "title": "Add Demo",
