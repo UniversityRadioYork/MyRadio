@@ -27,9 +27,9 @@
                 "description": "Create a new show on the URY Scheduler"
             },
             {
-                "title": "Add Demo",
+                "title": "Add Training Session",
                 "url": "module=Scheduler,action=createDemo",
-                "description": "Add a Demo slot that newbies can sign up to"
+                "description": "Add a training slot that newbies can sign up to"
             }
         ]
 }
