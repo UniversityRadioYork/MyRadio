@@ -553,6 +553,12 @@ class CoreUtils
         );
     }
 
+    /**
+     * udiff function for permission value equality
+     * @param  array $perm1 permission value & description
+     * @param  array $perm2 permission value & description
+     * @return int          comparison result
+     */
     private static function comparePermission($perm1, $perm2)
     {
         if ($perm1['value'] === $perm2['value']) {
@@ -564,6 +570,11 @@ class CoreUtils
         }
     }
 
+    /**
+     * Returns all permissions that are not included in the array given
+     * @param  array $perms array of permissions
+     * @return array        all permissions not included in $perms
+     */
     public static function diffPermissions($perms)
     {
         return array_udiff(self::getAllPermissions(), $perms, 'self::comparePermission');
