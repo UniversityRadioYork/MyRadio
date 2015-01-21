@@ -8,6 +8,8 @@ namespace MyRadio\ServiceAPI;
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
 
 /**
  * The Officer class provides information about Committee Officerships.
@@ -320,6 +322,47 @@ class MyRadio_Officer extends ServiceAPI
             AND lookupid = $2',
             [$this->getID(), $permissionid]
         );
+    }
+
+    /**
+     * Creates a form for adding permissions to the officer
+     * @return MyRadioForm Permission adding form
+     */
+    public function permissionForm()
+    {
+        // List permissions that the officer doesn't have
+        $permissions = CoreUtils::diffPermissions($this->getPermissions());
+
+        $form = (
+            new MyRadioForm(
+                'assign_officer_permissions',
+                'Profile',
+                'editOfficer',
+                ['title' => 'Edit Officer']
+            )
+        )->addField(
+            new MyRadioFormField(
+                'permission',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'explanation' => 'Select a permission that you want to add which when granted '
+                        .'allows the officer to perform this Action.',
+                    'label' => 'Permission',
+                    'required' => false,
+                    'options' => array_merge(
+                        [
+                            [
+                                'value' => null,
+                                'text' => 'Select a Permission'
+                            ]
+                        ],
+                        $permissions
+                    )
+                ]
+            )
+        );
+
+        return $form;
     }
 
     /**

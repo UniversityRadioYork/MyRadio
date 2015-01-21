@@ -1,5 +1,9 @@
-{% extends 'stripe.twig' %}
+{% extends 'form.twig' %}
+
+{% set officer = frm_custom.officer %}
+
 {% block stripecontent %}
+
 <div id="profile">
     <h3>
         {% if officer.type == 'o' %}Officer
@@ -30,4 +34,7 @@
         {% endfor %}
     </ul>
 </div>
+
+{{ parent() }}
+
 {% endblock %}

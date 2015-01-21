@@ -553,6 +553,22 @@ class CoreUtils
         );
     }
 
+    private static function comparePermission($perm1, $perm2)
+    {
+        if ($perm1['value'] === $perm2['value']) {
+            return 0;
+        } elseif ($perm1['value'] < $perm2['value']) {
+            return -1;
+        } else {
+            return 1;
+        }
+    }
+
+    public static function diffPermissions($perms)
+    {
+        return array_udiff(self::getAllPermissions(), $perms, 'self::comparePermission');
+    }
+
     /**
      * Add a new permission constant to the database.
      * @param String $descr A useful friendly description of what this action means.
