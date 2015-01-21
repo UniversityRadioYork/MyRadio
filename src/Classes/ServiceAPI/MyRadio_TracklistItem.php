@@ -7,6 +7,7 @@
 
 namespace MyRadio\ServiceAPI;
 
+use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\iTones\iTones_Playlist;
@@ -209,7 +210,7 @@ class MyRadio_TracklistItem extends ServiceAPI
      * total_playtime: The total number of seconds the track has been on air
      * in_playlists: A CSV of playlists the Track is in
      */
-    private static function trackAmalgamator($result)
+    private static function trackAmalgamator($result, $playlists = true)
     {
         $data = [];
         foreach ($result as $row) {
@@ -225,10 +226,13 @@ class MyRadio_TracklistItem extends ServiceAPI
             $track['num_plays'] = $row['num_plays'];
             $track['total_playtime'] = $row['num_plays'] * $trackobj->getDuration();
 
-            $playlistobjs = iTones_Playlist::getPlaylistsWithTrack($trackobj);
             $track['in_playlists'] = '';
-            foreach ($playlistobjs as $playlist) {
-                $track['in_playlists'] .= $playlist->getTitle() . ', ';
+
+            if ($playlists) {
+                $playlistobjs = iTones_Playlist::getPlaylistsWithTrack($trackobj);
+                foreach ($playlistobjs as $playlist) {
+                    $track['in_playlists'] .= $playlist->getTitle() . ', ';
+                }
             }
 
             $data[] = $track;
@@ -244,12 +248,13 @@ class MyRadio_TracklistItem extends ServiceAPI
      * @param int $end Period to end log from. Default time().
      * @param bool $include_playout Optional. Default true. If true, include statistics from when jukebox was not on air,
      * i.e. when it was only feeding campus bars.
+     * @param bool $playlists Whether to get playlist membership metadata for tracks.
      * @return Array, 2D, with the inner dimension being a MyRadio_Track Datasource output, with the addition of:
      * num_plays: The number of times the track was played
      * total_playtime: The total number of seconds the track has been on air
      * in_playlists: A CSV of playlists the Track is in
      */
-    public static function getTracklistStatsForJukebox($start = null, $end = null, $include_playout = true)
+    public static function getTracklistStatsForJukebox($start = null, $end = null, $include_playout = true, $playlists = false)
     {
         self::wakeup();
 
@@ -265,7 +270,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             [$start, $end]
         );
 
-        return self::trackAmalgamator($result);
+        return self::trackAmalgamator($result, $playlists);
     }
 
     /**
@@ -273,12 +278,13 @@ class MyRadio_TracklistItem extends ServiceAPI
      * and outputs the play count of each Track, including the total time played.
      * @param int $start Period to start log from. Default 0.
      * @param int $end Period to end log from. Default time().
+     * @param bool $playlists Whether to get playlist membership metadata for the tracks.
      * @return Array, 2D, with the inner dimension being a MyRadio_Track Datasource output, with the addition of:
      * num_plays: The number of times the track was played
      * total_playtime: The total number of seconds the track has been on air
      * in_playlists: A CSV of playlists the Track is in
      */
-    public static function getTracklistStatsForBAPS($start = null, $end = null)
+    public static function getTracklistStatsForBAPS($start = null, $end = null, $playlists = false)
     {
         self::wakeup();
 
@@ -293,7 +299,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             [$start, $end]
         );
 
-        return self::trackAmalgamator($result);
+        return self::trackAmalgamator($result, $playlists);
     }
 
     /**

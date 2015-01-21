@@ -280,7 +280,7 @@ class MyRadio_ChartRelease extends ServiceAPI
                 MyRadio_ChartRow::create(
                     [
                           'chart_release_id' => $this->getID(),
-                          'position' => $i,
+                          'position' => $i + 1,
                           'trackid' => $row
                     ]
                 );
@@ -326,7 +326,7 @@ class MyRadio_ChartRelease extends ServiceAPI
     {
         $this->release_time = strtotime($release_time);
 
-        return $this->setDB(SET_RELEASE_TIME_SQL, date('c', $release_time));
+        return $this->setDB(self::SET_RELEASE_TIME_SQL, date('c', $release_time));
     }
 
     /**
@@ -340,7 +340,7 @@ class MyRadio_ChartRelease extends ServiceAPI
     {
         $this->chart_type_id = intval($chart_type_id);
 
-        return $this->setDB(SET_CHART_TYPE_ID_SQL, intval($chart_type_id));
+        return $this->setDB(self::SET_CHART_TYPE_ID_SQL, intval($chart_type_id));
     }
 
     /**

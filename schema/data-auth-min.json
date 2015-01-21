@@ -1,5 +1,5 @@
 [
-	["Do not require login","AUTH_NOLOGIN"],
-	["Edit Permission Definitions","AUTH_ALTERPERMISSIONFLAGS"],
-	["Always show errors","AUTH_SHOWERRORS"]
+    ["Do not require login","AUTH_NOLOGIN"],
+    ["Edit Permission Definitions","AUTH_ALTERPERMISSIONFLAGS"],
+    ["Always show errors","AUTH_SHOWERRORS"]
 ]

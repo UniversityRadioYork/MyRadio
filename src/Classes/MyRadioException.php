@@ -86,7 +86,8 @@ class MyRadioException extends \RuntimeException
                 // TODO make this create the dir - maybe use error_log?
                 file_put_contents(
                     Config::$log_file,
-                    CoreUtils::getTimestamp() . '[' . $this->code . '] ' . $this->message . "\n" . $this->traceStr
+                    CoreUtils::getTimestamp() . '[' . $this->code . '] ' . $this->message . "\n" . $this->traceStr,
+                    FILE_APPEND
                 );
             }
 

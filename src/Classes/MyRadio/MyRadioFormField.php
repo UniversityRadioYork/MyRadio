@@ -94,6 +94,7 @@ class MyRadioFormField
      *
      * trackname: Since value will set the hidden integer value, this can be used to set the text value of the visible
      * element when loading a pre-filled form.
+     * digitised: Require that search results are digitised tracks. Default false.
      *
      * @todo Support for filtering to only digitised, clean tracks etc.
      */
@@ -649,8 +650,59 @@ class MyRadioFormField
                 break;
             case self::TYPE_TABULARSET:
                 $return = [];
+                $clearNulls = [];
                 foreach ($this->options as $option) {
+                    if ($option->getType() === self::TYPE_DAY) {
+                        $clearNulls[] = $option->getName();
+                    }
                     $return[$option->getName()] = $option->readValue($prefix);
+                }
+
+                $fields = array_keys($return);
+
+                //Explicitly set Days to null if the rest of the row is
+                //0 is treated as empty, so let's clear that up and advise using is_null
+                foreach ($clearNulls as $field) {
+                    foreach ($return[$field] as $i => $v) {
+                        if ($v > 0) {
+                            continue;
+                        }
+                        $hasValue = false;
+                        foreach ($fields as $other) {
+                            if ($other !== $field && !is_null($return[$other][$i])) {
+                                $hasValue = true;
+                                break;
+                            }
+                        }
+                        if (!$hasValue) {
+                            $return[$field][$i] = null;
+                        }
+                    }
+                }
+
+                //Clear rows that are entirely null
+                $removeKeys = [];
+                for ($i = 0; $i < sizeof($return[$fields[0]]); $i++) {
+                    $hasValue = false;
+                    foreach ($fields as $field) {
+                        if (!is_null($return[$field][$i])) {
+                            echo "$fields $i";
+                            $hasValue = true;
+                            break;
+                        }
+                    }
+                    if (!$hasValue) {
+                        $removeKeys[] = $i;
+                    }
+                }
+                if (!empty($removeKeys)) {
+                    foreach ($fields as $field) {
+                        foreach ($removeKeys as $key) {
+                            unset($return[$field][$key]);
+                        }
+                        //Reset indexes
+                        $return[$field] = array_values($return[$field]);
+                    }
                 }
 
                 return $return;
@@ -685,7 +737,10 @@ class MyRadioFormField
                 $active_time = null;
                 for ($i = 1; $i <= 7; $i++) { //Iterate over each day
                     for ($j = 0; $j < 86400; $j+=1800) { //Iterate over each 30 minute interval
-                        if (strtolower($_REQUEST[$name . '-' . $i . '-' . $j]) === 'on') {
+                        if (
+                            isset($_REQUEST[$name . '-' . $i . '-' . $j]) &&
+                            strtolower($_REQUEST[$name . '-' . $i . '-' . $j]) === 'on'
+                            ) {
                             //Is there already an active selection? If so, carry on.
                             if ($active_day !== null) {
                                 //Yep, nothing to see here.
@@ -723,6 +778,9 @@ class MyRadioFormField
 
     private function convertTime($timeString)
     {
+        if ($timeString === '') {
+            return null;
+        }
         /* For why we need to do this, consult the notes at
          * http://php.net/manual/en/function.strtotime.php.
          * YES, PHP IS RETARDED.

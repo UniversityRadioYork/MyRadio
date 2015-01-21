@@ -77,11 +77,11 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
         self::initDB();
 
         $class = get_called_class();
-        $key = $class::getCacheKey($itemid);
+        $key = self::getCacheKey($itemid);
         $cache = self::$cache->get($key);
         if (!$cache) {
             $cache = new $class($itemid);
-            self::$cache->set($key, $cache, 86400);
+            self::$cache->set($key, $cache);
         }
 
         return $cache;
@@ -165,7 +165,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
      */
     protected function updateCacheObject()
     {
-        self::$cache->set(self::getCacheKey($this->getID()), $this, 3600);
+        self::$cache->set(self::getCacheKey($this->getID()), $this);
     }
 
     /**

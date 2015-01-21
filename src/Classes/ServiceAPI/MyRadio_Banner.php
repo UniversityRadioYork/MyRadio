@@ -310,7 +310,7 @@ class MyRadio_Banner extends MyRadio_Photo
                 ]))
                 ->addField(new MyRadioFormField('photo', MyRadioFormField::TYPE_FILE, [
                     'label' => 'Image',
-                    'explanation' => 'Please upload a 640x212px image file to use as the Banner.'
+                    'explanation' => 'Please upload a 680x230px image file to use as the Banner.'
                 ]));
     }
 }

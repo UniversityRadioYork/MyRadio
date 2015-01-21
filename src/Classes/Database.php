@@ -280,4 +280,9 @@ class Database
     {
         return pg_escape_string($val);
     }
+
+    public function getInTransaction()
+    {
+        return $this->in_transaction;
+    }
 }

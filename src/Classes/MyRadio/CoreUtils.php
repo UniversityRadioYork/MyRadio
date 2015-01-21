@@ -249,7 +249,7 @@ class CoreUtils
             $data['myury_errors'] = MyRadioError::$php_errorlist;
         }
 
-        echo json_encode($data);
+        echo json_encode($data, JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES);
         exit;
     }
 
@@ -777,6 +777,11 @@ class CoreUtils
             flush();
         }
 
+        //Discard any in-progress transactions
+        if ($db->getInTransaction()) {
+            $db->query('ROLLBACK');
+        }
+
         $errors = MyRadioError::getErrorCount();
         $exceptions = MyRadioException::getExceptionCount();
         $queries = $db->getCounter();
@@ -908,10 +913,10 @@ class CoreUtils
     public static function getRequestInfo()
     {
         ob_start();
-        if (isset($_REQUEST['redact'])) {
+        if (isset($_REQUEST['redact']) || isset($_REQUEST['pass']) || isset($_REQUEST['password'])) {
             $info = [];
             foreach ($_REQUEST as $k => $v) {
-                if (!in_array($k, $_REQUEST['redact'])) {
+                if (!in_array($k, $_REQUEST['redact']) && $k !== 'pass' && $k !== 'password') {
                     $info[$k] = $v;
                 } else {
                     $info[$k] = '**REDACTED**';

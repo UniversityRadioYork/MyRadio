@@ -103,11 +103,11 @@ final class Config
      */
     public static $cache_provider = '\MyRadio\APCProvider';
     /**
-     * How long MyRadio_Track items should be cached before the data is invalidated. This is Configurable as due to a lot
-     * of external edit sources, it is reasonable to asssume the cache may become stale due to other systems.
+     * How long ServiceAPI items should be cached for by default. Turn this down if you
+     * get a lot of edits from other sources.
      * @var int
      */
-    public static $cache_track_timeout = 7200; //2 hours
+    public static $cache_default_timeout = 86400;
 
     /**
      * Whether MyRadio errors should be displayed in the browser. If this is set to false, users with the
@@ -193,13 +193,13 @@ final class Config
      * The url of the webcam server status
      * @var String
      */
-    public static $webcam_current_url = "http://copperbox.york.ac.uk:9090/current?noprotocol=true";
+    public static $webcam_current_url;
 
     /**
      * The url of the webcam server setter
      * @var String
      */
-    public static $webcam_set_url = "http://copperbox.york.ac.uk:9090/set?newcam=";
+    public static $webcam_set_url;
 
     /**
      * The path to store the original, unencoded copies of MyRadio Podcasts.
@@ -257,7 +257,7 @@ final class Config
     /**
      * The Samba File Share path to the Central Database.
      * This is used for BAPS compatibility features.
-     * 
+     *
      * If you are not URY, you will likely not need this setting.
      * However, if you have a studio audio playout tool that needs
      * samba paths to files stored in a database, set this here.
@@ -277,7 +277,7 @@ final class Config
      * The API key to access last.fm's resources.
      *
      * You will need one of these to enable Library management.
-     * 
+     *
      * @var String
      */
     public static $lastfm_api_key;
@@ -287,6 +287,18 @@ final class Config
      * @var String
      */
     public static $lastfm_api_secret;
+    
+    /**
+     * The last.fm group specifically for the University of York. If using
+     * this aspect of the code you probably want to change this bit.
+     */
+    public static $lastfm_group = 'University+of+York';
+
+    /**
+     * The last.fm nation of choice, at least for us. Again, you might wish to
+     * change this bit.
+     */
+     public static $lastfm_geo = 'United+Kingdom';
 
     /**
      * The array of different versions of tracks one can expect to find in the
@@ -361,7 +373,7 @@ final class Config
      */
     public static $log_file_lock = '/tmp/myradio_errors.lock';
     /**
-     * The email to send error reports to. This is different from reporting_list, 
+     * The email to send error reports to. This is different from reporting_list,
      * which does statistical reports, if enabled.
      * @var String
      */
@@ -431,7 +443,7 @@ final class Config
 
     /**
      * Recaptcha settings. Used for password resets.
-     * 
+     *
      * http://recaptcha.net
      *
      * @var String
@@ -510,7 +522,6 @@ final class Config
      * The Authenticators are tried in order when completing user authentication
      * operations.
      */
-    //public static $authenticators = ['MyRadioLDAPAuthenticator', 'MyRadioDefaultAuthenticator'];
     public static $authenticators = ['\MyRadio\MyRadio\MyRadioDefaultAuthenticator'];
     public static $auth_ldap_server = 'ldap://ldap.york.ac.uk';
     public static $auth_ldap_root = 'ou=people,ou=csrv,ou=nos,dc=york,dc=ac,dc=uk';
@@ -519,6 +530,14 @@ final class Config
     public static $eduroam_domain = 'york.ac.uk';
     public static $auth_ldap_friendly_name = 'IT Services';
     public static $auth_ldap_reset_url = 'https://idm.york.ac.uk/';
+
+    /**
+    * Email configuration
+    */
+    //All email domains handled by MyRadio
+    public static $local_email_domains = [];
+    //Primary email domains
+    public static $email_domain = 'ury.org.uk';
 
     /**
      * If true, users will be bound to a single Authenticator. Users whose
@@ -560,7 +579,6 @@ final class Config
     public static $short_name = 'URY';
     public static $long_name = 'University Radio York';
     public static $founded = '1967';
-    public static $email_domain = 'ury.org.uk';
     public static $facebook = 'https://www.facebook.com/URY1350';
     public static $welcome_email = <<<EOT
 

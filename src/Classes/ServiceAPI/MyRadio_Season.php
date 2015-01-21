@@ -206,10 +206,13 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
         //Now for requested times
         for ($i = 0; $i < sizeof($params['times']['day']); $i++) {
+            if (
+                is_null($params['times']['day'][$i]) ||
+                is_null($params['times']['stime'][$i]) ||
+                is_null($params['times']['etime'][$i])) {
+                throw new MyRadioException('Each requested time must have a day, start time and end time.', 400);
+            }
             //Deal with the possibility of a show from 11pm to midnight etc.
-            /**
-             * @todo make this not be completely stupid
-             */
             if ($params['times']['stime'][$i] < $params['times']['etime'][$i]) {
                 $interval = CoreUtils::makeInterval($params['times']['stime'][$i], $params['times']['etime'][$i]);
             } else {
@@ -509,7 +512,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             new MyRadioForm(
                 'sched_reject',
                 'Scheduler',
-                'doReject',
+                'reject',
                 [
                     'debug' => false,
                     'title' => 'Reject Season Application'
