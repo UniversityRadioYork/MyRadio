@@ -1410,7 +1410,8 @@ class MyRadio_User extends ServiceAPI
                     . 'and I understand that if I break any of the rules or '
                     . 'regulations stated by Ofcom or its successor, I will be '
                     . 'solely liable for any resulting fines or actions that may '
-                    . 'be levied against ' . Config::$long_name . '.'
+                    . 'be levied against ' . Config::$long_name . '.',
+                    'value' => $this->hasSignedContract()
                 ]))
                 ->addField(new MyRadioFormField('sec_personal_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
