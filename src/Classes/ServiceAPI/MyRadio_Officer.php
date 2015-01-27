@@ -324,6 +324,142 @@ class MyRadio_Officer extends ServiceAPI
         );
     }
 
+    public static function getForm()
+    {
+        $form = (
+            new MyRadioForm(
+                'officeForm',
+                'Profile',
+                'editOfficer',
+                ['title' => 'Edit Officer']
+            )
+        )->addField(
+            new MyRadioFormField(
+                'name',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Title'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'alias',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Email Alias'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'team',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'label' => 'Team',
+                    'options' => array_merge(
+                        [
+                            [
+                                'value' => null,
+                                'text' => 'Select a Team'
+                            ]
+                        ],
+                        MyRadio_Team::getCurrentTeams()
+                    )
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'ordering',
+                MyRadioFormField::TYPE_NUMBER,
+                [
+                    'label' => 'Ordering'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'description',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Description'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'status',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'label' => 'Status',
+                    'options' => array_merge(
+                        [
+                            [
+                                'value' => null,
+                                'text' => 'Select Status'
+                            ]
+                        ],
+                        CoreUtils::getStatusLookup()
+                    )
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'type',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'label' => 'Officer Type',
+                    'options' => [
+                        [
+                            'value' => null,
+                            'text' => 'Select Type'
+                        ],
+                        [
+                            'value' => 'h',
+                            'text' => 'Head of Team'
+                        ],
+                        [
+                            'value' => 'a',
+                            'text' => 'Assistant Head of Team'
+                        ],
+                        [
+                            'value' => 'o',
+                            'text' => 'Team Officer'
+                        ],
+                        [
+                            'value' => 'm',
+                            'text' => 'Team Member'
+                        ]
+                    ]
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'permissions',
+                MyRadioFormField::TYPE_TABULARSET,
+                [
+                    'label' => 'Permissions',
+                    'explanation' => 'Select permissions that you want to add.',
+                    'options' => [
+                        new MyRadioFormField(
+                            'permission',
+                            MyRadioFormField::TYPE_SELECT,
+                            [
+                                'label' => 'Permission',
+                                'required' => false,
+                                'options' => array_merge(
+                                    [
+                                        [
+                                            'value' => null,
+                                            'text' => 'Select a Permission'
+                                        ]
+                                    ],
+                                    CoreUtils::getAllPermissions()
+                                )
+                            ]
+                        )
+                    ]
+                ]
+            )
+        );
+    }
+
     /**
      * Creates a form for adding permissions to the officer
      * @return MyRadioForm Permission adding form

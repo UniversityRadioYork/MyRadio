@@ -100,6 +100,19 @@ class MyRadio_Team extends ServiceAPI
     }
 
     /**
+     * Returns teamids and names for use in select boxes
+     * @return array
+     */
+    public static function getCurrentTeams()
+    {
+        return self::$db->fetchAll(
+            'SELECT teamid AS value, team_name AS text FROM public.team
+            WHERE status = "c"
+            ORDER BY ordering ASC'
+        );
+    }
+
+    /**
      * Get the ID for this Team
      * @return int
      */
@@ -285,7 +298,7 @@ class MyRadio_Team extends ServiceAPI
      * @param  String $alias
      * @return MyRadio_Team
      */
-    public function getByAlias($alias)
+    public static function getByAlias($alias)
     {
         return self::getInstance(
             self::$db->fetchColumn('SELECT teamid FROM public.team WHERE local_alias=$1', [$alias])

@@ -885,6 +885,18 @@ class CoreUtils
     }
 
     /**
+     * Returns lookup values for Status for a select box
+     * @return array
+     */
+    public static function getStatusLookup()
+    {
+        return self::$db->->fetchAll(
+            'SELECT statusid AS value, descr AS text FROM public.l_status
+            ORDER BY descr ASC'
+        );
+    }
+
+    /**
      * Tests whether the given username or password are valid against a provider
      * (and the right provider if needed).
      *
