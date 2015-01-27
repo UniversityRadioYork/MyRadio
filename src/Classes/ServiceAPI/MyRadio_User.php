@@ -1402,7 +1402,7 @@ class MyRadio_User extends ServiceAPI
                     ]
                 ]))
                 ->addField(new MyRadioFormField('contract', MyRadioFormField::TYPE_CHECK, [
-                    'label' => 'I, ' . $user->getName() . ', agree to abide by '
+                    'label' => 'I, ' . $this->getName() . ', agree to abide by '
                     . Config::$short_name . '\'s station rules and regulations as '
                     . 'set out in the <a href="' . Config::$contract_uri . '" target="_blank">Presenter\'s Contract</a>, '
                     . 'and the <a href="//www.ofcom.org.uk" target="_blank">Ofcom Programming Code</a>. '
