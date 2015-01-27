@@ -201,12 +201,21 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Get the Album of the Track;
+     * Get the Album of the Track
      * @return Album
      */
     public function getAlbum()
     {
         return MyRadio_Album::getInstance($this->record);
+    }
+
+    /**
+     * Get the intro duration of the Track, in seconds
+     * @return int
+     */
+    public function getIntro()
+    {
+        return $this->intro;
     }
 
     /**
@@ -304,7 +313,7 @@ class MyRadio_Track extends ServiceAPI
             'album' => $this->getAlbum()->toDataSource(),
             'trackid' => $this->getID(),
             'length' => $this->getLength(),
-            'intro' => $this->intro,
+            'intro' => $this->getIntro(),
             'clean' => $this->clean !== 'n',
             'digitised' => $this->getDigitised(),
             'editlink' => [
@@ -810,6 +819,20 @@ class MyRadio_Track extends ServiceAPI
             $this->getID()
         ]);
         $this->updateCachedObject();
+    }
+
+    /**
+     * Set the length of the track intro, in seconds
+     * @param int
+     */
+    public function setIntro($duration)
+    {
+        $this->intro = (int) $duration;
+        self::$db->query('UPDATE rec_track SET intro=$1 WHERE trackid=$2', [
+            $duration,
+            $this->getID()
+        ]);
+        $this->updateCacheObject();
     }
 
     /**

@@ -318,7 +318,7 @@ var NIPSWeb = function(d) {
         $('ul.baps-channel li').off('click.playactivator').on('click.playactivator', function(e) {
             var channel = $(this).parent('.baps-channel').attr('channel');
             if (!getPlayer(channel).paused) {
-                showAlert('Cannot load track whilst another is playing.', 'info');
+                showAlert('Cannot load track whilst another is playing.', 'warning');
                 e.stopPropagation();
                 return false;
             }
