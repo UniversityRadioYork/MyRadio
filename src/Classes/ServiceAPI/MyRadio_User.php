@@ -182,6 +182,13 @@ class MyRadio_User extends ServiceAPI
     private $require_password_change;
 
     /**
+     * True if user has signed Presenter Contract
+     *
+     * @var boolean
+     */
+    private $contract_signed;
+
+    /**
      * Initiates the User variables
      * @param int $memberid The ID of the member to initialise
      */
@@ -629,6 +636,16 @@ class MyRadio_User extends ServiceAPI
     }
 
     /**
+     * Get whether the user has signed the Presenter Contract
+     *
+     * @return bool if the presenter has signed the contract
+     */
+    public function hasSignedContract()
+    {
+        return $this->contract_signed;
+    }
+
+    /**
      * Get whether the user needs to change their password
      *
      * @return boolean
@@ -695,7 +712,7 @@ class MyRadio_User extends ServiceAPI
         if ($this->hasAuth(AUTH_APISUDO)) {
             return true;
         }
-        
+
         $result = MyRadio_Swagger::getCallRequirements($class, $method);
         if ($result === null) {
             return false; //No permissions means the method is not accessible
@@ -1201,6 +1218,18 @@ class MyRadio_User extends ServiceAPI
     }
 
     /**
+     * Sets the user's contract signed-ness status.
+     *
+     * @param bool $bool True for contract being signed, False otherwise. Default F.
+     * @return MyRadio_User
+     */
+    public function setContractSigned($bool = false)
+    {
+        $this->setCommonParam('contract_signed', $bool);
+        return $this;
+    }
+
+    /**
      * Sets the User's last login time to right now.
      * Use this when they're being logged in (weird that)
      */
@@ -1371,6 +1400,17 @@ class MyRadio_User extends ServiceAPI
                         ['value' => 'f', 'text' => 'Female'],
                         ['value' => 'o', 'text' => 'Other']
                     ]
+                ]))
+                ->addField(new MyRadioFormField('contract', MyRadioFormField::TYPE_CHECK, [
+                    'label' => 'I, ' . $user->getName() . ', agree to abide by '
+                    . Config::$short_name . '\'s station rules and regulations as '
+                    . 'set out in the <a href="' . Config::$contract_uri . '" target="_blank">Presenter\'s Contract</a>, '
+                    . 'and the <a href="//www.ofcom.org.uk" target="_blank">Ofcom Programming Code</a>. '
+                    . 'I have fully read and understood these rules and regulations, '
+                    . 'and I understand that if I break any of the rules or '
+                    . 'regulations stated by Ofcom or its successor, I will be '
+                    . 'solely liable for any resulting fines or actions that may '
+                    . 'be levied against ' . Config::$long_name . '.'
                 ]))
                 ->addField(new MyRadioFormField('sec_personal_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
@@ -1556,7 +1596,7 @@ class MyRadio_User extends ServiceAPI
         //Actually create the member!
         $r = self::$db->fetchColumn(
             'INSERT INTO public.member (fname, sname, sex,
-            college, phone, email, receive_email, eduroam, require_password_change)
+            college, phone, email, receive_email, eduroam, require_password_change, contract_signed)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid',
             [
                 $fname,
@@ -1567,7 +1607,8 @@ class MyRadio_User extends ServiceAPI
                 $email,
                 $receive_email,
                 $eduroam,
-                true
+                true,
+                false
             ]
         );
 

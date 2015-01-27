@@ -1394,7 +1394,8 @@ CREATE TABLE member (
     require_password_change boolean DEFAULT false NOT NULL,
     profile_photo integer,
     bio text,
-    auth_provider character varying
+    auth_provider character varying,
+	contract_signed boolean DEFAULT false NOT NULL
 );
 COMMENT ON COLUMN member.email IS 'If set, this is the user''s contact address. Otherwise, use the eduroam field.';
 COMMENT ON COLUMN member.local_name IS 'This column represents the part of the user''s URY email address before the @. When null, the user does not have a URY email account.';

@@ -35,7 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ->setEmail($data['email'])
         ->setReceiveEmail($data['receive_email'])
         ->setEduroam($data['eduroam'])
-        ->setBio($data['bio']);
+        ->setBio($data['bio'])
+        ->setContractSigned($data['contract']);
 
     if (!empty($data['photo']['tmp_name'])) {
         $user->setProfilePhoto(MyRadio_Photo::create($data['photo']['tmp_name']));
