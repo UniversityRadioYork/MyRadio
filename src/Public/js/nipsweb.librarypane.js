@@ -162,7 +162,6 @@ $(document).ready(function() {
       });
       artistLookup.initialize();
       $('#res-filter-artist').typeahead({
-        hint: true,
         highlight: true,
         minLength: 1
       },
