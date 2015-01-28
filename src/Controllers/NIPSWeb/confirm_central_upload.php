@@ -15,7 +15,8 @@ $data = MyRadio_Track::identifyAndStoreTrack(
     $_REQUEST['title'],
     $_REQUEST['artist'],
     $_REQUEST['album'],
-    $_REQUEST['position']
+    $_REQUEST['position'],
+    $_REQUEST['explicit']
 );
 $data['fileid'] = $_REQUEST['fileid'];
 
