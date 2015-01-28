@@ -26,6 +26,10 @@ $('.twig-datatable').dataTable({
     "sTitle": "",
     "bVisible": false
   },
+  //view
+  {
+    "sTitle": "View"
+  },
   //edit
   {
     "sTitle": "Edit"

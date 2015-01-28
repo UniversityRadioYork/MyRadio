@@ -324,6 +324,10 @@ class MyRadio_Officer extends ServiceAPI
         );
     }
 
+    /**
+     * Form for Officerships
+     * @return MyRadioForm
+     */
     public static function getForm()
     {
         $form = (
@@ -331,7 +335,7 @@ class MyRadio_Officer extends ServiceAPI
                 'officeForm',
                 'Profile',
                 'editOfficer',
-                ['title' => 'Edit Officer']
+                ['title' => 'Create Officer']
             )
         )->addField(
             new MyRadioFormField(
@@ -379,7 +383,8 @@ class MyRadio_Officer extends ServiceAPI
                 'description',
                 MyRadioFormField::TYPE_TEXT,
                 [
-                    'label' => 'Description'
+                    'label' => 'Description',
+                    'required' => false
                 ]
             )
         )->addField(
@@ -436,6 +441,7 @@ class MyRadio_Officer extends ServiceAPI
                 [
                     'label' => 'Permissions',
                     'explanation' => 'Select permissions that you want to add.',
+                    'required' => false,
                     'options' => [
                         new MyRadioFormField(
                             'permission',
@@ -458,47 +464,36 @@ class MyRadio_Officer extends ServiceAPI
                 ]
             )
         );
+
+        return $form;
     }
 
     /**
-     * Creates a form for adding permissions to the officer
-     * @return MyRadioForm Permission adding form
+     * Edit form for an existing Officership
+     * @return MyRadioForm
      */
-    public function permissionForm()
+    public function getEditForm()
     {
-        // List permissions that the officer doesn't have
-        $permissions = CoreUtils::diffPermissions($this->getPermissions());
-
-        $form = (
-            new MyRadioForm(
-                'assign_officer_permissions',
-                'Profile',
-                'editOfficer',
-                ['title' => 'Edit Officer']
-            )
-        )->addField(
-            new MyRadioFormField(
-                'permission',
-                MyRadioFormField::TYPE_SELECT,
+        return self::getForm()
+            ->setTitle('Edit Officer')
+            ->editMode(
+                $this->getID(),
                 [
-                    'explanation' => 'Select a permission that you want to add which when granted '
-                        .'allows the officer to perform this Action.',
-                    'label' => 'Permission',
-                    'required' => false,
-                    'options' => array_merge(
-                        [
-                            [
-                                'value' => null,
-                                'text' => 'Select a Permission'
-                            ]
-                        ],
-                        $permissions
+                    'name' => $this->getName(),
+                    'description' => $this->getDescription(),
+                    'alias' => $this->getAlias(),
+                    'ordering' => $this->getOrdering(),
+                    'team' => $this->getTeam()->getID(),
+                    'type' => $this->getType(),
+                    'status' => $this->getStatus(),
+                    'permissions.permission' => array_map(
+                        function ($perm) {
+                            return $perm['value'];
+                        },
+                        $this->getPermissions()
                     )
                 ]
-            )
-        );
-
-        return $form;
+            );
     }
 
     /**

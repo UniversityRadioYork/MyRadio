@@ -107,7 +107,7 @@ class MyRadio_Team extends ServiceAPI
     {
         return self::$db->fetchAll(
             'SELECT teamid AS value, team_name AS text FROM public.team
-            WHERE status = "c"
+            WHERE status = \'c\'
             ORDER BY ordering ASC'
         );
     }

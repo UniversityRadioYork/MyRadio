@@ -890,7 +890,7 @@ class CoreUtils
      */
     public static function getStatusLookup()
     {
-        return self::$db->->fetchAll(
+        return Database::getInstance()->fetchAll(
             'SELECT statusid AS value, descr AS text FROM public.l_status
             ORDER BY descr ASC'
         );
