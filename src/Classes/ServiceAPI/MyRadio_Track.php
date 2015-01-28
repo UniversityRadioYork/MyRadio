@@ -610,7 +610,7 @@ class MyRadio_Track extends ServiceAPI
         }
 
         // See if the explicit checkbox was set, and set the value for the DB accordingly
-        if (isset($explicit){
+        if (isset($explicit)){
             $explicit = 'y';
         } else {
             $explicit = 'n';
