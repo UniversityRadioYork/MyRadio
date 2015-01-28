@@ -592,6 +592,7 @@ class MyRadio_Track extends ServiceAPI
         self::$db->query('BEGIN');
 
         $ainfo = null;
+        $clean = 'u'; // Default value for clean / explicitness.
         if ($album == "FROM_LASTFM") {
             // Get the album info if we're getting it from lastfm
             $ainfo = self::getAlbumDurationAndPositionFromLastfm($title, $artist);
@@ -610,10 +611,10 @@ class MyRadio_Track extends ServiceAPI
         }
 
         // See if the explicit checkbox was set, and set the value for the DB accordingly
-        if (isset($explicit)){
-            $explicit = 'y';
-        } else {
-            $explicit = 'u';
+        if ($explicit === true){
+            $clean = 'n';
+        } elseif ($explicit === false) { // Checkbox is either true or false, slightly misleading equality test.
+            $clean = 'u'; // Safe default
         }
 
         // Check if the track is already in the library and create it if not
@@ -627,7 +628,7 @@ class MyRadio_Track extends ServiceAPI
                         'duration' => $ainfo['duration'],
                         'recordid' => $ainfo['album']->getID(),
                         'number' => $ainfo['position'],
-                        'clean' => $explicit
+                        'clean' => $clean
             ]);
         } else {
             $track = $track[0];
