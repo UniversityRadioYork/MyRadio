@@ -190,7 +190,7 @@ class MyRadio_Officer extends ServiceAPI
             SET officer_name = $1
             WHERE officerid=$2',
             [$name, $this->getID()]
-        )
+        );
         $this->name = $name;
         return $this;
     }
@@ -216,7 +216,7 @@ class MyRadio_Officer extends ServiceAPI
             SET officer_alias = $1
             WHERE officerid=$2',
             [$alias, $this->getID()]
-        )
+        );
         $this->alias = $alias;
         return $this;
     }
@@ -242,7 +242,7 @@ class MyRadio_Officer extends ServiceAPI
             SET teamid = $1
             WHERE officerid=$2',
             [$team, $this->getID()]
-        )
+        );
         $this->team = $team;
         return $this;
     }
@@ -268,7 +268,7 @@ class MyRadio_Officer extends ServiceAPI
             SET ordering = $1
             WHERE officerid=$2',
             [$ordering, $this->getID()]
-        )
+        );
         $this->ordering = $ordering;
         return $this;
     }
@@ -294,7 +294,7 @@ class MyRadio_Officer extends ServiceAPI
             SET description = $1
             WHERE officerid=$2',
             [$description, $this->getID()]
-        )
+        );
         $this->description = $description;
         return $this;
     }
@@ -320,7 +320,7 @@ class MyRadio_Officer extends ServiceAPI
             SET status = $1
             WHERE officerid=$2',
             [$status, $this->getID()]
-        )
+        );
         $this->status = $status;
         return $this;
     }
@@ -347,7 +347,7 @@ class MyRadio_Officer extends ServiceAPI
             SET type = $1
             WHERE officerid=$2',
             [$type, $this->getID()]
-        )
+        );
         $this->type = $type;
         return $this;
     }
