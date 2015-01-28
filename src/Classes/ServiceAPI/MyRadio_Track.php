@@ -613,7 +613,7 @@ class MyRadio_Track extends ServiceAPI
         if (isset($explicit)){
             $explicit = 'y';
         } else {
-            $explicit = 'n';
+            $explicit = 'u';
         }
 
         // Check if the track is already in the library and create it if not
