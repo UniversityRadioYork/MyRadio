@@ -32,6 +32,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //submit edit
         $officer = MyRadio_Officer::getInstance($data['id']);
 
+        // update officer
+        $officer
+            ->setName($data['name'])
+            ->setDescription($data['description'])
+            ->setAlias($data['alias'])
+            ->setOrdering($data['ordering'])
+            ->setTeam($data['team'])
+            ->setType($data['type'])
+            ->setStatus($data['status']);
+
+
+        // remove empty permissions values
+        $data['permissions'] = array_filter($data['permissions']['permission']);
+
+        // get IDs of current officer permissions
+        $currentPerms = [];
+        $officerPerms = $officer->getPermissions();
+        foreach ($officerPerms as $perm) {
+             $currentPerms[] = (int)$perm['value'];
+        }
+
+        // Get permissions to add or remove
+        $addPerms = array_diff($data['permissions'], $currentPerms);
+        $remPerms = array_diff($currentPerms, $data['permissions']);
+
+        // Add permissions
+        if (!empty($addPerms)) {
+            foreach ($addPerms as $perm) {
+                $officer->addPermisson($perm);
+            }
+        }
+        // Remove permissions
+        if (!empty($remPerms)) {
+            foreach ($remPerms as $perm) {
+                $officer->revokePermission($perm);
+            }
+        }
+
     }
 
     CoreUtils::backWithMessage('Officer Updated!');

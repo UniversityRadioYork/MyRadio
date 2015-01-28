@@ -571,13 +571,14 @@ class CoreUtils
     }
 
     /**
-     * Returns all permissions that are not included in the array given
+     * Returns all permissions that are in $perms but not $diffPerms
      * @param  array $perms array of permissions
+     * @param  array $diffPerms array of permissions
      * @return array        all permissions not included in $perms
      */
-    public static function diffPermissions($perms)
+    public static function diffPermissions($perms, $diffPerms)
     {
-        return array_udiff(self::getAllPermissions(), $perms, 'self::comparePermission');
+        return array_udiff($perms, $diffPerms, 'self::comparePermission');
     }
 
     /**

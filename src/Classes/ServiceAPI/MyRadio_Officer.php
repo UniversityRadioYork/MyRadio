@@ -179,12 +179,46 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
+     * Sets the Name of this Officer Position
+     * @param String $name the new name of the officer
+     * @return MyRadio_Officer the updated officer object
+     */
+    public function setName($name)
+    {
+        self::$db->query(
+            'UPDATE public.member_officer
+            SET officer_name = $1
+            WHERE officerid=$2',
+            [$name, $this->getID()]
+        )
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
      * Gets the Officer primary email alias.
      * @return String
      */
     public function getAlias()
     {
         return $this->alias;
+    }
+
+    /**
+     * Sets the Alias of this Officer Position
+     * @param String $alias the new alias of the officer
+     * @return MyRadio_Officer the updated officer object
+     */
+    public function setAlias($alias)
+    {
+        self::$db->query(
+            'UPDATE public.member_officer
+            SET officer_alias = $1
+            WHERE officerid=$2',
+            [$alias, $this->getID()]
+        )
+        $this->alias = $alias;
+        return $this;
     }
 
     /**
@@ -197,12 +231,46 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
+     * Sets the Team of this Officer Position
+     * @param int $team the new team of the officer
+     * @return MyRadio_Officer the updated officer object
+     */
+    public function setTeam($team)
+    {
+        self::$db->query(
+            'UPDATE public.member_officer
+            SET teamid = $1
+            WHERE officerid=$2',
+            [$team, $this->getID()]
+        )
+        $this->team = $team;
+        return $this;
+    }
+
+    /**
      * Returns the weight of the Officer when listing them.
      * @return int
      */
     public function getOrdering()
     {
         return $this->ordering;
+    }
+
+    /**
+     * Sets the Ordering of this Officer Position
+     * @param int $ordering the new ordering of the officer
+     * @return MyRadio_Officer the updated officer object
+     */
+    public function setOrdering($ordering)
+    {
+        self::$db->query(
+            'UPDATE public.member_officer
+            SET ordering = $1
+            WHERE officerid=$2',
+            [$ordering, $this->getID()]
+        )
+        $this->ordering = $ordering;
+        return $this;
     }
 
     /**
@@ -215,12 +283,46 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
+     * Sets the Description of this Officer Position
+     * @param String $description the new description of the officer
+     * @return MyRadio_Officer the updated officer object
+     */
+    public function setDescription($description)
+    {
+        self::$db->query(
+            'UPDATE public.member_officer
+            SET description = $1
+            WHERE officerid=$2',
+            [$description, $this->getID()]
+        )
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
      * (c)urrent or (h)istorical.
      * @return char
      */
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Sets the Status of this Officer Position
+     * @param char $status the new status of the officer
+     * @return MyRadio_Officer the updated officer object
+     */
+    public function setStatus($status)
+    {
+        self::$db->query(
+            'UPDATE public.member_officer
+            SET status = $1
+            WHERE officerid=$2',
+            [$status, $this->getID()]
+        )
+        $this->status = $status;
+        return $this;
     }
 
     /**
@@ -231,6 +333,23 @@ class MyRadio_Officer extends ServiceAPI
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Sets the Type of this Officer Position
+     * @param char $type the new type of the officer
+     * @return MyRadio_Officer the updated officer object
+     */
+    public function setType($type)
+    {
+        self::$db->query(
+            'UPDATE public.member_officer
+            SET type = $1
+            WHERE officerid=$2',
+            [$type, $this->getID()]
+        )
+        $this->type = $type;
+        return $this;
     }
 
     /**
