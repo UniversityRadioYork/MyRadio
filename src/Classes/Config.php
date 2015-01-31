@@ -242,6 +242,7 @@ final class Config
 
     /**
      * The full web address of a copy of the Presenters Contract.
+     * @note If this variable is empty, then contracts are disabled.
      * @var String
      */
     public static $contract_uri = '/wiki/Contract';

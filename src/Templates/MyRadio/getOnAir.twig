@@ -7,7 +7,7 @@
 <li {% if paid and contract_signed %} class="menu-checklist-done"{% endif %}>
   <a href="{% if paid and contract_signed %}javascript:{% else %}{{myury.makeURL(config, 'Profile', 'edit')}}{% endif %}">Sign Presenter Contract</a>
 </li>
-<li {% if not (studio_demoed and paid) %} class="menu-checklist-disabled"{% endif %}>
+<li {% if not (studio_demoed and paid and contract_signed) %} class="menu-checklist-disabled"{% endif %}>
   <a href="{% if not (studio_demoed and paid) %}javascript:{% else %}{{myury.makeURL(config, 'Scheduler', 'myShows')}}{% endif %}"
      title="{% if not has_show %}You've passed all the stages of training. Now it's time to apply for your very first show! {%
 else

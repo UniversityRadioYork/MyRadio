@@ -642,7 +642,11 @@ class MyRadio_User extends ServiceAPI
      */
     public function hasSignedContract()
     {
-        return $this->contract_signed;
+        if (empty(Config::$contract_uri)) {
+            return true;
+        } else {
+            return $this->contract_signed;
+        }
     }
 
     /**
@@ -1225,7 +1229,9 @@ class MyRadio_User extends ServiceAPI
      */
     public function setContractSigned($bool = false)
     {
-        $this->setCommonParam('contract_signed', $bool);
+        if (empty(Config::$contract_uri) === false) {
+            $this->setCommonParam('contract_signed', $bool);
+        }
         return $this;
     }
 
@@ -1400,20 +1406,23 @@ class MyRadio_User extends ServiceAPI
                         ['value' => 'f', 'text' => 'Female'],
                         ['value' => 'o', 'text' => 'Other']
                     ]
-                ]))
-                ->addField(new MyRadioFormField('contract', MyRadioFormField::TYPE_CHECK, [
-                    'label' => 'I, ' . $this->getName() . ', agree to abide by '
-                    . Config::$short_name . '\'s station rules and regulations as '
-                    . 'set out in the <a href="' . Config::$contract_uri . '" target="_blank">Presenter\'s Contract</a>, '
-                    . 'and the <a href="//www.ofcom.org.uk" target="_blank">Ofcom Programming Code</a>. '
-                    . 'I have fully read and understood these rules and regulations, '
-                    . 'and I understand that if I break any of the rules or '
-                    . 'regulations stated by Ofcom or its successor, I will be '
-                    . 'solely liable for any resulting fines or actions that may '
-                    . 'be levied against ' . Config::$long_name . '.',
-                    'value' => $this->hasSignedContract()
-                ]))
-                ->addField(new MyRadioFormField('sec_personal_close', MyRadioFormField::TYPE_SECTION_CLOSE));
+                ]));
+        if (empty(Config::$contract_uri) === false) {
+            $form->addField(new MyRadioFormField('contract',
+                empty(Config::$contract_uri) ? MyRadioFormField::TYPE_HIDDEN : MyRadioFormField::TYPE_CHECK, [
+                'label' => 'I, ' . $this->getName() . ', agree to abide by '
+                . Config::$short_name . '\'s station rules and regulations as '
+                . 'set out in the <a href="' . Config::$contract_uri . '" target="_blank">Presenter\'s Contract</a>, '
+                . 'and the <a href="//www.ofcom.org.uk" target="_blank">Ofcom Programming Code</a>. '
+                . 'I have fully read and understood these rules and regulations, '
+                . 'and I understand that if I break any of the rules or '
+                . 'regulations stated by Ofcom or its successor, I will be '
+                . 'solely liable for any resulting fines or actions that may '
+                . 'be levied against ' . Config::$long_name . '.',
+                'value' => $this->hasSignedContract()
+            ]));
+        }
+        $form->addField(new MyRadioFormField('sec_personal_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
         //Contact details
         $form->addField(new MyRadioFormField('sec_contact', MyRadioFormField::TYPE_SECTION, [
