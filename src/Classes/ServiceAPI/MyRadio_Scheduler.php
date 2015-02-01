@@ -14,11 +14,9 @@ use \MyRadio\MyRadio\MyRadioFormField;
 /**
  * Abstractor for the Scheduler Module
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130813
  * @package MyRadio_Scheduler
- * @uses \Database
- * @todo Dedicated Term class
+ * @uses    \Database
+ * @todo    Dedicated Term class
  */
 class MyRadio_Scheduler extends MyRadio_Metadata_Common
 {
@@ -85,7 +83,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
 
     /**
     * Create a new term
-    * @param int $start The term start date
+    * @param int    $start The term start date
     * @param String $descr Term description e.g. Autumn 2036
     * @return int The new termid
     */
@@ -197,7 +195,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     /**
      * Returns an Array of Shows matching the given partial title
      * @param String $title A partial or total title to search for
-     * @param int $limit The maximum number of shows to return
+     * @param int    $limit The maximum number of shows to return
      * @return Array 2D with each first dimension an Array as follows:<br>
      * title: The title of the show<br>
      * show_id: The unique id of the show
@@ -250,7 +248,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
 
     /**
      *
-     * @param int $term_id The term to check for
+     * @param int   $term_id The term to check for
      * @param Array $time:
      * day: The day ID (0-6) to check for
      * start_time: The start time in seconds since midnight
@@ -287,8 +285,9 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
 
     /**
      * Returns a schedule conflict between the given times, if one exists
-     * @param int $start Start time
-     * @param int $end End time
+     *
+     * @param  int $start Start time
+     * @param  int $end   End time
      * @return Array empty if no conflict, show information otherwise
      *
      * @todo Move this into the relevant scheduler class

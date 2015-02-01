@@ -17,8 +17,6 @@ use MyRadio\ServiceAPI\MyRadio_User;
  * A collection of these is automatically created when building a MyRadioForm
  *
  * @package MyRadio_Core
- * @version 20130722
- * @author Lloyd Wallis <lpw@ury.org.uk>
  */
 class MyRadioFormField
 {
@@ -177,6 +175,7 @@ class MyRadioFormField
     /**
      * The constant used to specify this MyRadioFormField should be a text field that only accepts a time input.
      * NOTE: This currently only accepts time entries at 15 minute intervals.
+     *
      * @todo Support for custom time intervals
      *
      * This MyRadioFormField type does not support any Custom Options.
@@ -196,6 +195,7 @@ class MyRadioFormField
      * This should be closed with a TYPE_SECTION_CLOSE.
      *
      * This MyRadioFormField type does not support any Custom Options
+     *
      * @todo Collapsible?
      */
     const TYPE_SECTION = 0x10;
@@ -214,7 +214,6 @@ class MyRadioFormField
      * The file field takes the following custom options:
      *
      * progress: If true, will display an upload progress bar.
-     *
      */
     const TYPE_FILE = 0x12;
     /**
@@ -333,10 +332,10 @@ class MyRadioFormField
     /**
      * Set up a new MyRadio Form Field with the new parameters, returning the new field.
      * This method is only useful practically when the MyRadioFormField is inserted to a MyRadioForm
-     * @param  String           $name    The name and id of the field, as used in the HTML properties - should be unique to the form
+     * @param  String $name    The name and id of the field, as used in the HTML properties - should be unique to the form '.' IS A RESERVED CHARACTER!
      *                                   '.' IS A RESERVED CHARACTER!
-     * @param  int              $type    The MyRadioFormField Field Type to use. See the constants defined in this class for details
-     * @param  Array            $options A set of additional settings for the MyRadioFormField as follows (all optional):<br>
+     * @param  int    $type    The MyRadioFormField Field Type to use. See the constants defined in this class for details
+     * @param  Array  $options A set of additional settings for the MyRadioFormField as follows (all optional):<br> required: Whether the field is required (default true)<br> label: The human-readable name of the field. (default reuses name)<br> explanation: Help text for the MyRadioFormField (default none)<br> display: Whether the MyRadioFormField should be visible when the page loads (default true)<br> classes: An array of additional classes to add to the input field (default empty)<br> options: An array of additional settings that are specific to the field type (default empty)<br> value: The default value of the field when it is rendered (default none)<br> enabled: Whether the field is enabled when the page is loaded (default true)<br> redacted: If true, this field is hidden in debug output (default false)
      *                                   required: Whether the field is required (default true)<br>
      *                                   label: The human-readable name of the field. (default reuses name)<br>
      *                                   explanation: Help text for the MyRadioFormField (default none)<br>
@@ -547,232 +546,232 @@ class MyRadioFormField
      * MyRadioFormField depending on the $type parameter.
      *
      * This is called by MyRadioForm::readValues()
-     * @param  String           $prefix The current prefix to the field name
+     *
+     * @param  String $prefix The current prefix to the field name
      * @return mixed            The submitted field value
      * @throws MyRadioException if the field type does not have a valid read handler
-     * @todo Verify all returns deal with repeated elements correctly
+     * @todo   Verify all returns deal with repeated elements correctly
      */
     public function readValue($prefix)
     {
         $name = $prefix . str_replace(' ', '_', $this->name);
         //The easiest ones can just be returned
         switch ($this->type) {
-            case self::TYPE_TEXT:
-            case self::TYPE_EMAIL:
-            case self::TYPE_ARTIST:
-            case self::TYPE_HIDDEN:
-            case self::TYPE_BLOCKTEXT:
-            case self::TYPE_PASSWORD:
+        case self::TYPE_TEXT:
+        case self::TYPE_EMAIL:
+        case self::TYPE_ARTIST:
+        case self::TYPE_HIDDEN:
+        case self::TYPE_BLOCKTEXT:
+        case self::TYPE_PASSWORD:
+            return $_REQUEST[$name];
+                break;
+        case self::TYPE_MEMBER:
+            //Deal with Arrays for repeated elements
+            if (is_array($_REQUEST[$name])) {
+                for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
+                    if (empty($_REQUEST[$name][$i])) {
+                        continue;
+                    }
+                    $_REQUEST[$name][$i] = MyRadio_User::getInstance($_REQUEST[$name][$i]);
+                }
+
                 return $_REQUEST[$name];
-                break;
-            case self::TYPE_MEMBER:
-                //Deal with Arrays for repeated elements
-                if (is_array($_REQUEST[$name])) {
-                    for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
-                        if (empty($_REQUEST[$name][$i])) {
-                            continue;
-                        }
-                        $_REQUEST[$name][$i] = MyRadio_User::getInstance($_REQUEST[$name][$i]);
-                    }
+            } else {
+                if (empty($_REQUEST[$name])) {
+                    return null;
+                }
 
-                    return $_REQUEST[$name];
+                return MyRadio_User::getInstance($_REQUEST[$name]);
+            }
+            break;
+        case self::TYPE_TRACK:
+            //Deal with Arrays for repeated elements
+            if (is_array($_REQUEST[$name])) {
+                for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
+                    if (empty($_REQUEST[$name][$i])) {
+                        continue;
+                    }
+                    $_REQUEST[$name][$i] = MyRadio_Track::getInstance($_REQUEST[$name][$i]);
+                }
+
+                return $_REQUEST[$name];
+            } else {
+                return MyRadio_Track::getInstance($_REQUEST[$name]);
+            }
+            break;
+        case self::TYPE_NUMBER:
+        case self::TYPE_SELECT:
+        case self::TYPE_RADIO:
+        case self::TYPE_DAY:
+            //Deal with Arrays for repeated elements
+            if (is_array($_REQUEST[$name])) {
+                for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
+                    if (is_numeric($_REQUEST[$name][$i])) {
+                        $_REQUEST[$name][$i] = (int) $_REQUEST[$name][$i];
+                    }
+                }
+
+                return $_REQUEST[$name];
+            } else {
+                if (is_numeric($_REQUEST[$name])) {
+                    return (int) $_REQUEST[$name];
                 } else {
-                    if (empty($_REQUEST[$name])) {
-                        return null;
-                    }
-
-                    return MyRadio_User::getInstance($_REQUEST[$name]);
-                }
-                break;
-            case self::TYPE_TRACK:
-                //Deal with Arrays for repeated elements
-                if (is_array($_REQUEST[$name])) {
-                    for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
-                        if (empty($_REQUEST[$name][$i])) {
-                            continue;
-                        }
-                        $_REQUEST[$name][$i] = MyRadio_Track::getInstance($_REQUEST[$name][$i]);
-                    }
-
                     return $_REQUEST[$name];
-                } else {
-                    return MyRadio_Track::getInstance($_REQUEST[$name]);
                 }
+            }
+            break;
+        case self::TYPE_DATE:
+        case self::TYPE_DATETIME:
+        case self::TYPE_TIME:
+            //Deal with repeated elements
+            if (is_array($_REQUEST[$name])) {
+                for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
+                    $_REQUEST[$name][$i] = $this->convertTime($_REQUEST[$name][$i]);
+                }
+
+                return $_REQUEST[$name];
+            } else {
+                return $this->convertTime($_REQUEST[$name]);
+            }
+            break;
+        case self::TYPE_CHECK:
+            return (bool) (isset($_REQUEST[$name]) && ($_REQUEST[$name] === 'On' || $_REQUEST[$name] === 'on'));
                 break;
-            case self::TYPE_NUMBER:
-            case self::TYPE_SELECT:
-            case self::TYPE_RADIO:
-            case self::TYPE_DAY:
-                //Deal with Arrays for repeated elements
-                if (is_array($_REQUEST[$name])) {
-                    for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
-                        if (is_numeric($_REQUEST[$name][$i])) {
-                            $_REQUEST[$name][$i] = (int) $_REQUEST[$name][$i];
-                        }
+        case self::TYPE_CHECKGRP:
+            $return = [];
+            foreach ($this->options as $option) {
+                $return[$option->getName()] = (int) $option->readValue($name . '-');
+            }
+
+            return $return;
+                break;
+        case self::TYPE_FILE:
+            return $_FILES[$name];
+                break;
+        case self::TYPE_TABULARSET:
+            $return = [];
+            $clearNulls = [];
+            foreach ($this->options as $option) {
+                if ($option->getType() === self::TYPE_DAY) {
+                    $clearNulls[] = $option->getName();
+                }
+                $return[$option->getName()] = $option->readValue($prefix);
+            }
+
+            $fields = array_keys($return);
+
+            //Explicitly set Days to null if the rest of the row is
+            //0 is treated as empty, so let's clear that up and advise using is_null
+            foreach ($clearNulls as $field) {
+                foreach ($return[$field] as $i => $v) {
+                    if ($v > 0) {
+                        continue;
                     }
-
-                    return $_REQUEST[$name];
-                } else {
-                    if (is_numeric($_REQUEST[$name])) {
-                        return (int) $_REQUEST[$name];
-                    } else {
-                        return $_REQUEST[$name];
-                    }
-                }
-                break;
-            case self::TYPE_DATE:
-            case self::TYPE_DATETIME:
-            case self::TYPE_TIME:
-                //Deal with repeated elements
-                if (is_array($_REQUEST[$name])) {
-                    for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
-                        $_REQUEST[$name][$i] = $this->convertTime($_REQUEST[$name][$i]);
-                    }
-
-                    return $_REQUEST[$name];
-                } else {
-                    return $this->convertTime($_REQUEST[$name]);
-                }
-                break;
-            case self::TYPE_CHECK:
-                return (bool) (isset($_REQUEST[$name]) && ($_REQUEST[$name] === 'On' || $_REQUEST[$name] === 'on'));
-                break;
-            case self::TYPE_CHECKGRP:
-                $return = [];
-                foreach ($this->options as $option) {
-                    $return[$option->getName()] = (int) $option->readValue($name . '-');
-                }
-
-                return $return;
-                break;
-            case self::TYPE_FILE:
-                return $_FILES[$name];
-                break;
-            case self::TYPE_TABULARSET:
-                $return = [];
-                $clearNulls = [];
-                foreach ($this->options as $option) {
-                    if ($option->getType() === self::TYPE_DAY) {
-                        $clearNulls[] = $option->getName();
-                    }
-                    $return[$option->getName()] = $option->readValue($prefix);
-                }
-
-                $fields = array_keys($return);
-
-                //Explicitly set Days to null if the rest of the row is
-                //0 is treated as empty, so let's clear that up and advise using is_null
-                foreach ($clearNulls as $field) {
-                    foreach ($return[$field] as $i => $v) {
-                        if ($v > 0) {
-                            continue;
-                        }
-                        $hasValue = false;
-                        foreach ($fields as $other) {
-                            if ($other !== $field && !is_null($return[$other][$i])) {
-                                $hasValue = true;
-                                break;
-                            }
-                        }
-                        if (!$hasValue) {
-                            $return[$field][$i] = null;
-                        }
-                    }
-                }
-
-                //Clear rows that are entirely null
-                $removeKeys = [];
-                for ($i = 0; $i < sizeof($return[$fields[0]]); $i++) {
                     $hasValue = false;
-                    foreach ($fields as $field) {
-                        if (!is_null($return[$field][$i])) {
-                            echo "$fields $i";
+                    foreach ($fields as $other) {
+                        if ($other !== $field && !is_null($return[$other][$i])) {
                             $hasValue = true;
                             break;
                         }
                     }
                     if (!$hasValue) {
-                        $removeKeys[] = $i;
+                        $return[$field][$i] = null;
                     }
                 }
-                if (!empty($removeKeys)) {
-                    foreach ($fields as $field) {
-                        foreach ($removeKeys as $key) {
-                            unset($return[$field][$key]);
-                        }
-                        //Reset indexes
-                        $return[$field] = array_values($return[$field]);
+            }
+
+            //Clear rows that are entirely null
+            $removeKeys = [];
+            for ($i = 0; $i < sizeof($return[$fields[0]]); $i++) {
+                $hasValue = false;
+                foreach ($fields as $field) {
+                    if (!is_null($return[$field][$i])) {
+                        echo "$fields $i";
+                        $hasValue = true;
+                        break;
                     }
+                }
+                if (!$hasValue) {
+                    $removeKeys[] = $i;
+                }
+            }
+            if (!empty($removeKeys)) {
+                foreach ($fields as $field) {
+                    foreach ($removeKeys as $key) {
+                        unset($return[$field][$key]);
+                    }
+                    //Reset indexes
+                    $return[$field] = array_values($return[$field]);
+                }
+            }
+
+            return $return;
+                break;
+        case self::TYPE_SECTION:
+        case self::TYPE_SECTION_CLOSE:
+            return null;
+                break;
+        case self::TYPE_ALBUM:
+            //Deal with Arrays for repeated elements
+            if (is_array($_REQUEST[$name])) {
+                for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
+                    if (empty($_REQUEST[$name][$i])) {
+                        continue;
+                    }
+                    $_REQUEST[$name][$i] = MyRadio_Album::getInstance($_REQUEST[$name][$i]);
                 }
 
-                return $return;
-                break;
-            case self::TYPE_SECTION:
-            case self::TYPE_SECTION_CLOSE:
-                return null;
-                break;
-            case self::TYPE_ALBUM:
-                //Deal with Arrays for repeated elements
-                if (is_array($_REQUEST[$name])) {
-                    for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
-                        if (empty($_REQUEST[$name][$i])) {
-                            continue;
-                        }
-                        $_REQUEST[$name][$i] = MyRadio_Album::getInstance($_REQUEST[$name][$i]);
-                    }
-
-                    return $_REQUEST[$name];
-                } else {
-                    return MyRadio_Album::getInstance($_REQUEST[$name]);
-                }
-                break;
-            case self::TYPE_WEEKSELECT:
-                /**
+                return $_REQUEST[$name];
+            } else {
+                return MyRadio_Album::getInstance($_REQUEST[$name]);
+            }
+            break;
+        case self::TYPE_WEEKSELECT:
+            /**
                  * Now isn't this fun. The week select is comprised of 336 checkboxes that we need to amalgamate.
                  * Value returned are relative to days starting at midnight, not 7am.
                  * Selections spanning multiple days will return as two seperate selections ('days' here again being midnight)
                  */
-                $times = [];
-                $active_day = null;
-                $active_time = null;
-                for ($i = 1; $i <= 7; $i++) { //Iterate over each day
-                    for ($j = 0; $j < 86400; $j+=1800) { //Iterate over each 30 minute interval
-                        if (
-                            isset($_REQUEST[$name . '-' . $i . '-' . $j]) &&
-                            strtolower($_REQUEST[$name . '-' . $i . '-' . $j]) === 'on'
-                            ) {
-                            //Is there already an active selection? If so, carry on.
-                            if ($active_day !== null) {
-                                //Yep, nothing to see here.
-                                continue;
-                            } else {
-                                //Ooh, this is the start of a new range
-                                $active_day = $i;
-                                $active_time = $j;
-                            }
+            $times = [];
+            $active_day = null;
+            $active_time = null;
+            for ($i = 1; $i <= 7; $i++) { //Iterate over each day
+                for ($j = 0; $j < 86400; $j+=1800) { //Iterate over each 30 minute interval
+                    if (isset($_REQUEST[$name . '-' . $i . '-' . $j])
+                        && strtolower($_REQUEST[$name . '-' . $i . '-' . $j]) === 'on'
+                    ) {
+                        //Is there already an active selection? If so, carry on.
+                        if ($active_day !== null) {
+                            //Yep, nothing to see here.
+                            continue;
                         } else {
-                            //Was there an active selection? If so, kill it.
-                            if ($active_day !== null) {
-                                //Add the current state to times
-                                $times[] = ['day' => $active_day, 'start_time' => $active_time, 'end_time' => $j - 1];
-                                $active_day = null;
-                                $active_time = null;
-                            }
-                            //If there wasn't an active selection, we don't have to do anything.
+                            //Ooh, this is the start of a new range
+                            $active_day = $i;
+                            $active_time = $j;
                         }
-                    }
-                    //At the end of the day, kill any active selection.
-                    if ($active_day !== null) {
-                        $times[] = ['day' => $active_day, 'start_time' => $active_time, 'end_time' => 86399];
-                        $active_day = null;
-                        $active_time = null;
+                    } else {
+                        //Was there an active selection? If so, kill it.
+                        if ($active_day !== null) {
+                            //Add the current state to times
+                            $times[] = ['day' => $active_day, 'start_time' => $active_time, 'end_time' => $j - 1];
+                            $active_day = null;
+                            $active_time = null;
+                        }
+                        //If there wasn't an active selection, we don't have to do anything.
                     }
                 }
+                //At the end of the day, kill any active selection.
+                if ($active_day !== null) {
+                    $times[] = ['day' => $active_day, 'start_time' => $active_time, 'end_time' => 86399];
+                    $active_day = null;
+                    $active_time = null;
+                }
+            }
 
-                return $times;
+            return $times;
                 break;
-            default:
-                throw new MyRadioException('Field type ' . $this->type . ' does not have a valid value interpreter definition.');
+        default:
+            throw new MyRadioException('Field type ' . $this->type . ' does not have a valid value interpreter definition.');
         }
     }
 

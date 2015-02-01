@@ -3,8 +3,8 @@
  *
  * @todo Proper Documentation
  * @todo Permissions
- * @author Andy Durant <aj@ury.org.uk>
- * @version 20130516
+
+
  * @package MyRadio_Profile
  */
 

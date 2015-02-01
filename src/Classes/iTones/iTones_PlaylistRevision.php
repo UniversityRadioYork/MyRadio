@@ -15,8 +15,6 @@ use \MyRadio\ServiceAPI\MyRadio_Track;
 /**
  * The iTones_PlaylistRevision class helps to manage previous versions of an iTones_Playlist
  *
- * @version 20130714
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_iTones
  */
 class iTones_PlaylistRevision extends iTones_Playlist

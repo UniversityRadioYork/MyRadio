@@ -39,11 +39,13 @@ function api_error($code, $message = null, $previous = null)
     ];
     header("HTTP/1.1 $code {$messages[$code]}");
     header("Content-Type: application/json");
-    echo json_encode([
+    echo json_encode(
+        [
         "status" => $code,
         "time" => sprintf('%f', $GLOBALS['__start'] + microtime(true)),
         "message" => $message
-    ]);
+        ]
+    );
     //Log an API failure so it appears in the status graphs.
     throw new MyRadioException('API Error: ' . $message . "\nSource: " . $_SERVER['REMOTE_ADDR'], $code, $previous);
 }

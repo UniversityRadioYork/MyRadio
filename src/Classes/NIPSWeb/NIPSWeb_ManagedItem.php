@@ -15,10 +15,8 @@ use \MyRadio\ServiceAPI\MyRadio_User;
 /**
  * The NIPSWeb_ManagedItem class helps provide control and access to Beds and Jingles and similar not-PPL resources
  *
- * @version 20130601
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_NIPSWeb
- * @uses \Database
+ * @uses    \Database
  */
 class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
 {
@@ -40,7 +38,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Initiates the ManagedItem variables
-     * @param int $resid The ID of the managed resource to initialise
+     * @param int                     $resid       The ID of the managed resource to initialise
      * @param NIPSWeb_ManagedPlaylist $playlistref If the playlist is requesting this item, then pass the playlist object
      * @todo Length, BPM
      * @todo Seperate Managed Items and Managed User Items. The way they were implemented was a horrible hack, for which
@@ -71,12 +69,12 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
                 (($playlistref instanceof NIPSWeb_ManagedPlaylist) ? $playlistref :
                     NIPSWeb_ManagedPlaylist::getInstance($result['managedplaylistid'])
                 );
-        $this->folder = $result['folder'];
-        $this->title = $result['title'];
-        $this->length = strtotime('1970-01-01 '.$result['length']);
-        $this->bpm = (int) $result['bpm'];
-        $this->expirydate = strtotime($result['expirydate']);
-        $this->member = empty($result['memberid']) ? null : MyRadio_User::getInstance($result['memberid']);
+                $this->folder = $result['folder'];
+                $this->title = $result['title'];
+                $this->length = strtotime('1970-01-01 '.$result['length']);
+                $this->bpm = (int) $result['bpm'];
+                $this->expirydate = strtotime($result['expirydate']);
+                $this->member = empty($result['memberid']) ? null : MyRadio_User::getInstance($result['memberid']);
     }
 
     /**

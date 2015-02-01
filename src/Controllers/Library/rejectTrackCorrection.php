@@ -5,8 +5,6 @@
  * $_REQUEST['permanent'], default false, will also mark the data currently in the library as *correct*, meaning
  * that the background scanner will not propose any corrections in future.
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130722
  * @package MyRadio_Library
  */
 

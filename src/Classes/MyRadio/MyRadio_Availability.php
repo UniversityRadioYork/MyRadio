@@ -88,7 +88,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Initiates the MyRadio_Availability object
-     * @param int $id The ID of the Availability to initialise
+     * @param int    $id       The ID of the Availability to initialise
      * @param string $table
      * @param string $id_field
      */
@@ -130,7 +130,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Returns data about the Availability
-     * @param  bool  $full If true, returns full, detailed data about the timeslots in this campaign
+     * @param  bool $full If true, returns full, detailed data about the timeslots in this campaign
      * @return Array
      */
     public function toDataSource($full = false)
@@ -248,7 +248,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Sets the start time of the Availability
-     * @param  int                    $time
+     * @param  int $time
      * @return MyRadio_BannerCampaign
      */
     public function setEffectiveFrom($time)
@@ -264,7 +264,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Sets the end time of the Campaign
-     * @param  int                    $time
+     * @param  int $time
      * @return MyRadio_BannerCampaign
      */
     public function setEffectiveTo($time)
@@ -292,7 +292,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
      * @param int $day   Day the timeslot is on. 1 = Monday, 7 = Sunday. Timeslots cannot span days.
      * @param int $start Seconds since midnight that the Timeslot starts.
      * @param int $end   Seconds since midnight that the Timeslot ends.
-     * @todo Input validation.
+     * @todo  Input validation.
      */
     public function addTimeslot($day, $start, $end)
     {

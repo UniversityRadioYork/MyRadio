@@ -1,8 +1,8 @@
 <?php
 /**
  *
- * @author Andy Durant <aj@ury.org.uk>
- * @version 20140624
+
+
  * @package MyRadio_Scheduler
  */
 

@@ -2,8 +2,6 @@
 /**
  * Lists the archive for a Mailing List
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130828
  * @package MyRadio_Mail
  */
 

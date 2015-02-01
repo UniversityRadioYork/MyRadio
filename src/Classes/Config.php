@@ -9,8 +9,6 @@ namespace MyRadio;
 /**
  * Stores configuration settings
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20140529
  * @package MyRadio_Core
  */
 final class Config
@@ -70,7 +68,8 @@ final class Config
 
     /**
      * The base URL of Shibbobleh - it has CSS and JS resources used by MyRadio
-     * @var String
+     *
+     * @var        String
      * @deprecated
      */
     public static $shib_url       = '//ury.org.uk/portal/';
@@ -262,6 +261,7 @@ final class Config
      * However, if you have a studio audio playout tool that needs
      * samba paths to files stored in a database, set this here.
      * This data will then be stored in the public.baps_ table.
+     *
      * @var String
      */
     public static $music_smb_path = '\\\\musicstore.ury.york.ac.uk';
@@ -287,7 +287,7 @@ final class Config
      * @var String
      */
     public static $lastfm_api_secret;
-    
+
     /**
      * The last.fm group specifically for the University of York. If using
      * this aspect of the code you probably want to change this bit.
@@ -415,6 +415,7 @@ final class Config
      * The root URL to URY's API
      *
      * Must be absolute.
+     *
      * @var String
      */
     public static $api_url = null;
@@ -423,6 +424,7 @@ final class Config
      * The URL prefix to URY's webcam
      *
      * Must be absolute. With trailing /
+     *
      * @var String
      */
     public static $webcam_prefix = '//ury.org.uk/webcam/';

@@ -12,10 +12,8 @@ use \MyRadio\ServiceAPI\MyRadio_Track;
 /**
  * The NIPSWeb_TimeslotItem class helps provide Show Planner with access to all resource types a timeslot item could be
  *
- * @version 16042013
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_NIPSWeb
- * @uses \Database
+ * @uses    \Database
  */
 class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
 {
@@ -29,7 +27,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Initiates the TimeslotItem variables
-     * @param int $resid The timeslot_item_id of the resource to initialise
+     * @param int                     $resid       The timeslot_item_id of the resource to initialise
      * @param NIPSWeb_ManagedPlaylist $playlistref If the playlist is requesting this item, then pass the playlist object
      */
     protected function __construct($resid, $playlistref = null)

@@ -20,10 +20,8 @@ use \MyRadio\iTones\iTones_Utils;
  * BE CAREFUL USING SET METHOD IN THIS CLASS.
  * THEY *WILL* CHANGE THE STATION OUTPUT.
  *
- * @version 20130813
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
- * @uses \Database
+ * @uses    \Database
  */
 class MyRadio_Selector
 {
@@ -284,7 +282,7 @@ class MyRadio_Selector
 
     /**
      * Returns the power state of studio1 at the time given
-     * @param  int  $time
+     * @param  int $time
      * @return bool
      */
     public static function getStudio1PowerAtTime($time)
@@ -302,7 +300,7 @@ class MyRadio_Selector
 
     /**
      * Returns the power state of studio2 at the time given
-     * @param  int  $time
+     * @param  int $time
      * @return bool
      */
     public static function getStudio2PowerAtTime($time)
@@ -355,7 +353,7 @@ class MyRadio_Selector
 
     /**
      * Returns the selector status at the time given
-     * @param  int   $time
+     * @param  int $time
      * @return array
      */
     public static function getStatusAtTime($time)

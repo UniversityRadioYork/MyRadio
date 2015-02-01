@@ -19,8 +19,6 @@ use \MyRadio\ServiceAPI\MyRadio_User;
  * just "presenter" training, and more towards any activity, "Training Status"
  * was adopted.
  *
- * @version 20130810
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 
@@ -66,7 +64,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
     /**
      * Create a new UserTrainingStatus object.
      *
-     * @param int $statusid The ID of the UserTrainingStatus.
+     * @param  int $statusid The ID of the UserTrainingStatus.
      * @throws MyRadioException
      */
     protected function __construct($statusid)
@@ -176,9 +174,9 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
     /**
      * Creates a new User - Training Status map, awarding that User the training status.
      *
-     * @param MyRadio_TrainingStatus $status The status to be awarded
-     * @param MyRadio_User $awarded_to The User to be awarded the training status
-     * @param MyRadio_User $awarded_by The User that is granting the training status
+     * @param  MyRadio_TrainingStatus $status     The status to be awarded
+     * @param  MyRadio_User           $awarded_to The User to be awarded the training status
+     * @param  MyRadio_User           $awarded_by The User that is granting the training status
      * @return \self
      * @throws MyRadioException
      */

@@ -2,7 +2,6 @@
 /**
  * Provides the MyRadio_Webcam class
  * @package MyRadio_Webcam
- * @author Lloyd Wallis <lpw@ury.org.uk>
  */
 
 namespace MyRadio\ServiceAPI;
@@ -72,23 +71,23 @@ class MyRadio_Webcam extends ServiceAPI
         $current = file_get_contents(Config::$webcam_current_url);
 
         switch ($current) {
-            case '0': $location = 'Jukebox';
-                break;
-            case '2': $location = 'Studio 1';
-                break;
-            case '3': $location = 'Studio 1 Secondary';
-                break;
-            case '4': $location = 'Studio 2';
-                break;
-            case '5': $location = 'Office';
-                break;
-            case '6': $location = 'Hall';
-                break;
-            case '8': $location = 'OB';
-                break;
-            default: $location = $current;
-                $current = 7;
-                break;
+        case '0': $location = 'Jukebox';
+            break;
+        case '2': $location = 'Studio 1';
+            break;
+        case '3': $location = 'Studio 1 Secondary';
+            break;
+        case '4': $location = 'Studio 2';
+            break;
+        case '5': $location = 'Office';
+            break;
+        case '6': $location = 'Hall';
+            break;
+        case '8': $location = 'OB';
+            break;
+        default: $location = $current;
+            $current = 7;
+            break;
         }
 
         return [

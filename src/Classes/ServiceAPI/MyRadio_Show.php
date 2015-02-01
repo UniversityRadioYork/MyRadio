@@ -20,11 +20,9 @@ use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 
 /**
  * The Show class is used to create, view and manupulate Shows within the new MyRadio Scheduler Format
- * @version 20130728
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @package MyRadio_Scheduler
- * @uses \Database
  *
+ * @package MyRadio_Scheduler
+ * @uses    \Database
  */
 
 class MyRadio_Show extends MyRadio_Metadata_Common
@@ -157,6 +155,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     /**
      * Creates a new MyRadio Show and returns an object representing it
+     *
      * @param Array $params An array of Show properties compatible with the Models/Scheduler/showfrm Form:
      * title: The name of the show<br>
      * description: The description of the show<br>
@@ -173,7 +172,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      *
      * As this is the initial creation, all tags are <i>approved</i> by the submitted so the show has some initial values
      *
-     * @todo location (above) Is not in the Show creation form
+     * @todo   location (above) Is not in the Show creation form
      * @throws MyRadioException
      */
     public static function create($params = [])
@@ -580,13 +579,13 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * set to the effective_from of this value, effectively replacing the existing value.
      * This will *not* unset is_multiple values that are not in the new set.
      *
-     * @param String $string_key The metadata key
-     * @param mixed $value The metadata value. If key is_multiple and value is an array, will create instance
+     * @param String $string_key     The metadata key
+     * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance for value in the array. for value in the array.
      * for value in the array.
-     * @param int $effective_from UTC Time the metavalue is effective from. Default now.
-     * @param int $effective_to UTC Time the metadata value is effective to. Default NULL (does not expire).
-     * @param null $table Used for compatibility with parent.
-     * @param null $pkey Used for compatibility with parent.
+     * @param int    $effective_from UTC Time the metavalue is effective from. Default now.
+     * @param int    $effective_to   UTC Time the metadata value is effective to. Default NULL (does not expire).
+     * @param null   $table          Used for compatibility with parent.
+     * @param null   $pkey           Used for compatibility with parent.
      */
     public function setMeta(
         $string_key,
@@ -639,8 +638,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * Existing credits are kept active, ones that are not in the new list are set to effective_to now,
      * and ones that are in the new list but not exist are created with effective_from now.
      *
-     * @param MyRadio_User[] $users An array of Users associated.
-     * @param int[] $credittypes The relevant credittypeid for each User.
+     * @param MyRadio_User[] $users       An array of Users associated.
+     * @param int[]          $credittypes The relevant credittypeid for each User.
      */
     public function setCredits($users, $credittypes, $table = null, $pkey = null)
     {
@@ -727,6 +726,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     /**
      * Returns the current Show on air, if there is one.
+     *
      * @param int $time Optional integer timestamp
      *
      * @return MyRadio_Show|null

@@ -2,8 +2,6 @@
 /**
  * Lists Shows the User has
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130828
  * @package MyRadio_Scheduler
  */
 
@@ -25,9 +23,9 @@ $twig = CoreUtils::getTemplateObject()->setTemplate('Scheduler/myShows.twig')
 
 if (isset($_REQUEST['msg'])) {
     switch ($_REQUEST['msg']) {
-        case 'seasonCreated':
-            $twig->addInfo('Your season application has been submitted for processing.');
-            break;
+    case 'seasonCreated':
+        $twig->addInfo('Your season application has been submitted for processing.');
+        break;
     }
 }
 

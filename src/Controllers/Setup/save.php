@@ -2,8 +2,6 @@
 /**
  * Saves the Setup data to MyRadio_Config.local.php
  *
- * @version 20140529
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 use \MyRadio\Config;
@@ -14,7 +12,7 @@ $path = __DIR__ . '/../../MyRadio_Config.local.php';
 //Merge existing config
 if (file_exists($path)) {
     $old_config = file($path);
-    require $path; //Reload so that Config:: has the right values
+    include $path; //Reload so that Config:: has the right values
 } else {
     $old_config = [];
 }

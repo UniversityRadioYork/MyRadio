@@ -1,8 +1,7 @@
 <?php
 /**
  * Allows the editing of chart types.
- * @version 20140113
- * @author  Matt Windsor <matt.windsor@ury.org.uk>
+ *
  * @package MyRadio_Charts
  */
 

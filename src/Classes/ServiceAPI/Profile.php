@@ -11,11 +11,9 @@ use \MyRadio\MyRadio\CoreUtils;
 /**
  * Abstractor for the Profile Module
  *
- * @author Andy Durant <aj@ury.org.uk>
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @todo Merge into User
+ * @todo    Merge into User
  * @package MyRadio_Profile
- * @version 20130516
+
  * @uses \Database
  * @uses \CacheProvider
  */
