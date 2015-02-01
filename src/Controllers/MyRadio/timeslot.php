@@ -22,10 +22,7 @@ function setupTimeslot($timeslot)
     }
 
     //Can the user access this timeslot?
-    if (!empty(Config::$contract_uri) && !MyRadio_User::getInstance()->hasSignedContract()) {
-        $message = "You need to have signed the Presenter's Contract to view this";
-        require_once 'Controllers/Errors/403.php';
-    } elseif (!($timeslot->getSeason()->getShow()->isCurrentUserAnOwner() || CoreUtils::hasPermission(AUTH_EDITSHOWS))) {
+    if (!($timeslot->getSeason()->getShow()->isCurrentUserAnOwner() || CoreUtils::hasPermission(AUTH_EDITSHOWS))) {
         $message = "You don't have permission to view this show";
         require_once 'Controllers/Errors/403.php';
     } else {
@@ -41,7 +38,6 @@ function setupTimeslot($timeslot)
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
-
     if (isset($_POST['timeslotid'])) {
         setupTimeslot(MyRadio_Timeslot::getInstance($_POST['timeslotid']));
     } else {
@@ -50,6 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } elseif (isset($_GET['current']) && $_GET['current'] && CoreUtils::hasPermission(AUTH_EDITSHOWS)) {
     //Submitted Current
     setupTimeslot(MyRadio_Timeslot::getCurrentTimeslot());
+
+} elseif (!empty(Config::$contract_uri) && !MyRadio_User::getInstance()->hasSignedContract()) {
+    $message = "You need to have signed the Presenter's Contract to view this";
+    require_once 'Controllers/Errors/403.php';
 
 } else {
     //Not Submitted
