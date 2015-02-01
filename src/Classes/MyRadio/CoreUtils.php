@@ -19,8 +19,6 @@ use \MyRadio\Iface\MyRadio_DataSource;
  * Standard API Utilities. Basically miscellaneous functions for the core system
  * No database accessing etc should be setup here.
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20140102
  * @package MyRadio_Core
  * @todo    Factor out permission code into a seperate class?
  */
@@ -884,8 +882,8 @@ class CoreUtils
             $a = new $authenticator();
             $result = $a->validateCredentials($user, $pass);
             if ($result instanceof MyRadio_User) {
-                if (Config::$single_authenticator 
-                    && $result->getAuthProvider() !== null 
+                if (Config::$single_authenticator
+                    && $result->getAuthProvider() !== null
                     && $result->getAuthProvider() !== $authenticator
                 ) {
                     //This is the wrong authenticator for the user

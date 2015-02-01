@@ -4,8 +4,6 @@ namespace MyRadio\MyRadio;
 
 /**
 * Null session handler.
-*
-* @author Charles Pigott <lordaro@ury.org.uk>
  */
 class MyRadioNullSession extends MyRadioSession
 {

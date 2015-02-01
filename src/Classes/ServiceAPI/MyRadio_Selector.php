@@ -20,8 +20,6 @@ use \MyRadio\iTones\iTones_Utils;
  * BE CAREFUL USING SET METHOD IN THIS CLASS.
  * THEY *WILL* CHANGE THE STATION OUTPUT.
  *
- * @version 20130813
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  * @uses    \Database
  */

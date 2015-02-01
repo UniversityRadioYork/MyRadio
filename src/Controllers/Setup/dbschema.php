@@ -2,8 +2,6 @@
 /**
  * Sets up the database schema for MyRadio
  *
- * @version 20140505
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 use \MyRadio\Database;

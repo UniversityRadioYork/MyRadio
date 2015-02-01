@@ -12,11 +12,9 @@ use \MyRadio\MyRadio\CoreUtils;
 
 /**
  * The Album class fetches information about albums in the Cental Database.
- * @version 20130803
- * @author Anthony Williams <anthony@ury.york.ac.uk>
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ *
  * @package MyRadio_Core
- * @uses \Database
+ * @uses    \Database
  */
 
 class MyRadio_Album extends ServiceAPI

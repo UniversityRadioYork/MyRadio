@@ -3,7 +3,6 @@
  * This is the controller for the news items
  * members news, tech news and the presenter information sheet
  *
- * @author  Lloyd Wallis
  * @data    20131228
  * @package MyRadio_Core
  */

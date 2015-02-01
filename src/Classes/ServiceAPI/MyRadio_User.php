@@ -20,8 +20,6 @@ use \MyRadio\ServiceAPI\MyRadio_Swagger;
  * The user object provides and stores information about a user
  * It is not a singleton for Impersonate purposes
  *
- * @version 20130824
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  * @uses    \Database
  * @uses    \CacheProvider
@@ -694,7 +692,7 @@ class MyRadio_User extends ServiceAPI
         if ($this->hasAuth(AUTH_APISUDO)) {
             return true;
         }
-        
+
         $result = MyRadio_Swagger::getCallRequirements($class, $method);
         if ($result === null) {
             return false; //No permissions means the method is not accessible
@@ -1709,7 +1707,7 @@ class MyRadio_User extends ServiceAPI
 
         if ($user !== null && $user->activateMemberThisYear($paid)) {
             /**
- * @todo send welcome email to already existing users? 
+ * @todo send welcome email to already existing users?
 */
             return $user;
         } else {

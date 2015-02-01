@@ -4,8 +4,6 @@
  * This is the Root Controller - it is the backbone of every request, preparing resources and passing the request onto
  * the necessary handler.
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20131230
  * @package MyRadio_Core
  */
 

@@ -16,11 +16,10 @@ use \MyRadio\MyRadioEmail;
 
 /**
  * The Season class is used to create, view and manupulate Seasons within the new MyRadio Scheduler Format
- * @version 20130814
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ *
  * @package MyRadio_Scheduler
- * @uses \Database
- * @uses \MyRadio_Show
+ * @uses    \Database
+ * @uses    \MyRadio_Show
  */
 class MyRadio_Season extends MyRadio_Metadata_Common
 {
@@ -207,8 +206,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
         //Now for requested times
         for ($i = 0; $i < sizeof($params['times']['day']); $i++) {
-            if (is_null($params['times']['day'][$i]) 
-                || is_null($params['times']['stime'][$i]) 
+            if (is_null($params['times']['day'][$i])
+                || is_null($params['times']['stime'][$i])
                 || is_null($params['times']['etime'][$i])
             ) {
                 throw new MyRadioException('Each requested time must have a day, start time and end time.', 400);

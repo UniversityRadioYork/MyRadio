@@ -19,8 +19,6 @@ use \MyRadio\ServiceAPI\MyRadio_User;
  * just "presenter" training, and more towards any activity, "Training Status"
  * was adopted.
  *
- * @version 20130810
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 

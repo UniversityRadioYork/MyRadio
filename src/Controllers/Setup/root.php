@@ -7,8 +7,6 @@
  * enable/disable modules and default permission structures, as well as update
  * the DB schema to ensure it is current.
  *
- * @version 20140501
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 

@@ -15,8 +15,6 @@ use \MyRadio\ServiceAPI\MyRadio_User;
 /**
  * The NIPSWeb_ManagedItem class helps provide control and access to Beds and Jingles and similar not-PPL resources
  *
- * @version 20130601
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_NIPSWeb
  * @uses    \Database
  */

@@ -2,8 +2,6 @@
 /**
  * List of iTones_Playlists
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130712
  * @package MyRadio_iTones
  */
 

@@ -2,8 +2,6 @@
 /**
  * Streams a central database track if a play token is available
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 17032013
  * @package MyRadio_NIPSWeb
  */
 

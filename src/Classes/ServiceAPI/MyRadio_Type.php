@@ -11,8 +11,6 @@ namespace MyRadio\ServiceAPI;
  * items describing types/categories of other items have a machine-readable
  * name and human-readable description.
  *
- * @version 20130426
- * @author  Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Core
  * @uses    \Database
  */

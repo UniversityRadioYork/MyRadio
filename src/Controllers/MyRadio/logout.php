@@ -2,7 +2,7 @@
 
 /**
  *
- * @author Lloyd Wallis
+
  * @data 20131230
  * @package MyRadio_Core
  * @todo Throttle quick attempts from one IP with captcha

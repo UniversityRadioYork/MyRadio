@@ -3,8 +3,6 @@
 /**
  * Gets the full station tracklist - useful for PPL returns.
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130830
  * @package MyRadio_Stats
  */
 

@@ -15,8 +15,6 @@ use \MyRadio\MyRadio\MyRadioFormField;
 /**
  * A quote in the radio station Quotes Database.
  *
- * @version 20140113
- * @author  Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Core
  * @uses    \Database
  */

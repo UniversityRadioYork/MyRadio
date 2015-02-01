@@ -16,8 +16,6 @@ use \MyRadio\MyRadio\MyRadioFormField;
 /**
  * The Banner class stores and manages information about a Banner on the front website
  *
- * @version 20130806
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Website
  * @uses    \Database
  */

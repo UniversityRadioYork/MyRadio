@@ -15,8 +15,6 @@ use \MyRadio\MyRadio\CoreUtils;
  * The MyRadio_TrackCorrection class provides information and utilities for dealing with detecting a major issue
  * with the track metadata by the FingerprinterDaemon.
  *
- * @version 20130720
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  * @uses    \Database
  * @todo    Cache this

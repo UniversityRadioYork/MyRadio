@@ -12,8 +12,6 @@ use \MyRadio\MyRadio\CoreUtils;
 /**
  * The Team class provides information about Committee Teams.
  *
- * @version 20130908
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  * @uses    \Database
  */

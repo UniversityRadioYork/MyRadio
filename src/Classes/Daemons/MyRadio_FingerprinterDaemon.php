@@ -14,8 +14,6 @@ use \MyRadio\ServiceAPI\MyRadio_TrackCorrection;
  * The Fingerprinter Daemon will scan the digital files in the music library, and log information about potentially
  * incorrect metadata in the rec database.
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130711
  * @package MyRadio_Daemon
  */
 class MyRadio_FingerprinterDaemon extends \MyRadio\MyRadio\MyRadio_Daemon

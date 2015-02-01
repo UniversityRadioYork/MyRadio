@@ -12,8 +12,6 @@ use \MyRadio\Database;
 /**
  * The LabelFinder Daemon processes rec_record in batches, and tries to fill in the "label" field.
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130711
  * @package MyRadio_Daemon
  */
 class MyRadio_LabelFinderDaemon extends \MyRadio\MyRadio\MyRadio_Daemon

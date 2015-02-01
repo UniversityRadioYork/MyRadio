@@ -2,8 +2,6 @@
 /**
  * Sets up the database data for a new installation of MyRadio
  *
- * @version 20140506
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  * @todo    Apply patches
  * @todo    there's some duplication in setUpFullActionsAuth and DBDATA_BLANK

@@ -17,8 +17,6 @@ use \MyRadio\iTones\iTones_Playlist;
 /**
  * The MyRadio_Track class provides and stores information about a Track
  *
- * @version 20130609
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  * @uses    \Database
  * @todo    Cache this
@@ -553,7 +551,7 @@ class MyRadio_Track extends ServiceAPI
     {
         //Syspath is set by Daemons or where $PATH is not sufficent.
         $response = shell_exec((empty($GLOBALS['syspath']) ? '' : $GLOBALS['syspath']) . 'lastfm-fpclient -json ' . $path);
-        
+
         if (!trim($response)) {
             return ['status' => 'LASTFM_ERROR',
                     'error' => 'Last.FM doesn\'t seem to be working right now.'];

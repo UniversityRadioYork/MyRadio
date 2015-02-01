@@ -486,7 +486,7 @@ window.NIPSWeb = {
                     options.method = 'POST';
                     options.data = '{"position":"'+ui.value+'"}';
                     $.ajax(options);
-                }
+            }
         );
 
         //Funtion key press

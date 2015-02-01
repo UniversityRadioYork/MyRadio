@@ -1,8 +1,7 @@
 <?php
 /**
  * Allows the editing of quotes.
- * @version 20131020
- * @author Matt Windsor <matt.windsor@ury.org.uk>
+ *
  * @package MyURY_Quotes
  */
 

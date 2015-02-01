@@ -17,8 +17,6 @@ use \MyRadio\MyRadio\MyRadioFormField;
  * A chart release is a chart for a given week, and is associated with a chart
  * and an arbitrary number of rows (traditionally 10).
  *
- * @version 20140113
- * @author  Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Charts
  * @uses    \Database
  */

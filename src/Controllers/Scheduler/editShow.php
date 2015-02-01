@@ -4,8 +4,6 @@
  * It can take one parameter, $_REQUEST['showid']
  * which should be the ID of the Show to edit.
  *
- * @author  Andy Durant <aj@ury.org.uk>
- * @version 20140623
  * @package MyRadio_Scheduler
  */
 

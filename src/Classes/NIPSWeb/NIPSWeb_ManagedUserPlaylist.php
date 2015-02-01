@@ -10,8 +10,6 @@ namespace MyRadio\NIPSWeb;
 /**
  * The NIPSWeb_ManagedUserPlaylist class provide My Jingles and My Beds for users.
  *
- * @version 20130802
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_NIPSWeb
  * @uses    \Database
  */

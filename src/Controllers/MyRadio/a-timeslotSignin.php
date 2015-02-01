@@ -3,8 +3,6 @@
  * Returns the presenter signin data for the given Timeslot
  * (if the user has access to this data)
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20140102
  * @package MyRadio_Core
  */
 

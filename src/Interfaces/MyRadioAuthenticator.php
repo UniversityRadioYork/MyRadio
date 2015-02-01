@@ -5,8 +5,6 @@ namespace MyRadio\Iface;
 /**
  * An Authenticator processes login requests for a user against a specific
  * user database.
- *
- * @author Lloyd Wallis <lpw@ury.org.uk>
  */
 interface MyRadioAuthenticator
 {

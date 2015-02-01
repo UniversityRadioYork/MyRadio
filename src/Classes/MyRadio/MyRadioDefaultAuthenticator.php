@@ -11,8 +11,6 @@ use \MyRadio\ServiceAPI\MyRadio_User;
 /**
  * An Authenticator processes login requests for a user against a specific
  * user database.
- *
- * @author Lloyd Wallis <lpw@ury.org.uk>
  */
 class MyRadioDefaultAuthenticator extends \MyRadio\Database implements \MyRadio\Iface\MyRadioAuthenticator
 {

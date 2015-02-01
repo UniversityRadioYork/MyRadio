@@ -14,9 +14,6 @@ use \MyRadio\ServiceAPI\MyRadio_User;
  * The object obviously needs to have a credits table in the database for this
  * to work.
  *
- * @version 20140112
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @author  Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Core
  * @uses    \Database
  */

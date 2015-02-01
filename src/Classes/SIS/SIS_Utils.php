@@ -14,8 +14,6 @@ use \MyRadio\ServiceAPI\ServiceAPI;
 /**
  * This class has helper functions for building SIS
  *
- * @version 20130926
- * @author  Andy Durant <aj@ury.org.uk>
  * @package MyRadio_SIS
  */
 class SIS_Utils extends ServiceAPI

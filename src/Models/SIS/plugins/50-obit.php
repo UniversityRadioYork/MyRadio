@@ -3,8 +3,6 @@
 /**
  * Obit Plugin for SIS
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20140109
  * @package MyRadio_SIS
  */
 $moduleInfo = [

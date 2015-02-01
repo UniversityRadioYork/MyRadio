@@ -15,9 +15,6 @@ use \MyRadio\ServiceAPI\MyRadio_List;
 /**
  * Provides email functions so that MyRadio can send email.
  *
- * @author  Andy Durant <aj@ury.org.uk>
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130809
  * @package MyRadio_Mail
  * @todo    Footers contain hard-coded URLs. This used to be necessary (when the links went to mint), but isn't now.
  */
@@ -410,7 +407,7 @@ class MyRadioEmail extends ServiceAPI
     }
 
     /**
- * BELOW HERE IS FOR IF STUFF BREAKS REALLY EARLY BEFORE ^ WILL WORK * 
+ * BELOW HERE IS FOR IF STUFF BREAKS REALLY EARLY BEFORE ^ WILL WORK *
 */
 
     /**

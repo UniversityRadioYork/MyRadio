@@ -1,8 +1,8 @@
 <?php
 /**
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20141026
+
+
  * @package MyRadio_Scheduler
  */
 

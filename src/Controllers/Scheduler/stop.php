@@ -3,8 +3,6 @@
  * This stops everything. It's part of a several-stage process to trigger
  * the station's emergency broadcast system.
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20131215
  * @package MyRadio_Scheduler
  */
 

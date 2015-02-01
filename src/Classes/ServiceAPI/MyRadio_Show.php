@@ -20,10 +20,9 @@ use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 
 /**
  * The Show class is used to create, view and manupulate Shows within the new MyRadio Scheduler Format
- * @version 20130728
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ *
  * @package MyRadio_Scheduler
- * @uses \Database
+ * @uses    \Database
  */
 
 class MyRadio_Show extends MyRadio_Metadata_Common

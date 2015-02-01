@@ -14,8 +14,6 @@ use \MyRadio\ServiceAPI\MyRadio_Track;
 /**
  * The Explicit Daemon asks iTunes if a Track is Explicit.
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130711
  * @package MyRadio_Daemon
  */
 class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
@@ -45,7 +43,7 @@ class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 'custom' => 'trackid NOT IN (SELECT trackid FROM music.explicit_checked)'
             ]
         );
-        
+
         if (empty($tracks)) {
             self::$digitised_only = false;
         }
@@ -74,9 +72,9 @@ class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                     $clean = $data['results'][$i]['trackExplicitness'] == 'explicit'
                             ? 'n' : 'y';
                     $track->setClean($clean);
-                    
+
                     dlog(
-                        'Setting Explicicity of ' . 
+                        'Setting Explicicity of ' .
                         $track->getTitle() . ' (' . $track->getAlbum()->getID()
                         . '/' . $track->getID() . ') as ' . $clean,
                         2

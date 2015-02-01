@@ -17,8 +17,6 @@ use MyRadio\ServiceAPI\MyRadio_User;
  * A collection of these is automatically created when building a MyRadioForm
  *
  * @package MyRadio_Core
- * @version 20130722
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  */
 class MyRadioFormField
 {
@@ -739,7 +737,7 @@ class MyRadioFormField
             $active_time = null;
             for ($i = 1; $i <= 7; $i++) { //Iterate over each day
                 for ($j = 0; $j < 86400; $j+=1800) { //Iterate over each 30 minute interval
-                    if (isset($_REQUEST[$name . '-' . $i . '-' . $j]) 
+                    if (isset($_REQUEST[$name . '-' . $i . '-' . $j])
                         && strtolower($_REQUEST[$name . '-' . $i . '-' . $j]) === 'on'
                     ) {
                         //Is there already an active selection? If so, carry on.

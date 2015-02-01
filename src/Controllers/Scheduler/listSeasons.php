@@ -1,10 +1,9 @@
 <?php
 /**
  * Controller for outputting a Datatable of Seasons within the specified Show
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130828
+ *
  * @package MyRadio_Scheduler
- * @todo This requires manual permission checks as it needs interesting things
+ * @todo    This requires manual permission checks as it needs interesting things
  */
 
 use \MyRadio\MyRadio\CoreUtils;

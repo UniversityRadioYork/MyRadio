@@ -13,8 +13,6 @@ use \MyRadio\MyRadio\CoreUtils;
  * Extends the standard Exception class to provide additional functionality
  * and logging
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130711
  * @package MyRadio_Core
  */
 class MyRadioException extends \RuntimeException

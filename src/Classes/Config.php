@@ -9,8 +9,6 @@ namespace MyRadio;
 /**
  * Stores configuration settings
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20140529
  * @package MyRadio_Core
  */
 final class Config
@@ -289,7 +287,7 @@ final class Config
      * @var String
      */
     public static $lastfm_api_secret;
-    
+
     /**
      * The last.fm group specifically for the University of York. If using
      * this aspect of the code you probably want to change this bit.

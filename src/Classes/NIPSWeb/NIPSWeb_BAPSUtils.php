@@ -15,8 +15,6 @@ use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 /**
  * This class has helper functions for saving Show Planner show informaiton into legacy BAPS Show layout
  *
- * @version 20130508
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_NIPSWeb
  */
 class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
