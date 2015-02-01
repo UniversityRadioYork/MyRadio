@@ -200,7 +200,7 @@ class MyRadio_User extends ServiceAPI
             'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college,
             phone, email, receive_email, local_name, local_alias, eduroam,
             account_locked, last_login, joined, profile_photo, bio,
-            auth_provider, require_password_change
+            auth_provider, require_password_change, contract_signed
             FROM member, l_college
             WHERE memberid=$1
             AND member.college = l_college.collegeid
@@ -1408,8 +1408,7 @@ class MyRadio_User extends ServiceAPI
                     ]
                 ]));
         if (empty(Config::$contract_uri) === false) {
-            $form->addField(new MyRadioFormField('contract',
-                empty(Config::$contract_uri) ? MyRadioFormField::TYPE_HIDDEN : MyRadioFormField::TYPE_CHECK, [
+            $form->addField(new MyRadioFormField('contract', MyRadioFormField::TYPE_CHECK, [
                 'label' => 'I, ' . $this->getName() . ', agree to abide by '
                 . Config::$short_name . '\'s station rules and regulations as '
                 . 'set out in the <a href="' . Config::$contract_uri . '" target="_blank">Presenter\'s Contract</a>, '
@@ -1606,7 +1605,7 @@ class MyRadio_User extends ServiceAPI
         //Actually create the member!
         $r = self::$db->fetchColumn(
             'INSERT INTO public.member (fname, sname, sex,
-            college, phone, email, receive_email, eduroam, require_password_change, contract_signed)
+            college, phone, email, receive_email, eduroam, require_password_change)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid',
             [
                 $fname,
@@ -1617,8 +1616,7 @@ class MyRadio_User extends ServiceAPI
                 $email,
                 $receive_email,
                 $eduroam,
-                true,
-                false
+                true
             ]
         );
 

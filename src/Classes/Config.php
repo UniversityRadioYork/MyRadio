@@ -245,7 +245,7 @@ final class Config
      * @note If this variable is empty, then contracts are disabled.
      * @var String
      */
-    public static $contract_uri = '/wiki/Contract';
+    public static $contract_uri = '';
 
     /**
      * The file system path to the Central Database. Must be absolute. Can not be smb://, but may be a network share

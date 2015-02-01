@@ -22,7 +22,9 @@ function setupTimeslot($timeslot)
     }
 
     //Can the user access this timeslot?
-    if (!($timeslot->getSeason()->getShow()->isCurrentUserAnOwner() or CoreUtils::hasPermission(AUTH_EDITSHOWS))) {
+    if (!empty(Config::$contract_uri) && !MyRadio_User::getInstance()->hasSignedContract()
+        || !($timeslot->getSeason()->getShow()->isCurrentUserAnOwner() || CoreUtils::hasPermission(AUTH_EDITSHOWS))
+    ) {
         require_once 'Controllers/Errors/403.php';
     } else {
         $_SESSION['timeslotid'] = $timeslot->getID();
@@ -37,6 +39,7 @@ function setupTimeslot($timeslot)
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
+
     if (isset($_POST['timeslotid'])) {
         setupTimeslot(MyRadio_Timeslot::getInstance($_POST['timeslotid']));
     } else {
