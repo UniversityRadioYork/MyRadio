@@ -185,7 +185,7 @@ class Autoloader
     protected function requireFile($file)
     {
         if (file_exists($file)) {
-            include_once $file;
+            require_once $file;
             return true;
         }
         return false;

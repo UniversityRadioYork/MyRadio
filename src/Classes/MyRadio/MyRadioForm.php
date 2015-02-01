@@ -270,7 +270,7 @@ class MyRadioForm
          * If we need to do a captcha, load the requirements
          */
         if ($this->captcha) {
-            include_once 'Classes/vendor/recaptchalib.php';
+            require_once 'Classes/vendor/recaptchalib.php';
             $captcha = recaptcha_get_html(Config::$recaptcha_public_key, null, true);
         } else {
             $captcha = null;
@@ -337,7 +337,7 @@ class MyRadioForm
     {
         //If there was a captcha, verify it
         if ($this->captcha) {
-            include_once 'Classes/vendor/recaptchalib.php';
+            require_once 'Classes/vendor/recaptchalib.php';
             if (!recaptcha_check_answer(
                 Config::$recaptcha_private_key,
                 $_SERVER['REMOTE_ADDR'],

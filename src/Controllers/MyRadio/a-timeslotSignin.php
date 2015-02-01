@@ -16,5 +16,5 @@ if ($ts->getSeason()->getShow()->isCurrentUserAnOwner()
     $data = $ts->getSigninInfo();
     CoreUtils::dataToJSON($data);
 } else {
-    include_once 'Controllers/Errors/403.php';
+    require_once 'Controllers/Errors/403.php';
 }

@@ -22,7 +22,7 @@ function setupTimeslot($timeslot)
 
     //Can the user access this timeslot?
     if (!($timeslot->getSeason()->getShow()->isCurrentUserAnOwner() or CoreUtils::hasPermission(AUTH_EDITSHOWS))) {
-        include_once 'Controllers/Errors/403.php';
+        require_once 'Controllers/Errors/403.php';
     } else {
         $_SESSION['timeslotid'] = $timeslot->getID();
         $_SESSION['timeslotname'] = CoreUtils::happyTime($timeslot->getStartTime());

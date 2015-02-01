@@ -102,7 +102,7 @@ class CoreUtils
      */
     public static function getTemplateObject()
     {
-        include_once 'Twig/Autoloader.php';
+        require_once 'Twig/Autoloader.php';
         \Twig_Autoloader::register();
 
         return new MyRadioTwig();
@@ -413,7 +413,7 @@ class CoreUtils
         }
         if (!self::hasPermission($permission)) {
             //Load the 403 controller and exit
-            include 'Controllers/Errors/403.php';
+            require 'Controllers/Errors/403.php';
             exit;
         }
     }
@@ -467,7 +467,7 @@ class CoreUtils
                 self::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
             } else {
                 //Authenticated, but not authorized
-                include 'Controllers/Errors/403.php';
+                require 'Controllers/Errors/403.php';
             }
             exit;
         }
@@ -844,7 +844,7 @@ class CoreUtils
 
     public static function getSafeHTML($dirty_html)
     {
-        include_once 'Classes/vendor/htmlpurifier/HTMLPurifier.auto.php';
+        require_once 'Classes/vendor/htmlpurifier/HTMLPurifier.auto.php';
         $config = \HTMLPurifier_Config::createDefault();
         $purifier = new \HTMLPurifier($config);
 
