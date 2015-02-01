@@ -33,7 +33,8 @@ $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/menu.twig')
         ->addVariable('studio_demoed', $user->isStudioDemoed())
         ->addVariable('is_trainer', $user->isTrainer())
         ->addVariable('has_show', $user->hasShow())
-        ->addVariable('paid', $user->isCurrentlyPaid());
+        ->addVariable('paid', $user->isCurrentlyPaid())
+        ->addVariable('contract_signed', $user->hasSignedContract());
 
 if (Config::$members_news_enable) {
     $twig->addVariable('news', $news);

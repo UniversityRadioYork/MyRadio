@@ -286,7 +286,7 @@ class MyRadio_Track extends ServiceAPI
                 'f', null, $this->getID()
             ]
         );
-        $this->updateCachedObject();
+        $this->updateCacheObject();
     }
 
     /**
@@ -296,7 +296,7 @@ class MyRadio_Track extends ServiceAPI
     {
         $this->clean = $clean;
         self::$db->query('UPDATE rec_track SET clean=$1 WHERE trackid=$2', [$clean, $this->getID()]);
-        $this->updateCachedObject();
+        $this->updateCacheObject();
     }
 
     /**
@@ -772,7 +772,7 @@ class MyRadio_Track extends ServiceAPI
         $this->record = $album->getID();
         self::$db->query('UPDATE rec_track SET recordid=$1 WHERE trackid=$2', [$album->getID(), $this->getID()]);
 
-        $this->updateCachedObject();
+        $this->updateCacheObject();
     }
 
     public function setTitle($title)
@@ -783,7 +783,7 @@ class MyRadio_Track extends ServiceAPI
 
         $this->title = $title;
         self::$db->query('UPDATE rec_track SET title=$1 WHERE trackid=$2', [$title, $this->getID()]);
-        $this->updateCachedObject();
+        $this->updateCacheObject();
     }
 
     public function setArtist($artist)
@@ -795,14 +795,14 @@ class MyRadio_Track extends ServiceAPI
         $this->artist = $artist;
         self::$db->query('UPDATE rec_track SET artist=$1 WHERE trackid=$2', [$artist, $this->getID()]);
 
-        $this->updateCachedObject();
+        $this->updateCacheObject();
     }
 
     public function setPosition($position)
     {
         $this->position = (int) $position;
         self::$db->query('UPDATE rec_track SET number=$1 WHERE trackid=$2', [$this->getPosition(), $this->getID()]);
-        $this->updateCachedObject();
+        $this->updateCacheObject();
     }
 
     public function getPosition()
@@ -818,7 +818,7 @@ class MyRadio_Track extends ServiceAPI
             $this->getDuration(),
             $this->getID()
         ]);
-        $this->updateCachedObject();
+        $this->updateCacheObject();
     }
 
     /**
@@ -960,7 +960,7 @@ class MyRadio_Track extends ServiceAPI
                 }
             }
 
-            $this->updateCachedObject();
+            $this->updateCacheObject();
         }
 
         return self::resultSetToObjArray($this->lastfm_similar);
@@ -980,7 +980,7 @@ class MyRadio_Track extends ServiceAPI
                     [$this->getID()]
                 )
             );
-            $this->updateCachedObject();
+            $this->updateCacheObject();
         }
 
         return $this->itones_blacklist;

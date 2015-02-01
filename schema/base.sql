@@ -35,7 +35,7 @@ BEGIN
         AND ((NEW."timestopped" - NEW."timeplayed" > '00:00:30') )
         AND ((SELECT COUNT(*) FROM tracklist.tracklist WHERE bapsaudioid = NEW."audiologid") = 0)
         )
-        
+
  THEN
         INSERT INTO tracklist.tracklist (source, timestart, timestop, timeslotid, bapsaudioid)
                 VALUES ('b', NEW."timeplayed", NEW."timestopped", (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot WHERE start_time <= NOW() AND (start_time + duration) >= NOW()ORDER BY show_season_timeslot_id ASC LIMIT 1 ), NEW."audiologid" )
@@ -43,8 +43,8 @@ BEGIN
 	INSERT INTO tracklist.track_rec
                 VALUES ("audid", (SELECT rec.recordid FROM rec_track rec INNER JOIN baps_audio ba USING (trackid)
                 WHERE ba.audioid = NEW."audioid"), (SELECT trackid FROM baps_audio WHERE audioid = NEW."audioid"));
- 
-		
+
+
 	END IF;
 	RETURN NULL;
 END $$;
@@ -70,7 +70,7 @@ CREATE FUNCTION process_gammu_text() RETURNS trigger
         IF (TG_OP = 'INSERT') THEN
            IF (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot WHERE start_time <= NOW() AND (start_time + duration) >= NOW() ORDER BY show_season_timeslot_id ASC LIMIT 1) IS NOT NULL THEN
               INSERT INTO sis2.messages (commtypeid, timeslotid, sender, subject, content, statusid)
-              
+
               VALUES (2, (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot WHERE start_time <= NOW() AND (start_time + duration) >= NOW() ORDER BY show_season_timeslot_id ASC LIMIT 1), NEW."SenderNumber", NEW."TextDecoded", NEW."TextDecoded", 1);
               RETURN NEW;
            ELSE
@@ -612,23 +612,6 @@ CREATE SEQUENCE award_member_awardmemberid_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE award_member_awardmemberid_seq OWNED BY award_member.awardmemberid;
-CREATE TABLE contract_versions (
-    contract_version_id integer NOT NULL,
-    description text,
-    ratified_date date,
-    enforced_date date
-);
-COMMENT ON TABLE contract_versions IS 'Stores the revision history of URY''s presenter contract. This way we can ensure presenters have signed the latest version.';
-COMMENT ON COLUMN contract_versions.description IS 'A description of revisions made in this version of the contract.';
-COMMENT ON COLUMN contract_versions.ratified_date IS 'The date the new version of the contract came into use.';
-COMMENT ON COLUMN contract_versions.enforced_date IS 'If NULL, then it isn''t required for presenters to have signed the new contract yet.';
-CREATE SEQUENCE contract_versions_contract_version_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE contract_versions_contract_version_id_seq OWNED BY contract_versions.contract_version_id;
 CREATE TABLE error_rate (
     request_id integer NOT NULL,
     server_ip character varying NOT NULL,
@@ -1416,7 +1399,8 @@ CREATE TABLE member (
     require_password_change boolean DEFAULT false NOT NULL,
     profile_photo integer,
     bio text,
-    auth_provider character varying
+    auth_provider character varying,
+    contract_signed boolean DEFAULT false NOT NULL
 );
 COMMENT ON COLUMN member.email IS 'If set, this is the user''s contact address. Otherwise, use the eduroam field.';
 COMMENT ON COLUMN member.local_name IS 'This column represents the part of the user''s URY email address before the @. When null, the user does not have a URY email account.';
@@ -2573,7 +2557,6 @@ ALTER TABLE ONLY api_class_map ALTER COLUMN api_map_id SET DEFAULT nextval('api_
 ALTER TABLE ONLY api_method_auth ALTER COLUMN api_method_auth_id SET DEFAULT nextval('api_method_auth_api_method_auth_id_seq'::regclass);
 ALTER TABLE ONLY award_categories ALTER COLUMN awardid SET DEFAULT nextval('award_categories_awardid_seq'::regclass);
 ALTER TABLE ONLY award_member ALTER COLUMN awardmemberid SET DEFAULT nextval('award_member_awardmemberid_seq'::regclass);
-ALTER TABLE ONLY contract_versions ALTER COLUMN contract_version_id SET DEFAULT nextval('contract_versions_contract_version_id_seq'::regclass);
 ALTER TABLE ONLY error_rate ALTER COLUMN request_id SET DEFAULT nextval('error_rate_request_id_seq'::regclass);
 ALTER TABLE ONLY modules ALTER COLUMN moduleid SET DEFAULT nextval('modules_moduleid_seq'::regclass);
 ALTER TABLE ONLY photos ALTER COLUMN photoid SET DEFAULT nextval('photos_photoid_seq'::regclass);
@@ -3084,14 +3067,6 @@ ALTER TABLE ONLY award_categories
 
 ALTER TABLE ONLY award_member
     ADD CONSTRAINT award_member_pkey PRIMARY KEY (awardmemberid);
-
-
---
--- Name: contract_versions_pkey; Type: CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY contract_versions
-    ADD CONSTRAINT contract_versions_pkey PRIMARY KEY (contract_version_id);
 
 
 --

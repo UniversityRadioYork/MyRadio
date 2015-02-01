@@ -34,7 +34,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
         $r = MyRadio_Scheduler::getScheduleConflict($time, $time+3600);
         if (!empty($r)) {
             //There's a conflict
-            throw new MyRadioException('There is already something scheduled at that time', MyRadioException::FATAL);
+            throw new MyRadioException('There is already something scheduled at that time', 400);
 
             return false;
         }
@@ -60,14 +60,14 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
                 'Scheduler',
                 'createDemo',
                 [
-                    'title' => 'Create Demo'
+                    'title' => 'Create Training Session'
                 ]
             )
         )->addField(
             new MyRadioFormField(
                 'demo-datetime',
                 MyRadioFormField::TYPE_DATETIME,
-                ['label' => 'Date and Time of the Demo']
+                ['label' => 'Date and Time of the session']
             )
         );
     }
@@ -155,15 +155,15 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
         $time = self::getDemoTime($demoid);
         $user = self::getDemoer($demoid);
         $attendee = MyRadio_User::getInstance();
-        MyRadioEmail::sendEmailToUser($user, 'New Demo Attendee', $attendee->getName().' has joined your demo at '.$time.'.');
+        MyRadioEmail::sendEmailToUser($user, 'New Training Attendee', $attendee->getName().' has joined your session at '.$time.'.');
         MyRadioEmail::sendEmailToUser(
             $attendee,
-            'Attending Demo',
+            'Attending Training',
             'Hi '
             .$attendee->getFName()
-            .",\r\n\r\nThanks for joining a demo at $time. You will be demoed by "
+            .",\r\n\r\nThanks for joining a training session at $time. You will be trained by "
             .$user->getName()
-            .'. Just head over to the station in Vanbrugh College just before your demo and the trainer will be waiting for you.'
+            .'. Just head over to the station in Vanbrugh College just before your slot and the trainer will be waiting for you.'
             ."\r\n\r\nSee you on air soon!\r\n"
             .Config::$long_name
             ." Training"

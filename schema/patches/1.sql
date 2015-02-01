@@ -7,7 +7,6 @@ ALTER TABLE myury.api_key_log SET SCHEMA myradio;
 ALTER TABLE myury.api_method_auth SET SCHEMA myradio;
 ALTER TABLE myury.award_categories SET SCHEMA myradio;
 ALTER TABLE myury.award_member SET SCHEMA myradio;
-ALTER TABLE myury.contract_versions SET SCHEMA myradio;
 ALTER TABLE myury.error_rate SET SCHEMA myradio;
 ALTER TABLE myury.menu_columns SET SCHEMA myradio;
 ALTER TABLE myury.menu_links SET SCHEMA myradio;
