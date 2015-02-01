@@ -2,10 +2,10 @@
 /**
  * Selector setter for SIS
  *
- * @author Andy Durant <aj@ury.org.uk>
+ * @author  Andy Durant <aj@ury.org.uk>
  * @version 20131117
  * @package MyRadio_SIS
- * @todo Lots of duplication with MyRadio_Selector here
+ * @todo    Lots of duplication with MyRadio_Selector here
  */
 
 use \MyRadio\MyRadio\CoreUtils;
@@ -20,7 +20,8 @@ if (($src <= 0) || ($src > 8)) {
     $data = ['error' => 'Source '.$src.' already selected'];
 } elseif ((($src == 1) && (!$status['s1power']))
     || (($src == 2) && (!$status['s2power']))
-    || (($src == 4) && (!$status['s4power']))) {
+    || (($src == 4) && (!$status['s4power']))
+) {
     $data = ['error' => 'Source '.$src.' not powered'];
 } elseif ($status['lock'] != 0) {
     $data = ['error' => 'locked'];

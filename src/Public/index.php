@@ -12,7 +12,7 @@
  * - $module - The module requested<br>
  * - $action - The action requested
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130525
  * @package MyRadio_Core
  */

@@ -2,7 +2,7 @@
 /**
  * Allows Users to edit their profiles, or for admins to edit other users.
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130715
  * @package MyRadio_Profile
  */

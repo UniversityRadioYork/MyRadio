@@ -2,7 +2,7 @@
 /**
  * Main page for Banner Admin. Lists all the existing banners.
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130807
  * @package MyRadio_Website
  */

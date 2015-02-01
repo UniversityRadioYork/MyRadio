@@ -3,7 +3,7 @@
 /**
  * Ajax handler for Timelord
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130905
  * @package MyRadio_Timelord
  */

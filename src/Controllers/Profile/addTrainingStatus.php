@@ -2,7 +2,7 @@
 /**
  * Gives a User a Training Status
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130825
  * @package MyRadio_Profile
  */

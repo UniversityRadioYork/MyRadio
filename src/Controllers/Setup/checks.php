@@ -4,11 +4,11 @@
  * MyRadio to get started.
  *
  * @version 20140501
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
- * @todo Check if rewrites work
- * @todo Check if static resources load?
- * @todo Check for PostgreSQL >=9.2
+ * @todo    Check if rewrites work
+ * @todo    Check if static resources load?
+ * @todo    Check for PostgreSQL >=9.2
  */
 
 /**
@@ -22,21 +22,21 @@ function convertPHPSizeToBytes($sSize)
     $sSuffix = substr($sSize, -1);
     $iValue = substr($sSize, 0, -1);
     switch (strtoupper($sSuffix)) {
-        case 'P':
-            $iValue *= 1024;
-            //no break
-        case 'T':
-            $iValue *= 1024;
-            //no break
-        case 'G':
-            $iValue *= 1024;
-            //no break
-        case 'M':
-            $iValue *= 1024;
-            //no break
-        case 'K':
-            $iValue *= 1024;
-            break;
+    case 'P':
+        $iValue *= 1024;
+        //no break
+    case 'T':
+        $iValue *= 1024;
+        //no break
+    case 'G':
+        $iValue *= 1024;
+        //no break
+    case 'M':
+        $iValue *= 1024;
+        //no break
+    case 'K':
+        $iValue *= 1024;
+        break;
     }
     return $iValue;
 }
@@ -198,47 +198,47 @@ foreach ($function_checks as $check) {
           <div id="content-body" class="clearfix">
               <p>It looks like you're trying to install MyRadio! Would you like some help with that? No? Well too bad, I'm not a paperclip you can hide.</p>
               <p>I'm just running some background checks to see if you're ready to go.</p>
-              <?php
-              if ($ready) {
-                  ?>
-                  <p class="ui-state-highlight">Good news! It looks like you're ready to go. <a href="?c=dbserver">Click here to continue</a>.</p>
-              <?php
-              } else {
-                  ?>
-                  <p class="ui-state-error">Uh oh! It looks like there's some things you'll have to get sorted out before you can continue. Follow the advice below, then <a href=''>refresh this page</a> to try again.</p>
-              <?php
+                <?php
+                if ($ready) {
+                    ?>
+                    <p class="ui-state-highlight">Good news! It looks like you're ready to go. <a href="?c=dbserver">Click here to continue</a>.</p>
+                <?php
+                } else {
+                    ?>
+                    <p class="ui-state-error">Uh oh! It looks like there's some things you'll have to get sorted out before you can continue. Follow the advice below, then <a href=''>refresh this page</a> to try again.</p>
+                <?php
                   echo '<h3>The following tests failed and must be fixed before you can proceed:</h3><ul>';
-                  foreach ($problems as $problem) {
-                      echo '<li>'.$problem.'</li>';
-                  }
+                foreach ($problems as $problem) {
+                    echo '<li>'.$problem.'</li>';
+                }
                   echo '</ul>';
-              }
+                }
 
-              if (empty($warnings)) {
-                  if ($ready) {
-                      echo '<p><span class="ui-icon ui-icon-circle-check fleft"></span>Amazing! Your server is absolutely <em>perfect</em> for running MyRadio.</p>';
-                  }
-              } else {
-                  echo '<h3>The following tests failed, but they aren\'t required for MyRadio to run:</h3><ul>';
-                  foreach ($warnings as $warning) {
-                      echo '<li>'.$warning.'</li>';
-                  }
-                  echo '</ul>';
-              }
+                if (empty($warnings)) {
+                    if ($ready) {
+                        echo '<p><span class="ui-icon ui-icon-circle-check fleft"></span>Amazing! Your server is absolutely <em>perfect</em> for running MyRadio.</p>';
+                    }
+                } else {
+                    echo '<h3>The following tests failed, but they aren\'t required for MyRadio to run:</h3><ul>';
+                    foreach ($warnings as $warning) {
+                        echo '<li>'.$warning.'</li>';
+                    }
+                    echo '</ul>';
+                }
 
-              if (!empty($successes)) {
-                  echo '<h3>The following tests passed without any issues:</h3><ul>';
-                  foreach ($successes as $success) {
-                      echo '<li>'.$success.'</li>';
-                  }
-                  echo '</ul>';
-              }
+                if (!empty($successes)) {
+                    echo '<h3>The following tests passed without any issues:</h3><ul>';
+                    foreach ($successes as $success) {
+                        echo '<li>'.$success.'</li>';
+                    }
+                    echo '</ul>';
+                }
 
-              if ($ready === false or !empty($warnings)) {
-                  ?>
-                  <h3>Cheating</h3>
-                  <p>If you're using Ubuntu, the following commands (as root) will get you most of the way:</p>
-                  <code>
+                if ($ready === false or !empty($warnings)) {
+                    ?>
+                    <h3>Cheating</h3>
+                    <p>If you're using Ubuntu, the following commands (as root) will get you most of the way:</p>
+                    <code>
                       apt-get install php-apc php5-curl php5-geoip php5-gd php5-ldap php5-mcrypt php5-pgsql php5-dev php-pear<br>
                       pear channel-discover pear.twig-project.org<br>
                       pear install twig/Twig<br>
@@ -248,10 +248,10 @@ foreach ($function_checks as $check) {
                       echo "extension=twig.so" > /etc/php5/mods-available/twig.ini<br>
                       ln -s /etc/php5/mods-available/twig.ini /etc/php5/apache2/conf.d/20-twig.ini<br>
                       service apache2 restart
-                  </code>
-              <?php
-              }
-              ?>
+                    </code>
+                <?php
+                }
+                ?>
           </div>
       </div>
       <footer id="pageFooter" class="clearfix">

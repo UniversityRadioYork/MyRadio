@@ -2,8 +2,8 @@
 /**
  * List all of the possible permissions available for MyRadio
  *
- * @author Lloyd Wallis
- * @data 20140107
+ * @author  Lloyd Wallis
+ * @data    20140107
  * @package MyRadio_Core
  */
 

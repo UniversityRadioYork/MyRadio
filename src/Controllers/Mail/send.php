@@ -2,7 +2,7 @@
 /**
  * Send an email to a mailing list
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130526
  * @package MyRadio_Mail
  */

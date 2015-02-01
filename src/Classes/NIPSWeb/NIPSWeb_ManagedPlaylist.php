@@ -14,9 +14,9 @@ use \MyRadio\ServiceAPI\MyRadio_User;
  * The NIPSWeb_ManagedPlaylist class helps provide control and access to managed playlists
  *
  * @version 20130802
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_NIPSWeb
- * @uses \Database
+ * @uses    \Database
  */
 class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
 {

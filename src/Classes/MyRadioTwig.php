@@ -16,7 +16,7 @@ use \Twig_Extension_Debug;
 /**
  * Singleton class for the Twig template engine
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20131012
  * @depends Config
  * @package MyRadio_Core
@@ -78,8 +78,8 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
 
     /**
      * Registers a new variable to be passed to the template
-     * @param  String       $name  The name of the variable
-     * @param  mixed        $value The value of the variable - literally any valid type
+     * @param  String $name  The name of the variable
+     * @param  mixed  $value The value of the variable - literally any valid type
      * @return \MyRadioTwig This for chaining
      */
     public function addVariable($name, $value)
@@ -139,7 +139,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
 
     /**
      * Sets the template file to use
-     * @param  String           $template The template filename
+     * @param  String $template The template filename
      * @throws MyRadioException If template does not exist
      * @return MyRadioTwig      This for chaining
      */
@@ -169,7 +169,8 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
     public function render()
     {
         if ((defined('AUTH_SHOWERRORS') && CoreUtils::hasPermission(AUTH_SHOWERRORS))
-             || Config::$display_errors) {
+            || Config::$display_errors
+        ) {
             $this->addVariable('phperrors', MyRadioError::$php_errorlist);
             if (isset($_SESSION)) { //Is the DB working?
                 $this->addVariable('query_count', Database::getInstance()->getCounter());

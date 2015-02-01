@@ -19,9 +19,9 @@ use \MyRadio\MyRadio\MyRadioFormField;
  * The iTones_Playlist class helps provide control and access to managed playlists
  *
  * @version 20130712
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_iTones
- * @uses \Database
+ * @uses    \Database
  */
 class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
 {
@@ -238,8 +238,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Takes a lock on this playlist - stores a notification to all other systems that it should not be edited.
      *
-     * @param String $lockstr If you already have a lock, put it here. It will be renewed if it is still valid.
-     * @param MyRadio_User $user The user that has acquired the lock. Defaults to current user. Required for CLI requests.
+     * @param String       $lockstr If you already have a lock, put it here. It will be renewed if it is still valid.
+     * @param MyRadio_User $user    The user that has acquired the lock. Defaults to current user. Required for CLI requests. This String will be invalidated by the update.
      * This String will be invalidated by the update.
      *
      * @return bool|String false if the lock is not available, or a sha1 that proves ownership of the lock.
@@ -298,7 +298,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Generates a key to the provided lock
      * @param MyRadio_User $lock
-     * @param int $locktime
+     * @param int          $locktime
      * @return String
      */
     private function generateLockKey(MyRadio_User $lock, $locktime)
@@ -327,9 +327,9 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      *
      * Once that's done, go over every Track still in the temporary list and remove them from the Playlist
      *
-     * @param MyRadio_Track[] $tracks Tracks to put in the playlist.
-     * @param String $lockstr The string that provides Write access to this Playlist. Acquired from acquireLock();
-     * @param String $notes Optional. A textual commit message about the change.
+     * @param MyRadio_Track[] $tracks  Tracks to put in the playlist.
+     * @param String          $lockstr The string that provides Write access to this Playlist. Acquired from acquireLock();
+     * @param String          $notes   Optional. A textual commit message about the change.
      *
      * @todo Push these changes to the playlist files on playoutsvc.ury.york.ac.uk. This should probably be a MyRadioDaemon
      * configured to run only on that server.

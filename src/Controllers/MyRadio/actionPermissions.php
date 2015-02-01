@@ -3,7 +3,7 @@
  * Provides a tool to manage permissions for MyRadio Service/Module/Action systems
  *
  * @version 20120723
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 
@@ -106,8 +106,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
     }
     $form->setTemplate('MyRadio/actionPermissions.twig')
-        ->render([
+        ->render(
+            [
             'tabledata' => $data,
             'tablescript' => 'myury.core.actionPermissions'
-        ]);
+            ]
+        );
 }

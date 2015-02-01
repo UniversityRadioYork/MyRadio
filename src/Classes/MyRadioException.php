@@ -13,7 +13,7 @@ use \MyRadio\MyRadio\CoreUtils;
  * Extends the standard Exception class to provide additional functionality
  * and logging
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130711
  * @package MyRadio_Core
  */
@@ -28,8 +28,8 @@ class MyRadioException extends \RuntimeException
 
     /**
      * Extends the default session by enabling useful output
-     * @param String $message A nice message explaining what is going on
-     * @param int $code A number representing the problem. -1 Indicates fatal.
+     * @param String     $message  A nice message explaining what is going on
+     * @param int        $code     A number representing the problem. -1 Indicates fatal.
      * @param \Exception $previous
      */
     public function __construct($message, $code = 500, \Exception $previous = null)
@@ -95,20 +95,21 @@ class MyRadioException extends \RuntimeException
             if (!$silent
                 && Config::$display_errors
                 || (class_exists('\MyRadio\MyRadio\CoreUtils')
-                    && defined('AUTH_SHOWERRORS')
-                    && CoreUtils::hasPermission(AUTH_SHOWERRORS)
-                )
+                && defined('AUTH_SHOWERRORS')
+                && CoreUtils::hasPermission(AUTH_SHOWERRORS))
             ) {
                 if ($is_ajax) {
                     //This is an Ajax/CLI request. Return JSON
                     header('HTTP/1.1 ' . $this->code . ' Internal Server Error');
                     header('Content-Type: application/json');
-                    echo json_encode([
+                    echo json_encode(
+                        [
                         'status' => 'MyRadioException',
                         'error' => $this->message,
                         'code' => $this->code,
                         'trace' => $this->trace
-                    ]);
+                        ]
+                    );
                 } else {
                     //Output to the browser
                     header('HTTP/1.1 ' . $this->code . ' Internal Server Error');
@@ -131,11 +132,13 @@ class MyRadioException extends \RuntimeException
                     //This is an Ajax/CLI request. Return JSON
                     header('HTTP/1.1 ' . $this->code . ' Internal Server Error');
                     header('Content-Type: application/json');
-                    echo json_encode([
+                    echo json_encode(
+                        [
                         'status' => 'MyRadioError',
                         'error' => $this->message,
                         'code' => $this->code
-                    ]);
+                        ]
+                    );
                     //Stick the details in the session in case the user wants to report it
                     $_SESSION['last_ajax_error'] = [$this->error, $this->code, $this->trace];
                 } else {

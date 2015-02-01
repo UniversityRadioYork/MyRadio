@@ -145,6 +145,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
     /**
      * Creates a new MyRadio Season Application and returns an object representing it
+     *
      * @param Array $params An array of Seasons properties compatible with the Models/Scheduler/seasonfrm Form,
      * with a few additional potential customisation options:
      * weeks: An Array of weeks, keyed wk1-10, representing the requested week<br>
@@ -206,10 +207,10 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
         //Now for requested times
         for ($i = 0; $i < sizeof($params['times']['day']); $i++) {
-            if (
-                is_null($params['times']['day'][$i]) ||
-                is_null($params['times']['stime'][$i]) ||
-                is_null($params['times']['etime'][$i])) {
+            if (is_null($params['times']['day'][$i]) 
+                || is_null($params['times']['stime'][$i]) 
+                || is_null($params['times']['etime'][$i])
+            ) {
                 throw new MyRadioException('Each requested time must have a day, start time and end time.', 400);
             }
             //Deal with the possibility of a show from 11pm to midnight etc.
@@ -567,15 +568,17 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     /**
      * Get all the Seasons in the active term.
      *
-     * @param int $term_id
+     * @param  int $term_id
      * @return MyRadio_Season[]
      */
     public static function getAllSeasonsInTerm($term_id)
     {
-        return self::resultSetToObjArray(self::$db->fetchColumn(
-            'SELECT show_season_id FROM schedule.show_season WHERE termid=$1',
-            [$term_id]
-        ));
+        return self::resultSetToObjArray(
+            self::$db->fetchColumn(
+                'SELECT show_season_id FROM schedule.show_season WHERE termid=$1',
+                [$term_id]
+            )
+        );
     }
 
     /**
@@ -588,8 +591,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
      * A Season can be reapplied for by setting the "Submitted" field to the re-submit time.
      * It is also best practice to then set the "reject-reason" key to have the same effective_to.
      *
-     * @param String $reason Why the application was rejected
-     * @param bool $notify_user If true, all creditors will be notified about the rejection.
+     * @param String $reason      Why the application was rejected
+     * @param bool   $notify_user If true, all creditors will be notified about the rejection.
      */
     public function reject($reason, $notify_user = true)
     {
@@ -653,13 +656,13 @@ EOT
      * set to the effective_from of this value, effectively replacing the existing value.
      * This will *not* unset is_multiple values that are not in the new set.
      *
-     * @param String $string_key The metadata key
-     * @param mixed $value The metadata value. If key is_multiple and value is an array, will create instance
+     * @param String $string_key     The metadata key
+     * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance for value in the array. for value in the array.
      * for value in the array.
-     * @param int $effective_from UTC Time the metavalue is effective from. Default now.
-     * @param int $effective_to UTC Time the metadata value is effective to. Default NULL (does not expire).
-     * @param null $table No action. Used for compatibility with parent.
-     * @param null $pkey No action. Used for compatibility with parent.
+     * @param int    $effective_from UTC Time the metavalue is effective from. Default now.
+     * @param int    $effective_to   UTC Time the metadata value is effective to. Default NULL (does not expire).
+     * @param null   $table          No action. Used for compatibility with parent.
+     * @param null   $pkey           No action. Used for compatibility with parent.
      */
     public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null)
     {
@@ -809,7 +812,8 @@ EOT
 
     public function toDataSource($full = true)
     {
-        return array_merge($this->getShow()->toDataSource(false), [
+        return array_merge(
+            $this->getShow()->toDataSource(false), [
             'id' => $this->getID(),
             'season_num' => $this->getSeasonNumber(),
             'title' => $this->getMeta('title'),
@@ -834,13 +838,15 @@ EOT
                 'title' => 'Reject Application',
                 'url' => CoreUtils::makeURL('Scheduler', 'reject', ['show_season_id' => $this->getID()])
             ]
-        ]);
+            ]
+        );
     }
 
     /**
      * This is where some of the most important MyRadio stuff happens.
      * This is where an application for a presenter's dreams become reality...
      * or get crushed to pieces.
+     *
      * @param Array $params key=>value of the following parameters:
      * weeks: A key=>value away of weeks and whether to schedule (wk1 => 0, wk1=>1...)
      * time: The preference number of the show_season_requested_time that was selected, or -1
@@ -866,10 +872,9 @@ EOT
             throw new MyRadioException('The Time value sent is not a valid Requested Time Reference.', MyRadioException::FATAL);
         }
         //Verify the custom times are valid
-        if ($params['time'] == -1 && (
-            !isset($params['timecustom_day']) or //0 (monday) would fail an empty() test
-            !isset($params['timecustom_stime']) or //Same again with midnight (00:00)
-            empty($params['timecustom_etime']))
+        if ($params['time'] == -1 && (!isset($params['timecustom_day'])  //0 (monday) would fail an empty() test
+            or !isset($params['timecustom_stime'])  //Same again with midnight (00:00)
+            or empty($params['timecustom_etime']))
         ) {
             throw new MyRadioException('The Custom Time value sent is invalid.', MyRadioException::FATAL);
         }

@@ -18,10 +18,10 @@ use \MyRadio\iTones\iTones_Playlist;
  * The MyRadio_Track class provides and stores information about a Track
  *
  * @version 20130609
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
- * @uses \Database
- * @todo Cache this
+ * @uses    \Database
+ * @todo    Cache this
  */
 class MyRadio_Track extends ServiceAPI
 {
@@ -51,8 +51,9 @@ class MyRadio_Track extends ServiceAPI
 
     /**
      * Don't use this.
+     *
      * @deprecated
-     * @var String
+     * @var        String
      */
     private $duration;
 
@@ -514,7 +515,7 @@ class MyRadio_Track extends ServiceAPI
             throw new MyRadioException('Failed to move uploaded track to tmp directory.', 500);
         }
 
-        require_once 'Classes/vendor/getid3/getid3.php';
+        include_once 'Classes/vendor/getid3/getid3.php';
         $getID3 = new \getID3;
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
 
@@ -604,7 +605,7 @@ class MyRadio_Track extends ServiceAPI
 
         // Get the track duration from the file if it isn't already set
         if (empty($ainfo['duration'])) {
-            require_once 'Classes/vendor/getid3/getid3.php';
+            include_once 'Classes/vendor/getid3/getid3.php';
             $getID3 = new \getID3;
             $ainfo['duration'] = intval($getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $tmpid)['playtime_seconds']);
         }
@@ -613,14 +614,16 @@ class MyRadio_Track extends ServiceAPI
         $track = self::findByNameArtist($title, $artist, 1, false, true);
         if (empty($track)) {
             //Create the track
-            $track = self::create([
+            $track = self::create(
+                [
                         'title' => $title,
                         'artist' => $artist,
                         'digitised' => true,
                         'duration' => $ainfo['duration'],
                         'recordid' => $ainfo['album']->getID(),
                         'number' => $ainfo['position']
-            ]);
+                ]
+            );
         } else {
             $track = $track[0];
             //If it's set to digitised, throw an error
@@ -660,7 +663,7 @@ class MyRadio_Track extends ServiceAPI
 
     /**
      * Create a new MyRadio_Track with the provided options
-     * @param  Array            $options
+     * @param  Array $options
      *                                   title (required): Title of the track.
      *                                   artist (required): (string) Artist of the track.
      *                                   recordid (required): (int) Album of track.
@@ -804,11 +807,13 @@ class MyRadio_Track extends ServiceAPI
     public function setDuration($duration)
     {
         $this->duration = (int) $duration;
-        self::$db->query('UPDATE rec_track SET length=$1, duration=$2 WHERE trackid=$3', [
+        self::$db->query(
+            'UPDATE rec_track SET length=$1, duration=$2 WHERE trackid=$3', [
             CoreUtils::intToTime($this->getDuration()),
             $this->getDuration(),
             $this->getID()
-        ]);
+            ]
+        );
         $this->updateCacheObject();
     }
 
@@ -899,7 +904,7 @@ class MyRadio_Track extends ServiceAPI
      * of which only ones with a score of 0.25 or higher will be checked,
      * and then only tracks that are in URY's music library returned.
      *
-     * @todo Last.fm API Rate limit checks
+     * @todo   Last.fm API Rate limit checks
      * @return MyRadio_Track[]
      */
     public function getSimilar()

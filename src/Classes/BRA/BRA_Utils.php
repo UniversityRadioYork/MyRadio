@@ -11,7 +11,7 @@ namespace \MyRadio\Rapid;
  * This class has helper functions for communicating with a BAPS Server over BRA
  *
  * @version 20130907
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_BRA
  */
 class BRA_Utils extends \MyRadio\ServiceAPI\ServiceAPI

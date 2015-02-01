@@ -11,9 +11,9 @@ namespace MyRadio\NIPSWeb;
  * The NIPSWeb_ManagedUserPlaylist class provide My Jingles and My Beds for users.
  *
  * @version 20130802
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_NIPSWeb
- * @uses \Database
+ * @uses    \Database
  */
 class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
 {
@@ -38,14 +38,14 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
     {
         $data = explode('/', $id);
         switch ($data[sizeof($data) - 1]) {
-            case 'jingles':
-                return 'My Jingles';
+        case 'jingles':
+            return 'My Jingles';
                 break;
-            case 'beds':
-                return 'My Beds';
+        case 'beds':
+            return 'My Beds';
                 break;
-            default:
-                return 'ERR_USR_PRESET_NOT_FOUND: ' . $id;
+        default:
+            return 'ERR_USR_PRESET_NOT_FOUND: ' . $id;
                 break;
         }
     }

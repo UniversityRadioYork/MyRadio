@@ -53,7 +53,7 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
 
     /**
      * Returns data about the Availability
-     * @param  bool  $full If true, returns full, detailed data about the timeslots in this campaign
+     * @param  bool $full If true, returns full, detailed data about the timeslots in this campaign
      * @return Array
      */
     public function toDataSource($full = false)
@@ -120,11 +120,11 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
 
     /**
      * Creates a new Availability
-     * @param  iTones_Playlist        $playlist           The Playlist that is being Availabled.
-     * @param  int                    $weight             The weight of the Availability.
-     * @param  int                    $effective_from     Epoch time that the Availability is starts at. Default now.
-     * @param  int                    $effective_to       Epoch time that the Availability ends at. Default never.
-     * @param  Array                  $timeslots          An array of Timeslots the Availability is active during.
+     * @param  iTones_Playlist $playlist       The Playlist that is being Availabled.
+     * @param  int             $weight         The weight of the Availability.
+     * @param  int             $effective_from Epoch time that the Availability is starts at. Default now.
+     * @param  int             $effective_to   Epoch time that the Availability ends at. Default never.
+     * @param  Array           $timeslots      An array of Timeslots the Availability is active during.
      * @return iTones_PlaylistAvailability The new Availability
      */
     public static function create(

@@ -12,9 +12,9 @@ namespace MyRadio\ServiceAPI;
  * name and human-readable description.
  *
  * @version 20130426
- * @author Matt Windsor <matt.windsor@ury.org.uk>
+ * @author  Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Core
- * @uses \Database
+ * @uses    \Database
  */
 abstract class MyRadio_Type extends ServiceAPI
 {

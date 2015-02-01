@@ -15,7 +15,7 @@ use \MyRadio\ServiceAPI\ServiceAPI;
  * This class has helper functions for building SIS
  *
  * @version 20130926
- * @author Andy Durant <aj@ury.org.uk>
+ * @author  Andy Durant <aj@ury.org.uk>
  * @package MyRadio_SIS
  */
 class SIS_Utils extends ServiceAPI
@@ -33,7 +33,7 @@ class SIS_Utils extends ServiceAPI
 
     /**
      * Checks whether the client IP is a machine authorised for full control
-     * @param  String      $ip The IP address to check. If null, will use the REMOTE_ADDR server property
+     * @param  String $ip The IP address to check. If null, will use the REMOTE_ADDR server property
      * @return boolean|int The studio's ID number or false if unauthorised
      */
     private static function isAuthenticatedMachine($ip = null)

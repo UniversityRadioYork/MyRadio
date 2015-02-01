@@ -14,9 +14,9 @@ use \MyRadio\MyRadioEmail;
  * The List class stores and manages information about a URY Mailing List
  *
  * @version 20130526
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Mail
- * @uses \Database
+ * @uses    \Database
  */
 class MyRadio_List extends ServiceAPI
 {
@@ -180,10 +180,12 @@ class MyRadio_List extends ServiceAPI
             return false;
         }
 
-        return sizeof(self::$db->query(
-            'SELECT memberid FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
-            [$user->getID(), $this->getID()]
-        )) === 1;
+        return sizeof(
+            self::$db->query(
+                'SELECT memberid FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
+                [$user->getID(), $this->getID()]
+            )
+        ) === 1;
     }
 
     /**

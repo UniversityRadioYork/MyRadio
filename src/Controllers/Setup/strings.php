@@ -3,7 +3,7 @@
  * Sets up some config variables for MyRadio
  *
  * @version 20140515
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 use \MyRadio\Config;

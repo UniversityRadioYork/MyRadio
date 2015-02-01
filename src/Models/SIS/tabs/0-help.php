@@ -2,7 +2,7 @@
 /**
  * Getting Started Tab for SIS
  *
- * @author Andy Durant <aj@ury.org.uk>
+ * @author  Andy Durant <aj@ury.org.uk>
  * @version 20131123
  * @package MyRadio_SIS
  */

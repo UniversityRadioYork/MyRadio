@@ -5,7 +5,7 @@
  * - Any member can also view Phone & email alias of any committee member
  * - Members with AUTH_VIEWOTHERMEMBERS can view eduroam/email/locked/last login/paid of any other member
  *
- * @author Andy Durant <aj@ury.org.uk>
+ * @author  Andy Durant <aj@ury.org.uk>
  * @version 20130717
  * @package MyRadio_Profile
  */
@@ -60,7 +60,8 @@ if ($user->getID() === $visitor->getID() or $visitor->hasAuth(AUTH_EDITANYPROFIL
 }
 if (CoreUtils::hasPermission(AUTH_IMPERSONATE)
     && ($user->hasAuth(AUTH_BLOCKIMPERSONATE) === false
-        or CoreUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS))) {
+    or CoreUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS))
+) {
     $template->addVariable(
         'impersonateurl',
         '<a href="'

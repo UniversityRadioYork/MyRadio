@@ -2,7 +2,7 @@
 /**
  * Emails data to Computing
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 

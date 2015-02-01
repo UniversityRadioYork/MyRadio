@@ -17,9 +17,9 @@ use \MyRadio\iTones\iTones_TrackRequest;
  * The iTones_Utils class provides generic utilities for controlling iTones - URY's Campus Jukebox
  *
  * @version 20130710
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_iTones
- * @uses \Database
+ * @uses    \Database
  */
 class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 {
@@ -69,8 +69,8 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
      * Push a track into the iTones request queue, if it hasn't been played
      * recently.
      *
-     * @param  MyRadio_Track $track
-     * @param $queue The jukebox_[x] queue to push to. Default requests.
+     * @param  MyRadio_Track                                             $track
+     * @param  $queue The jukebox_[x] queue to push to. Default requests.
      *                              "main" is the queue used for the main track scheduler, i.e. non-user entries.
      * @return bool          Whether the operation was successful
      */

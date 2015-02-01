@@ -4,8 +4,8 @@
  * Enables a user to change their password, either whilst logged in or by
  * using a password reset token that has been emailed to them.
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @data 20140121
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
+ * @data    20140121
  * @package MyRadio_Core
  */
 
@@ -138,11 +138,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
 
     //If the user was locked out for a password change, unlock them
     if (isset($_SESSION['auth_use_locked'])
-        && $_SESSION['auth_use_locked'] === 'chooseAuth') {
+        && $_SESSION['auth_use_locked'] === 'chooseAuth'
+    ) {
         unset($_SESSION['auth_use_locked']);
     }
 
-CoreUtils::redirect('MyRadio', 'login');
+    CoreUtils::redirect('MyRadio', 'login');
 } else {
     foreach (Config::$authenticators as $authenticator) {
         $auth = new $authenticator;

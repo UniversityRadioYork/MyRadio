@@ -2,7 +2,7 @@
 /**
 * Adds a User payment
 *
-* @author Sam Willcocks <samw@ury.org.uk>
+* @author  Sam Willcocks <samw@ury.org.uk>
 * @version 20140129
 * @package MyRadio_Profile
 */

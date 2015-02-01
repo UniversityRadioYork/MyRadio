@@ -15,7 +15,7 @@ use \MyRadio\ServiceAPI\MyRadio_Webcam;
  * This class has helper functions for long-polling SIS
  *
  * @version 20131101
- * @author Andy Durant <aj@ury.org.uk>
+ * @author  Andy Durant <aj@ury.org.uk>
  * @package MyRadio_SIS
  */
 class SIS_Remote extends ServiceAPI

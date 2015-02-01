@@ -17,7 +17,6 @@ use \MyRadio\MyRadio\CoreUtils;
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  * @uses \Database
- *
  */
 
 class MyRadio_Album extends ServiceAPI
@@ -176,8 +175,8 @@ class MyRadio_Album extends ServiceAPI
 
     /**
      * Update the Artist for this Album
-     * @param  String           $artist        The Artist name
-     * @param  bool             $applyToTracks If true, this will update the Artist for each individual Track in the Album.
+     * @param  String $artist        The Artist name
+     * @param  bool   $applyToTracks If true, this will update the Artist for each individual Track in the Album. Default false.
      *                                         Default false.
      * @return \MyRadio_Album
      * @throws MyRadioException
@@ -231,7 +230,6 @@ class MyRadio_Album extends ServiceAPI
      *                       precise: If true, will only return exact matches for artist/title
      *                       nocorrectionproposed: If true, will only return items with no correction proposed.
      *                       clean: Default any. 'y' for clean tracks, 'n' for dirty, 'u' for unknown.
-     *
      */
     public static function findByOptions($options)
     {

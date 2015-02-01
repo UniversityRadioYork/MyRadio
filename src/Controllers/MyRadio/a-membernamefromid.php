@@ -3,8 +3,8 @@
  * This is pretty much what every Controller should look like.
  * Some might include more than one model etc....
  *
- * @todo Proper documentation
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @todo    Proper documentation
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 02082012
  * @package MyRadio_Core
  */
