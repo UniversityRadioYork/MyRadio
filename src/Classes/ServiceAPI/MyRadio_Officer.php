@@ -145,6 +145,20 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
+     * Assigns and officership to the given member
+     * @param  int $memberid ID of the member for the officership
+     */
+    public function assignOfficer($memberid)
+    {
+        self::$db->query(
+            'INSERT INTO public.member_officer
+            (officerid, memberid, from_date)
+            VALUES ($1, $2, NOW())',
+            [$this->getID(), $memberid]
+        );
+    }
+
+    /**
      * Stands Down the officership provided.
      *
      * @param int $memberofficerid The ID of the officership to stand down
@@ -451,7 +465,7 @@ class MyRadio_Officer extends ServiceAPI
     {
         $form = (
             new MyRadioForm(
-                'officeForm',
+                'officerForm',
                 'Profile',
                 'editOfficer',
                 ['title' => 'Create Officer']
@@ -613,6 +627,30 @@ class MyRadio_Officer extends ServiceAPI
                     )
                 ]
             );
+    }
+
+    /**
+     * Form for assigning members to an officership
+     * @return MyRadioForm
+     */
+    public static function getAssignForm()
+    {
+        $form = new MyRadioForm(
+            'assignForm',
+            'Profile',
+            'assignOfficer',
+            ['title' => 'Assign Officer']
+        )->addField(
+            new MyRadioFormField(
+                'member',
+                MyRadioFormField::TYPE_MEMBER,
+                [
+                    'explanation' => '',
+                    'label' => 'Member'
+                ]
+            )
+        );
+        return $form;
     }
 
     /**
