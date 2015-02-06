@@ -50,7 +50,6 @@ Config::$yusu_api_key = 'YOUR API KEY HERE';
 Config::$base_url = '//ury.org.uk/myury/';
 Config::$api_uri = '/api/';
 Config::$api_url = '//ury.org.uk/api';
-Config::$shib_url = '//ury.org.uk/portal';
 
 /**
  * Recaptcha Settings

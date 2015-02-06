@@ -50,7 +50,6 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
             )
             ->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null)
             ->addVariable('timeslotid', isset($_SESSION['timeslotid']) ? $_SESSION['timeslotid'] : null)
-            ->addVariable('shiburl', Config::$shib_url)
             ->addVariable('baseurl', Config::$base_url)
             ->addVariable('rewriteurl', Config::$rewrite_url)
             ->addVariable('serviceName', 'MyRadio')
