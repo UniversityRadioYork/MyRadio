@@ -640,7 +640,8 @@ class MyRadio_Officer extends ServiceAPI
             'Profile',
             'assignOfficer',
             ['title' => 'Assign Officer']
-        )->addField(
+        );
+        $form->addField(
             new MyRadioFormField(
                 'member',
                 MyRadioFormField::TYPE_MEMBER,
