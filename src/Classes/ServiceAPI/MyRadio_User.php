@@ -1409,15 +1409,16 @@ class MyRadio_User extends ServiceAPI
                 ]));
         if (empty(Config::$contract_uri) === false) {
             $form->addField(new MyRadioFormField('contract', MyRadioFormField::TYPE_CHECK, [
+                'required' => false,
                 'label' => 'I, ' . $this->getName() . ', agree to abide by '
-                . Config::$short_name . '\'s station rules and regulations as '
-                . 'set out in the <a href="' . Config::$contract_uri . '" target="_blank">Presenter\'s Contract</a>, '
-                . 'and the <a href="//www.ofcom.org.uk" target="_blank">Ofcom Programming Code</a>. '
-                . 'I have fully read and understood these rules and regulations, '
-                . 'and I understand that if I break any of the rules or '
-                . 'regulations stated by Ofcom or its successor, I will be '
-                . 'solely liable for any resulting fines or actions that may '
-                . 'be levied against ' . Config::$long_name . '.',
+                    . Config::$short_name . '\'s station rules and regulations as '
+                    . 'set out in the <a href="' . Config::$contract_uri . '" target="_blank">Presenter\'s Contract</a>, '
+                    . 'and the <a href="//www.ofcom.org.uk" target="_blank">Ofcom Programming Code</a>. '
+                    . 'I have fully read and understood these rules and regulations, '
+                    . 'and I understand that if I break any of the rules or '
+                    . 'regulations stated by Ofcom or its successor, I will be '
+                    . 'solely liable for any resulting fines or actions that may '
+                    . 'be levied against ' . Config::$long_name . '.',
                 'options' => ['checked' => $this->hasSignedContract()]
             ]));
         }
