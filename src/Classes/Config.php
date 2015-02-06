@@ -241,6 +241,13 @@ final class Config
     public static $vacant_officer_uri = '/media/image_meta/MyRadioImageMetadata/32.jpeg';
 
     /**
+     * The full web address of a copy of the Presenters Contract.
+     * @note If this variable is empty, then contracts are disabled.
+     * @var String
+     */
+    public static $contract_uri = '';
+
+    /**
      * The file system path to the Central Database. Must be absolute. Can not be smb://, but may be a network share
      * mounted to the file system mountpoint.
      * @var String
@@ -287,7 +294,7 @@ final class Config
      * @var String
      */
     public static $lastfm_api_secret;
-    
+
     /**
      * The last.fm group specifically for the University of York. If using
      * this aspect of the code you probably want to change this bit.
