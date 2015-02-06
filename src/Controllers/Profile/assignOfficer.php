@@ -29,7 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->editMode(
                 $officer->getID(),
                 []
-            )->render();
+            )
+            ->setTitle('Assign Officer - '. $officer->getName())
+            ->render();
 
     } else {
         // Error

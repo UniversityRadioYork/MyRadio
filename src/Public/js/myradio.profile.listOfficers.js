@@ -34,6 +34,10 @@ $('.twig-datatable').dataTable({
   {
     "sTitle": "Edit"
   },
+  //assign
+  {
+    "sTitle": "Assign"
+  },
   ],
   "bJQueryUI": true,
   "bSort": false,
