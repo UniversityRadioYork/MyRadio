@@ -92,7 +92,7 @@ var Library = function() {
                     if (manual_div !== null) {
                         // If the div exists, then the user has permission to upload a track
                         // manually, so display the div and set manual_track to true.
-                        manual_div.style.display = 'block';
+                        $(manual_div).show();
                         manual_track = true;
                     }
                 }
