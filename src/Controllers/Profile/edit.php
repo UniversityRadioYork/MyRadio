@@ -7,6 +7,7 @@
  * @package MyRadio_Profile
  */
 
+use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
@@ -37,6 +38,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ->setEduroam($data['eduroam'])
         ->setBio($data['bio']);
 
+    if (!empty(Config::$contract_uri)) {
+        $user->setContractSigned($data['contract']);
+    }
+
     if (!empty($data['photo']['tmp_name'])) {
         $user->setProfilePhoto(MyRadio_Photo::create($data['photo']['tmp_name']));
     }
@@ -46,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->setLocalAlias($data['local_alias']);
     }
 
-    CoreUtils::backWithMessage('User Updated');
+    CoreUtils::redirectWithMessage('Profile', 'view', 'User Updated');
 
 } else {
     //Not Submitted
