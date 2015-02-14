@@ -415,14 +415,11 @@ class CoreUtils
      */
     public static function hasPermission($permission)
     {
-        if (!isset($_SESSION['member_permissions'])) {
-            return false;
+        if (isset($_SESSION['memberid'])) {
+            return MyRadio_User::getInstance()->hasAuth($permission);
+        } else {
+            return $permission === null;
         }
-        if ($permission === null) {
-            return true;
-        }
-
-        return in_array($permission, $_SESSION['member_permissions']);
     }
 
     /**
