@@ -51,9 +51,13 @@ $(document).ajaxError(function(e, xhr, settings, error) {
         //Session timed out - need to login
         window.location = myury.makeURL('MyRadio', 'login', {next: window.location.href, message: window.btoa('Your session has expired and you need to log in again to continue.')});
     } else if (!errorVisible) {
-        errorVisible = true;
         var close = myury.closeButton();
         var report = myury.reportButton(xhr, settings, error);
+        var message = '';
+
+        if (xhr.responseJSON && xhr.responseJSON.error) {
+            message = xhr.responseJSON.error;
+        }
 
         var errorVisibleReset = function() {
             errorVisible = false;
@@ -64,9 +68,10 @@ $(document).ajaxError(function(e, xhr, settings, error) {
 
         myury.createDialog(
             'Error',
-            '<p>Sorry, just went a bit wrong and I\'m not sure what to do about it.</p><details>' + error + '</details>',
+            '<p>Sorry, just went a bit wrong and I\'m not sure what to do about it.</p><details>' + error + '<br>' + message + '</details>',
             [close, report]
         );
+        errorVisible = true;
     }
 });
 
