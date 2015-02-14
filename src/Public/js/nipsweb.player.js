@@ -643,7 +643,11 @@ var NIPSWeb = function(d) {
         });
 
         $(slider).on("introChanged", function(e) {
-            console.warn('TODO: Send updated intro time to server');
+            var trackid = getRecTrackFromID($(channelDiv).children('.selected')[0].getAttribute('id'))[1];
+            $.post(
+                mConfig.api_url + '/Track/' + trackid + '/setIntro',
+                {duration: e.originalEvent.detail.time}
+            );
         });
 
         $(slider).on("cueChanged", function(e) {

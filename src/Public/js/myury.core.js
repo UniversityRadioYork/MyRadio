@@ -57,6 +57,8 @@ $(document).ajaxError(function(e, xhr, settings, error) {
 
         if (xhr.responseJSON && xhr.responseJSON.error) {
             message = xhr.responseJSON.error;
+        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+            message = xhr.responseJSON.message;
         }
 
         var errorVisibleReset = function() {

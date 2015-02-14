@@ -58,6 +58,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $auth = $actionauth[2] == null ? null : constant($actionauth[2]);
             CoreUtils::addActionPermission($module, $action, $auth);
         }
+        foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-apiauth.json')) as $apiauth) {
+            $db->query(
+                'INSERT INTO myury.api_method_auth (class_name, method_name, typeid) VALUES ($1, $2, $3)',
+                [$apiauth[0], $apiauth[1], constant($apiauth[2])]
+            );
+        }
     }
 
     switch ($mode) {

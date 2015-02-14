@@ -778,7 +778,7 @@ class MyRadio_Track extends ServiceAPI
     public function setTitle($title)
     {
         if (empty($title)) {
-            throw new MyRadioException('Track title must not be empty!');
+            throw new MyRadioException('Track title must not be empty!', 400);
         }
 
         $this->title = $title;
@@ -829,7 +829,7 @@ class MyRadio_Track extends ServiceAPI
     {
         $this->intro = (int) $duration;
         self::$db->query('UPDATE rec_track SET intro=$1 WHERE trackid=$2', [
-            $duration,
+            CoreUtils::intToTime($this->intro),
             $this->getID()
         ]);
         $this->updateCacheObject();
