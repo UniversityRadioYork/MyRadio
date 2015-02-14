@@ -1088,6 +1088,9 @@ var playoutSlider = function(e) {
     e.className = 'playout-slider-container';
     e.appendChild(sliderContainer);
 
+    //Detect resize
+    window.addEventListener('resize', redraw);
+
     return {
         reset: reset,
         position: position,
