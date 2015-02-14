@@ -412,12 +412,12 @@ final class Config
     public static $daemon_lock_file = '/tmp/myradio_daemon.lock';
 
     /**
-     * The root URL to URY's API
+     * The root URL to the API
      *
      * Must be absolute.
      * @var String
      */
-    public static $api_url = null;
+    public static $api_url = '/api';
 
     /**
      * The URL prefix to URY's webcam
