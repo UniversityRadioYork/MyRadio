@@ -237,8 +237,8 @@ var Library = function() {
                     if (window.auxid.match(/^aux-\d+$/)) {
                         //This is a central one - it can have an expiry
                         result.append(
-                            $('<input type="text" placeholder="Expiry date" />').addClass('date').attr('id', 'resuploaddate-' + i).datepicker({
-                                dateFormat: 'dd/mm/yy'
+                            $('<input type="text" placeholder="Expiry date" />').addClass('date').attr('id', 'resuploaddate-' + i).datetimepicker({
+                                pickTime: 'false'
                             }))
                             .append('<em>Leave blank to never expire</em>&nbsp;&nbsp;');
                     }
