@@ -11,9 +11,13 @@ var PresenterInfo = function() {
         },
         update: function(data) {
         	lastTime = data.time;
-        	this.innerHTML = data.info.content;
-        	$(this).append('<hr>');
-        	$(this).append('<footer>~ ' + data.info.author + ', ' + data.info.posted + '</footer>');
+            if (data.info) {
+            	this.innerHTML = data.info.content;
+            	$(this).append('<hr>');
+            	$(this).append('<footer>~ ' + data.info.author + ', ' + data.info.posted + '</footer>');
+            } else {
+                this.innerHTML = 'There is no presenter information available at this time.';
+            }
         	this.registerParam('presenterinfo-lasttime', lastTime);
         }
     }

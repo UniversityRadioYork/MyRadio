@@ -71,7 +71,11 @@ var Webcam = function() {
             }
 
             currentWebcam = data['status']['current'];
-            onAir.innerHTML = data['streams'][currentWebcam]['streamname'] + ' is On Air';
+            if (currentWebcam !== -1) {
+                onAir.innerHTML = data['streams'][currentWebcam]['streamname'] + ' is On Air';
+            } else {
+                onAir.innerHTML = 'Webcam information is not available at this time.';
+            }
             this.registerParam('webcam-id', currentWebcam);
         };
 
