@@ -109,8 +109,5 @@ class SIS_Tracklist extends ServiceAPI
             WHERE audiologid = $1',
             [$tracklistid]
         );
-        if (self::$db->numRows() !== 1) {
-            throw new MyRadioException('Failed to delete tracklistitem ' . $tracklistid, 500);
-        }
     }
 }
