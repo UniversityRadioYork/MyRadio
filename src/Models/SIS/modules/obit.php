@@ -1,6 +1,6 @@
 <?php
 /**
- * Obit Plugin for SIS
+ * Obit for SIS
  *
  * @package MyRadio_SIS
  */

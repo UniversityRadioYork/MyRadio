@@ -5,6 +5,5 @@ util/checkpassword.conf
 *.sw[a-z]
 sftp-*.json
 .tags*
-<<<<<<< HEAD
 .phpintel/*
-.varnish/*
+.vagrant/*

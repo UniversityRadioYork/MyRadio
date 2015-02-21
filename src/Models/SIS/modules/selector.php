@@ -4,7 +4,6 @@
  *
  * @package MyRadio_SIS
  */
-
 $moduleInfo = [
     'pollfunc' => '\MyRadio\SIS\SIS_Remote::querySelector',
     'required_permission' => AUTH_MODIFYSELECTOR
