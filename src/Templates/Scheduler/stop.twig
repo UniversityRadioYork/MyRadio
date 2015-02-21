@@ -42,7 +42,7 @@
 <form method="post">
     <p>Okay. Please enter the title of your first ever show on the station:</p>
     <input type="hidden" name="stage" value="3">
-    <input type="text" name="show-name" placeholder="When The Cows Go On Air" style="width:400px"><br>
+    <input type="text" name="show-name" placeholder="When The Cows Go On Air" style="width:400px" autocomplete="off"><br>
     <input type="submit" class="btn btn-default sched-stop-button" value="Okay, done">
 </form>
 {% endif %}
@@ -50,16 +50,16 @@
 <form method="post">
     <p>Enter your username (the part before the @) below to cease broadcasting.</p>
     <input type="hidden" name="stage" value="0">
-    <input type="text" id="theField" style="width:400px"><br>
+    <input type="text" id="theField" style="width:400px" autocomplete="off"><br>
     <input type="submit" id="theButton" disabled="disabled" class="btn btn-danger" value="Start Obit System">
 </form>
 <script type="text/javascript">
     $('#theField').on('keyup', function() {
         console.log($(this).val());
-        if ($(this).val() == "{{result}}") {
-            $('#theButton').attr('disabled', 'disabled');
-        } else {
+        if ($(this).val() === "{{result}}") {
             $('#theButton').removeAttr('disabled');
+        } else {
+            $('#theButton').attr('disabled', 'disabled');
         }
     });
 </script>
