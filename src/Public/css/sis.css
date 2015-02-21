@@ -119,3 +119,22 @@ figure.webcam-stream-container img {
   font-size: .8em;
 }
 
+.twitter-typeahead {
+  display: block;
+  width: 100%;
+  margin-bottom: 1em;
+}
+
+.myradiofrmfield {
+  display: block;
+  width: 80%;
+  margin-bottom: 1em;
+}
+
+.twitter-typeahead .myradiofrmfield {
+  margin-bottom: 0;
+}
+
+.tt-dropdown-menu {
+  width: 80%;
+}

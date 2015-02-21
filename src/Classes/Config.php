@@ -470,6 +470,7 @@ final class Config
         'presenterinfo',
         'messages',
         'schedule',
+        'tracklist',
         'links',
         'selector',
         'webcam',

@@ -7,6 +7,7 @@
 
 namespace MyRadio\SIS;
 
+use \MyRadio\MyRadioException;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
 
@@ -37,6 +38,7 @@ class SIS_Tracklist extends ServiceAPI
                     'title' => $track['title'],
                     'artist' => $track['artist'],
                     'album' => $track['album'],
+                    'trackid' => 'custom',
                     'id' => $tracklistitem->getID()
                  ];
             } else {
@@ -45,6 +47,7 @@ class SIS_Tracklist extends ServiceAPI
                     'title' => $track->getTitle(),
                     'artist' => $track->getArtist(),
                     'album' => $track->getAlbum()->getTitle(),
+                    'trackid' => $track->getID(),
                     'id' => $tracklistitem->getID()
                  ];
             }
@@ -58,12 +61,11 @@ class SIS_Tracklist extends ServiceAPI
     * @param  string $tname      track name
     * @param  string $artist     track artist
     * @param  string $album      track album
-    * @param  time   $time       php time
     * @param  string $source     tracklistig source
     * @param  int    $timeslotid ID of timeslot to tracklist to
     * @return none
     */
-    public static function insertTrackNoRec($tname, $artist, $album, $time, $source, $timeslotid)
+    public static function insertTrackNoRec($tname, $artist, $album, $source, $timeslotid)
     {
         self::$db->query('BEGIN');
 
@@ -80,30 +82,7 @@ class SIS_Tracklist extends ServiceAPI
         self::$db->query('COMMIT');
     }
 
-    /**
-     * checks if track is in database
-     * @param  string $artist track artist
-     * @param  string $album  track album
-     * @param  string $tname  track name
-     * @return array  result of db query
-     */
-    public static function checkTrackOK($artist, $album, $tname)
-    {
-        $result = self::$db->fetchAll(
-            'SELECT DISTINCT trk.title AS track, rec.title AS album, trk.artist AS artist, trk.trackid AS trackid, rec.recordid AS recordid
-            FROM rec_track trk
-            INNER JOIN rec_record rec ON ( rec.recordid = trk.recordid )
-            WHERE trk.artist ILIKE $4 || $1 || $4
-            AND rec.title ILIKE $4 || $2 || $4
-            AND trk.title ILIKE $4 || $3 || $4
-            ORDER BY trk.title ASC LIMIT 10',
-            [$artist, $album, $tname, '%']
-        );
-
-        return $result;
-    }
-
-    public static function insertTrackRec($trackid, $recid, $time, $source, $timeslotid)
+    public static function insertTrackRec(MyRadio_Track $track, $source, $timeslotid)
     {
         self::$db->query('BEGIN');
 
@@ -116,10 +95,11 @@ class SIS_Tracklist extends ServiceAPI
         self::$db->query(
             'INSERT INTO tracklist.track_rec (audiologid, recordid, trackid)
             VALUES ($1, $2, $3)',
-            [$audiologid['audiologid'], $recid, $trackid]
+            [$audiologid['audiologid'], $track->getAlbum()->getID(), $track->getID()]
         );
 
         self::$db->query('COMMIT');
+        return true;
     }
 
     public static function markTrackDeleted($tracklistid)
@@ -129,5 +109,8 @@ class SIS_Tracklist extends ServiceAPI
             WHERE audiologid = $1',
             [$tracklistid]
         );
+        if (self::$db->numRows() !== 1) {
+            throw new MyRadioException('Failed to delete tracklistitem ' . $tracklistid, 500);
+        }
     }
 }

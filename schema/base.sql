@@ -7291,3 +7291,9 @@ INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\MyRadio\CoreU
 
 INSERT INTO api_method_auth (class_name, method_name, typeid) VALUES ('\MyRadio\ServiceAPI\MyRadio_Swagger', NULL, NULL);
 INSERT INTO api_method_auth (class_name, method_name, typeid) VALUES ('\MyRadio\ServiceAPI\MyRadio_Timeslot', 'getWeekSchedule', NULL);
+
+SET search_path = tracklist, pg_catalog;
+INSERT INTO tracklist.source (sourceid, source) VALUES ('b', 'BAPS');
+INSERT INTO tracklist.source (sourceid, source) VALUES ('m', 'Manual');
+INSERT INTO tracklist.source (sourceid, source) VALUES ('o', 'Other');
+INSERT INTO tracklist.source (sourceid, source) VALUES ('j', 'Jukebox');

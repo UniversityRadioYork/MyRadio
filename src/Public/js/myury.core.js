@@ -15,7 +15,7 @@ window.myury = {
             [myury.closeButton(), myury.reportButton(xhr, settings, myradio_errors)]
         );
     },
-    createDialog: function(title, text, buttons) {
+    createDialog: function(title, text, buttons, startHidden) {
         if (!buttons) {
             buttons = [];
         }
@@ -23,7 +23,9 @@ window.myury = {
         modal.find('.modal-body').append(text);
         modal.find('.modal-footer').append(buttons);
         modal.appendTo('body');
-        modal.modal();
+        if (!startHidden) {
+            modal.modal();
+        }
         return modal;
     },
     closeButton: function() {
@@ -63,7 +65,7 @@ $(document).ajaxError(function(e, xhr, settings, error) {
 
         var errorVisibleReset = function() {
             errorVisible = false;
-        }
+        };
 
         close.addEventListener('click', errorVisibleReset);
         report.addEventListener('click', errorVisibleReset);
@@ -98,9 +100,9 @@ jQuery.fn.show = function() {
         .css('display', 'block')
         .css('visibility', 'visible');
     return this;
-}
+};
 
 jQuery.fn.hide = function() {
     $(this).addClass('hidden');
     return this;
-}
+};

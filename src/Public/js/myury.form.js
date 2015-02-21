@@ -33,7 +33,7 @@ window.MyRadioForm = {
       var memberLookup = new Bloodhound({
         datumTokenizer: function(i) {
           return Bloodhound.tokenizers.whitespace(i.fname)
-            .concat(Bloodhound.tokenizers.whitespace(i.sname))
+            .concat(Bloodhound.tokenizers.whitespace(i.sname));
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         limit: 5,
@@ -78,7 +78,7 @@ window.MyRadioForm = {
       var trackLookup = new Bloodhound({
         datumTokenizer: function(i) {
           return Bloodhound.tokenizers.whitespace(i.title)
-            .concat(Bloodhound.tokenizers.whitespace(i.artist))
+            .concat(Bloodhound.tokenizers.whitespace(i.artist));
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         limit: 5,
@@ -108,7 +108,7 @@ window.MyRadioForm = {
             source: trackLookup.ttAdapter(),
             templates: {
               suggestion: function(i) {
-                return '<p>' + i.title + '<br><span style="font-size:.8em">' + i.artist + '</span></p>'
+                return '<p>' + i.title + '<br><span style="font-size:.8em">' + i.artist + '</span></p>';
               }
             }
           }
@@ -168,7 +168,7 @@ window.MyRadioForm = {
       var albumLookup = new Bloodhound({
         datumTokenizer: function(i) {
           return Bloodhound.tokenizers.whitespace(i.title)
-            .concat(Bloodhound.tokenizers.whitespace(i.artist))
+            .concat(Bloodhound.tokenizers.whitespace(i.artist));
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         limit: 5,
@@ -316,7 +316,7 @@ window.MyRadioForm = {
     $('.myury-form-add-row-button').on('click', function() {
       var new_id = $(this).attr('nextvalue');
       $('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody tr:first').clone()
-              .addClass(parseInt(new_id) % 2 == 0 ? 'odd' : 'even')
+              .addClass(parseInt(new_id) % 2 === 0 ? 'odd' : 'even')
               .find('input:not(.tt-hint)').each(function() {
         $(this).val('').removeClass('tt-input').attr('id', $(this).attr('id').replace(/0/, new_id));
       }).end().appendTo('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody');
@@ -356,10 +356,10 @@ window.MyRadioForm = {
         //data = $.parseJSON($(this).contents());
         data = $.parseJSON($($(this).contents().find('body').children()[0]).html());
         console.log(data);
-        percent = data['bytes_uploaded'] / data['bytes_total'] * 100;
+        percent = data.bytes_uploaded / data.bytes_total * 100;
         $('.myuryfrm-file-upload-progress').progressbar('value', percent);
         $('.progress-label').html(Math.floor(percent) + '% (' +
-                Math.floor(data['speed_average'] / 1024) + 'Kbps)');
+                Math.floor(data.speed_average / 1024) + 'Kbps)');
       });
     }
   },
@@ -371,7 +371,7 @@ window.MyRadioForm = {
     $('#myradiofrm-file-upload-iframe').attr('src',
             myury.makeURL('MyRadio', 'a-getuploadprogress', {
               id: $('#UPLOAD_IDENTIFIER').val(),
-              1: (new Date).getTime()
+              1: (new Date()).getTime()
             }));
   },
   init: function() {
