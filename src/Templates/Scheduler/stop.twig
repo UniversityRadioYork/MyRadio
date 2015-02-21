@@ -55,7 +55,6 @@
 </form>
 <script type="text/javascript">
     $('#theField').on('keyup', function() {
-        console.log($(this).val());
         if ($(this).val() === "{{result}}") {
             $('#theButton').removeAttr('disabled');
         } else {
