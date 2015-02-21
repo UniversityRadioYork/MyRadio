@@ -175,6 +175,11 @@ class CoreUtils
         return gmdate('Y-m-d H:i:s+00', $time);
     }
 
+    /**
+     * Returns the ISO8601 Year and Week Number for the given time
+     * @param int   $time The time to get the info for, default now.
+     * @return array [year, week_number]
+     */
     public static function getYearAndWeekNo($time = null) {
         if ($time === null) {
             $time = time();
