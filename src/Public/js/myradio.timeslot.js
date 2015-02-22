@@ -50,7 +50,7 @@ $('#timeslots').on('change', function() {
                     $('#signin-list').html('Sign in to your show:<br>');
                     var used_memberids = [];
                     for (row in data) {
-                        if (user_memberids.indexOf(data[row]['user']['memberid']) === -1) {
+                        if (used_memberids.indexOf(data[row]['user']['memberid']) === -1) {
                             var check = $('<input type="checkbox"></input>');
                             var label = $('<label></label>');
                             check.attr('name', 'signin[]')
@@ -66,7 +66,7 @@ $('#timeslots').on('change', function() {
                                 check.attr('checked', 'checked');
                             }
                             $('#signin-list').append(check).append(label).append('<br>');
-                            user_memberids.push(data[row]['user']['memberid']);
+                            used_memberids.push(data[row]['user']['memberid']);
                         }
                     }
                 }
