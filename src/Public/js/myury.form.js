@@ -60,7 +60,16 @@ window.MyRadioForm = {
             displayKey: function(i) {
               return i.fname + ' ' + i.sname;
             },
-            source: memberLookup.ttAdapter()
+            source: memberLookup.ttAdapter(),
+            templates: {
+              //Only needed for workaround
+              suggestion: function(i) {
+                //Fix typeahead not showing after hiding
+                //TODO: Report this @ https://github.com/twitter/typeahead.js/
+                $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
+                return '<p>' + i.fname + ' ' + i.sname + '</p>';
+              }
+            }
           }
         )
         .on('typeahead:selected', function(e, obj) {
@@ -108,6 +117,9 @@ window.MyRadioForm = {
             source: trackLookup.ttAdapter(),
             templates: {
               suggestion: function(i) {
+                //Fix typeahead not showing after hiding
+                //TODO: Report this @ https://github.com/twitter/typeahead.js/
+                $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
                 return '<p>' + i.title + '<br><span style="font-size:.8em">' + i.artist + '</span></p>';
               }
             }
@@ -150,7 +162,16 @@ window.MyRadioForm = {
           },
           {
             displayKey: 'title',
-            source: artistLookup.ttAdapter()
+            source: artistLookup.ttAdapter(),
+            templates: {
+              //Only needed for workaround
+              suggestion: function(i) {
+                //Fix typeahead not showing after hiding
+                //TODO: Report this @ https://github.com/twitter/typeahead.js/
+                $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
+                return '<p>' + i.title + '</p>';
+              }
+            }
           }
         )
         .on('typeahead:selected', function(e, obj) {
@@ -193,7 +214,16 @@ window.MyRadioForm = {
           },
           {
             displayKey: 'title',
-            source: albumLookup.ttAdapter()
+            source: albumLookup.ttAdapter(),
+            templates: {
+              //Only needed for workaround
+              suggestion: function(i) {
+                //Fix typeahead not showing after hiding
+                //TODO: Report this @ https://github.com/twitter/typeahead.js/
+                $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
+                return '<p>' + i.title + '</p>';
+              }
+            }
           }
         )
         .on('typeahead:selected', function(e, obj) {
