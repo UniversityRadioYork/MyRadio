@@ -274,6 +274,13 @@ final class Config
     public static $audio_upload_tmp_dir = '/tmp/myradioaudiouploadcache';
 
     /**
+     * The maximum allowed size of a single Track upload, in MB.
+     * Still bound by php.ini settings.
+     * @var String
+     */
+    public static $audio_upload_max_size = '15';
+
+    /**
      * The API key to access last.fm's resources.
      *
      * You will need one of these to enable Library management.
@@ -605,7 +612,8 @@ EOT;
             'short_name' => self::$short_name,
             'long_name' => self::$long_name,
             'founded' => self::$founded,
-            'facebook' => self::$facebook
+            'facebook' => self::$facebook,
+            'audio_upload_max_size' => self::$audio_upload_max_size
         ];
     }
 }

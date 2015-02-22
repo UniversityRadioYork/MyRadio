@@ -45,7 +45,7 @@ var Library = function() {
                 message = 'Please don\'t upload too many files at once.';
                 break;
             case 'FileTooLarge':
-                message = file.name + ' is too big. Please upload files smaller than 15MB.';
+                message = file.name + ' is too big. Please upload files smaller than ' + mConfig.audio_upload_max_size + 'MB.';
                 break;
             case 'FileTypeNotAllowed':
                 message = file.name + ' is not a valid audio file.';
@@ -65,7 +65,7 @@ var Library = function() {
             error: filedrop_error_handler,
             allowedfiletypes: allowed_mp3,
             maxfiles: 20,
-            maxfilesize: 15,
+            maxfilesize: mConfig.audio_upload_max_size,
             queuefiles: 1,
             drop: function () {
                 $('#central-status').html('Reading file (0%)...');
@@ -210,7 +210,7 @@ var Library = function() {
             error: filedrop_error_handler,
             allowedfiletypes: allowed_all,
             maxfiles: 20,
-            maxfilesize: 15,
+            maxfilesize: mConfig.audio_upload_max_size,
             queuefiles: 1,
             drop: function () {
                 $('#res-status').html('Reading file (0%)...');
