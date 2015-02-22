@@ -96,9 +96,17 @@ $(document).ajaxSuccess(function(e, xhr, settings) {
 
 /** Use bootstrap show/hide helpers **/
 jQuery.fn.show = function() {
+    console.log(this);
     $(this).removeClass('hidden')
-        .css('display', 'block')
         .css('visibility', 'visible');
+    for (var i = 0; i < this.length; i++) {
+        if (this[i].style.display === 'none') {
+            $(this[i]).css('display', '');
+        }
+        if (window.getComputedStyle(this[i]).display === 'none') {
+            $(this[i]).css('display', 'block');
+        }
+    }
     return this;
 };
 
