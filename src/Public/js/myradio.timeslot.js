@@ -48,23 +48,26 @@ $('#timeslots').on('change', function() {
                 data: {timeslotid: $(this).val()},
                 success: function(data) {
                     $('#signin-list').html('Sign in to your show:<br>');
+                    var used_memberids = [];
                     for (row in data) {
-                        var check = $('<input type="checkbox"></input>');
-                        var label = $('<label></label>');
-                        console.log(data[row]);
-                        check.attr('name', 'signin[]')
-                                .attr('id', 'signin_'+data[row]['user']['memberid'])
-                                .attr('value', data[row]['user']['memberid']);
-                        label.attr('for', 'signin_'+data[row]['user']['memberid'])
-                                .html(data[row]['user']['fname'] + ' ' + data[row]['user']['sname']);
-                        if (data[row]['signedby'] != null) {
-                            check.attr('checked', 'checked')
-                                    .attr('disabled', 'true');
-                            label.append(' (Signed in by '+data[row]['signedby']['fname'] + ' '+data[row]['signedby']['sname'] + ')');
-                        } else if (data[row]['user']['memberid'] == window.memberid) {
-                            check.attr('checked', 'checked');
+                        if (user_memberids.indexOf(data[row]['user']['memberid']) === -1) {
+                            var check = $('<input type="checkbox"></input>');
+                            var label = $('<label></label>');
+                            check.attr('name', 'signin[]')
+                                    .attr('id', 'signin_'+data[row]['user']['memberid'])
+                                    .attr('value', data[row]['user']['memberid']);
+                            label.attr('for', 'signin_'+data[row]['user']['memberid'])
+                                    .html(data[row]['user']['fname'] + ' ' + data[row]['user']['sname']);
+                            if (data[row]['signedby'] != null) {
+                                check.attr('checked', 'checked')
+                                        .attr('disabled', 'true');
+                                label.append(' (Signed in by '+data[row]['signedby']['fname'] + ' '+data[row]['signedby']['sname'] + ')');
+                            } else if (data[row]['user']['memberid'] == window.memberid) {
+                                check.attr('checked', 'checked');
+                            }
+                            $('#signin-list').append(check).append(label).append('<br>');
+                            user_memberids.push(data[row]['user']['memberid']);
                         }
-                        $('#signin-list').append(check).append(label).append('<br>');
                     }
                 }
             });
