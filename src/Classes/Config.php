@@ -278,7 +278,7 @@ final class Config
      * Still bound by php.ini settings.
      * @var String
      */
-    public static $audio_upload_max_size = '15';
+    public static $audio_upload_max_size = 15;
 
     /**
      * The API key to access last.fm's resources.
