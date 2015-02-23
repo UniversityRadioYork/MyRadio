@@ -175,6 +175,11 @@ class CoreUtils
         return gmdate('Y-m-d H:i:s+00', $time);
     }
 
+    /**
+     * Returns the ISO8601 Year and Week Number for the given time
+     * @param int   $time The time to get the info for, default now.
+     * @return array [year, week_number]
+     */
     public static function getYearAndWeekNo($time = null) {
         if ($time === null) {
             $time = time();
@@ -209,8 +214,8 @@ class CoreUtils
             );
 
             // Default to this year
-            $beforeAccountExpiry = strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days');
-            if (empty($term) || $beforeAccountExpiry) {
+            $account_reset_time = strtotime('+' . Config::$account_expiry_before . ' days');
+            if (empty($term) || strtotime($term[0]) <= $account_reset_time) {
                 CoreUtils::$academicYear = date('Y');
             } else {
                 self::$academicYear = date('Y') - 1;
@@ -415,14 +420,11 @@ class CoreUtils
      */
     public static function hasPermission($permission)
     {
-        if (!isset($_SESSION['member_permissions'])) {
-            return false;
+        if (isset($_SESSION['memberid'])) {
+            return MyRadio_User::getInstance()->hasAuth($permission);
+        } else {
+            return $permission === null;
         }
-        if ($permission === null) {
-            return true;
-        }
-
-        return in_array($permission, $_SESSION['member_permissions']);
     }
 
     /**

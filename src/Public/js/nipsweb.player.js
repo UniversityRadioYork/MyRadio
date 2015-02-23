@@ -318,7 +318,7 @@ var NIPSWeb = function(d) {
         $('ul.baps-channel li').off('click.playactivator').on('click.playactivator', function(e) {
             var channel = $(this).parent('.baps-channel').attr('channel');
             if (!getPlayer(channel).paused) {
-                showAlert('Cannot load track whilst another is playing.', 'info');
+                showAlert('Cannot load track whilst another is playing.', 'warning');
                 e.stopPropagation();
                 return false;
             }
@@ -643,7 +643,11 @@ var NIPSWeb = function(d) {
         });
 
         $(slider).on("introChanged", function(e) {
-            console.warn('TODO: Send updated intro time to server');
+            var trackid = getRecTrackFromID($(channelDiv).children('.selected')[0].getAttribute('id'))[1];
+            $.post(
+                mConfig.api_url + '/Track/' + trackid + '/setIntro',
+                {duration: e.originalEvent.detail.time}
+            );
         });
 
         $(slider).on("cueChanged", function(e) {
@@ -1083,6 +1087,9 @@ var playoutSlider = function(e) {
     //Attach the seekbar to the DOM
     e.className = 'playout-slider-container';
     e.appendChild(sliderContainer);
+
+    //Detect resize
+    window.addEventListener('resize', redraw);
 
     return {
         reset: reset,

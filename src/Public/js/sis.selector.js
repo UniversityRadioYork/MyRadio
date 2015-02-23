@@ -44,45 +44,54 @@ var Selector = function() {
             if (time <= lastTime) {
                 return;
             }
+
+            if (lastTime === 0) {
+                this.show();
+            }
+
             lastTime = parseInt(data['lastmod']);
             // When called bet selectStudio, this isn't what I think it is
             // @todo, see if that can be bound nicer
             that.registerParam('selector-lasttime', lastTime);
 
-            if (!data['s1power']) {
-                buttons[0].setAttribute('title', studios[0] + ' Powered Off');
-                buttons[0].setAttribute('class', 'selbtn poweredoff');
-                buttons[0].setAttribute('on', 'false');
-            } else {
-                liveStatus = (data['studio'] == 1) ? 's1on' : 's1off';
-                buttons[0].setAttribute('title', studios[0]);
-                buttons[0].setAttribute('class', 'selbtn poweredon ' + liveStatus);
-                buttons[0].setAttribute('on', 'true');
-            }
+            if (data['ready']) {
+                if (!data['s1power']) {
+                    buttons[0].setAttribute('title', studios[0] + ' Powered Off');
+                    buttons[0].setAttribute('class', 'selbtn poweredoff');
+                    buttons[0].setAttribute('on', 'false');
+                } else {
+                    liveStatus = (data['studio'] == 1) ? 's1on' : 's1off';
+                    buttons[0].setAttribute('title', studios[0]);
+                    buttons[0].setAttribute('class', 'selbtn poweredon ' + liveStatus);
+                    buttons[0].setAttribute('on', 'true');
+                }
 
-            if (!data['s2power']) {
-                buttons[1].setAttribute('title', studios[1] + ' Powered Off');
-                buttons[1].setAttribute('class', 'selbtn poweredoff');
-                buttons[1].setAttribute('on', 'false');
-            } else {
-                liveStatus = (data['studio'] == 2) ? 's2on' : 's2off';
-                buttons[1].setAttribute('title', studios[1]);
-                buttons[1].setAttribute('class', 'selbtn poweredon ' + liveStatus);
-                buttons[1].setAttribute('on', 'true');
-            }
+                if (!data['s2power']) {
+                    buttons[1].setAttribute('title', studios[1] + ' Powered Off');
+                    buttons[1].setAttribute('class', 'selbtn poweredoff');
+                    buttons[1].setAttribute('on', 'false');
+                } else {
+                    liveStatus = (data['studio'] == 2) ? 's2on' : 's2off';
+                    buttons[1].setAttribute('title', studios[1]);
+                    buttons[1].setAttribute('class', 'selbtn poweredon ' + liveStatus);
+                    buttons[1].setAttribute('on', 'true');
+                }
 
-            liveStatus = (data['studio'] == 3) ? 's3on' : 's3off';
-            buttons[2].setAttribute('class', 'selbtn poweredon ' + liveStatus);
+                liveStatus = (data['studio'] == 3) ? 's3on' : 's3off';
+                buttons[2].setAttribute('class', 'selbtn poweredon ' + liveStatus);
 
-            s = studios[data['studio'] - 1] + ' On Air';
-            currentStudio = data['studio'];
-            if (data['lock'] != 0) {
-              s = s + '<small> &mdash; Locked</small>';
-              locked = true;
+                s = studios[data['studio'] - 1] + ' On Air';
+                currentStudio = data['studio'];
+                if (data['lock'] != 0) {
+                  s = s + '<small> &mdash; Locked</small>';
+                  locked = true;
+                } else {
+                    locked = false;
+                }
+                onAir.innerHTML = s;
             } else {
-                locked = false;
+                this.innerHTML = 'It looks like Selector hasn\'t been set up yet.';
             }
-            onAir.innerHTML = s;
         };
 
 	return {

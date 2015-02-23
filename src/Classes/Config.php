@@ -69,13 +69,6 @@ final class Config
     public static $base_url       = '//ury.org.uk/myury/';
 
     /**
-     * The base URL of Shibbobleh - it has CSS and JS resources used by MyRadio
-     * @var String
-     * @deprecated
-     */
-    public static $shib_url       = '//ury.org.uk/portal/';
-
-    /**
      * The base URL of the schedule - has some JS resources from MyRadio
      * @var String
      */
@@ -103,11 +96,11 @@ final class Config
      */
     public static $cache_provider = '\MyRadio\APCProvider';
     /**
-     * How long MyRadio_Track items should be cached before the data is invalidated. This is Configurable as due to a lot
-     * of external edit sources, it is reasonable to asssume the cache may become stale due to other systems.
+     * How long ServiceAPI items should be cached for by default. Turn this down if you
+     * get a lot of edits from other sources.
      * @var int
      */
-    public static $cache_track_timeout = 7200; //2 hours
+    public static $cache_default_timeout = 86400;
 
     /**
      * Whether MyRadio errors should be displayed in the browser. If this is set to false, users with the
@@ -241,6 +234,13 @@ final class Config
     public static $vacant_officer_uri = '/media/image_meta/MyRadioImageMetadata/32.jpeg';
 
     /**
+     * The full web address of a copy of the Presenters Contract.
+     * @note If this variable is empty, then contracts are disabled.
+     * @var String
+     */
+    public static $contract_uri = '';
+
+    /**
      * The file system path to the Central Database. Must be absolute. Can not be smb://, but may be a network share
      * mounted to the file system mountpoint.
      * @var String
@@ -274,6 +274,13 @@ final class Config
     public static $audio_upload_tmp_dir = '/tmp/myradioaudiouploadcache';
 
     /**
+     * The maximum allowed size of a single Track upload, in MB.
+     * Still bound by php.ini settings.
+     * @var String
+     */
+    public static $audio_upload_max_size = 15;
+
+    /**
      * The API key to access last.fm's resources.
      *
      * You will need one of these to enable Library management.
@@ -287,7 +294,7 @@ final class Config
      * @var String
      */
     public static $lastfm_api_secret;
-    
+
     /**
      * The last.fm group specifically for the University of York. If using
      * this aspect of the code you probably want to change this bit.
@@ -412,12 +419,12 @@ final class Config
     public static $daemon_lock_file = '/tmp/myradio_daemon.lock';
 
     /**
-     * The root URL to URY's API
+     * The root URL to the API
      *
      * Must be absolute.
      * @var String
      */
-    public static $api_url = null;
+    public static $api_url = '/api';
 
     /**
      * The URL prefix to URY's webcam
@@ -469,39 +476,12 @@ final class Config
     public static $sis_modules = [
         'presenterinfo',
         'messages',
+        'schedule',
+        'tracklist',
         'links',
         'selector',
-        'webcam'
-    ];
-
-    /**
-     * Studio data
-     * name is the name that is shown if it is detected as the current output
-     * authenticated_machines is an array of IP addresses which will have all rights in SIS, even if they are non-officer
-     * colour is the colour of any alements identifying the studio. Any valid CSS color will work here
-     * @var Array
-     */
-    public static $studios = [
-        [
-            'name' => 'Campus Jukebox',
-            'authenticated_machines' => [],
-            'colour' => '#0F0'
-        ],
-        [
-            'name' => 'Studio 1',
-            'authenticated_machines' => ['144.32.64.181', '144.32.64.183'],
-            'colour' => 'red'
-        ],
-        [
-            'name' => 'Studio 2',
-            'authenticated_machines' => ['144.32.64.184', '144.32.64.185'],
-            'colour' => '#0044BA'
-        ],
-        [
-            'name' => 'Outside Broadcast',
-            'authenticated_machines' => [], //TODO: Add the OB Machines here
-            'colour' => '#bb00dc'
-        ],
+        'webcam',
+        'obit'
     ];
 
     /**
@@ -621,7 +601,6 @@ EOT;
             'ajax_limit_default' => self::$ajax_limit_default,
             'base_url' => self::$base_url,
             'rewrite_url' => self::$rewrite_url,
-            'shib_url' => self::$shib_url,
             'schedule_url' => self::$schedule_url,
             'timezone' => self::$timezone,
             'default_module' => self::$default_module,
@@ -633,7 +612,8 @@ EOT;
             'short_name' => self::$short_name,
             'long_name' => self::$long_name,
             'founded' => self::$founded,
-            'facebook' => self::$facebook
+            'facebook' => self::$facebook,
+            'audio_upload_max_size' => self::$audio_upload_max_size
         ];
     }
 }

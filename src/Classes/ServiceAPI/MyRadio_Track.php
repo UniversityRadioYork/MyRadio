@@ -122,9 +122,7 @@ class MyRadio_Track extends ServiceAPI
         $this->trackid = (int) $trackid;
         $result = self::$db->fetchOne('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', [$this->trackid]);
         if (empty($result)) {
-            throw new MyRadioException('The specified Track does not seem to exist');
-
-            return;
+            throw new MyRadioException('The specified Track does not seem to exist', 400);
         }
 
         $this->artist = $result['artist'];
@@ -138,11 +136,6 @@ class MyRadio_Track extends ServiceAPI
         $this->number = (int) $result['intro'];
         $this->record = (int) $result['recordid'];
         $this->title = $result['title'];
-    }
-
-    private function updateCachedObject()
-    {
-        self::$cache->set(self::getCacheKey($this->getID()), $this, Config::$cache_track_timeout);
     }
 
     public static function getForm()
@@ -206,12 +199,21 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Get the Album of the Track;
+     * Get the Album of the Track
      * @return Album
      */
     public function getAlbum()
     {
         return MyRadio_Album::getInstance($this->record);
+    }
+
+    /**
+     * Get the intro duration of the Track, in seconds
+     * @return int
+     */
+    public function getIntro()
+    {
+        return $this->intro;
     }
 
     /**
@@ -282,7 +284,7 @@ class MyRadio_Track extends ServiceAPI
                 'f', null, $this->getID()
             ]
         );
-        $this->updateCachedObject();
+        $this->updateCacheObject();
     }
 
     /**
@@ -292,7 +294,7 @@ class MyRadio_Track extends ServiceAPI
     {
         $this->clean = $clean;
         self::$db->query('UPDATE rec_track SET clean=$1 WHERE trackid=$2', [$clean, $this->getID()]);
-        $this->updateCachedObject();
+        $this->updateCacheObject();
     }
 
     /**
@@ -309,7 +311,7 @@ class MyRadio_Track extends ServiceAPI
             'album' => $this->getAlbum()->toDataSource(),
             'trackid' => $this->getID(),
             'length' => $this->getLength(),
-            'intro' => $this->intro,
+            'intro' => $this->getIntro(),
             'clean' => $this->clean !== 'n',
             'digitised' => $this->getDigitised(),
             'editlink' => [
@@ -361,19 +363,19 @@ class MyRadio_Track extends ServiceAPI
     /**
      *
      * @param Array $options One or more of the following:
-     *                       title: String title of the track
-     *                       artist: String artist name of the track
-     *                       digitised: If true, only return digitised tracks. If false, return any.
-     *                       itonesplaylistid: Tracks that are members of the iTones_Playlist id
-     *                       limit: Maximum number of items to return. 0 = No Limit
-     *                       recordid: int Record id
-     *                       lastfmverified: Boolean whether or not verified with Last.fm Fingerprinter. Default any.
-     *                       random: If true, sort randomly
-     *                       idsort: If true, sort by trackid
-     *                       custom: A custom SQL WHERE clause
-     *                       precise: If true, will only return exact matches for artist/title
-     *                       nocorrectionproposed: If true, will only return items with no correction proposed.
-     *                       clean: Default any. 'y' for clean tracks, 'n' for dirty, 'u' for unknown.
+     *  title: String title of the track
+     *  artist: String artist name of the track
+     *  digitised: If true, only return digitised tracks. If false, return any.
+     *  itonesplaylistid: Tracks that are members of the iTones_Playlist id
+     *  limit: Maximum number of items to return. 0 = No Limit
+     *  recordid: int Record id
+     *  lastfmverified: Boolean whether or not verified with Last.fm Fingerprinter. Default any.
+     *  random: If true, sort randomly
+     *  idsort: If true, sort by trackid
+     *  custom: A custom SQL WHERE clause
+     *  precise: If true, will only return exact matches for artist/title(/album if specified)
+     *  nocorrectionproposed: If true, will only return items with no correction proposed.
+     *  clean: Default any. 'y' for clean tracks, 'n' for dirty, 'u' for unknown.
      *
      * @todo Limit not accurate for itonesplaylistid queries
      */
@@ -441,8 +443,13 @@ class MyRadio_Track extends ServiceAPI
         }
 
         //Prepare paramaters
-        $sql_params = [$options['title'], $options['artist'], $options['album'], $options['precise'] ? '' : '%'];
-        $count = 4;
+        $sql_params = [$options['precise'] ? '' : '%', $options['title'], $options['artist']];
+        $count = 3;
+        if ($options['album']) {
+            $sql_params[] = $options['album'];
+            $count++;
+            $album_param = $count;
+        }
         if ($options['limit'] != 0) {
             $sql_params[] = $options['limit'];
             $count++;
@@ -458,9 +465,10 @@ class MyRadio_Track extends ServiceAPI
         $result = self::$db->fetchAll(
             'SELECT trackid, rec_track.recordid
             FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
-            AND (rec_track.title ILIKE $4 || $1 || $4'
+            AND (rec_track.title ILIKE $1 || $2 || $1'
             . $firstop
-            . ' rec_track.artist ILIKE $4 || $2 || $4) AND rec_record.title ILIKE $4 || $3 || $4'
+            . ' rec_track.artist ILIKE $1 || $3 || $1)'
+            . ($options['album'] ? ' AND rec_record.title ILIKE $1 || $' . $album_param . ' || $1' : '')
             . ($options['digitised'] ? ' AND digitised=\'t\'' : '')
             . ' '
             . ($options['lastfmverified'] === true ? ' AND lastfm_verified=\'t\'' : '')
@@ -762,18 +770,18 @@ class MyRadio_Track extends ServiceAPI
         $this->record = $album->getID();
         self::$db->query('UPDATE rec_track SET recordid=$1 WHERE trackid=$2', [$album->getID(), $this->getID()]);
 
-        $this->updateCachedObject();
+        $this->updateCacheObject();
     }
 
     public function setTitle($title)
     {
         if (empty($title)) {
-            throw new MyRadioException('Track title must not be empty!');
+            throw new MyRadioException('Track title must not be empty!', 400);
         }
 
         $this->title = $title;
         self::$db->query('UPDATE rec_track SET title=$1 WHERE trackid=$2', [$title, $this->getID()]);
-        $this->updateCachedObject();
+        $this->updateCacheObject();
     }
 
     public function setArtist($artist)
@@ -785,14 +793,14 @@ class MyRadio_Track extends ServiceAPI
         $this->artist = $artist;
         self::$db->query('UPDATE rec_track SET artist=$1 WHERE trackid=$2', [$artist, $this->getID()]);
 
-        $this->updateCachedObject();
+        $this->updateCacheObject();
     }
 
     public function setPosition($position)
     {
         $this->position = (int) $position;
         self::$db->query('UPDATE rec_track SET number=$1 WHERE trackid=$2', [$this->getPosition(), $this->getID()]);
-        $this->updateCachedObject();
+        $this->updateCacheObject();
     }
 
     public function getPosition()
@@ -808,7 +816,21 @@ class MyRadio_Track extends ServiceAPI
             $this->getDuration(),
             $this->getID()
         ]);
-        $this->updateCachedObject();
+        $this->updateCacheObject();
+    }
+
+    /**
+     * Set the length of the track intro, in seconds
+     * @param int
+     */
+    public function setIntro($duration)
+    {
+        $this->intro = (int) $duration;
+        self::$db->query('UPDATE rec_track SET intro=$1 WHERE trackid=$2', [
+            CoreUtils::intToTime($this->intro),
+            $this->getID()
+        ]);
+        $this->updateCacheObject();
     }
 
     /**
@@ -936,7 +958,7 @@ class MyRadio_Track extends ServiceAPI
                 }
             }
 
-            $this->updateCachedObject();
+            $this->updateCacheObject();
         }
 
         return self::resultSetToObjArray($this->lastfm_similar);
@@ -956,7 +978,7 @@ class MyRadio_Track extends ServiceAPI
                     [$this->getID()]
                 )
             );
-            $this->updateCachedObject();
+            $this->updateCacheObject();
         }
 
         return $this->itones_blacklist;

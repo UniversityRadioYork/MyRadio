@@ -45,7 +45,7 @@ var Library = function() {
                 message = 'Please don\'t upload too many files at once.';
                 break;
             case 'FileTooLarge':
-                message = file.name + ' is too big. Please upload files smaller than 15MB.';
+                message = file.name + ' is too big. Please upload files smaller than ' + mConfig.audio_upload_max_size + 'MB.';
                 break;
             case 'FileTypeNotAllowed':
                 message = file.name + ' is not a valid audio file.';
@@ -65,7 +65,7 @@ var Library = function() {
             error: filedrop_error_handler,
             allowedfiletypes: allowed_mp3,
             maxfiles: 20,
-            maxfilesize: 15,
+            maxfilesize: mConfig.audio_upload_max_size,
             queuefiles: 1,
             drop: function () {
                 $('#central-status').html('Reading file (0%)...');
@@ -92,7 +92,7 @@ var Library = function() {
                     if (manual_div !== null) {
                         // If the div exists, then the user has permission to upload a track
                         // manually, so display the div and set manual_track to true.
-                        manual_div.style.display = 'block';
+                        $(manual_div).show();
                         manual_track = true;
                     }
                 }
@@ -210,7 +210,7 @@ var Library = function() {
             error: filedrop_error_handler,
             allowedfiletypes: allowed_all,
             maxfiles: 20,
-            maxfilesize: 15,
+            maxfilesize: mConfig.audio_upload_max_size,
             queuefiles: 1,
             drop: function () {
                 $('#res-status').html('Reading file (0%)...');
@@ -237,8 +237,8 @@ var Library = function() {
                     if (window.auxid.match(/^aux-\d+$/)) {
                         //This is a central one - it can have an expiry
                         result.append(
-                            $('<input type="text" placeholder="Expiry date" />').addClass('date').attr('id', 'resuploaddate-' + i).datepicker({
-                                dateFormat: 'dd/mm/yy'
+                            $('<input type="text" placeholder="Expiry date" />').addClass('date').attr('id', 'resuploaddate-' + i).datetimepicker({
+                                pickTime: 'false'
                             }))
                             .append('<em>Leave blank to never expire</em>&nbsp;&nbsp;');
                     }
@@ -282,7 +282,9 @@ var Library = function() {
     };
 
     var initialise = function() {
+        $('#res-type-sel').on('change', res_type_sel_change_handler);
         $('#res-type-sel').on('click', res_type_sel_change_handler);
+        $('#res-type-sel').on('keyup', res_type_sel_change_handler);
         centralDbInit();
         auxDbInit();
         $('#central-status, #res-status').html('Ready');

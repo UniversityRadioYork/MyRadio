@@ -1,79 +1,35 @@
-body {
-  width: 98%;
-  min-width: 1200px;
-  height: calc(100% - 22px);
-  overflow-y: hidden;
+.container {
+  width: calc(100% - 10px);
 }
 
 #notice {
   position: fixed;
-  top: 22px;
+  top: 50px;
   left: 0;
 }
 
 #grid {
-  height: calc(100% - 150px);
-  min-height: 580px;
-  min-width: 1188px;
+  min-width: 250px;
   position: relative;
 }
 
-.h-link {
-  float: right;
-  margin: 0;
-  position: relative;
-  right: 15px;
-  top: 0.7em;
+@media (min-width: 992px) {
+  @media (min-height: 900px) {
+    #grid {
+      height: 725px;
+    }
+
+    #grid > div, #grid > div > div.tab-content {
+      height: 100%;
+    }
+  }
+
+  .tab-content .tab-pane {
+    height: 100%;
+    overflow-y: auto;
+  }
 }
 
-#hide-help {
-  float: right;
-}
-
-.pluginpane {
-  float: left;
-  width: 300px;
-  margin-right: 5px
-}
-.pluginpane .plugin:first-of-type .pluginhead {
-    margin-top: 0;
-}
-.pluginhead {
-  font-weight:bold;
-  cursor:pointer;
-  height:1.5em
-}
-.pluginbody {
-  overflow-x: hidden;
-  font-size: 12px
-}
-.ui-accordion .ui-accordion-content {
-  padding: 1em 2em;
-  overflow-x: hidden;
-}
-
-
-.maincontainer {
-  overflow: hidden;
-  height: 100%;
-  margin-right: 10px;
-}
-.ui-tabs {
-  height: calc(100% - .4em - 2px);
-  padding: 0;
-}
-.ui-tabs .ui-tabs-panel {
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: calc(100% - 2em - 0.5em - 48px);
-}
-
-.ui-resizable-s { height: 10px; bottom: 0; }
-
-.list { text-align:left; list-style-position:outside; list-style-type:none; }
-.infobox {  width:350px; margin:auto; padding:1em; font-size:0.8em; text-align:justify; font-style:italic; }
-
-.errorbox {  margin:auto; padding-bottom:1em; font-size:0.8em; font-style:italic; }
 .hr { margin:.5em 0 0 0; }
 
 #presenterinfo {
@@ -89,14 +45,11 @@ body {
   text-align: center;
   width: 100%;
 }
+
 .td-msgitem td:first-child {
   width: 50px;
 }
-table.messages tr.unread td:first-child {
-  background-image: url(../img/sis/6.png);
-  background-repeat: no-repeat;
-  background-position-y: 50%;
-}
+
 table.messages tr td:last-child {
   width: 100px;
 }
@@ -118,6 +71,7 @@ fieldset { padding:0; border:0; margin-top:25px; }
   border-spacing: 20px 0;
   margin-bottom: .5em;
   border-collapse: separate;
+  max-width: 250px;
 }
 .selbtn { height:35px; width:35px; }
 .poweredon { cursor:pointer; }
@@ -131,9 +85,6 @@ fieldset { padding:0; border:0; margin-top:25px; }
 .s1off { background-color: #600; }
 .poweredoff { background-color: #333; }
 
-#message-data, #tracklist-data {
-  display: none;
-}
 .td-msgitem, .delbutton {
   cursor: pointer;
 }
@@ -142,13 +93,17 @@ fieldset { padding:0; border:0; margin-top:25px; }
 figure {
   margin: 0;
 }
-.webcam-stream-container {
+figure.webcam-stream-container {
+  width: 70px;
   display: block;
 }
-.webcam-stream-container.live {
+figure.webcam-stream-container.live {
+  width: 150px;
   float: right;
 }
-
+figure.webcam-stream-container img {
+  width: 100%;
+}
 #customcam {
   margin-top: 0.5em;
 }
@@ -156,24 +111,30 @@ figure {
   margin-right: 0.5em;
 }
 
+.scheduleview .show {
+  font-size: 1.5em;
+}
 
-#schedule hgroup>* {
-  margin: 0;
+.scheduleview .show-description {
+  font-size: .8em;
 }
-#schedule-onair, .schedule-item {
-  margin-bottom: 2em;
-  position: relative;
+
+.twitter-typeahead {
+  display: block;
+  width: 100%;
+  margin-bottom: 1em;
 }
-#schedule h2 {
-  margin-top: 0;
-  text-align: left;
+
+.myradiofrmfield {
+  display: block;
+  width: 80%;
+  margin-bottom: 1em;
 }
-#schedule {
-  text-align: center;
+
+.twitter-typeahead .myradiofrmfield {
+  margin-bottom: 0;
 }
-.showTime {
-  position: absolute;
-  left: 2em;
-  font-size: larger;
-  font-weight: 700;
+
+.tt-dropdown-menu {
+  width: 80%;
 }

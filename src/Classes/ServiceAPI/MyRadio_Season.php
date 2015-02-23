@@ -758,7 +758,7 @@ EOT
                     if ($k > 10 || $k < 1) {
                         continue;
                     }
-                    $sids[$v]++;
+                    isset($sids[$v]) ? $side[$v]++ : $sids[$v] = 0;
                     //Work out blocked weeks
                     if ($k == ++$week_num) {
                         //Continuation of previous sequence

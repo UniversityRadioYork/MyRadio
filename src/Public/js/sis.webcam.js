@@ -10,49 +10,73 @@ var Webcam = function() {
             if (newcam === currentWebcam) {
                 return;
             }
-            $.get(myury.makeURL('SIS', 'webcam.set'), {src: newcam}, function(data) {
-                if (data['error']) {
-                    myury.createDialog('Webcam Error', data['error']);
-                    return;
-                }
-                update.call(this, data);
-            });
+            $.get(myury.makeURL('SIS', 'webcam.set'), {src: newcam});
         },
         update = function(data) {
-            for (i in data['streams']) {
-                if (!webcams.hasOwnProperty(data['streams'][i]['streamid'])) {
-                    var button = document.createElement('button'),
-                        figure = document.createElement('figure'),
-                        streamid = data['streams'][i]['streamid'];
-                    webcams[i['streamid']] = {
-                        button: button,
-                        figure: figure
-                    };
 
-                    button.innerHTML(data['streams'][i]['streamname']);
-                    button.addEventListener('click', function() {
-                        selectWebcam(streamid);
-                    });
-                    
-                    figure.setAttribute('src', data['streams'][i]['liveurl']);
-
-                    buttonContainer.appendChild(button);
-                    figureContainer.appendChild(figure);
-                }
+            if (currentWebcam === undefined) {
+                this.show();
             }
 
-            for (i in webcams) {
-                if (i == data['status']['current']) {
-                    webcams[i]['button'].setAttribute('disabled', 'disabled');
-                    webcams[i]['figure'].style.display = 'none';
-                } else {
-                    webcams[i]['button'].removeAttribute('disabled', 'disabled');
-                    webcams[i]['figure'].style.display = 'inline-block';
+            if (data['status']['current'] === -1) {
+                this.innerHTML = 'It looks like webcams haven\'t been set up yet.';
+            } else {
+                for (i in data['streams']) {
+                    if (!webcams.hasOwnProperty(data['streams'][i]['streamid'])) {
+                        var button = document.createElement('button'),
+                            figure = document.createElement('figure'),
+                            caption = document.createElement('figcaption'),
+                            img = document.createElement('img'),
+                            streamid = data['streams'][i]['streamid'],
+                            clickHandler = function(streamid) {
+                                return function() {
+                                    selectWebcam(streamid);
+                                }
+                            }(streamid);
+
+                        webcams[data['streams'][i]['streamid']] = {
+                            button: button,
+                            figure: figure
+                        };
+
+                        button.innerHTML = data['streams'][i]['streamname'];
+                        button.className = 'btn btn-default';
+                        button.addEventListener('click', clickHandler);
+                        
+                        img.setAttribute('src', data['streams'][i]['liveurl']);
+                        caption.innerHTML = data['streams'][i]['streamname'];
+
+                        figure.className = 'webcam-stream-container';
+                        if (streamid === 1) {
+                            figure.className = figure.className + ' live';
+                        } else {
+                            buttonContainer.appendChild(button);
+                        }
+                        figure.appendChild(img);
+                        figure.appendChild(caption);
+
+                        figureContainer.appendChild(figure);
+                    }
+                }
+
+                for (i in webcams) {
+                    if (i == data['status']['current']) {
+                        webcams[i]['button'].setAttribute('disabled', 'disabled');
+                        webcams[i]['figure'].style.display = 'none';
+                    } else {
+                        webcams[i]['button'].removeAttribute('disabled', 'disabled');
+                        webcams[i]['figure'].style.display = 'inline-block';
+                    }
                 }
             }
 
             currentWebcam = data['status']['current'];
-            this.registerParam('webcam_id', currentWebcam);
+            if (currentWebcam !== -1) {
+                onAir.innerHTML = data['streams'][currentWebcam]['streamname'] + ' is On Air';
+            } else {
+                onAir.innerHTML = 'Webcam information is not available at this time.';
+            }
+            this.registerParam('webcam-id', currentWebcam);
         };
 
 	return {

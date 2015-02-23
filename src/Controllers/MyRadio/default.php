@@ -20,11 +20,12 @@ $user = MyRadio_User::getInstance();
 $menu = (new MyRadioMenu())->getMenuForUser();
 
 $news = MyRadioNews::getLatestNewsItem(Config::$news_feed, $user);
+$news_clickthrough = Config::$members_news_enable && empty($news['seen']);
 
 $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/menu.twig')
         ->addVariable('title', 'Menu')
         ->addVariable('menu', $menu)
-        ->addVariable('news_clickthrough', empty($news['seen']))
+        ->addVariable('news_clickthrough', $news_clickthrough)
         /**
          * This is some bonus stuff for the Get On Air item
          */
@@ -32,7 +33,8 @@ $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/menu.twig')
         ->addVariable('studio_demoed', $user->isStudioDemoed())
         ->addVariable('is_trainer', $user->isTrainer())
         ->addVariable('has_show', $user->hasShow())
-        ->addVariable('paid', $user->isCurrentlyPaid());
+        ->addVariable('paid', $user->isCurrentlyPaid())
+        ->addVariable('contract_signed', $user->hasSignedContract());
 
 if (Config::$members_news_enable) {
     $twig->addVariable('news', $news);

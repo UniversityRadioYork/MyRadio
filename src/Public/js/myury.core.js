@@ -15,14 +15,17 @@ window.myury = {
             [myury.closeButton(), myury.reportButton(xhr, settings, myradio_errors)]
         );
     },
-    createDialog: function(title, text, buttons) {
+    createDialog: function(title, text, buttons, startHidden) {
         if (!buttons) {
             buttons = [];
         }
-        var modal = $('<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><h4 class="modal-title">' + title + '</h4></div><div class="modal-body">' + text + '</div><div class="modal-footer"></div></div></div></div>');
+        var modal = $('<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><h4 class="modal-title">' + title + '</h4></div><div class="modal-body"></div><div class="modal-footer"></div></div></div></div>');
+        modal.find('.modal-body').append(text);
         modal.find('.modal-footer').append(buttons);
         modal.appendTo('body');
-        modal.modal();
+        if (!startHidden) {
+            modal.modal();
+        }
         return modal;
     },
     closeButton: function() {
@@ -40,19 +43,39 @@ window.myury = {
         reportButton.addEventListener('click', function() {
             $.post(myury.makeURL('MyRadio', 'errorReport'), JSON.stringify({xhr: xhr, settings: settings, error: error}));
         });
+        return reportButton;
     }
 };
 
+var errorVisible = false;
 $(document).ajaxError(function(e, xhr, settings, error) {
     if (xhr.status == 401) {
         //Session timed out - need to login
         window.location = myury.makeURL('MyRadio', 'login', {next: window.location.href, message: window.btoa('Your session has expired and you need to log in again to continue.')});
-    } else {
+    } else if (!errorVisible) {
+        var close = myury.closeButton();
+        var report = myury.reportButton(xhr, settings, error);
+        var message = '';
+
+        if (xhr.responseJSON && xhr.responseJSON.error) {
+            message = xhr.responseJSON.error;
+        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+            message = xhr.responseJSON.message;
+        }
+
+        var errorVisibleReset = function() {
+            errorVisible = false;
+        };
+
+        close.addEventListener('click', errorVisibleReset);
+        report.addEventListener('click', errorVisibleReset);
+
         myury.createDialog(
             'Error',
-            '<p>Sorry, just went a bit wrong and I\'m not sure what to do about it.</p><details>' + error + '</details>',
-            [myury.closeButton(), myury.reportButton(xhr, settings, error)]
+            '<p>Sorry, just went a bit wrong and I\'m not sure what to do about it.</p><details>' + error + '<br>' + message + '</details>',
+            [close, report]
         );
+        errorVisible = true;
     }
 });
 
@@ -71,10 +94,22 @@ $(document).ajaxSuccess(function(e, xhr, settings) {
     }
 });
 
-/**
-* http://stackoverflow.com/questions/18568736/how-to-hide-element-using-twitter-bootstrap-3-and-show-it-using-jquery
-* @todo Remove the need for this
-*/
-$(document).ready(function() {
-    $('.hidden').hide().removeClass('hidden');
-});
+/** Use bootstrap show/hide helpers **/
+jQuery.fn.show = function() {
+    $(this).removeClass('hidden')
+        .css('visibility', 'visible');
+    for (var i = 0; i < this.length; i++) {
+        if (this[i].style.display === 'none') {
+            $(this[i]).css('display', '');
+        }
+        if (window.getComputedStyle(this[i]).display === 'none') {
+            $(this[i]).css('display', 'block');
+        }
+    }
+    return this;
+};
+
+jQuery.fn.hide = function() {
+    $(this).addClass('hidden');
+    return this;
+};

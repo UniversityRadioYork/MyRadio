@@ -12,6 +12,8 @@
 
 {% block foot %}
 {{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/vendor/typeahead.bundle.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/sis.js"></script>
 <script type="text/javascript">
 var sis = new SIS(document.getElementById('grid'));

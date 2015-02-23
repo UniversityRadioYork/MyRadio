@@ -33,7 +33,7 @@ window.MyRadioForm = {
       var memberLookup = new Bloodhound({
         datumTokenizer: function(i) {
           return Bloodhound.tokenizers.whitespace(i.fname)
-            .concat(Bloodhound.tokenizers.whitepsace(i.sname))
+            .concat(Bloodhound.tokenizers.whitespace(i.sname));
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         limit: 5,
@@ -52,7 +52,7 @@ window.MyRadioForm = {
         var defaultVal = idField.val();
 
         $(this).typeahead({
-            hint: true,
+            hint: false,
             highlight: true,
             minLength: 1
           },
@@ -60,7 +60,16 @@ window.MyRadioForm = {
             displayKey: function(i) {
               return i.fname + ' ' + i.sname;
             },
-            source: memberLookup.ttAdapter()
+            source: memberLookup.ttAdapter(),
+            templates: {
+              //Only needed for workaround
+              suggestion: function(i) {
+                //Fix typeahead not showing after hiding
+                //TODO: Report this @ https://github.com/twitter/typeahead.js/
+                $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
+                return '<p>' + i.fname + ' ' + i.sname + '</p>';
+              }
+            }
           }
         )
         .on('typeahead:selected', function(e, obj) {
@@ -78,7 +87,7 @@ window.MyRadioForm = {
       var trackLookup = new Bloodhound({
         datumTokenizer: function(i) {
           return Bloodhound.tokenizers.whitespace(i.title)
-            .concat(Bloodhound.tokenizers.whitepsace(i.artist))
+            .concat(Bloodhound.tokenizers.whitespace(i.artist));
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         limit: 5,
@@ -97,7 +106,7 @@ window.MyRadioForm = {
         var defaultVal = idField.val();
 
         $(this).typeahead({
-            hint: true,
+            hint: false,
             highlight: true,
             minLength: 1
           },
@@ -108,7 +117,10 @@ window.MyRadioForm = {
             source: trackLookup.ttAdapter(),
             templates: {
               suggestion: function(i) {
-                return '<p>' + i.title + '<br><span style="font-size:.8em">' + i.artist + '</span></p>'
+                //Fix typeahead not showing after hiding
+                //TODO: Report this @ https://github.com/twitter/typeahead.js/
+                $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
+                return '<p>' + i.title + '<br><span style="font-size:.8em">' + i.artist + '</span></p>';
               }
             }
           }
@@ -144,13 +156,22 @@ window.MyRadioForm = {
         var defaultVal = idField.val();
 
         $(this).typeahead({
-            hint: true,
+            hint: false,
             highlight: true,
             minLength: 1
           },
           {
             displayKey: 'title',
-            source: artistLookup.ttAdapter()
+            source: artistLookup.ttAdapter(),
+            templates: {
+              //Only needed for workaround
+              suggestion: function(i) {
+                //Fix typeahead not showing after hiding
+                //TODO: Report this @ https://github.com/twitter/typeahead.js/
+                $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
+                return '<p>' + i.title + '</p>';
+              }
+            }
           }
         )
         .on('typeahead:selected', function(e, obj) {
@@ -168,7 +189,7 @@ window.MyRadioForm = {
       var albumLookup = new Bloodhound({
         datumTokenizer: function(i) {
           return Bloodhound.tokenizers.whitespace(i.title)
-            .concat(Bloodhound.tokenizers.whitepsace(i.artist))
+            .concat(Bloodhound.tokenizers.whitespace(i.artist));
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         limit: 5,
@@ -187,13 +208,22 @@ window.MyRadioForm = {
         var defaultVal = idField.val();
 
         $(this).typeahead({
-            hint: true,
+            hint: false,
             highlight: true,
             minLength: 1
           },
           {
             displayKey: 'title',
-            source: albumLookup.ttAdapter()
+            source: albumLookup.ttAdapter(),
+            templates: {
+              //Only needed for workaround
+              suggestion: function(i) {
+                //Fix typeahead not showing after hiding
+                //TODO: Report this @ https://github.com/twitter/typeahead.js/
+                $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
+                return '<p>' + i.title + '</p>';
+              }
+            }
           }
         )
         .on('typeahead:selected', function(e, obj) {
@@ -226,9 +256,11 @@ window.MyRadioForm = {
      * Validation
      */
     $('fieldset.myradiofrm form').validate({
-      errorClass: 'ui-state-error',
+      errorClass: 'bg-danger',
       errorPlacement: function(error, element) {
-        error.addClass('label-nofloat').appendTo(element.parent('div'));
+        error.css('width', element.css('width'))
+            .css('margin-left', element.css('margin-left'))
+            .appendTo(element.parents('div.myradiofrmfield-container'));
       },
       submitHandler: function(form) {
         $(form).children('input[type=submit]').attr('disabled', 'disabled');
@@ -313,7 +345,7 @@ window.MyRadioForm = {
     $('.myury-form-add-row-button').on('click', function() {
       var new_id = $(this).attr('nextvalue');
       $('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody tr:first').clone()
-              .addClass(parseInt(new_id) % 2 == 0 ? 'odd' : 'even')
+              .addClass(parseInt(new_id) % 2 === 0 ? 'odd' : 'even')
               .find('input:not(.tt-hint)').each(function() {
         $(this).val('').removeClass('tt-input').attr('id', $(this).attr('id').replace(/0/, new_id));
       }).end().appendTo('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody');
@@ -349,13 +381,11 @@ window.MyRadioForm = {
         }
       });
       $('#myradiofrm-file-upload-iframe').on('load', function() {
-        //data = $.parseJSON($(this).contents());
         data = $.parseJSON($($(this).contents().find('body').children()[0]).html());
-        console.log(data);
-        percent = data['bytes_uploaded'] / data['bytes_total'] * 100;
+        percent = data.bytes_uploaded / data.bytes_total * 100;
         $('.myuryfrm-file-upload-progress').progressbar('value', percent);
         $('.progress-label').html(Math.floor(percent) + '% (' +
-                Math.floor(data['speed_average'] / 1024) + 'Kbps)');
+                Math.floor(data.speed_average / 1024) + 'Kbps)');
       });
     }
   },
@@ -367,7 +397,7 @@ window.MyRadioForm = {
     $('#myradiofrm-file-upload-iframe').attr('src',
             myury.makeURL('MyRadio', 'a-getuploadprogress', {
               id: $('#UPLOAD_IDENTIFIER').val(),
-              1: (new Date).getTime()
+              1: (new Date()).getTime()
             }));
   },
   init: function() {

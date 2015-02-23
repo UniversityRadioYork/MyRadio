@@ -15,13 +15,21 @@ body {
 }
 
 .footer {
-  position: fixed;
-  bottom: 0;
   width: 100%;
-  min-height: 40px;
   padding: 8px 0;
-  background-color: #f5f5f5;
-  z-index: 50;
+  border-top: .5em solid #f5f5f5;
+}
+
+@media (min-height: 800px) and (min-width: 992px) {
+  .footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    min-height: 40px;
+    z-index: 50;
+    background-color: #f5f5f5;
+    border: none;
+  }
 }
 
 /** MyRadio Menu Styles **/
@@ -518,7 +526,7 @@ div.officer .officer-title {
   height: 45px;
 }
 
-@media (min-width: 1000px) {
+@media (min-width: 992px) {
   div.scheduleview.view-day, div.scheduleview.hours-list {
     display: table-cell;
     width: calc(100% / 8);
@@ -529,6 +537,24 @@ div.officer .officer-title {
   div.scheduleview.hours-list div.hour {
     height: 50px;
   }
+}
+
+div.scheduleview-view-week div.show-description,
+div.scheduleview-view-week span.show-credits {
+  display: none;
+}
+
+div.scheduleview div.show-description {
+  font-style: italic;
+  text-align: center;
+}
+
+div.scheduleview-view-day div.show-title {
+  padding-left: 10%;
+}
+
+div.scheduleview div.show-title {
+  display: inline-block;
 }
 
 #schedule-preview {
@@ -563,4 +589,13 @@ div.scheduleview.view-day div, div.scheduleview.hours-list div {
   border: 1px solid #000;
   border-collapse: collapse;
   padding: 5px;
+}
+
+div.scheduleview-view-day div.nownext {
+  padding: 5px;
+}
+
+div.scheduleview div.now-marker {
+  text-align: center;
+  padding: 1px;
 }
