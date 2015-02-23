@@ -56,16 +56,16 @@ unset($_basepath);
  * Or, if it doesn't exist, kick into setup.
  */
 if (stream_resolve_include_path('MyRadio_Config.local.php')) {
-    include_once 'MyRadio_Config.local.php';
+    require_once 'MyRadio_Config.local.php';
     if (Config::$setup === true) {
-        include 'Controllers/Setup/root.php';
+        require 'Controllers/Setup/root.php';
         exit;
     }
 } else {
     /**
      * This install hasn't been configured yet. We should do that.
      */
-    include 'Controllers/Setup/root.php';
+    require 'Controllers/Setup/root.php';
     exit;
 }
 

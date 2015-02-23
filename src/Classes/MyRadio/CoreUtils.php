@@ -104,7 +104,7 @@ class CoreUtils
      */
     public static function getTemplateObject()
     {
-        include_once 'Twig/Autoloader.php';
+        require_once 'Twig/Autoloader.php';
         \Twig_Autoloader::register();
 
         return new MyRadioTwig();
@@ -180,7 +180,7 @@ class CoreUtils
      * @param int $time The time to get the info for, default now.
      * @return array [year, week_number]
      */
-    public static function getYearAndWeekNo($time = null) 
+    public static function getYearAndWeekNo($time = null)
     {
         if ($time === null) {
             $time = time();
@@ -437,7 +437,7 @@ class CoreUtils
         }
         if (!self::hasPermission($permission)) {
             //Load the 403 controller and exit
-            include 'Controllers/Errors/403.php';
+            require 'Controllers/Errors/403.php';
             exit;
         }
     }
@@ -498,7 +498,7 @@ class CoreUtils
                 }
             } else {
                 //Authenticated, but not authorized
-                include 'Controllers/Errors/403.php';
+                require 'Controllers/Errors/403.php';
             }
             exit;
         }
@@ -875,7 +875,7 @@ class CoreUtils
 
     public static function getSafeHTML($dirty_html)
     {
-        include_once 'Classes/vendor/htmlpurifier/HTMLPurifier.auto.php';
+        require_once 'Classes/vendor/htmlpurifier/HTMLPurifier.auto.php';
         $config = \HTMLPurifier_Config::createDefault();
         $purifier = new \HTMLPurifier($config);
 
@@ -913,8 +913,8 @@ class CoreUtils
             $a = new $authenticator();
             $result = $a->validateCredentials($user, $pass);
             if ($result instanceof MyRadio_User) {
-                if (Config::$single_authenticator 
-                    && $result->getAuthProvider() !== null 
+                if (Config::$single_authenticator
+                    && $result->getAuthProvider() !== null
                     && $result->getAuthProvider() !== $authenticator
                 ) {
                     //This is the wrong authenticator for the user

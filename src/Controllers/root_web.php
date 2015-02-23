@@ -34,7 +34,7 @@ if (isset($_REQUEST['request'])) {
         $module = $info[0];
         $action = Config::$default_action;
     } else {
-        include 'Controllers/Errors/404.php';
+        require 'Controllers/Errors/404.php';
         exit;
     }
 } else {
@@ -42,7 +42,7 @@ if (isset($_REQUEST['request'])) {
     $action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : Config::$default_action);
     if (!CoreUtils::isValidController($module, $action)) {
         //Yep, that doesn't exist.
-        include 'Controllers/Errors/404.php';
+        require 'Controllers/Errors/404.php';
         exit;
     }
 }

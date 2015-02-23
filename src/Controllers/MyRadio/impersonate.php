@@ -20,7 +20,7 @@ if (isset($_REQUEST['memberid'])) {
         || (        $impersonatee->hasAuth(AUTH_BLOCKIMPERSONATE)
         && !CoreUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS))
     ) {
-        include_once 'Controllers/Errors/403.php';
+        require_once 'Controllers/Errors/403.php';
     } else {
         // Yes, this temporary variable is necessary, otherwise recursion happens.
         // I don't even.

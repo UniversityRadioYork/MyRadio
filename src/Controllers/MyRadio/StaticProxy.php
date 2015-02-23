@@ -9,13 +9,13 @@
  */
 
 if (empty($_GET[0])) {
-    include 'default.php';
+    require 'default.php';
     exit;
 }
 
 //For config.js, this is a Controller in this module.
 if ($_GET[0] === 'config.js') {
-    include __DIR__.'/config.js.php';
+    require __DIR__.'/config.js.php';
     exit;
 }
 
