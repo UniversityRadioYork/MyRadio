@@ -11,6 +11,19 @@ MyRadio is part of a suite of upcoming public projects, including:
 - loggerng, our python audio logging and retriving system
 - Bootstrapping scripts for setting up and configuring all the dependencies
 
+Super Quickstart
+----------------
+MyRadio comes with a Vagrantfile based on Ubuntu 14.04.
+If you have [Vagrant](https://www.vagrantup.com) installed and want to get
+developing or playing right away, just run `vagrant up` and a few minutes
+later [you'll have a working server](https://localhost:4443/myradio/).
+
+During setup, you'll be asked for database credentials - you can use:
+Hostname: localhost
+Database: myradio
+Username: myradio
+Password: myradio
+
 Quickstart
 ----------
 Install Apache2, PHP and PostgreSQL on your prefered *nix distro. Or Windows,
