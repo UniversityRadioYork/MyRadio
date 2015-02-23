@@ -109,7 +109,7 @@ var Tracklist = function() {
                         title: addTitle.value,
                         artist: addArtist.value,
                         album: addAlbum.value,
-                        trackid: trackLookupId
+                        trackid: trackLookupId ? trackLookupId : null
                     }
                 );
             });
