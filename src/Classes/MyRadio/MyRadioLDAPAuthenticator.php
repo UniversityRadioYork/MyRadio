@@ -87,7 +87,7 @@ class MyRadioLDAPAuthenticator implements \MyRadio\Iface\MyRadioAuthenticator
 
     public function getResetFormMessage()
     {
-        return '<div class="ui-state-highlight">Have you tried using your '
+        return '<div class="alert alert-info">Have you tried using your '
                . $this->getFriendlyName()
                . ' username and password? <a href="'
                . Config::$auth_ldap_reset_url

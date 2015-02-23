@@ -37,9 +37,6 @@ function updateCentralSearch() {
       }
       planner.registerItemClicks();
       $('#notice').hide();
-    },
-    error: function() {
-      $('#notice').html('Search failed').addClass('notice-danger');
     }
   });
 }
@@ -76,9 +73,6 @@ $(document).ready(function() {
           ulsort.List.Filter('#res-filter-name', '#baps-channel-res>li');
           //Make them activatable
           planner.registerItemClicks();
-        },
-        error: function() {
-          $('#res-loading').html('Error loading library').addClass('ui-state-error');
         }
       });
       $('#res-filter-artist, #res-filter-track').hide();
@@ -105,9 +99,6 @@ $(document).ready(function() {
           ulsort.List.Filter('#res-filter-name', '#baps-channel-res>li');
           //Make them activatable
           planner.registerItemClicks();
-        },
-        error: function() {
-          $('#res-loading').html('Error loading library').addClass('ui-state-error');
         }
       });
       $('#res-filter-artist, #res-filter-track').hide();
@@ -137,9 +128,6 @@ $(document).ready(function() {
           ulsort.List.Filter('#res-filter-name', '#baps-channel-res>li');
           //Make them activatable
           planner.registerItemClicks();
-        },
-        error: function() {
-          $('#res-loading').html('Error loading library').addClass('ui-state-error');
         }
       });
       $('#res-filter-artist, #res-filter-track').hide();

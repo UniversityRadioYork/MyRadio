@@ -447,7 +447,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 'value' => $i,
                 'text' => $time['time'] . ' ' . $time['info'],
                 'disabled' => $time['conflict'],
-                'class' => $time['conflict'] ? 'ui-state-error' : ''
+                'class' => $time['conflict'] ? 'alert alert-danger' : ''
             ];
             $i++;
         }
