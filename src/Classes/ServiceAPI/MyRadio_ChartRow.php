@@ -10,8 +10,6 @@ use \MyRadio\MyRadioException;
 
 /**
  * The ChartRow class fetches information about rows of chart releases.
- * @version 20130426
- * @author Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Charts
  * @uses \Database
  */

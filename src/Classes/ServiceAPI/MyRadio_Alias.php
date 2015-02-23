@@ -12,8 +12,6 @@ use \MyRadio\MyRadio\CoreUtils;
 /**
  * The Alias class is used to do stuff with Aliases in URY's mail system.
  *
- * @version 20130824
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Mail
  * @uses    \Database
  */

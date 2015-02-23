@@ -14,8 +14,6 @@ use \MyRadio\MyRadio\MyRadioFormField;
 /**
  * Abstractor for the Scheduler Module
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130813
  * @package MyRadio_Scheduler
  * @uses    \Database
  * @todo    Dedicated Term class

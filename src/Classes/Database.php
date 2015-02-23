@@ -13,8 +13,6 @@ use \MyRadio\MyRadio\CoreUtils;
  *
  * This is a Critical include!
  *
- * @version 20130531
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @depends Config
  * @package MyRadio_Core
  */

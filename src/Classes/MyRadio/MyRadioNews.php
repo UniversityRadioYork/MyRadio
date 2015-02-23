@@ -17,8 +17,6 @@ use \MyRadio\MyRadio\MyRadioFormField;
 /**
  * Description of MyRadioNews
  *
- * @author  Andy Durant <aj@ury.org.uk>
- * @version 20130718
  * @package MyRadio_Core
  * @uses    \CacheProvider
  * @uses    \Database

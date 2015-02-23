@@ -10,8 +10,6 @@
  * 'digitised': Boolean If true, only digitised tracks are returned
  * 'itonesplaylistid': The ID if an itones playlist the tracks must be in
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130626
  * @package MyRadio_Core
  */
 

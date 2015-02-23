@@ -22,8 +22,6 @@ use MyRadio\Config;
  * - A Form Saver that loads the Form definiton, reads submitted values
  *   and calls getter to interpret them
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20140102
  * @package MyRadio_Core
  */
 class MyRadioForm

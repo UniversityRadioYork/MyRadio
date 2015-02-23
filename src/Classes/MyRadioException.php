@@ -13,8 +13,6 @@ use \MyRadio\MyRadio\CoreUtils;
  * Extends the standard Exception class to provide additional functionality
  * and logging
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130711
  * @package MyRadio_Core
  */
 class MyRadioException extends \RuntimeException
@@ -70,9 +68,9 @@ class MyRadioException extends \RuntimeException
                     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
                 || empty($_SERVER['REMOTE_ADDR']);
 
-            if (Config::$email_exceptions 
-                && class_exists('\MyRadio\MyRadioEmail') 
-                && $this->code !== 400 
+            if (Config::$email_exceptions
+                && class_exists('\MyRadio\MyRadioEmail')
+                && $this->code !== 400
                 && $this->code !== 401
             ) {
                 MyRadioEmail::sendEmailToComputing(

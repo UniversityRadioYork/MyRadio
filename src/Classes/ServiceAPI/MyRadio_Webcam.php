@@ -2,7 +2,6 @@
 /**
  * Provides the MyRadio_Webcam class
  * @package MyRadio_Webcam
- * @author Lloyd Wallis <lpw@ury.org.uk>
  */
 
 namespace MyRadio\ServiceAPI;

@@ -12,8 +12,6 @@ use \MyRadio\MyRadio\CoreUtils;
 /**
  * The Officer class provides information about Committee Officerships.
  *
- * @version 20130824
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  * @uses    \Database
  */

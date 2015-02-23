@@ -2,8 +2,6 @@
 /**
  * Provides a tool to manage permissions for MyRadio Service/Module/Action systems
  *
- * @version 20120723
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 

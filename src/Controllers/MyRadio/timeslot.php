@@ -3,7 +3,6 @@
 /**
  * Allows users to select the timeslot they are working with
  *
- * @author  Lloyd Wallis
  * @data    20140102
  * @package MyRadio_Core
  */

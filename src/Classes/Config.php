@@ -9,8 +9,6 @@ namespace MyRadio;
 /**
  * Stores configuration settings
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20140529
  * @package MyRadio_Core
  */
 final class Config

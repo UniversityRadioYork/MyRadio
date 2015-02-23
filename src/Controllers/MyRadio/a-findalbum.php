@@ -4,8 +4,6 @@
  * Some might include more than one model etc....
  *
  * @todo    Proper Documentation
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130722
  * @package MyRadio_Core
  */
 

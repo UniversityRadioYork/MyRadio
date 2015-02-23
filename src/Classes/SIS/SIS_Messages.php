@@ -13,8 +13,6 @@ use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 /**
  * This class has helper functions for building SIS
  *
- * @version 20130930
- * @author  Andy Durant <aj@ury.org.uk>
  * @package MyRadio_SIS
  */
 class SIS_Messages extends ServiceAPI

@@ -13,8 +13,6 @@ use \MyRadio\MyRadioEmail;
 /**
  * The List class stores and manages information about a URY Mailing List
  *
- * @version 20130526
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Mail
  * @uses    \Database
  */

@@ -1,8 +1,6 @@
 <?php
 /**
  * Allows the editing of chart releases.
- * @version 20140113
- * @author  Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Charts
  */
 

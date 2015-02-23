@@ -15,8 +15,6 @@ use \MyRadio\MyRadio\MyRadioFormField;
 /**
  * The BannerCampaign class stores and manages information about a Banner Campaign on the front website
  *
- * @version 20130806
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Website
  * @uses    \Database
  */
@@ -293,7 +291,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 [CoreUtils::getTimestamp($time), $this->getID()]
             );
         }
-        
+
         $this->updateCacheObject();
         return $this;
     }
@@ -339,14 +337,14 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 $end
             ]
         )[0];
-        
+
         $this->timeslots[] = [
             'id' => $id,
             'day' => $day,
             'start_time' => strtotime($start, 0),
             'end_time' => strtotime($end, 0)
         ];
-        
+
         $this->updateCacheObject();
     }
 

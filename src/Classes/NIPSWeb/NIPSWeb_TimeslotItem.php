@@ -12,8 +12,6 @@ use \MyRadio\ServiceAPI\MyRadio_Track;
 /**
  * The NIPSWeb_TimeslotItem class helps provide Show Planner with access to all resource types a timeslot item could be
  *
- * @version 16042013
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_NIPSWeb
  * @uses    \Database
  */

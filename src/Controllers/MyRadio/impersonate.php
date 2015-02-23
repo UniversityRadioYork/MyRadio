@@ -3,7 +3,6 @@
 /**
  * Impersonate a user, convincing systems that you *are* them.
  *
- * @author  Lloyd Wallis
  * @data    20140102
  * @package MyRadio_Core
  */

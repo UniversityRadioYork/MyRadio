@@ -17,8 +17,6 @@ use \MyRadio\iTones\iTones_Utils;
  * The Tracklist Item class provides information about URY's track playing
  * history.
  *
- * @version 20130718
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Tracklist
  * @uses    \Database
  */

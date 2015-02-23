@@ -2,8 +2,6 @@
 /**
  * IRN Proxy for SIS
  *
- * @author  Andy Durant <aj@ury.org.uk>
- * @version 20131102
  * @package MyRadio_SIS
  */
 /*

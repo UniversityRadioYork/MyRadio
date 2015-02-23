@@ -19,8 +19,6 @@ use \MyRadio\MyRadio\MyRadioFormField;
  * Reminder: Podcasts may not include any copyrighted content. This includes
  * all songs and *beds*.
  *
- * @version 20130815
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Podcast
  * @uses    \Database
  */

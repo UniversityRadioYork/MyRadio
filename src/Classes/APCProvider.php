@@ -13,8 +13,6 @@ namespace MyRadio;
  * which are then stored using the APC plugin automatically. In order for this class to work correctly, the server
  * needs the APC PHP plugin installed on the server. It will throw an Exception if it is not.
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130709
  * @package MyRadio_Core
  */
 class APCProvider implements \MyRadio\Iface\CacheProvider

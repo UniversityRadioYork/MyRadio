@@ -4,8 +4,6 @@
  * This is the controller for the news items
  * members news, tech news and the presenter information sheet
  *
- * @author  Andy Durant <aj@ury.org.uk>
- * @version 20140626
  * @package MyRadio_Core
  */
 

@@ -13,8 +13,6 @@ use \MyRadio\ServiceAPI\MyRadio_Swagger;
  * The APIKey Class provies information and management of API Keys for the MyRadio
  * REST API.
  *
- * @version 20130802
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_API
  * @uses    \Database
  */
