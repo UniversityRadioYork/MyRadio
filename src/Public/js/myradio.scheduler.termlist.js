@@ -15,7 +15,6 @@ $('.twig-datatable').dataTable(
               "sTitle": "Name"
             }
         ],
-        "bJQueryUI": true,
         "bPaginate": true
     }
 );

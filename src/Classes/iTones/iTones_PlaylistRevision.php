@@ -162,7 +162,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
             ],
             'restorelink' => [
                 'display' => 'icon',
-                'value' => 'refresh',
+                'value' => 'retweet',
                 'title' => 'Restore this revision',
                 'url' => CoreUtils::makeURL(
                     'iTones',

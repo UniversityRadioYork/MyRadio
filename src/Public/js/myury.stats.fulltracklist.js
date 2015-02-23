@@ -26,7 +26,6 @@ $('.twig-datatable').dataTable({
     sTitle: "Label"
   }
   ],
-  "bJQueryUI": true,
   "bPaginate": false,
   aaSorting: []
 }

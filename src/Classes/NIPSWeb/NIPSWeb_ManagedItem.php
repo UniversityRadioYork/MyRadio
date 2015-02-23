@@ -214,15 +214,22 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
         }
         $dbfile = $item->getFolder().'/'.$item->getID();
 
-        //Convert it with ffmpeg
+        //Convert it with ffmpeg/avconv
+        if (`which ffmpeg`) {
+            $bin = 'ffmpeg';
+        } elseif (`which avconv`) {
+            $bin = 'avconv';
+        } else {
+            throw new MyRadioException('Could not find ffmpeg or avconv.', 500);
+        }
         // BAPS needs stdout > to file
-        shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 - > '{$dbfile}.mp3'");
-        shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
+        shell_exec("nice -n 15 $bin -i '$tmpfile' -ab 192k -f mp3 '{$dbfile}.mp3'");
+        shell_exec("nice -n 15 $bin -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
         rename($tmpfile, $dbfile.'.'.$_SESSION['uploadInfo'][$tmpid]['fileformat'].'.orig');
 
         if (!file_exists($dbfile.'.mp3') || !file_exists($dbfile.'.ogg')) {
             //Conversion failed!
-            return ['status' => 'FAIL', 'error' => 'Conversion with ffmpeg failed.', 'fileid' => $_REQUEST['fileid']];
+            return ['status' => 'FAIL', 'error' => 'Conversion with $bin failed.', 'fileid' => $_REQUEST['fileid']];
         } elseif (!file_exists($dbfile.'.'.$_SESSION['uploadInfo'][$tmpid]['fileformat'].'.orig')) {
             return ['status' => 'FAIL', 'error' => 'Could not move file to library.', 'fileid' => $_REQUEST['fileid']];
         }

@@ -63,7 +63,6 @@ $('.twig-datatable').dataTable({
     "sTitle": "Playlist Membership"
   }
   ],
-  "bJQueryUI": true,
   "bPaginate": false,
   aaSorting: [[10, "desc"]]
 }

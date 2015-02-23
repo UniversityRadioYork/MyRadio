@@ -1,12 +1,12 @@
 {% extends 'form.twig' %}
 {% block stripecontent %}
 {% if frm_custom.error %}
-<div class='ui-state-error'>
+<div class='alert alert-danger'>
     Login failed. Please check your details and try again.
 </div>
 {% elseif frm_custom.logout %}
-<div class='ui-state-highlight'>
-    <span class="ui-icon ui-icon-circle-check fleft"></span>You have now logged out of all {{config.short_name}} web services.
+<div class='alert alert-success'>
+    <span class="glyphicon glyphicon-ok-sign"></span> You have now logged out of all {{config.short_name}} web services.
 </div>
 {% endif %}
 <p>The page you're trying to access requires you to be a {{config.short_name}} Member.

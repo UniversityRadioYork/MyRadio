@@ -396,7 +396,7 @@ class MyRadioEmail extends ServiceAPI
             'subject' => $this->subject,
             'view' => [
                 'display' => 'icon',
-                'value' => 'mail-open',
+                'value' => 'envelope',
                 'title' => 'Read this email',
                 'url' => CoreUtils::makeURL('Mail', 'view', ['emailid' => $this->getID()])
             ]

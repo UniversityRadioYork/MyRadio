@@ -15,7 +15,7 @@
         {% if column.display == "text" %}
                 <a href="{{column.url}}" title="{{column.title}}">{{column.value}}</a>
         {% elseif column.display == "icon" %}
-                <a href="{{column.url}}" title="{{column.title}}"><span class="ui-icon ui-icon-{{column.value}}">&nbsp;</span></a>
+                <a href="{{column.url}}" title="{{column.title}}"><span class="glyphicon glyphicon-{{column.value}}">&nbsp;</span></a>
         {% endif %}
       {% else %}
                 {{column | raw}}

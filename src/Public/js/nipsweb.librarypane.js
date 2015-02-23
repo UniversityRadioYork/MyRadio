@@ -10,7 +10,7 @@
  */
 var searchTimerRef = null;
 function updateCentralSearch() {
-  $('#res-loading').show();
+  $('#notice').html('Searching...').show();
   $.ajax({
     url: myury.makeURL('MyRadio', 'a-findtrack'),
     type: 'post',
@@ -30,15 +30,16 @@ function updateCentralSearch() {
 
         $('#baps-channel-res').append(
                 '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
+                '" intro="' + data[file].intro + '"' +
                 '" channel="res" weight="0" type="central" class="' + classes + '" length="' + data[file].length + '">'
                 + data[file].title + ' - ' + data[file].artist + '</li>'
                 );
       }
-      registerItemClicks();
-      $('#res-loading').hide();
+      planner.registerItemClicks();
+      $('#notice').hide();
     },
     error: function() {
-      $('#res-loading').html('Error loading library').addClass('ui-state-error');
+      $('#notice').html('Search failed').addClass('notice-danger');
     }
   });
 }
@@ -58,12 +59,14 @@ $(document).ready(function() {
       $('#res-loading').show();
       $.ajax({
         url: myury.makeURL('MyRadio', 'a-findtrack'),
-        type: 'post',
+        type: 'get',
         data: {itonesplaylistid: $(this).val().replace(/managed-/, ''), digitised: true, limit: 0},
         success: function(data) {
           for (file in data) {
             $('#baps-channel-res').append(
                     '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
+                    '" title="' + data[file].title + '(' + data[file].length + ')' +
+                    '" intro="' + data[file].intro + '"' +
                     '" channel="res" weight="0" type="central" length="' + data[file].length + '">'
                     + data[file].title + ' - ' + data[file].artist + '</li>'
                     );
@@ -72,7 +75,7 @@ $(document).ready(function() {
           //Enable name filtering
           ulsort.List.Filter('#res-filter-name', '#baps-channel-res>li');
           //Make them activatable
-          registerItemClicks();
+          planner.registerItemClicks();
         },
         error: function() {
           $('#res-loading').html('Error loading library').addClass('ui-state-error');
@@ -85,12 +88,14 @@ $(document).ready(function() {
       $('#res-loading').show();
       $.ajax({
         url: myury.makeURL('NIPSWeb', 'load_auto_managed'),
-        type: 'post',
+        type: 'get',
         data: 'playlistid=' + $(this).val(),
         success: function(data) {
           for (file in data) {
             $('#baps-channel-res').append(
                     '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
+                    '" title="' + data[file].title + '(' + data[file].length + ')' +
+                    '" intro="' + data[file].intro + '"' +
                     '" channel="res" weight="0" type="central" length="' + data[file].length + '">'
                     + data[file].title + ' - ' + data[file].artist + '</li>'
                     );
@@ -99,7 +104,7 @@ $(document).ready(function() {
           //Enable name filtering
           ulsort.List.Filter('#res-filter-name', '#baps-channel-res>li');
           //Make them activatable
-          registerItemClicks();
+          planner.registerItemClicks();
         },
         error: function() {
           $('#res-loading').html('Error loading library').addClass('ui-state-error');
@@ -111,7 +116,7 @@ $(document).ready(function() {
       $('#res-loading').show();
       $.ajax({
         url: myury.makeURL('NIPSWeb', 'load_aux_lib'),
-        type: 'post',
+        type: 'get',
         data: 'libraryid=' + $(this).val(),
         success: function(data) {
           for (file in data) {
@@ -121,6 +126,7 @@ $(document).ready(function() {
               $('#baps-channel-res').append(
                       '<li id="ManagedDB-' + data[file].managedid +
                       '" length="' + data[file].length +
+                      '" title="' + data[file].title + '(' + data[file].length + ')' +
                       '" channel="res" weight="0" type="aux" managedid="' + data[file].managedid + '">'
                       + data[file].title + '</li>'
                       );
@@ -130,7 +136,7 @@ $(document).ready(function() {
           //Enable name filtering
           ulsort.List.Filter('#res-filter-name', '#baps-channel-res>li');
           //Make them activatable
-          registerItemClicks();
+          planner.registerItemClicks();
         },
         error: function() {
           $('#res-loading').html('Error loading library').addClass('ui-state-error');
@@ -142,22 +148,37 @@ $(document).ready(function() {
     //Clear the current list
     $('#baps-channel-res').empty();
     //Makes the artist search autocompleting. When an artist is selected it'll filter
-    $('#res-filter-artist').autocomplete({
-      source: myury.makeURL('MyRadio', 'a-findartist'),
-      data: {limit: 50},
-      minLength: 2,
-      select: function(event, ui) {
-        $(this).val(ui.item.title);
-        //Let the autocomplete update the value of the filter
-        setTimeout("updateCentralSearch()", 50);
-        return false;
-      }
-    }).data("ui-autocomplete")._renderItem = function(ul, item) {
-      return $('<li></li>').data('item.autocomplete', item)
-              .append('<a>' + item.title + '</a>')
-              .appendTo(ul);
-    };
-    ;
+    var artistLookup = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('title'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        limit: 5,
+        dupDetector: function(remote, local) {
+          return local.title == remote.title;
+        },
+        prefetch: {
+          url: myury.makeURL('MyRadio', 'a-findartist', {term: null, limit: 500})
+        },
+        remote: myury.makeURL('MyRadio', 'a-findartist', {limit: 5, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+      });
+      artistLookup.initialize();
+      $('#res-filter-artist').typeahead({
+        highlight: true,
+        minLength: 1
+      },
+      {
+        displayKey: 'title',
+        source: artistLookup.ttAdapter(),
+        templates: {
+          //Only needed for workaround
+          suggestion: function(i) {
+            //Fix typeahead not showing after hiding
+            //TODO: Report this @ https://github.com/twitter/typeahead.js/
+            $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
+            return '<p>' + i.title + '</p>';
+          }
+        }
+      })
+      .on('typeahead:selected', updateCentralSearch);
   });
 
   //Bind the central search function
@@ -171,17 +192,7 @@ $(document).ready(function() {
    */
   $('#a-manage-library').click(function() {
     var url = $(this).children('a').attr('href');
-    var dialog = $('<div style="display:none"><iframe src="' + url + '" width="800" height="500" frameborder="0"></iframe></div>').appendTo('body');
-    dialog.dialog({
-      close: function(event, ui) {
-        dialog.remove();
-      },
-      modal: true,
-      title: 'Library Manager',
-      width: 850,
-      minHeight: 550,
-      position: {my: "center center", at: "center center", of: window}
-    });
+    var dialog = myury.createDialog('Manage Library', '<iframe src="' + url + '" width="580" height="500" frameborder="0"></iframe></div>');
     return false;
   });
 });

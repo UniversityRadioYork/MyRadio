@@ -1,9 +1,35 @@
+body {
+  margin-top: 50px; /* Bootstrap navbar offset*/
+}
+
 #menu #navRight {
   float: right;
   position: relative;
   top: -22px;
   left: -2px;
   color: #fff;
+}
+
+.main-container {
+  margin-bottom: 60px;
+}
+
+.footer {
+  width: 100%;
+  padding: 8px 0;
+  border-top: .5em solid #f5f5f5;
+}
+
+@media (min-height: 800px) and (min-width: 992px) {
+  .footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    min-height: 40px;
+    z-index: 50;
+    background-color: #f5f5f5;
+    border: none;
+  }
 }
 
 /** MyRadio Menu Styles **/
@@ -278,6 +304,10 @@ label.label-nofloat {
 }
 
 /** MyRadio Form Styles **/
+select {
+  color: #222!important;
+}
+
 .myradiofrm {
     padding: 0 10px 10px;
     border: dashed 1px;
@@ -351,6 +381,43 @@ table.myradiofrmfield-weeklycheck td {
 
 .myradiofrm-file-upload-progress {
   display: none;
+}
+
+.tt-hint {
+    width: 300px;
+    height: 30px;
+    margin-top: -2px;
+    margin-left: 19px;
+    font-size: 14px;
+    color: #999
+}
+
+.tt-dropdown-menu {
+    width: 300px;
+    margin-top: 0px;
+    margin-left: 19px;
+    padding: 0 0 8px 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.tt-suggestion {
+    padding: 3px 20px;
+    font-size: 14px;
+    line-height: 20px;
+    cursor: pointer;
+}
+
+.tt-suggestion.tt-cursor {
+    color: #fff;
+    background-color: #0097cf;
+}
+
+.tt-suggestion p {
+    margin: 0;
 }
 
 /* MyRadio Login Styles */
@@ -457,4 +524,78 @@ div.assistant-officer img {
 
 div.officer .officer-title {
   height: 45px;
+}
+
+@media (min-width: 992px) {
+  div.scheduleview.view-day, div.scheduleview.hours-list {
+    display: table-cell;
+    width: calc(100% / 8);
+  }
+  div.scheduleview.view-day div.show time {
+    display: none;
+  }
+  div.scheduleview.hours-list div.hour {
+    height: 50px;
+  }
+}
+
+div.scheduleview-view-week div.show-description,
+div.scheduleview-view-week span.show-credits {
+  display: none;
+}
+
+div.scheduleview div.show-description {
+  font-style: italic;
+  text-align: center;
+}
+
+div.scheduleview-view-day div.show-title {
+  padding-left: 10%;
+}
+
+div.scheduleview div.show-title {
+  display: inline-block;
+}
+
+#schedule-preview {
+  min-height: 300px;
+}
+
+div.scheduleview.header {
+  width: 100%;
+  text-align: center;
+}
+
+@media (max-width: 999px) {
+  div.scheduleview.view-day {
+    display: block;
+    width: 100%;
+  }
+  div.scheduleview.view-day div.show time {
+    margin-right: 10px;
+  }
+  div.scheduleview.hours-list, div.scheduleview.view-day div.filler {
+    display: none;
+  }
+}
+
+div.scheduleview .day-header {
+  text-align: center;
+  height: 50px;
+}
+
+div.scheduleview.view-day div, div.scheduleview.hours-list div {
+  overflow: hidden;
+  border: 1px solid #000;
+  border-collapse: collapse;
+  padding: 5px;
+}
+
+div.scheduleview-view-day div.nownext {
+  padding: 5px;
+}
+
+div.scheduleview div.now-marker {
+  text-align: center;
+  padding: 1px;
 }

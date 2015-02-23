@@ -39,7 +39,6 @@ $('.twig-datatable').dataTable({
     "sTitle": "Assign"
   },
   ],
-  "bJQueryUI": true,
   "bSort": false,
   "bPaginate": false
 }

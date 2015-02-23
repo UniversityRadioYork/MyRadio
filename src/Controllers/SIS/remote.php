@@ -9,12 +9,13 @@
 
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\SIS\SIS_Utils;
+use \MyRadio\Config;
 
 //Allow Session writing from other requests
 $session = $_SESSION;
 session_write_close();
 
-$pollFuncs = SIS_Utils::readPolls(array_merge(SIS_Utils::getPlugins(), SIS_Utils::getTabs()));
+$pollFuncs = SIS_Utils::readPolls(Config::$sis_modules);
 
 //Enter an infinite loop calling these functions, and enjoy the ride
 //Times out after 50 cycles to prevent infinites or something like that

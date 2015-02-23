@@ -94,7 +94,6 @@ $('.twig-datatable').dataTable({
     "sTitle": "Message Count"
   }
   ],
-  "bJQueryUI": true,
   "bPaginate": false
 }
 );

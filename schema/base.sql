@@ -529,29 +529,7 @@ CREATE SEQUENCE api_class_map_api_map_id_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE api_class_map_api_map_id_seq OWNED BY api_class_map.api_map_id;
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Track', 'Track');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Show', 'Show');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Season', 'Season');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Timeslot', 'Timeslot');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Album', 'Album');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Demo', 'Demo');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_List', 'List');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Photo', 'Photo');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Podcast', 'Podcast');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Scheduler', 'Scheduler');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_TrackCorrection', 'TrackCorrection');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_TrainingStatus', 'Training');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_UserTrainingStatus', 'UserTraining');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Selector', 'Selector');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Alias', 'Alias');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Officer', 'Officer');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Team', 'Team');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_TracklistItem', 'TracklistItem');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_User', 'User');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Swagger', 'resources');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\iTones\iTones_Playlist', 'Playlist');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\iTones\iTones_Utils', 'iTones');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\MyRadio\CoreUtils', 'Utils');
+
 CREATE TABLE api_key (
     key_string character varying NOT NULL,
     description character varying NOT NULL,
@@ -585,7 +563,7 @@ CREATE SEQUENCE api_method_auth_api_method_auth_id_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE api_method_auth_api_method_auth_id_seq OWNED BY api_method_auth.api_method_auth_id;
-INSERT INTO api_method_auth (class_name, method_name, typeid) VALUES ('\MyRadio\ServiceAPI\MyRadio_Swagger', NULL, NULL);
+
 CREATE TABLE award_categories (
     awardid integer NOT NULL,
     name character varying NOT NULL
@@ -1266,9 +1244,13 @@ CREATE TABLE l_newsfeed (
     feedid integer NOT NULL,
     feedname character varying(30) NOT NULL
 );
+INSERT INTO l_newsfeed (feedid, feedname) VALUES (1, 'Members News');
+INSERT INTO l_newsfeed (feedid, feedname) VALUES (2, 'Tech News');
+INSERT INTO l_newsfeed (feedid, feedname) VALUES (3, 'Breaking News');
+INSERT INTO l_newsfeed (feedid, feedname) VALUES (4, 'Presenter Information');
 COMMENT ON TABLE l_newsfeed IS 'Lookup table for internal news feeds';
 CREATE SEQUENCE l_newsfeeds_feedid_seq
-    START WITH 1
+    START WITH 5
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -1740,6 +1722,11 @@ CREATE TABLE sis_commtype (
     commtypeid integer NOT NULL,
     descr character varying(16) NOT NULL
 );
+INSERT INTO sis_commtype (commtypeid, descr) VALUES (1, 'Email');
+INSERT INTO sis_commtype (commtypeid, descr) VALUES (2, 'SMS');
+INSERT INTO sis_commtype (commtypeid, descr) VALUES (3, 'Website');
+INSERT INTO sis_commtype (commtypeid, descr) VALUES (4, 'Request');
+INSERT INTO sis_commtype (commtypeid, descr) VALUES (5, 'Mobile Site');
 CREATE SEQUENCE sis_commtype_commtypeid_seq
     START WITH 6
     INCREMENT BY 1
@@ -1767,8 +1754,13 @@ CREATE TABLE sis_status (
     statusid integer NOT NULL,
     descr character varying(8)
 );
+INSERT INTO sis_status (statusid, descr) VALUES (1, 'Unread');
+INSERT INTO sis_status (statusid, descr) VALUES (2, 'Read');
+INSERT INTO sis_status (statusid, descr) VALUES (3, 'Deleted');
+INSERT INTO sis_status (statusid, descr) VALUES (4, 'Junk');
+INSERT INTO sis_status (statusid, descr) VALUES (5, 'Abusive');
 CREATE SEQUENCE sis_status_statusid_seq
-    START WITH 1
+    START WITH 6
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -7270,3 +7262,38 @@ CREATE TABLE music.explicit_checked (
 
 ALTER TABLE ONLY music.explicit_checked ADD CONSTRAINT explicit_checked_pkey PRIMARY KEY (trackid);
 ALTER TABLE music.explicit_checked ADD CONSTRAINT explicit_checked_fkey FOREIGN KEY (trackid) REFERENCES public.rec_track(trackid) ON DELETE CASCADE;
+
+SET search_path = myury, pg_catalog;
+
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Track', 'Track');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Show', 'Show');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Season', 'Season');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Timeslot', 'Timeslot');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Album', 'Album');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Demo', 'Demo');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_List', 'List');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Photo', 'Photo');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Podcast', 'Podcast');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Scheduler', 'Scheduler');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_TrackCorrection', 'TrackCorrection');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_TrainingStatus', 'Training');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_UserTrainingStatus', 'UserTraining');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Selector', 'Selector');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Alias', 'Alias');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Officer', 'Officer');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Team', 'Team');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_TracklistItem', 'TracklistItem');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_User', 'User');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Swagger', 'resources');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\iTones\iTones_Playlist', 'Playlist');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\iTones\iTones_Utils', 'iTones');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\MyRadio\CoreUtils', 'Utils');
+
+INSERT INTO api_method_auth (class_name, method_name, typeid) VALUES ('\MyRadio\ServiceAPI\MyRadio_Swagger', NULL, NULL);
+INSERT INTO api_method_auth (class_name, method_name, typeid) VALUES ('\MyRadio\ServiceAPI\MyRadio_Timeslot', 'getWeekSchedule', NULL);
+
+SET search_path = tracklist, pg_catalog;
+INSERT INTO tracklist.source (sourceid, source) VALUES ('b', 'BAPS');
+INSERT INTO tracklist.source (sourceid, source) VALUES ('m', 'Manual');
+INSERT INTO tracklist.source (sourceid, source) VALUES ('o', 'Other');
+INSERT INTO tracklist.source (sourceid, source) VALUES ('j', 'Jukebox');

@@ -1,14 +1,8 @@
 {% extends 'stripe.twig' %}
 
 {% block stripecontent %}
-{% if news %}
-<div class="myury-news-alert ui-widget-content ui-corner-all" title="Latest News" id="newsentry-{{news.newsentryid}}">
-  {{news.content | raw}}
-    <footer><author>{{news.author}}</author> on {{news.posted}}</footer>
-</div>
-{% endif %}
 {% for column in menu %}
-<div class="menu-column">
+<div class="col-md-4">
   <h2>{{ column.title }}</h2>
     {% for section in column.sections %}
   <h3 class="section">{{ section.title }}</h3>
@@ -30,6 +24,10 @@
 {{ parent() }}
 <script type="text/javascript" src="{{baseurl}}js/myury.menu.js"></script>
 {% if news_clickthrough %}
+<script type="text/javascript">
+var news={{news|json_encode()|raw}};
+</script>
+<script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/myury.news.clickthrough.js"></script>
 {% endif %}
 {% endblock %}

@@ -341,26 +341,26 @@ class MyRadio_List extends ServiceAPI
             'optIn' => ((!$subscribed && ($this->optin || $this->hasOptedOutOfAuto(MyRadio_User::getCurrentOrSystemUser()))) ?
                 [
                     'display' => 'icon',
-                    'value' => 'circle-plus',
+                    'value' => 'plus',
                     'title' => 'Subscribe to this mailing list',
                     'url' => CoreUtils::makeURL('Mail', 'optin', ['list' => $this->getID()])
                 ] : null
             ),
             'optOut' => ($subscribed ? [
                 'display' => 'icon',
-                'value' => 'circle-minus',
+                'value' => 'minus',
                 'title' => 'Opt out of this mailing list',
                 'url' => CoreUtils::makeURL('Mail', 'optout', ['list' => $this->getID()])
             ] : null),
             'mail' => [
                 'display' => 'icon',
-                'value' => 'mail-closed',
+                'value' => 'envelope',
                 'title' => 'Send a message to this mailing list',
                 'url' => CoreUtils::makeURL('Mail', 'send', ['list' => $this->getID()])
             ],
             'archive' => [
                 'display' => 'icon',
-                'value' => 'disk',
+                'value' => 'folder-close',
                 'title' => 'View archives for this mailing list',
                 'url' => CoreUtils::makeURL('Mail', 'archive', ['list' => $this->getID()])
             ]

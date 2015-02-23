@@ -227,7 +227,7 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Get the user's permissions
-        $this->permissions = self::$db->fetchColumn(
+        $this->permissions = array_map('intval', self::$db->fetchColumn(
             'SELECT lookupid FROM auth_officer
             WHERE officerid IN (SELECT officerid FROM member_officer
             WHERE memberid=$1
@@ -238,7 +238,7 @@ class MyRadio_User extends ServiceAPI
             AND starttime < now()
             AND (endtime IS NULL OR endtime >= now())',
             [$memberid]
-        );
+        ));
 
         $this->payment = self::$db->fetchAll(
             'SELECT year, paid
@@ -698,12 +698,12 @@ class MyRadio_User extends ServiceAPI
      *
      * Always use CoreUtils::hasAuth when working with the current user.
      *
-     * @param  int     $authid The permission to test for
+     * @param  null|int     $authid The permission to test for. Null is "no permission required"
      * @return boolean Whether this user has the requested permission
      */
     public function hasAuth($authid)
     {
-        return in_array($authid, $this->permissions);
+        return $authid === null || in_array((int)$authid, $this->permissions);
     }
 
     /**
@@ -1409,15 +1409,16 @@ class MyRadio_User extends ServiceAPI
                 ]));
         if (empty(Config::$contract_uri) === false) {
             $form->addField(new MyRadioFormField('contract', MyRadioFormField::TYPE_CHECK, [
+                'required' => false,
                 'label' => 'I, ' . $this->getName() . ', agree to abide by '
-                . Config::$short_name . '\'s station rules and regulations as '
-                . 'set out in the <a href="' . Config::$contract_uri . '" target="_blank">Presenter\'s Contract</a>, '
-                . 'and the <a href="//www.ofcom.org.uk" target="_blank">Ofcom Programming Code</a>. '
-                . 'I have fully read and understood these rules and regulations, '
-                . 'and I understand that if I break any of the rules or '
-                . 'regulations stated by Ofcom or its successor, I will be '
-                . 'solely liable for any resulting fines or actions that may '
-                . 'be levied against ' . Config::$long_name . '.',
+                    . Config::$short_name . '\'s station rules and regulations as '
+                    . 'set out in the <a href="' . Config::$contract_uri . '" target="_blank">Presenter\'s Contract</a>, '
+                    . 'and the <a href="//www.ofcom.org.uk" target="_blank">Ofcom Programming Code</a>. '
+                    . 'I have fully read and understood these rules and regulations, '
+                    . 'and I understand that if I break any of the rules or '
+                    . 'regulations stated by Ofcom or its successor, I will be '
+                    . 'solely liable for any resulting fines or actions that may '
+                    . 'be levied against ' . Config::$long_name . '.',
                 'options' => ['checked' => $this->hasSignedContract()]
             ]));
         }

@@ -41,7 +41,6 @@ $('.twig-datatable').dataTable({
     bVisible: false
   },
   ],
-  "bJQueryUI": true,
   "bPaginate": false,
   "aaSorting": [[ 7, "desc" ]]
 }

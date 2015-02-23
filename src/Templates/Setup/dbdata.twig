@@ -4,22 +4,22 @@
 <p>When MyRadio is updated, new options will be made available according to the choice you make here.</p>
 <p>
 <form action="?c=dbdata" method="POST"><input type="hidden" name="mode" value="complete">
-<input type="submit" class="ui-widget ui-state-default ui-button" value="Complete starting set"> Start me off with everything I need to get going.
+<input type="submit" class="btn btn-default" value="Complete starting set"> Start me off with everything I need to get going.
 </form>
 </p>
 <p>
 <form action="?c=dbdata" method="POST"><input type="hidden" name="mode" value="permissions">
-<input type="submit" class="ui-widget ui-state-default ui-button" value="Give me permissions"> Start me off with permissions and mappings to actions, but don't create any roles for me.
+<input type="submit" class="btn btn-default" value="Give me permissions"> Start me off with permissions and mappings to actions, but don't create any roles for me.
 </form>
 </p>
 <p>
 <form action="?c=dbdata" method="POST"><input type="hidden" name="mode" value="sudo">
-<input type="submit" class="ui-widget ui-state-default ui-button" value="Everyone is an admin"> Make all actions available to all logged-in users. Managing actions and permissions is disabled.
+<input type="submit" class="btn btn-default" value="Everyone is an admin"> Make all actions available to all logged-in users. Managing actions and permissions is disabled.
 </form>
 </p>
 <p>
 <form action="?c=dbdata" method="POST"><input type="hidden" name="mode" value="blank">
-<input type="submit" class="ui-widget ui-state-default ui-button" value="Blank slate"> Don't do anything except give me access to the pages I need to set things up myself.
+<input type="submit" class="btn btn-default" value="Blank slate"> Don't do anything except give me access to the pages I need to set things up myself.
 </form>
 </p>
 {% endblock %}

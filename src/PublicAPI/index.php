@@ -45,7 +45,8 @@ function api_error($code, $message = null, $previous = null)
         "message" => $message
     ]);
     //Log an API failure so it appears in the status graphs.
-    throw new MyRadioException('API Error: ' . $message . "\nSource: " . $_SERVER['REMOTE_ADDR'], $code, $previous);
+    trigger_error('API Error: [' . $code . '] ' . $message . "\nSource: " . $_SERVER['REMOTE_ADDR']);
+    exit;
 }
 
 /**

@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->setLocalAlias($data['local_alias']);
     }
 
-    CoreUtils::backWithMessage('User Updated');
+    CoreUtils::redirectWithMessage('Profile', 'view', 'User Updated');
 
 } else {
     //Not Submitted

@@ -94,7 +94,6 @@ $('.twig-datatable').dataTable({
     "sTitle": "Listener Count"
   }
   ],
-  "bJQueryUI": true,
   "bPaginate": false
 }
 );
