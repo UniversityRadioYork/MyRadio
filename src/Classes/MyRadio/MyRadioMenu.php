@@ -13,12 +13,12 @@ use \MyRadio\MyRadioException;
 /**
  * Abstractor for the MyRadio Menu
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130930
  * @package MyRadio_Core
- * @uses \CacheProvider
- * @uses \Database
- * @uses \CoreUtils
+ * @uses    \CacheProvider
+ * @uses    \Database
+ * @uses    \CoreUtils
  */
 class MyRadioMenu
 {
@@ -85,7 +85,7 @@ class MyRadioMenu
 
     /**
      * Gets all items for a module's submenu and puts them in an array.
-     * @param  String   $module The name of the module to get items for
+     * @param  String $module The name of the module to get items for
      * @return Array An array that can be used by getSubMenuForUser() to build a submenu
      */
     private function getFullSubMenu($module)
@@ -122,7 +122,7 @@ class MyRadioMenu
 
     /**
      * Check if user has permission to see this menu item
-     * @param  Array   $item A MyRadioMenu Menu Item to check permissions for. Should have been passed through
+     * @param  Array $item A MyRadioMenu Menu Item to check permissions for. Should have been passed through breadDownURL() previously.
      *                       breadDownURL() previously.
      * @return boolean Whether the user can see this item
      */
@@ -134,7 +134,7 @@ class MyRadioMenu
 
     /**
      * @todo Document
-     * @param  type          $module
+     * @param  type $module
      * @return array
      */
     public function getSubMenuForUser($module)

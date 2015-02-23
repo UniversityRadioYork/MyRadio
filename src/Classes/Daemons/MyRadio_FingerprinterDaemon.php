@@ -14,7 +14,7 @@ use \MyRadio\ServiceAPI\MyRadio_TrackCorrection;
  * The Fingerprinter Daemon will scan the digital files in the music library, and log information about potentially
  * incorrect metadata in the rec database.
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130711
  * @package MyRadio_Daemon
  */
@@ -45,8 +45,10 @@ class MyRadio_FingerprinterDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
     public static function run()
     {
         //Get 5 unverified tracks. Tune the "limit" to change this
-        $tracks = MyRadio_Track::findByOptions(['lastfmverified' => false, 'random' => true, 'digitised' => true,
-            'nocorrectionproposed' => true, 'limit' => 5]);
+        $tracks = MyRadio_Track::findByOptions(
+            ['lastfmverified' => false, 'random' => true, 'digitised' => true,
+            'nocorrectionproposed' => true, 'limit' => 5]
+        );
 
         foreach ($tracks as $track) {
             /**
@@ -76,7 +78,8 @@ class MyRadio_FingerprinterDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             }
 
             if ($track->getTitle() == $info[0]['title']
-                && $track->getArtist() == $info[0]['artist']) {
+                && $track->getArtist() == $info[0]['artist']
+            ) {
                 echo "Track {$track->getID()} verified as correct.\n";
 
                 $track->setLastfmVerified();
@@ -86,8 +89,9 @@ class MyRadio_FingerprinterDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             $album = MyRadio_Track::getAlbumDurationAndPositionFromLastfm($info[0]['title'], $info[0]['artist'])['album']->getTitle();
 
             if (levenshtein($info[0]['title'], $track->getTitle()) < 8
-                    or levenshtein($info[0]['artist'], $track->getArtist()) < 5
-                    or levenshtein($album, $track->getAlbum()->getTitle()) < 5) {
+                or levenshtein($info[0]['artist'], $track->getArtist()) < 5
+                or levenshtein($album, $track->getAlbum()->getTitle()) < 5
+            ) {
                 MyRadio_TrackCorrection::create($track, $info[0]['title'], $info[0]['artist'], $album, MyRadio_TrackCorrection::LEVEL_RECOMMEND);
                 echo "Correction recommended for {$track->getID()}.\n";
             } else {

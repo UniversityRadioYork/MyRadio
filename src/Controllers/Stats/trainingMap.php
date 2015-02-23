@@ -2,7 +2,7 @@
 /**
  * Trainin Map
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130624
  * @package MyRadio_Stats
  */

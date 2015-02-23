@@ -2,7 +2,7 @@
 /**
  * Edit a Campaign
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130808
  * @package MyRadio_Website
  */
@@ -50,10 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $campaign = MyRadio_BannerCampaign::getInstance($_REQUEST['campaignid']);
             $campaign->getEditForm()
-                ->render([
+                ->render(
+                    [
                     'campaignStart'=> CoreUtils::happyTime($campaign->getEffectiveFrom()),
                     'bannerName'=> $campaign->getBanner()->getAlt()
-                ]);
+                    ]
+                );
 
     } else {
         //create form
@@ -65,8 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $banner = MyRadio_Banner::getInstance($_REQUEST['bannerid']);
 
         MyRadio_BannerCampaign::getForm($banner->getBannerID())
-            ->render([
+            ->render(
+                [
                 'bannerName' => $banner->getAlt()
-            ]);
+                ]
+            );
     }
 }

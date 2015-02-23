@@ -56,27 +56,29 @@ unset($_basepath);
  * Or, if it doesn't exist, kick into setup.
  */
 if (stream_resolve_include_path('MyRadio_Config.local.php')) {
-    require_once 'MyRadio_Config.local.php';
+    include_once 'MyRadio_Config.local.php';
     if (Config::$setup === true) {
-        require 'Controllers/Setup/root.php';
+        include 'Controllers/Setup/root.php';
         exit;
     }
 } else {
     /**
      * This install hasn't been configured yet. We should do that.
      */
-    require 'Controllers/Setup/root.php';
+    include 'Controllers/Setup/root.php';
     exit;
 }
 
 set_error_handler('MyRadio\MyRadioError::errorsToArray');
-set_exception_handler(function ($e) {
-    if (method_exists($e, 'uncaught')) {
-        $e->uncaught();
-    } else {
-        echo 'This information is not available at the moment. Please try again later.';
+set_exception_handler(
+    function ($e) {
+        if (method_exists($e, 'uncaught')) {
+            $e->uncaught();
+        } else {
+            echo 'This information is not available at the moment. Please try again later.';
+        }
     }
-});
+);
 
 // Set error log file
 ini_set('error_log', Config::$log_file);

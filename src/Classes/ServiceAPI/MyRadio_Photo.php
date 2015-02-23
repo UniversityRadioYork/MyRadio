@@ -15,9 +15,9 @@ use \MyRadio\MyRadio\CoreUtils;
  * The Photo class stores and manages information about a URY Photo
  *
  * @version 20130731
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
- * @uses \Database
+ * @uses    \Database
  */
 class MyRadio_Photo extends ServiceAPI
 {

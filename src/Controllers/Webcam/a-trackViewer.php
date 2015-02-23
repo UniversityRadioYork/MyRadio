@@ -8,7 +8,7 @@ use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_Webcam;
 
 if (isset($_SESSION['webcam_lastcounterincrement']) && $_SESSION['webcam_lastcounterincrement'] > time()-10) {
-    require 'Controllers/Errors/400.php';
+    include 'Controllers/Errors/400.php';
 }
 $_SESSION['webcam_lastcounterincrement'] = time();
 

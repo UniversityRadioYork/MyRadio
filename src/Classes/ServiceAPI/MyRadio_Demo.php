@@ -16,10 +16,10 @@ use \MyRadio\MyRadioEmail;
 /**
  * Abstractor for the Demo utilities
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130607
  * @package MyRadio_Demo
- * @uses \Database
+ * @uses    \Database
  */
 class MyRadio_Demo extends MyRadio_Metadata_Common
 {

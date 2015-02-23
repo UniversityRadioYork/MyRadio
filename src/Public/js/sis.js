@@ -13,16 +13,18 @@ var SIS = function(container) {
         * required callback functions from plugins.
         */
         connect = function() {
-            $.ajax({
-                url: myury.makeURL('SIS', 'remote'),
-                method: 'POST',
-                data: params,
-                cache: false,
-                dataType: 'json',
-                //The timeout here is to prevent stack overflow
-                complete: function() {setTimeout(connect, 100);},
-                success: handleResponse
-            });
+            $.ajax(
+                {
+                    url: myury.makeURL('SIS', 'remote'),
+                    method: 'POST',
+                    data: params,
+                    cache: false,
+                    dataType: 'json',
+                    //The timeout here is to prevent stack overflow
+                    complete: function() {setTimeout(connect, 100);},
+                    success: handleResponse
+                }
+            );
         },
         /**
         * Used by connect, this function deals with the JSON object returned from the
@@ -64,10 +66,12 @@ var SIS = function(container) {
             container.setAttribute('id', id);
             tabContentContainer.appendChild(container);
 
-            $(tabLink).click(function(e) {
-                e.preventDefault();
-                $(this).tab('show');
-            });
+            $(tabLink).click(
+                function(e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                }
+            );
 
             container.setUnread = function(num) {
                 if (num === 0) {
@@ -168,10 +172,9 @@ var SIS = function(container) {
 
     return {
         registerModule: function(id, module, type) {
-            if (
-                !module.hasOwnProperty('initialise') ||
-                !module.hasOwnProperty('name') ||
-                !module.hasOwnProperty('type')
+            if (!module.hasOwnProperty('initialise') 
+                || !module.hasOwnProperty('name') 
+                || !module.hasOwnProperty('type')
             ) {
                 console.error('Cannot load ' + id + ' as it is invalid.');
                 return;
@@ -184,10 +187,9 @@ var SIS = function(container) {
                 objs = generatePluginContainer(id, module.name);
             }
             // Make it the active module if it is set to be
-            if (
-                defaultActiveFound === false &&
-                module.hasOwnProperty('activeByDefault') &&
-                module.activeByDefault
+            if (defaultActiveFound === false 
+                && module.hasOwnProperty('activeByDefault') 
+                && module.activeByDefault
             ) {
                 defaultActiveFound = true;
                 $(objs.link).click();

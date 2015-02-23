@@ -17,11 +17,11 @@ use \MyRadio\MyRadioException;
  * An Abstract superclass for ServiceAPI classes that implements essential
  * base functionality for full MyRadio integration
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130707
  * @package MyRadio_Core
- * @uses \Database
- * @uses \CacheProvider
+ * @uses    \Database
+ * @uses    \CacheProvider
  */
 abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
 {
@@ -96,7 +96,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
      * Iteratively calls the toDataSource method on all of the objects in the given array, returning the results as
      * a new array.
      * @param Array $array
-     * @param bool $full If true, will return expanded data if available.
+     * @param bool  $full  If true, will return expanded data if available.
      * @return Array
      * @throws MyRadioException Throws an Exception if a provided object is not a DataSource
      */
@@ -150,7 +150,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
     /**
      * Generates the Key string for caching services
      *
-     * @param int $id The ID of the object to get the cache key for
+     * @param  int $id The ID of the object to get the cache key for
      * @return String
      */
     public static function getCacheKey($id)
@@ -171,6 +171,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
     /**
      * Removes singleton instance. Used for memory optimisation for very large
      * requests.
+     *
      * @deprecated
      */
     public function removeInstance()

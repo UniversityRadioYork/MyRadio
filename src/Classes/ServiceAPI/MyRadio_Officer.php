@@ -13,10 +13,9 @@ use \MyRadio\MyRadio\CoreUtils;
  * The Officer class provides information about Committee Officerships.
  *
  * @version 20130824
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
- * @uses \Database
- *
+ * @uses    \Database
  */
 class MyRadio_Officer extends ServiceAPI
 {
@@ -234,18 +233,20 @@ class MyRadio_Officer extends ServiceAPI
                         'to'=> empty($x['till_date']) ? null
                             : strtotime($x['till_date']),
                         'memberofficerid' => (int) $x['member_officerid']
-                  ];
+                    ];
                 },
                 $result
             );
             $this->updateCacheObject();
         }
 
-        return array_map(function ($x) {
-            $x['User'] = MyRadio_User::getInstance($x['User']);
+        return array_map(
+            function ($x) {
+                $x['User'] = MyRadio_User::getInstance($x['User']);
 
-            return $x;
-        }, $this->history);
+                return $x;
+            }, $this->history
+        );
     }
 
     /**
@@ -268,8 +269,8 @@ class MyRadio_Officer extends ServiceAPI
     /**
      * Returns data about the Officer.
      *
-     * @todo User who holds or has held position
-     * @param  bool  $full If true, includes info about User who holds position.
+     * @todo   User who holds or has held position
+     * @param  bool $full If true, includes info about User who holds position.
      * @return Array
      */
     public function toDataSource($full = false)

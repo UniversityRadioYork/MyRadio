@@ -6,18 +6,22 @@ var Messages = function() {
         table = document.createElement('table'),
         self = this,
         clickHandler = function(context, row, message) {
-            $(row).click(function() {
-                if ($(this).hasClass('unread')) {
-                    //This is the first time the message has been opened. Mark as read
-                    $.ajax({
-                        url: myury.makeURL('SIS', 'messages.markread', {'id': message['id']})
-                    });
-                    unreadMessages--;
-                    context.setUnread(unreadMessages);
-                    $(this).removeClass('unread');
+            $(row).click(
+                function() {
+                    if ($(this).hasClass('unread')) {
+                        //This is the first time the message has been opened. Mark as read
+                        $.ajax(
+                            {
+                                url: myury.makeURL('SIS', 'messages.markread', {'id': message['id']})
+                            }
+                        );
+                        unreadMessages--;
+                        context.setUnread(unreadMessages);
+                        $(this).removeClass('unread');
+                    }
+                    myury.createDialog('Message', message['body'], [myury.closeButton()]);
                 }
-                myury.createDialog('Message', message['body'], [myury.closeButton()]);
-            });
+            );
         };
 
     table.setAttribute('class', 'messages');

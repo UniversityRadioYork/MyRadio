@@ -2,7 +2,7 @@
 /**
  * Set the show photo
  *
- * @author Andy Durant <aj@ury.org.uk>
+ * @author  Andy Durant <aj@ury.org.uk>
  * @version 20140624
  * @package MyRadio_Scheduler
  */

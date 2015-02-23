@@ -17,10 +17,10 @@ use \MyRadio\ServiceAPI\MyRadio_User;
  * to work.
  *
  * @version 20131016
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @author Matt Windsor <matt.windsor@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Core
- * @uses \Database
+ * @uses    \Database
  */
 trait MyRadio_MetadataSubject
 {

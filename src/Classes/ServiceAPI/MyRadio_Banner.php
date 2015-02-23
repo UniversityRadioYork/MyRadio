@@ -17,9 +17,9 @@ use \MyRadio\MyRadio\MyRadioFormField;
  * The Banner class stores and manages information about a Banner on the front website
  *
  * @version 20130806
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Website
- * @uses \Database
+ * @uses    \Database
  */
 class MyRadio_Banner extends MyRadio_Photo
 {
@@ -183,7 +183,7 @@ class MyRadio_Banner extends MyRadio_Photo
 
     /**
      * Set the Alt text
-     * @param  String           $alt
+     * @param  String $alt
      * @return \MyRadio_Banner
      * @throws MyRadioException
      */
@@ -200,7 +200,7 @@ class MyRadio_Banner extends MyRadio_Photo
 
     /**
      * Set the Target URL
-     * @param  String          $target
+     * @param  String $target
      * @return \MyRadio_Banner
      */
     public function setTarget($target)
@@ -213,7 +213,7 @@ class MyRadio_Banner extends MyRadio_Photo
 
     /**
      * Set the Banner Type
-     * @param  int              $type
+     * @param  int $type
      * @return \MyRadio_Banner
      * @throws MyRadioException
      */
@@ -231,7 +231,7 @@ class MyRadio_Banner extends MyRadio_Photo
 
     /**
      * Set the Banner Photo
-     * @param  MyRadio_Photo   $photo
+     * @param  MyRadio_Photo $photo
      * @return \MyRadio_Banner
      */
     public function setPhoto(MyRadio_Photo $photo)
@@ -247,10 +247,10 @@ class MyRadio_Banner extends MyRadio_Photo
 
     /**
      * Creates a banner
-     * @param  MyRadio_Photo    $photo  The Photo this banner will use. Must be 640x212px.
-     * @param  String           $alt    Friendly name. Used on backend and as 'alt' text.
-     * @param  String           $target URL clicking the banner takes you to. Should be absolute.
-     * @param  int              $type   The type of banner. Currently, there's only one type, intuitively called 2.
+     * @param  MyRadio_Photo $photo  The Photo this banner will use. Must be 640x212px.
+     * @param  String        $alt    Friendly name. Used on backend and as 'alt' text.
+     * @param  String        $target URL clicking the banner takes you to. Should be absolute.
+     * @param  int           $type   The type of banner. Currently, there's only one type, intuitively called 2.
      * @return MyRadio_Banner   The new Banner, of course!
      * @throws MyRadioException
      */
@@ -285,32 +285,50 @@ class MyRadio_Banner extends MyRadio_Photo
      */
     public static function getForm()
     {
-        return (new MyRadioForm('bannerfrm', 'Website', 'editBanner', [
+        return (new MyRadioForm(
+            'bannerfrm', 'Website', 'editBanner', [
             'title' => 'Edit Banner',
             'template' => 'Website/bannerfrm.twig'
-            ]))
-                ->addField(new MyRadioFormField('alt', MyRadioFormField::TYPE_TEXT, [
-                    'label' => 'Title',
-                    'explanation' => 'This is used on the backpages to identify the Banner, and also on the main website as mouseover text.'
-                ]))
-                ->addField(new MyRadioFormField('target', MyRadioFormField::TYPE_TEXT, [
-                    'label' => 'Action',
-                    'explanation' => 'This is the URL that the User will be taken to if they click the Banner. You can leave this blank for there to not be a link.',
-                    'required' => false
-                ]))
-                ->addField(new MyRadioFormField('type', MyRadioFormField::TYPE_SELECT, [
-                    'label' => 'Type',
-                    'explanation' => 'TODO: Ask Matt what this is even supposed to do.',
-                    'options' => array_map(
-                        function ($x) {
-                            return ['value' => $x['banner_type_id'], 'text' => $x['description']];
-                        },
-                        self::getBannerTypes()
+            ]
+        ))
+                ->addField(
+                    new MyRadioFormField(
+                        'alt', MyRadioFormField::TYPE_TEXT, [
+                        'label' => 'Title',
+                        'explanation' => 'This is used on the backpages to identify the Banner, and also on the main website as mouseover text.'
+                        ]
                     )
-                ]))
-                ->addField(new MyRadioFormField('photo', MyRadioFormField::TYPE_FILE, [
-                    'label' => 'Image',
-                    'explanation' => 'Please upload a 680x230px image file to use as the Banner.'
-                ]));
+                )
+                ->addField(
+                    new MyRadioFormField(
+                        'target', MyRadioFormField::TYPE_TEXT, [
+                        'label' => 'Action',
+                        'explanation' => 'This is the URL that the User will be taken to if they click the Banner. You can leave this blank for there to not be a link.',
+                        'required' => false
+                        ]
+                    )
+                )
+                ->addField(
+                    new MyRadioFormField(
+                        'type', MyRadioFormField::TYPE_SELECT, [
+                        'label' => 'Type',
+                        'explanation' => 'TODO: Ask Matt what this is even supposed to do.',
+                        'options' => array_map(
+                            function ($x) {
+                                return ['value' => $x['banner_type_id'], 'text' => $x['description']];
+                            },
+                            self::getBannerTypes()
+                        )
+                        ]
+                    )
+                )
+                ->addField(
+                    new MyRadioFormField(
+                        'photo', MyRadioFormField::TYPE_FILE, [
+                        'label' => 'Image',
+                        'explanation' => 'Please upload a 680x230px image file to use as the Banner.'
+                        ]
+                    )
+                );
     }
 }

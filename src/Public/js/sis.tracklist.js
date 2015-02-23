@@ -10,16 +10,18 @@ var Tracklist = function() {
                 confirmButton.className = 'btn btn-danger';
                 confirmButton.innerHTML = 'Remove';
                 confirmButton.setAttribute('data-dismiss', 'modal');
-                confirmButton.addEventListener('click', function() {
-                    $.post(
-                        myury.makeURL('SIS', 'tracklist.delTrack'),
-                        {id: id},
-                        function() {
-                            var row = document.getElementById('t' + id);
-                            row.parentNode.removeChild(row);
-                        }
-                    );
-                });
+                confirmButton.addEventListener(
+                    'click', function() {
+                        $.post(
+                            myury.makeURL('SIS', 'tracklist.delTrack'),
+                            {id: id},
+                            function() {
+                                var row = document.getElementById('t' + id);
+                                row.parentNode.removeChild(row);
+                            }
+                        );
+                    }
+                );
                 myury.createDialog(
                     'Confirm removal',
                     'Are you sure you want to remove ' + title + ' by ' + artist + ' from the tracklist?',
@@ -102,17 +104,19 @@ var Tracklist = function() {
             submitButton.innerHTML = 'Add track';
             submitButton.setAttribute('disabled', 'disabled');
             submitButton.setAttribute('data-dismiss', 'modal');
-            submitButton.addEventListener('click', function() {
-                $.post(
-                    myury.makeURL('SIS', 'tracklist.checkTrack'),
-                    {
-                        title: addTitle.value,
-                        artist: addArtist.value,
-                        album: addAlbum.value,
-                        trackid: trackLookupId
-                    }
-                );
-            });
+            submitButton.addEventListener(
+                'click', function() {
+                    $.post(
+                        myury.makeURL('SIS', 'tracklist.checkTrack'),
+                        {
+                            title: addTitle.value,
+                            artist: addArtist.value,
+                            album: addAlbum.value,
+                            trackid: trackLookupId
+                        }
+                    );
+                }
+            );
 
             content = document.createElement('div');
             content.appendChild(recStatusDiv);
@@ -132,19 +136,22 @@ var Tracklist = function() {
 
             // Set up typeahead.js on the title field
             // the title needs to be in the DOM before this works, hence it being so far down
-            trackLookup = new Bloodhound({
-                datumTokenizer: function(i) {
-                    return Bloodhound.tokenizers.whitespace(i.title)
+            trackLookup = new Bloodhound(
+                {
+                    datumTokenizer: function(i) {
+                        return Bloodhound.tokenizers.whitespace(i.title)
                         .concat(Bloodhound.tokenizers.whitespace(i.artist));
                     },
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                limit: 20,
-                //Seperated out otherwise % gets urlescaped
-                remote: myury.makeURL('MyRadio', 'a-findtrack', {limit: 20, term: ''}) + '%QUERY'
-            });
+                    queryTokenizer: Bloodhound.tokenizers.whitespace,
+                    limit: 20,
+                    //Seperated out otherwise % gets urlescaped
+                    remote: myury.makeURL('MyRadio', 'a-findtrack', {limit: 20, term: ''}) + '%QUERY'
+                }
+            );
             trackLookup.initialize();
 
-            $(addTitle).typeahead({
+            $(addTitle).typeahead(
+                {
                     hint: false,
                     highlight: true,
                     minLength: 1
@@ -162,26 +169,31 @@ var Tracklist = function() {
                             return '<p>' + i.title + '<br><span style="font-size:.8em">' + i.artist + '</span></p>';
                         }
                     }
-                })
-            .on('typeahead:selected', function(e, obj) {
+                }
+            )
+            .on(
+                'typeahead:selected', function(e, obj) {
                     recStatusDiv.className = 'alert alert-success';
                     recStatusDiv.innerHTML = 'This is a track in our library.';
                     submitButton.removeAttribute('disabled');
                     trackLookupId = obj.trackid;
                     addArtist.value = obj.artist;
                     addAlbum.value = obj.album.title;
-            });
+                }
+            );
 
             // Add a button that opens the dialog when clicked
             addButton = document.createElement('button');
             addButton.className = 'btn btn-link';
             addButton.innerHTML = 'Add track';
-            addButton.addEventListener('click', function() {
-                addTitle.value = addAlbum.value = addArtist.value = '';
-                recStatusReset();
-                trackLookupId = NaN;
-                add_track_dialog.modal();
-            });
+            addButton.addEventListener(
+                'click', function() {
+                    addTitle.value = addAlbum.value = addArtist.value = '';
+                    recStatusReset();
+                    trackLookupId = NaN;
+                    add_track_dialog.modal();
+                }
+            );
 
             // Create a table that stores the current tracklist items
             table = document.createElement('table');

@@ -3,11 +3,11 @@
 /**
  * This is the Jukebox Scheduler Controller - when triggered, it will inject a track into the iTones playout queue
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130712
  * @package MyRadio_iTones
- * @uses \Database
- * @uses \CoreUtils
+ * @uses    \Database
+ * @uses    \CoreUtils
  */
 
 use \MyRadio\MyRadioException;

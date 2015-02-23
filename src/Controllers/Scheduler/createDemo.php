@@ -2,7 +2,7 @@
 /**
  * Allows URY Trainers to create demo slots for new members to attend
  *
- * @author Andy Durant <aj@ury.org.uk>
+ * @author  Andy Durant <aj@ury.org.uk>
  * @version 20140624
  * @package MyRadio_Scheduler
  */

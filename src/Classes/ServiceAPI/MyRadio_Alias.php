@@ -13,10 +13,9 @@ use \MyRadio\MyRadio\CoreUtils;
  * The Alias class is used to do stuff with Aliases in URY's mail system.
  *
  * @version 20130824
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Mail
- * @uses \Database
- *
+ * @uses    \Database
  */
 class MyRadio_Alias extends ServiceAPI
 {
@@ -144,7 +143,7 @@ class MyRadio_Alias extends ServiceAPI
     /**
      * Returns data about the Alias for the API.
      *
-     * @param  bool  $full
+     * @param  bool $full
      * @return Array
      */
     public function toDataSource($full = true)

@@ -13,7 +13,7 @@ namespace MyRadio;
  * which are then stored using the APC plugin automatically. In order for this class to work correctly, the server
  * needs the APC PHP plugin installed on the server. It will throw an Exception if it is not.
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130709
  * @package MyRadio_Core
  */
@@ -50,9 +50,9 @@ class APCProvider implements \MyRadio\Iface\CacheProvider
     /**
      * Stores an object in the APC User Object Cache
      *
-     * @param String $key The unique name of the object to store. Ideally, this would use myury_{module}_{name}
-     * @param mixed $value The data to store
-     * @param int $expires The number of seconds this cache entry is valid for. Default is value of
+     * @param  String $key     The unique name of the object to store. Ideally, this would use myury_{module}_{name}
+     * @param  mixed  $value   The data to store
+     * @param  int    $expires The number of seconds this cache entry is valid for. Default is value of MyRadio_Config::$cache_default_timeout
      *            MyRadio_Config::$cache_default_timeout
      * @return boolean Whether the operation was successful (returns false if caching disabled)
      * @assert ('myradio_core_test', 'test value', 0) == true
@@ -72,7 +72,7 @@ class APCProvider implements \MyRadio\Iface\CacheProvider
     /**
      * Reads a previously stored value from the APC User Object Cache and returns it
      *
-     * @param String $key The unique name of the object to fetch
+     * @param  String $key The unique name of the object to fetch
      * @return mixed The value of the store, or false on failure
      * @assert ('myradio_core_test') == 'test value'
      */
@@ -87,7 +87,7 @@ class APCProvider implements \MyRadio\Iface\CacheProvider
     /**
      * Deletes a previously stored value from the APC User Object Cache
      *
-     * @param String $key The unique name of the object to delete
+     * @param  String $key The unique name of the object to delete
      * @return boolean Returns whether the operaion was a success
      * @assert ('myradio_core_test') == true
      */
@@ -101,7 +101,6 @@ class APCProvider implements \MyRadio\Iface\CacheProvider
 
     /**
      * This will completely wipe the APC User Object Cache
-     *
      */
     public function purge()
     {

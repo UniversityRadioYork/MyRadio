@@ -1,3 +1,5 @@
-new ScheduleView({
-	container: document.getElementById('schedule-preview')
-});
+new ScheduleView(
+    {
+        container: document.getElementById('schedule-preview')
+    }
+);

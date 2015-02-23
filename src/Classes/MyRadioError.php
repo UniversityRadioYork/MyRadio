@@ -11,7 +11,7 @@ namespace MyRadio;
 /**
  * Provides error handling so that php errors can be displayed nicely.
  *
- * @author Andy Durant <aj@ury.org.uk>
+ * @author  Andy Durant <aj@ury.org.uk>
  * @version 20130711
  * @package MyRadio_Core
  */

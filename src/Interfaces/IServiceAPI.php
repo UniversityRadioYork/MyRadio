@@ -10,7 +10,7 @@ namespace MyRadio\Iface;
  * - Restores the database and cache connections on restore
  * - A static factory to create an instance of the ServiceAPI Object
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130808
  * @package MyRadio_Core
  */
