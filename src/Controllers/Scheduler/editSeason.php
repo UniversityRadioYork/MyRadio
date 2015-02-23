@@ -12,6 +12,7 @@
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;
 use \MyRadio\ServiceAPI\MyRadio_Season;
+use \MyRadio\ServiceAPI\MyRadio_Show;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
@@ -61,6 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         MyRadio_Season::getForm()
             ->setFieldValue('show_id', (int) $_REQUEST['showid'])
             ->setTemplate('Scheduler/createSeason.twig')
-            ->render(['current_term' => $current_term]);
+            ->render([
+                'current_term' => $current_term,
+                'show_title' => MyRadio_Show::getInstance($_REQUEST['showid'])->getMeta('title')
+            ]);
     }
 }

@@ -38,7 +38,6 @@ $('.twig-datatable').dataTable({
     sTitle: "View Archive"
   }
   ],
-  "bJQueryUI": true,
   "bPaginate": false
 }
 );

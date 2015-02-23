@@ -28,8 +28,7 @@ $('.twig-datatable').dataTable({
     "bSortable": false
   }
   ],
-  "bJQueryUI": true,
-  "bPaginate": false
+  "bPaginate": true
 }
 );
 

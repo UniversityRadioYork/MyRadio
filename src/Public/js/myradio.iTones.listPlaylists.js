@@ -25,7 +25,6 @@ $('.twig-datatable').dataTable({
     "sTitle": "Revisions"
   },
   ],
-  "bJQueryUI": true,
   "bPaginate": false
 }
 );

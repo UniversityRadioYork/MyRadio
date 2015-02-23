@@ -174,7 +174,7 @@ final class Config
      * The id of the news feed to use for presenter infomation
      * @var int
      */
-    public static $piss_feed = 4;
+    public static $presenterinfo_feed = 4;
 
     /**
      * The path to the motion Webcam logs. This must be a file path, but may be NFS/Samba mounter
@@ -272,6 +272,13 @@ final class Config
      * @var String
      */
     public static $audio_upload_tmp_dir = '/tmp/myradioaudiouploadcache';
+
+    /**
+     * The maximum allowed size of a single Track upload, in MB.
+     * Still bound by php.ini settings.
+     * @var String
+     */
+    public static $audio_upload_max_size = 15;
 
     /**
      * The API key to access last.fm's resources.
@@ -412,12 +419,12 @@ final class Config
     public static $daemon_lock_file = '/tmp/myradio_daemon.lock';
 
     /**
-     * The root URL to URY's API
+     * The root URL to the API
      *
      * Must be absolute.
      * @var String
      */
-    public static $api_url = null;
+    public static $api_url = '/api';
 
     /**
      * The URL prefix to URY's webcam
@@ -464,33 +471,17 @@ final class Config
     public static $sis_tab_folder = 'Models/SIS/tabs';
 
     /**
-     * Studio data
-     * name is the name that is shown if it is detected as the current output
-     * authenticated_machines is an array of IP addresses which will have all rights in SIS, even if they are non-officer
-     * colour is the colour of any alements identifying the studio. Any valid CSS color will work here
-     * @var Array
+     * Array of tabs and plugins to be used by SIS. They will be loaded in order.
      */
-    public static $studios = [
-        [
-            'name' => 'Campus Jukebox',
-            'authenticated_machines' => [],
-            'colour' => '#0F0'
-        ],
-        [
-            'name' => 'Studio 1',
-            'authenticated_machines' => ['144.32.64.181', '144.32.64.183'],
-            'colour' => 'red'
-        ],
-        [
-            'name' => 'Studio 2',
-            'authenticated_machines' => ['144.32.64.184', '144.32.64.185'],
-            'colour' => '#0044BA'
-        ],
-        [
-            'name' => 'Outside Broadcast',
-            'authenticated_machines' => [], //TODO: Add the OB Machines here
-            'colour' => '#bb00dc'
-        ],
+    public static $sis_modules = [
+        'presenterinfo',
+        'messages',
+        'schedule',
+        'tracklist',
+        'links',
+        'selector',
+        'webcam',
+        'obit'
     ];
 
     /**
@@ -621,7 +612,8 @@ EOT;
             'short_name' => self::$short_name,
             'long_name' => self::$long_name,
             'founded' => self::$founded,
-            'facebook' => self::$facebook
+            'facebook' => self::$facebook,
+            'audio_upload_max_size' => self::$audio_upload_max_size
         ];
     }
 }

@@ -44,7 +44,7 @@
     <fieldset id="signin-list">
 
     </fieldset>
-    <input type="submit" id="signin-submit" value="Continue" class="ui-helper-hidden" />
+    <input type="submit" id="signin-submit" value="Continue" class="btn btn-primary hidden" />
 </form>
 {% endblock %}
 {% block foot %}
@@ -53,5 +53,6 @@
     window.showdata = {{timeslots|json_encode|raw}};
     window.memberid = {{memberid}};
 </script>
+<script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
 <script type='text/javascript' src='{{baseurl}}js/myradio.timeslot.js'></script>
 {% endblock %}

@@ -269,7 +269,7 @@ class MyRadio_ChartType extends MyRadio_Type
             ],
             'editlink' => [
                 'display' => 'icon',
-                'value' => 'script',
+                'value' => 'pencil',
                 'title' => 'Edit Chart Type',
                 'url' => CoreUtils::makeURL(
                     'Charts',

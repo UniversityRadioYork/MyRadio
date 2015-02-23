@@ -800,7 +800,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ],
             'editlink' => [
                 'display' => 'icon',
-                'value' => 'script',
+                'value' => 'pencil',
                 'title' => 'Edit Show',
                 'url' => CoreUtils::makeURL('Scheduler', 'editShow', ['showid' => $this->getID()])
             ],
@@ -812,7 +812,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ],
             'micrositelink' => [
                 'display' => 'icon',
-                'value' => 'extlink',
+                'value' => 'link',
                 'title' => 'View Show Microsite',
                 'url' => $this->getWebpage()
             ],

@@ -21,7 +21,6 @@ $('.twig-datatable').dataTable({
     "sTitle": ""
   }
   ],
-  "bJQueryUI": true,
   "bPaginate": false,
   "aaSorting": [[ 1, "asc" ]]
 }

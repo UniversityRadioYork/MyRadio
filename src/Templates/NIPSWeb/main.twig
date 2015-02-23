@@ -4,39 +4,38 @@
 <link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css" />
 {% endblock %}
 {% block content %}
-<div id="notice" class="ui-state-highlight ui-helper-hidden">Saving...</div>
+<div id="notice" class="alert alert-warning">Preparing show plan...</div>
 {# <div id="head-icons"><button class="btn-feedback">Send Feedback</button>&nbsp;<button class="btn-help"></button><button class="btn-logout" onclick="window.location = '/portal/redir_out.php'"></button></div> #}
 <header id="content-header">
   <h3 id="a-manage-library"><a href="{{myury.makeURL(config,'NIPSWeb','manage_library')}}" title="Library Manager">Manage Library</a></h3>
   <h2>{{title}}</h2>
 </header>
 <div id="grid" class="transBG clearfix">
-
-  <div id="bapswrapper" class="ui-widget">
+  <div id="bapswrapper">
     <div id="baps-channel-container" class="clearfix">
       {% for i in 0..2 %}
-        <ul class="box width-1 height-2 baps-channel ui-widget-content" channel="{{i+1}}" id="baps-channel-{{i + 1}}">
+        <ul class="box col-xs-3 height-2 baps-channel" channel="{{i+1}}" id="baps-channel-{{i + 1}}">
           {% for track in tracks[i] %}
             <li id='{% if track['managedid'] is defined %}ManagedDB{% else %}{{track['album']['recordid']}}{% endif %}-{{track['trackid']}}' type='{{track['type']}}'
                 {% if track['managedid'] is defined %}managedid='{{track['managedid']}}'{% endif %}
                 {% if track['type'] == 'aux' %}auxid='{{track['auxid']}}'{% endif %}
                 length='{{track['length']}}' timeslotitemid='{{track['timeslotitemid']}}'
-                weight='{{track['weight']}}' channel='{{track['channel']}}'
+                weight='{{track['weight']}}' channel='{{track['channel']}}' intro='{{track['intro']}}'
+                title='{{track['title']}} ({{track['length']}})'
                 >{{track['title']}}{% if track['artist'] is defined %} - {{track['artist']}}{% endif %}</li>
           {% endfor %}
         </ul>
       {% endfor %}
 
-      <div id="resource-add-container" class="box width-2 height-2 ui-widget ui-widget-content">
-        <div id="resource-add-header" class="ui-widget-header">
+      <div id="resource-add-container" class="box col-md-3 col-sm-3 col-xs-3 height-2">
+        <div id="resource-add-header">
           {% include 'NIPSWeb/res_selector.twig' %}
-          <span id="res-loading" class="ui-state-highlight ui-helper-hidden">Loading...</span>
           <br>
-          <input type="text" placeholder="Filter by artist..." id="res-filter-artist" class="ui-widget-content ui-helper-hidden" />
-          <input type="text" placeholder="Filter by track..." id="res-filter-track" class="ui-widget-content ui-helper-hidden" />
-          <input type="text" placeholder="Filter by name..." id="res-filter-name" class="ui-widget-content ui-helper-hidden" />
+          <input type="text" placeholder="Filter by artist..." id="res-filter-artist" class="hidden" />
+          <input type="text" placeholder="Filter by track..." id="res-filter-track" class="hidden" />
+          <input type="text" placeholder="Filter by name..." id="res-filter-name" class="hidden" />
         </div>
-        <ul class="box baps-channel ui-widget-content" id="baps-channel-res" channel="res">
+        <ul class="box baps-channel" id="baps-channel-res" channel="res">
         </ul>
       </div>
 
@@ -45,21 +44,21 @@
     <div id="baps-channelaction-container"  class="clearfix">
       {% set channels = [1, 2, 3, 'res'] %}
       {% for channel in channels %}
-        <div class='box baps-channel channel-footer ui-widget-header{% if channel == 'res' %} width-2 library-footer'>Library{% else %} width-1'>Channel {{channel}}{% endif %}
+        <div class='box col-xs-3 baps-channel channel-footer {% if channel == 'res' %} library-footer'>Library{% else %}'>Channel {{channel}}{% endif %}
           <span id='baps-channel-{{channel}}-total' title="Total time of all tracks in this channel">(00:00)</span>
           <br>
-          <button class='play' id='ch{{channel}}-play' onclick='previewPlay("{{channel}}")'></button>
-          <button class='pause' id='ch{{channel}}-pause' onclick='previewPause("{{channel}}")'></button>
-          <button class='stop' id='ch{{channel}}-stop' class='ui-state-disabled' onclick='previewStop("{{channel}}")'></button><br>
+          <div class="btn-group">
+              <button type='button' title="Play{%if channel != 'res'%} (F{{channel+((channel-1)*3)}}){%endif%}" class='play btn btn-default' id='ch{{channel}}-play' disabled="disabled"><span class="glyphicon glyphicon-play"></span></button>
+              <button type='button' title="Pause{%if channel != 'res'%} (F{{channel+((channel-1)*3)+1}}){%endif%}" class='pause btn btn-default' id='ch{{channel}}-pause' disabled="disabled"><span class="glyphicon glyphicon-pause"></span></button>
+              <button type='button' title="Stop{%if channel != 'res'%} (F{{channel+((channel-1)*3)+2}}){%endif%}" class='stop btn btn-default' id='ch{{channel}}-stop' disabled="disabled"><span class="glyphicon glyphicon-stop"></span></button>
+          </div>
+          <br>
           <div id='progress-bar-{{channel}}'></div>
           <label id='ch{{channel}}-elapsed'>--:--</label> /
           <label id='ch{{channel}}-duration'>--:--</label>
         </div>
       {% endfor %}
     </div>
-  </div>
-
-  <div id="footer-tips" class="ui-state-highlight ui-helper-hidden"></div>
 
 </div>
 
@@ -67,7 +66,7 @@
 
 {% block foot %}
 {{ parent() }}
-<script type="text/javascript" src="{{baseurl}}js/vendor/jquery.ui-contextmenu.min.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/vendor/typeahead.bundle.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/nipsweb.player.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/nipsweb.librarypane.js"></script>

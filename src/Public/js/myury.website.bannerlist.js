@@ -46,7 +46,6 @@ $('.twig-datatable').dataTable({
     sTitle: "View Campaigns"
   }
   ],
-  "bJQueryUI": true,
   "bPaginate": false,
   "aaSorting": [[ 1, "asc" ]]
 }

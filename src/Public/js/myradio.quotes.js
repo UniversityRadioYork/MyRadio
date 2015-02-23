@@ -27,7 +27,6 @@ $('.twig-datatable').dataTable(
               "bVisible": true
             }
         ],
-        "bJQueryUI": true,
         "bPaginate": true
     }
 );

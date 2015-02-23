@@ -69,32 +69,39 @@ class MyRadio_Webcam extends ServiceAPI
      */
     public static function getCurrentWebcam()
     {
-        $current = file_get_contents(Config::$webcam_current_url);
+        if (Config::$webcam_current_url) {
+            $current = (int)file_get_contents(Config::$webcam_current_url);
 
-        switch ($current) {
-            case '0': $location = 'Jukebox';
-                break;
-            case '2': $location = 'Studio 1';
-                break;
-            case '3': $location = 'Studio 1 Secondary';
-                break;
-            case '4': $location = 'Studio 2';
-                break;
-            case '5': $location = 'Office';
-                break;
-            case '6': $location = 'Hall';
-                break;
-            case '8': $location = 'OB';
-                break;
-            default: $location = $current;
-                $current = 7;
-                break;
+            switch ($current) {
+                case 0: $location = 'Jukebox';
+                    break;
+                case 2: $location = 'Studio 1';
+                    break;
+                case 3: $location = 'Studio 1 Secondary';
+                    break;
+                case 4: $location = 'Studio 2';
+                    break;
+                case 5: $location = 'Office';
+                    break;
+                case 6: $location = 'Hall';
+                    break;
+                case 8: $location = 'OB';
+                    break;
+                default: $location = $current;
+                    $current = 7;
+                    break;
+            }
+
+            return [
+                'current' => $current,
+                'webcam' => $location
+            ];
+        } else {
+            return [
+                'current' => -1,
+                'webcam' => null
+            ];
         }
-
-        return [
-            'current' => $current,
-            'webcam' => $location
-        ];
     }
 
     /**

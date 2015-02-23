@@ -18,7 +18,6 @@ $('.twig-datatable').dataTable(
               sTitle: "Edit"
             }
         ],
-        "bJQueryUI": true,
         "bPaginate": false,
         "aaSorting": [[ 1, "asc" ]]
     }

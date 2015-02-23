@@ -27,39 +27,38 @@
     <li>You have run out of bacon</li>
 </ul>
 {% endif %}
-{% if stage != 0 %}<p class="ui-state-highlight">You are on step {{stage}} of 3.</p>{% endif %}
+{% if stage != 0 %}<p class="alert alert-warning">You are on step {{stage}} of 3.</p>{% endif %}
 
 {% if stage == 1 %}
 <form method="post">
     <input type="hidden" name="stage" value="2">
-    <input type="submit" class="ui-state-error sched-stop-button" value="I understand what I am doing. This is important!">
+    <input type="submit" class="btn btn-danger" value="I understand what I am doing. This is important!">
 </form>
 {% endif %}
 {% if stage == 2 %}
 {% if not result %}
-<p class="ui-state-error">That wasn't you first show. If you've never done a show, you can't use this.</p>
+<p class="alert alert-danger">That wasn't you first show. If you've never done a show, you can't use this.</p>
 {% endif %}
 <form method="post">
     <p>Okay. Please enter the title of your first ever show on the station:</p>
     <input type="hidden" name="stage" value="3">
-    <input type="text" name="show-name" placeholder="When The Cows Go On Air" style="width:400px"><br>
-    <input type="submit" class="sched-stop-button" value="Okay, done">
+    <input type="text" name="show-name" placeholder="When The Cows Go On Air" style="width:400px" autocomplete="off"><br>
+    <input type="submit" class="btn btn-default sched-stop-button" value="Okay, done">
 </form>
 {% endif %}
 {% if stage == 3 %}
 <form method="post">
-    <p>Enter your University username (without @york.ac.uk) below to cease broadcasting.</p>
+    <p>Enter your username (the part before the @) below to cease broadcasting.</p>
     <input type="hidden" name="stage" value="0">
-    <input type="text" id="theField" style="width:400px"><br>
-    <input type="submit" id="theButton" disabled="disabled" class="ui-state-disabled" value="Start Obit System">
+    <input type="text" id="theField" style="width:400px" autocomplete="off"><br>
+    <input type="submit" id="theButton" disabled="disabled" class="btn btn-danger" value="Start Obit System">
 </form>
 <script type="text/javascript">
     $('#theField').on('keyup', function() {
-        console.log($(this).val());
-        if ($(this).val() == "{{result}}") {
-            $('#theButton').button('enable');
+        if ($(this).val() === "{{result}}") {
+            $('#theButton').removeAttr('disabled');
         } else {
-            $('#theButton').button('disabled');
+            $('#theButton').attr('disabled', 'disabled');
         }
     });
 </script>

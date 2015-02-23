@@ -176,6 +176,30 @@ class CoreUtils
     }
 
     /**
+     * Returns the ISO8601 Year and Week Number for the given time
+     * @param int   $time The time to get the info for, default now.
+     * @return array [year, week_number]
+     */
+    public static function getYearAndWeekNo($time = null) {
+        if ($time === null) {
+            $time = time();
+        }
+
+        $year_absolute = (int)gmdate('Y', $time);
+        $week_number = (int)gmdate('W', $time);
+        $month = (int)gmdate('n', $time);
+
+        if ($month === 1 && $week_number > 50) {
+            //This is the final week of *last* year
+            $year_adjusted = $year_absolute - 1;
+        } else {
+            $year_adjusted = $year_absolute;
+        }
+
+        return [$year_adjusted, $week_number];
+    }
+
+    /**
      * Gives you the starting year of the current academic year
      * @return int year
      * @assert () == 2013
@@ -190,8 +214,8 @@ class CoreUtils
             );
 
             // Default to this year
-            $beforeAccountExpiry = strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days');
-            if (empty($term) || $beforeAccountExpiry) {
+            $account_reset_time = strtotime('+' . Config::$account_expiry_before . ' days');
+            if (empty($term) || strtotime($term[0]) <= $account_reset_time) {
                 CoreUtils::$academicYear = date('Y');
             } else {
                 self::$academicYear = date('Y') - 1;
@@ -314,7 +338,7 @@ class CoreUtils
 
             if (!empty($params)) {
                 if (is_string($params)) {
-                    $str .= $params;
+                    $str .= "&$params";
                 } else {
                     foreach ($params as $k => $v) {
                         $str .= "&$k=$v";
@@ -396,14 +420,11 @@ class CoreUtils
      */
     public static function hasPermission($permission)
     {
-        if (!isset($_SESSION['member_permissions'])) {
-            return false;
+        if (isset($_SESSION['memberid'])) {
+            return MyRadio_User::getInstance()->hasAuth($permission);
+        } else {
+            return $permission === null;
         }
-        if ($permission === null) {
-            return true;
-        }
-
-        return in_array($permission, $_SESSION['member_permissions']);
     }
 
     /**
@@ -469,7 +490,14 @@ class CoreUtils
         if (!$authorised && $require) {
             //Requires login
             if (!isset($_SESSION['memberid']) || $_SESSION['auth_use_locked'] !== false) {
-                self::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
+                $is_ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+                                && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+                            || empty($_SERVER['REMOTE_ADDR']);
+                if ($is_ajax) {
+                    throw new MyRadioException('Login required', 401);
+                } else {
+                    self::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
+                }
             } else {
                 //Authenticated, but not authorized
                 require 'Controllers/Errors/403.php';

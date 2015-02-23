@@ -603,6 +603,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $this->setMeta('reject-reason', $reason);
 
         if ($notify_user) {
+            $sname = Config::$short_name;
             MyRadioEmail::sendEmailToUserSet(
                 $this->getShow()->getCreditObjects(),
                 $this->getMeta('title') . ' Application Rejected',
@@ -615,7 +616,7 @@ $reason
 
 You can reapply online at any time, or for more information, email pc@ury.org.uk.
 
-~ {Config::$short_name} Scheduling Legume
+~ {$sname} Scheduling Legume
 EOT
             );
         }
@@ -757,7 +758,7 @@ EOT
                     if ($k > 10 || $k < 1) {
                         continue;
                     }
-                    $sids[$v]++;
+                    isset($sids[$v]) ? $side[$v]++ : $sids[$v] = 0;
                     //Work out blocked weeks
                     if ($k == ++$week_num) {
                         //Continuation of previous sequence
@@ -824,7 +825,7 @@ EOT
             ],
             'allocatelink' => [
                 'display' => 'icon',
-                'value' => 'script',
+                'value' => 'pencil',
                 'title' => 'Edit Application or Allocate Season',
                 'url' => CoreUtils::makeURL('Scheduler', 'allocate', ['show_season_id' => $this->getID()])
             ],
@@ -857,7 +858,6 @@ EOT
      */
     public function schedule($params)
     {
-        date_default_timezone_set('UTC');
         //Verify that the input time is valid
         if (!isset($params['time']) or !is_numeric($params['time'])) {
             throw new MyRadioException('No valid Time was sent to the Scheduling Mapper.', MyRadioException::FATAL);
@@ -891,8 +891,6 @@ EOT
         $start_day = MyRadio_Scheduler::getTermStartDate(MyRadio_Scheduler::getActiveApplicationTerm())
             + ($req_time['day'] * 86400);
 
-        $start_time = date('H:i:s', $req_time['start_time']);
-
         //Now it's time to BEGIN to COMMIT!
         self::$db->query('BEGIN');
         /**
@@ -903,21 +901,13 @@ EOT
         for ($i = 1; $i <= 10; $i++) {
             if (isset($params['weeks']['wk' . $i]) && $params['weeks']['wk' . $i] == 1) {
                 $day_start = $start_day + (($i - 1) * 7 * 86400);
-                $show_time = date('Y-m-d ', $day_start) . $start_time;
+                $show_time = $day_start + $req_time['start_time'] - date('Z'); //NOT gmdate
 
-                /**
-                 * @todo 1 is subtracted from the duration in the conflict checker here,
-                 * as shows last precisely an hour, not 59m59s. Should we do something
-                 * nicer here?
-                 */
                 $conflict = MyRadio_Scheduler::getScheduleConflict($day_start + $req_time['start_time'], $day_start + $start_time + $req_time['duration'] - 1);
-                //print_r($conflict);
-                //Disable because it doesn't fucking work.
-                /*         * if (!empty($conflict)) {
+                if (!empty($conflict)) {
                   self::$db->query('ROLLBACK');
-                  throw new MyRadioException('A show is already scheduled for this time: '.print_r($conflict, true));
-                  exit;
-                  } */
+                  throw new MyRadioException('A show is already scheduled for this time: ' . print_r($conflict, true));
+                }
 
                 //This week is due to be scheduled! QUERY! QUERY!
                 $r = self::$db->fetchAll(
@@ -926,7 +916,7 @@ EOT
                     VALUES ($1, $2, $3, $4, $5) RETURNING show_season_timeslot_id',
                     [
                         $this->season_id,
-                        $show_time,
+                        CoreUtils::getTimestamp($show_time),
                         $req_time['duration'],
                         $this->owner->getID(),
                         $_SESSION['memberid']
@@ -937,6 +927,11 @@ EOT
                 }
                 $this->timeslots[] = MyRadio_Timeslot::getInstance($r[0]['show_season_timeslot_id']);
                 $times .= CoreUtils::happyTime($show_time)."\n"; //Times for the email
+
+                // Clear the Schedule cache for this week
+                $weekAndYear = CoreUtils::getYearAndWeekNo($show_time);
+                self::$cache->delete('MyRadioScheduleFor' . $weekAndYear[0] . 'W' . $weekAndYear[1]);
+
             }
         }
         //COMMIT
@@ -962,8 +957,6 @@ $times
         if (!empty($times)) {
             MyRadioEmail::sendEmailToUser($this->owner, $this->getMeta('title') . ' Scheduled', $message);
         }
-
-        date_default_timezone_set(Config::$timezone);
     }
 
     /**

@@ -183,79 +183,92 @@ foreach ($function_checks as $check) {
 ?>
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Welcome to MyRadio</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="Stylesheet" type="text/css" href="css/normalise.css">
-        <link rel="Stylesheet" type="text/css" href="css/vendor/themes/ury-purple/jquery-ui.css">
-        <link rel="stylesheet" type="text/css" href="css/main.css">
-        <link rel="Stylesheet" type="text/css" href="css/style.css">
-        <script type="text/javascript" src="js/vendor/jquery-2.1.0.min.js"></script>
-    </head>
-    <body>
-      <div id="grid" class="transBG clearfix">
-          <header id="content-header"><h2>Hello there</h2></header>
-          <div id="content-body" class="clearfix">
-              <p>It looks like you're trying to install MyRadio! Would you like some help with that? No? Well too bad, I'm not a paperclip you can hide.</p>
-              <p>I'm just running some background checks to see if you're ready to go.</p>
-              <?php
-              if ($ready) {
-                  ?>
-                  <p class="ui-state-highlight">Good news! It looks like you're ready to go. <a href="?c=dbserver">Click here to continue</a>.</p>
-              <?php
-              } else {
-                  ?>
-                  <p class="ui-state-error">Uh oh! It looks like there's some things you'll have to get sorted out before you can continue. Follow the advice below, then <a href=''>refresh this page</a> to try again.</p>
-              <?php
-                  echo '<h3>The following tests failed and must be fixed before you can proceed:</h3><ul>';
-                  foreach ($problems as $problem) {
-                      echo '<li>'.$problem.'</li>';
-                  }
-                  echo '</ul>';
-              }
+  <head>
+    <title>Welcome to MyRadio</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="Stylesheet" type="text/css" href="css/vendor/bootstrap.min.css">
+    <link rel="Stylesheet" type="text/css" href="css/vendor/bootstrap-theme.min.css">
+    <link rel="Stylesheet" type="text/css" href="css/style.css">
 
-              if (empty($warnings)) {
-                  if ($ready) {
-                      echo '<p><span class="ui-icon ui-icon-circle-check fleft"></span>Amazing! Your server is absolutely <em>perfect</em> for running MyRadio.</p>';
-                  }
-              } else {
-                  echo '<h3>The following tests failed, but they aren\'t required for MyRadio to run:</h3><ul>';
-                  foreach ($warnings as $warning) {
-                      echo '<li>'.$warning.'</li>';
-                  }
-                  echo '</ul>';
-              }
-
-              if (!empty($successes)) {
-                  echo '<h3>The following tests passed without any issues:</h3><ul>';
-                  foreach ($successes as $success) {
-                      echo '<li>'.$success.'</li>';
-                  }
-                  echo '</ul>';
-              }
-
-              if ($ready === false or !empty($warnings)) {
-                  ?>
-                  <h3>Cheating</h3>
-                  <p>If you're using Ubuntu, the following commands (as root) will get you most of the way:</p>
-                  <code>
-                      apt-get install php-apc php5-curl php5-geoip php5-gd php5-ldap php5-mcrypt php5-pgsql php5-dev php-pear<br>
-                      pear channel-discover pear.twig-project.org<br>
-                      pear install twig/Twig<br>
-                      pear install twig/CTwig<br>
-                      echo "extension=mcrypt.so" > /etc/php5/mods-available/mcrypt.ini<br>
-                      ln -s /etc/php5/mods-available/mcrypt.ini /etc/php5/apache2/conf.d/20-mcrypt.ini<br>
-                      echo "extension=twig.so" > /etc/php5/mods-available/twig.ini<br>
-                      ln -s /etc/php5/mods-available/twig.ini /etc/php5/apache2/conf.d/20-twig.ini<br>
-                      service apache2 restart
-                  </code>
-              <?php
-              }
-              ?>
-          </div>
+    <script type="text/javascript" src="js/vendor/jquery-2.1.0.min.js"></script>
+    <script type="text/javascript" src="js/vendor/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand">MyRadio</a>
+        </div>
       </div>
-      <footer id="pageFooter" class="clearfix">
-        <div id="copyright"><p>MyRadio by <a href="mailto:webmaster@ury.org.uk">URY Computing Team</a></p></div>
+    </nav>
+    <br>
+    <div class="container main-container">
+      <h1>Hello there!</h1>
+      <p>It looks like you're trying to install MyRadio! Would you like some help with that? No? Well too bad, I'm not a paperclip you can hide.</p>
+      <p>I'm just running some background checks to see if you're ready to go.</p>
+      <?php
+      if ($ready) {
+          ?>
+          <p class="alert alert-success">Good news! It looks like you're ready to go. <a href="?c=dbserver">Click here to continue</a>.</p>
+      <?php
+      } else {
+          ?>
+          <p class="alert alert-danger">Uh oh! It looks like there's some things you'll have to get sorted out before you can continue. Follow the advice below, then <a href=''>refresh this page</a> to try again.</p>
+      <?php
+          echo '<h3>The following tests failed and must be fixed before you can proceed:</h3><ul>';
+          foreach ($problems as $problem) {
+              echo '<li>'.$problem.'</li>';
+          }
+          echo '</ul>';
+      }
+
+      if (empty($warnings)) {
+          if ($ready) {
+              echo '<p><span class="glyphicon glyphicon-ok"></span> Amazing! Your server is absolutely <em>perfect</em> for running MyRadio.</p>';
+          }
+      } else {
+          echo '<h3>The following tests failed, but they aren\'t required for MyRadio to run:</h3><ul>';
+          foreach ($warnings as $warning) {
+              echo '<li>'.$warning.'</li>';
+          }
+          echo '</ul>';
+      }
+
+      if (!empty($successes)) {
+          echo '<h3>The following tests passed without any issues:</h3><ul>';
+          foreach ($successes as $success) {
+              echo '<li>'.$success.'</li>';
+          }
+          echo '</ul>';
+      }
+
+      if ($ready === false or !empty($warnings)) {
+          ?>
+          <h3>Cheating</h3>
+          <p>If you're using Ubuntu, the following commands (as root) will get you most of the way:</p>
+          <code>
+              apt-get install php-apc php5-curl php5-geoip php5-gd php5-ldap php5-mcrypt php5-pgsql php5-dev php-pear<br>
+              pear channel-discover pear.twig-project.org<br>
+              pear install twig/Twig<br>
+              pear install twig/CTwig<br>
+              echo "extension=mcrypt.so" > /etc/php5/mods-available/mcrypt.ini<br>
+              ln -s /etc/php5/mods-available/mcrypt.ini /etc/php5/apache2/conf.d/20-mcrypt.ini<br>
+              echo "extension=twig.so" > /etc/php5/mods-available/twig.ini<br>
+              ln -s /etc/php5/mods-available/twig.ini /etc/php5/apache2/conf.d/20-twig.ini<br>
+              service apache2 restart
+          </code>
+      <?php
+      }
+      ?>
+    </div>
+      <footer class="footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              MyRadio by University Radio York
+            </div>
+          </div>
+        </div>
       </footer>
-    </body>
+  </body>
 </html>

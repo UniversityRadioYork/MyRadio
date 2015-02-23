@@ -362,7 +362,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $time = time();
         }
 
-        $filter = '{' . implode(', ', $filter) . '}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
+        $filter = '{' . implode(', ', $filter) . '}'; // http://php.net/manual/en/function.pg-query-params.php#71912
 
         $result = self::$db->fetchColumn(
             'SELECT show_season_timeslot_id
@@ -409,6 +409,60 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         } else {
             return self::getInstance($result[0]);
         }
+    }
+
+    /**
+    * Returns Timeslots scheduled for the given week number.
+    *
+    * "Weeks" are nine days - From the Sunday preceeding the week to the Monday
+    * after the week ends, i.e. Sun/Mon/Tue/Wed/Thu/Fri/Sat/Sun/Mon.
+    * A Timeslot that starts before the start of the period but ends during
+    * will be included. The same is true for ones that end after the period.<br>
+    * It is guaranteed that the results will be in order of start time.
+    *
+    * @param int $weekno An ISO-8601 Week Number (http://en.wikipedia.org/wiki/ISO_8601#Week_dates)
+    * @param int $year Default to current Calendar year.
+    * @return MyRadio_Timeslot[]
+    */
+    public static function getWeekSchedule($weekno, $year = null) {
+        self::wakeup();
+        if ($year === null) {
+            $year = int(gmdate('Y'));
+        }
+
+        if ($weekno < 10) {
+            $weekno = '0' . $weekno;
+        }
+
+        $key = 'MyRadioScheduleFor' . $year . 'W' . $weekno;
+        $cache = self::$cache->get($key);
+        if (!$cache) {
+            $startOfWeek = strtotime($year . 'W' . $weekno);
+            $sundayBefore = $startOfWeek - 86400; // 60 * 60 * 24
+            $endOfMondayAfter = $startOfWeek + (86400 * 8) - 1; //Monday 23:59:59
+
+            $startTimestamp = CoreUtils::getTimestamp($sundayBefore);
+            $endTimestamp = CoreUtils::getTimestamp($endOfMondayAfter);
+
+            $result = self::$db->fetchColumn(
+                'SELECT show_season_timeslot_id
+                FROM schedule.show_season_timeslot
+                INNER JOIN schedule.show_season USING (show_season_id)
+                INNER JOIN schedule.show USING (show_id)
+                WHERE (
+                    (start_time + duration >= $1 AND start_time + duration <= $2) OR
+                    (start_time >= $1 AND start_time <= $2)
+                )
+                AND show_type_id = 1
+                ORDER BY start_time ASC',
+                [$startTimestamp, $endTimestamp]
+            );
+
+            $cache = self::resultSetToObjArray($result);
+
+            self::$cache->set($key, $cache, 3600);
+        }
+        return $cache;
     }
 
     /**

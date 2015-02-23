@@ -28,163 +28,227 @@ window.MyRadioForm = {
     /**
      * Initialises the Member autocomplete pickers where necessary
      */
-    $('fieldset.myradiofrm input.member-autocomplete').each(function() {
-      $(this).autocomplete({
-        minLength: 3,
-        source: myury.makeURL('MyRadio', 'a-findmember'),
-        select: function(event, ui) {
-          $(this).val(ui.item.fname + ' ' + ui.item.sname);
-          $('#' + $(this).attr('id').replace(/-ui$/, '')).val(ui.item.memberid);
-          return false;
+    var memberFields = $('fieldset.myradiofrm input.member-autocomplete:not(.tt-hint):not(.tt-input)');
+    if (memberFields.length > 0) {
+      var memberLookup = new Bloodhound({
+        datumTokenizer: function(i) {
+          return Bloodhound.tokenizers.whitespace(i.fname)
+            .concat(Bloodhound.tokenizers.whitespace(i.sname));
         },
-        //Prevent the field blanking out when an item is given focus
-        focus: function(event, ui) {
-          return false;
-        }
-      })
-              .data("ui-autocomplete")._renderItem = function(ul, item) {
-        return $('<li></li>').data('item.autocomplete', item)
-                .append('<a>' + item.fname + ' ' + item.sname + '</a>')
-                .appendTo(ul);
-      };
-      //If there's an existing value, load it in
-      val = $('#' + $(this).attr('id').replace(/-ui$/, '')).val();
-      console.log(val);
-      if (typeof val != 'undefined' && val != '') {
-        $.ajax({
-          url: myury.makeURL('MyRadio', 'a-membernamefromid'),
-          data: {term: $('#' + $(this).attr('id').replace(/-ui$/, '')).val()},
-          context: this,
-          success: function(data) {
-            console.log($(this));
-            $(this).val(data);
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        limit: 5,
+        dupDetector: function(remote, local) {
+          return local.memberid == remote.memberid;
+        },
+        prefetch: {
+          url: myury.makeURL('MyRadio', 'a-findmember', {term: null, limit: 500})
+        },
+        remote: myury.makeURL('MyRadio', 'a-findmember', {limit: 5, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+      });
+      memberLookup.initialize();
+
+      memberFields.each(function() {
+        var idField =  $('#' + $(this).attr('id').replace(/-ui$/, ''));
+        var defaultVal = idField.val();
+
+        $(this).typeahead({
+            hint: false,
+            highlight: true,
+            minLength: 1
+          },
+          {
+            displayKey: function(i) {
+              return i.fname + ' ' + i.sname;
+            },
+            source: memberLookup.ttAdapter(),
+            templates: {
+              //Only needed for workaround
+              suggestion: function(i) {
+                //Fix typeahead not showing after hiding
+                //TODO: Report this @ https://github.com/twitter/typeahead.js/
+                $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
+                return '<p>' + i.fname + ' ' + i.sname + '</p>';
+              }
+            }
           }
+        )
+        .on('typeahead:selected', function(e, obj) {
+          idField.val(obj.memberid);
         });
-      }
-    });
+      });
+    }
   },
   setUpTrackFields: function() {
     /**
      * Initialises the Track autocomplete pickers where necessary
      */
-    $('fieldset.myradiofrm input.track-autocomplete').each(function() {
-      var self = this;
-      $(this).autocomplete({
-        minLength: 3,
-        source: function(term, callback) {
-          var data = term;
-          if ($(self).hasClass('digitisedonly')) {
-            data['require_digitised'] = 'true';
-          }
-          $.getJSON(myury.makeURL('MyRadio', 'a-findtrack'), data, callback);
+    var trackFields = $('fieldset.myradiofrm input.track-autocomplete:not(.tt-hint):not(.tt-input)');
+    if (trackFields.length > 0) {
+      var trackLookup = new Bloodhound({
+        datumTokenizer: function(i) {
+          return Bloodhound.tokenizers.whitespace(i.title)
+            .concat(Bloodhound.tokenizers.whitespace(i.artist));
         },
-        select: function(event, ui) {
-          $(this).val(ui.item.title);
-          $('#' + $(this).attr('id').replace(/-ui$/, '')).val(ui.item.trackid);
-          return false;
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        limit: 5,
+        dupDetector: function(remote, local) {
+          return local.trackid == remote.trackid;
         },
-        //Prevent the field blanking out when an item is given focus
-        focus: function(event, ui) {
-          return false;
-        }
-      })
-      .data("ui-autocomplete")._renderItem = function(ul, item) {
-        return $('<li></li>').data('item.autocomplete', item)
-                .append('<a>' + item.title + '<br><span style="font-size:.8em">' + item.artist + '</span></a>')
-                .appendTo(ul);
-      };
-      //If there's an existing ID value, load it in
-      if ($(this).val() === '' && $('#' + $(this).attr('id').replace(/-ui$/, '')).val() !== '') {
-        $.ajax({
-          url: myury.makeURL('MyRadio', 'a-findtrack'),
-          data: {
-            id: $('#' + $(this).attr('id').replace(/-ui$/, '')).val()
+        prefetch: {
+          url: myury.makeURL('MyRadio', 'a-findtrack', {term: null, limit: 500})
+        },
+        remote: myury.makeURL('MyRadio', 'a-findtrack', {limit: 5, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+      });
+      trackLookup.initialize();
+
+      trackFields.each(function() {
+        var idField =  $('#' + $(this).attr('id').replace(/-ui$/, ''));
+        var defaultVal = idField.val();
+
+        $(this).typeahead({
+            hint: false,
+            highlight: true,
+            minLength: 1
           },
-          context: this,
-          success: function(data) {
-            $(this).val(data.title);
+          {
+            displayKey: function(i) {
+              return i.title;
+            },
+            source: trackLookup.ttAdapter(),
+            templates: {
+              suggestion: function(i) {
+                //Fix typeahead not showing after hiding
+                //TODO: Report this @ https://github.com/twitter/typeahead.js/
+                $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
+                return '<p>' + i.title + '<br><span style="font-size:.8em">' + i.artist + '</span></p>';
+              }
+            }
           }
+        )
+        .on('typeahead:selected', function(e, obj) {
+          idField.val(obj.trackid);
         });
-      }
-    });
+      });
+    }
   },
   setUpArtistFields: function() {
     /**
      * Initialises the Artist autocomplete pickers where necessary
      */
-    $('fieldset.myradiofrm input.artist-autocomplete').each(function() {
-      $(this).autocomplete({
-        minLength: 3,
-        source: myury.makeURL('MyRadio', 'a-findartist'),
-        select: function(event, ui) {
-          $(this).val(ui.item.title);
-          $('#' + $(this).attr('id').replace(/-ui$/, '')).val(ui.item.artistid);
-          return false;
+    var artistFields = $('fieldset.myradiofrm input.artist-autocomplete:not(.tt-hint):not(.tt-input)');
+    if (artistFields.length > 0) {
+      var artistLookup = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('title'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        limit: 5,
+        dupDetector: function(remote, local) {
+          return local.title == remote.title;
         },
-        //Prevent the field blanking out when an item is given focus
-        focus: function(event, ui) {
-          return false;
-        }
-      })
-              .data("ui-autocomplete")._renderItem = function(ul, item) {
-        return $('<li></li>').data('item.autocomplete', item)
-                .append('<a>' + item.title + '</a>')
-                .appendTo(ul);
-      };
-    });
+        prefetch: {
+          url: myury.makeURL('MyRadio', 'a-findartist', {term: null, limit: 500})
+        },
+        remote: myury.makeURL('MyRadio', 'a-findartist', {limit: 5, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+      });
+      artistLookup.initialize();
+
+      artistFields.each(function() {
+        var idField =  $('#' + $(this).attr('id').replace(/-ui$/, ''));
+        var defaultVal = idField.val();
+
+        $(this).typeahead({
+            hint: false,
+            highlight: true,
+            minLength: 1
+          },
+          {
+            displayKey: 'title',
+            source: artistLookup.ttAdapter(),
+            templates: {
+              //Only needed for workaround
+              suggestion: function(i) {
+                //Fix typeahead not showing after hiding
+                //TODO: Report this @ https://github.com/twitter/typeahead.js/
+                $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
+                return '<p>' + i.title + '</p>';
+              }
+            }
+          }
+        )
+        .on('typeahead:selected', function(e, obj) {
+          idField.val(obj.artistid);
+        });
+      });
+    }
   },
   setUpAlbumFields: function() {
     /**
      * Initialises the Album autocomplete pickers where necessary
      */
-    $('fieldset.myradiofrm input.album-autocomplete').each(function() {
-      $(this).autocomplete({
-        minLength: 3,
-        source: myury.makeURL('MyRadio', 'a-findalbum'),
-        select: function(event, ui) {
-          $(this).val(ui.item.title);
-          $('#' + $(this).attr('id').replace(/-ui$/, '')).val(ui.item.recordid);
-          return false;
+    var albumFields = $('fieldset.myradiofrm input.album-autocomplete:not(.tt-hint):not(.tt-input)');
+    if (albumFields.length > 0) {
+      var albumLookup = new Bloodhound({
+        datumTokenizer: function(i) {
+          return Bloodhound.tokenizers.whitespace(i.title)
+            .concat(Bloodhound.tokenizers.whitespace(i.artist));
         },
-        //Prevent the field blanking out when an item is given focus
-        focus: function(event, ui) {
-          return false;
-        }
-      })
-              .data("ui-autocomplete")._renderItem = function(ul, item) {
-        return $('<li></li>').data('item.autocomplete', item)
-                .append('<a>' + item.title + '</a>')
-                .appendTo(ul);
-      }
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        limit: 5,
+        dupDetector: function(remote, local) {
+          return local.title == remote.title;
+        },
+        prefetch: {
+          url: myury.makeURL('MyRadio', 'a-findalbum', {term: null, limit: 500})
+        },
+        remote: myury.makeURL('MyRadio', 'a-findalbum', {limit: 5, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+      });
+      albumLookup.initialize();
 
-      //If there's an existing ID value, load it in
-      if ($(this).val() === '' && $('#' + $(this).attr('id').replace(/-ui$/, '')).val() !== '') {
-        $.ajax({
-          url: myury.makeURL('MyRadio', 'a-findalbum'),
-          data: {id: $('#' + $(this).attr('id').replace(/-ui$/, '')).val()},
-          context: this,
-          success: function(data) {
-            $(this).val(data.title);
+      albumFields.each(function() {
+        var idField =  $('#' + $(this).attr('id').replace(/-ui$/, ''));
+        var defaultVal = idField.val();
+
+        $(this).typeahead({
+            hint: false,
+            highlight: true,
+            minLength: 1
+          },
+          {
+            displayKey: 'title',
+            source: albumLookup.ttAdapter(),
+            templates: {
+              //Only needed for workaround
+              suggestion: function(i) {
+                //Fix typeahead not showing after hiding
+                //TODO: Report this @ https://github.com/twitter/typeahead.js/
+                $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
+                return '<p>' + i.title + '</p>';
+              }
+            }
           }
+        )
+        .on('typeahead:selected', function(e, obj) {
+          idField.val(obj.recordid);
         });
-      }
-    });
+      });
+    }
   },
   setUpTimePickers: function() {
     /**
      * Initialises the Time pickers where necessary
-     * @todo Make stepminute customisable?
+     * @todo Make minuteStepping customisable?
      */
-    $('fieldset.myradiofrm input.time').timepicker({
-      stepMinute: 15
+    $('fieldset.myradiofrm input.time').datetimepicker({
+      pickDate: false,
+      minuteStepping: 15,
+      useSeconds: false
     });
   },
   setUpDatePickers: function() {
     /**
      * Initialises the Date pickers where necessary
      */
-    $('fieldset.myradiofrm input.dateITA').datepicker({
-      dateFormat: "dd/mm/yy"
+    $('fieldset.myradiofrm input.dateITA').datetimepicker({
+      pickTime: false
     });
   },
   validate: function() {
@@ -192,9 +256,11 @@ window.MyRadioForm = {
      * Validation
      */
     $('fieldset.myradiofrm form').validate({
-      errorClass: 'ui-state-error',
+      errorClass: 'bg-danger',
       errorPlacement: function(error, element) {
-        error.addClass('label-nofloat').appendTo(element.parent('div'));
+        error.css('width', element.css('width'))
+            .css('margin-left', element.css('margin-left'))
+            .appendTo(element.parents('div.myradiofrmfield-container'));
       },
       submitHandler: function(form) {
         $(form).children('input[type=submit]').attr('disabled', 'disabled');
@@ -206,9 +272,8 @@ window.MyRadioForm = {
    * Sets up those pretty week drag-drop select fields. I wrote it, but don't understand it.
    */
   setUpWeekSelectFields: function() {
-    $('table.myradiofrmfield-weeklycheck').disableSelection();
     $.each($('table.myradiofrmfield-weeklycheck td'), function() {
-      $(this).on('mousedown', function() {
+      $(this).on('mousedown', function(e) {
         if (MyRadioForm.gCheckedValue === null) {
           /**
            * Start a drag selection. Invert the state of the selected checkbox,
@@ -220,6 +285,7 @@ window.MyRadioForm = {
           input.prop('checked', !input.prop('checked'));
           MyRadioForm.gCheckedValue = input.prop('checked');
         }
+        e.preventDefault();
       }).on('mouseenter', function() {
         //Is there an active dragging event?
         if (MyRadioForm.gCheckedValue === null) {
@@ -255,9 +321,8 @@ window.MyRadioForm = {
      * @todo Make stepminute customisable?
      */
     $('fieldset.myradiofrm input.datetime').datetimepicker({
-      dateFormat: "yy-mm-dd",
-      timeFormat: "hh:mm:ss",
-      stepMinute: 15
+      minuteStepping: 15,
+      useSeconds: false
     });
   },
   setUpCheckboxGroups: function() {
@@ -280,15 +345,14 @@ window.MyRadioForm = {
     $('.myury-form-add-row-button').on('click', function() {
       var new_id = $(this).attr('nextvalue');
       $('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody tr:first').clone()
-              .addClass(parseInt(new_id) % 2 == 0 ? 'odd' : 'even')
-              .find('input').each(function() {
-        $(this).val('').attr('id', function(_, id) {
-          return id.replace(/0/, new_id)
-        });
+              .addClass(parseInt(new_id) % 2 === 0 ? 'odd' : 'even')
+              .find('input:not(.tt-hint)').each(function() {
+        $(this).val('').removeClass('tt-input').attr('id', $(this).attr('id').replace(/0/, new_id));
       }).end().appendTo('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody');
       MyRadioForm.setUpArtistFields();
       MyRadioForm.setUpMemberFields();
       MyRadioForm.setUpTrackFields();
+      MyRadioForm.setUpAlbumFields();
       MyRadioForm.setUpTimePickers();
       $(this).attr('nextvalue', parseInt(new_id) + 1);
     });
@@ -298,8 +362,7 @@ window.MyRadioForm = {
     });
     //And the dataTable that contains them
     $('table.myuryfrm-repeaterset-container').dataTable({
-      bSort: true,
-      bJQueryUI: true,
+      bSort: false,
       bPaginate: false,
       bFilter: false
     }
@@ -318,13 +381,11 @@ window.MyRadioForm = {
         }
       });
       $('#myradiofrm-file-upload-iframe').on('load', function() {
-        //data = $.parseJSON($(this).contents());
         data = $.parseJSON($($(this).contents().find('body').children()[0]).html());
-        console.log(data);
-        percent = data['bytes_uploaded'] / data['bytes_total'] * 100;
+        percent = data.bytes_uploaded / data.bytes_total * 100;
         $('.myuryfrm-file-upload-progress').progressbar('value', percent);
         $('.progress-label').html(Math.floor(percent) + '% (' +
-                Math.floor(data['speed_average'] / 1024) + 'Kbps)');
+                Math.floor(data.speed_average / 1024) + 'Kbps)');
       });
     }
   },
@@ -336,7 +397,7 @@ window.MyRadioForm = {
     $('#myradiofrm-file-upload-iframe').attr('src',
             myury.makeURL('MyRadio', 'a-getuploadprogress', {
               id: $('#UPLOAD_IDENTIFIER').val(),
-              1: (new Date).getTime()
+              1: (new Date()).getTime()
             }));
   },
   init: function() {

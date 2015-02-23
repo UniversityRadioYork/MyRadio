@@ -13,7 +13,6 @@ $('.twig-datatable').dataTable({
     "sTitle": "# Missed"
   },
   ],
-  "bJQueryUI": true,
   "bPaginate": false,
 }
 );

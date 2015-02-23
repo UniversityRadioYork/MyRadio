@@ -23,9 +23,3 @@ $('#shortcut-lastmonth').on('click', function() {
   $('#rangesel-starttime').val(date.toUTCString());
   $('#timeselfrm').submit();
 });
-$('#shortcut-lastterm').on('click', function() {
-  $('#rangesel-endtime').val(date.toUTCString());
-  date.setDate(date.getDate() - 70);
-  $('#rangesel-starttime').val(date.toUTCString());
-  $('#timeselfrm').submit();
-});

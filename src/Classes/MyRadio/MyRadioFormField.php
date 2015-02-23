@@ -686,7 +686,6 @@ class MyRadioFormField
                     $hasValue = false;
                     foreach ($fields as $field) {
                         if (!is_null($return[$field][$i])) {
-                            echo "$fields $i";
                             $hasValue = true;
                             break;
                         }

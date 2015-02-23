@@ -17,11 +17,10 @@ use \MyRadio\iTones\iTones_Playlist;
 /**
  * The MyRadio_Track class provides and stores information about a Track
  *
- * @version 20130609
+ * @version 20141027
  * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  * @uses \Database
- * @todo Cache this
  */
 class MyRadio_Track extends ServiceAPI
 {
@@ -123,9 +122,7 @@ class MyRadio_Track extends ServiceAPI
         $this->trackid = (int) $trackid;
         $result = self::$db->fetchOne('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', [$this->trackid]);
         if (empty($result)) {
-            throw new MyRadioException('The specified Track does not seem to exist');
-
-            return;
+            throw new MyRadioException('The specified Track does not seem to exist', 400);
         }
 
         $this->artist = $result['artist'];
@@ -202,12 +199,21 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Get the Album of the Track;
+     * Get the Album of the Track
      * @return Album
      */
     public function getAlbum()
     {
         return MyRadio_Album::getInstance($this->record);
+    }
+
+    /**
+     * Get the intro duration of the Track, in seconds
+     * @return int
+     */
+    public function getIntro()
+    {
+        return $this->intro;
     }
 
     /**
@@ -305,11 +311,12 @@ class MyRadio_Track extends ServiceAPI
             'album' => $this->getAlbum()->toDataSource(),
             'trackid' => $this->getID(),
             'length' => $this->getLength(),
+            'intro' => $this->getIntro(),
             'clean' => $this->clean !== 'n',
             'digitised' => $this->getDigitised(),
             'editlink' => [
                 'display' => 'icon',
-                'value' => 'script',
+                'value' => 'pencil',
                 'title' => 'Edit Track',
                 'url' => CoreUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()])
             ],
@@ -769,7 +776,7 @@ class MyRadio_Track extends ServiceAPI
     public function setTitle($title)
     {
         if (empty($title)) {
-            throw new MyRadioException('Track title must not be empty!');
+            throw new MyRadioException('Track title must not be empty!', 400);
         }
 
         $this->title = $title;
@@ -807,6 +814,20 @@ class MyRadio_Track extends ServiceAPI
         self::$db->query('UPDATE rec_track SET length=$1, duration=$2 WHERE trackid=$3', [
             CoreUtils::intToTime($this->getDuration()),
             $this->getDuration(),
+            $this->getID()
+        ]);
+        $this->updateCacheObject();
+    }
+
+    /**
+     * Set the length of the track intro, in seconds
+     * @param int
+     */
+    public function setIntro($duration)
+    {
+        $this->intro = (int) $duration;
+        self::$db->query('UPDATE rec_track SET intro=$1 WHERE trackid=$2', [
+            CoreUtils::intToTime($this->intro),
             $this->getID()
         ]);
         $this->updateCacheObject();

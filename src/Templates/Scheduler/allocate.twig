@@ -11,10 +11,12 @@
 {% endfor %}
 </ul>
 {{ parent() }}
-<iframe src="{{ config.schedule_url }}" style="width:100%; height: 500px"></iframe>
+<div id="schedule-preview"></div>
 {% endblock %}
 
 {% block foot %}
 {{ parent() }}
-<script type="text/javascript" src="{{baseurl}}js/myury.scheduler.allocate.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/myradio.schedule.view.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/myradio.scheduler.allocate.js"></script>
 {% endblock %}

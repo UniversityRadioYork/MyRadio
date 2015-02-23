@@ -123,15 +123,23 @@ class MyRadio_Selector
      */
     public static function remoteStreams()
     {
-        $data = file(Config::$ob_remote_status_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (file_exists(Config::$ob_remote_status_file)) {
+            $data = file(Config::$ob_remote_status_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-        $response = [];
-        foreach ($data as $feed) {
-            $state = explode('=', $feed);
-            $response[trim($state[0])] = (bool) trim($state[1]);
+            if ($data) {
+                $response = ['ready' => true];
+                foreach ($data as $feed) {
+                    $state = explode('=', $feed);
+                    $response[trim($state[0])] = (bool) trim($state[1]);
+                }
+
+                return $response;
+            }
         }
 
-        return $response;
+        return [
+            'ready' => false
+        ];
     }
 
     /**
@@ -242,7 +250,15 @@ class MyRadio_Selector
         if ($response === 'FLK') {
             throw new MyRadioException('Selector Locked');
         } elseif ($response === 'ACK') {
-            return;
+            return [
+            'studio' => $studio,
+            'lock' => 0,
+            'selectedfrom' => 1,
+            's1power' => self::getStudio1PowerAtTime($time),
+            's2power' => self::getStudio2PowerAtTime($time),
+            's4power' => (self::remoteStreams()['s1']) ? true : false,
+            'lastmod' => time()
+        ];
         }
     }
 
@@ -260,6 +276,10 @@ class MyRadio_Selector
             LIMIT 1',
             [CoreUtils::getTimestamp($time)]
         );
+
+        if (!$result) {
+            return 0;
+        }
 
         return $result[0] - 3;
     }
@@ -279,6 +299,10 @@ class MyRadio_Selector
             [CoreUtils::getTimestamp($time)]
         );
 
+        if (empty($result)) {
+            return 0;
+        }
+
         return (int) $result[0];
     }
 
@@ -296,6 +320,10 @@ class MyRadio_Selector
             LIMIT 1',
             [CoreUtils::getTimestamp($time)]
         );
+
+        if (empty($result)) {
+            return false;
+        }
 
         return ($result[0] == 13) ? true : false;
     }
@@ -315,6 +343,10 @@ class MyRadio_Selector
             [CoreUtils::getTimestamp($time)]
         );
 
+        if (empty($result)) {
+            return false;
+        }
+
         return ($result[0] == 15) ? true : false;
     }
 
@@ -333,6 +365,10 @@ class MyRadio_Selector
             [CoreUtils::getTimestamp($time)]
         );
 
+        if (empty($result)) {
+            return false;
+        }
+
         return ($result[0] == 3) ? 0 : (int) $result[0];
     }
 
@@ -350,6 +386,10 @@ class MyRadio_Selector
             [CoreUtils::getTimestamp($time)]
         );
 
+        if (!$result) {
+            return 1;
+        }
+
         return strtotime($result[0]);
     }
 
@@ -360,13 +400,15 @@ class MyRadio_Selector
      */
     public static function getStatusAtTime($time)
     {
+        $status = self::remoteStreams();
         return [
+            'ready' => $status['ready'],
             'studio' => self::getStudioAtTime($time),
             'lock' => self::getLockAtTime($time),
             'selectedfrom' => self::getSetbyAtTime($time),
             's1power' => self::getStudio1PowerAtTime($time),
             's2power' => self::getStudio2PowerAtTime($time),
-            's4power' => (self::remoteStreams()['s1']) ? true : false,
+            's4power' => (isset($status['s1'])) ? $status['s1'] : false,
             'lastmod' => self::getLastModAtTime($time)
         ];
     }

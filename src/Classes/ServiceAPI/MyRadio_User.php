@@ -227,7 +227,7 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Get the user's permissions
-        $this->permissions = self::$db->fetchColumn(
+        $this->permissions = array_map('intval', self::$db->fetchColumn(
             'SELECT lookupid FROM auth_officer
             WHERE officerid IN (SELECT officerid FROM member_officer
             WHERE memberid=$1
@@ -238,7 +238,7 @@ class MyRadio_User extends ServiceAPI
             AND starttime < now()
             AND (endtime IS NULL OR endtime >= now())',
             [$memberid]
-        );
+        ));
 
         $this->payment = self::$db->fetchAll(
             'SELECT year, paid
@@ -698,12 +698,12 @@ class MyRadio_User extends ServiceAPI
      *
      * Always use CoreUtils::hasAuth when working with the current user.
      *
-     * @param  int     $authid The permission to test for
+     * @param  null|int     $authid The permission to test for. Null is "no permission required"
      * @return boolean Whether this user has the requested permission
      */
     public function hasAuth($authid)
     {
-        return in_array($authid, $this->permissions);
+        return $authid === null || in_array((int)$authid, $this->permissions);
     }
 
     /**
