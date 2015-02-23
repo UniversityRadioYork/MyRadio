@@ -258,7 +258,6 @@ window.MyRadioForm = {
     $('fieldset.myradiofrm form').validate({
       errorClass: 'bg-danger',
       errorPlacement: function(error, element) {
-        console.log(element.parents('div.myradiofrmfield-container'));
         error.css('width', element.css('width'))
             .css('margin-left', element.css('margin-left'))
             .appendTo(element.parents('div.myradiofrmfield-container'));
@@ -375,7 +374,6 @@ window.MyRadioForm = {
      */
     if ($('#UPLOAD_IDENTIFIER').length !== 0) {
       $('form').on('submit', function() {
-        console.log('UPLOAD HANDLER');
         if ($('#UPLOAD_IDENTIFIER').nextAll('input')[0].value !== "") {
             $('.myuryfrm-file-upload-progress').progressbar({value: false});
             //Poke the server for upload progress status
@@ -383,9 +381,7 @@ window.MyRadioForm = {
         }
       });
       $('#myradiofrm-file-upload-iframe').on('load', function() {
-        //data = $.parseJSON($(this).contents());
         data = $.parseJSON($($(this).contents().find('body').children()[0]).html());
-        console.log(data);
         percent = data.bytes_uploaded / data.bytes_total * 100;
         $('.myuryfrm-file-upload-progress').progressbar('value', percent);
         $('.progress-label').html(Math.floor(percent) + '% (' +
