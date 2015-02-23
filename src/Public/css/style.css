@@ -2,10 +2,6 @@ body {
   margin-top: 50px; /* Bootstrap navbar offset*/
 }
 
-.hidden {
-  visibility: visible!important; /* Override hidden - breaks jQuery.show */
-}
-
 #menu #navRight {
   float: right;
   position: relative;
