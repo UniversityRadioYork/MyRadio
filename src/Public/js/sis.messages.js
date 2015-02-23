@@ -5,7 +5,7 @@ var Messages = function() {
         glyphicons = ['question-sign', 'envelope', 'phone', 'globe'],
         table = document.createElement('table'),
         self = this,
-        clickHandler = function(row, message) {
+        clickHandler = function(context, row, message) {
             $(row).click(function() {
                 if ($(this).hasClass('unread')) {
                     //This is the first time the message has been opened. Mark as read
@@ -13,7 +13,7 @@ var Messages = function() {
                         url: myury.makeURL('SIS', 'messages.markread', {'id': message['id']})
                     });
                     unreadMessages--;
-                    self.setUnread(unreadMessages);
+                    context.setUnread(unreadMessages);
                     $(this).removeClass('unread');
                 }
                 myury.createDialog('Message', message['body'], [myury.closeButton()]);
@@ -77,7 +77,7 @@ var Messages = function() {
                 $(table).prepend(newRow);
 
                 //Add the onclick handler for the new row
-                handler = clickHandler(newRow, data[i]);
+                handler = clickHandler(this, newRow, data[i]);
 
                 //Increment the highest message id, if necessary
                 highest_message_id = (highest_message_id < data[i]['id']) ? data[i]['id'] : highest_message_id;
