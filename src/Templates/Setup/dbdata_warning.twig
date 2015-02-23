@@ -1,6 +1,6 @@
 {% extends 'minimal.twig' %}
 {% block content %}
-<p class="ui-state-error">Some warnings occured whilst performing that action. Please review the information below, make necessary adjustments, then <a href="?c={{next}}">click here to continue</a>.</p>
+<p class="alert alert-danger">Some warnings occured whilst performing that action. Please review the information below, make necessary adjustments, then <a href="?c={{next}}">click here to continue</a>.</p>
 <ol>
 {% for warning in warnings %}
 	<li>{{warning}}</li>

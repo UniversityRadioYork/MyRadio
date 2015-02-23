@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwReset-us
     if (!$data) {
         //Invalid captcha
         $form->render(
-            ['messages' => ['<div class="ui-state-error">Please verify the captcha input and try again.</div>']]
+            ['messages' => ['<div class="alert alert-danger">Please verify the captcha input and try again.</div>']]
         );
     } else {
         foreach (Config::$authenticators as $i) {
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwReset-us
         }
 
         $form->render(
-            ['messages' => ['<div class="ui-state-highlight">Please check your email to finish resetting your password.</div>']]
+            ['messages' => ['<div class="alert alert-success">Please check your email to finish resetting your password.</div>']]
         );
     }
 } else {

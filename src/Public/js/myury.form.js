@@ -356,7 +356,7 @@ window.MyRadioForm = {
       MyRadioForm.setUpTimePickers();
       $(this).attr('nextvalue', parseInt(new_id) + 1);
     });
-    $('button.myuryfrm-remove-row').button({icons: {primary: "ui-icon-trash"}, text: false}).on('click', function() {
+    $('button.myuryfrm-remove-row').on('click', function() {
       $(this).closest('tr').remove();
       return false;
     });

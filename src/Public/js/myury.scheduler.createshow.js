@@ -14,14 +14,14 @@ $(document).ready(function() {
         data: {term: value, limit: 100},
         success: function(data) {
           if (data.length >= 1) {
-            var html = '<span class="ui-icon ui-icon-info fleft"></span>Similar to '+data[0].title;
+            var html = '<span class="glyphicon glyphicon-info-sign fleft"></span>Similar to '+data[0].title;
           } else {
-            var html = '<span class="ui-icon ui-icon-circle-check fleft"></span>That title is unique!';
+            var html = '<span class="glyphicon glyphicon-ok-sign fleft"></span>That title is unique!';
           }
           if (data.length >= 2) {
             html = html + ' and '+(data.length-1)+' others';
           }
-          $('#sched_show-title-hint').html('<div class="ui-state-highlight">'+html+'</div>');
+          $('#sched_show-title-hint').html('<div class="alert alert-info">'+html+'</div>');
         }
       });
     }
