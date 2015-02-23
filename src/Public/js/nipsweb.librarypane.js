@@ -167,7 +167,16 @@ $(document).ready(function() {
       },
       {
         displayKey: 'title',
-        source: artistLookup.ttAdapter()
+        source: artistLookup.ttAdapter(),
+        templates: {
+          //Only needed for workaround
+          suggestion: function(i) {
+            //Fix typeahead not showing after hiding
+            //TODO: Report this @ https://github.com/twitter/typeahead.js/
+            $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
+            return '<p>' + i.title + '</p>';
+          }
+        }
       })
       .on('typeahead:selected', updateCentralSearch);
   });
