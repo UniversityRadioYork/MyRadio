@@ -4,28 +4,28 @@ $('.twig-datatable').dataTable(
         "aoColumns": [
             //quoteID
             {
-              "bVisible": false
-            },
+                "bVisible": false
+        },
             //source
             {
-              "sTitle": "Source",
-              "sClass": "left",
-            },
+                "sTitle": "Source",
+                "sClass": "left",
+        },
             //date
             {
-              "sTitle": "Date",
-              "aDataSort": [ 0 ]
-            },
+                "sTitle": "Date",
+                "aDataSort": [ 0 ]
+        },
             //text
             {
-              "sTitle": "Quote"
-            },
+                "sTitle": "Quote"
+        },
             //editlink
             {
-              "sTitle": "Edit",
-              "bSortable": false,
-              "bVisible": true
-            }
+                "sTitle": "Edit",
+                "bSortable": false,
+                "bVisible": true
+        }
         ],
         "bPaginate": true
     }

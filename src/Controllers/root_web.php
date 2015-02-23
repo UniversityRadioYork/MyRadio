@@ -4,7 +4,7 @@
  * This is the Root Controller - it is the backbone of every request, preparing resources and passing the request onto
  * the necessary handler.
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20131230
  * @package MyRadio_Core
  */
@@ -34,7 +34,7 @@ if (isset($_REQUEST['request'])) {
         $module = $info[0];
         $action = Config::$default_action;
     } else {
-        require 'Controllers/Errors/404.php';
+        include 'Controllers/Errors/404.php';
         exit;
     }
 } else {
@@ -42,7 +42,7 @@ if (isset($_REQUEST['request'])) {
     $action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : Config::$default_action);
     if (!CoreUtils::isValidController($module, $action)) {
         //Yep, that doesn't exist.
-        require 'Controllers/Errors/404.php';
+        include 'Controllers/Errors/404.php';
         exit;
     }
 }

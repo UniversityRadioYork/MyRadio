@@ -3,8 +3,8 @@
 /**
  * Allows users to select the timeslot they are working with
  *
- * @author Lloyd Wallis
- * @data 20140102
+ * @author  Lloyd Wallis
+ * @data    20140102
  * @package MyRadio_Core
  */
 
@@ -24,7 +24,7 @@ function setupTimeslot($timeslot)
     //Can the user access this timeslot?
     if (!($timeslot->getSeason()->getShow()->isCurrentUserAnOwner() || CoreUtils::hasPermission(AUTH_EDITSHOWS))) {
         $message = "You don't have permission to view this show";
-        require_once 'Controllers/Errors/403.php';
+        include_once 'Controllers/Errors/403.php';
     } else {
         $_SESSION['timeslotid'] = $timeslot->getID();
         $_SESSION['timeslotname'] = CoreUtils::happyTime($timeslot->getStartTime());
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 } elseif (!empty(Config::$contract_uri) && !MyRadio_User::getInstance()->hasSignedContract()) {
     $message = "You need to have signed the Presenter's Contract to view this";
-    require_once 'Controllers/Errors/403.php';
+    include_once 'Controllers/Errors/403.php';
 
 } else {
     //Not Submitted
@@ -78,9 +78,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     foreach ($shows as $show) {
         foreach ($show->getAllSeasons() as $season) {
-            $data[$show->getMeta('title')][] = array_map(function ($x) {
-                return [$x->getID(), $x->getStartTime(), $x->getEndTime()];
-            }, $season->getAllTimeslots());
+            $data[$show->getMeta('title')][] = array_map(
+                function ($x) {
+                    return [$x->getID(), $x->getStartTime(), $x->getEndTime()];
+                }, $season->getAllTimeslots()
+            );
         }
     }
     $twig->addVariable('timeslots', $data)->render();

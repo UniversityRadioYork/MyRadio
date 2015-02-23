@@ -1,8 +1,8 @@
 /* Schedule */
 var Schedule = function() {
-	var lastTime = 0;
-	return {
-		activeByDefault: true,
+    var lastTime = 0;
+    return {
+        activeByDefault: true,
         name: 'Schedule',
         type: 'tab',
         initialise: function() {
@@ -13,10 +13,12 @@ var Schedule = function() {
 
             var self = this;
             s.onload = function() {
-                ScheduleView({
-                    view: 'day',
-                    container:self
-                });
+                ScheduleView(
+                    {
+                        view: 'day',
+                        container:self
+                    }
+                );
             }
         }
     }

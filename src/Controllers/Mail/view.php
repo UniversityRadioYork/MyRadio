@@ -2,10 +2,10 @@
 /**
  * Lists the archive for a Mailing List
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130828
  * @package MyRadio_Mail
- * @todo Uses unsanitised HTTP_REFERER
+ * @todo    Uses unsanitised HTTP_REFERER
  */
 
 use \MyRadio\MyRadioException;

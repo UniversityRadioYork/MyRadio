@@ -138,7 +138,7 @@ class MyRadio_ChartRow extends ServiceAPI
     /**
      * Creates a new chart row in the database.
      *
-     * @param $data array  An array of data to populate the row with.
+     * @param  $data array  An array of data to populate the row with.
      *                     Must contain 'position', 'chart_release_id' and
      *                     'trackid'.
      * @return MyRadio_ChartRow The newly created track.

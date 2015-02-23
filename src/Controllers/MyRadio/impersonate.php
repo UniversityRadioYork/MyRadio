@@ -3,8 +3,8 @@
 /**
  * Impersonate a user, convincing systems that you *are* them.
  *
- * @author Lloyd Wallis
- * @data 20140102
+ * @author  Lloyd Wallis
+ * @data    20140102
  * @package MyRadio_Core
  */
 
@@ -17,12 +17,10 @@ if (isset($_REQUEST['memberid'])) {
     //Impersonate
     $impersonatee = MyRadio_User::getInstance($_REQUEST['memberid']);
     if ((!CoreUtils::hasPermission(AUTH_IMPERSONATE))
-        || (
-            $impersonatee->hasAuth(AUTH_BLOCKIMPERSONATE)
-            && !CoreUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS)
-        )
+        || (        $impersonatee->hasAuth(AUTH_BLOCKIMPERSONATE)
+        && !CoreUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS))
     ) {
-        require_once 'Controllers/Errors/403.php';
+        include_once 'Controllers/Errors/403.php';
     } else {
         // Yes, this temporary variable is necessary, otherwise recursion happens.
         // I don't even.

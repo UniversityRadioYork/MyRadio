@@ -297,7 +297,7 @@ class MyRadio_ChartRelease extends ServiceAPI
     /**
      * Creates a new chart release in the database.
      *
-     * @param $data array  An array of data to populate the row with.
+     * @param  $data array  An array of data to populate the row with.
      *                     Must contain 'chart_type_id' and 'submitted_time'.
      * @return The chart release with the given ID.
      */
@@ -346,7 +346,7 @@ class MyRadio_ChartRelease extends ServiceAPI
     /**
      * Sets a property on the database representation of this chart release.
      *
-     * @param string $sql The SQL to use for setting this property.
+     * @param string                                                         $sql The SQL to use for setting this property.
      * @param $value  The value of the property to set on this chart release.
      *
      * @return MyRadio_ChartRelease This object, for method chaining.

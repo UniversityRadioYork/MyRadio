@@ -70,10 +70,10 @@ class Autoloader
     /**
      * Adds a base directory for a namespace prefix.
      *
-     * @param string $prefix The namespace prefix.
-     * @param string $base_dir A base directory for class files in the
+     * @param  string $prefix   The namespace prefix.
+     * @param  string $base_dir A base directory for class files in the
      * namespace.
-     * @param bool $prepend If true, prepend the base directory to the stack
+     * @param  bool   $prepend  If true, prepend the base directory to the stack instead of appending it; this causes it to be searched first rather than last. instead of appending it; this causes it to be searched first rather than last.
      * instead of appending it; this causes it to be searched first rather
      * than last.
      * @return void
@@ -103,7 +103,7 @@ class Autoloader
     /**
      * Loads the class file for a given class name.
      *
-     * @param string $class The fully-qualified class name.
+     * @param  string $class The fully-qualified class name.
      * @return mixed The mapped file name on success, or boolean false on
      * failure.
      */
@@ -140,8 +140,8 @@ class Autoloader
     /**
      * Load the mapped file for a namespace prefix and relative class.
      *
-     * @param string $prefix The namespace prefix.
-     * @param string $relative_class The relative class name.
+     * @param  string $prefix         The namespace prefix.
+     * @param  string $relative_class The relative class name.
      * @return mixed Boolean false if no mapped file can be loaded, or the
      * name of the mapped file that was loaded.
      */
@@ -179,13 +179,13 @@ class Autoloader
     /**
      * If a file exists, require it from the file system.
      *
-     * @param string $file The file to require.
+     * @param  string $file The file to require.
      * @return bool True if the file exists, false if not.
      */
     protected function requireFile($file)
     {
         if (file_exists($file)) {
-            require_once $file;
+            include_once $file;
             return true;
         }
         return false;

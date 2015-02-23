@@ -2,7 +2,7 @@
 /**
  * The most played jukebox tracks in the given timeframe
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130708
  * @package MyRadio_Stats
  */

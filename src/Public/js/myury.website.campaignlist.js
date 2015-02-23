@@ -3,40 +3,40 @@ $('.twig-datatable').dataTable(
         "aoColumns": [
             //banner_campaign_id
             {
-              "bVisible" : false
-            },
+                "bVisible" : false
+        },
             //created_by
             {
-              bVisible: false
-            },
+                bVisible: false
+        },
             //approved_by
             {
-              bVisible: false
-            },
+                bVisible: false
+        },
             //effective_from
             {
-              sTitle: "Campaign Start"
-            },
+                sTitle: "Campaign Start"
+        },
             //effective_to
             {
-              sTitle: "Campaign End"
-            },
+                sTitle: "Campaign End"
+        },
             //banner_location_id
             {
-              bVisible: false
-            },
+                bVisible: false
+        },
             //num_timeslots
             {
-              sTitle: "# of Timeslots"
-            },
+                sTitle: "# of Timeslots"
+        },
             //edit_link
             {
-              sTitle: 'Edit'
-            },
+                sTitle: 'Edit'
+        },
             //timeslots
             {
-              bVisible: false
-            }
+                bVisible: false
+        }
         ],
         "bPaginate": false,
         "aaSorting": [[ 1, "asc" ]]

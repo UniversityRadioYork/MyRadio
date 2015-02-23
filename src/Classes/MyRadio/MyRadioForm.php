@@ -22,7 +22,7 @@ use MyRadio\Config;
  * - A Form Saver that loads the Form definiton, reads submitted values
  *   and calls getter to interpret them
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20140102
  * @package MyRadio_Core
  */
@@ -109,6 +109,7 @@ class MyRadioForm
 
     /**
      * Creates a new MyRadioForm object with the given parameters
+     *
      * @param string $name   The name/id of the form
      * @param string $module The module the form submits to
      * @param string $action The action the form submits to
@@ -150,7 +151,7 @@ class MyRadioForm
     /**
      * Changes the template to use when rendering
      *
-     * @todo Check if template exists first
+     * @todo  Check if template exists first
      * @param String $template The path to the template, relative to Templates
      */
     public function setTemplate($template)
@@ -193,8 +194,8 @@ class MyRadioForm
 
     /**
      * Allows you to update a MyRadioFormField contained within this object with a new value to be used when rendering
-     * @param  String           $fieldname The unique name of the MyRadioFormField to edit
-     * @param  mixed            $value     The new value of the MyRadioFormField. The variable type depends on the MyRadioFormField type
+     * @param  String $fieldname The unique name of the MyRadioFormField to edit
+     * @param  mixed  $value     The new value of the MyRadioFormField. The variable type depends on the MyRadioFormField type
      * @return void
      * @throws MyRadioException When trying to update a MyRadioFormField that is not attached to this MyRadioForm
      */
@@ -218,9 +219,9 @@ class MyRadioForm
      *
      * This methods sets all TYPE_FILE fields to not required - it is assumed that they are not needed for editing.
      *
-     * @param mixed $identifier Usually a primary key, something unique that the receiving controller will use to know
+     * @param mixed                                                       $identifier Usually a primary key, something unique that the receiving controller will use to know which instance of an entry is being updated
      *                          which instance of an entry is being updated
-     * @param Array $values     A key=>value array of input names and their values. These will literally be sent to setFieldValue
+     * @param Array                                                       $values     A key=>value array of input names and their values. These will literally be sent to setFieldValue iteratively
      *                          iteratively
      * @param String action If set, will replace the default Form action.
      *
@@ -271,7 +272,7 @@ class MyRadioForm
          * If we need to do a captcha, load the requirements
          */
         if ($this->captcha) {
-            require_once 'Classes/vendor/recaptchalib.php';
+            include_once 'Classes/vendor/recaptchalib.php';
             $captcha = recaptcha_get_html(Config::$recaptcha_public_key, null, true);
         } else {
             $captcha = null;
@@ -286,8 +287,9 @@ class MyRadioForm
              * logging output. Printing request data should use
              * CoreUtils::getRequestInfo
              */
-            if ($field->getType() === MyRadioFormField::TYPE_PASSWORD or
-                    $field->getRedacted()) {
+            if ($field->getType() === MyRadioFormField::TYPE_PASSWORD 
+                or $field->getRedacted()
+            ) {
                 $redact[] = $this->getPrefix() . $field->getName();
             }
         }
@@ -337,7 +339,7 @@ class MyRadioForm
     {
         //If there was a captcha, verify it
         if ($this->captcha) {
-            require_once 'Classes/vendor/recaptchalib.php';
+            include_once 'Classes/vendor/recaptchalib.php';
             if (!recaptcha_check_answer(
                 Config::$recaptcha_private_key,
                 $_SERVER['REMOTE_ADDR'],

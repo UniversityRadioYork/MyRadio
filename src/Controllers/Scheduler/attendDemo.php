@@ -2,7 +2,7 @@
 /**
  * Allows URY Trainers to create demo slots for new members to attend
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 24102012
  * @package MyRadio_Scheduler
  */

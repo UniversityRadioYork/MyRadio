@@ -2,7 +2,7 @@
 /**
  * Creates a NIPSWeb Edit Token for the current session
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130608
  * @package MyRadio_NIPSWeb
  */

@@ -6,7 +6,7 @@ namespace MyRadio\Iface;
  * A standard interface for cache systems. This should allow them to easily be
  * swapped out later (MemcachedProvider, APCProvider, PsqlProvider, FileProvider...)
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 21072012
  * @package MyRadio_Core
  */

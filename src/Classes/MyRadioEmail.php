@@ -15,11 +15,11 @@ use \MyRadio\ServiceAPI\MyRadio_List;
 /**
  * Provides email functions so that MyRadio can send email.
  *
- * @author Andy Durant <aj@ury.org.uk>
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Andy Durant <aj@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130809
  * @package MyRadio_Mail
- * @todo Footers contain hard-coded URLs. This used to be necessary (when the links went to mint), but isn't now.
+ * @todo    Footers contain hard-coded URLs. This used to be necessary (when the links went to mint), but isn't now.
  */
 class MyRadioEmail extends ServiceAPI
 {
@@ -89,12 +89,12 @@ class MyRadioEmail extends ServiceAPI
 
     /**
      * Create a new email
-     * @param MyRadio_User $from The User who sent the email. If null, uses no-reply
-     * @param array $to A 2D array of 'lists' = [l1, l2], 'members' = [m1, m2]
-     * @param String $subject email subject
-     * @param String $body email body
-     * @param int $timestamp Send time. If null, use now.
-     * @param bool $already_sent If true, all Recipients will be set to having had the email sent.
+     * @param MyRadio_User $from         The User who sent the email. If null, uses no-reply
+     * @param array        $to           A 2D array of 'lists' = [l1, l2], 'members' = [m1, m2]
+     * @param String       $subject      email subject
+     * @param String       $body         email body
+     * @param int          $timestamp    Send time. If null, use now.
+     * @param bool         $already_sent If true, all Recipients will be set to having had the email sent.
      * @note Use one of the SendToUser* wrapper functions instead of this one.
      */
     private static function create($to, $subject, $body, $from = null, $timestamp = null, $already_sent = false)
@@ -276,8 +276,8 @@ class MyRadioEmail extends ServiceAPI
     /**
      * Sends an email to the specified User
      * @param MyRadio_User $to
-     * @param string $subject email subject
-     * @param sting $message email message
+     * @param string       $subject email subject
+     * @param sting        $message email message
      * @todo Check if "Receive Emails" is enabled for the User
      */
     public static function sendEmailToUser(MyRadio_User $to, $subject, $message, MyRadio_User $from = null)
@@ -290,8 +290,8 @@ class MyRadioEmail extends ServiceAPI
     /**
      * Sends an email to the specified MyRadio_List
      * @param MyRadio_List $to
-     * @param string $subject email subject
-     * @param sting $message email message
+     * @param string       $subject email subject
+     * @param sting        $message email message
      * @todo Check if "Receive Emails" is enabled for the User
      */
     public static function sendEmailToList(MyRadio_List $to, $subject, $message, MyRadio_User $from = null)
@@ -308,9 +308,9 @@ class MyRadioEmail extends ServiceAPI
      * Sends an email to all the specified Users, with certain customisation abilities:
      * #NAME is replaced with the User's first name
      *
-     * @param Array $to An array of User objects
+     * @param Array  $to      An array of User objects
      * @param string $subject email subject
-     * @param sting $message email message
+     * @param sting  $message email message
      */
     public static function sendEmailToUserSet($to, $subject, $message, MyRadio_User $from = null)
     {
@@ -329,7 +329,7 @@ class MyRadioEmail extends ServiceAPI
      * Will return true if the email was sent to a mailing list they were
      * not a member of at the time.
      *
-     * @param MyRadio_User $user
+     * @param  MyRadio_User $user
      * @return boolean
      */
     public function isRecipient(MyRadio_User $user)
@@ -409,12 +409,14 @@ class MyRadioEmail extends ServiceAPI
         return $data;
     }
 
-    /** BELOW HERE IS FOR IF STUFF BREAKS REALLY EARLY BEFORE ^ WILL WORK * */
+    /**
+ * BELOW HERE IS FOR IF STUFF BREAKS REALLY EARLY BEFORE ^ WILL WORK * 
+*/
 
     /**
      *
      * @param string $subject email subject
-     * @param sting $message email message
+     * @param sting  $message email message
      */
     public static function sendEmailToComputing($subject, $message)
     {

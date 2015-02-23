@@ -19,14 +19,16 @@ var NIPSWeb = function(d) {
 
     if (writable) {
         //Get a client id to identify this session
-        $.ajax({
-            url: myury.makeURL('NIPSWeb', 'get_client_token'), 
-            type: 'POST',
-            success: function(data) {
-                clientid = parseInt(data.token);
-            },
-            async: false
-        });
+        $.ajax(
+            {
+                url: myury.makeURL('NIPSWeb', 'get_client_token'), 
+                type: 'POST',
+                success: function(data) {
+                    clientid = parseInt(data.token);
+                },
+                async: false
+            }
+        );
     }
 
     /**
@@ -100,41 +102,45 @@ var NIPSWeb = function(d) {
             addOp = false;
         }
 
-        ajaxQueue.queue(function(next) {
-            $('#notice').html('Saving changes...').show();
-            $.ajax({
-                async: !addOp,
-                cache: false,
-                success: function(data) {
-                    $('#notice').hide();
-                    for (i in data) {
-                        if (i === 'myury_errors') {
-                            continue;
-                        }
-                        if (typeof data[i].timeslotitemid !== 'undefined') {
-                            //@todo multiple AddItem ops in a jsonon set will make this break
-                            $('ul.baps-channel li[timeslotitemid="findme"]').attr('timeslotitemid', data[i].timeslotitemid);
-                        }
-                        if (!data[i].status && !debug) {
-                            window.location.reload();
-                        }
+        ajaxQueue.queue(
+            function(next) {
+                $('#notice').html('Saving changes...').show();
+                $.ajax(
+                    {
+                        async: !addOp,
+                        cache: false,
+                        success: function(data) {
+                            $('#notice').hide();
+                            for (i in data) {
+                                if (i === 'myury_errors') {
+                                    continue;
+                                }
+                                if (typeof data[i].timeslotitemid !== 'undefined') {
+                                    //@todo multiple AddItem ops in a jsonon set will make this break
+                                    $('ul.baps-channel li[timeslotitemid="findme"]').attr('timeslotitemid', data[i].timeslotitemid);
+                                }
+                                if (!data[i].status && !debug) {
+                                    window.location.reload();
+                                }
+                            }
+                        },
+                        complete: function() {
+                            next();
+                            if (typeof pNext !== 'undefined') {
+                                pNext();
+                            }
+                        },
+                        data: {
+                            clientid: clientid,
+                            ops: ops
+                        },
+                        dataType: 'json',
+                        type: 'POST',
+                        url: myury.makeURL('NIPSWeb', 'recv_ops')
                     }
-                },
-                complete: function() {
-                    next();
-                    if (typeof pNext !== 'undefined') {
-                        pNext();
-                    }
-                },
-                data: {
-                    clientid: clientid,
-                    ops: ops
-                },
-                dataType: 'json',
-                type: 'POST',
-                url: myury.makeURL('NIPSWeb', 'recv_ops')
-            });
-        });
+                );
+            }
+        );
     };
 
     /**
@@ -144,205 +150,236 @@ var NIPSWeb = function(d) {
         if (!li.hasOwnProperty('attr')) {
             li = $(li);
         }
-        changeQueue.queue(function(next) {
-            /**
+        changeQueue.queue(
+            function(next) {
+                /**
             * Update the position of the item to its new values. If it doesn't have them, set them.
             */
-            var oldChannel = li.attr('channel');
-            var oldWeight = li.attr('weight');
-            var newChannel;
-            if (li.parent('ul').attr('channel') != undefined) {
-                newChannel = li.parent('ul').attr('channel') === 'res' ? 'res' : li.parent('ul').attr('channel') - 1;
-            } else {
-                newChannel = null;
-            }
-            li.attr('channel', newChannel);
-            li.attr('weight', li.index());
+                var oldChannel = li.attr('channel');
+                var oldWeight = li.attr('weight');
+                var newChannel;
+                if (li.parent('ul').attr('channel') != undefined) {
+                    newChannel = li.parent('ul').attr('channel') === 'res' ? 'res' : li.parent('ul').attr('channel') - 1;
+                } else {
+                    newChannel = null;
+                }
+                li.attr('channel', newChannel);
+                li.attr('weight', li.index());
 
-            if (oldChannel !== li.attr('channel') || oldWeight !== li.attr('weight')) {
-                /**
+                if (oldChannel !== li.attr('channel') || oldWeight !== li.attr('weight')) {
+                    /**
                 * This item definitely isn't where it was before. Notify the server of the potential actions.
                 */
-                var ops = [];
-                var addOp = false;
-                if (oldChannel === 'res' && li.attr('channel') !== 'res') {
-                    addOp = true;
-                    /**
+                    var ops = [];
+                    var addOp = false;
+                    if (oldChannel === 'res' && li.attr('channel') !== 'res') {
+                        addOp = true;
+                        /**
                     * This item has just been added to the show plan. Send the server a AddItem operation.
                     * This operation will also send a number of MoveItem notifications - one for each item below this one in the
                     * channel, as their weights have now been increased to accomodate the new item.
                     * It will return a timeslotitemid from the server which then gets attached to the item.
                     */
-                    var current = li;
-                    while (current.next().length === 1) {
-                        current = current.next();
-                        current.attr('weight', parseInt(current.attr('weight')) + 1);
-                        ops.push({
-                            op: 'MoveItem',
-                            timeslotitemid: parseInt(current.attr('timeslotitemid')),
-                            oldchannel: parseInt(current.attr('channel')),
-                            oldweight: parseInt(current.attr('weight')) - 1,
-                            channel: parseInt(current.attr('channel')),
-                            weight: parseInt(current.attr('weight'))
-                        });
-                    }
+                        var current = li;
+                        while (current.next().length === 1) {
+                            current = current.next();
+                            current.attr('weight', parseInt(current.attr('weight')) + 1);
+                            ops.push(
+                                {
+                                    op: 'MoveItem',
+                                    timeslotitemid: parseInt(current.attr('timeslotitemid')),
+                                    oldchannel: parseInt(current.attr('channel')),
+                                    oldweight: parseInt(current.attr('weight')) - 1,
+                                    channel: parseInt(current.attr('channel')),
+                                    weight: parseInt(current.attr('weight'))
+                                }
+                            );
+                        }
 
-                    // Do the actual Add Operation
-                    // This is after the moves to ensure there aren't two items of the same weight
-                    ops.push({
-                        op: 'AddItem',
-                        id: li.attr('id'),
-                        channel: parseInt(li.attr('channel')),
-                        weight: parseInt(li.attr('weight'))
-                    });
-                    li.attr('timeslotitemid', 'findme');
+                        // Do the actual Add Operation
+                        // This is after the moves to ensure there aren't two items of the same weight
+                        ops.push(
+                            {
+                                op: 'AddItem',
+                                id: li.attr('id'),
+                                channel: parseInt(li.attr('channel')),
+                                weight: parseInt(li.attr('weight'))
+                            }
+                        );
+                        li.attr('timeslotitemid', 'findme');
 
-                } else if (li.attr('channel') === 'res' || li.attr('channel') == null) {
-                    /**
+                    } else if (li.attr('channel') === 'res' || li.attr('channel') == null) {
+                        /**
                     * This item has just been removed from the Show Plan. Send the server a RemoveItem operation.
                     * This operation will also send a number of MoveItem notifications - one for each item below this one in the
                     * channel, as their weights have now been decreased to accomodate the removed item.
                     */
-                    $('ul.baps-channel li[channel=' + oldChannel + ']').each(function() {
-                        if (oldWeight - $(this).attr('weight') < 0) {
-                            $(this).attr('weight', parseInt($(this).attr('weight')) - 1);
-                            ops.push({
-                                op: 'MoveItem',
-                                timeslotitemid: parseInt($(this).attr('timeslotitemid')),
-                                oldchannel: parseInt($(this).attr('channel')),
-                                oldweight: parseInt($(this).attr('weight')) + 1,
-                                channel: parseInt($(this).attr('channel')),
-                                weight: parseInt($(this).attr('weight'))
-                            });
-                        }
-                    });
+                        $('ul.baps-channel li[channel=' + oldChannel + ']').each(
+                            function() {
+                                if (oldWeight - $(this).attr('weight') < 0) {
+                                    $(this).attr('weight', parseInt($(this).attr('weight')) - 1);
+                                    ops.push(
+                                        {
+                                            op: 'MoveItem',
+                                            timeslotitemid: parseInt($(this).attr('timeslotitemid')),
+                                            oldchannel: parseInt($(this).attr('channel')),
+                                            oldweight: parseInt($(this).attr('weight')) + 1,
+                                            channel: parseInt($(this).attr('channel')),
+                                            weight: parseInt($(this).attr('weight'))
+                                        }
+                                    );
+                                }
+                            }
+                        );
 
-                    // Do the actual Remove Operation
-                    // This is after the moves to ensure there aren't two items of the same weight
-                    ops.push({
-                        op: 'RemoveItem',
-                        timeslotitemid: parseInt(li.attr('timeslotitemid')),
-                        channel: parseInt(oldChannel),
-                        weight: parseInt(oldWeight)
-                    });
+                        // Do the actual Remove Operation
+                        // This is after the moves to ensure there aren't two items of the same weight
+                        ops.push(
+                            {
+                                op: 'RemoveItem',
+                                timeslotitemid: parseInt(li.attr('timeslotitemid')),
+                                channel: parseInt(oldChannel),
+                                weight: parseInt(oldWeight)
+                            }
+                        );
 
-                    li.attr('timeslotitemid', null);
-                } else {
-                    /**
+                        li.attr('timeslotitemid', null);
+                    } else {
+                        /**
                     * This item has just been moved from one position to another.
                     * This involves a large number of MoveItem ops being sent to the server:
                     * - Each item below its previous location must have a MoveItem to decrement the weight
                     * - Each item below its new location must have a MoveItem to increment the weight
                     * - The item must have its channel/weight setting updated for its new location
                     */
-                    var inc = [];
-                    var dec = [];
+                        var inc = [];
+                        var dec = [];
 
-                    $('ul.baps-channel li[channel=' + oldChannel + ']').each(function() {
-                        if (oldWeight - $(this).attr('weight') < 0
-                            && $(this).attr('timeslotitemid') !== li.attr('timeslotitemid')) {
+                        $('ul.baps-channel li[channel=' + oldChannel + ']').each(
+                            function() {
+                                if (oldWeight - $(this).attr('weight') < 0
+                                    && $(this).attr('timeslotitemid') !== li.attr('timeslotitemid')
+                                ) {
 
-                            dec.push($(this).attr('timeslotitemid'));
-                            $(this).attr('weight', parseInt($(this).attr('weight')) - 1);
+                                    dec.push($(this).attr('timeslotitemid'));
+                                    $(this).attr('weight', parseInt($(this).attr('weight')) - 1);
+                                }
+                            }
+                        );
+
+                        var current = li;
+                        while (current.next().length === 1) {
+                            current = current.next();
+                            var pos = $.inArray(current.attr('timeslotitemid'), dec);
+                            //This is actually a no-op move.
+                            if (pos >= 0) {
+                                $('ui.baps-channel li[timeslotitemid=' + dec[pos] + ']').attr(
+                                    'weight',
+                                    parseInt($('ui.baps-channel li[timeslotitemid=' + dec[pos] + ']')) + 1
+                                )
+                                dec[pos] = null;
+                            } else {
+                                inc.push(current.attr('timeslotitemid'));
+                                current.attr('weight', parseInt(current.attr('weight')) + 1);
+                            }
                         }
-                    });
 
-                    var current = li;
-                    while (current.next().length === 1) {
-                        current = current.next();
-                        var pos = $.inArray(current.attr('timeslotitemid'), dec);
-                        //This is actually a no-op move.
-                        if (pos >= 0) {
-                            $('ui.baps-channel li[timeslotitemid=' + dec[pos] + ']').attr('weight',
-                            parseInt($('ui.baps-channel li[timeslotitemid=' + dec[pos] + ']')) + 1)
-                            dec[pos] = null;
-                        } else {
-                            inc.push(current.attr('timeslotitemid'));
-                            current.attr('weight', parseInt(current.attr('weight')) + 1);
+                        for (i in inc) {
+                            var obj = $('ul.baps-channel li[timeslotitemid=' + inc[i] + ']');
+                            ops.push(
+                                {
+                                    op: 'MoveItem',
+                                    timeslotitemid: parseInt(inc[i]),
+                                    oldchannel: parseInt(obj.attr('channel')),
+                                    oldweight: parseInt(obj.attr('weight')) - 1,
+                                    channel: parseInt(obj.attr('channel')),
+                                    weight: parseInt(obj.attr('weight'))
+                                }
+                            );
                         }
+
+                        for (i in dec) {
+                            if (dec[i] === null) {
+                                continue;
+                            }
+                            var obj = $('ul.baps-channel li[timeslotitemid=' + dec[i] + ']');
+                            ops.push(
+                                {
+                                    op: 'MoveItem',
+                                    timeslotitemid: parseInt(dec[i]),
+                                    oldchannel: parseInt(obj.attr('channel')),
+                                    oldweight: parseInt(obj.attr('weight')) + 1,
+                                    channel: parseInt(obj.attr('channel')),
+                                    weight: parseInt(obj.attr('weight'))
+                                }
+                            );
+                        }
+
+                        // Finally, we can add the item itself
+                        ops.push(
+                            {
+                                op: 'MoveItem',
+                                timeslotitemid: parseInt(li.attr('timeslotitemid')),
+                                oldchannel: parseInt(oldChannel),
+                                oldweight: parseInt(oldWeight),
+                                channel: parseInt(li.attr('channel')),
+                                weight: parseInt(li.attr('weight'))
+                            }
+                        );
                     }
 
-                    for (i in inc) {
-                        var obj = $('ul.baps-channel li[timeslotitemid=' + inc[i] + ']');
-                        ops.push({
-                            op: 'MoveItem',
-                            timeslotitemid: parseInt(inc[i]),
-                            oldchannel: parseInt(obj.attr('channel')),
-                            oldweight: parseInt(obj.attr('weight')) - 1,
-                            channel: parseInt(obj.attr('channel')),
-                            weight: parseInt(obj.attr('weight'))
-                        });
-                    }
-
-                    for (i in dec) {
-                        if (dec[i] === null) {
-                            continue;
-                        }
-                        var obj = $('ul.baps-channel li[timeslotitemid=' + dec[i] + ']');
-                        ops.push({
-                            op: 'MoveItem',
-                            timeslotitemid: parseInt(dec[i]),
-                            oldchannel: parseInt(obj.attr('channel')),
-                            oldweight: parseInt(obj.attr('weight')) + 1,
-                            channel: parseInt(obj.attr('channel')),
-                            weight: parseInt(obj.attr('weight'))
-                        });
-                    }
-
-                    // Finally, we can add the item itself
-                    ops.push({
-                        op: 'MoveItem',
-                        timeslotitemid: parseInt(li.attr('timeslotitemid')),
-                        oldchannel: parseInt(oldChannel),
-                        oldweight: parseInt(oldWeight),
-                        channel: parseInt(li.attr('channel')),
-                        weight: parseInt(li.attr('weight'))
-                    });
-                }
-
-                /**
+                    /**
                 * The important bit - ship the change operations over to the server to update the remote datastructure,
                 * the change log, and to propogate the changes to any other clients that may be active.
                 */
-                shipChanges(ops, addOp, next);
+                    shipChanges(ops, addOp, next);
+                }
             }
-        });
+        );
     };
 
     var registerItemClicks = function() {
         // Used by dragdrop - enables the selected item to move down on drag/drop
-        $('ul.baps-channel li').off('mousedown.predrag').on('mousedown.predrag', function(e) {
-            $(this).attr('nextSelect',
-            typeof $(this).next().attr('id') !== 'undefined' ? $(this).next().attr('id') : $(this).prev().attr('id'));
-        });
-        $('ul.baps-channel li').off('click.playactivator').on('click.playactivator', function(e) {
-            var channel = $(this).parent('.baps-channel').attr('channel');
-            if (!getPlayer(channel).paused) {
-                showAlert('Cannot load track whilst another is playing.', 'warning');
-                e.stopPropagation();
-                return false;
+        $('ul.baps-channel li').off('mousedown.predrag').on(
+            'mousedown.predrag', function(e) {
+                $(this).attr(
+                    'nextSelect',
+                    typeof $(this).next().attr('id') !== 'undefined' ? $(this).next().attr('id') : $(this).prev().attr('id')
+                );
             }
-            if ($(this).hasClass('undigitised')) {
-                //Can't select the track - it isn't digitised
-                showAlert($(this).html() + ' has not been digitised.', 'danger');
-                e.stopPropagation();
-                return false;
+        );
+        $('ul.baps-channel li').off('click.playactivator').on(
+            'click.playactivator', function(e) {
+                var channel = $(this).parent('.baps-channel').attr('channel');
+                if (!getPlayer(channel).paused) {
+                    showAlert('Cannot load track whilst another is playing.', 'warning');
+                    e.stopPropagation();
+                    return false;
+                }
+                if ($(this).hasClass('undigitised')) {
+                    //Can't select the track - it isn't digitised
+                    showAlert($(this).html() + ' has not been digitised.', 'danger');
+                    e.stopPropagation();
+                    return false;
+                }
+                if ($(this).hasClass('unclean')) {
+                    //This track may have naughty words, but don't block selection
+                    showAlert($(this).html() + ' explicit. Do not broadcast before 9pm.', 'danger');
+                }
+                //Set this track as the active file for this channel
+                //First, we need to remove the active class for any other file in the channel
+                $(this).parent('ul').children().removeClass('selected');
+                $(this).addClass('selected');
+                loadItem(channel);
             }
-            if ($(this).hasClass('unclean')) {
-                //This track may have naughty words, but don't block selection
-                showAlert($(this).html() + ' explicit. Do not broadcast before 9pm.', 'danger');
+        );
+        $('ul.baps-channel li').tooltip(
+            {
+                delay: 500,
+                placement: 'right',
+                container: 'body'
             }
-            //Set this track as the active file for this channel
-            //First, we need to remove the active class for any other file in the channel
-            $(this).parent('ul').children().removeClass('selected');
-            $(this).addClass('selected');
-            loadItem(channel);
-        });
-        $('ul.baps-channel li').tooltip({
-            delay: 500,
-            placement: 'right',
-            container: 'body'
-        });
+        );
     };
 
     // Sets up global listeners
@@ -363,9 +400,10 @@ var NIPSWeb = function(d) {
         };
 
         // Sets up key press triggers
-        $(document).on('keydown.bapscontrol', function(e) {
-            var trigger = false;
-            switch (e.which) {
+        $(document).on(
+            'keydown.bapscontrol', function(e) {
+                var trigger = false;
+                switch (e.which) {
                 case keys.F1:
                     //Play channel 1
                     play(1);
@@ -405,28 +443,33 @@ var NIPSWeb = function(d) {
                     stop(3);
                     trigger = true;
                     break;
+                }
+                if (trigger) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    return false;
+                }
             }
-            if (trigger) {
-                e.stopPropagation();
-                e.preventDefault();
-                return false;
-            }
-        });
+        );
     };
 
     var updateChannelTotalTimers = function() {
-        $('.baps-channel').each(function() {
-            var time = 0;
-            $(this).children('li').each(function() {
-                var tmp = $(this).attr('length').split(':');
-                if (tmp.length !== 3) {
-                    return;
-                }
-                time += parseInt(tmp[1]) * 60;
-                time += parseInt(tmp[2]);
-            });
-            $('#' + $(this).attr('id') + '-total').html('(' + timeMins(time) + ':' + timeSecs(time) + ')');
-        });
+        $('.baps-channel').each(
+            function() {
+                var time = 0;
+                $(this).children('li').each(
+                    function() {
+                        var tmp = $(this).attr('length').split(':');
+                        if (tmp.length !== 3) {
+                            return;
+                        }
+                        time += parseInt(tmp[1]) * 60;
+                        time += parseInt(tmp[2]);
+                    }
+                );
+                $('#' + $(this).attr('id') + '-total').html('(' + timeMins(time) + ':' + timeSecs(time) + ')');
+            }
+        );
     };
 
     var configureContextMenus = function() {
@@ -437,7 +480,8 @@ var NIPSWeb = function(d) {
                 obj.setAttribute(attr, 1);
             }
         }
-        channelMenu = contextMenu([
+        channelMenu = contextMenu(
+            [
             {
                 icon: 'trash',
                 text: 'Delete item',
@@ -521,38 +565,41 @@ var NIPSWeb = function(d) {
                     showAlert('Save/Load channel functionality is not available.', 'danger');
                 }
             }
-        ]);
+            ]
+        );
     };
 
     var initialiseUI = function() {
         if (writable) {
-            $('ul.baps-channel').sortable({
-                //connectWith allows drag and drop between the channels
-                connectWith: 'ul.baps-channel',
-                //A distance dragged of 15 before entering the dragging state
-                //Prevents accidentally dragging when clicking
-                distance: 15,
-                //Adds a placeholder highlight where the item will be dropped
-                placeholder: "alert-warning",
-                //Remove the "selected" class from the item - prevent multiple selected items in a channel
-                //Also activate the next/previous item, if there is one
-                start: function(e, ui) {
-                    if (ui.item.hasClass('selected')) {
-                        ui.item.removeClass('selected');
-                        if (ui.item.attr('nextSelect') != null) {
-                            $('#' + ui.item.attr('nextSelect')).click();
+            $('ul.baps-channel').sortable(
+                {
+                    //connectWith allows drag and drop between the channels
+                    connectWith: 'ul.baps-channel',
+                    //A distance dragged of 15 before entering the dragging state
+                    //Prevents accidentally dragging when clicking
+                    distance: 15,
+                    //Adds a placeholder highlight where the item will be dropped
+                    placeholder: "alert-warning",
+                    //Remove the "selected" class from the item - prevent multiple selected items in a channel
+                    //Also activate the next/previous item, if there is one
+                    start: function(e, ui) {
+                        if (ui.item.hasClass('selected')) {
+                            ui.item.removeClass('selected');
+                            if (ui.item.attr('nextSelect') != null) {
+                                $('#' + ui.item.attr('nextSelect')).click();
+                            }
                         }
-                    }
-                    ui.item.nextSelect = null;
-                },
-                stop: function(e, ui) {
-                    /**
+                        ui.item.nextSelect = null;
+                    },
+                    stop: function(e, ui) {
+                        /**
                     * Update the channel timers
                     */
-                    updateChannelTotalTimers();
-                    calcChanges(ui.item);
+                        updateChannelTotalTimers();
+                        calcChanges(ui.item);
+                    }
                 }
-            });
+            );
         }
 
         registerItemClicks();
@@ -596,66 +643,80 @@ var NIPSWeb = function(d) {
         var slider = sliders[(channel === 'res') ? 0 : channel];
         var channelDiv = $('#baps-channel-' + channel);
 
-        $(player).on('ended', function() {
-            var el = $('#baps-channel-' + channel + ' li.selected');
-            stopping(channel);
-            if (channelDiv.attr('autoadvance') == 1 && parseInt(channelDiv.attr('repeat')) !== 1) {
-                var next = el.next('li');
-                if (!next.length && el.parent().attr('repeat') == 2) {
-                    next = el.parent().children()[0];
+        $(player).on(
+            'ended', function() {
+                var el = $('#baps-channel-' + channel + ' li.selected');
+                stopping(channel);
+                if (channelDiv.attr('autoadvance') == 1 && parseInt(channelDiv.attr('repeat')) !== 1) {
+                    var next = el.next('li');
+                    if (!next.length && el.parent().attr('repeat') == 2) {
+                        next = el.parent().children()[0];
+                    }
+                    if (next) {
+                        el.removeClass('selected');
+                        next.click();
+                    }
+                } else if (parseInt(channelDiv.attr('repeat')) === 1) {
+                    player.currentTime = player.cueTime;
+                    player.play();
+                    playing(channel);
+                } else {
+                    player.currentTime = player.cueTime;
                 }
-                if (next) {
-                    el.removeClass('selected');
-                    next.click();
-                }
-            } else if (parseInt(channelDiv.attr('repeat')) === 1) {
-                player.currentTime = player.cueTime;
-                player.play();
-                playing(channel);
-            } else {
-                player.currentTime = player.cueTime;
             }
-        });
+        );
         // Chrome sometimes stops playback after seeking
-        $(player).on('seeked', function(e) {
-            if (player.nwIsPlaying) {
-                setTimeout(player.play, 50);
+        $(player).on(
+            'seeked', function(e) {
+                if (player.nwIsPlaying) {
+                    setTimeout(player.play, 50);
+                }
             }
-        });
-        $(player).on('timeupdate', function() {
-            getTime(channel);
-            sliders[getChannelInt(channel)].position(player.currentTime);
-        });
-
-        $(player).on('durationchange', function() {
-            getDuration(channel);
-            sliders[getChannelInt(channel)].reset(
-                player.duration,
-                0,
-                $('#baps-channel-' + channel + ' li.selected').attr('intro')
-            );
-        });
-
-        $(slider).on("seeked", function(e) {
-            if (e.originalEvent.detail.time) {
-                player.currentTime = parseFloat(e.originalEvent.detail.time.toPrecision(12));
+        );
+        $(player).on(
+            'timeupdate', function() {
+                getTime(channel);
+                sliders[getChannelInt(channel)].position(player.currentTime);
             }
-        });
+        );
 
-        $(slider).on("introChanged", function(e) {
-            var trackid = getRecTrackFromID($(channelDiv).children('.selected')[0].getAttribute('id'))[1];
-            $.post(
-                mConfig.api_url + '/Track/' + trackid + '/setIntro',
-                {duration: e.originalEvent.detail.time}
-            );
-        });
-
-        $(slider).on("cueChanged", function(e) {
-            if (player.cueTime >= player.currentTime && player.paused) {
-                player.currentTime = e.originalEvent.detail.time;
+        $(player).on(
+            'durationchange', function() {
+                getDuration(channel);
+                sliders[getChannelInt(channel)].reset(
+                    player.duration,
+                    0,
+                    $('#baps-channel-' + channel + ' li.selected').attr('intro')
+                );
             }
-            player.cueTime = e.originalEvent.detail.time;
-        });
+        );
+
+        $(slider).on(
+            "seeked", function(e) {
+                if (e.originalEvent.detail.time) {
+                    player.currentTime = parseFloat(e.originalEvent.detail.time.toPrecision(12));
+                }
+            }
+        );
+
+        $(slider).on(
+            "introChanged", function(e) {
+                var trackid = getRecTrackFromID($(channelDiv).children('.selected')[0].getAttribute('id'))[1];
+                $.post(
+                    mConfig.api_url + '/Track/' + trackid + '/setIntro',
+                    {duration: e.originalEvent.detail.time}
+                );
+            }
+        );
+
+        $(slider).on(
+            "cueChanged", function(e) {
+                if (player.cueTime >= player.currentTime && player.paused) {
+                    player.currentTime = e.originalEvent.detail.time;
+                }
+                player.cueTime = e.originalEvent.detail.time;
+            }
+        );
 
         channelDiv.on('contextmenu', channelMenu.show);
 
@@ -695,44 +756,50 @@ var NIPSWeb = function(d) {
         var type = $('#baps-channel-' + channel + ' li.selected').attr('type');
         if (type === 'central') {
             //Central Database Track
-            $.ajax({
-                url: myury.makeURL('NIPSWeb', 'create_token'),
-                type: 'post',
-                data: 'trackid=' + data[1] + '&recordid=' + data[0],
-                success: function() {
-                    params = {
-                        recordid: data[0],
-                        trackid: data[1]
-                    }
-                    if (getPlayer(channel).canPlayType('audio/mpeg')) {
-                        getPlayer(channel).type = 'audio/mpeg';
-                    } else if (getPlayer(channel).canPlayType('audio/ogg')) {
-                        getPlayer(channel).type = 'audio/ogg';
-                        params.ogg = true;
-                    } else {
-                        $('#notice').html('Sorry, you need to use a modern browser to use Track Preview.').addClass('alert-error').show();
-                    }
-                    getPlayer(channel).src = myury.makeURL('NIPSWeb', 'secure_play', params);
-
-                    $(getPlayer(channel)).off("canplay.forloaded").on("canplay.forloaded", function() {
-                        $('#ch' + channel + '-play').removeAttr('disabled');
-                        if (this.justStopped == false && $('#baps-channel-' + channel).attr('playonload') == 1) {
-                            this.play();
-                            playing(channel);
+            $.ajax(
+                {
+                    url: myury.makeURL('NIPSWeb', 'create_token'),
+                    type: 'post',
+                    data: 'trackid=' + data[1] + '&recordid=' + data[0],
+                    success: function() {
+                        params = {
+                            recordid: data[0],
+                            trackid: data[1]
                         }
-                        this.justStopped = false;
-                    });
+                        if (getPlayer(channel).canPlayType('audio/mpeg')) {
+                            getPlayer(channel).type = 'audio/mpeg';
+                        } else if (getPlayer(channel).canPlayType('audio/ogg')) {
+                            getPlayer(channel).type = 'audio/ogg';
+                            params.ogg = true;
+                        } else {
+                            $('#notice').html('Sorry, you need to use a modern browser to use Track Preview.').addClass('alert-error').show();
+                        }
+                        getPlayer(channel).src = myury.makeURL('NIPSWeb', 'secure_play', params);
+
+                        $(getPlayer(channel)).off("canplay.forloaded").on(
+                            "canplay.forloaded", function() {
+                                $('#ch' + channel + '-play').removeAttr('disabled');
+                                if (this.justStopped == false && $('#baps-channel-' + channel).attr('playonload') == 1) {
+                                    this.play();
+                                    playing(channel);
+                                }
+                                this.justStopped = false;
+                            }
+                        );
+                    }
                 }
-            });
+            );
         } else if (type === 'aux') {
             getPlayer(channel).src = myury.makeURL(
                 'NIPSWeb',
                 'managed_play',
                 {managedid: $('#' + audioid).attr('managedid')}
             );
-            $(getPlayer(channel)).on('canplay', function() {
-                $('#ch' + channel + '-play').removeAttr('disabled');
-            });
+            $(getPlayer(channel)).on(
+                'canplay', function() {
+                    $('#ch' + channel + '-play').removeAttr('disabled');
+                }
+            );
         }
 
         getPlayer(channel).cueTime = 0;
@@ -803,7 +870,9 @@ var contextMenu = function(items) {
     // The element that was activated when the menu was opened
     var triggeredBy;
 
-    /** DOM ELEMENTS **/
+    /**
+ * DOM ELEMENTS 
+**/
     var menuContainer = document.createElement('ul');
     menuContainer.className = 'context-menu dropdown-menu';
     menuContainer.style.position = 'absolute';
@@ -910,7 +979,9 @@ var playoutSlider = function(e) {
     var positionInt = 0;
     var isSliding = false;
 
-    /** DOM ELEMENTS **/
+    /**
+ * DOM ELEMENTS 
+**/
     var sliderContainer = document.createElement('div');
     sliderContainer.className = 'playout-slider';
 
@@ -946,7 +1017,9 @@ var playoutSlider = function(e) {
     positionSlider.appendChild(positionHandle);
     sliderContainer.appendChild(positionSlider);
 
-    /** HELPER FUNCTIONS **/
+    /**
+ * HELPER FUNCTIONS 
+**/
     var calculatePositionFromSeek = function(e, slider) {
         var result = e.clientX - getXOffset(e.currentTarget) + 3;
         if (result > sliderContainer.offsetWidth) {
@@ -966,7 +1039,9 @@ var playoutSlider = function(e) {
         return x;
     }
 
-    /** EVENT BINDINGS **/
+    /**
+ * EVENT BINDINGS 
+**/
     var positionHandleDragStart = function() {
         var positionInt;
         if (!isSliding) {

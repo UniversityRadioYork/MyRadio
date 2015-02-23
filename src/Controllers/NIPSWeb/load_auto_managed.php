@@ -2,7 +2,7 @@
 /**
  * Loads a NIPSWeb Auto playlist
  *
- * @author Andy Durant <lpw@ury.org.uk>
+ * @author  Andy Durant <lpw@ury.org.uk>
  * @version 20130508
  * @package MyRadio_NIPSWeb
  */

@@ -3,7 +3,7 @@
  * Sets up the database connection for MyRadio
  *
  * @version 20140504
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 use \MyRadio\Database;

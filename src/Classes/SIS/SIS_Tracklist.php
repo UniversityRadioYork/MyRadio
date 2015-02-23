@@ -15,7 +15,7 @@ use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
  * This class has helper functions for SIS tracklisting
  *
  * @version 20131011
- * @author Andy Durant <aj@ury.org.uk>
+ * @author  Andy Durant <aj@ury.org.uk>
  * @package MyRadio_SIS
  */
 class SIS_Tracklist extends ServiceAPI

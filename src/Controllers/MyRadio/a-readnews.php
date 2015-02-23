@@ -5,7 +5,7 @@
  *
  * @todo proper documentation
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @version 20130718
  * @package MyRadio_Core
  */
