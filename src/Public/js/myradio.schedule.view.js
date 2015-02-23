@@ -137,7 +137,7 @@ var ScheduleView = function(options) {
 					showDiv.style.minHeight = height;
 				}
 				dayDiv.appendChild(showDiv);
-				lastTime = endTime.unix();
+				lastTime = endTime;
 			}
 		}
 	}
@@ -261,10 +261,6 @@ var ScheduleView = function(options) {
 	scheduleContainerDiv.className = 'scheduleview scheduleview-view-' + view;
 	options.container.appendChild(scheduleContainerDiv);
 	loadWeek();
-
-	return {
-
-	};
 }
 
 ScheduleView.prototype = {
