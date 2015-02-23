@@ -457,7 +457,7 @@ class MyRadioFormField
 
     /**
      * Returns a space-separated string of classes that apply to this MyRadioFormField
-     * Includes ui-helper-hidden if the MyRadioFormField is set not to display
+     * Includes hidden if the MyRadioFormField is set not to display
      * @return string A space-separated string of classes that apply to this MyRadioFormField
      */
     private function getClasses()
@@ -468,7 +468,7 @@ class MyRadioFormField
         }
 
         if (!$this->display) {
-            $classes .= ' ui-helper-hidden';
+            $classes .= ' hidden';
         }
 
         $classes .= ' myradiofrmfield';
