@@ -282,7 +282,9 @@ var Library = function() {
     };
 
     var initialise = function() {
+        $('#res-type-sel').on('change', res_type_sel_change_handler);
         $('#res-type-sel').on('click', res_type_sel_change_handler);
+        $('#res-type-sel').on('keyup', res_type_sel_change_handler);
         centralDbInit();
         auxDbInit();
         $('#central-status, #res-status').html('Ready');
