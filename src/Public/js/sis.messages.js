@@ -20,7 +20,7 @@ var Messages = function() {
                         $(this).removeClass('unread');
                     }
                     var location;
-                    if (messages.location) {
+                    if (message.location) {
                         location = message.location[0];
                     }
                     myury.createDialog('Message', message.body + '<hr>' + location, [myury.closeButton()]);
