@@ -196,13 +196,16 @@ class MyRadio_Officer extends ServiceAPI
      */
     public function setName($name)
     {
-        self::$db->query(
-            'UPDATE public.member_officer
-            SET officer_name = $1
-            WHERE officerid=$2',
-            [$name, $this->getID()]
-        );
-        $this->name = $name;
+        if ($name !== $this->name) {
+            self::$db->query(
+                'UPDATE public.officer
+                SET officer_name = $1
+                WHERE officerid=$2',
+                [$name, $this->getID()]
+            );
+            $this->name = $name;
+            $this->updateCacheObject();
+        }
         return $this;
     }
 
@@ -222,13 +225,16 @@ class MyRadio_Officer extends ServiceAPI
      */
     public function setAlias($alias)
     {
-        self::$db->query(
-            'UPDATE public.member_officer
-            SET officer_alias = $1
-            WHERE officerid=$2',
-            [$alias, $this->getID()]
-        );
-        $this->alias = $alias;
+        if ($alias !== $this->alias) {
+            self::$db->query(
+                'UPDATE public.officer
+                SET officer_alias = $1
+                WHERE officerid=$2',
+                [$alias, $this->getID()]
+            );
+            $this->alias = $alias;
+            $this->updateCacheObject();
+        }
         return $this;
     }
 
@@ -248,13 +254,16 @@ class MyRadio_Officer extends ServiceAPI
      */
     public function setTeam($team)
     {
-        self::$db->query(
-            'UPDATE public.member_officer
-            SET teamid = $1
-            WHERE officerid=$2',
-            [$team, $this->getID()]
-        );
-        $this->team = $team;
+        if ($team !== $this->team) {
+            self::$db->query(
+                'UPDATE public.officer
+                SET teamid = $1
+                WHERE officerid=$2',
+                [$team, $this->getID()]
+            );
+            $this->team = $team;
+            $this->updateCacheObject();
+        }
         return $this;
     }
 
@@ -274,13 +283,16 @@ class MyRadio_Officer extends ServiceAPI
      */
     public function setOrdering($ordering)
     {
-        self::$db->query(
-            'UPDATE public.member_officer
-            SET ordering = $1
-            WHERE officerid=$2',
-            [$ordering, $this->getID()]
-        );
-        $this->ordering = $ordering;
+        if ($ordering !== $this->ordering) {
+            self::$db->query(
+                'UPDATE public.officer
+                SET ordering = $1
+                WHERE officerid=$2',
+                [$ordering, $this->getID()]
+            );
+            $this->ordering = $ordering;
+            $this->updateCacheObject();
+        }
         return $this;
     }
 
@@ -300,13 +312,16 @@ class MyRadio_Officer extends ServiceAPI
      */
     public function setDescription($description)
     {
-        self::$db->query(
-            'UPDATE public.member_officer
-            SET description = $1
-            WHERE officerid=$2',
-            [$description, $this->getID()]
-        );
-        $this->description = $description;
+        if ($description !== $this->description) {
+            self::$db->query(
+                'UPDATE public.officer
+                SET description = $1
+                WHERE officerid=$2',
+                [$description, $this->getID()]
+            );
+            $this->description = $description;
+            $this->updateCacheObject();
+        }
         return $this;
     }
 
@@ -326,13 +341,16 @@ class MyRadio_Officer extends ServiceAPI
      */
     public function setStatus($status)
     {
-        self::$db->query(
-            'UPDATE public.member_officer
-            SET status = $1
-            WHERE officerid=$2',
-            [$status, $this->getID()]
-        );
-        $this->status = $status;
+        if ($status !== $this->status) {
+            self::$db->query(
+                'UPDATE public.officer
+                SET status = $1
+                WHERE officerid=$2',
+                [$status, $this->getID()]
+            );
+            $this->status = $status;
+            $this->updateCacheObject();
+        }
         return $this;
     }
 
@@ -353,13 +371,16 @@ class MyRadio_Officer extends ServiceAPI
      */
     public function setType($type)
     {
-        self::$db->query(
-            'UPDATE public.member_officer
-            SET type = $1
-            WHERE officerid=$2',
-            [$type, $this->getID()]
-        );
-        $this->type = $type;
+        if ($type !== $this->type) {
+            self::$db->query(
+                'UPDATE public.officer
+                SET type = $1
+                WHERE officerid=$2',
+                [$type, $this->getID()]
+            );
+            $this->type = $type;
+            $this->updateCacheObject();
+        }
         return $this;
     }
 
@@ -440,6 +461,8 @@ class MyRadio_Officer extends ServiceAPI
             VALUES ($1, $2)',
             [$this->getID(), $permissionid]
         );
+        $this->updateCacheObject();
+        return $this;
     }
 
     /**
@@ -454,6 +477,8 @@ class MyRadio_Officer extends ServiceAPI
             AND lookupid = $2',
             [$this->getID(), $permissionid]
         );
+        $this->updateCacheObject();
+        return $this;
     }
 
     /**
