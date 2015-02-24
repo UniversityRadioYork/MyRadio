@@ -522,7 +522,7 @@ class MyRadio_Track extends ServiceAPI
             throw new MyRadioException('Failed to move uploaded track to tmp directory.', 500);
         }
 
-        include_once 'Classes/vendor/getid3/getid3.php';
+        require_once 'Classes/vendor/getid3/getid3.php';
         $getID3 = new \getID3;
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
 
@@ -560,7 +560,7 @@ class MyRadio_Track extends ServiceAPI
     {
         //Syspath is set by Daemons or where $PATH is not sufficent.
         $response = shell_exec((empty($GLOBALS['syspath']) ? '' : $GLOBALS['syspath']) . 'lastfm-fpclient -json ' . $path);
-        
+
         if (!trim($response)) {
             return ['status' => 'LASTFM_ERROR',
                     'error' => 'Last.FM doesn\'t seem to be working right now.'];
@@ -612,7 +612,7 @@ class MyRadio_Track extends ServiceAPI
 
         // Get the track duration from the file if it isn't already set
         if (empty($ainfo['duration'])) {
-            include_once 'Classes/vendor/getid3/getid3.php';
+            require_once 'Classes/vendor/getid3/getid3.php';
             $getID3 = new \getID3;
             $ainfo['duration'] = intval($getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $tmpid)['playtime_seconds']);
         }

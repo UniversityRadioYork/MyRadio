@@ -14,7 +14,7 @@ $path = __DIR__ . '/../../MyRadio_Config.local.php';
 //Merge existing config
 if (file_exists($path)) {
     $old_config = file($path);
-    include $path; //Reload so that Config:: has the right values
+    require $path; //Reload so that Config:: has the right values
 } else {
     $old_config = [];
 }

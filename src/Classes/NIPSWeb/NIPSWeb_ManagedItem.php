@@ -161,7 +161,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
 
         move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename);
 
-        include_once 'Classes/vendor/getid3/getid3.php';
+        require_once 'Classes/vendor/getid3/getid3.php';
         $getID3 = new \getID3;
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
 
