@@ -19,7 +19,11 @@ var Messages = function() {
                         context.setUnread(unreadMessages);
                         $(this).removeClass('unread');
                     }
-                    myury.createDialog('Message', message['body'], [myury.closeButton()]);
+                    var location;
+                    if (messages.location) {
+                        location = message.location[0];
+                    }
+                    myury.createDialog('Message', message.body + '<hr>' + location, [myury.closeButton()]);
                 }
             );
         };
