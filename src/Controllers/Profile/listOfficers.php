@@ -21,19 +21,19 @@ foreach ($officers as $k => $v) {
     }
     $officers[$k]['viewlink'] = [
         'display' => 'icon',
-        'value' => 'person',
+        'value' => 'user',
         'title' => 'View Officer',
         'url' => CoreUtils::makeURL('Profile', 'officer', ['officerid' => $v['officerid']]),
     ];
     $officers[$k]['editlink'] = [
         'display' => 'icon',
-        'value' => 'wrench',
+        'value' => 'pencil',
         'title' => 'Edit Officer',
         'url' => CoreUtils::makeURL('Profile', 'editOfficer', ['officerid' => $v['officerid']]),
     ];
     $officers[$k]['assignlink'] = [
         'display' => 'icon',
-        'value' => 'plusthick',
+        'value' => 'plus',
         'title' => 'Assign Officer',
         'url' => CoreUtils::makeURL('Profile', 'assignOfficer', ['officerid' => $v['officerid']]),
     ];
