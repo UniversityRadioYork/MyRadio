@@ -13,8 +13,6 @@ use \MyRadio\ServiceAPI\MyRadio_Podcast;
 /**
  * The Podcast Daemon converts uploaded audio files into web-ready uryplayer files.
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130817
  * @package MyRadio_Daemon
  */
 class MyRadio_PodcastDaemon extends \MyRadio\MyRadio\MyRadio_Daemon

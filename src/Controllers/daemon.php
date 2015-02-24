@@ -14,8 +14,6 @@
  * Enabled Deamons will then have class:run() executed on them, which should execute the desired task once, then return.
  * This controller will deal with recursion and timing.
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130720
  * @package MyRadio_Deamon
  * @uses    \Database
  * @uses    \CoreUtils

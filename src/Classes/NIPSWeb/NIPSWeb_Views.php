@@ -9,7 +9,6 @@ namespace MyRadio\NIPSWeb;
 /**
  * Description of NIPSWeb_Views
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
  */
 class NIPSWeb_Views
 {

@@ -3,8 +3,6 @@
  * The default page of the Scheduler module lists Season applications
  * that have not yet had timeslots assigned.
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130923
  * @package MyRadio_Scheduler
  */
 

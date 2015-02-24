@@ -4,7 +4,6 @@ namespace MyRadio\Iface;
 
 /**
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
  */
 interface MyRadio_DataSource
 {

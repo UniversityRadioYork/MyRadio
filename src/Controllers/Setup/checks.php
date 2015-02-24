@@ -3,8 +3,6 @@
  * Checks that necessary modules and resources are available for
  * MyRadio to get started.
  *
- * @version 20140501
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  * @todo    Check if rewrites work
  * @todo    Check if static resources load?

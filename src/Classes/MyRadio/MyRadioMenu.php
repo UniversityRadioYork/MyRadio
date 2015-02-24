@@ -13,8 +13,6 @@ use \MyRadio\MyRadioException;
 /**
  * Abstractor for the MyRadio Menu
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130930
  * @package MyRadio_Core
  * @uses    \CacheProvider
  * @uses    \Database
@@ -105,7 +103,7 @@ class MyRadioMenu
 
         return $items;
     }
-    
+
     /**
      * Takes a $url database column entry, and breaks it into its components
      * @param  String $url A database-fetched menu item URL

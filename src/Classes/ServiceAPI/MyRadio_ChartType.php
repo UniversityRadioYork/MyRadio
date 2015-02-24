@@ -13,8 +13,6 @@ use \MyRadio\MyRadio\MyRadioFormField;
 
 /**
  * The ChartType class fetches information about types of chart.
- * @version 20130426
- * @author Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Charts
  * @uses \Database
  */

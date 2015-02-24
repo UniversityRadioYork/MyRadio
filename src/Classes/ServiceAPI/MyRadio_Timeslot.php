@@ -20,8 +20,6 @@ use \MyRadio\SIS\SIS_Utils;
 /**
  * The Timeslot class is used to view and manupulate Timeslot within the new MyRadio Scheduler Format
  * @todo Generally the creation of bulk Timeslots is currently handled by the Season/Show classes, but this should change
- * @version 20130626
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Scheduler
  * @uses \Database
  * @uses \MyRadio_Show
@@ -426,7 +424,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     * @param  int $year   Default to current Calendar year.
     * @return MyRadio_Timeslot[]
     */
-    public static function getWeekSchedule($weekno, $year = null) 
+    public static function getWeekSchedule($weekno, $year = null)
     {
         self::wakeup();
         if ($year === null) {

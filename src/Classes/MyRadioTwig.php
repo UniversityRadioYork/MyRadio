@@ -16,8 +16,6 @@ use \Twig_Extension_Debug;
 /**
  * Singleton class for the Twig template engine
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20131012
  * @depends Config
  * @package MyRadio_Core
  */

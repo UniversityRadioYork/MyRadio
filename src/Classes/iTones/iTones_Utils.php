@@ -16,8 +16,6 @@ use \MyRadio\iTones\iTones_TrackRequest;
 /**
  * The iTones_Utils class provides generic utilities for controlling iTones - URY's Campus Jukebox
  *
- * @version 20130710
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_iTones
  * @uses    \Database
  */

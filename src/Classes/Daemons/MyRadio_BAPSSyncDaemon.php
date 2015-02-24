@@ -13,8 +13,6 @@ use \MyRadio\iTones\iTones_Playlist;
 /**
  * The BAPSSync Daemon will scan the Show Planner playlists, and put them into BAPS.
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130711
  * @package MyRadio_Daemon
  */
 class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon

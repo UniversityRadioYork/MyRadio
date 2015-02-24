@@ -18,8 +18,6 @@ use \MyRadio\MyRadio\CoreUtils;
 /**
  * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/
  *
- * @version 20130731
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_API
  * @uses    \Database
  *
@@ -29,7 +27,7 @@ use \MyRadio\MyRadio\CoreUtils;
 class MyRadio_Swagger
 {
     /**
- * THIS HALF DEALS WITH RESOURCES LISTING * 
+ * THIS HALF DEALS WITH RESOURCES LISTING *
 */
     public static function resources()
     {
@@ -66,7 +64,7 @@ class MyRadio_Swagger
     }
 
     /**
- * THIS HALF DEALS WITH API Declarations * 
+ * THIS HALF DEALS WITH API Declarations *
 */
     private $class;
 
@@ -115,7 +113,7 @@ class MyRadio_Swagger
 
             //Build the API URL
             $path = '/';
-            if (!$method->isStatic() 
+            if (!$method->isStatic()
                 && !($constructor->isPublic() && $constructor->getParameters() == null)
             ) {
                 $path .= '{id}/';
@@ -140,7 +138,7 @@ class MyRadio_Swagger
             //Build the parameters list
             //id is a parameter if the method is not static
             //unless the constructor is public and takes no args
-            if (!$method->isStatic() 
+            if (!$method->isStatic()
                 && !($constructor->isPublic() && $constructor->getParameters() == null)
             ) {
                 $params[] = [

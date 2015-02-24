@@ -17,8 +17,6 @@ use \MyRadio\iTones\iTones_Playlist;
 /**
  * The MyRadio_Track class provides and stores information about a Track
  *
- * @version 20141027
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  * @uses    \Database
  */

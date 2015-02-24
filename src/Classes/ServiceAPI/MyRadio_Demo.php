@@ -16,8 +16,6 @@ use \MyRadio\MyRadioEmail;
 /**
  * Abstractor for the Demo utilities
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130607
  * @package MyRadio_Demo
  * @uses    \Database
  */

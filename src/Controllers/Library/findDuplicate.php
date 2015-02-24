@@ -2,8 +2,6 @@
 
 /**
  * Scan music library, finding tracks that seem to exist more than once
- * @author Lloyd Wallis <lpw@ury.york.ac.uk>
- * @version 24052013
  * @package MyRadio_Library
  */
 

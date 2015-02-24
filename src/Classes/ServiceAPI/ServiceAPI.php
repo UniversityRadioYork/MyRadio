@@ -17,8 +17,6 @@ use \MyRadio\MyRadioException;
  * An Abstract superclass for ServiceAPI classes that implements essential
  * base functionality for full MyRadio integration
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130707
  * @package MyRadio_Core
  * @uses    \Database
  * @uses    \CacheProvider

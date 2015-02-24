@@ -4,7 +4,6 @@
  * Enables a user to change their password, either whilst logged in or by
  * using a password reset token that has been emailed to them.
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @data    20140121
  * @package MyRadio_Core
  */

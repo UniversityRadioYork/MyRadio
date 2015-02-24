@@ -2,7 +2,6 @@
 
 /**
  * Sets the user's prefered Authenticator
- * @author Lloyd Wallis
  * @data 20140102
  * @package MyRadio_Core
  */

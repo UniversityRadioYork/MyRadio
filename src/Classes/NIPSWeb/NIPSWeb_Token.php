@@ -13,8 +13,6 @@ use \MyRadio\MyRadioException;
  *
  * @todo Implement Play Token support
  *
- * @version 17032013
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_NIPSWeb
  * @uses    \Database
  */

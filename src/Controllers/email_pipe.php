@@ -5,8 +5,6 @@
  *
  * - if it's sent to a certain mailing list, it'll put it in the archives
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130712
  * @package MyRadio_Mail
  * @uses    \Database
  * @uses    \CoreUtils

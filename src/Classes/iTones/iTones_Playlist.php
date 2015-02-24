@@ -18,8 +18,6 @@ use \MyRadio\MyRadio\MyRadioFormField;
 /**
  * The iTones_Playlist class helps provide control and access to managed playlists
  *
- * @version 20130712
- * @author  Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_iTones
  * @uses    \Database
  */

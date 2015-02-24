@@ -19,8 +19,6 @@ use \MyRadio\Iface\MyRadio_DataSource;
  * Standard API Utilities. Basically miscellaneous functions for the core system
  * No database accessing etc should be setup here.
  *
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @version 20140102
  * @package MyRadio_Core
  * @todo    Factor out permission code into a seperate class?
  */
