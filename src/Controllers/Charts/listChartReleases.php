@@ -1,8 +1,6 @@
 <?php
 /**
  * Controller for listing all releases made for a given chart type.
- * @version 20131002
- * @author Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Charts
  */
 

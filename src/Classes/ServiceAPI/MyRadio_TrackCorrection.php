@@ -15,11 +15,9 @@ use \MyRadio\MyRadio\CoreUtils;
  * The MyRadio_TrackCorrection class provides information and utilities for dealing with detecting a major issue
  * with the track metadata by the FingerprinterDaemon.
  *
- * @version 20130720
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
- * @uses \Database
- * @todo Cache this
+ * @uses    \Database
+ * @todo    Cache this
  */
 class MyRadio_TrackCorrection extends MyRadio_Track
 {
@@ -103,10 +101,10 @@ class MyRadio_TrackCorrection extends MyRadio_Track
 
     /**
      * Creates a new MyRadio_TrackCorrection Proposal
-     * @param MyRadio_Track $track The Track to correct
-     * @param String $title The proposed Title
-     * @param String $artist The proposed Artist
-     * @param String $album_name The proposed Album
+     * @param MyRadio_Track $track      The Track to correct
+     * @param String        $title      The proposed Title
+     * @param String        $artist     The proposed Artist
+     * @param String        $album_name The proposed Album
      * @return MyRadio_TrackCorrection The New Correction object
      */
     public static function create(

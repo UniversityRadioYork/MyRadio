@@ -2,8 +2,6 @@
 /**
  * Sets up the database schema for MyRadio
  *
- * @version 20140505
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 use \MyRadio\Database;
@@ -38,10 +36,31 @@ if (!isset($result[0])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     switch ($operation) {
-        case 'NEW':
-            $db = Database::getInstance();
+    case 'NEW':
+        $db = Database::getInstance();
+        try {
+            $db->query(file_get_contents(SCHEMA_DIR . 'base.sql'));
+        } catch (MyRadioException $e) {
+            $error = pg_last_error();
+            CoreUtils::getTemplateObject()
+                ->setTemplate('Setup/dbschema_error.twig')
+                ->addVariable('title', 'Database Schema')
+                ->addVariable('error', $error)
+                ->render();
+                exit;
+        }
+        //Tell the upgrade operation to apply patches
+        $version = 0;
+        $next = '?c=dbdata';
+        //Break deliberately ommitted
+    case 'UPGRADE':
+        $db = Database::getInstance();
+        $db->query('BEGIN');
+        while ($version < MYRADIO_CURRENT_SCHEMA_VERSION) {
+            $version++;
             try {
-                $db->query(file_get_contents(SCHEMA_DIR . 'base.sql'));
+                $db->query(file_get_contents(SCHEMA_DIR . 'patches/'.$version.'.sql'));
+                $db->query('UPDATE myradio.schema SET value=$1 WHERE attr=\'version\'', [$version]);
             } catch (MyRadioException $e) {
                 $error = pg_last_error();
                 CoreUtils::getTemplateObject()
@@ -49,40 +68,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ->addVariable('title', 'Database Schema')
                     ->addVariable('error', $error)
                     ->render();
-                    exit;
             }
-            //Tell the upgrade operation to apply patches
-            $version = 0;
-            $next = '?c=dbdata';
-            //Break deliberately ommitted
-        case 'UPGRADE':
-            $db = Database::getInstance();
-            $db->query('BEGIN');
-            while ($version < MYRADIO_CURRENT_SCHEMA_VERSION) {
-                $version++;
-                try {
-                    $db->query(file_get_contents(SCHEMA_DIR . 'patches/'.$version.'.sql'));
-                    $db->query('UPDATE myradio.schema SET value=$1 WHERE attr=\'version\'', [$version]);
-                } catch (MyRadioException $e) {
-                    $error = pg_last_error();
-                    CoreUtils::getTemplateObject()
-                        ->setTemplate('Setup/dbschema_error.twig')
-                        ->addVariable('title', 'Database Schema')
-                        ->addVariable('error', $error)
-                        ->render();
-                }
-            }
-            $db->query('COMMIT');
-            if (!isset($next)) {
-                $next = '?c=???';
-            }
-            break;
-        case 'NEWER_WARN':
-        case 'CURRENT':
+        }
+        $db->query('COMMIT');
+        if (!isset($next)) {
             $next = '?c=???';
-            break;
-        default:
-            die('Unexpected database operation.');
+        }
+        break;
+    case 'NEWER_WARN':
+    case 'CURRENT':
+        $next = '?c=???';
+        break;
+    default:
+        die('Unexpected database operation.');
     }
     header('Location: '.$next);
 } else {

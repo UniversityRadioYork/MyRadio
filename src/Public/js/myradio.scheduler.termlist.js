@@ -4,16 +4,16 @@ $('.twig-datatable').dataTable(
         "aoColumns": [
             //termid
             {
-              "bVisible": false
-            },
+                "bVisible": false
+        },
             //start
             {
-              "sTitle": "Start Date"
-            },
+                "sTitle": "Start Date"
+        },
             //descr
             {
-              "sTitle": "Name"
-            }
+                "sTitle": "Name"
+        }
         ],
         "bPaginate": true
     }

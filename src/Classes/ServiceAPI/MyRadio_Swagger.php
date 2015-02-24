@@ -17,17 +17,18 @@ use \MyRadio\MyRadio\CoreUtils;
 
 /**
  * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/
- * @version 20130731
- * @author Lloyd Wallis <lpw@ury.org.uk>
+ *
  * @package MyRadio_API
- * @uses \Database
+ * @uses    \Database
  *
  * @todo Detect Response Types
  * @todo Parse docblocks to get variable information
  */
 class MyRadio_Swagger
 {
-    /** THIS HALF DEALS WITH RESOURCES LISTING * */
+    /**
+ * THIS HALF DEALS WITH RESOURCES LISTING *
+*/
     public static function resources()
     {
         $data = [
@@ -62,7 +63,9 @@ class MyRadio_Swagger
         return $result;
     }
 
-    /** THIS HALF DEALS WITH API Declarations * */
+    /**
+ * THIS HALF DEALS WITH API Declarations *
+*/
     private $class;
 
     public function __construct($class)
@@ -110,8 +113,9 @@ class MyRadio_Swagger
 
             //Build the API URL
             $path = '/';
-            if (!$method->isStatic() &&
-                    !($constructor->isPublic() && $constructor->getParameters() == null)) {
+            if (!$method->isStatic()
+                && !($constructor->isPublic() && $constructor->getParameters() == null)
+            ) {
                 $path .= '{id}/';
             }
 
@@ -134,8 +138,9 @@ class MyRadio_Swagger
             //Build the parameters list
             //id is a parameter if the method is not static
             //unless the constructor is public and takes no args
-            if (!$method->isStatic() &&
-                    !($constructor->isPublic() && $constructor->getParameters() == null)) {
+            if (!$method->isStatic()
+                && !($constructor->isPublic() && $constructor->getParameters() == null)
+            ) {
                 $params[] = [
                     "paramType" => "path",
                     "name" => "id",
@@ -213,20 +218,20 @@ class MyRadio_Swagger
         foreach ($doc['keys'] as $key => $values) {
             switch ($key) {
                 //Deal with $params
-                case 'param':
-                    /**
+            case 'param':
+                /**
                      * info[0] should be "@param"
                      * info[1] should be data type
                      * info[2] should be parameter name
                      * info[3] should be the description
                      */
-                    $info = explode(' ', $values[0], 4);
-                    $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
-                    $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
-                    break;
-                default:
-                    $i++;
-                    break;
+                $info = explode(' ', $values[0], 4);
+                $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
+                $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
+                break;
+            default:
+                $i++;
+                break;
             }
         }
 
@@ -269,20 +274,20 @@ class MyRadio_Swagger
         foreach ($doc['keys'] as $key => $values) {
             switch ($key) {
                 //Deal with $params
-                case 'param':
-                    /**
+            case 'param':
+                /**
                      * info[0] should be "@param"
                      * info[1] should be data type
                      * info[2] should be parameter name
                      * info[3] should be the description
                      */
-                    $info = explode(' ', $values[0], 4);
-                    $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
-                    $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
-                    break;
-                default:
-                    $i++;
-                    break;
+                $info = explode(' ', $values[0], 4);
+                $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
+                $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
+                break;
+            default:
+                $i++;
+                break;
             }
         }
 

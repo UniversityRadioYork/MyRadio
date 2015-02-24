@@ -2,8 +2,6 @@
 /**
  * Landing page for Website Tools
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130806
  * @package MyRadio_Website
  */
 

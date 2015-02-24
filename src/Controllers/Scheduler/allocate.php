@@ -2,8 +2,6 @@
 /**
  *
  * @todo Proper Documentation
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 22092012
  * @package MyRadio_Scheduler
  */
 

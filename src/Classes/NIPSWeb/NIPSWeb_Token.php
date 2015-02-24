@@ -10,12 +10,11 @@ use \MyRadio\MyRadioException;
 
 /**
  * The NIPSWeb_Token class
+ *
  * @todo Implement Play Token support
  *
- * @version 17032013
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_NIPSWeb
- * @uses \Database
+ * @uses    \Database
  */
 class NIPSWeb_Token extends \MyRadio\ServiceAPI\ServiceAPI
 {

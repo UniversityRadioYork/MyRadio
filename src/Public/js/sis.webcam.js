@@ -79,7 +79,7 @@ var Webcam = function() {
             this.registerParam('webcam-id', currentWebcam);
         };
 
-	return {
+    return {
         name: 'Webcam Selector',
         type: 'plugin',
         initialise: function() {

@@ -1,8 +1,6 @@
 <?php
 /**
  * List a User's Podcasts
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130815
  * @package MyRadio_Podcast
  */
 

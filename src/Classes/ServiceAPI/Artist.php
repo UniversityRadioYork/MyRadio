@@ -12,12 +12,10 @@ use \MyRadio\Config;
 /**
  * The Artist class provides and stores information about a Artist
  *
- * @version 20130605
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @todo The completion of this module is impossible as Artists do not have
+ * @todo    The completion of this module is impossible as Artists do not have
  * unique identifiers. For this to happen, BAPS needs to be replaced/updated
  * @package MyRadio_Core
- * @uses \Database
+ * @uses    \Database
  */
 class Artist extends ServiceAPI
 {
@@ -65,7 +63,6 @@ class Artist extends ServiceAPI
      *                       precise: If true, will only return exact matches for artist/title
      *                       nocorrectionproposed: If true, will only return items with no correction proposed.
      *                       clean: Default any. 'y' for clean tracks, 'n' for dirty, 'u' for unknown.
-     *
      */
     public static function findByOptions($options)
     {

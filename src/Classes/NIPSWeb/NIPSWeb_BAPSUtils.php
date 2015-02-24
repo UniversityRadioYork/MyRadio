@@ -15,8 +15,6 @@ use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 /**
  * This class has helper functions for saving Show Planner show informaiton into legacy BAPS Show layout
  *
- * @version 20130508
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_NIPSWeb
  */
 class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
@@ -122,40 +120,40 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
             if (isset($tracks[$listing['channel']])) {
                 foreach ($tracks[$listing['channel']] as $track) {
                     switch ($track['type']) {
-                        case 'central':
-                            $file = self::getTrackDetails($track['trackid'], $track['album']['recordid']);
-                            self::$db->query(
-                                'INSERT INTO baps_item (listingid, position, libraryitemid, name1, name2)
+                    case 'central':
+                        $file = self::getTrackDetails($track['trackid'], $track['album']['recordid']);
+                        self::$db->query(
+                            'INSERT INTO baps_item (listingid, position, libraryitemid, name1, name2)
                                 VALUES ($1, $2, $3, $4, $5)',
-                                [
-                                    $listing['listingid'],
-                                    $position,
-                                    $file['libraryitemid'],
-                                    $file['title'],
-                                    $file['artist']
-                                ],
-                                true
-                            );
+                            [
+                                $listing['listingid'],
+                                $position,
+                                $file['libraryitemid'],
+                                $file['title'],
+                                $file['artist']
+                            ],
+                            true
+                        );
 
-                            break;
-                        case 'aux':
-                            //Get the LegacyDB ID of the file
-                            $fileitemid = self::getFileItemFromManagedID($track['managedid']);
-                            self::$db->query(
-                                'INSERT INTO baps_item (listingid, position, fileitemid, name1)
+                        break;
+                    case 'aux':
+                        //Get the LegacyDB ID of the file
+                        $fileitemid = self::getFileItemFromManagedID($track['managedid']);
+                        self::$db->query(
+                            'INSERT INTO baps_item (listingid, position, fileitemid, name1)
                                 VALUES ($1, $2, $3, $4)',
-                                [
-                                    (int) $listing['listingid'],
-                                    (int) $position,
-                                    (int) $fileitemid,
-                                    $track['title']
-                                ],
-                                true
-                            );
+                            [
+                                (int) $listing['listingid'],
+                                (int) $position,
+                                (int) $fileitemid,
+                                $track['title']
+                            ],
+                            true
+                        );
 
-                            break;
-                        default:
-                            throw new MyRadioException('What do I even with this item?');
+                        break;
+                    default:
+                        throw new MyRadioException('What do I even with this item?');
                     }
                     $position++;
                 }
@@ -167,7 +165,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Gets the title, artist, and BapsWeb libraryitemid of a track
-     * @param int $trackid The Track ID from the rec database
+     * @param int $trackid  The Track ID from the rec database
      * @param int $recordid The Record ID from the rec database
      * @return boolean|array False on failure, or an array of the above
      */

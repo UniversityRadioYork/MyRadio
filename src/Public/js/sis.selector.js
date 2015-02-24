@@ -26,17 +26,19 @@ var Selector = function() {
                 return;
             }
 
-            $.get(myury.makeURL('SIS', 'selector.set'), {src: studio}, function(data) {
-                if (data['error'] == 'locked') {
-                    myury.createDialog('Selector Error', 'Could not change studio; studio selector is currently locked out.');
-                    return;
+            $.get(
+                myury.makeURL('SIS', 'selector.set'), {src: studio}, function(data) {
+                    if (data['error'] == 'locked') {
+                        myury.createDialog('Selector Error', 'Could not change studio; studio selector is currently locked out.');
+                        return;
+                    }
+                    if (data['error']) {
+                        myury.createDialog('Selector Error', data['error']);
+                        return;
+                    }
+                    update.call(this, data);
                 }
-                if (data['error']) {
-                    myury.createDialog('Selector Error', data['error']);
-                    return;
-                }
-                update.call(this, data);
-            });
+            );
         },
         update = function(data) {
             var liveStatus, s, time = parseInt(data['lastmod']);
@@ -83,8 +85,8 @@ var Selector = function() {
                 s = studios[data['studio'] - 1] + ' On Air';
                 currentStudio = data['studio'];
                 if (data['lock'] != 0) {
-                  s = s + '<small> &mdash; Locked</small>';
-                  locked = true;
+                    s = s + '<small> &mdash; Locked</small>';
+                    locked = true;
                 } else {
                     locked = false;
                 }
@@ -94,7 +96,7 @@ var Selector = function() {
             }
         };
 
-	return {
+    return {
         name: 'Studio Selector',
         type: 'plugin',
         initialise: function() {

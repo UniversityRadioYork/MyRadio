@@ -12,11 +12,8 @@ use \MyRadio\MyRadio\CoreUtils;
 /**
  * The Team class provides information about Committee Teams.
  *
- * @version 20130908
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
- * @uses \Database
- *
+ * @uses    \Database
  */
 class MyRadio_Team extends ServiceAPI
 {
@@ -120,7 +117,7 @@ class MyRadio_Team extends ServiceAPI
     /**
      * Gets the Team primary email alias.
      *
-     * @todo Database discrepancy - the actual lists themselves are defined
+     * @todo   Database discrepancy - the actual lists themselves are defined
      * manually. Need to discuss what to do about this.
      * @return String
      */
@@ -294,10 +291,10 @@ class MyRadio_Team extends ServiceAPI
 
     /**
      * Create a new Team with the given paramaters
-     * @param  String $name The name of the new Team
-     * @param  String $descr A friendly description of the new Team
-     * @param  String $alias /[a-z]+/ used for the mailing list name
-     * @param  int $ordering The larger this number, the further down this Team
+     * @param  String $name     The name of the new Team
+     * @param  String $descr    A friendly description of the new Team
+     * @param  String $alias    /[a-z]+/ used for the mailing list name
+     * @param  int    $ordering The larger this number, the further down this Team
      * @return MyRadio_Team The new Team
      */
     public static function createTeam($name, $descr, $alias, $ordering)
@@ -314,7 +311,7 @@ class MyRadio_Team extends ServiceAPI
     /**
      * Returns data about the Team.
      *
-     * @param bool $full If true, includes info about Officers in the Team
+     * @param  bool $full If true, includes info about Officers in the Team
      * @return Array
      */
     public function toDataSource($full = false)

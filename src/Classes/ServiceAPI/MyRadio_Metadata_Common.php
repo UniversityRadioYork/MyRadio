@@ -15,11 +15,8 @@ namespace MyRadio\ServiceAPI;
  * such as a title or description. It includes versioning in the form of
  * effective_from and effective_to field, storing a history of previous values.
  *
- * @version 20130815
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Scheduler
- * @uses \Database
- *
+ * @uses    \Database
  */
 abstract class MyRadio_Metadata_Common extends ServiceAPI
 {

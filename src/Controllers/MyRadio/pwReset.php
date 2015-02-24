@@ -2,7 +2,6 @@
 
 /**
  *
- * @author Lloyd Wallis
  * @data 20140120
  * @package MyRadio_Core
  */

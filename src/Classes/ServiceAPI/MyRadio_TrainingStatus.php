@@ -17,8 +17,6 @@ use \MyRadio\MyRadioException;
  * just "presenter" training, and more towards any activity, "Training Status"
  * was adopted.
  *
- * @version 20130801
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 
@@ -86,7 +84,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
     /**
      * Create a new TrainingStatus object. Generally, you should use getInstance.
      *
-     * @param int $statusid The ID of the TrainingStatus.
+     * @param  int $statusid The ID of the TrainingStatus.
      * @throws MyRadioException
      */
     protected function __construct($statusid)
@@ -166,7 +164,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
     /**
      * Checks if the user has the Training Status the one depends on.
      *
-     * @param MyRadio_User $user Default current User.
+     * @param  MyRadio_User $user Default current User.
      * @return bool True if no dependency or dependency gained, false otherwise.
      */
     public function hasDependency(MyRadio_User $user = null)
@@ -206,7 +204,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
      * Get an array of all UserTrainingStatuses this TrainingStatus has been
      * awarded to, and hasn't been revoked from.
      *
-     * @param int $ids If true, just returns User Training Status IDs instead of
+     * @param  int $ids If true, just returns User Training Status IDs instead of
      * UserTrainingStatuses.
      * @return MyRadio_User[]|int
      */
@@ -226,7 +224,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
     /**
      * Checks if the User has this Training Status
      *
-     * @param MyRadio_User $user
+     * @param  MyRadio_User $user
      * @return bool
      */
     public function isAwardedTo(MyRadio_User $user = null)
@@ -281,8 +279,8 @@ class MyRadio_TrainingStatus extends ServiceAPI
      *
      * A User cannot award themselves statuses.
      *
-     * @param MyRadio_User $to The User getting the Training Status.
-     * @param MyRadio_User $by The User awarding the Training Status.
+     * @param  MyRadio_User $to The User getting the Training Status.
+     * @param  MyRadio_User $by The User awarding the Training Status.
      * @return MyRadio_TrainingStatus[]
      */
     public static function getAllAwardableTo(MyRadio_User $to, MyRadio_User $by = null)

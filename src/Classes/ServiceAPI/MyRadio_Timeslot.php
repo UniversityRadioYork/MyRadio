@@ -20,12 +20,9 @@ use \MyRadio\SIS\SIS_Utils;
 /**
  * The Timeslot class is used to view and manupulate Timeslot within the new MyRadio Scheduler Format
  * @todo Generally the creation of bulk Timeslots is currently handled by the Season/Show classes, but this should change
- * @version 20130626
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Scheduler
  * @uses \Database
  * @uses \MyRadio_Show
- *
  */
 class MyRadio_Timeslot extends MyRadio_Metadata_Common
 {
@@ -268,7 +265,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     public function toDataSource()
     {
-        return array_merge($this->getSeason()->toDataSource(), [
+        return array_merge(
+            $this->getSeason()->toDataSource(), [
             'id' => $this->getID(),
             'timeslot_num' => $this->getTimeslotNumber(),
             'title' => $this->getMeta('title'),
@@ -282,12 +280,13 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 'value' => 'trash',
                 'title' => 'Cancel Episode',
                 'url' => CoreUtils::makeURL('Scheduler', 'cancelEpisode', ['show_season_timeslot_id' => $this->getID()])]
-        ]);
+            ]
+        );
     }
 
     /**
      * Find the most messaged Timeslots
-     * @param  int   $date If specified, only messages for timeslots since $date are counted.
+     * @param  int $date If specified, only messages for timeslots since $date are counted.
      * @return array An array of 30 Timeslots that have been put through toDataSource, with the addition of a msg_count key,
      *                    referring to the number of messages sent to that show.
      */
@@ -312,7 +311,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     /**
      * Find the most listened Timeslots
-     * @param  int   $date If specified, only messages for timeslots since $date are counted.
+     * @param  int $date If specified, only messages for timeslots since $date are counted.
      * @return array An array of 30 Timeslots that have been put through toDataSource, with the addition of a msg_count key,
      *                    referring to the number of messages sent to that show.
      */
@@ -350,7 +349,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     /**
      * Returns the current Timeslot on air, if there is one.
-     * @param int $time Optional integer timestamp
+     *
+     * @param int                                      $time Optional integer timestamp
      * @param $filter defines a filter of show_type ids
      *
      * @return MyRadio_Timeslot|null
@@ -384,7 +384,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     /**
      * Gets the next Timeslot to start after $time
-     * @param  int              $time
+     * @param  int                                      $time
      * @param                   $filter defines a filter of show_type ids
      * @return MyRadio_Timeslot
      */
@@ -420,11 +420,12 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     * will be included. The same is true for ones that end after the period.<br>
     * It is guaranteed that the results will be in order of start time.
     *
-    * @param int $weekno An ISO-8601 Week Number (http://en.wikipedia.org/wiki/ISO_8601#Week_dates)
-    * @param int $year Default to current Calendar year.
+    * @param  int $weekno An ISO-8601 Week Number (http://en.wikipedia.org/wiki/ISO_8601#Week_dates)
+    * @param  int $year   Default to current Calendar year.
     * @return MyRadio_Timeslot[]
     */
-    public static function getWeekSchedule($weekno, $year = null) {
+    public static function getWeekSchedule($weekno, $year = null)
+    {
         self::wakeup();
         if ($year === null) {
             $year = int(gmdate('Y'));
@@ -468,8 +469,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     /**
      * Returns the current timeslot, and the n after it, in a simplified
      * datasource format. Mainly intended for API use.
-     * @param int $time
-     * @param int $n number of next shows to return
+     * @param int                                      $time
+     * @param int                                      $n    number of next shows to return
      * @param $filter defines a filter of show_type ids
      */
     public static function getCurrentAndNext($time = null, $n = 1, $filter = array(1))
@@ -556,7 +557,6 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     /**
      * Deletes this Timeslot from the Schedule, and everything associated with it.
-     *
      *
      * This is a proxy for several other methods, depending on the User and the current time:<br>
      * (1) If the User has Cancel Show Privileges, then they can remove it at any time, notifying Creditors
@@ -670,61 +670,61 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
         foreach ($set['ops'] as $op) {
             switch ($op['op']) {
-                case 'AddItem':
-                    try {
-                        //Is this a record or a manageditem?
-                        $parts = explode('-', $op['id']);
-                        if ($parts[0] === 'ManagedDB') {
-                            //This is a managed item
-                            $i = NIPSWeb_TimeslotItem::createManaged($this->getID(), $parts[1], $op['channel'], $op['weight']);
-                        } else {
-                            //This is a rec database track
-                            $i = NIPSWeb_TimeslotItem::createCentral($this->getID(), $parts[1], $op['channel'], $op['weight']);
-                        }
-                    } catch (MyRadioException $e) {
-                        $result[] = ['status' => false];
-                        self::$db->query('ROLLBACK');
-
-                        return $result;
-                    }
-
-                    $result[] = ['status' => true, 'timeslotitemid' => $i->getID()];
-                    break;
-
-                case 'MoveItem':
-                    if (!is_numeric($op['timeslotitemid'])) {
-                        $result[] = ['status' => false];
-                        self::$db->query('ROLLBACK');
-
-                        return $result;
-                    }
-                    $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
-                    if ($i->getChannel() != $op['oldchannel'] or $i->getWeight() != $op['oldweight']) {
-                        $result[] = ['status' => false];
-                        self::$db->query('ROLLBACK');
-
-                        return $result;
+            case 'AddItem':
+                try {
+                    //Is this a record or a manageditem?
+                    $parts = explode('-', $op['id']);
+                    if ($parts[0] === 'ManagedDB') {
+                        //This is a managed item
+                        $i = NIPSWeb_TimeslotItem::createManaged($this->getID(), $parts[1], $op['channel'], $op['weight']);
                     } else {
-                        $i->setLocation($op['channel'], $op['weight']);
-                        $result[] = ['status' => true];
+                        //This is a rec database track
+                        $i = NIPSWeb_TimeslotItem::createCentral($this->getID(), $parts[1], $op['channel'], $op['weight']);
                     }
-                    break;
+                } catch (MyRadioException $e) {
+                    $result[] = ['status' => false];
+                    self::$db->query('ROLLBACK');
 
-                case 'RemoveItem':
-                    if (!is_numeric($op['timeslotitemid'])) {
-                        throw new MyRadioException($op['timeslotitemid'] . ' is invalid.', 500);
-                    }
-                    $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
-                    if ($i->getChannel() != $op['channel'] or $i->getWeight() != $op['weight']) {
-                        $result[] = ['status' => false];
-                        self::$db->query('ROLLBACK');
+                    return $result;
+                }
 
-                        return $result;
-                    } else {
-                        $i->remove();
-                        $result[] = ['status' => true];
-                    }
-                    break;
+                $result[] = ['status' => true, 'timeslotitemid' => $i->getID()];
+                break;
+
+            case 'MoveItem':
+                if (!is_numeric($op['timeslotitemid'])) {
+                    $result[] = ['status' => false];
+                    self::$db->query('ROLLBACK');
+
+                    return $result;
+                }
+                $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
+                if ($i->getChannel() != $op['oldchannel'] or $i->getWeight() != $op['oldweight']) {
+                    $result[] = ['status' => false];
+                    self::$db->query('ROLLBACK');
+
+                    return $result;
+                } else {
+                    $i->setLocation($op['channel'], $op['weight']);
+                    $result[] = ['status' => true];
+                }
+                break;
+
+            case 'RemoveItem':
+                if (!is_numeric($op['timeslotitemid'])) {
+                    throw new MyRadioException($op['timeslotitemid'] . ' is invalid.', 500);
+                }
+                $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
+                if ($i->getChannel() != $op['channel'] or $i->getWeight() != $op['weight']) {
+                    $result[] = ['status' => false];
+                    self::$db->query('ROLLBACK');
+
+                    return $result;
+                } else {
+                    $i->remove();
+                    $result[] = ['status' => true];
+                }
+                break;
             }
         }
 
