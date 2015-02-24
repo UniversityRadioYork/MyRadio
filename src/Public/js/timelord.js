@@ -28,10 +28,14 @@ window.timelord = {
      */
     updateTime: function() {
         var date = new Date();
-        $('#time').html(timelord.pad(date.getHours()) + ':' + timelord.pad(date.getMinutes()) +
-                ':' + timelord.pad(date.getSeconds()));
-        $('#date').html(date.getDate() + '' + timelord.getDateSuffix(date.getDate()) + ' ' +
-                timelord.months[date.getMonth()] + ' ' + date.getFullYear());
+        $('#time').html(
+            timelord.pad(date.getHours()) + ':' + timelord.pad(date.getMinutes()) +
+            ':' + timelord.pad(date.getSeconds())
+        );
+        $('#date').html(
+            date.getDate() + '' + timelord.getDateSuffix(date.getDate()) + ' ' +
+            timelord.months[date.getMonth()] + ' ' + date.getFullYear()
+        );
 
         return this;
     },
@@ -79,18 +83,18 @@ window.timelord = {
                 .removeClass('studio3').removeClass('studio4');
         $('#studio').addClass('studio' + num);
         switch (num) {
-            case 1:
-            case 2:
-                $('#studio').html('Studio ' + num + ' is On Air');
+        case 1:
+        case 2:
+            $('#studio').html('Studio ' + num + ' is On Air');
                 break;
-            case 3:
-                $('#studio').html('Jukebox is On Air');
+        case 3:
+            $('#studio').html('Jukebox is On Air');
                 break;
-            case 4:
-                $('#studio').html('Outside Broadcast');
+        case 4:
+            $('#studio').html('Outside Broadcast');
                 break;
-            default:
-                $('#studio').html('Unknown Output');
+        default:
+            $('#studio').html('Unknown Output');
                 break;
         }
         return this;
@@ -108,8 +112,10 @@ window.timelord = {
             start0 = timelord.pad(d0.getHours()) + ':' + timelord.pad(d0.getMinutes());
             d1 = (new Date(next[1].start_time * 1000));
             start1 = timelord.pad(d1.getHours()) + ':' + timelord.pad(d1.getMinutes());
-            $('#next-show').html('Up Next: ' + next[0].title + ' @ ' + start0 + '<br>'
-                    + next[1].title + ' @ ' + start1);
+            $('#next-show').html(
+                'Up Next: ' + next[0].title + ' @ ' + start0 + '<br>'
+                + next[1].title + ' @ ' + start1
+            );
         }
 
         return this;
@@ -139,84 +145,87 @@ window.timelord = {
      * @returns {window.timelord}
      */
     updateState: function() {
-        $.ajax({url: myury.makeURL('Timelord', 'a-update'),
-            global: false,
-            error: function() {
-                //Refresh on failure
-                window.location = window.location.href;
-            },
-            success: function(data) {
-                timelord.setStudio(data.selector.studio)
+        $.ajax(
+            {url: myury.makeURL('Timelord', 'a-update'),
+                global: false,
+                error: function() {
+                    //Refresh on failure
+                    window.location = window.location.href;
+                },
+                success: function(data) {
+                    timelord.setStudio(data.selector.studio)
                         .setNextShows(data.shows.next);
-                if (!timelord.news) {
-                    timelord.setCurrentShow(data.shows.current.title);
+                    if (!timelord.news) {
+                        timelord.setCurrentShow(data.shows.current.title);
 
-                    //Update info message
-                    if (data.breaking !== null) {
-                        timelord.showMsg(data.breaking.content);
-                    } else {
-                        timelord.hideMsg();
-                    }
-                }
-
-                //Update Studio 1 Alert
-                if (data.selector.studio === 1) {
-                    timelord.setAlert('power-s1', 'good');
-                } else if (data.selector.power === 1 || data.selector.power === 3) {
-                    timelord.setAlert('power-s1', 'standby');
-                } else {
-                    timelord.resetAlert('power-s1');
-                }
-
-                //Update Studio 2 Alert
-                if (data.selector.studio === 2) {
-                    timelord.setAlert('power-s2', 'good');
-                } else if (data.selector.power === 2 || data.selector.power === 3) {
-                    timelord.setAlert('power-s2', 'standby');
-                } else {
-                    timelord.resetAlert('power-s2');
-                }
-
-                //Update OB Alerts
-                for (i in timelord.routeobinfo) {
-                    if (data.ob[i]) {
-                        timelord.setAlert('routeob-' + i, 'good');
-                        if (timelord.routeobinfo[i] !== true
-                                && timelord.routeobinfo[i] !== false) {
-                            clearTimeout(timelord.routeobinfo[i]);
+                        //Update info message
+                        if (data.breaking !== null) {
+                            timelord.showMsg(data.breaking.content);
+                        } else {
+                            timelord.hideMsg();
                         }
-                        timelord.routeobinfo[i] = true;
-                    } else if (timelord.routeobinfo[i] !== false) {
-                        timelord.setAlert('routeob-' + i, 'bad');
-                        if (timelord.routeobinfo[i] === true) {
-                            timelord.routeobinfo[i] = setTimeout("timelord.routeobinfo['" + i + "'] = false", 30000);
-                        }
-                    } else {
-                        timelord.resetAlert('routeob-' + i);
                     }
-                }
 
-                //Update Silence Alert
-                if (data.silence >= 20) {
-                    timelord.setAlert('silence', 'worse');
-                } else if (data.silence >= 5) {
-                    timelord.setAlert('silence', 'bad');
-                } else {
-                    timelord.resetAlert('silence');
-                }
+                    //Update Studio 1 Alert
+                    if (data.selector.studio === 1) {
+                        timelord.setAlert('power-s1', 'good');
+                    } else if (data.selector.power === 1 || data.selector.power === 3) {
+                        timelord.setAlert('power-s1', 'standby');
+                    } else {
+                        timelord.resetAlert('power-s1');
+                    }
 
-                //Update obit alert
-                if (data.obit) {
-                    timelord.setAlert('obit', 'worse');
-                    $('#routeob-s1, #routeob-s2, #power-s2').hide();
-                } else {
-                    timelord.resetAlert('obit');
-                    $('#routeob-s1, #routeob-s2, #power-s2').show();
-                }
-            },
-            complete: function() {
-                setTimeout(timelord.updateState, 3000);
-            }});
+                    //Update Studio 2 Alert
+                    if (data.selector.studio === 2) {
+                        timelord.setAlert('power-s2', 'good');
+                    } else if (data.selector.power === 2 || data.selector.power === 3) {
+                        timelord.setAlert('power-s2', 'standby');
+                    } else {
+                        timelord.resetAlert('power-s2');
+                    }
+
+                    //Update OB Alerts
+                    for (i in timelord.routeobinfo) {
+                        if (data.ob[i]) {
+                            timelord.setAlert('routeob-' + i, 'good');
+                            if (timelord.routeobinfo[i] !== true
+                                && timelord.routeobinfo[i] !== false
+                            ) {
+                                clearTimeout(timelord.routeobinfo[i]);
+                            }
+                            timelord.routeobinfo[i] = true;
+                        } else if (timelord.routeobinfo[i] !== false) {
+                            timelord.setAlert('routeob-' + i, 'bad');
+                            if (timelord.routeobinfo[i] === true) {
+                                timelord.routeobinfo[i] = setTimeout("timelord.routeobinfo['" + i + "'] = false", 30000);
+                            }
+                        } else {
+                            timelord.resetAlert('routeob-' + i);
+                        }
+                    }
+
+                    //Update Silence Alert
+                    if (data.silence >= 20) {
+                        timelord.setAlert('silence', 'worse');
+                    } else if (data.silence >= 5) {
+                        timelord.setAlert('silence', 'bad');
+                    } else {
+                        timelord.resetAlert('silence');
+                    }
+
+                    //Update obit alert
+                    if (data.obit) {
+                        timelord.setAlert('obit', 'worse');
+                        $('#routeob-s1, #routeob-s2, #power-s2').hide();
+                    } else {
+                        timelord.resetAlert('obit');
+                        $('#routeob-s1, #routeob-s2, #power-s2').show();
+                    }
+                },
+                complete: function() {
+                    setTimeout(timelord.updateState, 3000);
+                }}
+        );
 
         return this;
     },
@@ -227,24 +236,31 @@ window.timelord = {
     newsWarn: function() {
         var date = new Date();
         if ((date.getMinutes() === 59 && (date.getSeconds() >= 15
-                && date.getSeconds() <= 52)) || date.getMinutes() < 2) {
+            && date.getSeconds() <= 52)) || date.getMinutes() < 2
+        ) {
             timelord.news = true;
             if (date.getMinutes() === 59) {
                 if (date.getSeconds() < 45) {
-                    timelord.setCurrentShow('<span class="news">News intro in ' +
-                            (45 - date.getSeconds()) + '...</span>');
+                    timelord.setCurrentShow(
+                        '<span class="news">News intro in ' +
+                        (45 - date.getSeconds()) + '...</span>'
+                    );
                     $('#next-show').show();
                 } else if (date.getSeconds() <= 52) {
-                    timelord.setCurrentShow('<span class="news">' +
-                            (52 - date.getSeconds()) + ' until voice over...</span>');
+                    timelord.setCurrentShow(
+                        '<span class="news">' +
+                        (52 - date.getSeconds()) + ' until voice over...</span>'
+                    );
                 } else {
                     timelord.setCurrentShow('<span class="news">'+mConfig.short_name+' News</span>');
                 }
             } else if (date.getMinutes() === 0) {
                 timelord.setCurrentShow('<span class="news">'+mConfig.short_name+' News</span>');
             } else {
-                timelord.setCurrentShow('<span class="news">News ends in ' +
-                        (60 - date.getSeconds()) + '...</span>');
+                timelord.setCurrentShow(
+                    '<span class="news">News ends in ' +
+                    (60 - date.getSeconds()) + '...</span>'
+                );
             }
         } else {
             timelord.news = false;
@@ -265,6 +281,8 @@ window.timelord = {
     }
 };
 
-$(document).ready(function() {
-    timelord.init();
-});
+$(document).ready(
+    function() {
+        timelord.init();
+    }
+);

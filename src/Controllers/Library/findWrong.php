@@ -1,8 +1,6 @@
 <?php
 /**
  * Scan music library, finding tracks that don't seem to be where they should be
- * @author Lloyd Wallis <lpw@ury.york.ac.uk>
- * @version 24042013
  * @package MyRadio_Library
  */
 

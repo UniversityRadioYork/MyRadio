@@ -9,7 +9,6 @@ use \MyRadio\ServiceAPI\MyRadio_User;
  * An Authenticator processes login requests for a user against a specific
  * user database.
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
  */
 class MyRadioLDAPAuthenticator implements \MyRadio\Iface\MyRadioAuthenticator
 {
@@ -30,9 +29,9 @@ class MyRadioLDAPAuthenticator implements \MyRadio\Iface\MyRadioAuthenticator
         ldap_close($this->ldap_handle);
     }
     /**
-     * @param  String             $user     The username (a full email address, or the prefix
+     * @param  String $user     The username (a full email address, or the prefix if it matches Config::$eduroam_domain).
      *                                      if it matches Config::$eduroam_domain).
-     * @param  String             $password The provided password.
+     * @param  String $password The provided password.
      * @return MyRadio_User|false Map the credentials to a MyRadio User on success, or
      *                                     return false on failure.
      */
@@ -61,7 +60,7 @@ class MyRadioLDAPAuthenticator implements \MyRadio\Iface\MyRadioAuthenticator
     /**
      * This authenticator can not process password resets.
      *
-     * @param  String  $user The username (a full email address, or the prefix
+     * @param  String $user The username (a full email address, or the prefix if it matches Config::$eduroam_domain).
      *                       if it matches Config::$eduroam_domain).
      * @return boolean Whether the reset has happened or not. MyRadio will stop
      *                      attempting resets once one Authenticator has return true.
@@ -87,7 +86,7 @@ class MyRadioLDAPAuthenticator implements \MyRadio\Iface\MyRadioAuthenticator
 
     public function getResetFormMessage()
     {
-        return '<div class="ui-state-highlight">Have you tried using your '
+        return '<div class="alert alert-info">Have you tried using your '
                . $this->getFriendlyName()
                . ' username and password? <a href="'
                . Config::$auth_ldap_reset_url

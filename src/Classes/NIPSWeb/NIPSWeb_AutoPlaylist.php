@@ -14,10 +14,8 @@ use \MyRadio\ServiceAPI\MyRadio_User;
 /**
  * The NIPSWeb_AutoPlaylist class helps provide control and access to Auto playlists
  *
- * @version 20130508
- * @author Andy Durant <aj@ury.org.uk>
  * @package MyRadio_NIPSWeb
- * @uses \Database
+ * @uses    \Database
  */
 class NIPSWeb_AutoPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
 {

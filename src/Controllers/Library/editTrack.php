@@ -2,8 +2,6 @@
 /**
  * Allows URY Librarians to create edit Tracks
  *
- * @author Andy Durant <aj@ury.org.uk>
- * @version 20140626
  * @package MyRadio_Library
  */
 

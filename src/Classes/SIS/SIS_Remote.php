@@ -16,8 +16,6 @@ use \MyRadio\MyRadio\MyRadioNews;
 /**
  * This class has helper functions for long-polling SIS
  *
- * @version 20131101
- * @author Andy Durant <aj@ury.org.uk>
  * @package MyRadio_SIS
  */
 class SIS_Remote extends ServiceAPI
@@ -28,7 +26,8 @@ class SIS_Remote extends ServiceAPI
      * @param  array $session phpSession variable
      * @return array presenter info data
      */
-    public static function queryPresenterInfo($session) {
+    public static function queryPresenterInfo($session)
+    {
         $time = 0;
         if (isset($_REQUEST['presenterinfo-lasttime'])) {
             $time = (int)$_REQUEST['presenterinfo-lasttime'];

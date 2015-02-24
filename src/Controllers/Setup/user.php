@@ -2,8 +2,6 @@
 /**
  * Sets up the initial admin user for MYRadio
  *
- * @version 20140515
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 use \MyRadio\APCProvider;

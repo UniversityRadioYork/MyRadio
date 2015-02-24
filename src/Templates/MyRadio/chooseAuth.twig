@@ -11,7 +11,7 @@ from the list below. We've highlighted the one we think is best for you.</p>
     <input type='hidden' name='next' value='{{next}}'>
     {% for a in methods %}
     <div class='myradiofrmfield-container'>
-        <label for="{{a.value}}" {% if a.default %}class="ui-widget-content"{% endif %}{% if a.different %}class=""{% endif %}>
+        <label for="{{a.value}}" {% if a.default %}class="bg-primary"{% endif %}{% if a.different %}class=""{% endif %}>
         <input type="radio" name="authenticator" value="{{a.value}}" id="{{a.value}}" {% if a.default %}checked{% endif %}>
         <h3>Use my {{a.name}} password to login</h3>
         <p>{{a.description}}</p>

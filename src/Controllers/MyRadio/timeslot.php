@@ -3,8 +3,7 @@
 /**
  * Allows users to select the timeslot they are working with
  *
- * @author Lloyd Wallis
- * @data 20140102
+ * @data    20140102
  * @package MyRadio_Core
  */
 
@@ -78,9 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     foreach ($shows as $show) {
         foreach ($show->getAllSeasons() as $season) {
-            $data[$show->getMeta('title')][] = array_map(function ($x) {
-                return [$x->getID(), $x->getStartTime(), $x->getEndTime()];
-            }, $season->getAllTimeslots());
+            $data[$show->getMeta('title')][] = array_map(
+                function ($x) {
+                    return [$x->getID(), $x->getStartTime(), $x->getEndTime()];
+                }, $season->getAllTimeslots()
+            );
         }
     }
     $twig->addVariable('timeslots', $data)->render();

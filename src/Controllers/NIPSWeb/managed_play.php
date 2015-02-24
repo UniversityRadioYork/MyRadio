@@ -2,8 +2,6 @@
 /**
  * Streams a managed database track
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 30032013
  * @package MyRadio_NIPSWeb
  */
 

@@ -17,11 +17,8 @@ use \MyRadio\iTones\iTones_Utils;
  * The Tracklist Item class provides information about URY's track playing
  * history.
  *
- * @version 20130718
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Tracklist
- * @uses \Database
- *
+ * @uses    \Database
  */
 class MyRadio_TracklistItem extends ServiceAPI
 {
@@ -114,8 +111,8 @@ class MyRadio_TracklistItem extends ServiceAPI
 
     /**
      * Find all tracks played by Jukebox
-     * @param int $start Period to start log from. Default 0.
-     * @param int $end Period to end log from. Default time().
+     * @param int  $start           Period to start log from. Default 0.
+     * @param int  $end             Period to end log from. Default time().
      * @param bool $include_playout Optional. Default true. If true, include statistics from when jukebox was not on air,
      * i.e. when it was only feeding campus bars.
      */
@@ -145,8 +142,8 @@ class MyRadio_TracklistItem extends ServiceAPI
      * Find all tracks played in the given timeframe, as datasources.
      * Not datasource runs out of RAM pretty quick.
      *
-     * @param int $start Period to start log from. Required.
-     * @param int $end Period to end log from. Default time().
+     * @param int  $start           Period to start log from. Required.
+     * @param int  $end             Period to end log from. Default time().
      * @param bool $include_playout If true, includes tracks played on /jukebox or /campus_playout while a show was on.
      */
     public static function getTracklistForTime($start, $end = null, $include_playout = false)
@@ -244,11 +241,11 @@ class MyRadio_TracklistItem extends ServiceAPI
     /**
      * Get an amalgamation of all tracks played by Jukebox. This looks at all played tracks within the proposed timeframe,
      * and outputs the play count of each Track, including the total time played.
-     * @param int $start Period to start log from. Default 0.
-     * @param int $end Period to end log from. Default time().
+     * @param int  $start           Period to start log from. Default 0.
+     * @param int  $end             Period to end log from. Default time().
      * @param bool $include_playout Optional. Default true. If true, include statistics from when jukebox was not on air,
      * i.e. when it was only feeding campus bars.
-     * @param bool $playlists Whether to get playlist membership metadata for tracks.
+     * @param bool $playlists       Whether to get playlist membership metadata for tracks.
      * @return Array, 2D, with the inner dimension being a MyRadio_Track Datasource output, with the addition of:
      * num_plays: The number of times the track was played
      * total_playtime: The total number of seconds the track has been on air
@@ -276,8 +273,8 @@ class MyRadio_TracklistItem extends ServiceAPI
     /**
      * Get an amalgamation of all tracks played by BAPS. This looks at all played tracks within the proposed timeframe,
      * and outputs the play count of each Track, including the total time played.
-     * @param int $start Period to start log from. Default 0.
-     * @param int $end Period to end log from. Default time().
+     * @param int  $start     Period to start log from. Default 0.
+     * @param int  $end       Period to end log from. Default time().
      * @param bool $playlists Whether to get playlist membership metadata for the tracks.
      * @return Array, 2D, with the inner dimension being a MyRadio_Track Datasource output, with the addition of:
      * num_plays: The number of times the track was played
@@ -306,7 +303,7 @@ class MyRadio_TracklistItem extends ServiceAPI
      * Returns if the given track has been played in the last $time seconds
      *
      * @param MyRadio_Track $track
-     * @param int $time Optional. Default 21600 (6 hours)
+     * @param int           $time  Optional. Default 21600 (6 hours)
      */
     public static function getIfPlayedRecently(MyRadio_Track $track, $time = 21600)
     {
@@ -328,10 +325,10 @@ class MyRadio_TracklistItem extends ServiceAPI
      * in a two hour period may be broadcast. Any more is a breach of this licence
      * so we should really stop doing it.
      *
-     * @param MyRadio_Track $track
-     * @param bool $include_queue If true, will include the tracks in the iTones
+     * @param  MyRadio_Track $track
+     * @param  bool          $include_queue If true, will include the tracks in the iTones queue.
      * queue.
-     * @param int $time. If set, will check if playing it at $time would be a/was
+     * @param  int           $time.         If set, will check if playing it at $time would be a/was a breach. No, this isn't magic and know the future accurately. a breach. No, this isn't magic and know the future accurately.
      * a breach. No, this isn't magic and know the future accurately.
      * @return bool
      */

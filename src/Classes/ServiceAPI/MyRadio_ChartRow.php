@@ -10,8 +10,6 @@ use \MyRadio\MyRadioException;
 
 /**
  * The ChartRow class fetches information about rows of chart releases.
- * @version 20130426
- * @author Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Charts
  * @uses \Database
  */
@@ -138,7 +136,7 @@ class MyRadio_ChartRow extends ServiceAPI
     /**
      * Creates a new chart row in the database.
      *
-     * @param $data array  An array of data to populate the row with.
+     * @param  $data array  An array of data to populate the row with.
      *                     Must contain 'position', 'chart_release_id' and
      *                     'trackid'.
      * @return MyRadio_ChartRow The newly created track.

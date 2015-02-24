@@ -7,7 +7,6 @@ use \MyRadio\Database;
 /**
  * Custom session handler.
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
  */
 class MyRadioSession
 {

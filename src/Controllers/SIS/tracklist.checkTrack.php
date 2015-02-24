@@ -2,8 +2,6 @@
 /**
  * Tracklist Track Inserter for SIS
  *
- * @author Andy Durant <aj@ury.org.uk>
- * @version 20131101
  * @package MyRadio_SIS
  */
 
@@ -26,7 +24,7 @@ if (empty($trackid)) {
         throw new MyRadioException('Album is required', 400);
     }
     if (empty($tname)) {
-        throw new MyRadioException('Track is required', 400);
+        throw new MyRadioException('Title is required', 400);
     }
     SIS_Tracklist::insertTrackNoRec($tname, $artist, $album, "m", $timeslotid);
 } else {

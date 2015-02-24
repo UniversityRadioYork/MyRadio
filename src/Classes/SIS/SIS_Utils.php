@@ -14,8 +14,6 @@ use \MyRadio\ServiceAPI\ServiceAPI;
 /**
  * This class has helper functions for building SIS
  *
- * @version 20130926
- * @author Andy Durant <aj@ury.org.uk>
  * @package MyRadio_SIS
  */
 class SIS_Utils extends ServiceAPI
@@ -34,10 +32,9 @@ class SIS_Utils extends ServiceAPI
                 if (stream_resolve_include_path($file)) {
                     include $file;
                 }
-                if (
-                    !isset($moduleInfo['required_permission']) ||
-                    CoreUtils::hasPermission($moduleInfo['required_permission'])
-                    ) {
+                if (!isset($moduleInfo['required_permission'])
+                    || CoreUtils::hasPermission($moduleInfo['required_permission'])
+                ) {
                     $loadedModules[] = $module;
                 }
             }

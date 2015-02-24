@@ -13,8 +13,6 @@ use \MyRadio\iTones\iTones_Playlist;
 /**
  * The BAPSSync Daemon will scan the Show Planner playlists, and put them into BAPS.
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130711
  * @package MyRadio_Daemon
  */
 class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
@@ -94,11 +92,13 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             /**
              * Create the playlist. '61' is system, which appears to be how BAPS chooses what shows are recommended listening
              */
-            $r = pg_fetch_row(pg_query_params(
-                'INSERT INTO public.baps_show (userid, name, broadcastdate, viewable)
+            $r = pg_fetch_row(
+                pg_query_params(
+                    'INSERT INTO public.baps_show (userid, name, broadcastdate, viewable)
                 VALUES (61, \'Managed::\'||$1, $2, true) RETURNING showid',
-                [$list['name'], $special_date]
-            ));
+                    [$list['name'], $special_date]
+                )
+            );
 
             $showid = $r[0];
             echo pg_last_error();
@@ -109,11 +109,13 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             /**
              * Create a single channel for the show, containing the items
              */
-            $r = pg_fetch_row(pg_query_params(
-                'INSERT INTO public.baps_listing (showid, name, channel) VALUES
+            $r = pg_fetch_row(
+                pg_query_params(
+                    'INSERT INTO public.baps_listing (showid, name, channel) VALUES
                 ($1, $2, 0) RETURNING listingid',
-                [$showid, $list['name']]
-            ));
+                    [$showid, $list['name']]
+                )
+            );
 
             $listingid = $r[0];
             echo pg_last_error();

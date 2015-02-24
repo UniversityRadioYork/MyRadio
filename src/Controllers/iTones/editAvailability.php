@@ -24,10 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data['timeslots']
         );
 
-        CoreUtils::redirect('iTones', 'editAvailability', [
+        CoreUtils::redirect(
+            'iTones', 'editAvailability', [
             'availabilityid' => $availability->getID(),
             'message' => base64_encode('The availability has been created.')
-        ]);
+            ]
+        );
     } else {
         //Update
         $availability = iTones_PlaylistAvailability::getInstance($data['id']);

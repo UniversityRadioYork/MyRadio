@@ -2,8 +2,6 @@
 /**
  * Main renderer for NIPSWeb
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130824
  * @package MyRadio_NIPSWeb
  */
 

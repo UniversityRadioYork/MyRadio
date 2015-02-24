@@ -15,10 +15,8 @@ use \MyRadio\MyRadio\MyRadioFormField;
 /**
  * The BannerCampaign class stores and manages information about a Banner Campaign on the front website
  *
- * @version 20130806
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Website
- * @uses \Database
+ * @uses    \Database
  */
 class MyRadio_BannerCampaign extends ServiceAPI
 {
@@ -116,7 +114,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
 
     /**
      * Returns data about the Campaign
-     * @param  bool  $full If true, returns full, detailed data about the timeslots in this campaign
+     * @param  bool $full If true, returns full, detailed data about the timeslots in this campaign
      * @return Array
      */
     public function toDataSource($full = false)
@@ -260,7 +258,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
 
     /**
      * Sets the start time of the Campaign
-     * @param  int                    $time
+     * @param  int $time
      * @return MyRadio_BannerCampaign
      */
     public function setEffectiveFrom($time)
@@ -276,7 +274,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
 
     /**
      * Sets the end time of the Campaign
-     * @param  int                    $time
+     * @param  int $time
      * @return MyRadio_BannerCampaign
      */
     public function setEffectiveTo($time)
@@ -293,14 +291,14 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 [CoreUtils::getTimestamp($time), $this->getID()]
             );
         }
-        
+
         $this->updateCacheObject();
         return $this;
     }
 
     /**
      * Sets the location of the Campaign
-     * @param  int                    $location
+     * @param  int $location
      * @return MyRadio_BannerCampaign
      */
     public function setLocation($location)
@@ -320,7 +318,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
      * @param int $day   Day the timeslot is on. 1 = Monday, 7 = Sunday. Timeslots cannot span days.
      * @param int $start Seconds since midnight that the Timeslot starts.
      * @param int $end   Seconds since midnight that the Timeslot ends.
-     * @todo Input validation.
+     * @todo  Input validation.
      */
     public function addTimeslot($day, $start, $end)
     {
@@ -339,24 +337,24 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 $end
             ]
         )[0];
-        
+
         $this->timeslots[] = [
             'id' => $id,
             'day' => $day,
             'start_time' => strtotime($start, 0),
             'end_time' => strtotime($end, 0)
         ];
-        
+
         $this->updateCacheObject();
     }
 
     /**
      * Creates a new Banner Campaign
-     * @param  MyRadio_Banner         $banner             The Banner that is being Campaigned
-     * @param  int                    $banner_location_id The location of the Banner Campaign. Default 1 (index page)
-     * @param  int                    $effective_from     Epoch time that the campaign is starts at. Default now.
-     * @param  int                    $effective_to       Epoch time that the campaign ends at. Default never.
-     * @param  Array                  $timeslots          An array of Timeslots the Campaign is active during.
+     * @param  MyRadio_Banner $banner             The Banner that is being Campaigned
+     * @param  int            $banner_location_id The location of the Banner Campaign. Default 1 (index page)
+     * @param  int            $effective_from     Epoch time that the campaign is starts at. Default now.
+     * @param  int            $effective_to       Epoch time that the campaign ends at. Default never.
+     * @param  Array          $timeslots          An array of Timeslots the Campaign is active during.
      * @return MyRadio_BannerCampaign The new BannerCampaign
      */
     public static function create(
@@ -413,7 +411,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
     /**
      * Returns the form needed to create or edit Banner Campaigns.
      *
-     * @param  int         $bannerid The ID of the Banner that this Campaign will be/is linked to
+     * @param  int $bannerid The ID of the Banner that this Campaign will be/is linked to
      * @return MyRadioForm
      */
     public static function getForm($bannerid = null)
