@@ -22,6 +22,9 @@ var Messages = function() {
                     var location;
                     if (message.location) {
                         location = message.location[0];
+                        if (message.location.length >= 2) {
+                            location = location + ' (' + message.location[1] + ')';
+                        }
                     }
                     myury.createDialog('Message', message.body + '<hr>' + location, [myury.closeButton()]);
                 }
@@ -59,7 +62,7 @@ var Messages = function() {
                 //Set some of the variables
                 img = "<div class='glyphicon glyphicon-" + glyphicons[data[i]['type']] + "'></div>";
                 msgdate = moment.unix(data[i]['time']);
-                time = msgdate.fromNow();
+                time = msgdate.format('HH:mm');
                 read = "";
                 classes = "";
                 if (data[i]['read'] === false) {
@@ -74,7 +77,7 @@ var Messages = function() {
                 titleTd.innerHTML = data[i]['title'];
 
                 dateDate.innerHTML = time;
-                dateDate.setAttribute('datetime', msgdate.toISOString);
+                dateDate.setAttribute('datetime', msgdate.toISOString());
                 dateTd.appendChild(dateDate);
 
                 newRow.appendChild(imgTd);
