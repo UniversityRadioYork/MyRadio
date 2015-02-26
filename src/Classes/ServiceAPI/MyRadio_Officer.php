@@ -142,7 +142,7 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Assigns and officership to the given member
+     * Assigns an officership to the given member
      * @param  int $memberid ID of the member for the officership
      */
     public function assignOfficer($memberid)
