@@ -439,7 +439,18 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * updates the permissions stored in the Officer Object
+     * Updates the cache objects for all current holders
+     *
+     */
+    private function updateMemberCache()
+    {
+        foreach ($this->getCurrentHolders() as $member) {
+            $member->updateCacheObject();
+        }
+    }
+
+    /**
+     * Updates the permissions stored in the Officer Object
      *
      */
     private function updatePermissions()
@@ -477,6 +488,7 @@ class MyRadio_Officer extends ServiceAPI
         );
         $this->updatePermissions();
         $this->updateCacheObject();
+        $this->updateMemberCache();
         return $this;
     }
 
@@ -495,6 +507,7 @@ class MyRadio_Officer extends ServiceAPI
         );
         $this->updatePermissions();
         $this->updateCacheObject();
+        $this->updateMemberCache();
         return $this;
     }
 
