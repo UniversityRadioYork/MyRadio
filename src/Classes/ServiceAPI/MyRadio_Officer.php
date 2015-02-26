@@ -95,13 +95,7 @@ class MyRadio_Officer extends ServiceAPI
             $this->type = $result['type'];
 
             //Get the officer's permissions
-            $this->permissions = self::$db->fetchAll(
-                'SELECT typeid AS value, descr AS text FROM public.l_action, public.auth_officer
-                WHERE typeid = lookupid
-                AND officerid=$1
-                ORDER BY descr ASC',
-                [$id]
-            );
+            $this->updatePermissions();
         }
     }
 
@@ -445,6 +439,22 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
+     * updates the permissions stored in the Officer Object
+     *
+     */
+    private function updatePermissions()
+    {
+        //Get the officer's permissions
+        $this->permissions = self::$db->fetchAll(
+            'SELECT typeid AS value, descr AS text FROM public.l_action, public.auth_officer
+            WHERE typeid = lookupid
+            AND officerid=$1
+            ORDER BY descr ASC',
+            [$this->getID()]
+        );
+    }
+
+    /**
      * Returns all the officer's active permission flags
      * @return Array
      */
@@ -465,6 +475,7 @@ class MyRadio_Officer extends ServiceAPI
             VALUES ($1, $2)',
             [$this->getID(), $permissionid]
         );
+        $this->updatePermissions();
         $this->updateCacheObject();
         return $this;
     }
@@ -482,6 +493,7 @@ class MyRadio_Officer extends ServiceAPI
             AND lookupid = $2',
             [$this->getID(), $permissionid]
         );
+        $this->updatePermissions();
         $this->updateCacheObject();
         return $this;
     }
