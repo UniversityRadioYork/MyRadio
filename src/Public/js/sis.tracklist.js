@@ -61,6 +61,7 @@ var Tracklist = function() {
                         recStatusDiv.innerHTML =
                             'This track is not currently in the library, but will be logged anyway.' + 
                             '<br>Think it is? Try searching using the title box.';
+                        submitButton.removeAttribute('disabled');
                     } else {
                         recStatusReset();
                     }
