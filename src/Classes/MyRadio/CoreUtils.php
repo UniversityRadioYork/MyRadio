@@ -595,8 +595,8 @@ class CoreUtils
 
     /**
      * Returns all permissions that are in $perms but not $diffPerms
-     * @param  array $perms array of permissions
-     * @param  array $diffPerms array of permissions
+     * @param   $perms array of permissions
+     * @param   $diffPerms array of permissions
      * @return array        all permissions not included in $perms
      */
     public static function diffPermissions($perms, $diffPerms)
