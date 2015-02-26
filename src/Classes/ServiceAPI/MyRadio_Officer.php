@@ -144,6 +144,7 @@ class MyRadio_Officer extends ServiceAPI
     /**
      * Assigns an officership to the given member
      * @param  int $memberid ID of the member for the officership
+     * @api   POST
      */
     public function assignOfficer($memberid)
     {
@@ -160,6 +161,7 @@ class MyRadio_Officer extends ServiceAPI
      * Stands Down the officership provided.
      *
      * @param int $memberofficerid The ID of the officership to stand down
+     * @api   POST
      */
     public static function standDown($memberofficerid)
     {
@@ -469,7 +471,8 @@ class MyRadio_Officer extends ServiceAPI
 
     /**
      * Removes a permission flag from the officer
-     * @param $permissionid the permission to remove
+     * @param int $permissionid the permission to remove
+     * @api   POST
      */
     public function revokePermission($permissionid)
     {

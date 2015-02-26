@@ -11,8 +11,8 @@ if not loop.first %}&{% endif %}{{i}}={{options[i]}}{%
 endfor %}
 {% endmacro %}
 
-{% macro API(config, module, action, options) %}
-{{config.api_url}}/{{module}}/{{action}}/{%
+{% macro API(config, module, action, options, id) %}
+{{config.api_url}}/{{module}}{% if id %}/{{id}}{% endif %}/{{action}}/{%
 if options %}?{% endif %}{%
 for i in options|keys %}{%
 if not loop.first %}&{% endif %}{{i}}={{options[i]}}{%

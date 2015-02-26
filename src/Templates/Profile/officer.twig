@@ -28,7 +28,7 @@
     <ul>
         {% for perm in officer.permissions %}
             <li>
-                {{ perm.text }} [<a href="{{MyRadio.API(config,'Officer','revokePermission', {'id':officer.officerid, 'permissionid':perm.value})}}">Remove</a>]
+                {{ perm.text }} [<a href="{{MyRadio.API(config,'Officer','revokePermission', {'permissionid':perm.value}, officer.officerid)}}">Remove</a>]
             </li>
         {% endfor %}
     </ul>
