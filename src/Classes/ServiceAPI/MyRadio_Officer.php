@@ -153,6 +153,7 @@ class MyRadio_Officer extends ServiceAPI
             VALUES ($1, $2, NOW())',
             [$this->getID(), $memberid]
         );
+        MyRadio_User::getInstance($memberid)->updateCacheObject();
     }
 
     /**
@@ -162,13 +163,14 @@ class MyRadio_Officer extends ServiceAPI
      */
     public static function standDown($memberofficerid)
     {
-        self::$db->query(
+        $return = self::$db->fetchColumn(
             'UPDATE public.member_officer
             SET till_date = NOW()
-            WHERE member_officerid = $1',
+            WHERE member_officerid = $1
+            RETURNING memberid',
             [$memberofficerid]
         );
-        // TODO update cache object & clear session automatically
+        MyRadio_User::getInstance($return[0])->updateCacheObject();
     }
 
     /**
@@ -681,7 +683,6 @@ class MyRadio_Officer extends ServiceAPI
     /**
      * Returns data about the Officer.
      *
-     * @todo   User who holds or has held position
      * @param  bool $full If true, includes info about User who holds position.
      * @return Array
      */
