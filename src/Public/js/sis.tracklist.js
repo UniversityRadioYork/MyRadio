@@ -56,7 +56,7 @@ var Tracklist = function() {
 
             recStatusCheckBad = function() {
                 if (!trackLookupId) {
-                    if (addArtist.value || addArtist.value) {
+                    if (addArtist.value && addAlbum.value) {
                         recStatusDiv.className = 'alert alert-danger';
                         recStatusDiv.innerHTML =
                             'This track is not currently in the library, but will be logged anyway.' + 
