@@ -1,5 +1,7 @@
 {% extends 'stripe.twig' %}
+
 {% block stripecontent %}
+
 <div id="profile">
   <h3>
       {% if officer.type == 'o' %}Officer
@@ -10,14 +12,26 @@
       {{ officer.team.name }}
   </h3>
   <p>{{officer.description}}</p>
+
   <h4>Held By</h4>
   <ul>
     {% for i in officer.history %}
-    <li><a href="{{i.User.url}}">{{i.User.fname}} {{i.User.sname}}</a> ({{i.from|date('d/m/Y')}} -
+    <li>
+        <a href="{{i.User.url}}">{{i.User.fname}} {{i.User.sname}}</a> ({{i.from|date('d/m/Y')}} -
         {% if i.to %}{{i.to|date('d/m/Y')}}{% else %}Present
-        [<a href="{{myury.makeURL(config,'Profile','removeOfficer',
-          {'memberofficerid':i.memberofficerid})}}">Stand Down</a>]{% endif %})</li>
+        [<a href="{{MyRadio.API(config,'Officer','standDown', {'memberofficerid':i.memberofficerid})}}">Stand Down</a>]{% endif %})
+    </li>
     {% endfor %}
   </ul>
+
+  <h4>Permissions</h4>
+    <ul>
+        {% for perm in officer.permissions %}
+            <li>
+                {{ perm.text }} [<a href="{{MyRadio.API(config,'Officer','revokePermission', {'permissionid':perm.value}, officer.officerid)}}">Remove</a>]
+            </li>
+        {% endfor %}
+    </ul>
 </div>
+
 {% endblock %}

@@ -104,7 +104,7 @@ class MyRadio_Swagger
              * Add the custom @api docblock option
              * @api may be GET, POST...
              */
-            $comment = preg_replace('/^.*\@api ([A-Z]+)?.*$/s', '$1', $method->getDocComment(), 1, $count);
+            $comment = preg_replace('/^.*\@api\s+([A-Z]+)?.*$/s', '$1', $method->getDocComment(), 1, $count);
             if ($count === 1) {
                 $meta['api'] = $comment;
             } else {

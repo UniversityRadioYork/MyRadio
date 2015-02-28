@@ -118,7 +118,7 @@
         {% endfor %}
         </ul>
         {% if (can_mark_payments and not user.is_currently_paid) %}
-        <form type="post" action="{{myury.makeURL(config, 'Profile', 'markPaid')}}">
+        <form type="post" action="{{MyRadio.makeURL(config, 'Profile', 'markPaid')}}">
           <input type="hidden" name="memberid" value="{{user.memberid}}">
           <input type="submit" value="Mark Paid">
         </form>
@@ -163,7 +163,7 @@
         {% endfor %}
         </ul>
         {% if user.training_avail %}
-        <form action="{{myury.makeURL(config, 'Profile', 'addTrainingStatus')}}"
+        <form action="{{MyRadio.makeURL(config, 'Profile', 'addTrainingStatus')}}"
               method="POST">
         <select name="status_id" id="status_id">
           {% for train in user.training_avail %}

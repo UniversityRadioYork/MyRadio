@@ -7,7 +7,7 @@
 <p>We've made some changes to the way you can log in to {{config.short_name}},
 and want to let you choose how you do it from now on. Select your preferred option
 from the list below. We've highlighted the one we think is best for you.</p>
-<form action='{{myury.makeURL(config,"MyRadio","chooseAuth")}}' method='post' class='chooseAuth'>
+<form action='{{MyRadio.makeURL(config,"MyRadio","chooseAuth")}}' method='post' class='chooseAuth'>
     <input type='hidden' name='next' value='{{next}}'>
     {% for a in methods %}
     <div class='myradiofrmfield-container'>

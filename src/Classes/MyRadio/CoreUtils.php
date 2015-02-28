@@ -577,6 +577,34 @@ class CoreUtils
     }
 
     /**
+     * udiff function for permission value equality
+     * @param  array $perm1 permission value & description
+     * @param  array $perm2 permission value & description
+     * @return int          comparison result
+     */
+    private static function comparePermission($perm1, $perm2)
+    {
+        if ($perm1['value'] === $perm2['value']) {
+            return 0;
+        } elseif ($perm1['value'] < $perm2['value']) {
+            return -1;
+        } else {
+            return 1;
+        }
+    }
+
+    /**
+     * Returns all permissions that are in $perms but not $diffPerms
+     * @param   $perms array of permissions
+     * @param   $diffPerms array of permissions
+     * @return array        all permissions not included in $perms
+     */
+    public static function diffPermissions($perms, $diffPerms)
+    {
+        return array_udiff($perms, $diffPerms, 'self::comparePermission');
+    }
+
+    /**
      * Add a new permission constant to the database.
      * @param String $descr    A useful friendly description of what this action means.
      * @param String $constant /AUTH_[A-Z_]+/
@@ -878,6 +906,18 @@ class CoreUtils
         $purifier = new \HTMLPurifier($config);
 
         return $purifier->purify($dirty_html);
+    }
+
+    /**
+     * Returns lookup values for Status for a select box
+     * @return array
+     */
+    public static function getStatusLookup()
+    {
+        return Database::getInstance()->fetchAll(
+            'SELECT statusid AS value, descr AS text FROM public.l_status
+            ORDER BY descr ASC'
+        );
     }
 
     /**

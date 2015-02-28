@@ -19,16 +19,28 @@ foreach ($officers as $k => $v) {
             'value' => $v['name']
         ];
     }
+    $officers[$k]['viewlink'] = [
+        'display' => 'icon',
+        'value' => 'user',
+        'title' => 'View Officer',
+        'url' => CoreUtils::makeURL('Profile', 'officer', ['officerid' => $v['officerid']]),
+    ];
     $officers[$k]['editlink'] = [
         'display' => 'icon',
-        'value' => 'wrench',
+        'value' => 'pencil',
         'title' => 'Edit Officer',
         'url' => CoreUtils::makeURL('Profile', 'editOfficer', ['officerid' => $v['officerid']]),
+    ];
+    $officers[$k]['assignlink'] = [
+        'display' => 'icon',
+        'value' => 'plus',
+        'title' => 'Assign Officer',
+        'url' => CoreUtils::makeURL('Profile', 'assignOfficer', ['officerid' => $v['officerid']]),
     ];
 }
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-    ->addVariable('tablescript', 'myury.profile.listOfficers')
+    ->addVariable('tablescript', 'myradio.profile.listOfficers')
     ->addVariable('title', 'Officers List')
     ->addVariable('tabledata', $officers)
     ->render();

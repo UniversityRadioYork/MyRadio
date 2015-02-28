@@ -1,5 +1,5 @@
 {% spaceless %}
-{% import 'macros.twig' as myury %}
+{% import 'macros.twig' as MyRadio %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -17,7 +17,7 @@
          <ul class="nav navbar-nav navbar-right">
             {% if memberid %}
               <li>
-                <a href="{{myury.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}">
+                <a href="{{MyRadio.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}">
                   <span class="glyphicon glyphicon-time"></span> {% if timeslotname is not null %}{{ timeslotname }}{% else %}Select Timeslot{% endif %}
                 </a>
               </li>
@@ -31,13 +31,13 @@
                    {{ name | raw }}<span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu" role="menu">
-                  <li><a href="{{myury.makeURL(config, 'Profile')}}"><span class="glyphicon glyphicon-user"></span> My Profile</a></li>
+                  <li><a href="{{MyRadio.makeURL(config, 'Profile')}}"><span class="glyphicon glyphicon-user"></span> My Profile</a></li>
                   {% if impersonator %}
                     <li class="divider"></li>
                     <li class="dropdown-header">Impersonator: {{impersonator | raw }}</li>
-                    <li><a href="{{myury.makeURL(config, 'MyRadio', 'impersonate')}}"><span class="glyphicon glyphicon-eye-close"></span> Unimpersonate</a></li>
+                    <li><a href="{{MyRadio.makeURL(config, 'MyRadio', 'impersonate')}}"><span class="glyphicon glyphicon-eye-close"></span> Unimpersonate</a></li>
                   {% endif %}
-                  <li><a href="{{myury.makeURL(config, 'MyRadio', 'logout')}}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                  <li><a href="{{MyRadio.makeURL(config, 'MyRadio', 'logout')}}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
               </li>
             {% endif %}
