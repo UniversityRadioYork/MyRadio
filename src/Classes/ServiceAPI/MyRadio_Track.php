@@ -592,13 +592,12 @@ class MyRadio_Track extends ServiceAPI
         }
     }
 
-    public static function identifyAndStoreTrack($tmpid, $title, $artist, $album, $position, $explicit)
+    public static function identifyAndStoreTrack($tmpid, $title, $artist, $album, $position, $explicit = null)
     {
         // We need to rollback if something goes wrong later
         self::$db->query('BEGIN');
 
         $ainfo = null;
-        $clean = 'u'; // Default value for clean / explicitness.
         if ($album == "FROM_LASTFM") {
             // Get the album info if we're getting it from lastfm
             $ainfo = self::getAlbumDurationAndPositionFromLastfm($title, $artist);
@@ -616,12 +615,17 @@ class MyRadio_Track extends ServiceAPI
             $ainfo['duration'] = intval($getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $tmpid)['playtime_seconds']);
         }
 
-        // See if the explicit checkbox was set, and set the value for the DB accordingly
-        if ($explicit === true){
-            $clean = 'n';
-        } elseif ($explicit === false) { // Checkbox is either true or false, slightly misleading equality test.
-            $clean = 'u'; // Safe default
+        // See if the explicit is set, and set the value for the DB accordingly - if not set unknown
+        if (!is_null($explicit)) {
+            if ($explicit === true){
+                $clean = 'n';
+            } elseif ($explicit === false) {
+                $clean = 'y';
+            }
+        } else {
+            $clean = 'u';
         }
+
 
         // Check if the track is already in the library and create it if not
         $track = self::findByNameArtist($title, $artist, 1, false, true);
