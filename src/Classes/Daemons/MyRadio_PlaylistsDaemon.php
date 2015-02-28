@@ -17,11 +17,8 @@ use \MyRadio\NIPSWeb\NIPSWeb_AutoPlaylist;
 /**
  * This Daemon updates the auto-generated iTones Playlists once an hour.
  *
- * @version 20130710
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Tracklist
- * @uses \Database
- *
+ * @uses    \Database
  */
 class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {

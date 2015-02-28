@@ -3,22 +3,21 @@ $('.twig-datatable').dataTable(
         "aoColumns": [
             //name
             {
-              "bVisible" : false
-            },
+                "bVisible" : false
+        },
             //description
             {
-              sTitle: "Chart Name"
-            },
+                sTitle: "Chart Name"
+        },
             //releases
             {
-              sTitle: "Releases"
-            },
+                sTitle: "Releases"
+        },
             //editlink
             {
-              sTitle: "Edit"
-            }
+                sTitle: "Edit"
+        }
         ],
-        "bJQueryUI": true,
         "bPaginate": false,
         "aaSorting": [[ 1, "asc" ]]
     }

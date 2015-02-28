@@ -2,8 +2,6 @@
 /**
  * The most played BAPS tracks for the given timeframe
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130708
  * @package MyRadio_Stats
  */
 

@@ -17,10 +17,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($data['id'])) {
         //Create
         $playlist = iTones_Playlist::create($data['title'], $data['description']);
-        CoreUtils::redirect('iTones', 'configurePlaylist', [
+        CoreUtils::redirect(
+            'iTones', 'configurePlaylist', [
             'playlistid' => $playlist->getID(),
             'message' => base64_encode('The playlist has been created.')
-        ]);
+            ]
+        );
     } else {
         //Edit
         $playlist = iTones_Playlist::getInstance($data['id']);
@@ -41,12 +43,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //Update
         $playlist = iTones_Playlist::getInstance($_REQUEST['playlistid']);
         $playlist->getEditForm()
-                ->setTemplate('iTones/configurePlaylist.twig')
-                ->render(array(
+            ->setTemplate('iTones/configurePlaylist.twig')
+            ->render(
+                array(
                     'tabledata' => CoreUtils::dataSourceParser(
                         iTones_PlaylistAvailability::getAvailabilitiesForPlaylist($playlist->getID())
                     ),
                     'playlistid' => $_REQUEST['playlistid']
-                ));
+                    )
+            );
     }
 }

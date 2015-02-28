@@ -3,8 +3,6 @@
 /**
  * This provides similar information to listOfficers, but in a far nicer format.
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130802
  * @package MyRadio_Profile
  */
 

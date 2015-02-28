@@ -16,11 +16,8 @@ use \MyRadio\ServiceAPI\MyRadio_User;
  * The object obviously needs to have metadata tables in the database for this
  * to work.
  *
- * @version 20131016
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @author Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Core
- * @uses \Database
+ * @uses    \Database
  */
 trait MyRadio_MetadataSubject
 {

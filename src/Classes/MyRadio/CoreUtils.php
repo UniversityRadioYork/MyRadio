@@ -19,10 +19,8 @@ use \MyRadio\Iface\MyRadio_DataSource;
  * Standard API Utilities. Basically miscellaneous functions for the core system
  * No database accessing etc should be setup here.
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20140102
  * @package MyRadio_Core
- * @todo Factor out permission code into a seperate class?
+ * @todo    Factor out permission code into a seperate class?
  */
 class CoreUtils
 {
@@ -68,8 +66,8 @@ class CoreUtils
 
     /**
      * Checks whether a given Module/Action combination is valid
-     * @param  String  $module The module to check
-     * @param  String  $action The action to check. Default 'default'
+     * @param  String $module The module to check
+     * @param  String $action The action to check. Default 'default'
      * @return boolean Whether or not the request is valid
      * @assert ('Core', 'default') === true
      * @assert ('foo', 'barthatdoesnotandwillnoteverexisteverbecauseitwouldbesilly') === false
@@ -112,7 +110,7 @@ class CoreUtils
 
     /**
      * Checks whether a requested action is safe
-     * @param  String           $action A module action
+     * @param  String $action A module action
      * @return boolean          Whether the module is safe to be used on a filesystem
      * @throws MyRadioException Thrown if directory traversal detected
      * @assert ('safe!') === true
@@ -142,7 +140,7 @@ class CoreUtils
 
     /**
      * Formats a number into h:m:s format.
-     * @param  int    $int
+     * @param  int $int
      * @return String
      */
     public static function intToTime($int)
@@ -162,7 +160,7 @@ class CoreUtils
 
     /**
      * Returns a postgresql-formatted timestamp
-     * @param  int    $time The time to get the timestamp for. Default right now.
+     * @param  int $time The time to get the timestamp for. Default right now.
      * @return String a timestamp
      * @assert (30) == '1970-01-01 00:00:30'
      */
@@ -173,6 +171,31 @@ class CoreUtils
         }
 
         return gmdate('Y-m-d H:i:s+00', $time);
+    }
+
+    /**
+     * Returns the ISO8601 Year and Week Number for the given time
+     * @param int $time The time to get the info for, default now.
+     * @return array [year, week_number]
+     */
+    public static function getYearAndWeekNo($time = null)
+    {
+        if ($time === null) {
+            $time = time();
+        }
+
+        $year_absolute = (int)gmdate('Y', $time);
+        $week_number = (int)gmdate('W', $time);
+        $month = (int)gmdate('n', $time);
+
+        if ($month === 1 && $week_number > 50) {
+            //This is the final week of *last* year
+            $year_adjusted = $year_absolute - 1;
+        } else {
+            $year_adjusted = $year_absolute;
+        }
+
+        return [$year_adjusted, $week_number];
     }
 
     /**
@@ -190,8 +213,8 @@ class CoreUtils
             );
 
             // Default to this year
-            $beforeAccountExpiry = strtotime($term[0]) <= strtotime('+' . Config::$account_expiry_before . ' days');
-            if (empty($term) || $beforeAccountExpiry) {
+            $account_reset_time = strtotime('+' . Config::$account_expiry_before . ' days');
+            if (empty($term) || strtotime($term[0]) <= $account_reset_time) {
                 CoreUtils::$academicYear = date('Y');
             } else {
                 self::$academicYear = date('Y') - 1;
@@ -203,8 +226,8 @@ class CoreUtils
 
     /**
      * Returns a postgresql formatted interval
-     * @param  int    $start The start time
-     * @param  int    $end   The end time
+     * @param  int $start The start time
+     * @param  int $end   The end time
      * @return String a PgSQL valid interval value
      * @assert (0, 0) == '0 seconds'
      */
@@ -215,7 +238,6 @@ class CoreUtils
 
     /**
      * Redirects back to previous page.
-     *
      */
     public static function back()
     {
@@ -224,7 +246,6 @@ class CoreUtils
 
     /**
      * Responds with nocontent.
-     *
      */
     public static function nocontent()
     {
@@ -234,7 +255,6 @@ class CoreUtils
 
     /**
      * Responds with JSON data.
-     *
      */
     public static function dataToJSON($data)
     {
@@ -314,7 +334,7 @@ class CoreUtils
 
             if (!empty($params)) {
                 if (is_string($params)) {
-                    $str .= $params;
+                    $str .= "&$params";
                 } else {
                     foreach ($params as $k => $v) {
                         $str .= "&$k=$v";
@@ -350,7 +370,7 @@ class CoreUtils
     /**
      * Returns the Actions and API Endpoints that utilise a given type.
      *
-     * @param  int            $typeid
+     * @param  int $typeid
      * @return [[action,...], [api method,...]]
      */
     public static function getAuthUsage($typeid)
@@ -379,7 +399,7 @@ class CoreUtils
     /**
      * Gets the description (friendly name) of the given permission.
      *
-     * @param  int    $typeid
+     * @param  int $typeid
      * @return String
      */
     public static function getAuthDescription($typeid)
@@ -391,24 +411,21 @@ class CoreUtils
 
     /**
      * Checks using cached permissions whether the current member has the specified permission
-     * @param  int     $permission The ID of the permission, resolved by using an AUTH_ constant
+     * @param  int $permission The ID of the permission, resolved by using an AUTH_ constant
      * @return boolean Whether the member has the requested permission
      */
     public static function hasPermission($permission)
     {
-        if (!isset($_SESSION['member_permissions'])) {
-            return false;
+        if (isset($_SESSION['memberid'])) {
+            return MyRadio_User::getInstance()->hasAuth($permission);
+        } else {
+            return $permission === null;
         }
-        if ($permission === null) {
-            return true;
-        }
-
-        return in_array($permission, $_SESSION['member_permissions']);
     }
 
     /**
      * Checks if the user has the given permission. Or, alternatiely, if we are currently running CLI, reutrns true.
-     * @param  int  $permission A permission constant to check
+     * @param  int $permission A permission constant to check
      * @return void Will Fatal error if the user does not have the permission
      */
     public static function requirePermission($permission)
@@ -469,7 +486,14 @@ class CoreUtils
         if (!$authorised && $require) {
             //Requires login
             if (!isset($_SESSION['memberid']) || $_SESSION['auth_use_locked'] !== false) {
-                self::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
+                $is_ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+                                && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+                            || empty($_SERVER['REMOTE_ADDR']);
+                if ($is_ajax) {
+                    throw new MyRadioException('Login required', 401);
+                } else {
+                    self::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
+                }
             } else {
                 //Authenticated, but not authorized
                 require 'Controllers/Errors/403.php';
@@ -495,7 +519,6 @@ class CoreUtils
      *               service: The name of the Service the module is in<br>
      *               permission: The name of the permission applied to that Service/Module/Action combination<br>
      *               actpermissionid: The unique ID of this Service/Module/Action combination
-     *
      */
     public static function getAllActionPermissions()
     {
@@ -555,7 +578,7 @@ class CoreUtils
 
     /**
      * Add a new permission constant to the database.
-     * @param String $descr A useful friendly description of what this action means.
+     * @param String $descr    A useful friendly description of what this action means.
      * @param String $constant /AUTH_[A-Z_]+/
      */
     public static function addPermission($descr, $constant)
@@ -654,8 +677,8 @@ class CoreUtils
      * Assigns a permission to a command. Note arguments are the integer IDs
      * NOT the String names
      *
-     * @param int $module The module ID
-     * @param int $action The action ID
+     * @param int $module     The module ID
+     * @param int $action     The action ID
      * @param int $permission The permission typeid
      */
     public static function addActionPermission($module, $action, $permission)
@@ -702,30 +725,30 @@ class CoreUtils
         for ($j = 0; $j < $arrsize; $j++) {
             $val = $xmlarray[$j];
             switch ($val["type"]) {
-                case "open":
-                    $opened[$val["level"]] = 0;
-                    /* Fall through */
-                case "complete":
-                    $index = "";
-                    for ($i = 1; $i < ($val["level"]); $i++) {
-                        $index .= "[" . $opened[$i] . "]";
-                    }
-                    $path = explode('][', substr($index, 1, -1));
-                    $value = &$array;
-                    foreach ($path as $segment) {
-                        $value = &$value[$segment];
-                    }
-                    $value = $val;
-                    unset($value["level"]);
-                    unset($value["type"]);
-                    if ($val["type"] == "complete") {
-                        $opened[$val["level"] - 1] ++;
-                    }
-                    break;
-                case "close":
+            case "open":
+                $opened[$val["level"]] = 0;
+                /* Fall through */
+            case "complete":
+                $index = "";
+                for ($i = 1; $i < ($val["level"]); $i++) {
+                    $index .= "[" . $opened[$i] . "]";
+                }
+                $path = explode('][', substr($index, 1, -1));
+                $value = &$array;
+                foreach ($path as $segment) {
+                    $value = &$value[$segment];
+                }
+                $value = $val;
+                unset($value["level"]);
+                unset($value["type"]);
+                if ($val["type"] == "complete") {
                     $opened[$val["level"] - 1] ++;
-                    unset($opened[$val["level"]]);
-                    break;
+                }
+                break;
+            case "close":
+                $opened[$val["level"] - 1] ++;
+                unset($opened[$val["level"]]);
+                break;
             }
         }
 
@@ -867,10 +890,10 @@ class CoreUtils
      * You MUST use POST with this - otherwise the credentials will turn up in
      * access logs.
      *
-     * @param  String             $user
-     * @param  String             $pass
+     * @param  String $user
+     * @param  String $pass
      * @return MyRadio_User|false
-     * @api POST
+     * @api    POST
      */
     public static function testCredentials($user, $pass)
     {
@@ -888,9 +911,10 @@ class CoreUtils
             $a = new $authenticator();
             $result = $a->validateCredentials($user, $pass);
             if ($result instanceof MyRadio_User) {
-                if (Config::$single_authenticator &&
-                        $result->getAuthProvider() !== null &&
-                        $result->getAuthProvider() !== $authenticator) {
+                if (Config::$single_authenticator
+                    && $result->getAuthProvider() !== null
+                    && $result->getAuthProvider() !== $authenticator
+                ) {
                     //This is the wrong authenticator for the user
                     continue;
                 } else {

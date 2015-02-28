@@ -35,7 +35,7 @@ BEGIN
         AND ((NEW."timestopped" - NEW."timeplayed" > '00:00:30') )
         AND ((SELECT COUNT(*) FROM tracklist.tracklist WHERE bapsaudioid = NEW."audiologid") = 0)
         )
-        
+
  THEN
         INSERT INTO tracklist.tracklist (source, timestart, timestop, timeslotid, bapsaudioid)
                 VALUES ('b', NEW."timeplayed", NEW."timestopped", (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot WHERE start_time <= NOW() AND (start_time + duration) >= NOW()ORDER BY show_season_timeslot_id ASC LIMIT 1 ), NEW."audiologid" )
@@ -43,8 +43,8 @@ BEGIN
 	INSERT INTO tracklist.track_rec
                 VALUES ("audid", (SELECT rec.recordid FROM rec_track rec INNER JOIN baps_audio ba USING (trackid)
                 WHERE ba.audioid = NEW."audioid"), (SELECT trackid FROM baps_audio WHERE audioid = NEW."audioid"));
- 
-		
+
+
 	END IF;
 	RETURN NULL;
 END $$;
@@ -70,7 +70,7 @@ CREATE FUNCTION process_gammu_text() RETURNS trigger
         IF (TG_OP = 'INSERT') THEN
            IF (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot WHERE start_time <= NOW() AND (start_time + duration) >= NOW() ORDER BY show_season_timeslot_id ASC LIMIT 1) IS NOT NULL THEN
               INSERT INTO sis2.messages (commtypeid, timeslotid, sender, subject, content, statusid)
-              
+
               VALUES (2, (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot WHERE start_time <= NOW() AND (start_time + duration) >= NOW() ORDER BY show_season_timeslot_id ASC LIMIT 1), NEW."SenderNumber", NEW."TextDecoded", NEW."TextDecoded", 1);
               RETURN NEW;
            ELSE
@@ -529,29 +529,7 @@ CREATE SEQUENCE api_class_map_api_map_id_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE api_class_map_api_map_id_seq OWNED BY api_class_map.api_map_id;
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Track', 'Track');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Show', 'Show');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Season', 'Season');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Timeslot', 'Timeslot');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Album', 'Album');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Demo', 'Demo');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_List', 'List');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Photo', 'Photo');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Podcast', 'Podcast');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Scheduler', 'Scheduler');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_TrackCorrection', 'TrackCorrection');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_TrainingStatus', 'Training');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_UserTrainingStatus', 'UserTraining');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Selector', 'Selector');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Alias', 'Alias');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Officer', 'Officer');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Team', 'Team');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_TracklistItem', 'TracklistItem');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_User', 'User');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Swagger', 'resources');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\iTones\iTones_Playlist', 'Playlist');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\iTones\iTones_Utils', 'iTones');
-INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\MyRadio\CoreUtils', 'Utils');
+
 CREATE TABLE api_key (
     key_string character varying NOT NULL,
     description character varying NOT NULL,
@@ -585,7 +563,7 @@ CREATE SEQUENCE api_method_auth_api_method_auth_id_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE api_method_auth_api_method_auth_id_seq OWNED BY api_method_auth.api_method_auth_id;
-INSERT INTO api_method_auth (class_name, method_name, typeid) VALUES ('\MyRadio\ServiceAPI\MyRadio_Swagger', NULL, NULL);
+
 CREATE TABLE award_categories (
     awardid integer NOT NULL,
     name character varying NOT NULL
@@ -611,23 +589,6 @@ CREATE SEQUENCE award_member_awardmemberid_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE award_member_awardmemberid_seq OWNED BY award_member.awardmemberid;
-CREATE TABLE contract_versions (
-    contract_version_id integer NOT NULL,
-    description text,
-    ratified_date date,
-    enforced_date date
-);
-COMMENT ON TABLE contract_versions IS 'Stores the revision history of URY''s presenter contract. This way we can ensure presenters have signed the latest version.';
-COMMENT ON COLUMN contract_versions.description IS 'A description of revisions made in this version of the contract.';
-COMMENT ON COLUMN contract_versions.ratified_date IS 'The date the new version of the contract came into use.';
-COMMENT ON COLUMN contract_versions.enforced_date IS 'If NULL, then it isn''t required for presenters to have signed the new contract yet.';
-CREATE SEQUENCE contract_versions_contract_version_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE contract_versions_contract_version_id_seq OWNED BY contract_versions.contract_version_id;
 CREATE TABLE error_rate (
     request_id integer NOT NULL,
     server_ip character varying NOT NULL,
@@ -1283,9 +1244,13 @@ CREATE TABLE l_newsfeed (
     feedid integer NOT NULL,
     feedname character varying(30) NOT NULL
 );
+INSERT INTO l_newsfeed (feedid, feedname) VALUES (1, 'Members News');
+INSERT INTO l_newsfeed (feedid, feedname) VALUES (2, 'Tech News');
+INSERT INTO l_newsfeed (feedid, feedname) VALUES (3, 'Breaking News');
+INSERT INTO l_newsfeed (feedid, feedname) VALUES (4, 'Presenter Information');
 COMMENT ON TABLE l_newsfeed IS 'Lookup table for internal news feeds';
 CREATE SEQUENCE l_newsfeeds_feedid_seq
-    START WITH 1
+    START WITH 5
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -1411,7 +1376,8 @@ CREATE TABLE member (
     require_password_change boolean DEFAULT false NOT NULL,
     profile_photo integer,
     bio text,
-    auth_provider character varying
+    auth_provider character varying,
+    contract_signed boolean DEFAULT false NOT NULL
 );
 COMMENT ON COLUMN member.email IS 'If set, this is the user''s contact address. Otherwise, use the eduroam field.';
 COMMENT ON COLUMN member.local_name IS 'This column represents the part of the user''s URY email address before the @. When null, the user does not have a URY email account.';
@@ -1756,6 +1722,11 @@ CREATE TABLE sis_commtype (
     commtypeid integer NOT NULL,
     descr character varying(16) NOT NULL
 );
+INSERT INTO sis_commtype (commtypeid, descr) VALUES (1, 'Email');
+INSERT INTO sis_commtype (commtypeid, descr) VALUES (2, 'SMS');
+INSERT INTO sis_commtype (commtypeid, descr) VALUES (3, 'Website');
+INSERT INTO sis_commtype (commtypeid, descr) VALUES (4, 'Request');
+INSERT INTO sis_commtype (commtypeid, descr) VALUES (5, 'Mobile Site');
 CREATE SEQUENCE sis_commtype_commtypeid_seq
     START WITH 6
     INCREMENT BY 1
@@ -1783,8 +1754,13 @@ CREATE TABLE sis_status (
     statusid integer NOT NULL,
     descr character varying(8)
 );
+INSERT INTO sis_status (statusid, descr) VALUES (1, 'Unread');
+INSERT INTO sis_status (statusid, descr) VALUES (2, 'Read');
+INSERT INTO sis_status (statusid, descr) VALUES (3, 'Deleted');
+INSERT INTO sis_status (statusid, descr) VALUES (4, 'Junk');
+INSERT INTO sis_status (statusid, descr) VALUES (5, 'Abusive');
 CREATE SEQUENCE sis_status_statusid_seq
-    START WITH 1
+    START WITH 6
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -2558,7 +2534,6 @@ ALTER TABLE ONLY api_class_map ALTER COLUMN api_map_id SET DEFAULT nextval('api_
 ALTER TABLE ONLY api_method_auth ALTER COLUMN api_method_auth_id SET DEFAULT nextval('api_method_auth_api_method_auth_id_seq'::regclass);
 ALTER TABLE ONLY award_categories ALTER COLUMN awardid SET DEFAULT nextval('award_categories_awardid_seq'::regclass);
 ALTER TABLE ONLY award_member ALTER COLUMN awardmemberid SET DEFAULT nextval('award_member_awardmemberid_seq'::regclass);
-ALTER TABLE ONLY contract_versions ALTER COLUMN contract_version_id SET DEFAULT nextval('contract_versions_contract_version_id_seq'::regclass);
 ALTER TABLE ONLY error_rate ALTER COLUMN request_id SET DEFAULT nextval('error_rate_request_id_seq'::regclass);
 ALTER TABLE ONLY modules ALTER COLUMN moduleid SET DEFAULT nextval('modules_moduleid_seq'::regclass);
 ALTER TABLE ONLY photos ALTER COLUMN photoid SET DEFAULT nextval('photos_photoid_seq'::regclass);
@@ -3069,14 +3044,6 @@ ALTER TABLE ONLY award_categories
 
 ALTER TABLE ONLY award_member
     ADD CONSTRAINT award_member_pkey PRIMARY KEY (awardmemberid);
-
-
---
--- Name: contract_versions_pkey; Type: CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY contract_versions
-    ADD CONSTRAINT contract_versions_pkey PRIMARY KEY (contract_version_id);
 
 
 --
@@ -7295,3 +7262,38 @@ CREATE TABLE music.explicit_checked (
 
 ALTER TABLE ONLY music.explicit_checked ADD CONSTRAINT explicit_checked_pkey PRIMARY KEY (trackid);
 ALTER TABLE music.explicit_checked ADD CONSTRAINT explicit_checked_fkey FOREIGN KEY (trackid) REFERENCES public.rec_track(trackid) ON DELETE CASCADE;
+
+SET search_path = myury, pg_catalog;
+
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Track', 'Track');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Show', 'Show');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Season', 'Season');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Timeslot', 'Timeslot');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Album', 'Album');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Demo', 'Demo');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_List', 'List');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Photo', 'Photo');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Podcast', 'Podcast');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Scheduler', 'Scheduler');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_TrackCorrection', 'TrackCorrection');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_TrainingStatus', 'Training');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_UserTrainingStatus', 'UserTraining');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Selector', 'Selector');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Alias', 'Alias');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Officer', 'Officer');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Team', 'Team');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_TracklistItem', 'TracklistItem');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_User', 'User');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\MyRadio_Swagger', 'resources');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\iTones\iTones_Playlist', 'Playlist');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\iTones\iTones_Utils', 'iTones');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\MyRadio\CoreUtils', 'Utils');
+
+INSERT INTO api_method_auth (class_name, method_name, typeid) VALUES ('\MyRadio\ServiceAPI\MyRadio_Swagger', NULL, NULL);
+INSERT INTO api_method_auth (class_name, method_name, typeid) VALUES ('\MyRadio\ServiceAPI\MyRadio_Timeslot', 'getWeekSchedule', NULL);
+
+SET search_path = tracklist, pg_catalog;
+INSERT INTO tracklist.source (sourceid, source) VALUES ('b', 'BAPS');
+INSERT INTO tracklist.source (sourceid, source) VALUES ('m', 'Manual');
+INSERT INTO tracklist.source (sourceid, source) VALUES ('o', 'Other');
+INSERT INTO tracklist.source (sourceid, source) VALUES ('j', 'Jukebox');

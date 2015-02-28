@@ -4,5 +4,6 @@
 {% if display_labels %}<label for="{{frm_name}}-{{field.name}}">{{field.label}}</label>{% endif %}
 <input type="text" class="{{field.class}}{% if field.required %} required{% endif %} dateITA"
        value="{{field.value}}" name="{{frm_name}}-{{sfieldname}}" id="{{frm_name}}-{{field.name}}"
-       {% if not field.enabled %} readonly="readonly"{% endif %} placeholder="Day/Month/Year" />
+       {% if not field.enabled %} readonly="readonly"{% endif %} placeholder="Day/Month/Year"
+       data-date-format="DD/MM/YYYY" />
 <span class="myradiofrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>

@@ -2,8 +2,6 @@
 /**
  * This View renders a HTTP/1.1 403 Error - for when a <code>CoreUtils::requirePermission()</code> call returns false.
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20130809
  * @package MyRadio_Core
  */
 
@@ -29,7 +27,7 @@ CoreUtils::getTemplateObject()->setTemplate('error.twig')
         Module Requested: '.$module.'<br>
         Action Requested: '.$action.'<br>
         User Requesting: '
-        .(class_exists('User') ? (MyRadio_User::getInstance()->getName()) : '')
+        .(class_exists('\MyRadio\ServiceAPI\MyRadio_User') ? (MyRadio_User::getInstance()->getName()) : 'Anonymous')
         .'</details>'
     )
     ->render();

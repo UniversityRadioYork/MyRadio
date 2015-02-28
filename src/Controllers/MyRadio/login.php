@@ -8,7 +8,6 @@ use \MyRadio\MyRadio\MyRadioFormField;
 
 /**
  *
- * @author Lloyd Wallis
  * @date 20131230
  * @package MyRadio_Core
  * @todo Throttle quick attempts from one IP with captcha
@@ -71,8 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
                 //The user's account is disabled
                 $status = 'locked';
                 break;
-            } elseif (Config::$single_authenticator &&
-                    $user->getAuthProvider() != null && $user->getAuthProvider() != $i) {
+            } elseif (Config::$single_authenticator
+                && $user->getAuthProvider() != null && $user->getAuthProvider() != $i
+            ) {
                 //They can only authenticate with the right provider once they've set one
                 //(if they haven't yet, we'll ask them to choose one)
                 $status = 'wrongAuthProvider';

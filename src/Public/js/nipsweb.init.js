@@ -1,7 +1,11 @@
-$(document).ready(function() {
-  initialiseUI();
-  initialisePlayer('0');
-  initialisePlayer('1');
-  initialisePlayer('2');
-  initialisePlayer('3');
-});
+$(document).ready(
+    function() {
+        planner = NIPSWeb(false);
+        planner.initialiseUI();
+        planner.initialisePlayer('0');
+        planner.initialisePlayer('1');
+        planner.initialisePlayer('2');
+        planner.initialisePlayer('3');
+        $('#notice').hide();
+    }
+);

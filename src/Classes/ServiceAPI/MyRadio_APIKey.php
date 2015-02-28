@@ -13,10 +13,8 @@ use \MyRadio\ServiceAPI\MyRadio_Swagger;
  * The APIKey Class provies information and management of API Keys for the MyRadio
  * REST API.
  *
- * @version 20130802
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_API
- * @uses \Database
+ * @uses    \Database
  */
 class MyRadio_APIKey extends ServiceAPI
 {
@@ -53,8 +51,8 @@ class MyRadio_APIKey extends ServiceAPI
     /**
      * Check if this API Key can call the given Method.
      *
-     * @param  String  $class  The class the method belongs to (actual, not API Alias)
-     * @param  String  $method The method being called
+     * @param  String $class  The class the method belongs to (actual, not API Alias)
+     * @param  String $method The method being called
      * @return boolean
      */
     public function canCall($class, $method, $ignore_revoked = false)
@@ -88,11 +86,11 @@ class MyRadio_APIKey extends ServiceAPI
     /**
      * Logs that this API Key has called something. Used for auditing.
      *
-     * @param String $uri
-     * @param Array  $args
+     * @param      String $uri
+     * @param      Array  $args
      * @deprecated
-     * @todo A better way of doing this
-     * @todo Disabled as user auth checking would log passwords
+     * @todo       A better way of doing this
+     * @todo       Disabled as user auth checking would log passwords
      */
     public function logCall($uri, $args)
     {

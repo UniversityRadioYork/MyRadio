@@ -20,11 +20,9 @@ use \MyRadio\ServiceAPI\MyRadio_Swagger;
  * The user object provides and stores information about a user
  * It is not a singleton for Impersonate purposes
  *
- * @version 20130824
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
- * @uses \Database
- * @uses \CacheProvider
+ * @uses    \Database
+ * @uses    \CacheProvider
  */
 class MyRadio_User extends ServiceAPI
 {
@@ -182,6 +180,13 @@ class MyRadio_User extends ServiceAPI
     private $require_password_change;
 
     /**
+     * True if user has signed Presenter Contract
+     *
+     * @var boolean
+     */
+    private $contract_signed;
+
+    /**
      * Initiates the User variables
      * @param int $memberid The ID of the member to initialise
      */
@@ -193,7 +198,7 @@ class MyRadio_User extends ServiceAPI
             'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college,
             phone, email, receive_email, local_name, local_alias, eduroam,
             account_locked, last_login, joined, profile_photo, bio,
-            auth_provider, require_password_change
+            auth_provider, require_password_change, contract_signed
             FROM member, l_college
             WHERE memberid=$1
             AND member.college = l_college.collegeid
@@ -220,8 +225,9 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Get the user's permissions
-        $this->permissions = self::$db->fetchColumn(
-            'SELECT lookupid FROM auth_officer
+        $this->permissions = array_map(
+            'intval', self::$db->fetchColumn(
+                'SELECT lookupid FROM auth_officer
             WHERE officerid IN (SELECT officerid FROM member_officer
             WHERE memberid=$1
             AND from_date <= now()
@@ -230,7 +236,8 @@ class MyRadio_User extends ServiceAPI
             WHERE memberid=$1
             AND starttime < now()
             AND (endtime IS NULL OR endtime >= now())',
-            [$memberid]
+                [$memberid]
+            )
         );
 
         $this->payment = self::$db->fetchAll(
@@ -333,7 +340,7 @@ class MyRadio_User extends ServiceAPI
     /**
      * Get all types of training the User has.
      *
-     * @param  bool                              $ignore_revoked If true, Revoked statuses will not be included.
+     * @param  bool $ignore_revoked If true, Revoked statuses will not be included.
      * @return Array[MyRadio_UserTrainingStatus]
      */
     public function getAllTraining($ignore_revoked = false)
@@ -457,7 +464,7 @@ class MyRadio_User extends ServiceAPI
      * the address that should be shown to your standard member.
      * See getPublicEmail().
      *
-     * @todo hardcoded domains here.
+     * @todo   hardcoded domains here.
      * @return string The User's email
      */
     public function getEmail()
@@ -629,6 +636,20 @@ class MyRadio_User extends ServiceAPI
     }
 
     /**
+     * Get whether the user has signed the Presenter Contract
+     *
+     * @return bool if the presenter has signed the contract
+     */
+    public function hasSignedContract()
+    {
+        if (empty(Config::$contract_uri)) {
+            return true;
+        } else {
+            return $this->contract_signed;
+        }
+    }
+
+    /**
      * Get whether the user needs to change their password
      *
      * @return boolean
@@ -642,7 +663,7 @@ class MyRadio_User extends ServiceAPI
      * Returns an array of Shows which the User owns or is an active
      * credit in. Guaranteed order by first broadcast date of the show.
      *
-     * @param  int   $show_type_id
+     * @param  int $show_type_id
      * @return Array an array of Show objects attached to the given user
      */
     public function getShows($show_type_id = 1)
@@ -677,25 +698,24 @@ class MyRadio_User extends ServiceAPI
      *
      * Always use CoreUtils::hasAuth when working with the current user.
      *
-     * @param  int     $authid The permission to test for
+     * @param  null|int $authid The permission to test for. Null is "no permission required"
      * @return boolean Whether this user has the requested permission
      */
     public function hasAuth($authid)
     {
-        return in_array($authid, $this->permissions);
+        return $authid === null || in_array((int)$authid, $this->permissions);
     }
 
     /**
      * Returns if the user can call a method via the REST API
-     *
      */
     public function canCall($class, $method)
     {
-        # I am become superuser, doer of API calls
+        // I am become superuser, doer of API calls
         if ($this->hasAuth(AUTH_APISUDO)) {
             return true;
         }
-        
+
         $result = MyRadio_Swagger::getCallRequirements($class, $method);
         if ($result === null) {
             return false; //No permissions means the method is not accessible
@@ -913,7 +933,7 @@ class MyRadio_User extends ServiceAPI
      * If a User's account is locked, access to all URY services is blocked by
      * MyRadio and IMAP.
      *
-     * @param  bool         $bool True for Locked, False for Unlocked. Default True.
+     * @param  bool $bool True for Locked, False for Unlocked. Default True.
      * @return MyRadio_User
      */
     public function setAccountLocked($bool = true)
@@ -927,7 +947,7 @@ class MyRadio_User extends ServiceAPI
      * If a user has requested a new password, this should be set to true.
      * Should be set to false when the user actually changes their password.
      *
-     * @param bool $bool True for change required, False otherwise. Default T.
+     * @param  bool $bool True for change required, False otherwise. Default T.
      * @return MyRadio_User
      */
     public function setRequirePasswordChange($bool = true)
@@ -941,7 +961,7 @@ class MyRadio_User extends ServiceAPI
      *
      * College IDs can be acquired using User::getColleges().
      *
-     * @param  int          $college_id The ID of the college.
+     * @param  int $college_id The ID of the college.
      * @return MyRadio_User
      */
     public function setCollegeID($college_id)
@@ -954,14 +974,15 @@ class MyRadio_User extends ServiceAPI
     /**
      * Set the user's eduroam address
      *
-     * @param  type         $eduroam The User's UoY address, i.e. abc123@york.ac.uk (@york.ac.uk optional)
+     * @param  type $eduroam The User's UoY address, i.e. abc123@york.ac.uk (@york.ac.uk optional)
      * @return MyRadio_User
      */
     public function setEduroam($eduroam)
     {
         //Require the user to be part of this eduroam domain
         if (strstr($eduroam, '@') !== false
-            && strstr($eduroam, '@' . Config::$eduroam_domain) === false) {
+            && strstr($eduroam, '@' . Config::$eduroam_domain) === false
+        ) {
             throw new MyRadioException(
                 'Eduroam account should be @'
                 .Config::$eduroam_domain
@@ -987,7 +1008,7 @@ class MyRadio_User extends ServiceAPI
 
     /**
      * Sets the User's primary contact Email. If null, eduroam is used.
-     * @param  String           $email
+     * @param  String $email
      * @return MyRadio_User
      * @throws MyRadioException
      */
@@ -1012,7 +1033,7 @@ class MyRadio_User extends ServiceAPI
 
     /**
      * Sets the User's first name
-     * @param  String           $fname
+     * @param  String $fname
      * @return MyRadio_User
      * @throws MyRadioException
      */
@@ -1028,7 +1049,7 @@ class MyRadio_User extends ServiceAPI
 
     /**
      * Set the User's official @ury.org.uk prefix. Usually fname.sname
-     * @param  String           $alias
+     * @param  String $alias
      * @return MyRadio_User
      * @throws MyRadioException
      */
@@ -1044,7 +1065,7 @@ class MyRadio_User extends ServiceAPI
 
     /**
      * Set the User's server account name
-     * @param  String           $name
+     * @param  String $name
      * @return MyRadio_User
      * @throws MyRadioException
      */
@@ -1063,7 +1084,7 @@ class MyRadio_User extends ServiceAPI
 
     /**
      * Set the User's phone number
-     * @param  String           $phone A string of numbers (because leading 0)
+     * @param  String $phone A string of numbers (because leading 0)
      * @return MyRadio_User
      * @throws MyRadioException
      */
@@ -1093,7 +1114,7 @@ class MyRadio_User extends ServiceAPI
 
     /**
      * Set whether the User should receive Emails
-     * @param  boolean      $bool
+     * @param  boolean $bool
      * @return MyRadio_User
      */
     public function setReceiveEmail($bool = true)
@@ -1105,7 +1126,7 @@ class MyRadio_User extends ServiceAPI
 
     /**
      * Set the User's preferred Auth provider
-     * @param  String       $provider
+     * @param  String $provider
      * @return MyRadio_User
      */
     public function setAuthProvider($provider = null)
@@ -1117,7 +1138,7 @@ class MyRadio_User extends ServiceAPI
 
     /**
      * Set the User's last name.
-     * @param  String           $sname
+     * @param  String $sname
      * @return MyRadio_User
      * @throws MyRadioException
      */
@@ -1133,7 +1154,7 @@ class MyRadio_User extends ServiceAPI
 
     /**
      * Set the User's Gender
-     * @param  char             $initial (m)ale, (f)emale or (o)ther
+     * @param  char $initial (m)ale, (f)emale or (o)ther
      * @return MyRadio_User
      * @throws MyRadioException
      */
@@ -1153,7 +1174,7 @@ class MyRadio_User extends ServiceAPI
 
     /**
      * Set the User's HTML biography.
-     * @param  String       $bio
+     * @param  String $bio
      * @return MyRadio_User
      */
     public function setBio($bio)
@@ -1201,6 +1222,20 @@ class MyRadio_User extends ServiceAPI
     }
 
     /**
+     * Sets the user's contract signed-ness status.
+     *
+     * @param  bool $bool True for contract being signed, False otherwise. Default F.
+     * @return MyRadio_User
+     */
+    public function setContractSigned($bool = false)
+    {
+        if (empty(Config::$contract_uri) === false) {
+            $this->setCommonParam('contract_signed', $bool);
+        }
+        return $this;
+    }
+
+    /**
      * Sets the User's last login time to right now.
      * Use this when they're being logged in (weird that)
      */
@@ -1217,7 +1252,7 @@ class MyRadio_User extends ServiceAPI
 
     /**
      * Searched for the user with the given email address, returning the User if they exist, or null if it fails.
-     * @param  String            $email
+     * @param  String $email
      * @return null|MyRadio_User
      */
     public static function findByEmail($email)
@@ -1249,7 +1284,7 @@ class MyRadio_User extends ServiceAPI
      * Please use MyRadio_TrainingStatus.
      *
      * @deprecated
-     * @return MyRadio_User[]
+     * @return     MyRadio_User[]
      */
     public static function findAllTrained()
     {
@@ -1272,7 +1307,7 @@ class MyRadio_User extends ServiceAPI
      * Please use MyRadio_TrainingStatus.
      *
      * @deprecated
-     * @return MyRadio_User[]
+     * @return     MyRadio_User[]
      */
     public static function findAllDemoed()
     {
@@ -1295,7 +1330,7 @@ class MyRadio_User extends ServiceAPI
      * Please use MyRadio_TrainingStatus.
      *
      * @deprecated
-     * @return MyRadio_User[]
+     * @return     MyRadio_User[]
      */
     public static function findAllTrainers()
     {
@@ -1320,9 +1355,11 @@ class MyRadio_User extends ServiceAPI
      */
     public static function getAllAliases()
     {
-        $users = self::resultSetToObjArray(self::$db->fetchColumn(
-            'SELECT memberid FROM public.member WHERE local_alias IS NOT NULL'
-        ));
+        $users = self::resultSetToObjArray(
+            self::$db->fetchColumn(
+                'SELECT memberid FROM public.member WHERE local_alias IS NOT NULL'
+            )
+        );
 
         $data = [];
         foreach ($users as $user) {
@@ -1349,113 +1386,190 @@ class MyRadio_User extends ServiceAPI
         $form = new MyRadioForm('profileedit', 'Profile', 'edit', ['title' => 'Edit Profile']);
         //Personal details
         $form->addField(new MyRadioFormField('memberid', MyRadioFormField::TYPE_HIDDEN, ['value' => $this->getID()]))
-                ->addField(new MyRadioFormField('sec_personal', MyRadioFormField::TYPE_SECTION, [
-                    'label' => 'Personal Details'
-                ]))
-                ->addField(new MyRadioFormField('fname', MyRadioFormField::TYPE_TEXT, [
-                    'required' => true,
-                    'label' => 'First Name',
-                    'value' => $this->getFName()
-                ]))
-                ->addField(new MyRadioFormField('sname', MyRadioFormField::TYPE_TEXT, [
-                    'required' => true,
-                    'label' => 'Last Name',
-                    'value' => $this->getSName()
-                ]))
-                ->addField(new MyRadioFormField('sex', MyRadioFormField::TYPE_SELECT, [
-                    'required' => true,
-                    'label' => 'Gender',
-                    'value' => $this->getSex(),
-                    'options' => [
+            ->addField(
+                new MyRadioFormField(
+                    'sec_personal', MyRadioFormField::TYPE_SECTION, [
+                        'label' => 'Personal Details'
+                        ]
+                )
+            )
+            ->addField(
+                new MyRadioFormField(
+                    'fname', MyRadioFormField::TYPE_TEXT, [
+                        'required' => true,
+                        'label' => 'First Name',
+                        'value' => $this->getFName()
+                        ]
+                )
+            )
+            ->addField(
+                new MyRadioFormField(
+                    'sname', MyRadioFormField::TYPE_TEXT, [
+                        'required' => true,
+                        'label' => 'Last Name',
+                        'value' => $this->getSName()
+                        ]
+                )
+            )
+            ->addField(
+                new MyRadioFormField(
+                    'sex', MyRadioFormField::TYPE_SELECT, [
+                        'required' => true,
+                        'label' => 'Gender',
+                        'value' => $this->getSex(),
+                        'options' => [
                         ['value' => 'm', 'text' => 'Male'],
                         ['value' => 'f', 'text' => 'Female'],
                         ['value' => 'o', 'text' => 'Other']
+                        ]
+                        ]
+                )
+            );
+        if (empty(Config::$contract_uri) === false) {
+            $form->addField(
+                new MyRadioFormField(
+                    'contract', MyRadioFormField::TYPE_CHECK, [
+                    'required' => false,
+                    'label' => 'I, ' . $this->getName() . ', agree to abide by '
+                    . Config::$short_name . '\'s station rules and regulations as '
+                    . 'set out in the <a href="' . Config::$contract_uri . '" target="_blank">Presenter\'s Contract</a>, '
+                    . 'and the <a href="//www.ofcom.org.uk" target="_blank">Ofcom Programming Code</a>. '
+                    . 'I have fully read and understood these rules and regulations, '
+                    . 'and I understand that if I break any of the rules or '
+                    . 'regulations stated by Ofcom or its successor, I will be '
+                    . 'solely liable for any resulting fines or actions that may '
+                    . 'be levied against ' . Config::$long_name . '.',
+                    'options' => ['checked' => $this->hasSignedContract()]
                     ]
-                ]))
-                ->addField(new MyRadioFormField('sec_personal_close', MyRadioFormField::TYPE_SECTION_CLOSE));
+                )
+            );
+        }
+        $form->addField(new MyRadioFormField('sec_personal_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
         //Contact details
-        $form->addField(new MyRadioFormField('sec_contact', MyRadioFormField::TYPE_SECTION, [
+        $form->addField(
+            new MyRadioFormField(
+                'sec_contact', MyRadioFormField::TYPE_SECTION, [
                     'label' => 'Contact Details'
-                ]))
-                ->addField(new MyRadioFormField('collegeid', MyRadioFormField::TYPE_SELECT, [
-                    'required' => true,
-                    'label' => 'College',
-                    'options' => self::getColleges(),
-                    'value' => $this->getCollegeID()
-                ]))
-                ->addField(new MyRadioFormField('phone', MyRadioFormField::TYPE_TEXT, [
-                    'required' => false,
-                    'label' => 'Phone Number',
-                    'value' => $this->getPhone()
-                ]))
-                ->addField(new MyRadioFormField('email', MyRadioFormField::TYPE_EMAIL, [
-                    'required' => false,
-                    'label' => 'Email',
-                    'value' => $this->email
-                ]))
-                ->addField(new MyRadioFormField('receive_email', MyRadioFormField::TYPE_CHECK, [
-                    'required' => false,
-                    'label' => 'Receive Email?',
-                    'options' => ['checked' => $this->getReceiveEmail()],
-                    'explanation' => 'If unchecked, you will receive no emails, even if you are subscribed to mailing lists.'
-                ]))
-                ->addField(new MyRadioFormField('eduroam', MyRadioFormField::TYPE_TEXT, [
-                    'required' => false,
-                    'label' => 'University Email',
-                    'value' => str_replace('@york.ac.uk', '', $this->getUniAccount()),
-                    'explanation' => '@york.ac.uk'
-                ]))
-                ->addField(new MyRadioFormField('sec_contact_close', MyRadioFormField::TYPE_SECTION_CLOSE));
+                ]
+            )
+        )
+            ->addField(
+                new MyRadioFormField(
+                    'collegeid', MyRadioFormField::TYPE_SELECT, [
+                        'required' => true,
+                        'label' => 'College',
+                        'options' => self::getColleges(),
+                        'value' => $this->getCollegeID()
+                        ]
+                )
+            )
+            ->addField(
+                new MyRadioFormField(
+                    'phone', MyRadioFormField::TYPE_TEXT, [
+                        'required' => false,
+                        'label' => 'Phone Number',
+                        'value' => $this->getPhone()
+                        ]
+                )
+            )
+            ->addField(
+                new MyRadioFormField(
+                    'email', MyRadioFormField::TYPE_EMAIL, [
+                        'required' => false,
+                        'label' => 'Email',
+                        'value' => $this->email
+                        ]
+                )
+            )
+            ->addField(
+                new MyRadioFormField(
+                    'receive_email', MyRadioFormField::TYPE_CHECK, [
+                        'required' => false,
+                        'label' => 'Receive Email?',
+                        'options' => ['checked' => $this->getReceiveEmail()],
+                        'explanation' => 'If unchecked, you will receive no emails, even if you are subscribed to mailing lists.'
+                        ]
+                )
+            )
+            ->addField(
+                new MyRadioFormField(
+                    'eduroam', MyRadioFormField::TYPE_TEXT, [
+                        'required' => false,
+                        'label' => 'University Email',
+                        'value' => str_replace('@york.ac.uk', '', $this->getUniAccount()),
+                        'explanation' => '@york.ac.uk'
+                        ]
+                )
+            )
+            ->addField(new MyRadioFormField('sec_contact_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
         //About Me
-        $form->addField(new MyRadioFormField(
-            'sec_about',
-            MyRadioFormField::TYPE_SECTION,
-            [
+        $form->addField(
+            new MyRadioFormField(
+                'sec_about',
+                MyRadioFormField::TYPE_SECTION,
+                [
                 'label' => 'About Me',
                 'explanation' => 'If you\'d like to share a little more about yourself, then I\'m happy to listen!'
-            ]
-        ))->addField(new MyRadioFormField(
-            'photo',
-            MyRadioFormField::TYPE_FILE,
-            [
-                'required' => false,
-                'label' => 'Profile Photo',
-                'explanation' => 'Share your Radio Face with all our members. If we ever launch presenter pages on the website, we\'ll use this there too.'
-            ]
-        ))->addField(new MyRadioFormField(
-            'bio',
-            MyRadioFormField::TYPE_BLOCKTEXT,
-            [
-                'required' => false,
-                'label' => 'Bio',
-                'explanation' => 'Tell use about yourself - if you\'re a committee member please introduce yourself!',
-                'value' => $this->getBio()
-            ]
-        ))->addField(new MyRadioFormField('sec_about_close', MyRadioFormField::TYPE_SECTION_CLOSE));
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'photo',
+                MyRadioFormField::TYPE_FILE,
+                [
+                    'required' => false,
+                    'label' => 'Profile Photo',
+                    'explanation' => 'Share your Radio Face with all our members. If we ever launch presenter pages on the website, we\'ll use this there too.'
+                    ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'bio',
+                MyRadioFormField::TYPE_BLOCKTEXT,
+                [
+                    'required' => false,
+                    'label' => 'Bio',
+                    'explanation' => 'Tell use about yourself - if you\'re a committee member please introduce yourself!',
+                    'value' => $this->getBio()
+                    ]
+            )
+        )->addField(new MyRadioFormField('sec_about_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
         //Mailbox
         if (self::getInstance()->hasAuth(AUTH_CHANGESERVERACCOUNT)) {
-            $form->addField(new MyRadioFormField('sec_server', MyRadioFormField::TYPE_SECTION, [
+            $form->addField(
+                new MyRadioFormField(
+                    'sec_server', MyRadioFormField::TYPE_SECTION, [
                         'label' => Config::$short_name . ' Mailbox Account',
                         'explanation' => 'Before changing these settings, please ensure you understand the guidelines and'
                             . ' documentation on ' . Config::$long_name . '\'s Internal Email Service'
-                    ]))
-                    ->addField(new MyRadioFormField('local_name', MyRadioFormField::TYPE_TEXT, [
-                        'required' => false,
-                        'label' => 'Server Account (Mailbox)',
-                        'value' => $this->getLocalName(),
-                        'explanation' => 'Best practice is their ITS Username'
-                    ]))
-                    ->addField(new MyRadioFormField('local_alias', MyRadioFormField::TYPE_TEXT, [
-                        'required' => false,
-                        'label' => '@ury.org.uk Alias',
-                        'value' => $this->getLocalAlias(),
-                        'explanation' => 'Usually, this is firstname.lastname (i.e. ' .
-                        strtolower($this->getFName() . '.' . $this->getSName()) . ')'
-                    ]))
-                    ->addField(new MyRadioFormField('sec_server_close', MyRadioFormField::TYPE_SECTION_CLOSE));
+                    ]
+                )
+            )
+                ->addField(
+                    new MyRadioFormField(
+                        'local_name', MyRadioFormField::TYPE_TEXT, [
+                            'required' => false,
+                            'label' => 'Server Account (Mailbox)',
+                            'value' => $this->getLocalName(),
+                            'explanation' => 'Best practice is their ITS Username'
+                            ]
+                    )
+                )
+                ->addField(
+                    new MyRadioFormField(
+                        'local_alias', MyRadioFormField::TYPE_TEXT, [
+                            'required' => false,
+                            'label' => '@ury.org.uk Alias',
+                            'value' => $this->getLocalAlias(),
+                            'explanation' => 'Usually, this is firstname.lastname (i.e. ' .
+                            strtolower($this->getFName() . '.' . $this->getSName()) . ')'
+                            ]
+                    )
+                )
+                ->addField(new MyRadioFormField('sec_server_close', MyRadioFormField::TYPE_SECTION_CLOSE));
         }
 
         return $form;
@@ -1471,15 +1585,15 @@ class MyRadio_User extends ServiceAPI
      * must be filled in. Password will be generated automatically and emailed to
      * the user.
      *
-     * @param  string           $fname         The User's first name.
-     * @param  string           $sname         The User's last name.
-     * @param  string           $eduroam       The User's @york.ac.uk address.
-     * @param  char             $sex           The User's gender.
-     * @param  int              $collegeid     The User's college.
-     * @param  string           $email         The User's non @york.ac.uk address.
-     * @param  string           $phone         The User's phone number.
-     * @param  bool             $receive_email Whether the User should receive emails.
-     * @param  float            $paid          How much the User has paid this Membership Year
+     * @param  string $fname         The User's first name.
+     * @param  string $sname         The User's last name.
+     * @param  string $eduroam       The User's @york.ac.uk address.
+     * @param  char   $sex           The User's gender.
+     * @param  int    $collegeid     The User's college.
+     * @param  string $email         The User's non @york.ac.uk address.
+     * @param  string $phone         The User's phone number.
+     * @param  bool   $receive_email Whether the User should receive emails.
+     * @param  float  $paid          How much the User has paid this Membership Year
      * @return MyRadio_User
      * @throws MyRadioException
      */
@@ -1609,7 +1723,7 @@ class MyRadio_User extends ServiceAPI
      * Activating a membership re-activates basic access to web services, and
      * renews their mailing list subscriptions.
      *
-     * @param  int     $paid
+     * @param  int $paid
      * @return boolean
      */
     public function activateMemberThisYear($paid = 0)
@@ -1628,15 +1742,15 @@ class MyRadio_User extends ServiceAPI
     /**
      * Creates a new User, or activates a user, if it already exists.
      *
-     * @param  string           $fname         The User's first name.
-     * @param  string           $sname         The User's last name.
-     * @param  string           $eduroam       The User's @york.ac.uk address.
-     * @param  char             $sex           The User's gender.
-     * @param  int              $collegeid     The User's college.
-     * @param  string           $email         The User's non @york.ac.uk address.
-     * @param  string           $phone         The User's phone number.
-     * @param  bool             $receive_email Whether the User should receive emails.
-     * @param  float            $paid          How much the User has paid this Membership Year
+     * @param  string $fname         The User's first name.
+     * @param  string $sname         The User's last name.
+     * @param  string $eduroam       The User's @york.ac.uk address.
+     * @param  char   $sex           The User's gender.
+     * @param  int    $collegeid     The User's college.
+     * @param  string $email         The User's non @york.ac.uk address.
+     * @param  string $phone         The User's phone number.
+     * @param  bool   $receive_email Whether the User should receive emails.
+     * @param  float  $paid          How much the User has paid this Membership Year
      * @return MyRadio_User
      */
     public static function createOrActivate($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00)
@@ -1648,7 +1762,9 @@ class MyRadio_User extends ServiceAPI
         }
 
         if ($user !== null && $user->activateMemberThisYear($paid)) {
-            /** @todo send welcome email to already existing users? */
+            /**
+ * @todo send welcome email to already existing users?
+*/
             return $user;
         } else {
             return self::create($fname, $sname, $eduroam, $sex, $collegeid, $email, $phone, $receive_email, $paid);
@@ -1705,45 +1821,77 @@ class MyRadio_User extends ServiceAPI
 
         $form = new MyRadioForm('profilequickadd', 'Profile', 'quickAdd', ['title' => 'Add Member (Quick)']);
         //Personal details
-        $form->addField(new MyRadioFormField('sec_personal', MyRadioFormField::TYPE_SECTION, [
+        $form->addField(
+            new MyRadioFormField(
+                'sec_personal', MyRadioFormField::TYPE_SECTION, [
                     'label' => 'Personal Details'
-                ]))
-                ->addField(new MyRadioFormField('fname', MyRadioFormField::TYPE_TEXT, [
-                    'required' => true,
-                    'label' => 'First Name'
-                ]))
-                ->addField(new MyRadioFormField('sname', MyRadioFormField::TYPE_TEXT, [
-                    'required' => true,
-                    'label' => 'Last Name'
-                ]))
-                ->addField(new MyRadioFormField('sex', MyRadioFormField::TYPE_SELECT, [
-                    'required' => true,
-                    'label' => 'Gender',
-                    'options' => [
+                ]
+            )
+        )
+            ->addField(
+                new MyRadioFormField(
+                    'fname', MyRadioFormField::TYPE_TEXT, [
+                        'required' => true,
+                        'label' => 'First Name'
+                        ]
+                )
+            )
+            ->addField(
+                new MyRadioFormField(
+                    'sname', MyRadioFormField::TYPE_TEXT, [
+                        'required' => true,
+                        'label' => 'Last Name'
+                        ]
+                )
+            )
+            ->addField(
+                new MyRadioFormField(
+                    'sex', MyRadioFormField::TYPE_SELECT, [
+                        'required' => true,
+                        'label' => 'Gender',
+                        'options' => [
                         ['value' => 'm', 'text' => 'Male'],
                         ['value' => 'f', 'text' => 'Female'],
                         ['value' => 'o', 'text' => 'Other']
-                    ]
-        ]));
+                        ]
+                        ]
+                )
+            );
 
         //Contact details
-        $form->addField(new MyRadioFormField('sec_contact', MyRadioFormField::TYPE_SECTION, [
+        $form->addField(
+            new MyRadioFormField(
+                'sec_contact', MyRadioFormField::TYPE_SECTION, [
                     'label' => 'Contact Details'
-                ]))
-                ->addField(new MyRadioFormField('collegeid', MyRadioFormField::TYPE_SELECT, [
-                    'required' => true,
-                    'label' => 'College',
-                    'options' => self::getColleges()
-                ]))
-                ->addField(new MyRadioFormField('eduroam', MyRadioFormField::TYPE_TEXT, [
-                    'required' => true,
-                    'label' => 'University Email',
-                    'explanation' => '@york.ac.uk'
-                ]))
-                ->addField(new MyRadioFormField('phone', MyRadioFormField::TYPE_TEXT, [
-                    'required' => false,
-                    'label' => 'Phone Number'
-        ]));
+                ]
+            )
+        )
+            ->addField(
+                new MyRadioFormField(
+                    'collegeid', MyRadioFormField::TYPE_SELECT, [
+                        'required' => true,
+                        'label' => 'College',
+                        'options' => self::getColleges()
+                        ]
+                )
+            )
+            ->addField(
+                new MyRadioFormField(
+                    'eduroam', MyRadioFormField::TYPE_TEXT, [
+                        'required' => true,
+                        'label' => 'University Email',
+                        'explanation' => '@york.ac.uk'
+                        ]
+                )
+            )
+            ->addField(
+                new MyRadioFormField(
+                    'phone', MyRadioFormField::TYPE_TEXT, [
+                        'required' => false,
+                        'label' => 'Phone Number'
+                        ]
+                )
+            );
 
         return $form;
     }
@@ -1761,36 +1909,50 @@ class MyRadio_User extends ServiceAPI
 
         $form = new MyRadioForm('profilebulkadd', 'Profile', 'bulkAdd', ['title' => 'Add Member (Bulk)']);
         //Personal details
-        $form->addField(new MyRadioFormField('bulkaddrepeater', MyRadioFormField::TYPE_TABULARSET, [
-            'options' => [
-                new MyRadioFormField('fname', MyRadioFormField::TYPE_TEXT, [
+        $form->addField(
+            new MyRadioFormField(
+                'bulkaddrepeater', MyRadioFormField::TYPE_TABULARSET, [
+                'options' => [
+                new MyRadioFormField(
+                    'fname', MyRadioFormField::TYPE_TEXT, [
                     'required' => true,
                     'label' => 'First Name'
-                        ]),
-                new MyRadioFormField('sname', MyRadioFormField::TYPE_TEXT, [
+                        ]
+                ),
+                new MyRadioFormField(
+                    'sname', MyRadioFormField::TYPE_TEXT, [
                     'required' => true,
                     'label' => 'Last Name'
-                        ]),
-                new MyRadioFormField('sex', MyRadioFormField::TYPE_SELECT, [
+                        ]
+                ),
+                new MyRadioFormField(
+                    'sex', MyRadioFormField::TYPE_SELECT, [
                     'required' => true,
                     'label' => 'Gender',
                     'options' => [
                         ['value' => 'm', 'text' => 'Male'],
                         ['value' => 'f', 'text' => 'Female'],
                         ['value' => 'o', 'text' => 'Other']
-                    ]]),
-                new MyRadioFormField('collegeid', MyRadioFormField::TYPE_SELECT, [
-                    'required' => true,
-                    'label' => 'College',
-                    'options' => self::getColleges()
-                        ]),
-                new MyRadioFormField('eduroam', MyRadioFormField::TYPE_TEXT, [
-                    'required' => true,
-                    'label' => 'University Email',
-                    'explanation' => '@york.ac.uk'
-                        ])
-            ]
-        ]));
+                    ]]
+                ),
+                    new MyRadioFormField(
+                        'collegeid', MyRadioFormField::TYPE_SELECT, [
+                        'required' => true,
+                        'label' => 'College',
+                        'options' => self::getColleges()
+                        ]
+                    ),
+                    new MyRadioFormField(
+                        'eduroam', MyRadioFormField::TYPE_TEXT, [
+                        'required' => true,
+                        'label' => 'University Email',
+                        'explanation' => '@york.ac.uk'
+                        ]
+                    )
+                ]
+                ]
+            )
+        );
 
         return $form;
     }

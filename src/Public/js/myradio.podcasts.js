@@ -3,28 +3,27 @@ $('.twig-datatable').dataTable(
         "aoColumns": [
             //podcast_id
             {
-              "bVisible": false
-            },
+                "bVisible": false
+        },
             //title
             {
-              "sTitle": "Title",
-            },
+                "sTitle": "Title",
+        },
             //description
             {
-              "sTitle": "Description",
-            },
+                "sTitle": "Description",
+        },
             //status
             {
-              "sTitle": "Status"
-            },
+                "sTitle": "Status"
+        },
             //editlink
             {
-              "sTitle": "Edit",
-              "bSortable": false,
-              "bVisible": true
-            }
+                "sTitle": "Edit",
+                "bSortable": false,
+                "bVisible": true
+        }
         ],
-        "bJQueryUI": true,
         "bPaginate": true
     }
 );

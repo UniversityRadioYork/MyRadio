@@ -19,10 +19,8 @@ use \MyRadio\MyRadio\MyRadioFormField;
  * Reminder: Podcasts may not include any copyrighted content. This includes
  * all songs and *beds*.
  *
- * @version 20130815
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Podcast
- * @uses \Database
+ * @uses    \Database
  */
 class MyRadio_Podcast extends MyRadio_Metadata_Common
 {
@@ -194,9 +192,11 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     {
         self::initDB();
 
-        return self::resultSetToObjArray(self::$db->fetchColumn(
-            'SELECT podcast_id FROM uryplayer.podcast WHERE submitted IS NULL'
-        ));
+        return self::resultSetToObjArray(
+            self::$db->fetchColumn(
+                'SELECT podcast_id FROM uryplayer.podcast WHERE submitted IS NULL'
+            )
+        );
     }
 
     public static function getForm()
@@ -369,12 +369,12 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     /**
      * Create a new Podcast
-     * @param String $title The Podcast's title
-     * @param String $description The Podcast's description
-     * @param Array $tags An array of String tags
-     * @param String $file The local filesystem path to the Podcast file
-     * @param MyRadio_Show $show The show to attach the Podcast to
-     * @param Array $credits Credit data. Format compatible with a credit
+     * @param String       $title       The Podcast's title
+     * @param String       $description The Podcast's description
+     * @param Array        $tags        An array of String tags
+     * @param String       $file        The local filesystem path to the Podcast file
+     * @param MyRadio_Show $show        The show to attach the Podcast to
+     * @param Array        $credits     Credit data. Format compatible with a credit TABULARSET (see Scheduler) TABULARSET (see Scheduler)
      * TABULARSET (see Scheduler)
      */
     public static function create(
@@ -551,7 +551,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'status' => $this->getStatus(),
             'editlink' => [
                 'display' => 'icon',
-                'value' => 'script',
+                'value' => 'pencil',
                 'title' => 'Edit Podcast',
                 'url' => CoreUtils::makeURL('Podcast', 'editPodcast', ['podcast_id' => $this->getID()])
             ]
@@ -569,7 +569,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     /**
      * Sets the current podcast cover for this podcast.
      *
-     * @param string $url  The URL of the incoming podcast cover.
+     * @param string $url The URL of the incoming podcast cover.
      */
     public function setCover($url)
     {
@@ -627,13 +627,13 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      * set to the effective_from of this value, effectively replacing the existing value.
      * This will *not* unset is_multiple values that are not in the new set.
      *
-     * @param String $string_key The metadata key
-     * @param mixed $value The metadata value. If key is_multiple and value is an array, will create instance
+     * @param String $string_key     The metadata key
+     * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance for value in the array. for value in the array.
      * for value in the array.
-     * @param int $effective_from UTC Time the metavalue is effective from. Default now.
-     * @param int $effective_to UTC Time the metadata value is effective to. Default NULL (does not expire).
-     * @param null $table Used for compatibility with parent.
-     * @param null $pkey Used for compatibility with parent.
+     * @param int    $effective_from UTC Time the metavalue is effective from. Default now.
+     * @param int    $effective_to   UTC Time the metadata value is effective to. Default NULL (does not expire).
+     * @param null   $table          Used for compatibility with parent.
+     * @param null   $pkey           Used for compatibility with parent.
      */
     public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null)
     {
@@ -648,8 +648,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      * Existing credits are kept active, ones that are not in the new list are set to effective_to now,
      * and ones that are in the new list but not exist are created with effective_from now.
      *
-     * @param MyRadio_User[] $users An array of Users associated.
-     * @param int[] $credittypes The relevant credittypeid for each User.
+     * @param MyRadio_User[] $users       An array of Users associated.
+     * @param int[]          $credittypes The relevant credittypeid for each User.
      */
     public function setCredits($users, $credittypes, $table = null, $pkey = null)
     {

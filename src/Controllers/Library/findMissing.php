@@ -1,8 +1,6 @@
 <?php
 /**
  * Scan music library, filling in blanks or changing default values
- * @author Lloyd Wallis <lpw@ury.york.ac.uk>
- * @version 24042013
  * @package MyRadio_Library
  */
 

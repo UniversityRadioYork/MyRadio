@@ -1,9 +1,6 @@
 <?php
 /**
  * Render form to create a new Podcast
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @author Andy Durant <aj@ury.org.uk>
- * @version 20140618
  * @package MyRadio_Podcast
  */
 

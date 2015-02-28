@@ -7,19 +7,41 @@
 
 namespace MyRadio\SIS;
 
+use \MyRadio\Config;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_Selector;
 use \MyRadio\ServiceAPI\MyRadio_Webcam;
+use \MyRadio\MyRadio\MyRadioNews;
 
 /**
  * This class has helper functions for long-polling SIS
  *
- * @version 20131101
- * @author Andy Durant <aj@ury.org.uk>
  * @package MyRadio_SIS
  */
 class SIS_Remote extends ServiceAPI
 {
+
+    /**
+     * Gets the latest presenter info
+     * @param  array $session phpSession variable
+     * @return array presenter info data
+     */
+    public static function queryPresenterInfo($session)
+    {
+        $time = 0;
+        if (isset($_REQUEST['presenterinfo-lasttime'])) {
+            $time = (int)$_REQUEST['presenterinfo-lasttime'];
+        }
+        if ($time < time() - 300) {
+            $response = MyRadioNews::getLatestNewsItem(Config::$presenterinfo_feed);
+            return [
+                'presenterinfo' => ['time' => time(), 'info' => $response]
+            ];
+        } else {
+            return [];
+        }
+    }
+
     /**
      * Gets the latest messages for the selected timeslot
      * @param  array $session phpSession variable
@@ -56,9 +78,14 @@ class SIS_Remote extends ServiceAPI
      */
     public static function querySelector($session)
     {
+        $time = 0;
+        if (isset($_REQUEST['selector-lasttime'])) {
+            $time = (int)$_REQUEST['selector-lasttime'];
+        }
+
         $response = MyRadio_Selector::getStatusAtTime(time());
 
-        if ($response['lastmod'] > $_REQUEST['selector_lastmod']) {
+        if ($response['lastmod'] > $time) {
             return ['selector' => $response];
         }
     }
@@ -71,9 +98,18 @@ class SIS_Remote extends ServiceAPI
     public static function queryWebcam($session)
     {
         $response = MyRadio_Webcam::getCurrentWebcam();
+        $current = null;
+        if (isset($_REQUEST['webcam-id'])) {
+            $current = (int)$_REQUEST['webcam-id'];
+        }
 
-        if ($response['current'] != $_REQUEST['webcam_id']) {
-            return ['webcam' => $response];
+        if ($response['current'] !== $current) {
+            return [
+                'webcam' => [
+                    'status' => $response,
+                    'streams' => MyRadio_Webcam::getStreams()
+                ]
+            ];
         }
     }
 }

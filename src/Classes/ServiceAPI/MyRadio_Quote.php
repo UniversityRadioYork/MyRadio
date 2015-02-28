@@ -15,10 +15,8 @@ use \MyRadio\MyRadio\MyRadioFormField;
 /**
  * A quote in the radio station Quotes Database.
  *
- * @version 20140113
- * @author Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Core
- * @uses \Database
+ * @uses    \Database
  */
 class MyRadio_Quote extends ServiceAPI
 {
@@ -203,7 +201,7 @@ class MyRadio_Quote extends ServiceAPI
     /**
      * Creates a new quote in the database.
      *
-     * @param $data array  An array of data to populate the row with.
+     * @param  $data array  An array of data to populate the row with.
      *                     Must contain 'text', 'source' and 'date'.
      * @return nothing.
      */
@@ -222,7 +220,7 @@ class MyRadio_Quote extends ServiceAPI
 
     /**
      * Sets this quote's text.
-     * @param  string        $text The quote text.
+     * @param  string $text The quote text.
      * @return MyRadio_Quote This object, for method chaining.
      */
     public function setText($text)
@@ -234,7 +232,7 @@ class MyRadio_Quote extends ServiceAPI
 
     /**
      * Sets this quote's source.
-     * @param  User          $source The quote source.
+     * @param  User $source The quote source.
      * @return MyRadio_Quote This object, for method chaining.
      */
     public function setSource($source)
@@ -246,7 +244,7 @@ class MyRadio_Quote extends ServiceAPI
 
     /**
      * Sets this quote's date.
-     * @param  int|string    $date The date, as a UNIX timestamp or date string.
+     * @param  int|string $date The date, as a UNIX timestamp or date string.
      * @return MyRadio_Quote This object, for method chaining.
      */
     public function setDate($date)
@@ -259,7 +257,7 @@ class MyRadio_Quote extends ServiceAPI
     /**
      * Sets a property on this quote.
      *
-     * @param string $sql The SQL to use for setting this property.
+     * @param string                                                 $sql The SQL to use for setting this property.
      * @param $value  The value of the property to set on this quote.
      *
      * @return MyRadio_Quote This object, for method chaining.
@@ -340,7 +338,7 @@ class MyRadio_Quote extends ServiceAPI
             'text' => $this->getText(),
             'editlink' => [
                 'display' => 'icon',
-                'value' => 'script',
+                'value' => 'pencil',
                 'title' => 'Edit Quote',
                 'url' => CoreUtils::makeURL(
                     'Quotes',

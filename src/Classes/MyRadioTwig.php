@@ -16,8 +16,6 @@ use \Twig_Extension_Debug;
 /**
  * Singleton class for the Twig template engine
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20131012
  * @depends Config
  * @package MyRadio_Core
  */
@@ -43,14 +41,19 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
 
         $this->addVariable('memberid', isset($_SESSION['memberid']) ? $_SESSION['memberid'] : 0)
             ->addVariable(
+                'impersonatorurl',
+                !empty($_SESSION['myradio-impersonating'])
+                ? (CoreUtils::makeURL('MyRadio', 'impersonate', ['next' => $_SERVER['REQUEST_URI']]))
+                : ''
+            )
+            ->addVariable(
                 'impersonator',
                 !empty($_SESSION['myradio-impersonating'])
-                ? ('<a href="'.CoreUtils::makeURL('MyRadio', 'impersonate', ['next' => $_SERVER['REQUEST_URI']])
-                .'">Impersonated by ' . $_SESSION['myradio-impersonating']['name']).'</a>' : ''
+                ? $_SESSION['myradio-impersonating']['name']
+                : ''
             )
             ->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null)
             ->addVariable('timeslotid', isset($_SESSION['timeslotid']) ? $_SESSION['timeslotid'] : null)
-            ->addVariable('shiburl', Config::$shib_url)
             ->addVariable('baseurl', Config::$base_url)
             ->addVariable('rewriteurl', Config::$rewrite_url)
             ->addVariable('serviceName', 'MyRadio')
@@ -78,8 +81,8 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
 
     /**
      * Registers a new variable to be passed to the template
-     * @param  String       $name  The name of the variable
-     * @param  mixed        $value The value of the variable - literally any valid type
+     * @param  String $name  The name of the variable
+     * @param  mixed  $value The value of the variable - literally any valid type
      * @return \MyRadioTwig This for chaining
      */
     public function addVariable($name, $value)
@@ -123,23 +126,23 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
         return $value;
     }
 
-    public function addInfo($message, $icon = 'info')
+    public function addInfo($message, $icon = 'info-sign')
     {
-        $this->contextVariables['notices'][] = ['icon' => $icon, 'message' => $message, 'state' => 'highlight'];
+        $this->contextVariables['notices'][] = ['icon' => $icon, 'message' => $message, 'state' => 'info'];
 
         return $this;
     }
 
-    public function addError($message, $icon = 'alert')
+    public function addError($message, $icon = 'warning-sign')
     {
-        $this->contextVariables['notices'][] = ['icon' => $icon, 'message' => $message, 'state' => 'error'];
+        $this->contextVariables['notices'][] = ['icon' => $icon, 'message' => $message, 'state' => 'danger'];
 
         return $this;
     }
 
     /**
      * Sets the template file to use
-     * @param  String           $template The template filename
+     * @param  String $template The template filename
      * @throws MyRadioException If template does not exist
      * @return MyRadioTwig      This for chaining
      */
@@ -169,7 +172,8 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
     public function render()
     {
         if ((defined('AUTH_SHOWERRORS') && CoreUtils::hasPermission(AUTH_SHOWERRORS))
-             || Config::$display_errors) {
+            || Config::$display_errors
+        ) {
             $this->addVariable('phperrors', MyRadioError::$php_errorlist);
             if (isset($_SESSION)) { //Is the DB working?
                 $this->addVariable('query_count', Database::getInstance()->getCounter());

@@ -4,8 +4,6 @@
  * It can take one parameter, $_REQUEST['termid']
  * which should be the ID of the Term to edit.
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 20141026
  * @package MyRadio_Scheduler
  */
 
@@ -31,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         */
         throw new MyRadioException('Not Implemented');
         //submit edit
-        
+
 
         CoreUtils::backWithMessage("Show Updated!");
     }

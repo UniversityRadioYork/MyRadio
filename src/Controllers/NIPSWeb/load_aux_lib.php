@@ -2,9 +2,6 @@
 /**
  * Loads a NIPSWeb Auxillary playlist
  *
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @author Andy Durant <aj@ury.org.uk>
- * @version 20130512
  * @package MyRadio_NIPSWeb
  */
 

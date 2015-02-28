@@ -3,27 +3,27 @@
   <head>
 {% include 'parts/base_head.twig' %}
       <link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css" />
-      <style>html,body{background: none; box-shadow: none; width: 800px; min-width: 800px; height: auto;}</style>
+      <style>html,body{background: none; box-shadow: none; width: 550px; min-width: 550px; height: auto;}</style>
     </head>
     <body>
-  {% include 'NIPSWeb/res_selector.twig' %}<a href="#" onclick="res_type_sel_change_handler()">Update</a>
-        <div id="central-container" class="res-container ui-widget-content ui-helper-hidden">
+  {% include 'NIPSWeb/res_selector.twig' %}
+        <div id="central-container" class="res-container hidden">
           <p>You can upload track to the central database by dragging them into the box below. I'll try to analyse the file and if I can figure out what it is, then I'll upload it for you. If the track is of poor quality or too unknown to be recognised, then this tool will not allow tracks to be uploaded.</p>
-          <div id="central-dragdrop" class="ui-widget-header">Drag MP3 files here to upload<div id="lastfm-attr">
+          <div id="central-dragdrop" class="well">Drag MP3 files here to upload<div id="lastfm-attr">
               <a href="http://www.last.fm/">Powered by <img src="http://cdn.last.fm/flatness/badges/lastfm_black_small.gif" /></a>
-          </div></div>
-          <div class="ui-state-highlight" id="central-status"></div>
-          <div class="ui-widget-content" id="central-result"></div>
+          </div><div class="alert alert-warning" id="central-status">Getting set up...</div></div>
+          <div id="central-result"></div>
         </div>
-        <div id="managed-container" class="res-container ui-widget-content ui-helper-hidden">Managed playlists are controlled using <a href="/itones/" target="_blank">Campus Playout Manager</a>. Entering them there also adds them to the wonderful Campus Jukebox</div>
-        <div id="res-container" class="res-container ui-widget-content ui-helper-hidden">
+        <div id="managed-container" class="res-container hidden">Managed playlists are controlled using <a href="/itones/" target="_blank">Campus Playout Manager</a>. Entering them there also adds them to the wonderful Campus Jukebox</div>
+        <div id="res-container" class="res-container hidden">
           <p>You can upload track to this resource library by dragging them into the box below. Tracks uploaded must not return a match against our music analysis software.</p>
-          <div id="res-dragdrop" class="ui-widget-header">Drag WAV/MP3 files here to upload</div>
-          <div class="ui-state-highlight" id="res-status"></div>
-          <div class="ui-widget-content" id="res-result"></div>
+          <div id="res-dragdrop" class="well">Drag WAV/MP3 files here to upload<div class="alert alert-warning" id="res-status">Getting set up...</div></div>
+          
+          <div id="res-result"></div>
         </div>
         <script type="text/javascript">window.memberid = parseInt({{memberid}});</script>
   {% include 'parts/base_foot.twig' %}
       <script type="text/javascript" src="{{baseurl}}js/vendor/jquery.filedrop.js"></script>
       <script type="text/javascript" src="{{baseurl}}js/nipsweb.managelibrary.js"></script>
-      </body></html>
+    </body>
+</html>

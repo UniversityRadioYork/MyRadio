@@ -6,23 +6,39 @@
 	<head>
 		<title>Welcome to MyRadio</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<link rel="Stylesheet" type="text/css" href="css/normalise.css">
-		<link rel="Stylesheet" type="text/css" href="css/vendor/themes/ury-purple/jquery-ui.css">
-		<link rel="stylesheet" type="text/css" href="css/main.css">
+
+		<link rel="Stylesheet" type="text/css" href="css/vendor/bootstrap.min.css">
+		<link rel="Stylesheet" type="text/css" href="css/vendor/bootstrap-theme.min.css">
 		<link rel="Stylesheet" type="text/css" href="css/style.css">
+
 		<script type="text/javascript" src="js/vendor/jquery-2.1.0.min.js"></script>
+		<script type="text/javascript" src="js/vendor/bootstrap.min.js"></script>
 	</head>
 	<body>
-	  <div id="grid" class="transBG clearfix">
-	  	<header id="content-header"><h2>{{ title }}</h2></header>
-	  	<div id="content-body" class="clearfix">
+	    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	      <div class="container">
+	        <div class="navbar-header">
+	          <a class="navbar-brand">MyRadio</a>
+	        </div>
+	        <div class="collapse navbar-collapse">
+	        </div>
+	      </div>
+	    </nav>
+	    <br>
+	    <div class="container main-container">
+	    	<h1>{{ title }}</h1>
 	  		{% block content %}
 	  		{{content}}
 	  		{% endblock %}
 	  	</div>
-	  </div>
-	  <footer id="pageFooter" class="clearfix">
-		<div id="copyright"><p>MyRadio by <a href="https://github.com/UniversityRadioYork/">URY Computing Team</a></p></div>
-	  </footer>
+		<footer class="footer">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6">
+					MyRadio by University Radio York
+					</div>
+				</div>
+			</div>
+		</footer>
 	</body>
 </html>

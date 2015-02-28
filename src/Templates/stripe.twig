@@ -1,18 +1,14 @@
 {% extends 'base.twig' %}
 {% block content %}
-<header id="pageHeader" class="clearfix">
-  <a id="logo" href="{{baseurl}}">
-    <h1>{{config.long_name}}</h1>
-  </a>
+<header class="page-header">
+  <h1>{{ title }}</h1>
 </header>
 <div id="grid" class="transBG clearfix">
-  <header id="content-header">
-    <h2>{{ title }}</h2>
-  </header>
   <div id="content-body" class="clearfix">
     {% if submenu|length > 0 %}
     {% include 'parts/submenu.twig' %}
     {% endif %}
   {% block stripecontent %}{{stripedata | raw}}{% endblock %}
       </div>
+</div>
 {% endblock %}

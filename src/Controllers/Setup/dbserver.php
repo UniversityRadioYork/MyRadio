@@ -2,8 +2,6 @@
 /**
  * Sets up the database connection for MyRadio
  *
- * @version 20140504
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 use \MyRadio\Database;
@@ -29,6 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     CoreUtils::getTemplateObject()
         ->setTemplate('Setup/dbserver.twig')
         ->addVariable('title', 'Database Server')
-        ->addVariable('db_error', isset($_GET['err']))
+        ->addVariable('db_error', isset($_GET['db_error']))
         ->render();
 }

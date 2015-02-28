@@ -13,10 +13,8 @@ use \MyRadio\MyRadioEmail;
 /**
  * The List class stores and manages information about a URY Mailing List
  *
- * @version 20130526
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Mail
- * @uses \Database
+ * @uses    \Database
  */
 class MyRadio_List extends ServiceAPI
 {
@@ -180,10 +178,12 @@ class MyRadio_List extends ServiceAPI
             return false;
         }
 
-        return sizeof(self::$db->query(
-            'SELECT memberid FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
-            [$user->getID(), $this->getID()]
-        )) === 1;
+        return sizeof(
+            self::$db->query(
+                'SELECT memberid FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
+                [$user->getID(), $this->getID()]
+            )
+        ) === 1;
     }
 
     /**
@@ -341,26 +341,26 @@ class MyRadio_List extends ServiceAPI
             'optIn' => ((!$subscribed && ($this->optin || $this->hasOptedOutOfAuto(MyRadio_User::getCurrentOrSystemUser()))) ?
                 [
                     'display' => 'icon',
-                    'value' => 'circle-plus',
+                    'value' => 'plus',
                     'title' => 'Subscribe to this mailing list',
                     'url' => CoreUtils::makeURL('Mail', 'optin', ['list' => $this->getID()])
                 ] : null
             ),
             'optOut' => ($subscribed ? [
                 'display' => 'icon',
-                'value' => 'circle-minus',
+                'value' => 'minus',
                 'title' => 'Opt out of this mailing list',
                 'url' => CoreUtils::makeURL('Mail', 'optout', ['list' => $this->getID()])
             ] : null),
             'mail' => [
                 'display' => 'icon',
-                'value' => 'mail-closed',
+                'value' => 'envelope',
                 'title' => 'Send a message to this mailing list',
                 'url' => CoreUtils::makeURL('Mail', 'send', ['list' => $this->getID()])
             ],
             'archive' => [
                 'display' => 'icon',
-                'value' => 'disk',
+                'value' => 'folder-close',
                 'title' => 'View archives for this mailing list',
                 'url' => CoreUtils::makeURL('Mail', 'archive', ['list' => $this->getID()])
             ]

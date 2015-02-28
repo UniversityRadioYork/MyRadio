@@ -2,8 +2,6 @@
 /**
  * Saves the Setup data to MyRadio_Config.local.php
  *
- * @version 20140529
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @package MyRadio_Core
  */
 use \MyRadio\Config;

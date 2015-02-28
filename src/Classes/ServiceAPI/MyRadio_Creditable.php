@@ -14,11 +14,8 @@ use \MyRadio\ServiceAPI\MyRadio_User;
  * The object obviously needs to have a credits table in the database for this
  * to work.
  *
- * @version 20140112
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @author Matt Windsor <matt.windsor@ury.org.uk>
  * @package MyRadio_Core
- * @uses \Database
+ * @uses    \Database
  */
 trait MyRadio_Creditable
 {
@@ -166,8 +163,9 @@ trait MyRadio_Creditable
         foreach ($old as $credit) {
             if (!in_array($credit, $new)) {
                 self::$db->query(
-                    'UPDATE '.$table.' SET effective_to=NOW()'
-                    . 'WHERE '.$pkey.'=$1 AND creditid=$2 AND credit_type_id=$3',
+                    'UPDATE ' . $table . ' SET effective_to=NOW()'
+                    . ' WHERE ' . $pkey . '=$1 AND creditid=$2 AND credit_type_id=$3'
+                    . ' AND effective_to IS NULL',
                     [$this->getID(), $credit['User']->getID(), $credit['type']],
                     true
                 );

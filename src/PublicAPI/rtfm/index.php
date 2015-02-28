@@ -7,7 +7,8 @@
   <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
   <link href='css/reset.css' media='print' rel='stylesheet' type='text/css'/>
   <link href='css/screen.css' media='print' rel='stylesheet' type='text/css'/>
-  <link rel="stylesheet" type="text/css" href="https://ury.org.uk/portal/css/main.css" />
+  <link rel="stylesheet" type="text/css" href="https://ury.org.uk/myradio/css/vendor/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="https://ury.org.uk/myradio/css/style.css" />
   <script type="text/javascript" src="lib/shred.bundle.js"></script>
   <script src='lib/jquery-1.8.0.min.js' type='text/javascript'></script>
   <script src='lib/jquery.slideto.min.js' type='text/javascript'></script>
@@ -69,10 +70,11 @@
 </head>
 
 <body>
-    <header id="pageHeader" class="clearfix">
-        <img id="logo-img" alt="University Radio York" src="//ury.org.uk/static/img/logo.png" />
-        <h1 style='color:white;font-family:helvetica,arial,sans-serif;font-size:32px;padding:0 0 0 20px'>University Radio York</h1>
-    </header>
+    <nav id="pageHeader" class="navbar navbar-inverse navbar-fixed-top">
+        <header class="navbar-header">
+            <a class="navbar-brand">MyRadio API</a>
+        </header>
+    </nav>
     <div class="main transBG clearfix" id="grid">
         <header id="content-header">
             <h2 style="color:white;font-family:helvetica,arial,sans-serif;padding:0;font-weight:bold">API Documentation</h2>

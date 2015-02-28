@@ -3,8 +3,6 @@
 /**
  *
  * @todo Proper Documentation
- * @author Lloyd Wallis <lpw@ury.org.uk>
- * @version 24072012
  * @package MyRadio_Core
  */
 $form = new MyRadioForm(

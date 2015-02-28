@@ -13,8 +13,6 @@ use \MyRadio\MyRadio\CoreUtils;
  *
  * This is a Critical include!
  *
- * @version 20130531
- * @author Lloyd Wallis <lpw@ury.org.uk>
  * @depends Config
  * @package MyRadio_Core
  */
@@ -83,9 +81,9 @@ class Database
 
     /**
      * Generic function that just runs a pg_query_params
-     * @param String $sql The query string to execute
-     * @param Array $params Parameters for the query
-     * @param bool $rollback Deprecated.
+     * @param String $sql      The query string to execute
+     * @param Array  $params   Parameters for the query
+     * @param bool   $rollback Deprecated.
      * @return A pg result reference
      * @throws MyRadioException If the query fails
      * @assert ('SELECT * FROM public.tableethatreallydoesntexist') throws MyRadioException
@@ -143,9 +141,9 @@ class Database
     /**
      * The most commonly used database function
      * Equates to a pg_fetch_all(pg_query)
-     * @param String|Resource $sql The query string to execute
+     * @param String|Resource $sql    The query string to execute or a psql result resource
      * or a psql result resource
-     * @param Array $params Parameters for the query
+     * @param Array           $params Parameters for the query
      * @return Array An array of result rows (potentially empty)
      * @throws MyRadioException
      */
@@ -171,8 +169,8 @@ class Database
 
     /**
      * Equates to a pg_fetch_assoc(pg_query). Returns the first row
-     * @param String $sql The query string to execute
-     * @param Array $params Paramaters for the query
+     * @param String $sql    The query string to execute
+     * @param Array  $params Paramaters for the query
      * @return Array The requested result row, or an empty array on failure
      * @throws MyRadioException
      */
@@ -189,9 +187,9 @@ class Database
 
     /**
      * Equates to a pg_fetch_all_columns(pg_query,0). Returns all first column entries
-     * @param String $sql The query string to execute
-     * @param Array $params Paramaters for the query
-     * @param bool $rollback deprecated.
+     * @param String $sql      The query string to execute
+     * @param Array  $params   Paramaters for the query
+     * @param bool   $rollback deprecated.
      * @return Array The requested result column, or an empty array on failure
      * @throws MyRadioException
      */

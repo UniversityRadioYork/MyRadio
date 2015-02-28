@@ -16,9 +16,6 @@ use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
 /**
  * Method object for requesting a track be played by iTones.
  *
- * @version 20140112
- * @author  Lloyd Wallis <lpw@ury.org.uk>
- * @author  Matt Windsor <mattbw@ury.org.uk>
  * @package MyRadio_iTones
  * @uses    \Database
  */
