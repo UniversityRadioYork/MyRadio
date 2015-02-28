@@ -281,6 +281,9 @@ class MyRadio_Officer extends ServiceAPI
      */
     public function setOrdering($ordering)
     {
+        if (!is_int($ordering)) {
+            throw new MyRadioException('Ordering must be a number', 400);
+        }
         if ($ordering !== $this->ordering) {
             self::$db->query(
                 'UPDATE public.officer
