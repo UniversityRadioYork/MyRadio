@@ -592,7 +592,7 @@ class MyRadio_Track extends ServiceAPI
         }
     }
 
-    public static function identifyAndStoreTrack($tmpid, $title, $artist, $album, $position)
+    public static function identifyAndStoreTrack($tmpid, $title, $artist, $album, $position, $explicit = null)
     {
         // We need to rollback if something goes wrong later
         self::$db->query('BEGIN');
@@ -615,6 +615,18 @@ class MyRadio_Track extends ServiceAPI
             $ainfo['duration'] = intval($getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $tmpid)['playtime_seconds']);
         }
 
+        // See if the explicit is set, and set the value for the DB accordingly - if not set unknown
+        if (!is_null($explicit)) {
+            if ($explicit === true){
+                $clean = 'n';
+            } elseif ($explicit === false) {
+                $clean = 'y';
+            }
+        } else {
+            $clean = 'u';
+        }
+
+
         // Check if the track is already in the library and create it if not
         $track = self::findByNameArtist($title, $artist, 1, false, true);
         if (empty($track)) {
@@ -626,7 +638,8 @@ class MyRadio_Track extends ServiceAPI
                         'digitised' => true,
                         'duration' => $ainfo['duration'],
                         'recordid' => $ainfo['album']->getID(),
-                        'number' => $ainfo['position']
+                        'number' => $ainfo['position'],
+                        'clean' => $clean
                 ]
             );
         } else {
