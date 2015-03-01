@@ -234,6 +234,8 @@ class Database
      * json_decode *nearly* works in some cases, but this tends to be more reliable
      *
      * Based on http://stackoverflow.com/questions/3068683/convert-postgresql-array-to-php-array
+     *
+     * @deprecated Use json output from Postgres instead
      */
     public function decodeArray($text)
     {

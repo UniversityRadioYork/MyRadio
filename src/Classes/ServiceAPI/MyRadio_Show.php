@@ -26,6 +26,78 @@ use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 
 class MyRadio_Show extends MyRadio_Metadata_Common
 {
+
+    const BASE_SHOW_SQL = 
+        'SELECT show_id,
+            show.show_type_id,
+            show.submitted,
+            show.memberid AS owner,
+            array_to_json(metadata.metadata_key_id) AS metadata_keys,
+            array_to_json(metadata.metadata_value) AS metadata_values,
+            array_to_json(image_metadata.metadata_key_id) AS image_metadata_keys,
+            array_to_json(image_metadata.metadata_value) AS image_metadata_values,
+            array_to_json(credits.credit_type_id) AS credit_types,
+            array_to_json(credits.creditid) AS credits,
+            array_to_json(genre.genre_id) AS genres,
+            array_to_json(season.show_season_id) AS seasons
+        FROM 
+            schedule.show
+            NATURAL FULL JOIN
+            (
+                SELECT
+                    show_id,
+                    array_agg(metadata_key_id) AS metadata_key_id,
+                    array_agg(metadata_value) AS metadata_value
+                FROM schedule.show_metadata
+                WHERE effective_from <= NOW()
+                    AND (effective_to IS NULL OR effective_to >= NOW())
+                    AND approvedid IS NOT NULL
+                GROUP BY show_id
+            ) AS metadata
+            NATURAL FULL JOIN
+            (
+                SELECT
+                    show_id,
+                    array_agg(metadata_key_id) AS metadata_key_id,
+                    array_agg(metadata_value) AS metadata_value
+                FROM schedule.show_image_metadata
+                WHERE effective_from <= NOW()
+                    AND (effective_to IS NULL OR effective_to >= NOW())
+                    AND approvedid IS NOT NULL
+                GROUP BY show_id
+            ) AS image_metadata
+            NATURAL FULL JOIN
+            (
+                SELECT
+                    show_id,
+                    array_agg(credit_type_id) AS credit_type_id,
+                    array_agg(creditid) AS creditid
+                FROM schedule.show_credit
+                WHERE effective_from <= NOW()
+                    AND (effective_to IS NULL OR effective_to >= NOW())
+                    AND approvedid IS NOT NULL
+                GROUP BY show_id
+            ) AS credits
+            NATURAL FULL JOIN
+            (
+                SELECT
+                    show_id,
+                    array_agg(genre_id) AS genre_id
+                FROM schedule.show_genre
+                WHERE effective_from <= NOW()
+                    AND (effective_to IS NULL OR effective_to >= NOW())
+                    AND approvedid IS NOT NULL
+                GROUP BY show_id
+            ) AS genre
+            NATURAL FULL JOIN
+            (
+                SELECT
+                    show_id,
+                    array_agg(show_season_id) AS show_season_id
+                FROM schedule.show_season
+                GROUP BY show_id
+            ) AS season';
+
     private $show_id;
     private $owner;
     protected $credits = [];
@@ -35,71 +107,44 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     private $season_ids;
     private $photo_url;
 
-    protected function __construct($show_id)
+    /**
+     * @param $result Array
+     * show_id int
+     * show_type_id int
+     * submitted strtotimeable string
+     * owner int
+     * metadata_keys array[int]
+     * metadata_values array[string]
+     * image_metadata_keys array[int]
+     * image_metadata_values array[string]
+     * credit_types array[int]
+     * credits array[int]
+     * genres array[int]
+     * seasons array[int]
+     */
+    protected function __construct($result)
     {
-        $this->show_id = $show_id;
-        self::initDB();
-
-        $result = self::$db->fetchOne(
-            'SELECT show_type_id, submitted, memberid, (
-                SELECT array(
-                    SELECT metadata_key_id FROM schedule.show_metadata
-                    WHERE show_id=$1 AND effective_from <= NOW()
-                    AND (effective_to IS NULL OR effective_to >= NOW())
-                    ORDER BY effective_from, show_metadata_id
-                )
-            ) AS metadata_types, (
-                SELECT array(
-                    SELECT metadata_value FROM schedule.show_metadata
-                    WHERE show_id=$1 AND effective_from <= NOW()
-                    AND (effective_to IS NULL OR effective_to >= NOW())
-                    ORDER BY effective_from, show_metadata_id
-                )
-            ) AS metadata, (
-                SELECT array(
-                    SELECT metadata_value FROM schedule.show_image_metadata
-                    WHERE show_id=$1 AND effective_from <= NOW()
-                    AND (effective_to IS NULL OR effective_to >= NOW())
-                    ORDER BY effective_from, show_image_metadata_id
-                )
-            ) AS image_metadata, (
-                SELECT array(
-                    SELECT credit_type_id FROM schedule.show_credit
-                    WHERE show_id=$1 AND effective_from <= NOW()
-                    AND (effective_to IS NULL OR effective_to >= NOW())
-                    AND approvedid IS NOT NULL
-                    ORDER BY show_credit_id
-                )
-            ) AS credit_types, (
-                SELECT array(
-                    SELECT creditid FROM schedule.show_credit
-                    WHERE show_id=$1 AND effective_from <= NOW()
-                    AND (effective_to IS NULL OR effective_to >= NOW())
-                    AND approvedid IS NOT NULL
-                    ORDER BY show_credit_id
-                )
-            ) AS credits, (
-                SELECT array(
-                    SELECT genre_id FROM schedule.show_genre
-                    WHERE show_id=$1 AND effective_from <= NOW()
-                    AND (effective_to IS NULL OR effective_to >= NOW())
-                    AND approvedid IS NOT NULL
-                    ORDER BY show_genre_id
-                )
-            ) AS genres
-            FROM schedule.show WHERE show_id=$1',
-            [$show_id]
-        );
+        $this->show_id = (int) $result['show_id'];
 
         //Deal with the easy fields
-        $this->owner = (int) $result['memberid'];
+        $this->owner = (int) $result['owner'];
         $this->show_type = (int) $result['show_type_id'];
         $this->submitted_time = strtotime($result['submitted']);
-        $this->genres = self::$db->decodeArray($result['genres']);
+
+        $this->genres = json_decode($result['genres']);
+        if ($this->genres === null) {
+            $this->genres = [];
+        }
 
         //Deal with the Credits arrays
-        $credit_types = self::$db->decodeArray($result['credit_types']);
-        $credits = self::$db->decodeArray($result['credits']);
+        $credit_types = json_decode($result['credit_types']);
+        $credits = json_decode($result['credits']);
+        if ($credit_types === null) {
+            $credit_types = [];
+        }
+        if ($credits === null) {
+            $credits = [];
+        }
 
         for ($i = 0; $i < sizeof($credits); $i++) {
             if (empty($credits[$i])) {
@@ -113,8 +158,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         }
 
         //Deal with the Metadata arrays
-        $metadata_types = self::$db->decodeArray($result['metadata_types']);
-        $metadata = self::$db->decodeArray($result['metadata']);
+        $metadata_types = json_decode($result['metadata_keys']);
+        $metadata = json_decode($result['metadata_values']);
+        if ($metadata_types === null) {
+            $metadata_types = [];
+        }
+        if ($metadata === null) {
+            $metadata = [];
+        }
 
         for ($i = 0; $i < sizeof($metadata); $i++) {
             if (self::isMetadataMultiple($metadata_types[$i])) {
@@ -130,26 +181,24 @@ class MyRadio_Show extends MyRadio_Metadata_Common
          * @todo Support general photo attachment?
          */
         $this->photo_url = Config::$default_person_uri;
-        if ($result['image_metadata'] !== '{}') {
-            $this->photo_url = Config::$public_media_uri.'/'.self::$db->decodeArray($result['image_metadata'])[0];
+        $image_metadata = json_decode($result['image_metadata_values']);
+        if ($result['image_metadata_values'] !== null) {
+            $this->photo_url = Config::$public_media_uri . '/' . $image_metadata[0];
         }
 
         //Get information about Seasons
-        $this->season_ids = self::$db->fetchColumn(
-            'SELECT show_season_id
-            FROM schedule.show_season WHERE show_id=$1',
-            [$show_id]
-        );
+        $this->season_ids = json_decode($result['seasons']);
+        if ($this->season_ids === null) {
+            $this->season_ids = [];
+        }
     }
 
-    /**
-     * Get the cache key for the Show with this ID.
-     * @param int $id
-     * @return String
-     */
-    public static function getCacheKey($id)
+    protected static function factory($showid)
     {
-        return 'MyRadio_Show-'.$id;
+        $sql = self::BASE_SHOW_SQL . ' WHERE show_id=$1';
+        $result = self::$db->fetchOne($sql, [$showid]);
+
+        return new MyRadio_Show($result);
     }
 
     /**
@@ -649,51 +698,40 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
-     * @todo Document this method
-     * @todo Ajax the All Shows page - this isn't a particularly nice query
+     * Returns all Shows of the given type. Caches for 1h.
+     * @return Array[MyRadio_Show]
      */
     public static function getAllShows($show_type_id = 1, $current_term_only = false)
     {
-        if($current_term_only) {
-            $show_ids = self::$db->fetchColumn(
-                'SELECT show_id FROM schedule.show
-                WHERE show_type_id=$1 AND EXISTS (
-                        SELECT * FROM schedule.show_season
-                        WHERE schedule.show_season.show_id=schedule.show.show_id
-                        AND schedule.show_season.termid=$2
-                )
-                ORDER BY (
-                    SELECT metadata_value FROM schedule.show_metadata
-                    WHERE show.show_id=show_metadata.show_id AND metadata_key_id=2
-                    AND effective_from <= NOW()
-                    AND (effective_to IS NULL OR effective_to > NOW())
-                    ORDER BY effective_from DESC LIMIT 1
-                );',
-                [$show_type_id, MyRadio_Scheduler::getActiveApplicationTerm()]
-            );
-        }
-        else
-        {
-            $show_ids = self::$db->fetchColumn(
-                'SELECT show_id FROM schedule.show
-                WHERE show_type_id=$1
-                ORDER BY (
-                    SELECT metadata_value FROM schedule.show_metadata
-                    WHERE show.show_id=show_metadata.show_id AND metadata_key_id=2
-                    AND effective_from <= NOW()
-                    AND (effective_to IS NULL OR effective_to > NOW())
-                    ORDER BY effective_from DESC LIMIT 1
-                );',
-                [$show_type_id]
-            );
+        $key = 'MyRadio_Show_AllShowsFetcher_last_' . $show_type_id . '_' . (int) $current_term_only;
+
+        if (self::$cache->get($key)) {
+            $shows = self::$cache->getAll(self::getCacheKey(''));
+        } else {
+            $sql = self::BASE_SHOW_SQL . ' WHERE show_type_id=$1';
+            $params = [$show_type_id];
+            if($current_term_only) {
+                $sql .= ' AND EXISTS (
+                            SELECT * FROM schedule.show_season
+                            WHERE schedule.show_season.show_id=schedule.show.show_id
+                            AND schedule.show_season.termid=$2
+                        )';
+                $params[] = MyRadio_Scheduler::getActiveApplicationTerm();
+            }
+
+            $result = self::$db->fetchAll($sql, $params);
+
+            $shows = [];
+            foreach ($result as $row) {
+                $show = new MyRadio_Show($row);
+                $show->updateCacheObject();
+                $shows[] = $show;
+            }
+
+            self::$cache->set($key, 'true');
         }
 
-        return array_map(
-            function ($show_id) {
-                return self::getInstance($show_id);
-            },
-            array_values($show_ids)
-        );
+        return $shows;
     }
 
     /**
