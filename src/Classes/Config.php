@@ -427,6 +427,17 @@ final class Config
     public static $api_url = '/api';
 
     /**
+     * A list of domains that will get a valid Access-Control-Allow-Origin.
+     *
+     * The default, an empty array, allows all access.
+     *
+     * @todo Is this a sane default?
+     *
+     * @var array
+     */
+    public static $api_allowed_domains = [];
+
+    /**
      * The URL prefix to URY's webcam
      *
      * Must be absolute. With trailing /

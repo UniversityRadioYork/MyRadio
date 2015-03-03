@@ -300,6 +300,22 @@ class MyRadio_Swagger
     }
 
     /**
+     * Return the methods this endpoint allows.
+     * 
+     * Specify these with one or more @api decorators.
+     * Defaults to GET only.
+     */
+    public static function getOptionsAllow(ReflectionMethod $method)
+    {
+        $info = self::parseDoc($method);
+        if (isset($info['keys']['api'])) {
+            return array_merge(['OPTIONS'], $info['keys']['api']);
+        } else {
+            return ['OPTIONS', 'GET'];
+        }
+    }
+
+    /**
      * Get the permissions that are needed to access this API Call.
      *
      * If the return values is null, this method cannot be called.
