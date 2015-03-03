@@ -309,6 +309,8 @@ class MyRadio_Swagger
         $info = self::parseDoc($method);
         if (isset($info['keys']['api'])) {
             return array_merge(['OPTIONS'], $info['keys']['api']);
+        } elseif (strncmp($method->getName(), 'set', strlen('set')) === 0) {
+            return ['OPTIONS', 'POST'];
         } else {
             return ['OPTIONS', 'GET'];
         }

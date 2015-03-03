@@ -838,6 +838,7 @@ class MyRadio_Track extends ServiceAPI
     /**
      * Set the length of the track intro, in seconds
      * @param int
+     * @api POST
      */
     public function setIntro($duration)
     {
