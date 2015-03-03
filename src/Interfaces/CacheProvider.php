@@ -23,7 +23,7 @@ interface CacheProvider extends Singleton
      */
     public function get($key);
     /**
-     * Gets all cache entries starting with the given prefic
+     * Gets all cache entries starting with the given prefix
      * @return Array
      */
     public function getAll($prefix = '');
