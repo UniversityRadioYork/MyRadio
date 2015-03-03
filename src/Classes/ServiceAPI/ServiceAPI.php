@@ -78,11 +78,17 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
         $key = self::getCacheKey($itemid);
         $cache = self::$cache->get($key);
         if (!$cache) {
-            $cache = new $class($itemid);
+            $cache = $class::factory($itemid);
             self::$cache->set($key, $cache);
         }
 
         return $cache;
+    }
+
+    protected static function factory($itemid)
+    {
+        $class = get_called_class();
+        return new $class($itemid);
     }
 
     public function toDataSource($full = false)

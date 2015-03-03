@@ -82,6 +82,23 @@ class APCProvider implements \MyRadio\Iface\CacheProvider
         return apc_fetch($this->getKeyPrefix().$key);
     }
 
+    public function getAll($prefix = '')
+    {
+        if (!$this->enable) {
+            return [];
+        }
+        
+        $prefix = preg_quote($this->getKeyPrefix() . $prefix);
+
+        $result = [];
+        $it = new \APCIterator('user', '/^' . $prefix . '/', APC_ITER_VALUE);
+        foreach ($it as $row) {
+            $result[] = $row['value'];
+        }
+
+        return $result;
+    }
+
     /**
      * Deletes a previously stored value from the APC User Object Cache
      *

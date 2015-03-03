@@ -2084,7 +2084,7 @@ CREATE TABLE show_image_metadata (
     effective_from timestamp with time zone,
     effective_to timestamp with time zone,
     metadata_key_id integer NOT NULL,
-    metadata_value character varying(100) NOT NULL,
+    metadata_value character text NOT NULL,
     show_id integer,
     show_image_metadata_id integer NOT NULL
 );
