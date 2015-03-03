@@ -35,6 +35,7 @@ function api_error($code, $message = null, $previous = null)
         401 => "Unauthorized",
         403 => "Forbidden",
         404 => "File Not Found",
+        405 => "Method Not Allowed",
         500 => "Internal Server Error"
     ];
     header("HTTP/1.1 $code {$messages[$code]}");
@@ -156,6 +157,31 @@ try {
     $methodReflection = $classReflection->getMethod($method);
 } catch (ReflectionException $e) {
     api_error(404);
+}
+
+/**
+ * Check and provide Access-Control-Allow-Origin if needed
+ */
+if (isset($_SERVER['HTTP_ORIGIN'])) {
+    if (
+        empty(Config::$api_allowed_domains) or
+        in_array($_SERVER['HTTP_ORIGIN'], Config::$api_allowed_domains)
+    ) {
+        header('Access-Control-Allow-Origin: *');
+    }
+}
+
+/**
+ * If it's an OPTIONS request report what methods are allowed
+ * Otherwise, check they're using one of those methods
+ */
+$allowed_methods = MyRadio_Swagger::getOptionsAllow($methodReflection);
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header('Allow: ' . implode(', ', $allowed_methods));
+    exit;
+} elseif (!in_array($_SERVER['REQUEST_METHOD'], $allowed_methods)) {
+    header('Allow: ' . implode(', ', $allowed_methods));
+    api_error(405);
 }
 
 /**
