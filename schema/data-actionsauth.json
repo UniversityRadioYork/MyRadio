@@ -7,6 +7,7 @@
     ["iTones", "editPlaylist", "AUTH_JUKEBOX_MODIFYPLAYLISTS"],
     ["iTones", "listPlaylists", "AUTH_JUKEBOX_MODIFYPLAYLISTS"],
     ["iTones", "refreshLock", "AUTH_JUKEBOX_MODIFYPLAYLISTS"],
+    ["iTones", "configurePlaylist", "AUTH_JUKEBOX_MODIFYPLAYLISTS"],
     ["iTones", "requestTrack", "AUTH_JUKEBOX_REQUESTTRACK"],
     ["iTones", "viewPlaylistHistory", "AUTH_JUKEBOX_REVERTPLAYLIST"],
     ["Library", "acceptTrackCorrection", "AUTH_EDITMUSIC"],
