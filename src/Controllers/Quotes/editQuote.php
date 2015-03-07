@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         MyRadio_Quote::create($data);
     } else {
         //submit edit
-        MyRadio_Quote::getInstance($id)
+        MyRadio_Quote::getInstance($data['id'])
             ->setSource($data['source'])
             ->setText($data['text'])
             ->setDate($data['date']);

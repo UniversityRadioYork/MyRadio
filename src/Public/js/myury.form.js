@@ -357,7 +357,9 @@ window.MyRadioForm = {
             tinymce.init(
                 {
                     selector: "textarea.myury-form-tinymce",
-                    plugins: "anchor autolink charmap code contextmenu fullscreen hr image link lists media tabfocus table wordcount"
+                    plugins: "anchor autolink charmap code contextmenu fullscreen hr image link lists media tabfocus table wordcount",
+                    relative_urls: false,
+                    remove_script_host: false
                 }
             );
         }
