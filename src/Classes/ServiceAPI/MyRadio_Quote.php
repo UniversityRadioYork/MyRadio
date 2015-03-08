@@ -227,7 +227,7 @@ class MyRadio_Quote extends ServiceAPI
     {
         $this->text = $text;
 
-        return $this->set(SET_SOURCE_SQL, $text);
+        return $this->set(self::SET_TEXT_SQL, $text);
     }
 
     /**
@@ -239,7 +239,7 @@ class MyRadio_Quote extends ServiceAPI
     {
         $this->source = $source;
 
-        return $this->set(SET_SOURCE_SQL, $source->getID());
+        return $this->set(self::SET_SOURCE_SQL, $source->getID());
     }
 
     /**
@@ -251,7 +251,7 @@ class MyRadio_Quote extends ServiceAPI
     {
         $this->date = $date;
 
-        return $this->set(SET_DATE_SQL, strtotime($date));
+        return $this->set(self::SET_DATE_SQL, CoreUtils::getTimestamp($date));
     }
 
     /**
