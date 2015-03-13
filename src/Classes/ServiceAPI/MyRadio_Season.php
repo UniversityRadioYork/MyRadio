@@ -197,10 +197,20 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $season_id = $season_create_result[0];
 
         //Now let's allocate store the requested weeks for a term
+        $any_weeks = false;
         for ($i = 1; $i <= 10; $i++) {
             if ($params['weeks']["wk$i"]) {
-                self::$db->query('INSERT INTO schedule.show_season_requested_week (show_season_id, week) VALUES ($1, $2)', [$season_id, $i], true);
+                self::$db->query(
+                    'INSERT INTO schedule.show_season_requested_week (show_season_id, week) VALUES ($1, $2)',
+                    [$season_id, $i],
+                    true
+                );
+                $any_weeks = true;
             }
+        }
+        if (!$any_weeks) {
+            self::$db->query('ROLLBACK');
+            throw new MyRadioException('A Season must at least have one requested week.', 400);
         }
 
         //Now for requested times
