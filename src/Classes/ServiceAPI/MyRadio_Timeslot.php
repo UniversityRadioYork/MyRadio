@@ -254,7 +254,6 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      * @param int    $effective_to   UTC Time the metadata value is effective to. Default NULL (does not expire).
      * @param null   $table          No action. Used for compatibility with parent.
      * @param null   $pkey           No action. Used for compatibility with parent.
-     * @api GET                      API defaults to POST for setN functions, mixclouder (and others) expects GET
      */
     public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null)
     {
