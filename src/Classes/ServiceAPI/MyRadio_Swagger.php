@@ -303,6 +303,7 @@ class MyRadio_Swagger
      * 
      * Specify these with one or more @api decorators.
      * Defaults to GET only.
+     * Defaults to POST if the method begins with 'set' (e.g. setIntro)
      */
     public static function getOptionsAllow(ReflectionMethod $method)
     {
