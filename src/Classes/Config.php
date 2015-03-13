@@ -586,7 +586,7 @@ final class Config
     public static $welcome_email = <<<EOT
 
    This is a welcome email. You can use #NAME to get the user's first name,
-   and include #UNAME and #PASS to tell them their newly created login details.
+   and include #USER and #PASS to tell them their newly created login details.
 
 EOT;
 
