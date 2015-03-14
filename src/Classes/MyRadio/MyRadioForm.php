@@ -348,7 +348,7 @@ class MyRadioForm extends ContainerSubject
             $captcha = new \Captcha\Captcha();
             $captcha->setPublicKey(self::$container['config']->recaptcha_public_key);
             $captcha->setPrivateKey(self::$container['config']->recaptcha_private_key);
-            if (!$captcha->check()) {
+            if (!$captcha->check()->isValid()) {
                 return false;
             }
         }
