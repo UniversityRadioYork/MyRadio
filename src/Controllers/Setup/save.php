@@ -57,7 +57,7 @@ foreach ($config_overrides as $k => $v) {
     } elseif ($v === false) {
         $v = 'false';
     }
-    fwrite($file, '$container['config']->' . $k . ' = ' . strval($v) . ";\n");
+    fwrite($file, '$container[\'config\']->' . $k . ' = ' . strval($v) . ";\n");
 }
 
 fclose($file);
