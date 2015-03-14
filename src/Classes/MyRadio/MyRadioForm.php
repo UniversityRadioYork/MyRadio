@@ -3,7 +3,7 @@
 namespace MyRadio\MyRadio;
 
 use MyRadio\MyRadioException;
-use MyRadio\Config;
+use MyRadio\ContainerSubject;
 
 /**
  * This file provides the MyRadioForm class for MyRadio
@@ -24,7 +24,7 @@ use MyRadio\Config;
  *
  * @package MyRadio_Core
  */
-class MyRadioForm
+class MyRadioForm extends ContainerSubject
 {
     /**
      * The name of the form
@@ -108,6 +108,7 @@ class MyRadioForm
     /**
      * Creates a new MyRadioForm object with the given parameters
      *
+     * @param Container $container The services context Container
      * @param string $name   The name/id of the form
      * @param string $module The module the form submits to
      * @param string $action The action the form submits to
@@ -261,18 +262,23 @@ class MyRadioForm
          * Prevent XSRF attacks with this token - if this isn't present or is
          * different, then the request is invalid.
          */
-        if (!isset($_SESSION['myradio-xsrf-token'])) {
-            $_SESSION['myradio-xsrf-token'] = bin2hex(openssl_random_pseudo_bytes(128));
+        if (!isset(self::$container['session']['myradio-xsrf-token'])) {
+            self::$container['session']['myradio-xsrf-token'] = bin2hex(openssl_random_pseudo_bytes(128));
         }
-        $this->addField(new MyRadioFormField('__xsrf-token', MyRadioFormField::TYPE_HIDDEN, ['value' => $_SESSION['myradio-xsrf-token']]));
+        $this->addField(
+            new MyRadioFormField(
+                '__xsrf-token',
+                MyRadioFormField::TYPE_HIDDEN,
+                ['value' => self::$container['session']['myradio-xsrf-token']]
+            )
+        );
 
         /**
          * If we need to do a captcha, load the requirements
          */
         if ($this->captcha) {
-            require_once 'Classes/vendor/recaptchalib.php';
             $captchaObj = new \Captcha\Captcha();
-            $captchaObj->setPublicKey(Config::$recaptcha_public_key);
+            $captchaObj->setPublicKey(self::$container->recaptcha_public_key);
             $captcha = $captchaObj->html();
         } else {
             $captcha = null;
@@ -340,8 +346,8 @@ class MyRadioForm
         //If there was a captcha, verify it
         if ($this->captcha) {
             $captcha = new \Captcha\Captcha();
-            $captcha->setPublicKey(Config::$recaptcha_public_key);
-            $captcha->setPrivateKey(Config::$recaptcha_private_key);
+            $captcha->setPublicKey(self::$container['config']->recaptcha_public_key);
+            $captcha->setPrivateKey(self::$container['config']->recaptcha_private_key);
             if (!$captcha->check()) {
                 return false;
             }
@@ -364,7 +370,7 @@ class MyRadioForm
             $return['id'] = is_numeric($tempID) ? (int) $tempID : $tempID;
         }
         //XSRF check
-        if ($_REQUEST[$this->getPrefix().'__xsrf-token'] !== $_SESSION['myradio-xsrf-token']) {
+        if ($_REQUEST[$this->getPrefix().'__xsrf-token'] !== self::$container['session']['myradio-xsrf-token']) {
             throw new MyRadioException('Session expired (Invalid token). Please refresh the page.', 401);
         }
 

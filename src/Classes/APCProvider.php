@@ -29,14 +29,17 @@ class APCProvider implements \MyRadio\Iface\CacheProvider
      */
     private $enable;
 
+    private $container;
+
     /**
      * Constructs the Unique instance of the CacheProvider for use. Private so that instances cannot be used in ways
      * other than those intended
      * @param boolean $enable Whether caching is actually enabled in this request. Default true
      * @throws MyRadioException Will throw a MyRadioException if the APC extension is not loaded
      */
-    private function __construct($enable = true)
+    public function __construct($enable = true, $container)
     {
+        $this->container = $container;
         $this->enable = $enable;
         if ($enable && !function_exists('apc_store')) {
             //Functions not available. If this is caught upstream, just disable
@@ -62,7 +65,7 @@ class APCProvider implements \MyRadio\Iface\CacheProvider
         }
 
         if ($expires === 0) {
-            $expires = \MyRadio\Config::$cache_default_timeout;
+            $expires = $this->container['config']->cache_default_timeout;
         }
         return apc_store($this->getKeyPrefix().$key, $value, $expires);
     }
@@ -130,13 +133,11 @@ class APCProvider implements \MyRadio\Iface\CacheProvider
      * Returns the Singleton instance of this class, creating it if necessary
      *
      * @return APCProvider
+     * @deprecated Handled by pimple - use new APCProvider()
      */
     public static function getInstance()
     {
-        if (!self::$me) {
-            self::$me = new self(Config::$cache_enable);
-        }
-        return self::$me;
+        return new self(Config::$cache_enable);
     }
 
     /**

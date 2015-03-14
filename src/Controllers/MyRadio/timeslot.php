@@ -31,7 +31,7 @@ function setupTimeslot($timeslot)
         foreach ($_REQUEST['signin'] as $memberid) {
             $timeslot->signIn(MyRadio_User::getInstance($memberid));
         }
-        header('Location: ' . ($_REQUEST['next'] !== '' ? $_REQUEST['next'] : Config::$base_url));
+        header('Location: ' . ($_REQUEST['next'] !== '' ? $_REQUEST['next'] : $container['config']->base_url));
     }
 }
 
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted Current
     setupTimeslot(MyRadio_Timeslot::getCurrentTimeslot());
 
-} elseif (!empty(Config::$contract_uri) && !MyRadio_User::getInstance()->hasSignedContract()) {
+} elseif (!empty($container['config']->contract_uri) && !MyRadio_User::getInstance()->hasSignedContract()) {
     $message = "You need to have signed the Presenter's Contract to view this";
     require_once 'Controllers/Errors/403.php';
 

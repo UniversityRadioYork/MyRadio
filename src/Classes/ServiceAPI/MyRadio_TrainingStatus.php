@@ -91,7 +91,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
     {
         $this->presenterstatusid = (int) $statusid;
 
-        $result = self::$db->fetchOne('SELECT * FROM public.l_presenterstatus WHERE presenterstatusid=$1', [$statusid]);
+        $result = self::$container['database']->fetchOne('SELECT * FROM public.l_presenterstatus WHERE presenterstatusid=$1', [$statusid]);
 
         if (empty($result)) {
             throw new MyRadioException('The specified Training Status ('.$statusid.') does not seem to exist');
@@ -105,7 +105,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
         $this->depends = empty($result['depends']) ? null : $result['depends'];
         $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
 
-        $this->permissions = self::$db->fetchColumn('SELECT typeid FROM public.auth_trainingstatus WHERE presenterstatusid=$1', [$statusid]);
+        $this->permissions = self::$container['database']->fetchColumn('SELECT typeid FROM public.auth_trainingstatus WHERE presenterstatusid=$1', [$statusid]);
     }
 
     /**
@@ -211,7 +211,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
     public function getAwardedTo($ids = false)
     {
         if ($this->awarded_to === null) {
-            $this->awarded_to = self::$db->fetchColumn(
+            $this->awarded_to = self::$container['database']->fetchColumn(
                 'SELECT memberpresenterstatusid FROM member_presenterstatus
                 WHERE presenterstatusid=$1 AND revokedtime IS NULL',
                 [$this->getID()]
@@ -267,7 +267,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
     public static function getAll()
     {
         return self::resultSetToObjArray(
-            self::$db->fetchColumn(
+            self::$container['database']->fetchColumn(
                 'SELECT presenterstatusid FROM public.l_presenterstatus
                 ORDER BY presenterstatusid'
             )

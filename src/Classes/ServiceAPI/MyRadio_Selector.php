@@ -7,8 +7,7 @@
 
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
-use \MyRadio\Database;
+use \MyRadio\ContainerSubject;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\iTones\iTones_Utils;
@@ -23,7 +22,7 @@ use \MyRadio\iTones\iTones_Utils;
  * @package MyRadio_Core
  * @uses    \Database
  */
-class MyRadio_Selector
+class MyRadio_Selector extends ContainerSubject
 {
     /**
      * The current studio is Studio 1
@@ -121,8 +120,8 @@ class MyRadio_Selector
      */
     public static function remoteStreams()
     {
-        if (file_exists(Config::$ob_remote_status_file)) {
-            $data = file(Config::$ob_remote_status_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (file_exists(self::$container['config']->ob_remote_status_file)) {
+            $data = file(self::$container['config']->ob_remote_status_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
             if ($data) {
                 $response = ['ready' => true];
@@ -146,7 +145,7 @@ class MyRadio_Selector
      */
     public function isSilence()
     {
-        $result = Database::getInstance()->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT starttime, stoptime
             FROM jukebox.silence_log
             ORDER BY silenceid DESC LIMIT 1'
@@ -205,7 +204,7 @@ class MyRadio_Selector
      */
     private function cmd($cmd)
     {
-        $h = fsockopen('tcp://' . Config::$selector_telnet_host, Config::$selector_telnet_port, $errno, $errstr, 10);
+        $h = fsockopen('tcp://' . self::$container['config']->selector_telnet_host, self::$container['config']->selector_telnet_port, $errno, $errstr, 10);
 
         //Read through the welcome "studio selector:" message (16x2bytes)
         fgets($h, 32);
@@ -267,7 +266,7 @@ class MyRadio_Selector
      */
     public static function getStudioAtTime($time)
     {
-        $result = Database::getInstance()->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT action FROM public.selector WHERE time <= $1
             AND action >= 4 AND action <= 11
             ORDER BY time DESC
@@ -289,7 +288,7 @@ class MyRadio_Selector
      */
     public static function getSetbyAtTime($time)
     {
-        $result = Database::getInstance()->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT setby FROM public.selector WHERE time <= $1
             AND action >= 4 AND action <= 11
             ORDER BY time DESC
@@ -311,7 +310,7 @@ class MyRadio_Selector
      */
     public static function getStudio1PowerAtTime($time)
     {
-        $result = Database::getInstance()->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT action FROM public.selector WHERE time <= $1
             AND action >= 13 AND action <= 14
             ORDER BY time DESC
@@ -333,7 +332,7 @@ class MyRadio_Selector
      */
     public static function getStudio2PowerAtTime($time)
     {
-        $result = Database::getInstance()->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT action FROM public.selector WHERE time <= $1
             AND action >= 15 AND action <= 16
             ORDER BY time DESC
@@ -355,7 +354,7 @@ class MyRadio_Selector
      */
     public static function getLockAtTime($time)
     {
-        $result = Database::getInstance()->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT action FROM public.selector WHERE time <= $1
             AND action >= 1 AND action <= 3
             ORDER BY time DESC
@@ -377,7 +376,7 @@ class MyRadio_Selector
      */
     public static function getLastModAtTime($time)
     {
-        $result = Database::getInstance()->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT time FROM public.selector WHERE time <= $1
             ORDER BY time DESC
             LIMIT 1',
@@ -432,7 +431,7 @@ class MyRadio_Selector
 
         //Request the obit file a few times (5h of content)
         for ($i = 0; $i < 5; $i++) {
-            iTones_Utils::requestFile(Config::$jukebox_obit_file);
+            iTones_Utils::requestFile(self::$container['config']->jukebox_obit_file);
         }
 
         //Skip to the next track

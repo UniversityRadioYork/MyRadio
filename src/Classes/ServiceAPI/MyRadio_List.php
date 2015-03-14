@@ -76,7 +76,7 @@ class MyRadio_List extends ServiceAPI
     {
         $this->listid = $listid;
 
-        $result = self::$db->fetchOne('SELECT * FROM mail_list WHERE listid=$1', [$listid]);
+        $result = self::$container['database']->fetchOne('SELECT * FROM mail_list WHERE listid=$1', [$listid]);
         if (empty($result)) {
             throw new MyRadioException('List ' . $listid . ' does not exist!');
 
@@ -91,10 +91,10 @@ class MyRadio_List extends ServiceAPI
 
         if ($this->optin) {
             //Get subscribed members
-            $this->members = self::$db->fetchColumn('SELECT memberid FROM mail_subscription WHERE listid=$1', [$listid]);
+            $this->members = self::$container['database']->fetchColumn('SELECT memberid FROM mail_subscription WHERE listid=$1', [$listid]);
         } else {
             //Get members joined with opted-out members
-            $this->members = self::$db->fetchColumn(
+            $this->members = self::$container['database']->fetchColumn(
                 'SELECT memberid FROM (' . $this->parseSQL($this->sql) . ') as t1 WHERE memberid NOT IN
                 (SELECT memberid FROM mail_subscription WHERE listid=$1)',
                 [$listid]
@@ -179,7 +179,7 @@ class MyRadio_List extends ServiceAPI
         }
 
         return sizeof(
-            self::$db->query(
+            self::$container['database']->query(
                 'SELECT memberid FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
                 [$user->getID(), $this->getID()]
             )
@@ -209,12 +209,12 @@ class MyRadio_List extends ServiceAPI
         }
 
         if ($this->optin) {
-            self::$db->query(
+            self::$container['database']->query(
                 'INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)',
                 [$user->getID(), $this->getID()]
             );
         } else {
-            self::$db->query(
+            self::$container['database']->query(
                 'DELETE FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
                 [$user->getID(), $this->getID()]
             );
@@ -240,12 +240,12 @@ class MyRadio_List extends ServiceAPI
         }
 
         if (!$this->optin) {
-            self::$db->query(
+            self::$container['database']->query(
                 'INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)',
                 [$user->getID(), $this->getID()]
             );
         } else {
-            self::$db->query(
+            self::$container['database']->query(
                 'DELETE FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
                 [$user->getID(), $this->getID()]
             );
@@ -284,7 +284,7 @@ class MyRadio_List extends ServiceAPI
     public function getArchive()
     {
         if (empty($this->archive)) {
-            $this->archive = self::$db->fetchColumn(
+            $this->archive = self::$container['database']->fetchColumn(
                 'SELECT email.email_id '
                 . 'FROM mail.email_recipient_list '
                 . 'LEFT JOIN mail.email USING (email_id) '
@@ -300,8 +300,8 @@ class MyRadio_List extends ServiceAPI
 
     public static function getByName($str)
     {
-        self::initDB();
-        $r = self::$db->fetchColumn(
+
+        $r = self::$container['database']->fetchColumn(
             'SELECT listid FROM mail_list WHERE listname ILIKE $1 OR listaddress ILIKE $1',
             [$str]
         );
@@ -314,7 +314,7 @@ class MyRadio_List extends ServiceAPI
 
     public static function getAllLists()
     {
-        $r = self::$db->fetchColumn('SELECT listid FROM mail_list');
+        $r = self::$container['database']->fetchColumn('SELECT listid FROM mail_list');
 
         $lists = [];
         foreach ($r as $list) {
@@ -326,7 +326,7 @@ class MyRadio_List extends ServiceAPI
 
     public function toDataSource($full = true)
     {
-        if (isset($_SESSION['memberid'])) {
+        if (isset(self::$container['session']['memberid'])) {
             $subscribed = $this->isMember(MyRadio_User::getInstance());
         } else {
             $subscribed = false;

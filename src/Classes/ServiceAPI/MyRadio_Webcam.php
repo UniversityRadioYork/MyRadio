@@ -6,7 +6,6 @@
 
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
 
 /**
  * @todo Document
@@ -15,13 +14,13 @@ class MyRadio_Webcam extends ServiceAPI
 {
     public static function getStreams()
     {
-        return self::$db->fetchAll('SELECT * FROM webcam.streams ORDER BY streamid ASC');
+        return self::$container['database']->fetchAll('SELECT * FROM webcam.streams ORDER BY streamid ASC');
     }
 
     public static function incrementViewCounter(MyRadio_User $user)
     {
         //Get the current view counter. We do this as a separate query in case the row doesn't exist yet
-        $counter = self::$db->fetchOne('SELECT timer FROM webcam.memberviews WHERE memberid = $1', [$user->getID()]);
+        $counter = self::$container['database']->fetchOne('SELECT timer FROM webcam.memberviews WHERE memberid = $1', [$user->getID()]);
         if (empty($counter)) {
             $counter = 0;
             $sql = 'INSERT INTO webcam.memberviews (memberid, timer) VALUES ($1, $2)';
@@ -31,7 +30,7 @@ class MyRadio_Webcam extends ServiceAPI
         }
         $counter += 15;
 
-        self::$db->query($sql, [$user->getID(), $counter]);
+        self::$container['database']->query($sql, [$user->getID(), $counter]);
 
         return $counter;
     }
@@ -41,7 +40,7 @@ class MyRadio_Webcam extends ServiceAPI
      */
     public static function getArchiveTimeRange()
     {
-        $files = scandir(Config::$webcam_archive_path);
+        $files = scandir(self::$container['config']->webcam_archive_path);
         $earliest = time();
         $latest = time();
         foreach ($files as $file) {
@@ -68,8 +67,8 @@ class MyRadio_Webcam extends ServiceAPI
      */
     public static function getCurrentWebcam()
     {
-        if (Config::$webcam_current_url) {
-            $current = (int)file_get_contents(Config::$webcam_current_url);
+        if (self::$container['config']->webcam_current_url) {
+            $current = (int)file_get_contents(self::$container['config']->webcam_current_url);
 
             switch ($current) {
             case 0: $location = 'Jukebox';
@@ -116,7 +115,7 @@ class MyRadio_Webcam extends ServiceAPI
             || ($id == 8)
             || (!strncmp($id, "http://", strlen("http://")))
         ) {
-            file_get_contents(Config::$webcam_set_url.$id);
+            file_get_contents(self::$container['config']->webcam_set_url.$id);
         }
     }
 }

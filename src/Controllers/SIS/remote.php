@@ -13,7 +13,7 @@ use \MyRadio\Config;
 $session = $_SESSION;
 session_write_close();
 
-$pollFuncs = SIS_Utils::readPolls(Config::$sis_modules);
+$pollFuncs = SIS_Utils::readPolls($container['config']->sis_modules);
 
 //Enter an infinite loop calling these functions, and enjoy the ride
 //Times out after 50 cycles to prevent infinites or something like that

@@ -6,7 +6,6 @@
 
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 
@@ -62,7 +61,7 @@ class MyRadio_Album extends ServiceAPI
     {
         $this->albumid = $recordid;
 
-        $result = self::$db->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT * FROM (SELECT * FROM public.rec_record WHERE recordid=$1 LIMIT 1) AS t1
             LEFT JOIN public.rec_statuslookup ON t1.status = rec_statuslookup.status_code
             LEFT JOIN public.rec_medialookup ON t1.media = rec_medialookup.media_code
@@ -93,7 +92,7 @@ class MyRadio_Album extends ServiceAPI
         $this->cdid = $result['cdid'];
         $this->location = $result['location_descr'];
 
-        $this->tracks = self::$db->fetchColumn('SELECT trackid FROM rec_track WHERE recordid=$1', [$this->albumid]);
+        $this->tracks = self::$container['database']->fetchColumn('SELECT trackid FROM rec_track WHERE recordid=$1', [$this->albumid]);
     }
 
     public function getID()
@@ -113,7 +112,7 @@ class MyRadio_Album extends ServiceAPI
 
     public function getFolder()
     {
-        $dir = Config::$music_central_db_path.'/records/'.$this->getID();
+        $dir = self::$container['config']->music_central_db_path.'/records/'.$this->getID();
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0777, true)) {
                 throw new MyRadioException('Failed to create directory ' . $dir, 500);
@@ -154,7 +153,7 @@ class MyRadio_Album extends ServiceAPI
             $paramName = $param_maps[$paramName];
         }
 
-        self::$db->query('UPDATE public.rec_record SET ' . $paramName . '=$1 WHERE recordid=$2', [$value, $this->getID()]);
+        self::$container['database']->query('UPDATE public.rec_record SET ' . $paramName . '=$1 WHERE recordid=$2', [$value, $this->getID()]);
 
         return true;
     }
@@ -198,7 +197,7 @@ class MyRadio_Album extends ServiceAPI
     public static function findByName($title, $limit)
     {
         $title = trim($title);
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT DISTINCT rec_record.recordid AS recordid FROM rec_record
             WHERE rec_record.title ILIKE \'%\' || $1 || \'%\' LIMIT $2;',
             [$title, $limit]
@@ -230,7 +229,7 @@ class MyRadio_Album extends ServiceAPI
      */
     public static function findByOptions($options)
     {
-        self::wakeup();
+
 
         if (empty($options['title'])) {
             $options['title'] = '';
@@ -248,7 +247,7 @@ class MyRadio_Album extends ServiceAPI
             $options['itonesplaylistid'] = null;
         }
         if (!isset($options['limit'])) {
-            $options['limit'] = Config::$ajax_limit_default;
+            $options['limit'] = self::$container['config']->ajax_limit_default;
         }
         if (empty($options['trackid'])) {
             $options['trackid'] = null;
@@ -290,7 +289,7 @@ class MyRadio_Album extends ServiceAPI
         }
 
         //Do the bulk of the sorting with SQL
-        $result = self::$db->fetchAll(
+        $result = self::$container['database']->fetchAll(
             'SELECT DISTINCT rec_record.recordid
             FROM rec_record
             INNER JOIN rec_track ON ( rec_record.recordid = rec_track.recordid )
@@ -327,7 +326,7 @@ class MyRadio_Album extends ServiceAPI
         $title = trim($title);
         $artist = trim($artist);
 
-        $result = self::$db->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT recordid FROM rec_record WHERE title=$1 AND artist=$2 LIMIT 1',
             [$title, $artist]
         );
@@ -385,7 +384,7 @@ class MyRadio_Album extends ServiceAPI
             $options['promoterid'] = null;
         }
 
-        $r = self::$db->query(
+        $r = self::$container['database']->query(
             'INSERT INTO rec_record (title, artist, status, media, format, recordlabel, shelfnumber,
             shelfletter, memberid_add, cdid, location, promoterid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
             RETURNING recordid',
@@ -398,14 +397,14 @@ class MyRadio_Album extends ServiceAPI
                 $options['recordlabel'],
                 $options['shelfnumber'],
                 $options['shelfletter'],
-                $_SESSION['memberid'],
+                self::$container['session']['memberid'],
                 $options['cdid'],
                 $options['location'],
                 $options['promoterid']
             ]
         );
 
-        $id = self::$db->fetchAll($r);
+        $id = self::$container['database']->fetchAll($r);
 
         return self::getInstance($id[0]['recordid']);
     }

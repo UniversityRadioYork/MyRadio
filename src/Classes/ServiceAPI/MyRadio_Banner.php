@@ -7,7 +7,6 @@
 
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm;
@@ -59,7 +58,7 @@ class MyRadio_Banner extends MyRadio_Photo
     {
         $this->banner_id = (int) $banner_id;
 
-        $result = self::$db->fetchOne('SELECT * FROM website.banner WHERE banner_id=$1', [$banner_id]);
+        $result = self::$container['database']->fetchOne('SELECT * FROM website.banner WHERE banner_id=$1', [$banner_id]);
         if (empty($result)) {
             throw new MyRadioException('Banner ' . $banner_id . ' does not exist!');
         }
@@ -71,10 +70,10 @@ class MyRadio_Banner extends MyRadio_Photo
         if (is_numeric($result['photoid'])) {
             parent::__construct($result['photoid']);
         } else {
-            parent::__construct(Config::$photo_joined);
+            parent::__construct(self::$container['config']->photo_joined);
         }
 
-        $this->campaigns = self::$db->fetchColumn(
+        $this->campaigns = self::$container['database']->fetchColumn(
             'SELECT banner_campaign_id FROM website.banner_campaign
             WHERE banner_id=$1',
             [$this->banner_id]
@@ -191,7 +190,7 @@ class MyRadio_Banner extends MyRadio_Photo
             throw new MyRadioException('Banner Alt cannot be empty!', 400);
         }
         $this->alt = $alt;
-        self::$db->query('UPDATE website.banner SET alt=$1 WHERE banner_id=$2', [$alt, $this->getBannerID()]);
+        self::$container['database']->query('UPDATE website.banner SET alt=$1 WHERE banner_id=$2', [$alt, $this->getBannerID()]);
 
         return $this;
     }
@@ -204,7 +203,7 @@ class MyRadio_Banner extends MyRadio_Photo
     public function setTarget($target)
     {
         $this->target = $target;
-        self::$db->query('UPDATE website.banner SET target=$1 WHERE banner_id=$2', [$target, $this->getBannerID()]);
+        self::$container['database']->query('UPDATE website.banner SET target=$1 WHERE banner_id=$2', [$target, $this->getBannerID()]);
 
         return $this;
     }
@@ -222,7 +221,7 @@ class MyRadio_Banner extends MyRadio_Photo
         }
 
         $this->type = $type;
-        self::$db->query('UPDATE website.banner SET banner_type_id=$1 WHERE banner_id=$2', [$type, $this->getBannerID()]);
+        self::$container['database']->query('UPDATE website.banner SET banner_type_id=$1 WHERE banner_id=$2', [$type, $this->getBannerID()]);
 
         return $this;
     }
@@ -235,9 +234,9 @@ class MyRadio_Banner extends MyRadio_Photo
     public function setPhoto(MyRadio_Photo $photo)
     {
         parent::__construct($photo->getID());
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE website.banner SET image=$1, photoid=$2 WHERE banner_id=$3',
-            [str_replace(Config::$public_media_uri.'/', '', $photo->getURL()), $this->getID(), $this->getBannerID()]
+            [str_replace(self::$container['config']->public_media_uri.'/', '', $photo->getURL()), $this->getID(), $this->getBannerID()]
         );
 
         return $this;
@@ -254,7 +253,7 @@ class MyRadio_Banner extends MyRadio_Photo
      */
     public static function create(MyRadio_Photo $photo, $alt = 'Unnamed Banner', $target = null, $type = 2)
     {
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'INSERT INTO website.banner (alt, image, target, banner_type_id, photoid)
             VALUES ($1, $2, $3, $4, $5) RETURNING banner_id',
             [$alt, $photo->getURL(), $target, $type, $photo->getID()]
@@ -269,12 +268,12 @@ class MyRadio_Banner extends MyRadio_Photo
      */
     public static function getAllBanners()
     {
-        return self::resultSetToObjArray(self::$db->fetchColumn('SELECT banner_id FROM website.banner'));
+        return self::resultSetToObjArray(self::$container['database']->fetchColumn('SELECT banner_id FROM website.banner'));
     }
 
     public static function getBannerTypes()
     {
-        return self::$db->fetchAll('SELECT banner_type_id, description FROM website.banner_type');
+        return self::$container['database']->fetchAll('SELECT banner_type_id, description FROM website.banner_type');
     }
 
     /**

@@ -8,24 +8,15 @@ use \MyRadio\Database;
  * Custom session handler.
  *
  */
-class MyRadioSession
+class MyRadioSession implements \ArrayAccess
 {
     const TIMEOUT = 7200; //Session expires after 2hrs
 
     private $db;
 
-    public static function factory()
+    public function __construct($db)
     {
-        if (isset($_SESSION)) {
-            session_write_close();
-        }
-
-        return new self();
-    }
-
-    public function __construct()
-    {
-        $this->db = Database::getInstance();
+        $this->db = $db;
     }
 
     public function open($id)
@@ -36,6 +27,33 @@ class MyRadioSession
     public function close()
     {
         return true;
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        if (defined('READONLY_SESSION') && READONLY_SESSION) {
+            return true;
+        }
+        if (is_null($offset)) {
+            $_SESSION[] = $value;
+        } else {
+            $_SESSION[$offset] = $value;
+        }
+    }
+
+    public function offsetExists($offset)
+    {
+        return isset($_SESSION[$offset]);
+    }
+
+    public function offsetUnset($offset)
+    {
+        unset($_SESSION[$offset]);
+    }
+
+    public function offsetGet($offset)
+    {
+        return isset($_SESSION[$offset]) ? $_SESSION[$offset] : null;
     }
 
     /**

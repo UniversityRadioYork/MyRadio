@@ -8,7 +8,7 @@ namespace MyRadio\Iface;
  *
  * @package MyRadio_Core
  */
-interface CacheProvider extends Singleton
+interface CacheProvider
 {
     /**
      * Inserts or Updates a cache entry

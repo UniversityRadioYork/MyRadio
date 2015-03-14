@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ->setEduroam($data['eduroam'])
         ->setBio($data['bio']);
 
-    if (!empty(Config::$contract_uri)) {
+    if (!empty($container['config']->contract_uri)) {
         $user->setContractSigned($data['contract']);
     }
 

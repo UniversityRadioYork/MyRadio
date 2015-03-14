@@ -9,3 +9,4 @@ sftp-*.json
 .vagrant
 src/vendor
 composer.lock
+build/logs/junit.xml

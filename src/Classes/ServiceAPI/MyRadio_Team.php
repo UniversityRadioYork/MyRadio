@@ -56,7 +56,7 @@ class MyRadio_Team extends ServiceAPI
 
     protected function __construct($id)
     {
-        $result = self::$db->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT * FROM public.team
             WHERE teamid=$1',
             [$id]
@@ -75,7 +75,7 @@ class MyRadio_Team extends ServiceAPI
                 function ($x) {
                     return (int) $x;
                 },
-                self::$db->fetchColumn(
+                self::$container['database']->fetchColumn(
                     'SELECT officerid FROM officer
                     WHERE teamid=$1 ORDER BY ordering',
                     [$id]
@@ -91,7 +91,7 @@ class MyRadio_Team extends ServiceAPI
     public static function getAllTeams($full = true)
     {
         return self::resultSetToObjArray(
-            self::$db->fetchColumn('SELECT teamid FROM public.team'),
+            self::$container['database']->fetchColumn('SELECT teamid FROM public.team'),
             $full
         );
     }
@@ -102,7 +102,7 @@ class MyRadio_Team extends ServiceAPI
      */
     public static function getCurrentTeams()
     {
-        return self::$db->fetchAll(
+        return self::$container['database']->fetchAll(
             'SELECT teamid AS value, team_name AS text FROM public.team
             WHERE status = \'c\'
             ORDER BY ordering ASC'
@@ -298,7 +298,7 @@ class MyRadio_Team extends ServiceAPI
     public static function getByAlias($alias)
     {
         return self::getInstance(
-            self::$db->fetchColumn('SELECT teamid FROM public.team WHERE local_alias=$1', [$alias])
+            self::$container['database']->fetchColumn('SELECT teamid FROM public.team WHERE local_alias=$1', [$alias])
         );
     }
 
@@ -313,7 +313,7 @@ class MyRadio_Team extends ServiceAPI
     public static function createTeam($name, $descr, $alias, $ordering)
     {
         return self::getInstance(
-            self::$db->fetchColumn(
+            self::$container['database']->fetchColumn(
                 'INSERT INTO public.team (team_name, descr, local_alias, ordering)
                 VALUES ($1, $2, $3, $4) RETURNING teamid',
                 [$name, $descr, $alias, $ordering]

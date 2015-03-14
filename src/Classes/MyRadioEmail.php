@@ -172,8 +172,8 @@ class MyRadioEmail extends ServiceAPI
             $headers[] = 'From: ' . $this->from->getName() . ' <' . $this->from->getEmail() . '>';
             $headers[] = 'Return-Path: ' . $this->from->getEmail();
         } else {
-            $headers[] = 'From: '.Config::$long_name.' <no-reply@'.Config::$email_domain.'>';
-            $headers[] = 'Return-Path: no-reply@'.Config::$email_domain;
+            $headers[] = 'From: '.self::$container['config']->long_name.' <no-reply@'.self::$container['config']->email_domain.'>';
+            $headers[] = 'Return-Path: no-reply@'.self::$container['config']->email_domain;
         }
 
         /**
@@ -214,7 +214,7 @@ class MyRadioEmail extends ServiceAPI
                 if ($user->getReceiveEmail()) {
                     $u_subject = trim(str_ireplace('#NAME', $user->getFName(), $this->subject));
                     if (substr($u_subject, 0, 1) !== '[') {
-                        $u_subject = '['.Config::$short_name.'] ' . $u_subject;
+                        $u_subject = '['.self::$container['config']->short_name.'] ' . $u_subject;
                     }
                     $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
                     if (!mail($user->getName() . ' <' . $user->getEmail() . '>', $u_subject, $u_message, $this->getHeader())) {
@@ -232,7 +232,7 @@ class MyRadioEmail extends ServiceAPI
                     if ($user->getReceiveEmail()) {
                         $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
                         $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-                        if (!mail($list->getName() . ' <' . $user->getEmail() . '>', '['.Config::$short_name.'] ' . $u_subject, $u_message, $this->getHeader())) {
+                        if (!mail($list->getName() . ' <' . $user->getEmail() . '>', '['.self::$container['config']->short_name.'] ' . $u_subject, $u_message, $this->getHeader())) {
                             continue;
                         }
                     }
@@ -417,7 +417,7 @@ class MyRadioEmail extends ServiceAPI
      */
     public static function sendEmailToComputing($subject, $message)
     {
-        mail("MyRadio Service <".Config::$error_report_email."@".Config::$email_domain.">", $subject, self::addFooter($message), self::getDefaultHeader());
+        mail("MyRadio Service <".self::$container['config']->error_report_email."@".self::$container['config']->email_domain.">", $subject, self::addFooter($message), self::getDefaultHeader());
 
         return true;
     }

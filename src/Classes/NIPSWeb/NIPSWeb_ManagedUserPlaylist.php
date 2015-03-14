@@ -64,7 +64,7 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
     public function getItems()
     {
         if (empty($this->items)) {
-            $items = self::$db->fetchColumn(
+            $items = self::$container['database']->fetchColumn(
                 'SELECT manageditemid FROM bapsplanner.managed_user_items
                 WHERE managedplaylistid=$1 ORDER BY title',
                 ['membersmusic/' . $this->folder]

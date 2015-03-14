@@ -48,7 +48,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
     {
         $this->managed_item_id = $resid;
         //*dies*
-        $result = self::$db->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT manageditemid, title, length, bpm, NULL AS folder, memberid, expirydate, managedplaylistid
             FROM bapsplanner.managed_items WHERE manageditemid=$1
             UNION SELECT manageditemid, title, length, bpm, managedplaylistid AS folder, NULL AS memberid, NULL AS expirydate,
@@ -148,14 +148,14 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
 
     public static function cacheItem($tmp_path)
     {
-        if (!isset($_SESSION['myury_nipsweb_file_cache_counter'])) {
-            $_SESSION['myury_nipsweb_file_cache_counter'] = 0;
+        if (!isset(self::$container['session']['myury_nipsweb_file_cache_counter'])) {
+            self::$container['session']['myury_nipsweb_file_cache_counter'] = 0;
         }
         if (!is_dir(Config::$audio_upload_tmp_dir)) {
             mkdir(Config::$audio_upload_tmp_dir);
         }
 
-        $filename = session_id() . '-' . ++$_SESSION['myury_nipsweb_file_cache_counter'] . '.mp3';
+        $filename = session_id() . '-' . ++self::$container['session']['myury_nipsweb_file_cache_counter'] . '.mp3';
 
         move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename);
 
@@ -163,7 +163,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
 
         //The entire $fileInfo array will break Session.
-        $_SESSION['uploadInfo'][$filename] = [
+        self::$container['session']['uploadInfo'][$filename] = [
             'fileformat' => $fileInfo['fileformat'],
             'playtime_seconds' => $fileInfo['playtime_seconds']
         ];
@@ -187,7 +187,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
             'title' => $title,
             'expires' => $_REQUEST['expires'],
             'auxid' => $_REQUEST['auxid'],
-            'duration' => $_SESSION['uploadInfo'][$tmpid]['playtime_seconds'],
+            'duration' => self::$container['session']['uploadInfo'][$tmpid]['playtime_seconds'],
         ];
 
         $item = self::create($options);
@@ -222,12 +222,12 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
         // BAPS needs stdout > to file
         shell_exec("nice -n 15 $bin -i '$tmpfile' -ab 192k -f mp3 '{$dbfile}.mp3'");
         shell_exec("nice -n 15 $bin -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
-        rename($tmpfile, $dbfile.'.'.$_SESSION['uploadInfo'][$tmpid]['fileformat'].'.orig');
+        rename($tmpfile, $dbfile.'.'.self::$container['session']['uploadInfo'][$tmpid]['fileformat'].'.orig');
 
         if (!file_exists($dbfile.'.mp3') || !file_exists($dbfile.'.ogg')) {
             //Conversion failed!
             return ['status' => 'FAIL', 'error' => 'Conversion with $bin failed.', 'fileid' => $_REQUEST['fileid']];
-        } elseif (!file_exists($dbfile.'.'.$_SESSION['uploadInfo'][$tmpid]['fileformat'].'.orig')) {
+        } elseif (!file_exists($dbfile.'.'.self::$container['session']['uploadInfo'][$tmpid]['fileformat'].'.orig')) {
             return ['status' => 'FAIL', 'error' => 'Could not move file to library.', 'fileid' => $_REQUEST['fileid']];
         }
 
@@ -249,7 +249,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public static function create($options)
     {
-        self::wakeup();
+
 
         $required = ['title', 'duration', 'auxid'];
         foreach ($required as $require) {
@@ -270,7 +270,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
         if (strpos($options['auxid'], 'user-') !== false) {
             //This is a personal resource
             $path = str_replace('user-', 'membersmusic/', $options['auxid']);
-            $result = self::$db->query(
+            $result = self::$container['database']->query(
                 'INSERT INTO bapsplanner.managed_user_items (managedplaylistid, title, length, bpm)
                 VALUES ($1, $2, $3, $4) RETURNING manageditemid',
                 [
@@ -282,7 +282,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
             );
         } else {
             //This is a central resource
-            $result = self::$db->fetchColumn(
+            $result = self::$container['database']->fetchColumn(
                 'SELECT managedplaylistid FROM bapsplanner.managed_playlists WHERE managedplaylistid=$1 LIMIT 1',
                 [str_replace('aux-', '', $options['auxid'])]
             );
@@ -291,7 +291,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
             }
             $playlistid = $result[0];
 
-            $result = self::$db->query(
+            $result = self::$container['database']->query(
                 'INSERT INTO bapsplanner.managed_items (managedplaylistid, title, length, bpm, expirydate, memberid)
                 VALUES ($1, $2, $3, $4, $5, $6) RETURNING manageditemid',
                 [
@@ -300,12 +300,12 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
                     CoreUtils::intToTime($options['duration']),
                     $options['bpm'],
                     $options['expires'],
-                    $_SESSION['memberid'],
+                    self::$container['session']['memberid'],
                 ]
             );
         }
 
-        $id = self::$db->fetchAll($result);
+        $id = self::$container['database']->fetchAll($result);
 
         return self::getInstance($id[0]['manageditemid']);
     }

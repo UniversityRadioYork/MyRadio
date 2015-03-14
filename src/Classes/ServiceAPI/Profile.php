@@ -58,10 +58,10 @@ class Profile extends ServiceAPI
     public static function getAllMembers()
     {
         //Return the object if it is cached
-        self::$allMembers = self::$cache->get('MyRadioProfile_allMembers');
+        self::$allMembers = self::$container['cache']->get('MyRadioProfile_allMembers');
         if (self::$allMembers === false) {
-            self::wakeup();
-            self::$allMembers = self::$db->fetchAll(
+
+            self::$allMembers = self::$container['database']->fetchAll(
                 'SELECT member.memberid, sname || \', \' || fname AS name, l_college.descr AS college, paid
                 FROM member LEFT JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
                 ON ( member.memberid = member_year.memberid ), l_college
@@ -69,7 +69,7 @@ class Profile extends ServiceAPI
                 ORDER BY sname ASC',
                 [CoreUtils::getAcademicYear()]
             );
-            self::$cache->set('MyRadioProfile_allMembers', self::$allMembers);
+            self::$container['cache']->set('MyRadioProfile_allMembers', self::$allMembers);
         }
 
         return self::$allMembers;
@@ -89,9 +89,9 @@ class Profile extends ServiceAPI
      */
     public static function getThisYearsMembers()
     {
-        self::wakeup();
 
-        return self::$db->fetchAll(
+
+        return self::$container['database']->fetchAll(
             'SELECT member.memberid, sname || \', \' || fname AS name, l_college.descr AS college, paid
             FROM member INNER JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
             ON ( member.memberid = member_year.memberid ), l_college
@@ -116,16 +116,16 @@ class Profile extends ServiceAPI
     public static function getCurrentOfficers()
     {
         //Return the object if it is cached
-        self::$currentOfficers = self::$cache->get('MyRadioProfile_currentOfficers');
+        self::$currentOfficers = self::$container['cache']->get('MyRadioProfile_currentOfficers');
         if (self::$currentOfficers === false) {
-            self::wakeup();
-            self::$currentOfficers = self::$db->fetchAll(
+
+            self::$currentOfficers = self::$container['database']->fetchAll(
                 'SELECT team.team_name AS team, officer.officer_name AS officership, sname || \', \' || fname AS name, member.memberid
                 FROM member, officer, member_officer, team
                 WHERE member_officer.memberid = member.memberid AND officer.officerid = member_officer.officerid AND officer.teamid = team.teamid AND member_officer.till_date IS NULL
                 ORDER BY team.ordering, officer.ordering, sname'
             );
-            self::$cache->set('MyRadioProfile_currentOfficers', self::$currentOfficers);
+            self::$container['cache']->set('MyRadioProfile_currentOfficers', self::$currentOfficers);
         }
 
         return self::$currentOfficers;
@@ -146,10 +146,10 @@ class Profile extends ServiceAPI
     public static function getOfficers()
     {
         //Return the object if it is cached
-        self::$officers = self::$cache->get('MyRadioProfile_officers');
+        self::$officers = self::$container['cache']->get('MyRadioProfile_officers');
         if (self::$officers === false) {
-            self::wakeup();
-            self::$officers = self::$db->fetchAll(
+
+            self::$officers = self::$container['database']->fetchAll(
                 'SELECT team.team_name AS team, officer.type, officer.officer_name AS officership,
                 fname || \' \' || sname AS name, member.memberid, officer.officerid
                 FROM team
@@ -159,7 +159,7 @@ class Profile extends ServiceAPI
                 WHERE team.status = \'c\' AND officer.type != \'m\'
                 ORDER BY team.ordering, officer.ordering, sname'
             );
-            self::$cache->set('MyRadioProfile_officers', self::$officers);
+            self::$container['cache']->set('MyRadioProfile_officers', self::$officers);
         }
 
         return self::$officers;

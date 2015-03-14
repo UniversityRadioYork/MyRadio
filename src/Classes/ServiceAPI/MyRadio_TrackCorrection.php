@@ -7,7 +7,6 @@
 
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 
@@ -79,7 +78,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
     protected function __construct($correctionid)
     {
         $this->correctionid = (int) $correctionid;
-        $result = self::$db->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT * FROM public.rec_trackcorrection WHERE correctionid=$1 LIMIT 1',
             [$this->correctionid]
         );
@@ -114,7 +113,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
         $album_name = 'No Suggestion.',
         $level = self::LEVEL_SUGGEST
     ) {
-        $r = self::$db->fetchColumn(
+        $r = self::$container['database']->fetchColumn(
             'INSERT INTO public.rec_trackcorrection
             (trackid, proposed_title, proposed_artist, proposed_album_name, level)
             VALUES ($1, $2, $3, $4, $5) RETURNING correctionid',
@@ -133,7 +132,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
      */
     public static function getRandom()
     {
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT correctionid FROM public.rec_trackcorrection WHERE state=\'p\'
             ORDER BY RANDOM() LIMIT 1'
         );
@@ -183,13 +182,13 @@ class MyRadio_TrackCorrection extends MyRadio_Track
     public function apply($ignore_album = false)
     {
         //Don't apply a "URY Downloads" album - that's worse than whatever is already there.
-        if (!$ignore_album && strstr($this->getProposedAlbumTitle(), Config::$short_name.' Downloads') === false) {
+        if (!$ignore_album && strstr($this->getProposedAlbumTitle(), self::$container['config']->short_name.' Downloads') === false) {
             $this->setAlbum(MyRadio_Album::findOrCreate($this->getProposedAlbumTitle(), $this->getProposedArtist()));
         }
         $this->setArtist($this->getProposedArtist());
         $this->setTitle($this->getProposedTitle());
 
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE public.rec_trackcorrection SET state=\'a\', reviewedby=$2 WHERE correctionid=$1',
             [$this->getCorrectionID(), MyRadio_User::getInstance()->getID()]
         );
@@ -201,7 +200,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
 
     public function reject($permanent = false)
     {
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE public.rec_trackcorrection SET state=\'r\', reviewedby=$2 WHERE correctionid=$1',
             [$this->getCorrectionID(), MyRadio_User::getInstance()->getID()]
         );

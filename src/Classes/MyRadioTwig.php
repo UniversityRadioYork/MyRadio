@@ -2,8 +2,7 @@
 
 namespace MyRadio;
 
-use \MyRadio\Config;
-use \MyRadio\Database;
+use \MyRadio\ContainerSubject;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioMenu;
 use \MyRadio\MyRadioException;
@@ -16,10 +15,9 @@ use \Twig_Extension_Debug;
 /**
  * Singleton class for the Twig template engine
  *
- * @depends Config
  * @package MyRadio_Core
  */
-class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
+class MyRadioTwig extends ContainerSubject implements \MyRadio\Iface\TemplateEngine
 {
     private $contextVariables = [];
     private $template;
@@ -34,37 +32,37 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
         $twig_loader = new Twig_Loader_Filesystem(__DIR__ . '/../Templates/');
         $this->contextVariables['notices'] = '';
         $this->twig = new Twig_Environment($twig_loader, ['auto_reload' => true]);
-        if (Config::$template_debug) {
+        if (self::$container['config']->template_debug) {
             $this->twig->addExtension(new Twig_Extension_Debug());
             $this->twig->enableDebug();
         }
 
-        $this->addVariable('memberid', isset($_SESSION['memberid']) ? $_SESSION['memberid'] : 0)
+        $this->addVariable('memberid', isset(self::$container['session']['memberid']) ? self::$container['session']['memberid'] : 0)
             ->addVariable(
                 'impersonatorurl',
-                !empty($_SESSION['myradio-impersonating'])
+                !empty(self::$container['session']['myradio-impersonating'])
                 ? (CoreUtils::makeURL('MyRadio', 'impersonate', ['next' => $_SERVER['REQUEST_URI']]))
                 : ''
             )
             ->addVariable(
                 'impersonator',
-                !empty($_SESSION['myradio-impersonating'])
-                ? $_SESSION['myradio-impersonating']['name']
+                !empty(self::$container['session']['myradio-impersonating'])
+                ? self::$container['session']['myradio-impersonating']['name']
                 : ''
             )
-            ->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null)
-            ->addVariable('timeslotid', isset($_SESSION['timeslotid']) ? $_SESSION['timeslotid'] : null)
-            ->addVariable('baseurl', Config::$base_url)
-            ->addVariable('rewriteurl', Config::$rewrite_url)
+            ->addVariable('timeslotname', isset(self::$container['session']['timeslotname']) ? self::$container['session']['timeslotname'] : null)
+            ->addVariable('timeslotid', isset(self::$container['session']['timeslotid']) ? self::$container['session']['timeslotid'] : null)
+            ->addVariable('baseurl', self::$container['config']->base_url)
+            ->addVariable('rewriteurl', self::$container['config']->rewrite_url)
             ->addVariable('serviceName', 'MyRadio')
             ->setTemplate('stripe.twig')
             ->addVariable('uri', $_SERVER['REQUEST_URI'])
-            ->addVariable('module', empty($GLOBALS['module']) ? Config::$default_module : $GLOBALS['module'])
-            ->addVariable('action', empty($GLOBALS['action']) ? Config::$default_action : $GLOBALS['action'])
-            ->addVariable('config', Config::getPublicConfig())
-            ->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : '');
+            ->addVariable('module', empty($GLOBALS['module']) ? self::$container['config']->default_module : $GLOBALS['module'])
+            ->addVariable('action', empty($GLOBALS['action']) ? self::$container['config']->default_action : $GLOBALS['action'])
+            ->addVariable('config', self::$container['config']->getPublicConfig())
+            ->addVariable('name', isset(self::$container['session']['name']) ? self::$container['session']['name'] : '');
 
-        if (!empty($GLOBALS['module']) && isset($_SESSION['memberid'])) {
+        if (!empty($GLOBALS['module']) && isset(self::$container['session']['memberid'])) {
             $this->addVariable('submenu', (new MyRadioMenu())->getSubMenuForUser($GLOBALS['module']))
                 ->addVariable('title', $GLOBALS['module']);
         }
@@ -172,11 +170,11 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
     public function render()
     {
         if ((defined('AUTH_SHOWERRORS') && CoreUtils::hasPermission(AUTH_SHOWERRORS))
-            || Config::$display_errors
+            || self::$container['config']->display_errors
         ) {
             $this->addVariable('phperrors', MyRadioError::$php_errorlist);
-            if (isset($_SESSION)) { //Is the DB working?
-                $this->addVariable('query_count', Database::getInstance()->getCounter());
+            if (isset(self::$container['session'])) { //Is the DB working?
+                $this->addVariable('query_count', self::$container['database']->getCounter());
             }
         }
 

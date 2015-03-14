@@ -41,10 +41,10 @@ class NIPSWeb_Token extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public static function getEditToken()
     {
-        $r = self::$db->fetchColumn(
+        $r = self::$container['database']->fetchColumn(
             'INSERT INTO bapsplanner.client_ids (show_season_timeslot_id, session_id)
             VALUES ($1, $2) RETURNING client_id',
-            [$_SESSION['timeslotid'], session_id()]
+            [self::$container['session']['timeslotid'], session_id()]
         );
 
         if (empty($r)) {
@@ -61,7 +61,7 @@ class NIPSWeb_Token extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public static function getEditTokenTimeslot($client_id)
     {
-        $r = self::$db->fetchColumn(
+        $r = self::$container['database']->fetchColumn(
             'SELECT show_season_timeslot_id FROM bapsplanner.client_ids
             WHERE client_id=$1 LIMIT 1',
             [$client_id]

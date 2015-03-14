@@ -43,7 +43,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public static function getRemainingRequests()
     {
-        return self::$db->fetchOne(
+        return self::$container['database']->fetchOne(
             self::REQUESTS_REMAINING_SQL,
             self::getRemainingRequestsParams()
         )['remaining'];
@@ -57,9 +57,9 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
     private static function getRemainingRequestsParams()
     {
         return [
-            Config::$itones_request_maximum,
+            self::$container['config']->itones_request_maximum,
             MyRadio_User::getInstance()->getID(),
-            Config::$itones_request_period
+            self::$container['config']->itones_request_period
         ];
     }
 
@@ -77,7 +77,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
         $track_request = new iTones_TrackRequest(
             $track,
             MyRadio_User::getInstance(),
-            self::$db,
+            self::$container['database'],
             $queue
         );
 
@@ -120,7 +120,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
                 if (stristr($meta, 'skip="true"') === false) {
                     //Get the trackid
                     $tid = preg_replace(
-                        '/^.*filename=\"' . str_replace('/', '\\/', Config::$music_central_db_path)
+                        '/^.*filename=\"' . str_replace('/', '\\/', self::$container['config']->music_central_db_path)
                         . '\/records\/[0-9]+\/([0-9]+)\.mp3.*$/is',
                         '$1',
                         $meta
@@ -271,7 +271,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 
     private static function telnetStart()
     {
-        self::$telnet_handle = fsockopen('tcp://' . Config::$itones_telnet_host, Config::$itones_telnet_port, $errno, $errstr, 10);
+        self::$telnet_handle = fsockopen('tcp://' . self::$container['config']->itones_telnet_host, self::$container['config']->itones_telnet_port, $errno, $errstr, 10);
         register_shutdown_function([__CLASS__, 'telnetEnd']);
     }
 

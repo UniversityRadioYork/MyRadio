@@ -12,9 +12,9 @@
 use \MyRadio\Config;
 use \MyRadio\MyRadio\CoreUtils;
 
-$dest_host = Config::$news_provider;
+$dest_host = $container['config']->news_provider;
 $proxy_base_url = '/' . ltrim(str_replace($_SERVER['HTTP_HOST'], '', CoreUtils::makeURL('SIS', 'news')), '/');
-$proxying_url = Config::$news_proxy;
+$proxying_url = $container['config']->news_proxy;
 
 $proxied_headers = ['Set-Cookie', 'Content-Type', 'Cookie', 'Location'];
 

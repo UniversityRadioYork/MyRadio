@@ -43,9 +43,9 @@ class MyRadio_APIKey extends ServiceAPI
     protected function __construct($key)
     {
         $this->key = $key;
-        $revoked = self::$db->fetchColumn('SELECT revoked from myury.api_key WHERE key_string=$1', [$key]);
+        $revoked = self::$container['database']->fetchColumn('SELECT revoked from myury.api_key WHERE key_string=$1', [$key]);
         $this->revoked = ($revoked[0] == 't');
-        $this->permissions = self::$db->fetchColumn('SELECT typeid FROM myury.api_key_auth WHERE key_string=$1', [$key]);
+        $this->permissions = self::$container['database']->fetchColumn('SELECT typeid FROM myury.api_key_auth WHERE key_string=$1', [$key]);
     }
 
     /**
@@ -95,7 +95,7 @@ class MyRadio_APIKey extends ServiceAPI
     public function logCall($uri, $args)
     {
         return;
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO myury.api_key_log (key_string, remote_ip, request_path, request_params)
             VALUES ($1, $2, $3, $4)',
             [$this->key, $_SERVER['REMOTE_ADDR'], $uri, json_encode($args)]

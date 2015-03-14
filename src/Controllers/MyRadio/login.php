@@ -1,13 +1,11 @@
 <?php
-
 use \MyRadio\Config;
-use \MyRadio\Database;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
 /**
- *
+ * @todo Container support
  * @date 20131230
  * @package MyRadio_Core
  * @todo Throttle quick attempts from one IP with captcha
@@ -49,7 +47,7 @@ $form = (
         'next',
         MyRadioFormField::TYPE_HIDDEN,
         [
-            'value' => isset($_REQUEST['next']) ? $_REQUEST['next'] : Config::$base_url
+            'value' => isset($_REQUEST['next']) ? $_REQUEST['next'] : $container['config']->base_url
         ]
     )
 )->setTemplate('MyRadio/login.twig');
@@ -59,18 +57,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
     $status = null;
     $data = $form->readValues();
 
-    $raw_uname = str_replace('@' . Config::$eduroam_domain, '', $data['user']);
+    $raw_uname = str_replace('@' . $container['config']->eduroam_domain, '', $data['user']);
 
     $authenticators = [];
-    foreach (Config::$authenticators as $i) {
-        $authenticator = new $i();
+    foreach ($container['config']->authenticators as $i) {
+        $authenticator = new $i($container);
         $user = $authenticator->validateCredentials($raw_uname, $data['password']);
         if ($user) {
             if ($user->getAccountLocked()) {
                 //The user's account is disabled
                 $status = 'locked';
                 break;
-            } elseif (Config::$single_authenticator
+            } elseif ($container['config']->single_authenticator
                 && $user->getAuthProvider() != null && $user->getAuthProvider() != $i
             ) {
                 //They can only authenticate with the right provider once they've set one
@@ -82,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
                  * Add in permissions granted by the remote IP
                  * Contains or equals: >>=
                  */
-                $ip_auth = Database::getInstance()->fetchColumn(
+                $ip_auth = $container['database']->fetchColumn(
                     'SELECT typeid FROM auth_subnet WHERE subnet >>= $1',
                     [$_SERVER['REMOTE_ADDR']]
                 );
@@ -112,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
                 }
 
                 //If the user needs to specify an auth provider, go through all login mechanisms
-                if (Config::$single_authenticator && !$user->getAuthProvider()) {
+                if ($container['config']->single_authenticator && !$user->getAuthProvider()) {
                     $_SESSION['auth_use_locked'] = 'chooseAuth';
                     $status = 'choose';
                 } else {
@@ -131,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
         $options = [];
         $chosen_default = false;
         foreach ($authenticators as $authenticator => $success) {
-            $a = new $authenticator();
+            $a = new $authenticator($container);
             $option = [
                 'value' => $authenticator,
                 'name' => $a->getFriendlyName(),
@@ -146,18 +144,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])
             $options[] = $option;
         }
         $twig->addVariable('methods', $options)
-            ->addVariable('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL(Config::$default_module))
+            ->addVariable('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL($container['config']->default_module))
             ->render();
     } elseif ($status === 'change') {
         CoreUtils::redirect('MyRadio', 'pwChange');
     } elseif ($status !== 'success') {
-        $form->setFieldValue('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL(Config::$default_module))
+        $form->setFieldValue('next', isset($data['next']) ? $data['next'] : CoreUtils::makeURL($container['config']->default_module))
             ->render(['error' => true]);
     } else {
         if (isset($data['next'])) {
             header('Location: ' . $data['next']);
         } else {
-            CoreUtils::redirect(Config::$default_module);
+            CoreUtils::redirect($container['config']->default_module);
         }
     }
 } else {

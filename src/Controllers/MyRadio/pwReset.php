@@ -43,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwReset-us
             ['messages' => ['<div class="alert alert-danger">Please verify the captcha input and try again.</div>']]
         );
     } else {
-        foreach (Config::$authenticators as $i) {
-            $authenticator = new $i;
+        foreach ($container['config']->authenticators as $i) {
+            $authenticator = new $i($container);
             if ($authenticator->resetAccount($data['user'])) {
                 break;
             }
@@ -55,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwReset-us
         );
     }
 } else {
-    foreach (Config::$authenticators as $authenticator) {
-        $auth = new $authenticator;
+    foreach ($container['config']->authenticators as $authenticator) {
+        $auth = new $authenticator($container);
         $messages[] = $auth->getResetFormMessage();
     }
 

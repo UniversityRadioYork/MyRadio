@@ -6,7 +6,6 @@
 
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadioError;
@@ -180,10 +179,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         /**
          * @todo Support general photo attachment?
          */
-        $this->photo_url = Config::$default_person_uri;
+        $this->photo_url = self::$container['config']->default_person_uri;
         $image_metadata = json_decode($result['image_metadata_values']);
         if ($result['image_metadata_values'] !== null) {
-            $this->photo_url = Config::$public_media_uri . '/' . $image_metadata[0];
+            $this->photo_url = self::$container['config']->public_media_uri . '/' . $image_metadata[0];
         }
 
         //Get information about Seasons
@@ -196,7 +195,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     protected static function factory($showid)
     {
         $sql = self::BASE_SHOW_SQL . ' WHERE show_id=$1';
-        $result = self::$db->fetchOne($sql, [$showid]);
+        $result = self::$container['database']->fetchOne($sql, [$showid]);
 
         return new MyRadio_Show($result);
     }
@@ -233,11 +232,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             }
         }
 
-        self::initDB();
+
 
         //Get or set the show type id
         if (empty($params['showtypeid'])) {
-            $rtype = self::$db->fetchColumn('SELECT show_type_id FROM schedule.show_type WHERE name=\'Show\'');
+            $rtype = self::$container['database']->fetchColumn('SELECT show_type_id FROM schedule.show_type WHERE name=\'Show\'');
             if (empty($rtype[0])) {
                 throw new MyRadioException('There is no Show ShowType Available!', MyRadioException::FATAL);
             }
@@ -252,25 +251,25 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         }
 
         //We're all or nothing from here on out - transaction time
-        self::$db->query('BEGIN');
+        self::$container['database']->query('BEGIN');
 
         //Add the basic info, getting the show id
 
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'INSERT INTO schedule.show (show_type_id, submitted, memberid)
             VALUES ($1, NOW(), $2) RETURNING show_id',
-            [$params['showtypeid'], $_SESSION['memberid']],
+            [$params['showtypeid'], self::$container['session']['memberid']],
             true
         );
         $show_id = $result[0];
 
         //Right, set the title and description next
         foreach (['title', 'description'] as $key) {
-            self::$db->query(
+            self::$container['database']->query(
                 'INSERT INTO schedule.show_metadata
                 (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid)
                 VALUES ($1, $2, $3, NOW(), $4, $4)',
-                [self::getMetadataKey($key), $show_id, $params[$key], $_SESSION['memberid']],
+                [self::getMetadataKey($key), $show_id, $params[$key], self::$container['session']['memberid']],
                 true
             );
         }
@@ -283,10 +282,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             if (!is_numeric($genre)) {
                 continue;
             }
-            self::$db->query(
+            self::$container['database']->query(
                 'INSERT INTO schedule.show_genre (show_id, genre_id, effective_from, memberid, approvedid)
                 VALUES ($1, $2, NOW(), $3, $3)',
-                [$show_id, $genre, $_SESSION['memberid']],
+                [$show_id, $genre, self::$container['session']['memberid']],
                 true
             );
         }
@@ -294,11 +293,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         //Explode the tags
         $tags = explode(' ', $params['tags']);
         foreach ($tags as $tag) {
-            self::$db->query(
+            self::$container['database']->query(
                 'INSERT INTO schedule.show_metadata
                 (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid)
                 VALUES ($1, $2, $3, NOW(), $4, $4)',
-                [self::getMetadataKey('tag'), $show_id, $tag, $_SESSION['memberid']],
+                [self::getMetadataKey('tag'), $show_id, $tag, self::$container['session']['memberid']],
                 true
             );
         }
@@ -311,14 +310,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
              */
             $params['location'] = 1;
         }
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO schedule.show_location
             (show_id, location_id, effective_from, memberid, approvedid)
             VALUES ($1, $2, NOW(), $3, $3)',
             [
                 $show_id,
                 $params['location'],
-                $_SESSION['memberid']
+                self::$container['session']['memberid']
             ],
             true
         );
@@ -329,7 +328,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             if (empty($params['credits']['member'][$i])) {
                 continue;
             }
-            self::$db->query(
+            self::$container['database']->query(
                 'INSERT INTO schedule.show_credit
                 (show_id, credit_type_id, creditid, effective_from, memberid, approvedid)
                 VALUES ($1, $2, $3, NOW(), $4, $4)',
@@ -337,14 +336,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     $show_id,
                     (int) $params['credits']['credittype'][$i],
                     $params['credits']['member'][$i]->getID(),
-                    $_SESSION['memberid']
+                    self::$container['session']['memberid']
                 ],
                 true
             );
         }
 
         //Actually commit the show to the database!
-        self::$db->query('COMMIT');
+        self::$container['database']->query('COMMIT');
 
         $show = new self($show_id);
 
@@ -579,11 +578,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     public function isCurrentUserAnOwner()
     {
-        if ($this->owner === $_SESSION['memberid']) {
+        if ($this->owner === self::$container['session']['memberid']) {
             return true;
         }
         foreach ($this->getCreditObjects() as $user) {
-            if ($user->getID() === $_SESSION['memberid']) {
+            if ($user->getID() === self::$container['session']['memberid']) {
                 return true;
             }
         }
@@ -593,17 +592,17 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     public function setShowPhoto($tmp_path)
     {
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'INSERT INTO schedule.show_image_metadata (memberid, approvedid, metadata_key_id, metadata_value, show_id)
             VALUES ($1, $1, $2, $3, $4) RETURNING show_image_metadata_id',
-            [$_SESSION['memberid'], self::getMetadataKey('player_image'), 'tmp', $this->getID()]
+            [self::$container['session']['memberid'], self::getMetadataKey('player_image'), 'tmp', $this->getID()]
         )[0];
 
         $suffix = 'image_meta/ShowImageMetadata/'.$result.'.png';
-        $path = Config::$public_media_path.'/'.$suffix;
+        $path = self::$container['config']->public_media_path.'/'.$suffix;
         move_uploaded_file($tmp_path, $path);
 
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE schedule.show_image_metadata SET effective_to=NOW()
             WHERE metadata_key_id=$1
             AND show_id=$2
@@ -611,7 +610,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             [self::getMetadataKey('player_image'), $this->getID()]
         );
 
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE schedule.show_image_metadata SET effective_from=NOW(), metadata_value=$1
             WHERE show_image_metadata_id=$2',
             [$suffix, $result]
@@ -666,11 +665,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             throw new MyRadioException('Genre cannot be empty!', 400);
         }
         if ($genreid != $this->getGenre()) {
-            self::$db->query(
+            self::$container['database']->query(
                 'UPDATE schedule.show_genre SET effective_to=NOW() WHERE show_id=$1',
                 [$this->getID()]
             );
-            self::$db->query(
+            self::$container['database']->query(
                 'INSERT INTO schedule.show_genre (show_id, genre_id, effective_from, memberid, approvedid)
                 VALUES ($1, $2, NOW(), $3, $3)',
                 [$this->getID(), $genreid, MyRadio_User::getInstance()->getID()]
@@ -705,8 +704,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     {
         $key = 'MyRadio_Show_AllShowsFetcher_last_' . $show_type_id . '_' . (int) $current_term_only;
 
-        if (self::$cache->get($key)) {
-            $shows = self::$cache->getAll(self::getCacheKey(''));
+        if (self::$container['cache']->get($key)) {
+            $shows = self::$container['cache']->getAll(self::getCacheKey(''));
         } else {
             $sql = self::BASE_SHOW_SQL . ' WHERE show_type_id=$1';
             $params = [$show_type_id];
@@ -719,7 +718,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 $params[] = MyRadio_Scheduler::getActiveApplicationTerm();
             }
 
-            $result = self::$db->fetchAll($sql, $params);
+            $result = self::$container['database']->fetchAll($sql, $params);
 
             $shows = [];
             foreach ($result as $row) {
@@ -728,7 +727,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 $shows[] = $show;
             }
 
-            self::$cache->set($key, 'true');
+            self::$container['cache']->set($key, 'true');
         }
 
         return $shows;
@@ -742,7 +741,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      */
     public static function getMostMessaged($date = 0)
     {
-        $result = self::$db->fetchAll(
+        $result = self::$container['database']->fetchAll(
             'SELECT show.show_id, count(*) as msg_count FROM sis2.messages
             LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid = show_season_timeslot.show_season_timeslot_id
             LEFT JOIN schedule.show_season ON show_season_timeslot.show_season_id = show_season.show_season_id
@@ -787,11 +786,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     public static function getMostListened($date = 0)
     {
         $key = 'stats_show_mostlistened';
-        if (($top = self::$cache->get($key)) !== false) {
+        if (($top = self::$container['cache']->get($key)) !== false) {
             return $top;
         }
 
-        $result = self::$db->fetchAll(
+        $result = self::$container['database']->fetchAll(
             'SELECT show_id, SUM(listeners) AS listeners_sum FROM (
                 SELECT show_season_id, (
                     SELECT COUNT(*) FROM strm_log
@@ -816,7 +815,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $top[] = $show;
         }
 
-        self::$cache->set($key, $top, 86400);
+        self::$container['cache']->set($key, $top, 86400);
 
         return $top;
     }

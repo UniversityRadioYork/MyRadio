@@ -33,7 +33,7 @@ class SIS_Remote extends ServiceAPI
             $time = (int)$_REQUEST['presenterinfo-lasttime'];
         }
         if ($time < time() - 300) {
-            $response = MyRadioNews::getLatestNewsItem(Config::$presenterinfo_feed);
+            $response = MyRadioNews::getLatestNewsItem(self::$container['database'], self::$container['cache']->presenterinfo_feed);
             return [
                 'presenterinfo' => ['time' => time(), 'info' => $response]
             ];

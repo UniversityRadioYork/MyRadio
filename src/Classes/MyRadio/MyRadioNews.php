@@ -25,18 +25,14 @@ use \MyRadio\MyRadio\MyRadioFormField;
  */
 class MyRadioNews
 {
-    public function __construct()
-    {
-    }
-
     /**
      * Returns all items in the given feed
      * @param int $newsfeedid
      */
-    public static function getFeed($newsfeedid, MyRadio_User $user = null, $revoked = false)
+    public static function getFeed($database, $newsfeedid, MyRadio_User $user = null, $revoked = false)
     {
         $data = [];
-        foreach (Database::getInstance()->fetchColumn(
+        foreach ($database::getInstance()->fetchColumn(
             'SELECT newsentryid FROM public.news_feed'
             . ' WHERE feedid=$1' .($revoked ? '' : ' AND revoked=false'),
             [$newsfeedid]
@@ -54,9 +50,9 @@ class MyRadioNews
      * @param  MyRadio_User $user       The User object to check if seen. Default null, won't return a seen column.
      * @return Array
      */
-    public static function getLatestNewsItem($newsfeedid, MyRadio_User $user = null)
+    public static function getLatestNewsItem($database, $newsfeedid, MyRadio_User $user = null)
     {
-        $newsentry = Database::getInstance()->fetchOne(
+        $newsentry = $database->fetchOne(
             'SELECT newsentryid FROM public.news_feed
             WHERE public.news_feed.feedid=$1 AND revoked=false
             ORDER BY timestamp DESC',
@@ -67,14 +63,12 @@ class MyRadioNews
             return null;
         }
 
-        return self::getNewsItem($newsentry['newsentryid'], $user);
+        return self::getNewsItem($database, $newsentry['newsentryid'], $user);
     }
 
-    public static function getNewsItem($newsentryid, MyRadio_User $user = null)
+    public static function getNewsItem($database, $newsentryid, MyRadio_User $user = null)
     {
-        $db = Database::getInstance();
-
-        $news = $db->fetchOne(
+        $news = $database->fetchOne(
             'SELECT newsentryid, fname || \' \' || sname AS author, timestamp AS posted, content
             FROM public.news_feed, public.member
             WHERE newsentryid=$1
@@ -89,7 +83,7 @@ class MyRadioNews
         return array_merge(
             $news,
             [
-                'seen' => $db->fetchOne(
+                'seen' => $database->fetchOne(
                     'SELECT seen FROM public.member_news_feed
                     WHERE newsentryid=$1 AND memberid=$2 LIMIT 1',
                     [
