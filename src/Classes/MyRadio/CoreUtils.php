@@ -901,7 +901,6 @@ class CoreUtils
 
     public static function getSafeHTML($dirty_html)
     {
-        require_once 'Classes/vendor/htmlpurifier/HTMLPurifier.auto.php';
         $config = \HTMLPurifier_Config::createDefault();
         $purifier = new \HTMLPurifier($config);
 

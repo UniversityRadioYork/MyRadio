@@ -1,0 +1,10 @@
+{
+    "require": {
+        "recaptcha/php5": "~1.1",
+        "james-heinrich/getid3": "~1.9",
+        "ezyang/htmlpurifier": "~4.6"
+    },
+    "config": {
+        "vendor-dir": "src/vendor"
+    }
+}

@@ -34,10 +34,10 @@ date_default_timezone_set('Europe/London');
  * Sets the include path to include MyRadio at the end - makes for nicer includes
  */
 set_include_path(str_replace('Controllers', '', __DIR__) . PATH_SEPARATOR . get_include_path());
-/**
- * Sets up the autoloader for all classes
- */
 
+/**
+ * Sets up the autoloader for all MyRadio classes
+ */
 require_once 'Classes/Autoloader.php';
 // instantiate the loader
 $loader = new \MyRadio\Autoloader;
@@ -50,6 +50,11 @@ $loader->addNamespace('MyRadio', $_basepath . 'Classes');
 $loader->addNamespace('MyRadio\Iface', $_basepath . 'Interfaces');
 
 unset($_basepath);
+
+/**
+ * Sets up the autoloader for composer
+ */
+require 'vendor/autoload.php';
 
 /**
  * Load configuration specific to this system.

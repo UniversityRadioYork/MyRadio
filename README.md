@@ -26,8 +26,11 @@ Password: myradio
 
 Quickstart
 ----------
-Install Apache2, PHP and PostgreSQL on your prefered *nix distro. Or Windows,
-if you're into that. MyRadio has been tested with Ubuntu and FreeBSD.
+Install Apache2, PHP, Composer and PostgreSQL on your prefered *nix distro.
+Or Windows, if you're into that. MyRadio has been tested with Ubuntu and
+FreeBSD.
+
+cd to your MyRadio installation and run `composer install`
 
 Edit your Apache config as follows (where /usr/local/www/myradio is your
 checkout of this repository):

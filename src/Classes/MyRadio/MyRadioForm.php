@@ -271,7 +271,9 @@ class MyRadioForm
          */
         if ($this->captcha) {
             require_once 'Classes/vendor/recaptchalib.php';
-            $captcha = recaptcha_get_html(Config::$recaptcha_public_key, null, true);
+            $captchaObj = new \Captcha\Captcha();
+            $captchaObj->setPublicKey(Config::$recaptcha_public_key);
+            $captcha = $captchaObj->html();
         } else {
             $captcha = null;
         }
@@ -337,13 +339,10 @@ class MyRadioForm
     {
         //If there was a captcha, verify it
         if ($this->captcha) {
-            require_once 'Classes/vendor/recaptchalib.php';
-            if (!recaptcha_check_answer(
-                Config::$recaptcha_private_key,
-                $_SERVER['REMOTE_ADDR'],
-                $_REQUEST['recaptcha_challenge_field'],
-                $_REQUEST['recaptcha_response_field']
-            )->is_valid) {
+            $captcha = new \Captcha\Captcha();
+            $captcha->setPublicKey(Config::$recaptcha_public_key);
+            $captcha->setPrivateKey(Config::$recaptcha_private_key);
+            if (!$captcha->check()) {
                 return false;
             }
         }
