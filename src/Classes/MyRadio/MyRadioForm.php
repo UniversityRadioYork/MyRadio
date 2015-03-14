@@ -270,7 +270,6 @@ class MyRadioForm
          * If we need to do a captcha, load the requirements
          */
         if ($this->captcha) {
-            require_once 'Classes/vendor/recaptchalib.php';
             $captchaObj = new \Captcha\Captcha();
             $captchaObj->setPublicKey(Config::$recaptcha_public_key);
             $captcha = $captchaObj->html();
