@@ -341,7 +341,7 @@ class MyRadioForm
             $captcha = new \Captcha\Captcha();
             $captcha->setPublicKey(Config::$recaptcha_public_key);
             $captcha->setPrivateKey(Config::$recaptcha_private_key);
-            if (!$captcha->check()) {
+            if (!$captcha->check()->isValid()) {
                 return false;
             }
         }
