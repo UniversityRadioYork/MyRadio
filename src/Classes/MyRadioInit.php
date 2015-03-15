@@ -85,7 +85,7 @@ class MyRadioInit
             return new $provider($container['config']->cache_enable, $container);
         };
 
-        $container['session'] = $container->factory(function($container) {
+        $container['session'] = function($container) {
             /**
              * Sets up a session stored in the database - uesful for sharing between more
              * than one server.
@@ -113,7 +113,7 @@ class MyRadioInit
             );
             session_start();
             return $session_handler;
-        });
+        };
 
         $container['config'] = function() {
             return new \MyRadio\Config;
