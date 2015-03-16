@@ -10,3 +10,6 @@ sftp-*.json
 src/vendor
 composer.lock
 build/logs/junit.xml
+build/coverage
+build/logs/clover.xml
+*.db

@@ -32,13 +32,13 @@ class MyRadioNews
     public static function getFeed($database, $newsfeedid, MyRadio_User $user = null, $revoked = false)
     {
         $data = [];
-        foreach ($database::getInstance()->fetchColumn(
+        foreach ($database->fetchColumn(
             'SELECT newsentryid FROM public.news_feed'
             . ' WHERE feedid=$1' .($revoked ? '' : ' AND revoked=false'),
             [$newsfeedid]
         ) as $row) {
 
-            $data[] = self::getNewsItem($row, $user);
+            $data[] = self::getNewsItem($database, $row, $user);
         }
 
         return $data;
@@ -112,9 +112,9 @@ class MyRadioNews
         }; //Can sometimes get duplicate key errors
     }
 
-    public static function addItem($feedid, $content)
+    public static function addItem($database, $feedid, $content)
     {
-        Database::getInstance()->query(
+        $database->query(
             'INSERT INTO public.news_feed'
             . ' (feedid, memberid, content) VALUES'
             . ' ($1, $2, $3)',
