@@ -1,6 +1,22 @@
 # Base packages and Apache setup
 apt-get update
-apt-get install -y apache2 libapache2-mod-php5 php5-common postgresql-9.3 postgresql-client-9.3 php-apc php5-curl php5-geoip php5-gd php5-ldap php5-mcrypt php5-pgsql php5-dev php-pear openssl
+apt-get install -y apache2 \
+	libapache2-mod-php5 \
+	php5-common \
+	postgresql-9.3 \
+	postgresql-client-9.3 \
+	memcached \
+	php-apc \
+	php5-curl \
+	php5-geoip \
+	php5-gd \
+	php5-ldap \
+	php5-mcrypt \
+	php5-pgsql \
+	php5-dev \
+	php-pear \
+	php5-memcached \
+	openssl
 a2enmod ssl
 a2enmod rewrite
 service apache2 stop
