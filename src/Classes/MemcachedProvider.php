@@ -12,8 +12,8 @@ use \Memcached;
  * MemcachedProvider provides in-memory caching for PHP resources to increase page load times
  *
  * MemcachedProvider was the first CacheProvider implementation in MyRadio. It enables Models to send cache commands to it
- * which are then stored using the APC plugin automatically. In order for this class to work correctly, the server
- * needs the APC PHP plugin installed on the server. It will throw an Exception if it is not.
+ * which are then stored using Memcached automatically. In order for this class to work correctly, the server
+ * needs the Memcached PHP plugin installed on the server. It will throw an Error and disable itself if it is not.
  *
  * @package MyRadio_Core
  */
@@ -60,7 +60,7 @@ class MemcachedProvider implements \MyRadio\Iface\CacheProvider
     }
 
     /**
-     * Stores an object in the APC User Object Cache
+     * Stores an object in Memcached
      *
      * @param  String $key     The unique name of the object to store. Ideally, this would use myradio_{module}_{name}
      * @param  mixed  $value   The data to store
