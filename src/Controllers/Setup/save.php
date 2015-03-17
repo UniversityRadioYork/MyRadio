@@ -25,7 +25,7 @@ foreach ($old_config as $line) {
         continue;
     }
     if (!isset($config_overrides[$param]) && property_exists('Config', $param)) {
-        $config_overrides[$param] = Config::$$param;
+        $config_overrides[$param] = $container['config']->$param;
     }
 }
 
@@ -57,7 +57,7 @@ foreach ($config_overrides as $k => $v) {
     } elseif ($v === false) {
         $v = 'false';
     }
-    fwrite($file, 'Config::$' . $k . ' = ' . strval($v) . ";\n");
+    fwrite($file, '$container[\'config\']->' . $k . ' = ' . strval($v) . ";\n");
 }
 
 fclose($file);

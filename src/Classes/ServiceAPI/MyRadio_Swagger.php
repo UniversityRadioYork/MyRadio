@@ -11,8 +11,7 @@ use \ReflectionMethod;
 use \ReflectionClass;
 use \ReflectionException;
 
-use \MyRadio\Config;
-use \MyRadio\Database;
+use \MyRadio\ContainerSubject;
 use \MyRadio\MyRadio\CoreUtils;
 
 /**
@@ -24,7 +23,7 @@ use \MyRadio\MyRadio\CoreUtils;
  * @todo Detect Response Types
  * @todo Parse docblocks to get variable information
  */
-class MyRadio_Swagger
+class MyRadio_Swagger extends \MyRadio\ContainerSubject
 {
     /**
  * THIS HALF DEALS WITH RESOURCES LISTING *
@@ -34,7 +33,7 @@ class MyRadio_Swagger
         $data = [
             'apiVersion' => 0.1,
             'swaggerVersion' => 1.2,
-            'basePath' => Config::$api_url,
+            'basePath' => self::$container['config']->api_url,
             'authorizations' => ['apiKey' => ['type' => 'api_key', 'passAs' => 'query']],
             'apis' => []
         ];
@@ -53,7 +52,7 @@ class MyRadio_Swagger
 
     public static function getApiClasses()
     {
-        $data = Database::getInstance()->fetchAll('SELECT class_name, api_name FROM myury.api_class_map ORDER BY api_name');
+        $data = self::$container['database']->fetchAll('SELECT class_name, api_name FROM myury.api_class_map ORDER BY api_name');
         $result = [];
 
         foreach ($data as $row) {
@@ -87,7 +86,7 @@ class MyRadio_Swagger
         $data = [
             'swaggerVersion' => 1.2,
             'apiVersion' => 0.2,
-            'basePath' => Config::$api_url . '/' . $this->class,
+            'basePath' => self::$container['config']->api_url . '/' . $this->class,
             'apis' => [],
             'models' => []
         ];
@@ -329,7 +328,7 @@ class MyRadio_Swagger
      */
     public static function getCallRequirements($class, $method)
     {
-        $result = Database::getInstance()->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT typeid FROM myury.api_method_auth WHERE class_name=$1 AND
             (method_name=$2 OR method_name IS NULL)',
             [$class, $method]

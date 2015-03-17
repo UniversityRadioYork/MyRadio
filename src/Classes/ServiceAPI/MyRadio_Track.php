@@ -7,7 +7,6 @@
 
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm;
@@ -119,7 +118,7 @@ class MyRadio_Track extends ServiceAPI
     protected function __construct($trackid)
     {
         $this->trackid = (int) $trackid;
-        $result = self::$db->fetchOne('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', [$this->trackid]);
+        $result = self::$container['database']->fetchOne('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', [$this->trackid]);
         if (empty($result)) {
             throw new MyRadioException('The specified Track does not seem to exist', 400);
         }
@@ -275,10 +274,10 @@ class MyRadio_Track extends ServiceAPI
     public function setDigitised($digitised)
     {
         $this->digitised = $digitised;
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE rec_track SET digitised=$1, digitisedby=$2 WHERE trackid=$3',
             $digitised ? [
-                't', $_SESSION['memberid'], $this->getID()
+                't', self::$container['session']['memberid'], $this->getID()
             ] : [
                 'f', null, $this->getID()
             ]
@@ -292,7 +291,7 @@ class MyRadio_Track extends ServiceAPI
     public function setClean($clean)
     {
         $this->clean = $clean;
-        self::$db->query('UPDATE rec_track SET clean=$1 WHERE trackid=$2', [$clean, $this->getID()]);
+        self::$container['database']->query('UPDATE rec_track SET clean=$1 WHERE trackid=$2', [$clean, $this->getID()]);
         $this->updateCacheObject();
     }
 
@@ -339,7 +338,7 @@ class MyRadio_Track extends ServiceAPI
      */
     private static function findByNameArtist($title, $artist, $limit, $digitised = false, $exact = false)
     {
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT trackid
             FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
             AND rec_track.title '
@@ -380,7 +379,7 @@ class MyRadio_Track extends ServiceAPI
      */
     public static function findByOptions($options)
     {
-        self::wakeup();
+
 
         //Shortcircuit - if itonesplaylistid is the only not-default value, just return the playlist
         $conflict = false;
@@ -414,7 +413,7 @@ class MyRadio_Track extends ServiceAPI
             $options['itonesplaylistid'] = null;
         }
         if (!isset($options['limit'])) {
-            $options['limit'] = Config::$ajax_limit_default;
+            $options['limit'] = self::$container['config']->ajax_limit_default;
         }
         if (empty($options['recordid'])) {
             $options['recordid'] = null;
@@ -461,7 +460,7 @@ class MyRadio_Track extends ServiceAPI
         }
 
         //Do the bulk of the sorting with SQL
-        $result = self::$db->fetchAll(
+        $result = self::$container['database']->fetchAll(
             'SELECT trackid, rec_track.recordid
             FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
             AND (rec_track.title ILIKE $1 || $2 || $1'
@@ -507,22 +506,21 @@ class MyRadio_Track extends ServiceAPI
      */
     public static function cacheAndIdentifyUploadedTrack($tmp_path)
     {
-        if (!isset($_SESSION['myury_nipsweb_file_cache_counter'])) {
-            $_SESSION['myury_nipsweb_file_cache_counter'] = 0;
+        if (!isset(self::$container['session']['myury_nipsweb_file_cache_counter'])) {
+            self::$container['session']['myury_nipsweb_file_cache_counter'] = 0;
         }
-        if (!is_dir(Config::$audio_upload_tmp_dir)) {
-            mkdir(Config::$audio_upload_tmp_dir);
+        if (!is_dir(self::$container['config']->audio_upload_tmp_dir)) {
+            mkdir(self::$container['config']->audio_upload_tmp_dir);
         }
 
-        $filename = session_id() . '-' . ++$_SESSION['myury_nipsweb_file_cache_counter'] . '.mp3';
+        $filename = session_id() . '-' . ++self::$container['session']['myury_nipsweb_file_cache_counter'] . '.mp3';
 
-        if (!move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename)) {
+        if (!move_uploaded_file($tmp_path, self::$container['config']->audio_upload_tmp_dir . '/' . $filename)) {
             throw new MyRadioException('Failed to move uploaded track to tmp directory.', 500);
         }
 
-        require_once 'Classes/vendor/getid3/getid3.php';
         $getID3 = new \getID3;
-        $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
+        $fileInfo = $getID3->analyze(self::$container['config']->audio_upload_tmp_dir . '/' . $filename);
 
         // File quality checks
         if ($fileInfo['audio']['bitrate'] < 192000) {
@@ -532,7 +530,7 @@ class MyRadio_Track extends ServiceAPI
             return ['status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
         }
 
-        $analysis = self::identifyUploadedTrack(Config::$audio_upload_tmp_dir . '/' . $filename);
+        $analysis = self::identifyUploadedTrack(self::$container['config']->audio_upload_tmp_dir . '/' . $filename);
         if (isset($analysis['status'])) {
             $analysis['fileid'] = $filename;
             return $analysis;
@@ -595,7 +593,7 @@ class MyRadio_Track extends ServiceAPI
     public static function identifyAndStoreTrack($tmpid, $title, $artist, $album, $position, $explicit = null)
     {
         // We need to rollback if something goes wrong later
-        self::$db->query('BEGIN');
+        self::$container['database']->query('BEGIN');
 
         $ainfo = null;
         if ($album == "FROM_LASTFM") {
@@ -610,9 +608,8 @@ class MyRadio_Track extends ServiceAPI
 
         // Get the track duration from the file if it isn't already set
         if (empty($ainfo['duration'])) {
-            require_once 'Classes/vendor/getid3/getid3.php';
-            $getID3 = new \getID3;
-            $ainfo['duration'] = intval($getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $tmpid)['playtime_seconds']);
+            $getID3 = new \getID3();
+            $ainfo['duration'] = intval($getID3->analyze(self::$container['config']->audio_upload_tmp_dir . '/' . $tmpid)['playtime_seconds']);
         }
 
         // See if the explicit is set, and set the value for the DB accordingly - if not set unknown
@@ -659,7 +656,7 @@ class MyRadio_Track extends ServiceAPI
          * 2- 192kbps OGG for Safari/Firefox
          * 3- Original file for potential future conversions
          */
-        $tmpfile = Config::$audio_upload_tmp_dir . '/' . $tmpid;
+        $tmpfile = self::$container['config']->audio_upload_tmp_dir . '/' . $tmpid;
         $dbfile = $ainfo['album']->getFolder() . '/' . $track->getID();
 
         if (`which ffmpeg`) {
@@ -674,7 +671,7 @@ class MyRadio_Track extends ServiceAPI
         shell_exec("nice -n 15 $bin -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
         rename($tmpfile, $dbfile . '.mp3.orig');
 
-        self::$db->query('COMMIT');
+        self::$container['database']->query('COMMIT');
 
         return ['status' => 'OK'];
     }
@@ -696,7 +693,7 @@ class MyRadio_Track extends ServiceAPI
      */
     public static function create($options)
     {
-        self::wakeup();
+
 
         $required = ['title', 'artist', 'recordid', 'duration'];
         foreach ($required as $require) {
@@ -728,7 +725,7 @@ class MyRadio_Track extends ServiceAPI
             $options['digitised'] = $options['digitised'] ? 't' : 'f';
         }
 
-        $result = self::$db->query(
+        $result = self::$container['database']->query(
             'INSERT INTO rec_track (number, title, artist, length, genre, intro, clean, recordid, digitised, digitisedby, duration)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING trackid',
             [
@@ -741,12 +738,12 @@ class MyRadio_Track extends ServiceAPI
                 $options['clean'],
                 $options['recordid'],
                 $options['digitised'],
-                $_SESSION['memberid'],
+                self::$container['session']['memberid'],
                 $options['duration']
             ]
         );
 
-        $id = self::$db->fetchAll($result);
+        $id = self::$container['database']->fetchAll($result);
 
         return self::getInstance($id[0]['trackid']);
     }
@@ -766,11 +763,11 @@ class MyRadio_Track extends ServiceAPI
             return;
         }
         //Move the file
-        foreach (Config::$music_central_db_exts as $ext) {
+        foreach (self::$container['config']->music_central_db_exts as $ext) {
             if (!file_exists($this->getPath($ext))) {
                 continue;
             }
-            $new_dir = Config::$music_central_db_path . '/records/' . $album->getID();
+            $new_dir = self::$container['config']->music_central_db_path . '/records/' . $album->getID();
             if (!is_dir($new_dir)) {
                 mkdir($new_dir);
             }
@@ -782,7 +779,7 @@ class MyRadio_Track extends ServiceAPI
         }
 
         $this->record = $album->getID();
-        self::$db->query('UPDATE rec_track SET recordid=$1 WHERE trackid=$2', [$album->getID(), $this->getID()]);
+        self::$container['database']->query('UPDATE rec_track SET recordid=$1 WHERE trackid=$2', [$album->getID(), $this->getID()]);
 
         $this->updateCacheObject();
     }
@@ -794,7 +791,7 @@ class MyRadio_Track extends ServiceAPI
         }
 
         $this->title = $title;
-        self::$db->query('UPDATE rec_track SET title=$1 WHERE trackid=$2', [$title, $this->getID()]);
+        self::$container['database']->query('UPDATE rec_track SET title=$1 WHERE trackid=$2', [$title, $this->getID()]);
         $this->updateCacheObject();
     }
 
@@ -805,7 +802,7 @@ class MyRadio_Track extends ServiceAPI
         }
 
         $this->artist = $artist;
-        self::$db->query('UPDATE rec_track SET artist=$1 WHERE trackid=$2', [$artist, $this->getID()]);
+        self::$container['database']->query('UPDATE rec_track SET artist=$1 WHERE trackid=$2', [$artist, $this->getID()]);
 
         $this->updateCacheObject();
     }
@@ -813,7 +810,7 @@ class MyRadio_Track extends ServiceAPI
     public function setPosition($position)
     {
         $this->position = (int) $position;
-        self::$db->query('UPDATE rec_track SET number=$1 WHERE trackid=$2', [$this->getPosition(), $this->getID()]);
+        self::$container['database']->query('UPDATE rec_track SET number=$1 WHERE trackid=$2', [$this->getPosition(), $this->getID()]);
         $this->updateCacheObject();
     }
 
@@ -825,7 +822,7 @@ class MyRadio_Track extends ServiceAPI
     public function setDuration($duration)
     {
         $this->duration = (int) $duration;
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE rec_track SET length=$1, duration=$2 WHERE trackid=$3', [
             CoreUtils::intToTime($this->getDuration()),
             $this->getDuration(),
@@ -843,7 +840,7 @@ class MyRadio_Track extends ServiceAPI
     public function setIntro($duration)
     {
         $this->intro = (int) $duration;
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE rec_track SET intro=$1 WHERE trackid=$2', [
             CoreUtils::intToTime($this->intro),
             $this->getID()
@@ -859,8 +856,8 @@ class MyRadio_Track extends ServiceAPI
      */
     public static function getAllDigitised()
     {
-        self::initDB();
-        $ids = self::$db->fetchColumn('SELECT trackid FROM rec_track WHERE digitised=\'t\'');
+
+        $ids = self::$container['database']->fetchColumn('SELECT trackid FROM rec_track WHERE digitised=\'t\'');
 
         $tracks = [];
         foreach ($ids as $id) {
@@ -877,7 +874,7 @@ class MyRadio_Track extends ServiceAPI
      */
     public function getPath($format = 'mp3')
     {
-        return Config::$music_central_db_path . '/records/' . $this->getAlbum()->getID() . '/' . $this->getID() . '.' . $format;
+        return self::$container['config']->music_central_db_path . '/records/' . $this->getAlbum()->getID() . '/' . $this->getID() . '.' . $format;
     }
 
     /**
@@ -903,7 +900,7 @@ class MyRadio_Track extends ServiceAPI
         $details = json_decode(
             file_get_contents(
                 'https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key='
-                . Config::$lastfm_api_key
+                . self::$container['config']->lastfm_api_key
                 . '&artist=' . urlencode($artist)
                 . '&track=' . urlencode(str_replace(' (Radio Edit)', '', $title))
                 . '&format=json'
@@ -914,7 +911,7 @@ class MyRadio_Track extends ServiceAPI
         if (!isset($details['track']['album'])) {
             //Send some defaults for album info
             return [
-                'album' => MyRadio_Album::findOrCreate(Config::$short_name . ' Downloads ' . date('Y'), Config::$short_name),
+                'album' => MyRadio_Album::findOrCreate(self::$container['config']->short_name . ' Downloads ' . date('Y'), self::$container['config']->short_name),
                 'position' => 0,
                 'duration' => intval($details['track']['duration'] / 1000)
             ];
@@ -929,7 +926,7 @@ class MyRadio_Track extends ServiceAPI
 
     public function setLastfmVerified()
     {
-        self::$db->query('UPDATE rec_track SET lastfm_verified=\'t\' WHERE trackid=$1', [$this->getID()]);
+        self::$container['database']->query('UPDATE rec_track SET lastfm_verified=\'t\' WHERE trackid=$1', [$this->getID()]);
     }
 
     /**
@@ -948,7 +945,7 @@ class MyRadio_Track extends ServiceAPI
             $data = json_decode(
                 file_get_contents(
                     'https://ws.audioscrobbler.com/2.0/?method=track.getSimilar&api_key='
-                    . Config::$lastfm_api_key
+                    . self::$container['config']->lastfm_api_key
                     . '&track=' . urlencode($this->getTitle())
                     . '&artist=' . urlencode($this->getArtist())
                     . '&limit=50&format=json'
@@ -990,8 +987,8 @@ class MyRadio_Track extends ServiceAPI
     public function isBlacklisted()
     {
         if ($this->itones_blacklist === null) {
-            $this->itones_blacklist = (bool) self::$db->numRows(
-                self::$db->query(
+            $this->itones_blacklist = (bool) self::$container['database']->numRows(
+                self::$container['database']->query(
                     'SELECT * FROM jukebox.track_blacklist
                     WHERE trackid=$1',
                     [$this->getID()]
@@ -1012,16 +1009,16 @@ class MyRadio_Track extends ServiceAPI
      */
     public static function getLibraryStats()
     {
-        $num_digitised = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\'')[0];
-        $num_undigitised = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\'')[0];
-        $num_clean = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'y\'')[0];
-        $num_unclean = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'n\'')[0];
-        $num_cleanunknown = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'u\'')[0];
-        $num_verified = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'t\'')[0];
-        $num_unverified = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'f\'')[0];
+        $num_digitised = (int) self::$container['database']->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\'')[0];
+        $num_undigitised = (int) self::$container['database']->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\'')[0];
+        $num_clean = (int) self::$container['database']->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'y\'')[0];
+        $num_unclean = (int) self::$container['database']->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'n\'')[0];
+        $num_cleanunknown = (int) self::$container['database']->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'u\'')[0];
+        $num_verified = (int) self::$container['database']->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'t\'')[0];
+        $num_unverified = (int) self::$container['database']->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'f\'')[0];
 
-        $num_singles = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_record WHERE format=\'s\'')[0];
-        $num_albums = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_record WHERE format=\'a\'')[0];
+        $num_singles = (int) self::$container['database']->fetchColumn('SELECT COUNT(*) FROM public.rec_record WHERE format=\'s\'')[0];
+        $num_albums = (int) self::$container['database']->fetchColumn('SELECT COUNT(*) FROM public.rec_record WHERE format=\'a\'')[0];
 
         return [
             ['Key', 'Value'],

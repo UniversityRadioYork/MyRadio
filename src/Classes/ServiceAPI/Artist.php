@@ -7,7 +7,6 @@
 namespace MyRadio\ServiceAPI;
 
 use \MyRadio\MyRadioException;
-use \MyRadio\Config;
 
 /**
  * The Artist class provides and stores information about a Artist
@@ -41,7 +40,7 @@ class Artist extends ServiceAPI
     {
         $title = trim($title);
 
-        return self::$db->fetchAll(
+        return self::$container['database']->fetchAll(
             'SELECT DISTINCT rec_track.artist AS title, 0 AS artistid
             FROM rec_track WHERE rec_track.artist ILIKE \'%\' || $1 || \'%\' LIMIT $2',
             [$title, $limit]
@@ -66,7 +65,7 @@ class Artist extends ServiceAPI
      */
     public static function findByOptions($options)
     {
-        self::wakeup();
+
 
         if (empty($options['title'])) {
             $options['title'] = '';
@@ -84,7 +83,7 @@ class Artist extends ServiceAPI
             $options['itonesplaylistid'] = null;
         }
         if (!isset($options['limit'])) {
-            $options['limit'] = Config::$ajax_limit_default;
+            $options['limit'] = self::$container['config']->ajax_limit_default;
         }
         if (empty($options['trackid'])) {
             $options['trackid'] = null;
@@ -126,7 +125,7 @@ class Artist extends ServiceAPI
         }
 
         //Do the bulk of the sorting with SQL
-        $result = self::$db->fetchAll(
+        $result = self::$container['database']->fetchAll(
             'SELECT DISTINCT rec_track.artist
             FROM rec_track
             INNER JOIN rec_record ON ( rec_track.recordid = rec_record.recordid )

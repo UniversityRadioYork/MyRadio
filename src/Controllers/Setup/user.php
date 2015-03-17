@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_REQUEST['email'],
         empty($_REQUEST['phone']) ? null : $_REQUEST['phone'],
         true,
-        Config::$membership_fee,
+        $container['config']->membership_fee,
         $_REQUEST['password']
     );
 

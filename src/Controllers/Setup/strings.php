@@ -40,19 +40,19 @@ foreach ($shorttext as $key) {
     $rProperty = $rConfig->getProperty($key);
     $name = ucwords(str_replace('_', ' ', $key));
     $desc = implode('<br>', MyRadio_Swagger::parseDoc($rProperty)['lines']);
-    $short_params[] = [$key, $name, $desc, Config::$$key];
+    $short_params[] = [$key, $name, $desc, $container['config']->$key];
 }
 
 foreach ($longtext as $key) {
     $rProperty = $rConfig->getProperty($key);
     $name = ucwords(str_replace('_', ' ', $key));
     $desc = implode('<br>', MyRadio_Swagger::parseDoc($rProperty)['lines']);
-    $long_params[] = [$key, $name, $desc, Config::$$key];
+    $long_params[] = [$key, $name, $desc, $container['config']->$key];
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($_POST as $k => $v) {
-        if (Config::$$k !== $v) {
+        if ($container['config']->$k !== $v) {
             $config_overrides[$k] = $v;
         }
     }

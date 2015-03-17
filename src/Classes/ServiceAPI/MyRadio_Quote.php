@@ -113,7 +113,7 @@ class MyRadio_Quote extends ServiceAPI
      */
     protected function __construct($quote_id)
     {
-        $quote_data = self::$db->fetchOne(
+        $quote_data = self::$container['database']->fetchOne(
             self::GET_INSTANCE_SQL,
             [$quote_id]
         );
@@ -161,7 +161,7 @@ class MyRadio_Quote extends ServiceAPI
      */
     public function getAll()
     {
-        $quote_ids = self::$db->fetchColumn(self::GET_ALL_SQL, []);
+        $quote_ids = self::$container['database']->fetchColumn(self::GET_ALL_SQL, []);
 
         return array_map('self::getInstance', $quote_ids);
     }
@@ -207,7 +207,7 @@ class MyRadio_Quote extends ServiceAPI
      */
     public function create($data)
     {
-        self::$db->query(
+        self::$container['database']->query(
             self::INSERT_SQL,
             [
                 $data['text'],
@@ -264,7 +264,7 @@ class MyRadio_Quote extends ServiceAPI
      */
     private function set($sql, $value)
     {
-        self::$db->query($sql, [$value, $this->getID()]);
+        self::$container['database']->query($sql, [$value, $this->getID()]);
 
         return $this;
     }

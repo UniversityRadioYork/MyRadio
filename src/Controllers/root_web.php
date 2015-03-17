@@ -7,7 +7,6 @@
  * @package MyRadio_Core
  */
 
-use \MyRadio\Config;
 use \MyRadio\MyRadio\CoreUtils;
 
 require_once __DIR__.'/root.php';
@@ -25,19 +24,19 @@ if (isset($_REQUEST['request'])) {
         $module = $info[0];
         $action = $info[1];
         //If there's only one, determine if it's the module or action
-    } elseif (CoreUtils::isValidController(Config::$default_module, $info[0])) {
-        $module = Config::$default_module;
+    } elseif (CoreUtils::isValidController($container['config']->default_module, $info[0])) {
+        $module = $container['config']->default_module;
         $action = $info[0];
-    } elseif (CoreUtils::isValidController($info[0], Config::$default_action)) {
+    } elseif (CoreUtils::isValidController($info[0], $container['config']->default_action)) {
         $module = $info[0];
-        $action = Config::$default_action;
+        $action = $container['config']->default_action;
     } else {
         require 'Controllers/Errors/404.php';
         exit;
     }
 } else {
-    $module = (isset($_REQUEST['module']) ? $_REQUEST['module'] : Config::$default_module);
-    $action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : Config::$default_action);
+    $module = (isset($_REQUEST['module']) ? $_REQUEST['module'] : $container['config']->default_module);
+    $action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : $container['config']->default_action);
     if (!CoreUtils::isValidController($module, $action)) {
         //Yep, that doesn't exist.
         require 'Controllers/Errors/404.php';

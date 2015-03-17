@@ -36,7 +36,7 @@ class NIPSWeb_AutoPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
     protected function __construct($playlistid)
     {
         $this->auto_playlist_id = $playlistid;
-        $result = self::$db->fetchOne('SELECT * FROM bapsplanner.auto_playlists WHERE auto_playlist_id=$1 LIMIT 1', [$playlistid]);
+        $result = self::$container['database']->fetchOne('SELECT * FROM bapsplanner.auto_playlists WHERE auto_playlist_id=$1 LIMIT 1', [$playlistid]);
         if (empty($result)) {
             throw new MyRadioException('The specified NIPSWeb Auto Playlist does not seem to exist');
 
@@ -57,7 +57,7 @@ class NIPSWeb_AutoPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
     public function getTracks()
     {
         if (empty($this->tracks)) {
-            $tracks = self::$db->fetchAll($this->query);
+            $tracks = self::$container['database']->fetchAll($this->query);
             $this->tracks = [];
 
             foreach ($tracks as $id) {
@@ -91,7 +91,7 @@ class NIPSWeb_AutoPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
         if ($editable_only && !MyRadio_User::getInstance()->hasAuth(AUTH_EDITCENTRALRES)) {
             return [];
         }
-        $result = self::$db->fetchColumn('SELECT auto_playlist_id FROM bapsplanner.auto_playlists ORDER BY name');
+        $result = self::$container['database']->fetchColumn('SELECT auto_playlist_id FROM bapsplanner.auto_playlists ORDER BY name');
         $response = [];
         foreach ($result as $id) {
             $response[] = self::getInstance($id);
@@ -102,7 +102,7 @@ class NIPSWeb_AutoPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
 
     public static function findByName($name)
     {
-        $result = self::$db->fetchColumn('SELECT auto_playlist_id FROM bapsplanner.auto_playlists WHERE name=$1', [$name]);
+        $result = self::$container['database']->fetchColumn('SELECT auto_playlist_id FROM bapsplanner.auto_playlists WHERE name=$1', [$name]);
 
         if (empty($result)) {
             throw new MyRadioException('That auto playlist does not exist!');

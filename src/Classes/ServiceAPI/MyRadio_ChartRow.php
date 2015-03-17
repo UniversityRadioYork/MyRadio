@@ -54,7 +54,7 @@ class MyRadio_ChartRow extends ServiceAPI
         $this->chart_row_id = $chart_row_id;
         $this->chart_release = $chart_release;
 
-        $chart_row_data = self::$db->fetchOne(
+        $chart_row_data = self::$container['database']->fetchOne(
             'SELECT *
             FROM music.chart_row
             WHERE chart_row_id = $1;',
@@ -143,7 +143,7 @@ class MyRadio_ChartRow extends ServiceAPI
      */
     public function create($data)
     {
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO music.chart_row(chart_release_id, position, trackid)
              VALUES ($1, $2, $3);',
             [
@@ -166,7 +166,7 @@ class MyRadio_ChartRow extends ServiceAPI
     {
         $this->trackid = intval($trackid);
 
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE music.chart_row
              SET trackid = $1
              WHERE chart_row_id = $2;',

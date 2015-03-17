@@ -5,5 +5,11 @@ util/checkpassword.conf
 *.sw[a-z]
 sftp-*.json
 .tags*
-.phpintel/*
-.vagrant/*
+.phpintel
+.vagrant
+src/vendor
+composer.lock
+build/logs/junit.xml
+build/coverage
+build/logs/clover.xml
+*.db

@@ -12,7 +12,7 @@ use \MyRadio\MyRadio\MyRadioNews;
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/news.twig')
         ->addVariable('title', 'News Feed')
-        ->addVariable('tabledata', MyRadioNews::getFeed($_REQUEST['feed']))
+        ->addVariable('tabledata', MyRadioNews::getFeed($container['database'], $_REQUEST['feed']))
         ->addVariable('tablescript', 'myradio.newslist')
         ->addVariable('feedid', $_REQUEST['feed'])
         ->render();

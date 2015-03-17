@@ -9,8 +9,7 @@ namespace MyRadio\ServiceAPI;
 use \MyRadio\Iface\IServiceAPI;
 use \MyRadio\Iface\MyRadio_DataSource;
 
-use \MyRadio\Config;
-use \MyRadio\Database;
+use \MyRadio\ContainerSubject;
 use \MyRadio\MyRadioException;
 
 /**
@@ -21,65 +20,16 @@ use \MyRadio\MyRadioException;
  * @uses    \Database
  * @uses    \CacheProvider
  */
-abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
+abstract class ServiceAPI extends ContainerSubject implements IServiceAPI, MyRadio_DataSource
 {
-    /**
-     * All ServiceAPI subclasses will contain a reference to the Database Singleton
-     * @var \Database
-     */
-    protected static $db = null;
-    /**
-     * All ServiceAPI subclasses will contain a reference to the CacheProvider Singleton
-     * @var \CacheProvider
-     */
-    protected static $cache = null;
-
-    /**
-     * Start up the connection to the Database
-     */
-    protected static function initDB()
-    {
-        if (!self::$db) {
-            self::$db = Database::getInstance();
-        }
-    }
-
-    /**
-     * Start up the connection to the CacheProvider
-     */
-    protected static function initCache()
-    {
-        if (!self::$cache) {
-            $cache = Config::$cache_provider;
-            self::$cache = $cache::getInstance();
-        }
-    }
-
-    /**
-     * A magic function that will reload the Database and CacheProvider after the object has been loaded from Cache
-     */
-    public function __wakeup()
-    {
-        self::wakeup();
-    }
-
-    public static function wakeup()
-    {
-        self::initDB();
-        self::initCache();
-    }
-
     public static function getInstance($itemid)
     {
-        self::initCache();
-        self::initDB();
-
         $class = get_called_class();
         $key = self::getCacheKey($itemid);
-        $cache = self::$cache->get($key);
+        $cache = self::$container['cache']->get($key);
         if (!$cache) {
             $cache = $class::factory($itemid);
-            self::$cache->set($key, $cache);
+            self::$container['cache']->set($key, $cache);
         }
 
         return $cache;
@@ -169,7 +119,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
      */
     protected function updateCacheObject()
     {
-        self::$cache->set(self::getCacheKey($this->getID()), $this);
+        self::$container['cache']->set(self::getCacheKey($this->getID()), $this);
     }
 
     /**

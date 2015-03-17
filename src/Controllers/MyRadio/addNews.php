@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = MyRadioNews::getForm()->readValues();
 
-    MyRadioNews::addItem($data['feedid'], $data['body']);
+    MyRadioNews::addItem($container['database'], $data['feedid'], $data['body']);
 
     CoreUtils::backWithMessage('News Updated!');
 

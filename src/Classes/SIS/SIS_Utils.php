@@ -24,7 +24,7 @@ class SIS_Utils extends ServiceAPI
      */
     public static function getModulesForUser()
     {
-        $modules = Config::$sis_modules;
+        $modules = self::$container['config']->sis_modules;
         $loadedModules = [];
         if ($modules !== false) {
             foreach ($modules as $module) {
@@ -50,7 +50,7 @@ class SIS_Utils extends ServiceAPI
      */
     public static function ipLookup($ip)
     {
-        $query = self::$db->query('SELECT iscollege, description FROM l_subnet WHERE subnet >> $1 ORDER BY description ASC', [$ip]);
+        $query = self::$container['database']->query('SELECT iscollege, description FROM l_subnet WHERE subnet >> $1 ORDER BY description ASC', [$ip]);
 
         $location = [];
 
@@ -60,7 +60,7 @@ class SIS_Utils extends ServiceAPI
 
             return $location;
         }
-        $q = self::$db->fetchAll($query);
+        $q = self::$container['database']->fetchAll($query);
         foreach ($q as $k) {
             $location[] = $k['description'];
             $location[] = ($k['iscollege'] == 't') ? 'College Bedroom' : 'Study Room / Labs / Wifi';

@@ -18,7 +18,7 @@ $trackid = (int) $_REQUEST['trackid'];
 
 if (NIPSWeb_Token::hasToken($trackid)) {
     //Yes, clear the current play session and read the track
-    $path = Config::$music_central_db_path."/records/$recordid/$trackid";
+    $path = $container['config']->music_central_db_path."/records/$recordid/$trackid";
 
     if (isset($_REQUEST['ogg'])) {
         $path .= '.ogg';

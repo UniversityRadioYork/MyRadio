@@ -128,8 +128,7 @@ trait MyRadio_MetadataSubject
     protected static function cacheMetadataKeys()
     {
         if (empty(self::$metadata_keys)) {
-            self::initDB();
-            $r = self::$db->fetchAll(
+            $r = self::$container['database']->fetchAll(
                 'SELECT metadata_key_id AS id, name,'
                 . ' allow_multiple AS multiple FROM metadata.metadata_key'
             );
@@ -195,7 +194,7 @@ trait MyRadio_MetadataSubject
         //Remove the extra comma
         $sql = substr($sql, 0, -1);
 
-        self::$db->query($sql, $params);
+        self::$container['database']->query($sql, $params);
     }
 
     /**
@@ -230,7 +229,7 @@ trait MyRadio_MetadataSubject
      */
     private function expire($key, $value, $time, $table, $id_field)
     {
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE ' . $table . '
             SET effective_to = $1
             WHERE metadata_key_id =$2

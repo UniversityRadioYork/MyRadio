@@ -37,7 +37,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
             /**
              * Must not be null - otherwise it hasn't been submitted yet
              */
-            $result = self::$db->fetchColumn(
+            $result = self::$container['database']->fetchColumn(
                 'SELECT show_season_id FROM schedule.show_season
                 WHERE show_season_id NOT IN (SELECT show_season_id FROM schedule.show_season_timeslot)
                 AND submitted IS NOT NULL
@@ -100,7 +100,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
 
         echo "INSERT INTO terms (start, finish, descr) VALUES ('$ts', '$te', '$descr') RETURNING termid";
 
-        return self::$db->fetchColumn(
+        return self::$container['database']->fetchColumn(
             'INSERT INTO terms (start, finish, descr) VALUES ($1, $2, $3) RETURNING termid',
             [$ts, $te, $descr]
         )[0];
@@ -113,7 +113,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
      */
     public static function getTerms()
     {
-        return self::$db->fetchAll(
+        return self::$container['database']->fetchAll(
             'SELECT termid, EXTRACT(EPOCH FROM start) AS start, descr
             FROM terms
             WHERE finish > now()
@@ -144,7 +144,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
 
     public static function getTermDescr($termid)
     {
-        $return = self::$db->fetchOne(
+        $return = self::$container['database']->fetchOne(
             'SELECT descr, start FROM terms WHERE termid=$1',
             [$termid]
         );
@@ -157,7 +157,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
         if ($term_id === null) {
             $term_id = self::getActiveApplicationTerm();
         }
-        $result = self::$db->fetchOne('SELECT start FROM terms WHERE termid=$1', [$term_id]);
+        $result = self::$container['database']->fetchOne('SELECT start FROM terms WHERE termid=$1', [$term_id]);
         /**
          * An extra hour is added here due to some issues with timezones and public.terms - some
          * terms are set to start at 11pm Sunday instead of Midnight Monday. It's annoying because then we convert it back.
@@ -174,9 +174,9 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
      */
     public static function getGenres()
     {
-        self::wakeup();
 
-        return self::$db->fetchAll('SELECT genre_id AS value, name AS text FROM schedule.genre ORDER BY name ASC');
+
+        return self::$container['database']->fetchAll('SELECT genre_id AS value, name AS text FROM schedule.genre ORDER BY name ASC');
     }
 
     /**
@@ -184,9 +184,9 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
      */
     public static function getCreditTypes()
     {
-        self::wakeup();
 
-        return self::$db->fetchAll(
+
+        return self::$container['database']->fetchAll(
             'SELECT credit_type_id AS value, name AS text
             FROM people.credit_type ORDER BY name ASC'
         );
@@ -202,9 +202,9 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
      */
     public static function findShowByTitle($term, $limit)
     {
-        self::initDB();
 
-        return self::$db->fetchAll(
+
+        return self::$container['database']->fetchAll(
             'SELECT schedule.show.show_id, metadata_value AS title
             FROM schedule.show, schedule.show_metadata
             WHERE schedule.show.show_id = schedule.show_metadata.show_id
@@ -233,7 +233,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
      */
     public static function getActiveApplicationTerm()
     {
-        $return = self::$db->fetchColumn(
+        $return = self::$container['database']->fetchColumn(
             'SELECT termid FROM terms
             WHERE start <= $1 AND finish >= NOW() LIMIT 1',
             [CoreUtils::getTimestamp(strtotime('+28 Days'))]
@@ -260,7 +260,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
      */
     public static function getScheduleConflicts($term_id, $time)
     {
-        self::initDB();
+
         $conflicts = [];
         $date = MyRadio_Scheduler::getTermStartDate($term_id);
         //Iterate over each week
@@ -297,7 +297,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
         $start = CoreUtils::getTimestamp($start);
         $end = CoreUtils::getTimestamp($end-1);
 
-        return self::$db->fetchOne(
+        return self::$container['database']->fetchOne(
             'SELECT show_season_timeslot_id,
             show_season_id, start_time, start_time+duration AS end_time,
             \'$1\' AS requested_start, \'$2\' AS requested_end

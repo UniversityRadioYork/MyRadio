@@ -7,7 +7,6 @@
 
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 
@@ -51,7 +50,7 @@ class MyRadio_Photo extends ServiceAPI
     {
         $this->photoid = $photoid;
 
-        $result = self::$db->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT * FROM myury.photos WHERE photoid=$1',
             [$photoid]
         );
@@ -122,7 +121,7 @@ class MyRadio_Photo extends ServiceAPI
      */
     public function getURL()
     {
-        return Config::$public_media_uri.'/image_meta/MyRadioImageMetadata/'.$this->getID().'.'.$this->format;
+        return self::$container['config']->public_media_uri.'/image_meta/MyRadioImageMetadata/'.$this->getID().'.'.$this->format;
     }
 
     /**
@@ -131,7 +130,7 @@ class MyRadio_Photo extends ServiceAPI
      */
     public function getURI()
     {
-        return Config::$public_media_path.'/image_meta/MyRadioImageMetadata/'.$this->getID().'.'.$this->format;
+        return self::$container['config']->public_media_path.'/image_meta/MyRadioImageMetadata/'.$this->getID().'.'.$this->format;
     }
 
     /**
@@ -147,14 +146,14 @@ class MyRadio_Photo extends ServiceAPI
 
         $format = explode('/', finfo_file(finfo_open(FILEINFO_MIME_TYPE), $tmp_file))[1];
 
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'INSERT INTO myury.photos (owner, format) VALUES ($1, $2) RETURNING photoid',
             [MyRadio_User::getInstance()->getID(), $format]
         );
         $id = $result[0];
         $photo = self::getInstance($id);
         if (!move_uploaded_file($tmp_file, $photo->getURI())) {
-            self::$db->query('DELETE FROM myury.photos WHERE photoid=$1', [$id]);
+            self::$container['database']->query('DELETE FROM myury.photos WHERE photoid=$1', [$id]);
             throw new MyRadioException('Failed to move new Photo from '.$tmp_file.' to '.$photo->getURI().'. Are permissions for the destination right?', 500);
         }
 

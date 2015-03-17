@@ -26,7 +26,7 @@ session_start();
 if (isset($_SESSION['myradio_setup_config'])) {
     $config_overrides = $_SESSION['myradio_setup_config'];
     foreach ($_SESSION['myradio_setup_config'] as $k => $v) {
-        Config::$$k = $v;
+        $container['config']->$k = $v;
     }
 }
 

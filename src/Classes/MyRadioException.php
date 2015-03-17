@@ -35,7 +35,7 @@ class MyRadioException extends \RuntimeException
         parent::__construct((string) $message, (int) $code, $previous);
 
         self::$count++;
-        if (self::$count > Config::$exception_limit) {
+        if (self::$count > 10) {
             trigger_error('Exception limit exceeded. Futher exceptions will not be reported.');
             return;
         }
@@ -59,7 +59,7 @@ class MyRadioException extends \RuntimeException
     /**
     * Called when the exception is not caught
     */
-    public function uncaught()
+    public function uncaught($container)
     {
         $silent = (defined('SILENT_EXCEPTIONS') && SILENT_EXCEPTIONS);
 
@@ -68,7 +68,7 @@ class MyRadioException extends \RuntimeException
                     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
                 || empty($_SERVER['REMOTE_ADDR']);
 
-            if (Config::$email_exceptions
+            if ($container['config']->email_exceptions
                 && class_exists('\MyRadio\MyRadioEmail')
                 && $this->code !== 400
                 && $this->code !== 401
@@ -84,10 +84,10 @@ class MyRadioException extends \RuntimeException
                 );
             }
 
-            if (Config::$log_file) {
+            if ($container['config']->log_file) {
                 // TODO make this create the dir - maybe use error_log?
                 file_put_contents(
-                    Config::$log_file,
+                    $container['config']->log_file,
                     CoreUtils::getTimestamp() . '[' . $this->code . '] ' . $this->message . "\n" . $this->traceStr,
                     FILE_APPEND
                 );
@@ -95,7 +95,7 @@ class MyRadioException extends \RuntimeException
 
             //Configuration is available, use this to decide what to do
             if (!$silent
-                && Config::$display_errors
+                && $container['config']->display_errors
                 || (class_exists('\MyRadio\MyRadio\CoreUtils')
                 && defined('AUTH_SHOWERRORS')
                 && CoreUtils::hasPermission(AUTH_SHOWERRORS))

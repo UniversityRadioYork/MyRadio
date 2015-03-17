@@ -9,7 +9,7 @@ use \MyRadio\APCProvider;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Album;
 
-$albums = MyRadio_Album::findByName(Config::$short_name, 10);
+$albums = MyRadio_Album::findByName($container['config']->short_name, 10);
 
 $cacher = APCProvider::getInstance();
 

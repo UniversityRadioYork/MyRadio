@@ -6,7 +6,6 @@
 
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm;
@@ -23,7 +22,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
 {
     public static function registerDemo($time)
     {
-        self::initDB();
+
         date_default_timezone_set('UTC');
 
         /**
@@ -40,12 +39,12 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
         /**
          * Demos use the timeslot member as the credit for simplicity
          */
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO schedule.show_season_timeslot (show_season_id, start_time, memberid, approvedid, duration)
             VALUES (0, $1, $2, $2, \'01:00:00\')',
-            [CoreUtils::getTimestamp($time), $_SESSION['memberid']]
+            [CoreUtils::getTimestamp($time), self::$container['session']['memberid']]
         );
-        date_default_timezone_set(Config::$timezone);
+        date_default_timezone_set(self::$container['config']->timezone);
 
         return true;
     }
@@ -73,7 +72,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
     public static function attendingDemo($demoid)
     {
         if (MyRadio_User::getInstance()->hasAuth(AUTH_ADDDEMOS)) {
-            $r = self::$db->fetchColumn('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', [self::getDemoTime($demoid)]);
+            $r = self::$container['database']->fetchColumn('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', [self::getDemoTime($demoid)]);
             if (empty($r)) {
                 return 'Nobody';
             }
@@ -94,7 +93,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
 
     public static function attendingDemoCount($demoid)
     {
-        return self::$db->numRows(self::$db->query('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', [self::getDemoTime($demoid)]));
+        return self::$container['database']->numRows(self::$container['database']->query('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', [self::getDemoTime($demoid)]));
     }
 
     /**
@@ -102,8 +101,8 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
      */
     public static function listDemos()
     {
-        self::initDB();
-        $result = self::$db->fetchAll(
+
+        $result = self::$container['database']->fetchAll(
             'SELECT show_season_timeslot_id, start_time, memberid FROM schedule.show_season_timeslot
             WHERE show_season_id = 0 AND start_time > NOW() ORDER BY start_time ASC'
         );
@@ -127,28 +126,28 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
      */
     public static function attend($demoid)
     {
-        self::initDB();
+
         //Get # of attendees
         if (self::attendingDemoCount($demoid) >= 2) {
             return 1;
         }
 
         //Check they aren't already attending one in the next week
-        if (self::$db->numRows(
-            self::$db->query(
+        if (self::$container['database']->numRows(
+            self::$container['database']->query(
                 'SELECT creditid FROM schedule.show_credit WHERE show_id=0 AND creditid=$1
                 AND effective_from >= NOW() AND effective_from <= (NOW() + INTERVAL \'1 week\') LIMIT 1',
-                [$_SESSION['memberid']]
+                [self::$container['session']['memberid']]
             )
         ) === 1
         ) {
             return 2;
         }
 
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from, effective_to, memberid, approvedid)
             VALUES (0, 7, $1, $2, $2, $1, $1)',
-            [$_SESSION['memberid'], self::getDemoTime($demoid)]
+            [self::$container['session']['memberid'], self::getDemoTime($demoid)]
         );
         $time = self::getDemoTime($demoid);
         $user = self::getDemoer($demoid);
@@ -163,7 +162,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
             .$user->getName()
             .'. Just head over to the station in Vanbrugh College just before your slot and the trainer will be waiting for you.'
             ."\r\n\r\nSee you on air soon!\r\n"
-            .Config::$long_name
+            .self::$container['config']->long_name
             ." Training"
         );
 
@@ -172,16 +171,16 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
 
     public static function getDemoTime($demoid)
     {
-        self::initDB();
-        $r = self::$db->fetchColumn('SELECT start_time FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', [$demoid]);
+
+        $r = self::$container['database']->fetchColumn('SELECT start_time FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', [$demoid]);
 
         return $r[0];
     }
 
     public static function getDemoer($demoid)
     {
-        self::initDB();
-        $r = self::$db->fetchColumn('SELECT memberid FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', [$demoid]);
+
+        $r = self::$container['database']->fetchColumn('SELECT memberid FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', [$demoid]);
 
         return MyRadio_User::getInstance($r[0]);
     }

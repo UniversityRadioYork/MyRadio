@@ -29,7 +29,7 @@ $form = (
         'subject',
         MyRadioFormField::TYPE_TEXT,
         [
-            'placeholder' => 'Subject (['.Config::$short_name.'] is prefixed automatically)'
+            'placeholder' => 'Subject (['.$container['config']->short_name.'] is prefixed automatically)'
         ]
     )
 )->addField(

@@ -14,11 +14,6 @@ namespace MyRadio\Iface;
  */
 interface IServiceAPI
 {
-    /**
-     * Reestablishes the database connection after being Cached
-     */
-    public function __wakeup();
-
     public function toDataSource($full = false);
 
     /**

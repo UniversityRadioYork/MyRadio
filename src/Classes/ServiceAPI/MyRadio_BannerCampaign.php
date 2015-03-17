@@ -83,7 +83,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
     {
         $this->banner_campaign_id = (int) $banner_campaign_id;
 
-        $result = self::$db->fetchOne('SELECT * FROM website.banner_campaign WHERE banner_campaign_id=$1', [$banner_campaign_id]);
+        $result = self::$container['database']->fetchOne('SELECT * FROM website.banner_campaign WHERE banner_campaign_id=$1', [$banner_campaign_id]);
         if (empty($result)) {
             throw new MyRadioException('Banner Campaign ' . $banner_campaign_id . ' does not exist!');
         }
@@ -104,7 +104,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                     'end_time' => strtotime($x['end_time'], 0)
                 ];
             },
-            self::$db->fetchAll(
+            self::$container['database']->fetchAll(
                 'SELECT id, day, start_time, end_time, \'order\' FROM website.banner_timeslot
                 WHERE banner_campaign_id=$1',
                 [$this->banner_campaign_id]
@@ -252,7 +252,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
     public function clearTimeslots()
     {
         $this->timeslots = [];
-        self::$db->query('DELETE FROM website.banner_timeslot WHERE banner_campaign_id=$1', [$this->getID()]);
+        self::$container['database']->query('DELETE FROM website.banner_timeslot WHERE banner_campaign_id=$1', [$this->getID()]);
         $this->updateCacheObject();
     }
 
@@ -264,7 +264,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
     public function setEffectiveFrom($time)
     {
         $this->effective_from = $time;
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE website.banner_campaign SET effective_from=$1 WHERE banner_campaign_id=$2',
             [CoreUtils::getTimestamp($time), $this->getID()]
         );
@@ -281,12 +281,12 @@ class MyRadio_BannerCampaign extends ServiceAPI
     {
         if ($time === null) {
             $this->effective_to = $time;
-            self::$db->query(
+            self::$container['database']->query(
                 'UPDATE website.banner_campaign SET effective_to=NULL WHERE banner_campaign_id=$1',
                 [$this->getID()]
             );
         } else {
-            self::$db->query(
+            self::$container['database']->query(
                 'UPDATE website.banner_campaign SET effective_to=$1 WHERE banner_campaign_id=$2',
                 [CoreUtils::getTimestamp($time), $this->getID()]
             );
@@ -304,7 +304,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
     public function setLocation($location)
     {
         $this->banner_location_id = $location;
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE website.banner_campaign SET banner_location_id=$1 WHERE banner_campaign_id=$2',
             [$location, $this->getID()]
         );
@@ -325,7 +325,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
         $start = gmdate('H:i:s', $start).'+00';
         $end = gmdate('H:i:s', $end).'+00';
 
-        $id = self::$db->fetchColumn(
+        $id = self::$container['database']->fetchColumn(
             'INSERT INTO website.banner_timeslot
             (banner_campaign_id, memberid, approvedid, "order", day, start_time, end_time)
             VALUES ($1, $2, $2, $1, $3, $4, $5) RETURNING id',
@@ -368,7 +368,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
             $effective_from = time();
         }
 
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'INSERT INTO website.banner_campaign
             (banner_id, banner_location_id, effective_from, effective_to, memberid, approvedid)
             VALUES ($1, $2, $3, $4, $5, $5) RETURNING banner_campaign_id',
@@ -396,7 +396,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
      */
     public static function getAllBannerCampaigns()
     {
-        return self::resultSetToObjArray(self::$db->fetchColumn('SELECT banner_campaign_id FROM website.banner_campaign'));
+        return self::resultSetToObjArray(self::$container['database']->fetchColumn('SELECT banner_campaign_id FROM website.banner_campaign'));
     }
 
     /**
@@ -405,7 +405,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
      */
     public static function getCampaignLocations()
     {
-        return self::$db->fetchAll('SELECT banner_location_id AS value, description AS text FROM website.banner_location');
+        return self::$container['database']->fetchAll('SELECT banner_location_id AS value, description AS text FROM website.banner_location');
     }
 
     /**

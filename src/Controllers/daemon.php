@@ -22,8 +22,6 @@
  * @todo Install the pcntl extension on thunderhorn
  */
 
-use \MyRadio\Config;
-use \MyRadio\Database;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadioError;
 use \MyRadio\MyRadioEmail;
@@ -52,10 +50,10 @@ function dlog($x, $level = 3)
 function signal_handler($signo)
 {
     switch ($signo) {
-    case SIGTERM:
-        //Shutdown
-        dlog('Caught SIGTERM. Shutting down after this loop.', 1);
-        $GLOBALS['once'] = true; //This will kill after next iteration
+        case SIGTERM:
+            //Shutdown
+            dlog('Caught SIGTERM. Shutting down after this loop.', 1);
+            $GLOBALS['once'] = true; //This will kill after next iteration
     }
 }
 
@@ -107,9 +105,9 @@ if (empty($classes)) {
 while (true) {
     foreach ($classes as $class) {
         try {
-            if ($class::isEnabled()) {
+            if ($class::isEnabled($container['config'])) {
                 dlog('Running ' . $class, 2);
-                $class::run();
+                $class::run($container);
                 if (!$once) {
                     sleep(1);
                 }
@@ -120,10 +118,10 @@ while (true) {
     }
 
     //Every once in a while, check database connection. If it's lost, routinely try to reconnect.
-    if (!Database::getInstance()->status()) {
+    if (!$container['database']->status()) {
         dlog('CRITICAL: Database server connection lost. Attempting to reconnect...', 0);
         $db_fail_start = time();
-        while (!Database::getInstance()->reconnect()) {
+        while (!$container['database']->reconnect()) {
             if (time() - $db_fail_start > 900) {
                 //Connection has been lost for more than 15 minutes. Give up.
                 MyRadioEmail::sendEmailToComputing(
@@ -147,11 +145,11 @@ while (true) {
     //This is both nice for statistics, and prevents an entry of several tens of thousands when the server restarts :)
     try {
         CoreUtils::shutdown();
-        Database::getInstance()->resetCounter();
+        $container['database']->resetCounter();
         MyRadioException::resetExceptionCount();
         MyRadioError::resetErrorCount();
     } catch (MyRadioException $e) {
-
+        dlog('Caught exception finishing up Daemon cycle: ' $e->getMessage(), 1);
     }
 
     //Reload the configuration to see if it has changed

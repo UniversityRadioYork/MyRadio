@@ -132,7 +132,7 @@ class MyRadio_ChartRelease extends ServiceAPI
         $this->chart_release_id = $chart_release_id;
         $this->chart_type = $chart_type;
 
-        $chart_release_data = self::$db->fetchOne(
+        $chart_release_data = self::$container['database']->fetchOne(
             self::GET_INSTANCE_SQL,
             [$chart_release_id]
         );
@@ -145,7 +145,7 @@ class MyRadio_ChartRelease extends ServiceAPI
         $this->release_time = strtotime($chart_release_data['submitted']);
         $this->chart_type_id = $chart_release_data['chart_type_id'];
 
-        $this->chart_row_ids = self::$db->fetchColumn(
+        $this->chart_row_ids = self::$container['database']->fetchColumn(
             self::GET_CHART_ROWS_SQL,
             [$chart_release_id]
         );
@@ -194,7 +194,7 @@ class MyRadio_ChartRelease extends ServiceAPI
     public function findReleaseIDOn($release_time, $chart_type_id)
     {
         return array_pop(
-            self::$db->fetchColumn(
+            self::$container['database']->fetchColumn(
                 self::FIND_RELEASE_ID_ON_SQL,
                 [
                     $chart_type_id,
@@ -301,7 +301,7 @@ class MyRadio_ChartRelease extends ServiceAPI
      */
     public static function create($data)
     {
-        $r = self::$db->fetchColumn(
+        $r = self::$container['database']->fetchColumn(
             self::INSERT_SQL,
             [
                 intval($data['chart_type_id']),
@@ -351,7 +351,7 @@ class MyRadio_ChartRelease extends ServiceAPI
      */
     private function setDB($sql, $value)
     {
-        self::$db->query($sql, [$value, $this->getID()]);
+        self::$container['database']->query($sql, [$value, $this->getID()]);
 
         return $this;
     }

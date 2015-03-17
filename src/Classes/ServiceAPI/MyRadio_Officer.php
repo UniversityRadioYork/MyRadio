@@ -76,7 +76,7 @@ class MyRadio_Officer extends ServiceAPI
 
     protected function __construct($id)
     {
-        $result = self::$db->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT * FROM public.officer '
             . 'WHERE officerid=$1',
             [$id]
@@ -113,7 +113,7 @@ class MyRadio_Officer extends ServiceAPI
     public static function createOfficer($name, $descr, $alias, $ordering, MyRadio_Team $team, $type = 'o')
     {
         return self::getInstance(
-            self::$db->fetchColumn(
+            self::$container['database']->fetchColumn(
                 'INSERT INTO public.officer
                 (officer_name, officer_alias, teamid, ordering, descr, type)
                 VALUES ($1, $2, $3, $4, $5, $6) RETURNING officerid',
@@ -129,7 +129,7 @@ class MyRadio_Officer extends ServiceAPI
     public static function getAllOfficerPositions()
     {
         return self::resultSetToObjArray(
-            self::$db->fetchColumn(
+            self::$container['database']->fetchColumn(
                 'SELECT officerid FROM public.officer'
             )
         );
@@ -142,7 +142,7 @@ class MyRadio_Officer extends ServiceAPI
      */
     public function assignOfficer($memberid)
     {
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO public.member_officer
             (officerid, memberid, from_date)
             VALUES ($1, $2, NOW())',
@@ -159,7 +159,7 @@ class MyRadio_Officer extends ServiceAPI
      */
     public static function standDown($memberofficerid)
     {
-        $return = self::$db->fetchColumn(
+        $return = self::$container['database']->fetchColumn(
             'UPDATE public.member_officer
             SET till_date = NOW()
             WHERE member_officerid = $1
@@ -195,7 +195,7 @@ class MyRadio_Officer extends ServiceAPI
     public function setName($name)
     {
         if ($name !== $this->name) {
-            self::$db->query(
+            self::$container['database']->query(
                 'UPDATE public.officer
                 SET officer_name = $1
                 WHERE officerid=$2',
@@ -224,7 +224,7 @@ class MyRadio_Officer extends ServiceAPI
     public function setAlias($alias)
     {
         if ($alias !== $this->alias) {
-            self::$db->query(
+            self::$container['database']->query(
                 'UPDATE public.officer
                 SET officer_alias = $1
                 WHERE officerid=$2',
@@ -253,7 +253,7 @@ class MyRadio_Officer extends ServiceAPI
     public function setTeam($team)
     {
         if ($team !== $this->team) {
-            self::$db->query(
+            self::$container['database']->query(
                 'UPDATE public.officer
                 SET teamid = $1
                 WHERE officerid=$2',
@@ -285,7 +285,7 @@ class MyRadio_Officer extends ServiceAPI
             throw new MyRadioException('Ordering must be a number', 400);
         }
         if ($ordering !== $this->ordering) {
-            self::$db->query(
+            self::$container['database']->query(
                 'UPDATE public.officer
                 SET ordering = $1
                 WHERE officerid=$2',
@@ -314,7 +314,7 @@ class MyRadio_Officer extends ServiceAPI
     public function setDescription($description)
     {
         if ($description !== $this->description) {
-            self::$db->query(
+            self::$container['database']->query(
                 'UPDATE public.officer
                 SET description = $1
                 WHERE officerid=$2',
@@ -343,7 +343,7 @@ class MyRadio_Officer extends ServiceAPI
     public function setStatus($status)
     {
         if ($status !== $this->status) {
-            self::$db->query(
+            self::$container['database']->query(
                 'UPDATE public.officer
                 SET status = $1
                 WHERE officerid=$2',
@@ -373,7 +373,7 @@ class MyRadio_Officer extends ServiceAPI
     public function setType($type)
     {
         if ($type !== $this->type) {
-            self::$db->query(
+            self::$container['database']->query(
                 'UPDATE public.officer
                 SET type = $1
                 WHERE officerid=$2',
@@ -393,7 +393,7 @@ class MyRadio_Officer extends ServiceAPI
     public function getHistory()
     {
         if (empty($this->history)) {
-            $result = self::$db->fetchAll(
+            $result = self::$container['database']->fetchAll(
                 'SELECT member_officerid, memberid, '
                 . 'from_date, till_date FROM public.member_officer '
                 . 'WHERE officerid=$1 ORDER BY from_date DESC',
@@ -459,7 +459,7 @@ class MyRadio_Officer extends ServiceAPI
     private function updatePermissions()
     {
         //Get the officer's permissions
-        $this->permissions = self::$db->fetchAll(
+        $this->permissions = self::$container['database']->fetchAll(
             'SELECT typeid AS value, descr AS text FROM public.l_action, public.auth_officer
             WHERE typeid = lookupid
             AND officerid=$1
@@ -483,7 +483,7 @@ class MyRadio_Officer extends ServiceAPI
      */
     public function addPermission($permissionid)
     {
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO public.auth_officer
             (officerid, lookupid)
             VALUES ($1, $2)',
@@ -502,7 +502,7 @@ class MyRadio_Officer extends ServiceAPI
      */
     public function revokePermission($permissionid)
     {
-        self::$db->query(
+        self::$container['database']->query(
             'DELETE from public.auth_officer
             WHERE officerid = $1
             AND lookupid = $2',

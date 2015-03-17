@@ -17,7 +17,7 @@ if (!isset($_REQUEST['authenticator'])) {
     exit;
 }
 
-if (!in_array($_REQUEST['authenticator'], Config::$authenticators)) {
+if (!in_array($_REQUEST['authenticator'], $container['config']->authenticators)) {
     throw new MyRadioException($_REQUEST['authenticator'].' is not a valid Authenticator', 400);
 }
 

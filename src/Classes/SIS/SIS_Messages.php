@@ -41,7 +41,7 @@ class SIS_Messages extends ServiceAPI
      */
     public static function setMessageStatus($id, $status = self::MSG_STATUS_READ)
     {
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE sis2.messages SET statusid=$1 WHERE commid=$2',
             [$status, $id]
         );

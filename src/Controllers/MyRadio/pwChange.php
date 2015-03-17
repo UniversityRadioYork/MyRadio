@@ -51,7 +51,7 @@ $form = (
  * their existing one. If they aren't logged in, then they should be following
  * a password reset link, in which case we verify the reset token.
  */
-if (isset($_SESSION['memberid'])) {
+if (isset($container['session']['memberid'])) {
     $form->addField(
         new MyRadioFormField(
             'pwold',
@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
      * Only works with MyRadioDefaultAuthenticator. Should it allow
      * others to plug in? I think not.
      */
-    $authenticator = new MyRadioDefaultAuthenticator();
+    $authenticator = new MyRadioDefaultAuthenticator($container);
     $authenticator->setPassword($user, $data['pw1']);
     unset($data);
 
@@ -144,8 +144,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
 
     CoreUtils::redirect('MyRadio', 'login');
 } else {
-    foreach (Config::$authenticators as $authenticator) {
-        $auth = new $authenticator;
+    foreach ($container['config']->authenticators as $authenticator) {
+        $auth = new $authenticator($container);
         $messages[] = $auth->getResetFormMessage();
     }
 

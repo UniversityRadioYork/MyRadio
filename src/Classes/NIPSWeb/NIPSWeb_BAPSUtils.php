@@ -21,7 +21,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
 {
     public static function getBAPSShowIDFromTimeslot(MyRadio_Timeslot $timeslot)
     {
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT showid FROM baps_show
             WHERE externallinkid=$1 LIMIT 1',
             [$timeslot->getID()]
@@ -29,7 +29,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
 
         if (empty($result)) {
             //No match. Create a show
-            $result = self::$db->fetchColumn(
+            $result = self::$container['database']->fetchColumn(
                 'INSERT INTO baps_show (userid, name, broadcastdate, externallinkid, viewable)
                 VALUES (4, $1, $2, $3, true) RETURNING showid',
                 [
@@ -54,7 +54,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public static function getListingsForShow($showid)
     {
-        $listings = self::$db->fetchAll(
+        $listings = self::$container['database']->fetchAll(
             'SELECT * FROM baps_listing
             WHERE showid=$1 ORDER BY channel ASC',
             [(int) $showid]
@@ -83,7 +83,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
         $change = false;
         foreach ($channels as $channel => $exists) {
             if (!$exists) {
-                self::$db->query(
+                self::$container['database']->query(
                     'INSERT INTO baps_listing (showid, name, channel)
                     VALUES ($1, \'Channel ' . $channel . '\', $2)',
                     [$showid, $channel]
@@ -109,11 +109,11 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
         $listings = self::getListingsForShow($showid);
 
         //Start a transaction for this change
-        self::$db->query('BEGIN');
+        self::$container['database']->query('BEGIN');
 
         foreach ($listings as $listing) {
             //Delete the old format
-            self::$db->query('DELETE FROM baps_item WHERE listingid=$1', [$listing['listingid']], true);
+            self::$container['database']->query('DELETE FROM baps_item WHERE listingid=$1', [$listing['listingid']], true);
             //Add each new entry
             $position = 1;
             //if the listing isn't empty then write the tracks that are in there
@@ -122,7 +122,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
                     switch ($track['type']) {
                     case 'central':
                         $file = self::getTrackDetails($track['trackid'], $track['album']['recordid']);
-                        self::$db->query(
+                        self::$container['database']->query(
                             'INSERT INTO baps_item (listingid, position, libraryitemid, name1, name2)
                                 VALUES ($1, $2, $3, $4, $5)',
                             [
@@ -139,7 +139,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
                     case 'aux':
                         //Get the LegacyDB ID of the file
                         $fileitemid = self::getFileItemFromManagedID($track['managedid']);
-                        self::$db->query(
+                        self::$container['database']->query(
                             'INSERT INTO baps_item (listingid, position, fileitemid, name1)
                                 VALUES ($1, $2, $3, $4)',
                             [
@@ -160,7 +160,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
             }
         }
 
-        self::$db->query('COMMIT');
+        self::$container['database']->query('COMMIT');
     }
 
     /**
@@ -173,7 +173,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
     {
         $trackid = (int) $trackid;
         $recordid = (int) $recordid;
-        $result = self::$db->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT title, artist, libraryitemid
             FROM rec_track, baps_libraryitem
             WHERE rec_track.trackid = baps_libraryitem.trackid
@@ -183,7 +183,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
 
         if (empty($result)) {
             //Create the baps_libraryitem and recurse. pg_query_params doesn't like this...
-            $result = self::$db->query(
+            $result = self::$container['database']->query(
                 'INSERT INTO baps_libraryitem
                 (trackid, recordid) VALUES ($1, $2)',
                 [$trackid, $recordid]
@@ -215,7 +215,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
 
         if (!$id) {
             //Create it
-            $r = self::$db->fetchColumn('INSERT INTO public.baps_fileitem (filename) VALUES ($1) RETURNING fileitemid', [$legacy_path]);
+            $r = self::$container['database']->fetchColumn('INSERT INTO public.baps_fileitem (filename) VALUES ($1) RETURNING fileitemid', [$legacy_path]);
 
             return $r[0];
         }
@@ -244,7 +244,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public static function getFileItemFromPath($path)
     {
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT fileitemid FROM baps_fileitem
             WHERE filename=$1 LIMIT 1',
             [$path]

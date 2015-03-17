@@ -7,7 +7,7 @@
 
 namespace MyRadio\MyRadio;
 
-use \MyRadio\Config;
+use \MyRadio\ContainerSubject;
 use \MyRadio\MyRadioException;
 
 /**
@@ -18,7 +18,7 @@ use \MyRadio\MyRadioException;
  * @uses    \Database
  * @uses    \CoreUtils
  */
-class MyRadioMenu
+class MyRadioMenu extends ContainerSubject
 {
     /**
      * Returns a customised MyRadio menu for the *currently logged in* user
@@ -189,7 +189,7 @@ class MyRadioMenu
             if (isset($exp[1])) {
                 return str_replace('action=', '', $exp[1]);
             } else {
-                return Config::$default_action;
+                return self::$container['config']->default_action;
             }
         }
 

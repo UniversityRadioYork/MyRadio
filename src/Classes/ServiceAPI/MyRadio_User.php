@@ -7,7 +7,6 @@
 
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
 use \MyRadio\MyRadioEmail;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
@@ -194,7 +193,7 @@ class MyRadio_User extends ServiceAPI
     {
         $this->memberid = (int) $memberid;
         //Get the base data
-        $data = self::$db->fetchOne(
+        $data = self::$container['database']->fetchOne(
             'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college,
             phone, email, receive_email, local_name, local_alias, eduroam,
             account_locked, last_login, joined, profile_photo, bio,
@@ -226,7 +225,7 @@ class MyRadio_User extends ServiceAPI
 
         //Get the user's permissions
         $this->permissions = array_map(
-            'intval', self::$db->fetchColumn(
+            'intval', self::$container['database']->fetchColumn(
                 'SELECT lookupid FROM auth_officer
             WHERE officerid IN (SELECT officerid FROM member_officer
             WHERE memberid=$1
@@ -240,7 +239,7 @@ class MyRadio_User extends ServiceAPI
             )
         );
 
-        $this->payment = self::$db->fetchAll(
+        $this->payment = self::$container['database']->fetchAll(
             'SELECT year, paid
             FROM member_year
             WHERE memberid = $1
@@ -249,7 +248,7 @@ class MyRadio_User extends ServiceAPI
         );
 
         // Get the User's officerships
-        $this->officerships = self::$db->fetchAll(
+        $this->officerships = self::$container['database']->fetchAll(
             'SELECT officerid,officer_name,teamid,from_date,till_date
             FROM member_officer
             INNER JOIN officer
@@ -261,7 +260,7 @@ class MyRadio_User extends ServiceAPI
         );
 
         // Get Training info all into array
-        $this->training = self::$db->fetchColumn(
+        $this->training = self::$container['database']->fetchColumn(
             'SELECT memberpresenterstatusid
             FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
             WHERE memberid=$1 ORDER BY ordering, completeddate ASC',
@@ -368,7 +367,7 @@ class MyRadio_User extends ServiceAPI
     {
         foreach ($this->getAllPayments() as $payment) {
             if ($payment['year'] == CoreUtils::getAcademicYear()) {
-                return $payment['paid'] >= Config::$membership_fee;
+                return $payment['paid'] >= self::$container['config']->membership_fee;
             }
         }
 
@@ -470,7 +469,7 @@ class MyRadio_User extends ServiceAPI
     public function getEmail()
     {
         $domain = $domain = substr(strrchr($this->email, "@"), 1);
-        if (in_array($domain, Config::$local_email_domains)) {
+        if (in_array($domain, self::$container['config']->local_email_domains)) {
             //The user has set an alias or their local mailbox here.
             //Return the local mailbox, or, failing that, eduroam
             $local = $this->getLocalName();
@@ -482,11 +481,11 @@ class MyRadio_User extends ServiceAPI
                 if (empty($eduroam)) {
                     return null;
                 } else {
-                    return $eduroam . '@' . Config::$eduroam_domain;
+                    return $eduroam . '@' . self::$container['config']->eduroam_domain;
                 }
             }
         } elseif (empty($this->email)) {
-            return $this->getEduroam() . '@' . Config::$eduroam_domain;
+            return $this->getEduroam() . '@' . self::$container['config']->eduroam_domain;
         } else {
             return $this->email;
         }
@@ -506,7 +505,7 @@ class MyRadio_User extends ServiceAPI
          */
         $alias = $this->getLocalAlias();
 
-        return empty($alias) ? $this->getEmail() : $alias . '@' . Config::$email_domain;
+        return empty($alias) ? $this->getEmail() : $alias . '@' . self::$container['config']->email_domain;
     }
 
     /**
@@ -515,7 +514,7 @@ class MyRadio_User extends ServiceAPI
      */
     public function getEduroam()
     {
-        return str_replace('@' . Config::$eduroam_domain, '', $this->eduroam);
+        return str_replace('@' . self::$container['config']->eduroam_domain, '', $this->eduroam);
     }
 
     /**
@@ -642,7 +641,7 @@ class MyRadio_User extends ServiceAPI
      */
     public function hasSignedContract()
     {
-        if (empty(Config::$contract_uri)) {
+        if (empty(self::$container['config']->contract_uri)) {
             return true;
         } else {
             return $this->contract_signed;
@@ -668,7 +667,7 @@ class MyRadio_User extends ServiceAPI
      */
     public function getShows($show_type_id = 1)
     {
-        $this->shows = self::$db->fetchColumn(
+        $this->shows = self::$container['database']->fetchColumn(
             'SELECT show_id FROM schedule.show
             WHERE memberid=$1 OR show_id IN
             (SELECT show_id FROM schedule.show_credit
@@ -754,20 +753,20 @@ class MyRadio_User extends ServiceAPI
     public static function findByName($name, $limit = -1)
     {
         if ($limit == -1) {
-            $limit = Config::$ajax_limit_default;
+            $limit = self::$container['config']->ajax_limit_default;
         }
         //If there's a space, split into first and last name
         $name = trim($name);
         $names = explode(' ', $name);
         if (isset($names[1])) {
-            return self::$db->fetchAll(
+            return self::$container['database']->fetchAll(
                 'SELECT memberid, fname, sname FROM member
                 WHERE fname ILIKE $1 || \'%\' AND sname ILIKE $2 || \'%\'
                 ORDER BY sname, fname LIMIT $3',
                 [$names[0], $names[1], $limit]
             );
         } else {
-            return self::$db->fetchAll(
+            return self::$container['database']->fetchAll(
                 'SELECT memberid, fname, sname FROM member
                 WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $1 || \'%\'
                 ORDER BY sname, fname LIMIT $2',
@@ -779,17 +778,17 @@ class MyRadio_User extends ServiceAPI
     public static function getInstance($itemid = -1)
     {
         if ($itemid === -1) {
-            if (isset($_SESSION['memberid'])) {
-                $itemid = $_SESSION['memberid'];
+            if (isset(self::$container['session']['memberid'])) {
+                $itemid = self::$container['session']['memberid'];
             } else {
                 throw new MyRadioException('Trying to get current user info with no current user');
             }
         }
 
         if ($itemid === -1) {
-            $itemid = $_SESSION['memberid'];
+            $itemid = self::$container['session']['memberid'];
         }
-        if (isset($_SESSION['memberid']) && $itemid == $_SESSION['memberid']) {
+        if (isset(self::$container['session']['memberid']) && $itemid == self::$container['session']['memberid']) {
             if (!self::$current_user) {
                 self::$current_user = parent::getInstance($itemid);
             }
@@ -806,10 +805,10 @@ class MyRadio_User extends ServiceAPI
      */
     public static function getCurrentOrSystemUser()
     {
-        if (isset($_SESSION['memberid'])) {
+        if (isset(self::$container['session']['memberid'])) {
             return self::getInstance();
         } else {
-            return self::getInstance(Config::$system_user);
+            return self::getInstance(self::$container['config']->system_user);
         }
     }
 
@@ -829,13 +828,13 @@ class MyRadio_User extends ServiceAPI
             $events[] = [
                 'message' => 'became ' . $officer['officer_name'],
                 'timestamp' => strtotime($officer['from_date']),
-                'photo' => Config::$photo_officership_get
+                'photo' => self::$container['config']->photo_officership_get
             ];
             if ($officer['till_date'] != null) {
                 $events[] = [
                     'message' => 'stepped down as ' . $officer['officer_name'],
                     'timestamp' => strtotime($officer['till_date']),
-                    'photo' => Config::$photo_officership_down
+                    'photo' => self::$container['config']->photo_officership_down
                 ];
             }
         }
@@ -869,7 +868,7 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Get their officership history, show history and awards
-        /* $result = self::$db->fetchAll(
+        /* $result = self::$container['database']->fetchAll(
           SELECT \'won an award: \' || name AS message, awarded AS timestamp,
           \'photo_award_get\' AS photo
           FROM myury.award_categories, myury.award_member
@@ -881,8 +880,8 @@ class MyRadio_User extends ServiceAPI
         //Get when they joined URY
         $events[] = [
             'timestamp' => strtotime($this->joined),
-            'message' => 'joined ' . Config::$short_name,
-            'photo' => Config::$photo_joined
+            'message' => 'joined ' . self::$container['config']->short_name,
+            'photo' => self::$container['config']->photo_joined
         ];
 
         return $events;
@@ -921,7 +920,7 @@ class MyRadio_User extends ServiceAPI
             $paramName = $param_maps[$paramName];
         }
 
-        self::$db->query('UPDATE member SET ' . $paramName . '=$1 WHERE memberid=$2', [$value, $this->getID()]);
+        self::$container['database']->query('UPDATE member SET ' . $paramName . '=$1 WHERE memberid=$2', [$value, $this->getID()]);
         $this->updateCacheObject();
 
         return true;
@@ -981,11 +980,11 @@ class MyRadio_User extends ServiceAPI
     {
         //Require the user to be part of this eduroam domain
         if (strstr($eduroam, '@') !== false
-            && strstr($eduroam, '@' . Config::$eduroam_domain) === false
+            && strstr($eduroam, '@' . self::$container['config']->eduroam_domain) === false
         ) {
             throw new MyRadioException(
                 'Eduroam account should be @'
-                .Config::$eduroam_domain
+                .self::$container['config']->eduroam_domain
                 .'! Use of other eduroam accounts is blocked.
                 This is a basic validation filter, so if there is a valid reason for another account to be here, this check
                 can be removed.',
@@ -994,7 +993,7 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Remove the domain if it is set
-        $eduroam = str_replace('@'.Config::$eduroam_domain, '', $eduroam);
+        $eduroam = str_replace('@'.self::$container['config']->eduroam_domain, '', $eduroam);
 
         if (empty($eduroam) && empty($this->email)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
@@ -1197,7 +1196,7 @@ class MyRadio_User extends ServiceAPI
                 return;
             } elseif ($v['year'] == $year) {
                 //Change payment.
-                self::$db->query(
+                self::$container['database']->query(
                     'UPDATE member_year SET paid=$1
                     WHERE year=$2 AND memberid=$3',
                     [(float) $amount, $year, $this->getID()]
@@ -1210,7 +1209,7 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Not a member this year
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO member_year (paid, year, memberid)
             VALUES ($1, $2, $3)',
             [(float) $amount, $year, $this->getID()]
@@ -1229,7 +1228,7 @@ class MyRadio_User extends ServiceAPI
      */
     public function setContractSigned($bool = false)
     {
-        if (empty(Config::$contract_uri) === false) {
+        if (empty(self::$container['config']->contract_uri) === false) {
             $this->setCommonParam('contract_signed', $bool);
         }
         return $this;
@@ -1242,7 +1241,7 @@ class MyRadio_User extends ServiceAPI
     public function updateLastLogin()
     {
         $this->last_login = CoreUtils::getTimestamp();
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE public.member SET last_login=$1
             WHERE memberid=$2',
             [$this->last_login, $this->getID()]
@@ -1262,14 +1261,13 @@ class MyRadio_User extends ServiceAPI
         }
         //Doing this instead of ILIKE halves the query time
         $email = strtolower($email);
-        self::wakeup();
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT memberid FROM public.member WHERE email LIKE $1 OR eduroam LIKE $1
             OR local_name LIKE $3 OR local_alias LIKE $3 OR eduroam LIKE $2',
             [
                 $email,
-                str_ireplace('@' . Config::$eduroam_domain, '', $email),
-                str_ireplace('@' . Config::$email_domain, '', $email)
+                str_ireplace('@' . self::$container['config']->eduroam_domain, '', $email),
+                str_ireplace('@' . self::$container['config']->email_domain, '', $email)
             ]
         );
 
@@ -1288,10 +1286,10 @@ class MyRadio_User extends ServiceAPI
      */
     public static function findAllTrained()
     {
-        self::wakeup();
+
         trigger_error('Use of deprecated method User::findAllTrained.', E_USER_WARNING);
 
-        $trained = self::$db->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=1');
+        $trained = self::$container['database']->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=1');
         $members = [];
         foreach ($trained as $mid) {
             $member = self::getInstance($mid);
@@ -1311,10 +1309,10 @@ class MyRadio_User extends ServiceAPI
      */
     public static function findAllDemoed()
     {
-        self::wakeup();
+
         trigger_error('Use of deprecated method User::findAllDemoed.', E_USER_WARNING);
 
-        $trained = self::$db->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=2');
+        $trained = self::$container['database']->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=2');
         $members = [];
         foreach ($trained as $mid) {
             $member = self::getInstance($mid);
@@ -1334,10 +1332,10 @@ class MyRadio_User extends ServiceAPI
      */
     public static function findAllTrainers()
     {
-        self::wakeup();
+
         trigger_error('Use of deprecated method User::findAllTrainers.', E_USER_WARNING);
 
-        $trained = self::$db->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=3');
+        $trained = self::$container['database']->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=3');
         $members = [];
         foreach ($trained as $mid) {
             $member = self::getInstance($mid);
@@ -1356,7 +1354,7 @@ class MyRadio_User extends ServiceAPI
     public static function getAllAliases()
     {
         $users = self::resultSetToObjArray(
-            self::$db->fetchColumn(
+            self::$container['database']->fetchColumn(
                 'SELECT memberid FROM public.member WHERE local_alias IS NOT NULL'
             )
         );
@@ -1425,20 +1423,20 @@ class MyRadio_User extends ServiceAPI
                         ]
                 )
             );
-        if (empty(Config::$contract_uri) === false) {
+        if (empty(self::$container['config']->contract_uri) === false) {
             $form->addField(
                 new MyRadioFormField(
                     'contract', MyRadioFormField::TYPE_CHECK, [
                     'required' => false,
                     'label' => 'I, ' . $this->getName() . ', agree to abide by '
-                    . Config::$short_name . '\'s station rules and regulations as '
-                    . 'set out in the <a href="' . Config::$contract_uri . '" target="_blank">Presenter\'s Contract</a>, '
+                    . self::$container['config']->short_name . '\'s station rules and regulations as '
+                    . 'set out in the <a href="' . self::$container['config']->contract_uri . '" target="_blank">Presenter\'s Contract</a>, '
                     . 'and the <a href="//www.ofcom.org.uk" target="_blank">Ofcom Programming Code</a>. '
                     . 'I have fully read and understood these rules and regulations, '
                     . 'and I understand that if I break any of the rules or '
                     . 'regulations stated by Ofcom or its successor, I will be '
                     . 'solely liable for any resulting fines or actions that may '
-                    . 'be levied against ' . Config::$long_name . '.',
+                    . 'be levied against ' . self::$container['config']->long_name . '.',
                     'options' => ['checked' => $this->hasSignedContract()]
                     ]
                 )
@@ -1542,9 +1540,9 @@ class MyRadio_User extends ServiceAPI
             $form->addField(
                 new MyRadioFormField(
                     'sec_server', MyRadioFormField::TYPE_SECTION, [
-                        'label' => Config::$short_name . ' Mailbox Account',
+                        'label' => self::$container['config']->short_name . ' Mailbox Account',
                         'explanation' => 'Before changing these settings, please ensure you understand the guidelines and'
-                            . ' documentation on ' . Config::$long_name . '\'s Internal Email Service'
+                            . ' documentation on ' . self::$container['config']->long_name . '\'s Internal Email Service'
                     ]
                 )
             )
@@ -1577,7 +1575,7 @@ class MyRadio_User extends ServiceAPI
 
     public static function getColleges()
     {
-        return self::$db->fetchAll('SELECT collegeid AS value, descr AS text FROM public.l_college');
+        return self::$container['database']->fetchAll('SELECT collegeid AS value, descr AS text FROM public.l_college');
     }
 
     /**
@@ -1617,7 +1615,7 @@ class MyRadio_User extends ServiceAPI
         }
         //Validate input
         if (empty($collegeid)) {
-            $collegeid = Config::$default_college;
+            $collegeid = self::$container['config']->default_college;
         } elseif (!is_numeric($collegeid)) {
             throw new MyRadioException('Invalid College ID!', 400);
         }
@@ -1628,10 +1626,10 @@ class MyRadio_User extends ServiceAPI
 
         //Require the user to be part of this eduroam domain
         if (strstr($eduroam, '@') !== false
-            && strstr($eduroam, '@'.Config::$eduroam_domain) === false
+            && strstr($eduroam, '@'.self::$container['config']->eduroam_domain) === false
         ) {
             throw new MyRadioException(
-                'Eduroam account should be @'.Config::$eduroam_domain.'! Use of other eduroam accounts is blocked.
+                'Eduroam account should be @'.self::$container['config']->eduroam_domain.'! Use of other eduroam accounts is blocked.
                 This is a basic validation filter, so if there is a valid reason for another account to be here, this check
                 can be removed.',
                 400
@@ -1639,7 +1637,7 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Remove the domain if it is set
-        $eduroam = str_replace('@'.Config::$eduroam_domain, '', $eduroam);
+        $eduroam = str_replace('@'.self::$container['config']->eduroam_domain, '', $eduroam);
 
         if (empty($eduroam) && empty($email)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
@@ -1668,7 +1666,7 @@ class MyRadio_User extends ServiceAPI
         $plain_pass = empty($provided_password) ? CoreUtils::newPassword() : $provided_password;
 
         //Actually create the member!
-        $r = self::$db->fetchColumn(
+        $r = self::$container['database']->fetchColumn(
             'INSERT INTO public.member (fname, sname, sex,
             college, phone, email, receive_email, eduroam, require_password_change)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid',
@@ -1706,13 +1704,13 @@ class MyRadio_User extends ServiceAPI
         if (!empty($provided_pass)) {
             $plain_pass = '(The password you entered when registering)';
         }
-        $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$fname, $uname, $plain_pass], Config::$welcome_email);
+        $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$fname, $uname, $plain_pass], self::$container['config']->welcome_email);
 
         //Send the email
         /**
          * @todo Make this be sent from the getinvolved email, rather than no-reply.
          */
-        MyRadioEmail::sendEmailToUser(self::getInstance($memberid), 'Welcome to ' . Config::$short_name . ' - Getting Involved and Your Account', $welcome_email);
+        MyRadioEmail::sendEmailToUser(self::getInstance($memberid), 'Welcome to ' . self::$container['config']->short_name . ' - Getting Involved and Your Account', $welcome_email);
 
         return self::getInstance($memberid);
     }
@@ -1732,7 +1730,7 @@ class MyRadio_User extends ServiceAPI
             return true;
         } else {
             $year = CoreUtils::getAcademicYear();
-            self::$db->query('INSERT INTO public.member_year (memberid, year, paid) VALUES ($1, $2, $3)', [$this->getID(), $year, $paid]);
+            self::$container['database']->query('INSERT INTO public.member_year (memberid, year, paid) VALUES ($1, $2, $3)', [$this->getID(), $year, $paid]);
             $this->payment[] = ['year' => $year, 'paid' => $paid];
             $this->updateCacheObject();
             return true;
@@ -1797,7 +1795,7 @@ class MyRadio_User extends ServiceAPI
         } else {
             $tostamp = null;
         }
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO public.auth
             (memberid, lookupid, starttime, endtime) VALUES ($1, $2, $3, $4)',
             [$this->getID(), $authid, CoreUtils::getTimestamp($from), $to]
@@ -1819,7 +1817,7 @@ class MyRadio_User extends ServiceAPI
             throw new MyRadioException(self::getInstance() . ' tried to add members!');
         }
 
-        $form = new MyRadioForm('profilequickadd', 'Profile', 'quickAdd', ['title' => 'Add Member (Quick)']);
+        $form = new MyRadioForm(self::$container, 'profilequickadd', 'Profile', 'quickAdd', ['title' => 'Add Member (Quick)']);
         //Personal details
         $form->addField(
             new MyRadioFormField(
@@ -1907,7 +1905,12 @@ class MyRadio_User extends ServiceAPI
             throw new MyRadioException(self::getInstance() . ' tried to add members!');
         }
 
-        $form = new MyRadioForm('profilebulkadd', 'Profile', 'bulkAdd', ['title' => 'Add Member (Bulk)']);
+        $form = new MyRadioForm(
+            'profilebulkadd',
+            'Profile',
+            'bulkAdd',
+            ['title' => 'Add Member (Bulk)']
+        );
         //Personal details
         $form->addField(
             new MyRadioFormField(
@@ -1974,7 +1977,7 @@ class MyRadio_User extends ServiceAPI
         if ($full) {
             $data['paid'] = $this->getAllPayments();
             $data['photo'] = $this->getProfilePhoto() === null ?
-                Config::$default_person_uri : $this->getProfilePhoto()->getURL();
+                self::$container['config']->default_person_uri : $this->getProfilePhoto()->getURL();
             $data['bio'] = $this->getBio();
             $data['shows'] = CoreUtils::dataSourceParser($this->getShows(), false);
             $data['officerships'] = $this->getOfficerships();

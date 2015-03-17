@@ -4,10 +4,8 @@ use \ReflectionMethod;
 use \ReflectionClass;
 use \ReflectionException;
 
-use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\MyRadioSession;
 use \MyRadio\ServiceAPI\MyRadio_APIKey;
 use \MyRadio\ServiceAPI\MyRadio_Swagger;
 use \MyRadio\ServiceAPI\MyRadio_User;
@@ -21,7 +19,7 @@ $__start = -microtime(true);
  */
 // Configure MyRadio & Set API Settings
 define('SILENT_EXCEPTIONS', true);
-define('DISABLE_SESSION', true);
+define('READONLY_SESSION', true);
 
 require_once __DIR__ . '/../Controllers/root_cli.php';
 
@@ -73,7 +71,7 @@ function invokeArgsNamed(ReflectionMethod $refmethod, $object, Array $args = [])
  */
 //Remove double-slashes that occassionally appear.
 $cleaned = str_replace('//', '/', $_SERVER['REQUEST_URI']);
-$params = explode('/', str_ireplace(Config::$api_uri, '', explode('?', $cleaned)[0]));
+$params = explode('/', str_ireplace($container['config']->api_uri, '', explode('?', $cleaned)[0]));
 $class = $params[0];
 
 if (empty($class)) {
@@ -98,16 +96,11 @@ if (empty($_REQUEST['api_key'])) {
     } else {
         /**
          * Attempt to use user session
-         * By not using session handler, and resetting $_SESSION after
-         * We are ensuring there are no session-based side effects
          */
-        $dummysession = $_SESSION;
-        session_decode((new MyRadioSession())->read(session_id()));
-        if (!isset($_SESSION['memberid'])) {
+        if (!isset($container['session']['memberid'])) {
             api_error(401, 'An API Key must be provided.');
         }
-        $api_key = MyRadio_User::getInstance($_SESSION['memberid']);
-        $_SESSION = $dummysession;
+        $api_key = MyRadio_User::getInstance();
     }
 }
 if (!isset($api_key)) {
@@ -164,8 +157,8 @@ try {
  */
 if (isset($_SERVER['HTTP_ORIGIN'])) {
     if (
-        empty(Config::$api_allowed_domains) or
-        in_array($_SERVER['HTTP_ORIGIN'], Config::$api_allowed_domains)
+        empty($container['config']->api_allowed_domains) or
+        in_array($_SERVER['HTTP_ORIGIN'], $container['config']->api_allowed_domains)
     ) {
         header('Access-Control-Allow-Origin: *');
     }
@@ -233,7 +226,7 @@ if (!$api_key->canCall($classes[$class], $method)) {
         /**
          * Let's process the request!
          */
-        $api_key->logCall(preg_replace('/(.*)\?(.*)/', '$1', str_replace(Config::$api_uri, '', $_SERVER['REQUEST_URI'])), $args);
+        $api_key->logCall(preg_replace('/(.*)\?(.*)/', '$1', str_replace($container['config']->api_uri, '', $_SERVER['REQUEST_URI'])), $args);
         $result = invokeArgsNamed($methodReflection, $object, $args);
     } catch (MyRadioException $e) {
         api_error($e->getCode(), $e->getMessage(), $e);

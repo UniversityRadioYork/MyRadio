@@ -7,7 +7,6 @@
 
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadioEmail;
@@ -42,10 +41,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
         $this->timeslot_id = $timeslot_id;
         //Init Database
-        self::initDB();
+
 
         //Get the basic info about the season
-        $result = self::$db->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid,
             (
                 SELECT array(
@@ -118,8 +117,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $this->owner = MyRadio_User::getInstance($result['memberid']);
         $this->timeslot_num = (int) $result['timeslot_num'];
 
-        $metadata_types = self::$db->decodeArray($result['metadata_types']);
-        $metadata = self::$db->decodeArray($result['metadata']);
+        $metadata_types = self::$container['database']->decodeArray($result['metadata_types']);
+        $metadata = self::$container['database']->decodeArray($result['metadata']);
         //Deal with the metadata
         for ($i = 0; $i < sizeof($metadata_types); $i++) {
             if (self::isMetadataMultiple($metadata_types[$i])) {
@@ -130,8 +129,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         }
 
         //Deal with the Credits arrays
-        $credit_types = self::$db->decodeArray($result['credit_types']);
-        $credits = self::$db->decodeArray($result['credits']);
+        $credit_types = self::$container['database']->decodeArray($result['credit_types']);
+        $credits = self::$container['database']->decodeArray($result['credits']);
 
         for ($i = 0; $i < sizeof($credits); $i++) {
             if (empty($credits[$i])) {
@@ -217,7 +216,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         $filter = '{' . implode(', ', $filter) . '}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
 
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT show_season_timeslot_id
             FROM schedule.show_season_timeslot
             INNER JOIN schedule.show_season USING (show_season_id)
@@ -292,7 +291,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public static function getMostMessaged($date = 0)
     {
-        $result = self::$db->fetchAll(
+        $result = self::$container['database']->fetchAll(
             'SELECT messages.timeslotid, count(*) as msg_count FROM sis2.messages
             LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid = show_season_timeslot.show_season_timeslot_id
             WHERE show_season_timeslot.start_time > $1 GROUP BY messages.timeslotid ORDER BY msg_count DESC LIMIT 30',
@@ -318,11 +317,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     public static function getMostListened($date = 0)
     {
         $key = 'stats_timeslot_mostlistened';
-        if (($top = self::$cache->get($key)) !== false) {
+        if (($top = self::$container['cache']->get($key)) !== false) {
             return $top;
         }
 
-        $result = self::$db->fetchAll(
+        $result = self::$container['database']->fetchAll(
             'SELECT show_season_timeslot_id,
             (
                 SELECT COUNT(*) FROM strm_log
@@ -342,7 +341,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $top[] = $show;
         }
 
-        self::$cache->set($key, $top, 86400);
+        self::$container['cache']->set($key, $top, 86400);
 
         return $top;
     }
@@ -357,14 +356,13 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public static function getCurrentTimeslot($time = null, $filter = array(1))
     {
-        self::initDB(); //First DB access for Timelord
         if ($time === null) {
             $time = time();
         }
 
         $filter = '{' . implode(', ', $filter) . '}'; // http://php.net/manual/en/function.pg-query-params.php#71912
 
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT show_season_timeslot_id
             FROM schedule.show_season_timeslot
             INNER JOIN schedule.show_season USING (show_season_id)
@@ -392,7 +390,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         $filter = '{' . implode(', ', $filter) . '}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
 
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT show_season_timeslot_id
             FROM schedule.show_season_timeslot
             INNER JOIN schedule.show_season USING (show_season_id)
@@ -426,7 +424,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     */
     public static function getWeekSchedule($weekno, $year = null)
     {
-        self::wakeup();
+
         if ($year === null) {
             $year = int(gmdate('Y'));
         }
@@ -436,7 +434,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         }
 
         $key = 'MyRadioScheduleFor' . $year . 'W' . $weekno;
-        $cache = self::$cache->get($key);
+        $cache = self::$container['cache']->get($key);
         if (!$cache) {
             $startOfWeek = strtotime($year . 'W' . $weekno);
             $sundayBefore = $startOfWeek - 86400; // 60 * 60 * 24
@@ -445,7 +443,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $startTimestamp = CoreUtils::getTimestamp($sundayBefore);
             $endTimestamp = CoreUtils::getTimestamp($endOfMondayAfter);
 
-            $result = self::$db->fetchColumn(
+            $result = self::$container['database']->fetchColumn(
                 'SELECT show_season_timeslot_id
                 FROM schedule.show_season_timeslot
                 INNER JOIN schedule.show_season USING (show_season_id)
@@ -461,7 +459,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
             $cache = self::resultSetToObjArray($result);
 
-            self::$cache->set($key, $cache, 3600);
+            self::$container['cache']->set($key, $cache, 3600);
         }
         return $cache;
     }
@@ -482,9 +480,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             //There's currently not a show on.
             $response = [
                 'current' => [
-                    'title' => Config::$short_name . ' Jukebox',
+                    'title' => self::$container['config']->short_name . ' Jukebox',
                     'desc' => 'Non-stop Music',
-                    'photo' => Config::$default_show_uri,
+                    'photo' => self::$container['config']->default_show_uri,
                     'end_time' => $next ? $next->getStartTime() : 'The End of Time'
                 ]
             ];
@@ -513,9 +511,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     $nextshow = self::getNextTimeslot($lastnext->getEndTime(), $filter);
 
                     $response['next'][] = [
-                        'title' => Config::$short_name . ' Jukebox',
+                        'title' => self::$container['config']->short_name . ' Jukebox',
                         'desc' => 'Non-stop Music',
-                        'photo' => Config::$default_show_uri,
+                        'photo' => self::$container['config']->default_show_uri,
                         'start_time' => $lastnext->getEndTime(),
                         'end_time' => $nextshow ? $nextshow->getStartTime() : 'The End of Time'
                     ];
@@ -606,8 +604,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
         $email = "Hi #NAME, \r\n\r\n Please note that an episode of your show, " . $this->getMeta('title') .
                 ' has been cancelled by our Programming Team. The affected episode was at ' . CoreUtils::happyTime($this->getStartTime());
-        $email .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\n" . Config::$long_name . " Programming Team";
-        self::$cache->purge();
+        $email .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\n" . self::$container['config']->long_name . " Programming Team";
+        self::$container['cache']->purge();
 
         MyRadioEmail::sendEmailToUserSet($this->getSeason()->getShow()->getCreditObjects(), 'Episode of ' . $this->getMeta('title') . ' Cancelled', $email);
 
@@ -623,7 +621,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
         $email1 = "Hi #NAME, \r\n\r\n You have requested that an episode of " . $this->getMeta('title') .
                 ' is cancelled. The affected episode was at ' . CoreUtils::happyTime($this->getStartTime());
-        $email1 .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\n" . Config::$long_name . " Scheduler Robot";
+        $email1 .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\n" . self::$container['config']->long_name . " Scheduler Robot";
 
         $email2 = $this->getMeta('title') . ' on ' . CoreUtils::happyTime($this->getStartTime()) . ' was cancelled by a presenter because ' . $reason;
         $email2 .= "\r\n\r\nIt was cancelled automatically as more than required notice was given.";
@@ -651,7 +649,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     private function deleteTimeslot()
     {
-        $r = self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', [$this->getID()]);
+        $r = self::$container['database']->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', [$this->getID()]);
 
         $this->updateCacheObject();
 
@@ -666,7 +664,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         $result = [];
         //Being a Database Transaction - this all succeeds, or none of it does
-        self::$db->query('BEGIN');
+        self::$container['database']->query('BEGIN');
 
         foreach ($set['ops'] as $op) {
             switch ($op['op']) {
@@ -683,7 +681,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     }
                 } catch (MyRadioException $e) {
                     $result[] = ['status' => false];
-                    self::$db->query('ROLLBACK');
+                    self::$container['database']->query('ROLLBACK');
 
                     return $result;
                 }
@@ -694,14 +692,14 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             case 'MoveItem':
                 if (!is_numeric($op['timeslotitemid'])) {
                     $result[] = ['status' => false];
-                    self::$db->query('ROLLBACK');
+                    self::$container['database']->query('ROLLBACK');
 
                     return $result;
                 }
                 $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
                 if ($i->getChannel() != $op['oldchannel'] or $i->getWeight() != $op['oldweight']) {
                     $result[] = ['status' => false];
-                    self::$db->query('ROLLBACK');
+                    self::$container['database']->query('ROLLBACK');
 
                     return $result;
                 } else {
@@ -717,7 +715,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
                 if ($i->getChannel() != $op['channel'] or $i->getWeight() != $op['weight']) {
                     $result[] = ['status' => false];
-                    self::$db->query('ROLLBACK');
+                    self::$container['database']->query('ROLLBACK');
 
                     return $result;
                 } else {
@@ -728,7 +726,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             }
         }
 
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO bapsplanner.timeslot_change_ops (client_id, change_ops)
             VALUES ($1, $2)',
             [
@@ -737,7 +735,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             ]
         );
 
-        self::$db->query('COMMIT');
+        self::$container['database']->query('COMMIT');
 
         //Update the legacy baps show plans database
         $this->updateLegacyShowPlan();
@@ -759,19 +757,19 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
          * Find out if there's a NIPSWeb Schema listing for this timeslot.
          * If not, throw back an empty array
          */
-        $r = self::$db->query(
+        $r = self::$container['database']->query(
             'SELECT timeslot_item_id, channel_id FROM bapsplanner.timeslot_items
             WHERE timeslot_id=$1
             ORDER BY weight ASC',
             [$this->getID()]
         );
 
-        if (!$r or self::$db->numRows($r) === 0) {
+        if (!$r or self::$container['database']->numRows($r) === 0) {
             //No show planned yet
             return [];
         } else {
             $tracks = [];
-            foreach (self::$db->fetchAll($r) as $track) {
+            foreach (self::$container['database']->fetchAll($r) as $track) {
                 $tracks[$track['channel_id']][] = NIPSWeb_TimeslotItem::getInstance($track['timeslot_item_id'])->toDataSource();
             }
 
@@ -785,7 +783,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function getSigninInfo()
     {
-        $result = self::$db->fetchAll(
+        $result = self::$container['database']->fetchAll(
             'SELECT * FROM (
                 SELECT creditid AS memberid
                 FROM schedule.show_credit WHERE show_id IN (
@@ -818,7 +816,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     public function getMessages($offset = 0)
     {
-        $result = self::$db->fetchAll(
+        $result = self::$container['database']->fetchAll(
             'SELECT c.commid AS id,
             commtypeid AS type,
             EXTRACT (EPOCH FROM date) AS time,
@@ -854,7 +852,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function signIn(MyRadio_User $member)
     {
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO sis2.member_signin (show_season_timeslot_id, memberid, signerid)
             VALUES ($1, $2, $3)',
             [

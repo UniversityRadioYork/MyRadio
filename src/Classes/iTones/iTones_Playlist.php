@@ -40,7 +40,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     protected function __construct($playlistid)
     {
         $this->playlistid = $playlistid;
-        $result = self::$db->fetchOne('SELECT * FROM jukebox.playlists WHERE playlistid=$1 LIMIT 1', [$playlistid]);
+        $result = self::$container['database']->fetchOne('SELECT * FROM jukebox.playlists WHERE playlistid=$1 LIMIT 1', [$playlistid]);
         if (empty($result)) {
             throw new MyRadioException('The specified iTones Playlist does not seem to exist');
 
@@ -53,7 +53,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         $this->lock = empty($result['lock']) ? null : MyRadio_User::getInstance($result['lock']);
         $this->locktime = (int) $result['locktime'];
 
-        $this->revisionid = (int) self::$db->fetchOne(
+        $this->revisionid = (int) self::$container['database']->fetchOne(
             'SELECT revisionid FROM jukebox.playlist_revisions
             WHERE playlistid=$1 ORDER BY revisionid DESC LIMIT 1',
             [$this->getID()]
@@ -182,7 +182,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     public function getTracks()
     {
         if (empty($this->tracks)) {
-            $items = self::$db->fetchColumn(
+            $items = self::$container['database']->fetchColumn(
                 'SELECT trackid FROM jukebox.playlist_entries WHERE playlistid=$1
                 AND revision_removed IS NULL
                 ORDER BY entryid',
@@ -249,13 +249,13 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
             $user = MyRadio_User::getInstance();
         }
         //Acquire a lock on the lock row - we don't want someone else acquiring a lock while we are!
-        self::$db->query('BEGIN');
-        self::$db->query('SELECT * FROM jukebox.playlists WHERE playlistid=$1 FOR UPDATE', [$this->getID()], true);
+        self::$container['database']->query('BEGIN');
+        self::$container['database']->query('SELECT * FROM jukebox.playlists WHERE playlistid=$1 FOR UPDATE', [$this->getID()], true);
 
         //Refresh the local lock information - threads using this could have been running for a *while*
         $this->refreshLockInformation();
 
-        if ($this->locktime >= time() - Config::$playlist_lock_time) {
+        if ($this->locktime >= time() - self::$container['config']->playlist_lock_time) {
             //There's a lock in place. Is it held by this client?
             if ($lockstr !== $this->generateLockKey($this->lock, $this->locktime)) {
                 //It is not. Return false.
@@ -265,8 +265,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         }
         //Or, if there isn't an active lock
         $locktime = time();
-        self::$db->query('UPDATE jukebox.playlists SET lock=$1, locktime=$2 WHERE playlistid=$3', [$user->getID(), $locktime, $this->getID()], true);
-        self::$db->query('COMMIT'); //This releases the lock
+        self::$container['database']->query('UPDATE jukebox.playlists SET lock=$1, locktime=$2 WHERE playlistid=$3', [$user->getID(), $locktime, $this->getID()], true);
+        self::$container['database']->query('COMMIT'); //This releases the lock
         $this->refreshLockInformation();
 
         return $this->generateLockKey($user, $locktime);
@@ -279,7 +279,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     public function releaseLock($lockstr)
     {
         if ($this->validateLock($lockstr)) {
-            self::$db->query('UPDATE jukebox.playlists SET locktime=NULL WHERE playlistid=$1', [$this->getID()]);
+            self::$container['database']->query('UPDATE jukebox.playlists SET locktime=NULL WHERE playlistid=$1', [$this->getID()]);
         }
     }
 
@@ -288,7 +288,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      */
     private function refreshLockInformation()
     {
-        $result = self::$db->fetchOne('SELECT lock, locktime FROM jukebox.playlists WHERE playlistid=$1', [$this->getID()]);
+        $result = self::$container['database']->fetchOne('SELECT lock, locktime FROM jukebox.playlists WHERE playlistid=$1', [$this->getID()]);
         $this->lock = empty($result['lock']) ? null : MyRadio_User::getInstance($result['lock']);
         $this->locktime = (int) $result['locktime'];
     }
@@ -368,10 +368,10 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         }
 
         //Cool, now we know what needs to be done.
-        self::$db->query('BEGIN');
+        self::$container['database']->query('BEGIN');
         $revisionid = $this->getRevisionID() + 1;
         //Get the new revision ID
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO jukebox.playlist_revisions (playlistid, revisionid, author, notes)
             VALUES ($1, $2, $3, $4) RETURNING revisionid',
             [$this->getID(), $revisionid, $user->getID(), $notes],
@@ -383,7 +383,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 trigger_error('Discarding non-track item: ' . print_r($track, true));
                 continue;
             }
-            self::$db->query(
+            self::$container['database']->query(
                 'INSERT INTO jukebox.playlist_entries (playlistid, trackid, revision_added) VALUES ($1, $2, $3)',
                 [$this->getID(), $track->getID(), $revisionid],
                 true
@@ -392,7 +392,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         //Remove old tracks
         foreach ($old_list as $track) {
             if ($track instanceof MyRadio_Track) {
-                self::$db->query(
+                self::$container['database']->query(
                     'UPDATE jukebox.playlist_entries SET revision_removed=$1 WHERE playlistid=$2 AND trackid=$3
                     AND revision_removed IS NULL',
                     [$revisionid, $this->getID(), $track->getID()],
@@ -401,7 +401,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
             }
         }
         //All is happy. Commit!
-        self::$db->query('COMMIT');
+        self::$container['database']->query('COMMIT');
         $this->tracks = $tracks;
         $this->revisionid = $revisionid;
         $this->updateCacheObject();
@@ -413,7 +413,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     */
     public function setTitle($title)
     {
-        self::$db->query('UPDATE jukebox.playlists SET title=$1 WHERE playlistid=$2', [$title, $this->getID()]);
+        self::$container['database']->query('UPDATE jukebox.playlists SET title=$1 WHERE playlistid=$2', [$title, $this->getID()]);
         $this->title = $title;
         $this->updateCacheObject();
     }
@@ -424,7 +424,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     */
     public function setDescription($description)
     {
-        self::$db->query('UPDATE jukebox.playlists SET description=$1 WHERE playlistid=$2', [$description, $this->getID()]);
+        self::$container['database']->query('UPDATE jukebox.playlists SET description=$1 WHERE playlistid=$2', [$description, $this->getID()]);
         $this->description = $description;
         $this->updateCacheObject();
     }
@@ -435,8 +435,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public static function getAlliTonesPlaylists()
     {
-        self::wakeup();
-        $result = self::$db->fetchColumn('SELECT playlistid FROM jukebox.playlists ORDER BY title');
+
+        $result = self::$container['database']->fetchColumn('SELECT playlistid FROM jukebox.playlists ORDER BY title');
 
         return self::resultSetToObjArray($result);
     }
@@ -447,9 +447,9 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public static function getPlaylistFromWeights()
     {
-        self::wakeup();
 
-        $result = self::$db->fetchAll(
+
+        $result = self::$container['database']->fetchAll(
             'SELECT playlists.playlistid AS item, MAX(playlist_availability.weight) AS weight
                 FROM jukebox.playlists, jukebox.playlist_availability, jukebox.playlist_timeslot
                 WHERE playlists.playlistid=playlist_availability.playlistid
@@ -475,7 +475,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public static function getPlaylistsWithTrack(MyRadio_Track $track)
     {
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT playlistid FROM jukebox.playlist_entries WHERE trackid=$1
             AND revision_removed IS NULL',
             [$track->getID()]
@@ -488,7 +488,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     {
         $id = str_replace(' ', '-', $title);
         $id = strtolower(preg_replace('/[^a-z0-9-]/i', '', $id));
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO jukebox.playlists (playlistid, title, description)
             VALUES ($1, $2, $3)',
             [$id, $title, $description]

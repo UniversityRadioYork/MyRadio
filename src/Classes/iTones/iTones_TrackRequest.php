@@ -144,9 +144,9 @@ class iTones_TrackRequest
     private function userCanMakeRequestsParams()
     {
         return [
-            Config::$itones_request_maximum,
+            self::$container['config']->itones_request_maximum,
             $this->requester->getID(),
-            Config::$itones_request_period
+            self::$container['config']->itones_request_period
         ];
     }
 

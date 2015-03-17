@@ -11,8 +11,8 @@ use \MyRadio\ServiceAPI\MyRadio_Track;
 
 $wrong = [];
 
-foreach (Config::$music_central_db_exts as $ext) {
-    foreach (glob(Config::$music_central_db_path.'/records/*/*.'.$ext) as $file) {
+foreach ($container['config']->music_central_db_exts as $ext) {
+    foreach (glob($container['config']->music_central_db_path.'/records/*/*.'.$ext) as $file) {
         $recordid = preg_replace('/^.*\/([0-9]+)\/[0-9]+\.'.$ext.'$/', '$1', $file);
         $trackid = preg_replace('/^.*\/([0-9]+)\.'.$ext.'$/', '$1', $file);
 
@@ -22,8 +22,8 @@ foreach (Config::$music_central_db_exts as $ext) {
                 $wrong[] = [$file, $track->getAlbum()->getID()];
 
                 if (isset($_GET['fix'])) {
-                    if (!is_dir(Config::$music_central_db_path.'/records/'.$track->getAlbum()->getID())) {
-                        mkdir(Config::$music_central_db_path.'/records/'.$track->getAlbum()->getID());
+                    if (!is_dir($container['config']->music_central_db_path.'/records/'.$track->getAlbum()->getID())) {
+                        mkdir($container['config']->music_central_db_path.'/records/'.$track->getAlbum()->getID());
                     }
                     if (copy($file, $track->getPath($ext))) {
                         unlink($file);

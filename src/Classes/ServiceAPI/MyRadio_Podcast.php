@@ -7,7 +7,6 @@
 
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm;
@@ -31,7 +30,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     private $podcast_id;
 
     /**
-     * The path to the file, relative to Config::$public_media_uri
+     * The path to the file, relative to self::$container['config']->public_media_uri
      * @var String
      */
     private $file;
@@ -74,7 +73,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     {
         $this->podcast_id = (int) $podcast_id;
 
-        $result = self::$db->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT file, memberid, approvedid, submitted, show_id, (
                 SELECT array(
                     SELECT metadata_key_id FROM uryplayer.podcast_metadata
@@ -127,8 +126,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $this->show_id = (int) $result['show_id'];
 
         //Deal with the Credits arrays
-        $credit_types = self::$db->decodeArray($result['credit_types']);
-        $credits = self::$db->decodeArray($result['credits']);
+        $credit_types = self::$container['database']->decodeArray($result['credit_types']);
+        $credits = self::$container['database']->decodeArray($result['credits']);
 
         for ($i = 0; $i < sizeof($credits); $i++) {
             if (empty($credits[$i])) {
@@ -143,8 +142,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
 
         //Deal with the Metadata arrays
-        $metadata_types = self::$db->decodeArray($result['metadata_types']);
-        $metadata = self::$db->decodeArray($result['metadata']);
+        $metadata_types = self::$container['database']->decodeArray($result['metadata_types']);
+        $metadata = self::$container['database']->decodeArray($result['metadata']);
 
         for ($i = 0; $i < sizeof($metadata); $i++) {
             if (self::isMetadataMultiple($metadata_types[$i])) {
@@ -177,7 +176,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             $user = MyRadio_User::getInstance();
         }
 
-        return self::$db->fetchColumn(
+        return self::$container['database']->fetchColumn(
             'SELECT podcast_id FROM uryplayer.podcast
             WHERE memberid=$1 OR podcast_id IN (
                 SELECT podcast_id FROM uryplayer.podcast_credit
@@ -190,10 +189,10 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     public static function getPending()
     {
-        self::initDB();
+
 
         return self::resultSetToObjArray(
-            self::$db->fetchColumn(
+            self::$container['database']->fetchColumn(
                 'SELECT podcast_id FROM uryplayer.podcast WHERE submitted IS NULL'
             )
         );
@@ -330,7 +329,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 [
                     'label' => 'I have read and confirm that this audio file complies'
                     . ' with <a href="/wiki/Podcasting_Policy" target="_blank">'
-                    . Config::$short_name . '\'s Podcasting Policy</a>.'
+                    . self::$container['config']->short_name . '\'s Podcasting Policy</a>.'
                 ]
             )
         );
@@ -387,7 +386,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     ) {
 
         //Get an ID for the new Podcast
-        $id = (int) self::$db->fetchColumn(
+        $id = (int) self::$container['database']->fetchColumn(
             'INSERT INTO uryplayer.podcast '
             . '(memberid, approvedid, submitted) VALUES ($1, $1, NULL) '
             . 'RETURNING podcast_id',
@@ -433,7 +432,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             . '.'
             . explode('/', finfo_file(finfo_open(FILEINFO_MIME_TYPE), $temporary_file))[1];
 
-        $file_path = Config::$public_media_path . $path;
+        $file_path = self::$container['config']->public_media_path . $path;
 
         if (file_exists($file_path)) {
             throw new MyRadioException('The cover filename chosen already exists.', 500);
@@ -490,7 +489,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      */
     public function getArchiveFile()
     {
-        return Config::$podcast_archive_path.'/'.$this->getID().'.orig';
+        return self::$container['config']->podcast_archive_path.'/'.$this->getID().'.orig';
     }
 
     /**
@@ -499,7 +498,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      */
     public function getWebFile()
     {
-        return Config::$public_media_path.'/podcasts/MyRadioPodcast'.$this->getID().'.mp3';
+        return self::$container['config']->public_media_path.'/podcasts/MyRadioPodcast'.$this->getID().'.mp3';
     }
 
     /**
@@ -517,14 +516,14 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      */
     public function setShow(MyRadio_Show $show)
     {
-        self::$db->query(
+        self::$container['database']->query(
             'DELETE FROM schedule.show_podcast_link
             WHERE podcast_id=$1',
             [$this->getID()]
         );
 
         if (!empty($show)) {
-            self::$db->query(
+            self::$container['database']->query(
                 'INSERT INTO schedule.show_podcast_link
                 (show_id, podcast_id) VALUES ($1, $2)',
                 [$show->getID(), $this->getID()]
@@ -579,7 +578,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             throw new MyRadioException('URL is blank.');
         }
 
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO uryplayer.podcast_image_metadata
             (metadata_key_id, podcast_id, memberid, approvedid,
             metadata_value, effective_from, effective_to)
@@ -605,7 +604,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     {
         // TODO: Plumb this into the metadata system.
         //       At time of writing, MyRadio's metadata system doesn't do images.
-        return self::$db->fetchOne(
+        return self::$container['database']->fetchOne(
             'SELECT metadata_value AS url
             FROM uryplayer.podcast_image_metadata
             WHERE podcast_id = $1
@@ -665,7 +664,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     public function setSubmitted($time)
     {
         $this->submitted = $time;
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE uryplayer.podcast SET submitted=$1
             WHERE podcast_id=$2',
             [CoreUtils::getTimestamp($time), $this->getID()]
@@ -686,7 +685,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $dbfile = $this->getWebFile();
         shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 - >'{$dbfile}'");
 
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE uryplayer.podcast SET file=$1 WHERE podcast_id=$2',
             [$this->getFile(), $this->getID()]
         );

@@ -49,7 +49,7 @@ class MyRadio_ChartType extends MyRadio_Type
     {
         $this->chart_type_id = $chart_type_id;
 
-        $chart_type_data = self::$db->fetchOne(
+        $chart_type_data = self::$container['database']->fetchOne(
             'SELECT *
              FROM music.chart_type
              WHERE chart_type_id = $1;',
@@ -63,7 +63,7 @@ class MyRadio_ChartType extends MyRadio_Type
 
         parent::constructType($chart_type_data['name'], $chart_type_data['description']);
 
-        $this->chart_release_ids = self::$db->fetchColumn(
+        $this->chart_release_ids = self::$container['database']->fetchColumn(
             'SELECT chart_release_id
              FROM music.chart_release
              WHERE chart_type_id = $1
@@ -104,7 +104,7 @@ class MyRadio_ChartType extends MyRadio_Type
      */
     public function getAll()
     {
-        $chart_type_ids = self::$db->fetchColumn(
+        $chart_type_ids = self::$container['database']->fetchColumn(
             'SELECT chart_type_id
              FROM music.chart_type
              ORDER BY chart_type_id ASC;',
@@ -167,7 +167,7 @@ class MyRadio_ChartType extends MyRadio_Type
         }
 
         $this->name = $name;
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE music.chart_type
              SET name = $1
              WHERE chart_type_id = $2;',
@@ -191,7 +191,7 @@ class MyRadio_ChartType extends MyRadio_Type
         }
 
         $this->description = $description;
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE music.chart_type
              SET description = $1
              WHERE chart_type_id = $2;',

@@ -44,5 +44,5 @@ if (isset($_REQUEST['memberid'])) {
 if (isset($_REQUEST['next'])) {
     header('Location: ' . $_REQUEST['next']);
 } else {
-    header('Location: ' . Config::$base_url);
+    header('Location: ' . $container['config']->base_url);
 }

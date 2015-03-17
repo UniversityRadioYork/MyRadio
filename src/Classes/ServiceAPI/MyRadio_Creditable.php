@@ -107,7 +107,7 @@ trait MyRadio_Creditable
     public function setCredits($users, $credittypes, $table, $pkey)
     {
         //Start a transaction, atomic-like.
-        self::$db->query('BEGIN');
+        self::$container['database']->query('BEGIN');
 
         $newcredits = $this->mergeCreditArrays($users, $credittypes);
         $oldcredits = $this->getCredits();
@@ -117,7 +117,7 @@ trait MyRadio_Creditable
         $this->updateLocalCredits($newcredits);
 
         //Oh, and commit the transaction. I always forget this.
-        self::$db->query('COMMIT');
+        self::$container['database']->query('COMMIT');
 
         return $this;
     }
@@ -162,7 +162,7 @@ trait MyRadio_Creditable
     {
         foreach ($old as $credit) {
             if (!in_array($credit, $new)) {
-                self::$db->query(
+                self::$container['database']->query(
                     'UPDATE ' . $table . ' SET effective_to=NOW()'
                     . ' WHERE ' . $pkey . '=$1 AND creditid=$2 AND credit_type_id=$3'
                     . ' AND effective_to IS NULL',
@@ -189,7 +189,7 @@ trait MyRadio_Creditable
             //Look for an existing credit
             if (!in_array($credit, $old)) {
                 //Doesn't seem to exist.
-                self::$db->query(
+                self::$container['database']->query(
                     'INSERT INTO '.$table.' ('.$pkey.', credit_type_id, creditid, effective_from,'
                     . 'memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)',
                     [
@@ -220,7 +220,7 @@ trait MyRadio_Creditable
     protected static function getCreditName($credit_id)
     {
         if (empty(self::$credit_names)) {
-            $r = self::$db->fetchAll('SELECT credit_type_id, name FROM people.credit_type');
+            $r = self::$container['database']->fetchAll('SELECT credit_type_id, name FROM people.credit_type');
 
             foreach ($r as $v) {
                 self::$credit_names[$v['credit_type_id']] = $v['name'];

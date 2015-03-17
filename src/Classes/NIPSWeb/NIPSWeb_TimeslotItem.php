@@ -34,7 +34,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
     {
         $this->timeslot_item_id = $resid;
         //*dies*
-        $result = self::$db->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT * FROM bapsplanner.timeslot_items where timeslot_item_id=$1 LIMIT 1',
             [$resid]
         );
@@ -88,7 +88,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
     {
         $this->channel = (int) $channel;
         $this->weight = (int) $weight;
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE bapsplanner.timeslot_items SET channel_id=$1, weight=$2 WHERE timeslot_item_id=$3',
             [$this->channel, $this->weight, $this->getID()]
         );
@@ -97,7 +97,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
 
     public function remove()
     {
-        self::$db->query(
+        self::$container['database']->query(
             'DELETE FROM bapsplanner.timeslot_items WHERE timeslot_item_id=$1',
             [$this->getID()]
         );
@@ -107,7 +107,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
 
     public static function createManaged($timeslot, $manageditemid, $channel, $weight)
     {
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'INSERT INTO bapsplanner.timeslot_items (timeslot_id, managed_item_id, channel_id, weight)
             VALUES ($1, $2, $3, $4) RETURNING timeslot_item_id',
             [$timeslot, $manageditemid, $channel, $weight]
@@ -118,7 +118,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
 
     public static function createCentral($timeslot, $trackid, $channel, $weight)
     {
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'INSERT INTO bapsplanner.timeslot_items (timeslot_id, rec_track_id, channel_id, weight)
             VALUES ($1, $2, $3, $4) RETURNING timeslot_item_id',
             [$timeslot, $trackid, $channel, $weight]

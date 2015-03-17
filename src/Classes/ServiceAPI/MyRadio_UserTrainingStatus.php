@@ -71,7 +71,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
     {
         $this->memberpresenterstatusid = (int) $statusid;
 
-        $result = self::$db->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT * FROM public.member_presenterstatus
             WHERE memberpresenterstatusid=$1',
             [$statusid]
@@ -218,7 +218,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
             throw new MyRadioException($awarded_to .' does not have the prerequisite training to be awarded '.$status);
         }
 
-        $id = self::$db->fetchColumn(
+        $id = self::$container['database']->fetchColumn(
             'INSERT INTO public.member_presenterstatus (memberid, presenterstatusid, confirmedby)
             VALUES ($1, $2, $3) RETURNING memberpresenterstatusid',
             [
@@ -229,7 +229,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         )[0];
 
         //Force the User to be updated on next request.
-        self::$cache->delete(MyRadio_User::getCacheKey($awarded_to->getID()));
+        self::$container['cache']->delete(MyRadio_User::getCacheKey($awarded_to->getID()));
 
         return new self($id);
     }

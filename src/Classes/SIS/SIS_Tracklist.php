@@ -65,44 +65,44 @@ class SIS_Tracklist extends ServiceAPI
     */
     public static function insertTrackNoRec($tname, $artist, $album, $source, $timeslotid)
     {
-        self::$db->query('BEGIN');
+        self::$container['database']->query('BEGIN');
 
-        $audiologid = self::$db->fetchOne(
+        $audiologid = self::$container['database']->fetchOne(
             'INSERT INTO tracklist.tracklist (source, timeslotid) VALUES ($1, $2) RETURNING audiologid',
             [$source, $timeslotid]
         );
 
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO tracklist.track_notrec (audiologid, artist, album, track) VALUES ($1, $2, $3, $4)',
             [$audiologid['audiologid'], $artist, $album, $tname]
         );
 
-        self::$db->query('COMMIT');
+        self::$container['database']->query('COMMIT');
     }
 
     public static function insertTrackRec(MyRadio_Track $track, $source, $timeslotid)
     {
-        self::$db->query('BEGIN');
+        self::$container['database']->query('BEGIN');
 
-        $audiologid = self::$db->fetchOne(
+        $audiologid = self::$container['database']->fetchOne(
             'INSERT INTO tracklist.tracklist (source, timeslotid)
             VALUES ($1, $2) RETURNING audiologid',
             [$source, $timeslotid]
         );
 
-        self::$db->query(
+        self::$container['database']->query(
             'INSERT INTO tracklist.track_rec (audiologid, recordid, trackid)
             VALUES ($1, $2, $3)',
             [$audiologid['audiologid'], $track->getAlbum()->getID(), $track->getID()]
         );
 
-        self::$db->query('COMMIT');
+        self::$container['database']->query('COMMIT');
         return true;
     }
 
     public static function markTrackDeleted($tracklistid)
     {
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE tracklist.tracklist SET state = \'d\'
             WHERE audiologid = $1',
             [$tracklistid]

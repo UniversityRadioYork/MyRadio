@@ -37,7 +37,7 @@ class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
     protected function __construct($playlistid)
     {
         $this->managed_playlist_id = $playlistid;
-        $result = self::$db->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT * FROM bapsplanner.managed_playlists WHERE managedplaylistid=$1 LIMIT 1',
             [$playlistid]
         );
@@ -59,7 +59,7 @@ class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
     public function getItems()
     {
         if (empty($this->items)) {
-            $items = self::$db->fetchColumn(
+            $items = self::$container['database']->fetchColumn(
                 'SELECT manageditemid FROM bapsplanner.managed_items WHERE managedplaylistid=$1
                 AND (expirydate IS NULL OR expirydate > NOW())
                 ORDER BY title',
@@ -112,7 +112,7 @@ class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
         if ($editable_only && !MyRadio_User::getInstance()->hasAuth(AUTH_EDITCENTRALRES)) {
             return [];
         }
-        $result = self::$db->fetchColumn('SELECT managedplaylistid FROM bapsplanner.managed_playlists ORDER BY name');
+        $result = self::$container['database']->fetchColumn('SELECT managedplaylistid FROM bapsplanner.managed_playlists ORDER BY name');
         $response = [];
         foreach ($result as $id) {
             $response[] = self::getInstance($id);

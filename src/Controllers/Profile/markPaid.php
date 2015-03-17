@@ -10,6 +10,6 @@ use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
 $user = MyRadio_User::getInstance($_REQUEST['memberid']);
-$user->setPayment(Config::$membership_fee);
+$user->setPayment($container['config']->membership_fee);
 
 CoreUtils::backWithMessage('Payment data updated');

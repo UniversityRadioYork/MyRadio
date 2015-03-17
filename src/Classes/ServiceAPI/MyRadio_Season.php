@@ -7,7 +7,6 @@
 
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm;
@@ -36,10 +35,10 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     {
         $this->season_id = $season_id;
         //Init Database
-        self::initDB();
+
 
         //Get the basic info about the season
-        $result = self::$db->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT show_id, termid, submitted, memberid, (
                 SELECT array(
                     SELECT metadata_key_id FROM schedule.season_metadata
@@ -102,8 +101,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $this->term_id = (int) $result['termid'];
         $this->season_num = (int) $result['season_num'];
 
-        $metadata_types = self::$db->decodeArray($result['metadata_types']);
-        $metadata = self::$db->decodeArray($result['metadata']);
+        $metadata_types = self::$container['database']->decodeArray($result['metadata_types']);
+        $metadata = self::$container['database']->decodeArray($result['metadata']);
         //Deal with the metadata
         for ($i = 0; $i < sizeof($metadata_types); $i++) {
             if (self::isMetadataMultiple($metadata_types[$i])) {
@@ -114,27 +113,27 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         }
 
         //Requested Weeks
-        $requested_weeks = self::$db->decodeArray($result['requested_weeks']);
+        $requested_weeks = self::$container['database']->decodeArray($result['requested_weeks']);
         $this->requested_weeks = [];
         foreach ($requested_weeks as $requested_week) {
             $this->requested_weeks[] = intval($requested_week);
         }
 
         //Requested timeslots
-        $requested_days = self::$db->decodeArray($result['requested_days']);
-        $requested_start_times = self::$db->decodeArray($result['requested_start_times']);
-        $requested_durations = self::$db->decodeArray($result['requested_durations']);
+        $requested_days = self::$container['database']->decodeArray($result['requested_days']);
+        $requested_start_times = self::$container['database']->decodeArray($result['requested_start_times']);
+        $requested_durations = self::$container['database']->decodeArray($result['requested_durations']);
 
         for ($i = 0; $i < sizeof($requested_days); $i++) {
             $this->requested_times[] = [
                 'day' => (int) $requested_days[$i],
                 'start_time' => (int) $requested_start_times[$i],
-                'duration' => self::$db->intervalToTime($requested_durations[$i])
+                'duration' => self::$container['database']->intervalToTime($requested_durations[$i])
             ];
         }
 
         //And now initiate timeslots
-        $timeslots = self::$db->decodeArray($result['timeslots']);
+        $timeslots = self::$container['database']->decodeArray($result['timeslots']);
         $this->timeslots = [];
         foreach ($timeslots as $timeslot) {
             $this->timeslots[] = MyRadio_Timeslot::getInstance($timeslot);
@@ -178,10 +177,10 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $term_id = MyRadio_Scheduler::getActiveApplicationTerm();
 
         //Start a transaction
-        self::$db->query('BEGIN');
+        self::$container['database']->query('BEGIN');
 
         //Right, let's start by getting a Season ID created for this entry
-        $season_create_result = self::$db->fetchColumn(
+        $season_create_result = self::$container['database']->fetchColumn(
             'INSERT INTO schedule.show_season
             (show_id, termid, submitted, memberid)
             VALUES ($1, $2, $3, $4) RETURNING show_season_id',
@@ -199,7 +198,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         //Now let's allocate store the requested weeks for a term
         for ($i = 1; $i <= 10; $i++) {
             if ($params['weeks']["wk$i"]) {
-                self::$db->query('INSERT INTO schedule.show_season_requested_week (show_season_id, week) VALUES ($1, $2)', [$season_id, $i], true);
+                self::$container['database']->query('INSERT INTO schedule.show_season_requested_week (show_season_id, week) VALUES ($1, $2)', [$season_id, $i], true);
             }
         }
 
@@ -219,7 +218,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             }
 
             //Enter the data
-            self::$db->query(
+            self::$container['database']->query(
                 'INSERT INTO schedule.show_season_requested_time
                 (requested_day, start_time, preference, duration, show_season_id)
                 VALUES ($1, $2, $3, $4, $5)',
@@ -235,7 +234,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
         //If the description metadata is non-blank, then update that too
         if (!empty($params['description'])) {
-            self::$db->query(
+            self::$container['database']->query(
                 'INSERT INTO schedule.season_metadata
                 (metadata_key_id, show_season_id, metadata_value, effective_from, memberid, approvedid)
                 VALUES ($1, $2, $3, NOW(), $4, $4)',
@@ -256,7 +255,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 if (empty($tag)) {
                     continue;
                 }
-                self::$db->query(
+                self::$container['database']->query(
                     'INSERT INTO schedule.season_metadata
                     (metadata_key_id, show_season_id, metadata_value, effective_from, memberid, approvedid)
                     VALUES ($1, $2, $3, NOW(), $4, $4)',
@@ -272,7 +271,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         }
 
         //Actually commit the show to the database!
-        self::$db->query('COMMIT');
+        self::$container['database']->query('COMMIT');
 
         MyRadio_Show::getInstance($params['show_id'])->addSeason($season_id);
 
@@ -551,7 +550,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
      */
     public static function getAllSeasonsInLatestTerm()
     {
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'SELECT termid FROM public.terms
             WHERE start <= NOW() ORDER BY finish DESC LIMIT 1'
         );
@@ -572,7 +571,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     public static function getAllSeasonsInTerm($term_id)
     {
         return self::resultSetToObjArray(
-            self::$db->fetchColumn(
+            self::$container['database']->fetchColumn(
                 'SELECT show_season_id FROM schedule.show_season WHERE termid=$1',
                 [$term_id]
             )
@@ -597,14 +596,14 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         if ($this->submitted == null) {
             return false;
         }
-        self::$db->query('BEGIN');
-        self::$db->query('UPDATE schedule.show_season SET submitted=NULL WHERE show_season_id=$1', [$this->getID()], true);
+        self::$container['database']->query('BEGIN');
+        self::$container['database']->query('UPDATE schedule.show_season SET submitted=NULL WHERE show_season_id=$1', [$this->getID()], true);
         $this->submitted = null;
 
         $this->setMeta('reject-reason', $reason);
 
         if ($notify_user) {
-            $sname = Config::$short_name;
+            $sname = self::$container['config']->short_name;
             MyRadioEmail::sendEmailToUserSet(
                 $this->getShow()->getCreditObjects(),
                 $this->getMeta('title') . ' Application Rejected',
@@ -622,7 +621,7 @@ EOT
             );
         }
 
-        self::$db->query('COMMIT');
+        self::$container['database']->query('COMMIT');
     }
 
     public function getMeta($meta_string)
@@ -895,7 +894,7 @@ EOT
             + ($req_time['day'] * 86400);
 
         //Now it's time to BEGIN to COMMIT!
-        self::$db->query('BEGIN');
+        self::$container['database']->query('BEGIN');
         /**
          * This will iterate over each week, decide if it should be scheduled,
          * then schedule it if it should. Simples.
@@ -908,12 +907,12 @@ EOT
 
                 $conflict = MyRadio_Scheduler::getScheduleConflict($day_start + $req_time['start_time'], $day_start + $start_time + $req_time['duration'] - 1);
                 if (!empty($conflict)) {
-                    self::$db->query('ROLLBACK');
+                    self::$container['database']->query('ROLLBACK');
                     throw new MyRadioException('A show is already scheduled for this time: ' . print_r($conflict, true));
                 }
 
                 //This week is due to be scheduled! QUERY! QUERY!
-                $r = self::$db->fetchAll(
+                $r = self::$container['database']->fetchAll(
                     'INSERT INTO schedule.show_season_timeslot
                     (show_season_id, start_time, duration, memberid, approvedid)
                     VALUES ($1, $2, $3, $4, $5) RETURNING show_season_timeslot_id',
@@ -922,7 +921,7 @@ EOT
                         CoreUtils::getTimestamp($show_time),
                         $req_time['duration'],
                         $this->owner->getID(),
-                        $_SESSION['memberid']
+                        self::$container['session']['memberid']
                     ]
                 );
                 if (empty($r)) {
@@ -933,21 +932,21 @@ EOT
 
                 // Clear the Schedule cache for this week
                 $weekAndYear = CoreUtils::getYearAndWeekNo($show_time);
-                self::$cache->delete('MyRadioScheduleFor' . $weekAndYear[0] . 'W' . $weekAndYear[1]);
+                self::$container['cache']->delete('MyRadioScheduleFor' . $weekAndYear[0] . 'W' . $weekAndYear[1]);
 
             }
         }
         //COMMIT
-        self::$db->query('COMMIT');
+        self::$container['database']->query('COMMIT');
         $this->updateCacheObject();
         //Email the user
         /**
-         * @todo Make this nicer and configurable and stuff
+         * @todo Make this nicer and self::$container['config']urable and stuff
          */
         $message = "
 Hello,
 
-  Please note that one of your shows has been allocated the following timeslots on the ".Config::$short_name." Schedule:
+  Please note that one of your shows has been allocated the following timeslots on the ".self::$container['config']->short_name." Schedule:
 
 $times
 
@@ -955,7 +954,7 @@ $times
 
   If you have any questions about your application, direct them to pc@ury.org.uk
 
-  ~ ".Config::$short_name." Scheduling Legume";
+  ~ ".self::$container['config']->short_name." Scheduling Legume";
 
         if (!empty($times)) {
             MyRadioEmail::sendEmailToUser($this->owner, $this->getMeta('title') . ' Scheduled', $message);
@@ -979,14 +978,14 @@ $times
         }
 
         $email = 'Please note that your show, ' . $this->getMeta('title') . ' has been cancelled for the rest of the current Season. This is the following timeslots: ' . $timeslot_str;
-        $email .= "\r\n\r\nRegards\r\n" . Config::$long_name . " Programming Team";
+        $email .= "\r\n\r\nRegards\r\n" . self::$container['config']->long_name . " Programming Team";
 
         foreach ($this->getShow()->getCredits() as $credit) {
             $u = MyRadio_User::getInstance($credit);
             MyRadioEmail::sendEmailToUser($u, 'Show Cancelled', $email);
         }
 
-        $r = (bool) self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_id=$1 AND start_time >= NOW()', [$this->getID()]);
+        $r = (bool) self::$container['database']->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_id=$1 AND start_time >= NOW()', [$this->getID()]);
 
         $this->updateCacheObject();
 
@@ -1002,7 +1001,7 @@ $times
      */
     public function getFutureTimeslots()
     {
-        return self::$db->fetchAll(
+        return self::$container['database']->fetchAll(
             'SELECT show_season_timeslot_id, start_time, duration FROM schedule.show_season_timeslot
             WHERE show_season_id=$1 AND start_time >= NOW()',
             [$this->getID()]

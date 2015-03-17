@@ -9,21 +9,17 @@ namespace MyRadio;
 use \MyRadio\MyRadio\CoreUtils;
 
 /**
- * This singleton class handles actual database connection
+ * This class handles actual database connection
  *
  * This is a Critical include!
  *
  * @depends Config
+ * @todo Create a Database Interace, a Database superclass (for metrics)
+ *        and a PostgresDatabase subclass
  * @package MyRadio_Core
  */
 class Database
 {
-    /**
-     * Stores the singleton instance of the Database object
-     * @var Database
-     */
-    private static $me;
-
     /**
      * Stores the resource id of the connection to the PostgreSQL database
      * @var Resource
@@ -45,13 +41,13 @@ class Database
     /**
      * Constructs the singleton database connector
      */
-    private function __construct()
+    public function __construct($config)
     {
         $this->db = @pg_connect(
-            'host='. Config::$db_hostname
-            .' port=5432 dbname='.Config::$db_name
-            .' user='. Config::$db_user
-            .' password='. Config::$db_pass
+            'host='. $config->db_hostname
+            .' port=5432 dbname='.$config->db_name
+            .' user='. $config->db_user
+            .' password='. $config->db_pass
         );
         if (!$this->db) {
             //Database isn't working. Throw an EVERYTHING IS BROKEN Exception
@@ -205,19 +201,6 @@ class Database
         }
 
         return pg_fetch_all_columns($result, 0);
-    }
-
-    /**
-     * Used to create the object, or return a reference to it if it already exists
-     * @return Database One of these things
-     */
-    public static function getInstance()
-    {
-        if (!self::$me) {
-            self::$me = new self();
-        }
-
-        return self::$me;
     }
 
     /**

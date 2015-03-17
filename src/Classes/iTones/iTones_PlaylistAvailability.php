@@ -37,7 +37,7 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
         $this->timeslot_table = 'jukebox.playlist_timeslot';
         $this->id_field = 'playlist_availability_id';
 
-        $result = self::$db->fetchOne(
+        $result = self::$container['database']->fetchOne(
             'SELECT * FROM ' . $this->availability_table . ' WHERE ' . $this->id_field . '=$1',
             [$id]
         );
@@ -92,7 +92,7 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
     public function setWeight($weight)
     {
         $this->weight = $weight;
-        self::$db->query(
+        self::$container['database']->query(
             'UPDATE ' . $this->availability_table . ' SET weight=$1 WHERE ' . $this->id_field . '=$2',
             [$weight, $this->getID()]
         );
@@ -138,7 +138,7 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
             $effective_from = time();
         }
 
-        $result = self::$db->fetchColumn(
+        $result = self::$container['database']->fetchColumn(
             'INSERT INTO jukebox.playlist_availability
             (playlistid, weight, effective_from, effective_to, memberid, approvedid)
             VALUES ($1, $2, $3, $4, $5, $5) RETURNING playlist_availability_id',
@@ -194,7 +194,7 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
     public static function getAvailabilitiesForPlaylist($playlistid)
     {
         return self::resultSetToObjArray(
-            self::$db->fetchColumn(
+            self::$container['database']->fetchColumn(
                 'SELECT playlist_availability_id FROM jukebox.playlist_availability WHERE playlistid=$1',
                 [$playlistid]
             )
