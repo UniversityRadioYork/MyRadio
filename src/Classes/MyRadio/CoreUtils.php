@@ -68,7 +68,7 @@ class CoreUtils extends ContainerSubject
      * @param  String $module The module to check
      * @param  String $action The action to check. Default 'default'
      * @return boolean Whether or not the request is valid
-     * @assert ('Core', 'default') === true
+     * @assert ('MyRadio', 'default') === true
      * @assert ('foo', 'barthatdoesnotandwillnoteverexisteverbecauseitwouldbesilly') === false
      * @assert ('../foo', 'bar') === false
      * @assert ('foo', '../bar') === false
@@ -96,6 +96,7 @@ class CoreUtils extends ContainerSubject
      * Provides a template engine object compliant with TemplateEngine interface
      * @return MyRadioTwig
      * @todo Make this generalisable for drop-in template engine replacements
+     * @todo Deprecate this, add autoloader to init, and replace with Container pattern
      * @assert () !== false
      * @assert () !== null
      */
@@ -130,11 +131,16 @@ class CoreUtils extends ContainerSubject
      * @param  string $timestring Some form of time
      * @param  bool   $time       Whether to include Hours,Mins. Default yes
      * @return String A happy time
-     * @assert (40000) == '01/01/1970'
+     * @assert (40000, false) == '01/01/1970'
      */
     public static function happyTime($timestring, $time = true, $date = true)
     {
-        return date(($date ? 'd/m/Y' : '') . ($time && $date ? ' ' : '') . ($time ? 'H:i' : ''), is_numeric($timestring) ? $timestring : strtotime($timestring));
+        return date(
+            ($date ? 'd/m/Y' : '') .
+            ($time && $date ? ' ' : '') .
+            ($time ? 'H:i' : ''),
+            is_numeric($timestring) ? $timestring : strtotime($timestring)
+        );
     }
 
     /**
@@ -144,24 +150,19 @@ class CoreUtils extends ContainerSubject
      */
     public static function intToTime($int)
     {
-        $hours = floor($int / 3600);
-        if ($hours === 0) {
-            $hours = null;
-        } else {
-            $hours = $hours . ':';
+        $time = date('i:s', $int);
+        if ($int >= 3600) {
+            $time = str_pad(floor($int / 3600), 2, '0', STR_PAD_LEFT) . ':' . $time;
         }
 
-        $mins = floor(($int - ($hours * 3600)) / 60);
-        $secs = ($int - ($hours * 3600) - ($mins * 60));
-
-        return "$hours$mins:$secs";
+        return $time;
     }
 
     /**
      * Returns a postgresql-formatted timestamp
      * @param  int $time The time to get the timestamp for. Default right now.
      * @return String a timestamp
-     * @assert (30) == '1970-01-01 00:00:30'
+     * @assert (30) == '1970-01-01 00:00:30+00'
      */
     public static function getTimestamp($time = null)
     {
@@ -214,7 +215,7 @@ class CoreUtils extends ContainerSubject
             // Default to this year
             $account_reset_time = strtotime('+' . self::$container['config']->account_expiry_before . ' days');
             if (empty($term) || strtotime($term[0]) <= $account_reset_time) {
-                CoreUtils::$academicYear = date('Y');
+                self::$academicYear = date('Y');
             } else {
                 self::$academicYear = date('Y') - 1;
             }

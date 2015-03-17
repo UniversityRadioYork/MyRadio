@@ -9,4 +9,4 @@
 require_once __DIR__ . '/../Classes/MyRadioInit.php';
 use \MyRadio\MyRadioInit;
 
-$container = MyRadioInit::init();
+$container = MyRadioInit::init(false);

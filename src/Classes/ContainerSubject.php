@@ -32,4 +32,13 @@ abstract class ContainerSubject
     {
         self::$container = $container;
     }
+
+    /**
+     * Gets the current container
+     * @return Container
+     */
+    public static function getContainer()
+    {
+        return self::$container;
+    }
 }

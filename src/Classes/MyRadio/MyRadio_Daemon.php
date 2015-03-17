@@ -11,7 +11,7 @@ abstract class MyRadio_Daemon
         return false;
     }
 
-    public static function run();
+    abstract public static function run();
 
     protected static function getVal($container, $key)
     {
