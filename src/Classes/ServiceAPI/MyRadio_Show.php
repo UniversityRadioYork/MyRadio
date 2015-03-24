@@ -346,7 +346,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         //Actually commit the show to the database!
         self::$db->query('COMMIT');
 
-        $show = new self($show_id);
+        $show = self::factory($show_id);
 
         /**
          * Enable mixcloud upload if requested
