@@ -94,7 +94,7 @@ $(document).ajaxSuccess(
         } catch (error) {
             return; //Not JSON
         }
-        if (data.myury_errors !== null) {
+        if (data.hasOwnProperty("myury_errors") && data.myury_errors.length > 0) {
             myury.errorReport(data.myury_errors, e, xhr, settings);
         }
     }
