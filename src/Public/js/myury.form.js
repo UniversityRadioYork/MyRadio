@@ -39,14 +39,14 @@ window.MyRadioForm = {
                         .concat(Bloodhound.tokenizers.whitespace(i.sname));
                     },
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
-                    limit: 5,
+                    limit: 25,
                     dupDetector: function(remote, local) {
                         return local.memberid == remote.memberid;
                     },
                     prefetch: {
                         url: myury.makeURL('MyRadio', 'a-findmember', {term: null, limit: 500})
                     },
-                    remote: myury.makeURL('MyRadio', 'a-findmember', {limit: 5, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+                    remote: myury.makeURL('MyRadio', 'a-findmember', {limit: 25, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
                 }
             );
             memberLookup.initialize();
@@ -100,14 +100,14 @@ window.MyRadioForm = {
                         .concat(Bloodhound.tokenizers.whitespace(i.artist));
                     },
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
-                    limit: 5,
+                    limit: 25,
                     dupDetector: function(remote, local) {
                         return local.trackid == remote.trackid;
                     },
                     prefetch: {
                         url: myury.makeURL('MyRadio', 'a-findtrack', {term: null, limit: 500})
                     },
-                    remote: myury.makeURL('MyRadio', 'a-findtrack', {limit: 5, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+                    remote: myury.makeURL('MyRadio', 'a-findtrack', {limit: 25, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
                 }
             );
             trackLookup.initialize();
@@ -157,14 +157,14 @@ window.MyRadioForm = {
                 {
                     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('title'),
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
-                    limit: 5,
+                    limit: 25,
                     dupDetector: function(remote, local) {
                         return local.title == remote.title;
                     },
                     prefetch: {
                         url: myury.makeURL('MyRadio', 'a-findartist', {term: null, limit: 500})
                     },
-                    remote: myury.makeURL('MyRadio', 'a-findartist', {limit: 5, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+                    remote: myury.makeURL('MyRadio', 'a-findartist', {limit: 25, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
                 }
             );
             artistLookup.initialize();
@@ -216,14 +216,14 @@ window.MyRadioForm = {
                         .concat(Bloodhound.tokenizers.whitespace(i.artist));
                     },
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
-                    limit: 5,
+                    limit: 25,
                     dupDetector: function(remote, local) {
                         return local.title == remote.title;
                     },
                     prefetch: {
                         url: myury.makeURL('MyRadio', 'a-findalbum', {term: null, limit: 500})
                     },
-                    remote: myury.makeURL('MyRadio', 'a-findalbum', {limit: 5, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+                    remote: myury.makeURL('MyRadio', 'a-findalbum', {limit: 25, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
                 }
             );
             albumLookup.initialize();
