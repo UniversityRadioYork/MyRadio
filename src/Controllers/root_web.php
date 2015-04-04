@@ -69,6 +69,6 @@ try {
         //Redirect to login
         self::redirect('MyRadio', 'login', ['next' => $container['server']['REQUEST_URI']]);
     } else {
-        raise $e;
+        throw $e;
     }
 }
