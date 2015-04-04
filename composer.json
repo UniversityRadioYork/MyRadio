@@ -3,13 +3,17 @@
         "recaptcha/php5": "~1.1",
         "james-heinrich/getid3": "~1.9",
         "ezyang/htmlpurifier": "~4.6",
-        "pimple/pimple": "~3.0"
+        "pimple/pimple": "~3.0",
+        "twig/twig": "~1.18"
     },
     "config": {
         "vendor-dir": "src/vendor"
     },
     "require-dev": {
         "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~4.5"
+        "phpunit/phpunit": "~4.5",
+        "phploc/phploc": "~2.1",
+        "phpmd/phpmd": "~2.2",
+        "brianium/paratest": "0.12.*"
     }
 }

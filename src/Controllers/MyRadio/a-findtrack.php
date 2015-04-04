@@ -31,4 +31,4 @@ if (isset($_REQUEST['id'])) {
         ]
     );
 }
-CoreUtils::dataToJSON($data);
+echo CoreUtils::dataToJSON($data);

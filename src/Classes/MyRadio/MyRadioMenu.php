@@ -127,7 +127,7 @@ class MyRadioMenu extends ContainerSubject
     private function userHasPermission($item)
     {
         return empty($item['action']) or
-            CoreUtils::requirePermissionAuto($item['module'], $item['action'], false);
+            CoreUtils::requirePermissionAuto($item['module'], $item['action']);
     }
 
     /**

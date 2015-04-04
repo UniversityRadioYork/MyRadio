@@ -58,6 +58,8 @@
    <arg value="${basedir}/build/logs/phploc.csv" />
    <arg value="--log-xml" />
    <arg value="${basedir}/build/logs/phploc.xml" />
+   <arg value="--exclude" />
+   <arg value="${basedir}/src/vendor" />
    <arg path="${basedir}/src" />
   </exec>
  </target>
@@ -78,7 +80,7 @@
    <arg value="text" />
    <arg value="${basedir}/build/phpmd.xml" />
    <arg value="--exclude" />
-   <arg value="vendor" />
+   <arg value="${basedir}/src/vendor" />
   </exec>
  </target>
 
@@ -128,6 +130,9 @@
  </target>
 
  <target name="phpunit" description="Run unit tests with PHPUnit">
-  <exec executable="phpunit" failonerror="true"/>
+  <exec executable="phpunit" failonerror="true">
+    <arg value="--coverage-html=build/coverage" />
+    <arg value="--coverage-clover=build/logs/clover.xml" />
+  </exec>
  </target>
 </project>

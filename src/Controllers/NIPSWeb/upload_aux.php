@@ -10,4 +10,4 @@ use \MyRadio\NIPSWeb\NIPSWeb_ManagedItem;
 
 $data = NIPSWeb_ManagedItem::cacheItem($_FILES['audio']['tmp_name']);
 
-CoreUtils::dataToJSON($data);
+echo CoreUtils::dataToJSON($data);

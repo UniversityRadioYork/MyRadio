@@ -19,4 +19,4 @@ if (isset($_FILES['audio']['error']) && $_FILES['audio']['error'] !== 0) {
 
 $data = MyRadio_Track::cacheAndIdentifyUploadedTrack($_FILES['audio']['tmp_name']);
 
-CoreUtils::dataToJSON($data);
+echo CoreUtils::dataToJSON($data);

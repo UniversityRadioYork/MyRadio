@@ -57,4 +57,4 @@ if ($box == "artist") {
 }
 
 $data = $dataout;
-CoreUtils::dataToJSON($data);
+echo CoreUtils::dataToJSON($data);

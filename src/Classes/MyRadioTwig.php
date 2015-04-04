@@ -41,7 +41,7 @@ class MyRadioTwig extends ContainerSubject implements \MyRadio\Iface\TemplateEng
             ->addVariable(
                 'impersonatorurl',
                 !empty(self::$container['session']['myradio-impersonating'])
-                ? (CoreUtils::makeURL('MyRadio', 'impersonate', ['next' => $_SERVER['REQUEST_URI']]))
+                ? (CoreUtils::makeURL('MyRadio', 'impersonate', ['next' => self::$container['server']['REQUEST_URI']]))
                 : ''
             )
             ->addVariable(
@@ -56,7 +56,7 @@ class MyRadioTwig extends ContainerSubject implements \MyRadio\Iface\TemplateEng
             ->addVariable('rewriteurl', self::$container['config']->rewrite_url)
             ->addVariable('serviceName', 'MyRadio')
             ->setTemplate('stripe.twig')
-            ->addVariable('uri', $_SERVER['REQUEST_URI'])
+            ->addVariable('uri', self::$container['server']['REQUEST_URI'])
             ->addVariable('module', empty($GLOBALS['module']) ? self::$container['config']->default_module : $GLOBALS['module'])
             ->addVariable('action', empty($GLOBALS['action']) ? self::$container['config']->default_action : $GLOBALS['action'])
             ->addVariable('config', self::$container['config']->getPublicConfig())

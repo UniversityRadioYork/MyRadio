@@ -27,4 +27,4 @@ if ($lock === false) {
     $data = ['SUCCESS', $lock];
 }
 
-CoreUtils::dataToJSON($data);
+echo CoreUtils::dataToJSON($data);

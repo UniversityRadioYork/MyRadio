@@ -149,7 +149,7 @@ while (true) {
         MyRadioException::resetExceptionCount();
         MyRadioError::resetErrorCount();
     } catch (MyRadioException $e) {
-        dlog('Caught exception finishing up Daemon cycle: ' $e->getMessage(), 1);
+        dlog('Caught exception finishing up Daemon cycle: ' . $e->getMessage(), 1);
     }
 
     //Reload the configuration to see if it has changed

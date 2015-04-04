@@ -46,12 +46,6 @@ class CoreUtils extends ContainerSubject
     private static $typeid_descr = [];
 
     /**
-     * Stores actionid => uri mappings of custom web addresses (e.g. /myury/iTones/default gets mapped to /itones)
-     * @var Array
-     */
-    private static $custom_uris = [];
-
-    /**
      * Stores module name => id mappings to reduce query load - they are initialised once and stored
      * @var Array
      */
@@ -102,7 +96,7 @@ class CoreUtils extends ContainerSubject
      */
     public static function getTemplateObject()
     {
-        require_once 'Twig/Autoloader.php';
+        require_once 'vendor/twig/twig/lib/Twig/Autoloader.php';
         \Twig_Autoloader::register();
 
         return new MyRadioTwig();
@@ -238,19 +232,20 @@ class CoreUtils extends ContainerSubject
 
     /**
      * Redirects back to previous page.
+     * @codeCoverageIgnore
      */
     public static function back()
     {
-        header('Location: '.$_SERVER['HTTP_REFERER']);
+        header('Location: ' . $_SERVER['HTTP_REFERER']);
     }
 
     /**
      * Responds with nocontent.
+     * @codeCoverageIgnore
      */
     public static function nocontent()
     {
         header('HTTP/1.1 204 No Content');
-        exit;
     }
 
     /**
@@ -266,11 +261,10 @@ class CoreUtils extends ContainerSubject
 
         $canDisplayErr = self::$container['config']->display_errors || CoreUtils::hasPermission(AUTH_SHOWERRORS);
         if (!empty(MyRadioError::$php_errorlist) && $canDisplayErr) {
-            $data['myury_errors'] = MyRadioError::$php_errorlist;
+            $data['myradio_errors'] = MyRadioError::$php_errorlist;
         }
 
-        echo json_encode($data, JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES);
-        exit;
+        return json_encode($data, JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES);
     }
 
     /**
@@ -280,12 +274,16 @@ class CoreUtils extends ContainerSubject
      * @param  string $action The optional action inside the module to target.
      * @param  array  $params Additional GET variables
      * @return null   Nothing.
+     * @codeCoverageIgnore
      */
     public static function redirect($module, $action = null, $params = [])
     {
         header('Location: ' . self::makeURL($module, $action, $params));
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public static function redirectWithMessage($module, $action, $message)
     {
         self::redirect($module, $action, ['message' => base64_encode($message)]);
@@ -297,22 +295,10 @@ class CoreUtils extends ContainerSubject
      * @param  string $action
      * @param  array  $params Additional GET variables
      * @return String URL to Module/Action
+     * @todo remove deprecated custom_uri functionality?
      */
     public static function makeURL($module, $action = null, $params = [])
     {
-        if (empty(self::$custom_uris) && class_exists('Database')) {
-            $result = self::$container['database']->fetchAll('SELECT actionid, custom_uri FROM myury.actions');
-
-            foreach ($result as $row) {
-                self::$custom_uris[$row['actionid']] = $row['custom_uri'];
-            }
-        }
-        //Check if there is a custom URL configured
-        $key = self::getActionId(self::getModuleId($module), empty($action) ? self::$container['config']->default_action : $action);
-        if (!empty(self::$custom_uris[$key])) {
-            return self::$custom_uris[$key];
-        }
-
         if (self::$container['config']->rewrite_url) {
             $str = self::$container['config']->base_url . $module . '/' . (($action !== null) ? $action . '/' : '');
             if (!empty($params)) {
@@ -334,6 +320,9 @@ class CoreUtils extends ContainerSubject
 
             if (!empty($params)) {
                 if (is_string($params)) {
+                    if (substr($params, 0, 1) === '?') {
+                        $params = substr($params, 1);
+                    }
                     $str .= "&$params";
                 } else {
                     foreach ($params as $k => $v) {
@@ -453,7 +442,7 @@ class CoreUtils extends ContainerSubject
      * @param  bool   $require If true, will die if the user does not have permission. If false, will just return false
      * @return bool   True on required or authorised, false on unauthorised
      */
-    public static function requirePermissionAuto($module, $action, $require = true)
+    public static function requirePermissionAuto($module, $action)
     {
         self::setUpAuth();
         $db = self::$container['database'];
@@ -471,7 +460,7 @@ class CoreUtils extends ContainerSubject
 
         //Don't allow empty result sets - throw an Exception as this is very very bad.
         if (empty($result) && $require) {
-            throw new MyRadioException('There are no permissions defined for the ' . $module . '/' . $action . ' action!');
+            throw new MyRadioException('There are no permissions defined for the ' . $module . '/' . $action . ' action!', 500);
         }
 
         $authorised = false;
@@ -483,26 +472,15 @@ class CoreUtils extends ContainerSubject
             }
         }
 
-        if (!$authorised && $require) {
+        if (!$authorised) {
             //Requires login
             if (!isset(self::$container['session']['memberid']) || self::$container['session']['auth_use_locked'] !== false) {
-                $is_ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
-                                && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
-                            || empty($_SERVER['REMOTE_ADDR']);
-                if ($is_ajax) {
-                    throw new MyRadioException('Login required', 401);
-                } else {
-                    self::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
-                }
-            } else {
-                //Authenticated, but not authorized
-                require 'Controllers/Errors/403.php';
+                throw new MyRadioException('Login required', 401);
             }
-            exit;
         }
 
-        //Return true on required success, or whether authorised otherwise
-        return $require || $authorised;
+        //Return whether authorised
+        return $authorised;
     }
 
     /**

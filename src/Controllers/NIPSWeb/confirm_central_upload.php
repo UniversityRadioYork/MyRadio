@@ -18,4 +18,4 @@ $data = MyRadio_Track::identifyAndStoreTrack(
 );
 $data['fileid'] = $_REQUEST['fileid'];
 
-CoreUtils::dataToJSON($data);
+echo CoreUtils::dataToJSON($data);

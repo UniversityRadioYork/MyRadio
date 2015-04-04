@@ -33,4 +33,4 @@ if (($src <= 0) || ($src > 8)) {
     }
 }
 
-CoreUtils::dataToJSON($data);
+echo CoreUtils::dataToJSON($data);

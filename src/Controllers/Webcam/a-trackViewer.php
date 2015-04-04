@@ -14,4 +14,4 @@ $_SESSION['webcam_lastcounterincrement'] = time();
 
 $data = MyRadio_Webcam::incrementViewCounter(MyRadio_User::getInstance());
 
-CoreUtils::dataToJSON($data);
+echo CoreUtils::dataToJSON($data);

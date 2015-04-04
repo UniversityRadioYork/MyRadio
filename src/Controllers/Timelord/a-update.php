@@ -21,4 +21,4 @@ $data = [
     'obit' => $sel->isObitHappening()
 ];
 
-CoreUtils::dataToJSON($data);
+echo CoreUtils::dataToJSON($data);

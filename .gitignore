@@ -13,3 +13,4 @@ build/logs/junit.xml
 build/coverage
 build/logs/clover.xml
 *.db
+cache.properties

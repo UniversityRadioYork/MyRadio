@@ -10,4 +10,4 @@ use \MyRadio\NIPSWeb\NIPSWeb_Token;
 
 $data = ['token' => NIPSWeb_Token::getEditToken()];
 
-CoreUtils::dataToJSON($data);
+echo CoreUtils::dataToJSON($data);

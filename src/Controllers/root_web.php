@@ -17,8 +17,8 @@ require_once __DIR__.'/root.php';
  * Notice how the default Action is 'default'. This means that the "default" Controller should exist for all Modules.
  * The top half deals with Rewritten URLs, which get mapped to ?request=
  */
-if (isset($_REQUEST['request'])) {
-    $info = explode('/', $_REQUEST['request']);
+if (isset($container['request'])) {
+    $info = explode('/', $container['request']);
     //If both are defined, it's Module/Action
     if (!empty($info[1])) {
         $module = $info[0];
@@ -35,8 +35,8 @@ if (isset($_REQUEST['request'])) {
         exit;
     }
 } else {
-    $module = (isset($_REQUEST['module']) ? $_REQUEST['module'] : $container['config']->default_module);
-    $action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : $container['config']->default_action);
+    $module = (isset($container['module']) ? $container['module'] : $container['config']->default_module);
+    $action = (isset($container['action']) ? $container['action'] : $container['config']->default_action);
     if (!CoreUtils::isValidController($module, $action)) {
         //Yep, that doesn't exist.
         require 'Controllers/Errors/404.php';
@@ -46,19 +46,29 @@ if (isset($_REQUEST['request'])) {
 
 /**
  * Use the Database authentication data to check whether the user has permission to access that.
- * This method will automatically cause a premature exit if necessary.
  *
  * IMPORTANT: This will cause a fatal error if an action does not have any permissions associated with it.
  * This is to prevent developers from forgetting to assign permissions to an action.
  */
-CoreUtils::requirePermissionAuto($module, $action);
+try {
+    if (CoreUtils::requirePermissionAuto($module, $action)) {
+        /**
+         * If a Joyride is defined, start it
+         */
+        if (isset($container['joyride'])) {
+            $_SESSION['joyride'] = $container['joyride'];
+        }
 
-/**
- * If a Joyride is defined, start it
- */
-if (isset($_REQUEST['joyride'])) {
-    $_SESSION['joyride'] = $_REQUEST['joyride'];
+        //Include the requested action
+        require 'Controllers/'. $module . '/' . $action . '.php';
+    } else {
+        require 'Controllers/Errors/403.php';
+    }
+} catch (MyRadioException $e) {
+    if ($e->code === 401 && $container['is_rest']) {
+        //Redirect to login
+        self::redirect('MyRadio', 'login', ['next' => $container['server']['REQUEST_URI']]);
+    } else {
+        raise $e;
+    }
 }
-
-//Include the requested action
-require 'Controllers/'. $module . '/' . $action . '.php';

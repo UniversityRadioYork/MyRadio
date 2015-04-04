@@ -94,8 +94,8 @@ $(document).ajaxSuccess(
         } catch (error) {
             return; //Not JSON
         }
-        if (data.myury_errors !== null) {
-            myury.errorReport(data.myury_errors, e, xhr, settings);
+        if (data.myradio_errors !== null) {
+            myury.errorReport(data.myradio_errors, e, xhr, settings);
         }
     }
 );

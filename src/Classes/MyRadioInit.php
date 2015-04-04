@@ -31,7 +31,9 @@ class MyRadioInit
          * This number is incremented every time a database patch is released.
          * Patches are scripts in schema/patches.
          */
-        define('MYRADIO_CURRENT_SCHEMA_VERSION', 0);
+        if (!defined('MYRADIO_CURRENT_SCHEMA_VERSION')) {
+            define('MYRADIO_CURRENT_SCHEMA_VERSION', 0);
+        }
         /**
          * Sets the include path to include MyRadio at the end - makes for nicer includes
          */
@@ -71,6 +73,7 @@ class MyRadioInit
     /**
      * Build a Pimple Container with services. Register it with ServiceAPI.
      * @return Container
+     * @codeCoverageIgnore
      */
     protected static function setupServiceContainer()
     {
@@ -117,6 +120,23 @@ class MyRadioInit
 
         $container['config'] = function() {
             return new \MyRadio\Config;
+        };
+
+        $container['request'] = function() {
+            return $_REQUEST;
+        };
+
+        $container['server'] = function() {
+            return $_SERVER;
+        };
+
+        // returns if the current request looks like it's ajaxy
+        $container['is_rest'] = function() {
+            return (
+                    isset(self::$container['server']['HTTP_X_REQUESTED_WITH'])
+                    && strtolower(self::$container['server']['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
+                )
+                || empty(self::$container['server']['REMOTE_ADDR']);
         };
 
         return $container;

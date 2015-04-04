@@ -14,7 +14,7 @@ if ($ts->getSeason()->getShow()->isCurrentUserAnOwner()
     or CoreUtils::hasPermission(AUTH_EDITSHOWS)
 ) {
     $data = $ts->getSigninInfo();
-    CoreUtils::dataToJSON($data);
+    echo CoreUtils::dataToJSON($data);
 } else {
     require_once 'Controllers/Errors/403.php';
 }

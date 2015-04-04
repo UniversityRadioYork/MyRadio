@@ -16,4 +16,4 @@ if (!isset($_REQUEST['term'])) {
 }
 
 $data = MyRadio_User::getInstance((int) $_REQUEST['term'])->getName();
-CoreUtils::dataToJSON($data);
+echo CoreUtils::dataToJSON($data);

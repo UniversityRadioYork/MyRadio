@@ -12,4 +12,4 @@ use \MyRadio\NIPSWeb\NIPSWeb_AutoPlaylist;
 
  $data = NIPSWeb_AutoPlaylist::getInstance($playlistid)->getTracks();
 
-CoreUtils::dataToJSON($data);
+echo CoreUtils::dataToJSON($data);

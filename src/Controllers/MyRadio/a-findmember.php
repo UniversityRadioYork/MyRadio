@@ -21,4 +21,4 @@ $data = MyRadio_User::findByName(
     isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : $container['config']->ajax_limit_default
 );
 
-CoreUtils::dataToJSON($data);
+echo CoreUtils::dataToJSON($data);

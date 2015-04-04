@@ -15,4 +15,4 @@ if (function_exists("uploadprogress_get_info")) {
     $data = false;
 }
 
-CoreUtils::dataToJSON($data);
+echo CoreUtils::dataToJSON($data);

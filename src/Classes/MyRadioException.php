@@ -24,6 +24,19 @@ class MyRadioException extends \RuntimeException
     private $trace;
     private $traceStr;
 
+    private $codeMap = [
+        400 => 'Bad Request',
+        401 => 'Unauthorized',
+        403 => 'Forbidden',
+        404 => 'Not Found',
+        405 => 'Method Not Allowed',
+        410 => 'Gone',
+        416 => 'Requested Range Not Satisfiable',
+        418 => 'I\'m a teapot',
+        500 => 'Internal Server Error',
+        503 => 'Service Unavailable'
+    ];
+
     /**
      * Extends the default session by enabling useful output
      * @param String     $message  A nice message explaining what is going on
@@ -64,9 +77,7 @@ class MyRadioException extends \RuntimeException
         $silent = (defined('SILENT_EXCEPTIONS') && SILENT_EXCEPTIONS);
 
         if (class_exists('\MyRadio\Config')) {
-            $is_ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
-                    && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
-                || empty($_SERVER['REMOTE_ADDR']);
+            $is_ajax = $container['is_rest'];
 
             if ($container['config']->email_exceptions
                 && class_exists('\MyRadio\MyRadioEmail')
@@ -102,7 +113,7 @@ class MyRadioException extends \RuntimeException
             ) {
                 if ($is_ajax) {
                     //This is an Ajax/CLI request. Return JSON
-                    header('HTTP/1.1 ' . $this->code . ' Internal Server Error');
+                    header('HTTP/1.1 ' . $this->code . ' ' . $this->codeMap[$this->code]);
                     header('Content-Type: application/json');
                     echo json_encode(
                         [

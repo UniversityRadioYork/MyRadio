@@ -1,10 +1,7 @@
 <?php
 use \MyRadio\MyRadio\CoreUtils;
 
-/**
- * @backupStaticAttributes enabled
- */
-class CoreUtilsTest extends PHPUnit_Framework_TestCase {
+class CoreUtilsTest extends MyRadio_TestCase {
 
 	public function testIsValidController()
 	{
@@ -12,6 +9,11 @@ class CoreUtilsTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(CoreUtils::isValidController('MyRadio'));
 		$this->assertFalse(CoreUtils::isValidController('MyRadio/../'));
 		$this->assertFalse(CoreUtils::isValidController('iDoNotExistSorry'));
+	}
+
+	public function testGetTemplateObject()
+	{
+		$this->assertInstanceOf('\MyRadio\Iface\TemplateEngine', CoreUtils::getTemplateObject());
 	}
 
 	public function testHappyTime()
@@ -30,6 +32,7 @@ class CoreUtilsTest extends PHPUnit_Framework_TestCase {
 	public function testGetTimestamp()
 	{
 		$this->assertEquals('1970-01-01 00:00:30+00', CoreUtils::getTimestamp(30));
+		$this->assertEquals(gmdate('Y-m-d H:i:s+00'), CoreUtils::getTimestamp());
 	}
 
 	public function testGetYearAndWeekNo()
@@ -41,13 +44,11 @@ class CoreUtilsTest extends PHPUnit_Framework_TestCase {
 
 	public function testGetAcademicYear()
 	{
-		$container = CoreUtils::getContainer();
-		$container['database'] = function() {
+		self::wireMockDatabase(function() {
 			$db = \Mockery::mock('\MyRadio\Database');
 			$db->shouldDeferMissing()->shouldReceive('fetchColumn')->andReturn(['2015-03-09']);
 			return $db;
-		};
-		CoreUtils::registerContainer($container);
+		});
 
 		$this->assertEquals(2015, CoreUtils::getAcademicYear(1426630418)); //17th March 2015
 		$this->assertEquals(2015, CoreUtils::getAcademicYear(1420235395)); //2nd Jan 2015
@@ -58,6 +59,41 @@ class CoreUtilsTest extends PHPUnit_Framework_TestCase {
 	{
 		$this->assertEquals('60 seconds', CoreUtils::makeInterval(0, 60));
 		$this->assertEquals('-60 seconds', CoreUtils::makeInterval(60, 0));
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 */
+	public function testDataToJSON()
+	{
+		$this->assertEquals('null', CoreUtils::dataToJSON(null));
+		$this->assertEquals('[]', CoreUtils::dataToJSON([]));
+		$this->assertEquals('{"foo":"bar"}', CoreUtils::dataToJSON(["foo"=>"bar"]));
+
+		\MyRadio\MyRadioError::$php_errorlist = ['foo went wrong'];
+		CoreUtils::getContainer()['config']->display_errors = true;
+		$this->assertEquals('{"foo":"bar","myradio_errors":["foo went wrong"]}', CoreUtils::dataToJSON(["foo"=>"bar"]));
+	}
+
+	public function testMakeURL()
+	{
+		CoreUtils::getContainer()['config']->base_url = '//example.com/myradio/';
+		CoreUtils::getContainer()['config']->rewrite_url = true;
+		$this->assertEquals('//example.com/myradio/foo/bar/', CoreUtils::makeURL('foo', 'bar'));
+		$this->assertEquals('//example.com/myradio/foo/bar/?meow=cat', CoreUtils::makeURL('foo', 'bar', ['meow' => 'cat']));
+		$this->assertEquals('//example.com/myradio/foo/bar/?meow=cat', CoreUtils::makeURL('foo', 'bar', 'meow=cat'));
+		$this->assertEquals('//example.com/myradio/foo/bar/?meow=cat', CoreUtils::makeURL('foo', 'bar', '?meow=cat'));
+
+		CoreUtils::getContainer()['config']->rewrite_url = false;
+		$this->assertEquals('//example.com/myradio/?module=foo&action=bar', CoreUtils::makeURL('foo', 'bar'));
+		$this->assertEquals('//example.com/myradio/?module=foo&action=bar&meow=cat', CoreUtils::makeURL('foo', 'bar', ['meow' => 'cat']));
+		$this->assertEquals('//example.com/myradio/?module=foo&action=bar&meow=cat', CoreUtils::makeURL('foo', 'bar', 'meow=cat'));
+		$this->assertEquals('//example.com/myradio/?module=foo&action=bar&meow=cat', CoreUtils::makeURL('foo', 'bar', '?meow=cat'));
+	}
+
+	public function testRequirePermissionAuto()
+	{
+		
 	}
 
 }

@@ -31,4 +31,4 @@ do {
 } while (empty($data) && $count < 50);
 
 //Return the response data
-CoreUtils::dataToJSON($data);
+echo CoreUtils::dataToJSON($data);

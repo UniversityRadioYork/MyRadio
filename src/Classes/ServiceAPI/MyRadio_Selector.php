@@ -224,7 +224,7 @@ class MyRadio_Selector extends ContainerSubject
     public static function setStudio($studio)
     {
         if (($studio <= 0) || ($studio > 8)) {
-            return ['myury_errors' => 'Invalid Studio ID'];
+            return ['myradio_errors' => 'Invalid Studio ID'];
         }
         $status = self::getStatusAtTime(time());
 
