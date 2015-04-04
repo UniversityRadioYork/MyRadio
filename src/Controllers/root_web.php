@@ -67,7 +67,7 @@ try {
 } catch (MyRadioException $e) {
     if ($e->code === 401 && $container['is_rest']) {
         //Redirect to login
-        self::redirect('MyRadio', 'login', ['next' => $container['server']['REQUEST_URI']]);
+        CoreUtils::redirect('MyRadio', 'login', ['next' => $container['server']['REQUEST_URI']]);
     } else {
         throw $e;
     }
