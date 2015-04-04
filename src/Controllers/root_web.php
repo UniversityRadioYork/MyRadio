@@ -17,8 +17,8 @@ require_once __DIR__.'/root.php';
  * Notice how the default Action is 'default'. This means that the "default" Controller should exist for all Modules.
  * The top half deals with Rewritten URLs, which get mapped to ?request=
  */
-if (isset($container['request'])) {
-    $info = explode('/', $container['request']);
+if (isset($container['request']['request'])) {
+    $info = explode('/', $container['request']['request']);
     //If both are defined, it's Module/Action
     if (!empty($info[1])) {
         $module = $info[0];
