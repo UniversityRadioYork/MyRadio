@@ -1,28 +1,23 @@
 <?php
-require_once __DIR__ . '/MyRadio_TestCase.php';
 require_once __DIR__ . '/../src/Classes/MyRadioInit.php';
-require_once __DIR__ . '/../src/Classes/ContainerSubject.php';
+require_once __DIR__ . '/../src/Interfaces/SessionProvider.php';
+require_once __DIR__ . '/../src/Classes/MyRadio/MyRadioNullSession.php';
 
-use \Pimple\Container;
+use \Aura\Di\Container;
+use \Aura\Di\Factory;
+use \MyRadio\MyRadio\MyRadioNullSession;
+
 class MyRadioTestInit extends \MyRadio\MyRadioInit {
 
 	protected static function setupServiceContainer()
 	{
-		$container = new Container();
+		$container = parent::setupServiceContainer();
 
-		$container['config'] = function() {
-			return new \MyRadio\Config;
-		};
-
-		$container['session'] = function() {
-			[];
-		};
-
-		$container['server'] = function() {
-			return [
-				'REQUEST_URI' => '/foo/bar'
-			];
-		};
+		$container->set('config', $container->lazy(function() {
+			$c = new \MyRadio\Config;
+			$c->display_errors = true;
+			return $c;
+		}));
 		
 		return $container;
 	}
@@ -32,10 +27,35 @@ class MyRadioTestInit extends \MyRadio\MyRadioInit {
 		self::setupPreConfigEnvironment();
         self::setupAutoLoaders();
         $container = self::setupServiceContainer();
-        \MyRadio\ContainerSubject::registerContainer($container);
-        self::loadConfigAndCheckForSetup($container);
+        self::loadConfigDatabaseAndCheckForSetup($container);
         return $container;
 	}
+}
+
+class DummySession extends MyRadioNullSession {
+	private $d = [
+		'auth_use_locked' => false
+	];
+
+    public function offsetSet($offset, $value)
+    {
+        return $this->d[$offset] = $value;
+    }
+
+    public function offsetExists($offset)
+    {
+        return isset($this->d[$offset]);
+    }
+
+    public function offsetUnset($offset)
+    {
+        unset($this->d[$offset]);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->d[$offset];
+    }
 }
 
 MyRadioTestInit::init();

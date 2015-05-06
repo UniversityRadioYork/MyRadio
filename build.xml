@@ -133,6 +133,7 @@
   <exec executable="phpunit" failonerror="true">
     <arg value="--coverage-html=build/coverage" />
     <arg value="--coverage-clover=build/logs/clover.xml" />
+    <arg value="tests" />
   </exec>
  </target>
 </project>

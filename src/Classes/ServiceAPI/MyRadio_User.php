@@ -189,11 +189,11 @@ class MyRadio_User extends ServiceAPI
      * Initiates the User variables
      * @param int $memberid The ID of the member to initialise
      */
-    protected function __construct($memberid)
+    public function __construct($memberid, $database)
     {
         $this->memberid = (int) $memberid;
         //Get the base data
-        $data = self::$container['database']->fetchOne(
+        $data = $database->fetchOne(
             'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college,
             phone, email, receive_email, local_name, local_alias, eduroam,
             account_locked, last_login, joined, profile_photo, bio,
@@ -225,7 +225,7 @@ class MyRadio_User extends ServiceAPI
 
         //Get the user's permissions
         $this->permissions = array_map(
-            'intval', self::$container['database']->fetchColumn(
+            'intval', $this->database->fetchColumn(
                 'SELECT lookupid FROM auth_officer
             WHERE officerid IN (SELECT officerid FROM member_officer
             WHERE memberid=$1
@@ -239,7 +239,7 @@ class MyRadio_User extends ServiceAPI
             )
         );
 
-        $this->payment = self::$container['database']->fetchAll(
+        $this->payment = $this->database->fetchAll(
             'SELECT year, paid
             FROM member_year
             WHERE memberid = $1
@@ -248,7 +248,7 @@ class MyRadio_User extends ServiceAPI
         );
 
         // Get the User's officerships
-        $this->officerships = self::$container['database']->fetchAll(
+        $this->officerships = $this->database->fetchAll(
             'SELECT officerid,officer_name,teamid,from_date,till_date
             FROM member_officer
             INNER JOIN officer
@@ -260,7 +260,7 @@ class MyRadio_User extends ServiceAPI
         );
 
         // Get Training info all into array
-        $this->training = self::$container['database']->fetchColumn(
+        $this->training = $this->database->fetchColumn(
             'SELECT memberpresenterstatusid
             FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
             WHERE memberid=$1 ORDER BY ordering, completeddate ASC',
@@ -667,7 +667,7 @@ class MyRadio_User extends ServiceAPI
      */
     public function getShows($show_type_id = 1)
     {
-        $this->shows = self::$container['database']->fetchColumn(
+        $this->shows = $this->database->fetchColumn(
             'SELECT show_id FROM schedule.show
             WHERE memberid=$1 OR show_id IN
             (SELECT show_id FROM schedule.show_credit
@@ -759,14 +759,14 @@ class MyRadio_User extends ServiceAPI
         $name = trim($name);
         $names = explode(' ', $name);
         if (isset($names[1])) {
-            return self::$container['database']->fetchAll(
+            return $this->database->fetchAll(
                 'SELECT memberid, fname, sname FROM member
                 WHERE fname ILIKE $1 || \'%\' AND sname ILIKE $2 || \'%\'
                 ORDER BY sname, fname LIMIT $3',
                 [$names[0], $names[1], $limit]
             );
         } else {
-            return self::$container['database']->fetchAll(
+            return $this->database->fetchAll(
                 'SELECT memberid, fname, sname FROM member
                 WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $1 || \'%\'
                 ORDER BY sname, fname LIMIT $2',
@@ -775,26 +775,23 @@ class MyRadio_User extends ServiceAPI
         }
     }
 
-    public static function getInstance($itemid = -1)
+    public static function getInstance($itemid = -1, $container)
     {
         if ($itemid === -1) {
-            if (isset(self::$container['session']['memberid'])) {
-                $itemid = self::$container['session']['memberid'];
+            if (isset($_SESSION['memberid'])) {
+                $itemid = $_SESSION['memberid'];
             } else {
                 throw new MyRadioException('Trying to get current user info with no current user');
             }
         }
 
-        if ($itemid === -1) {
-            $itemid = self::$container['session']['memberid'];
-        }
-        if (isset(self::$container['session']['memberid']) && $itemid == self::$container['session']['memberid']) {
+        if (isset($_SESSION['memberid']) && $itemid == $_SESSION['memberid']) {
             if (!self::$current_user) {
-                self::$current_user = parent::getInstance($itemid);
+                self::$current_user = parent::getInstance($itemid, $container);
             }
             return self::$current_user;
         } else {
-            return parent::getInstance($itemid);
+            return parent::getInstance($itemid, $container);
         }
     }
 
@@ -805,7 +802,7 @@ class MyRadio_User extends ServiceAPI
      */
     public static function getCurrentOrSystemUser()
     {
-        if (isset(self::$container['session']['memberid'])) {
+        if (isset($this->session['memberid'])) {
             return self::getInstance();
         } else {
             return self::getInstance(self::$container['config']->system_user);
@@ -868,7 +865,7 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Get their officership history, show history and awards
-        /* $result = self::$container['database']->fetchAll(
+        /* $result = $this->database->fetchAll(
           SELECT \'won an award: \' || name AS message, awarded AS timestamp,
           \'photo_award_get\' AS photo
           FROM myury.award_categories, myury.award_member
@@ -920,7 +917,7 @@ class MyRadio_User extends ServiceAPI
             $paramName = $param_maps[$paramName];
         }
 
-        self::$container['database']->query('UPDATE member SET ' . $paramName . '=$1 WHERE memberid=$2', [$value, $this->getID()]);
+        $this->database->query('UPDATE member SET ' . $paramName . '=$1 WHERE memberid=$2', [$value, $this->getID()]);
         $this->updateCacheObject();
 
         return true;
@@ -1196,7 +1193,7 @@ class MyRadio_User extends ServiceAPI
                 return;
             } elseif ($v['year'] == $year) {
                 //Change payment.
-                self::$container['database']->query(
+                $this->database->query(
                     'UPDATE member_year SET paid=$1
                     WHERE year=$2 AND memberid=$3',
                     [(float) $amount, $year, $this->getID()]
@@ -1209,7 +1206,7 @@ class MyRadio_User extends ServiceAPI
         }
 
         //Not a member this year
-        self::$container['database']->query(
+        $this->database->query(
             'INSERT INTO member_year (paid, year, memberid)
             VALUES ($1, $2, $3)',
             [(float) $amount, $year, $this->getID()]
@@ -1241,7 +1238,7 @@ class MyRadio_User extends ServiceAPI
     public function updateLastLogin()
     {
         $this->last_login = CoreUtils::getTimestamp();
-        self::$container['database']->query(
+        $this->database->query(
             'UPDATE public.member SET last_login=$1
             WHERE memberid=$2',
             [$this->last_login, $this->getID()]
@@ -1261,7 +1258,7 @@ class MyRadio_User extends ServiceAPI
         }
         //Doing this instead of ILIKE halves the query time
         $email = strtolower($email);
-        $result = self::$container['database']->fetchColumn(
+        $result = $this->database->fetchColumn(
             'SELECT memberid FROM public.member WHERE email LIKE $1 OR eduroam LIKE $1
             OR local_name LIKE $3 OR local_alias LIKE $3 OR eduroam LIKE $2',
             [
@@ -1289,7 +1286,7 @@ class MyRadio_User extends ServiceAPI
 
         trigger_error('Use of deprecated method User::findAllTrained.', E_USER_WARNING);
 
-        $trained = self::$container['database']->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=1');
+        $trained = $this->database->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=1');
         $members = [];
         foreach ($trained as $mid) {
             $member = self::getInstance($mid);
@@ -1312,7 +1309,7 @@ class MyRadio_User extends ServiceAPI
 
         trigger_error('Use of deprecated method User::findAllDemoed.', E_USER_WARNING);
 
-        $trained = self::$container['database']->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=2');
+        $trained = $this->database->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=2');
         $members = [];
         foreach ($trained as $mid) {
             $member = self::getInstance($mid);
@@ -1335,7 +1332,7 @@ class MyRadio_User extends ServiceAPI
 
         trigger_error('Use of deprecated method User::findAllTrainers.', E_USER_WARNING);
 
-        $trained = self::$container['database']->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=3');
+        $trained = $this->database->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=3');
         $members = [];
         foreach ($trained as $mid) {
             $member = self::getInstance($mid);
@@ -1354,7 +1351,7 @@ class MyRadio_User extends ServiceAPI
     public static function getAllAliases()
     {
         $users = self::resultSetToObjArray(
-            self::$container['database']->fetchColumn(
+            $this->database->fetchColumn(
                 'SELECT memberid FROM public.member WHERE local_alias IS NOT NULL'
             )
         );
@@ -1575,7 +1572,7 @@ class MyRadio_User extends ServiceAPI
 
     public static function getColleges()
     {
-        return self::$container['database']->fetchAll('SELECT collegeid AS value, descr AS text FROM public.l_college');
+        return $this->database->fetchAll('SELECT collegeid AS value, descr AS text FROM public.l_college');
     }
 
     /**
@@ -1666,7 +1663,7 @@ class MyRadio_User extends ServiceAPI
         $plain_pass = empty($provided_password) ? CoreUtils::newPassword() : $provided_password;
 
         //Actually create the member!
-        $r = self::$container['database']->fetchColumn(
+        $r = $this->database->fetchColumn(
             'INSERT INTO public.member (fname, sname, sex,
             college, phone, email, receive_email, eduroam, require_password_change)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid',
@@ -1730,7 +1727,7 @@ class MyRadio_User extends ServiceAPI
             return true;
         } else {
             $year = CoreUtils::getAcademicYear();
-            self::$container['database']->query('INSERT INTO public.member_year (memberid, year, paid) VALUES ($1, $2, $3)', [$this->getID(), $year, $paid]);
+            $this->database->query('INSERT INTO public.member_year (memberid, year, paid) VALUES ($1, $2, $3)', [$this->getID(), $year, $paid]);
             $this->payment[] = ['year' => $year, 'paid' => $paid];
             $this->updateCacheObject();
             return true;
@@ -1795,7 +1792,7 @@ class MyRadio_User extends ServiceAPI
         } else {
             $tostamp = null;
         }
-        self::$container['database']->query(
+        $this->database->query(
             'INSERT INTO public.auth
             (memberid, lookupid, starttime, endtime) VALUES ($1, $2, $3, $4)',
             [$this->getID(), $authid, CoreUtils::getTimestamp($from), $to]

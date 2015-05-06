@@ -6,17 +6,16 @@
  * Make a copy of this file called MyRadio_Config.local.php and edit it as
  * necessary. It will then override settings in the Config class.
  */
-use \MyRadio\Config;
 
 /**
  * String Settings
  */
-Config::$short_name = 'ACRONYM OR ABBREVIATION HERE';
-Config::$long_name = 'FULL STATION NAME HERE';
-Config::$email_domain = 'EMAIL DOMAIN HERE';
-Config::$founded = 'FOUNDED YEAR HERE';
-Config::$facebook = 'FACEBOOK PAGE ADDRESS HERE (inc https://facebook.com)';
-Config::$welcome_email = <<<EOT
+$config->short_name = 'ACRONYM OR ABBREVIATION HERE';
+$config->long_name = 'FULL STATION NAME HERE';
+$config->email_domain = 'EMAIL DOMAIN HERE';
+$config->founded = 'FOUNDED YEAR HERE';
+$config->facebook = 'FACEBOOK PAGE ADDRESS HERE (inc https://facebook.com)';
+$config->welcome_email = <<<EOT
 
    This is a welcome email. You can use #NAME to get the user's first name,
    and include #UNAME and #PASS to tell them their newly created login details.
@@ -26,57 +25,57 @@ EOT;
 /**
  * Database connection settings.
  */
-Config::$db_hostname = 'YOUR HOSTNAME HERE';
-Config::$db_name = 'membership';
-Config::$db_user = 'YOUR USERNAME HERE';
-Config::$db_pass = 'YOUR PASSWORD HERE';
-Config::$auth_db_user = 'YOUR USERNAME HERE';
-Config::$auth_db_pass = 'YOUR PASSWORD HERE';
+$config->db_hostname = 'YOUR HOSTNAME HERE';
+$config->db_name = 'membership';
+$config->db_user = 'YOUR USERNAME HERE';
+$config->db_pass = 'YOUR PASSWORD HERE';
+$config->auth_db_user = 'YOUR USERNAME HERE';
+$config->auth_db_pass = 'YOUR PASSWORD HERE';
 
 /**
  * Last.fm connection settings.
  */
-Config::$lastfm_api_key = 'YOUR API KEY HERE';
-Config::$lastfm_api_secret = 'YOUR API SECRET HERE';
+$config->lastfm_api_key = 'YOUR API KEY HERE';
+$config->lastfm_api_secret = 'YOUR API SECRET HERE';
 
 /**
  * SU API connection settings.
  */
-Config::$yusu_api_key = 'YOUR API KEY HERE';
+$config->yusu_api_key = 'YOUR API KEY HERE';
 
 /**
  * URL Settings
  */
-Config::$base_url = '//ury.org.uk/myury/';
-Config::$api_uri = '/api/';
-Config::$api_url = '//ury.org.uk/api';
+$config->base_url = '//ury.org.uk/myury/';
+$config->api_uri = '/api/';
+$config->api_url = '//ury.org.uk/api';
 
 /**
  * Recaptcha Settings
  */
-Config::$recaptcha_public_key = 'YOUR KEY HERE';
-Config::$recaptcha_private_key = 'YOUR KEY HERE';
+$config->recaptcha_public_key = 'YOUR KEY HERE';
+$config->recaptcha_private_key = 'YOUR KEY HERE';
 
 /**
  * Feature enable
  */
-Config::$rewrite_url = true;
-Config::$cache_enable = true;
-Config::$display_errors = true;
-Config::$email_exceptions = true;
-Config::$template_debug = true;
-Config::$membership_fee = 7.00;
+$config->rewrite_url = true;
+$config->cache_enable = true;
+$config->display_errors = true;
+$config->email_exceptions = true;
+$config->template_debug = true;
+$config->membership_fee = 7.00;
 
 /**
  * Daemon enable
  */
-Config::$d_BAPSSync_enabled = false;
-Config::$d_EmailQueue_enabled = true;
-Config::$d_Fingerprinter_enabled = false;
-Config::$d_LabelFinder_enabled = false;
-Config::$d_MemberSync_enabled = false;
-Config::$d_Playlists_enabled = true;
-Config::$d_Podcast_enabled = true;
-Config::$d_StatsGen_enabled = false;
-Config::$d_Explicit_enabled = false;
+$config->d_BAPSSync_enabled = false;
+$config->d_EmailQueue_enabled = true;
+$config->d_Fingerprinter_enabled = false;
+$config->d_LabelFinder_enabled = false;
+$config->d_MemberSync_enabled = false;
+$config->d_Playlists_enabled = true;
+$config->d_Podcast_enabled = true;
+$config->d_StatsGen_enabled = false;
+$config->d_Explicit_enabled = false;
 

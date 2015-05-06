@@ -7,8 +7,6 @@
  * @package MyRadio_Core
  */
 
-use \MyRadio\MyRadio\CoreUtils;
-
 require_once __DIR__.'/root.php';
 
 /**
@@ -17,17 +15,17 @@ require_once __DIR__.'/root.php';
  * Notice how the default Action is 'default'. This means that the "default" Controller should exist for all Modules.
  * The top half deals with Rewritten URLs, which get mapped to ?request=
  */
-if (isset($container['request']['request'])) {
-    $info = explode('/', $container['request']['request']);
+if (isset($_REQUEST['request'])) {
+    $info = explode('/', $_REQUEST['request']);
     //If both are defined, it's Module/Action
     if (!empty($info[1])) {
         $module = $info[0];
         $action = $info[1];
         //If there's only one, determine if it's the module or action
-    } elseif (CoreUtils::isValidController($container['config']->default_module, $info[0])) {
+    } elseif ($container->get('utils')->isValidController($container['config']->default_module, $info[0])) {
         $module = $container['config']->default_module;
         $action = $info[0];
-    } elseif (CoreUtils::isValidController($info[0], $container['config']->default_action)) {
+    } elseif ($container->get('utils')->isValidController($info[0], $container['config']->default_action)) {
         $module = $info[0];
         $action = $container['config']->default_action;
     } else {
@@ -35,9 +33,9 @@ if (isset($container['request']['request'])) {
         exit;
     }
 } else {
-    $module = (isset($container['module']) ? $container['module'] : $container['config']->default_module);
-    $action = (isset($container['action']) ? $container['action'] : $container['config']->default_action);
-    if (!CoreUtils::isValidController($module, $action)) {
+    $module = (isset($_REQUEST['module']) ? $_REQUEST['module'] : $container->get('config')->default_module);
+    $action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : $container->get('config')->default_action);
+    if (!$container->get('utils')->isValidController($module, $action)) {
         //Yep, that doesn't exist.
         require 'Controllers/Errors/404.php';
         exit;
@@ -51,15 +49,16 @@ if (isset($container['request']['request'])) {
  * This is to prevent developers from forgetting to assign permissions to an action.
  */
 try {
-    if (CoreUtils::requirePermissionAuto($module, $action)) {
+    if ($container->get('utils')->requirePermissionAuto($module, $action)) {
         /**
          * If a Joyride is defined, start it
          */
-        if (isset($container['joyride'])) {
-            $_SESSION['joyride'] = $container['joyride'];
+        if (isset($_REQUEST['joyride'])) {
+            $_SESSION['joyride'] = $_REQUEST['joyride'];
         }
 
         //Include the requested action
+        echo "Handing over to controller";
         require 'Controllers/'. $module . '/' . $action . '.php';
     } else {
         require 'Controllers/Errors/403.php';
@@ -67,7 +66,7 @@ try {
 } catch (MyRadioException $e) {
     if ($e->code === 401 && $container['is_rest']) {
         //Redirect to login
-        CoreUtils::redirect('MyRadio', 'login', ['next' => $container['server']['REQUEST_URI']]);
+        $container->get('utils')->redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
     } else {
         throw $e;
     }

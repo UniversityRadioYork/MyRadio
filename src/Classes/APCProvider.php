@@ -6,6 +6,8 @@
 
 namespace MyRadio;
 
+use \MyRadio\Traits\Configurable;
+
 /**
  * APCProvider provides in-memory caching for PHP resources to increase page load times
  *
@@ -17,6 +19,8 @@ namespace MyRadio;
  */
 class APCProvider implements \MyRadio\Iface\CacheProvider
 {
+    use Configurable;
+
     /**
      * A variable to store the singleton instance
      * @var APCProvider storage for the only APCProvider instance
@@ -29,17 +33,14 @@ class APCProvider implements \MyRadio\Iface\CacheProvider
      */
     private $enable;
 
-    private $container;
-
     /**
      * Constructs the Unique instance of the CacheProvider for use. Private so that instances cannot be used in ways
      * other than those intended
      * @param boolean $enable Whether caching is actually enabled in this request. Default true
      * @throws MyRadioException Will throw a MyRadioException if the APC extension is not loaded
      */
-    public function __construct($enable = true, $container)
+    public function __construct($enable = true)
     {
-        $this->container = $container;
         $this->enable = $enable;
         if ($enable && !function_exists('apc_store')) {
             //Functions not available. If this is caught upstream, just disable
@@ -65,7 +66,7 @@ class APCProvider implements \MyRadio\Iface\CacheProvider
         }
 
         if ($expires === 0) {
-            $expires = $this->container['config']->cache_default_timeout;
+            $expires = $this->config->cache_default_timeout;
         }
         return apc_store($this->getKeyPrefix().$key, $value, $expires);
     }

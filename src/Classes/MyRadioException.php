@@ -76,15 +76,17 @@ class MyRadioException extends \RuntimeException
     {
         $silent = (defined('SILENT_EXCEPTIONS') && SILENT_EXCEPTIONS);
 
-        if (class_exists('\MyRadio\Config')) {
-            $is_ajax = $container['is_rest'];
+        if ($container->get('config')) {
+            $config = $container->get('config');
+            $is_ajax = false;//$container['is_rest'];
 
-            if ($container['config']->email_exceptions
+            if ($config->email_exceptions
                 && class_exists('\MyRadio\MyRadioEmail')
                 && $this->code !== 400
                 && $this->code !== 401
             ) {
                 MyRadioEmail::sendEmailToComputing(
+                    $container,
                     '[MyRadio] Exception Thrown',
                     'Code: ' . $this->code . "\r\n\r\n"
                     . 'Message: ' . $this->message . "\r\n\r\n"
@@ -95,10 +97,10 @@ class MyRadioException extends \RuntimeException
                 );
             }
 
-            if ($container['config']->log_file) {
+            if ($config->log_file) {
                 // TODO make this create the dir - maybe use error_log?
                 file_put_contents(
-                    $container['config']->log_file,
+                    $config->log_file,
                     CoreUtils::getTimestamp() . '[' . $this->code . '] ' . $this->message . "\n" . $this->traceStr,
                     FILE_APPEND
                 );
@@ -106,7 +108,7 @@ class MyRadioException extends \RuntimeException
 
             //Configuration is available, use this to decide what to do
             if (!$silent
-                && $container['config']->display_errors
+                && $config->display_errors
                 || (class_exists('\MyRadio\MyRadio\CoreUtils')
                 && defined('AUTH_SHOWERRORS')
                 && CoreUtils::hasPermission(AUTH_SHOWERRORS))

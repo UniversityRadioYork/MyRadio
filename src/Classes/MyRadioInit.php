@@ -11,14 +11,14 @@
 
 namespace MyRadio;
 
-use \MyRadio\Database;
 use \MyRadio\MyRadioError;
-use \MyRadio\ContainerSubject;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioSession;
 use \MyRadio\MyRadio\MyRadioNullSession;
+use \MyRadio\Iface\CacheProvider;
 
-use \Pimple\Container;
+use \Aura\Di\Container;
+use \Aura\Di\Factory;
 
 class MyRadioInit
 {
@@ -61,6 +61,7 @@ class MyRadioInit
 
         $loader->addNamespace('MyRadio', $_basepath . 'Classes');
         $loader->addNamespace('MyRadio\Iface', $_basepath . 'Interfaces');
+        $loader->addNamespace('MyRadio\Traits', $_basepath . 'Traits');
 
         unset($_basepath);
 
@@ -71,73 +72,39 @@ class MyRadioInit
     }
 
     /**
-     * Build a Pimple Container with services. Register it with ServiceAPI.
+     * Build a Container with services. Register it with ServiceAPI.
      * @return Container
      * @codeCoverageIgnore
      */
     protected static function setupServiceContainer()
     {
-        $container = new Container();
+        $container = new Container(new Factory);
 
-        $container['database'] = function($container) {
-            return new Database($container['config']);
-        };
+        //Service singletons
+        $container->set('config', new Config);
+        $container->set('database', new Database);
 
-        $container['cache'] = function($container) {
-            $provider = $container['config']->cache_provider;
-            return new $provider($container['config']->cache_enable, $container);
-        };
+        // Define implementations of interfaces
+        $container->types['CacheProvider'] = $container->lazyNew(
+            $container->get('config')->cache_provider
+        );
+        $container->params['CacheProvider']['enable'] = $container->get('config')->cache_enable;
 
-        $container['session'] = function($container) {
-            /**
-             * Sets up a session stored in the database - uesful for sharing between more
-             * than one server.
-             * We disable this for the API using the DISABLE_SESSION constant.
-             */
-            //Override any existing session
-            if (isset($_SESSION)) {
-                session_write_close();
-                session_id($_COOKIE['PHPSESSID']);
-            }
+        $factory = new \MyRadio\MyRadio\MyRadioServiceFactory($container);
 
-            if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
-                $session_handler = new MyRadioSession($container['database']);
-            } else {
-                $session_handler = new MyRadioNullSession;
-            }
+        $container->setter['MyRadio\Traits\Configurable']['setConfig'] = $container->lazyGet('config');
+        $container->setter['MyRadio\Traits\DatabaseSubject']['setDatabase'] = $container->get('database');
+        $container->setter['MyRadio\Traits\ServiceFactorySubject']['setServiceFactory'] = $factory;
+        $container->setter['MyRadio\Traits\SessionSubject']['setSession'] = $container->lazyGet('session');
 
-            session_set_save_handler(
-                [$session_handler, 'open'],
-                [$session_handler, 'close'],
-                [$session_handler, 'read'],
-                [$session_handler, 'write'],
-                [$session_handler, 'destroy'],
-                [$session_handler, 'gc']
-            );
-            session_start();
-            return $session_handler;
-        };
+        if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
+            $session_handler = 'MyRadio\MyRadio\MyRadioSession';
+        } else {
+            $session_handler = 'MyRadio\MyRadio\MyRadioNullSession';
+        }
+        $container->set('session', $container->lazyNew($session_handler));
 
-        $container['config'] = function() {
-            return new \MyRadio\Config;
-        };
-
-        $container['request'] = function() {
-            return $_REQUEST;
-        };
-
-        $container['server'] = function() {
-            return $_SERVER;
-        };
-
-        // returns if the current request looks like it's ajaxy
-        $container['is_rest'] = function() {
-            return (
-                    isset(self::$container['server']['HTTP_X_REQUESTED_WITH'])
-                    && strtolower(self::$container['server']['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
-                )
-                || empty(self::$container['server']['REMOTE_ADDR']);
-        };
+        $container->set('utils', $container->lazyNew('MyRadio\MyRadio\CoreUtils'));
 
         return $container;
     }
@@ -147,15 +114,19 @@ class MyRadioInit
      *
      * @return boolean false if setup has been loaded. Calling process should halt execution.
      */
-    protected static function loadConfigAndCheckForSetup($container)
+    protected static function loadConfigDatabaseAndCheckForSetup($container)
     {
         /**
          * Load configuration specific to this system.
          * Or, if it doesn't exist, kick into setup.
          */
         if (stream_resolve_include_path('MyRadio_Config.local.php')) {
+            $config = $container->get('config');
             require_once 'MyRadio_Config.local.php';
-            if ($container['config']->setup === true) {
+
+            $container->get('database')->connect($config);
+
+            if ($config->setup === true) {
                 require 'Controllers/Setup/root.php';
                 return false;
             }
@@ -176,37 +147,39 @@ class MyRadioInit
     {
         set_error_handler('MyRadio\MyRadioError::errorsToArray');
         set_exception_handler(
-            function ($e) {
-                global $container;
+            function ($e) use ($container) {
                 if (method_exists($e, 'uncaught')) {
                     $e->uncaught($container);
                 } else {
+                    var_dump($e);
                     echo 'This information is not available at the moment. Please try again later.';
                 }
             }
         );
 
         // Set error log file
-        ini_set('error_log', $container['config']->log_file);
+        ini_set('error_log', $container->get('config')->log_file);
 
         //Initialise the permission constants
-        CoreUtils::setUpAuth();
+        $container->get('utils')->setUpAuth();
 
         /**
          * Turn off visible error reporting, if needed
          * must come after CoreUtils::setUpAuth()
          */
-        if (!$container['config']->display_errors && !CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
-            ini_set('display_errors', 'Off');
+        if (!$container->get('config')->display_errors && !$container->get('utils')->hasPermission(AUTH_SHOWERRORS)) {
+            //ini_set('display_errors', 'Off');
         }
     }
 
     /**
      * Register shutdown functions
      */
-    protected static function setupTearDown()
+    protected static function setupTearDown($container)
     {
-        register_shutdown_function('\MyRadio\MyRadio\CoreUtils::shutdown');
+        register_shutdown_function(function() use ($container) {
+            $container->get('utils')->shutdown();
+        });
     }
 
     /**
@@ -217,10 +190,9 @@ class MyRadioInit
         self::setupPreConfigEnvironment();
         self::setupAutoLoaders();
         $container = self::setupServiceContainer();
-        ContainerSubject::registerContainer($container);
-        self::loadConfigAndCheckForSetup($container);
+        self::loadConfigDatabaseAndCheckForSetup($container);
         self::setupAuthErrorAndExceptionHandlers($container);
-        self::setupTearDown();
+        self::setupTearDown($container);
 
         return $container;
     }

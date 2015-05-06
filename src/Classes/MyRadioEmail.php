@@ -415,9 +415,9 @@ class MyRadioEmail extends ServiceAPI
      * @param string $subject email subject
      * @param sting  $message email message
      */
-    public static function sendEmailToComputing($subject, $message)
+    public static function sendEmailToComputing($container, $subject, $message)
     {
-        mail("MyRadio Service <".self::$container['config']->error_report_email."@".self::$container['config']->email_domain.">", $subject, self::addFooter($message), self::getDefaultHeader());
+        mail("MyRadio Service <".$container->get('config')->error_report_email."@".$container->get('config')->email_domain.">", $subject, self::addFooter($message), self::getDefaultHeader());
 
         return true;
     }

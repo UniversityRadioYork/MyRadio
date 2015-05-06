@@ -7,6 +7,8 @@ use \MyRadio\MyRadioEmail;
 use \MyRadio\MyRadioException;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
+use \MyRadio\Traits\Configurable;
+
 /**
  * An Authenticator processes login requests for a user against a specific
  * user database.
@@ -14,30 +16,30 @@ use \MyRadio\ServiceAPI\MyRadio_User;
  */
 class MyRadioDefaultAuthenticator extends \MyRadio\Database implements \MyRadio\Iface\MyRadioAuthenticator
 {
-    private $container;
+    use Configurable;
+
     protected $db;
+
     /**
      * Sets up the DB connection
      */
-    public function __construct($container)
+    public function __construct()
     {
-        if (empty($container['config']->auth_db_user)) {
+        if (empty($this->config->auth_db_user)) {
             $this->db = pg_connect(
-                'host=' . $container['config']->db_hostname . ' port=5432 dbname=' . $container['config']->db_name
-                . ' user=' . $container['config']->db_user . ' password=' . $container['config']->db_pass
+                'host=' . $this->config->db_hostname . ' port=5432 dbname=' . $this->config->db_name
+                . ' user=' . $this->config->db_user . ' password=' . $this->config->db_pass
             );
         } else {
             $this->db = pg_connect(
-                'host=' . $container['config']->db_hostname . ' port=5432 dbname=' . $container['config']->db_name
-                . ' user=' . $container['config']->auth_db_user . ' password=' . $container['config']->auth_db_pass
+                'host=' . $this->config->db_hostname . ' port=5432 dbname=' . $this->config->db_name
+                . ' user=' . $this->config->auth_db_user . ' password=' . $this->config->auth_db_pass
             );
         }
         if (!$this->db) {
             //Database isn't working. Throw an EVERYTHING IS BROKEN Exception
             throw new MyRadioException('Database Connection Failed!', MyRadioException::FATAL);
         }
-
-        $this->container = $container;
     }
 
     /**
@@ -45,14 +47,14 @@ class MyRadioDefaultAuthenticator extends \MyRadio\Database implements \MyRadio\
      */
     public function __destruct()
     {
-        if (!empty($this->container['config']->auth_db_user)) {
+        if (!empty($this->config->auth_db_user)) {
             pg_close($this->db);
         }
     }
 
     /**
-     * @param  String $user     The username (a full email address, or the prefix if it matches $container['config']->eduroam_domain).
-     *                                      if it matches $container['config']->eduroam_domain).
+     * @param  String $user     The username (a full email address, or the prefix if it matches $config->eduroam_domain).
+     *                                      if it matches $config->eduroam_domain).
      * @param  String $password The provided password.
      * @return MyRadio_User|false Map the credentials to a MyRadio User on success, or
      *                                     return false on failure.
@@ -63,7 +65,7 @@ class MyRadioDefaultAuthenticator extends \MyRadio\Database implements \MyRadio\
     public function validateCredentials($user, $password)
     {
         //If local passwords are disabled, don't even try.
-        if (!$this->container['config']->enable_local_passwords) {
+        if (!$this->config->enable_local_passwords) {
             return false;
         }
         //Find the member in our DB
@@ -106,7 +108,7 @@ class MyRadioDefaultAuthenticator extends \MyRadio\Database implements \MyRadio\
      * defined internally.
      *
      * @param  String $user The username (a full email address, or the prefix
-     *                      if it matches $container['config']->eduroam_domain).
+     *                      if it matches $this->config->eduroam_domain).
      * @return Array  A list of IDs for the permission flags this user should be
      *                     granted. These are in addition to the ones computed by MyRadio
      *                     internally.
@@ -119,8 +121,8 @@ class MyRadioDefaultAuthenticator extends \MyRadio\Database implements \MyRadio\
     /**
      * This authenticator will reset the password in the MyRadio database.
      *
-     * @param  String $user The username (a full email address, or the prefix if it matches $container['config']->eduroam_domain).
-     *                       if it matches $container['config']->eduroam_domain).
+     * @param  String $user The username (a full email address, or the prefix if it matches $this->config->eduroam_domain).
+     *                       if it matches $this->config->eduroam_domain).
      * @return boolean Whether the reset has happened or not. MyRadio will stop
      *                      attempting resets once one Authenticator has return true.
      * @todo   implement password resets
@@ -151,7 +153,7 @@ class MyRadioDefaultAuthenticator extends \MyRadio\Database implements \MyRadio\
             $result,
             'Password reset',
             'Hello,'
-            . '<p>A password reset has been requested for the ' . $this->container['config']->short_name
+            . '<p>A password reset has been requested for the ' . $this->config->short_name
             . ' account associated with this email address. If you did not request'
             . ' this email, please ignore it.</p>'
             . '<p><a href="' . CoreUtils::makeURL('MyRadio', 'pwChange', ['token' => $token])
@@ -184,7 +186,7 @@ class MyRadioDefaultAuthenticator extends \MyRadio\Database implements \MyRadio\
 
     public function getFriendlyName()
     {
-        return $container['config']->short_name . '-only';
+        return $this->config->short_name . '-only';
     }
 
     public function getDescription()
@@ -231,19 +233,19 @@ class MyRadioDefaultAuthenticator extends \MyRadio\Database implements \MyRadio\
     {
         //If this is not the only authenticator, mention this will create a
         //MyRadio specific login.
-        if (sizeof($this->container['config']->authenticators) > 1) {
+        if (sizeof($this->config->authenticators) > 1) {
             $others = '';
-            foreach ($this->container['config']->authenticators as $auth) {
+            foreach ($this->config->authenticators as $auth) {
                 if ($auth !== __CLASS__) {
                     $a = new $auth;
                     $others .= (empty($others) ? '' : ', ') . $a->getFriendlyName();
                 }
             }
-            return 'If you do not currently have a ' . $this->container['config']->short_name .
+            return 'If you do not currently have a ' . $this->config->short_name .
                     ' password, this will enable you to set one up which is'
                     . ' seperate to your ' . $others . ' password.';
         } else {
-            return 'If you\'ve forgotten your ' . $this->container['config']->short_name . ' password, you'
+            return 'If you\'ve forgotten your ' . $this->config->short_name . ' password, you'
                     . ' can fill in this form to have a reset email sent to you.';
         }
     }

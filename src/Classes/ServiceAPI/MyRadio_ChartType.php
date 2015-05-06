@@ -10,6 +10,7 @@ use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
+use \MyRadio\Traits\DatabaseSubject;
 
 /**
  * The ChartType class fetches information about types of chart.
@@ -18,6 +19,8 @@ use \MyRadio\MyRadio\MyRadioFormField;
  */
 class MyRadio_ChartType extends MyRadio_Type
 {
+    use DatabaseSubject;
+
     /**
      * The singleton store for ChartType objects
      * @var MyRadio_ChartType[]
@@ -49,7 +52,7 @@ class MyRadio_ChartType extends MyRadio_Type
     {
         $this->chart_type_id = $chart_type_id;
 
-        $chart_type_data = self::$container['database']->fetchOne(
+        $chart_type_data = $this->database->fetchOne(
             'SELECT *
              FROM music.chart_type
              WHERE chart_type_id = $1;',
@@ -63,7 +66,7 @@ class MyRadio_ChartType extends MyRadio_Type
 
         parent::constructType($chart_type_data['name'], $chart_type_data['description']);
 
-        $this->chart_release_ids = self::$container['database']->fetchColumn(
+        $this->chart_release_ids = $this->database->fetchColumn(
             'SELECT chart_release_id
              FROM music.chart_release
              WHERE chart_type_id = $1
@@ -104,7 +107,7 @@ class MyRadio_ChartType extends MyRadio_Type
      */
     public function getAll()
     {
-        $chart_type_ids = self::$container['database']->fetchColumn(
+        $chart_type_ids = $this->database->fetchColumn(
             'SELECT chart_type_id
              FROM music.chart_type
              ORDER BY chart_type_id ASC;',
@@ -167,7 +170,7 @@ class MyRadio_ChartType extends MyRadio_Type
         }
 
         $this->name = $name;
-        self::$container['database']->query(
+        $this->database->query(
             'UPDATE music.chart_type
              SET name = $1
              WHERE chart_type_id = $2;',
@@ -191,7 +194,7 @@ class MyRadio_ChartType extends MyRadio_Type
         }
 
         $this->description = $description;
-        self::$container['database']->query(
+        $this->database->query(
             'UPDATE music.chart_type
              SET description = $1
              WHERE chart_type_id = $2;',

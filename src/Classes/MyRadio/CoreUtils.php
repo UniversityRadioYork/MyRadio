@@ -12,50 +12,55 @@ use \MyRadio\MyRadioException;
 use \MyRadio\MyRadioError;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\Iface\MyRadio_DataSource;
-use \MyRadio\ContainerSubject;
+
+use \MyRadio\Traits\Configurable;
+use \MyRadio\Traits\DatabaseSubject;
+use \MyRadio\Traits\ServiceFactorySubject;
+use \MyRadio\Traits\SessionSubject;
 
 /**
- * Standard API Utilities. Basically miscellaneous functions for the core system
- * No database accessing etc should be setup here.
+ * Standard API Utilities. Basically miscellaneous functions.
  *
  * @package MyRadio_Core
- * @todo    Factor out permission code into a seperate class?
  */
-class CoreUtils extends ContainerSubject
+class CoreUtils
 {
+    use Configurable;
+    use DatabaseSubject;
+    use ServiceFactorySubject;
+    use SessionSubject;
+
     /**
      * This stores whether the Permissions have been defined to prevent re-defining, causing errors and wasting time
      * Once setUpAuth is run, this is set to true to prevent subsequent runs
      * @var boolean
      */
-    private static $auth_cached = false;
+    private $auth_cached = false;
 
     /**
      * Stores the result of CoreUtils::getAcademicYear
      *
-     * This cut 8k queries off of loading one test page...
-     *
      * @var int
      */
-    private static $academicYear;
+    private $academicYear;
 
     /**
      * Stores permission typeid => description mappings
      * @var Array
      */
-    private static $typeid_descr = [];
+    private $typeid_descr = [];
 
     /**
      * Stores module name => id mappings to reduce query load - they are initialised once and stored
      * @var Array
      */
-    private static $module_ids = [];
+    private $module_ids = [];
 
     /**
      * Stores action name => id mappings to reduce query load - they are initialised once and stored
      * @var Array
      */
-    private static $action_ids = [];
+    private $action_ids = [];
 
     /**
      * Checks whether a given Module/Action combination is valid
@@ -67,14 +72,14 @@ class CoreUtils extends ContainerSubject
      * @assert ('../foo', 'bar') === false
      * @assert ('foo', '../bar') === false
      */
-    public static function isValidController($module, $action = null)
+    public function isValidController($module, $action = null)
     {
         if ($action === null) {
-            $action = self::$container['config']->default_action;
+            $action = $this->config->default_action;
         }
         try {
-            self::actionSafe($action);
-            self::actionSafe($module);
+            $this->actionSafe($action);
+            $this->actionSafe($module);
         } catch (MyRadioException $e) {
             return false;
         }
@@ -94,7 +99,7 @@ class CoreUtils extends ContainerSubject
      * @assert () !== false
      * @assert () !== null
      */
-    public static function getTemplateObject()
+    public function getTemplateObject()
     {
         require_once 'vendor/twig/twig/lib/Twig/Autoloader.php';
         \Twig_Autoloader::register();
@@ -110,7 +115,7 @@ class CoreUtils extends ContainerSubject
      * @assert ('safe!') === true
      * @assert ('../notsafe!') throws MyRadioException
      */
-    public static function actionSafe($action)
+    public function actionSafe($action)
     {
         if (strpos($action, '/') !== false) {
             //Someone is trying to traverse directories
@@ -127,7 +132,7 @@ class CoreUtils extends ContainerSubject
      * @return String A happy time
      * @assert (40000, false) == '01/01/1970'
      */
-    public static function happyTime($timestring, $time = true, $date = true)
+    public function happyTime($timestring, $time = true, $date = true)
     {
         return date(
             ($date ? 'd/m/Y' : '') .
@@ -142,7 +147,7 @@ class CoreUtils extends ContainerSubject
      * @param  int $int
      * @return String
      */
-    public static function intToTime($int)
+    public function intToTime($int)
     {
         $time = date('i:s', $int);
         if ($int >= 3600) {
@@ -158,7 +163,7 @@ class CoreUtils extends ContainerSubject
      * @return String a timestamp
      * @assert (30) == '1970-01-01 00:00:30+00'
      */
-    public static function getTimestamp($time = null)
+    public function getTimestamp($time = null)
     {
         if ($time === null) {
             $time = time();
@@ -172,7 +177,7 @@ class CoreUtils extends ContainerSubject
      * @param int $time The time to get the info for, default now.
      * @return array [year, week_number]
      */
-    public static function getYearAndWeekNo($time = null)
+    public function getYearAndWeekNo($time = null)
     {
         if ($time === null) {
             $time = time();
@@ -197,25 +202,25 @@ class CoreUtils extends ContainerSubject
      * @return int year
      * @assert () == 2013
      */
-    public static function getAcademicYear()
+    public function getAcademicYear()
     {
-        if (empty(self::$academicYear)) {
-            $term = self::$container['database']->fetchColumn(
+        if (empty($this->academicYear)) {
+            $term = $this->db->fetchColumn(
                 'SELECT start FROM public.terms WHERE descr=\'Autumn\'
                 AND EXTRACT(year FROM start) = $1',
                 [date('Y')]
             );
 
             // Default to this year
-            $account_reset_time = strtotime('+' . self::$container['config']->account_expiry_before . ' days');
+            $account_reset_time = strtotime('+' . $this->config->account_expiry_before . ' days');
             if (empty($term) || strtotime($term[0]) <= $account_reset_time) {
-                self::$academicYear = date('Y');
+                $this->academicYear = date('Y');
             } else {
-                self::$academicYear = date('Y') - 1;
+                $this->academicYear = date('Y') - 1;
             }
         }
 
-        return self::$academicYear;
+        return $this->academicYear;
     }
 
     /**
@@ -225,7 +230,7 @@ class CoreUtils extends ContainerSubject
      * @return String a PgSQL valid interval value
      * @assert (0, 0) == '0 seconds'
      */
-    public static function makeInterval($start, $end)
+    public function makeInterval($start, $end)
     {
         return $end - $start . ' seconds';
     }
@@ -234,7 +239,7 @@ class CoreUtils extends ContainerSubject
      * Redirects back to previous page.
      * @codeCoverageIgnore
      */
-    public static function back()
+    public function back()
     {
         header('Location: ' . $_SERVER['HTTP_REFERER']);
     }
@@ -243,7 +248,7 @@ class CoreUtils extends ContainerSubject
      * Responds with nocontent.
      * @codeCoverageIgnore
      */
-    public static function nocontent()
+    public function nocontent()
     {
         header('HTTP/1.1 204 No Content');
     }
@@ -251,15 +256,15 @@ class CoreUtils extends ContainerSubject
     /**
      * Responds with JSON data.
      */
-    public static function dataToJSON($data)
+    public function dataToJSON($data)
     {
         header('Content-Type: application/json');
         header('HTTP/1.1 200 OK');
 
         //Decode to datasource if needed
-        $data = self::dataSourceParser($data);
+        $data = $this->dataSourceParser($data);
 
-        $canDisplayErr = self::$container['config']->display_errors || CoreUtils::hasPermission(AUTH_SHOWERRORS);
+        $canDisplayErr = $this->config->display_errors || CoreUtils::hasPermission(AUTH_SHOWERRORS);
         if (!empty(MyRadioError::$php_errorlist) && $canDisplayErr) {
             $data['myradio_errors'] = MyRadioError::$php_errorlist;
         }
@@ -276,17 +281,17 @@ class CoreUtils extends ContainerSubject
      * @return null   Nothing.
      * @codeCoverageIgnore
      */
-    public static function redirect($module, $action = null, $params = [])
+    public function redirect($module, $action = null, $params = [])
     {
-        header('Location: ' . self::makeURL($module, $action, $params));
+        header('Location: ' . $this->makeURL($module, $action, $params));
     }
 
     /**
      * @codeCoverageIgnore
      */
-    public static function redirectWithMessage($module, $action, $message)
+    public function redirectWithMessage($module, $action, $message)
     {
-        self::redirect($module, $action, ['message' => base64_encode($message)]);
+        $this->redirect($module, $action, ['message' => base64_encode($message)]);
     }
 
     /**
@@ -297,10 +302,10 @@ class CoreUtils extends ContainerSubject
      * @return String URL to Module/Action
      * @todo remove deprecated custom_uri functionality?
      */
-    public static function makeURL($module, $action = null, $params = [])
+    public function makeURL($module, $action = null, $params = [])
     {
-        if (self::$container['config']->rewrite_url) {
-            $str = self::$container['config']->base_url . $module . '/' . (($action !== null) ? $action . '/' : '');
+        if ($this->config->rewrite_url) {
+            $str = $this->config->base_url . $module . '/' . (($action !== null) ? $action . '/' : '');
             if (!empty($params)) {
                 if (is_string($params)) {
                     if (substr($params, 0, 1) !== '?') {
@@ -316,7 +321,7 @@ class CoreUtils extends ContainerSubject
                 }
             }
         } else {
-            $str = self::$container['config']->base_url . '?module=' . $module . (($action !== null) ? '&action=' . $action : '');
+            $str = $this->config->base_url . '?module=' . $module . (($action !== null) ? '&action=' . $action : '');
 
             if (!empty($params)) {
                 if (is_string($params)) {
@@ -340,20 +345,19 @@ class CoreUtils extends ContainerSubject
      * @return void
      * @assert () == null
      */
-    public static function setUpAuth()
+    public function setUpAuth()
     {
-        if (self::$auth_cached) {
+        if ($this->auth_cached) {
             return;
         }
 
-        $db = self::$container['database'];
-        $result = $db->fetchAll('SELECT typeid, phpconstant, descr FROM l_action');
+        $result = $this->db->fetchAll('SELECT typeid, phpconstant, descr FROM l_action');
         foreach ($result as $row) {
             define($row['phpconstant'], $row['typeid']);
-            self::$typeid_descr[$row['typeid']] = $row['descr'];
+            $this->typeid_descr[$row['typeid']] = $row['descr'];
         }
 
-        self::$auth_cached = true;
+        $this->auth_cached = true;
     }
 
     /**
@@ -362,9 +366,9 @@ class CoreUtils extends ContainerSubject
      * @param  int $typeid
      * @return [[action,...], [api method,...]]
      */
-    public static function getAuthUsage($typeid)
+    public function getAuthUsage($typeid)
     {
-        $db = self::$container['database'];
+        $db = $this->db;
         $actions = $db->fetchAll(
             'SELECT modules.name AS module, actions.name AS action
             FROM myury.act_permission
@@ -391,11 +395,11 @@ class CoreUtils extends ContainerSubject
      * @param  int $typeid
      * @return String
      */
-    public static function getAuthDescription($typeid)
+    public function getAuthDescription($typeid)
     {
-        self::setUpAuth();
+        $this->setUpAuth();
 
-        return self::$typeid_descr[$typeid];
+        return $this->$typeid_descr[$typeid];
     }
 
     /**
@@ -403,26 +407,26 @@ class CoreUtils extends ContainerSubject
      * @param  int $permission The ID of the permission, resolved by using an AUTH_ constant
      * @return boolean Whether the member has the requested permission
      */
-    public static function hasPermission($permission)
+    public function hasPermission($permission)
     {
         try {
-            return MyRadio_User::getInstance()->hasAuth($permission);
+            return $this->factory->getInstanceOf('MyRadio_User')->hasAuth($permission);
         } catch (MyRadioException $e) {
             return $permission === null;
         }
     }
 
     /**
-     * Checks if the user has the given permission. Or, alternatiely, if we are currently running CLI, reutrns true.
+     * Checks if the user has the given permission. Or, alternatiely, if we are currently running CLI, returns true.
      * @param  int $permission A permission constant to check
      * @return void Will Fatal error if the user does not have the permission
      */
-    public static function requirePermission($permission)
+    public function requirePermission($permission)
     {
         if (php_sapi_name() === 'cli') {
             return true; //Non-interactive version has God Rights.
         }
-        if (!self::hasPermission($permission)) {
+        if (!$this->hasPermission($permission)) {
             //Load the 403 controller and exit
             require 'Controllers/Errors/403.php';
             exit;
@@ -442,10 +446,10 @@ class CoreUtils extends ContainerSubject
      * @param  bool   $require If true, will die if the user does not have permission. If false, will just return false
      * @return bool   True on required or authorised, false on unauthorised
      */
-    public static function requirePermissionAuto($module, $action)
+    public function requirePermissionAuto($module, $action)
     {
-        self::setUpAuth();
-        $db = self::$container['database'];
+        $this->setUpAuth();
+        $db = $this->db;
 
         $result = $db->fetchColumn(
             'SELECT typeid FROM myury.act_permission
@@ -459,14 +463,14 @@ class CoreUtils extends ContainerSubject
         );
 
         //Don't allow empty result sets - throw an Exception as this is very very bad.
-        if (empty($result) && $require) {
+        if (empty($result)) {
             throw new MyRadioException('There are no permissions defined for the ' . $module . '/' . $action . ' action!', 500);
         }
 
         $authorised = false;
         foreach ($result as $permission) {
             //It only needs to match one
-            if ($permission === AUTH_NOLOGIN || (self::hasPermission($permission) && self::$container['session']['auth_use_locked'] === false)) {
+            if ($permission === AUTH_NOLOGIN || ($this->hasPermission($permission) && $this->session['auth_use_locked'] === false)) {
                 $authorised = true;
                 break;
             }
@@ -474,7 +478,7 @@ class CoreUtils extends ContainerSubject
 
         if (!$authorised) {
             //Requires login
-            if (!isset(self::$container['session']['memberid']) || self::$container['session']['auth_use_locked'] !== false) {
+            if (!isset($this->session['memberid']) || $this->session['auth_use_locked'] !== false) {
                 throw new MyRadioException('Login required', 401);
             }
         }
@@ -498,9 +502,9 @@ class CoreUtils extends ContainerSubject
      *               permission: The name of the permission applied to that Service/Module/Action combination<br>
      *               actpermissionid: The unique ID of this Service/Module/Action combination
      */
-    public static function getAllActionPermissions()
+    public function getAllActionPermissions()
     {
-        return self::$container['database']->fetchAll(
+        return $this->db->fetchAll(
             'SELECT actpermissionid,
             myury.services.name AS service,
             myury.modules.name AS module,
@@ -546,9 +550,9 @@ class CoreUtils extends ContainerSubject
      * Returns a list of Permissions ready for direct use in a select MyRadioFormField
      * @return Array A 2D Array matching the MyRadioFormField::TYPE_SELECT specification.
      */
-    public static function getAllPermissions()
+    public function getAllPermissions()
     {
-        return self::$container['database']->fetchAll(
+        return $this->db->fetchAll(
             'SELECT typeid AS value, descr AS text FROM public.l_action
             ORDER BY descr ASC'
         );
@@ -560,7 +564,7 @@ class CoreUtils extends ContainerSubject
      * @param  array $perm2 permission value & description
      * @return int          comparison result
      */
-    private static function comparePermission($perm1, $perm2)
+    private function comparePermission($perm1, $perm2)
     {
         if ($perm1['value'] === $perm2['value']) {
             return 0;
@@ -577,9 +581,9 @@ class CoreUtils extends ContainerSubject
      * @param   $diffPerms array of permissions
      * @return array        all permissions not included in $perms
      */
-    public static function diffPermissions($perms, $diffPerms)
+    public function diffPermissions($perms, $diffPerms)
     {
-        return array_udiff($perms, $diffPerms, 'self::comparePermission');
+        return array_udiff($perms, $diffPerms, '$this->comparePermission');
     }
 
     /**
@@ -587,9 +591,9 @@ class CoreUtils extends ContainerSubject
      * @param String $descr    A useful friendly description of what this action means.
      * @param String $constant /AUTH_[A-Z_]+/
      */
-    public static function addPermission($descr, $constant)
+    public function addPermission($descr, $constant)
     {
-        $value = (int)self::$container['database']->fetchColumn(
+        $value = (int)$this->db->fetchColumn(
             'INSERT INTO public.l_action (descr, phpconstant)
             VALUES ($1, $2) RETURNING typeid',
             [$descr, $constant]
@@ -604,9 +608,9 @@ class CoreUtils extends ContainerSubject
      * @param String $message The HTML to display for this user
      * @assert (7449, 'Test') == null
      */
-    public static function debugFor($userid, $message)
+    public function debugFor($userid, $message)
     {
-        if (self::$container['session']['memberid'] == $userid) {
+        if ($this->$container['session']['memberid'] == $userid) {
             echo '<p>' . $message . '</p>';
         }
     }
@@ -620,30 +624,30 @@ class CoreUtils extends ContainerSubject
      * @param  String $module
      * @return int
      */
-    public static function getModuleId($module)
+    public function getModuleId($module)
     {
-        if (empty(self::$module_ids)) {
-            $result = self::$container['database']->fetchAll('SELECT name, moduleid FROM myury.modules');
+        if (empty($this->$module_ids)) {
+            $result = $this->db->fetchAll('SELECT name, moduleid FROM myury.modules');
             foreach ($result as $row) {
-                self::$module_ids[$row['name']] = $row['moduleid'];
+                $this->$module_ids[$row['name']] = $row['moduleid'];
             }
         }
 
-        if (empty(self::$module_ids[$module])) {
+        if (empty($this->$module_ids[$module])) {
             //The module needs creating
-            $result = self::$container['database']->fetchColumn(
+            $result = $this->db->fetchColumn(
                 'INSERT INTO myury.modules (serviceid, name)
                 VALUES ($1, $2) RETURNING moduleid',
-                [self::$container['config']->service_id, $module]
+                [$this->config->service_id, $module]
             );
             if ($result) {
-                self::$module_ids[$module] = $result[0];
+                $this->$module_ids[$module] = $result[0];
             } else {
                 return null;
             }
         }
 
-        return self::$module_ids[$module];
+        return $this->$module_ids[$module];
     }
 
     /**
@@ -652,30 +656,30 @@ class CoreUtils extends ContainerSubject
      * @param  String $action
      * @return int
      */
-    public static function getActionId($module, $action)
+    public function getActionId($module, $action)
     {
-        if (empty(self::$action_ids)) {
-            $result = self::$container['database']->fetchAll('SELECT name, moduleid, actionid FROM myury.actions');
+        if (empty($this->$action_ids)) {
+            $result = $this->db->fetchAll('SELECT name, moduleid, actionid FROM myury.actions');
             foreach ($result as $row) {
-                self::$action_ids[$row['name'] . '-' . $row['moduleid']] = $row['actionid'];
+                $this->$action_ids[$row['name'] . '-' . $row['moduleid']] = $row['actionid'];
             }
         }
 
-        if (empty(self::$action_ids[$action . '-' . $module])) {
+        if (empty($this->$action_ids[$action . '-' . $module])) {
             //The action needs creating
-            $result = self::$container['database']->fetchColumn(
+            $result = $this->db->fetchColumn(
                 'INSERT INTO myury.actions (moduleid, name)
                 VALUES ($1, $2) RETURNING actionid',
                 [$module, $action]
             );
             if ($result) {
-                self::$action_ids[$action . '-' . $module] = $result[0];
+                $this->$action_ids[$action . '-' . $module] = $result[0];
             } else {
                 return null;
             }
         }
 
-        return self::$action_ids[$action . '-' . $module];
+        return $this->$action_ids[$action . '-' . $module];
 
     }
 
@@ -687,13 +691,13 @@ class CoreUtils extends ContainerSubject
      * @param int $action     The action ID
      * @param int $permission The permission typeid
      */
-    public static function addActionPermission($module, $action, $permission)
+    public function addActionPermission($module, $action, $permission)
     {
-        $db = self::$container['database'];
+        $db = $this->db;
         $db->query(
             'INSERT INTO myury.act_permission (serviceid, moduleid, actionid, typeid)
             VALUES ($1, $2, $3, $4)',
-            [self::$container['config']->service_id, $module, $action, $permission]
+            [$this->config->service_id, $module, $action, $permission]
         );
     }
 
@@ -702,13 +706,13 @@ class CoreUtils extends ContainerSubject
      * @param  mixed $data
      * @return array
      */
-    public static function dataSourceParser($data, $full = true)
+    public function dataSourceParser($data, $full = true)
     {
         if (is_object($data) && $data instanceof MyRadio_DataSource) {
             return $data->toDataSource($full);
         } elseif (is_array($data)) {
             foreach ($data as $k => $v) {
-                $data[$k] = self::dataSourceParser($v, $full);
+                $data[$k] = $this->dataSourceParser($v, $full);
             }
 
             return $data;
@@ -718,7 +722,7 @@ class CoreUtils extends ContainerSubject
     }
 
     //from http://www.php.net/manual/en/function.xml-parse-into-struct.php#109032
-    public static function xml2array($xml)
+    public function xml2array($xml)
     {
         $opened = [];
         $opened[1] = 0;
@@ -761,15 +765,15 @@ class CoreUtils extends ContainerSubject
         return $array;
     }
 
-    public static function requireTimeslot()
+    public function requireTimeslot()
     {
-        if (!isset(self::$container['session']['timeslotid'])) {
-            self::redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
+        if (!isset($this->$container['session']['timeslotid'])) {
+            $this->redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
             exit;
         }
     }
 
-    public static function backWithMessage($message)
+    public function backWithMessage($message)
     {
         header('Location: ' . $_SERVER['HTTP_REFERER'] . (strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?') . 'message=' . base64_encode($message));
     }
@@ -779,7 +783,7 @@ class CoreUtils extends ContainerSubject
      * Weighted should be an integer - how many times to put the item into the bag
      * @param Array $data 2D of Format [['item' => mixed, 'weight' => n], ...]
      */
-    public static function biasedRandom($data)
+    public function biasedRandom($data)
     {
         $bag = [];
 
@@ -793,11 +797,11 @@ class CoreUtils extends ContainerSubject
     }
 
     //Reports some things
-    public static function shutdown()
+    public function shutdown()
     {
         session_write_close(); //It doesn't seem to do this itself sometimes.
         try {
-            $db = self::$container['database'];
+            $db = $this->db;
         } catch (MyRadioException $e) {
             return;
         }
@@ -830,7 +834,7 @@ class CoreUtils extends ContainerSubject
      *
      * @return Array JSON Response, forced to assoc array
      */
-    public static function callYUSU($function = 'ListMembers')
+    public function callYUSU($function = 'ListMembers')
     {
         $options = [
             'http' => [
@@ -843,7 +847,7 @@ class CoreUtils extends ContainerSubject
         return json_decode(
             file_get_contents(
                 'https://www.yusu.org/api/api.php?apikey='
-                . self::$container['config']->yusu_api_key
+                . $this->config->yusu_api_key
                 . '&function='
                 . $function,
                 false,
@@ -853,19 +857,19 @@ class CoreUtils extends ContainerSubject
         );
     }
 
-    public static function getErrorStats($since = null)
+    public function getErrorStats($since = null)
     {
         if ($since === null) {
             $since = time() - 86400;
         }
-        $result = self::$container['database']->fetchAll(
+        $result = $this->db->fetchAll(
             'SELECT
             round(extract(\'epoch\' from timestamp) / 600) * 600 as timestamp,
             SUM(error_count)/COUNT(error_count) AS errors, SUM(exception_count)/COUNT(exception_count) AS exceptions,
             SUM(queries)/COUNT(queries) AS queries
             FROM myury.error_rate WHERE timestamp>=$1 GROUP BY round(extract(\'epoch\' from timestamp) / 600)
             ORDER BY timestamp ASC',
-            [self::getTimestamp($since)]
+            [$this->getTimestamp($since)]
         );
 
         $return = [];
@@ -877,7 +881,7 @@ class CoreUtils extends ContainerSubject
         return $return;
     }
 
-    public static function getSafeHTML($dirty_html)
+    public function getSafeHTML($dirty_html)
     {
         $config = \HTMLPurifier_Config::createDefault();
         $purifier = new \HTMLPurifier($config);
@@ -889,9 +893,9 @@ class CoreUtils extends ContainerSubject
      * Returns lookup values for Status for a select box
      * @return array
      */
-    public static function getStatusLookup()
+    public function getStatusLookup()
     {
-        return self::$container['database']->fetchAll(
+        return $this->db->fetchAll(
             'SELECT statusid AS value, descr AS text FROM public.l_status
             ORDER BY descr ASC'
         );
@@ -912,7 +916,7 @@ class CoreUtils extends ContainerSubject
      * @return MyRadio_User|false
      * @api    POST
      */
-    public static function testCredentials($user, $pass)
+    public function testCredentials($user, $pass)
     {
         //Make a best guess at the user account
         //This way we can skip authenticators if they have one set
@@ -920,7 +924,7 @@ class CoreUtils extends ContainerSubject
         if ($u instanceof MyRadio_User && $u->getAuthProvider() !== null) {
             $authenticators = [$u->getAuthProvider()];
         } else {
-            $authenticators = self::$container['config']->authenticators;
+            $authenticators = $this->config->authenticators;
         }
 
         //Iterate over each authenticator
@@ -928,7 +932,7 @@ class CoreUtils extends ContainerSubject
             $a = new $authenticator();
             $result = $a->validateCredentials($user, $pass);
             if ($result instanceof MyRadio_User) {
-                if (self::$container['config']->single_authenticator
+                if ($this->config->single_authenticator
                     && $result->getAuthProvider() !== null
                     && $result->getAuthProvider() !== $authenticator
                 ) {
@@ -951,7 +955,7 @@ class CoreUtils extends ContainerSubject
      *
      * @return String var_dump output
      */
-    public static function getRequestInfo()
+    public function getRequestInfo()
     {
         ob_start();
         if (isset($_REQUEST['redact']) || isset($_REQUEST['pass']) || isset($_REQUEST['password'])) {
@@ -971,11 +975,24 @@ class CoreUtils extends ContainerSubject
     }
 
     /**
+     * Returns if the current request is via ajax
+     */
+    public function isAjax()
+    {
+        return (
+                isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+                && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
+            )
+            || empty($_SERVER['REMOTE_ADDR']
+        );
+    }
+
+    /**
      * Generates a completely pseudorandom string, aimed for Salt purposes.
      * @param int $pwdLen The length of the string to generate
      * @return String a random string of length $pwdLen
      */
-    public static function randomString($pwdLen = 8)
+    public function randomString($pwdLen = 8)
     {
         $result = '';
         $pwdSource = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -987,19 +1004,15 @@ class CoreUtils extends ContainerSubject
         return( $result );
     }
 
-    private function __construct()
-    {
-    }
-
     /**
      * Generates a new password consisting of two words and a two-digit number
      * @todo Make this crypto secure random?
      * @return String
      */
-    public static function newPassword()
+    public function newPassword()
     {
-        return self::$words[array_rand(self::$words)] . rand(10, 99)
-            . self::$words[array_rand(self::$words)];
+        return $this->$words[array_rand($this->$words)] . rand(10, 99)
+            . $this->$words[array_rand($this->$words)];
     }
 
     /**

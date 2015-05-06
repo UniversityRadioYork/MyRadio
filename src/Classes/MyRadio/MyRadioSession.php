@@ -8,13 +8,13 @@ use \MyRadio\Database;
  * Custom session handler.
  *
  */
-class MyRadioSession implements \ArrayAccess
+class MyRadioSession extends MyRadioAbstractSession
 {
     const TIMEOUT = 7200; //Session expires after 2hrs
 
     private $db;
 
-    public function __construct($db)
+    public function __construct(Database $db)
     {
         $this->db = $db;
     }

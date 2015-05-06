@@ -3,7 +3,6 @@
 namespace MyRadio\MyRadio;
 
 use MyRadio\MyRadioException;
-use MyRadio\ContainerSubject;
 
 /**
  * This file provides the MyRadioForm class for MyRadio
@@ -24,7 +23,7 @@ use MyRadio\ContainerSubject;
  *
  * @package MyRadio_Core
  */
-class MyRadioForm extends ContainerSubject
+class MyRadioForm
 {
     /**
      * The name of the form

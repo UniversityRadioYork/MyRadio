@@ -7,10 +7,7 @@ namespace MyRadio\Iface;
  * user database.
  *
  */
-interface MyRadioAuthenticator
-{
-    public function __construct($container);
-
+interface MyRadioAuthenticator {
     /**
      * @param  String $user     The username (a full email address, or the prefix if it matches Config::$eduroam_domain).
      *                                      if it matches Config::$eduroam_domain).

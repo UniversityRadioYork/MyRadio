@@ -6,13 +6,8 @@ namespace MyRadio\MyRadio;
 * Null session handler.
 *
  */
-class MyRadioNullSession extends MyRadioSession
+class MyRadioNullSession implements \MyRadio\Iface\SessionProvider
 {
-    public function __construct()
-    {
-        $this->db = null;
-    }
-
     /**
      * Clear up old session entries in the database
      * This should be called automatically by PHP every one in a while
@@ -45,5 +40,25 @@ class MyRadioNullSession extends MyRadioSession
     public function destroy($id)
     {
         return !empty($id);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        return true;
+    }
+
+    public function offsetExists($offset)
+    {
+        return false;
+    }
+
+    public function offsetUnset($offset)
+    {
+        return true;
+    }
+
+    public function offsetGet($offset)
+    {
+        return null;
     }
 }

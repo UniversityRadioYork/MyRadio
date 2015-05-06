@@ -11,7 +11,6 @@ use \ReflectionMethod;
 use \ReflectionClass;
 use \ReflectionException;
 
-use \MyRadio\ContainerSubject;
 use \MyRadio\MyRadio\CoreUtils;
 
 /**
@@ -23,7 +22,7 @@ use \MyRadio\MyRadio\CoreUtils;
  * @todo Detect Response Types
  * @todo Parse docblocks to get variable information
  */
-class MyRadio_Swagger extends \MyRadio\ContainerSubject
+class MyRadio_Swagger
 {
     /**
  * THIS HALF DEALS WITH RESOURCES LISTING *

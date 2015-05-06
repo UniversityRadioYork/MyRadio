@@ -7,7 +7,6 @@
 
 namespace MyRadio\MyRadio;
 
-use \MyRadio\ContainerSubject;
 use \MyRadio\MyRadioException;
 
 /**
@@ -18,7 +17,7 @@ use \MyRadio\MyRadioException;
  * @uses    \Database
  * @uses    \CoreUtils
  */
-class MyRadioMenu extends ContainerSubject
+class MyRadioMenu
 {
     /**
      * Returns a customised MyRadio menu for the *currently logged in* user

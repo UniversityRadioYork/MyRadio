@@ -7,11 +7,12 @@
 
 namespace MyRadio\iTones;
 
-use \MyRadio\Config;
-use \MyRadio\Database;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
+
+use \MyRadio\Traits\Configurable;
+use \MyRadio\Traits\DatabaseSubject;
 
 /**
  * Method object for requesting a track be played by iTones.
@@ -21,6 +22,9 @@ use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
  */
 class iTones_TrackRequest
 {
+    use Configurable;
+    use DatabaseSubject;
+
     const CAN_MAKE_REQUEST_SQL = '
         SELECT
             (COUNT(trackid) <= $1) AS allowed
@@ -43,18 +47,15 @@ class iTones_TrackRequest
      *
      * @param MyRadio_Track $track     The track being requested.
      * @param MyRadio_User  $requester The user performing the request.
-     * @param Database      $database  The database to query for request data.
      * @param String        $queue     The iTones queue to request into.
      */
     public function __construct(
         MyRadio_Track $track,
         MyRadio_User  $requester,
-        Database      $database,
         $queue = 'requests'
     ) {
         $this->track     = $track;
         $this->requester = $requester;
-        $this->database  = $database;
         $this->queue     = $queue;
     }
 
@@ -144,9 +145,9 @@ class iTones_TrackRequest
     private function userCanMakeRequestsParams()
     {
         return [
-            self::$container['config']->itones_request_maximum,
+            $this->config->itones_request_maximum,
             $this->requester->getID(),
-            self::$container['config']->itones_request_period
+            $this->config->itones_request_period
         ];
     }
 

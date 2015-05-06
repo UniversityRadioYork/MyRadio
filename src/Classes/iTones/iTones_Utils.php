@@ -7,11 +7,13 @@
 
 namespace MyRadio\iTones;
 
-use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 use \MyRadio\iTones\iTones_TrackRequest;
+
+use \MyRadio\Traits\Configurable;
+use \MyRadio\Traits\DatabaseSubject;
 
 /**
  * The iTones_Utils class provides generic utilities for controlling iTones - URY's Campus Jukebox
@@ -21,6 +23,9 @@ use \MyRadio\iTones\iTones_TrackRequest;
  */
 class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 {
+    use Configurable;
+    use DatabaseSubject;
+    
     private static $telnet_handle;
     private static $queues = ['requests', 'main'];
     private static $queue_cache = [];

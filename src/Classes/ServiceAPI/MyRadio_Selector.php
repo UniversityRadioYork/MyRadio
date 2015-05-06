@@ -7,7 +7,6 @@
 
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\ContainerSubject;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\iTones\iTones_Utils;
@@ -22,7 +21,7 @@ use \MyRadio\iTones\iTones_Utils;
  * @package MyRadio_Core
  * @uses    \Database
  */
-class MyRadio_Selector extends ContainerSubject
+class MyRadio_Selector
 {
     /**
      * The current studio is Studio 1

@@ -9,7 +9,9 @@ namespace MyRadio\ServiceAPI;
 use \MyRadio\Iface\IServiceAPI;
 use \MyRadio\Iface\MyRadio_DataSource;
 
-use \MyRadio\ContainerSubject;
+use \MyRadio\Traits\Configurable;
+use \MyRadio\Traits\DatabaseSubject;
+
 use \MyRadio\MyRadioException;
 
 /**
@@ -20,25 +22,31 @@ use \MyRadio\MyRadioException;
  * @uses    \Database
  * @uses    \CacheProvider
  */
-abstract class ServiceAPI extends ContainerSubject implements IServiceAPI, MyRadio_DataSource
+abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
 {
-    public static function getInstance($itemid)
+    use Configurable;
+    use DatabaseSubject;
+
+    public static function getInstance($itemid, $container)
     {
+        //TODO: Fix caching
+        $cacheProvider = null;
+
         $class = get_called_class();
         $key = self::getCacheKey($itemid);
-        $cache = self::$container['cache']->get($key);
+        $cache = $cacheProvider ? $cacheProvider->get($key) : false;
         if (!$cache) {
-            $cache = $class::factory($itemid);
-            self::$container['cache']->set($key, $cache);
+            $cache = $class::factory($itemid, $container);
+            $cacheProvider->set($key, $cache);
         }
 
         return $cache;
     }
 
-    protected static function factory($itemid)
+    protected static function factory($itemid, $container)
     {
         $class = get_called_class();
-        return new $class($itemid);
+        return $container->newInstance($class, [ $itemid, $container->get('database') ]);
     }
 
     public function toDataSource($full = false)

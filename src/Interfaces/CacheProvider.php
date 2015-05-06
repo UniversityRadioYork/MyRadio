@@ -10,6 +10,7 @@ namespace MyRadio\Iface;
  */
 interface CacheProvider
 {
+    public function __construct($enable = true);
     /**
      * Inserts or Updates a cache entry
      * @param int $expires The number of seconds the cache is valid for

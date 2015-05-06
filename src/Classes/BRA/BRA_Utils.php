@@ -2,10 +2,10 @@
 
 /*
  * This file provides the BRA_Utils class for MyRadio
- * @package MyRadio_BRA
+ * @package MyRadio_Rapid
  */
 
-namespace \MyRadio\Rapid;
+namespace MyRadio\Rapid;
 
 /**
  * This class has helper functions for communicating with a BAPS Server over BRA

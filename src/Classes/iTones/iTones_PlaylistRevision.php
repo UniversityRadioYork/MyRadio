@@ -12,6 +12,8 @@ use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 
+use \MyRadio\Traits\DatabaseSubject;
+
 /**
  * The iTones_PlaylistRevision class helps to manage previous versions of an iTones_Playlist
  *
@@ -19,6 +21,8 @@ use \MyRadio\ServiceAPI\MyRadio_Track;
  */
 class iTones_PlaylistRevision extends iTones_Playlist
 {
+    use DatabaseSubject;
+
     /**
     * When this revision was created
     * @var int
@@ -46,7 +50,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
         list($playlistid, $revisionid) = explode('~', $id);
         parent::__construct($playlistid);
 
-        $result = self::$container['database']->fetchOne(
+        $result = $this->database->fetchOne(
             'SELECT * FROM jukebox.playlist_revisions
             WHERE playlistid=$1 AND revisionid=$2 LIMIT 1',
             [$playlistid, $revisionid]
@@ -62,7 +66,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
         $this->notes = $result['notes'];
         $this->timestamp = strtotime($result['timestamp']);
 
-        $items = self::$container['database']->fetchColumn(
+        $items = $this->database->fetchColumn(
             'SELECT trackid FROM jukebox.playlist_entries WHERE playlistid=$1
             AND revision_added <= $2 AND (revision_removed >= $2 OR revision_removed IS NULL)
             ORDER BY entryid',
@@ -123,7 +127,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
     public static function getAllRevisions($playlistid)
     {
         $data = [];
-        foreach (self::$container['database']->fetchColumn(
+        foreach ($this->database->fetchColumn(
             'SELECT revisionid FROM jukebox.playlist_revisions WHERE playlistid=$1',
             [$playlistid]
         ) as $revisionid) {

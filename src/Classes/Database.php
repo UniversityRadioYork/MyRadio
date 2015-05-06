@@ -6,8 +6,6 @@
 
 namespace MyRadio;
 
-use \MyRadio\MyRadio\CoreUtils;
-
 /**
  * This class handles actual database connection
  *
@@ -38,17 +36,19 @@ class Database
      */
     private $in_transaction = false;
 
-    /**
-     * Constructs the singleton database connector
-     */
-    public function __construct($config)
+    public function connect(Config $config)
     {
+        if ($this->db) {
+            return;
+        }
+
         $this->db = @pg_connect(
             'host='. $config->db_hostname
             .' port=5432 dbname='.$config->db_name
             .' user='. $config->db_user
             .' password='. $config->db_pass
         );
+        
         if (!$this->db) {
             //Database isn't working. Throw an EVERYTHING IS BROKEN Exception
             throw new MyRadioException(
@@ -97,11 +97,6 @@ class Database
             if (is_bool($v)) {
                 $params[$k] = ($v? 't' : 'f');
             }
-        }
-
-        if (isset($_REQUEST['dbdbg']) && CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
-            //Debug output
-            echo $sql . '&nbsp;' . print_r($params, true) . '<br>';
         }
 
         if (empty($params)) {
