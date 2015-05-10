@@ -24,6 +24,9 @@ function updateCentralSearch() {
             success: function(data) {
                 $('#baps-channel-res').empty();
                 for (file in data) {
+                    if (file === 'myradio_errors') {
+                        continue;
+                    }
                     var classes = '';
                     if (!data[file].clean) {
                         classes = classes + ' unclean';
@@ -93,10 +96,15 @@ $(document).ready(
                             data: 'playlistid=' + $(this).val(),
                             success: function(data) {
                                 for (file in data) {
+                                    var classes = '';
+                                    if (!data[file].clean) {
+                                        classes = classes + ' unclean';
+                                    }
                                     $('#baps-channel-res').append(
                                         '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
                                         '" title="' + data[file].title + '(' + data[file].length + ')' +
                                         '" intro="' + data[file].intro + '"' +
+                                        '" class="' + classes + '"' +
                                         '" channel="res" weight="0" type="central" length="' + data[file].length + '">'
                                         + data[file].title + ' - ' + data[file].artist + '</li>'
                                     );
