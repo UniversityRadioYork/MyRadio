@@ -914,7 +914,7 @@ EOT
         for ($i = 1; $i <= 10; $i++) {
             if (isset($params['weeks']['wk' . $i]) && $params['weeks']['wk' . $i] == 1) {
                 $day_start = $start_day + (($i - 1) * 7 * 86400);
-                $show_time = $day_start + $req_time['start_time'];
+                $show_time = $day_start + $req_time['start_time'] - date('Z'); //NOT gmdate;
 
                 $conflict = MyRadio_Scheduler::getScheduleConflict($day_start + $req_time['start_time'], $day_start + $start_time + $req_time['duration'] - 1);
                 if (!empty($conflict)) {
