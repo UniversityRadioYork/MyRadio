@@ -112,7 +112,7 @@ var NIPSWeb = function(d) {
                         success: function(data) {
                             $('#notice').hide();
                             for (i in data) {
-                                if (i === 'myury_errors') {
+                                if (i === 'myradio_errors') {
                                     continue;
                                 }
                                 if (typeof data[i].timeslotitemid !== 'undefined') {

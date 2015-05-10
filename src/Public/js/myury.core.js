@@ -94,8 +94,8 @@ $(document).ajaxSuccess(
         } catch (error) {
             return; //Not JSON
         }
-        if (data.hasOwnProperty("myury_errors") && data.myury_errors.length > 0) {
-            myury.errorReport(data.myury_errors, e, xhr, settings);
+        if (data.hasOwnProperty("myradio_errors") && data.myradio_errors.length > 0) {
+            myury.errorReport(data.myradio_errors, e, xhr, settings);
         }
     }
 );

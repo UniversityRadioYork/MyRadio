@@ -24,6 +24,9 @@ function updateCentralSearch() {
             success: function(data) {
                 $('#baps-channel-res').empty();
                 for (file in data) {
+                    if (file === 'myradio_errors') {
+                        continue;
+                    }
                     var classes = '';
                     if (!data[file].clean) {
                         classes = classes + ' unclean';

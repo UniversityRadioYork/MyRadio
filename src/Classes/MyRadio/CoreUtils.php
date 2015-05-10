@@ -266,7 +266,7 @@ class CoreUtils
 
         $canDisplayErr = Config::$display_errors || CoreUtils::hasPermission(AUTH_SHOWERRORS);
         if (!empty(MyRadioError::$php_errorlist) && $canDisplayErr) {
-            $data['myury_errors'] = MyRadioError::$php_errorlist;
+            $data['myradio_errors'] = MyRadioError::$php_errorlist;
         }
 
         echo json_encode($data, JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES);
