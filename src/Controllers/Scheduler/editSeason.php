@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Not Submitted
     if (isset($_REQUEST['seasonid'])) {
         //edit form
-        $season = MyRadio_Season::getInstance($data['id']);
+        $season = MyRadio_Season::getInstance($_REQUEST['seasonid']);
 
         //Check the user has permission to edit this show
         if (!$season->isCurrentUserAnOwner()) {

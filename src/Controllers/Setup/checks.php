@@ -40,13 +40,13 @@ function convertPHPSizeToBytes($sSize)
 }
 
 $required_modules = [
-    [
+/*    [
         'module' => 'apc',
         'success' => 'APC will be used to make MyRadio run faster.',
         'fail' => 'If you had the <a href="http://www.php.net/manual/en/book.apc.php">APC extension</a> MyRadio could use it to run much, much faster.',
         'required' => false,
         'set_fail' => ['cache_enable', false]
-    ],
+    ],*/
     [
         'module' => 'curl',
         'success' => 'cURL can be used to embed the IRN news service into SIS.',

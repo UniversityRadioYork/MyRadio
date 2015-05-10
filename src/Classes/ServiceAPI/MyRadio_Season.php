@@ -197,10 +197,20 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $season_id = $season_create_result[0];
 
         //Now let's allocate store the requested weeks for a term
+        $any_weeks = false;
         for ($i = 1; $i <= 10; $i++) {
             if ($params['weeks']["wk$i"]) {
-                self::$db->query('INSERT INTO schedule.show_season_requested_week (show_season_id, week) VALUES ($1, $2)', [$season_id, $i], true);
+                self::$db->query(
+                    'INSERT INTO schedule.show_season_requested_week (show_season_id, week) VALUES ($1, $2)',
+                    [$season_id, $i],
+                    true
+                );
+                $any_weeks = true;
             }
+        }
+        if (!$any_weeks) {
+            self::$db->query('ROLLBACK');
+            throw new MyRadioException('A Season must at least have one requested week.', 400);
         }
 
         //Now for requested times
@@ -904,7 +914,7 @@ EOT
         for ($i = 1; $i <= 10; $i++) {
             if (isset($params['weeks']['wk' . $i]) && $params['weeks']['wk' . $i] == 1) {
                 $day_start = $start_day + (($i - 1) * 7 * 86400);
-                $show_time = $day_start + $req_time['start_time'] - date('Z'); //NOT gmdate
+                $show_time = $day_start + $req_time['start_time'];
 
                 $conflict = MyRadio_Scheduler::getScheduleConflict($day_start + $req_time['start_time'], $day_start + $start_time + $req_time['duration'] - 1);
                 if (!empty($conflict)) {

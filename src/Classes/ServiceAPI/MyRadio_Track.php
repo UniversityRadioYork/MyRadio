@@ -520,7 +520,6 @@ class MyRadio_Track extends ServiceAPI
             throw new MyRadioException('Failed to move uploaded track to tmp directory.', 500);
         }
 
-        require_once 'Classes/vendor/getid3/getid3.php';
         $getID3 = new \getID3;
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
 
@@ -610,8 +609,7 @@ class MyRadio_Track extends ServiceAPI
 
         // Get the track duration from the file if it isn't already set
         if (empty($ainfo['duration'])) {
-            require_once 'Classes/vendor/getid3/getid3.php';
-            $getID3 = new \getID3;
+            $getID3 = new \getID3();
             $ainfo['duration'] = intval($getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $tmpid)['playtime_seconds']);
         }
 
