@@ -111,8 +111,13 @@ var NIPSWeb = function(d) {
                         cache: false,
                         success: function(data) {
                             $('#notice').hide();
+<<<<<<< HEAD
                             for (var i in data) {
                                 if (i === 'myury_errors') {
+=======
+                            for (i in data) {
+                                if (i === 'myradio_errors') {
+>>>>>>> master
                                     continue;
                                 }
                                 if (typeof data[i].timeslotitemid !== 'undefined') {
