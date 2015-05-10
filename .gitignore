@@ -7,3 +7,8 @@ sftp-*.json
 .tags*
 .phpintel/*
 .vagrant/*
+Thumbs.db
+cache.properties
+composer.lock
+src/vendor
+build/
