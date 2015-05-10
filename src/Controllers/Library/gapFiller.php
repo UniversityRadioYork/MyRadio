@@ -5,13 +5,13 @@
  */
 
 use \MyRadio\Config;
-use \MyRadio\APCProvider;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Album;
 
 $albums = MyRadio_Album::findByName(Config::$short_name, 10);
 
-$cacher = APCProvider::getInstance();
+$cache = Config::$cache_provider;
+$cacher = $cache::getInstance();
 
 $checked = $cacher->get('myradioLibraryGapFillerCheckedTracks');
 if (!is_array($checked)) {
