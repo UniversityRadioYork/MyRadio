@@ -253,8 +253,8 @@ CREATE TABLE playlist_timeslot (
     weight integer NOT NULL,
     playlistid character varying(15) NOT NULL,
     day smallint NOT NULL,
-    start_time time with time zone NOT NULL,
-    end_time time with time zone NOT NULL
+    start_time time without time zone NOT NULL,
+    end_time time without time zone NOT NULL
 );
 COMMENT ON COLUMN playlist_timeslot.day IS '1-7 (1=Monday)';
 CREATE TABLE playlists (
@@ -2480,8 +2480,8 @@ CREATE TABLE banner_timeslot (
     "order" integer NOT NULL,
     banner_campaign_id integer NOT NULL,
     day smallint NOT NULL,
-    start_time time with time zone NOT NULL,
-    end_time time with time zone,
+    start_time time without time zone NOT NULL,
+    end_time time without time zone,
     CONSTRAINT banner_timeslot_day_check CHECK ((day >= 0)),
     CONSTRAINT banner_timeslot_order_check CHECK (("order" >= 0))
 );
