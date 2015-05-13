@@ -42,8 +42,22 @@ class Artist extends ServiceAPI
         $title = trim($title);
 
         return self::$db->fetchAll(
-            'SELECT DISTINCT rec_track.artist AS title, 0 AS artistid
-            FROM rec_track WHERE rec_track.artist ILIKE \'%\' || $1 || \'%\' LIMIT $2',
+            'SELECT title, artistid FROM (
+                SELECT DISTINCT title, artistid, priority FROM
+                (
+                    (
+                        SELECT rec_track.artist AS title, 0 AS artistid, 1 AS priority
+                        FROM rec_track WHERE rec_track.artist=$1
+                    ) UNION (
+                        SELECT rec_track.artist AS title, 0 AS artistid, 2 AS priority
+                        FROM rec_track WHERE rec_track.artist ILIKE $1 || \'%\'
+                    ) UNION (
+                        SELECT rec_track.artist AS title, 0 AS artistid, 3 AS priority
+                        FROM rec_track WHERE rec_track.artist ILIKE \'%\' || $1 || \'%\'
+                    )
+                ) AS t1
+            ) As t2
+            ORDER BY priority LIMIT $2',
             [$title, $limit]
         );
     }

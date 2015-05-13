@@ -339,24 +339,47 @@ class MyRadio_Track extends ServiceAPI
      */
     private static function findByNameArtist($title, $artist, $limit, $digitised = false, $exact = false)
     {
-        $result = self::$db->fetchColumn(
-            'SELECT trackid
-            FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
-            AND rec_track.title '
-            . ($exact ? '=$1' : 'ILIKE \'%\' || $1 || \'%\'')
-            . 'AND rec_track.artist '
-            . ($exact ? '=$2' : 'ILIKE \'%\' || $1 || \'%\'')
-            . ($digitised ? ' AND digitised=\'t\'' : '')
-            . ' LIMIT $3',
-            [$title, $artist, $limit]
-        );
-
-        $response = [];
-        foreach ($result as $trackid) {
-            $response[] = new MyRadio_Track($trackid);
+        if ($exact) {
+            $result = self::$db->fetchColumn(
+                'SELECT trackid
+                FROM rec_track
+                WHERE title=$1 AND artist=$2'
+                . ($digitised ? ' AND digitised=\'t\'' : '')
+                . ' LIMIT $3',
+                [$title, $artist, $limit]
+            );
+        } else {
+            $opts = [$title, $limit];
+            if ($artist) {
+                $opts[] = $artist;
+            }
+            $result = self::$db->fetchColumn(
+                'SELECT trackid FROM (
+                    SELECT DISTINCT trackid, priority FROM
+                    (
+                        (
+                            SELECT trackid, 1 AS priority
+                            FROM rec_track WHERE title=$1'
+                            . ($artist ? ' AND artist=$3' : '')
+                            . ($digitised ? ' AND digitised=\'t\'' : '') . '
+                        ) UNION (
+                            SELECT trackid, 2 AS priority
+                            FROM rec_track WHERE title ILIKE $1 || \'%\''
+                            . ($artist ? '  AND artist ILIKE $3 || \'%\'' : '')
+                            . ($digitised ? ' AND digitised=\'t\'' : '') . '
+                        ) UNION (
+                            SELECT trackid, 3 AS priority
+                            FROM rec_track WHERE title ILIKE \'%\' || $1 || \'%\''
+                            . ($artist ? ' AND artist ILIKE \'%\' || $3 || \'%\'' : '')
+                            . ($digitised ? ' AND digitised=\'t\'' : '') . '
+                        )
+                    ) AS t1
+                ) As t2
+                ORDER BY priority LIMIT $2',
+            $opts);
         }
 
-        return $response;
+        return self::resultSetToObjArray($result);
     }
 
     /**
@@ -439,6 +462,27 @@ class MyRadio_Track extends ServiceAPI
         }
         if (empty($options['clean'])) {
             $options['clean'] = false;
+        }
+
+        //Shortcircuit - there's a far simpler and more accurate method
+        // if there's only title/artist/digitised/limit
+        if (
+            !$options['itonesplaylistid']
+            && !$options['recordid']
+            && !$options['lastfmverified']
+            && !$options['random']
+            && !$options['idsort']
+            && !$options['custom']
+            && !$options['nocorrectionproposed']
+            && !$options['clean']
+        ) {
+            return self::findByNameArtist(
+                $options['title'],
+                $firstop === 'OR' ? null : $options['artist'],
+                $options['limit'],
+                $options['digitised'],
+                $options['precise']
+            );
         }
 
         //Prepare paramaters
