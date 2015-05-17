@@ -359,7 +359,7 @@ class MyRadio_Track extends ServiceAPI
                     (
                         (
                             SELECT trackid, 1 AS priority
-                            FROM rec_track WHERE title=$1'
+                            FROM rec_track WHERE title ILIKE $1'
                             . ($artist ? ' AND artist=$3' : '')
                             . ($digitised ? ' AND digitised=\'t\'' : '') . '
                         ) UNION (
@@ -379,7 +379,7 @@ class MyRadio_Track extends ServiceAPI
             $opts);
         }
 
-        return self::resultSetToObjArray($result);
+        return self::resultSetToObjArray(array_unique($result));
     }
 
     /**
