@@ -1005,16 +1005,6 @@ class MyRadio_Track extends ServiceAPI
             }
             foreach ($data['similartracks']['track'] as $r) {
                 if ($r['match'] >= 0.25) {
-<<<<<<< HEAD
-                    $c = self::findByOptions(
-                        [
-                            'title' => $r['name'],
-                            'artist' => $r['artist']['name'],
-                            'limit' => 1,
-                            'digitised' => true
-                        ]
-                    );
-=======
                     //Try to find an exact match
                     $c = self::findByOptions(['title' => $r['name'],
                                 'artist' => $r['artist']['name'],
@@ -1030,7 +1020,6 @@ class MyRadio_Track extends ServiceAPI
                                 'precise' => false]);
                     }
                     //If match found, add track to Similar list
->>>>>>> 3dff0a27d5e48f3557709b3605741cfc094a4870
                     if (!empty($c)) {
                         $this->lastfm_similar[] = $c[0]->getID();
                     }
