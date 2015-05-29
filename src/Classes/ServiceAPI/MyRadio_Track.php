@@ -1006,18 +1006,26 @@ class MyRadio_Track extends ServiceAPI
             foreach ($data['similartracks']['track'] as $r) {
                 if ($r['match'] >= 0.25) {
                     //Try to find an exact match
-                    $c = self::findByOptions(['title' => $r['name'],
-                                'artist' => $r['artist']['name'],
-                                'limit' => 1,
-                                'digitised' => true,
-                                'precise' => true]);
+                    $c = self::findByOptions(
+                        [
+                            'title' => $r['name'],
+                            'artist' => $r['artist']['name'],
+                            'limit' => 1,
+                            'digitised' => true,
+                            'precise' => true
+                        ]
+                    );
                     //Try to find a not-so-exact match
                     if (empty($c)) {
-                        $c = self::findByOptions(['title' => $r['name'],
+                        $c = self::findByOptions(
+                            [
+                                'title' => $r['name'],
                                 'artist' => $r['artist']['name'],
                                 'limit' => 1,
                                 'digitised' => true,
-                                'precise' => false]);
+                                'precise' => false
+                            ]
+                        );
                     }
                     //If match found, add track to Similar list
                     if (!empty($c)) {
