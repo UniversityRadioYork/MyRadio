@@ -716,8 +716,8 @@ EOT
 
     private function formatTimeHuman($time)
     {
-        $stime = gmdate(' H:i', $time['start_time'] + date('Z'));
-        $etime = gmdate('H:i', $time['start_time'] + $time['duration'] + date('Z'));
+        $stime = date(' H:i', $time['start_time']);
+        $etime = date('H:i', $time['start_time'] + $time['duration']);
 
         return self::getDayNameFromID($time['day']) . $stime . ' - ' . $etime;
     }
@@ -920,7 +920,7 @@ EOT
                 $day_start = $start_day + (($i - 1) * 7 * 86400);
                 $show_time = $day_start + $req_time['start_time'];
 
-                $conflict = MyRadio_Scheduler::getScheduleConflict($day_start + $req_time['start_time'], $day_start + $start_time + $req_time['duration'] - 1);
+                $conflict = MyRadio_Scheduler::getScheduleConflict($show_time, $show_time + $req_time['duration']);
                 if (!empty($conflict)) {
                     self::$db->query('ROLLBACK');
                     throw new MyRadioException('A show is already scheduled for this time: ' . print_r($conflict, true));
