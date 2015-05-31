@@ -1957,28 +1957,52 @@ class MyRadio_User extends ServiceAPI
         return $form;
     }
 
-    public function toDataSource($full = true)
+    private $mixin_funcs = [
+        'officerships' => function(&$data) {
+            $data['officerships'] = $this->getOfficerships();
+        },
+        'training' => function(&$data) {
+            $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining(), false);
+        },
+        'shows' => function(&$data) {
+            $data['shows'] = CoreUtils::dataSourceParser($this->getShows(), false);
+        },
+        'personal_data' => function(&$data) {
+            $data['paid'] = $this->getAllPayments();
+            $data['locked'] = $this->getAccountLocked();
+            $data['college'] = $this->getCollege();
+            $data['receive_email'] = $this->getReceiveEmail();
+            $data['local_name'] = $this->getLocalName();
+        }
+    ];
+
+    /**
+     * @mixin officerships
+     * @mixin training
+     * @mixin shows
+     * @mixin personal_data
+     */
+    public function toDataSource($mixins = [])
     {
         $data = [
             'memberid' => $this->getID(),
-            'locked' => $this->getAccountLocked(),
-            'college' => $this->getCollege(),
             'fname' => $this->getFName(),
             'sname' => $this->getSName(),
             'sex' => $this->getSex(),
-            'receive_email' => $this->getReceiveEmail(),
             'public_email' => $this->getEmail(),
-            'url' => $this->getURL(),
-            'local_name' => $this->getLocalName()
+            'url' => $this->getURL()
         ];
-        if ($full) {
-            $data['paid'] = $this->getAllPayments();
-            $data['photo'] = $this->getProfilePhoto() === null ?
-                Config::$default_person_uri : $this->getProfilePhoto()->getURL();
-            $data['bio'] = $this->getBio();
-            $data['shows'] = CoreUtils::dataSourceParser($this->getShows(), false);
-            $data['officerships'] = $this->getOfficerships();
-            $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining(), false);
+
+        $data['photo'] = $this->getProfilePhoto() === null ?
+            Config::$default_person_uri : $this->getProfilePhoto()->getURL();
+        $data['bio'] = $this->getBio();
+
+        for ($mixins as $mixin) {
+            if (in_array($this->mixin_funcs, $mixin)) {
+                $this->mixin_funcs[$mixin]($data);
+            } else {
+                throw new MyRadioException('Unsupported mixin ' + $mixin, 400);
+            }
         }
 
         return $data;
