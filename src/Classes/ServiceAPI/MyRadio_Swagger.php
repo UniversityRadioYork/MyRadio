@@ -66,7 +66,7 @@ class MyRadio_Swagger
     /**
  * THIS HALF DEALS WITH API Declarations *
 */
-    private $class;
+    protected $class;
 
     public function __construct($class)
     {
@@ -202,7 +202,7 @@ class MyRadio_Swagger
         return ['lines' => $lines, 'keys' => $keys];
     }
 
-    private static function getClassDoc(ReflectionClass $class)
+    protected static function getClassDoc(ReflectionClass $class)
     {
         $doc = self::parseDoc($class);
 
@@ -228,9 +228,6 @@ class MyRadio_Swagger
                 $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
                 $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
                 break;
-            default:
-                $i++;
-                break;
             }
         }
 
@@ -242,7 +239,7 @@ class MyRadio_Swagger
         ];
     }
 
-    private static function getMethodDoc(ReflectionMethod $method)
+    protected static function getMethodDoc(ReflectionMethod $method)
     {
         $doc = self::parseDoc($method);
 
@@ -251,25 +248,10 @@ class MyRadio_Swagger
         //Parse for long description. This is until the first @
         $long_desc = implode('<br>', $doc['lines']);
 
-        //We append the auth requirements to the long description
-        $requirements = self::getCallRequirements(
-            self::getApiClasses()[$method->getDeclaringClass()],
-            $method->getName()
-        );
-        if ($requirements === null) {
-            $long_desc .= '<br>This API Call requires a Full API Access Key.';
-        } elseif (empty($requirements)) {
-            $long_desc .= '<br>Any API Key can Call this method.';
-        } else {
-            $long_desc .= '<br>The following permissions enable access to this method:';
-            foreach ($requirements as $typeid) {
-                $long_desc .= '<br> - ' . CoreUtils::getAuthDescription($typeid);
-            }
-        }
-
         //Now parse for docblock things
         $params = [];
         $return_type = 'Set';
+        $deprecated = false;
         foreach ($doc['keys'] as $key => $values) {
             switch ($key) {
                 //Deal with $params
@@ -281,11 +263,14 @@ class MyRadio_Swagger
                      * info[3] should be the description
                      */
                 $info = explode(' ', $values[0], 4);
+                if (sizeof($info) < 4) {
+                    break;
+                }
                 $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
                 $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
                 break;
-            default:
-                $i++;
+            case 'deprecated':
+                $deprecated = true;
                 break;
             }
         }
@@ -294,7 +279,8 @@ class MyRadio_Swagger
             'short_desc' => trim($short_desc),
             'long_desc' => trim($long_desc),
             'params' => $params,
-            'return_type' => $return_type
+            'return_type' => $return_type,
+            'deprecated' => $deprecated
         ];
     }
 

@@ -59,7 +59,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
         );
 
         if (empty($result)) {
-            throw new MyRadioException('The specified NIPSWeb Managed Item or Managed User Item does not seem to exist');
+            throw new MyRadioException('The specified NIPSWeb Managed Item or Managed User Item does not seem to exist', 404);
 
             return;
         }

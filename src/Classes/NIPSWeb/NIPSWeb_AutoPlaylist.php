@@ -38,7 +38,7 @@ class NIPSWeb_AutoPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
         $this->auto_playlist_id = $playlistid;
         $result = self::$db->fetchOne('SELECT * FROM bapsplanner.auto_playlists WHERE auto_playlist_id=$1 LIMIT 1', [$playlistid]);
         if (empty($result)) {
-            throw new MyRadioException('The specified NIPSWeb Auto Playlist does not seem to exist');
+            throw new MyRadioException('The specified NIPSWeb Auto Playlist does not seem to exist', 404);
 
             return;
         }

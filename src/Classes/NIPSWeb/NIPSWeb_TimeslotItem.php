@@ -40,7 +40,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
         );
 
         if (empty($result)) {
-            throw new MyRadioException('The specified Timeslot Item does not seem to exist');
+            throw new MyRadioException('The specified Timeslot Item does not seem to exist', 404);
 
             return;
         }

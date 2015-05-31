@@ -52,7 +52,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
             [$playlistid, $revisionid]
         );
         if (empty($result)) {
-            throw new MyRadioException('The specified iTones Playlist Revision does not seem to exist');
+            throw new MyRadioException('The specified iTones Playlist Revision does not seem to exist', 404);
 
             return;
         }

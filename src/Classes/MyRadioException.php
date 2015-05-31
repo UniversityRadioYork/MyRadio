@@ -66,7 +66,8 @@ class MyRadioException extends \RuntimeException
         if (class_exists('\MyRadio\Config')) {
             $is_ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
                     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
-                || empty($_SERVER['REMOTE_ADDR']);
+                || empty($_SERVER['REMOTE_ADDR'])
+                || (defined('JSON_DEBUG') && JSON_DEBUG);
 
             if (Config::$email_exceptions
                 && class_exists('\MyRadio\MyRadioEmail')

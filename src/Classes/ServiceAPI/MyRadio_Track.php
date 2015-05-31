@@ -121,7 +121,7 @@ class MyRadio_Track extends ServiceAPI
         $this->trackid = (int) $trackid;
         $result = self::$db->fetchOne('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', [$this->trackid]);
         if (empty($result)) {
-            throw new MyRadioException('The specified Track does not seem to exist', 400);
+            throw new MyRadioException('The specified Track does not seem to exist', 404);
         }
 
         $this->artist = $result['artist'];

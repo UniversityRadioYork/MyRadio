@@ -1957,25 +1957,6 @@ class MyRadio_User extends ServiceAPI
         return $form;
     }
 
-    private $mixin_funcs = [
-        'officerships' => function(&$data) {
-            $data['officerships'] = $this->getOfficerships();
-        },
-        'training' => function(&$data) {
-            $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining(), false);
-        },
-        'shows' => function(&$data) {
-            $data['shows'] = CoreUtils::dataSourceParser($this->getShows(), false);
-        },
-        'personal_data' => function(&$data) {
-            $data['paid'] = $this->getAllPayments();
-            $data['locked'] = $this->getAccountLocked();
-            $data['college'] = $this->getCollege();
-            $data['receive_email'] = $this->getReceiveEmail();
-            $data['local_name'] = $this->getLocalName();
-        }
-    ];
-
     /**
      * @mixin officerships
      * @mixin training
@@ -1984,6 +1965,25 @@ class MyRadio_User extends ServiceAPI
      */
     public function toDataSource($mixins = [])
     {
+        $mixin_funcs = [
+            'officerships' => function(&$data) {
+                $data['officerships'] = $this->getOfficerships();
+            },
+            'training' => function(&$data) {
+                $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining(), false);
+            },
+            'shows' => function(&$data) {
+                $data['shows'] = CoreUtils::dataSourceParser($this->getShows(), false);
+            },
+            'personal_data' => function(&$data) {
+                $data['paid'] = $this->getAllPayments();
+                $data['locked'] = $this->getAccountLocked();
+                $data['college'] = $this->getCollege();
+                $data['receive_email'] = $this->getReceiveEmail();
+                $data['local_name'] = $this->getLocalName();
+            }
+        ];
+
         $data = [
             'memberid' => $this->getID(),
             'fname' => $this->getFName(),
@@ -1997,9 +1997,9 @@ class MyRadio_User extends ServiceAPI
             Config::$default_person_uri : $this->getProfilePhoto()->getURL();
         $data['bio'] = $this->getBio();
 
-        for ($mixins as $mixin) {
-            if (in_array($this->mixin_funcs, $mixin)) {
-                $this->mixin_funcs[$mixin]($data);
+        foreach ($mixins as $mixin) {
+            if (in_array($mixin_funcs, $mixin)) {
+                $mixin_funcs[$mixin]($data);
             } else {
                 throw new MyRadioException('Unsupported mixin ' + $mixin, 400);
             }

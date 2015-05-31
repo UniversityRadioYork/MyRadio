@@ -42,7 +42,7 @@ class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
             [$playlistid]
         );
         if (empty($result)) {
-            throw new MyRadioException('The specified NIPSWeb Managed Playlist does not seem to exist');
+            throw new MyRadioException('The specified NIPSWeb Managed Playlist does not seem to exist', 404);
 
             return;
         }
