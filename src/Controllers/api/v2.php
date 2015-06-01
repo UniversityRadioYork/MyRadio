@@ -14,7 +14,7 @@ use \MyRadio\ServiceAPI\MyRadio_User;
 header('Content-Type: application/json');
 
 //Strip everything from the URL before the version
-$url = explode(Config::$api_url . '/v2/', $_SERVER['REQUEST_URI'])[1];
+$url = explode(Config::$api_uri . 'v2/', $_SERVER['REQUEST_URI'])[1];
 
 if ($url === 'swagger.json') {
 	echo json_encode(MyRadio_Swagger2::resources());
