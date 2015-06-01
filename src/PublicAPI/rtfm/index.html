@@ -23,7 +23,7 @@
   <script type="text/javascript">
     $(function () {
       var version = window.location.search.match(/version=([0-9.]+)/);
-      var doc_url = window.location.href.split('/');
+      var doc_url = window.location.href.split('#!/')[0].split('/');
       doc_url.pop();
       doc_url.pop();
       var url_base = doc_url.join('/');
