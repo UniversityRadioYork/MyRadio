@@ -107,7 +107,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         $apis = self::getApis();
         $data = [
             'swagger' => '2.0',
-            'basePath' => Config::$api_url . '/v2',
+            'basePath' => Config::$api_uri . 'v2',
             'host' => $_SERVER['HTTP_HOST'],
             'info' => [
                 'title' => 'MyRadio API',
