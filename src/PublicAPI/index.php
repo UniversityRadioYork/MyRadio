@@ -84,7 +84,7 @@ if (empty($class)) {
 }
 
 //Go to the right version controller
-if (strpos($_SERVER['REQUEST_URI'], Config::$api_url . '/v2/') !== false) {
+if (strpos($_SERVER['REQUEST_URI'], Config::$api_uri . 'v2/') !== false) {
     require_once '../Controllers/api/v2.php';
 } else {
     require_once '../Controllers/api/v1.php';
