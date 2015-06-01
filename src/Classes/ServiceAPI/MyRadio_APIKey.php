@@ -7,6 +7,7 @@
 
 namespace MyRadio\ServiceAPI;
 
+use \MyRadio\Iface\APICaller;
 use \MyRadio\ServiceAPI\MyRadio_Swagger;
 
 /**
@@ -16,7 +17,7 @@ use \MyRadio\ServiceAPI\MyRadio_Swagger;
  * @package MyRadio_API
  * @uses    \Database
  */
-class MyRadio_APIKey extends ServiceAPI
+class MyRadio_APIKey extends ServiceAPI implements APICaller
 {
     /**
      * The API Key

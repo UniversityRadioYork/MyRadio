@@ -30,14 +30,22 @@ if (sizeof($parts) === 3) {
 	$id = $parts[1];
 }
 
-$response = MyRadio_Swagger2::handleRequest($op, $class, $method, $id);
+try {
+	$response = MyRadio_Swagger2::handleRequest($op, $class, $method, $id);
+	$data = [
+	    'status' => 'OK',
+	    'payload' => CoreUtils::dataSourceParser($response),
+	    'time' => sprintf('%f', $__start + microtime(true))
+	];
+} catch (MyRadioException $e) {
+	header('HTTP/1.1 ' . $e->getCode() . ' ' . $e->getCodeName());
+	$data = [
+	    'status' => 'FAIL',
+	    'payload' => $e->getMessage(),
+	    'time' => sprintf('%f', $__start + microtime(true))
+	];
+}
 
-$time = sprintf('%f', $__start + microtime(true));
 
-$data = [
-    'status' => 'OK',
-    'payload' => CoreUtils::dataSourceParser($response),
-    'time' => sprintf('%f', $__start + microtime(true))
-];
 
 echo json_encode($data);

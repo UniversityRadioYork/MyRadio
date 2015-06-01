@@ -21,26 +21,13 @@ use \MyRadio\ServiceAPI\MyRadio_User;
 if (isset($_REQUEST['apiKey'])) {
     $_REQUEST['api_key'] = $_REQUEST['apiKey'];
 }
-if (empty($_REQUEST['api_key'])) {
-    if ($class === 'resources') {
-        $_REQUEST['api_key'] = 'IUrnsb8AMkjqDRdfXvOMe3DqHLW8HJ1RNBPNJq3H1FQpiwQDs7Ufoxmsf5xZE9XEbQErRO97DG4xfyVAO7LuS2dOiVNZYoxkk4fEhDt8wR4sLXbghidtM5rLHcgkzO10';
-    } else {
-        /**
-         * Attempt to use user session
-         * By not using session handler, and resetting $_SESSION after
-         * We are ensuring there are no session-based side effects
-         */
-        $dummysession = $_SESSION;
-        session_decode((new MyRadioSession())->read(session_id()));
-        if (!isset($_SESSION['memberid'])) {
-            api_error(401, 'An API Key must be provided.');
-        }
-        $api_key = MyRadio_User::getInstance($_SESSION['memberid']);
-        $_SESSION = $dummysession;
-    }
+if (empty($_REQUEST['api_key']) && $class === 'resources') {
+    $_REQUEST['api_key'] = 'IUrnsb8AMkjqDRdfXvOMe3DqHLW8HJ1RNBPNJq3H1FQpiwQDs7Ufoxmsf5xZE9XEbQErRO97DG4xfyVAO7LuS2dOiVNZYoxkk4fEhDt8wR4sLXbghidtM5rLHcgkzO10';
 }
-if (!isset($api_key)) {
-    $api_key = MyRadio_APIKey::getInstance($_REQUEST['api_key']);
+
+$api_key = MyRadio_Swagger::getAPICaller();
+if (!$api_key) {
+    api_error(401, 'An API Key must be provided.');
 }
 
 /**

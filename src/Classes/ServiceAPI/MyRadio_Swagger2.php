@@ -73,6 +73,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             case 'put':
                 //ya rly
                 parse_str(file_get_contents("php://input"), $args);
+                break;
         }
 
         if ($id) {
@@ -85,8 +86,17 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             $object = null;
         }
 
-        //Cool, it's valid.
-        return invokeArgsNamed($paths[$path][$op], $object, $args);
+        //Cool, it's valid. Can they get at it?
+        $caller = self::getAPICaller();
+
+        if (!$caller) {
+            throw new MyRadioException('No valid authentication data provided.', 401);
+        } elseif ($caller->canCall($classes[$class], $paths[$path][$op]->getName())) {
+            $caller->logCall($_SERVER['REQUEST_URI'], $args);
+            return invokeArgsNamed($paths[$path][$op], $object, $args);
+        } else {
+            throw new MyRadioException('Caller cannot access this method.', 403);
+        }
     }
 
     /**
@@ -149,30 +159,38 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
     private static function getPaths($apis)
     {
-        $paths = [];
+        $cache_class = Config::$cache_provider;
+        $cache = $cache_class::getInstance();
 
-        foreach ($apis as $class => $public_name) {
-            $api = new MyRadio_Swagger2($class);
+        $paths = $cache->get('api_pathmap_v2');
+        if (!$paths) {
+             $paths = [];
 
-            foreach ($api->getClassInfo()['children'] as $method_name => $child) {
+            foreach ($apis as $class => $public_name) {
+                $api = new MyRadio_Swagger2($class);
 
-                foreach ($child as $op => $reflector) {
-                    $data = self::getMethodDoc($reflector);
+                foreach ($api->getClassInfo()['children'] as $method_name => $child) {
 
-                    $paths['/' . $public_name . $method_name][$op] = [
-                        'summary' => $data['short_desc'],
-                        'description' => $data['long_desc'],
-                        'tags' => [$public_name],
-                        'operationId' => $class . ':' . $reflector->getName(),
-                        'parameters' => self::getParameters($reflector),
-                        'responses' => [
-                            '400' => ['$ref' => '#/responses/invalidInput']
-                        ],
-                        'deprecated' => $data['deprecated'],
-                        'security' => []
-                    ];
+                    foreach ($child as $op => $reflector) {
+                        $data = self::getMethodDoc($reflector);
+
+                        $paths['/' . $public_name . $method_name][$op] = [
+                            'summary' => $data['short_desc'],
+                            'description' => $data['long_desc'],
+                            'tags' => [$public_name],
+                            'operationId' => $class . ':' . $reflector->getName(),
+                            'parameters' => self::getParameters($reflector),
+                            'responses' => [
+                                '400' => ['$ref' => '#/responses/invalidInput']
+                            ],
+                            'deprecated' => $data['deprecated'],
+                            'security' => []
+                        ];
+                    }
                 }
             }
+
+            $cache->set('api_pathmap_v2', $paths, 600);
         }
 
         return $paths;

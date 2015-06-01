@@ -8,6 +8,7 @@
 namespace MyRadio\ServiceAPI;
 
 use \MyRadio\Config;
+use \MyRadio\Iface\APICaller;
 use \MyRadio\MyRadioEmail;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
@@ -24,7 +25,7 @@ use \MyRadio\ServiceAPI\MyRadio_Swagger;
  * @uses    \Database
  * @uses    \CacheProvider
  */
-class MyRadio_User extends ServiceAPI
+class MyRadio_User extends ServiceAPI implements APICaller
 {
     /**
      * Stores the currently logged in User's object after first use.

@@ -14,6 +14,8 @@ use \ReflectionException;
 use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioSession;
+use \MyRadio\ServiceAPI\MyRadio_User;
 
 /**
  * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/
@@ -332,5 +334,47 @@ class MyRadio_Swagger
         }
 
         return $result;
+    }
+
+    /**
+     * Identifies who's calling this.
+     * @return \MyRadio\Iface\APICaller The APICaller authorising against the request
+     */
+    public static function getAPICaller()
+    {
+        if (isset($_GET['apiKey'])) {
+            $_GET['api_key'] = $_GET['apiKey'];
+        }
+        if (empty($_GET['api_key'])) {
+            /**
+             * Attempt to use user session
+             * By not using session handler, and resetting $_SESSION after
+             * We are ensuring there are no session-based side effects
+             */
+            $api_key = self::getCurrentUserWithoutMessingWithSession();
+        } else {
+            $api_key = MyRadio_APIKey::getInstance($_GET['api_key']);
+        }
+
+        return $api_key;
+    }
+
+    /**
+     * I really, really hope that the brief method name tells you what's going on here.
+     *
+     * @return MyRadio_User|null
+     */
+    protected static function getCurrentUserWithoutMessingWithSession()
+    {
+        $dummysession = $_SESSION;
+        session_decode((new MyRadioSession())->read(session_id()));
+        if (!isset($_SESSION['memberid'])) {
+            $user = null;
+        } else {
+            $user = MyRadio_User::getInstance($_SESSION['memberid']);
+        }
+        $_SESSION = $dummysession;
+
+        return $user;
     }
 }
