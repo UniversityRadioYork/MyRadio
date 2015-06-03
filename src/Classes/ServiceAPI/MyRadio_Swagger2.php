@@ -214,11 +214,6 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         return $tags;
     }
 
-    public static function getClassFor($path)
-    {
-        //@todo
-    }
-
     public function getClassInfo()
     {
         $blocked_methods = [
@@ -252,7 +247,10 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
             $name = $method->getName();
 
-            if (CoreUtils::startsWith($name, 'set')) {
+            if ($name === 'toDataSource') {
+                $op = 'get';
+                $public_name = '';
+            } elseif (CoreUtils::startsWith($name, 'set')) {
                 $op = 'put';
                 $public_name = '/' . strtolower(substr($name, 3));
             } elseif (CoreUtils::startsWith($name, 'get')) {

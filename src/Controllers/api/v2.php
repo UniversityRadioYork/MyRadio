@@ -24,6 +24,9 @@ $method = preg_replace('/[^0-9a-zA-Z-_]+/', '', $parts[sizeof($parts)-1]);
 $id = null;
 if (sizeof($parts) === 3) {
 	$id = $parts[1];
+} elseif (is_numeric($method)) {
+	$id = $method;
+	$method = null;
 }
 
 try {
