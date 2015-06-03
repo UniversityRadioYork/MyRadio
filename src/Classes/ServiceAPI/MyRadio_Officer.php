@@ -149,7 +149,7 @@ class MyRadio_Officer extends ServiceAPI
             [$this->getID(), $memberid]
         );
         MyRadio_User::getInstance($memberid)->updateCacheObject();
-	Profile::clearCache();
+        Profile::clearCache();
     }
 
     /**
