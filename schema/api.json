@@ -18,7 +18,6 @@
 	"\\MyRadio\\ServiceAPI\\MyRadio_Team": "team",
 	"\\MyRadio\\ServiceAPI\\MyRadio_TracklistItem": "tracklistItem",
 	"\\MyRadio\\ServiceAPI\\MyRadio_User": "user",
-	"\\MyRadio\\iTones\\iTones_Playlist": "playlist",
 	"\\MyRadio\\iTones\\iTones_Utils": "iTones",
 	"\\MyRadio\\MyRadio\\CoreUtils": "utils",
 	"\\MyRadio\\ServiceAPI\\MyRadio_Quote": "quote",

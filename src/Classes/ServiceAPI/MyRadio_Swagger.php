@@ -252,6 +252,7 @@ class MyRadio_Swagger
 
         //Now parse for docblock things
         $params = [];
+        $mixins = [];
         $return_type = 'Set';
         $deprecated = false;
         foreach ($doc['keys'] as $key => $values) {
@@ -259,17 +260,27 @@ class MyRadio_Swagger
                 //Deal with $params
             case 'param':
                 /**
-                     * info[0] should be "@param"
-                     * info[1] should be data type
-                     * info[2] should be parameter name
-                     * info[3] should be the description
-                     */
+                 * info[0] should be "@param"
+                 * info[1] should be data type
+                 * info[2] should be parameter name
+                 * info[3] should be the description
+                 */
                 $info = explode(' ', $values[0], 4);
                 if (sizeof($info) < 4) {
                     break;
                 }
                 $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
                 $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
+                break;
+            case 'mixin':
+                /**
+                 * info[0] should be the mixin name
+                 * info[1] should be a description of what the mixin does
+                 */
+                foreach ($values as $value) {
+                    $info = explode(' ', $value, 2);
+                    $mixins[$info[0]] = $info[1];
+                }
                 break;
             case 'deprecated':
                 $deprecated = true;
@@ -281,6 +292,7 @@ class MyRadio_Swagger
             'short_desc' => trim($short_desc),
             'long_desc' => trim($long_desc),
             'params' => $params,
+            'mixins' => $mixins,
             'return_type' => $return_type,
             'deprecated' => $deprecated
         ];

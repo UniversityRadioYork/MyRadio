@@ -89,6 +89,18 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         //Cool, it's valid. Can they get at it?
         $caller = self::getAPICaller();
 
+        // Check mixin permissions too
+        if (isset($args['mixin'])) {
+            if (is_string($args['mixin'])) {
+                $mixins = [$args['mixin']];
+            } else {
+                $mixins = $args['mixin'];
+            }
+
+            // @todo we current pretend we've validated
+            $args = ['mixins' => $mixins];
+        }
+
         if (!$caller) {
             throw new MyRadioException('No valid authentication data provided.', 401);
         } elseif ($caller->canCall($classes[$class], $paths[$path][$op]->getName())) {
@@ -127,6 +139,14 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     'description' => 'The ID of the item to work with.',
                     'required' => true,
                     'type' => 'integer'
+                ],
+                'dataSourceFull' => [
+                    'name' => 'full',
+                    'in' => 'query',
+                    'description' => 'Deprecated. Used to return more details in object GETs.',
+                    'required' => false,
+                    'type' => 'boolean',
+                    'default' => false
                 ]
             ],
             'responses' => [
@@ -144,7 +164,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         return json_decode(file_get_contents(__DIR__ . '/../../../schema/api.json'), true);
     }
 
-    private static function getParameters($method)
+    private static function getParameters($method, $doc)
     {
         $parameters = [];
 
@@ -152,6 +172,32 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             $parameters[] = [
                 '$ref' => '#/parameters/idParam'
             ];
+        }
+
+        if ($method->name === 'toDataSource' && $method->getNumberOfParameters() === 1) {
+            if (!empty($doc['mixins'])) {
+                $description = 'A list of mixins to provide additional information in the response. Possible values:';
+                foreach ($doc['mixins'] as $mixin => $desc) {
+                    $description .= "<br>$mixin: $desc";
+                }
+                $parameters[] = [
+                    'name' => 'mixin',
+                    'in' => 'query',
+                    'description' => $description,
+                    'required' => false,
+                    'type' => 'array',
+                    'items' => [
+                        'type' => 'string',
+                        'format' => 'string'
+                    ],
+                    'collectionFormat' => 'multi',
+                    'default' => []
+                ];
+            } else {
+                $parameters[] = [
+                    '$ref' => '#/parameters/dataSourceFull'
+                ];
+            }
         }
 
         return $parameters;
@@ -179,7 +225,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                             'description' => $data['long_desc'],
                             'tags' => [$public_name],
                             'operationId' => $class . ':' . $reflector->getName(),
-                            'parameters' => self::getParameters($reflector),
+                            'parameters' => self::getParameters($reflector, $data),
                             'responses' => [
                                 '400' => ['$ref' => '#/responses/invalidInput']
                             ],

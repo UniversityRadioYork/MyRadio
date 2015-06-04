@@ -1959,10 +1959,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
     }
 
     /**
-     * @mixin officerships
-     * @mixin training
-     * @mixin shows
-     * @mixin personal_data
+     * @mixin officerships Provides 'officerships' that the user has held.
+     * @mixin training Provides the 'training' that the user has had.
+     * @mixin shows Provides the 'shows' that the user is a part of.
+     * @mixin personal_data Provides 'paid', 'locked', 'college' and other information considered personal.
      */
     public function toDataSource($mixins = [])
     {
@@ -1999,10 +1999,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $data['bio'] = $this->getBio();
 
         foreach ($mixins as $mixin) {
-            if (in_array($mixin_funcs, $mixin)) {
+            if (in_array($mixin_funcs, $mixin) !== false) {
                 $mixin_funcs[$mixin]($data);
             } else {
-                throw new MyRadioException('Unsupported mixin ' + $mixin, 400);
+                throw new MyRadioException('Unsupported mixin ' . $mixin, 400);
             }
         }
 
