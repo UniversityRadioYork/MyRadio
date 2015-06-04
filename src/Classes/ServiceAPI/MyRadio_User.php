@@ -1999,7 +1999,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $data['bio'] = $this->getBio();
 
         foreach ($mixins as $mixin) {
-            if (in_array($mixin, $mixin_funcs) !== false) {
+            if (in_array($mixin_funcs, $mixin) !== false) {
                 $mixin_funcs[$mixin]($data);
             } else {
                 throw new MyRadioException('Unsupported mixin ' . $mixin, 400);
