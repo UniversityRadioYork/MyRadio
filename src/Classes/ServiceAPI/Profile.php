@@ -43,6 +43,18 @@ class Profile extends ServiceAPI
      */
     private static $officers = null;
 
+
+    /**
+     * Clears (well, deletes) the cache objects used in Profile.
+     *
+     */
+    public static function clearCache()
+    {
+        self::$cache->delete('MyRadioProfile_allMembers');
+        self::$cache->delete('MyRadioProfile_currentOfficers');
+        self::$cache->delete('MyRadioProfile_officers');
+    }
+
     /**
      * Returns an Array representation of all URY members. On first run, this is cached locally in the class, and
      * shared in the CacheProvider until the Cache is cleared
