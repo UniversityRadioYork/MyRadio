@@ -11,6 +11,7 @@
 use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
@@ -104,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
     //Logged in user change?
     if (isset($data['pwold'])) {
         //Is the old password correct?
-        if (CoreUtils::testCredentials(MyRadio_User::getInstance()->getEmail(), $data['pwold']) === false) {
+        if (AuthUtils::testCredentials(MyRadio_User::getInstance()->getEmail(), $data['pwold']) === false) {
             $form->render(['error' => 'Your old password was invalid.']);
             exit;
         }

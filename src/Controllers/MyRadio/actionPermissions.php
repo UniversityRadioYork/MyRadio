@@ -5,6 +5,7 @@
  * @package MyRadio_Core
  */
 
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
@@ -59,7 +60,7 @@ $form->addField(
                         'text' => 'GLOBAL ACCESS'
                     ]
                 ],
-                CoreUtils::getAllPermissions()
+                AuthUtils::getAllPermissions()
             )
         ]
     )
@@ -80,14 +81,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $permission = null;
     }
 
-    CoreUtils::addActionPermission($setModule, $setAction, $permission);
+    AuthUtils::addActionPermission($setModule, $setAction, $permission);
 
     CoreUtils::backWithMessage('The action permission has been updated.');
 
 } else {
     //Not Submitted
     //Include the current permissions. This will be rendered in a DataTable.
-    $data = CoreUtils::getAllActionPermissions();
+    $data = AuthUtils::getAllActionPermissions();
 
     /**
      * Pass it over to the actionPermissions view for output.

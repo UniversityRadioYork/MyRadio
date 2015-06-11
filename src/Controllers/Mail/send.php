@@ -8,6 +8,7 @@
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadioEmail;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
@@ -65,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         throw new MyRadioException('List ID was not provided!', 400);
     }
     if (!MyRadio_List::getInstance($_REQUEST['list'])->isPublic()) {
-        CoreUtils::requirePermission(AUTH_MAILALLMEMBERS);
+        AuthUtils::requirePermission(AUTH_MAILALLMEMBERS);
     }
 
     $form->setFieldValue(

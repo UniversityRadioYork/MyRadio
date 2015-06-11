@@ -4,6 +4,7 @@ namespace MyRadio;
 
 use \MyRadio\Config;
 use \MyRadio\Database;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioMenu;
 use \MyRadio\MyRadioException;
@@ -171,7 +172,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
      */
     public function render()
     {
-        if ((defined('AUTH_SHOWERRORS') && CoreUtils::hasPermission(AUTH_SHOWERRORS))
+        if ((defined('AUTH_SHOWERRORS') && AuthUtils::hasPermission(AUTH_SHOWERRORS))
             || Config::$display_errors
         ) {
             $this->addVariable('phperrors', MyRadioError::$php_errorlist);

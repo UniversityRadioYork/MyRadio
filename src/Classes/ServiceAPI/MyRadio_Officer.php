@@ -7,6 +7,7 @@
 namespace MyRadio\ServiceAPI;
 
 use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
@@ -647,7 +648,7 @@ class MyRadio_Officer extends ServiceAPI
                                             'text' => 'Select a Permission'
                                         ]
                                     ],
-                                    CoreUtils::getAllPermissions()
+                                    AuthUtils::getAllPermissions()
                                 )
                             ]
                         )

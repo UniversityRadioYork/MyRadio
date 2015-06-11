@@ -6,6 +6,7 @@
  */
 
 use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_List;
 use \MyRadio\ServiceAPI\MyRadio_User;
@@ -15,7 +16,7 @@ if (!isset($_REQUEST['list'])) {
 }
 
 if (isset($_REQUEST['memberid'])) {
-    CoreUtils::requirePermission(AUTH_EDITANYPROFILE);
+    AuthUtils::requirePermission(AUTH_EDITANYPROFILE);
     $user = $_REQUEST['memberid'];
 } else {
     $user = -1;

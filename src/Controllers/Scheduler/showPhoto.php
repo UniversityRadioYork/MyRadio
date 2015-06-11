@@ -6,6 +6,7 @@
  */
 
 use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Show;
 
@@ -16,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $show = MyRadio_Show::getInstance($data['show_id']);
     //Require this is the user's show or the user can edit any show
     if (!$show->isCurrentUserAnOwner()) {
-        CoreUtils::requirePermission(AUTH_EDITSHOWS);
+        AuthUtils::requirePermission(AUTH_EDITSHOWS);
     }
 
     $show->setShowPhoto($data['image_file']['tmp_name']);
@@ -33,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     //Require this is the user's show or the user can edit any show
     if (!$show->isCurrentUserAnOwner()) {
-        CoreUtils::requirePermission(AUTH_EDITSHOWS);
+        AuthUtils::requirePermission(AUTH_EDITSHOWS);
     }
 
     MyRadio_Show::getPhotoForm()
