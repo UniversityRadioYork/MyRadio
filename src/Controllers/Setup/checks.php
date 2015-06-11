@@ -54,12 +54,6 @@ $required_modules = [
         'required' => false
     ],
     [
-        'module' => 'fileinfo',
-        'success' => 'The Fileinfo extension can be used to provide upload functionality for the Podcast and Library modules.',
-        'fail' => 'If you had the <a href="http://www.php.net/manual/en/book.fileinfo.php">Fileinfo extension</a> MyRadio could be used to upload podcasts and manage a music library.',
-        'required' => false
-    ],
-    [
         'module' => 'geoip',
         'success' => 'The GeoIP extension can be used to provide location functionality for Stats and SIS modules.',
         'fail' => 'If you had the <a href="http://www.php.net/manual/en/book.geoip.php">GeoIP extension</a> MyRadio could provide location information for the Studio Information Service and Statistics.',
