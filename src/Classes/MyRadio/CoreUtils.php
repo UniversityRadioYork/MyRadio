@@ -32,12 +32,6 @@ class CoreUtils
     private static $academicYear;
 
     /**
-     * Stores actionid => uri mappings of custom web addresses (e.g. /myury/iTones/default gets mapped to /itones)
-     * @var Array
-     */
-    private static $custom_uris = [];
-
-    /**
      * Stores module name => id mappings to reduce query load - they are initialised once and stored
      * @var Array
      */
@@ -222,116 +216,6 @@ class CoreUtils
     }
 
     /**
-     * Redirects back to previous page.
-     */
-    public static function back()
-    {
-        header('Location: '.$_SERVER['HTTP_REFERER']);
-    }
-
-    /**
-     * Responds with nocontent.
-     */
-    public static function nocontent()
-    {
-        header('HTTP/1.1 204 No Content');
-        exit;
-    }
-
-    /**
-     * Responds with JSON data.
-     */
-    public static function dataToJSON($data)
-    {
-        header('Content-Type: application/json');
-        header('HTTP/1.1 200 OK');
-
-        //Decode to datasource if needed
-        $data = self::dataSourceParser($data);
-
-        $canDisplayErr = Config::$display_errors || AuthUtils::hasPermission(AUTH_SHOWERRORS);
-        if (!empty(MyRadioError::$php_errorlist) && $canDisplayErr) {
-            $data['myradio_errors'] = MyRadioError::$php_errorlist;
-        }
-
-        echo json_encode($data, JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES);
-        exit;
-    }
-
-    /**
-     * Redirects to another page.
-     *
-     * @param  string $module The module to which we should redirect.
-     * @param  string $action The optional action inside the module to target.
-     * @param  array  $params Additional GET variables
-     * @return null   Nothing.
-     */
-    public static function redirect($module, $action = null, $params = [])
-    {
-        header('Location: ' . self::makeURL($module, $action, $params));
-    }
-
-    public static function redirectWithMessage($module, $action, $message)
-    {
-        self::redirect($module, $action, ['message' => base64_encode($message)]);
-    }
-
-    /**
-     * Builds a module/action URL
-     * @param  string $module
-     * @param  string $action
-     * @param  array  $params Additional GET variables
-     * @return String URL to Module/Action
-     */
-    public static function makeURL($module, $action = null, $params = [])
-    {
-        if (empty(self::$custom_uris) && class_exists('Database')) {
-            $result = Database::getInstance()->fetchAll('SELECT actionid, custom_uri FROM myury.actions');
-
-            foreach ($result as $row) {
-                self::$custom_uris[$row['actionid']] = $row['custom_uri'];
-            }
-        }
-        //Check if there is a custom URL configured
-        $key = self::getActionId(self::getModuleId($module), empty($action) ? Config::$default_action : $action);
-        if (!empty(self::$custom_uris[$key])) {
-            return self::$custom_uris[$key];
-        }
-
-        if (Config::$rewrite_url) {
-            $str = Config::$base_url . $module . '/' . (($action !== null) ? $action . '/' : '');
-            if (!empty($params)) {
-                if (is_string($params)) {
-                    if (substr($params, 0, 1) !== '?') {
-                        $str .= '?';
-                    }
-                    $str .= $params;
-                } else {
-                    $str .= '?';
-                    foreach ($params as $k => $v) {
-                        $str .= "$k=$v&";
-                    }
-                    $str = substr($str, 0, -1);
-                }
-            }
-        } else {
-            $str = Config::$base_url . '?module=' . $module . (($action !== null) ? '&action=' . $action : '');
-
-            if (!empty($params)) {
-                if (is_string($params)) {
-                    $str .= "&$params";
-                } else {
-                    foreach ($params as $k => $v) {
-                        $str .= "&$k=$v";
-                    }
-                }
-            }
-        }
-
-        return $str;
-    }
-
-    /**
      * A simple debug method that only displays output for a specific user.
      * @param int    $userid  The ID of the user to display for
      * @param String $message The HTML to display for this user
@@ -482,11 +366,6 @@ class CoreUtils
             self::redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
             exit;
         }
-    }
-
-    public static function backWithMessage($message)
-    {
-        header('Location: ' . $_SERVER['HTTP_REFERER'] . (strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?') . 'message=' . base64_encode($message));
     }
 
     /**

@@ -8,18 +8,19 @@
 
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 
 $data = array_map(
     function ($x) {
         $x['usage'] = [
         'display' => 'text',
         'value' => 'Usage',
-        'url' => CoreUtils::makeURL('MyRadio', 'permissionUsage', ['typeid' => $x['value']])
+        'url' => URLUtils::makeURL('MyRadio', 'permissionUsage', ['typeid' => $x['value']])
         ];
         $x['assigned'] = [
         'display' => 'text',
         'value' => 'Assigned To',
-        'url' => CoreUtils::makeURL('MyRadio', 'permissionAssigned', ['typeid' => $x['value']])
+        'url' => URLUtils::makeURL('MyRadio', 'permissionAssigned', ['typeid' => $x['value']])
         ];
 
         return $x;

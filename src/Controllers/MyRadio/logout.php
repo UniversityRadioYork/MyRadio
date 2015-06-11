@@ -8,7 +8,7 @@
  * @todo Refactor login code to support Authentication plugins
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 
 session_destroy();
-CoreUtils::redirect('MyRadio', 'login', ['logout' => 1]);
+URLUtils::redirect('MyRadio', 'login', ['logout' => 1]);

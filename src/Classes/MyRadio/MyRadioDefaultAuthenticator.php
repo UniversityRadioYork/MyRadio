@@ -150,7 +150,7 @@ class MyRadioDefaultAuthenticator extends \MyRadio\Database implements \MyRadio\
             . '<p>A password reset has been requested for the ' . Config::$short_name
             . ' account associated with this email address. If you did not request'
             . ' this email, please ignore it.</p>'
-            . '<p><a href="' . CoreUtils::makeURL('MyRadio', 'pwChange', ['token' => $token])
+            . '<p><a href="' . URLUtils::makeURL('MyRadio', 'pwChange', ['token' => $token])
             . '">Click here to finish resetting your password.</a></p>'
         );
 

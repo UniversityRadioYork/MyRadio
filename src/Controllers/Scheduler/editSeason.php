@@ -8,7 +8,7 @@
  */
 
 use \MyRadio\MyRadio\AuthUtils;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;
 use \MyRadio\ServiceAPI\MyRadio_Season;
 use \MyRadio\ServiceAPI\MyRadio_Show;
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     }
 
-    CoreUtils::backWithMessage("Season Updated!");
+    URLUtils::backWithMessage("Season Updated!");
 
 } else {
     //Not Submitted

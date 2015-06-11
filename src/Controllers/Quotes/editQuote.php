@@ -7,6 +7,7 @@
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Quote;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -24,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->setDate($data['date']);
     }
 
-    CoreUtils::backWithMessage('Quote Updated!');
+    URLUtils::backWithMessage('Quote Updated!');
 
 } else {
     //Not Submitted

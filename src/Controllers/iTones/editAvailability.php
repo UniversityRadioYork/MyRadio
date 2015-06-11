@@ -6,7 +6,7 @@
  */
 
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\iTones\iTones_Playlist;
 use \MyRadio\iTones\iTones_PlaylistAvailability;
 
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data['timeslots']
         );
 
-        CoreUtils::redirect(
+        URLUtils::redirect(
             'iTones', 'editAvailability', [
             'availabilityid' => $availability->getID(),
             'message' => base64_encode('The availability has been created.')
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $availability->addTimeslot($timeslot['day'], $timeslot['start_time'], $timeslot['end_time']);
         }
 
-        CoreUtils::backWithMessage('The availability has been updated.');
+        URLUtils::backWithMessage('The availability has been updated.');
     }
 
 } elseif (!empty($_REQUEST['availabilityid'])) {

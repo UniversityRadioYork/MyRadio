@@ -176,7 +176,7 @@ class AuthUtils
                 if ($is_ajax) {
                     throw new MyRadioException('Login required', 401);
                 } else {
-                    CoreUtils::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
+                    URLUtils::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
                 }
             } else {
                 //Authenticated, but not authorized

@@ -7,6 +7,7 @@
 
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
@@ -83,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     AuthUtils::addActionPermission($setModule, $setAction, $permission);
 
-    CoreUtils::backWithMessage('The action permission has been updated.');
+    URLUtils::backWithMessage('The action permission has been updated.');
 
 } else {
     //Not Submitted
@@ -96,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     for ($i = 0; $i < sizeof($data); $i++) {
         $data[$i]['del'] = [
             'display' => 'text',
-            'url' => CoreUtils::makeURL(
+            'url' => URLUtils::makeURL(
                 'Core',
                 'removeActionPermission',
                 ['permissionid' => $data[$i]['actpermissionid']]

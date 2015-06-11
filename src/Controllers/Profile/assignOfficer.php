@@ -6,7 +6,7 @@
  */
 
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Officer;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($data['member']->isCurrentlyPaid()) {
         $officer->assignOfficer($data['member']->getID());
-        CoreUtils::backWithMessage('Officership Assigned!');
+        URLUtils::backWithMessage('Officership Assigned!');
     } else {
         throw new MyRadioException('Member is not paid!', 400);
     }

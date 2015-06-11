@@ -7,7 +7,7 @@
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\AuthUtils;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Show;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $show->setShowPhoto($data['image_file']['tmp_name']);
 
-    CoreUtils::backWithMessage("Show Photo Updated!");
+    URLUtils::backWithMessage("Show Photo Updated!");
 
 } else {
     //Not Submitted

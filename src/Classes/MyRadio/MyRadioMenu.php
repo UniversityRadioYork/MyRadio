@@ -17,7 +17,7 @@ use \MyRadio\MyRadioException;
  * @uses    \CacheProvider
  * @uses    \Database
  * @uses    \AuthUtils
- * @uses    \CoreUtils
+ * @uses    \URLUtils
  */
 class MyRadioMenu
 {
@@ -194,7 +194,7 @@ class MyRadioMenu
             }
         }
 
-        $url = $count === 1 ? CoreUtils::makeURL($module, $action, $params) : $url;
+        $url = $count === 1 ? URLUtils::makeURL($module, $action, $params) : $url;
 
         return $url;
     }

@@ -6,7 +6,7 @@
  */
 
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 use \MyRadio\NIPSWeb\NIPSWeb_Token;
 
@@ -16,4 +16,4 @@ if (!isset($_POST['clientid'])) {
 
 $data = MyRadio_Timeslot::getInstance(NIPSWeb_Token::getEditTokenTimeslot($_POST['clientid']))->updateShowPlan($_POST);
 
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

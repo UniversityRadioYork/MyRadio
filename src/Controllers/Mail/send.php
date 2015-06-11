@@ -9,7 +9,7 @@ use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadioEmail;
 use \MyRadio\MyRadio\AuthUtils;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\ServiceAPI\MyRadio_List;
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         MyRadio_User::getInstance()
     );
 
-    CoreUtils::backWithMessage('Message sent!');
+    URLUtils::backWithMessage('Message sent!');
 
 } else {
     //Not Submitted

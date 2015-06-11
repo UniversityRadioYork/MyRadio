@@ -5,7 +5,7 @@
  * @package MyRadio_Library
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $track->setArtist($data['artist']);
     $track->setAlbum($data['album']);
 
-    CoreUtils::backWithMessage('Track Updated.');
+    URLUtils::backWithMessage('Track Updated.');
 
 } else {
     //Not Submitted

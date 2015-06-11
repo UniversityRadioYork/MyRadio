@@ -12,7 +12,7 @@ use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\AuthUtils;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\MyRadio\MyRadioDefaultAuthenticator;
@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
         unset($_SESSION['auth_use_locked']);
     }
 
-    CoreUtils::redirect('MyRadio', 'login');
+    URLUtils::redirect('MyRadio', 'login');
 } else {
     foreach (Config::$authenticators as $authenticator) {
         $auth = new $authenticator;

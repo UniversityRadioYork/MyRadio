@@ -10,6 +10,7 @@ namespace MyRadio\ServiceAPI;
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadioEmail;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
@@ -279,7 +280,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 'display' => 'icon',
                 'value' => 'trash',
                 'title' => 'Cancel Episode',
-                'url' => CoreUtils::makeURL('Scheduler', 'cancelEpisode', ['show_season_timeslot_id' => $this->getID()])]
+                'url' => URLUtils::makeURL('Scheduler', 'cancelEpisode', ['show_season_timeslot_id' => $this->getID()])]
             ]
         );
     }
@@ -638,7 +639,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         $email = $this->getMeta('title') . ' on ' . CoreUtils::happyTime($this->getStartTime()) . ' has requested cancellation because ' . $reason;
         $email .= "\r\n\r\nDue to the short notice, it has been passed to you for consideration. To cancel the timeslot, visit ";
-        $email .= CoreUtils::makeURL('Scheduler', 'cancelEpisode', ['show_season_timeslot_id' => $this->getID(), 'reason' => base64_encode($reason)]);
+        $email .= URLUtils::makeURL('Scheduler', 'cancelEpisode', ['show_season_timeslot_id' => $this->getID(), 'reason' => base64_encode($reason)]);
 
         MyRadioEmail::sendEmailToList(MyRadio_List::getByName('programming'), 'Show Cancellation Request', $email);
 

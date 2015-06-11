@@ -5,7 +5,7 @@
  * @package MyRadio_NIPSWeb
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 
 $data = MyRadio_Track::identifyAndStoreTrack(
@@ -18,4 +18,4 @@ $data = MyRadio_Track::identifyAndStoreTrack(
 );
 $data['fileid'] = $_REQUEST['fileid'];
 
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);
