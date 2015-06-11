@@ -431,7 +431,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             . '-'
             . time()
             . '.'
-            . explode('/', finfo_file(finfo_open(FILEINFO_MIME_TYPE), $temporary_file))[1];
+            . explode('/', getimagesize($temporary_file)["mime"])[1];
 
         $file_path = Config::$public_media_path . $path;
 
