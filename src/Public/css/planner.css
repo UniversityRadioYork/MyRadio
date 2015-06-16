@@ -1,6 +1,5 @@
 html {
   height: 100%;
-  overflow: hidden;
 }
 
 body {
@@ -303,4 +302,3 @@ select {
   border: 2px solid #d9534f;
   border-radius: 5px;
 }
-
