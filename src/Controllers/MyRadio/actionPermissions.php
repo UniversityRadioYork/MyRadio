@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data[$i]['del'] = [
             'display' => 'text',
             'url' => URLUtils::makeURL(
-                'Core',
+                'MyRadio',
                 'removeActionPermission',
                 ['permissionid' => $data[$i]['actpermissionid']]
             ),
