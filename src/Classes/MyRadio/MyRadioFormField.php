@@ -560,11 +560,22 @@ class MyRadioFormField
         case self::TYPE_TEXT:
         case self::TYPE_EMAIL:
         case self::TYPE_ARTIST:
-        case self::TYPE_HIDDEN:
+            return strip_tags($_REQUEST[$name]);
+            break;
         case self::TYPE_BLOCKTEXT:
+            $dom = new DOMDocument;
+            $dom->loadHtml($_REQUEST[$name]);
+
+            $xpath = new DOMXPath($dom);
+            while ($node = $xpath->query('//script')->item(0)) {
+                $node->parentNode->removeChild($node);
+            }
+            return $dom->saveHTML();
+            break;
+        case self::TYPE_HIDDEN:
         case self::TYPE_PASSWORD:
             return $_REQUEST[$name];
-                break;
+            break;
         case self::TYPE_MEMBER:
             //Deal with Arrays for repeated elements
             if (is_array($_REQUEST[$name])) {
