@@ -563,10 +563,10 @@ class MyRadioFormField
             return strip_tags($_REQUEST[$name]);
             break;
         case self::TYPE_BLOCKTEXT:
-            $dom = new DOMDocument;
+            $dom = new \DOMDocument;
             $dom->loadHtml($_REQUEST[$name]);
 
-            $xpath = new DOMXPath($dom);
+            $xpath = new \DOMXPath($dom);
             while ($node = $xpath->query('//script')->item(0)) {
                 $node->parentNode->removeChild($node);
             }
