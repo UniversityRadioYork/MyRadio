@@ -75,7 +75,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
         }
 
         if (isset($_REQUEST['message'])) {
-            $this->addInfo(base64_decode(strip_tags($_REQUEST['message'], '<a>')));
+            $this->addInfo(strip_tags(base64_decode($_REQUEST['message']), '<a>')));
         }
     }
 
