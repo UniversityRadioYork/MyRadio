@@ -90,12 +90,8 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         $caller = self::getAPICaller();
 
         // Check mixin permissions too
-        if (isset($args['mixin'])) {
-            if (is_string($args['mixin'])) {
-                $mixins = [$args['mixin']];
-            } else {
-                $mixins = $args['mixin'];
-            }
+        if (isset($args['mixins'])) {
+            $mixins = explode(',', $args['mixins']);
 
             // @todo we current pretend we've validated
             $args = ['mixins' => $mixins];
@@ -104,7 +100,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         if (!$caller) {
             throw new MyRadioException('No valid authentication data provided.', 401);
         } elseif ($caller->canCall($classes[$class], $paths[$path][$op]->getName())) {
-            $caller->logCall($_SERVER['REQUEST_URI'], $args);
+            $caller->logCall($_SERVER['REQUEST_URI'], ($op === 'get' ? $args : null));
             return invokeArgsNamed($paths[$path][$op], $object, $args);
         } else {
             throw new MyRadioException('Caller cannot access this method.', 403);
@@ -181,7 +177,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     $description .= "<br>$mixin: $desc";
                 }
                 $parameters[] = [
-                    'name' => 'mixin',
+                    'name' => 'mixins',
                     'in' => 'query',
                     'description' => $description,
                     'required' => false,
@@ -190,7 +186,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                         'type' => 'string',
                         'format' => 'string'
                     ],
-                    'collectionFormat' => 'multi',
+                    'collectionFormat' => 'csv',
                     'default' => []
                 ];
             } else {
