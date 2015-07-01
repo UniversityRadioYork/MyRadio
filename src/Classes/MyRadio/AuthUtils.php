@@ -9,6 +9,7 @@ namespace MyRadio\MyRadio;
 
 use \MyRadio\Config;
 use \MyRadio\Database;
+use \MyRadio\MyRadioException;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
 /**
