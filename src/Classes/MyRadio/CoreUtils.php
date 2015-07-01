@@ -363,7 +363,7 @@ class CoreUtils
     public static function requireTimeslot()
     {
         if (!isset($_SESSION['timeslotid'])) {
-            self::redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
+            URLUtils::redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
             exit;
         }
     }
