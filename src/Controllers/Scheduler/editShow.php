@@ -7,7 +7,8 @@
  * @package MyRadio_Scheduler
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\AuthUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Show;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
@@ -18,14 +19,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($data['id'])) {
         //create new
         $show = MyRadio_Show::create($data);
-        CoreUtils::redirectWithMessage('Scheduler', 'myShows', 'Your show, ' . $show->getMeta('title') . ', has been created!');
+        URLUtils::redirectWithMessage('Scheduler', 'myShows', 'Your show, ' . $show->getMeta('title') . ', has been created!');
     } else {
         //submit edit
         $show = MyRadio_Show::getInstance($data['id']);
 
         //Check the user has permission to edit this show
         if (!$show->isCurrentUserAnOwner()) {
-            CoreUtils::requirePermission(AUTH_EDITSHOWS);
+            AuthUtils::requirePermission(AUTH_EDITSHOWS);
         }
 
         $show->setMeta('title', $data['title']);
@@ -46,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $show->setMeta('upload_state', 'Opted Out');
         }
-        CoreUtils::backWithMessage("Show Updated!");
+        URLUtils::backWithMessage("Show Updated!");
     }
 
 } else {
@@ -57,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         //Check the user has permission to edit this show
         if (!$show->isCurrentUserAnOwner()) {
-            CoreUtils::requirePermission(AUTH_EDITSHOWS);
+            AuthUtils::requirePermission(AUTH_EDITSHOWS);
         }
 
         $meta = $show->getMeta('tag');

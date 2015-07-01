@@ -10,6 +10,7 @@ namespace MyRadio\ServiceAPI;
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\MyRadioEmail;
@@ -831,25 +832,25 @@ EOT
                 'num_episodes' => [
                     'display' => 'text',
                     'value' => sizeof($this->timeslots),
-                    'url' => CoreUtils::makeURL('Scheduler', 'listTimeslots', ['show_season_id' => $this->getID()])
+                    'url' => URLUtils::makeURL('Scheduler', 'listTimeslots', ['show_season_id' => $this->getID()])
                 ],
                 'editlink' => [
                     'display' => 'icon',
                     'value' => 'pencil',
                     'title' => 'Edit Season',
-                    'url' => CoreUtils::makeURL('Scheduler', 'editSeason', ['seasonid' => $this->getID()])
+                    'url' => URLUtils::makeURL('Scheduler', 'editSeason', ['seasonid' => $this->getID()])
                 ],
                 'allocatelink' => [
                     'display' => 'icon',
                     'value' => 'pencil',
                     'title' => 'Edit Application or Allocate Season',
-                    'url' => CoreUtils::makeURL('Scheduler', 'allocate', ['show_season_id' => $this->getID()])
+                    'url' => URLUtils::makeURL('Scheduler', 'allocate', ['show_season_id' => $this->getID()])
                 ],
                 'rejectlink' => [
                     'display' => 'icon',
                     'value' => 'trash',
                     'title' => 'Reject Application',
-                    'url' => CoreUtils::makeURL('Scheduler', 'reject', ['show_season_id' => $this->getID()])
+                    'url' => URLUtils::makeURL('Scheduler', 'reject', ['show_season_id' => $this->getID()])
                 ]
             ]
         );

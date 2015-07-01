@@ -7,7 +7,7 @@
 namespace MyRadio\ServiceAPI;
 
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
@@ -259,7 +259,7 @@ class MyRadio_ChartType extends MyRadio_Type
                 'display' => 'text',
                 'value' => $this->getNumberOfReleases(),
                 'title' => 'Click to see releases for this chart type.',
-                'url' => CoreUtils::makeURL(
+                'url' => URLUtils::makeURL(
                     'Charts',
                     'listChartReleases',
                     ['chart_type_id' => $this->getID()]
@@ -269,7 +269,7 @@ class MyRadio_ChartType extends MyRadio_Type
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Edit Chart Type',
-                'url' => CoreUtils::makeURL(
+                'url' => URLUtils::makeURL(
                     'Charts',
                     'editChartType',
                     ['chart_type_id' => $this->getID()]

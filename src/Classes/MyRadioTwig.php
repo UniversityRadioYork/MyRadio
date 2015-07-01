@@ -4,7 +4,8 @@ namespace MyRadio;
 
 use \MyRadio\Config;
 use \MyRadio\Database;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\AuthUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioMenu;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadioError;
@@ -43,7 +44,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
             ->addVariable(
                 'impersonatorurl',
                 !empty($_SESSION['myradio-impersonating'])
-                ? (CoreUtils::makeURL('MyRadio', 'impersonate', ['next' => $_SERVER['REQUEST_URI']]))
+                ? (URLUtils::makeURL('MyRadio', 'impersonate', ['next' => $_SERVER['REQUEST_URI']]))
                 : ''
             )
             ->addVariable(
@@ -171,7 +172,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
      */
     public function render()
     {
-        if ((defined('AUTH_SHOWERRORS') && CoreUtils::hasPermission(AUTH_SHOWERRORS))
+        if ((defined('AUTH_SHOWERRORS') && AuthUtils::hasPermission(AUTH_SHOWERRORS))
             || Config::$display_errors
         ) {
             $this->addVariable('phperrors', MyRadioError::$php_errorlist);

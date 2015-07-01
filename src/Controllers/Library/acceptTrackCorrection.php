@@ -6,7 +6,7 @@
  */
 
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_TrackCorrection;
 
 if (isset($_REQUEST['correctionid'])) {
@@ -17,4 +17,4 @@ if (isset($_REQUEST['correctionid'])) {
 
 $correction->apply(empty($_REQUEST['ignorealbum']) ? false : (bool) $_REQUEST['ignorealbum']);
 
-CoreUtils::backWithMessage('The correction was applied successfully!');
+URLUtils::backWithMessage('The correction was applied successfully!');

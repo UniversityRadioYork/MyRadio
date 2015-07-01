@@ -11,6 +11,7 @@ use \MyRadio\Database;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadioError;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\ServiceAPI\MyRadio_User;
@@ -27,7 +28,7 @@ use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 class MyRadio_Show extends MyRadio_Metadata_Common
 {
 
-    const BASE_SHOW_SQL = 
+    const BASE_SHOW_SQL =
         'SELECT show_id,
             show.show_type_id,
             show.submitted,
@@ -40,7 +41,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             array_to_json(credits.creditid) AS credits,
             array_to_json(genre.genre_id) AS genres,
             array_to_json(season.show_season_id) AS seasons
-        FROM 
+        FROM
             schedule.show
             NATURAL FULL JOIN
             (
@@ -833,19 +834,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'display' => 'text',
                 'value' => $this->getNumberOfSeasons(),
                 'title' => 'Click to see Seasons for this show',
-                'url' => CoreUtils::makeURL('Scheduler', 'listSeasons', ['showid' => $this->getID()])
+                'url' => URLUtils::makeURL('Scheduler', 'listSeasons', ['showid' => $this->getID()])
             ],
             'editlink' => [
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Edit Show',
-                'url' => CoreUtils::makeURL('Scheduler', 'editShow', ['showid' => $this->getID()])
+                'url' => URLUtils::makeURL('Scheduler', 'editShow', ['showid' => $this->getID()])
             ],
             'applylink' => [
                 'display' => 'icon',
                 'value' => 'calendar',
                 'title' => 'Apply for a new Season',
-                'url' => CoreUtils::makeURL('Scheduler', 'editSeason', ['showid' => $this->getID()])
+                'url' => URLUtils::makeURL('Scheduler', 'editSeason', ['showid' => $this->getID()])
             ],
             'micrositelink' => [
                 'display' => 'icon',

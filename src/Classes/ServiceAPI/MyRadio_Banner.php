@@ -9,7 +9,7 @@ namespace MyRadio\ServiceAPI;
 
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
@@ -93,13 +93,13 @@ class MyRadio_Banner extends MyRadio_Photo
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Click here to edit this Banner',
-                'url' => CoreUtils::makeURL('Website', 'editBanner', ['bannerid' => $this->getBannerID()])
+                'url' => URLUtils::makeURL('Website', 'editBanner', ['bannerid' => $this->getBannerID()])
             ],
             'campaigns_link' => [
                 'display' => 'icon',
                 'value' => 'calendar',
                 'title' => 'Click here to view the Campaigns for this Banner',
-                'url' => CoreUtils::makeURL('Website', 'campaigns', ['bannerid' => $this->getBannerID()])
+                'url' => URLUtils::makeURL('Website', 'campaigns', ['bannerid' => $this->getBannerID()])
             ]
         ];
 

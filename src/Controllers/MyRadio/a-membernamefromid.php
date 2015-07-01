@@ -8,7 +8,7 @@
  */
 
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
 if (!isset($_REQUEST['term'])) {
@@ -16,4 +16,4 @@ if (!isset($_REQUEST['term'])) {
 }
 
 $data = MyRadio_User::getInstance((int) $_REQUEST['term'])->getName();
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

@@ -5,8 +5,8 @@
  * @package MyRadio_Core
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 
 unset($_SESSION['joyride']);
 
-CoreUtils::nocontent();
+URLUtils::nocontent();

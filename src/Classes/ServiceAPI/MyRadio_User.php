@@ -11,6 +11,7 @@ use \MyRadio\Config;
 use \MyRadio\MyRadioEmail;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioDefaultAuthenticator;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
@@ -613,7 +614,7 @@ class MyRadio_User extends ServiceAPI
      */
     public function getURL()
     {
-        return CoreUtils::makeURL('Profile', 'view', ['memberid' => $this->getID()]);
+        return URLUtils::makeURL('Profile', 'view', ['memberid' => $this->getID()]);
     }
 
     /**
@@ -696,7 +697,7 @@ class MyRadio_User extends ServiceAPI
     /**
      * Returns if the user has the given permission.
      *
-     * Always use CoreUtils::hasAuth when working with the current user.
+     * Always use AuthUtils::hasAuth when working with the current user.
      *
      * @param  null|int $authid The permission to test for. Null is "no permission required"
      * @return boolean Whether this user has the requested permission

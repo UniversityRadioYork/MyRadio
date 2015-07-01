@@ -7,7 +7,8 @@
  * @package MyRadio_Scheduler
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\AuthUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;
 use \MyRadio\ServiceAPI\MyRadio_Season;
 use \MyRadio\ServiceAPI\MyRadio_Show;
@@ -26,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         //Check the user has permission to edit this show
         if (!$season->isCurrentUserAnOwner()) {
-            CoreUtils::requirePermission(AUTH_EDITSHOWS);
+            AuthUtils::requirePermission(AUTH_EDITSHOWS);
         }
 
         $season->setMeta('title', $data['title']);
@@ -36,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     }
 
-    CoreUtils::backWithMessage("Season Updated!");
+    URLUtils::backWithMessage("Season Updated!");
 
 } else {
     //Not Submitted
@@ -46,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         //Check the user has permission to edit this show
         if (!$season->isCurrentUserAnOwner()) {
-            CoreUtils::requirePermission(AUTH_EDITSHOWS);
+            AuthUtils::requirePermission(AUTH_EDITSHOWS);
         }
 
         $season->getEditForm()->render();

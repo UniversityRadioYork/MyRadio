@@ -8,6 +8,7 @@ use \MyRadio\APCProvider;
 use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\IFace\CacheProvider;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadioEmail;
 use \MyRadio\ServiceAPI\MyRadio_User;
@@ -27,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 
     // Give this user most possible permissions
-    CoreUtils::setUpAuth();
+    AuthUtils::setUpAuth();
     foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-auth.json')) as $auth) {
         if (!$auth[2] or !defined($auth[1])) {
             continue;

@@ -9,6 +9,7 @@ namespace MyRadio\iTones;
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\ServiceAPI\MyRadio_User;
@@ -65,7 +66,7 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
             'display' => 'icon',
             'value' => 'pencil',
             'title' => 'Click to edit this availability',
-            'url' => CoreUtils::makeURL('iTones', 'editAvailability', ['availabilityid' => $this->getID()])
+            'url' => URLUtils::makeURL('iTones', 'editAvailability', ['availabilityid' => $this->getID()])
         ];
 
         return $data;

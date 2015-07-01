@@ -9,7 +9,7 @@
  */
 
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_TrackCorrection;
 
 if (isset($_REQUEST['correctionid'])) {
@@ -20,4 +20,4 @@ if (isset($_REQUEST['correctionid'])) {
 
 $correction->reject(empty($_REQUEST['permanent']) ? false : (bool) $_REQUEST['permanent']);
 
-CoreUtils::backWithMessage('The correction was applied successfully!');
+URLUtils::backWithMessage('The correction was applied successfully!');

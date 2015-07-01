@@ -8,7 +8,9 @@
  * @package MyRadio_Profile
  */
 
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_TrainingStatus;
 
@@ -28,7 +30,7 @@ if ($user->isOfficer()) {
     $userData['email'] = $user->getPublicEmail();
 }
 
-if (CoreUtils::hasPermission(AUTH_VIEWOTHERMEMBERS)) {
+if (AuthUtils::hasPermission(AUTH_VIEWOTHERMEMBERS)) {
     $userData['email'] = $user->getEmail();
     $userData['eduroam'] = $user->getEduroam();
     $userData['local_alias'] = $user->getLocalAlias();
@@ -48,7 +50,7 @@ if ($user->getID() === $visitor->getID() or $visitor->hasAuth(AUTH_EDITANYPROFIL
     $template->addVariable(
         'editurl',
         '<a href="'
-        .CoreUtils::makeURL(
+        .URLUtils::makeURL(
             'Profile',
             'edit',
             ['memberid' => $user->getID()]
@@ -56,14 +58,14 @@ if ($user->getID() === $visitor->getID() or $visitor->hasAuth(AUTH_EDITANYPROFIL
         .'">Edit Profile</a>'
     );
 }
-if (CoreUtils::hasPermission(AUTH_IMPERSONATE)
+if (AuthUtils::hasPermission(AUTH_IMPERSONATE)
     && ($user->hasAuth(AUTH_BLOCKIMPERSONATE) === false
-    or CoreUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS))
+    || AuthUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS))
 ) {
     $template->addVariable(
         'impersonateurl',
         '<a href="'
-        .CoreUtils::makeURL(
+        .URLUtils::makeURL(
             'MyRadio',
             'impersonate',
             ['memberid' => $user->getID()]
@@ -71,11 +73,11 @@ if (CoreUtils::hasPermission(AUTH_IMPERSONATE)
         .'">Impersonate User</a>'
     );
 }
-if (CoreUtils::hasPermission(AUTH_LOCK)) {
+if (AuthUtils::hasPermission(AUTH_LOCK)) {
     $template->addVariable(
         'lockurl',
         '<a href="'
-        .CoreUtils::makeURL(
+        .URLUtils::makeURL(
             'Profile',
             'lock',
             ['memberid' => $user->getID()]
@@ -83,7 +85,7 @@ if (CoreUtils::hasPermission(AUTH_LOCK)) {
         .'">Disable Account</a>'
     );
 }
-if (CoreUtils::hasPermission(AUTH_MARKPAYMENT)) {
+if (AuthUtils::hasPermission(AUTH_MARKPAYMENT)) {
     $template->addVariable('can_mark_payments', true);
 }
 $template->render();

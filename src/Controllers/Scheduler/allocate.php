@@ -5,7 +5,7 @@
  * @package MyRadio_Scheduler
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Season;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $season->schedule($data);
 
-    CoreUtils::backWithMessage('Season Allocated!');
+    URLUtils::backWithMessage('Season Allocated!');
 
 } else {
     //Not Submitted

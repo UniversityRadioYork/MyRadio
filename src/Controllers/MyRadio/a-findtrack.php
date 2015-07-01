@@ -14,7 +14,7 @@
  */
 
 use \MyRadio\Config;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 
 if (isset($_REQUEST['id'])) {
@@ -31,4 +31,4 @@ if (isset($_REQUEST['id'])) {
         ]
     );
 }
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);
