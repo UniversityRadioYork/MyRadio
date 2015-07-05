@@ -20,6 +20,8 @@ class MyRadio_APIKey extends ServiceAPI implements APICaller
 {
     use MyRadio_APICaller_Common {
         canCall as commonCanCall;
+        canMixin as canMixin;
+        hasAuth as hasAuth;
     }
 
     /**
