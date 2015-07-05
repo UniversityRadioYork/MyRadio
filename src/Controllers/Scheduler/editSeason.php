@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $season = MyRadio_Season::getInstance($data['id']);
 
         //Check the user has permission to edit this show
-        if (!$season->isCurrentUserAnOwner()) {
+        if (!$season->getShow()->isCurrentUserAnOwner()) {
             AuthUtils::requirePermission(AUTH_EDITSHOWS);
         }
 
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $season = MyRadio_Season::getInstance($_REQUEST['seasonid']);
 
         //Check the user has permission to edit this show
-        if (!$season->isCurrentUserAnOwner()) {
+        if (!$season->getShow()->isCurrentUserAnOwner()) {
             AuthUtils::requirePermission(AUTH_EDITSHOWS);
         }
 
