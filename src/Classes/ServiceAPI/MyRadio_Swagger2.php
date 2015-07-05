@@ -245,6 +245,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     'required' => true,
                     'type' => self::getParamType($param, $doc)
                 ];
+                $startIdx++;
             }
 
             for ($i = $startIdx; $i < sizeof($paramReflectors); $i++) {
