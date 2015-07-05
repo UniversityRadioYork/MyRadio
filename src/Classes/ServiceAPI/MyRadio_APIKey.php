@@ -7,6 +7,8 @@
 
 namespace MyRadio\ServiceAPI;
 
+use \MyRadio\Iface\APICaller;
+
 /**
  * The APIKey Class provies information and management of API Keys for the MyRadio
  * REST API.
