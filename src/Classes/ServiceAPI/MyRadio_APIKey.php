@@ -18,7 +18,9 @@ use \MyRadio\Iface\APICaller;
  */
 class MyRadio_APIKey extends ServiceAPI implements APICaller
 {
-    use MyRadio_APICaller_Common;
+    use MyRadio_APICaller_Common {
+        canCall as commonCanCall;
+    }
 
     /**
      * The API Key
@@ -58,7 +60,7 @@ class MyRadio_APIKey extends ServiceAPI implements APICaller
             return false;
         }
         
-        return parent::canCall($class, $method);
+        return $this->commonCanCall($class, $method);
     }
 
     /**
