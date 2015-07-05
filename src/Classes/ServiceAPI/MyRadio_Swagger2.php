@@ -58,7 +58,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
         // Check mixins too
         if (isset($args['mixins'])) {
-            $args = ['mixins' => array_filter(explode(',', $args['mixin']))];
+            $args = ['mixins' => array_filter(explode(',', $args['mixins']))];
         }
 
         return $args;
