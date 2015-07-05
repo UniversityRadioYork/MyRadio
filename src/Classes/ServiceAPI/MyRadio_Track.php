@@ -272,6 +272,7 @@ class MyRadio_Track extends ServiceAPI
 
     /**
      * Update whether or not the track is digitised
+     * @param boolean $digitised
      */
     public function setDigitised($digitised)
     {
