@@ -145,7 +145,6 @@ if (!$api_key->canCall($classes[$class], $method)) {
         /**
          * Let's process the request!
          */
-        $api_key->logCall(preg_replace('/(.*)\?(.*)/', '$1', str_replace(Config::$api_uri, '', $_SERVER['REQUEST_URI'])), $args);
         $result = invokeArgsNamed($methodReflection, $object, $args);
     } catch (MyRadioException $e) {
         api_error($e->getCode(), $e->getMessage(), $e);

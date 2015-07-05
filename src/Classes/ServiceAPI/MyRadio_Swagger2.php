@@ -28,11 +28,48 @@ use \MyRadio\MyRadio\CoreUtils;
 class MyRadio_Swagger2 extends MyRadio_Swagger
 {
     /**
+     * Returns if the given Authenticator can call the given Class/Method/Mixin combination
+     * @param \MyRadio\IFace\APICaller  $auth   The Authenticator to validate the request against
+     * @param String                    $class  The internal name of the class to validate against
+     * @param String                    $method The internal name of the method to validate against
+     * @param String[]                  $mixins For toDataSource requests, zero or more mixins to validate against
+     * @return boolean
+     */
+    private static function validateRequest($auth, $class, $method, $mixins) {
+        return $auth->canCall($class, $method) &&
+            ($method !== 'toDataSource' || $auth->canMixin($class, $mixins));
+    }
+
+    private static function getArgs($op) {
+        $args = [];
+
+        switch ($op) {
+            case 'get':
+                $args = $_GET;
+                break;
+            case 'post':
+                $args = $_POST;
+                break;
+            case 'put':
+                //ya rly
+                parse_str(file_get_contents("php://input"), $args);
+                break;
+        }
+
+        // Check mixins too
+        if (isset($args['mixin'])) {
+            $args = ['mixins' => array_filter(explode(',', $args['mixin']))];
+        }
+
+        return $args;
+    }
+
+    /**
      * Process an /api/v2 request
      * @param string $op The HTTP request method (GET/PUT/POST/DELETE...)
      * @param string $class The URI-name of the class being acted on
      * @param string $method The URI-name of the method being acted on
-     * @param mixed $id The ID of the item being acted on, if the method is non-static
+     * @param mixed  $id The ID of the item being acted on, if the method is non-static
      */
     public static function handleRequest($op, $class, $method, $id = null)
     {
@@ -61,20 +98,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             throw new MyRadioException("$path does not have a valid $op handler.", 405);
         }
 
-        $args = [];
-
-        switch ($op) {
-            case 'get':
-                $args = $_GET;
-                break;
-            case 'post':
-                $args = $_POST;
-                break;
-            case 'put':
-                //ya rly
-                parse_str(file_get_contents("php://input"), $args);
-                break;
-        }
+        $args = self::getArgs($op);
 
         if ($id) {
             if (method_exists($classes[$class], 'getInstance')) {
@@ -89,22 +113,10 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         //Cool, it's valid. Can they get at it?
         $caller = self::getAPICaller();
 
-        // Check mixin permissions too
-        if (isset($args['mixin'])) {
-            if (is_string($args['mixin'])) {
-                $mixins = [$args['mixin']];
-            } else {
-                $mixins = $args['mixin'];
-            }
-
-            // @todo we current pretend we've validated
-            $args = ['mixins' => $mixins];
-        }
-
         if (!$caller) {
             throw new MyRadioException('No valid authentication data provided.', 401);
-        } elseif ($caller->canCall($classes[$class], $paths[$path][$op]->getName())) {
-            $caller->logCall($_SERVER['REQUEST_URI'], $args);
+        } elseif (self::validateRequest($caller, $classes[$class], $paths[$path][$op]->getName(), $args['mixins'])) {
+            $caller->logCall($_SERVER['REQUEST_URI'], $op === 'get' ? $args : [$op]);
             return invokeArgsNamed($paths[$path][$op], $object, $args);
         } else {
             throw new MyRadioException('Caller cannot access this method.', 403);
@@ -190,7 +202,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                         'type' => 'string',
                         'format' => 'string'
                     ],
-                    'collectionFormat' => 'multi',
+                    'collectionFormat' => 'csv',
                     'default' => []
                 ];
             } else {

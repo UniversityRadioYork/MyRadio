@@ -28,6 +28,8 @@ use \MyRadio\ServiceAPI\MyRadio_Swagger;
  */
 class MyRadio_User extends ServiceAPI implements APICaller
 {
+    use MyRadio_APICaller_Common;
+
     /**
      * Stores the currently logged in User's object after first use.
      */
@@ -37,12 +39,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * @var int
      */
     private $memberid;
-
-    /**
-     * Stores the User's permissions
-     * @var Array
-     */
-    private $permissions;
 
     /**
      * Stores the User's first name
@@ -696,48 +692,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
     }
 
     /**
-     * Returns if the user has the given permission.
-     *
-     * Always use AuthUtils::hasAuth when working with the current user.
-     *
-     * @param  null|int $authid The permission to test for. Null is "no permission required"
-     * @return boolean Whether this user has the requested permission
-     */
-    public function hasAuth($authid)
-    {
-        return $authid === null || in_array((int)$authid, $this->permissions);
-    }
-
-    /**
-     * Returns if the user can call a method via the REST API
-     */
-    public function canCall($class, $method)
-    {
-        // I am become superuser, doer of API calls
-        if ($this->hasAuth(AUTH_APISUDO)) {
-            return true;
-        }
-
-        $result = MyRadio_Swagger::getCallRequirements($class, $method);
-        if ($result === null) {
-            return false; //No permissions means the method is not accessible
-        }
-
-        if (empty($result)) {
-            return true; //An empty array means no permissions needed
-        }
-
-        foreach ($result as $type) {
-            if ($this->hasAuth($type)) {
-                return true; //The Key has that permission
-            }
-        }
-
-        return false; //Didn't match anything...
-    }
-
-    /**
-     * @todo...
+     * @todo ...
      */
     public function logCall($uri, $args)
     {

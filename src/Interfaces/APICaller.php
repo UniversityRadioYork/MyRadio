@@ -21,4 +21,13 @@ interface APICaller
      * Log that this APICaller has Called an API Call.
      */
     public function logCall($uri, $args);
+
+    /**
+     * Tells you whether this APICaller can use the given mixins.
+     *
+     * @param  String   $class  The class the method belongs to (actual, not API Alias)
+     * @param  String[] $mixins The mixins being called
+     * @return bool Whether or not the user can call this
+     */
+    public function canMixin($class, $mixins);
 }

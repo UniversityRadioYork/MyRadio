@@ -13,7 +13,6 @@ use \ReflectionException;
 
 use \MyRadio\Config;
 use \MyRadio\Database;
-use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioSession;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
@@ -66,8 +65,8 @@ class MyRadio_Swagger
     }
 
     /**
- * THIS HALF DEALS WITH API Declarations *
-*/
+    * THIS HALF DEALS WITH API Declarations *
+    */
     protected $class;
 
     public function __construct($class)
@@ -300,7 +299,7 @@ class MyRadio_Swagger
 
     /**
      * Return the methods this endpoint allows.
-     * 
+     *
      * Specify these with one or more @api decorators.
      * Defaults to GET only.
      * Defaults to POST if the method begins with 'set' (e.g. setIntro)
@@ -332,6 +331,37 @@ class MyRadio_Swagger
         $result = Database::getInstance()->fetchColumn(
             'SELECT typeid FROM myury.api_method_auth WHERE class_name=$1 AND
             (method_name=$2 OR method_name IS NULL)',
+            [$class, $method]
+        );
+
+        if (empty($result)) {
+            return null;
+        }
+
+        foreach ($result as $row) {
+            if (empty($row)) {
+                return []; //There's a global auth option
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the permissions that are needed to access this API Call with the given mixin.
+     *
+     * If the return values is null, this method cannot be called.
+     * If the return value is an empty array, no permissions are needed.
+     *
+     * @param  String $class  The class the method belongs to (actual, not API Alias)
+     * @param  String $mixin The mixin being called
+     * @return int[]
+     */
+    public static function getMixinRequirements($class, $mixin)
+    {
+        $result = Database::getInstance()->fetchColumn(
+            'SELECT typeid FROM myury.api_mixin_auth WHERE class_name=$1 AND
+            (mixin_name=$2 OR mixin_name IS NULL)',
             [$class, $method]
         );
 
