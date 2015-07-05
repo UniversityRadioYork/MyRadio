@@ -193,7 +193,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     $description .= "<br>$mixin: $desc";
                 }
                 $parameters[] = [
-                    'name' => 'mixin',
+                    'name' => 'mixins',
                     'in' => 'query',
                     'description' => $description,
                     'required' => false,
