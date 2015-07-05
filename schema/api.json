@@ -21,5 +21,6 @@
 	"\\MyRadio\\iTones\\iTones_Utils": "iTones",
 	"\\MyRadio\\MyRadio\\CoreUtils": "utils",
 	"\\MyRadio\\ServiceAPI\\MyRadio_Quote": "quote",
-	"\\MyRadio\\Config": "config"
+	"\\MyRadio\\Config": "config",
+	"\\MyRadio\\MyRadio\\AuthUtils": "auth"
 }

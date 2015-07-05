@@ -33,7 +33,7 @@ try {
 	$response = MyRadio_Swagger2::handleRequest($op, $class, $method, $id);
 	$data = [
 	    'status' => 'OK',
-	    'payload' => CoreUtils::dataSourceParser($response),
+	    'payload' => CoreUtils::dataSourceParser($response['content'], $response['mixins']),
 	    'time' => sprintf('%f', $__start + microtime(true))
 	];
 } catch (MyRadioException $e) {
@@ -44,7 +44,5 @@ try {
 	    'time' => sprintf('%f', $__start + microtime(true))
 	];
 }
-
-
 
 echo json_encode($data);

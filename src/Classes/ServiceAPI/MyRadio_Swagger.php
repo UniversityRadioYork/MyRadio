@@ -254,36 +254,37 @@ class MyRadio_Swagger
         $mixins = [];
         $return_type = 'Set';
         $deprecated = false;
+        $method = 'auto';
         foreach ($doc['keys'] as $key => $values) {
             switch ($key) {
                 //Deal with $params
-            case 'param':
-                /**
-                 * info[0] should be "@param"
-                 * info[1] should be data type
-                 * info[2] should be parameter name
-                 * info[3] should be the description
-                 */
-                $info = explode(' ', $values[0], 4);
-                if (sizeof($info) < 4) {
+                case 'param':
+                    /**
+                     * info[0] should be "@param"
+                     * info[1] should be data type
+                     * info[2] should be parameter name
+                     * info[3] should be the description
+                     */
+                    $info = explode(' ', $values[0], 4);
+                    if (sizeof($info) < 4) {
+                        break;
+                    }
+                    $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
+                    $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
                     break;
-                }
-                $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
-                $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
-                break;
-            case 'mixin':
-                /**
-                 * info[0] should be the mixin name
-                 * info[1] should be a description of what the mixin does
-                 */
-                foreach ($values as $value) {
-                    $info = explode(' ', $value, 2);
-                    $mixins[$info[0]] = $info[1];
-                }
-                break;
-            case 'deprecated':
-                $deprecated = true;
-                break;
+                case 'mixin':
+                    /**
+                     * info[0] should be the mixin name
+                     * info[1] should be a description of what the mixin does
+                     */
+                    foreach ($values as $value) {
+                        $info = explode(' ', $value, 2);
+                        $mixins[$info[0]] = $info[1];
+                    }
+                    break;
+                case 'deprecated':
+                    $deprecated = true;
+                    break;
             }
         }
 
