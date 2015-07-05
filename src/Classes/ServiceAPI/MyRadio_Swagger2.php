@@ -233,6 +233,8 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             }
         } else {
             $startIdx = 0;
+            $paramReflectors = $method->getParameters();
+
             if ($method->getNumberOfRequiredParameters() === 1 && $op === 'get') {
                 //If only one GET is required, make it URL
                 $param = $method->getParameters()[0];
@@ -244,6 +246,19 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     'type' => self::getParamType($param, $doc)
                 ];
             }
+
+            for ($i = $startIdx; $i < sizeof($paramReflectors); $i++) {
+                $param = $paramReflectors[$i];
+                $parameters[] = [
+                    'name' => $param->getName(),
+                    'in' => $op === 'get' ? 'query' : 'form',
+                    'description' => self::getParamDescription($param, $doc),
+                    'required' => !$param->isOptional(),
+                    'type' => self::getParamType($param, $doc),
+                    'default' => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null
+                ];
+            }
+
         }
 
         return $parameters;
