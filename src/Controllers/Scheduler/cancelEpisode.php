@@ -6,7 +6,7 @@
  */
 
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = 'Your cancellation request has been sent. You will receive an email informing you of updates.';
     }
 
-    CoreUtils::backWithMessage($message);
+    URLUtils::backWithMessage($message);
 
 } else {
     //Not Submitted

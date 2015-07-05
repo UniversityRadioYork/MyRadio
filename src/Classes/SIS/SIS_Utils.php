@@ -8,7 +8,7 @@
 namespace MyRadio\SIS;
 
 use \MyRadio\Config;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\ServiceAPI\ServiceAPI;
 
 /**
@@ -33,7 +33,7 @@ class SIS_Utils extends ServiceAPI
                     include $file;
                 }
                 if (!isset($moduleInfo['required_permission'])
-                    || CoreUtils::hasPermission($moduleInfo['required_permission'])
+                    || AuthUtils::hasPermission($moduleInfo['required_permission'])
                 ) {
                     $loadedModules[] = $module;
                 }

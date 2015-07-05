@@ -7288,6 +7288,7 @@ INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\ServiceAPI\My
 INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\iTones\iTones_Playlist', 'Playlist');
 INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\iTones\iTones_Utils', 'iTones');
 INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\MyRadio\CoreUtils', 'Utils');
+INSERT INTO api_class_map (class_name, api_name) VALUES ('\MyRadio\MyRadio\AuthUtils', 'AuthUtils');
 
 INSERT INTO api_method_auth (class_name, method_name, typeid) VALUES ('\MyRadio\ServiceAPI\MyRadio_Swagger', NULL, NULL);
 INSERT INTO api_method_auth (class_name, method_name, typeid) VALUES ('\MyRadio\ServiceAPI\MyRadio_Timeslot', 'getWeekSchedule', NULL);

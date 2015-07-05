@@ -3,7 +3,7 @@
  * Ajax request to increment track viewer counter
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_Webcam;
 
@@ -14,4 +14,4 @@ $_SESSION['webcam_lastcounterincrement'] = time();
 
 $data = MyRadio_Webcam::incrementViewCounter(MyRadio_User::getInstance());
 
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

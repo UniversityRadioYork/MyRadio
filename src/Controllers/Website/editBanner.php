@@ -5,7 +5,7 @@
  * @package MyRadio_Website
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Banner;
 use \MyRadio\ServiceAPI\MyRadio_Photo;
 
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    CoreUtils::backWithMessage('Banner Updated!');
+    URLUtils::backWithMessage('Banner Updated!');
 
 } else {
     //Not Submitted

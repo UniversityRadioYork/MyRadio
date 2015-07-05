@@ -6,6 +6,7 @@
  */
 
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Demo;
 
 $demos = MyRadio_Demo::listDemos();
@@ -15,7 +16,7 @@ $twig = CoreUtils::getTemplateObject();
 $tabledata = [];
 foreach ($demos as $demo) {
     $demo['join'] = '<a href="'
-        .CoreUtils::makeURL(
+        .URLUtils::makeURL(
             'Scheduler',
             'attendDemo',
             ['demoid' => $demo['show_season_timeslot_id']]

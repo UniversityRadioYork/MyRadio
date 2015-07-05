@@ -11,7 +11,8 @@
 use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\AuthUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\MyRadio\MyRadioDefaultAuthenticator;
@@ -104,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
     //Logged in user change?
     if (isset($data['pwold'])) {
         //Is the old password correct?
-        if (CoreUtils::testCredentials(MyRadio_User::getInstance()->getEmail(), $data['pwold']) === false) {
+        if (AuthUtils::testCredentials(MyRadio_User::getInstance()->getEmail(), $data['pwold']) === false) {
             $form->render(['error' => 'Your old password was invalid.']);
             exit;
         }
@@ -142,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
         unset($_SESSION['auth_use_locked']);
     }
 
-    CoreUtils::redirect('MyRadio', 'login');
+    URLUtils::redirect('MyRadio', 'login');
 } else {
     foreach (Config::$authenticators as $authenticator) {
         $auth = new $authenticator;

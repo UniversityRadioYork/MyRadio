@@ -10,6 +10,7 @@ namespace MyRadio\ServiceAPI;
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
@@ -431,7 +432,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             . '-'
             . time()
             . '.'
-            . explode('/', finfo_file(finfo_open(FILEINFO_MIME_TYPE), $temporary_file))[1];
+            . explode('/', getimagesize($temporary_file)["mime"])[1];
 
         $file_path = Config::$public_media_path . $path;
 
@@ -553,7 +554,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Edit Podcast',
-                'url' => CoreUtils::makeURL('Podcast', 'editPodcast', ['podcast_id' => $this->getID()])
+                'url' => URLUtils::makeURL('Podcast', 'editPodcast', ['podcast_id' => $this->getID()])
             ]
         ];
 

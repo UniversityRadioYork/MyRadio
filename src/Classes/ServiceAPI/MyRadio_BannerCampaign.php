@@ -9,6 +9,7 @@ namespace MyRadio\ServiceAPI;
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
@@ -131,7 +132,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Click here to edit this Campaign',
-                'url' => CoreUtils::makeURL('Website', 'editCampaign', ['campaignid' => $this->getID()])
+                'url' => URLUtils::makeURL('Website', 'editCampaign', ['campaignid' => $this->getID()])
             ]
         ];
 

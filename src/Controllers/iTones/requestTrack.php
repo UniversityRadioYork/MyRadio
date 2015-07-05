@@ -6,7 +6,7 @@
  * @package MyRadio_iTones
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\iTones\iTones_Utils;
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = 'Sorry, but this track cannot be requested right now. Please try again later.';
     }
 
-    CoreUtils::backWithMessage($message);
+    URLUtils::backWithMessage($message);
 
 } else {
     //Not Submitted

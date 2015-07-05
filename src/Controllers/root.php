@@ -9,7 +9,7 @@
 use \MyRadio\Config;
 use \MyRadio\MyRadioError;
 use \MyRadio\ServiceAPI\ServiceAPI;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\MyRadioSession;
 use \MyRadio\MyRadio\MyRadioNullSession;
 
@@ -93,13 +93,13 @@ ini_set('error_log', Config::$log_file);
 ServiceAPI::wakeup();
 
 //Initialise the permission constants
-CoreUtils::setUpAuth();
+AuthUtils::setUpAuth();
 
 /**
  * Turn off visible error reporting, if needed
- * must come after CoreUtils::setUpAuth()
+ * must come after AuthUtils::setUpAuth()
  */
-if (!Config::$display_errors && !CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
+if (!Config::$display_errors && !AuthUtils::hasPermission(AUTH_SHOWERRORS)) {
     ini_set('display_errors', 'Off');
 }
 

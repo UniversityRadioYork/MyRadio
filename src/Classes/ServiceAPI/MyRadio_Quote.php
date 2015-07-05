@@ -9,6 +9,7 @@ namespace MyRadio\ServiceAPI;
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
@@ -340,7 +341,7 @@ class MyRadio_Quote extends ServiceAPI
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Edit Quote',
-                'url' => CoreUtils::makeURL(
+                'url' => URLUtils::makeURL(
                     'Quotes',
                     'editQuote',
                     ['quote_id' => $this->getID()]

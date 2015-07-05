@@ -7,6 +7,7 @@
 
 namespace MyRadio;
 
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 
 /**
@@ -117,9 +118,9 @@ class MyRadioException extends \RuntimeException
             //Configuration is available, use this to decide what to do
             if (!$silent
                 && Config::$display_errors
-                || (class_exists('\MyRadio\MyRadio\CoreUtils')
+                || (class_exists('\MyRadio\MyRadio\AuthUtils')
                 && defined('AUTH_SHOWERRORS')
-                && CoreUtils::hasPermission(AUTH_SHOWERRORS))
+                && AuthUtils::hasPermission(AUTH_SHOWERRORS))
             ) {
                 if ($is_ajax) {
                     //This is an Ajax/CLI request. Return JSON
