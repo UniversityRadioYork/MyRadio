@@ -74,6 +74,16 @@ class MyRadio_Swagger
         $this->class = $class;
     }
 
+    protected static function getParamType($param, $meta)
+    {
+        return (empty($meta['params'][$param->getName()]['type']) ? 'int' : $meta['params'][$param->getName()]['type']);
+    }
+
+    protected static function getParamDescription($param, $meta)
+    {
+        return (empty($meta['params'][$param->getName()]['description']) ? '' : $meta['params'][$param->getName()]['description']);
+    }
+
     public function toDataSource()
     {
         $blocked_methods = [
@@ -156,8 +166,8 @@ class MyRadio_Swagger
                 $params[] = [
                     "paramType" => "query",
                     "name" => $param->getName(),
-                    "description" => (empty($meta['params'][$param->getName()]['description']) ? : $meta['params'][$param->getName()]['description']),
-                    "type" => (empty($meta['params'][$param->getName()]['type']) ? 'int' : $meta['params'][$param->getName()]['type']),
+                    "description" => self::getParamDescription($param, $meta),
+                    "type" => self::getParamType($param, $meta),
                     "required" => !$param->isOptional(),
                     "allowMultiple" => false,
                     "defaultValue" => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null
@@ -260,17 +270,13 @@ class MyRadio_Swagger
                 //Deal with $params
                 case 'param':
                     /**
-                     * info[0] should be "@param"
-                     * info[1] should be data type
-                     * info[2] should be parameter name
-                     * info[3] should be the description
+                     * info[0] should be data type
+                     * info[1] should be parameter name
+                     * info[2] should be the description
                      */
-                    $info = explode(' ', $values[0], 4);
-                    if (sizeof($info) < 4) {
-                        break;
-                    }
-                    $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
-                    $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
+                    $info = preg_split('/\s+/', $values[0], 3);
+                    $arg = str_replace('$', '', $info[1]); //Strip the $ from variable name
+                    $params[$arg] = ['type' => $info[0], 'description' => empty($info[2]) ? : $info[2]];
                     break;
                 case 'mixin':
                     /**

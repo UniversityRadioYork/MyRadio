@@ -40,7 +40,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             ($method !== 'toDataSource' || $auth->canMixin($class, $mixins));
     }
 
-    private static function getArgs($op) {
+    private static function getArgs($op, $method, $arg0) {
         $args = [];
 
         switch ($op) {
@@ -61,6 +61,10 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             $args['mixins'] = array_filter(explode(',', $args['mixins']));
         }
 
+        if ($op === 'get' && $method->getNumberOfRequiredParameters() === 1) {
+            $args[$method->getParameters()[0]->getName()] = $arg0;
+        }
+
         return $args;
     }
 
@@ -70,8 +74,9 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
      * @param string $class The URI-name of the class being acted on
      * @param string $method The URI-name of the method being acted on
      * @param mixed  $id The ID of the item being acted on, if the method is non-static
+     * @param mixed  $arg0 The value of the parameter after the method name, if there is one
      */
-    public static function handleRequest($op, $class, $method, $id = null)
+    public static function handleRequest($op, $class, $method, $id = null, $arg0 = null)
     {
         $classes = array_flip(self::getApis());
 
@@ -90,6 +95,22 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             $path = $path . '/' . $method;
         }
 
+        if ($arg0) {
+            // array_filter($paths, func, ARRAY_FILTER_USE_KEY) is not running func for me...
+            $options = [];
+            foreach (array_keys($paths) as $key) {
+                if (strpos($key, $path . '/{') === 0) {
+                    $options[] = $key;
+                }
+            }
+
+            if (sizeof($options) > 1) {
+                throw new MyRadioException("Ambiguous path.", 404);
+            } elseif (sizeof($options) === 1) {
+                $path = $options[0];
+            }
+        }
+
         if (!isset($paths[$path])) {
             throw new MyRadioException("$class has no child $method.", 404);
         }
@@ -98,7 +119,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             throw new MyRadioException("$path does not have a valid $op handler.", 405);
         }
 
-        $args = self::getArgs($op);
+        $args = self::getArgs($op, $paths[$path][$op], $arg0);
 
         if ($id) {
             if (method_exists($classes[$class], 'getInstance')) {
@@ -176,7 +197,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         return json_decode(file_get_contents(__DIR__ . '/../../../schema/api.json'), true);
     }
 
-    private static function getParameters($method, $doc)
+    private static function getParameters($method, $doc, $op)
     {
         $parameters = [];
 
@@ -210,6 +231,19 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     '$ref' => '#/parameters/dataSourceFull'
                 ];
             }
+        } else {
+            $startIdx = 0;
+            if ($method->getNumberOfRequiredParameters() === 1 && $op === 'get') {
+                //If only one GET is required, make it URL
+                $param = $method->getParameters()[0];
+                $parameters[] = [
+                    'name' => $param->getName(),
+                    'in' => 'path',
+                    'description' => self::getParamDescription($param, $doc),
+                    'required' => true,
+                    'type' => self::getParamType($param, $doc)
+                ];
+            }
         }
 
         return $parameters;
@@ -237,7 +271,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                             'description' => $data['long_desc'],
                             'tags' => [$public_name],
                             'operationId' => $class . ':' . $reflector->getName(),
-                            'parameters' => self::getParameters($reflector, $data),
+                            'parameters' => self::getParameters($reflector, $data, $op),
                             'responses' => [
                                 '400' => ['$ref' => '#/responses/invalidInput']
                             ],
@@ -323,6 +357,10 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
             if (!$method->isStatic()) {
                 $public_name = '/{id}' . $public_name;
+            }
+
+            if ($op === 'get' && $method->getNumberOfRequiredParameters() === 1) {
+                $public_name .= '/{' . $method->getParameters()[0]->getName() . '}';
             }
 
             $data['children'][$public_name][$op] = $method;
