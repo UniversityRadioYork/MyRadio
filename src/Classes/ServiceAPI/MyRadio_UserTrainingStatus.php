@@ -78,7 +78,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         );
 
         if (empty($result)) {
-            throw new MyRadioException('The specified UserTrainingStatus ('.$statusid.') does not seem to exist');
+            throw new MyRadioException('The specified UserTrainingStatus ('.$statusid.') does not seem to exist', 404);
         }
 
         $this->user = (int) $result['memberid'];

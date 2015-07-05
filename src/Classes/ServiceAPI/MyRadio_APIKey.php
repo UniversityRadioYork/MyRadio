@@ -7,8 +7,6 @@
 
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\ServiceAPI\MyRadio_Swagger;
-
 /**
  * The APIKey Class provies information and management of API Keys for the MyRadio
  * REST API.
@@ -16,19 +14,15 @@ use \MyRadio\ServiceAPI\MyRadio_Swagger;
  * @package MyRadio_API
  * @uses    \Database
  */
-class MyRadio_APIKey extends ServiceAPI
+class MyRadio_APIKey extends ServiceAPI implements APICaller
 {
+    use MyRadio_APICaller_Common;
+
     /**
      * The API Key
      * @var String
      */
     private $key;
-
-    /**
-     * The Permission flags this API key has.
-     * @var int[]
-     */
-    private $permissions;
 
     /**
      * Whether the API key has been revoked
@@ -53,6 +47,7 @@ class MyRadio_APIKey extends ServiceAPI
      *
      * @param  String $class  The class the method belongs to (actual, not API Alias)
      * @param  String $method The method being called
+     * @param  boolean $ignore_revoked Don't return false if the API Key has been revoked
      * @return boolean
      */
     public function canCall($class, $method, $ignore_revoked = false)
@@ -60,27 +55,8 @@ class MyRadio_APIKey extends ServiceAPI
         if ($this->revoked && !$ignore_revoked) {
             return false;
         }
-        if (in_array(AUTH_APISUDO, $this->permissions)) {
-            return true;
-        }
-
-        $result = MyRadio_Swagger::getCallRequirements($class, $method);
-
-        if ($result === null) {
-            return false; //No permissions means the method is not accessible
-        }
-
-        if (empty($result)) {
-            return true; //An empty array means no permissions needed
-        }
-
-        foreach ($result as $type) {
-            if (in_array($type, $this->permissions)) {
-                return true; //The Key has that permission
-            }
-        }
-
-        return false; //Didn't match anything...
+        
+        return parent::canCall($class, $method);
     }
 
     /**
@@ -89,12 +65,9 @@ class MyRadio_APIKey extends ServiceAPI
      * @param      String $uri
      * @param      Array  $args
      * @deprecated
-     * @todo       A better way of doing this
-     * @todo       Disabled as user auth checking would log passwords
      */
     public function logCall($uri, $args)
     {
-        return;
         self::$db->query(
             'INSERT INTO myury.api_key_log (key_string, remote_ip, request_path, request_params)
             VALUES ($1, $2, $3, $4)',

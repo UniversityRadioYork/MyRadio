@@ -8,6 +8,7 @@
 namespace MyRadio\ServiceAPI;
 
 use \MyRadio\Config;
+use \MyRadio\Iface\APICaller;
 use \MyRadio\MyRadioEmail;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
@@ -25,8 +26,10 @@ use \MyRadio\ServiceAPI\MyRadio_Swagger;
  * @uses    \Database
  * @uses    \CacheProvider
  */
-class MyRadio_User extends ServiceAPI
+class MyRadio_User extends ServiceAPI implements APICaller
 {
+    use MyRadio_APICaller_Common;
+
     /**
      * Stores the currently logged in User's object after first use.
      */
@@ -36,12 +39,6 @@ class MyRadio_User extends ServiceAPI
      * @var int
      */
     private $memberid;
-
-    /**
-     * Stores the User's permissions
-     * @var Array
-     */
-    private $permissions;
 
     /**
      * Stores the User's first name
@@ -695,48 +692,7 @@ class MyRadio_User extends ServiceAPI
     }
 
     /**
-     * Returns if the user has the given permission.
-     *
-     * Always use AuthUtils::hasAuth when working with the current user.
-     *
-     * @param  null|int $authid The permission to test for. Null is "no permission required"
-     * @return boolean Whether this user has the requested permission
-     */
-    public function hasAuth($authid)
-    {
-        return $authid === null || in_array((int)$authid, $this->permissions);
-    }
-
-    /**
-     * Returns if the user can call a method via the REST API
-     */
-    public function canCall($class, $method)
-    {
-        // I am become superuser, doer of API calls
-        if ($this->hasAuth(AUTH_APISUDO)) {
-            return true;
-        }
-
-        $result = MyRadio_Swagger::getCallRequirements($class, $method);
-        if ($result === null) {
-            return false; //No permissions means the method is not accessible
-        }
-
-        if (empty($result)) {
-            return true; //An empty array means no permissions needed
-        }
-
-        foreach ($result as $type) {
-            if ($this->hasAuth($type)) {
-                return true; //The Key has that permission
-            }
-        }
-
-        return false; //Didn't match anything...
-    }
-
-    /**
-     * @todo...
+     * @todo ...
      */
     public function logCall($uri, $args)
     {
@@ -1958,28 +1914,52 @@ class MyRadio_User extends ServiceAPI
         return $form;
     }
 
-    public function toDataSource($full = true)
+    /**
+     * @mixin officerships Provides 'officerships' that the user has held.
+     * @mixin training Provides the 'training' that the user has had.
+     * @mixin shows Provides the 'shows' that the user is a part of.
+     * @mixin personal_data Provides 'paid', 'locked', 'college' and other information considered personal.
+     */
+    public function toDataSource($mixins = [])
     {
+        $mixin_funcs = [
+            'officerships' => function(&$data) {
+                $data['officerships'] = $this->getOfficerships();
+            },
+            'training' => function(&$data) {
+                $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining(), false);
+            },
+            'shows' => function(&$data) {
+                $data['shows'] = CoreUtils::dataSourceParser($this->getShows(), false);
+            },
+            'personal_data' => function(&$data) {
+                $data['paid'] = $this->getAllPayments();
+                $data['locked'] = $this->getAccountLocked();
+                $data['college'] = $this->getCollege();
+                $data['receive_email'] = $this->getReceiveEmail();
+                $data['local_name'] = $this->getLocalName();
+            }
+        ];
+
         $data = [
             'memberid' => $this->getID(),
-            'locked' => $this->getAccountLocked(),
-            'college' => $this->getCollege(),
             'fname' => $this->getFName(),
             'sname' => $this->getSName(),
             'sex' => $this->getSex(),
-            'receive_email' => $this->getReceiveEmail(),
             'public_email' => $this->getEmail(),
-            'url' => $this->getURL(),
-            'local_name' => $this->getLocalName()
+            'url' => $this->getURL()
         ];
-        if ($full) {
-            $data['paid'] = $this->getAllPayments();
-            $data['photo'] = $this->getProfilePhoto() === null ?
-                Config::$default_person_uri : $this->getProfilePhoto()->getURL();
-            $data['bio'] = $this->getBio();
-            $data['shows'] = CoreUtils::dataSourceParser($this->getShows(), false);
-            $data['officerships'] = $this->getOfficerships();
-            $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining(), false);
+
+        $data['photo'] = $this->getProfilePhoto() === null ?
+            Config::$default_person_uri : $this->getProfilePhoto()->getURL();
+        $data['bio'] = $this->getBio();
+
+        foreach ($mixins as $mixin) {
+            if (array_key_exists($mixin, $mixin_funcs)) {
+                $mixin_funcs[$mixin]($data);
+            } else {
+                throw new MyRadioException('Unsupported mixin ' . $mixin, 400);
+            }
         }
 
         return $data;

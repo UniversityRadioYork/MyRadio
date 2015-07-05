@@ -535,6 +535,16 @@ class CoreUtils
         return( $result );
     }
 
+    /**
+     * I'm becoming a Python person who just expects this to be a thing.
+     *
+     * Copypasta from http://stackoverflow.com/questions/834303/startswith-and-endswith-functions-in-php
+     */
+    public static function startsWith($haystack, $needle) {
+        // search backwards starting from haystack length characters from the end
+        return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
+    }
+
     private function __construct()
     {
     }

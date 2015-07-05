@@ -7298,3 +7298,11 @@ INSERT INTO tracklist.source (sourceid, source) VALUES ('b', 'BAPS');
 INSERT INTO tracklist.source (sourceid, source) VALUES ('m', 'Manual');
 INSERT INTO tracklist.source (sourceid, source) VALUES ('o', 'Other');
 INSERT INTO tracklist.source (sourceid, source) VALUES ('j', 'Jukebox');
+
+SET search_path = public, pg_catalog;
+CREATE TABLE myury.api_mixin_auth (
+    api_mixin_auth_id SERIAL,
+    class_name CHARACTER VARYING NOT NULL,
+    mixin_name CHARACTER VARYING,
+    typeid INT REFERENCES l_action(typeid)
+);

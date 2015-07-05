@@ -43,7 +43,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         $this->playlistid = $playlistid;
         $result = self::$db->fetchOne('SELECT * FROM jukebox.playlists WHERE playlistid=$1 LIMIT 1', [$playlistid]);
         if (empty($result)) {
-            throw new MyRadioException('The specified iTones Playlist does not seem to exist');
+            throw new MyRadioException('The specified iTones Playlist does not seem to exist', 404);
 
             return;
         }

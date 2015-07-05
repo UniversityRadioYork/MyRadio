@@ -72,7 +72,7 @@ class MyRadio_Album extends ServiceAPI
         );
 
         if (empty($result)) {
-            throw new MyRadioException('The specified Record/Album does not seem to exist');
+            throw new MyRadioException('The specified Record/Album does not seem to exist', 404);
 
             return;
         }
