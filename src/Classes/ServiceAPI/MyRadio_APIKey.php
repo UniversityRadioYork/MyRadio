@@ -18,11 +18,7 @@ use \MyRadio\Iface\APICaller;
  */
 class MyRadio_APIKey extends ServiceAPI implements APICaller
 {
-    use MyRadio_APICaller_Common {
-        canCall as commonCanCall;
-        canMixin as canMixin;
-        hasAuth as hasAuth;
-    }
+    use MyRadio_APICaller_Common;
 
     /**
      * The API Key
@@ -46,23 +42,6 @@ class MyRadio_APIKey extends ServiceAPI implements APICaller
         $revoked = self::$db->fetchColumn('SELECT revoked from myury.api_key WHERE key_string=$1', [$key]);
         $this->revoked = ($revoked[0] == 't');
         $this->permissions = self::$db->fetchColumn('SELECT typeid FROM myury.api_key_auth WHERE key_string=$1', [$key]);
-    }
-
-    /**
-     * Check if this API Key can call the given Method.
-     *
-     * @param  String $class  The class the method belongs to (actual, not API Alias)
-     * @param  String $method The method being called
-     * @param  boolean $ignore_revoked Don't return false if the API Key has been revoked
-     * @return boolean
-     */
-    public function canCall($class, $method, $ignore_revoked = false)
-    {
-        if ($this->revoked && !$ignore_revoked) {
-            return false;
-        }
-        
-        return $this->commonCanCall($class, $method);
     }
 
     /**

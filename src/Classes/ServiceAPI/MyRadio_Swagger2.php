@@ -58,7 +58,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
         // Check mixins too
         if (isset($args['mixins'])) {
-            $args = ['mixins' => array_filter(explode(',', $args['mixins']))];
+            $args['mixins'] = array_filter(explode(',', $args['mixins']));
         }
 
         return $args;
@@ -117,7 +117,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             throw new MyRadioException('No valid authentication data provided.', 401);
         } elseif (self::validateRequest($caller, $classes[$class], $paths[$path][$op]->getName(), $args['mixins'])) {
             $caller->logCall($_SERVER['REQUEST_URI'], $op === 'get' ? $args : [$op]);
-            return invokeArgsNamed($paths[$path][$op], $object, $args);
+            return ['content' => invokeArgsNamed($paths[$path][$op], $object, $args), 'mixins' => $args['mixins']];
         } else {
             throw new MyRadioException('Caller cannot access this method.', 403);
         }
@@ -290,7 +290,6 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         ];
 
         $refClass = new ReflectionClass($this->class);
-        $constructor = new ReflectionMethod($this->class, '__construct');
 
         $data['description'] = self::getClassDoc($refClass)['short_desc'];
 

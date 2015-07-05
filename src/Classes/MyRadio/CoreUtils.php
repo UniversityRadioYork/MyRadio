@@ -301,13 +301,13 @@ class CoreUtils
      * @param  mixed $data
      * @return array
      */
-    public static function dataSourceParser($data, $full = true)
+    public static function dataSourceParser($data, $mixins = [])
     {
         if (is_object($data) && $data instanceof MyRadio_DataSource) {
-            return $data->toDataSource($full);
+            return $data->toDataSource($mixins);
         } elseif (is_array($data)) {
             foreach ($data as $k => $v) {
-                $data[$k] = self::dataSourceParser($v, $full);
+                $data[$k] = self::dataSourceParser($v, $mixins);
             }
 
             return $data;
