@@ -1,5 +1,5 @@
 *.LCK*
-MyRadio_Config.local.php
+MyRadio_Config.local.php*
 util/checkpassword.conf
 *.sw[a-z]
 sftp-*.json

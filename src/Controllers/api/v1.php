@@ -72,18 +72,6 @@ try {
 }
 
 /**
- * Check and provide Access-Control-Allow-Origin if needed
- */
-if (isset($_SERVER['HTTP_ORIGIN'])) {
-    if (
-        empty(Config::$api_allowed_domains) or
-        in_array($_SERVER['HTTP_ORIGIN'], Config::$api_allowed_domains)
-    ) {
-        header('Access-Control-Allow-Origin: *');
-    }
-}
-
-/**
  * If it's an OPTIONS request report what methods are allowed
  * Otherwise, check they're using one of those methods
  */
