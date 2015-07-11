@@ -16,7 +16,7 @@ use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\MyRadioEmail;
 
 /**
- * The Season class is used to create, view and manupulate Seasons within the new MyRadio Scheduler Format
+ * The Season class is used to create, view and manipulate Seasons within the new MyRadio Scheduler Format
  * @package MyRadio_Scheduler
  * @uses \Database
  * @uses \MyRadio_Show

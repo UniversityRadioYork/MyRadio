@@ -11,7 +11,7 @@ use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 
 /**
- * The Album class fetches information about albums in the Cental Database.
+ * The Album class fetches information about albums in the Central Database.
  * @package MyRadio_Core
  * @uses \Database
  */
