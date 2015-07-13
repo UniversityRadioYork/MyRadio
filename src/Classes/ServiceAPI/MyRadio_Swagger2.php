@@ -138,7 +138,20 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             throw new MyRadioException('No valid authentication data provided.', 401);
         } elseif (self::validateRequest($caller, $classes[$class], $paths[$path][$op]->getName(), $args['mixins'])) {
             $caller->logCall($_SERVER['REQUEST_URI'], $op === 'get' ? $args : [$op]);
-            return ['content' => invokeArgsNamed($paths[$path][$op], $object, $args), 'mixins' => $args['mixins']];
+            $data = ['content' => invokeArgsNamed($paths[$path][$op], $object, $args), 'mixins' => $args['mixins']];
+
+            // If this returns a datasourceable array of objects, validate any mixins
+            $sample_obj = null;
+            if (is_array($data) && sizeof($data) > 0 && is_subclass_of($data[0], 'MyRadio::ServiceAPI::ServiceAPI')) {
+                $sample_obj = $data[0];
+            } elseif (is_subclass_of($data, 'MyRadio::ServiceAPI::ServiceAPI')) {
+                $sample_obj = $data;
+            }
+
+            if ($sample_obj && !$caller->canMixin(get_class($sample_obj), $args['mixins'])) {
+                throw new MyRadioException('Caller cannot access this method.', 403);
+            }
+            return $data;
         } else {
             throw new MyRadioException('Caller cannot access this method.', 403);
         }
