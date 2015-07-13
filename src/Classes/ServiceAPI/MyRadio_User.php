@@ -194,9 +194,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
         //Get the base data
         $data = self::$db->fetchOne(
             'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college,
-            phone, email, receive_email, local_name, local_alias, eduroam,
-            account_locked, last_login, joined, profile_photo, bio,
-            auth_provider, require_password_change, contract_signed
+            phone, email, receive_email::boolean::text, local_name, local_alias, eduroam,
+            account_locked::boolean::text, last_login, joined, profile_photo, bio,
+            auth_provider, require_password_change::boolean::text, contract_signed::boolean::text
             FROM member, l_college
             WHERE memberid=$1
             AND member.college = l_college.collegeid
@@ -213,9 +213,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 $this->$key = (int) strtotime($value);
             } elseif (filter_var($value, FILTER_VALIDATE_INT)) {
                 $this->$key = (int) $value;
-            } elseif ($value === 't') {
+            } elseif ($value === 'true') {
                 $this->$key = true;
-            } elseif ($value === 'f') {
+            } elseif ($value === 'false') {
                 $this->$key = false;
             } else {
                 $this->$key = $value;
