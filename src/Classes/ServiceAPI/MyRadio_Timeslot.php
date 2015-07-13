@@ -41,7 +41,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             throw new MyRadioException('Timeslot ID must be provided.');
         }
 
-        $this->timeslot_id = $timeslot_id;
+        $this->timeslot_id = (int) $timeslot_id;
         //Init Database
         self::initDB();
 

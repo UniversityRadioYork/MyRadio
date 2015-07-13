@@ -35,7 +35,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
     protected function __construct($season_id)
     {
-        $this->season_id = $season_id;
+        $this->season_id = (int) $season_id;
         //Init Database
         self::initDB();
 

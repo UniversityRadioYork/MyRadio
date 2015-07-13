@@ -49,7 +49,7 @@ class MyRadio_Photo extends ServiceAPI
      */
     protected function __construct($photoid)
     {
-        $this->photoid = $photoid;
+        $this->photoid = (int) $photoid;
 
         $result = self::$db->fetchOne(
             'SELECT * FROM myury.photos WHERE photoid=$1',
