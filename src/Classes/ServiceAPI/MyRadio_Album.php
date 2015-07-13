@@ -60,7 +60,7 @@ class MyRadio_Album extends ServiceAPI
 
     protected function __construct($recordid)
     {
-        $this->albumid = $recordid;
+        $this->albumid = (int) $recordid;
 
         $result = self::$db->fetchOne(
             'SELECT * FROM (SELECT * FROM public.rec_record WHERE recordid=$1 LIMIT 1) AS t1

@@ -75,9 +75,9 @@ class MyRadio_List extends ServiceAPI
      */
     protected function __construct($listid)
     {
-        $this->listid = $listid;
+        $this->listid = (int) $listid;
 
-        $result = self::$db->fetchOne('SELECT * FROM mail_list WHERE listid=$1', [$listid]);
+        $result = self::$db->fetchOne('SELECT * FROM mail_list WHERE listid=$1', [$this->listid]);
         if (empty($result)) {
             throw new MyRadioException('List ' . $listid . ' does not exist!');
 

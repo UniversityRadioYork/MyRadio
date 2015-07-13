@@ -25,7 +25,7 @@ class Artist extends ServiceAPI
      */
     protected function __construct($artistid)
     {
-        $this->artistid = $artistid;
+        $this->artistid = (int) $artistid;
         throw new MyRadioException('Not implemented Artist::__construct');
     }
 

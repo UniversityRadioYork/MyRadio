@@ -130,7 +130,7 @@ class MyRadio_ChartRelease extends ServiceAPI
      */
     protected function __construct($chart_release_id, $chart_type = null)
     {
-        $this->chart_release_id = $chart_release_id;
+        $this->chart_release_id = (int) $chart_release_id;
         $this->chart_type = $chart_type;
 
         $chart_release_data = self::$db->fetchOne(
