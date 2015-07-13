@@ -313,6 +313,10 @@ class MyRadio_List extends ServiceAPI
         }
     }
 
+    /**
+     * Return all mailing lists
+     * @return MyRadio_User[]
+     */
     public static function getAllLists()
     {
         $r = self::$db->fetchColumn('SELECT listid FROM mail_list');
