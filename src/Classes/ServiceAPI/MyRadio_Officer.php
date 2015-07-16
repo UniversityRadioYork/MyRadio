@@ -716,11 +716,26 @@ class MyRadio_Officer extends ServiceAPI
     /**
      * Returns data about the Officer.
      *
-     * @param  bool $full If true, includes info about User who holds position.
+     * @mixin permissions Lists permissions the officer has
+     * @mixin history Lists historic position holders
+     * @mixin current Lists current position holders
+     *
      * @return Array
      */
-    public function toDataSource($full = false)
+    public function toDataSource($mixins = [])
     {
+        $mixin_funcs = [
+            'permissions' => function(&$data) {
+                $data['permissions'] = $this->getPermissions();
+            },
+            'history' => function(&$data) {
+                $data['history'] = CoreUtils::dataSourceParser($this->getHistory());
+            },
+            'current' => function(&$data) {
+                $data['current'] = CoreUtils::dataSourceParser($this->getCurrentHolders());
+            }
+        ];
+
         $data = [
             'officerid' => $this->getID(),
             'name' => $this->getName(),
@@ -729,14 +744,10 @@ class MyRadio_Officer extends ServiceAPI
             'ordering' => $this->getOrdering(),
             'description' => $this->getDescription(),
             'status' => $this->getStatus(),
-            'type' => $this->getType(),
-            'permissions' => $this->getPermissions()
+            'type' => $this->getType()
         ];
 
-        if ($full) {
-            $data['current'] = CoreUtils::dataSourceParser($this->getCurrentHolders(), false);
-            $data['history'] = CoreUtils::dataSourceParser($this->getHistory(), false);
-        }
+        $this->addMixins($data, $mixins, $mixin_funcs);
 
         return $data;
     }

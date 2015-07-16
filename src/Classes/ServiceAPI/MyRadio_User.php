@@ -1954,13 +1954,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             Config::$default_person_uri : $this->getProfilePhoto()->getURL();
         $data['bio'] = $this->getBio();
 
-        foreach ($mixins as $mixin) {
-            if (array_key_exists($mixin, $mixin_funcs)) {
-                $mixin_funcs[$mixin]($data);
-            } else {
-                throw new MyRadioException('Unsupported mixin ' . $mixin, 400);
-            }
-        }
+        $this->addMixins($data, $mixins, $mixin_funcs);
 
         return $data;
     }

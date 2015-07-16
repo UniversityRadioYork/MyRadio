@@ -91,6 +91,16 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
         return new $class($itemid);
     }
 
+    protected function addMixins(&$data, $mixins, $mixin_funcs, $strict = true) {
+        foreach ($mixins as $mixin) {
+            if (array_key_exists($mixin, $mixin_funcs)) {
+                $mixin_funcs[$mixin]($data);
+            } else {
+                throw new MyRadioException('Unsupported mixin ' . $mixin, 400);
+            }
+        }
+    }
+
     public function toDataSource($full = false)
     {
         throw new MyRadioException(get_called_class() . ' has not had a DataSource Conversion Method Defined!', 500);
