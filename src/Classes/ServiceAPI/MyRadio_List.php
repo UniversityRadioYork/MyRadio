@@ -329,46 +329,66 @@ class MyRadio_List extends ServiceAPI
         return $lists;
     }
 
-    public function toDataSource($full = true)
+    /**
+     * Returns data about the List.
+     *
+     * @mixin actions Returns interaction options for the UI
+     * @mixin recipients Lists recipients of the list
+     *
+     * @return Array
+     */
+    public function toDataSource($mixins = [])
     {
+        $mixin_funcs = [
+            'actions' => function(&$data) {
+                $data['optIn'] = ((!$subscribed && ($this->optin || $this->hasOptedOutOfAuto(MyRadio_User::getCurrentOrSystemUser()))) ?
+                    [
+                        'display' => 'icon',
+                        'value' => 'plus',
+                        'title' => 'Subscribe to this mailing list',
+                        'url' => URLUtils::makeURL('Mail', 'optin', ['list' => $this->getID()])
+                    ] : null
+                );
+                $data['optOut'] = ($subscribed ? [
+                    'display' => 'icon',
+                    'value' => 'minus',
+                    'title' => 'Opt out of this mailing list',
+                    'url' => URLUtils::makeURL('Mail', 'optout', ['list' => $this->getID()])
+                ] : null);
+                $data['mail'] = [
+                    'display' => 'icon',
+                    'value' => 'envelope',
+                    'title' => 'Send a message to this mailing list',
+                    'url' => URLUtils::makeURL('Mail', 'send', ['list' => $this->getID()])
+                ];
+                $data['archive'] = [
+                    'display' => 'icon',
+                    'value' => 'folder-close',
+                    'title' => 'View archives for this mailing list',
+                    'url' => URLUtils::makeURL('Mail', 'archive', ['list' => $this->getID()])
+                ];
+            },
+            'recipients' => function(&$data) {
+                $data['recipients'] = CoreUtils::dataSourceParser($this->getMembers());
+            }
+        ];
+
         if (isset($_SESSION['memberid'])) {
             $subscribed = $this->isMember(MyRadio_User::getInstance());
         } else {
             $subscribed = false;
         }
 
-        return [
+        $data = [
             'listid' => $this->getID(),
             'subscribed' => $subscribed,
             'name' => $this->getName(),
             'address' => $this->getAddress(),
-            'recipient_count' => sizeof($this->getMembers()),
-            'optIn' => ((!$subscribed && ($this->optin || $this->hasOptedOutOfAuto(MyRadio_User::getCurrentOrSystemUser()))) ?
-                [
-                    'display' => 'icon',
-                    'value' => 'plus',
-                    'title' => 'Subscribe to this mailing list',
-                    'url' => URLUtils::makeURL('Mail', 'optin', ['list' => $this->getID()])
-                ] : null
-            ),
-            'optOut' => ($subscribed ? [
-                'display' => 'icon',
-                'value' => 'minus',
-                'title' => 'Opt out of this mailing list',
-                'url' => URLUtils::makeURL('Mail', 'optout', ['list' => $this->getID()])
-            ] : null),
-            'mail' => [
-                'display' => 'icon',
-                'value' => 'envelope',
-                'title' => 'Send a message to this mailing list',
-                'url' => URLUtils::makeURL('Mail', 'send', ['list' => $this->getID()])
-            ],
-            'archive' => [
-                'display' => 'icon',
-                'value' => 'folder-close',
-                'title' => 'View archives for this mailing list',
-                'url' => URLUtils::makeURL('Mail', 'archive', ['list' => $this->getID()])
-            ]
+            'recipient_count' => sizeof($this->members),
         ];
+
+        $this->addMixins($data, $mixins, $mixin_funcs);
+
+        return $data;
     }
 }

@@ -129,7 +129,7 @@ class MyRadio_Alias extends ServiceAPI
      * Returns what the Alias maps to.
      *
      * Format:<br>
-     * {{type: 'text', value: 'dave.tracz'}, ...}
+     * {{type: 'text', value: string/Officer/Member}, ...}
      *
      * @return mixed[]
      */
@@ -141,15 +141,15 @@ class MyRadio_Alias extends ServiceAPI
     /**
      * Returns data about the Alias for the API.
      *
-     * @param  bool $full
+     * @param  Array $mixins
      * @return Array
      */
-    public function toDataSource($full = true)
+    public function toDataSource($mixins = [])
     {
         $data = [
             'alias_id' => $this->getID(),
             'source' => $this->getSource(),
-            'destinations' => CoreUtils::dataSourceParser($this->getDestinations(), false)
+            'destinations' => CoreUtils::dataSourceParser($this->getDestinations())
         ];
 
         return $data;
