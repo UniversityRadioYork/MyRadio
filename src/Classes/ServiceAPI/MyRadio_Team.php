@@ -312,7 +312,7 @@ class MyRadio_Team extends ServiceAPI
     public static function getByAlias($alias)
     {
         return self::getInstance(
-            self::$db->fetchColumn('SELECT teamid FROM public.team WHERE local_alias=$1', [$alias])
+            self::$db->fetchColumn('SELECT teamid FROM public.team WHERE local_alias=$1', [$alias])[0]
         );
     }
 
