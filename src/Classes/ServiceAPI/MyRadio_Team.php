@@ -340,11 +340,21 @@ class MyRadio_Team extends ServiceAPI
     /**
      * Returns data about the Team.
      *
-     * @param  bool $full If true, includes info about Officers in the Team
+     * @mixin officers Provides officers for the team.
+     * @mixin history Provides historic data for the team.
      * @return Array
      */
-    public function toDataSource($full = false)
+    public function toDataSource($mixins = [])
     {
+        $mixin_funcs = [
+            'officers' => function(&$data) {
+                $data['officers'] = CoreUtils::dataSourceParser($this->getCurrentHolders(), false);
+            },
+            'history' => function(&$data) {
+                $data['history'] = CoreUtils::dataSourceParser($this->getHistory(), false);
+            }
+        ];
+
         $data = [
             'teamid' => $this->getID(),
             'name' => $this->getName(),
@@ -354,10 +364,7 @@ class MyRadio_Team extends ServiceAPI
             'status' => $this->getStatus()
         ];
 
-        if ($full) {
-            $data['officers'] = CoreUtils::dataSourceParser($this->getCurrentHolders(), false);
-            $data['history'] = CoreUtils::dataSourceParser($this->getHistory(), false);
-        }
+        $this->addMixins($data, $mixins, $mixin_funcs);
 
         return $data;
     }
