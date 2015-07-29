@@ -88,11 +88,10 @@ class MyRadio_Team extends ServiceAPI
      * Returns all the Teams available.
      * @return array
      */
-    public static function getAllTeams($full = true)
+    public static function getAllTeams()
     {
         return self::resultSetToObjArray(
-            self::$db->fetchColumn('SELECT teamid FROM public.team'),
-            $full
+            self::$db->fetchColumn('SELECT teamid FROM public.team')
         );
     }
 
@@ -100,15 +99,14 @@ class MyRadio_Team extends ServiceAPI
      * Returns all the current Teams.
      * @return array
      */
-    public static function getCurrentTeams($full = true)
+    public static function getCurrentTeams()
     {
         return self::resultSetToObjArray(
             self::$db->fetchColumn(
                 'SELECT teamid FROM public.team
                 WHERE status = \'c\'
                 ORDER BY ordering ASC'
-            ),
-            $full
+            )
         );
     }
 
