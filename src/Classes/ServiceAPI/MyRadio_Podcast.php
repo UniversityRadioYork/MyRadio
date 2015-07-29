@@ -513,6 +513,15 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     }
 
     /**
+     * Get the web uri for the podcast
+     * @return String
+     */
+    public function getURI()
+    {
+        return Config::$public_media_uri.'/'.$this->getFile();
+    }
+
+    /**
      * Set the Show this Podcast is linked to. If null, removes any link.
      * @param MyRadio_Show $show
      */
