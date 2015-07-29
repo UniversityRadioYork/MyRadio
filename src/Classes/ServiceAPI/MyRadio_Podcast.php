@@ -518,7 +518,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      */
     public function getURI()
     {
-        return Config::$public_media_uri.'/'.$this->getFile();
+        return Config::$public_media_uri.'/'.$this->file;
     }
 
     /**
