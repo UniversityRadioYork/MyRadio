@@ -558,7 +558,7 @@ class MyRadio_Officer extends ServiceAPI
                                 'text' => 'Select a Team'
                             ]
                         ],
-                        MyRadio_Team::getCurrentTeams()
+                        MyRadio_Team::getTeamSelect()
                     )
                 ]
             )

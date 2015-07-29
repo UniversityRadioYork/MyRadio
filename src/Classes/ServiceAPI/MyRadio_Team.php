@@ -100,7 +100,7 @@ class MyRadio_Team extends ServiceAPI
      * Returns teamids and names for use in select boxes
      * @return array
      */
-    public static function getCurrentTeams()
+    public static function getTeamSelect()
     {
         return self::$db->fetchAll(
             'SELECT teamid AS value, team_name AS text FROM public.team
