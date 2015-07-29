@@ -346,10 +346,10 @@ class MyRadio_Team extends ServiceAPI
     {
         $mixin_funcs = [
             'officers' => function(&$data) {
-                $data['officers'] = CoreUtils::dataSourceParser($this->getCurrentHolders(), false);
+                $data['officers'] = CoreUtils::dataSourceParser($this->getCurrentHolders());
             },
             'history' => function(&$data) {
-                $data['history'] = CoreUtils::dataSourceParser($this->getHistory(), false);
+                $data['history'] = CoreUtils::dataSourceParser($this->getHistory());
             }
         ];
 
