@@ -836,7 +836,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      */
     public static function searchMeta($query, $string_keys = null, $effective_from = null, $effective_to = null)
     {
-        if ($string_keys === null) {
+        if (is_null($string_keys)) {
             $string_keys = ['title', 'description', 'tag'];
         }
 

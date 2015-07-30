@@ -259,6 +259,10 @@ trait MyRadio_MetadataSubject
      */
     public static function searchMeta($query, $string_keys, $effective_from = null, $effective_to = null, $table = null, $id_field = null)
     {
+        if (is_null($table) || is_null($id_field)) {
+            throw new MyRadioException('Search table and ID must be set.');
+        }
+
         $keys = [];
 
         foreach ($string_keys as $string_key) {
