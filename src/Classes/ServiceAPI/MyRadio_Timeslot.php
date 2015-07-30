@@ -348,17 +348,6 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         return $top;
     }
 
-    public static function getFromSlug($slug)
-    {
-        return self::getInstance(
-            self::$db->fetchColumn(
-                'SELECT show_season_timeslot_id FROM schedule.timeslot_metadata
-                WHERE metadata_value LIKE \'%\' || $1 || \'%\'',
-                [$slug]
-            )[0]
-        );
-    }
-
     /**
      * Returns the current Timeslot on air, if there is one.
      *
