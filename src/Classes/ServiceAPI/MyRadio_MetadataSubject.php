@@ -245,10 +245,11 @@ trait MyRadio_MetadataSubject
      * Searches searchable *text* metadata for the specified value. Does not work for image metadata.
      *
      * This function must be extended by Classes using MetadataSubject to provide the correct
-     * ID field and table that the metadata is stored in
+     * ID field and table that the metadata is stored in.
+     * @todo effective_from/to not yet implemented
      *
-     * @param mixed  $string_keys    The metadata keys to search
-     * @param mixed  $query          The query value.
+     * @param Array  $string_keys    The metadata keys to search
+     * @param String $query          The query value.
      * @param int    $effective_from UTC Time to search from.
      * @param int    $effective_to   UTC Time to search to.
      * @param String $table          The metadata table, *including* the schema.
@@ -259,21 +260,20 @@ trait MyRadio_MetadataSubject
     public static function searchMeta($string_keys, $query, $effective_from = null, $effective_to = null, $table = null, $id_field = null)
     {
         $keys = [];
-        $multiple = [];
 
         foreach ($string_keys as $string_key) {
             $keys[] = self::getMetadataKey($string_key); //Integer meta key
         }
 
-        $meta_keys = implode(',', $keys);
+        $meta_keys = '(' . implode(',', array_unique($keys)) . ')';
 
         $results = self::$db->fetchColumn(
             'SELECT ' . $id_field
             .' FROM ' . $table
-            .'WHERE metadata_value LIKE \'%\' || $1 || \'%\''
-            .'AND metadata_key IN ($2)',
-            [$query, $meta_keys]
-        )
+            .' WHERE metadata_value ILIKE \'%\' || $1 || \'%\''
+            .' AND metadata_key_id IN '. $meta_keys,
+            [$query]
+        );
 
         return $results;
     }

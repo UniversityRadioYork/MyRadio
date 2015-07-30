@@ -822,6 +822,24 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         return $top;
     }
 
+    /**
+     * Searches searchable *text* metadata for the specified value. Does not work for image metadata.
+     *
+     * @todo effective_from/to not yet implemented
+     *
+     * @param Array  $string_keys    The metadata keys to search
+     * @param String $query          The query value.
+     * @param int    $effective_from UTC Time to search from.
+     * @param int    $effective_to   UTC Time to search to.
+     *
+     * @return Array The shows that match the search terms
+     */
+    public static function searchMeta($string_keys, $query, $effective_from = null, $effective_to = null)
+    {
+        $r = parent::searchMeta($string_keys, $query, $effective_from, $effective_to, 'schedule.show_metadata', 'show_id');
+        return self::resultSetToObjArray($r);
+    }
+
     public function toDataSource($full = true)
     {
         $data = [

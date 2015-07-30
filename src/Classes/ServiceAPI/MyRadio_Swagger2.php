@@ -61,8 +61,10 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             $args['mixins'] = array_filter(explode(',', $args['mixins']));
         }
 
+        $parameters = $method->getParameters();
+
         if ($op === 'get' && $method->getNumberOfRequiredParameters() === 1) {
-            $args[$method->getParameters()[0]->getName()] = $arg0;
+            $args[$parameters[0]->getName()] = $arg0;
         }
 
         return $args;
@@ -376,9 +378,15 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             } elseif (CoreUtils::startsWith($name, 'get')) {
                 $op = 'get';
                 $public_name = '/' . strtolower(substr($name, 3));
+            } elseif (CoreUtils::startsWith($name, 'is')) {
+                $op = 'get';
+                $public_name = '/' . strtolower($name);
             } elseif ($name === 'create') {
                 $op = 'post';
                 $public_name = '';
+            } elseif ($method->isStatic()) {
+                $op = 'get';
+                $public_name = '/' . strtolower($name);
             } else {
                 $op = 'put';
                 $public_name = '/' . strtolower($name);
