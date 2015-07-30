@@ -1062,4 +1062,26 @@ $times
 
         return [($signed_in / $total) * 100, $total - $signed_in];
     }
+
+    /**
+     * Searches searchable *text* metadata for the specified value. Does not work for image metadata.
+     *
+     * @todo effective_from/to not yet implemented
+     *
+     * @param String $query          The query value.
+     * @param Array  $string_keys    The metadata keys to search
+     * @param int    $effective_from UTC Time to search from.
+     * @param int    $effective_to   UTC Time to search to.
+     *
+     * @return Array The shows that match the search terms
+     */
+    public static function searchMeta($query, $string_keys = null, $effective_from = null, $effective_to = null)
+    {
+        if ($string_keys === null) {
+            $string_keys = ['title', 'description', 'tag'];
+        }
+
+        $r = parent::searchMeta($query, $string_keys, $effective_from, $effective_to, 'schedule.season_metadata', 'show_season_id');
+        return self::resultSetToObjArray($r);
+    }
 }

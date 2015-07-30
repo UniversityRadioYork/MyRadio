@@ -827,16 +827,20 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      *
      * @todo effective_from/to not yet implemented
      *
-     * @param Array  $string_keys    The metadata keys to search
      * @param String $query          The query value.
+     * @param Array  $string_keys    The metadata keys to search
      * @param int    $effective_from UTC Time to search from.
      * @param int    $effective_to   UTC Time to search to.
      *
      * @return Array The shows that match the search terms
      */
-    public static function searchMeta($string_keys, $query, $effective_from = null, $effective_to = null)
+    public static function searchMeta($query, $string_keys = null, $effective_from = null, $effective_to = null)
     {
-        $r = parent::searchMeta($string_keys, $query, $effective_from, $effective_to, 'schedule.show_metadata', 'show_id');
+        if ($string_keys === null) {
+            $string_keys = ['title', 'description', 'tag'];
+        }
+
+        $r = parent::searchMeta($query, $string_keys, $effective_from, $effective_to, 'schedule.show_metadata', 'show_id');
         return self::resultSetToObjArray($r);
     }
 

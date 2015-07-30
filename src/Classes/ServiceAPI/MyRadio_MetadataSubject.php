@@ -248,8 +248,8 @@ trait MyRadio_MetadataSubject
      * ID field and table that the metadata is stored in.
      * @todo effective_from/to not yet implemented
      *
-     * @param Array  $string_keys    The metadata keys to search
      * @param String $query          The query value.
+     * @param Array  $string_keys    The metadata keys to search
      * @param int    $effective_from UTC Time to search from.
      * @param int    $effective_to   UTC Time to search to.
      * @param String $table          The metadata table, *including* the schema.
@@ -257,7 +257,7 @@ trait MyRadio_MetadataSubject
      *
      * @return Array The list of IDs of whatever is being searched.
      */
-    public static function searchMeta($string_keys, $query, $effective_from = null, $effective_to = null, $table = null, $id_field = null)
+    public static function searchMeta($query, $string_keys, $effective_from = null, $effective_to = null, $table = null, $id_field = null)
     {
         $keys = [];
 
