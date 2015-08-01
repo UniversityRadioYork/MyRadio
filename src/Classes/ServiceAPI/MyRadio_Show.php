@@ -547,9 +547,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         return $this->show_id;
     }
 
+    /**
+     * Get the microsite URI
+     *
+     * @return String
+     */
     public function getWebpage()
     {
-        return '//ury.org.uk/schedule/shows/' . $this->getID();
+        return '/schedule/shows/' . $this->getID();
     }
 
     /**

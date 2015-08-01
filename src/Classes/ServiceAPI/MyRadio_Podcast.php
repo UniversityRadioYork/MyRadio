@@ -522,6 +522,16 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     }
 
     /**
+     * Get the microsite URI
+     *
+     * @return String
+     */
+    public function getWebpage()
+    {
+        return '/uryplayer/podcasts/' . $this->getID();
+    }
+
+    /**
      * Set the Show this Podcast is linked to. If null, removes any link.
      * @param MyRadio_Show $show
      */
@@ -564,6 +574,12 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 'value' => 'pencil',
                 'title' => 'Edit Podcast',
                 'url' => URLUtils::makeURL('Podcast', 'editPodcast', ['podcast_id' => $this->getID()])
+            ],
+            'micrositelink' => [
+                'display' => 'icon',
+                'value' => 'link',
+                'title' => 'View Podcast Microsite',
+                'url' => $this->getWebpage()
             ]
         ];
 
@@ -627,6 +643,27 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         )['url'];
     }
 
+    /**
+     * Searches searchable *text* metadata for the specified value. Does not work for image metadata.
+     *
+     * @todo effective_from/to not yet implemented
+     *
+     * @param String $query          The query value.
+     * @param Array  $string_keys    The metadata keys to search
+     * @param int    $effective_from UTC Time to search from.
+     * @param int    $effective_to   UTC Time to search to.
+     *
+     * @return Array The shows that match the search terms
+     */
+    public static function searchMeta($query, $string_keys = null, $effective_from = null, $effective_to = null)
+    {
+        if (is_null($string_keys)) {
+            $string_keys = ['title', 'description', 'tag'];
+        }
+
+        $r = parent::searchMeta($query, $string_keys, $effective_from, $effective_to, 'uryplayer.podcast_metadata', 'podcast_id');
+        return self::resultSetToObjArray($r);
+    }
 
     /**
      * Sets a metadata key to the specified value.

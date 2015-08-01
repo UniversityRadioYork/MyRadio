@@ -163,11 +163,14 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         return MyRadio_Season::getInstance($this->season_id);
     }
 
+    /**
+     * Get the microsite URI
+     *
+     * @return String
+     */
     public function getWebpage()
     {
-        $season = $this->getSeason();
-
-        return 'http://ury.org.uk/schedule/shows/timeslots/' . $this->timeslot_id;
+        return '/schedule/shows/timeslots/' . $this->timeslot_id;
     }
 
     public function getPhoto()

@@ -700,9 +700,14 @@ EOT
         return CoreUtils::happyTime($this->submitted);
     }
 
+    /**
+     * Get the microsite URI
+     *
+     * @return String
+     */
     public function getWebpage()
     {
-        return 'http://ury.org.uk/show/' . $this->getShow()->getID() . '/' . $this->getID();
+        return '/schedule/shows/seasons/' . $this->getID();
     }
 
     public function getRequestedTimes()
