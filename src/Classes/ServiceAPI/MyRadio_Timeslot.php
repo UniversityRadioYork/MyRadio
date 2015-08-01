@@ -298,6 +298,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'title' => $this->getMeta('title'),
             'description' => $this->getMeta('description'),
             'tags' => $this->getMeta('tag'),
+            'time' => $this->getStartTime(),
             'start_time' => CoreUtils::happyTime($this->getStartTime()),
             'duration' => $this->getDuration(),
             'mixcloud_status' => $this->getMeta('upload_state'),

@@ -17,9 +17,19 @@ $('.twig-datatable').dataTable(
             {
                 "sTitle": "Status"
         },
+            //submitted
+            {
+                "sTitle": "Time Submitted"
+        },
             //editlink
             {
                 "sTitle": "Edit",
+                "bSortable": false,
+                "bVisible": true
+        },
+            //micrositelink
+            {
+                "sTitle": "Site",
                 "bSortable": false,
                 "bVisible": true
         }
@@ -27,3 +37,7 @@ $('.twig-datatable').dataTable(
         "bPaginate": true
     }
 );
+
+$('.column-time').text(function(i, old) {
+    return moment.unix(old).format('DD/MM/YYYY HH:mm');
+});

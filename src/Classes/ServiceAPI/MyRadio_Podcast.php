@@ -521,6 +521,11 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         return Config::$public_media_uri.'/'.$this->file;
     }
 
+    public function getSubmitted()
+    {
+        return $this->submitted;
+    }
+
     /**
      * Get the microsite URI
      *
@@ -569,6 +574,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'title' => $this->getMeta('title'),
             'description' => $this->getMeta('description'),
             'status' => $this->getStatus(),
+            'time' => $this->getSubmitted(),
             'editlink' => [
                 'display' => 'icon',
                 'value' => 'pencil',
