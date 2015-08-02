@@ -455,7 +455,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         self::wakeup();
         if ($year === null) {
-            $year = int(gmdate('Y'));
+            $year = (int)gmdate('Y');
         }
 
         if ($weekno < 10) {
