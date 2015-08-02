@@ -271,6 +271,8 @@ trait MyRadio_MetadataSubject
 
         $meta_keys = '(' . implode(',', array_unique($keys)) . ')';
 
+        $query = urldecode($query);
+
         $results = self::$db->fetchColumn(
             'SELECT ' . $id_field
             .' FROM ' . $table
