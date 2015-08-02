@@ -134,12 +134,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             ];
         }
 
-        //And now initiate timeslots
-        $timeslots = self::$db->decodeArray($result['timeslots']);
-        $this->timeslots = [];
-        foreach ($timeslots as $timeslot) {
-            $this->timeslots[] = MyRadio_Timeslot::getInstance($timeslot);
-        }
+        $this->timeslots = self::$db->decodeArray($result['timeslots']);
     }
 
     /**
@@ -820,6 +815,8 @@ EOT
 
     public function toDataSource($full = true)
     {
+        $first_time = $this->getFirstTime();
+
         return array_merge(
             $this->getShow()->toDataSource(false), [
                 'id' => $this->getID(),
@@ -828,7 +825,7 @@ EOT
                 'description' => $this->getMeta('description'),
                 'submitted' => $this->getSubmittedTime(),
                 'requested_time' => sizeof($this->getRequestedTimes()) === 0 ? null : $this->getRequestedTimes()[0],
-                'first_time' => (isset($this->timeslots[0]) && is_object($this->timeslots[0]) ? CoreUtils::happyTime($this->timeslots[0]->getStartTime()) : 'Not Scheduled'),
+                'first_time' => ($first_time ? CoreUtils::happyTime($first_time) : 'Not Scheduled'),
                 'num_episodes' => [
                     'display' => 'text',
                     'value' => sizeof($this->timeslots),
@@ -943,7 +940,7 @@ EOT
                 if (empty($r)) {
                     throw new MyRadioException('Failed to schedule timeslot.', 500);
                 }
-                $this->timeslots[] = MyRadio_Timeslot::getInstance($r[0]['show_season_timeslot_id']);
+                $this->timeslots[] = $r[0]['show_season_timeslot_id'];
                 $times .= CoreUtils::happyTime($show_time)."\n"; //Times for the email
 
                 // Clear the Schedule cache for this week
@@ -1025,12 +1022,25 @@ $times
     }
 
     /**
+     * Returns the start time of the first Timeslot in this season
+     * @return int
+     */
+    public function getFirstTime()
+    {
+        if (sizeof($this->timeslots) > 0) {
+            return MyRadio_Timeslot::getInstance($this->timeslots[0])->getStartTime();
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Returns all Timeslots for this Season
      * @return MyRadio_Timeslot[]
      */
     public function getAllTimeslots()
     {
-        return $this->timeslots;
+        return MyRadio_Timeslot::resultSetToObjArray($this->timeslots);
     }
 
     /**
