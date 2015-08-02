@@ -34,6 +34,8 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
      */
     protected static $cache = null;
 
+    protected $change = false;
+
     /**
      * Start up the connection to the Database
      */
@@ -161,6 +163,14 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
 
     }
 
+    protected function __destruct()
+    {
+        if ($this->change) {
+            $this->change = false;
+            self::$cache->set(self::getCacheKey($this->getID()), $this);
+        }
+    }
+
     /**
      * Generates the Key string for caching services
      *
@@ -179,7 +189,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
      */
     protected function updateCacheObject()
     {
-        self::$cache->set(self::getCacheKey($this->getID()), $this);
+        $this->change = true;
     }
 
     /**
