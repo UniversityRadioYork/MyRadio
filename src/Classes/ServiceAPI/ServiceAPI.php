@@ -163,7 +163,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
 
     }
 
-    protected function __destruct()
+    public function __destruct()
     {
         if ($this->change) {
             $this->change = false;
