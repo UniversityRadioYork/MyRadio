@@ -106,7 +106,7 @@ class Database
 
         if (defined('DB_PROFILE')) {
             //Debug output
-            echo $sql . '&nbsp;' . print_r($params, true) . '...';
+            echo $sql . ' ' . print_r($params, true) . '...';
             $timer = microtime(true);
         }
 
