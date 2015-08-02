@@ -743,9 +743,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
             }
         }
 
-        if ($itemid === -1) {
-            $itemid = $_SESSION['memberid'];
-        }
         if (isset($_SESSION['memberid']) && $itemid == $_SESSION['memberid']) {
             if (!self::$current_user) {
                 self::$current_user = parent::getInstance($itemid);
