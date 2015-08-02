@@ -221,57 +221,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 $this->$key = $value;
             }
         }
-
-        //Get the user's permissions
-        $this->permissions = array_map(
-            'intval', self::$db->fetchColumn(
-                'SELECT lookupid FROM auth_officer
-            WHERE officerid IN (SELECT officerid FROM member_officer
-            WHERE memberid=$1
-            AND from_date <= now()
-            AND (till_date IS NULL OR till_date > now()- interval \'1 month\'))
-            UNION SELECT lookupid FROM auth
-            WHERE memberid=$1
-            AND starttime < now()
-            AND (endtime IS NULL OR endtime >= now())',
-                [$memberid]
-            )
-        );
-
-        $this->payment = self::$db->fetchAll(
-            'SELECT year, paid
-            FROM member_year
-            WHERE memberid = $1
-            ORDER BY year ASC;',
-            [$memberid]
-        );
-
-        // Get the User's officerships
-        $this->officerships = self::$db->fetchAll(
-            'SELECT officerid,officer_name,teamid,from_date,till_date
-            FROM member_officer
-            INNER JOIN officer
-            USING (officerid)
-            WHERE memberid = $1
-            AND type!=\'m\'
-            ORDER BY from_date,till_date;',
-            [$memberid]
-        );
-
-        // Get Training info all into array
-        $this->training = self::$db->fetchColumn(
-            'SELECT memberpresenterstatusid
-            FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
-            WHERE memberid=$1 ORDER BY ordering, completeddate ASC',
-            [$this->memberid]
-        );
-
-        if ($this->isCurrentlyPaid()) {
-            //Add training permissions, but only if currently paid
-            foreach ($this->getAllTraining() as $training) {
-                $this->permissions = array_merge($this->permissions, $training->getPermissions());
-            }
-        }
     }
 
     /**
@@ -343,6 +292,17 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function getAllTraining($ignore_revoked = false)
     {
+        if (!$this->training) {
+            // Get Training info all into array
+            $this->training = self::$db->fetchColumn(
+                'SELECT memberpresenterstatusid
+                FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
+                WHERE memberid=$1 ORDER BY ordering, completeddate ASC',
+                [$this->memberid]
+            );
+            $this->updateCacheObject();
+        }
+
         if ($ignore_revoked) {
             $data = [];
             foreach (MyRadio_UserTrainingStatus::resultSetToObjArray($this->training) as $train) {
@@ -451,6 +411,34 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function getPermissions()
     {
+        if (!$this->permissions) {
+            //Get the user's permissions
+            $permissions = array_map(
+                'intval', self::$db->fetchColumn(
+                    'SELECT lookupid FROM auth_officer
+                WHERE officerid IN (SELECT officerid FROM member_officer
+                WHERE memberid=$1
+                AND from_date <= now()
+                AND (till_date IS NULL OR till_date > now()- interval \'1 month\'))
+                UNION SELECT lookupid FROM auth
+                WHERE memberid=$1
+                AND starttime < now()
+                AND (endtime IS NULL OR endtime >= now())',
+                    [$this->getID()]
+                )
+            );
+
+            if ($this->isCurrentlyPaid()) {
+                //Add training permissions, but only if currently paid
+                foreach ($this->getAllTraining() as $training) {
+                    $permissions = array_merge($permissions, $training->getPermissions());
+                }
+            }
+
+            $this->permissions = array_unique($permissions);
+
+            $this->updateCacheObject();
+        }
         return $this->permissions;
     }
 
@@ -548,6 +536,16 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function getAllPayments()
     {
+        if (!$this->payment) {
+            $this->payment = self::$db->fetchAll(
+                'SELECT year, paid
+                FROM member_year
+                WHERE memberid = $1
+                ORDER BY year ASC;',
+                [$memberid]
+            );
+            $this->updateCacheObject();
+        }
         return $this->payment;
     }
 
@@ -602,6 +600,21 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function getOfficerships()
     {
+        if (!$this->officerships) {
+            // Get the User's officerships
+            $this->officerships = self::$db->fetchAll(
+                'SELECT officerid,officer_name,teamid,from_date,till_date
+                FROM member_officer
+                INNER JOIN officer
+                USING (officerid)
+                WHERE memberid = $1
+                AND type!=\'m\'
+                ORDER BY from_date,till_date;',
+                [$memberid]
+            );
+
+            $this->updateCacheObject();
+        }
         return $this->officerships;
     }
 
