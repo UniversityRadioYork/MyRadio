@@ -128,7 +128,7 @@ class Database
         $this->counter++;
 
         if (defined('DB_PROFILE')) {
-            echo (microtime(true) - $timer) + "s\n";
+            echo (microtime(true) - $timer) . "s\n";
         }
 
         return $result;
