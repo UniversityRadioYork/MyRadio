@@ -298,7 +298,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 'SELECT memberpresenterstatusid
                 FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
                 WHERE memberid=$1 ORDER BY ordering, completeddate ASC',
-                [$this->memberid]
+                [$this->getID()]
             );
             $this->updateCacheObject();
         }
@@ -542,7 +542,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 FROM member_year
                 WHERE memberid = $1
                 ORDER BY year ASC;',
-                [$memberid]
+                [$this->getID()]
             );
             $this->updateCacheObject();
         }
@@ -610,7 +610,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 WHERE memberid = $1
                 AND type!=\'m\'
                 ORDER BY from_date,till_date;',
-                [$memberid]
+                [$this->getID()]
             );
 
             $this->updateCacheObject();
