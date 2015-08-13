@@ -391,10 +391,10 @@ class MyRadio_Swagger
      */
     public static function getAPICaller()
     {
-        if (isset($_GET['apiKey'])) {
-            $_GET['api_key'] = $_GET['apiKey'];
+        if (isset($_REQUEST['apiKey'])) {
+            $_REQUEST['api_key'] = $_REQUEST['apiKey'];
         }
-        if (empty($_GET['api_key'])) {
+        if (empty($_REQUEST['api_key'])) {
             /**
              * Attempt to use user session
              * By not using session handler, and resetting $_SESSION after
@@ -402,7 +402,7 @@ class MyRadio_Swagger
              */
             $api_key = self::getCurrentUserWithoutMessingWithSession();
         } else {
-            $api_key = MyRadio_APIKey::getInstance($_GET['api_key']);
+            $api_key = MyRadio_APIKey::getInstance($_REQUEST['api_key']);
         }
 
         return $api_key;
