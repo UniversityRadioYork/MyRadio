@@ -522,8 +522,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $startOfWeek = strtotime($year . 'W' . $weekno) + (60*60*9); // Monday 09:00:00
             $endOfWeek = $startOfWeek + (86400 * 7) - 1; //Next Monday 08:59:59
 
-            $startTimestamp = date('Y-m-d H:i:s', $startOfWeek);
-            $endTimestamp = date('Y-m-d H:i:s', $endOfWeek);
+            $startTimestamp = CoreUtils::getTimestamp($startOfWeek);
+            $endTimestamp = CoreUtils::getTimestamp($endOfWeek);
 
             $result = self::$db->fetchAll(
                 'SELECT show_season_timeslot_id, EXTRACT(ISODOW FROM (start_time - interval \'9 hours\')) as day
