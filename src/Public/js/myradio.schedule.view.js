@@ -37,7 +37,7 @@ var ScheduleView = function(options) {
             startTime = newStartTime;
             $.ajax(
                 {
-                    url: mConfig.api_url + '/Timeslot/getWeekSchedule',
+                    url: mConfig.api_url + '/Timeslot/9DaySchedule',
                     data: {
                         year: year,
                         weekno: week
@@ -99,9 +99,9 @@ var ScheduleView = function(options) {
                     dayDiv.appendChild(fillerDiv);
                 }
             }
-            
-            if (view === 'week' 
-                || time.isSame(targetDay, 'day') 
+
+            if (view === 'week'
+                || time.isSame(targetDay, 'day')
                 || (time.isSame(targetNextDay, 'day') && time.hour() <= 6)
             ) {
                 startTimeDiv.innerHTML = time.format('HH:mm');
@@ -123,8 +123,8 @@ var ScheduleView = function(options) {
                 showDiv.appendChild(showDescription);
 
                 showDiv.className = 'show';
-                if (nextFound === false 
-                    && today 
+                if (nextFound === false
+                    && today
                     && (time.isAfter() || endTime.isAfter())
                 ) {
                     showDiv.className = showDiv.className + ' nownext bg-warning';

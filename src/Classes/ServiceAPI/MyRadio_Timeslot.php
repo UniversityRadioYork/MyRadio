@@ -451,7 +451,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     * @param  int $year   Default to current Calendar year.
     * @return MyRadio_Timeslot[]
     */
-    public static function getWeekSchedule($weekno, $year = null)
+    public static function get9DaySchedule($weekno, $year = null)
     {
         self::wakeup();
         if ($year === null) {
@@ -462,7 +462,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $weekno = '0' . $weekno;
         }
 
-        $key = 'MyRadioScheduleFor' . $year . 'W' . $weekno;
+        $key = 'MyRadio9DayScheduleFor' . $year . 'W' . $weekno;
         $cache = self::$cache->get($key);
         if (!$cache) {
             $startOfWeek = strtotime($year . 'W' . $weekno);
@@ -487,6 +487,65 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             );
 
             $cache = self::resultSetToObjArray($result);
+
+            self::$cache->set($key, $cache, 3600);
+        }
+        return $cache;
+    }
+
+    /**
+    * Returns Timeslots scheduled for the given week number.
+    *
+    * Weeks are from Monday - Sunday
+    * A Timeslot that starts before the start of the period but ends during
+    * will be included. The same is true for ones that end after the period.<br>
+    * It is guaranteed that the results will be in order of start time.
+    *
+    * @param  int $weekno An ISO-8601 Week Number (http://en.wikipedia.org/wiki/ISO_8601#Week_dates)
+    * @param  int $year   Default to current Calendar year.
+    * @return MyRadio_Timeslot[]
+    */
+    public static function getWeekSchedule($weekno, $year = null)
+    {
+        self::wakeup();
+        if ($year === null) {
+            $year = (int)gmdate('Y');
+        }
+
+        if ($weekno < 10) {
+            $weekno = '0' . $weekno;
+        }
+
+        $key = 'MyRadioWeekScheduleFor' . $year . 'W' . $weekno;
+        $cache = self::$cache->get($key);
+        if (!$cache) {
+            $startOfWeek = strtotime($year . 'W' . $weekno) + (60*60*9); // Monday 09:00:00
+            $endOfWeek = $startOfWeek + (86400 * 7) - 1; //Next Monday 08:59:59
+
+            $startTimestamp = date('Y-m-d H:i:s', $startOfWeek);
+            $endTimestamp = date('Y-m-d H:i:s', $endOfWeek);
+
+            $result = self::$db->fetchAll(
+                'SELECT show_season_timeslot_id, EXTRACT(ISODOW FROM (start_time - interval \'9 hours\')) as day
+                FROM schedule.show_season_timeslot
+                INNER JOIN schedule.show_season USING (show_season_id)
+                INNER JOIN schedule.show USING (show_id)
+                WHERE (
+                    (start_time + duration >= $1 AND start_time + duration <= $2) OR
+                    (start_time >= $1 AND start_time <= $2)
+                )
+                AND show_type_id = 1
+                ORDER BY start_time ASC',
+                [$startTimestamp, $endTimestamp]
+            );
+
+            $schedule = [];
+
+            foreach ($result as $item) {
+                $schedule[$item['day']][] = self::getInstance($item['show_season_timeslot_id']);
+            }
+
+            $cache = $schedule;
 
             self::$cache->set($key, $cache, 3600);
         }
