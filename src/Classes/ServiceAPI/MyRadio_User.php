@@ -1721,6 +1721,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * @param  string $phone         The User's phone number.
      * @param  bool   $receive_email Whether the User should receive emails.
      * @param  float  $paid          How much the User has paid this Membership Year
+     * @api POST
      * @return MyRadio_User
      */
     public static function createOrActivate($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00)
