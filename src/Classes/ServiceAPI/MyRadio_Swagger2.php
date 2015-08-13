@@ -381,7 +381,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             } elseif (CoreUtils::startsWith($name, 'is')) {
                 $op = 'get';
                 $public_name = '/' . strtolower($name);
-            } elseif ($name === 'create') {
+            } elseif (CoreUtils::startsWith($name, 'create')) {
                 $op = 'post';
                 $public_name = '';
             } elseif ($method->isStatic()) {

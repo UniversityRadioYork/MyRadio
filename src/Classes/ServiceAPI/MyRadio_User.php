@@ -1690,7 +1690,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * Activating a membership re-activates basic access to web services, and
      * renews their mailing list subscriptions.
      *
-     * @param  int $paid
+     * @param  float $paid
      * @return boolean
      */
     public function activateMemberThisYear($paid = 0)
