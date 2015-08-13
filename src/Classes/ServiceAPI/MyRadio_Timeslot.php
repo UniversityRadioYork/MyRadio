@@ -496,7 +496,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     /**
     * Returns Timeslots scheduled for the given week number.
     *
-    * Weeks are from Monday - Sunday
+    * Weeks are from Monday - Sunday (URY days start at 6am)
     * A Timeslot that starts before the start of the period but ends during
     * will be included. The same is true for ones that end after the period.<br>
     * It is guaranteed that the results will be in order of start time.
@@ -519,14 +519,14 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $key = 'MyRadioWeekScheduleFor' . $year . 'W' . $weekno;
         $cache = self::$cache->get($key);
         if (!$cache) {
-            $startOfWeek = strtotime($year . 'W' . $weekno) + (60*60*9); // Monday 09:00:00
-            $endOfWeek = $startOfWeek + (86400 * 7) - 1; //Next Monday 08:59:59
+            $startOfWeek = strtotime($year . 'W' . $weekno) + (60*60*6); // Monday 06:00:00
+            $endOfWeek = $startOfWeek + (86400 * 7) - 1; //Next Monday 05:59:59
 
             $startTimestamp = CoreUtils::getTimestamp($startOfWeek);
             $endTimestamp = CoreUtils::getTimestamp($endOfWeek);
 
             $result = self::$db->fetchAll(
-                'SELECT show_season_timeslot_id, EXTRACT(ISODOW FROM (start_time - interval \'9 hours\')) as day
+                'SELECT show_season_timeslot_id, EXTRACT(ISODOW FROM (start_time - interval \'6 hours\')) as day
                 FROM schedule.show_season_timeslot
                 INNER JOIN schedule.show_season USING (show_season_id)
                 INNER JOIN schedule.show USING (show_id)
