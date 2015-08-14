@@ -270,9 +270,7 @@ class MyRadioForm
          * If we need to do a captcha, load the requirements
          */
         if ($this->captcha) {
-            $captchaObj = new \Captcha\Captcha();
-            $captchaObj->setPublicKey(Config::$recaptcha_public_key);
-            $captcha = $captchaObj->html();
+            $captcha = '<div class="g-recaptcha" data-sitekey="'.Config::$recaptcha_public_key.'"></div><script src="https://www.google.com/recaptcha/api.js"></script>'
         } else {
             $captcha = null;
         }
@@ -338,10 +336,8 @@ class MyRadioForm
     {
         //If there was a captcha, verify it
         if ($this->captcha) {
-            $captcha = new \Captcha\Captcha();
-            $captcha->setPublicKey(Config::$recaptcha_public_key);
-            $captcha->setPrivateKey(Config::$recaptcha_private_key);
-            if (!$captcha->check()->isValid()) {
+            $valid = AuthUtils::verifyRecaptcha($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
+            if ($valid !== true) {
                 return false;
             }
         }

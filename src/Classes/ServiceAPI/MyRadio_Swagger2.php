@@ -48,11 +48,19 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                 $args = $_GET;
                 break;
             case 'post':
-                $args = $_POST;
+                if (substr_count($_SERVER["CONTENT_TYPE"],'application/json')) {
+                    $args = json_decode(file_get_contents("php://input"), true);
+                } else {
+                    $args = $_POST;
+                }
                 break;
             case 'put':
                 //ya rly
-                parse_str(file_get_contents("php://input"), $args);
+                if (substr_count($_SERVER["CONTENT_TYPE"],'application/json')) {
+                    $args = json_decode(file_get_contents("php://input"), true);
+                } else {
+                    parse_str(file_get_contents("php://input"), $args);
+                }
                 break;
         }
 
@@ -117,7 +125,13 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             throw new MyRadioException("$class has no child $method.", 404);
         }
 
-        if (!isset($paths[$path][$op])) {
+
+        $options = strtoupper(implode(', ', array_keys($paths[$path]))) . ', OPTIONS';
+        if ($op === 'options') {
+            header('Allow: ' . $options);
+            exit;
+        } elseif (!isset($paths[$path][$op])) {
+            header('Allow: ' . $options);
             throw new MyRadioException("$path does not have a valid $op handler.", 405);
         }
 
@@ -381,9 +395,12 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             } elseif (CoreUtils::startsWith($name, 'is')) {
                 $op = 'get';
                 $public_name = '/' . strtolower($name);
-            } elseif (CoreUtils::startsWith($name, 'create')) {
+            } elseif ($name === 'create') {
                 $op = 'post';
                 $public_name = '';
+            } elseif (CoreUtils::startsWith($name, 'create')) {
+                $op = 'post';
+                $public_name = '/' . strtolower($name);
             } elseif ($method->isStatic()) {
                 $op = 'get';
                 $public_name = '/' . strtolower($name);

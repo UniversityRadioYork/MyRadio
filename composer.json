@@ -1,8 +1,8 @@
 {
     "require": {
-        "recaptcha/php5": "~1.1",
         "james-heinrich/getid3": "~1.9",
-        "ezyang/htmlpurifier": "~4.6"
+        "ezyang/htmlpurifier": "~4.6",
+        "google/recaptcha": "~1.1"
     },
     "config": {
         "vendor-dir": "src/vendor"

@@ -11,6 +11,7 @@ use \MyRadio\Config;
 use \MyRadio\Iface\APICaller;
 use \MyRadio\MyRadioEmail;
 use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioDefaultAuthenticator;
@@ -1730,11 +1731,34 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
         if ($user !== null && $user->activateMemberThisYear($paid)) {
             /**
- * @todo send welcome email to already existing users?
-*/
+             * @todo send welcome email to already existing users?
+             */
             return $user;
         } else {
             return self::create($fname, $sname, $eduroam, $sex, $collegeid, $email, $phone, $receive_email, $paid);
+        }
+    }
+
+    /**
+     * createOrActivate a user with protection behind recaptcha
+     *
+     * @param  string $fname         The User's first name.
+     * @param  string $sname         The User's last name.
+     * @param  string $eduroam       The User's @york.ac.uk address.
+     * @param  char   $sex           The User's gender.
+     * @param  int    $collegeid     The User's college.
+     * @param  string $email         The User's non @york.ac.uk address.
+     * @param  string $phone         The User's phone number.
+     * @return mixed                 MyRadio_User if successful, Array of errors if not
+     */
+    public static function createActivateAPI($fname, $sname, $captcha, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null)
+    {
+        $captchaResponse = AuthUtils::verifyRecaptcha($captcha, $_SERVER['REMOTE_ADDR']);
+
+        if ($captchaResponse === true) {
+            self::createOrActivate($fname, $sname, $eduroam, $sex, $collegeid, $email, $phone);
+        } else {
+            return $captchaResponse;
         }
     }
 
