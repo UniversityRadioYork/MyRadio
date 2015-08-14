@@ -415,16 +415,17 @@ class MyRadio_User extends ServiceAPI implements APICaller
         if (!$this->permissions) {
             //Get the user's permissions
             $permissions = array_map(
-                'intval', self::$db->fetchColumn(
+                'intval',
+                self::$db->fetchColumn(
                     'SELECT lookupid FROM auth_officer
-                WHERE officerid IN (SELECT officerid FROM member_officer
-                WHERE memberid=$1
-                AND from_date <= now()
-                AND (till_date IS NULL OR till_date > now()- interval \'1 month\'))
-                UNION SELECT lookupid FROM auth
-                WHERE memberid=$1
-                AND starttime < now()
-                AND (endtime IS NULL OR endtime >= now())',
+                    WHERE officerid IN (SELECT officerid FROM member_officer
+                    WHERE memberid=$1
+                    AND from_date <= now()
+                    AND (till_date IS NULL OR till_date > now()- interval \'1 month\'))
+                    UNION SELECT lookupid FROM auth
+                    WHERE memberid=$1
+                    AND starttime < now()
+                    AND (endtime IS NULL OR endtime >= now())',
                     [$this->getID()]
                 )
             );
@@ -1757,7 +1758,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $captchaResponse = AuthUtils::verifyRecaptcha($captcha, $_SERVER['REMOTE_ADDR']);
 
         if ($captchaResponse === true) {
-            self::createOrActivate($fname, $sname, $eduroam, $sex, $collegeid, $email, $phone);
+            return self::createOrActivate($fname, $sname, $eduroam, $sex, $collegeid, $email, $phone);
         } else {
             return $captchaResponse;
         }
