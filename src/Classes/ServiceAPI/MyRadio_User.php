@@ -299,7 +299,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 'SELECT memberpresenterstatusid
                 FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
                 WHERE memberid=$1 ORDER BY ordering, completeddate ASC',
-                [$this->memberid]
+                [$this->getID()]
             );
             $this->updateCacheObject();
         }
@@ -543,7 +543,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 FROM member_year
                 WHERE memberid = $1
                 ORDER BY year ASC;',
-                [$memberid]
+                [$this->getID()]
             );
             $this->updateCacheObject();
         }
@@ -611,7 +611,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 WHERE memberid = $1
                 AND type!=\'m\'
                 ORDER BY from_date,till_date;',
-                [$memberid]
+                [$this->getID()]
             );
 
             $this->updateCacheObject();
@@ -1719,6 +1719,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * @param  string $phone         The User's phone number.
      * @param  bool   $receive_email Whether the User should receive emails.
      * @param  float  $paid          How much the User has paid this Membership Year
+     * @api POST
      * @return MyRadio_User
      */
     public static function createOrActivate($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00)
