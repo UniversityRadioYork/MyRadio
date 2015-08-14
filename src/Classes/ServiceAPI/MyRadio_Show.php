@@ -860,7 +860,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         if ($full) {
             $data['credits'] = array_map(
                 function ($x) {
-                    $x['User'] = $x['User']->toDataSource(false);
+                    $x['User'] = $x['User']->toDataSource();
 
                     return $x;
                 },
