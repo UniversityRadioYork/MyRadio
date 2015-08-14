@@ -740,7 +740,7 @@ class MyRadio_Officer extends ServiceAPI
             'officerid' => $this->getID(),
             'name' => $this->getName(),
             'alias' => $this->getAlias(),
-            'team' => CoreUtils::dataSourceParser($this->getTeam(), false),
+            'team' => CoreUtils::dataSourceParser($this->getTeam()),
             'ordering' => $this->getOrdering(),
             'description' => $this->getDescription(),
             'status' => $this->getStatus(),
