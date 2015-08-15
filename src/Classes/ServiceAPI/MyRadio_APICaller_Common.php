@@ -27,7 +27,7 @@ trait MyRadio_APICaller_Common
      */
     public function hasAuth($authid)
     {
-        return $authid === null || in_array((int)$authid, $this->getPermissions());
+        return $authid === null || in_array((int)$authid, $this->permissions);
     }
 
     /**
