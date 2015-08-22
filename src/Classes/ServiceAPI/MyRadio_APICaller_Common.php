@@ -18,6 +18,15 @@ trait MyRadio_APICaller_Common
     protected $permissions;
 
     /**
+     * Returns the API key's active permission flags
+     * @return Array
+     */
+    public function getPermissions()
+    {
+        return $this->permissions;
+    }
+
+    /**
      * Returns if the user has the given permission.
      *
      * Always use AuthUtils::hasAuth when working with the current user.
