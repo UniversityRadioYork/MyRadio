@@ -270,7 +270,7 @@ class MyRadioForm
          * If we need to do a captcha, load the requirements
          */
         if ($this->captcha) {
-            $captcha = '<div class="g-recaptcha" data-sitekey="'.Config::$recaptcha_public_key.'"></div><script src="https://www.google.com/recaptcha/api.js"></script>'
+            $captcha = '<div class="g-recaptcha" data-sitekey="'.Config::$recaptcha_public_key.'"></div><script src="https://www.google.com/recaptcha/api.js"></script>';
         } else {
             $captcha = null;
         }
