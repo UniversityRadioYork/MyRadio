@@ -128,10 +128,10 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
         $options = strtoupper(implode(', ', array_keys($paths[$path]))) . ', OPTIONS';
         if ($op === 'options') {
-            header('Allow: ' . $options);
+            header('Access-Control-Allow-Methods: ' . $options); // This is for CORS in browser
             exit;
         } elseif (!isset($paths[$path][$op])) {
-            header('Allow: ' . $options);
+            header('Allow: ' . $options); // This is reference for HTTP 405
             throw new MyRadioException("$path does not have a valid $op handler.", 405);
         }
 
