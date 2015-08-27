@@ -338,7 +338,7 @@ class MyRadioEmail extends ServiceAPI
             }
         }
         foreach ($this->getListRecipients() as $list) {
-            if ($list->isMember($user)) {
+            if ($list->isMember($user->getID())) {
                 return true;
             }
         }

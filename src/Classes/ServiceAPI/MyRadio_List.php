@@ -71,7 +71,7 @@ class MyRadio_List extends ServiceAPI
 
     /**
      * Initiates the MyRadio_List object
-     * @param int $listid The ID of the Mailing List to initialise
+     * @param $listid The ID of the Mailing List to initialise
      */
     protected function __construct($listid)
     {
@@ -149,9 +149,9 @@ class MyRadio_List extends ServiceAPI
          return $this->public;
     }
 
-    public function isMember(MyRadio_User $user)
+    public function isMember($userid)
     {
-        return in_array($user->getID(), $this->members);
+        return in_array($userid, $this->members);
     }
 
     /**
@@ -171,9 +171,9 @@ class MyRadio_List extends ServiceAPI
     /**
      * Returns true if the user has *actively opted out* of an *automatic* mailing list
      * Returns false if they are still a member of the list, or if this is subscribable
-     * @param MyRadio_User $user
+     * @param int $userid
      */
-    public function hasOptedOutOfAuto(MyRadio_User $user)
+    public function hasOptedOutOfAuto($userid)
     {
         if ($this->optin) {
             return false;
@@ -182,7 +182,7 @@ class MyRadio_List extends ServiceAPI
         return sizeof(
             self::$db->query(
                 'SELECT memberid FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
-                [$user->getID(), $this->getID()]
+                [$userid, $this->getID()]
             )
         ) === 1;
     }
@@ -190,38 +190,34 @@ class MyRadio_List extends ServiceAPI
     /**
      * If the mailing list is subscribable, opt the user in if they aren't already.
      * If the mailing list is automatic, but the user has previously opted out, remove this opt-out entry.
-     * @param  MyRadio_User $user
+     * @param  int     $userid
      * @return boolean      True if the user is now opted in, false if they could not be opted in.
      * @todo Auto-rebuild Exim routing after change
      */
-    public function optin(MyRadio_User $user)
+    public function optin($userid)
     {
-        if ($this->isMember($user)) {
-            return false;
-        }
-
-        if (!$this->optin && !$this->hasOptedOutOfAuto($user)) {
-            return false;
-        }
-
         //User is already opted in
-        if (in_array($user, $this->getMembers())) {
+        if ($this->isMember($userid)) {
             return true;
+        }
+
+        if (!$this->optin && !$this->hasOptedOutOfAuto($userid)) {
+            return false;
         }
 
         if ($this->optin) {
             self::$db->query(
                 'INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)',
-                [$user->getID(), $this->getID()]
+                [$userid, $this->getID()]
             );
         } else {
             self::$db->query(
                 'DELETE FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
-                [$user->getID(), $this->getID()]
+                [$userid, $this->getID()]
             );
         }
 
-        $this->members[] = $user->getID();
+        $this->members[] = $userid;
         $this->updateCacheObject();
 
         return true;
@@ -230,29 +226,29 @@ class MyRadio_List extends ServiceAPI
     /**
      * If the mailing list is subscribable, opt the user out if they are currently subscribed.
      * If the mailing list is automatic, opt-the user out of the list.
-     * @param  MyRadio_User $user
+     * @param       $userid
      * @return boolean      True if the user is now opted out, false if they could not be opted out.
      * @todo Auto-rebuild Exim routing after change
      */
-    public function optout(MyRadio_User $user)
+    public function optout(int $userid)
     {
-        if (!$this->isMember($user)) {
+        if (!$this->isMember($userid)) {
             return false;
         }
 
         if (!$this->optin) {
             self::$db->query(
                 'INSERT INTO public.mail_subscription (memberid, listid) VALUES ($1, $2)',
-                [$user->getID(), $this->getID()]
+                [$userid, $this->getID()]
             );
         } else {
             self::$db->query(
                 'DELETE FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
-                [$user->getID(), $this->getID()]
+                [$userid, $this->getID()]
             );
         }
 
-        $key = array_search($user->getID(), $this->members);
+        $key = array_search($userid, $this->members);
         if ($key !== false) {
             unset($this->members[$key]);
         }
@@ -341,7 +337,7 @@ class MyRadio_List extends ServiceAPI
     {
         $mixin_funcs = [
             'actions' => function(&$data) {
-                $data['optIn'] = ((!$subscribed && ($this->optin || $this->hasOptedOutOfAuto(MyRadio_User::getCurrentOrSystemUser()))) ?
+                $data['optIn'] = ((!$data['subscribed'] && ($this->optin || $this->hasOptedOutOfAuto(MyRadio_User::getCurrentOrSystemUser()->getID()))) ?
                     [
                         'display' => 'icon',
                         'value' => 'plus',
@@ -349,7 +345,7 @@ class MyRadio_List extends ServiceAPI
                         'url' => URLUtils::makeURL('Mail', 'optin', ['list' => $this->getID()])
                     ] : null
                 );
-                $data['optOut'] = ($subscribed ? [
+                $data['optOut'] = ($data['subscribed'] ? [
                     'display' => 'icon',
                     'value' => 'minus',
                     'title' => 'Opt out of this mailing list',
@@ -374,7 +370,7 @@ class MyRadio_List extends ServiceAPI
         ];
 
         if (isset($_SESSION['memberid'])) {
-            $subscribed = $this->isMember(MyRadio_User::getInstance());
+            $subscribed = $this->isMember(MyRadio_User::getInstance()->getID());
         } else {
             $subscribed = false;
         }
