@@ -23,7 +23,7 @@ if (isset($_REQUEST['memberid'])) {
 }
 
 $list = MyRadio_List::getInstance($_REQUEST['list']);
-if ($list->optout(MyRadio_User::getInstance($user))) {
+if ($list->optout(MyRadio_User::getInstance($user)->getID())) {
     URLUtils::backWithMessage('You are now opted-out of '.$list->getName().'.');
 } else {
     URLUtils::backWithMessage('You could not be opted-out at this time. You may already have opted-out.');

@@ -23,7 +23,7 @@ if (isset($_REQUEST['memberid'])) {
 }
 
 $list = MyRadio_List::getInstance($_REQUEST['list']);
-if ($list->optin(MyRadio_User::getInstance($user))) {
+if ($list->optin(MyRadio_User::getInstance($user)->getID())) {
     URLUtils::backWithMessage('You are now subscribed to '.$list->getName().'.');
 } else {
     URLUtils::backWithMessage(
