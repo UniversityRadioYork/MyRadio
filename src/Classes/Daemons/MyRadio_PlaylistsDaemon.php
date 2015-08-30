@@ -321,7 +321,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                     'artist' => $m['artist']['name']
                 ];
             },
-            $data['toptracks']['track']
+            $data['tracks']['track']
         );
 
         self::playlistGenCommit(
