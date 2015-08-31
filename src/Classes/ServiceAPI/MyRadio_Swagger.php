@@ -369,7 +369,7 @@ class MyRadio_Swagger
         $result = Database::getInstance()->fetchColumn(
             'SELECT typeid FROM myury.api_mixin_auth WHERE class_name=$1 AND
             (mixin_name=$2 OR mixin_name IS NULL)',
-            [$class, $method]
+            [$class, $mixin]
         );
 
         if (empty($result)) {
