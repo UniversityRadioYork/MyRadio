@@ -3,6 +3,7 @@
  *
  * @todo Proper Documentation
  * @todo Permissions
+ * @todo Use Users better
  * @package MyRadio_Profile
  */
 
