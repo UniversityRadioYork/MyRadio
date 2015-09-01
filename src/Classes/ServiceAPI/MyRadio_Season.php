@@ -712,8 +712,8 @@ EOT
 
     private function formatTimeHuman($time)
     {
-        $stime = date(' H:i', $time['start_time']);
-        $etime = date('H:i', $time['start_time'] + $time['duration']);
+        $stime = gmdate(' H:i', $time['start_time']);
+        $etime = gmdate('H:i', $time['start_time'] + $time['duration']);
 
         return self::getDayNameFromID($time['day']) . $stime . ' - ' . $etime;
     }
