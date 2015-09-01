@@ -6,6 +6,7 @@
 
 namespace MyRadio\ServiceAPI;
 
+use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm;
@@ -260,22 +261,28 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     {
         self::initDB();
         $conflicts = [];
-        $date = MyRadio_Scheduler::getTermStartDate($term_id);
+        $start_day = MyRadio_Scheduler::getTermStartDate($term_id) + ($time['day'] * 86400);
         //Iterate over each week
         for ($i = 1; $i <= 10; $i++) {
+            $day_start = $start_day + (($i - 1) * 7 * 86400);
             //Get the start and end times
-            $start = $date + $time['start_time'];
-            $end = $date + $time['start_time'] + $time['duration'];
+            $gmt_start = $day_start + $time['start_time'];
+
+            $dst_offset = timezone_offset_get(timezone_open(Config::$timezone), date_create('@'.$gmt_start));
+
+            if ($dst_offset !== false) {
+                $start = $gmt_start - $dst_offset;
+            } else {
+                $start = $gmt_start;
+            }
+
             //Query for conflicts
-            $r = self::getScheduleConflict($start, $end);
+            $r = self::getScheduleConflict($start, $start + $time['duration']);
 
             //If there's a conflict, log it
             if (!empty($r)) {
                 $conflicts[$i] = $r['show_season_id'];
             }
-
-            //Increment week
-            $date += 3600 * 24 * 7;
         }
 
         return $conflicts;

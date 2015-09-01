@@ -450,7 +450,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         foreach ($this->getRequestedTimesAvail() as $time) {
             $times[] = [
                 'value' => $i,
-                'text' => $time['time'] . ' ' . $time['info'],
+                'text' =>  empty($time['info']) ? $time['time'] : $time['time'] . ' - ' . $time['info'],
                 'disabled' => $time['conflict'],
                 'class' => $time['conflict'] ? 'alert alert-danger' : ''
             ];
@@ -742,7 +742,7 @@ EOT
             $conflicts = MyRadio_Scheduler::getScheduleConflicts($this->term_id, $time);
             $warnings = [];
             foreach ($conflicts as $wk => $sid) {
-                if (!in_array($wk, $conflicts)) {
+                if (!in_array($wk, $this->requested_weeks)) {
                     //This isn't actually a conflict because the week isn't requested by the user
                     $warnings[$wk] = $sid;
                     unset($conflicts[$wk]);
@@ -763,7 +763,7 @@ EOT
                     if ($k > 10 || $k < 1) {
                         continue;
                     }
-                    isset($sids[$v]) ? $side[$v]++ : $sids[$v] = 0;
+                    isset($sids[$v]) ? $sids[$v]++ : $sids[$v] = 0;
                     //Work out blocked weeks
                     if ($k == ++$week_num) {
                         //Continuation of previous sequence
@@ -789,6 +789,46 @@ EOT
                     $names .= self::getInstance($k)->getMeta('title');
                 }
                 $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => true, 'info' => 'Conflicts with ' . $names . $weeks];
+            } elseif (!empty($warnings)) {
+                $names = '';
+                $weeks = ' on non-requested week ';
+                $week_num = -10;
+                //Count the number of warnings with season ids
+                $sids = [];
+                foreach ($warnings as $k => $v) {
+                    /**
+                     * @todo - figure out why this loop includes 0 and 11 sometimes
+                     * @todo Work on weeks text output - duplicates/overlaps
+                     */
+                    if ($k > 10 || $k < 1) {
+                        continue;
+                    }
+                    isset($sids[$v]) ? $sids[$v]++ : $sids[$v] = 0;
+                    //Work out blocked weeks
+                    if ($k == ++$week_num) {
+                        //Continuation of previous sequence
+                        $week_num = $k;
+                        if ($k == 10) {
+                            $weeks .= '-10';
+                        }
+                    } else {
+                        //New sequence
+                        if ($week_num > 0) {
+                            $weeks .= '-' . $week_num . ', ';
+                        }
+                        $weeks .= $k;
+                        $week_num = $k;
+                    }
+                }
+                //Iterate over every conflicted show and log
+                foreach ($sids as $k => $v) {
+                    //Get the show name and store it
+                    if ($names !== '') {
+                        $names .= ', ';
+                    }
+                    $names .= self::getInstance($k)->getMeta('title');
+                }
+                $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => false, 'info' => 'Warning: ' . $names . ' scheduled' . $weeks];
             } else {
                 //No conflicts
                 $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => false, 'info' => ''];
