@@ -12,7 +12,6 @@ use \MyRadio\Database;
 use \MyRadio\MyRadioTwig;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadioError;
-use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\Iface\MyRadio_DataSource;
 
 /**
@@ -20,17 +19,9 @@ use \MyRadio\Iface\MyRadio_DataSource;
  * No database accessing etc should be setup here.
  *
  * @package MyRadio_Core
- * @todo    Factor out permission code into a seperate class?
  */
 class CoreUtils
 {
-    /**
-     * This stores whether the Permissions have been defined to prevent re-defining, causing errors and wasting time
-     * Once setUpAuth is run, this is set to true to prevent subsequent runs
-     * @var boolean
-     */
-    private static $auth_cached = false;
-
     /**
      * Stores the result of CoreUtils::getAcademicYear
      *
@@ -39,18 +30,6 @@ class CoreUtils
      * @var int
      */
     private static $academicYear;
-
-    /**
-     * Stores permission typeid => description mappings
-     * @var Array
-     */
-    private static $typeid_descr = [];
-
-    /**
-     * Stores actionid => uri mappings of custom web addresses (e.g. /myury/iTones/default gets mapped to /itones)
-     * @var Array
-     */
-    private static $custom_uris = [];
 
     /**
      * Stores module name => id mappings to reduce query load - they are initialised once and stored
@@ -237,390 +216,6 @@ class CoreUtils
     }
 
     /**
-     * Redirects back to previous page.
-     */
-    public static function back()
-    {
-        header('Location: '.$_SERVER['HTTP_REFERER']);
-    }
-
-    /**
-     * Responds with nocontent.
-     */
-    public static function nocontent()
-    {
-        header('HTTP/1.1 204 No Content');
-        exit;
-    }
-
-    /**
-     * Responds with JSON data.
-     */
-    public static function dataToJSON($data)
-    {
-        header('Content-Type: application/json');
-        header('HTTP/1.1 200 OK');
-
-        //Decode to datasource if needed
-        $data = self::dataSourceParser($data);
-
-        $canDisplayErr = Config::$display_errors || CoreUtils::hasPermission(AUTH_SHOWERRORS);
-        if (!empty(MyRadioError::$php_errorlist) && $canDisplayErr) {
-            $data['myradio_errors'] = MyRadioError::$php_errorlist;
-        }
-
-        echo json_encode($data, JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES);
-        exit;
-    }
-
-    /**
-     * Redirects to another page.
-     *
-     * @param  string $module The module to which we should redirect.
-     * @param  string $action The optional action inside the module to target.
-     * @param  array  $params Additional GET variables
-     * @return null   Nothing.
-     */
-    public static function redirect($module, $action = null, $params = [])
-    {
-        header('Location: ' . self::makeURL($module, $action, $params));
-    }
-
-    public static function redirectWithMessage($module, $action, $message)
-    {
-        self::redirect($module, $action, ['message' => base64_encode($message)]);
-    }
-
-    /**
-     * Builds a module/action URL
-     * @param  string $module
-     * @param  string $action
-     * @param  array  $params Additional GET variables
-     * @return String URL to Module/Action
-     */
-    public static function makeURL($module, $action = null, $params = [])
-    {
-        if (empty(self::$custom_uris) && class_exists('Database')) {
-            $result = Database::getInstance()->fetchAll('SELECT actionid, custom_uri FROM myury.actions');
-
-            foreach ($result as $row) {
-                self::$custom_uris[$row['actionid']] = $row['custom_uri'];
-            }
-        }
-        //Check if there is a custom URL configured
-        $key = self::getActionId(self::getModuleId($module), empty($action) ? Config::$default_action : $action);
-        if (!empty(self::$custom_uris[$key])) {
-            return self::$custom_uris[$key];
-        }
-
-        if (Config::$rewrite_url) {
-            $str = Config::$base_url . $module . '/' . (($action !== null) ? $action . '/' : '');
-            if (!empty($params)) {
-                if (is_string($params)) {
-                    if (substr($params, 0, 1) !== '?') {
-                        $str .= '?';
-                    }
-                    $str .= $params;
-                } else {
-                    $str .= '?';
-                    foreach ($params as $k => $v) {
-                        $str .= "$k=$v&";
-                    }
-                    $str = substr($str, 0, -1);
-                }
-            }
-        } else {
-            $str = Config::$base_url . '?module=' . $module . (($action !== null) ? '&action=' . $action : '');
-
-            if (!empty($params)) {
-                if (is_string($params)) {
-                    $str .= "&$params";
-                } else {
-                    foreach ($params as $k => $v) {
-                        $str .= "&$k=$v";
-                    }
-                }
-            }
-        }
-
-        return $str;
-    }
-
-    /**
-     * Sets up the Authentication Constants
-     * @return void
-     * @assert () == null
-     */
-    public static function setUpAuth()
-    {
-        if (self::$auth_cached) {
-            return;
-        }
-
-        $db = Database::getInstance();
-        $result = $db->fetchAll('SELECT typeid, phpconstant, descr FROM l_action');
-        foreach ($result as $row) {
-            define($row['phpconstant'], $row['typeid']);
-            self::$typeid_descr[$row['typeid']] = $row['descr'];
-        }
-
-        self::$auth_cached = true;
-    }
-
-    /**
-     * Returns the Actions and API Endpoints that utilise a given type.
-     *
-     * @param  int $typeid
-     * @return [[action,...], [api method,...]]
-     */
-    public static function getAuthUsage($typeid)
-    {
-        $db = Database::getInstance();
-        $actions = $db->fetchAll(
-            'SELECT modules.name AS module, actions.name AS action
-            FROM myury.act_permission
-            LEFT JOIN myury.modules USING (moduleid)
-            LEFT JOIN myury.actions USING (actionid)
-            WHERE typeid=$1',
-            [$typeid]
-        );
-
-        $apis = $db->fetchAll(
-            'SELECT api_name, method_name
-            FROM myury.api_method_auth
-            LEFT JOIN myury.api_class_map USING (class_name)
-            WHERE typeid=$1',
-            [$typeid]
-        );
-
-        return [$actions, $apis];
-    }
-
-    /**
-     * Gets the description (friendly name) of the given permission.
-     *
-     * @param  int $typeid
-     * @return String
-     */
-    public static function getAuthDescription($typeid)
-    {
-        self::setUpAuth();
-
-        return self::$typeid_descr[$typeid];
-    }
-
-    /**
-     * Checks using cached permissions whether the current member has the specified permission
-     * @param  int $permission The ID of the permission, resolved by using an AUTH_ constant
-     * @return boolean Whether the member has the requested permission
-     */
-    public static function hasPermission($permission)
-    {
-        if (isset($_SESSION['memberid'])) {
-            return MyRadio_User::getInstance()->hasAuth($permission);
-        } else {
-            return $permission === null;
-        }
-    }
-
-    /**
-     * Checks if the user has the given permission. Or, alternatiely, if we are currently running CLI, reutrns true.
-     * @param  int $permission A permission constant to check
-     * @return void Will Fatal error if the user does not have the permission
-     */
-    public static function requirePermission($permission)
-    {
-        if (php_sapi_name() === 'cli') {
-            return true; //Non-interactive version has God Rights.
-        }
-        if (!self::hasPermission($permission)) {
-            //Load the 403 controller and exit
-            require 'Controllers/Errors/403.php';
-            exit;
-        }
-    }
-
-    /**
-     * Checks if the user has the given permissions required for the given Module/Action combination
-     *
-     * The query needs a little bit of explaining.<br>
-     * The first two WHERE clauses just set up foreign key references - we're searching by name, not ID.<br>
-     * The next two WHERE clauses return exact or wildcard matches for this Module/Action combination.<br>
-     * The final two AND NOT phrases make sure it ignores wildcards that allow any access.
-     *
-     * @param  String $module  The Module to check permissions for
-     * @param  String $action  The Action to check permissions for
-     * @param  bool   $require If true, will die if the user does not have permission. If false, will just return false
-     * @return bool   True on required or authorised, false on unauthorised
-     */
-    public static function requirePermissionAuto($module, $action, $require = true)
-    {
-        self::setUpAuth();
-        $db = Database::getInstance();
-
-        $result = $db->fetchColumn(
-            'SELECT typeid FROM myury.act_permission
-            LEFT OUTER JOIN myury.modules ON act_permission.moduleid=modules.moduleid
-            LEFT OUTER JOIN myury.actions ON act_permission.actionid=actions.actionid
-            WHERE (myury.modules.name=$1 OR myury.act_permission.moduleid IS NULL)
-            AND (myury.actions.name=$2 OR myury.act_permission.actionid IS NULL)
-            AND NOT (myury.act_permission.actionid IS NULL AND myury.act_permission.typeid IS NULL)
-            AND NOT (myury.act_permission.moduleid IS NULL AND myury.act_permission.typeid IS NULL)',
-            [$module, $action]
-        );
-
-        //Don't allow empty result sets - throw an Exception as this is very very bad.
-        if (empty($result) && $require) {
-            throw new MyRadioException('There are no permissions defined for the ' . $module . '/' . $action . ' action!');
-        }
-
-        $authorised = false;
-        foreach ($result as $permission) {
-            //It only needs to match one
-            if ($permission === AUTH_NOLOGIN || (self::hasPermission($permission) && $_SESSION['auth_use_locked'] === false)) {
-                $authorised = true;
-                break;
-            }
-        }
-
-        if (!$authorised && $require) {
-            //Requires login
-            if (!isset($_SESSION['memberid']) || $_SESSION['auth_use_locked'] !== false) {
-                $is_ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
-                                && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
-                            || empty($_SERVER['REMOTE_ADDR']);
-                if ($is_ajax) {
-                    throw new MyRadioException('Login required', 401);
-                } else {
-                    self::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
-                }
-            } else {
-                //Authenticated, but not authorized
-                require 'Controllers/Errors/403.php';
-            }
-            exit;
-        }
-
-        //Return true on required success, or whether authorised otherwise
-        return $require || $authorised;
-    }
-
-    /**
-     * Returns a list of all currently defined permissions on MyRadio Service/Module/Action combinations.
-     *
-     * This has multiple UNIONS with similar queries so it gracefully deals with NULL values - the joins lose them.
-     *
-     * @todo Is there a nicer way of doing this?
-     * @todo Won't do null fields. Requires outer joins.
-     *
-     * @return Array A 2D Array, where each second dimensions is as follows:<br>
-     *               action: The name of the Action page<br>
-     *               module: The name of the Module the action is in<br>
-     *               service: The name of the Service the module is in<br>
-     *               permission: The name of the permission applied to that Service/Module/Action combination<br>
-     *               actpermissionid: The unique ID of this Service/Module/Action combination
-     */
-    public static function getAllActionPermissions()
-    {
-        return Database::getInstance()->fetchAll(
-            'SELECT actpermissionid,
-            myury.services.name AS service,
-            myury.modules.name AS module,
-            myury.actions.name AS action,
-            public.l_action.descr AS permission
-            FROM myury.act_permission, myury.services, myury.modules, myury.actions, public.l_action
-            WHERE myury.act_permission.actionid=myury.actions.actionid
-            AND myury.act_permission.moduleid=myury.modules.moduleid
-            AND myury.act_permission.serviceid=myury.services.serviceid
-            AND myury.act_permission.typeid = public.l_action.typeid
-
-            UNION
-
-            SELECT actpermissionid,
-            myury.services.name AS service,
-            myury.modules.name AS module,
-            \'ALL ACTIONS\' AS action,
-            public.l_action.descr AS permission
-            FROM myury.act_permission, myury.services, myury.modules, public.l_action
-            WHERE myury.act_permission.moduleid=myury.modules.moduleid
-            AND myury.act_permission.serviceid=myury.services.serviceid
-            AND myury.act_permission.typeid = public.l_action.typeid
-            AND myury.act_permission.actionid IS NULL
-
-            UNION
-
-            SELECT actpermissionid,
-            myury.services.name AS service,
-            myury.modules.name AS module,
-            myury.actions.name AS action,
-            \'GLOBAL ACCESS\' AS permission
-            FROM myury.act_permission, myury.services, myury.modules, myury.actions
-            WHERE myury.act_permission.moduleid=myury.modules.moduleid
-            AND myury.act_permission.serviceid=myury.services.serviceid
-            AND myury.act_permission.actionid=myury.actions.actionid
-            AND myury.act_permission.typeid IS NULL
-
-            ORDER BY service, module'
-        );
-    }
-
-    /**
-     * Returns a list of Permissions ready for direct use in a select MyRadioFormField
-     * @return Array A 2D Array matching the MyRadioFormField::TYPE_SELECT specification.
-     */
-    public static function getAllPermissions()
-    {
-        return Database::getInstance()->fetchAll(
-            'SELECT typeid AS value, descr AS text FROM public.l_action
-            ORDER BY descr ASC'
-        );
-    }
-
-    /**
-     * udiff function for permission value equality
-     * @param  array $perm1 permission value & description
-     * @param  array $perm2 permission value & description
-     * @return int          comparison result
-     */
-    private static function comparePermission($perm1, $perm2)
-    {
-        if ($perm1['value'] === $perm2['value']) {
-            return 0;
-        } elseif ($perm1['value'] < $perm2['value']) {
-            return -1;
-        } else {
-            return 1;
-        }
-    }
-
-    /**
-     * Returns all permissions that are in $perms but not $diffPerms
-     * @param   $perms array of permissions
-     * @param   $diffPerms array of permissions
-     * @return array        all permissions not included in $perms
-     */
-    public static function diffPermissions($perms, $diffPerms)
-    {
-        return array_udiff($perms, $diffPerms, 'self::comparePermission');
-    }
-
-    /**
-     * Add a new permission constant to the database.
-     * @param String $descr    A useful friendly description of what this action means.
-     * @param String $constant /AUTH_[A-Z_]+/
-     */
-    public static function addPermission($descr, $constant)
-    {
-        $value = (int)Database::getInstance()->fetchColumn(
-            'INSERT INTO public.l_action (descr, phpconstant)
-            VALUES ($1, $2) RETURNING typeid',
-            [$descr, $constant]
-        )[0];
-        define($constant, $value);
-        return $value;
-    }
-
-    /**
      * A simple debug method that only displays output for a specific user.
      * @param int    $userid  The ID of the user to display for
      * @param String $message The HTML to display for this user
@@ -702,35 +297,17 @@ class CoreUtils
     }
 
     /**
-     * Assigns a permission to a command. Note arguments are the integer IDs
-     * NOT the String names
-     *
-     * @param int $module     The module ID
-     * @param int $action     The action ID
-     * @param int $permission The permission typeid
-     */
-    public static function addActionPermission($module, $action, $permission)
-    {
-        $db = Database::getInstance();
-        $db->query(
-            'INSERT INTO myury.act_permission (serviceid, moduleid, actionid, typeid)
-            VALUES ($1, $2, $3, $4)',
-            [Config::$service_id, $module, $action, $permission]
-        );
-    }
-
-    /**
      * Parses an object or array into client array datasource
      * @param  mixed $data
      * @return array
      */
-    public static function dataSourceParser($data, $full = true)
+    public static function dataSourceParser($data, $mixins = [])
     {
         if (is_object($data) && $data instanceof MyRadio_DataSource) {
-            return $data->toDataSource($full);
+            return $data->toDataSource($mixins);
         } elseif (is_array($data)) {
             foreach ($data as $k => $v) {
-                $data[$k] = self::dataSourceParser($v, $full);
+                $data[$k] = self::dataSourceParser($v, $mixins);
             }
 
             return $data;
@@ -786,14 +363,9 @@ class CoreUtils
     public static function requireTimeslot()
     {
         if (!isset($_SESSION['timeslotid'])) {
-            self::redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
+            URLUtils::redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
             exit;
         }
-    }
-
-    public static function backWithMessage($message)
-    {
-        header('Location: ' . $_SERVER['HTTP_REFERER'] . (strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?') . 'message=' . base64_encode($message));
     }
 
     /**
@@ -920,52 +492,6 @@ class CoreUtils
     }
 
     /**
-     * Tests whether the given username or password are valid against a provider
-     * (and the right provider if needed).
-     *
-     * This is a far more basic version of the full Controllers/login.php system,
-     * not verifying if the user needs to take an action first.
-     * It does, however, update the User's last login time..
-     * You MUST use POST with this - otherwise the credentials will turn up in
-     * access logs.
-     *
-     * @param  String $user
-     * @param  String $pass
-     * @return MyRadio_User|false
-     * @api    POST
-     */
-    public static function testCredentials($user, $pass)
-    {
-        //Make a best guess at the user account
-        //This way we can skip authenticators if they have one set
-        $u = MyRadio_User::findByEmail($user);
-        if ($u instanceof MyRadio_User && $u->getAuthProvider() !== null) {
-            $authenticators = [$u->getAuthProvider()];
-        } else {
-            $authenticators = Config::$authenticators;
-        }
-
-        //Iterate over each authenticator
-        foreach ($authenticators as $authenticator) {
-            $a = new $authenticator();
-            $result = $a->validateCredentials($user, $pass);
-            if ($result instanceof MyRadio_User) {
-                if (Config::$single_authenticator
-                    && $result->getAuthProvider() !== null
-                    && $result->getAuthProvider() !== $authenticator
-                ) {
-                    //This is the wrong authenticator for the user
-                    continue;
-                } else {
-                    $result->updateLastLogin();
-                    return $result;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
      * Returns information about the $_REQUEST array.
      *
      * This *MUST* be used instead of print_r($_REQUEST) or var_dump($_REQUEST)
@@ -1007,6 +533,16 @@ class CoreUtils
             $pwdLen--;
         }
         return( $result );
+    }
+
+    /**
+     * I'm becoming a Python person who just expects this to be a thing.
+     *
+     * Copypasta from http://stackoverflow.com/questions/834303/startswith-and-endswith-functions-in-php
+     */
+    public static function startsWith($haystack, $needle) {
+        // search backwards starting from haystack length characters from the end
+        return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
     }
 
     private function __construct()

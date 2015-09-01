@@ -8,16 +8,17 @@
 
 use \MyRadio\Config;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_List;
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('tablescript', 'myury.mail.default')
     ->addVariable('title', 'All Mailing Lists')
-    ->addVariable('tabledata', CoreUtils::dataSourceParser(MyRadio_List::getAllLists()))
+    ->addVariable('tabledata', CoreUtils::dataSourceParser(MyRadio_List::getAllLists(), ['actions']))
     ->addInfo(
         'You will only get any messages from '
         .Config::$short_name
         .' if you are set to "Receive Email" on your <a href="'
-        .CoreUtils::makeURL('Profile', 'edit')
+        .URLUtils::makeURL('Profile', 'edit')
         .'">profile</a>.'
     )->render();

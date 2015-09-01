@@ -5,7 +5,7 @@
  * @package MyRadio_NIPSWeb
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\NIPSWeb\NIPSWeb_ManagedPlaylist;
 use \MyRadio\NIPSWeb\NIPSWeb_ManagedUserPlaylist;
 
@@ -17,4 +17,4 @@ if (preg_match('/^aux-.*$/', $_REQUEST['libraryid']) === 1) {
     $data = NIPSWeb_ManagedUserPlaylist::getInstance($libraryid)->getItems();
 }
 
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

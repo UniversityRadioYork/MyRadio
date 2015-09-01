@@ -12,6 +12,11 @@
             "description": "List this year's members"
         },
         {
+            "title": "List Previous Members",
+            "url": "module=Profile,action=listPrevious",
+            "description": "List last year's members"
+        },
+        {
             "title": "List Officers",
             "url": "module=Profile,action=listOfficers",
             "description": "List the current officers"

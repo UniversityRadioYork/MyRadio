@@ -5,7 +5,7 @@
  * @package MyRadio_Profile
  */
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Officer;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     }
 
-    CoreUtils::backWithMessage('Officer Updated!');
+    URLUtils::backWithMessage('Officer Updated!');
 
 } else {
     //Not Submitted

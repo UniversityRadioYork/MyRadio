@@ -49,7 +49,7 @@ class MyRadio_Photo extends ServiceAPI
      */
     protected function __construct($photoid)
     {
-        $this->photoid = $photoid;
+        $this->photoid = (int) $photoid;
 
         $result = self::$db->fetchOne(
             'SELECT * FROM myury.photos WHERE photoid=$1',
@@ -145,7 +145,7 @@ class MyRadio_Photo extends ServiceAPI
             throw new MyRadioException('Photo path '.$tmp_file.' does not exist!', 400);
         }
 
-        $format = explode('/', finfo_file(finfo_open(FILEINFO_MIME_TYPE), $tmp_file))[1];
+        $format = explode('/', getimagesize($tmp_file)["mime"])[1];
 
         $result = self::$db->fetchColumn(
             'INSERT INTO myury.photos (owner, format) VALUES ($1, $2) RETURNING photoid',

@@ -1,5 +1,9 @@
 <?php
 
+use \MyRadio\MyRadio\AuthUtils;
+use \MyRadio\MyRadio\MyRadioForm;
+use \MyRadio\MyRadio\MyRadioFormField;
+
 /**
  *
  * @todo Proper Documentation
@@ -53,7 +57,7 @@ $form->addField(
                         'text' => 'GLOBAL ACCESS'
                     ]
                 ],
-                CoreUtils::getAllPermissions()
+                AuthUtils::getAllPermissions()
             )
         ]
     )

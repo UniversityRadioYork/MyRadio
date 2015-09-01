@@ -6,7 +6,7 @@
 
 namespace MyRadio;
 
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\AuthUtils;
 
 /**
  * This singleton class handles actual database connection
@@ -104,9 +104,10 @@ class Database
             }
         }
 
-        if (isset($_REQUEST['dbdbg']) && CoreUtils::hasPermission(AUTH_SHOWERRORS)) {
+        if (defined('DB_PROFILE')) {
             //Debug output
-            echo $sql . '&nbsp;' . print_r($params, true) . '<br>';
+            echo $sql . ' ' . print_r($params, true) . '...';
+            $timer = microtime(true);
         }
 
         if (empty($params)) {
@@ -125,6 +126,10 @@ class Database
             );
         }
         $this->counter++;
+
+        if (defined('DB_PROFILE')) {
+            echo (microtime(true) - $timer) . "s\n";
+        }
 
         return $result;
     }

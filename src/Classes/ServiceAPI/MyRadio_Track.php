@@ -10,6 +10,7 @@ namespace MyRadio\ServiceAPI;
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\iTones\iTones_Playlist;
@@ -121,7 +122,7 @@ class MyRadio_Track extends ServiceAPI
         $this->trackid = (int) $trackid;
         $result = self::$db->fetchOne('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', [$this->trackid]);
         if (empty($result)) {
-            throw new MyRadioException('The specified Track does not seem to exist', 400);
+            throw new MyRadioException('The specified Track does not seem to exist', 404);
         }
 
         $this->artist = $result['artist'];
@@ -271,6 +272,7 @@ class MyRadio_Track extends ServiceAPI
 
     /**
      * Update whether or not the track is digitised
+     * @param boolean $digitised
      */
     public function setDigitised($digitised)
     {
@@ -317,13 +319,13 @@ class MyRadio_Track extends ServiceAPI
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Edit Track',
-                'url' => CoreUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()])
+                'url' => URLUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()])
             ],
             'deletelink' => [
                 'display' => 'icon',
                 'value' => 'trash',
                 'title' => 'Delete (Undigitise) Track',
-                'url' => CoreUtils::makeURL('Library', 'deleteTrack', ['trackid' => $this->getID()])
+                'url' => URLUtils::makeURL('Library', 'deleteTrack', ['trackid' => $this->getID()])
             ]
         ];
     }

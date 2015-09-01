@@ -7,15 +7,16 @@
 
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\AuthUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_Photo;
 
 // Set if trying to view another member's profile page
-if (isset($_REQUEST['profileedit-memberid']) && CoreUtils::hasPermission(AUTH_EDITANYPROFILE)) {
+if (isset($_REQUEST['profileedit-memberid']) && AuthUtils::hasPermission(AUTH_EDITANYPROFILE)) {
     $user = MyRadio_User::getInstance($_REQUEST['profileedit-memberid']);
 
-} elseif (isset($_REQUEST['memberid']) && CoreUtils::hasPermission(AUTH_EDITANYPROFILE)) {
+} elseif (isset($_REQUEST['memberid']) && AuthUtils::hasPermission(AUTH_EDITANYPROFILE)) {
     $user = MyRadio_User::getInstance($_REQUEST['memberid']);
 
 } else {
@@ -49,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->setLocalAlias($data['local_alias']);
     }
 
-    CoreUtils::redirectWithMessage('Profile', 'view', 'User Updated');
+    URLUtils::redirectWithMessage('Profile', 'view', 'User Updated');
 
 } else {
     //Not Submitted

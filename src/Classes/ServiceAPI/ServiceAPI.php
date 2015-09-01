@@ -34,6 +34,8 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
      */
     protected static $cache = null;
 
+    protected $change = false;
+
     /**
      * Start up the connection to the Database
      */
@@ -89,6 +91,16 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
     {
         $class = get_called_class();
         return new $class($itemid);
+    }
+
+    protected function addMixins(&$data, $mixins, $mixin_funcs, $strict = true) {
+        foreach ($mixins as $mixin) {
+            if (array_key_exists($mixin, $mixin_funcs)) {
+                $mixin_funcs[$mixin]($data);
+            } else {
+                throw new MyRadioException('Unsupported mixin ' . $mixin, 400);
+            }
+        }
     }
 
     public function toDataSource($full = false)
@@ -151,6 +163,14 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
 
     }
 
+    public function __destruct()
+    {
+        if ($this->change) {
+            $this->change = false;
+            self::$cache->set(self::getCacheKey($this->getID()), $this);
+        }
+    }
+
     /**
      * Generates the Key string for caching services
      *
@@ -169,7 +189,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
      */
     protected function updateCacheObject()
     {
-        self::$cache->set(self::getCacheKey($this->getID()), $this);
+        $this->change = true;
     }
 
     /**

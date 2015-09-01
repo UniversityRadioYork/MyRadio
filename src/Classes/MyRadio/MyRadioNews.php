@@ -31,7 +31,7 @@ class MyRadioNews
 
     /**
      * Returns all items in the given feed
-     * @param int $newsfeedid
+     * @param int $newsfeedid The ID of the feed to get
      */
     public static function getFeed($newsfeedid, MyRadio_User $user = null, $revoked = false)
     {

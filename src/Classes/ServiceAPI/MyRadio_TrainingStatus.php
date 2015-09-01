@@ -94,7 +94,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
         $result = self::$db->fetchOne('SELECT * FROM public.l_presenterstatus WHERE presenterstatusid=$1', [$statusid]);
 
         if (empty($result)) {
-            throw new MyRadioException('The specified Training Status ('.$statusid.') does not seem to exist');
+            throw new MyRadioException('The specified Training Status ('.$statusid.') does not seem to exist', 404);
             return;
         }
 

@@ -11,7 +11,7 @@ use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 
 /**
- * The Album class fetches information about albums in the Cental Database.
+ * The Album class fetches information about albums in the Central Database.
  * @package MyRadio_Core
  * @uses \Database
  */
@@ -60,7 +60,7 @@ class MyRadio_Album extends ServiceAPI
 
     protected function __construct($recordid)
     {
-        $this->albumid = $recordid;
+        $this->albumid = (int) $recordid;
 
         $result = self::$db->fetchOne(
             'SELECT * FROM (SELECT * FROM public.rec_record WHERE recordid=$1 LIMIT 1) AS t1
@@ -72,7 +72,7 @@ class MyRadio_Album extends ServiceAPI
         );
 
         if (empty($result)) {
-            throw new MyRadioException('The specified Record/Album does not seem to exist');
+            throw new MyRadioException('The specified Record/Album does not seem to exist', 404);
 
             return;
         }

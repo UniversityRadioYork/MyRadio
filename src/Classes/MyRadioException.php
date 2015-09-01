@@ -7,6 +7,7 @@
 
 namespace MyRadio;
 
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 
 /**
@@ -23,6 +24,26 @@ class MyRadioException extends \RuntimeException
     private $error;
     private $trace;
     private $traceStr;
+
+    public function getCodeName()
+    {
+        switch ($this->code) {
+            case 400:
+                return 'Bad Request';
+            case 401:
+                return 'Authentication Required';
+            case 403:
+                return 'Unauthorized';
+            case 404:
+                return 'File Not Found';
+            case 405:
+                return 'Method Not Allowed';
+            case 418:
+                return 'I\'m a Teapot';
+            case 500:
+                return 'Internal Server Error';
+        }
+    }
 
     /**
      * Extends the default session by enabling useful output
@@ -66,7 +87,8 @@ class MyRadioException extends \RuntimeException
         if (class_exists('\MyRadio\Config')) {
             $is_ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
                     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
-                || empty($_SERVER['REMOTE_ADDR']);
+                || empty($_SERVER['REMOTE_ADDR'])
+                || (defined('JSON_DEBUG') && JSON_DEBUG);
 
             if (Config::$email_exceptions
                 && class_exists('\MyRadio\MyRadioEmail')
@@ -88,7 +110,7 @@ class MyRadioException extends \RuntimeException
                 // TODO make this create the dir - maybe use error_log?
                 file_put_contents(
                     Config::$log_file,
-                    CoreUtils::getTimestamp() . '[' . $this->code . '] ' . $this->message . "\n" . $this->traceStr,
+                    CoreUtils::getTimestamp() . '[' . $this->code . '] ' . $this->message . "\n" . $this->traceStr . "\n\n",
                     FILE_APPEND
                 );
             }
@@ -96,13 +118,13 @@ class MyRadioException extends \RuntimeException
             //Configuration is available, use this to decide what to do
             if (!$silent
                 && Config::$display_errors
-                || (class_exists('\MyRadio\MyRadio\CoreUtils')
+                || (class_exists('\MyRadio\MyRadio\AuthUtils')
                 && defined('AUTH_SHOWERRORS')
-                && CoreUtils::hasPermission(AUTH_SHOWERRORS))
+                && AuthUtils::hasPermission(AUTH_SHOWERRORS))
             ) {
                 if ($is_ajax) {
                     //This is an Ajax/CLI request. Return JSON
-                    header('HTTP/1.1 ' . $this->code . ' Internal Server Error');
+                    header('HTTP/1.1 ' . $this->code . ' ' . $this->getCodeName());
                     header('Content-Type: application/json');
                     echo json_encode(
                         [
@@ -114,7 +136,7 @@ class MyRadioException extends \RuntimeException
                     );
                 } else {
                     //Output to the browser
-                    header('HTTP/1.1 ' . $this->code . ' Internal Server Error');
+                    header('HTTP/1.1 ' . $this->code . ' ' . $this->getCodeName());
 
                     if (class_exists('\MyRadio\MyRadio\CoreUtils') && !headers_sent()) {
                         //We can use a pretty full-page output
@@ -132,7 +154,7 @@ class MyRadioException extends \RuntimeException
             } elseif (!$silent) {
                 if ($is_ajax) {
                     //This is an Ajax/CLI request. Return JSON
-                    header('HTTP/1.1 ' . $this->code . ' Internal Server Error');
+                    header('HTTP/1.1 ' . $this->code . ' ' . $this->getCodeName());
                     header('Content-Type: application/json');
                     echo json_encode(
                         [
@@ -150,7 +172,7 @@ class MyRadioException extends \RuntimeException
                         .'<p>Computing Team have been notified.</p>'
                         .'</div>';
                     //Output limited info to the browser
-                    header('HTTP/1.1 ' . $this->code . ' Internal Server Error');
+                    header('HTTP/1.1 ' . $this->code . ' ' . $this->getCodeName());
 
                     if (class_exists('\MyRadio\MyRadio\CoreUtils') && !headers_sent()) {
                         //We can use a pretty full-page output

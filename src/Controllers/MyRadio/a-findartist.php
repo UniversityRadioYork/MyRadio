@@ -8,7 +8,7 @@
  */
 
 use \MyRadio\Config;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\Artist;
 
 if (!isset($_REQUEST['term'])) {
@@ -19,4 +19,4 @@ if (!isset($_REQUEST['term'])) {
         isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default
     );
 }
-CoreUtils::dataToJSON($data);
+URLUtils::dataToJSON($data);

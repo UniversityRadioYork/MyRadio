@@ -7,6 +7,7 @@
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\iTones\iTones_Playlist;
 use \MyRadio\iTones\iTones_PlaylistAvailability;
 
@@ -17,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($data['id'])) {
         //Create
         $playlist = iTones_Playlist::create($data['title'], $data['description']);
-        CoreUtils::redirect(
+        URLUtils::redirect(
             'iTones', 'configurePlaylist', [
             'playlistid' => $playlist->getID(),
             'message' => base64_encode('The playlist has been created.')
@@ -29,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $playlist->setTitle($data['title']);
         $playlist->setDescription($data['description']);
-        CoreUtils::backWithMessage('The playlist has been updated.');
+        URLUtils::backWithMessage('The playlist has been updated.');
     }
 
 } else {

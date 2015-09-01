@@ -3,10 +3,12 @@
  *
  * @todo Proper Documentation
  * @todo Permissions
+ * @todo Use Users better
  * @package MyRadio_Profile
  */
 
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\Profile;
 
 $members = Profile::getThisYearsMembers();
@@ -14,7 +16,7 @@ $members = Profile::getThisYearsMembers();
 foreach ($members as $k => $v) {
     $members[$k]['name'] = [
         'display' => 'text',
-        'url' => CoreUtils::makeURL('Profile', 'view', ['memberid' => $v['memberid']]),
+        'url' => URLUtils::makeURL('Profile', 'view', ['memberid' => $v['memberid']]),
         'value' => $v['name']
     ];
 }

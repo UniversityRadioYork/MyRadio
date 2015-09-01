@@ -31,7 +31,7 @@ ln -s /etc/php5/mods-available/twig.ini /etc/php5/apache2/conf.d/20-twig.ini
 # Composer
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
-cd /vagrant/src
+cd /vagrant
 composer install
 
 ln -s /vagrant/src /var/www/myradio

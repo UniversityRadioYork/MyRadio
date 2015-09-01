@@ -19,18 +19,6 @@ use \MyRadio\MyRadio\CoreUtils;
 class Profile extends ServiceAPI
 {
     /**
-     * Stores an Array representation of all members from the getAllMembers function when it is first called.
-     * This is also cached using a CacheProvider
-     * @var Array
-     */
-    private static $allMembers = null;
-    /**
-     * Stores an Array representation of this year's members from the getThisYearsMembers function when it is first called
-     * This is also cached using a CacheProvider
-     * @var Array
-     */
-    private static $thisYearsMembers = null;
-    /**
      * Stores an Array representation of the current officers from the getCurrentOfficers function when it is first called
      * This is also cached using a CacheProvider
      * @var Array
@@ -43,41 +31,20 @@ class Profile extends ServiceAPI
      */
     private static $officers = null;
 
-    /**
-     * Returns an Array representation of all URY members. On first run, this is cached locally in the class, and
-     * shared in the CacheProvider until the Cache is cleared
-     *
-     * @return Array A two-dimensional Array, each element in the first dimension container the following details about
-     * a member, sorted by their name:
-     *
-     * memberid: The user's unique memberid
-     * name: The user's last and first names formatted as <code>sname, fname</code>
-     * college: The name of the member's college (not the ID!)
-     * paid: How much the member has paid this year
-     */
-    public static function getAllMembers()
-    {
-        //Return the object if it is cached
-        self::$allMembers = self::$cache->get('MyRadioProfile_allMembers');
-        if (self::$allMembers === false) {
-            self::wakeup();
-            self::$allMembers = self::$db->fetchAll(
-                'SELECT member.memberid, sname || \', \' || fname AS name, l_college.descr AS college, paid
-                FROM member LEFT JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
-                ON ( member.memberid = member_year.memberid ), l_college
-                WHERE member.college = l_college.collegeid
-                ORDER BY sname ASC',
-                [CoreUtils::getAcademicYear()]
-            );
-            self::$cache->set('MyRadioProfile_allMembers', self::$allMembers);
-        }
 
-        return self::$allMembers;
+    /**
+     * Clears (well, deletes) the cache objects used in Profile.
+     *
+     */
+    public static function clearCache()
+    {
+        self::$cache->delete('MyRadioProfile_allMembers');
+        self::$cache->delete('MyRadioProfile_currentOfficers');
+        self::$cache->delete('MyRadioProfile_officers');
     }
 
     /**
-     * Returns an Array representation of this year's URY Members. On first run, this is cached locally in the class, and
-     * shared in the CacheProvider until the Cache is cleared
+     * Returns an Array representation of this year's URY Members.
      *
      * @return Array A two-dimensional Array, each element in the first dimension container the following details about
      * a member, sorted by their name:
@@ -89,6 +56,22 @@ class Profile extends ServiceAPI
      */
     public static function getThisYearsMembers()
     {
+        return self::getMembersForYear(CoreUtils::getAcademicYear());
+    }
+
+    /**
+     * Returns an Array representation of the given year's URY Members.
+     *
+     * @return Array A two-dimensional Array, each element in the first dimension container the following details about
+     * a member, sorted by their name:
+     *
+     * memberid: The user's unique memberid
+     * name: The user's last and first names formatted as <code>sname, fname</code>
+     * college: The name of the member's college (not the ID!)
+     * paid: How much the member has paid this year
+     */
+    public static function getMembersForYear($year)
+    {
         self::wakeup();
 
         return self::$db->fetchAll(
@@ -97,7 +80,7 @@ class Profile extends ServiceAPI
             ON ( member.memberid = member_year.memberid ), l_college
             WHERE member.college = l_college.collegeid
             ORDER BY sname ASC',
-            [CoreUtils::getAcademicYear()]
+            [$year]
         );
     }
 

@@ -8,6 +8,7 @@
 namespace MyRadio;
 
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_List;
@@ -337,7 +338,7 @@ class MyRadioEmail extends ServiceAPI
             }
         }
         foreach ($this->getListRecipients() as $list) {
-            if ($list->isMember($user)) {
+            if ($list->isMember($user->getID())) {
                 return true;
             }
         }
@@ -395,7 +396,7 @@ class MyRadioEmail extends ServiceAPI
                 'display' => 'icon',
                 'value' => 'envelope',
                 'title' => 'Read this email',
-                'url' => CoreUtils::makeURL('Mail', 'view', ['emailid' => $this->getID()])
+                'url' => URLUtils::makeURL('Mail', 'view', ['emailid' => $this->getID()])
             ]
         ];
 

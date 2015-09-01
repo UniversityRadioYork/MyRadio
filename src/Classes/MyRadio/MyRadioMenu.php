@@ -16,7 +16,8 @@ use \MyRadio\MyRadioException;
  * @package MyRadio_Core
  * @uses    \CacheProvider
  * @uses    \Database
- * @uses    \CoreUtils
+ * @uses    \AuthUtils
+ * @uses    \URLUtils
  */
 class MyRadioMenu
 {
@@ -127,7 +128,7 @@ class MyRadioMenu
     private function userHasPermission($item)
     {
         return empty($item['action']) or
-            CoreUtils::requirePermissionAuto($item['module'], $item['action'], false);
+            AuthUtils::requirePermissionAuto($item['module'], $item['action'], false);
     }
 
     /**
@@ -193,7 +194,7 @@ class MyRadioMenu
             }
         }
 
-        $url = $count === 1 ? CoreUtils::makeURL($module, $action, $params) : $url;
+        $url = $count === 1 ? URLUtils::makeURL($module, $action, $params) : $url;
 
         return $url;
     }

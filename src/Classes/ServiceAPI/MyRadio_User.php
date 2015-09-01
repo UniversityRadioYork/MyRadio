@@ -8,9 +8,11 @@
 namespace MyRadio\ServiceAPI;
 
 use \MyRadio\Config;
+use \MyRadio\Iface\APICaller;
 use \MyRadio\MyRadioEmail;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioDefaultAuthenticator;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
@@ -24,8 +26,10 @@ use \MyRadio\ServiceAPI\MyRadio_Swagger;
  * @uses    \Database
  * @uses    \CacheProvider
  */
-class MyRadio_User extends ServiceAPI
+class MyRadio_User extends ServiceAPI implements APICaller
 {
+    use MyRadio_APICaller_Common;
+
     /**
      * Stores the currently logged in User's object after first use.
      */
@@ -35,12 +39,6 @@ class MyRadio_User extends ServiceAPI
      * @var int
      */
     private $memberid;
-
-    /**
-     * Stores the User's permissions
-     * @var Array
-     */
-    private $permissions;
 
     /**
      * Stores the User's first name
@@ -196,9 +194,9 @@ class MyRadio_User extends ServiceAPI
         //Get the base data
         $data = self::$db->fetchOne(
             'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college,
-            phone, email, receive_email, local_name, local_alias, eduroam,
-            account_locked, last_login, joined, profile_photo, bio,
-            auth_provider, require_password_change, contract_signed
+            phone, email, receive_email::boolean::text, local_name, local_alias, eduroam,
+            account_locked::boolean::text, last_login, joined, profile_photo, bio,
+            auth_provider, require_password_change::boolean::text, contract_signed::boolean::text
             FROM member, l_college
             WHERE memberid=$1
             AND member.college = l_college.collegeid
@@ -215,63 +213,12 @@ class MyRadio_User extends ServiceAPI
                 $this->$key = (int) strtotime($value);
             } elseif (filter_var($value, FILTER_VALIDATE_INT)) {
                 $this->$key = (int) $value;
-            } elseif ($value === 't') {
+            } elseif ($value === 'true') {
                 $this->$key = true;
-            } elseif ($value === 'f') {
+            } elseif ($value === 'false') {
                 $this->$key = false;
             } else {
                 $this->$key = $value;
-            }
-        }
-
-        //Get the user's permissions
-        $this->permissions = array_map(
-            'intval', self::$db->fetchColumn(
-                'SELECT lookupid FROM auth_officer
-            WHERE officerid IN (SELECT officerid FROM member_officer
-            WHERE memberid=$1
-            AND from_date <= now()
-            AND (till_date IS NULL OR till_date > now()- interval \'1 month\'))
-            UNION SELECT lookupid FROM auth
-            WHERE memberid=$1
-            AND starttime < now()
-            AND (endtime IS NULL OR endtime >= now())',
-                [$memberid]
-            )
-        );
-
-        $this->payment = self::$db->fetchAll(
-            'SELECT year, paid
-            FROM member_year
-            WHERE memberid = $1
-            ORDER BY year ASC;',
-            [$memberid]
-        );
-
-        // Get the User's officerships
-        $this->officerships = self::$db->fetchAll(
-            'SELECT officerid,officer_name,teamid,from_date,till_date
-            FROM member_officer
-            INNER JOIN officer
-            USING (officerid)
-            WHERE memberid = $1
-            AND type!=\'m\'
-            ORDER BY from_date,till_date;',
-            [$memberid]
-        );
-
-        // Get Training info all into array
-        $this->training = self::$db->fetchColumn(
-            'SELECT memberpresenterstatusid
-            FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
-            WHERE memberid=$1 ORDER BY ordering, completeddate ASC',
-            [$this->memberid]
-        );
-
-        if ($this->isCurrentlyPaid()) {
-            //Add training permissions, but only if currently paid
-            foreach ($this->getAllTraining() as $training) {
-                $this->permissions = array_merge($this->permissions, $training->getPermissions());
             }
         }
     }
@@ -345,6 +292,17 @@ class MyRadio_User extends ServiceAPI
      */
     public function getAllTraining($ignore_revoked = false)
     {
+        if (!$this->training) {
+            // Get Training info all into array
+            $this->training = self::$db->fetchColumn(
+                'SELECT memberpresenterstatusid
+                FROM public.member_presenterstatus LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
+                WHERE memberid=$1 ORDER BY ordering, completeddate ASC',
+                [$this->getID()]
+            );
+            $this->updateCacheObject();
+        }
+
         if ($ignore_revoked) {
             $data = [];
             foreach (MyRadio_UserTrainingStatus::resultSetToObjArray($this->training) as $train) {
@@ -453,6 +411,34 @@ class MyRadio_User extends ServiceAPI
      */
     public function getPermissions()
     {
+        if (!$this->permissions) {
+            //Get the user's permissions
+            $permissions = array_map(
+                'intval', self::$db->fetchColumn(
+                    'SELECT lookupid FROM auth_officer
+                WHERE officerid IN (SELECT officerid FROM member_officer
+                WHERE memberid=$1
+                AND from_date <= now()
+                AND (till_date IS NULL OR till_date > now()- interval \'1 month\'))
+                UNION SELECT lookupid FROM auth
+                WHERE memberid=$1
+                AND starttime < now()
+                AND (endtime IS NULL OR endtime >= now())',
+                    [$this->getID()]
+                )
+            );
+
+            if ($this->isCurrentlyPaid()) {
+                //Add training permissions, but only if currently paid
+                foreach ($this->getAllTraining() as $training) {
+                    $permissions = array_merge($permissions, $training->getPermissions());
+                }
+            }
+
+            $this->permissions = array_unique($permissions);
+
+            $this->updateCacheObject();
+        }
         return $this->permissions;
     }
 
@@ -550,6 +536,16 @@ class MyRadio_User extends ServiceAPI
      */
     public function getAllPayments()
     {
+        if (!$this->payment) {
+            $this->payment = self::$db->fetchAll(
+                'SELECT year, paid
+                FROM member_year
+                WHERE memberid = $1
+                ORDER BY year ASC;',
+                [$this->getID()]
+            );
+            $this->updateCacheObject();
+        }
         return $this->payment;
     }
 
@@ -604,6 +600,21 @@ class MyRadio_User extends ServiceAPI
      */
     public function getOfficerships()
     {
+        if (!$this->officerships) {
+            // Get the User's officerships
+            $this->officerships = self::$db->fetchAll(
+                'SELECT officerid,officer_name,teamid,from_date,till_date
+                FROM member_officer
+                INNER JOIN officer
+                USING (officerid)
+                WHERE memberid = $1
+                AND type!=\'m\'
+                ORDER BY from_date,till_date;',
+                [$this->getID()]
+            );
+
+            $this->updateCacheObject();
+        }
         return $this->officerships;
     }
 
@@ -613,7 +624,7 @@ class MyRadio_User extends ServiceAPI
      */
     public function getURL()
     {
-        return CoreUtils::makeURL('Profile', 'view', ['memberid' => $this->getID()]);
+        return URLUtils::makeURL('Profile', 'view', ['memberid' => $this->getID()]);
     }
 
     /**
@@ -694,48 +705,7 @@ class MyRadio_User extends ServiceAPI
     }
 
     /**
-     * Returns if the user has the given permission.
-     *
-     * Always use CoreUtils::hasAuth when working with the current user.
-     *
-     * @param  null|int $authid The permission to test for. Null is "no permission required"
-     * @return boolean Whether this user has the requested permission
-     */
-    public function hasAuth($authid)
-    {
-        return $authid === null || in_array((int)$authid, $this->permissions);
-    }
-
-    /**
-     * Returns if the user can call a method via the REST API
-     */
-    public function canCall($class, $method)
-    {
-        // I am become superuser, doer of API calls
-        if ($this->hasAuth(AUTH_APISUDO)) {
-            return true;
-        }
-
-        $result = MyRadio_Swagger::getCallRequirements($class, $method);
-        if ($result === null) {
-            return false; //No permissions means the method is not accessible
-        }
-
-        if (empty($result)) {
-            return true; //An empty array means no permissions needed
-        }
-
-        foreach ($result as $type) {
-            if ($this->hasAuth($type)) {
-                return true; //The Key has that permission
-            }
-        }
-
-        return false; //Didn't match anything...
-    }
-
-    /**
-     * @todo...
+     * @todo ...
      */
     public function logCall($uri, $args)
     {
@@ -1751,6 +1721,7 @@ class MyRadio_User extends ServiceAPI
      * @param  string $phone         The User's phone number.
      * @param  bool   $receive_email Whether the User should receive emails.
      * @param  float  $paid          How much the User has paid this Membership Year
+     * @api POST
      * @return MyRadio_User
      */
     public static function createOrActivate($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00)
@@ -1957,29 +1928,47 @@ class MyRadio_User extends ServiceAPI
         return $form;
     }
 
-    public function toDataSource($full = true)
+    /**
+     * @mixin officerships Provides 'officerships' that the user has held.
+     * @mixin training Provides the 'training' that the user has had.
+     * @mixin shows Provides the 'shows' that the user is a part of.
+     * @mixin personal_data Provides 'paid', 'locked', 'college' and other information considered personal.
+     */
+    public function toDataSource($mixins = [])
     {
+        $mixin_funcs = [
+            'officerships' => function(&$data) {
+                $data['officerships'] = $this->getOfficerships();
+            },
+            'training' => function(&$data) {
+                $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining(), false);
+            },
+            'shows' => function(&$data) {
+                $data['shows'] = CoreUtils::dataSourceParser($this->getShows(), false);
+            },
+            'personal_data' => function(&$data) {
+                $data['paid'] = $this->getAllPayments();
+                $data['locked'] = $this->getAccountLocked();
+                $data['college'] = $this->getCollege();
+                $data['receive_email'] = $this->getReceiveEmail();
+                $data['local_name'] = $this->getLocalName();
+            }
+        ];
+
         $data = [
             'memberid' => $this->getID(),
-            'locked' => $this->getAccountLocked(),
-            'college' => $this->getCollege(),
             'fname' => $this->getFName(),
             'sname' => $this->getSName(),
             'sex' => $this->getSex(),
-            'receive_email' => $this->getReceiveEmail(),
             'public_email' => $this->getEmail(),
-            'url' => $this->getURL(),
-            'local_name' => $this->getLocalName()
+            'url' => $this->getURL()
         ];
-        if ($full) {
-            $data['paid'] = $this->getAllPayments();
-            $data['photo'] = $this->getProfilePhoto() === null ?
-                Config::$default_person_uri : $this->getProfilePhoto()->getURL();
-            $data['bio'] = $this->getBio();
-            $data['shows'] = CoreUtils::dataSourceParser($this->getShows(), false);
-            $data['officerships'] = $this->getOfficerships();
-            $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining(), false);
-        }
+
+        $data['photo'] = $this->getProfilePhoto() === null ?
+            Config::$default_person_uri : $this->getProfilePhoto()->getURL();
+        $data['bio'] = $this->getBio();
+
+        $this->addMixins($data, $mixins, $mixin_funcs);
 
         return $data;
     }

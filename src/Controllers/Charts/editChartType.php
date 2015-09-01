@@ -5,7 +5,7 @@
  */
 
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_ChartType;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $chart_type = MyRadio_ChartType::getInstance($data['myradiofrmedid']);
     $chart_type->setName($data['name'])->setDescription($data['description']);
 
-    CoreUtils::backWithMessage('Chart Type Updated.');
+    URLUtils::backWithMessage('Chart Type Updated.');
 
 } else {
     //Not Submitted

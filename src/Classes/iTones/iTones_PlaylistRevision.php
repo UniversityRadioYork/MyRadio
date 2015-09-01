@@ -9,6 +9,7 @@ namespace MyRadio\iTones;
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 
@@ -52,7 +53,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
             [$playlistid, $revisionid]
         );
         if (empty($result)) {
-            throw new MyRadioException('The specified iTones Playlist Revision does not seem to exist');
+            throw new MyRadioException('The specified iTones Playlist Revision does not seem to exist', 404);
 
             return;
         }
@@ -149,7 +150,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
                 'display' => 'icon',
                 'value' => 'folder-open',
                 'title' => 'View Tracks in this playlist revision',
-                'url' => CoreUtils::makeURL(
+                'url' => URLUtils::makeURL(
                     'iTones',
                     'viewPlaylistRevision',
                     [
@@ -162,7 +163,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
                 'display' => 'icon',
                 'value' => 'retweet',
                 'title' => 'Restore this revision',
-                'url' => CoreUtils::makeURL(
+                'url' => URLUtils::makeURL(
                     'iTones',
                     'restorePlaylistRevision',
                     [

@@ -9,7 +9,7 @@ namespace MyRadio\ServiceAPI;
 
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 
 /**
  * The MyRadio_TrackCorrection class provides information and utilities for dealing with detecting a major issue
@@ -84,7 +84,7 @@ class MyRadio_TrackCorrection extends MyRadio_Track
             [$this->correctionid]
         );
         if (empty($result)) {
-            throw new MyRadioException('The specified TrackCorrection does not seem to exist');
+            throw new MyRadioException('The specified TrackCorrection does not seem to exist', 404);
 
             return;
         }
@@ -233,20 +233,20 @@ class MyRadio_TrackCorrection extends MyRadio_Track
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Edit Track Manually',
-                'url' => CoreUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()])
+                'url' => URLUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()])
             ],
             'confirmlink' => [
                 'display' => 'icon',
                 'value' => 'ok',
                 'title' => 'Approve Track Correction',
-                'url' => CoreUtils::makeURL('Library', 'acceptTrackCorrection', ['correctionid' => $this->getCorrectionID()])
+                'url' => URLUtils::makeURL('Library', 'acceptTrackCorrection', ['correctionid' => $this->getCorrectionID()])
             ]
             ,
             'rejectlink' => [
                 'display' => 'icon',
                 'value' => 'trash',
                 'title' => 'Reject Track Correction',
-                'url' => CoreUtils::makeURL('Library', 'rejectTrackCorrection', ['correctionid' => $this->getCorrectionID()])
+                'url' => URLUtils::makeURL('Library', 'rejectTrackCorrection', ['correctionid' => $this->getCorrectionID()])
             ]
         ];
     }

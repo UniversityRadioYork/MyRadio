@@ -1,6 +1,6 @@
 <?php
 /**
- * This View renders a HTTP/1.1 403 Error - for when a <code>CoreUtils::requirePermission()</code> call returns false.
+ * This View renders a HTTP/1.1 403 Error - for when a <code>AuthUtils::requirePermission()</code> call returns false.
  *
  * @package MyRadio_Core
  */

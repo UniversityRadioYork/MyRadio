@@ -1,6 +1,5 @@
 html {
   height: 100%;
-  overflow: hidden;
 }
 
 body {
@@ -25,7 +24,7 @@ body {
 
 #grid {
   height: calc(100% - 100px);
-  min-height: 580px;
+  min-height: 280px;
   min-width: 1188px;
   position: relative;
 }
@@ -303,4 +302,3 @@ select {
   border: 2px solid #d9534f;
   border-radius: 5px;
 }
-

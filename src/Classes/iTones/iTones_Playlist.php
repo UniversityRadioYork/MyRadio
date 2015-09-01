@@ -10,6 +10,7 @@ namespace MyRadio\iTones;
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 use \MyRadio\MyRadio\MyRadioForm;
@@ -42,7 +43,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         $this->playlistid = $playlistid;
         $result = self::$db->fetchOne('SELECT * FROM jukebox.playlists WHERE playlistid=$1 LIMIT 1', [$playlistid]);
         if (empty($result)) {
-            throw new MyRadioException('The specified iTones Playlist does not seem to exist');
+            throw new MyRadioException('The specified iTones Playlist does not seem to exist', 404);
 
             return;
         }
@@ -512,19 +513,19 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 'display' => 'icon',
                 'value' => 'folder-open',
                 'title' => 'Edit Tracks in this playlist',
-                'url' => CoreUtils::makeURL('iTones', 'editPlaylist', ['playlistid' => $this->getID()])
+                'url' => URLUtils::makeURL('iTones', 'editPlaylist', ['playlistid' => $this->getID()])
             ],
             'configurelink' => [
                 'display' => 'icon',
                 'value' => 'wrench',
                 'title' => 'Alter playlist settings',
-                'url' => CoreUtils::makeURL('iTones', 'configurePlaylist', ['playlistid' => $this->getID()])
+                'url' => URLUtils::makeURL('iTones', 'configurePlaylist', ['playlistid' => $this->getID()])
             ],
             'revisionslink' => [
                 'display' => 'icon',
                 'value' => 'time',
                 'title' => 'View revision history',
-                'url' => CoreUtils::makeURL('iTones', 'viewPlaylistHistory', ['playlistid' => $this->getID()])
+                'url' => URLUtils::makeURL('iTones', 'viewPlaylistHistory', ['playlistid' => $this->getID()])
             ]
         ];
     }

@@ -8,6 +8,7 @@ namespace MyRadio\ServiceAPI;
 
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
@@ -129,7 +130,7 @@ class MyRadio_ChartRelease extends ServiceAPI
      */
     protected function __construct($chart_release_id, $chart_type = null)
     {
-        $this->chart_release_id = $chart_release_id;
+        $this->chart_release_id = (int) $chart_release_id;
         $this->chart_type = $chart_type;
 
         $chart_release_data = self::$db->fetchOne(
@@ -447,7 +448,7 @@ class MyRadio_ChartRelease extends ServiceAPI
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Edit Chart Release',
-                'url' => CoreUtils::makeURL(
+                'url' => URLUtils::makeURL(
                     'Charts',
                     'editChartRelease',
                     ['chart_release_id' => $this->getID()]

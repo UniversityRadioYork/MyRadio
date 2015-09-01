@@ -13,7 +13,8 @@ use \ReflectionException;
 
 use \MyRadio\Config;
 use \MyRadio\Database;
-use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\MyRadioSession;
+use \MyRadio\ServiceAPI\MyRadio_User;
 
 /**
  * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/
@@ -64,13 +65,23 @@ class MyRadio_Swagger
     }
 
     /**
- * THIS HALF DEALS WITH API Declarations *
-*/
-    private $class;
+    * THIS HALF DEALS WITH API Declarations *
+    */
+    protected $class;
 
     public function __construct($class)
     {
         $this->class = $class;
+    }
+
+    protected static function getParamType($param, $meta)
+    {
+        return (empty($meta['params'][$param->getName()]['type']) ? 'int' : $meta['params'][$param->getName()]['type']);
+    }
+
+    protected static function getParamDescription($param, $meta)
+    {
+        return (empty($meta['params'][$param->getName()]['description']) ? '' : $meta['params'][$param->getName()]['description']);
     }
 
     public function toDataSource()
@@ -155,8 +166,8 @@ class MyRadio_Swagger
                 $params[] = [
                     "paramType" => "query",
                     "name" => $param->getName(),
-                    "description" => (empty($meta['params'][$param->getName()]['description']) ? : $meta['params'][$param->getName()]['description']),
-                    "type" => (empty($meta['params'][$param->getName()]['type']) ? 'int' : $meta['params'][$param->getName()]['type']),
+                    "description" => self::getParamDescription($param, $meta),
+                    "type" => self::getParamType($param, $meta),
                     "required" => !$param->isOptional(),
                     "allowMultiple" => false,
                     "defaultValue" => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null
@@ -202,7 +213,7 @@ class MyRadio_Swagger
         return ['lines' => $lines, 'keys' => $keys];
     }
 
-    private static function getClassDoc(ReflectionClass $class)
+    protected static function getClassDoc(ReflectionClass $class)
     {
         $doc = self::parseDoc($class);
 
@@ -228,9 +239,6 @@ class MyRadio_Swagger
                 $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
                 $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
                 break;
-            default:
-                $i++;
-                break;
             }
         }
 
@@ -242,7 +250,7 @@ class MyRadio_Swagger
         ];
     }
 
-    private static function getMethodDoc(ReflectionMethod $method)
+    protected static function getMethodDoc(ReflectionMethod $method)
     {
         $doc = self::parseDoc($method);
 
@@ -251,42 +259,38 @@ class MyRadio_Swagger
         //Parse for long description. This is until the first @
         $long_desc = implode('<br>', $doc['lines']);
 
-        //We append the auth requirements to the long description
-        $requirements = self::getCallRequirements(
-            self::getApiClasses()[$method->getDeclaringClass()],
-            $method->getName()
-        );
-        if ($requirements === null) {
-            $long_desc .= '<br>This API Call requires a Full API Access Key.';
-        } elseif (empty($requirements)) {
-            $long_desc .= '<br>Any API Key can Call this method.';
-        } else {
-            $long_desc .= '<br>The following permissions enable access to this method:';
-            foreach ($requirements as $typeid) {
-                $long_desc .= '<br> - ' . CoreUtils::getAuthDescription($typeid);
-            }
-        }
-
         //Now parse for docblock things
         $params = [];
+        $mixins = [];
         $return_type = 'Set';
+        $deprecated = false;
+        $method = 'auto';
         foreach ($doc['keys'] as $key => $values) {
             switch ($key) {
                 //Deal with $params
-            case 'param':
-                /**
-                     * info[0] should be "@param"
-                     * info[1] should be data type
-                     * info[2] should be parameter name
-                     * info[3] should be the description
+                case 'param':
+                    /**
+                     * info[0] should be data type
+                     * info[1] should be parameter name
+                     * info[2] should be the description
                      */
-                $info = explode(' ', $values[0], 4);
-                $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
-                $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
-                break;
-            default:
-                $i++;
-                break;
+                    $info = preg_split('/\s+/', $values[0], 3);
+                    $arg = str_replace('$', '', $info[1]); //Strip the $ from variable name
+                    $params[$arg] = ['type' => $info[0], 'description' => empty($info[2]) ? : $info[2]];
+                    break;
+                case 'mixin':
+                    /**
+                     * info[0] should be the mixin name
+                     * info[1] should be a description of what the mixin does
+                     */
+                    foreach ($values as $value) {
+                        $info = explode(' ', $value, 2);
+                        $mixins[$info[0]] = $info[1];
+                    }
+                    break;
+                case 'deprecated':
+                    $deprecated = true;
+                    break;
             }
         }
 
@@ -294,13 +298,15 @@ class MyRadio_Swagger
             'short_desc' => trim($short_desc),
             'long_desc' => trim($long_desc),
             'params' => $params,
-            'return_type' => $return_type
+            'mixins' => $mixins,
+            'return_type' => $return_type,
+            'deprecated' => $deprecated
         ];
     }
 
     /**
      * Return the methods this endpoint allows.
-     * 
+     *
      * Specify these with one or more @api decorators.
      * Defaults to GET only.
      * Defaults to POST if the method begins with 'set' (e.g. setIntro)
@@ -346,5 +352,78 @@ class MyRadio_Swagger
         }
 
         return $result;
+    }
+
+    /**
+     * Get the permissions that are needed to access this API Call with the given mixin.
+     *
+     * If the return values is null, this method cannot be called.
+     * If the return value is an empty array, no permissions are needed.
+     *
+     * @param  String $class  The class the method belongs to (actual, not API Alias)
+     * @param  String $mixin The mixin being called
+     * @return int[]
+     */
+    public static function getMixinRequirements($class, $mixin)
+    {
+        $result = Database::getInstance()->fetchColumn(
+            'SELECT typeid FROM myury.api_mixin_auth WHERE class_name=$1 AND
+            (mixin_name=$2 OR mixin_name IS NULL)',
+            [$class, $mixin]
+        );
+
+        if (empty($result)) {
+            return null;
+        }
+
+        foreach ($result as $row) {
+            if (empty($row)) {
+                return []; //There's a global auth option
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Identifies who's calling this.
+     * @return \MyRadio\Iface\APICaller The APICaller authorising against the request
+     */
+    public static function getAPICaller()
+    {
+        if (isset($_REQUEST['apiKey'])) {
+            $_REQUEST['api_key'] = $_REQUEST['apiKey'];
+        }
+        if (empty($_REQUEST['api_key'])) {
+            /**
+             * Attempt to use user session
+             * By not using session handler, and resetting $_SESSION after
+             * We are ensuring there are no session-based side effects
+             */
+            $api_key = self::getCurrentUserWithoutMessingWithSession();
+        } else {
+            $api_key = MyRadio_APIKey::getInstance($_REQUEST['api_key']);
+        }
+
+        return $api_key;
+    }
+
+    /**
+     * I really, really hope that the brief method name tells you what's going on here.
+     *
+     * @return MyRadio_User|null
+     */
+    protected static function getCurrentUserWithoutMessingWithSession()
+    {
+        $dummysession = $_SESSION;
+        session_decode((new MyRadioSession())->read(session_id()));
+        if (!isset($_SESSION['memberid'])) {
+            $user = null;
+        } else {
+            $user = MyRadio_User::getInstance($_SESSION['memberid']);
+        }
+        $_SESSION = $dummysession;
+
+        return $user;
     }
 }

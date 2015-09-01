@@ -10,12 +10,13 @@ namespace MyRadio\ServiceAPI;
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\MyRadioEmail;
 
 /**
- * The Season class is used to create, view and manupulate Seasons within the new MyRadio Scheduler Format
+ * The Season class is used to create, view and manipulate Seasons within the new MyRadio Scheduler Format
  * @package MyRadio_Scheduler
  * @uses \Database
  * @uses \MyRadio_Show
@@ -34,7 +35,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
     protected function __construct($season_id)
     {
-        $this->season_id = $season_id;
+        $this->season_id = (int) $season_id;
         //Init Database
         self::initDB();
 
@@ -133,12 +134,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             ];
         }
 
-        //And now initiate timeslots
-        $timeslots = self::$db->decodeArray($result['timeslots']);
-        $this->timeslots = [];
-        foreach ($timeslots as $timeslot) {
-            $this->timeslots[] = MyRadio_Timeslot::getInstance($timeslot);
-        }
+        $this->timeslots = self::$db->decodeArray($result['timeslots']);
     }
 
     /**
@@ -819,6 +815,8 @@ EOT
 
     public function toDataSource($full = true)
     {
+        $first_time = $this->getFirstTime();
+
         return array_merge(
             $this->getShow()->toDataSource(false), [
                 'id' => $this->getID(),
@@ -827,29 +825,29 @@ EOT
                 'description' => $this->getMeta('description'),
                 'submitted' => $this->getSubmittedTime(),
                 'requested_time' => sizeof($this->getRequestedTimes()) === 0 ? null : $this->getRequestedTimes()[0],
-                'first_time' => (isset($this->timeslots[0]) && is_object($this->timeslots[0]) ? CoreUtils::happyTime($this->timeslots[0]->getStartTime()) : 'Not Scheduled'),
+                'first_time' => ($first_time ? CoreUtils::happyTime($first_time) : 'Not Scheduled'),
                 'num_episodes' => [
                     'display' => 'text',
                     'value' => sizeof($this->timeslots),
-                    'url' => CoreUtils::makeURL('Scheduler', 'listTimeslots', ['show_season_id' => $this->getID()])
+                    'url' => URLUtils::makeURL('Scheduler', 'listTimeslots', ['show_season_id' => $this->getID()])
                 ],
                 'editlink' => [
                     'display' => 'icon',
                     'value' => 'pencil',
                     'title' => 'Edit Season',
-                    'url' => CoreUtils::makeURL('Scheduler', 'editSeason', ['seasonid' => $this->getID()])
+                    'url' => URLUtils::makeURL('Scheduler', 'editSeason', ['seasonid' => $this->getID()])
                 ],
                 'allocatelink' => [
                     'display' => 'icon',
                     'value' => 'pencil',
                     'title' => 'Edit Application or Allocate Season',
-                    'url' => CoreUtils::makeURL('Scheduler', 'allocate', ['show_season_id' => $this->getID()])
+                    'url' => URLUtils::makeURL('Scheduler', 'allocate', ['show_season_id' => $this->getID()])
                 ],
                 'rejectlink' => [
                     'display' => 'icon',
                     'value' => 'trash',
                     'title' => 'Reject Application',
-                    'url' => CoreUtils::makeURL('Scheduler', 'reject', ['show_season_id' => $this->getID()])
+                    'url' => URLUtils::makeURL('Scheduler', 'reject', ['show_season_id' => $this->getID()])
                 ]
             ]
         );
@@ -942,7 +940,7 @@ EOT
                 if (empty($r)) {
                     throw new MyRadioException('Failed to schedule timeslot.', 500);
                 }
-                $this->timeslots[] = MyRadio_Timeslot::getInstance($r[0]['show_season_timeslot_id']);
+                $this->timeslots[] = $r[0]['show_season_timeslot_id'];
                 $times .= CoreUtils::happyTime($show_time)."\n"; //Times for the email
 
                 // Clear the Schedule cache for this week
@@ -1024,12 +1022,25 @@ $times
     }
 
     /**
+     * Returns the start time of the first Timeslot in this season
+     * @return int
+     */
+    public function getFirstTime()
+    {
+        if (sizeof($this->timeslots) > 0) {
+            return MyRadio_Timeslot::getInstance($this->timeslots[0])->getStartTime();
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Returns all Timeslots for this Season
      * @return MyRadio_Timeslot[]
      */
     public function getAllTimeslots()
     {
-        return $this->timeslots;
+        return MyRadio_Timeslot::resultSetToObjArray($this->timeslots);
     }
 
     /**
