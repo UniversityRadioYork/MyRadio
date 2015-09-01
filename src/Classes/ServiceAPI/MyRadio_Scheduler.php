@@ -152,21 +152,19 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
         return $return['descr'] . date(' Y', strtotime($return['start']));
     }
 
+    /**
+     * Gives the start date for the given/current term at midnight GMT
+     * @param  int $term_id id of the term to get the date of
+     * @return int          unix timestamp of midnight GMT for the start of term
+     */
     public static function getTermStartDate($term_id = null)
     {
         if ($term_id === null) {
             $term_id = self::getActiveApplicationTerm();
         }
         $result = self::$db->fetchOne('SELECT start FROM terms WHERE termid=$1', [$term_id]);
-        /**
-         * An extra hour is added here due to some issues with timezones and public.terms - some
-         * terms are set to start at 11pm Sunday instead of Midnight Monday. It's annoying because then we convert it back.
-         * If we didn't it's not the end of the world - the usage for this does not include time so just the date *should*
-         * be sufficient.
-         * @todo Fix terms database so it isn't silly.
-         */
 
-        return strtotime('Midnight '.date('d-m-Y', strtotime($result['start'])+3600));
+        return strtotime('Midnight ' . gmdate('d-m-Y', strtotime($result['start'])) . ' GMT');
     }
 
     /**

@@ -903,8 +903,7 @@ EOT
         /**
          * Since terms start on the Monday, we just +1 day to it
          */
-        $start_day = MyRadio_Scheduler::getTermStartDate(MyRadio_Scheduler::getActiveApplicationTerm())
-            + ($req_time['day'] * 86400);
+        $start_day = MyRadio_Scheduler::getTermStartDate() + ($req_time['day'] * 86400);
 
         //Now it's time to BEGIN to COMMIT!
         self::$db->query('BEGIN');
@@ -916,7 +915,15 @@ EOT
         for ($i = 1; $i <= 10; $i++) {
             if (isset($params['weeks']['wk' . $i]) && $params['weeks']['wk' . $i] == 1) {
                 $day_start = $start_day + (($i - 1) * 7 * 86400);
-                $show_time = $day_start + $req_time['start_time'];
+                $gmt_show_time = $day_start + $req_time['start_time'];
+
+                $dst_offset = timezone_offset_get(timezone_open(Config::$timezone), date_create('@'.$gmt_show_time));
+
+                if ($dst_offset !== false) {
+                    $show_time = $gmt_show_time - $dst_offset;
+                } else {
+                    $show_time = $gmt_show_time;
+                }
 
                 $conflict = MyRadio_Scheduler::getScheduleConflict($show_time, $show_time + $req_time['duration']);
                 if (!empty($conflict)) {
