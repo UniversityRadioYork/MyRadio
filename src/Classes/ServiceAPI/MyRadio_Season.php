@@ -946,6 +946,9 @@ Hello,
 $times
 
   Remember that except in exceptional circumstances, you must give at least 48 hours notice for cancelling your show as part of your presenter contract. If you do not do this for two shows in one season, all other shows are forfeit and may be cancelled.
+  
+  You can cancel a timeslot by going to: My Shows -> Seasons for Show -> Timeslots for Season, and selecting cancel for the particular time.
+  ". URLUtils::makeURL('Scheduler', 'myShows') ."
 
   If you have any questions about your application, direct them to pc@ury.org.uk
 
