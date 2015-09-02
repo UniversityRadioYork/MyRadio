@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     }
 
-    URLUtils::backWithMessage("Season Updated!");
+    URLUtils::redirectWithMessage('Scheduler', 'myShows', "Season Updated!");
 
 } else {
     //Not Submitted

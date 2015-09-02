@@ -1173,6 +1173,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 );
                 $this->payment[$k]['paid'] = $amount;
                 $this->updateCacheObject();
+                $this->permissions = null; // Clear local permissions cache
 
                 return;
             }
@@ -1186,6 +1187,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         );
         $this->payment[] = ['year' => $year, 'amount' => (float) $amount];
         $this->updateCacheObject();
+        $this->permissions = null; // Clear local permissions cache
 
         return;
     }
