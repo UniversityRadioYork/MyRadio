@@ -726,13 +726,15 @@ EOT
     }
 
     /**
+     * Fetches requested times for the season and checks for conflicts
+     *
      * Returns a 2D array:
      * time: Value as per getRequestedTimes()
      * conflict: True if one or more of requested weeks already have a booking that time
      * info: If True above, will have human-readable why-it-is-a-conflict details. It may also contain information about
-     * "warnings" - conflicts on weeks this show isn't planned to be aired
-     * @todo The Warnings part above
-     * @todo Discuss efficiency of this algorithm
+     *       "warnings" - conflicts on weeks this show isn't planned to be aired
+     *
+     * @return Array time, conflict, info
      */
     public function getRequestedTimesAvail()
     {
@@ -741,100 +743,33 @@ EOT
             //Check for existence of shows in requested times
             $conflicts = MyRadio_Scheduler::getScheduleConflicts($this->term_id, $time);
             $warnings = [];
-            foreach ($conflicts as $wk => $sid) {
-                if (!in_array($wk, $this->requested_weeks)) {
-                    //This isn't actually a conflict because the week isn't requested by the user
-                    $warnings[$wk] = $sid;
-                    unset($conflicts[$wk]);
-                }
-            }
-            //If there's a any conflicts, let's make the nice explanation
+
             if (!empty($conflicts)) {
-                $names = '';
-                $weeks = ' on weeks ';
-                $week_num = -10;
-                //Count the number of conflicts with season ids
-                $sids = [];
-                foreach ($conflicts as $k => $v) {
-                    /**
-                     * @todo - figure out why this loop includes 0 and 11 sometimes
-                     * @todo Work on weeks text output - duplicates/overlaps
-                     */
-                    if ($k > 10 || $k < 1) {
-                        continue;
-                    }
-                    isset($sids[$v]) ? $sids[$v]++ : $sids[$v] = 0;
-                    //Work out blocked weeks
-                    if ($k == ++$week_num) {
-                        //Continuation of previous sequence
-                        $week_num = $k;
-                        if ($k == 10) {
-                            $weeks .= '-10';
-                        }
+
+                $conflict = '';
+                $warning = '';
+
+                foreach ($conflicts as $wk => $season_id) {
+                    // Check if week is requested
+                    if (in_array($wk, $this->requested_weeks)) {
+                        $conflict .= self::getInstance($season_id)->getMeta('title') . ' (week ' . $wk . '). ';
                     } else {
-                        //New sequence
-                        if ($week_num > 0) {
-                            $weeks .= '-' . $week_num . ', ';
-                        }
-                        $weeks .= $k;
-                        $week_num = $k;
+                        $warning .= self::getInstance($season_id)->getMeta('title') . ' (week ' . $wk . '). ';
                     }
                 }
-                //Iterate over every conflicted show and log
-                foreach ($sids as $k => $v) {
-                    //Get the show name and store it
-                    if ($names !== '') {
-                        $names .= ', ';
-                    }
-                    $names .= self::getInstance($k)->getMeta('title');
+
+                if (!empty($conflict)) {
+                    // return conflicts
+                    $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => true, 'info' => 'Conflicts with: ' . $conflict];
+                } else {
+                    // return warning
+                    $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => false, 'info' => 'Warnings with: ' . $warning];
                 }
-                $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => true, 'info' => 'Conflicts with ' . $names . $weeks];
-            } elseif (!empty($warnings)) {
-                $names = '';
-                $weeks = ' on non-requested week ';
-                $week_num = -10;
-                //Count the number of warnings with season ids
-                $sids = [];
-                foreach ($warnings as $k => $v) {
-                    /**
-                     * @todo - figure out why this loop includes 0 and 11 sometimes
-                     * @todo Work on weeks text output - duplicates/overlaps
-                     */
-                    if ($k > 10 || $k < 1) {
-                        continue;
-                    }
-                    isset($sids[$v]) ? $sids[$v]++ : $sids[$v] = 0;
-                    //Work out blocked weeks
-                    if ($k == ++$week_num) {
-                        //Continuation of previous sequence
-                        $week_num = $k;
-                        if ($k == 10) {
-                            $weeks .= '-10';
-                        }
-                    } else {
-                        //New sequence
-                        if ($week_num > 0) {
-                            $weeks .= '-' . $week_num . ', ';
-                        }
-                        $weeks .= $k;
-                        $week_num = $k;
-                    }
-                }
-                //Iterate over every conflicted show and log
-                foreach ($sids as $k => $v) {
-                    //Get the show name and store it
-                    if ($names !== '') {
-                        $names .= ', ';
-                    }
-                    $names .= self::getInstance($k)->getMeta('title');
-                }
-                $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => false, 'info' => 'Warning: ' . $names . ' scheduled' . $weeks];
             } else {
-                //No conflicts
+                // no conflicts or warnings
                 $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => false, 'info' => ''];
             }
         }
-
         return $return;
     }
 

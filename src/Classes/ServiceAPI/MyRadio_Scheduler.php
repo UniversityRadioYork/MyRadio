@@ -254,8 +254,6 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
      * duration: The duration in seconds
      *
      * Return: Array of conflicts with week # as key and show as value
-     *
-     * @todo Move this into the relevant scheduler class
      */
     public static function getScheduleConflicts($term_id, $time)
     {
@@ -265,7 +263,8 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
         //Iterate over each week
         for ($i = 1; $i <= 10; $i++) {
             $day_start = $start_day + (($i - 1) * 7 * 86400);
-            //Get the start and end times
+
+            //Get the start time
             $gmt_start = $day_start + $time['start_time'];
 
             $dst_offset = timezone_offset_get(timezone_open(Config::$timezone), date_create('@'.$gmt_start));
@@ -294,8 +293,6 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
      * @param  int $start Start time
      * @param  int $end   End time
      * @return Array empty if no conflict, show information otherwise
-     *
-     * @todo Move this into the relevant scheduler class
      */
     public static function getScheduleConflict($start, $end)
     {
