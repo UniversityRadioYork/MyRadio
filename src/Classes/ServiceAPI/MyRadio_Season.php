@@ -450,7 +450,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         foreach ($this->getRequestedTimesAvail() as $time) {
             $times[] = [
                 'value' => $i,
-                'text' => $time['time'] . ' ' . $time['info'],
+                'text' =>  empty($time['info']) ? $time['time'] : $time['time'] . ' - ' . $time['info'],
                 'disabled' => $time['conflict'],
                 'class' => $time['conflict'] ? 'alert alert-danger' : ''
             ];
@@ -712,8 +712,8 @@ EOT
 
     private function formatTimeHuman($time)
     {
-        $stime = gmdate(' H:i', $time['start_time'] + date('Z'));
-        $etime = gmdate('H:i', $time['start_time'] + $time['duration'] + date('Z'));
+        $stime = gmdate(' H:i', $time['start_time']);
+        $etime = gmdate('H:i', $time['start_time'] + $time['duration']);
 
         return self::getDayNameFromID($time['day']) . $stime . ' - ' . $etime;
     }
@@ -726,13 +726,15 @@ EOT
     }
 
     /**
+     * Fetches requested times for the season and checks for conflicts
+     *
      * Returns a 2D array:
      * time: Value as per getRequestedTimes()
      * conflict: True if one or more of requested weeks already have a booking that time
      * info: If True above, will have human-readable why-it-is-a-conflict details. It may also contain information about
-     * "warnings" - conflicts on weeks this show isn't planned to be aired
-     * @todo The Warnings part above
-     * @todo Discuss efficiency of this algorithm
+     *       "warnings" - conflicts on weeks this show isn't planned to be aired
+     *
+     * @return Array time, conflict, info
      */
     public function getRequestedTimesAvail()
     {
@@ -741,60 +743,33 @@ EOT
             //Check for existence of shows in requested times
             $conflicts = MyRadio_Scheduler::getScheduleConflicts($this->term_id, $time);
             $warnings = [];
-            foreach ($conflicts as $wk => $sid) {
-                if (!in_array($wk, $conflicts)) {
-                    //This isn't actually a conflict because the week isn't requested by the user
-                    $warnings[$wk] = $sid;
-                    unset($conflicts[$wk]);
-                }
-            }
-            //If there's a any conflicts, let's make the nice explanation
+
             if (!empty($conflicts)) {
-                $names = '';
-                $weeks = ' on weeks ';
-                $week_num = -10;
-                //Count the number of conflicts with season ids
-                $sids = [];
-                foreach ($conflicts as $k => $v) {
-                    /**
-                     * @todo - figure out why this loop includes 0 and 11 sometimes
-                     * @todo Work on weeks text output - duplicates/overlaps
-                     */
-                    if ($k > 10 || $k < 1) {
-                        continue;
-                    }
-                    isset($sids[$v]) ? $side[$v]++ : $sids[$v] = 0;
-                    //Work out blocked weeks
-                    if ($k == ++$week_num) {
-                        //Continuation of previous sequence
-                        $week_num = $k;
-                        if ($k == 10) {
-                            $weeks .= '-10';
-                        }
+
+                $conflict = '';
+                $warning = '';
+
+                foreach ($conflicts as $wk => $season_id) {
+                    // Check if week is requested
+                    if (in_array($wk, $this->requested_weeks)) {
+                        $conflict .= self::getInstance($season_id)->getMeta('title') . ' (week ' . $wk . '). ';
                     } else {
-                        //New sequence
-                        if ($week_num > 0) {
-                            $weeks .= '-' . $week_num . ', ';
-                        }
-                        $weeks .= $k;
-                        $week_num = $k;
+                        $warning .= self::getInstance($season_id)->getMeta('title') . ' (week ' . $wk . '). ';
                     }
                 }
-                //Iterate over every conflicted show and log
-                foreach ($sids as $k => $v) {
-                    //Get the show name and store it
-                    if ($names !== '') {
-                        $names .= ', ';
-                    }
-                    $names .= self::getInstance($k)->getMeta('title');
+
+                if (!empty($conflict)) {
+                    // return conflicts
+                    $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => true, 'info' => 'Conflicts with: ' . $conflict];
+                } else {
+                    // return warning
+                    $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => false, 'info' => 'Warnings with: ' . $warning];
                 }
-                $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => true, 'info' => 'Conflicts with ' . $names . $weeks];
             } else {
-                //No conflicts
+                // no conflicts or warnings
                 $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => false, 'info' => ''];
             }
         }
-
         return $return;
     }
 
@@ -903,8 +878,7 @@ EOT
         /**
          * Since terms start on the Monday, we just +1 day to it
          */
-        $start_day = MyRadio_Scheduler::getTermStartDate(MyRadio_Scheduler::getActiveApplicationTerm())
-            + ($req_time['day'] * 86400);
+        $start_day = MyRadio_Scheduler::getTermStartDate() + ($req_time['day'] * 86400);
 
         //Now it's time to BEGIN to COMMIT!
         self::$db->query('BEGIN');
@@ -916,9 +890,17 @@ EOT
         for ($i = 1; $i <= 10; $i++) {
             if (isset($params['weeks']['wk' . $i]) && $params['weeks']['wk' . $i] == 1) {
                 $day_start = $start_day + (($i - 1) * 7 * 86400);
-                $show_time = $day_start + $req_time['start_time'];
+                $gmt_show_time = $day_start + $req_time['start_time'];
 
-                $conflict = MyRadio_Scheduler::getScheduleConflict($day_start + $req_time['start_time'], $day_start + $start_time + $req_time['duration'] - 1);
+                $dst_offset = timezone_offset_get(timezone_open(Config::$timezone), date_create('@'.$gmt_show_time));
+
+                if ($dst_offset !== false) {
+                    $show_time = $gmt_show_time - $dst_offset;
+                } else {
+                    $show_time = $gmt_show_time;
+                }
+
+                $conflict = MyRadio_Scheduler::getScheduleConflict($show_time, $show_time + $req_time['duration']);
                 if (!empty($conflict)) {
                     self::$db->query('ROLLBACK');
                     throw new MyRadioException('A show is already scheduled for this time: ' . print_r($conflict, true));

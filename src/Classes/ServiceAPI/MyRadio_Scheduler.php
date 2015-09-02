@@ -6,6 +6,7 @@
 
 namespace MyRadio\ServiceAPI;
 
+use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm;
@@ -152,21 +153,19 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
         return $return['descr'] . date(' Y', strtotime($return['start']));
     }
 
+    /**
+     * Gives the start date for the given/current term at midnight GMT
+     * @param  int $term_id id of the term to get the date of
+     * @return int          unix timestamp of midnight GMT for the start of term
+     */
     public static function getTermStartDate($term_id = null)
     {
         if ($term_id === null) {
             $term_id = self::getActiveApplicationTerm();
         }
         $result = self::$db->fetchOne('SELECT start FROM terms WHERE termid=$1', [$term_id]);
-        /**
-         * An extra hour is added here due to some issues with timezones and public.terms - some
-         * terms are set to start at 11pm Sunday instead of Midnight Monday. It's annoying because then we convert it back.
-         * If we didn't it's not the end of the world - the usage for this does not include time so just the date *should*
-         * be sufficient.
-         * @todo Fix terms database so it isn't silly.
-         */
 
-        return strtotime('Midnight '.date('d-m-Y', strtotime($result['start'])+3600));
+        return strtotime('Midnight ' . gmdate('d-m-Y', strtotime($result['start'])) . ' GMT');
     }
 
     /**
@@ -255,29 +254,34 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
      * duration: The duration in seconds
      *
      * Return: Array of conflicts with week # as key and show as value
-     *
-     * @todo Move this into the relevant scheduler class
      */
     public static function getScheduleConflicts($term_id, $time)
     {
         self::initDB();
         $conflicts = [];
-        $date = MyRadio_Scheduler::getTermStartDate($term_id);
+        $start_day = MyRadio_Scheduler::getTermStartDate($term_id) + ($time['day'] * 86400);
         //Iterate over each week
         for ($i = 1; $i <= 10; $i++) {
-            //Get the start and end times
-            $start = $date + $time['start_time'];
-            $end = $date + $time['start_time'] + $time['duration'];
+            $day_start = $start_day + (($i - 1) * 7 * 86400);
+
+            //Get the start time
+            $gmt_start = $day_start + $time['start_time'];
+
+            $dst_offset = timezone_offset_get(timezone_open(Config::$timezone), date_create('@'.$gmt_start));
+
+            if ($dst_offset !== false) {
+                $start = $gmt_start - $dst_offset;
+            } else {
+                $start = $gmt_start;
+            }
+
             //Query for conflicts
-            $r = self::getScheduleConflict($start, $end);
+            $r = self::getScheduleConflict($start, $start + $time['duration']);
 
             //If there's a conflict, log it
             if (!empty($r)) {
                 $conflicts[$i] = $r['show_season_id'];
             }
-
-            //Increment week
-            $date += 3600 * 24 * 7;
         }
 
         return $conflicts;
@@ -289,8 +293,6 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
      * @param  int $start Start time
      * @param  int $end   End time
      * @return Array empty if no conflict, show information otherwise
-     *
-     * @todo Move this into the relevant scheduler class
      */
     public static function getScheduleConflict($start, $end)
     {

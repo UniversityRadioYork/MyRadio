@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $season->schedule($data);
 
-    URLUtils::backWithMessage('Season Allocated!');
+    URLUtils::redirectWithMessage('Scheduler', 'default', 'Season Allocated!');
 
 } else {
     //Not Submitted

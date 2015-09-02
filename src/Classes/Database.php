@@ -60,7 +60,6 @@ class Database
                 MyRadioException::FATAL
             );
         }
-        $this->query('SET timezone TO +0');
     }
 
     /**

@@ -2,11 +2,13 @@
 {% if display_labels %}<legend>{{field.label}}</legend>{% endif %}
 <div class="myradiofrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</div>
 {% for option in field.options %}
-<label for="{{frm_name}}-{{field.name}}-{{option.value}}" class="{{option.class}}">
-<input type="radio" name="{{frm_name}}-{{field.name}}" id="{{frm_name}}-{{field.name}}-{{option.value}}"
-        class="{{field.class}} radio{% if field.required %} required{% endif %}"
-        value="{{option.value}}"{% if field.value == option.value %} checked="checked"{% endif %}
-        {% if option.disabled or field.disabled %} disabled="disabled"{% endif %} />
-{{option.text}}</label>
+    <div class="radio">
+        <label for="{{frm_name}}-{{field.name}}-{{option.value}}" class="{{option.class}}">
+        <input type="radio" name="{{frm_name}}-{{field.name}}" id="{{frm_name}}-{{field.name}}-{{option.value}}"
+                class="{{field.class}} radio{% if field.required %} required{% endif %}"
+                value="{{option.value}}"{% if field.value == option.value %} checked="checked"{% endif %}
+                {% if option.disabled or field.disabled %} disabled="disabled"{% endif %} />
+        {{option.text}}</label>
+    </div>
   {% endfor %}
 </fieldset>
