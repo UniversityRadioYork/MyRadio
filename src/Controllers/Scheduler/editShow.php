@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $show->setMeta('upload_state', 'Opted Out');
         }
-        URLUtils::backWithMessage("Show Updated!");
+        URLUtils::redirectWithMessage('Scheduler', 'myShows', "Show Updated!");
     }
 
 } else {
