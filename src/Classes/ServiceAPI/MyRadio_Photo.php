@@ -76,7 +76,8 @@ class MyRadio_Photo extends ServiceAPI
             'photoid' => $this->getID(),
             'date_added' => CoreUtils::happyTime($this->getDateAdded()),
             'format' => $this->getFormat(),
-            'owner' => $this->getOwner()->getID()
+            'owner' => $this->getOwner()->getID(),
+            'url' => $this->getURL()
         ];
     }
 
