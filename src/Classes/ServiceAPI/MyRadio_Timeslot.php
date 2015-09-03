@@ -934,6 +934,46 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
+     * Sends a message to the timeslot for display in SIS
+     *
+     * @param  string $message the message to be sent
+     * @return pg_result
+     */
+    public function sendMessage($message)
+    {
+        $message = trim($message);
+
+        if (empty($message)) {
+            throw new MyRadioException('Message is empty.', 400);
+        }
+
+        $junk = SIS_Utils::checkMessageSpam($message);
+        $warning = SIS_Utils::checkMessageSocialEngineering($message);
+
+        if ($warning !== false) {
+            $prefix = '<p class="bg-danger">'.$warning.'</p> '
+        } else {
+            $prefix = '';
+        }
+
+        $source = $_SERVER['REMOTE_ADDR'];
+
+        return self::$db->query(
+            'INSERT INTO sis2.messages (timeslotid, commtypeid, sender, subject, content, statusid, comm_source)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [
+                $this->getID(),             // timeslot
+                3,                          // commtypeid : website
+                'MyRadio',                  // sender
+                substr($message, 0, 144),   // subject : trancated message
+                $prefix . $message,         // content : message with prefix
+                $junk ? 4 : 1,              // statusid : junk or unread
+                $source                     // comm_source : IP
+            ]
+        );
+    }
+
+    /**
      * Signs the given user into the timeslot to say they were on air at this time.
      *
      * @param MyRadio_User $member

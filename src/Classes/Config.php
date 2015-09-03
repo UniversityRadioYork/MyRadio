@@ -502,6 +502,40 @@ final class Config
     ];
 
     /**
+     * Array of spam strings to check messages for
+     * @var string[]
+     */
+    public static $spam = [
+        '[url=',
+        '<a href=',
+        '&lt;a href=',
+        'viagra'
+    ];
+
+    /**
+     * Array of social engineering strings to check messages for
+     * @var string[]
+     */
+    public static $social_engineering_trigger = [
+        'fs1',
+        'server',
+        'icecast',
+        'stream',
+        'jukebox',
+        'restart',
+        'logger',
+        'computing team',
+        'compteam'
+    ];
+
+    /**
+     * Warning text to display on suspected social engineering attacks
+     * @var string
+     */
+    public static $social_engineering_warning = 'Beware of Social Engineering, someone may be trying to disrupt your show.
+    Management and Computing will never send official communication through SIS.';
+
+    /**
      * URL of the news provider
      * @var string
      */
