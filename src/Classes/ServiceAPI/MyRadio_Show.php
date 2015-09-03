@@ -706,8 +706,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     {
         $key = 'MyRadio_Show_AllShowsFetcher_last_' . $show_type_id . '_' . (int) $current_term_only;
 
-        if (self::$cache->get($key)) {
-            $shows = self::$cache->getAll(self::getCacheKey(''));
+        $keys = self::$cache->get($key);
+
+        if ($keys) {
+            $shows = self::$cache->getAll($keys);
         } else {
             $sql = self::BASE_SHOW_SQL . ' WHERE show_type_id=$1';
             $params = [$show_type_id];
@@ -723,13 +725,15 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $result = self::$db->fetchAll($sql, $params);
 
             $shows = [];
+            $show_keys = [];
             foreach ($result as $row) {
                 $show = new MyRadio_Show($row);
                 $show->updateCacheObject();
                 $shows[] = $show;
+                $show_keys[] = self::getCacheKey($show->getID());
             }
 
-            self::$cache->set($key, 'true');
+            self::$cache->set($key, $show_keys);
         }
 
         return $shows;
