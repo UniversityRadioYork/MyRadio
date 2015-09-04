@@ -584,7 +584,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     'start_time' => $timeslot->getStartTime(),
                     'end_time' => $timeslot->getEndTime(),
                     'presenters' => $timeslot->getPresenterString(),
-                    'url' => $timeslot->getWebpage()
+                    'url' => $timeslot->getWebpage(),
+                    'id' => $timeslot->getID()
                 ]
             ];
             $next = $timeslot->getTimeslotAfter($filter);
@@ -615,7 +616,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     'start_time' => $next->getStartTime(),
                     'end_time' => $next->getEndTime(),
                     'presenters' => $next->getPresenterString(),
-                    'url' => $next->getWebpage()
+                    'url' => $next->getWebpage(),
+                    'id' => $next->getID()
                 ];
             }
 
