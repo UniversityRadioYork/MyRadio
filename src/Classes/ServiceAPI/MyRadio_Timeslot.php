@@ -951,7 +951,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $warning = SIS_Utils::checkMessageSocialEngineering($message);
 
         if ($warning !== false) {
-            $prefix = '<p class="bg-danger">'.$warning.'</p> '
+            $prefix = '<p class="bg-danger">'.$warning.'</p> ';
         } else {
             $prefix = '';
         }
