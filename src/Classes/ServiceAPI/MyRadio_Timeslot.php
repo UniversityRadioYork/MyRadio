@@ -293,7 +293,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         return array_merge(
             $this->getSeason()->toDataSource(), [
-            'id' => $this->getID(),
+            'timeslot_id' => $this->getID(),
             'timeslot_num' => $this->getTimeslotNumber(),
             'title' => $this->getMeta('title'),
             'description' => $this->getMeta('description'),

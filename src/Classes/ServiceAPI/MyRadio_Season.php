@@ -799,7 +799,7 @@ EOT
 
         return array_merge(
             $this->getShow()->toDataSource(false), [
-                'id' => $this->getID(),
+                'season_id' => $this->getID(),
                 'season_num' => $this->getSeasonNumber(),
                 'title' => $this->getMeta('title'),
                 'description' => $this->getMeta('description'),
