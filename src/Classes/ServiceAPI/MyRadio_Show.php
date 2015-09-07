@@ -35,8 +35,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             show.memberid AS owner,
             array_to_json(metadata.metadata_key_id) AS metadata_keys,
             array_to_json(metadata.metadata_value) AS metadata_values,
-            array_to_json(image_metadata.metadata_key_id) AS image_metadata_keys,
-            array_to_json(image_metadata.metadata_value) AS image_metadata_values,
+            array_to_json(image_metadata.image_metadata_key_id) AS image_metadata_keys,
+            array_to_json(image_metadata.image_metadata_value) AS image_metadata_values,
             array_to_json(credits.credit_type_id) AS credit_types,
             array_to_json(credits.creditid) AS credits,
             array_to_json(genre.genre_id) AS genres,
@@ -59,8 +59,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             (
                 SELECT
                     show_id,
-                    array_agg(metadata_key_id) AS metadata_key_id,
-                    array_agg(metadata_value) AS metadata_value
+                    array_agg(metadata_key_id) AS image_metadata_key_id,
+                    array_agg(metadata_value) AS image_metadata_value
                 FROM schedule.show_image_metadata
                 WHERE effective_from <= NOW()
                     AND (effective_to IS NULL OR effective_to >= NOW())
