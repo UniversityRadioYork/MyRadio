@@ -1186,7 +1186,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             VALUES ($1, $2, $3)',
             [(float) $amount, $year, $this->getID()]
         );
-        $this->payment[] = ['year' => $year, 'amount' => (float) $amount];
+        $this->payment[] = ['year' => $year, 'paid' => $amount];
         $this->permissions = null; // Clear local permissions cache
         $this->updateCacheObject();
 
