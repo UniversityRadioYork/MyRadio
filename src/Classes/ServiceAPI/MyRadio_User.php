@@ -1163,7 +1163,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $amount = number_format($amount, 2);
 
         foreach ($this->getAllPayments() as $k => $v) {
-            if ($v['year'] == $year && $v['paid'] >= $amount) {
+            if ($v['year'] == $year && $v['paid'] == $amount) {
                 return;
             } elseif ($v['year'] == $year) {
                 //Change payment.
