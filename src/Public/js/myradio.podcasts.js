@@ -4,35 +4,39 @@ $('.twig-datatable').dataTable(
             //podcast_id
             {
                 "bVisible": false
-        },
+            },
             //title
             {
                 "sTitle": "Title",
-        },
+            },
             //description
             {
                 "sTitle": "Description",
-        },
+            },
             //status
             {
                 "sTitle": "Status"
-        },
+            },
             //submitted
             {
                 "sTitle": "Time Submitted"
-        },
+            },
+            // photo
+            {
+                "bVisible": false
+            },
             //editlink
             {
                 "sTitle": "Edit",
                 "bSortable": false,
                 "bVisible": true
-        },
+            },
             //micrositelink
             {
                 "sTitle": "Site",
                 "bSortable": false,
                 "bVisible": true
-        }
+            }
         ],
         "bPaginate": true
     }
