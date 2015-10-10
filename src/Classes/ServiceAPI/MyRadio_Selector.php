@@ -227,7 +227,7 @@ class MyRadio_Selector
         if (($studio <= 0) || ($studio > 8)) {
             return ['myradio_errors' => 'Invalid Studio ID'];
         }
-        $status = self::getStatusAtTime(time());
+        $status = self::getStatusAtTime();
 
         if ($studio == $status['studio']) {
             throw new MyRadioException('Source ' . $studio . ' is already selected');
@@ -265,7 +265,7 @@ class MyRadio_Selector
      * @param  int $time
      * @return int
      */
-    public static function getStudioAtTime($time)
+    public static function getStudioAtTime($time = time())
     {
         $result = Database::getInstance()->fetchColumn(
             'SELECT action FROM public.selector WHERE time <= $1
@@ -287,7 +287,7 @@ class MyRadio_Selector
      * @param  int $time
      * @return int
      */
-    public static function getSetbyAtTime($time)
+    public static function getSetbyAtTime($time = time())
     {
         $result = Database::getInstance()->fetchColumn(
             'SELECT setby FROM public.selector WHERE time <= $1
@@ -309,7 +309,7 @@ class MyRadio_Selector
      * @param  int $time
      * @return bool
      */
-    public static function getStudio1PowerAtTime($time)
+    public static function getStudio1PowerAtTime($time = time())
     {
         $result = Database::getInstance()->fetchColumn(
             'SELECT action FROM public.selector WHERE time <= $1
@@ -331,7 +331,7 @@ class MyRadio_Selector
      * @param  int $time
      * @return bool
      */
-    public static function getStudio2PowerAtTime($time)
+    public static function getStudio2PowerAtTime($time = time())
     {
         $result = Database::getInstance()->fetchColumn(
             'SELECT action FROM public.selector WHERE time <= $1
@@ -353,7 +353,7 @@ class MyRadio_Selector
      * @param  int $time
      * @return int
      */
-    public static function getLockAtTime($time)
+    public static function getLockAtTime($time = time())
     {
         $result = Database::getInstance()->fetchColumn(
             'SELECT action FROM public.selector WHERE time <= $1
@@ -375,7 +375,7 @@ class MyRadio_Selector
      * @param  int $time
      * @return int
      */
-    public static function getLastModAtTime($time)
+    public static function getLastModAtTime($time = time())
     {
         $result = Database::getInstance()->fetchColumn(
             'SELECT time FROM public.selector WHERE time <= $1
@@ -396,7 +396,7 @@ class MyRadio_Selector
      * @param  int $time
      * @return array
      */
-    public static function getStatusAtTime($time)
+    public static function getStatusAtTime($time = time())
     {
         $status = self::remoteStreams();
         return [
