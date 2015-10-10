@@ -62,7 +62,8 @@ class MyRadio_TracklistItem extends ServiceAPI
             ];
     }
 
-    protected function factory($id) {
+    protected function factory($id)
+    {
         $result = self::$db->fetchOne(BASE_TRACKLISTITEM_SQL . ' WHERE tracklist.audiologid=$1 LIMIT 1', [$id]);
         if (empty($result)) {
             throw new MyRadioException('The requested TracklistItem does not appear to exist.', 404);

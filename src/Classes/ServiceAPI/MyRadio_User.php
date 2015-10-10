@@ -443,6 +443,16 @@ class MyRadio_User extends ServiceAPI implements APICaller
     }
 
     /**
+     * Ensure permissions are available to ApiCaller_Common
+     * @todo This is horrible, we need to rethink the protected $permissions property
+     */
+    public function hasAuth($a, $b)
+    {
+        $this->getPermissions();
+        parent::hasAuth($a, $b);
+    }
+
+    /**
      * Returns the User's email address. If the email address is null, it is
      * assumed their eduroam address is the preferred contact method.
      *

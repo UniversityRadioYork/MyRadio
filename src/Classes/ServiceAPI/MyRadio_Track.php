@@ -133,6 +133,7 @@ class MyRadio_Track extends ServiceAPI
      */
     protected function __construct($result)
     {
+        $this->trackid = (int)$result['trackid'];
         $this->artist = $result['artist'];
         $this->clean = $result['clean'];
         $this->digitised = ($result['digitised'] == 't') ? true : false;
@@ -151,7 +152,8 @@ class MyRadio_Track extends ServiceAPI
      * @throws MyRadioException if the track does not exist
      * @return MyRadio_Track
      */
-    protected function factory($trackid) {
+    protected function factory($trackid)
+    {
         $sql = BASE_TRACK_SQL . ' WHERE trackid=$1 LIMIT 1';
         $result = self::$db->fetchOne($sql, [$trackid]);
 
