@@ -94,11 +94,11 @@ class MyRadio_TracklistItem extends ServiceAPI
     public static function getTracklistForTimeslot($timeslotid, $offset = 0)
     {
         $result = self::$db->fetchAll(
-            BASE_TRACKLISTITEM_SQL . 
-                ' WHERE timeslotid=$1
-                AND (state ISNULL OR state != \'d\')
-                AND audiologid > $2
-                ORDER BY timestart ASC',
+            BASE_TRACKLISTITEM_SQL
+            . ' WHERE timeslotid=$1'
+            . ' AND (state ISNULL OR state != \'d\')'
+            . ' AND audiologid > $2'
+            . ' ORDER BY timestart ASC',
             [$timeslotid, $offset]
         );
 
@@ -125,10 +125,10 @@ class MyRadio_TracklistItem extends ServiceAPI
         $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
 
         $result = self::$db->fetchAll(
-            BASE_TRACKLISTITEM_SQL . 
-                ' WHERE source=\'j\'
-                AND timestart >= $1 AND timestart <= $2'
-                . ($include_playout ? '' : ' AND state!=\'u\' AND state!=\'d\''),
+            BASE_TRACKLISTITEM_SQL
+            . ' WHERE source=\'j\''
+            . ' AND timestart >= $1 AND timestart <= $2'
+            . ($include_playout ? '' : ' AND state!=\'u\' AND state!=\'d\''),
             [$start, $end]
         );
 
@@ -157,8 +157,8 @@ class MyRadio_TracklistItem extends ServiceAPI
         $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
 
         $result = self::$db->fetchAll(
-            'SELECT audiologid FROM tracklist.tracklist
-            WHERE timestart >= $1 AND timestart <= $2 AND (state IS NULL OR state=\'c\''
+            BASE_TRACKLISTITEM_SQL
+            . ' WHERE timestart >= $1 AND timestart <= $2 AND (state IS NULL OR state=\'c\''
             . ($include_playout ? 'OR state = \'o\')' : ')')
             . ' ORDER BY timestart ASC',
             [$start, $end]
