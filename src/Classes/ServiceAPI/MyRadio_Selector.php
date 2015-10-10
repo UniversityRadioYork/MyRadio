@@ -227,7 +227,7 @@ class MyRadio_Selector
         if (($studio <= 0) || ($studio > 8)) {
             return ['myradio_errors' => 'Invalid Studio ID'];
         }
-        $status = self::getStatusAtTime(time());
+        $status = self::getStatusAtTime();
 
         if ($studio == $status['studio']) {
             throw new MyRadioException('Source ' . $studio . ' is already selected');
