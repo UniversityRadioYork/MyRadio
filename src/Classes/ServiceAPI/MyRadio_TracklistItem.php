@@ -22,6 +22,10 @@ use \MyRadio\iTones\iTones_Utils;
  */
 class MyRadio_TracklistItem extends ServiceAPI
 {
+    const BASE_TRACKLISTITEM_SQL =
+        "SELECT * FROM tracklist.tracklist
+            LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
+            LEFT JOIN tracklist.track_notrec ON tracklist.audiologid = track_notrec.audiologid";
     private $audiologid;
     private $source;
     private $starttime;
@@ -35,20 +39,9 @@ class MyRadio_TracklistItem extends ServiceAPI
      */
     private $track;
 
-    protected function __construct($id)
+    protected function __construct($result)
     {
-        $this->audiologid = (int) $id;
-
-        $result = self::$db->fetchOne(
-            'SELECT * FROM tracklist.tracklist
-            LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
-            LEFT JOIN tracklist.track_notrec ON tracklist.audiologid = track_notrec.audiologid
-            WHERE tracklist.audiologid=$1 LIMIT 1',
-            [$id]
-        );
-        if (empty($result)) {
-            throw new MyRadioException('The requested TracklistItem does not appear to exist!', 400);
-        }
+        $this->audiologid = (int) $result['audiologid'];
 
         $this->source = $result['source'];
         $this->starttime = strtotime($result['timestart']);
@@ -67,6 +60,14 @@ class MyRadio_TracklistItem extends ServiceAPI
                 'length' => $result['length'],
                 'record_label' => $result['label']
             ];
+    }
+
+    protected function factory($id) {
+        $result = self::$db->fetchOne(BASE_TRACKLISTITEM_SQL . ' WHERE tracklist.audiologid=$1 LIMIT 1', [$id]);
+        if (empty($result)) {
+            throw new MyRadioException('The requested TracklistItem does not appear to exist.', 404);
+        }
+        return new MyRadio_TracklistItem($result);
     }
 
     public function getID()
@@ -92,18 +93,18 @@ class MyRadio_TracklistItem extends ServiceAPI
      */
     public static function getTracklistForTimeslot($timeslotid, $offset = 0)
     {
-        $result = self::$db->fetchColumn(
-            'SELECT audiologid FROM tracklist.tracklist
-            WHERE timeslotid=$1
-            AND (state ISNULL OR state != \'d\')
-            AND audiologid > $2
-            ORDER BY timestart ASC',
+        $result = self::$db->fetchAll(
+            BASE_TRACKLISTITEM_SQL . 
+                ' WHERE timeslotid=$1
+                AND (state ISNULL OR state != \'d\')
+                AND audiologid > $2
+                ORDER BY timestart ASC',
             [$timeslotid, $offset]
         );
 
         $items = [];
         foreach ($result as $item) {
-            $items[] = self::getInstance($item);
+            $items[] = new MyRadio_TracklistItem($item);
         }
 
         return $items;
@@ -123,16 +124,17 @@ class MyRadio_TracklistItem extends ServiceAPI
         $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
         $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
 
-        $result = self::$db->fetchColumn(
-            'SELECT audiologid FROM tracklist.tracklist WHERE source=\'j\'
-            AND timestart >= $1 AND timestart <= $2'
-            . ($include_playout ? '' : ' AND state!=\'u\' AND state!=\'d\''),
+        $result = self::$db->fetchAll(
+            BASE_TRACKLISTITEM_SQL . 
+                ' WHERE source=\'j\'
+                AND timestart >= $1 AND timestart <= $2'
+                . ($include_playout ? '' : ' AND state!=\'u\' AND state!=\'d\''),
             [$start, $end]
         );
 
         $items = [];
         foreach ($result as $item) {
-            $items[] = self::getInstance((int) $item);
+            $items[] = new MyRadio_TracklistItem($item);
         }
 
         return $items;
@@ -141,6 +143,7 @@ class MyRadio_TracklistItem extends ServiceAPI
     /**
      * Find all tracks played in the given timeframe, as datasources.
      * Not datasource runs out of RAM pretty quick.
+     * @todo Datasources are a lot nicer than they used to be - revisit this
      *
      * @param int  $start           Period to start log from. Required.
      * @param int  $end             Period to end log from. Default time().
@@ -153,7 +156,7 @@ class MyRadio_TracklistItem extends ServiceAPI
         $start = CoreUtils::getTimestamp($start);
         $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
 
-        $result = self::$db->fetchColumn(
+        $result = self::$db->fetchAll(
             'SELECT audiologid FROM tracklist.tracklist
             WHERE timestart >= $1 AND timestart <= $2 AND (state IS NULL OR state=\'c\''
             . ($include_playout ? 'OR state = \'o\')' : ')')
@@ -162,12 +165,12 @@ class MyRadio_TracklistItem extends ServiceAPI
         );
 
         $return = [];
-        foreach ($result as $id) {
+        foreach ($result as $item) {
             if (sizeof($return) == 100000) {
                 return $return;
             }
 
-            $obj = self::getInstance($id);
+            $obj = new MyRadio_TracklistItem($item);
             $data = $obj->toDataSource();
 
             unset($data['audiologid']);
