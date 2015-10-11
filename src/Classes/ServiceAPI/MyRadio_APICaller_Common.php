@@ -18,6 +18,15 @@ trait MyRadio_APICaller_Common
     protected $permissions;
 
     /**
+     * Getter for permissions - can be overridden by children
+     * e.g. User lazy-loads these
+     */
+    public function getPermissions()
+    {
+        return $this->permissions;
+    }
+
+    /**
      * Returns if the user has the given permission.
      *
      * Always use AuthUtils::hasAuth when working with the current user.
@@ -27,7 +36,7 @@ trait MyRadio_APICaller_Common
      */
     public function hasAuth($authid)
     {
-        return $authid === null || in_array((int)$authid, $this->permissions);
+        return $authid === null || in_array((int)$authid, $this->getPermissions());
     }
 
     /**
