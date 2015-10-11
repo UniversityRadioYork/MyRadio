@@ -1162,7 +1162,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
         $amount = number_format($amount, 2);
 
-        foreach ($this->payment as $k => $v) {
+        foreach ($this->getAllPayments() as $k => $v) {
             if ($v['year'] == $year && $v['paid'] == $amount) {
                 return;
             } elseif ($v['year'] == $year) {
@@ -1173,6 +1173,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                     [(float) $amount, $year, $this->getID()]
                 );
                 $this->payment[$k]['paid'] = $amount;
+                $this->permissions = null; // Clear local permissions cache
                 $this->updateCacheObject();
 
                 return;
@@ -1185,7 +1186,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
             VALUES ($1, $2, $3)',
             [(float) $amount, $year, $this->getID()]
         );
-        $this->payment[] = ['year' => $year, 'amount' => (float) $amount];
+        $this->payment[] = ['year' => $year, 'paid' => $amount];
+        $this->permissions = null; // Clear local permissions cache
         $this->updateCacheObject();
 
         return;
@@ -1702,8 +1704,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             return true;
         } else {
             $year = CoreUtils::getAcademicYear();
-            self::$db->query('INSERT INTO public.member_year (memberid, year, paid) VALUES ($1, $2, $3)', [$this->getID(), $year, $paid]);
-            $this->payment[] = ['year' => $year, 'paid' => $paid];
+            $this->setPayment($paid, $year);
             $this->updateCacheObject();
             return true;
         }

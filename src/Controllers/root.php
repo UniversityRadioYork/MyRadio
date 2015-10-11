@@ -81,6 +81,7 @@ set_exception_handler(
             $e->uncaught();
         } else {
             echo 'This information is not available at the moment. Please try again later.';
+            print_r($e);
         }
     }
 );

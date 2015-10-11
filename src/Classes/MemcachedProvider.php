@@ -102,21 +102,24 @@ class MemcachedProvider implements \MyRadio\Iface\CacheProvider
         return $this->memcached->get($this->getKeyPrefix() . $key);
     }
 
-    public function getAll($prefix = '')
+    /**
+     * Fetch all objects from the cache assosicated with the given keys
+     * @param  array $keys cache keys to be fetched
+     * @return mixed[]     array of objects relating to provided keys
+     */
+    public function getAll($keys)
     {
         if (!$this->enable) {
             return [];
         }
 
-        $prefix = $this->getKeyPrefix() . $prefix;
-        $result = [];
-        $len = strlen($prefix);
-        foreach ($this->memcached->getAllKeys() as $key) {
-            if (substr($key, 0, $len) === $prefix) {
-                //Don't use $this->get as it'll append the prefix twice
-                $result[] = $this->memcached->get($key);
-            }
+        $prefix = $this->getKeyPrefix();
+        foreach ($keys as &$key) {
+            $key = $prefix . $key;
         }
+
+        //Don't use $this->get as it'll append the prefix twice
+        $result = $this->memcached->getMulti($keys);
 
         return $result;
     }

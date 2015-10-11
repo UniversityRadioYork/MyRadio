@@ -795,7 +795,7 @@ class MyRadioFormField
          * YES, PHP IS RETARDED.
          */
         $timeString = str_replace('/', '-', $timeString);
-        $time = (int) strtotime($timeString) - date('Z');
+        $time = (int) strtotime($timeString);
         //Times should be seconds since midnight *any* day
         if ($this->type === self::TYPE_TIME) {
             $time -= strtotime('Midnight');

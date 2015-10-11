@@ -18,8 +18,8 @@ trait MyRadio_APICaller_Common
     protected $permissions;
 
     /**
-     * Getter for permissions - can be overridden by children
-     * e.g. User lazy-loads these
+     * Returns the API key's active permission flags
+     * @return Array
      */
     public function getPermissions()
     {
