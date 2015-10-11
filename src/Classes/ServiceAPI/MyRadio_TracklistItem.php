@@ -231,9 +231,7 @@ class MyRadio_TracklistItem extends ServiceAPI
 
             if ($playlists) {
                 $playlistobjs = iTones_Playlist::getPlaylistsWithTrack($trackobj);
-                foreach ($playlistobjs as $playlist) {
-                    $track['in_playlists'] .= $playlist->getTitle() . ', ';
-                }
+                $track['in_playlists'] = implode(', ', array_map(function($i){return $i->getTitle();}, $playlistobjs);
             }
 
             $data[] = $track;
