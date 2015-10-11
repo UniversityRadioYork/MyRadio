@@ -62,7 +62,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             ];
     }
 
-    protected function factory($id)
+    protected static function factory($id)
     {
         $result = self::$db->fetchOne(BASE_TRACKLISTITEM_SQL . ' WHERE tracklist.audiologid=$1 LIMIT 1', [$id]);
         if (empty($result)) {

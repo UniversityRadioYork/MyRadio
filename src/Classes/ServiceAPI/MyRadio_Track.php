@@ -152,7 +152,7 @@ class MyRadio_Track extends ServiceAPI
      * @throws MyRadioException if the track does not exist
      * @return MyRadio_Track
      */
-    protected function factory($trackid)
+    protected static function factory($trackid)
     {
         $sql = BASE_TRACK_SQL . ' WHERE trackid=$1 LIMIT 1';
         $result = self::$db->fetchOne($sql, [$trackid]);
