@@ -154,7 +154,7 @@ class MyRadio_Track extends ServiceAPI
      */
     protected static function factory($trackid)
     {
-        $sql = BASE_TRACK_SQL . ' WHERE trackid=$1 LIMIT 1';
+        $sql = self::BASE_TRACK_SQL . ' WHERE trackid=$1 LIMIT 1';
         $result = self::$db->fetchOne($sql, [$trackid]);
 
         if (empty($result)) {
@@ -930,7 +930,7 @@ class MyRadio_Track extends ServiceAPI
     public static function getAllDigitised()
     {
         self::initDB();
-        $result = self::$db->fetchColumn(BASE_TRACK_SQL . ' WHERE digitised=\'t\'');
+        $result = self::$db->fetchColumn(self::BASE_TRACK_SQL . ' WHERE digitised=\'t\'');
 
         $tracks = [];
         foreach ($result as $row) {

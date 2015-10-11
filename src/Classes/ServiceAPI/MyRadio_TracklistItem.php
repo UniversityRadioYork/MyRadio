@@ -64,7 +64,7 @@ class MyRadio_TracklistItem extends ServiceAPI
 
     protected static function factory($id)
     {
-        $result = self::$db->fetchOne(BASE_TRACKLISTITEM_SQL . ' WHERE tracklist.audiologid=$1 LIMIT 1', [$id]);
+        $result = self::$db->fetchOne(self::BASE_TRACKLISTITEM_SQL . ' WHERE tracklist.audiologid=$1 LIMIT 1', [$id]);
         if (empty($result)) {
             throw new MyRadioException('The requested TracklistItem does not appear to exist.', 404);
         }
@@ -95,7 +95,7 @@ class MyRadio_TracklistItem extends ServiceAPI
     public static function getTracklistForTimeslot($timeslotid, $offset = 0)
     {
         $result = self::$db->fetchAll(
-            BASE_TRACKLISTITEM_SQL
+            self::BASE_TRACKLISTITEM_SQL
             . ' WHERE timeslotid=$1'
             . ' AND (state ISNULL OR state != \'d\')'
             . ' AND audiologid > $2'
@@ -126,7 +126,7 @@ class MyRadio_TracklistItem extends ServiceAPI
         $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
 
         $result = self::$db->fetchAll(
-            BASE_TRACKLISTITEM_SQL
+            self::BASE_TRACKLISTITEM_SQL
             . ' WHERE source=\'j\''
             . ' AND timestart >= $1 AND timestart <= $2'
             . ($include_playout ? '' : ' AND state!=\'u\' AND state!=\'d\''),
@@ -158,7 +158,7 @@ class MyRadio_TracklistItem extends ServiceAPI
         $end = $end === null ? CoreUtils::getTimestamp() : CoreUtils::getTimestamp($end);
 
         $result = self::$db->fetchAll(
-            BASE_TRACKLISTITEM_SQL
+            self::BASE_TRACKLISTITEM_SQL
             . ' WHERE timestart >= $1 AND timestart <= $2 AND (state IS NULL OR state=\'c\''
             . ($include_playout ? 'OR state = \'o\')' : ')')
             . ' ORDER BY timestart ASC',
