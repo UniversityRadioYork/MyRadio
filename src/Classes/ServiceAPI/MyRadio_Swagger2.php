@@ -15,6 +15,7 @@ use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 
 /**
  * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/
@@ -129,7 +130,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         $options = strtoupper(implode(', ', array_keys($paths[$path]))) . ', OPTIONS';
         if ($op === 'options') {
             header('Access-Control-Allow-Methods: ' . $options); // This is for CORS in browser
-            exit;
+            URLUtils::nocontent();
         } elseif (!isset($paths[$path][$op])) {
             header('Allow: ' . $options); // This is reference for HTTP 405
             throw new MyRadioException("$path does not have a valid $op handler.", 405);
