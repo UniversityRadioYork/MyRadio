@@ -505,28 +505,13 @@ final class Config
      * Array of spam strings to check messages for
      * @var string[]
      */
-    public static $spam = [
-        '[url=',
-        '<a href=',
-        '&lt;a href=',
-        'viagra'
-    ];
+    public static $spam = [];
 
     /**
      * Array of social engineering strings to check messages for
      * @var string[]
      */
-    public static $social_engineering_trigger = [
-        'fs1',
-        'server',
-        'icecast',
-        'stream',
-        'jukebox',
-        'restart',
-        'logger',
-        'computing team',
-        'compteam'
-    ];
+    public static $social_engineering_trigger = [];
 
     /**
      * Warning text to display on suspected social engineering attacks
@@ -545,7 +530,7 @@ final class Config
      * Host that the news provider must be accessed from
      * @var string
      */
-    public static $news_proxy = "wc10.york.ac.uk:8080";
+    public static $news_proxy = "";
 
     /**
      * URY's Membership Fee
