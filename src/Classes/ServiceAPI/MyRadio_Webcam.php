@@ -15,15 +15,7 @@ class MyRadio_Webcam extends ServiceAPI
 {
     public static function getStreams()
     {
-        $response = self::$db->fetchAll('SELECT * FROM webcam.streams ORDER BY streamid ASC');
-
-        $streams = [];
-
-        foreach ($response as $stream) {
-            $streams[$stream['camera']] = $stream;
-        }
-
-        return $streams;
+        return self::$db->fetchAll('SELECT * FROM webcam.streams ORDER BY streamid ASC');
     }
 
     public static function incrementViewCounter(MyRadio_User $user)
