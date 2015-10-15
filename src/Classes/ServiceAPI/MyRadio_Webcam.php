@@ -15,7 +15,15 @@ class MyRadio_Webcam extends ServiceAPI
 {
     public static function getStreams()
     {
-        return self::$db->fetchAll('SELECT * FROM webcam.streams ORDER BY streamid ASC');
+        $response = self::$db->fetchAll('SELECT * FROM webcam.streams ORDER BY streamid ASC');
+
+        $streams = [];
+
+        foreach ($response as $stream) {
+            $streams[$stream['camera']] = $stream;
+        }
+
+        return $streams;
     }
 
     public static function incrementViewCounter(MyRadio_User $user)
@@ -69,36 +77,30 @@ class MyRadio_Webcam extends ServiceAPI
     public static function getCurrentWebcam()
     {
         if (Config::$webcam_current_url) {
-            $current = (int)file_get_contents(Config::$webcam_current_url);
+            $response = file_get_contents(Config::$webcam_current_url);
+            $response = json_decode($response, true);
 
-            switch ($current) {
-            case 0: $location = 'Jukebox';
+            switch ($response['room']) {
+            case 1: $location = 'Studio 1';
                 break;
-            case 2: $location = 'Studio 1';
+            case 2: $location = 'Studio 2';
                 break;
-            case 3: $location = 'Studio 1 Secondary';
+            case 3: $location = 'Jukebox';
                 break;
-            case 4: $location = 'Studio 2';
+            case 4: $location = 'OB';
                 break;
-            case 5: $location = 'Office';
-                break;
-            case 6: $location = 'Hall';
-                break;
-            case 8: $location = 'OB';
-                break;
-            default: $location = $current;
-                $current = 7;
+            default: $location = 'Unknown';
                 break;
             }
 
             return [
-                'current' => $current,
-                'webcam' => $location
+                'camera' => $response['camera'],
+                'location' => $location
             ];
         } else {
             return [
-                'current' => -1,
-                'webcam' => null
+                'camera' => -1,
+                'location' => null
             ];
         }
     }
@@ -109,14 +111,18 @@ class MyRadio_Webcam extends ServiceAPI
      */
     public static function setWebcam($id)
     {
-        if (($id == 0)
-            || ($id == 2)
-            || ($id == 3)
-            || ($id == 4)
-            || ($id == 8)
-            || (!strncmp($id, "http://", strlen("http://")))
+        if (($id == 'studio1')
+            || ($id == 'studio2')
+            || ($id == 'cam1')
+            || ($id == 'cam2')
+            || ($id == 'cam5')
         ) {
-            file_get_contents(Config::$webcam_set_url.$id);
+            $ch = \curl_init(Config::$webcam_set_url.$id);
+            \curl_setopt($ch, CURLOPT_POST, true);
+            \curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
+            \curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+            $response = \curl_exec($ch);
         }
     }
 }
