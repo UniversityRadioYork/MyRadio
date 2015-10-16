@@ -4,8 +4,14 @@
 <div class="webcam-grid-container">
   {% for stream in streams %}
     <figure class="webcam-stream-container" id="webcam-stream-{{stream.streamid}}">
-      <img src="{{stream.liveurl}}" class="webcam-stream" />
+      <img id="{{stream.streamname}}" src="{{stream.liveurl}}" class="webcam-stream" />
       <figcaption>{{stream.streamname}}</figcaption>
+      <script>
+        var img = document.getElementById('{{stream.streamname}}');
+        setInterval(function (image, source) {
+            image.setAttribute('src', source + '?_=' + Date.now());
+        }, 1000, img, '{{stream.liveurl}}');
+      </script>
     </figure>
   {% endfor %}
 </div>

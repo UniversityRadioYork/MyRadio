@@ -98,12 +98,12 @@ class SIS_Remote extends ServiceAPI
     public static function queryWebcam($session)
     {
         $response = MyRadio_Webcam::getCurrentWebcam();
-        $current = null;
+        $camera = null;
         if (isset($_REQUEST['webcam-id'])) {
-            $current = (int)$_REQUEST['webcam-id'];
+            $camera = $_REQUEST['webcam-id'];
         }
 
-        if ($response['current'] !== $current) {
+        if ($response['camera'] !== $camera) {
             return [
                 'webcam' => [
                     'status' => $response,
