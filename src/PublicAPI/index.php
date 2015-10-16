@@ -92,6 +92,7 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
         in_array($_SERVER['HTTP_ORIGIN'], Config::$api_allowed_domains)
     ) {
         header('Access-Control-Allow-Origin: *');
+        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
     }
 }
 

@@ -57,22 +57,22 @@ $('.twig-datatable').dataTable(
             "sTitle": "Season #",
             "bVisible": false
         },
-        //createddate
+        //submitted
         {
             "sTitle": "Submitted",
             "bVisible": false
         },
-        //requestedtime
+        //requested_time
         {
             "sTitle": "Requested Time",
             "bVisible": false
         },
-        //firsttime
+        //first_time
         {
             "sTitle": "First Episode",
             "bVisible": false
         },
-        //numepisodes
+        //num_episodes
         {
             "sTitle": "# of Episodes",
             "bVisible": false
@@ -89,7 +89,7 @@ $('.twig-datatable').dataTable(
             "bSortable": false,
             "bVisible": true
         },
-        //timeslotnum
+        //timeslot_num
         {
             "sTitle": "Episode #"
         },
@@ -98,9 +98,15 @@ $('.twig-datatable').dataTable(
             "sTitle": "Tags",
             "bVisible": false
         },
+        //time
+        {
+            "sTitle": "Time",
+            "bVisible": false
+        },
         //starttime
         {
-            "sTitle": "Time"
+            "sTitle": "Time",
+            "iDataSort": 20
         },
         //duration
         {

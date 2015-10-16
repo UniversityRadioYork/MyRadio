@@ -12,5 +12,5 @@ use \MyRadio\ServiceAPI\MyRadio_Banner;
 CoreUtils::getTemplateObject()->setTemplate('Website/banners.twig')->addVariable('title', 'Website Banners')
     ->addVariable('newbannerurl', URLUtils::makeURL('Website', 'editBanner'))
     ->addVariable('tabledata', CoreUtils::dataSourceParser(MyRadio_Banner::getAllBanners()))
-    ->addVariable('tablescript', 'myury.website.bannerlist')
+    ->addVariable('tablescript', 'myradio.website.bannerlist')
     ->render();

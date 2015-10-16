@@ -92,4 +92,44 @@ class SIS_Utils extends ServiceAPI
 
         return false;
     }
+
+    /**
+     * Checks message for suspected spam strings
+     * @param  string $message text to test for spam
+     * @return bool            spam true, else false
+     */
+    public static function checkMessageSpam($message)
+    {
+        if (!empty(Config::$spam)) {
+            foreach (Config::$spam as $needle) {
+                if (stripos($message, $needle) !== false) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Checks message for suspected social engineering attack
+     * @param  string $message text to test for social engineering
+     * @return mixed           warning string or false
+     */
+    public static function checkMessageSocialEngineering($message)
+    {
+        if (!empty(Config::$social_engineering_trigger)) {
+            foreach (Config::$social_engineering_trigger as $trigger) {
+                if (stripos($message, $trigger) !== false) {
+                    return Config::$social_engineering_warning;
+                } else {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+    }
 }

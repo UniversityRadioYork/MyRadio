@@ -272,6 +272,33 @@ class MyRadio_Banner extends MyRadio_Photo
         return self::resultSetToObjArray(self::$db->fetchColumn('SELECT banner_id FROM website.banner'));
     }
 
+    /**
+     * Gets all Banners that are currently active. That is, they have started and have not expired.
+     * It returns them even when there isn't currently a Banner Timeslot for the Campaign running.
+     * @return MyRadio_Banner[]
+     */
+    public static function getActiveBanners()
+    {
+        $result = [];
+        foreach (MyRadio_BannerCampaign::getActiveBannerCampaigns() as $campaign) {
+            $result[] = $campaign->getBanner();
+        }
+        return $result;
+    }
+
+    /**
+     * Gets all Banners that are currently live. That is they are active and have timeslots at the current time.
+     * @return MyRadio_Banner[]
+     */
+    public static function getLiveBanners()
+    {
+        $result = [];
+        foreach (MyRadio_BannerCampaign::getLiveBannerCampaigns() as $campaign) {
+            $result[] = $campaign->getBanner();
+        }
+        return $result;
+    }
+
     public static function getBannerTypes()
     {
         return self::$db->fetchAll('SELECT banner_type_id, description FROM website.banner_type');

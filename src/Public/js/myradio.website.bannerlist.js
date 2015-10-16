@@ -17,6 +17,10 @@ $('.twig-datatable').dataTable(
         {
             bVisible: false
         },
+        //url
+        {
+            bVisible: false
+        },
         //banner_id
         {
             bVisible: false

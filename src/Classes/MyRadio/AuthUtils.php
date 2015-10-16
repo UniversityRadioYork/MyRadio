@@ -7,6 +7,8 @@
 
 namespace MyRadio\MyRadio;
 
+use \ReCaptcha\ReCaptcha;
+
 use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadioException;
@@ -367,5 +369,24 @@ class AuthUtils
             }
         }
         return false;
+    }
+
+    /**
+     * Verify that the recaptcha response is valid
+     * @param  String $response g-recaptcha-response from the widget
+     * @param  String $addr     Remote IP address of response
+     * @return Bool/Array       true if valid, array of errors if not
+     */
+    public static function verifyRecaptcha($response, $addr = null)
+    {
+        $recaptcha = new ReCaptcha(Config::$recaptcha_private_key);
+
+        $resp = $recaptcha->verify($response, $addr);
+
+        if ($resp->isSuccess()) {
+            return true;
+        } else {
+            return $resp->getErrorCodes();
+        }
     }
 }

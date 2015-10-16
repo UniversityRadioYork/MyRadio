@@ -240,4 +240,47 @@ trait MyRadio_MetadataSubject
             [CoreUtils::getTimestamp($time), $key, $this->getID(), $value]
         );
     }
+
+    /**
+     * Searches searchable *text* metadata for the specified value. Does not work for image metadata.
+     *
+     * This function must be extended by Classes using MetadataSubject to provide the correct
+     * ID field and table that the metadata is stored in.
+     * @todo effective_from/to not yet implemented
+     *
+     * @param String $query          The query value.
+     * @param Array  $string_keys    The metadata keys to search
+     * @param int    $effective_from UTC Time to search from.
+     * @param int    $effective_to   UTC Time to search to.
+     * @param String $table          The metadata table, *including* the schema.
+     * @param String $id_field       The ID field in the metadata table.
+     *
+     * @return Array The list of IDs of whatever is being searched.
+     */
+    public static function searchMeta($query, $string_keys, $effective_from = null, $effective_to = null, $table = null, $id_field = null)
+    {
+        if (is_null($table) || is_null($id_field)) {
+            throw new MyRadioException('Search table and ID must be set.');
+        }
+
+        $keys = [];
+
+        foreach ($string_keys as $string_key) {
+            $keys[] = self::getMetadataKey($string_key); //Integer meta key
+        }
+
+        $meta_keys = '(' . implode(',', array_unique($keys)) . ')';
+
+        $query = urldecode($query);
+
+        $results = self::$db->fetchColumn(
+            'SELECT ' . $id_field
+            .' FROM ' . $table
+            .' WHERE metadata_value ILIKE \'%\' || $1 || \'%\''
+            .' AND metadata_key_id IN '. $meta_keys,
+            [$query]
+        );
+
+        return $results;
+    }
 }
