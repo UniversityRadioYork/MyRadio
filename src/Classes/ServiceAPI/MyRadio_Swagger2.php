@@ -399,7 +399,13 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             } elseif ($name === 'create') {
                 $op = 'post';
                 $public_name = '';
+            } elseif ($name === 'testcredentials') {
+                $op = 'post';
+                $public_name = '/' . strtolower($name);
             } elseif (CoreUtils::startsWith($name, 'create')) {
+                $op = 'post';
+                $public_name = '/' . strtolower($name);
+            } elseif (CoreUtils::startsWith($name, 'add')) {
                 $op = 'post';
                 $public_name = '/' . strtolower($name);
             } elseif ($method->isStatic()) {
