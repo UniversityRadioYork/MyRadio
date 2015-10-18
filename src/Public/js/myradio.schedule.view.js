@@ -37,10 +37,9 @@ var ScheduleView = function(options) {
             startTime = newStartTime;
             $.ajax(
                 {
-                    url: mConfig.api_url + '/Timeslot/9DaySchedule',
+                    url: mConfig.api_url + '/v2' + '/timeslot/9dayschedule/' + week,
                     data: {
-                        year: year,
-                        weekno: week
+                        year: year
                     },
                     success: updateView
                 }
