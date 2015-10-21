@@ -103,60 +103,10 @@ class MyRadio_Selector
     const ON_BOTH = 3;
 
     /**
-     * Caches the status of the selector (the query command)
-     * @var Array
-     */
-    private $sel_status;
-
-    /**
      * Construct the Selector Object
      */
     public function __construct()
     {
-    }
-
-    /**
-     * Returns the state of the remote OB feeds in an associative array.
-     * @return Array
-     */
-    public static function remoteStreams()
-    {
-        if (file_exists(Config::$ob_remote_status_file)) {
-            $data = file(Config::$ob_remote_status_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
-            if ($data) {
-                $response = ['ready' => true];
-                foreach ($data as $feed) {
-                    $state = explode('=', $feed);
-                    $response[trim($state[0])] = (bool) trim($state[1]);
-                }
-
-                return $response;
-            }
-        }
-
-        return [
-            'ready' => false
-        ];
-    }
-
-    /**
-     * Returns the length of the current silence, if any.
-     * @return int
-     */
-    public function isSilence()
-    {
-        $result = Database::getInstance()->fetchOne(
-            'SELECT starttime, stoptime
-            FROM jukebox.silence_log
-            ORDER BY silenceid DESC LIMIT 1'
-        );
-
-        if (empty($result['stoptime'])) {
-            return time() - strtotime($result['starttime']);
-        } else {
-            return 0;
-        }
     }
 
     /**
@@ -170,22 +120,20 @@ class MyRadio_Selector
      * @return Array {'studio' => [1-8], 'selectedfrom' => [0-3], 'lock' => [0-2],
      *               'power' => [0-3]}
      */
-    public function query()
+    public static function setQuery()
     {
-        if (empty($this->sel_status)) {
-            $data = $this->cmd('Q');
+        $data = self::cmd('Q');
 
-            $state = str_split($data);
+        $state = str_split($data);
 
-            $this->sel_status = [
-                'studio' => (int) $state[0],
-                'lock' => (int) $state[1],
-                'selectedfrom' => (int) $state[2],
-                'power' => (int) $state[3]
-            ];
-        }
+        $sel_status = [
+            'studio' => (int) $state[0],
+            'lock' => (int) $state[1],
+            'selectedfrom' => (int) $state[2],
+            'power' => (int) $state[3]
+        ];
 
-        return $this->sel_status;
+        return $sel_status;
     }
 
     /**
@@ -193,9 +141,9 @@ class MyRadio_Selector
      * no longer operate the selector. The buttons on the main panel will
      * continue to work.
      */
-    public function lock()
+    public static function setLock()
     {
-        $this->cmd('L');
+        self::cmd('L');
     }
 
     /**
@@ -203,7 +151,7 @@ class MyRadio_Selector
      * @param  String $cmd (Q)uery, (L)ock, (U)nlock, S[1-8]
      * @return String Status for Query, or ACK/FLK for other commands.
      */
-    private function cmd($cmd)
+    private static function cmd($cmd)
     {
         $h = fsockopen('tcp://' . Config::$selector_telnet_host, Config::$selector_telnet_port, $errno, $errstr, 10);
 
@@ -242,8 +190,7 @@ class MyRadio_Selector
             throw new MyRadioException('Selector Locked');
         }
 
-        $sel = new self();
-        $response = $sel->cmd('S' . $studio);
+        $response = self::cmd('S' . $studio);
 
         if ($response === 'FLK') {
             throw new MyRadioException('Selector Locked');
@@ -453,7 +400,7 @@ class MyRadio_Selector
      * It also emails an array of various important people to inform them that
      * this has happened.
      */
-    public function startObit()
+    public static function setObit()
     {
         //Empty all existing request queues
         iTones_Utils::emptyQueues();
@@ -468,13 +415,13 @@ class MyRadio_Selector
 
         //Switch to studio 3
         try {
-            $this->setStudio(3);
+            self::setStudio(3);
         } catch (MyRadioException $e) {
             trigger_error('OBIT: Could not change selector source: '.$e->getMessage());
         }
 
         //Lock the selector
-        $this->lock();
+        self::lock();
 
         //Email people
         MyRadioEmail::sendEmailToComputing(
@@ -491,12 +438,56 @@ class MyRadio_Selector
     /**
      * Returns if an obit event is happening.
      */
-    public function isObitHappening()
+    public static function isObitHappening()
     {
         if (file_exists('/tmp/myradio-obit')) {
             return (bool) file_get_contents('/tmp/myradio-obit');
         } else {
             return false;
+        }
+    }
+
+    /**
+     * Returns the state of the remote OB feeds in an associative array.
+     * @return Array
+     */
+    public static function remoteStreams()
+    {
+        if (file_exists(Config::$ob_remote_status_file)) {
+            $data = file(Config::$ob_remote_status_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+            if ($data) {
+                $response = ['ready' => true];
+                foreach ($data as $feed) {
+                    $state = explode('=', $feed);
+                    $response[trim($state[0])] = (bool) trim($state[1]);
+                }
+
+                return $response;
+            }
+        }
+
+        return [
+            'ready' => false
+        ];
+    }
+
+    /**
+     * Returns the length of the current silence, if any.
+     * @return int
+     */
+    public static function isSilence()
+    {
+        $result = Database::getInstance()->fetchOne(
+            'SELECT starttime, stoptime
+            FROM jukebox.silence_log
+            ORDER BY silenceid DESC LIMIT 1'
+        );
+
+        if (empty($result['stoptime'])) {
+            return time() - strtotime($result['starttime']);
+        } else {
+            return 0;
         }
     }
 }
