@@ -186,8 +186,7 @@ class Database
             } catch (MyRadioException $e) {
                 return [];
             }
-        } else {
-
+        }
         return pg_fetch_assoc($sql);
     }
 
