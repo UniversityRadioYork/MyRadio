@@ -1974,12 +1974,16 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 $data['locked'] = $this->getAccountLocked();
                 $data['college'] = $this->getCollege();
                 $data['receive_email'] = $this->getReceiveEmail();
-                $data['local_name'] = $this->getLocalName();
+                $data['email'] = $this->getEmail();
                 $data['phone'] = $this->getPhone();
                 $data['eduroam'] = $this->getEduroam();
+                $data['local_alias'] = $this->getLocalAlias();
+                $data['local_name'] = $this->getLocalName();
+                $data['last_login'] = $this->getLastLogin();
             },
             'payment' => function(&$data) {
                 $data['payment'] = $this->getAllPayments();
+                $data['is_currently_paid'] = $this->isCurrentlyPaid();
             }
         ];
 
@@ -1988,7 +1992,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'fname' => $this->getFName(),
             'sname' => $this->getSName(),
             'sex' => $this->getSex(),
-            'email' => $this->getEmail(),
             'public_email' => $this->getPublicEmail(),
             'url' => $this->getURL()
         ];
