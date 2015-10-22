@@ -19,13 +19,16 @@ $user = MyRadio_User::getInstance(empty($_REQUEST['memberid']) ? -1 : $_REQUEST[
 $visitor = MyRadio_User::getInstance();
 
 //Add global user data
+$mixins = [];
 
 if ($user->getID() === $visitor->getID() || AuthUtils::hasPermission(AUTH_VIEWOTHERMEMBERS)) {
-    $userData = $user->toDataSource(['personal_data', 'officerships', 'payment']);
-} else {
-    $userData = $user->toDataSource();
+    $mixins = ['personal_data', 'officerships', 'payment'];
+} elseif ($user->isOfficer()) {
+    // A non-officer viewing an officer
+    $mixins = ['officerships'];
 }
 
+$userData = $user->toDataSource($mixins);
 
 $userData['training'] = CoreUtils::dataSourceParser($user->getAllTraining(true));
 $userData['training_avail'] = CoreUtils::dataSourceParser(
@@ -35,7 +38,6 @@ $userData['training_avail'] = CoreUtils::dataSourceParser(
 // A non-officer viewing an officer
 if ($user->isOfficer()) {
     $userData['phone'] = $user->getPhone();
-    $userData['officerships'] = $user->getOfficerships();
 }
 
 $template = CoreUtils::getTemplateObject()->setTemplate('Profile/user.twig')
