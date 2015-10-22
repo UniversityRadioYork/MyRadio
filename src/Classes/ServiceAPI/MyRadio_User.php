@@ -1975,6 +1975,11 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 $data['college'] = $this->getCollege();
                 $data['receive_email'] = $this->getReceiveEmail();
                 $data['local_name'] = $this->getLocalName();
+                $data['phone'] = $this->getPhone();
+                $data['eduroam'] = $this->getEduroam();
+            },
+            'payment' => function(&$data) {
+                $data['payment'] = $this->getAllPayments();
             }
         ];
 
@@ -1983,7 +1988,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'fname' => $this->getFName(),
             'sname' => $this->getSName(),
             'sex' => $this->getSex(),
-            'public_email' => $this->getEmail(),
+            'email' => $this->getEmail(),
             'url' => $this->getURL()
         ];
 

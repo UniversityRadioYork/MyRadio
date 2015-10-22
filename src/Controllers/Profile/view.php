@@ -19,7 +19,14 @@ $user = MyRadio_User::getInstance(empty($_REQUEST['memberid']) ? -1 : $_REQUEST[
 $visitor = MyRadio_User::getInstance();
 
 //Add global user data
-$userData = $user->toDataSource();
+
+if ($user->getID() === $visitor->getID() or AuthUtils::hasPermission(AUTH_VIEWOTHERMEMBERS)) {
+    $userData = $user->toDataSource(['personal_data', 'officerships', 'payment']);
+} else {
+    $userData = $user->toDataSource();
+}
+
+
 $userData['training'] = CoreUtils::dataSourceParser($user->getAllTraining(true));
 $userData['training_avail'] = CoreUtils::dataSourceParser(
     MyRadio_TrainingStatus::getAllAwardableTo($user)
@@ -28,17 +35,13 @@ $userData['training_avail'] = CoreUtils::dataSourceParser(
 if ($user->isOfficer()) {
     $userData['phone'] = $user->getPhone();
     $userData['email'] = $user->getPublicEmail();
+    $userData['officerships'] = $user->getOfficerships();
 }
 
-if (AuthUtils::hasPermission(AUTH_VIEWOTHERMEMBERS)) {
+if ($user->getID() === $visitor->getID() or AuthUtils::hasPermission(AUTH_VIEWOTHERMEMBERS)) {
     $userData['email'] = $user->getEmail();
-    $userData['eduroam'] = $user->getEduroam();
     $userData['local_alias'] = $user->getLocalAlias();
-    $userData['local_name'] = $user->getLocalName();
-    $userData['account_locked'] = $user->getAccountLocked();
     $userData['last_login'] = $user->getLastLogin();
-    $userData['payment'] = $user->getAllPayments();
-    $userData['receive_email'] = $user->getReceiveEmail();
     $userData['is_currently_paid'] = $user->isCurrentlyPaid();
 }
 

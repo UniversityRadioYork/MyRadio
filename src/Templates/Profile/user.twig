@@ -27,7 +27,7 @@
         {% endif %}
       </td>
     </tr>
-    {% if user.collegeid != 10 %}
+    {% if user.college is defined %}
       <tr>
         <td><b>College:</b></td>
         <td>{{user.college}}</td>
@@ -77,11 +77,11 @@
       </td>
     </tr>
     {% endif %}
-    {% if user.account_locked is defined %}
+    {% if user.locked is defined %}
     <tr>
       <td><b>Account Locked:</b></td>
       <td>
-        {% if user.account_locked %}
+        {% if user.locked %}
           Yes
         {% else %}
           No
