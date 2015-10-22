@@ -1989,6 +1989,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'sname' => $this->getSName(),
             'sex' => $this->getSex(),
             'email' => $this->getEmail(),
+            'public_email' => $this->getPublicEmail(),
             'url' => $this->getURL()
         ];
 
