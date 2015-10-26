@@ -5,8 +5,8 @@
 <link type="text/css" rel="stylesheet" src="{{baseurl}}css/vendor/bootstrap-datetimepicker.css">
 {% endblock %}
 {% block stripecontent %}
-{% set myury_form_section_exists = false %}
-{% set myury_form_file_progress = false %}
+{% set myradio_form_section_exists = false %}
+{% set myradio_form_file_progress = false %}
 <fieldset class="{{frm_classes}}">
     <form action="{{frm_action | raw}}" method="{{frm_method}}" name="{{frm_name}}" id="{{frm_name}}" enctype="multipart/form-data">
     {% for field in frm_fields %}
@@ -41,5 +41,5 @@
 <script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/vendor/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/vendor/typeahead.bundle.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/myury.form.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/myradio.form.js"></script>
 {% endblock %}

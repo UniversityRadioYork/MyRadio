@@ -1,6 +1,6 @@
 {% if display_labels %}<label for="{{frm_name}}-{{field.name}}">{{field.label}}</label>{% endif %}
 <textarea name="{{frm_name}}-{{sfieldname}}" id="{{frm_name}}-{{field.name}}"
-        class="myury-form-tinymce {{field.class}}{% if field.required %} required{% endif %}"
+        class="myradio-form-tinymce {{field.class}}{% if field.required %} required{% endif %}"
        {% if field.options.minlength is defined %} minlength="{{field.options.minlength}}"{% endif %}
        {% if field.options.maxlength is defined %} maxlength="{{field.options.maxlength}}"{% endif %}
        {% if not field.enabled %} readonly="readonly"{% endif %}>{{field.value}}</textarea>
