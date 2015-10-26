@@ -18,7 +18,7 @@
                 <a href="{{column.url}}" title="{{column.title}}"><span class="glyphicon glyphicon-{{column.value}}">&nbsp;</span></a>
         {% endif %}
       {% else %}
-                {{column | raw}}
+                {{column}}
      {% endif %}
               </td>
     {% endfor %}
@@ -30,4 +30,3 @@
   {% endfor %}
           </tbody>
         </table>
-
