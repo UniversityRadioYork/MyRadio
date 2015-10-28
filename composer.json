@@ -2,7 +2,8 @@
     "require": {
         "james-heinrich/getid3": "~1.9",
         "ezyang/htmlpurifier": "~4.6",
-        "google/recaptcha": "~1.1"
+        "google/recaptcha": "~1.1",
+        "raven/raven": "~0.13"
     },
     "config": {
         "vendor-dir": "src/vendor"
