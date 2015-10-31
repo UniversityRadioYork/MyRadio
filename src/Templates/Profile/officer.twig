@@ -19,7 +19,7 @@
     <li>
         <a href="{{i.User.url}}">{{i.User.fname}} {{i.User.sname}}</a> ({{i.from|date('d/m/Y')}} -
         {% if i.to %}{{i.to|date('d/m/Y')}}{% else %}Present
-        [<a href="{{MyRadio.API(config,'Officer','standDown', {'memberofficerid':i.memberofficerid})}}">Stand Down</a>]{% endif %})
+        [{{MyRadio.linkAPI('Stand Down', config, 'GET', 'officer', 'standdown', {'memberofficerid': i.memberofficerid})}}]{% endif %})
     </li>
     {% endfor %}
   </ul>
@@ -28,7 +28,7 @@
     <ul>
         {% for perm in officer.permissions %}
             <li>
-                {{ perm.text }} [<a href="{{MyRadio.API(config,'Officer','revokePermission', {'permissionid':perm.value}, officer.officerid)}}">Remove</a>]
+                {{ perm.text }} [{{MyRadio.linkAPI("Remove", config, 'PUT', 'officer', 'revokepermission', {'permissionid':perm.value}, officer.officerid)}}]
             </li>
         {% endfor %}
     </ul>

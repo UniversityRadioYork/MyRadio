@@ -11,10 +11,30 @@ if not loop.first %}&{% endif %}{{i}}={{options[i]}}{%
 endfor %}
 {% endmacro %}
 
-{% macro API(config, module, action, options, id) %}
+{% macro makeAPI(config, module, action, options, id) %}
 {{config.api_url}}/{{module}}{% if id %}/{{id}}{% endif %}/{{action}}/{%
 if options %}?{% endif %}{%
 for i in options|keys %}{%
 if not loop.first %}&{% endif %}{{i}}={{options[i]}}{%
 endfor %}
+{% endmacro %}
+
+{% macro linkAPI(name, config, method, module, action, options, id) %}
+<script>
+    var scriptTag = document.getElementsByTagName('script');
+    scriptTag = scriptTag[scriptTag.length - 1];
+
+    var parent = scriptTag.parentNode,
+        apiLink = document.createElement('a'),
+        linkText = document.createTextNode('{{name}}');
+
+    apiLink.setAttribute('href', window.location);
+    apiLink.appendChild(linkText);
+
+    apiLink.addEventListener('click', function() {
+        myradio.callAPI('{{method}}', '{{module}}', '{{action}}', '{{id}}', '{{options|first}}', {{options|json_encode()|raw}});
+    });
+
+    parent.appendChild(apiLink);
+</script>
 {% endmacro %}

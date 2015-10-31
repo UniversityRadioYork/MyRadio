@@ -46,6 +46,23 @@ window.myradio = {
             }
         );
         return reportButton;
+    },
+    callAPI: function(method, module, action, id, firstParam, options) {
+        var url = mConfig.api_url;
+        url += '/v2/' + module;
+        if (id !== '') {
+            url += '/' + id;
+        }
+        url += '/' + action;
+        if (firstParam !== '') {
+            url += '/' + firstParam;
+        }
+
+        $.ajax({
+            url: url,
+            data: options,
+            method: method
+        });
     }
 };
 
