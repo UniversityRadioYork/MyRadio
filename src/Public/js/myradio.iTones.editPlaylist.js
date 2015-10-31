@@ -1,7 +1,7 @@
 function iTones_refreshLock() {
     $.ajax(
         {
-            url: myury.makeURL('iTones', 'refreshLock'),
+            url: myradio.makeURL('iTones', 'refreshLock'),
             type: 'POST',
             data: {playlistid: $('#itones_playlistedit-myradiofrmedid').val()}
         }

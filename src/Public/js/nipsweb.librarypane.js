@@ -13,7 +13,7 @@ function updateCentralSearch() {
     $('#notice').html('Searching...').show();
     $.ajax(
         {
-            url: myury.makeURL('MyRadio', 'a-findtrack'),
+            url: myradio.makeURL('MyRadio', 'a-findtrack'),
             type: 'post',
             data: {
                 artist: $('#res-filter-artist').val(),
@@ -63,7 +63,7 @@ $(document).ready(
                     $('#res-loading').show();
                     $.ajax(
                         {
-                            url: myury.makeURL('MyRadio', 'a-findtrack'),
+                            url: myradio.makeURL('MyRadio', 'a-findtrack'),
                             type: 'get',
                             data: {itonesplaylistid: $(this).val().replace(/managed-/, ''), digitised: true, limit: 0},
                             success: function(data) {
@@ -99,7 +99,7 @@ $(document).ready(
                     $('#res-loading').show();
                     $.ajax(
                         {
-                            url: myury.makeURL('NIPSWeb', 'load_auto_managed'),
+                            url: myradio.makeURL('NIPSWeb', 'load_auto_managed'),
                             type: 'get',
                             data: 'playlistid=' + $(this).val(),
                             success: function(data) {
@@ -134,7 +134,7 @@ $(document).ready(
                     $('#res-loading').show();
                     $.ajax(
                         {
-                            url: myury.makeURL('NIPSWeb', 'load_aux_lib'),
+                            url: myradio.makeURL('NIPSWeb', 'load_aux_lib'),
                             type: 'get',
                             data: 'libraryid=' + $(this).val(),
                             success: function(data) {
@@ -174,9 +174,9 @@ $(document).ready(
                             return local.title == remote.title;
                         },
                         prefetch: {
-                            url: myury.makeURL('MyRadio', 'a-findartist', {term: null, limit: 500})
+                            url: myradio.makeURL('MyRadio', 'a-findartist', {term: null, limit: 500})
                         },
-                        remote: myury.makeURL('MyRadio', 'a-findartist', {limit: 5, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+                        remote: myradio.makeURL('MyRadio', 'a-findartist', {limit: 5, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
                     }
                 );
                 artistLookup.initialize();
@@ -217,7 +217,7 @@ $(document).ready(
         $('#a-manage-library').click(
             function() {
                 var url = $(this).children('a').attr('href');
-                var dialog = myury.createDialog('Manage Library', '<iframe src="' + url + '" width="580" height="500" frameborder="0"></iframe></div>');
+                var dialog = myradio.createDialog('Manage Library', '<iframe src="' + url + '" width="580" height="500" frameborder="0"></iframe></div>');
                 return false;
             }
         );

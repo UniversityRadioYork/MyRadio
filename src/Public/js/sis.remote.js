@@ -37,7 +37,7 @@ var server = {
     connect: function() {
         $.ajax(
             {
-                url: myury.makeURL('SIS', 'remote'),
+                url: myradio.makeURL('SIS', 'remote'),
                 method: 'POST',
                 data: server.getQueryString(),
                 cache: false,

@@ -13,7 +13,7 @@ $(document).ready(
                     var value = $(this).val();
                     $.ajax(
                         {
-                            url: myury.makeURL('Scheduler', 'a-findshowbytitle'),
+                            url: myradio.makeURL('Scheduler', 'a-findshowbytitle'),
                             data: {term: value, limit: 100},
                             success: function(data) {
                                 if (data.length >= 1) {

@@ -14,7 +14,7 @@ var webcam = {
             {
                 type: 'get',
                 cache: false,
-                url: myury.makeURL('Webcam', 'a-trackViewer'),
+                url: myradio.makeURL('Webcam', 'a-trackViewer'),
                 success: function(data) {
                     var sub = 0;
                     var time = '';

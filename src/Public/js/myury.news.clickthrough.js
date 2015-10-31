@@ -15,14 +15,14 @@ $(document).ready(
         body.innerHTML = news.content;
         body.appendChild(footer);
 
-        var button = myury.closeButton();
+        var button = myradio.closeButton();
         button.className = 'btn btn-primary';
         button.innerHTML = 'Got it!';
         button.addEventListener(
             'click', function() {
                 $.ajax(
                     {
-                        url: myury.makeURL('MyRadio', 'a-readnews'),
+                        url: myradio.makeURL('MyRadio', 'a-readnews'),
                         type: 'post',
                         data: 'newsentryid='+news.newsentryid
                     }
@@ -30,6 +30,6 @@ $(document).ready(
             }
         );
 
-        myury.createDialog("Latest news", body, [button, myury.closeButton()]);
+        myradio.createDialog("Latest news", body, [button, myradio.closeButton()]);
     }
 );

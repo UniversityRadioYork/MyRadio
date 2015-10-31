@@ -50,7 +50,7 @@ $('#timeslots').on(
                     $('#signin-list').show().html('Loading...');
                     $.ajax(
                         {
-                            url: myury.makeURL('MyRadio', 'a-timeslotSignin'),
+                            url: myradio.makeURL('MyRadio', 'a-timeslotSignin'),
                             data: {timeslotid: $(this).val()},
                             success: function(data) {
                                 $('#signin-list').html('Sign in to your show:<br>');

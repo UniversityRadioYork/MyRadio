@@ -44,9 +44,9 @@ window.MyRadioForm = {
                         return local.memberid == remote.memberid;
                     },
                     prefetch: {
-                        url: myury.makeURL('MyRadio', 'a-findmember', {term: null, limit: 500})
+                        url: myradio.makeURL('MyRadio', 'a-findmember', {term: null, limit: 500})
                     },
-                    remote: myury.makeURL('MyRadio', 'a-findmember', {limit: 25, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+                    remote: myradio.makeURL('MyRadio', 'a-findmember', {limit: 25, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
                 }
             );
             memberLookup.initialize();
@@ -105,9 +105,9 @@ window.MyRadioForm = {
                         return local.trackid == remote.trackid;
                     },
                     prefetch: {
-                        url: myury.makeURL('MyRadio', 'a-findtrack', {term: null, limit: 500})
+                        url: myradio.makeURL('MyRadio', 'a-findtrack', {term: null, limit: 500})
                     },
-                    remote: myury.makeURL('MyRadio', 'a-findtrack', {limit: 25, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+                    remote: myradio.makeURL('MyRadio', 'a-findtrack', {limit: 25, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
                 }
             );
             trackLookup.initialize();
@@ -162,9 +162,9 @@ window.MyRadioForm = {
                         return local.title == remote.title;
                     },
                     prefetch: {
-                        url: myury.makeURL('MyRadio', 'a-findartist', {term: null, limit: 500})
+                        url: myradio.makeURL('MyRadio', 'a-findartist', {term: null, limit: 500})
                     },
-                    remote: myury.makeURL('MyRadio', 'a-findartist', {limit: 25, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+                    remote: myradio.makeURL('MyRadio', 'a-findartist', {limit: 25, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
                 }
             );
             artistLookup.initialize();
@@ -221,9 +221,9 @@ window.MyRadioForm = {
                         return local.title == remote.title;
                     },
                     prefetch: {
-                        url: myury.makeURL('MyRadio', 'a-findalbum', {term: null, limit: 500})
+                        url: myradio.makeURL('MyRadio', 'a-findalbum', {term: null, limit: 500})
                     },
-                    remote: myury.makeURL('MyRadio', 'a-findalbum', {limit: 25, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+                    remote: myradio.makeURL('MyRadio', 'a-findalbum', {limit: 25, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
                 }
             );
             albumLookup.initialize();
@@ -468,7 +468,7 @@ window.MyRadioForm = {
      */
         $('#myradiofrm-file-upload-iframe').attr(
             'src',
-            myury.makeURL(
+            myradio.makeURL(
                 'MyRadio', 'a-getuploadprogress', {
                     id: $('#UPLOAD_IDENTIFIER').val(),
                     1: (new Date()).getTime()

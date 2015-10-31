@@ -15,7 +15,7 @@ var SIS = function(container) {
         connect = function() {
             $.ajax(
                 {
-                    url: myury.makeURL('SIS', 'remote'),
+                    url: myradio.makeURL('SIS', 'remote'),
                     method: 'POST',
                     data: params,
                     cache: false,

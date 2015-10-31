@@ -163,7 +163,7 @@ window.NIPSWeb = {
                         modal: true,
                         buttons: {
                             'Go Back': function() {
-                                window.location = myury.makeURL(mConfig.default_module, mConfig.default_action);
+                                window.location = myradio.makeURL(mConfig.default_module, mConfig.default_action);
                             }
                         },
                         width: 600,

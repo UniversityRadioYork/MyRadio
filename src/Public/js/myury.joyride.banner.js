@@ -10,7 +10,7 @@ $('#myury-joyride').joyride(
                 }
             }
 
-            $.get(myury.makeURL('MyRadio', 'a-endjoyride'));
+            $.get(myradio.makeURL('MyRadio', 'a-endjoyride'));
         }
     }
 );

@@ -12,7 +12,7 @@ var Messages = function() {
                         //This is the first time the message has been opened. Mark as read
                         $.ajax(
                             {
-                                url: myury.makeURL('SIS', 'messages.markread', {'id': message['id']})
+                                url: myradio.makeURL('SIS', 'messages.markread', {'id': message['id']})
                             }
                         );
                         unreadMessages--;
@@ -26,7 +26,7 @@ var Messages = function() {
                             location = location + ' (' + message.location[1] + ')';
                         }
                     }
-                    myury.createDialog('Message', message.body + '<hr>' + location, [myury.closeButton()]);
+                    myradio.createDialog('Message', message.body + '<hr>' + location, [myradio.closeButton()]);
                 }
             );
         };

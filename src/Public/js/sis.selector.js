@@ -22,18 +22,18 @@ var Selector = function() {
             }
             
             if (locked) {
-                myury.createDialog('Error', 'Could not change studio.<br>Studio selector is currently locked out.');
+                myradio.createDialog('Error', 'Could not change studio.<br>Studio selector is currently locked out.');
                 return;
             }
 
             $.get(
-                myury.makeURL('SIS', 'selector.set'), {src: studio}, function(data) {
+                myradio.makeURL('SIS', 'selector.set'), {src: studio}, function(data) {
                     if (data['error'] == 'locked') {
-                        myury.createDialog('Selector Error', 'Could not change studio; studio selector is currently locked out.');
+                        myradio.createDialog('Selector Error', 'Could not change studio; studio selector is currently locked out.');
                         return;
                     }
                     if (data['error']) {
-                        myury.createDialog('Selector Error', data['error']);
+                        myradio.createDialog('Selector Error', data['error']);
                         return;
                     }
                     update.call(this, data);
