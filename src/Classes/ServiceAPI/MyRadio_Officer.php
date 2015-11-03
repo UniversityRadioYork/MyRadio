@@ -729,10 +729,10 @@ class MyRadio_Officer extends ServiceAPI
                 $data['permissions'] = $this->getPermissions();
             },
             'history' => function(&$data) {
-                $data['history'] = CoreUtils::dataSourceParser($this->getHistory());
+                $data['history'] = CoreUtils::dataSourceParser($this->getHistory(), $mixins);
             },
             'current' => function(&$data) {
-                $data['current'] = CoreUtils::dataSourceParser($this->getCurrentHolders());
+                $data['current'] = CoreUtils::dataSourceParser($this->getCurrentHolders(), $mixins);
             }
         ];
 
