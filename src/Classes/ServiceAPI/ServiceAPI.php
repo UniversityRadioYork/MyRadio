@@ -96,7 +96,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
     protected function addMixins(&$data, $mixins, $mixin_funcs, $strict = false) {
         foreach ($mixins as $mixin) {
             if (array_key_exists($mixin, $mixin_funcs)) {
-                $mixin_funcs[$mixin]($data);
+                $mixin_funcs[$mixin]($data, $mixins);
             } elseif ($strict) {
                 throw new MyRadioException('Unsupported mixin ' . $mixin, 400);
             }
