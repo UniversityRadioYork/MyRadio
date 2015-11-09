@@ -10,7 +10,7 @@ use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Selector;
 
 $src = (isset($_REQUEST['src'])) ? (int) $_REQUEST['src'] : 0;
-$status = MyRadio_Selector::getStatusAtTime(time());
+$status = MyRadio_Selector::getStatusAtTime();
 
 if (($src <= 0) || ($src > 8)) {
     $data = ['error' => 'Invalid Selection'];
@@ -29,7 +29,7 @@ if (($src <= 0) || ($src > 8)) {
     if (!empty($response)) {
         $data = $response;
     } else {
-        $data = MyRadio_Selector::getStatusAtTime(time());
+        $data = MyRadio_Selector::getStatusAtTime();
     }
 }
 

@@ -82,18 +82,16 @@ class APCProvider implements \MyRadio\Iface\CacheProvider
         return apc_fetch($this->getKeyPrefix().$key);
     }
 
-    public function getAll($prefix = '')
+    public function getAll($keys)
     {
         if (!$this->enable) {
             return [];
         }
-        
-        $prefix = preg_quote($this->getKeyPrefix() . $prefix);
 
         $result = [];
-        $it = new \APCIterator('user', '/^' . $prefix . '/', APC_ITER_VALUE);
-        foreach ($it as $row) {
-            $result[] = $row['value'];
+
+        foreach ($keys as $key) {
+            $result[] = $this->get($key);
         }
 
         return $result;

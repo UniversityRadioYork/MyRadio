@@ -163,11 +163,14 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         return MyRadio_Season::getInstance($this->season_id);
     }
 
+    /**
+     * Get the microsite URI
+     *
+     * @return String
+     */
     public function getWebpage()
     {
-        $season = $this->getSeason();
-
-        return 'http://ury.org.uk/schedule/shows/timeslots/' . $this->timeslot_id;
+        return '/schedule/shows/timeslots/' . $this->timeslot_id;
     }
 
     public function getPhoto()
@@ -264,15 +267,38 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         return $r;
     }
 
+    /**
+     * Searches searchable *text* metadata for the specified value. Does not work for image metadata.
+     *
+     * @todo effective_from/to not yet implemented
+     *
+     * @param String $query          The query value.
+     * @param Array  $string_keys    The metadata keys to search
+     * @param int    $effective_from UTC Time to search from.
+     * @param int    $effective_to   UTC Time to search to.
+     *
+     * @return Array The shows that match the search terms
+     */
+    public static function searchMeta($query, $string_keys = null, $effective_from = null, $effective_to = null)
+    {
+        if (is_null($string_keys)) {
+            $string_keys = ['title', 'description', 'tag'];
+        }
+
+        $r = parent::searchMeta($query, $string_keys, $effective_from, $effective_to, 'schedule.timeslot_metadata', 'show_season_timeslot_id');
+        return self::resultSetToObjArray($r);
+    }
+
     public function toDataSource()
     {
         return array_merge(
             $this->getSeason()->toDataSource(), [
-            'id' => $this->getID(),
+            'timeslot_id' => $this->getID(),
             'timeslot_num' => $this->getTimeslotNumber(),
             'title' => $this->getMeta('title'),
             'description' => $this->getMeta('description'),
             'tags' => $this->getMeta('tag'),
+            'time' => $this->getStartTime(),
             'start_time' => CoreUtils::happyTime($this->getStartTime()),
             'duration' => $this->getDuration(),
             'mixcloud_status' => $this->getMeta('upload_state'),
@@ -425,7 +451,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     * @param  int $year   Default to current Calendar year.
     * @return MyRadio_Timeslot[]
     */
-    public static function getWeekSchedule($weekno, $year = null)
+    public static function get9DaySchedule($weekno, $year = null)
     {
         self::wakeup();
         if ($year === null) {
@@ -436,7 +462,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $weekno = '0' . $weekno;
         }
 
-        $key = 'MyRadioScheduleFor' . $year . 'W' . $weekno;
+        $key = 'MyRadio9DayScheduleFor' . $year . 'W' . $weekno;
         $cache = self::$cache->get($key);
         if (!$cache) {
             $startOfWeek = strtotime($year . 'W' . $weekno);
@@ -461,6 +487,65 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             );
 
             $cache = self::resultSetToObjArray($result);
+
+            self::$cache->set($key, $cache, 3600);
+        }
+        return $cache;
+    }
+
+    /**
+    * Returns Timeslots scheduled for the given week number.
+    *
+    * Weeks are from Monday - Sunday (URY days start at 6am)
+    * A Timeslot that starts before the start of the period but ends during
+    * will be included. The same is true for ones that end after the period.<br>
+    * It is guaranteed that the results will be in order of start time.
+    *
+    * @param  int $weekno An ISO-8601 Week Number (http://en.wikipedia.org/wiki/ISO_8601#Week_dates)
+    * @param  int $year   Default to current Calendar year.
+    * @return MyRadio_Timeslot[]
+    */
+    public static function getWeekSchedule($weekno, $year = null)
+    {
+        self::wakeup();
+        if ($year === null) {
+            $year = (int)gmdate('Y');
+        }
+
+        if ($weekno < 10) {
+            $weekno = '0' . $weekno;
+        }
+
+        $key = 'MyRadioWeekScheduleFor' . $year . 'W' . $weekno;
+        $cache = self::$cache->get($key);
+        if (!$cache) {
+            $startOfWeek = strtotime($year . 'W' . $weekno) + (60*60*6); // Monday 06:00:00
+            $endOfWeek = $startOfWeek + (86400 * 7) - 1; //Next Monday 05:59:59
+
+            $startTimestamp = CoreUtils::getTimestamp($startOfWeek);
+            $endTimestamp = CoreUtils::getTimestamp($endOfWeek);
+
+            $result = self::$db->fetchAll(
+                'SELECT show_season_timeslot_id, EXTRACT(ISODOW FROM (start_time - interval \'6 hours\')) as day
+                FROM schedule.show_season_timeslot
+                INNER JOIN schedule.show_season USING (show_season_id)
+                INNER JOIN schedule.show USING (show_id)
+                WHERE (
+                    (start_time + duration >= $1 AND start_time + duration <= $2) OR
+                    (start_time >= $1 AND start_time <= $2)
+                )
+                AND show_type_id = 1
+                ORDER BY start_time ASC',
+                [$startTimestamp, $endTimestamp]
+            );
+
+            $schedule = [];
+
+            foreach ($result as $item) {
+                $schedule[$item['day']][] = self::getInstance($item['show_season_timeslot_id']);
+            }
+
+            $cache = $schedule;
 
             self::$cache->set($key, $cache, 3600);
         }
@@ -499,7 +584,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     'start_time' => $timeslot->getStartTime(),
                     'end_time' => $timeslot->getEndTime(),
                     'presenters' => $timeslot->getPresenterString(),
-                    'url' => $timeslot->getWebpage()
+                    'url' => $timeslot->getWebpage(),
+                    'id' => $timeslot->getID()
                 ]
             ];
             $next = $timeslot->getTimeslotAfter($filter);
@@ -530,7 +616,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     'start_time' => $next->getStartTime(),
                     'end_time' => $next->getEndTime(),
                     'presenters' => $next->getPresenterString(),
-                    'url' => $next->getWebpage()
+                    'url' => $next->getWebpage(),
+                    'id' => $next->getID()
                 ];
             }
 
@@ -846,6 +933,46 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         }
 
         return $result;
+    }
+
+    /**
+     * Sends a message to the timeslot for display in SIS
+     *
+     * @param  string $message the message to be sent
+     * @return pg_result
+     */
+    public function sendMessage($message)
+    {
+        $message = trim($message);
+
+        if (empty($message)) {
+            throw new MyRadioException('Message is empty.', 400);
+        }
+
+        $junk = SIS_Utils::checkMessageSpam($message);
+        $warning = SIS_Utils::checkMessageSocialEngineering($message);
+
+        if ($warning !== false) {
+            $prefix = '<p class="bg-danger">'.$warning.'</p> ';
+        } else {
+            $prefix = '';
+        }
+
+        $source = $_SERVER['REMOTE_ADDR'];
+
+        return self::$db->query(
+            'INSERT INTO sis2.messages (timeslotid, commtypeid, sender, subject, content, statusid, comm_source)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [
+                $this->getID(),             // timeslot
+                3,                          // commtypeid : website
+                'MyRadio',                  // sender
+                substr($message, 0, 144),   // subject : trancated message
+                $prefix . $message,         // content : message with prefix
+                $junk ? 4 : 1,              // statusid : junk or unread
+                $source                     // comm_source : IP
+            ]
+        );
     }
 
     /**

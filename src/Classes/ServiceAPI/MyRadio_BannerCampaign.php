@@ -401,6 +401,44 @@ class MyRadio_BannerCampaign extends ServiceAPI
     }
 
     /**
+     * Gets all Banner Campaigns that are currently active. That is, they have started and have not expired.
+     * It returns them even when there isn't currently a Banner Timeslot for the Campaign running.
+     * @return MyRadio_BannerCampaign[]
+     */
+    public static function getActiveBannerCampaigns()
+    {
+        return self::resultSetToObjArray(
+            self::$db->fetchColumn(
+                'SELECT banner_campaign_id FROM website.banner_campaign
+                WHERE effective_from < now()
+                AND (effective_to IS NULL
+                    OR effective_to > now())'
+            )
+        );
+    }
+
+    /**
+     * Gets all Banner Campaigns that are currently live. That is they are active and have timeslots at the current time.
+     * @return MyRadio_BannerCampaign[]
+     */
+    public static function getLiveBannerCampaigns()
+    {
+        return self::resultSetToObjArray(
+            self::$db->fetchColumn(
+                'SELECT website.banner_campaign.banner_campaign_id FROM website.banner_campaign, website.banner_timeslot
+                WHERE website.banner_campaign.banner_campaign_id = website.banner_timeslot.banner_campaign_id
+                AND effective_from < now()
+                AND (effective_to IS NULL
+                    OR effective_to > now())
+                AND day = EXTRACT(ISODOW FROM now())
+                AND start_time < localtime
+                AND end_time > localtime
+                ORDER BY "order" ASC'
+            )
+        );
+    }
+
+    /**
      * Get all the possible Banner Campaign Locations.
      * @return Array
      */

@@ -11,6 +11,7 @@ use \MyRadio\Config;
 use \MyRadio\Iface\APICaller;
 use \MyRadio\MyRadioEmail;
 use \MyRadio\MyRadioException;
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioDefaultAuthenticator;
@@ -414,16 +415,17 @@ class MyRadio_User extends ServiceAPI implements APICaller
         if (!$this->permissions) {
             //Get the user's permissions
             $permissions = array_map(
-                'intval', self::$db->fetchColumn(
+                'intval',
+                self::$db->fetchColumn(
                     'SELECT lookupid FROM auth_officer
-                WHERE officerid IN (SELECT officerid FROM member_officer
-                WHERE memberid=$1
-                AND from_date <= now()
-                AND (till_date IS NULL OR till_date > now()- interval \'1 month\'))
-                UNION SELECT lookupid FROM auth
-                WHERE memberid=$1
-                AND starttime < now()
-                AND (endtime IS NULL OR endtime >= now())',
+                    WHERE officerid IN (SELECT officerid FROM member_officer
+                    WHERE memberid=$1
+                    AND from_date <= now()
+                    AND (till_date IS NULL OR till_date > now()- interval \'1 month\'))
+                    UNION SELECT lookupid FROM auth
+                    WHERE memberid=$1
+                    AND starttime < now()
+                    AND (endtime IS NULL OR endtime >= now())',
                     [$this->getID()]
                 )
             );
@@ -756,9 +758,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
             }
         }
 
-        if ($itemid === -1) {
-            $itemid = $_SESSION['memberid'];
-        }
         if (isset($_SESSION['memberid']) && $itemid == $_SESSION['memberid']) {
             if (!self::$current_user) {
                 self::$current_user = parent::getInstance($itemid);
@@ -1186,7 +1185,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             VALUES ($1, $2, $3)',
             [(float) $amount, $year, $this->getID()]
         );
-        $this->payment[] = ['year' => $year, 'amount' => (float) $amount];
+        $this->payment[] = ['year' => $year, 'paid' => $amount];
         $this->permissions = null; // Clear local permissions cache
         $this->updateCacheObject();
 
@@ -1695,7 +1694,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * Activating a membership re-activates basic access to web services, and
      * renews their mailing list subscriptions.
      *
-     * @param  int $paid
+     * @param  float $paid
      * @return boolean
      */
     public function activateMemberThisYear($paid = 0)
@@ -1735,11 +1734,34 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
         if ($user !== null && $user->activateMemberThisYear($paid)) {
             /**
- * @todo send welcome email to already existing users?
-*/
+             * @todo send welcome email to already existing users?
+             */
             return $user;
         } else {
             return self::create($fname, $sname, $eduroam, $sex, $collegeid, $email, $phone, $receive_email, $paid);
+        }
+    }
+
+    /**
+     * createOrActivate a user with protection behind recaptcha
+     *
+     * @param  string $fname         The User's first name.
+     * @param  string $sname         The User's last name.
+     * @param  string $eduroam       The User's @york.ac.uk address.
+     * @param  char   $sex           The User's gender.
+     * @param  int    $collegeid     The User's college.
+     * @param  string $email         The User's non @york.ac.uk address.
+     * @param  string $phone         The User's phone number.
+     * @return mixed                 MyRadio_User if successful, Array of errors if not
+     */
+    public static function createActivateAPI($fname, $sname, $captcha, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null)
+    {
+        $captchaResponse = AuthUtils::verifyRecaptcha($captcha, $_SERVER['REMOTE_ADDR']);
+
+        if ($captchaResponse === true) {
+            return self::createOrActivate($fname, $sname, $eduroam, $sex, $collegeid, $email, $phone);
+        } else {
+            return $captchaResponse;
         }
     }
 
@@ -1952,7 +1974,16 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 $data['locked'] = $this->getAccountLocked();
                 $data['college'] = $this->getCollege();
                 $data['receive_email'] = $this->getReceiveEmail();
+                $data['email'] = $this->getEmail();
+                $data['phone'] = $this->getPhone();
+                $data['eduroam'] = $this->getEduroam();
+                $data['local_alias'] = $this->getLocalAlias();
                 $data['local_name'] = $this->getLocalName();
+                $data['last_login'] = $this->getLastLogin();
+            },
+            'payment' => function(&$data) {
+                $data['payment'] = $this->getAllPayments();
+                $data['is_currently_paid'] = $this->isCurrentlyPaid();
             }
         ];
 
@@ -1961,7 +1992,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'fname' => $this->getFName(),
             'sname' => $this->getSName(),
             'sex' => $this->getSex(),
-            'public_email' => $this->getEmail(),
+            'public_email' => $this->getPublicEmail(),
             'url' => $this->getURL()
         ];
 

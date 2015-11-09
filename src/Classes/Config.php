@@ -502,6 +502,25 @@ final class Config
     ];
 
     /**
+     * Array of spam strings to check messages for
+     * @var string[]
+     */
+    public static $spam = [];
+
+    /**
+     * Array of social engineering strings to check messages for
+     * @var string[]
+     */
+    public static $social_engineering_trigger = [];
+
+    /**
+     * Warning text to display on suspected social engineering attacks
+     * @var string
+     */
+    public static $social_engineering_warning = 'Beware of Social Engineering, someone may be trying to disrupt your show.
+    Management and Computing will never send official communication through SIS.';
+
+    /**
      * URL of the news provider
      * @var string
      */
@@ -511,7 +530,7 @@ final class Config
      * Host that the news provider must be accessed from
      * @var string
      */
-    public static $news_proxy = "wc10.york.ac.uk:8080";
+    public static $news_proxy = "";
 
     /**
      * URY's Membership Fee

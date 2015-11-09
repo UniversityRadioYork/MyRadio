@@ -27,7 +27,7 @@
         {% endif %}
       </td>
     </tr>
-    {% if user.collegeid != 10 %}
+    {% if user.college is defined %}
       <tr>
         <td><b>College:</b></td>
         <td>{{user.college}}</td>
@@ -51,7 +51,7 @@
     {% endif %}
     <tr>
       <td><b>Emails Go To:</b></td>
-      <td><a href="mailto:{{user.email}}">{{user.email}}</a></td>
+      <td><a href="mailto:{{user.email ?: user.public_email}}">{{user.email ?: user.public_email}}</a></td>
     </tr>
     {% if user.local_alias != '' %}
       <tr>
@@ -77,11 +77,11 @@
       </td>
     </tr>
     {% endif %}
-    {% if user.account_locked is defined %}
+    {% if user.locked is defined %}
     <tr>
       <td><b>Account Locked:</b></td>
       <td>
-        {% if user.account_locked %}
+        {% if user.locked %}
           Yes
         {% else %}
           No

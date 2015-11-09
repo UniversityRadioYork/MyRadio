@@ -11,14 +11,13 @@ use \MyRadio\ServiceAPI\MyRadio_Selector;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 use \MyRadio\MyRadio\MyRadioNews;
 
-$sel = new MyRadio_Selector();
 $data = [
-    'selector' => $sel->query(),
+    'selector' => MyRadio_Selector::setQuery(),
     'shows' => MyRadio_Timeslot::getCurrentAndNext(null, 2),
     'breaking' => MyRadioNews::getLatestNewsItem(3),
     'ob' => MyRadio_Selector::remoteStreams(),
-    'silence' => $sel->isSilence(),
-    'obit' => $sel->isObitHappening()
+    'silence' => MyRadio_Selector::isSilence(),
+    'obit' => MyRadio_Selector::isObitHappening()
 ];
 
 URLUtils::dataToJSON($data);

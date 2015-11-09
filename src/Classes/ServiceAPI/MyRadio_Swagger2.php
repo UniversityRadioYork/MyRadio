@@ -15,6 +15,7 @@ use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 
 /**
  * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/
@@ -48,11 +49,19 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                 $args = $_GET;
                 break;
             case 'post':
-                $args = $_POST;
+                if (substr_count($_SERVER["CONTENT_TYPE"],'application/json')) {
+                    $args = json_decode(file_get_contents("php://input"), true);
+                } else {
+                    $args = $_POST;
+                }
                 break;
             case 'put':
                 //ya rly
-                parse_str(file_get_contents("php://input"), $args);
+                if (substr_count($_SERVER["CONTENT_TYPE"],'application/json')) {
+                    $args = json_decode(file_get_contents("php://input"), true);
+                } else {
+                    parse_str(file_get_contents("php://input"), $args);
+                }
                 break;
         }
 
@@ -61,8 +70,10 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             $args['mixins'] = array_filter(explode(',', $args['mixins']));
         }
 
+        $parameters = $method->getParameters();
+
         if ($op === 'get' && $method->getNumberOfRequiredParameters() === 1) {
-            $args[$method->getParameters()[0]->getName()] = $arg0;
+            $args[$parameters[0]->getName()] = $arg0;
         }
 
         return $args;
@@ -115,7 +126,13 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             throw new MyRadioException("$class has no child $method.", 404);
         }
 
-        if (!isset($paths[$path][$op])) {
+
+        $options = strtoupper(implode(', ', array_keys($paths[$path]))) . ', OPTIONS';
+        if ($op === 'options') {
+            header('Access-Control-Allow-Methods: ' . $options); // This is for CORS in browser
+            URLUtils::nocontent();
+        } elseif (!isset($paths[$path][$op])) {
+            header('Allow: ' . $options); // This is reference for HTTP 405
             throw new MyRadioException("$path does not have a valid $op handler.", 405);
         }
 
@@ -376,9 +393,24 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             } elseif (CoreUtils::startsWith($name, 'get')) {
                 $op = 'get';
                 $public_name = '/' . strtolower(substr($name, 3));
+            } elseif (CoreUtils::startsWith($name, 'is')) {
+                $op = 'get';
+                $public_name = '/' . strtolower($name);
             } elseif ($name === 'create') {
                 $op = 'post';
                 $public_name = '';
+            } elseif ($name === 'testCredentials') {
+                $op = 'post';
+                $public_name = '/' . strtolower($name);
+            } elseif (CoreUtils::startsWith($name, 'create')) {
+                $op = 'post';
+                $public_name = '/' . strtolower($name);
+            } elseif (CoreUtils::startsWith($name, 'add')) {
+                $op = 'post';
+                $public_name = '/' . strtolower($name);
+            } elseif ($method->isStatic()) {
+                $op = 'get';
+                $public_name = '/' . strtolower($name);
             } else {
                 $op = 'put';
                 $public_name = '/' . strtolower($name);

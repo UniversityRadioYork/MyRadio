@@ -30,8 +30,7 @@ if ($stage == 3) {
 }
 
 if ($stage == 0) {
-    $sel = new MyRadio_Selector();
-    $sel->startObit();
+    MyRadio_Selector::setObit();
 }
 
 CoreUtils::getTemplateObject()->setTemplate('Scheduler/stop.twig')

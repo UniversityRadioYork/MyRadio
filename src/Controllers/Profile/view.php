@@ -19,34 +19,32 @@ $user = MyRadio_User::getInstance(empty($_REQUEST['memberid']) ? -1 : $_REQUEST[
 $visitor = MyRadio_User::getInstance();
 
 //Add global user data
-$userData = $user->toDataSource();
+$mixins = [];
+
+if ($user->getID() === $visitor->getID() || AuthUtils::hasPermission(AUTH_VIEWOTHERMEMBERS)) {
+    $mixins = ['personal_data', 'officerships', 'payment'];
+} elseif ($user->isOfficer()) {
+    // A non-officer viewing an officer
+    $mixins = ['officerships'];
+}
+
+$userData = $user->toDataSource($mixins);
+
 $userData['training'] = CoreUtils::dataSourceParser($user->getAllTraining(true));
 $userData['training_avail'] = CoreUtils::dataSourceParser(
     MyRadio_TrainingStatus::getAllAwardableTo($user)
 );
 
+// A non-officer viewing an officer
 if ($user->isOfficer()) {
     $userData['phone'] = $user->getPhone();
-    $userData['email'] = $user->getPublicEmail();
-}
-
-if (AuthUtils::hasPermission(AUTH_VIEWOTHERMEMBERS)) {
-    $userData['email'] = $user->getEmail();
-    $userData['eduroam'] = $user->getEduroam();
-    $userData['local_alias'] = $user->getLocalAlias();
-    $userData['local_name'] = $user->getLocalName();
-    $userData['account_locked'] = $user->getAccountLocked();
-    $userData['last_login'] = $user->getLastLogin();
-    $userData['payment'] = $user->getAllPayments();
-    $userData['receive_email'] = $user->getReceiveEmail();
-    $userData['is_currently_paid'] = $user->isCurrentlyPaid();
 }
 
 $template = CoreUtils::getTemplateObject()->setTemplate('Profile/user.twig')
     ->addVariable('title', 'View Profile')
     ->addVariable('user', $userData);
 
-if ($user->getID() === $visitor->getID() or $visitor->hasAuth(AUTH_EDITANYPROFILE)) {
+if ($user->getID() === $visitor->getID() || $visitor->hasAuth(AUTH_EDITANYPROFILE)) {
     $template->addVariable(
         'editurl',
         '<a href="'

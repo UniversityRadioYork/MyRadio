@@ -682,9 +682,14 @@ EOT
         return CoreUtils::happyTime($this->submitted);
     }
 
+    /**
+     * Get the microsite URI
+     *
+     * @return String
+     */
     public function getWebpage()
     {
-        return 'http://ury.org.uk/show/' . $this->getShow()->getID() . '/' . $this->getID();
+        return '/schedule/shows/seasons/' . $this->getID();
     }
 
     public function getRequestedTimes()
@@ -781,7 +786,7 @@ EOT
 
         return array_merge(
             $this->getShow()->toDataSource(false), [
-                'id' => $this->getID(),
+                'season_id' => $this->getID(),
                 'season_num' => $this->getSeasonNumber(),
                 'title' => $this->getMeta('title'),
                 'description' => $this->getMeta('description'),
@@ -1043,5 +1048,27 @@ $times
         }
 
         return [($signed_in / $total) * 100, $total - $signed_in];
+    }
+
+    /**
+     * Searches searchable *text* metadata for the specified value. Does not work for image metadata.
+     *
+     * @todo effective_from/to not yet implemented
+     *
+     * @param String $query          The query value.
+     * @param Array  $string_keys    The metadata keys to search
+     * @param int    $effective_from UTC Time to search from.
+     * @param int    $effective_to   UTC Time to search to.
+     *
+     * @return Array The shows that match the search terms
+     */
+    public static function searchMeta($query, $string_keys = null, $effective_from = null, $effective_to = null)
+    {
+        if (is_null($string_keys)) {
+            $string_keys = ['title', 'description', 'tag'];
+        }
+
+        $r = parent::searchMeta($query, $string_keys, $effective_from, $effective_to, 'schedule.season_metadata', 'show_season_id');
+        return self::resultSetToObjArray($r);
     }
 }

@@ -35,8 +35,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             show.memberid AS owner,
             array_to_json(metadata.metadata_key_id) AS metadata_keys,
             array_to_json(metadata.metadata_value) AS metadata_values,
-            array_to_json(image_metadata.metadata_key_id) AS image_metadata_keys,
-            array_to_json(image_metadata.metadata_value) AS image_metadata_values,
+            array_to_json(image_metadata.image_metadata_key_id) AS image_metadata_keys,
+            array_to_json(image_metadata.image_metadata_value) AS image_metadata_values,
             array_to_json(credits.credit_type_id) AS credit_types,
             array_to_json(credits.creditid) AS credits,
             array_to_json(genre.genre_id) AS genres,
@@ -59,8 +59,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             (
                 SELECT
                     show_id,
-                    array_agg(metadata_key_id) AS metadata_key_id,
-                    array_agg(metadata_value) AS metadata_value
+                    array_agg(metadata_key_id) AS image_metadata_key_id,
+                    array_agg(metadata_value) AS image_metadata_value
                 FROM schedule.show_image_metadata
                 WHERE effective_from <= NOW()
                     AND (effective_to IS NULL OR effective_to >= NOW())
@@ -547,9 +547,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         return $this->show_id;
     }
 
+    /**
+     * Get the microsite URI
+     *
+     * @return String
+     */
     public function getWebpage()
     {
-        return '//ury.org.uk/schedule/shows/' . $this->getID();
+        return '/schedule/shows/' . $this->getID();
     }
 
     /**
@@ -706,8 +711,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     {
         $key = 'MyRadio_Show_AllShowsFetcher_last_' . $show_type_id . '_' . (int) $current_term_only;
 
-        if (self::$cache->get($key)) {
-            $shows = self::$cache->getAll(self::getCacheKey(''));
+        $keys = self::$cache->get($key);
+
+        if ($keys) {
+            $shows = self::$cache->getAll($keys);
         } else {
             $sql = self::BASE_SHOW_SQL . ' WHERE show_type_id=$1';
             $params = [$show_type_id];
@@ -723,13 +730,15 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $result = self::$db->fetchAll($sql, $params);
 
             $shows = [];
+            $show_keys = [];
             foreach ($result as $row) {
                 $show = new MyRadio_Show($row);
                 $show->updateCacheObject();
                 $shows[] = $show;
+                $show_keys[] = self::getCacheKey($show->getID());
             }
 
-            self::$cache->set($key, 'true');
+            self::$cache->set($key, $show_keys);
         }
 
         return $shows;
@@ -820,6 +829,28 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         self::$cache->set($key, $top, 86400);
 
         return $top;
+    }
+
+    /**
+     * Searches searchable *text* metadata for the specified value. Does not work for image metadata.
+     *
+     * @todo effective_from/to not yet implemented
+     *
+     * @param String $query          The query value.
+     * @param Array  $string_keys    The metadata keys to search
+     * @param int    $effective_from UTC Time to search from.
+     * @param int    $effective_to   UTC Time to search to.
+     *
+     * @return Array The shows that match the search terms
+     */
+    public static function searchMeta($query, $string_keys = null, $effective_from = null, $effective_to = null)
+    {
+        if (is_null($string_keys)) {
+            $string_keys = ['title', 'description', 'tag'];
+        }
+
+        $r = parent::searchMeta($query, $string_keys, $effective_from, $effective_to, 'schedule.show_metadata', 'show_id');
+        return self::resultSetToObjArray($r);
     }
 
     public function toDataSource($full = true)
