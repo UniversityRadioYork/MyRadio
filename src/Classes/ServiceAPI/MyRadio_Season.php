@@ -399,21 +399,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             ->editMode(
                 $this->getID(),
                 [
-                    'title' => $this->getMeta('title'),
                     'description' => $this->getMeta('description'),
-                    'tags' => implode(' ', $this->getMeta('tag')),
-                    'credits.member' => array_map(
-                        function ($ar) {
-                            return $ar['User'];
-                        },
-                        $this->getCredits()
-                    ),
-                    'credits.credittype' => array_map(
-                        function ($ar) {
-                            return $ar['type'];
-                        },
-                        $this->getCredits()
-                    )
+                    'tags' => implode(' ', $this->getMeta('tag'))
                 ]
             );
     }
