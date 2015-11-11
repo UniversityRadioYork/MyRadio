@@ -34,7 +34,7 @@
                   <li><a href="{{MyRadio.makeURL(config, 'Profile')}}"><span class="glyphicon glyphicon-user"></span> My Profile</a></li>
                   {% if impersonator %}
                     <li class="divider"></li>
-                    <li class="dropdown-header">Impersonator: {{impersonator | raw }}</li>
+                    <li class="dropdown-header">Impersonator: {{impersonator}}</li>
                     <li><a href="{{MyRadio.makeURL(config, 'MyRadio', 'impersonate')}}"><span class="glyphicon glyphicon-eye-close"></span> Unimpersonate</a></li>
                   {% endif %}
                   <li><a href="{{MyRadio.makeURL(config, 'MyRadio', 'logout')}}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
