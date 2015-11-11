@@ -1,7 +1,7 @@
-{% if field.options.progress and not myury_form_file_progress %}
+{% if field.options.progress and not myradio_form_file_progress %}
 <input type="hidden" name="UPLOAD_IDENTIFIER"
        id="UPLOAD_IDENTIFIER" value="{{field.options.progress_id}}">
-  {% set myury_form_file_progress = true %}
+  {% set myradio_form_file_progress = true %}
 {% endif %}
 {% if display_labels %}<label for="{{frm_name}}-{{field.name}}">{{field.label}}</label>{% endif %}
 <input type="file" class="{{field.class}}{% if field.required %} required{% endif %}"
