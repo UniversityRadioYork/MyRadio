@@ -149,7 +149,7 @@ class MyRadio_Alias extends ServiceAPI
         $data = [
             'alias_id' => $this->getID(),
             'source' => $this->getSource(),
-            'destinations' => CoreUtils::dataSourceParser($this->getDestinations())
+            'destinations' => CoreUtils::dataSourceParser($this->getDestinations(), $mixins)
         ];
 
         return $data;
