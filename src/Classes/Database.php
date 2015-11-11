@@ -182,13 +182,12 @@ class Database
     {
         if (!is_resource($sql)) {
             try {
-                $result = $this->query($sql, $params);
+                $sql = $this->query($sql, $params);
             } catch (MyRadioException $e) {
                 return [];
             }
         }
-
-        return pg_fetch_assoc($result);
+        return pg_fetch_assoc($sql);
     }
 
     /**
