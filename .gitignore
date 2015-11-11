@@ -3,6 +3,7 @@ MyRadio_Config.local.php*
 util/checkpassword.conf
 *.sw[a-z]
 sftp-*.json
+.sync-config.cson
 .tags*
 Thumbs.db
 cache.properties

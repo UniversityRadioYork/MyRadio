@@ -23,9 +23,9 @@ $twig = CoreUtils::getTemplateObject()->setTemplate('Scheduler/myShows.twig')
 
 if (isset($_REQUEST['msg'])) {
     switch ($_REQUEST['msg']) {
-    case 'seasonCreated':
-        $twig->addInfo('Your season application has been submitted for processing.');
-        break;
+        case 'seasonCreated':
+            $twig->addInfo('Your season application has been submitted for processing.');
+            break;
     }
 }
 

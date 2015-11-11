@@ -391,6 +391,11 @@ final class Config
     public static $error_report_email = 'alerts.myradio';
 
     /**
+     * Raven (sentry) DSN
+     */
+    public static $raven_dsn;
+
+    /**
      * The number of seconds an iTones Playlist lock is valid for before it expires.
      * @var int
      */

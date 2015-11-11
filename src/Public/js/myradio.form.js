@@ -356,8 +356,14 @@ window.MyRadioForm = {
         if (typeof tinymce !== 'undefined') {
             tinymce.init(
                 {
-                    selector: "textarea.myury-form-tinymce",
-                    plugins: "anchor autolink charmap code contextmenu fullscreen hr image link lists media tabfocus table wordcount",
+                    selector: "textarea.myradio-form-tinymce",
+                    plugins: "anchor autolink charmap code contextmenu hr image link lists media tabfocus table wordcount",
+                    media_alt_source: false,
+                    menubar: false,
+                    toolbar: "undo redo | styleselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media charmap | code",
+                    invalid_elements: "script",
+                    invalid_styles: "color, font-size, background",
+                    keep_styles: false,
                     relative_urls: false,
                     remove_script_host: false
                 }
@@ -401,7 +407,7 @@ window.MyRadioForm = {
     },
     setUpRepeatingSets: function() {
         //Set up tabular repeating sets
-        $('.myury-form-add-row-button').on(
+        $('.myradio-form-add-row-button').on(
             'click', function() {
                 var new_id = $(this).attr('nextvalue');
                 $('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody tr:first').clone()
