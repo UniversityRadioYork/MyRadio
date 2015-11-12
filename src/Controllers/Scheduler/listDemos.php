@@ -15,13 +15,11 @@ $twig = CoreUtils::getTemplateObject();
 
 $tabledata = [];
 foreach ($demos as $demo) {
-    $demo['join'] = '<a href="'
-        .URLUtils::makeURL(
-            'Scheduler',
-            'attendDemo',
-            ['demoid' => $demo['show_season_timeslot_id']]
-        )
-        .'">Join</a>';
+    $demo['join'] = [
+        'display' => 'text',
+        'value' => 'Join',
+        'url' => URLUtils::makeURL('Scheduler', 'attendDemo', ['demoid' => $demo['show_season_timeslot_id']])
+    ];
     $tabledata[] = $demo;
 }
 
@@ -37,15 +35,15 @@ $twig->setTemplate('table.twig')
 
 if (isset($_REQUEST['msg'])) {
     switch ($_REQUEST['msg']) {
-    case 0: //joined
-        $twig->addInfo('You have successfully been added to this session.');
-        break;
-    case 1: //full
-        $twig->addError('Sorry, but a maximum two people can join a session.');
-        break;
-    case 2: //attending already
-        $twig->addError('You can only attend one session at a time.');
-        break;
+        case 0: //joined
+            $twig->addInfo('You have successfully been added to this session.');
+            break;
+        case 1: //full
+            $twig->addError('Sorry, but a maximum two people can join a session.');
+            break;
+        case 2: //attending already
+            $twig->addError('You can only attend one session at a time.');
+            break;
     }
 }
 
