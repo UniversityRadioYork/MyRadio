@@ -19,7 +19,8 @@ $('.twig-datatable').dataTable(
         },
         //attend
         {
-            "sTitle": ""
+            "sTitle": "",
+            "bSortable": false
         }
         ],
         "bPaginate": false,

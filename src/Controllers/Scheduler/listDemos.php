@@ -31,7 +31,7 @@ if (empty($tabledata)) {
 $twig->setTemplate('table.twig')
     ->addVariable('title', 'Upcoming Training Slots')
     ->addVariable('tabledata', $tabledata)
-    ->addVariable('tablescript', 'myury.scheduler.demolist');
+    ->addVariable('tablescript', 'myradio.scheduler.demolist');
 
 if (isset($_REQUEST['msg'])) {
     switch ($_REQUEST['msg']) {
