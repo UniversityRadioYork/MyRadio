@@ -5,21 +5,25 @@ $('.twig-datatable').dataTable(
             //quoteID
             {
                 "bVisible": false
-        },
+            },
             //source
             {
                 "sTitle": "Source",
                 "sClass": "left",
-        },
+            },
             //date
             {
                 "sTitle": "Date",
                 "aDataSort": [ 0 ]
-        },
+            },
             //text
             {
+                "bVisible": false
+            },
+            //html
+            {
                 "sTitle": "Quote"
-        },
+            },
             //editlink
             {
                 "sTitle": "Edit",
