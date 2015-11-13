@@ -18,12 +18,14 @@
         <div id="res-container" class="res-container hidden">
           <p>You can upload track to this resource library by dragging them into the box below. Tracks uploaded must not return a match against our music analysis software.</p>
           <div id="res-dragdrop" class="well">Drag WAV/MP3 files here to upload<div class="alert alert-warning" id="res-status">Getting set up...</div></div>
-          
+
           <div id="res-result"></div>
         </div>
         <script type="text/javascript">window.memberid = parseInt({{memberid}});</script>
   {% include 'parts/base_foot.twig' %}
       <script type="text/javascript" src="{{baseurl}}js/vendor/jquery.filedrop.js"></script>
+      <script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
+      <script type="text/javascript" src="{{baseurl}}js/vendor/bootstrap-datetimepicker.min.js"></script>
       <script type="text/javascript" src="{{baseurl}}js/nipsweb.managelibrary.js"></script>
     </body>
 </html>
