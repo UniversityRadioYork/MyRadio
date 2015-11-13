@@ -1,32 +1,36 @@
 <table class="twig-datatable dataTable">
-  <thead>
-    <tr>
-    {% for title, column in tabledata[0] %}
-        <th id="columnheader-{{title}}">{{ title }}</th>
-    {% endfor %}
-      </tr>
+    <thead>
+        <tr>
+            {% for title, column in tabledata[0] %}
+                <th id="columnheader-{{title}}">{{ title }}</th>
+            {% endfor %}
+        </tr>
     </thead>
     <tbody>
-  {% for row in tabledata %}
-        <tr>
-    {% for title, column in row %}
-            <td class="column-{{title}}">
-      {% if column.display is defined %}
-        {% if column.display == "text" %}
-                <a href="{{column.url}}" title="{{column.title}}">{{column.value}}</a>
-        {% elseif column.display == "icon" %}
-                <a href="{{column.url}}" title="{{column.title}}"><span class="glyphicon glyphicon-{{column.value}}">&nbsp;</span></a>
-        {% endif %}
-      {% else %}
-                {{column}}
-     {% endif %}
-              </td>
-    {% endfor %}
-            </tr>
-  {% else %}
+        {% for row in tabledata %}
             <tr>
-              <td>This table is empty!</td>
+                {% for title, column in row %}
+                    <td class="column-{{title}}">
+                        {% if column.display is defined %}
+                            {% if column.display == "text" %}
+                                <a href="{{column.url}}" title="{{column.title}}">{{column.value}}</a>
+                            {% elseif column.display == "icon" %}
+                                <a href="{{column.url}}" title="{{column.title}}">
+                                    <span class="glyphicon glyphicon-{{column.value}}">&nbsp;</span>
+                                </a>
+                            {% elseif column.display == "html" %}
+                                {{column.html | raw}}
+                            {% endif %}
+                        {% else %}
+                            {{column}}
+                        {% endif %}
+                     </td>
+                {% endfor %}
+                    </tr>
+        {% else %}
+            <tr>
+                <td>This table is empty!</td>
             </tr>
-  {% endfor %}
-          </tbody>
-        </table>
+        {% endfor %}
+    </tbody>
+</table>
