@@ -756,24 +756,16 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      */
     public static function getAllPodcasts()
     {
-        $key = 'MyRadio_Podcast_AllPodcastsFetcher_last';
+        $result = self::$db->fetchColumn(
+            'SELECT podcast_id FROM uryplayer.podcast
+            ORDER BY submitted DESC'
+        );
 
-        if (self::$cache->get($key)) {
-            $podcasts = self::$cache->getAll(self::getCacheKey(''));
-        } else {
-            $result = self::$db->fetchColumn(
-                'SELECT podcast_id FROM uryplayer.podcast
-                ORDER BY submitted DESC'
-            );
-
-            $podcasts = [];
-            foreach ($result as $row) {
-                $podcast = new MyRadio_Podcast($row);
-                $podcast->updateCacheObject();
-                $podcasts[] = $podcast;
-            }
-
-            self::$cache->set($key, 'true');
+        $podcasts = [];
+        foreach ($result as $row) {
+            $podcast = new MyRadio_Podcast($row);
+            $podcast->updateCacheObject();
+            $podcasts[] = $podcast;
         }
 
         return $podcasts;
