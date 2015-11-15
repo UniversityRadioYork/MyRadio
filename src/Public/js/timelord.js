@@ -146,7 +146,7 @@ window.timelord = {
      */
     updateState: function() {
         $.ajax(
-            {url: myury.makeURL('Timelord', 'a-update'),
+            {url: myradio.makeURL('Timelord', 'a-update'),
                 global: false,
                 error: function() {
                     //Refresh on failure

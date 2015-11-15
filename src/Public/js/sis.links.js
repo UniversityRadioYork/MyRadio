@@ -2,15 +2,15 @@
 var Links = function() {
     var links = [
         {
-            'href': myury.makeURL('Mail', 'send', {list: 30}),
+            'href': myradio.makeURL('Mail', 'send', {list: 30}),
             'desc': 'Report a Fault'
     },
         {
-            'href': myury.makeURL('Mail', 'send', {list: 44}),
+            'href': myradio.makeURL('Mail', 'send', {list: 44}),
             'desc': 'Contact Management'
     },
         {
-            'href': myury.makeURL('Mail', 'send', {list: 56}),
+            'href': myradio.makeURL('Mail', 'send', {list: 56}),
             'desc': 'Contact Presenting Team'
     }
     ];

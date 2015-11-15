@@ -13,7 +13,7 @@ var Tracklist = function() {
                 confirmButton.addEventListener(
                     'click', function() {
                         $.post(
-                            myury.makeURL('SIS', 'tracklist.delTrack'),
+                            myradio.makeURL('SIS', 'tracklist.delTrack'),
                             {id: id},
                             function() {
                                 var row = document.getElementById('t' + id);
@@ -22,10 +22,10 @@ var Tracklist = function() {
                         );
                     }
                 );
-                myury.createDialog(
+                myradio.createDialog(
                     'Confirm removal',
                     'Are you sure you want to remove ' + title + ' by ' + artist + ' from the tracklist?',
-                    [confirmButton, myury.closeButton()]
+                    [confirmButton, myradio.closeButton()]
                 );
             };
         };
@@ -107,7 +107,7 @@ var Tracklist = function() {
             submitButton.addEventListener(
                 'click', function() {
                     $.post(
-                        myury.makeURL('SIS', 'tracklist.checkTrack'),
+                        myradio.makeURL('SIS', 'tracklist.checkTrack'),
                         {
                             title: addTitle.value,
                             artist: addArtist.value,
@@ -127,10 +127,10 @@ var Tracklist = function() {
 
             // Put all the elements into a dialog
             // don't open it straight away
-            add_track_dialog = myury.createDialog(
+            add_track_dialog = myradio.createDialog(
                 'Add track to tracklist',
                 content,
-                [myury.closeButton()],
+                [myradio.closeButton()],
                 true
             );
 
@@ -145,7 +145,7 @@ var Tracklist = function() {
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
                     limit: 20,
                     //Seperated out otherwise % gets urlescaped
-                    remote: myury.makeURL('MyRadio', 'a-findtrack', {limit: 20, term: ''}) + '%QUERY'
+                    remote: myradio.makeURL('MyRadio', 'a-findtrack', {limit: 20, term: ''}) + '%QUERY'
                 }
             );
             trackLookup.initialize();

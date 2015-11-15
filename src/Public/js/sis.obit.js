@@ -5,7 +5,7 @@ var Obit = function() {
     button.innerHTML = 'Start Obituary Procedure';
     button.addEventListener(
         'click', function() {
-            window.open(myury.makeURL('Scheduler', 'stop'), 'Stop Broadcast');
+            window.open(myradio.makeURL('Scheduler', 'stop'), 'Stop Broadcast');
         }
     );
 

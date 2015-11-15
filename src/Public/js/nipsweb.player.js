@@ -21,7 +21,7 @@ var NIPSWeb = function(d) {
         //Get a client id to identify this session
         $.ajax(
             {
-                url: myury.makeURL('NIPSWeb', 'get_client_token'), 
+                url: myradio.makeURL('NIPSWeb', 'get_client_token'),
                 type: 'POST',
                 success: function(data) {
                     clientid = parseInt(data.token);
@@ -136,7 +136,7 @@ var NIPSWeb = function(d) {
                         },
                         dataType: 'json',
                         type: 'POST',
-                        url: myury.makeURL('NIPSWeb', 'recv_ops')
+                        url: myradio.makeURL('NIPSWeb', 'recv_ops')
                     }
                 );
             }
@@ -761,7 +761,7 @@ var NIPSWeb = function(d) {
             //Central Database Track
             $.ajax(
                 {
-                    url: myury.makeURL('NIPSWeb', 'create_token'),
+                    url: myradio.makeURL('NIPSWeb', 'create_token'),
                     type: 'post',
                     data: 'trackid=' + data[1] + '&recordid=' + data[0],
                     success: function() {
@@ -777,7 +777,7 @@ var NIPSWeb = function(d) {
                         } else {
                             $('#notice').html('Sorry, you need to use a modern browser to use Track Preview.').addClass('alert-error').show();
                         }
-                        getPlayer(channel).src = myury.makeURL('NIPSWeb', 'secure_play', params);
+                        getPlayer(channel).src = myradio.makeURL('NIPSWeb', 'secure_play', params);
 
                         $(getPlayer(channel)).off("canplay.forloaded").on(
                             "canplay.forloaded", function() {
@@ -793,7 +793,7 @@ var NIPSWeb = function(d) {
                 }
             );
         } else if (type === 'aux') {
-            getPlayer(channel).src = myury.makeURL(
+            getPlayer(channel).src = myradio.makeURL(
                 'NIPSWeb',
                 'managed_play',
                 {managedid: $('#' + audioid).attr('managedid')}
@@ -874,7 +874,7 @@ var contextMenu = function(items) {
     var triggeredBy;
 
     /**
-     * DOM ELEMENTS 
+     * DOM ELEMENTS
      **/
     var menuContainer = document.createElement('ul');
     menuContainer.className = 'context-menu dropdown-menu';
@@ -989,7 +989,7 @@ var playoutSlider = function(e) {
     var isSliding = false;
 
     /**
- * DOM ELEMENTS 
+ * DOM ELEMENTS
 **/
     var sliderContainer = document.createElement('div');
     sliderContainer.className = 'playout-slider';
@@ -1027,7 +1027,7 @@ var playoutSlider = function(e) {
     sliderContainer.appendChild(positionSlider);
 
     /**
- * HELPER FUNCTIONS 
+ * HELPER FUNCTIONS
 **/
     var calculatePositionFromSeek = function(e, slider) {
         var result = e.clientX - getXOffset(e.currentTarget) + 3;
@@ -1049,7 +1049,7 @@ var playoutSlider = function(e) {
     };
 
     /**
- * EVENT BINDINGS 
+ * EVENT BINDINGS
 **/
     var positionHandleDragStart = function() {
         var positionInt;

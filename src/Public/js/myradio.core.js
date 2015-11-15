@@ -1,4 +1,4 @@
-window.myury = {
+window.myradio = {
     makeURL: function(module, action, params) {
         qstring = (params === undefined) ? '' : $.param(params);
         if (mConfig.rewrite_url) {
@@ -9,10 +9,10 @@ window.myury = {
     },
     errorReport: function(myradio_errors, e, xhr, settings) {
         console.log(myradio_errors);
-        myury.createDialog(
+        myradio.createDialog(
             'Error',
             '<p>It looks like that request worked, but things might not quite work as expected.</p><details>' + myradio_errors + '</details>',
-            [myury.closeButton(), myury.reportButton(xhr, settings, myradio_errors)]
+            [myradio.closeButton(), myradio.reportButton(xhr, settings, myradio_errors)]
         );
     },
     createDialog: function(title, text, buttons, startHidden) {
@@ -42,10 +42,27 @@ window.myury = {
         reportButton.setAttribute('data-dismiss', 'modal');
         reportButton.addEventListener(
             'click', function() {
-                $.post(myury.makeURL('MyRadio', 'errorReport'), JSON.stringify({xhr: xhr, settings: settings, error: error}));
+                $.post(myradio.makeURL('MyRadio', 'errorReport'), JSON.stringify({xhr: xhr, settings: settings, error: error}));
             }
         );
         return reportButton;
+    },
+    callAPI: function(method, module, action, id, firstParam, options) {
+        var url = mConfig.api_url;
+        url += '/v2/' + module;
+        if (id !== '') {
+            url += '/' + id;
+        }
+        url += '/' + action;
+        if (firstParam !== '') {
+            url += '/' + firstParam;
+        }
+
+        $.ajax({
+            url: url,
+            data: options,
+            method: method
+        });
     }
 };
 
@@ -54,10 +71,10 @@ $(document).ajaxError(
     function(e, xhr, settings, error) {
         if (xhr.status == 401) {
             //Session timed out - need to login
-            window.location = myury.makeURL('MyRadio', 'login', {next: window.location.href, message: window.btoa('Your session has expired and you need to log in again to continue.')});
+            window.location = myradio.makeURL('MyRadio', 'login', {next: window.location.href, message: window.btoa('Your session has expired and you need to log in again to continue.')});
         } else if (!errorVisible) {
-            var close = myury.closeButton();
-            var report = myury.reportButton(xhr, settings, error);
+            var close = myradio.closeButton();
+            var report = myradio.reportButton(xhr, settings, error);
             var message = '';
 
             if (xhr.responseJSON && xhr.responseJSON.error) {
@@ -73,7 +90,7 @@ $(document).ajaxError(
             close.addEventListener('click', errorVisibleReset);
             report.addEventListener('click', errorVisibleReset);
 
-            myury.createDialog(
+            myradio.createDialog(
                 'Error',
                 '<p>Sorry, just went a bit wrong and I\'m not sure what to do about it.</p><details>' + error + '<br>' + message + '</details>',
                 [close, report]
@@ -95,13 +112,13 @@ $(document).ajaxSuccess(
             return; //Not JSON
         }
         if (data.hasOwnProperty("myradio_errors") && data.myradio_errors.length > 0) {
-            myury.errorReport(data.myradio_errors, e, xhr, settings);
+            myradio.errorReport(data.myradio_errors, e, xhr, settings);
         }
     }
 );
 
 /**
- * Use bootstrap show/hide helpers 
+ * Use bootstrap show/hide helpers
 **/
 jQuery.fn.show = function() {
     $(this).removeClass('hidden')

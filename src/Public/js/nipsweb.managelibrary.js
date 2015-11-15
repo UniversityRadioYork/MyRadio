@@ -63,7 +63,7 @@ var Library = function() {
 **/
         $('#central-dragdrop').filedrop(
             {
-                url: myury.makeURL('NIPSWeb', 'upload_central'),
+                url: myradio.makeURL('NIPSWeb', 'upload_central'),
                 paramname: 'audio',
                 error: filedrop_error_handler,
                 allowedfiletypes: allowed_mp3,
@@ -178,7 +178,7 @@ var Library = function() {
                             .html(track_title + ': Saving');
                             $.ajax(
                                 {
-                                    url: myury.makeURL('NIPSWeb', 'confirm_central_upload'),
+                                    url: myradio.makeURL('NIPSWeb', 'confirm_central_upload'),
                                     data: {
                                         title: track_title,
                                         artist: track_artist,
@@ -220,7 +220,7 @@ var Library = function() {
     var auxDbInit = function () {
         $('#res-dragdrop').filedrop(
             {
-                url: myury.makeURL('NIPSWeb', 'upload_aux'),
+                url: myradio.makeURL('NIPSWeb', 'upload_aux'),
                 paramname: 'audio',
                 error: filedrop_error_handler,
                 allowedfiletypes: allowed_all,
@@ -273,7 +273,7 @@ var Library = function() {
                                     result.html('Adding <em>' + title + '</em> to library');
                                     $.ajax(
                                         {
-                                            url: myury.makeURL('NIPSWeb', 'confirm_aux_upload'),
+                                            url: myradio.makeURL('NIPSWeb', 'confirm_aux_upload'),
                                             data: {
                                                 auxid: window.auxid,
                                                 fileid: fileid,

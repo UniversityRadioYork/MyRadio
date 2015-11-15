@@ -10,7 +10,7 @@ var Webcam = function() {
             if (newcam === currentWebcam) {
                 return;
             }
-            $.get(myury.makeURL('SIS', 'webcam.set'), {src: newcam});
+            $.get(myradio.makeURL('SIS', 'webcam.set'), {src: newcam});
         },
         update = function(data) {
 
