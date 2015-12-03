@@ -21,7 +21,7 @@ var webcam = {
                     if (data >= 7*24*60*60) {
                         sub = Math.floor(data/(7*24*24*60));
                         time = time + sub + ' weeks, '
-                        data -= sub*7*24*60*60;
+                        data -= sub*7*24*24*60;
                     }
                     if (data >= 24*60*60) {
                         sub = Math.floor(data/(24*60*60));
