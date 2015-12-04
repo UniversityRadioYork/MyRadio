@@ -642,14 +642,21 @@ class MyRadio_Track extends ServiceAPI
         // We need to rollback if something goes wrong later
         self::$db->query('BEGIN');
 
+        $track = self::findByNameArtist($title, $artist, 1, false, true);
+
         $ainfo = null;
         if ($album == "FROM_LASTFM") {
             // Get the album info if we're getting it from lastfm
             $ainfo = self::getAlbumDurationAndPositionFromLastfm($title, $artist);
         } else {
-            // Use the album title the user has provided. Use an existing album
-            // if we already have one of that title. If not, create one.
-            $myradio_album = MyRadio_Album::findOrCreate($album, $artist);
+
+            if (!empty($track)) {
+                $myradio_album = $track->getAlbum();
+            } else {
+                // Use the album title the user has provided. Use an existing album
+                // if we already have one of that title. If not, create one.
+                $myradio_album = MyRadio_Album::findOrCreate($album, $artist);
+            }
             $ainfo = array('duration' => null, 'position' => intval($position), 'album' => $myradio_album);
         }
 
@@ -672,7 +679,6 @@ class MyRadio_Track extends ServiceAPI
 
 
         // Check if the track is already in the library and create it if not
-        $track = self::findByNameArtist($title, $artist, 1, false, true);
         if (empty($track)) {
             //Create the track
             $track = self::create(
@@ -692,11 +698,9 @@ class MyRadio_Track extends ServiceAPI
             if ($track->getDigitised()) {
                 return ['status' => 'FAIL', 'error' => 'This track is already in our library.'];
             } else {
-                //Mark it as digitised
+                //Mark it as digitised/explicit
                 $track->setDigitised(true);
-
-                //Change the album to update
-                $ainfo['album'] = $track->getAlbum();
+                $track->setClean($clean);
             }
         }
 
