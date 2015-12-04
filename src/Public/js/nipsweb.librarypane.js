@@ -10,6 +10,7 @@
  */
 var searchTimerRef = null;
 function updateCentralSearch() {
+    var file;
     $('#notice').html('Searching...').show();
     $.ajax(
         {
@@ -35,8 +36,8 @@ function updateCentralSearch() {
                     $('#baps-channel-res').append(
                         '<li id="' + data[file].album.recordid + '-' + data[file].trackid +
                         '" intro="' + data[file].intro + '"' +
-                        '" channel="res" weight="0" type="central" class="' + classes + '" length="' + data[file].length + '">'
-                        + data[file].title + ' - ' + data[file].artist + '</li>'
+                        '" channel="res" weight="0" type="central" class="' + classes + '" length="' + data[file].length + '">' +
+                        data[file].title + ' - ' + data[file].artist + '</li>'
                     );
                 }
                 planner.registerItemClicks();
@@ -53,10 +54,12 @@ $(document).ready(
     function() {
         $('#res-type-sel').change(
             function() {
+                var file;
                 //Show the relevent filter forms
                 if ($(this).val() === 'central') {
-                    $('#res-filter-name').hide();
-                    $('#res-filter-artist, #res-filter-track').fadeIn();
+                    $('#res-filter-artist').parent().fadeIn();
+                    $('#res-filter-track').hide();
+                    $('#res-filter-name').parent().hide();
                     //This doesn't auto-load any files until search paramaters are set
                 } else if ($(this).val().match(/managed-.*/)) {
                     //Load a managed playlist
@@ -80,8 +83,8 @@ $(document).ready(
                                         '" title="' + data[file].title + '(' + data[file].length + ')' +
                                         '" intro="' + data[file].intro + '"' +
                                         '" class="' + classes + '"' +
-                                        '" channel="res" weight="0" type="central" length="' + data[file].length + '">'
-                                        + data[file].title + ' - ' + data[file].artist + '</li>'
+                                        '" channel="res" weight="0" type="central" length="' + data[file].length + '">' +
+                                        data[file].title + ' - ' + data[file].artist + '</li>'
                                     );
                                 }
                                 $('#res-loading').hide();
@@ -92,8 +95,9 @@ $(document).ready(
                             }
                         }
                     );
-                    $('#res-filter-artist, #res-filter-track').hide();
-                    $('#res-filter-name').fadeIn();
+                    $('#res-filter-artist').parent().hide();
+                    $('#res-filter-track').hide();
+                    $('#res-filter-name').parent().fadeIn();
                 } else if ($(this).val().match(/auto-.*/)) {
                     //Load an auto playlist
                     $('#res-loading').show();
@@ -116,8 +120,8 @@ $(document).ready(
                                         '" title="' + data[file].title + '(' + data[file].length + ')' +
                                         '" intro="' + data[file].intro + '"' +
                                         '" class="' + classes + '"' +
-                                        '" channel="res" weight="0" type="central" length="' + data[file].length + '">'
-                                        + data[file].title + ' - ' + data[file].artist + '</li>'
+                                        '" channel="res" weight="0" type="central" length="' + data[file].length + '">' +
+                                        data[file].title + ' - ' + data[file].artist + '</li>'
                                     );
                                 }
                                 $('#res-loading').hide();
@@ -128,8 +132,9 @@ $(document).ready(
                             }
                         }
                     );
-                    $('#res-filter-artist, #res-filter-track').hide();
-                    $('#res-filter-name').fadeIn();
+                    $('#res-filter-artist').parent().hide();
+                    $('#res-filter-track').hide();
+                    $('#res-filter-name').parent().fadeIn();
                 } else if ($(this).val().match(/^aux-\d+|^user-.*/)) {
                     $('#res-loading').show();
                     $.ajax(
@@ -146,8 +151,8 @@ $(document).ready(
                                             '<li id="ManagedDB-' + data[file].managedid +
                                             '" length="' + data[file].length +
                                             '" title="' + data[file].title + '(' + data[file].length + ')' +
-                                            '" channel="res" weight="0" type="aux" managedid="' + data[file].managedid + '">'
-                                            + data[file].title + '</li>'
+                                            '" channel="res" weight="0" type="aux" managedid="' + data[file].managedid + '">' +
+                                            data[file].title + '</li>'
                                         );
                                     }
                                 }
@@ -159,8 +164,9 @@ $(document).ready(
                             }
                         }
                     );
-                    $('#res-filter-artist, #res-filter-track').hide();
-                    $('#res-filter-name').fadeIn();
+                    $('#res-filter-artist').parent().hide();
+                    $('#res-filter-track').hide();
+                    $('#res-filter-name').parent().fadeIn();
                 }
                 //Clear the current list
                 $('#baps-channel-res').empty();
