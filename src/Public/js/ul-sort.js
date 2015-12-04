@@ -17,7 +17,7 @@ ulsort.List = {
                 }
 
                 // Building the regex from our user input, 'inp' should be escaped
-                inp = $(this).attr('value');
+                inp = $(this).val();
                 rgx.compile(inp, 'im');
                 titles.each(
                     function () {
