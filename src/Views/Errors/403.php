@@ -15,19 +15,14 @@ CoreUtils::getTemplateObject()->setTemplate('error.twig')
     ->addVariable('title', 'Forbidden')
     ->addVariable(
         'body',
-        '<p>I\'m sorry, but the Action you are trying to perform requires elevated permissions you do not have.</p>
-        <ul>
-        <li>If you think you should have these permissions but do not, please contact Station Management.</li>
-        <li>If you are Station Management, please contact Computing.</li>
-        <li>If you are Computing, panic.</li>
-        </ul>'
-        .(empty($message) ? '' : $message)
-        .'<details><summary>Detailed Request Information</summary>
-        Error: HTTP/1.1 403: Forbidden<br>
-        Module Requested: '.$module.'<br>
-        Action Requested: '.$action.'<br>
-        User Requesting: '
-        .(class_exists('\MyRadio\ServiceAPI\MyRadio_User') ? (MyRadio_User::getInstance()->getName()) : 'Anonymous')
-        .'</details>'
+        '<p>I\'m sorry, but you don\'t have permission to go here.</p>'
+        . (empty($message)
+            ? '<ul>
+            <li>If you think you should be able to access this page, please contact Station Management.</li>
+            <li>If you are Station Management, please contact Computing.</li>
+            <li>If you are Computing, panic.</li>
+            </ul>'
+            : $message
+        )
     )
     ->render();
