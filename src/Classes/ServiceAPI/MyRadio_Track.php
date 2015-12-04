@@ -651,7 +651,7 @@ class MyRadio_Track extends ServiceAPI
         } else {
 
             if (!empty($track)) {
-                $myradio_album = $track->getAlbum();
+                $myradio_album = $track[0]->getAlbum();
             } else {
                 // Use the album title the user has provided. Use an existing album
                 // if we already have one of that title. If not, create one.
