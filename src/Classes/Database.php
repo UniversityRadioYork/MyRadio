@@ -147,7 +147,6 @@ class Database
      * The most commonly used database function
      * Equates to a pg_fetch_all(pg_query)
      * @param String|Resource $sql    The query string to execute or a psql result resource
-     * or a psql result resource
      * @param Array           $params Parameters for the query
      * @return Array An array of result rows (potentially empty)
      * @throws MyRadioException
@@ -174,20 +173,21 @@ class Database
 
     /**
      * Equates to a pg_fetch_assoc(pg_query). Returns the first row
-     * @param String $sql    The query string to execute
-     * @param Array  $params Paramaters for the query
+     * @param String $sql    The query string to execute or a psql result resource
+     * @param Array  $params Parameters for the query
      * @return Array The requested result row, or an empty array on failure
      * @throws MyRadioException
      */
     public function fetchOne($sql, $params = [])
     {
-        try {
-            $result = $this->query($sql, $params);
-        } catch (MyRadioException $e) {
-            return [];
+        if (!is_resource($sql)) {
+            try {
+                $sql = $this->query($sql, $params);
+            } catch (MyRadioException $e) {
+                return [];
+            }
         }
-
-        return pg_fetch_assoc($result);
+        return pg_fetch_assoc($sql);
     }
 
     /**

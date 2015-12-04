@@ -23,6 +23,9 @@ use \MyRadio\iTones\iTones_Playlist;
  */
 class MyRadio_Track extends ServiceAPI
 {
+
+    const BASE_TRACK_SQL = 'SELECT * FROM public.rec_track';
+
     /**
      * The number of the Track on a Record
      * @var int
@@ -113,18 +116,24 @@ class MyRadio_Track extends ServiceAPI
 
     /**
      * Initiates the Track variables
-     * @param int $trackid The ID of the track to initialise
+     * @param array $result
+     * artist string
+     * clean char y/n/u
+     * digitised bool
+     * digitisedby int
+     * genre int
+     * intro string HH:ii:ss
+     * length string HH:ii:ss
+     * duration int
+     * intro int
+     * recordid int
+     * title string
      * @todo Genre class
      * @todo Artist normalisation
      */
-    protected function __construct($trackid)
+    protected function __construct($result)
     {
-        $this->trackid = (int) $trackid;
-        $result = self::$db->fetchOne('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', [$this->trackid]);
-        if (empty($result)) {
-            throw new MyRadioException('The specified Track does not seem to exist', 404);
-        }
-
+        $this->trackid = (int)$result['trackid'];
         $this->artist = $result['artist'];
         $this->clean = $result['clean'];
         $this->digitised = ($result['digitised'] == 't') ? true : false;
@@ -136,6 +145,23 @@ class MyRadio_Track extends ServiceAPI
         $this->number = (int) $result['intro'];
         $this->record = (int) $result['recordid'];
         $this->title = $result['title'];
+    }
+
+    /**
+     *
+     * @throws MyRadioException if the track does not exist
+     * @return MyRadio_Track
+     */
+    protected static function factory($trackid)
+    {
+        $sql = self::BASE_TRACK_SQL . ' WHERE trackid=$1 LIMIT 1';
+        $result = self::$db->fetchOne($sql, [$trackid]);
+
+        if (empty($result)) {
+            throw new MyRadioException('The specified Track does not seem to exist', 404);
+        }
+
+        return new MyRadio_Track($result);
     }
 
     public static function getForm()
@@ -781,7 +807,7 @@ class MyRadio_Track extends ServiceAPI
 
         $result = self::$db->query(
             'INSERT INTO rec_track (number, title, artist, length, genre, intro, clean, recordid, digitised, digitisedby, duration)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING trackid',
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
             [
                 $options['number'],
                 trim($options['title']),
@@ -797,9 +823,9 @@ class MyRadio_Track extends ServiceAPI
             ]
         );
 
-        $id = self::$db->fetchAll($result);
+        $data = self::$db->fetchOne($result);
 
-        return self::getInstance($id[0]['trackid']);
+        return new MyRadio_Track($data[0]);
     }
 
     public function updateInfoFromLastfm()
@@ -911,11 +937,11 @@ class MyRadio_Track extends ServiceAPI
     public static function getAllDigitised()
     {
         self::initDB();
-        $ids = self::$db->fetchColumn('SELECT trackid FROM rec_track WHERE digitised=\'t\'');
+        $result = self::$db->fetchColumn(self::BASE_TRACK_SQL . ' WHERE digitised=\'t\'');
 
         $tracks = [];
-        foreach ($ids as $id) {
-            $tracks[] = self::getInstance($id);
+        foreach ($result as $row) {
+            $tracks[] = new MyRadio_Track($row);
         }
 
         return $tracks;

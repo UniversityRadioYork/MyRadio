@@ -199,6 +199,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $sql = self::BASE_SHOW_SQL . ' WHERE show_id=$1';
         $result = self::$db->fetchOne($sql, [$showid]);
 
+        if (empty($result)) {
+            throw new MyRadioException('The specified Show does not seem to exist', 404);
+        }
+
         return new MyRadio_Show($result);
     }
 
