@@ -694,6 +694,9 @@ class MyRadio_Track extends ServiceAPI
             } else {
                 //Mark it as digitised
                 $track->setDigitised(true);
+
+                //Change the album to update
+                $ainfo['album'] = $track->getAlbum();
             }
         }
 
