@@ -357,10 +357,10 @@ window.MyRadioForm = {
             tinymce.init(
                 {
                     selector: "textarea.myradio-form-tinymce",
-                    plugins: "anchor autolink charmap code contextmenu hr image link lists media tabfocus table wordcount",
+                    plugins: "anchor autolink charmap code contextmenu emoticons hr image link lists media paste preview searchreplace tabfocus table visualblocks wordcount",
                     media_alt_source: false,
                     menubar: false,
-                    toolbar: "undo redo | styleselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media charmap | code",
+                    toolbar: "undo redo | styleselect | bold italic underline | removeformat | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media charmap | visualblocks code preview",
                     invalid_elements: "script",
                     invalid_styles: "color, font-size, background",
                     keep_styles: false,
