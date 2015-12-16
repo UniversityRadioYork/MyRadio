@@ -430,7 +430,8 @@ class MyRadio_Track extends ServiceAPI
                     ) AS t1
                 ) As t2
                 ORDER BY priority LIMIT $2',
-            $opts);
+                $opts
+            );
         }
 
         return self::resultSetToObjArray(array_unique($result));
@@ -519,8 +520,7 @@ class MyRadio_Track extends ServiceAPI
 
         //Shortcircuit - there's a far simpler and more accurate method
         // if there's only title/artist/digitised/limit
-        if (
-            !$options['itonesplaylistid']
+        if (!$options['itonesplaylistid']
             && !$options['recordid']
             && !$options['lastfmverified']
             && !$options['random']
@@ -931,7 +931,8 @@ class MyRadio_Track extends ServiceAPI
     {
         $this->duration = (int) $duration;
         self::$db->query(
-            'UPDATE rec_track SET length=$1, duration=$2 WHERE trackid=$3', [
+            'UPDATE rec_track SET length=$1, duration=$2 WHERE trackid=$3',
+            [
             CoreUtils::intToTime($this->getDuration()),
             $this->getDuration(),
             $this->getID(),
@@ -951,7 +952,8 @@ class MyRadio_Track extends ServiceAPI
     {
         $this->intro = (int) $duration;
         self::$db->query(
-            'UPDATE rec_track SET intro=$1 WHERE trackid=$2', [
+            'UPDATE rec_track SET intro=$1 WHERE trackid=$2',
+            [
             CoreUtils::intToTime($this->intro),
             $this->getID(),
             ]

@@ -9,7 +9,8 @@
  * in the search panel
  */
 var searchTimerRef = null;
-function updateCentralSearch() {
+function updateCentralSearch()
+{
     var file;
     $('#notice').html('Searching...').show();
     $.ajax(
@@ -22,7 +23,7 @@ function updateCentralSearch() {
                 limit: 100,
                 require_digitised: true
             },
-            success: function(data) {
+            success: function (data) {
                 $('#baps-channel-res').empty();
                 for (file in data) {
                     if (file === 'myradio_errors') {
@@ -51,9 +52,9 @@ function updateCentralSearch() {
  *Deal with the Resources Library selector being changed
  */
 $(document).ready(
-    function() {
+    function () {
         $('#res-type-sel').change(
-            function() {
+            function () {
                 var file;
                 //Show the relevent filter forms
                 if ($(this).val() === 'central') {
@@ -69,7 +70,7 @@ $(document).ready(
                             url: myradio.makeURL('MyRadio', 'a-findtrack'),
                             type: 'get',
                             data: {itonesplaylistid: $(this).val().replace(/managed-/, ''), digitised: true, limit: 0},
-                            success: function(data) {
+                            success: function (data) {
                                 for (file in data) {
                                     if (file === 'myradio_errors') {
                                         continue;
@@ -106,7 +107,7 @@ $(document).ready(
                             url: myradio.makeURL('NIPSWeb', 'load_auto_managed'),
                             type: 'get',
                             data: 'playlistid=' + $(this).val(),
-                            success: function(data) {
+                            success: function (data) {
                                 for (file in data) {
                                     if (file === 'myradio_errors') {
                                         continue;
@@ -142,7 +143,7 @@ $(document).ready(
                             url: myradio.makeURL('NIPSWeb', 'load_aux_lib'),
                             type: 'get',
                             data: 'libraryid=' + $(this).val(),
-                            success: function(data) {
+                            success: function (data) {
                                 for (file in data) {
                                     if (data[file].meta == true) {
                                         $('#baps-channel-res').append('<span>' + data[file].title + '</span><br>');
@@ -176,7 +177,7 @@ $(document).ready(
                         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('title'),
                         queryTokenizer: Bloodhound.tokenizers.whitespace,
                         limit: 5,
-                        dupDetector: function(remote, local) {
+                        dupDetector: function (remote, local) {
                             return local.title == remote.title;
                         },
                         prefetch: {
@@ -196,7 +197,7 @@ $(document).ready(
                         source: artistLookup.ttAdapter(),
                         templates: {
                             //Only needed for workaround
-                            suggestion: function(i) {
+                            suggestion: function (i) {
                                 //Fix typeahead not showing after hiding
                                 //TODO: Report this @ https://github.com/twitter/typeahead.js/
                                 $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
@@ -211,7 +212,8 @@ $(document).ready(
 
         //Bind the central search function
         $('#res-filter-track').on(
-            'keyup', function() {
+            'keyup',
+            function () {
                 clearTimeout(searchTimerRef);
                 searchTimerRef = setTimeout(updateCentralSearch, 500);
             }
@@ -221,7 +223,7 @@ $(document).ready(
     * Handler for activating the Manage Library link
     */
         $('#a-manage-library').click(
-            function() {
+            function () {
                 var url = $(this).children('a').attr('href');
                 var dialog = myradio.createDialog('Manage Library', '<iframe src="' + url + '" width="580" height="500" frameborder="0"></iframe></div>');
                 return false;

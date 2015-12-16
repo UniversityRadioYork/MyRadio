@@ -72,16 +72,21 @@ class MyRadio_Webcam extends ServiceAPI
             $response = json_decode($response, true);
 
             switch ($response['room']) {
-            case 1: $location = 'Studio 1';
-                break;
-            case 2: $location = 'Studio 2';
-                break;
-            case 3: $location = 'Jukebox';
-                break;
-            case 4: $location = 'OB';
-                break;
-            default: $location = 'Unknown';
-                break;
+                case 1:
+                    $location = 'Studio 1';
+                    break;
+                case 2:
+                    $location = 'Studio 2';
+                    break;
+                case 3:
+                    $location = 'Jukebox';
+                    break;
+                case 4:
+                    $location = 'OB';
+                    break;
+                default:
+                    $location = 'Unknown';
+                    break;
             }
 
             return [

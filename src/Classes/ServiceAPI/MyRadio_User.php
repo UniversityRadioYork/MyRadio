@@ -1452,47 +1452,57 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $form->addField(new MyRadioFormField('memberid', MyRadioFormField::TYPE_HIDDEN, ['value' => $this->getID()]))
             ->addField(
                 new MyRadioFormField(
-                    'sec_personal', MyRadioFormField::TYPE_SECTION, [
-                        'label' => 'Personal Details',
-                        ]
+                    'sec_personal',
+                    MyRadioFormField::TYPE_SECTION,
+                    [
+                    'label' => 'Personal Details',
+                    ]
                 )
             )
             ->addField(
                 new MyRadioFormField(
-                    'fname', MyRadioFormField::TYPE_TEXT, [
-                        'required' => true,
-                        'label' => 'First Name',
-                        'value' => $this->getFName(),
-                        ]
+                    'fname',
+                    MyRadioFormField::TYPE_TEXT,
+                    [
+                    'required' => true,
+                    'label' => 'First Name',
+                    'value' => $this->getFName(),
+                    ]
                 )
             )
             ->addField(
                 new MyRadioFormField(
-                    'sname', MyRadioFormField::TYPE_TEXT, [
-                        'required' => true,
-                        'label' => 'Last Name',
-                        'value' => $this->getSName(),
-                        ]
+                    'sname',
+                    MyRadioFormField::TYPE_TEXT,
+                    [
+                    'required' => true,
+                    'label' => 'Last Name',
+                    'value' => $this->getSName(),
+                    ]
                 )
             )
             ->addField(
                 new MyRadioFormField(
-                    'sex', MyRadioFormField::TYPE_SELECT, [
-                        'required' => true,
-                        'label' => 'Gender',
-                        'value' => $this->getSex(),
-                        'options' => [
-                        ['value' => 'm', 'text' => 'Male'],
-                        ['value' => 'f', 'text' => 'Female'],
-                        ['value' => 'o', 'text' => 'Other'],
-                        ],
-                        ]
+                    'sex',
+                    MyRadioFormField::TYPE_SELECT,
+                    [
+                    'required' => true,
+                    'label' => 'Gender',
+                    'value' => $this->getSex(),
+                    'options' => [
+                    ['value' => 'm', 'text' => 'Male'],
+                    ['value' => 'f', 'text' => 'Female'],
+                    ['value' => 'o', 'text' => 'Other'],
+                    ],
+                    ]
                 )
             );
         if (empty(Config::$contract_uri) === false) {
             $form->addField(
                 new MyRadioFormField(
-                    'contract', MyRadioFormField::TYPE_CHECK, [
+                    'contract',
+                    MyRadioFormField::TYPE_CHECK,
+                    [
                     'required' => false,
                     'label' => 'I, '.$this->getName().', agree to abide by '
                     .Config::$short_name.'\'s station rules and regulations as '
@@ -1513,57 +1523,73 @@ class MyRadio_User extends ServiceAPI implements APICaller
         //Contact details
         $form->addField(
             new MyRadioFormField(
-                'sec_contact', MyRadioFormField::TYPE_SECTION, [
-                    'label' => 'Contact Details',
+                'sec_contact',
+                MyRadioFormField::TYPE_SECTION,
+                [
+                'label' => 'Contact Details',
                 ]
             )
         )
             ->addField(
                 new MyRadioFormField(
-                    'collegeid', MyRadioFormField::TYPE_SELECT, [
-                        'required' => true,
-                        'label' => 'College',
-                        'options' => self::getColleges(),
-                        'value' => $this->getCollegeID(),
-                        ]
+                    'collegeid',
+                    MyRadioFormField::TYPE_SELECT,
+                    [
+                    'required' => true,
+                    'label' => 'College',
+                    'options' => self::getColleges(),
+                    'value' => $this->getCollegeID(),
+                    ]
                 )
             )
             ->addField(
                 new MyRadioFormField(
-                    'phone', MyRadioFormField::TYPE_TEXT, [
-                        'required' => false,
-                        'label' => 'Phone Number',
-                        'value' => $this->getPhone(),
-                        ]
+                    'phone',
+                    MyRadioFormField::TYPE_TEXT,
+                    [
+                    'required' => false,
+                    'label' => 'Phone Number',
+                    'value' => $this->getPhone(),
+                    ]
                 )
             )
             ->addField(
                 new MyRadioFormField(
-                    'email', MyRadioFormField::TYPE_EMAIL, [
-                        'required' => false,
-                        'label' => 'Email',
-                        'value' => $this->email,
-                        ]
+                    'email',
+                    MyRadioFormField::TYPE_EMAIL,
+                    [
+                    'required' => false,
+                    'label' => 'Email',
+                    'value' => $this->email,
+                    ]
                 )
             )
             ->addField(
                 new MyRadioFormField(
-                    'receive_email', MyRadioFormField::TYPE_CHECK, [
-                        'required' => false,
-                        'label' => 'Receive Email?',
-                        'options' => ['checked' => $this->getReceiveEmail()],
-                        'explanation' => 'If unchecked, you will receive no emails, even if you are subscribed to mailing lists.',
-                        ]
+                    'receive_email',
+                    MyRadioFormField::TYPE_CHECK,
+                    [
+                    'required' => false,
+                    'label' => 'Receive Email?',
+                    'options' => ['checked' => $this->getReceiveEmail()],
+                    'explanation' => 'If unchecked, you will receive no emails, even if you are subscribed to mailing lists.',
+                    ]
                 )
             )
             ->addField(
                 new MyRadioFormField(
-                    'eduroam', MyRadioFormField::TYPE_TEXT, [
-                        'required' => false,
-                        'label' => 'University Email',
-                        'value' => str_replace('@york.ac.uk', '', $this->getUniAccount()),
-                        'explanation' => '@york.ac.uk',
-                        ]
+                    'eduroam',
+                    MyRadioFormField::TYPE_TEXT,
+                    [
+                    'required' => false,
+                    'label' => 'University Email',
+                    'value' => str_replace(
+                        '@york.ac.uk',
+                        '',
+                        $this->getUniAccount()
+                    ),
+                    'explanation' => '@york.ac.uk',
+                    ]
                 )
             )
             ->addField(new MyRadioFormField('sec_contact_close', MyRadioFormField::TYPE_SECTION_CLOSE));
@@ -1605,32 +1631,38 @@ class MyRadio_User extends ServiceAPI implements APICaller
         if (self::getInstance()->hasAuth(AUTH_CHANGESERVERACCOUNT)) {
             $form->addField(
                 new MyRadioFormField(
-                    'sec_server', MyRadioFormField::TYPE_SECTION, [
-                        'label' => Config::$short_name.' Mailbox Account',
-                        'explanation' => 'Before changing these settings, please ensure you understand the guidelines and'
-                            .' documentation on '.Config::$long_name.'\'s Internal Email Service',
+                    'sec_server',
+                    MyRadioFormField::TYPE_SECTION,
+                    [
+                    'label' => Config::$short_name.' Mailbox Account',
+                    'explanation' => 'Before changing these settings, please ensure you understand the guidelines and'
+                    .' documentation on '.Config::$long_name.'\'s Internal Email Service',
                     ]
                 )
             )
                 ->addField(
                     new MyRadioFormField(
-                        'local_name', MyRadioFormField::TYPE_TEXT, [
-                            'required' => false,
-                            'label' => 'Server Account (Mailbox)',
-                            'value' => $this->getLocalName(),
-                            'explanation' => 'Best practice is their ITS Username',
-                            ]
+                        'local_name',
+                        MyRadioFormField::TYPE_TEXT,
+                        [
+                        'required' => false,
+                        'label' => 'Server Account (Mailbox)',
+                        'value' => $this->getLocalName(),
+                        'explanation' => 'Best practice is their ITS Username',
+                        ]
                     )
                 )
                 ->addField(
                     new MyRadioFormField(
-                        'local_alias', MyRadioFormField::TYPE_TEXT, [
-                            'required' => false,
-                            'label' => '@ury.org.uk Alias',
-                            'value' => $this->getLocalAlias(),
-                            'explanation' => 'Usually, this is firstname.lastname (i.e. '.
-                            strtolower($this->getFName().'.'.$this->getSName()).')',
-                            ]
+                        'local_alias',
+                        MyRadioFormField::TYPE_TEXT,
+                        [
+                        'required' => false,
+                        'label' => '@ury.org.uk Alias',
+                        'value' => $this->getLocalAlias(),
+                        'explanation' => 'Usually, this is firstname.lastname (i.e. '.
+                        strtolower($this->getFName().'.'.$this->getSName()).')',
+                        ]
                     )
                 )
                 ->addField(new MyRadioFormField('sec_server_close', MyRadioFormField::TYPE_SECTION_CLOSE));
@@ -1921,73 +1953,89 @@ class MyRadio_User extends ServiceAPI implements APICaller
         //Personal details
         $form->addField(
             new MyRadioFormField(
-                'sec_personal', MyRadioFormField::TYPE_SECTION, [
-                    'label' => 'Personal Details',
+                'sec_personal',
+                MyRadioFormField::TYPE_SECTION,
+                [
+                'label' => 'Personal Details',
                 ]
             )
         )
             ->addField(
                 new MyRadioFormField(
-                    'fname', MyRadioFormField::TYPE_TEXT, [
-                        'required' => true,
-                        'label' => 'First Name',
-                        ]
+                    'fname',
+                    MyRadioFormField::TYPE_TEXT,
+                    [
+                    'required' => true,
+                    'label' => 'First Name',
+                    ]
                 )
             )
             ->addField(
                 new MyRadioFormField(
-                    'sname', MyRadioFormField::TYPE_TEXT, [
-                        'required' => true,
-                        'label' => 'Last Name',
-                        ]
+                    'sname',
+                    MyRadioFormField::TYPE_TEXT,
+                    [
+                    'required' => true,
+                    'label' => 'Last Name',
+                    ]
                 )
             )
             ->addField(
                 new MyRadioFormField(
-                    'sex', MyRadioFormField::TYPE_SELECT, [
-                        'required' => true,
-                        'label' => 'Gender',
-                        'options' => [
-                        ['value' => 'm', 'text' => 'Male'],
-                        ['value' => 'f', 'text' => 'Female'],
-                        ['value' => 'o', 'text' => 'Other'],
-                        ],
-                        ]
+                    'sex',
+                    MyRadioFormField::TYPE_SELECT,
+                    [
+                    'required' => true,
+                    'label' => 'Gender',
+                    'options' => [
+                    ['value' => 'm', 'text' => 'Male'],
+                    ['value' => 'f', 'text' => 'Female'],
+                    ['value' => 'o', 'text' => 'Other'],
+                    ],
+                    ]
                 )
             );
 
         //Contact details
         $form->addField(
             new MyRadioFormField(
-                'sec_contact', MyRadioFormField::TYPE_SECTION, [
-                    'label' => 'Contact Details',
+                'sec_contact',
+                MyRadioFormField::TYPE_SECTION,
+                [
+                'label' => 'Contact Details',
                 ]
             )
         )
             ->addField(
                 new MyRadioFormField(
-                    'collegeid', MyRadioFormField::TYPE_SELECT, [
-                        'required' => true,
-                        'label' => 'College',
-                        'options' => self::getColleges(),
-                        ]
+                    'collegeid',
+                    MyRadioFormField::TYPE_SELECT,
+                    [
+                    'required' => true,
+                    'label' => 'College',
+                    'options' => self::getColleges(),
+                    ]
                 )
             )
             ->addField(
                 new MyRadioFormField(
-                    'eduroam', MyRadioFormField::TYPE_TEXT, [
-                        'required' => true,
-                        'label' => 'University Email',
-                        'explanation' => '@york.ac.uk',
-                        ]
+                    'eduroam',
+                    MyRadioFormField::TYPE_TEXT,
+                    [
+                    'required' => true,
+                    'label' => 'University Email',
+                    'explanation' => '@york.ac.uk',
+                    ]
                 )
             )
             ->addField(
                 new MyRadioFormField(
-                    'phone', MyRadioFormField::TYPE_TEXT, [
-                        'required' => false,
-                        'label' => 'Phone Number',
-                        ]
+                    'phone',
+                    MyRadioFormField::TYPE_TEXT,
+                    [
+                    'required' => false,
+                    'label' => 'Phone Number',
+                    ]
                 )
             );
 
@@ -2011,44 +2059,57 @@ class MyRadio_User extends ServiceAPI implements APICaller
         //Personal details
         $form->addField(
             new MyRadioFormField(
-                'bulkaddrepeater', MyRadioFormField::TYPE_TABULARSET, [
+                'bulkaddrepeater',
+                MyRadioFormField::TYPE_TABULARSET,
+                [
                 'options' => [
                 new MyRadioFormField(
-                    'fname', MyRadioFormField::TYPE_TEXT, [
+                    'fname',
+                    MyRadioFormField::TYPE_TEXT,
+                    [
                     'required' => true,
                     'label' => 'First Name',
-                        ]
+                    ]
                 ),
                 new MyRadioFormField(
-                    'sname', MyRadioFormField::TYPE_TEXT, [
+                    'sname',
+                    MyRadioFormField::TYPE_TEXT,
+                    [
                     'required' => true,
                     'label' => 'Last Name',
-                        ]
+                    ]
                 ),
                 new MyRadioFormField(
-                    'sex', MyRadioFormField::TYPE_SELECT, [
+                    'sex',
+                    MyRadioFormField::TYPE_SELECT,
+                    [
                     'required' => true,
                     'label' => 'Gender',
                     'options' => [
-                        ['value' => 'm', 'text' => 'Male'],
-                        ['value' => 'f', 'text' => 'Female'],
-                        ['value' => 'o', 'text' => 'Other'],
-                    ], ]
+                    ['value' => 'm', 'text' => 'Male'],
+                    ['value' => 'f', 'text' => 'Female'],
+                    ['value' => 'o', 'text' => 'Other'],
+                    ],
+                    ]
                 ),
-                    new MyRadioFormField(
-                        'collegeid', MyRadioFormField::TYPE_SELECT, [
+                new MyRadioFormField(
+                    'collegeid',
+                    MyRadioFormField::TYPE_SELECT,
+                    [
                         'required' => true,
                         'label' => 'College',
                         'options' => self::getColleges(),
                         ]
-                    ),
-                    new MyRadioFormField(
-                        'eduroam', MyRadioFormField::TYPE_TEXT, [
+                ),
+                new MyRadioFormField(
+                    'eduroam',
+                    MyRadioFormField::TYPE_TEXT,
+                    [
                         'required' => true,
                         'label' => 'University Email',
                         'explanation' => '@york.ac.uk',
                         ]
-                    ),
+                ),
                 ],
                 ]
             )

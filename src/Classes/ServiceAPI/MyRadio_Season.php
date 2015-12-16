@@ -785,37 +785,54 @@ EOT
         $first_time = $this->getFirstTime();
 
         return array_merge(
-            $this->getShow()->toDataSource(false), [
-                'season_id' => $this->getID(),
-                'season_num' => $this->getSeasonNumber(),
-                'title' => $this->getMeta('title'),
-                'description' => $this->getMeta('description'),
-                'submitted' => $this->getSubmittedTime(),
-                'requested_time' => sizeof($this->getRequestedTimes()) === 0 ? null : $this->getRequestedTimes()[0],
-                'first_time' => ($first_time ? CoreUtils::happyTime($first_time) : 'Not Scheduled'),
-                'num_episodes' => [
-                    'display' => 'text',
-                    'value' => sizeof($this->timeslots),
-                    'url' => URLUtils::makeURL('Scheduler', 'listTimeslots', ['show_season_id' => $this->getID()]),
-                ],
-                'editlink' => [
-                    'display' => 'icon',
-                    'value' => 'pencil',
-                    'title' => 'Edit Season',
-                    'url' => URLUtils::makeURL('Scheduler', 'editSeason', ['seasonid' => $this->getID()]),
-                ],
-                'allocatelink' => [
-                    'display' => 'icon',
-                    'value' => 'pencil',
-                    'title' => 'Edit Application or Allocate Season',
-                    'url' => URLUtils::makeURL('Scheduler', 'allocate', ['show_season_id' => $this->getID()]),
-                ],
-                'rejectlink' => [
-                    'display' => 'icon',
-                    'value' => 'trash',
-                    'title' => 'Reject Application',
-                    'url' => URLUtils::makeURL('Scheduler', 'reject', ['show_season_id' => $this->getID()]),
-                ],
+            $this->getShow()->toDataSource(false),
+            [
+            'season_id' => $this->getID(),
+            'season_num' => $this->getSeasonNumber(),
+            'title' => $this->getMeta('title'),
+            'description' => $this->getMeta('description'),
+            'submitted' => $this->getSubmittedTime(),
+            'requested_time' => sizeof($this->getRequestedTimes()) === 0 ? null : $this->getRequestedTimes()[0],
+            'first_time' => ($first_time ? CoreUtils::happyTime($first_time) : 'Not Scheduled'),
+            'num_episodes' => [
+            'display' => 'text',
+            'value' => sizeof($this->timeslots),
+            'url' => URLUtils::makeURL(
+                'Scheduler',
+                'listTimeslots',
+                ['show_season_id' => $this->getID()]
+            ),
+            ],
+            'editlink' => [
+            'display' => 'icon',
+            'value' => 'pencil',
+            'title' => 'Edit Season',
+            'url' => URLUtils::makeURL(
+                'Scheduler',
+                'editSeason',
+                ['seasonid' => $this->getID()]
+            ),
+            ],
+            'allocatelink' => [
+            'display' => 'icon',
+            'value' => 'pencil',
+            'title' => 'Edit Application or Allocate Season',
+            'url' => URLUtils::makeURL(
+                'Scheduler',
+                'allocate',
+                ['show_season_id' => $this->getID()]
+            ),
+            ],
+            'rejectlink' => [
+            'display' => 'icon',
+            'value' => 'trash',
+            'title' => 'Reject Application',
+            'url' => URLUtils::makeURL(
+                'Scheduler',
+                'reject',
+                ['show_season_id' => $this->getID()]
+            ),
+            ],
             ]
         );
     }

@@ -8,7 +8,7 @@ window.timelord = {
      * @param String message
      * @returns {window.timelord}
      */
-    showMsg: function(message) {
+    showMsg: function (message) {
         $('#breaking-container').html(message).show();
         $('#current-show, #next-show').hide();
         return this;
@@ -17,7 +17,7 @@ window.timelord = {
      * Hides a breaking news message
      * @returns {window.timelord}
      */
-    hideMsg: function() {
+    hideMsg: function () {
         $('#breaking-container').hide();
         $('#current-show, #next-show').show();
         return this;
@@ -26,7 +26,7 @@ window.timelord = {
      * Updates the time and date display
      * @returns {window.timelord}
      */
-    updateTime: function() {
+    updateTime: function () {
         var date = new Date();
         $('#time').html(
             timelord.pad(date.getHours()) + ':' + timelord.pad(date.getMinutes()) +
@@ -44,7 +44,7 @@ window.timelord = {
      * @param int input
      * @returns {String|Window.timelord.pad.input}
      */
-    pad: function(input) {
+    pad: function (input) {
         input = input.toString();
         if (input.length === 1) {
             input = '0' + input;
@@ -56,7 +56,7 @@ window.timelord = {
      * @param int day
      * @returns {String}
      */
-    getDateSuffix: function(day) {
+    getDateSuffix: function (day) {
         if (day > 10 && day < 14) {
             return 'th';
         }
@@ -78,33 +78,33 @@ window.timelord = {
      * @param int num Sel value.
      * @returns {window.timelord}
      */
-    setStudio: function(num) {
+    setStudio: function (num) {
         $('#studio').removeClass('studio1').removeClass('studio2')
                 .removeClass('studio3').removeClass('studio4');
         $('#studio').addClass('studio' + num);
         switch (num) {
-        case 1:
-        case 2:
-            $('#studio').html('Studio ' + num + ' is On Air');
+            case 1:
+            case 2:
+                $('#studio').html('Studio ' + num + ' is On Air');
                 break;
-        case 3:
-            $('#studio').html('Jukebox is On Air');
+            case 3:
+                $('#studio').html('Jukebox is On Air');
                 break;
-        case 4:
-            $('#studio').html('Outside Broadcast');
+            case 4:
+                $('#studio').html('Outside Broadcast');
                 break;
-        default:
-            $('#studio').html('Unknown Output');
+            default:
+                $('#studio').html('Unknown Output');
                 break;
         }
         return this;
     },
-    setCurrentShow: function(text) {
+    setCurrentShow: function (text) {
         $('#current-show-title').html(text);
 
         return this;
     },
-    setNextShows: function(next) {
+    setNextShows: function (next) {
         if (!next || next[0] == null) {
             $('#next-show').html('');
         } else {
@@ -125,7 +125,7 @@ window.timelord = {
      * @param String alert An ID for one of the alert fields
      * @returns {window.timelord}
      */
-    resetAlert: function(alert) {
+    resetAlert: function (alert) {
         $('#' + alert).removeClass('worse').removeClass('bad').removeClass('good').removeClass('standby');
         return this;
     },
@@ -135,7 +135,7 @@ window.timelord = {
      * @param String state bad|standby|good
      * @returns {window.timelord}
      */
-    setAlert: function(alert, state) {
+    setAlert: function (alert, state) {
         this.resetAlert(alert);
         $('#' + alert).addClass(state);
         return this;
@@ -144,15 +144,15 @@ window.timelord = {
      * Update the view
      * @returns {window.timelord}
      */
-    updateState: function() {
+    updateState: function () {
         $.ajax(
             {url: myradio.makeURL('Timelord', 'a-update'),
                 global: false,
-                error: function() {
+                error: function () {
                     //Refresh on failure
                     window.location = window.location.href;
                 },
-                success: function(data) {
+                success: function (data) {
                     timelord.setStudio(data.selector.studio)
                         .setNextShows(data.shows.next);
                     if (!timelord.news) {
@@ -222,7 +222,7 @@ window.timelord = {
                         $('#routeob-s1, #routeob-s2, #power-s2').show();
                     }
                 },
-                complete: function() {
+                complete: function () {
                     setTimeout(timelord.updateState, 3000);
                 }}
         );
@@ -233,7 +233,7 @@ window.timelord = {
      * Displays a message when it's news time.
      * @returns {window.timelord}
      */
-    newsWarn: function() {
+    newsWarn: function () {
         var date = new Date();
         if ((date.getMinutes() === 59 && (date.getSeconds() >= 15
             && date.getSeconds() <= 52)) || date.getMinutes() < 2
@@ -271,7 +271,7 @@ window.timelord = {
      * Startup
      * @returns {window.timelord}
      */
-    init: function() {
+    init: function () {
         setInterval(timelord.updateTime, 250);
         setInterval(timelord.newsWarn, 250);
         //Chromium and its darn memory leaks.
@@ -282,7 +282,7 @@ window.timelord = {
 };
 
 $(document).ready(
-    function() {
+    function () {
         timelord.init();
     }
 );

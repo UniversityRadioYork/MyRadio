@@ -370,8 +370,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         $data['description'] = self::getClassDoc($refClass)['short_desc'];
 
         foreach ($refClass->getMethods() as $method) {
-            if (
-                (!$method->isPublic())
+            if ((!$method->isPublic())
                 || in_array($method->getName(), $blocked_methods)
                 || substr($method->getName(), strlen($method->getName()) - 4) === 'Form'
                 ) {

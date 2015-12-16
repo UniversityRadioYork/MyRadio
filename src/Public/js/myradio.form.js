@@ -4,7 +4,11 @@
  * needed for a MyRadio Form
  */
 jQuery.validator.addMethod(
-    "dateITA", function(value, element) {
+    "dateITA",
+    function (
+        value,
+        element
+    ) {
         var check = false;
         var re = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
         if (re.test(value)) {
@@ -22,11 +26,12 @@ jQuery.validator.addMethod(
             check = false;
         }
         return this.optional(element) || check;
-    }, "Please enter a valid date."
+    },
+    "Please enter a valid date."
 );
 window.MyRadioForm = {
     gCheckedValue: null,
-    setUpMemberFields: function() {
+    setUpMemberFields: function () {
         /**
      * Initialises the Member autocomplete pickers where necessary
      */
@@ -34,13 +39,13 @@ window.MyRadioForm = {
         if (memberFields.length > 0) {
             var memberLookup = new Bloodhound(
                 {
-                    datumTokenizer: function(i) {
+                    datumTokenizer: function (i) {
                         return Bloodhound.tokenizers.whitespace(i.fname)
                         .concat(Bloodhound.tokenizers.whitespace(i.sname));
                     },
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
                     limit: 25,
-                    dupDetector: function(remote, local) {
+                    dupDetector: function (remote, local) {
                         return local.memberid == remote.memberid;
                     },
                     prefetch: {
@@ -52,7 +57,7 @@ window.MyRadioForm = {
             memberLookup.initialize();
 
             memberFields.each(
-                function() {
+                function () {
                     var idField =  $('#' + $(this).attr('id').replace(/-ui$/, ''));
                     var defaultVal = idField.val();
 
@@ -63,13 +68,13 @@ window.MyRadioForm = {
                             minLength: 1
                         },
                         {
-                            displayKey: function(i) {
+                            displayKey: function (i) {
                                 return i.fname + ' ' + i.sname;
                             },
                             source: memberLookup.ttAdapter(),
                             templates: {
                                 //Only needed for workaround
-                                suggestion: function(i) {
+                                suggestion: function (i) {
                                     //Fix typeahead not showing after hiding
                                     //TODO: Report this @ https://github.com/twitter/typeahead.js/
                                     $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
@@ -79,7 +84,11 @@ window.MyRadioForm = {
                         }
                     )
                     .on(
-                        'typeahead:selected', function(e, obj) {
+                        'typeahead:selected',
+                        function (
+                            e,
+                            obj
+                        ) {
                             idField.val(obj.memberid);
                         }
                     );
@@ -87,7 +96,7 @@ window.MyRadioForm = {
             );
         }
     },
-    setUpTrackFields: function() {
+    setUpTrackFields: function () {
         /**
      * Initialises the Track autocomplete pickers where necessary
      */
@@ -95,13 +104,13 @@ window.MyRadioForm = {
         if (trackFields.length > 0) {
             var trackLookup = new Bloodhound(
                 {
-                    datumTokenizer: function(i) {
+                    datumTokenizer: function (i) {
                         return Bloodhound.tokenizers.whitespace(i.title)
                         .concat(Bloodhound.tokenizers.whitespace(i.artist));
                     },
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
                     limit: 25,
-                    dupDetector: function(remote, local) {
+                    dupDetector: function (remote, local) {
                         return local.trackid == remote.trackid;
                     },
                     prefetch: {
@@ -113,7 +122,7 @@ window.MyRadioForm = {
             trackLookup.initialize();
 
             trackFields.each(
-                function() {
+                function () {
                     var idField =  $('#' + $(this).attr('id').replace(/-ui$/, ''));
                     var defaultVal = idField.val();
 
@@ -124,12 +133,12 @@ window.MyRadioForm = {
                             minLength: 1
                         },
                         {
-                            displayKey: function(i) {
+                            displayKey: function (i) {
                                 return i.title;
                             },
                             source: trackLookup.ttAdapter(),
                             templates: {
-                                suggestion: function(i) {
+                                suggestion: function (i) {
                                     //Fix typeahead not showing after hiding
                                     //TODO: Report this @ https://github.com/twitter/typeahead.js/
                                     $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
@@ -139,7 +148,11 @@ window.MyRadioForm = {
                         }
                     )
                     .on(
-                        'typeahead:selected', function(e, obj) {
+                        'typeahead:selected',
+                        function (
+                            e,
+                            obj
+                        ) {
                             idField.val(obj.trackid);
                         }
                     );
@@ -147,7 +160,7 @@ window.MyRadioForm = {
             );
         }
     },
-    setUpArtistFields: function() {
+    setUpArtistFields: function () {
         /**
      * Initialises the Artist autocomplete pickers where necessary
      */
@@ -158,7 +171,7 @@ window.MyRadioForm = {
                     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('title'),
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
                     limit: 25,
-                    dupDetector: function(remote, local) {
+                    dupDetector: function (remote, local) {
                         return local.title == remote.title;
                     },
                     prefetch: {
@@ -170,7 +183,7 @@ window.MyRadioForm = {
             artistLookup.initialize();
 
             artistFields.each(
-                function() {
+                function () {
                     var idField =  $('#' + $(this).attr('id').replace(/-ui$/, ''));
                     var defaultVal = idField.val();
 
@@ -185,7 +198,7 @@ window.MyRadioForm = {
                             source: artistLookup.ttAdapter(),
                             templates: {
                                 //Only needed for workaround
-                                suggestion: function(i) {
+                                suggestion: function (i) {
                                     //Fix typeahead not showing after hiding
                                     //TODO: Report this @ https://github.com/twitter/typeahead.js/
                                     $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
@@ -195,7 +208,11 @@ window.MyRadioForm = {
                         }
                     )
                     .on(
-                        'typeahead:selected', function(e, obj) {
+                        'typeahead:selected',
+                        function (
+                            e,
+                            obj
+                        ) {
                             idField.val(obj.artistid);
                         }
                     );
@@ -203,7 +220,7 @@ window.MyRadioForm = {
             );
         }
     },
-    setUpAlbumFields: function() {
+    setUpAlbumFields: function () {
         /**
      * Initialises the Album autocomplete pickers where necessary
      */
@@ -211,13 +228,13 @@ window.MyRadioForm = {
         if (albumFields.length > 0) {
             var albumLookup = new Bloodhound(
                 {
-                    datumTokenizer: function(i) {
+                    datumTokenizer: function (i) {
                         return Bloodhound.tokenizers.whitespace(i.title)
                         .concat(Bloodhound.tokenizers.whitespace(i.artist));
                     },
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
                     limit: 25,
-                    dupDetector: function(remote, local) {
+                    dupDetector: function (remote, local) {
                         return local.title == remote.title;
                     },
                     prefetch: {
@@ -229,7 +246,7 @@ window.MyRadioForm = {
             albumLookup.initialize();
 
             albumFields.each(
-                function() {
+                function () {
                     var idField =  $('#' + $(this).attr('id').replace(/-ui$/, ''));
                     var defaultVal = idField.val();
 
@@ -244,7 +261,7 @@ window.MyRadioForm = {
                             source: albumLookup.ttAdapter(),
                             templates: {
                                 //Only needed for workaround
-                                suggestion: function(i) {
+                                suggestion: function (i) {
                                     //Fix typeahead not showing after hiding
                                     //TODO: Report this @ https://github.com/twitter/typeahead.js/
                                     $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
@@ -254,7 +271,11 @@ window.MyRadioForm = {
                         }
                     )
                     .on(
-                        'typeahead:selected', function(e, obj) {
+                        'typeahead:selected',
+                        function (
+                            e,
+                            obj
+                        ) {
                             idField.val(obj.recordid);
                         }
                     );
@@ -262,7 +283,7 @@ window.MyRadioForm = {
             );
         }
     },
-    setUpTimePickers: function() {
+    setUpTimePickers: function () {
         /**
      * Initialises the Time pickers where necessary
      * @todo Make minuteStepping customisable?
@@ -275,7 +296,7 @@ window.MyRadioForm = {
             }
         );
     },
-    setUpDatePickers: function() {
+    setUpDatePickers: function () {
         /**
      * Initialises the Date pickers where necessary
      */
@@ -285,19 +306,19 @@ window.MyRadioForm = {
             }
         );
     },
-    validate: function() {
+    validate: function () {
         /**
      * Validation
      */
         $('fieldset.myradiofrm form').validate(
             {
                 errorClass: 'bg-danger',
-                errorPlacement: function(error, element) {
+                errorPlacement: function (error, element) {
                     error.css('width', element.css('width'))
                     .css('margin-left', element.css('margin-left'))
                     .appendTo(element.parents('div.myradiofrmfield-container'));
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     $(form).children('input[type=submit]').attr('disabled', 'disabled');
                     form.submit();
                 }
@@ -307,11 +328,13 @@ window.MyRadioForm = {
     /**
    * Sets up those pretty week drag-drop select fields. I wrote it, but don't understand it.
    */
-    setUpWeekSelectFields: function() {
+    setUpWeekSelectFields: function () {
         $.each(
-            $('table.myradiofrmfield-weeklycheck td'), function() {
+            $('table.myradiofrmfield-weeklycheck td'),
+            function () {
                 $(this).on(
-                    'mousedown', function(e) {
+                    'mousedown',
+                    function (e) {
                         if (MyRadioForm.gCheckedValue === null) {
                             /**
                     * Start a drag selection. Invert the state of the selected checkbox,
@@ -326,16 +349,18 @@ window.MyRadioForm = {
                         e.preventDefault();
                     }
                 ).on(
-                    'mouseenter', function() {
-                        //Is there an active dragging event?
+                    'mouseenter',
+                    function () {
+                    //Is there an active dragging event?
                         if (MyRadioForm.gCheckedValue === null) {
                             return; //Nope.
                         }
                         $(this).children('input[type=checkbox]').prop('checked', MyRadioForm.gCheckedValue);
                     }
                 ).on(
-                    'click', function(e) {
-                        //Stop the default click handler running - it unselects boxes.
+                    'click',
+                    function (e) {
+                    //Stop the default click handler running - it unselects boxes.
                         e.preventDefault();
                     }
                 );
@@ -343,13 +368,14 @@ window.MyRadioForm = {
         );
         //Initialise this to the whole page, otherwise mouseup outside the table makes a mess
         $(document).on(
-            'mouseup', function() {
-                //End the dragging event
+            'mouseup',
+            function () {
+            //End the dragging event
                 MyRadioForm.gCheckedValue = null;
             }
         );
     },
-    setUpTinyMCEFields: function() {
+    setUpTinyMCEFields: function () {
         /**
      * Initialises TinyMCE fields
      */
@@ -370,7 +396,7 @@ window.MyRadioForm = {
             );
         }
     },
-    setUpDateTimePickerFields: function() {
+    setUpDateTimePickerFields: function () {
         /**
      * Initialises the Datetime pickers where necessary
      * @todo Make stepminute customisable?
@@ -382,38 +408,39 @@ window.MyRadioForm = {
             }
         );
     },
-    setUpCheckboxGroups: function() {
+    setUpCheckboxGroups: function () {
         /**
      * Setup Checkbox Group select all / select none
      */
         $('fieldset a.checkgroup-all').click(
-            function() {
+            function () {
                 $(this).parents('fieldset:first').find('input[type=checkbox]').each(
-                    function() {
+                    function () {
                         $(this).attr('checked', 'checked');
                     }
                 );
             }
         );
         $('fieldset a.checkgroup-none').click(
-            function() {
+            function () {
                 $(this).parents('fieldset:first').find('input[type=checkbox]').each(
-                    function() {
+                    function () {
                         $(this).attr('checked', null);
                     }
                 );
             }
         );
     },
-    setUpRepeatingSets: function() {
+    setUpRepeatingSets: function () {
         //Set up tabular repeating sets
         $('.myradio-form-add-row-button').on(
-            'click', function() {
+            'click',
+            function () {
                 var new_id = $(this).attr('nextvalue');
                 $('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody tr:first').clone()
                 .addClass(parseInt(new_id) % 2 === 0 ? 'odd' : 'even')
                 .find('input:not(.tt-hint)').each(
-                    function() {
+                    function () {
                         $(this).val('').removeClass('tt-input').attr('id', $(this).attr('id').replace(/0/, new_id));
                     }
                 ).end().appendTo('#' + $(this).attr('id').replace(/add-to-/, '') + ' tbody');
@@ -426,7 +453,8 @@ window.MyRadioForm = {
             }
         );
         $('button.myuryfrm-remove-row').on(
-            'click', function() {
+            'click',
+            function () {
                 $(this).closest('tr').remove();
                 return false;
             }
@@ -440,13 +468,14 @@ window.MyRadioForm = {
             }
         );
     },
-    setUpFileProgress: function() {
+    setUpFileProgress: function () {
         /**
      * Sets up the progress bar for file upload progress
      */
         if ($('#UPLOAD_IDENTIFIER').length !== 0) {
             $('form').on(
-                'submit', function() {
+                'submit',
+                function () {
                     if ($('#UPLOAD_IDENTIFIER').nextAll('input')[0].value !== "") {
                         $('.myuryfrm-file-upload-progress').progressbar({value: false});
                         //Poke the server for upload progress status
@@ -455,7 +484,8 @@ window.MyRadioForm = {
                 }
             );
             $('#myradiofrm-file-upload-iframe').on(
-                'load', function() {
+                'load',
+                function () {
                     data = $.parseJSON($($(this).contents().find('body').children()[0]).html());
                     percent = data.bytes_uploaded / data.bytes_total * 100;
                     $('.myuryfrm-file-upload-progress').progressbar('value', percent);
@@ -467,7 +497,7 @@ window.MyRadioForm = {
             );
         }
     },
-    pollFileProgress: function() {
+    pollFileProgress: function () {
         /**
      * You could ask "Why not use $.ajax?" Well the answer is that WebKit
      * won't let you start a new XHR once the form is submitted. YAAY iFrames!
@@ -475,14 +505,16 @@ window.MyRadioForm = {
         $('#myradiofrm-file-upload-iframe').attr(
             'src',
             myradio.makeURL(
-                'MyRadio', 'a-getuploadprogress', {
+                'MyRadio',
+                'a-getuploadprogress',
+                {
                     id: $('#UPLOAD_IDENTIFIER').val(),
                     1: (new Date()).getTime()
                 }
             )
         );
     },
-    init: function() {
+    init: function () {
         MyRadioForm.setUpRepeatingSets();
         MyRadioForm.setUpTinyMCEFields();
         MyRadioForm.setUpDateTimePickerFields();
@@ -499,7 +531,7 @@ window.MyRadioForm = {
     }
 };
 $(document).ready(
-    function() {
+    function () {
         MyRadioForm.init();
     }
 );

@@ -460,7 +460,8 @@ class MyRadio_Officer extends ServiceAPI
                 $x['User'] = MyRadio_User::getInstance($x['User']);
 
                 return $x;
-            }, $this->history
+            },
+            $this->history
         );
     }
 

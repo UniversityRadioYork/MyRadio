@@ -78,7 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data[$show->getMeta('title')][] = array_map(
                 function ($x) {
                     return [$x->getID(), $x->getStartTime(), $x->getEndTime()];
-                }, $season->getAllTimeslots()
+                },
+                $season->getAllTimeslots()
             );
         }
     }

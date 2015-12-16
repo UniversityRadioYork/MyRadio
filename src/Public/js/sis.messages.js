@@ -1,13 +1,13 @@
 /* Messages */
-var Messages = function() {
+var Messages = function () {
     var highest_message_id = 0,
         unreadMessages = 0,
         glyphicons = ['question-sign', 'envelope', 'phone', 'globe'],
         table = document.createElement('table'),
         self = this,
-        clickHandler = function(context, row, message) {
+        clickHandler = function (context, row, message) {
             $(row).click(
-                function() {
+                function () {
                     if ($(this).hasClass('unread')) {
                         //This is the first time the message has been opened. Mark as read
                         $.ajax(
@@ -36,10 +36,10 @@ var Messages = function() {
     return {
         name: 'Messages',
         type: 'tab',
-        initialise: function() {
+        initialise: function () {
             $(this).append(table);
         },
-        update: function(data) {
+        update: function (data) {
             for (var i in data) {
                 var locationStr,
                     img,
@@ -100,3 +100,4 @@ var Messages = function() {
 }
 
 sis.registerModule('messages', new Messages());
+

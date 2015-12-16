@@ -208,7 +208,9 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         //Check whether this user can do that.
         if (in_array(
             array_map(
-                function ($x) {return $x->getID();},
+                function ($x) {
+                    return $x->getID();
+                },
                 $awarded_by->getAllTraining(true)
             ),
             $status->getAwarder()->getID()
@@ -220,7 +222,9 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         if ($status->getDepends() !== null and in_array(
             $status->getDepends()->getID(),
             array_map(
-                function ($x) {return $x->getID();},
+                function ($x) {
+                    return $x->getID();
+                },
                 $awarded_to->getAllTraining(true)
             )
         ) === false) {

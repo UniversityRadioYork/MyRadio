@@ -15,7 +15,7 @@ var server = {
    * @param namespace A root array within the JSON response which will
    * trigger callback_func if nonempty
    */
-    register_callback: function(callback_func, namespace) {
+    register_callback: function (callback_func, namespace) {
         server.callbacks[namespace] = callback_func;
     },
     /**
@@ -26,7 +26,7 @@ var server = {
    * @param key The name of the parameter to send to the server
    * @param value The value of the parameter to send to the server
    */
-    register_param: function(key, value) {
+    register_param: function (key, value) {
         server.params[key] = value;
     },
     /**
@@ -34,7 +34,7 @@ var server = {
    * first time it is run. When the request is complete, it will call the
    * required callback functions from plugins.
    */
-    connect: function() {
+    connect: function () {
         $.ajax(
             {
                 url: myradio.makeURL('SIS', 'remote'),
@@ -43,7 +43,8 @@ var server = {
                 cache: false,
                 dataType: 'json',
                 //The timeout here is to prevent stack overflow
-                complete: function() {setTimeout('server.connect()', 100);},
+                complete: function () {
+                    setTimeout('server.connect()', 100);},
                 success: server.handleResponse
             }
         );
@@ -52,7 +53,7 @@ var server = {
    * Used by connect, this takes all the current registered server parameters
    * and returns them as a concatenated query string
    */
-    getQueryString: function() {
+    getQueryString: function () {
         var qString = '';
         var first = true;
         for (var key in server.params) {
@@ -70,7 +71,7 @@ var server = {
    * server
    * @param data The JSON object returned from the server
    */
-    handleResponse: function(data) {
+    handleResponse: function (data) {
         for (var namespace in data) {
             //Handle the Debug namespace - log the message
             if (namespace == 'debug') {
@@ -90,18 +91,18 @@ var server = {
     /**
    * Used to set the number of unread events in the page
    */
-    incrementUnreadEvents: function() {
+    incrementUnreadEvents: function () {
         server.unreadEvents++;
         server.updateTitle();
     },
-    decrementUnreadEvents: function() {
+    decrementUnreadEvents: function () {
         server.unreadEvents--;
         server.updateTitle();
     },
     /**
    * Displays the number of unread events in the title
    */
-    updateTitle: function() {
+    updateTitle: function () {
         var prefix = "";
         if (server.unreadEvents !== 0) {
             prefix = '('+server.unreadEvents+') ';
@@ -112,7 +113,7 @@ var server = {
 
 //The timeout give functions time to register
 $(document).ready(
-    function() {
+    function () {
         setTimeout("server.connect()", 1000);
     }
 );

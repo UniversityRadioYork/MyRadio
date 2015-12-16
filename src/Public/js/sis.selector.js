@@ -1,5 +1,5 @@
 /* Selector */
-var Selector = function() {
+var Selector = function () {
     var studios = [
             'Studio 1',
             'Studio 2',
@@ -12,7 +12,7 @@ var Selector = function() {
         lastTime = 0,
         currentStudio,
         locked = true,
-        selectStudio = function() {
+        selectStudio = function () {
             var studio = this.getAttribute('studio');
             if (studio == currentStudio) {
                 return;
@@ -27,7 +27,9 @@ var Selector = function() {
             }
 
             $.get(
-                myradio.makeURL('SIS', 'selector.set'), {src: studio}, function(data) {
+                myradio.makeURL('SIS', 'selector.set'),
+                {src: studio},
+                function (data) {
                     if (data['error'] == 'locked') {
                         myradio.createDialog('Selector Error', 'Could not change studio; studio selector is currently locked out.');
                         return;
@@ -40,7 +42,7 @@ var Selector = function() {
                 }
             );
         },
-        update = function(data) {
+        update = function (data) {
             var liveStatus, s, time = parseInt(data['lastmod']);
             // Disregard data older than the latest update
             if (time <= lastTime) {
@@ -99,7 +101,7 @@ var Selector = function() {
     return {
         name: 'Studio Selector',
         type: 'plugin',
-        initialise: function() {
+        initialise: function () {
             var table = document.createElement('table'),
                 row = document.createElement('tr'),
                 button;

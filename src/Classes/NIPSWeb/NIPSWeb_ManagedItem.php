@@ -64,7 +64,8 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
         }
 
         $this->managed_playlist = empty(
-            $result['managedplaylistid']) ? null :
+            $result['managedplaylistid']
+        ) ? null :
                 (($playlistref instanceof NIPSWeb_ManagedPlaylist) ? $playlistref :
                     NIPSWeb_ManagedPlaylist::getInstance($result['managedplaylistid'])
                 );

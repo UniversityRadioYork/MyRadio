@@ -10,7 +10,8 @@ $terms = array_map(
         $x['start'] = date('d/m/Y', $x['start']);
 
         return $x;
-    }, MyRadio_Scheduler::getTerms()
+    },
+    MyRadio_Scheduler::getTerms()
 );
 
 CoreUtils::getTemplateObject()->setTemplate('Scheduler/listTerms.twig')

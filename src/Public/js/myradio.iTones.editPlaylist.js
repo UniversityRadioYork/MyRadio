@@ -1,4 +1,5 @@
-function iTones_refreshLock() {
+function iTones_refreshLock()
+{
     $.ajax(
         {
             url: myradio.makeURL('iTones', 'refreshLock'),
@@ -9,7 +10,7 @@ function iTones_refreshLock() {
 }
 
 $(document).ready(
-    function() {
+    function () {
         setInterval(iTones_refreshLock, 15000);
     }
 );

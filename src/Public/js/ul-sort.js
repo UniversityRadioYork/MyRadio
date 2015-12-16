@@ -10,7 +10,8 @@ ulsort.List = {
 
         // binding keyup to the unordered list
         $(inputSelector).bind(
-            'keyup', function (e) {
+            'keyup',
+            function (e) {
                 console.log('keyup');
                 if (jQuery.inArray(e.keyCode, keys) >= 0) {
                     return false;

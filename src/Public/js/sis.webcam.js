@@ -1,18 +1,18 @@
 /* Webcam */
-var Webcam = function() {
+var Webcam = function () {
     var webcams = [],
         that,
         buttonContainer = document.createElement('div'),
         figureContainer = document.createElement('div'),
         onAir = document.createElement('span'),
         currentWebcam,
-        selectWebcam = function(newcam) {
+        selectWebcam = function (newcam) {
             if (newcam === currentWebcam) {
                 return;
             }
             $.get(myradio.makeURL('SIS', 'webcam.set'), {src: newcam});
         },
-        update = function(data) {
+        update = function (data) {
 
             if (currentWebcam === undefined) {
                 this.show();
@@ -29,8 +29,8 @@ var Webcam = function() {
                             img = document.createElement('img'),
                             streamid = data['streams'][i]['streamid'],
                             camera = data['streams'][i]['camera'],
-                            clickHandler = function(camera) {
-                                return function() {
+                            clickHandler = function (camera) {
+                                return function () {
                                     selectWebcam(camera);
                                 };
                             }(camera);
@@ -88,7 +88,7 @@ var Webcam = function() {
     return {
         name: 'Webcam Selector',
         type: 'plugin',
-        initialise: function() {
+        initialise: function () {
             onAir.innerHTML = 'Webcam unavailable &mdash; Loading';
             this.appendChild(buttonContainer);
             this.appendChild(figureContainer);

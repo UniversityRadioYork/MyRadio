@@ -1,5 +1,5 @@
 window.myradio = {
-    makeURL: function(module, action, params) {
+    makeURL: function (module, action, params) {
         qstring = (params === undefined) ? '' : $.param(params);
         if (mConfig.rewrite_url) {
             return mConfig.base_url + module + '/' + action + '/' + (qstring === '' ? '' : '?' + qstring);
@@ -7,7 +7,7 @@ window.myradio = {
             return mConfig.base_url + '?module=' + module + '&action=' + action + (qstring === '' ? '' : '&' + qstring);
         }
     },
-    errorReport: function(myradio_errors, e, xhr, settings) {
+    errorReport: function (myradio_errors, e, xhr, settings) {
         console.log(myradio_errors);
         myradio.createDialog(
             'Error',
@@ -15,7 +15,7 @@ window.myradio = {
             [myradio.closeButton(), myradio.reportButton(xhr, settings, myradio_errors)]
         );
     },
-    createDialog: function(title, text, buttons, startHidden) {
+    createDialog: function (title, text, buttons, startHidden) {
         if (!buttons) {
             buttons = [];
         }
@@ -28,26 +28,27 @@ window.myradio = {
         }
         return modal;
     },
-    closeButton: function() {
+    closeButton: function () {
         var closeButton = document.createElement('button');
         closeButton.className = 'btn btn-link';
         closeButton.innerHTML = 'Close';
         closeButton.setAttribute('data-dismiss', 'modal');
         return closeButton;
     },
-    reportButton: function(xhr, settings, error) {
+    reportButton: function (xhr, settings, error) {
         var reportButton = document.createElement('button');
         reportButton.className = 'btn btn-primary';
         reportButton.innerHTML = 'Report';
         reportButton.setAttribute('data-dismiss', 'modal');
         reportButton.addEventListener(
-            'click', function() {
+            'click',
+            function () {
                 $.post(myradio.makeURL('MyRadio', 'errorReport'), JSON.stringify({xhr: xhr, settings: settings, error: error}));
             }
         );
         return reportButton;
     },
-    callAPI: function(method, module, action, id, firstParam, options) {
+    callAPI: function (method, module, action, id, firstParam, options) {
         var url = mConfig.api_url;
         url += '/v2/' + module;
         if (id !== '') {
@@ -68,7 +69,7 @@ window.myradio = {
 
 var errorVisible = false;
 $(document).ajaxError(
-    function(e, xhr, settings, error) {
+    function (e, xhr, settings, error) {
         if (xhr.status == 401) {
             //Session timed out - need to login
             window.location = myradio.makeURL('MyRadio', 'login', {next: window.location.href, message: window.btoa('Your session has expired and you need to log in again to continue.')});
@@ -83,7 +84,7 @@ $(document).ajaxError(
                 message = xhr.responseJSON.message;
             }
 
-            var errorVisibleReset = function() {
+            var errorVisibleReset = function () {
                 errorVisible = false;
             };
 
@@ -101,7 +102,7 @@ $(document).ajaxError(
 );
 
 $(document).ajaxSuccess(
-    function(e, xhr, settings) {
+    function (e, xhr, settings) {
         var data;
         if (xhr === null) {
             return;
@@ -120,7 +121,7 @@ $(document).ajaxSuccess(
 /**
  * Use bootstrap show/hide helpers
 **/
-jQuery.fn.show = function() {
+jQuery.fn.show = function () {
     $(this).removeClass('hidden')
         .css('visibility', 'visible');
     for (var i = 0; i < this.length; i++) {
@@ -134,7 +135,7 @@ jQuery.fn.show = function() {
     return this;
 };
 
-jQuery.fn.hide = function() {
+jQuery.fn.hide = function () {
     $(this).addClass('hidden');
     return this;
 };

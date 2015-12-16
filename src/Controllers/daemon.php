@@ -49,10 +49,10 @@ function dlog($x, $level = 3)
 function signal_handler($signo)
 {
     switch ($signo) {
-    case SIGTERM:
-        //Shutdown
-        dlog('Caught SIGTERM. Shutting down after this loop.', 1);
-        $GLOBALS['once'] = true; //This will kill after next iteration
+        case SIGTERM:
+            //Shutdown
+            dlog('Caught SIGTERM. Shutting down after this loop.', 1);
+            $GLOBALS['once'] = true; //This will kill after next iteration
     }
 }
 

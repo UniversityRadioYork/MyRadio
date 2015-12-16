@@ -1,4 +1,4 @@
-var SIS = function(container) {
+var SIS = function (container) {
     var sisContainer = container,
         tabContainer = document.createElement('div'),
         tabTabsContainer = document.createElement('ul'),
@@ -12,7 +12,7 @@ var SIS = function(container) {
         * first time it is run. When the request is complete, it will call the
         * required callback functions from plugins.
         */
-        connect = function() {
+        connect = function () {
             $.ajax(
                 {
                     url: myradio.makeURL('SIS', 'remote'),
@@ -21,7 +21,8 @@ var SIS = function(container) {
                     cache: false,
                     dataType: 'json',
                     //The timeout here is to prevent stack overflow
-                    complete: function() {setTimeout(connect, 100);},
+                    complete: function () {
+                        setTimeout(connect, 100);},
                     success: handleResponse
                 }
             );
@@ -31,7 +32,7 @@ var SIS = function(container) {
         * server
         * @param data The JSON object returned from the server
         */
-        handleResponse = function(data) {
+        handleResponse = function (data) {
             for (var namespace in data) {
                 //Handle the Debug namespace - log the message
                 if (namespace == 'debug') {
@@ -45,7 +46,7 @@ var SIS = function(container) {
                 }
             }
         },
-        generateTabContainer = function(id, name) {
+        generateTabContainer = function (id, name) {
             var tabTab = document.createElement('li'),
                 tabLink = document.createElement('a'),
                 tabBadge = document.createElement('span');
@@ -67,13 +68,13 @@ var SIS = function(container) {
             tabContentContainer.appendChild(container);
 
             $(tabLink).click(
-                function(e) {
+                function (e) {
                     e.preventDefault();
                     $(this).tab('show');
                 }
             );
 
-            container.setUnread = function(num) {
+            container.setUnread = function (num) {
                 if (num === 0) {
                     tabBadge.innerHTML = '';
                 } else {
@@ -81,7 +82,7 @@ var SIS = function(container) {
                 }
             };
 
-            container.registerParam = function(key, value) {
+            container.registerParam = function (key, value) {
                 params[key] = value;
             };
 
@@ -90,7 +91,7 @@ var SIS = function(container) {
                 link: tabLink
             };
         },
-        generatePluginContainer = function(id, name) {
+        generatePluginContainer = function (id, name) {
             var panel = document.createElement('div'),
                 heading = document.createElement('div'),
                 title = document.createElement('h4'),
@@ -130,7 +131,7 @@ var SIS = function(container) {
             pluginContainer.appendChild(panel);
             $(contentHolder).collapse({toggle:false});
 
-            content.setUnread = function(num) {
+            content.setUnread = function (num) {
                 if (num === 0) {
                     titleBadge.innerHTML = '';
                 } else {
@@ -138,15 +139,15 @@ var SIS = function(container) {
                 }
             };
 
-            content.registerParam = function(key, value) {
+            content.registerParam = function (key, value) {
                 params[key] = value;
             };
 
-            content.hide = function() {
+            content.hide = function () {
                 $(contentHolder).collapse('hide');
             };
 
-            content.show = function() {
+            content.show = function () {
                 $(contentHolder).collapse('show');
             };
 
@@ -171,9 +172,9 @@ var SIS = function(container) {
     connect();
 
     return {
-        registerModule: function(id, module, type) {
-            if (!module.hasOwnProperty('initialise') 
-                || !module.hasOwnProperty('name') 
+        registerModule: function (id, module, type) {
+            if (!module.hasOwnProperty('initialise')
+                || !module.hasOwnProperty('name')
                 || !module.hasOwnProperty('type')
             ) {
                 console.error('Cannot load ' + id + ' as it is invalid.');
@@ -187,8 +188,8 @@ var SIS = function(container) {
                 objs = generatePluginContainer(id, module.name);
             }
             // Make it the active module if it is set to be
-            if (defaultActiveFound === false 
-                && module.hasOwnProperty('activeByDefault') 
+            if (defaultActiveFound === false
+                && module.hasOwnProperty('activeByDefault')
                 && module.activeByDefault
             ) {
                 defaultActiveFound = true;
@@ -196,7 +197,7 @@ var SIS = function(container) {
             }
 
             if (module.hasOwnProperty('update')) {
-                callbacks[id] = function(data) {
+                callbacks[id] = function (data) {
                     module.update.call(objs.container, data);
                 };
             }

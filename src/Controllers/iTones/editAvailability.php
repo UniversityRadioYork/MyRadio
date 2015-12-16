@@ -22,7 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
         URLUtils::redirect(
-            'iTones', 'editAvailability', [
+            'iTones',
+            'editAvailability',
+            [
             'availabilityid' => $availability->getID(),
             'message' => base64_encode('The availability has been created.'),
             ]

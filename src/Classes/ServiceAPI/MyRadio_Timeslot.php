@@ -297,7 +297,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     public function toDataSource()
     {
         return array_merge(
-            $this->getSeason()->toDataSource(), [
+            $this->getSeason()->toDataSource(),
+            [
             'timeslot_id' => $this->getID(),
             'timeslot_num' => $this->getTimeslotNumber(),
             'title' => $this->getMeta('title'),
@@ -308,10 +309,15 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'duration' => $this->getDuration(),
             'mixcloud_status' => $this->getMeta('upload_state'),
             'rejectlink' => [
-                'display' => 'icon',
-                'value' => 'trash',
-                'title' => 'Cancel Episode',
-                'url' => URLUtils::makeURL('Scheduler', 'cancelEpisode', ['show_season_timeslot_id' => $this->getID()]), ],
+            'display' => 'icon',
+            'value' => 'trash',
+            'title' => 'Cancel Episode',
+            'url' => URLUtils::makeURL(
+                'Scheduler',
+                'cancelEpisode',
+                ['show_season_timeslot_id' => $this->getID()]
+            ),
+            ],
             ]
         );
     }
@@ -776,61 +782,61 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
         foreach ($set['ops'] as $op) {
             switch ($op['op']) {
-            case 'AddItem':
-                try {
-                    //Is this a record or a manageditem?
-                    $parts = explode('-', $op['id']);
-                    if ($parts[0] === 'ManagedDB') {
-                        //This is a managed item
-                        $i = NIPSWeb_TimeslotItem::createManaged($this->getID(), $parts[1], $op['channel'], $op['weight']);
-                    } else {
-                        //This is a rec database track
-                        $i = NIPSWeb_TimeslotItem::createCentral($this->getID(), $parts[1], $op['channel'], $op['weight']);
+                case 'AddItem':
+                    try {
+                        //Is this a record or a manageditem?
+                        $parts = explode('-', $op['id']);
+                        if ($parts[0] === 'ManagedDB') {
+                            //This is a managed item
+                            $i = NIPSWeb_TimeslotItem::createManaged($this->getID(), $parts[1], $op['channel'], $op['weight']);
+                        } else {
+                            //This is a rec database track
+                            $i = NIPSWeb_TimeslotItem::createCentral($this->getID(), $parts[1], $op['channel'], $op['weight']);
+                        }
+                    } catch (MyRadioException $e) {
+                        $result[] = ['status' => false];
+                        self::$db->query('ROLLBACK');
+
+                        return $result;
                     }
-                } catch (MyRadioException $e) {
-                    $result[] = ['status' => false];
-                    self::$db->query('ROLLBACK');
 
-                    return $result;
-                }
+                    $result[] = ['status' => true, 'timeslotitemid' => $i->getID()];
+                    break;
 
-                $result[] = ['status' => true, 'timeslotitemid' => $i->getID()];
-                break;
+                case 'MoveItem':
+                    if (!is_numeric($op['timeslotitemid'])) {
+                        $result[] = ['status' => false];
+                        self::$db->query('ROLLBACK');
 
-            case 'MoveItem':
-                if (!is_numeric($op['timeslotitemid'])) {
-                    $result[] = ['status' => false];
-                    self::$db->query('ROLLBACK');
+                        return $result;
+                    }
+                    $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
+                    if ($i->getChannel() != $op['oldchannel'] or $i->getWeight() != $op['oldweight']) {
+                        $result[] = ['status' => false];
+                        self::$db->query('ROLLBACK');
 
-                    return $result;
-                }
-                $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
-                if ($i->getChannel() != $op['oldchannel'] or $i->getWeight() != $op['oldweight']) {
-                    $result[] = ['status' => false];
-                    self::$db->query('ROLLBACK');
+                        return $result;
+                    } else {
+                        $i->setLocation($op['channel'], $op['weight']);
+                        $result[] = ['status' => true];
+                    }
+                    break;
 
-                    return $result;
-                } else {
-                    $i->setLocation($op['channel'], $op['weight']);
-                    $result[] = ['status' => true];
-                }
-                break;
+                case 'RemoveItem':
+                    if (!is_numeric($op['timeslotitemid'])) {
+                        throw new MyRadioException($op['timeslotitemid'].' is invalid.', 500);
+                    }
+                    $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
+                    if ($i->getChannel() != $op['channel'] or $i->getWeight() != $op['weight']) {
+                        $result[] = ['status' => false];
+                        self::$db->query('ROLLBACK');
 
-            case 'RemoveItem':
-                if (!is_numeric($op['timeslotitemid'])) {
-                    throw new MyRadioException($op['timeslotitemid'].' is invalid.', 500);
-                }
-                $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
-                if ($i->getChannel() != $op['channel'] or $i->getWeight() != $op['weight']) {
-                    $result[] = ['status' => false];
-                    self::$db->query('ROLLBACK');
-
-                    return $result;
-                } else {
-                    $i->remove();
-                    $result[] = ['status' => true];
-                }
-                break;
+                        return $result;
+                    } else {
+                        $i->remove();
+                        $result[] = ['status' => true];
+                    }
+                    break;
             }
         }
 

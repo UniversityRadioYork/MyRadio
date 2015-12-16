@@ -36,14 +36,14 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
     {
         $data = explode('/', $id);
         switch ($data[sizeof($data) - 1]) {
-        case 'jingles':
-            return 'My Jingles';
+            case 'jingles':
+                return 'My Jingles';
                 break;
-        case 'beds':
-            return 'My Beds';
+            case 'beds':
+                return 'My Beds';
                 break;
-        default:
-            return 'ERR_USR_PRESET_NOT_FOUND: '.$id;
+            default:
+                return 'ERR_USR_PRESET_NOT_FOUND: '.$id;
                 break;
         }
     }

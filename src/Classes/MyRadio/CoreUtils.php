@@ -351,30 +351,30 @@ class CoreUtils
         for ($j = 0; $j < $arrsize; ++$j) {
             $val = $xmlarray[$j];
             switch ($val['type']) {
-            case 'open':
-                $opened[$val['level']] = 0;
-                /* Fall through */
-            case 'complete':
-                $index = '';
-                for ($i = 1; $i < ($val['level']); ++$i) {
-                    $index .= '['.$opened[$i].']';
-                }
-                $path = explode('][', substr($index, 1, -1));
-                $value = &$array;
-                foreach ($path as $segment) {
-                    $value = &$value[$segment];
-                }
-                $value = $val;
-                unset($value['level']);
-                unset($value['type']);
-                if ($val['type'] == 'complete') {
-                    ++$opened[$val['level'] - 1];
-                }
-                break;
-            case 'close':
-                $opened[$val['level'] - 1]++;
-                unset($opened[$val['level']]);
-                break;
+                case 'open':
+                    $opened[$val['level']] = 0;
+                    /* Fall through */
+                case 'complete':
+                    $index = '';
+                    for ($i = 1; $i < ($val['level']); ++$i) {
+                        $index .= '['.$opened[$i].']';
+                    }
+                    $path = explode('][', substr($index, 1, -1));
+                    $value = &$array;
+                    foreach ($path as $segment) {
+                        $value = &$value[$segment];
+                    }
+                    $value = $val;
+                    unset($value['level']);
+                    unset($value['type']);
+                    if ($val['type'] == 'complete') {
+                        ++$opened[$val['level'] - 1];
+                    }
+                    break;
+                case 'close':
+                    $opened[$val['level'] - 1]++;
+                    unset($opened[$val['level']]);
+                    break;
             }
         }
 

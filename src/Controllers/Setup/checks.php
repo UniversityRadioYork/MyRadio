@@ -19,21 +19,21 @@ function convertPHPSizeToBytes($sSize)
     $sSuffix = substr($sSize, -1);
     $iValue = substr($sSize, 0, -1);
     switch (strtoupper($sSuffix)) {
-    case 'P':
-        $iValue *= 1024;
-        //no break
-    case 'T':
-        $iValue *= 1024;
-        //no break
-    case 'G':
-        $iValue *= 1024;
-        //no break
-    case 'M':
-        $iValue *= 1024;
-        //no break
-    case 'K':
-        $iValue *= 1024;
-        break;
+        case 'P':
+            $iValue *= 1024;
+            //no break
+        case 'T':
+            $iValue *= 1024;
+            //no break
+        case 'G':
+            $iValue *= 1024;
+            //no break
+        case 'M':
+            $iValue *= 1024;
+            //no break
+        case 'K':
+            $iValue *= 1024;
+            break;
     }
 
     return $iValue;
@@ -209,9 +209,9 @@ foreach ($function_checks as $check) {
             <p class="alert alert-danger">Uh oh! It looks like there's some things you'll have to get sorted out before you can continue. Follow the advice below, then <a href=''>refresh this page</a> to try again.</p>
         <?php
           echo '<h3>The following tests failed and must be fixed before you can proceed:</h3><ul>';
-            foreach ($problems as $problem) {
-                echo '<li>'.$problem.'</li>';
-            }
+        foreach ($problems as $problem) {
+            echo '<li>'.$problem.'</li>';
+        }
             echo '</ul>';
         }
 

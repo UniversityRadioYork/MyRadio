@@ -22,7 +22,8 @@ $data = array_map(
         ];
 
         return $x;
-    }, AuthUtils::getAllPermissions()
+    },
+    AuthUtils::getAllPermissions()
 );
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/listPermissions.twig')

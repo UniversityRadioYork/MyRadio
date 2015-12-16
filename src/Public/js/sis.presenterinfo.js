@@ -1,15 +1,15 @@
 /* Presenter Information */
-var PresenterInfo = function() {
+var PresenterInfo = function () {
     var lastTime = 0;
     return {
         activeByDefault: true,
         name: 'Presenter Info',
         type: 'tab',
-        initialise: function() {
+        initialise: function () {
             this.innerHTML = 'SIS is getting ready...';
             this.registerParam('presenterinfo-lasttime', lastTime);
         },
-        update: function(data) {
+        update: function (data) {
             lastTime = data.time;
             if (data.info) {
                 this.innerHTML = data.info.content;

@@ -339,14 +339,19 @@ class MyRadio_Banner extends MyRadio_Photo
     public static function getForm()
     {
         return (new MyRadioForm(
-            'bannerfrm', 'Website', 'editBanner', [
+            'bannerfrm',
+            'Website',
+            'editBanner',
+            [
             'title' => 'Edit Banner',
             'template' => 'Website/bannerfrm.twig',
             ]
         ))
                 ->addField(
                     new MyRadioFormField(
-                        'alt', MyRadioFormField::TYPE_TEXT, [
+                        'alt',
+                        MyRadioFormField::TYPE_TEXT,
+                        [
                         'label' => 'Title',
                         'explanation' => 'This is used on the backpages to identify the Banner, and also on the main website as mouseover text.',
                         ]
@@ -354,7 +359,9 @@ class MyRadio_Banner extends MyRadio_Photo
                 )
                 ->addField(
                     new MyRadioFormField(
-                        'target', MyRadioFormField::TYPE_TEXT, [
+                        'target',
+                        MyRadioFormField::TYPE_TEXT,
+                        [
                         'label' => 'Action',
                         'explanation' => 'This is the URL that the User will be taken to if they click the Banner. You can leave this blank for there to not be a link.',
                         'required' => false,
@@ -363,7 +370,9 @@ class MyRadio_Banner extends MyRadio_Photo
                 )
                 ->addField(
                     new MyRadioFormField(
-                        'type', MyRadioFormField::TYPE_SELECT, [
+                        'type',
+                        MyRadioFormField::TYPE_SELECT,
+                        [
                         'label' => 'Type',
                         'explanation' => 'TODO: Ask Matt what this is even supposed to do.',
                         'options' => array_map(
@@ -377,7 +386,9 @@ class MyRadio_Banner extends MyRadio_Photo
                 )
                 ->addField(
                     new MyRadioFormField(
-                        'photo', MyRadioFormField::TYPE_FILE, [
+                        'photo',
+                        MyRadioFormField::TYPE_FILE,
+                        [
                         'label' => 'Image',
                         'explanation' => 'Please upload a 680x230px image file to use as the Banner.',
                         ]

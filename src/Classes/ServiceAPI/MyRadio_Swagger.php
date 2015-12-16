@@ -224,17 +224,17 @@ class MyRadio_Swagger
         foreach ($doc['keys'] as $key => $values) {
             switch ($key) {
                 //Deal with $params
-            case 'param':
-                /*
+                case 'param':
+                    /*
                      * info[0] should be "@param"
                      * info[1] should be data type
                      * info[2] should be parameter name
                      * info[3] should be the description
                      */
-                $info = explode(' ', $values[0], 4);
-                $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
-                $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ?: $info[3]];
-                break;
+                    $info = explode(' ', $values[0], 4);
+                    $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
+                    $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ?: $info[3]];
+                    break;
             }
         }
 

@@ -78,8 +78,7 @@ if (empty($class)) {
  * Check and provide Access-Control-Allow-Origin if needed
  */
 if (isset($_SERVER['HTTP_ORIGIN'])) {
-    if (
-        empty(Config::$api_allowed_domains) or
+    if (empty(Config::$api_allowed_domains) or
         in_array($_SERVER['HTTP_ORIGIN'], Config::$api_allowed_domains)
     ) {
         header('Access-Control-Allow-Origin: *');

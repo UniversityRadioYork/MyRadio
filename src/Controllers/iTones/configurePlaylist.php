@@ -15,7 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //Create
         $playlist = iTones_Playlist::create($data['title'], $data['description']);
         URLUtils::redirect(
-            'iTones', 'configurePlaylist', [
+            'iTones',
+            'configurePlaylist',
+            [
             'playlistid' => $playlist->getID(),
             'message' => base64_encode('The playlist has been created.'),
             ]
