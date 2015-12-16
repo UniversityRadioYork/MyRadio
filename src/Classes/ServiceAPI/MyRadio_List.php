@@ -146,7 +146,7 @@ class MyRadio_List extends ServiceAPI
 
     public function isPublic()
     {
-         return $this->public;
+        return $this->public;
     }
 
     public function isMember($userid)
@@ -336,7 +336,7 @@ class MyRadio_List extends ServiceAPI
     public function toDataSource($mixins = [])
     {
         $mixin_funcs = [
-            'actions' => function(&$data) {
+            'actions' => function (&$data) {
                 $data['optIn'] = ((!$data['subscribed'] && ($this->optin || $this->hasOptedOutOfAuto(MyRadio_User::getCurrentOrSystemUser()->getID()))) ?
                     [
                         'display' => 'icon',
@@ -364,7 +364,7 @@ class MyRadio_List extends ServiceAPI
                     'url' => URLUtils::makeURL('Mail', 'archive', ['list' => $this->getID()])
                 ];
             },
-            'recipients' => function(&$data) {
+            'recipients' => function (&$data) {
                 $data['recipients'] = CoreUtils::dataSourceParser($this->getMembers());
             }
         ];

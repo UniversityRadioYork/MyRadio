@@ -15,7 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ->reject($data['reason'], $data['notify_user']);
 
     URLUtils::backWithMessage("Season Rejected!");
-
 } else {
     //Not Submitted
 

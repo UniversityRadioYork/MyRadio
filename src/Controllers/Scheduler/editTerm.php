@@ -33,7 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         URLUtils::backWithMessage("Show Updated!");
     }
-
 } else {
     //Not Submitted
     if (isset($_REQUEST['termid'])) {

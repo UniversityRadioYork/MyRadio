@@ -3,7 +3,6 @@
 use \ReflectionMethod;
 use \ReflectionClass;
 use \ReflectionException;
-
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
@@ -57,7 +56,7 @@ function api_error($code, $message = null, $previous = null)
  * Names the parameters to make sure they're called in the "correct" order.
  * Adapted from http://stackoverflow.com/q/8649536/995325
  */
-function invokeArgsNamed(ReflectionMethod $refmethod, $object, Array $args = [])
+function invokeArgsNamed(ReflectionMethod $refmethod, $object, array $args = [])
 {
     $parameters = $refmethod->getParameters();
     foreach ($parameters as &$param) {

@@ -23,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $show->setShowPhoto($data['image_file']['tmp_name']);
 
     URLUtils::backWithMessage("Show Photo Updated!");
-
 } else {
     //Not Submitted
 

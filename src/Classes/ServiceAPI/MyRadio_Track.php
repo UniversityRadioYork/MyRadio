@@ -675,7 +675,6 @@ class MyRadio_Track extends ServiceAPI
             // Get the album info if we're getting it from lastfm
             $ainfo = self::getAlbumDurationAndPositionFromLastfm($title, $artist);
         } else {
-
             if (!empty($track)) {
                 $myradio_album = $track[0]->getAlbum();
             } else {
@@ -694,7 +693,7 @@ class MyRadio_Track extends ServiceAPI
 
         // See if the explicit is set, and set the value for the DB accordingly - if not set unknown
         if (!is_null($explicit)) {
-            if ($explicit === true){
+            if ($explicit === true) {
                 $clean = 'n';
             } elseif ($explicit === false) {
                 $clean = 'y';

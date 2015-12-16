@@ -16,7 +16,7 @@ if (isset($_REQUEST['memberid'])) {
     //Impersonate
     $impersonatee = MyRadio_User::getInstance($_REQUEST['memberid']);
     if ((!AuthUtils::hasPermission(AUTH_IMPERSONATE))
-        || (        $impersonatee->hasAuth(AUTH_BLOCKIMPERSONATE)
+        || ($impersonatee->hasAuth(AUTH_BLOCKIMPERSONATE)
         && !AuthUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS))
     ) {
         require_once 'Controllers/Errors/403.php';

@@ -15,7 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     MyRadio_Demo::registerDemo($demoinfo['demo-datetime']);
 
     URLUtils::backWithMessage('Session Updated!');
-
 } else {
     //Not Submitted
 

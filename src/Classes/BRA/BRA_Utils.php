@@ -21,7 +21,6 @@ class BRA_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 
     public function __construct()
     {
-
     }
 
     public function getAllChannelInfo()

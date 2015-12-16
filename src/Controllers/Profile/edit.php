@@ -15,10 +15,8 @@ use \MyRadio\ServiceAPI\MyRadio_Photo;
 // Set if trying to view another member's profile page
 if (isset($_REQUEST['profileedit-memberid']) && AuthUtils::hasPermission(AUTH_EDITANYPROFILE)) {
     $user = MyRadio_User::getInstance($_REQUEST['profileedit-memberid']);
-
 } elseif (isset($_REQUEST['memberid']) && AuthUtils::hasPermission(AUTH_EDITANYPROFILE)) {
     $user = MyRadio_User::getInstance($_REQUEST['memberid']);
-
 } else {
     $user = MyRadio_User::getInstance();
 }
@@ -51,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     URLUtils::redirectWithMessage('Profile', 'view', 'User Updated');
-
 } else {
     //Not Submitted
     $user->getEditForm()->render();

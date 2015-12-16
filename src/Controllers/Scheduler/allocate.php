@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $season->schedule($data);
 
     URLUtils::redirectWithMessage('Scheduler', 'default', 'Season Allocated!');
-
 } else {
     //Not Submitted
     $season = MyRadio_Season::getInstance($_REQUEST['show_season_id']);

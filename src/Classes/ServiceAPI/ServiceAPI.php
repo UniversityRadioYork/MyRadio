@@ -8,7 +8,6 @@ namespace MyRadio\ServiceAPI;
 
 use \MyRadio\Iface\IServiceAPI;
 use \MyRadio\Iface\MyRadio_DataSource;
-
 use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadioException;
@@ -93,7 +92,8 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
         return new $class($itemid);
     }
 
-    protected function addMixins(&$data, $mixins, $mixin_funcs, $strict = true) {
+    protected function addMixins(&$data, $mixins, $mixin_funcs, $strict = true)
+    {
         foreach ($mixins as $mixin) {
             if (array_key_exists($mixin, $mixin_funcs)) {
                 $mixin_funcs[$mixin]($data);
@@ -160,7 +160,6 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
 
     protected function __construct()
     {
-
     }
 
     public function __destruct()

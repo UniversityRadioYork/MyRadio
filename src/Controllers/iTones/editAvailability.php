@@ -44,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         URLUtils::backWithMessage('The availability has been updated.');
     }
-
 } elseif (!empty($_REQUEST['availabilityid'])) {
     //Not Submitted, update
     $availability = iTones_PlaylistAvailability::getInstance($_REQUEST['availabilityid']);

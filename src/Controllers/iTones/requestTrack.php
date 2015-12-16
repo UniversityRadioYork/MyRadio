@@ -57,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     URLUtils::backWithMessage($message);
-
 } else {
     //Not Submitted
     $form->render();

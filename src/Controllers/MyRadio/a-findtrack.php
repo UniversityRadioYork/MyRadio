@@ -20,7 +20,6 @@ use \MyRadio\ServiceAPI\MyRadio_Track;
 if (isset($_REQUEST['id'])) {
     $data = MyRadio_Track::getInstance((int) $_REQUEST['id']);
 } else {
-
     $data = MyRadio_Track::findByOptions(
         [
                 'title' => isset($_REQUEST['term']) ? $_REQUEST['term'] : '',

@@ -47,11 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } elseif (isset($_GET['current']) && $_GET['current'] && AuthUtils::hasPermission(AUTH_EDITSHOWS)) {
     //Submitted Current
     setupTimeslot(MyRadio_Timeslot::getCurrentTimeslot());
-
 } elseif (!empty(Config::$contract_uri) && !MyRadio_User::getInstance()->hasSignedContract()) {
     $message = "You need to have signed the Presenter's Contract to view this";
     require_once 'Controllers/Errors/403.php';
-
 } else {
     //Not Submitted
     $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/timeslot.twig')

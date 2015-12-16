@@ -26,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     URLUtils::backWithMessage('Quote Updated!');
-
 } else {
     //Not Submitted
 
@@ -35,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $quote = MyRadio_Quote::getInstance($_REQUEST['quote_id']);
 
         $quote->getEditForm()->render();
-
     } else {
         //create form
         MyRadio_Quote::getForm()

@@ -18,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $track->setAlbum($data['album']);
 
     URLUtils::backWithMessage('Track Updated.');
-
 } else {
     //Not Submitted
 

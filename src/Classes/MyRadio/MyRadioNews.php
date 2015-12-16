@@ -41,7 +41,6 @@ class MyRadioNews
             . ' WHERE feedid=$1' .($revoked ? '' : ' AND revoked=false'),
             [$newsfeedid]
         ) as $row) {
-
             $data[] = self::getNewsItem($row, $user);
         }
 
@@ -114,7 +113,6 @@ class MyRadioNews
         try {
             $db->query('INSERT INTO public.member_news_feed (newsentryid, memberid) VALUES ($1, $2)', [$newsentryid, $user->getID()]);
         } catch (MyRadioException $e) {
-
         }; //Can sometimes get duplicate key errors
     }
 

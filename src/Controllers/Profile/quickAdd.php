@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 
     URLUtils::backWithMessage('New Member has been created with ID '.$user->getID());
-
 } else {
     //Not Submitted
     MyRadio_User::getQuickAddForm()->render();

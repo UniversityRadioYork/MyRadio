@@ -10,7 +10,6 @@ namespace MyRadio\ServiceAPI;
 use \ReflectionMethod;
 use \ReflectionClass;
 use \ReflectionException;
-
 use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadioException;
@@ -36,12 +35,14 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
      * @param String[]                  $mixins For toDataSource requests, zero or more mixins to validate against
      * @return boolean
      */
-    private static function validateRequest($auth, $class, $method, $mixins) {
+    private static function validateRequest($auth, $class, $method, $mixins)
+    {
         return $auth->canCall($class, $method) &&
             ($method !== 'toDataSource' || $auth->canMixin($class, $mixins));
     }
 
-    private static function getArgs($op, $method, $arg0) {
+    private static function getArgs($op, $method, $arg0)
+    {
         $args = [];
 
         switch ($op) {
@@ -49,7 +50,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                 $args = $_GET;
                 break;
             case 'post':
-                if (substr_count($_SERVER["CONTENT_TYPE"],'application/json')) {
+                if (substr_count($_SERVER["CONTENT_TYPE"], 'application/json')) {
                     $args = json_decode(file_get_contents("php://input"), true);
                 } else {
                     $args = $_POST;
@@ -57,7 +58,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                 break;
             case 'put':
                 //ya rly
-                if (substr_count($_SERVER["CONTENT_TYPE"],'application/json')) {
+                if (substr_count($_SERVER["CONTENT_TYPE"], 'application/json')) {
                     $args = json_decode(file_get_contents("php://input"), true);
                 } else {
                     parse_str(file_get_contents("php://input"), $args);
@@ -289,7 +290,6 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     'default' => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null
                 ];
             }
-
         }
 
         return $parameters;
@@ -302,13 +302,12 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
         $paths = $cache->get('api_pathmap_v2');
         if (!$paths) {
-             $paths = [];
+            $paths = [];
 
             foreach ($apis as $class => $public_name) {
                 $api = new MyRadio_Swagger2($class);
 
                 foreach ($api->getClassInfo()['children'] as $method_name => $child) {
-
                     foreach ($child as $op => $reflector) {
                         $data = self::getMethodDoc($reflector);
 

@@ -68,7 +68,6 @@ class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 if ($data['results'][$i]['trackName'] == $track->getTitle()
                     && $data['results'][$i]['artistName'] == $track->getArtist()
                 ) {
-
                     $clean = $data['results'][$i]['trackExplicitness'] == 'explicit'
                             ? 'n' : 'y';
                     $track->setClean($clean);

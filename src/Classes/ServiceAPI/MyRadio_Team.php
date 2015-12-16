@@ -345,10 +345,10 @@ class MyRadio_Team extends ServiceAPI
     public function toDataSource($mixins = [])
     {
         $mixin_funcs = [
-            'officers' => function(&$data) {
+            'officers' => function (&$data) {
                 $data['officers'] = CoreUtils::dataSourceParser($this->getCurrentHolders());
             },
-            'history' => function(&$data) {
+            'history' => function (&$data) {
                 $data['history'] = CoreUtils::dataSourceParser($this->getHistory());
             }
         ];

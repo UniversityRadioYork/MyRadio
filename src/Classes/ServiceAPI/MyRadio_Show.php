@@ -722,7 +722,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         } else {
             $sql = self::BASE_SHOW_SQL . ' WHERE show_type_id=$1';
             $params = [$show_type_id];
-            if($current_term_only) {
+            if ($current_term_only) {
                 $sql .= ' AND EXISTS (
                             SELECT * FROM schedule.show_season
                             WHERE schedule.show_season.show_id=schedule.show.show_id

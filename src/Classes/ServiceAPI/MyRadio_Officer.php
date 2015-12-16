@@ -725,13 +725,13 @@ class MyRadio_Officer extends ServiceAPI
     public function toDataSource($mixins = [])
     {
         $mixin_funcs = [
-            'permissions' => function(&$data) {
+            'permissions' => function (&$data) {
                 $data['permissions'] = $this->getPermissions();
             },
-            'history' => function(&$data) {
+            'history' => function (&$data) {
                 $data['history'] = CoreUtils::dataSourceParser($this->getHistory());
             },
-            'current' => function(&$data) {
+            'current' => function (&$data) {
                 $data['current'] = CoreUtils::dataSourceParser($this->getCurrentHolders());
             }
         ];
@@ -751,5 +751,4 @@ class MyRadio_Officer extends ServiceAPI
 
         return $data;
     }
-
 }

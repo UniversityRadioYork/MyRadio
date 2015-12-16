@@ -68,7 +68,6 @@ class SIS_Remote extends ServiceAPI
         if (!empty($response) && $response !== false) {
             return ['tracklist' => $response];
         }
-
     }
 
     /**

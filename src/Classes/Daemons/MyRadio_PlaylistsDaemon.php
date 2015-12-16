@@ -282,7 +282,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         );
 
         $items = array_map(
-            function($m) {
+            function ($m) {
                 return [
                     'count' => $m['playcount'],
                     'title' => $m['name'],
@@ -315,7 +315,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         );
 
         $items = array_map(
-            function($m) {
+            function ($m) {
                 return [
                     'title' => $m['name'],
                     'artist' => $m['artist']['name']
@@ -328,7 +328,6 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             'lastgeo-auto',
             self::dataSimilarIterator($items, 0, null, false)
         );
-
     }
 
     private static function updateLastFMTopPlaylist()
@@ -347,7 +346,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         );
 
         $items = array_map(
-            function($m) {
+            function ($m) {
                 return [
                     'title' => $m['name'],
                     'artist' => $m['artist']['name']
@@ -378,7 +377,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         );
 
         $items = array_map(
-            function($m) {
+            function ($m) {
                 return [
                     'title' => $m['name'],
                     'artist' => $m['artist']['name']
@@ -392,5 +391,4 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             self::dataSimilarIterator($items, 0, null, false)
         );
     }
-
 }

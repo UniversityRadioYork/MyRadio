@@ -293,7 +293,6 @@ class CoreUtils
         }
 
         return self::$action_ids[$action . '-' . $module];
-
     }
 
     /**
@@ -532,7 +531,7 @@ class CoreUtils
             $result .= substr($pwdSource, rand(0, strlen($pwdSource) - 1), 1);
             $pwdLen--;
         }
-        return( $result );
+        return($result);
     }
 
     /**
@@ -540,9 +539,10 @@ class CoreUtils
      *
      * Copypasta from http://stackoverflow.com/questions/834303/startswith-and-endswith-functions-in-php
      */
-    public static function startsWith($haystack, $needle) {
+    public static function startsWith($haystack, $needle)
+    {
         // search backwards starting from haystack length characters from the end
-        return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
+        return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== false;
     }
 
     private function __construct()

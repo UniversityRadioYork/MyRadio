@@ -29,7 +29,6 @@ class MyRadio_StatsGenDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 
         //Do dailies?
         if (self::getVal($daykey) <= time() - 86300) {
-
             self::generateJukeboxReport();
 
             self::setVal($daykey, time());

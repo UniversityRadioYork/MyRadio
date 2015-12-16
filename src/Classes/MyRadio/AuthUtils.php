@@ -8,7 +8,6 @@
 namespace MyRadio\MyRadio;
 
 use \ReCaptcha\ReCaptcha;
-
 use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadioException;

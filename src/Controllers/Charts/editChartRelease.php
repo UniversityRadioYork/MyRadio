@@ -32,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $chart_release->setChartRows($tracks);
 
     URLUtils::backWithMessage('Chart Release Updated.');
-
 } else {
     //Not Submitted
     if (isset($_REQUEST['chart_release_id'])) {
@@ -40,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         MyRadio_ChartRelease::getInstance($_REQUEST['chart_release_id'])
             ->getEditForm()
             ->render();
-
     } else {
         //create form
         MyRadio_ChartRelease::getForm()

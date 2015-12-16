@@ -32,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $playlist->setDescription($data['description']);
         URLUtils::backWithMessage('The playlist has been updated.');
     }
-
 } else {
     //Not Submitted
     if (empty($_REQUEST['playlistid'])) {

@@ -115,7 +115,6 @@ while (true) {
                 }
             }
         } catch (MyRadioException $e) {
-
         }
     }
 
@@ -151,7 +150,6 @@ while (true) {
         MyRadioException::resetExceptionCount();
         MyRadioError::resetErrorCount();
     } catch (MyRadioException $e) {
-
     }
 
     //Reload the configuration to see if it has changed

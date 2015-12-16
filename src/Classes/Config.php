@@ -627,7 +627,6 @@ EOT;
      */
     private function __construct()
     {
-
     }
 
     /**

@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data['team'],
             $data['type']
         );
-
     } else {
         //submit edit
         $officer = MyRadio_Officer::getInstance($data['id']);
@@ -45,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $currentPerms = [];
         $officerPerms = $officer->getPermissions();
         foreach ($officerPerms as $perm) {
-             $currentPerms[] = (int)$perm['value'];
+            $currentPerms[] = (int)$perm['value'];
         }
 
         // Get permissions to add or remove
@@ -64,11 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $officer->revokePermission($perm);
             }
         }
-
     }
 
     URLUtils::backWithMessage('Officer Updated!');
-
 } else {
     //Not Submitted
 
@@ -79,10 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $officer
             ->getEditForm()
             ->render();
-
     } else {
         //create form
         MyRadio_Officer::getForm()->render();
     }
-
 }

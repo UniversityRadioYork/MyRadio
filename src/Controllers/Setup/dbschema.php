@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ->addVariable('title', 'Database Schema')
                 ->addVariable('error', $error)
                 ->render();
-                exit;
+            exit;
         }
         //Tell the upgrade operation to apply patches
         $version = 0;

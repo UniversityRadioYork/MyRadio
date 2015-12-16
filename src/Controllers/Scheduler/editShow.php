@@ -49,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         URLUtils::redirectWithMessage('Scheduler', 'myShows', "Show Updated!");
     }
-
 } else {
     //Not Submitted
     if (isset($_REQUEST['showid'])) {
@@ -66,7 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $meta = [];
         }
         $show->getEditForm()->render();
-
     } else {
         //create form
         MyRadio_Show::getForm()

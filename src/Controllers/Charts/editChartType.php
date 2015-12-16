@@ -15,7 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $chart_type->setName($data['name'])->setDescription($data['description']);
 
     URLUtils::backWithMessage('Chart Type Updated.');
-
 } else {
     //Not Submitted
     if (!isset($_REQUEST['chart_type_id'])) {

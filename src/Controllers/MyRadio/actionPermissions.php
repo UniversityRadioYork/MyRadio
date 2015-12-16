@@ -85,7 +85,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     AuthUtils::addActionPermission($setModule, $setAction, $permission);
 
     URLUtils::backWithMessage('The action permission has been updated.');
-
 } else {
     //Not Submitted
     //Include the current permissions. This will be rendered in a DataTable.

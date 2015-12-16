@@ -73,7 +73,6 @@ class iTones_PlaylistRevision extends iTones_Playlist
         foreach ($items as $id) {
             $this->tracks[] = MyRadio_Track::getInstance($id);
         }
-
     }
 
     /**

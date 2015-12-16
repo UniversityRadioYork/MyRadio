@@ -1960,16 +1960,16 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function toDataSource($mixins = [])
     {
         $mixin_funcs = [
-            'officerships' => function(&$data) {
+            'officerships' => function (&$data) {
                 $data['officerships'] = $this->getOfficerships();
             },
-            'training' => function(&$data) {
+            'training' => function (&$data) {
                 $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining(), false);
             },
-            'shows' => function(&$data) {
+            'shows' => function (&$data) {
                 $data['shows'] = CoreUtils::dataSourceParser($this->getShows(), false);
             },
-            'personal_data' => function(&$data) {
+            'personal_data' => function (&$data) {
                 $data['paid'] = $this->getAllPayments();
                 $data['locked'] = $this->getAccountLocked();
                 $data['college'] = $this->getCollege();
@@ -1981,7 +1981,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 $data['local_name'] = $this->getLocalName();
                 $data['last_login'] = $this->getLastLogin();
             },
-            'payment' => function(&$data) {
+            'payment' => function (&$data) {
                 $data['payment'] = $this->getAllPayments();
                 $data['is_currently_paid'] = $this->isCurrentlyPaid();
             }

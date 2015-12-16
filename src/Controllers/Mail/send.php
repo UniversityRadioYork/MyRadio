@@ -59,7 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 
     URLUtils::backWithMessage('Message sent!');
-
 } else {
     //Not Submitted
     if (!isset($_REQUEST['list'])) {

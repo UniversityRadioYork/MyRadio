@@ -34,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $template->setTemplate('MyRadio/text.twig')->render();
-
 } else {
     //Not Submitted
     MyRadio_User::getBulkAddForm()->render();

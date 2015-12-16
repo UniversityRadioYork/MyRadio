@@ -54,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     URLUtils::backWithMessage('Podcast Updated');
-
 } else {
     //Not Submitted
     if (isset($_REQUEST['podcast_id'])) {
@@ -69,7 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $podcast
             ->getEditForm()
             ->render();
-
     } else {
         //create form
         MyRadio_Podcast::getForm()->render();

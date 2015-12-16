@@ -127,7 +127,7 @@ class Database
         $this->counter++;
 
         if (defined('DB_PROFILE')) {
-            echo (microtime(true) - $timer) . "s\n";
+            echo(microtime(true) - $timer) . "s\n";
         }
 
         return $result;
@@ -253,7 +253,7 @@ class Database
                 if ('{' != $text{$offset}) {
                     preg_match("/(\\{?\"([^\"\\\\]|\\\\.)*\"|[^,{}]+)+([,}]+)/", $text, $match, 0, $offset);
                     $offset += strlen($match[0]);
-                    $output[] = ( '"' != $match[1]{0} ? $match[1] : stripcslashes(substr($match[1], 1, -1)) );
+                    $output[] = ('"' != $match[1]{0} ? $match[1] : stripcslashes(substr($match[1], 1, -1)));
                     if ('},' == $match[3]) {
                         return $offset;
                     }
