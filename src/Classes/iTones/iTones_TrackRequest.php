@@ -1,22 +1,19 @@
 <?php
 
 /**
- * This file provides the iTones_TrackRequest class
- * @package MyRadio_iTones
+ * This file provides the iTones_TrackRequest class.
  */
-
 namespace MyRadio\iTones;
 
-use \MyRadio\Config;
-use \MyRadio\Database;
-use \MyRadio\ServiceAPI\MyRadio_User;
-use \MyRadio\ServiceAPI\MyRadio_Track;
-use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
+use MyRadio\Config;
+use MyRadio\Database;
+use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\MyRadio_Track;
+use MyRadio\ServiceAPI\MyRadio_TracklistItem;
 
 /**
  * Method object for requesting a track be played by iTones.
  *
- * @package MyRadio_iTones
  * @uses    \Database
  */
 class iTones_TrackRequest
@@ -44,7 +41,7 @@ class iTones_TrackRequest
      * @param MyRadio_Track $track     The track being requested.
      * @param MyRadio_User  $requester The user performing the request.
      * @param Database      $database  The database to query for request data.
-     * @param String        $queue     The iTones queue to request into.
+     * @param string        $queue     The iTones queue to request into.
      */
     public function __construct(
         MyRadio_Track $track,
@@ -52,10 +49,10 @@ class iTones_TrackRequest
         Database      $database,
         $queue = 'requests'
     ) {
-        $this->track     = $track;
+        $this->track = $track;
         $this->requester = $requester;
-        $this->database  = $database;
-        $this->queue     = $queue;
+        $this->database = $database;
+        $this->queue = $queue;
     }
 
     /**
@@ -81,10 +78,10 @@ class iTones_TrackRequest
      */
     private function canRequestTrack()
     {
-        return (
+        return
             $this->trackCanBePlayed() &&
             $this->userCanMakeRequests()
-        );
+        ;
     }
 
     /**
@@ -146,7 +143,7 @@ class iTones_TrackRequest
         return [
             Config::$itones_request_maximum,
             $this->requester->getID(),
-            Config::$itones_request_period
+            Config::$itones_request_period,
         ];
     }
 
@@ -173,8 +170,6 @@ class iTones_TrackRequest
      * Logs that the current user has made a request.
      *
      * @param MyRadio_Track $track The track to log in the database.
-     *
-     * @return null Nothing.
      */
     private function logRequest()
     {
@@ -196,7 +191,7 @@ class iTones_TrackRequest
         return [
             $this->track->getID(),
             $this->requester->getID(),
-            $this->queue
+            $this->queue,
         ];
     }
 }

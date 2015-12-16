@@ -1,16 +1,14 @@
 <?php
 /**
- * Provides the MyRadio_ChartRelease class for MyRadio
- * @package MyRadio_Charts
+ * Provides the MyRadio_ChartRelease class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
 
 /**
  * The ChartRelease class fetches information about chart releases.
@@ -18,7 +16,6 @@ use \MyRadio\MyRadio\MyRadioFormField;
  * A chart release is a chart for a given week, and is associated with a chart
  * and an arbitrary number of rows (traditionally 10).
  *
- * @package MyRadio_Charts
  * @uses    \Database
  */
 class MyRadio_ChartRelease extends ServiceAPI
@@ -83,38 +80,44 @@ class MyRadio_ChartRelease extends ServiceAPI
         ;';
 
     /**
-     * The singleton store for ChartRelease objects
+     * The singleton store for ChartRelease objects.
+     *
      * @var MyRadio_ChartRelease[]
      */
     private static $chart_releases = [];
 
     /**
      * The chart type this chart release was released under.
+     *
      * @var MyRadio_ChartType
      */
     private $chart_type;
 
     /**
      * The numeric ID of the chart type.
-     * @var Int
+     *
+     * @var int
      */
     private $chart_type_id;
 
     /**
      * The numeric ID of the chart release.
-     * @var Int
+     *
+     * @var int
      */
     private $chart_release_id;
 
     /**
      * The UNIX timestamp, if any, on which this chart release was released.
-     * @var Int
+     *
+     * @var int
      */
     private $release_time;
 
     /**
      * The list of IDs of MyRadio_ChartRows for this chart release.
-     * @var Int[]
+     *
+     * @var int[]
      */
     private $chart_row_ids;
 
@@ -187,10 +190,11 @@ class MyRadio_ChartRelease extends ServiceAPI
      *
      * This is mainly useful for finding a newly created chart type's ID.
      *
-     * @param  int $release_time  The release time, as a UNIX timestamp.
-     * @param  int $chart_type_id The ID of the chart type to search in.
+     * @param int $release_time  The release time, as a UNIX timestamp.
+     * @param int $chart_type_id The ID of the chart type to search in.
+     *
      * @return int The first chart released on the given time for
-     *                           the given type.
+     *             the given type.
      */
     public function findReleaseIDOn($release_time, $chart_type_id)
     {
@@ -199,7 +203,7 @@ class MyRadio_ChartRelease extends ServiceAPI
                 self::FIND_RELEASE_ID_ON_SQL,
                 [
                     $chart_type_id,
-                    date('c', $release_time)
+                    date('c', $release_time),
                 ]
             )
         );
@@ -280,7 +284,7 @@ class MyRadio_ChartRelease extends ServiceAPI
                     [
                           'chart_release_id' => $this->getID(),
                           'position' => $i + 1,
-                          'trackid' => $row
+                          'trackid' => $row,
                     ]
                 );
             }
@@ -298,6 +302,7 @@ class MyRadio_ChartRelease extends ServiceAPI
      *
      * @param  $data array  An array of data to populate the row with.
      *                     Must contain 'chart_type_id' and 'submitted_time'.
+     *
      * @return The chart release with the given ID.
      */
     public static function create($data)
@@ -306,7 +311,7 @@ class MyRadio_ChartRelease extends ServiceAPI
             self::INSERT_SQL,
             [
                 intval($data['chart_type_id']),
-                date('%c', intval($data['submitted_time'])) // Expecting UNIX timestamp
+                date('%c', intval($data['submitted_time'])), // Expecting UNIX timestamp
             ],
             true
         );
@@ -345,7 +350,7 @@ class MyRadio_ChartRelease extends ServiceAPI
     /**
      * Sets a property on the database representation of this chart release.
      *
-     * @param string                                                         $sql The SQL to use for setting this property.
+     * @param string $sql The SQL to use for setting this property.
      * @param $value  The value of the property to set on this chart release.
      *
      * @return MyRadio_ChartRelease This object, for method chaining.
@@ -364,7 +369,7 @@ class MyRadio_ChartRelease extends ServiceAPI
         foreach ($types as $type) {
             $type_select[] = [
                 'value' => $type->getID(),
-                'text' => $type->getDescription()
+                'text' => $type->getDescription(),
             ];
         }
 
@@ -382,7 +387,7 @@ class MyRadio_ChartRelease extends ServiceAPI
                 [
                     'label' => 'Chart Type',
                     'explanation' => 'The type of chart.',
-                    'options' => $type_select
+                    'options' => $type_select,
                 ]
             )
         )->addField(
@@ -391,7 +396,7 @@ class MyRadio_ChartRelease extends ServiceAPI
                 MyRadioFormField::TYPE_DATE,
                 [
                     'label' => 'Release Date',
-                    'explanation' => 'The date on which the chart is released.'
+                    'explanation' => 'The date on which the chart is released.',
                 ]
             )
         )->addField(
@@ -406,8 +411,8 @@ class MyRadio_ChartRelease extends ServiceAPI
                             [
                                 'label' => 'Tracks',
                             ]
-                        )
-                    )
+                        ),
+                    ),
                 )
             )
         );
@@ -429,7 +434,7 @@ class MyRadio_ChartRelease extends ServiceAPI
                             return $chartRow->getTrack();
                         },
                         $this->getChartRows()
-                    )
+                    ),
                 ]
             );
     }
@@ -452,7 +457,7 @@ class MyRadio_ChartRelease extends ServiceAPI
                     'Charts',
                     'editChartRelease',
                     ['chart_release_id' => $this->getID()]
-                )
+                ),
             ],
         ];
     }

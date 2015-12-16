@@ -1,50 +1,52 @@
 <?php
 
 /**
- * This file provides the Photo class for MyRadio
- * @package MyRadio_Core
+ * This file provides the Photo class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use MyRadio\Config;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
 
 /**
- * The Photo class stores and manages information about a URY Photo
+ * The Photo class stores and manages information about a URY Photo.
  *
- * @package MyRadio_Core
  * @uses    \Database
  */
 class MyRadio_Photo extends ServiceAPI
 {
     /**
-     * Stores the primary key for the Photo
+     * Stores the primary key for the Photo.
+     *
      * @var int
      */
     private $photoid;
 
     /**
-     * Stores the User that created this Photo
+     * Stores the User that created this Photo.
+     *
      * @var MyRadio_User
      */
     private $owner;
 
     /**
-     * Stores when the Photo was uploaded
+     * Stores when the Photo was uploaded.
+     *
      * @var int
      */
     private $date_added;
 
     /**
-     * The file extension of the photo
-     * @var String
+     * The file extension of the photo.
+     *
+     * @var string
      */
     private $format;
 
     /**
-     * Initiates the MyRadio_Photo object
+     * Initiates the MyRadio_Photo object.
+     *
      * @param int $photoid The ID of the Photo to initialise
      */
     protected function __construct($photoid)
@@ -56,9 +58,9 @@ class MyRadio_Photo extends ServiceAPI
             [$photoid]
         );
         if (empty($result)) {
-            throw new MyRadioException('Photo ' . $photoid . ' does not exist!');
+            throw new MyRadioException('Photo '.$photoid.' does not exist!');
 
-            return null;
+            return;
         }
 
         $this->owner = MyRadio_User::getInstance($result['owner']);
@@ -68,7 +70,8 @@ class MyRadio_Photo extends ServiceAPI
 
     /**
      * Get array of information about the object.
-     * @return Array
+     *
+     * @return array
      */
     public function toDataSource()
     {
@@ -77,12 +80,13 @@ class MyRadio_Photo extends ServiceAPI
             'date_added' => CoreUtils::happyTime($this->getDateAdded()),
             'format' => $this->getFormat(),
             'owner' => $this->getOwner()->getID(),
-            'url' => $this->getURL()
+            'url' => $this->getURL(),
         ];
     }
 
     /**
-     * Get the time the Photo was created
+     * Get the time the Photo was created.
+     *
      * @return int
      */
     public function getDateAdded()
@@ -92,7 +96,8 @@ class MyRadio_Photo extends ServiceAPI
 
     /**
      * Get the format (file extension) of the Photo.
-     * @return String
+     *
+     * @return string
      */
     public function getFormat()
     {
@@ -100,7 +105,8 @@ class MyRadio_Photo extends ServiceAPI
     }
 
     /**
-     * Get the unique ID of this Photo
+     * Get the unique ID of this Photo.
+     *
      * @return int
      */
     public function getID()
@@ -109,7 +115,8 @@ class MyRadio_Photo extends ServiceAPI
     }
 
     /**
-     * Get the User that owns this Photo
+     * Get the User that owns this Photo.
+     *
      * @return MyRadio_User
      */
     public function getOwner()
@@ -118,8 +125,9 @@ class MyRadio_Photo extends ServiceAPI
     }
 
     /**
-     * Get the web URL for loading this Photo
-     * @return String
+     * Get the web URL for loading this Photo.
+     *
+     * @return string
      */
     public function getURL()
     {
@@ -127,8 +135,9 @@ class MyRadio_Photo extends ServiceAPI
     }
 
     /**
-     * Get the file system path to the Photo
-     * @return String
+     * Get the file system path to the Photo.
+     *
+     * @return string
      */
     public function getURI()
     {
@@ -136,8 +145,10 @@ class MyRadio_Photo extends ServiceAPI
     }
 
     /**
-     * Add a Photo
-     * @param String $tmp_file The path to the temporary file that is the image.
+     * Add a Photo.
+     *
+     * @param string $tmp_file The path to the temporary file that is the image.
+     *
      * @return MyRadio_Photo
      */
     public static function create($tmp_file)
@@ -146,7 +157,7 @@ class MyRadio_Photo extends ServiceAPI
             throw new MyRadioException('Photo path '.$tmp_file.' does not exist!', 400);
         }
 
-        $format = explode('/', getimagesize($tmp_file)["mime"])[1];
+        $format = explode('/', getimagesize($tmp_file)['mime'])[1];
 
         $result = self::$db->fetchColumn(
             'INSERT INTO myury.photos (owner, format) VALUES ($1, $2) RETURNING photoid',

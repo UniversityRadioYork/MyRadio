@@ -1,24 +1,20 @@
 <?php
 
 /**
- * Provides the MyRadio_Swagger class for MyRadio
- * @package MyRadio_API
+ * Provides the MyRadio_Swagger class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \ReflectionMethod;
-use \ReflectionClass;
-use \ReflectionException;
-use \MyRadio\Config;
-use \MyRadio\Database;
-use \MyRadio\MyRadio\MyRadioSession;
-use \MyRadio\ServiceAPI\MyRadio_User;
+use ReflectionMethod;
+use ReflectionClass;
+use MyRadio\Config;
+use MyRadio\Database;
+use MyRadio\MyRadio\MyRadioSession;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 /**
- * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/
+ * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/.
  *
- * @package MyRadio_API
  * @uses    \Database
  *
  * @todo Detect Response Types
@@ -27,8 +23,8 @@ use \MyRadio\ServiceAPI\MyRadio_User;
 class MyRadio_Swagger
 {
     /**
- * THIS HALF DEALS WITH RESOURCES LISTING *
-*/
+     * THIS HALF DEALS WITH RESOURCES LISTING *.
+     */
     public static function resources()
     {
         $data = [
@@ -36,7 +32,7 @@ class MyRadio_Swagger
             'swaggerVersion' => 1.2,
             'basePath' => Config::$api_url,
             'authorizations' => ['apiKey' => ['type' => 'api_key', 'passAs' => 'query']],
-            'apis' => []
+            'apis' => [],
         ];
 
         foreach (self::getApiClasses() as $api => $myury) {
@@ -45,7 +41,7 @@ class MyRadio_Swagger
             }
             $class = new ReflectionClass($myury);
             $meta = self::getClassDoc($class);
-            $data['apis'][] = ['path' => '/resources/' . $api, 'description' => $meta['short_desc']];
+            $data['apis'][] = ['path' => '/resources/'.$api, 'description' => $meta['short_desc']];
         }
 
         return $data;
@@ -64,8 +60,8 @@ class MyRadio_Swagger
     }
 
     /**
-    * THIS HALF DEALS WITH API Declarations *
-    */
+     * THIS HALF DEALS WITH API Declarations *.
+     */
     protected $class;
 
     public function __construct($class)
@@ -75,12 +71,12 @@ class MyRadio_Swagger
 
     protected static function getParamType($param, $meta)
     {
-        return (empty($meta['params'][$param->getName()]['type']) ? 'int' : $meta['params'][$param->getName()]['type']);
+        return empty($meta['params'][$param->getName()]['type']) ? 'int' : $meta['params'][$param->getName()]['type'];
     }
 
     protected static function getParamDescription($param, $meta)
     {
-        return (empty($meta['params'][$param->getName()]['description']) ? '' : $meta['params'][$param->getName()]['description']);
+        return empty($meta['params'][$param->getName()]['description']) ? '' : $meta['params'][$param->getName()]['description'];
     }
 
     public function toDataSource()
@@ -92,14 +88,14 @@ class MyRadio_Swagger
             'removeInstance',
             '__toString',
             'setToDataSource',
-            '__construct'
+            '__construct',
         ];
         $data = [
             'swaggerVersion' => 1.2,
             'apiVersion' => 0.2,
-            'basePath' => Config::$api_url . '/' . $this->class,
+            'basePath' => Config::$api_url.'/'.$this->class,
             'apis' => [],
-            'models' => []
+            'models' => [],
         ];
 
         $refClass = new ReflectionClass($this->getApiClasses()[$this->class]);
@@ -110,7 +106,7 @@ class MyRadio_Swagger
                 continue;
             }
             $meta = self::getMethodDoc($method);
-            /**
+            /*
              * Add the custom @api docblock option
              * @api may be GET, POST...
              */
@@ -131,17 +127,17 @@ class MyRadio_Swagger
 
             $params = [];
             if ($method->getName() !== 'toDataSource') {
-                $path .= $method->getName() . '/';
+                $path .= $method->getName().'/';
             } else {
                 //toDataSource has a full option
                 $params[] = [
-                    "paramType" => "query",
-                    "name" => 'full',
-                    "description" => "Some objects can optionally return a small or large response. By default, a full response is on, although it is intended for this to change.",
-                    "type" => "boolean",
-                    "required" => false,
-                    "allowMultiple" => false,
-                    "defaultValue" => true
+                    'paramType' => 'query',
+                    'name' => 'full',
+                    'description' => 'Some objects can optionally return a small or large response. By default, a full response is on, although it is intended for this to change.',
+                    'type' => 'boolean',
+                    'required' => false,
+                    'allowMultiple' => false,
+                    'defaultValue' => true,
                 ];
             }
 
@@ -152,41 +148,41 @@ class MyRadio_Swagger
                 && !($constructor->isPublic() && $constructor->getParameters() == null)
             ) {
                 $params[] = [
-                    "paramType" => "path",
-                    "name" => "id",
-                    "description" => "The unique identifier of the $this->class to be acted on. An int for most Objects, but some are Strings.",
-                    "type" => "int",
-                    "required" => true,
-                    "allowMultiple" => false
+                    'paramType' => 'path',
+                    'name' => 'id',
+                    'description' => "The unique identifier of the $this->class to be acted on. An int for most Objects, but some are Strings.",
+                    'type' => 'int',
+                    'required' => true,
+                    'allowMultiple' => false,
                 ];
             }
             //now do the ones for the specific method
             foreach ($method->getParameters() as $param) {
                 $params[] = [
-                    "paramType" => "query",
-                    "name" => $param->getName(),
-                    "description" => self::getParamDescription($param, $meta),
-                    "type" => self::getParamType($param, $meta),
-                    "required" => !$param->isOptional(),
-                    "allowMultiple" => false,
-                    "defaultValue" => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null
+                    'paramType' => 'query',
+                    'name' => $param->getName(),
+                    'description' => self::getParamDescription($param, $meta),
+                    'type' => self::getParamType($param, $meta),
+                    'required' => !$param->isOptional(),
+                    'allowMultiple' => false,
+                    'defaultValue' => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null,
                 ];
             }
 
             //cool, now add the method in
             $data['apis'][] = [
-                "path" => $path,
-                "description" => $meta['short_desc'],
-                "operations" => [
+                'path' => $path,
+                'description' => $meta['short_desc'],
+                'operations' => [
                     [
-                        "method" => $meta['api'],
-                        "nickname" => $method->getName(),
-                        "\$ref" => $meta['return_type'],
-                        "parameters" => $params,
-                        "summary" => $meta['short_desc'],
-                        "notes" => $meta['long_desc']
-                    ]
-                ]
+                        'method' => $meta['api'],
+                        'nickname' => $method->getName(),
+                        '$ref' => $meta['return_type'],
+                        'parameters' => $params,
+                        'summary' => $meta['short_desc'],
+                        'notes' => $meta['long_desc'],
+                    ],
+                ],
             ];
         }
 
@@ -206,9 +202,10 @@ class MyRadio_Swagger
                 $key = preg_replace('/^\@([a-zA-Z]+)(.*)$/', '$1', $line);
                 $keys[$key][] = trim(preg_replace('/^\@([a-zA-Z]+) (.*)$/', '$2', $line));
             } else {
-                $lines[sizeof($lines)-1] .= $line . ' ';
+                $lines[sizeof($lines) - 1] .= $line.' ';
             }
         }
+
         return ['lines' => $lines, 'keys' => $keys];
     }
 
@@ -228,7 +225,7 @@ class MyRadio_Swagger
             switch ($key) {
                 //Deal with $params
             case 'param':
-                /**
+                /*
                      * info[0] should be "@param"
                      * info[1] should be data type
                      * info[2] should be parameter name
@@ -236,7 +233,7 @@ class MyRadio_Swagger
                      */
                 $info = explode(' ', $values[0], 4);
                 $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
-                $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ? : $info[3]];
+                $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ?: $info[3]];
                 break;
             }
         }
@@ -245,7 +242,7 @@ class MyRadio_Swagger
             'short_desc' => trim($short_desc),
             'long_desc' => trim($long_desc),
             'params' => $params,
-            'return_type' => $return_type
+            'return_type' => $return_type,
         ];
     }
 
@@ -268,17 +265,17 @@ class MyRadio_Swagger
             switch ($key) {
                 //Deal with $params
                 case 'param':
-                    /**
+                    /*
                      * info[0] should be data type
                      * info[1] should be parameter name
                      * info[2] should be the description
                      */
                     $info = preg_split('/\s+/', $values[0], 3);
                     $arg = str_replace('$', '', $info[1]); //Strip the $ from variable name
-                    $params[$arg] = ['type' => $info[0], 'description' => empty($info[2]) ? : $info[2]];
+                    $params[$arg] = ['type' => $info[0], 'description' => empty($info[2]) ?: $info[2]];
                     break;
                 case 'mixin':
-                    /**
+                    /*
                      * info[0] should be the mixin name
                      * info[1] should be a description of what the mixin does
                      */
@@ -299,7 +296,7 @@ class MyRadio_Swagger
             'params' => $params,
             'mixins' => $mixins,
             'return_type' => $return_type,
-            'deprecated' => $deprecated
+            'deprecated' => $deprecated,
         ];
     }
 
@@ -328,8 +325,9 @@ class MyRadio_Swagger
      * If the return values is null, this method cannot be called.
      * If the return value is an empty array, no permissions are needed.
      *
-     * @param  String $class  The class the method belongs to (actual, not API Alias)
-     * @param  String $method The method being called
+     * @param string $class  The class the method belongs to (actual, not API Alias)
+     * @param string $method The method being called
+     *
      * @return int[]
      */
     public static function getCallRequirements($class, $method)
@@ -341,7 +339,7 @@ class MyRadio_Swagger
         );
 
         if (empty($result)) {
-            return null;
+            return;
         }
 
         foreach ($result as $row) {
@@ -359,8 +357,9 @@ class MyRadio_Swagger
      * If the return values is null, this method cannot be called.
      * If the return value is an empty array, no permissions are needed.
      *
-     * @param  String $class  The class the method belongs to (actual, not API Alias)
-     * @param  String $mixin The mixin being called
+     * @param string $class The class the method belongs to (actual, not API Alias)
+     * @param string $mixin The mixin being called
+     *
      * @return int[]
      */
     public static function getMixinRequirements($class, $mixin)
@@ -372,7 +371,7 @@ class MyRadio_Swagger
         );
 
         if (empty($result)) {
-            return null;
+            return;
         }
 
         foreach ($result as $row) {
@@ -386,6 +385,7 @@ class MyRadio_Swagger
 
     /**
      * Identifies who's calling this.
+     *
      * @return \MyRadio\Iface\APICaller The APICaller authorising against the request
      */
     public static function getAPICaller()
@@ -394,7 +394,7 @@ class MyRadio_Swagger
             $_REQUEST['api_key'] = $_REQUEST['apiKey'];
         }
         if (empty($_REQUEST['api_key'])) {
-            /**
+            /*
              * Attempt to use user session
              * By not using session handler, and resetting $_SESSION after
              * We are ensuring there are no session-based side effects

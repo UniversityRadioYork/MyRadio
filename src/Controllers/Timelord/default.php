@@ -1,10 +1,7 @@
 <?php
 /**
- * Main renderer for Timelord
- *
- * @package MyRadio_Timelord
+ * Main renderer for Timelord.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 
 CoreUtils::getTemplateObject()->setTemplate('Timelord/main.twig')

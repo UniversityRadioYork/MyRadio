@@ -1,8 +1,6 @@
 <?php
 /**
- * Sets up the database connection for MyRadio
- *
- * @package MyRadio_Core
+ * Sets up the database connection for MyRadio.
  */
 use \MyRadio\Database;
 use \MyRadio\MyRadioException;

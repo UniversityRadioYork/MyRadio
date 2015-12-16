@@ -1,10 +1,7 @@
 <?php
 /**
  * This Controller receives a JSONON set from a client and updates the server model and change log.
- *
- * @package MyRadio_NIPSWeb
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;

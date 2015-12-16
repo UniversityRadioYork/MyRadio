@@ -1,11 +1,9 @@
 <?php
 /**
- * Lists the archive for a Mailing List
+ * Lists the archive for a Mailing List.
  *
- * @package MyRadio_Mail
  * @todo    Uses unsanitised HTTP_REFERER
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadioEmail;
 use \MyRadio\MyRadio\CoreUtils;

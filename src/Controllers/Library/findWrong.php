@@ -1,9 +1,7 @@
 <?php
 /**
- * Scan music library, finding tracks that don't seem to be where they should be
- * @package MyRadio_Library
+ * Scan music library, finding tracks that don't seem to be where they should be.
  */
-
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;

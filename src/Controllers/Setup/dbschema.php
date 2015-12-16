@@ -1,8 +1,6 @@
 <?php
 /**
- * Sets up the database schema for MyRadio
- *
- * @package MyRadio_Core
+ * Sets up the database schema for MyRadio.
  */
 use \MyRadio\Database;
 use \MyRadio\MyRadioException;
@@ -21,7 +19,7 @@ if (!isset($result[0])) {
     //Well, it looks like MyRadio isn't installed here.
     $operation = 'NEW';
 } else {
-    $version = (int)$result[0];
+    $version = (int) $result[0];
     if ($version < MYRADIO_CURRENT_SCHEMA_VERSION) {
         //MyRadio schema has been created, but is out of date.
         $operation = 'UPGRADE';
@@ -39,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     case 'NEW':
         $db = Database::getInstance();
         try {
-            $db->query(file_get_contents(SCHEMA_DIR . 'base.sql'));
+            $db->query(file_get_contents(SCHEMA_DIR.'base.sql'));
         } catch (MyRadioException $e) {
             $error = pg_last_error();
             CoreUtils::getTemplateObject()
@@ -57,9 +55,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $db = Database::getInstance();
         $db->query('BEGIN');
         while ($version < MYRADIO_CURRENT_SCHEMA_VERSION) {
-            $version++;
+            ++$version;
             try {
-                $db->query(file_get_contents(SCHEMA_DIR . 'patches/'.$version.'.sql'));
+                $db->query(file_get_contents(SCHEMA_DIR.'patches/'.$version.'.sql'));
                 $db->query('UPDATE myradio.schema SET value=$1 WHERE attr=\'version\'', [$version]);
             } catch (MyRadioException $e) {
                 $error = pg_last_error();

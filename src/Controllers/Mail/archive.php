@@ -1,10 +1,7 @@
 <?php
 /**
- * Lists the archive for a Mailing List
- *
- * @package MyRadio_Mail
+ * Lists the archive for a Mailing List.
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_List;

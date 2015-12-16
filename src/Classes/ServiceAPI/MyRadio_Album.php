@@ -1,26 +1,24 @@
 <?php
 /**
- * Provides the MyRadio_Album class for MyRadio
- * @package MyRadio_Core
+ * Provides the MyRadio_Album class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use MyRadio\Config;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
 
 /**
  * The Album class fetches information about albums in the Central Database.
- * @package MyRadio_Core
+ *
  * @uses \Database
  */
-
 class MyRadio_Album extends ServiceAPI
 {
     /**
-     * The Title of the release
-     * @var String
+     * The Title of the release.
+     *
+     * @var string
      */
     private $title;
 
@@ -116,7 +114,7 @@ class MyRadio_Album extends ServiceAPI
         $dir = Config::$music_central_db_path.'/records/'.$this->getID();
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0777, true)) {
-                throw new MyRadioException('Failed to create directory ' . $dir, 500);
+                throw new MyRadioException('Failed to create directory '.$dir, 500);
             }
         }
 
@@ -124,14 +122,13 @@ class MyRadio_Album extends ServiceAPI
     }
 
     /**
-     *
-     * @param String $paramName The key to update, e.g. title.
+     * @param string $paramName The key to update, e.g. title.
      *                          Don't be silly and try to set recordid. Bad things will happen.
      * @param mixed  $value     The value to set the param to. Type depends on $paramName.
      */
     private function setCommonParam($paramName, $value)
     {
-        /**
+        /*
          * You won't believe how annoying psql can be about '' already being used on a unique key.
          */
         if ($value == '') {
@@ -154,7 +151,7 @@ class MyRadio_Album extends ServiceAPI
             $paramName = $param_maps[$paramName];
         }
 
-        self::$db->query('UPDATE public.rec_record SET ' . $paramName . '=$1 WHERE recordid=$2', [$value, $this->getID()]);
+        self::$db->query('UPDATE public.rec_record SET '.$paramName.'=$1 WHERE recordid=$2', [$value, $this->getID()]);
 
         return true;
     }
@@ -171,11 +168,14 @@ class MyRadio_Album extends ServiceAPI
     }
 
     /**
-     * Update the Artist for this Album
-     * @param  String $artist        The Artist name
-     * @param  bool   $applyToTracks If true, this will update the Artist for each individual Track in the Album. Default false.
-     *                                         Default false.
+     * Update the Artist for this Album.
+     *
+     * @param string $artist        The Artist name
+     * @param bool   $applyToTracks If true, this will update the Artist for each individual Track in the Album. Default false.
+     *                              Default false.
+     *
      * @return \MyRadio_Album
+     *
      * @throws MyRadioException
      */
     public function setArtist($artist, $applyToTracks = false)
@@ -206,15 +206,14 @@ class MyRadio_Album extends ServiceAPI
 
         $response = [];
         foreach ($result as $album) {
-            $response[] = MyRadio_Album::getInstance($album);
+            $response[] = self::getInstance($album);
         }
 
         return $response;
     }
 
     /**
-     *
-     * @param Array $options One or more of the following:
+     * @param array $options One or more of the following:
      *                       title: String title of the track
      *                       artist: String artist name of the track
      *                       digitised: If true, only return digitised tracks. If false, return any.
@@ -280,12 +279,12 @@ class MyRadio_Album extends ServiceAPI
         $count = 4;
         if ($options['limit'] != 0) {
             $sql_params[] = $options['limit'];
-            $count++;
+            ++$count;
             $limit_param = $count;
         }
         if ($options['clean']) {
             $sql_params[] = $options['clean'];
-            $count++;
+            ++$count;
             $clean_param = $count;
         }
 
@@ -297,17 +296,17 @@ class MyRadio_Album extends ServiceAPI
             WHERE rec_track.title ILIKE $4 || $1 || $4
             AND rec_track.artist ILIKE $4 || $2 || $4
             AND rec_record.title ILIKE $4 || $3 || $4'
-            . ($options['digitised'] ? ' AND digitised=\'t\'' : '')
-            . ($options['lastfmverified'] === true ? ' AND lastfm_verified=\'t\'' : '')
-            . ($options['lastfmverified'] === false ? ' AND lastfm_verified=\'f\'' : '')
-            . ($options['nocorrectionproposed'] === true ? ' AND trackid NOT IN (
+            .($options['digitised'] ? ' AND digitised=\'t\'' : '')
+            .($options['lastfmverified'] === true ? ' AND lastfm_verified=\'t\'' : '')
+            .($options['lastfmverified'] === false ? ' AND lastfm_verified=\'f\'' : '')
+            .($options['nocorrectionproposed'] === true ? ' AND trackid NOT IN (
                 SELECT trackid FROM public.rec_trackcorrection WHERE state=\'p\'
                 )' : '')
-            . ($options['clean'] != null ? ' AND clean=$'.$clean_param : '')
-            . ($options['custom'] !== null ? ' AND ' . $options['custom'] : '')
-            . ($options['random'] ? ' ORDER BY RANDOM()' : '')
-            . ($options['idsort'] ? ' ORDER BY trackid' : '')
-            . ($options['limit'] == 0 ? '' : ' LIMIT $'.$limit_param),
+            .($options['clean'] != null ? ' AND clean=$'.$clean_param : '')
+            .($options['custom'] !== null ? ' AND '.$options['custom'] : '')
+            .($options['random'] ? ' ORDER BY RANDOM()' : '')
+            .($options['idsort'] ? ' ORDER BY trackid' : '')
+            .($options['limit'] == 0 ? '' : ' LIMIT $'.$limit_param),
             $sql_params
         );
 
@@ -401,7 +400,7 @@ class MyRadio_Album extends ServiceAPI
                 $_SESSION['memberid'],
                 $options['cdid'],
                 $options['location'],
-                $options['promoterid']
+                $options['promoterid'],
             ]
         );
 
@@ -429,7 +428,7 @@ class MyRadio_Album extends ServiceAPI
             'shelf_letter' => $this->shelf_letter,
             'shelf_number' => $this->shelf_number,
             'status' => $this->status,
-            'label' => $this->record_label
+            'label' => $this->record_label,
         ];
     }
 }

@@ -1,22 +1,19 @@
 <?php
 
 /**
- * This file provides the MyRadioError class for MyRadio
- * @package MyRadio_Core
+ * This file provides the MyRadioError class for MyRadio.
  */
-
 namespace MyRadio;
 
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\ServiceAPI\ServiceAPI;
-use \MyRadio\ServiceAPI\MyRadio_User;
-use \MyRadio\ServiceAPI\MyRadio_List;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\ServiceAPI\ServiceAPI;
+use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\MyRadio_List;
 
 /**
  * Provides email functions so that MyRadio can send email.
  *
- * @package MyRadio_Mail
  * @todo    Footers contain hard-coded URLs. This used to be necessary (when the links went to mint), but isn't now.
  */
 class MyRadioEmail extends ServiceAPI
@@ -52,7 +49,7 @@ class MyRadioEmail extends ServiceAPI
         $info = self::$db->fetchOne('SELECT * FROM mail.email WHERE email_id=$1', [$eid]);
 
         if (empty($info)) {
-            throw new MyRadioException('Email ' . $eid . ' does not exist!');
+            throw new MyRadioException('Email '.$eid.' does not exist!');
         }
 
         $this->subject = $info['subject'];
@@ -65,7 +62,7 @@ class MyRadioEmail extends ServiceAPI
 
         $this->r_lists = self::$db->fetchColumn('SELECT listid FROM mail.email_recipient_list WHERE email_id=$1', [$eid]);
 
-        /**
+        /*
          * Check if the body needs to be split into multipart.
          * This creates a string with both Text and HTML parts.
          */
@@ -75,22 +72,23 @@ class MyRadioEmail extends ServiceAPI
             $split = html_entity_decode($split);
             $this->multipart = true;
             $this->body_transformed = 'This is a MIME encoded message.'
-                    . self::$rtnl . self::$rtnl . '--' . self::$multipart_boundary . self::$rtnl
-                    . 'Content-Type: text/plain;charset=utf-8' . self::$rtnl . self::$rtnl
-                    . self::addFooter($split) . self::$rtnl . self::$rtnl . '--' . self::$multipart_boundary . self::$rtnl
-                    . 'Content-Type: text/html;charset=utf-8' . self::$rtnl . self::$rtnl
-                    . self::addHTMLFooter($this->body) . self::$rtnl . self::$rtnl . '--' . self::$multipart_boundary . '--';
+                    .self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
+                    .'Content-Type: text/plain;charset=utf-8'.self::$rtnl.self::$rtnl
+                    .self::addFooter($split).self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
+                    .'Content-Type: text/html;charset=utf-8'.self::$rtnl.self::$rtnl
+                    .self::addHTMLFooter($this->body).self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.'--';
         } else {
             $this->body_transformed = self::addFooter($this->body);
         }
     }
 
     /**
-     * Create a new email
+     * Create a new email.
+     *
      * @param MyRadio_User $from         The User who sent the email. If null, uses no-reply
      * @param array        $to           A 2D array of 'lists' = [l1, l2], 'members' = [m1, m2]
-     * @param String       $subject      email subject
-     * @param String       $body         email body
+     * @param string       $subject      email subject
+     * @param string       $body         email body
      * @param int          $timestamp    Send time. If null, use now.
      * @param bool         $already_sent If true, all Recipients will be set to having had the email sent.
      * @note Use one of the SendToUser* wrapper functions instead of this one.
@@ -109,7 +107,7 @@ class MyRadioEmail extends ServiceAPI
         if (strlen($body) > 1024000) {
             //Woah - that's a big email. Where's this coming from?
             //If its more than a couple MB expect this script/service to shortly die due to RAM usage.
-            $caller =  array_shift(debug_backtrace());
+            $caller = array_shift(debug_backtrace());
             trigger_error(
                 'Received long email body: '.strlen($body).' bytes. Source: '
                 .$from.'/'.$caller['file'].':'.$caller['line'],
@@ -127,9 +125,9 @@ class MyRadioEmail extends ServiceAPI
 
         $eid = self::$db->fetchColumn(
             'INSERT INTO mail.email (subject, body'
-            . ($timestamp !== null ? ', timestamp' : '') . ($from instanceof ServiceAPI ? ', sender' : '') . ')
-            VALUES ($1, $2' . (($timestamp !== null or $from instanceof ServiceAPI) ? ', $3' : '')
-            . (($timestamp !== null && $from !== null) ? ', $4' : '') . ') RETURNING email_id',
+            .($timestamp !== null ? ', timestamp' : '').($from instanceof ServiceAPI ? ', sender' : '').')
+            VALUES ($1, $2'.(($timestamp !== null or $from instanceof ServiceAPI) ? ', $3' : '')
+            .(($timestamp !== null && $from !== null) ? ', $4' : '').') RETURNING email_id',
             $params
         );
 
@@ -170,18 +168,18 @@ class MyRadioEmail extends ServiceAPI
         $headers = ['MIME-Version: 1.0'];
 
         if ($this->from !== null) {
-            $headers[] = 'From: ' . $this->from->getName() . ' <' . $this->from->getEmail() . '>';
-            $headers[] = 'Return-Path: ' . $this->from->getEmail();
+            $headers[] = 'From: '.$this->from->getName().' <'.$this->from->getEmail().'>';
+            $headers[] = 'Return-Path: '.$this->from->getEmail();
         } else {
             $headers[] = 'From: '.Config::$long_name.' <no-reply@'.Config::$email_domain.'>';
             $headers[] = 'Return-Path: no-reply@'.Config::$email_domain;
         }
 
-        /**
+        /*
          * !! Multipart headers must be *last* or things Go Badly
          */
         if ($this->multipart) {
-            $headers[] = 'Content-Type: multipart/alternative;boundary=' . self::$multipart_boundary;
+            $headers[] = 'Content-Type: multipart/alternative;boundary='.self::$multipart_boundary;
         } else {
             $headers[] = 'Content-Type: text/plain; charset=utf-8';
         }
@@ -191,16 +189,16 @@ class MyRadioEmail extends ServiceAPI
 
     private static function addFooter($message)
     {
-        return $message . self::$rtnl . self::$rtnl . self::$footer;
+        return $message.self::$rtnl.self::$rtnl.self::$footer;
     }
 
     private static function addHTMLFooter($message)
     {
-        return $message . '<hr>' . self::$html_footer;
+        return $message.'<hr>'.self::$html_footer;
     }
 
     /**
-     * Actually send the email
+     * Actually send the email.
      */
     public function send()
     {
@@ -215,10 +213,10 @@ class MyRadioEmail extends ServiceAPI
                 if ($user->getReceiveEmail()) {
                     $u_subject = trim(str_ireplace('#NAME', $user->getFName(), $this->subject));
                     if (substr($u_subject, 0, 1) !== '[') {
-                        $u_subject = '['.Config::$short_name.'] ' . $u_subject;
+                        $u_subject = '['.Config::$short_name.'] '.$u_subject;
                     }
                     $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-                    if (!mail($user->getName() . ' <' . $user->getEmail() . '>', $u_subject, $u_message, $this->getHeader())) {
+                    if (!mail($user->getName().' <'.$user->getEmail().'>', $u_subject, $u_message, $this->getHeader())) {
                         continue;
                     }
                 }
@@ -233,7 +231,7 @@ class MyRadioEmail extends ServiceAPI
                     if ($user->getReceiveEmail()) {
                         $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
                         $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-                        if (!mail($list->getName() . ' <' . $user->getEmail() . '>', '['.Config::$short_name.'] ' . $u_subject, $u_message, $this->getHeader())) {
+                        if (!mail($list->getName().' <'.$user->getEmail().'>', '['.Config::$short_name.'] '.$u_subject, $u_message, $this->getHeader())) {
                             continue;
                         }
                     }
@@ -272,10 +270,12 @@ class MyRadioEmail extends ServiceAPI
     }
 
     /**
-     * Sends an email to the specified User
+     * Sends an email to the specified User.
+     *
      * @param MyRadio_User $to
      * @param string       $subject email subject
      * @param sting        $message email message
+     *
      * @todo Check if "Receive Emails" is enabled for the User
      */
     public static function sendEmailToUser(MyRadio_User $to, $subject, $message, MyRadio_User $from = null)
@@ -286,10 +286,12 @@ class MyRadioEmail extends ServiceAPI
     }
 
     /**
-     * Sends an email to the specified MyRadio_List
+     * Sends an email to the specified MyRadio_List.
+     *
      * @param MyRadio_List $to
      * @param string       $subject email subject
      * @param sting        $message email message
+     *
      * @todo Check if "Receive Emails" is enabled for the User
      */
     public static function sendEmailToList(MyRadio_List $to, $subject, $message, MyRadio_User $from = null)
@@ -304,9 +306,9 @@ class MyRadioEmail extends ServiceAPI
 
     /**
      * Sends an email to all the specified Users, with certain customisation abilities:
-     * #NAME is replaced with the User's first name
+     * #NAME is replaced with the User's first name.
      *
-     * @param Array  $to      An array of User objects
+     * @param array  $to      An array of User objects
      * @param string $subject email subject
      * @param sting  $message email message
      */
@@ -314,7 +316,7 @@ class MyRadioEmail extends ServiceAPI
     {
         foreach ($to as $user) {
             if (!($user instanceof MyRadio_User)) {
-                throw new MyRadioException($user . ' is not an instance or derivative of the user class!');
+                throw new MyRadioException($user.' is not an instance or derivative of the user class!');
             }
 
             self::create(['members' => $to], $subject, $message, $from);
@@ -327,8 +329,9 @@ class MyRadioEmail extends ServiceAPI
      * Will return true if the email was sent to a mailing list they were
      * not a member of at the time.
      *
-     * @param  MyRadio_User $user
-     * @return boolean
+     * @param MyRadio_User $user
+     *
+     * @return bool
      */
     public function isRecipient(MyRadio_User $user)
     {
@@ -366,7 +369,7 @@ class MyRadioEmail extends ServiceAPI
         if ($this->body) {
             $data = CoreUtils::getSafeHTML($this->body);
         } else {
-            /**
+            /*
              * @todo Filtering here.
              */
             $body = $this->body_transformed;
@@ -396,8 +399,8 @@ class MyRadioEmail extends ServiceAPI
                 'display' => 'icon',
                 'value' => 'envelope',
                 'title' => 'Read this email',
-                'url' => URLUtils::makeURL('Mail', 'view', ['emailid' => $this->getID()])
-            ]
+                'url' => URLUtils::makeURL('Mail', 'view', ['emailid' => $this->getID()]),
+            ],
         ];
 
         if ($full) {
@@ -408,27 +411,25 @@ class MyRadioEmail extends ServiceAPI
     }
 
     /**
- * BELOW HERE IS FOR IF STUFF BREAKS REALLY EARLY BEFORE ^ WILL WORK *
-*/
+     * BELOW HERE IS FOR IF STUFF BREAKS REALLY EARLY BEFORE ^ WILL WORK *.
+     */
 
     /**
-     *
      * @param string $subject email subject
      * @param sting  $message email message
      */
     public static function sendEmailToComputing($subject, $message)
     {
-        mail("MyRadio Service <".Config::$error_report_email."@".Config::$email_domain.">", $subject, self::addFooter($message), self::getDefaultHeader());
+        mail('MyRadio Service <'.Config::$error_report_email.'@'.Config::$email_domain.'>', $subject, self::addFooter($message), self::getDefaultHeader());
 
         return true;
     }
 
     /**
-     *
      * @return string default headers for sending email - Plain text and sent from no-reply
      */
     private static function getDefaultHeader()
     {
-        return self::$headers . self::$rtnl . self::$sender;
+        return self::$headers.self::$rtnl.self::$sender;
     }
 }

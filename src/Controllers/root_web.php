@@ -3,17 +3,14 @@
 /**
  * This is the Root Controller - it is the backbone of every request, preparing resources and passing the request onto
  * the necessary handler.
- *
- * @package MyRadio_Core
  */
-
 use \MyRadio\Config;
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 
 require_once __DIR__.'/root.php';
 
-/**
+/*
  * Set up the Module and Action global variables. These are used by Module/Action controllers as well as this file.
  * Notice how the default Module is MyRadio. This is basically the MyRadio Menu, and maybe a couple of admin pages.
  * Notice how the default Action is 'default'. This means that the "default" Controller should exist for all Modules.
@@ -46,7 +43,7 @@ if (isset($_REQUEST['request'])) {
     }
 }
 
-/**
+/*
  * Use the Database authentication data to check whether the user has permission to access that.
  * This method will automatically cause a premature exit if necessary.
  *
@@ -55,7 +52,7 @@ if (isset($_REQUEST['request'])) {
  */
 AuthUtils::requirePermissionAuto($module, $action);
 
-/**
+/*
  * If a Joyride is defined, start it
  */
 if (isset($_REQUEST['joyride'])) {
@@ -63,4 +60,4 @@ if (isset($_REQUEST['joyride'])) {
 }
 
 //Include the requested action
-require 'Controllers/'. $module . '/' . $action . '.php';
+require 'Controllers/'.$module.'/'.$action.'.php';

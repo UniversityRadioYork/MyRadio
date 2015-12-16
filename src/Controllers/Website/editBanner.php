@@ -1,10 +1,7 @@
 <?php
 /**
- * Edit a Banner
- *
- * @package MyRadio_Website
+ * Edit a Banner.
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Banner;
 use \MyRadio\ServiceAPI\MyRadio_Photo;

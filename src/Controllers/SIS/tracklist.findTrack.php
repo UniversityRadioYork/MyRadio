@@ -1,10 +1,7 @@
 <?php
 /**
- * Tracklist Track Finder for SIS
- *
- * @package MyRadio_SIS
+ * Tracklist Track Finder for SIS.
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\Artist;
 use \MyRadio\ServiceAPI\MyRadio_Track;
@@ -20,7 +17,7 @@ $artistResult = Artist::findByOptions(
         'title' => $tname,
         'artist' => $artist,
         'album' => $album,
-        'digitised' => false
+        'digitised' => false,
     ]
 );
 $trackResult = MyRadio_Track::findByOptions(
@@ -28,7 +25,7 @@ $trackResult = MyRadio_Track::findByOptions(
         'title' => $tname,
         'artist' => $artist,
         'album' => $album,
-        'digitised' => false
+        'digitised' => false,
     ]
 );
 $albumResult = MyRadio_Album::findByOptions(
@@ -36,21 +33,21 @@ $albumResult = MyRadio_Album::findByOptions(
         'title' => $tname,
         'artist' => $artist,
         'album' => $album,
-        'digitised' => false
+        'digitised' => false,
     ]
 );
 
 $dataout = [];
 
-if ($box == "artist") {
+if ($box == 'artist') {
     foreach ($artistResult as $artist) {
         $dataout[] = "{$artist['artist']}";
     }
-} elseif ($box == "album") {
+} elseif ($box == 'album') {
     foreach ($albumResult as $record) {
         $dataout[] = "{$record->getTitle()}";
     }
-} elseif ($box == "tname") {
+} elseif ($box == 'tname') {
     foreach ($trackResult as $track) {
         $dataout[] = "{$track->getTitle()}";
     }

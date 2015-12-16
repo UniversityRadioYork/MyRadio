@@ -7,15 +7,13 @@
 
 namespace MyRadio\NIPSWeb;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\MyRadio_Timeslot;
+use MyRadio\Config;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\ServiceAPI\MyRadio_Timeslot;
 
 /**
- * This class has helper functions for saving Show Planner show informaiton into legacy BAPS Show layout
- *
- * @package MyRadio_NIPSWeb
+ * This class has helper functions for saving Show Planner show informaiton into legacy BAPS Show layout.
  */
 class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
 {
@@ -34,10 +32,10 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
                 VALUES (4, $1, $2, $3, true) RETURNING showid',
                 [
                     $timeslot->getMeta('title')
-                    . '-'
-                    . $timeslot->getID(),
+                    .'-'
+                    .$timeslot->getID(),
                     CoreUtils::getTimestamp($timeslot->getStartTime()),
-                    $timeslot->getID()
+                    $timeslot->getID(),
                 ]
             );
         }
@@ -48,9 +46,11 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Takes a BAPS ShowID, and gets the channel references for the show
      * If a listing for one or more channels does not exist, this method
-     * creates them automatically
+     * creates them automatically.
+     *
      * @param int $showid The BAPS show id
-     * @return boolean|Array An array of BAPS Channels, or false on failure
+     *
+     * @return bool|array An array of BAPS Channels, or false on failure
      */
     public static function getListingsForShow($showid)
     {
@@ -69,7 +69,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
             return $listings;
         }
 
-        /**
+        /*
          * @todo Wow I was lazy here.
          */
         $channels = [false, false, false];
@@ -85,7 +85,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
             if (!$exists) {
                 self::$db->query(
                     'INSERT INTO baps_listing (showid, name, channel)
-                    VALUES ($1, \'Channel ' . $channel . '\', $2)',
+                    VALUES ($1, \'Channel '.$channel.'\', $2)',
                     [$showid, $channel]
                 );
                 $change = true;
@@ -130,7 +130,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
                                 $position,
                                 $file['libraryitemid'],
                                 $file['title'],
-                                $file['artist']
+                                $file['artist'],
                             ],
                             true
                         );
@@ -146,7 +146,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
                                 (int) $listing['listingid'],
                                 (int) $position,
                                 (int) $fileitemid,
-                                $track['title']
+                                $track['title'],
                             ],
                             true
                         );
@@ -155,7 +155,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
                     default:
                         throw new MyRadioException('What do I even with this item?');
                     }
-                    $position++;
+                    ++$position;
                 }
             }
         }
@@ -164,10 +164,12 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Gets the title, artist, and BapsWeb libraryitemid of a track
+     * Gets the title, artist, and BapsWeb libraryitemid of a track.
+     *
      * @param int $trackid  The Track ID from the rec database
      * @param int $recordid The Record ID from the rec database
-     * @return boolean|array False on failure, or an array of the above
+     *
+     * @return bool|array False on failure, or an array of the above
      */
     private static function getTrackDetails($trackid, $recordid)
     {
@@ -196,19 +198,19 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Returns the FileItemID from a ManagedItemID
+     * Returns the FileItemID from a ManagedItemID.
      */
     public static function getFileItemFromManagedID($auxid)
     {
         $item = NIPSWeb_ManagedItem::getInstance($auxid);
 
-        $legacy_path = Config::$music_smb_path . '\\membersmusic\\fileitems\\' . self::sanitisePath($item->getTitle()) . '_' . $auxid . '.mp3';
+        $legacy_path = Config::$music_smb_path.'\\membersmusic\\fileitems\\'.self::sanitisePath($item->getTitle()).'_'.$auxid.'.mp3';
         //Make a hard link if it doesn't exist
-        $ln_path = Config::$music_central_db_path . '/membersmusic/fileitems/' . self::sanitisePath($item->getTitle()) . '_' . $auxid . '.mp3';
+        $ln_path = Config::$music_central_db_path.'/membersmusic/fileitems/'.self::sanitisePath($item->getTitle()).'_'.$auxid.'.mp3';
 
         if (!file_exists($ln_path)) {
             if (!@link($item->getPath('mp3'), $ln_path)) {
-                trigger_error('Could not link ' . $item->getPath('mp3') . ' to ' . $ln_path);
+                trigger_error('Could not link '.$item->getPath('mp3').' to '.$ln_path);
             }
         }
         $id = self::getFileItemFromPath($legacy_path);
@@ -227,20 +229,22 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
     {
         if (in_array($item->getFolder(), ['jingles', 'beds', 'adverts']) !== false) {
             //Make a hard link if it doesn't exist
-            $ln_path = Config::$music_central_db_path . '/membersmusic/'.$item->getFolder().'/' . self::sanitisePath($item->getTitle()).'.mp3';
+            $ln_path = Config::$music_central_db_path.'/membersmusic/'.$item->getFolder().'/'.self::sanitisePath($item->getTitle()).'.mp3';
 
             if (!file_exists($ln_path)) {
                 if (!@link($item->getPath(), $ln_path)) {
-                    trigger_error('Could not link '.$item->getPath() . ' to ' . $ln_path);
+                    trigger_error('Could not link '.$item->getPath().' to '.$ln_path);
                 }
             }
         }
     }
 
     /**
-     * Returns the ID of an item in the auxillary database based on its samba path
+     * Returns the ID of an item in the auxillary database based on its samba path.
+     *
      * @param string $path The Samba Share location of the file to search for
-     * @return boolean|int false on error or non existent, fileitemid otherwise
+     *
+     * @return bool|int false on error or non existent, fileitemid otherwise
      */
     public static function getFileItemFromPath($path)
     {
@@ -258,11 +262,12 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Ensure a string can be used as a filename
+     * Ensure a string can be used as a filename.
+     *
      * @param type $file
      */
     public static function sanitisePath($file)
     {
-        return trim(preg_replace("/[^0-9^a-z^,^_^.^\(^\)^-^ ]/i", "", str_replace('..', '.', $file)));
+        return trim(preg_replace("/[^0-9^a-z^,^_^.^\(^\)^-^ ]/i", '', str_replace('..', '.', $file)));
     }
 }

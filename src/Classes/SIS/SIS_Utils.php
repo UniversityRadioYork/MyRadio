@@ -7,20 +7,19 @@
 
 namespace MyRadio\SIS;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadio\AuthUtils;
-use \MyRadio\ServiceAPI\ServiceAPI;
+use MyRadio\Config;
+use MyRadio\MyRadio\AuthUtils;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
- * This class has helper functions for building SIS
- *
- * @package MyRadio_SIS
+ * This class has helper functions for building SIS.
  */
 class SIS_Utils extends ServiceAPI
 {
     /**
-     * Gets the module data (tabs or plugins) based on the active users permissions
-     * @return Array  modules
+     * Gets the module data (tabs or plugins) based on the active users permissions.
+     *
+     * @return array modules
      */
     public static function getModulesForUser()
     {
@@ -28,7 +27,7 @@ class SIS_Utils extends ServiceAPI
         $loadedModules = [];
         if ($modules !== false) {
             foreach ($modules as $module) {
-                $file = 'Models/SIS/modules/' . $module . '.php';
+                $file = 'Models/SIS/modules/'.$module.'.php';
                 if (stream_resolve_include_path($file)) {
                     include $file;
                 }
@@ -38,15 +37,19 @@ class SIS_Utils extends ServiceAPI
                     $loadedModules[] = $module;
                 }
             }
+
             return $loadedModules;
         }
+
         return false;
     }
 
     /**
-     * Looks up IP location from Campus Network Data or GeoIP
-     * @param  String $ip IP address to lookup
-     * @return String Location
+     * Looks up IP location from Campus Network Data or GeoIP.
+     *
+     * @param string $ip IP address to lookup
+     *
+     * @return string Location
      */
     public static function ipLookup($ip)
     {
@@ -70,8 +73,10 @@ class SIS_Utils extends ServiceAPI
     }
 
     /**
-     * Read the loaded modules and returns the poll functions, if configured
-     * @param  array $modules the loaded modules
+     * Read the loaded modules and returns the poll functions, if configured.
+     *
+     * @param array $modules the loaded modules
+     *
      * @return array $pollFuncs functions to run for LongPolling
      */
     public static function readPolls($modules)
@@ -79,8 +84,8 @@ class SIS_Utils extends ServiceAPI
         if ($modules !== false) {
             $pollFuncs = [];
             foreach ($modules as $module) {
-                if (stream_resolve_include_path('Models/SIS/modules/' . $module . '.php')) {
-                    require 'Models/SIS/modules/' . $module . '.php';
+                if (stream_resolve_include_path('Models/SIS/modules/'.$module.'.php')) {
+                    require 'Models/SIS/modules/'.$module.'.php';
                     if (isset($moduleInfo['pollfunc'])) {
                         $pollFuncs[] = $moduleInfo['pollfunc'];
                     }
@@ -94,9 +99,11 @@ class SIS_Utils extends ServiceAPI
     }
 
     /**
-     * Checks message for suspected spam strings
-     * @param  string $message text to test for spam
-     * @return bool            spam true, else false
+     * Checks message for suspected spam strings.
+     *
+     * @param string $message text to test for spam
+     *
+     * @return bool spam true, else false
      */
     public static function checkMessageSpam($message)
     {
@@ -114,9 +121,11 @@ class SIS_Utils extends ServiceAPI
     }
 
     /**
-     * Checks message for suspected social engineering attack
-     * @param  string $message text to test for social engineering
-     * @return mixed           warning string or false
+     * Checks message for suspected social engineering attack.
+     *
+     * @param string $message text to test for social engineering
+     *
+     * @return mixed warning string or false
      */
     public static function checkMessageSocialEngineering($message)
     {

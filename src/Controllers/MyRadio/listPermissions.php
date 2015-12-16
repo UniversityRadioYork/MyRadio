@@ -1,11 +1,9 @@
 <?php
 /**
- * List all of the possible permissions available for MyRadio
+ * List all of the possible permissions available for MyRadio.
  *
  * @data    20140107
- * @package MyRadio_Core
  */
-
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
@@ -15,12 +13,12 @@ $data = array_map(
         $x['usage'] = [
         'display' => 'text',
         'value' => 'Usage',
-        'url' => URLUtils::makeURL('MyRadio', 'permissionUsage', ['typeid' => $x['value']])
+        'url' => URLUtils::makeURL('MyRadio', 'permissionUsage', ['typeid' => $x['value']]),
         ];
         $x['assigned'] = [
         'display' => 'text',
         'value' => 'Assigned To',
-        'url' => URLUtils::makeURL('MyRadio', 'permissionAssigned', ['typeid' => $x['value']])
+        'url' => URLUtils::makeURL('MyRadio', 'permissionAssigned', ['typeid' => $x['value']]),
         ];
 
         return $x;

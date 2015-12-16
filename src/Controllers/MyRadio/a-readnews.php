@@ -4,10 +4,7 @@
  * Some might include more than one model etc....
  *
  * @todo proper documentation
- *
- * @package MyRadio_Core
  */
-
 use \MyRadio\MyRadio\MyRadioNews;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;

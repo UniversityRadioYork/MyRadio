@@ -1,18 +1,10 @@
 <?php
 
 use \ReflectionMethod;
-use \ReflectionClass;
-use \ReflectionException;
 use \MyRadio\Config;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\MyRadioSession;
-use \MyRadio\ServiceAPI\MyRadio_APIKey;
-use \MyRadio\ServiceAPI\MyRadio_Swagger;
-use \MyRadio\ServiceAPI\MyRadio_User;
 
 $__start = -microtime(true);
-/**
+/*
  * This MyRadio Extension exposes some of MyRadio's internal classes as a REST API.
  * It aims to be compatible with https://developers.helloreverb.com/swagger/
  *
@@ -23,38 +15,38 @@ define('SILENT_EXCEPTIONS', true);
 define('DISABLE_SESSION', true);
 define('JSON_DEBUG', true);
 
-require_once __DIR__ . '/../Controllers/root_cli.php';
+require_once __DIR__.'/../Controllers/root_cli.php';
 
 /**
- * Handle API errors
+ * Handle API errors.
  */
 function api_error($code, $message = null, $previous = null)
 {
     $messages = [
-        400 => "Bad Request",
-        401 => "Unauthorized",
-        403 => "Forbidden",
-        404 => "File Not Found",
-        405 => "Method Not Allowed",
-        500 => "Internal Server Error"
+        400 => 'Bad Request',
+        401 => 'Unauthorized',
+        403 => 'Forbidden',
+        404 => 'File Not Found',
+        405 => 'Method Not Allowed',
+        500 => 'Internal Server Error',
     ];
     header("HTTP/1.1 $code {$messages[$code]}");
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     echo json_encode(
         [
-        "status" => $code,
-        "time" => sprintf('%f', $GLOBALS['__start'] + microtime(true)),
-        "message" => $message
+        'status' => $code,
+        'time' => sprintf('%f', $GLOBALS['__start'] + microtime(true)),
+        'message' => $message,
         ]
     );
     //Log an API failure so it appears in the status graphs.
-    trigger_error('API Error: [' . $code . '] ' . $message . "\nSource: " . $_SERVER['REMOTE_ADDR']);
+    trigger_error('API Error: ['.$code.'] '.$message."\nSource: ".$_SERVER['REMOTE_ADDR']);
     exit;
 }
 
 /**
  * Names the parameters to make sure they're called in the "correct" order.
- * Adapted from http://stackoverflow.com/q/8649536/995325
+ * Adapted from http://stackoverflow.com/q/8649536/995325.
  */
 function invokeArgsNamed(ReflectionMethod $refmethod, $object, array $args = [])
 {
@@ -68,7 +60,7 @@ function invokeArgsNamed(ReflectionMethod $refmethod, $object, array $args = [])
     return $refmethod->invokeArgs($object, $parameters);
 }
 
-/**
+/*
  * Break up the URL. URLs are of the form /api/ExposedClassName[/id][/method]
  */
 //Remove double-slashes that occassionally appear.
@@ -82,7 +74,7 @@ if (empty($class)) {
     exit;
 }
 
-/**
+/*
  * Check and provide Access-Control-Allow-Origin if needed
  */
 if (isset($_SERVER['HTTP_ORIGIN'])) {
@@ -91,12 +83,12 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
         in_array($_SERVER['HTTP_ORIGIN'], Config::$api_allowed_domains)
     ) {
         header('Access-Control-Allow-Origin: *');
-        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+        header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
     }
 }
 
 //Go to the right version controller
-if (strpos($_SERVER['REQUEST_URI'], Config::$api_uri . 'v2/') !== false) {
+if (strpos($_SERVER['REQUEST_URI'], Config::$api_uri.'v2/') !== false) {
     require_once '../Controllers/api/v2.php';
 } else {
     require_once '../Controllers/api/v1.php';

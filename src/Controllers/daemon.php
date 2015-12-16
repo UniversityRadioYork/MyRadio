@@ -14,15 +14,12 @@
  * Enabled Deamons will then have class:run() executed on them, which should execute the desired task once, then return.
  * This controller will deal with recursion and timing.
  *
- * @package MyRadio_Deamon
  * @uses    \Database
  * @uses    \CoreUtils
  *
  * @todo Make this not use echo in various Daemons
  * @todo Install the pcntl extension on thunderhorn
  */
-
-use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadioError;
@@ -30,7 +27,7 @@ use \MyRadio\MyRadioEmail;
 use \MyRadio\MyRadio\CoreUtils;
 
 $log_level = 4; //0: Critical, 1: Important, 2: Run Process, 3: Info, 4: Debug
-/**
+/*
  * @todo Make paths nicer. This variable is used in MyRadio_Track directly.
  */
 $syspath = '';
@@ -44,7 +41,7 @@ function dlog($x, $level = 3)
         fclose($f);
     }
     if ($GLOBALS['log_level'] >= $level) {
-        echo $x . "\n";
+        echo $x."\n";
     }
 }
 
@@ -61,7 +58,7 @@ function signal_handler($signo)
 
 //Is the extension installed?
 if (function_exists('pcntl_signal')) {
-    pcntl_signal(SIGTERM, "signal_handler");
+    pcntl_signal(SIGTERM, 'signal_handler');
 }
 chdir(__DIR__);
 
@@ -69,7 +66,7 @@ chdir(__DIR__);
 $path = '../Classes/Daemons/';
 $handle = opendir($path);
 if (!$handle) {
-    die('PATH DOES NOT EXIST ' . $path . "\n");
+    die('PATH DOES NOT EXIST '.$path."\n");
 }
 $classes = [];
 
@@ -84,14 +81,14 @@ while (false !== ($file = readdir($handle))) {
         continue;
     }
     //Is the file valid PHP?
-    system($syspath . 'php -l ' . $path . $file, $result);
+    system($syspath.'php -l '.$path.$file, $result);
     if ($result !== 0) {
-        dlog('Not checking ' . $file . ' - Parse Error', 1);
+        dlog('Not checking '.$file.' - Parse Error', 1);
     } else {
-        require $path . $file;
-        $class = '\MyRadio\Daemons\\' . str_replace('.php', '', $file); // TODO: php5.5 allows ClassName:class to remove this hack
+        require $path.$file;
+        $class = '\MyRadio\Daemons\\'.str_replace('.php', '', $file); // TODO: php5.5 allows ClassName:class to remove this hack
         if (!class_exists($class)) {
-            echo dlog('Daemon does not exist - ' . $class, 1);
+            echo dlog('Daemon does not exist - '.$class, 1);
         } else {
             $classes[] = $class;
         }
@@ -108,7 +105,7 @@ while (true) {
     foreach ($classes as $class) {
         try {
             if ($class::isEnabled()) {
-                dlog('Running ' . $class, 2);
+                dlog('Running '.$class, 2);
                 $class::run();
                 if (!$once) {
                     sleep(1);
@@ -129,7 +126,7 @@ while (true) {
                     '[MyRadio] Background Service Failure',
                     "MyRadio's connection to the Database Server has been lost. "
                     ."Attempts to reconnect for the last 15 minutes have proved futile, so the service has stopped.\r\n"
-                    ."Please investigate Database connectivity and restart the service one access is restored."
+                    .'Please investigate Database connectivity and restart the service one access is restored.'
                 );
             }
             dlog('FAILED! Will retry in 30 seconds.', 0);

@@ -1,10 +1,7 @@
 <?php
 /**
  * Controller for the focus Webcam Module. It's pretty much some webcams.
- *
- * @package MyRadio_Webcam
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Webcam;
 

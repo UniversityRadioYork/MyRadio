@@ -1,8 +1,7 @@
 <?php
 /**
- * Sets up the database data for a new installation of MyRadio
+ * Sets up the database data for a new installation of MyRadio.
  *
- * @package MyRadio_Core
  * @todo    Apply patches
  * @todo    there's some duplication in setUpFullActionsAuth and DBDATA_BLANK
  */
@@ -35,30 +34,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     /**
      * For some reason, after a break; a further match of the same
-     * clause, so to avoid code duplication full actionauth is a function
+     * clause, so to avoid code duplication full actionauth is a function.
      */
     function setUpFullActionsAuth()
     {
         global $db;
-        foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actions.json')) as $action) {
+        foreach (json_decode(file_get_contents(SCHEMA_DIR.'data-actions.json')) as $action) {
             //The getXxxId method creates these if they don't exist
             $module = CoreUtils::getModuleId($action[0]);
             CoreUtils::getActionId($module, $action[1]);
         }
-        foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-auth.json')) as $auth) {
+        foreach (json_decode(file_get_contents(SCHEMA_DIR.'data-auth.json')) as $auth) {
             try {
                 AuthUtils::addPermission($auth[0], $auth[1]);
             } catch (MyRadioException $e) {
-                $warnings[] = 'Failed to create Permission "' . $auth[0] . '". It may already exist.';
+                $warnings[] = 'Failed to create Permission "'.$auth[0].'". It may already exist.';
             }
         }
-        foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actionsauth.json')) as $actionauth) {
+        foreach (json_decode(file_get_contents(SCHEMA_DIR.'data-actionsauth.json')) as $actionauth) {
             $module = CoreUtils::getModuleId($actionauth[0]);
             $action = $actionauth[1] == null ? null : CoreUtils::getActionId($module, $actionauth[1]);
             $auth = $actionauth[2] == null ? null : constant($actionauth[2]);
             AuthUtils::addActionPermission($module, $action, $auth);
         }
-        foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-apiauth.json')) as $apiauth) {
+        foreach (json_decode(file_get_contents(SCHEMA_DIR.'data-apiauth.json')) as $apiauth) {
             $db->query(
                 'INSERT INTO myury.api_method_auth (class_name, method_name, typeid) VALUES ($1, $2, $3)',
                 [$apiauth[0], $apiauth[1], constant($apiauth[2])]
@@ -72,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         break;
     case DBDATA_COMPLETE:
         setUpFullActionsAuth();
-        $data = json_decode(file_get_contents(SCHEMA_DIR . 'data-officers.json'), true);
+        $data = json_decode(file_get_contents(SCHEMA_DIR.'data-officers.json'), true);
         foreach ($data['teams'] as $team) {
             $oTeam = MyRadio_Team::createTeam($team[0], $team[1], $team[2], $team[3]);
             foreach ($team[4] as $officer) {
@@ -88,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         break;
     case DBDATA_SUDO:
-        foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actions.json')) as $action) {
+        foreach (json_decode(file_get_contents(SCHEMA_DIR.'data-actions.json')) as $action) {
             if (in_array($action[1], ['actionPermissions', 'addActionPermission', 'listPermissions']) !== false) {
                 //Skip permissions controls
                 continue;
@@ -100,19 +99,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         break;
     case DBDATA_BLANK:
-        foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actions-min.json')) as $action) {
+        foreach (json_decode(file_get_contents(SCHEMA_DIR.'data-actions-min.json')) as $action) {
             //The getXxxId method create these if they don't exist
             $module = CoreUtils::getModuleId($action[0]);
             CoreUtils::getActionId($module, $action[1]);
         }
-        foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-auth-min.json')) as $auth) {
+        foreach (json_decode(file_get_contents(SCHEMA_DIR.'data-auth-min.json')) as $auth) {
             try {
                 AuthUtils::addPermission($auth[0], $auth[1]);
             } catch (MyRadioException $e) {
                 $warnings[] = 'Failed to create Permission "'.$auth[0].'". It may already exist.';
             }
         }
-        foreach (json_decode(file_get_contents(SCHEMA_DIR . 'data-actionsauth-min.json')) as $actionauth) {
+        foreach (json_decode(file_get_contents(SCHEMA_DIR.'data-actionsauth-min.json')) as $actionauth) {
             $module = CoreUtils::getModuleId($actionauth[0]);
             $action = $actionauth[1] == null ? null : CoreUtils::getActionId($module, $actionauth[1]);
             $auth = $actionauth[2] == null ? null : constant($actionauth[2]);

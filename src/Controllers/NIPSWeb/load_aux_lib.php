@@ -1,10 +1,7 @@
 <?php
 /**
- * Loads a NIPSWeb Auxillary playlist
- *
- * @package MyRadio_NIPSWeb
+ * Loads a NIPSWeb Auxillary playlist.
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\NIPSWeb\NIPSWeb_ManagedPlaylist;
 use \MyRadio\NIPSWeb\NIPSWeb_ManagedUserPlaylist;

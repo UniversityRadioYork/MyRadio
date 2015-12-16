@@ -1,10 +1,7 @@
 <?php
 /**
- * List all trainers
- *
- * @package MyRadio_Profile
+ * List all trainers.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_TrainingStatus;
 

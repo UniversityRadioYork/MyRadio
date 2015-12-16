@@ -1,10 +1,7 @@
 <?php
 /**
- * List Campaigns
- *
- * @package MyRadio_Website
+ * List Campaigns.
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;

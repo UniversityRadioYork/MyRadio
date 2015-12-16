@@ -1,10 +1,7 @@
 <?php
 /**
- *
  * @todo Proper Documentation
- * @package MyRadio_Scheduler
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Demo;
@@ -18,13 +15,13 @@ foreach ($demos as $demo) {
     $demo['join'] = [
         'display' => 'text',
         'value' => 'Join',
-        'url' => URLUtils::makeURL('Scheduler', 'attendDemo', ['demoid' => $demo['show_season_timeslot_id']])
+        'url' => URLUtils::makeURL('Scheduler', 'attendDemo', ['demoid' => $demo['show_season_timeslot_id']]),
     ];
     $tabledata[] = $demo;
 }
 
 if (empty($tabledata)) {
-    $tabledata = [['','','','','Error' => 'There are currently no training slots available.']];
+    $tabledata = [['', '', '', '', 'Error' => 'There are currently no training slots available.']];
 }
 
 //print_r($tabledata);

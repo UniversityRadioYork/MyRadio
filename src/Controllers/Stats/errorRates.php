@@ -1,10 +1,7 @@
 <?php
 /**
- * Trainin Map
- *
- * @package MyRadio_Stats
+ * Trainin Map.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 
 $options = [
@@ -12,8 +9,8 @@ $options = [
     'series' => [
         ['targetAxisIndex' => 0],
         ['targetAxisIndex' => 0],
-        ['targetAxisIndex' => 1]
-    ]
+        ['targetAxisIndex' => 1],
+    ],
 ];
 CoreUtils::getTemplateObject()->setTemplate('linegraph.twig')
     ->addVariable('title', 'MyRadio Error Rates')

@@ -2,12 +2,12 @@
 
 namespace MyRadio\Daemons;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\MyRadio_User;
-use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
-use \MyRadio\ServiceAPI\MyRadio_List;
-use \MyRadio\MyRadioEmail;
+use MyRadio\Config;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\MyRadio_TracklistItem;
+use MyRadio\ServiceAPI\MyRadio_List;
+use MyRadio\MyRadioEmail;
 
 class MyRadio_StatsGenDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
@@ -77,9 +77,9 @@ class MyRadio_StatsGenDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
     {
         //Review of whole week on Sundays
         if (date('N') == 7) {
-            $info = MyRadio_TracklistItem::getTracklistStatsForJukebox(time()-(86400*7));
+            $info = MyRadio_TracklistItem::getTracklistStatsForJukebox(time() - (86400 * 7));
         } else {
-            $info = MyRadio_TracklistItem::getTracklistStatsForJukebox(time()-86400);
+            $info = MyRadio_TracklistItem::getTracklistStatsForJukebox(time() - 86400);
         }
 
         $totalplays = 0;
@@ -89,9 +89,9 @@ class MyRadio_StatsGenDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 
         foreach ($info as $row) {
             $table .= '<tr><td>'.$row['num_plays'].'</td><td>'.$row['title'].'</td><td>'.$row['total_playtime'].'</td><td>'
-                    . $row['in_playlists'] .'</td></tr>'."\r\n";
+                    .$row['in_playlists'].'</td></tr>'."\r\n";
             $totalplays += $row['num_plays'];
-            $totaltracks++;
+            ++$totaltracks;
             $totaltime += $row['total_playtime'];
         }
 

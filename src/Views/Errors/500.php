@@ -1,10 +1,7 @@
 <?php
 /**
- *
  * @todo Proper Documentation
- * @package MyRadio_Core
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 
 header('HTTP/1.1 500 Internal Server Error');

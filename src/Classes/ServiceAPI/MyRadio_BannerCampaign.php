@@ -1,64 +1,68 @@
 <?php
 
 /**
- * This file provides the BannerCampaign class for MyRadio
- * @package MyRadio_Website
+ * This file provides the BannerCampaign class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
 
 /**
- * The BannerCampaign class stores and manages information about a Banner Campaign on the front website
+ * The BannerCampaign class stores and manages information about a Banner Campaign on the front website.
  *
- * @package MyRadio_Website
  * @uses    \Database
  */
 class MyRadio_BannerCampaign extends ServiceAPI
 {
     /**
-     * The ID of the BannerCampaign
+     * The ID of the BannerCampaign.
+     *
      * @var int
      */
     private $banner_campaign_id;
 
     /**
-     * The Banner this is a Campaign for
+     * The Banner this is a Campaign for.
+     *
      * @var MyRadio_Banner
      */
     private $banner;
 
     /**
-     * The User that created this Banner Campaign
+     * The User that created this Banner Campaign.
+     *
      * @var MyRadio_User
      */
     private $created_by;
 
     /**
-     * The User that approved this Banner Campaign
+     * The User that approved this Banner Campaign.
+     *
      * @var MyRadio_User
      */
     private $approved_by;
 
     /**
-     * The time this Banner Campaign is active from
+     * The time this Banner Campaign is active from.
+     *
      * @var int
      */
     private $effective_from;
 
     /**
-     * The time this Banner Campaign is active to
+     * The time this Banner Campaign is active to.
+     *
      * @var int
      */
     private $effective_to;
 
     /**
-     * The ID of the location of the Banner (e.g. index)
+     * The ID of the location of the Banner (e.g. index).
+     *
      * @var int
      */
     private $banner_location_id;
@@ -72,12 +76,13 @@ class MyRadio_BannerCampaign extends ServiceAPI
      * Where day is [Matt doesn't even know.], and order is the order the banner appears in on the scrolling
      * slideshow. A higher number appears first.
      *
-     * @var Array[]
+     * @var array[]
      */
     private $timeslots;
 
     /**
-     * Initiates the MyRadio_BannerCampaign object
+     * Initiates the MyRadio_BannerCampaign object.
+     *
      * @param int $banner_campaign_id The ID of the Banner Campaign to initialise
      */
     protected function __construct($banner_campaign_id)
@@ -86,7 +91,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
 
         $result = self::$db->fetchOne('SELECT * FROM website.banner_campaign WHERE banner_campaign_id=$1', [$banner_campaign_id]);
         if (empty($result)) {
-            throw new MyRadioException('Banner Campaign ' . $banner_campaign_id . ' does not exist!');
+            throw new MyRadioException('Banner Campaign '.$banner_campaign_id.' does not exist!');
         }
 
         $this->banner = MyRadio_Banner::getInstance($result['banner_id']);
@@ -102,7 +107,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 return [
                     'id' => $x['id'], 'day' => $x['day'],
                     'start_time' => strtotime($x['start_time'], 0),
-                    'end_time' => strtotime($x['end_time'], 0)
+                    'end_time' => strtotime($x['end_time'], 0),
                 ];
             },
             self::$db->fetchAll(
@@ -114,9 +119,11 @@ class MyRadio_BannerCampaign extends ServiceAPI
     }
 
     /**
-     * Returns data about the Campaign
-     * @param  bool $full If true, returns full, detailed data about the timeslots in this campaign
-     * @return Array
+     * Returns data about the Campaign.
+     *
+     * @param bool $full If true, returns full, detailed data about the timeslots in this campaign
+     *
+     * @return array
      */
     public function toDataSource($full = false)
     {
@@ -132,8 +139,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Click here to edit this Campaign',
-                'url' => URLUtils::makeURL('Website', 'editCampaign', ['campaignid' => $this->getID()])
-            ]
+                'url' => URLUtils::makeURL('Website', 'editCampaign', ['campaignid' => $this->getID()]),
+            ],
         ];
 
         if ($full) {
@@ -144,7 +151,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
     }
 
     /**
-     * Get the ID of the BannerCampaign
+     * Get the ID of the BannerCampaign.
+     *
      * @return int
      */
     public function getID()
@@ -153,7 +161,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
     }
 
     /**
-     * Get the User that created this Campaign
+     * Get the User that created this Campaign.
+     *
      * @return MyRadio_User
      */
     public function getCreatedBy()
@@ -162,7 +171,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
     }
 
     /**
-     * Get the User that approved this Campaign
+     * Get the User that approved this Campaign.
+     *
      * @return MyRadio_User
      */
     public function getApprovedBy()
@@ -172,6 +182,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
 
     /**
      * Get the time (as epoch int) that this Campaign starts.
+     *
      * @return int
      */
     public function getEffectiveFrom()
@@ -182,6 +193,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
     /**
      * Get the time (as epoch int) that this campaign ends.
      * Returns null if the Campaign does not end.
+     *
      * @return int
      */
     public function getEffectiveTo()
@@ -190,7 +202,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
     }
 
     /**
-     * Get the ID of the Banner Location
+     * Get the ID of the Banner Location.
+     *
      * @return int
      */
     public function getLocation()
@@ -200,7 +213,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
 
     /**
      * Get an array of times during the Active period that the Campaign is visible on the Website.
-     * @return Array [[day: 1, start_time: 0, end_time: 86399], ...]
+     *
+     * @return array [[day: 1, start_time: 0, end_time: 86399], ...]
      */
     public function getTimeslots()
     {
@@ -208,7 +222,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
     }
 
     /**
-     * Get the Banner this is a Campaign for
+     * Get the Banner this is a Campaign for.
+     *
      * @return MyRadio_Banner
      */
     public function getBanner()
@@ -218,6 +233,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
 
     /**
      * Returns a MyRadioForm filled in and ripe for being used to edit this Campaign.
+     *
      * @return MyRadioForm
      */
     public function getEditForm()
@@ -230,7 +246,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                     'effective_from' => CoreUtils::happyTime($this->getEffectiveFrom()),
                     'effective_to' => $this->getEffectiveTo() === null ? null :
                         CoreUtils::happyTime($this->getEffectiveTo()),
-                    'location' => $this->getLocation()
+                    'location' => $this->getLocation(),
                 ]
             );
     }
@@ -238,7 +254,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
     /**
      * Return if this Banner Campaign is currently active. That is, it has started and has not expired.
      * It returns true even when there isn't currently a Banner Timeslot for the Campaign running.
-     * @return boolean
+     *
+     * @return bool
      */
     public function isActive()
     {
@@ -258,8 +275,10 @@ class MyRadio_BannerCampaign extends ServiceAPI
     }
 
     /**
-     * Sets the start time of the Campaign
-     * @param  int $time
+     * Sets the start time of the Campaign.
+     *
+     * @param int $time
+     *
      * @return MyRadio_BannerCampaign
      */
     public function setEffectiveFrom($time)
@@ -270,12 +289,15 @@ class MyRadio_BannerCampaign extends ServiceAPI
             [CoreUtils::getTimestamp($time), $this->getID()]
         );
         $this->updateCacheObject();
+
         return $this;
     }
 
     /**
-     * Sets the end time of the Campaign
-     * @param  int $time
+     * Sets the end time of the Campaign.
+     *
+     * @param int $time
+     *
      * @return MyRadio_BannerCampaign
      */
     public function setEffectiveTo($time)
@@ -294,12 +316,15 @@ class MyRadio_BannerCampaign extends ServiceAPI
         }
 
         $this->updateCacheObject();
+
         return $this;
     }
 
     /**
-     * Sets the location of the Campaign
-     * @param  int $location
+     * Sets the location of the Campaign.
+     *
+     * @param int $location
+     *
      * @return MyRadio_BannerCampaign
      */
     public function setLocation($location)
@@ -310,15 +335,17 @@ class MyRadio_BannerCampaign extends ServiceAPI
             [$location, $this->getID()]
         );
         $this->updateCacheObject();
+
         return $this;
     }
 
     /**
-     * Adds an Active Timeslot to the Campaign
+     * Adds an Active Timeslot to the Campaign.
      *
      * @param int $day   Day the timeslot is on. 1 = Monday, 7 = Sunday. Timeslots cannot span days.
      * @param int $start Seconds since midnight that the Timeslot starts.
      * @param int $end   Seconds since midnight that the Timeslot ends.
+     *
      * @todo  Input validation.
      */
     public function addTimeslot($day, $start, $end)
@@ -335,7 +362,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 MyRadio_User::getInstance()->getID(),
                 $day,
                 $start,
-                $end
+                $end,
             ]
         )[0];
 
@@ -343,19 +370,21 @@ class MyRadio_BannerCampaign extends ServiceAPI
             'id' => $id,
             'day' => $day,
             'start_time' => strtotime($start, 0),
-            'end_time' => strtotime($end, 0)
+            'end_time' => strtotime($end, 0),
         ];
 
         $this->updateCacheObject();
     }
 
     /**
-     * Creates a new Banner Campaign
-     * @param  MyRadio_Banner $banner             The Banner that is being Campaigned
-     * @param  int            $banner_location_id The location of the Banner Campaign. Default 1 (index page)
-     * @param  int            $effective_from     Epoch time that the campaign is starts at. Default now.
-     * @param  int            $effective_to       Epoch time that the campaign ends at. Default never.
-     * @param  Array          $timeslots          An array of Timeslots the Campaign is active during.
+     * Creates a new Banner Campaign.
+     *
+     * @param MyRadio_Banner $banner             The Banner that is being Campaigned
+     * @param int            $banner_location_id The location of the Banner Campaign. Default 1 (index page)
+     * @param int            $effective_from     Epoch time that the campaign is starts at. Default now.
+     * @param int            $effective_to       Epoch time that the campaign ends at. Default never.
+     * @param array          $timeslots          An array of Timeslots the Campaign is active during.
+     *
      * @return MyRadio_BannerCampaign The new BannerCampaign
      */
     public static function create(
@@ -378,7 +407,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 $banner_location_id,
                 CoreUtils::getTimestamp($effective_from),
                 CoreUtils::getTimestamp($effective_to),
-                MyRadio_User::getInstance()->getID()
+                MyRadio_User::getInstance()->getID(),
             ]
         );
 
@@ -392,7 +421,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
     }
 
     /**
-     * Get all Banner Campaigns
+     * Get all Banner Campaigns.
+     *
      * @return MyRadio_BannerCampaign[]
      */
     public static function getAllBannerCampaigns()
@@ -403,6 +433,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
     /**
      * Gets all Banner Campaigns that are currently active. That is, they have started and have not expired.
      * It returns them even when there isn't currently a Banner Timeslot for the Campaign running.
+     *
      * @return MyRadio_BannerCampaign[]
      */
     public static function getActiveBannerCampaigns()
@@ -419,6 +450,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
 
     /**
      * Gets all Banner Campaigns that are currently live. That is they are active and have timeslots at the current time.
+     *
      * @return MyRadio_BannerCampaign[]
      */
     public static function getLiveBannerCampaigns()
@@ -440,7 +472,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
 
     /**
      * Get all the possible Banner Campaign Locations.
-     * @return Array
+     *
+     * @return array
      */
     public static function getCampaignLocations()
     {
@@ -450,7 +483,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
     /**
      * Returns the form needed to create or edit Banner Campaigns.
      *
-     * @param  int $bannerid The ID of the Banner that this Campaign will be/is linked to
+     * @param int $bannerid The ID of the Banner that this Campaign will be/is linked to
+     *
      * @return MyRadioForm
      */
     public static function getForm($bannerid = null)
@@ -462,7 +496,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 'editCampaign',
                 [
                     'template' => 'Website/campaignfrm.twig',
-                    'title' => 'Edit Banner Campaign'
+                    'title' => 'Edit Banner Campaign',
                 ]
             )
         )
@@ -474,7 +508,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                     'required' => true,
                     'value' => CoreUtils::happyTime(time()),
                     'label' => 'Start Time',
-                    'explanation' => 'The time from which this Campaign becomes active.'
+                    'explanation' => 'The time from which this Campaign becomes active.',
                 ]
             )
         )
@@ -486,7 +520,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                     'required' => false,
                     'label' => 'End Time',
                     'explanation' => 'The time at which this Campaign becomes inactive. Leaving this blank means'
-                    . ' the Campaign will continue indefinitely.'
+                    .' the Campaign will continue indefinitely.',
                 ]
             )
         )
@@ -497,7 +531,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 [
                     'label' => 'Location',
                     'explanation' => 'Choose where on the website this Campaign is run.',
-                    'options' => self::getCampaignLocations()
+                    'options' => self::getCampaignLocations(),
                 ]
             )
         )
@@ -508,8 +542,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 [
                     'label' => 'Timeslots',
                     'explanation' => 'All times filled in on this schedule (i.e. are purple) are times during the'
-                    . ' week that this Campaign is considered active, and therefore appears on the website.'
-                    . ' Click a square to toggle it. Click and drag to select lots at once!',
+                    .' week that this Campaign is considered active, and therefore appears on the website.'
+                    .' Click a square to toggle it. Click and drag to select lots at once!',
                 ]
             )
         )
@@ -518,7 +552,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 'bannerid',
                 MyRadioFormField::TYPE_HIDDEN,
                 [
-                    'value' => $bannerid
+                    'value' => $bannerid,
                 ]
             )
         );

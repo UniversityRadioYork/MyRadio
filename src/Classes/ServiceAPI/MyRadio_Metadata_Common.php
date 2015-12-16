@@ -1,10 +1,8 @@
 <?php
 
 /**
- * Provides the Metadata Common class for MyRadio
- * @package MyRadio_Core
+ * Provides the Metadata Common class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
 /**
@@ -15,7 +13,6 @@ namespace MyRadio\ServiceAPI;
  * such as a title or description. It includes versioning in the form of
  * effective_from and effective_to field, storing a history of previous values.
  *
- * @package MyRadio_Scheduler
  * @uses    \Database
  */
 abstract class MyRadio_Metadata_Common extends ServiceAPI

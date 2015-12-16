@@ -4,10 +4,7 @@
  *
  * $_REQUEST['permanent'], default false, will also mark the data currently in the library as *correct*, meaning
  * that the background scanner will not propose any corrections in future.
- *
- * @package MyRadio_Library
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_TrackCorrection;

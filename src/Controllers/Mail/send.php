@@ -1,10 +1,7 @@
 <?php
 /**
- * Send an email to a mailing list
- *
- * @package MyRadio_Mail
+ * Send an email to a mailing list.
  */
-
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadioEmail;
@@ -22,7 +19,7 @@ $form = (
         $action,
         [
             'debug' => true,
-            'title' => 'Send Email'
+            'title' => 'Send Email',
         ]
     )
 )->addField(
@@ -30,7 +27,7 @@ $form = (
         'subject',
         MyRadioFormField::TYPE_TEXT,
         [
-            'placeholder' => 'Subject (['.Config::$short_name.'] is prefixed automatically)'
+            'placeholder' => 'Subject (['.Config::$short_name.'] is prefixed automatically)',
         ]
     )
 )->addField(

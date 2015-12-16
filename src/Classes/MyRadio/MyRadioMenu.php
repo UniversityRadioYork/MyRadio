@@ -1,19 +1,16 @@
 <?php
 
 /**
- * This file provides the MyRadioMenu class for MyRadio
- * @package MyRadio_Core
+ * This file provides the MyRadioMenu class for MyRadio.
  */
-
 namespace MyRadio\MyRadio;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadioException;
+use MyRadio\Config;
+use MyRadio\MyRadioException;
 
 /**
- * Abstractor for the MyRadio Menu
+ * Abstractor for the MyRadio Menu.
  *
- * @package MyRadio_Core
  * @uses    \CacheProvider
  * @uses    \Database
  * @uses    \AuthUtils
@@ -22,8 +19,9 @@ use \MyRadio\MyRadioException;
 class MyRadioMenu
 {
     /**
-     * Returns a customised MyRadio menu for the *currently logged in* user
-     * @return Array         A complex Menu array array array array array
+     * Returns a customised MyRadio menu for the *currently logged in* user.
+     *
+     * @return array A complex Menu array array array array array
      */
     public function getMenuForUser()
     {
@@ -56,8 +54,9 @@ class MyRadioMenu
     }
 
     /**
-     * Returns the entire MyRadio Main Menu structure
-     * @return Array An array that can be used by getMenuForUser() to build the menu
+     * Returns the entire MyRadio Main Menu structure.
+     *
+     * @return array An array that can be used by getMenuForUser() to build the menu
      */
     private function getFullMenu()
     {
@@ -84,8 +83,10 @@ class MyRadioMenu
 
     /**
      * Gets all items for a module's submenu and puts them in an array.
-     * @param  String $module The name of the module to get items for
-     * @return Array An array that can be used by getSubMenuForUser() to build a submenu
+     *
+     * @param string $module The name of the module to get items for
+     *
+     * @return array An array that can be used by getSubMenuForUser() to build a submenu
      */
     private function getFullSubMenu($module)
     {
@@ -106,24 +107,28 @@ class MyRadioMenu
     }
 
     /**
-     * Takes a $url database column entry, and breaks it into its components
-     * @param  String $url A database-fetched menu item URL
-     * @return Array  with four keys - 'url', 'module', 'action'. All are the String names, not IDs.
+     * Takes a $url database column entry, and breaks it into its components.
+     *
+     * @param string $url A database-fetched menu item URL
+     *
+     * @return array with four keys - 'url', 'module', 'action'. All are the String names, not IDs.
      */
     private function breakDownURL($url)
     {
         return [
             'url' => $this->parseURL($url),
             'module' => $this->parseURL($url, 'module'),
-            'action' => $this->parseURL($url, 'action')
+            'action' => $this->parseURL($url, 'action'),
         ];
     }
 
     /**
-     * Check if user has permission to see this menu item
-     * @param  Array $item A MyRadioMenu Menu Item to check permissions for. Should have been passed through breadDownURL() previously.
-     *                       breadDownURL() previously.
-     * @return boolean Whether the user can see this item
+     * Check if user has permission to see this menu item.
+     *
+     * @param array $item A MyRadioMenu Menu Item to check permissions for. Should have been passed through breadDownURL() previously.
+     *                    breadDownURL() previously.
+     *
+     * @return bool Whether the user can see this item
      */
     private function userHasPermission($item)
     {
@@ -133,7 +138,9 @@ class MyRadioMenu
 
     /**
      * @todo Document
-     * @param  type $module
+     *
+     * @param type $module
+     *
      * @return array
      */
     public function getSubMenuForUser($module)
@@ -153,8 +160,10 @@ class MyRadioMenu
 
     /**
      * Detects module/action links and rewrites
-     * This is a method so it can easily be changed if Apache rewrites
-     * @param String $url The URL to parse
+     * This is a method so it can easily be changed if Apache rewrites.
+     *
+     * @param string $url The URL to parse
+     *
      * @todo Rewrite this to make sense
      */
     private function parseURL($url, $return = 'url')
@@ -181,7 +190,7 @@ class MyRadioMenu
         } else {
             //It's not a rewritable
             if ($return !== 'url') {
-                return null;
+                return;
             }
         }
         if ($return === 'module') {

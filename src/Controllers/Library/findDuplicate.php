@@ -1,10 +1,8 @@
 <?php
 
 /**
- * Scan music library, finding tracks that seem to exist more than once
- * @package MyRadio_Library
+ * Scan music library, finding tracks that seem to exist more than once.
  */
-
 use \MyRadio\Database;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Track;
@@ -27,7 +25,7 @@ do {
             'limit' => 500,
             'digitised' => true,
             'idsort' => true,
-            'custom' => 'trackid > ' . $finalid
+            'custom' => 'trackid > '.$finalid,
         ]
     );
 
@@ -43,7 +41,7 @@ do {
                 'title' => $track->getTitle(),
                 'artist' => $track->getArtist(),
                 'limit' => 0,
-                'precise' => true
+                'precise' => true,
             ]
         );
 
@@ -67,7 +65,7 @@ do {
             break;
         }
     }
-    echo "$finalid ({$db->getCounter()}/" . sizeof($duplicates) . ")<br>";
+    echo "$finalid ({$db->getCounter()}/".sizeof($duplicates).')<br>';
     gc_collect_cycles();
 
     if ($db->getCounter() > $query_limit) {

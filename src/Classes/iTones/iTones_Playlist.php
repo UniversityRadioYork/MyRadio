@@ -1,25 +1,22 @@
 <?php
 
 /**
- * This file provides the iTones_Playlist class for MyRadio - Contains a predefined list of Central tracks
- * @package MyRadio_iTones
+ * This file provides the iTones_Playlist class for MyRadio - Contains a predefined list of Central tracks.
  */
-
 namespace MyRadio\iTones;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\ServiceAPI\MyRadio_User;
-use \MyRadio\ServiceAPI\MyRadio_Track;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\Config;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\MyRadio_Track;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
 
 /**
- * The iTones_Playlist class helps provide control and access to managed playlists
+ * The iTones_Playlist class helps provide control and access to managed playlists.
  *
- * @package MyRadio_iTones
  * @uses    \Database
  */
 class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
@@ -34,9 +31,10 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     protected $revisionid;
 
     /**
-     * Initiates the ManagedPlaylist variables
+     * Initiates the ManagedPlaylist variables.
+     *
      * @param int $playlistid The ID of the managed playlist to initialise
-     * Note: Only links *non-expired* items
+     *                        Note: Only links *non-expired* items
      */
     protected function __construct($playlistid)
     {
@@ -69,7 +67,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 'iTones',
                 'editPlaylist',
                 [
-                    'title' => 'Edit Campus Jukebox Playlist'
+                    'title' => 'Edit Campus Jukebox Playlist',
                 ]
             )
         )->addField(
@@ -84,18 +82,18 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                             [
                                 'label' => 'Tracks',
                                 'options' => [
-                                    'digitised' => true
-                                ]
+                                    'digitised' => true,
+                                ],
                             ]
                         ),
                         new MyRadioFormField(
                             'artist',
                             MyRadioFormField::TYPE_ARTIST,
                             [
-                                'label' => 'Artists'
+                                'label' => 'Artists',
                             ]
-                        )
-                    ]
+                        ),
+                    ],
                 ]
             )
         )->addField(
@@ -105,7 +103,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 [
                     'label' => 'Notes',
                     'explanation' => 'Optional. Enter notes about this change.',
-                    'required' => false
+                    'required' => false,
                 ]
             )
         );
@@ -124,7 +122,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                             return $track->getArtist();
                         },
                         $this->getTracks()
-                    )
+                    ),
                 ]
             );
     }
@@ -137,7 +135,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 'iTones',
                 'configurePlaylist',
                 [
-                    'title' => 'Configure Jukebox Playlist'
+                    'title' => 'Configure Jukebox Playlist',
                 ]
             )
         )->addField(
@@ -147,7 +145,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 [
                     'label' => 'Name',
                     'explanation' => 'Name the playlist. I named my last playlist Scott.',
-                    'required' => true
+                    'required' => true,
                 ]
             )
         )->addField(
@@ -157,7 +155,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 [
                     'label' => 'Description',
                     'explanation' => 'What is this playlist even for?',
-                    'required' => false
+                    'required' => false,
                 ]
             )
         );
@@ -171,14 +169,15 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 $this->getID(),
                 [
                     'title' => $this->getTitle(),
-                    'description' => $this->getDescription()
+                    'description' => $this->getDescription(),
                 ]
             );
     }
 
     /**
-     * Return the MyRadio_Tracks that belong to this playlist
-     * @return Array of MyRadio_Track objects
+     * Return the MyRadio_Tracks that belong to this playlist.
+     *
+     * @return array of MyRadio_Track objects
      */
     public function getTracks()
     {
@@ -199,8 +198,9 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get the Title of the Playlist
-     * @return String
+     * Get the Title of the Playlist.
+     *
+     * @return string
      */
     public function getTitle()
     {
@@ -208,8 +208,9 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get the unique playlistid of the Playlist
-     * @return String
+     * Get the unique playlistid of the Playlist.
+     *
+     * @return string
      */
     public function getID()
     {
@@ -217,7 +218,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get the long description of the Playlist
+     * Get the long description of the Playlist.
+     *
      * @return string
      */
     public function getDescription()
@@ -226,7 +228,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get the current Revision ID of the Playlist
+     * Get the current Revision ID of the Playlist.
+     *
      * @return int
      */
     public function getRevisionID()
@@ -237,12 +240,12 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Takes a lock on this playlist - stores a notification to all other systems that it should not be edited.
      *
-     * @param String       $lockstr If you already have a lock, put it here. It will be renewed if it is still valid.
+     * @param string       $lockstr If you already have a lock, put it here. It will be renewed if it is still valid.
      * @param MyRadio_User $user    The user that has acquired the lock. Defaults to current user. Required for CLI requests. This String will be invalidated by the update.
-     * This String will be invalidated by the update.
+     *                              This String will be invalidated by the update.
      *
-     * @return bool|String false if the lock is not available, or a sha1 that proves ownership of the lock.
-     * No, the hash isn't all that fancy, but it prevents people being stupid. Write operations require this String.
+     * @return bool|string false if the lock is not available, or a sha1 that proves ownership of the lock.
+     *                     No, the hash isn't all that fancy, but it prevents people being stupid. Write operations require this String.
      */
     public function acquireOrRenewLock($lockstr = null, MyRadio_User $user = null)
     {
@@ -274,8 +277,9 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Release your lock on this Playlist
-     * @param String $lockstr
+     * Release your lock on this Playlist.
+     *
+     * @param string $lockstr
      */
     public function releaseLock($lockstr)
     {
@@ -285,7 +289,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Updates the locally stored Lock information to ensure it is up to date
+     * Updates the locally stored Lock information to ensure it is up to date.
      */
     private function refreshLockInformation()
     {
@@ -295,19 +299,23 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Generates a key to the provided lock
+     * Generates a key to the provided lock.
+     *
      * @param MyRadio_User $lock
      * @param int          $locktime
-     * @return String
+     *
+     * @return string
      */
     private function generateLockKey(MyRadio_User $lock, $locktime)
     {
-        return sha1('myradioitoneslockkey' . $lock->__toString() . $locktime . $this->getID());
+        return sha1('myradioitoneslockkey'.$lock->__toString().$locktime.$this->getID());
     }
 
     /**
-     * Returns if the provided Lock string is valid for this Playlist
-     * @param String $lockstr
+     * Returns if the provided Lock string is valid for this Playlist.
+     *
+     * @param string $lockstr
+     *
      * @return bool
      */
     public function validateLock($lockstr)
@@ -327,8 +335,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      * Once that's done, go over every Track still in the temporary list and remove them from the Playlist
      *
      * @param MyRadio_Track[] $tracks  Tracks to put in the playlist.
-     * @param String          $lockstr The string that provides Write access to this Playlist. Acquired from acquireLock();
-     * @param String          $notes   Optional. A textual commit message about the change.
+     * @param string          $lockstr The string that provides Write access to this Playlist. Acquired from acquireLock();
+     * @param string          $notes   Optional. A textual commit message about the change.
      *
      * @todo Push these changes to the playlist files on playoutsvc.ury.york.ac.uk. This should probably be a MyRadioDaemon
      * configured to run only on that server.
@@ -381,7 +389,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         //Add new tracks
         foreach ($new_additions as $track) {
             if (!$track instanceof MyRadio_Track) {
-                trigger_error('Discarding non-track item: ' . print_r($track, true));
+                trigger_error('Discarding non-track item: '.print_r($track, true));
                 continue;
             }
             self::$db->query(
@@ -409,9 +417,10 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-    * Update the title
-    * @param String $title
-    */
+     * Update the title.
+     *
+     * @param string $title
+     */
     public function setTitle($title)
     {
         self::$db->query('UPDATE jukebox.playlists SET title=$1 WHERE playlistid=$2', [$title, $this->getID()]);
@@ -420,9 +429,10 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-    * Update the description
-    * @param String $description
-    */
+     * Update the description.
+     *
+     * @param string $description
+     */
     public function setDescription($description)
     {
         self::$db->query('UPDATE jukebox.playlists SET description=$1 WHERE playlistid=$2', [$description, $this->getID()]);
@@ -431,8 +441,9 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get an array of all Playlists
-     * @return Array of iTones_Playlist objects
+     * Get an array of all Playlists.
+     *
+     * @return array of iTones_Playlist objects
      */
     public static function getAlliTonesPlaylists()
     {
@@ -444,6 +455,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Uses weighted playout values to select a random Playlist, returning it.
+     *
      * @return iTones_Playlist
      */
     public static function getPlaylistFromWeights()
@@ -470,9 +482,11 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Find out what Playlists have this Track in them, if any
+     * Find out what Playlists have this Track in them, if any.
+     *
      * @param MyRadio_Track $track The track to search for
-     * @return Array One or more iTones_Playlists, each of which contain $track
+     *
+     * @return array One or more iTones_Playlists, each of which contain $track
      */
     public static function getPlaylistsWithTrack(MyRadio_Track $track)
     {
@@ -499,9 +513,11 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Returns an array of key information, useful for Twig rendering and JSON requests
+     * Returns an array of key information, useful for Twig rendering and JSON requests.
+     *
      * @todo Expand the information this returns
-     * @return Array
+     *
+     * @return array
      */
     public function toDataSource()
     {
@@ -513,20 +529,20 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 'display' => 'icon',
                 'value' => 'folder-open',
                 'title' => 'Edit Tracks in this playlist',
-                'url' => URLUtils::makeURL('iTones', 'editPlaylist', ['playlistid' => $this->getID()])
+                'url' => URLUtils::makeURL('iTones', 'editPlaylist', ['playlistid' => $this->getID()]),
             ],
             'configurelink' => [
                 'display' => 'icon',
                 'value' => 'wrench',
                 'title' => 'Alter playlist settings',
-                'url' => URLUtils::makeURL('iTones', 'configurePlaylist', ['playlistid' => $this->getID()])
+                'url' => URLUtils::makeURL('iTones', 'configurePlaylist', ['playlistid' => $this->getID()]),
             ],
             'revisionslink' => [
                 'display' => 'icon',
                 'value' => 'time',
                 'title' => 'View revision history',
-                'url' => URLUtils::makeURL('iTones', 'viewPlaylistHistory', ['playlistid' => $this->getID()])
-            ]
+                'url' => URLUtils::makeURL('iTones', 'viewPlaylistHistory', ['playlistid' => $this->getID()]),
+            ],
         ];
     }
 }

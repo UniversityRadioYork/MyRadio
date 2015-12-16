@@ -1,25 +1,23 @@
 <?php
 
 /**
- * This file provides the URLUtils class for MyRadio
- * @package MyRadio_Core
+ * This file provides the URLUtils class for MyRadio.
  */
-
 namespace MyRadio\MyRadio;
 
-use \MyRadio\Config;
-use \MyRadio\Database;
-use \MyRadio\MyRadioError;
+use MyRadio\Config;
+use MyRadio\Database;
+use MyRadio\MyRadioError;
 
 /**
  * URL API Utilities.
- * @package MyRadio_Core
  */
 class URLUtils
 {
     /**
-     * Stores actionid => uri mappings of custom web addresses (e.g. /myury/iTones/default gets mapped to /itones)
-     * @var Array
+     * Stores actionid => uri mappings of custom web addresses (e.g. /myury/iTones/default gets mapped to /itones).
+     *
+     * @var array
      */
     private static $custom_uris = [];
 
@@ -33,7 +31,7 @@ class URLUtils
 
     public static function backWithMessage($message)
     {
-        header('Location: ' . $_SERVER['HTTP_REFERER'] . (strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?') . 'message=' . base64_encode($message));
+        header('Location: '.$_SERVER['HTTP_REFERER'].(strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?').'message='.base64_encode($message));
     }
 
     /**
@@ -68,14 +66,13 @@ class URLUtils
     /**
      * Redirects to another page.
      *
-     * @param  string $module The module to which we should redirect.
-     * @param  string $action The optional action inside the module to target.
-     * @param  array  $params Additional GET variables
-     * @return null   Nothing.
+     * @param string $module The module to which we should redirect.
+     * @param string $action The optional action inside the module to target.
+     * @param array  $params Additional GET variables
      */
     public static function redirect($module, $action = null, $params = [])
     {
-        header('Location: ' . self::makeURL($module, $action, $params));
+        header('Location: '.self::makeURL($module, $action, $params));
     }
 
     public static function redirectWithMessage($module, $action, $message)
@@ -84,11 +81,13 @@ class URLUtils
     }
 
     /**
-     * Builds a module/action URL
-     * @param  string $module
-     * @param  string $action
-     * @param  array  $params Additional GET variables
-     * @return String URL to Module/Action
+     * Builds a module/action URL.
+     *
+     * @param string $module
+     * @param string $action
+     * @param array  $params Additional GET variables
+     *
+     * @return string URL to Module/Action
      */
     public static function makeURL($module, $action = null, $params = [])
     {
@@ -106,7 +105,7 @@ class URLUtils
         }
 
         if (Config::$rewrite_url) {
-            $str = Config::$base_url . $module . '/' . (($action !== null) ? $action . '/' : '');
+            $str = Config::$base_url.$module.'/'.(($action !== null) ? $action.'/' : '');
             if (!empty($params)) {
                 if (is_string($params)) {
                     if (substr($params, 0, 1) !== '?') {
@@ -122,7 +121,7 @@ class URLUtils
                 }
             }
         } else {
-            $str = Config::$base_url . '?module=' . $module . (($action !== null) ? '&action=' . $action : '');
+            $str = Config::$base_url.'?module='.$module.(($action !== null) ? '&action='.$action : '');
 
             if (!empty($params)) {
                 if (is_string($params)) {

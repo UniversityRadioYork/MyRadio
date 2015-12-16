@@ -1,13 +1,10 @@
 <?php
-use \MyRadio\Config;
+
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\MyRadioSession;
-use \MyRadio\ServiceAPI\MyRadio_APIKey;
 use \MyRadio\ServiceAPI\MyRadio_Swagger;
-use \MyRadio\ServiceAPI\MyRadio_User;
 
-/**
+/*
  * Get the API key, or complain if there isn't one.
  * Do this after RTFM.
  *
@@ -26,7 +23,7 @@ if (!$api_key) {
     api_error(401, 'An API Key must be provided.');
 }
 
-/**
+/*
  * Available API Classes
  */
 $classes = MyRadio_Swagger::getApiClasses();
@@ -35,20 +32,20 @@ if (!isset($classes[$class])) {
 }
 $classReflection = new ReflectionClass($classes[$class]);
 
-/**
+/*
  * Okay, now lets see if the second part of the URL is numeric. If it is, that's definitely an ID
  */
 if (is_numeric($params[1])) {
     $id = (int) $params[1];
     $method = empty($params[2]) ? 'toDataSource' : $params[2];
 } elseif (!empty($params[2])) {
-    /**
+    /*
      * Now, if it's a String, it could be an ID or method. If there's a 3rd part this is the ID.
      */
     $id = $params[1];
     $method = $params[2];
 } else {
-    /**
+    /*
      * If there's two parts, this could be a Static method call *or* the ID of something with
      * a String key. We'll have to ask the class if the method exists.
      */
@@ -61,7 +58,7 @@ if (is_numeric($params[1])) {
     }
 }
 
-/**
+/*
  * Woo! Now we know everything we need to get started.
  * Now let's check if the method exists and get its details
  */
@@ -71,26 +68,26 @@ try {
     api_error(404);
 }
 
-/**
+/*
  * If it's an OPTIONS request report what methods are allowed
  * Otherwise, check they're using one of those methods
  */
 $allowed_methods = MyRadio_Swagger::getOptionsAllow($methodReflection);
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    header('Allow: ' . implode(', ', $allowed_methods));
+    header('Allow: '.implode(', ', $allowed_methods));
     exit;
 } elseif (!in_array($_SERVER['REQUEST_METHOD'], $allowed_methods)) {
-    header('Allow: ' . implode(', ', $allowed_methods));
+    header('Allow: '.implode(', ', $allowed_methods));
     api_error(405);
 }
 
-/**
+/*
  * Okay, the method exists. Does the given API key have access to it?
  */
 if (!$api_key->canCall($classes[$class], $method)) {
-    api_error(403, 'Your API Key (' . $api_key->getID() . ') does not have access to this method.');
+    api_error(403, 'Your API Key ('.$api_key->getID().') does not have access to this method.');
 } else {
-    /**
+    /*
      * Map the paramaters
      */
     $args = [];
@@ -102,22 +99,22 @@ if (!$api_key->canCall($classes[$class], $method)) {
                     $hint = $param->getClass()->getName();
                     $args[$param->getName()] = $hint::getInstance($_REQUEST[$param->getName()]);
                 } catch (MyRadioException $ex) {
-                    api_error(400, 'Parameter ' . $param->getName() . ' got an invalid ID. Must be an ID for ' . $param->getClass() . '.');
+                    api_error(400, 'Parameter '.$param->getName().' got an invalid ID. Must be an ID for '.$param->getClass().'.');
                 }
             } else {
                 $args[$param->getName()] = $_REQUEST[$param->getName()];
             }
         } elseif (!$param->isOptional()) {
             //Uh-oh, required option missing
-            api_error(400, 'Parameter ' . $param->getName() . ' is required but not provided.');
+            api_error(400, 'Parameter '.$param->getName().' is required but not provided.');
         }
     }
 
-    /**
+    /*
      * From here on out, return a happy error message. If something goes awry.
      */
     try {
-        /**
+        /*
          * Okay, now if the method isn't static, then we need to initialise an object.
          */
         if (!$methodReflection->isStatic()) {
@@ -130,7 +127,7 @@ if (!$api_key->canCall($classes[$class], $method)) {
             $object = null;
         }
 
-        /**
+        /*
          * Let's process the request!
          */
         $result = invokeArgsNamed($methodReflection, $object, $args);
@@ -140,7 +137,7 @@ if (!$api_key->canCall($classes[$class], $method)) {
 
     header('Content-Type: application/json');
 
-    /**
+    /*
      * Some objects have really expensive "full" responses. Some systems
      * (e.g. authenticators) don't need this much information and need to respond
      * quickly.
@@ -155,7 +152,7 @@ if (!$api_key->canCall($classes[$class], $method)) {
     $data = $class === 'resources' ? $result : [
         'status' => 'OK',
         'payload' => CoreUtils::dataSourceParser($result, $full),
-        'time' => sprintf('%f', $__start + microtime(true))
+        'time' => sprintf('%f', $__start + microtime(true)),
     ];
 
     echo json_encode($data);

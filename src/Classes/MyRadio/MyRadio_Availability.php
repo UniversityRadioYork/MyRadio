@@ -7,68 +7,72 @@
  * is active based on the day of week/time with start and end times (See the
  * WEEKSELECT FormField). This kind of functionality is used by components such
  * as Playlists and Banners.
- *
- * @package MyRadio_Website
  */
-
 namespace MyRadio\MyRadio;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
-use \MyRadio\ServiceAPI\ServiceAPI;
-use \MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
 {
     /**
-    * The table the Availability is stored in.
-    * Overriden by implementations
-    * @var String
-    */
+     * The table the Availability is stored in.
+     * Overriden by implementations.
+     *
+     * @var string
+     */
     protected $availability_table;
 
     /**
-    * The table the Availability timeslots is stored in.
-    * Overriden by implementations
-    * @var String
-    */
+     * The table the Availability timeslots is stored in.
+     * Overriden by implementations.
+     *
+     * @var string
+     */
     protected $timeslot_table;
 
     /**
-    * The id field the Availability is stored in.
-    * Overriden by implementations
-    * @var String
-    */
+     * The id field the Availability is stored in.
+     * Overriden by implementations.
+     *
+     * @var string
+     */
     protected $id_field = 'id';
 
     /**
-     * The ID of the Availability
+     * The ID of the Availability.
+     *
      * @var int
      */
     private $id;
 
     /**
-     * The User that created this Availability
+     * The User that created this Availability.
+     *
      * @var MyRadio_User
      */
     private $created_by;
 
     /**
-     * The User that approved this Availability
+     * The User that approved this Availability.
+     *
      * @var MyRadio_User
      */
     private $approved_by;
 
     /**
-     * The time this Availability is active from
+     * The time this Availability is active from.
+     *
      * @var int
      */
     private $effective_from;
 
     /**
-     * The time this Availability is active to
+     * The time this Availability is active to.
+     *
      * @var int
      */
     private $effective_to;
@@ -82,28 +86,29 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
      * Where Monday is 1, and order is the order the banner appears in on the scrolling
      * slideshow. A higher number appears first.
      *
-     * @var Array[]
+     * @var array[]
      */
     private $timeslots;
 
     /**
-     * Initiates the MyRadio_Availability object
+     * Initiates the MyRadio_Availability object.
+     *
      * @param int    $id       The ID of the Availability to initialise
      * @param string $table
      * @param string $id_field
      */
     protected function __construct($id, $result = null)
     {
-        $this->id = (int)$id;
+        $this->id = (int) $id;
 
         if ($result === null) {
             $result = self::$db->fetchOne(
-                'SELECT * FROM ' . $this->availability_table . ' WHERE ' . $this->id_field . '=$1',
+                'SELECT * FROM '.$this->availability_table.' WHERE '.$this->id_field.'=$1',
                 [$id]
             );
         }
         if (empty($result)) {
-            throw new MyRadioException('Availability ' . $id . ' does not exist!');
+            throw new MyRadioException('Availability '.$id.' does not exist!');
         }
 
         $this->created_by = MyRadio_User::getInstance($result['memberid']);
@@ -117,21 +122,23 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
                 return [
                     'id' => $x['id'], 'day' => $x['day'],
                     'start_time' => strtotime($x['start_time'], 0),
-                    'end_time' => strtotime($x['end_time'], 0)
+                    'end_time' => strtotime($x['end_time'], 0),
                 ];
             },
             self::$db->fetchAll(
-                'SELECT id, day, start_time, end_time, \'order\' FROM ' . $this->timeslot_table . '
-                WHERE ' . $this->id_field . '=$1',
+                'SELECT id, day, start_time, end_time, \'order\' FROM '.$this->timeslot_table.'
+                WHERE '.$this->id_field.'=$1',
                 [$this->id]
             )
         );
     }
 
     /**
-     * Returns data about the Availability
-     * @param  bool $full If true, returns full, detailed data about the timeslots in this campaign
-     * @return Array
+     * Returns data about the Availability.
+     *
+     * @param bool $full If true, returns full, detailed data about the timeslots in this campaign
+     *
+     * @return array
      */
     public function toDataSource($full = false)
     {
@@ -141,7 +148,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
             'approved_by' => ($this->getApprovedBy() == null) ? null : $this->getApprovedBy()->getID(),
             'effective_from' => CoreUtils::happyTime($this->getEffectiveFrom()),
             'effective_to' => ($this->getEffectiveTo() === null) ? 'Never' : CoreUtils::happyTime($this->getEffectiveTo()),
-            'num_timeslots' => sizeof($this->getTimeslots())
+            'num_timeslots' => sizeof($this->getTimeslots()),
         ];
 
         if ($full) {
@@ -152,7 +159,8 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get the ID of the Availability
+     * Get the ID of the Availability.
+     *
      * @return int
      */
     public function getID()
@@ -161,7 +169,8 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get the User that created this Availability
+     * Get the User that created this Availability.
+     *
      * @return MyRadio_User
      */
     public function getCreatedBy()
@@ -170,7 +179,8 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get the User that approved this Availability
+     * Get the User that approved this Availability.
+     *
      * @return MyRadio_User
      */
     public function getApprovedBy()
@@ -180,6 +190,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Get the time (as epoch int) that this Availability starts.
+     *
      * @return int
      */
     public function getEffectiveFrom()
@@ -190,6 +201,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Get the time (as epoch int) that this Availability ends.
      * Returns null if the Availability does not end.
+     *
      * @return int
      */
     public function getEffectiveTo()
@@ -199,7 +211,8 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Get an array of times during the Active period that the Availability is visible on the Website.
-     * @return Array [[day: 1, start_time: 0, end_time: 86399], ...]
+     *
+     * @return array [[day: 1, start_time: 0, end_time: 86399], ...]
      */
     public function getTimeslots()
     {
@@ -208,6 +221,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Returns a MyRadioForm filled in and ripe for being used to edit this Availability.
+     *
      * @return MyRadioForm
      */
     public function getEditForm()
@@ -219,7 +233,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
                     'timeslots' => $this->getTimeslots(),
                     'effective_from' => CoreUtils::happyTime($this->getEffectiveFrom()),
                     'effective_to' => $this->getEffectiveTo() === null ? null :
-                        CoreUtils::happyTime($this->getEffectiveTo())
+                        CoreUtils::happyTime($this->getEffectiveTo()),
                 ]
             );
     }
@@ -227,7 +241,8 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Return if this Availability is currently active. That is, it has started and has not expired.
      * It returns true even when there isn't currently a Timeslot for the Availaibility running.
-     * @return boolean
+     *
+     * @return bool
      */
     public function isActive()
     {
@@ -242,29 +257,34 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
     public function clearTimeslots()
     {
         $this->timeslots = [];
-        self::$db->query('DELETE FROM ' . $this->timeslot_table . ' WHERE ' . $this->id_field . '=$1', [$this->getID()]);
+        self::$db->query('DELETE FROM '.$this->timeslot_table.' WHERE '.$this->id_field.'=$1', [$this->getID()]);
         $this->updateCacheObject();
     }
 
     /**
-     * Sets the start time of the Availability
-     * @param  int $time
+     * Sets the start time of the Availability.
+     *
+     * @param int $time
+     *
      * @return MyRadio_BannerCampaign
      */
     public function setEffectiveFrom($time)
     {
         $this->effective_from = $time;
         self::$db->query(
-            'UPDATE ' . $this->availability_table . ' SET effective_from=$1 WHERE ' . $this->id_field . '=$2',
+            'UPDATE '.$this->availability_table.' SET effective_from=$1 WHERE '.$this->id_field.'=$2',
             [CoreUtils::getTimestamp($time), $this->getID()]
         );
         $this->updateCacheObject();
+
         return $this;
     }
 
     /**
-     * Sets the end time of the Campaign
-     * @param  int $time
+     * Sets the end time of the Campaign.
+     *
+     * @param int $time
+     *
      * @return MyRadio_BannerCampaign
      */
     public function setEffectiveTo($time)
@@ -272,26 +292,28 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
         if ($time === null) {
             $this->effective_to = $time;
             self::$db->query(
-                'UPDATE ' . $this->availability_table . ' SET effective_to=NULL WHERE ' . $this->id_field . '=$1',
+                'UPDATE '.$this->availability_table.' SET effective_to=NULL WHERE '.$this->id_field.'=$1',
                 [$this->getID()]
             );
         } else {
             self::$db->query(
-                'UPDATE ' . $this->availability_table . ' SET effective_to=$1 WHERE ' . $this->id_field . '=$2',
+                'UPDATE '.$this->availability_table.' SET effective_to=$1 WHERE '.$this->id_field.'=$2',
                 [CoreUtils::getTimestamp($time), $this->getID()]
             );
         }
-        
+
         $this->updateCacheObject();
+
         return $this;
     }
 
     /**
-     * Adds an Active Timeslot to the Campaign
+     * Adds an Active Timeslot to the Campaign.
      *
      * @param int $day   Day the timeslot is on. 1 = Monday, 7 = Sunday. Timeslots cannot span days.
      * @param int $start Seconds since midnight that the Timeslot starts.
      * @param int $end   Seconds since midnight that the Timeslot ends.
+     *
      * @todo  Input validation.
      */
     public function addTimeslot($day, $start, $end)
@@ -300,37 +322,38 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
         $end = gmdate('H:i:s', $end).'+00';
 
         $id = self::$db->fetchColumn(
-            'INSERT INTO ' . $this->timeslot_table . '
-            (' . $this->id_field . ', memberid, approvedid, day, start_time, end_time)
+            'INSERT INTO '.$this->timeslot_table.'
+            ('.$this->id_field.', memberid, approvedid, day, start_time, end_time)
             VALUES ($1, $2, $2, $3, $4, $5) RETURNING id',
             [
                 $this->getID(),
                 MyRadio_User::getInstance()->getID(),
                 $day,
                 $start,
-                $end
+                $end,
             ]
         )[0];
-        
+
         $this->timeslots[] = [
             'id' => $id,
             'day' => $day,
             'start_time' => strtotime($start, 0),
-            'end_time' => strtotime($end, 0)
+            'end_time' => strtotime($end, 0),
         ];
-        
+
         $this->updateCacheObject();
     }
 
     /**
-     * Get all Banner Campaigns
+     * Get all Banner Campaigns.
+     *
      * @return MyRadio_BannerCampaign[]
      */
     public static function getAllAvailabilities()
     {
         return self::resultSetToObjArray(
             self::$db->fetchColumn(
-                'SELECT ' . $this->id_field . ' FROM ' . $this->availability_table
+                'SELECT '.$this->id_field.' FROM '.$this->availability_table
             )
         );
     }
@@ -357,7 +380,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
                     'required' => true,
                     'value' => CoreUtils::happyTime(time()),
                     'label' => 'Start Time',
-                    'explanation' => 'The time from which this Availability becomes active.'
+                    'explanation' => 'The time from which this Availability becomes active.',
                 ]
             )
         )
@@ -369,7 +392,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
                     'required' => false,
                     'label' => 'End Time',
                     'explanation' => 'The time at which this Availability becomes inactive. Leaving this blank means'
-                    . ' the Availability will continue indefinitely.'
+                    .' the Availability will continue indefinitely.',
                 ]
             )
         )
@@ -380,8 +403,8 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
                 [
                     'label' => 'Timeslots',
                     'explanation' => 'All times filled in on this schedule (i.e. are purple) are times during the'
-                    . ' week that this Availability is considered active, and therefore appears on the website.'
-                    . ' Click a square to toggle it. Click and drag to select lots at once!',
+                    .' week that this Availability is considered active, and therefore appears on the website.'
+                    .' Click a square to toggle it. Click and drag to select lots at once!',
                 ]
             )
         );

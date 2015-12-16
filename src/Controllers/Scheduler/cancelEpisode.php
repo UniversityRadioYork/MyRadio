@@ -1,10 +1,7 @@
 <?php
 /**
- * Presents a form to the user to enable them to cancel an Episode
- *
- * @package MyRadio_Scheduler
+ * Presents a form to the user to enable them to cancel an Episode.
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;

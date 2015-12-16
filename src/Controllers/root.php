@@ -1,62 +1,58 @@
 <?php
 
 /**
- * This is the Root Controller - it is the backbone of everything MyRadio
- *
- * @package MyRadio_Core
+ * This is the Root Controller - it is the backbone of everything MyRadio.
  */
-
 use \MyRadio\Config;
-use \MyRadio\MyRadioError;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\MyRadioSession;
 use \MyRadio\MyRadio\MyRadioNullSession;
 
-/**
+/*
  * This number is incremented every time a database patch is released.
  * Patches are scripts in schema/patches.
  */
 define('MYRADIO_CURRENT_SCHEMA_VERSION', 0);
 
-/**
+/*
  * Turn on Error Reporting for the start. Once the Config object is loaded
  * this is updated to reflect Config.
  */
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
-/**
+/*
  * Set the Default Timezone.
  * Once Config is available, this value should be used instead.
  */
 date_default_timezone_set('Europe/London');
-/**
+/*
  * Sets the include path to include MyRadio at the end - makes for nicer includes
  */
-set_include_path(str_replace('Controllers', '', __DIR__) . PATH_SEPARATOR . get_include_path());
+set_include_path(str_replace('Controllers', '', __DIR__).PATH_SEPARATOR.get_include_path());
 
 /**
- * Sets up the autoloader for all MyRadio classes
+ * Sets up the autoloader for all MyRadio classes.
  */
 require_once 'Classes/Autoloader.php';
 // instantiate the loader
-$loader = new \MyRadio\Autoloader;
+$loader = new \MyRadio\Autoloader();
 // register the autoloader
 $loader->register();
 // register the base directories for the namespace prefix
-$_basepath = str_replace('Controllers', '', __DIR__) . DIRECTORY_SEPARATOR;
+$_basepath = str_replace('Controllers', '', __DIR__).DIRECTORY_SEPARATOR;
 
-$loader->addNamespace('MyRadio', $_basepath . 'Classes');
-$loader->addNamespace('MyRadio\Iface', $_basepath . 'Interfaces');
+$loader->addNamespace('MyRadio', $_basepath.'Classes');
+$loader->addNamespace('MyRadio\Iface', $_basepath.'Interfaces');
 
 unset($_basepath);
 
 /**
- * Sets up the autoloader for composer
+ * Sets up the autoloader for composer.
  */
 require 'vendor/autoload.php';
 
-/**
+/*
  * Load configuration specific to this system.
  * Or, if it doesn't exist, kick into setup.
  */
@@ -96,7 +92,7 @@ ServiceAPI::wakeup();
 //Initialise the permission constants
 AuthUtils::setUpAuth();
 
-/**
+/*
  * Turn off visible error reporting, if needed
  * must come after AuthUtils::setUpAuth()
  */
@@ -108,7 +104,7 @@ if (!Config::$display_errors && !AuthUtils::hasPermission(AUTH_SHOWERRORS)) {
 //AFTER other things to ensure DB is registered
 register_shutdown_function('\MyRadio\MyRadio\CoreUtils::shutdown');
 
-/**
+/*
  * Sets up a session stored in the database - uesful for sharing between more
  * than one server.
  * We disable this for the API using the DISABLE_SESSION constant.

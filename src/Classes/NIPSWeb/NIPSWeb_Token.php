@@ -1,19 +1,16 @@
 <?php
 /**
- * This file provides the NIPSWeb_Token class
- * @package MyRadio_NIPSWeb
+ * This file provides the NIPSWeb_Token class.
  */
-
 namespace MyRadio\NIPSWeb;
 
-use \MyRadio\MyRadioException;
+use MyRadio\MyRadioException;
 
 /**
- * The NIPSWeb_Token class
+ * The NIPSWeb_Token class.
  *
  * @todo Implement Play Token support
  *
- * @package MyRadio_NIPSWeb
  * @uses    \Database
  */
 class NIPSWeb_Token extends \MyRadio\ServiceAPI\ServiceAPI
@@ -37,6 +34,7 @@ class NIPSWeb_Token extends \MyRadio\ServiceAPI\ServiceAPI
      * Generate a unique session token - this is as Show Planner clients need to be more unique than a session id
      * in case the user has more than one instance of the planner open.
      * These IDs are also tied to the timeslot they were using at the time.
+     *
      * @return int a unique edit token
      */
     public static function getEditToken()
@@ -55,8 +53,10 @@ class NIPSWeb_Token extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Returns the Timeslot ID the edit token is assigned to
+     * Returns the Timeslot ID the edit token is assigned to.
+     *
      * @param int $client_id
+     *
      * @return int
      */
     public static function getEditTokenTimeslot($client_id)

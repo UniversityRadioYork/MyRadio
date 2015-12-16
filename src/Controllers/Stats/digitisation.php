@@ -1,10 +1,7 @@
 <?php
 /**
- * CML Digitisation Status
- *
- * @package MyRadio_Stats
+ * CML Digitisation Status.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 

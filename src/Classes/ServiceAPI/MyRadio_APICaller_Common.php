@@ -1,16 +1,13 @@
 <?php
 /**
- * Provides the APICaller Common class for MyRadio
- * @package MyRadio_API
+ * Provides the APICaller Common class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
 /**
  * The API class is used to provide sane default methods for authenticating against the API.
  * Users of this trait should populate $this->permissions at startup.
  *
- * @package MyRadio_API
  * @uses    \Database
  */
 trait MyRadio_APICaller_Common
@@ -18,8 +15,9 @@ trait MyRadio_APICaller_Common
     protected $permissions;
 
     /**
-     * Returns the API key's active permission flags
-     * @return Array
+     * Returns the API key's active permission flags.
+     *
+     * @return array
      */
     public function getPermissions()
     {
@@ -31,16 +29,17 @@ trait MyRadio_APICaller_Common
      *
      * Always use AuthUtils::hasAuth when working with the current user.
      *
-     * @param  null|int $authid The permission to test for. Null is "no permission required"
-     * @return boolean Whether this user has the requested permission
+     * @param null|int $authid The permission to test for. Null is "no permission required"
+     *
+     * @return bool Whether this user has the requested permission
      */
     public function hasAuth($authid)
     {
-        return $authid === null || in_array((int)$authid, $this->getPermissions());
+        return $authid === null || in_array((int) $authid, $this->getPermissions());
     }
 
     /**
-     * Returns if the user can call this method via the REST API
+     * Returns if the user can call this method via the REST API.
      */
     public function canCall($class, $method)
     {
@@ -67,11 +66,12 @@ trait MyRadio_APICaller_Common
         return false; //Didn't match anything...
     }
 
-     /**
+    /**
      * Tells you whether this APICaller can use the given mixins.
      *
-     * @param  String   $class  The class the method belongs to (actual, not API Alias)
-     * @param  String[] $mixins The mixins being called
+     * @param string   $class  The class the method belongs to (actual, not API Alias)
+     * @param string[] $mixins The mixins being called
+     *
      * @return bool Whether or not the user can call this
      */
     public function canMixin($class, $mixins)

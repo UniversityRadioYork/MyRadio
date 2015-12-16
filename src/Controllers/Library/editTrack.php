@@ -1,10 +1,7 @@
 <?php
 /**
- * Allows URY Librarians to create edit Tracks
- *
- * @package MyRadio_Library
+ * Allows URY Librarians to create edit Tracks.
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 

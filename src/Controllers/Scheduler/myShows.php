@@ -1,10 +1,7 @@
 <?php
 /**
- * Lists Shows the User has
- *
- * @package MyRadio_Scheduler
+ * Lists Shows the User has.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_User;

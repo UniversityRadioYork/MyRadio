@@ -1,12 +1,10 @@
 <?php
 /**
- * Provides the MyRadio_TrainingStatus class for MyRadio
- * @package MyRadio_Core
+ * Provides the MyRadio_TrainingStatus class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\MyRadioException;
+use MyRadio\MyRadioException;
 
 /**
  * The TrainingStatus class provides information about the URY Training States
@@ -16,21 +14,20 @@ use \MyRadio\MyRadioException;
  * referred to as Presenter Statuses. With the increasing removal detachment from
  * just "presenter" training, and more towards any activity, "Training Status"
  * was adopted.
- *
- * @package MyRadio_Core
  */
-
 class MyRadio_TrainingStatus extends ServiceAPI
 {
     /**
-     * The ID of the Training Status
+     * The ID of the Training Status.
+     *
      * @var int
      */
     private $presenterstatusid;
 
     /**
-     * The Title of the Training Status
-     * @var String
+     * The Title of the Training Status.
+     *
+     * @var string
      */
     private $descr;
 
@@ -61,7 +58,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
     /**
      * A long description of the capabilities of a member with this Training Status.
      *
-     * @var String
+     * @var string
      */
     private $detail;
 
@@ -84,7 +81,8 @@ class MyRadio_TrainingStatus extends ServiceAPI
     /**
      * Create a new TrainingStatus object. Generally, you should use getInstance.
      *
-     * @param  int $statusid The ID of the TrainingStatus.
+     * @param int $statusid The ID of the TrainingStatus.
+     *
      * @throws MyRadioException
      */
     protected function __construct($statusid)
@@ -95,6 +93,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
 
         if (empty($result)) {
             throw new MyRadioException('The specified Training Status ('.$statusid.') does not seem to exist', 404);
+
             return;
         }
 
@@ -109,7 +108,8 @@ class MyRadio_TrainingStatus extends ServiceAPI
     }
 
     /**
-     * Get the presenterstatusid
+     * Get the presenterstatusid.
+     *
      * @return int
      */
     public function getID()
@@ -118,11 +118,11 @@ class MyRadio_TrainingStatus extends ServiceAPI
     }
 
     /**
-     * Get the Title
+     * Get the Title.
      *
      * Internally, this is the `descr` field for compatibility.
      *
-     * @return String
+     * @return string
      */
     public function getTitle()
     {
@@ -130,9 +130,9 @@ class MyRadio_TrainingStatus extends ServiceAPI
     }
 
     /**
-     * Get details about the TrainingStatus' purpose
+     * Get details about the TrainingStatus' purpose.
      *
-     * @return String
+     * @return string
      */
     public function getDetail()
     {
@@ -140,7 +140,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
     }
 
     /**
-     * Get the permissions this Training Status grants
+     * Get the permissions this Training Status grants.
      *
      * @return int[]
      */
@@ -164,7 +164,8 @@ class MyRadio_TrainingStatus extends ServiceAPI
     /**
      * Checks if the user has the Training Status the one depends on.
      *
-     * @param  MyRadio_User $user Default current User.
+     * @param MyRadio_User $user Default current User.
+     *
      * @return bool True if no dependency or dependency gained, false otherwise.
      */
     public function hasDependency(MyRadio_User $user = null)
@@ -173,7 +174,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
             $user = MyRadio_User::getInstance();
         }
 
-        return ($this->getDepends() == null or $this->getDepends()->isAwardedTo($user));
+        return $this->getDepends() == null or $this->getDepends()->isAwardedTo($user);
     }
 
     /**
@@ -187,8 +188,10 @@ class MyRadio_TrainingStatus extends ServiceAPI
     }
 
     /**
-     * Returns if the User can Award this Training Status
+     * Returns if the User can Award this Training Status.
+     *
      * @param MyRadio_User $user
+     *
      * @return bool
      */
     public function canAward(MyRadio_User $user = null)
@@ -204,8 +207,9 @@ class MyRadio_TrainingStatus extends ServiceAPI
      * Get an array of all UserTrainingStatuses this TrainingStatus has been
      * awarded to, and hasn't been revoked from.
      *
-     * @param  int $ids If true, just returns User Training Status IDs instead of
-     * UserTrainingStatuses.
+     * @param int $ids If true, just returns User Training Status IDs instead of
+     *                 UserTrainingStatuses.
+     *
      * @return MyRadio_User[]|int
      */
     public function getAwardedTo($ids = false)
@@ -222,9 +226,10 @@ class MyRadio_TrainingStatus extends ServiceAPI
     }
 
     /**
-     * Checks if the User has this Training Status
+     * Checks if the User has this Training Status.
      *
-     * @param  MyRadio_User $user
+     * @param MyRadio_User $user
+     *
      * @return bool
      */
     public function isAwardedTo(MyRadio_User $user = null)
@@ -247,7 +252,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
     /**
      * Get an array of properties for this TrainingStatus.
      *
-     * @return Array
+     * @return array
      */
     public function toDataSource()
     {
@@ -256,12 +261,13 @@ class MyRadio_TrainingStatus extends ServiceAPI
             'title' => $this->getTitle(),
             'detail' => $this->getDetail(),
             'depends' => $this->getDepends(),
-            'awarded_by' => $this->getAwarder()
+            'awarded_by' => $this->getAwarder(),
         ];
     }
 
     /**
      * Get all Training Statuses.
+     *
      * @return MyRadio_TrainingStatus[]
      */
     public static function getAll()
@@ -279,8 +285,9 @@ class MyRadio_TrainingStatus extends ServiceAPI
      *
      * A User cannot award themselves statuses.
      *
-     * @param  MyRadio_User $to The User getting the Training Status.
-     * @param  MyRadio_User $by The User awarding the Training Status.
+     * @param MyRadio_User $to The User getting the Training Status.
+     * @param MyRadio_User $by The User awarding the Training Status.
+     *
      * @return MyRadio_TrainingStatus[]
      */
     public static function getAllAwardableTo(MyRadio_User $to, MyRadio_User $by = null)

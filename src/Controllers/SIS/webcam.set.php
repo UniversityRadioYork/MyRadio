@@ -1,10 +1,7 @@
 <?php
 /**
- * Webcam Setter for SIS
- *
- * @package MyRadio_SIS
+ * Webcam Setter for SIS.
  */
-
 use \MyRadio\ServiceAPI\MyRadio_Webcam;
 
 if (!isset($_REQUEST['src'])) {

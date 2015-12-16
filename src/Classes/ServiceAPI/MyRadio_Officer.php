@@ -1,85 +1,90 @@
 <?php
 /**
- * Provides the Officer class for MyRadio
- * @package MyRadio_Core
+ * Provides the Officer class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\AuthUtils;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\AuthUtils;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
 
 /**
  * The Officer class provides information about Committee Officerships.
  *
- * @package MyRadio_Core
  * @uses    \Database
  */
 class MyRadio_Officer extends ServiceAPI
 {
     /**
-     * The ID of the Officer
+     * The ID of the Officer.
+     *
      * @var int
      */
     private $officerid;
 
     /**
-     * Officer title e.g. "Station Manager"
-     * @var String
+     * Officer title e.g. "Station Manager".
+     *
+     * @var string
      */
     private $name;
     /**
-     * Officer email alias e.g. "station.manager"
-     * @var String
+     * Officer email alias e.g. "station.manager".
+     *
+     * @var string
      */
     private $alias;
     /**
      * Team the Officership is a member of.
+     *
      * @var int
      */
     private $team;
     /**
      * The weight of the Officer position, when listing on a page.
+     *
      * @var int
      */
     private $ordering;
     /**
      * A description of the position.
-     * @var String
+     *
+     * @var string
      */
     private $description;
     /**
      * (c)urrent or (h)istorical.
+     *
      * @var char
      */
     private $status;
     /**
      * (o)fficer, (a)ssistant head of team, (h)ead of team
-     * or (m)ember (not actually an Officer, just in team)
+     * or (m)ember (not actually an Officer, just in team).
      *
      * @var char
      */
     private $type;
     /**
      * Users who have held this position. Cached on first request.
-     * @var Array
+     *
+     * @var array
      */
     private $history;
     /**
-     * Stores the Officer's permissions
-     * @var Array
+     * Stores the Officer's permissions.
+     *
+     * @var array
      */
     private $permissions;
-
 
     protected function __construct($id)
     {
         $result = self::$db->fetchOne(
             'SELECT * FROM public.officer '
-            . 'WHERE officerid=$1',
+            .'WHERE officerid=$1',
             [$id]
         );
 
@@ -101,15 +106,16 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Create a new Officer position
+     * Create a new Officer position.
      *
-     * @param  String       $name     The position name, e.g. "Station Cat"
-     * @param  String       $descr    A description of the position "official feline"
-     * @param  String       $alias    Email alias (may be NULL) e.g. station.cat
-     * @param  int          $ordering Weighting when appearing in lists e.g. 0
-     * @param  MyRadio_Team $team     The Team the Officer is part of
-     * @param  char         $type     'm'ember, 'o'fficer, 'a'ssistant head, 'h'ead
-     * @return MyRadio_Officer        The new Officer position
+     * @param string       $name     The position name, e.g. "Station Cat"
+     * @param string       $descr    A description of the position "official feline"
+     * @param string       $alias    Email alias (may be NULL) e.g. station.cat
+     * @param int          $ordering Weighting when appearing in lists e.g. 0
+     * @param MyRadio_Team $team     The Team the Officer is part of
+     * @param char         $type     'm'ember, 'o'fficer, 'a'ssistant head, 'h'ead
+     *
+     * @return MyRadio_Officer The new Officer position
      */
     public static function createOfficer($name, $descr, $alias, $ordering, MyRadio_Team $team, $type = 'o')
     {
@@ -125,6 +131,7 @@ class MyRadio_Officer extends ServiceAPI
 
     /**
      * Returns all the Officers available.
+     *
      * @return array
      */
     public static function getAllOfficerPositions()
@@ -137,8 +144,10 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Assigns an officership to the given member
-     * @param  int $memberid ID of the member for the officership
+     * Assigns an officership to the given member.
+     *
+     * @param int $memberid ID of the member for the officership
+     *
      * @api   POST
      */
     public function assignOfficer($memberid)
@@ -157,6 +166,7 @@ class MyRadio_Officer extends ServiceAPI
      * Stands Down the officership provided.
      *
      * @param int $memberofficerid The ID of the officership to stand down
+     *
      * @api   POST
      */
     public static function standDown($memberofficerid)
@@ -172,7 +182,8 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Get the ID fo this Officer
+     * Get the ID fo this Officer.
+     *
      * @return int
      */
     public function getID()
@@ -181,8 +192,9 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Get the Name of this Officer Position
-     * @return String
+     * Get the Name of this Officer Position.
+     *
+     * @return string
      */
     public function getName()
     {
@@ -190,8 +202,10 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Sets the Name of this Officer Position
-     * @param String $name the new name of the officer
+     * Sets the Name of this Officer Position.
+     *
+     * @param string $name the new name of the officer
+     *
      * @return MyRadio_Officer the updated officer object
      */
     public function setName($name)
@@ -206,12 +220,14 @@ class MyRadio_Officer extends ServiceAPI
             $this->name = $name;
             $this->updateCacheObject();
         }
+
         return $this;
     }
 
     /**
      * Gets the Officer primary email alias.
-     * @return String
+     *
+     * @return string
      */
     public function getAlias()
     {
@@ -219,8 +235,10 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Sets the Alias of this Officer Position
-     * @param String $alias the new alias of the officer
+     * Sets the Alias of this Officer Position.
+     *
+     * @param string $alias the new alias of the officer
+     *
      * @return MyRadio_Officer the updated officer object
      */
     public function setAlias($alias)
@@ -235,11 +253,13 @@ class MyRadio_Officer extends ServiceAPI
             $this->alias = $alias;
             $this->updateCacheObject();
         }
+
         return $this;
     }
 
     /**
-     * Returns the Team this Officership is part of
+     * Returns the Team this Officership is part of.
+     *
      * @return MyRadio_Team
      */
     public function getTeam()
@@ -248,8 +268,10 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Sets the Team of this Officer Position
+     * Sets the Team of this Officer Position.
+     *
      * @param int $team the new team of the officer
+     *
      * @return MyRadio_Officer the updated officer object
      */
     public function setTeam($team)
@@ -264,11 +286,13 @@ class MyRadio_Officer extends ServiceAPI
             $this->team = $team;
             $this->updateCacheObject();
         }
+
         return $this;
     }
 
     /**
      * Returns the weight of the Officer when listing them.
+     *
      * @return int
      */
     public function getOrdering()
@@ -277,8 +301,10 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Sets the Ordering of this Officer Position
+     * Sets the Ordering of this Officer Position.
+     *
      * @param int $ordering the new ordering of the officer
+     *
      * @return MyRadio_Officer the updated officer object
      */
     public function setOrdering($ordering)
@@ -296,12 +322,12 @@ class MyRadio_Officer extends ServiceAPI
             $this->ordering = $ordering;
             $this->updateCacheObject();
         }
+
         return $this;
     }
 
     /**
-     *
-     * @return String
+     * @return string
      */
     public function getDescription()
     {
@@ -309,8 +335,10 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Sets the Description of this Officer Position
-     * @param String $description the new description of the officer
+     * Sets the Description of this Officer Position.
+     *
+     * @param string $description the new description of the officer
+     *
      * @return MyRadio_Officer the updated officer object
      */
     public function setDescription($description)
@@ -325,11 +353,13 @@ class MyRadio_Officer extends ServiceAPI
             $this->description = $description;
             $this->updateCacheObject();
         }
+
         return $this;
     }
 
     /**
      * (c)urrent or (h)istorical.
+     *
      * @return char
      */
     public function getStatus()
@@ -338,8 +368,10 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Sets the Status of this Officer Position
+     * Sets the Status of this Officer Position.
+     *
      * @param char $status the new status of the officer
+     *
      * @return MyRadio_Officer the updated officer object
      */
     public function setStatus($status)
@@ -354,12 +386,14 @@ class MyRadio_Officer extends ServiceAPI
             $this->status = $status;
             $this->updateCacheObject();
         }
+
         return $this;
     }
 
     /**
      * (o)fficer, (a)ssistant head of team, (h)ead of team
-     * or (m)ember (not actually an Officer, just in team)
+     * or (m)ember (not actually an Officer, just in team).
+     *
      * @return char
      */
     public function getType()
@@ -368,8 +402,10 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Sets the Type of this Officer Position
+     * Sets the Type of this Officer Position.
+     *
      * @param char $type the new type of the officer
+     *
      * @return MyRadio_Officer the updated officer object
      */
     public function setType($type)
@@ -384,12 +420,14 @@ class MyRadio_Officer extends ServiceAPI
             $this->type = $type;
             $this->updateCacheObject();
         }
+
         return $this;
     }
 
     /**
-     * Return all Users who held this Officership
-     * @return Array {'User':User, 'from':time, 'to':time|null,
+     * Return all Users who held this Officership.
+     *
+     * @return array {'User':User, 'from':time, 'to':time|null,
      *               'memberofficerid': int}
      */
     public function getHistory()
@@ -397,19 +435,19 @@ class MyRadio_Officer extends ServiceAPI
         if (empty($this->history)) {
             $result = self::$db->fetchAll(
                 'SELECT member_officerid, memberid, '
-                . 'from_date, till_date FROM public.member_officer '
-                . 'WHERE officerid=$1 ORDER BY from_date DESC',
+                .'from_date, till_date FROM public.member_officer '
+                .'WHERE officerid=$1 ORDER BY from_date DESC',
                 [$this->getID()]
             );
 
             $this->history = array_map(
                 function ($x) {
                     return [
-                        'User'=>$x['memberid'],
-                        'from'=>strtotime($x['from_date']),
-                        'to'=> empty($x['till_date']) ? null
+                        'User' => $x['memberid'],
+                        'from' => strtotime($x['from_date']),
+                        'to' => empty($x['till_date']) ? null
                             : strtotime($x['till_date']),
-                        'memberofficerid' => (int) $x['member_officerid']
+                        'memberofficerid' => (int) $x['member_officerid'],
                     ];
                 },
                 $result
@@ -427,7 +465,8 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Get Users currently in the position
+     * Get Users currently in the position.
+     *
      * @return MyRadio_User[]
      */
     public function getCurrentHolders()
@@ -444,8 +483,7 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Updates the cache objects for all current holders
-     *
+     * Updates the cache objects for all current holders.
      */
     private function updateMemberCache()
     {
@@ -455,8 +493,7 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Updates the permissions stored in the Officer Object
-     *
+     * Updates the permissions stored in the Officer Object.
      */
     private function updatePermissions()
     {
@@ -471,8 +508,9 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Returns all the officer's active permission flags
-     * @return Array
+     * Returns all the officer's active permission flags.
+     *
+     * @return array
      */
     public function getPermissions()
     {
@@ -480,7 +518,8 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Adds a permission flag to the officer
+     * Adds a permission flag to the officer.
+     *
      * @param $permissionid the permission to add
      */
     public function addPermission($permissionid)
@@ -494,12 +533,15 @@ class MyRadio_Officer extends ServiceAPI
         $this->updatePermissions();
         $this->updateCacheObject();
         $this->updateMemberCache();
+
         return $this;
     }
 
     /**
-     * Removes a permission flag from the officer
+     * Removes a permission flag from the officer.
+     *
      * @param int $permissionid the permission to remove
+     *
      * @api   POST
      */
     public function revokePermission($permissionid)
@@ -513,11 +555,13 @@ class MyRadio_Officer extends ServiceAPI
         $this->updatePermissions();
         $this->updateCacheObject();
         $this->updateMemberCache();
+
         return $this;
     }
 
     /**
-     * Form for Officerships
+     * Form for Officerships.
+     *
      * @return MyRadioForm
      */
     public static function getForm()
@@ -534,7 +578,7 @@ class MyRadio_Officer extends ServiceAPI
                 'name',
                 MyRadioFormField::TYPE_TEXT,
                 [
-                    'label' => 'Title'
+                    'label' => 'Title',
                 ]
             )
         )->addField(
@@ -542,7 +586,7 @@ class MyRadio_Officer extends ServiceAPI
                 'alias',
                 MyRadioFormField::TYPE_TEXT,
                 [
-                    'label' => 'Email Alias'
+                    'label' => 'Email Alias',
                 ]
             )
         )->addField(
@@ -555,11 +599,11 @@ class MyRadio_Officer extends ServiceAPI
                         [
                             [
                                 'value' => null,
-                                'text' => 'Select a Team'
-                            ]
+                                'text' => 'Select a Team',
+                            ],
                         ],
                         MyRadio_Team::getTeamSelect()
-                    )
+                    ),
                 ]
             )
         )->addField(
@@ -567,7 +611,7 @@ class MyRadio_Officer extends ServiceAPI
                 'ordering',
                 MyRadioFormField::TYPE_NUMBER,
                 [
-                    'label' => 'Ordering'
+                    'label' => 'Ordering',
                 ]
             )
         )->addField(
@@ -576,7 +620,7 @@ class MyRadio_Officer extends ServiceAPI
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Description',
-                    'required' => false
+                    'required' => false,
                 ]
             )
         )->addField(
@@ -589,11 +633,11 @@ class MyRadio_Officer extends ServiceAPI
                         [
                             [
                                 'value' => null,
-                                'text' => 'Select Status'
-                            ]
+                                'text' => 'Select Status',
+                            ],
                         ],
                         CoreUtils::getStatusLookup()
-                    )
+                    ),
                 ]
             )
         )->addField(
@@ -605,25 +649,25 @@ class MyRadio_Officer extends ServiceAPI
                     'options' => [
                         [
                             'value' => null,
-                            'text' => 'Select Type'
+                            'text' => 'Select Type',
                         ],
                         [
                             'value' => 'h',
-                            'text' => 'Head of Team'
+                            'text' => 'Head of Team',
                         ],
                         [
                             'value' => 'a',
-                            'text' => 'Assistant Head of Team'
+                            'text' => 'Assistant Head of Team',
                         ],
                         [
                             'value' => 'o',
-                            'text' => 'Team Officer'
+                            'text' => 'Team Officer',
                         ],
                         [
                             'value' => 'm',
-                            'text' => 'Team Member'
-                        ]
-                    ]
+                            'text' => 'Team Member',
+                        ],
+                    ],
                 ]
             )
         )->addField(
@@ -645,14 +689,14 @@ class MyRadio_Officer extends ServiceAPI
                                     [
                                         [
                                             'value' => null,
-                                            'text' => 'Select a Permission'
-                                        ]
+                                            'text' => 'Select a Permission',
+                                        ],
                                     ],
                                     AuthUtils::getAllPermissions()
-                                )
+                                ),
                             ]
-                        )
-                    ]
+                        ),
+                    ],
                 ]
             )
         );
@@ -661,7 +705,8 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
-     * Edit form for an existing Officership
+     * Edit form for an existing Officership.
+     *
      * @return MyRadioForm
      */
     public function getEditForm()
@@ -683,13 +728,14 @@ class MyRadio_Officer extends ServiceAPI
                             return $perm['value'];
                         },
                         $this->getPermissions()
-                    )
+                    ),
                 ]
             );
     }
 
     /**
-     * Form for assigning members to an officership
+     * Form for assigning members to an officership.
+     *
      * @return MyRadioForm
      */
     public static function getAssignForm()
@@ -706,10 +752,11 @@ class MyRadio_Officer extends ServiceAPI
                 MyRadioFormField::TYPE_MEMBER,
                 [
                     'explanation' => '',
-                    'label' => 'Member'
+                    'label' => 'Member',
                 ]
             )
         );
+
         return $form;
     }
 
@@ -720,7 +767,7 @@ class MyRadio_Officer extends ServiceAPI
      * @mixin history Lists historic position holders
      * @mixin current Lists current position holders
      *
-     * @return Array
+     * @return array
      */
     public function toDataSource($mixins = [])
     {
@@ -733,7 +780,7 @@ class MyRadio_Officer extends ServiceAPI
             },
             'current' => function (&$data) {
                 $data['current'] = CoreUtils::dataSourceParser($this->getCurrentHolders());
-            }
+            },
         ];
 
         $data = [
@@ -744,7 +791,7 @@ class MyRadio_Officer extends ServiceAPI
             'ordering' => $this->getOrdering(),
             'description' => $this->getDescription(),
             'status' => $this->getStatus(),
-            'type' => $this->getType()
+            'type' => $this->getType(),
         ];
 
         $this->addMixins($data, $mixins, $mixin_funcs);

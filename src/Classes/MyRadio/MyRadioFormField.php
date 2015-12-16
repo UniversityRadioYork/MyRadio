@@ -8,15 +8,12 @@ use MyRadio\ServiceAPI\MyRadio_Track;
 use MyRadio\ServiceAPI\MyRadio_User;
 
 /**
- * This file provides the MyRadioFormField class for MyRadio
- * @package MyRadio_Core
+ * This file provides the MyRadioFormField class for MyRadio.
  */
 
 /**
  * An input of some description that will be rendered in a form
- * A collection of these is automatically created when building a MyRadioForm
- *
- * @package MyRadio_Core
+ * A collection of these is automatically created when building a MyRadioForm.
  */
 class MyRadioFormField
 {
@@ -31,7 +28,6 @@ class MyRadioFormField
      *
      * placeholder: Placeholder text that is cleared when the input takes focus.
      */
-
     const TYPE_TEXT = 0x00;
     /**
      * The constant used to specify this MyRadioFormField should be a standard number field.
@@ -44,13 +40,13 @@ class MyRadioFormField
      */
     const TYPE_NUMBER = 0x01;
     /**
-     * The constant used to specify this MyRadioFormField must be a text field that validates as an email address
+     * The constant used to specify this MyRadioFormField must be a text field that validates as an email address.
      *
      * The email field takes no custom options.
      */
     const TYPE_EMAIL = 0x02;
     /**
-     * The constant used to specify this MyRadioFormField must be a valid date, and provides a datepicker widget for it
+     * The constant used to specify this MyRadioFormField must be a valid date, and provides a datepicker widget for it.
      *
      * The date field currently takes no custom options.
      *
@@ -58,15 +54,13 @@ class MyRadioFormField
      */
     const TYPE_DATE = 0x03;
     /**
-     * The constant used to specify this MyRadioFormField must be a valid date and time, providing a datetime widget for it
+     * The constant used to specify this MyRadioFormField must be a valid date and time, providing a datetime widget for it.
      *
      * The datetime field currently takes no custom options.
      * NOTE: Currently, the TIME aspect must be in 15 minute intervals
      *
      * @todo Support for a custom time interval
-     *
      * @todo Support for mindate and maxdate
-     *
      * @todo Support for mintime and maxtime
      */
     const TYPE_DATETIME = 0x04;
@@ -244,7 +238,7 @@ class MyRadioFormField
 
     /**
      * The constant used to specify this MyRadioFormField should be a password field.
-     * This MyRadioFormField type does not support any Custom Options
+     * This MyRadioFormField type does not support any Custom Options.
      */
     const TYPE_PASSWORD = 0x15;
 
@@ -256,95 +250,109 @@ class MyRadioFormField
     const TYPE_SECTION_CLOSE = 0x16;
 
     /**
-     * The name/id of the Form Field
+     * The name/id of the Form Field.
+     *
      * @var string
      */
     private $name;
 
     /**
-     * The type of the form field
+     * The type of the form field.
+     *
      * @var int
      */
     private $type;
 
     /**
-     * Whether input in this field is required
+     * Whether input in this field is required.
+     *
      * @var bool
      */
     private $required = true;
 
     /**
-     * The label of the field (null = use name)
+     * The label of the field (null = use name).
+     *
      * @var string
      */
     private $label = null;
 
     /**
-     * Helpful text explaining the form field
+     * Helpful text explaining the form field.
+     *
      * @var string
      */
     private $explanation = '';
 
     /**
-     * Whether the form element should be visible
+     * Whether the form element should be visible.
+     *
      * @var bool
      */
     private $display = true;
 
     /**
-     * Additional classes to add to the field
+     * Additional classes to add to the field.
+     *
      * @var array
      */
     private $classes = [];
 
     /**
-     * For selects, radios and checkboxes only - the options to display
+     * For selects, radios and checkboxes only - the options to display.
+     *
      * @var 2D Array as defined
-     * {display: 'Value to Display', enabled: true}
+     *         {display: 'Value to Display', enabled: true}
      */
     private $options = [];
 
     /**
-     * The value of the form field
+     * The value of the form field.
+     *
      * @var mixed
      */
     private $value = null;
 
     /**
      * Whether the field is enabled/disabled by default
-     * Actually renders as readonly in most cases
+     * Actually renders as readonly in most cases.
+     *
      * @var bool
      */
     private $enabled = true;
 
     /**
      * Whether the field is redacted by default.
+     *
      * @var bool
      */
     private $redacted = false;
 
     /**
-     * Settings that cannot be altered by the $options parameter
+     * Settings that cannot be altered by the $options parameter.
+     *
      * @var array
      */
     private $restricted_attributes = ['restricted_attributes', 'name', 'type'];
 
     /**
      * Set up a new MyRadio Form Field with the new parameters, returning the new field.
-     * This method is only useful practically when the MyRadioFormField is inserted to a MyRadioForm
-     * @param  String $name    The name and id of the field, as used in the HTML properties - should be unique to the form '.' IS A RESERVED CHARACTER!
-     *                                   '.' IS A RESERVED CHARACTER!
-     * @param  int    $type    The MyRadioFormField Field Type to use. See the constants defined in this class for details
-     * @param  Array  $options A set of additional settings for the MyRadioFormField as follows (all optional):<br> required: Whether the field is required (default true)<br> label: The human-readable name of the field. (default reuses name)<br> explanation: Help text for the MyRadioFormField (default none)<br> display: Whether the MyRadioFormField should be visible when the page loads (default true)<br> classes: An array of additional classes to add to the input field (default empty)<br> options: An array of additional settings that are specific to the field type (default empty)<br> value: The default value of the field when it is rendered (default none)<br> enabled: Whether the field is enabled when the page is loaded (default true)<br> redacted: If true, this field is hidden in debug output (default false)
-     *                                   required: Whether the field is required (default true)<br>
-     *                                   label: The human-readable name of the field. (default reuses name)<br>
-     *                                   explanation: Help text for the MyRadioFormField (default none)<br>
-     *                                   display: Whether the MyRadioFormField should be visible when the page loads (default true)<br>
-     *                                   classes: An array of additional classes to add to the input field (default empty)<br>
-     *                                   options: An array of additional settings that are specific to the field type (default empty)<br>
-     *                                   value: The default value of the field when it is rendered (default none)<br>
-     *                                   enabled: Whether the field is enabled when the page is loaded (default true)<br>
-     *                                   redacted: If true, this field is hidden in debug output (default false)
+     * This method is only useful practically when the MyRadioFormField is inserted to a MyRadioForm.
+     *
+     * @param string $name    The name and id of the field, as used in the HTML properties - should be unique to the form '.' IS A RESERVED CHARACTER!
+     *                        '.' IS A RESERVED CHARACTER!
+     * @param int    $type    The MyRadioFormField Field Type to use. See the constants defined in this class for details
+     * @param array  $options A set of additional settings for the MyRadioFormField as follows (all optional):<br> required: Whether the field is required (default true)<br> label: The human-readable name of the field. (default reuses name)<br> explanation: Help text for the MyRadioFormField (default none)<br> display: Whether the MyRadioFormField should be visible when the page loads (default true)<br> classes: An array of additional classes to add to the input field (default empty)<br> options: An array of additional settings that are specific to the field type (default empty)<br> value: The default value of the field when it is rendered (default none)<br> enabled: Whether the field is enabled when the page is loaded (default true)<br> redacted: If true, this field is hidden in debug output (default false)
+     *                        required: Whether the field is required (default true)<br>
+     *                        label: The human-readable name of the field. (default reuses name)<br>
+     *                        explanation: Help text for the MyRadioFormField (default none)<br>
+     *                        display: Whether the MyRadioFormField should be visible when the page loads (default true)<br>
+     *                        classes: An array of additional classes to add to the input field (default empty)<br>
+     *                        options: An array of additional settings that are specific to the field type (default empty)<br>
+     *                        value: The default value of the field when it is rendered (default none)<br>
+     *                        enabled: Whether the field is enabled when the page is loaded (default true)<br>
+     *                        redacted: If true, this field is hidden in debug output (default false)
+     *
      * @throws MyRadioException If an attempt is made to set an $options value other than those listed above
      */
     public function __construct($name, $type, $options = [])
@@ -361,18 +369,19 @@ class MyRadioFormField
         foreach ($options as $k => $v) {
             //Sanity checks - is this a valid parameter and is it not blacklisted?
             if (isset($this->$k) === false && @$this->$k !== null) {
-                throw new MyRadioException('Tried to set MyRadioFormField parameter ' . $k . ' but it does not exist.');
+                throw new MyRadioException('Tried to set MyRadioFormField parameter '.$k.' but it does not exist.');
             }
             if (in_array($k, $this->restricted_attributes)) {
-                throw new MyRadioException('Tried to set MyRadioFormField parameter ' . $k . ' but it is not editable.');
+                throw new MyRadioException('Tried to set MyRadioFormField parameter '.$k.' but it is not editable.');
             }
             $this->$k = $v;
         }
     }
 
     /**
-     * Returns the name property of this MyRadioFormField
-     * @return String The name of this MyRadioFormField
+     * Returns the name property of this MyRadioFormField.
+     *
+     * @return string The name of this MyRadioFormField
      */
     public function getName()
     {
@@ -380,7 +389,8 @@ class MyRadioFormField
     }
 
     /**
-     * Get if this needs a value
+     * Get if this needs a value.
+     *
      * @return bool
      */
     public function getRequired()
@@ -389,7 +399,8 @@ class MyRadioFormField
     }
 
     /**
-     * Get the type of form field
+     * Get the type of form field.
+     *
      * @return int
      */
     public function getType()
@@ -398,7 +409,8 @@ class MyRadioFormField
     }
 
     /**
-     * Get if this field is redacted
+     * Get if this field is redacted.
+     *
      * @return bool
      */
     public function getRedacted()
@@ -408,6 +420,7 @@ class MyRadioFormField
 
     /**
      * Set whether this field needs a value.
+     *
      * @param bool $bool
      */
     public function setRequired($bool)
@@ -417,7 +430,8 @@ class MyRadioFormField
 
     /**
      * Merges the given options to the original ones.
-     * @param Array $options
+     *
+     * @param array $options
      */
     public function setOptions($options)
     {
@@ -431,7 +445,7 @@ class MyRadioFormField
      * field name, which is the name of this field, a period '.', and the name of the inner field.
      *
      * @param mixed  $value    The value that this MyRadioFormField will be set to. Type depends on $type parameter.
-     * @param String $subfield For TABULARSETs, this is fieldname.innerfieldname.
+     * @param string $subfield For TABULARSETs, this is fieldname.innerfieldname.
      */
     public function setValue($value, $subField = null)
     {
@@ -444,7 +458,7 @@ class MyRadioFormField
             return;
         } else {
             foreach ($this->options as $field) {
-                if (!$field instanceof MyRadioFormField) {
+                if (!$field instanceof self) {
                     continue;
                 }
                 if ($field->getName() === $subField) {
@@ -456,7 +470,8 @@ class MyRadioFormField
 
     /**
      * Returns a space-separated string of classes that apply to this MyRadioFormField
-     * Includes hidden if the MyRadioFormField is set not to display
+     * Includes hidden if the MyRadioFormField is set not to display.
+     *
      * @return string A space-separated string of classes that apply to this MyRadioFormField
      */
     private function getClasses()
@@ -477,8 +492,9 @@ class MyRadioFormField
 
     /**
      * Prepares an Array of parameters ready to be sent to the Templater in order to render this MyRadioFormField in a
-     *  MyRadioForm
-     * @return Array An array of parameters ready to be used in a Template render call
+     *  MyRadioForm.
+     *
+     * @return array An array of parameters ready to be used in a Template render call
      */
     public function render()
     {
@@ -492,13 +508,13 @@ class MyRadioFormField
             }
         }
 
-        if ($this->type === MyRadioFormField::TYPE_ARTIST) {
+        if ($this->type === self::TYPE_ARTIST) {
             $options['artistname'] = $this->value;
         }
-        if ($this->type === MyRadioFormField::TYPE_FILE) {
+        if ($this->type === self::TYPE_FILE) {
             $options['progress_id'] = uniqid();
             $value = null;
-        } elseif (($this->type === MyRadioFormField::TYPE_TRACK) && !empty($this->value)) {
+        } elseif (($this->type === self::TYPE_TRACK) && !empty($this->value)) {
             if (is_array($this->value)) { //Deal with TABULARSETs
                 foreach ($this->value as $k => $v) {
                     if (empty($v)) {
@@ -511,7 +527,7 @@ class MyRadioFormField
                 $options['trackname'] = $this->value->getTitle();
                 $value = $this->value->getID();
             }
-        } elseif (($this->type === MyRadioFormField::TYPE_MEMBER) && !empty($this->value)) {
+        } elseif (($this->type === self::TYPE_MEMBER) && !empty($this->value)) {
             if (is_array($this->value)) { //Deal with TABULARSETs
                 foreach ($this->value as $k => $v) {
                     if (empty($v)) {
@@ -537,7 +553,7 @@ class MyRadioFormField
             'class' => $this->getClasses(),
             'options' => $options,
             'value' => $value,
-            'enabled' => $this->enabled
+            'enabled' => $this->enabled,
         ];
     }
 
@@ -547,14 +563,17 @@ class MyRadioFormField
      *
      * This is called by MyRadioForm::readValues()
      *
-     * @param  String $prefix The current prefix to the field name
-     * @return mixed            The submitted field value
+     * @param string $prefix The current prefix to the field name
+     *
+     * @return mixed The submitted field value
+     *
      * @throws MyRadioException if the field type does not have a valid read handler
+     *
      * @todo   Verify all returns deal with repeated elements correctly
      */
     public function readValue($prefix)
     {
-        $name = $prefix . str_replace(' ', '_', $this->name);
+        $name = $prefix.str_replace(' ', '_', $this->name);
         //The easiest ones can just be returned
         switch ($this->type) {
         case self::TYPE_TEXT:
@@ -563,13 +582,14 @@ class MyRadioFormField
             return strip_tags($_REQUEST[$name]);
             break;
         case self::TYPE_BLOCKTEXT:
-            $dom = new \DOMDocument;
+            $dom = new \DOMDocument();
             $dom->loadHtml($_REQUEST[$name]);
 
             $xpath = new \DOMXPath($dom);
             while ($node = $xpath->query('//script')->item(0)) {
                 $node->parentNode->removeChild($node);
             }
+
             return $dom->saveHTML();
             break;
         case self::TYPE_HIDDEN:
@@ -579,7 +599,7 @@ class MyRadioFormField
         case self::TYPE_MEMBER:
             //Deal with Arrays for repeated elements
             if (is_array($_REQUEST[$name])) {
-                for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
+                for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                     if (empty($_REQUEST[$name][$i])) {
                         continue;
                     }
@@ -589,7 +609,7 @@ class MyRadioFormField
                 return $_REQUEST[$name];
             } else {
                 if (empty($_REQUEST[$name])) {
-                    return null;
+                    return;
                 }
 
                 return MyRadio_User::getInstance($_REQUEST[$name]);
@@ -598,7 +618,7 @@ class MyRadioFormField
         case self::TYPE_TRACK:
             //Deal with Arrays for repeated elements
             if (is_array($_REQUEST[$name])) {
-                for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
+                for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                     if (empty($_REQUEST[$name][$i])) {
                         continue;
                     }
@@ -616,7 +636,7 @@ class MyRadioFormField
         case self::TYPE_DAY:
             //Deal with Arrays for repeated elements
             if (is_array($_REQUEST[$name])) {
-                for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
+                for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                     if (is_numeric($_REQUEST[$name][$i])) {
                         $_REQUEST[$name][$i] = (int) $_REQUEST[$name][$i];
                     }
@@ -636,7 +656,7 @@ class MyRadioFormField
         case self::TYPE_TIME:
             //Deal with repeated elements
             if (is_array($_REQUEST[$name])) {
-                for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
+                for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                     $_REQUEST[$name][$i] = $this->convertTime($_REQUEST[$name][$i]);
                 }
 
@@ -651,7 +671,7 @@ class MyRadioFormField
         case self::TYPE_CHECKGRP:
             $return = [];
             foreach ($this->options as $option) {
-                $return[$option->getName()] = (int) $option->readValue($name . '-');
+                $return[$option->getName()] = (int) $option->readValue($name.'-');
             }
 
             return $return;
@@ -693,7 +713,7 @@ class MyRadioFormField
 
             //Clear rows that are entirely null
             $removeKeys = [];
-            for ($i = 0; $i < sizeof($return[$fields[0]]); $i++) {
+            for ($i = 0; $i < sizeof($return[$fields[0]]); ++$i) {
                 $hasValue = false;
                 foreach ($fields as $field) {
                     if (!is_null($return[$field][$i])) {
@@ -719,12 +739,12 @@ class MyRadioFormField
                 break;
         case self::TYPE_SECTION:
         case self::TYPE_SECTION_CLOSE:
-            return null;
+            return;
                 break;
         case self::TYPE_ALBUM:
             //Deal with Arrays for repeated elements
             if (is_array($_REQUEST[$name])) {
-                for ($i = 0; $i < sizeof($_REQUEST[$name]); $i++) {
+                for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                     if (empty($_REQUEST[$name][$i])) {
                         continue;
                     }
@@ -737,7 +757,7 @@ class MyRadioFormField
             }
             break;
         case self::TYPE_WEEKSELECT:
-            /**
+            /*
                  * Now isn't this fun. The week select is comprised of 336 checkboxes that we need to amalgamate.
                  * Value returned are relative to days starting at midnight, not 7am.
                  * Selections spanning multiple days will return as two seperate selections ('days' here again being midnight)
@@ -745,10 +765,10 @@ class MyRadioFormField
             $times = [];
             $active_day = null;
             $active_time = null;
-            for ($i = 1; $i <= 7; $i++) { //Iterate over each day
-                for ($j = 0; $j < 86400; $j+=1800) { //Iterate over each 30 minute interval
-                    if (isset($_REQUEST[$name . '-' . $i . '-' . $j])
-                        && strtolower($_REQUEST[$name . '-' . $i . '-' . $j]) === 'on'
+            for ($i = 1; $i <= 7; ++$i) { //Iterate over each day
+                for ($j = 0; $j < 86400; $j += 1800) { //Iterate over each 30 minute interval
+                    if (isset($_REQUEST[$name.'-'.$i.'-'.$j])
+                        && strtolower($_REQUEST[$name.'-'.$i.'-'.$j]) === 'on'
                     ) {
                         //Is there already an active selection? If so, carry on.
                         if ($active_day !== null) {
@@ -781,14 +801,14 @@ class MyRadioFormField
             return $times;
                 break;
         default:
-            throw new MyRadioException('Field type ' . $this->type . ' does not have a valid value interpreter definition.');
+            throw new MyRadioException('Field type '.$this->type.' does not have a valid value interpreter definition.');
         }
     }
 
     private function convertTime($timeString)
     {
         if ($timeString === '') {
-            return null;
+            return;
         }
         /* For why we need to do this, consult the notes at
          * http://php.net/manual/en/function.strtotime.php.

@@ -2,13 +2,13 @@
 
 /**
  * Provides basic login requirement functionality to other PHP web systems,
- * backwards compatible with the old Shibbobleh system URY use to use
+ * backwards compatible with the old Shibbobleh system URY use to use.
  */
 //Load the basic MyRadio framework
 
 use \MyRadio\MyRadio\URLUtils;
 
-require_once __DIR__ . '/root_cli.php';
+require_once __DIR__.'/root_cli.php';
 
 //Check the current authentication status of the user
 if ((!isset($_SESSION['memberid']) or $_SESSION['auth_use_locked'])

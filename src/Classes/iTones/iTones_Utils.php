@@ -1,22 +1,19 @@
 <?php
 
 /**
- * This file provides the iTones_Utils class
- * @package MyRadio_iTones
+ * This file provides the iTones_Utils class.
  */
-
 namespace MyRadio\iTones;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadioException;
-use \MyRadio\ServiceAPI\MyRadio_User;
-use \MyRadio\ServiceAPI\MyRadio_Track;
-use \MyRadio\iTones\iTones_TrackRequest;
+use MyRadio\Config;
+use MyRadio\MyRadioException;
+use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\MyRadio_Track;
+use MyRadio\iTones\iTones_TrackRequest;
 
 /**
- * The iTones_Utils class provides generic utilities for controlling iTones - URY's Campus Jukebox
+ * The iTones_Utils class provides generic utilities for controlling iTones - URY's Campus Jukebox.
  *
- * @package MyRadio_iTones
  * @uses    \Database
  */
 class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
@@ -37,7 +34,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
         ;';
 
     /**
-     * Gets the number of tracks the current user can currently request
+     * Gets the number of tracks the current user can currently request.
      *
      * @return int The number of tracks requestable as of now.
      */
@@ -59,7 +56,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
         return [
             Config::$itones_request_maximum,
             MyRadio_User::getInstance()->getID(),
-            Config::$itones_request_period
+            Config::$itones_request_period,
         ];
     }
 
@@ -67,10 +64,11 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
      * Push a track into the iTones request queue, if it hasn't been played
      * recently.
      *
-     * @param  MyRadio_Track                                             $track
+     * @param MyRadio_Track $track
      * @param  $queue The jukebox_[x] queue to push to. Default requests.
      *                              "main" is the queue used for the main track scheduler, i.e. non-user entries.
-     * @return bool          Whether the operation was successful
+     *
+     * @return bool Whether the operation was successful
      */
     public static function requestTrack(MyRadio_Track $track, $queue = 'requests')
     {
@@ -87,21 +85,24 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Pushes the file at the given path to the iTones request queue.
      *
-     * @param  String $file Path to file on iTones server.
-     * @return bool   Whether the operation was successful
+     * @param string $file Path to file on iTones server.
+     *
+     * @return bool Whether the operation was successful
      */
     public static function requestFile($file, $queue = 'requests')
     {
         self::verifyQueue($queue);
-        $r = self::telnetOp('jukebox_' . $queue . '.push ' . $file);
+        $r = self::telnetOp('jukebox_'.$queue.'.push '.$file);
 
         return is_numeric($r);
     }
 
     /**
-     * Returns Request IDs and Track IDs currently in the queue
-     * @param  String $queue Optional, as per definition in requestTrack()
-     * @return Array  2D, such as [['requestid' => 1, 'trackid' => 72830, 'queue' => 'requests'], ...]
+     * Returns Request IDs and Track IDs currently in the queue.
+     *
+     * @param string $queue Optional, as per definition in requestTrack()
+     *
+     * @return array 2D, such as [['requestid' => 1, 'trackid' => 72830, 'queue' => 'requests'], ...]
      */
     public static function getTracksInQueue($queue = 'requests')
     {
@@ -110,18 +111,18 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
             return self::$queue_cache[$queue];
         }
 
-        $info = explode(' ', self::telnetOp('jukebox_' . $queue . '.queue'));
+        $info = explode(' ', self::telnetOp('jukebox_'.$queue.'.queue'));
 
         $items = [];
         foreach ($info as $item) {
             if (is_numeric($item)) {
-                $meta = self::telnetOp('request.metadata ' . $item);
+                $meta = self::telnetOp('request.metadata '.$item);
                 //Don't include items that are set to ignore
                 if (stristr($meta, 'skip="true"') === false) {
                     //Get the trackid
                     $tid = preg_replace(
-                        '/^.*filename=\"' . str_replace('/', '\\/', Config::$music_central_db_path)
-                        . '\/records\/[0-9]+\/([0-9]+)\.mp3.*$/is',
+                        '/^.*filename=\"'.str_replace('/', '\\/', Config::$music_central_db_path)
+                        .'\/records\/[0-9]+\/([0-9]+)\.mp3.*$/is',
                         '$1',
                         $meta
                     );
@@ -137,8 +138,9 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Returns all the tracks in all Queues
-     * @return Array compatible with getTracksInQueue
+     * Returns all the tracks in all Queues.
+     *
+     * @return array compatible with getTracksInQueue
      */
     public static function getTracksInAllQueues()
     {
@@ -152,7 +154,8 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Check if a track is currently queued to be played in any queue.
-     * @return boolean
+     *
+     * @return bool
      */
     public static function getIfQueued(MyRadio_Track $track)
     {
@@ -169,7 +172,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Goes through the Queues, removing duplicate items
+     * Goes through the Queues, removing duplicate items.
      *
      * @return int The number of tracks that were removed from queues
      */
@@ -187,7 +190,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
         foreach ($tracks as $track) {
             if (in_array($track['trackid'], $found)) {
                 self::removeRequestFromQueue($track['queue'], $track['requestid']);
-                $removed++;
+                ++$removed;
             } else {
                 $found[] = $track['trackid'];
             }
@@ -215,21 +218,23 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * "Deletes" the given request from the given queue. It marks the item as
      * "ignore" but the rid remains in the queue.
-     * @param String $queue
+     *
+     * @param string $queue
      * @param int    $requestid
      */
     private static function removeRequestFromQueue($queue, $requestid)
     {
         self::verifyQueue($queue);
 
-        self::telnetOp('jukebox_' . $queue . '.ignore ' . $requestid);
+        self::telnetOp('jukebox_'.$queue.'.ignore '.$requestid);
 
         unset(self::$queue_cache[$queue]);
     }
 
     /**
      * Skips to the next track.
-     * @return String telnet response.
+     *
+     * @return string telnet response.
      */
     public static function skip()
     {
@@ -244,9 +249,11 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Runs a telnet command
-     * @param  String $command
-     * @return String
+     * Runs a telnet command.
+     *
+     * @param string $command
+     *
+     * @return string
      */
     private static function telnetOp($command)
     {
@@ -255,7 +262,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
             self::telnetStart();
         }
 
-        fwrite(self::$telnet_handle, $command . "\n");
+        fwrite(self::$telnet_handle, $command."\n");
         $response = '';
         $line = '';
         do {
@@ -263,15 +270,13 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
             $line = fgets(self::$telnet_handle, 1048576); //Read a max of 1MB of data
         } while (trim($line) !== 'END');
 
-
-
         //Remove the END
         return trim($response);
     }
 
     private static function telnetStart()
     {
-        self::$telnet_handle = fsockopen('tcp://' . Config::$itones_telnet_host, Config::$itones_telnet_port, $errno, $errstr, 10);
+        self::$telnet_handle = fsockopen('tcp://'.Config::$itones_telnet_host, Config::$itones_telnet_port, $errno, $errstr, 10);
         register_shutdown_function([__CLASS__, 'telnetEnd']);
     }
 

@@ -1,55 +1,59 @@
 <?php
 /**
- * Provides the Team class for MyRadio
- * @package MyRadio_Core
+ * Provides the Team class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
 
 /**
  * The Team class provides information about Committee Teams.
  *
- * @package MyRadio_Core
  * @uses    \Database
  */
 class MyRadio_Team extends ServiceAPI
 {
     /**
-     * The ID of the Team
+     * The ID of the Team.
+     *
      * @var int
      */
     private $teamid;
 
     /**
-     * Team name e.g. "Computing Team"
-     * @var String
+     * Team name e.g. "Computing Team".
+     *
+     * @var string
      */
     private $name;
     /**
-     * Officer email alias e.g. "computing"
-     * @var String
+     * Officer email alias e.g. "computing".
+     *
+     * @var string
      */
     private $alias;
     /**
      * The weight of the Team, when listing on a page.
+     *
      * @var int
      */
     private $ordering;
     /**
      * A description of the Team.
-     * @var String
+     *
+     * @var string
      */
     private $description;
     /**
      * (c)urrent or (h)istorical.
+     *
      * @var char
      */
     private $status;
     /**
-     * Officer positions in this team
+     * Officer positions in this team.
+     *
      * @var int[]
      */
     private $officers;
@@ -86,6 +90,7 @@ class MyRadio_Team extends ServiceAPI
 
     /**
      * Returns all the Teams available.
+     *
      * @return array
      */
     public static function getAllTeams()
@@ -97,6 +102,7 @@ class MyRadio_Team extends ServiceAPI
 
     /**
      * Returns all the current Teams.
+     *
      * @return array
      */
     public static function getCurrentTeams()
@@ -111,7 +117,8 @@ class MyRadio_Team extends ServiceAPI
     }
 
     /**
-     * Returns teamids and names for use in select boxes
+     * Returns teamids and names for use in select boxes.
+     *
      * @return array
      */
     public static function getTeamSelect()
@@ -124,7 +131,8 @@ class MyRadio_Team extends ServiceAPI
     }
 
     /**
-     * Get the ID for this Team
+     * Get the ID for this Team.
+     *
      * @return int
      */
     public function getID()
@@ -133,8 +141,9 @@ class MyRadio_Team extends ServiceAPI
     }
 
     /**
-     * Get the Name of this Team
-     * @return String
+     * Get the Name of this Team.
+     *
+     * @return string
      */
     public function getName()
     {
@@ -146,7 +155,8 @@ class MyRadio_Team extends ServiceAPI
      *
      * @todo   Database discrepancy - the actual lists themselves are defined
      * manually. Need to discuss what to do about this.
-     * @return String
+     *
+     * @return string
      */
     public function getAlias()
     {
@@ -155,6 +165,7 @@ class MyRadio_Team extends ServiceAPI
 
     /**
      * Returns the weight of the Team when listing them.
+     *
      * @return int
      */
     public function getOrdering()
@@ -163,8 +174,9 @@ class MyRadio_Team extends ServiceAPI
     }
 
     /**
-     * Get a description of the Team
-     * @return String
+     * Get a description of the Team.
+     *
+     * @return string
      */
     public function getDescription()
     {
@@ -173,6 +185,7 @@ class MyRadio_Team extends ServiceAPI
 
     /**
      * (c)urrent or (h)istorical.
+     *
      * @return char
      */
     public function getStatus()
@@ -182,7 +195,8 @@ class MyRadio_Team extends ServiceAPI
 
     /**
      * (o)fficer, (a)ssistant head of team, (h)ead of team
-     * or (m)ember (not actually an Officer, just in team)
+     * or (m)ember (not actually an Officer, just in team).
+     *
      * @return char
      */
     public function getType()
@@ -191,7 +205,8 @@ class MyRadio_Team extends ServiceAPI
     }
 
     /**
-     * Return all Officer Positions in the team
+     * Return all Officer Positions in the team.
+     *
      * @return MyRadio_Officer[]
      */
     public function getOfficers()
@@ -200,9 +215,10 @@ class MyRadio_Team extends ServiceAPI
     }
 
     /**
-     * Return all Users who held positions in this Team
-     * @return Array {'User':User, 'from':time, 'to':time|null,
-     *   'memberofficerid': int, 'position': MyRadio_Officer}
+     * Return all Users who held positions in this Team.
+     *
+     * @return array {'User':User, 'from':time, 'to':time|null,
+     *               'memberofficerid': int, 'position': MyRadio_Officer}
      */
     public function getHistory()
     {
@@ -224,7 +240,7 @@ class MyRadio_Team extends ServiceAPI
         usort(
             $data,
             function ($a, $b) {
-                return $b['from']-$a['from'];
+                return $b['from'] - $a['from'];
             }
         );
 
@@ -232,9 +248,10 @@ class MyRadio_Team extends ServiceAPI
     }
 
     /**
-     * Get Users currently in the Team
-     * @return Array {'User':User, 'from':time,
-     *   'memberofficerid': int, 'position': MyRadio_Officer}
+     * Get Users currently in the Team.
+     *
+     * @return array {'User':User, 'from':time,
+     *               'memberofficerid': int, 'position': MyRadio_Officer}
      */
     public function getCurrentHolders()
     {
@@ -252,7 +269,8 @@ class MyRadio_Team extends ServiceAPI
     }
 
     /**
-     * Returns Officer positions that are the Assistant Head of Team
+     * Returns Officer positions that are the Assistant Head of Team.
+     *
      * @return Officer[]
      */
     public function getAssistantHeadPositions()
@@ -261,7 +279,8 @@ class MyRadio_Team extends ServiceAPI
     }
 
     /**
-     * Returns Officer positions that are the Head of Team
+     * Returns Officer positions that are the Head of Team.
+     *
      * @return Officer[]
      */
     public function getHeadPositions()
@@ -270,7 +289,8 @@ class MyRadio_Team extends ServiceAPI
     }
 
     /**
-     * Returns Officer positions that are an Officer member
+     * Returns Officer positions that are an Officer member.
+     *
      * @return Officer[]
      */
     public function getOfficerPositions()
@@ -279,7 +299,8 @@ class MyRadio_Team extends ServiceAPI
     }
 
     /**
-     * Returns Officer positions that are a non-committee member
+     * Returns Officer positions that are a non-committee member.
+     *
      * @return Officer[]
      */
     public function getMemberPositions()
@@ -288,8 +309,10 @@ class MyRadio_Team extends ServiceAPI
     }
 
     /**
-     * Returns Officer positions that are the given type
+     * Returns Officer positions that are the given type.
+     *
      * @param char $type
+     *
      * @return MyRadio_Officer[]
      */
     private function getMembersOfType($type)
@@ -305,8 +328,10 @@ class MyRadio_Team extends ServiceAPI
     }
 
     /**
-     * Returns the team with the given local_alias
-     * @param  String $alias
+     * Returns the team with the given local_alias.
+     *
+     * @param string $alias
+     *
      * @return MyRadio_Team
      */
     public static function getByAlias($alias)
@@ -317,11 +342,13 @@ class MyRadio_Team extends ServiceAPI
     }
 
     /**
-     * Create a new Team with the given paramaters
-     * @param  String $name     The name of the new Team
-     * @param  String $descr    A friendly description of the new Team
-     * @param  String $alias    /[a-z]+/ used for the mailing list name
-     * @param  int    $ordering The larger this number, the further down this Team
+     * Create a new Team with the given paramaters.
+     *
+     * @param string $name     The name of the new Team
+     * @param string $descr    A friendly description of the new Team
+     * @param string $alias    /[a-z]+/ used for the mailing list name
+     * @param int    $ordering The larger this number, the further down this Team
+     *
      * @return MyRadio_Team The new Team
      */
     public static function createTeam($name, $descr, $alias, $ordering)
@@ -340,7 +367,8 @@ class MyRadio_Team extends ServiceAPI
      *
      * @mixin officers Provides officers for the team.
      * @mixin history Provides historic data for the team.
-     * @return Array
+     *
+     * @return array
      */
     public function toDataSource($mixins = [])
     {
@@ -350,7 +378,7 @@ class MyRadio_Team extends ServiceAPI
             },
             'history' => function (&$data) {
                 $data['history'] = CoreUtils::dataSourceParser($this->getHistory());
-            }
+            },
         ];
 
         $data = [
@@ -359,7 +387,7 @@ class MyRadio_Team extends ServiceAPI
             'alias' => $this->getAlias(),
             'ordering' => $this->getOrdering(),
             'description' => $this->getDescription(),
-            'status' => $this->getStatus()
+            'status' => $this->getStatus(),
         ];
 
         $this->addMixins($data, $mixins, $mixin_funcs);

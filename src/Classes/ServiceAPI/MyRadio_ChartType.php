@@ -1,38 +1,39 @@
 <?php
 /**
- * Provides the MyRadio_ChartType class for MyRadio
- * @package MyRadio_Core
+ * Provides the MyRadio_ChartType class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
 
 /**
  * The ChartType class fetches information about types of chart.
- * @package MyRadio_Charts
+ *
  * @uses \Database
  */
 class MyRadio_ChartType extends MyRadio_Type
 {
     /**
-     * The singleton store for ChartType objects
+     * The singleton store for ChartType objects.
+     *
      * @var MyRadio_ChartType[]
      */
     private static $chart_types = [];
 
     /**
      * The numeric ID of the chart type.
-     * @var Int
+     *
+     * @var int
      */
     private $chart_type_id;
 
     /**
      * The list of IDs of MyRadio_ChartReleases for this chart type.
-     * @var Int
+     *
+     * @var int
      */
     private $chart_release_ids;
 
@@ -216,7 +217,7 @@ class MyRadio_ChartType extends MyRadio_Type
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Identifier',
-                    'explanation' => 'What the chart will be referred to in the website code.'
+                    'explanation' => 'What the chart will be referred to in the website code.',
                 ]
             )
         )->addField(
@@ -225,7 +226,7 @@ class MyRadio_ChartType extends MyRadio_Type
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Name',
-                    'explanation' => 'What the chart will be called on the website itself.'
+                    'explanation' => 'What the chart will be called on the website itself.',
                 ]
             )
         );
@@ -240,7 +241,7 @@ class MyRadio_ChartType extends MyRadio_Type
                 $this->getID(),
                 [
                     'name' => $this->getName(),
-                    'description' => $this->getDescription()
+                    'description' => $this->getDescription(),
                 ]
             );
     }
@@ -263,7 +264,7 @@ class MyRadio_ChartType extends MyRadio_Type
                     'Charts',
                     'listChartReleases',
                     ['chart_type_id' => $this->getID()]
-                )
+                ),
             ],
             'editlink' => [
                 'display' => 'icon',
@@ -273,7 +274,7 @@ class MyRadio_ChartType extends MyRadio_Type
                     'Charts',
                     'editChartType',
                     ['chart_type_id' => $this->getID()]
-                )
+                ),
             ],
         ];
     }

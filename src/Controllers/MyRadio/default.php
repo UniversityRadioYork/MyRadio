@@ -4,10 +4,7 @@
  * Some might include more than one model etc....
  *
  * @todo Proper documentation
- *
- * @package MyRadio_Core
  */
-
 use \MyRadio\Config;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
@@ -24,7 +21,7 @@ $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/menu.twig')
         ->addVariable('title', 'Menu')
         ->addVariable('menu', $menu)
         ->addVariable('news_clickthrough', $news_clickthrough)
-        /**
+        /*
          * This is some bonus stuff for the Get On Air item
          */
         ->addVariable('studio_trained', $user->isStudioTrained())

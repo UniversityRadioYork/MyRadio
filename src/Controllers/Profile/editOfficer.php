@@ -1,10 +1,7 @@
 <?php
 /**
- * Edit an Officer
- *
- * @package MyRadio_Profile
+ * Edit an Officer.
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Officer;
 
@@ -36,7 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->setType($data['type'])
             ->setStatus($data['status']);
 
-
         // remove empty permissions values
         $data['permissions'] = array_filter($data['permissions']['permission']);
 
@@ -44,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $currentPerms = [];
         $officerPerms = $officer->getPermissions();
         foreach ($officerPerms as $perm) {
-            $currentPerms[] = (int)$perm['value'];
+            $currentPerms[] = (int) $perm['value'];
         }
 
         // Get permissions to add or remove

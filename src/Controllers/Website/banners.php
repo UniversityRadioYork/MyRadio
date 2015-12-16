@@ -1,10 +1,7 @@
 <?php
 /**
  * Main page for Banner Admin. Lists all the existing banners.
- *
- * @package MyRadio_Website
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Banner;

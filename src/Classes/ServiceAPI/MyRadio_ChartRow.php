@@ -1,41 +1,43 @@
 <?php
 /**
- * Provides the MyRadio_ChartRow class for MyRadio
- * @package MyRadio_Charts
+ * Provides the MyRadio_ChartRow class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\MyRadioException;
+use MyRadio\MyRadioException;
 
 /**
  * The ChartRow class fetches information about rows of chart releases.
- * @package MyRadio_Charts
+ *
  * @uses \Database
  */
 class MyRadio_ChartRow extends ServiceAPI
 {
     /**
-     * The singleton store for ChartRow objects
+     * The singleton store for ChartRow objects.
+     *
      * @var MyRadio_ChartRow[]
      */
     private static $chart_rows = [];
 
     /**
      * The numeric ID of the chart row.
-     * @var Int
+     *
+     * @var int
      */
     private $chart_row_id;
 
     /**
      * The position on the chart release this row occupies.
-     * @var Int
+     *
+     * @var int
      */
     private $position;
 
     /**
      * The ID of the track at this position.
-     * @var String
+     *
+     * @var string
      */
     private $trackid;
 
@@ -105,6 +107,7 @@ class MyRadio_ChartRow extends ServiceAPI
 
     /**
      * Returns the chart row's track ID.
+     *
      * @return int The unique integral ID of the chart row track.
      */
     public function getTrackID()
@@ -126,6 +129,7 @@ class MyRadio_ChartRow extends ServiceAPI
 
     /**
      * Returns the chart row's position.
+     *
      * @return The position on the chart release this row occupies.
      */
     public function getPosition()
@@ -139,6 +143,7 @@ class MyRadio_ChartRow extends ServiceAPI
      * @param  $data array  An array of data to populate the row with.
      *                     Must contain 'position', 'chart_release_id' and
      *                     'trackid'.
+     *
      * @return MyRadio_ChartRow The newly created track.
      */
     public function create($data)
@@ -149,7 +154,7 @@ class MyRadio_ChartRow extends ServiceAPI
             [
                 $data['chart_release_id'],
                 $data['position'],
-                $data['trackid']
+                $data['trackid'],
             ],
             true
         );

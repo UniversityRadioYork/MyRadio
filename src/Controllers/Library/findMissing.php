@@ -1,9 +1,7 @@
 <?php
 /**
- * Scan music library, filling in blanks or changing default values
- * @package MyRadio_Library
+ * Scan music library, filling in blanks or changing default values.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Track;

@@ -1,9 +1,7 @@
 <?php
 /**
  * Controller for listing all releases made for a given chart type.
- * @package MyRadio_Charts
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_ChartType;

@@ -1,11 +1,7 @@
 <?php
 /**
- * Allows a User to configure an iTones Playlist
- *
- * @package MyRadio_iTones
+ * Allows a User to configure an iTones Playlist.
  */
-
-use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\iTones\iTones_Playlist;
@@ -21,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         URLUtils::redirect(
             'iTones', 'configurePlaylist', [
             'playlistid' => $playlist->getID(),
-            'message' => base64_encode('The playlist has been created.')
+            'message' => base64_encode('The playlist has been created.'),
             ]
         );
     } else {
@@ -49,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'tabledata' => CoreUtils::dataSourceParser(
                         iTones_PlaylistAvailability::getAvailabilitiesForPlaylist($playlist->getID())
                     ),
-                    'playlistid' => $_REQUEST['playlistid']
+                    'playlistid' => $_REQUEST['playlistid'],
                     )
             );
     }

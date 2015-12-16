@@ -1,26 +1,24 @@
 <?php
 
 /**
- * This file provides the MyRadioNews class for MyRadio
- * @package MyRadio_Core
+ * This file provides the MyRadioNews class for MyRadio.
  */
-
 namespace MyRadio\MyRadio;
 
-use \MyRadio\Database;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\MyRadio_User;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\Database;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
 
 /**
- * Description of MyRadioNews
+ * Description of MyRadioNews.
  *
- * @package MyRadio_Core
  * @uses    \CacheProvider
  * @uses    \Database
  * @uses    \CoreUtils
+ *
  * @todo    Refactor to classes and ServiceAPI
  */
 class MyRadioNews
@@ -30,7 +28,8 @@ class MyRadioNews
     }
 
     /**
-     * Returns all items in the given feed
+     * Returns all items in the given feed.
+     *
      * @param int $newsfeedid The ID of the feed to get
      */
     public static function getFeed($newsfeedid, MyRadio_User $user = null, $revoked = false)
@@ -38,7 +37,7 @@ class MyRadioNews
         $data = [];
         foreach (Database::getInstance()->fetchColumn(
             'SELECT newsentryid FROM public.news_feed'
-            . ' WHERE feedid=$1' .($revoked ? '' : ' AND revoked=false'),
+            .' WHERE feedid=$1'.($revoked ? '' : ' AND revoked=false'),
             [$newsfeedid]
         ) as $row) {
             $data[] = self::getNewsItem($row, $user);
@@ -48,10 +47,12 @@ class MyRadioNews
     }
 
     /**
-     * Returns the latest news item for the given feed, and if given a user, the timestamp of when they saw it
-     * @param  id           $newsfeedid The ID of the newsfeed to check
-     * @param  MyRadio_User $user       The User object to check if seen. Default null, won't return a seen column.
-     * @return Array
+     * Returns the latest news item for the given feed, and if given a user, the timestamp of when they saw it.
+     *
+     * @param id           $newsfeedid The ID of the newsfeed to check
+     * @param MyRadio_User $user       The User object to check if seen. Default null, won't return a seen column.
+     *
+     * @return array
      */
     public static function getLatestNewsItem($newsfeedid, MyRadio_User $user = null)
     {
@@ -63,7 +64,7 @@ class MyRadioNews
         );
 
         if (empty($newsentry)) {
-            return null;
+            return;
         }
 
         return self::getNewsItem($newsentry['newsentryid'], $user);
@@ -82,7 +83,7 @@ class MyRadioNews
         );
 
         if (empty($news)) {
-            return null;
+            return;
         }
 
         return array_merge(
@@ -93,16 +94,17 @@ class MyRadioNews
                     WHERE newsentryid=$1 AND memberid=$2 LIMIT 1',
                     [
                         $news['newsentryid'],
-                        empty($user) ? 0 : $user->getID()
+                        empty($user) ? 0 : $user->getID(),
                     ]
                 ),
-                'posted' => CoreUtils::happyTime($news['posted'])
+                'posted' => CoreUtils::happyTime($news['posted']),
             ]
         );
     }
 
     /**
      * @todo Document this
+     *
      * @param type         $newsentryid
      * @param MyRadio_User $user
      */
@@ -120,8 +122,8 @@ class MyRadioNews
     {
         Database::getInstance()->query(
             'INSERT INTO public.news_feed'
-            . ' (feedid, memberid, content) VALUES'
-            . ' ($1, $2, $3)',
+            .' (feedid, memberid, content) VALUES'
+            .' ($1, $2, $3)',
             [$feedid, $_SESSION['memberid'], $content]
         );
     }
@@ -134,7 +136,7 @@ class MyRadioNews
                 'MyRadio',
                 'addNews',
                 [
-                    'title' => 'Add news item'
+                    'title' => 'Add news item',
                 ]
             )
         )->addField(
@@ -143,7 +145,7 @@ class MyRadioNews
                 MyRadioFormField::TYPE_BLOCKTEXT,
                 [
                     'explanation' => '',
-                    'label' => 'Content'
+                    'label' => 'Content',
                 ]
             )
         )->addField(

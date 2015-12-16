@@ -5,9 +5,7 @@
  * using a password reset token that has been emailed to them.
  *
  * @data    20140121
- * @package MyRadio_Core
  */
-
 use \MyRadio\Config;
 use \MyRadio\Database;
 use \MyRadio\MyRadioException;
@@ -24,7 +22,7 @@ $form = (
         'MyRadio',
         'pwChange',
         [
-            'title' => 'Password Change'
+            'title' => 'Password Change',
         ]
     )
 )->addField(
@@ -33,7 +31,7 @@ $form = (
         MyRadioFormField::TYPE_PASSWORD,
         [
             'explanation' => '',
-            'label' => 'New Password:'
+            'label' => 'New Password:',
         ]
     )
 )->addField(
@@ -42,12 +40,12 @@ $form = (
         MyRadioFormField::TYPE_PASSWORD,
         [
             'explanation' => '',
-            'label' => 'Confirm New Password:'
+            'label' => 'Confirm New Password:',
         ]
     )
 )->setTemplate('MyRadio/pwReset.twig');
 
-/**
+/*
  * If the user is logged in, we're changing their password. Ask them to verify
  * their existing one. If they aren't logged in, then they should be following
  * a password reset link, in which case we verify the reset token.
@@ -59,7 +57,7 @@ if (isset($_SESSION['memberid'])) {
             MyRadioFormField::TYPE_PASSWORD,
             [
                 'explanation' => '',
-                'label' => 'Current Password:'
+                'label' => 'Current Password:',
             ]
         )
     );
@@ -84,7 +82,7 @@ if (isset($_SESSION['memberid'])) {
                     'token',
                     MyRadioFormField::TYPE_HIDDEN,
                     [
-                        'value' => $token['token']
+                        'value' => $token['token'],
                     ]
                 )
             );
@@ -116,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
     }
 
     //Right, let's update the password
-    /**
+    /*
      * Only works with MyRadioDefaultAuthenticator. Should it allow
      * others to plug in? I think not.
      */
@@ -146,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwChange-p
     URLUtils::redirect('MyRadio', 'login');
 } else {
     foreach (Config::$authenticators as $authenticator) {
-        $auth = new $authenticator;
+        $auth = new $authenticator();
         $messages[] = $auth->getResetFormMessage();
     }
 

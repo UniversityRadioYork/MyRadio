@@ -1,9 +1,7 @@
 <?php
 /**
- * List a User's Podcasts
- * @package MyRadio_Podcast
+ * List a User's Podcasts.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_Podcast;

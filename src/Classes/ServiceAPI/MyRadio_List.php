@@ -1,63 +1,67 @@
 <?php
 /**
- * This file provides the List class for MyRadio
- * @package MyRadio_Core
+ * This file provides the List class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\MyRadioEmail;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\MyRadioEmail;
 
 /**
- * The List class stores and manages information about a URY Mailing List
+ * The List class stores and manages information about a URY Mailing List.
  *
- * @package MyRadio_Mail
  * @uses    \Database
  */
 class MyRadio_List extends ServiceAPI
 {
     /**
-     * Stores the primary key for the list
+     * Stores the primary key for the list.
+     *
      * @var int
      */
     private $listid;
 
     /**
-     * Stores the user-friendly name of the list
-     * @var String
+     * Stores the user-friendly name of the list.
+     *
+     * @var string
      */
     private $name;
 
     /**
-     * If non-optin, stores the SQL query that returns the member memberids
-     * @var String
+     * If non-optin, stores the SQL query that returns the member memberids.
+     *
+     * @var string
      */
     private $sql;
 
     /**
-     * If true, this mailing list has an @ury.org.uk alias that is publically usable
-     * @var boolean
+     * If true, this mailing list has an @ury.org.uk alias that is publically usable.
+     *
+     * @var bool
      */
     private $public;
 
     /**
      * If public, this is the prefix for the email address (i.e. "cactus")
-     * would be cactus@ury.org.uk
-     * @var String
+     * would be cactus@ury.org.uk.
+     *
+     * @var string
      */
     private $address;
 
     /**
-     * If true, this means that members subscribe themselves to this list
-     * @var boolean
+     * If true, this means that members subscribe themselves to this list.
+     *
+     * @var bool
      */
     private $optin;
 
     /**
-     * This is the set of members that receive messages to this list
+     * This is the set of members that receive messages to this list.
+     *
      * @var int[]
      */
     private $members = [];
@@ -65,12 +69,14 @@ class MyRadio_List extends ServiceAPI
     /**
      * Initialised on first request, stores an archive of all the email IDs
      * sent to this list.
+     *
      * @var int[]
      */
     private $archive = [];
 
     /**
-     * Initiates the MyRadio_List object
+     * Initiates the MyRadio_List object.
+     *
      * @param $listid The ID of the Mailing List to initialise
      */
     protected function __construct($listid)
@@ -79,9 +85,9 @@ class MyRadio_List extends ServiceAPI
 
         $result = self::$db->fetchOne('SELECT * FROM mail_list WHERE listid=$1', [$this->listid]);
         if (empty($result)) {
-            throw new MyRadioException('List ' . $listid . ' does not exist!');
+            throw new MyRadioException('List '.$listid.' does not exist!');
 
-            return null;
+            return;
         }
 
         $this->name = $result['listname'];
@@ -96,7 +102,7 @@ class MyRadio_List extends ServiceAPI
         } else {
             //Get members joined with opted-out members
             $this->members = self::$db->fetchColumn(
-                'SELECT memberid FROM (' . $this->parseSQL($this->sql) . ') as t1 WHERE memberid NOT IN
+                'SELECT memberid FROM ('.$this->parseSQL($this->sql).') as t1 WHERE memberid NOT IN
                 (SELECT memberid FROM mail_subscription WHERE listid=$1)',
                 [$listid]
             );
@@ -116,7 +122,7 @@ class MyRadio_List extends ServiceAPI
             [
                 $this->getID(),
                 CoreUtils::getAcademicYear(),
-                '\'' . CoreUtils::getAcademicYear() . '-10-01 00:00:00\''
+                '\''.CoreUtils::getAcademicYear().'-10-01 00:00:00\'',
             ],
             $sql
         );
@@ -155,9 +161,11 @@ class MyRadio_List extends ServiceAPI
     }
 
     /**
-     * Returns if the user has permission to email this list
-     * @param  MyRadio_User $user
-     * @return boolean
+     * Returns if the user has permission to email this list.
+     *
+     * @param MyRadio_User $user
+     *
+     * @return bool
      */
     public function hasSendPermission(MyRadio_User $user)
     {
@@ -170,7 +178,8 @@ class MyRadio_List extends ServiceAPI
 
     /**
      * Returns true if the user has *actively opted out* of an *automatic* mailing list
-     * Returns false if they are still a member of the list, or if this is subscribable
+     * Returns false if they are still a member of the list, or if this is subscribable.
+     *
      * @param int $userid
      */
     public function hasOptedOutOfAuto($userid)
@@ -190,8 +199,11 @@ class MyRadio_List extends ServiceAPI
     /**
      * If the mailing list is subscribable, opt the user in if they aren't already.
      * If the mailing list is automatic, but the user has previously opted out, remove this opt-out entry.
-     * @param  int     $userid
-     * @return boolean      True if the user is now opted in, false if they could not be opted in.
+     *
+     * @param int $userid
+     *
+     * @return bool True if the user is now opted in, false if they could not be opted in.
+     *
      * @todo Auto-rebuild Exim routing after change
      */
     public function optin($userid)
@@ -226,8 +238,11 @@ class MyRadio_List extends ServiceAPI
     /**
      * If the mailing list is subscribable, opt the user out if they are currently subscribed.
      * If the mailing list is automatic, opt-the user out of the list.
-     * @param       $userid
-     * @return boolean      True if the user is now opted out, false if they could not be opted out.
+     *
+     * @param   $userid
+     *
+     * @return bool True if the user is now opted out, false if they could not be opted out.
+     *
      * @todo Auto-rebuild Exim routing after change
      */
     public function optout(int $userid)
@@ -258,10 +273,10 @@ class MyRadio_List extends ServiceAPI
     }
 
     /**
-     * Takes an email and puts it in the online Email Archive
+     * Takes an email and puts it in the online Email Archive.
      *
      * @param MyRadio_User $from
-     * @param String       $email
+     * @param string       $email
      */
     public function archiveMessage($from, $email)
     {
@@ -276,6 +291,7 @@ class MyRadio_List extends ServiceAPI
 
     /**
      * Return all the emails Archived in this List.
+     *
      * @return MyRadioEmail[]
      */
     public function getArchive()
@@ -283,10 +299,10 @@ class MyRadio_List extends ServiceAPI
         if (empty($this->archive)) {
             $this->archive = self::$db->fetchColumn(
                 'SELECT email.email_id '
-                . 'FROM mail.email_recipient_list '
-                . 'LEFT JOIN mail.email USING (email_id) '
-                . 'WHERE listid=$1 '
-                . 'ORDER BY timestamp DESC',
+                .'FROM mail.email_recipient_list '
+                .'LEFT JOIN mail.email USING (email_id) '
+                .'WHERE listid=$1 '
+                .'ORDER BY timestamp DESC',
                 [$this->getID()]
             );
             $this->updateCacheObject();
@@ -303,14 +319,15 @@ class MyRadio_List extends ServiceAPI
             [$str]
         );
         if (empty($r)) {
-            return null;
+            return;
         } else {
             return self::getInstance($r[0]);
         }
     }
 
     /**
-     * Return all mailing lists
+     * Return all mailing lists.
+     *
      * @return MyRadio_User[]
      */
     public static function getAllLists()
@@ -331,7 +348,7 @@ class MyRadio_List extends ServiceAPI
      * @mixin actions Returns interaction options for the UI
      * @mixin recipients Lists recipients of the list
      *
-     * @return Array
+     * @return array
      */
     public function toDataSource($mixins = [])
     {
@@ -342,31 +359,31 @@ class MyRadio_List extends ServiceAPI
                         'display' => 'icon',
                         'value' => 'plus',
                         'title' => 'Subscribe to this mailing list',
-                        'url' => URLUtils::makeURL('Mail', 'optin', ['list' => $this->getID()])
+                        'url' => URLUtils::makeURL('Mail', 'optin', ['list' => $this->getID()]),
                     ] : null
                 );
                 $data['optOut'] = ($data['subscribed'] ? [
                     'display' => 'icon',
                     'value' => 'minus',
                     'title' => 'Opt out of this mailing list',
-                    'url' => URLUtils::makeURL('Mail', 'optout', ['list' => $this->getID()])
+                    'url' => URLUtils::makeURL('Mail', 'optout', ['list' => $this->getID()]),
                 ] : null);
                 $data['mail'] = [
                     'display' => 'icon',
                     'value' => 'envelope',
                     'title' => 'Send a message to this mailing list',
-                    'url' => URLUtils::makeURL('Mail', 'send', ['list' => $this->getID()])
+                    'url' => URLUtils::makeURL('Mail', 'send', ['list' => $this->getID()]),
                 ];
                 $data['archive'] = [
                     'display' => 'icon',
                     'value' => 'folder-close',
                     'title' => 'View archives for this mailing list',
-                    'url' => URLUtils::makeURL('Mail', 'archive', ['list' => $this->getID()])
+                    'url' => URLUtils::makeURL('Mail', 'archive', ['list' => $this->getID()]),
                 ];
             },
             'recipients' => function (&$data) {
                 $data['recipients'] = CoreUtils::dataSourceParser($this->getMembers());
-            }
+            },
         ];
 
         if (isset($_SESSION['memberid'])) {

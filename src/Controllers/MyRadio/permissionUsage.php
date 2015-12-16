@@ -1,11 +1,9 @@
 <?php
 /**
- * List all of the possible permissions available for MyRadio
+ * List all of the possible permissions available for MyRadio.
  *
  * @data    20140107
- * @package MyRadio_Core
  */
-
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 

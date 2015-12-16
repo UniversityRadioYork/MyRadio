@@ -1,9 +1,7 @@
 <?php
 /**
  * Allows the editing of chart releases.
- * @package MyRadio_Charts
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_ChartRelease;

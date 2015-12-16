@@ -8,21 +8,19 @@ namespace MyRadio\Iface;
  * - Initialises a database connection on instantiation
  * - Initialises a cache connection on instantiation
  * - Restores the database and cache connections on restore
- * - A static factory to create an instance of the ServiceAPI Object
- *
- * @package MyRadio_Core
+ * - A static factory to create an instance of the ServiceAPI Object.
  */
 interface IServiceAPI
 {
     /**
-     * Reestablishes the database connection after being Cached
+     * Reestablishes the database connection after being Cached.
      */
     public function __wakeup();
 
     public function toDataSource($full = false);
 
     /**
-     * Static Factory method to setup an instance of a ServiceAPI Object
+     * Static Factory method to setup an instance of a ServiceAPI Object.
      */
     public static function getInstance($serviceObjectId);
 }

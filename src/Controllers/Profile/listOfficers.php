@@ -1,11 +1,8 @@
 <?php
 /**
- *
  * @todo Proper Documentation
  * @todo Permissions
- * @package MyRadio_Profile
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\Profile;
@@ -17,7 +14,7 @@ foreach ($officers as $k => $v) {
         $officers[$k]['name'] = [
             'display' => 'text',
             'url' => URLUtils::makeURL('Profile', 'view', ['memberid' => $v['memberid']]),
-            'value' => $v['name']
+            'value' => $v['name'],
         ];
     }
     $officers[$k]['viewlink'] = [

@@ -1,10 +1,7 @@
 <?php
 /**
- * Main renderer for NIPSWeb
- *
- * @package MyRadio_NIPSWeb
+ * Main renderer for NIPSWeb.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 use \MyRadio\iTones\iTones_Playlist;
@@ -27,7 +24,7 @@ if (isset($_REQUEST['readonly'])) {
             'managed' => iTones_Playlist::getAlliTonesPlaylists(),
             'auto' => NIPSWeb_AutoPlaylist::getAllAutoPlaylists(),
             'aux' => NIPSWeb_ManagedPlaylist::getAllManagedPlaylists(),
-            'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(MyRadio_User::getInstance())
+            'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(MyRadio_User::getInstance()),
         ]
     );
 }

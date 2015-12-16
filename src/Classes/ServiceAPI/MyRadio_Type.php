@@ -1,9 +1,7 @@
 <?php
 /**
- * Provides the MyRadio_Type class for MyRadio
- * @package MyRadio_Core
+ * Provides the MyRadio_Type class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
 /**
@@ -11,20 +9,21 @@ namespace MyRadio\ServiceAPI;
  * items describing types/categories of other items have a machine-readable
  * name and human-readable description.
  *
- * @package MyRadio_Core
  * @uses    \Database
  */
 abstract class MyRadio_Type extends ServiceAPI
 {
     /**
      * The machine-readable name of the type.
-     * @var String
+     *
+     * @var string
      */
     private $name;
 
     /**
      * The human-readable description/descriptive name of the type.
-     * @var String
+     *
+     * @var string
      */
     private $description;
 

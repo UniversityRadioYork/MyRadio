@@ -1,26 +1,25 @@
 <?php
 /**
- * This file provides the Artist class for MyRadio
- * @package MyRadio_Core
+ * This file provides the Artist class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\Config;
+use MyRadio\MyRadioException;
+use MyRadio\Config;
 
 /**
- * The Artist class provides and stores information about a Artist
+ * The Artist class provides and stores information about a Artist.
  *
  * @todo    The completion of this module is impossible as Artists do not have
  * unique identifiers. For this to happen, BAPS needs to be replaced/updated
- * @package MyRadio_Core
+ *
  * @uses    \Database
  */
 class Artist extends ServiceAPI
 {
     /**
-     * Initiates the Artist object
+     * Initiates the Artist object.
+     *
      * @param int $artistid The ID of the Artist to initialise
      */
     protected function __construct($artistid)
@@ -30,12 +29,14 @@ class Artist extends ServiceAPI
     }
 
     /**
-     * Returns an Array of Artists matching the given partial name
-     * @param  String $title A partial or total title to search for
-     * @param  int    $limit The maximum number of tracks to return
-     * @return Array  2D with each first dimension an Array as follows:<br>
-     *                      title: The name of the artist<br>
-     *                      artistid: Always 0 until Artist support is implemented
+     * Returns an Array of Artists matching the given partial name.
+     *
+     * @param string $title A partial or total title to search for
+     * @param int    $limit The maximum number of tracks to return
+     *
+     * @return array 2D with each first dimension an Array as follows:<br>
+     *               title: The name of the artist<br>
+     *               artistid: Always 0 until Artist support is implemented
      */
     public static function findByName($title, $limit)
     {
@@ -63,8 +64,7 @@ class Artist extends ServiceAPI
     }
 
     /**
-     *
-     * @param Array $options One or more of the following:
+     * @param array $options One or more of the following:
      *                       title: String title of the track
      *                       artist: String artist name of the track
      *                       digitised: If true, only return digitised tracks. If false, return any.
@@ -130,12 +130,12 @@ class Artist extends ServiceAPI
         $count = 4;
         if ($options['limit'] != 0) {
             $sql_params[] = $options['limit'];
-            $count++;
+            ++$count;
             $limit_param = $count;
         }
         if ($options['clean']) {
             $sql_params[] = $options['clean'];
-            $count++;
+            ++$count;
             $clean_param = $count;
         }
 
@@ -147,17 +147,17 @@ class Artist extends ServiceAPI
             WHERE rec_track.title ILIKE $4 || $1 || $4
             AND rec_track.artist ILIKE $4 || $2 || $4
             AND rec_record.title ILIKE $4 || $3 || $4'
-            . ($options['digitised'] ? ' AND digitised=\'t\'' : '')
-            . ($options['lastfmverified'] === true ? ' AND lastfm_verified=\'t\'' : '')
-            . ($options['lastfmverified'] === false ? ' AND lastfm_verified=\'f\'' : '')
-            . ($options['nocorrectionproposed'] === true ? ' AND trackid NOT IN (
+            .($options['digitised'] ? ' AND digitised=\'t\'' : '')
+            .($options['lastfmverified'] === true ? ' AND lastfm_verified=\'t\'' : '')
+            .($options['lastfmverified'] === false ? ' AND lastfm_verified=\'f\'' : '')
+            .($options['nocorrectionproposed'] === true ? ' AND trackid NOT IN (
                 SELECT trackid FROM public.rec_trackcorrection WHERE state=\'p\'
                 )' : '')
-            . ($options['clean'] != null ? ' AND clean=$'.$clean_param : '')
-            . ($options['custom'] !== null ? ' AND ' . $options['custom'] : '')
-            . ($options['random'] ? ' ORDER BY RANDOM()' : '')
-            . ($options['idsort'] ? ' ORDER BY trackid' : '')
-            . ($options['limit'] == 0 ? '' : ' LIMIT $'.$limit_param),
+            .($options['clean'] != null ? ' AND clean=$'.$clean_param : '')
+            .($options['custom'] !== null ? ' AND '.$options['custom'] : '')
+            .($options['random'] ? ' ORDER BY RANDOM()' : '')
+            .($options['idsort'] ? ' ORDER BY trackid' : '')
+            .($options['limit'] == 0 ? '' : ' LIMIT $'.$limit_param),
             $sql_params
         );
 

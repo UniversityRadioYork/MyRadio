@@ -1,11 +1,7 @@
 <?php
 /**
  * Allows the editing of quotes.
- * @package MyURY_Quotes
  */
-
-
-use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Quote;

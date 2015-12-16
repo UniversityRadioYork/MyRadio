@@ -2,10 +2,7 @@
 
 /**
  * Gets the full station tracklist - useful for PPL returns.
- *
- * @package MyRadio_Stats
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
@@ -21,9 +18,9 @@ switch ($format) {
 case 'csv':
     $file = 'tracklist_'.$start.'-'.$end.'.csv';
     header('Content-Disposition: inline; filename="'.$file.'"');
-    header("Content-Transfer-Encoding: Binary");
+    header('Content-Transfer-Encoding: Binary');
     header('Content-Type: text/csv');
-    header('Content-Disposition: attachment; filename="' . $file . '"');
+    header('Content-Disposition: attachment; filename="'.$file.'"');
     CoreUtils::getTemplateObject()->setTemplate('csv.twig')
         ->addVariable('data', $data)
         ->render();
@@ -51,7 +48,7 @@ default:
             [
                 'rangesel-starttime' => array_key_exists($_GET['rangesel-starttime']) ? $_GET['rangesel-starttime'] : '',
                 'rangesel-endtime' => array_key_exists($_GET['rangesel-endtime']) ? $_GET['rangesel-endtime'] : '',
-                'format' => 'csv'
+                'format' => 'csv',
             ]
         )
         .'">CSV File</a>.'

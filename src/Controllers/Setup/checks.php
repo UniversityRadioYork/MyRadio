@@ -3,14 +3,13 @@
  * Checks that necessary modules and resources are available for
  * MyRadio to get started.
  *
- * @package MyRadio_Core
  * @todo    Check if rewrites work
  * @todo    Check if static resources load?
  * @todo    Check for PostgreSQL >=9.2
  */
 
 /**
- * Helper function for size checks
+ * Helper function for size checks.
  */
 function convertPHPSizeToBytes($sSize)
 {
@@ -36,6 +35,7 @@ function convertPHPSizeToBytes($sSize)
         $iValue *= 1024;
         break;
     }
+
     return $iValue;
 }
 
@@ -51,52 +51,52 @@ $required_modules = [
         'module' => 'curl',
         'success' => 'cURL can be used to embed the IRN news service into SIS.',
         'fail' => 'If you had the <a href="http://www.php.net/manual/en/book.curl.php">cURL extension</a> MyRadio could use it provide IRN news information in SIS.',
-        'required' => false
+        'required' => false,
     ],
     [
         'module' => 'geoip',
         'success' => 'The GeoIP extension can be used to provide location functionality for Stats and SIS modules.',
         'fail' => 'If you had the <a href="http://www.php.net/manual/en/book.geoip.php">GeoIP extension</a> MyRadio could provide location information for the Studio Information Service and Statistics.',
-        'required' => false
+        'required' => false,
     ],
     [
         'module' => 'gd',
         'success' => 'The Image (GD) extension can be used to provide upload functionality for the Podcast, Profile and Website modules.',
         'fail' => 'If you had the <a href="http://www.php.net/manual/en/book.image.php">Image (GD) extension</a> MyRadio could be used to manage image content on Podcasts, Profiles and a frontend website.',
-        'required' => false
+        'required' => false,
     ],
     [
         'module' => 'ldap',
         'success' => 'The LDAP extension can be used to provide external authenticators that use the LDAP protocol.',
         'fail' => 'If you had the <a href="http://www.php.net/manual/en/book.ldap.php">LDAP extension</a> MyRadio could integrate with external authentication providers.',
-        'required' => false
+        'required' => false,
     ],
     [
         'module' => 'mcrypt',
         'success' => 'You have the mcrypt extension installed.',
         'fail' => 'The <a href="http://www.php.net/manual/en/book.mcrypt.php">mcrypt extension</a> is required for MyRadio to talk to authentication services.',
-        'required' => true
+        'required' => true,
     ],
     [
         'module' => 'pgsql',
         'success' => 'You have an appropriate database driver installed.',
         'fail' => 'The <a href="http://www.php.net/manual/en/book.pgsql.php">PostgreSQL extension</a> is required for MyRadio to talk to a database. Without this, it can\'t do much.',
-        'required' => true
+        'required' => true,
     ],
     [
         'module' => 'session',
         'success' => 'You have the session extension installed.',
         'fail' => 'The <a href="http://www.php.net/manual/en/book.session.php">Session extension</a> is required for MyRadio to talk to keep track of who is logged in.',
-        'required' => true
-    ]
+        'required' => true,
+    ],
 ];
 $required_files = [
     [
         'file' => 'Twig/Autoloader.php',
         'success' => 'You have Twig installed! This is required for MyRadio to generate web pages.',
         'fail' => 'Your server needs to have Twig installed in order to continue. See <a href="http://twig.sensiolabs.org/doc/installation.html">the Twig documentation</a> for more information.',
-        'required' => true
-    ]
+        'required' => true,
+    ],
 ];
 $function_checks = [
     [
@@ -110,8 +110,8 @@ $function_checks = [
         },
         'success' => 'Your server is configured to support large file uploads.',
         'fail' => 'Your server is set to have a small (<40MB) upload limit. Consider tweaking your php.ini to prevent issues using Show Planner, Podcasts and other file upload utilities.',
-        'required' => false
-    ]
+        'required' => false,
+    ],
 ];
 
 $ready = true;

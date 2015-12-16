@@ -1,10 +1,7 @@
 <?php
 /**
- * Allows URY Trainers to create demo slots for new members to attend
- *
- * @package MyRadio_Scheduler
+ * Allows URY Trainers to create demo slots for new members to attend.
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Demo;
 

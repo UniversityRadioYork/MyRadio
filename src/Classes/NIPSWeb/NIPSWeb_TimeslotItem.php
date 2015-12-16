@@ -1,18 +1,15 @@
 <?php
 /**
- * This file provides the NIPSWeb_TimeslotItem class for MyRadio - a Show Plan wrapper for all items
- * @package MyRadio_NIPSWeb
+ * This file provides the NIPSWeb_TimeslotItem class for MyRadio - a Show Plan wrapper for all items.
  */
-
 namespace MyRadio\NIPSWeb;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\ServiceAPI\MyRadio_Track;
+use MyRadio\MyRadioException;
+use MyRadio\ServiceAPI\MyRadio_Track;
 
 /**
- * The NIPSWeb_TimeslotItem class helps provide Show Planner with access to all resource types a timeslot item could be
+ * The NIPSWeb_TimeslotItem class helps provide Show Planner with access to all resource types a timeslot item could be.
  *
- * @package MyRadio_NIPSWeb
  * @uses    \Database
  */
 class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
@@ -26,7 +23,8 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
     private $weight;
 
     /**
-     * Initiates the TimeslotItem variables
+     * Initiates the TimeslotItem variables.
+     *
      * @param int                     $resid       The timeslot_item_id of the resource to initialise
      * @param NIPSWeb_ManagedPlaylist $playlistref If the playlist is requesting this item, then pass the playlist object
      */
@@ -45,7 +43,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
             return;
         }
 
-        /**
+        /*
         * @todo detect definition of multiple track types in an entry and fail out
         */
         if ($result['rec_track_id'] != null) {
@@ -61,7 +59,8 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get the unique timeslotitemid of the TimeslotItem
+     * Get the unique timeslotitemid of the TimeslotItem.
+     *
      * @return int
      */
     public function getID()
@@ -128,9 +127,11 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Returns an array of key information, useful for Twig rendering and JSON requests
+     * Returns an array of key information, useful for Twig rendering and JSON requests.
+     *
      * @todo Expand the information this returns
-     * @return Array
+     *
+     * @return array
      */
     public function toDataSource()
     {
@@ -138,7 +139,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
             [
                 'timeslotitemid' => $this->getID(),
                 'channel' => $this->getChannel(),
-                'weight' => $this->getWeight()
+                'weight' => $this->getWeight(),
             ],
             $this->getItem()->toDataSource()
         );

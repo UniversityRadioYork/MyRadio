@@ -1,41 +1,42 @@
 <?php
 /**
- * This file provides the Scheduler class for MyRadio
- * @package MyRadio_Scheduler
+ * This file provides the Scheduler class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\Config;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
 
 /**
- * Abstractor for the Scheduler Module
+ * Abstractor for the Scheduler Module.
  *
- * @package MyRadio_Scheduler
  * @uses    \Database
+ *
  * @todo    Dedicated Term class
  */
 class MyRadio_Scheduler extends MyRadio_Metadata_Common
 {
     /**
-     * This provides a temporary cache of the result from pendingAllocationsQuery
-     * @var Array
+     * This provides a temporary cache of the result from pendingAllocationsQuery.
+     *
+     * @var array
      */
     private static $pendingAllocationsResult = null;
 
     /**
      * Returns an Array of pending Season allocations.
-     * @return Array An Array of MyRadio_Season objects which do not have an allocated timeslot, ordered by time submitted
+     *
+     * @return array An Array of MyRadio_Season objects which do not have an allocated timeslot, ordered by time submitted
+     *
      * @todo Move to MyRadio_Season?
      */
     private static function pendingAllocationsQuery()
     {
         if (self::$pendingAllocationsResult === null) {
-            /**
+            /*
              * Must not be null - otherwise it hasn't been submitted yet
              */
             $result = self::$db->fetchColumn(
@@ -55,7 +56,8 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     }
 
     /**
-     * Returns the number of seasons awaiting a timeslot allocation
+     * Returns the number of seasons awaiting a timeslot allocation.
+     *
      * @return int the number of pending season allocations
      */
     public static function countPendingAllocations()
@@ -64,7 +66,8 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     }
 
     /**
-     * Returns all show requests awaiting a timeslot allocation
+     * Returns all show requests awaiting a timeslot allocation.
+     *
      * @return Array[MyRadio_Season] An array of Seasons of pending allocation
      */
     public static function getPendingAllocations()
@@ -73,8 +76,10 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     }
 
     /**
-     * Return the number of show application disputes pending response from Master of Scheduling
+     * Return the number of show application disputes pending response from Master of Scheduling.
+     *
      * @todo implement this
+     *
      * @return int Zero.
      */
     public static function countPendingDisputes()
@@ -83,11 +88,13 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     }
 
     /**
-    * Create a new term
-    * @param int    $start The term start date
-    * @param String $descr Term description e.g. Autumn 2036
-    * @return int The new termid
-    */
+     * Create a new term.
+     *
+     * @param int    $start The term start date
+     * @param string $descr Term description e.g. Autumn 2036
+     *
+     * @return int The new termid
+     */
     public static function addTerm($start, $descr)
     {
         if (date('D', $start) !== 'Mon') {
@@ -108,8 +115,10 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     }
 
     /**
-     * Returns a list of terms in the present or future
+     * Returns a list of terms in the present or future.
+     *
      * @todo There's currently no caching on this, could be a potential slowdown
+     *
      * @return Array[Array] an array of arrays of terms
      */
     public static function getTerms()
@@ -138,8 +147,9 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     {
         $termid = self::getActiveApplicationTerm();
         if (empty($termid)) {
-            return null;
+            return;
         }
+
         return ['termid' => $termid, 'descr' => self::getTermDescr($termid)];
     }
 
@@ -150,13 +160,15 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
             [$termid]
         );
 
-        return $return['descr'] . date(' Y', strtotime($return['start']));
+        return $return['descr'].date(' Y', strtotime($return['start']));
     }
 
     /**
-     * Gives the start date for the given/current term at midnight GMT
-     * @param  int $term_id id of the term to get the date of
-     * @return int          unix timestamp of midnight GMT for the start of term
+     * Gives the start date for the given/current term at midnight GMT.
+     *
+     * @param int $term_id id of the term to get the date of
+     *
+     * @return int unix timestamp of midnight GMT for the start of term
      */
     public static function getTermStartDate($term_id = null)
     {
@@ -165,11 +177,11 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
         }
         $result = self::$db->fetchOne('SELECT start FROM terms WHERE termid=$1', [$term_id]);
 
-        return strtotime('Midnight ' . gmdate('d-m-Y', strtotime($result['start'])) . ' GMT');
+        return strtotime('Midnight '.gmdate('d-m-Y', strtotime($result['start'])).' GMT');
     }
 
     /**
-     * Returns a list of potential genres, organised so they can be used as a SELECT MyRadioFormField data source
+     * Returns a list of potential genres, organised so they can be used as a SELECT MyRadioFormField data source.
      */
     public static function getGenres()
     {
@@ -179,7 +191,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     }
 
     /**
-     * Returns a list of potential credit types, organsed so they can be used as a SELECT MyRadioFormField data source
+     * Returns a list of potential credit types, organsed so they can be used as a SELECT MyRadioFormField data source.
      */
     public static function getCreditTypes()
     {
@@ -192,12 +204,14 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     }
 
     /**
-     * Returns an Array of Shows matching the given partial title
-     * @param String $title A partial or total title to search for
+     * Returns an Array of Shows matching the given partial title.
+     *
+     * @param string $title A partial or total title to search for
      * @param int    $limit The maximum number of shows to return
-     * @return Array 2D with each first dimension an Array as follows:<br>
-     * title: The title of the show<br>
-     * show_id: The unique id of the show
+     *
+     * @return array 2D with each first dimension an Array as follows:<br>
+     *               title: The title of the show<br>
+     *               show_id: The unique id of the show
      */
     public static function findShowByTitle($term, $limit)
     {
@@ -239,19 +253,18 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
         );
 
         if (empty($return)) {
-            return null;
+            return;
         }
 
         return $return[0];
     }
 
     /**
-     *
      * @param int   $term_id The term to check for
-     * @param Array $time:
-     * day: The day ID (0-6) to check for
-     * start_time: The start time in seconds since midnight
-     * duration: The duration in seconds
+     * @param array $time:
+     *                       day: The day ID (0-6) to check for
+     *                       start_time: The start time in seconds since midnight
+     *                       duration: The duration in seconds
      *
      * Return: Array of conflicts with week # as key and show as value
      */
@@ -259,9 +272,9 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     {
         self::initDB();
         $conflicts = [];
-        $start_day = MyRadio_Scheduler::getTermStartDate($term_id) + ($time['day'] * 86400);
+        $start_day = self::getTermStartDate($term_id) + ($time['day'] * 86400);
         //Iterate over each week
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 10; ++$i) {
             $day_start = $start_day + (($i - 1) * 7 * 86400);
 
             //Get the start time
@@ -288,16 +301,17 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     }
 
     /**
-     * Returns a schedule conflict between the given times, if one exists
+     * Returns a schedule conflict between the given times, if one exists.
      *
-     * @param  int $start Start time
-     * @param  int $end   End time
-     * @return Array empty if no conflict, show information otherwise
+     * @param int $start Start time
+     * @param int $end   End time
+     *
+     * @return array empty if no conflict, show information otherwise
      */
     public static function getScheduleConflict($start, $end)
     {
         $start = CoreUtils::getTimestamp($start);
-        $end = CoreUtils::getTimestamp($end-1);
+        $end = CoreUtils::getTimestamp($end - 1);
 
         return self::$db->fetchOne(
             'SELECT show_season_timeslot_id,
@@ -318,7 +332,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
                 'Scheduler',
                 'editTerm',
                 [
-                    'title' => 'Create Term'
+                    'title' => 'Create Term',
                 ]
             )
         )->addField(
@@ -328,7 +342,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
                 [
                     'explanation' => 'Name the term. Try and make it unique.',
                     'label' => 'Term description',
-                    'options' => ['maxlength' => 10]
+                    'options' => ['maxlength' => 10],
                 ]
             )
         )->addField(
@@ -337,7 +351,7 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_DATE,
                 [
                     'explanation' => 'Select a term start date. This must be a Monday.',
-                    'label' => 'Start date'
+                    'label' => 'Start date',
                 ]
             )
         );

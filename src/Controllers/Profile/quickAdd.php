@@ -1,10 +1,7 @@
 <?php
 /**
  * Allows creation of new URY members!
- *
- * @package MyRadio_Profile
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 

@@ -3,8 +3,7 @@
 namespace MyRadio\MyRadio;
 
 /**
-* Null session handler.
-*
+ * Null session handler.
  */
 class MyRadioNullSession extends MyRadioSession
 {
@@ -15,7 +14,7 @@ class MyRadioNullSession extends MyRadioSession
 
     /**
      * Clear up old session entries in the database
-     * This should be called automatically by PHP every one in a while
+     * This should be called automatically by PHP every one in a while.
      */
     public function gc($lifetime)
     {
@@ -24,7 +23,7 @@ class MyRadioNullSession extends MyRadioSession
 
     /**
      * Reads the session data from the database. If no data exists, creates an
-     * empty row
+     * empty row.
      */
     public function read($id)
     {
@@ -32,7 +31,7 @@ class MyRadioNullSession extends MyRadioSession
     }
 
     /**
-     * Writes changes to the session data to the database
+     * Writes changes to the session data to the database.
      */
     public function write($id, $data)
     {
@@ -40,7 +39,7 @@ class MyRadioNullSession extends MyRadioSession
     }
 
     /**
-     * Deletes the session entry from the database
+     * Deletes the session entry from the database.
      */
     public function destroy($id)
     {

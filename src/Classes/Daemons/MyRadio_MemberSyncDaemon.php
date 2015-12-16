@@ -2,12 +2,12 @@
 
 namespace MyRadio\Daemons;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\Config;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 /**
- * This Daemon creates new Member accounts based on data from the YUSU API
+ * This Daemon creates new Member accounts based on data from the YUSU API.
  */
 class MyRadio_MemberSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {

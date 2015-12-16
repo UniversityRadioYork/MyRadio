@@ -1,9 +1,7 @@
 <?php
 /**
  * Allows the editing of chart types.
- * @package MyRadio_Charts
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_ChartType;

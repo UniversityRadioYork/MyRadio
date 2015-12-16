@@ -1,24 +1,22 @@
 <?php
 /**
- * Provides the Alias class for MyRadio
- * @package MyRadio_Mail
+ * Provides the Alias class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
 
 /**
  * The Alias class is used to do stuff with Aliases in URY's mail system.
  *
- * @package MyRadio_Mail
  * @uses    \Database
  */
 class MyRadio_Alias extends ServiceAPI
 {
     /**
-     * The ID of the Alias
+     * The ID of the Alias.
+     *
      * @var int
      */
     private $alias_id;
@@ -26,8 +24,9 @@ class MyRadio_Alias extends ServiceAPI
     /**
      * The source of the alias
      * If this is an alias from foo@ury.org.uk to bar@ury.org.uk, this value is
-     * 'foo'
-     * @var String
+     * 'foo'.
+     *
+     * @var string
      */
     private $source;
 
@@ -41,20 +40,19 @@ class MyRadio_Alias extends ServiceAPI
      */
     private $destinations = [];
 
-
     protected function __construct($id)
     {
         $result = self::$db->fetchOne(
             'SELECT source, '
-            . '(SELECT array(SELECT destination FROM mail.alias_text '
-            . '  WHERE alias_id=$1)) AS dtext, '
-            . '(SELECT array(SELECT destination FROM mail.alias_officer '
-            . '  WHERE alias_id=$1)) AS dofficer, '
-            . '(SELECT array(SELECT destination FROM mail.alias_member '
-            . '  WHERE alias_id=$1)) AS dmember, '
-            . '(SELECT array(SELECT destination FROM mail.alias_list '
-            . '  WHERE alias_id=$1)) AS dlist '
-            . 'FROM mail.alias WHERE alias_id=$1',
+            .'(SELECT array(SELECT destination FROM mail.alias_text '
+            .'  WHERE alias_id=$1)) AS dtext, '
+            .'(SELECT array(SELECT destination FROM mail.alias_officer '
+            .'  WHERE alias_id=$1)) AS dofficer, '
+            .'(SELECT array(SELECT destination FROM mail.alias_member '
+            .'  WHERE alias_id=$1)) AS dmember, '
+            .'(SELECT array(SELECT destination FROM mail.alias_list '
+            .'  WHERE alias_id=$1)) AS dlist '
+            .'FROM mail.alias WHERE alias_id=$1',
             [$id]
         );
         if (empty($result)) {
@@ -66,28 +64,28 @@ class MyRadio_Alias extends ServiceAPI
             foreach (self::$db->decodeArray($result['dtext']) as $text) {
                 $this->destinations[] = [
                     'type' => 'text',
-                    'value' => $text
+                    'value' => $text,
                 ];
             }
 
             foreach (self::$db->decodeArray($result['dofficer']) as $officer) {
                 $this->destinations[] = [
                     'type' => 'officer',
-                    'value' => MyRadio_Officer::getInstance($officer)
+                    'value' => MyRadio_Officer::getInstance($officer),
                 ];
             }
 
             foreach (self::$db->decodeArray($result['dmember']) as $member) {
                 $this->destinations[] = [
                     'type' => 'member',
-                    'value' => MyRadio_User::getInstance($member)
+                    'value' => MyRadio_User::getInstance($member),
                 ];
             }
 
             foreach (self::$db->decodeArray($result['dlist']) as $list) {
                 $this->destinations[] = [
                     'type' => 'list',
-                    'value' => MyRadio_List::getInstance($list)
+                    'value' => MyRadio_List::getInstance($list),
                 ];
             }
         }
@@ -95,6 +93,7 @@ class MyRadio_Alias extends ServiceAPI
 
     /**
      * Returns all the Aliases available.
+     *
      * @return array
      */
     public static function getAllAliases()
@@ -107,7 +106,8 @@ class MyRadio_Alias extends ServiceAPI
     }
 
     /**
-     * Get the ID fo this Alias
+     * Get the ID fo this Alias.
+     *
      * @return int
      */
     public function getID()
@@ -118,7 +118,7 @@ class MyRadio_Alias extends ServiceAPI
     /**
      * Returns the string prefix of the Alias.
      *
-     * @return String
+     * @return string
      */
     public function getSource()
     {
@@ -141,15 +141,16 @@ class MyRadio_Alias extends ServiceAPI
     /**
      * Returns data about the Alias for the API.
      *
-     * @param  Array $mixins
-     * @return Array
+     * @param array $mixins
+     *
+     * @return array
      */
     public function toDataSource($mixins = [])
     {
         $data = [
             'alias_id' => $this->getID(),
             'source' => $this->getSource(),
-            'destinations' => CoreUtils::dataSourceParser($this->getDestinations())
+            'destinations' => CoreUtils::dataSourceParser($this->getDestinations()),
         ];
 
         return $data;

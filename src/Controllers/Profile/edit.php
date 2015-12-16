@@ -1,12 +1,8 @@
 <?php
 /**
  * Allows Users to edit their profiles, or for admins to edit other users.
- *
- * @package MyRadio_Profile
  */
-
 use \MyRadio\Config;
-use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;

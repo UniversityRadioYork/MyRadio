@@ -1,10 +1,7 @@
 <?php
 /**
- * Gives a User a Training Status
- *
- * @package MyRadio_Profile
+ * Gives a User a Training Status.
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_TrainingStatus;

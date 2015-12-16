@@ -1,10 +1,7 @@
 <?php
 /**
- * Allows a User to edit an iTones PlaylistAvailability
- *
- * @package MyRadio_iTones
+ * Allows a User to edit an iTones PlaylistAvailability.
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\iTones\iTones_Playlist;
@@ -27,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         URLUtils::redirect(
             'iTones', 'editAvailability', [
             'availabilityid' => $availability->getID(),
-            'message' => base64_encode('The availability has been created.')
+            'message' => base64_encode('The availability has been created.'),
             ]
         );
     } else {

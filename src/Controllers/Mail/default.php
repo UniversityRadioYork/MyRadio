@@ -1,11 +1,9 @@
 <?php
 /**
- * Lists all mailing lists
+ * Lists all mailing lists.
  *
  * @todo    Datatable niceness
- * @package MyRadio_Mail
  */
-
 use \MyRadio\Config;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;

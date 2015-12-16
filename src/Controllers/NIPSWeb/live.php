@@ -2,10 +2,7 @@
 
 /**
  * Main renderer for NIPSWeb in LIVE mode.
- *
- * @package MyRadio_NIPSWeb
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\iTones\iTones_Playlist;
@@ -20,7 +17,7 @@ $reslists = CoreUtils::dataSourceParser(
     'managed' => iTones_Playlist::getAlliTonesPlaylists(),
     'auto' => NIPSWeb_AutoPlaylist::getAllAutoPlaylists(),
     'aux' => NIPSWeb_ManagedPlaylist::getAllManagedPlaylists(),
-    'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(MyRadio_User::getInstance())
+    'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(MyRadio_User::getInstance()),
     ]
 );
 

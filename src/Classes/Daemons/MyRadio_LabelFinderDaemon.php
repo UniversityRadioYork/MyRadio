@@ -1,25 +1,22 @@
 <?php
 /**
- * This file provides the MyRadio_LabelFinderDaemon class for MyRadio
- * @package MyRadio_Daemon
+ * This file provides the MyRadio_LabelFinderDaemon class for MyRadio.
  */
-
 namespace MyRadio\Daemons;
 
-use \MyRadio\Config;
-use \MyRadio\Database;
+use MyRadio\Config;
+use MyRadio\Database;
 
 /**
  * The LabelFinder Daemon processes rec_record in batches, and tries to fill in the "label" field.
- *
- * @package MyRadio_Daemon
  */
 class MyRadio_LabelFinderDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
     /**
      * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.
      * It is currently enabled because we have a lot of labels that needed filling in for Tracklisting.
-     * @return boolean
+     *
+     * @return bool
      */
     public static function isEnabled()
     {

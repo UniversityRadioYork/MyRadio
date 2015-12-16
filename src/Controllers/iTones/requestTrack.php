@@ -1,11 +1,8 @@
 <?php
 
 /**
- * Allows a User to request a track on the jukebox
- *
- * @package MyRadio_iTones
+ * Allows a User to request a track on the jukebox.
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
@@ -18,7 +15,7 @@ $form = (
         $action,
         [
             'debug' => true,
-            'title' => 'Request Campus Jukebox Track'
+            'title' => 'Request Campus Jukebox Track',
         ]
     )
 )->addField(
@@ -27,7 +24,7 @@ $form = (
         MyRadioFormField::TYPE_TRACK,
         [
             'explanation' => 'Enter a track here to request it on the Jukebox.',
-            'label' => 'Track'
+            'label' => 'Track',
         ]
     )
 )->addField(
@@ -40,7 +37,7 @@ $form = (
             'label' => 'Remaining Requests',
             'value' => iTones_Utils::getRemainingRequests(),
             'enabled' => false,
-            'required' => false
+            'required' => false,
         ]
     )
 );

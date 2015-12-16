@@ -1,10 +1,7 @@
 <?php
 /**
- * Set the show photo
- *
- * @package MyRadio_Scheduler
+ * Set the show photo.
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\URLUtils;
@@ -22,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $show->setShowPhoto($data['image_file']['tmp_name']);
 
-    URLUtils::backWithMessage("Show Photo Updated!");
+    URLUtils::backWithMessage('Show Photo Updated!');
 } else {
     //Not Submitted
 

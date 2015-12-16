@@ -1,10 +1,7 @@
 <?php
 /**
- * Edit a Campaign
- *
- * @package MyRadio_Website
+ * Edit a Campaign.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Banner;
@@ -49,8 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $campaign->getEditForm()
                 ->render(
                     [
-                    'campaignStart'=> CoreUtils::happyTime($campaign->getEffectiveFrom()),
-                    'bannerName'=> $campaign->getBanner()->getAlt()
+                    'campaignStart' => CoreUtils::happyTime($campaign->getEffectiveFrom()),
+                    'bannerName' => $campaign->getBanner()->getAlt(),
                     ]
                 );
     } else {
@@ -65,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         MyRadio_BannerCampaign::getForm($banner->getBannerID())
             ->render(
                 [
-                'bannerName' => $banner->getAlt()
+                'bannerName' => $banner->getAlt(),
                 ]
             );
     }

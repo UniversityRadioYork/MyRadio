@@ -2,27 +2,25 @@
 
 /**
  * This file provides the NIPSWeb_AutoPlaylist class for MyRadio - Contains Jingles etc.
- * @package MyRadio_NIPSWeb
  */
-
 namespace MyRadio\NIPSWeb;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\ServiceAPI\MyRadio_Track;
-use \MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\MyRadioException;
+use MyRadio\ServiceAPI\MyRadio_Track;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 /**
- * The NIPSWeb_AutoPlaylist class helps provide control and access to Auto playlists
+ * The NIPSWeb_AutoPlaylist class helps provide control and access to Auto playlists.
  *
- * @package MyRadio_NIPSWeb
  * @uses    \Database
  */
 class NIPSWeb_AutoPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
 {
     /**
-    * The Singleton store for AutoPlaylist objects
-    * @var NIPSWeb_AutoPlaylist
-    */
+     * The Singleton store for AutoPlaylist objects.
+     *
+     * @var NIPSWeb_AutoPlaylist
+     */
     private static $playlists = [];
     private $auto_playlist_id;
     protected $name;
@@ -30,9 +28,10 @@ class NIPSWeb_AutoPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
     protected $query;
 
     /**
-    * Initiates the AutoPlaylist variables
-    * @param int $playlistid The ID of the auto playlist to initialise
-    */
+     * Initiates the AutoPlaylist variables.
+     *
+     * @param int $playlistid The ID of the auto playlist to initialise
+     */
     protected function __construct($playlistid)
     {
         $this->auto_playlist_id = $playlistid;
@@ -48,12 +47,12 @@ class NIPSWeb_AutoPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-    * Return the MyRadio_Tracks that belong to this playlist
-    *
-    * Lazily evaluated - Tracks will not be loaded until the method is called
-    *
-    * @return Array[MyRadio_Track]
-    */
+     * Return the MyRadio_Tracks that belong to this playlist.
+     *
+     * Lazily evaluated - Tracks will not be loaded until the method is called
+     *
+     * @return Array[MyRadio_Track]
+     */
     public function getTracks()
     {
         if (empty($this->tracks)) {
@@ -69,18 +68,20 @@ class NIPSWeb_AutoPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-    * Get the Title of the AutoPlaylist
-    * @return String
-    */
+     * Get the Title of the AutoPlaylist.
+     *
+     * @return string
+     */
     public function getTitle()
     {
         return $this->name;
     }
 
     /**
-    * Get the unique manageditemid of the AutoPlaylist
-    * @return int
-    */
+     * Get the unique manageditemid of the AutoPlaylist.
+     *
+     * @return int
+     */
     public function getID()
     {
         return $this->auto_playlist_id;
@@ -112,10 +113,12 @@ class NIPSWeb_AutoPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-    * Returns an array of key information, useful for Twig rendering and JSON requests
-    * @todo Expand the information this returns
-    * @return Array
-    */
+     * Returns an array of key information, useful for Twig rendering and JSON requests.
+     *
+     * @todo Expand the information this returns
+     *
+     * @return array
+     */
     public function toDataSource()
     {
         return [

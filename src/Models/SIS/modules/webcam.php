@@ -1,10 +1,8 @@
 <?php
 /**
- * Webcam Plugin for SIS
- *
- * @package MyRadio_SIS
+ * Webcam Plugin for SIS.
  */
 $moduleInfo = [
     'pollfunc' => '\MyRadio\SIS\SIS_Remote::queryWebcam',
-    'required_permission' => AUTH_MODIFYWEBCAM
+    'required_permission' => AUTH_MODIFYWEBCAM,
 ];

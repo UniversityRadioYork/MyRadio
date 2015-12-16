@@ -1,10 +1,7 @@
 <?php
 /**
- * Listener Stats Graph for SIS
- *
- * @package MyRadio_SIS
+ * Listener Stats Graph for SIS.
  */
-
 error_reporting(0);
 $fname = (isset($_REQUEST['f'])) ? $_REQUEST['f'] : 'https://ury.org.uk/sis2/streamstats-ury.txt';
 $f = file($fname);
@@ -42,13 +39,13 @@ $colfill = imagecolorallocate($image, 0x36, 0x3D, 0x5F);
 imageline($image, $left, $padding, $left, $imageheight - 2 * $padding, $coledge);
 imagestring($image, 4, 5, $padding - 5, $max, $coltext);
 imagestring($image, 4, 5, $imageheight - 2 * $padding - 5, '0', $coltext);
-imagestring($image, 2, $left, $padding + $maxheight + 2, date("H:i", (int) $f[0][0]), $coltext);
+imagestring($image, 2, $left, $padding + $maxheight + 2, date('H:i', (int) $f[0][0]), $coltext);
 imagestring(
     $image,
     2,
     $imagewidth - 2 * $padding - 30,
     $padding + $maxheight + 2,
-    date("H:i", (int) $f[count($f) - 1][0]),
+    date('H:i', (int) $f[count($f) - 1][0]),
     $coltext
 );
 
@@ -72,7 +69,7 @@ $points[] = $maxheight + $padding;
 
 imagefilledpolygon($image, $points, count($points) / 2, $colfill);
 imagepolygon($image, $points, count($points) / 2, $coledge);
-imagestring($image, 2, $maxleft - 14, $maxheight - 5, date("H:i", (int) $maxdate) . " ($max)", $coltext);
+imagestring($image, 2, $maxleft - 14, $maxheight - 5, date('H:i', (int) $maxdate)." ($max)", $coltext);
 imageline($image, $maxleft, $padding, $maxleft, $maxheight + $padding, $coledge);
 imagestring(
     $image,

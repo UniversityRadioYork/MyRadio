@@ -1,10 +1,7 @@
 <?php
 /**
- * Help Tab Hidder for SIS
- *
- * @package MyRadio_SIS
+ * Help Tab Hidder for SIS.
  */
-
 use \MyRadio\SIS\SIS_Utils;
 
 SIS_Utils::hideHelpTab($_SESSION['memberid']);

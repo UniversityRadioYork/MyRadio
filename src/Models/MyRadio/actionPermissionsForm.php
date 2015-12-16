@@ -4,7 +4,7 @@ use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
-/**
+/*
  *
  * @todo Proper Documentation
  * @package MyRadio_Core
@@ -15,7 +15,7 @@ $form = new MyRadioForm(
     'addActionPermission',
     [
         'debug' => true,
-        'title' => 'Assign Action Permissions'
+        'title' => 'Assign Action Permissions',
     ]
 );
 
@@ -25,7 +25,7 @@ $form->addField(
         MyRadioFormField::TYPE_TEXT,
         [
             'explanation' => 'Type a Module to apply permissions to',
-            'label' => 'Module'
+            'label' => 'Module',
         ]
     )
 )->addField(
@@ -36,7 +36,7 @@ $form->addField(
             'explanation' => 'Type an Action within that Module to apply permissions to. '
                 .'Leave blank to apply it to all Actions.',
             'label' => 'Action',
-            'required' => false
+            'required' => false,
         ]
     )
 )->addField(
@@ -54,11 +54,11 @@ $form->addField(
                 [
                     [
                         'value' => null,
-                        'text' => 'GLOBAL ACCESS'
-                    ]
+                        'text' => 'GLOBAL ACCESS',
+                    ],
                 ],
                 AuthUtils::getAllPermissions()
-            )
+            ),
         ]
     )
 );

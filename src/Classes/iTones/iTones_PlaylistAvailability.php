@@ -1,35 +1,36 @@
 <?php
 
 /**
- * This file provides the PlaylistAvailability class for iTones
- * @package MyRadio_iTones
+ * This file provides the PlaylistAvailability class for iTones.
  */
-
 namespace MyRadio\iTones;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
-use \MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
 {
     /**
-     * The Playlist this is a Availability for
+     * The Playlist this is a Availability for.
+     *
      * @var iTones_Playlist
      */
     private $playlist;
 
     /**
-    * The weight of this Availability
-    * @var int
-    */
+     * The weight of this Availability.
+     *
+     * @var int
+     */
     private $weight;
 
     /**
-     * Initiates the iTones_PlaylistAvailability object
+     * Initiates the iTones_PlaylistAvailability object.
+     *
      * @param int $id The ID of the PlaylistAvailability to initialise
      */
     protected function __construct($id)
@@ -39,11 +40,11 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
         $this->id_field = 'playlist_availability_id';
 
         $result = self::$db->fetchOne(
-            'SELECT * FROM ' . $this->availability_table . ' WHERE ' . $this->id_field . '=$1',
+            'SELECT * FROM '.$this->availability_table.' WHERE '.$this->id_field.'=$1',
             [$id]
         );
         if (empty($result)) {
-            throw new MyRadioException('Playlist Availability ' . $id . ' does not exist!');
+            throw new MyRadioException('Playlist Availability '.$id.' does not exist!');
         }
 
         parent::__construct($id, $result);
@@ -53,9 +54,11 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
     }
 
     /**
-     * Returns data about the Availability
-     * @param  bool $full If true, returns full, detailed data about the timeslots in this campaign
-     * @return Array
+     * Returns data about the Availability.
+     *
+     * @param bool $full If true, returns full, detailed data about the timeslots in this campaign
+     *
+     * @return array
      */
     public function toDataSource($full = false)
     {
@@ -66,14 +69,15 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
             'display' => 'icon',
             'value' => 'pencil',
             'title' => 'Click to edit this availability',
-            'url' => URLUtils::makeURL('iTones', 'editAvailability', ['availabilityid' => $this->getID()])
+            'url' => URLUtils::makeURL('iTones', 'editAvailability', ['availabilityid' => $this->getID()]),
         ];
 
         return $data;
     }
 
     /**
-     * Get the Playlist this is a Campaign for
+     * Get the Playlist this is a Campaign for.
+     *
      * @return iTones_Playlist
      */
     public function getPlaylist()
@@ -82,9 +86,10 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
     }
 
     /**
-    * Returns the weight of the Availability
-    * @return int
-    */
+     * Returns the weight of the Availability.
+     *
+     * @return int
+     */
     public function getWeight()
     {
         return $this->weight;
@@ -94,7 +99,7 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
     {
         $this->weight = $weight;
         self::$db->query(
-            'UPDATE ' . $this->availability_table . ' SET weight=$1 WHERE ' . $this->id_field . '=$2',
+            'UPDATE '.$this->availability_table.' SET weight=$1 WHERE '.$this->id_field.'=$2',
             [$weight, $this->getID()]
         );
         $this->updateCacheObject();
@@ -102,6 +107,7 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
 
     /**
      * Returns a MyRadioForm filled in and ripe for being used to edit this Availability.
+     *
      * @return MyRadioForm
      */
     public function getEditForm()
@@ -114,18 +120,20 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
                     'effective_from' => CoreUtils::happyTime($this->getEffectiveFrom()),
                     'effective_to' => $this->getEffectiveTo() === null ? null :
                         CoreUtils::happyTime($this->getEffectiveTo()),
-                    'weight' => $this->getWeight()
+                    'weight' => $this->getWeight(),
                 ]
             );
     }
 
     /**
-     * Creates a new Availability
-     * @param  iTones_Playlist $playlist       The Playlist that is being Availabled.
-     * @param  int             $weight         The weight of the Availability.
-     * @param  int             $effective_from Epoch time that the Availability is starts at. Default now.
-     * @param  int             $effective_to   Epoch time that the Availability ends at. Default never.
-     * @param  Array           $timeslots      An array of Timeslots the Availability is active during.
+     * Creates a new Availability.
+     *
+     * @param iTones_Playlist $playlist       The Playlist that is being Availabled.
+     * @param int             $weight         The weight of the Availability.
+     * @param int             $effective_from Epoch time that the Availability is starts at. Default now.
+     * @param int             $effective_to   Epoch time that the Availability ends at. Default never.
+     * @param array           $timeslots      An array of Timeslots the Availability is active during.
+     *
      * @return iTones_PlaylistAvailability The new Availability
      */
     public static function create(
@@ -148,7 +156,7 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
                 $weight,
                 CoreUtils::getTimestamp($effective_from),
                 $effective_to ? CoreUtils::getTimestamp($effective_to) : null,
-                MyRadio_User::getInstance()->getID()
+                MyRadio_User::getInstance()->getID(),
             ]
         );
 
@@ -164,7 +172,8 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
     /**
      * Returns the form needed to create or edit Playlist Availabilities.
      *
-     * @param  int $playlistid The ID of the Playlist that this Availability will be/is linked to
+     * @param int $playlistid The ID of the Playlist that this Availability will be/is linked to
+     *
      * @return MyRadioForm
      */
     public static function getForm($playlistid = null)
@@ -178,7 +187,7 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
                     [
                         'required' => true,
                         'label' => 'Weight',
-                        'explanation' => 'A heavier playlist is more likely to be played.'
+                        'explanation' => 'A heavier playlist is more likely to be played.',
                     ]
                 )
             )->addField(
@@ -186,7 +195,7 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
                     'playlistid',
                     MyRadioFormField::TYPE_HIDDEN,
                     [
-                        'value' => $playlistid
+                        'value' => $playlistid,
                     ]
                 )
             );

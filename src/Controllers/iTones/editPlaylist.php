@@ -1,10 +1,7 @@
 <?php
 /**
- * Allows a User to edit the tracks in an iTones Playlist
- *
- * @package MyRadio_iTones
+ * Allows a User to edit the tracks in an iTones Playlist.
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;

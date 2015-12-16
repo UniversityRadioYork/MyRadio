@@ -1,26 +1,23 @@
 <?php
 /**
- * This file provides the MyRadio_BAPSSyncDaemon class for MyRadio
- * @package MyRadio_Daemon
+ * This file provides the MyRadio_BAPSSyncDaemon class for MyRadio.
  */
-
 namespace MyRadio\Daemons;
 
-use \MyRadio\Config;
-use \MyRadio\Database;
-use \MyRadio\iTones\iTones_Playlist;
+use MyRadio\Config;
+use MyRadio\Database;
+use MyRadio\iTones\iTones_Playlist;
 
 /**
  * The BAPSSync Daemon will scan the Show Planner playlists, and put them into BAPS.
- *
- * @package MyRadio_Daemon
  */
 class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
     /**
      * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.
      * It is currently disabled because it hasn't actuall finished being ported from NIPSWeb 1.
-     * @return boolean
+     *
+     * @return bool
      */
     public static function isEnabled()
     {
@@ -47,7 +44,7 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $db->query('DELETE FROM public.baps_show WHERE broadcastdate=$1', [$special_date]);
         //Start with the Jukebox Playlists
         foreach (iTones_Playlist::getAlliTonesPlaylists() as $list) {
-            /**
+            /*
              * Create the playlist. '61' is system, which appears to be how BAPS chooses what shows are recommended listening
              */
             $r = $db->fetchColumn(
@@ -61,7 +58,7 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 return;
             }
 
-            /**
+            /*
              * Create a single channel for the show, containing the items
              */
             $r = $db->fetchOne(
@@ -77,7 +74,7 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             $i = 0;
             foreach ($this->getManagedPlaylist($list['playlistid']) as $item) {
                 $track = $this->getTrackDetails($item['trackid'], $item['recordid']);
-                $i++;
+                ++$i;
                 pg_query_params(
                     'INSERT INTO public.baps_item (listingid, name1, name2, position, libraryitemid)
                     VALUES ($1, $2, $3, $4, $5)',
@@ -89,7 +86,7 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 
         //And now the Aux Resource Playlists
         foreach ($this->getCentralResourceLists() as $list) {
-            /**
+            /*
              * Create the playlist. '61' is system, which appears to be how BAPS chooses what shows are recommended listening
              */
             $r = pg_fetch_row(
@@ -106,7 +103,7 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 return;
             }
 
-            /**
+            /*
              * Create a single channel for the show, containing the items
              */
             $r = pg_fetch_row(
@@ -126,7 +123,7 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             $i = 0;
             foreach ($this->getAuxItems($list['folder']) as $item) {
                 $track = $this->getFileItemFromManagedID($item['manageditemid']);
-                $i++;
+                ++$i;
                 pg_query_params(
                     'INSERT INTO public.baps_item (listingid, name1, name2, position, fileitemid)
                     VALUES ($1, $2, $3, $4, $5)',

@@ -2,10 +2,7 @@
 
 /**
  * Shows statistics about members actually turning up for their shows.
- *
- * @package MyRadio_Scheduler
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Season;
 
@@ -16,7 +13,7 @@ foreach (MyRadio_Season::getAllSeasonsInLatestTerm() as $season) {
     $data[] = [
         'title' => $season->getMeta('title'),
         'percent' => (int) $info[0],
-        'missed' => (int) $info[1]
+        'missed' => (int) $info[1],
     ];
 }
 

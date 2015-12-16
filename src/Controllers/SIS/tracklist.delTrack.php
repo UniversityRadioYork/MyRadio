@@ -1,10 +1,7 @@
 <?php
 /**
- * Tracklist Track Deleter for SIS
- *
- * @package MyRadio_SIS
+ * Tracklist Track Deleter for SIS.
  */
-
 use \MyRadio\SIS\SIS_Tracklist;
 
 SIS_Tracklist::markTrackDeleted($_REQUEST['id']);

@@ -1,10 +1,7 @@
 <?php
 /**
- * Landing page for Website Tools
- *
- * @package MyRadio_Website
+ * Landing page for Website Tools.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/text.twig')->addVariable('title', 'Website Tools')

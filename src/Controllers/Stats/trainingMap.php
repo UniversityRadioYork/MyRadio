@@ -1,10 +1,7 @@
 <?php
 /**
- * Trainin Map
- *
- * @package MyRadio_Stats
+ * Trainin Map.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/fullimage.twig')

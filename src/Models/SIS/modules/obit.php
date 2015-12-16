@@ -1,9 +1,7 @@
 <?php
 /**
- * Obit for SIS
- *
- * @package MyRadio_SIS
+ * Obit for SIS.
  */
 $moduleInfo = [
-    'required_permission' => AUTH_STOPBROADCAST
+    'required_permission' => AUTH_STOPBROADCAST,
 ];

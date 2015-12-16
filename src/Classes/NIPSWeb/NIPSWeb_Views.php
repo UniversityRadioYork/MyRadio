@@ -7,8 +7,7 @@
 namespace MyRadio\NIPSWeb;
 
 /**
- * Description of NIPSWeb_Views
- *
+ * Description of NIPSWeb_Views.
  */
 class NIPSWeb_Views
 {
@@ -17,7 +16,7 @@ class NIPSWeb_Views
         //Set mp3 headers
         header('Content-Type: audio/mpeg');
 
-        /**
+        /*
          * Partial content support - this is required to set audio.currentTime
          * it will also help mitigate some issues with tracks pausing to buffer halfway through
          */
@@ -26,11 +25,11 @@ class NIPSWeb_Views
             self::rangeDownload($path);
         } else {
             //This is a dumb read-whole-file request
-            /**
+            /*
              * @todo Investigate whether whole file requests are ever used if partial is available
              */
             //Get the size of the file
-            header('Content-Length: ' . filesize($path));
+            header('Content-Length: '.filesize($path));
             //Make sure it doesn't suddently not
             header('Connection: Keep-Alive');
             //Read the file
@@ -43,7 +42,7 @@ class NIPSWeb_Views
         //Set mp3 headers
         header('Content-Type: audio/ogg');
 
-        /**
+        /*
          * Partial content support - this is required to set audio.currentTime
          * it will also help mitigate some issues with tracks pausing to buffer halfway through
          */
@@ -52,11 +51,11 @@ class NIPSWeb_Views
             self::rangeDownload($path);
         } else {
             //This is a dumb read-whole-file request
-            /**
+            /*
              * @todo Investigate whether whole file requests are ever used if partial is available
              */
             //Get the size of the file
-            header('Content-Length: ' . filesize($path));
+            header('Content-Length: '.filesize($path));
             //Make sure it doesn't suddently not
             header('Connection: Keep-Alive');
             //Read the file
@@ -66,8 +65,9 @@ class NIPSWeb_Views
 
     /**
      * Allows Partial Content Downloads - useful for audio and video streaming HTML5 stuff
-     * From http://forums.phpfreaks.com/topic/106711-php-code-which-supports-byte-range-downloads-for-iphone/
-     * @param String $file path to the file
+     * From http://forums.phpfreaks.com/topic/106711-php-code-which-supports-byte-range-downloads-for-iphone/.
+     *
+     * @param string $file path to the file
      */
     public static function rangeDownload($file)
     {

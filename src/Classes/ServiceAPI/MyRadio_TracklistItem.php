@@ -1,31 +1,28 @@
 <?php
 
 /**
- * Provides the TracklistItem class for MyRadio
- * @package MyRadio_Tracklist
+ * Provides the TracklistItem class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\iTones\iTones_Playlist;
-use \MyRadio\iTones\iTones_Utils;
+use MyRadio\Config;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\iTones\iTones_Playlist;
+use MyRadio\iTones\iTones_Utils;
 
 /**
  * The Tracklist Item class provides information about URY's track playing
  * history.
  *
- * @package MyRadio_Tracklist
  * @uses    \Database
  */
 class MyRadio_TracklistItem extends ServiceAPI
 {
     const BASE_TRACKLISTITEM_SQL =
-        "SELECT * FROM tracklist.tracklist
+        'SELECT * FROM tracklist.tracklist
             LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
-            LEFT JOIN tracklist.track_notrec ON tracklist.audiologid = track_notrec.audiologid";
+            LEFT JOIN tracklist.track_notrec ON tracklist.audiologid = track_notrec.audiologid';
     private $audiologid;
     private $source;
     private $starttime;
@@ -58,17 +55,18 @@ class MyRadio_TracklistItem extends ServiceAPI
                 'trackid' => null,
                 'trackno' => (int) $result['trackno'],
                 'length' => $result['length'],
-                'record_label' => $result['label']
+                'record_label' => $result['label'],
             ];
     }
 
     protected static function factory($id)
     {
-        $result = self::$db->fetchOne(self::BASE_TRACKLISTITEM_SQL . ' WHERE tracklist.audiologid=$1 LIMIT 1', [$id]);
+        $result = self::$db->fetchOne(self::BASE_TRACKLISTITEM_SQL.' WHERE tracklist.audiologid=$1 LIMIT 1', [$id]);
         if (empty($result)) {
             throw new MyRadioException('The requested TracklistItem does not appear to exist.', 404);
         }
-        return new MyRadio_TracklistItem($result);
+
+        return new self($result);
     }
 
     public function getID()
@@ -88,35 +86,38 @@ class MyRadio_TracklistItem extends ServiceAPI
     }
 
     /**
-     * Returns an array of all TracklistItems played during the given Timeslot
+     * Returns an array of all TracklistItems played during the given Timeslot.
+     *
      * @param int $timeslotid
-     * @return Array
+     *
+     * @return array
      */
     public static function getTracklistForTimeslot($timeslotid, $offset = 0)
     {
         $result = self::$db->fetchAll(
             self::BASE_TRACKLISTITEM_SQL
-            . ' WHERE timeslotid=$1'
-            . ' AND (state ISNULL OR state != \'d\')'
-            . ' AND audiologid > $2'
-            . ' ORDER BY timestart ASC',
+            .' WHERE timeslotid=$1'
+            .' AND (state ISNULL OR state != \'d\')'
+            .' AND audiologid > $2'
+            .' ORDER BY timestart ASC',
             [$timeslotid, $offset]
         );
 
         $items = [];
         foreach ($result as $item) {
-            $items[] = new MyRadio_TracklistItem($item);
+            $items[] = new self($item);
         }
 
         return $items;
     }
 
     /**
-     * Find all tracks played by Jukebox
+     * Find all tracks played by Jukebox.
+     *
      * @param int  $start           Period to start log from. Default 0.
      * @param int  $end             Period to end log from. Default time().
      * @param bool $include_playout Optional. Default true. If true, include statistics from when jukebox was not on air,
-     * i.e. when it was only feeding campus bars.
+     *                              i.e. when it was only feeding campus bars.
      */
     public static function getTracklistForJukebox($start = null, $end = null, $include_playout = true)
     {
@@ -127,15 +128,15 @@ class MyRadio_TracklistItem extends ServiceAPI
 
         $result = self::$db->fetchAll(
             self::BASE_TRACKLISTITEM_SQL
-            . ' WHERE source=\'j\''
-            . ' AND timestart >= $1 AND timestart <= $2'
-            . ($include_playout ? '' : ' AND state!=\'u\' AND state!=\'d\''),
+            .' WHERE source=\'j\''
+            .' AND timestart >= $1 AND timestart <= $2'
+            .($include_playout ? '' : ' AND state!=\'u\' AND state!=\'d\''),
             [$start, $end]
         );
 
         $items = [];
         foreach ($result as $item) {
-            $items[] = new MyRadio_TracklistItem($item);
+            $items[] = new self($item);
         }
 
         return $items;
@@ -144,6 +145,7 @@ class MyRadio_TracklistItem extends ServiceAPI
     /**
      * Find all tracks played in the given timeframe, as datasources.
      * Not datasource runs out of RAM pretty quick.
+     *
      * @todo Datasources are a lot nicer than they used to be - revisit this
      *
      * @param int  $start           Period to start log from. Required.
@@ -159,9 +161,9 @@ class MyRadio_TracklistItem extends ServiceAPI
 
         $result = self::$db->fetchAll(
             self::BASE_TRACKLISTITEM_SQL
-            . ' WHERE timestart >= $1 AND timestart <= $2 AND (state IS NULL OR state=\'c\''
-            . ($include_playout ? 'OR state = \'o\')' : ')')
-            . ' ORDER BY timestart ASC',
+            .' WHERE timestart >= $1 AND timestart <= $2 AND (state IS NULL OR state=\'c\''
+            .($include_playout ? 'OR state = \'o\')' : ')')
+            .' ORDER BY timestart ASC',
             [$start, $end]
         );
 
@@ -171,7 +173,7 @@ class MyRadio_TracklistItem extends ServiceAPI
                 return $return;
             }
 
-            $obj = new MyRadio_TracklistItem($item);
+            $obj = new self($item);
             $data = $obj->toDataSource();
 
             unset($data['audiologid']);
@@ -205,17 +207,18 @@ class MyRadio_TracklistItem extends ServiceAPI
 
     /**
      * Takes as input a result set of num_plays and trackid, and generates the extended Datasource output used by
-     * getTracklistStats(.*)()
+     * getTracklistStats(.*)().
+     *
      * @return Array, 2D, with the inner dimension being a MyRadio_Track Datasource output, with the addition of:
-     * num_plays: The number of times the track was played
-     * total_playtime: The total number of seconds the track has been on air
-     * in_playlists: A CSV of playlists the Track is in
+     *                num_plays: The number of times the track was played
+     *                total_playtime: The total number of seconds the track has been on air
+     *                in_playlists: A CSV of playlists the Track is in
      */
     private static function trackAmalgamator($result, $playlists = true)
     {
         $data = [];
         foreach ($result as $row) {
-            /**
+            /*
              * @todo Temporary hack due to lack of fkey on tracklist.track_rec
              */
             try {
@@ -243,15 +246,17 @@ class MyRadio_TracklistItem extends ServiceAPI
     /**
      * Get an amalgamation of all tracks played by Jukebox. This looks at all played tracks within the proposed timeframe,
      * and outputs the play count of each Track, including the total time played.
+     *
      * @param int  $start           Period to start log from. Default 0.
      * @param int  $end             Period to end log from. Default time().
      * @param bool $include_playout Optional. Default true. If true, include statistics from when jukebox was not on air,
-     * i.e. when it was only feeding campus bars.
+     *                              i.e. when it was only feeding campus bars.
      * @param bool $playlists       Whether to get playlist membership metadata for tracks.
+     *
      * @return Array, 2D, with the inner dimension being a MyRadio_Track Datasource output, with the addition of:
-     * num_plays: The number of times the track was played
-     * total_playtime: The total number of seconds the track has been on air
-     * in_playlists: A CSV of playlists the Track is in
+     *                num_plays: The number of times the track was played
+     *                total_playtime: The total number of seconds the track has been on air
+     *                in_playlists: A CSV of playlists the Track is in
      */
     public static function getTracklistStatsForJukebox($start = null, $end = null, $include_playout = true, $playlists = false)
     {
@@ -264,8 +269,8 @@ class MyRadio_TracklistItem extends ServiceAPI
             'SELECT COUNT(trackid) AS num_plays, trackid FROM tracklist.tracklist
             LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
             WHERE source=\'j\' AND timestart >= $1 AND timestart <= $2 AND trackid IS NOT NULL'
-            . ($include_playout ? '' : 'AND state != \'o\'')
-            . ' GROUP BY trackid ORDER BY num_plays DESC',
+            .($include_playout ? '' : 'AND state != \'o\'')
+            .' GROUP BY trackid ORDER BY num_plays DESC',
             [$start, $end]
         );
 
@@ -275,13 +280,15 @@ class MyRadio_TracklistItem extends ServiceAPI
     /**
      * Get an amalgamation of all tracks played by BAPS. This looks at all played tracks within the proposed timeframe,
      * and outputs the play count of each Track, including the total time played.
+     *
      * @param int  $start     Period to start log from. Default 0.
      * @param int  $end       Period to end log from. Default time().
      * @param bool $playlists Whether to get playlist membership metadata for the tracks.
+     *
      * @return Array, 2D, with the inner dimension being a MyRadio_Track Datasource output, with the addition of:
-     * num_plays: The number of times the track was played
-     * total_playtime: The total number of seconds the track has been on air
-     * in_playlists: A CSV of playlists the Track is in
+     *                num_plays: The number of times the track was played
+     *                total_playtime: The total number of seconds the track has been on air
+     *                in_playlists: A CSV of playlists the Track is in
      */
     public static function getTracklistStatsForBAPS($start = null, $end = null, $playlists = false)
     {
@@ -302,7 +309,7 @@ class MyRadio_TracklistItem extends ServiceAPI
     }
 
     /**
-     * Returns if the given track has been played in the last $time seconds
+     * Returns if the given track has been played in the last $time seconds.
      *
      * @param MyRadio_Track $track
      * @param int           $time  Optional. Default 21600 (6 hours)
@@ -327,11 +334,12 @@ class MyRadio_TracklistItem extends ServiceAPI
      * in a two hour period may be broadcast. Any more is a breach of this licence
      * so we should really stop doing it.
      *
-     * @param  MyRadio_Track $track
-     * @param  bool          $include_queue If true, will include the tracks in the iTones queue.
-     * queue.
-     * @param  int           $time.         If set, will check if playing it at $time would be a/was a breach. No, this isn't magic and know the future accurately. a breach. No, this isn't magic and know the future accurately.
-     * a breach. No, this isn't magic and know the future accurately.
+     * @param MyRadio_Track $track
+     * @param bool          $include_queue If true, will include the tracks in the iTones queue.
+     *                                     queue.
+     * @param int           $time.         If set, will check if playing it at $time would be a/was a breach. No, this isn't magic and know the future accurately. a breach. No, this isn't magic and know the future accurately.
+     *                                     a breach. No, this isn't magic and know the future accurately.
+     *
      * @return bool
      */
     public static function getIfAlbumArtistCompliant(MyRadio_Track $track, $include_queue = true, $time = null)
@@ -341,7 +349,7 @@ class MyRadio_TracklistItem extends ServiceAPI
         }
         $timeout = CoreUtils::getTimestamp($time - (3600 * 2)); //Two hours ago
 
-        /**
+        /*
          * The title check is a hack to work around our default album
          * being URY Downloads
          */
@@ -359,7 +367,7 @@ class MyRadio_TracklistItem extends ServiceAPI
                 $track->getAlbum()->getID(),
                 $track->getArtist(),
                 $timeout,
-                CoreUtils::getTimestamp($time)
+                CoreUtils::getTimestamp($time),
             ]
         );
 
@@ -370,17 +378,17 @@ class MyRadio_TracklistItem extends ServiceAPI
                 }
                 $t = MyRadio_Track::getInstance($req['trackid']);
 
-                /**
+                /*
                  * The title check is a hack to work around our default album
                  * being URY Downloads
                  */
                 if (($t->getAlbum()->getID() == $track->getAlbum()->getID() && stristr($t->getAlbum()->getTitle(), Config::$short_name.' Downloads') === false) or $t->getArtist() === $track->getArtist()) {
-                    $result[0] ++;
+                    ++$result[0];
                 }
             }
         }
 
-        return ($result[0] < 2);
+        return $result[0] < 2;
     }
 
     public function toDataSource($full = false)

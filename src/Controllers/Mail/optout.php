@@ -1,10 +1,7 @@
 <?php
 /**
- * Opt out of a mailing list
- *
- * @package MyRadio_Mail
+ * Opt out of a mailing list.
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\URLUtils;

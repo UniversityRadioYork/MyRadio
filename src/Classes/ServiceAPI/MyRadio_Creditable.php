@@ -1,12 +1,10 @@
 <?php
 /**
- * Provides the Creditable trait for MyRadio
- * @package MyRadio_Core
+ * Provides the Creditable trait for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 /**
  * The MyRadio_Creditable trait adds credits functionality to an object.
@@ -14,7 +12,6 @@ use \MyRadio\ServiceAPI\MyRadio_User;
  * The object obviously needs to have a credits table in the database for this
  * to work.
  *
- * @package MyRadio_Core
  * @uses    \Database
  */
 trait MyRadio_Creditable
@@ -23,9 +20,11 @@ trait MyRadio_Creditable
     protected static $credit_names;
 
     /**
-     * Get all credits
-     * @param  MyRadio_Metadata_Common $parent Used when there is inheritance enabled
-     *                                         for this object. In this case credits are merged.
+     * Get all credits.
+     *
+     * @param MyRadio_Metadata_Common $parent Used when there is inheritance enabled
+     *                                        for this object. In this case credits are merged.
+     *
      * @return type
      */
     public function getCredits($parent = null)
@@ -40,8 +39,8 @@ trait MyRadio_Creditable
      * Returns an Array of Arrays containing Credit names and roles, or just
      * name.
      *
-     * @param boolean $types If true return an array with the role as well.
-     *                       Otherwise just return the credit.
+     * @param bool $types If true return an array with the role as well.
+     *                    Otherwise just return the credit.
      *
      * @return type
      */
@@ -78,7 +77,7 @@ trait MyRadio_Creditable
     /**
      * Gets the presenter credits for as a comma-delimited string.
      *
-     * @return String
+     * @return string
      */
     public function getPresenterString()
     {
@@ -137,7 +136,7 @@ trait MyRadio_Creditable
                 function ($user, $type) {
                     return (empty($user) || empty($type))
                     ? null
-                    : [ 'User' => $user, 'type' => $type, 'memberid' => $user->getID() ];
+                    : ['User' => $user, 'type' => $type, 'memberid' => $user->getID()];
                 },
                 $users,
                 $types
@@ -155,17 +154,15 @@ trait MyRadio_Creditable
      * @param array  $new   The array of incoming credits.
      * @param string $table The database table to update.
      * @param string $pkey  The primary key of the object to update.
-     *
-     * @return null Nothing.
      */
     private function removeOldCredits($old, $new, $table, $pkey)
     {
         foreach ($old as $credit) {
             if (!in_array($credit, $new)) {
                 self::$db->query(
-                    'UPDATE ' . $table . ' SET effective_to=NOW()'
-                    . ' WHERE ' . $pkey . '=$1 AND creditid=$2 AND credit_type_id=$3'
-                    . ' AND effective_to IS NULL',
+                    'UPDATE '.$table.' SET effective_to=NOW()'
+                    .' WHERE '.$pkey.'=$1 AND creditid=$2 AND credit_type_id=$3'
+                    .' AND effective_to IS NULL',
                     [$this->getID(), $credit['User']->getID(), $credit['type']],
                     true
                 );
@@ -180,8 +177,6 @@ trait MyRadio_Creditable
      * @param array  $new   The array of incoming credits.
      * @param string $table The database table to update.
      * @param string $pkey  The primary key of the object to update.
-     *
-     * @return null Nothing.
      */
     private function addNewCredits($old, $new, $table, $pkey)
     {
@@ -191,12 +186,12 @@ trait MyRadio_Creditable
                 //Doesn't seem to exist.
                 self::$db->query(
                     'INSERT INTO '.$table.' ('.$pkey.', credit_type_id, creditid, effective_from,'
-                    . 'memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)',
+                    .'memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)',
                     [
                         $this->getID(),
                         $credit['type'],
                         $credit['memberid'],
-                        MyRadio_User::getCurrentOrSystemUser()->getID()
+                        MyRadio_User::getCurrentOrSystemUser()->getID(),
                     ],
                     true
                 );
@@ -209,8 +204,6 @@ trait MyRadio_Creditable
      *
      * @param array $new   The array of incoming credits
      * @param array $types The array of incoming credit types.
-     *
-     * @return null Nothing.
      */
     private function updateLocalCredits($new)
     {

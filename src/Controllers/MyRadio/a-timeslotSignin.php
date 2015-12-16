@@ -1,11 +1,8 @@
 <?php
 /**
  * Returns the presenter signin data for the given Timeslot
- * (if the user has access to this data)
- *
- * @package MyRadio_Core
+ * (if the user has access to this data).
  */
-
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;

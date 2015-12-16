@@ -1,10 +1,7 @@
 <?php
 /**
- * Streams a central database track if a play token is available
- *
- * @package MyRadio_NIPSWeb
+ * Streams a central database track if a play token is available.
  */
-
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\NIPSWeb\NIPSWeb_Token;

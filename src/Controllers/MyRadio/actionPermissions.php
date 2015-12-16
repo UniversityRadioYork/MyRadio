@@ -1,17 +1,14 @@
 <?php
 /**
- * Provides a tool to manage permissions for MyRadio Service/Module/Action systems
- *
- * @package MyRadio_Core
+ * Provides a tool to manage permissions for MyRadio Service/Module/Action systems.
  */
-
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
-/**
+/*
  * Form definition for adding permissions.
  */
 $form = new MyRadioForm(
@@ -19,7 +16,7 @@ $form = new MyRadioForm(
     $module,
     $action,
     [
-        'title' => 'Assign Action Permissions'
+        'title' => 'Assign Action Permissions',
     ]
 );
 
@@ -29,7 +26,7 @@ $form->addField(
         MyRadioFormField::TYPE_TEXT,
         [
             'explanation' => 'Type a Module to apply permissions to',
-            'label' => 'Module'
+            'label' => 'Module',
         ]
     )
 )->addField(
@@ -40,7 +37,7 @@ $form->addField(
             'explanation' => 'Type an Action within that Module to apply permissions to. '
                 .'Leave blank to apply it to all Actions.',
             'label' => 'Action',
-            'required' => false
+            'required' => false,
         ]
     )
 )->addField(
@@ -58,15 +55,14 @@ $form->addField(
                 [
                     [
                         'value' => null,
-                        'text' => 'GLOBAL ACCESS'
-                    ]
+                        'text' => 'GLOBAL ACCESS',
+                    ],
                 ],
                 AuthUtils::getAllPermissions()
-            )
+            ),
         ]
     )
 );
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
@@ -90,10 +86,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Include the current permissions. This will be rendered in a DataTable.
     $data = AuthUtils::getAllActionPermissions();
 
-    /**
+    /*
      * Pass it over to the actionPermissions view for output.
      */
-    for ($i = 0; $i < sizeof($data); $i++) {
+    for ($i = 0; $i < sizeof($data); ++$i) {
         $data[$i]['del'] = [
             'display' => 'text',
             'url' => URLUtils::makeURL(
@@ -101,14 +97,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'removeActionPermission',
                 ['permissionid' => $data[$i]['actpermissionid']]
             ),
-            'value' => 'Delete'
+            'value' => 'Delete',
         ];
     }
     $form->setTemplate('MyRadio/actionPermissions.twig')
         ->render(
             [
             'tabledata' => $data,
-            'tablescript' => 'myury.core.actionPermissions'
+            'tablescript' => 'myury.core.actionPermissions',
             ]
         );
 }
