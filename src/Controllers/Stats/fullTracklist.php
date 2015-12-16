@@ -49,8 +49,8 @@ default:
             'Stats',
             'fullTracklist',
             [
-                'rangesel-starttime' => array_key_exists($_GET['rangesel-starttime']) ? $_GET['rangesel-starttime'], : '',
-                'rangesel-endtime' => array_key_exists($_GET['rangesel-endtime']) ? $_GET['rangesel-endtime'], : '',
+                'rangesel-starttime' => array_key_exists($_GET['rangesel-starttime']) ? $_GET['rangesel-starttime'] : '',
+                'rangesel-endtime' => array_key_exists($_GET['rangesel-endtime']) ? $_GET['rangesel-endtime'] : '',
                 'format' => 'csv'
             ]
         )
