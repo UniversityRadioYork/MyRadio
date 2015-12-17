@@ -1,9 +1,7 @@
 <?php
 /**
- * Tracklist for SIS
- *
- * @package MyRadio_SIS
+ * Tracklist for SIS.
  */
 $moduleInfo = [
-    'pollfunc' => '\MyRadio\SIS\SIS_Remote::queryTracklist'
+    'pollfunc' => '\MyRadio\SIS\SIS_Remote::queryTracklist',
 ];

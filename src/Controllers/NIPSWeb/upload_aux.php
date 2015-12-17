@@ -1,10 +1,7 @@
 <?php
 /**
- * Uploads a ManagedItem
- *
- * @package MyRadio_NIPSWeb
+ * Uploads a ManagedItem.
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\NIPSWeb\NIPSWeb_ManagedItem;
 

@@ -1,8 +1,6 @@
 <?php
 /**
- * Sets up some config variables for MyRadio
- *
- * @package MyRadio_Core
+ * Sets up some config variables for MyRadio.
  */
 use \MyRadio\Config;
 use \MyRadio\MyRadio\CoreUtils;
@@ -25,11 +23,11 @@ $shorttext = [
     'long_name',
     'founded',
     'email_domain',
-    'facebook'
+    'facebook',
 ];
 
 $longtext = [
-    'welcome_email'
+    'welcome_email',
 ];
 
 $short_params = [];

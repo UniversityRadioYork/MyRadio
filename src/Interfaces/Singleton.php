@@ -3,9 +3,7 @@
 namespace MyRadio\Iface;
 
 /**
- * Provides a standard layout for all URY Singletons
- *
- * @package MyRadio_Core
+ * Provides a standard layout for all URY Singletons.
  */
 interface Singleton
 {

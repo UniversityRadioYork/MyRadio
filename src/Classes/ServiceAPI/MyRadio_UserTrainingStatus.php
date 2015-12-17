@@ -1,13 +1,11 @@
 <?php
 /**
- * Provides the MyRadio_UserTrainingStatus class for MyRadio
- * @package MyRadio_Core
+ * Provides the MyRadio_UserTrainingStatus class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\MyRadioException;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 /**
  * The UserTrainingStatus class links TrainingStatuses to Users.
@@ -18,14 +16,11 @@ use \MyRadio\ServiceAPI\MyRadio_User;
  * referred to as Presenter Statuses. With the increasing removal detachment from
  * just "presenter" training, and more towards any activity, "Training Status"
  * was adopted.
- *
- * @package MyRadio_Core
  */
-
 class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
 {
     /**
-     * The ID of the UserPresenterStatus
+     * The ID of the UserPresenterStatus.
      *
      * @var int
      */
@@ -33,30 +28,35 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
 
     /**
      * The User the TrainingStatus was awarded to.
+     *
      * @var int
      */
     private $user;
 
     /**
-     * The timestamp the UserTrainingStatus was Awarded
+     * The timestamp the UserTrainingStatus was Awarded.
+     *
      * @var int
      */
     private $awarded_time;
 
     /**
-     * The memberid of the User that granted this UserTrainingStatus
+     * The memberid of the User that granted this UserTrainingStatus.
+     *
      * @var int
      */
     private $awarded_by;
 
     /**
-     * The timestamp the UserTrainingStatus was Revoked (null if still active)
+     * The timestamp the UserTrainingStatus was Revoked (null if still active).
+     *
      * @var int
      */
     private $revoked_time;
 
     /**
-     * The memberid of the User that revoked this UserTrainingStatus
+     * The memberid of the User that revoked this UserTrainingStatus.
+     *
      * @var int
      */
     private $revoked_by;
@@ -64,7 +64,8 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
     /**
      * Create a new UserTrainingStatus object.
      *
-     * @param  int $statusid The ID of the UserTrainingStatus.
+     * @param int $statusid The ID of the UserTrainingStatus.
+     *
      * @throws MyRadioException
      */
     protected function __construct($statusid)
@@ -91,7 +92,8 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
     }
 
     /**
-     * Get the memberpresenterstatusid
+     * Get the memberpresenterstatusid.
+     *
      * @return int
      */
     public function getUserTrainingStatusID()
@@ -100,7 +102,8 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
     }
 
     /**
-     * Get the User that Awarded this Training Status
+     * Get the User that Awarded this Training Status.
+     *
      * @return MyRadio_User
      */
     public function getAwardedBy()
@@ -109,7 +112,8 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
     }
 
     /**
-     * Get the User that was Awarded this Training Status
+     * Get the User that was Awarded this Training Status.
+     *
      * @return MyRadio_User
      */
     public function getAwardedTo($id = false)
@@ -118,7 +122,8 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
     }
 
     /**
-     * Get the time the User was Awarded this Training Status
+     * Get the time the User was Awarded this Training Status.
+     *
      * @return int
      */
     public function getAwardedTime()
@@ -127,7 +132,8 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
     }
 
     /**
-     * Get the User that Revoked this Training Status
+     * Get the User that Revoked this Training Status.
+     *
      * @return MyRadio_User|null
      */
     public function getRevokedBy()
@@ -136,7 +142,8 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
     }
 
     /**
-     * Get the time the User had this Training Status Revoked
+     * Get the time the User had this Training Status Revoked.
+     *
      * @return int
      */
     public function getRevokedTime()
@@ -147,7 +154,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
     /**
      * Get an array of properties for this UserTrainingStatus.
      *
-     * @return Array
+     * @return array
      */
     public function toDataSource($full = true)
     {
@@ -156,12 +163,12 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         $data['awarded_to'] = [
             'display' => 'text',
             'url' => $this->getAwardedTo()->getURL(),
-            'value' => $this->getAwardedTo()->getName()
+            'value' => $this->getAwardedTo()->getName(),
         ];
         $data['awarded_by'] = [
             'display' => 'text',
             'url' => $this->getAwardedBy()->getURL(),
-            'value' => $this->getAwardedBy()->getName()
+            'value' => $this->getAwardedBy()->getName(),
         ];
         $data['awarded_time'] = $this->getAwardedTime();
         $data['revoked_by'] = ($this->getRevokedBy() === null ? null :
@@ -174,10 +181,12 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
     /**
      * Creates a new User - Training Status map, awarding that User the training status.
      *
-     * @param  MyRadio_TrainingStatus $status     The status to be awarded
-     * @param  MyRadio_User           $awarded_to The User to be awarded the training status
-     * @param  MyRadio_User           $awarded_by The User that is granting the training status
+     * @param MyRadio_TrainingStatus $status     The status to be awarded
+     * @param MyRadio_User           $awarded_to The User to be awarded the training status
+     * @param MyRadio_User           $awarded_by The User that is granting the training status
+     *
      * @return \self
+     *
      * @throws MyRadioException
      */
     public static function create(
@@ -199,23 +208,27 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         //Check whether this user can do that.
         if (in_array(
             array_map(
-                function ($x) {return $x->getID();},
+                function ($x) {
+                    return $x->getID();
+                },
                 $awarded_by->getAllTraining(true)
             ),
             $status->getAwarder()->getID()
         ) === false) {
-            throw new MyRadioException($awarded_by .' does not have permission to award '.$status);
+            throw new MyRadioException($awarded_by.' does not have permission to award '.$status);
         }
 
         //Check whether the target user has the prerequisites
         if ($status->getDepends() !== null and in_array(
             $status->getDepends()->getID(),
             array_map(
-                function ($x) {return $x->getID();},
+                function ($x) {
+                    return $x->getID();
+                },
                 $awarded_to->getAllTraining(true)
             )
         ) === false) {
-            throw new MyRadioException($awarded_to .' does not have the prerequisite training to be awarded '.$status);
+            throw new MyRadioException($awarded_to.' does not have the prerequisite training to be awarded '.$status);
         }
 
         $id = self::$db->fetchColumn(
@@ -224,7 +237,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
             [
                 $awarded_to->getID(),
                 $status->getID(),
-                $awarded_by->getID()
+                $awarded_by->getID(),
             ]
         )[0];
 

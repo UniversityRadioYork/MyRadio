@@ -7,22 +7,21 @@
 
 namespace MyRadio\SIS;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\ServiceAPI\ServiceAPI;
-use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
+use MyRadio\ServiceAPI\ServiceAPI;
+use MyRadio\ServiceAPI\MyRadio_TracklistItem;
 
 /**
- * This class has helper functions for SIS tracklisting
- *
- * @package MyRadio_SIS
+ * This class has helper functions for SIS tracklisting.
  */
 class SIS_Tracklist extends ServiceAPI
 {
     /**
-     * Get track info tracklisted for a timeslot
-     * @param  integer $timeslotid ID of timslot to get tracklist for
-     * @param  integer $offset     tracklist logid to offset by
-     * @return array   tracks in tracklist for the timeslot from the offset
+     * Get track info tracklisted for a timeslot.
+     *
+     * @param int $timeslotid ID of timslot to get tracklist for
+     * @param int $offset     tracklist logid to offset by
+     *
+     * @return array tracks in tracklist for the timeslot from the offset
      */
     public static function getTrackListing($timeslotid, $offset = 0)
     {
@@ -37,7 +36,7 @@ class SIS_Tracklist extends ServiceAPI
                     'artist' => $track['artist'],
                     'album' => $track['album'],
                     'trackid' => 'custom',
-                    'id' => $tracklistitem->getID()
+                    'id' => $tracklistitem->getID(),
                  ];
             } else {
                 $tracks[] = [
@@ -46,7 +45,7 @@ class SIS_Tracklist extends ServiceAPI
                     'artist' => $track->getArtist(),
                     'album' => $track->getAlbum()->getTitle(),
                     'trackid' => $track->getID(),
-                    'id' => $tracklistitem->getID()
+                    'id' => $tracklistitem->getID(),
                  ];
             }
         }
@@ -55,14 +54,16 @@ class SIS_Tracklist extends ServiceAPI
     }
 
     /**
-    * Adds a non-database track to the tracklist
-    * @param  string $tname      track name
-    * @param  string $artist     track artist
-    * @param  string $album      track album
-    * @param  string $source     tracklistig source
-    * @param  int    $timeslotid ID of timeslot to tracklist to
-    * @return none
-    */
+     * Adds a non-database track to the tracklist.
+     *
+     * @param string $tname      track name
+     * @param string $artist     track artist
+     * @param string $album      track album
+     * @param string $source     tracklistig source
+     * @param int    $timeslotid ID of timeslot to tracklist to
+     *
+     * @return none
+     */
     public static function insertTrackNoRec($tname, $artist, $album, $source, $timeslotid)
     {
         self::$db->query('BEGIN');
@@ -97,6 +98,7 @@ class SIS_Tracklist extends ServiceAPI
         );
 
         self::$db->query('COMMIT');
+
         return true;
     }
 

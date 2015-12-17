@@ -1,13 +1,9 @@
 <?php
 
 /**
- *
  * @data 20140120
- * @package MyRadio_Core
  */
-
 use \MyRadio\Config;
-use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
@@ -18,7 +14,7 @@ $form = (
         'pwReset',
         [
             'title' => 'Password Reset',
-            'captcha' => true
+            'captcha' => true,
         ]
     )
 )->addField(
@@ -28,7 +24,7 @@ $form = (
         [
             'explanation' => '',
             'label' => 'Username:',
-            'options' => ['placeholder' => 'abc123']
+            'options' => ['placeholder' => 'abc123'],
         ]
     )
 )->setTemplate('MyRadio/pwReset.twig');
@@ -44,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwReset-us
         );
     } else {
         foreach (Config::$authenticators as $i) {
-            $authenticator = new $i;
+            $authenticator = new $i();
             if ($authenticator->resetAccount($data['user'])) {
                 break;
             }
@@ -56,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwReset-us
     }
 } else {
     foreach (Config::$authenticators as $authenticator) {
-        $auth = new $authenticator;
+        $auth = new $authenticator();
         $messages[] = $auth->getResetFormMessage();
     }
 

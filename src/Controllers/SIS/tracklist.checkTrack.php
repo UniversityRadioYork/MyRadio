@@ -1,11 +1,7 @@
 <?php
 /**
- * Tracklist Track Inserter for SIS
- *
- * @package MyRadio_SIS
+ * Tracklist Track Inserter for SIS.
  */
-
-use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\SIS\SIS_Tracklist;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 
@@ -26,8 +22,8 @@ if (empty($trackid)) {
     if (empty($tname)) {
         throw new MyRadioException('Title is required', 400);
     }
-    SIS_Tracklist::insertTrackNoRec($tname, $artist, $album, "m", $timeslotid);
+    SIS_Tracklist::insertTrackNoRec($tname, $artist, $album, 'm', $timeslotid);
 } else {
     $track = MyRadio_Track::getInstance($trackid);
-    SIS_Tracklist::insertTrackRec($track, "m", $timeslotid);
+    SIS_Tracklist::insertTrackRec($track, 'm', $timeslotid);
 }

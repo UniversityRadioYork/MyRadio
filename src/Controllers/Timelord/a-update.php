@@ -1,11 +1,8 @@
 <?php
 
 /**
- * Ajax handler for Timelord
- *
- * @package MyRadio_Timelord
+ * Ajax handler for Timelord.
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Selector;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
@@ -17,7 +14,7 @@ $data = [
     'breaking' => MyRadioNews::getLatestNewsItem(3),
     'ob' => MyRadio_Selector::remoteStreams(),
     'silence' => MyRadio_Selector::isSilence(),
-    'obit' => MyRadio_Selector::isObitHappening()
+    'obit' => MyRadio_Selector::isObitHappening(),
 ];
 
 URLUtils::dataToJSON($data);

@@ -1,11 +1,7 @@
 <?php
 /**
  * Allows the editing of quotes.
- * @package MyURY_Quotes
  */
-
-
-use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Quote;
@@ -26,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     URLUtils::backWithMessage('Quote Updated!');
-
 } else {
     //Not Submitted
 
@@ -35,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $quote = MyRadio_Quote::getInstance($_REQUEST['quote_id']);
 
         $quote->getEditForm()->render();
-
     } else {
         //create form
         MyRadio_Quote::getForm()

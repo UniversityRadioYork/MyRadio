@@ -1,10 +1,7 @@
 <?php
 /**
- * Edit a Campaign
- *
- * @package MyRadio_Website
+ * Edit a Campaign.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Banner;
@@ -23,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data['effective_to'],
             $data['timeslots']
         );
-
     } else {
         //submit edit
         $campaign = MyRadio_BannerCampaign::getInstance($data['id']);
@@ -40,22 +36,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     URLUtils::backWithMessage('Campaign Updated!');
-
 } else {
     //Not Submitted
 
     if (isset($_REQUEST['campaignid'])) {
-            //edit form
+        //edit form
 
             $campaign = MyRadio_BannerCampaign::getInstance($_REQUEST['campaignid']);
-            $campaign->getEditForm()
+        $campaign->getEditForm()
                 ->render(
                     [
-                    'campaignStart'=> CoreUtils::happyTime($campaign->getEffectiveFrom()),
-                    'bannerName'=> $campaign->getBanner()->getAlt()
+                    'campaignStart' => CoreUtils::happyTime($campaign->getEffectiveFrom()),
+                    'bannerName' => $campaign->getBanner()->getAlt(),
                     ]
                 );
-
     } else {
         //create form
 
@@ -68,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         MyRadio_BannerCampaign::getForm($banner->getBannerID())
             ->render(
                 [
-                'bannerName' => $banner->getAlt()
+                'bannerName' => $banner->getAlt(),
                 ]
             );
     }

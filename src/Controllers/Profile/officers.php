@@ -2,10 +2,7 @@
 
 /**
  * This provides similar information to listOfficers, but in a far nicer format.
- *
- * @package MyRadio_Profile
  */
-
 use \MyRadio\Config;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;

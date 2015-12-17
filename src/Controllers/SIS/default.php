@@ -1,13 +1,9 @@
 <?php
 /**
- * Main renderer for SIS
- *
- * @package MyRadio_SIS
+ * Main renderer for SIS.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\SIS\SIS_Utils;
-use \MyRadio\Config;
 
 CoreUtils::requireTimeslot();
 

@@ -1,41 +1,39 @@
 <?php
 
 /**
- * This file provides the AuthUtils class for MyRadio
- * @package MyRadio_Core
+ * This file provides the AuthUtils class for MyRadio.
  */
-
 namespace MyRadio\MyRadio;
 
-use \ReCaptcha\ReCaptcha;
-
-use \MyRadio\Config;
-use \MyRadio\Database;
-use \MyRadio\MyRadioException;
-use \MyRadio\ServiceAPI\MyRadio_User;
+use ReCaptcha\ReCaptcha;
+use MyRadio\Config;
+use MyRadio\Database;
+use MyRadio\MyRadioException;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 /**
- * Authentication and permission API utilities
- * @package MyRadio_Core
+ * Authentication and permission API utilities.
  */
 class AuthUtils
 {
     /**
      * This stores whether the Permissions have been defined to prevent re-defining, causing errors and wasting time
-     * Once setUpAuth is run, this is set to true to prevent subsequent runs
-     * @var boolean
+     * Once setUpAuth is run, this is set to true to prevent subsequent runs.
+     *
+     * @var bool
      */
     private static $auth_cached = false;
 
     /**
-     * Stores permission typeid => description mappings
-     * @var Array
+     * Stores permission typeid => description mappings.
+     *
+     * @var array
      */
     private static $typeid_descr = [];
 
     /**
-     * Sets up the Authentication Constants
-     * @return void
+     * Sets up the Authentication Constants.
+     *
      * @assert () == null
      */
     public static function setUpAuth()
@@ -57,7 +55,8 @@ class AuthUtils
     /**
      * Returns the Actions and API Endpoints that utilise a given type.
      *
-     * @param  int $typeid
+     * @param int $typeid
+     *
      * @return [[action,...], [api method,...]]
      */
     public static function getAuthUsage($typeid)
@@ -86,8 +85,9 @@ class AuthUtils
     /**
      * Gets the description (friendly name) of the given permission.
      *
-     * @param  int $typeid
-     * @return String
+     * @param int $typeid
+     *
+     * @return string
      */
     public static function getAuthDescription($typeid)
     {
@@ -97,9 +97,11 @@ class AuthUtils
     }
 
     /**
-     * Checks using cached permissions whether the current member has the specified permission
-     * @param  int $permission The ID of the permission, resolved by using an AUTH_ constant
-     * @return boolean Whether the member has the requested permission
+     * Checks using cached permissions whether the current member has the specified permission.
+     *
+     * @param int $permission The ID of the permission, resolved by using an AUTH_ constant
+     *
+     * @return bool Whether the member has the requested permission
      */
     public static function hasPermission($permission)
     {
@@ -112,8 +114,8 @@ class AuthUtils
 
     /**
      * Checks if the user has the given permission. Or, alternatiely, if we are currently running CLI, reutrns true.
-     * @param  int $permission A permission constant to check
-     * @return void Will Fatal error if the user does not have the permission
+     *
+     * @param int $permission A permission constant to check
      */
     public static function requirePermission($permission)
     {
@@ -128,17 +130,18 @@ class AuthUtils
     }
 
     /**
-     * Checks if the user has the given permissions required for the given Module/Action combination
+     * Checks if the user has the given permissions required for the given Module/Action combination.
      *
      * The query needs a little bit of explaining.<br>
      * The first two WHERE clauses just set up foreign key references - we're searching by name, not ID.<br>
      * The next two WHERE clauses return exact or wildcard matches for this Module/Action combination.<br>
      * The final two AND NOT phrases make sure it ignores wildcards that allow any access.
      *
-     * @param  String $module  The Module to check permissions for
-     * @param  String $action  The Action to check permissions for
-     * @param  bool   $require If true, will die if the user does not have permission. If false, will just return false
-     * @return bool   True on required or authorised, false on unauthorised
+     * @param string $module  The Module to check permissions for
+     * @param string $action  The Action to check permissions for
+     * @param bool   $require If true, will die if the user does not have permission. If false, will just return false
+     *
+     * @return bool True on required or authorised, false on unauthorised
      */
     public static function requirePermissionAuto($module, $action, $require = true)
     {
@@ -158,7 +161,7 @@ class AuthUtils
 
         //Don't allow empty result sets - throw an Exception as this is very very bad.
         if (empty($result) && $require) {
-            throw new MyRadioException('There are no permissions defined for the ' . $module . '/' . $action . ' action!');
+            throw new MyRadioException('There are no permissions defined for the '.$module.'/'.$action.' action!');
         }
 
         $authorised = false;
@@ -200,7 +203,7 @@ class AuthUtils
      * @todo Is there a nicer way of doing this?
      * @todo Won't do null fields. Requires outer joins.
      *
-     * @return Array A 2D Array, where each second dimensions is as follows:<br>
+     * @return array A 2D Array, where each second dimensions is as follows:<br>
      *               action: The name of the Action page<br>
      *               module: The name of the Module the action is in<br>
      *               service: The name of the Service the module is in<br>
@@ -252,8 +255,9 @@ class AuthUtils
     }
 
     /**
-     * Returns a list of Permissions ready for direct use in a select MyRadioFormField
-     * @return Array A 2D Array matching the MyRadioFormField::TYPE_SELECT specification.
+     * Returns a list of Permissions ready for direct use in a select MyRadioFormField.
+     *
+     * @return array A 2D Array matching the MyRadioFormField::TYPE_SELECT specification.
      */
     public static function getAllPermissions()
     {
@@ -264,10 +268,12 @@ class AuthUtils
     }
 
     /**
-     * udiff function for permission value equality
-     * @param  array $perm1 permission value & description
-     * @param  array $perm2 permission value & description
-     * @return int          comparison result
+     * udiff function for permission value equality.
+     *
+     * @param array $perm1 permission value & description
+     * @param array $perm2 permission value & description
+     *
+     * @return int comparison result
      */
     private static function comparePermission($perm1, $perm2)
     {
@@ -281,10 +287,12 @@ class AuthUtils
     }
 
     /**
-     * Returns all permissions that are in $perms but not $diffPerms
-     * @param   $perms array of permissions
+     * Returns all permissions that are in $perms but not $diffPerms.
+     *
+     * @param   $perms     array of permissions
      * @param   $diffPerms array of permissions
-     * @return array        all permissions not included in $perms
+     *
+     * @return array all permissions not included in $perms
      */
     public static function diffPermissions($perms, $diffPerms)
     {
@@ -293,23 +301,25 @@ class AuthUtils
 
     /**
      * Add a new permission constant to the database.
-     * @param String $descr    A useful friendly description of what this action means.
-     * @param String $constant /AUTH_[A-Z_]+/
+     *
+     * @param string $descr    A useful friendly description of what this action means.
+     * @param string $constant /AUTH_[A-Z_]+/
      */
     public static function addPermission($descr, $constant)
     {
-        $value = (int)Database::getInstance()->fetchColumn(
+        $value = (int) Database::getInstance()->fetchColumn(
             'INSERT INTO public.l_action (descr, phpconstant)
             VALUES ($1, $2) RETURNING typeid',
             [$descr, $constant]
         )[0];
         define($constant, $value);
+
         return $value;
     }
 
     /**
      * Assigns a permission to a command. Note arguments are the integer IDs
-     * NOT the String names
+     * NOT the String names.
      *
      * @param int $module     The module ID
      * @param int $action     The action ID
@@ -335,9 +345,11 @@ class AuthUtils
      * You MUST use POST with this - otherwise the credentials will turn up in
      * access logs.
      *
-     * @param  String $user
-     * @param  String $pass
+     * @param string $user
+     * @param string $pass
+     *
      * @return MyRadio_User|false
+     *
      * @api    POST
      */
     public static function testCredentials($user, $pass)
@@ -364,18 +376,22 @@ class AuthUtils
                     continue;
                 } else {
                     $result->updateLastLogin();
+
                     return $result;
                 }
             }
         }
+
         return false;
     }
 
     /**
-     * Verify that the recaptcha response is valid
-     * @param  String $response g-recaptcha-response from the widget
-     * @param  String $addr     Remote IP address of response
-     * @return Bool/Array       true if valid, array of errors if not
+     * Verify that the recaptcha response is valid.
+     *
+     * @param string $response g-recaptcha-response from the widget
+     * @param string $addr     Remote IP address of response
+     *
+     * @return Bool/Array true if valid, array of errors if not
      */
     public static function verifyRecaptcha($response, $addr = null)
     {

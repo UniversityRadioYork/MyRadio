@@ -1,14 +1,11 @@
 #!/usr/bin/php
 <?php
 /**
- * This is the Jukebox Scheduler Controller - when triggered, it will inject a track into the iTones playout queue
+ * This is the Jukebox Scheduler Controller - when triggered, it will inject a track into the iTones playout queue.
  *
- * @package MyRadio_iTones
  * @uses    \Database
  * @uses    \CoreUtils
  */
-
-use \MyRadio\MyRadioException;
 use \MyRadio\iTones\iTones_Utils;
 use \MyRadio\iTones\iTones_Playlist;
 use \MyRadio\ServiceAPI\MyRadio_TracklistItem;

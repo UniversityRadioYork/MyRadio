@@ -1,24 +1,22 @@
 <?php
 
 /**
- * This file provides the NIPSWeb_ManagedUserPlaylist class for MyRadio - Contains My Jingles and My Beds
- * @package MyRadio_NIPSWeb
+ * This file provides the NIPSWeb_ManagedUserPlaylist class for MyRadio - Contains My Jingles and My Beds.
  */
-
 namespace MyRadio\NIPSWeb;
 
 /**
  * The NIPSWeb_ManagedUserPlaylist class provide My Jingles and My Beds for users.
  *
- * @package MyRadio_NIPSWeb
  * @uses    \Database
  */
 class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
 {
     /**
-     * Initiates the UserPlaylist variables
+     * Initiates the UserPlaylist variables.
+     *
      * @param int $playlistid The folder of the user playlist to initialise, e.g. 7449/beds
-     * Note: Only links *non-expired* items
+     *                        Note: Only links *non-expired* items
      */
     protected function __construct($playlistid)
     {
@@ -28,29 +26,32 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
     }
 
     /**
-     * Get the User Playlist Name from the Folder path. This is "My Beds" or "My Jingles"
+     * Get the User Playlist Name from the Folder path. This is "My Beds" or "My Jingles".
+     *
      * @param string $id Folder
+     *
      * @return string "My Beds" or "My Jingles"
      */
     public static function getNameFromFolder($id)
     {
         $data = explode('/', $id);
         switch ($data[sizeof($data) - 1]) {
-        case 'jingles':
-            return 'My Jingles';
+            case 'jingles':
+                return 'My Jingles';
                 break;
-        case 'beds':
-            return 'My Beds';
+            case 'beds':
+                return 'My Beds';
                 break;
-        default:
-            return 'ERR_USR_PRESET_NOT_FOUND: ' . $id;
+            default:
+                return 'ERR_USR_PRESET_NOT_FOUND: '.$id;
                 break;
         }
     }
 
     /**
-     * Get the unique folder of the ManagedUserPlaylist
-     * @return String
+     * Get the unique folder of the ManagedUserPlaylist.
+     *
+     * @return string
      */
     public function getID()
     {
@@ -58,7 +59,8 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
     }
 
     /**
-     * Return the NIPSWeb_ManagedItems that belong to this playlist
+     * Return the NIPSWeb_ManagedItems that belong to this playlist.
+     *
      * @return Array[NIPSWeb_ManagedItem]
      */
     public function getItems()
@@ -67,11 +69,11 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
             $items = self::$db->fetchColumn(
                 'SELECT manageditemid FROM bapsplanner.managed_user_items
                 WHERE managedplaylistid=$1 ORDER BY title',
-                ['membersmusic/' . $this->folder]
+                ['membersmusic/'.$this->folder]
             );
             $this->items = [];
             foreach ($items as $id) {
-                /**
+                /*
                  * Pass this to the ManagedItem - it's called Dependency Injection and prevents loops and looks pretty
                  * http://stackoverflow.com/questions/4903387/can-2-singleton-classes-reference-each-other
                  * http://www.phparch.com/2010/03/static-methods-vs-singletons-choose-neither/
@@ -84,15 +86,17 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
     }
 
     /**
-     * Returns the managed user playlists for the given user
+     * Returns the managed user playlists for the given user.
+     *
      * @param MyRadio_User $user
+     *
      * @return array of My Beds and My Jingles playlists for the user
      */
     public static function getAllManagedUserPlaylistsFor($user)
     {
         return [
-            self::getInstance($user->getID() . '/beds'),
-            self::getInstance($user->getID() . '/jingles')
+            self::getInstance($user->getID().'/beds'),
+            self::getInstance($user->getID().'/jingles'),
         ];
     }
 }

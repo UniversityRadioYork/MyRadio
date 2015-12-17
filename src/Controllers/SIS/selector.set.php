@@ -1,11 +1,9 @@
 <?php
 /**
- * Selector setter for SIS
+ * Selector setter for SIS.
  *
- * @package MyRadio_SIS
  * @todo    Lots of duplication with MyRadio_Selector here
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Selector;
 

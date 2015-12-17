@@ -1,51 +1,51 @@
 <?php
 
 /**
- * This file provides the MyRadio_Track class for MyRadio
- * @package MyRadio_Core
+ * This file provides the MyRadio_Track class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
-use \MyRadio\iTones\iTones_Playlist;
+use MyRadio\Config;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\iTones\iTones_Playlist;
 
 /**
- * The MyRadio_Track class provides and stores information about a Track
+ * The MyRadio_Track class provides and stores information about a Track.
  *
- * @package MyRadio_Core
  * @uses    \Database
  */
 class MyRadio_Track extends ServiceAPI
 {
-
     const BASE_TRACK_SQL = 'SELECT * FROM public.rec_track';
 
     /**
-     * The number of the Track on a Record
+     * The number of the Track on a Record.
+     *
      * @var int
      */
     private $number;
 
     /**
-     * The title of the Track
-     * @var String
+     * The title of the Track.
+     *
+     * @var string
      */
     private $title;
 
     /**
-     * The Artist of the Track
+     * The Artist of the Track.
+     *
      * @var int
      */
     private $artist;
 
     /**
-     * The length of the Track, in seconds
+     * The length of the Track, in seconds.
+     *
      * @var int
      */
     private $length;
@@ -54,18 +54,21 @@ class MyRadio_Track extends ServiceAPI
      * Don't use this.
      *
      * @deprecated
-     * @var        String
+     *
+     * @var string
      */
     private $duration;
 
     /**
-     * The genreid of the Track
+     * The genreid of the Track.
+     *
      * @var char
      */
     private $genre;
 
     /**
-     * How long the intro (non-vocal) part of the track is, in seconds
+     * How long the intro (non-vocal) part of the track is, in seconds.
+     *
      * @var int
      */
     private $intro;
@@ -74,72 +77,80 @@ class MyRadio_Track extends ServiceAPI
      * Whether the track is clean:<br>
      * y: The track is verified as clean<br>
      * n: The track is verified as unclean<br>
-     * u: This track has not been checked for cleanliness
-     * @var String
+     * u: This track has not been checked for cleanliness.
+     *
+     * @var string
      */
     private $clean;
 
     /**
-     * The Unique ID of this Track
+     * The Unique ID of this Track.
+     *
      * @var int
      */
     private $trackid;
 
     /**
-     * The Record this track belongs to
+     * The Record this track belongs to.
+     *
      * @var int
      */
     private $record;
 
     /**
-     * Whether or not there is a digital version of this track stored in the Central Database
+     * Whether or not there is a digital version of this track stored in the Central Database.
+     *
      * @var bool
      */
     private $digitised;
 
     /**
-     * The member who digitised this track
+     * The member who digitised this track.
+     *
      * @var int
      */
     private $digitisedby;
 
     /**
      * Caches Last.fm's Track.getSimilar response.
-     * @var Array
+     *
+     * @var array
      */
     private $lastfm_similar;
 
     /**
-     * Whether this track is iTones blacklisted
+     * Whether this track is iTones blacklisted.
      */
     private $itones_blacklist = null;
 
     /**
-     * Initiates the Track variables
+     * Initiates the Track variables.
+     *
      * @param array $result
-     * artist string
-     * clean char y/n/u
-     * digitised bool
-     * digitisedby int
-     * genre int
-     * intro string HH:ii:ss
-     * length string HH:ii:ss
-     * duration int
-     * intro int
-     * recordid int
-     * title string
+     *                      artist string
+     *                      clean char y/n/u
+     *                      digitised bool
+     *                      digitisedby int
+     *                      genre int
+     *                      intro string HH:ii:ss
+     *                      length string HH:ii:ss
+     *                      duration int
+     *                      intro int
+     *                      recordid int
+     *                      title string
+     *
      * @todo Genre class
      * @todo Artist normalisation
      */
     protected function __construct($result)
     {
-        $this->trackid = (int)$result['trackid'];
+        $this->trackid = (int) $result['trackid'];
         $this->artist = $result['artist'];
         $this->clean = $result['clean'];
         $this->digitised = ($result['digitised'] == 't') ? true : false;
         $this->digitisedby = empty($result['digitisedby']) ? null : (int) $result['digitisedby'];
         $this->genre = $result['genre'];
-        $this->intro = strtotime('1970-01-01 ' . $result['intro'] . '+00');
+        $this->intro = strtotime('1970-01-01 '.$result['intro'].'+00');
         $this->length = $result['length'];
         $this->duration = (int) $result['duration'];
         $this->number = (int) $result['intro'];
@@ -148,20 +159,20 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     *
      * @throws MyRadioException if the track does not exist
+     *
      * @return MyRadio_Track
      */
     protected static function factory($trackid)
     {
-        $sql = self::BASE_TRACK_SQL . ' WHERE trackid=$1 LIMIT 1';
+        $sql = self::BASE_TRACK_SQL.' WHERE trackid=$1 LIMIT 1';
         $result = self::$db->fetchOne($sql, [$trackid]);
 
         if (empty($result)) {
             throw new MyRadioException('The specified Track does not seem to exist', 404);
         }
 
-        return new MyRadio_Track($result);
+        return new self($result);
     }
 
     public static function getForm()
@@ -172,7 +183,7 @@ class MyRadio_Track extends ServiceAPI
                 'Library',
                 'editTrack',
                 [
-                    'title' => 'Edit Track'
+                    'title' => 'Edit Track',
                 ]
             )
         )->addField(
@@ -192,23 +203,25 @@ class MyRadio_Track extends ServiceAPI
                 [
                     'title' => $this->getTitle(),
                     'artist' => $this->getArtist(),
-                    'album' => $this->getAlbum()->getID()
+                    'album' => $this->getAlbum()->getID(),
                 ]
             );
     }
 
     /**
      * Returns a "summary" string - the title and artist seperated with a dash.
-     * @return String
+     *
+     * @return string
      */
     public function getSummary()
     {
-        return $this->getTitle() . ' - ' . $this->getArtist();
+        return $this->getTitle().' - '.$this->getArtist();
     }
 
     /**
-     * Get the Title of the Track
-     * @return String
+     * Get the Title of the Track.
+     *
+     * @return string
      */
     public function getTitle()
     {
@@ -216,8 +229,9 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Get the Artist of the Track
-     * @return String
+     * Get the Artist of the Track.
+     *
+     * @return string
      */
     public function getArtist()
     {
@@ -225,7 +239,8 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Get the Album of the Track
+     * Get the Album of the Track.
+     *
      * @return Album
      */
     public function getAlbum()
@@ -234,7 +249,8 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Get the intro duration of the Track, in seconds
+     * Get the intro duration of the Track, in seconds.
+     *
      * @return int
      */
     public function getIntro()
@@ -243,7 +259,8 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Get whether the track is clean
+     * Get whether the track is clean.
+     *
      * @return char
      */
     public function getClean()
@@ -252,7 +269,8 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Get the unique trackid of the Track
+     * Get the unique trackid of the Track.
+     *
      * @return int
      */
     public function getID()
@@ -261,7 +279,8 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Get the length of the Track, in hours:minutes:seconds
+     * Get the length of the Track, in hours:minutes:seconds.
+     *
      * @return string
      */
     public function getLength()
@@ -270,7 +289,8 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Get the duration of the Track, in seconds
+     * Get the duration of the Track, in seconds.
+     *
      * @return int
      */
     public function getDuration()
@@ -279,7 +299,8 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Get whether or not the track is digitised
+     * Get whether or not the track is digitised.
+     *
      * @return bool
      */
     public function getDigitised()
@@ -290,15 +311,16 @@ class MyRadio_Track extends ServiceAPI
     public function getDigitisedBy()
     {
         if ($this->digitisedby === null) {
-            return null;
+            return;
         } else {
             return MyRadio_User::getInstance($this->digitisedby);
         }
     }
 
     /**
-     * Update whether or not the track is digitised
-     * @param boolean $digitised
+     * Update whether or not the track is digitised.
+     *
+     * @param bool $digitised
      */
     public function setDigitised($digitised)
     {
@@ -306,16 +328,16 @@ class MyRadio_Track extends ServiceAPI
         self::$db->query(
             'UPDATE rec_track SET digitised=$1, digitisedby=$2 WHERE trackid=$3',
             $digitised ? [
-                't', $_SESSION['memberid'], $this->getID()
+                't', $_SESSION['memberid'], $this->getID(),
             ] : [
-                'f', null, $this->getID()
+                'f', null, $this->getID(),
             ]
         );
         $this->updateCacheObject();
     }
 
     /**
-     * Update whether or not the track is clean
+     * Update whether or not the track is clean.
      */
     public function setClean($clean)
     {
@@ -325,9 +347,11 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Returns an array of key information, useful for Twig rendering and JSON requests
+     * Returns an array of key information, useful for Twig rendering and JSON requests.
+     *
      * @todo Expand the information this returns
-     * @return Array
+     *
+     * @return array
      */
     public function toDataSource()
     {
@@ -345,25 +369,27 @@ class MyRadio_Track extends ServiceAPI
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Edit Track',
-                'url' => URLUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()])
+                'url' => URLUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()]),
             ],
             'deletelink' => [
                 'display' => 'icon',
                 'value' => 'trash',
                 'title' => 'Delete (Undigitise) Track',
-                'url' => URLUtils::makeURL('Library', 'deleteTrack', ['trackid' => $this->getID()])
-            ]
+                'url' => URLUtils::makeURL('Library', 'deleteTrack', ['trackid' => $this->getID()]),
+            ],
         ];
     }
 
     /**
-     * Returns an Array of Tracks matching the given partial title
-     * @param  String $title     A partial or total title to search for
-     * @param  String $artist    a partial or total title to search for
-     * @param  int    $limit     The maximum number of tracks to return
-     * @param  bool   $digitised Whether the track must be digitised. Default false.
-     * @param  bool   $exact     Only return Exact matches (i.e. no %)
-     * @return Array  of Track objects
+     * Returns an Array of Tracks matching the given partial title.
+     *
+     * @param string $title     A partial or total title to search for
+     * @param string $artist    a partial or total title to search for
+     * @param int    $limit     The maximum number of tracks to return
+     * @param bool   $digitised Whether the track must be digitised. Default false.
+     * @param bool   $exact     Only return Exact matches (i.e. no %)
+     *
+     * @return array of Track objects
      */
     private static function findByNameArtist($title, $artist, $limit, $digitised = false, $exact = false)
     {
@@ -372,8 +398,8 @@ class MyRadio_Track extends ServiceAPI
                 'SELECT trackid
                 FROM rec_track
                 WHERE title=$1 AND artist=$2'
-                . ($digitised ? ' AND digitised=\'t\'' : '')
-                . ' LIMIT $3',
+                .($digitised ? ' AND digitised=\'t\'' : '')
+                .' LIMIT $3',
                 [$title, $artist, $limit]
             );
         } else {
@@ -388,44 +414,44 @@ class MyRadio_Track extends ServiceAPI
                         (
                             SELECT trackid, 1 AS priority
                             FROM rec_track WHERE title ILIKE $1'
-                            . ($artist ? ' AND artist=$3' : '')
-                            . ($digitised ? ' AND digitised=\'t\'' : '') . '
+                            .($artist ? ' AND artist=$3' : '')
+                            .($digitised ? ' AND digitised=\'t\'' : '').'
                         ) UNION (
                             SELECT trackid, 2 AS priority
                             FROM rec_track WHERE title ILIKE $1 || \'%\''
-                            . ($artist ? '  AND artist ILIKE $3 || \'%\'' : '')
-                            . ($digitised ? ' AND digitised=\'t\'' : '') . '
+                            .($artist ? '  AND artist ILIKE $3 || \'%\'' : '')
+                            .($digitised ? ' AND digitised=\'t\'' : '').'
                         ) UNION (
                             SELECT trackid, 3 AS priority
                             FROM rec_track WHERE title ILIKE \'%\' || $1 || \'%\''
-                            . ($artist ? ' AND artist ILIKE \'%\' || $3 || \'%\'' : '')
-                            . ($digitised ? ' AND digitised=\'t\'' : '') . '
+                            .($artist ? ' AND artist ILIKE \'%\' || $3 || \'%\'' : '')
+                            .($digitised ? ' AND digitised=\'t\'' : '').'
                         )
                     ) AS t1
                 ) As t2
                 ORDER BY priority LIMIT $2',
-            $opts);
+                $opts
+            );
         }
 
         return self::resultSetToObjArray(array_unique($result));
     }
 
     /**
-     *
-     * @param Array $options One or more of the following:
-     *  title: String title of the track
-     *  artist: String artist name of the track
-     *  digitised: If true, only return digitised tracks. If false, return any.
-     *  itonesplaylistid: Tracks that are members of the iTones_Playlist id
-     *  limit: Maximum number of items to return. 0 = No Limit
-     *  recordid: int Record id
-     *  lastfmverified: Boolean whether or not verified with Last.fm Fingerprinter. Default any.
-     *  random: If true, sort randomly
-     *  idsort: If true, sort by trackid
-     *  custom: A custom SQL WHERE clause
-     *  precise: If true, will only return exact matches for artist/title(/album if specified)
-     *  nocorrectionproposed: If true, will only return items with no correction proposed.
-     *  clean: Default any. 'y' for clean tracks, 'n' for dirty, 'u' for unknown.
+     * @param array $options One or more of the following:
+     *                       title: String title of the track
+     *                       artist: String artist name of the track
+     *                       digitised: If true, only return digitised tracks. If false, return any.
+     *                       itonesplaylistid: Tracks that are members of the iTones_Playlist id
+     *                       limit: Maximum number of items to return. 0 = No Limit
+     *                       recordid: int Record id
+     *                       lastfmverified: Boolean whether or not verified with Last.fm Fingerprinter. Default any.
+     *                       random: If true, sort randomly
+     *                       idsort: If true, sort by trackid
+     *                       custom: A custom SQL WHERE clause
+     *                       precise: If true, will only return exact matches for artist/title(/album if specified)
+     *                       nocorrectionproposed: If true, will only return items with no correction proposed.
+     *                       clean: Default any. 'y' for clean tracks, 'n' for dirty, 'u' for unknown.
      *
      * @todo Limit not accurate for itonesplaylistid queries
      */
@@ -494,8 +520,7 @@ class MyRadio_Track extends ServiceAPI
 
         //Shortcircuit - there's a far simpler and more accurate method
         // if there's only title/artist/digitised/limit
-        if (
-            !$options['itonesplaylistid']
+        if (!$options['itonesplaylistid']
             && !$options['recordid']
             && !$options['lastfmverified']
             && !$options['random']
@@ -518,17 +543,17 @@ class MyRadio_Track extends ServiceAPI
         $count = 3;
         if ($options['album']) {
             $sql_params[] = $options['album'];
-            $count++;
+            ++$count;
             $album_param = $count;
         }
         if ($options['limit'] != 0) {
             $sql_params[] = $options['limit'];
-            $count++;
+            ++$count;
             $limit_param = $count;
         }
         if ($options['clean']) {
             $sql_params[] = $options['clean'];
-            $count++;
+            ++$count;
             $clean_param = $count;
         }
 
@@ -537,20 +562,20 @@ class MyRadio_Track extends ServiceAPI
             'SELECT trackid, rec_track.recordid
             FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
             AND (rec_track.title ILIKE $1 || $2 || $1'
-            . $firstop
-            . ' rec_track.artist ILIKE $1 || $3 || $1)'
-            . ($options['album'] ? ' AND rec_record.title ILIKE $1 || $' . $album_param . ' || $1' : '')
-            . ($options['digitised'] ? ' AND digitised=\'t\'' : '')
-            . ' '
-            . ($options['lastfmverified'] === true ? ' AND lastfm_verified=\'t\'' : '')
-            . ($options['lastfmverified'] === false ? ' AND lastfm_verified=\'f\'' : '')
-            . ($options['nocorrectionproposed'] === true ? ' AND trackid NOT IN (
+            .$firstop
+            .' rec_track.artist ILIKE $1 || $3 || $1)'
+            .($options['album'] ? ' AND rec_record.title ILIKE $1 || $'.$album_param.' || $1' : '')
+            .($options['digitised'] ? ' AND digitised=\'t\'' : '')
+            .' '
+            .($options['lastfmverified'] === true ? ' AND lastfm_verified=\'t\'' : '')
+            .($options['lastfmverified'] === false ? ' AND lastfm_verified=\'f\'' : '')
+            .($options['nocorrectionproposed'] === true ? ' AND trackid NOT IN (
             SELECT trackid FROM public.rec_trackcorrection WHERE state=\'p\')' : '')
-            . ($options['clean'] != null ? ' AND clean=$' . $clean_param : '')
-            . ($options['custom'] !== null ? ' AND ' . $options['custom'] : '')
-            . ($options['random'] ? ' ORDER BY RANDOM()' : '')
-            . ($options['idsort'] ? ' ORDER BY trackid' : '')
-            . ($options['limit'] == 0 ? '' : ' LIMIT $' . $limit_param),
+            .($options['clean'] != null ? ' AND clean=$'.$clean_param : '')
+            .($options['custom'] !== null ? ' AND '.$options['custom'] : '')
+            .($options['random'] ? ' ORDER BY RANDOM()' : '')
+            .($options['idsort'] ? ' ORDER BY trackid' : '')
+            .($options['limit'] == 0 ? '' : ' LIMIT $'.$limit_param),
             $sql_params
         );
 
@@ -559,7 +584,7 @@ class MyRadio_Track extends ServiceAPI
             if ($options['recordid'] !== null && $trackid['recordid'] != $options['recordid']) {
                 continue;
             }
-            $response[] = new MyRadio_Track($trackid['trackid']);
+            $response[] = new self($trackid['trackid']);
         }
 
         //Intersect with iTones if necessary, then return
@@ -586,14 +611,14 @@ class MyRadio_Track extends ServiceAPI
             mkdir(Config::$audio_upload_tmp_dir);
         }
 
-        $filename = session_id() . '-' . ++$_SESSION['myury_nipsweb_file_cache_counter'] . '.mp3';
+        $filename = session_id().'-'.++$_SESSION['myury_nipsweb_file_cache_counter'].'.mp3';
 
-        if (!move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename)) {
+        if (!move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir.'/'.$filename)) {
             throw new MyRadioException('Failed to move uploaded track to tmp directory.', 500);
         }
 
-        $getID3 = new \getID3;
-        $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
+        $getID3 = new \getID3();
+        $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir.'/'.$filename);
 
         // File quality checks
         if ($fileInfo['audio']['bitrate'] < 192000) {
@@ -603,15 +628,16 @@ class MyRadio_Track extends ServiceAPI
             return ['status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
         }
 
-        $analysis = self::identifyUploadedTrack(Config::$audio_upload_tmp_dir . '/' . $filename);
+        $analysis = self::identifyUploadedTrack(Config::$audio_upload_tmp_dir.'/'.$filename);
         if (isset($analysis['status'])) {
             $analysis['fileid'] = $filename;
+
             return $analysis;
         } else {
             return [
                 'fileid' => $filename,
                 'status' => 'OK',
-                'analysis' => $analysis
+                'analysis' => $analysis,
             ];
         }
     }
@@ -622,31 +648,32 @@ class MyRadio_Track extends ServiceAPI
      * !This method requires the external lastfm-fpclient application to be installed on the server. A FreeBSD build
      * with URY's API key and support for -json can be found in the fpclient.git URY Git repository.
      *
-     * @param  String $path The location of the MP3 file
-     * @return Array  A parsed array version of the JSON lastfm response
+     * @param string $path The location of the MP3 file
+     *
+     * @return array A parsed array version of the JSON lastfm response
      */
     public static function identifyUploadedTrack($path)
     {
         //Syspath is set by Daemons or where $PATH is not sufficent.
-        $response = shell_exec((empty($GLOBALS['syspath']) ? '' : $GLOBALS['syspath']) . 'lastfm-fpclient -json ' . $path);
+        $response = shell_exec((empty($GLOBALS['syspath']) ? '' : $GLOBALS['syspath']).'lastfm-fpclient -json '.$path);
 
         if (!trim($response)) {
             return ['status' => 'LASTFM_ERROR',
-                    'error' => 'Last.FM doesn\'t seem to be working right now.'];
+                    'error' => 'Last.FM doesn\'t seem to be working right now.', ];
         }
 
         $lastfm = json_decode($response, true);
 
         if (empty($lastfm)) {
             return ['status' => 'NO_LASTFM_MATCH',
-                    'error' => 'Track not found in Last FM.'];
+                    'error' => 'Track not found in Last FM.', ];
         } else {
             if (isset($lastfm['tracks']['track']['mbid'])) {
                 //Only one match
                 return [
                     ['title' => $lastfm['tracks']['track']['name'],
                         'artist' => $lastfm['tracks']['track']['artist']['name'],
-                        'rank' => $lastfm['tracks']['track']['@attr']['rank']]
+                        'rank' => $lastfm['tracks']['track']['@attr']['rank'], ],
                 ];
             }
 
@@ -671,11 +698,10 @@ class MyRadio_Track extends ServiceAPI
         $track = self::findByNameArtist($title, $artist, 1, false, true);
 
         $ainfo = null;
-        if ($album == "FROM_LASTFM") {
+        if ($album == 'FROM_LASTFM') {
             // Get the album info if we're getting it from lastfm
             $ainfo = self::getAlbumDurationAndPositionFromLastfm($title, $artist);
         } else {
-
             if (!empty($track)) {
                 $myradio_album = $track[0]->getAlbum();
             } else {
@@ -689,12 +715,12 @@ class MyRadio_Track extends ServiceAPI
         // Get the track duration from the file if it isn't already set
         if (empty($ainfo['duration'])) {
             $getID3 = new \getID3();
-            $ainfo['duration'] = intval($getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $tmpid)['playtime_seconds']);
+            $ainfo['duration'] = intval($getID3->analyze(Config::$audio_upload_tmp_dir.'/'.$tmpid)['playtime_seconds']);
         }
 
         // See if the explicit is set, and set the value for the DB accordingly - if not set unknown
         if (!is_null($explicit)) {
-            if ($explicit === true){
+            if ($explicit === true) {
                 $clean = 'n';
             } elseif ($explicit === false) {
                 $clean = 'y';
@@ -702,7 +728,6 @@ class MyRadio_Track extends ServiceAPI
         } else {
             $clean = 'u';
         }
-
 
         // Check if the track is already in the library and create it if not
         if (empty($track)) {
@@ -715,7 +740,7 @@ class MyRadio_Track extends ServiceAPI
                         'duration' => $ainfo['duration'],
                         'recordid' => $ainfo['album']->getID(),
                         'number' => $ainfo['position'],
-                        'clean' => $clean
+                        'clean' => $clean,
                 ]
             );
         } else {
@@ -730,14 +755,14 @@ class MyRadio_Track extends ServiceAPI
             }
         }
 
-        /**
+        /*
          * Store three versions of the track:
          * 1- 192kbps MP3 for BAPS and Chrome/IE
          * 2- 192kbps OGG for Safari/Firefox
          * 3- Original file for potential future conversions
          */
-        $tmpfile = Config::$audio_upload_tmp_dir . '/' . $tmpid;
-        $dbfile = $ainfo['album']->getFolder() . '/' . $track->getID();
+        $tmpfile = Config::$audio_upload_tmp_dir.'/'.$tmpid;
+        $dbfile = $ainfo['album']->getFolder().'/'.$track->getID();
 
         if (`which ffmpeg`) {
             $bin = 'ffmpeg';
@@ -749,7 +774,7 @@ class MyRadio_Track extends ServiceAPI
 
         shell_exec("nice -n 15 $bin -i '$tmpfile' -ab 192k -f mp3 '{$dbfile}.mp3'");
         shell_exec("nice -n 15 $bin -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
-        rename($tmpfile, $dbfile . '.mp3.orig');
+        rename($tmpfile, $dbfile.'.mp3.orig');
 
         self::$db->query('COMMIT');
 
@@ -757,18 +782,21 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Create a new MyRadio_Track with the provided options
-     * @param  Array $options
-     *                                   title (required): Title of the track.
-     *                                   artist (required): (string) Artist of the track.
-     *                                   recordid (required): (int) Album of track.
-     *                                   duration (required): Duration of the track, in seconds
-     *                                   number: Position of track on album
-     *                                   genre: Character code genre of track
-     *                                   intro: Length of track intro, in seconds
-     *                                   clean: 'y' yes, 'n' no, 'u' unknown lyric cleanliness status
-     *                                   digitised: boolean digitised status
-     * @return MyRadio_Track    a shiny new MyRadio_Track with the provided options
+     * Create a new MyRadio_Track with the provided options.
+     *
+     * @param array $options
+     *                       title (required): Title of the track.
+     *                       artist (required): (string) Artist of the track.
+     *                       recordid (required): (int) Album of track.
+     *                       duration (required): Duration of the track, in seconds
+     *                       number: Position of track on album
+     *                       genre: Character code genre of track
+     *                       intro: Length of track intro, in seconds
+     *                       clean: 'y' yes, 'n' no, 'u' unknown lyric cleanliness status
+     *                       digitised: boolean digitised status
+     *
+     * @return MyRadio_Track a shiny new MyRadio_Track with the provided options
+     *
      * @throws MyRadioException
      */
     public static function create($options)
@@ -778,7 +806,7 @@ class MyRadio_Track extends ServiceAPI
         $required = ['title', 'artist', 'recordid', 'duration'];
         foreach ($required as $require) {
             if (empty($options[$require])) {
-                throw new MyRadioException($require . ' is required to create a Track.', 400);
+                throw new MyRadioException($require.' is required to create a Track.', 400);
             }
         }
 
@@ -819,13 +847,13 @@ class MyRadio_Track extends ServiceAPI
                 $options['recordid'],
                 $options['digitised'],
                 $_SESSION['memberid'],
-                $options['duration']
+                $options['duration'],
             ]
         );
 
         $data = self::$db->fetchOne($result);
 
-        return new MyRadio_Track($data[0]);
+        return new self($data[0]);
     }
 
     public function updateInfoFromLastfm()
@@ -847,13 +875,13 @@ class MyRadio_Track extends ServiceAPI
             if (!file_exists($this->getPath($ext))) {
                 continue;
             }
-            $new_dir = Config::$music_central_db_path . '/records/' . $album->getID();
+            $new_dir = Config::$music_central_db_path.'/records/'.$album->getID();
             if (!is_dir($new_dir)) {
                 mkdir($new_dir);
             }
-            $new_path = $new_dir . '/' . $this->getID() . '.' . $ext;
+            $new_path = $new_dir.'/'.$this->getID().'.'.$ext;
             if (!copy($this->getPath($ext), $new_path)) {
-                throw new MyRadioException('Failed to move file from ' . $this->getPath($ext) . ' to ' . $new_path);
+                throw new MyRadioException('Failed to move file from '.$this->getPath($ext).' to '.$new_path);
             }
             unlink($this->getPath($ext));
         }
@@ -903,64 +931,72 @@ class MyRadio_Track extends ServiceAPI
     {
         $this->duration = (int) $duration;
         self::$db->query(
-            'UPDATE rec_track SET length=$1, duration=$2 WHERE trackid=$3', [
+            'UPDATE rec_track SET length=$1, duration=$2 WHERE trackid=$3',
+            [
             CoreUtils::intToTime($this->getDuration()),
             $this->getDuration(),
-            $this->getID()
+            $this->getID(),
             ]
         );
         $this->updateCacheObject();
     }
 
     /**
-     * Set the length of the track intro, in seconds
+     * Set the length of the track intro, in seconds.
+     *
      * @param int
+     *
      * @api POST
      */
     public function setIntro($duration)
     {
         $this->intro = (int) $duration;
         self::$db->query(
-            'UPDATE rec_track SET intro=$1 WHERE trackid=$2', [
+            'UPDATE rec_track SET intro=$1 WHERE trackid=$2',
+            [
             CoreUtils::intToTime($this->intro),
-            $this->getID()
+            $this->getID(),
             ]
         );
         $this->updateCacheObject();
     }
 
     /**
-     * Returns all Tracks that are marked as digitsed in the library
+     * Returns all Tracks that are marked as digitsed in the library.
      *
      * @return MyRadio_Track[] An array of digitised Tracks
      */
     public static function getAllDigitised()
     {
         self::initDB();
-        $result = self::$db->fetchColumn(self::BASE_TRACK_SQL . ' WHERE digitised=\'t\'');
+        $result = self::$db->fetchColumn(self::BASE_TRACK_SQL.' WHERE digitised=\'t\'');
 
         $tracks = [];
         foreach ($result as $row) {
-            $tracks[] = new MyRadio_Track($row);
+            $tracks[] = new self($row);
         }
 
         return $tracks;
     }
 
     /**
-     * Returns the physical path to the Track
-     * @param  String $format Optional file extension - at time of writing this could me "mp3", "ogg" or "mp3.orig"
-     * @return String path to Track file
+     * Returns the physical path to the Track.
+     *
+     * @param string $format Optional file extension - at time of writing this could me "mp3", "ogg" or "mp3.orig"
+     *
+     * @return string path to Track file
      */
     public function getPath($format = 'mp3')
     {
-        return Config::$music_central_db_path . '/records/' . $this->getAlbum()->getID() . '/' . $this->getID() . '.' . $format;
+        return Config::$music_central_db_path.'/records/'.$this->getAlbum()->getID().'/'.$this->getID().'.'.$format;
     }
 
     /**
-     * Returns whether this track's physical file exists
-     * @param  String $format Optional file extension - at time of writing this could me "mp3", "ogg" or "mp3.orig"
-     * @return bool   If the file exists
+     * Returns whether this track's physical file exists.
+     *
+     * @param string $format Optional file extension - at time of writing this could me "mp3", "ogg" or "mp3.orig"
+     *
+     * @return bool If the file exists
      */
     public function checkForAudioFile($format = 'mp3')
     {
@@ -968,22 +1004,24 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Queries the last.fm API to find information about a track with the given title/artist combination
-     * @param  String $title  track title
-     * @param  String $artist track artist
-     * @return array  album: MyRadio_Album object matching the input
-     *                       position: The track number on the album
-     *                       duration: The length of the track, in seconds
+     * Queries the last.fm API to find information about a track with the given title/artist combination.
+     *
+     * @param string $title  track title
+     * @param string $artist track artist
+     *
+     * @return array album: MyRadio_Album object matching the input
+     *               position: The track number on the album
+     *               duration: The length of the track, in seconds
      */
     public static function getAlbumDurationAndPositionFromLastfm($title, $artist)
     {
         $details = json_decode(
             file_get_contents(
                 'https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key='
-                . Config::$lastfm_api_key
-                . '&artist=' . urlencode($artist)
-                . '&track=' . urlencode(str_replace(' (Radio Edit)', '', $title))
-                . '&format=json'
+                .Config::$lastfm_api_key
+                .'&artist='.urlencode($artist)
+                .'&track='.urlencode(str_replace(' (Radio Edit)', '', $title))
+                .'&format=json'
             ),
             true
         );
@@ -991,16 +1029,16 @@ class MyRadio_Track extends ServiceAPI
         if (!isset($details['track']['album'])) {
             //Send some defaults for album info
             return [
-                'album' => MyRadio_Album::findOrCreate(Config::$short_name . ' Downloads ' . date('Y'), Config::$short_name),
+                'album' => MyRadio_Album::findOrCreate(Config::$short_name.' Downloads '.date('Y'), Config::$short_name),
                 'position' => 0,
-                'duration' => intval($details['track']['duration'] / 1000)
+                'duration' => intval($details['track']['duration'] / 1000),
             ];
         }
 
         return [
             'album' => MyRadio_Album::findOrCreate($details['track']['album']['title'], $details['track']['album']['artist']),
             'position' => (int) $details['track']['album']['@attr']['position'],
-            'duration' => intval($details['track']['duration'] / 1000)
+            'duration' => intval($details['track']['duration'] / 1000),
         ];
     }
 
@@ -1017,6 +1055,7 @@ class MyRadio_Track extends ServiceAPI
      * and then only tracks that are in URY's music library returned.
      *
      * @todo   Last.fm API Rate limit checks
+     *
      * @return MyRadio_Track[]
      */
     public function getSimilar()
@@ -1025,16 +1064,16 @@ class MyRadio_Track extends ServiceAPI
             $data = json_decode(
                 file_get_contents(
                     'https://ws.audioscrobbler.com/2.0/?method=track.getSimilar&api_key='
-                    . Config::$lastfm_api_key
-                    . '&track=' . urlencode($this->getTitle())
-                    . '&artist=' . urlencode($this->getArtist())
-                    . '&limit=50&format=json'
+                    .Config::$lastfm_api_key
+                    .'&track='.urlencode($this->getTitle())
+                    .'&artist='.urlencode($this->getArtist())
+                    .'&limit=50&format=json'
                 ),
                 true
             );
 
             if (!is_array($data['similartracks']['track'])) {
-                trigger_error($this . ' had an empty Similar Tracks result.');
+                trigger_error($this.' had an empty Similar Tracks result.');
 
                 return [];
             }
@@ -1047,7 +1086,7 @@ class MyRadio_Track extends ServiceAPI
                             'artist' => $r['artist']['name'],
                             'limit' => 1,
                             'digitised' => true,
-                            'precise' => true
+                            'precise' => true,
                         ]
                     );
                     //Try to find a not-so-exact match
@@ -1058,7 +1097,7 @@ class MyRadio_Track extends ServiceAPI
                                 'artist' => $r['artist']['name'],
                                 'limit' => 1,
                                 'digitised' => true,
-                                'precise' => false
+                                'precise' => false,
                             ]
                         );
                     }
@@ -1076,7 +1115,8 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Returns whether the Track is iTones Blacklisted
+     * Returns whether the Track is iTones Blacklisted.
+     *
      * @return bool
      */
     public function isBlacklisted()
@@ -1100,7 +1140,7 @@ class MyRadio_Track extends ServiceAPI
      *
      * The format is compatible with Google Charts.
      *
-     * @return Array
+     * @return array
      */
     public static function getLibraryStats()
     {
@@ -1125,7 +1165,7 @@ class MyRadio_Track extends ServiceAPI
             ['Singles', $num_singles],
             ['Albums', $num_albums],
             ['Verified Metadata', $num_verified],
-            ['Unverified Metadata', $num_unverified]
+            ['Unverified Metadata', $num_unverified],
         ];
     }
 }

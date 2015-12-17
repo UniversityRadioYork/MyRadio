@@ -1,10 +1,7 @@
 <?php
 /**
- * Landing page for iTones
- *
- * @package MyRadio_iTones
+ * Landing page for iTones.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 
 CoreUtils::getTemplateObject()

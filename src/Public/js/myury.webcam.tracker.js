@@ -3,19 +3,19 @@
  */
 
 $(document).ready(
-    function() {
+    function () {
         setInterval('webcam.trackViewer()', 15000);
     }
 );
 
 var webcam = {
-    trackViewer: function() {
+    trackViewer: function () {
         $.ajax(
             {
                 type: 'get',
                 cache: false,
                 url: myradio.makeURL('Webcam', 'a-trackViewer'),
-                success: function(data) {
+                success: function (data) {
                     var sub = 0;
                     var time = '';
                     if (data >= 7*24*60*60) {

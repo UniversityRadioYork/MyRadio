@@ -1,9 +1,7 @@
 <?php
 /**
- * Render form to create a new Podcast
- * @package MyRadio_Podcast
+ * Render form to create a new Podcast.
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\URLUtils;
@@ -21,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data['description'],
             explode(' ', $data['tags']),
             $data['file']['tmp_name'],
-            empty($data['show']) ? null: MyRadio_Show::getInstance($data['show']),
+            empty($data['show']) ? null : MyRadio_Show::getInstance($data['show']),
             $data['credits']
         );
     } else {
@@ -54,7 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     URLUtils::backWithMessage('Podcast Updated');
-
 } else {
     //Not Submitted
     if (isset($_REQUEST['podcast_id'])) {
@@ -69,7 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $podcast
             ->getEditForm()
             ->render();
-
     } else {
         //create form
         MyRadio_Podcast::getForm()->render();

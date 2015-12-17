@@ -2,23 +2,21 @@
 
 namespace MyRadio;
 
-use \MyRadio\Config;
-use \MyRadio\Database;
-use \MyRadio\MyRadio\AuthUtils;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\MyRadio\MyRadioMenu;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadioError;
-
-use \Twig_Loader_Filesystem;
-use \Twig_Environment;
-use \Twig_Extension_Debug;
+use MyRadio\Config;
+use MyRadio\Database;
+use MyRadio\MyRadio\AuthUtils;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\MyRadio\MyRadioMenu;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadioError;
+use Twig_Loader_Filesystem;
+use Twig_Environment;
+use Twig_Extension_Debug;
 
 /**
- * Singleton class for the Twig template engine
+ * Singleton class for the Twig template engine.
  *
  * @depends Config
- * @package MyRadio_Core
  */
 class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
 {
@@ -27,12 +25,13 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
     private $twig;
 
     /**
-     * Cannot be private - parent does not allow it
+     * Cannot be private - parent does not allow it.
+     *
      * @todo Better Documentation
      */
     public function __construct()
     {
-        $twig_loader = new Twig_Loader_Filesystem(__DIR__ . '/../Templates/');
+        $twig_loader = new Twig_Loader_Filesystem(__DIR__.'/../Templates/');
         $this->contextVariables['notices'] = '';
         $this->twig = new Twig_Environment($twig_loader, ['auto_reload' => true]);
         if (Config::$template_debug) {
@@ -81,14 +80,16 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
     }
 
     /**
-     * Registers a new variable to be passed to the template
-     * @param  String $name  The name of the variable
-     * @param  mixed  $value The value of the variable - literally any valid type
+     * Registers a new variable to be passed to the template.
+     *
+     * @param string $name  The name of the variable
+     * @param mixed  $value The value of the variable - literally any valid type
+     *
      * @return \MyRadioTwig This for chaining
      */
     public function addVariable($name, $value)
     {
-        /**
+        /*
          * This is a hack for datatables, as there's no easy way for Twig to know booleans.
          * It's slow.
          * @todo Is there a better way of casting true/false to Yes/No?
@@ -108,8 +109,10 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
     /**
      * Recursively iterates over an array of any depth, replacing all booleans with "Yes" or "No".
      * Used for the datatable hack.
-     * @param  Array $value
-     * @return Array
+     *
+     * @param array $value
+     *
+     * @return array
      */
     private function boolParser($value)
     {
@@ -142,24 +145,27 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
     }
 
     /**
-     * Sets the template file to use
-     * @param  String $template The template filename
+     * Sets the template file to use.
+     *
+     * @param string $template The template filename
+     *
      * @throws MyRadioException If template does not exist
-     * @return MyRadioTwig      This for chaining
+     *
+     * @return MyRadioTwig This for chaining
      */
     public function setTemplate($template)
     {
-        if (!file_exists(__DIR__ . '/../Templates/' . $template)) {
+        if (!file_exists(__DIR__.'/../Templates/'.$template)) {
             throw new MyRadioException("Template $template does not exist");
         }
 
         //Validate template
         try {
-            $this->twig->parse($this->twig->tokenize(file_get_contents(__DIR__ . '/../Templates/' . $template), $template));
+            $this->twig->parse($this->twig->tokenize(file_get_contents(__DIR__.'/../Templates/'.$template), $template));
 
             // the $template is valid
         } catch (Twig_Error_Syntax $e) {
-            throw new MyRadioException('Twig Parse Error' . $e->getMessage(), $e->getCode(), $e);
+            throw new MyRadioException('Twig Parse Error'.$e->getMessage(), $e->getCode(), $e);
         }
 
         $this->template = $this->twig->loadTemplate($template);
@@ -168,7 +174,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
     }
 
     /**
-     * Renders the template
+     * Renders the template.
      */
     public function render()
     {
@@ -186,7 +192,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
             //That's not right.
             throw new MyRadioException(
                 'Failed to render page '
-                . '(template ' . $this->template->getTemplateName() . ')',
+                .'(template '.$this->template->getTemplateName().')',
                 500
             );
         }

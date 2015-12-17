@@ -4,9 +4,7 @@
  * Impersonate a user, convincing systems that you *are* them.
  *
  * @data    20140102
- * @package MyRadio_Core
  */
-
 use \MyRadio\Database;
 use \MyRadio\Config;
 use \MyRadio\MyRadio\AuthUtils;
@@ -16,7 +14,7 @@ if (isset($_REQUEST['memberid'])) {
     //Impersonate
     $impersonatee = MyRadio_User::getInstance($_REQUEST['memberid']);
     if ((!AuthUtils::hasPermission(AUTH_IMPERSONATE))
-        || (        $impersonatee->hasAuth(AUTH_BLOCKIMPERSONATE)
+        || ($impersonatee->hasAuth(AUTH_BLOCKIMPERSONATE)
         && !AuthUtils::hasPermission(AUTH_IMPERSONATE_BLOCKED_USERS))
     ) {
         require_once 'Controllers/Errors/403.php';
@@ -42,7 +40,7 @@ if (isset($_REQUEST['memberid'])) {
 }
 
 if (isset($_REQUEST['next'])) {
-    header('Location: ' . $_REQUEST['next']);
+    header('Location: '.$_REQUEST['next']);
 } else {
-    header('Location: ' . Config::$base_url);
+    header('Location: '.Config::$base_url);
 }

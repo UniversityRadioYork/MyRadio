@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is pretty much the single most important file in URY Web Services.
- * It basically everything. If you're here to learn about MyRadio's Core, then read on
+ * It basically everything. If you're here to learn about MyRadio's Core, then read on.
  *
  * As you can see in the code for this file, MyRadio has very little public-facing server code. This file simply starts
  * us up with a referral to our MVC framework by passing to the root controller. If you want to learn more about
@@ -11,8 +11,6 @@
  * - $member - The current User<br>
  * - $module - The module requested<br>
  * - $action - The action requested
- *
- * @package MyRadio_Core
  */
 
 //Refer straight to the root Controller

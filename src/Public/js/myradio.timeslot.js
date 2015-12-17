@@ -2,7 +2,8 @@
  * Handles the interactivityness of timeslot selection
  */
 $('#shows').on(
-    'change', function() {
+    'change',
+    function () {
         $('#seasons').empty();
         $('#timeslots').empty();
         $('#signin-list').empty();
@@ -15,7 +16,8 @@ $('#shows').on(
     }
 );
 $('#seasons').on(
-    'change', function() {
+    'change',
+    function () {
         $('#timeslots').empty();
         $('#signin-list').empty();
         $('#signin-submit').hide();
@@ -27,7 +29,8 @@ $('#seasons').on(
     }
 );
 $('#timeslots').on(
-    'change', function() {
+    'change',
+    function () {
         if ($(this).val() !== null) {
             $('#signin-list').empty();
             $('#signin-submit').show();
@@ -52,7 +55,7 @@ $('#timeslots').on(
                         {
                             url: myradio.makeURL('MyRadio', 'a-timeslotSignin'),
                             data: {timeslotid: $(this).val()},
-                            success: function(data) {
+                            success: function (data) {
                                 $('#signin-list').html('Sign in to your show:<br>');
                                 var used_memberids = [];
                                 for (var row in data) {
@@ -90,7 +93,7 @@ $('#timeslots').on(
 
 
 $(document).ready(
-    function() {
+    function () {
         //Now we're going to select the closest timeslot
         var closest = [null, null, null, null];
         var seconds = (new Date()).getTime() / 1000;

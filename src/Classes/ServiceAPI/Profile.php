@@ -1,18 +1,16 @@
 <?php
 /**
- * This file provides the Profile class for MyRadio
- * @package MyRadio_Profile
+ * This file provides the Profile class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\CoreUtils;
 
 /**
- * Abstractor for the Profile Module
+ * Abstractor for the Profile Module.
  *
  * @todo    Merge into User
- * @package MyRadio_Profile
+ *
  * @uses    \Database
  * @uses    \CacheProvider
  */
@@ -20,21 +18,21 @@ class Profile extends ServiceAPI
 {
     /**
      * Stores an Array representation of the current officers from the getCurrentOfficers function when it is first called
-     * This is also cached using a CacheProvider
-     * @var Array
+     * This is also cached using a CacheProvider.
+     *
+     * @var array
      */
     private static $currentOfficers = null;
     /**
      * Stores an Array representation of the current officerships and members holding them from the getOfficers function when it is first called
-     * This is also cached using a CacheProvider
-     * @var Array
+     * This is also cached using a CacheProvider.
+     *
+     * @var array
      */
     private static $officers = null;
 
-
     /**
      * Clears (well, deletes) the cache objects used in Profile.
-     *
      */
     public static function clearCache()
     {
@@ -46,8 +44,8 @@ class Profile extends ServiceAPI
     /**
      * Returns an Array representation of this year's URY Members.
      *
-     * @return Array A two-dimensional Array, each element in the first dimension container the following details about
-     * a member, sorted by their name:
+     * @return array A two-dimensional Array, each element in the first dimension container the following details about
+     *               a member, sorted by their name:
      *
      * memberid: The user's unique memberid
      * name: The user's last and first names formatted as <code>sname, fname</code>
@@ -62,8 +60,8 @@ class Profile extends ServiceAPI
     /**
      * Returns an Array representation of the given year's URY Members.
      *
-     * @return Array A two-dimensional Array, each element in the first dimension container the following details about
-     * a member, sorted by their name:
+     * @return array A two-dimensional Array, each element in the first dimension container the following details about
+     *               a member, sorted by their name:
      *
      * memberid: The user's unique memberid
      * name: The user's last and first names formatted as <code>sname, fname</code>
@@ -86,10 +84,10 @@ class Profile extends ServiceAPI
 
     /**
      * Returns an Array representation of the current URY Officers. On first run, this is cached locally in the class, and
-     * shared in the CacheProvider until the Cache is cleared
+     * shared in the CacheProvider until the Cache is cleared.
      *
-     * @return Array A two-dimensional Array, each element in the first dimension container the following details about
-     * officer, sorted by their officer ordering:
+     * @return array A two-dimensional Array, each element in the first dimension container the following details about
+     *               officer, sorted by their officer ordering:
      *
      * team: The team the officer is in
      * officership: The current position held
@@ -116,10 +114,10 @@ class Profile extends ServiceAPI
 
     /**
      * Returns an Array representation of the current URY officerships and the member holding them. On first run, this is cached locally in the class, and
-     * shared in the CacheProvider until the Cache is cleared
+     * shared in the CacheProvider until the Cache is cleared.
      *
-     * @return Array A two-dimensional Array, each element in the first dimension container the following details about
-     * a member, sorted by their name:
+     * @return array A two-dimensional Array, each element in the first dimension container the following details about
+     *               a member, sorted by their name:
      *
      * team: The team the officer is in
      * officership: The current position held

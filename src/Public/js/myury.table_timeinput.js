@@ -1,6 +1,7 @@
 var date = new Date();
 $('#shortcut-lastday').on(
-    'click', function() {
+    'click',
+    function () {
         $('#rangesel-endtime').val(date.toUTCString());
         date.setDate(date.getDate() - 1);
         $('#rangesel-starttime').val(date.toUTCString());
@@ -8,7 +9,8 @@ $('#shortcut-lastday').on(
     }
 );
 $('#shortcut-lastweek').on(
-    'click', function() {
+    'click',
+    function () {
         $('#rangesel-endtime').val(date.toUTCString());
         date.setDate(date.getDate() - 7);
         $('#rangesel-starttime').val(date.toUTCString());
@@ -16,7 +18,8 @@ $('#shortcut-lastweek').on(
     }
 );
 $('#shortcut-lastfortnight').on(
-    'click', function() {
+    'click',
+    function () {
         $('#rangesel-endtime').val(date.toUTCString());
         date.setDate(date.getDate() - 14);
         $('#rangesel-starttime').val(date.toUTCString());
@@ -24,7 +27,8 @@ $('#shortcut-lastfortnight').on(
     }
 );
 $('#shortcut-lastmonth').on(
-    'click', function() {
+    'click',
+    function () {
         $('#rangesel-endtime').val(date.toUTCString());
         date.setDate(date.getDate() - 28);
         $('#rangesel-starttime').val(date.toUTCString());

@@ -6,10 +6,7 @@
  * At the moment it's quite simple, but longer term it'd be great if it could
  * enable/disable modules and default permission structures, as well as update
  * the DB schema to ensure it is current.
- *
- * @package MyRadio_Core
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\Config;
 

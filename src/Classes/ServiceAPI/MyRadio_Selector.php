@@ -1,17 +1,15 @@
 <?php
 
 /**
- * Provides the MyRadio_Selector class for MyRadio
- * @package MyRadio_Selector
+ * Provides the MyRadio_Selector class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
-use \MyRadio\Database;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\iTones\iTones_Utils;
+use MyRadio\Config;
+use MyRadio\Database;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\iTones\iTones_Utils;
 
 /**
  * The Selector class provies an abstractor to the `sel` service
@@ -20,53 +18,52 @@ use \MyRadio\iTones\iTones_Utils;
  * BE CAREFUL USING SET METHOD IN THIS CLASS.
  * THEY *WILL* CHANGE THE STATION OUTPUT.
  *
- * @package MyRadio_Core
  * @uses    \Database
  */
 class MyRadio_Selector
 {
     /**
-     * The current studio is Studio 1
+     * The current studio is Studio 1.
      */
     const SEL_STUDIO1 = 1;
 
     /**
-     * The current studio is Studio 2
+     * The current studio is Studio 2.
      */
     const SEL_STUDIO2 = 2;
 
     /**
-     * The current studio is Jukebox
+     * The current studio is Jukebox.
      */
     const SEL_JUKEBOX = 3;
 
     /**
-     * The current studio is Outside Broadcast
+     * The current studio is Outside Broadcast.
      */
     const SEL_OB = 4;
 
     /**
-     * The studio selection was made by the Selector Telnet interface
+     * The studio selection was made by the Selector Telnet interface.
      */
     const FROM_AUX = 0;
 
     /**
-     * The studio selection was made by Studio 1
+     * The studio selection was made by Studio 1.
      */
     const FROM_S1 = 1;
 
     /**
-     * The studio selection was made by Studio 2
+     * The studio selection was made by Studio 2.
      */
     const FROM_S2 = 2;
 
     /**
-     * The studio selection was made on the main selector panel in the hub
+     * The studio selection was made on the main selector panel in the hub.
      */
     const FROM_HUB = 3;
 
     /**
-     * The selector is unlocked
+     * The selector is unlocked.
      */
     const LOCK_NONE = 0;
 
@@ -103,21 +100,21 @@ class MyRadio_Selector
     const ON_BOTH = 3;
 
     /**
-     * Construct the Selector Object
+     * Construct the Selector Object.
      */
     public function __construct()
     {
     }
 
     /**
-     * Returns the current selector status
+     * Returns the current selector status.
      *
      * The command 'Q' returns a 4-digit number. The first digit is the currently
      * selected studio. The second is where it was selected from, the third
      * provides information about whether the selector is locked, and the fourth
      * about which studios are switched on.
      *
-     * @return Array {'studio' => [1-8], 'selectedfrom' => [0-3], 'lock' => [0-2],
+     * @return array {'studio' => [1-8], 'selectedfrom' => [0-3], 'lock' => [0-2],
      *               'power' => [0-3]}
      */
     public static function setQuery()
@@ -130,7 +127,7 @@ class MyRadio_Selector
             'studio' => (int) $state[0],
             'lock' => (int) $state[1],
             'selectedfrom' => (int) $state[2],
-            'power' => (int) $state[3]
+            'power' => (int) $state[3],
         ];
 
         return $sel_status;
@@ -148,18 +145,20 @@ class MyRadio_Selector
 
     /**
      * Runs a command against URY's Physical Studio Selector. Be careful.
-     * @param  String $cmd (Q)uery, (L)ock, (U)nlock, S[1-8]
-     * @return String Status for Query, or ACK/FLK for other commands.
+     *
+     * @param string $cmd (Q)uery, (L)ock, (U)nlock, S[1-8]
+     *
+     * @return string Status for Query, or ACK/FLK for other commands.
      */
     private static function cmd($cmd)
     {
-        $h = fsockopen('tcp://' . Config::$selector_telnet_host, Config::$selector_telnet_port, $errno, $errstr, 10);
+        $h = fsockopen('tcp://'.Config::$selector_telnet_host, Config::$selector_telnet_port, $errno, $errstr, 10);
 
         //Read through the welcome "studio selector:" message (16x2bytes)
         fgets($h, 32);
 
         //Run command
-        fwrite($h, $cmd . "\n");
+        fwrite($h, $cmd."\n");
 
         //Read response (4x2bytes)
         $response = fgets($h, 16);
@@ -178,19 +177,19 @@ class MyRadio_Selector
         $status = self::getStatusAtTime();
 
         if ($studio == $status['studio']) {
-            throw new MyRadioException('Source ' . $studio . ' is already selected');
+            throw new MyRadioException('Source '.$studio.' is already selected');
         }
         if ((($studio == 1) && (!$status['s1power']))
             || (($studio == 2) && (!$status['s2power']))
             || (($studio == 4) && (!$status['s4power']))
         ) {
-            throw new MyRadioException('Source ' . $studio . ' is not powered');
+            throw new MyRadioException('Source '.$studio.' is not powered');
         }
         if ($status['lock'] != 0) {
             throw new MyRadioException('Selector Locked');
         }
 
-        $response = self::cmd('S' . $studio);
+        $response = self::cmd('S'.$studio);
 
         if ($response === 'FLK') {
             throw new MyRadioException('Selector Locked');
@@ -202,14 +201,16 @@ class MyRadio_Selector
             's1power' => self::getStudio1PowerAtTime($time),
             's2power' => self::getStudio2PowerAtTime($time),
             's4power' => (self::remoteStreams()['s1']) ? true : false,
-            'lastmod' => time()
+            'lastmod' => time(),
             ];
         }
     }
 
     /**
-     * Returns what studio was on air at the time given
-     * @param  int $time
+     * Returns what studio was on air at the time given.
+     *
+     * @param int $time
+     *
      * @return int
      */
     public static function getStudioAtTime($time = null)
@@ -234,8 +235,10 @@ class MyRadio_Selector
     }
 
     /**
-     * Returns where the selector was set from at the time given
-     * @param  int $time
+     * Returns where the selector was set from at the time given.
+     *
+     * @param int $time
+     *
      * @return int
      */
     public static function getSetbyAtTime($time = null)
@@ -260,8 +263,10 @@ class MyRadio_Selector
     }
 
     /**
-     * Returns the power state of studio1 at the time given
-     * @param  int $time
+     * Returns the power state of studio1 at the time given.
+     *
+     * @param int $time
+     *
      * @return bool
      */
     public static function getStudio1PowerAtTime($time = null)
@@ -286,8 +291,10 @@ class MyRadio_Selector
     }
 
     /**
-     * Returns the power state of studio2 at the time given
-     * @param  int $time
+     * Returns the power state of studio2 at the time given.
+     *
+     * @param int $time
+     *
      * @return bool
      */
     public static function getStudio2PowerAtTime($time = null)
@@ -312,8 +319,10 @@ class MyRadio_Selector
     }
 
     /**
-     * Returns the lock state at the time given
-     * @param  int $time
+     * Returns the lock state at the time given.
+     *
+     * @param int $time
+     *
      * @return int
      */
     public static function getLockAtTime($time = null)
@@ -338,8 +347,10 @@ class MyRadio_Selector
     }
 
     /**
-     * Returns the time last modified before the time given
-     * @param  int $time
+     * Returns the time last modified before the time given.
+     *
+     * @param int $time
+     *
      * @return int
      */
     public static function getLastModAtTime($time = null)
@@ -363,8 +374,10 @@ class MyRadio_Selector
     }
 
     /**
-     * Returns the selector status at the time given
-     * @param  int $time
+     * Returns the selector status at the time given.
+     *
+     * @param int $time
+     *
      * @return array
      */
     public static function getStatusAtTime($time = null)
@@ -374,6 +387,7 @@ class MyRadio_Selector
         }
 
         $status = self::remoteStreams();
+
         return [
             'ready' => $status['ready'],
             'studio' => self::getStudioAtTime($time),
@@ -382,7 +396,7 @@ class MyRadio_Selector
             's1power' => self::getStudio1PowerAtTime($time),
             's2power' => self::getStudio2PowerAtTime($time),
             's4power' => (isset($status['s1'])) ? $status['s1'] : false,
-            'lastmod' => self::getLastModAtTime($time)
+            'lastmod' => self::getLastModAtTime($time),
         ];
     }
 
@@ -406,7 +420,7 @@ class MyRadio_Selector
         iTones_Utils::emptyQueues();
 
         //Request the obit file a few times (5h of content)
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 5; ++$i) {
             iTones_Utils::requestFile(Config::$jukebox_obit_file);
         }
 
@@ -427,8 +441,8 @@ class MyRadio_Selector
         MyRadioEmail::sendEmailToComputing(
             'OBIT INITIATED',
             'Urgent: Initiated Obit procedure for station as requested by '
-            . MyRadio_User::getInstance()->getName() . ' - '
-            . MyRadio_User::getInstance()->getEmail()
+            .MyRadio_User::getInstance()->getName().' - '
+            .MyRadio_User::getInstance()->getEmail()
         );
 
         //Store the event for Timelord
@@ -449,7 +463,8 @@ class MyRadio_Selector
 
     /**
      * Returns the state of the remote OB feeds in an associative array.
-     * @return Array
+     *
+     * @return array
      */
     public static function remoteStreams()
     {
@@ -468,12 +483,13 @@ class MyRadio_Selector
         }
 
         return [
-            'ready' => false
+            'ready' => false,
         ];
     }
 
     /**
      * Returns the length of the current silence, if any.
+     *
      * @return int
      */
     public static function isSilence()

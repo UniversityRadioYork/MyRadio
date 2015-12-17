@@ -1,33 +1,28 @@
 <?php
 /**
- * Provides the Show class for MyRadio
- * @package MyRadio_Scheduler
+ * Provides the Show class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
-use \MyRadio\Database;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadioError;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
-use \MyRadio\ServiceAPI\MyRadio_User;
-use \MyRadio\ServiceAPI\MyRadio_Season;
-use \MyRadio\ServiceAPI\MyRadio_Scheduler;
-use \MyRadio\ServiceAPI\MyRadio_Timeslot;
+use MyRadio\Config;
+use MyRadio\Database;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\MyRadio_Season;
+use MyRadio\ServiceAPI\MyRadio_Scheduler;
+use MyRadio\ServiceAPI\MyRadio_Timeslot;
 
 /**
- * The Show class is used to create, view and manupulate Shows within the new MyRadio Scheduler Format
- * @package MyRadio_Scheduler
+ * The Show class is used to create, view and manupulate Shows within the new MyRadio Scheduler Format.
+ *
  * @uses \Database
  */
-
 class MyRadio_Show extends MyRadio_Metadata_Common
 {
-
     const BASE_SHOW_SQL =
         'SELECT show_id,
             show.show_type_id,
@@ -147,14 +142,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $credits = [];
         }
 
-        for ($i = 0; $i < sizeof($credits); $i++) {
+        for ($i = 0; $i < sizeof($credits); ++$i) {
             if (empty($credits[$i])) {
                 continue;
             }
             $this->credits[] = [
                 'type' => (int) $credit_types[$i],
                 'memberid' => $credits[$i],
-                'User' => MyRadio_User::getInstance($credits[$i])
+                'User' => MyRadio_User::getInstance($credits[$i]),
             ];
         }
 
@@ -168,7 +163,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $metadata = [];
         }
 
-        for ($i = 0; $i < sizeof($metadata); $i++) {
+        for ($i = 0; $i < sizeof($metadata); ++$i) {
             if (self::isMetadataMultiple($metadata_types[$i])) {
                 //Multiples should be an array
                 $this->metadata[$metadata_types[$i]][] = $metadata[$i];
@@ -178,13 +173,13 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         }
 
         //Deal with Show Photo
-        /**
+        /*
          * @todo Support general photo attachment?
          */
         $this->photo_url = Config::$default_person_uri;
         $image_metadata = json_decode($result['image_metadata_values']);
         if ($result['image_metadata_values'] !== null) {
-            $this->photo_url = Config::$public_media_uri . '/' . $image_metadata[0];
+            $this->photo_url = Config::$public_media_uri.'/'.$image_metadata[0];
         }
 
         //Get information about Seasons
@@ -196,36 +191,37 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     protected static function factory($showid)
     {
-        $sql = self::BASE_SHOW_SQL . ' WHERE show_id=$1';
+        $sql = self::BASE_SHOW_SQL.' WHERE show_id=$1';
         $result = self::$db->fetchOne($sql, [$showid]);
 
         if (empty($result)) {
             throw new MyRadioException('The specified Show does not seem to exist', 404);
         }
 
-        return new MyRadio_Show($result);
+        return new self($result);
     }
 
     /**
-     * Creates a new MyRadio Show and returns an object representing it
+     * Creates a new MyRadio Show and returns an object representing it.
      *
-     * @param Array $params An array of Show properties compatible with the Models/Scheduler/showfrm Form:
-     * title: The name of the show<br>
-     * description: The description of the show<br>
-     * genres: An array of 0 or more genre ids this Show is a member of<br>
-     * tags: A string of 0 or more space-seperated tags this Show relates to<br>
-     * credits: a 2D Array with keys member and credittype. member is Array of Users, credittype is Array of<br>
-     * corresponding credittypeids
-     * showtypeid: The ID of the type of show (see schedule.show_type). Defaults to "Show"
-     * location: The ID of the location the show will be in
-     * mixclouder: If true, the show will be published to Mixcloud after broadcast.
-     * Requires https://github.com/UniversityRadioYork/mixclouder.
+     * @param array $params An array of Show properties compatible with the Models/Scheduler/showfrm Form:
+     *                      title: The name of the show<br>
+     *                      description: The description of the show<br>
+     *                      genres: An array of 0 or more genre ids this Show is a member of<br>
+     *                      tags: A string of 0 or more space-seperated tags this Show relates to<br>
+     *                      credits: a 2D Array with keys member and credittype. member is Array of Users, credittype is Array of<br>
+     *                      corresponding credittypeids
+     *                      showtypeid: The ID of the type of show (see schedule.show_type). Defaults to "Show"
+     *                      location: The ID of the location the show will be in
+     *                      mixclouder: If true, the show will be published to Mixcloud after broadcast.
+     *                      Requires https://github.com/UniversityRadioYork/mixclouder.
      *
      * title, description, credits and credittypes are required fields.
      *
      * As this is the initial creation, all tags are <i>approved</i> by the submitted so the show has some initial values
      *
      * @todo   location (above) Is not in the Show creation form
+     *
      * @throws MyRadioException
      */
     public static function create($params = [])
@@ -234,7 +230,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $required = ['title', 'description', 'credits'];
         foreach ($required as $field) {
             if (!isset($params[$field])) {
-                throw new MyRadioException('Parameter ' . $field . ' was not provided.');
+                throw new MyRadioException('Parameter '.$field.' was not provided.');
             }
         }
 
@@ -310,7 +306,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
         //Set a location
         if (empty($params['location'])) {
-            /**
+            /*
              * Hardcoded default to Studio 1
              * @todo Location support
              */
@@ -323,13 +319,13 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             [
                 $show_id,
                 $params['location'],
-                $_SESSION['memberid']
+                $_SESSION['memberid'],
             ],
             true
         );
 
         //And now all that's left is who's on the show
-        for ($i = 0; $i < sizeof($params['credits']['member']); $i++) {
+        for ($i = 0; $i < sizeof($params['credits']['member']); ++$i) {
             //Skip blank entries
             if (empty($params['credits']['member'][$i])) {
                 continue;
@@ -342,7 +338,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     $show_id,
                     (int) $params['credits']['credittype'][$i],
                     $params['credits']['member'][$i]->getID(),
-                    $_SESSION['memberid']
+                    $_SESSION['memberid'],
                 ],
                 true
             );
@@ -353,7 +349,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
         $show = self::factory($show_id);
 
-        /**
+        /*
          * Enable mixcloud upload if requested
          */
         if ($params['mixclouder']) {
@@ -372,7 +368,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'editShow',
                 [
                     'debug' => true,
-                    'title' => 'Create Show'
+                    'title' => 'Create Show',
                 ]
             )
         )->addField(
@@ -383,7 +379,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'explanation' => 'Enter a name for your new show. Try and make it unique.',
-                    'label' => 'Show Name'
+                    'label' => 'Show Name',
                 ]
             )
         )->addField(
@@ -392,7 +388,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_BLOCKTEXT,
                 [
                     'explanation' => 'Describe your show as best you can. This goes on the public-facing website.',
-                    'label' => 'Description'
+                    'label' => 'Description',
                 ]
             )
         )->addField(
@@ -405,7 +401,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                         MyRadio_Scheduler::getGenres()
                     ),
                     'label' => 'Genre',
-                    'explanation' => 'What type of music do you play, if any?'
+                    'explanation' => 'What type of music do you play, if any?',
                 ]
             )
         )->addField(
@@ -414,7 +410,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Tags',
-                    'explanation' => 'A set of keywords to describe your show generally, seperated with spaces.'
+                    'explanation' => 'A set of keywords to describe your show generally, seperated with spaces.',
                 ]
             )
         )->addField(
@@ -432,7 +428,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                             MyRadioFormField::TYPE_MEMBER,
                             [
                                 'explanation' => '',
-                                'label' => 'Credit'
+                                'label' => 'Credit',
                             ]
                         ),
                         new MyRadioFormField(
@@ -444,10 +440,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                                     MyRadio_Scheduler::getCreditTypes()
                                 ),
                                 'explanation' => '',
-                                'label' => 'Role'
+                                'label' => 'Role',
                             ]
-                        )
-                    ]
+                        ),
+                    ],
                 ]
             )
         )->addField(
@@ -460,7 +456,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'explanation' => 'If ticked, your shows will automatically be uploaded to mixcloud',
                     'label' => 'Enable Mixcloud',
                     'options' => ['checked' => true],
-                    'required' => false
+                    'required' => false,
                 ]
             )
         );
@@ -489,7 +485,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                         },
                         $this->getCredits()
                     ),
-                    'mixclouder' => ($this->getMeta('upload_state') === 'Requested')
+                    'mixclouder' => ($this->getMeta('upload_state') === 'Requested'),
                 ]
             );
     }
@@ -538,6 +534,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     /**
      * Internally associates a Season with this Show.
      * Does not persist in database. Used for updating the cache.
+     *
      * @param int $id
      */
     public function addSeason($id)
@@ -552,18 +549,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
-     * Get the microsite URI
+     * Get the microsite URI.
      *
-     * @return String
+     * @return string
      */
     public function getWebpage()
     {
-        return '/schedule/shows/' . $this->getID();
+        return '/schedule/shows/'.$this->getID();
     }
 
     /**
-     * Get the web url for the Show Photo
-     * @return String
+     * Get the web url for the Show Photo.
+     *
+     * @return string
      */
     public function getShowPhoto()
     {
@@ -571,7 +569,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
-     * Returns the ID for the type of Show
+     * Returns the ID for the type of Show.
+     *
      * @return int
      */
     public function getShowType()
@@ -637,9 +636,9 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * set to the effective_from of this value, effectively replacing the existing value.
      * This will *not* unset is_multiple values that are not in the new set.
      *
-     * @param String $string_key     The metadata key
+     * @param string $string_key     The metadata key
      * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance for value in the array. for value in the array.
-     * for value in the array.
+     *                               for value in the array.
      * @param int    $effective_from UTC Time the metavalue is effective from. Default now.
      * @param int    $effective_to   UTC Time the metadata value is effective to. Default NULL (does not expire).
      * @param null   $table          Used for compatibility with parent.
@@ -667,7 +666,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
-     * Sets the Genre, if it hasn't changed
+     * Sets the Genre, if it hasn't changed.
+     *
      * @param int $genreid
      */
     public function setGenre($genreid)
@@ -709,20 +709,21 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     /**
      * Returns all Shows of the given type. Caches for 1h.
+     *
      * @return Array[MyRadio_Show]
      */
     public static function getAllShows($show_type_id = 1, $current_term_only = false)
     {
-        $key = 'MyRadio_Show_AllShowsFetcher_last_' . $show_type_id . '_' . (int) $current_term_only;
+        $key = 'MyRadio_Show_AllShowsFetcher_last_'.$show_type_id.'_'.(int) $current_term_only;
 
         $keys = self::$cache->get($key);
 
         if ($keys) {
             $shows = self::$cache->getAll($keys);
         } else {
-            $sql = self::BASE_SHOW_SQL . ' WHERE show_type_id=$1';
+            $sql = self::BASE_SHOW_SQL.' WHERE show_type_id=$1';
             $params = [$show_type_id];
-            if($current_term_only) {
+            if ($current_term_only) {
                 $sql .= ' AND EXISTS (
                             SELECT * FROM schedule.show_season
                             WHERE schedule.show_season.show_id=schedule.show.show_id
@@ -736,7 +737,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $shows = [];
             $show_keys = [];
             foreach ($result as $row) {
-                $show = new MyRadio_Show($row);
+                $show = new self($row);
                 $show->updateCacheObject();
                 $shows[] = $show;
                 $show_keys[] = self::getCacheKey($show->getID());
@@ -749,10 +750,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
-     * Find the most messaged shows
+     * Find the most messaged shows.
+     *
      * @param int $date If specified, only messages for timeslots since $date are counted.
+     *
      * @return array An array of 30 Shows that have been put through toDataSource, with the addition of a msg_count key,
-     * referring to the number of messages sent to that show.
+     *               referring to the number of messages sent to that show.
      */
     public static function getMostMessaged($date = 0)
     {
@@ -786,17 +789,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     {
         $timeslot = MyRadio_Timeslot::getCurrentTimeslot($time);
         if (empty($timeslot)) {
-            return null;
+            return;
         } else {
             return $timeslot->getSeason()->getShow();
         }
     }
 
     /**
-     * Find the most listened Shows
+     * Find the most listened Shows.
+     *
      * @param int $date If specified, only messages for timeslots since $date are counted.
+     *
      * @return array An array of 30 Timeslots that have been put through toDataSource, with the addition of a msg_count key,
-     * referring to the number of messages sent to that show.
+     *               referring to the number of messages sent to that show.
      */
     public static function getMostListened($date = 0)
     {
@@ -840,12 +845,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      *
      * @todo effective_from/to not yet implemented
      *
-     * @param String $query          The query value.
-     * @param Array  $string_keys    The metadata keys to search
+     * @param string $query          The query value.
+     * @param array  $string_keys    The metadata keys to search
      * @param int    $effective_from UTC Time to search from.
      * @param int    $effective_to   UTC Time to search to.
      *
-     * @return Array The shows that match the search terms
+     * @return array The shows that match the search terms
      */
     public static function searchMeta($query, $string_keys = null, $effective_from = null, $effective_to = null)
     {
@@ -854,6 +859,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         }
 
         $r = parent::searchMeta($query, $string_keys, $effective_from, $effective_to, 'schedule.show_metadata', 'show_id');
+
         return self::resultSetToObjArray($r);
     }
 
@@ -869,27 +875,27 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'display' => 'text',
                 'value' => $this->getNumberOfSeasons(),
                 'title' => 'Click to see Seasons for this show',
-                'url' => URLUtils::makeURL('Scheduler', 'listSeasons', ['showid' => $this->getID()])
+                'url' => URLUtils::makeURL('Scheduler', 'listSeasons', ['showid' => $this->getID()]),
             ],
             'editlink' => [
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Edit Show',
-                'url' => URLUtils::makeURL('Scheduler', 'editShow', ['showid' => $this->getID()])
+                'url' => URLUtils::makeURL('Scheduler', 'editShow', ['showid' => $this->getID()]),
             ],
             'applylink' => [
                 'display' => 'icon',
                 'value' => 'calendar',
                 'title' => 'Apply for a new Season',
-                'url' => URLUtils::makeURL('Scheduler', 'editSeason', ['showid' => $this->getID()])
+                'url' => URLUtils::makeURL('Scheduler', 'editSeason', ['showid' => $this->getID()]),
             ],
             'micrositelink' => [
                 'display' => 'icon',
                 'value' => 'link',
                 'title' => 'View Show Microsite',
-                'url' => $this->getWebpage()
+                'url' => $this->getWebpage(),
             ],
-            'photo' => $this->getShowPhoto()
+            'photo' => $this->getShowPhoto(),
         ];
 
         if ($full) {
@@ -902,6 +908,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 $this->getCredits()
             );
         }
+
         return $data;
     }
 }

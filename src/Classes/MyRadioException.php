@@ -1,20 +1,16 @@
 <?php
 
 /**
- * This file provides the MyRadioException class for MyRadio
- * @package MyRadio_Core
+ * This file provides the MyRadioException class for MyRadio.
  */
-
 namespace MyRadio;
 
-use \MyRadio\MyRadio\AuthUtils;
-use \MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\AuthUtils;
+use MyRadio\MyRadio\CoreUtils;
 
 /**
  * Extends the standard Exception class to provide additional functionality
- * and logging
- *
- * @package MyRadio_Core
+ * and logging.
  */
 class MyRadioException extends \RuntimeException
 {
@@ -46,8 +42,9 @@ class MyRadioException extends \RuntimeException
     }
 
     /**
-     * Extends the default session by enabling useful output
-     * @param String     $message  A nice message explaining what is going on
+     * Extends the default session by enabling useful output.
+     *
+     * @param string     $message  A nice message explaining what is going on
      * @param int        $code     A number representing the problem. -1 Indicates fatal.
      * @param \Exception $previous
      */
@@ -55,9 +52,10 @@ class MyRadioException extends \RuntimeException
     {
         parent::__construct((string) $message, (int) $code, $previous);
 
-        self::$count++;
+        ++self::$count;
         if (self::$count > Config::$exception_limit) {
             trigger_error('Exception limit exceeded. Futher exceptions will not be reported.');
+
             return;
         }
 
@@ -73,13 +71,13 @@ class MyRadioException extends \RuntimeException
                 <table class='errortable' style='color:#633'>
                   <tr><td>Message: </td><td>{$this->getMessage()}</td></tr>
                   <tr><td>Location: </td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
-                  <tr><td>Trace: </td><td>" . nl2br($this->traceStr) . "</td></tr>
-                </table>";
+                  <tr><td>Trace: </td><td>".nl2br($this->traceStr).'</td></tr>
+                </table>';
     }
 
     /**
-    * Called when the exception is not caught
-    */
+     * Called when the exception is not caught.
+     */
     public function uncaught()
     {
         $silent = (defined('SILENT_EXCEPTIONS') && SILENT_EXCEPTIONS);
@@ -103,12 +101,12 @@ class MyRadioException extends \RuntimeException
             ) {
                 MyRadioEmail::sendEmailToComputing(
                     '[MyRadio] Exception Thrown',
-                    'Code: ' . $this->code . "\r\n\r\n"
-                    . 'Message: ' . $this->message . "\r\n\r\n"
-                    . "Trace: \r\n" . $this->traceStr . "\r\n\r\n"
-                    . "Request: \r\n" . CoreUtils::getRequestInfo() . "\r\n\r\n"
-                    . "Session: \r\n"
-                    . (isset($_SESSION) ? print_r($_SESSION, true) : '')
+                    'Code: '.$this->code."\r\n\r\n"
+                    .'Message: '.$this->message."\r\n\r\n"
+                    ."Trace: \r\n".$this->traceStr."\r\n\r\n"
+                    ."Request: \r\n".CoreUtils::getRequestInfo()."\r\n\r\n"
+                    ."Session: \r\n"
+                    .(isset($_SESSION) ? print_r($_SESSION, true) : '')
                 );
             }
 
@@ -116,7 +114,7 @@ class MyRadioException extends \RuntimeException
                 // TODO make this create the dir - maybe use error_log?
                 file_put_contents(
                     Config::$log_file,
-                    CoreUtils::getTimestamp() . '[' . $this->code . '] ' . $this->message . "\n" . $this->traceStr . "\n\n",
+                    CoreUtils::getTimestamp().'['.$this->code.'] '.$this->message."\n".$this->traceStr."\n\n",
                     FILE_APPEND
                 );
             }
@@ -130,19 +128,19 @@ class MyRadioException extends \RuntimeException
             ) {
                 if ($is_ajax) {
                     //This is an Ajax/CLI request. Return JSON
-                    header('HTTP/1.1 ' . $this->code . ' ' . $this->getCodeName());
+                    header('HTTP/1.1 '.$this->code.' '.$this->getCodeName());
                     header('Content-Type: application/json');
                     echo json_encode(
                         [
                         'status' => 'MyRadioException',
                         'error' => $this->message,
                         'code' => $this->code,
-                        'trace' => $this->trace
+                        'trace' => $this->trace,
                         ]
                     );
                 } else {
                     //Output to the browser
-                    header('HTTP/1.1 ' . $this->code . ' ' . $this->getCodeName());
+                    header('HTTP/1.1 '.$this->code.' '.$this->getCodeName());
 
                     if (class_exists('\MyRadio\MyRadio\CoreUtils') && !headers_sent()) {
                         //We can use a pretty full-page output
@@ -160,13 +158,13 @@ class MyRadioException extends \RuntimeException
             } elseif (!$silent) {
                 if ($is_ajax) {
                     //This is an Ajax/CLI request. Return JSON
-                    header('HTTP/1.1 ' . $this->code . ' ' . $this->getCodeName());
+                    header('HTTP/1.1 '.$this->code.' '.$this->getCodeName());
                     header('Content-Type: application/json');
                     echo json_encode(
                         [
                         'status' => 'MyRadioError',
                         'error' => $this->message,
-                        'code' => $this->code
+                        'code' => $this->code,
                         ]
                     );
                     //Stick the details in the session in case the user wants to report it
@@ -174,11 +172,11 @@ class MyRadioException extends \RuntimeException
                 } else {
                     $error = '<div class="errortable">'
                         .'<p>Sorry, we have encountered an error and are unable to continue. Please try again later.</p>'
-                        .'<p>' . $this->message . '</p>'
+                        .'<p>'.$this->message.'</p>'
                         .'<p>Computing Team have been notified.</p>'
                         .'</div>';
                     //Output limited info to the browser
-                    header('HTTP/1.1 ' . $this->code . ' ' . $this->getCodeName());
+                    header('HTTP/1.1 '.$this->code.' '.$this->getCodeName());
 
                     if (class_exists('\MyRadio\MyRadio\CoreUtils') && !headers_sent()) {
                         //We can use a pretty full-page output
@@ -200,6 +198,7 @@ class MyRadioException extends \RuntimeException
 
     /**
      * Get the number of MyRadioExceptions that have been fired.
+     *
      * @return int
      */
     public static function getExceptionCount()

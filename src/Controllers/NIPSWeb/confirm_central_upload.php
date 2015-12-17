@@ -1,10 +1,7 @@
 <?php
 /**
- * Saves a cached upload into the URY Central Database
- *
- * @package MyRadio_NIPSWeb
+ * Saves a cached upload into the URY Central Database.
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 

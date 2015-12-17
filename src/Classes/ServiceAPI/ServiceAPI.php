@@ -1,35 +1,33 @@
 <?php
 /**
- * This file provides the ServiceAPI abstract class for MyRadio
- * @package MyRadio_Core
+ * This file provides the ServiceAPI abstract class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Iface\IServiceAPI;
-use \MyRadio\Iface\MyRadio_DataSource;
-
-use \MyRadio\Config;
-use \MyRadio\Database;
-use \MyRadio\MyRadioException;
+use MyRadio\Iface\IServiceAPI;
+use MyRadio\Iface\MyRadio_DataSource;
+use MyRadio\Config;
+use MyRadio\Database;
+use MyRadio\MyRadioException;
 
 /**
  * An Abstract superclass for ServiceAPI classes that implements essential
- * base functionality for full MyRadio integration
+ * base functionality for full MyRadio integration.
  *
- * @package MyRadio_Core
  * @uses    \Database
  * @uses    \CacheProvider
  */
 abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
 {
     /**
-     * All ServiceAPI subclasses will contain a reference to the Database Singleton
+     * All ServiceAPI subclasses will contain a reference to the Database Singleton.
+     *
      * @var \Database
      */
     protected static $db = null;
     /**
-     * All ServiceAPI subclasses will contain a reference to the CacheProvider Singleton
+     * All ServiceAPI subclasses will contain a reference to the CacheProvider Singleton.
+     *
      * @var \CacheProvider
      */
     protected static $cache = null;
@@ -37,7 +35,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
     protected $change = false;
 
     /**
-     * Start up the connection to the Database
+     * Start up the connection to the Database.
      */
     protected static function initDB()
     {
@@ -47,7 +45,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
     }
 
     /**
-     * Start up the connection to the CacheProvider
+     * Start up the connection to the CacheProvider.
      */
     protected static function initCache()
     {
@@ -58,7 +56,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
     }
 
     /**
-     * A magic function that will reload the Database and CacheProvider after the object has been loaded from Cache
+     * A magic function that will reload the Database and CacheProvider after the object has been loaded from Cache.
      */
     public function __wakeup()
     {
@@ -90,30 +88,35 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
     protected static function factory($itemid)
     {
         $class = get_called_class();
+
         return new $class($itemid);
     }
 
-    protected function addMixins(&$data, $mixins, $mixin_funcs, $strict = true) {
+    protected function addMixins(&$data, $mixins, $mixin_funcs, $strict = true)
+    {
         foreach ($mixins as $mixin) {
             if (array_key_exists($mixin, $mixin_funcs)) {
                 $mixin_funcs[$mixin]($data);
             } else {
-                throw new MyRadioException('Unsupported mixin ' . $mixin, 400);
+                throw new MyRadioException('Unsupported mixin '.$mixin, 400);
             }
         }
     }
 
     public function toDataSource($full = false)
     {
-        throw new MyRadioException(get_called_class() . ' has not had a DataSource Conversion Method Defined!', 500);
+        throw new MyRadioException(get_called_class().' has not had a DataSource Conversion Method Defined!', 500);
     }
 
     /**
      * Iteratively calls the toDataSource method on all of the objects in the given array, returning the results as
      * a new array.
-     * @param Array $array
+     *
+     * @param array $array
      * @param bool  $full  If true, will return expanded data if available.
-     * @return Array
+     *
+     * @return array
+     *
      * @throws MyRadioException Throws an Exception if a provided object is not a DataSource
      */
     public static function setToDataSource($array, $full = false)
@@ -140,8 +143,10 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
     }
 
     /**
-     * Takes an array of IDs, and creates an array of the relevant objects
+     * Takes an array of IDs, and creates an array of the relevant objects.
+     *
      * @param int[] $ids
+     *
      * @return ServiceAPI[]
      */
     public static function resultSetToObjArray($ids)
@@ -160,7 +165,6 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
 
     protected function __construct()
     {
-
     }
 
     public function __destruct()
@@ -172,14 +176,15 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
     }
 
     /**
-     * Generates the Key string for caching services
+     * Generates the Key string for caching services.
      *
-     * @param  int $id The ID of the object to get the cache key for
-     * @return String
+     * @param int $id The ID of the object to get the cache key for
+     *
+     * @return string
      */
     public static function getCacheKey($id)
     {
-        return get_called_class() . '-' . $id;
+        return get_called_class().'-'.$id;
     }
 
     /**

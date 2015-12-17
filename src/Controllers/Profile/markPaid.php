@@ -1,10 +1,7 @@
 <?php
 /**
-* Adds a User payment
-*
-* @package MyRadio_Profile
+* Adds a User payment.
 */
-
 use \MyRadio\Config;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;

@@ -1,10 +1,11 @@
 /* Obit */
-var Obit = function() {
+var Obit = function () {
     var button = document.createElement('button');
     button.className = 'btn btn-danger';
     button.innerHTML = 'Start Obituary Procedure';
     button.addEventListener(
-        'click', function() {
+        'click',
+        function () {
             window.open(myradio.makeURL('Scheduler', 'stop'), 'Stop Broadcast');
         }
     );
@@ -12,7 +13,7 @@ var Obit = function() {
     return {
         name: 'Stop Broadcast',
         type: 'plugin',
-        initialise: function() {
+        initialise: function () {
             this.appendChild(button);
         }
     }

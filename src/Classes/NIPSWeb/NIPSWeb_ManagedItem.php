@@ -1,21 +1,18 @@
 <?php
 /**
  * This file provides the NIPSWeb_ManagedItem class for MyRadio - these are Jingles, Beds, Adverts and others of a similar
- * ilk
- * @package MyRadio_NIPSWeb
+ * ilk.
  */
-
 namespace MyRadio\NIPSWeb;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\Config;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 /**
- * The NIPSWeb_ManagedItem class helps provide control and access to Beds and Jingles and similar not-PPL resources
+ * The NIPSWeb_ManagedItem class helps provide control and access to Beds and Jingles and similar not-PPL resources.
  *
- * @package MyRadio_NIPSWeb
  * @uses    \Database
  */
 class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
@@ -37,9 +34,11 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
     private $member;
 
     /**
-     * Initiates the ManagedItem variables
+     * Initiates the ManagedItem variables.
+     *
      * @param int                     $resid       The ID of the managed resource to initialise
      * @param NIPSWeb_ManagedPlaylist $playlistref If the playlist is requesting this item, then pass the playlist object
+     *
      * @todo Length, BPM
      * @todo Seperate Managed Items and Managed User Items. The way they were implemented was a horrible hack, for which
      * I am to blame. I should go to hell for it, seriously - Lloyd
@@ -65,21 +64,23 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
         }
 
         $this->managed_playlist = empty(
-            $result['managedplaylistid']) ? null :
+            $result['managedplaylistid']
+        ) ? null :
                 (($playlistref instanceof NIPSWeb_ManagedPlaylist) ? $playlistref :
                     NIPSWeb_ManagedPlaylist::getInstance($result['managedplaylistid'])
                 );
-                $this->folder = $result['folder'];
-                $this->title = $result['title'];
-                $this->length = strtotime('1970-01-01 '.$result['length']);
-                $this->bpm = (int) $result['bpm'];
-                $this->expirydate = strtotime($result['expirydate']);
-                $this->member = empty($result['memberid']) ? null : MyRadio_User::getInstance($result['memberid']);
+        $this->folder = $result['folder'];
+        $this->title = $result['title'];
+        $this->length = strtotime('1970-01-01 '.$result['length']);
+        $this->bpm = (int) $result['bpm'];
+        $this->expirydate = strtotime($result['expirydate']);
+        $this->member = empty($result['memberid']) ? null : MyRadio_User::getInstance($result['memberid']);
     }
 
     /**
-     * Get the Title of the ManagedItem
-     * @return String
+     * Get the Title of the ManagedItem.
+     *
+     * @return string
      */
     public function getTitle()
     {
@@ -87,7 +88,8 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get the unique manageditemid of the ManagedItem
+     * Get the unique manageditemid of the ManagedItem.
+     *
      * @return int
      */
     public function getID()
@@ -96,8 +98,10 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get the length of the ManagedItem, in seconds
+     * Get the length of the ManagedItem, in seconds.
+     *
      * @todo Not Implemented as Length not stored in DB
+     *
      * @return int
      */
     public function getLength()
@@ -106,8 +110,10 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get the path of the ManagedItem
-     * @param String $ext One of the supported file types
+     * Get the path of the ManagedItem.
+     *
+     * @param string $ext One of the supported file types
+     *
      * @return string
      */
     public function getPath($extension = 'mp3')
@@ -128,9 +134,11 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Returns an array of key information, useful for Twig rendering and JSON requests
+     * Returns an array of key information, useful for Twig rendering and JSON requests.
+     *
      * @todo Expand the information this returns
-     * @return Array
+     *
+     * @return array
      */
     public function toDataSource()
     {
@@ -142,7 +150,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
             'length' => CoreUtils::happyTime($this->getLength() > 0 ? $this->getLength() : 0, true, false),
             'trackid' => $this->getID(),
             'recordid' => 'ManagedDB', //Legacy NIPSWeb Views
-            'auxid' => 'managed:' . $this->getID() //Legacy NIPSWeb Views
+            'auxid' => 'managed:'.$this->getID(), //Legacy NIPSWeb Views
         ];
     }
 
@@ -155,17 +163,17 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
             mkdir(Config::$audio_upload_tmp_dir);
         }
 
-        $filename = session_id() . '-' . ++$_SESSION['myury_nipsweb_file_cache_counter'] . '.mp3';
+        $filename = session_id().'-'.++$_SESSION['myury_nipsweb_file_cache_counter'].'.mp3';
 
-        move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir . '/' . $filename);
+        move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir.'/'.$filename);
 
-        $getID3 = new \getID3;
-        $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir . '/' . $filename);
+        $getID3 = new \getID3();
+        $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir.'/'.$filename);
 
         //The entire $fileInfo array will break Session.
         $_SESSION['uploadInfo'][$filename] = [
             'fileformat' => $fileInfo['fileformat'],
-            'playtime_seconds' => $fileInfo['playtime_seconds']
+            'playtime_seconds' => $fileInfo['playtime_seconds'],
         ];
 
         // File quality checks
@@ -197,7 +205,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
             return ['status' => 'FAIL', 'error' => 'A database kerfuffle occured.', 'fileid' => $_REQUEST['fileid']];
         }
 
-        /**
+        /*
          * Store three versions of the track:
          * 1- 192kbps MP3 for BAPS and Chrome/IE
          * 2- 192kbps OGG for Safari/Firefox
@@ -237,14 +245,17 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Create a new NIPSWEB_ManagedItem with the provided options
-     * @param Array $options
-     * title (required): Title of the item.
-     * duration (required): Duration of the item, in seconds
-     * auxid (required): The auxid of the playlist
-     * bpm: The beats per minute of the item
-     * expires: The expiry date of the item
+     * Create a new NIPSWEB_ManagedItem with the provided options.
+     *
+     * @param array $options
+     *                       title (required): Title of the item.
+     *                       duration (required): Duration of the item, in seconds
+     *                       auxid (required): The auxid of the playlist
+     *                       bpm: The beats per minute of the item
+     *                       expires: The expiry date of the item
+     *
      * @return NIPSWEB_ManagedItem a shiny new NIPSWEB_ManagedItem with the provided options
+     *
      * @throws MyRadioException
      */
     public static function create($options)

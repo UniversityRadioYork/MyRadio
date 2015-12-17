@@ -1,5 +1,5 @@
 $(document).ready(
-    function() {
+    function () {
         planner = NIPSWeb(false);
         planner.initialiseUI();
         planner.initialisePlayer('0');

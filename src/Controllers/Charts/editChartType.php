@@ -1,9 +1,7 @@
 <?php
 /**
  * Allows the editing of chart types.
- * @package MyRadio_Charts
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_ChartType;
@@ -15,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $chart_type->setName($data['name'])->setDescription($data['description']);
 
     URLUtils::backWithMessage('Chart Type Updated.');
-
 } else {
     //Not Submitted
     if (!isset($_REQUEST['chart_type_id'])) {

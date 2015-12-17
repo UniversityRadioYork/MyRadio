@@ -1,22 +1,19 @@
 <?php
 
 /**
- * This file provides the MyRadio_Quote class for MyRadio
- * @package MyRadio_Core
+ * This file provides the MyRadio_Quote class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
 
 /**
  * A quote in the radio station Quotes Database.
  *
- * @package MyRadio_Core
  * @uses    \Database
  */
 class MyRadio_Quote extends ServiceAPI
@@ -75,30 +72,35 @@ class MyRadio_Quote extends ServiceAPI
 
     /**
      * The quote ID.
+     *
      * @var int
      */
     private $id;
 
     /**
      * The quote itself.
+     *
      * @var string
      */
     private $text;
 
     /**
      * The member who said the quote.
+     *
      * @var User
      */
     private $source;
 
     /**
      * The date of the quote, as a UNIX timestamp.
+     *
      * @var int
      */
     private $date;
 
     /**
      * The singleton store of all Quotes.
+     *
      * @var array
      */
     private static $quotes = [];
@@ -125,9 +127,9 @@ class MyRadio_Quote extends ServiceAPI
         }
 
         $this->id = (int) $quote_id;
-        $this->text   = $quote_data['text'];
+        $this->text = $quote_data['text'];
         $this->source = MyRadio_User::getInstance($quote_data['source']);
-        $this->date   = strtotime($quote_data['date']);
+        $this->date = strtotime($quote_data['date']);
     }
 
     /**
@@ -204,6 +206,7 @@ class MyRadio_Quote extends ServiceAPI
      *
      * @param  $data array  An array of data to populate the row with.
      *                     Must contain 'text', 'source' and 'date'.
+     *
      * @return nothing.
      */
     public function create($data)
@@ -213,7 +216,7 @@ class MyRadio_Quote extends ServiceAPI
             [
                 $data['text'],
                 $data['source']->getID(),
-                date('%c', intval($data['date'])) // Expecting UNIX timestamp
+                date('%c', intval($data['date'])), // Expecting UNIX timestamp
             ],
             true
         );
@@ -221,7 +224,9 @@ class MyRadio_Quote extends ServiceAPI
 
     /**
      * Sets this quote's text.
-     * @param  string $text The quote text.
+     *
+     * @param string $text The quote text.
+     *
      * @return MyRadio_Quote This object, for method chaining.
      */
     public function setText($text)
@@ -233,7 +238,9 @@ class MyRadio_Quote extends ServiceAPI
 
     /**
      * Sets this quote's source.
-     * @param  User $source The quote source.
+     *
+     * @param User $source The quote source.
+     *
      * @return MyRadio_Quote This object, for method chaining.
      */
     public function setSource($source)
@@ -245,7 +252,9 @@ class MyRadio_Quote extends ServiceAPI
 
     /**
      * Sets this quote's date.
-     * @param  int|string $date The date, as a UNIX timestamp or date string.
+     *
+     * @param int|string $date The date, as a UNIX timestamp or date string.
+     *
      * @return MyRadio_Quote This object, for method chaining.
      */
     public function setDate($date)
@@ -258,7 +267,7 @@ class MyRadio_Quote extends ServiceAPI
     /**
      * Sets a property on this quote.
      *
-     * @param string                                                 $sql The SQL to use for setting this property.
+     * @param string $sql The SQL to use for setting this property.
      * @param $value  The value of the property to set on this quote.
      *
      * @return MyRadio_Quote This object, for method chaining.
@@ -285,7 +294,7 @@ class MyRadio_Quote extends ServiceAPI
                 MyRadioFormField::TYPE_MEMBER,
                 [
                     'label' => 'Source',
-                    'explanation' => 'Which member said it?'
+                    'explanation' => 'Which member said it?',
                 ]
             )
         )->addField(
@@ -294,7 +303,7 @@ class MyRadio_Quote extends ServiceAPI
                 MyRadioFormField::TYPE_DATE,
                 [
                     'label' => 'Date',
-                    'explanation' => 'When did they say it?'
+                    'explanation' => 'When did they say it?',
                 ]
             )
         )->addField(
@@ -303,7 +312,7 @@ class MyRadio_Quote extends ServiceAPI
                 MyRadioFormField::TYPE_BLOCKTEXT,
                 [
                     'label' => 'Text',
-                    'explanation' => 'What was said?'
+                    'explanation' => 'What was said?',
                 ]
             )
         );
@@ -318,9 +327,9 @@ class MyRadio_Quote extends ServiceAPI
             ->editMode(
                 $this->getID(),
                 [
-                    'date'   => CoreUtils::happyTime($this->getDate(), false),
+                    'date' => CoreUtils::happyTime($this->getDate(), false),
                     'source' => $this->getSource(),
-                    'text'   => $this->getText()
+                    'text' => $this->getText(),
                 ]
             );
     }
@@ -339,7 +348,7 @@ class MyRadio_Quote extends ServiceAPI
             'text' => $this->getText(),
             'html' => [
                 'display' => 'html',
-                'html' => $this->getText()
+                'html' => $this->getText(),
             ],
             'editlink' => [
                 'display' => 'icon',
@@ -349,7 +358,7 @@ class MyRadio_Quote extends ServiceAPI
                     'Quotes',
                     'editQuote',
                     ['quote_id' => $this->getID()]
-                )
+                ),
             ],
         ];
     }

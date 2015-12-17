@@ -7,7 +7,7 @@ use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
-/**
+/*
  *
  * @date 20131230
  * @package MyRadio_Core
@@ -24,7 +24,7 @@ if (isset($_SESSION['memberid'])) {
             'MyRadio',
             'login',
             [
-                'title' => 'Login'
+                'title' => 'Login',
             ]
         )
     )->addField(
@@ -36,8 +36,8 @@ if (isset($_SESSION['memberid'])) {
                 'label' => 'Username:',
                 'options' => [
                     'placeholder' => 'abc123',
-                    'autofocus' => true
-                ]
+                    'autofocus' => true,
+                ],
             ]
         )
     )->addField(
@@ -46,7 +46,7 @@ if (isset($_SESSION['memberid'])) {
             MyRadioFormField::TYPE_PASSWORD,
             [
                 'explanation' => '',
-                'label' => 'Password:'
+                'label' => 'Password:',
             ]
         )
     )->addField(
@@ -54,7 +54,7 @@ if (isset($_SESSION['memberid'])) {
             'next',
             MyRadioFormField::TYPE_HIDDEN,
             [
-                'value' => isset($_REQUEST['next']) ? $_REQUEST['next'] : Config::$base_url
+                'value' => isset($_REQUEST['next']) ? $_REQUEST['next'] : Config::$base_url,
             ]
         )
     )->setTemplate('MyRadio/login.twig');
@@ -64,7 +64,7 @@ if (isset($_SESSION['memberid'])) {
         $status = null;
         $data = $form->readValues();
 
-        $raw_uname = str_replace('@' . Config::$eduroam_domain, '', $data['user']);
+        $raw_uname = str_replace('@'.Config::$eduroam_domain, '', $data['user']);
 
         $authenticators = [];
         foreach (Config::$authenticators as $i) {
@@ -83,7 +83,7 @@ if (isset($_SESSION['memberid'])) {
                     $status = 'wrongAuthProvider';
                 } else {
                     $_SESSION['memberid'] = (int) $user->getID();
-                    /**
+                    /*
                      * Add in permissions granted by the remote IP
                      * Contains or equals: >>=
                      */
@@ -142,7 +142,7 @@ if (isset($_SESSION['memberid'])) {
                     'name' => $a->getFriendlyName(),
                     'description' => $a->getDescription(),
                     'different' => !$success,
-                    'default' => false
+                    'default' => false,
                 ];
                 if ($success && !$chosen_default) {
                     $option['default'] = true;
@@ -160,7 +160,7 @@ if (isset($_SESSION['memberid'])) {
                 ->render(['error' => true]);
         } else {
             if (isset($data['next'])) {
-                header('Location: ' . $data['next']);
+                header('Location: '.$data['next']);
             } else {
                 URLUtils::redirect(Config::$default_module);
             }

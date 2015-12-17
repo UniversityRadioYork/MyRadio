@@ -1,26 +1,19 @@
 <?php
 
 /**
- * Provides the MyRadio_Swagger2 class for MyRadio
- * @package MyRadio_API
+ * Provides the MyRadio_Swagger2 class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \ReflectionMethod;
-use \ReflectionClass;
-use \ReflectionException;
-
-use \MyRadio\Config;
-use \MyRadio\Database;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\URLUtils;
+use ReflectionClass;
+use MyRadio\Config;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
 
 /**
- * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/
+ * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/.
  *
- * @package MyRadio_API
  * @uses    \Database
  *
  * @todo Detect Response Types
@@ -29,19 +22,23 @@ use \MyRadio\MyRadio\URLUtils;
 class MyRadio_Swagger2 extends MyRadio_Swagger
 {
     /**
-     * Returns if the given Authenticator can call the given Class/Method/Mixin combination
-     * @param \MyRadio\IFace\APICaller  $auth   The Authenticator to validate the request against
-     * @param String                    $class  The internal name of the class to validate against
-     * @param String                    $method The internal name of the method to validate against
-     * @param String[]                  $mixins For toDataSource requests, zero or more mixins to validate against
-     * @return boolean
+     * Returns if the given Authenticator can call the given Class/Method/Mixin combination.
+     *
+     * @param \MyRadio\IFace\APICaller $auth   The Authenticator to validate the request against
+     * @param string                   $class  The internal name of the class to validate against
+     * @param string                   $method The internal name of the method to validate against
+     * @param string[]                 $mixins For toDataSource requests, zero or more mixins to validate against
+     *
+     * @return bool
      */
-    private static function validateRequest($auth, $class, $method, $mixins) {
+    private static function validateRequest($auth, $class, $method, $mixins)
+    {
         return $auth->canCall($class, $method) &&
             ($method !== 'toDataSource' || $auth->canMixin($class, $mixins));
     }
 
-    private static function getArgs($op, $method, $arg0) {
+    private static function getArgs($op, $method, $arg0)
+    {
         $args = [];
 
         switch ($op) {
@@ -49,18 +46,18 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                 $args = $_GET;
                 break;
             case 'post':
-                if (substr_count($_SERVER["CONTENT_TYPE"],'application/json')) {
-                    $args = json_decode(file_get_contents("php://input"), true);
+                if (substr_count($_SERVER['CONTENT_TYPE'], 'application/json')) {
+                    $args = json_decode(file_get_contents('php://input'), true);
                 } else {
                     $args = $_POST;
                 }
                 break;
             case 'put':
                 //ya rly
-                if (substr_count($_SERVER["CONTENT_TYPE"],'application/json')) {
-                    $args = json_decode(file_get_contents("php://input"), true);
+                if (substr_count($_SERVER['CONTENT_TYPE'], 'application/json')) {
+                    $args = json_decode(file_get_contents('php://input'), true);
                 } else {
-                    parse_str(file_get_contents("php://input"), $args);
+                    parse_str(file_get_contents('php://input'), $args);
                 }
                 break;
         }
@@ -80,12 +77,13 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
     }
 
     /**
-     * Process an /api/v2 request
-     * @param string $op The HTTP request method (GET/PUT/POST/DELETE...)
-     * @param string $class The URI-name of the class being acted on
+     * Process an /api/v2 request.
+     *
+     * @param string $op     The HTTP request method (GET/PUT/POST/DELETE...)
+     * @param string $class  The URI-name of the class being acted on
      * @param string $method The URI-name of the method being acted on
-     * @param mixed  $id The ID of the item being acted on, if the method is non-static
-     * @param mixed  $arg0 The value of the parameter after the method name, if there is one
+     * @param mixed  $id     The ID of the item being acted on, if the method is non-static
+     * @param mixed  $arg0   The value of the parameter after the method name, if there is one
      */
     public static function handleRequest($op, $class, $method, $id = null, $arg0 = null)
     {
@@ -95,28 +93,28 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             throw new MyRadioException("$class endpoint does not exist.", 404);
         }
 
-        $refClass = new MyRadio_Swagger2($classes[$class]);
+        $refClass = new self($classes[$class]);
         $paths = $refClass->getClassInfo()['children'];
 
         $path = '';
         if ($id) {
-            $path = $path . '/{id}';
+            $path = $path.'/{id}';
         }
         if ($method) {
-            $path = $path . '/' . $method;
+            $path = $path.'/'.$method;
         }
 
         if ($arg0) {
             // array_filter($paths, func, ARRAY_FILTER_USE_KEY) is not running func for me...
             $options = [];
             foreach (array_keys($paths) as $key) {
-                if (strpos($key, $path . '/{') === 0) {
+                if (strpos($key, $path.'/{') === 0) {
                     $options[] = $key;
                 }
             }
 
             if (sizeof($options) > 1) {
-                throw new MyRadioException("Ambiguous path.", 404);
+                throw new MyRadioException('Ambiguous path.', 404);
             } elseif (sizeof($options) === 1) {
                 $path = $options[0];
             }
@@ -126,13 +124,12 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             throw new MyRadioException("$class has no child $method.", 404);
         }
 
-
-        $options = strtoupper(implode(', ', array_keys($paths[$path]))) . ', OPTIONS';
+        $options = strtoupper(implode(', ', array_keys($paths[$path]))).', OPTIONS';
         if ($op === 'options') {
-            header('Access-Control-Allow-Methods: ' . $options); // This is for CORS in browser
+            header('Access-Control-Allow-Methods: '.$options); // This is for CORS in browser
             URLUtils::nocontent();
         } elseif (!isset($paths[$path][$op])) {
-            header('Allow: ' . $options); // This is reference for HTTP 405
+            header('Allow: '.$options); // This is reference for HTTP 405
             throw new MyRadioException("$path does not have a valid $op handler.", 405);
         }
 
@@ -168,6 +165,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             if ($sample_obj && !$caller->canMixin(get_class($sample_obj), $args['mixins'])) {
                 throw new MyRadioException('Caller cannot access this method.', 403);
             }
+
             return $data;
         } else {
             throw new MyRadioException('Caller cannot access this method.', 403);
@@ -175,20 +173,20 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
     }
 
     /**
-     * THIS HALF DEALS WITH RESOURCES LISTING
+     * THIS HALF DEALS WITH RESOURCES LISTING.
      */
     public static function resources()
     {
         $apis = self::getApis();
         $data = [
             'swagger' => '2.0',
-            'basePath' => Config::$api_uri . 'v2',
+            'basePath' => Config::$api_uri.'v2',
             'host' => $_SERVER['HTTP_HOST'],
             'info' => [
                 'title' => 'MyRadio API',
                 'description' => 'The MyRadio API provides vaguely RESTful access to many of the internal workings of your friendly local radio station.',
                 'termsOfService' => 'The use of this API is permitted only for applications which have been issued an API key, and only then within the additional Terms of Service issued with that application\'s key. Any other use is strictly prohibited. The MyRadio API may be used for good, but not evil. The lighter 15 of the 50 grey areas are also permitted for all authorised applications.',
-                'version' => '2.0'
+                'version' => '2.0',
             ],
             'schemes' => ['https'],
             'consumes' => [],
@@ -201,7 +199,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     'in' => 'path',
                     'description' => 'The ID of the item to work with.',
                     'required' => true,
-                    'type' => 'integer'
+                    'type' => 'integer',
                 ],
                 'dataSourceFull' => [
                     'name' => 'full',
@@ -209,14 +207,14 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     'description' => 'Deprecated. Used to return more details in object GETs.',
                     'required' => false,
                     'type' => 'boolean',
-                    'default' => false
-                ]
+                    'default' => false,
+                ],
             ],
             'responses' => [
                 'invalidInput' => [
-                    'description' => 'Invalid input for this operation.'
-                ]
-            ]
+                    'description' => 'Invalid input for this operation.',
+                ],
+            ],
         ];
 
         return $data;
@@ -224,7 +222,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
     private static function getApis()
     {
-        return json_decode(file_get_contents(__DIR__ . '/../../../schema/api.json'), true);
+        return json_decode(file_get_contents(__DIR__.'/../../../schema/api.json'), true);
     }
 
     private static function getParameters($method, $doc, $op)
@@ -233,7 +231,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
         if (!$method->isStatic()) {
             $parameters[] = [
-                '$ref' => '#/parameters/idParam'
+                '$ref' => '#/parameters/idParam',
             ];
         }
 
@@ -251,14 +249,14 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     'type' => 'array',
                     'items' => [
                         'type' => 'string',
-                        'format' => 'string'
+                        'format' => 'string',
                     ],
                     'collectionFormat' => 'csv',
-                    'default' => []
+                    'default' => [],
                 ];
             } else {
                 $parameters[] = [
-                    '$ref' => '#/parameters/dataSourceFull'
+                    '$ref' => '#/parameters/dataSourceFull',
                 ];
             }
         } else {
@@ -273,12 +271,12 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     'in' => 'path',
                     'description' => self::getParamDescription($param, $doc),
                     'required' => true,
-                    'type' => self::getParamType($param, $doc)
+                    'type' => self::getParamType($param, $doc),
                 ];
-                $startIdx++;
+                ++$startIdx;
             }
 
-            for ($i = $startIdx; $i < sizeof($paramReflectors); $i++) {
+            for ($i = $startIdx; $i < sizeof($paramReflectors); ++$i) {
                 $param = $paramReflectors[$i];
                 $parameters[] = [
                     'name' => $param->getName(),
@@ -286,10 +284,9 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     'description' => self::getParamDescription($param, $doc),
                     'required' => !$param->isOptional(),
                     'type' => self::getParamType($param, $doc),
-                    'default' => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null
+                    'default' => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null,
                 ];
             }
-
         }
 
         return $parameters;
@@ -302,27 +299,26 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
         $paths = $cache->get('api_pathmap_v2');
         if (!$paths) {
-             $paths = [];
+            $paths = [];
 
             foreach ($apis as $class => $public_name) {
-                $api = new MyRadio_Swagger2($class);
+                $api = new self($class);
 
                 foreach ($api->getClassInfo()['children'] as $method_name => $child) {
-
                     foreach ($child as $op => $reflector) {
                         $data = self::getMethodDoc($reflector);
 
-                        $paths['/' . $public_name . $method_name][$op] = [
+                        $paths['/'.$public_name.$method_name][$op] = [
                             'summary' => $data['short_desc'],
                             'description' => $data['long_desc'],
                             'tags' => [$public_name],
-                            'operationId' => $class . ':' . $reflector->getName(),
+                            'operationId' => $class.':'.$reflector->getName(),
                             'parameters' => self::getParameters($reflector, $data, $op),
                             'responses' => [
-                                '400' => ['$ref' => '#/responses/invalidInput']
+                                '400' => ['$ref' => '#/responses/invalidInput'],
                             ],
                             'deprecated' => $data['deprecated'],
-                            'security' => []
+                            'security' => [],
                         ];
                     }
                 }
@@ -339,11 +335,11 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         $tags = [];
 
         foreach ($apis as $class => $public_name) {
-            $api = new MyRadio_Swagger2($class);
+            $api = new self($class);
 
             $tag = [
-                "name" => $public_name,
-                "description" => $api->getClassInfo()['description']
+                'name' => $public_name,
+                'description' => $api->getClassInfo()['description'],
             ];
 
             $tags[] = $tag;
@@ -361,12 +357,12 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             'removeInstance',
             '__toString',
             'setToDataSource',
-            '__construct'
+            '__construct',
         ];
 
         $data = [
             'description' => '',
-            'children' => []
+            'children' => [],
         ];
 
         $refClass = new ReflectionClass($this->class);
@@ -374,8 +370,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         $data['description'] = self::getClassDoc($refClass)['short_desc'];
 
         foreach ($refClass->getMethods() as $method) {
-            if (
-                (!$method->isPublic())
+            if ((!$method->isPublic())
                 || in_array($method->getName(), $blocked_methods)
                 || substr($method->getName(), strlen($method->getName()) - 4) === 'Form'
                 ) {
@@ -389,39 +384,39 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                 $public_name = '';
             } elseif (CoreUtils::startsWith($name, 'set')) {
                 $op = 'put';
-                $public_name = '/' . strtolower(substr($name, 3));
+                $public_name = '/'.strtolower(substr($name, 3));
             } elseif (CoreUtils::startsWith($name, 'get')) {
                 $op = 'get';
-                $public_name = '/' . strtolower(substr($name, 3));
+                $public_name = '/'.strtolower(substr($name, 3));
             } elseif (CoreUtils::startsWith($name, 'is')) {
                 $op = 'get';
-                $public_name = '/' . strtolower($name);
+                $public_name = '/'.strtolower($name);
             } elseif ($name === 'create') {
                 $op = 'post';
                 $public_name = '';
             } elseif ($name === 'testCredentials') {
                 $op = 'post';
-                $public_name = '/' . strtolower($name);
+                $public_name = '/'.strtolower($name);
             } elseif (CoreUtils::startsWith($name, 'create')) {
                 $op = 'post';
-                $public_name = '/' . strtolower($name);
+                $public_name = '/'.strtolower($name);
             } elseif (CoreUtils::startsWith($name, 'add')) {
                 $op = 'post';
-                $public_name = '/' . strtolower($name);
+                $public_name = '/'.strtolower($name);
             } elseif ($method->isStatic()) {
                 $op = 'get';
-                $public_name = '/' . strtolower($name);
+                $public_name = '/'.strtolower($name);
             } else {
                 $op = 'put';
-                $public_name = '/' . strtolower($name);
+                $public_name = '/'.strtolower($name);
             }
 
             if (!$method->isStatic()) {
-                $public_name = '/{id}' . $public_name;
+                $public_name = '/{id}'.$public_name;
             }
 
             if ($op === 'get' && $method->getNumberOfRequiredParameters() === 1) {
-                $public_name .= '/{' . $method->getParameters()[0]->getName() . '}';
+                $public_name .= '/{'.$method->getParameters()[0]->getName().'}';
             }
 
             $data['children'][$public_name][$op] = $method;

@@ -1,8 +1,6 @@
 <?php
 /**
- * View an Officer
- *
- * @package MyRadio_Profile
+ * View an Officer.
  */
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Officer;

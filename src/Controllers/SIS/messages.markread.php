@@ -1,10 +1,7 @@
 <?php
 /**
- * Message Mark Reader for SIS
- *
- * @package MyRadio_SIS
+ * Message Mark Reader for SIS.
  */
-
 use \MyRadio\SIS\SIS_Messages;
 
 SIS_Messages::setMessageStatus(intval($_GET['id']), SIS_Messages::MSG_STATUS_READ);

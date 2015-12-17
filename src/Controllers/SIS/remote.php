@@ -1,10 +1,7 @@
 <?php
 /**
- * Comet Server Handler for SIS
- *
- * @package MyRadio_SIS
+ * Comet Server Handler for SIS.
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\SIS\SIS_Utils;
 use \MyRadio\Config;
@@ -27,7 +24,7 @@ do {
         }
     }
     sleep(1);
-    $count++;
+    ++$count;
 } while (empty($data) && $count < 50);
 
 //Return the response data

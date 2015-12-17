@@ -1,22 +1,20 @@
 #!/usr/local/bin/php -q
 <?php
 /**
- * This is the Email Pipe Controller - it will read in emails piped to it and do MyRadio things with them
+ * This is the Email Pipe Controller - it will read in emails piped to it and do MyRadio things with them.
  *
  * - if it's sent to a certain mailing list, it'll put it in the archives
  *
- * @package MyRadio_Mail
  * @uses    \Database
  * @uses    \CoreUtils
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_List;
 
 define('SILENT_EXCEPTIONS', true);
-ini_set("log_errors", 1);
-ini_set("error_log", "/tmp/php-mailparser-error.log");
+ini_set('log_errors', 1);
+ini_set('error_log', '/tmp/php-mailparser-error.log');
 ini_set('display_errors', 'Off');
 
 require_once __DIR__.'/root_cli.php';

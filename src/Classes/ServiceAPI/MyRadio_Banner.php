@@ -1,58 +1,61 @@
 <?php
 
 /**
- * This file provides the Banner class for MyRadio
- * @package MyRadio_Website
+ * This file provides the Banner class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\Config;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
 
 /**
- * The Banner class stores and manages information about a Banner on the front website
+ * The Banner class stores and manages information about a Banner on the front website.
  *
- * @package MyRadio_Website
  * @uses    \Database
  */
 class MyRadio_Banner extends MyRadio_Photo
 {
     /**
-     * The ID of the banner
+     * The ID of the banner.
+     *
      * @var int
      */
     private $banner_id;
 
     /**
-     * A short text description of the banner
-     * @var String
+     * A short text description of the banner.
+     *
+     * @var string
      */
     private $alt;
 
     /**
      * URL target of the banner. Activated when banner is clicked.
-     * @var String
+     *
+     * @var string
      */
     private $target;
 
     /**
      * Banner type. No idea what this is, and there's only one type.
+     *
      * @var int
      */
     private $type = 2;
 
     /**
-     * IDs of Campaigns that use this Banner
+     * IDs of Campaigns that use this Banner.
+     *
      * @var int[]
      */
     private $campaigns = [];
 
     /**
-     * Initiates the MyRadio_Banner object
+     * Initiates the MyRadio_Banner object.
+     *
      * @param int $banner_id The ID of the Banner to initialise
      */
     protected function __construct($banner_id)
@@ -61,7 +64,7 @@ class MyRadio_Banner extends MyRadio_Photo
 
         $result = self::$db->fetchOne('SELECT * FROM website.banner WHERE banner_id=$1', [$banner_id]);
         if (empty($result)) {
-            throw new MyRadioException('Banner ' . $banner_id . ' does not exist!');
+            throw new MyRadioException('Banner '.$banner_id.' does not exist!');
         }
 
         $this->alt = $result['alt'];
@@ -93,21 +96,22 @@ class MyRadio_Banner extends MyRadio_Photo
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Click here to edit this Banner',
-                'url' => URLUtils::makeURL('Website', 'editBanner', ['bannerid' => $this->getBannerID()])
+                'url' => URLUtils::makeURL('Website', 'editBanner', ['bannerid' => $this->getBannerID()]),
             ],
             'campaigns_link' => [
                 'display' => 'icon',
                 'value' => 'calendar',
                 'title' => 'Click here to view the Campaigns for this Banner',
-                'url' => URLUtils::makeURL('Website', 'campaigns', ['bannerid' => $this->getBannerID()])
-            ]
+                'url' => URLUtils::makeURL('Website', 'campaigns', ['bannerid' => $this->getBannerID()]),
+            ],
         ];
 
         return array_merge(parent::toDataSource(), $data);
     }
 
     /**
-     * Get the ID of the Banner
+     * Get the ID of the Banner.
+     *
      * @return int
      */
     public function getBannerID()
@@ -116,8 +120,9 @@ class MyRadio_Banner extends MyRadio_Photo
     }
 
     /**
-     * Get a description of the Banner
-     * @return String
+     * Get a description of the Banner.
+     *
+     * @return string
      */
     public function getAlt()
     {
@@ -125,8 +130,9 @@ class MyRadio_Banner extends MyRadio_Photo
     }
 
     /**
-     * Get the link action of the Banner
-     * @return String
+     * Get the link action of the Banner.
+     *
+     * @return string
      */
     public function getTarget()
     {
@@ -134,7 +140,8 @@ class MyRadio_Banner extends MyRadio_Photo
     }
 
     /**
-     * Get the type of the Banner
+     * Get the type of the Banner.
+     *
      * @return int
      */
     public function getType()
@@ -143,7 +150,8 @@ class MyRadio_Banner extends MyRadio_Photo
     }
 
     /**
-     * Get all the campaigns that this Banner has
+     * Get all the campaigns that this Banner has.
+     *
      * @return MyRadio_BannerCampaign[]
      */
     public function getCampaigns()
@@ -152,8 +160,9 @@ class MyRadio_Banner extends MyRadio_Photo
     }
 
     /**
-     * Get if any Campaigns linked to this Banner are active
-     * @return boolean
+     * Get if any Campaigns linked to this Banner are active.
+     *
+     * @return bool
      */
     public function isActive()
     {
@@ -174,15 +183,18 @@ class MyRadio_Banner extends MyRadio_Photo
                 [
                     'alt' => $this->getAlt(),
                     'target' => $this->getTarget(),
-                    'type' => $this->getType()
+                    'type' => $this->getType(),
                 ]
             );
     }
 
     /**
-     * Set the Alt text
-     * @param  String $alt
+     * Set the Alt text.
+     *
+     * @param string $alt
+     *
      * @return \MyRadio_Banner
+     *
      * @throws MyRadioException
      */
     public function setAlt($alt)
@@ -197,8 +209,10 @@ class MyRadio_Banner extends MyRadio_Photo
     }
 
     /**
-     * Set the Target URL
-     * @param  String $target
+     * Set the Target URL.
+     *
+     * @param string $target
+     *
      * @return \MyRadio_Banner
      */
     public function setTarget($target)
@@ -210,9 +224,12 @@ class MyRadio_Banner extends MyRadio_Photo
     }
 
     /**
-     * Set the Banner Type
-     * @param  int $type
+     * Set the Banner Type.
+     *
+     * @param int $type
+     *
      * @return \MyRadio_Banner
+     *
      * @throws MyRadioException
      */
     public function setType($type)
@@ -228,8 +245,10 @@ class MyRadio_Banner extends MyRadio_Photo
     }
 
     /**
-     * Set the Banner Photo
-     * @param  MyRadio_Photo $photo
+     * Set the Banner Photo.
+     *
+     * @param MyRadio_Photo $photo
+     *
      * @return \MyRadio_Banner
      */
     public function setPhoto(MyRadio_Photo $photo)
@@ -244,12 +263,15 @@ class MyRadio_Banner extends MyRadio_Photo
     }
 
     /**
-     * Creates a banner
-     * @param  MyRadio_Photo $photo  The Photo this banner will use. Must be 640x212px.
-     * @param  String        $alt    Friendly name. Used on backend and as 'alt' text.
-     * @param  String        $target URL clicking the banner takes you to. Should be absolute.
-     * @param  int           $type   The type of banner. Currently, there's only one type, intuitively called 2.
-     * @return MyRadio_Banner   The new Banner, of course!
+     * Creates a banner.
+     *
+     * @param MyRadio_Photo $photo  The Photo this banner will use. Must be 640x212px.
+     * @param string        $alt    Friendly name. Used on backend and as 'alt' text.
+     * @param string        $target URL clicking the banner takes you to. Should be absolute.
+     * @param int           $type   The type of banner. Currently, there's only one type, intuitively called 2.
+     *
+     * @return MyRadio_Banner The new Banner, of course!
+     *
      * @throws MyRadioException
      */
     public static function create(MyRadio_Photo $photo, $alt = 'Unnamed Banner', $target = null, $type = 2)
@@ -264,7 +286,8 @@ class MyRadio_Banner extends MyRadio_Photo
     }
 
     /**
-     * Get ALL the Banners
+     * Get ALL the Banners.
+     *
      * @return MyRadio_Banner[]
      */
     public static function getAllBanners()
@@ -275,6 +298,7 @@ class MyRadio_Banner extends MyRadio_Photo
     /**
      * Gets all Banners that are currently active. That is, they have started and have not expired.
      * It returns them even when there isn't currently a Banner Timeslot for the Campaign running.
+     *
      * @return MyRadio_Banner[]
      */
     public static function getActiveBanners()
@@ -283,11 +307,13 @@ class MyRadio_Banner extends MyRadio_Photo
         foreach (MyRadio_BannerCampaign::getActiveBannerCampaigns() as $campaign) {
             $result[] = $campaign->getBanner();
         }
+
         return $result;
     }
 
     /**
      * Gets all Banners that are currently live. That is they are active and have timeslots at the current time.
+     *
      * @return MyRadio_Banner[]
      */
     public static function getLiveBanners()
@@ -296,6 +322,7 @@ class MyRadio_Banner extends MyRadio_Photo
         foreach (MyRadio_BannerCampaign::getLiveBannerCampaigns() as $campaign) {
             $result[] = $campaign->getBanner();
         }
+
         return $result;
     }
 
@@ -305,37 +332,47 @@ class MyRadio_Banner extends MyRadio_Photo
     }
 
     /**
-     * Generates the form used to Create and Edit Banners
+     * Generates the form used to Create and Edit Banners.
+     *
      * @return MyRadio_Form
      */
     public static function getForm()
     {
         return (new MyRadioForm(
-            'bannerfrm', 'Website', 'editBanner', [
+            'bannerfrm',
+            'Website',
+            'editBanner',
+            [
             'title' => 'Edit Banner',
-            'template' => 'Website/bannerfrm.twig'
+            'template' => 'Website/bannerfrm.twig',
             ]
         ))
                 ->addField(
                     new MyRadioFormField(
-                        'alt', MyRadioFormField::TYPE_TEXT, [
+                        'alt',
+                        MyRadioFormField::TYPE_TEXT,
+                        [
                         'label' => 'Title',
-                        'explanation' => 'This is used on the backpages to identify the Banner, and also on the main website as mouseover text.'
+                        'explanation' => 'This is used on the backpages to identify the Banner, and also on the main website as mouseover text.',
                         ]
                     )
                 )
                 ->addField(
                     new MyRadioFormField(
-                        'target', MyRadioFormField::TYPE_TEXT, [
+                        'target',
+                        MyRadioFormField::TYPE_TEXT,
+                        [
                         'label' => 'Action',
                         'explanation' => 'This is the URL that the User will be taken to if they click the Banner. You can leave this blank for there to not be a link.',
-                        'required' => false
+                        'required' => false,
                         ]
                     )
                 )
                 ->addField(
                     new MyRadioFormField(
-                        'type', MyRadioFormField::TYPE_SELECT, [
+                        'type',
+                        MyRadioFormField::TYPE_SELECT,
+                        [
                         'label' => 'Type',
                         'explanation' => 'TODO: Ask Matt what this is even supposed to do.',
                         'options' => array_map(
@@ -343,15 +380,17 @@ class MyRadio_Banner extends MyRadio_Photo
                                 return ['value' => $x['banner_type_id'], 'text' => $x['description']];
                             },
                             self::getBannerTypes()
-                        )
+                        ),
                         ]
                     )
                 )
                 ->addField(
                     new MyRadioFormField(
-                        'photo', MyRadioFormField::TYPE_FILE, [
+                        'photo',
+                        MyRadioFormField::TYPE_FILE,
+                        [
                         'label' => 'Image',
-                        'explanation' => 'Please upload a 680x230px image file to use as the Banner.'
+                        'explanation' => 'Please upload a 680x230px image file to use as the Banner.',
                         ]
                     )
                 );

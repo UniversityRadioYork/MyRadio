@@ -1,78 +1,85 @@
 <?php
 
 /**
- * This file provides the MyRadio_TrackCorrection class for MyRadio
- * @package MyRadio_Core
+ * This file provides the MyRadio_TrackCorrection class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\URLUtils;
+use MyRadio\Config;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\URLUtils;
 
 /**
  * The MyRadio_TrackCorrection class provides information and utilities for dealing with detecting a major issue
  * with the track metadata by the FingerprinterDaemon.
  *
- * @package MyRadio_Core
  * @uses    \Database
+ *
  * @todo    Cache this
  */
 class MyRadio_TrackCorrection extends MyRadio_Track
 {
     /**
-     * A "recommended" correction proposal is one that is almost certainly correct, e.g. typo
+     * A "recommended" correction proposal is one that is almost certainly correct, e.g. typo.
      */
     const LEVEL_RECOMMEND = 1;
     /**
-     * A "suggested" correction proposal is one that is possibly correct, e.g. incorrect information
+     * A "suggested" correction proposal is one that is possibly correct, e.g. incorrect information.
      */
     const LEVEL_SUGGEST = 0;
 
     /**
-     * The proposed title for the track
-     * @var String
+     * The proposed title for the track.
+     *
+     * @var string
      */
     private $proposed_title;
     /**
-     * The proposed artist for the track
-     * @var String
+     * The proposed artist for the track.
+     *
+     * @var string
      */
     private $proposed_artist;
     /**
      * The proposed album name for the track. This is *now* a MyRadio_Album - The album may not exist yet.
-     * @var String
+     *
+     * @var string
      */
     private $proposed_album_name;
 
     /**
      * The ID of the Track Correction Proposal.
+     *
      * @var int
      */
     private $correctionid;
 
     /**
      * The User that has reviewed this Correction, if any.
+     *
      * @var null:User
      */
     private $reviewedby;
 
     /**
-     * The recommendation level - one of the LEVEL_ constants
+     * The recommendation level - one of the LEVEL_ constants.
+     *
      * @var int
      */
     private $level;
 
     /**
-     * The state of the correction (p)ending, (a)pproved or (r)ejected
-     * @var String
+     * The state of the correction (p)ending, (a)pproved or (r)ejected.
+     *
+     * @var string
      */
     private $state;
 
     /**
-     * Initiates the Track variables
+     * Initiates the Track variables.
+     *
      * @param int $correctionid The ID of the track correction proposal to initialise
+     *
      * @todo Genre class
      * @todo Artist normalisation
      */
@@ -100,11 +107,13 @@ class MyRadio_TrackCorrection extends MyRadio_Track
     }
 
     /**
-     * Creates a new MyRadio_TrackCorrection Proposal
+     * Creates a new MyRadio_TrackCorrection Proposal.
+     *
      * @param MyRadio_Track $track      The Track to correct
-     * @param String        $title      The proposed Title
-     * @param String        $artist     The proposed Artist
-     * @param String        $album_name The proposed Album
+     * @param string        $title      The proposed Title
+     * @param string        $artist     The proposed Artist
+     * @param string        $album_name The proposed Album
+     *
      * @return MyRadio_TrackCorrection The New Correction object
      */
     public static function create(
@@ -124,11 +133,13 @@ class MyRadio_TrackCorrection extends MyRadio_Track
         if (empty($r)) {
             return false;
         }
+
         return self::getInstance((int) $r[0]);
     }
 
     /**
-     * Get a random "Pending" track correction proposal, or null if there are no proposals
+     * Get a random "Pending" track correction proposal, or null if there are no proposals.
+     *
      * @return MyRadio_TrackCorrection|null
      */
     public static function getRandom()
@@ -139,8 +150,9 @@ class MyRadio_TrackCorrection extends MyRadio_Track
         );
 
         if (empty($result)) {
-            return null;
+            return;
         }
+
         return self::getInstance($result[0]);
     }
 
@@ -176,8 +188,11 @@ class MyRadio_TrackCorrection extends MyRadio_Track
 
     /**
      * Apply the proposed correction to the original rec_track entry.
+     *
      * @param bool $ignore_album If true, the album will not be changed.
-     * @return boolean
+     *
+     * @return bool
+     *
      * @todo Does the Cache need updating anywhere?
      */
     public function apply($ignore_album = false)
@@ -212,9 +227,11 @@ class MyRadio_TrackCorrection extends MyRadio_Track
     }
 
     /**
-     * Returns an array of key information, useful for Twig rendering and JSON requests
+     * Returns an array of key information, useful for Twig rendering and JSON requests.
+     *
      * @todo Expand the information this returns
-     * @return Array
+     *
+     * @return array
      */
     public function toDataSource()
     {
@@ -233,21 +250,20 @@ class MyRadio_TrackCorrection extends MyRadio_Track
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Edit Track Manually',
-                'url' => URLUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()])
+                'url' => URLUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()]),
             ],
             'confirmlink' => [
                 'display' => 'icon',
                 'value' => 'ok',
                 'title' => 'Approve Track Correction',
-                'url' => URLUtils::makeURL('Library', 'acceptTrackCorrection', ['correctionid' => $this->getCorrectionID()])
-            ]
-            ,
+                'url' => URLUtils::makeURL('Library', 'acceptTrackCorrection', ['correctionid' => $this->getCorrectionID()]),
+            ],
             'rejectlink' => [
                 'display' => 'icon',
                 'value' => 'trash',
                 'title' => 'Reject Track Correction',
-                'url' => URLUtils::makeURL('Library', 'rejectTrackCorrection', ['correctionid' => $this->getCorrectionID()])
-            ]
+                'url' => URLUtils::makeURL('Library', 'rejectTrackCorrection', ['correctionid' => $this->getCorrectionID()]),
+            ],
         ];
     }
 }

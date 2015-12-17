@@ -1,22 +1,19 @@
 <?php
 /**
- * This file provides the Demo class for MyRadio
- * @package MyRadio_Demo
+ * This file provides the Demo class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
-use \MyRadio\MyRadioEmail;
+use MyRadio\Config;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\MyRadioEmail;
 
 /**
- * Abstractor for the Demo utilities
+ * Abstractor for the Demo utilities.
  *
- * @package MyRadio_Demo
  * @uses    \Database
  */
 class MyRadio_Demo extends MyRadio_Metadata_Common
@@ -26,10 +23,10 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
         self::initDB();
         date_default_timezone_set('UTC');
 
-        /**
+        /*
          * Check for conflicts
          */
-        $r = MyRadio_Scheduler::getScheduleConflict($time, $time+3600);
+        $r = MyRadio_Scheduler::getScheduleConflict($time, $time + 3600);
         if (!empty($r)) {
             //There's a conflict
             throw new MyRadioException('There is already something scheduled at that time', 400);
@@ -37,7 +34,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
             return false;
         }
 
-        /**
+        /*
          * Demos use the timeslot member as the credit for simplicity
          */
         self::$db->query(
@@ -58,7 +55,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
                 'Scheduler',
                 'createDemo',
                 [
-                    'title' => 'Create Training Session'
+                    'title' => 'Create Training Session',
                 ]
             )
         )->addField(
@@ -98,7 +95,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
     }
 
     /**
-     * Gets a list of available demo slots in the future
+     * Gets a list of available demo slots in the future.
      */
     public static function listDemos()
     {
@@ -123,7 +120,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
      * The current user is marked as attending a demo
      * Return 0: Success
      * Return 1: Demo Full
-     * Return 2: Already Attending a Demo
+     * Return 2: Already Attending a Demo.
      */
     public static function attend($demoid)
     {
@@ -164,7 +161,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
             .'. Just head over to the station in Vanbrugh College just before your slot and the trainer will be waiting for you.'
             ."\r\n\r\nSee you on air soon!\r\n"
             .Config::$long_name
-            ." Training"
+            .' Training'
         );
 
         return 0;

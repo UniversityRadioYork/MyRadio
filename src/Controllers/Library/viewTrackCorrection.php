@@ -1,10 +1,7 @@
 <?php
 /**
  * Allows Librarian-level officers to approve automatically-suggested rec database corrections.
- *
- * @package MyRadio_Library
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_TrackCorrection;
 

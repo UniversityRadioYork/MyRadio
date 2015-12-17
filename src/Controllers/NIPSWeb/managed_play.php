@@ -1,10 +1,7 @@
 <?php
 /**
- * Streams a managed database track
- *
- * @package MyRadio_NIPSWeb
+ * Streams a managed database track.
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\NIPSWeb\NIPSWeb_Views;
 use \MyRadio\NIPSWeb\NIPSWeb_ManagedItem;

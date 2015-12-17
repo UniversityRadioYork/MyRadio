@@ -1,12 +1,10 @@
 <?php
 /**
  * This is the controller for the news items
- * members news, tech news and the presenter information sheet
+ * members news, tech news and the presenter information sheet.
  *
  * @data    20131228
- * @package MyRadio_Core
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\MyRadioNews;
 

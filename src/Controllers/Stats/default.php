@@ -1,10 +1,7 @@
 <?php
 /**
- * Stats Overview
- *
- * @package MyRadio_Stats
+ * Stats Overview.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/text.twig')

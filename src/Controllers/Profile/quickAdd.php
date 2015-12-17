@@ -1,10 +1,7 @@
 <?php
 /**
  * Allows creation of new URY members!
- *
- * @package MyRadio_Profile
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
@@ -22,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 
     URLUtils::backWithMessage('New Member has been created with ID '.$user->getID());
-
 } else {
     //Not Submitted
     MyRadio_User::getQuickAddForm()->render();

@@ -1,19 +1,16 @@
 <?php
 
 /**
- * Provides the MyRadio_APIKey class for MyRadio
- * @package MyRadio_API
+ * Provides the MyRadio_APIKey class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Iface\APICaller;
+use MyRadio\Iface\APICaller;
 
 /**
  * The APIKey Class provies information and management of API Keys for the MyRadio
  * REST API.
  *
- * @package MyRadio_API
  * @uses    \Database
  */
 class MyRadio_APIKey extends ServiceAPI implements APICaller
@@ -21,20 +18,23 @@ class MyRadio_APIKey extends ServiceAPI implements APICaller
     use MyRadio_APICaller_Common;
 
     /**
-     * The API Key
-     * @var String
+     * The API Key.
+     *
+     * @var string
      */
     private $key;
 
     /**
-     * Whether the API key has been revoked
+     * Whether the API key has been revoked.
+     *
      * @var bool
      */
     private $revoked;
 
     /**
-     * Construct the API Key Object
-     * @param String $key
+     * Construct the API Key Object.
+     *
+     * @param string $key
      */
     protected function __construct($key)
     {
@@ -47,8 +47,9 @@ class MyRadio_APIKey extends ServiceAPI implements APICaller
     /**
      * Logs that this API Key has called something. Used for auditing.
      *
-     * @param      String $uri
-     * @param      Array  $args
+     * @param string $uri
+     * @param array  $args
+     *
      * @deprecated
      */
     public function logCall($uri, $args)
@@ -61,7 +62,7 @@ class MyRadio_APIKey extends ServiceAPI implements APICaller
     }
 
     /**
-     * Get the key for this apikey
+     * Get the key for this apikey.
      */
     public function getID()
     {

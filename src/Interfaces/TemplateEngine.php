@@ -4,9 +4,7 @@ namespace MyRadio\Iface;
 
 /**
  * A standard Interface for the Template Engine Abstractors
- * Allows drop-in replacement of template systems
- *
- * @package MyRadio_Core
+ * Allows drop-in replacement of template systems.
  */
 interface TemplateEngine extends Singleton
 {

@@ -1,14 +1,12 @@
 <?php
 /**
- * Provides the MetadataSubject trait for MyRadio
- * @package MyRadio_Core
+ * Provides the MetadataSubject trait for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 /**
  * The MyRadio_MetadataSubject trait adds metadata functionality to an object.
@@ -16,7 +14,6 @@ use \MyRadio\ServiceAPI\MyRadio_User;
  * The object obviously needs to have metadata tables in the database for this
  * to work.
  *
- * @package MyRadio_Core
  * @uses    \Database
  */
 trait MyRadio_MetadataSubject
@@ -31,20 +28,20 @@ trait MyRadio_MetadataSubject
     }
 
     /**
-     * Gets the id for the string representation of a type of metadata
+     * Gets the id for the string representation of a type of metadata.
      */
     public static function getMetadataKey($string)
     {
         self::cacheMetadataKeys();
         if (!isset(self::$metadata_keys[$string])) {
-            throw new MyRadioException('Metadata Key ' . $string . ' does not exist');
+            throw new MyRadioException('Metadata Key '.$string.' does not exist');
         }
 
         return self::$metadata_keys[$string]['id'];
     }
 
     /**
-     * Gets whether the type of metadata is allowed to exist more than once
+     * Gets whether the type of metadata is allowed to exist more than once.
      */
     public static function isMetadataMultiple($id)
     {
@@ -54,7 +51,7 @@ trait MyRadio_MetadataSubject
                 return $key['multiple'];
             }
         }
-        throw new MyRadioException('Metadata Key ID ' . $id . ' does not exist');
+        throw new MyRadioException('Metadata Key ID '.$id.' does not exist');
     }
 
     /**
@@ -66,13 +63,13 @@ trait MyRadio_MetadataSubject
      * set to the effective_from of this value, effectively replacing the existing value.
      * This will *not* unset is_multiple values that are not in the new set.
      *
-     * @param String $string_key     The metadata key
+     * @param string $string_key     The metadata key
      * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance
      *                               for value in the array.
      * @param int    $effective_from UTC Time the metavalue is effective from. Default now.
      * @param int    $effective_to   UTC Time the metadata value is effective to. Default NULL (does not expire).
-     * @param String $table          The metadata table, *including* the schema.
-     * @param String $id_field       The ID field in the metadata table.
+     * @param string $table          The metadata table, *including* the schema.
+     * @param string $id_field       The ID field in the metadata table.
      */
     public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $id_field = null)
     {
@@ -131,7 +128,7 @@ trait MyRadio_MetadataSubject
             self::initDB();
             $r = self::$db->fetchAll(
                 'SELECT metadata_key_id AS id, name,'
-                . ' allow_multiple AS multiple FROM metadata.metadata_key'
+                .' allow_multiple AS multiple FROM metadata.metadata_key'
             );
             foreach ($r as $key) {
                 self::$metadata_keys[$key['name']]['id'] = (int) $key['id'];
@@ -169,28 +166,26 @@ trait MyRadio_MetadataSubject
      * @param int    $to       The time at which the metadata should expire.
      * @param string $table    The metadata table on which we're adding.
      * @param string $id_field The field in $table storing the object ID.
-     *
-     * @return null Nothing.
      */
     private function addMulti($key, $values, $from, $to, $table, $id_field)
     {
-        $sql = 'INSERT INTO ' . $table
-            . ' (metadata_key_id, '
-            . $id_field
-            . ', memberid, approvedid, metadata_value, effective_from, effective_to) VALUES ';
+        $sql = 'INSERT INTO '.$table
+            .' (metadata_key_id, '
+            .$id_field
+            .', memberid, approvedid, metadata_value, effective_from, effective_to) VALUES ';
         $params = [
             $key,
             $this->getID(),
             MyRadio_User::getCurrentOrSystemUser()->getID(),
             CoreUtils::getTimestamp($from),
-            $to == null ? null : CoreUtils::getTimestamp($to)
+            $to == null ? null : CoreUtils::getTimestamp($to),
         ];
 
         $param_counter = 6;
         foreach ($values as $value) {
-            $sql .= '($1, $2, $3, $3, $' . $param_counter . ', $4, $5),';
+            $sql .= '($1, $2, $3, $3, $'.$param_counter.', $4, $5),';
             $params[] = $value;
-            $param_counter++;
+            ++$param_counter;
         }
         //Remove the extra comma
         $sql = substr($sql, 0, -1);
@@ -206,8 +201,6 @@ trait MyRadio_MetadataSubject
      * @param int    $time     The time at which the metadata should expire.
      * @param string $table    The metadata table on which we're expiring.
      * @param string $id_field The field in $table storing the object ID.
-     *
-     * @return null Nothing.
      */
     private function expireMulti($key, $values, $time, $table, $id_field)
     {
@@ -225,16 +218,14 @@ trait MyRadio_MetadataSubject
      * @param int    $time     The time at which the metadata should expire.
      * @param string $table    The metadata table on which we're expiring.
      * @param string $id_field The field in $table storing the object ID.
-     *
-     * @return null Nothing.
      */
     private function expire($key, $value, $time, $table, $id_field)
     {
         self::$db->query(
-            'UPDATE ' . $table . '
+            'UPDATE '.$table.'
             SET effective_to = $1
             WHERE metadata_key_id =$2
-            AND ' . $id_field . ' =$3
+            AND '.$id_field.' =$3
             AND metadata_value = $4
             AND (effective_to IS NULL OR effective_to > $1);',
             [CoreUtils::getTimestamp($time), $key, $this->getID(), $value]
@@ -246,16 +237,17 @@ trait MyRadio_MetadataSubject
      *
      * This function must be extended by Classes using MetadataSubject to provide the correct
      * ID field and table that the metadata is stored in.
+     *
      * @todo effective_from/to not yet implemented
      *
-     * @param String $query          The query value.
-     * @param Array  $string_keys    The metadata keys to search
+     * @param string $query          The query value.
+     * @param array  $string_keys    The metadata keys to search
      * @param int    $effective_from UTC Time to search from.
      * @param int    $effective_to   UTC Time to search to.
-     * @param String $table          The metadata table, *including* the schema.
-     * @param String $id_field       The ID field in the metadata table.
+     * @param string $table          The metadata table, *including* the schema.
+     * @param string $id_field       The ID field in the metadata table.
      *
-     * @return Array The list of IDs of whatever is being searched.
+     * @return array The list of IDs of whatever is being searched.
      */
     public static function searchMeta($query, $string_keys, $effective_from = null, $effective_to = null, $table = null, $id_field = null)
     {
@@ -269,15 +261,15 @@ trait MyRadio_MetadataSubject
             $keys[] = self::getMetadataKey($string_key); //Integer meta key
         }
 
-        $meta_keys = '(' . implode(',', array_unique($keys)) . ')';
+        $meta_keys = '('.implode(',', array_unique($keys)).')';
 
         $query = urldecode($query);
 
         $results = self::$db->fetchColumn(
-            'SELECT ' . $id_field
-            .' FROM ' . $table
+            'SELECT '.$id_field
+            .' FROM '.$table
             .' WHERE metadata_value ILIKE \'%\' || $1 || \'%\''
-            .' AND metadata_key_id IN '. $meta_keys,
+            .' AND metadata_key_id IN '.$meta_keys,
             [$query]
         );
 

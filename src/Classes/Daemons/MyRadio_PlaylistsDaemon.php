@@ -1,23 +1,20 @@
 <?php
 
 /**
- * Provides the MyRadio_PlaylistsDaemon class for MyRadio
- * @package MyRadio_Daemon
+ * Provides the MyRadio_PlaylistsDaemon class for MyRadio.
  */
-
 namespace MyRadio\Daemons;
 
-use \MyRadio\Config;
-use \MyRadio\iTones\iTones_Playlist;
-use \MyRadio\ServiceAPI\MyRadio_User;
-use \MyRadio\ServiceAPI\MyRadio_Track;
-use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
-use \MyRadio\NIPSWeb\NIPSWeb_AutoPlaylist;
+use MyRadio\Config;
+use MyRadio\iTones\iTones_Playlist;
+use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\MyRadio_Track;
+use MyRadio\ServiceAPI\MyRadio_TracklistItem;
+use MyRadio\NIPSWeb\NIPSWeb_AutoPlaylist;
 
 /**
  * This Daemon updates the auto-generated iTones Playlists once an hour.
  *
- * @package MyRadio_Tracklist
  * @uses    \Database
  */
 class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
@@ -31,7 +28,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 
     public static function run($force = false)
     {
-        $hourkey = __CLASS__ . '_last_run_hourly';
+        $hourkey = __CLASS__.'_last_run_hourly';
         if (!$force && self::getVal($hourkey) > time() - 3500) {
             return;
         }
@@ -54,25 +51,27 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $lock = $playlist->acquireOrRenewLock(null, MyRadio_User::getInstance(Config::$system_user));
         self::$locks[$playlistid] = [
             $playlist,
-            $lock
+            $lock,
         ];
         if ($lock === false) {
-            dlog('ERROR updating playlist: could not get lock on ' . $playlistid, 3);
+            dlog('ERROR updating playlist: could not get lock on '.$playlistid, 3);
         }
+
         return $lock !== false;
     }
 
     private static function playlistGenCommit($playlistid, $data)
     {
         if (empty(self::$locks[$playlistid][1])) {
-            dlog('ERROR updating playlist: lock not acquired ' . $playlistid, 3);
+            dlog('ERROR updating playlist: lock not acquired '.$playlistid, 3);
+
             return false;
         }
 
         if (empty($data)) {
-            dlog('Warning: Saving empty playlist ' . $playlistid, 3);
+            dlog('Warning: Saving empty playlist '.$playlistid, 3);
         } else {
-            dlog('Saving ' . sizeof($data) . ' items to ' . $playlistid, 5);
+            dlog('Saving '.sizeof($data).' items to '.$playlistid, 5);
         }
 
         self::$locks[$playlistid][0]->setTracks(
@@ -86,12 +85,12 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
     }
 
     /**
-    * @param $data array of ['title': title, 'artist': artist, 'count': value]
-    * Where count is only required if $threshold is set
-    * @param $limit int The maximum number of matched tracks to return (0 == no limit)
-    * @param $threshold int The minimum value of `count` to consider
-    * @param $include_similar bool Whether to include similar tracks or just the track itself
-    */
+     * @param $data array of ['title': title, 'artist': artist, 'count': value]
+     * Where count is only required if $threshold is set
+     * @param $limit int The maximum number of matched tracks to return (0 == no limit)
+     * @param $threshold int The minimum value of `count` to consider
+     * @param $include_similar bool Whether to include similar tracks or just the track itself
+     */
     private static function dataSimilarIterator(
         $data,
         $limit = 0,
@@ -110,7 +109,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 
                 if (!empty($similar)) {
                     $playlist = array_merge($playlist, $similar);
-                    $count++;
+                    ++$count;
                     if ($limit !== 0 && $count >= $limit) {
                         break;
                     }
@@ -130,7 +129,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 'artist' => $artist,
                 'limit' => 1,
                 'digitised' => true,
-                'precise' => true
+                'precise' => true,
             ]
         );
 
@@ -142,7 +141,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                     'artist' => $artist,
                     'limit' => 1,
                     'digitised' => true,
-                    'precise' => false
+                    'precise' => false,
                 ]
             );
         }
@@ -153,9 +152,10 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         } elseif ($include_similar) {
             //Whoop, something!
             $similar = $c[0]->getSimilar();
-            dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $c[0]->getTitle() . ' - ' .$c[0]->getArtist(), 4);
+            dlog('Found '.sizeof($similar).' similar tracks for '.$c[0]->getTitle().' - '.$c[0]->getArtist(), 4);
             // Unshift edits array in-place
             array_unshift($similar, $c[0]);
+
             return $similar;
         } else {
             return $c;
@@ -170,12 +170,12 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $keys = array_keys($tracks);
         $playlist = [];
         //Take the top 20 from this list
-        for ($i = 0; $i < min(20, sizeof($tracks)); $i++) {
+        for ($i = 0; $i < min(20, sizeof($tracks)); ++$i) {
             $key = $keys[$i];
             $track = MyRadio_Track::getInstance($key);
             //Ask last.fm for similar songs that are in our library
             $similar = $track->getSimilar();
-            dlog('Found ' . sizeof($similar) . ' similar tracks for ' . $track->getTitle() . ' - ' .$track->getArtist(), 4);
+            dlog('Found '.sizeof($similar).' similar tracks for '.$track->getTitle().' - '.$track->getArtist(), 4);
             //Add these to the playlist, along with the popular track
             $playlist[] = $track;
             $playlist = array_merge($playlist, $similar);
@@ -187,12 +187,12 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
     private static function updateMostPlayedPlaylist()
     {
         if (self::playlistGenPrepare('semantic-auto')) {
-            /**
+            /*
              * Daytime Track play stats for last 14 days
              */
             $most_played = [];
             //Get track statistics for every daytime window
-            for ($i = 0; $i < 14; $i++) {
+            for ($i = 0; $i < 14; ++$i) {
                 $stats = MyRadio_TracklistItem::getTracklistStatsForBAPS(
                     strtotime("6am -{$i} days"),
                     strtotime("9pm -{$i} days")
@@ -212,14 +212,13 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             );
         }
 
-
         //Aaaand repeat
         if (self::playlistGenPrepare('semantic-spec')) {
-            /**
+            /*
              * Specialist Track play stats for last 14 days
              */
             $most_played = [];
-            for ($i = 0; $i < 14; $i++) {
+            for ($i = 0; $i < 14; ++$i) {
                 $j = $i + 1;
                 $stats = MyRadio_TracklistItem::getTracklistStatsForBAPS(
                     strtotime("9pm -{$j} days"),
@@ -252,7 +251,6 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         );
     }
 
-
     private static function updateRandomTracksPlaylist()
     {
         if (!self::playlistGenPrepare('random-auto')) {
@@ -274,19 +272,19 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $data = json_decode(
             file_get_contents(
                 'https://ws.audioscrobbler.com/2.0/?method=group.getweeklytrackchart&api_key='
-                . Config::$lastfm_api_key
-                . '&group=' . Config::$lastfm_group
-                . '&format=json'
+                .Config::$lastfm_api_key
+                .'&group='.Config::$lastfm_group
+                .'&format=json'
             ),
             true
         );
 
         $items = array_map(
-            function($m) {
+            function ($m) {
                 return [
                     'count' => $m['playcount'],
                     'title' => $m['name'],
-                    'artist' => $m['artist']['#text']
+                    'artist' => $m['artist']['#text'],
                 ];
             },
             $data['weeklytrackchart']['track']
@@ -307,18 +305,18 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $data = json_decode(
             file_get_contents(
                 'https://ws.audioscrobbler.com/2.0/?method=geo.getTopTracks&api_key='
-                . Config::$lastfm_api_key
-                . '&country=' . Config::$lastfm_geo
-                . '&limit=150&format=json'
+                .Config::$lastfm_api_key
+                .'&country='.Config::$lastfm_geo
+                .'&limit=150&format=json'
             ),
             true
         );
 
         $items = array_map(
-            function($m) {
+            function ($m) {
                 return [
                     'title' => $m['name'],
-                    'artist' => $m['artist']['name']
+                    'artist' => $m['artist']['name'],
                 ];
             },
             $data['tracks']['track']
@@ -328,7 +326,6 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             'lastgeo-auto',
             self::dataSimilarIterator($items, 0, null, false)
         );
-
     }
 
     private static function updateLastFMTopPlaylist()
@@ -340,17 +337,17 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $data = json_decode(
             file_get_contents(
                 'https://ws.audioscrobbler.com/2.0/?method=chart.getTopTracks&api_key='
-                . Config::$lastfm_api_key
-                . '&limit=150&format=json'
+                .Config::$lastfm_api_key
+                .'&limit=150&format=json'
             ),
             true
         );
 
         $items = array_map(
-            function($m) {
+            function ($m) {
                 return [
                     'title' => $m['name'],
-                    'artist' => $m['artist']['name']
+                    'artist' => $m['artist']['name'],
                 ];
             },
             $data['tracks']['track']
@@ -371,17 +368,17 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $data = json_decode(
             file_get_contents(
                 'https://ws.audioscrobbler.com/2.0/?method=chart.getHypedTracks&api_key='
-                . Config::$lastfm_api_key
-                . '&limit=150&format=json'
+                .Config::$lastfm_api_key
+                .'&limit=150&format=json'
             ),
             true
         );
 
         $items = array_map(
-            function($m) {
+            function ($m) {
                 return [
                     'title' => $m['name'],
-                    'artist' => $m['artist']['name']
+                    'artist' => $m['artist']['name'],
                 ];
             },
             $data['tracks']['track']
@@ -392,5 +389,4 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             self::dataSimilarIterator($items, 0, null, false)
         );
     }
-
 }

@@ -1,12 +1,10 @@
 <?php
 /**
- * Provides the MyRadio_Webcam class
- * @package MyRadio_Webcam
+ * Provides the MyRadio_Webcam class.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
+use MyRadio\Config;
 
 /**
  * @todo Document
@@ -37,7 +35,7 @@ class MyRadio_Webcam extends ServiceAPI
     }
 
     /**
-     * Returns the available range of times for the Webcam Archives
+     * Returns the available range of times for the Webcam Archives.
      */
     public static function getArchiveTimeRange()
     {
@@ -63,7 +61,8 @@ class MyRadio_Webcam extends ServiceAPI
     }
 
     /**
-     * Returns the id and location of the currentl selected webcam
+     * Returns the id and location of the currentl selected webcam.
+     *
      * @return array webcam id and location
      */
     public static function getCurrentWebcam()
@@ -73,32 +72,38 @@ class MyRadio_Webcam extends ServiceAPI
             $response = json_decode($response, true);
 
             switch ($response['room']) {
-            case 1: $location = 'Studio 1';
-                break;
-            case 2: $location = 'Studio 2';
-                break;
-            case 3: $location = 'Jukebox';
-                break;
-            case 4: $location = 'OB';
-                break;
-            default: $location = 'Unknown';
-                break;
+                case 1:
+                    $location = 'Studio 1';
+                    break;
+                case 2:
+                    $location = 'Studio 2';
+                    break;
+                case 3:
+                    $location = 'Jukebox';
+                    break;
+                case 4:
+                    $location = 'OB';
+                    break;
+                default:
+                    $location = 'Unknown';
+                    break;
             }
 
             return [
                 'camera' => $response['camera'],
-                'location' => $location
+                'location' => $location,
             ];
         } else {
             return [
                 'camera' => -1,
-                'location' => null
+                'location' => null,
             ];
         }
     }
 
     /**
-     * [setWebcam description]
+     * [setWebcam description].
+     *
      * @param [type] $id [description]
      */
     public static function setWebcam($id)

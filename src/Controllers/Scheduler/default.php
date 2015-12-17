@@ -2,10 +2,7 @@
 /**
  * The default page of the Scheduler module lists Season applications
  * that have not yet had timeslots assigned.
- *
- * @package MyRadio_Scheduler
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;
 

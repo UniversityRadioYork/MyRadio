@@ -1,4 +1,4 @@
-var Library = function() {
+var Library = function () {
     var auxid = null;
     var allowed_mp3 = ['audio/mpeg3', 'audio/x-mpeg-3', 'audio/mpeg', 'audio/x-mpeg',
             'audio/mp3', 'audio/x-mp3', 'audio/mpg', 'audio/mpg3', 'audio/mpegaudio'];
@@ -7,7 +7,7 @@ var Library = function() {
             'audio/mp4a-latm', 'audio/mp4', 'audio/aac']
 
     //Converts bytes to human readable numbers
-    var byteSize = function(size) {
+    var byteSize = function (size) {
         if (size > 1048576) {
             return (size / 1048576).toFixed(2) + 'MB';
         }
@@ -18,7 +18,7 @@ var Library = function() {
     }
 
     // Handles change events for the library dropdown
-    var res_type_sel_change_handler = function() {
+    var res_type_sel_change_handler = function () {
         $('div.res-container').hide();
         if ($('#res-type-sel').val() === null) {
             return;
@@ -35,31 +35,31 @@ var Library = function() {
         $('#res-container').show();
     };
 
-    var filedrop_error_handler = function(err, file) {
+    var filedrop_error_handler = function (err, file) {
         var message;
         switch (err) {
-        case 'BrowserNotSupported':
-            message = 'You need to use Google Chrome or Mozilla Firefox 3.6+ to upload files.';
+            case 'BrowserNotSupported':
+                message = 'You need to use Google Chrome or Mozilla Firefox 3.6+ to upload files.';
                 break;
-        case 'TooManyFiles':
-            message = 'Please don\'t upload too many files at once.';
+            case 'TooManyFiles':
+                message = 'Please don\'t upload too many files at once.';
                 break;
-        case 'FileTooLarge':
-            message = file.name + ' is too big. Please upload files smaller than ' + mConfig.audio_upload_max_size + 'MB.';
+            case 'FileTooLarge':
+                message = file.name + ' is too big. Please upload files smaller than ' + mConfig.audio_upload_max_size + 'MB.';
                 break;
-        case 'FileTypeNotAllowed':
-            message = file.name + ' is not a valid audio file.';
+            case 'FileTypeNotAllowed':
+                message = file.name + ' is not a valid audio file.';
                 break;
-        default:
-            message = 'An unknown error occured: ' + err;
+            default:
+                message = 'An unknown error occured: ' + err;
         };
 
         $('.result-container:visible').append('<div class="alert alert-danger">' + message + '</div>');
     }
 
-    var centralDbInit = function() {
+    var centralDbInit = function () {
         /**
- * Central Database Handler 
+ * Central Database Handler
 **/
         $('#central-dragdrop').filedrop(
             {
@@ -84,11 +84,12 @@ var Library = function() {
                     $('#central-status').html(status);
 
                     setTimeout(
-                        function() {
+                        function () {
                             if ($('#central-status').html() == status) {
                                 $('#central-status').html('Ready');
                             }
-                        }, 5000
+                        },
+                        5000
                     )
 
                     var manual_track = false;
@@ -128,7 +129,11 @@ var Library = function() {
                         select = $('<select></select>')
                         .attr('name', response.fileid).attr('id', 'centralupload-' + i);
                         $.each(
-                            response.analysis, function (key, value) {
+                            response.analysis,
+                            function (
+                                key,
+                                value
+                            ) {
                                 select.append('<option value="' + value.title + ':-:' + value.artist + '">' + value.title + ' by ' + value.artist + '</option>');
                             }
                         );
@@ -215,7 +220,7 @@ var Library = function() {
     };
 
     /**
- * Auxillary Database Handler 
+ * Auxillary Database Handler
 **/
     var auxDbInit = function () {
         $('#res-dragdrop').filedrop(
@@ -310,7 +315,7 @@ var Library = function() {
         );
     };
 
-    var initialise = function() {
+    var initialise = function () {
         $('#res-type-sel').on('change', res_type_sel_change_handler);
         $('#res-type-sel').on('click', res_type_sel_change_handler);
         $('#res-type-sel').on('keyup', res_type_sel_change_handler);

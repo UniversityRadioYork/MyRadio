@@ -29,15 +29,15 @@ $('.twig-datatable').dataTable(
         },
         //view
         {
-          "sTitle": "View"
+            "sTitle": "View"
         },
         //edit
         {
-          "sTitle": "Edit"
+            "sTitle": "Edit"
         },
         //assign
         {
-          "sTitle": "Assign"
+            "sTitle": "Assign"
         },
         ],
         "bSort": false,

@@ -7,7 +7,7 @@
 * week - Week number to start at
 * year - Year to start at (four digits)
 */
-var ScheduleView = function(options) {
+var ScheduleView = function (options) {
     var year;
     var week;
     /**
@@ -25,13 +25,13 @@ var ScheduleView = function(options) {
     var view = 'week';
     var scheduleContainerDiv = document.createElement('div');
     var pixelFactor = 3600 / 50;
-    var addNowMarker = function(dayDiv) {
+    var addNowMarker = function (dayDiv) {
         var marker = document.createElement('div');
         marker.innerHTML = 'Now (' + moment().format('HH:mm') + ')';
         marker.className = 'scheduleview now-marker bg-success';
         dayDiv.appendChild(marker);
     }
-    var loadWeek = function() {
+    var loadWeek = function () {
         var newStartTime = moment(year + '-' + week, 'YYYY-W');
         if (!newStartTime.isSame(startTime)) {
             startTime = newStartTime;
@@ -48,7 +48,7 @@ var ScheduleView = function(options) {
             updateView(currentData);
         }
     };
-    var updateView = function(data) {
+    var updateView = function (data) {
         currentData = data;
         var currentDay;
         var dayDiv;
@@ -140,7 +140,7 @@ var ScheduleView = function(options) {
             }
         }
     }
-    var resetView = function() {
+    var resetView = function () {
         var title,
             targetDay = moment(startTime).isoWeekday(day);
 
@@ -155,7 +155,8 @@ var ScheduleView = function(options) {
             previous.className = 'btn btn-link';
             previous.innerHTML = 'Previous ' + view;
             previous.addEventListener(
-                'click', function() {
+                'click',
+                function () {
                     if (view === 'day') {
                         day = day - 1;
                     }
@@ -185,7 +186,8 @@ var ScheduleView = function(options) {
             next.className = 'btn btn-link';
             next.innerHTML = 'Next ' + view;
             next.addEventListener(
-                'click', function() {
+                'click',
+                function () {
                     if (view === 'day') {
                         day = day + 1;
                     }
@@ -222,7 +224,7 @@ var ScheduleView = function(options) {
             scheduleContainerDiv.appendChild(timesDiv);
         }
     };
-    var assembleDayDiv = function(time) {
+    var assembleDayDiv = function (time) {
         var div = document.createElement('div');
         var headerDiv = document.createElement('div');
 

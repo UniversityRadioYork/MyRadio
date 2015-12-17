@@ -2,20 +2,21 @@
  * This file is a supplement to the default forms system for the MyRadio Scheduler Shows System
  */
 $(document).ready(
-    function() {
+    function () {
         /*
         * Set up a title check - it's not essential that a show title is unique
         * but it would be nice
         */
         $('#sched_show-title').on(
-            'input propertychange', function() {
+            'input propertychange',
+            function () {
                 if ($(this).val().length >= 3) {
                     var value = $(this).val();
                     $.ajax(
                         {
                             url: myradio.makeURL('Scheduler', 'a-findshowbytitle'),
                             data: {term: value, limit: 100},
-                            success: function(data) {
+                            success: function (data) {
                                 if (data.length >= 1) {
                                     var html = '<span class="glyphicon glyphicon-info-sign fleft"></span>Similar to '+data[0].title;
                                 } else {
@@ -26,7 +27,7 @@ $(document).ready(
                                 }
                                 $('#sched_show-title-hint').html('<div class="alert alert-info">'+html+'</div>');
                             }
-                        }
+                            }
                     );
                 }
             }
@@ -39,7 +40,8 @@ $(document).ready(
     * Tell the credittype add link to trigger the credits add action
     */
         $('#sched_show-credittypes-repeater').on(
-            'click', function() {
+            'click',
+            function () {
                 $('#sched_show-credits-repeater').trigger('click');
             }
         );

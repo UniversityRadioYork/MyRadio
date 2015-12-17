@@ -1,47 +1,47 @@
 <?php
 
 /**
- * This file provides the iTones_PlaylistRevision class for MyRadio - Contains history of an iTones_Playlist
- * @package MyRadio_iTones
+ * This file provides the iTones_PlaylistRevision class for MyRadio - Contains history of an iTones_Playlist.
  */
-
 namespace MyRadio\iTones;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\ServiceAPI\MyRadio_User;
-use \MyRadio\ServiceAPI\MyRadio_Track;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\MyRadio_Track;
 
 /**
- * The iTones_PlaylistRevision class helps to manage previous versions of an iTones_Playlist
- *
- * @package MyRadio_iTones
+ * The iTones_PlaylistRevision class helps to manage previous versions of an iTones_Playlist.
  */
 class iTones_PlaylistRevision extends iTones_Playlist
 {
     /**
-    * When this revision was created
-    * @var int
-    */
+     * When this revision was created.
+     *
+     * @var int
+     */
     private $timestamp;
 
     /**
-    * Who created this revision
-    * @var MyRadio_User
-    */
+     * Who created this revision.
+     *
+     * @var MyRadio_User
+     */
     private $author;
 
     /**
-    * A commit message about the change
-    * @var String
-    */
+     * A commit message about the change.
+     *
+     * @var string
+     */
     private $notes;
 
     /**
-    * Initiates the PlaylistRevision variables
-    * @param string $id $playlistid~$revisionid
-    */
+     * Initiates the PlaylistRevision variables.
+     *
+     * @param string $id $playlistid~$revisionid
+     */
     protected function __construct($id)
     {
         list($playlistid, $revisionid) = explode('~', $id);
@@ -73,13 +73,13 @@ class iTones_PlaylistRevision extends iTones_Playlist
         foreach ($items as $id) {
             $this->tracks[] = MyRadio_Track::getInstance($id);
         }
-
     }
 
     /**
-    * Return the MyRadio_Tracks that belong to this playlist
-    * @return Array of MyRadio_Track objects
-    */
+     * Return the MyRadio_Tracks that belong to this playlist.
+     *
+     * @return array of MyRadio_Track objects
+     */
     public function getTracks()
     {
         return $this->tracks;
@@ -106,16 +106,16 @@ class iTones_PlaylistRevision extends iTones_Playlist
     }
 
     /**
-    * Prevents idiots attempting to edit this revision.
-    */
+     * Prevents idiots attempting to edit this revision.
+     */
     public function acquireOrRenewLock($lockstr = null, MyRadio_User $user = null)
     {
         throw new MyRadioException('You can\'t lock an archived playlist revision, poopyhead!');
     }
 
     /**
-    * Prevents idiots attempting to edit this revision.
-    */
+     * Prevents idiots attempting to edit this revision.
+     */
     public function setTracks($tracks, $lockstr = null, $notes = null)
     {
         throw new MyRadioException('You can\'t lock an archived playlist revision, poopyhead!');
@@ -135,10 +135,12 @@ class iTones_PlaylistRevision extends iTones_Playlist
     }
 
     /**
-    * Returns an array of key information, useful for Twig rendering and JSON requests
-    * @todo Expand the information this returns
-    * @return Array
-    */
+     * Returns an array of key information, useful for Twig rendering and JSON requests.
+     *
+     * @todo Expand the information this returns
+     *
+     * @return array
+     */
     public function toDataSource()
     {
         return [
@@ -154,10 +156,10 @@ class iTones_PlaylistRevision extends iTones_Playlist
                     'iTones',
                     'viewPlaylistRevision',
                     [
-                        'playlistid'=>$this->getID(),
-                        'revisionid' => $this->getRevisionID()
+                        'playlistid' => $this->getID(),
+                        'revisionid' => $this->getRevisionID(),
                     ]
-                )
+                ),
             ],
             'restorelink' => [
                 'display' => 'icon',
@@ -167,10 +169,10 @@ class iTones_PlaylistRevision extends iTones_Playlist
                     'iTones',
                     'restorePlaylistRevision',
                     [
-                        'playlistid'=>$this->getID(),
-                        'revisionid' => $this->getRevisionID()
+                        'playlistid' => $this->getID(),
+                        'revisionid' => $this->getRevisionID(),
                     ]
-                )
+                ),
             ],
         ];
     }

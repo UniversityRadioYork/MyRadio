@@ -1,20 +1,16 @@
 <?php
 /**
- * This file provides the MyRadio_FingerprinterDaemon class for MyRadio
- * @package MyRadio_Daemon
+ * This file provides the MyRadio_FingerprinterDaemon class for MyRadio.
  */
-
 namespace MyRadio\Daemons;
 
-use \MyRadio\Config;
-use \MyRadio\ServiceAPI\MyRadio_Track;
-use \MyRadio\ServiceAPI\MyRadio_TrackCorrection;
+use MyRadio\Config;
+use MyRadio\ServiceAPI\MyRadio_Track;
+use MyRadio\ServiceAPI\MyRadio_TrackCorrection;
 
 /**
  * The Fingerprinter Daemon will scan the digital files in the music library, and log information about potentially
  * incorrect metadata in the rec database.
- *
- * @package MyRadio_Daemon
  */
 class MyRadio_FingerprinterDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
@@ -22,7 +18,8 @@ class MyRadio_FingerprinterDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
      * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.
      * It is currently enabled for a full scan of the music library. Generally, it may often be disabled as it
      * generates a fare amount of load and actually making the changes is a manual process anyway.
-     * @return boolean
+     *
+     * @return bool
      */
     public static function isEnabled()
     {
@@ -45,17 +42,17 @@ class MyRadio_FingerprinterDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         //Get 5 unverified tracks. Tune the "limit" to change this
         $tracks = MyRadio_Track::findByOptions(
             ['lastfmverified' => false, 'random' => true, 'digitised' => true,
-            'nocorrectionproposed' => true, 'limit' => 5]
+            'nocorrectionproposed' => true, 'limit' => 5, ]
         );
 
         foreach ($tracks as $track) {
-            /**
+            /*
              * Run the last.fm Fingerprinter on the Track to see what they think it
              * is.
              */
             $info = MyRadio_Track::identifyUploadedTrack($track->getPath());
 
-            /**
+            /*
              * We use two metrics to identify if the information is reliable
              * 1. Is the rank high (> 0.8)?
              * 2. Does is have a short levenshtein difference from the current value?

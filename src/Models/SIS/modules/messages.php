@@ -1,9 +1,7 @@
 <?php
 /**
- * Messages for SIS
- *
- * @package MyRadio_SIS
+ * Messages for SIS.
  */
 $moduleInfo = [
-    'pollfunc' => '\MyRadio\SIS\SIS_Remote::queryMessages'
+    'pollfunc' => '\MyRadio\SIS\SIS_Remote::queryMessages',
 ];

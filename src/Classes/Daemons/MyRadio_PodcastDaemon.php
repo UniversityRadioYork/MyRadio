@@ -1,25 +1,22 @@
 <?php
 
 /**
- * This file provides the MyRadio_PodcastDeamon class for MyRadio
- * @package MyRadio_Daemon
+ * This file provides the MyRadio_PodcastDeamon class for MyRadio.
  */
-
 namespace MyRadio\Daemons;
 
-use \MyRadio\Config;
-use \MyRadio\ServiceAPI\MyRadio_Podcast;
+use MyRadio\Config;
+use MyRadio\ServiceAPI\MyRadio_Podcast;
 
 /**
  * The Podcast Daemon converts uploaded audio files into web-ready uryplayer files.
- *
- * @package MyRadio_Daemon
  */
 class MyRadio_PodcastDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
     /**
      * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.
-     * @return boolean
+     *
+     * @return bool
      */
     public static function isEnabled()
     {

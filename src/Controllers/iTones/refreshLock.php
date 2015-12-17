@@ -1,10 +1,7 @@
 <?php
 /**
- * Refreshes a lock on a playlist to prevent it expiring
- *
- * @package MyRadio_iTones
+ * Refreshes a lock on a playlist to prevent it expiring.
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\iTones\iTones_Playlist;
@@ -21,7 +18,7 @@ $lock = $playlist->acquireOrRenewLock(
 );
 
 if ($lock === false) {
-    $data = ['FAIL','Locked for editing by another user'];
+    $data = ['FAIL', 'Locked for editing by another user'];
 } else {
     $_SESSION['itones_lock_'.$playlist->getID()] = $lock;
     $data = ['SUCCESS', $lock];

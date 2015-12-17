@@ -1,5 +1,5 @@
 $(document).ready(
-    function() {
+    function () {
         var body = document.createElement('div');
 
         var footer = document.createElement('footer');
@@ -19,7 +19,8 @@ $(document).ready(
         button.className = 'btn btn-primary';
         button.innerHTML = 'Got it!';
         button.addEventListener(
-            'click', function() {
+            'click',
+            function () {
                 $.ajax(
                     {
                         url: myradio.makeURL('MyRadio', 'a-readnews'),

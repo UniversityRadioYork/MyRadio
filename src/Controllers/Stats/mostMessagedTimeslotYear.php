@@ -1,10 +1,7 @@
 <?php
 /**
- * The most messaged timeslots this academic year
- *
- * @package MyRadio_Stats
+ * The most messaged timeslots this academic year.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 

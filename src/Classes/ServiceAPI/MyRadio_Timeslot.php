@@ -1,27 +1,26 @@
 <?php
 
 /**
- * Provides the Timeslot class for MyRadio
- * @package MyRadio_Scheduler
+ * Provides the Timeslot class for MyRadio.
  */
-
 namespace MyRadio\ServiceAPI;
 
-use \MyRadio\Config;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\MyRadioEmail;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
-use \MyRadio\NIPSWeb\NIPSWeb_TimeslotItem;
-use \MyRadio\NIPSWeb\NIPSWeb_BAPSUtils;
-use \MyRadio\SIS\SIS_Utils;
+use MyRadio\Config;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\MyRadioEmail;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\NIPSWeb\NIPSWeb_TimeslotItem;
+use MyRadio\NIPSWeb\NIPSWeb_BAPSUtils;
+use MyRadio\SIS\SIS_Utils;
 
 /**
- * The Timeslot class is used to view and manupulate Timeslot within the new MyRadio Scheduler Format
+ * The Timeslot class is used to view and manupulate Timeslot within the new MyRadio Scheduler Format.
+ *
  * @todo Generally the creation of bulk Timeslots is currently handled by the Season/Show classes, but this should change
- * @package MyRadio_Scheduler
+ *
  * @uses \Database
  * @uses \MyRadio_Show
  */
@@ -108,7 +107,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         );
         if (empty($result)) {
             //Invalid Season
-            throw new MyRadioException('The MyRadio_Timeslot with instance ID #' . $timeslot_id . ' does not exist.', 400);
+            throw new MyRadioException('The MyRadio_Timeslot with instance ID #'.$timeslot_id.' does not exist.', 400);
         }
 
         //Deal with the easy bits
@@ -122,7 +121,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $metadata_types = self::$db->decodeArray($result['metadata_types']);
         $metadata = self::$db->decodeArray($result['metadata']);
         //Deal with the metadata
-        for ($i = 0; $i < sizeof($metadata_types); $i++) {
+        for ($i = 0; $i < sizeof($metadata_types); ++$i) {
             if (self::isMetadataMultiple($metadata_types[$i])) {
                 $this->metadata[$metadata_types[$i]][] = $metadata[$i];
             } else {
@@ -134,12 +133,12 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $credit_types = self::$db->decodeArray($result['credit_types']);
         $credits = self::$db->decodeArray($result['credits']);
 
-        for ($i = 0; $i < sizeof($credits); $i++) {
+        for ($i = 0; $i < sizeof($credits); ++$i) {
             if (empty($credits[$i])) {
                 continue;
             }
             $this->credits[] = ['type' => (int) $credit_types[$i], 'memberid' => $credits[$i],
-                'User' => MyRadio_User::getInstance($credits[$i])];
+                'User' => MyRadio_User::getInstance($credits[$i]), ];
         }
     }
 
@@ -164,13 +163,13 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
-     * Get the microsite URI
+     * Get the microsite URI.
      *
-     * @return String
+     * @return string
      */
     public function getWebpage()
     {
-        return '/schedule/shows/timeslots/' . $this->timeslot_id;
+        return '/schedule/shows/timeslots/'.$this->timeslot_id;
     }
 
     public function getPhoto()
@@ -180,6 +179,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     /**
      * Get the Timeslot number - for the first Timeslot of a Season, this is 1, for the second it's 2 etc.
+     *
      * @return int
      */
     public function getTimeslotNumber()
@@ -188,7 +188,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
-     * Get the start time of the Timeslot as an integer since epoch
+     * Get the start time of the Timeslot as an integer since epoch.
+     *
      * @return int
      */
     public function getStartTime()
@@ -202,24 +203,27 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
-     * Returns when the timeslot ends in epoch number form
+     * Returns when the timeslot ends in epoch number form.
+     *
      * @return int
      */
     public function getEndTime()
     {
-        $duration = strtotime('1970-01-01 ' . $this->getDuration() . '+00');
+        $duration = strtotime('1970-01-01 '.$this->getDuration().'+00');
 
         return $this->getStartTime() + $duration;
     }
 
     /**
      * Gets the Timeslot that is on after this.
+     *
      * @param $filter defines a filter of show_type ids
+     *
      * @return MyRadio_Timeslot|null If null, Jukebox is next.
      */
     public function getTimeslotAfter($filter = array(1))
     {
-        $filter = '{' . implode(', ', $filter) . '}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
+        $filter = '{'.implode(', ', $filter).'}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
 
         $result = self::$db->fetchColumn(
             'SELECT show_season_timeslot_id
@@ -232,11 +236,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             [
                 CoreUtils::getTimestamp($this->getEndTime() - 300),
                 CoreUtils::getTimestamp($this->getEndTime() + 300),
-                $filter
+                $filter,
             ]
         );
         if (empty($result)) {
-            return null;
+            return;
         } else {
             return self::getInstance($result[0]);
         }
@@ -251,7 +255,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      * set to the effective_from of this value, effectively replacing the existing value.
      * This will *not* unset is_multiple values that are not in the new set.
      *
-     * @param String $string_key     The metadata key
+     * @param string $string_key     The metadata key
      * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance
      *                               for value in the array.
      * @param int    $effective_from UTC Time the metavalue is effective from. Default now.
@@ -272,12 +276,12 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      *
      * @todo effective_from/to not yet implemented
      *
-     * @param String $query          The query value.
-     * @param Array  $string_keys    The metadata keys to search
+     * @param string $query          The query value.
+     * @param array  $string_keys    The metadata keys to search
      * @param int    $effective_from UTC Time to search from.
      * @param int    $effective_to   UTC Time to search to.
      *
-     * @return Array The shows that match the search terms
+     * @return array The shows that match the search terms
      */
     public static function searchMeta($query, $string_keys = null, $effective_from = null, $effective_to = null)
     {
@@ -286,13 +290,15 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         }
 
         $r = parent::searchMeta($query, $string_keys, $effective_from, $effective_to, 'schedule.timeslot_metadata', 'show_season_timeslot_id');
+
         return self::resultSetToObjArray($r);
     }
 
     public function toDataSource()
     {
         return array_merge(
-            $this->getSeason()->toDataSource(), [
+            $this->getSeason()->toDataSource(),
+            [
             'timeslot_id' => $this->getID(),
             'timeslot_num' => $this->getTimeslotNumber(),
             'title' => $this->getMeta('title'),
@@ -303,19 +309,26 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'duration' => $this->getDuration(),
             'mixcloud_status' => $this->getMeta('upload_state'),
             'rejectlink' => [
-                'display' => 'icon',
-                'value' => 'trash',
-                'title' => 'Cancel Episode',
-                'url' => URLUtils::makeURL('Scheduler', 'cancelEpisode', ['show_season_timeslot_id' => $this->getID()])]
+            'display' => 'icon',
+            'value' => 'trash',
+            'title' => 'Cancel Episode',
+            'url' => URLUtils::makeURL(
+                'Scheduler',
+                'cancelEpisode',
+                ['show_season_timeslot_id' => $this->getID()]
+            ),
+            ],
             ]
         );
     }
 
     /**
-     * Find the most messaged Timeslots
-     * @param  int $date If specified, only messages for timeslots since $date are counted.
+     * Find the most messaged Timeslots.
+     *
+     * @param int $date If specified, only messages for timeslots since $date are counted.
+     *
      * @return array An array of 30 Timeslots that have been put through toDataSource, with the addition of a msg_count key,
-     *                    referring to the number of messages sent to that show.
+     *               referring to the number of messages sent to that show.
      */
     public static function getMostMessaged($date = 0)
     {
@@ -337,10 +350,12 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
-     * Find the most listened Timeslots
-     * @param  int $date If specified, only messages for timeslots since $date are counted.
+     * Find the most listened Timeslots.
+     *
+     * @param int $date If specified, only messages for timeslots since $date are counted.
+     *
      * @return array An array of 30 Timeslots that have been put through toDataSource, with the addition of a msg_count key,
-     *                    referring to the number of messages sent to that show.
+     *               referring to the number of messages sent to that show.
      */
     public static function getMostListened($date = 0)
     {
@@ -377,7 +392,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     /**
      * Returns the current Timeslot on air, if there is one.
      *
-     * @param int                                      $time Optional integer timestamp
+     * @param int $time Optional integer timestamp
      * @param $filter defines a filter of show_type ids
      *
      * @return MyRadio_Timeslot|null
@@ -389,7 +404,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $time = time();
         }
 
-        $filter = '{' . implode(', ', $filter) . '}'; // http://php.net/manual/en/function.pg-query-params.php#71912
+        $filter = '{'.implode(', ', $filter).'}'; // http://php.net/manual/en/function.pg-query-params.php#71912
 
         $result = self::$db->fetchColumn(
             'SELECT show_season_timeslot_id
@@ -403,21 +418,23 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         );
 
         if (empty($result)) {
-            return null;
+            return;
         } else {
-            return MyRadio_Timeslot::getInstance($result[0]);
+            return self::getInstance($result[0]);
         }
     }
 
     /**
-     * Gets the next Timeslot to start after $time
-     * @param  int                                      $time
-     * @param                   $filter defines a filter of show_type ids
+     * Gets the next Timeslot to start after $time.
+     *
+     * @param int $time
+     * @param     $filter defines a filter of show_type ids
+     *
      * @return MyRadio_Timeslot
      */
     public static function getNextTimeslot($time = null, $filter = array(1))
     {
-        $filter = '{' . implode(', ', $filter) . '}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
+        $filter = '{'.implode(', ', $filter).'}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
 
         $result = self::$db->fetchColumn(
             'SELECT show_season_timeslot_id
@@ -432,40 +449,41 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         );
 
         if (empty($result)) {
-            return null;
+            return;
         } else {
             return self::getInstance($result[0]);
         }
     }
 
     /**
-    * Returns Timeslots scheduled for the given week number.
-    *
-    * "Weeks" are nine days - From the Sunday preceeding the week to the Monday
-    * after the week ends, i.e. Sun/Mon/Tue/Wed/Thu/Fri/Sat/Sun/Mon.
-    * A Timeslot that starts before the start of the period but ends during
-    * will be included. The same is true for ones that end after the period.<br>
-    * It is guaranteed that the results will be in order of start time.
-    *
-    * @param  int $weekno An ISO-8601 Week Number (http://en.wikipedia.org/wiki/ISO_8601#Week_dates)
-    * @param  int $year   Default to current Calendar year.
-    * @return MyRadio_Timeslot[]
-    */
+     * Returns Timeslots scheduled for the given week number.
+     *
+     * "Weeks" are nine days - From the Sunday preceeding the week to the Monday
+     * after the week ends, i.e. Sun/Mon/Tue/Wed/Thu/Fri/Sat/Sun/Mon.
+     * A Timeslot that starts before the start of the period but ends during
+     * will be included. The same is true for ones that end after the period.<br>
+     * It is guaranteed that the results will be in order of start time.
+     *
+     * @param int $weekno An ISO-8601 Week Number (http://en.wikipedia.org/wiki/ISO_8601#Week_dates)
+     * @param int $year   Default to current Calendar year.
+     *
+     * @return MyRadio_Timeslot[]
+     */
     public static function get9DaySchedule($weekno, $year = null)
     {
         self::wakeup();
         if ($year === null) {
-            $year = (int)gmdate('Y');
+            $year = (int) gmdate('Y');
         }
 
         if ($weekno < 10) {
-            $weekno = '0' . $weekno;
+            $weekno = '0'.$weekno;
         }
 
-        $key = 'MyRadio9DayScheduleFor' . $year . 'W' . $weekno;
+        $key = 'MyRadio9DayScheduleFor'.$year.'W'.$weekno;
         $cache = self::$cache->get($key);
         if (!$cache) {
-            $startOfWeek = strtotime($year . 'W' . $weekno);
+            $startOfWeek = strtotime($year.'W'.$weekno);
             $sundayBefore = $startOfWeek - 86400; // 60 * 60 * 24
             $endOfMondayAfter = $startOfWeek + (86400 * 8) - 1; //Monday 23:59:59
 
@@ -490,36 +508,38 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
             self::$cache->set($key, $cache, 3600);
         }
+
         return $cache;
     }
 
     /**
-    * Returns Timeslots scheduled for the given week number.
-    *
-    * Weeks are from Monday - Sunday (URY days start at 6am)
-    * A Timeslot that starts before the start of the period but ends during
-    * will be included. The same is true for ones that end after the period.<br>
-    * It is guaranteed that the results will be in order of start time.
-    *
-    * @param  int $weekno An ISO-8601 Week Number (http://en.wikipedia.org/wiki/ISO_8601#Week_dates)
-    * @param  int $year   Default to current Calendar year.
-    * @return MyRadio_Timeslot[]
-    */
+     * Returns Timeslots scheduled for the given week number.
+     *
+     * Weeks are from Monday - Sunday (URY days start at 6am)
+     * A Timeslot that starts before the start of the period but ends during
+     * will be included. The same is true for ones that end after the period.<br>
+     * It is guaranteed that the results will be in order of start time.
+     *
+     * @param int $weekno An ISO-8601 Week Number (http://en.wikipedia.org/wiki/ISO_8601#Week_dates)
+     * @param int $year   Default to current Calendar year.
+     *
+     * @return MyRadio_Timeslot[]
+     */
     public static function getWeekSchedule($weekno, $year = null)
     {
         self::wakeup();
         if ($year === null) {
-            $year = (int)gmdate('Y');
+            $year = (int) gmdate('Y');
         }
 
         if ($weekno < 10) {
-            $weekno = '0' . $weekno;
+            $weekno = '0'.$weekno;
         }
 
-        $key = 'MyRadioWeekScheduleFor' . $year . 'W' . $weekno;
+        $key = 'MyRadioWeekScheduleFor'.$year.'W'.$weekno;
         $cache = self::$cache->get($key);
         if (!$cache) {
-            $startOfWeek = strtotime($year . 'W' . $weekno) + (60*60*6); // Monday 06:00:00
+            $startOfWeek = strtotime($year.'W'.$weekno) + (60 * 60 * 6); // Monday 06:00:00
             $endOfWeek = $startOfWeek + (86400 * 7) - 1; //Next Monday 05:59:59
 
             $startTimestamp = CoreUtils::getTimestamp($startOfWeek);
@@ -549,14 +569,16 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
             self::$cache->set($key, $cache, 3600);
         }
+
         return $cache;
     }
 
     /**
      * Returns the current timeslot, and the n after it, in a simplified
      * datasource format. Mainly intended for API use.
-     * @param int                                      $time
-     * @param int                                      $n    number of next shows to return
+     *
+     * @param int $time
+     * @param int $n    number of next shows to return
      * @param $filter defines a filter of show_type ids
      */
     public static function getCurrentAndNext($time = null, $n = 1, $filter = array(1))
@@ -568,11 +590,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             //There's currently not a show on.
             $response = [
                 'current' => [
-                    'title' => Config::$short_name . ' Jukebox',
+                    'title' => Config::$short_name.' Jukebox',
                     'desc' => 'Non-stop Music',
                     'photo' => Config::$default_show_uri,
-                    'end_time' => $next ? $next->getStartTime() : 'The End of Time'
-                ]
+                    'end_time' => $next ? $next->getStartTime() : 'The End of Time',
+                ],
             ];
         } else {
             //There's a show on!
@@ -585,26 +607,26 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     'end_time' => $timeslot->getEndTime(),
                     'presenters' => $timeslot->getPresenterString(),
                     'url' => $timeslot->getWebpage(),
-                    'id' => $timeslot->getID()
-                ]
+                    'id' => $timeslot->getID(),
+                ],
             ];
             $next = $timeslot->getTimeslotAfter($filter);
         }
 
         $lastnext = $timeslot;
 
-        for ($i = 0; $i < $n; $i++) {
+        for ($i = 0; $i < $n; ++$i) {
             if (empty($next)) {
-                if ($lastnext instanceof MyRadio_Timeslot) {
+                if ($lastnext instanceof self) {
                     //There's not a next show, but there might be one later
                     $nextshow = self::getNextTimeslot($lastnext->getEndTime(), $filter);
 
                     $response['next'][] = [
-                        'title' => Config::$short_name . ' Jukebox',
+                        'title' => Config::$short_name.' Jukebox',
                         'desc' => 'Non-stop Music',
                         'photo' => Config::$default_show_uri,
                         'start_time' => $lastnext->getEndTime(),
-                        'end_time' => $nextshow ? $nextshow->getStartTime() : 'The End of Time'
+                        'end_time' => $nextshow ? $nextshow->getStartTime() : 'The End of Time',
                     ];
                 }
             } else {
@@ -617,15 +639,15 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     'end_time' => $next->getEndTime(),
                     'presenters' => $next->getPresenterString(),
                     'url' => $next->getWebpage(),
-                    'id' => $next->getID()
+                    'id' => $next->getID(),
                 ];
             }
 
-            if ($next instanceof MyRadio_Timeslot) {
+            if ($next instanceof self) {
                 $lastnext = $next;
                 $next = $next->getTimeslotAfter($filter);
             } else {
-                if ($lastnext instanceof MyRadio_Timeslot) {
+                if ($lastnext instanceof self) {
                     $last = $next;
                     $next = self::getNextTimeslot($lastnext->getEndTime(), $filter);
                     $lastnext = $last;
@@ -692,12 +714,12 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             return false;
         }
 
-        $email = "Hi #NAME, \r\n\r\n Please note that an episode of your show, " . $this->getMeta('title') .
-                ' has been cancelled by our Programming Team. The affected episode was at ' . CoreUtils::happyTime($this->getStartTime());
-        $email .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\n" . Config::$long_name . " Programming Team";
+        $email = "Hi #NAME, \r\n\r\n Please note that an episode of your show, ".$this->getMeta('title').
+                ' has been cancelled by our Programming Team. The affected episode was at '.CoreUtils::happyTime($this->getStartTime());
+        $email .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\n".Config::$long_name.' Programming Team';
         self::$cache->purge();
 
-        MyRadioEmail::sendEmailToUserSet($this->getSeason()->getShow()->getCreditObjects(), 'Episode of ' . $this->getMeta('title') . ' Cancelled', $email);
+        MyRadioEmail::sendEmailToUserSet($this->getSeason()->getShow()->getCreditObjects(), 'Episode of '.$this->getMeta('title').' Cancelled', $email);
 
         return true;
     }
@@ -709,22 +731,22 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             return false;
         }
 
-        $email1 = "Hi #NAME, \r\n\r\n You have requested that an episode of " . $this->getMeta('title') .
-                ' is cancelled. The affected episode was at ' . CoreUtils::happyTime($this->getStartTime());
-        $email1 .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\n" . Config::$long_name . " Scheduler Robot";
+        $email1 = "Hi #NAME, \r\n\r\n You have requested that an episode of ".$this->getMeta('title').
+                ' is cancelled. The affected episode was at '.CoreUtils::happyTime($this->getStartTime());
+        $email1 .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\n".Config::$long_name.' Scheduler Robot';
 
-        $email2 = $this->getMeta('title') . ' on ' . CoreUtils::happyTime($this->getStartTime()) . ' was cancelled by a presenter because ' . $reason;
+        $email2 = $this->getMeta('title').' on '.CoreUtils::happyTime($this->getStartTime()).' was cancelled by a presenter because '.$reason;
         $email2 .= "\r\n\r\nIt was cancelled automatically as more than required notice was given.";
 
-        MyRadioEmail::sendEmailToUserSet($this->getSeason()->getShow()->getCreditObjects(), 'Episode of ' . $this->getMeta('title') . ' Cancelled', $email1);
-        MyRadioEmail::sendEmailToList(MyRadio_List::getByName('programming'), 'Episode of ' . $this->getMeta('title') . ' Cancelled', $email2);
+        MyRadioEmail::sendEmailToUserSet($this->getSeason()->getShow()->getCreditObjects(), 'Episode of '.$this->getMeta('title').' Cancelled', $email1);
+        MyRadioEmail::sendEmailToList(MyRadio_List::getByName('programming'), 'Episode of '.$this->getMeta('title').' Cancelled', $email2);
 
         return true;
     }
 
     private function cancelTimeslotRequest($reason)
     {
-        $email = $this->getMeta('title') . ' on ' . CoreUtils::happyTime($this->getStartTime()) . ' has requested cancellation because ' . $reason;
+        $email = $this->getMeta('title').' on '.CoreUtils::happyTime($this->getStartTime()).' has requested cancellation because '.$reason;
         $email .= "\r\n\r\nDue to the short notice, it has been passed to you for consideration. To cancel the timeslot, visit ";
         $email .= URLUtils::makeURL('Scheduler', 'cancelEpisode', ['show_season_timeslot_id' => $this->getID(), 'reason' => base64_encode($reason)]);
 
@@ -735,6 +757,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     /**
      * Deletes the timeslot. Nothing else. See the cancelTimeslot... methods for recommended removal usage.
+     *
      * @return bool success/fail
      */
     private function deleteTimeslot()
@@ -747,7 +770,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
-     * This is the server-side implementation of the JSONON system for tracking Show Planner alterations
+     * This is the server-side implementation of the JSONON system for tracking Show Planner alterations.
+     *
      * @param array[] $set A JSONON operation set
      */
     public function updateShowPlan($set)
@@ -758,61 +782,61 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
         foreach ($set['ops'] as $op) {
             switch ($op['op']) {
-            case 'AddItem':
-                try {
-                    //Is this a record or a manageditem?
-                    $parts = explode('-', $op['id']);
-                    if ($parts[0] === 'ManagedDB') {
-                        //This is a managed item
-                        $i = NIPSWeb_TimeslotItem::createManaged($this->getID(), $parts[1], $op['channel'], $op['weight']);
-                    } else {
-                        //This is a rec database track
-                        $i = NIPSWeb_TimeslotItem::createCentral($this->getID(), $parts[1], $op['channel'], $op['weight']);
+                case 'AddItem':
+                    try {
+                        //Is this a record or a manageditem?
+                        $parts = explode('-', $op['id']);
+                        if ($parts[0] === 'ManagedDB') {
+                            //This is a managed item
+                            $i = NIPSWeb_TimeslotItem::createManaged($this->getID(), $parts[1], $op['channel'], $op['weight']);
+                        } else {
+                            //This is a rec database track
+                            $i = NIPSWeb_TimeslotItem::createCentral($this->getID(), $parts[1], $op['channel'], $op['weight']);
+                        }
+                    } catch (MyRadioException $e) {
+                        $result[] = ['status' => false];
+                        self::$db->query('ROLLBACK');
+
+                        return $result;
                     }
-                } catch (MyRadioException $e) {
-                    $result[] = ['status' => false];
-                    self::$db->query('ROLLBACK');
 
-                    return $result;
-                }
+                    $result[] = ['status' => true, 'timeslotitemid' => $i->getID()];
+                    break;
 
-                $result[] = ['status' => true, 'timeslotitemid' => $i->getID()];
-                break;
+                case 'MoveItem':
+                    if (!is_numeric($op['timeslotitemid'])) {
+                        $result[] = ['status' => false];
+                        self::$db->query('ROLLBACK');
 
-            case 'MoveItem':
-                if (!is_numeric($op['timeslotitemid'])) {
-                    $result[] = ['status' => false];
-                    self::$db->query('ROLLBACK');
+                        return $result;
+                    }
+                    $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
+                    if ($i->getChannel() != $op['oldchannel'] or $i->getWeight() != $op['oldweight']) {
+                        $result[] = ['status' => false];
+                        self::$db->query('ROLLBACK');
 
-                    return $result;
-                }
-                $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
-                if ($i->getChannel() != $op['oldchannel'] or $i->getWeight() != $op['oldweight']) {
-                    $result[] = ['status' => false];
-                    self::$db->query('ROLLBACK');
+                        return $result;
+                    } else {
+                        $i->setLocation($op['channel'], $op['weight']);
+                        $result[] = ['status' => true];
+                    }
+                    break;
 
-                    return $result;
-                } else {
-                    $i->setLocation($op['channel'], $op['weight']);
-                    $result[] = ['status' => true];
-                }
-                break;
+                case 'RemoveItem':
+                    if (!is_numeric($op['timeslotitemid'])) {
+                        throw new MyRadioException($op['timeslotitemid'].' is invalid.', 500);
+                    }
+                    $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
+                    if ($i->getChannel() != $op['channel'] or $i->getWeight() != $op['weight']) {
+                        $result[] = ['status' => false];
+                        self::$db->query('ROLLBACK');
 
-            case 'RemoveItem':
-                if (!is_numeric($op['timeslotitemid'])) {
-                    throw new MyRadioException($op['timeslotitemid'] . ' is invalid.', 500);
-                }
-                $i = NIPSWeb_TimeslotItem::getInstance($op['timeslotitemid']);
-                if ($i->getChannel() != $op['channel'] or $i->getWeight() != $op['weight']) {
-                    $result[] = ['status' => false];
-                    self::$db->query('ROLLBACK');
-
-                    return $result;
-                } else {
-                    $i->remove();
-                    $result[] = ['status' => true];
-                }
-                break;
+                        return $result;
+                    } else {
+                        $i->remove();
+                        $result[] = ['status' => true];
+                    }
+                    break;
             }
         }
 
@@ -821,7 +845,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             VALUES ($1, $2)',
             [
                 $set['clientid'],
-                json_encode($set['ops'])
+                json_encode($set['ops']),
             ]
         );
 
@@ -839,11 +863,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
-     * Returns the tracks etc. and their associated channels as planned for this show. Mainly used by NIPSWeb
+     * Returns the tracks etc. and their associated channels as planned for this show. Mainly used by NIPSWeb.
      */
     public function getShowPlan()
     {
-        /**
+        /*
          * Find out if there's a NIPSWeb Schema listing for this timeslot.
          * If not, throw back an empty array
          */
@@ -869,6 +893,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     /**
      * Get information about the Users signed into this Timeslot.
+     *
      * @todo Cache this data?
      */
     public function getSigninInfo()
@@ -897,7 +922,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             function ($x) {
                 return [
                     'user' => MyRadio_User::getInstance($x['memberid']),
-                    'signedby' => $x['signerid'] ? MyRadio_User::getInstance($x['signerid']) : null
+                    'signedby' => $x['signerid'] ? MyRadio_User::getInstance($x['signerid']) : null,
                 ];
             },
             $result
@@ -936,9 +961,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
-     * Sends a message to the timeslot for display in SIS
+     * Sends a message to the timeslot for display in SIS.
      *
-     * @param  string $message the message to be sent
+     * @param string $message the message to be sent
+     *
      * @return pg_result
      */
     public function sendMessage($message)
@@ -968,9 +994,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 3,                          // commtypeid : website
                 'MyRadio',                  // sender
                 substr($message, 0, 144),   // subject : trancated message
-                $prefix . $message,         // content : message with prefix
+                $prefix.$message,         // content : message with prefix
                 $junk ? 4 : 1,              // statusid : junk or unread
-                $source                     // comm_source : IP
+                $source,                     // comm_source : IP
             ]
         );
     }
@@ -988,7 +1014,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             [
                 $this->getID(),
                 $member->getID(),
-                MyRadio_User::getInstance()->getID()
+                MyRadio_User::getInstance()->getID(),
             ]
         );
     }
@@ -1002,7 +1028,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 'cancelEpisode',
                 [
                     'debug' => false,
-                    'title' => 'Cancel Episode'
+                    'title' => 'Cancel Episode',
                 ]
             )
         )->addField(

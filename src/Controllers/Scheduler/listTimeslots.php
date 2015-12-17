@@ -1,10 +1,9 @@
 <?php
 /**
- * Controller for outputting a Datatable of Seasons within the specified Show
- * @package MyRadio_Scheduler
+ * Controller for outputting a Datatable of Seasons within the specified Show.
+ *
  * @todo This requires manual permission checks as it needs interesting things
  */
-
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\ServiceAPI\ServiceAPI;
 use MyRadio\ServiceAPI\MyRadio_Season;

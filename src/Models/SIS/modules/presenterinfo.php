@@ -1,9 +1,7 @@
 <?php
 /**
- * Presenter Infomation Tab for SIS
- *
- * @package MyRadio_SIS
+ * Presenter Infomation Tab for SIS.
  */
 $moduleInfo = [
-    'pollfunc' => 'MyRadio\SIS\SIS_Remote::queryPresenterInfo'
+    'pollfunc' => 'MyRadio\SIS\SIS_Remote::queryPresenterInfo',
 ];

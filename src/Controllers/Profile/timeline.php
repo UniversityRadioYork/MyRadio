@@ -1,11 +1,8 @@
 <?php
 /**
- *
  * @todo Proper Documentation
  * @todo Permissions
- * @package MyRadio_Profile
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 

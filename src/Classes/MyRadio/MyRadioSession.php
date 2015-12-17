@@ -2,11 +2,10 @@
 
 namespace MyRadio\MyRadio;
 
-use \MyRadio\Database;
+use MyRadio\Database;
 
 /**
  * Custom session handler.
- *
  */
 class MyRadioSession
 {
@@ -40,7 +39,7 @@ class MyRadioSession
 
     /**
      * Clear up old session entries in the database
-     * This should be called automatically by PHP every one in a while
+     * This should be called automatically by PHP every one in a while.
      */
     public function gc($lifetime)
     {
@@ -54,7 +53,7 @@ class MyRadioSession
 
     /**
      * Reads the session data from the database. If no data exists, creates an
-     * empty row
+     * empty row.
      */
     public function read($id)
     {
@@ -81,7 +80,7 @@ class MyRadioSession
     }
 
     /**
-     * Writes changes to the session data to the database
+     * Writes changes to the session data to the database.
      */
     public function write($id, $data)
     {
@@ -97,11 +96,11 @@ class MyRadioSession
             [$id, $data]
         );
 
-        return ($result !== false);
+        return $result !== false;
     }
 
     /**
-     * Deletes the session entry from the database
+     * Deletes the session entry from the database.
      */
     public function destroy($id)
     {

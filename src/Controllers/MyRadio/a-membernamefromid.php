@@ -4,9 +4,7 @@
  * Some might include more than one model etc....
  *
  * @todo    Proper documentation
- * @package MyRadio_Core
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;

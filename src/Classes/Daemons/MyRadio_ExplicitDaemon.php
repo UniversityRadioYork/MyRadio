@@ -1,20 +1,16 @@
 <?php
 
 /**
- * This file provides the MyRadio_ExplicitDaemon class for MyRadio
- * @package MyRadio_Daemon
+ * This file provides the MyRadio_ExplicitDaemon class for MyRadio.
  */
-
 namespace MyRadio\Daemons;
 
-use \MyRadio\Config;
-use \MyRadio\Database;
-use \MyRadio\ServiceAPI\MyRadio_Track;
+use MyRadio\Config;
+use MyRadio\Database;
+use MyRadio\ServiceAPI\MyRadio_Track;
 
 /**
  * The Explicit Daemon asks iTunes if a Track is Explicit.
- *
- * @package MyRadio_Daemon
  */
 class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 {
@@ -23,7 +19,8 @@ class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
     /**
      * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.
      * It is currently enabled because we have a lot of labels that needed filling in for Tracklisting.
-     * @return boolean
+     *
+     * @return bool
      */
     public static function isEnabled()
     {
@@ -40,7 +37,7 @@ class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 'limit' => 25,
                 'random' => true,
                 'digitised' => self::$digitised_only,
-                'custom' => 'trackid NOT IN (SELECT trackid FROM music.explicit_checked)'
+                'custom' => 'trackid NOT IN (SELECT trackid FROM music.explicit_checked)',
             ]
         );
 
@@ -49,34 +46,33 @@ class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         }
 
         foreach ($tracks as $track) {
-            $q = trim($track->getTitle() . ' ' . $track->getArtist());
+            $q = trim($track->getTitle().' '.$track->getArtist());
             $data = json_decode(
                 file_get_contents(
                     'http://itunes.apple.com/search?term='
-                    . urlencode($q) . '&entity=song&limit=5'
+                    .urlencode($q).'&entity=song&limit=5'
                 ),
                 true
             );
 
-            dlog('Checking ' . $q . ' (' . $data['resultCount'] . ' matches)', 4);
+            dlog('Checking '.$q.' ('.$data['resultCount'].' matches)', 4);
 
-            for ($i = 0; $i < $data['resultCount']; $i++) {
-                /**
+            for ($i = 0; $i < $data['resultCount']; ++$i) {
+                /*
                  * explicit (explicit lyrics, possibly explicit album cover), cleaned
                  * (explicit lyrics "bleeped out"), notExplicit (no explicit lyrics)
                  */
                 if ($data['results'][$i]['trackName'] == $track->getTitle()
                     && $data['results'][$i]['artistName'] == $track->getArtist()
                 ) {
-
                     $clean = $data['results'][$i]['trackExplicitness'] == 'explicit'
                             ? 'n' : 'y';
                     $track->setClean($clean);
 
                     dlog(
-                        'Setting Explicicity of ' .
-                        $track->getTitle() . ' (' . $track->getAlbum()->getID()
-                        . '/' . $track->getID() . ') as ' . $clean,
+                        'Setting Explicicity of '.
+                        $track->getTitle().' ('.$track->getAlbum()->getID()
+                        .'/'.$track->getID().') as '.$clean,
                         2
                     );
                     break;

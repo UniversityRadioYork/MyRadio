@@ -1,10 +1,7 @@
 <?php
 /**
- * Assign a Member an Officership
- *
- * @package MyRadio_Profile
+ * Assign a Member an Officership.
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Officer;
@@ -21,8 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         throw new MyRadioException('Member is not paid!', 400);
     }
-
-
 } else {
     //Not Submitted
 
@@ -35,9 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $officer->getID(),
                 []
             )
-            ->setTitle('Assign Officer - '. $officer->getName())
+            ->setTitle('Assign Officer - '.$officer->getName())
             ->render();
-
     } else {
         // Error
         throw new MyRadioException('Officer ID must be provided.', 400);

@@ -1,10 +1,7 @@
 <?php
 /**
- * Edit a Banner
- *
- * @package MyRadio_Website
+ * Edit a Banner.
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Banner;
 use \MyRadio\ServiceAPI\MyRadio_Photo;
@@ -17,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //create new
         $photo = MyRadio_Photo::create($data['photo']['tmp_name']);
         $banner = MyRadio_Banner::create($photo, $data['alt'], $data['target'], $data['type']);
-
     } else {
         //submit edit
         $banner = MyRadio_Banner::getInstance($data['id'])
@@ -32,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     URLUtils::backWithMessage('Banner Updated!');
-
 } else {
     //Not Submitted
 
@@ -42,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $banner
             ->getEditForm()
             ->render(['bannerName' => $banner->getAlt()]);
-
     } else {
         //create form
         MyRadio_Banner::getForm()->render();

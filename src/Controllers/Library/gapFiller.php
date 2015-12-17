@@ -1,9 +1,7 @@
 <?php
 /**
- * Scan music library, filling in blanks or changing default values
- * @package MyRadio_Library
+ * Scan music library, filling in blanks or changing default values.
  */
-
 use \MyRadio\Config;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Album;
@@ -33,7 +31,7 @@ foreach ($albums as $album) {
         $updated[] = $track;
         $checked[] = $track->getID();
         usleep(200000);
-        $limit--;
+        --$limit;
     }
 }
 

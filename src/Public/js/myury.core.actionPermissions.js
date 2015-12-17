@@ -34,7 +34,8 @@ $('.twig-datatable').dataTable(
 );
 
 $('td.column-del a').on(
-    'click', function(e) {
+    'click',
+    function (e) {
         e.preventDefault();
         window.actionpermissionconfirmurl = $(this).attr('href');
         $(
@@ -44,10 +45,10 @@ other permission settings defined, it will no longer work.</div>'
             {
                 modal:true,
                 buttons: {
-                    "Delete Permission Allocation": function() {
+                    "Delete Permission Allocation": function () {
                         window.location = window.actionpermissionconfirmurl;
                     },
-                    Cancel: function() {
+                    Cancel: function () {
                         window.actionpermissionconfirmurl = null;
                         $(this).dialog('close');
                     }

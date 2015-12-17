@@ -1,18 +1,18 @@
 /* Schedule */
-var Schedule = function() {
+var Schedule = function () {
     var lastTime = 0;
     return {
         activeByDefault: true,
         name: 'Schedule',
         type: 'tab',
-        initialise: function() {
+        initialise: function () {
             var s = document.createElement('script');
             s.type = "text/javascript";
             s.src = mConfig.base_url + 'js/myradio.schedule.view.js';
             document.body.appendChild(s);
 
             var self = this;
-            s.onload = function() {
+            s.onload = function () {
                 ScheduleView(
                     {
                         view: 'day',

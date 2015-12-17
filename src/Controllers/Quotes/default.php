@@ -2,10 +2,7 @@
 
 /**
  * Allows the addition of new quotes.
- *
- * @package MyRadio_Quotes
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_Quote;

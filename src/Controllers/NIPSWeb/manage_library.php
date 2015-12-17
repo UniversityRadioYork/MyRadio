@@ -1,10 +1,7 @@
 <?php
 /**
- * Main renderer for NIPSWeb
- *
- * @package MyRadio_NIPSWeb
+ * Main renderer for NIPSWeb.
  */
-
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
@@ -23,7 +20,7 @@ CoreUtils::getTemplateObject()->setTemplate($template)
             [
                 'managed' => [],
                 'aux' => NIPSWeb_ManagedPlaylist::getAllManagedPlaylists(true),
-                'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(MyRadio_User::getInstance())
+                'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(MyRadio_User::getInstance()),
             ]
         )
     )->render();

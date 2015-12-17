@@ -1,12 +1,10 @@
 <?php
 
 /**
- * Allows users to select the timeslot they are working with
+ * Allows users to select the timeslot they are working with.
  *
  * @data    20140102
- * @package MyRadio_Core
  */
-
 use \MyRadio\Config;
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
@@ -19,7 +17,7 @@ function setupTimeslot($timeslot)
 {
     // No timeslot (probably jukebox)
     if (empty($timeslot)) {
-        URLUtils::backWithMessage("Cannot select empty timeslot.");
+        URLUtils::backWithMessage('Cannot select empty timeslot.');
     }
 
     //Can the user access this timeslot?
@@ -33,7 +31,7 @@ function setupTimeslot($timeslot)
         foreach ($_REQUEST['signin'] as $memberid) {
             $timeslot->signIn(MyRadio_User::getInstance($memberid));
         }
-        header('Location: ' . ($_REQUEST['next'] !== '' ? $_REQUEST['next'] : Config::$base_url));
+        header('Location: '.($_REQUEST['next'] !== '' ? $_REQUEST['next'] : Config::$base_url));
     }
 }
 
@@ -42,16 +40,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['timeslotid'])) {
         setupTimeslot(MyRadio_Timeslot::getInstance($_POST['timeslotid']));
     } else {
-        URLUtils::backWithMessage("Cannot select empty timeslot");
+        URLUtils::backWithMessage('Cannot select empty timeslot');
     }
 } elseif (isset($_GET['current']) && $_GET['current'] && AuthUtils::hasPermission(AUTH_EDITSHOWS)) {
     //Submitted Current
     setupTimeslot(MyRadio_Timeslot::getCurrentTimeslot());
-
 } elseif (!empty(Config::$contract_uri) && !MyRadio_User::getInstance()->hasSignedContract()) {
     $message = "You need to have signed the Presenter's Contract to view this";
     require_once 'Controllers/Errors/403.php';
-
 } else {
     //Not Submitted
     $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/timeslot.twig')
@@ -60,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->addVariable('next', $_GET['next']);
 
     $data = [];
-    /**
+    /*
      * People with AUTH_EDITSHOWS can see all timeslots here
      */
     $shows = MyRadio_User::getInstance()->getShows();
@@ -82,7 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data[$show->getMeta('title')][] = array_map(
                 function ($x) {
                     return [$x->getID(), $x->getStartTime(), $x->getEndTime()];
-                }, $season->getAllTimeslots()
+                },
+                $season->getAllTimeslots()
             );
         }
     }

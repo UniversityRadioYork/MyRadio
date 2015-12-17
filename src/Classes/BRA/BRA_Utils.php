@@ -8,9 +8,7 @@
 namespace \MyRadio\Rapid;
 
 /**
- * This class has helper functions for communicating with a BAPS Server over BRA
- *
- * @package MyRadio_BRA
+ * This class has helper functions for communicating with a BAPS Server over BRA.
  */
 class BRA_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 {
@@ -21,7 +19,6 @@ class BRA_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 
     public function __construct()
     {
-
     }
 
     public function getAllChannelInfo()

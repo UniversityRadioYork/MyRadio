@@ -42,7 +42,7 @@ window.NIPSWeb = {
     /**
      * Initialises with latest data from BRA using POST.
      */
-    initData: function() {
+    initData: function () {
         //First we get the contents of all playlists
         options = NIPSWeb.baseReq('playlists');
         options.done = NIPSWeb.drawChannels;
@@ -55,7 +55,7 @@ window.NIPSWeb = {
     /**
      * Initialises the connection to the BRA WebSocket Stream
      */
-    initStream: function() {
+    initStream: function () {
         NIPSWeb.resetCounter++;
         if (NIPSWeb.braStream) {
             NIPSWeb.braStream.close();
@@ -63,13 +63,13 @@ window.NIPSWeb = {
         NIPSWeb.braStream = new WebSocket(
             "wss://" + NIPSWeb.server + "/stream/"
         );
-        NIPSWeb.braStream.onopen = function(e) {
+        NIPSWeb.braStream.onopen = function (e) {
             NIPSWeb.braStream.send('{"type":"auth","username":"' + NIPSWeb.user + '","password":"' + NIPSWeb.pass + '"}');
             //Populate with initial data
             //Don't do this first - what happens to events in between?
             NIPSWeb.initData();
         };
-        NIPSWeb.braStream.onmessage = function(data) {
+        NIPSWeb.braStream.onmessage = function (data) {
             NIPSWeb.processStream(data);
         };
         /**
@@ -77,7 +77,7 @@ window.NIPSWeb = {
          */
         if (!NIPSWeb.streamChecker) {
             NIPSWeb.streamChecker = setInterval(
-                function() {
+                function () {
                     if (NIPSWeb.braStream.readyState !== 1) {
                         if (NIPSWeb.resetCounter == NIPSWeb.resetLimit) {
                             console.log(NIPSWeb.resetLimit + ' WebSocket retries exceeded. Suggesting REST fallback.');
@@ -87,11 +87,11 @@ window.NIPSWeb = {
                                     {
                                         modal: true,
                                         buttons: {
-                                            'Try a Slower Connection': function() {
+                                            'Try a Slower Connection': function () {
                                                 NIPSWeb.initFallback(0);
                                                 $(this).dialog("close");
                                             },
-                                            'Keep Trying': function() {
+                                            'Keep Trying': function () {
                                                 NIPSWeb.initStream();
                                                 $('#init-overlay-fallback').show();
                                                 $(this).dialog("close");
@@ -99,7 +99,7 @@ window.NIPSWeb = {
                                         },
                                         width: 600,
                                         closeOnEscape: false,
-                                        open: function(e, ui) {
+                                        open: function (e, ui) {
                                             $(".ui-dialog-titlebar-close", ui.dialog).hide()
                                         }
                                     }
@@ -114,7 +114,8 @@ window.NIPSWeb = {
                             NIPSWeb.initStream();
                         }
                     }
-                }, 1500
+                },
+                1500
             );
         }
     },
@@ -123,7 +124,7 @@ window.NIPSWeb = {
      * state repeatedly. This can be stopped by resetting NIPSWeb.resetCounter
      * to 0.
      */
-    initFallback: function(part) {
+    initFallback: function (part) {
         //Stop if we're trying sockets again
         if (NIPSWeb.resetCounter != NIPSWeb.resetLimit) {
             return false;
@@ -131,7 +132,7 @@ window.NIPSWeb = {
         if (part === 1) {
             //First we get the contents of all playlists
             coptions = NIPSWeb.baseReq('playlists');
-            coptions.done = function(x) {
+            coptions.done = function (x) {
                 setTimeout("NIPSWeb.initFallback(1)", 2500);
                 NIPSWeb.drawChannels(x);
             };
@@ -140,7 +141,7 @@ window.NIPSWeb = {
         } else if (part === 2) {
             //Now we get the status of the players
             poptions = NIPSWeb.baseReq('players');
-            poptions.done = function(x) {
+            poptions.done = function (x) {
                 setTimeout("NIPSWeb.initFallback(2)", 500);
                 NIPSWeb.updatePlayers(x);
             };
@@ -155,20 +156,20 @@ window.NIPSWeb = {
     /**
      * Deals with the REST Fallback Mode not working
      */
-    fallbackFail: function() {
+    fallbackFail: function () {
         $('<div></div>').attr('title', 'Server Unavailable').attr('id', 'error-dialog')
                 .append('<p>I have tried as hard as I can, but it looks like there\'s currently a problem with the playout system in this studio. Please contact faults to report this.</p>')
                 .dialog(
                     {
                         modal: true,
                         buttons: {
-                            'Go Back': function() {
+                            'Go Back': function () {
                                 window.location = myradio.makeURL(mConfig.default_module, mConfig.default_action);
                             }
                         },
                         width: 600,
                         closeOnEscape: false,
-                        open: function(e, ui) {
+                        open: function (e, ui) {
                             $(".ui-dialog-titlebar-close", ui.dialog).hide()
                         }
                     }
@@ -177,7 +178,7 @@ window.NIPSWeb = {
     /**
      * Handles changes to client state over the BRA WebSocket Stream
      */
-    processStream: function(data) {
+    processStream: function (data) {
         var obj = $.parseJSON(data.data)
 
         //{type: "update", /players/0/position: 173818}
@@ -269,7 +270,7 @@ window.NIPSWeb = {
      * @param json data
      * @returns {undefined}
      */
-    drawChannels: function(data) {
+    drawChannels: function (data) {
         $('ul.baps-channel').empty();
         for (i in data) {
             var channel = $('#baps-channel-' + (parseInt(i) + 1));
@@ -282,7 +283,7 @@ window.NIPSWeb = {
     /**
      * Updates player state based on the result of a players REST request.
      */
-    updatePlayers: function(data) {
+    updatePlayers: function (data) {
         for (i in data) {
             //Update the player state
             var cid = parseInt(i) + 1;
@@ -305,23 +306,23 @@ window.NIPSWeb = {
      * Creates a standard BRAPI request framework. Pass your response handler
      * as .done - .success is used for internal request handling.
      */
-    baseReq: function(command) {
+    baseReq: function (command) {
         return {
             url: 'https://' + NIPSWeb.server + '/' + command,
             accept: 'application/json',
-            beforeSend: function(request) {
+            beforeSend: function (request) {
                 b64 = window.btoa(NIPSWeb.user + ':' + NIPSWeb.pass);
                 request.withCredentials = true;
                 request.setRequestHeader("Authorization", "Basic " + b64);
             },
-            success: function(data) {
+            success: function (data) {
                 /**
                  * @todo Handle 'status' parameter
                  */
                 return this.done(data['value']);
             },
             //Custom parameter - called by success once response handled
-            done: function(data) {
+            done: function (data) {
                 return true;
             },
             cache: false,
@@ -334,21 +335,21 @@ window.NIPSWeb = {
     /**
      * Returns the next incremental ID from the local ID store
      */
-    getID: function() {
+    getID: function () {
         return ++NIPSWeb.idCounter;
     },
     /**
      * Strips out unwanted bits of an item name (Managed Items and Personal
      * Items are exposed to BAPS as [name]_[manageditemid])
      */
-    parseItemName: function(str) {
+    parseItemName: function (str) {
         return str.replace(/_[0-9]+$/, '');
     },
     /**
      * Returns number of minutes (zero padded) from a time in seconds
      * @param time in seconds
      */
-    timeMins: function(time) {
+    timeMins: function (time) {
         var mins = Math.floor(time / 60) + "";
         if (mins.length < 2) {
             mins = '0' + mins;
@@ -358,7 +359,7 @@ window.NIPSWeb = {
     /**
      * Returns number of seconds (zero padded) less than mins from a time in seconds
      */
-    timeSecs: function(time) {
+    timeSecs: function (time) {
         var secs = Math.floor(time % 60) + "";
         if (secs.length < 2) {
             secs = '0' + secs;
@@ -368,22 +369,22 @@ window.NIPSWeb = {
     /**
      * Returns a pretty formatted time (min:sec) from a BAPS time (millisec)
      */
-    parseTime: function(time) {
+    parseTime: function (time) {
         var t = Math.round(time / 1000);
         return t ? NIPSWeb.timeMins(t) + ':' + NIPSWeb.timeSecs(t) : '--:--';
     },
-    setChannelDuration: function(cid, time) {
+    setChannelDuration: function (cid, time) {
         $('#ch' + cid + '-duration').html(NIPSWeb.parseTime(time));
         $('#progress-bar-' + cid).slider({max: time});
     },
-    setChannelPosition: function(cid, time) {
+    setChannelPosition: function (cid, time) {
         $('#ch' + cid + '-elapsed').html(NIPSWeb.parseTime(time));
         $('#progress-bar-' + cid).slider({value: time});
     },
     /**
      * Valid values: playing, stopped, loading, ok (loading finished), paused
      */
-    setChannelState: function(cid, state) {
+    setChannelState: function (cid, state) {
         if (state === "playing") {
             $('#ch' + cid + '-play').button('enable').addClass('ui-state-highlight');
             $('#ch' + cid + '-pause').button('enable').removeClass('ui-state-highlight');
@@ -406,22 +407,23 @@ window.NIPSWeb = {
      * Sets up UI elements such as dialogs and progressbars
      * @todo Currently assumes 3 broadcast channels
      */
-    initUI: function() {
+    initUI: function () {
         //Loading bar
         $('#init-progressbar').progressbar({value: false});
         //Fallback notice dialog
         $('#notice').on(
-            'click', function() {
+            'click',
+            function () {
                 $('<div></div>').attr('title', 'Fallback Mode Enabled').attr('id', 'error-dialog')
                     .append('<p>I\'ve put you into Fallback Mode right now because of problems connected to our Live server, or because you\'re using an old web browser. You will still be able to use BAPS, but the screen will update slower and things may just generally not work as well.</p>')
                     .dialog(
                         {
                             modal: true,
                             buttons: {
-                                'Stay in Fallback Mode': function() {
+                                'Stay in Fallback Mode': function () {
                                     $(this).dialog("close");
                                 },
-                                'Switch back to Live Mode': function() {
+                                'Switch back to Live Mode': function () {
                                     NIPSWeb.resetCounter = 0;
                                     NIPSWeb.initStream();
                                     $('#notice').hide();
@@ -435,7 +437,8 @@ window.NIPSWeb = {
         );
         //Fallback button on loading dialog
         $('#init-overlay-fallback button').on(
-            'click', function() {
+            'click',
+            function () {
                 clearTimeout(NIPSWeb.streamChecker);
                 NIPSWeb.streamChecker = null;
                 NIPSWeb.resetCounter = NIPSWeb.resetLimit;
@@ -444,7 +447,7 @@ window.NIPSWeb = {
             }
         );
         /**
- * Initialise player boxes 
+ * Initialise player boxes
 */
         //Play/Pause/Stop (clicks handled by onClick in DOM)
         $('button.play').button(
@@ -480,59 +483,64 @@ window.NIPSWeb = {
                 min: 0
             }
         ).on(
-            "slidestop", function(e, ui) {
-                    var cid = parseInt($(this).attr('id').replace(/^progress\-bar\-/,''))-1;
-                    var options = NIPSWeb.baseReq('players/'+cid);
-                    options.method = 'POST';
-                    options.data = '{"position":"'+ui.value+'"}';
-                    $.ajax(options);
-                }
+            "slidestop",
+            function (
+                e,
+                ui
+            ) {
+                var cid = parseInt($(this).attr('id').replace(/^progress\-bar\-/,''))-1;
+                var options = NIPSWeb.baseReq('players/'+cid);
+                options.method = 'POST';
+                options.data = '{"position":"'+ui.value+'"}';
+                $.ajax(options);
+            }
         );
 
         //Funtion key press
         $(document).on(
-            'keydown.bapsplayers', function(e) {
+            'keydown.bapsplayers',
+            function (e) {
                 var trigger = false;
                 switch (e.which) {
-                case NIPSWeb.keys.F1:
-                    //Play channel 1
-                    NIPSWeb.play(1);
-                    trigger = true;
-                    break;
-                case NIPSWeb.keys.F2:
-                    NIPSWeb.pause(1);
-                    trigger = true;
-                    break;
-                case NIPSWeb.keys.F3:
-                    NIPSWeb.stop(1);
-                    trigger = true;
-                    break;
-                case NIPSWeb.keys.F5:
-                    //Play channel 2
-                    NIPSWeb.play(2);
-                    trigger = true;
-                    break;
-                case NIPSWeb.keys.F6:
-                    NIPSWeb.pause(2);
-                    trigger = true;
-                    break;
-                case NIPSWeb.keys.F7:
-                    NIPSWeb.stop(2);
-                    trigger = true;
-                    break;
-                case NIPSWeb.keys.F9:
-                    //Play channel 3
-                    NIPSWeb.play(3);
-                    trigger = true;
-                    break;
-                case NIPSWeb.keys.F10:
-                    NIPSWeb.pause(3);
-                    trigger = true;
-                    break;
-                case NIPSWeb.keys.F11:
-                    NIPSWeb.stop(3);
-                    trigger = true;
-                    break;
+                    case NIPSWeb.keys.F1:
+                        //Play channel 1
+                        NIPSWeb.play(1);
+                        trigger = true;
+                        break;
+                    case NIPSWeb.keys.F2:
+                        NIPSWeb.pause(1);
+                        trigger = true;
+                        break;
+                    case NIPSWeb.keys.F3:
+                        NIPSWeb.stop(1);
+                        trigger = true;
+                        break;
+                    case NIPSWeb.keys.F5:
+                        //Play channel 2
+                        NIPSWeb.play(2);
+                        trigger = true;
+                        break;
+                    case NIPSWeb.keys.F6:
+                        NIPSWeb.pause(2);
+                        trigger = true;
+                        break;
+                    case NIPSWeb.keys.F7:
+                        NIPSWeb.stop(2);
+                        trigger = true;
+                        break;
+                    case NIPSWeb.keys.F9:
+                        //Play channel 3
+                        NIPSWeb.play(3);
+                        trigger = true;
+                        break;
+                    case NIPSWeb.keys.F10:
+                        NIPSWeb.pause(3);
+                        trigger = true;
+                        break;
+                    case NIPSWeb.keys.F11:
+                        NIPSWeb.stop(3);
+                        trigger = true;
+                        break;
                 }
                 if (trigger) {
                     e.stopPropagation();
@@ -543,14 +551,15 @@ window.NIPSWeb = {
         );
 
         /**
- * Initialise Movement Operations 
+ * Initialise Movement Operations
 **/
         $('ul.baps-channel').not('#baps-channel-res').sortable();
     },
-    initListClick: function() {
+    initListClick: function () {
         $('ul.baps-channel li').off('click.playerLoad').on(
-            'click.playerLoad', function(e) {
-                /**
+            'click.playerLoad',
+            function (e) {
+            /**
              * @todo Look into implementing this cool stuff
              */
                 if ($(this).hasClass('unclean')) {
@@ -569,7 +578,7 @@ window.NIPSWeb = {
             }
         );
     },
-    makeItem: function(data) {
+    makeItem: function (data) {
         var li = $('<li></li>');
         li.attr('id', 'bapsidx-' + NIPSWeb.getID());
         li.attr('duration', NIPSWeb.parseTime(data.duration))
@@ -577,7 +586,7 @@ window.NIPSWeb = {
         return li;
     },
     //Handles a play request for (ch-1)
-    play: function(ch) {
+    play: function (ch) {
         var cid = parseInt(ch) - 1;
         var options = NIPSWeb.baseReq('players/' + cid);
         options.method = 'POST';
@@ -585,7 +594,7 @@ window.NIPSWeb = {
         $.ajax(options);
     },
     //Handles a pause request for (ch-1)
-    pause: function(ch) {
+    pause: function (ch) {
         var cid = parseInt(ch) - 1;
         var options = NIPSWeb.baseReq('players/' + cid);
         options.method = 'POST';
@@ -597,7 +606,7 @@ window.NIPSWeb = {
         $.ajax(options);
     },
     //Handles a stop request for (ch-1)
-    stop: function(ch) {
+    stop: function (ch) {
         var cid = parseInt(ch) - 1;
         var options = NIPSWeb.baseReq('players/' + cid);
         options.method = 'POST';
@@ -647,7 +656,8 @@ window.debug = true;
   }
   */
 
-function configureContextMenus() {
+function configureContextMenus()
+{
     return;
     $(document).contextmenu(
         {
@@ -664,17 +674,19 @@ function configureContextMenus() {
             {title: "Load Channel", cmd: "loadPreset", uiIcon: "ui-icon-folder-open"}
             ],
             position: {my: "left top", at: "center"},
-            beforeOpen: function(event) {
+            beforeOpen: function (event) {
                 var ul = ($(event.relatedTarget).is('li') ? $(event.relatedTarget).parent('ul') : event.relatedTarget);
                 console.log(ul);
                 //Enable/disable Delete item depending on if it's an li - lis are items, ul would be container
                 $(document).contextmenu("enableEntry", "itemDel", $(event.relatedTarget).is('li'));
                 $(document).contextmenu(
-                    "setEntry", "autoAdv",
+                    "setEntry",
+                    "autoAdv",
                     {title: "Automatic Advance", cmd: "autoAdv", uiIcon: $(ul).attr('autoadvance') == 1 ? "ui-icon-check" : ""}
                 ),
                 $(document).contextmenu(
-                    "setEntry", "autoPlay",
+                    "setEntry",
+                    "autoPlay",
                     {title: "Play On Load", cmd: "autoPlay", uiIcon: $(ul).attr('playonload') == 1 ? "ui-icon-check" : ""}
                 )
             },
@@ -682,10 +694,14 @@ function configureContextMenus() {
         }
     );
     $(document).bind(
-        "contextmenuselect", function(event, ui) {
+        "contextmenuselect",
+        function (
+            event,
+            ui
+        ) {
             var menuId = ui.item.find(">a").attr("href"),
-                target = event.relatedTarget,
-                ul = ($(event.relatedTarget).is('li') ? $(event.relatedTarget).parent('ul') : event.relatedTarget);
+            target = event.relatedTarget,
+            ul = ($(event.relatedTarget).is('li') ? $(event.relatedTarget).parent('ul') : event.relatedTarget);
             if (menuId === "#autoAdv") {
                 if ($(ul).attr('autoadvance') == 1) {
                     $(ul).attr('autoadvance', 0);
@@ -708,10 +724,12 @@ function configureContextMenus() {
  * Generic Functions
  */
 
-function registerItemClicks() {
+function registerItemClicks()
+{
     // Used by dragdrop - enables the selected item to move down on drag/drop
     $('ul.baps-channel li').off('mousedown.predrag').on(
-        'mousedown.predrag', function(e) {
+        'mousedown.predrag',
+        function (e) {
             $(this).attr(
                 'nextSelect',
                 typeof $(this).next().attr('id') !== 'undefined' ? $(this).next().attr('id') : $(this).prev().attr('id')
@@ -723,7 +741,7 @@ function registerItemClicks() {
             items: "li",
             show: {delay: 500},
             hide: false,
-            content: function() {
+            content: function () {
                 return $(this).html() + ($(this).attr('length') == null ? '' : ' (' + $(this).attr('length') + ')');
             }
         }

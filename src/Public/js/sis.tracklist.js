@@ -1,21 +1,22 @@
 /* Tracklist */
-var Tracklist = function() {
+var Tracklist = function () {
     var tracklist_highest_id = 0,
         table,
         self = this,
         add_track_dialog,
-        get_delete_func = function(id, title, artist) {
-            return function() {
+        get_delete_func = function (id, title, artist) {
+            return function () {
                 var confirmButton = document.createElement('button');
                 confirmButton.className = 'btn btn-danger';
                 confirmButton.innerHTML = 'Remove';
                 confirmButton.setAttribute('data-dismiss', 'modal');
                 confirmButton.addEventListener(
-                    'click', function() {
+                    'click',
+                    function () {
                         $.post(
                             myradio.makeURL('SIS', 'tracklist.delTrack'),
                             {id: id},
-                            function() {
+                            function () {
                                 var row = document.getElementById('t' + id);
                                 row.parentNode.removeChild(row);
                             }
@@ -33,7 +34,7 @@ var Tracklist = function() {
     return {
         name: 'Tracklist',
         type: 'tab',
-        initialise: function() {
+        initialise: function () {
             var recStatusDiv,
                 recStatusReset,
                 recStatusCheckBad,
@@ -48,18 +49,18 @@ var Tracklist = function() {
                 trackLookup,
                 trackLookupId;
 
-            recStatusReset = function() {
+            recStatusReset = function () {
                 recStatusDiv.className = 'alert alert-info';
                 recStatusDiv.innerHTML = 'Start entering track information...';
                 submitButton.setAttribute('disabled', 'disabled');
             };
 
-            recStatusCheckBad = function() {
+            recStatusCheckBad = function () {
                 if (!trackLookupId) {
                     if (addArtist.value && addAlbum.value) {
                         recStatusDiv.className = 'alert alert-danger';
                         recStatusDiv.innerHTML =
-                            'This track is not currently in the library, but will be logged anyway.' + 
+                            'This track is not currently in the library, but will be logged anyway.' +
                             '<br>Think it is? Try searching using the title box.';
                         submitButton.removeAttribute('disabled');
                     } else {
@@ -68,7 +69,7 @@ var Tracklist = function() {
                 }
             };
 
-            trackResetAndCheck = function() {
+            trackResetAndCheck = function () {
                 trackLookupId = NaN;
                 recStatusCheckBad();
             };
@@ -105,7 +106,8 @@ var Tracklist = function() {
             submitButton.setAttribute('disabled', 'disabled');
             submitButton.setAttribute('data-dismiss', 'modal');
             submitButton.addEventListener(
-                'click', function() {
+                'click',
+                function () {
                     $.post(
                         myradio.makeURL('SIS', 'tracklist.checkTrack'),
                         {
@@ -138,7 +140,7 @@ var Tracklist = function() {
             // the title needs to be in the DOM before this works, hence it being so far down
             trackLookup = new Bloodhound(
                 {
-                    datumTokenizer: function(i) {
+                    datumTokenizer: function (i) {
                         return Bloodhound.tokenizers.whitespace(i.title)
                         .concat(Bloodhound.tokenizers.whitespace(i.artist));
                     },
@@ -157,12 +159,12 @@ var Tracklist = function() {
                     minLength: 1
                 },
                 {
-                    displayKey: function(i) {
+                    displayKey: function (i) {
                         return i.title;
                     },
                     source: trackLookup.ttAdapter(),
                     templates: {
-                        suggestion: function(i) {
+                        suggestion: function (i) {
                             //Fix typeahead not showing after hiding
                             //TODO: Report this @ https://github.com/twitter/typeahead.js/
                             $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
@@ -172,7 +174,11 @@ var Tracklist = function() {
                 }
             )
             .on(
-                'typeahead:selected', function(e, obj) {
+                'typeahead:selected',
+                function (
+                    e,
+                    obj
+                ) {
                     recStatusDiv.className = 'alert alert-success';
                     recStatusDiv.innerHTML = 'This is a track in our library.';
                     submitButton.removeAttribute('disabled');
@@ -187,7 +193,8 @@ var Tracklist = function() {
             addButton.className = 'btn btn-link';
             addButton.innerHTML = 'Add track';
             addButton.addEventListener(
-                'click', function() {
+                'click',
+                function () {
                     addTitle.value = addAlbum.value = addArtist.value = '';
                     recStatusReset();
                     trackLookupId = NaN;
@@ -205,7 +212,7 @@ var Tracklist = function() {
             this.appendChild(addButton);
             this.appendChild(table);
         },
-        update: function(data) {
+        update: function (data) {
             for (var i in data) {
                 var time,
                     newRow = document.createElement('tr'),

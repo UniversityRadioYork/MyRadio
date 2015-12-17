@@ -2,24 +2,22 @@
 
 /**
  * This file provides the NIPSWeb_ManagedPlaylist class for MyRadio - Contains Jingles etc.
- * @package MyRadio_NIPSWeb
  */
-
 namespace MyRadio\NIPSWeb;
 
-use \MyRadio\MyRadioException;
-use \MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\MyRadioException;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 /**
- * The NIPSWeb_ManagedPlaylist class helps provide control and access to managed playlists
+ * The NIPSWeb_ManagedPlaylist class helps provide control and access to managed playlists.
  *
- * @package MyRadio_NIPSWeb
  * @uses    \Database
  */
 class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
 {
     /**
-     * The Singleton store for ManagedPlaylist objects
+     * The Singleton store for ManagedPlaylist objects.
+     *
      * @var NIPSWeb_ManagedPlaylist
      */
     private static $playlists = [];
@@ -30,9 +28,10 @@ class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
     private $item_ttl;
 
     /**
-     * Initiates the ManagedPlaylist variables
+     * Initiates the ManagedPlaylist variables.
+     *
      * @param int $playlistid The ID of the managed playlist to initialise
-     * Note: Only links *non-expired* items
+     *                        Note: Only links *non-expired* items
      */
     protected function __construct($playlistid)
     {
@@ -53,7 +52,8 @@ class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Return the NIPSWeb_ManagedItems that belong to this playlist
+     * Return the NIPSWeb_ManagedItems that belong to this playlist.
+     *
      * @return Array[NIPSWeb_ManagedItem]
      */
     public function getItems()
@@ -68,7 +68,7 @@ class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
 
             $this->items = [];
             foreach ($items as $id) {
-                /**
+                /*
                  * Pass this to the ManagedItem - it's called Dependency Injection and prevents loops and looks pretty
                  * http://stackoverflow.com/questions/4903387/can-2-singleton-classes-reference-each-other
                  * http://www.phparch.com/2010/03/static-methods-vs-singletons-choose-neither/
@@ -81,8 +81,9 @@ class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get the Title of the ManagedPlaylist
-     * @return String
+     * Get the Title of the ManagedPlaylist.
+     *
+     * @return string
      */
     public function getTitle()
     {
@@ -90,7 +91,8 @@ class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get the unique manageditemid of the ManagedPlaylist
+     * Get the unique manageditemid of the ManagedPlaylist.
+     *
      * @return int
      */
     public function getID()
@@ -99,8 +101,9 @@ class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get the unique path of the ManagedPlaylist
-     * @return String
+     * Get the unique path of the ManagedPlaylist.
+     *
+     * @return string
      */
     public function getFolder()
     {
@@ -122,9 +125,11 @@ class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Returns an array of key information, useful for Twig rendering and JSON requests
+     * Returns an array of key information, useful for Twig rendering and JSON requests.
+     *
      * @todo Expand the information this returns
-     * @return Array
+     *
+     * @return array
      */
     public function toDataSource()
     {

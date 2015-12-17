@@ -3,10 +3,7 @@
  * This page enables Users to create a new Show or edit a Show that already exists.
  * It can take one parameter, $_REQUEST['showid']
  * which should be the ID of the Show to edit.
- *
- * @package MyRadio_Scheduler
  */
-
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Show;
@@ -19,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($data['id'])) {
         //create new
         $show = MyRadio_Show::create($data);
-        URLUtils::redirectWithMessage('Scheduler', 'myShows', 'Your show, ' . $show->getMeta('title') . ', has been created!');
+        URLUtils::redirectWithMessage('Scheduler', 'myShows', 'Your show, '.$show->getMeta('title').', has been created!');
     } else {
         //submit edit
         $show = MyRadio_Show::getInstance($data['id']);
@@ -47,9 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $show->setMeta('upload_state', 'Opted Out');
         }
-        URLUtils::redirectWithMessage('Scheduler', 'myShows', "Show Updated!");
+        URLUtils::redirectWithMessage('Scheduler', 'myShows', 'Show Updated!');
     }
-
 } else {
     //Not Submitted
     if (isset($_REQUEST['showid'])) {
@@ -66,7 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $meta = [];
         }
         $show->getEditForm()->render();
-
     } else {
         //create form
         MyRadio_Show::getForm()

@@ -1,10 +1,7 @@
 <?php
 /**
  * Allows creation of new URY members!
- *
- * @package MyRadio_Profile
  */
-
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
@@ -14,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = MyRadio_User::getBulkAddForm()->readValues();
     $template = CoreUtils::getTemplateObject();
 
-    for ($i = 0; $i < sizeof($data['bulkaddrepeater']['fname']); $i++) {
+    for ($i = 0; $i < sizeof($data['bulkaddrepeater']['fname']); ++$i) {
         $params = [];
         foreach ($data['bulkaddrepeater'] as $key => $v) {
             $params[$key] = $data['bulkaddrepeater'][$key][$i];
@@ -34,7 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $template->setTemplate('MyRadio/text.twig')->render();
-
 } else {
     //Not Submitted
     MyRadio_User::getBulkAddForm()->render();

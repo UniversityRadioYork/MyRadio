@@ -3,10 +3,7 @@
  * This page enables Users to create a new Season or to edit a Season that already exists.
  * It can take one parameter, $_REQUEST['seasonid']
  * which should be the ID of the Show to edit.
- *
- * @package MyRadio_Scheduler
  */
-
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;
@@ -20,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($data['id'])) {
         //create new
         MyRadio_Season::create($data);
-
     } else {
         //submit edit
         $season = MyRadio_Season::getInstance($data['id']);
@@ -34,11 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $season->setMeta('description', $data['description']);
         $season->setMeta('tag', explode(' ', $data['tags']));
         $season->setCredits($data['credits']['member'], $data['credits']['credittype']);
-
     }
 
-    URLUtils::redirectWithMessage('Scheduler', 'myShows', "Season Updated!");
-
+    URLUtils::redirectWithMessage('Scheduler', 'myShows', 'Season Updated!');
 } else {
     //Not Submitted
     if (isset($_REQUEST['seasonid'])) {
@@ -51,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $season->getEditForm()->render();
-
     } else {
         //create form
 
@@ -64,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->render(
                 [
                 'current_term' => $current_term,
-                'show_title' => MyRadio_Show::getInstance($_REQUEST['showid'])->getMeta('title')
+                'show_title' => MyRadio_Show::getInstance($_REQUEST['showid'])->getMeta('title'),
                 ]
             );
     }

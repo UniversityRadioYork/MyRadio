@@ -1,10 +1,7 @@
 <?php
 /**
- * List of iTones_Playlists
- *
- * @package MyRadio_iTones
+ * List of iTones_Playlists.
  */
-
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\iTones\iTones_PlaylistRevision;
 

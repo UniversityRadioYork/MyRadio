@@ -1,11 +1,10 @@
 <?php
 
 /**
- * Sets the user's prefered Authenticator
+ * Sets the user's prefered Authenticator.
+ *
  * @data 20140102
- * @package MyRadio_Core
  */
-
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;

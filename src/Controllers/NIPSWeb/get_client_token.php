@@ -1,10 +1,7 @@
 <?php
 /**
- * Creates a NIPSWeb Edit Token for the current session
- *
- * @package MyRadio_NIPSWeb
+ * Creates a NIPSWeb Edit Token for the current session.
  */
-
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\NIPSWeb\NIPSWeb_Token;
 

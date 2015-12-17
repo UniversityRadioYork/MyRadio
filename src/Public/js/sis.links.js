@@ -1,5 +1,5 @@
 /* Links */
-var Links = function() {
+var Links = function () {
     var links = [
         {
             'href': myradio.makeURL('Mail', 'send', {list: 30}),
@@ -18,7 +18,7 @@ var Links = function() {
         activeByDefault: true,
         name: 'Useful Links',
         type: 'plugin',
-        initialise: function() {
+        initialise: function () {
             var ul = document.createElement('ul'),
                 li,
                 a;

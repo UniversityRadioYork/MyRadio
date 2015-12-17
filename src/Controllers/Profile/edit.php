@@ -1,12 +1,8 @@
 <?php
 /**
  * Allows Users to edit their profiles, or for admins to edit other users.
- *
- * @package MyRadio_Profile
  */
-
 use \MyRadio\Config;
-use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
@@ -15,10 +11,8 @@ use \MyRadio\ServiceAPI\MyRadio_Photo;
 // Set if trying to view another member's profile page
 if (isset($_REQUEST['profileedit-memberid']) && AuthUtils::hasPermission(AUTH_EDITANYPROFILE)) {
     $user = MyRadio_User::getInstance($_REQUEST['profileedit-memberid']);
-
 } elseif (isset($_REQUEST['memberid']) && AuthUtils::hasPermission(AUTH_EDITANYPROFILE)) {
     $user = MyRadio_User::getInstance($_REQUEST['memberid']);
-
 } else {
     $user = MyRadio_User::getInstance();
 }
@@ -51,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     URLUtils::redirectWithMessage('Profile', 'view', 'User Updated');
-
 } else {
     //Not Submitted
     $user->getEditForm()->render();

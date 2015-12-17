@@ -1,4 +1,4 @@
-var NIPSWeb = function(d) {
+var NIPSWeb = function (d) {
     // If enabled, doesn't reload on error
     var debug = d;
     // Queue up processing client changes one at a time
@@ -23,7 +23,7 @@ var NIPSWeb = function(d) {
             {
                 url: myradio.makeURL('NIPSWeb', 'get_client_token'),
                 type: 'POST',
-                success: function(data) {
+                success: function (data) {
                     clientid = parseInt(data.token);
                 },
                 async: false
@@ -35,7 +35,7 @@ var NIPSWeb = function(d) {
     * Returns number of minutes (zero padded) from a time in seconds
     * @param time in seconds
     */
-    var timeMins = function(time) {
+    var timeMins = function (time) {
         var mins = Math.floor(time / 60) + "";
         if (mins.length < 2) {
             mins = '0' + mins;
@@ -44,7 +44,7 @@ var NIPSWeb = function(d) {
     };
 
     // Returns number of seconds (zero padded) less than mins from a time in seconds
-    var timeSecs = function(time) {
+    var timeSecs = function (time) {
         var secs = Math.floor(time % 60) + "";
         if (secs.length < 2) {
             secs = '0' + secs;
@@ -53,7 +53,7 @@ var NIPSWeb = function(d) {
     };
 
     // Gets the time of the current track in channel
-    var getTime = function(channel) {
+    var getTime = function (channel) {
         var audio = getPlayer(channel);
 
         var elapsed = audio.currentTime; //Get the current playing position of the track
@@ -65,7 +65,7 @@ var NIPSWeb = function(d) {
     };
 
     // Gets the duration of the current track in channel
-    var getDuration = function(channel) {
+    var getDuration = function (channel) {
         var audio = getPlayer(channel);
 
         var duration = audio.duration; //Get the duration of the track
@@ -76,7 +76,7 @@ var NIPSWeb = function(d) {
         $('#ch' + channel + '-duration').html(mindur + ':' + secdur);
     };
 
-    var showAlert = function(text, type) {
+    var showAlert = function (text, type) {
         if (!type) {
             type = 'success';
         }
@@ -86,7 +86,8 @@ var NIPSWeb = function(d) {
         var alert = $('<div></div>').addClass('footer-alert').addClass('alert').addClass('alert-'+type).html(text + close);
         alert.alert();
 
-        setTimeout(function() {alert.alert('close');}, 15000);
+        setTimeout(function () {
+            alert.alert('close');}, 15000);
 
         $(document.body).append(alert);
     };
@@ -97,19 +98,19 @@ var NIPSWeb = function(d) {
     * addOp: If true, there has been an add operation. We currently make these syncronous.
     * pNext: Optional. Parent queue to process on completion.
     */
-    var shipChanges = function(ops, addOp, pNext) {
+    var shipChanges = function (ops, addOp, pNext) {
         if (typeof addOp === 'undefined') {
             addOp = false;
         }
 
         ajaxQueue.queue(
-            function(next) {
+            function (next) {
                 $('#notice').html('Saving changes...').show();
                 $.ajax(
                     {
                         async: !addOp,
                         cache: false,
-                        success: function(data) {
+                        success: function (data) {
                             $('#notice').hide();
                             for (var i in data) {
                                 if (i === 'myradio_errors') {
@@ -124,7 +125,7 @@ var NIPSWeb = function(d) {
                                 }
                             }
                         },
-                        complete: function() {
+                        complete: function () {
                             next();
                             if (typeof pNext !== 'undefined') {
                                 pNext();
@@ -151,7 +152,7 @@ var NIPSWeb = function(d) {
             li = $(li);
         }
         changeQueue.queue(
-            function(next) {
+            function (next) {
                 /**
                 * Update the position of the item to its new values. If it doesn't have them, set them.
                 */
@@ -218,7 +219,7 @@ var NIPSWeb = function(d) {
                         * Only perform this operation if the previous item channel was not res.
                         */
                         $('ul.baps-channel li[channel=' + oldChannel + ']').each(
-                            function() {
+                            function () {
                                 if (oldWeight - $(this).attr('weight') < 0) {
                                     $(this).attr('weight', parseInt($(this).attr('weight')) - 1);
                                     ops.push(
@@ -259,7 +260,7 @@ var NIPSWeb = function(d) {
                         var dec = [];
 
                         $('ul.baps-channel li[channel=' + oldChannel + ']').each(
-                            function() {
+                            function () {
                                 if (oldWeight - $(this).attr('weight') < 0 &&
                                     $(this).attr('timeslotitemid') !== li.attr('timeslotitemid')
                                 ) {
@@ -341,10 +342,11 @@ var NIPSWeb = function(d) {
         );
     };
 
-    var registerItemClicks = function() {
+    var registerItemClicks = function () {
         // Used by dragdrop - enables the selected item to move down on drag/drop
         $('ul.baps-channel li').off('mousedown.predrag').on(
-            'mousedown.predrag', function(e) {
+            'mousedown.predrag',
+            function (e) {
                 $(this).attr(
                     'nextSelect',
                     typeof $(this).next().attr('id') !== 'undefined' ? $(this).next().attr('id') : $(this).prev().attr('id')
@@ -352,7 +354,8 @@ var NIPSWeb = function(d) {
             }
         );
         $('ul.baps-channel li').off('click.playactivator').on(
-            'click.playactivator', function(e) {
+            'click.playactivator',
+            function (e) {
                 var channel = $(this).parent('.baps-channel').attr('channel');
                 if (!getPlayer(channel).paused) {
                     showAlert('Cannot load track whilst another is playing.', 'warning');
@@ -386,7 +389,7 @@ var NIPSWeb = function(d) {
     };
 
     // Sets up global listeners
-    var setupGenericListeners = function() {
+    var setupGenericListeners = function () {
         // Setup key bindings
         var keys = {
             F1: 112,
@@ -404,48 +407,49 @@ var NIPSWeb = function(d) {
 
         // Sets up key press triggers
         $(document).on(
-            'keydown.bapscontrol', function(e) {
+            'keydown.bapscontrol',
+            function (e) {
                 var trigger = false;
                 switch (e.which) {
-                case keys.F1:
-                    //Play channel 1
-                    play(1);
-                    trigger = true;
-                    break;
-                case keys.F2:
-                    pause(1);
-                    trigger = true;
-                    break;
-                case keys.F3:
-                    stop(1);
-                    trigger = true;
-                    break;
-                case keys.F5:
-                    //Play channel 2
-                    play(2);
-                    trigger = true;
-                    break;
-                case keys.F6:
-                    pause(2);
-                    trigger = true;
-                    break;
-                case keys.F7:
-                    stop(2);
-                    trigger = true;
-                    break;
-                case keys.F9:
-                    //Play channel 3
-                    play(3);
-                    trigger = true;
-                    break;
-                case keys.F10:
-                    pause(3);
-                    trigger = true;
-                    break;
-                case keys.F11:
-                    stop(3);
-                    trigger = true;
-                    break;
+                    case keys.F1:
+                        //Play channel 1
+                        play(1);
+                        trigger = true;
+                        break;
+                    case keys.F2:
+                        pause(1);
+                        trigger = true;
+                        break;
+                    case keys.F3:
+                        stop(1);
+                        trigger = true;
+                        break;
+                    case keys.F5:
+                        //Play channel 2
+                        play(2);
+                        trigger = true;
+                        break;
+                    case keys.F6:
+                        pause(2);
+                        trigger = true;
+                        break;
+                    case keys.F7:
+                        stop(2);
+                        trigger = true;
+                        break;
+                    case keys.F9:
+                        //Play channel 3
+                        play(3);
+                        trigger = true;
+                        break;
+                    case keys.F10:
+                        pause(3);
+                        trigger = true;
+                        break;
+                    case keys.F11:
+                        stop(3);
+                        trigger = true;
+                        break;
                 }
                 if (trigger) {
                     e.stopPropagation();
@@ -456,12 +460,12 @@ var NIPSWeb = function(d) {
         );
     };
 
-    var updateChannelTotalTimers = function() {
+    var updateChannelTotalTimers = function () {
         $('.baps-channel').each(
-            function() {
+            function () {
                 var time = 0;
                 $(this).children('li').each(
-                    function() {
+                    function () {
                         var tmp = $(this).attr('length').split(':');
                         if (tmp.length !== 3) {
                             return;
@@ -475,8 +479,8 @@ var NIPSWeb = function(d) {
         );
     };
 
-    var configureContextMenus = function() {
-        var invert = function(obj, attr) {
+    var configureContextMenus = function () {
+        var invert = function (obj, attr) {
             if (obj.getAttribute(attr) == 1) {
                 obj.setAttribute(attr, 0);
             } else {
@@ -488,11 +492,11 @@ var NIPSWeb = function(d) {
             {
                 icon: 'trash',
                 text: 'Delete item',
-                callback: function(e) {
+                callback: function (e) {
                     var toDelete = e.triggeredBy.parentNode.removeChild(e.triggeredBy);
                     calcChanges(toDelete);
                 },
-                open: function(e) {
+                open: function (e) {
                     if (e.triggeredBy.nodeName == 'LI') {
                         this.enable();
                     } else {
@@ -503,50 +507,50 @@ var NIPSWeb = function(d) {
             {
                 icon: '',
                 text: 'Automatic advance',
-                callback: function(e) {
+                callback: function (e) {
                     invert(e.boundTo, 'autoadvance');
                 },
-                open: function(e) {
+                open: function (e) {
                     this.setIcon(e.boundTo.getAttribute('autoadvance') == 1 ? 'ok' : '');
                 }
             },
             {
                 icon: '',
                 text: 'Play on load',
-                callback: function(e) {
+                callback: function (e) {
                     invert(e.boundTo, 'playonload');
                 },
-                open: function(e) {
+                open: function (e) {
                     this.setIcon(e.boundTo.getAttribute('playonload') == 1 ? 'ok' : '');
                 }
             },
             {
                 icon: '',
                 text: 'Repeat none',
-                callback: function(e) {
+                callback: function (e) {
                     e.boundTo.setAttribute('repeat', 0);
                 },
-                open: function(e) {
+                open: function (e) {
                     this.setIcon(e.boundTo.getAttribute('repeat') == 0 ? 'record' : '');
                 }
             },
             {
                 icon: '',
                 text: 'Repeat one',
-                callback: function(e) {
+                callback: function (e) {
                     e.boundTo.setAttribute('repeat', 1);
                 },
-                open: function(e) {
+                open: function (e) {
                     this.setIcon(e.boundTo.getAttribute('repeat') == 1 ? 'record' : '');
                 }
             },
             {
                 icon: '',
                 text: 'Repeat all',
-                callback: function(e) {
+                callback: function (e) {
                     e.boundTo.setAttribute('repeat', 2);
                 },
-                open: function(e) {
+                open: function (e) {
                     this.setIcon(e.boundTo.getAttribute('repeat') == 2 ? 'record' : '');
                 }
             },
@@ -557,14 +561,14 @@ var NIPSWeb = function(d) {
             {
                 icon: 'save',
                 text: 'Save channel as...',
-                callback: function() {
+                callback: function () {
                     showAlert('Save/Load channel functionality is not available.', 'danger');
                 }
             },
             {
                 icon: 'open',
                 text: 'Load channel',
-                callback: function() {
+                callback: function () {
                     showAlert('Save/Load channel functionality is not available.', 'danger');
                 }
             }
@@ -572,7 +576,7 @@ var NIPSWeb = function(d) {
         );
     };
 
-    var initialiseUI = function() {
+    var initialiseUI = function () {
         if (writable) {
             $('ul.baps-channel').sortable(
                 {
@@ -585,7 +589,7 @@ var NIPSWeb = function(d) {
                     placeholder: "alert-warning",
                     //Remove the "selected" class from the item - prevent multiple selected items in a channel
                     //Also activate the next/previous item, if there is one
-                    start: function(e, ui) {
+                    start: function (e, ui) {
                         if (ui.item.hasClass('selected')) {
                             ui.item.removeClass('selected');
                             if (ui.item.attr('nextSelect') != null) {
@@ -594,7 +598,7 @@ var NIPSWeb = function(d) {
                         }
                         ui.item.nextSelect = null;
                     },
-                    stop: function(e, ui) {
+                    stop: function (e, ui) {
                         /**
                     * Update the channel timers
                     */
@@ -611,7 +615,7 @@ var NIPSWeb = function(d) {
         configureContextMenus();
     };
 
-    var getChannelInt = function(channel) {
+    var getChannelInt = function (channel) {
         if (channel == 'res') {
             return 0;
         } else {
@@ -641,13 +645,14 @@ var NIPSWeb = function(d) {
     };
 
     // Sets up listeners per channel
-    var setupListeners = function(channel) {
+    var setupListeners = function (channel) {
         var player = getPlayer(channel);
         var slider = sliders[(channel === 'res') ? 0 : channel];
         var channelDiv = $('#baps-channel-' + channel);
 
         $(player).on(
-            'ended', function() {
+            'ended',
+            function () {
                 var el = $('#baps-channel-' + channel + ' li.selected');
                 stopping(channel);
                 if (channelDiv.attr('autoadvance') == 1 && parseInt(channelDiv.attr('repeat')) !== 1) {
@@ -670,21 +675,24 @@ var NIPSWeb = function(d) {
         );
         // Chrome sometimes stops playback after seeking
         $(player).on(
-            'seeked', function(e) {
+            'seeked',
+            function (e) {
                 if (player.nwIsPlaying) {
                     setTimeout(player.play, 50);
                 }
             }
         );
         $(player).on(
-            'timeupdate', function() {
+            'timeupdate',
+            function () {
                 getTime(channel);
                 sliders[getChannelInt(channel)].position(player.currentTime);
             }
         );
 
         $(player).on(
-            'durationchange', function() {
+            'durationchange',
+            function () {
                 getDuration(channel);
                 sliders[getChannelInt(channel)].reset(
                     player.duration,
@@ -695,7 +703,8 @@ var NIPSWeb = function(d) {
         );
 
         $(slider).on(
-            "seeked", function(e) {
+            "seeked",
+            function (e) {
                 if (e.originalEvent.detail.time) {
                     player.currentTime = parseFloat(e.originalEvent.detail.time.toPrecision(12));
                 }
@@ -703,7 +712,8 @@ var NIPSWeb = function(d) {
         );
 
         $(slider).on(
-            "introChanged", function(e) {
+            "introChanged",
+            function (e) {
                 var trackid = getRecTrackFromID($(channelDiv).children('.selected')[0].getAttribute('id'))[1];
                 $.post(
                     mConfig.api_url + '/Track/' + trackid + '/setIntro',
@@ -713,7 +723,8 @@ var NIPSWeb = function(d) {
         );
 
         $(slider).on(
-            "cueChanged", function(e) {
+            "cueChanged",
+            function (e) {
                 if (player.cueTime >= player.currentTime && player.paused) {
                     player.currentTime = e.originalEvent.detail.time;
                 }
@@ -723,20 +734,23 @@ var NIPSWeb = function(d) {
 
         channelDiv.on('contextmenu', channelMenu.show);
 
-        $('#ch' + channel + '-play').on('click', function() {play(channel);});
-        $('#ch' + channel + '-pause').on('click', function() {pause(channel);});
-        $('#ch' + channel + '-stop').on('click', function() {stop(channel);});
+        $('#ch' + channel + '-play').on('click', function () {
+            play(channel);});
+        $('#ch' + channel + '-pause').on('click', function () {
+            pause(channel);});
+        $('#ch' + channel + '-stop').on('click', function () {
+            stop(channel);});
     };
 
     // Returns the player element for the given channel
-    var getPlayer = function(channel) {
+    var getPlayer = function (channel) {
         if (channel === 'res') {
             channel = 0;
         }
         return players[channel];
     };
 
-    var getRecTrackFromID = function(id) {
+    var getRecTrackFromID = function (id) {
         id = id.split('-');
 
         var data = [];
@@ -764,7 +778,7 @@ var NIPSWeb = function(d) {
                     url: myradio.makeURL('NIPSWeb', 'create_token'),
                     type: 'post',
                     data: 'trackid=' + data[1] + '&recordid=' + data[0],
-                    success: function() {
+                    success: function () {
                         params = {
                             recordid: data[0],
                             trackid: data[1]
@@ -780,7 +794,8 @@ var NIPSWeb = function(d) {
                         getPlayer(channel).src = myradio.makeURL('NIPSWeb', 'secure_play', params);
 
                         $(getPlayer(channel)).off("canplay.forloaded").on(
-                            "canplay.forloaded", function() {
+                            "canplay.forloaded",
+                            function () {
                                 $('#ch' + channel + '-play').removeAttr('disabled');
                                 if (this.justStopped === false && $('#baps-channel-' + channel).attr('playonload') == 1) {
                                     this.play();
@@ -799,7 +814,8 @@ var NIPSWeb = function(d) {
                 {managedid: $('#' + audioid).attr('managedid')}
             );
             $(getPlayer(channel)).on(
-                'canplay', function() {
+                'canplay',
+                function () {
                     $('#ch' + channel + '-play').removeAttr('disabled');
                 }
             );
@@ -808,7 +824,7 @@ var NIPSWeb = function(d) {
         getPlayer(channel).cueTime = 0;
     };
 
-    var playing = function(channel) {
+    var playing = function (channel) {
         getPlayer(channel).nwIsPlaying = true;
         $('#ch' + channel + '-play').removeClass('btn-default').addClass('btn-primary');
         $('#ch' + channel + '-pause, #ch' + channel + '-stop')
@@ -817,21 +833,21 @@ var NIPSWeb = function(d) {
                 .addClass('btn-default');
     };
 
-    var stopping = function(channel) {
+    var stopping = function (channel) {
         getPlayer(channel).nwIsPlaying = false;
         $('#ch' + channel + '-play').removeClass('btn-primary').addClass('btn-default');
         $('#ch' + channel + '-pause').removeClass('btn-warning').addClass('btn-default').attr('disabled', 'disabled');
         $('#ch' + channel + '-stop').attr('disabled', 'disabled');
     };
 
-    var play = function(channel) {
+    var play = function (channel) {
         player = getPlayer(channel);
         player.nwIsPlaying = true;
         player.play();
         playing(channel);
     };
 
-    var pause = function(channel) {
+    var pause = function (channel) {
         var player = getPlayer(channel);
         if (player.paused) {
             player.play();
@@ -845,7 +861,7 @@ var NIPSWeb = function(d) {
         }
     };
 
-    var stop = function(channel) {
+    var stop = function (channel) {
         stopping(channel);
         var player = getPlayer(channel);
         player.pause();
@@ -866,7 +882,7 @@ var NIPSWeb = function(d) {
 /**
 * Items options: icon (required), text (required), callback
 */
-var contextMenu = function(items) {
+var contextMenu = function (items) {
     var hideListener;
     // The element the event that opened the menu is bound to
     var boundTo;
@@ -881,45 +897,45 @@ var contextMenu = function(items) {
     menuContainer.style.position = 'absolute';
     menuContainer.style.display = 'none';
 
-    var callback = function(item, cb) {
+    var callback = function (item, cb) {
         if (cb) {
-            return function(e) {
+            return function (e) {
                 e.boundTo = boundTo;
                 e.triggeredBy = triggeredBy;
                 cb.apply(item, [e]);
             };
         } else {
-            return function(){};
+            return function (){};
         }
     };
 
-    var open = function(item, cb) {
+    var open = function (item, cb) {
         if (cb) {
-            return function(e) {
+            return function (e) {
                 e.boundTo = boundTo;
                 e.triggeredBy = triggeredBy;
                 cb.apply(item, [e]);
             };
         } else {
-            return function(){};
+            return function (){};
         }
     };
 
-    var setIcon = function(itemIcon) {
-        return function(icon) {
+    var setIcon = function (itemIcon) {
+        return function (icon) {
             itemIcon.className = 'glyphicon glyphicon-' + icon;
         };
     };
 
-    var disable = function(item, callback) {
-        return function() {
+    var disable = function (item, callback) {
+        return function () {
             item.style.opacity = "0.5";
             item.removeEventListener('click', callback);
         };
     };
 
-    var enable = function(item, callback) {
-        return function() {
+    var enable = function (item, callback) {
+        return function () {
             item.style.opacity = "1.0";
             item.addEventListener('click', callback);
         };
@@ -954,13 +970,13 @@ var contextMenu = function(items) {
 
     document.body.appendChild(menuContainer);
 
-    hideListener = function() {
+    hideListener = function () {
         menuContainer.style.display = 'none';
         document.body.removeEventListener('click', hideListener);
     };
 
     return {
-        show: function(e) {
+        show: function (e) {
             boundTo = e.currentTarget;
             triggeredBy = e.target;
             for (var i = 0; i < menuContainer.children.length; i++) {
@@ -981,7 +997,7 @@ contextMenu.prototype = {
     constructor: contextMenu
 };
 
-var playoutSlider = function(e) {
+var playoutSlider = function (e) {
     var duration = 0;
     var cue = 0;
     var intro = 0;
@@ -1029,7 +1045,7 @@ var playoutSlider = function(e) {
     /**
  * HELPER FUNCTIONS
 **/
-    var calculatePositionFromSeek = function(e, slider) {
+    var calculatePositionFromSeek = function (e, slider) {
         var result = e.clientX - getXOffset(e.currentTarget) + 3;
         if (result > sliderContainer.offsetWidth) {
             result = sliderContainer.offsetWidth;
@@ -1039,7 +1055,7 @@ var playoutSlider = function(e) {
         return result / getPixelsPerSecond();
     };
 
-    var getXOffset = function(e) {
+    var getXOffset = function (e) {
         var x = 0;
         while (e) {
             x += e.offsetLeft + e.clientLeft - e.scrollLeft;
@@ -1051,16 +1067,16 @@ var playoutSlider = function(e) {
     /**
  * EVENT BINDINGS
 **/
-    var positionHandleDragStart = function() {
+    var positionHandleDragStart = function () {
         var positionInt;
         if (!isSliding) {
             isSliding = true;
 
-            var dragMove = function(e) {
+            var dragMove = function (e) {
                 positionInt = calculatePositionFromSeek(e, positionSlider);
                 return false;
             };
-            var dragEnd = function(e) {
+            var dragEnd = function (e) {
                 sliderContainer.dispatchEvent(new CustomEvent('seeked', {detail: {time: positionInt}}));
 
                 sliderContainer.removeEventListener('mousemove', dragMove);
@@ -1075,15 +1091,15 @@ var playoutSlider = function(e) {
     };
     positionHandle.addEventListener('mousedown', positionHandleDragStart);
 
-    var introHandleDragStart = function() {
+    var introHandleDragStart = function () {
         if (!isSliding) {
             isSliding = true;
 
-            var dragMove = function(e) {
+            var dragMove = function (e) {
                 intro = calculatePositionFromSeek({clientX: e.clientX, currentTarget: introSlider}, introSlider);
                 return false;
             };
-            var dragEnd = function(e) {
+            var dragEnd = function (e) {
                 sliderContainer.dispatchEvent(new CustomEvent('introChanged', {detail: {time: intro}}));
 
                 sliderContainer.parentNode.parentNode.removeEventListener('mousemove', dragMove);
@@ -1098,15 +1114,15 @@ var playoutSlider = function(e) {
     };
     introHandle.addEventListener('mousedown', introHandleDragStart);
 
-    var cueHandleDragStart = function() {
+    var cueHandleDragStart = function () {
         if (!isSliding) {
             isSliding = true;
 
-            var dragMove = function(e) {
+            var dragMove = function (e) {
                 cue = calculatePositionFromSeek({clientX: e.clientX, currentTarget: cueSlider}, cueSlider);
                 return false;
             };
-            var dragEnd = function(e) {
+            var dragEnd = function (e) {
                 sliderContainer.dispatchEvent(new CustomEvent('cueChanged', {detail: {time: cue}}));
 
                 sliderContainer.parentNode.parentNode.removeEventListener('mousemove', dragMove);
@@ -1122,7 +1138,7 @@ var playoutSlider = function(e) {
     cueHandle.addEventListener('mousedown', cueHandleDragStart);
 
     // Needs to go after drag handlers to ensure they set isSliding first
-    var clickHandler = function(e) {
+    var clickHandler = function (e) {
         if (!isSliding) {
             var positionInt = calculatePositionFromSeek(e, positionSlider);
             sliderContainer.dispatchEvent(new CustomEvent('seeked', {detail: {time: positionInt}}));
@@ -1131,7 +1147,7 @@ var playoutSlider = function(e) {
     };
     sliderContainer.addEventListener('mousedown', clickHandler);
 
-    var reset = function(newDuration, newCue, newIntro) {
+    var reset = function (newDuration, newCue, newIntro) {
         duration = parseInt(newDuration);
         cue = parseInt(newCue);
         intro = parseInt(newIntro);
@@ -1139,11 +1155,11 @@ var playoutSlider = function(e) {
         redraw();
     };
 
-    var getPixelsPerSecond = function() {
+    var getPixelsPerSecond = function () {
         return (duration > 0 ? (sliderContainer.offsetWidth - 2)/duration : 0);
     };
 
-    var position = function(newPosition) {
+    var position = function (newPosition) {
         if (newPosition !== undefined) {
             if (!isSliding) {
                 positionInt = newPosition;
@@ -1154,17 +1170,17 @@ var playoutSlider = function(e) {
         }
     };
 
-    var redraw = function() {
+    var redraw = function () {
         cueSlider.style.width = cue * getPixelsPerSecond() + 'px';
         introSlider.style.width = intro * getPixelsPerSecond() + 'px';
         positionSlider.style.width = positionInt * getPixelsPerSecond() + 'px';
     };
 
-    var addEventListener = function(a, b, c) {
+    var addEventListener = function (a, b, c) {
         sliderContainer.addEventListener(a, b, c);
     };
 
-    var removeEventListener = function(a, b, c) {
+    var removeEventListener = function (a, b, c) {
         sliderContainer.removeEventListener(a, b, c);
     };
 
