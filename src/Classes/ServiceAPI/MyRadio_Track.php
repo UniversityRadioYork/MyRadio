@@ -853,7 +853,7 @@ class MyRadio_Track extends ServiceAPI
 
         $data = self::$db->fetchOne($result);
 
-        return new self($data[0]);
+        return new self($data);
     }
 
     public function updateInfoFromLastfm()
