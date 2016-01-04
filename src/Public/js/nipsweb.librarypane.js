@@ -58,9 +58,8 @@ $(document).ready(
                 var file;
                 //Show the relevent filter forms
                 if ($(this).val() === 'central') {
-                    $('#res-filter-artist').parent().fadeIn();
-                    $('#res-filter-track').hide();
-                    $('#res-filter-name').parent().hide();
+                    $('#res-filter-name').hide();
+                    $('#res-filter-artist, #res-filter-track').fadeIn();
                     //This doesn't auto-load any files until search paramaters are set
                 } else if ($(this).val().match(/managed-.*/)) {
                     //Load a managed playlist
@@ -96,9 +95,8 @@ $(document).ready(
                             }
                         }
                     );
-                    $('#res-filter-artist').parent().hide();
-                    $('#res-filter-track').hide();
-                    $('#res-filter-name').parent().fadeIn();
+                    $('#res-filter-artist, #res-filter-track').hide();
+                    $('#res-filter-name').fadeIn();
                 } else if ($(this).val().match(/auto-.*/)) {
                     //Load an auto playlist
                     $('#res-loading').show();
@@ -133,9 +131,8 @@ $(document).ready(
                             }
                         }
                     );
-                    $('#res-filter-artist').parent().hide();
-                    $('#res-filter-track').hide();
-                    $('#res-filter-name').parent().fadeIn();
+                    $('#res-filter-artist, #res-filter-track').hide();
+                    $('#res-filter-name').fadeIn();
                 } else if ($(this).val().match(/^aux-\d+|^user-.*/)) {
                     $('#res-loading').show();
                     $.ajax(
@@ -165,9 +162,8 @@ $(document).ready(
                             }
                         }
                     );
-                    $('#res-filter-artist').parent().hide();
-                    $('#res-filter-track').hide();
-                    $('#res-filter-name').parent().fadeIn();
+                    $('#res-filter-artist, #res-filter-track').hide();
+                    $('#res-filter-name').fadeIn();
                 }
                 //Clear the current list
                 $('#baps-channel-res').empty();
