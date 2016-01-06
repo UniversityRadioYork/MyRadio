@@ -20,11 +20,9 @@ use MyRadio\iTones\iTones_Utils;
 class MyRadio_TracklistItem extends ServiceAPI
 {
     const BASE_TRACKLISTITEM_SQL =
-        'SELECT tracklist.*, track_rec.recordid, track_rec.recordid
-            track_notrec.artist, track_notrec.album, track_notrec.label, track_notrec.trackno, track_notrec.track, track_notrec.length
-            FROM tracklist.tracklist
-            LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
-            LEFT JOIN tracklist.track_notrec ON tracklist.audiologid = track_notrec.audiologid';
+        'SELECT * FROM tracklist.tracklist
+            LEFT JOIN tracklist.track_rec USING (audiologid)
+            LEFT JOIN tracklist.track_notrec USING (audiologid)';
     private $audiologid;
     private $source;
     private $starttime;
