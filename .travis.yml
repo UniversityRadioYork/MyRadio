@@ -1,0 +1,35 @@
+language: php
+php:
+    - '5.6'
+services:
+    - postgresql
+install:
+    - composer install
+    - npm install -g jasmine-node
+    - npm install frisby
+before_script:
+    - sudo apt-get update
+    - sudo apt-get install apache2 libapache2-mod-fastcgi
+    # enable php-fpm
+    - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
+    - sudo a2enmod rewrite actions fastcgi alias
+    - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
+    # configure apache virtual hosts
+    - sudo cp -f sample_configs/travis-fpm.conf /etc/apache2/sites-available/default
+    - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
+    - sudo a2enmod rewrite
+    - sudo a2ensite default
+    - sudo service apache2 restart
+    - sudo cat /etc/apache2/sites-enabled/*
+    # setup postgres
+    - cat sample_configs/postgres.sql | psql -U postgres
+    - cat schema/postgres.sql | psql -U postgres
+    #- cat schema/patches/*.sql | psql -U postgres
+    - cat sample_configs/travis-auth.sql | psql -U postgres
+    # configure MyRadio
+    - cp sample_configs/travis-config.php MyRadio_Config.local.php
+script:
+    - jasmine-node tests/api/
+after_script:
+    - sudo cat /var/log/apache2/*.log
