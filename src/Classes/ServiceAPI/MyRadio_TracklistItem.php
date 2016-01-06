@@ -98,7 +98,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             self::BASE_TRACKLISTITEM_SQL
             .' WHERE timeslotid=$1'
             .' AND (state ISNULL OR state != \'d\')'
-            .' AND audiologid > $2'
+            .' AND tracklist.audiologid > $2'
             .' ORDER BY timestart ASC',
             [$timeslotid, $offset]
         );
