@@ -21,8 +21,8 @@ class MyRadio_TracklistItem extends ServiceAPI
 {
     const BASE_TRACKLISTITEM_SQL =
         'SELECT * FROM tracklist.tracklist
-            LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
-            LEFT JOIN tracklist.track_notrec ON tracklist.audiologid = track_notrec.audiologid';
+            LEFT JOIN tracklist.track_rec USING (audiologid)
+            LEFT JOIN tracklist.track_notrec USING (audiologid)';
     private $audiologid;
     private $source;
     private $starttime;
@@ -98,7 +98,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             self::BASE_TRACKLISTITEM_SQL
             .' WHERE timeslotid=$1'
             .' AND (state ISNULL OR state != \'d\')'
-            .' AND audiologid > $2'
+            .' AND tracklist.audiologid > $2'
             .' ORDER BY timestart ASC',
             [$timeslotid, $offset]
         );
