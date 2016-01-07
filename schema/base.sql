@@ -542,12 +542,6 @@ CREATE TABLE api_key_auth (
     typeid integer NOT NULL
 );
 COMMENT ON TABLE api_key_auth IS 'Stores what API capabilities each key has.';
-CREATE SEQUENCE api_key_log_api_log_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
 CREATE TABLE api_method_auth (
     api_method_auth_id integer NOT NULL,
     class_name character varying NOT NULL,
@@ -674,6 +668,23 @@ CREATE SEQUENCE services_versions_serviceversionid_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE services_versions_serviceversionid_seq OWNED BY services_versions.serviceversionid;
+
+CREATE TABLE api_key_log (
+    api_log_id integer NOT NULL,
+    key_string character varying NOT NULL,
+    "timestamp" timestamp without time zone DEFAULT now() NOT NULL,
+    remote_ip inet NOT NULL,
+    request_path character varying,
+    request_params json
+);
+COMMENT ON TABLE api_key_log IS 'Stores a record of API Requests by an API Key';
+CREATE SEQUENCE api_key_log_api_log_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER SEQUENCE api_key_log_api_log_id_seq OWNED BY api_key_log.api_log_id;
 SET search_path = people, pg_catalog;
 CREATE TABLE credit_type (
     credit_type_id integer NOT NULL,
@@ -2539,6 +2550,7 @@ ALTER TABLE ONLY modules ALTER COLUMN moduleid SET DEFAULT nextval('modules_modu
 ALTER TABLE ONLY photos ALTER COLUMN photoid SET DEFAULT nextval('photos_photoid_seq'::regclass);
 ALTER TABLE ONLY services ALTER COLUMN serviceid SET DEFAULT nextval('services_serviceid_seq'::regclass);
 ALTER TABLE ONLY services_versions ALTER COLUMN serviceversionid SET DEFAULT nextval('services_versions_serviceversionid_seq'::regclass);
+ALTER TABLE ONLY api_key_log ALTER COLUMN api_log_id SET DEFAULT nextval('api_key_log_api_log_id_seq'::regclass);
 SET search_path = people, pg_catalog;
 ALTER TABLE ONLY credit_type ALTER COLUMN credit_type_id SET DEFAULT nextval('"schedule.showcredittype_id_seq"'::regclass);
 ALTER TABLE ONLY group_root_role ALTER COLUMN group_root_role_id SET DEFAULT nextval('group_root_role_group_root_role_id_seq'::regclass);
@@ -2627,17 +2639,6 @@ ALTER TABLE ONLY banner_campaign ALTER COLUMN banner_campaign_id SET DEFAULT nex
 ALTER TABLE ONLY banner_location ALTER COLUMN banner_location_id SET DEFAULT nextval('banner_location_banner_location_id_seq'::regclass);
 ALTER TABLE ONLY banner_timeslot ALTER COLUMN id SET DEFAULT nextval('banner_timeslot_id_seq'::regclass);
 ALTER TABLE ONLY banner_type ALTER COLUMN banner_type_id SET DEFAULT nextval('banner_type_banner_type_id_seq'::regclass);
-SET search_path = myury, pg_catalog;
-CREATE TABLE api_key_log (
-    api_log_id integer NOT NULL,
-    key_string character varying NOT NULL,
-    "timestamp" timestamp without time zone DEFAULT now() NOT NULL,
-    remote_ip inet NOT NULL,
-    request_path character varying,
-    request_params json
-);
-COMMENT ON TABLE api_key_log IS 'Stores a record of API Requests by an API Key';
-ALTER SEQUENCE api_key_log_api_log_id_seq OWNED BY api_key_log.api_log_id;
 
 
 --------------
