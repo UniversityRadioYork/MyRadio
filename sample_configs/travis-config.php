@@ -10,4 +10,5 @@ Config::$long_name = 'University Radio Nork';
 Config::$welcome_email = '   This is a welcome email. You can use #NAME to get the user\'s first name,
    and include #USER and #PASS to tell them their newly created login details.
 "';
-Config::$base_url = '//localhost:4443/myradio/';
+Config::$base_url = 'http://localhost/myradio/';
+Config::$cache_enable = false;
