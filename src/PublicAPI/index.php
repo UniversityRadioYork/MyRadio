@@ -1,6 +1,5 @@
 <?php
 
-use \ReflectionMethod;
 use \MyRadio\Config;
 
 $__start = -microtime(true);
