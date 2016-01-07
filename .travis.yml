@@ -21,14 +21,15 @@ before_script:
     - sudo a2enmod rewrite
     - sudo a2ensite default
     - sudo service apache2 restart
+    - sudo apachectl -S
     - sudo cat /etc/apache2/sites-enabled/*
     # setup postgres
     - cat sample_configs/postgres.sql | psql -U postgres
-    - cat schema/postgres.sql | psql -U postgres
+    - cat schema/base.sql | psql -U postgres
     #- cat schema/patches/*.sql | psql -U postgres
     - cat sample_configs/travis-auth.sql | psql -U postgres
     # configure MyRadio
-    - cp sample_configs/travis-config.php MyRadio_Config.local.php
+    - cp sample_configs/travis-config.php src/MyRadio_Config.local.php
 script:
     - jasmine-node tests/api/
 after_script:
