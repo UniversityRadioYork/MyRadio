@@ -10,11 +10,14 @@ $__start = -microtime(true);
  * @todo Management interfaces to configure keys and expose methods
  */
 // Configure MyRadio & Set API Settings
-define('SILENT_EXCEPTIONS', true);
+define('SILENT_EXCEPTIONS', false);
 define('DISABLE_SESSION', true);
 define('JSON_DEBUG', true);
 
 require_once __DIR__.'/../Controllers/root_cli.php';
+
+ini_set('display_errors', 'On');
+error_reporting(E_ALL);
 
 /**
  * Handle API errors.
