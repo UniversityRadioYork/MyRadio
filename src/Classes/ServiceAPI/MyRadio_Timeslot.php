@@ -750,7 +750,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $email .= "\r\n\r\nDue to the short notice, it has been passed to you for consideration. To cancel the timeslot, visit ";
         $email .= URLUtils::makeURL('Scheduler', 'cancelEpisode', ['show_season_timeslot_id' => $this->getID(), 'reason' => base64_encode($reason)]);
 
-        MyRadioEmail::sendEmailToList(MyRadio_List::getByName('programming'), 'Show Cancellation Request', $email);
+        MyRadioEmail::sendEmailToList(MyRadio_List::getByName('presenting'), 'Show Cancellation Request', $email);
 
         return true;
     }
