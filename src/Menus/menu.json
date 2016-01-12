@@ -51,8 +51,13 @@
                                 [
                                     {
                                         "title": "Change/Cancel Show",
-                                        "url": "module=Mail,action=send,list=41",
+                                        "url": "module=Scheduler,action=myShows",
                                         "description": "You signed a contract saying you'd give 48 hours of cancelling a show. Click here to do just that. Or if you want to fix a spelling mistake in the title of your show."
+                                    },
+                                    {
+                                        "title": "Ask about shows/training",
+                                        "url": "module=Mail,action=send,list=56",
+                                        "description": "If you need to contact the Programme Controller or Training Coordinator then click here."
                                     },
                                     {
                                         "title": "Contact Management",
