@@ -307,7 +307,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 'https://ws.audioscrobbler.com/2.0/?method=geo.getTopTracks&api_key='
                 .Config::$lastfm_api_key
                 .'&country='.Config::$lastfm_geo
-                .'&limit=150&format=json'
+                .'&limit=151&format=json'
             ),
             true
         );
@@ -338,7 +338,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             file_get_contents(
                 'https://ws.audioscrobbler.com/2.0/?method=chart.getTopTracks&api_key='
                 .Config::$lastfm_api_key
-                .'&limit=150&format=json'
+                .'&limit=151&format=json'
             ),
             true
         );
@@ -369,7 +369,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             file_get_contents(
                 'https://ws.audioscrobbler.com/2.0/?method=chart.getHypedTracks&api_key='
                 .Config::$lastfm_api_key
-                .'&limit=150&format=json'
+                .'&limit=151&format=json'
             ),
             true
         );
