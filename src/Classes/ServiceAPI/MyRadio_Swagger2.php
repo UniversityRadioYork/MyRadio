@@ -21,6 +21,9 @@ use MyRadio\MyRadio\URLUtils;
  */
 class MyRadio_Swagger2 extends MyRadio_Swagger
 {
+
+    private static $api_config;
+
     /**
      * Returns if the given Authenticator can call the given Class/Method/Mixin combination.
      *
@@ -47,13 +50,12 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                 break;
             case 'post':
                 if (substr_count($_SERVER['CONTENT_TYPE'], 'application/json')) {
-                    $args = json_decode(file_get_contents('php://input'), true);
+                    $args = [json_decode(file_get_contents('php://input'), true)];
                 } else {
                     $args = $_POST;
                 }
                 break;
             case 'put':
-                //ya rly
                 if (substr_count($_SERVER['CONTENT_TYPE'], 'application/json')) {
                     $args = json_decode(file_get_contents('php://input'), true);
                 } else {
@@ -215,6 +217,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     'description' => 'Invalid input for this operation.',
                 ],
             ],
+            'definitions' => self::getApiConfig()['specs']
         ];
 
         return $data;
@@ -222,10 +225,18 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
     private static function getApis()
     {
-        return json_decode(file_get_contents(__DIR__.'/../../../schema/api.json'), true);
+        return self::getApiConfig()["classes"];
     }
 
-    private static function getParameters($method, $doc, $op)
+    private static function getApiConfig()
+    {
+        if (!self::$api_config) {
+            self::$api_config = json_decode(file_get_contents(__DIR__.'/../../../schema/api.json'), true);
+        }
+        return self::$api_config;
+    }
+
+    private static function getParameters($method, $doc, $op, $public_name)
     {
         $parameters = [];
 
@@ -259,6 +270,21 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     '$ref' => '#/parameters/dataSourceFull',
                 ];
             }
+        } else if (
+            $method->name === 'create' &&
+            $method->getNumberOfParameters() === 1
+            && $op === 'post'
+            && self::getApiConfig()['specs'][$public_name]
+            ) {
+            //This endpoint can have JSON POSTed at it
+            $parameters[] = [
+                'name' => $public_name,
+                'in' => 'body',
+                'required' => true,
+                'schema' => [
+                    '$ref' => '#/definitions/' . $public_name
+                ]
+            ];
         } else {
             $startIdx = 0;
             $paramReflectors = $method->getParameters();
@@ -313,7 +339,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                             'description' => $data['long_desc'],
                             'tags' => [$public_name],
                             'operationId' => $class.':'.$reflector->getName(),
-                            'parameters' => self::getParameters($reflector, $data, $op),
+                            'parameters' => self::getParameters($reflector, $data, $op, $public_name),
                             'responses' => [
                                 '400' => ['$ref' => '#/responses/invalidInput'],
                             ],

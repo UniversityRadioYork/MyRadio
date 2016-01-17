@@ -1,29 +1,87 @@
 {
-    "\\MyRadio\\ServiceAPI\\MyRadio_Track": "track",
-    "\\MyRadio\\ServiceAPI\\MyRadio_Show": "show",
-    "\\MyRadio\\ServiceAPI\\MyRadio_Season": "season",
-    "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot": "timeslot",
-    "\\MyRadio\\ServiceAPI\\MyRadio_Album": "album",
-    "\\MyRadio\\ServiceAPI\\MyRadio_Demo": "demo",
-    "\\MyRadio\\ServiceAPI\\MyRadio_List": "list",
-    "\\MyRadio\\ServiceAPI\\MyRadio_Photo": "photo",
-    "\\MyRadio\\ServiceAPI\\MyRadio_Podcast": "podcast",
-    "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler": "scheduler",
-    "\\MyRadio\\ServiceAPI\\MyRadio_TrackCorrection": "trackCorrection",
-    "\\MyRadio\\ServiceAPI\\MyRadio_TrainingStatus": "training",
-    "\\MyRadio\\ServiceAPI\\MyRadio_UserTrainingStatus": "userTraining",
-    "\\MyRadio\\ServiceAPI\\MyRadio_Selector": "selector",
-    "\\MyRadio\\ServiceAPI\\MyRadio_Alias": "alias",
-    "\\MyRadio\\ServiceAPI\\MyRadio_Officer": "officer",
-    "\\MyRadio\\ServiceAPI\\MyRadio_Team": "team",
-    "\\MyRadio\\ServiceAPI\\MyRadio_TracklistItem": "tracklistItem",
-    "\\MyRadio\\ServiceAPI\\MyRadio_User": "user",
-    "\\MyRadio\\ServiceAPI\\MyRadio_Banner": "banner",
-    "\\MyRadio\\ServiceAPI\\MyRadio_BannerCampaign": "bannerCampaign",
-    "\\MyRadio\\iTones\\iTones_Utils": "iTones",
-    "\\MyRadio\\MyRadio\\AuthUtils": "auth",
-    "\\MyRadio\\MyRadio\\CoreUtils": "utils",
-    "\\MyRadio\\MyRadio\\MyRadioNews": "news",
-    "\\MyRadio\\ServiceAPI\\MyRadio_Quote": "quote",
-    "\\MyRadio\\Config": "config"
+    "classes": {
+        "\\MyRadio\\ServiceAPI\\MyRadio_Track": "track",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Show": "show",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Season": "season",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot": "timeslot",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Album": "album",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Demo": "demo",
+        "\\MyRadio\\ServiceAPI\\MyRadio_List": "list",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Photo": "photo",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Podcast": "podcast",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler": "scheduler",
+        "\\MyRadio\\ServiceAPI\\MyRadio_TrackCorrection": "trackCorrection",
+        "\\MyRadio\\ServiceAPI\\MyRadio_TrainingStatus": "training",
+        "\\MyRadio\\ServiceAPI\\MyRadio_UserTrainingStatus": "userTraining",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Selector": "selector",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Alias": "alias",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Officer": "officer",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Team": "team",
+        "\\MyRadio\\ServiceAPI\\MyRadio_TracklistItem": "tracklistItem",
+        "\\MyRadio\\ServiceAPI\\MyRadio_User": "user",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Banner": "banner",
+        "\\MyRadio\\ServiceAPI\\MyRadio_BannerCampaign": "bannerCampaign",
+        "\\MyRadio\\iTones\\iTones_Utils": "iTones",
+        "\\MyRadio\\MyRadio\\AuthUtils": "auth",
+        "\\MyRadio\\MyRadio\\CoreUtils": "utils",
+        "\\MyRadio\\MyRadio\\MyRadioNews": "news",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Quote": "quote",
+        "\\MyRadio\\Config": "config"
+    },
+    "specs": {
+        "show": {
+            "required": ["title", "description", "credits"],
+            "properties": {
+                "show_id": {
+                    "type": "integer",
+                    "readOnly": true
+                },
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "credits": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "object",
+                        "required": ["type", "memberid"],
+                        "properties": {
+                            "type": {
+                                "type": "integer"
+                            },
+                            "memberid": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                },
+                "show_type_id": {
+                    "type": "integer",
+                    "default": 1
+                },
+                "seasons": {
+                    "type": "integer",
+                    "description": "The number of seasons attached to this show.",
+                    "readOnly": true
+                },
+                "tag": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "upload_state": {
+                    "type": "string",
+                    "description": "If mixclouder is available, setting this to 'Requested' will make broadcasts of this show available on Mixcloud after broadcast. It will change to a progress status and finally to Mixcloud ID of the ondemand."
+                },
+                "image": {
+                    "type": "string",
+                    "readOnly": true
+                }
+            }
+        }
+    }    
 }
