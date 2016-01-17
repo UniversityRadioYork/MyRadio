@@ -204,33 +204,23 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     /**
      * Creates a new MyRadio Show and returns an object representing it.
      *
-     * @param array $params An array of Show properties compatible with the Models/Scheduler/showfrm Form:
-     *                      title: The name of the show<br>
-     *                      description: The description of the show<br>
-     *                      genres: An array of 0 or more genre ids this Show is a member of<br>
-     *                      tags: A string of 0 or more space-seperated tags this Show relates to<br>
-     *                      credits: a 2D Array with keys member and credittype. member is Array of Users, credittype is Array of<br>
-     *                      corresponding credittypeids
-     *                      showtypeid: The ID of the type of show (see schedule.show_type). Defaults to "Show"
-     *                      location: The ID of the location the show will be in
-     *                      mixclouder: If true, the show will be published to Mixcloud after broadcast.
-     *                      Requires https://github.com/UniversityRadioYork/mixclouder.
+     * @param array $params An assoc array (possibly decoded from JSON), taking a format generally based on what toDataSource produces
+     * Properties may be "genres" (["Jazz", ...], "credits" ([["memberid": 7449, "typeid": 1], ...]), location or any valid metadata key.
+     * the title/description metadata keys, and the credits key, are all required.
+     * e.g. Set upload_state: "Requested" to set this show to be uploaded to Mixclouder after broadcast.
      *
-     * title, description, credits and credittypes are required fields.
+     * title, description, credits are required fields.
      *
-     * As this is the initial creation, all tags are <i>approved</i> by the submitted so the show has some initial values
-     *
-     * @todo   location (above) Is not in the Show creation form
+     * As this is the initial creation, all data are <i>approved</i> by the submitter so the show has some initial values
      *
      * @throws MyRadioException
      */
-    public static function create($params = [])
-    {
+    public static function create($params = []) {
         //Validate input
         $required = ['title', 'description', 'credits'];
         foreach ($required as $field) {
             if (!isset($params[$field])) {
-                throw new MyRadioException('Parameter '.$field.' was not provided.');
+                throw new MyRadioException('You must provide ' . $field, 400);
             }
         }
 

@@ -54,9 +54,14 @@ function api_error($code, $message = null, $previous = null)
 function invokeArgsNamed(ReflectionMethod $refmethod, $object, array $args = [])
 {
     $parameters = $refmethod->getParameters();
-    foreach ($parameters as &$param) {
-        $name = $param->getName();
-        $param = isset($args[$name]) ? $args[$name] : $param->getDefaultValue();
+    if (sizeof($parameters) === 1 and sizeof($args) === 1) {
+        // Handle the case where the request body is the param, and also a shortcut...
+        $parameters = $args;
+    } else {
+        foreach ($parameters as &$param) {
+            $name = $param->getName();
+            $param = isset($args[$name]) ? $args[$name] : $param->getDefaultValue();
+        }
     }
     unset($param);
 
