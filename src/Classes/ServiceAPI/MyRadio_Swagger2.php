@@ -50,7 +50,12 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                 break;
             case 'post':
                 if (substr_count($_SERVER['CONTENT_TYPE'], 'application/json')) {
-                    $args = [json_decode(file_get_contents('php://input'), true)];
+                    $args = json_decode(file_get_contents('php://input'), true);
+                    if (sizeof($method->getParameters()) === 1) {
+                        //Support the case where the entire body is the parameter
+                        // This is the more likely case, but I think the other scenario is used somewhere...
+                        $args = [$args];
+                    }
                 } else {
                     $args = $_POST;
                 }
