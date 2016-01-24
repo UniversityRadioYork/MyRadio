@@ -68,6 +68,9 @@
                             },
                             "memberid": {
                                 "type": "integer"
+                            },
+                            "User": {
+                                "readOnly": true
                             }
                         }
                     }

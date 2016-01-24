@@ -33,11 +33,18 @@ frisby.create('Create a test member')
       .expectJSON({
         status: 'OK',
         payload: {
-          short_name: 'URN'
+          title: show.title,
+          description: show.description,
+          seasons: {
+            value: 0
+          }
         }
       })
       .expectJSONTypes({
-        time: String
+        time: String,
+        show_id: Number,
+        // Don't like, but backwards compatibility :(
+        credits: String
       })
       .toss();
   })

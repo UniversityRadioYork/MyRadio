@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         //create form
         MyRadio_Show::getForm()
-            ->setFieldValue('credits.member', [MyRadio_User::getInstance()])
+            ->setFieldValue('credits.memberid', [MyRadio_User::getInstance()])
             ->setFieldValue('credits.credittype', [1])
             ->setTemplate('Scheduler/createShow.twig')
             ->render();
