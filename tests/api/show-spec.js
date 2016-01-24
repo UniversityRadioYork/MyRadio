@@ -42,9 +42,11 @@ frisby.create('Create a test member')
       })
       .expectJSONTypes({
         time: String,
-        show_id: Number,
-        // Don't like, but backwards compatibility :(
-        credits: String
+        payload: {
+          show_id: Number,
+          // Don't like, but backwards compatibility :(
+          credits: String
+        }
       })
       .toss();
   })
