@@ -209,7 +209,7 @@ class MyRadio_Quote extends ServiceAPI
      *
      * @return nothing.
      */
-    public function create($data)
+    public static function create($data)
     {
         self::$db->query(
             self::INSERT_SQL,
@@ -253,7 +253,7 @@ class MyRadio_Quote extends ServiceAPI
     /**
      * Sets this quote's date.
      *
-     * @param int|string $date The date, as a UNIX timestamp or date string.
+     * @param int $date The date, as a UNIX timestamp or date string.
      *
      * @return MyRadio_Quote This object, for method chaining.
      */

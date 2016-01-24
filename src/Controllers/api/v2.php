@@ -5,8 +5,6 @@ use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Swagger2;
 
-header('Content-Type: application/json');
-
 //Strip everything from the URL before the version and query string
 $url = explode('?', explode(Config::$api_uri.'v2/', $_SERVER['REQUEST_URI'])[1])[0];
 
@@ -42,6 +40,10 @@ if (sizeof($parts) === 1) {
 
 try {
     $response = MyRadio_Swagger2::handleRequest($op, $class, $method, $id, $arg0);
+    if ($response['status']) {
+        header('HTTP/1.1 ' . $response['status']);
+    }
+    header('Content-Type: application/json');
     $data = [
         'status' => 'OK',
         'payload' => CoreUtils::dataSourceParser($response['content'], $response['mixins']),
@@ -49,6 +51,7 @@ try {
     ];
 } catch (MyRadioException $e) {
     header('HTTP/1.1 '.$e->getCode().' '.$e->getCodeName());
+    header('Content-Type: application/json');
     $data = [
         'status' => 'FAIL',
         'payload' => $e->getMessage(),
