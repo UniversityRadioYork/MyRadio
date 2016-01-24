@@ -1884,8 +1884,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 'collegeid' => $collegeid,
                 'email' => $email,
                 'phone' => $phone,
-                'receive_email' => $receive_email;
-                'paid' => $paid;
+                'receive_email' => $receive_email,
+                'paid' => $paid
             ];
             return self::create($data);
         }
