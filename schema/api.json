@@ -29,6 +29,20 @@
         "\\MyRadio\\Config": "config"
     },
     "specs": {
+        "quote": {
+            "required": ["text", "source", "date"],
+            "properties": {
+                "text": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "integer"
+                }
+            }
+        },
         "show": {
             "required": ["title", "description", "credits"],
             "properties": {
@@ -82,6 +96,52 @@
                     "readOnly": true
                 }
             }
+        },
+        "user": {
+            "required": ["fname", "sname"],
+            "properties": {
+                "fname": {
+                    "type": "string"
+                },
+                "sname": {
+                    "type": "string"
+                },
+                "eduroam": {
+                    "type": "string"
+                },
+                "sex": {
+                    "type": "string",
+                    "enum": ["m", "f", "o"],
+                    "default": "o"
+                },
+                "collegeid": {
+                    "type": "integer",
+                    "description": "Default configurable"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "receive_email": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "paid": {
+                    "type": "number",
+                    "default": 0.00
+                },
+                "provided_pass": {
+                    "type": "string"
+                }
+            },
+            "anyOf": [{
+                "required": ["eduroam"]
+            },
+            {
+                "required": ["email"]    
+            }]
         }
     }    
 }

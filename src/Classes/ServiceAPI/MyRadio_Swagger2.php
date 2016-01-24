@@ -175,7 +175,11 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             throw new MyRadioException('No valid authentication data provided.', 401);
         } elseif (self::validateRequest($caller, $classes[$class], $paths[$path][$op]->getName(), $args['mixins'])) {
             $caller->logCall($_SERVER['REQUEST_URI'], $op === 'get' ? $args : [$op]);
-            $data = ['content' => invokeArgsNamed($paths[$path][$op], $object, $args), 'mixins' => $args['mixins']];
+            $status = '200 OK';
+            if ($paths[$path][$op]->getName() === 'create') {
+                $status = '201 Created';
+            }
+            $data = ['status' => $status, 'content' => invokeArgsNamed($paths[$path][$op], $object, $args), 'mixins' => $args['mixins']];
 
             // If this returns a datasourceable array of objects, validate any mixins
             $sample_obj = null;
@@ -325,14 +329,17 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
             for ($i = $startIdx; $i < sizeof($paramReflectors); ++$i) {
                 $param = $paramReflectors[$i];
-                $parameters[] = [
+                $definition = [
                     'name' => $param->getName(),
                     'in' => $op === 'get' ? 'query' : 'form',
                     'description' => self::getParamDescription($param, $doc),
                     'required' => !$param->isOptional(),
-                    'type' => self::getParamType($param, $doc),
-                    'default' => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null,
+                    'type' => self::getParamType($param, $doc)
                 ];
+                if ($param->isDefaultValueAvailable()) {
+                    $definition['default'] = $param->getDefaultValue();
+                }
+                $parameters[] = $definition;
             }
         }
 
@@ -449,6 +456,8 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             '__toString',
             'setToDataSource',
             '__construct',
+            'resultSetToObjArray',
+            '__destruct'
         ];
 
         $data = [

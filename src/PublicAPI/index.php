@@ -16,6 +16,7 @@ define('JSON_DEBUG', true);
 
 require_once __DIR__.'/../Controllers/root_cli.php';
 
+ob_start();
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
@@ -24,6 +25,7 @@ error_reporting(E_ALL);
  */
 function api_error($code, $message = null, $previous = null)
 {
+    ob_end_clean();
     $messages = [
         400 => 'Bad Request',
         401 => 'Unauthorized',
@@ -59,6 +61,9 @@ function invokeArgsNamed(ReflectionMethod $refmethod, $object, array $args = [])
     } else {
         foreach ($parameters as &$param) {
             $name = $param->getName();
+            if (!$param->isOptional && !isset($args[$name])) {
+                api_error(400, $name . ' is required.');
+            }
             $param = isset($args[$name]) ? $args[$name] : $param->getDefaultValue();
         }
     }
