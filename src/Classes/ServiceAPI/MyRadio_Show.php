@@ -242,6 +242,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $params['tags'] = '';
         }
 
+        // Support API calls where there is no session.
+        // @todo should this be system_user?
+        if (!empty($_SESSION['memberid'])) {
+            $creator = $_SESSION['memberid'];
+        } else {
+            $creator = $params['credits'][0]['memberid'];
+        }
+
         //We're all or nothing from here on out - transaction time
         self::$db->query('BEGIN');
 
@@ -250,7 +258,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $result = self::$db->fetchColumn(
             'INSERT INTO schedule.show (show_type_id, submitted, memberid)
             VALUES ($1, NOW(), $2) RETURNING show_id',
-            [$params['showtypeid'], $_SESSION['memberid']],
+            [$params['showtypeid'], $creator],
             true
         );
         $show_id = $result[0];
@@ -261,7 +269,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'INSERT INTO schedule.show_metadata
                 (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid)
                 VALUES ($1, $2, $3, NOW(), $4, $4)',
-                [self::getMetadataKey($key), $show_id, $params[$key], $_SESSION['memberid']],
+                [self::getMetadataKey($key), $show_id, $params[$key], $creator],
                 true
             );
         }
@@ -277,7 +285,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             self::$db->query(
                 'INSERT INTO schedule.show_genre (show_id, genre_id, effective_from, memberid, approvedid)
                 VALUES ($1, $2, NOW(), $3, $3)',
-                [$show_id, $genre, $_SESSION['memberid']],
+                [$show_id, $genre, $creator],
                 true
             );
         }
@@ -289,7 +297,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'INSERT INTO schedule.show_metadata
                 (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid)
                 VALUES ($1, $2, $3, NOW(), $4, $4)',
-                [self::getMetadataKey('tag'), $show_id, $tag, $_SESSION['memberid']],
+                [self::getMetadataKey('tag'), $show_id, $tag, $creator],
                 true
             );
         }
@@ -309,7 +317,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             [
                 $show_id,
                 $params['location'],
-                $_SESSION['memberid'],
+                $creator,
             ],
             true
         );
@@ -328,7 +336,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     $show_id,
                     (int) $params['credits']['credittype'][$i],
                     $params['credits']['member'][$i]->getID(),
-                    $_SESSION['memberid'],
+                    $creator,
                 ],
                 true
             );

@@ -25,7 +25,7 @@ frisby.create('Create a test member')
   .afterJSON(function(json) {
     var memberid = json.payload.memberid;
     show.credits = [{type: 1, memberid: memberid}];
-    
+
     frisby.create('Create a test show')
       .post('http://localhost/api/v2/show?api_key=travis-test-key', show, {json: true})
       .expectStatus(201)
@@ -42,4 +42,3 @@ frisby.create('Create a test member')
       .toss();
   })
   .toss();
-
