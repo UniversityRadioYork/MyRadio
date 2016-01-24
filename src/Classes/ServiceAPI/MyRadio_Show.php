@@ -323,9 +323,9 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         );
 
         //And now all that's left is who's on the show
-        for ($i = 0; $i < sizeof($params['credits']['member']); ++$i) {
+        for ($i = 0; $i < sizeof($params['credits']['memberid']); ++$i) {
             //Skip blank entries
-            if (empty($params['credits']['member'][$i])) {
+            if (empty($params['credits']['memberid'][$i])) {
                 continue;
             }
             self::$db->query(
@@ -335,7 +335,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 [
                     $show_id,
                     (int) $params['credits']['credittype'][$i],
-                    $params['credits']['member'][$i]->getID(),
+                    $params['credits']['memberid'][$i]->getID(),
                     $creator,
                 ],
                 true
@@ -422,7 +422,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 [
                     'options' => [
                         new MyRadioFormField(
-                            'member',
+                            'memberid',
                             MyRadioFormField::TYPE_MEMBER,
                             [
                                 'explanation' => '',
@@ -471,7 +471,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'description' => $this->getMeta('description'),
                     'genres' => $this->getGenre(),
                     'tags' => is_null($this->getMeta('tag')) ? null : implode(' ', $this->getMeta('tag')),
-                    'credits.member' => array_map(
+                    'credits.memberid' => array_map(
                         function ($ar) {
                             return $ar['User'];
                         },
