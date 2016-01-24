@@ -48,6 +48,49 @@ frisby.create('Create a test member')
           credits: String
         }
       })
+      .afterJSON(function(json) {
+        var showid = json.payload.show_id;
+
+        frisby.create('The show should have no seasons')
+          .get('http://localhost/api/v2/show/' + showid + '/numberofseasons?api_key=travis-test-key', {json: true})
+          .expectStatus(200)
+          .expectHeaderContains('content-type', 'application/json')
+          .expectJSON({
+            status: 'OK',
+            payload: 0
+          })
+          .expectJSONTypes({
+            time: String
+          })
+          .toss();
+
+        frisby.create('The show should have a credit')
+          .get('http://localhost/api/v2/show/' + showid + '/credits?api_key=travis-test-key', {json: true})
+          .expectStatus(200)
+          .expectHeaderContains('content-type', 'application/json')
+          .expectJSON({
+            status: 'OK',
+            payload: show.credits
+          })
+          .expectJSONTypes({
+            time: String
+          })
+          .toss();
+
+        frisby.create('The show should appear in the All Shows list')
+          .get('http://localhost/api/v2/show/allshows?api_key=travis-test-key', {json: true})
+          .expectStatus(200)
+          .expectHeaderContains('content-type', 'application/json')
+          .expectJSON('payload.?', {
+            show_id: showid,
+            title: show.title,
+            description: show.description
+          })
+          .expectJSONTypes({
+            time: String
+          })
+          .toss();
+      })
       .toss();
   })
   .toss();
