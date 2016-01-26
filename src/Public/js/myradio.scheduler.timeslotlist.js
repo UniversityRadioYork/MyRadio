@@ -3,7 +3,7 @@ $('.twig-datatable').dataTable(
         "aoColumns": [
         //show_id
         {
-            bVisible: false
+            "bVisible": false
         },
         //title
         {
@@ -22,7 +22,7 @@ $('.twig-datatable').dataTable(
         },
         //show_type_id
         {
-            bVisible: false
+            "bVisible": false
         },
         //seasons
         {
@@ -46,9 +46,9 @@ $('.twig-datatable').dataTable(
         },
         //photo
         {
-            bVisible: false
+            "bVisible": false
         },
-        //id
+        //season_id
         {
             "bVisible": false
         },
@@ -89,6 +89,10 @@ $('.twig-datatable').dataTable(
             "bSortable": false,
             "bVisible": true
         },
+        //timeslot_id
+        {
+            "bVisible": false
+        },
         //timeslot_num
         {
             "sTitle": "Episode #"
@@ -106,7 +110,7 @@ $('.twig-datatable').dataTable(
         //starttime
         {
             "sTitle": "Time",
-            "iDataSort": 20
+            "iDataSort": 21
         },
         //duration
         {
