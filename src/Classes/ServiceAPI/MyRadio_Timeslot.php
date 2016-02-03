@@ -955,8 +955,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             if ($v['type'] == 3) {
                 $result[$k]['location'] = SIS_Utils::ipLookup($v['source']);
             }
-            $results[$k]['title'] = htmlspecialchars($v['title']);
-            $results[$k]['body'] = htmlspecialchars($v['body']);
+            $result[$k]['title'] = htmlspecialchars($v['title']);
+            $result[$k]['body'] = htmlspecialchars($v['body']);
         }
 
         return $result;
