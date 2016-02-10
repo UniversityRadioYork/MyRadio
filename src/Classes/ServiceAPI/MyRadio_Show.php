@@ -863,12 +863,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         return self::resultSetToObjArray($r);
     }
 
-    public function toDataSource($full = true)
+    public function toDataSource()
     {
         $data = [
             'show_id' => $this->getID(),
             'title' => $this->getMeta('title'),
-            'credits' => implode(', ', $this->getCreditsNames(false)),
+            'credits' => array_map(
+                function ($x) {
+                    $x['User'] = $x['User']->toDataSource();
+
+                    return $x;
+                },
+                $this->getCredits()
+            ),
             'description' => $this->getMeta('description'),
             'show_type_id' => $this->show_type,
             'seasons' => [
@@ -897,17 +904,6 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ],
             'photo' => $this->getShowPhoto(),
         ];
-
-        if ($full) {
-            $data['credits'] = array_map(
-                function ($x) {
-                    $x['User'] = $x['User']->toDataSource();
-
-                    return $x;
-                },
-                $this->getCredits()
-            );
-        }
 
         return $data;
     }
