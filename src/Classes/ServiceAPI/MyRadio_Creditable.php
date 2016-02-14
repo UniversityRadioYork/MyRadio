@@ -29,7 +29,7 @@ trait MyRadio_Creditable
      */
     public function getCredits(MyRadio\ServiceAPI\MyRadio_Metadata_Common $parent = null)
     {
-        $parent = $parent === null ? [] : $parent->getCredits();
+        $parent = empty($parent) ? [] : $parent->getCredits();
         $current = empty($this->credits) ? [] : $this->credits;
 
         return array_unique(array_merge($current, $parent), SORT_REGULAR);
