@@ -61,7 +61,7 @@ function invokeArgsNamed(ReflectionMethod $refmethod, $object, array $args = [])
     } else {
         foreach ($parameters as &$param) {
             $name = $param->getName();
-            if (!$param->isOptional && !isset($args[$name])) {
+            if (!$param->isOptional() && !isset($args[$name])) {
                 api_error(400, $name . ' is required.');
             }
             $param = isset($args[$name]) ? $args[$name] : $param->getDefaultValue();

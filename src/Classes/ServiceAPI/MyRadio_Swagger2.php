@@ -336,7 +336,8 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     'required' => !$param->isOptional(),
                     'type' => self::getParamType($param, $doc)
                 ];
-                if ($param->isDefaultValueAvailable()) {
+                // SwaggerUI converts a null to the string "null", which is confusing.
+                if ($param->isDefaultValueAvailable() && $param->getDefaultValue() !== null) {
                     $definition['default'] = $param->getDefaultValue();
                 }
                 $parameters[] = $definition;
