@@ -10,9 +10,13 @@ $('.twig-datatable').dataTable(
             "sTitle": "Title",
             "sClass": "left"
         },
-        //credits
+        //credits_string
         {
             "sTitle": "Credits",
+            "bVisible": false
+        },
+        //credits
+        {
             "bVisible": false
         },
         //description
