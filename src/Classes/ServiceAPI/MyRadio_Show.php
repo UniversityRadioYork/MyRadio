@@ -868,6 +868,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $data = [
             'show_id' => $this->getID(),
             'title' => $this->getMeta('title'),
+            'credits_string' => implode(', ', $this->getCreditsNames(false)),
             'credits' => array_map(
                 function ($x) {
                     $x['User'] = $x['User']->toDataSource();
