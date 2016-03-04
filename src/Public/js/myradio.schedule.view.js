@@ -106,7 +106,7 @@ var ScheduleView = function (options) {
                 startTimeDiv.innerHTML = time.format('HH:mm');
                 endTimeDiv.innerHTML = endTime.format('HH:mm');
 
-                showCredits.innerHTML = ' with ' + show.credits;
+                showCredits.innerHTML = ' with ' + show.credits_string;
                 showCredits.className = 'show-credits';
                 showText.className = 'show-title';
                 showText.innerHTML = show.title;
