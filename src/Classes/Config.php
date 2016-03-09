@@ -468,6 +468,12 @@ final class Config
     public static $yusu_api_key;
 
     /**
+     * The web address (up to the endpoint) where the YUSU API lives. It changes from time 
+     * to time so check that the API calls are actually succeeding now and then.
+     */
+    public static $yusu_api_website;
+
+    /**
      * The default college for new users that do not specify one.
      * 1 is Unknown. (Unless you're URY, in which case it's 10 because legacy).
      */
