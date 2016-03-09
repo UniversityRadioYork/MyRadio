@@ -527,6 +527,19 @@ class MyRadioFormField
                 $options['trackname'] = $this->value->getTitle();
                 $value = $this->value->getID();
             }
+        } elseif (($this->type === self::TYPE_ALBUM) && !empty($this->value)) {
+            if (is_array($this->value)) { //Deal with TABULARSETs
+                foreach ($this->value as $k => $v) {
+                    if (empty($v)) {
+                        continue;
+                    }
+                    $options['albumname'][$k] = $v->getTitle();
+                    $value[$k] = $v->getID();
+                }
+            } else {
+                $options['albumname'] = $this->value->getTitle();
+                $value = $this->value->getID();
+            }
         } elseif (($this->type === self::TYPE_MEMBER) && !empty($this->value)) {
             if (is_array($this->value)) { //Deal with TABULARSETs
                 foreach ($this->value as $k => $v) {
