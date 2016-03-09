@@ -458,7 +458,7 @@ class CoreUtils
 
         return json_decode(
             file_get_contents(
-                .Config::$yusu_api_website
+                Config::$yusu_api_website
                 .'?apikey='
                 .Config::$yusu_api_key
                 .'&function='
