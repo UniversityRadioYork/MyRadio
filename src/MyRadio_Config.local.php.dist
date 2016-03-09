@@ -43,6 +43,7 @@ Config::$lastfm_api_secret = 'YOUR API SECRET HERE';
  * SU API connection settings.
  */
 Config::$yusu_api_key = 'YOUR API KEY HERE';
+Config::$yusu_api_website = 'YOUR YUSU WEB ADDRESS [WHERE THE API WORKS] HERE'
 
 /**
  * URL Settings
