@@ -163,6 +163,10 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             if ($paths[$path][$op]->getName() === 'create') {
                 $status = '201 Created';
             }
+
+            // Don't send the API key to the function
+            unset($args['api_key']);
+
             $data = ['status' => $status, 'content' => invokeArgsNamed($paths[$path][$op], $object, $args), 'mixins' => $args['mixins']];
 
             // If this returns a datasourceable array of objects, validate any mixins

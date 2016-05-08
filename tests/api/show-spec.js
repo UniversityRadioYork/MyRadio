@@ -10,7 +10,7 @@ frisby.globalSetup({
 var user = {
   fname: 'Travis',
   sname: 'The Tester',
-  email: 'showspecdevnull@example.com',
+  email: 'showspecdevnull' + Date.now() + '@example.com',
   receive_email: false
 };
 
@@ -20,24 +20,21 @@ var show = {
 };
 
 frisby.create('Create a test member')
-  .post('http://localhost/api/v2/user?api_key=travis-test-key', user, {json: true})
+  .post('http://localhost:7080/api/v2/user?api_key=travis-test-key', user, {json: true})
   .expectStatus(201)
   .afterJSON(function(json) {
     var memberid = json.payload.memberid;
     show.credits = [{type: 1, memberid: memberid}];
 
     frisby.create('Create a test show')
-      .post('http://localhost/api/v2/show?api_key=travis-test-key', show, {json: true})
+      .post('http://localhost:7080/api/v2/show?api_key=travis-test-key', show, {json: true})
       .expectStatus(201)
       .expectHeaderContains('content-type', 'application/json')
       .expectJSON({
         status: 'OK',
         payload: {
           title: show.title,
-          description: show.description,
-          seasons: {
-            value: 0
-          }
+          description: show.description
         }
       })
       .expectJSONTypes({
@@ -52,7 +49,7 @@ frisby.create('Create a test member')
         var showid = json.payload.show_id;
 
         frisby.create('The show should have no seasons')
-          .get('http://localhost/api/v2/show/' + showid + '/numberofseasons?api_key=travis-test-key')
+          .get('http://localhost:7080/api/v2/show/' + showid + '/numberofseasons?api_key=travis-test-key')
           .expectStatus(200)
           .expectHeaderContains('content-type', 'application/json')
           .expectJSON({
@@ -65,7 +62,7 @@ frisby.create('Create a test member')
           .toss();
 
         frisby.create('The show should have a credit')
-          .get('http://localhost/api/v2/show/' + showid + '/credits?api_key=travis-test-key')
+          .get('http://localhost:7080/api/v2/show/' + showid + '/credits?api_key=travis-test-key')
           .expectStatus(200)
           .expectHeaderContains('content-type', 'application/json')
           .expectJSON({
@@ -78,7 +75,7 @@ frisby.create('Create a test member')
           .toss();
 
         frisby.create('The show should appear in the All Shows list')
-          .get('http://localhost/api/v2/show/allshows?api_key=travis-test-key')
+          .get('http://localhost:7080/api/v2/show/allshows?api_key=travis-test-key')
           .expectStatus(200)
           .expectHeaderContains('content-type', 'application/json')
           .expectJSON('payload.?', {

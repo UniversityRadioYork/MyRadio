@@ -8,7 +8,7 @@ frisby.globalSetup({
 });
 
 frisby.create('Get public config')
-  .get('http://localhost/api/v2/config/publicconfig?api_key=travis-test-key')
+  .get('http://localhost:7080/api/v2/config/publicconfig?api_key=travis-test-key')
   .expectStatus(200)
   .expectHeaderContains('content-type', 'application/json')
   .expectJSON({
