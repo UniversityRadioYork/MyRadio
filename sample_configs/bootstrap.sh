@@ -16,6 +16,7 @@ apt-get install -y apache2 \
 	php5-dev \
 	php-pear \
 	php5-memcached \
+	php5-xdebug \
 	openssl \
 	libav-tools
 a2enmod ssl
@@ -29,6 +30,17 @@ ln -s /etc/php5/mods-available/mcrypt.ini /etc/php5/apache2/conf.d/20-mcrypt.ini
 echo "extension=twig.so" > /etc/php5/mods-available/twig.ini
 ln -s /etc/php5/mods-available/twig.ini /etc/php5/apache2/conf.d/20-twig.ini
 
+cat <<EOF >> /etc/php5/mods-available/xdebug.ini
+echo "xdebug.default_enable=1"
+echo "xdebug.remote_enable=1"
+echo "xdebug.remote_autostart=0"
+echo "xdebug.remote_port=9000"
+echo "xdebug.remote_log=\"/var/log/xdebug/xdebug.log\""
+echo "xdebug.remote_host=10.0.2.2"
+echo "xdebug.idekey=\"MyRadio vagrant\""
+echo "xdebug.remote_handler=dbgp"
+EOF
+
 # Composer
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
@@ -38,6 +50,7 @@ composer install
 ln -s /vagrant/src /var/www/myradio
 ln -s /vagrant/sample_configs/apache.conf /etc/apache2/sites-available/myradio.conf
 a2ensite myradio
+a2dissite 000-default
 
 # Generate an SSL cert
 export PASSPHRASE=$(head -c 500 /dev/urandom | tr -dc a-z0-9A-Z | head -c 128; echo)
@@ -60,6 +73,9 @@ openssl req \
 	-passin env:PASSPHRASE
 openssl rsa -in /etc/apache2/myradio.key -out /etc/apache2/myradio.key -passin env:PASSPHRASE
 openssl x509 -req -days 3650 -in /etc/apache2/myradio.csr -signkey /etc/apache2/myradio.key -out /etc/apache2/myradio.crt
+
+# Start httpd back up
+service apache2 start
 
 # Create DB cluster/database/user
 pg_createcluster 9.3 myradio

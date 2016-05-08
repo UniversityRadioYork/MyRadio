@@ -1,4 +1,5 @@
 var frisby = require('frisby');
+var url = require('./lib/url');
 
 frisby.globalSetup({
   request: {
@@ -8,7 +9,7 @@ frisby.globalSetup({
 });
 
 frisby.create('Get public config')
-  .get('http://localhost/api/v2/config/publicconfig?api_key=travis-test-key')
+  .get(url.base + 'config/publicconfig?api_key=travis-test-key')
   .expectStatus(200)
   .expectHeaderContains('content-type', 'application/json')
   .expectJSON({

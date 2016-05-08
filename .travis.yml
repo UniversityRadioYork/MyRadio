@@ -34,6 +34,7 @@ before_script:
     # configure MyRadio
     - cp sample_configs/travis-config.php src/MyRadio_Config.local.php
 script:
+    - curl -v http://localhost/api/v2/config/publicconfig?api_key=travis-test-key
     - jasmine-node tests/api/
 after_script:
     - sudo cat /var/log/apache2/*.log
