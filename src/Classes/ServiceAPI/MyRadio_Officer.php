@@ -347,7 +347,7 @@ class MyRadio_Officer extends ServiceAPI
         if ($description !== $this->description) {
             self::$db->query(
                 'UPDATE public.officer
-                SET description = $1
+                SET descr = $1
                 WHERE officerid=$2',
                 [$description, $this->getID()]
             );
