@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->setStatus($data['status']);
 
         // remove empty permissions values
-        $data['permissions'] = array_filter($data['permissions']['permission']);
+        $data['permissions'] = array_filter($data['permissions']['permission']) ?: [];
 
         // get IDs of current officer permissions
         $currentPerms = [];
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Add permissions
         if (!empty($addPerms)) {
             foreach ($addPerms as $perm) {
-                $officer->addPermisson($perm);
+                $officer->addPermission($perm);
             }
         }
         // Remove permissions
