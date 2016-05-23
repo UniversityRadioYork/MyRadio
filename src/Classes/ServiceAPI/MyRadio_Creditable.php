@@ -32,7 +32,7 @@ trait MyRadio_Creditable
         $parent = $parent === null ? [] : $parent->getCredits();
         $current = empty($this->credits) ? [] : $this->credits;
 
-        return array_unique(array_merge($current, $parent), SORT_REGULAR);
+        return array_values(array_unique(array_merge($current, $parent), SORT_REGULAR));
     }
 
     /**
