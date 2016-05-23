@@ -105,6 +105,7 @@ class MyRadioException extends \RuntimeException
                     .'Message: '.$this->message."\r\n\r\n"
                     ."Trace: \r\n".$this->traceStr."\r\n\r\n"
                     ."Request: \r\n".CoreUtils::getRequestInfo()."\r\n\r\n"
+                    ."RequestURI: \r\n".$_SERVER['REQUEST_URI']."\r\n\r\n"
                     ."Session: \r\n"
                     .(isset($_SESSION) ? print_r($_SESSION, true) : '')
                 );

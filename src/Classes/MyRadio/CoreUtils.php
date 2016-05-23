@@ -544,6 +544,18 @@ class CoreUtils
     }
 
     /**
+     * Returns information about the $_SERVER array.
+     *
+     * @return string var_dump output
+     */
+    public static function getServerInfo()
+    {
+        ob_start();
+        var_dump($_SERVER);
+        return ob_get_clean();
+    }
+
+    /**
      * Generates a completely pseudorandom string, aimed for Salt purposes.
      *
      * @param int $pwdLen The length of the string to generate
