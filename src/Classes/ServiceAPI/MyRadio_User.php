@@ -467,7 +467,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 }
             }
 
-            $this->permissions = array_unique($permissions);
+            $this->permissions = array_values(array_unique($permissions));
 
             $this->updateCacheObject();
         }
