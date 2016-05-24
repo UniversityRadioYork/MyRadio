@@ -87,9 +87,7 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
 
     protected static function factory($itemid)
     {
-        $class = get_called_class();
-
-        return new $class($itemid);
+        return new static($itemid);
     }
 
     protected function addMixins(&$data, $mixins, $mixin_funcs, $strict = true)

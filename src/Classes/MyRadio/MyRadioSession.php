@@ -19,7 +19,7 @@ class MyRadioSession
             session_write_close();
         }
 
-        return new self();
+        return new static();
     }
 
     public function __construct()
