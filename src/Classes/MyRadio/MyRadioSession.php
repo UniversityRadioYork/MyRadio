@@ -19,7 +19,8 @@ class MyRadioSession
             session_write_close();
         }
 
-        return new self();
+        $class = get_called_class();
+        return new $class();
     }
 
     public function __construct()
