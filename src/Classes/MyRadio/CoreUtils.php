@@ -121,7 +121,7 @@ class CoreUtils
      */
     public static function happyTime($timestring, $time = true, $date = true)
     {
-        $formatstring = ($date ? 'd/m/Y' : '') . ($time && $date ? ' ' : '') . ($time ? 'H:i' : '');
+        $formatstring = ($date ? 'd/m/Y' : '') . ($time && $date ? ' ' : '') . ($time ? 'H:i:s' : '');
         return date($formatstring, is_numeric($timestring) ? $timestring : strtotime($timestring));
     }
 
