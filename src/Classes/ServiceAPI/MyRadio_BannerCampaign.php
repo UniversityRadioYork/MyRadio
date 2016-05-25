@@ -457,15 +457,15 @@ class MyRadio_BannerCampaign extends ServiceAPI
     {
         return self::resultSetToObjArray(
             self::$db->fetchColumn(
-                'SELECT website.banner_campaign.banner_campaign_id FROM website.banner_campaign, website.banner_timeslot
-                WHERE website.banner_campaign.banner_campaign_id = website.banner_timeslot.banner_campaign_id
-                AND effective_from < now()
-                AND (effective_to IS NULL
-                    OR effective_to > now())
-                AND day = EXTRACT(ISODOW FROM now())
-                AND start_time < localtime
-                AND end_time > localtime
-                ORDER BY "order" ASC'
+                'SELECT banner_campaign_id FROM website.banner_campaign
+                 LEFT JOIN website.banner_timeslot USING(banner_campaign_id)
+                 WHERE effective_from < now()
+                 AND (effective_to IS NULL
+                      OR effective_to > now())
+                 AND day = EXTRACT(ISODOW FROM now())
+                 AND start_time < localtime
+                 AND end_time > localtime
+                 ORDER BY "order" ASC'
             )
         );
     }
