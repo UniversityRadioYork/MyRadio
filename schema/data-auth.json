@@ -68,7 +68,6 @@
     ["Edit Officership","AUTH_CHANGEOFFICERSHIP", true],
     ["Edit Server Account Name","AUTH_CHANGESERVERACCOUNT", true],
     ["Access Show Planner","AUTH_USENIPSWEB", true],
-    ["Access Timelord","AUTH_USETIMELORD", true],
     ["Access NIPSWeb Live","AUTH_USENWLIVE", true],
     ["[API Only] View Aliases","AUTH_VIEWALIASES", false],
     ["Access Restricted Passwords","AUTH_RESTRICTEDPASSWORDS", true],
