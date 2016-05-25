@@ -31,9 +31,11 @@ endfor %}
     apiLink.setAttribute('href', window.location);
     apiLink.appendChild(linkText);
 
-    apiLink.addEventListener('click', function() {
+    apiLink.addEventListener('click', function(event) {
         myradio.callAPI('{{method}}', '{{module}}', '{{action}}', '{{id}}', '{{options|first}}', {{options|json_encode()|raw}});
-    });
+        parent.remove();
+        event.preventDefault();
+    }, false);
 
     parent.appendChild(apiLink);
 </script>
