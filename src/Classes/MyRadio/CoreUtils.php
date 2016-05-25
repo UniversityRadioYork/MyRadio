@@ -148,19 +148,26 @@ class CoreUtils
 
     /**
      * Returns a postgresql-formatted timestamp.
-     *
-     * @param int $time The time to get the timestamp for. Default right now.
-     *
+     * @param int $time The time to get the timestamp for. Defaults to "now".
      * @return string a timestamp
      * @assert (30) == '1970-01-01 00:00:30'
      */
     public static function getTimestamp($time = null)
     {
-        if ($time === null) {
-            $time = time();
-        }
-
+        if (!isset($time)) $time = time();
         return gmdate('Y-m-d H:i:s+00', $time);
+    }
+
+    /**
+     * Returns a postgresql-formatted duration.
+     * @param int $time The time to get the duration for. Defaults to "now".
+     * @return string a duration
+     * @assert (4242) == '01:10:42'
+     */
+    public static function getDuration($time = null)
+    {
+        if (!isset($time)) $time = time();
+        return gmdate('H:i:s', $time);
     }
 
     /**
