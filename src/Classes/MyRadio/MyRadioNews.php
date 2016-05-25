@@ -75,7 +75,7 @@ class MyRadioNews
         $db = Database::getInstance();
 
         $news = $db->fetchOne(
-            'SELECT newsentryid, fname || \' \' || sname AS author, timestamp AS posted, content
+            'SELECT newsentryid, fname || \' \' || sname AS author, EXTRACT(epoch FROM timestamp) AS posted, content
             FROM public.news_feed, public.member
             WHERE newsentryid=$1
             AND news_feed.memberid = member.memberid',

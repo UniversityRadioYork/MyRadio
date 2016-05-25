@@ -46,7 +46,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
         //Get the basic info about the season
         $result = self::$db->fetchOne(
-            'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid,
+            'SELECT show_season_timeslot_id, show_season_id, memberid,
+            extract(epoch FROM start_time) AS start_time,
+            extract(epoch FROM duration) AS duration,
             (
                 SELECT array(
                     SELECT metadata_key_id FROM schedule.timeslot_metadata
@@ -113,8 +115,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         //Deal with the easy bits
         $this->timeslot_id = (int) $result['show_season_timeslot_id'];
         $this->season_id = (int) $result['show_season_id'];
-        $this->start_time = strtotime($result['start_time']);
-        $this->duration = $result['duration'];
+        $this->start_time = (int) $result['start_time'];
+        $this->duration = (int) $result['duration'];
         $this->owner = MyRadio_User::getInstance($result['memberid']);
         $this->timeslot_num = (int) $result['timeslot_num'];
 
@@ -197,6 +199,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         return $this->start_time;
     }
 
+    /**
+     * Get the duration of the Timeslot as an integer (number of seconds)
+     *
+     * @return int
+     */
     public function getDuration()
     {
         return $this->duration;
@@ -209,9 +216,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function getEndTime()
     {
-        $duration = strtotime('1970-01-01 '.$this->getDuration().'+00');
-
-        return $this->getStartTime() + $duration;
+        return $this->getStartTime() + $this->getDuration();
     }
 
     /**
@@ -240,7 +245,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             ]
         );
         if (empty($result)) {
-            return;
+            return null;
         } else {
             return self::getInstance($result[0]);
         }
@@ -305,7 +310,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'description' => $this->getMeta('description'),
             'tags' => $this->getMeta('tag'),
             'time' => $this->getStartTime(),
-            'start_time' => CoreUtils::happyTime($this->getStartTime()),
+            'start_time' => $this->getStartTime(),
             'duration' => $this->getDuration(),
             'mixcloud_status' => $this->getMeta('upload_state'),
             'rejectlink' => [

@@ -20,7 +20,11 @@ use MyRadio\iTones\iTones_Utils;
 class MyRadio_TracklistItem extends ServiceAPI
 {
     const BASE_TRACKLISTITEM_SQL =
-        'SELECT * FROM tracklist.tracklist
+        'SELECT audiologid, source, state, timeslotid, bapsaudioid,
+         trackid, track, artist, album, trackno, length, label,
+         EXTRACT(epoch FROM timestart) AS timestart,
+         EXTRACT(epoch FROM timestop) AS timestop
+         FROM tracklist.tracklist
             LEFT JOIN tracklist.track_rec USING (audiologid)
             LEFT JOIN tracklist.track_notrec USING (audiologid)';
     private $audiologid;
@@ -41,8 +45,8 @@ class MyRadio_TracklistItem extends ServiceAPI
         $this->audiologid = (int) $result['audiologid'];
 
         $this->source = $result['source'];
-        $this->starttime = strtotime($result['timestart']);
-        $this->endtime = strtotime($result['timestop']);
+        $this->starttime = $result['timestart'];
+        $this->endtime = $result['timestop'];
         $this->state = $result['state'];
         $this->timeslot = is_numeric($result['timeslotid']) ? MyRadio_Timeslot::getInstance($result['timeslotid']) : null;
         $this->bapsaudioid = is_numeric($result['bapsaudioid']) ? (int) $result['bapsaudioid'] : null;
@@ -402,8 +406,6 @@ class MyRadio_TracklistItem extends ServiceAPI
             $return = $this->getTrack()->toDataSource($full);
         }
         $return['time'] = $this->getStartTime();
-        $return['starttime'] = date('d/m/Y H:i:s', $this->getStartTime());
-        //$return['endtime'] = $this->getEndTime();
         $return['state'] = $this->state;
         $return['audiologid'] = $this->audiologid;
 

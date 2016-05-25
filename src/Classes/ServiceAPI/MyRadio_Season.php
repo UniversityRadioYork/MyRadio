@@ -39,7 +39,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
         //Get the basic info about the season
         $result = self::$db->fetchOne(
-            'SELECT show_id, termid, submitted, memberid, (
+            'SELECT show_id, termid, memberid, (
+             EXTRACT(epoch from submitted)) AS submitted, (
                 SELECT array(
                     SELECT metadata_key_id FROM schedule.season_metadata
                     WHERE show_season_id=$1 AND effective_from <= NOW()
@@ -97,7 +98,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         //Deal with the easy bits
         $this->owner = MyRadio_User::getInstance($result['memberid']);
         $this->show_id = (int) $result['show_id'];
-        $this->submitted = strtotime($result['submitted']);
+        $this->submitted = $result['submitted'];
         $this->term_id = (int) $result['termid'];
         $this->season_num = (int) $result['season_num'];
 
@@ -678,7 +679,7 @@ EOT
 
     public function getSubmittedTime()
     {
-        return CoreUtils::happyTime($this->submitted);
+        return $this->submitted;
     }
 
     /**
@@ -793,7 +794,7 @@ EOT
             'description' => $this->getMeta('description'),
             'submitted' => $this->getSubmittedTime(),
             'requested_time' => sizeof($this->getRequestedTimes()) === 0 ? null : $this->getRequestedTimes()[0],
-            'first_time' => ($first_time ? CoreUtils::happyTime($first_time) : 'Not Scheduled'),
+            'first_time' => $this->getFirstTime() ?: 'Not Scheduled',
             'num_episodes' => [
             'display' => 'text',
             'value' => sizeof($this->timeslots),
@@ -954,7 +955,7 @@ Hello,
 $times
 
   Remember that except in exceptional circumstances, you must give at least 48 hours notice for cancelling your show as part of your presenter contract. If you do not do this for two shows in one season, all other shows are forfeit and may be cancelled.
-  
+
   You can cancel a timeslot by going to: My Shows -> Seasons for Show -> Timeslots for Season, and selecting cancel for the particular time.
   ".URLUtils::makeURL('Scheduler', 'myShows').'
 
@@ -1016,7 +1017,7 @@ $times
     }
 
     /**
-     * Returns the start time of the first Timeslot in this season.
+     * Returns the start time of the first Timeslot in this season as a unix timestamp, or 0 if no timeslot exists.
      *
      * @return int
      */
@@ -1025,7 +1026,7 @@ $times
         if (sizeof($this->timeslots) > 0) {
             return MyRadio_Timeslot::getInstance($this->timeslots[0])->getStartTime();
         } else {
-            return false;
+            return 0;
         }
     }
 
