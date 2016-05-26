@@ -20,64 +20,39 @@ use MyRadio\MyRadio\MyRadioFormField;
  */
 class MyRadio_ChartRelease extends ServiceAPI
 {
-    const GET_INSTANCE_SQL = '
-        SELECT
-            *
-        FROM
-            music.chart_release
-        WHERE
-            chart_release_id = $1
-        ;';
+    const GET_INSTANCE_SQL =
+        'SELECT chart_release_id, chart_type_id,
+         EXTRACT(epoch FROM submitted) AS submitted
+         FROM music.chart_release
+         WHERE chart_release_id = $1';
 
-    const GET_CHART_ROWS_SQL = '
-        SELECT
-            chart_row_id
-        FROM
-            music.chart_row
-        WHERE
-            chart_release_id = $1
-        ORDER BY
-            position ASC
-        ;';
+    const GET_CHART_ROWS_SQL =
+        'SELECT chart_row_id
+         FROM music.chart_row
+         WHERE chart_release_id = $1
+         ORDER BY position ASC';
 
-    const FIND_RELEASE_ID_ON_SQL = '
-        SELECT
-            chart_release_id
-        FROM
-            music.chart_release
-        WHERE
-            chart_type_id = $1 AND
-            submitted     = $2
-        LIMIT
-            1
-        ;';
+    const FIND_RELEASE_ID_ON_SQL =
+        'SELECT chart_release_id
+        FROM music.chart_release
+        WHERE chart_type_id = $1
+          AND submitted     = $2
+        LIMIT 1';
 
-    const INSERT_SQL = '
-        INSERT INTO
-            music.chart_release(chart_type_id, submitted)
-        VALUES
-            ($1, $2)
-        RETURNING
-            chart_release_id
-        ;';
+    const INSERT_SQL =
+        'INSERT INTO music.chart_release(chart_type_id, submitted)
+        VALUES ($1, $2)
+        RETURNING chart_release_id';
 
-    const SET_RELEASE_TIME_SQL = '
-        UPDATE
-            music.chart_release
-        SET
-            submitted = $1
-        WHERE
-            chart_release_id = $2
-        ;';
+    const SET_RELEASE_TIME_SQL =
+        'UPDATE music.chart_release
+        SET submitted = $1
+        WHERE chart_release_id = $2';
 
-    const SET_CHART_TYPE_ID_SQL = '
-        UPDATE
-            music.chart_release
-        SET
-            chart_type_id = $1
-        WHERE
-            chart_release_id = $2
-        ;';
+    const SET_CHART_TYPE_ID_SQL =
+        'UPDATE music.chart_release
+        SET chart_type_id = $1
+        WHERE chart_release_id = $2';
 
     /**
      * The singleton store for ChartRelease objects.
@@ -142,11 +117,10 @@ class MyRadio_ChartRelease extends ServiceAPI
         );
         if (empty($chart_release_data)) {
             throw new MyRadioException('The specified Chart Release does not seem to exist.');
-
             return;
         }
 
-        $this->release_time = strtotime($chart_release_data['submitted']);
+        $this->release_time = $chart_release_data['submitted'];
         $this->chart_type_id = $chart_release_data['chart_type_id'];
 
         $this->chart_row_ids = self::$db->fetchColumn(
@@ -310,8 +284,8 @@ class MyRadio_ChartRelease extends ServiceAPI
         $r = self::$db->fetchColumn(
             self::INSERT_SQL,
             [
-                intval($data['chart_type_id']),
-                date('%c', intval($data['submitted_time'])), // Expecting UNIX timestamp
+                (int) $data['chart_type_id'],
+                date('c', (int)$data['submitted_time']), // Expecting UNIX timestamp
             ],
             true
         );
@@ -448,7 +422,7 @@ class MyRadio_ChartRelease extends ServiceAPI
     {
         return [
             'type' => $this->getChartType()->getDescription(),
-            'date' => strftime('%c', $this->getReleaseTime()),
+            'date' => $this->getReleaseTime(),
             'editlink' => [
                 'display' => 'icon',
                 'value' => 'pencil',

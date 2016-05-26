@@ -48,18 +48,19 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
         $this->managed_item_id = $resid;
         //*dies*
         $result = self::$db->fetchOne(
-            'SELECT manageditemid, title, length, bpm, NULL AS folder, memberid, expirydate, managedplaylistid
-            FROM bapsplanner.managed_items WHERE manageditemid=$1
-            UNION SELECT manageditemid, title, length, bpm, managedplaylistid AS folder, NULL AS memberid, NULL AS expirydate,
-            NULL as managedplaylistid
-            FROM bapsplanner.managed_user_items WHERE manageditemid=$1
-            LIMIT 1',
+            'SELECT manageditemid, title, EXTRACT(epoch FROM length) AS length, bpm,
+               NULL AS folder, memberid, EXTRACT(epoch FROM expirydate) AS expirydate, managedplaylistid
+             FROM bapsplanner.managed_items WHERE manageditemid=$1
+             UNION
+             SELECT manageditemid, title, EXTRACT(epoch FROM length) AS length, bpm, managedplaylistid AS folder,
+               NULL AS memberid, NULL AS expirydate, NULL as managedplaylistid
+             FROM bapsplanner.managed_user_items
+             WHERE manageditemid=$1',
             [$resid]
         );
 
         if (empty($result)) {
             throw new MyRadioException('The specified NIPSWeb Managed Item or Managed User Item does not seem to exist', 404);
-
             return;
         }
 
@@ -71,9 +72,9 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
                 );
         $this->folder = $result['folder'];
         $this->title = $result['title'];
-        $this->length = strtotime('1970-01-01 '.$result['length']);
+        $this->length = $result['length'] ?: 0;
         $this->bpm = (int) $result['bpm'];
-        $this->expirydate = strtotime($result['expirydate']);
+        $this->expirydate = $result['expirydate'] ?: 0;
         $this->member = empty($result['memberid']) ? null : MyRadio_User::getInstance($result['memberid']);
     }
 
@@ -147,7 +148,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
             'summary' => $this->getTitle(), //Again, freaking NIPSWeb
             'title' => $this->getTitle(),
             'managedid' => $this->getID(),
-            'length' => CoreUtils::happyTime($this->getLength() > 0 ? $this->getLength() : 0, true, false),
+            'length' => $this->getLength(),
             'trackid' => $this->getID(),
             'recordid' => 'ManagedDB', //Legacy NIPSWeb Views
             'auxid' => 'managed:'.$this->getID(), //Legacy NIPSWeb Views

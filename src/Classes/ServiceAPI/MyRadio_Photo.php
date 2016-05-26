@@ -54,17 +54,19 @@ class MyRadio_Photo extends ServiceAPI
         $this->photoid = (int) $photoid;
 
         $result = self::$db->fetchOne(
-            'SELECT * FROM myury.photos WHERE photoid=$1',
+            'SELECT photoid, owner, format,
+             EXTRACT(epoch FROM date_added) AS date_added
+             FROM myury.photos
+             WHERE photoid=$1',
             [$photoid]
         );
         if (empty($result)) {
             throw new MyRadioException('Photo '.$photoid.' does not exist!');
-
             return;
         }
 
         $this->owner = MyRadio_User::getInstance($result['owner']);
-        $this->date_added = strtotime($result['date_added']);
+        $this->date_added = (int) $result['date_added'];
         $this->format = $result['format'];
     }
 
@@ -77,7 +79,7 @@ class MyRadio_Photo extends ServiceAPI
     {
         return [
             'photoid' => $this->getID(),
-            'date_added' => CoreUtils::happyTime($this->getDateAdded()),
+            'date_added' => $this->getDateAdded(),
             'format' => $this->getFormat(),
             'owner' => $this->getOwner()->getID(),
             'url' => $this->getURL(),

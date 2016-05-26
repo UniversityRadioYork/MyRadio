@@ -18,57 +18,35 @@ use MyRadio\MyRadio\MyRadioFormField;
  */
 class MyRadio_Quote extends ServiceAPI
 {
-    const GET_INSTANCE_SQL = '
-        SELECT
-            *
-        FROM
-            people.quote
-        WHERE
-            quote_id = $1
-        ;';
+    const GET_INSTANCE_SQL =
+        'SELECT quote_id, text, source,
+         EXTRACT(epoch FROM date) AS date
+         FROM people.quote
+         WHERE quote_id = $1';
 
-    const GET_ALL_SQL = '
-        SELECT
-            quote_id
-        FROM
-            people.quote
-        ORDER BY
-            date DESC
-        ;';
+    const GET_ALL_SQL =
+        'SELECT quote_id
+         FROM people.quote
+         ORDER BY date DESC';
 
-    const INSERT_SQL = '
-        INSERT INTO
-            people.quote(text, source, date)
-        VALUES
-            ($1, $2, $3);
-        ;';
+    const INSERT_SQL =
+        'INSERT INTO people.quote(text, source, date)
+         VALUES ($1, $2, $3)';
 
-    const SET_TEXT_SQL = '
-        UPDATE
-            people.quote
-        SET
-            text = $1
-        WHERE
-            quote_id = $2;
-        ;';
+    const SET_TEXT_SQL =
+        'UPDATE people.quote
+         SET text = $1
+         WHERE quote_id = $2';
 
-    const SET_SOURCE_SQL = '
-        UPDATE
-            people.quote
-        SET
-            source = $1
-        WHERE
-            quote_id = $2
-        ;';
+    const SET_SOURCE_SQL =
+        'UPDATE people.quote
+         SET source = $1
+         WHERE quote_id = $2';
 
-    const SET_DATE_SQL = '
-        UPDATE
-            people.quote
-        SET
-            date = $1
-        WHERE
-            quote_id = $2
-        ;';
+    const SET_DATE_SQL =
+        'UPDATE people.quote
+         SET date = $1
+         WHERE quote_id = $2';
 
     /**
      * The quote ID.
@@ -129,7 +107,7 @@ class MyRadio_Quote extends ServiceAPI
         $this->id = (int) $quote_id;
         $this->text = $quote_data['text'];
         $this->source = MyRadio_User::getInstance($quote_data['source']);
-        $this->date = strtotime($quote_data['date']);
+        $this->date = (int) $quote_data['date'];
     }
 
     /**
@@ -216,7 +194,7 @@ class MyRadio_Quote extends ServiceAPI
             [
                 $data['text'],
                 $data['source']->getID(),
-                date('%c', intval($data['date'])), // Expecting UNIX timestamp
+                date('c', (int) $data['date']), // Expecting UNIX timestamp
             ],
             true
         );
@@ -344,7 +322,7 @@ class MyRadio_Quote extends ServiceAPI
         return [
             'id' => $this->getID(),
             'source' => $this->getSource()->getName(),
-            'date' => strftime('%F', $this->getDate()),
+            'date' => $this->getDate(),
             'text' => $this->getText(),
             'html' => [
                 'display' => 'html',

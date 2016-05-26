@@ -89,8 +89,12 @@ class MyRadio_BannerCampaign extends ServiceAPI
     {
         $this->banner_campaign_id = (int) $banner_campaign_id;
 
-        $result = self::$db->fetchOne('SELECT * FROM website.banner_campaign WHERE banner_campaign_id=$1',
-                                      [$banner_campaign_id]);
+        $result = self::$db->fetchOne(
+            'SELECT banner_id, memberid, approvedid, banner_location_id,
+               EXTRACT(epoch FROM effective_from), EXTRACT(epoch FROM effective_to)
+             FROM website.banner_campaign
+             WHERE banner_campaign_id=$1',
+            [$banner_campaign_id]);
         if (empty($result)) {
             throw new MyRadioException('Banner Campaign '.$banner_campaign_id.' does not exist!');
         }
@@ -98,8 +102,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
         $this->banner = MyRadio_Banner::getInstance($result['banner_id']);
         $this->created_by = MyRadio_User::getInstance($result['memberid']);
         $this->approved_by = empty($result['approvedid']) ? null : MyRadio_User::getInstance($result['approvedid']);
-        $this->effective_from = strtotime($result['effective_from']);
-        $this->effective_to = empty($result['effective_to']) ? null : strtotime($result['effective_to']);
+        $this->effective_from = $result['effective_from'];
+        $this->effective_to = empty($result['effective_to']) ? null : $result['effective_to'];
         $this->banner_location_id = (int) $result['banner_location_id'];
 
         //Make times be in seconds since midnight
@@ -132,8 +136,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
             'banner_campaign_id' => $this->getID(),
             'created_by' => $this->getCreatedBy()->getID(),
             'approved_by' => ($this->getApprovedBy() == null) ? null : $this->getApprovedBy()->getID(),
-            'effective_from' => CoreUtils::happyTime($this->getEffectiveFrom()),
-            'effective_to' => ($this->getEffectiveTo() === null) ? 'Never' : CoreUtils::happyTime($this->getEffectiveTo()),
+            'effective_from' => $this->getEffectiveFrom(),
+            'effective_to' => ($this->getEffectiveTo() === null) ? null : $this->getEffectiveTo(),
             'banner_location_id' => $this->getLocation(),
             'num_timeslots' => sizeof($this->getTimeslots()),
             'edit_link' => [

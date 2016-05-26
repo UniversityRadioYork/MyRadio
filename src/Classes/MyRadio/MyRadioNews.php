@@ -91,11 +91,8 @@ class MyRadioNews
             [
                 'seen' => $db->fetchOne(
                     'SELECT seen FROM public.member_news_feed
-                    WHERE newsentryid=$1 AND memberid=$2 LIMIT 1',
-                    [
-                        $news['newsentryid'],
-                        empty($user) ? 0 : $user->getID(),
-                    ]
+                    WHERE newsentryid=$1 AND memberid=$2',
+                    [$news['newsentryid'], empty($user) ? 0 : $user->getID()]
                 ),
                 'posted' => CoreUtils::happyTime($news['posted']),
             ]

@@ -61,11 +61,16 @@ class MyRadio_Album extends ServiceAPI
         $this->albumid = (int) $recordid;
 
         $result = self::$db->fetchOne(
-            'SELECT * FROM (SELECT * FROM public.rec_record WHERE recordid=$1 LIMIT 1) AS t1
-            LEFT JOIN public.rec_statuslookup ON t1.status = rec_statuslookup.status_code
-            LEFT JOIN public.rec_medialookup ON t1.media = rec_medialookup.media_code
-            LEFT JOIN public.rec_formatlookup ON t1.format = rec_formatlookup.format_code
-            LEFT JOIN public.rec_locationlookup ON t1.location = rec_locationlookup.location_code',
+            'SELECT title, artist, status_descr, media_descr, format_descr, recordlabel,
+               EXTRACT(epoch FROM dateadded) AS dateadded, EXTRACT(epoch FROM datereleased) AS datereleased,
+               shelfnumber, shelfletter, memberid_add, memberid_edit,
+               EXTRACT(epoch FROM datetime_lastedit) AS datetime_lastedit, cdid, location_descr
+             FROM public.rec_record
+             LEFT JOIN public.rec_statuslookup ON status = rec_statuslookup.status_code
+             LEFT JOIN public.rec_medialookup ON media = rec_medialookup.media_code
+             LEFT JOIN public.rec_formatlookup ON format = rec_formatlookup.format_code
+             LEFT JOIN public.rec_locationlookup ON location = rec_locationlookup.location_code
+             WHERE recordid=$1',
             [$recordid]
         );
 
@@ -81,13 +86,13 @@ class MyRadio_Album extends ServiceAPI
         $this->media = $result['media_descr'];
         $this->format = $result['format_descr'];
         $this->record_label = $result['recordlabel'];
-        $this->date_added = strtotime($result['dateadded']);
-        $this->date_released = strtotime($result['datereleased']);
+        $this->date_added = (int) $result['dateadded'];
+        $this->date_released = (int) $result['datereleased'];
         $this->shelf_number = (int) $result['shelfnumber'];
         $this->shelf_letter = $result['shelfletter'];
         $this->member_add = empty($result['memberid_add']) ? null : (int) $result['memberid_add'];
         $this->member_edit = empty($result['memberid_edit']) ? null : (int) $result['memberid_edit'];
-        $this->last_modified = strtotime($result['datetime_lastedit']);
+        $this->last_modified = (int) $result['datetime_lastedit'];
         $this->cdid = $result['cdid'];
         $this->location = $result['location_descr'];
 
@@ -416,10 +421,10 @@ class MyRadio_Album extends ServiceAPI
             'recordid' => $this->getID(),
             'artist' => $this->artist,
             'cdid' => $this->cdid,
-            'date_added' => CoreUtils::happyTime($this->date_added),
-            'date_released' => CoreUtils::happyTime($this->date_released, false),
+            'date_added' => $this->date_added,
+            'date_released' => $this->date_released,
             'format' => $this->format,
-            'last_modified' => CoreUtils::happyTime($this->last_modified),
+            'last_modified' => $this->last_modified,
             'location' => $this->location,
             'media' => $this->media,
             'member_add' => $this->member_add,
