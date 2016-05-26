@@ -168,7 +168,7 @@ class CoreUtils
     public static function getDuration($time = null)
     {
         if (!isset($time)) $time = time();
-        return gmdate('H:i:s', $time);
+        return gmdate('H:i:s+00', $time);
     }
 
     /**
@@ -496,7 +496,7 @@ class CoreUtils
         $return = [];
         $return[] = ['Timestamp', 'Errors per request', 'Exceptions per request', 'Queries per request'];
         foreach ($result as $row) {
-            $return[] = [date('H:i', $row['timestamp']), (int) $row['errors'], (int) $row['exceptions'], (int) $row['queries']];
+            $return[] = [self::happyTime($row['timestamp'], true, false), (int) $row['errors'], (int) $row['exceptions'], (int) $row['queries']];
         }
 
         return $return;

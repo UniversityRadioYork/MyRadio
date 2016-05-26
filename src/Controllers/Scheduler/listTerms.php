@@ -7,8 +7,7 @@ use \MyRadio\ServiceAPI\MyRadio_Scheduler;
 
 $terms = array_map(
     function ($x) {
-        $x['start'] = date('d/m/Y', $x['start']);
-
+        $x['start'] = CoreUtils::happyTime($x['start'], false);
         return $x;
     },
     MyRadio_Scheduler::getTerms()

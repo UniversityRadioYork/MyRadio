@@ -10,7 +10,7 @@ $trainers = CoreUtils::dataSourceParser(
 );
 
 foreach ($trainers as $key => $value) {
-    $trainers[$key]['awarded_time'] = date('Y/m/d', $trainers[$key]['awarded_time']);
+    $trainers[$key]['awarded_time'] = CoreUtils::happyTime($trainers[$key]['awarded_time'], false);
 }
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')

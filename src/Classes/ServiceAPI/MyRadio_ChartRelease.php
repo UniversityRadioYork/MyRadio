@@ -175,10 +175,7 @@ class MyRadio_ChartRelease extends ServiceAPI
         return array_pop(
             self::$db->fetchColumn(
                 self::FIND_RELEASE_ID_ON_SQL,
-                [
-                    $chart_type_id,
-                    date('c', $release_time),
-                ]
+                [$chart_type_id, CoreUtils::getTimestamp($release_time)]
             )
         );
     }
@@ -283,10 +280,7 @@ class MyRadio_ChartRelease extends ServiceAPI
     {
         $r = self::$db->fetchColumn(
             self::INSERT_SQL,
-            [
-                (int) $data['chart_type_id'],
-                date('c', (int)$data['submitted_time']), // Expecting UNIX timestamp
-            ],
+            [(int) $data['chart_type_id'], CoreUtils::getTimestamp($data['submitted_time'])], // Expecting UNIX timestamp
             true
         );
 
@@ -304,7 +298,7 @@ class MyRadio_ChartRelease extends ServiceAPI
     {
         $this->release_time = intval($release_time);
 
-        return $this->setDB(self::SET_RELEASE_TIME_SQL, date('c', intval($release_time)));
+        return $this->setDB(self::SET_RELEASE_TIME_SQL, CoreUtils::getTimestamp($release_time));
     }
 
     /**

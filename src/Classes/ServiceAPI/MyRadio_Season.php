@@ -39,8 +39,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
         //Get the basic info about the season
         $result = self::$db->fetchOne(
-            'SELECT show_id, termid, memberid, (
-             EXTRACT(epoch from submitted)) AS submitted, (
+            'SELECT show_id, termid, memberid, EXTRACT(epoch from submitted) AS submitted, (
                 SELECT array(
                     SELECT metadata_key_id FROM schedule.season_metadata
                     WHERE show_season_id=$1 AND effective_from <= NOW()
@@ -56,18 +55,21 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 )
             ) AS metadata, (
                 SELECT array(
-                    SELECT requested_day FROM schedule.show_season_requested_time
+                    SELECT EXTRACT(epoch FROM requested_day) AS requested_day
+                    FROM schedule.show_season_requested_time
                     WHERE show_season_id=$1 ORDER BY preference ASC
                 )
             ) AS requested_days, (
                 SELECT array(
-                    SELECT start_time FROM schedule.show_season_requested_time
+                    SELECT EXTRACT(epoch FROM start_time) AS start_time
+                    FROM schedule.show_season_requested_time
                     WHERE show_season_id=$1
                     ORDER BY preference ASC
                 )
             ) AS requested_start_times, (
                 SELECT array(
-                    SELECT duration FROM schedule.show_season_requested_time
+                    SELECT EXTRACT(epoch FROM duration) AS duration
+                    FROM schedule.show_season_requested_time
                     WHERE show_season_id=$1
                     ORDER BY preference ASC
                 )
@@ -129,7 +131,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             $this->requested_times[] = [
                 'day' => (int) $requested_days[$i],
                 'start_time' => (int) $requested_start_times[$i],
-                'duration' => self::$db->intervalToTime($requested_durations[$i]),
+                'duration' => (int) $requested_durations[$i],
             ];
         }
 
@@ -694,34 +696,14 @@ EOT
 
     public function getRequestedTimes()
     {
-        $return = [];
-        foreach ($this->requested_times as $time) {
-            $return[] = $this->formatTimeHuman($time);
-        }
-
-        return $return;
-    }
-
-    private function formatTimeHuman($time)
-    {
-        $stime = gmdate(' H:i', $time['start_time']);
-        $etime = gmdate('H:i', $time['start_time'] + $time['duration']);
-
-        return self::getDayNameFromID($time['day']).$stime.' - '.$etime;
-    }
-
-    private function getDayNameFromID($dow)
-    {
-        $days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-        return $days[$dow];
+        return $this->requested_times;
     }
 
     /**
      * Fetches requested times for the season and checks for conflicts.
      *
      * Returns a 2D array:
-     * time: Value as per getRequestedTimes()
+     * time: Unix timestamp as per getRequestedTimes()
      * conflict: True if one or more of requested weeks already have a booking that time
      * info: If True above, will have human-readable why-it-is-a-conflict details. It may also contain information about
      *       "warnings" - conflicts on weeks this show isn't planned to be aired
@@ -751,14 +733,14 @@ EOT
 
                 if (!empty($conflict)) {
                     // return conflicts
-                    $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => true, 'info' => 'Conflicts with: '.$conflict];
+                    $return[] = ['time' => $time, 'conflict' => true, 'info' => 'Conflicts with: '.$conflict];
                 } else {
                     // return warning
-                    $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => false, 'info' => 'Warnings with: '.$warning];
+                    $return[] = ['time' => $time, 'conflict' => false, 'info' => 'Warnings with: '.$warning];
                 }
             } else {
                 // no conflicts or warnings
-                $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => false, 'info' => ''];
+                $return[] = ['time' => $time, 'conflict' => false, 'info' => ''];
             }
         }
 

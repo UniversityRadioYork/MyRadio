@@ -101,16 +101,13 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
             throw new MyRadioException('Terms must start on a Monday.', 400);
         }
 
-        // Let's make this a GMT thing, exactly midnight
-        $ts = gmdate('Y-m-d 00:00:00+00', $start);
-        $end = $start + (86400 * 68); // +68 days, to Friday of the 10th week
-        $te = gmdate('Y-m-d 00:00:00+00', $end);
-
-        echo "INSERT INTO terms (start, finish, descr) VALUES ('$ts', '$te', '$descr') RETURNING termid";
+        // Let's make this exactly midnight UTC
+        $ts = $start % 86400;
+        $te = $ts + (86400 * 68); // +68 days, to Friday of the 10th week
 
         return self::$db->fetchColumn(
             'INSERT INTO terms (start, finish, descr) VALUES ($1, $2, $3) RETURNING termid',
-            [$ts, $te, $descr]
+            [CoreUtils::getTimestamp($ts), CoreUtils::getTimestamp($te), $descr]
         )[0];
     }
 
@@ -156,28 +153,28 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     public static function getTermDescr($termid)
     {
         $return = self::$db->fetchOne(
-            'SELECT descr, start FROM terms WHERE termid=$1',
+            'SELECT descr, EXTRACT(epoch FROM start) AS start FROM terms WHERE termid=$1',
             [$termid]
         );
 
-        return $return['descr'].date(' Y', strtotime($return['start']));
+        return $return['descr'] . date(' Y', $return['start']);
     }
 
     /**
-     * Gives the start date for the given/current term at midnight GMT.
+     * Gives the start date for the given/current term at midnight UTC.
      *
      * @param int $term_id id of the term to get the date of
      *
-     * @return int unix timestamp of midnight GMT for the start of term
+     * @return int unix timestamp of midnight UTC for the start of term
      */
     public static function getTermStartDate($term_id = null)
     {
         if ($term_id === null) {
             $term_id = self::getActiveApplicationTerm();
         }
-        $result = self::$db->fetchOne('SELECT start FROM terms WHERE termid=$1', [$term_id]);
+        $result = self::$db->fetchOne('SELECT EXTRACT(epoch FROM start) AS start FROM terms WHERE termid=$1', [$term_id]);
 
-        return strtotime('Midnight '.gmdate('d-m-Y', strtotime($result['start'])).' GMT');
+        return $result['start'] % 86400; // Midnight UTC
     }
 
     /**

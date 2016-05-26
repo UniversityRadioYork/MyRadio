@@ -20,7 +20,7 @@ if (!$list->isMember(MyRadio_User::getInstance()->getID())) {
 $archive = CoreUtils::dataSourceParser($list->getArchive(), false);
 
 foreach ($archive as $key => $value) {
-    $archive[$key]['timestamp'] = date('Y/m/d H:i', $archive[$key]['timestamp']);
+    $archive[$key]['timestamp'] = CoreUtils::happyTime($archive[$key]['timestamp']);
 }
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')

@@ -355,9 +355,6 @@ class MyRadio_BannerCampaign extends ServiceAPI
      */
     public function addTimeslot($day, $start, $end)
     {
-        $start = gmdate('H:i:s', $start).'+00';
-        $end = gmdate('H:i:s', $end).'+00';
-
         $id = self::$db->fetchColumn(
             'INSERT INTO website.banner_timeslot
             (banner_campaign_id, memberid, approvedid, "order", day, start_time, end_time)
@@ -366,16 +363,16 @@ class MyRadio_BannerCampaign extends ServiceAPI
                 $this->getID(),
                 MyRadio_User::getInstance()->getID(),
                 $day,
-                $start,
-                $end,
+                CoreUtils::getDuration($start),
+                CoreUtils::getDuration($end),
             ]
         )[0];
 
         $this->timeslots[] = [
             'id' => $id,
             'day' => $day,
-            'start_time' => strtotime($start, 0),
-            'end_time' => strtotime($end, 0),
+            'start_time' => $start,
+            'end_time' => $end,
         ];
 
         $this->updateCacheObject();
