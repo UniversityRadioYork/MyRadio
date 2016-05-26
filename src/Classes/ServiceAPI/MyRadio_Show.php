@@ -26,7 +26,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     const BASE_SHOW_SQL =
         'SELECT show_id,
             show.show_type_id,
-            show.submitted,
+            EXTRACT(epoch FROM show.submitted),
             show.memberid AS owner,
             array_to_json(metadata.metadata_key_id) AS metadata_keys,
             array_to_json(metadata.metadata_value) AS metadata_values,
@@ -107,7 +107,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * @param $result Array
      * show_id int
      * show_type_id int
-     * submitted strtotimeable string
+     * submitted unix timestamp int
      * owner int
      * metadata_keys array[int]
      * metadata_values array[string]
@@ -125,7 +125,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         //Deal with the easy fields
         $this->owner = (int) $result['owner'];
         $this->show_type = (int) $result['show_type_id'];
-        $this->submitted_time = strtotime($result['submitted']);
+        $this->submitted_time = $result['submitted'];
 
         $this->genres = json_decode($result['genres']);
         if ($this->genres === null) {

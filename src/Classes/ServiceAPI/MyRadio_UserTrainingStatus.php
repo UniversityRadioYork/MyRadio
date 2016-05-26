@@ -73,8 +73,10 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         $this->memberpresenterstatusid = (int) $statusid;
 
         $result = self::$db->fetchOne(
-            'SELECT * FROM public.member_presenterstatus
-            WHERE memberpresenterstatusid=$1',
+            'SELECT memberid, confirmedby, revoked_by, presenterstatusid,
+               EXTRACT(epoch FROM completeddate) AS completeddate, EXTRACT(epoch FROM revokedtime) AS revokedtime
+             FROM public.member_presenterstatus
+             WHERE memberpresenterstatusid=$1',
             [$statusid]
         );
 
@@ -83,9 +85,9 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         }
 
         $this->user = (int) $result['memberid'];
-        $this->awarded_time = strtotime($result['completeddate']);
+        $this->awarded_time = (int) $result['completeddate'];
         $this->awarded_by = (int) $result['confirmedby'];
-        $this->revoked_time = strtotime($result['revokedtime']);
+        $this->revoked_time = (int) $result['revokedtime'];
         $this->revoked_by = (int) $result['revokedby'];
 
         parent::__construct($result['presenterstatusid']);
@@ -189,11 +191,8 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
      *
      * @throws MyRadioException
      */
-    public static function create(
-        MyRadio_TrainingStatus $status,
-        MyRadio_User $awarded_to,
-        MyRadio_User $awarded_by = null
-    ) {
+    public static function create(MyRadio_TrainingStatus $status, MyRadio_User $awarded_to, MyRadio_User $awarded_by = null)
+    {
         //Does the User already have this?
         foreach ($awarded_to->getAllTraining(true) as $training) {
             if ($training->getID() === $status->getID()) {

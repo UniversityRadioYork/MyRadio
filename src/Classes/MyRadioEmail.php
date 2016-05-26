@@ -46,7 +46,11 @@ class MyRadioEmail extends ServiceAPI
     {
         self::$db = Database::getInstance();
 
-        $info = self::$db->fetchOne('SELECT * FROM mail.email WHERE email_id=$1', [$eid]);
+        $info = self::$db->fetchOne(
+            'SELECT subject, body, sender, timestamp
+             FROM mail.email WHERE email_id=$1',
+            [$eid]
+        );
 
         if (empty($info)) {
             throw new MyRadioException('Email '.$eid.' does not exist!');
@@ -55,7 +59,7 @@ class MyRadioEmail extends ServiceAPI
         $this->subject = $info['subject'];
         $this->body = $info['body'];
         $this->from = (empty($info['sender']) ? null : MyRadio_User::getInstance($info['sender']));
-        $this->timestamp = strtotime($info['timestamp']);
+        $this->timestamp = $info['timestamp'];
         $this->email_id = $eid;
 
         $this->r_users = self::$db->fetchColumn('SELECT memberid FROM mail.email_recipient_member WHERE email_id=$1', [$eid]);

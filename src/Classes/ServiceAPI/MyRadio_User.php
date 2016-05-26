@@ -213,7 +213,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $data = self::$db->fetchOne(
             'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college,
             phone, email, receive_email::boolean::text, local_name, local_alias, eduroam,
-            account_locked::boolean::text, last_login, joined, profile_photo, bio,
+            account_locked::boolean::text, last_login, EXTRACT(epoch FROM joined) AS joined, profile_photo, bio,
             auth_provider, require_password_change::boolean::text, contract_signed::boolean::text
             FROM member, l_college
             WHERE memberid=$1
@@ -227,9 +227,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         }
         //Set the variables
         foreach ($data as $key => $value) {
-            if ($key === 'joined') {
-                $this->$key = (int) strtotime($value);
-            } elseif (filter_var($value, FILTER_VALIDATE_INT)) {
+            if (filter_var($value, FILTER_VALIDATE_INT)) {
                 $this->$key = (int) $value;
             } elseif ($value === 'true') {
                 $this->$key = true;
@@ -848,13 +846,13 @@ class MyRadio_User extends ServiceAPI implements APICaller
         foreach ($this->getOfficerships() as $officer) {
             $events[] = [
                 'message' => 'became '.$officer['officer_name'],
-                'timestamp' => strtotime($officer['from_date']),
+                'timestamp' => $officer['from_date'],
                 'photo' => Config::$photo_officership_get,
             ];
             if ($officer['till_date'] != null) {
                 $events[] = [
                     'message' => 'stepped down as '.$officer['officer_name'],
-                    'timestamp' => strtotime($officer['till_date']),
+                    'timestamp' => $officer['till_date'],
                     'photo' => Config::$photo_officership_down,
                 ];
             }
@@ -875,13 +873,13 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 if ($season->getSeasonNumber() == 1) {
                     $events[] = [
                         'message' => 'started a new Show as '.$credit.' of '.$season->getMeta('title'),
-                        'timestamp' => strtotime($season->getAllTimeslots()[0]->getStartTime()),
+                        'timestamp' => $season->getAllTimeslots()[0]->getStartTime(),
                         'photo' => $show->getShowPhoto(),
                     ];
                 } else {
                     $events[] = [
                         'message' => 'was '.$credit.' on Season '.$season->getSeasonNumber().' of '.$season->getMeta('title'),
-                        'timestamp' => strtotime($season->getAllTimeslots()[0]->getStartTime()),
+                        'timestamp' => $season->getAllTimeslots()[0]->getStartTime(),
                         'photo' => $show->getShowPhoto(),
                     ];
                 }
@@ -900,7 +898,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
         //Get when they joined URY
         $events[] = [
-            'timestamp' => strtotime($this->joined),
+            'timestamp' => $this->joined,
             'message' => 'joined '.Config::$short_name,
             'photo' => Config::$photo_joined,
         ];

@@ -435,9 +435,10 @@ class MyRadio_Officer extends ServiceAPI
     {
         if (empty($this->history)) {
             $result = self::$db->fetchAll(
-                'SELECT member_officerid, memberid, '
-                .'from_date, till_date FROM public.member_officer '
-                .'WHERE officerid=$1 ORDER BY from_date DESC',
+                'SELECT member_officerid, memberid, EXTRACT(epoch FROM from_date), EXTRACT(epoch FROM till_date)
+                 FROM public.member_officer
+                 WHERE officerid=$1
+                 ORDER BY from_date DESC',
                 [$this->getID()]
             );
 
@@ -445,9 +446,8 @@ class MyRadio_Officer extends ServiceAPI
                 function ($x) {
                     return [
                         'User' => $x['memberid'],
-                        'from' => strtotime($x['from_date']),
-                        'to' => empty($x['till_date']) ? null
-                            : strtotime($x['till_date']),
+                        'from' => $x['from_date'],
+                        'to' => $x['till_date'] ?: null,
                         'memberofficerid' => (int) $x['member_officerid'],
                     ];
                 },

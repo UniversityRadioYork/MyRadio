@@ -215,15 +215,12 @@ class MyRadio_Selector
      */
     public static function getStudioAtTime($time = null)
     {
-        if ($time === null) {
-            $time = time();
-        }
+        if (!isset($time)) $time = time();
 
-        $result = Database::getInstance()->fetchColumn(
+        $result = Database::getInstance()->fetchOne(
             'SELECT action FROM public.selector WHERE time <= $1
             AND action >= 4 AND action <= 11
-            ORDER BY time DESC
-            LIMIT 1',
+            ORDER BY time DESC',
             [CoreUtils::getTimestamp($time)]
         );
 
@@ -231,7 +228,7 @@ class MyRadio_Selector
             return 0;
         }
 
-        return $result[0] - 3;
+        return $result['action'] - 3;
     }
 
     /**
@@ -243,15 +240,12 @@ class MyRadio_Selector
      */
     public static function getSetbyAtTime($time = null)
     {
-        if ($time === null) {
-            $time = time();
-        }
+        if (!isset($time)) $time = time();
 
-        $result = Database::getInstance()->fetchColumn(
+        $result = Database::getInstance()->fetchOne(
             'SELECT setby FROM public.selector WHERE time <= $1
             AND action >= 4 AND action <= 11
-            ORDER BY time DESC
-            LIMIT 1',
+            ORDER BY time DESC',
             [CoreUtils::getTimestamp($time)]
         );
 
@@ -259,7 +253,7 @@ class MyRadio_Selector
             return 0;
         }
 
-        return (int) $result[0];
+        return (int) $result['setby'];
     }
 
     /**
@@ -271,15 +265,12 @@ class MyRadio_Selector
      */
     public static function getStudio1PowerAtTime($time = null)
     {
-        if ($time === null) {
-            $time = time();
-        }
+        if (!isset($time)) $time = time();
 
-        $result = Database::getInstance()->fetchColumn(
+        $result = Database::getInstance()->fetchOne(
             'SELECT action FROM public.selector WHERE time <= $1
             AND action >= 13 AND action <= 14
-            ORDER BY time DESC
-            LIMIT 1',
+            ORDER BY time DESC',
             [CoreUtils::getTimestamp($time)]
         );
 
@@ -287,7 +278,7 @@ class MyRadio_Selector
             return false;
         }
 
-        return ($result[0] == 13) ? true : false;
+        return $result['action'] == 13;
     }
 
     /**
@@ -299,15 +290,12 @@ class MyRadio_Selector
      */
     public static function getStudio2PowerAtTime($time = null)
     {
-        if ($time === null) {
-            $time = time();
-        }
+        if (!isset($time)) $time = time();
 
-        $result = Database::getInstance()->fetchColumn(
+        $result = Database::getInstance()->fetchOne(
             'SELECT action FROM public.selector WHERE time <= $1
             AND action >= 15 AND action <= 16
-            ORDER BY time DESC
-            LIMIT 1',
+            ORDER BY time DESC',
             [CoreUtils::getTimestamp($time)]
         );
 
@@ -315,7 +303,7 @@ class MyRadio_Selector
             return false;
         }
 
-        return ($result[0] == 15) ? true : false;
+        return $result['action'] == 15;
     }
 
     /**
@@ -327,11 +315,9 @@ class MyRadio_Selector
      */
     public static function getLockAtTime($time = null)
     {
-        if ($time === null) {
-            $time = time();
-        }
+        if (!isset($time)) $time = time();
 
-        $result = Database::getInstance()->fetchColumn(
+        $result = Database::getInstance()->fetchOne(
             'SELECT action FROM public.selector WHERE time <= $1
             AND action >= 1 AND action <= 3
             ORDER BY time DESC
@@ -343,7 +329,7 @@ class MyRadio_Selector
             return false;
         }
 
-        return ($result[0] == 3) ? 0 : (int) $result[0];
+        return ($result['action'] == 3) ? 0 : (int) $result['action'];
     }
 
     /**
@@ -355,14 +341,11 @@ class MyRadio_Selector
      */
     public static function getLastModAtTime($time = null)
     {
-        if ($time === null) {
-            $time = time();
-        }
+        if (!isset($time)) $time = time();
 
-        $result = Database::getInstance()->fetchColumn(
+        $result = Database::getInstance()->fetchOne(
             'SELECT time FROM public.selector WHERE time <= $1
-            ORDER BY time DESC
-            LIMIT 1',
+            ORDER BY time DESC',
             [CoreUtils::getTimestamp($time)]
         );
 
@@ -370,7 +353,7 @@ class MyRadio_Selector
             return 1;
         }
 
-        return strtotime($result[0]);
+        return $result['time'];
     }
 
     /**
@@ -382,9 +365,7 @@ class MyRadio_Selector
      */
     public static function getStatusAtTime($time = null)
     {
-        if ($time === null) {
-            $time = time();
-        }
+        if (!isset($time)) $time = time();
 
         $status = self::remoteStreams();
 
@@ -495,13 +476,13 @@ class MyRadio_Selector
     public static function isSilence()
     {
         $result = Database::getInstance()->fetchOne(
-            'SELECT starttime, stoptime
+            'SELECT EXTRACT(epoch FROM starttime) AS starttime, EXTRACT(epoch FROM stoptime) AS stoptime
             FROM jukebox.silence_log
-            ORDER BY silenceid DESC LIMIT 1'
+            ORDER BY silenceid DESC'
         );
 
         if (empty($result['stoptime'])) {
-            return time() - strtotime($result['starttime']);
+            return time() - $result['starttime'];
         } else {
             return 0;
         }

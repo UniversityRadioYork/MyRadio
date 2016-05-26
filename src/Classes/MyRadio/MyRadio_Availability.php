@@ -103,7 +103,10 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
 
         if ($result === null) {
             $result = self::$db->fetchOne(
-                'SELECT * FROM '.$this->availability_table.' WHERE '.$this->id_field.'=$1',
+                'SELECT memberid, approvedid, EXTRACT(epoch FROM effective_from) AS effective_from,
+                 EXTRACT(epoch FROM effective_to) AS effective_to
+                 FROM ' . $this->availability_table . '
+                 WHERE ' . $this->id_field . ' = $1',
                 [$id]
             );
         }
@@ -113,21 +116,24 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
 
         $this->created_by = MyRadio_User::getInstance($result['memberid']);
         $this->approved_by = empty($result['approvedid']) ? null : MyRadio_User::getInstance($result['approvedid']);
-        $this->effective_from = strtotime($result['effective_from']);
-        $this->effective_to = empty($result['effective_to']) ? null : strtotime($result['effective_to']);
+        $this->effective_from = $result['effective_from'];
+        $this->effective_to = $result['effective_to'] ?: 0;
 
         //Make times be in seconds since midnight
         $this->timeslots = array_map(
             function ($x) {
                 return [
-                    'id' => $x['id'], 'day' => $x['day'],
-                    'start_time' => strtotime($x['start_time'], 0),
-                    'end_time' => strtotime($x['end_time'], 0),
+                    'id'         => $x['id'],
+                    'day'        => $x['day'],
+                    'start_time' => $x['start_time'] ?: 0,
+                    'end_time'   => $x['end_time'] ?: 0,
                 ];
             },
             self::$db->fetchAll(
-                'SELECT id, day, start_time, end_time, \'order\' FROM '.$this->timeslot_table.'
-                WHERE '.$this->id_field.'=$1',
+                'SELECT id, day, \'order\', EXTRACT(epoch FROM start_time) AS start_time,
+                 EXTRACT(epoch FROM end_time) AS end_time
+                 FROM ' . $this->timeslot_table . '
+                 WHERE ' . $this->id_field . ' = $1',
                 [$this->id]
             )
         );
@@ -146,8 +152,8 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
             'id' => $this->getID(),
             'created_by' => $this->getCreatedBy()->getID(),
             'approved_by' => ($this->getApprovedBy() == null) ? null : $this->getApprovedBy()->getID(),
-            'effective_from' => CoreUtils::happyTime($this->getEffectiveFrom()),
-            'effective_to' => ($this->getEffectiveTo() === null) ? 'Never' : CoreUtils::happyTime($this->getEffectiveTo()),
+            'effective_from' => $this->getEffectiveFrom(),
+            'effective_to' => $this->getEffectiveTo(),
             'num_timeslots' => sizeof($this->getTimeslots()),
         ];
 
@@ -230,10 +236,9 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
             ->editMode(
                 $this->getID(),
                 [
-                    'timeslots' => $this->getTimeslots(),
+                    'timeslots'      => $this->getTimeslots(),
                     'effective_from' => CoreUtils::happyTime($this->getEffectiveFrom()),
-                    'effective_to' => $this->getEffectiveTo() === null ? null :
-                        CoreUtils::happyTime($this->getEffectiveTo()),
+                    'effective_to'   => CoreUtils::happyTime($this->getEffectiveTo()),
                 ]
             );
     }
@@ -318,8 +323,8 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public function addTimeslot($day, $start, $end)
     {
-        $start = gmdate('H:i:s', $start).'+00';
-        $end = gmdate('H:i:s', $end).'+00';
+        $start = gmdate('H:i:s', $start);
+        $end = gmdate('H:i:s', $end);
 
         $id = self::$db->fetchColumn(
             'INSERT INTO '.$this->timeslot_table.'
@@ -337,8 +342,8 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
         $this->timeslots[] = [
             'id' => $id,
             'day' => $day,
-            'start_time' => strtotime($start, 0),
-            'end_time' => strtotime($end, 0),
+            'start_time' => $start,
+            'end_time' => $end,
         ];
 
         $this->updateCacheObject();

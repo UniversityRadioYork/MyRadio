@@ -20,7 +20,10 @@ use MyRadio\iTones\iTones_Playlist;
  */
 class MyRadio_Track extends ServiceAPI
 {
-    const BASE_TRACK_SQL = 'SELECT * FROM public.rec_track';
+    const BASE_TRACK_SQL =
+        'SELECT number, title, artist, genre, clean, trackid, recordid, digitised, digitisedby,
+           duration, lastfm_verified, EXTRACT(epoch FROM length) AS length, EXTRACT(epoch FROM intro) AS intro
+         FROM public.rec_track';
 
     /**
      * The number of the Track on a Record.
@@ -150,8 +153,8 @@ class MyRadio_Track extends ServiceAPI
         $this->digitised = ($result['digitised'] == 't') ? true : false;
         $this->digitisedby = empty($result['digitisedby']) ? null : (int) $result['digitisedby'];
         $this->genre = $result['genre'];
-        $this->intro = strtotime('1970-01-01 '.$result['intro'].'+00');
-        $this->length = $result['length'];
+        $this->intro = (int) $result['intro'];
+        $this->length = (int) $result['length'];
         $this->duration = (int) $result['duration'];
         $this->number = (int) $result['intro'];
         $this->record = (int) $result['recordid'];
@@ -165,7 +168,7 @@ class MyRadio_Track extends ServiceAPI
      */
     protected static function factory($trackid)
     {
-        $sql = self::BASE_TRACK_SQL.' WHERE trackid=$1 LIMIT 1';
+        $sql = self::BASE_TRACK_SQL.' WHERE trackid=$1';
         $result = self::$db->fetchOne($sql, [$trackid]);
 
         if (empty($result)) {

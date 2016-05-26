@@ -81,7 +81,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $this->podcast_id = (int) $podcast_id;
 
         $result = self::$db->fetchOne(
-            'SELECT file, memberid, approvedid, submitted, show_id, (
+            'SELECT file, memberid, approvedid, EXTRACT(epoch FROM submitted) AS submitted, show_id, (
                 SELECT array(
                     SELECT metadata_key_id FROM uryplayer.podcast_metadata
                     WHERE podcast_id=$1 AND effective_from <= NOW()
@@ -129,7 +129,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $this->file = $result['file'];
         $this->memberid = (int) $result['memberid'];
         $this->approvedid = (int) $result['approvedid'];
-        $this->submitted = strtotime($result['submitted']);
+        $this->submitted = (int) $result['submitted'];
         $this->show_id = (int) $result['show_id'];
 
         //Deal with the Credits arrays

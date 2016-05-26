@@ -302,9 +302,9 @@ class MyRadio_ChartRelease extends ServiceAPI
      */
     public function setReleaseTime($release_time)
     {
-        $this->release_time = strtotime($release_time);
+        $this->release_time = intval($release_time);
 
-        return $this->setDB(self::SET_RELEASE_TIME_SQL, date('c', $release_time));
+        return $this->setDB(self::SET_RELEASE_TIME_SQL, date('c', intval($release_time)));
     }
 
     /**

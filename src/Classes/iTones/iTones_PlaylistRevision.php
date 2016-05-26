@@ -48,8 +48,10 @@ class iTones_PlaylistRevision extends iTones_Playlist
         parent::__construct($playlistid);
 
         $result = self::$db->fetchOne(
-            'SELECT * FROM jukebox.playlist_revisions
-            WHERE playlistid=$1 AND revisionid=$2 LIMIT 1',
+            'SELECT EXTRACT(epoch FROM timestamp), auth, notes
+             FROM jukebox.playlist_revisions
+             WHERE playlistid=$1
+               AND revisionid=$2',
             [$playlistid, $revisionid]
         );
         if (empty($result)) {
@@ -61,11 +63,14 @@ class iTones_PlaylistRevision extends iTones_Playlist
         $this->revisionid = $revisionid;
         $this->author = MyRadio_User::getInstance($result['author']);
         $this->notes = $result['notes'];
-        $this->timestamp = strtotime($result['timestamp']);
+        $this->timestamp = (int) $result['timestamp'];
 
         $items = self::$db->fetchColumn(
-            'SELECT trackid FROM jukebox.playlist_entries WHERE playlistid=$1
-            AND revision_added <= $2 AND (revision_removed >= $2 OR revision_removed IS NULL)
+            'SELECT trackid FROM jukebox.playlist_entries
+             WHERE playlistid=$1
+               AND revision_added <= $2
+               AND (revision_removed >= $2
+                 OR revision_removed IS NULL)
             ORDER BY entryid',
             [$this->getID(), $this->getRevisionID()]
         );
@@ -145,7 +150,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
     {
         return [
             'revisionid' => $this->getRevisionID(),
-            'timestamp' => CoreUtils::happyTime($this->getTimestamp()),
+            'timestamp' => $this->getTimestamp(),
             'notes' => $this->getNotes(),
             'author' => $this->getAuthor()->getName(),
             'viewtrackslink' => [
