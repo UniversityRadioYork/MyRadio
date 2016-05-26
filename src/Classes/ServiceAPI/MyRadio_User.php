@@ -732,7 +732,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'SELECT show_id FROM schedule.show
             WHERE memberid=$1 OR show_id IN
             (SELECT show_id FROM schedule.show_credit
-            WHERE creditid=$1 AND effective_from <= NOW() AND
+            WHERE creditid=$1 AND
             (effective_to >= NOW() OR effective_to IS NULL))
             ORDER BY (SELECT start_time FROM schedule.show_season_timeslot
             WHERE show_season_id IN
