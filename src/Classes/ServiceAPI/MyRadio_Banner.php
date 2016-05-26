@@ -239,7 +239,8 @@ class MyRadio_Banner extends MyRadio_Photo
         }
 
         $this->type = $type;
-        self::$db->query('UPDATE website.banner SET banner_type_id=$1 WHERE banner_id=$2', [$type, $this->getBannerID()]);
+        self::$db->query('UPDATE website.banner SET banner_type_id=$1 WHERE banner_id=$2',
+                         [$type, $this->getBannerID()]);
 
         return $this;
     }

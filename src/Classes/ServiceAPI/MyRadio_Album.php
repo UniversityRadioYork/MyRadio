@@ -171,7 +171,7 @@ class MyRadio_Album extends ServiceAPI
      * Update the Artist for this Album.
      *
      * @param string $artist        The Artist name
-     * @param bool   $applyToTracks If true, this will update the Artist for each individual Track in the Album. Default false.
+     * @param bool   $applyToTracks If true, this will update the Artist for each individual Track in the Album.
      *                              Default false.
      *
      * @return \MyRadio_Album

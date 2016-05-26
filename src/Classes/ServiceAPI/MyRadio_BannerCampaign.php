@@ -89,7 +89,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
     {
         $this->banner_campaign_id = (int) $banner_campaign_id;
 
-        $result = self::$db->fetchOne('SELECT * FROM website.banner_campaign WHERE banner_campaign_id=$1', [$banner_campaign_id]);
+        $result = self::$db->fetchOne('SELECT * FROM website.banner_campaign WHERE banner_campaign_id=$1',
+                                      [$banner_campaign_id]);
         if (empty($result)) {
             throw new MyRadioException('Banner Campaign '.$banner_campaign_id.' does not exist!');
         }
@@ -449,7 +450,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
     }
 
     /**
-     * Gets all Banner Campaigns that are currently live. That is they are active and have timeslots at the current time.
+     * Gets all Banner Campaigns that are currently live.
+     * That is they are active and have timeslots at the current time.
      *
      * @return MyRadio_BannerCampaign[]
      */
