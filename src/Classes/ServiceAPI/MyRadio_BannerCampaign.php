@@ -91,10 +91,11 @@ class MyRadio_BannerCampaign extends ServiceAPI
 
         $result = self::$db->fetchOne(
             'SELECT banner_id, memberid, approvedid, banner_location_id,
-               EXTRACT(epoch FROM effective_from), EXTRACT(epoch FROM effective_to)
-             FROM website.banner_campaign
-             WHERE banner_campaign_id=$1',
-            [$banner_campaign_id]);
+              EXTRACT(epoch FROM effective_from), EXTRACT(epoch FROM effective_to)
+            FROM website.banner_campaign
+            WHERE banner_campaign_id=$1',
+            [$banner_campaign_id]
+        );
         if (empty($result)) {
             throw new MyRadioException('Banner Campaign '.$banner_campaign_id.' does not exist!');
         }

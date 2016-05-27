@@ -268,8 +268,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      * @param null   $table          No action. Used for compatibility with parent.
      * @param null   $pkey           No action. Used for compatibility with parent.
      */
-    public function setMeta($string_key, $value, $effective_from = null,
-                            $effective_to = null, $table = null, $pkey = null)
+    public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null)
     {
         $r = parent::setMeta($string_key, $value, $effective_from, $effective_to,
                              'schedule.timeslot_metadata', 'show_season_timeslot_id');
@@ -729,8 +728,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $email .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\n" . Config::$long_name . ' Programming Team';
         self::$cache->purge();
 
-        MyRadioEmail::sendEmailToUserSet($this->getSeason()->getShow()->getCreditObjects(),
-                                         'Episode of ' . $this->getMeta('title') . ' Cancelled', $email);
+        MyRadioEmail::sendEmailToUserSet(
+            $this->getSeason()->getShow()->getCreditObjects(),
+            'Episode of ' . $this->getMeta('title') . ' Cancelled',
+            $email
+        );
 
         return true;
     }
@@ -750,10 +752,16 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $email2 .= ' was cancelled by a presenter because ' . $reason;
         $email2 .= "\r\n\r\nIt was cancelled automatically as more than required notice was given.";
 
-        MyRadioEmail::sendEmailToUserSet($this->getSeason()->getShow()->getCreditObjects(),
-                                         'Episode of ' . $this->getMeta('title') . ' Cancelled', $email1);
-        MyRadioEmail::sendEmailToList(MyRadio_List::getByName('programming'),
-                                      'Episode of ' . $this->getMeta('title') . ' Cancelled', $email2);
+        MyRadioEmail::sendEmailToUserSet(
+            $this->getSeason()->getShow()->getCreditObjects(),
+            'Episode of ' . $this->getMeta('title') . ' Cancelled',
+            $email1
+        );
+        MyRadioEmail::sendEmailToList(
+            MyRadio_List::getByName('programming'),
+            'Episode of ' . $this->getMeta('title') . ' Cancelled',
+            $email2
+        );
 
         return true;
     }
@@ -763,8 +771,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $email = $this->getMeta('title').' on '.CoreUtils::happyTime($this->getStartTime());
         $email .= ' has requested cancellation because '.$reason;
         $email .= "\r\n\r\nDue to the short notice, it has been passed to you for consideration. To cancel the timeslot, visit ";
-        $email .= URLUtils::makeURL('Scheduler', 'cancelEpisode',
-                                    ['show_season_timeslot_id' => $this->getID(), 'reason' => base64_encode($reason)]);
+        $email .= URLUtils::makeURL(
+            'Scheduler',
+            'cancelEpisode',
+            ['show_season_timeslot_id' => $this->getID(), 'reason' => base64_encode($reason)]
+        );
 
         MyRadioEmail::sendEmailToList(MyRadio_List::getByName('presenting'), 'Show Cancellation Request', $email);
 
@@ -778,8 +789,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     private function deleteTimeslot()
     {
-        $r = self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1',
-                              [$this->getID()]);
+        $r = self::$db->query(
+            'DELETE FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1',
+            [$this->getID()]
+        );
 
         $this->updateCacheObject();
 
@@ -805,12 +818,20 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                         $parts = explode('-', $op['id']);
                         if ($parts[0] === 'ManagedDB') {
                             //This is a managed item
-                            $i = NIPSWeb_TimeslotItem::createManaged($this->getID(), $parts[1],
-                                                                     $op['channel'], $op['weight']);
+                            $i = NIPSWeb_TimeslotItem::createManaged(
+                                $this->getID(),
+                                $parts[1],
+                                $op['channel'],
+                                $op['weight']
+                            );
                         } else {
                             //This is a rec database track
-                            $i = NIPSWeb_TimeslotItem::createCentral($this->getID(), $parts[1],
-                                                                     $op['channel'], $op['weight']);
+                            $i = NIPSWeb_TimeslotItem::createCentral(
+                                $this->getID(),
+                                $parts[1],
+                                $op['channel'],
+                                $op['weight']
+                            );
                         }
                     } catch (MyRadioException $e) {
                         $result[] = ['status' => false];

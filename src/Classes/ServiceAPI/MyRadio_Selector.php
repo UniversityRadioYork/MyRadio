@@ -215,7 +215,9 @@ class MyRadio_Selector
      */
     public static function getStudioAtTime($time = null)
     {
-        if (!isset($time)) $time = time();
+        if (!isset($time)) {
+            $time = time();
+        }
 
         $result = Database::getInstance()->fetchOne(
             'SELECT action FROM public.selector WHERE time <= $1
@@ -240,7 +242,9 @@ class MyRadio_Selector
      */
     public static function getSetbyAtTime($time = null)
     {
-        if (!isset($time)) $time = time();
+        if (!isset($time)) {
+            $time = time();
+        }
 
         $result = Database::getInstance()->fetchOne(
             'SELECT setby FROM public.selector WHERE time <= $1
@@ -265,7 +269,9 @@ class MyRadio_Selector
      */
     public static function getStudio1PowerAtTime($time = null)
     {
-        if (!isset($time)) $time = time();
+        if (!isset($time)) {
+            $time = time();
+        }
 
         $result = Database::getInstance()->fetchOne(
             'SELECT action FROM public.selector WHERE time <= $1
@@ -290,7 +296,9 @@ class MyRadio_Selector
      */
     public static function getStudio2PowerAtTime($time = null)
     {
-        if (!isset($time)) $time = time();
+        if (!isset($time)) {
+            $time = time();
+        }
 
         $result = Database::getInstance()->fetchOne(
             'SELECT action FROM public.selector WHERE time <= $1
@@ -315,7 +323,9 @@ class MyRadio_Selector
      */
     public static function getLockAtTime($time = null)
     {
-        if (!isset($time)) $time = time();
+        if (!isset($time)) {
+            $time = time();
+        }
 
         $result = Database::getInstance()->fetchOne(
             'SELECT action FROM public.selector WHERE time <= $1
@@ -341,7 +351,9 @@ class MyRadio_Selector
      */
     public static function getLastModAtTime($time = null)
     {
-        if (!isset($time)) $time = time();
+        if (!isset($time)) {
+            $time = time();
+        }
 
         $result = Database::getInstance()->fetchOne(
             'SELECT time FROM public.selector WHERE time <= $1
@@ -365,7 +377,9 @@ class MyRadio_Selector
      */
     public static function getStatusAtTime($time = null)
     {
-        if (!isset($time)) $time = time();
+        if (!isset($time)) {
+            $time = time();
+        }
 
         $status = self::remoteStreams();
 

@@ -496,7 +496,12 @@ class CoreUtils
         $return = [];
         $return[] = ['Timestamp', 'Errors per request', 'Exceptions per request', 'Queries per request'];
         foreach ($result as $row) {
-            $return[] = [self::happyTime($row['timestamp'], true, false), (int) $row['errors'], (int) $row['exceptions'], (int) $row['queries']];
+            $return[] = [
+                self::happyTime($row['timestamp'], true, false),
+                (int) $row['errors'],
+                (int) $row['exceptions'],
+                (int) $row['queries']
+            ];
         }
 
         return $return;
