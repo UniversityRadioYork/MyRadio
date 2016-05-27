@@ -73,10 +73,10 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         $this->memberpresenterstatusid = (int) $statusid;
 
         $result = self::$db->fetchOne(
-            'SELECT memberid, confirmedby, revoked_by, presenterstatusid,
+            'SELECT memberid, confirmedby, revokedby, presenterstatusid,
                EXTRACT(epoch FROM completeddate) AS completeddate, EXTRACT(epoch FROM revokedtime) AS revokedtime
-             FROM public.member_presenterstatus
-             WHERE memberpresenterstatusid=$1',
+            FROM public.member_presenterstatus
+            WHERE memberpresenterstatusid=$1',
             [$statusid]
         );
 
