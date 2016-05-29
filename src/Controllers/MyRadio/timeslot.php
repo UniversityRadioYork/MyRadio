@@ -21,7 +21,7 @@ function setupTimeslot($timeslot)
     }
 
     //Can the user access this timeslot?
-    if (!($timeslot->getSeason()->getShow()->isCurrentUserAnOwner() || AuthUtils::hasPermission(AUTH_EDITSHOWS))) {
+    if (!($timeslot->isCurrentUserAnOwner() || AuthUtils::hasPermission(AUTH_EDITSHOWS))) {
         $message = "You don't have permission to view this show";
         require_once 'Controllers/Errors/403.php';
     } else {

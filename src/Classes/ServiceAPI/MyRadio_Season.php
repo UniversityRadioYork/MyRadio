@@ -25,11 +25,11 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     private $show_id;
     private $term_id;
     private $submitted;
-    private $owner;
     private $timeslots;
     private $requested_times = [];
     private $requested_weeks = [];
     private $season_num;
+    protected $owner;
 
     protected function __construct($season_id)
     {
@@ -954,7 +954,7 @@ Hello,
 $times
 
   Remember that except in exceptional circumstances, you must give at least 48 hours notice for cancelling your show as part of your presenter contract. If you do not do this for two shows in one season, all other shows are forfeit and may be cancelled.
-  
+
   You can cancel a timeslot by going to: My Shows -> Seasons for Show -> Timeslots for Season, and selecting cancel for the particular time.
   ".URLUtils::makeURL('Scheduler', 'myShows').'
 
