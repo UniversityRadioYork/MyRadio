@@ -30,8 +30,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     private $start_time;
     private $duration;
     private $season_id;
-    private $owner;
     private $timeslot_num;
+    protected $owner;
     protected $credits;
 
     protected function __construct($timeslot_id)
@@ -44,15 +44,15 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         //Init Database
         self::initDB();
 
-        //Get the basic info about the season
+        //Get the basic info about the timeslot
         $result = self::$db->fetchOne(
             'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid,
             (
                 SELECT array(
                     SELECT metadata_key_id FROM schedule.timeslot_metadata
                     WHERE show_season_timeslot_id=$1
-                    AND effective_from <= NOW()
-                    AND (effective_to IS NULL OR effective_to >= NOW())
+                    AND effective_from < (start_time + duration)
+                    AND (effective_to IS NULL OR effective_to > start_time)
                     ORDER BY effective_from, show_season_timeslot_id
                 )
             ) AS metadata_types,
@@ -60,8 +60,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 SELECT array(
                     SELECT metadata_value FROM schedule.timeslot_metadata
                     WHERE show_season_timeslot_id=$1
-                    AND effective_from <= NOW()
-                    AND (effective_to IS NULL OR effective_to >= NOW())
+                    AND effective_from < (start_time + duration)
+                    AND (effective_to IS NULL OR effective_to > start_time)
                     ORDER BY effective_from, show_season_timeslot_id
                 )
             ) AS metadata,
@@ -81,8 +81,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                         JOIN schedule.show_season USING (show_season_id)
                         WHERE show_season_timeslot_id=$1
                     )
-                    AND effective_from <= NOW()
-                    AND (effective_to IS NULL OR effective_to >= NOW())
+                    AND effective_from < (start_time + duration)
+                    AND (effective_to IS NULL OR effective_to > start_time)
                     AND approvedid IS NOT NULL
                     ORDER BY show_credit_id
                 )
@@ -95,8 +95,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                         JOIN schedule.show_season USING (show_season_id)
                         WHERE show_season_timeslot_id=$1
                     )
-                    AND effective_from <= NOW()
-                    AND (effective_to IS NULL OR effective_to >= NOW())
+                    AND effective_from < (start_time + duration)
+                    AND (effective_to IS NULL OR effective_to > start_time)
                     AND approvedid IS NOT NULL
                     ORDER BY show_credit_id
                 )

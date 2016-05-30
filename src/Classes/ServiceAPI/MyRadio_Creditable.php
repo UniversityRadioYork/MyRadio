@@ -16,6 +16,7 @@ use MyRadio\ServiceAPI\MyRadio_User;
  */
 trait MyRadio_Creditable
 {
+    protected $owner;
     protected $credits = [];
     protected static $credit_names;
 
@@ -72,6 +73,24 @@ trait MyRadio_Creditable
         }
 
         return $r;
+    }
+
+    /**
+     * Checks the current user is in the credits for the creditable item
+     * @return boolean The user is an owner
+     */
+    public function isCurrentUserAnOwner()
+    {
+        if ($this->owner === $_SESSION['memberid']) {
+            return true;
+        }
+        foreach ($this->getCreditObjects() as $user) {
+            if ($user->getID() === $_SESSION['memberid']) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

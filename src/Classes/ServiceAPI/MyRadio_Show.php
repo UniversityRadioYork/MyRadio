@@ -95,7 +95,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ) AS season';
 
     private $show_id;
-    private $owner;
+    protected $owner;
     protected $credits = [];
     private $genres;
     private $show_type;
@@ -584,20 +584,6 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     public function getGenre()
     {
         return isset($this->genres[0]) ? $this->genres[0] : null;
-    }
-
-    public function isCurrentUserAnOwner()
-    {
-        if ($this->owner === $_SESSION['memberid']) {
-            return true;
-        }
-        foreach ($this->getCreditObjects() as $user) {
-            if ($user->getID() === $_SESSION['memberid']) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public function setShowPhoto($tmp_path)
