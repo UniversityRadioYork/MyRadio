@@ -45,14 +45,16 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         self::initDB();
 
         //Get the basic info about the timeslot
+        // Note that credits have different metadata timeranges to text
+        // This is annoying, but needs to be this way.
         $result = self::$db->fetchOne(
             'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid,
             (
                 SELECT array(
                     SELECT metadata_key_id FROM schedule.timeslot_metadata
                     WHERE show_season_timeslot_id=$1
-                    AND effective_from < (start_time + duration)
-                    AND (effective_to IS NULL OR effective_to > start_time)
+                    AND effective_from < NOW()
+                    AND (effective_to IS NULL OR effective_to > NOW())
                     ORDER BY effective_from, show_season_timeslot_id
                 )
             ) AS metadata_types,
@@ -60,8 +62,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 SELECT array(
                     SELECT metadata_value FROM schedule.timeslot_metadata
                     WHERE show_season_timeslot_id=$1
-                    AND effective_from < (start_time + duration)
-                    AND (effective_to IS NULL OR effective_to > start_time)
+                    AND effective_from < NOW()
+                    AND (effective_to IS NULL OR effective_to > NOW())
                     ORDER BY effective_from, show_season_timeslot_id
                 )
             ) AS metadata,
