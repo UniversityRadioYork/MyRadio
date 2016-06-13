@@ -171,7 +171,7 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
      *
      * @return bool|array False on failure, or an array of the above
      */
-    private static function getTrackDetails($trackid, $recordid)
+    public static function getTrackDetails($trackid, $recordid)
     {
         $trackid = (int) $trackid;
         $recordid = (int) $recordid;
