@@ -67,7 +67,7 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 'INSERT INTO public.baps_listing (showid, name, channel) VALUES ($1, $2, 0) RETURNING listingid',
                 [$showid, $list->getTitle()]
             );
-            $listingid = $r[0];
+            $listingid = $r['listingid'];
 
             if (empty($r)) {
                 return;
@@ -81,7 +81,7 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 pg_query_params(
                     'INSERT INTO public.baps_item (listingid, name1, name2, position, libraryitemid)
                     VALUES ($1, $2, $3, $4, $5)',
-                    [$listingid, $track->getTitle(), $this->getArtist(), $i, $libraryitemid]
+                    [$listingid, $track->getTitle(), $track->getArtist(), $i, $libraryitemid]
                 );
                 echo pg_last_error();
             }
@@ -124,7 +124,7 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             }
 
             $i = 0;
-            foreach ($list->getItems()) as $item) {
+            foreach ($list->getItems() as $item) {
                 $track = NIPSWeb_BAPSUtils::getFileItemFromManagedID($item->getID());
                 ++$i;
                 pg_query_params(
