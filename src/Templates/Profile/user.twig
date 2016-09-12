@@ -156,7 +156,11 @@
         <ul id="training">
         {% for train in user.training %}
           <li>{{train.title}} on {{train.awarded_time|date("j/n/Y")}}
-            <em>by <a href="{{train.awarded_by.url}}">{{train.awarded_by.value}}</a></em>
+            <em>by <a href="{{train.awarded_by.url}}">{{train.awarded_by.value}}</a>
+              {% if train.revoked_by %}
+                , revoked by <a href="{{train.revoked_by.url}}">{{train.revoked_by|json_encode}}</a>
+              {% endif %}
+            </em>
           </li>
         {% else %}
           <li>No Training Data Available</li>
