@@ -461,6 +461,11 @@ final class Config
     public static $system_user = 779;
 
     /**
+     * The URL for the SU page allowing people to pay and join the society.
+     */
+    public static $yusu_payment_url;
+
+    /**
      * This key enables automated access to the YUSU CMS information about URY's members.
      *
      * This is literally only useful if you are URY.
@@ -725,6 +730,7 @@ EOT;
             'founded' => self::$founded,
             'facebook' => self::$facebook,
             'audio_upload_max_size' => self::$audio_upload_max_size,
+            'payment_url' => self::$yusu_payment_url,
         ];
     }
 }
