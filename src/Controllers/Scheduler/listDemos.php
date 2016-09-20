@@ -5,18 +5,39 @@
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Demo;
+use \MyRadio\ServiceAPI\MyRadio_User;
 
 $demos = MyRadio_Demo::listDemos();
 
 $twig = CoreUtils::getTemplateObject();
 
 $tabledata = [];
+
+$currentUser = MyRadio_User::getInstance();
+
 foreach ($demos as $demo) {
-    $demo['join'] = [
-        'display' => 'text',
-        'value' => 'Join',
-        'url' => URLUtils::makeURL('Scheduler', 'attendDemo', ['demoid' => $demo['show_season_timeslot_id']]),
-    ];
+    if ($currentUser->hasAuth(AUTH_ADDDEMOS)) {
+        $demo['attending'] = MyRadio_Demo::usersAttendingDemo($demo['show_season_timeslot_id']);
+    } else {
+        if (MyRadio_Demo::isUserAttendingDemo($demo['show_season_timeslot_id'], $currentUser->getID())) {
+            $demo['attending'] = 'You are attending this demo';
+            $demo['join'] = [
+                'display' => 'text',
+                'value' => 'Leave',
+                'url' => URLUtils::makeURL('Scheduler', 'leaveDemo', ['demoid' => $demo['show_season_timeslot_id']]),
+            ];
+        } elseif (MyRadio_Demo::isSpaceOnDemo($demo['show_season_timeslot_id'])) {
+            $demo['attending'] = 'Space available!';
+            $demo['join'] = [
+                'display' => 'text',
+                'value' => 'Join',
+                'url' => URLUtils::makeURL('Scheduler', 'attendDemo', ['demoid' => $demo['show_season_timeslot_id']]),
+            ];
+        } else {
+            $demo['attending'] = 'Demo full';
+        }
+    }
+
     $tabledata[] = $demo;
 }
 
@@ -41,6 +62,8 @@ if (isset($_REQUEST['msg'])) {
         case 2: //attending already
             $twig->addError('You can only attend one session at a time.');
             break;
+        case 3: // Left session
+            $twig->addInfo('You have left the training session.');
     }
 }
 

@@ -67,26 +67,32 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
         );
     }
 
-    public static function attendingDemo($demoid)
+    public static function isUserAttendingDemo($demoid, $userid)
     {
-        if (MyRadio_User::getInstance()->hasAuth(AUTH_ADDDEMOS)) {
-            $r = self::$db->fetchColumn('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', [self::getDemoTime($demoid)]);
-            if (empty($r)) {
-                return 'Nobody';
-            }
-            $str = MyRadio_User::getInstance($r[0])->getName();
-            if (isset($r[1])) {
-                $str .= ', '.MyRadio_User::getInstance($r[1])->getName();
-            }
+        $r = self::$db->fetchColumn('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7 AND creditid=$2', [self::getDemoTime($demoid), $userid]);
 
-            return $str;
-        } else {
-            if (self::attendingDemoCount($demoid) < 2) {
-                return 'Space Available!';
-            } else {
-                return 'Full';
-            }
+        return count($r) > 0;
+    }
+
+    public static function isSpaceOnDemo($demoid)
+    {
+        return self::attendingDemoCount($demoid) < 2;
+    }
+
+    public static function usersAttendingDemo($demoid)
+    {
+        // First, retrieve all the memberids attending this demo
+        $r = self::$db->fetchColumn('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', [self::getDemoTime($demoid)]);
+
+        if (empty($r)) {
+            return 'Nobody';
         }
+        $str = MyRadio_User::getInstance($r[0])->getName();
+        if (isset($r[1])) {
+            $str .= ', '.MyRadio_User::getInstance($r[1])->getName();
+        }
+
+        return $str;
     }
 
     public static function attendingDemoCount($demoid)
@@ -110,7 +116,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
         foreach ($result as $demo) {
             $demo['start_time'] = date('d M H:i', strtotime($demo['start_time']));
             $demo['memberid'] = MyRadio_User::getInstance($demo['memberid'])->getName();
-            $demos[] = array_merge($demo, ['attending' => self::attendingDemo($demo['show_season_timeslot_id'])]);
+            $demos[] = $demo;
         }
 
         return $demos;
@@ -160,6 +166,35 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
             .$user->getName()
             .'. Just head over to the station in Vanbrugh College just before your slot and the trainer will be waiting for you.'
             ."\r\n\r\nSee you on air soon!\r\n"
+            .Config::$long_name
+            .' Training'
+        );
+
+        return 0;
+    }
+
+    /**
+     * The current user is unmarked as attending a demo.
+     */
+    public static function leave($demoid)
+    {
+        self::initDB();
+
+        self::$db->query(
+            'DELETE FROM schedule.show_credit WHERE show_id=0 AND credit_type_id=7 AND creditid=$1 AND effective_from=$2 AND effective_to=$2',
+            [$_SESSION['memberid'], self::getDemoTime($demoid)]
+        );
+        $time = self::getDemoTime($demoid);
+        $user = self::getDemoer($demoid);
+        $attendee = MyRadio_User::getInstance();
+        MyRadioEmail::sendEmailToUser($user, 'Training Attendee Left', $attendee->getName().' has left your session at '.$time.'.');
+        MyRadioEmail::sendEmailToUser(
+            $attendee,
+            'Training Cancellation',
+            'Hi '
+            .$attendee->getFName()
+            .",\r\n\r\nJust to confirm that you have left the training session at $time. If this was accidental, simply rejoin."
+            ."\r\n\r\nThanks!\r\n"
             .Config::$long_name
             .' Training'
         );
