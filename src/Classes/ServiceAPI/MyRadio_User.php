@@ -2140,7 +2140,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 $data['paid'] = $this->getAllPayments();
                 $data['locked'] = $this->getAccountLocked();
                 $data['college'] = $this->getCollege();
-                $data['receive_email'] = $this->getReceiveEmail();
                 $data['email'] = $this->getEmail();
                 $data['phone'] = $this->getPhone();
                 $data['eduroam'] = $this->getEduroam();
@@ -2161,6 +2160,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'sex' => $this->getSex(),
             'public_email' => $this->getPublicEmail(),
             'url' => $this->getURL(),
+            'receive_email' => $this->getReceiveEmail(),
         ];
 
         $data['photo'] = $this->getProfilePhoto() === null ?
