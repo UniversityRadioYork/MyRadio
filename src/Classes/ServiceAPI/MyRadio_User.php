@@ -1804,13 +1804,13 @@ class MyRadio_User extends ServiceAPI implements APICaller
         if (!empty($provided_pass)) {
             $plain_pass = '(The password you entered when registering)';
         }
-        $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$fname, $uname, $plain_pass], Config::$welcome_email);
 
-        //Send the email
-        /*
-         * @todo Make this be sent from the getinvolved email, rather than no-reply.
-         */
-        MyRadioEmail::sendEmailToUser(self::getInstance($memberid), 'Welcome to '.Config::$short_name.' - Getting Involved and Your Account', $welcome_email);
+        $welcome_email = str_replace(['#NAME'], [$fname], Config::$welcome_email);
+        $account_email = str_replace(['#NAME', '#USER', '#PASS'], [$fname, $uname, $plain_pass], Config::$account_email);
+
+        //Send the emails
+        MyRadioEmail::sendEmailToUser(self::getInstance($memberid), 'Welcome to '.Config::$short_name.' - Getting Involved', $welcome_email);// @TODO: come from station manager
+        MyRadioEmail::sendEmailToUser(self::getInstance($memberid), 'Welcome to '.Config::$short_name.' - Your Account', $account_email);// comes from no-reply
 
         return self::getInstance($memberid);
     }

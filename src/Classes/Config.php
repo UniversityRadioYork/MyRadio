@@ -689,10 +689,18 @@ final class Config
     public static $facebook = 'https://www.facebook.com/URY1350';
     public static $welcome_email = <<<EOT
 
-   This is a welcome email. You can use #NAME to get the user's first name,
-   and include #USER and #PASS to tell them their newly created login details.
+   This is a welcome email. You can use #NAME to get the user's first name.
 
 EOT;
+    public static $account_email = <<<EOT
+
+   This is an email to give a new member their account details.
+   You can use #NAME to get the user's first name.
+   You can use #USER and #PASS to tell them their newly created login details.
+
+EOT;
+
+
 
     /**
      * The constructor doesn't do anything practical.
