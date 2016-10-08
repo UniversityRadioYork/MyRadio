@@ -42,7 +42,9 @@ BEGIN
     THEN
         INSERT INTO tracklist.tracklist (SOURCE, timestart, timestop, timeslotid, bapsaudioid)
             VALUES ('b', NEW."timeplayed", NEW."timestopped", (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
-                                                               WHERE start_time <= NOW() AND (start_time + duration) >= NOW()
+                                                               WHERE start_time <= NOW()
+                                                                   AND (start_time + duration) >= NOW()
+                                                                   AND show_season_id != 0
                                                                ORDER BY show_season_timeslot_id ASC
                                                                LIMIT 1),
                     NEW."audiologid")
