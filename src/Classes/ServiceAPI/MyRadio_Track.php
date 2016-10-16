@@ -772,8 +772,8 @@ class MyRadio_Track extends ServiceAPI
             throw new MyRadioException('Could not find ffmpeg or avconv.', 500);
         }
 
-        shell_exec("nice -n 15 $bin -i '$tmpfile' -ab 192k -f mp3 '{$dbfile}.mp3'");
-        shell_exec("nice -n 15 $bin -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
+        shell_exec("nice -n 15 $bin -i '$tmpfile' -ab 192k -f mp3 -map 0:a '{$dbfile}.mp3'");
+        shell_exec("nice -n 15 $bin -i '$tmpfile' -acodec libvorbis -ab 192k -map 0:a '{$dbfile}.ogg'");
         rename($tmpfile, $dbfile.'.mp3.orig');
 
         self::$db->query('COMMIT');
