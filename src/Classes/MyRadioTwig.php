@@ -56,6 +56,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
             ->addVariable('timeslotid', isset($_SESSION['timeslotid']) ? $_SESSION['timeslotid'] : null)
             ->addVariable('baseurl', Config::$base_url)
             ->addVariable('websiteurl', Config::$website_url)
+            ->addVariable('shortname', Config::$short_name)
             ->addVariable('rewriteurl', Config::$rewrite_url)
             ->addVariable('serviceName', 'MyRadio')
             ->setTemplate('stripe.twig')
