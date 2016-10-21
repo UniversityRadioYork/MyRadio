@@ -84,7 +84,7 @@ final class Config
      *
      * @var string
      */
-    public static $home_url = '//ury.org.uk/';
+    public static $website_url = '//ury.org.uk/';
 
     /**
      * Whether nice URL rewrites are enabled
