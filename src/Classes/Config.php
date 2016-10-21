@@ -80,6 +80,13 @@ final class Config
     public static $schedule_url = '//ury.org.uk/schedule';
 
     /**
+     * The base URL of the radio home pages.
+     *
+     * @var string
+     */
+    public static $home_url = '//ury.org.uk/';
+
+    /**
      * Whether nice URL rewrites are enabled
      * If true, then urls will be myury/[module]/[action]
      * If false, then urls will be myury/?module=[module]&action=[action].
