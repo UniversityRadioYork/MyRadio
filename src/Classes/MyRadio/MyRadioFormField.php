@@ -583,7 +583,7 @@ class MyRadioFormField
             break;
             case self::TYPE_BLOCKTEXT:
                 $dom = new \DOMDocument();
-                $dom->loadHtml($_REQUEST[$name]);
+                $dom->loadHtml("<div>$_REQUEST[$name]</div>", LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
                 $xpath = new \DOMXPath($dom);
                 while ($node = $xpath->query('//script')->item(0)) {
