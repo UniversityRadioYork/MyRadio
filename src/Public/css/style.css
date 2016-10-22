@@ -71,6 +71,100 @@ body {
   }
 }
 
+/** MyRadio bootstrap navbar overides taken from http://work.smarchal.com/twbscolor/css/002d5a0053a6ffffffe1e1e11 **/
+.navbar-ury {
+  background-color: #002d5a;
+  border-color: #0053a6;
+  border: none;
+}
+.navbar-ury .navbar-brand {
+  color: #ffffff;
+  padding: 10px 15px; /** added to center the logo **/
+  line-height: 30px;  /** added to center the logo **/
+}
+.navbar-ury .navbar-brand:hover,
+.navbar-ury .navbar-brand:focus {
+  color: #e1e1e1;
+}
+.navbar-ury .navbar-text {
+  color: #ffffff;
+}
+.navbar-ury .navbar-nav > li > a {
+  color: #ffffff;
+}
+.navbar-ury .navbar-nav > li > a:hover,
+.navbar-ury .navbar-nav > li > a:focus {
+  color: #e1e1e1;
+  background-color: #0053a6;
+}
+.navbar-ury .navbar-nav > li > .dropdown-menu {
+  background-color: #002d5a;
+}
+.navbar-ury .navbar-nav > li > .dropdown-menu > li > a {
+  color: #ffffff;
+}
+.navbar-ury .navbar-nav > li > .dropdown-menu > li > a:hover,
+.navbar-ury .navbar-nav > li > .dropdown-menu > li > a:focus {
+  color: #e1e1e1;
+  background-color: #0053a6;
+}
+.navbar-ury .navbar-nav > li > .dropdown-menu > li > .divider {
+  background-color: #0053a6;
+}
+.navbar-ury .navbar-nav .open .dropdown-menu > .active > a,
+.navbar-ury .navbar-nav .open .dropdown-menu > .active > a:hover,
+.navbar-ury .navbar-nav .open .dropdown-menu > .active > a:focus {
+  color: #e1e1e1;
+  background-color: #0053a6;
+}
+.navbar-ury .navbar-nav > .active > a,
+.navbar-ury .navbar-nav > .active > a:hover,
+.navbar-ury .navbar-nav > .active > a:focus {
+  color: #e1e1e1;
+  background-color: #0053a6;
+}
+.navbar-ury .navbar-nav > .open > a,
+.navbar-ury .navbar-nav > .open > a:hover,
+.navbar-ury .navbar-nav > .open > a:focus {
+  color: #e1e1e1;
+  background-color: #0053a6 !important;
+}
+.navbar-ury .navbar-toggle {
+  border-color: #0053a6;
+}
+.navbar-ury .navbar-toggle:hover,
+.navbar-ury .navbar-toggle:focus {
+  background-color: #0053a6;
+}
+.navbar-ury .navbar-toggle .icon-bar {
+  background-color: #ffffff;
+}
+.navbar-ury .navbar-collapse,
+.navbar-ury .navbar-form {
+  border-color: #ffffff;
+}
+.navbar-ury .navbar-link {
+  color: #ffffff;
+}
+.navbar-ury .navbar-link:hover {
+  color: #e1e1e1;
+}
+
+@media (max-width: 767px) {
+  .navbar-ury .navbar-nav .open .dropdown-menu > li > a {
+    color: #ffffff;
+  }
+  .navbar-ury .navbar-nav .open .dropdown-menu > li > a:hover,
+  .navbar-ury .navbar-nav .open .dropdown-menu > li > a:focus {
+    color: #e1e1e1;
+  }
+  .navbar-ury .navbar-nav .open .dropdown-menu > .active > a,
+  .navbar-ury .navbar-nav .open .dropdown-menu > .active > a:hover,
+  .navbar-ury .navbar-nav .open .dropdown-menu > .active > a:focus {
+    color: #e1e1e1;
+    background-color: #0053a6;
+  }
+}
 /** MyRadio Menu Styles **/
 
 .menu-column {
