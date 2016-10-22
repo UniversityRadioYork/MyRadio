@@ -82,6 +82,9 @@ body {
   padding: 10px 15px; /** added to center the logo **/
   line-height: 30px;  /** added to center the logo **/
 }
+.navbar-ury .navbar-brand img {
+  max-height: 100%;
+}
 .navbar-ury .navbar-brand:hover,
 .navbar-ury .navbar-brand:focus {
   color: #e1e1e1;
