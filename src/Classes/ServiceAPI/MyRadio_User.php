@@ -1736,8 +1736,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
             );
         }
 
-        //Remove the domain if it is set
+        //Remove the domain if it is set, and lowercase it
         $eduroam = str_replace('@'.Config::$eduroam_domain, '', $eduroam);
+        $eduroam = strtolower($eduroam);
 
         if (empty($eduroam) && empty($email)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
