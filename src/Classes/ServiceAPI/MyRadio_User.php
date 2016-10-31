@@ -241,6 +241,22 @@ class MyRadio_User extends ServiceAPI implements APICaller
         }
     }
 
+    public function clearPermissionCache()
+    {
+        $this->permissions = null;
+        return $this;
+    }
+    public function clearOfficershipCache()
+    {
+        $this->officerships = null;
+        return $this;
+    }
+    public function clearTrainingCache()
+    {
+        $this->training = null;
+        return $this;
+    }
+
     /**
      * Returns if the User is currently an Officer.
      *
@@ -1257,8 +1273,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                     [(float) $amount, $year, $this->getID()]
                 );
                 $this->payment[$k]['paid'] = $amount;
-                $this->permissions = null; // Clear local permissions cache
-                $this->updateCacheObject();
+                $this->clearPermissionCache()->updateCacheObject();
 
                 return;
             }
@@ -1271,8 +1286,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             [(float) $amount, $year, $this->getID()]
         );
         $this->payment[] = ['year' => $year, 'paid' => $amount];
-        $this->permissions = null; // Clear local permissions cache
-        $this->updateCacheObject();
+        $this->clearPermissionCache()->updateCacheObject();
 
         return;
     }
