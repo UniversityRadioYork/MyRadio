@@ -67,6 +67,13 @@ class MyRadio_List extends ServiceAPI
     private $members = [];
 
     /**
+     * This is the set of members have opted out of this 'optin' list.
+     *
+     * @var int[]
+     */
+    private $nonMembers = [];
+
+    /**
      * Initialised on first request, stores an archive of all the email IDs
      * sent to this list.
      *
@@ -106,12 +113,22 @@ class MyRadio_List extends ServiceAPI
                 (SELECT memberid FROM mail_subscription WHERE listid=$1)',
                 [$listid]
             );
+            $this->nonMembers = self::$db->fetchColumn(
+                'SELECT memberid FROM mail_subscription WHERE listid=$1',
+                [$listid]
+            );
         }
         $this->members = array_map(
             function ($x) {
                 return (int) $x;
             },
             $this->members
+        );
+        $this->nonMembers = array_map(
+            function ($x) {
+                return (int) $x;
+            },
+            $this->nonMembers
         );
     }
 
@@ -328,7 +345,7 @@ class MyRadio_List extends ServiceAPI
     /**
      * Return all mailing lists.
      *
-     * @return MyRadio_User[]
+     * @return MyRadio_List[]
      */
     public static function getAllLists()
     {
@@ -337,6 +354,27 @@ class MyRadio_List extends ServiceAPI
         $lists = [];
         foreach ($r as $list) {
             $lists[] = self::getInstance($list);
+        }
+
+        return $lists;
+    }
+
+    /**
+     * Return mailing lists a user has access to.
+     *
+     * @return MyRadio_List[]
+     */
+    public static function getUserLists($memberid = -1)
+    {
+        $member = MyRadio_User::getInstance($memberid)->getID();
+        $r = self::$db->fetchColumn('SELECT listid FROM mail_list');
+
+        $lists = [];
+        foreach ($r as $list) {
+            $l = self::getInstance($list);
+            if ($l->optin || in_array($member, $l->members) || in_array($member, $l->nonMembers)) {
+                $lists[] = $l;
+            }
         }
 
         return $lists;
