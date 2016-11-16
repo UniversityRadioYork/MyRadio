@@ -2639,6 +2639,7 @@ CREATE TABLE api_key_log (
 COMMENT ON TABLE api_key_log IS 'Stores a record of API Requests by an API Key';
 ALTER SEQUENCE api_key_log_api_log_id_seq OWNED BY api_key_log.api_log_id;
 
+ALTER TABLE ONLY api_key_log ALTER COLUMN api_log_id SET DEFAULT nextval('api_key_log_api_log_id_seq'::regclass);
 
 --------------
 -- Add constraints and keys
