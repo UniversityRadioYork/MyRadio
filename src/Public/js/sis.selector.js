@@ -49,10 +49,6 @@ var Selector = function () {
                 return;
             }
 
-            if (lastTime === 0) {
-                this.show();
-            }
-
             lastTime = parseInt(data['lastmod']);
             // When called bet selectStudio, this isn't what I think it is
             // @todo, see if that can be bound nicer
