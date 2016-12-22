@@ -772,6 +772,112 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
+     * Deletes all Timeslots for a specific season from the Schedule, and everything associated with it.
+     *
+     * This is a proxy for several other methods, depending on the User and the current time:<br>
+     * (1) If the User has Cancel Show Privileges, then they can remove it at any time, notifying Creditors
+     *
+     * (2) If the User is a Show Credit, and there are 48 hours or more until broadcast, they can remove it,
+     *     notifying the PC
+     *
+     * (3) If the User is a Show Credit, and there are less than 48 hours until broadcast, they can send a request to the
+     *     PC for removal, and it will be flagged as hidden from the Schedule - it will still count as a noshow unless (1) occurs
+     *
+     * @param string $reason, Why the episode was cancelled.
+     *
+     * @todo Make the smarter - check if it's a programming team person, in which case just do this, if it's not
+     *       then if >48hrs away just do it but email programming, but <48hrs should hide it but tell prog to confirm reason
+     * @todo Response codes? i.e. error/db or error/403 etc
+     */
+    public function cancelAllSeasonTimeslots($reason)
+    {
+        //Get if the User has permission to drop the episode
+        if (MyRadio_User::getInstance()->hasAuth(AUTH_DELETESHOWS)) {
+            //Yep, do an administrative drop
+            $r = $this->cancelAllSeasonTimeslotsAdmin($reason);
+        } elseif ($this->getSeason()->getShow()->isCurrentUserAnOwner()) {
+            //Get if the User is a Creditor
+            //Yaay, depending on time they can do an self-service drop or cancellation request
+            if ($this->getStartTime() > time() + (48 * 3600)) {
+                //Self-service cancellation
+                $r = $this->cancelTimeslotSelfService($reason);
+            } else {
+                //Emergency cancellation request
+                $r = $this->cancelTimeslotRequest($reason);
+            }
+        } else {
+            //They can't do this.
+            return $r = false;
+        }
+
+        return $r;
+    }
+
+    private function cancelAllSeasonTimeslotsAdmin($reason)
+    {
+        $r = $this->deleteAllSeasonTimeslots();
+        if (!$r) {
+            return false;
+        }
+
+        $email = "Hi #NAME, \r\n\r\n Please note that all episodes of your show, ".$this->getMeta('title').
+                ' has been cancelled by our Programming Team. The affected episode was at '.CoreUtils::happyTime($this->getStartTime());
+        $email .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\n".Config::$long_name.' Programming Team';
+        self::$cache->purge();
+
+        MyRadioEmail::sendEmailToUserSet($this->getSeason()->getShow()->getCreditObjects(), 'Episode of '.$this->getMeta('title').' Cancelled', $email);
+
+        return true;
+    }
+
+    private function cancelAllSeasonTimeslotsSelfService($reason)
+    {
+        $r = $this->deleteTimeslot();
+        if (!$r) {
+            return false;
+        }
+
+        $email1 = "Hi #NAME, \r\n\r\n You have requested that an episode of ".$this->getMeta('title').
+                ' is cancelled. The affected episode was at '.CoreUtils::happyTime($this->getStartTime());
+        $email1 .= "\r\n\r\nReason: $reason\r\n\r\nRegards\r\n".Config::$long_name.' Scheduler Robot';
+
+        $email2 = $this->getMeta('title').' on '.CoreUtils::happyTime($this->getStartTime()).' was cancelled by a presenter because '.$reason;
+        $email2 .= "\r\n\r\nIt was cancelled automatically as more than required notice was given.";
+
+        MyRadioEmail::sendEmailToUserSet($this->getSeason()->getShow()->getCreditObjects(), 'Episode of '.$this->getMeta('title').' Cancelled', $email1);
+        MyRadioEmail::sendEmailToList(MyRadio_List::getByName('programming'), 'Episode of '.$this->getMeta('title').' Cancelled', $email2);
+
+        return true;
+    }
+
+    private function cancelAllSeasonTimeslotsRequest($reason)
+    {
+        $email = $this->getMeta('title').' on '.CoreUtils::happyTime($this->getStartTime()).' has requested cancellation because '.$reason;
+        $email .= "\r\n\r\nDue to the short notice, it has been passed to you for consideration. To cancel the timeslot, visit ";
+        $email .= URLUtils::makeURL('Scheduler', 'cancelEpisode', ['show_season_timeslot_id' => $this->getID(), 'reason' => base64_encode($reason)]);
+
+        MyRadioEmail::sendEmailToList(MyRadio_List::getByName('presenting'), 'Show Cancellation Request', $email);
+
+        return true;
+    }
+
+
+    /**
+     * Deletes all the timeslots for a specific season. Nothing else. See the @todo ... methods for recommended removal usage.
+     *
+     * @return bool success/fail
+     */
+    private function deleteAllSeasonTimeslots()
+    {
+        $r = self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_id=$1', [$this->getID()]);
+
+        $this->updateCacheObject();
+
+        return $r;
+    }
+
+
+    /**
      * This is the server-side implementation of the JSONON system for tracking Show Planner alterations.
      *
      * @param array[] $set A JSONON operation set
