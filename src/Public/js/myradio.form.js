@@ -40,8 +40,11 @@ window.MyRadioForm = {
             var memberLookup = new Bloodhound(
                 {
                     datumTokenizer: function (i) {
-                        return Bloodhound.tokenizers.whitespace(i.fname)
-                        .concat(Bloodhound.tokenizers.whitespace(i.sname));
+                        var strmemberID = Bloodhound.tokenizers.whitespace(i.memberid);
+                        var strfname = Bloodhound.tokenizers.whitespace(i.fname);
+                        var strsname = Bloodhound.tokenizers.whitespace(i.sname);
+                        var streduroam = Bloodhound.tokenizers.whitespace(i.eduroam);
+                        return strmemberID.concat(strfname).concat(strsname).concat(streduroam);
                     },
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
                     limit: 25,
@@ -78,7 +81,14 @@ window.MyRadioForm = {
                                     //Fix typeahead not showing after hiding
                                     //TODO: Report this @ https://github.com/twitter/typeahead.js/
                                     $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
-                                    return '<p>' + i.fname + ' ' + i.sname + '</p>';
+                                    if (i.eduroam != null) {
+                                        var identity = '(' + i.eduroam + ')';
+                                    } else if (i.local_alias != null) {
+                                        var identity = '(' + i.local_alias + ')';
+                                    } else {
+                                        var identity = '(#' + i.memberid + ')';
+                                    }
+                                    return '<p>' + i.fname + ' ' + i.sname + ' ' + identity + '</p>';
                                 }
                             }
                         }

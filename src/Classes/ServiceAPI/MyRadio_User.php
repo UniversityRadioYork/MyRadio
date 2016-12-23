@@ -786,7 +786,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * @return array A 2D Array where every value of the first dimension is an Array as follows:<br>
      *               memberid: The unique id of the User<br>
      *               fname: The actual first name of the User<br>
-     *               sname: The actual last name of the User
+     *               sname: The actual last name of the User<br>
+     *               eduroam: The actual eduroam account of the User
      */
     public static function findByName($name, $limit = -1)
     {
@@ -798,14 +799,14 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $names = explode(' ', $name);
         if (isset($names[1])) {
             return self::$db->fetchAll(
-                'SELECT memberid, fname, sname FROM member
+                'SELECT memberid, fname, sname, eduroam, local_alias FROM member
                 WHERE fname ILIKE $1 || \'%\' AND sname ILIKE $2 || \'%\'
                 ORDER BY sname, fname LIMIT $3',
                 [$names[0], $names[1], $limit]
             );
         } else {
             return self::$db->fetchAll(
-                'SELECT memberid, fname, sname FROM member
+                'SELECT memberid, fname, sname, eduroam, local_alias FROM member
                 WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $1 || \'%\'
                 ORDER BY sname, fname LIMIT $2',
                 [$name, $limit]
