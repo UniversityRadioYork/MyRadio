@@ -75,7 +75,7 @@ window.MyRadioForm = {
                                     //Fix typeahead not showing after hiding
                                     //TODO: Report this @ https://github.com/twitter/typeahead.js/
                                     $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
-                                    var identity
+                                    var identity = '';
                                     if (i.eduroam != null) {
                                         identity = '(Eduroam:' + i.eduroam + ')';
                                     } else if (i.local_alias != null) {
