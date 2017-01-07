@@ -38,27 +38,28 @@ window.MyRadioForm = {
         var memberFields = $('fieldset.myradiofrm input.member-autocomplete:not(.tt-hint):not(.tt-input)');
         if (memberFields.length > 0) {
             var memberLookup = new Bloodhound(
+                
                 {
-                    datumTokenizer: function (i) {
-                        var strmemberID = Bloodhound.tokenizers.whitespace(i.memberid);
-                        var strfname = Bloodhound.tokenizers.whitespace(i.fname);
-                        var strsname = Bloodhound.tokenizers.whitespace(i.sname);
-                        var streduroam = Bloodhound.tokenizers.whitespace(i.eduroam);
-                        return strmemberID.concat(strfname).concat(strsname).concat(streduroam);
-                    },
+                    datumTokenizer: Bloodhound.tokenizers.whitespace,
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
-                    limit: 25,
+                    limit: 50,
                     dupDetector: function (remote, local) {
                         return local.memberid == remote.memberid;
                     },
                     prefetch: {
                         url: myradio.makeURL('MyRadio', 'a-findmember', {term: null, limit: 500})
                     },
-                    remote: myradio.makeURL('MyRadio', 'a-findmember', {limit: 25, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
+                    remote: {
+                        url: myradio.makeURL('MyRadio', 'a-findmember', {limit: 25, term: ''}) + '%QUERY',//Seperated out otherwise % gets urlescaped
+                        ajax: {
+                            type: 'GET',
+                            dataType: 'json',
+                        }
+                    } 
                 }
             );
             memberLookup.initialize();
-
+            
             memberFields.each(
                 function () {
                     var idField =  $('#' + $(this).attr('id').replace(/-ui$/, ''));
@@ -72,6 +73,7 @@ window.MyRadioForm = {
                         },
                         {
                             displayKey: function (i) {
+                                alert(JSON.stringify(i))
                                 return i.fname + ' ' + i.sname;
                             },
                             source: memberLookup.ttAdapter(),
@@ -81,12 +83,13 @@ window.MyRadioForm = {
                                     //Fix typeahead not showing after hiding
                                     //TODO: Report this @ https://github.com/twitter/typeahead.js/
                                     $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
+                                    var identity
                                     if (i.eduroam != null) {
-                                        var identity = '(' + i.eduroam + ')';
+                                        identity = '(' + i.eduroam + ')';
                                     } else if (i.local_alias != null) {
-                                        var identity = '(' + i.local_alias + ')';
+                                        identity = '(' + i.local_alias + ')';
                                     } else {
-                                        var identity = '(#' + i.memberid + ')';
+                                        identity = '(#' + i.memberid + ')';
                                     }
                                     return '<p>' + i.fname + ' ' + i.sname + ' ' + identity + '</p>';
                                 }
