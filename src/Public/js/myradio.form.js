@@ -37,29 +37,22 @@ window.MyRadioForm = {
      */
         var memberFields = $('fieldset.myradiofrm input.member-autocomplete:not(.tt-hint):not(.tt-input)');
         if (memberFields.length > 0) {
-            var memberLookup = new Bloodhound(
-                
+            var memberLookup = new Bloodhound(            
                 {
                     datumTokenizer: Bloodhound.tokenizers.whitespace,
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
-                    limit: 50,
+                    limit: 25,
                     dupDetector: function (remote, local) {
                         return local.memberid == remote.memberid;
                     },
                     prefetch: {
                         url: myradio.makeURL('MyRadio', 'a-findmember', {term: null, limit: 500})
                     },
-                    remote: {
-                        url: myradio.makeURL('MyRadio', 'a-findmember', {limit: 25, term: ''}) + '%QUERY',//Seperated out otherwise % gets urlescaped
-                        ajax: {
-                            type: 'GET',
-                            dataType: 'json',
-                        }
-                    } 
+                    remote: myradio.makeURL('MyRadio', 'a-findmember', {limit: 25, term: ''}) + '%QUERY' //Seperated out otherwise % gets urlescaped
                 }
             );
             memberLookup.initialize();
-            
+       
             memberFields.each(
                 function () {
                     var idField =  $('#' + $(this).attr('id').replace(/-ui$/, ''));
@@ -73,7 +66,6 @@ window.MyRadioForm = {
                         },
                         {
                             displayKey: function (i) {
-                                alert(JSON.stringify(i))
                                 return i.fname + ' ' + i.sname;
                             },
                             source: memberLookup.ttAdapter(),
@@ -85,9 +77,9 @@ window.MyRadioForm = {
                                     $('input:focus').parent().children('.tt-dropdown-menu').removeClass('hidden');
                                     var identity
                                     if (i.eduroam != null) {
-                                        identity = '(' + i.eduroam + ')';
+                                        identity = '(Eduroam:' + i.eduroam + ')';
                                     } else if (i.local_alias != null) {
-                                        identity = '(' + i.local_alias + ')';
+                                        identity = '(Alias: ' + i.local_alias + ')';
                                     } else {
                                         identity = '(#' + i.memberid + ')';
                                     }
