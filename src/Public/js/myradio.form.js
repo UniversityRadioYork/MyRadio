@@ -37,7 +37,7 @@ window.MyRadioForm = {
      */
         var memberFields = $('fieldset.myradiofrm input.member-autocomplete:not(.tt-hint):not(.tt-input)');
         if (memberFields.length > 0) {
-            var memberLookup = new Bloodhound(            
+            var memberLookup = new Bloodhound(
                 {
                     datumTokenizer: Bloodhound.tokenizers.whitespace,
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -52,7 +52,7 @@ window.MyRadioForm = {
                 }
             );
             memberLookup.initialize();
-       
+
             memberFields.each(
                 function () {
                     var idField =  $('#' + $(this).attr('id').replace(/-ui$/, ''));

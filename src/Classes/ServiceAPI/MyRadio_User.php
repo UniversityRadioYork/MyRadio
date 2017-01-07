@@ -787,7 +787,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
      *               memberid: The unique id of the User<br>
      *               fname: The actual first name of the User<br>
      *               sname: The actual last name of the User<br>
-     *               eduroam: The actual eduroam account of the User
+     *               eduroam: The actual eduroam account of the User<br>
+     *               local_alias: The actual local alias (THISPART@emailaddr) for the user
      */
     public static function findByName($name, $limit = -1)
     {
