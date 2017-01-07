@@ -155,6 +155,7 @@ var Library = function () {
                                 track_artist = document.getElementById('track-manual-entry-artist').value;
                                 track_album = document.getElementById('track-manual-entry-album').value;
                                 track_position = document.getElementById('track-manual-entry-position').value;
+                                track_explicit = document.getElementById('track-manual-entry-explicit').value;
 
                                 if (!track_title) {
                                     result.find('.error').html('Please enter a title');
@@ -189,7 +190,8 @@ var Library = function () {
                                         artist: track_artist,
                                         album: track_album,
                                         position: track_position,
-                                        fileid: track_fileid
+                                        fileid: track_fileid,
+                                        explicit: track_explicit
                                     },
                                     dataType: 'json',
                                     type: 'get',
