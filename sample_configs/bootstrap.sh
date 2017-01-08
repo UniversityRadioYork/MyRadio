@@ -70,4 +70,4 @@ service apache2 start
 
 # Somewhere to store audio uploads
 mkdir -p /music/records
-chown apache2:apache2 /music/records
+chown www-data:www-data /music/records
