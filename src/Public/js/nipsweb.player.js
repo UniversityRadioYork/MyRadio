@@ -1052,7 +1052,7 @@ var playoutSlider = function (e) {
         }
 
         slider.style.width = result + 'px';
-        return result / getPixelsPerSecond();
+        return Math.round(result / getPixelsPerSecond() * 100) / 100;
     };
 
     var getXOffset = function (e) {

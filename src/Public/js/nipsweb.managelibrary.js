@@ -155,7 +155,9 @@ var Library = function () {
                                 track_artist = document.getElementById('track-manual-entry-artist').value;
                                 track_album = document.getElementById('track-manual-entry-album').value;
                                 track_position = document.getElementById('track-manual-entry-position').value;
-                                track_explicit = document.getElementById('track-manual-entry-explicit').value;
+                                track_explicit = document.getElementById('track-manual-entry-explicit').checked;
+
+                                debugger;
 
                                 if (!track_title) {
                                     result.find('.error').html('Please enter a title');
