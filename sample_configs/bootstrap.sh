@@ -17,7 +17,7 @@ apt-get install -y apache2 \
 	php-pear \
 	php5-memcached \
 	openssl \
-  libav-tools
+	libav-tools
 a2enmod ssl
 a2enmod rewrite
 service apache2 stop
@@ -52,12 +52,12 @@ emailAddress=someone@example.com
 "
 openssl genrsa -des3 -out /etc/apache2/myradio.key -passout env:PASSPHRASE 2048
 openssl req \
-  -new \
-  -batch \
-  -subj "$(echo -n "$subj" | tr "\n" "/")" \
-  -key /etc/apache2/myradio.key \
-  -out /etc/apache2/myradio.csr \
-  -passin env:PASSPHRASE
+	-new \
+	-batch \
+	-subj "$(echo -n "$subj" | tr "\n" "/")" \
+	-key /etc/apache2/myradio.key \
+	-out /etc/apache2/myradio.csr \
+	-passin env:PASSPHRASE
 openssl rsa -in /etc/apache2/myradio.key -out /etc/apache2/myradio.key -passin env:PASSPHRASE
 openssl x509 -req -days 3650 -in /etc/apache2/myradio.csr -signkey /etc/apache2/myradio.key -out /etc/apache2/myradio.crt
 

@@ -45,7 +45,7 @@
       {% set channels = [1, 2, 3, 'res'] %}
       {% for channel in channels %}
         <div class='box col-xs-3 baps-channel channel-footer{% if channel == 'res' %} library-footer{% endif %}'>
-          <a href='javascript:' id='baps-channel-{{channel}}-name'>{% if channel == 'res' %}Library{% else %}Channel {{channel}}{% endif %}</a>&nbsp
+          <a href='javascript:' id='baps-channel-{{channel}}-name'>{% if channel == 'res' %}Library{% else %}Channel {{channel}}{% endif %}</a>&nbsp;
           <span id='baps-channel-{{channel}}-total' title="Total time of all tracks in this channel">(00:00)</span>
           <br>
           <div class="btn-group">
