@@ -690,6 +690,10 @@ class MyRadio_Track extends ServiceAPI
         }
     }
 
+
+    /**
+     * Pay special attention to the tri-state value of explicit. False and null are different things.
+     */
     public static function identifyAndStoreTrack($tmpid, $title, $artist, $album, $position, $explicit = null)
     {
         // We need to rollback if something goes wrong later
