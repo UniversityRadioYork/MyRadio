@@ -65,6 +65,16 @@ var ChannelConfigurator = function(player) {
                 }
             }
 
+            // Set the current value, if there is one
+            try {
+                if (localStorage.hasOwnProperty('nipsWebDeviceMapping')) {
+                    var storedValue = JSON.parse(localStorage.nipsWebDeviceMapping)[player.nipswebId];
+                    if (storedValue) {
+                        select.value = storedValue;
+                    }
+                }
+            } catch (e) {console.error('Local Storage is being mean.', e);}
+
             select.addEventListener('change', function() {
                 var sink = this.value;
                 player.setSinkId(sink)
