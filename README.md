@@ -25,7 +25,7 @@ Username: myradio
 Password: myradio
 
 Quickstart
-----------
+==========
 Install Apache2, PHP, Composer and PostgreSQL on your prefered *nix distro.
 Or Windows, if you're into that. MyRadio has been tested with Ubuntu and
 FreeBSD.
@@ -65,6 +65,24 @@ psql
 CREATE USER myradio WITH password '[A_STRONG_PASSWORD]';
 CREATE DATABASE myradio WITH OWNER=myradio;
 ```
+
+Next steps
+==========
+Once you've got through the setup wizard, the next thing that's most useful to
+you is most likely creating a show.
+
+To do this, you first need to:
+- Create a Term (Show Scheduler -> Manage Terms)
+- Create a Show (List My Shows -> Create a Show)
+- Apply for a Season of your new Show (List My Shows -> New Season)
+- Schedule the Season (Shows Scheduler)
+
+A note on Seasons and Terms
+---------------------------
+MyRadio splits Shows into "Seasons". Any Season is applied to in relation to a
+"Term", which is a 10-week space of time. This is because The University of
+York has 10 week terms, if you didn't know.
+
 
 MyRadio uses GitHub Flow as a development workflow:
 https://guides.github.com/overviews/flow/

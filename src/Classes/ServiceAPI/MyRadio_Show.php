@@ -858,6 +858,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             'credits' => array_map(
                 function ($x) {
                     $x['User'] = $x['User']->toDataSource();
+                    $x['type_name'] = $this->getCreditName($x['type']);
 
                     return $x;
                 },
