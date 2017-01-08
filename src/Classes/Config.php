@@ -93,7 +93,7 @@ final class Config
      *
      * @var bool
      */
-    public static $rewrite_url = false;
+    public static $rewrite_url = true;
 
     /**
      * Whether to enable the Caching system
