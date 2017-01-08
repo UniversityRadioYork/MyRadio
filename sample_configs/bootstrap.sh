@@ -16,7 +16,8 @@ apt-get install -y apache2 \
 	php5-dev \
 	php-pear \
 	php5-memcached \
-	openssl
+	openssl \
+  libav-tools
 a2enmod ssl
 a2enmod rewrite
 service apache2 stop
@@ -66,3 +67,7 @@ su - postgres -c "cat /vagrant/sample_configs/postgres.sql | psql"
 
 # Start httpd back up
 service apache2 start
+
+# Somewhere to store audio uploads
+mkdir -p /music/records
+chown apache2:apache2 /music/records

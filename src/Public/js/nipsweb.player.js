@@ -625,6 +625,17 @@ var NIPSWeb = function (d) {
 
     // Create the player for the given channel
     var initialisePlayer = function (channel) {
+        var outputDevice = 'default';
+
+        try {
+            if (localStorage && localStorage.hasOwnProperty('nipsWebDeviceMapping')) {
+                var audioSinks = JSON.parse(localStorage.nipsWebDeviceMapping);
+                if (audioSinks[channel]) {
+                    outputDevice = audioSinks[channel]
+                }
+            }
+        } catch (e) {console.info('Local Storage is being mean.', e);}
+
         if (channel == 0) {
             channel = 'res';
         }
@@ -634,14 +645,24 @@ var NIPSWeb = function (d) {
         var a = new Audio();
         a.cueTime = 0;
         a.justStopped = false;
+        a.nipswebId = getChannelInt(channel);
 
-        players[getChannelInt(channel)] = a;
+        players[a.nipswebId] = a;
 
         setupListeners(channel);
 
         var ul = document.getElementById('baps-channel-'+channel);
         ul.setAttribute('autoadvance', 1);
         ul.setAttribute('repeat', 0);
+
+        if (outputDevice !== 'default') {
+            navigator.mediaDevices.getUserMedia({audio: true}).then(function() {
+                a.setSinkId(outputDevice)
+                    .catch(function(error) {
+                        console.error('Failed to change output according to localStorage', a, outputDevice, error);
+                    });
+            });
+        }
     };
 
     // Sets up listeners per channel
@@ -660,7 +681,7 @@ var NIPSWeb = function (d) {
                     if (!next.length && el.parent().attr('repeat') == 2) {
                         next = el.parent().children()[0];
                     }
-                    if (next) {
+                    if (next && next.length) {
                         el.removeClass('selected');
                         next.click();
                     }
@@ -740,6 +761,10 @@ var NIPSWeb = function (d) {
             pause(channel);});
         $('#ch' + channel + '-stop').on('click', function () {
             stop(channel);});
+
+        $('#baps-channel-' + channel + '-name').on('click', function() {
+            new ChannelConfigurator(getPlayer(channel));
+        });
     };
 
     // Returns the player element for the given channel
