@@ -137,6 +137,21 @@ var Library = function () {
                                 select.append('<option value="' + value.title + ':-:' + value.artist + '">' + value.title + ' by ' + value.artist + '</option>');
                             }
                         );
+                    } else {
+                        if (response.analysis.length != 0) {
+                            document.getElementById('track-manual-entry-title').value = response.analysis.title;
+                            document.getElementById('track-manual-entry-artist').value = response.analysis.artist;
+                            document.getElementById('track-manual-entry-album').value = response.analysis.album;
+                            document.getElementById('track-manual-entry-position').value = response.analysis.position;
+                            document.getElementById('track-manual-entry-explicit').checked = response.analysis.explicit;
+                        } else {
+                            //this isn't right, should go into php file.
+                            document.getElementById('track-manual-entry-title').value = '';
+                            document.getElementById('track-manual-entry-artist').value = '';
+                            document.getElementById('track-manual-entry-album').value = '';
+                            document.getElementById('track-manual-entry-position').value = '';
+                            document.getElementById('track-manual-entry-explicit').checked = false;
+                        }
                     }
 
                     // The submit part

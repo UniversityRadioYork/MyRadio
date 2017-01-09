@@ -619,6 +619,7 @@ class MyRadio_Track extends ServiceAPI
 
         $getID3 = new \getID3();
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir.'/'.$filename);
+        
 
         // File quality checks
         if ($fileInfo['audio']['bitrate'] < 192000) {
@@ -627,11 +628,24 @@ class MyRadio_Track extends ServiceAPI
         if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
             return ['status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
         }
+        if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
+            return ['status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
+        }
 
         $analysis = self::identifyUploadedTrack(Config::$audio_upload_tmp_dir.'/'.$filename);
         if (isset($analysis['status'])) {
+            //If song can't be found in Last FM'
+            $analysis['error'] = $analysis['error'] . ' Track metadata will be automatically filled-in below if embeded within the file.';
             $analysis['fileid'] = $filename;
-
+            $analysis['analysis']['title'] = $fileInfo['tags_html']['id3v1']['title'];
+            $analysis['analysis']['artist'] = $fileInfo['tags_html']['id3v1']['artist'][0];
+            $analysis['analysis']['album'] = $fileInfo['tags_html']['id3v1']['album'];
+            $analysis['analysis']['position'] = $fileInfo['tags_html']['id3v2']['track_number'];
+            if (strpos($fileInfo['tags_html']['id3v1']['title'], 'explicit') !== false) {
+                $analysis['analysis']['explicit'] = true;
+            } else {
+                $analysis['analysis']['explicit'] = false;
+            }
             return $analysis;
         } else {
             return [
@@ -690,10 +704,6 @@ class MyRadio_Track extends ServiceAPI
         }
     }
 
-
-    /**
-     * Pay special attention to the tri-state value of explicit. False and null are different things.
-     */
     public static function identifyAndStoreTrack($tmpid, $title, $artist, $album, $position, $explicit = null)
     {
         // We need to rollback if something goes wrong later
