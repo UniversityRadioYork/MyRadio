@@ -619,6 +619,8 @@ class MyRadio_Track extends ServiceAPI
 
         $getID3 = new \getID3();
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir.'/'.$filename);
+        $getID3_lib = new \getID3_lib();
+        $getID3_lib->CopyTagsToComments($fileInfo);
         
 
         // File quality checks
@@ -637,11 +639,11 @@ class MyRadio_Track extends ServiceAPI
             //If song can't be found in Last FM'
             $analysis['error'] = $analysis['error'] . ' Track metadata will be automatically filled-in below if embeded within the file.';
             $analysis['fileid'] = $filename;
-            $analysis['analysis']['title'] = $fileInfo['tags_html']['id3v1']['title'];
-            $analysis['analysis']['artist'] = $fileInfo['tags_html']['id3v1']['artist'][0];
-            $analysis['analysis']['album'] = $fileInfo['tags_html']['id3v1']['album'];
-            $analysis['analysis']['position'] = $fileInfo['tags_html']['id3v2']['track_number'];
-            if (strpos($fileInfo['tags_html']['id3v1']['title'], 'explicit') !== false) {
+            $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
+            $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'][0];
+            $analysis['analysis']['album'] = $fileInfo['comments_html']['album'];
+            $analysis['analysis']['position'] = $fileInfo['comments_html']['track_number'];
+            if (strpos($fileInfo['comments_html']['title'], 'explicit') == true) {
                 $analysis['analysis']['explicit'] = true;
             } else {
                 $analysis['analysis']['explicit'] = false;
