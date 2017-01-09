@@ -98,7 +98,7 @@ var Library = function () {
                         if (manual_div !== null) {
                             // If the div exists, then the user has permission to upload a track
                             // manually, so display the div and set manual_track to true.
-                            $(manual_div).show();
+                            $(manual_div).slideDown();
                             manual_track = true;
                         }
                     }
@@ -196,7 +196,7 @@ var Library = function () {
 
                             result.removeClass('alert-danger')
                             .addClass('alert-info')
-                            .html(track_title + ': Saving');
+                            .html('<div class="glyphicon glyphicon-refresh gly-spin"></div>&nbsp;<strong>' + track_title + '</strong> is saving...');
                             $.ajax(
                                 {
                                     url: myradio.makeURL('NIPSWeb', 'confirm_central_upload'),
@@ -214,12 +214,13 @@ var Library = function () {
                                         data.fileid = data.fileid.replace(/\.mp3/, '');
                                         if (data.status == 'OK') {
                                             result.removeClass('alert-info')
-                                            .addClass('alert-success')
-                                            .html('<div class="glyphicon glyphicon-ok"></div>&nbsp;' + track_title + ' uploaded');
+                                            .addClass('alert-success alert-dismissable')
+                                            .html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><div class="glyphicon glyphicon-ok"></div>&nbsp;<strong>' + track_title + '</strong> uploaded successfully.');
+                                            $('#track-manual-entry').slideUp();
                                         } else {
                                             result.removeClass('alert-info')
                                             .addClass('alert-danger')
-                                            .html('<div class="glyphicon glyphicon-exclamation-sign"></div>&nbsp;' + track_title + ': ' + data.error);
+                                            .html('<div class="glyphicon glyphicon-exclamation-sign"></div>&nbsp;<strong>' + track_title + '</strong> ' + data.error);
                                         }
                                     }
                                 }
