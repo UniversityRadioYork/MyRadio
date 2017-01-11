@@ -626,31 +626,29 @@ class MyRadio_Track extends ServiceAPI
         // File quality checks
         if ($fileInfo['audio']['bitrate'] < 192000) {
             return ['status' => 'FAIL', 'message' => 'Bitrate is below 192kbps', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']];
-        } else if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
+        }
+        if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
             return ['status' => 'FAIL', 'message' => 'Item is not stereo', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
-        } else {
-            $analysis['status'] = 'INFO';
-            $analysis['message'] = 'Currently editing track information for';
-            $analysis['submittable'] = True;
-            $analysis['fileid'] = $filename;
-            $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
-            $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'];
-            $analysis['analysis']['album'] = $fileInfo['comments_html']['album'];
+        }
+
+        $analysis['status'] = 'INFO';
+        $analysis['message'] = 'Currently editing track information for';
+        $analysis['submittable'] = True;
+        $analysis['fileid'] = $filename;
+        $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
+        $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'];
+        $analysis['analysis']['album'] = $fileInfo['comments_html']['album'];
             
            
-            //Remove total tracks in album from the track_number tag.
-            $trackNo = explode("/", $fileInfo['comments_html']['track_number'][0], 2)[0];
-            $analysis['analysis']['position'] = (string)$trackNo;
+        //Remove total tracks in album from the track_number tag.
+        $trackNo = explode("/", $fileInfo['comments_html']['track_number'][0], 2)[0];
+        $analysis['analysis']['position'] = (string)$trackNo;
 
-            $trackName = implode("", $fileInfo['comments_html']['title']);
+        $trackName = implode("", $fileInfo['comments_html']['title']);
            
-            if (stripos($trackName, 'explicit') == true) {
-                $analysis['analysis']['explicit'] = true;
-            } else {
-                $analysis['analysis']['explicit'] = false;
-            }
-            return $analysis;
-        }
+        $analysis['analysis']['explicit'] = !!stripos($trackName, 'explicit');
+
+        return $analysis;
     }
 
     /**
