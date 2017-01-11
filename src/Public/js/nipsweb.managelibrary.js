@@ -164,7 +164,7 @@ var Library = function () {
                     }
 
                     // The submit part
-                    var submit = $('<a href="javascript:">Save' + (manual_track ? ' using below metadata' : '') + '</a>').click(
+                    var submit = $('<button type="button" class="btn btn-primary">Save Track</button>').click(
                         function () {
                             if (manual_track) {
                                 track_fileid = response.fileid;
@@ -198,8 +198,10 @@ var Library = function () {
 
                             result.removeClass('alert-danger')
                             .addClass('alert-info')
+                            .removeClass('current-track')
                             .html(icon_loading + '<strong>' + track_title + '</strong> is saving...').slideDown();
                             $('#track-manual-entry').slideUp();
+                            submit.remove();
                             $('.form-error').hide();
                             
                             $.ajax(
@@ -219,12 +221,10 @@ var Library = function () {
                                         data.fileid = data.fileid.replace(/\.mp3/, '');
                                         if (data.status == 'OK') {
                                             result.removeClass('alert-info')
-                                            .removeClass('current-track')
                                             .addClass('alert-success alert-dismissable')
                                             .html(icon_close + icon_ok + '<strong>' + track_title + '</strong> uploaded successfully.');
                                         } else {
                                             result.removeClass('alert-info')
-                                            .removeClass('current-track')
                                             .addClass('alert-danger alert-dismissable')
                                             .html(icon_close + icon_error + '<strong>' + track_title + '</strong> ' + data.error);
                                         }
@@ -237,7 +237,7 @@ var Library = function () {
                     result.append('<label for="centralupload-' + i + '">' + file.name + ' &nbsp;</label>');
                     //.append(select)
                     if (manual_track == true) {
-                        result.append(submit);
+                        $('#track-manual-entry form').append(submit);
                     }
                     $('#central-result').append(result);
                 }
