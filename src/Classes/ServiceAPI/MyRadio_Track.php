@@ -636,7 +636,7 @@ class MyRadio_Track extends ServiceAPI
             $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
             $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'];
             $analysis['analysis']['album'] = $fileInfo['comments_html']['album'];
-            $analysis['analysis']['position'] = $fileInfo['comments_html']['track_number'];
+            $analysis['analysis']['position'] = $fileInfo['comments_html']['track_number'][0];
 
             $trackName = implode("", $fileInfo['comments_html']['title']);
             if (stripos($trackName, 'explicit') == true) {
