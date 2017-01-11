@@ -289,15 +289,14 @@ var Library = function () {
 
                         if (window.auxid.match(/^aux-\d+$/)) {
                             //This is a central one - it can have an expiry
-                            result.append('<div class="row"><label for="resuploaddate-' + i + '" class="col-xs-4 control-label">Expiry Date: </label><div class="col-xs-6">');
-                            result.append(
+                            result.append('<div class="row"><label for="resuploaddate-' + i + '" class="col-xs-4 control-label">Expiry Date: </label><div class="col-xs-6 expiry-input"></div></div>');
+                            result.find('.expiry-input').html(
                                 $('<input type="text" placeholder="Leave blank to never expire." />').addClass('date form-control').attr('id', 'resuploaddate-' + i).datetimepicker(
                                     {
                                         pickTime: 'false'
                                     }
                                 )
                             )
-                            result.append('</div></div>');
                         }
                         result.append('<div id="confirminator-' + (response.fileid.replace(/\.mp3/, '')) + '"></div>');
                         result.find('.row:first-of-type').append(
