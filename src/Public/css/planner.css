@@ -72,6 +72,9 @@ body {
   padding: 5px 15px 3px 15px;
   margin: 5px 0;
 }
+.result-container .alert label {
+  margin-top: 6px;
+}
 .result-container .alert-dismissable {
     padding-right: 35px;
 }
