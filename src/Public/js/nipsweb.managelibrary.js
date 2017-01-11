@@ -269,9 +269,8 @@ var Library = function () {
 
                     var result = $('<div class="alert"></div>');
                     if (response['status'] == 'FAIL') {
-                        //An error occurred
-                        alert('fail');
-                        result.addClass('alert-danger').append('<span class="error">' + response['error'] + '</span>');
+                        //An error occurred, probably bitrate is too low.
+                        result.addClass('alert-danger alert-dismissable').append(icon_error + icon_close + '<strong>' + file.name + ':</strong> <span class="error">' + response['error'] + '</span>');
                         $('#res-result').append(result);
                     } else {
                         result.addClass('alert-info').append(
@@ -297,7 +296,7 @@ var Library = function () {
                                     }
                                 )
                             )
-                            .append('<em>Leave blank to never expire</em>&nbsp;&nbsp;');
+                            .append('<strong>Leave blank to never expire</strong>&nbsp;&nbsp;');
                         }
                         result.append('<div id="confirminator-' + (response.fileid.replace(/\.mp3/, '')) + '"></div>');
                         result.find('.row').append(
@@ -307,7 +306,7 @@ var Library = function () {
                                     var expire = result.find('input.date').val() || null;
                                     var fileid = result.find('input.title').attr('name');
 
-                                    result.html('Adding <em>' + title + '</em> to library');
+                                    result.html(icon_loading + 'Adding <strong>' + title + '</strong> to library...');
                                     $.ajax(
                                         {
                                             url: myradio.makeURL('NIPSWeb', 'confirm_aux_upload'),
@@ -323,13 +322,13 @@ var Library = function () {
                                                 data.fileid = data.fileid.replace(/\.mp3/, '');
                                                 if (data.status == 'OK') {
                                                     result.removeClass('alert-info')
-                                                    .addClass('alert-success')
-                                                    .html(icon_ok + title + '</em> added to library');
+                                                    .addClass('alert-success alert-dismissable')
+                                                    .html(icon_ok + icon_close + '<strong>' + title + ':</strong> was added to library.');
                                                 } else {
                                                     result.removeClass('alert-info')
-                                                    .addClass('alert-danger')
+                                                    .addClass('alert-danger alert-dismissable')
                                                     .html(
-                                                        icon_error + title + '</em> could not be added to library.<br>'
+                                                        icon_error + icon_close + '<strong>' + title + ':</strong> could not be added to library.<br>Error: '
                                                         + data.error
                                                     );
                                                 }
