@@ -309,6 +309,21 @@ var Library = function () {
                                     var expire = result.find('input.date').val() || null;
                                     var fileid = result.find('input.title').attr('name');
 
+                                    if (!title) {
+                                        $('.form-error').html(icon_error + 'Please enter a title.').slideDown();
+                                        //Flash the empty input
+                                        result.find('input.title').prop('disabled', true); 
+                                        setTimeout(
+                                            function () {
+                                                result.find('input.title').prop('disabled', false); 
+                                                result.find('input.title').focus();
+                                            },
+                                            500
+                                        )
+                                        
+                                        return;
+                                    }
+
                                     result.html(icon_loading + 'Adding <strong>' + title + '</strong> to library...');
                                     $.ajax(
                                         {
