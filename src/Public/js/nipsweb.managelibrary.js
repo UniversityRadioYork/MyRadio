@@ -256,27 +256,36 @@ var Library = function () {
                 maxfilesize: mConfig.audio_upload_max_size,
                 queuefiles: 1,
                 drop: function () {
-                    $('#res-status').html('Reading file (0%)...');
+                    $('#res-status').html(icon_loading + 'Reading file (0%)...');
                 },
                 uploadStarted: function (i, file, total) {
-                    $('#res-status').html('Uploading ' + file.name + '... (' + byteSize(file.size) + ')');
+                    $('#res-status').html(icon_loading + 'Uploading ' + file.name + '... (' + byteSize(file.size) + ')');
                 },
                 progressUpdated: function (i, file, progress) {
-                    $('#res-status').html('Reading ' + file.name + ' (' + progress + '%)...');
+                    $('#res-status').html(icon_loading + 'Reading ' + file.name + ' (' + progress + '%)...');
                 },
                 uploadFinished: function (i, file, response, time) {
-                    $('#res-status').html('Uploaded ' + file.name);
+                    $('#res-status').html(icon_ok + 'Uploaded ' + file.name);
 
                     var result = $('<div class="alert"></div>');
                     if (response['status'] == 'FAIL') {
                         //An error occurred
+                        alert('fail');
                         result.addClass('alert-danger').append('<span class="error">' + response['error'] + '</span>');
+                        $('#res-result').append(result);
                     } else {
                         result.addClass('alert-info').append(
-                            '<div id="resupload-' + i + '">' +
-                            file.name + ': <input type="text" class="title" name="' +
-                            response.fileid + '" id="resuploadname-' + i +
-                            '" placeholder="Enter a helpful name..." /></div>'
+                            '<div id="resupload-' + i + '" class="row">' + 
+                                '<label for="resuploadname-' + i + '" class="col-sm-4 control-label">' +
+                                    file.name + 
+                                ':</label>' +
+                                '<div class="col-sm-6">' + 
+                                    '<input type="text" class="title form-control" name="' +
+                                        response.fileid + '" id="resuploadname-' + i +
+                                    '" placeholder="Enter a helpful name..." />' +
+                                '</div>' +
+                            '</div>'
+                                
                         );
 
                         if (window.auxid.match(/^aux-\d+$/)) {
@@ -291,8 +300,8 @@ var Library = function () {
                             .append('<em>Leave blank to never expire</em>&nbsp;&nbsp;');
                         }
                         result.append('<div id="confirminator-' + (response.fileid.replace(/\.mp3/, '')) + '"></div>');
-                        result.append(
-                            $('<a href="javascript:">Save</a>').click(
+                        result.find('.row').append(
+                            $('<div class="col-sm-2"><button type="button" class="btn btn-primary save-button">Save</button></div>').click(
                                 function () {
                                     var title = result.find('input.title').val();
                                     var expire = result.find('input.date').val() || null;
@@ -315,12 +324,12 @@ var Library = function () {
                                                 if (data.status == 'OK') {
                                                     result.removeClass('alert-info')
                                                     .addClass('alert-success')
-                                                    .html('<div class="glyphicon glyphicon-ok"></div><em>' + title + '</em> added to library');
+                                                    .html(icon_ok + title + '</em> added to library');
                                                 } else {
                                                     result.removeClass('alert-info')
                                                     .addClass('alert-danger')
                                                     .html(
-                                                        '<div class="glyphicon glyphicon-exclamation-sign"></div><em>' + title + '</em> could not be added to library<br>'
+                                                        icon_error + title + '</em> could not be added to library.<br>'
                                                         + data.error
                                                     );
                                                 }
@@ -330,9 +339,8 @@ var Library = function () {
                                 }
                             )
                         );
-
-                        $('#res-result').append(result);
                     }
+                    $('#res-result').append(result);
                 }
             }
         );
