@@ -657,6 +657,8 @@ class MyRadio_Track extends ServiceAPI
      * !This method requires the external lastfm-fpclient application to be installed on the server. A FreeBSD build
      * with URY's API key and support for -json can be found in the fpclient.git URY Git repository.
      *
+     ***** Since LastFM was removed from the central track uploader, this code MAY not be used anymore.
+     *
      * @param string $path The location of the MP3 file
      *
      * @return array A parsed array version of the JSON lastfm response

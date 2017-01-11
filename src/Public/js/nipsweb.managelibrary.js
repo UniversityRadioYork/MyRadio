@@ -235,7 +235,6 @@ var Library = function () {
                     );
 
                     result.append('<label for="centralupload-' + i + '">' + file.name + ' &nbsp;</label>');
-                    //.append(select)
                     if (manual_track == true) {
                         $('#track-manual-entry form').append(submit);
                     }
