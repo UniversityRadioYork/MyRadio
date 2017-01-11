@@ -276,10 +276,10 @@ var Library = function () {
                     } else {
                         result.addClass('alert-info').append(
                             '<div id="resupload-' + i + '" class="row">' + 
-                                '<label for="resuploadname-' + i + '" class="col-sm-4 control-label">' +
+                                '<label for="resuploadname-' + i + '" class="col-xs-4 control-label">' +
                                     file.name + 
                                 ':</label>' +
-                                '<div class="col-sm-6">' + 
+                                '<div class="col-xs-6">' + 
                                     '<input type="text" class="title form-control" name="' +
                                         response.fileid + '" id="resuploadname-' + i +
                                     '" placeholder="Enter a helpful name..." />' +
@@ -301,7 +301,7 @@ var Library = function () {
                         }
                         result.append('<div id="confirminator-' + (response.fileid.replace(/\.mp3/, '')) + '"></div>');
                         result.find('.row').append(
-                            $('<div class="col-sm-2"><button type="button" class="btn btn-primary save-button">Save</button></div>').click(
+                            $('<div class="col-xs-2"><button type="button" class="btn btn-primary save-button">Save</button></div>').click(
                                 function () {
                                     var title = result.find('input.title').val();
                                     var expire = result.find('input.date').val() || null;
