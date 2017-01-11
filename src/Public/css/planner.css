@@ -58,14 +58,11 @@ body {
 }
 #central-status, #res-status {
   position: relative;
-  top: calc(100% - 60px);
+  top: calc(100% - 33px);
   left: -19px;
   width: calc(100% + 38px);
   height: 32px;
   padding-top: 5px;
-}
-#res-status {
-  top: calc(100% - 33px);
 }
 .result-container {
   width: 550px;
@@ -73,7 +70,7 @@ body {
 .result-container .alert {
   width: 100%;
   padding: 5px 15px 3px 15px;
-  margin: 0;
+  margin: 5px 0;
 }
 .result-container .alert-dismissable {
     padding-right: 35px;
@@ -120,12 +117,6 @@ body {
   }
 }
 
-#lastfm-attr {
-  position: relative;
-  top: calc(100% - 70px);
-  right: 1em;
-  text-align: right;
-}
 #baps-channel-res {
   height: calc(100% - 90px);
 }
