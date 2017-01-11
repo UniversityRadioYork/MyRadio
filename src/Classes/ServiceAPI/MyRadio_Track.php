@@ -625,36 +625,26 @@ class MyRadio_Track extends ServiceAPI
 
         // File quality checks
         if ($fileInfo['audio']['bitrate'] < 192000) {
-            return ['status' => 'FAIL', 'error' => 'Bitrate is below 192kbps.', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']];
-        }
-        if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
-            return ['status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
-        }
-        if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
-            return ['status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
-        }
-
-        $analysis = self::identifyUploadedTrack(Config::$audio_upload_tmp_dir.'/'.$filename);
-        if (isset($analysis['status'])) {
-            //If song can't be found in Last FM'
-            $analysis['error'] = $analysis['error'] . ' Track metadata will be automatically filled-in below if embeded within the file.';
+            return ['status' => 'FAIL', 'message' => 'Bitrate is below 192kbps', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']];
+        } else if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
+            return ['status' => 'FAIL', 'message' => 'Item is not stereo', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
+        } else {
+            $analysis['status'] = 'INFO';
+            $analysis['message'] = 'Currently editing track information for';
+            $analysis['submittable'] = True;
             $analysis['fileid'] = $filename;
             $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
-            $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'][0];
+            $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'];
             $analysis['analysis']['album'] = $fileInfo['comments_html']['album'];
             $analysis['analysis']['position'] = $fileInfo['comments_html']['track_number'];
-            if (strpos($fileInfo['comments_html']['title'], 'explicit') == true) {
+
+            $trackName = implode("", $fileInfo['comments_html']['title']);
+            if (stripos($trackName, 'explicit') == true) {
                 $analysis['analysis']['explicit'] = true;
             } else {
                 $analysis['analysis']['explicit'] = false;
             }
             return $analysis;
-        } else {
-            return [
-                'fileid' => $filename,
-                'status' => 'OK',
-                'analysis' => $analysis,
-            ];
         }
     }
 
