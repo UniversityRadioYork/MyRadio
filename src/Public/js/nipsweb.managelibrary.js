@@ -116,6 +116,8 @@ var Library = function () {
                             $('.current-track').append('File was not submitted. ');
                             $('.current-track a').remove();
                             $('.current-track').removeClass('alert-info').addClass('alert-danger').removeClass('current-track'); 
+                            //Hide any previous form fill errors.
+                            $('.form-error').slideUp();
                         }       
                     var result = $('<div class="alert"></div>');
 
@@ -198,6 +200,7 @@ var Library = function () {
                             .addClass('alert-info')
                             .html(icon_loading + '<strong>' + track_title + '</strong> is saving...').slideDown();
                             $('#track-manual-entry').slideUp();
+                            $('.form-error').hide();
                             
                             $.ajax(
                                 {
