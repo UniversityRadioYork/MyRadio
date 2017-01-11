@@ -4,8 +4,13 @@ var Library = function () {
             'audio/mp3', 'audio/x-mp3', 'audio/mpg', 'audio/mpg3', 'audio/mpegaudio'];
     var allowed_all = ['audio/mpeg3', 'audio/x-mpeg-3', 'audio/mpeg', 'audio/x-mpeg',
             'audio/mp3', 'audio/x-mp3', 'audio/mpg', 'audio/mpg3', 'audio/mpegaudio', 'audio/wav', 'audio/x-wav',
-            'audio/mp4a-latm', 'audio/mp4', 'audio/aac']
+            'audio/mp4a-latm', 'audio/mp4', 'audio/aac'];
 
+    var icon_error = '<div class="glyphicon glyphicon-exclamation-sign"></div>&nbsp;';
+    var icon_ok = '<div class="glyphicon glyphicon-ok"></div>&nbsp;';
+    var icon_ok = '<div class="glyphicon glyphicon-ok"></div>&nbsp;';
+    var icon_loading = '<div class="glyphicon glyphicon-refresh gly-spin"></div>&nbsp;';
+    var icon_close = '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>';
     //Converts bytes to human readable numbers
     var byteSize = function (size) {
         if (size > 1048576) {
@@ -67,52 +72,61 @@ var Library = function () {
                 paramname: 'audio',
                 error: filedrop_error_handler,
                 allowedfiletypes: allowed_mp3,
-                maxfiles: 20,
+                maxfiles: 1,
                 maxfilesize: mConfig.audio_upload_max_size,
                 queuefiles: 1,
                 drop: function () {
-                    $('#central-status').html('Reading file (0%)...');
+                    $('#central-status').html(icon_loading + 'Reading file (0%)...');
                 },
                 uploadStarted: function (i, file, total) {
-                    $('#central-status').html('Uploading ' + file.name + '... (' + byteSize(file.size) + ')');
+                    $('#central-status').html(icon_loading + 'Uploading ' + file.name + '... (' + byteSize(file.size) + ')');
                 },
                 progressUpdated: function (i, file, progress) {
-                    $('#central-status').html('Reading ' + file.name + ' (' + progress + '%)...');
+                    $('#central-status').html(icon_loading + 'Reading ' + file.name + ' (' + progress + '%)...');
                 },
                 uploadFinished: function (i, file, response, time) {
-                    var status = 'Uploaded ' + file.name;
+                    var status = icon_ok + 'Uploaded ' + file.name;
                     $('#central-status').html(status);
 
                     setTimeout(
                         function () {
                             if ($('#central-status').html() == status) {
-                                $('#central-status').html('Ready');
+                                $('#central-status').html(icon_ok + 'Ready');
                             }
                         },
                         5000
                     )
 
                     var manual_track = false;
-                    if (response['status'] !== 'OK' || response.analysis.length === 0) {
-                        var manual_div = document.getElementById('track-manual-entry');
+                    var manual_div = document.getElementById('track-manual-entry');
                         if (manual_div !== null) {
-                            // If the div exists, then the user has permission to upload a track
-                            // manually, so display the div and set manual_track to true.
-                            $(manual_div).slideDown();
-                            manual_track = true;
-                        }
-                    }
-
+                            if (response['status'] !== 'OK' && response['submittable'] == true ) {
+                                
+                                    // If the div exists, then the user has permission to upload a track
+                                    // manually, so display the div and set manual_track to true.
+                                    $(manual_div).slideDown();
+                                    manual_track = true;
+                                
+                            } else if (response['status'] !== 'OK' && response['submittable'] != true ) {
+                                    $(manual_div).slideUp();
+                                    manual_track = false;
+                            } 
+                            //Prevents any previous uploaded but not submmited tracks from being incorrectly submitted.
+                            $('.current-track span').html(icon_error)
+                            $('.current-track').append('File was not submitted. ');
+                            $('.current-track a').remove();
+                            $('.current-track').removeClass('alert-info').addClass('alert-danger').removeClass('current-track'); 
+                        }       
                     var result = $('<div class="alert"></div>');
 
                     if (response['status'] !== 'OK') {
-                        //An error occurred
-                        result.addClass('alert-danger').append('<span class="error">' + response['error'] + '</span>');
-                        if (manual_track) {
-                            result.append('<br>');
+                        if (response['status'] === 'FAIL') {
+                            //An error occurred
+                            result.addClass('alert-danger').append('<span class="error">' + icon_error + response['message'] + ': </span>');
+                        } else if (response['status'] === 'INFO') {
+                            //An info message has been sent (A song is now being edited)
+                            result.addClass('alert-info current-track').append('<span class="error">' + response['message'] + ': </span>');
                         }
-                    } else {
-                        result.addClass('alert-info');
                     }
 
                     // Track info.
@@ -122,30 +136,23 @@ var Library = function () {
                     var track_album = "";
                     var track_position = "";
 
-                    // Build a list of tracks from the lastfm responses and store it in a drop
-                    // down list
-                    var select = "";
-                    if (!manual_track) {
-                        select = $('<select></select>')
-                        .attr('name', response.fileid).attr('id', 'centralupload-' + i);
-                        $.each(
-                            response.analysis,
-                            function (
-                                key,
-                                value
-                            ) {
-                                select.append('<option value="' + value.title + ':-:' + value.artist + '">' + value.title + ' by ' + value.artist + '</option>');
+
+                    if (manual_track) {
+                        if (response.analysis) {
+                            //Otherwise, if we got an analysis from the ID3 tags, prefill the textboxes.
+                            function decodeHtml(html) {
+                                //Removes special HTML &xxx; from recieved data
+                                var txt = document.createElement("textarea");
+                                txt.innerHTML = html;
+                                return txt.value;
                             }
-                        );
-                    } else {
-                        if (response.analysis.length != 0) {
-                            document.getElementById('track-manual-entry-title').value = response.analysis.title;
-                            document.getElementById('track-manual-entry-artist').value = response.analysis.artist;
-                            document.getElementById('track-manual-entry-album').value = response.analysis.album;
-                            document.getElementById('track-manual-entry-position').value = response.analysis.position;
+                            document.getElementById('track-manual-entry-title').value = decodeHtml(response.analysis.title);
+                            document.getElementById('track-manual-entry-artist').value = decodeHtml(response.analysis.artist);
+                            document.getElementById('track-manual-entry-album').value = decodeHtml(response.analysis.album);
+                            document.getElementById('track-manual-entry-position').value = decodeHtml(response.analysis.position);
                             document.getElementById('track-manual-entry-explicit').checked = response.analysis.explicit;
                         } else {
-                            //this isn't right, should go into php file.
+                            //If we didn't get an analysis for some reason, just make the textboxes empty.
                             document.getElementById('track-manual-entry-title').value = '';
                             document.getElementById('track-manual-entry-artist').value = '';
                             document.getElementById('track-manual-entry-album').value = '';
@@ -157,14 +164,7 @@ var Library = function () {
                     // The submit part
                     var submit = $('<a href="javascript:">Save' + (manual_track ? ' using below metadata' : '') + '</a>').click(
                         function () {
-                            if (!manual_track) {
-                                var select = $(this).parent().find('select').val();
-                                track_fileid = $(this).parent().find('select').attr('name');
-                                track_title = select.replace(/:-:.*$/, '');
-                                track_artist = select.replace(/^.*:-:/, '');
-                                track_album = "FROM_LASTFM";
-                                track_position = "FROM_LASTFM";
-                            } else {
+                            if (manual_track) {
                                 track_fileid = response.fileid;
                                 track_title = document.getElementById('track-manual-entry-title').value;
                                 track_artist = document.getElementById('track-manual-entry-artist').value;
@@ -173,22 +173,22 @@ var Library = function () {
                                 track_explicit = document.getElementById('track-manual-entry-explicit').checked;
 
                                 if (!track_title) {
-                                    result.find('.error').html('Please enter a title');
+                                    $('.form-error').html(icon_error + 'Please enter a title.').slideDown();
                                     $('#track-manual-entry-title').focus();
                                     return;
                                 }
                                 if (!track_artist) {
-                                    result.find('.error').html('Please enter an artist');
+                                    $('.form-error').html(icon_error + 'Please enter an artist.').slideDown();
                                     $('#track-manual-entry-artist').focus();
                                     return;
                                 }
                                 if (!track_album) {
-                                    result.find('.error').html('Please enter an album');
+                                    $('.form-error').html(icon_error + 'Please enter an album.').slideDown();
                                     $('#track-manual-entry-album').focus();
                                     return;
                                 }
                                 if (!track_position) {
-                                    result.find('.error').html('Please enter a track number');
+                                    $('.form-error').html(icon_error + 'Please enter a track number.').slideDown();
                                     $('#track-manual-entry-position').focus();
                                     return;
                                 }
@@ -196,7 +196,9 @@ var Library = function () {
 
                             result.removeClass('alert-danger')
                             .addClass('alert-info')
-                            .html('<div class="glyphicon glyphicon-refresh gly-spin"></div>&nbsp;<strong>' + track_title + '</strong> is saving...');
+                            .html(icon_loading + '<strong>' + track_title + '</strong> is saving...').slideDown();
+                            $('#track-manual-entry').slideUp();
+                            
                             $.ajax(
                                 {
                                     url: myradio.makeURL('NIPSWeb', 'confirm_central_upload'),
@@ -214,13 +216,14 @@ var Library = function () {
                                         data.fileid = data.fileid.replace(/\.mp3/, '');
                                         if (data.status == 'OK') {
                                             result.removeClass('alert-info')
+                                            .removeClass('current-track')
                                             .addClass('alert-success alert-dismissable')
-                                            .html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><div class="glyphicon glyphicon-ok"></div>&nbsp;<strong>' + track_title + '</strong> uploaded successfully.');
-                                            $('#track-manual-entry').slideUp();
+                                            .html(icon_close + icon_ok + '<strong>' + track_title + '</strong> uploaded successfully.');
                                         } else {
                                             result.removeClass('alert-info')
-                                            .addClass('alert-danger')
-                                            .html('<div class="glyphicon glyphicon-exclamation-sign"></div>&nbsp;<strong>' + track_title + '</strong> ' + data.error);
+                                            .removeClass('current-track')
+                                            .addClass('alert-danger alert-dismissable')
+                                            .html(icon_close + icon_error + '<strong>' + track_title + '</strong> ' + data.error);
                                         }
                                     }
                                 }
@@ -228,9 +231,11 @@ var Library = function () {
                         }
                     );
 
-                    result.append('<label for="centralupload-' + i + '">' + file.name + ':&nbsp;</label>')
-                    .append(select)
-                    .append(submit);
+                    result.append('<label for="centralupload-' + i + '">' + file.name + ' &nbsp;</label>');
+                    //.append(select)
+                    if (manual_track == true) {
+                        result.append(submit);
+                    }
                     $('#central-result').append(result);
                 }
             }
@@ -339,7 +344,7 @@ var Library = function () {
         $('#res-type-sel').on('keyup', res_type_sel_change_handler);
         centralDbInit();
         auxDbInit();
-        $('#central-status, #res-status').html('Ready');
+        $('#central-status, #res-status').html('<div class="glyphicon glyphicon-ok"></div>&nbsp;Ready');
     };
 
     return {
