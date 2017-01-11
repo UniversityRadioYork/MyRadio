@@ -636,9 +636,14 @@ class MyRadio_Track extends ServiceAPI
             $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
             $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'];
             $analysis['analysis']['album'] = $fileInfo['comments_html']['album'];
-            $analysis['analysis']['position'] = $fileInfo['comments_html']['track_number'][0];
+            
+           
+            //Remove total tracks in album from the track_number tag.
+            $trackNo = explode("/", $fileInfo['comments_html']['track_number'][0], 2)[0];
+            $analysis['analysis']['position'] = (string)$trackNo;
 
             $trackName = implode("", $fileInfo['comments_html']['title']);
+           
             if (stripos($trackName, 'explicit') == true) {
                 $analysis['analysis']['explicit'] = true;
             } else {
