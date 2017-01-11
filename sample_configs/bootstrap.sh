@@ -69,5 +69,8 @@ su - postgres -c "cat /vagrant/sample_configs/postgres.sql | psql"
 service apache2 start
 
 # Somewhere to store audio uploads
-mkdir -p /music/records
-chown www-data:www-data /music/records
+music_dirs=( "records" "membersmusic" "beds" "jingles" )
+for i in "${music_dirs[@]}"; do
+	mkdir -p /music/$i
+	chown www-data:www-data /music/$i
+done
