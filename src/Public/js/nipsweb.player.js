@@ -382,7 +382,7 @@ var NIPSWeb = function (d) {
         $('ul.baps-channel li').tooltip(
             {
                 delay: 500,
-                placement: 'right',
+                placement: 'auto right',
                 container: 'body'
             }
         );
