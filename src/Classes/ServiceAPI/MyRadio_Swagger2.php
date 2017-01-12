@@ -83,7 +83,8 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
      * @param ReflectionMethod The method
      * @return bool
      */
-    private static function isOptionInPathForMethod($method) {
+    private static function isOptionInPathForMethod($method)
+    {
         $doc = self::getMethodDoc($method);
         return self::getMethodOpType($method) === 'get' &&
             $method->getNumberOfRequiredParameters() === 1 &&
