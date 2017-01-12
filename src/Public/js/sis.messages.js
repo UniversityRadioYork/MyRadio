@@ -71,7 +71,7 @@ var Messages = function () {
                 
                 //Set some of the variables
                 icon_location = "<div class='glyphicon glyphicon-" + glyphicons[data[i]['type']] + "' title='Location: " + locationNames[data[i]['type']] + ", click for more details.'></div>";
-                icon_unread = "<div class='glyphicon glyphicon-record' title='Message unread, click to mark read.'></div>";
+                icon_unread = "<div class='unread-dot' title='Message unread, click to mark read.'></div>";
                 msgdate = moment.unix(data[i]['time']);
                 time = msgdate.format('HH:mm');
                 read = "";
@@ -86,7 +86,14 @@ var Messages = function () {
 
                 locationTd.innerHTML = icon_location;
                 unreadTd.innerHTML = icon_unread;
-                titleTd.innerHTML = data[i]['title'];
+
+                var longTitle = data[i]['title'];
+                var trimmedTitle = longTitle.substring(0, 120);
+                if (longTitle != trimmedTitle) {
+                    trimmedTitle = trimmedTitle + '... <a>Read more</a>';
+                }
+                titleTd.innerHTML = trimmedTitle;
+                
 
                 dateDate.innerHTML = time;
                 dateDate.setAttribute('datetime', msgdate.toISOString());
