@@ -47,7 +47,7 @@
 }
 .td-msgitem td:first-child {
   visibility: hidden;
-  color: #fd0;
+  color: #2aaef5;
   width: 15px;
 }
 .td-msgitem.unread td:first-child {
