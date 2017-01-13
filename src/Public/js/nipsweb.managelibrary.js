@@ -100,24 +100,23 @@ var Library = function () {
                     var manual_track = false;
                     var manual_div = document.getElementById('track-manual-entry');
                         if (manual_div !== null) {
-                            if (response['status'] !== 'OK' && response['submittable'] == true ) {
-                                
+                            if (response['status'] !== 'OK' && response['submittable']) {
                                     // If the div exists, then the user has permission to upload a track
                                     // manually, so display the div and set manual_track to true.
                                     $(manual_div).slideDown();
                                     manual_track = true;
-                                
                             } else if (response['status'] !== 'OK' && response['submittable'] != true ) {
                                     $(manual_div).slideUp();
                                     manual_track = false;
                             } 
-                            //Prevents any previous uploaded but not submmited tracks from being incorrectly submitted.
+                            //Prevents any previous uploaded but not submitted tracks from being incorrectly submitted.
                             $('.current-track span').html(icon_error)
                             $('.current-track').append('File was not submitted. ');
                             $('.current-track a').remove();
                             $('.current-track').removeClass('alert-info').addClass('alert-danger').removeClass('current-track'); 
                             //Hide any previous form fill errors.
                             $('.form-error').slideUp();
+                            $('#track-manual-entry button').remove();
                         }       
                     var result = $('<div class="alert"></div>');
 
@@ -137,7 +136,6 @@ var Library = function () {
                     var track_artist = "";
                     var track_album = "";
                     var track_position = "";
-
 
                     if (manual_track) {
                         if (response.analysis) {
@@ -235,7 +233,7 @@ var Library = function () {
                     );
 
                     result.append('<label for="centralupload-' + i + '">' + file.name + ' &nbsp;</label>');
-                    if (manual_track == true) {
+                    if (manual_track) {
                         $('#track-manual-entry form').append(submit);
                     }
                     $('#central-result').append(result);
@@ -319,7 +317,6 @@ var Library = function () {
                                             },
                                             500
                                         )
-                                        
                                         return;
                                     }
 
@@ -376,8 +373,6 @@ var Library = function () {
         initialise: initialise
     };
 }
-
-
 
 $(document).ready(
     function () {

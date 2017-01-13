@@ -620,8 +620,7 @@ class MyRadio_Track extends ServiceAPI
         $getID3 = new \getID3();
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir.'/'.$filename);
         $getID3_lib = new \getID3_lib();
-        $getID3_lib->CopyTagsToComments($fileInfo);
-        
+        $getID3_lib->CopyTagsToComments($fileInfo);       
 
         // File quality checks
         if ($fileInfo['audio']['bitrate'] < 192000) {
@@ -638,14 +637,12 @@ class MyRadio_Track extends ServiceAPI
         $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
         $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'];
         $analysis['analysis']['album'] = $fileInfo['comments_html']['album'];
-            
            
         //Remove total tracks in album from the track_number tag.
         $trackNo = explode("/", $fileInfo['comments_html']['track_number'][0], 2)[0];
         $analysis['analysis']['position'] = (string)$trackNo;
 
-        $trackName = implode("", $fileInfo['comments_html']['title']);
-           
+        $trackName = implode("", $fileInfo['comments_html']['title']);   
         $analysis['analysis']['explicit'] = !!stripos($trackName, 'explicit');
 
         return $analysis;
