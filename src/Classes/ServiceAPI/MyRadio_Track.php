@@ -194,7 +194,6 @@ class MyRadio_Track extends ServiceAPI
             new MyRadioFormField('album', MyRadioFormField::TYPE_ALBUM, ['label' => 'Album'])
         );
     }
-
     public function getEditForm()
     {
         return self::getForm()
@@ -207,6 +206,31 @@ class MyRadio_Track extends ServiceAPI
                 ]
             );
     }
+
+    public static function getSearchForm()
+    {
+        return (
+            new MyRadioForm(
+                'lib_search',
+                'Library',
+                'search',
+                [
+                    'title' => 'Library Search',
+                ]
+            )
+        )->addField(
+            new MyRadioFormField('title', MyRadioFormField::TYPE_TEXT, ['required' => false, 'label' => 'Title'])
+        )->addField(
+            new MyRadioFormField('artist', MyRadioFormField::TYPE_TEXT, ['required' => false, 'label' => 'Artist'])
+        );
+    }
+
+    public function getSearchEditForm()
+    {
+        return self::getSearchForm()
+            ->editMode();
+    }
+    
 
     /**
      * Returns a "summary" string - the title and artist seperated with a dash.
