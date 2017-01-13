@@ -13,8 +13,7 @@ if (isset($_REQUEST['title']) || isset($_REQUEST['artist'])) {
     );
 }
 
-CoreUtils::getTemplateObject()->addError('Currently, the exact Track and/or Artist must be entered.')
-    ->setTemplate('table.twig')
+CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('tablescript', 'myury.library.search')
     ->addVariable('tabledata', CoreUtils::dataSourceParser($tracks))
     ->addVariable('title', 'Search Library')
