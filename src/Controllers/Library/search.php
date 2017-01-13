@@ -10,8 +10,21 @@ use \MyRadio\ServiceAPI\MyRadio_Track;
  */
 use \MyRadio\MyRadio\URLUtils;
 //use \MyRadio\ServiceAPI\MyRadio_Track;
-MyRadio_Track::getSearchEditForm()
-        ->render();
+
+            $form = new MyRadioForm(
+                'lib_search',
+                'Library',
+                'search',
+                [
+                    'title' => 'Library Search'
+                ]
+            );
+        
+        $form->addField(
+            new MyRadioFormField('title', MyRadioFormField::TYPE_TEXT, ['required' => false, 'label' => 'Title'])
+        )->addField(
+            new MyRadioFormField('artist', MyRadioFormField::TYPE_TEXT, ['required' => false, 'label' => 'Artist'])
+        );
         
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
@@ -29,14 +42,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tracks = null;
     }
 
-    CoreUtils::getTemplateObject()->setTemplate('table.twig')
-        ->addVariable('tablescript', 'myury.library.search')
-        ->addVariable('tabledata', CoreUtils::dataSourceParser($tracks))
-        ->addVariable(
-            'text',
-            'Here you can search for tracks in the Central Music Library.'
-        )
-        ->render();
+    //CoreUtils::getTemplateObject()->setTemplate('table.twig')
+      //  ->addVariable('tablescript', 'myury.library.search')
+      //  ->addVariable('tabledata', CoreUtils::dataSourceParser($tracks))
+      //  ->addVariable(
+      //      'text',
+      //      'Here you can search for tracks in the Central Music Library.'
+      //  )
+      //  ->render();
 
     //$track = MyRadio_Track::getInstance($data['id']);
     //$track->setTitle($data['title']);
@@ -46,6 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //URLUtils::backWithMessage('Track Updated.');
 } //else {
     //Not Submitted
-
+        $form->setTemplate('Library/search.twig')
+            ->render([
+            'tabledata' => CoreUtils::dataSourceParser($tracks),
+            'tablescript' => 'myury.library.search'
+            ]
+        );
     
 //}
