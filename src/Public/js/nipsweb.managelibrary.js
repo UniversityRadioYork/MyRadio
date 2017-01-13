@@ -97,17 +97,17 @@ var Library = function () {
                         5000
                     )
 
-                    var manual_track = false;
+                    var submittable_track = false;
                     var manual_div = document.getElementById('track-manual-entry');
                         if (manual_div !== null) {
                             if (response['status'] !== 'OK' && response['submittable']) {
                                     // If the div exists, then the user has permission to upload a track
-                                    // manually, so display the div and set manual_track to true.
+                                    // manually, so display the div and set submittable_track to true.
                                     $(manual_div).slideDown();
-                                    manual_track = true;
+                                    submittable_track = true;
                             } else if (response['status'] !== 'OK' && response['submittable'] != true ) {
                                     $(manual_div).slideUp();
-                                    manual_track = false;
+                                    submittable_track = false;
                             } 
                             //Prevents any previous uploaded but not submitted tracks from being incorrectly submitted.
                             $('.current-track span').html(icon_error)
@@ -137,7 +137,7 @@ var Library = function () {
                     var track_album = "";
                     var track_position = "";
 
-                    if (manual_track) {
+                    if (submittable_track) {
                         if (response.analysis) {
                             //Otherwise, if we got an analysis from the ID3 tags, prefill the textboxes.
                             function decodeHtml(html) {
@@ -164,7 +164,7 @@ var Library = function () {
                     // The submit part
                     var submit = $('<button type="button" class="btn btn-primary">Save Track</button>').click(
                         function () {
-                            if (manual_track) {
+                            if (submittable_track) {
                                 track_fileid = response.fileid;
                                 track_title = document.getElementById('track-manual-entry-title').value;
                                 track_artist = document.getElementById('track-manual-entry-artist').value;
@@ -233,7 +233,7 @@ var Library = function () {
                     );
 
                     result.append('<label for="centralupload-' + i + '">' + file.name + ' &nbsp;</label>');
-                    if (manual_track) {
+                    if (submittable_track) {
                         $('#track-manual-entry form').append(submit);
                     }
                     $('#central-result').append(result);
