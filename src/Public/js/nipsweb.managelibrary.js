@@ -1,16 +1,15 @@
 var Library = function () {
     var auxid = null;
-    var allowed_mp3 = ['audio/mpeg3', 'audio/x-mpeg-3', 'audio/mpeg', 'audio/x-mpeg',
+    const ALLOWED_MP3 = ['audio/mpeg3', 'audio/x-mpeg-3', 'audio/mpeg', 'audio/x-mpeg',
             'audio/mp3', 'audio/x-mp3', 'audio/mpg', 'audio/mpg3', 'audio/mpegaudio'];
-    var allowed_all = ['audio/mpeg3', 'audio/x-mpeg-3', 'audio/mpeg', 'audio/x-mpeg',
+    const ALLOWED_ALL = ['audio/mpeg3', 'audio/x-mpeg-3', 'audio/mpeg', 'audio/x-mpeg',
             'audio/mp3', 'audio/x-mp3', 'audio/mpg', 'audio/mpg3', 'audio/mpegaudio', 'audio/wav', 'audio/x-wav',
             'audio/mp4a-latm', 'audio/mp4', 'audio/aac'];
 
-    var icon_error = '<div class="glyphicon glyphicon-exclamation-sign"></div>&nbsp;';
-    var icon_ok = '<div class="glyphicon glyphicon-ok"></div>&nbsp;';
-    var icon_ok = '<div class="glyphicon glyphicon-ok"></div>&nbsp;';
-    var icon_loading = '<div class="glyphicon glyphicon-refresh gly-spin"></div>&nbsp;';
-    var icon_close = '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>';
+    const ICON_ERROR = '<div class="glyphicon glyphicon-exclamation-sign"></div>&nbsp;';
+    const ICON_OK = '<div class="glyphicon glyphicon-ok"></div>&nbsp;';
+    const ICON_LOADING = '<div class="glyphicon glyphicon-refresh gly-spin"></div>&nbsp;';
+    const ICON_CLOSE = '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>';
     //Converts bytes to human readable numbers
     var byteSize = function (size) {
         if (size > 1048576) {
@@ -71,27 +70,27 @@ var Library = function () {
                 url: myradio.makeURL('NIPSWeb', 'upload_central'),
                 paramname: 'audio',
                 error: filedrop_error_handler,
-                allowedfiletypes: allowed_mp3,
+                allowedfiletypes: ALLOWED_MP3,
                 maxfiles: 1,
                 maxfilesize: mConfig.audio_upload_max_size,
                 queuefiles: 1,
                 drop: function () {
-                    $('#central-status').html(icon_loading + 'Reading file (0%)...');
+                    $('#central-status').html(ICON_LOADING + 'Reading file (0%)...');
                 },
                 uploadStarted: function (i, file, total) {
-                    $('#central-status').html(icon_loading + 'Uploading ' + file.name + '... (' + byteSize(file.size) + ')');
+                    $('#central-status').html(ICON_LOADING + 'Uploading ' + file.name + '... (' + byteSize(file.size) + ')');
                 },
                 progressUpdated: function (i, file, progress) {
-                    $('#central-status').html(icon_loading + 'Reading ' + file.name + ' (' + progress + '%)...');
+                    $('#central-status').html(ICON_LOADING + 'Reading ' + file.name + ' (' + progress + '%)...');
                 },
                 uploadFinished: function (i, file, response, time) {
-                    var status = icon_ok + 'Uploaded ' + file.name;
+                    var status = ICON_OK + 'Uploaded ' + file.name;
                     $('#central-status').html(status);
 
                     setTimeout(
                         function () {
                             if ($('#central-status').html() == status) {
-                                $('#central-status').html(icon_ok + 'Ready');
+                                $('#central-status').html(ICON_OK + 'Ready');
                             }
                         },
                         5000
@@ -110,7 +109,7 @@ var Library = function () {
                                     submittable_track = false;
                             } 
                             //Prevents any previous uploaded but not submitted tracks from being incorrectly submitted.
-                            $('.current-track span').html(icon_error)
+                            $('.current-track span').html(ICON_ERROR)
                             $('.current-track').append('File was not submitted. ');
                             $('.current-track a').remove();
                             $('.current-track').removeClass('alert-info').addClass('alert-danger').removeClass('current-track'); 
@@ -123,7 +122,7 @@ var Library = function () {
                     if (response['status'] !== 'OK') {
                         if (response['status'] === 'FAIL') {
                             //An error occurred
-                            result.addClass('alert-danger').append('<span class="error">' + icon_error + response['message'] + ': </span>');
+                            result.addClass('alert-danger').append('<span class="error">' + ICON_ERROR + response['message'] + ': </span>');
                         } else if (response['status'] === 'INFO') {
                             //An info message has been sent (A song is now being edited)
                             result.addClass('alert-info current-track').append('<span class="error">' + response['message'] + ': </span>');
@@ -173,22 +172,22 @@ var Library = function () {
                                 track_explicit = document.getElementById('track-manual-entry-explicit').checked;
 
                                 if (!track_title) {
-                                    $('.form-error').html(icon_error + 'Please enter a title.').slideDown();
+                                    $('.form-error').html(ICON_ERROR + 'Please enter a title.').slideDown();
                                     $('#track-manual-entry-title').focus();
                                     return;
                                 }
                                 if (!track_artist) {
-                                    $('.form-error').html(icon_error + 'Please enter an artist.').slideDown();
+                                    $('.form-error').html(ICON_ERROR + 'Please enter an artist.').slideDown();
                                     $('#track-manual-entry-artist').focus();
                                     return;
                                 }
                                 if (!track_album) {
-                                    $('.form-error').html(icon_error + 'Please enter an album.').slideDown();
+                                    $('.form-error').html(ICON_ERROR + 'Please enter an album.').slideDown();
                                     $('#track-manual-entry-album').focus();
                                     return;
                                 }
                                 if (!track_position) {
-                                    $('.form-error').html(icon_error + 'Please enter a track number.').slideDown();
+                                    $('.form-error').html(ICON_ERROR + 'Please enter a track number.').slideDown();
                                     $('#track-manual-entry-position').focus();
                                     return;
                                 }
@@ -197,7 +196,7 @@ var Library = function () {
                             result.removeClass('alert-danger')
                             .addClass('alert-info')
                             .removeClass('current-track')
-                            .html(icon_loading + '<strong>' + track_title + '</strong> is saving...').slideDown();
+                            .html(ICON_LOADING + '<strong>' + track_title + '</strong> is saving...').slideDown();
                             $('#track-manual-entry').slideUp();
                             submit.remove();
                             $('.form-error').hide();
@@ -220,11 +219,11 @@ var Library = function () {
                                         if (data.status == 'OK') {
                                             result.removeClass('alert-info')
                                             .addClass('alert-success alert-dismissable')
-                                            .html(icon_close + icon_ok + '<strong>' + track_title + '</strong> uploaded successfully.');
+                                            .html(ICON_CLOSE + ICON_OK + '<strong>' + track_title + '</strong> uploaded successfully.');
                                         } else {
                                             result.removeClass('alert-info')
                                             .addClass('alert-danger alert-dismissable')
-                                            .html(icon_close + icon_error + '<strong>' + track_title + '</strong> ' + data.error);
+                                            .html(ICON_CLOSE + ICON_ERROR + '<strong>' + track_title + '</strong> ' + data.error);
                                         }
                                     }
                                 }
@@ -251,26 +250,26 @@ var Library = function () {
                 url: myradio.makeURL('NIPSWeb', 'upload_aux'),
                 paramname: 'audio',
                 error: filedrop_error_handler,
-                allowedfiletypes: allowed_all,
+                allowedfiletypes: ALLOWED_ALL,
                 maxfiles: 20,
                 maxfilesize: mConfig.audio_upload_max_size,
                 queuefiles: 1,
                 drop: function () {
-                    $('#res-status').html(icon_loading + 'Reading file (0%)...');
+                    $('#res-status').html(ICON_LOADING + 'Reading file (0%)...');
                 },
                 uploadStarted: function (i, file, total) {
-                    $('#res-status').html(icon_loading + 'Uploading ' + file.name + '... (' + byteSize(file.size) + ')');
+                    $('#res-status').html(ICON_LOADING + 'Uploading ' + file.name + '... (' + byteSize(file.size) + ')');
                 },
                 progressUpdated: function (i, file, progress) {
-                    $('#res-status').html(icon_loading + 'Reading ' + file.name + ' (' + progress + '%)...');
+                    $('#res-status').html(ICON_LOADING + 'Reading ' + file.name + ' (' + progress + '%)...');
                 },
                 uploadFinished: function (i, file, response, time) {
-                    $('#res-status').html(icon_ok + 'Uploaded ' + file.name);
+                    $('#res-status').html(ICON_OK + 'Uploaded ' + file.name);
 
                     var result = $('<div class="alert"></div>');
                     if (response['status'] == 'FAIL') {
                         //An error occurred, probably bitrate is too low.
-                        result.addClass('alert-danger alert-dismissable').append(icon_error + icon_close + '<strong>' + file.name + ':</strong> <span class="error">' + response['error'] + '</span>');
+                        result.addClass('alert-danger alert-dismissable').append(ICON_ERROR + ICON_CLOSE + '<strong>' + file.name + ':</strong> <span class="error">' + response['error'] + '</span>');
                         $('#res-result').append(result);
                     } else {
                         result.addClass('alert-info').append(
@@ -307,7 +306,7 @@ var Library = function () {
                                     var fileid = result.find('input.title').attr('name');
 
                                     if (!title) {
-                                        $('.form-error').html(icon_error + 'Please enter a title.').slideDown();
+                                        $('.form-error').html(ICON_ERROR + 'Please enter a title.').slideDown();
                                         //Flash the empty input
                                         result.find('input.title').prop('disabled', true); 
                                         setTimeout(
@@ -320,7 +319,7 @@ var Library = function () {
                                         return;
                                     }
 
-                                    result.html(icon_loading + 'Adding <strong>' + title + '</strong> to library...');
+                                    result.html(ICON_LOADING + 'Adding <strong>' + title + '</strong> to library...');
                                     $.ajax(
                                         {
                                             url: myradio.makeURL('NIPSWeb', 'confirm_aux_upload'),
@@ -337,12 +336,12 @@ var Library = function () {
                                                 if (data.status == 'OK') {
                                                     result.removeClass('alert-info')
                                                     .addClass('alert-success alert-dismissable')
-                                                    .html(icon_ok + icon_close + '<strong>' + title + ':</strong> was added to library.');
+                                                    .html(ICON_OK + ICON_CLOSE + '<strong>' + title + ':</strong> was added to library.');
                                                 } else {
                                                     result.removeClass('alert-info')
                                                     .addClass('alert-danger alert-dismissable')
                                                     .html(
-                                                        icon_error + icon_close + '<strong>' + title + ':</strong> could not be added to library.<br>Error: '
+                                                        ICON_ERROR + ICON_CLOSE + '<strong>' + title + ':</strong> could not be added to library.<br>Error: '
                                                         + data.error
                                                     );
                                                 }
