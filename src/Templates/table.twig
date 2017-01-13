@@ -4,6 +4,7 @@
 {% include 'parts/table-header.twig' %}
 {% endblock %}
 {% block stripecontent %}
+{{text | raw}}
 {% include 'parts/table-content.twig' %}
 {% endblock %}
 {% block foot %}
