@@ -1,46 +1,14 @@
-{% extends 'stripe.twig' %}
+{% extends 'form.twig' %}
 {% block head %}
 {{ parent() }}
 {% include 'parts/table-header.twig' %}
-<link type="text/css" rel="stylesheet" src="{{baseurl}}css/vendor/bootstrap-datetimepicker.css">
 {% endblock %}
 {% block stripecontent %}
-{% set myradio_form_section_exists = false %}
-{% set myradio_form_file_progress = false %}
-<fieldset class="{{frm_classes}}">
-    <form action="{{frm_action | raw}}" method="{{frm_method}}" name="{{frm_name}}" id="{{frm_name}}" enctype="multipart/form-data">
-    {% for field in frm_fields %}
-      {% set display_labels = true %}
-      {% set sfieldname = field.name %}
-      {% if field.type != 16 and field.type != 22 %}
-        <div id="{{frm_name}}-{{field.name}}-container" class="{{field.class}}-container">
-      {% endif %}
-          {% include ('FormFields/FieldType_'~field.type~'.twig') %}
-      {% if field.type != 16 and field.type != 22 %}
-        </div>
-      {% endif %}
-    {% endfor %}
-      {% for field in redact %}
-        <input type="hidden" name="redact[]" value="{{field}}" />
-      {% endfor %}
-        {% if captcha %}
-        <div class="captcha">{{ captcha | raw }}</div>
-        {% endif %}
-        <input type="submit" class="btn btn-primary" id="{{frm_name}}-submit" value="Submit" />
-    </form>
-    <div class="myradiofrm-file-upload-progress"><div class="progress-label">Starting Upload...</div></div>
-    <iframe class="hidden" id="myradiofrm-file-upload-iframe"></iframe>
-</fieldset>
+{{ parent() }}
+{% set tabledata = frm_custom.tabledata %}
 {% include 'parts/table-content.twig' %}
 {% endblock %}
-
 {% block foot %}
 {{ parent() }}
-{% include 'parts/table-footer.twig' %}
-<script type="text/javascript" src="{{baseurl}}js/vendor/jquery.validate.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/vendor/tinymce.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/vendor/bootstrap-datetimepicker.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/vendor/typeahead.bundle.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/myradio.form.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/{{frm_custom.tablescript}}.js"></script>
 {% endblock %}
