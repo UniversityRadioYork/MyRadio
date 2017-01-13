@@ -15,7 +15,7 @@ $('.twig-datatable').dataTable(
           },
           //Album
           {
-                "sTitle": "Album"
+                "bVisible": false
           },
           //TrackID
           {
@@ -27,7 +27,7 @@ $('.twig-datatable').dataTable(
           },
           //Intro
           {
-                "sTitle": "Title"
+                "bVisible": false
           },
           //Clean
           {
