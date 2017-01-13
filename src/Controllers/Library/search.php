@@ -11,6 +11,8 @@ if (isset($_REQUEST['title']) || isset($_REQUEST['artist'])) {
                 'artist' => isset($_REQUEST['artist']) ? $_REQUEST['artist'] : ''
         ]
     );
+} else {
+    $tracks = [];
 }
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
