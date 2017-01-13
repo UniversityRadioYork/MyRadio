@@ -39,6 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tracks = null;
     }
 
+} else {
+    $tracks = null;
 }
 $tableData = CoreUtils::dataSourceParser($tracks);
 
