@@ -107,16 +107,16 @@ var Library = function () {
                             } else if (response['status'] !== 'OK' && response['submittable'] != true ) {
                                     $(manual_div).slideUp();
                                     submittable_track = false;
-                            } 
+                            }
                             //Prevents any previous uploaded but not submitted tracks from being incorrectly submitted.
                             $('.current-track span').html(ICON_ERROR)
                             $('.current-track').append('File was not submitted. ');
                             $('.current-track a').remove();
-                            $('.current-track').removeClass('alert-info').addClass('alert-danger').removeClass('current-track'); 
+                            $('.current-track').removeClass('alert-info').addClass('alert-danger').removeClass('current-track');
                             //Hide any previous form fill errors.
                             $('.form-error').slideUp();
                             $('#track-manual-entry button').remove();
-                        }       
+                        }
                     var result = $('<div class="alert"></div>');
 
                     if (response['status'] !== 'OK') {
@@ -200,7 +200,7 @@ var Library = function () {
                             $('#track-manual-entry').slideUp();
                             submit.remove();
                             $('.form-error').hide();
-                            
+
                             $.ajax(
                                 {
                                     url: myradio.makeURL('NIPSWeb', 'confirm_central_upload'),
@@ -273,17 +273,17 @@ var Library = function () {
                         $('#res-result').append(result);
                     } else {
                         result.addClass('alert-info').append(
-                            '<div id="resupload-' + i + '" class="row">' + 
+                            '<div id="resupload-' + i + '" class="row">' +
                                 '<label for="resuploadname-' + i + '" class="col-xs-4 control-label">' +
-                                    file.name + 
+                                    file.name +
                                 ':</label>' +
-                                '<div class="col-xs-6">' + 
+                                '<div class="col-xs-6">' +
                                     '<input type="text" class="title form-control" name="' +
                                         response.fileid + '" id="resuploadname-' + i +
                                     '" placeholder="Enter a helpful name..." />' +
                                 '</div>' +
                             '</div>'
-                                
+
                         );
 
                         if (window.auxid.match(/^aux-\d+$/)) {
@@ -308,10 +308,10 @@ var Library = function () {
                                     if (!title) {
                                         $('.form-error').html(ICON_ERROR + 'Please enter a title.').slideDown();
                                         //Flash the empty input
-                                        result.find('input.title').prop('disabled', true); 
+                                        result.find('input.title').prop('disabled', true);
                                         setTimeout(
                                             function () {
-                                                result.find('input.title').prop('disabled', false); 
+                                                result.find('input.title').prop('disabled', false);
                                                 result.find('input.title').focus();
                                             },
                                             500
