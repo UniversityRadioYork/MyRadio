@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = $form->readValues();
 
-    if (isset($data['title']) || isset($data['title'])) {
+    if (isset($data['title']) || isset($data['artist'])) {
         $tracks = MyRadio_Track::findByOptions(
             [
                     'title' => isset($data['title']) ? $data['title'] : '',
