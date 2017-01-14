@@ -143,6 +143,10 @@ div.baps-channel {
   user-select: none;
 }
 
+div.baps-channel a {
+  color: #FFF;
+}
+
 ul.baps-channel li {
   list-style: none;
   cursor: pointer;
