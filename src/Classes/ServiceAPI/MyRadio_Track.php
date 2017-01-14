@@ -194,7 +194,6 @@ class MyRadio_Track extends ServiceAPI
             new MyRadioFormField('album', MyRadioFormField::TYPE_ALBUM, ['label' => 'Album'])
         );
     }
-
     public function getEditForm()
     {
         return self::getForm()
@@ -207,6 +206,7 @@ class MyRadio_Track extends ServiceAPI
                 ]
             );
     }
+    
 
     /**
      * Returns a "summary" string - the title and artist seperated with a dash.
