@@ -200,7 +200,7 @@ class MyRadio_Swagger
                 $lines[] = '';
             } elseif (substr($line, 0, 1) === '@') {
                 $key = preg_replace('/^\@([a-zA-Z]+)(.*)$/', '$1', $line);
-                $keys[$key][] = trim(preg_replace('/^\@([a-zA-Z]+) (.*)$/', '$2', $line));
+                $keys[] = ['type' => $key, 'data' => trim(preg_replace('/^\@([a-zA-Z]+) (.*)$/', '$2', $line))];
             } else {
                 $lines[sizeof($lines) - 1] .= $line.' ';
             }
@@ -221,8 +221,8 @@ class MyRadio_Swagger
         //Now parse for docblock things
         $params = [];
         $return_type = 'Set';
-        foreach ($doc['keys'] as $key => $values) {
-            switch ($key) {
+        foreach ($doc['keys'] as $key) {
+            switch ($key['type']) {
                 //Deal with $params
                 case 'param':
                     /*
@@ -231,7 +231,7 @@ class MyRadio_Swagger
                      * info[2] should be parameter name
                      * info[3] should be the description
                      */
-                    $info = explode(' ', $values[0], 4);
+                    $info = explode(' ', $key['data'][0], 4);
                     $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
                     $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ?: $info[3]];
                     break;
@@ -260,9 +260,10 @@ class MyRadio_Swagger
         $mixins = [];
         $return_type = 'Set';
         $deprecated = false;
+        $ignore = false;
         $method = 'auto';
-        foreach ($doc['keys'] as $key => $values) {
-            switch ($key) {
+        foreach ($doc['keys'] as $key) {
+            switch ($key['type']) {
                 //Deal with $params
                 case 'param':
                     /*
@@ -270,7 +271,7 @@ class MyRadio_Swagger
                      * info[1] should be parameter name
                      * info[2] should be the description
                      */
-                    $info = preg_split('/\s+/', $values[0], 3);
+                    $info = preg_split('/\s+/', $key['data'], 3);
                     $arg = str_replace('$', '', $info[1]); //Strip the $ from variable name
                     $params[$arg] = ['type' => $info[0], 'description' => empty($info[2]) ?: $info[2]];
                     break;
@@ -279,13 +280,18 @@ class MyRadio_Swagger
                      * info[0] should be the mixin name
                      * info[1] should be a description of what the mixin does
                      */
-                    foreach ($values as $value) {
+                    foreach ($key['data'] as $value) {
                         $info = explode(' ', $value, 2);
                         $mixins[$info[0]] = $info[1];
                     }
                     break;
                 case 'deprecated':
                     $deprecated = true;
+                    break;
+                case 'swagger':
+                    if ($key['data'][0] === 'ignore') {
+                        $ignore = true;
+                    }
                     break;
             }
         }
@@ -297,6 +303,7 @@ class MyRadio_Swagger
             'mixins' => $mixins,
             'return_type' => $return_type,
             'deprecated' => $deprecated,
+            'ignore' => $ignore
         ];
     }
 
@@ -310,9 +317,13 @@ class MyRadio_Swagger
     public static function getOptionsAllow(ReflectionMethod $method)
     {
         $info = self::parseDoc($method);
-        if (isset($info['keys']['api'])) {
-            return array_merge(['OPTIONS'], $info['keys']['api']);
-        } elseif (strncmp($method->getName(), 'set', strlen('set')) === 0) {
+        foreach ($info['keys'] as $key) {
+            if ($key['type'] === 'api') {
+                return array_merge(['OPTIONS'], $key['data']);
+            }
+        }
+        
+        if (strncmp($method->getName(), 'set', strlen('set')) === 0) {
             return ['OPTIONS', 'POST'];
         } else {
             return ['OPTIONS', 'GET'];
