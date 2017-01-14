@@ -45,9 +45,22 @@
   text-align: center;
   width: 100%;
 }
-
 .td-msgitem td:first-child {
-  width: 50px;
+  visibility: hidden;
+  width: 15px;
+}
+.td-msgitem.unread td:first-child {
+  visibility: visible;
+}
+.td-msgitem td:nth-child(2) {
+  width: 15px;
+  padding-right: 35px;
+}
+.td-msgitem .unread-dot {
+  border-radius: 100%;
+  height:1em;
+  width:1em;
+  background-color: #2aaef5;
 }
 
 table.messages tr td:last-child {
