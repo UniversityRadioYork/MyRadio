@@ -620,7 +620,7 @@ class MyRadio_Track extends ServiceAPI
         $getID3 = new \getID3();
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir.'/'.$filename);
         $getID3_lib = new \getID3_lib();
-        $getID3_lib->CopyTagsToComments($fileInfo);       
+        $getID3_lib->CopyTagsToComments($fileInfo);
 
         // File quality checks
         if ($fileInfo['audio']['bitrate'] < 192000) {
@@ -697,6 +697,7 @@ class MyRadio_Track extends ServiceAPI
             return $tracks;
         }
     }
+    
     /**
       * Pay special attention to the tri-state value of explicit. False and null are different things.
     */
