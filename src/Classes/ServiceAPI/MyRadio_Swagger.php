@@ -200,7 +200,7 @@ class MyRadio_Swagger
                 $lines[] = '';
             } elseif (substr($line, 0, 1) === '@') {
                 $key = preg_replace('/^\@([a-zA-Z]+)(.*)$/', '$1', $line);
-                $keys[] = [ 'type' => $key, 'data' => trim(preg_replace('/^\@([a-zA-Z]+) (.*)$/', '$2', $line))];
+                $keys[] = ['type' => $key, 'data' => trim(preg_replace('/^\@([a-zA-Z]+) (.*)$/', '$2', $line))];
             } else {
                 $lines[sizeof($lines) - 1] .= $line.' ';
             }
