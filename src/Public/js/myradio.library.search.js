@@ -31,11 +31,13 @@ $('.twig-datatable').dataTable(
           },
           //Clean
           {
-                "sTitle": "Clean"
+                "sTitle": "Clean",
+                "bVisible": false
           },
           //Digitised
           {
-                "sTitle": "Digitised"
+                "sTitle": "Digitised",
+                "bVisible": false
           },
           //EditLink
           {
