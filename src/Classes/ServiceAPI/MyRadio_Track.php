@@ -206,7 +206,7 @@ class MyRadio_Track extends ServiceAPI
                 ]
             );
     }
-    
+
 
     /**
      * Returns a "summary" string - the title and artist seperated with a dash.
@@ -476,7 +476,7 @@ class MyRadio_Track extends ServiceAPI
             'precise' => filter_var($precise, FILTER_VALIDATE_BOOLEAN),
             'limit' => (($page - 1) * 50) . ',50'
         ];
-        
+
         if ($sort === 'id') {
             $options['idsort'] = true;
         }
@@ -528,11 +528,25 @@ class MyRadio_Track extends ServiceAPI
         if (!$conflict && !empty($options['itonesplaylistid'])) {
             return iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks();
         }
-
-        if (!$options['random'] && !$options['titlesort']) {
+        if (isset($options['random']) && isset($options['titlesort'])) {
+            if (!$options['random'] && !$options['titlesort']) {
+                $options['idsort'] = true;
+            }
+        } else if (isset($options['random'])) {
+            if (!$options['random']) {
+                $options['idsort'] = true;
+                $options['titlesort'] = false;
+            }
+        } else if (isset($options['titlesort'])) {
+            if (!$options['titlesort']) {
+                $options['idsort'] = true;
+                $options['random'] = false;
+            }
+        } else {
             $options['idsort'] = true;
+            $options['random'] = false;
+            $options['titlesort'] = false;
         }
-
         if (empty($options['title'])) {
             $options['title'] = '';
         }
