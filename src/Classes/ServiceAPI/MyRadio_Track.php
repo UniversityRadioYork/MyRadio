@@ -680,27 +680,33 @@ class MyRadio_Track extends ServiceAPI
 
         $getID3 = new \getID3();
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir.'/'.$filename);
+        $getID3_lib = new \getID3_lib();
+        $getID3_lib->CopyTagsToComments($fileInfo);
 
         // File quality checks
         if ($fileInfo['audio']['bitrate'] < 192000) {
-            return ['status' => 'FAIL', 'error' => 'Bitrate is below 192kbps.', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']];
+            return ['status' => 'FAIL', 'message' => 'Bitrate is below 192kbps', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']];
         }
         if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
-            return ['status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
+            return ['status' => 'FAIL', 'message' => 'Item is not stereo', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
         }
 
-        $analysis = self::identifyUploadedTrack(Config::$audio_upload_tmp_dir.'/'.$filename);
-        if (isset($analysis['status'])) {
-            $analysis['fileid'] = $filename;
+        $analysis['status'] = 'INFO';
+        $analysis['message'] = 'Currently editing track information for';
+        $analysis['submittable'] = True;
+        $analysis['fileid'] = $filename;
+        $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
+        $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'];
+        $analysis['analysis']['album'] = $fileInfo['comments_html']['album'];
+           
+        //Remove total tracks in album from the track_number tag.
+        $trackNo = explode("/", $fileInfo['comments_html']['track_number'][0], 2)[0];
+        $analysis['analysis']['position'] = (string)$trackNo;
 
-            return $analysis;
-        } else {
-            return [
-                'fileid' => $filename,
-                'status' => 'OK',
-                'analysis' => $analysis,
-            ];
-        }
+        $trackName = implode("", $fileInfo['comments_html']['title']);   
+        $analysis['analysis']['explicit'] = !!stripos($trackName, 'explicit');
+
+        return $analysis;
     }
 
     /**
@@ -708,6 +714,8 @@ class MyRadio_Track extends ServiceAPI
      *
      * !This method requires the external lastfm-fpclient application to be installed on the server. A FreeBSD build
      * with URY's API key and support for -json can be found in the fpclient.git URY Git repository.
+     *
+     ***** Since LastFM was removed from the central track uploader, this code MAY not be used anymore.
      *
      * @param string $path The location of the MP3 file
      *
@@ -750,11 +758,10 @@ class MyRadio_Track extends ServiceAPI
             return $tracks;
         }
     }
-
-
+    
     /**
-     * Pay special attention to the tri-state value of explicit. False and null are different things.
-     */
+      * Pay special attention to the tri-state value of explicit. False and null are different things.
+    */
     public static function identifyAndStoreTrack($tmpid, $title, $artist, $album, $position, $explicit = null)
     {
         // We need to rollback if something goes wrong later
