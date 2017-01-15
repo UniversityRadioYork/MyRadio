@@ -1,4 +1,4 @@
-$('.twig-datatable').dataTable({
+$(".twig-datatable").dataTable({
   "aoColumns": [
     //photoid
     {
@@ -6,7 +6,7 @@ $('.twig-datatable').dataTable({
     },
     //date_added
     {
-      sTitle: 'Date Created'
+      sTitle: "Date Created"
     },
     //format
     {
@@ -34,12 +34,12 @@ $('.twig-datatable').dataTable({
     },
     //num_campaigns
     {
-      sTitle: '# of Campaigns',
+      sTitle: "# of Campaigns",
       bVisible: false
     },
     //is_active
     {
-      sTitle: 'Active?'
+      sTitle: "Active?"
     },
     //edit_link
     {

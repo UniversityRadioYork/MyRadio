@@ -1,4 +1,4 @@
-$('.twig-datatable').dataTable({
+$(".twig-datatable").dataTable({
   "aoColumns": [
     //actpermissionid
     {
@@ -31,14 +31,14 @@ $('.twig-datatable').dataTable({
   "bPaginate": true
 });
 
-$('td.column-del a').on(
-  'click',
+$("td.column-del a").on(
+  "click",
   function (e) {
     e.preventDefault();
-    window.actionpermissionconfirmurl = $(this).attr('href');
+    window.actionpermissionconfirmurl = $(this).attr("href");
     $(
-      '<div title="Confirm Deletion">Are you sure you want to remove this permission requirement? If this Action has no\n\
-      other permission settings defined, it will no longer work.</div>'
+      "<div title=\"Confirm Deletion\">Are you sure you want to remove this permission requirement? If this Action has no\n\
+      other permission settings defined, it will no longer work.</div>"
     ).dialog({
       modal:true,
       buttons: {
@@ -47,7 +47,7 @@ $('td.column-del a').on(
         },
         Cancel: function () {
           window.actionpermissionconfirmurl = null;
-          $(this).dialog('close');
+          $(this).dialog("close");
         }
       },
       width: 400

@@ -1,4 +1,4 @@
-var ulsort = {}
+var ulsort = {};
 ulsort.List = {
   Filter : function (inputSelector, listSelector) {
 
@@ -10,19 +10,18 @@ ulsort.List = {
 
     // binding keyup to the unordered list
     $(inputSelector).bind(
-      'keyup',
+      "keyup",
       function (e) {
-        console.log('keyup');
         if (jQuery.inArray(e.keyCode, keys) >= 0) {
           return false;
         }
 
         // Building the regex from our user input, 'inp' should be escaped
         inp = $(this).val();
-        rgx.compile(inp, 'im');
+        rgx.compile(inp, "im");
         titles.each(
           function () {
-            if (rgx.source !== '' && !rgx.test($(this).html())) {
+            if (rgx.source !== "" && !rgx.test($(this).html())) {
               $(this).hide();
             } else {
               $(this).show();

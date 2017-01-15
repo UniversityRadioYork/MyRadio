@@ -1,1 +1,1 @@
-$('.twig-datatable').dataTable();
+$(".twig-datatable").dataTable();

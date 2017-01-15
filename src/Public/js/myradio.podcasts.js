@@ -1,4 +1,5 @@
-$('.twig-datatable').dataTable({
+/* global moment */
+$(".twig-datatable").dataTable({
   "aoColumns": [
     //podcast_id
     {
@@ -40,6 +41,6 @@ $('.twig-datatable').dataTable({
   "bPaginate": true
 });
 
-$('.column-time').text(function (i, old) {
-  return moment.unix(old).format('DD/MM/YYYY HH:mm');
+$(".column-time").text(function (i, old) {
+  return moment.unix(old).format("DD/MM/YYYY HH:mm");
 });

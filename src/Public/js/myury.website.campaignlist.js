@@ -1,4 +1,4 @@
-$('.twig-datatable').dataTable({
+$(".twig-datatable").dataTable({
   "aoColumns": [
     //banner_campaign_id
     {
@@ -30,7 +30,7 @@ $('.twig-datatable').dataTable({
     },
     //edit_link
     {
-      sTitle: 'Edit'
+      sTitle: "Edit"
     },
     //timeslots
     {

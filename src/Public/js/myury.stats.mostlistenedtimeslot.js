@@ -1,4 +1,4 @@
-$('.twig-datatable').dataTable({
+$(".twig-datatable").dataTable({
   bSort: false,
   "aoColumns": [
     //title

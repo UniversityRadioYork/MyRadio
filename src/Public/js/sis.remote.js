@@ -1,3 +1,4 @@
+/* global myradio */
 /**
  * Controls the master server poller. Tabs and plugins can register callback
  * functions and namespaces
@@ -37,15 +38,15 @@ var server = {
   connect: function () {
     $.ajax(
       {
-        url: myradio.makeURL('SIS', 'remote'),
-        method: 'POST',
+        url: myradio.makeURL("SIS", "remote"),
+        method: "POST",
         data: server.getQueryString(),
         cache: false,
-        dataType: 'json',
+        dataType: "json",
         //The timeout here is to prevent stack overflow
         complete: function () {
-          setTimeout('server.connect()', 100);},
-        success: server.handleResponse
+          setTimeout("server.connect()", 100);},
+        success: server.handleResponse,
         statusCode: {
           // See SIS/remote.php for why this is necessary
           400: function () {
@@ -67,7 +68,7 @@ var server = {
    * and returns them as a concatenated query string
    */
   getQueryString: function () {
-    var qString = '';
+    var qString = "";
     var first = true;
     for (var key in server.params) {
       if (!first) {
@@ -87,17 +88,17 @@ var server = {
   handleResponse: function (data) {
     for (var namespace in data) {
       //Handle the Debug namespace - log the message
-      if (namespace == 'debug') {
+      if (namespace == "debug") {
         for (var message in data[namespace]) {
           console.log(data[namespace][message]);
         }
         continue;
-      } else if (typeof(server.callbacks[namespace]) != 'undefined') {
-        console.log('Callback for '+namespace+' found');
+      } else if (typeof(server.callbacks[namespace]) != "undefined") {
+        console.log("Callback for "+namespace+" found");
         //This namespace is registered. Execute the callback function
         server.callbacks[namespace](data[namespace]);
       } else {
-        console.log('api.error.client No Callback for namespace '+namespace);
+        console.log("api.error.client No Callback for namespace "+namespace);
       }
     }
   },
@@ -118,9 +119,9 @@ var server = {
   updateTitle: function () {
     var prefix = "";
     if (server.unreadEvents !== 0) {
-      prefix = '('+server.unreadEvents+') ';
+      prefix = "("+server.unreadEvents+") ";
     }
-    document.title = prefix+'Studio Information Service';
+    document.title = prefix+"Studio Information Service";
   }
 };
 
