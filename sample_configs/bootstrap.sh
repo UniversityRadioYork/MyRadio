@@ -16,13 +16,9 @@ apt-get install -y apache2 \
 	php5-dev \
 	php-pear \
 	php5-memcached \
-<<<<<<< HEAD
 	php5-xdebug \
 	openssl
-=======
-	openssl \
 	libav-tools
->>>>>>> master
 a2enmod ssl
 a2enmod rewrite
 service apache2 stop
