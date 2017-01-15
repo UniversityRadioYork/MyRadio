@@ -32,7 +32,6 @@ if (isset($_SESSION['memberid'])) {
             'user',
             MyRadioFormField::TYPE_TEXT,
             [
-                'explanation' => 'Note: case insensitive',
                 'label' => 'Username:',
                 'options' => [
                     'placeholder' => 'abc123',
