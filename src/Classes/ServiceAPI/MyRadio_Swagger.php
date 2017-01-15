@@ -71,7 +71,24 @@ class MyRadio_Swagger
 
     protected static function getParamType($param, $meta)
     {
-        return empty($meta['params'][$param->getName()]['type']) ? 'int' : $meta['params'][$param->getName()]['type'];
+        $type = empty($meta['params'][$param->getName()]['type']) ? 'integer' : $meta['params'][$param->getName()]['type'];
+        switch ($type) {
+            case 'int':
+                $type = 'integer';
+                break;
+            case 'float':
+            case 'double':
+                $type = 'number';
+                break;
+            case 'char':
+                $type = 'string';
+                break;
+            case 'bool':
+                $type = 'boolean';
+                break;
+        }
+
+        return $type;
     }
 
     protected static function getParamDescription($param, $meta)
@@ -271,9 +288,11 @@ class MyRadio_Swagger
                      * info[1] should be parameter name
                      * info[2] should be the description
                      */
-                    $info = preg_split('/\s+/', $key['data'], 3);
-                    $arg = str_replace('$', '', $info[1]); //Strip the $ from variable name
-                    $params[$arg] = ['type' => $info[0], 'description' => empty($info[2]) ?: $info[2]];
+                    foreach ($values as $value) {
+                        $info = preg_split('/\s+/', $value, 3);
+                        $arg = str_replace('$', '', $info[1]); //Strip the $ from variable name
+                        $params[$arg] = ['type' => $info[0], 'description' => empty($info[2]) ?: $info[2]];
+                    }
                     break;
                 case 'mixin':
                     /*

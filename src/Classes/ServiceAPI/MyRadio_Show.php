@@ -204,33 +204,23 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     /**
      * Creates a new MyRadio Show and returns an object representing it.
      *
-     * @param array $params An array of Show properties compatible with the Models/Scheduler/showfrm Form:
-     *                      title: The name of the show<br>
-     *                      description: The description of the show<br>
-     *                      genres: An array of 0 or more genre ids this Show is a member of<br>
-     *                      tags: A string of 0 or more space-seperated tags this Show relates to<br>
-     *                      credits: a 2D Array with keys member and credittype. member is Array of Users, credittype is Array of<br>
-     *                      corresponding credittypeids
-     *                      showtypeid: The ID of the type of show (see schedule.show_type). Defaults to "Show"
-     *                      location: The ID of the location the show will be in
-     *                      mixclouder: If true, the show will be published to Mixcloud after broadcast.
-     *                      Requires https://github.com/UniversityRadioYork/mixclouder.
+     * @param array $params An assoc array (possibly decoded from JSON), taking a format generally based on what toDataSource produces
+     * Properties may be "genres" (["Jazz", ...], "credits" ([["memberid": 7449, "typeid": 1], ...]), location or any valid metadata key.
+     * the title/description metadata keys, and the credits key, are all required.
+     * e.g. Set upload_state: "Requested" to set this show to be uploaded to Mixclouder after broadcast.
      *
-     * title, description, credits and credittypes are required fields.
+     * title, description, credits are required fields.
      *
-     * As this is the initial creation, all tags are <i>approved</i> by the submitted so the show has some initial values
-     *
-     * @todo   location (above) Is not in the Show creation form
+     * As this is the initial creation, all data are <i>approved</i> by the submitter so the show has some initial values
      *
      * @throws MyRadioException
      */
-    public static function create($params = [])
-    {
+    public static function create($params = []) {
         //Validate input
         $required = ['title', 'description', 'credits'];
         foreach ($required as $field) {
             if (!isset($params[$field])) {
-                throw new MyRadioException('Parameter '.$field.' was not provided.');
+                throw new MyRadioException('You must provide ' . $field, 400);
             }
         }
 
@@ -252,6 +242,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $params['tags'] = '';
         }
 
+        // Support API calls where there is no session.
+        // @todo should this be system_user?
+        if (!empty($_SESSION['memberid'])) {
+            $creator = $_SESSION['memberid'];
+        } else {
+            $creator = $params['credits'][0]['memberid'];
+        }
+
         //We're all or nothing from here on out - transaction time
         self::$db->query('BEGIN');
 
@@ -260,7 +258,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $result = self::$db->fetchColumn(
             'INSERT INTO schedule.show (show_type_id, submitted, memberid)
             VALUES ($1, NOW(), $2) RETURNING show_id',
-            [$params['showtypeid'], $_SESSION['memberid']],
+            [$params['showtypeid'], $creator],
             true
         );
         $show_id = $result[0];
@@ -271,7 +269,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'INSERT INTO schedule.show_metadata
                 (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid)
                 VALUES ($1, $2, $3, NOW(), $4, $4)',
-                [self::getMetadataKey($key), $show_id, $params[$key], $_SESSION['memberid']],
+                [self::getMetadataKey($key), $show_id, $params[$key], $creator],
                 true
             );
         }
@@ -287,7 +285,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             self::$db->query(
                 'INSERT INTO schedule.show_genre (show_id, genre_id, effective_from, memberid, approvedid)
                 VALUES ($1, $2, NOW(), $3, $3)',
-                [$show_id, $genre, $_SESSION['memberid']],
+                [$show_id, $genre, $creator],
                 true
             );
         }
@@ -299,7 +297,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'INSERT INTO schedule.show_metadata
                 (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid)
                 VALUES ($1, $2, $3, NOW(), $4, $4)',
-                [self::getMetadataKey('tag'), $show_id, $tag, $_SESSION['memberid']],
+                [self::getMetadataKey('tag'), $show_id, $tag, $creator],
                 true
             );
         }
@@ -319,15 +317,15 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             [
                 $show_id,
                 $params['location'],
-                $_SESSION['memberid'],
+                $creator,
             ],
             true
         );
 
         //And now all that's left is who's on the show
-        for ($i = 0; $i < sizeof($params['credits']['member']); ++$i) {
+        for ($i = 0; $i < sizeof($params['credits']['memberid']); ++$i) {
             //Skip blank entries
-            if (empty($params['credits']['member'][$i])) {
+            if (empty($params['credits']['memberid'][$i])) {
                 continue;
             }
             self::$db->query(
@@ -337,8 +335,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 [
                     $show_id,
                     (int) $params['credits']['credittype'][$i],
-                    $params['credits']['member'][$i]->getID(),
-                    $_SESSION['memberid'],
+                    $params['credits']['memberid'][$i]->getID(),
+                    $creator,
                 ],
                 true
             );
@@ -424,7 +422,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 [
                     'options' => [
                         new MyRadioFormField(
-                            'member',
+                            'memberid',
                             MyRadioFormField::TYPE_MEMBER,
                             [
                                 'explanation' => '',
@@ -473,7 +471,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'description' => $this->getMeta('description'),
                     'genres' => $this->getGenre(),
                     'tags' => is_null($this->getMeta('tag')) ? null : implode(' ', $this->getMeta('tag')),
-                    'credits.member' => array_map(
+                    'credits.memberid' => array_map(
                         function ($ar) {
                             return $ar['User'];
                         },

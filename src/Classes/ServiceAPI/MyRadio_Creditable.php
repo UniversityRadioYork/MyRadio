@@ -28,9 +28,9 @@ trait MyRadio_Creditable
      *
      * @return type
      */
-    public function getCredits($parent = null)
+    public function getCredits(MyRadio\ServiceAPI\MyRadio_Metadata_Common $parent = null)
     {
-        $parent = $parent === null ? [] : $parent->getCredits();
+        $parent = empty($parent) ? [] : $parent->getCredits();
         $current = empty($this->credits) ? [] : $this->credits;
 
         return array_values(array_unique(array_merge($current, $parent), SORT_REGULAR));
