@@ -9,9 +9,9 @@ install:
     - composer install
     - npm install -g jasmine-node
     - npm install frisby
-before_script:
     - sudo apt-get update
     - sudo apt-get install apache2 libapache2-mod-fastcgi
+before_script:
     # enable php-fpm
     - phpenv config-add sample_configs/travis-php.ini
     - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
@@ -27,10 +27,11 @@ before_script:
     - sudo apachectl -S
     - sudo cat /etc/apache2/sites-enabled/*
     # setup postgres
-    - cat sample_configs/postgres.sql | psql -U postgres
-    - cat schema/base.sql | PGPASSWORD=myradio psql -U myradio myradio
-    #- cat schema/patches/*.sql | PGPASSWORD=myradio psql -U myradio myradio
-    - cat sample_configs/travis-auth.sql | PGPASSWORD=myradio psql -U myradio myradio
+    - psql -U postgres < sample_configs/postgres.sql
+    - PGPASSWORD=myradio psql -U myradio myradio < schema/base.sql
+    # Disabled until patch files are implemented (there's a 1.sql which renames schema myury to myradio)
+    #- PGPASSWORD=myradio psql -U myradio myradio < schema/patches/*.sql
+    - PGPASSWORD=myradio psql -U myradio myradio < sample_configs/travis-auth.sql
     # configure MyRadio
     - cp sample_configs/travis-config.php src/MyRadio_Config.local.php
 script:
