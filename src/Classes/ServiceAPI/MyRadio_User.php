@@ -1861,7 +1861,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
     /**
      * Creates a new User, or activates a user, if it already exists.
      *
-     * @param string $fname The User's first name.
+     * @param string $fname         The User's first name.
      * @param string $sname         The User's last name.
      * @param string $eduroam       The User's @york.ac.uk address.
      * @param char   $sex           The User's gender.
