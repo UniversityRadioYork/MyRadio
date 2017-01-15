@@ -155,8 +155,6 @@
     ["Stats", "fullTracklist", "AUTH_TRACKSTATISTICS"],
     ["Stats", "jukeboxPlayCounter", "AUTH_TRACKSTATISTICS"],
     ["Stats", null, "AUTH_VIEWSTATS"],
-    ["Timelord", null, "AUTH_NOLOGIN"],
-    ["Timelord", null, "AUTH_USETIMELORD"],
     ["Webcam", "archive", "AUTH_VIEWWEBCAMARCHIVE"],
     ["Webcam", "a-trackViewer", "AUTH_VIEWEBCAM"],
     ["Webcam", "default", "AUTH_VIEWEBCAM"],

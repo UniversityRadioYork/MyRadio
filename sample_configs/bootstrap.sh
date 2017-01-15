@@ -16,8 +16,13 @@ apt-get install -y apache2 \
 	php5-dev \
 	php-pear \
 	php5-memcached \
+<<<<<<< HEAD
 	php5-xdebug \
 	openssl
+=======
+	openssl \
+	libav-tools
+>>>>>>> master
 a2enmod ssl
 a2enmod rewrite
 service apache2 stop
@@ -61,12 +66,12 @@ emailAddress=someone@example.com
 "
 openssl genrsa -des3 -out /etc/apache2/myradio.key -passout env:PASSPHRASE 2048
 openssl req \
-  -new \
-  -batch \
-  -subj "$(echo -n "$subj" | tr "\n" "/")" \
-  -key /etc/apache2/myradio.key \
-  -out /etc/apache2/myradio.csr \
-  -passin env:PASSPHRASE
+	-new \
+	-batch \
+	-subj "$(echo -n "$subj" | tr "\n" "/")" \
+	-key /etc/apache2/myradio.key \
+	-out /etc/apache2/myradio.csr \
+	-passin env:PASSPHRASE
 openssl rsa -in /etc/apache2/myradio.key -out /etc/apache2/myradio.key -passin env:PASSPHRASE
 openssl x509 -req -days 3650 -in /etc/apache2/myradio.csr -signkey /etc/apache2/myradio.key -out /etc/apache2/myradio.crt
 
@@ -76,3 +81,13 @@ service apache2 start
 # Create DB cluster/database/user
 pg_createcluster 9.3 myradio
 su - postgres -c "cat /vagrant/sample_configs/postgres.sql | psql"
+
+# Start httpd back up
+service apache2 start
+
+# Somewhere to store audio uploads
+music_dirs=( "records" "membersmusic" "beds" "jingles" )
+for i in "${music_dirs[@]}"; do
+	mkdir -p /music/$i
+	chown www-data:www-data /music/$i
+done

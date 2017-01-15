@@ -7,6 +7,8 @@ namespace MyRadio\Daemons;
 use MyRadio\Config;
 use MyRadio\Database;
 use MyRadio\iTones\iTones_Playlist;
+use MyRadio\NIPSWeb\NIPSWeb_BAPSUtils;
+use MyRadio\NIPSWeb\NIPSWeb_ManagedPlaylist;
 
 /**
  * The BAPSSync Daemon will scan the Show Planner playlists, and put them into BAPS.
@@ -65,27 +67,28 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 'INSERT INTO public.baps_listing (showid, name, channel) VALUES ($1, $2, 0) RETURNING listingid',
                 [$showid, $list->getTitle()]
             );
-            $listingid = $r[0];
+            $listingid = $r['listingid'];
 
             if (empty($r)) {
                 return;
             }
 
             $i = 0;
-            foreach ($this->getManagedPlaylist($list['playlistid']) as $item) {
-                $track = $this->getTrackDetails($item['trackid'], $item['recordid']);
+
+            foreach ($list->getTracks() as $track) {
                 ++$i;
+                $libraryitemid = NIPSWeb_BAPSUtils::getTrackDetails($track->getID(), $track->getAlbum()->getID())['libraryitemid'];
                 pg_query_params(
                     'INSERT INTO public.baps_item (listingid, name1, name2, position, libraryitemid)
                     VALUES ($1, $2, $3, $4, $5)',
-                    [$listingid, $item['title'], $item['artist'], $i, $track['libraryitemid']]
+                    [$listingid, $track->getTitle(), $track->getArtist(), $i, $libraryitemid]
                 );
                 echo pg_last_error();
             }
         }
 
         //And now the Aux Resource Playlists
-        foreach ($this->getCentralResourceLists() as $list) {
+        foreach (NIPSWeb_ManagedPlaylist::getAllManagedPlaylists() as $list) {
             /*
              * Create the playlist. '61' is system, which appears to be how BAPS chooses what shows are recommended listening
              */
@@ -93,7 +96,7 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 pg_query_params(
                     'INSERT INTO public.baps_show (userid, name, broadcastdate, viewable)
                 VALUES (61, \'Managed::\'||$1, $2, true) RETURNING showid',
-                    [$list['name'], $special_date]
+                    [$list->getTitle(), $special_date]
                 )
             );
 
@@ -110,7 +113,7 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 pg_query_params(
                     'INSERT INTO public.baps_listing (showid, name, channel) VALUES
                 ($1, $2, 0) RETURNING listingid',
-                    [$showid, $list['name']]
+                    [$showid, $list->getTitle()]
                 )
             );
 
@@ -121,13 +124,13 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             }
 
             $i = 0;
-            foreach ($this->getAuxItems($list['folder']) as $item) {
-                $track = $this->getFileItemFromManagedID($item['manageditemid']);
+            foreach ($list->getItems() as $item) {
+                $track = NIPSWeb_BAPSUtils::getFileItemFromManagedID($item->getID());
                 ++$i;
                 pg_query_params(
                     'INSERT INTO public.baps_item (listingid, name1, name2, position, fileitemid)
                     VALUES ($1, $2, $3, $4, $5)',
-                    [$listingid, $item['title'], '', $i, $track]
+                    [$listingid, $item->getTitle(), '', $i, $track]
                 );
                 echo pg_last_error();
             }

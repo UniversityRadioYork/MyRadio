@@ -4,6 +4,7 @@ use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/text.twig')
+    ->addVariable('title', 'Upload Track')
     ->addVariable(
         'text',
         '<iframe src="'

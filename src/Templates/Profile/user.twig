@@ -39,7 +39,14 @@
         <td>{{user.phone}}</td>
       </tr>
     {% endif %}
-    <tr><td colspan="2">{{user.bio | raw}}</td></tr>
+    {% if user.bio != '' %}
+      <tr>
+        <td><b>Bio:</b></td>
+      </tr>
+      <tr>
+        <td colspan="2">{{user.bio | raw}}</td>
+      </tr>
+    {% endif %}
     <tr>
       <td colspan="2">&nbsp;</td>
     </tr>

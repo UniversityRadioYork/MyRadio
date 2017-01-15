@@ -162,7 +162,7 @@ class MyRadio_Quote extends ServiceAPI
      *
      * @return array An array of all active quotes.
      */
-    public function getAll()
+    public static function getAll()
     {
         $quote_ids = self::$db->fetchColumn(self::GET_ALL_SQL, []);
 

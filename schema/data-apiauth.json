@@ -1,3 +1,7 @@
 [
+    ["\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", "get9DaySchedule", null],
+    ["\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", "getCreditsNames", null],
+    ["\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", "getCurrentAndNext", null],
+    ["\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", "getWeekSchedule", null],
     ["\\MyRadio\\ServiceAPI\\MyRadio_Track", "setIntro", "AUTH_USENIPSWEB"]
 ]

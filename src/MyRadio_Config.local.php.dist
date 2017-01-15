@@ -40,9 +40,11 @@ Config::$lastfm_api_key = 'YOUR API KEY HERE';
 Config::$lastfm_api_secret = 'YOUR API SECRET HERE';
 
 /**
- * SU API connection settings.
+ * Student Union-relevant settings.
  */
 Config::$yusu_api_key = 'YOUR API KEY HERE';
+Config::$yusu_api_website = 'YOUR YUSU WEB ADDRESS [WHERE THE API WORKS] HERE';
+Config::$yusu_payment_url = 'LINK TO PAYMENT PAGE' // Link to student union society payment page
 
 /**
  * URL Settings

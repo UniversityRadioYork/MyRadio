@@ -178,7 +178,11 @@ class MyRadio_Officer extends ServiceAPI
             RETURNING memberid',
             [$memberofficerid]
         );
-        MyRadio_User::getInstance($return[0])->updateCacheObject();
+
+        MyRadio_User::getInstance($return[0])
+        ->clearOfficershipCache()
+        ->clearPermissionCache()
+        ->updateCacheObject();
         Profile::clearCache();
     }
 
@@ -347,7 +351,7 @@ class MyRadio_Officer extends ServiceAPI
         if ($description !== $this->description) {
             self::$db->query(
                 'UPDATE public.officer
-                SET description = $1
+                SET descr = $1
                 WHERE officerid=$2',
                 [$description, $this->getID()]
             );

@@ -241,6 +241,22 @@ class MyRadio_User extends ServiceAPI implements APICaller
         }
     }
 
+    public function clearPermissionCache()
+    {
+        $this->permissions = null;
+        return $this;
+    }
+    public function clearOfficershipCache()
+    {
+        $this->officerships = null;
+        return $this;
+    }
+    public function clearTrainingCache()
+    {
+        $this->training = null;
+        return $this;
+    }
+
     /**
      * Returns if the User is currently an Officer.
      *
@@ -467,7 +483,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 }
             }
 
-            $this->permissions = array_unique($permissions);
+            $this->permissions = array_values(array_unique($permissions));
 
             $this->updateCacheObject();
         }
@@ -732,7 +748,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'SELECT show_id FROM schedule.show
             WHERE memberid=$1 OR show_id IN
             (SELECT show_id FROM schedule.show_credit
-            WHERE creditid=$1 AND effective_from <= NOW() AND
+            WHERE creditid=$1 AND
             (effective_to >= NOW() OR effective_to IS NULL))
             ORDER BY (SELECT start_time FROM schedule.show_season_timeslot
             WHERE show_season_id IN
@@ -770,7 +786,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * @return array A 2D Array where every value of the first dimension is an Array as follows:<br>
      *               memberid: The unique id of the User<br>
      *               fname: The actual first name of the User<br>
-     *               sname: The actual last name of the User
+     *               sname: The actual last name of the User<br>
+     *               eduroam: The actual eduroam account of the User<br>
+     *               local_alias: The actual local alias (THISPART@emailaddr) for the user
      */
     public static function findByName($name, $limit = -1)
     {
@@ -782,14 +800,14 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $names = explode(' ', $name);
         if (isset($names[1])) {
             return self::$db->fetchAll(
-                'SELECT memberid, fname, sname FROM member
+                'SELECT memberid, fname, sname, eduroam, local_alias FROM member
                 WHERE fname ILIKE $1 || \'%\' AND sname ILIKE $2 || \'%\'
                 ORDER BY sname, fname LIMIT $3',
                 [$names[0], $names[1], $limit]
             );
         } else {
             return self::$db->fetchAll(
-                'SELECT memberid, fname, sname FROM member
+                'SELECT memberid, fname, sname, eduroam, local_alias FROM member
                 WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $1 || \'%\'
                 ORDER BY sname, fname LIMIT $2',
                 [$name, $limit]
@@ -1257,8 +1275,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                     [(float) $amount, $year, $this->getID()]
                 );
                 $this->payment[$k]['paid'] = $amount;
-                $this->permissions = null; // Clear local permissions cache
-                $this->updateCacheObject();
+                $this->clearPermissionCache()->updateCacheObject();
 
                 return;
             }
@@ -1271,8 +1288,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             [(float) $amount, $year, $this->getID()]
         );
         $this->payment[] = ['year' => $year, 'paid' => $amount];
-        $this->permissions = null; // Clear local permissions cache
-        $this->updateCacheObject();
+        $this->clearPermissionCache()->updateCacheObject();
 
         return;
     }
@@ -1741,10 +1757,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             );
         }
 
-        //Remove the domain if it is set
-        if (!empty($params['eduroam'])) {
-            $params['eduroam'] = str_replace('@'.Config::$eduroam_domain, '', $params['eduroam']);
-        }
+        $params['eduroam'] = str_replace('@'.Config::$eduroam_domain, '', strtolower($params['eduroam']));
 
         if (empty($params['eduroam']) && empty($params['email'])) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
@@ -2158,7 +2171,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 $data['paid'] = $this->getAllPayments();
                 $data['locked'] = $this->getAccountLocked();
                 $data['college'] = $this->getCollege();
-                $data['receive_email'] = $this->getReceiveEmail();
                 $data['email'] = $this->getEmail();
                 $data['phone'] = $this->getPhone();
                 $data['eduroam'] = $this->getEduroam();
@@ -2179,6 +2191,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'sex' => $this->getSex(),
             'public_email' => $this->getPublicEmail(),
             'url' => $this->getURL(),
+            'receive_email' => $this->getReceiveEmail(),
         ];
 
         $data['photo'] = $this->getProfilePhoto() === null ?

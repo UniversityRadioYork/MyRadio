@@ -458,7 +458,8 @@ class CoreUtils
 
         return json_decode(
             file_get_contents(
-                'https://www.yusu.org/api/api.php?apikey='
+                Config::$yusu_api_website
+                .'?apikey='
                 .Config::$yusu_api_key
                 .'&function='
                 .$function,
@@ -539,6 +540,18 @@ class CoreUtils
             var_dump($_REQUEST);
         }
 
+        return ob_get_clean();
+    }
+
+    /**
+     * Returns information about the $_SERVER array.
+     *
+     * @return string var_dump output
+     */
+    public static function getServerInfo()
+    {
+        ob_start();
+        var_dump($_SERVER);
         return ob_get_clean();
     }
 

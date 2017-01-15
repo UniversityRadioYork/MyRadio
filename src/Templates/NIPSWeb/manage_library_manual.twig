@@ -8,21 +8,41 @@
     <body>
   {% include 'NIPSWeb/res_selector.twig' %}
         <div id="central-container" class="res-container hidden">
-          <p>You can upload track to the central database by dragging them into the box below. I'll try to analyse the file and if I can figure out what it is, then I'll upload it for you. If the track is of poor quality then this tool will not allow tracks to be uploaded. If the track is not recognised, you will be asked to enter the track details manually.</p>
-          <div id="central-dragdrop" class="well">Drag MP3 files here to upload<div id="lastfm-attr">
-              <a href="http://www.last.fm/">Powered by <img src="http://cdn.last.fm/flatness/badges/lastfm_black_small.gif" /></a>
-          </div><div class="alert alert-warning" id="central-status">Getting set up...</div></div>
+          <p>You can upload track to the central database by dragging them into the box below. I'll try to analyse the file and if I can figure out what it is, then I'll upload it for you. If the track is of poor quality then I will not allow tracks to be uploaded.</p>
+          <div id="central-dragdrop" class="well">
+            Drag MP3 files here to upload
+            <div class="alert alert-warning" id="central-status">Getting set up...</div>
+          </div>
+          <br>
           <div id="central-result" class="result-container"></div>
-
-          <div id="track-manual-entry" class="hidden">
-              <p>Track not found. Please enter the details manually:</p>
-              <form>
-              <label for="track-manual-entry-title">Title: </label><input type="text" id="track-manual-entry-title"><br>
-              <label for="track-manual-entry-artist">Artist: </label><input type="text" id="track-manual-entry-artist"><br>
-              <label for="track-manual-entry-album">Album: </label><input type="text" id="track-manual-entry-album"><br>
-              <label for="track-manual-entry-position">Track Number: </label><input type="number" id="track-manual-entry-position"><br>
-              <label for="track-manual-entry-explicit">Explicit?: <input type="checkbox" id="track-manual-entry-explicit">
-              </form>
+          <br>
+          <div id="track-manual-entry" class="hidden panel panel-default">
+              <div class="panel-heading">Track Listing</div>
+              <div class="panel-body">
+                <p>Please enter/check the details for this track manually and click "Save using below metadata" above.</p>
+                <div class="alert alert-warning form-error" style="display:none;"></div>
+                <form>
+                  <div class="form-group">
+                    <label for="track-manual-entry-title">Title:</label>
+                    <input type="text" id="track-manual-entry-title" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="track-manual-entry-artist">Artist:</label>
+                    <input type="text" id="track-manual-entry-artist" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="track-manual-entry-album">Album:</label>
+                    <input type="text" id="track-manual-entry-album" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="track-manual-entry-position">Track Number:</label>
+                    <input type="number" id="track-manual-entry-position" class="form-control">
+                  </div>
+                  <div class="checkbox">
+                    <label for="track-manual-entry-explicit"><input type="checkbox" id="track-manual-entry-explicit"> <strong>Explicit?</strong></label>    
+                  </div>
+                </form>
+              </div>
           </div>
 
         </div>

@@ -95,7 +95,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ) AS season';
 
     private $show_id;
-    private $owner;
+    protected $owner;
     protected $credits = [];
     private $genres;
     private $show_type;
@@ -584,20 +584,6 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         return isset($this->genres[0]) ? $this->genres[0] : null;
     }
 
-    public function isCurrentUserAnOwner()
-    {
-        if ($this->owner === $_SESSION['memberid']) {
-            return true;
-        }
-        foreach ($this->getCreditObjects() as $user) {
-            if ($user->getID() === $_SESSION['memberid']) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public function setShowPhoto($tmp_path)
     {
         $result = self::$db->fetchColumn(
@@ -861,12 +847,21 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         return self::resultSetToObjArray($r);
     }
 
-    public function toDataSource($full = true)
+    public function toDataSource()
     {
         $data = [
             'show_id' => $this->getID(),
             'title' => $this->getMeta('title'),
-            'credits' => implode(', ', $this->getCreditsNames(false)),
+            'credits_string' => implode(', ', $this->getCreditsNames(false)),
+            'credits' => array_map(
+                function ($x) {
+                    $x['User'] = $x['User']->toDataSource();
+                    $x['type_name'] = $this->getCreditName($x['type']);
+
+                    return $x;
+                },
+                $this->getCredits()
+            ),
             'description' => $this->getMeta('description'),
             'show_type_id' => $this->show_type,
             'seasons' => [
@@ -895,17 +890,6 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ],
             'photo' => $this->getShowPhoto(),
         ];
-
-        if ($full) {
-            $data['credits'] = array_map(
-                function ($x) {
-                    $x['User'] = $x['User']->toDataSource();
-
-                    return $x;
-                },
-                $this->getCredits()
-            );
-        }
 
         return $data;
     }
