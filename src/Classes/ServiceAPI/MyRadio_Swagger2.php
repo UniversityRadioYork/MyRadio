@@ -89,7 +89,6 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         return self::getMethodOpType($method) === 'get' &&
             $method->getNumberOfRequiredParameters() === 1 &&
             self::getParamType($method->getParameters()[0], $doc) !== 'array';
-
     }
 
     /**
@@ -132,9 +131,9 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
             if (sizeof($options) > 1) {
                 throw new MyRadioException('Ambiguous path.', 404);
-            } elseif (self::isOptionInPathForMethod($method)) {
-                $path = $options[0];
             }
+
+            $path = $options[0];
         }
 
         if (!isset($paths[$path])) {
