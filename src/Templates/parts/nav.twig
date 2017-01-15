@@ -12,13 +12,6 @@
       </a>
     </div>
     <div class="collapse navbar-collapse" id="navbar-collapse-1">
-    <ul class="nav navbar-nav">
-    {% if websiteurl %}
-      <li>
-        <a href="{{websiteurl}}">{{shortname}} Website</a>
-      </li>
-      {% endif %}
-    </ul>
      <ul class="nav navbar-nav navbar-right">
         {% if memberid %}
           <li>
@@ -45,6 +38,11 @@
               <li><a href="{{MyRadio.makeURL(config, 'MyRadio', 'logout')}}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
             </ul>
           </li>
+        {% endif %}
+        {% if websiteurl %}
+        <li class="nav-img">
+          <a href="{{websiteurl}}"><img alt="MyRadio" src="{{baseurl}}img/{{shortname}}.png"></a>
+        </li>
         {% endif %}
       </ul>
     </div>

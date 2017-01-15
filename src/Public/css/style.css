@@ -71,10 +71,10 @@ body {
   }
 }
 
-/** MyRadio bootstrap navbar overides taken from http://work.smarchal.com/twbscolor/css/002d5a0053a6ffffffe1e1e11 **/
+/** MyRadio bootstrap navbar overides taken from http://work.smarchal.com/twbscolor/css/979797979797ffffffe1e1e11 **/
 .navbar-ury {
-  background-color: #002d5a;
-  border-color: #0053a6;
+  background-color: #2D333C;
+  border-color: #979797;
   border: none;
 }
 .navbar-ury .navbar-brand {
@@ -95,13 +95,25 @@ body {
 .navbar-ury .navbar-nav > li > a {
   color: #ffffff;
 }
+.navbar-ury .navbar-nav > li.nav-img {
+  height: 50px;
+}
+.navbar-ury .navbar-nav > li.nav-img > a {
+  height: 100%;
+  padding: 10px 10px;
+}
+.navbar-ury .navbar-nav > li.nav-img > a > img {
+  height: 100%;
+}
+
+
 .navbar-ury .navbar-nav > li > a:hover,
 .navbar-ury .navbar-nav > li > a:focus {
   color: #e1e1e1;
-  background-color: #0053a6;
+  background-color: #979797;
 }
 .navbar-ury .navbar-nav > li > .dropdown-menu {
-  background-color: #002d5a;
+  background-color: #979797;
 }
 .navbar-ury .navbar-nav > li > .dropdown-menu > li > a {
   color: #ffffff;
@@ -109,35 +121,35 @@ body {
 .navbar-ury .navbar-nav > li > .dropdown-menu > li > a:hover,
 .navbar-ury .navbar-nav > li > .dropdown-menu > li > a:focus {
   color: #e1e1e1;
-  background-color: #0053a6;
+  background-color: #979797;
 }
 .navbar-ury .navbar-nav > li > .dropdown-menu > li > .divider {
-  background-color: #0053a6;
+  background-color: #979797;
 }
 .navbar-ury .navbar-nav .open .dropdown-menu > .active > a,
 .navbar-ury .navbar-nav .open .dropdown-menu > .active > a:hover,
 .navbar-ury .navbar-nav .open .dropdown-menu > .active > a:focus {
   color: #e1e1e1;
-  background-color: #0053a6;
+  background-color: #979797;
 }
 .navbar-ury .navbar-nav > .active > a,
 .navbar-ury .navbar-nav > .active > a:hover,
 .navbar-ury .navbar-nav > .active > a:focus {
   color: #e1e1e1;
-  background-color: #0053a6;
+  background-color: #979797;
 }
 .navbar-ury .navbar-nav > .open > a,
 .navbar-ury .navbar-nav > .open > a:hover,
 .navbar-ury .navbar-nav > .open > a:focus {
   color: #e1e1e1;
-  background-color: #0053a6 !important;
+  background-color: #979797 !important;
 }
 .navbar-ury .navbar-toggle {
-  border-color: #0053a6;
+  border-color: #979797;
 }
 .navbar-ury .navbar-toggle:hover,
 .navbar-ury .navbar-toggle:focus {
-  background-color: #0053a6;
+  background-color: #979797;
 }
 .navbar-ury .navbar-toggle .icon-bar {
   background-color: #ffffff;
@@ -165,7 +177,7 @@ body {
   .navbar-ury .navbar-nav .open .dropdown-menu > .active > a:hover,
   .navbar-ury .navbar-nav .open .dropdown-menu > .active > a:focus {
     color: #e1e1e1;
-    background-color: #0053a6;
+    background-color: #979797;
   }
 }
 /** MyRadio Menu Styles **/
