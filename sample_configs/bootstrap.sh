@@ -29,14 +29,17 @@ echo "extension=mcrypt.so" > /etc/php5/mods-available/mcrypt.ini
 ln -s /etc/php5/mods-available/mcrypt.ini /etc/php5/apache2/conf.d/20-mcrypt.ini
 echo "extension=twig.so" > /etc/php5/mods-available/twig.ini
 ln -s /etc/php5/mods-available/twig.ini /etc/php5/apache2/conf.d/20-twig.ini
-echo "xdebug.default_enable=1" >> /etc/php5/mods-available/xdebug.ini
-echo "xdebug.remote_enable=1" >> /etc/php5/mods-available/xdebug.ini
-echo "xdebug.remote_autostart=0" >> /etc/php5/mods-available/xdebug.ini
-echo "xdebug.remote_port=9000" >> /etc/php5/mods-available/xdebug.ini
-echo "xdebug.remote_log=\"/var/log/xdebug/xdebug.log\"" >> /etc/php5/mods-available/xdebug.ini
-echo "xdebug.remote_host=10.0.2.2" >> /etc/php5/mods-available/xdebug.ini
-echo "xdebug.idekey=\"MyRadio vagrant\"" >> /etc/php5/mods-available/xdebug.ini
-echo "xdebug.remote_handler=dbgp" >> /etc/php5/mods-available/xdebug.ini
+
+cat <<EOF >> /etc/php5/mods-available/xdebug.ini
+echo "xdebug.default_enable=1"
+echo "xdebug.remote_enable=1"
+echo "xdebug.remote_autostart=0"
+echo "xdebug.remote_port=9000"
+echo "xdebug.remote_log=\"/var/log/xdebug/xdebug.log\""
+echo "xdebug.remote_host=10.0.2.2"
+echo "xdebug.idekey=\"MyRadio vagrant\""
+echo "xdebug.remote_handler=dbgp"
+EOF
 
 # Composer
 curl -sS https://getcomposer.org/installer | php
