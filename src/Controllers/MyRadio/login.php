@@ -32,7 +32,6 @@ if (isset($_SESSION['memberid'])) {
             'user',
             MyRadioFormField::TYPE_TEXT,
             [
-                'explanation' => '',
                 'label' => 'Username:',
                 'options' => [
                     'placeholder' => 'abc123',
@@ -65,6 +64,7 @@ if (isset($_SESSION['memberid'])) {
         $data = $form->readValues();
 
         $raw_uname = str_replace('@'.Config::$eduroam_domain, '', $data['user']);
+        $raw_uname = strtolower($raw_uname);
 
         $authenticators = [];
         foreach (Config::$authenticators as $i) {

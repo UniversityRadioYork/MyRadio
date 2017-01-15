@@ -25,7 +25,7 @@ load_rc_config myradio_daemon_enable
 
 command=/usr/local/www/myradio/src/Controllers/daemon.php
 command_interpreter=`which php`
-command_args='process >/var/log/ury-org-uk/myradio_daemon.log 2>&1 &'
+command_args='process >/var/log/myradio/daemon.log 2>&1 &'
 start_precmd=find_pidfile
 stop_precmd=find_pidfile
 

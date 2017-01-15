@@ -88,7 +88,8 @@ class MyRadio_TracklistItem extends ServiceAPI
     /**
      * Returns an array of all TracklistItems played during the given Timeslot.
      *
-     * @param int $timeslotid
+     * @param int $timeslotid The ID of the Timeslot
+     * @param int $offset     Skip items with an audiologid <= this
      *
      * @return array
      */

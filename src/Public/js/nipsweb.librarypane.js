@@ -221,7 +221,7 @@ $(document).ready(
         $('#a-manage-library').click(
             function () {
                 var url = $(this).children('a').attr('href');
-                var dialog = myradio.createDialog('Manage Library', '<iframe src="' + url + '" width="580" height="500" frameborder="0"></iframe></div>');
+                var dialog = myradio.createDialog('Manage Library', '<iframe src="' + url + '" width="580" height="500" frameborder="0"></iframe>');
                 return false;
             }
         );

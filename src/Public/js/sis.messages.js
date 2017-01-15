@@ -3,6 +3,7 @@ var Messages = function () {
     var highest_message_id = 0,
         unreadMessages = 0,
         glyphicons = ['question-sign', 'envelope', 'phone', 'globe'],
+        locationNames = ['unknown method', 'email', 'text message', 'the website'],
         table = document.createElement('table'),
         self = this,
         clickHandler = function (context, row, message) {
@@ -19,6 +20,12 @@ var Messages = function () {
                         context.setUnread(unreadMessages);
                         $(this).removeClass('unread');
                     }
+                    var locationName;
+                    locationName = locationNames[message.type];
+                    var dateTime;
+                    var time;
+                    dateTime = moment.unix(message.time); 
+                    time = dateTime.format('HH:mm');
                     var location;
                     if (message.location) {
                         location = message.location[0];
@@ -26,7 +33,7 @@ var Messages = function () {
                             location = location + ' (' + message.location[1] + ')';
                         }
                     }
-                    myradio.createDialog('Message', message.body + '<hr>' + location, [myradio.closeButton()]);
+                    myradio.createDialog('Message', '<blockquote><p>' +message.body + '</p><footer>Listener via ' + locationName + ' at <cite>' + time + '</cite>.</footer></blockquote>' + location,  [myradio.closeButton()]);
                 }
             );
         };
@@ -42,14 +49,16 @@ var Messages = function () {
         update: function (data) {
             for (var i in data) {
                 var locationStr,
-                    img,
+                    icon_location,
+                    icon_unread,
                     msgdate,
                     mins,
                     time,
                     read,
                     classes,
                     newRow = document.createElement('tr'),
-                    imgTd = document.createElement('td'),
+                    locationTd = document.createElement('td'),
+                    unreadTd = document.createElement('td'),
                     titleTd = document.createElement('td'),
                     dateTd = document.createElement('td'),
                     dateDate = document.createElement('date'),
@@ -59,8 +68,10 @@ var Messages = function () {
                 for (var l in data[i]['location']) {
                     locationStr = locationStr + '<br>'+data[i]['location'][l];
                 }
+                
                 //Set some of the variables
-                img = "<div class='glyphicon glyphicon-" + glyphicons[data[i]['type']] + "'></div>";
+                icon_location = "<div class='glyphicon glyphicon-" + glyphicons[data[i]['type']] + "' title='Location: " + locationNames[data[i]['type']] + ", click for more details.'></div>";
+                icon_unread = "<div class='unread-dot' title='Message unread, click to mark read.'></div>";
                 msgdate = moment.unix(data[i]['time']);
                 time = msgdate.format('HH:mm');
                 read = "";
@@ -73,14 +84,23 @@ var Messages = function () {
                 newRow.className = 'td-msgitem'+classes
                 newRow.setAttribute('id', 'm'+data[i]['id']);
 
-                imgTd.innerHTML = img;
-                titleTd.innerHTML = data[i]['title'];
+                locationTd.innerHTML = icon_location;
+                unreadTd.innerHTML = icon_unread;
+
+                var longTitle = data[i]['title'];
+                var trimmedTitle = longTitle.substring(0, 120);
+                if (longTitle != trimmedTitle) {
+                    trimmedTitle = trimmedTitle + '... <a>Read more</a>';
+                }
+                titleTd.innerHTML = trimmedTitle;
+                
 
                 dateDate.innerHTML = time;
                 dateDate.setAttribute('datetime', msgdate.toISOString());
                 dateTd.appendChild(dateDate);
-
-                newRow.appendChild(imgTd);
+				
+				newRow.appendChild(unreadTd);
+                newRow.appendChild(locationTd);
                 newRow.appendChild(titleTd);
                 newRow.appendChild(dateTd);
                 
@@ -100,4 +120,3 @@ var Messages = function () {
 }
 
 sis.registerModule('messages', new Messages());
-

@@ -44,7 +44,8 @@
     <div id="baps-channelaction-container"  class="clearfix">
       {% set channels = [1, 2, 3, 'res'] %}
       {% for channel in channels %}
-        <div class='box col-xs-3 baps-channel channel-footer {% if channel == 'res' %} library-footer'>Library{% else %}'>Channel {{channel}}{% endif %}
+        <div class='box col-xs-3 baps-channel channel-footer{% if channel == 'res' %} library-footer{% endif %}'>
+          <a href='javascript:' id='baps-channel-{{channel}}-name'>{% if channel == 'res' %}Library{% else %}Channel {{channel}}{% endif %}</a>&nbsp;
           <span id='baps-channel-{{channel}}-total' title="Total time of all tracks in this channel">(00:00)</span>
           <br>
           <div class="btn-group">
@@ -68,6 +69,7 @@
 {{ parent() }}
 <script type="text/javascript" src="{{baseurl}}js/vendor/typeahead.bundle.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.channelconfig.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/nipsweb.player.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/nipsweb.librarypane.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/nipsweb.init.js"></script>

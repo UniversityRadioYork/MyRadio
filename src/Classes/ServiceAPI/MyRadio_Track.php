@@ -194,7 +194,6 @@ class MyRadio_Track extends ServiceAPI
             new MyRadioFormField('album', MyRadioFormField::TYPE_ALBUM, ['label' => 'Album'])
         );
     }
-
     public function getEditForm()
     {
         return self::getForm()
@@ -207,6 +206,7 @@ class MyRadio_Track extends ServiceAPI
                 ]
             );
     }
+
 
     /**
      * Returns a "summary" string - the title and artist seperated with a dash.
@@ -438,16 +438,73 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
+     * Search for tracks in the library.
+     *
+     * @param string $title Only return tracks matching this title
+     * @param string $artist Only return tracks matching this artist
+     * @param integer $recordid Only return tracks in this album
+     * @param boolean $digitised Only return tracks that are digitised. If false, return any. Default true.
+     * @param enum $clean Only return tracks with the given cleanliness (y = clean, n = explicit, u = unknown)
+     * @param boolean $precise Only return exact matches for title and artist. Defaults to fuzzy search.
+     * @param integer $page Search only returns 50 results by default. Increment this counter for additional results.
+     * @param enum $sort Sort order. Possible values: "id" (default), "title", "random". Random will not paginate well.
+     */
+    public static function search(
+        $title = null,
+        $artist = null,
+        $recordid = null,
+        $digitised = true,
+        $clean = null,
+        $precise = false,
+        $page = 1,
+        $sort = null
+    ) {
+        if ($clean !== null && $clean !== 'u' && $clean !== 'y' && $clean !== 'n') {
+            throw new MyRadioException('Valid values for clean are u, y and n.');
+        }
+
+        if ($sort !== null && $sort !== 'id' && $sort !== 'title' && $sort !== 'random') {
+            throw new MyRadioException('Valid values for sort are id, title and random.');
+        }
+
+        $options = [
+            'title' => $title,
+            'artist' => $artist,
+            'recordid' => empty($recordid) ? null : (int)$recordid,
+            'digitised' => filter_var($digitised, FILTER_VALIDATE_BOOLEAN),
+            'clean' => $clean,
+            'precise' => filter_var($precise, FILTER_VALIDATE_BOOLEAN),
+            'limit' => (($page - 1) * 50) . ',50'
+        ];
+
+        if ($sort === 'id') {
+            $options['idsort'] = true;
+        }
+        if ($sort === 'title') {
+            $options['titlesort'] = true;
+        }
+        if ($sort === 'random') {
+            $options['random'] = true;
+        }
+
+        return self::findByOptions($options);
+    }
+
+    /**
+     * Not for use via the Swagger API. See /track/search instead.
+     *
+     * @swagger ignore
      * @param array $options One or more of the following:
      *                       title: String title of the track
      *                       artist: String artist name of the track
      *                       digitised: If true, only return digitised tracks. If false, return any.
      *                       itonesplaylistid: Tracks that are members of the iTones_Playlist id
-     *                       limit: Maximum number of items to return. 0 = No Limit
+     *                       limit: Maximum number of items to return. 0 = No Limit. start,limit can also be used.
      *                       recordid: int Record id
      *                       lastfmverified: Boolean whether or not verified with Last.fm Fingerprinter. Default any.
      *                       random: If true, sort randomly
-     *                       idsort: If true, sort by trackid
+     *                       idsort: If true, sort by trackid (default)
+     *                       titlesort: If true, sort by title
      *                       custom: A custom SQL WHERE clause
      *                       precise: If true, will only return exact matches for artist/title(/album if specified)
      *                       nocorrectionproposed: If true, will only return items with no correction proposed.
@@ -471,7 +528,25 @@ class MyRadio_Track extends ServiceAPI
         if (!$conflict && !empty($options['itonesplaylistid'])) {
             return iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks();
         }
-
+        if (isset($options['random']) && isset($options['titlesort'])) {
+            if (!$options['random'] && !$options['titlesort']) {
+                $options['idsort'] = true;
+            }
+        } else if (isset($options['random'])) {
+            if (!$options['random']) {
+                $options['idsort'] = true;
+                $options['titlesort'] = false;
+            }
+        } else if (isset($options['titlesort'])) {
+            if (!$options['titlesort']) {
+                $options['idsort'] = true;
+                $options['random'] = false;
+            }
+        } else {
+            $options['idsort'] = true;
+            $options['random'] = false;
+            $options['titlesort'] = false;
+        }
         if (empty($options['title'])) {
             $options['title'] = '';
         }
@@ -562,11 +637,10 @@ class MyRadio_Track extends ServiceAPI
             'SELECT trackid, rec_track.recordid
             FROM rec_track, rec_record WHERE rec_track.recordid=rec_record.recordid
             AND (rec_track.title ILIKE $1 || $2 || $1'
-            .$firstop
+            .' ' .$firstop
             .' rec_track.artist ILIKE $1 || $3 || $1)'
             .($options['album'] ? ' AND rec_record.title ILIKE $1 || $'.$album_param.' || $1' : '')
             .($options['digitised'] ? ' AND digitised=\'t\'' : '')
-            .' '
             .($options['lastfmverified'] === true ? ' AND lastfm_verified=\'t\'' : '')
             .($options['lastfmverified'] === false ? ' AND lastfm_verified=\'f\'' : '')
             .($options['nocorrectionproposed'] === true ? ' AND trackid NOT IN (
@@ -575,6 +649,7 @@ class MyRadio_Track extends ServiceAPI
             .($options['custom'] !== null ? ' AND '.$options['custom'] : '')
             .($options['random'] ? ' ORDER BY RANDOM()' : '')
             .($options['idsort'] ? ' ORDER BY trackid' : '')
+            .($options['titlesort'] ? ' ORDER BY rec_track.title' : '')
             .($options['limit'] == 0 ? '' : ' LIMIT $'.$limit_param),
             $sql_params
         );
@@ -584,7 +659,7 @@ class MyRadio_Track extends ServiceAPI
             if ($options['recordid'] !== null && $trackid['recordid'] != $options['recordid']) {
                 continue;
             }
-            $response[] = new self($trackid['trackid']);
+            $response[] = self::getInstance($trackid['trackid']);
         }
 
         //Intersect with iTones if necessary, then return
@@ -619,27 +694,33 @@ class MyRadio_Track extends ServiceAPI
 
         $getID3 = new \getID3();
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir.'/'.$filename);
+        $getID3_lib = new \getID3_lib();
+        $getID3_lib->CopyTagsToComments($fileInfo);
 
         // File quality checks
         if ($fileInfo['audio']['bitrate'] < 192000) {
-            return ['status' => 'FAIL', 'error' => 'Bitrate is below 192kbps.', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']];
+            return ['status' => 'FAIL', 'message' => 'Bitrate is below 192kbps', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']];
         }
         if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
-            return ['status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
+            return ['status' => 'FAIL', 'message' => 'Item is not stereo', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
         }
 
-        $analysis = self::identifyUploadedTrack(Config::$audio_upload_tmp_dir.'/'.$filename);
-        if (isset($analysis['status'])) {
-            $analysis['fileid'] = $filename;
+        $analysis['status'] = 'INFO';
+        $analysis['message'] = 'Currently editing track information for';
+        $analysis['submittable'] = True;
+        $analysis['fileid'] = $filename;
+        $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
+        $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'];
+        $analysis['analysis']['album'] = $fileInfo['comments_html']['album'];
+           
+        //Remove total tracks in album from the track_number tag.
+        $trackNo = explode("/", $fileInfo['comments_html']['track_number'][0], 2)[0];
+        $analysis['analysis']['position'] = (string)$trackNo;
 
-            return $analysis;
-        } else {
-            return [
-                'fileid' => $filename,
-                'status' => 'OK',
-                'analysis' => $analysis,
-            ];
-        }
+        $trackName = implode("", $fileInfo['comments_html']['title']);   
+        $analysis['analysis']['explicit'] = !!stripos($trackName, 'explicit');
+
+        return $analysis;
     }
 
     /**
@@ -647,6 +728,8 @@ class MyRadio_Track extends ServiceAPI
      *
      * !This method requires the external lastfm-fpclient application to be installed on the server. A FreeBSD build
      * with URY's API key and support for -json can be found in the fpclient.git URY Git repository.
+     *
+     ***** Since LastFM was removed from the central track uploader, this code MAY not be used anymore.
      *
      * @param string $path The location of the MP3 file
      *
@@ -689,7 +772,10 @@ class MyRadio_Track extends ServiceAPI
             return $tracks;
         }
     }
-
+    
+    /**
+      * Pay special attention to the tri-state value of explicit. False and null are different things.
+    */
     public static function identifyAndStoreTrack($tmpid, $title, $artist, $album, $position, $explicit = null)
     {
         // We need to rollback if something goes wrong later

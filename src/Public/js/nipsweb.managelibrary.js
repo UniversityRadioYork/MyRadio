@@ -1,11 +1,15 @@
 var Library = function () {
     var auxid = null;
-    var allowed_mp3 = ['audio/mpeg3', 'audio/x-mpeg-3', 'audio/mpeg', 'audio/x-mpeg',
+    const ALLOWED_MP3 = ['audio/mpeg3', 'audio/x-mpeg-3', 'audio/mpeg', 'audio/x-mpeg',
             'audio/mp3', 'audio/x-mp3', 'audio/mpg', 'audio/mpg3', 'audio/mpegaudio'];
-    var allowed_all = ['audio/mpeg3', 'audio/x-mpeg-3', 'audio/mpeg', 'audio/x-mpeg',
+    const ALLOWED_ALL = ['audio/mpeg3', 'audio/x-mpeg-3', 'audio/mpeg', 'audio/x-mpeg',
             'audio/mp3', 'audio/x-mp3', 'audio/mpg', 'audio/mpg3', 'audio/mpegaudio', 'audio/wav', 'audio/x-wav',
-            'audio/mp4a-latm', 'audio/mp4', 'audio/aac']
+            'audio/mp4a-latm', 'audio/mp4', 'audio/aac'];
 
+    const ICON_ERROR = '<div class="glyphicon glyphicon-exclamation-sign"></div>&nbsp;';
+    const ICON_OK = '<div class="glyphicon glyphicon-ok"></div>&nbsp;';
+    const ICON_LOADING = '<div class="glyphicon glyphicon-refresh gly-spin"></div>&nbsp;';
+    const ICON_CLOSE = '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>';
     //Converts bytes to human readable numbers
     var byteSize = function (size) {
         if (size > 1048576) {
@@ -66,53 +70,63 @@ var Library = function () {
                 url: myradio.makeURL('NIPSWeb', 'upload_central'),
                 paramname: 'audio',
                 error: filedrop_error_handler,
-                allowedfiletypes: allowed_mp3,
-                maxfiles: 20,
+                allowedfiletypes: ALLOWED_MP3,
+                maxfiles: 1,
                 maxfilesize: mConfig.audio_upload_max_size,
                 queuefiles: 1,
                 drop: function () {
-                    $('#central-status').html('Reading file (0%)...');
+                    $('#central-status').html(ICON_LOADING + 'Reading file (0%)...');
                 },
                 uploadStarted: function (i, file, total) {
-                    $('#central-status').html('Uploading ' + file.name + '... (' + byteSize(file.size) + ')');
+                    $('#central-status').html(ICON_LOADING + 'Uploading ' + file.name + '... (' + byteSize(file.size) + ')');
                 },
                 progressUpdated: function (i, file, progress) {
-                    $('#central-status').html('Reading ' + file.name + ' (' + progress + '%)...');
+                    $('#central-status').html(ICON_LOADING + 'Reading ' + file.name + ' (' + progress + '%)...');
                 },
                 uploadFinished: function (i, file, response, time) {
-                    var status = 'Uploaded ' + file.name;
+                    var status = ICON_OK + 'Uploaded ' + file.name;
                     $('#central-status').html(status);
 
                     setTimeout(
                         function () {
                             if ($('#central-status').html() == status) {
-                                $('#central-status').html('Ready');
+                                $('#central-status').html(ICON_OK + 'Ready');
                             }
                         },
                         5000
                     )
 
-                    var manual_track = false;
-                    if (response['status'] !== 'OK' || response.analysis.length === 0) {
-                        var manual_div = document.getElementById('track-manual-entry');
+                    var submittable_track = false;
+                    var manual_div = document.getElementById('track-manual-entry');
                         if (manual_div !== null) {
-                            // If the div exists, then the user has permission to upload a track
-                            // manually, so display the div and set manual_track to true.
-                            $(manual_div).show();
-                            manual_track = true;
+                            if (response['status'] !== 'OK' && response['submittable']) {
+                                    // If the div exists, then the user has permission to upload a track
+                                    // manually, so display the div and set submittable_track to true.
+                                    $(manual_div).slideDown();
+                                    submittable_track = true;
+                            } else if (response['status'] !== 'OK' && response['submittable'] != true ) {
+                                    $(manual_div).slideUp();
+                                    submittable_track = false;
+                            }
+                            //Prevents any previous uploaded but not submitted tracks from being incorrectly submitted.
+                            $('.current-track span').html(ICON_ERROR)
+                            $('.current-track').append('File was not submitted. ');
+                            $('.current-track a').remove();
+                            $('.current-track').removeClass('alert-info').addClass('alert-danger').removeClass('current-track');
+                            //Hide any previous form fill errors.
+                            $('.form-error').slideUp();
+                            $('#track-manual-entry button').remove();
                         }
-                    }
-
                     var result = $('<div class="alert"></div>');
 
                     if (response['status'] !== 'OK') {
-                        //An error occurred
-                        result.addClass('alert-danger').append('<span class="error">' + response['error'] + '</span>');
-                        if (manual_track) {
-                            result.append('<br>');
+                        if (response['status'] === 'FAIL') {
+                            //An error occurred
+                            result.addClass('alert-danger').append('<span class="error">' + ICON_ERROR + response['message'] + ': </span>');
+                        } else if (response['status'] === 'INFO') {
+                            //An info message has been sent (A song is now being edited)
+                            result.addClass('alert-info current-track').append('<span class="error">' + response['message'] + ': </span>');
                         }
-                    } else {
-                        result.addClass('alert-info');
                     }
 
                     // Track info.
@@ -122,57 +136,58 @@ var Library = function () {
                     var track_album = "";
                     var track_position = "";
 
-                    // Build a list of tracks from the lastfm responses and store it in a drop
-                    // down list
-                    var select = "";
-                    if (!manual_track) {
-                        select = $('<select></select>')
-                        .attr('name', response.fileid).attr('id', 'centralupload-' + i);
-                        $.each(
-                            response.analysis,
-                            function (
-                                key,
-                                value
-                            ) {
-                                select.append('<option value="' + value.title + ':-:' + value.artist + '">' + value.title + ' by ' + value.artist + '</option>');
+                    if (submittable_track) {
+                        if (response.analysis) {
+                            //Otherwise, if we got an analysis from the ID3 tags, prefill the textboxes.
+                            function decodeHtml(html) {
+                                //Removes special HTML &xxx; from recieved data
+                                var txt = document.createElement("textarea");
+                                txt.innerHTML = html;
+                                return txt.value;
                             }
-                        );
+                            document.getElementById('track-manual-entry-title').value = decodeHtml(response.analysis.title);
+                            document.getElementById('track-manual-entry-artist').value = decodeHtml(response.analysis.artist);
+                            document.getElementById('track-manual-entry-album').value = decodeHtml(response.analysis.album);
+                            document.getElementById('track-manual-entry-position').value = decodeHtml(response.analysis.position);
+                            document.getElementById('track-manual-entry-explicit').checked = response.analysis.explicit;
+                        } else {
+                            //If we didn't get an analysis for some reason, just make the textboxes empty.
+                            document.getElementById('track-manual-entry-title').value = '';
+                            document.getElementById('track-manual-entry-artist').value = '';
+                            document.getElementById('track-manual-entry-album').value = '';
+                            document.getElementById('track-manual-entry-position').value = '';
+                            document.getElementById('track-manual-entry-explicit').checked = false;
+                        }
                     }
 
                     // The submit part
-                    var submit = $('<a href="javascript:">Save' + (manual_track ? ' using below metadata' : '') + '</a>').click(
+                    var submit = $('<button type="button" class="btn btn-primary">Save Track</button>').click(
                         function () {
-                            if (!manual_track) {
-                                var select = $(this).parent().find('select').val();
-                                track_fileid = $(this).parent().find('select').attr('name');
-                                track_title = select.replace(/:-:.*$/, '');
-                                track_artist = select.replace(/^.*:-:/, '');
-                                track_album = "FROM_LASTFM";
-                                track_position = "FROM_LASTFM";
-                            } else {
+                            if (submittable_track) {
                                 track_fileid = response.fileid;
                                 track_title = document.getElementById('track-manual-entry-title').value;
                                 track_artist = document.getElementById('track-manual-entry-artist').value;
                                 track_album = document.getElementById('track-manual-entry-album').value;
                                 track_position = document.getElementById('track-manual-entry-position').value;
+                                track_explicit = document.getElementById('track-manual-entry-explicit').checked;
 
                                 if (!track_title) {
-                                    result.find('.error').html('Please enter a title');
+                                    $('.form-error').html(ICON_ERROR + 'Please enter a title.').slideDown();
                                     $('#track-manual-entry-title').focus();
                                     return;
                                 }
                                 if (!track_artist) {
-                                    result.find('.error').html('Please enter an artist');
+                                    $('.form-error').html(ICON_ERROR + 'Please enter an artist.').slideDown();
                                     $('#track-manual-entry-artist').focus();
                                     return;
                                 }
                                 if (!track_album) {
-                                    result.find('.error').html('Please enter an album');
+                                    $('.form-error').html(ICON_ERROR + 'Please enter an album.').slideDown();
                                     $('#track-manual-entry-album').focus();
                                     return;
                                 }
                                 if (!track_position) {
-                                    result.find('.error').html('Please enter a track number');
+                                    $('.form-error').html(ICON_ERROR + 'Please enter a track number.').slideDown();
                                     $('#track-manual-entry-position').focus();
                                     return;
                                 }
@@ -180,7 +195,12 @@ var Library = function () {
 
                             result.removeClass('alert-danger')
                             .addClass('alert-info')
-                            .html(track_title + ': Saving');
+                            .removeClass('current-track')
+                            .html(ICON_LOADING + '<strong>' + track_title + '</strong> is saving...').slideDown();
+                            $('#track-manual-entry').slideUp();
+                            submit.remove();
+                            $('.form-error').hide();
+
                             $.ajax(
                                 {
                                     url: myradio.makeURL('NIPSWeb', 'confirm_central_upload'),
@@ -189,7 +209,8 @@ var Library = function () {
                                         artist: track_artist,
                                         album: track_album,
                                         position: track_position,
-                                        fileid: track_fileid
+                                        fileid: track_fileid,
+                                        explicit: track_explicit
                                     },
                                     dataType: 'json',
                                     type: 'get',
@@ -197,12 +218,12 @@ var Library = function () {
                                         data.fileid = data.fileid.replace(/\.mp3/, '');
                                         if (data.status == 'OK') {
                                             result.removeClass('alert-info')
-                                            .addClass('alert-success')
-                                            .html('<div class="glyphicon glyphicon-ok"></div>&nbsp;' + track_title + ' uploaded');
+                                            .addClass('alert-success alert-dismissable')
+                                            .html(ICON_CLOSE + ICON_OK + '<strong>' + track_title + '</strong> uploaded successfully.');
                                         } else {
                                             result.removeClass('alert-info')
-                                            .addClass('alert-danger')
-                                            .html('<div class="glyphicon glyphicon-exclamation-sign"></div>&nbsp;' + track_title + ': ' + data.error);
+                                            .addClass('alert-danger alert-dismissable')
+                                            .html(ICON_CLOSE + ICON_ERROR + '<strong>' + track_title + '</strong> ' + data.error);
                                         }
                                     }
                                 }
@@ -210,9 +231,10 @@ var Library = function () {
                         }
                     );
 
-                    result.append('<label for="centralupload-' + i + '">' + file.name + ':&nbsp;</label>')
-                    .append(select)
-                    .append(submit);
+                    result.append('<label for="centralupload-' + i + '">' + file.name + ' &nbsp;</label>');
+                    if (submittable_track) {
+                        $('#track-manual-entry form').append(submit);
+                    }
                     $('#central-result').append(result);
                 }
             }
@@ -228,54 +250,76 @@ var Library = function () {
                 url: myradio.makeURL('NIPSWeb', 'upload_aux'),
                 paramname: 'audio',
                 error: filedrop_error_handler,
-                allowedfiletypes: allowed_all,
+                allowedfiletypes: ALLOWED_ALL,
                 maxfiles: 20,
                 maxfilesize: mConfig.audio_upload_max_size,
                 queuefiles: 1,
                 drop: function () {
-                    $('#res-status').html('Reading file (0%)...');
+                    $('#res-status').html(ICON_LOADING + 'Reading file (0%)...');
                 },
                 uploadStarted: function (i, file, total) {
-                    $('#res-status').html('Uploading ' + file.name + '... (' + byteSize(file.size) + ')');
+                    $('#res-status').html(ICON_LOADING + 'Uploading ' + file.name + '... (' + byteSize(file.size) + ')');
                 },
                 progressUpdated: function (i, file, progress) {
-                    $('#res-status').html('Reading ' + file.name + ' (' + progress + '%)...');
+                    $('#res-status').html(ICON_LOADING + 'Reading ' + file.name + ' (' + progress + '%)...');
                 },
                 uploadFinished: function (i, file, response, time) {
-                    $('#res-status').html('Uploaded ' + file.name);
+                    $('#res-status').html(ICON_OK + 'Uploaded ' + file.name);
 
                     var result = $('<div class="alert"></div>');
                     if (response['status'] == 'FAIL') {
-                        //An error occurred
-                        result.addClass('alert-danger').append('<span class="error">' + response['error'] + '</span>');
+                        //An error occurred, probably bitrate is too low.
+                        result.addClass('alert-danger alert-dismissable').append(ICON_ERROR + ICON_CLOSE + '<strong>' + file.name + ':</strong> <span class="error">' + response['error'] + '</span>');
+                        $('#res-result').append(result);
                     } else {
                         result.addClass('alert-info').append(
-                            '<div id="resupload-' + i + '">' +
-                            file.name + ': <input type="text" class="title" name="' +
-                            response.fileid + '" id="resuploadname-' + i +
-                            '" placeholder="Enter a helpful name..." /></div>'
+                            '<div id="resupload-' + i + '" class="row">' +
+                                '<label for="resuploadname-' + i + '" class="col-xs-4 control-label">' +
+                                    file.name +
+                                ':</label>' +
+                                '<div class="col-xs-6">' +
+                                    '<input type="text" class="title form-control" name="' +
+                                        response.fileid + '" id="resuploadname-' + i +
+                                    '" placeholder="Enter a helpful name..." />' +
+                                '</div>' +
+                            '</div>'
+
                         );
 
                         if (window.auxid.match(/^aux-\d+$/)) {
                             //This is a central one - it can have an expiry
-                            result.append(
-                                $('<input type="text" placeholder="Expiry date" />').addClass('date').attr('id', 'resuploaddate-' + i).datetimepicker(
+                            result.append('<div class="row"><label for="resuploaddate-' + i + '" class="col-xs-4 control-label">Expiry Date: </label><div class="col-xs-6 expiry-input"></div></div>');
+                            result.find('.expiry-input').html(
+                                $('<input type="text" placeholder="Leave blank to never expire." />').addClass('date form-control').attr('id', 'resuploaddate-' + i).datetimepicker(
                                     {
                                         pickTime: 'false'
                                     }
                                 )
                             )
-                            .append('<em>Leave blank to never expire</em>&nbsp;&nbsp;');
                         }
                         result.append('<div id="confirminator-' + (response.fileid.replace(/\.mp3/, '')) + '"></div>');
-                        result.append(
-                            $('<a href="javascript:">Save</a>').click(
+                        result.find('.row:first-of-type').append(
+                            $('<div class="col-xs-2"><button type="button" class="btn btn-primary save-button">Save</button></div>').click(
                                 function () {
                                     var title = result.find('input.title').val();
                                     var expire = result.find('input.date').val() || null;
                                     var fileid = result.find('input.title').attr('name');
 
-                                    result.html('Adding <em>' + title + '</em> to library');
+                                    if (!title) {
+                                        $('.form-error').html(ICON_ERROR + 'Please enter a title.').slideDown();
+                                        //Flash the empty input
+                                        result.find('input.title').prop('disabled', true);
+                                        setTimeout(
+                                            function () {
+                                                result.find('input.title').prop('disabled', false);
+                                                result.find('input.title').focus();
+                                            },
+                                            500
+                                        )
+                                        return;
+                                    }
+
+                                    result.html(ICON_LOADING + 'Adding <strong>' + title + '</strong> to library...');
                                     $.ajax(
                                         {
                                             url: myradio.makeURL('NIPSWeb', 'confirm_aux_upload'),
@@ -291,13 +335,13 @@ var Library = function () {
                                                 data.fileid = data.fileid.replace(/\.mp3/, '');
                                                 if (data.status == 'OK') {
                                                     result.removeClass('alert-info')
-                                                    .addClass('alert-success')
-                                                    .html('<div class="glyphicon glyphicon-ok"></div><em>' + title + '</em> added to library');
+                                                    .addClass('alert-success alert-dismissable')
+                                                    .html(ICON_OK + ICON_CLOSE + '<strong>' + title + ':</strong> was added to library.');
                                                 } else {
                                                     result.removeClass('alert-info')
-                                                    .addClass('alert-danger')
+                                                    .addClass('alert-danger alert-dismissable')
                                                     .html(
-                                                        '<div class="glyphicon glyphicon-exclamation-sign"></div><em>' + title + '</em> could not be added to library<br>'
+                                                        ICON_ERROR + ICON_CLOSE + '<strong>' + title + ':</strong> could not be added to library.<br>Error: '
                                                         + data.error
                                                     );
                                                 }
@@ -307,9 +351,8 @@ var Library = function () {
                                 }
                             )
                         );
-
-                        $('#res-result').append(result);
                     }
+                    $('#res-result').append(result);
                 }
             }
         );
@@ -321,7 +364,7 @@ var Library = function () {
         $('#res-type-sel').on('keyup', res_type_sel_change_handler);
         centralDbInit();
         auxDbInit();
-        $('#central-status, #res-status').html('Ready');
+        $('#central-status, #res-status').html('<div class="glyphicon glyphicon-ok"></div>&nbsp;Ready');
     };
 
     return {
@@ -329,8 +372,6 @@ var Library = function () {
         initialise: initialise
     };
 }
-
-
 
 $(document).ready(
     function () {
