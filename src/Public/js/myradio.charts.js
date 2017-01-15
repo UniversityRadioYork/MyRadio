@@ -1,24 +1,22 @@
-$('.twig-datatable').dataTable(
+$('.twig-datatable').dataTable({
+  "aoColumns": [
+    //name
     {
-        "aoColumns": [
-            //name
-            {
-                "bVisible" : false
-        },
-            //description
-            {
-                sTitle: "Chart Name"
-        },
-            //releases
-            {
-                sTitle: "Releases"
-        },
-            //editlink
-            {
-                sTitle: "Edit"
-        }
-        ],
-        "bPaginate": false,
-        "aaSorting": [[ 1, "asc" ]]
+      "bVisible" : false
+    },
+    //description
+    {
+      sTitle: "Chart Name"
+    },
+    //releases
+    {
+      sTitle: "Releases"
+    },
+    //editlink
+    {
+      sTitle: "Edit"
     }
-);
+  ],
+  "bPaginate": false,
+  "aaSorting": [[ 1, "asc" ]]
+});

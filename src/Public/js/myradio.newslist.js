@@ -1,28 +1,26 @@
-$('.twig-datatable').dataTable(
+$('.twig-datatable').dataTable({
+  "aoColumns": [
+    //newsentryid
     {
-        "aoColumns": [
-        //newsentryid
-        {
-            "bVisible" : false
-        },
-        //author
-        {
-            "sTitle": "Author"
-        },
-        //posted
-        {
-            "sTitle": "Time"
-        },
-        //body
-        {
-            bVisible: false
-        },
-        //seen
-        {
-            "sTitle": "Seen"
-        }
-        ],
-        "bPaginate": false,
-        "aaSorting": [[ 1, "asc" ]]
+      "bVisible" : false
+    },
+    //author
+    {
+      "sTitle": "Author"
+    },
+    //posted
+    {
+      "sTitle": "Time"
+    },
+    //body
+    {
+      bVisible: false
+    },
+    //seen
+    {
+      "sTitle": "Seen"
     }
-);
+  ],
+  "bPaginate": false,
+  "aaSorting": [[ 1, "asc" ]]
+});
