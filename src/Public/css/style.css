@@ -71,10 +71,10 @@ body {
   }
 }
 
-/** MyRadio bootstrap navbar overides taken from http://work.smarchal.com/twbscolor/css/979797979797ffffffe1e1e11 **/
+/** MyRadio bootstrap navbar overides taken from http://work.smarchal.com/twbscolor/css/2D425F2D425Fffffffe1e1e11 **/
 .navbar-ury {
   background-color: #2D333C;
-  border-color: #979797;
+  border-color: #2D425F;
   border: none;
 }
 .navbar-ury .navbar-brand {
@@ -110,10 +110,10 @@ body {
 .navbar-ury .navbar-nav > li > a:hover,
 .navbar-ury .navbar-nav > li > a:focus {
   color: #e1e1e1;
-  background-color: #979797;
+  background-color: #2D425F;
 }
 .navbar-ury .navbar-nav > li > .dropdown-menu {
-  background-color: #979797;
+  background-color: #2D425F;
 }
 .navbar-ury .navbar-nav > li > .dropdown-menu > li > a {
   color: #ffffff;
@@ -121,35 +121,35 @@ body {
 .navbar-ury .navbar-nav > li > .dropdown-menu > li > a:hover,
 .navbar-ury .navbar-nav > li > .dropdown-menu > li > a:focus {
   color: #e1e1e1;
-  background-color: #979797;
+  background-color: #2D425F;
 }
 .navbar-ury .navbar-nav > li > .dropdown-menu > li > .divider {
-  background-color: #979797;
+  background-color: #2D425F;
 }
 .navbar-ury .navbar-nav .open .dropdown-menu > .active > a,
 .navbar-ury .navbar-nav .open .dropdown-menu > .active > a:hover,
 .navbar-ury .navbar-nav .open .dropdown-menu > .active > a:focus {
   color: #e1e1e1;
-  background-color: #979797;
+  background-color: #2D425F;
 }
 .navbar-ury .navbar-nav > .active > a,
 .navbar-ury .navbar-nav > .active > a:hover,
 .navbar-ury .navbar-nav > .active > a:focus {
   color: #e1e1e1;
-  background-color: #979797;
+  background-color: #2D425F;
 }
 .navbar-ury .navbar-nav > .open > a,
 .navbar-ury .navbar-nav > .open > a:hover,
 .navbar-ury .navbar-nav > .open > a:focus {
   color: #e1e1e1;
-  background-color: #979797 !important;
+  background-color: #2D425F !important;
 }
 .navbar-ury .navbar-toggle {
-  border-color: #979797;
+  border-color: #2D425F;
 }
 .navbar-ury .navbar-toggle:hover,
 .navbar-ury .navbar-toggle:focus {
-  background-color: #979797;
+  background-color: #2D425F;
 }
 .navbar-ury .navbar-toggle .icon-bar {
   background-color: #ffffff;
@@ -177,7 +177,7 @@ body {
   .navbar-ury .navbar-nav .open .dropdown-menu > .active > a:hover,
   .navbar-ury .navbar-nav .open .dropdown-menu > .active > a:focus {
     color: #e1e1e1;
-    background-color: #979797;
+    background-color: #2D425F;
   }
 }
 /** MyRadio Menu Styles **/
