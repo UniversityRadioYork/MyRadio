@@ -1007,21 +1007,26 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
-     * Signs the given user into the timeslot to say they were on air at this time.
+     * Signs the given user into the timeslot to say they were
+     * on air at this time, if they haven't been signed in already.
      *
      * @param MyRadio_User $member
      */
     public function signIn(MyRadio_User $member)
     {
-        self::$db->query(
-            'INSERT INTO sis2.member_signin (show_season_timeslot_id, memberid, signerid)
-            VALUES ($1, $2, $3)',
-            [
-                $this->getID(),
-                $member->getID(),
-                MyRadio_User::getInstance()->getID(),
-            ]
-        );
+        // If member already signed in for whatever reason, don't bother trying again.
+        $signedIn = !empty(self::$db->fetchOne(
+            'SELECT * FROM sis2.member_signin
+               WHERE show_season_timeslot_id=$1 AND memberid=$2',
+            [$this->getID(), $member->getID]
+        ));
+        if (!$signedIn) {
+            self::$db->query(
+                'INSERT INTO sis2.member_signin (show_season_timeslot_id, memberid, signerid)
+                VALUES ($1, $2, $3)',
+                [$this->getID(), $member->getID(), MyRadio_User::getInstance()->getID()]
+            );
+        }
     }
 
     public static function getCancelForm()
