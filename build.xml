@@ -109,7 +109,7 @@
    <arg value="--report-checkstyle=${basedir}/build/logs/checkstyle.xml" />
    <arg value="--report-summary" />
    <arg value="--standard=PSR2" />
-   <arg value="--ignore=*.min.*,*/vendor/*,*/PublicAPI/rtfm/*" />
+   <arg value="--ignore=*.min.*,*/vendor/*,*/PublicAPI/rtfm/*,*/Public/js/*" />
    <arg path="${basedir}/src" />
    <arg value="-p" />
   </exec>
