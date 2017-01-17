@@ -24,8 +24,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     URLUtils::backWithMessage('Track Updated.');
 } else {
     //Not Submitted
-
+    if (isset($_REQUEST['trackid'])) {
     MyRadio_Track::getInstance($_REQUEST['trackid'])
         ->getEditForm()
         ->render();
+    } else {
+        URLUtils::backWithMessage('A TrackID to edit has not been provided, please try again.');
+    }
 }
