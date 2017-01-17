@@ -642,12 +642,12 @@ class MyRadio_Track extends ServiceAPI
             if (!$options['random'] && !$options['titlesort']) {
                 $options['idsort'] = true;
             }
-        } else if (isset($options['random'])) {
+        } elseif (isset($options['random'])) {
             if (!$options['random']) {
                 $options['idsort'] = true;
                 $options['titlesort'] = false;
             }
-        } else if (isset($options['titlesort'])) {
+        } elseif (isset($options['titlesort'])) {
             if (!$options['titlesort']) {
                 $options['idsort'] = true;
                 $options['random'] = false;
@@ -817,17 +817,17 @@ class MyRadio_Track extends ServiceAPI
 
         $analysis['status'] = 'INFO';
         $analysis['message'] = 'Currently editing track information for';
-        $analysis['submittable'] = True;
+        $analysis['submittable'] = true;
         $analysis['fileid'] = $filename;
         $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
         $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'];
         $analysis['analysis']['album'] = $fileInfo['comments_html']['album'];
-           
+
         //Remove total tracks in album from the track_number tag.
         $trackNo = explode("/", $fileInfo['comments_html']['track_number'][0], 2)[0];
         $analysis['analysis']['position'] = (string)$trackNo;
 
-        $trackName = implode("", $fileInfo['comments_html']['title']);   
+        $trackName = implode("", $fileInfo['comments_html']['title']);
         $analysis['analysis']['explicit'] = !!stripos($trackName, 'explicit');
 
         return $analysis;
@@ -882,7 +882,7 @@ class MyRadio_Track extends ServiceAPI
             return $tracks;
         }
     }
-    
+
     /**
       * Pay special attention to the tri-state value of explicit. False and null are different things.
     */

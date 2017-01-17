@@ -990,18 +990,18 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $source = $_SERVER['REMOTE_ADDR'];
 
         self::$db->query(
-                'INSERT INTO sis2.messages (timeslotid, commtypeid, sender, subject, content, statusid, comm_source)
-                VALUES ($1, $2, $3, $4, $5, $6, $7)',
-                [
-                    $this->getID(),             // timeslot
-                    3,                          // commtypeid : website
-                    'MyRadio',                  // sender
-                    substr($message, 0, 144),   // subject : trancated message
-                    $prefix.$message,         // content : message with prefix
-                    $junk ? 4 : 1,              // statusid : junk or unread
-                    $source,                     // comm_source : IP
-                ]
-            );
+            'INSERT INTO sis2.messages (timeslotid, commtypeid, sender, subject, content, statusid, comm_source)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [
+                $this->getID(),           // timeslot
+                3,                        // commtypeid : website
+                'MyRadio',                // sender
+                substr($message, 0, 144), // subject : trancated message
+                $prefix.$message,         // content : message with prefix
+                $junk ? 4 : 1,            // statusid : junk or unread
+                $source,                  // comm_source : IP
+            ]
+        );
 
         return $this;
     }

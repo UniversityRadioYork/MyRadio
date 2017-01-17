@@ -374,19 +374,17 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         $name = $method->getName();
 
         //Note the ordering is important - create is static!
-        if (
-            $name === 'testCredentials' ||
-            CoreUtils::startsWith($name, 'create') ||
-            CoreUtils::startsWith($name, 'add')
+        if ($name === 'testCredentials'
+            || CoreUtils::startsWith($name, 'create')
+            || CoreUtils::startsWith($name, 'add')
         ) {
             return 'post';
         }
 
-        if (
-            $name === 'toDataSource' ||
-            CoreUtils::startsWith($name, 'get') ||
-            CoreUtils::startsWith($name, 'is') ||
-            $method->isStatic()
+        if ($name === 'toDataSource'
+            || CoreUtils::startsWith($name, 'get')
+            || CoreUtils::startsWith($name, 'is')
+            || $method->isStatic()
         ) {
             return 'get';
         }
@@ -394,7 +392,8 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         return 'put';
     }
 
-    private static function getMethodPublicName($method) {
+    private static function getMethodPublicName($method)
+    {
         $name = $method->getName();
 
         if ($name === 'toDataSource' || $name === 'create') {
