@@ -1077,7 +1077,7 @@ var playoutSlider = function (e) {
         }
 
         slider.style.width = result + 'px';
-        return Math.Max(0, Math.round(result / getPixelsPerSecond() * 100) / 100);
+        return Math.max(0, Math.round(result / getPixelsPerSecond() * 100) / 100);
     };
 
     var getXOffset = function (e) {
