@@ -7,33 +7,31 @@ var Messages = function () {
     locationNames = ["unknown method", "email", "text message", "the website"],
     table = document.createElement("table"),
     clickHandler = function (context, row, message) {
-      $(row).click(
-        function () {
-          if ($(this).hasClass("unread")) {
-            //This is the first time the message has been opened. Mark as read
-            $.ajax({
-              url: myradio.makeURL("SIS", "messages.markread", {"id": message["id"]})
-            });
-            unreadMessages--;
-            context.setUnread(unreadMessages);
-            $(this).removeClass("unread");
-          }
-          var locationName;
-          locationName = locationNames[message.type];
-          var dateTime;
-          var time;
-          dateTime = moment.unix(message.time);
-          time = dateTime.format("HH:mm");
-          var location;
-          if (message.location) {
-            location = message.location[0];
-            if (message.location.length >= 2) {
-              location = location + " (" + message.location[1] + ")";
-            }
-          }
-          myradio.createDialog("Message", "<blockquote><p>" +message.body + "</p><footer>Listener via " + locationName + " at <cite>" + time + "</cite>.</footer></blockquote>" + location,  [myradio.closeButton()]);
+      $(row).click(function () {
+        if ($(this).hasClass("unread")) {
+          //This is the first time the message has been opened. Mark as read
+          $.ajax({
+            url: myradio.makeURL("SIS", "messages.markread", {"id": message["id"]})
+          });
+          unreadMessages--;
+          context.setUnread(unreadMessages);
+          $(this).removeClass("unread");
         }
-      );
+        var locationName;
+        locationName = locationNames[message.type];
+        var dateTime;
+        var time;
+        dateTime = moment.unix(message.time);
+        time = dateTime.format("HH:mm");
+        var location;
+        if (message.location) {
+          location = message.location[0];
+          if (message.location.length >= 2) {
+            location = location + " (" + message.location[1] + ")";
+          }
+        }
+        myradio.createDialog("Message", "<blockquote><p>" +message.body + "</p><footer>Listener via " + locationName + " at <cite>" + time + "</cite>.</footer></blockquote>" + location,  [myradio.closeButton()]);
+      });
     };
 
   table.setAttribute("class", "messages");

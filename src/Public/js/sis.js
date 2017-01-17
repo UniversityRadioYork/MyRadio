@@ -30,11 +30,11 @@ var SIS = function (container) {
           // See SIS/remote.php for why this is necessary
           400: function () {
             window.location = myradio.makeURL(
-              'MyRadio',
-              'timeslot',
+              "MyRadio",
+              "timeslot",
               {
                 next: window.location.pathname,
-                message: window.btoa('Your session has expired, please pick a Timeslot to continue.'),
+                message: window.btoa("Your session has expired, please pick a Timeslot to continue."),
               }
             );
           }

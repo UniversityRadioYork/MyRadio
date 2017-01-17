@@ -19,15 +19,13 @@ ulsort.List = {
         // Building the regex from our user input, 'inp' should be escaped
         inp = $(this).val();
         rgx.compile(inp, "im");
-        titles.each(
-          function () {
-            if (rgx.source !== "" && !rgx.test($(this).html())) {
-              $(this).hide();
-            } else {
-              $(this).show();
-            }
+        titles.each(function () {
+          if (rgx.source !== "" && !rgx.test($(this).html())) {
+            $(this).hide();
+          } else {
+            $(this).show();
           }
-        );
+        });
       }
     );
   }

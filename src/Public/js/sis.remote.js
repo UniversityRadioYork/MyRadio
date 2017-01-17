@@ -36,32 +36,31 @@ var server = {
    * required callback functions from plugins.
    */
   connect: function () {
-    $.ajax(
-      {
-        url: myradio.makeURL("SIS", "remote"),
-        method: "POST",
-        data: server.getQueryString(),
-        cache: false,
-        dataType: "json",
-        //The timeout here is to prevent stack overflow
-        complete: function () {
-          setTimeout("server.connect()", 100);},
-        success: server.handleResponse,
-        statusCode: {
-          // See SIS/remote.php for why this is necessary
-          400: function () {
-            window.location = myradio.makeURL(
-              'MyRadio',
-              'timeslot',
-              {
-                next: window.location.pathname,
-                message: window.btoa('Your session has expired, please pick a Timeslot to continue.')
-              }
-            );
-          }
+    $.ajax({
+      url: myradio.makeURL("SIS", "remote"),
+      method: "POST",
+      data: server.getQueryString(),
+      cache: false,
+      dataType: "json",
+      //The timeout here is to prevent stack overflow
+      complete: function () {
+        setTimeout("server.connect()", 100);
+      },
+      success: server.handleResponse,
+      statusCode: {
+        // See SIS/remote.php for why this is necessary
+        400: function () {
+          window.location = myradio.makeURL(
+            "MyRadio",
+            "timeslot",
+            {
+              next: window.location.pathname,
+              message: window.btoa("Your session has expired, please pick a Timeslot to continue.")
+            }
+          );
         }
       }
-    );
+    });
   },
   /**
    * Used by connect, this takes all the current registered server parameters

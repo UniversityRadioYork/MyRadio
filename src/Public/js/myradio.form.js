@@ -397,11 +397,10 @@ var MyRadioForm = {
         var new_id = $(this).attr("nextvalue");
         $("#" + $(this).attr("id").replace(/add-to-/, "") + " tbody tr:first").clone()
           .addClass(parseInt(new_id) % 2 === 0 ? "odd" : "even")
-          .find("input:not(.tt-hint)").each(
-            function () {
-              $(this).val("").removeClass("tt-input").attr("id", $(this).attr("id").replace(/0/, new_id));
-            }
-          ).end().appendTo("#" + $(this).attr("id").replace(/add-to-/, "") + " tbody");
+          .find("input:not(.tt-hint)").each(function () {
+            $(this).val("").removeClass("tt-input").attr("id", $(this).attr("id").replace(/0/, new_id));
+          })
+          .end().appendTo("#" + $(this).attr("id").replace(/add-to-/, "") + " tbody");
         MyRadioForm.setUpArtistFields();
         MyRadioForm.setUpMemberFields();
         MyRadioForm.setUpTrackFields();
