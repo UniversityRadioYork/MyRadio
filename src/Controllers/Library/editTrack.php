@@ -4,6 +4,7 @@
  */
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Track;
+use \MyRadio\MyRadioException;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
@@ -25,10 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     //Not Submitted
     if (isset($_REQUEST['trackid'])) {
-    MyRadio_Track::getInstance($_REQUEST['trackid'])
-        ->getEditForm()
-        ->render();
+        MyRadio_Track::getInstance($_REQUEST['trackid'])
+            ->getEditForm()
+            ->render();
     } else {
-        URLUtils::backWithMessage('A TrackID to edit has not been provided, please try again.');
+        throw new MyRadioException('A TrackID to edit has not been provided, please try again.', 400);
     }
 }
