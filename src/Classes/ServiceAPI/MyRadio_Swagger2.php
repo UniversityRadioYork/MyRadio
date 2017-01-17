@@ -437,7 +437,6 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                 continue;
             }
 
-            $name = $method->getName();
             $op = self::getMethodOpType($method);
             $public_name = self::getMethodPublicName($method);
 

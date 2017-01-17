@@ -733,7 +733,6 @@ EOT
         foreach ($this->requested_times as $time) {
             //Check for existence of shows in requested times
             $conflicts = MyRadio_Scheduler::getScheduleConflicts($this->term_id, $time);
-            $warnings = [];
 
             if (!empty($conflicts)) {
                 $conflict = '';

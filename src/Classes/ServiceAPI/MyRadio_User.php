@@ -1818,7 +1818,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
          * @todo Link to Facebook events
          */
         $uname = empty($eduroam) ? $email : str_replace('@york.ac.uk', '', $eduroam);
-        if (!empty($provided_pass)) {
+        if (!empty($provided_password)) {
             $plain_pass = '(The password you entered when registering)';
         }
         $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$fname, $uname, $plain_pass], Config::$welcome_email);
@@ -1948,8 +1948,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
             [$this->getID(), $authid, CoreUtils::getTimestamp($from), $to]
         );
 
-        if (($from === null or $from < $time) && ($to === null or $to > time())) {
-            $permissions[] = (int) $authid;
+        if (($from === null || $from < time()) && ($to === null || $to > time())) {
+            $this->permissions[] = (int) $authid;
         }
     }
 

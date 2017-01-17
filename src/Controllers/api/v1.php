@@ -132,7 +132,7 @@ if (!$api_key->canCall($classes[$class], $method)) {
          */
         $result = invokeArgsNamed($methodReflection, $object, $args);
     } catch (MyRadioException $e) {
-        api_error($e->getCode(), $e->getMessage(), $e);
+        api_error($e->getCode(), $e->getMessage());
     }
 
     header('Content-Type: application/json');

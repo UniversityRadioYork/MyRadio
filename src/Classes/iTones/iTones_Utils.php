@@ -40,10 +40,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public static function getRemainingRequests()
     {
-        return self::$db->fetchOne(
-            self::REQUESTS_REMAINING_SQL,
-            self::getRemainingRequestsParams()
-        )['remaining'];
+        return self::$db->fetchOne(self::REQUESTS_REMAINING_SQL, self::getRemainingRequestsParams())['remaining'];
     }
 
     /**

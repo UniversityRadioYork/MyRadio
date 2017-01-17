@@ -20,7 +20,7 @@ require_once __DIR__.'/../Controllers/root_cli.php';
 /**
  * Handle API errors.
  */
-function api_error($code, $message = null, $previous = null)
+function api_error($code, $message = null)
 {
     $messages = [
         400 => 'Bad Request',
