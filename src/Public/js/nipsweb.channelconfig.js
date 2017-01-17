@@ -1,4 +1,5 @@
 /* global myradio */
+/* exported ChannelConfigurator */
 var ChannelConfigurator = function(player) {
 
   var getOrUpdateStoredDeviceMappings = function(devices) {

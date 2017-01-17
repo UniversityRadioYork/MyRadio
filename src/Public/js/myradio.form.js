@@ -30,7 +30,8 @@ jQuery.validator.addMethod(
     },
     "Please enter a valid date."
 );
-window.MyRadioForm = {
+
+var MyRadioForm = {
   gCheckedValue: null,
   setUpMemberFields: function () {
     /**

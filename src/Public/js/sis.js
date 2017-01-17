@@ -1,4 +1,5 @@
 /* global myradio */
+/* exported SIS */
 var SIS = function (container) {
   var sisContainer = container,
     tabContainer = document.createElement("div"),

@@ -1,4 +1,5 @@
 /* global ChannelConfigurator, myradio, mConfig */
+/* exported NIPSWeb */
 var NIPSWeb = function (d) {
   // If enabled, doesn't reload on error
   var debug = d;

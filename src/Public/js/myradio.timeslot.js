@@ -9,10 +9,8 @@ $("#shows").on(
     $("#timeslots").empty();
     $("#signin-list").empty();
     $("#signin-submit").hide();
-    var seriesno = 1;
-    for (var series in window.showdata[$(this).val()]) {
-      $("#seasons").append("<option value=\"" + (seriesno - 1) + "\">Season " + seriesno + "</option>");
-      seriesno++;
+    for (var seriesno in window.showdata[$(this).val()]) {
+      $("#seasons").append("<option value='" + seriesno + "'>Season " + (seriesno + 1) + "</option>");
     }
   }
 );
@@ -25,10 +23,11 @@ $("#seasons").on(
     var season = window.showdata[$("#shows").val()][$(this).val()];
     for (var timeslot in season) {
       var time = moment.unix(season[timeslot][1]);
-      $("#timeslots").append("<option value=\"" + season[timeslot][0] + "\">" + time.format("DD/MM/YYYY HH:mm") + "</option>");
+      $("#timeslots").append("<option value='" + season[timeslot][0] + "'>" + time.format("DD/MM/YYYY HH:mm") + "</option>");
     }
   }
 );
+
 $("#timeslots").on(
   "change",
   function () {

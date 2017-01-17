@@ -1,5 +1,5 @@
 /* global mConfig */
-window.myradio = {
+var myradio = {
   makeURL: function (module, action, params) {
     var qstring = (params === undefined) ? "" : $.param(params);
     if (mConfig.rewrite_url) {
