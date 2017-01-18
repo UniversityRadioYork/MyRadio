@@ -247,7 +247,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         if (!empty($_SESSION['memberid'])) {
             $creator = $_SESSION['memberid'];
         } else {
-            $creator = $params['credits'][0]['memberid'];
+            $creator = $params['credits']['memberid'][0];
         }
 
         //We're all or nothing from here on out - transaction time
@@ -328,6 +328,13 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             if (empty($params['credits']['memberid'][$i])) {
                 continue;
             }
+            // Both a memberid and a User object are valid here.
+            // This is icky and should be fixed.
+            if (is_numeric($params['credits']['memberid'][$i])) {
+                $member = MyRadio_User::getInstance($params['credits']['memberid'][$i]);
+            } else {
+                $member = $params['credits']['memberid'][$i];
+            }
             self::$db->query(
                 'INSERT INTO schedule.show_credit
                 (show_id, credit_type_id, creditid, effective_from, memberid, approvedid)
@@ -335,7 +342,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 [
                     $show_id,
                     (int) $params['credits']['credittype'][$i],
-                    $params['credits']['memberid'][$i]->getID(),
+                    $member->getID(),
                     $creator,
                 ],
                 true

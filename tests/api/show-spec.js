@@ -25,7 +25,8 @@ frisby.create('Create a test member')
   .expectStatus(201)
   .afterJSON(function(json) {
     var memberid = json.payload.memberid;
-    show.credits = [{type: 1, memberid: memberid}];
+    // This is the format the create form submites :(
+    show.credits = {credittype: [1], memberid: [memberid]};
 
     frisby.create('Create a test show')
       .post(url.base + 'show?api_key=travis-test-key', show, {json: true})
@@ -42,8 +43,7 @@ frisby.create('Create a test member')
         time: String,
         payload: {
           show_id: Number,
-          // Don't like, but backwards compatibility :(
-          credits: String
+          credits_string: String
         }
       })
       .afterJSON(function(json) {
@@ -68,7 +68,7 @@ frisby.create('Create a test member')
           .expectHeaderContains('content-type', 'application/json')
           .expectJSON({
             status: 'OK',
-            payload: show.credits
+            payload: [{memberid: memberid}]
           })
           .expectJSONTypes({
             time: String
