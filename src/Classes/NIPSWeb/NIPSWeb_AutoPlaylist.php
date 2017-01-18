@@ -35,11 +35,12 @@ class NIPSWeb_AutoPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
     protected function __construct($playlistid)
     {
         $this->auto_playlist_id = $playlistid;
-        $result = self::$db->fetchOne('SELECT * FROM bapsplanner.auto_playlists WHERE auto_playlist_id=$1 LIMIT 1', [$playlistid]);
+        $result = self::$db->fetchOne(
+            'SELECT * FROM bapsplanner.auto_playlists WHERE auto_playlist_id=$1 LIMIT 1',
+            [$playlistid]
+        );
         if (empty($result)) {
             throw new MyRadioException('The specified NIPSWeb Auto Playlist does not seem to exist', 404);
-
-            return;
         }
 
         $this->name = $result['name'];
@@ -103,7 +104,10 @@ class NIPSWeb_AutoPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
 
     public static function findByName($name)
     {
-        $result = self::$db->fetchColumn('SELECT auto_playlist_id FROM bapsplanner.auto_playlists WHERE name=$1', [$name]);
+        $result = self::$db->fetchColumn(
+            'SELECT auto_playlist_id FROM bapsplanner.auto_playlists WHERE name=$1',
+            [$name]
+        );
 
         if (empty($result)) {
             throw new MyRadioException('That auto playlist does not exist!');

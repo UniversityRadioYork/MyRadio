@@ -18,9 +18,17 @@ $form = new MyRadioForm(
 );
 
 $form->addField(
-    new MyRadioFormField('title', MyRadioFormField::TYPE_TEXT, ['required' => false, 'label' => 'Title', 'placeholder' => 'Filter by track title...'])
+    new MyRadioFormField(
+        'title',
+        MyRadioFormField::TYPE_TEXT,
+        ['required' => false, 'label' => 'Title', 'placeholder' => 'Filter by track title...']
+    )
 )->addField(
-    new MyRadioFormField('artist', MyRadioFormField::TYPE_TEXT, ['required' => false, 'label' => 'Artist', 'placeholder' => 'Filter by artist name...'])
+    new MyRadioFormField(
+        'artist',
+        MyRadioFormField::TYPE_TEXT,
+        ['required' => false, 'label' => 'Artist', 'placeholder' => 'Filter by artist name...']
+    )
 );
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -38,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $tracks = null;
     }
-
 } else {
     $tracks = null;
 }

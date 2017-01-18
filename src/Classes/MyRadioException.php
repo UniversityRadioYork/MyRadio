@@ -172,7 +172,7 @@ class MyRadioException extends \RuntimeException
                     $_SESSION['last_ajax_error'] = [$this->error, $this->code, $this->trace];
                 } else {
                     $error = '<div class="errortable">'
-                        .'<p>Sorry, we have encountered an error and are unable to continue. Please try again later.</p>'
+                        .'<p>Sorry, we encountered an error and are unable to continue. Please try again later.</p>'
                         .'<p>'.$this->message.'</p>'
                         .'<p>Computing Team have been notified.</p>'
                         .'</div>';
@@ -193,7 +193,8 @@ class MyRadioException extends \RuntimeException
                 }
             }
         } elseif (!$silent) {
-            echo 'MyRadio is unavailable at the moment. Please try again later. If the problem persists, contact support.';
+            echo 'MyRadio is unavailable at the moment. '
+                .'Please try again later. If the problem persists, contact support.';
         }
     }
 

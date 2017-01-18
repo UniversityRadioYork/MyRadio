@@ -256,13 +256,21 @@ class MyRadio_TrackCorrection extends MyRadio_Track
                 'display' => 'icon',
                 'value' => 'ok',
                 'title' => 'Approve Track Correction',
-                'url' => URLUtils::makeURL('Library', 'acceptTrackCorrection', ['correctionid' => $this->getCorrectionID()]),
+                'url' => URLUtils::makeURL(
+                    'Library',
+                    'acceptTrackCorrection',
+                    ['correctionid' => $this->getCorrectionID()]
+                ),
             ],
             'rejectlink' => [
                 'display' => 'icon',
                 'value' => 'trash',
                 'title' => 'Reject Track Correction',
-                'url' => URLUtils::makeURL('Library', 'rejectTrackCorrection', ['correctionid' => $this->getCorrectionID()]),
+                'url' => URLUtils::makeURL(
+                    'Library',
+                    'rejectTrackCorrection',
+                    ['correctionid' => $this->getCorrectionID()]
+                ),
             ],
         ];
     }

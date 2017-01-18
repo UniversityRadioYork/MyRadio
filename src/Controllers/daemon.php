@@ -86,7 +86,8 @@ while (false !== ($file = readdir($handle))) {
         dlog('Not checking '.$file.' - Parse Error', 1);
     } else {
         require $path.$file;
-        $class = '\MyRadio\Daemons\\'.str_replace('.php', '', $file); // TODO: php5.5 allows ClassName:class to remove this hack
+        // TODO: php5.5 allows ClassName:class to remove this hack
+        $class = '\MyRadio\Daemons\\'.str_replace('.php', '', $file);
         if (!class_exists($class)) {
             echo dlog('Daemon does not exist - '.$class, 1);
         } else {

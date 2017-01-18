@@ -15,7 +15,8 @@ if (isset($_REQUEST['apiKey'])) {
     $_REQUEST['api_key'] = $_REQUEST['apiKey'];
 }
 if (empty($_REQUEST['api_key']) && $class === 'resources') {
-    $_REQUEST['api_key'] = 'IUrnsb8AMkjqDRdfXvOMe3DqHLW8HJ1RNBPNJq3H1FQpiwQDs7Ufoxmsf5xZE9XEbQErRO97DG4xfyVAO7LuS2dOiVNZYoxkk4fEhDt8wR4sLXbghidtM5rLHcgkzO10';
+    $_REQUEST['api_key'] = 'IUrnsb8AMkjqDRdfXvOMe3DqHLW8HJ1RNBPNJq3H1FQpiwQDs7Ufoxmsf5x'
+        .'ZE9XEbQErRO97DG4xfyVAO7LuS2dOiVNZYoxkk4fEhDt8wR4sLXbghidtM5rLHcgkzO10';
 }
 
 $api_key = MyRadio_Swagger::getAPICaller();
@@ -99,7 +100,10 @@ if (!$api_key->canCall($classes[$class], $method)) {
                     $hint = $param->getClass()->getName();
                     $args[$param->getName()] = $hint::getInstance($_REQUEST[$param->getName()]);
                 } catch (MyRadioException $ex) {
-                    api_error(400, 'Parameter '.$param->getName().' got an invalid ID. Must be an ID for '.$param->getClass().'.');
+                    api_error(
+                        400,
+                        'Parameter '.$param->getName().' got an invalid ID. Must be an ID for '.$param->getClass().'.'
+                    );
                 }
             } else {
                 $args[$param->getName()] = $_REQUEST[$param->getName()];

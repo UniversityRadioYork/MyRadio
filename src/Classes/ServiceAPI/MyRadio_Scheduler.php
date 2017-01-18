@@ -29,7 +29,8 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     /**
      * Returns an Array of pending Season allocations.
      *
-     * @return array An Array of MyRadio_Season objects which do not have an allocated timeslot, ordered by time submitted
+     * @return array An Array of MyRadio_Season objects which do not have an allocated timeslot,
+     *               ordered by time submitted
      *
      * @todo Move to MyRadio_Season?
      */
@@ -340,7 +341,8 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
                 'descr',
                 MyRadioFormField::TYPE_TEXT,
                 [
-                    'explanation' => 'Name the term. A value of "Autumn" denotes that this term represents the start of a new membership year.',
+                    'explanation' => 'Name the term. A value of "Autumn" denotes that this '
+                                     . 'term represents the start of a new membership year.',
                     'label' => 'Term description',
                     'options' => ['maxlength' => 10],
                 ]

@@ -200,8 +200,13 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             'host' => $_SERVER['HTTP_HOST'],
             'info' => [
                 'title' => 'MyRadio API',
-                'description' => 'The MyRadio API provides vaguely RESTful access to many of the internal workings of your friendly local radio station.',
-                'termsOfService' => 'The use of this API is permitted only for applications which have been issued an API key, and only then within the additional Terms of Service issued with that application\'s key. Any other use is strictly prohibited. The MyRadio API may be used for good, but not evil. The lighter 15 of the 50 grey areas are also permitted for all authorised applications.',
+                'description' => 'The MyRadio API provides vaguely RESTful access to many of the internal workings '
+                                 . 'of your friendly local radio station.',
+                'termsOfService' => 'The use of this API is permitted only for applications which have been issued an '
+                                  . 'API key, and only then within the additional Terms of Service issued with that '
+                                  . 'application\'s key. Any other use is strictly prohibited. The MyRadio API may be '
+                                  . 'used for good, but not evil. The lighter 15 of the 50 grey areas are also '
+                                  . 'permitted for all authorised applications.',
                 'version' => '2.0',
             ],
             'schemes' => ['https'],

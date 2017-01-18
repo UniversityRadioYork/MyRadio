@@ -89,7 +89,10 @@ class MyRadio_BannerCampaign extends ServiceAPI
     {
         $this->banner_campaign_id = (int) $banner_campaign_id;
 
-        $result = self::$db->fetchOne('SELECT * FROM website.banner_campaign WHERE banner_campaign_id=$1', [$banner_campaign_id]);
+        $result = self::$db->fetchOne(
+            'SELECT * FROM website.banner_campaign WHERE banner_campaign_id=$1',
+            [$banner_campaign_id]
+        );
         if (empty($result)) {
             throw new MyRadioException('Banner Campaign '.$banner_campaign_id.' does not exist!');
         }
@@ -132,7 +135,8 @@ class MyRadio_BannerCampaign extends ServiceAPI
             'created_by' => $this->getCreatedBy()->getID(),
             'approved_by' => ($this->getApprovedBy() == null) ? null : $this->getApprovedBy()->getID(),
             'effective_from' => CoreUtils::happyTime($this->getEffectiveFrom()),
-            'effective_to' => ($this->getEffectiveTo() === null) ? 'Never' : CoreUtils::happyTime($this->getEffectiveTo()),
+            'effective_to' => ($this->getEffectiveTo() === null) ?
+                'Never' : CoreUtils::happyTime($this->getEffectiveTo()),
             'banner_location_id' => $this->getLocation(),
             'num_timeslots' => sizeof($this->getTimeslots()),
             'edit_link' => [
@@ -427,7 +431,9 @@ class MyRadio_BannerCampaign extends ServiceAPI
      */
     public static function getAllBannerCampaigns()
     {
-        return self::resultSetToObjArray(self::$db->fetchColumn('SELECT banner_campaign_id FROM website.banner_campaign'));
+        return self::resultSetToObjArray(
+            self::$db->fetchColumn('SELECT banner_campaign_id FROM website.banner_campaign')
+        );
     }
 
     /**
@@ -449,7 +455,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
     }
 
     /**
-     * Gets all Banner Campaigns that are currently live. That is they are active and have timeslots at the current time.
+     * Gets all currently live Banner Campaigns. That is they are active and have timeslots at the current time.
      *
      * @return MyRadio_BannerCampaign[]
      */
@@ -477,7 +483,9 @@ class MyRadio_BannerCampaign extends ServiceAPI
      */
     public static function getCampaignLocations()
     {
-        return self::$db->fetchAll('SELECT banner_location_id AS value, description AS text FROM website.banner_location');
+        return self::$db->fetchAll(
+            'SELECT banner_location_id AS value, description AS text FROM website.banner_location'
+        );
     }
 
     /**

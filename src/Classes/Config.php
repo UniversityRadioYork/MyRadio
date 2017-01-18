@@ -601,7 +601,7 @@ final class Config
      *
      * @var string
      */
-    public static $social_engineering_warning = 'Beware of Social Engineering, someone may be trying to disrupt your show.
+    public static $social_engineering_warning = 'Beware of Social Engineering, someone may be trying to spoil your show.
     Management and Computing will never send official communication through SIS.';
 
     /**

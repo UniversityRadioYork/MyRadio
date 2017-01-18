@@ -273,7 +273,13 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 
     private static function telnetStart()
     {
-        self::$telnet_handle = fsockopen('tcp://'.Config::$itones_telnet_host, Config::$itones_telnet_port, $errno, $errstr, 10);
+        self::$telnet_handle = fsockopen(
+            'tcp://'.Config::$itones_telnet_host,
+            Config::$itones_telnet_port,
+            $errno,
+            $errstr,
+            10
+        );
         register_shutdown_function([__CLASS__, 'telnetEnd']);
     }
 
