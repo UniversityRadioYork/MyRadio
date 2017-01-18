@@ -1344,8 +1344,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
             OR local_name LIKE $3 OR local_alias LIKE $3 OR eduroam LIKE $2',
             [
                 $email,
-                str_ireplace('@'.Config::$eduroam_domain, '', $email),
-                str_ireplace('@'.Config::$email_domain, '', $email),
+                str_replace('@'.Config::$eduroam_domain, '', $email),
+                str_replace('@'.Config::$email_domain, '', $email),
             ]
         );
 
@@ -1824,11 +1824,11 @@ class MyRadio_User extends ServiceAPI implements APICaller
          * @todo Make this easier to change
          * @todo Link to Facebook events
          */
-        $uname = empty($params['eduroam']) ? $params['email'] : str_replace('@york.ac.uk', '', $params['eduroam']);
-        if (!empty($provided_pass)) {
+        $uname = empty($params['eduroam']) ? $params['email'] : str_replace(Config::$eduroam_domain, '', $params['eduroam']);
+        if (!empty($params['provided_password'])) {
             $plain_pass = '(The password you entered when registering)';
         }
-        $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$params['fname'], $params['uname'], $plain_pass], Config::$welcome_email);
+        $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$params['fname'], $uname, $plain_pass], Config::$welcome_email);
 
         //Send the email
         /*

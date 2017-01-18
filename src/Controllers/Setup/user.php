@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'email' => $_REQUEST['email'],
         'phone' => $_REQUEST['phone'],
         'paid' => Config::$membership_fee,
-        'provided_pass' => $_REQUEST['password']
+        'provided_password' => $_REQUEST['password']
     ];
     $user = MyRadio_User::create($params);
 
