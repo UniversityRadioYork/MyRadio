@@ -196,7 +196,7 @@ class MyRadio_Track extends ServiceAPI
                 MyRadioFormField::TYPE_ALBUM,
                 [
                     'label' => 'Album',
-                    'explanation' => 'This must be an existing album in our system. To edit albums use the album editor.'
+                    'explanation' => 'This must be an existing album in our system.'
                 ]
             )
         )->addField(
