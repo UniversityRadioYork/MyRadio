@@ -1,3 +1,5 @@
+# Add a recent Node repo
+curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 # Base packages and Apache setup
 apt-get update
 apt-get install -y apache2 \
@@ -18,7 +20,8 @@ apt-get install -y apache2 \
 	php5-memcached \
 	php5-xdebug \
 	openssl \
-	libav-tools
+	libav-tools \
+	nodejs
 a2enmod ssl
 a2enmod rewrite
 service apache2 stop
@@ -31,14 +34,14 @@ echo "extension=twig.so" > /etc/php5/mods-available/twig.ini
 ln -s /etc/php5/mods-available/twig.ini /etc/php5/apache2/conf.d/20-twig.ini
 
 cat <<EOF >> /etc/php5/mods-available/xdebug.ini
-echo "xdebug.default_enable=1"
-echo "xdebug.remote_enable=1"
-echo "xdebug.remote_autostart=0"
-echo "xdebug.remote_port=9000"
-echo "xdebug.remote_log=\"/var/log/xdebug/xdebug.log\""
-echo "xdebug.remote_host=10.0.2.2"
-echo "xdebug.idekey=\"MyRadio vagrant\""
-echo "xdebug.remote_handler=dbgp"
+xdebug.default_enable=1
+xdebug.remote_enable=1
+xdebug.remote_autostart=0
+xdebug.remote_port=9000
+xdebug.remote_log="/var/log/xdebug/xdebug.log"
+xdebug.remote_host=10.0.2.2
+xdebug.idekey="MyRadio vagrant"
+xdebug.remote_handler=dbgp
 EOF
 
 # Composer
@@ -46,6 +49,10 @@ curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
 cd /vagrant
 composer install
+
+# Tools to run API tests
+npm install -g jasmine-node
+npm install --no-bin-links frisby
 
 ln -s /vagrant/src /var/www/myradio
 ln -s /vagrant/sample_configs/apache.conf /etc/apache2/sites-available/myradio.conf

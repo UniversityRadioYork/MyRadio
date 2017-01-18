@@ -2640,8 +2640,6 @@ ALTER TABLE ONLY banner_location ALTER COLUMN banner_location_id SET DEFAULT nex
 ALTER TABLE ONLY banner_timeslot ALTER COLUMN id SET DEFAULT nextval('banner_timeslot_id_seq'::regclass);
 ALTER TABLE ONLY banner_type ALTER COLUMN banner_type_id SET DEFAULT nextval('banner_type_banner_type_id_seq'::regclass);
 
-ALTER TABLE ONLY api_key_log ALTER COLUMN api_log_id SET DEFAULT nextval('api_key_log_api_log_id_seq'::regclass);
-
 --------------
 -- Add constraints and keys
 -- These were missing from the initial dump for some reason
