@@ -566,12 +566,6 @@ CREATE TABLE api_key_auth (
     typeid integer NOT NULL
 );
 COMMENT ON TABLE api_key_auth IS 'Stores what API capabilities each key has.';
-CREATE SEQUENCE api_key_log_api_log_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
 CREATE TABLE api_method_auth (
     api_method_auth_id integer NOT NULL,
     class_name character varying NOT NULL,
@@ -2652,18 +2646,6 @@ ALTER TABLE ONLY banner_location ALTER COLUMN banner_location_id SET DEFAULT nex
 ALTER TABLE ONLY banner_timeslot ALTER COLUMN id SET DEFAULT nextval('banner_timeslot_id_seq'::regclass);
 ALTER TABLE ONLY banner_type ALTER COLUMN banner_type_id SET DEFAULT nextval('banner_type_banner_type_id_seq'::regclass);
 SET search_path = myury, pg_catalog;
-CREATE TABLE api_key_log (
-    api_log_id integer NOT NULL,
-    key_string character varying NOT NULL,
-    "timestamp" timestamp without time zone DEFAULT now() NOT NULL,
-    remote_ip inet NOT NULL,
-    request_path character varying,
-    request_params json
-);
-COMMENT ON TABLE api_key_log IS 'Stores a record of API Requests by an API Key';
-ALTER SEQUENCE api_key_log_api_log_id_seq OWNED BY api_key_log.api_log_id;
-
-ALTER TABLE ONLY api_key_log ALTER COLUMN api_log_id SET DEFAULT nextval('api_key_log_api_log_id_seq'::regclass);
 
 --------------
 -- Add constraints and keys
@@ -3014,14 +2996,6 @@ ALTER TABLE ONLY api_class_map
 
 ALTER TABLE ONLY api_key_auth
     ADD CONSTRAINT api_key_auth_pkey PRIMARY KEY (key_string, typeid);
-
-
---
--- Name: api_key_log_pkey; Type: CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY api_key_log
-    ADD CONSTRAINT api_key_log_pkey PRIMARY KEY (api_log_id);
 
 --
 -- Name: api_key_pkey; Type: CONSTRAINT; Schema: myury
@@ -4550,13 +4524,6 @@ CREATE INDEX chart_type_name_like ON chart_type USING btree (name varchar_patter
 SET search_path = myury, pg_catalog;
 
 --
--- Name: api_key_log_timestamp_index; Type: INDEX; Schema: myury
---
-
-CREATE INDEX api_key_log_timestamp_index ON api_key_log USING btree ("timestamp");
-
-
---
 -- Name: error_rate_i_timestamp; Type: INDEX; Schema: myury
 --
 
@@ -5692,14 +5659,6 @@ ALTER TABLE ONLY api_key_auth
 
 ALTER TABLE ONLY api_key_auth
     ADD CONSTRAINT api_key_auth_auth_id_fkey FOREIGN KEY (typeid) REFERENCES public.l_action(typeid);
-
-
---
--- Name: api_key_log_key_string_fkey; Type: FK CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY api_key_log
-    ADD CONSTRAINT api_key_log_key_string_fkey FOREIGN KEY (key_string) REFERENCES api_key(key_string);
 
 
 --

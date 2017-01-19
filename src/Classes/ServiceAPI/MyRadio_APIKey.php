@@ -48,23 +48,6 @@ class MyRadio_APIKey extends ServiceAPI implements APICaller
     }
 
     /**
-     * Logs that this API Key has called something. Used for auditing.
-     *
-     * @param string $uri
-     * @param array  $args
-     *
-     * @deprecated
-     */
-    public function logCall($uri, $args)
-    {
-        self::$db->query(
-            'INSERT INTO myury.api_key_log (key_string, remote_ip, request_path, request_params)
-            VALUES ($1, $2, $3, $4)',
-            [$this->key, $_SERVER['REMOTE_ADDR'], $uri, json_encode($args)]
-        );
-    }
-
-    /**
      * Get the key for this apikey.
      */
     public function getID()
