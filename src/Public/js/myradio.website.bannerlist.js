@@ -49,6 +49,10 @@ $('.twig-datatable').dataTable(
         //campaigns_link
         {
             sTitle: "View Campaigns"
+        },
+        //delete_link
+        {
+            sTitle: "Delete Banner"
         }
         ],
         "bPaginate": false,
