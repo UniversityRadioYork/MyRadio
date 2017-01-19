@@ -427,17 +427,6 @@ class CoreUtils
         if ($db->getInTransaction()) {
             $db->query('ROLLBACK');
         }
-
-        $errors = MyRadioError::getErrorCount();
-        $exceptions = MyRadioException::getExceptionCount();
-        $queries = $db->getCounter();
-        $host = gethostbyname(gethostname());
-
-        $db->query(
-            'INSERT INTO myury.error_rate (server_ip, error_count, exception_count, queries)
-            VALUES ($1, $2, $3, $4)',
-            [$host, $errors, $exceptions, $queries]
-        );
     }
 
     /**
@@ -469,35 +458,6 @@ class CoreUtils
             ),
             true
         );
-    }
-
-    public static function getErrorStats($since = null)
-    {
-        if ($since === null) {
-            $since = time() - 86400;
-        }
-        $result = Database::getInstance()->fetchAll(
-            'SELECT
-            round(extract(\'epoch\' from timestamp) / 600) * 600 as timestamp,
-            SUM(error_count)/COUNT(error_count) AS errors, SUM(exception_count)/COUNT(exception_count) AS exceptions,
-            SUM(queries)/COUNT(queries) AS queries
-            FROM myury.error_rate WHERE timestamp>=$1 GROUP BY round(extract(\'epoch\' from timestamp) / 600)
-            ORDER BY timestamp ASC',
-            [self::getTimestamp($since)]
-        );
-
-        $return = [];
-        $return[] = ['Timestamp', 'Errors per request', 'Exceptions per request', 'Queries per request'];
-        foreach ($result as $row) {
-            $return[] = [
-                date('H:i', $row['timestamp']),
-                (int) $row['errors'],
-                (int) $row['exceptions'],
-                (int) $row['queries']
-            ];
-        }
-
-        return $return;
     }
 
     public static function getSafeHTML($dirty_html)

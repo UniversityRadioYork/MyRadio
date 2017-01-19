@@ -607,23 +607,6 @@ CREATE SEQUENCE award_member_awardmemberid_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE award_member_awardmemberid_seq OWNED BY award_member.awardmemberid;
-CREATE TABLE error_rate (
-    request_id integer NOT NULL,
-    server_ip character varying NOT NULL,
-    error_count integer NOT NULL,
-    exception_count integer NOT NULL,
-    "timestamp" timestamp without time zone DEFAULT now() NOT NULL,
-    queries integer DEFAULT 0 NOT NULL
-);
-COMMENT ON TABLE error_rate IS 'Stores error and exception counts for every request.';
-COMMENT ON COLUMN error_rate.queries IS 'Number of queries executed, not errors :P';
-CREATE SEQUENCE error_rate_request_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE error_rate_request_id_seq OWNED BY error_rate.request_id;
 CREATE TABLE modules (
     moduleid integer NOT NULL,
     serviceid integer,
@@ -2552,7 +2535,6 @@ ALTER TABLE ONLY api_class_map ALTER COLUMN api_map_id SET DEFAULT nextval('api_
 ALTER TABLE ONLY api_method_auth ALTER COLUMN api_method_auth_id SET DEFAULT nextval('api_method_auth_api_method_auth_id_seq'::regclass);
 ALTER TABLE ONLY award_categories ALTER COLUMN awardid SET DEFAULT nextval('award_categories_awardid_seq'::regclass);
 ALTER TABLE ONLY award_member ALTER COLUMN awardmemberid SET DEFAULT nextval('award_member_awardmemberid_seq'::regclass);
-ALTER TABLE ONLY error_rate ALTER COLUMN request_id SET DEFAULT nextval('error_rate_request_id_seq'::regclass);
 ALTER TABLE ONLY modules ALTER COLUMN moduleid SET DEFAULT nextval('modules_moduleid_seq'::regclass);
 ALTER TABLE ONLY photos ALTER COLUMN photoid SET DEFAULT nextval('photos_photoid_seq'::regclass);
 ALTER TABLE ONLY services ALTER COLUMN serviceid SET DEFAULT nextval('services_serviceid_seq'::regclass);
@@ -3043,14 +3025,6 @@ ALTER TABLE ONLY award_categories
 
 ALTER TABLE ONLY award_member
     ADD CONSTRAINT award_member_pkey PRIMARY KEY (awardmemberid);
-
-
---
--- Name: error_rate_pkey; Type: CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY error_rate
-    ADD CONSTRAINT error_rate_pkey PRIMARY KEY (request_id);
 
 
 --
@@ -4519,15 +4493,6 @@ CREATE INDEX chart_type_name ON chart_type USING btree (name);
 --
 
 CREATE INDEX chart_type_name_like ON chart_type USING btree (name varchar_pattern_ops);
-
-
-SET search_path = myury, pg_catalog;
-
---
--- Name: error_rate_i_timestamp; Type: INDEX; Schema: myury
---
-
-CREATE INDEX error_rate_i_timestamp ON error_rate USING btree ("timestamp");
 
 
 SET search_path = people, pg_catalog;
