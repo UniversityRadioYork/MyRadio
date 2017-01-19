@@ -104,6 +104,12 @@ class MyRadio_Banner extends MyRadio_Photo
                 'title' => 'Click here to view the Campaigns for this Banner',
                 'url' => URLUtils::makeURL('Website', 'campaigns', ['bannerid' => $this->getBannerID()]),
             ],
+            'delete_link' => [
+                'display' => 'icon',
+                'value' => 'trash',
+                'title' => 'Click here to delete this Banner',
+                'url' => URLUtils::makeURL('Website', 'deleteBanner', ['bannerid' => $this->getBannerID()]),
+            ],
         ];
 
         return array_merge(parent::toDataSource(), $data);
@@ -332,6 +338,22 @@ class MyRadio_Banner extends MyRadio_Photo
     }
 
     /**
+     * Delete's a banner and it's campaigns.
+     *
+     * @param int $banner_id
+     *
+     * @return TODO
+     */
+    public function deleteBanner()
+    {
+        self::$db->query('BEGIN');
+        self::$db->query('DELETE FROM website.banner WHERE banner_id=$1', [$this->getBannerID()], true);
+
+        self::$db->query('COMMIT');
+        $this->updateCacheObject();
+    }
+
+    /**
      * Generates the form used to Create and Edit Banners.
      *
      * @return MyRadio_Form
@@ -394,5 +416,38 @@ class MyRadio_Banner extends MyRadio_Photo
                         ]
                     )
                 );
+    }
+
+    /**
+     * Generates the form used to Delete Banners.
+     *
+     * @return MyRadio_Form
+     */
+    public static function getDeleteForm()
+    {
+        return (
+            new MyRadioForm(
+                'deleteBannerfrm',
+                'Website',
+                'deleteBanner',
+                [
+                    'debug' => false,
+                    'title' => 'Delete Banner',
+                ]
+            )
+        )->addField(
+            new MyRadioFormField('bannerid', MyRadioFormField::TYPE_HIDDEN)
+        )->addField(
+            new MyRadioFormField(
+                'confirm',
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    'label' => 'Are you sure?',
+                    'options' => ['checked' => true],
+                    'required' => true,
+                    'explanation' => 'You are about to delete this banner. Please confirm.'
+                ]
+            )
+        );
     }
 }
