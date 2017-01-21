@@ -153,7 +153,7 @@ class MyRadio_Track extends ServiceAPI
         $this->intro = strtotime('1970-01-01 '.$result['intro'].'+00');
         $this->length = $result['length'];
         $this->duration = (int) $result['duration'];
-        $this->number = (int) $result['intro'];
+        $this->number = (int) $result['number'];
         $this->record = (int) $result['recordid'];
         $this->title = $result['title'];
     }
@@ -191,7 +191,84 @@ class MyRadio_Track extends ServiceAPI
         )->addField(
             new MyRadioFormField('artist', MyRadioFormField::TYPE_TEXT, ['label' => 'Artist'])
         )->addField(
-            new MyRadioFormField('album', MyRadioFormField::TYPE_ALBUM, ['label' => 'Album'])
+            new MyRadioFormField(
+                'album',
+                MyRadioFormField::TYPE_ALBUM,
+                [
+                    'label' => 'Album',
+                    'explanation' => 'This must be an existing album in our system.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'position',
+                MyRadioFormField::TYPE_NUMBER,
+                [
+                    'label' => 'Position',
+                    'explanation' => 'The track number on the album.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'intro',
+                MyRadioFormField::TYPE_NUMBER,
+                [
+                    'label' => 'Intro',
+                    'explanation' => 'The track intro time in seconds.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'clean',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'options' => array_merge(
+                        [['text' => 'Please select...', 'disabled' => true]],
+                        self::getCleanOptions()
+                    ),
+                    'label' => 'Clean/Explicit/Unknown'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'genre',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'options' => array_merge(
+                        [['text' => 'Please select...', 'disabled' => true]],
+                        self::getGenres()
+                    ),
+                    'label' => 'Genre'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'digitised',
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    'label' => 'Digitised',
+                    'required' => false
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'digitisedby',
+                MyRadioFormField::TYPE_MEMBER,
+                [
+                    'label' => 'Digitised By',
+                    'explanation' => 'The person who uploaded the track.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'blacklisted',
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    'label' => 'Blacklisted',
+                    'required' => false,
+                    'explanation' => 'If the track is banned from playing on Jukebox.'
+                ]
+            )
         );
     }
     public function getEditForm()
@@ -202,7 +279,14 @@ class MyRadio_Track extends ServiceAPI
                 [
                     'title' => $this->getTitle(),
                     'artist' => $this->getArtist(),
-                    'album' => $this->getAlbum()->getID(),
+                    'album' => $this->getAlbum(),
+                    'position' => $this->getPosition(),
+                    'intro' => $this->getIntro(),
+                    'clean' => $this->getClean(),
+                    'genre' => $this->getGenre(),
+                    'digitised' => $this->getDigitised(),
+                    'digitisedby' => $this->getDigitisedBy(),
+                    'blacklisted' => $this->isBlacklisted(),
                 ]
             );
     }
@@ -299,6 +383,16 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
+     * Get the genre of the Track.
+     *
+     * @return char
+     */
+    public function getGenre()
+    {
+        return $this->genre;
+    }
+
+    /**
      * Get whether or not the track is digitised.
      *
      * @return bool
@@ -333,6 +427,22 @@ class MyRadio_Track extends ServiceAPI
                 'f', null, $this->getID(),
             ]
         );
+        $this->updateCacheObject();
+    }
+
+    /**
+     * Update the user who digitised the track
+     * @param MyRadio_User $digitisedby The user who digitised the track.
+     */
+    public function setDigitisedBy($digitisedby)
+    {
+        $this->digitisedby = $digitisedby->getID();
+        self::$db->query(
+            'UPDATE rec_track SET digitisedby=$1 WHERE trackid=$2',
+            [
+                $digitisedby->getID(),
+                $this->getID()
+            ]);
         $this->updateCacheObject();
     }
 
@@ -1003,14 +1113,14 @@ class MyRadio_Track extends ServiceAPI
 
     public function setPosition($position)
     {
-        $this->position = (int) $position;
+        $this->number = (int) $position;
         self::$db->query('UPDATE rec_track SET number=$1 WHERE trackid=$2', [$this->getPosition(), $this->getID()]);
         $this->updateCacheObject();
     }
 
     public function getPosition()
     {
-        return $this->position;
+        return $this->number;
     }
 
     public function setDuration($duration)
@@ -1022,6 +1132,19 @@ class MyRadio_Track extends ServiceAPI
             CoreUtils::intToTime($this->getDuration()),
             $this->getDuration(),
             $this->getID(),
+            ]
+        );
+        $this->updateCacheObject();
+    }
+
+    public function setGenre($genre)
+    {
+        $this->genre = $genre;
+        self::$db->query(
+            'UPDATE rec_track SET genre=$1 WHERE trackid=$2',
+            [
+                $genre,
+                $this->getID()
             ]
         );
         $this->updateCacheObject();
@@ -1221,6 +1344,31 @@ class MyRadio_Track extends ServiceAPI
         return $this->itones_blacklist;
     }
 
+    public function setBlacklisted($blacklist)
+    {
+        if ($blacklist === true) {
+            $this->itones_blacklist = true;
+            self::$db->query(
+                'INSERT INTO jukebox.track_blacklist
+                (trackid) VALUES ($1)',
+                [
+                    $this->getID()
+                ]
+            );
+            $this->updateCacheObject();
+        } elseif ($blacklist === false && $this->isBlacklisted()) {
+            $this->itones_blacklist = false;
+            self::$db->query(
+                'DELETE FROM jukebox.track_blacklist
+                WHERE trackid = $1',
+                [
+                    $this->getID()
+                ]
+            );
+            $this->updateCacheObject();
+        }
+    }
+
     /**
      * Returns various numbers that look pretty on a graph, which concern the Central Music Library.
      *
@@ -1253,5 +1401,25 @@ class MyRadio_Track extends ServiceAPI
             ['Verified Metadata', $num_verified],
             ['Unverified Metadata', $num_unverified],
         ];
+    }
+
+    /**
+     * Returns a list of potential clean statuses, organised so they can be used as a SELECT MyRadioFormField data source.
+     */
+    public static function getCleanOptions()
+    {
+        self::wakeup();
+
+        return self::$db->fetchAll('SELECT clean_code AS value, clean_descr AS text FROM public.rec_cleanlookup ORDER BY clean_descr ASC');
+    }
+
+    /**
+     * Returns a list of potential genres, organised so they can be used as a SELECT MyRadioFormField data source.
+     */
+    public static function getGenres()
+    {
+        self::wakeup();
+
+        return self::$db->fetchAll('SELECT genre_code AS value, genre_descr AS text FROM public.rec_genrelookup ORDER BY genre_descr ASC');
     }
 }
