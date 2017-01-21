@@ -87,7 +87,7 @@ var Messages = function () {
                 locationTd.innerHTML = icon_location;
                 unreadTd.innerHTML = icon_unread;
 
-                var longTitle = data[i]['title'];
+                var longTitle = String(data[i]['title']);
                 var trimmedTitle = longTitle.substring(0, 120);
                 if (longTitle != trimmedTitle) {
                     trimmedTitle = trimmedTitle + '... <a>Read more</a>';
