@@ -24,97 +24,121 @@ CREATE SCHEMA webcam;
 CREATE SCHEMA website;
 COMMENT ON SCHEMA website IS 'Collection of data relating to the operation of the public-facing website.';
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-CREATE FUNCTION bapstotracklist() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$DECLARE
-audid INTEGER;
+CREATE FUNCTION bapstotracklist() RETURNS TRIGGER AS $$
+DECLARE
+    audid INTEGER;
 BEGIN
-	IF ((TG_OP = 'UPDATE')
-        AND ((SELECT COUNT(*) FROM (SELECT sel.action FROM selector sel WHERE sel.action >= 4 AND sel.action <= 11 ORDER BY sel.time DESC LIMIT 1)AS seltop INNER JOIN tracklist.selbaps bsel ON (seltop.action = bsel.selaction) WHERE bsel.bapsloc = NEW."serverid" AND (NEW."timeplayed" >= (SELECT sel.time FROM selector sel ORDER BY sel.time DESC LIMIT 1) ) ) = 1 )
-        AND ((SELECT COUNT(*) FROM baps_audio ba WHERE ba.audioid = NEW."audioid" AND ba.trackid > 0 ) = 1 )
-        AND ((NEW."timestopped" - NEW."timeplayed" > '00:00:30') )
-        AND ((SELECT COUNT(*) FROM tracklist.tracklist WHERE bapsaudioid = NEW."audiologid") = 0)
-        )
-
- THEN
-        INSERT INTO tracklist.tracklist (source, timestart, timestop, timeslotid, bapsaudioid)
-                VALUES ('b', NEW."timeplayed", NEW."timestopped", (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot WHERE start_time <= NOW() AND (start_time + duration) >= NOW()ORDER BY show_season_timeslot_id ASC LIMIT 1 ), NEW."audiologid" )
-                RETURNING audiologid INTO audid;
-	INSERT INTO tracklist.track_rec
-                VALUES ("audid", (SELECT rec.recordid FROM rec_track rec INNER JOIN baps_audio ba USING (trackid)
-                WHERE ba.audioid = NEW."audioid"), (SELECT trackid FROM baps_audio WHERE audioid = NEW."audioid"));
-
-
-	END IF;
-	RETURN NULL;
-END $$;
-CREATE FUNCTION clear_item_func() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-BEGIN
-IF OLD.textitemid IS NOT NULL THEN
-	DELETE FROM baps_textitem WHERE textitemid=OLD.textitemid;
-END IF;
-IF OLD.libraryitemid IS NOT NULL THEN
-	DELETE FROM baps_libraryitem WHERE libraryitemid=OLD.libraryitemid;
-END IF;
-IF OLD.fileitemid IS NOT NULL THEN
-	DELETE FROM baps_fileitem WHERE fileitemid=OLD.fileitemid;
-END IF;
-RETURN OLD;
+    IF ((TG_OP = 'UPDATE')
+        AND ((SELECT COUNT(*) FROM (SELECT sel.action FROM selector sel
+                                    WHERE sel.action >= 4 AND sel.action <= 11
+                                    ORDER BY sel.TIME DESC LIMIT 1) AS seltop
+              INNER JOIN tracklist.selbaps bsel ON (seltop.action = bsel.selaction)
+              WHERE bsel.bapsloc = NEW."serverid" AND (NEW."timeplayed" >= (SELECT sel.TIME FROM selector sel
+                                                                            ORDER BY sel.TIME DESC
+                                                                            LIMIT 1))) = 1)
+        AND ((SELECT COUNT(*) FROM baps_audio ba WHERE ba.audioid = NEW."audioid" AND ba.trackid > 0) = 1)
+        AND ((NEW."timestopped" - NEW."timeplayed" > '00:00:30'))
+        AND ((SELECT COUNT(*) FROM tracklist.tracklist WHERE bapsaudioid = NEW."audiologid") = 0))
+    THEN
+        INSERT INTO tracklist.tracklist (SOURCE, timestart, timestop, timeslotid, bapsaudioid)
+            VALUES ('b', NEW."timeplayed", NEW."timestopped", (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
+                                                               WHERE start_time <= NOW()
+                                                                   AND (start_time + duration) >= NOW()
+                                                                   AND show_season_id != 0
+                                                               ORDER BY show_season_timeslot_id ASC
+                                                               LIMIT 1),
+                    NEW."audiologid")
+            RETURNING audiologid INTO audid;
+    INSERT INTO tracklist.track_rec
+        VALUES ("audid", (SELECT rec.recordid FROM rec_track rec
+                          INNER JOIN baps_audio ba USING (trackid)
+                          WHERE ba.audioid = NEW."audioid"),
+                (SELECT trackid FROM baps_audio WHERE audioid = NEW."audioid"));
+    END IF;
+    RETURN NULL;
 END;
-$$;
-CREATE FUNCTION process_gammu_text() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$    BEGIN
-        IF (TG_OP = 'INSERT') THEN
-           IF (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot WHERE start_time <= NOW() AND (start_time + duration) >= NOW() ORDER BY show_season_timeslot_id ASC LIMIT 1) IS NOT NULL THEN
-              INSERT INTO sis2.messages (commtypeid, timeslotid, sender, subject, content, statusid)
-
-              VALUES (2, (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot WHERE start_time <= NOW() AND (start_time + duration) >= NOW() ORDER BY show_season_timeslot_id ASC LIMIT 1), NEW."SenderNumber", NEW."TextDecoded", NEW."TextDecoded", 1);
+$$ LANGUAGE plpgsql;
+CREATE FUNCTION clear_item_func() RETURNS trigger AS $$
+BEGIN
+    IF OLD.textitemid IS NOT NULL
+    THEN
+        DELETE FROM baps_textitem WHERE textitemid = OLD.textitemid;
+    END IF;
+    IF OLD.libraryitemid IS NOT NULL
+    THEN
+        DELETE FROM baps_libraryitem WHERE libraryitemid = OLD.libraryitemid;
+    END IF;
+    IF OLD.fileitemid IS NOT NULL
+    THEN
+        DELETE FROM baps_fileitem WHERE fileitemid = OLD.fileitemid;
+    END IF;
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+CREATE FUNCTION process_gammu_text() RETURNS trigger AS $$
+BEGIN
+    IF (TG_OP = 'INSERT')
+    THEN
+        IF ((SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
+                 WHERE start_time <= NOW() AND (start_time + duration) >= NOW()
+                 ORDER BY show_season_timeslot_id ASC
+                 LIMIT 1) IS NOT NULL)
+        THEN
+            INSERT INTO sis2.messages (commtypeid, timeslotid, sender, subject, content, statusid)
+                VALUES (2, (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
+                                WHERE start_time <= NOW() AND (start_time + duration) >= NOW()
+                                ORDER BY show_season_timeslot_id ASC
+                                LIMIT 1),
+                        NEW."SenderNumber", NEW."TextDecoded", NEW."TextDecoded", 1);
               RETURN NEW;
-           ELSE
-              INSERT INTO sis2.messages (commtypeid, timeslotid, sender, subject, content, statusid)
-              VALUES (2, 118540, NEW."SenderNumber", NEW."TextDecoded", NEW."TextDecoded", 1);
-              RETURN NEW;
-           END IF;
+        ELSE
+            INSERT INTO sis2.messages (commtypeid, timeslotid, sender, subject, content, statusid)
+                VALUES (2, 118540, NEW."SenderNumber", NEW."TextDecoded", NEW."TextDecoded", 1);
+            RETURN NEW;
         END IF;
-        RETURN NULL;
-    END;
-$$;
-CREATE FUNCTION set_shelfcode_func() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$DECLARE
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+CREATE FUNCTION set_shelfcode_func() RETURNS trigger AS $$
+DECLARE
     myshelfnumber integer DEFAULT 0;
     recordrow RECORD;
 BEGIN
-    IF ((NEW.media='7' OR NEW.media='2') AND NEW.format='a') THEN
-        FOR recordrow IN SELECT * FROM rec_record WHERE media=NEW.media AND (format='7' OR format='2') AND shelfletter=NEW.shelfletter ORDER BY shelfnumber LOOP
-	        IF recordrow.shelfnumber > myshelfnumber+1 THEN
-			EXIT;
-		END IF;
-		myshelfnumber = myshelfnumber + 1;
-    	END LOOP;
+    IF ((NEW.media = '7' OR NEW.media = '2') AND NEW.format = 'a')
+    THEN
+        FOR recordrow IN (SELECT * FROM rec_record
+                          WHERE media = NEW.media AND (format = '7' OR format = '2') AND shelfletter = NEW.shelfletter
+                          ORDER BY shelfnumber)
+        LOOP
+            IF (recordrow.shelfnumber > myshelfnumber + 1)
+            THEN
+                EXIT;
+            END IF;
+            myshelfnumber = myshelfnumber + 1;
+        END LOOP;
     ELSE
-        FOR recordrow IN SELECT * FROM rec_record WHERE media=NEW.media AND format=NEW.format AND shelfletter=NEW.shelfletter ORDER BY shelfnumber LOOP
-	        IF recordrow.shelfnumber > myshelfnumber+1 THEN
-			EXIT;
-		END IF;
-		myshelfnumber = myshelfnumber + 1;
-    	END LOOP;
+        FOR recordrow IN (SELECT * FROM rec_record
+                          WHERE media = NEW.media AND format = NEW.format AND shelfletter = NEW.shelfletter
+                          ORDER BY shelfnumber)
+        LOOP
+            IF (recordrow.shelfnumber > myshelfnumber + 1)
+            THEN
+                EXIT;
+            END IF;
+            myshelfnumber = myshelfnumber + 1;
+        END LOOP;
     END IF;
     NEW.shelfnumber = myshelfnumber + 1;
 RETURN NEW;
 END;
-$$;
-CREATE FUNCTION update_timestamp() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-  BEGIN
+$$ LANGUAGE plpgsql;
+CREATE FUNCTION update_timestamp() RETURNS trigger AS $$
+BEGIN
     NEW."UpdatedInDB" := LOCALTIMESTAMP(0);
     RETURN NEW;
-  END;
-$$;
+END;
+$$ LANGUAGE plpgsql;
 CREATE SEQUENCE bapsplanner.auto_playlists_autoplaylistid_seq
     START WITH 3
     INCREMENT BY 1
