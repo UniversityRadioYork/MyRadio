@@ -19,8 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $track->setClean($data['clean']);
     $track->setGenre($data['genre']);
     $track->setDigitised($data['digitised']);
-    $track->setDigitisedBy($data['digitisedby']);
     $track->setBlacklisted($data['blacklisted']);
+    $track->setLastEdited();
 
     URLUtils::backWithMessage('Track Updated.');
 } else {

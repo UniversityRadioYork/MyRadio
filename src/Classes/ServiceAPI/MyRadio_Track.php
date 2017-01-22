@@ -111,6 +111,20 @@ class MyRadio_Track extends ServiceAPI
      */
     private $digitisedby;
 
+     /**
+     * The time when this track was last edited.
+     *
+     * @var int
+     */
+    private $lastedited;
+
+     /**
+     * The member who last edited this track.
+     *
+     * @var int
+     */
+    private $lasteditedby;
+
     /**
      * Caches Last.fm's Track.getSimilar response.
      *
@@ -149,6 +163,8 @@ class MyRadio_Track extends ServiceAPI
         $this->clean = $result['clean'];
         $this->digitised = ($result['digitised'] == 't') ? true : false;
         $this->digitisedby = empty($result['digitisedby']) ? null : (int) $result['digitisedby'];
+        $this->lastedited = empty($result['lastedited']) ? null : $result['lastedited'];
+        $this->lasteditedby = empty($result['lasteditedby']) ? null : (int) $result['lasteditedby'];
         $this->genre = $result['genre'];
         $this->intro = strtotime('1970-01-01 '.$result['intro'].'+00');
         $this->length = $result['length'];
@@ -256,7 +272,8 @@ class MyRadio_Track extends ServiceAPI
                 MyRadioFormField::TYPE_MEMBER,
                 [
                     'label' => 'Digitised By',
-                    'explanation' => 'The person who uploaded the track.'
+                    'explanation' => 'The person who uploaded the track.',
+                    'enabled' => false
                 ]
             )
         )->addField(
@@ -267,6 +284,36 @@ class MyRadio_Track extends ServiceAPI
                     'label' => 'Blacklisted',
                     'required' => false,
                     'explanation' => 'If the track is banned from playing on Jukebox.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'lasteditedseparator',
+                MyRadioFormField::TYPE_SECTION,
+                [
+                    'label' => 'Edit History'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'lastedited',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Last Edited',
+                    'required' => false,
+                    'explanation' => 'The time someone last submitted this form for this track.',
+                    'enabled' => false
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'lasteditedby',
+                MyRadioFormField::TYPE_NUMBER,
+                [
+                    'label' => 'Last Edited By',
+                    'required' => false,
+                    'explanation' => 'The member that last submitted this form for this track.',
+                    'enabled' => false
                 ]
             )
         );
@@ -287,6 +334,9 @@ class MyRadio_Track extends ServiceAPI
                     'digitised' => $this->getDigitised(),
                     'digitisedby' => $this->getDigitisedBy(),
                     'blacklisted' => $this->isBlacklisted(),
+                    'lastedited' => $this->getLastEdited() === null ? null :
+                        CoreUtils::happyTime($this->getLastEdited()),
+                    'lasteditedby' => $this->getLastEditedBy(),
                 ]
             );
     }
@@ -402,9 +452,37 @@ class MyRadio_Track extends ServiceAPI
         return $this->digitised;
     }
 
+    /**
+     * Get the user who digitised the track
+     * @param MyRadio_User $digitisedby The user who digitised the track.
+     */
     public function getDigitisedBy()
     {
         if ($this->digitisedby === null) {
+            return;
+        } else {
+            return MyRadio_User::getInstance($this->digitisedby);
+        }
+    }
+
+    /**
+     * Get the last time a user edited the track.
+     *
+     * @return bool
+     */
+    public function getLastEdited()
+    {
+        return $this->lastedited;
+    }
+
+    /**
+     * Get the user who last edited the track.
+     *
+     * @return MyRadio_User $lasteditedby The user who last edited the track.
+     */
+    public function getLastEditedBy()
+    {
+        if ($this->lasteditedby === null) {
             return;
         } else {
             return MyRadio_User::getInstance($this->digitisedby);
@@ -441,6 +519,24 @@ class MyRadio_Track extends ServiceAPI
             'UPDATE rec_track SET digitisedby=$1 WHERE trackid=$2',
             [
                 $digitisedby->getID(),
+                $this->getID()
+            ]);
+        $this->updateCacheObject();
+    }
+
+    /**
+     * Update when a user last edited the track info.
+     *
+     * @param bool $digitised
+     */
+    public function setLastEdited()
+    {
+        $this->lastedited = time();
+        self::$db->query(
+            'UPDATE rec_track SET lastedited=$1, lasteditedby=$2 WHERE trackid=$3',
+            [
+                $this->lastedited ? CoreUtils::getTimestamp($this->lastedited) : null,
+                $_SESSION['memberid'],
                 $this->getID()
             ]);
         $this->updateCacheObject();
@@ -822,12 +918,12 @@ class MyRadio_Track extends ServiceAPI
         $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
         $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'];
         $analysis['analysis']['album'] = $fileInfo['comments_html']['album'];
-           
+
         //Remove total tracks in album from the track_number tag.
         $trackNo = explode("/", $fileInfo['comments_html']['track_number'][0], 2)[0];
         $analysis['analysis']['position'] = (string)$trackNo;
 
-        $trackName = implode("", $fileInfo['comments_html']['title']);   
+        $trackName = implode("", $fileInfo['comments_html']['title']);
         $analysis['analysis']['explicit'] = !!stripos($trackName, 'explicit');
 
         return $analysis;
@@ -882,7 +978,7 @@ class MyRadio_Track extends ServiceAPI
             return $tracks;
         }
     }
-    
+
     /**
       * Pay special attention to the tri-state value of explicit. False and null are different things.
     */
