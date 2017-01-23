@@ -130,4 +130,12 @@
  <target name="phpunit" description="Run unit tests with PHPUnit">
   <exec executable="phpunit" failonerror="true"/>
  </target>
+
+ <target name="eslint" description="Lint JS with ESLint">
+  <exec executable="eslint">
+   <arg value="--config=${basedir}/.eslintrc.json" />
+   <arg value="--ignore-path=${basedir}/.eslintignore" />
+   <arg path="${basedir}/src/Public/js" />
+  </exec>
+ </target>
 </project>
