@@ -47,6 +47,7 @@ var server = {
                     setTimeout('server.connect()', 100);},
                 success: server.handleResponse,
                 statusCode: {
+                    // See SIS/remote.php for why this is necessary
                     400: function () {
                         window.location = myradio.makeURL(
                             'MyRadio',
