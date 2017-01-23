@@ -72,7 +72,7 @@ $(document).ajaxError(
     function (e, xhr, settings, error) {
         if (xhr.status == 401) {
             //Session timed out - need to login
-            window.location = myradio.makeURL('MyRadio', 'login', {next: window.location.href, message: window.btoa('Your session has expired and you need to log in again to continue.')});
+            window.location = myradio.makeURL('MyRadio', 'login', {next: window.location.pathname, message: window.btoa('Your session has expired and you need to log in again to continue.')});
         } else if (!errorVisible) {
             var close = myradio.closeButton();
             var report = myradio.reportButton(xhr, settings, error);
