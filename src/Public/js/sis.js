@@ -23,7 +23,19 @@ var SIS = function (container) {
                     //The timeout here is to prevent stack overflow
                     complete: function () {
                         setTimeout(connect, 100);},
-                    success: handleResponse
+                    success: handleResponse,
+                    statusCode: {
+                        400: function () {
+                            window.location = myradio.makeURL(
+                                'MyRadio',
+                                'timeslot',
+                                {
+                                    next: window.location.pathname,
+                                    message: window.btoa('Your session has expired, please pick a Timeslot to continue.')
+                                }
+                            );
+                        }
+                    }
                 }
             );
         },
