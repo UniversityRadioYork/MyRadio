@@ -642,12 +642,12 @@ class MyRadio_Track extends ServiceAPI
             if (!$options['random'] && !$options['titlesort']) {
                 $options['idsort'] = true;
             }
-        } else if (isset($options['random'])) {
+        } elseif (isset($options['random'])) {
             if (!$options['random']) {
                 $options['idsort'] = true;
                 $options['titlesort'] = false;
             }
-        } else if (isset($options['titlesort'])) {
+        } elseif (isset($options['titlesort'])) {
             if (!$options['titlesort']) {
                 $options['idsort'] = true;
                 $options['random'] = false;
@@ -809,25 +809,35 @@ class MyRadio_Track extends ServiceAPI
 
         // File quality checks
         if ($fileInfo['audio']['bitrate'] < 192000) {
-            return ['status' => 'FAIL', 'message' => 'Bitrate is below 192kbps', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']];
+            return [
+                'status' => 'FAIL',
+                'message' => 'Bitrate is below 192kbps',
+                'fileid' => $filename,
+                'bitrate' => $fileInfo['audio']['bitrate']
+            ];
         }
         if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
-            return ['status' => 'FAIL', 'message' => 'Item is not stereo', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
+            return [
+                'status' => 'FAIL',
+                'message' => 'Item is not stereo',
+                'fileid' => $filename,
+                'channelmode' => $fileInfo['audio']['channelmode']
+            ];
         }
 
         $analysis['status'] = 'INFO';
         $analysis['message'] = 'Currently editing track information for';
-        $analysis['submittable'] = True;
+        $analysis['submittable'] = true;
         $analysis['fileid'] = $filename;
         $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
         $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'];
         $analysis['analysis']['album'] = $fileInfo['comments_html']['album'];
-           
+
         //Remove total tracks in album from the track_number tag.
         $trackNo = explode("/", $fileInfo['comments_html']['track_number'][0], 2)[0];
         $analysis['analysis']['position'] = (string)$trackNo;
 
-        $trackName = implode("", $fileInfo['comments_html']['title']);   
+        $trackName = implode("", $fileInfo['comments_html']['title']);
         $analysis['analysis']['explicit'] = !!stripos($trackName, 'explicit');
 
         return $analysis;
@@ -863,11 +873,11 @@ class MyRadio_Track extends ServiceAPI
         } else {
             if (isset($lastfm['tracks']['track']['mbid'])) {
                 //Only one match
-                return [
-                    ['title' => $lastfm['tracks']['track']['name'],
-                        'artist' => $lastfm['tracks']['track']['artist']['name'],
-                        'rank' => $lastfm['tracks']['track']['@attr']['rank'], ],
-                ];
+                return [[
+                    'title' => $lastfm['tracks']['track']['name'],
+                    'artist' => $lastfm['tracks']['track']['artist']['name'],
+                    'rank' => $lastfm['tracks']['track']['@attr']['rank'],
+                ]];
             }
 
             $tracks = [];
@@ -876,13 +886,17 @@ class MyRadio_Track extends ServiceAPI
             }
 
             foreach ($lastfm['tracks']['track'] as $track) {
-                $tracks[] = ['title' => $track['name'], 'artist' => $track['artist']['name'], 'rank' => $track['@attr']['rank']];
+                $tracks[] = [
+                    'title' => $track['name'],
+                    'artist' => $track['artist']['name'],
+                    'rank' => $track['@attr']['rank']
+                ];
             }
 
             return $tracks;
         }
     }
-    
+
     /**
       * Pay special attention to the tri-state value of explicit. False and null are different things.
     */
@@ -1030,7 +1044,8 @@ class MyRadio_Track extends ServiceAPI
         }
 
         $result = self::$db->query(
-            'INSERT INTO rec_track (number, title, artist, length, genre, intro, clean, recordid, digitised, digitisedby, duration)
+            'INSERT INTO rec_track (number, title, artist, length, genre, intro,
+            clean, recordid, digitised, digitisedby, duration)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
             [
                 $options['number'],
@@ -1238,14 +1253,20 @@ class MyRadio_Track extends ServiceAPI
         if (!isset($details['track']['album'])) {
             //Send some defaults for album info
             return [
-                'album' => MyRadio_Album::findOrCreate(Config::$short_name.' Downloads '.date('Y'), Config::$short_name),
+                'album' => MyRadio_Album::findOrCreate(
+                    Config::$short_name . ' Downloads ' . date('Y'),
+                    Config::$short_name
+                ),
                 'position' => 0,
                 'duration' => intval($details['track']['duration'] / 1000),
             ];
         }
 
         return [
-            'album' => MyRadio_Album::findOrCreate($details['track']['album']['title'], $details['track']['album']['artist']),
+            'album' => MyRadio_Album::findOrCreate(
+                $details['track']['album']['title'],
+                $details['track']['album']['artist']
+            ),
             'position' => (int) $details['track']['album']['@attr']['position'],
             'duration' => intval($details['track']['duration'] / 1000),
         ];
@@ -1378,16 +1399,21 @@ class MyRadio_Track extends ServiceAPI
      */
     public static function getLibraryStats()
     {
-        $num_digitised = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\'')[0];
-        $num_undigitised = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\'')[0];
-        $num_clean = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'y\'')[0];
-        $num_unclean = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'n\'')[0];
-        $num_cleanunknown = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'u\'')[0];
-        $num_verified = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'t\'')[0];
-        $num_unverified = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'f\'')[0];
+        $num_digitised = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\'');
+        $num_undigitised = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\'');
+        $num_clean = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'y\'');
+        $num_unclean = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'n\'');
+        $num_cleanunknown = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'u\'');
 
-        $num_singles = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_record WHERE format=\'s\'')[0];
-        $num_albums = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_record WHERE format=\'a\'')[0];
+        $num_verified = (int) self::$db->fetchOne(
+            'SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'t\''
+        );
+        $num_unverified = (int) self::$db->fetchOne(
+            'SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'f\''
+        );
+
+        $num_singles = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_record WHERE format=\'s\'');
+        $num_albums = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_record WHERE format=\'a\'');
 
         return [
             ['Key', 'Value'],

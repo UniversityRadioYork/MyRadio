@@ -41,7 +41,8 @@ class APCProvider implements \MyRadio\Iface\CacheProvider
         $this->enable = $enable;
         if ($enable && !function_exists('apc_store')) {
             //Functions not available. If this is caught upstream, just disable
-            throw new MyRadioException('Cache is enabled but selected CacheProvider does not have required prerequisites (Is APC Extension installed and loaded?)');
+            throw new MyRadioException('Cache is enabled but selected CacheProvider does not have required '
+                                       . 'prerequisites (Is APC Extension installed and loaded?)');
             $this->enable = false;
         }
     }
@@ -51,7 +52,7 @@ class APCProvider implements \MyRadio\Iface\CacheProvider
      *
      * @param string $key     The unique name of the object to store. Ideally, this would use myury_{module}_{name}
      * @param mixed  $value   The data to store
-     * @param int    $expires The number of seconds this cache entry is valid for. Default is value of MyRadio_Config::$cache_default_timeout
+     * @param int    $expires The number of seconds this cache entry is valid for. Default is value of
      *                        MyRadio_Config::$cache_default_timeout
      *
      * @return bool Whether the operation was successful (returns false if caching disabled)

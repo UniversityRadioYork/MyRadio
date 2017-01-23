@@ -72,7 +72,10 @@ class MyRadioMenu
             foreach ($column['sections'] as $skey => $section) {
                 foreach ($section['items'] as $key => $item) {
                     if (empty($item['template'])) {
-                        $columns[$ckey]['sections'][$skey]['items'][$key] = array_merge($section['items'][$key], $this->breakDownURL($item['url']));
+                        $columns[$ckey]['sections'][$skey]['items'][$key] = array_merge(
+                            $section['items'][$key],
+                            $this->breakDownURL($item['url'])
+                        );
                     }
                 }
             }
@@ -125,7 +128,7 @@ class MyRadioMenu
     /**
      * Check if user has permission to see this menu item.
      *
-     * @param array $item A MyRadioMenu Menu Item to check permissions for. Should have been passed through breadDownURL() previously.
+     * @param array $item A MyRadioMenu Menu Item to check permissions for. Should have been passed through
      *                    breadDownURL() previously.
      *
      * @return bool Whether the user can see this item

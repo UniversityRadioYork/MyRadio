@@ -151,13 +151,19 @@ if (isset($_SESSION['memberid'])) {
                 $options[] = $option;
             }
             $twig->addVariable('methods', $options)
-                ->addVariable('next', isset($data['next']) ? $data['next'] : URLUtils::makeURL(Config::$default_module))
+                ->addVariable(
+                    'next',
+                    isset($data['next']) ? $data['next'] : URLUtils::makeURL(Config::$default_module)
+                )
                 ->render();
         } elseif ($status === 'change') {
             URLUtils::redirect('MyRadio', 'pwChange');
         } elseif ($status !== 'success') {
-            $form->setFieldValue('next', isset($data['next']) ? $data['next'] : URLUtils::makeURL(Config::$default_module))
-                ->render(['error' => true]);
+            $form->setFieldValue(
+                'next',
+                isset($data['next']) ? $data['next'] : URLUtils::makeURL(Config::$default_module)
+            )
+            ->render(['error' => true]);
         } else {
             if (isset($data['next'])) {
                 header('Location: '.$data['next']);

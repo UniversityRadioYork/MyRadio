@@ -10,9 +10,9 @@ use Memcached;
 /**
  * MemcachedProvider provides in-memory caching for PHP resources to increase page load times.
  *
- * MemcachedProvider was the second CacheProvider implementation in MyRadio. It enables Models to send cache commands to it
- * which are then stored using Memcached automatically. In order for this class to work correctly, the server
- * needs the Memcached PHP plugin installed on the server. It will throw an Error and disable itself if it is not.
+ * MemcachedProvider was the second CacheProvider implementation in MyRadio. It enables Models to send cache commands to
+ * it which are then stored using Memcached automatically. It will throw an Error and disable itself if it cannot
+ * initialise correctly.
  */
 class MemcachedProvider implements \MyRadio\Iface\CacheProvider
 {
@@ -48,7 +48,7 @@ class MemcachedProvider implements \MyRadio\Iface\CacheProvider
         if ($enable) {
             if (!class_exists('\Memcached')) {
                 //Functions not available. If this is caught upstream, just disable
-                trigger_error('Cache is enabled but selected CacheProvider does not have required prerequisites (Is Memcached Extension installed and loaded?)');
+                trigger_error('Cache is enabled but selected CacheProvider does not have required prerequisites');
                 $this->enable = false;
             } elseif (empty($servers)) {
                 trigger_error('No Memcached servers are configured.');

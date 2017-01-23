@@ -64,11 +64,9 @@ class CoreUtils
         } catch (MyRadioException $e) {
             return false;
         }
-        /*
-         * This is better than file_exists because it ensures that the response is valid for a version which has the file
-         * when live does not
-         */
 
+        /* This is better than file_exists because it ensures that the response
+         * is valid for a version which has the file when live does not */
         return is_string(stream_resolve_include_path('Controllers/'.$module.'/'.$action.'.php'));
     }
 
@@ -121,7 +119,10 @@ class CoreUtils
      */
     public static function happyTime($timestring, $time = true, $date = true)
     {
-        return date(($date ? 'd/m/Y' : '').($time && $date ? ' ' : '').($time ? 'H:i' : ''), is_numeric($timestring) ? $timestring : strtotime($timestring));
+        return date(
+            ($date ? 'd/m/Y' : '').($time && $date ? ' ' : '').($time ? 'H:i' : ''),
+            is_numeric($timestring) ? $timestring : strtotime($timestring)
+        );
     }
 
     /**
@@ -488,7 +489,12 @@ class CoreUtils
         $return = [];
         $return[] = ['Timestamp', 'Errors per request', 'Exceptions per request', 'Queries per request'];
         foreach ($result as $row) {
-            $return[] = [date('H:i', $row['timestamp']), (int) $row['errors'], (int) $row['exceptions'], (int) $row['queries']];
+            $return[] = [
+                date('H:i', $row['timestamp']),
+                (int) $row['errors'],
+                (int) $row['exceptions'],
+                (int) $row['queries']
+            ];
         }
 
         return $return;
