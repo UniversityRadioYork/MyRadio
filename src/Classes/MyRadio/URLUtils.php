@@ -101,7 +101,8 @@ class URLUtils
         }
         //Check if there is a custom URL configured
         $key = CoreUtils::getActionId(
-            CoreUtils::getModuleId($module), empty($action) ? Config::$default_action : $action
+            CoreUtils::getModuleId($module),
+            empty($action) ? Config::$default_action : $action
         );
         if (!empty(self::$custom_uris[$key])) {
             return self::$custom_uris[$key];

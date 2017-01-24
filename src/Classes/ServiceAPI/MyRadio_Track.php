@@ -421,11 +421,7 @@ class MyRadio_Track extends ServiceAPI
         $this->digitised = $digitised;
         self::$db->query(
             'UPDATE rec_track SET digitised=$1, digitisedby=$2 WHERE trackid=$3',
-            $digitised ? [
-                't', $_SESSION['memberid'], $this->getID(),
-            ] : [
-                'f', null, $this->getID(),
-            ]
+            $digitised ? ['t', $_SESSION['memberid'], $this->getID()] : ['f', null, $this->getID()]
         );
         $this->updateCacheObject();
     }
@@ -439,10 +435,8 @@ class MyRadio_Track extends ServiceAPI
         $this->digitisedby = $digitisedby->getID();
         self::$db->query(
             'UPDATE rec_track SET digitisedby=$1 WHERE trackid=$2',
-            [
-                $digitisedby->getID(),
-                $this->getID()
-            ]);
+            [$digitisedby->getID(), $this->getID()]
+        );
         $this->updateCacheObject();
     }
 
@@ -1430,22 +1424,28 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
-     * Returns a list of potential clean statuses, organised so they can be used as a SELECT MyRadioFormField data source.
+     * Returns a list of potential clean statuses, organised so
+     * they can be used as a SELECT MyRadioFormField data source.
      */
     public static function getCleanOptions()
     {
         self::wakeup();
 
-        return self::$db->fetchAll('SELECT clean_code AS value, clean_descr AS text FROM public.rec_cleanlookup ORDER BY clean_descr ASC');
+        return self::$db->fetchAll(
+            'SELECT clean_code AS value, clean_descr AS text FROM public.rec_cleanlookup ORDER BY clean_descr ASC'
+        );
     }
 
     /**
-     * Returns a list of potential genres, organised so they can be used as a SELECT MyRadioFormField data source.
+     * Returns a list of potential genres, organised so
+     * they can be used as a SELECT MyRadioFormField data source.
      */
     public static function getGenres()
     {
         self::wakeup();
 
-        return self::$db->fetchAll('SELECT genre_code AS value, genre_descr AS text FROM public.rec_genrelookup ORDER BY genre_descr ASC');
+        return self::$db->fetchAll(
+            'SELECT genre_code AS value, genre_descr AS text FROM public.rec_genrelookup ORDER BY genre_descr ASC'
+        );
     }
 }
