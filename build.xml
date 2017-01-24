@@ -99,6 +99,7 @@
          description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
   <exec executable="phpcs">
    <arg value="--standard=PSR2" />
+   <arg value="--exclude=Squiz.Classes.ValidClassName.NotCamelCaps" />
    <arg value="--ignore=*.min.*,*/vendor/*,*/PublicAPI/rtfm/*" />
    <arg path="${basedir}/src" />
    <arg value="-v" />
