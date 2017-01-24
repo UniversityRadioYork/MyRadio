@@ -137,7 +137,7 @@
    <arg value="--config=${basedir}/.eslintrc.json" />
    <arg value="--ignore-path=${basedir}/.eslintignore" />
    <arg value="--format=checkstyle" />
-   <arg value="--output-file=${basedir}/builds/logs/eslint.xml" />
+   <arg value="--output-file=${basedir}/build/logs/eslint.xml" />
    <arg path="${basedir}/src/Public/js" />
   </exec>
  </target>
