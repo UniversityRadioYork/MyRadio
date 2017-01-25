@@ -663,8 +663,7 @@ EOT
         $effective_to = null,
         $table = null,
         $pkey = null
-    )
-    {
+    ) {
         $r = parent::setMeta(
             $string_key,
             $value,

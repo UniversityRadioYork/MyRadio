@@ -1607,11 +1607,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 [
                     'required' => false,
                     'label' => 'University Email',
-                    'value' => str_replace(
-                        '@york.ac.uk',
-                        '',
-                        $this->getUniAccount()
-                    ),
+                    'value' => str_replace('@york.ac.uk', '', $this->getUniAccount()),
                     'explanation' => '@york.ac.uk',
                 ]
             )
@@ -1687,10 +1683,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
                         'value' => $this->getLocalAlias(),
                         'explanation' => 'Usually, this is firstname.lastname (i.e. '.
                         strtolower($this->getFName().'.'.$this->getSName()).')',
-                        ]
-                    )
+                    ]
                 )
-                ->addField(new MyRadioFormField('sec_server_close', MyRadioFormField::TYPE_SECTION_CLOSE));
+            )
+            ->addField(new MyRadioFormField('sec_server_close', MyRadioFormField::TYPE_SECTION_CLOSE));
         }
 
         return $form;
