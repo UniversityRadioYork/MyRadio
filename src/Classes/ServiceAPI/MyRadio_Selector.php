@@ -7,6 +7,7 @@ namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
 use MyRadio\Database;
+use MyRadio\MyRadioEmail;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\iTones\iTones_Utils;
