@@ -435,7 +435,7 @@ class MyRadio_Selector
         }
 
         //Lock the selector
-        self::lock();
+        self::setLock();
 
         //Email people
         MyRadioEmail::sendEmailToComputing(
