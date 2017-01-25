@@ -678,6 +678,11 @@ final class Config
      */
     public static $account_expiry_before = 49;
 
+    /**
+     * The email list to send Obit activation notifications to.
+     */
+    public static $obit_list_id = 36;
+
     /**** DAEMON CONFIGURATION ****/
     public static $d_BAPSSync_enabled = false;
     public static $d_EmailQueue_enabled = true;
