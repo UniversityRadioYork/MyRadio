@@ -1,19 +1,17 @@
-$('.twig-datatable').dataTable(
+$(".twig-datatable").dataTable({
+  "aoColumns": [
+    //title
     {
-        "aoColumns": [
-        //title
-        {
-            "sTitle": "Show"
-        },
-        //percent
-        {
-            "sTitle": "Percent Attd"
-        },
-        //missed
-        {
-            "sTitle": "# Missed"
-        },
-        ],
-        "bPaginate": false,
-    }
-);
+      "sTitle": "Show"
+    },
+    //percent
+    {
+      "sTitle": "Percent Attd"
+    },
+    //missed
+    {
+      "sTitle": "# Missed"
+    },
+  ],
+  "bPaginate": false,
+});

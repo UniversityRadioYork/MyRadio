@@ -1,22 +1,23 @@
+/* global myradio, sis */
 /* Obit */
 var Obit = function () {
-    var button = document.createElement('button');
-    button.className = 'btn btn-danger';
-    button.innerHTML = 'Start Obituary Procedure';
-    button.addEventListener(
-        'click',
-        function () {
-            window.open(myradio.makeURL('Scheduler', 'stop'), 'Stop Broadcast');
-        }
-    );
-
-    return {
-        name: 'Stop Broadcast',
-        type: 'plugin',
-        initialise: function () {
-            this.appendChild(button);
-        }
+  var button = document.createElement("button");
+  button.className = "btn btn-danger";
+  button.innerHTML = "Start Obituary Procedure";
+  button.addEventListener(
+    "click",
+    function () {
+      window.open(myradio.makeURL("Scheduler", "stop"), "Stop Broadcast");
     }
-}
+  );
 
-sis.registerModule('obit', new Obit());
+  return {
+    name: "Stop Broadcast",
+    type: "plugin",
+    initialise: function () {
+      this.appendChild(button);
+    }
+  };
+};
+
+sis.registerModule("obit", new Obit());

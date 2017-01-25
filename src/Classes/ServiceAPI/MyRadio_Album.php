@@ -171,7 +171,7 @@ class MyRadio_Album extends ServiceAPI
      * Update the Artist for this Album.
      *
      * @param string $artist        The Artist name
-     * @param bool   $applyToTracks If true, this will update the Artist for each individual Track in the Album. Default false.
+     * @param bool   $applyToTracks If true, this will update the Artist for each individual Track in the Album.
      *                              Default false.
      *
      * @return \MyRadio_Album
@@ -386,7 +386,8 @@ class MyRadio_Album extends ServiceAPI
 
         $r = self::$db->query(
             'INSERT INTO rec_record (title, artist, status, media, format, recordlabel, shelfnumber,
-            shelfletter, memberid_add, cdid, location, promoterid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+            shelfletter, memberid_add, cdid, location, promoterid)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
             RETURNING recordid',
             [
                 trim($options['title']),

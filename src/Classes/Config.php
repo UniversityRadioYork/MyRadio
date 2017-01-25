@@ -80,13 +80,20 @@ final class Config
     public static $schedule_url = '//ury.org.uk/schedule';
 
     /**
+     * The base URL of the radio home pages.
+     *
+     * @var string
+     */
+    public static $website_url = '//ury.org.uk/';
+
+    /**
      * Whether nice URL rewrites are enabled
      * If true, then urls will be myury/[module]/[action]
      * If false, then urls will be myury/?module=[module]&action=[action].
      *
      * @var bool
      */
-    public static $rewrite_url = false;
+    public static $rewrite_url = true;
 
     /**
      * Whether to enable the Caching system
@@ -473,7 +480,7 @@ final class Config
     public static $yusu_api_key;
 
     /**
-     * The web address (up to the endpoint) where the YUSU API lives. It changes from time 
+     * The web address (up to the endpoint) where the YUSU API lives. It changes from time
      * to time so check that the API calls are actually succeeding now and then.
      */
     public static $yusu_api_website;
@@ -594,7 +601,7 @@ final class Config
      *
      * @var string
      */
-    public static $social_engineering_warning = 'Beware of Social Engineering, someone may be trying to disrupt your show.
+    public static $social_engineering_warning = 'Beware of Social Engineering, someone may be trying to spoil your show.
     Management and Computing will never send official communication through SIS.';
 
     /**
@@ -718,6 +725,7 @@ EOT;
             'base_url' => self::$base_url,
             'rewrite_url' => self::$rewrite_url,
             'schedule_url' => self::$schedule_url,
+            'website_url' => self::$website_url,
             'timezone' => self::$timezone,
             'default_module' => self::$default_module,
             'default_action' => self::$default_action,

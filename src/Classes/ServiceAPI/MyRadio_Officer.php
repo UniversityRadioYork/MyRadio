@@ -178,7 +178,11 @@ class MyRadio_Officer extends ServiceAPI
             RETURNING memberid',
             [$memberofficerid]
         );
-        MyRadio_User::getInstance($return[0])->updateCacheObject();
+
+        MyRadio_User::getInstance($return[0])
+        ->clearOfficershipCache()
+        ->clearPermissionCache()
+        ->updateCacheObject();
         Profile::clearCache();
     }
 

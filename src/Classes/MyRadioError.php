@@ -40,9 +40,7 @@ class MyRadioError
 
     private static function getErrorName($errno)
     {
-        return $error_name = (isset(self::$error_type[$errno]) ?
-            self::$error_type[$errno] : 'Unknown error code'
-        );
+        return isset(self::$error_type[$errno]) ? self::$error_type[$errno] : 'Unknown error code';
     }
 
     /**
@@ -133,7 +131,6 @@ class MyRadioError
         ++self::$count; //Increment the error counter
 
         $errstr = utf8_encode($errstr);
-        $error_name = self::getErrorName($errno);
         // Log errors to file for permenance
         self::errorsToLog($errno, $errstr, $errfile, $errline);
         /*

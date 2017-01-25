@@ -209,7 +209,7 @@ class MyRadioForm
      * Allows you to update a MyRadioFormField contained within this object with a new value to be used when rendering.
      *
      * @param string $fieldname The unique name of the MyRadioFormField to edit
-     * @param mixed  $value     The new value of the MyRadioFormField. The variable type depends on the MyRadioFormField type
+     * @param mixed  $value     The new value of the MyRadioFormField. The type depends on the MyRadioFormField type
      *
      * @throws MyRadioException When trying to update a MyRadioFormField that is not attached to this MyRadioForm
      */
@@ -233,17 +233,17 @@ class MyRadioForm
      *
      * This methods sets all TYPE_FILE fields to not required - it is assumed that they are not needed for editing.
      *
-     * @param mixed $identifier Usually a primary key, something unique that the receiving controller will use to know which instance of an entry is being updated
-     *                          which instance of an entry is being updated
-     * @param array $values     A key=>value array of input names and their values. These will literally be sent to setFieldValue iteratively
-     *                          iteratively
+     * @param mixed $ident  Usually a primary key, something unique that the receiving controller will use to know
+     *                      which instance of an entry is being updated
+     * @param array $values A key=>value array of input names and their values. These will literally be sent to
+     *                      setFieldValue iteratively
      * @param string action If set, will replace the default Form action.
      *
      * Note: This method should only be called once in the object's lifetime
      */
-    public function editMode($identifier, $values, $action = null)
+    public function editMode($ident, $values, $action = null)
     {
-        $this->addField(new MyRadioFormField('myradiofrmedid', MyRadioFormField::TYPE_HIDDEN, ['value' => $identifier]));
+        $this->addField(new MyRadioFormField('myradiofrmedid', MyRadioFormField::TYPE_HIDDEN, ['value' => $ident]));
 
         foreach ($values as $k => $v) {
             $this->setFieldValue($k, $v);
@@ -281,13 +281,18 @@ class MyRadioForm
         if (!isset($_SESSION['myradio-xsrf-token'])) {
             $_SESSION['myradio-xsrf-token'] = bin2hex(openssl_random_pseudo_bytes(128));
         }
-        $this->addField(new MyRadioFormField('__xsrf-token', MyRadioFormField::TYPE_HIDDEN, ['value' => $_SESSION['myradio-xsrf-token']]));
+        $this->addField(new MyRadioFormField(
+            '__xsrf-token',
+            MyRadioFormField::TYPE_HIDDEN,
+            ['value' => $_SESSION['myradio-xsrf-token']]
+        ));
 
         /*
          * If we need to do a captcha, load the requirements
          */
         if ($this->captcha) {
-            $captcha = '<div class="g-recaptcha" data-sitekey="'.Config::$recaptcha_public_key.'"></div><script src="https://www.google.com/recaptcha/api.js"></script>';
+            $captcha = '<div class="g-recaptcha" data-sitekey="'.Config::$recaptcha_public_key.'"></div>'
+                .'<script src="https://www.google.com/recaptcha/api.js"></script>';
         } else {
             $captcha = null;
         }

@@ -14,7 +14,7 @@ use MyRadio\ServiceAPI\MyRadio_List;
 /**
  * Provides email functions so that MyRadio can send email.
  *
- * @todo    Footers contain hard-coded URLs. This used to be necessary (when the links went to mint), but isn't now.
+ * @todo Footers contain hard-coded URLs. This used to be necessary (when the links went to mint), but isn't now.
  */
 class MyRadioEmail extends ServiceAPI
 {
@@ -24,8 +24,10 @@ class MyRadioEmail extends ServiceAPI
      */
     private static $headers = 'Content-type: text/plain; charset=utf-8';
     private static $sender = 'From: MyRadio <no-reply@ury.org.uk>';
-    private static $footer = 'This email was sent automatically from MyRadio. You can opt out of emails by visiting https://ury.org.uk/myury/Profile/edit/.';
-    private static $html_footer = 'This email was sent automatically from MyRadio. You can opt out of emails <a href="https://ury.org.uk/myury/Profile/edit/">on your profile page</a>.';
+    private static $footer = 'This email was sent automatically from MyRadio. '
+        .'You can opt out of emails by visiting https://ury.org.uk/myury/Profile/edit/.';
+    private static $html_footer = 'This email was sent automatically from MyRadio. '
+        .'You can opt out of emails <a href="https://ury.org.uk/myury/Profile/edit/">on your profile page</a>.';
     // Standard
     /**
      * @var string carriage return + newline
@@ -58,9 +60,14 @@ class MyRadioEmail extends ServiceAPI
         $this->timestamp = strtotime($info['timestamp']);
         $this->email_id = $eid;
 
-        $this->r_users = self::$db->fetchColumn('SELECT memberid FROM mail.email_recipient_member WHERE email_id=$1', [$eid]);
-
-        $this->r_lists = self::$db->fetchColumn('SELECT listid FROM mail.email_recipient_list WHERE email_id=$1', [$eid]);
+        $this->r_users = self::$db->fetchColumn(
+            'SELECT memberid FROM mail.email_recipient_member WHERE email_id=$1',
+            [$eid]
+        );
+        $this->r_lists = self::$db->fetchColumn(
+            'SELECT listid FROM mail.email_recipient_list WHERE email_id=$1',
+            [$eid]
+        );
 
         /*
          * Check if the body needs to be split into multipart.
@@ -216,7 +223,12 @@ class MyRadioEmail extends ServiceAPI
                         $u_subject = '['.Config::$short_name.'] '.$u_subject;
                     }
                     $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-                    if (!mail($user->getName().' <'.$user->getEmail().'>', $u_subject, $u_message, $this->getHeader())) {
+                    if (!mail(
+                        $user->getName() . ' <' . $user->getEmail() . '>',
+                        $u_subject,
+                        $u_message,
+                        $this->getHeader()
+                    )) {
                         continue;
                     }
                 }
@@ -231,7 +243,12 @@ class MyRadioEmail extends ServiceAPI
                     if ($user->getReceiveEmail()) {
                         $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
                         $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-                        if (!mail($list->getName().' <'.$user->getEmail().'>', '['.Config::$short_name.'] '.$u_subject, $u_message, $this->getHeader())) {
+                        if (!mail(
+                            $list->getName().' <'.$user->getEmail().'>',
+                            '['.Config::$short_name.'] '.$u_subject,
+                            $u_message,
+                            $this->getHeader()
+                        )) {
                             continue;
                         }
                     }
@@ -245,27 +262,37 @@ class MyRadioEmail extends ServiceAPI
 
     public function getSentToUser(MyRadio_User $user)
     {
-        $r = self::$db->fetchColumn('SELECT sent FROM mail.email_recipient_member WHERE email_id=$1 AND memberid=$2 LIMIT 1', [$this->email_id, $user->getID()]);
-
+        $r = self::$db->fetchColumn(
+            'SELECT sent FROM mail.email_recipient_member WHERE email_id=$1 AND memberid=$2 LIMIT 1',
+            [$this->email_id, $user->getID()]
+        );
         return $r[0] === 't';
     }
 
     public function setSentToUser(MyRadio_User $user)
     {
-        self::$db->query('UPDATE mail.email_recipient_member SET sent=\'t\' WHERE email_id=$1 AND memberid=$2', [$this->email_id, $user->getID()]);
+        self::$db->query(
+            'UPDATE mail.email_recipient_member SET sent=\'t\' WHERE email_id=$1 AND memberid=$2',
+            [$this->email_id, $user->getID()]
+        );
         $this->updateCacheObject();
     }
 
     public function getSentToList(MyRadio_List $list)
     {
-        $r = self::$db->fetchColumn('SELECT sent FROM mail.email_recipient_list WHERE email_id=$1 AND listid=$2 LIMIT 1', [$this->email_id, $list->getID()]);
-
+        $r = self::$db->fetchColumn(
+            'SELECT sent FROM mail.email_recipient_list WHERE email_id=$1 AND listid=$2 LIMIT 1',
+            [$this->email_id, $list->getID()]
+        );
         return $r[0] === 't';
     }
 
     public function setSentToList(MyRadio_List $list)
     {
-        self::$db->query('UPDATE mail.email_recipient_list SET sent=\'t\' WHERE email_id=$1 AND listid=$2', [$this->email_id, $list->getID()]);
+        self::$db->query(
+            'UPDATE mail.email_recipient_list SET sent=\'t\' WHERE email_id=$1 AND listid=$2',
+            [$this->email_id, $list->getID()]
+        );
         $this->updateCacheObject();
     }
 
@@ -420,8 +447,12 @@ class MyRadioEmail extends ServiceAPI
      */
     public static function sendEmailToComputing($subject, $message)
     {
-        mail('MyRadio Service <'.Config::$error_report_email.'@'.Config::$email_domain.'>', $subject, self::addFooter($message), self::getDefaultHeader());
-
+        mail(
+            'MyRadio Service <'.Config::$error_report_email.'@'.Config::$email_domain.'>',
+            $subject,
+            self::addFooter($message),
+            self::getDefaultHeader()
+        );
         return true;
     }
 

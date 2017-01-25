@@ -16,7 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($data['id'])) {
         //create new
         $show = MyRadio_Show::create($data);
-        URLUtils::redirectWithMessage('Scheduler', 'myShows', 'Your show, '.$show->getMeta('title').', has been created!');
+        URLUtils::redirectWithMessage(
+            'Scheduler',
+            'myShows',
+            'Your show, ' . $show->getMeta('title') . ', has been created!'
+        );
     } else {
         //submit edit
         $show = MyRadio_Show::getInstance($data['id']);

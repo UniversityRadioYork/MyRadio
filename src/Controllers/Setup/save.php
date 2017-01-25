@@ -41,7 +41,11 @@ if (!$file) {
     //...or not
     CoreUtils::getTemplateObject()
         ->setTemplate('minimal.twig')
-        ->addVariable('content', 'An error occurred saving your settings. Please make sure I have write access to '.$path.' and then reload this page.')
+        ->addVariable(
+            'content',
+            'An error occurred saving your settings. '
+            .'Please make sure I have write access to '.$path.' and then reload this page.'
+        )
         ->render();
     exit;
 }

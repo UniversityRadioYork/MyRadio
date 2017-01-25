@@ -26,7 +26,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
      * Initiates the TimeslotItem variables.
      *
      * @param int                     $resid       The timeslot_item_id of the resource to initialise
-     * @param NIPSWeb_ManagedPlaylist $playlistref If the playlist is requesting this item, then pass the playlist object
+     * @param NIPSWeb_ManagedPlaylist $playlistref If the playlist is requesting this item, then pass the playlist obj
      */
     protected function __construct($resid, $playlistref = null)
     {

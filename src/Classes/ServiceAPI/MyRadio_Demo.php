@@ -69,8 +69,11 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
 
     public static function isUserAttendingDemo($demoid, $userid)
     {
-        $r = self::$db->fetchColumn('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7 AND creditid=$2', [self::getDemoTime($demoid), $userid]);
-
+        $r = self::$db->fetchColumn(
+            'SELECT creditid FROM schedule.show_credit
+            WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7 AND creditid=$2',
+            [self::getDemoTime($demoid), $userid]
+        );
         return count($r) > 0;
     }
 
@@ -82,7 +85,10 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
     public static function usersAttendingDemo($demoid)
     {
         // First, retrieve all the memberids attending this demo
-        $r = self::$db->fetchColumn('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', [self::getDemoTime($demoid)]);
+        $r = self::$db->fetchColumn(
+            'SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7',
+            [self::getDemoTime($demoid)]
+        );
 
         if (empty($r)) {
             return 'Nobody';
@@ -97,7 +103,10 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
 
     public static function attendingDemoCount($demoid)
     {
-        return self::$db->numRows(self::$db->query('SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7', [self::getDemoTime($demoid)]));
+        return (int) self::$db->fetchOne(
+            'SELECT COUNT(*) FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7',
+            [self::getDemoTime($demoid)]
+        );
     }
 
     /**
@@ -137,34 +146,37 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
         }
 
         //Check they aren't already attending one in the next week
-        if (self::$db->numRows(
-            self::$db->query(
-                'SELECT creditid FROM schedule.show_credit WHERE show_id=0 AND creditid=$1
+        if ((int) self::$db->fetchOne(
+                'SELECT COUNT(*) FROM schedule.show_credit WHERE show_id=0 AND creditid=$1
                 AND effective_from >= NOW() AND effective_from <= (NOW() + INTERVAL \'1 week\') LIMIT 1',
                 [$_SESSION['memberid']]
-            )
-        ) === 1
-        ) {
+        ) === 1) {
             return 2;
         }
 
         self::$db->query(
-            'INSERT INTO schedule.show_credit (show_id, credit_type_id, creditid, effective_from, effective_to, memberid, approvedid)
+            'INSERT INTO schedule.show_credit
+            (show_id, credit_type_id, creditid, effective_from, effective_to, memberid, approvedid)
             VALUES (0, 7, $1, $2, $2, $1, $1)',
             [$_SESSION['memberid'], self::getDemoTime($demoid)]
         );
         $time = self::getDemoTime($demoid);
         $user = self::getDemoer($demoid);
         $attendee = MyRadio_User::getInstance();
-        MyRadioEmail::sendEmailToUser($user, 'New Training Attendee', $attendee->getName().' has joined your session at '.$time.'.');
+        MyRadioEmail::sendEmailToUser(
+            $user,
+            'New Training Attendee',
+            $attendee->getName() . ' has joined your session at ' . $time . '.'
+        );
         MyRadioEmail::sendEmailToUser(
             $attendee,
             'Attending Training',
             'Hi '
-            .$attendee->getFName()
-            .",\r\n\r\nThanks for joining a training session at $time. You will be trained by "
+            .$attendee->getFName(a) . ",\r\n\r\n"
+            ."Thanks for joining a training session at $time. You will be trained by "
             .$user->getName()
-            .'. Just head over to the station in Vanbrugh College just before your slot and the trainer will be waiting for you.'
+            .'. Just head over to the station in Vanbrugh College just before your slot '
+            .' and the trainer will be waiting for you.'
             ."\r\n\r\nSee you on air soon!\r\n"
             .Config::$long_name
             .' Training'
@@ -181,19 +193,23 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
         self::initDB();
 
         self::$db->query(
-            'DELETE FROM schedule.show_credit WHERE show_id=0 AND credit_type_id=7 AND creditid=$1 AND effective_from=$2 AND effective_to=$2',
+            'DELETE FROM schedule.show_credit
+            WHERE show_id=0 AND credit_type_id=7 AND creditid=$1 AND effective_from=$2 AND effective_to=$2',
             [$_SESSION['memberid'], self::getDemoTime($demoid)]
         );
         $time = self::getDemoTime($demoid);
         $user = self::getDemoer($demoid);
         $attendee = MyRadio_User::getInstance();
-        MyRadioEmail::sendEmailToUser($user, 'Training Attendee Left', $attendee->getName().' has left your session at '.$time.'.');
+        MyRadioEmail::sendEmailToUser(
+            $user,
+            'Training Attendee Left',
+            $attendee->getName() . ' has left your session at ' . $time . '.'
+        );
         MyRadioEmail::sendEmailToUser(
             $attendee,
             'Training Cancellation',
-            'Hi '
-            .$attendee->getFName()
-            .",\r\n\r\nJust to confirm that you have left the training session at $time. If this was accidental, simply rejoin."
+            'Hi ' . $attendee->getFName() . ",\r\n\r\n"
+            ."Just to confirm that you have left the training session at $time. If this was accidental, simply rejoin."
             ."\r\n\r\nThanks!\r\n"
             .Config::$long_name
             .' Training'
@@ -205,16 +221,20 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
     public static function getDemoTime($demoid)
     {
         self::initDB();
-        $r = self::$db->fetchColumn('SELECT start_time FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', [$demoid]);
-
-        return $r[0];
+        $r = self::$db->fetchOne(
+            'SELECT start_time FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1',
+            [$demoid]
+        );
+        return $r;
     }
 
     public static function getDemoer($demoid)
     {
         self::initDB();
-        $r = self::$db->fetchColumn('SELECT memberid FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1', [$demoid]);
-
-        return MyRadio_User::getInstance($r[0]);
+        $r = self::$db->fetchOne(
+            'SELECT memberid FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1',
+            [$demoid]
+        );
+        return MyRadio_User::getInstance($r);
     }
 }

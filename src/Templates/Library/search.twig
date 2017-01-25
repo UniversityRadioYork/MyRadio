@@ -1,0 +1,16 @@
+{% extends 'form.twig' %}
+{% block head %}
+{{ parent() }}
+{% include 'parts/table-header.twig' %}
+{% endblock %}
+{% block stripecontent %}
+<p>This page allows you to search for tracks in the Central Music Library. You can search by track title and/or artist.</p>
+{{ parent() }}
+<h3>Results</h3>
+{% set tabledata = frm_custom.tabledata %}
+{% include 'parts/table-content.twig' %}
+{% endblock %}
+{% block foot %}
+{{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/{{frm_custom.tablescript}}.js"></script>
+{% endblock %}

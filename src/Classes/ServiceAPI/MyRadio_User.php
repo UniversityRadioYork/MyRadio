@@ -241,6 +241,22 @@ class MyRadio_User extends ServiceAPI implements APICaller
         }
     }
 
+    public function clearPermissionCache()
+    {
+        $this->permissions = null;
+        return $this;
+    }
+    public function clearOfficershipCache()
+    {
+        $this->officerships = null;
+        return $this;
+    }
+    public function clearTrainingCache()
+    {
+        $this->training = null;
+        return $this;
+    }
+
     /**
      * Returns if the User is currently an Officer.
      *
@@ -520,10 +536,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function getPublicEmail()
     {
-        /*
-         * This works around a PHP bug:
-         * Fatal error: Can't use method return value in write context is thrown if the getter is used directly in empty()
-         */
+        /* This works around a PHP bug:
+         * Fatal error: Can't use method return value in write context
+         * is thrown if the getter is used directly in empty() */
         $alias = $this->getLocalAlias();
 
         return empty($alias) ? $this->getEmail() : $alias.'@'.Config::$email_domain;
@@ -770,7 +785,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * @return array A 2D Array where every value of the first dimension is an Array as follows:<br>
      *               memberid: The unique id of the User<br>
      *               fname: The actual first name of the User<br>
-     *               sname: The actual last name of the User
+     *               sname: The actual last name of the User<br>
+     *               eduroam: The actual eduroam account of the User<br>
+     *               local_alias: The actual local alias (THISPART@emailaddr) for the user
      */
     public static function findByName($name, $limit = -1)
     {
@@ -782,14 +799,14 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $names = explode(' ', $name);
         if (isset($names[1])) {
             return self::$db->fetchAll(
-                'SELECT memberid, fname, sname FROM member
+                'SELECT memberid, fname, sname, eduroam, local_alias FROM member
                 WHERE fname ILIKE $1 || \'%\' AND sname ILIKE $2 || \'%\'
                 ORDER BY sname, fname LIMIT $3',
                 [$names[0], $names[1], $limit]
             );
         } else {
             return self::$db->fetchAll(
-                'SELECT memberid, fname, sname FROM member
+                'SELECT memberid, fname, sname, eduroam, local_alias FROM member
                 WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $1 || \'%\'
                 ORDER BY sname, fname LIMIT $2',
                 [$name, $limit]
@@ -880,7 +897,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
                     ];
                 } else {
                     $events[] = [
-                        'message' => 'was '.$credit.' on Season '.$season->getSeasonNumber().' of '.$season->getMeta('title'),
+                        'message' => 'was ' . $credit
+                                     . ' on Season ' . $season->getSeasonNumber()
+                                     . ' of '.$season->getMeta('title'),
                         'timestamp' => strtotime($season->getAllTimeslots()[0]->getStartTime()),
                         'photo' => $show->getShowPhoto(),
                     ];
@@ -1011,9 +1030,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
             throw new MyRadioException(
                 'Eduroam account should be @'
                 .Config::$eduroam_domain
-                .'! Use of other eduroam accounts is blocked.
-                This is a basic validation filter, so if there is a valid reason for another account to be here, this check
-                can be removed.',
+                .'! Use of other eduroam accounts is blocked. '
+                .'This is a basic validation filter, so if there is a valid reason for another account to be here, '
+                .'this check can be removed.',
                 400
             );
         }
@@ -1257,8 +1276,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                     [(float) $amount, $year, $this->getID()]
                 );
                 $this->payment[$k]['paid'] = $amount;
-                $this->permissions = null; // Clear local permissions cache
-                $this->updateCacheObject();
+                $this->clearPermissionCache()->updateCacheObject();
 
                 return;
             }
@@ -1271,8 +1289,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             [(float) $amount, $year, $this->getID()]
         );
         $this->payment[] = ['year' => $year, 'paid' => $amount];
-        $this->permissions = null; // Clear local permissions cache
-        $this->updateCacheObject();
+        $this->clearPermissionCache()->updateCacheObject();
 
         return;
     }
@@ -1352,7 +1369,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
         self::wakeup();
         trigger_error('Use of deprecated method User::findAllTrained.', E_USER_WARNING);
 
-        $trained = self::$db->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=1');
+        $trained = self::$db->fetchColumn(
+            'SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=1'
+        );
         $members = [];
         foreach ($trained as $mid) {
             $member = self::getInstance($mid);
@@ -1376,7 +1395,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
         self::wakeup();
         trigger_error('Use of deprecated method User::findAllDemoed.', E_USER_WARNING);
 
-        $trained = self::$db->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=2');
+        $trained = self::$db->fetchColumn(
+            'SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=2'
+        );
         $members = [];
         foreach ($trained as $mid) {
             $member = self::getInstance($mid);
@@ -1400,7 +1421,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
         self::wakeup();
         trigger_error('Use of deprecated method User::findAllTrainers.', E_USER_WARNING);
 
-        $trained = self::$db->fetchColumn('SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=3');
+        $trained = self::$db->fetchColumn(
+            'SELECT memberid FROM public.member_presenterstatus WHERE presenterstatusid=3'
+        );
         $members = [];
         foreach ($trained as $mid) {
             $member = self::getInstance($mid);
@@ -1526,61 +1549,62 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 'sec_contact',
                 MyRadioFormField::TYPE_SECTION,
                 [
-                'label' => 'Contact Details',
+                    'label' => 'Contact Details',
                 ]
             )
         )
-            ->addField(
-                new MyRadioFormField(
-                    'collegeid',
-                    MyRadioFormField::TYPE_SELECT,
-                    [
+        ->addField(
+            new MyRadioFormField(
+                'collegeid',
+                MyRadioFormField::TYPE_SELECT,
+                [
                     'required' => true,
                     'label' => 'College',
                     'options' => self::getColleges(),
                     'value' => $this->getCollegeID(),
-                    ]
-                )
+                ]
             )
-            ->addField(
-                new MyRadioFormField(
-                    'phone',
-                    MyRadioFormField::TYPE_TEXT,
-                    [
+        )
+        ->addField(
+            new MyRadioFormField(
+                'phone',
+                MyRadioFormField::TYPE_TEXT,
+                [
                     'required' => false,
                     'label' => 'Phone Number',
                     'value' => $this->getPhone(),
-                    ]
-                )
+                ]
             )
-            ->addField(
-                new MyRadioFormField(
-                    'email',
-                    MyRadioFormField::TYPE_EMAIL,
-                    [
+        )
+        ->addField(
+            new MyRadioFormField(
+                'email',
+                MyRadioFormField::TYPE_EMAIL,
+                [
                     'required' => false,
                     'label' => 'Email',
                     'value' => $this->email,
-                    ]
-                )
+                ]
             )
-            ->addField(
-                new MyRadioFormField(
-                    'receive_email',
-                    MyRadioFormField::TYPE_CHECK,
-                    [
+        )
+        ->addField(
+            new MyRadioFormField(
+                'receive_email',
+                MyRadioFormField::TYPE_CHECK,
+                [
                     'required' => false,
                     'label' => 'Receive Email?',
                     'options' => ['checked' => $this->getReceiveEmail()],
-                    'explanation' => 'If unchecked, you will receive no emails, even if you are subscribed to mailing lists.',
-                    ]
-                )
+                    'explanation' => 'If unchecked, you will receive no emails, '
+                                     .'even if you are subscribed to mailing lists.',
+                ]
             )
-            ->addField(
-                new MyRadioFormField(
-                    'eduroam',
-                    MyRadioFormField::TYPE_TEXT,
-                    [
+        )
+        ->addField(
+            new MyRadioFormField(
+                'eduroam',
+                MyRadioFormField::TYPE_TEXT,
+                [
                     'required' => false,
                     'label' => 'University Email',
                     'value' => str_replace(
@@ -1589,10 +1613,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
                         $this->getUniAccount()
                     ),
                     'explanation' => '@york.ac.uk',
-                    ]
-                )
+                ]
             )
-            ->addField(new MyRadioFormField('sec_contact_close', MyRadioFormField::TYPE_SECTION_CLOSE));
+        )
+        ->addField(new MyRadioFormField('sec_contact_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
         //About Me
         $form->addField(
@@ -1600,8 +1624,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 'sec_about',
                 MyRadioFormField::TYPE_SECTION,
                 [
-                'label' => 'About Me',
-                'explanation' => 'If you\'d like to share a little more about yourself, then I\'m happy to listen!',
+                    'label' => 'About Me',
+                    'explanation' => 'If you\'d like to share a little more about yourself, then I\'m happy to listen!',
                 ]
             )
         )->addField(
@@ -1611,8 +1635,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 [
                     'required' => false,
                     'label' => 'Profile Photo',
-                    'explanation' => 'Share your Radio Face with all our members. If we ever launch presenter pages on the website, we\'ll use this there too.',
-                    ]
+                    'explanation' => 'Share your Radio Face with all our members. '
+                                     .'Also displayed on the presenter pages on the website',
+                ]
             )
         )->addField(
             new MyRadioFormField(
@@ -1621,9 +1646,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 [
                     'required' => false,
                     'label' => 'Bio',
-                    'explanation' => 'Tell use about yourself - if you\'re a committee member please introduce yourself!',
+                    'explanation' => "Tell us about yourself - if you're a committee member please introduce yourself!",
                     'value' => $this->getBio(),
-                    ]
+                ]
             )
         )->addField(new MyRadioFormField('sec_about_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
@@ -1634,29 +1659,29 @@ class MyRadio_User extends ServiceAPI implements APICaller
                     'sec_server',
                     MyRadioFormField::TYPE_SECTION,
                     [
-                    'label' => Config::$short_name.' Mailbox Account',
-                    'explanation' => 'Before changing these settings, please ensure you understand the guidelines and'
-                    .' documentation on '.Config::$long_name.'\'s Internal Email Service',
+                        'label' => Config::$short_name.' Mailbox Account',
+                        'explanation' => 'Before changing these settings, please ensure you understand the guidelines '
+                        . 'and documentation on '.Config::$long_name.'\'s Internal Email Service',
                     ]
                 )
             )
-                ->addField(
-                    new MyRadioFormField(
-                        'local_name',
-                        MyRadioFormField::TYPE_TEXT,
-                        [
+            ->addField(
+                new MyRadioFormField(
+                    'local_name',
+                    MyRadioFormField::TYPE_TEXT,
+                    [
                         'required' => false,
                         'label' => 'Server Account (Mailbox)',
                         'value' => $this->getLocalName(),
                         'explanation' => 'Best practice is their ITS Username',
-                        ]
-                    )
+                    ]
                 )
-                ->addField(
-                    new MyRadioFormField(
-                        'local_alias',
-                        MyRadioFormField::TYPE_TEXT,
-                        [
+            )
+            ->addField(
+                new MyRadioFormField(
+                    'local_alias',
+                    MyRadioFormField::TYPE_TEXT,
+                    [
                         'required' => false,
                         'label' => '@ury.org.uk Alias',
                         'value' => $this->getLocalAlias(),
@@ -1730,14 +1755,15 @@ class MyRadio_User extends ServiceAPI implements APICaller
         ) {
             throw new MyRadioException(
                 'Eduroam account should be @'.Config::$eduroam_domain.'! Use of other eduroam accounts is blocked.
-                This is a basic validation filter, so if there is a valid reason for another account to be here, this check
-                can be removed.',
+                This is a basic validation filter, so if there is a valid reason for another account to be here,
+                this check can be removed.',
                 400
             );
         }
 
-        //Remove the domain if it is set
+        //Remove the domain if it is set, and lowercase it
         $eduroam = str_replace('@'.Config::$eduroam_domain, '', $eduroam);
+        $eduroam = strtolower($eduroam);
 
         if (empty($eduroam) && empty($email)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
@@ -1801,17 +1827,22 @@ class MyRadio_User extends ServiceAPI implements APICaller
          * @todo Link to Facebook events
          */
         $uname = empty($eduroam) ? $email : str_replace('@york.ac.uk', '', $eduroam);
-        if (!empty($provided_pass)) {
+        if (!empty($provided_password)) {
             $plain_pass = '(The password you entered when registering)';
         }
-        $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$fname, $uname, $plain_pass], Config::$welcome_email);
+        $welcome_email = str_replace(
+            ['#NAME', '#USER', '#PASS'],
+            [$fname, $uname, $plain_pass],
+            Config::$welcome_email
+        );
 
         //Send the email
-        /*
-         * @todo Make this be sent from the getinvolved email, rather than no-reply.
-         */
-        MyRadioEmail::sendEmailToUser(self::getInstance($memberid), 'Welcome to '.Config::$short_name.' - Getting Involved and Your Account', $welcome_email);
-
+        // @todo Make this be sent from the getinvolved email, rather than no-reply.
+        MyRadioEmail::sendEmailToUser(
+            self::getInstance($memberid),
+            'Welcome to ' . Config::$short_name . ' - Getting Involved and Your Account',
+            $welcome_email
+        );
         return self::getInstance($memberid);
     }
 
@@ -1855,8 +1886,17 @@ class MyRadio_User extends ServiceAPI implements APICaller
      *
      * @return MyRadio_User
      */
-    public static function createOrActivate($fname, $sname, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null, $receive_email = true, $paid = 0.00)
-    {
+    public static function createOrActivate(
+        $fname,
+        $sname,
+        $eduroam = null,
+        $sex = 'o',
+        $collegeid = null,
+        $email = null,
+        $phone = null,
+        $receive_email = true,
+        $paid = 0.00
+    ) {
         $user = self::findByEmail($eduroam);
         // Fine, we'll try with the email then.
         if ($user === null) {
@@ -1864,9 +1904,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         }
 
         if ($user !== null && $user->activateMemberThisYear($paid)) {
-            /*
-             * @todo send welcome email to already existing users?
-             */
+            // @todo send welcome email to already existing users?
             return $user;
         } else {
             return self::create($fname, $sname, $eduroam, $sex, $collegeid, $email, $phone, $receive_email, $paid);
@@ -1886,8 +1924,16 @@ class MyRadio_User extends ServiceAPI implements APICaller
      *
      * @return mixed MyRadio_User if successful, Array of errors if not
      */
-    public static function createActivateAPI($fname, $sname, $captcha, $eduroam = null, $sex = 'o', $collegeid = null, $email = null, $phone = null)
-    {
+    public static function createActivateAPI(
+        $fname,
+        $sname,
+        $captcha,
+        $eduroam = null,
+        $sex = 'o',
+        $collegeid = null,
+        $email = null,
+        $phone = null
+    ) {
         $captchaResponse = AuthUtils::verifyRecaptcha($captcha, $_SERVER['REMOTE_ADDR']);
 
         if ($captchaResponse === true) {
@@ -1931,8 +1977,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
             [$this->getID(), $authid, CoreUtils::getTimestamp($from), $to]
         );
 
-        if (($from === null or $from < $time) && ($to === null or $to > time())) {
-            $permissions[] = (int) $authid;
+        if (($from === null || $from < time()) && ($to === null || $to > time())) {
+            $this->permissions[] = (int) $authid;
         }
     }
 
@@ -1956,45 +2002,45 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 'sec_personal',
                 MyRadioFormField::TYPE_SECTION,
                 [
-                'label' => 'Personal Details',
+                    'label' => 'Personal Details',
                 ]
             )
         )
-            ->addField(
-                new MyRadioFormField(
-                    'fname',
-                    MyRadioFormField::TYPE_TEXT,
-                    [
+        ->addField(
+            new MyRadioFormField(
+                'fname',
+                MyRadioFormField::TYPE_TEXT,
+                [
                     'required' => true,
                     'label' => 'First Name',
-                    ]
-                )
+                ]
             )
-            ->addField(
-                new MyRadioFormField(
-                    'sname',
-                    MyRadioFormField::TYPE_TEXT,
-                    [
+        )
+        ->addField(
+            new MyRadioFormField(
+                'sname',
+                MyRadioFormField::TYPE_TEXT,
+                [
                     'required' => true,
                     'label' => 'Last Name',
-                    ]
-                )
+                ]
             )
-            ->addField(
-                new MyRadioFormField(
-                    'sex',
-                    MyRadioFormField::TYPE_SELECT,
-                    [
+        )
+        ->addField(
+            new MyRadioFormField(
+                'sex',
+                MyRadioFormField::TYPE_SELECT,
+                [
                     'required' => true,
                     'label' => 'Gender',
                     'options' => [
-                    ['value' => 'm', 'text' => 'Male'],
-                    ['value' => 'f', 'text' => 'Female'],
-                    ['value' => 'o', 'text' => 'Other'],
+                        ['value' => 'm', 'text' => 'Male'],
+                        ['value' => 'f', 'text' => 'Female'],
+                        ['value' => 'o', 'text' => 'Other'],
                     ],
-                    ]
-                )
-            );
+                ]
+            )
+        );
 
         //Contact details
         $form->addField(
@@ -2002,42 +2048,42 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 'sec_contact',
                 MyRadioFormField::TYPE_SECTION,
                 [
-                'label' => 'Contact Details',
+                    'label' => 'Contact Details',
                 ]
             )
         )
-            ->addField(
-                new MyRadioFormField(
-                    'collegeid',
-                    MyRadioFormField::TYPE_SELECT,
-                    [
+        ->addField(
+            new MyRadioFormField(
+                'collegeid',
+                MyRadioFormField::TYPE_SELECT,
+                [
                     'required' => true,
                     'label' => 'College',
                     'options' => self::getColleges(),
-                    ]
-                )
+                ]
             )
-            ->addField(
-                new MyRadioFormField(
-                    'eduroam',
-                    MyRadioFormField::TYPE_TEXT,
-                    [
+        )
+        ->addField(
+            new MyRadioFormField(
+                'eduroam',
+                MyRadioFormField::TYPE_TEXT,
+                [
                     'required' => true,
                     'label' => 'University Email',
                     'explanation' => '@york.ac.uk',
-                    ]
-                )
+                ]
             )
-            ->addField(
-                new MyRadioFormField(
-                    'phone',
-                    MyRadioFormField::TYPE_TEXT,
-                    [
+        )
+        ->addField(
+            new MyRadioFormField(
+                'phone',
+                MyRadioFormField::TYPE_TEXT,
+                [
                     'required' => false,
                     'label' => 'Phone Number',
-                    ]
-                )
-            );
+                ]
+            )
+        );
 
         return $form;
     }
@@ -2062,55 +2108,55 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 'bulkaddrepeater',
                 MyRadioFormField::TYPE_TABULARSET,
                 [
-                'options' => [
-                new MyRadioFormField(
-                    'fname',
-                    MyRadioFormField::TYPE_TEXT,
-                    [
-                    'required' => true,
-                    'label' => 'First Name',
-                    ]
-                ),
-                new MyRadioFormField(
-                    'sname',
-                    MyRadioFormField::TYPE_TEXT,
-                    [
-                    'required' => true,
-                    'label' => 'Last Name',
-                    ]
-                ),
-                new MyRadioFormField(
-                    'sex',
-                    MyRadioFormField::TYPE_SELECT,
-                    [
-                    'required' => true,
-                    'label' => 'Gender',
                     'options' => [
-                    ['value' => 'm', 'text' => 'Male'],
-                    ['value' => 'f', 'text' => 'Female'],
-                    ['value' => 'o', 'text' => 'Other'],
+                        new MyRadioFormField(
+                            'fname',
+                            MyRadioFormField::TYPE_TEXT,
+                            [
+                                'required' => true,
+                                'label' => 'First Name',
+                            ]
+                        ),
+                        new MyRadioFormField(
+                            'sname',
+                            MyRadioFormField::TYPE_TEXT,
+                            [
+                                'required' => true,
+                                'label' => 'Last Name',
+                            ]
+                        ),
+                        new MyRadioFormField(
+                            'sex',
+                            MyRadioFormField::TYPE_SELECT,
+                            [
+                                'required' => true,
+                                'label' => 'Gender',
+                                'options' => [
+                                    ['value' => 'm', 'text' => 'Male'],
+                                    ['value' => 'f', 'text' => 'Female'],
+                                    ['value' => 'o', 'text' => 'Other'],
+                                ],
+                            ]
+                        ),
+                        new MyRadioFormField(
+                            'collegeid',
+                            MyRadioFormField::TYPE_SELECT,
+                            [
+                                'required' => true,
+                                'label' => 'College',
+                                'options' => self::getColleges(),
+                            ]
+                        ),
+                        new MyRadioFormField(
+                            'eduroam',
+                            MyRadioFormField::TYPE_TEXT,
+                            [
+                                'required' => true,
+                                'label' => 'University Email',
+                                'explanation' => '@york.ac.uk',
+                            ]
+                        ),
                     ],
-                    ]
-                ),
-                new MyRadioFormField(
-                    'collegeid',
-                    MyRadioFormField::TYPE_SELECT,
-                    [
-                        'required' => true,
-                        'label' => 'College',
-                        'options' => self::getColleges(),
-                        ]
-                ),
-                new MyRadioFormField(
-                    'eduroam',
-                    MyRadioFormField::TYPE_TEXT,
-                    [
-                        'required' => true,
-                        'label' => 'University Email',
-                        'explanation' => '@york.ac.uk',
-                        ]
-                ),
-                ],
                 ]
             )
         );

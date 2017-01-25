@@ -351,7 +351,7 @@ select {
     clear: both;
 }
 .myradiofrmfield-container input, .myradiofrmfield-container textarea, .myradiofrmfield-container select {
-    width: 90%;
+    max-width: 90%;
     vertical-align: top;
 }
 .myradiofrmfield-container input[type="checkbox"] {

@@ -69,11 +69,26 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
         $parameters = $method->getParameters();
 
-        if ($op === 'get' && $method->getNumberOfRequiredParameters() === 1) {
+        if (self::isOptionInPathForMethod($method)) {
             $args[$parameters[0]->getName()] = $arg0;
         }
 
         return $args;
+    }
+
+    /**
+     * Identify if this method should put its option in its path
+     * i.e. as /class/method/option
+     *
+     * @param ReflectionMethod The method
+     * @return bool
+     */
+    private static function isOptionInPathForMethod($method)
+    {
+        $doc = self::getMethodDoc($method);
+        return self::getMethodOpType($method) === 'get' &&
+            $method->getNumberOfRequiredParameters() === 1 &&
+            self::getParamType($method->getParameters()[0], $doc) !== 'array';
     }
 
     /**
@@ -110,14 +125,15 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             foreach (array_keys($paths) as $key) {
                 if (strpos($key, $path.'/{') === 0) {
                     $options[] = $key;
+                    break;
                 }
             }
 
             if (sizeof($options) > 1) {
                 throw new MyRadioException('Ambiguous path.', 404);
-            } elseif (sizeof($options) === 1) {
-                $path = $options[0];
             }
+
+            $path = $options[0];
         }
 
         if (!isset($paths[$path])) {
@@ -184,8 +200,13 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             'host' => $_SERVER['HTTP_HOST'],
             'info' => [
                 'title' => 'MyRadio API',
-                'description' => 'The MyRadio API provides vaguely RESTful access to many of the internal workings of your friendly local radio station.',
-                'termsOfService' => 'The use of this API is permitted only for applications which have been issued an API key, and only then within the additional Terms of Service issued with that application\'s key. Any other use is strictly prohibited. The MyRadio API may be used for good, but not evil. The lighter 15 of the 50 grey areas are also permitted for all authorised applications.',
+                'description' => 'The MyRadio API provides vaguely RESTful access to many of the internal workings '
+                                 . 'of your friendly local radio station.',
+                'termsOfService' => 'The use of this API is permitted only for applications which have been issued an '
+                                  . 'API key, and only then within the additional Terms of Service issued with that '
+                                  . 'application\'s key. Any other use is strictly prohibited. The MyRadio API may be '
+                                  . 'used for good, but not evil. The lighter 15 of the 50 grey areas are also '
+                                  . 'permitted for all authorised applications.',
                 'version' => '2.0',
             ],
             'schemes' => ['https'],
@@ -263,7 +284,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             $startIdx = 0;
             $paramReflectors = $method->getParameters();
 
-            if ($method->getNumberOfRequiredParameters() === 1 && $op === 'get') {
+            if (self::isOptionInPathForMethod($method)) {
                 //If only one GET is required, make it URL
                 $param = $method->getParameters()[0];
                 $parameters[] = [
@@ -308,6 +329,11 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     foreach ($child as $op => $reflector) {
                         $data = self::getMethodDoc($reflector);
 
+                        // Skip methods set to be skipped
+                        if ($data['ignore']) {
+                            continue;
+                        }
+
                         $paths['/'.$public_name.$method_name][$op] = [
                             'summary' => $data['short_desc'],
                             'description' => $data['long_desc'],
@@ -348,6 +374,44 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         return $tags;
     }
 
+    private static function getMethodOpType($method)
+    {
+        $name = $method->getName();
+
+        //Note the ordering is important - create is static!
+        if ($name === 'testCredentials'
+            || CoreUtils::startsWith($name, 'create')
+            || CoreUtils::startsWith($name, 'add')
+        ) {
+            return 'post';
+        }
+
+        if ($name === 'toDataSource'
+            || CoreUtils::startsWith($name, 'get')
+            || CoreUtils::startsWith($name, 'is')
+            || $method->isStatic()
+        ) {
+            return 'get';
+        }
+
+        return 'put';
+    }
+
+    private static function getMethodPublicName($method)
+    {
+        $name = $method->getName();
+
+        if ($name === 'toDataSource' || $name === 'create') {
+            return '';
+        }
+
+        if (CoreUtils::startsWith($name, 'set') || CoreUtils::startsWith($name, 'get')) {
+            return '/'.strtolower(substr($name, 3));
+        }
+
+        return '/'.strtolower($name);
+    }
+
     public function getClassInfo()
     {
         $blocked_methods = [
@@ -377,45 +441,14 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                 continue;
             }
 
-            $name = $method->getName();
-
-            if ($name === 'toDataSource') {
-                $op = 'get';
-                $public_name = '';
-            } elseif (CoreUtils::startsWith($name, 'set')) {
-                $op = 'put';
-                $public_name = '/'.strtolower(substr($name, 3));
-            } elseif (CoreUtils::startsWith($name, 'get')) {
-                $op = 'get';
-                $public_name = '/'.strtolower(substr($name, 3));
-            } elseif (CoreUtils::startsWith($name, 'is')) {
-                $op = 'get';
-                $public_name = '/'.strtolower($name);
-            } elseif ($name === 'create') {
-                $op = 'post';
-                $public_name = '';
-            } elseif ($name === 'testCredentials') {
-                $op = 'post';
-                $public_name = '/'.strtolower($name);
-            } elseif (CoreUtils::startsWith($name, 'create')) {
-                $op = 'post';
-                $public_name = '/'.strtolower($name);
-            } elseif (CoreUtils::startsWith($name, 'add')) {
-                $op = 'post';
-                $public_name = '/'.strtolower($name);
-            } elseif ($method->isStatic()) {
-                $op = 'get';
-                $public_name = '/'.strtolower($name);
-            } else {
-                $op = 'put';
-                $public_name = '/'.strtolower($name);
-            }
+            $op = self::getMethodOpType($method);
+            $public_name = self::getMethodPublicName($method);
 
             if (!$method->isStatic()) {
                 $public_name = '/{id}'.$public_name;
             }
 
-            if ($op === 'get' && $method->getNumberOfRequiredParameters() === 1) {
+            if (self::isOptionInPathForMethod($method)) {
                 $public_name .= '/{'.$method->getParameters()[0]->getName().'}';
             }
 
