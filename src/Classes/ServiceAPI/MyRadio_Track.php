@@ -273,7 +273,8 @@ class MyRadio_Track extends ServiceAPI
                 [
                     'label' => 'Digitised By',
                     'explanation' => 'The person who uploaded the track.',
-                    'enabled' => false
+                    'enabled' => false,
+                    'required' => false
                 ]
             )
         )->addField(
