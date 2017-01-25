@@ -309,7 +309,7 @@ class MyRadio_Track extends ServiceAPI
         )->addField(
             new MyRadioFormField(
                 'lasteditedby',
-                MyRadioFormField::TYPE_NUMBER,
+                MyRadioFormField::TYPE_MEMBER,
                 [
                     'label' => 'Last Edited By',
                     'required' => false,
@@ -486,7 +486,7 @@ class MyRadio_Track extends ServiceAPI
         if ($this->lasteditedby === null) {
             return;
         } else {
-            return MyRadio_User::getInstance($this->digitisedby);
+            return MyRadio_User::getInstance($this->lasteditedby);
         }
     }
 
