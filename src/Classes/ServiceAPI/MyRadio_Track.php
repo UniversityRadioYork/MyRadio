@@ -1393,21 +1393,21 @@ class MyRadio_Track extends ServiceAPI
      */
     public static function getLibraryStats()
     {
-        $num_digitised = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\'');
-        $num_undigitised = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\'');
-        $num_clean = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'y\'');
-        $num_unclean = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'n\'');
-        $num_cleanunknown = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'u\'');
+        $num_digitised = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\'')[0];
+        $num_undigitised = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\'')[0];
+        $num_clean = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'y\'')[0];
+        $num_unclean = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'n\'')[0];
+        $num_cleanunknown = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'u\'')[0];
 
         $num_verified = (int) self::$db->fetchOne(
             'SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'t\''
-        );
+        )[0];
         $num_unverified = (int) self::$db->fetchOne(
             'SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'f\''
-        );
+        )[0];
 
-        $num_singles = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_record WHERE format=\'s\'');
-        $num_albums = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_record WHERE format=\'a\'');
+        $num_singles = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_record WHERE format=\'s\'')[0];
+        $num_albums = (int) self::$db->fetchOne('SELECT COUNT(*) FROM public.rec_record WHERE format=\'a\'')[0];
 
         return [
             ['Key', 'Value'],
