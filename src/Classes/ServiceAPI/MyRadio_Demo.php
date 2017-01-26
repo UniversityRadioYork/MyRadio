@@ -69,12 +69,12 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
 
     public static function isUserAttendingDemo($demoid, $userid)
     {
-        $r = self::$db->fetchOne(
-            'SELECT COUNT(*) FROM schedule.show_credit
+        $r = self::$db->fetchColumn(
+            'SELECT creditid FROM schedule.show_credit
             WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7 AND creditid=$2',
             [self::getDemoTime($demoid), $userid]
         );
-        return $r[0] > 0;
+        return count($r) > 0;
     }
 
     public static function isSpaceOnDemo($demoid)
@@ -103,10 +103,10 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
 
     public static function attendingDemoCount($demoid)
     {
-        return (int) self::$db->fetchOne(
-            'SELECT COUNT(*) FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7',
+        return count(self::$db->fetchColumn(
+            'SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7',
             [self::getDemoTime($demoid)]
-        )[0];
+        ));
     }
 
     /**
@@ -127,7 +127,6 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
             $demo['memberid'] = MyRadio_User::getInstance($demo['memberid'])->getName();
             $demos[] = $demo;
         }
-
         return $demos;
     }
 
@@ -146,12 +145,12 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
         }
 
         //Check they aren't already attending one in the next week
-        if ((int) self::$db->fetchOne(
-            'SELECT COUNT(*) FROM schedule.show_credit
+        if (count(self::$db->fetchColumn(
+            'SELECT creditid FROM schedule.show_credit
             WHERE show_id=0 AND creditid=$1 AND effective_from >= NOW()
               AND effective_from <= (NOW() + INTERVAL \'1 week\')',
             [$_SESSION['memberid']]
-        )[0] === 1) {
+        )) !== 0) {
             return 2;
         }
 
@@ -222,7 +221,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
     public static function getDemoTime($demoid)
     {
         self::initDB();
-        $r = self::$db->fetchOne(
+        $r = self::$db->fetchColumn(
             'SELECT start_time FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1',
             [$demoid]
         );
@@ -232,7 +231,7 @@ class MyRadio_Demo extends MyRadio_Metadata_Common
     public static function getDemoer($demoid)
     {
         self::initDB();
-        $r = self::$db->fetchOne(
+        $r = self::$db->fetchColumn(
             'SELECT memberid FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1',
             [$demoid]
         );
