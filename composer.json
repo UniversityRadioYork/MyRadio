@@ -6,6 +6,14 @@
         "sentry/sentry": "~1.5",
         "soundasleep/html2text": "~0.3"
     },
+    "require-dev": {
+      "squizlabs/php_codesniffer": "*",
+      "pdepend/pdepend": "*",
+      "phpmd/phpmd": "*",
+      "sebastian/phpcpd": "*",
+      "phploc/phploc": "*",
+      "theseer/phpdox": "*"
+    },
     "config": {
         "vendor-dir": "src/vendor"
     }
