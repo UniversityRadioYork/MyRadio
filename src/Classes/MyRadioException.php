@@ -54,8 +54,7 @@ class MyRadioException extends \RuntimeException
 
         ++self::$count;
         if (self::$count > Config::$exception_limit) {
-            trigger_error('Exception limit exceeded. Futher exceptions will not be reported.');
-
+            trigger_error("Exception limit exceeded. Further exceptions will not be reported.");
             return;
         }
 
@@ -196,16 +195,6 @@ class MyRadioException extends \RuntimeException
             echo 'MyRadio is unavailable at the moment. '
                 .'Please try again later. If the problem persists, contact support.';
         }
-    }
-
-    /**
-     * Get the number of MyRadioExceptions that have been fired.
-     *
-     * @return int
-     */
-    public static function getExceptionCount()
-    {
-        return self::$count;
     }
 
     public static function resetExceptionCount()

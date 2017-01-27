@@ -769,14 +769,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
     }
 
     /**
-     * @todo ...
-     */
-    public function logCall($uri, $args)
-    {
-        return;
-    }
-
-    /**
      * Searches for Users with a name starting with $name.
      *
      * @param string $name  The name to search for. If there is a space, it is assumed the second word is the surname

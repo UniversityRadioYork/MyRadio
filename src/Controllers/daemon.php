@@ -146,7 +146,6 @@ while (true) {
         CoreUtils::shutdown();
         Database::getInstance()->resetCounter();
         MyRadioException::resetExceptionCount();
-        MyRadioError::resetErrorCount();
     } catch (MyRadioException $e) {
     }
 
