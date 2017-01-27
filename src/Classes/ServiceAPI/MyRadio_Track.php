@@ -111,6 +111,20 @@ class MyRadio_Track extends ServiceAPI
      */
     private $digitisedby;
 
+     /**
+     * The time when this track was last edited.
+     *
+     * @var int
+     */
+    private $last_edited_time;
+
+     /**
+     * The member who last edited this track.
+     *
+     * @var int
+     */
+    private $last_edited_memberid;
+
     /**
      * Caches Last.fm's Track.getSimilar response.
      *
@@ -149,6 +163,8 @@ class MyRadio_Track extends ServiceAPI
         $this->clean = $result['clean'];
         $this->digitised = ($result['digitised'] == 't') ? true : false;
         $this->digitisedby = empty($result['digitisedby']) ? null : (int) $result['digitisedby'];
+        $this->last_edited_time = empty($result['last_edited_time']) ? null : $result['last_edited_time'];
+        $this->last_edited_memberid = empty($result['last_edited_memberid']) ? null : (int) $result['last_edited_memberid'];
         $this->genre = $result['genre'];
         $this->intro = strtotime('1970-01-01 '.$result['intro'].'+00');
         $this->length = $result['length'];
@@ -256,7 +272,9 @@ class MyRadio_Track extends ServiceAPI
                 MyRadioFormField::TYPE_MEMBER,
                 [
                     'label' => 'Digitised By',
-                    'explanation' => 'The person who uploaded the track.'
+                    'explanation' => 'The person who uploaded the track.',
+                    'enabled' => false,
+                    'required' => false
                 ]
             )
         )->addField(
@@ -267,6 +285,36 @@ class MyRadio_Track extends ServiceAPI
                     'label' => 'Blacklisted',
                     'required' => false,
                     'explanation' => 'If the track is banned from playing on Jukebox.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'last_edited_separator',
+                MyRadioFormField::TYPE_SECTION,
+                [
+                    'label' => 'Edit History'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'last_edited_time',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Last Edited',
+                    'required' => false,
+                    'explanation' => 'The time someone last submitted this form for this track.',
+                    'enabled' => false
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'last_edited_memberid',
+                MyRadioFormField::TYPE_MEMBER,
+                [
+                    'label' => 'Last Edited By',
+                    'required' => false,
+                    'explanation' => 'The member that last submitted this form for this track.',
+                    'enabled' => false
                 ]
             )
         );
@@ -287,6 +335,9 @@ class MyRadio_Track extends ServiceAPI
                     'digitised' => $this->getDigitised(),
                     'digitisedby' => $this->getDigitisedBy(),
                     'blacklisted' => $this->isBlacklisted(),
+                    'last_edited_time' => $this->getLastEditedTime() === null ? null :
+                        CoreUtils::happyTime($this->getLastEditedTime()),
+                    'last_edited_memberid' => $this->getLastEditedMemberID(),
                 ]
             );
     }
@@ -402,12 +453,40 @@ class MyRadio_Track extends ServiceAPI
         return $this->digitised;
     }
 
+    /**
+     * Get the user who digitised the track
+     * @param MyRadio_User $digitisedby The user who digitised the track.
+     */
     public function getDigitisedBy()
     {
         if ($this->digitisedby === null) {
             return;
         } else {
             return MyRadio_User::getInstance($this->digitisedby);
+        }
+    }
+
+    /**
+     * Get the last time a user edited the track.
+     *
+     * @return bool
+     */
+    public function getLastEditedTime()
+    {
+        return $this->last_edited_time;
+    }
+
+    /**
+     * Get the user who last edited the track.
+     *
+     * @return MyRadio_User $last_edited_memberid The user who last edited the track.
+     */
+    public function getLastEditedMemberID()
+    {
+        if ($this->last_edited_memberid === null) {
+            return;
+        } else {
+            return MyRadio_User::getInstance($this->last_edited_memberid);
         }
     }
 
@@ -437,6 +516,25 @@ class MyRadio_Track extends ServiceAPI
             'UPDATE rec_track SET digitisedby=$1 WHERE trackid=$2',
             [$digitisedby->getID(), $this->getID()]
         );
+        $this->updateCacheObject();
+    }
+
+    /**
+     * Update when a user last edited the track info.
+     *
+     * @param bool $digitised
+     */
+    public function setLastEdited()
+    {
+        $this->last_edited_time = CoreUtils::getTimestamp();
+        $this->last_edited_memberid = $_SESSION['memberid'];
+        self::$db->query(
+            'UPDATE rec_track SET last_edited_time=$1, last_edited_memberid=$2 WHERE trackid=$3',
+            [
+                $this->last_edited_time,
+                $this->last_edited_memberid,
+                $this->getID()
+            ]);
         $this->updateCacheObject();
     }
 
