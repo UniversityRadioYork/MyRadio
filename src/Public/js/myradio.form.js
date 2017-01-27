@@ -356,11 +356,16 @@ var MyRadioForm = {
         media_alt_source: false,
         menubar: false,
         toolbar: "undo redo | styleselect | bold italic underline | removeformat | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media charmap | visualblocks code preview",
+        element_format : 'html',
         invalid_elements: "script",
         invalid_styles: "color, font-size, background",
         keep_styles: false,
         relative_urls: false,
-        remove_script_host: false
+        remove_script_host: false,
+        paste_auto_cleanup_on_paste : true,
+        paste_remove_styles: true,
+        paste_remove_styles_if_webkit: true,
+        paste_strip_class_attributes: true
       });
     }
   },

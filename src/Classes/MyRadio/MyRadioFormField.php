@@ -613,14 +613,16 @@ class MyRadioFormField
             break;
             case self::TYPE_BLOCKTEXT:
                 $dom = new \DOMDocument();
-                $dom->loadHtml($_REQUEST[$name]);
+                // We have to wrap the html so that DOMDocument has a root
+                $dom->loadHtml("<div>$_REQUEST[$name]</div>", LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
                 $xpath = new \DOMXPath($dom);
                 while ($node = $xpath->query('//script')->item(0)) {
                     $node->parentNode->removeChild($node);
                 }
 
-                return $dom->saveHTML();
+                // Strip the <div> ... </div> nodes back off
+                return substr(trim($dom->saveHTML()), 5, -6);
             break;
             case self::TYPE_HIDDEN:
             case self::TYPE_PASSWORD:
