@@ -53,6 +53,7 @@
    <arg value="${basedir}/build/logs/phploc.csv" />
    <arg value="--log-xml" />
    <arg value="${basedir}/build/logs/phploc.xml" />
+   <arg value="--exclude=vendor" />
    <arg path="${basedir}/src" />
   </exec>
  </target>
@@ -62,6 +63,7 @@
    <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
    <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
    <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
+   <arg value="--ignore=vendor" />
    <arg path="${basedir}/src" />
   </exec>
  </target>
@@ -71,6 +73,7 @@
    <arg path="${basedir}/src" />
    <arg value="xml" />
    <arg value="${basedir}/build/phpmd.xml" />
+
    <arg value="--reportfile" />
    <arg value="${basedir}/build/logs/pmd.xml" />
    <arg value="--exclude" />
