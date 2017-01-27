@@ -486,7 +486,7 @@ class MyRadio_Track extends ServiceAPI
         if ($this->lasteditedby === null) {
             return;
         } else {
-            return MyRadio_User::getInstance($this->lasteditedby);
+            return MyRadio_User::getInstance($this->lastedited);
         }
     }
 
