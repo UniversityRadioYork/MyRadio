@@ -356,7 +356,7 @@ var MyRadioForm = {
         media_alt_source: false,
         menubar: false,
         toolbar: "undo redo | styleselect | bold italic underline | removeformat | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media charmap | visualblocks code preview",
-        element_format : 'html',
+        element_format : "html",
         invalid_elements: "script",
         invalid_styles: "color, font-size, background",
         keep_styles: false,

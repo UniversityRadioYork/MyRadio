@@ -209,7 +209,6 @@ foreach ($function_checks as $check) {
             <p class="alert alert-success">Good news! It looks like you're ready to go.
             <a href="?c=dbserver">Click here to continue</a>.</p>
         <?php
-
         } else {
             ?>
             <p class="alert alert-danger">
@@ -261,7 +260,6 @@ foreach ($function_checks as $check) {
               service apache2 restart
             </code>
         <?php
-
         }
         ?>
     </div>

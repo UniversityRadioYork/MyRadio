@@ -1393,8 +1393,13 @@ class MyRadio_Track extends ServiceAPI
      */
     public static function getLibraryStats()
     {
-        $num_digitised = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\'')[0];
-        $num_undigitised = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\'')[0];
+        $num_digitised = (int) self::$db->fetchColumn(
+            'SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\''
+        )[0];
+        $num_undigitised = (int) self::$db->fetchColumn(
+            'SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\''
+        )[0];
+
         $num_clean = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'y\'')[0];
         $num_unclean = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'n\'')[0];
         $num_cleanunknown = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'u\'')[0];
