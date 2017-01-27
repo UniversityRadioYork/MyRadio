@@ -532,13 +532,13 @@ class MyRadio_Track extends ServiceAPI
      */
     public function setLastEdited()
     {
-        $this->last_edited_time = time();
+        $this->last_edited_time = CoreUtils::getTimestamp();
         $this->last_edited_memberid = $_SESSION['memberid'];
         self::$db->query(
             'UPDATE rec_track SET last_edited_time=$1, last_edited_memberid=$2 WHERE trackid=$3',
             [
-                $this->last_edited_time ? CoreUtils::getTimestamp($this->last_edited_time) : null,
-                $_SESSION['memberid'],
+                $this->last_edited_time,
+                $this->last_edited_memberid,
                 $this->getID()
             ]);
         $this->updateCacheObject();
