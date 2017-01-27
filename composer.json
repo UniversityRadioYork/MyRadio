@@ -12,7 +12,7 @@
       "phpmd/phpmd": "~2.6",
       "sebastian/phpcpd": "~2.0",
       "phploc/phploc": "~3.0",
-      "theseer/phpdox": "~0.9"
+      "theseer/phpdox": "^0.8"
     },
     "config": {
         "vendor-dir": "src/vendor"
