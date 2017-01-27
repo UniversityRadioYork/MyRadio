@@ -116,14 +116,14 @@ class MyRadio_Track extends ServiceAPI
      *
      * @var int
      */
-    private $lastedited;
+    private $last_edited_time;
 
      /**
      * The member who last edited this track.
      *
      * @var int
      */
-    private $lasteditedby;
+    private $last_edited_memberid;
 
     /**
      * Caches Last.fm's Track.getSimilar response.
@@ -163,8 +163,8 @@ class MyRadio_Track extends ServiceAPI
         $this->clean = $result['clean'];
         $this->digitised = ($result['digitised'] == 't') ? true : false;
         $this->digitisedby = empty($result['digitisedby']) ? null : (int) $result['digitisedby'];
-        $this->lastedited = empty($result['lastedited']) ? null : $result['lastedited'];
-        $this->lasteditedby = empty($result['lasteditedby']) ? null : (int) $result['lasteditedby'];
+        $this->last_edited_time = empty($result['last_edited_time']) ? null : $result['last_edited_time'];
+        $this->last_edited_memberid = empty($result['last_edited_memberid']) ? null : (int) $result['last_edited_memberid'];
         $this->genre = $result['genre'];
         $this->intro = strtotime('1970-01-01 '.$result['intro'].'+00');
         $this->length = $result['length'];
@@ -289,7 +289,7 @@ class MyRadio_Track extends ServiceAPI
             )
         )->addField(
             new MyRadioFormField(
-                'lasteditedseparator',
+                'last_edited_separator',
                 MyRadioFormField::TYPE_SECTION,
                 [
                     'label' => 'Edit History'
@@ -297,7 +297,7 @@ class MyRadio_Track extends ServiceAPI
             )
         )->addField(
             new MyRadioFormField(
-                'lastedited',
+                'last_edited_time',
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Last Edited',
@@ -308,7 +308,7 @@ class MyRadio_Track extends ServiceAPI
             )
         )->addField(
             new MyRadioFormField(
-                'lasteditedby',
+                'last_edited_memberid',
                 MyRadioFormField::TYPE_MEMBER,
                 [
                     'label' => 'Last Edited By',
@@ -335,9 +335,9 @@ class MyRadio_Track extends ServiceAPI
                     'digitised' => $this->getDigitised(),
                     'digitisedby' => $this->getDigitisedBy(),
                     'blacklisted' => $this->isBlacklisted(),
-                    'lastedited' => $this->getLastEdited() === null ? null :
-                        CoreUtils::happyTime($this->getLastEdited()),
-                    'lasteditedby' => $this->getLastEditedBy(),
+                    'last_edited_time' => $this->getLastEditedTime() === null ? null :
+                        CoreUtils::happyTime($this->getLastEditedTime()),
+                    'last_edited_memberid' => $this->getLastEditedMemberID(),
                 ]
             );
     }
@@ -471,22 +471,22 @@ class MyRadio_Track extends ServiceAPI
      *
      * @return bool
      */
-    public function getLastEdited()
+    public function getLastEditedTime()
     {
-        return $this->lastedited;
+        return $this->last_edited_time;
     }
 
     /**
      * Get the user who last edited the track.
      *
-     * @return MyRadio_User $lasteditedby The user who last edited the track.
+     * @return MyRadio_User $last_edited_memberid The user who last edited the track.
      */
-    public function getLastEditedBy()
+    public function getLastEditedMemberID()
     {
-        if ($this->lasteditedby === null) {
+        if ($this->last_edited_memberid === null) {
             return;
         } else {
-            return MyRadio_User::getInstance($this->lastedited);
+            return MyRadio_User::getInstance($this->last_edited_memberid);
         }
     }
 
@@ -532,11 +532,12 @@ class MyRadio_Track extends ServiceAPI
      */
     public function setLastEdited()
     {
-        $this->lastedited = time();
+        $this->last_edited_time = time();
+        $this->last_edited_memberid = $_SESSION['memberid'];
         self::$db->query(
-            'UPDATE rec_track SET lastedited=$1, lasteditedby=$2 WHERE trackid=$3',
+            'UPDATE rec_track SET last_edited_time=$1, last_edited_memberid=$2 WHERE trackid=$3',
             [
-                $this->lastedited ? CoreUtils::getTimestamp($this->lastedited) : null,
+                $this->last_edited_time ? CoreUtils::getTimestamp($this->last_edited_time) : null,
                 $_SESSION['memberid'],
                 $this->getID()
             ]);
