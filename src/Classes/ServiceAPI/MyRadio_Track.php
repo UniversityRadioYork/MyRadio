@@ -537,7 +537,7 @@ class MyRadio_Track extends ServiceAPI
         self::$db->query(
             'UPDATE rec_track SET last_edited_time=$1, last_edited_memberid=$2 WHERE trackid=$3',
             [
-                $this->last_edited_time ? $this->last_edited_time : null,
+                $this->last_edited_time ? CoreUtils::getTimestamp($this->last_edited_time) : null,
                 $_SESSION['memberid'],
                 $this->getID()
             ]);
