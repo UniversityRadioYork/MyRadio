@@ -1,7 +1,9 @@
 /* global NIPSWeb */
+/* exported planner */
+var planner = null;
 $(document).ready(
   function () {
-    var planner = NIPSWeb(false);
+    planner = NIPSWeb(false);
     planner.initialiseUI();
     planner.initialisePlayer("0");
     planner.initialisePlayer("1");
