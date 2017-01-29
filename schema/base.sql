@@ -15,7 +15,7 @@ COMMENT ON SCHEMA people IS 'Tables for the LeRouge Extensible Roles (Or User Gr
 CREATE SCHEMA schedule;
 COMMENT ON SCHEMA schedule IS 'Schema for the MyRadio schedule.';
 CREATE SCHEMA sis2;
-COMMENT ON SCHEMA sis2 IS 'Used by Studio Infomation Service. Deprecated somewhat.';
+COMMENT ON SCHEMA sis2 IS 'Used by Studio Infomation Service.';
 CREATE SCHEMA tracklist;
 COMMENT ON SCHEMA tracklist IS 'Provides a schema that logs played out tracks for PPL track returns';
 CREATE SCHEMA uryplayer;
@@ -49,15 +49,16 @@ BEGIN
                                                                LIMIT 1),
                     NEW."audiologid")
             RETURNING audiologid INTO audid;
-    INSERT INTO tracklist.track_rec
-        VALUES ("audid", (SELECT rec.recordid FROM rec_track rec
-                          INNER JOIN baps_audio ba USING (trackid)
-                          WHERE ba.audioid = NEW."audioid"),
-                (SELECT trackid FROM baps_audio WHERE audioid = NEW."audioid"));
+        INSERT INTO tracklist.track_rec
+            VALUES ("audid", (SELECT rec.recordid FROM rec_track rec
+                              INNER JOIN baps_audio ba USING (trackid)
+                              WHERE ba.audioid = NEW."audioid"),
+                    (SELECT trackid FROM baps_audio WHERE audioid = NEW."audioid"));
     END IF;
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
+
 CREATE FUNCTION clear_item_func() RETURNS trigger AS $$
 BEGIN
     IF OLD.textitemid IS NOT NULL
@@ -75,22 +76,23 @@ BEGIN
     RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
+
 CREATE FUNCTION process_gammu_text() RETURNS trigger AS $$
 BEGIN
     IF (TG_OP = 'INSERT')
     THEN
         IF ((SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
-                 WHERE start_time <= NOW() AND (start_time + duration) >= NOW()
-                 ORDER BY show_season_timeslot_id ASC
-                 LIMIT 1) IS NOT NULL)
+             WHERE start_time <= NOW() AND (start_time + duration) >= NOW()
+             ORDER BY show_season_timeslot_id ASC
+             LIMIT 1) IS NOT NULL)
         THEN
             INSERT INTO sis2.messages (commtypeid, timeslotid, sender, subject, content, statusid)
                 VALUES (2, (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
-                                WHERE start_time <= NOW() AND (start_time + duration) >= NOW()
-                                ORDER BY show_season_timeslot_id ASC
-                                LIMIT 1),
+                            WHERE start_time <= NOW() AND (start_time + duration) >= NOW()
+                            ORDER BY show_season_timeslot_id ASC
+                            LIMIT 1),
                         NEW."SenderNumber", NEW."TextDecoded", NEW."TextDecoded", 1);
-              RETURN NEW;
+            RETURN NEW;
         ELSE
             INSERT INTO sis2.messages (commtypeid, timeslotid, sender, subject, content, statusid)
                 VALUES (2, 118540, NEW."SenderNumber", NEW."TextDecoded", NEW."TextDecoded", 1);
@@ -100,6 +102,7 @@ BEGIN
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
+
 CREATE FUNCTION set_shelfcode_func() RETURNS trigger AS $$
 DECLARE
     myshelfnumber integer DEFAULT 0;
@@ -133,12 +136,14 @@ BEGIN
 RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
 CREATE FUNCTION update_timestamp() RETURNS trigger AS $$
 BEGIN
     NEW."UpdatedInDB" := LOCALTIMESTAMP(0);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
 CREATE SEQUENCE bapsplanner.auto_playlists_autoplaylistid_seq
     START WITH 3
     INCREMENT BY 1
@@ -243,6 +248,15 @@ CREATE SEQUENCE bapsplanner.timeslot_items_timeslot_item_id_seq
     CACHE 1;
 ALTER SEQUENCE bapsplanner.timeslot_items_timeslot_item_id_seq OWNED BY bapsplanner.timeslot_items.timeslot_item_id;
 SET search_path = jukebox, pg_catalog;
+CREATE TABLE playlist_availability (
+    memberid integer,
+	approvedid integer,
+	effective_from timestamp with time zone NOT NULL,
+	effective_to timestamp with time zone,
+	playlist_availability_id integer DEFAULT nextval('website.banner_campaign_banner_campaign_id_seq'::regclass) NOT NULL,
+	weight integer NOT NULL,
+	playlistid character varying NOT NULL
+);
 CREATE TABLE playlist_entries (
     playlistid character varying(15) NOT NULL,
     trackid integer NOT NULL,
@@ -274,11 +288,10 @@ CREATE TABLE playlist_timeslot (
     id integer DEFAULT nextval('playlist_timeslot_id_seq'::regclass) NOT NULL,
     memberid integer NOT NULL,
     approvedid integer,
-    weight integer NOT NULL,
-    playlistid character varying(15) NOT NULL,
     day smallint NOT NULL,
     start_time time without time zone NOT NULL,
-    end_time time without time zone NOT NULL
+    end_time time without time zone NOT NULL,
+    playlist_availability_id integer NOT NULL
 );
 COMMENT ON COLUMN playlist_timeslot.day IS '1-7 (1=Monday)';
 CREATE TABLE playlists (
@@ -308,14 +321,6 @@ CREATE SEQUENCE request_request_id_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE request_request_id_seq OWNED BY request.request_id;
-CREATE TABLE requests (
-    "user" integer NOT NULL,
-    start timestamp with time zone NOT NULL,
-    "end" timestamp with time zone NOT NULL,
-    format character varying(4) NOT NULL,
-    title character varying(64),
-    removed boolean DEFAULT false NOT NULL
-);
 CREATE TABLE silence_log (
     silenceid integer NOT NULL,
     starttime timestamp without time zone DEFAULT now() NOT NULL,
@@ -817,40 +822,6 @@ CREATE SEQUENCE types_id_seq
     CACHE 1;
 ALTER SEQUENCE types_id_seq OWNED BY role_visibility.role_visibility_id;
 SET search_path = public, pg_catalog;
-CREATE TABLE acl_member (
-    privilegeid integer NOT NULL,
-    memberid integer,
-    class text NOT NULL,
-    verb text NOT NULL,
-    scope integer DEFAULT 0 NOT NULL
-);
-COMMENT ON TABLE acl_member IS 'Access Control List for regular members (used to grant temporary and extraordinary permissions)';
-COMMENT ON COLUMN acl_member.privilegeid IS 'The unique ID of this ACL row.';
-COMMENT ON COLUMN acl_member.memberid IS 'The unique ID of the member being granted a permission.';
-COMMENT ON COLUMN acl_member.class IS 'The full name of the Rapier object class a permission is being granted for.';
-COMMENT ON COLUMN acl_member.verb IS 'The verb (eg "read") representing the privileged action being granted.';
-COMMENT ON COLUMN acl_member.scope IS 'The scope of this action being granted. (see constants_acl_scope).';
-CREATE SEQUENCE acl_member_privilegeid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE acl_member_privilegeid_seq OWNED BY acl_member.privilegeid;
-CREATE TABLE acl_officer (
-    privilegeid integer DEFAULT nextval('acl_member_privilegeid_seq'::regclass) NOT NULL,
-    officerid integer NOT NULL,
-    class text NOT NULL,
-    verb text NOT NULL,
-    scope integer DEFAULT 0 NOT NULL
-);
-COMMENT ON COLUMN acl_officer.class IS 'The full name of the Rapier object class a permission is being granted for.';
-CREATE SEQUENCE acl_officer_privilegeid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
 SET default_with_oids = true;
 CREATE TABLE auth (
     memberid integer NOT NULL,
@@ -881,19 +852,6 @@ CREATE TABLE auth_officer (
 );
 COMMENT ON TABLE auth_officer IS 'Grants permanent back end permissions to people currently holding officer posts.';
 SET default_with_oids = false;
-CREATE TABLE auth_permission (
-    id integer NOT NULL,
-    name character varying(50) NOT NULL,
-    content_type_id integer NOT NULL,
-    codename character varying(100) NOT NULL
-);
-CREATE SEQUENCE auth_permission_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE auth_permission_id_seq OWNED BY auth_permission.id;
 CREATE TABLE auth_subnet (
     typeid integer NOT NULL,
     subnet cidr NOT NULL
@@ -1156,38 +1114,6 @@ CREATE TABLE chart (
 );
 COMMENT ON TABLE chart IS 'ury chart rundowns';
 COMMENT ON COLUMN chart.chartweek IS 'chart release timestamp';
-CREATE TABLE client (
-    clientid integer DEFAULT nextval(('"client_clientid_seq"'::text)::regclass) NOT NULL,
-    name text NOT NULL,
-    secrethash text NOT NULL,
-    description text
-);
-COMMENT ON TABLE client IS 'Registry of clients allowed to use Rapier.';
-COMMENT ON COLUMN client.clientid IS 'The numeric ID of the client.';
-COMMENT ON COLUMN client.name IS 'The log-in name of the client.';
-COMMENT ON COLUMN client.secrethash IS 'A hash of the log-in password of the client.';
-COMMENT ON COLUMN client.description IS 'A human-readable description of the client.';
-CREATE SEQUENCE client_clientid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE client_clientid_seq OWNED BY client.clientid;
-CREATE TABLE constants_acl_scope (
-    scopeid integer NOT NULL,
-    description text NOT NULL
-);
-COMMENT ON TABLE constants_acl_scope IS 'Human-readable descriptions for the ACL scope levels.';
-COMMENT ON COLUMN constants_acl_scope.scopeid IS 'The unique ID of this scope level.';
-COMMENT ON COLUMN constants_acl_scope.description IS 'The human-readable description of this scope level.';
-CREATE SEQUENCE constants_acl_scope_scopeid_seq
-    START WITH 3
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE constants_acl_scope_scopeid_seq OWNED BY constants_acl_scope.scopeid;
 CREATE TABLE selector (
     selid integer NOT NULL,
     "time" timestamp with time zone DEFAULT now() NOT NULL,
@@ -1712,139 +1638,7 @@ CREATE SEQUENCE selector_selid_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE selector_selid_seq OWNED BY selector.selid;
-CREATE SEQUENCE sis_comm_track_comm_trackid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    MAXVALUE 100000
-    CACHE 1;
-SET default_with_oids = true;
-CREATE TABLE sis_commtype (
-    commtypeid integer NOT NULL,
-    descr character varying(16) NOT NULL
-);
-INSERT INTO sis_commtype (commtypeid, descr) VALUES (1, 'Email');
-INSERT INTO sis_commtype (commtypeid, descr) VALUES (2, 'SMS');
-INSERT INTO sis_commtype (commtypeid, descr) VALUES (3, 'Website');
-INSERT INTO sis_commtype (commtypeid, descr) VALUES (4, 'Request');
-INSERT INTO sis_commtype (commtypeid, descr) VALUES (5, 'Mobile Site');
-CREATE SEQUENCE sis_commtype_commtypeid_seq
-    START WITH 6
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE sis_commtype_commtypeid_seq OWNED BY sis_commtype.commtypeid;
 SET default_with_oids = false;
-CREATE TABLE sis_piss (
-    id integer NOT NULL,
-    body text,
-    "timestamp" timestamp without time zone,
-    memberid integer
-);
-COMMENT ON TABLE sis_piss IS 'SIS2 Presenter Information Sheets';
-CREATE SEQUENCE sis_piss_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE sis_piss_id_seq OWNED BY sis_piss.id;
-SET default_with_oids = true;
-CREATE TABLE sis_status (
-    statusid integer NOT NULL,
-    descr character varying(8)
-);
-INSERT INTO sis_status (statusid, descr) VALUES (1, 'Unread');
-INSERT INTO sis_status (statusid, descr) VALUES (2, 'Read');
-INSERT INTO sis_status (statusid, descr) VALUES (3, 'Deleted');
-INSERT INTO sis_status (statusid, descr) VALUES (4, 'Junk');
-INSERT INTO sis_status (statusid, descr) VALUES (5, 'Abusive');
-CREATE SEQUENCE sis_status_statusid_seq
-    START WITH 6
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE sis_status_statusid_seq OWNED BY sis_status.statusid;
-CREATE SEQUENCE sis_type_typeid_seq
-    START WITH 6
-    INCREMENT BY 1
-    NO MINVALUE
-    MAXVALUE 1000
-    CACHE 1;
-SET default_with_oids = false;
-CREATE TABLE site_package (
-    packageid integer NOT NULL,
-    name text NOT NULL,
-    active boolean DEFAULT false NOT NULL,
-    starttime timestamp without time zone,
-    endtime timestamp without time zone
-);
-COMMENT ON TABLE site_package IS 'Table defining special event packages, which temporarily replace the site look and feel.
-Packages reside in /content/packages/*NAME* and must include the following files:
-1) package.css - a CSS file patching the normal URY CSS to add event-specific changes such as a different banner.
-2) index.php - a PHP file that will replace the home page while the package is active.  This will usually redirect to the actual home page for the event.';
-COMMENT ON COLUMN site_package.packageid IS 'The unique identifier of the package.  The package with the highest packageid (and active set to TRUE) is the one that will be applied to the site.';
-COMMENT ON COLUMN site_package.name IS 'The name of the package, which also denotes the subdirectory of /content/packages/ that contains the package files.';
-COMMENT ON COLUMN site_package.active IS 'When TRUE, the package is active.  There should generally be only one active package; in the case that there are multiple the one with the highest packageid is selected.';
-CREATE SEQUENCE site_special_package_packageid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE site_special_package_packageid_seq OWNED BY site_package.packageid;
-CREATE TABLE sitetree_tree (
-    id integer NOT NULL,
-    title character varying(100) NOT NULL,
-    alias character varying(80) NOT NULL
-);
-CREATE SEQUENCE sitetree_tree_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE sitetree_tree_id_seq OWNED BY sitetree_tree.id;
-CREATE TABLE sitetree_treeitem (
-    id integer NOT NULL,
-    title character varying(100) NOT NULL,
-    hint character varying(200) NOT NULL,
-    url character varying(200) NOT NULL,
-    urlaspattern boolean NOT NULL,
-    tree_id integer NOT NULL,
-    hidden boolean NOT NULL,
-    alias character varying(80),
-    description text NOT NULL,
-    inmenu boolean NOT NULL,
-    inbreadcrumbs boolean NOT NULL,
-    insitetree boolean NOT NULL,
-    access_loggedin boolean NOT NULL,
-    access_restricted boolean NOT NULL,
-    access_perm_type integer NOT NULL,
-    parent_id integer,
-    sort_order integer NOT NULL
-);
-CREATE TABLE sitetree_treeitem_access_permissions (
-    id integer NOT NULL,
-    treeitem_id integer NOT NULL,
-    permission_id integer NOT NULL
-);
-CREATE SEQUENCE sitetree_treeitem_access_permissions_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE sitetree_treeitem_access_permissions_id_seq OWNED BY sitetree_treeitem_access_permissions.id;
-CREATE SEQUENCE sitetree_treeitem_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE sitetree_treeitem_id_seq OWNED BY sitetree_treeitem.id;
 CREATE TABLE sso_session (
     id character varying(32) NOT NULL,
     data text,
@@ -2229,6 +2023,22 @@ CREATE SEQUENCE timeslot_metadata_timeslot_metadata_id_seq
     CACHE 1;
 ALTER SEQUENCE timeslot_metadata_timeslot_metadata_id_seq OWNED BY timeslot_metadata.timeslot_metadata_id;
 SET search_path = sis2, pg_catalog;
+CREATE TABLE commtype (
+    commtypeid integer NOT NULL,
+    descr character varying(16) NOT NULL
+);
+INSERT INTO commtype (commtypeid, descr) VALUES (1, 'Email');
+INSERT INTO commtype (commtypeid, descr) VALUES (2, 'SMS');
+INSERT INTO commtype (commtypeid, descr) VALUES (3, 'Website');
+INSERT INTO commtype (commtypeid, descr) VALUES (4, 'Request');
+INSERT INTO commtype (commtypeid, descr) VALUES (5, 'Mobile Site');
+CREATE SEQUENCE commtype_commtypeid_seq
+    START WITH 6
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER SEQUENCE commtype_commtypeid_seq OWNED BY commtype.commtypeid;
 CREATE TABLE config (
     setting character varying(100) NOT NULL,
     value character varying(100)
@@ -2276,6 +2086,22 @@ CREATE SEQUENCE messages_commid_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE messages_commid_seq OWNED BY messages.commid;
+CREATE TABLE statustype (
+    statusid integer NOT NULL,
+    descr character varying(8)
+);
+INSERT INTO statustype (statusid, descr) VALUES (1, 'Unread');
+INSERT INTO statustype (statusid, descr) VALUES (2, 'Read');
+INSERT INTO statustype (statusid, descr) VALUES (3, 'Deleted');
+INSERT INTO statustype (statusid, descr) VALUES (4, 'Junk');
+INSERT INTO statustype (statusid, descr) VALUES (5, 'Abusive');
+CREATE SEQUENCE statustype_statusid_seq
+    START WITH 6
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER SEQUENCE statustype_statusid_seq OWNED BY statustype.statusid;
 SET search_path = tracklist, pg_catalog;
 CREATE TABLE selbaps (
     selaction integer NOT NULL,
@@ -2549,9 +2375,7 @@ ALTER TABLE ONLY role_inheritance ALTER COLUMN role_inheritance_id SET DEFAULT n
 ALTER TABLE ONLY role_text_metadata ALTER COLUMN role_text_metadata_id SET DEFAULT nextval('role_metadata_role_metadata_id_seq'::regclass);
 ALTER TABLE ONLY role_visibility ALTER COLUMN role_visibility_id SET DEFAULT nextval('types_id_seq'::regclass);
 SET search_path = public, pg_catalog;
-ALTER TABLE ONLY acl_member ALTER COLUMN privilegeid SET DEFAULT nextval('acl_member_privilegeid_seq'::regclass);
 ALTER TABLE ONLY auth_group ALTER COLUMN id SET DEFAULT nextval('auth_group_id_seq'::regclass);
-ALTER TABLE ONLY auth_permission ALTER COLUMN id SET DEFAULT nextval('auth_permission_id_seq'::regclass);
 ALTER TABLE ONLY auth_user ALTER COLUMN id SET DEFAULT nextval('auth_user_id_seq'::regclass);
 ALTER TABLE ONLY auth_user_groups ALTER COLUMN id SET DEFAULT nextval('auth_user_groups_id_seq'::regclass);
 ALTER TABLE ONLY baps_audio ALTER COLUMN audioid SET DEFAULT nextval('baps_audio_audioid_seq'::regclass);
@@ -2567,8 +2391,6 @@ ALTER TABLE ONLY baps_textitem ALTER COLUMN textitemid SET DEFAULT nextval('baps
 ALTER TABLE ONLY baps_user ALTER COLUMN userid SET DEFAULT nextval('baps_user_userid_seq'::regclass);
 ALTER TABLE ONLY baps_user_external ALTER COLUMN userexternalid SET DEFAULT nextval('baps_user_external_userexternalid_seq'::regclass);
 ALTER TABLE ONLY baps_user_filefolder ALTER COLUMN userfilefolderid SET DEFAULT nextval('baps_user_filefolder_userfilefolderid_seq'::regclass);
-ALTER TABLE ONLY client ALTER COLUMN clientid SET DEFAULT nextval('client_clientid_seq'::regclass);
-ALTER TABLE ONLY constants_acl_scope ALTER COLUMN scopeid SET DEFAULT nextval('constants_acl_scope_scopeid_seq'::regclass);
 ALTER TABLE ONLY l_newsfeed ALTER COLUMN feedid SET DEFAULT nextval('l_newsfeeds_feedid_seq'::regclass);
 ALTER TABLE ONLY l_presenterstatus ALTER COLUMN presenterstatusid SET DEFAULT nextval('l_presenterstatus_presenterstatusid_seq'::regclass);
 ALTER TABLE ONLY mail_alias_text ALTER COLUMN aliasid SET DEFAULT nextval('mail_aliasid_seq'::regclass);
@@ -2579,13 +2401,6 @@ ALTER TABLE ONLY news_feed ALTER COLUMN newsentryid SET DEFAULT nextval('news_fe
 ALTER TABLE ONLY rec_trackcorrection ALTER COLUMN correctionid SET DEFAULT nextval('rec_trackcorrection_correctionid_seq'::regclass);
 ALTER TABLE ONLY selector ALTER COLUMN selid SET DEFAULT nextval('selector_selid_seq'::regclass);
 ALTER TABLE ONLY selector_actions ALTER COLUMN action SET DEFAULT nextval('selector_actions_action_seq'::regclass);
-ALTER TABLE ONLY sis_commtype ALTER COLUMN commtypeid SET DEFAULT nextval('sis_commtype_commtypeid_seq'::regclass);
-ALTER TABLE ONLY sis_piss ALTER COLUMN id SET DEFAULT nextval('sis_piss_id_seq'::regclass);
-ALTER TABLE ONLY sis_status ALTER COLUMN statusid SET DEFAULT nextval('sis_status_statusid_seq'::regclass);
-ALTER TABLE ONLY site_package ALTER COLUMN packageid SET DEFAULT nextval('site_special_package_packageid_seq'::regclass);
-ALTER TABLE ONLY sitetree_tree ALTER COLUMN id SET DEFAULT nextval('sitetree_tree_id_seq'::regclass);
-ALTER TABLE ONLY sitetree_treeitem ALTER COLUMN id SET DEFAULT nextval('sitetree_treeitem_id_seq'::regclass);
-ALTER TABLE ONLY sitetree_treeitem_access_permissions ALTER COLUMN id SET DEFAULT nextval('sitetree_treeitem_access_permissions_id_seq'::regclass);
 ALTER TABLE ONLY strm_log ALTER COLUMN logid SET DEFAULT nextval('strm_log_logid_seq'::regclass);
 ALTER TABLE ONLY strm_logfile ALTER COLUMN logfileid SET DEFAULT nextval('strm_logfile_logfileid_seq'::regclass);
 ALTER TABLE ONLY strm_stream ALTER COLUMN streamid SET DEFAULT nextval('strm_stream_streamid_seq'::regclass);
@@ -2609,8 +2424,10 @@ ALTER TABLE ONLY show_season_timeslot ALTER COLUMN show_season_timeslot_id SET D
 ALTER TABLE ONLY show_type ALTER COLUMN show_type_id SET DEFAULT nextval('show_type_show_type_id_seq'::regclass);
 ALTER TABLE ONLY timeslot_metadata ALTER COLUMN timeslot_metadata_id SET DEFAULT nextval('timeslot_metadata_timeslot_metadata_id_seq'::regclass);
 SET search_path = sis2, pg_catalog;
+ALTER TABLE ONLY commtype ALTER COLUMN commtypeid SET DEFAULT nextval('commtype_commtypeid_seq'::regclass);
 ALTER TABLE ONLY member_signin ALTER COLUMN member_signin_id SET DEFAULT nextval('member_signin_member_signin_id_seq'::regclass);
 ALTER TABLE ONLY messages ALTER COLUMN commid SET DEFAULT nextval('messages_commid_seq'::regclass);
+ALTER TABLE ONLY statustype ALTER COLUMN statusid SET DEFAULT nextval('statustype_statusid_seq'::regclass);
 SET search_path = tracklist, pg_catalog;
 ALTER TABLE ONLY tracklist ALTER COLUMN audiologid SET DEFAULT nextval('tracklist_audiologid_seq'::regclass);
 SET search_path = uryplayer, pg_catalog;
@@ -3894,6 +3711,88 @@ ALTER TABLE ONLY recommended_listening
 
 
 --
+-- Name: sched_entrytype_entrytypename_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY sched_entrytype
+    ADD CONSTRAINT sched_entrytype_entrytypename_key UNIQUE (entrytypename);
+
+ALTER TABLE sched_entrytype CLUSTER ON sched_entrytype_entrytypename_key;
+
+
+--
+-- Name: sched_entrytype_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY sched_entrytype
+    ADD CONSTRAINT sched_entrytype_pkey PRIMARY KEY (entrytypeid);
+
+
+--
+-- Name: sched_genre_musiccategoryname_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY sched_genre
+    ADD CONSTRAINT sched_genre_musiccategoryname_key UNIQUE (genrename);
+
+
+--
+-- Name: sched_genre_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY sched_genre
+    ADD CONSTRAINT sched_genre_pkey PRIMARY KEY (genreid);
+
+
+--
+-- Name: sched_musiccategory_musiccategoryname_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY sched_musiccategory
+    ADD CONSTRAINT sched_musiccategory_musiccategoryname_key UNIQUE (musiccategoryname);
+
+
+--
+-- Name: sched_musiccategory_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY sched_musiccategory
+    ADD CONSTRAINT sched_musiccategory_pkey PRIMARY KEY (musiccategoryid);
+
+
+--
+-- Name: sched_room_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY sched_room
+    ADD CONSTRAINT sched_room_pkey PRIMARY KEY (roomid);
+
+
+--
+-- Name: sched_room_roomname_key; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY sched_room
+    ADD CONSTRAINT sched_room_roomname_key UNIQUE (roomname);
+
+
+--
+-- Name: sched_speechcategory_pkey; Type: CONSTRAINT; Schema: public
+--
+
+ALTER TABLE ONLY sched_speechcategory
+    ADD CONSTRAINT sched_speechcategory_pkey PRIMARY KEY (speechcategoryid);
+
+
+--
+-- Name: sched_speechcategory_speechcategoryname_key; Type: CONSTRAINT; Schema
+--
+
+ALTER TABLE ONLY sched_speechcategory
+    ADD CONSTRAINT sched_speechcategory_speechcategoryname_key UNIQUE (speechcategoryname);
+
+
+--
 -- Name: selector_actions_pkey; Type: CONSTRAINT; Schema: public
 --
 
@@ -3907,30 +3806,6 @@ ALTER TABLE ONLY selector_actions
 
 ALTER TABLE ONLY selector
     ADD CONSTRAINT selector_pkey PRIMARY KEY (selid);
-
-
---
--- Name: sis_piss_pkey; Type: CONSTRAINT; Schema: public
---
-
-ALTER TABLE ONLY sis_piss
-    ADD CONSTRAINT sis_piss_pkey PRIMARY KEY (id);
-
-
---
--- Name: sis_status_pkey; Type: CONSTRAINT; Schema: public
---
-
-ALTER TABLE ONLY sis_status
-    ADD CONSTRAINT sis_status_pkey PRIMARY KEY (statusid);
-
-
---
--- Name: sis_type_pkey; Type: CONSTRAINT; Schema: public
---
-
-ALTER TABLE ONLY sis_commtype
-    ADD CONSTRAINT sis_type_pkey PRIMARY KEY (commtypeid);
 
 
 --
@@ -4210,6 +4085,14 @@ ALTER TABLE ONLY timeslot_metadata
 SET search_path = sis2, pg_catalog;
 
 --
+-- Name: sis_type_pkey; Type: CONSTRAINT; Schema: sis2
+--
+
+ALTER TABLE ONLY commtype
+    ADD CONSTRAINT sis_type_pkey PRIMARY KEY (commtypeid);
+
+
+--
 -- Name: config_pkey; Type: CONSTRAINT; Schema: sis2
 --
 
@@ -4239,6 +4122,14 @@ ALTER TABLE ONLY member_signin
 
 ALTER TABLE ONLY member_signin
     ADD CONSTRAINT member_signin_pkey PRIMARY KEY (member_signin_id);
+
+
+--
+-- Name: sis_status_pkey; Type: CONSTRAINT; Schema: sis2
+--
+
+ALTER TABLE ONLY statustype
+    ADD CONSTRAINT sis_status_pkey PRIMARY KEY (statusid);
 
 
 SET search_path = tracklist, pg_catalog;
@@ -4391,6 +4282,50 @@ ALTER TABLE ONLY banner_timeslot
 
 ALTER TABLE ONLY banner_type
     ADD CONSTRAINT banner_type_pkey PRIMARY KEY (banner_type_id);
+
+
+SET search_path = jukebox, pg_catalog;
+
+--
+-- Name: playlist_availability_approvedid_idx; Type: INDEX; Schema: jukebox
+--
+
+CREATE INDEX playlist_availability_approvedid_idx ON playlist_availability USING btree (approvedid);
+
+
+--
+-- Name: playlist_availability_banner_id_idx; Type: INDEX; Schema: jukebox
+--
+
+CREATE INDEX playlist_availability_banner_id_idx ON playlist_availability USING btree (playlistid);
+
+
+--
+-- Name: playlist_availability_banner_location_id_idx; Type: INDEX; Schema: jukebox
+--
+
+CREATE INDEX playlist_availability_banner_location_id_idx ON playlist_availability USING btree (weight);
+
+
+--
+-- Name: playlist_availability_effective_from_idx; Type: INDEX; Schema: jukebox
+--
+
+CREATE INDEX playlist_availability_effective_from_idx ON playlist_availability USING btree (effective_from);
+
+
+--
+-- Name: playlist_availability_effective_to_idx; Type: INDEX; Schema: jukebox
+--
+
+CREATE INDEX playlist_availability_effective_to_idx ON playlist_availability USING btree (effective_to);
+
+
+--
+-- Name: playlist_availability_memberid_idx; Type: INDEX; Schema: jukebox
+--
+
+CREATE INDEX playlist_availability_memberid_idx ON playlist_availability USING btree (memberid);
 
 
 SET search_path = metadata, pg_catalog;
@@ -4750,6 +4685,12 @@ CREATE INDEX rec_unique_recordid ON rec_labelqueue USING btree (recordid);
 
 CREATE INDEX recommended_listening_chartweek_key ON recommended_listening USING btree (week);
 
+
+--
+-- Name: sched_entrytype_entrytypenamenews_key; Type: INDEX; Schema: public
+--
+
+CREATE INDEX sched_entrytype_entrytypenamenews_key ON sched_entrytype USING btree (entrytypename) WHERE ((entrytypename)::text = 'News'::text);
 
 --
 -- Name: strm_log_starttime_key; Type: INDEX; Schema: public
@@ -5275,6 +5216,22 @@ ALTER TABLE ONLY playlists
 
 
 --
+-- Name: playlist_availability_pkey; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlist_availability
+    ADD CONSTRAINT playlist_availability_pkey PRIMARY KEY (playlist_availability_id);
+
+
+--
+-- Name: playlist_availability_playlistid_fkey; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlist_availability
+    ADD CONSTRAINT playlist_availability_playlistid_fkey FOREIGN KEY (playlistid) REFERENCES playlists(playlistid) ON UPDATE CASCADE;
+
+
+--
 -- Name: playlist_entries_playlistid_fkey; Type: FK CONSTRAINT; Schema: jukebox
 --
 
@@ -5344,6 +5301,14 @@ ALTER TABLE ONLY playlist_timeslot
 
 ALTER TABLE ONLY playlist_timeslot
     ADD CONSTRAINT playlist_timeslot_playlistid_fkey FOREIGN KEY (playlistid) REFERENCES playlists(playlistid);
+
+
+--
+-- Name: playlist_timeslot_playlist_availability_id_fkey; Type: FK CONSTRAINT; Schema: jukebox
+--
+
+ALTER TABLE ONLY playlist_timeslot
+    ADD CONSTRAINT playlist_timeslot_playlist_availability_id_fkey FOREIGN KEY (playlist_availability_id) REFERENCES playlist_availability(playlist_availability_id);
 
 
 --
@@ -6091,7 +6056,7 @@ ALTER TABLE ONLY auth_user_groups
 --
 
 ALTER TABLE ONLY baps_item
-    ADD CONSTRAINT baps_item_fileitemid_fkey FOREIGN KEY (fileitemid) REFERENCES baps_fileitem(fileitemid);
+    ADD CONSTRAINT baps_item_fileitemid_fkey FOREIGN KEY (fileitemid) REFERENCES baps_fileitem(fileitemi) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -6099,7 +6064,7 @@ ALTER TABLE ONLY baps_item
 --
 
 ALTER TABLE ONLY baps_item
-    ADD CONSTRAINT baps_item_libraryitemid_fkey FOREIGN KEY (libraryitemid) REFERENCES baps_libraryitem(libraryitemid);
+    ADD CONSTRAINT baps_item_libraryitemid_fkey FOREIGN KEY (libraryitemid) REFERENCES baps_libraryitem(libraryitemid) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -6309,6 +6274,13 @@ ALTER TABLE ONLY rec_itunes
 ALTER TABLE ONLY rec_track
     ADD CONSTRAINT rec_track_digitisedby_fkey FOREIGN KEY (digitisedby) REFERENCES member(memberid) ON UPDATE CASCADE ON DELETE SET NULL;
 
+--
+-- Name: rec_track_lasteditedby_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY rec_track
+    ADD CONSTRAINT rec_track_lasteditedby_fkey FOREIGN KEY (last_edited_memberid) REFERENCES member(memberid) ON UPDATE CASCADE ON DELETE SET NULL;
+
 
 --
 -- Name: rec_trackcorrection_reviewedby_fkey; Type: FK CONSTRAINT; Schema: public
@@ -6332,14 +6304,6 @@ ALTER TABLE ONLY rec_trackcorrection
 
 ALTER TABLE ONLY selector
     ADD CONSTRAINT selector_action_fkey FOREIGN KEY (action) REFERENCES selector_actions(action) ON UPDATE CASCADE ON DELETE RESTRICT;
-
-
---
--- Name: sis_piss_memberid_fkey; Type: FK CONSTRAINT; Schema: public
---
-
-ALTER TABLE ONLY sis_piss
-    ADD CONSTRAINT sis_piss_memberid_fkey FOREIGN KEY (memberid) REFERENCES member(memberid) ON DELETE CASCADE;
 
 
 --
@@ -6727,7 +6691,7 @@ ALTER TABLE ONLY member_signin
 --
 
 ALTER TABLE ONLY messages
-    ADD CONSTRAINT messages_commtypeid_fkey FOREIGN KEY (commtypeid) REFERENCES public.sis_commtype(commtypeid) ON DELETE SET NULL;
+    ADD CONSTRAINT messages_commtypeid_fkey FOREIGN KEY (commtypeid) REFERENCES commtype(commtypeid) ON DELETE SET NULL;
 
 
 --
@@ -6735,7 +6699,7 @@ ALTER TABLE ONLY messages
 --
 
 ALTER TABLE ONLY messages
-    ADD CONSTRAINT messages_statusid_fkey FOREIGN KEY (statusid) REFERENCES public.sis_status(statusid) ON DELETE SET NULL;
+    ADD CONSTRAINT messages_statusid_fkey FOREIGN KEY (statusid) REFERENCES statustype(statusid) ON DELETE SET NULL;
 
 
 --
