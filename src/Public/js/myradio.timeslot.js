@@ -9,7 +9,7 @@ $("#shows").on(
     $("#timeslots").empty();
     $("#signin-list").empty();
     $("#signin-submit").hide();
-    for (var seriesno in window.showdata[$(this).val()]) {
+    for (var seriesno = 0; seriesno < window.showdata[$(this).val()].length; seriesno++) {
       $("#seasons").append("<option value='" + seriesno + "'>Season " + (seriesno + 1) + "</option>");
     }
   }
