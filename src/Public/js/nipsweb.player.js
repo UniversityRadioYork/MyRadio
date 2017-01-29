@@ -94,7 +94,7 @@ var NIPSWeb = function (d) {
   };
 
   /**
-   * Change shipping operates in a queue - this ensures that changes are sent automically and sequentially.
+   * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
    * ops: JSON changeset to send
    * addOp: If true, there has been an add operation. We currently make these syncronous.
    * pNext: Optional. Parent queue to process on completion.
@@ -349,7 +349,7 @@ var NIPSWeb = function (d) {
         }
         if ($(this).hasClass("unclean")) {
           //This track may have naughty words, but don't block selection
-          showAlert($(this).html() + " explicit. Do not broadcast before 9pm.", "danger");
+          showAlert("<strong>" + $(this).html() + "</strong> is explicit. Do not broadcast before 9pm.", "danger");
         }
         //Set this track as the active file for this channel
         //First, we need to remove the active class for any other file in the channel
