@@ -30,17 +30,20 @@ function updateCentralSearch()
           continue;
         }
         var classes = "";
+        var cleanStars = "";
+        var tooltip = "";
         if (!data[file].clean) {
           classes = classes + " unclean";
-        }
-        var cleanStars = "";
-        if (!data[file].clean) {
           cleanStars = "**";
+          tooltip = "This track is explicit. Do not broadcast before 9PM."
+        }
+        if (!data[file].clean) {
+
         }
 
         $("#baps-channel-res").append(
           "<li id='" + data[file].album.recordid + "-" + data[file].trackid +
-          "' intro='" + data[file].intro + "'" +
+          "' intro='" + data[file].intro + "' title='" + tooltip + "'" +
           "' channel='res' weight='0' type='central' class='" + classes + "' length='" + data[file].length + "'>" +
           cleanStars + data[file].title + " - " + data[file].artist + "</li>"
         );
