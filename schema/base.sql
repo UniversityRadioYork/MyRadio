@@ -250,12 +250,12 @@ ALTER SEQUENCE bapsplanner.timeslot_items_timeslot_item_id_seq OWNED BY bapsplan
 SET search_path = jukebox, pg_catalog;
 CREATE TABLE playlist_availability (
     memberid integer,
-	approvedid integer,
-	effective_from timestamp with time zone NOT NULL,
-	effective_to timestamp with time zone,
-	playlist_availability_id integer DEFAULT nextval('website.banner_campaign_banner_campaign_id_seq'::regclass) NOT NULL,
-	weight integer NOT NULL,
-	playlistid character varying NOT NULL
+    approvedid integer,
+    effective_from timestamp with time zone NOT NULL,
+    effective_to timestamp with time zone,
+    playlist_availability_id integer DEFAULT nextval('website.banner_campaign_banner_campaign_id_seq'::regclass) NOT NULL,
+    weight integer NOT NULL,
+    playlistid character varying NOT NULL
 );
 CREATE TABLE playlist_entries (
     playlistid character varying(15) NOT NULL,
@@ -6056,7 +6056,7 @@ ALTER TABLE ONLY auth_user_groups
 --
 
 ALTER TABLE ONLY baps_item
-    ADD CONSTRAINT baps_item_fileitemid_fkey FOREIGN KEY (fileitemid) REFERENCES baps_fileitem(fileitemi) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT baps_item_fileitemid_fkey FOREIGN KEY (fileitemid) REFERENCES baps_fileitem(fileitemid) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
