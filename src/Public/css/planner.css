@@ -97,12 +97,11 @@ body {
 #baps-channel-res {
   height: calc(100% - 90px);
 }
-#a-manage-library {
+#baps-menu {
   float: right;
   margin: 0;
   position: relative;
   right: 20px;
-  top: 0.5em;
 }
 
 #res-loading {

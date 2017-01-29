@@ -33,12 +33,16 @@ function updateCentralSearch()
         if (!data[file].clean) {
           classes = classes + " unclean";
         }
+        var cleanStars = "";
+        if (!data[file].clean) {
+          cleanStars = "**";
+        }
 
         $("#baps-channel-res").append(
           "<li id='" + data[file].album.recordid + "-" + data[file].trackid +
           "' intro='" + data[file].intro + "'" +
           "' channel='res' weight='0' type='central' class='" + classes + "' length='" + data[file].length + "'>" +
-          data[file].title + " - " + data[file].artist + "</li>"
+          cleanStars + data[file].title + " - " + data[file].artist + "</li>"
         );
       }
       planner.registerItemClicks();
@@ -209,9 +213,9 @@ $(document).ready(function () {
   /**
    * Handler for activating the Manage Library link
    */
-  $("#a-manage-library").click(function () {
+  $("#menu-track-upload").click(function () {
     var url = $(this).children("a").attr("href");
-    myradio.createDialog("Manage Library", "<iframe src='" + url + "' width='580' height='500' frameborder='0'></iframe>");
+    myradio.createDialog("Upload Tracks", "<iframe src='" + url + "' width='580' height='500' frameborder='0'></iframe>");
     return false;
   });
 });
