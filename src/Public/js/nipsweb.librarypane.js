@@ -37,10 +37,6 @@ function updateCentralSearch()
           cleanStars = "**";
           tooltip = "This track is explicit. Do not broadcast before 9PM."
         }
-        if (!data[file].clean) {
-
-        }
-
         $("#baps-channel-res").append(
           "<li id='" + data[file].album.recordid + "-" + data[file].trackid +
           "' intro='" + data[file].intro + "' title='" + tooltip + "'" +
@@ -218,7 +214,7 @@ $(document).ready(function () {
    */
   $("#menu-track-upload").click(function () {
     var url = $(this).children("a").attr("href");
-    myradio.createDialog("Upload Tracks", "<iframe src='" + url + "' width='580' height='500' frameborder='0'></iframe>");
+    myradio.createDialog("Upload to Library", "<iframe src='" + url + "' width='580' height='500' frameborder='0'></iframe>");
     return false;
   });
 });
