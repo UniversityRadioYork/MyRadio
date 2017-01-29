@@ -5,10 +5,9 @@
 {% endblock %}
 {% block content %}
 <div id="notice" class="alert alert-warning">Preparing show plan...</div>
-{# <div id="head-icons"><button class="btn-feedback">Send Feedback</button>&nbsp;<button class="btn-help"></button><button class="btn-logout" onclick="window.location = '/portal/redir_out.php'"></button></div> #}
 <header id="content-header">
   <div id="baps-menu" class="btn-group">
-    <a  href="{{MyRadio.makeURL(config,'NIPSWeb','manage_library')}}" id="menu-track-upload" class="btn btn-default"><span class="glyphicon glyphicon-upload"></span> Upload Tracks</a>
+    <a  href="{{MyRadio.makeURL(config,'NIPSWeb','manage_library')}}" id="menu-track-upload" class="btn btn-default"><span class="glyphicon glyphicon-upload"></span> Upload to Library</a>
   </div>
   <h2>{{title}}</h2>
 </header>
