@@ -94,7 +94,7 @@ var NIPSWeb = function (d) {
   };
 
   /**
-   * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
+   * Change shipping operates in a queue - this ensures that changes are sent automically and sequentially.
    * ops: JSON changeset to send
    * addOp: If true, there has been an add operation. We currently make these syncronous.
    * pNext: Optional. Parent queue to process on completion.
@@ -709,10 +709,11 @@ var NIPSWeb = function (d) {
       "introChanged",
       function (e) {
         var trackid = getRecTrackFromID($(channelDiv).children(".selected")[0].getAttribute("id"))[1];
-        $.post(
-          mConfig.api_url + "/Track/" + trackid + "/setIntro",
-          {duration: e.originalEvent.detail.time}
-        );
+        $.ajax({
+            url: mConfig.api_url + "/v2/track/" + trackid + "/intro",
+            type: 'PUT',
+            data : {duration: e.originalEvent.detail.time}
+        });
       }
     );
 
