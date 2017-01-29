@@ -439,7 +439,8 @@ class MyRadio_Selector
         self::setLock();
 
         //Email people
-        MyRadioEmail::sendEmailToComputing(
+        MyRadioEmail::sendEmailToList(
+            MyRadio_List::getInstance(Config::$obit_list_id),
             'OBIT INITIATED',
             'Urgent: Initiated Obit procedure for station as requested by '
             .MyRadio_User::getInstance()->getName().' - '
