@@ -126,7 +126,10 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
         foreach ($array as $element) {
             //It must implement the toDataSource method!
             if (!method_exists($element, 'toDataSource')) {
-                throw new MyRadioException('Attempted to convert '.get_class($element).' to a DataSource but it not a valid Data Object!', 500);
+                throw new MyRadioException(
+                    'Attempted to convert '.get_class($element).' to a DataSource but it not a valid Data Object!',
+                    500
+                );
             } else {
                 $result[] = $element->toDataSource($full);
             }

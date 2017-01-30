@@ -3,7 +3,16 @@
         "james-heinrich/getid3": "~1.9",
         "ezyang/htmlpurifier": "~4.6",
         "google/recaptcha": "~1.1",
-        "raven/raven": "~0.13"
+        "sentry/sentry": "~1.5",
+        "soundasleep/html2text": "~0.3"
+    },
+    "require-dev": {
+      "squizlabs/php_codesniffer": "~2.7",
+      "pdepend/pdepend": "~2.5",
+      "phpmd/phpmd": "~2.6",
+      "sebastian/phpcpd": "~2.0",
+      "phploc/phploc": "~3.0",
+      "theseer/phpdox": "^0.8"
     },
     "config": {
         "vendor-dir": "src/vendor"

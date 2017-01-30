@@ -104,7 +104,10 @@ class MyRadio_TrainingStatus extends ServiceAPI
         $this->depends = empty($result['depends']) ? null : $result['depends'];
         $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
 
-        $this->permissions = self::$db->fetchColumn('SELECT typeid FROM public.auth_trainingstatus WHERE presenterstatusid=$1', [$statusid]);
+        $this->permissions = self::$db->fetchColumn(
+            'SELECT typeid FROM public.auth_trainingstatus WHERE presenterstatusid=$1',
+            [$statusid]
+        );
     }
 
     /**

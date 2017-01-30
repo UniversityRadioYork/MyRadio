@@ -35,9 +35,9 @@ foreach ($demos as $demo) {
             ];
         } else {
             $demo['attending'] = 'Demo full';
+            $demo['join'] = ['display' => 'none'];
         }
     }
-
     $tabledata[] = $demo;
 }
 

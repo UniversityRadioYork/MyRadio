@@ -1,7 +1,7 @@
 <?php
 /**
- * This file provides the NIPSWeb_ManagedItem class for MyRadio - these are Jingles, Beds, Adverts and others of a similar
- * ilk.
+ * This file provides the NIPSWeb_ManagedItem class for MyRadio - these are Jingles, Beds, Adverts and others of a
+ * similar ilk.
  */
 namespace MyRadio\NIPSWeb;
 
@@ -37,7 +37,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
      * Initiates the ManagedItem variables.
      *
      * @param int                     $resid       The ID of the managed resource to initialise
-     * @param NIPSWeb_ManagedPlaylist $playlistref If the playlist is requesting this item, then pass the playlist object
+     * @param NIPSWeb_ManagedPlaylist $playlistref If the playlist is requesting this item, then pass the playlist obj
      *
      * @todo Length, BPM
      * @todo Seperate Managed Items and Managed User Items. The way they were implemented was a horrible hack, for which
@@ -50,17 +50,19 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
         $result = self::$db->fetchOne(
             'SELECT manageditemid, title, length, bpm, NULL AS folder, memberid, expirydate, managedplaylistid
             FROM bapsplanner.managed_items WHERE manageditemid=$1
-            UNION SELECT manageditemid, title, length, bpm, managedplaylistid AS folder, NULL AS memberid, NULL AS expirydate,
-            NULL as managedplaylistid
+            UNION
+            SELECT manageditemid, title, length, bpm, managedplaylistid AS folder,
+                NULL AS memberid, NULL AS expirydate, NULL as managedplaylistid
             FROM bapsplanner.managed_user_items WHERE manageditemid=$1
             LIMIT 1',
             [$resid]
         );
 
         if (empty($result)) {
-            throw new MyRadioException('The specified NIPSWeb Managed Item or Managed User Item does not seem to exist', 404);
-
-            return;
+            throw new MyRadioException(
+                'The specified NIPSWeb Managed Item or Managed User Item does not seem to exist',
+                404
+            );
         }
 
         $this->managed_playlist = empty(
@@ -118,12 +120,15 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public function getPath($extension = 'mp3')
     {
-        return Config::$music_central_db_path.'/'.($this->managed_playlist ? $this->managed_playlist->getFolder() : $this->folder).'/'.$this->getID().'.'.$extension;
+        return Config::$music_central_db_path.'/'
+            .($this->managed_playlist ? $this->managed_playlist->getFolder() : $this->folder)
+            .'/'.$this->getID().'.'.$extension;
     }
 
     public function getFolder()
     {
-        $dir = Config::$music_central_db_path.'/'.($this->managed_playlist ? $this->managed_playlist->getFolder() : $this->folder);
+        $dir = Config::$music_central_db_path.'/'
+            .($this->managed_playlist ? $this->managed_playlist->getFolder() : $this->folder);
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0777, true)) {
                 return false;
@@ -178,10 +183,20 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
 
         // File quality checks
         if ($fileInfo['audio']['bitrate'] < 192000) {
-            return ['status' => 'FAIL', 'error' => 'Bitrate is below 192kbps.', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']];
+            return [
+                'status' => 'FAIL',
+                'error' => 'Bitrate is below 192kbps.',
+                'fileid' => $filename,
+                'bitrate' => $fileInfo['audio']['bitrate']
+            ];
         }
         if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
-            return ['status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
+            return [
+                'status' => 'FAIL',
+                'error' => 'Item is not stereo.',
+                'fileid' => $filename,
+                'channelmode' => $fileInfo['audio']['channelmode']
+            ];
         }
 
         return [

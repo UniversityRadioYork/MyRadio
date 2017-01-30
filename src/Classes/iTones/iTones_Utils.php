@@ -40,10 +40,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public static function getRemainingRequests()
     {
-        return self::$db->fetchOne(
-            self::REQUESTS_REMAINING_SQL,
-            self::getRemainingRequestsParams()
-        )['remaining'];
+        return self::$db->fetchOne(self::REQUESTS_REMAINING_SQL, self::getRemainingRequestsParams())['remaining'];
     }
 
     /**
@@ -276,7 +273,13 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 
     private static function telnetStart()
     {
-        self::$telnet_handle = fsockopen('tcp://'.Config::$itones_telnet_host, Config::$itones_telnet_port, $errno, $errstr, 10);
+        self::$telnet_handle = fsockopen(
+            'tcp://'.Config::$itones_telnet_host,
+            Config::$itones_telnet_port,
+            $errno,
+            $errstr,
+            10
+        );
         register_shutdown_function([__CLASS__, 'telnetEnd']);
     }
 

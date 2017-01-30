@@ -71,8 +71,14 @@ trait MyRadio_MetadataSubject
      * @param string $table          The metadata table, *including* the schema.
      * @param string $id_field       The ID field in the metadata table.
      */
-    public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $id_field = null)
-    {
+    public function setMeta(
+        $string_key,
+        $value,
+        $effective_from = null,
+        $effective_to = null,
+        $table = null,
+        $id_field = null
+    ) {
         $key = self::getMetadataKey($string_key); //Integer meta key
         $multiple = self::isMetadataMultiple($key); //Bool whether multiple values are allowed
         if ($effective_from === null) {
@@ -249,8 +255,14 @@ trait MyRadio_MetadataSubject
      *
      * @return array The list of IDs of whatever is being searched.
      */
-    public static function searchMeta($query, $string_keys, $effective_from = null, $effective_to = null, $table = null, $id_field = null)
-    {
+    public static function searchMeta(
+        $query,
+        $string_keys,
+        $effective_from = null,
+        $effective_to = null,
+        $table = null,
+        $id_field = null
+    ) {
         if (is_null($table) || is_null($id_field)) {
             throw new MyRadioException('Search table and ID must be set.');
         }

@@ -49,7 +49,9 @@ class MyRadio_Swagger
 
     public static function getApiClasses()
     {
-        $data = Database::getInstance()->fetchAll('SELECT class_name, api_name FROM myury.api_class_map ORDER BY api_name');
+        $data = Database::getInstance()->fetchAll(
+            'SELECT class_name, api_name FROM myury.api_class_map ORDER BY api_name'
+        );
         $result = [];
 
         foreach ($data as $row) {
@@ -93,7 +95,8 @@ class MyRadio_Swagger
 
     protected static function getParamDescription($param, $meta)
     {
-        return empty($meta['params'][$param->getName()]['description']) ? '' : $meta['params'][$param->getName()]['description'];
+        return empty($meta['params'][$param->getName()]['description']) ?
+            '' : $meta['params'][$param->getName()]['description'];
     }
 
     public function toDataSource()
@@ -131,7 +134,8 @@ class MyRadio_Swagger
             if ($count === 1) {
                 $meta['api'] = $comment;
             } else {
-                $meta['api'] = (substr($method->getName(), 0, 3) === 'set' or $method->getName() === 'create') ? 'POST' : 'GET';
+                $meta['api'] = (substr($method->getName(), 0, 3) === 'set' || $method->getName() === 'create') ?
+                    'POST' : 'GET';
             }
 
             //Build the API URL
@@ -150,7 +154,8 @@ class MyRadio_Swagger
                 $params[] = [
                     'paramType' => 'query',
                     'name' => 'full',
-                    'description' => 'Some objects can optionally return a small or large response. By default, a full response is on, although it is intended for this to change.',
+                    'description' => 'Some objects can optionally return a small or large response. '
+                                     . 'By default, a full response is on, although it is intended for this to change.',
                     'type' => 'boolean',
                     'required' => false,
                     'allowMultiple' => false,
@@ -167,7 +172,8 @@ class MyRadio_Swagger
                 $params[] = [
                     'paramType' => 'path',
                     'name' => 'id',
-                    'description' => "The unique identifier of the $this->class to be acted on. An int for most Objects, but some are Strings.",
+                    'description' => "The unique identifier of the $this->class to be acted on. "
+                                     . "An int for most Objects, but some are Strings.",
                     'type' => 'int',
                     'required' => true,
                     'allowMultiple' => false,
@@ -208,7 +214,10 @@ class MyRadio_Swagger
 
     public static function parseDoc($doc)
     {
-        $raw = explode("\n", trim(preg_replace('/(\/\*\*)|(\n\s+\*\/?[^\S\r\n]?)/', "\n", $doc->getDocComment()), " \n"));
+        $raw = explode(
+            "\n",
+            trim(preg_replace('/(\/\*\*)|(\n\s+\*\/?[^\S\r\n]?)/', "\n", $doc->getDocComment()), " \n")
+        );
 
         $lines = [''];
         $keys = [];

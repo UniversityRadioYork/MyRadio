@@ -1,47 +1,47 @@
-$('.twig-datatable').dataTable(
-    {
-        "aoColumns": [
+$(".twig-datatable").dataTable(
+  {
+    "aoColumns": [
         //id
-        {
-            bVisible: false
-        },
+      {
+        bVisible: false
+      },
         //created_by
-        {
-            bVisible: false
-        },
+      {
+        bVisible: false
+      },
         //approved_by
-        {
-            bVisible: false
-        },
+      {
+        bVisible: false
+      },
         //effective_from
-        {
-            sTitle: "From"
-        },
+      {
+        sTitle: "From"
+      },
         //effective_to
-        {
-            sTitle: "Until"
-        },
+      {
+        sTitle: "Until"
+      },
         //num_timeslots
-        {
-            sTitle: "Times"
-        },
+      {
+        sTitle: "Times"
+      },
         //timeslots
-        {
-            bVisible: false
-        },
+      {
+        bVisible: false
+      },
         //playlist
-        {
-            bVisible: false
-        },
+      {
+        bVisible: false
+      },
         //weight
-        {
-            sTitle: "Weight"
-        },
+      {
+        sTitle: "Weight"
+      },
         //edit
-        {
-            sTitle: "Edit"
-        }
-        ],
-        bPaginate: false
-    }
+      {
+        sTitle: "Edit"
+      }
+    ],
+    bPaginate: false
+  }
 );

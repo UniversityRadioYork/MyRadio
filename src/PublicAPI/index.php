@@ -23,7 +23,7 @@ error_reporting(E_ALL);
 /**
  * Handle API errors.
  */
-function api_error($code, $message = null, $previous = null)
+function api_error($code, $message = null)
 {
     ob_end_clean();
     $messages = [

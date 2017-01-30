@@ -1,20 +1,18 @@
-$('.twig-datatable').dataTable(
+$(".twig-datatable").dataTable({
+  "aaSorting": [[2, "desc"]],
+  "aoColumns": [
+    //termid
     {
-        "aaSorting": [[2, 'desc']],
-        "aoColumns": [
-            //termid
-            {
-                "bVisible": false
-        },
-            //start
-            {
-                "sTitle": "Start Date"
-        },
-            //descr
-            {
-                "sTitle": "Name"
-        }
-        ],
-        "bPaginate": true
+      "bVisible": false
+    },
+    //start
+    {
+      "sTitle": "Start Date"
+    },
+    //descr
+    {
+      "sTitle": "Name"
     }
-);
+  ],
+  "bPaginate": true
+});

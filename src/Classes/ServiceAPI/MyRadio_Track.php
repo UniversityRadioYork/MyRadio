@@ -111,6 +111,20 @@ class MyRadio_Track extends ServiceAPI
      */
     private $digitisedby;
 
+     /**
+     * The time when this track was last edited.
+     *
+     * @var int
+     */
+    private $last_edited_time;
+
+     /**
+     * The member who last edited this track.
+     *
+     * @var int
+     */
+    private $last_edited_memberid;
+
     /**
      * Caches Last.fm's Track.getSimilar response.
      *
@@ -149,11 +163,13 @@ class MyRadio_Track extends ServiceAPI
         $this->clean = $result['clean'];
         $this->digitised = ($result['digitised'] == 't') ? true : false;
         $this->digitisedby = empty($result['digitisedby']) ? null : (int) $result['digitisedby'];
+        $this->last_edited_time = empty($result['last_edited_time']) ? null : $result['last_edited_time'];
+        $this->last_edited_memberid = empty($result['last_edited_memberid']) ? null : (int) $result['last_edited_memberid'];
         $this->genre = $result['genre'];
         $this->intro = strtotime('1970-01-01 '.$result['intro'].'+00');
         $this->length = $result['length'];
         $this->duration = (int) $result['duration'];
-        $this->number = (int) $result['intro'];
+        $this->number = (int) $result['number'];
         $this->record = (int) $result['recordid'];
         $this->title = $result['title'];
     }
@@ -191,7 +207,116 @@ class MyRadio_Track extends ServiceAPI
         )->addField(
             new MyRadioFormField('artist', MyRadioFormField::TYPE_TEXT, ['label' => 'Artist'])
         )->addField(
-            new MyRadioFormField('album', MyRadioFormField::TYPE_ALBUM, ['label' => 'Album'])
+            new MyRadioFormField(
+                'album',
+                MyRadioFormField::TYPE_ALBUM,
+                [
+                    'label' => 'Album',
+                    'explanation' => 'This must be an existing album in our system.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'position',
+                MyRadioFormField::TYPE_NUMBER,
+                [
+                    'label' => 'Position',
+                    'explanation' => 'The track number on the album.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'intro',
+                MyRadioFormField::TYPE_NUMBER,
+                [
+                    'label' => 'Intro',
+                    'explanation' => 'The track intro time in seconds.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'clean',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'options' => array_merge(
+                        [['text' => 'Please select...', 'disabled' => true]],
+                        self::getCleanOptions()
+                    ),
+                    'label' => 'Clean/Explicit/Unknown'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'genre',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'options' => array_merge(
+                        [['text' => 'Please select...', 'disabled' => true]],
+                        self::getGenres()
+                    ),
+                    'label' => 'Genre'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'digitised',
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    'label' => 'Digitised',
+                    'required' => false
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'digitisedby',
+                MyRadioFormField::TYPE_MEMBER,
+                [
+                    'label' => 'Digitised By',
+                    'explanation' => 'The person who uploaded the track.',
+                    'enabled' => false,
+                    'required' => false
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'blacklisted',
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    'label' => 'Blacklisted',
+                    'required' => false,
+                    'explanation' => 'If the track is banned from playing on Jukebox.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'last_edited_separator',
+                MyRadioFormField::TYPE_SECTION,
+                [
+                    'label' => 'Edit History'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'last_edited_time',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Last Edited',
+                    'required' => false,
+                    'explanation' => 'The time someone last submitted this form for this track.',
+                    'enabled' => false
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'last_edited_memberid',
+                MyRadioFormField::TYPE_MEMBER,
+                [
+                    'label' => 'Last Edited By',
+                    'required' => false,
+                    'explanation' => 'The member that last submitted this form for this track.',
+                    'enabled' => false
+                ]
+            )
         );
     }
     public function getEditForm()
@@ -202,7 +327,17 @@ class MyRadio_Track extends ServiceAPI
                 [
                     'title' => $this->getTitle(),
                     'artist' => $this->getArtist(),
-                    'album' => $this->getAlbum()->getID(),
+                    'album' => $this->getAlbum(),
+                    'position' => $this->getPosition(),
+                    'intro' => $this->getIntro(),
+                    'clean' => $this->getClean(),
+                    'genre' => $this->getGenre(),
+                    'digitised' => $this->getDigitised(),
+                    'digitisedby' => $this->getDigitisedBy(),
+                    'blacklisted' => $this->isBlacklisted(),
+                    'last_edited_time' => $this->getLastEditedTime() === null ? null :
+                        CoreUtils::happyTime($this->getLastEditedTime()),
+                    'last_edited_memberid' => $this->getLastEditedMemberID(),
                 ]
             );
     }
@@ -299,6 +434,16 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
+     * Get the genre of the Track.
+     *
+     * @return char
+     */
+    public function getGenre()
+    {
+        return $this->genre;
+    }
+
+    /**
      * Get whether or not the track is digitised.
      *
      * @return bool
@@ -308,12 +453,40 @@ class MyRadio_Track extends ServiceAPI
         return $this->digitised;
     }
 
+    /**
+     * Get the user who digitised the track
+     * @param MyRadio_User $digitisedby The user who digitised the track.
+     */
     public function getDigitisedBy()
     {
         if ($this->digitisedby === null) {
             return;
         } else {
             return MyRadio_User::getInstance($this->digitisedby);
+        }
+    }
+
+    /**
+     * Get the last time a user edited the track.
+     *
+     * @return bool
+     */
+    public function getLastEditedTime()
+    {
+        return $this->last_edited_time;
+    }
+
+    /**
+     * Get the user who last edited the track.
+     *
+     * @return MyRadio_User $last_edited_memberid The user who last edited the track.
+     */
+    public function getLastEditedMemberID()
+    {
+        if ($this->last_edited_memberid === null) {
+            return;
+        } else {
+            return MyRadio_User::getInstance($this->last_edited_memberid);
         }
     }
 
@@ -327,12 +500,41 @@ class MyRadio_Track extends ServiceAPI
         $this->digitised = $digitised;
         self::$db->query(
             'UPDATE rec_track SET digitised=$1, digitisedby=$2 WHERE trackid=$3',
-            $digitised ? [
-                't', $_SESSION['memberid'], $this->getID(),
-            ] : [
-                'f', null, $this->getID(),
-            ]
+            $digitised ? ['t', $_SESSION['memberid'], $this->getID()] : ['f', null, $this->getID()]
         );
+        $this->updateCacheObject();
+    }
+
+    /**
+     * Update the user who digitised the track
+     * @param MyRadio_User $digitisedby The user who digitised the track.
+     */
+    public function setDigitisedBy($digitisedby)
+    {
+        $this->digitisedby = $digitisedby->getID();
+        self::$db->query(
+            'UPDATE rec_track SET digitisedby=$1 WHERE trackid=$2',
+            [$digitisedby->getID(), $this->getID()]
+        );
+        $this->updateCacheObject();
+    }
+
+    /**
+     * Update when a user last edited the track info.
+     *
+     * @param bool $digitised
+     */
+    public function setLastEdited()
+    {
+        $this->last_edited_time = CoreUtils::getTimestamp();
+        $this->last_edited_memberid = $_SESSION['memberid'];
+        self::$db->query(
+            'UPDATE rec_track SET last_edited_time=$1, last_edited_memberid=$2 WHERE trackid=$3',
+            [
+                $this->last_edited_time,
+                $this->last_edited_memberid,
+                $this->getID()
+            ]);
         $this->updateCacheObject();
     }
 
@@ -532,12 +734,12 @@ class MyRadio_Track extends ServiceAPI
             if (!$options['random'] && !$options['titlesort']) {
                 $options['idsort'] = true;
             }
-        } else if (isset($options['random'])) {
+        } elseif (isset($options['random'])) {
             if (!$options['random']) {
                 $options['idsort'] = true;
                 $options['titlesort'] = false;
             }
-        } else if (isset($options['titlesort'])) {
+        } elseif (isset($options['titlesort'])) {
             if (!$options['titlesort']) {
                 $options['idsort'] = true;
                 $options['random'] = false;
@@ -699,25 +901,35 @@ class MyRadio_Track extends ServiceAPI
 
         // File quality checks
         if ($fileInfo['audio']['bitrate'] < 192000) {
-            return ['status' => 'FAIL', 'message' => 'Bitrate is below 192kbps', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']];
+            return [
+                'status' => 'FAIL',
+                'message' => 'Bitrate is below 192kbps',
+                'fileid' => $filename,
+                'bitrate' => $fileInfo['audio']['bitrate']
+            ];
         }
         if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
-            return ['status' => 'FAIL', 'message' => 'Item is not stereo', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
+            return [
+                'status' => 'FAIL',
+                'message' => 'Item is not stereo',
+                'fileid' => $filename,
+                'channelmode' => $fileInfo['audio']['channelmode']
+            ];
         }
 
         $analysis['status'] = 'INFO';
         $analysis['message'] = 'Currently editing track information for';
-        $analysis['submittable'] = True;
+        $analysis['submittable'] = true;
         $analysis['fileid'] = $filename;
         $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
         $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'];
         $analysis['analysis']['album'] = $fileInfo['comments_html']['album'];
-           
+
         //Remove total tracks in album from the track_number tag.
         $trackNo = explode("/", $fileInfo['comments_html']['track_number'][0], 2)[0];
         $analysis['analysis']['position'] = (string)$trackNo;
 
-        $trackName = implode("", $fileInfo['comments_html']['title']);   
+        $trackName = implode("", $fileInfo['comments_html']['title']);
         $analysis['analysis']['explicit'] = !!stripos($trackName, 'explicit');
 
         return $analysis;
@@ -753,11 +965,11 @@ class MyRadio_Track extends ServiceAPI
         } else {
             if (isset($lastfm['tracks']['track']['mbid'])) {
                 //Only one match
-                return [
-                    ['title' => $lastfm['tracks']['track']['name'],
-                        'artist' => $lastfm['tracks']['track']['artist']['name'],
-                        'rank' => $lastfm['tracks']['track']['@attr']['rank'], ],
-                ];
+                return [[
+                    'title' => $lastfm['tracks']['track']['name'],
+                    'artist' => $lastfm['tracks']['track']['artist']['name'],
+                    'rank' => $lastfm['tracks']['track']['@attr']['rank'],
+                ]];
             }
 
             $tracks = [];
@@ -766,13 +978,17 @@ class MyRadio_Track extends ServiceAPI
             }
 
             foreach ($lastfm['tracks']['track'] as $track) {
-                $tracks[] = ['title' => $track['name'], 'artist' => $track['artist']['name'], 'rank' => $track['@attr']['rank']];
+                $tracks[] = [
+                    'title' => $track['name'],
+                    'artist' => $track['artist']['name'],
+                    'rank' => $track['@attr']['rank']
+                ];
             }
 
             return $tracks;
         }
     }
-    
+
     /**
       * Pay special attention to the tri-state value of explicit. False and null are different things.
     */
@@ -920,7 +1136,8 @@ class MyRadio_Track extends ServiceAPI
         }
 
         $result = self::$db->query(
-            'INSERT INTO rec_track (number, title, artist, length, genre, intro, clean, recordid, digitised, digitisedby, duration)
+            'INSERT INTO rec_track (number, title, artist, length, genre, intro,
+            clean, recordid, digitised, digitisedby, duration)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
             [
                 $options['number'],
@@ -1003,14 +1220,14 @@ class MyRadio_Track extends ServiceAPI
 
     public function setPosition($position)
     {
-        $this->position = (int) $position;
+        $this->number = (int) $position;
         self::$db->query('UPDATE rec_track SET number=$1 WHERE trackid=$2', [$this->getPosition(), $this->getID()]);
         $this->updateCacheObject();
     }
 
     public function getPosition()
     {
-        return $this->position;
+        return $this->number;
     }
 
     public function setDuration($duration)
@@ -1022,6 +1239,19 @@ class MyRadio_Track extends ServiceAPI
             CoreUtils::intToTime($this->getDuration()),
             $this->getDuration(),
             $this->getID(),
+            ]
+        );
+        $this->updateCacheObject();
+    }
+
+    public function setGenre($genre)
+    {
+        $this->genre = $genre;
+        self::$db->query(
+            'UPDATE rec_track SET genre=$1 WHERE trackid=$2',
+            [
+                $genre,
+                $this->getID()
             ]
         );
         $this->updateCacheObject();
@@ -1115,14 +1345,20 @@ class MyRadio_Track extends ServiceAPI
         if (!isset($details['track']['album'])) {
             //Send some defaults for album info
             return [
-                'album' => MyRadio_Album::findOrCreate(Config::$short_name.' Downloads '.date('Y'), Config::$short_name),
+                'album' => MyRadio_Album::findOrCreate(
+                    Config::$short_name . ' Downloads ' . date('Y'),
+                    Config::$short_name
+                ),
                 'position' => 0,
                 'duration' => intval($details['track']['duration'] / 1000),
             ];
         }
 
         return [
-            'album' => MyRadio_Album::findOrCreate($details['track']['album']['title'], $details['track']['album']['artist']),
+            'album' => MyRadio_Album::findOrCreate(
+                $details['track']['album']['title'],
+                $details['track']['album']['artist']
+            ),
             'position' => (int) $details['track']['album']['@attr']['position'],
             'duration' => intval($details['track']['duration'] / 1000),
         ];
@@ -1221,6 +1457,31 @@ class MyRadio_Track extends ServiceAPI
         return $this->itones_blacklist;
     }
 
+    public function setBlacklisted($blacklist)
+    {
+        if ($blacklist === true) {
+            $this->itones_blacklist = true;
+            self::$db->query(
+                'INSERT INTO jukebox.track_blacklist
+                (trackid) VALUES ($1)',
+                [
+                    $this->getID()
+                ]
+            );
+            $this->updateCacheObject();
+        } elseif ($blacklist === false && $this->isBlacklisted()) {
+            $this->itones_blacklist = false;
+            self::$db->query(
+                'DELETE FROM jukebox.track_blacklist
+                WHERE trackid = $1',
+                [
+                    $this->getID()
+                ]
+            );
+            $this->updateCacheObject();
+        }
+    }
+
     /**
      * Returns various numbers that look pretty on a graph, which concern the Central Music Library.
      *
@@ -1230,13 +1491,23 @@ class MyRadio_Track extends ServiceAPI
      */
     public static function getLibraryStats()
     {
-        $num_digitised = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\'')[0];
-        $num_undigitised = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\'')[0];
+        $num_digitised = (int) self::$db->fetchColumn(
+            'SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\''
+        )[0];
+        $num_undigitised = (int) self::$db->fetchColumn(
+            'SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'f\''
+        )[0];
+
         $num_clean = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'y\'')[0];
         $num_unclean = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'n\'')[0];
         $num_cleanunknown = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE clean=\'u\'')[0];
-        $num_verified = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'t\'')[0];
-        $num_unverified = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'f\'')[0];
+
+        $num_verified = (int) self::$db->fetchColumn(
+            'SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'t\''
+        )[0];
+        $num_unverified = (int) self::$db->fetchColumn(
+            'SELECT COUNT(*) FROM public.rec_track WHERE digitised=\'t\' AND lastfm_verified=\'f\''
+        )[0];
 
         $num_singles = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_record WHERE format=\'s\'')[0];
         $num_albums = (int) self::$db->fetchColumn('SELECT COUNT(*) FROM public.rec_record WHERE format=\'a\'')[0];
@@ -1253,5 +1524,31 @@ class MyRadio_Track extends ServiceAPI
             ['Verified Metadata', $num_verified],
             ['Unverified Metadata', $num_unverified],
         ];
+    }
+
+    /**
+     * Returns a list of potential clean statuses, organised so
+     * they can be used as a SELECT MyRadioFormField data source.
+     */
+    public static function getCleanOptions()
+    {
+        self::wakeup();
+
+        return self::$db->fetchAll(
+            'SELECT clean_code AS value, clean_descr AS text FROM public.rec_cleanlookup ORDER BY clean_descr ASC'
+        );
+    }
+
+    /**
+     * Returns a list of potential genres, organised so
+     * they can be used as a SELECT MyRadioFormField data source.
+     */
+    public static function getGenres()
+    {
+        self::wakeup();
+
+        return self::$db->fetchAll(
+            'SELECT genre_code AS value, genre_descr AS text FROM public.rec_genrelookup ORDER BY genre_descr ASC'
+        );
     }
 }

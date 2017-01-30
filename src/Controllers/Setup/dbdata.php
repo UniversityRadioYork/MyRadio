@@ -39,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     function setUpFullActionsAuth()
     {
         global $db;
+        global $warnings;
         foreach (json_decode(file_get_contents(SCHEMA_DIR.'data-actions.json')) as $action) {
             //The getXxxId method creates these if they don't exist
             $module = CoreUtils::getModuleId($action[0]);

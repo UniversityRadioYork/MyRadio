@@ -7,6 +7,7 @@ namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
 use MyRadio\Database;
+use MyRadio\MyRadioEmail;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\iTones\iTones_Utils;
@@ -435,10 +436,11 @@ class MyRadio_Selector
         }
 
         //Lock the selector
-        self::lock();
+        self::setLock();
 
         //Email people
-        MyRadioEmail::sendEmailToComputing(
+        MyRadioEmail::sendEmailToList(
+            MyRadio_List::getInstance(Config::$obit_list_id),
             'OBIT INITIATED',
             'Urgent: Initiated Obit procedure for station as requested by '
             .MyRadio_User::getInstance()->getName().' - '

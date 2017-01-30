@@ -628,7 +628,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * This will *not* unset is_multiple values that are not in the new set.
      *
      * @param string $string_key     The metadata key
-     * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance for value in the array. for value in the array.
+     * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance
      *                               for value in the array.
      * @param int    $effective_from UTC Time the metavalue is effective from. Default now.
      * @param int    $effective_to   UTC Time the metadata value is effective to. Default NULL (does not expire).
@@ -751,10 +751,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     public static function getMostMessaged($date = 0)
     {
         $result = self::$db->fetchAll(
-            'SELECT show.show_id, count(*) as msg_count FROM sis2.messages
-            LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid = show_season_timeslot.show_season_timeslot_id
-            LEFT JOIN schedule.show_season ON show_season_timeslot.show_season_id = show_season.show_season_id
-            LEFT JOIN schedule.show ON show_season.show_id = show.show_id
+            'SELECT show.show_id, COUNT(*) as msg_count FROM sis2.messages
+            LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid=show_season_timeslot.show_season_timeslot_id
+            LEFT JOIN schedule.show_season ON show_season_timeslot.show_season_id=show_season.show_season_id
+            LEFT JOIN schedule.show ON show_season.show_id=show.show_id
             WHERE show_season_timeslot.start_time > $1 GROUP BY show.show_id ORDER BY msg_count DESC LIMIT 30',
             [CoreUtils::getTimestamp($date)]
         );
@@ -791,8 +791,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      *
      * @param int $date If specified, only messages for timeslots since $date are counted.
      *
-     * @return array An array of 30 Timeslots that have been put through toDataSource, with the addition of a msg_count key,
-     *               referring to the number of messages sent to that show.
+     * @return array An array of 30 Timeslots that have been put through toDataSource, with the addition of a msg_count
+     *               key, referring to the number of messages sent to that show.
      */
     public static function getMostListened($date = 0)
     {
@@ -849,8 +849,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $string_keys = ['title', 'description', 'tag'];
         }
 
-        $r = parent::searchMeta($query, $string_keys, $effective_from, $effective_to, 'schedule.show_metadata', 'show_id');
-
+        $r = parent::searchMeta(
+            $query,
+            $string_keys,
+            $effective_from,
+            $effective_to,
+            'schedule.show_metadata',
+            'show_id'
+        );
         return self::resultSetToObjArray($r);
     }
 

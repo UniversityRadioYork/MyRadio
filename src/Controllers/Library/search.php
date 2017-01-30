@@ -18,11 +18,19 @@ $form = new MyRadioForm(
 );
 
 $form->addField(
-    new MyRadioFormField('title', MyRadioFormField::TYPE_TEXT, ['required' => false, 'label' => 'Title', 'placeholder' => 'Filter by track title...'])
+    new MyRadioFormField(
+        'title',
+        MyRadioFormField::TYPE_TEXT,
+        ['required' => false, 'label' => 'Title', 'placeholder' => 'Filter by track title...']
+    )
 )->addField(
-    new MyRadioFormField('artist', MyRadioFormField::TYPE_TEXT, ['required' => false, 'label' => 'Artist', 'placeholder' => 'Filter by artist name...'])
+    new MyRadioFormField(
+        'artist',
+        MyRadioFormField::TYPE_TEXT,
+        ['required' => false, 'label' => 'Artist', 'placeholder' => 'Filter by artist name...']
+    )
 );
-        
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = $form->readValues();
@@ -30,15 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($data['title']) || isset($data['artist'])) {
         $tracks = MyRadio_Track::findByOptions(
             [
-                    'title' => isset($data['title']) ? $data['title'] : '',
-                    'artist' => isset($data['artist']) ? $data['artist'] : '',
-                    'limit' => 30
+                'title' => isset($data['title']) ? $data['title'] : '',
+                'artist' => isset($data['artist']) ? $data['artist'] : '',
+                'limit' => 30
             ]
         );
     } else {
         $tracks = null;
     }
-
 } else {
     $tracks = null;
 }
@@ -48,7 +55,4 @@ $form->setTemplate('Library/search.twig')
     ->render([
         'tabledata' => $tableData,
         'tablescript' => 'myradio.library.search',
-        ]
-        );
-    
-
+    ]);

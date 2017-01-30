@@ -126,16 +126,15 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
                                 'INSERT INTO baps_item (listingid, position, libraryitemid, name1, name2)
                                 VALUES ($1, $2, $3, $4, $5)',
                                 [
-                                $listing['listingid'],
-                                $position,
-                                $file['libraryitemid'],
-                                $file['title'],
-                                $file['artist'],
-                                ],
-                                true
+                                    $listing['listingid'],
+                                    $position,
+                                    $file['libraryitemid'],
+                                    $file['title'],
+                                    $file['artist'],
+                                ]
                             );
-
                             break;
+
                         case 'aux':
                             //Get the LegacyDB ID of the file
                             $fileitemid = self::getFileItemFromManagedID($track['managedid']);
@@ -143,15 +142,14 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
                                 'INSERT INTO baps_item (listingid, position, fileitemid, name1)
                                 VALUES ($1, $2, $3, $4)',
                                 [
-                                (int) $listing['listingid'],
-                                (int) $position,
-                                (int) $fileitemid,
-                                $track['title'],
-                                ],
-                                true
+                                    (int) $listing['listingid'],
+                                    (int) $position,
+                                    (int) $fileitemid,
+                                    $track['title'],
+                                ]
                             );
-
                             break;
+
                         default:
                             throw new MyRadioException('What do I even with this item?');
                     }
@@ -204,24 +202,25 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
     {
         $item = NIPSWeb_ManagedItem::getInstance($auxid);
 
-        $legacy_path = Config::$music_smb_path.'\\membersmusic\\fileitems\\'.self::sanitisePath($item->getTitle()).'_'.$auxid.'.mp3';
+        $legacy_path = Config::$music_smb_path . '\\membersmusic\\fileitems\\'
+            . self::sanitisePath($item->getTitle()) . '_' . $auxid . '.mp3';
         //Make a hard link if it doesn't exist
-        $ln_path = Config::$music_central_db_path.'/membersmusic/fileitems/'.self::sanitisePath($item->getTitle()).'_'.$auxid.'.mp3';
+        $ln_path = Config::$music_central_db_path . '/membersmusic/fileitems/'
+            . self::sanitisePath($item->getTitle()) . '_' . $auxid . '.mp3';
 
-        if (!file_exists($ln_path)) {
-            if (!@link($item->getPath('mp3'), $ln_path)) {
-                trigger_error('Could not link '.$item->getPath('mp3').' to '.$ln_path);
-            }
+        if (!file_exists($ln_path) && !@link($item->getPath('mp3'), $ln_path)) {
+            trigger_error('Could not link '.$item->getPath('mp3').' to '.$ln_path);
         }
         $id = self::getFileItemFromPath($legacy_path);
 
         if (!$id) {
             //Create it
-            $r = self::$db->fetchColumn('INSERT INTO public.baps_fileitem (filename) VALUES ($1) RETURNING fileitemid', [$legacy_path]);
-
+            $r = self::$db->fetchColumn(
+                'INSERT INTO public.baps_fileitem (filename) VALUES ($1) RETURNING fileitemid',
+                [$legacy_path]
+            );
             return $r[0];
         }
-
         return $id;
     }
 
@@ -229,12 +228,11 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
     {
         if (in_array($item->getFolder(), ['jingles', 'beds', 'adverts']) !== false) {
             //Make a hard link if it doesn't exist
-            $ln_path = Config::$music_central_db_path.'/membersmusic/'.$item->getFolder().'/'.self::sanitisePath($item->getTitle()).'.mp3';
+            $ln_path = Config::$music_central_db_path . '/membersmusic/'
+                . $item->getFolder() . '/' . self::sanitisePath($item->getTitle()) . '.mp3';
 
-            if (!file_exists($ln_path)) {
-                if (!@link($item->getPath(), $ln_path)) {
-                    trigger_error('Could not link '.$item->getPath().' to '.$ln_path);
-                }
+            if (!file_exists($ln_path) && !@link($item->getPath(), $ln_path)) {
+                trigger_error('Could not link '.$item->getPath().' to '.$ln_path);
             }
         }
     }
@@ -248,16 +246,10 @@ class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public static function getFileItemFromPath($path)
     {
-        $result = self::$db->fetchColumn(
-            'SELECT fileitemid FROM baps_fileitem
-            WHERE filename=$1 LIMIT 1',
-            [$path]
-        );
-
+        $result = self::$db->fetchColumn('SELECT fileitemid FROM baps_fileitem WHERE filename=$1 LIMIT 1', [$path]);
         if (empty($result)) {
             return false;
         }
-
         return (int) $result[0];
     }
 

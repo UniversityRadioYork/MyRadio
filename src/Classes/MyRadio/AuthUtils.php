@@ -167,7 +167,9 @@ class AuthUtils
         $authorised = false;
         foreach ($result as $permission) {
             //It only needs to match one
-            if ($permission === AUTH_NOLOGIN || (self::hasPermission($permission) && $_SESSION['auth_use_locked'] === false)) {
+            if ($permission === AUTH_NOLOGIN
+                || (self::hasPermission($permission) && $_SESSION['auth_use_locked'] === false)
+            ) {
                 $authorised = true;
                 break;
             }

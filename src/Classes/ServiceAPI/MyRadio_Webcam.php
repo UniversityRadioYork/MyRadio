@@ -108,18 +108,14 @@ class MyRadio_Webcam extends ServiceAPI
      */
     public static function setWebcam($id)
     {
-        if (($id == 'studio1')
-            || ($id == 'studio2')
-            || ($id == 'cam1')
-            || ($id == 'cam2')
-            || ($id == 'cam5')
-        ) {
+        $validCams = ['studio1', 'studio2', 'cam1', 'cam2', 'cam5'];
+        if (in_array($id, $validCams)) {
             $ch = \curl_init(Config::$webcam_set_url.$id);
             \curl_setopt($ch, CURLOPT_POST, true);
             \curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
             \curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
-            $response = \curl_exec($ch);
+            \curl_exec($ch); // ignore response
         }
     }
 }

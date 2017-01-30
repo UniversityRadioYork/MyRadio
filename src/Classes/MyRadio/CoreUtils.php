@@ -64,11 +64,9 @@ class CoreUtils
         } catch (MyRadioException $e) {
             return false;
         }
-        /*
-         * This is better than file_exists because it ensures that the response is valid for a version which has the file
-         * when live does not
-         */
 
+        /* This is better than file_exists because it ensures that the response
+         * is valid for a version which has the file when live does not */
         return is_string(stream_resolve_include_path('Controllers/'.$module.'/'.$action.'.php'));
     }
 
@@ -121,7 +119,10 @@ class CoreUtils
      */
     public static function happyTime($timestring, $time = true, $date = true)
     {
-        return date(($date ? 'd/m/Y' : '').($time && $date ? ' ' : '').($time ? 'H:i' : ''), is_numeric($timestring) ? $timestring : strtotime($timestring));
+        return date(
+            ($date ? 'd/m/Y' : '').($time && $date ? ' ' : '').($time ? 'H:i' : ''),
+            is_numeric($timestring) ? $timestring : strtotime($timestring)
+        );
     }
 
     /**
@@ -426,17 +427,6 @@ class CoreUtils
         if ($db->getInTransaction()) {
             $db->query('ROLLBACK');
         }
-
-        $errors = MyRadioError::getErrorCount();
-        $exceptions = MyRadioException::getExceptionCount();
-        $queries = $db->getCounter();
-        $host = gethostbyname(gethostname());
-
-        $db->query(
-            'INSERT INTO myury.error_rate (server_ip, error_count, exception_count, queries)
-            VALUES ($1, $2, $3, $4)',
-            [$host, $errors, $exceptions, $queries]
-        );
     }
 
     /**
@@ -468,30 +458,6 @@ class CoreUtils
             ),
             true
         );
-    }
-
-    public static function getErrorStats($since = null)
-    {
-        if ($since === null) {
-            $since = time() - 86400;
-        }
-        $result = Database::getInstance()->fetchAll(
-            'SELECT
-            round(extract(\'epoch\' from timestamp) / 600) * 600 as timestamp,
-            SUM(error_count)/COUNT(error_count) AS errors, SUM(exception_count)/COUNT(exception_count) AS exceptions,
-            SUM(queries)/COUNT(queries) AS queries
-            FROM myury.error_rate WHERE timestamp>=$1 GROUP BY round(extract(\'epoch\' from timestamp) / 600)
-            ORDER BY timestamp ASC',
-            [self::getTimestamp($since)]
-        );
-
-        $return = [];
-        $return[] = ['Timestamp', 'Errors per request', 'Exceptions per request', 'Queries per request'];
-        foreach ($result as $row) {
-            $return[] = [date('H:i', $row['timestamp']), (int) $row['errors'], (int) $row['exceptions'], (int) $row['queries']];
-        }
-
-        return $return;
     }
 
     public static function getSafeHTML($dirty_html)

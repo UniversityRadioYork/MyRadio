@@ -24,97 +24,121 @@ CREATE SCHEMA webcam;
 CREATE SCHEMA website;
 COMMENT ON SCHEMA website IS 'Collection of data relating to the operation of the public-facing website.';
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-CREATE FUNCTION bapstotracklist() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$DECLARE
-audid INTEGER;
+CREATE FUNCTION bapstotracklist() RETURNS TRIGGER AS $$
+DECLARE
+    audid INTEGER;
 BEGIN
-	IF ((TG_OP = 'UPDATE')
-        AND ((SELECT COUNT(*) FROM (SELECT sel.action FROM selector sel WHERE sel.action >= 4 AND sel.action <= 11 ORDER BY sel.time DESC LIMIT 1)AS seltop INNER JOIN tracklist.selbaps bsel ON (seltop.action = bsel.selaction) WHERE bsel.bapsloc = NEW."serverid" AND (NEW."timeplayed" >= (SELECT sel.time FROM selector sel ORDER BY sel.time DESC LIMIT 1) ) ) = 1 )
-        AND ((SELECT COUNT(*) FROM baps_audio ba WHERE ba.audioid = NEW."audioid" AND ba.trackid > 0 ) = 1 )
-        AND ((NEW."timestopped" - NEW."timeplayed" > '00:00:30') )
-        AND ((SELECT COUNT(*) FROM tracklist.tracklist WHERE bapsaudioid = NEW."audiologid") = 0)
-        )
-
- THEN
-        INSERT INTO tracklist.tracklist (source, timestart, timestop, timeslotid, bapsaudioid)
-                VALUES ('b', NEW."timeplayed", NEW."timestopped", (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot WHERE start_time <= NOW() AND (start_time + duration) >= NOW()ORDER BY show_season_timeslot_id ASC LIMIT 1 ), NEW."audiologid" )
-                RETURNING audiologid INTO audid;
-	INSERT INTO tracklist.track_rec
-                VALUES ("audid", (SELECT rec.recordid FROM rec_track rec INNER JOIN baps_audio ba USING (trackid)
-                WHERE ba.audioid = NEW."audioid"), (SELECT trackid FROM baps_audio WHERE audioid = NEW."audioid"));
-
-
-	END IF;
-	RETURN NULL;
-END $$;
-CREATE FUNCTION clear_item_func() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-BEGIN
-IF OLD.textitemid IS NOT NULL THEN
-	DELETE FROM baps_textitem WHERE textitemid=OLD.textitemid;
-END IF;
-IF OLD.libraryitemid IS NOT NULL THEN
-	DELETE FROM baps_libraryitem WHERE libraryitemid=OLD.libraryitemid;
-END IF;
-IF OLD.fileitemid IS NOT NULL THEN
-	DELETE FROM baps_fileitem WHERE fileitemid=OLD.fileitemid;
-END IF;
-RETURN OLD;
+    IF ((TG_OP = 'UPDATE')
+        AND ((SELECT COUNT(*) FROM (SELECT sel.action FROM selector sel
+                                    WHERE sel.action >= 4 AND sel.action <= 11
+                                    ORDER BY sel.TIME DESC LIMIT 1) AS seltop
+              INNER JOIN tracklist.selbaps bsel ON (seltop.action = bsel.selaction)
+              WHERE bsel.bapsloc = NEW."serverid" AND (NEW."timeplayed" >= (SELECT sel.TIME FROM selector sel
+                                                                            ORDER BY sel.TIME DESC
+                                                                            LIMIT 1))) = 1)
+        AND ((SELECT COUNT(*) FROM baps_audio ba WHERE ba.audioid = NEW."audioid" AND ba.trackid > 0) = 1)
+        AND ((NEW."timestopped" - NEW."timeplayed" > '00:00:30'))
+        AND ((SELECT COUNT(*) FROM tracklist.tracklist WHERE bapsaudioid = NEW."audiologid") = 0))
+    THEN
+        INSERT INTO tracklist.tracklist (SOURCE, timestart, timestop, timeslotid, bapsaudioid)
+            VALUES ('b', NEW."timeplayed", NEW."timestopped", (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
+                                                               WHERE start_time <= NOW()
+                                                                   AND (start_time + duration) >= NOW()
+                                                                   AND show_season_id != 0
+                                                               ORDER BY show_season_timeslot_id ASC
+                                                               LIMIT 1),
+                    NEW."audiologid")
+            RETURNING audiologid INTO audid;
+    INSERT INTO tracklist.track_rec
+        VALUES ("audid", (SELECT rec.recordid FROM rec_track rec
+                          INNER JOIN baps_audio ba USING (trackid)
+                          WHERE ba.audioid = NEW."audioid"),
+                (SELECT trackid FROM baps_audio WHERE audioid = NEW."audioid"));
+    END IF;
+    RETURN NULL;
 END;
-$$;
-CREATE FUNCTION process_gammu_text() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$    BEGIN
-        IF (TG_OP = 'INSERT') THEN
-           IF (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot WHERE start_time <= NOW() AND (start_time + duration) >= NOW() ORDER BY show_season_timeslot_id ASC LIMIT 1) IS NOT NULL THEN
-              INSERT INTO sis2.messages (commtypeid, timeslotid, sender, subject, content, statusid)
-
-              VALUES (2, (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot WHERE start_time <= NOW() AND (start_time + duration) >= NOW() ORDER BY show_season_timeslot_id ASC LIMIT 1), NEW."SenderNumber", NEW."TextDecoded", NEW."TextDecoded", 1);
+$$ LANGUAGE plpgsql;
+CREATE FUNCTION clear_item_func() RETURNS trigger AS $$
+BEGIN
+    IF OLD.textitemid IS NOT NULL
+    THEN
+        DELETE FROM baps_textitem WHERE textitemid = OLD.textitemid;
+    END IF;
+    IF OLD.libraryitemid IS NOT NULL
+    THEN
+        DELETE FROM baps_libraryitem WHERE libraryitemid = OLD.libraryitemid;
+    END IF;
+    IF OLD.fileitemid IS NOT NULL
+    THEN
+        DELETE FROM baps_fileitem WHERE fileitemid = OLD.fileitemid;
+    END IF;
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+CREATE FUNCTION process_gammu_text() RETURNS trigger AS $$
+BEGIN
+    IF (TG_OP = 'INSERT')
+    THEN
+        IF ((SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
+                 WHERE start_time <= NOW() AND (start_time + duration) >= NOW()
+                 ORDER BY show_season_timeslot_id ASC
+                 LIMIT 1) IS NOT NULL)
+        THEN
+            INSERT INTO sis2.messages (commtypeid, timeslotid, sender, subject, content, statusid)
+                VALUES (2, (SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
+                                WHERE start_time <= NOW() AND (start_time + duration) >= NOW()
+                                ORDER BY show_season_timeslot_id ASC
+                                LIMIT 1),
+                        NEW."SenderNumber", NEW."TextDecoded", NEW."TextDecoded", 1);
               RETURN NEW;
-           ELSE
-              INSERT INTO sis2.messages (commtypeid, timeslotid, sender, subject, content, statusid)
-              VALUES (2, 118540, NEW."SenderNumber", NEW."TextDecoded", NEW."TextDecoded", 1);
-              RETURN NEW;
-           END IF;
+        ELSE
+            INSERT INTO sis2.messages (commtypeid, timeslotid, sender, subject, content, statusid)
+                VALUES (2, 118540, NEW."SenderNumber", NEW."TextDecoded", NEW."TextDecoded", 1);
+            RETURN NEW;
         END IF;
-        RETURN NULL;
-    END;
-$$;
-CREATE FUNCTION set_shelfcode_func() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$DECLARE
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+CREATE FUNCTION set_shelfcode_func() RETURNS trigger AS $$
+DECLARE
     myshelfnumber integer DEFAULT 0;
     recordrow RECORD;
 BEGIN
-    IF ((NEW.media='7' OR NEW.media='2') AND NEW.format='a') THEN
-        FOR recordrow IN SELECT * FROM rec_record WHERE media=NEW.media AND (format='7' OR format='2') AND shelfletter=NEW.shelfletter ORDER BY shelfnumber LOOP
-	        IF recordrow.shelfnumber > myshelfnumber+1 THEN
-			EXIT;
-		END IF;
-		myshelfnumber = myshelfnumber + 1;
-    	END LOOP;
+    IF ((NEW.media = '7' OR NEW.media = '2') AND NEW.format = 'a')
+    THEN
+        FOR recordrow IN (SELECT * FROM rec_record
+                          WHERE media = NEW.media AND (format = '7' OR format = '2') AND shelfletter = NEW.shelfletter
+                          ORDER BY shelfnumber)
+        LOOP
+            IF (recordrow.shelfnumber > myshelfnumber + 1)
+            THEN
+                EXIT;
+            END IF;
+            myshelfnumber = myshelfnumber + 1;
+        END LOOP;
     ELSE
-        FOR recordrow IN SELECT * FROM rec_record WHERE media=NEW.media AND format=NEW.format AND shelfletter=NEW.shelfletter ORDER BY shelfnumber LOOP
-	        IF recordrow.shelfnumber > myshelfnumber+1 THEN
-			EXIT;
-		END IF;
-		myshelfnumber = myshelfnumber + 1;
-    	END LOOP;
+        FOR recordrow IN (SELECT * FROM rec_record
+                          WHERE media = NEW.media AND format = NEW.format AND shelfletter = NEW.shelfletter
+                          ORDER BY shelfnumber)
+        LOOP
+            IF (recordrow.shelfnumber > myshelfnumber + 1)
+            THEN
+                EXIT;
+            END IF;
+            myshelfnumber = myshelfnumber + 1;
+        END LOOP;
     END IF;
     NEW.shelfnumber = myshelfnumber + 1;
 RETURN NEW;
 END;
-$$;
-CREATE FUNCTION update_timestamp() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-  BEGIN
+$$ LANGUAGE plpgsql;
+CREATE FUNCTION update_timestamp() RETURNS trigger AS $$
+BEGIN
     NEW."UpdatedInDB" := LOCALTIMESTAMP(0);
     RETURN NEW;
-  END;
-$$;
+END;
+$$ LANGUAGE plpgsql;
 CREATE SEQUENCE bapsplanner.auto_playlists_autoplaylistid_seq
     START WITH 3
     INCREMENT BY 1
@@ -583,23 +607,6 @@ CREATE SEQUENCE award_member_awardmemberid_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE award_member_awardmemberid_seq OWNED BY award_member.awardmemberid;
-CREATE TABLE error_rate (
-    request_id integer NOT NULL,
-    server_ip character varying NOT NULL,
-    error_count integer NOT NULL,
-    exception_count integer NOT NULL,
-    "timestamp" timestamp without time zone DEFAULT now() NOT NULL,
-    queries integer DEFAULT 0 NOT NULL
-);
-COMMENT ON TABLE error_rate IS 'Stores error and exception counts for every request.';
-COMMENT ON COLUMN error_rate.queries IS 'Number of queries executed, not errors :P';
-CREATE SEQUENCE error_rate_request_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE error_rate_request_id_seq OWNED BY error_rate.request_id;
 CREATE TABLE modules (
     moduleid integer NOT NULL,
     serviceid integer,
@@ -2545,7 +2552,6 @@ ALTER TABLE ONLY api_class_map ALTER COLUMN api_map_id SET DEFAULT nextval('api_
 ALTER TABLE ONLY api_method_auth ALTER COLUMN api_method_auth_id SET DEFAULT nextval('api_method_auth_api_method_auth_id_seq'::regclass);
 ALTER TABLE ONLY award_categories ALTER COLUMN awardid SET DEFAULT nextval('award_categories_awardid_seq'::regclass);
 ALTER TABLE ONLY award_member ALTER COLUMN awardmemberid SET DEFAULT nextval('award_member_awardmemberid_seq'::regclass);
-ALTER TABLE ONLY error_rate ALTER COLUMN request_id SET DEFAULT nextval('error_rate_request_id_seq'::regclass);
 ALTER TABLE ONLY modules ALTER COLUMN moduleid SET DEFAULT nextval('modules_moduleid_seq'::regclass);
 ALTER TABLE ONLY photos ALTER COLUMN photoid SET DEFAULT nextval('photos_photoid_seq'::regclass);
 ALTER TABLE ONLY services ALTER COLUMN serviceid SET DEFAULT nextval('services_serviceid_seq'::regclass);
@@ -2990,14 +2996,6 @@ ALTER TABLE ONLY api_class_map
 ALTER TABLE ONLY api_key_auth
     ADD CONSTRAINT api_key_auth_pkey PRIMARY KEY (key_string, typeid);
 
-
---
--- Name: api_key_log_pkey; Type: CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY api_key_log
-    ADD CONSTRAINT api_key_log_pkey PRIMARY KEY (api_log_id);
-
 --
 -- Name: api_key_pkey; Type: CONSTRAINT; Schema: myury
 --
@@ -3044,14 +3042,6 @@ ALTER TABLE ONLY award_categories
 
 ALTER TABLE ONLY award_member
     ADD CONSTRAINT award_member_pkey PRIMARY KEY (awardmemberid);
-
-
---
--- Name: error_rate_pkey; Type: CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY error_rate
-    ADD CONSTRAINT error_rate_pkey PRIMARY KEY (request_id);
 
 
 --
@@ -4522,22 +4512,6 @@ CREATE INDEX chart_type_name ON chart_type USING btree (name);
 CREATE INDEX chart_type_name_like ON chart_type USING btree (name varchar_pattern_ops);
 
 
-SET search_path = myury, pg_catalog;
-
---
--- Name: api_key_log_timestamp_index; Type: INDEX; Schema: myury
---
-
-CREATE INDEX api_key_log_timestamp_index ON api_key_log USING btree ("timestamp");
-
-
---
--- Name: error_rate_i_timestamp; Type: INDEX; Schema: myury
---
-
-CREATE INDEX error_rate_i_timestamp ON error_rate USING btree ("timestamp");
-
-
 SET search_path = people, pg_catalog;
 
 --
@@ -5667,14 +5641,6 @@ ALTER TABLE ONLY api_key_auth
 
 ALTER TABLE ONLY api_key_auth
     ADD CONSTRAINT api_key_auth_auth_id_fkey FOREIGN KEY (typeid) REFERENCES public.l_action(typeid);
-
-
---
--- Name: api_key_log_key_string_fkey; Type: FK CONSTRAINT; Schema: myury
---
-
-ALTER TABLE ONLY api_key_log
-    ADD CONSTRAINT api_key_log_key_string_fkey FOREIGN KEY (key_string) REFERENCES api_key(key_string);
 
 
 --

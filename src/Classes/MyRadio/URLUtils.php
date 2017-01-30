@@ -31,7 +31,8 @@ class URLUtils
 
     public static function backWithMessage($message)
     {
-        header('Location: '.$_SERVER['HTTP_REFERER'].(strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?').'message='.base64_encode($message));
+        header('Location: '.$_SERVER['HTTP_REFERER']
+            .(strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?').'message='.base64_encode($message));
     }
 
     /**
@@ -99,7 +100,10 @@ class URLUtils
             }
         }
         //Check if there is a custom URL configured
-        $key = CoreUtils::getActionId(CoreUtils::getModuleId($module), empty($action) ? Config::$default_action : $action);
+        $key = CoreUtils::getActionId(
+            CoreUtils::getModuleId($module),
+            empty($action) ? Config::$default_action : $action
+        );
         if (!empty(self::$custom_uris[$key])) {
             return self::$custom_uris[$key];
         }

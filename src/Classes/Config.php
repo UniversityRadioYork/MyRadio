@@ -480,7 +480,7 @@ final class Config
     public static $yusu_api_key;
 
     /**
-     * The web address (up to the endpoint) where the YUSU API lives. It changes from time 
+     * The web address (up to the endpoint) where the YUSU API lives. It changes from time
      * to time so check that the API calls are actually succeeding now and then.
      */
     public static $yusu_api_website;
@@ -601,7 +601,7 @@ final class Config
      *
      * @var string
      */
-    public static $social_engineering_warning = 'Beware of Social Engineering, someone may be trying to disrupt your show.
+    public static $social_engineering_warning = 'Beware of Social Engineering, someone may be trying to spoil your show.
     Management and Computing will never send official communication through SIS.';
 
     /**
@@ -677,6 +677,11 @@ final class Config
      * The current choice should mean it resets results week.
      */
     public static $account_expiry_before = 49;
+
+    /**
+     * The email list to send Obit activation notifications to.
+     */
+    public static $obit_list_id = 36;
 
     /**** DAEMON CONFIGURATION ****/
     public static $d_BAPSSync_enabled = false;
