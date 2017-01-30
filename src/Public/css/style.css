@@ -129,6 +129,7 @@ body {
 }
 .navbar-ury .navbar-nav > li > .dropdown-menu {
   background-color: #2D425F;
+  border-top: none;
 }
 .navbar-ury .navbar-nav > li > .dropdown-menu > li > a {
   color: #ffffff;
