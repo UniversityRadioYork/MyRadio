@@ -13,7 +13,6 @@ apt-get install -y apache2 \
 	php5-geoip \
 	php5-gd \
 	php5-ldap \
-	php5-mcrypt \
 	php5-pgsql \
 	php5-dev \
 	php-pear \
@@ -28,8 +27,6 @@ service apache2 stop
 pear channel-discover pear.twig-project.org
 pear install twig/Twig
 pear install twig/CTwig
-echo "extension=mcrypt.so" > /etc/php5/mods-available/mcrypt.ini
-ln -s /etc/php5/mods-available/mcrypt.ini /etc/php5/apache2/conf.d/20-mcrypt.ini
 echo "extension=twig.so" > /etc/php5/mods-available/twig.ini
 ln -s /etc/php5/mods-available/twig.ini /etc/php5/apache2/conf.d/20-twig.ini
 
