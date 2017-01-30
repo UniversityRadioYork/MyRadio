@@ -15,33 +15,34 @@ function updateCentralSearch()
   var file;
   $("#notice").html("Searching...").show();
   $.ajax({
-    url: myradio.makeURL("MyRadio", "a-findtrack"),
-    type: "post",
-    data: {
-      artist: $("#res-filter-artist").val(),
-      term: $("#res-filter-track").val(),
-      limit: 100,
-      require_digitised: true
-    },
+            url: mConfig.api_url + "/v2/track/search/",
+            type: 'get',
+            data: {
+              artist: $("#res-filter-artist").val(),
+              title: $("#res-filter-track").val(),
+              limit: 100,
+              digitised: true
+            },
     success: function (data) {
       $("#baps-channel-res").empty();
-      for (file in data) {
+      for (file in data.payload) {
         if (file === "myradio_errors") {
           continue;
         }
         var classes = "";
         var cleanStars = "";
         var tooltip = "";
-        if (!data[file].clean) {
+        if (!data.payload[file].clean) {
           classes = classes + " unclean";
           cleanStars = "**";
           tooltip = "This track is explicit. Do not broadcast before 9PM."
         }
+        console.log(data);
         $("#baps-channel-res").append(
-          "<li id='" + data[file].album.recordid + "-" + data[file].trackid +
-          "' intro='" + data[file].intro + "' title='" + tooltip + "'" +
-          "' channel='res' weight='0' type='central' class='" + classes + "' length='" + data[file].length + "'>" +
-          cleanStars + data[file].title + " - " + data[file].artist + "</li>"
+          "<li id='" + data.payload[file].album.recordid + "-" + data.payload[file].trackid +
+          "' intro='" + data.payload[file].intro + "' title='" + tooltip + "'" +
+          "' channel='res' weight='0' type='central' class='" + classes + "' length='" + data.payload[file].length + "'>" +
+          cleanStars + data.payload[file].title + " - " + data.payload[file].artist + "</li>"
         );
       }
       planner.registerItemClicks();
@@ -66,7 +67,7 @@ $(document).ready(function () {
       //Load a managed playlist
       $("#res-loading").show();
       $.ajax({
-        url: myradio.makeURL("MyRadio", "a-findtrack"),
+        url: mConfig.api_url + "/v2/track/search/",
         type: "get",
         data: {itonesplaylistid: $(this).val().replace(/managed-/, ""), digitised: true, limit: 0},
         success: function (data) {
@@ -75,16 +76,16 @@ $(document).ready(function () {
               continue;
             }
             var classes = "";
-            if (!data[file].clean) {
+            if (!data.payload[file].clean) {
               classes = classes + " unclean";
             }
             $("#baps-channel-res").append(
-              "<li id='" + data[file].album.recordid + "-" + data[file].trackid +
-              "' title='" + data[file].title + "(" + data[file].length + ")" +
-              "' intro='" + data[file].intro + "'" +
+              "<li id='" + data.payload[file].album.recordid + "-" + data.payload[file].trackid +
+              "' title='" + data.payload[file].title + "(" + data.payload[file].length + ")" +
+              "' intro='" + data.payload[file].intro + "'" +
               "' class='" + classes + "'" +
-              "' channel='res' weight='0' type='central' length='" + data[file].length + "'>" +
-              data[file].title + " - " + data[file].artist + "</li>"
+              "' channel='res' weight='0' type='central' length='" + data.payload[file].length + "'>" +
+              data.payload[file].title + " - " + data.payload[file].artist + "</li>"
             );
           }
           $("#res-loading").hide();
@@ -173,9 +174,9 @@ $(document).ready(function () {
         return local.title == remote.title;
       },
       prefetch: {
-        url: myradio.makeURL("MyRadio", "a-findartist", {term: null, limit: 500})
+        url: mConfig.api_url + "/v2/artist/findbyname/?term=null&limit=500"
       },
-      remote: myradio.makeURL("MyRadio", "a-findartist", {limit: 5, term: ""}) + "%QUERY" //Seperated out otherwise % gets urlescaped
+      remote: mConfig.api_url + "/v2/artist/findbyname/?term=%QUERY&limit=5", //Seperated out otherwise % gets urlescaped
     });
     artistLookup.initialize();
     $("#res-filter-artist").typeahead(
