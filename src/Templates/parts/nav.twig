@@ -7,7 +7,11 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="{{baseurl}}">
+      {% if websiteurl %}
+        <a class="navbar-brand homepage-logo" href="{{websiteurl}}"><img alt="Go to the {{shortname}} homepage" src="{{baseurl}}img/{{shortname}}.svg"></a>
+      {% endif %}
+      <span class="navbar-brand divider"></span>
+      <a class="navbar-brand myradio-logo" href="{{baseurl}}">
         <img alt="Go to myradio homepage" src="{{baseurl}}img/myradio-logo.svg">
       </a>
     </div>
@@ -38,11 +42,6 @@
               <li><a href="{{MyRadio.makeURL(config, 'MyRadio', 'logout')}}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
             </ul>
           </li>
-        {% endif %}
-        {% if websiteurl %}
-        <li class="nav-img">
-          <a href="{{websiteurl}}"><img alt="Go to the {{shortname}} homepage" src="{{baseurl}}img/{{shortname}}.svg"></a>
-        </li>
         {% endif %}
       </ul>
     </div>

@@ -81,6 +81,10 @@ body {
   color: #ffffff;
   padding: 10px 15px; /** added to center the logo **/
   line-height: 30px;  /** added to center the logo **/
+
+}
+.navbar-ury .navbar-brand.myradio-logo {
+  margin-left: 0 !important;
 }
 .navbar-ury .navbar-brand img {
   max-height: 100%;
@@ -88,6 +92,12 @@ body {
 .navbar-ury .navbar-brand:hover,
 .navbar-ury .navbar-brand:focus {
   color: #e1e1e1;
+}
+.navbar-ury .navbar-brand.divider {
+  border-right: 1px white solid;
+  margin: 14px 0;
+  height: 22px;
+  padding: 0;
 }
 .navbar-ury .navbar-text {
   color: #ffffff;
@@ -105,7 +115,12 @@ body {
 .navbar-ury .navbar-nav > li.nav-img > a > img {
   height: 100%;
 }
-
+.navbar-ury .navbar-nav .caret {
+  margin-left: 5px;
+}
+.navbar-ury .navbar-nav .glyphicon {
+  margin-right: 5px;
+}
 
 .navbar-ury .navbar-nav > li > a:hover,
 .navbar-ury .navbar-nav > li > a:focus {
