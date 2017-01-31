@@ -1,4 +1,5 @@
 {% extends 'table.twig' %}
+{% import 'macros.twig' as MyRadio %}
 {% block stripecontent %}
 <a href="{{MyRadio.makeURL(config, 'iTones', 'configurePlaylist')}}">Add a new Playlist</a>
 {{ parent() }}
