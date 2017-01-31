@@ -73,7 +73,24 @@ class MyRadio_Swagger
 
     protected static function getParamType($param, $meta)
     {
-        return empty($meta['params'][$param->getName()]['type']) ? 'int' : $meta['params'][$param->getName()]['type'];
+        $type = empty($meta['params'][$param->getName()]['type']) ? 'integer' : $meta['params'][$param->getName()]['type'];
+        switch ($type) {
+            case 'int':
+                $type = 'integer';
+                break;
+            case 'float':
+            case 'double':
+                $type = 'number';
+                break;
+            case 'char':
+                $type = 'string';
+                break;
+            case 'bool':
+                $type = 'boolean';
+                break;
+        }
+
+        return $type;
     }
 
     protected static function getParamDescription($param, $meta)

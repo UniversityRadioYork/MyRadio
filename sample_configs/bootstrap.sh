@@ -1,3 +1,5 @@
+# Add a recent Node repo
+curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 # Base packages and Apache setup
 apt-get update
 apt-get install -y apache2 \
@@ -16,8 +18,10 @@ apt-get install -y apache2 \
 	php5-dev \
 	php-pear \
 	php5-memcached \
+	php5-xdebug \
 	openssl \
-	libav-tools
+	libav-tools \
+	nodejs
 a2enmod ssl
 a2enmod rewrite
 service apache2 stop
@@ -29,15 +33,31 @@ ln -s /etc/php5/mods-available/mcrypt.ini /etc/php5/apache2/conf.d/20-mcrypt.ini
 echo "extension=twig.so" > /etc/php5/mods-available/twig.ini
 ln -s /etc/php5/mods-available/twig.ini /etc/php5/apache2/conf.d/20-twig.ini
 
+cat <<EOF >> /etc/php5/mods-available/xdebug.ini
+xdebug.default_enable=1
+xdebug.remote_enable=1
+xdebug.remote_autostart=0
+xdebug.remote_port=9000
+xdebug.remote_log="/var/log/xdebug/xdebug.log"
+xdebug.remote_host=10.0.2.2
+xdebug.idekey="MyRadio vagrant"
+xdebug.remote_handler=dbgp
+EOF
+
 # Composer
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
 cd /vagrant
 composer install
 
+# Tools to run API tests
+npm install -g jasmine-node
+npm install --no-bin-links frisby
+
 ln -s /vagrant/src /var/www/myradio
 ln -s /vagrant/sample_configs/apache.conf /etc/apache2/sites-available/myradio.conf
 a2ensite myradio
+a2dissite 000-default
 
 # Generate an SSL cert
 export PASSPHRASE=$(head -c 500 /dev/urandom | tr -dc a-z0-9A-Z | head -c 128; echo)
@@ -60,6 +80,9 @@ openssl req \
 	-passin env:PASSPHRASE
 openssl rsa -in /etc/apache2/myradio.key -out /etc/apache2/myradio.key -passin env:PASSPHRASE
 openssl x509 -req -days 3650 -in /etc/apache2/myradio.csr -signkey /etc/apache2/myradio.key -out /etc/apache2/myradio.crt
+
+# Start httpd back up
+service apache2 start
 
 # Create DB cluster/database/user
 pg_createcluster 9.3 myradio

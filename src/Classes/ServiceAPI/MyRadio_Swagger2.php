@@ -21,6 +21,9 @@ use MyRadio\MyRadio\URLUtils;
  */
 class MyRadio_Swagger2 extends MyRadio_Swagger
 {
+
+    private static $api_config;
+
     /**
      * Returns if the given Authenticator can call the given Class/Method/Mixin combination.
      *
@@ -48,12 +51,16 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             case 'post':
                 if (substr_count($_SERVER['CONTENT_TYPE'], 'application/json')) {
                     $args = json_decode(file_get_contents('php://input'), true);
+                    if ($method->getNumberOfParameters() === 1) {
+                        //Support the case where the entire body is the parameter
+                        // This is the more likely case, but I think the other scenario is used somewhere...
+                        $args = [$args];
+                    }
                 } else {
                     $args = $_POST;
                 }
                 break;
             case 'put':
-                //ya rly
                 if (substr_count($_SERVER['CONTENT_TYPE'], 'application/json')) {
                     $args = json_decode(file_get_contents('php://input'), true);
                 } else {
@@ -167,7 +174,15 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         if (!$caller) {
             throw new MyRadioException('No valid authentication data provided.', 401);
         } elseif (self::validateRequest($caller, $classes[$class], $paths[$path][$op]->getName(), $args['mixins'])) {
-            $data = ['content' => invokeArgsNamed($paths[$path][$op], $object, $args), 'mixins' => $args['mixins']];
+            $status = '200 OK';
+            if ($paths[$path][$op]->getName() === 'create') {
+                $status = '201 Created';
+            }
+
+            // Don't send the API key to the function
+            unset($args['api_key']);
+
+            $data = ['status' => $status, 'content' => invokeArgsNamed($paths[$path][$op], $object, $args), 'mixins' => $args['mixins']];
 
             // If this returns a datasourceable array of objects, validate any mixins
             $sample_obj = null;
@@ -235,6 +250,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     'description' => 'Invalid input for this operation.',
                 ],
             ],
+            'definitions' => self::getApiConfig()['specs']
         ];
 
         return $data;
@@ -242,10 +258,18 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
     private static function getApis()
     {
-        return json_decode(file_get_contents(__DIR__.'/../../../schema/api.json'), true);
+        return self::getApiConfig()["classes"];
     }
 
-    private static function getParameters($method, $doc, $op)
+    private static function getApiConfig()
+    {
+        if (!self::$api_config) {
+            self::$api_config = json_decode(file_get_contents(__DIR__.'/../../../schema/api.json'), true);
+        }
+        return self::$api_config;
+    }
+
+    private static function getParameters($method, $doc, $op, $public_name)
     {
         $parameters = [];
 
@@ -279,6 +303,21 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     '$ref' => '#/parameters/dataSourceFull',
                 ];
             }
+        } else if (
+            $method->name === 'create' &&
+            $method->getNumberOfParameters() === 1
+            && $op === 'post'
+            && self::getApiConfig()['specs'][$public_name]
+            ) {
+            //This endpoint can have JSON POSTed at it
+            $parameters[] = [
+                'name' => $public_name,
+                'in' => 'body',
+                'required' => true,
+                'schema' => [
+                    '$ref' => '#/definitions/' . $public_name
+                ]
+            ];
         } else {
             $startIdx = 0;
             $paramReflectors = $method->getParameters();
@@ -298,14 +337,18 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
             for ($i = $startIdx; $i < sizeof($paramReflectors); ++$i) {
                 $param = $paramReflectors[$i];
-                $parameters[] = [
+                $definition = [
                     'name' => $param->getName(),
                     'in' => $op === 'get' ? 'query' : 'form',
                     'description' => self::getParamDescription($param, $doc),
                     'required' => !$param->isOptional(),
-                    'type' => self::getParamType($param, $doc),
-                    'default' => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null,
+                    'type' => self::getParamType($param, $doc)
                 ];
+                // SwaggerUI converts a null to the string "null", which is confusing.
+                if ($param->isDefaultValueAvailable() && $param->getDefaultValue() !== null) {
+                    $definition['default'] = $param->getDefaultValue();
+                }
+                $parameters[] = $definition;
             }
         }
 
@@ -338,7 +381,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                             'description' => $data['long_desc'],
                             'tags' => [$public_name],
                             'operationId' => $class.':'.$reflector->getName(),
-                            'parameters' => self::getParameters($reflector, $data, $op),
+                            'parameters' => self::getParameters($reflector, $data, $op, $public_name),
                             'responses' => [
                                 '400' => ['$ref' => '#/responses/invalidInput'],
                             ],
@@ -421,6 +464,8 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             '__toString',
             'setToDataSource',
             '__construct',
+            'resultSetToObjArray',
+            '__destruct'
         ];
 
         $data = [

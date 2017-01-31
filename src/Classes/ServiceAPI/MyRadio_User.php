@@ -1337,8 +1337,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
             OR local_name LIKE $3 OR local_alias LIKE $3 OR eduroam LIKE $2',
             [
                 $email,
-                str_ireplace('@'.Config::$eduroam_domain, '', $email),
-                str_ireplace('@'.Config::$email_domain, '', $email),
+                str_replace('@'.Config::$eduroam_domain, '', $email),
+                str_replace('@'.Config::$email_domain, '', $email),
             ]
         );
 
@@ -1692,54 +1692,61 @@ class MyRadio_User extends ServiceAPI implements APICaller
     /**
      * Create a new User, returning the user. At least one of Email OR eduroam
      * must be filled in. Password will be generated automatically and emailed to
-     * the user.
+     * the user. See schema/api.json.
      *
-     * @param string $fname         The User's first name.
-     * @param string $sname         The User's last name.
-     * @param string $eduroam       The User's @york.ac.uk address.
-     * @param char   $sex           The User's gender.
-     * @param int    $collegeid     The User's college.
-     * @param string $email         The User's non @york.ac.uk address.
-     * @param string $phone         The User's phone number.
-     * @param bool   $receive_email Whether the User should receive emails.
-     * @param float  $paid          How much the User has paid this Membership Year
+     * @param array $params An assoc array (possibly decoded from JSON), taking a format generally based on what toDataSource produces
+     * fname and sname are required.
      *
      * @return MyRadio_User
      *
      * @throws MyRadioException
      */
-    public static function create(
-        $fname,
-        $sname,
-        $eduroam = null,
-        $sex = 'o',
-        $collegeid = null,
-        $email = null,
-        $phone = null,
-        $receive_email = true,
-        $paid = 0.00,
-        $provided_password = null
-    ) {
+    public static function create($params) {
+
+        $defaults = [
+            'eduroam' => null,
+            'sex' => 'o',
+            'collegeid' => null,
+            'email' => null,
+            'phone' => null,
+            'receive_email' => true,
+            'paid' => 0.00,
+        ];
+
+        $params = array_merge($defaults, $params);
+
         /*
          * Deal with the UNIQUE constraint on the DB table.
+         * Some bad clients will pass this empty string (including SwaggerUI, as it doesn't support null types)
          */
-        if ($phone === '') {
-            $phone = null;
+        if ($params['phone'] === '') {
+            $params['phone'] = null;
         }
+        if ($params['eduroam'] === '') {
+            $params['eduroam'] = null;
+        }
+        if ($params['email'] === '') {
+            $params['email'] = null;
+        }
+
         //Validate input
-        if (empty($collegeid)) {
-            $collegeid = Config::$default_college;
-        } elseif (!is_numeric($collegeid)) {
+        if (empty($params['fname']) || empty($params['sname'])) {
+            throw new MyRadioException('fname and sname are required.', 400);
+        }
+
+        if (empty($params['collegeid'])) {
+            $params['collegeid'] = Config::$default_college;
+        } elseif (!is_numeric($params['collegeid'])) {
             throw new MyRadioException('Invalid College ID!', 400);
         }
 
-        if (empty($eduroam) && empty($email)) {
+        if (empty($params['eduroam']) && empty($params['email'])) {
             throw new MyRadioException('At least one of eduroam or email must be provided.', 400);
         }
 
         //Require the user to be part of this eduroam domain
-        if (strstr($eduroam, '@') !== false
-            && strstr($eduroam, '@'.Config::$eduroam_domain) === false
+        if (strstr($params['eduroam'], '@') !== false
+            && strstr($params['eduroam'], '@'.Config::$eduroam_domain) === false
         ) {
             throw new MyRadioException(
                 'Eduroam account should be @'.Config::$eduroam_domain.'! Use of other eduroam accounts is blocked.
@@ -1749,25 +1756,27 @@ class MyRadio_User extends ServiceAPI implements APICaller
             );
         }
 
-        //Remove the domain if it is set, and lowercase it
-        $eduroam = str_replace('@'.Config::$eduroam_domain, '', $eduroam);
-        $eduroam = strtolower($eduroam);
+        //Remove the domain if it is set and lowercase it
+        if (!empty($params['eduroam'])) {
+            $params['eduroam'] = str_replace('@'.Config::$eduroam_domain, '', $params['eduroam']);
+            $params['eduroam'] = strtolower($params['eduroam']);
+        }
 
-        if (empty($eduroam) && empty($email)) {
+        if (empty($params['eduroam']) && empty($params['email'])) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
         }
 
-        if ($sex !== 'm' && $sex !== 'f' && $sex !== 'o') {
+        if ($params['sex'] !== 'm' && $params['sex'] !== 'f' && $params['sex'] !== 'o') {
             throw new MyRadioException('User gender must be m, f or o!', 400);
         }
 
-        if (!is_numeric($paid)) {
+        if (!is_numeric($params['paid'])) {
             throw new MyRadioException('Invalid payment amount!', 400);
         }
 
         //Check if it looks like the user might already exist
-        if (self::findByEmail($eduroam) !== null
-            or self::findByEmail($email) !== null
+        if (self::findByEmail($params['eduroam']) !== null
+            or self::findByEmail($params['email']) !== null
         ) {
             throw new MyRadioException(
                 'This User already appears to exist. '
@@ -1777,7 +1786,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         }
 
         //Looks good. Generate a password for them.
-        $plain_pass = empty($provided_password) ? CoreUtils::newPassword() : $provided_password;
+        $plain_pass = empty($params['provided_password']) ? CoreUtils::newPassword() : $params['provided_password'];
 
         //Actually create the member!
         $r = self::$db->fetchColumn(
@@ -1785,15 +1794,15 @@ class MyRadio_User extends ServiceAPI implements APICaller
             college, phone, email, receive_email, eduroam, require_password_change)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid',
             [
-                $fname,
-                $sname,
-                $sex,
-                $collegeid,
-                $phone,
-                $email,
-                $receive_email,
-                $eduroam,
-                true,
+                $params['fname'],
+                $params['sname'],
+                $params['sex'],
+                $params['collegeid'],
+                $params['phone'],
+                $params['email'],
+                $params['receive_email'],
+                $params['eduroam'],
+                true
             ]
         );
 
@@ -1805,7 +1814,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $user = self::getInstance($memberid);
 
         //Activate the member's account for the current academic year
-        $user->activateMemberThisYear($paid);
+        $user->activateMemberThisYear($params['paid']);
         //Set the user's password
         (new MyRadioDefaultAuthenticator())->setPassword($user, $plain_pass);
 
@@ -1814,24 +1823,19 @@ class MyRadio_User extends ServiceAPI implements APICaller
          * @todo Make this easier to change
          * @todo Link to Facebook events
          */
-        $uname = empty($eduroam) ? $email : str_replace('@york.ac.uk', '', $eduroam);
-        if (!empty($provided_password)) {
+        $uname = empty($params['eduroam']) ? $params['email'] : str_replace(Config::$eduroam_domain, '', $params['eduroam']);
+        if (!empty($params['provided_password'])) {
             $plain_pass = '(The password you entered when registering)';
         }
-        $welcome_email = str_replace(
-            ['#NAME', '#USER', '#PASS'],
-            [$fname, $uname, $plain_pass],
-            Config::$welcome_email
-        );
+        $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$params['fname'], $uname, $plain_pass], Config::$welcome_email);
 
         //Send the email
-        // @todo Make this be sent from the getinvolved email, rather than no-reply.
-        MyRadioEmail::sendEmailToUser(
-            self::getInstance($memberid),
-            'Welcome to ' . Config::$short_name . ' - Getting Involved and Your Account',
-            $welcome_email
-        );
-        return self::getInstance($memberid);
+        /*
+         * @todo Make this be sent from the getinvolved email, rather than no-reply.
+         */
+        MyRadioEmail::sendEmailToUser($user, 'Welcome to '.Config::$short_name.' - Getting Involved and Your Account', $welcome_email);
+
+        return $user;
     }
 
     /**
@@ -1895,7 +1899,18 @@ class MyRadio_User extends ServiceAPI implements APICaller
             // @todo send welcome email to already existing users?
             return $user;
         } else {
-            return self::create($fname, $sname, $eduroam, $sex, $collegeid, $email, $phone, $receive_email, $paid);
+            $data = [
+                'fname' => $fname,
+                'sname' => $sname,
+                'eduroam' => $eduroam,
+                'sex' => $sex,
+                'collegeid' => $collegeid,
+                'email' => $email,
+                'phone' => $phone,
+                'receive_email' => $receive_email,
+                'paid' => $paid,
+            ];
+            return self::create($data);
         }
     }
 

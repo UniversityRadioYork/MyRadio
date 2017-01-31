@@ -8,18 +8,16 @@ use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $user = MyRadio_User::create(
-        $_REQUEST['first-name'],
-        $_REQUEST['last-name'],
-        null,
-        $_REQUEST['gender'],
-        null,
-        $_REQUEST['email'],
-        empty($_REQUEST['phone']) ? null : $_REQUEST['phone'],
-        true,
-        Config::$membership_fee,
-        $_REQUEST['password']
-    );
+    $params = [
+        'fname' => $_REQUEST['first-name'],
+        'sname' => $_REQUEST['last-name'],
+        'sex' => $_REQUEST['gender'],
+        'email' => $_REQUEST['email'],
+        'phone' => $_REQUEST['phone'],
+        'paid' => Config::$membership_fee,
+        'provided_password' => $_REQUEST['password']
+    ];
+    $user = MyRadio_User::create($params);
 
     // Give this user most possible permissions
     AuthUtils::setUpAuth();
