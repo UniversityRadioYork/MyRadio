@@ -109,12 +109,12 @@ final class Config
      *
      * @var string
      */
-    public static $cache_provider = '\MyRadio\APCProvider';
+    public static $cache_provider = '\MyRadio\MemcachedProvider';
     /**
      * If using the Memcached CacheProvider, set a list of servers to use here.
      * e.g. [['localhost', 11211]] (optionally, a third option, a weighting).
      */
-    public static $cache_memcached_servers = [];
+    public static $cache_memcached_servers = [['localhost', 11211]];
     /**
      * How long ServiceAPI items should be cached for by default. Turn this down if you
      * get a lot of edits from other sources.
