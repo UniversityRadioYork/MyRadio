@@ -26,7 +26,8 @@ apt-get install -y apache2 \
 	openssl \
 	libav-tools \
 	zip \
-	unzip
+	unzip \
+	composer
 a2enmod ssl
 a2enmod rewrite
 service apache2 stop
@@ -42,9 +43,7 @@ xdebug.idekey="MyRadio vagrant"
 xdebug.remote_handler=dbgp
 EOF
 
-# Composer - no package on 14.04 :(
-curl -sS https://getcomposer.org/installer | php
-mv composer.phar /usr/local/bin/composer
+# Composer
 cd /vagrant
 su vagrant -c 'composer --no-progress update'
 

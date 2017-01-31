@@ -240,10 +240,10 @@ foreach ($function_checks as $check) {
         if ($ready === false or !empty($warnings)) {
             ?>
             <h3>Cheating</h3>
-            <p>If you're using Ubuntu, the following commands (as root) will get you most of the way:</p>
+            <p>If you're using Ubuntu (&gt;=16.04), the following commands (as root) will get you most of the way:</p>
             <code>
-              apt-get install php5-curl php5-geoip php5-gd php5-ldap php5-pgsql php5-dev<br>
-              composer update # Will need manual installation on Ubuntu 14.04<br>
+              apt install php-curl php-geoip php-gd php-ldap php-pgsql php-mbstring php-dev composer<br>
+              composer update<br>
               service apache2 restart
             </code>
         <?php
