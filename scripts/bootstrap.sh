@@ -8,28 +8,30 @@ curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 # Base packages and Apache setup
 apt-get update
 apt-get install -y apache2 \
-	libapache2-mod-php5 \
-	php5-common \
-	postgresql-9.3 \
-	postgresql-client-9.3 \
+	libapache2-mod-php \
+	php-common \
+	postgresql-9.5 \
+	postgresql-client-9.5 \
 	memcached \
-	php-apc \
-	php5-curl \
-	php5-geoip \
-	php5-gd \
-	php5-ldap \
-	php5-pgsql \
-	php5-dev \
-	php5-memcached \
-	php5-xdebug \
-	php5-xsl \
+	php-curl \
+	php-geoip \
+	php-gd \
+	php-ldap \
+	php-pgsql \
+	php-dev \
+	php-memcached \
+	php-xdebug \
+	php-mbstring \
+	php-xsl \
 	openssl \
-	libav-tools
+	libav-tools \
+	zip \
+	unzip
 a2enmod ssl
 a2enmod rewrite
 service apache2 stop
 
-cat <<EOF >> /etc/php5/mods-available/xdebug.ini
+cat <<EOF >> /etc/php/7.0/mods-available/xdebug.ini
 xdebug.default_enable=1
 xdebug.remote_enable=1
 xdebug.remote_autostart=0
@@ -77,7 +79,7 @@ openssl x509 -req -days 3650 -in /etc/apache2/myradio.csr -signkey /etc/apache2/
 service apache2 start
 
 # Create DB cluster/database/user
-pg_createcluster 9.3 myradio
+pg_createcluster 9.5 myradio
 su - postgres -c "cat /vagrant/sample_configs/postgres.sql | psql"
 
 # Start httpd back up
