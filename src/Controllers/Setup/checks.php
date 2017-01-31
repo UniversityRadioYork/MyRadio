@@ -83,9 +83,9 @@ $required_modules = [
         'required' => true,
     ],
 ];
-$required_files = [
+$required_classes = [
     [
-        'file' => 'vendor/twig/twig/lib/Twig/Autoloader.php',
+        'class' => '\Twig_Environment',
         'success' => 'You have Twig installed! This is required for MyRadio to generate web pages.',
         'fail' => 'Your server needs to have Twig installed in order to continue. See '
         .'<a href="http://twig.sensiolabs.org/doc/installation.html">the Twig documentation</a> for more information.',
@@ -142,16 +142,16 @@ foreach ($required_modules as $module) {
         $successes[] = $module['success'];
     }
 }
-foreach ($required_files as $file) {
-    if (!stream_resolve_include_path($file['file'])) {
-        if ($file['required']) {
+foreach ($required_classes as $class) {
+    if (!class_exists($class['class'])) {
+        if ($class['required']) {
             $ready = false;
-            $problems[] = $file['fail'];
+            $problems[] = $class['fail'];
         } else {
-            $warnings[] = $file['fail'];
+            $warnings[] = $class['fail'];
         }
     } else {
-        $successes[] = $file['success'];
+        $successes[] = $class['success'];
     }
 }
 foreach ($function_checks as $check) {

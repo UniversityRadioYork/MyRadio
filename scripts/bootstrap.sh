@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -eu
+set -eux
 
 # Base packages and Apache setup
 apt-get update
@@ -41,6 +41,7 @@ EOF
 
 # Composer
 cd /vagrant
+mkdir -p /vagrant/src/vendor
 su vagrant -c 'composer --no-progress update'
 
 ln -s /vagrant/src /var/www/myradio
