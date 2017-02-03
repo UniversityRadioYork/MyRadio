@@ -136,12 +136,13 @@ class Profile extends ServiceAPI
             self::wakeup();
             self::$officers = self::$db->fetchAll(
                 'SELECT team.team_name AS team, officer.type, officer.officer_name AS officership,
-                        fname || \' \' || sname AS name, member.memberid, officer.officerid
+                    fname || \' \' || sname AS name, member.memberid, officer.officerid
                 FROM team
                 LEFT JOIN officer ON team.teamid = officer.teamid AND officer.status = \'c\'
                 LEFT JOIN member_officer ON officer.officerid = member_officer.officerid
+                    AND member_officer.till_date IS NULL
                 LEFT JOIN member ON member_officer.memberid = member.memberid
-                WHERE team.status = \'c\' AND officer.type != \'m\' AND member_officer.till_date IS NULL
+                WHERE team.status = \'c\' AND officer.type != \'m\'
                 ORDER BY team.ordering, officer.ordering, sname'
             );
             self::$cache->set('MyRadioProfile_officers', self::$officers);
