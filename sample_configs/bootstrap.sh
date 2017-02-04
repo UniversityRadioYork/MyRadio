@@ -1,5 +1,10 @@
+#!/usr/bin/env sh
+
+set -eu
+
 # Add a recent Node repo
 curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+
 # Base packages and Apache setup
 apt-get update
 apt-get install -y apache2 \
@@ -35,11 +40,11 @@ xdebug.idekey="MyRadio vagrant"
 xdebug.remote_handler=dbgp
 EOF
 
-# Composer
+# Composer - no package on 14.04 :(
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
 cd /vagrant
-composer install
+su vagrant -c 'composer update'
 
 # Tools to run API tests
 npm install -g jasmine-node
@@ -83,8 +88,8 @@ su - postgres -c "cat /vagrant/sample_configs/postgres.sql | psql"
 service apache2 start
 
 # Somewhere to store audio uploads
-music_dirs=( "records" "membersmusic" "beds" "jingles" )
-for i in "${music_dirs[@]}"; do
+music_dirs="records membersmusic beds jingles"
+for i in ${music_dirs}; do # no spaces
 	mkdir -p /music/$i
 	chown www-data:www-data /music/$i
 done
