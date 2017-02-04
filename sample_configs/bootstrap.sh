@@ -15,7 +15,6 @@ apt-get install -y apache2 \
 	php5-ldap \
 	php5-pgsql \
 	php5-dev \
-	php-pear \
 	php5-memcached \
 	php5-xdebug \
 	openssl \
@@ -24,11 +23,6 @@ apt-get install -y apache2 \
 a2enmod ssl
 a2enmod rewrite
 service apache2 stop
-pear channel-discover pear.twig-project.org
-pear install twig/Twig
-pear install twig/CTwig
-echo "extension=twig.so" > /etc/php5/mods-available/twig.ini
-ln -s /etc/php5/mods-available/twig.ini /etc/php5/apache2/conf.d/20-twig.ini
 
 cat <<EOF >> /etc/php5/mods-available/xdebug.ini
 xdebug.default_enable=1
