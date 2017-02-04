@@ -22,6 +22,7 @@ apt-get install -y apache2 \
 	php5-dev \
 	php5-memcached \
 	php5-xdebug \
+	php5-xsl \
 	openssl \
 	libav-tools
 a2enmod ssl
@@ -43,7 +44,7 @@ EOF
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
 cd /vagrant
-su vagrant -c 'composer update'
+su vagrant -c 'composer --no-progress update'
 
 ln -s /vagrant/src /var/www/myradio
 ln -s /vagrant/sample_configs/apache.conf /etc/apache2/sites-available/myradio.conf

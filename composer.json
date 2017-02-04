@@ -11,7 +11,7 @@
       "pdepend/pdepend": "~2.5",
       "phpmd/phpmd": "~2.6",
       "sebastian/phpcpd": "~2.0",
-      "phploc/phploc": "~3.0",
+      "phploc/phploc": "~2.1",
       "theseer/phpdox": "^0.8"
     },
     "config": {
