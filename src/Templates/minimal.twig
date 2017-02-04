@@ -26,11 +26,16 @@
 	    </nav>
 	    <br>
 	    <div class="container main-container">
-	    	<h1>{{ title }}</h1>
-	  		{% block content %}
-	  		{{content}}
-	  		{% endblock %}
-	  	</div>
+			<h1>{{ title }}</h1>
+			{% block content %}
+				{{content|nl2br}}
+			{% endblock %}
+			{% autoescape false %}
+			{% block rawcontent %}
+				{{rawcontent}}
+			{% endblock %}
+			{% endautoescape %}
+		</div>
 		<footer class="footer">
 			<div class="container">
 				<div class="row">
