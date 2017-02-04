@@ -30,11 +30,9 @@
 			{% block content %}
 				{{content|nl2br}}
 			{% endblock %}
-			{% autoescape false %}
 			{% block rawcontent %}
-				{{rawcontent}}
+				{{rawcontent|raw}}
 			{% endblock %}
-			{% endautoescape %}
 		</div>
 		<footer class="footer">
 			<div class="container">
