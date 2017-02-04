@@ -3,7 +3,6 @@
         "james-heinrich/getid3": "~1.9",
         "ezyang/htmlpurifier": "~4.6",
         "google/recaptcha": "~1.1",
-        "sentry/sentry": "~1.5",
         "soundasleep/html2text": "~0.3"
     },
     "require-dev": {
