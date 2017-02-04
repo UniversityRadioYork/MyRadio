@@ -23,8 +23,7 @@ apt-get install -y apache2 \
 	php5-memcached \
 	php5-xdebug \
 	openssl \
-	libav-tools \
-	nodejs
+	libav-tools
 a2enmod ssl
 a2enmod rewrite
 service apache2 stop
@@ -45,10 +44,6 @@ curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
 cd /vagrant
 su vagrant -c 'composer update'
-
-# Tools to run API tests
-npm install -g jasmine-node
-npm install --no-bin-links frisby
 
 ln -s /vagrant/src /var/www/myradio
 ln -s /vagrant/sample_configs/apache.conf /etc/apache2/sites-available/myradio.conf
