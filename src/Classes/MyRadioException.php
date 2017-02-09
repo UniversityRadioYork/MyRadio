@@ -87,12 +87,6 @@ class MyRadioException extends \RuntimeException
                 || empty($_SERVER['REMOTE_ADDR'])
                 || (defined('JSON_DEBUG') && JSON_DEBUG);
 
-            // Sentry exception handling
-            if (Config::$raven_dsn) {
-                $client = new \Raven_Client(Config::$raven_dsn);
-                $client->getIdent($client->captureException($this));
-            }
-
             if (Config::$email_exceptions
                 && class_exists('\MyRadio\MyRadioEmail')
                 && $this->code !== 400

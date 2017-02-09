@@ -69,13 +69,6 @@ $required_modules = [
         'required' => false,
     ],
     [
-        'module' => 'mcrypt',
-        'success' => 'You have the mcrypt extension installed.',
-        'fail' => 'The <a href="http://www.php.net/manual/en/book.mcrypt.php">mcrypt extension</a> '
-        .'is required for MyRadio to talk to authentication services.',
-        'required' => true,
-    ],
-    [
         'module' => 'pgsql',
         'success' => 'You have an appropriate database driver installed.',
         'fail' => 'The <a href="http://www.php.net/manual/en/book.pgsql.php">PostgreSQL extension</a> '
@@ -92,7 +85,7 @@ $required_modules = [
 ];
 $required_files = [
     [
-        'file' => 'Twig/Autoloader.php',
+        'file' => 'vendor/twig/twig/lib/Twig/Autoloader.php',
         'success' => 'You have Twig installed! This is required for MyRadio to generate web pages.',
         'fail' => 'Your server needs to have Twig installed in order to continue. See '
         .'<a href="http://twig.sensiolabs.org/doc/installation.html">the Twig documentation</a> for more information.',
@@ -249,14 +242,8 @@ foreach ($function_checks as $check) {
             <h3>Cheating</h3>
             <p>If you're using Ubuntu, the following commands (as root) will get you most of the way:</p>
             <code>
-              apt-get install php5-curl php5-geoip php5-gd php5-ldap php5-mcrypt php5-pgsql php5-dev php-pear<br>
-              pear channel-discover pear.twig-project.org<br>
-              pear install twig/Twig<br>
-              pear install twig/CTwig<br>
-              echo "extension=mcrypt.so" > /etc/php5/mods-available/mcrypt.ini<br>
-              ln -s /etc/php5/mods-available/mcrypt.ini /etc/php5/apache2/conf.d/20-mcrypt.ini<br>
-              echo "extension=twig.so" > /etc/php5/mods-available/twig.ini<br>
-              ln -s /etc/php5/mods-available/twig.ini /etc/php5/apache2/conf.d/20-twig.ini<br>
+              apt-get install php5-curl php5-geoip php5-gd php5-ldap php5-pgsql php5-dev<br>
+              composer update # Will need manual installation on Ubuntu 14.04<br>
               service apache2 restart
             </code>
         <?php

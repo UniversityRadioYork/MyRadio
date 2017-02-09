@@ -39,7 +39,6 @@ Vagrant.configure(2) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "./", "/vagrant_data"
-  config.vm.synced_folder "./src", "/vagrant/src", :owner=> 'www-data', :group=>'www-data', :mount_options => ['dmode=775', 'fmode=775']
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -67,5 +66,5 @@ Vagrant.configure(2) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision :shell, :inline => "sed -i 's#http://us.archive.ubuntu.com/ubuntu/#mirror://mirrors.ubuntu.com/mirrors.txt#g' /etc/apt/sources.list"
-  config.vm.provision :shell, path: "sample_configs/bootstrap.sh"
+  config.vm.provision :shell, path: "scripts/bootstrap.sh"
 end

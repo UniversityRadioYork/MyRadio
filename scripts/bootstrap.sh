@@ -1,5 +1,10 @@
+#!/usr/bin/env sh
+
+set -eu
+
 # Add a recent Node repo
 curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+
 # Base packages and Apache setup
 apt-get update
 apt-get install -y apache2 \
@@ -13,25 +18,16 @@ apt-get install -y apache2 \
 	php5-geoip \
 	php5-gd \
 	php5-ldap \
-	php5-mcrypt \
 	php5-pgsql \
 	php5-dev \
-	php-pear \
 	php5-memcached \
 	php5-xdebug \
+	php5-xsl \
 	openssl \
-	libav-tools \
-	nodejs
+	libav-tools
 a2enmod ssl
 a2enmod rewrite
 service apache2 stop
-pear channel-discover pear.twig-project.org
-pear install twig/Twig
-pear install twig/CTwig
-echo "extension=mcrypt.so" > /etc/php5/mods-available/mcrypt.ini
-ln -s /etc/php5/mods-available/mcrypt.ini /etc/php5/apache2/conf.d/20-mcrypt.ini
-echo "extension=twig.so" > /etc/php5/mods-available/twig.ini
-ln -s /etc/php5/mods-available/twig.ini /etc/php5/apache2/conf.d/20-twig.ini
 
 cat <<EOF >> /etc/php5/mods-available/xdebug.ini
 xdebug.default_enable=1
@@ -44,15 +40,11 @@ xdebug.idekey="MyRadio vagrant"
 xdebug.remote_handler=dbgp
 EOF
 
-# Composer
+# Composer - no package on 14.04 :(
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
 cd /vagrant
-composer install
-
-# Tools to run API tests
-npm install -g jasmine-node
-npm install --no-bin-links frisby
+su vagrant -c 'composer --no-progress update'
 
 ln -s /vagrant/src /var/www/myradio
 ln -s /vagrant/sample_configs/apache.conf /etc/apache2/sites-available/myradio.conf
@@ -92,8 +84,8 @@ su - postgres -c "cat /vagrant/sample_configs/postgres.sql | psql"
 service apache2 start
 
 # Somewhere to store audio uploads
-music_dirs=( "records" "membersmusic" "beds" "jingles" )
-for i in "${music_dirs[@]}"; do
+music_dirs="records membersmusic beds jingles"
+for i in ${music_dirs}; do # no spaces
 	mkdir -p /music/$i
 	chown www-data:www-data /music/$i
 done
