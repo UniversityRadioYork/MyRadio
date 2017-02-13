@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
         $show->setGenre($data['genres']);
-        $show->setCredits($data['credits']['member'], $data['credits']['credittype']);
+        $show->setCredits($data['credits']['memberid'], $data['credits']['credittype']);
 
         if ($data['mixclouder']) {
             $show->setMeta('upload_state', 'Requested');
