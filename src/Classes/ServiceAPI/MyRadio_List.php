@@ -357,7 +357,7 @@ class MyRadio_List extends ServiceAPI
     {
         $mixin_funcs = [
             'actions' => function (&$data) {
-                if (!data['subscribed']
+                if (!$data['subscribed']
                     && ($this->optin || $this->hasOptedOutOfAuto(MyRadio_User::getCurrentOrSystemUser()->getID()))
                 ) {
                     $data['optin'] = [
