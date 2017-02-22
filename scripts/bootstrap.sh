@@ -1,9 +1,5 @@
 #!/usr/bin/env sh
-
 set -eu
-
-# Add a recent Node repo
-curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 
 # Base packages and Apache setup
 apt-get update
