@@ -1,8 +1,14 @@
 language: php
 php:
     - '5.6'
+    - '7.0'
+    - '7.1'
+
+matrix:
+    allow_failures:
+        - php: '5.6'
 addons:
-    postgresql: '9.4'
+    postgresql: '9.5'
 services:
     - postgresql
 install:
