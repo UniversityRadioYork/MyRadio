@@ -10,7 +10,7 @@ CoreUtils::getTemplateObject()->setTemplate(
     'table.twig'
 )->addVariable(
     'tablescript',
-    'myury.datatable.default'
+    'myradio.datatable.default'
 )->addVariable(
     'title',
     'Chart Releases'

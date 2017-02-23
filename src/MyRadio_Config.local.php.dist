@@ -49,7 +49,7 @@ Config::$yusu_payment_url = 'LINK TO PAYMENT PAGE' // Link to student union soci
 /**
  * URL Settings
  */
-Config::$base_url = '//ury.org.uk/myury/';
+Config::$base_url = '//ury.org.uk/myradio/';
 Config::$api_uri = '/api/';
 Config::$api_url = '//ury.org.uk/api';
 

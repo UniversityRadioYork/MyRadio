@@ -16,7 +16,7 @@ if (empty($shows) or (sizeof($shows) === 1 and sizeof($shows[0]->getAllSeasons()
 $twig = CoreUtils::getTemplateObject()->setTemplate('Scheduler/myShows.twig')
     ->addVariable('title', 'My Shows')
     ->addVariable('tabledata', ServiceAPI::setToDataSource($shows))
-    ->addVariable('tablescript', 'myury.scheduler.showlist');
+    ->addVariable('tablescript', 'myradio.scheduler.showlist');
 
 if (isset($_REQUEST['msg'])) {
     switch ($_REQUEST['msg']) {

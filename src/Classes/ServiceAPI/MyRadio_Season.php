@@ -158,7 +158,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
      * As this is the initial creation, all tags are <i>approved</i> by the submitter
      * so the Season has some initial values
      *
-     * @throws MyURYException
+     * @throws MyRadioException
      */
     public static function create($params = [])
     {

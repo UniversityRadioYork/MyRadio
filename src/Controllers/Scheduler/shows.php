@@ -12,5 +12,5 @@ $shows = MyRadio_Show::getAllShows(1, !$all);
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('title', $all ? 'All Shows' : 'This Term\'s Shows')
     ->addVariable('tabledata', ServiceAPI::setToDataSource($shows))
-    ->addVariable('tablescript', 'myury.scheduler.showlist')
+    ->addVariable('tablescript', 'myradio.scheduler.showlist')
     ->render();

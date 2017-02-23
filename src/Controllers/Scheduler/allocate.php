@@ -7,9 +7,9 @@ use \MyRadio\ServiceAPI\MyRadio_Season;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
-    $season = MyRadio_Season::getInstance($_SESSION['myury_working_with_season']);
+    $season = MyRadio_Season::getInstance($_SESSION['myradio_working_with_season']);
 
-    unset($_SESSION['myury_working_with_season']);
+    unset($_SESSION['myradio_working_with_season']);
 
     $data = $season->getAllocateForm()->readValues();
 
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     /*
      * @todo WHY IS THIS IN THE SESSION
      */
-    $_SESSION['myury_working_with_season'] = $season->getID();
+    $_SESSION['myradio_working_with_season'] = $season->getID();
 
     $season
         ->getAllocateForm()
