@@ -8,6 +8,10 @@ function webcamTrackViewer() {
     type: "get",
     cache: false,
     url: myradio.makeURL("Webcam", "a-trackViewer"),
+    statusCode: {
+      // API returns 400 when timedelta is too big (minimised tab or whatever) clientside should ignore.
+      400: function () {}
+    },
     success: function (data) {
       var sub = 0;
       var time = "";
