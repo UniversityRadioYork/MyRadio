@@ -6008,11 +6008,11 @@ ALTER TABLE ONLY rec_track
     ADD CONSTRAINT "$3" FOREIGN KEY (clean) REFERENCES rec_cleanlookup(clean_code) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 --
--- Name: $4; Type: FK CONSTRAINT; Schema: public; Owner: myradio
+-- Name: rec_track_lasteditedby_fkey Type: FK CONSTRAINT; Schema: public; Owner: myradio
 --
 
 ALTER TABLE ONLY rec_track
-    ADD CONSTRAINT "$4" FOREIGN KEY (last_edited_memberid) REFERENCES member(memberid) ON UPDATE CASCADE ON DELETE SET NULL;
+    ADD CONSTRAINT rec_track_lasteditedby_fkey FOREIGN KEY (last_edited_memberid) REFERENCES member(memberid) ON UPDATE CASCADE ON DELETE SET NULL;
 
 --
 -- Name: $3; Type: FK CONSTRAINT; Schema: public
