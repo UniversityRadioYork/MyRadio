@@ -700,12 +700,17 @@ var NIPSWeb = function (d) {
     $(slider).on(
       "introChanged",
       function (e) {
-        var trackid = getRecTrackFromID($(channelDiv).children(".selected")[0].getAttribute("id"))[1];
-        $.ajax({
-            url: mConfig.api_url + "/v2/track/" + trackid + "/intro",
-            type: 'PUT',
-            data : {duration: e.originalEvent.detail.time}
-        });
+        if ($(channelDiv).children(".selected").length != 0) {
+          var trackid = getRecTrackFromID($(channelDiv).children(".selected")[0].getAttribute("id"))[1];
+          $(channelDiv).children(".selected")[0].setAttribute("intro", parseInt(e.originalEvent.detail.time));
+          $.ajax({
+              url: mConfig.api_url + "/v2/track/" + trackid + "/intro",
+              type: 'PUT',
+              data : {duration: e.originalEvent.detail.time}
+          });
+        } else {
+
+        }
       }
     );
 
