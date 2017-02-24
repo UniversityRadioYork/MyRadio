@@ -691,7 +691,7 @@ var NIPSWeb = function (d) {
     $(slider).on(
       "seeked",
       function (e) {
-        if (e.originalEvent.detail.time) {
+        if (e.originalEvent.detail.time && isFinite(e.originalEvent.detail.time)) {
           player.currentTime = parseFloat(e.originalEvent.detail.time.toPrecision(12));
         }
       }
