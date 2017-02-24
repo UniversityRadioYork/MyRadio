@@ -213,7 +213,6 @@ var NIPSWeb = function (d) {
              * channel, as their weights have now been decreased to accomodate the removed item.
              * Only perform this operation if the previous item channel was not res.
              */
-            alert('We should not be doing this on res');
             $("ul.baps-channel li[channel=" + oldChannel + "]").each(function () {
               if (oldWeight - $(this).attr("weight") < 0) {
                 $(this).attr("weight", parseInt($(this).attr("weight")) - 1);
@@ -668,15 +667,7 @@ var NIPSWeb = function (d) {
         }
       }
     );
-    // Chrome sometimes stops playback after seeking
-    $(player).on(
-      "seeked",
-      function (e) {
-        if (player.nwIsPlaying) {
-          setTimeout(player.play, 50);
-        }
-      }
-    );
+
     $(player).on(
       "timeupdate",
       function () {
