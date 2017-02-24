@@ -206,13 +206,14 @@ var NIPSWeb = function (d) {
             });
             li.attr("timeslotitemid", "findme");
 
-          } else if ( $(this).attr("channel") !== "res" && (li.attr("channel") === "res" || li.attr("channel") == null)) {
+          } else if ( oldChannel !== "res" && (li.attr("channel") === "res" || li.attr("channel") == null)) {
             /**
              * This item has just been removed from the Show Plan. Send the server a RemoveItem operation.
              * This operation will also send a number of MoveItem notifications - one for each item below this one in the
              * channel, as their weights have now been decreased to accomodate the removed item.
              * Only perform this operation if the previous item channel was not res.
              */
+            alert('We should not be doing this on res');
             $("ul.baps-channel li[channel=" + oldChannel + "]").each(function () {
               if (oldWeight - $(this).attr("weight") < 0) {
                 $(this).attr("weight", parseInt($(this).attr("weight")) - 1);
