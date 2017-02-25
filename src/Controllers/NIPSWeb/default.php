@@ -12,13 +12,14 @@ use \MyRadio\ServiceAPI\MyRadio_User;
 
 CoreUtils::requireTimeslot();
 
+    $title = MyRadio_Timeslot::getInstance($_SESSION['timeslotid'])->getMeta('title');
+    $timeDate = CoreUtils::HappyTime(MyRadio_Timeslot::getInstance($_SESSION['timeslotid'])->getStartTime());
+
 if (isset($_REQUEST['readonly'])) {
     $template = 'NIPSWeb/readonly.twig';
-    $title = MyRadio_Timeslot::getInstance($_SESSION['timeslotid'])->getMeta('title');
     $reslists = [];
 } else {
     $template = 'NIPSWeb/main.twig';
-    $title = 'Show Planner';
     $reslists = CoreUtils::dataSourceParser(
         [
             'managed' => iTones_Playlist::getAlliTonesPlaylists(),
@@ -31,6 +32,7 @@ if (isset($_REQUEST['readonly'])) {
 
 CoreUtils::getTemplateObject()->setTemplate($template)
     ->addVariable('title', $title)
+    ->addVariable('timeDate', $timeDate)
     ->addVariable('tracks', MyRadio_Timeslot::getInstance($_SESSION['timeslotid'])->getShowPlan())
     ->addVariable('reslists', $reslists)
     ->render();
