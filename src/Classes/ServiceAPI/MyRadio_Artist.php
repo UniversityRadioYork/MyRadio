@@ -15,7 +15,7 @@ use MyRadio\Config;
  *
  * @uses    \Database
  */
-class Artist extends ServiceAPI
+class MyRadio_Artist extends ServiceAPI
 {
     /**
      * Initiates the Artist object.
