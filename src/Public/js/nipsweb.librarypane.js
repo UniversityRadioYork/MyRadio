@@ -15,14 +15,14 @@ function updateCentralSearch()
   var file;
   $("#notice").html("Searching...").show();
   $.ajax({
-            url: mConfig.api_url + "/v2/track/search/",
-            type: 'get',
-            data: {
-              artist: $("#res-filter-artist").val(),
-              title: $("#res-filter-track").val(),
-              limit: 100,
-              digitised: true
-            },
+    url: mConfig.api_url + "/v2/track/search/",
+    type: 'get',
+    data: {
+      artist: $("#res-filter-artist").val(),
+      title: $("#res-filter-track").val(),
+      limit: 100,
+      digitised: true
+    },
     success: function (data) {
       $("#baps-channel-res").empty();
       for (file in data.payload) {
@@ -167,16 +167,34 @@ $(document).ready(function () {
     $("#baps-channel-res").empty();
     //Makes the artist search autocompleting. When an artist is selected it'll filter
     var artistLookup = new Bloodhound({
-      datumTokenizer: Bloodhound.tokenizers.obj.whitespace("title"),
+      datumTokenizer: function (datum) {
+        return Bloodhound.tokenizers.whitespace(datum.title);
+      },
       queryTokenizer: Bloodhound.tokenizers.whitespace,
       limit: 5,
       dupDetector: function (remote, local) {
         return local.title == remote.title;
       },
       prefetch: {
-        url: mConfig.api_url + "/v2/artist/findbyname/?term=null&limit=500"
+        url: mConfig.api_url + "/v2/artist/findbyname/?title=null&limit=500",
+        filter: function (data) {
+          return $.map(data.payload, function (artist) {
+            return {
+              title: artist.title,
+            };
+          });
+        }
       },
-      remote: mConfig.api_url + "/v2/artist/findbyname/?term=%QUERY&limit=5", //Seperated out otherwise % gets urlescaped
+      remote: {
+        url: mConfig.api_url + "/v2/artist/findbyname/?title=%QUERY&limit=5", //Seperated out otherwise % gets urlescaped
+        filter: function (data) {
+          return $.map(data.payload, function (artist) {
+            return {
+              title: artist.title,
+            };
+          });
+        }
+      }
     });
     artistLookup.initialize();
     $("#res-filter-artist").typeahead(
@@ -214,7 +232,7 @@ $(document).ready(function () {
    * Handler for activating the Manage Library link
    */
   $("#menu-track-upload").click(function () {
-    var url = $(this).children("a").attr("href");
+    var url = $(this).attr("href");
     myradio.createDialog("Upload to Library", "<iframe src='" + url + "' width='580' height='500' frameborder='0'></iframe>");
     return false;
   });
