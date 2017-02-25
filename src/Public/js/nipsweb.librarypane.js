@@ -37,7 +37,6 @@ function updateCentralSearch()
           cleanStars = "**";
           tooltip = "This track is explicit. Do not broadcast before 9PM."
         }
-        console.log(data);
         $("#baps-channel-res").append(
           "<li id='" + data.payload[file].album.recordid + "-" + data.payload[file].trackid +
           "' intro='" + data.payload[file].intro + "' title='" + tooltip + "'" +
