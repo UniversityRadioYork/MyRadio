@@ -7,7 +7,7 @@
  */
 use \MyRadio\Config;
 use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\ServiceAPI\Artist;
+use \MyRadio\ServiceAPI\MyRadio_Artist;
 
 if (!isset($_REQUEST['term'])) {
     $data = [];
