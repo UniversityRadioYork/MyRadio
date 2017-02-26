@@ -68,12 +68,14 @@ $(document).ready(function () {
       $.ajax({
         url: mConfig.api_url + "/v2/track/search/",
         type: "get",
-        data: {itonesplaylistid: $(this).val().replace(/managed-/, ""), digitised: true, limit: 0},
+        data: {itonesplaylistid: $(this).val().replace(/managed-/, ""), digitised: true},
         success: function (data) {
           for (file in data) {
             if (file === "myradio_errors") {
               continue;
             }
+          }
+          for (file in data.payload) {
             var classes = "";
             if (!data.payload[file].clean) {
               classes = classes + " unclean";
@@ -235,4 +237,11 @@ $(document).ready(function () {
     myradio.createDialog("Upload to Library", "<iframe src='" + url + "' width='580' height='500' frameborder='0'></iframe>");
     return false;
   });
+
+  $("#menu-import").click(function () {
+    var url = $(this).attr("href");
+    myradio.createDialog("Import from another show", "<iframe src='" + url + "' width='580' height='500' frameborder='0'></iframe>");
+    return false;
+  });
+
 });
