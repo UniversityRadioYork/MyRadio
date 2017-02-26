@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+{% include 'parts/base_head.twig' %}
+    <link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css" />
+    <style>html,body{background: none; box-shadow: none; width: 550px; min-width: 550px; height: auto;}</style>
+    </head>
+  <body>
+    <select class="form-control" id="import-show-selector">
+      <option disabled="disabled" selected="selected">Select a show...</option>
+    </select>
+    <select class="form-control" id="import-season-selector">
+      <option disabled="disabled" selected="selected">Select a season...</option>
+    </select>
+    <select class="form-control" id="import-timeslot-selector">
+      <option disabled="disabled" selected="selected">Select a timeslot...</option>
+    </select>
+
+    <div id="import-channel-selector" class="btn-group">
+        <a href="#" id="import-channel-0" channel="0" class="btn btn-default active">Channel 1</a>
+        <a href="#" id="import-channel-1" channel="1" class="btn btn-default">Channel 2</a>
+        <a href="#" id="import-channel-2" channel="2" class="btn btn-default">Channel 3</a>
+    </div>
+    <ul id="import-channel-list" class="baps-channel">
+      <li>Track 1</li>
+      <li>Track 1</li>
+      <li>Track 1</li>
+      <li>Track 1</li>
+    </ul>
+    <script type="text/javascript">
+      $(document).ready(
+        function () {
+          $.ajax({
+            url: mConfig.api_url + "/v2/user/1/shows/",
+            type: "get",
+            success: function (data) {
+              for (show in data) {
+                if (show === "myradio_errors") {
+                  continue;
+                }
+              }
+              for (show in data.payload) {
+                $('#import-show-selector').append("<option value='" + data.payload[show].show_id + "'>" + data.payload[show].title + "</option>");
+              }
+            }
+          });
+
+          $('#import-channel-selector a').on('click','', function() {
+              return selectChannel($(this).attr('channel'));
+            }
+          );
+        }
+      );
+
+      function selectChannel(channelNo) {
+        $('#import-channel-selector a').removeClass('active');
+        $('#import-channel-' + channelNo).addClass('active');
+        loadChannelList();
+      }
+
+      function loadChannelList() {
+        selectedTimeslotID = $('#import-timeslot-selector').find(":selected").attr('value');
+        $.ajax({
+            url: mConfig.api_url + "/v2/timeslot/" + selectedTimeslotID + "/showplan",
+            type: "get",
+            success: function (data) {
+              for (item in data) {
+                if (item === "myradio_errors") {
+                  continue;
+                }
+              }
+              var loadChannelList = function loadChannelList() {
+                $('#import-channel-list').empty();
+                selectedChannelNo = $('#import-channel-selector a.active').attr('channel');
+                for (item in data.payload[selectedChannelNo]) {
+                  extraString = "";
+                  if (data.payload[selectedChannelNo][item].type == "central") {
+                    extraString += " - " + data.payload[selectedChannelNo][item].artist;
+                  }
+                    $('#import-channel-list').append("<li>" + data.payload[selectedChannelNo][item].title + extraString + "</li>");
+                  //}
+                }
+              }
+              loadChannelList();
+            }
+          });
+      }
+
+      $("#import-show-selector").change(function() {
+        selectedShowID = $('#import-show-selector').find(":selected").attr('value');
+        $.ajax({
+            url: mConfig.api_url + "/v2/show/" + selectedShowID + "/allseasons",
+            type: "get",
+            success: function (data) {
+              for (season in data) {
+                if (show === "myradio_errors") {
+                  continue;
+                }
+              }
+              $('#import-season-selector option:not(:selected)').remove();
+              for (season in data.payload) {
+                $('#import-season-selector').append("<option value='" + data.payload[season].season_id + "'>Season " + data.payload[season].season_num + "</option>");
+              }
+            }
+          });
+      });
+
+      $("#import-season-selector").change(function() {
+        selectedSeasonID = $('#import-season-selector').find(":selected").attr('value');
+        $.ajax({
+            url: mConfig.api_url + "/v2/season/" + selectedSeasonID + "/alltimeslots",
+            type: "get",
+            success: function (data) {
+              for (timeslot in data) {
+                if (timeslot === "myradio_errors") {
+                  continue;
+                }
+              }
+              $('#import-timeslot-selector option:not(:selected)').remove();
+              for (timeslot in data.payload) {
+                $('#import-timeslot-selector').append("<option value='" + data.payload[timeslot].timeslot_id + "'>Episode " + data.payload[timeslot].timeslot_num + " (" + data.payload[timeslot].start_time + ")</option>");
+              }
+            }
+          });
+      });
+
+      $("#import-timeslot-selector").change(function() {
+        loadChannelList();
+      });
+
+
+    </script>
+
+{% include 'parts/base_foot.twig' %}
+  </body>
+</html>
+
