@@ -650,6 +650,7 @@ class MyRadio_Track extends ServiceAPI
      * @param boolean $precise Only return exact matches for title and artist. Defaults to fuzzy search.
      * @param integer $page Search only returns 50 results by default. Increment this counter for additional results.
      * @param enum $sort Sort order. Possible values: "id" (default), "title", "random". Random will not paginate well.
+     * @param string $itonesplaylistid Managed playlist id to return, for example 'breakfast' will return all tracks from the breakfast playlist.
      */
     public static function search(
         $title = null,
@@ -659,7 +660,8 @@ class MyRadio_Track extends ServiceAPI
         $clean = null,
         $precise = false,
         $page = 1,
-        $sort = null
+        $sort = null,
+        $itonesplaylistid = null
     ) {
         if ($clean !== null && $clean !== 'u' && $clean !== 'y' && $clean !== 'n') {
             throw new MyRadioException('Valid values for clean are u, y and n.');
@@ -676,7 +678,8 @@ class MyRadio_Track extends ServiceAPI
             'digitised' => filter_var($digitised, FILTER_VALIDATE_BOOLEAN),
             'clean' => $clean,
             'precise' => filter_var($precise, FILTER_VALIDATE_BOOLEAN),
-            'limit' => (($page - 1) * 50) . ',50'
+            'limit' => (($page - 1) * 50) . ',50',
+            'itonesplaylistid' => $itonesplaylistid
         ];
 
         if ($sort === 'id') {
