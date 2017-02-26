@@ -68,7 +68,7 @@ $(document).ready(function () {
       $.ajax({
         url: mConfig.api_url + "/v2/track/search/",
         type: "get",
-        data: {itonesplaylistid: $(this).val().replace(/managed-/, ""), digitised: true},
+        data: {itonesplaylistid: $(this).val().replace(/managed-/, ""), digitised: true, limit: 0},
         success: function (data) {
           for (file in data) {
             if (file === "myradio_errors") {
