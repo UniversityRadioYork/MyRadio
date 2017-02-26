@@ -671,10 +671,6 @@ class MyRadio_Track extends ServiceAPI
             throw new MyRadioException('Valid values for sort are id, title and random.');
         }
 
-        if ($limit == null) {
-            $limit = Config::$ajax_limit_default;
-        }
-
         $options = [
             'title' => $title,
             'artist' => $artist,
@@ -682,9 +678,11 @@ class MyRadio_Track extends ServiceAPI
             'digitised' => filter_var($digitised, FILTER_VALIDATE_BOOLEAN),
             'clean' => $clean,
             'precise' => filter_var($precise, FILTER_VALIDATE_BOOLEAN),
-            'limit' => $limit,
             'itonesplaylistid' => $itonesplaylistid
         ];
+        if ($limit != null) {
+            $options['limit'] = $limit;
+        }
         if ($sort === 'id') {
             $options['idsort'] = true;
         }
