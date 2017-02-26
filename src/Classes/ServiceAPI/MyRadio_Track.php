@@ -648,7 +648,7 @@ class MyRadio_Track extends ServiceAPI
      * @param boolean $digitised Only return tracks that are digitised. If false, return any. Default true.
      * @param enum $clean Only return tracks with the given cleanliness (y = clean, n = explicit, u = unknown)
      * @param boolean $precise Only return exact matches for title and artist. Defaults to fuzzy search.
-     * @param integer $page Search only returns 50 results by default. Increment this counter for additional results.
+     * @param integer $limit Search only returns the default config number of results by default, this overrides that.
      * @param enum $sort Sort order. Possible values: "id" (default), "title", "random". Random will not paginate well.
      * @param string $itonesplaylistid Managed playlist id to return, for example 'breakfast' will return all tracks from the breakfast playlist.
      */
@@ -659,7 +659,7 @@ class MyRadio_Track extends ServiceAPI
         $digitised = true,
         $clean = null,
         $precise = false,
-        $page = 1,
+        $limit = null,
         $sort = null,
         $itonesplaylistid = null
     ) {
@@ -671,6 +671,10 @@ class MyRadio_Track extends ServiceAPI
             throw new MyRadioException('Valid values for sort are id, title and random.');
         }
 
+        if ($limit == null) {
+            $limit = Config::$ajax_limit_default;
+        }
+
         $options = [
             'title' => $title,
             'artist' => $artist,
@@ -678,10 +682,9 @@ class MyRadio_Track extends ServiceAPI
             'digitised' => filter_var($digitised, FILTER_VALIDATE_BOOLEAN),
             'clean' => $clean,
             'precise' => filter_var($precise, FILTER_VALIDATE_BOOLEAN),
-            'limit' => (($page - 1) * 50) . ',50',
+            'limit' => $limit,
             'itonesplaylistid' => $itonesplaylistid
         ];
-
         if ($sort === 'id') {
             $options['idsort'] = true;
         }
