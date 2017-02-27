@@ -1078,7 +1078,9 @@ CREATE TABLE rec_track (
     digitised boolean DEFAULT false NOT NULL,
     digitisedby integer,
     duration integer,
-    lastfm_verified boolean DEFAULT false
+    lastfm_verified boolean DEFAULT false,
+    last_edited_memberid integer,
+    last_edited_time timestamp with time zone
 );
 COMMENT ON COLUMN rec_track.duration IS 'Duration of track in seconds';
 COMMENT ON COLUMN rec_track.lastfm_verified IS 'Whether or not the metadata of this track has been verified using the LastFM API';
@@ -6022,6 +6024,12 @@ ALTER TABLE ONLY strm_log
 ALTER TABLE ONLY rec_track
     ADD CONSTRAINT "$3" FOREIGN KEY (clean) REFERENCES rec_cleanlookup(clean_code) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
+--
+-- Name: rec_track_lasteditedby_fkey Type: FK CONSTRAINT; Schema: public; Owner: myradio
+--
+
+ALTER TABLE ONLY rec_track
+    ADD CONSTRAINT rec_track_lasteditedby_fkey FOREIGN KEY (last_edited_memberid) REFERENCES member(memberid) ON UPDATE CASCADE ON DELETE SET NULL;
 
 --
 -- Name: $3; Type: FK CONSTRAINT; Schema: public
