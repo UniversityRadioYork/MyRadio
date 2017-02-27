@@ -316,6 +316,8 @@ var NIPSWeb = function (d) {
            * the change log, and to propogate the changes to any other clients that may be active.
            */
           shipChanges(ops, addOp, next);
+        } else {
+          $(this).dequeue();
         }
       }
     );
