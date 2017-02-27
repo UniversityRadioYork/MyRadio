@@ -310,12 +310,13 @@ var NIPSWeb = function (d) {
               weight: parseInt(li.attr("weight"))
             });
           }
-
           /**
            * The important bit - ship the change operations over to the server to update the remote datastructure,
            * the change log, and to propogate the changes to any other clients that may be active.
            */
           shipChanges(ops, addOp, next);
+        } else {
+          $(this).dequeue();
         }
       }
     );
@@ -680,11 +681,19 @@ var NIPSWeb = function (d) {
       "durationchange",
       function () {
         getDuration(channel);
-        sliders[getChannelInt(channel)].reset(
-          player.duration,
-          0,
-          $("#baps-channel-" + channel + " li.selected").attr("intro")
-        );
+        if ($('#baps-channel-' + channel + ' li.selected[type="central"]').length !=0) {
+          sliders[getChannelInt(channel)].reset(
+            player.duration,
+            0,
+            $("#baps-channel-" + channel + " li.selected").attr("intro")
+          );
+        } else {
+          sliders[getChannelInt(channel)].reset(
+            player.duration,
+            0,
+            0
+          );
+        }
       }
     );
 
@@ -700,7 +709,7 @@ var NIPSWeb = function (d) {
     $(slider).on(
       "introChanged",
       function (e) {
-        if ($(channelDiv).children(".selected").length != 0) {
+        if ($(channelDiv).children('.selected[type="central"]').length != 0) {
           var trackid = getRecTrackFromID($(channelDiv).children(".selected")[0].getAttribute("id"))[1];
           $(channelDiv).children(".selected")[0].setAttribute("intro", parseInt(e.originalEvent.detail.time));
           $.ajax({
@@ -804,7 +813,6 @@ var NIPSWeb = function (d) {
             $("#notice").html("Sorry, you need to use a modern browser to use Track Preview.").addClass("alert-error").show();
           }
           getPlayer(channel).src = myradio.makeURL("NIPSWeb", "secure_play", params);
-
           $(getPlayer(channel)).off("canplay.forloaded").on(
             "canplay.forloaded",
             function () {
@@ -831,7 +839,6 @@ var NIPSWeb = function (d) {
         }
       );
     }
-
     getPlayer(channel).cueTime = 0;
   };
 
