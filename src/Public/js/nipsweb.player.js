@@ -1,3 +1,26 @@
+//Global popup alert controller for all nipsweb js files.
+var showAlert = function (text, type) {
+  // Stores fancy message notice icons.
+  const ICON_ERROR = "<div class='glyphicon glyphicon-exclamation-sign'></div>&nbsp;";
+  const ICON_OK = "<div class='glyphicon glyphicon-ok'></div>&nbsp;";
+  const ICON_LOADING = "<div class='glyphicon glyphicon-refresh gly-spin'></div>&nbsp;";
+  const ICON_CLOSE = "<a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>";
+  if (!type) {
+    type = "success";
+  }
+  var icon;
+  if (type == "success") {
+    icon = ICON_OK;
+  } else if (type == "warning"){
+    icon = ICON_LOADING;
+  } else if (type == "danger") {
+    icon = ICON_ERROR;
+  }
+
+  $("#notice").removeClass(function (index, className) {
+    return (className.match (/(^|\s)alert-\S+/g) || []).join(' ')
+  }).addClass("alert-"+type).html(icon + text);
+};
 /* global ChannelConfigurator, myradio, mConfig */
 /* exported NIPSWeb */
 var NIPSWeb = function (d) {
@@ -76,23 +99,6 @@ var NIPSWeb = function (d) {
     $("#ch" + channel + "-duration").html(mindur + ":" + secdur);
   };
 
-  var showAlert = function (text, type) {
-    if (!type) {
-      type = "success";
-    }
-
-    var close = "<button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>×</span><span class='sr-only'>Close</span></button>";
-
-    var alert = $("<div></div>").addClass("footer-alert").addClass("alert").addClass("alert-"+type).html(text + close);
-    alert.alert();
-
-    setTimeout(function () {
-      alert.alert("close");
-    }, 15000);
-
-    $(document.body).append(alert);
-  };
-
   /**
    * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
    * ops: JSON changeset to send
@@ -106,12 +112,10 @@ var NIPSWeb = function (d) {
 
     ajaxQueue.queue(
       function (next) {
-        $("#notice").html("Saving changes...").show();
         $.ajax({
           async: !addOp,
           cache: false,
           success: function (data) {
-            $("#notice").hide();
             for (var i in data) {
               if (i === "myradio_errors") {
                 continue;
@@ -130,6 +134,7 @@ var NIPSWeb = function (d) {
             if (typeof pNext !== "undefined") {
               pNext();
             }
+            showAlert("Changes Saved Successfuly", "success");
           },
           data: {
             clientid: clientid,
@@ -147,6 +152,7 @@ var NIPSWeb = function (d) {
    * Detect what changes have been made to the show plan
    */
   var calcChanges = function (li) {
+    showAlert("Saving changes to show plan...", "warning");
     if (!li.hasOwnProperty("attr")) {
       li = $(li);
     }
@@ -715,7 +721,19 @@ var NIPSWeb = function (d) {
           $.ajax({
               url: mConfig.api_url + "/v2/track/" + trackid + "/intro",
               type: 'PUT',
-              data : {duration: e.originalEvent.detail.time}
+              data : {duration: e.originalEvent.detail.time},
+              success: function (data) {
+                for (file in data) {
+                  if (file === "myradio_errors") {
+                    continue;
+                  }
+                }
+                if (!data.status) {
+                  showAlert("We couldn't save that intro, try reloading.", "danger");
+                } else {
+                  showAlert("Intro Updated Successfuly", "success");
+                }
+              }
           });
         } else {
 
@@ -810,7 +828,7 @@ var NIPSWeb = function (d) {
             getPlayer(channel).type = "audio/ogg";
             params.ogg = true;
           } else {
-            $("#notice").html("Sorry, you need to use a modern browser to use Track Preview.").addClass("alert-error").show();
+            showAlert("Sorry, you need to use a modern browser to use Track Preview.", "danger");
           }
           getPlayer(channel).src = myradio.makeURL("NIPSWeb", "secure_play", params);
           $(getPlayer(channel)).off("canplay.forloaded").on(

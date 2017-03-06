@@ -13,7 +13,7 @@ var searchTimerRef = null;
 function updateCentralSearch()
 {
   var file;
-  $("#notice").html("Searching...").show();
+  showAlert("Searching library...", "warning");
   $.ajax({
     url: mConfig.api_url + "/v2/track/search/",
     type: 'get',
@@ -45,7 +45,7 @@ function updateCentralSearch()
         );
       }
       planner.registerItemClicks();
-      $("#notice").hide();
+      showAlert("Library Search Complete", "success");
     }
   });
 }
