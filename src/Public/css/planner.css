@@ -9,13 +9,13 @@ body {
   margin: 20px auto 0 auto;
 }
 
-#notice {
+/* #notice {
   position: fixed;
   top: 0;
   left: -2px;
   z-index: 1050;
   height: 51px;
-}
+} */
 
 .main-container, #baps-channel-container {
   height: calc(100% - 60px);
@@ -112,16 +112,6 @@ body {
 #res-filter-artist,  #res-filter-track,  #res-filter-name, #resource-add-header .twitter-typeahead {
   padding: 0;
   width: 100%;
-}
-
-.footer-alert {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1050;
-  margin-bottom: 0;
-  padding: 10px;
 }
 
 .box.height-1 {
