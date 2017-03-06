@@ -4,11 +4,13 @@
 <link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css" />
 {% endblock %}
 {% block content %}
-<div id="notice" class="alert alert-warning">Preparing show plan...</div>
 <header id="content-header">
-  <div id="baps-menu" class="btn-group">
-    <a  href="{{MyRadio.makeURL(config,'NIPSWeb','import')}}" id="menu-import" class="btn btn-default"><span class="glyphicon glyphicon-log-in"></span> Import</a>
-    <a  href="{{MyRadio.makeURL(config,'NIPSWeb','manage_library')}}" id="menu-track-upload" class="btn btn-default"><span class="glyphicon glyphicon-upload"></span> Upload to Library</a>
+  <div id="baps-menu">
+    <div id="notice" class="alert alert-warning"><div class="glyphicon glyphicon-refresh gly-spin"></div> Show Planner is starting up...</div>
+    <div class="btn-group">
+      <a href="{{MyRadio.makeURL(config,'NIPSWeb','import')}}" id="menu-import" class="btn btn-default"><span class="glyphicon glyphicon-log-in"></span> Import</a>
+      <a href="{{MyRadio.makeURL(config,'NIPSWeb','manage_library')}}" id="menu-track-upload" class="btn btn-default"><span class="glyphicon glyphicon-upload"></span> Upload to Library</a>
+    </div>
   </div>
   <h2>Show Planner <small>{{title}} - {{timeDate}}</small></h2>
 </header>
@@ -20,11 +22,13 @@
           {% for track in tracks[i] %}
             <li id='{% if track['managedid'] is defined %}ManagedDB{% else %}{{track['album']['recordid']}}{% endif %}-{{track['trackid']}}' type='{{track['type']}}'
                 {% if track['managedid'] is defined %}managedid='{{track['managedid']}}'{% endif %}
+                {% if track['clean'] is defined and track['clean'] == false %}class="unclean"{% endif %}
                 {% if track['type'] == 'aux' %}auxid='{{track['auxid']}}'{% endif %}
                 length='{{track['length']}}' timeslotitemid='{{track['timeslotitemid']}}'
                 weight='{{track['weight']}}' channel='{{track['channel']}}' intro='{{track['intro']}}'
-                title='{{track['title']}} ({{track['length']}})'
-                >{{track['title']}}{% if track['artist'] is defined %} - {{track['artist']}}{% endif %}</li>
+                title='{{track['title']}} ({{track['length']}})'>
+                {% if track['clean'] is defined and track['clean'] == false %}**{% endif %}{{track['title']}}
+                {% if track['artist'] is defined %} - {{track['artist']}}{% endif %}</li>
           {% endfor %}
         </ul>
       {% endfor %}
