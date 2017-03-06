@@ -9,6 +9,6 @@ $(document).ready(
     planner.initialisePlayer("1");
     planner.initialisePlayer("2");
     planner.initialisePlayer("3");
-    $("#notice").hide();
+    $("#notice").removeClass('alert-warning').addClass('alert-success').html(ICON_OK + 'Welcome to Show Planner!');
   }
 );
