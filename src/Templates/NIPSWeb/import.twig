@@ -31,7 +31,7 @@
       $(document).ready(
         function () {
           $.ajax({
-            url: mConfig.api_url + "/v2/user/1/shows/",
+            url: mConfig.api_url + "/v2/user/" + window.memberid + "/shows/",
             type: "get",
             success: function (data) {
               for (show in data) {
