@@ -6,27 +6,22 @@
     <style>html,body{background: none; box-shadow: none; width: 550px; min-width: 550px; height: auto;}</style>
     </head>
   <body>
-    <select class="form-control" id="import-show-selector">
-      <option disabled="disabled" selected="selected">Select a show...</option>
+    <select class="form-control" id="import-show-selector" disabled="disabled">
+      <option disabled="disabled" selected="selected" value="null">Select a show...</option>
     </select>
-    <select class="form-control" id="import-season-selector">
-      <option disabled="disabled" selected="selected">Select a season...</option>
+    <select class="form-control" id="import-season-selector" disabled="disabled">
+      <option disabled="disabled" selected="selected" value="null">Select a season...</option>
     </select>
-    <select class="form-control" id="import-timeslot-selector">
-      <option disabled="disabled" selected="selected">Select a timeslot...</option>
+    <select class="form-control" id="import-timeslot-selector" disabled="disabled">
+      <option disabled="disabled" selected="selected" value="null">Select a timeslot...</option>
     </select>
 
-    <div id="import-channel-selector" class="btn-group">
+    <div id="import-channel-selector" class="btn-group hidden">
         <a href="#" id="import-channel-0" channel="0" class="btn btn-default active">Channel 1</a>
         <a href="#" id="import-channel-1" channel="1" class="btn btn-default">Channel 2</a>
         <a href="#" id="import-channel-2" channel="2" class="btn btn-default">Channel 3</a>
     </div>
-    <ul id="import-channel-list" class="baps-channel">
-      <li>Track 1</li>
-      <li>Track 1</li>
-      <li>Track 1</li>
-      <li>Track 1</li>
-    </ul>
+    <ul id="import-channel-list" class="baps-channel hidden"></ul>
     <script type="text/javascript">
       $(document).ready(
         function () {
@@ -42,11 +37,16 @@
               for (show in data.payload) {
                 $('#import-show-selector').append("<option value='" + data.payload[show].show_id + "'>" + data.payload[show].title + "</option>");
               }
+              $('#import-show-selector').prop('disabled', false);
+              //if it's going to auto select the only element...
+              if (data.payload.length <= 1 ) {
+                updateSeasonList();
+              }
             }
           });
 
           $('#import-channel-selector a').on('click','', function() {
-              return selectChannel($(this).attr('channel'));
+              selectChannel($(this).attr('channel'));
             }
           );
         }
@@ -69,64 +69,85 @@
                   continue;
                 }
               }
-              var loadChannelList = function loadChannelList() {
-                $('#import-channel-list').empty();
-                selectedChannelNo = $('#import-channel-selector a.active').attr('channel');
-                for (item in data.payload[selectedChannelNo]) {
-                  extraString = "";
-                  if (data.payload[selectedChannelNo][item].type == "central") {
-                    extraString += " - " + data.payload[selectedChannelNo][item].artist;
-                  }
-                    $('#import-channel-list').append("<li>" + data.payload[selectedChannelNo][item].title + extraString + "</li>");
-                  //}
+              $('#import-channel-list').empty();
+              selectedChannelNo = $('#import-channel-selector a.active').attr('channel');
+              for (item in data.payload[selectedChannelNo]) {
+                extraString = "";
+                if (data.payload[selectedChannelNo][item].type == "central") {
+                  extraString += " - " + data.payload[selectedChannelNo][item].artist;
                 }
+                $('#import-channel-list').append("<li>" + data.payload[selectedChannelNo][item].title + extraString + "</li>");
               }
-              loadChannelList();
+              if (data.payload[selectedChannelNo] == undefined || data.payload[selectedChannelNo].length == 0) {
+                $('#import-channel-list').append("<li>No items in this channel.</li>");
+              }
             }
           });
       }
 
       $("#import-show-selector").change(function() {
-        selectedShowID = $('#import-show-selector').find(":selected").attr('value');
-        $.ajax({
-            url: mConfig.api_url + "/v2/show/" + selectedShowID + "/allseasons",
-            type: "get",
-            success: function (data) {
-              for (season in data) {
-                if (show === "myradio_errors") {
-                  continue;
-                }
-              }
-              $('#import-season-selector option:not(:selected)').remove();
-              for (season in data.payload) {
-                $('#import-season-selector').append("<option value='" + data.payload[season].season_id + "'>Season " + data.payload[season].season_num + "</option>");
-              }
-            }
-          });
+        updateSeasonList()
       });
 
       $("#import-season-selector").change(function() {
-        selectedSeasonID = $('#import-season-selector').find(":selected").attr('value');
-        $.ajax({
-            url: mConfig.api_url + "/v2/season/" + selectedSeasonID + "/alltimeslots",
-            type: "get",
-            success: function (data) {
-              for (timeslot in data) {
-                if (timeslot === "myradio_errors") {
-                  continue;
-                }
-              }
-              $('#import-timeslot-selector option:not(:selected)').remove();
-              for (timeslot in data.payload) {
-                $('#import-timeslot-selector').append("<option value='" + data.payload[timeslot].timeslot_id + "'>Episode " + data.payload[timeslot].timeslot_num + " (" + data.payload[timeslot].start_time + ")</option>");
-              }
-            }
-          });
+        updateTimeslotList()
       });
 
       $("#import-timeslot-selector").change(function() {
+        $("#import-channel-selector").removeClass("hidden");
+        $("#import-channel-list").removeClass("hidden");
         loadChannelList();
       });
+
+      function updateSeasonList() {
+        selectedShowID = $('#import-show-selector').find(":selected").attr('value');
+        $('#import-season-selector').prop('disabled', 'disabled');
+        $('#import-season-selector option:not(:disabled)').remove();
+        if (selectedShowID != "null") {
+          $.ajax({
+              url: mConfig.api_url + "/v2/show/" + selectedShowID + "/allseasons",
+              type: "get",
+              success: function (data) {
+                for (season in data) {
+                  if (season === "myradio_errors") {
+                    continue;
+                  }
+                }
+                for (season in data.payload) {
+                  $('#import-season-selector').append("<option value='" + data.payload[season].season_id + "'>Season " + data.payload[season].season_num + "</option>");
+                }
+                $('#import-season-selector').prop('disabled', false);
+                //if it's going to auto select the only element...
+                if (data.payload.length <= 1) {
+                  updateTimeslotList();
+                }
+              }
+            });
+        }
+      };
+
+      function updateTimeslotList() {
+        selectedSeasonID = $('#import-season-selector').find(":selected").attr('value');
+        $('#import-timeslot-selector').prop('disabled', 'disabled');
+        $('#import-timeslot-selector option:not(:disabled)').remove();
+        if (selectedSeasonID != "null") {
+          $.ajax({
+              url: mConfig.api_url + "/v2/season/" + selectedSeasonID + "/alltimeslots",
+              type: "get",
+              success: function (data) {
+                for (timeslot in data) {
+                  if (timeslot === "myradio_errors") {
+                    continue;
+                  }
+                }
+                for (timeslot in data.payload) {
+                  $('#import-timeslot-selector').append("<option value='" + data.payload[timeslot].timeslot_id + "'>Episode " + data.payload[timeslot].timeslot_num + " (" + data.payload[timeslot].start_time + ")</option>");
+                }
+                $('#import-timeslot-selector').prop('disabled', false);
+              }
+            });
+        };
+      };
 
 
     </script>
