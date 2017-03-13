@@ -85,18 +85,26 @@ fieldset { padding:0; border:0; margin-top:25px; }
   margin-bottom: .5em;
   border-collapse: separate;
   max-width: 250px;
+  
 }
-.selbtn { height:35px; width:35px; }
+.selbtn {
+ height:35px;
+ width:35px;
+ background-color: #eee;
+}
 .poweredon { cursor:pointer; }
-.s4on { background-color: #6b00a3; }
-.s4off { background-color: #5f0093; }
-.s3on { background-color: #0f0; }
-.s3off { background-color: #080; }
-.s2on { background-color: #0044ba; }
-.s2off { background-color: #003c76; }
-.s1on { background-color: #f00; }
-.s1off { background-color: #600; }
-.poweredoff { background-color: #333; }
+.s1on, .s2on, .s3on, .s4on {
+  border: 5px solid gold;
+}
+.poweredon.s4on { background-color: #6b00a3; }
+.poweredon.s4off { background-color: #5f0093; }
+.poweredon.s3on { background-color: #0f0; }
+.poweredon.s3off { background-color: #080; }
+.poweredon.s2on { background-color: #0044ba; }
+.poweredon.s2off { background-color: #003c76; }
+.poweredon.s1on { background-color: #f00; }
+.poweredon.s1off { background-color: #600; }
+.poweredoff { background-color: #eee; }
 
 .td-msgitem, .delbutton {
   cursor: pointer;
