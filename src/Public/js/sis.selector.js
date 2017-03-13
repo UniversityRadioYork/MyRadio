@@ -77,6 +77,17 @@ var Selector = function () {
           buttons[1].setAttribute("class", "selbtn poweredon " + liveStatus);
           buttons[1].setAttribute("on", "true");
         }
+        
+        if (!data["s4power"]) {
+          buttons[3].setAttribute("title", studios[4] + " Offline");
+          buttons[3].setAttribute("class", "selbtn poweredoff");
+          buttons[3].setAttribute("on", "false");
+        } else {
+          liveStatus = (data["studio"] == 2) ? "s4on" : "s4off";
+          buttons[3].setAttribute("title", studios[4]);
+          buttons[3].setAttribute("class", "selbtn poweredon " + liveStatus);
+          buttons[3].setAttribute("on", "true");
+        }
 
         liveStatus = (data["studio"] == 3) ? "s3on" : "s3off";
         buttons[2].setAttribute("class", "selbtn poweredon " + liveStatus);
