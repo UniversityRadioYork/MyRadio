@@ -79,7 +79,7 @@ var Selector = function () {
         }
         
         if (!data["s4power"]) {
-          buttons[3].setAttribute("title", studios[4] + " Offline");
+          buttons[3].setAttribute("title", studios[3] + " Offline");
           buttons[3].setAttribute("class", "selbtn poweredoff");
           buttons[3].setAttribute("on", "false");
         } else {
