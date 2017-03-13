@@ -84,7 +84,7 @@ var Selector = function () {
           buttons[3].setAttribute("on", "false");
         } else {
           liveStatus = (data["studio"] == 2) ? "s4on" : "s4off";
-          buttons[3].setAttribute("title", studios[4]);
+          buttons[3].setAttribute("title", studios[3]);
           buttons[3].setAttribute("class", "selbtn poweredon " + liveStatus);
           buttons[3].setAttribute("on", "true");
         }
