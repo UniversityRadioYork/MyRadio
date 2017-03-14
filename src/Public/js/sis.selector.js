@@ -56,24 +56,15 @@ var Selector = function () {
       if (data["ready"]) {
         for (studioNum = 1; studioNum <= 4; studioNum++) {
           studioNumIndex = studioNum-1;
-          if (studioNum != 3) {
-            if (!data["s" + studioNum + "power"]) {
-              powered = false;
-            } else {
-              powered = true;
-            }
+          if (studioNum != 3 && data["s" + studioNum + "power"] == false) {
+            buttons[studioNumIndex].setAttribute("title", studios[studioNumIndex] + " Powered Off");
+            buttons[studioNumIndex].setAttribute("class", "selbtn poweredoff s" + studioNum + "off");
+            buttons[studioNumIndex].setAttribute("on", "false");
           } else {
-            powered = true;
-          }
-          if (powered) {
             liveStatus = (data["studio"] == studioNum) ? "s" + studioNum + "on" : "s" + studioNum + "off";
             buttons[studioNumIndex].setAttribute("title", studios[studioNumIndex]);
             buttons[studioNumIndex].setAttribute("class", "selbtn poweredon " + liveStatus);
             buttons[studioNumIndex].setAttribute("on", "true");
-          } else {
-            buttons[studioNumIndex].setAttribute("title", studios[studioNumIndex] + " Powered Off");
-            buttons[studioNumIndex].setAttribute("class", "selbtn poweredoff s" + studioNum + "off");
-            buttons[studioNumIndex].setAttribute("on", "false");
           }
         }
         s = "<strong>" + studios[data["studio"] - 1] + "</strong> is On Air.";
