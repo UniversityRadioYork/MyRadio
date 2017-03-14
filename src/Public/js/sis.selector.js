@@ -26,7 +26,6 @@ var Selector = function () {
         myradio.createDialog("Error", "Could not change studio.<br>Studio selector is currently locked out.");
         return;
       }
-
       $.get(
         myradio.makeURL("SIS", "selector.set"),
         {src: studio},
@@ -77,7 +76,7 @@ var Selector = function () {
             buttons[studioNumIndex].setAttribute("on", "false");
           }
         }
-        s = studios[data["studio"] - 1] + " On Air";
+        s = "<strong>" + studios[data["studio"] - 1] + "</strong> is On Air.";
         currentStudio = data["studio"];
         if (data["lock"] != 0) {
           s = s + "<small> &mdash; Locked</small>";
