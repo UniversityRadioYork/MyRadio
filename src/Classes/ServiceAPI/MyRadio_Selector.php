@@ -195,17 +195,8 @@ class MyRadio_Selector
         if ($response === 'FLK') {
             throw new MyRadioException('Selector Locked');
         } elseif ($response === 'ACK') {
-            return [
-            'ready' => true,
-            'studio' => $studio,
-            'lock' => 0,
-            'selectedfrom' => 1,
-            's1power' => self::getStudio1PowerAtTime(),
-            's2power' => self::getStudio2PowerAtTime(),
-            's3power' => true,
-            's4power' => (self::remoteStreams()['s1']) ? true : false,
-            'lastmod' => time(),
-            ];
+            //Overrides JSON output because DB may have not caught up from phyical selector yet.
+            return getStatusAtTime(null, $studio, $status['studio']);
         }
     }
 
@@ -383,7 +374,7 @@ class MyRadio_Selector
      *
      * @return array
      */
-    public static function getStatusAtTime($time = null)
+    public static function getStatusAtTime($time = null, $studioOverride = null, $setByOverride = null)
     {
         if ($time === null) {
             $time = time();
@@ -393,9 +384,9 @@ class MyRadio_Selector
 
         return [
             'ready' => $status['ready'],
-            'studio' => self::getStudioAtTime($time),
+            'studio' => ($studioOverride === null) ? self::getStudioAtTime($time) : $studioOverride,
             'lock' => self::getLockAtTime($time),
-            'selectedfrom' => self::getSetbyAtTime($time),
+            'selectedfrom' => ($setByOverride === null) ? self::getSetbyAtTime($time) : $setByOverride,
             's1power' => self::getStudio1PowerAtTime($time),
             's2power' => self::getStudio2PowerAtTime($time),
             's3power' => true,
