@@ -195,8 +195,11 @@ class MyRadio_Selector
         if ($response === 'FLK') {
             throw new MyRadioException('Selector Locked');
         } elseif ($response === 'ACK') {
-            //Overrides JSON output because DB may have not caught up from phyical selector yet.
-            return getStatusAtTime(null, $studio, $status['studio']);
+            // DB may not have updaded from the physical selector, so force it.
+            $statusUpdated = getStatusAtTime();
+            $statusUpdated['selectedfrom'] = $status['studio'];
+            $statusUpdated['studio'] = $studio;
+            return $statusUpdated;
         }
     }
 
@@ -374,7 +377,7 @@ class MyRadio_Selector
      *
      * @return array
      */
-    public static function getStatusAtTime($time = null, $studioOverride = null, $setByOverride = null)
+    public static function getStatusAtTime($time = null)
     {
         if ($time === null) {
             $time = time();
