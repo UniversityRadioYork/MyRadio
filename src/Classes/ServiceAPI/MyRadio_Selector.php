@@ -196,6 +196,7 @@ class MyRadio_Selector
             throw new MyRadioException('Selector Locked');
         } elseif ($response === 'ACK') {
             return [
+            'ready' => self::remoteStreams()['ready'],
             'studio' => $studio,
             'lock' => 0,
             'selectedfrom' => 1,
