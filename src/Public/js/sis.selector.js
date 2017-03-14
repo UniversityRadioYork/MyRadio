@@ -48,7 +48,7 @@ var Selector = function () {
       if (time <= lastTime) {
         return;
       }
-      lastTime = parseInt(data["lastmod"]);
+      lastTime = time;
       // When called bet selectStudio, this isn't what I think it is
       // @todo, see if that can be bound nicer
       that.registerParam("selector-lasttime", lastTime);
@@ -56,15 +56,15 @@ var Selector = function () {
       if (data["ready"]) {
         for (studioNum = 1; studioNum <= 4; studioNum++) {
           studioNumIndex = studioNum-1;
-          if (studioNum != 3 && data["s" + studioNum + "power"] == false) {
-            buttons[studioNumIndex].setAttribute("title", studios[studioNumIndex] + " Powered Off");
-            buttons[studioNumIndex].setAttribute("class", "selbtn poweredoff s" + studioNum + "off");
-            buttons[studioNumIndex].setAttribute("on", "false");
-          } else {
+          if (data["s" + studioNum + "power"]) {
             liveStatus = (data["studio"] == studioNum) ? "s" + studioNum + "on" : "s" + studioNum + "off";
             buttons[studioNumIndex].setAttribute("title", studios[studioNumIndex]);
             buttons[studioNumIndex].setAttribute("class", "selbtn poweredon " + liveStatus);
             buttons[studioNumIndex].setAttribute("on", "true");
+          } else {
+            buttons[studioNumIndex].setAttribute("title", studios[studioNumIndex] + " Powered Off");
+            buttons[studioNumIndex].setAttribute("class", "selbtn poweredoff s" + studioNum + "off");
+            buttons[studioNumIndex].setAttribute("on", "false");
           }
         }
         s = "<strong>" + studios[data["studio"] - 1] + "</strong> is On Air.";
