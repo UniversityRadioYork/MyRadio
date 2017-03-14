@@ -196,12 +196,12 @@ class MyRadio_Selector
             throw new MyRadioException('Selector Locked');
         } elseif ($response === 'ACK') {
             return [
-            'ready' => self::remoteStreams()['ready'],
             'studio' => $studio,
             'lock' => 0,
             'selectedfrom' => 1,
-            's1power' => self::getStudio1PowerAtTime(),
-            's2power' => self::getStudio2PowerAtTime(),
+            's1power' => self::getStudio1PowerAtTime($time),
+            's2power' => self::getStudio2PowerAtTime($time),
+            's3power' => true,
             's4power' => (self::remoteStreams()['s1']) ? true : false,
             'lastmod' => time(),
             ];
@@ -397,6 +397,7 @@ class MyRadio_Selector
             'selectedfrom' => self::getSetbyAtTime($time),
             's1power' => self::getStudio1PowerAtTime($time),
             's2power' => self::getStudio2PowerAtTime($time),
+            's3power' => true,
             's4power' => (isset($status['s1'])) ? $status['s1'] : false,
             'lastmod' => self::getLastModAtTime($time),
         ];
