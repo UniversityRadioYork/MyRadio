@@ -200,8 +200,8 @@ class MyRadio_Selector
             'studio' => $studio,
             'lock' => 0,
             'selectedfrom' => 1,
-            's1power' => self::getStudio1PowerAtTime($time),
-            's2power' => self::getStudio2PowerAtTime($time),
+            's1power' => self::getStudio1PowerAtTime(),
+            's2power' => self::getStudio2PowerAtTime(),
             's4power' => (self::remoteStreams()['s1']) ? true : false,
             'lastmod' => time(),
             ];
