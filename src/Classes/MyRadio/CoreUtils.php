@@ -242,9 +242,21 @@ class CoreUtils
      */
     public static function encodeTrack($tmpfile, $dbfile)
     {
-        shell_exec("nice -n 15 ffmpeg -i '{$tmpfile}' -ab 192k -f mp3 -map 0:a '{$dbfile}.mp3'");
-        shell_exec("nice -n 15 ffmpeg -i '{$tmpfile}' -acodec libvorbis -ab 192k -map 0:a '{$dbfile}.ogg'");
-        if (!file_exists($dbfile.'.mp3') || !file_exists($dbfile.'.ogg')) {
+        $commands = ['mp3' => "nice -n 15 ffmpeg -i '{$tmpfile}' -ab 192k -f mp3 -map 0:a '{$dbfile}.mp3'",
+                     'ogg' => "nice -n 15 ffmpeg -i '{$tmpfile}' -acodec libvorbis -ab 192k -map 0:a '{$dbfile}.ogg'"];
+        $escaped_commands = array_map('escapeshellcmd', $commands);
+        $failed_formats = [];
+
+        foreach ($escaped_commands as $format => $command) {
+            exec($command, $command_stdout, $command_exit_code);
+            if ($command_exit_code) {
+                $failed_formats[] = $format;
+            }
+        }
+
+        if ($failed_formats) {
+            throw new MyRadioException('Conversion failed: ' . implode(',', $failed_formats), 500);
+        } elseif (!file_exists($dbfile.'.mp3') || !file_exists($dbfile.'.ogg')) {
             throw new MyRadioException('Conversion failed', 500);
         }
 
