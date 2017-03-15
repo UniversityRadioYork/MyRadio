@@ -387,9 +387,9 @@ class MyRadio_Selector
 
         return [
             'ready' => $status['ready'],
-            'studio' => ($studioOverride === null) ? self::getStudioAtTime($time) : $studioOverride,
+            'studio' => self::getStudioAtTime($time),
             'lock' => self::getLockAtTime($time),
-            'selectedfrom' => ($setByOverride === null) ? self::getSetbyAtTime($time) : $setByOverride,
+            'selectedfrom' => self::getSetbyAtTime($time),
             's1power' => self::getStudio1PowerAtTime($time),
             's2power' => self::getStudio2PowerAtTime($time),
             's3power' => true,
