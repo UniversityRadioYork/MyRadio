@@ -233,6 +233,28 @@ class CoreUtils
     }
 
     /**
+     * Runs the relevant encode commands on an uploaded music file.
+     *
+     * @param string $tmpfile The original unencoded filepath
+     * @param string $dbfile  The destination filepath, sans extension
+     * @throws MyRadioException Thrown if encode or move commands appear to fail.
+     * @note Similar command is run for podcast uploads, which are done slightly differently
+     */
+    public static function encodeTrack($tmpfile, $dbfile)
+    {
+        shell_exec("nice -n 15 ffmpeg -i '{$tmpfile}' -ab 192k -f mp3 -map 0:a '{$dbfile}.mp3'");
+        shell_exec("nice -n 15 ffmpeg -i '{$tmpfile}' -acodec libvorbis -ab 192k -map 0:a '{$dbfile}.ogg'");
+        if (!file_exists($dbfile.'.mp3') || !file_exists($dbfile.'.ogg')) {
+            throw new MyRadioException('Conversion failed', 500);
+        }
+
+        rename($tmpfile, "{$dbfile}.mp3.orig");
+        if (!file_exists("{$dbfile}.mp3.orig")) {
+            throw new MyRadioException('Could not move file to library.');
+        }
+    }
+
+    /**
      * A simple debug method that only displays output for a specific user.
      *
      * @param int    $userid  The ID of the user to display for

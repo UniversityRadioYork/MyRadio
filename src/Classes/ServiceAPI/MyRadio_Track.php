@@ -1065,18 +1065,11 @@ class MyRadio_Track extends ServiceAPI
          */
         $tmpfile = Config::$audio_upload_tmp_dir.'/'.$tmpid;
         $dbfile = $ainfo['album']->getFolder().'/'.$track->getID();
-
-        if (`which ffmpeg`) {
-            $bin = 'ffmpeg';
-        } elseif (`which avconv`) {
-            $bin = 'avconv';
-        } else {
-            throw new MyRadioException('Could not find ffmpeg or avconv.', 500);
+        try {
+            CoreUtils::encodeTrack($tmpfile, $dbfile);
+        } catch (MyRadioException $e) {
+            return ['status' => 'FAIL', 'error' => $e->getMessage()];
         }
-
-        shell_exec("nice -n 15 $bin -i '$tmpfile' -ab 192k -f mp3 -map 0:a '{$dbfile}.mp3'");
-        shell_exec("nice -n 15 $bin -i '$tmpfile' -acodec libvorbis -ab 192k -map 0:a '{$dbfile}.ogg'");
-        rename($tmpfile, $dbfile.'.mp3.orig');
 
         self::$db->query('COMMIT');
 

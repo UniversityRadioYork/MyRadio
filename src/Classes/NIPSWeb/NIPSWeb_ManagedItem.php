@@ -214,10 +214,13 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
         ];
 
         $item = self::create($options);
-
         if (!$item) {
             //Database transaction failed.
             return ['status' => 'FAIL', 'error' => 'A database kerfuffle occured.', 'fileid' => $_REQUEST['fileid']];
+        }
+        if (!$item->getFolder()) {
+            //Creating folders failed.
+            return ['status' => 'FAIL', 'error' => 'Folders could not be created.', 'fileid' => $_REQUEST['fileid']];
         }
 
         /*
@@ -227,31 +230,13 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
          * 3- Original file for potential future conversions
          */
         $tmpfile = Config::$audio_upload_tmp_dir.'/'.$tmpid;
-
-        if (!$item->getFolder()) {
-            //Creating folders failed.
-            return ['status' => 'FAIL', 'error' => 'Folders could not be created.', 'fileid' => $_REQUEST['fileid']];
-        }
         $dbfile = $item->getFolder().'/'.$item->getID();
+        CoreUtils::encodeTrack($tmpfile, $dbfile);
 
-        //Convert it with ffmpeg/avconv
-        if (`which ffmpeg`) {
-            $bin = 'ffmpeg';
-        } elseif (`which avconv`) {
-            $bin = 'avconv';
-        } else {
-            throw new MyRadioException('Could not find ffmpeg or avconv.', 500);
-        }
-        // BAPS needs stdout > to file
-        shell_exec("nice -n 15 $bin -i '$tmpfile' -ab 192k -f mp3 '{$dbfile}.mp3'");
-        shell_exec("nice -n 15 $bin -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
-        rename($tmpfile, $dbfile.'.'.$_SESSION['uploadInfo'][$tmpid]['fileformat'].'.orig');
-
-        if (!file_exists($dbfile.'.mp3') || !file_exists($dbfile.'.ogg')) {
-            //Conversion failed!
-            return ['status' => 'FAIL', 'error' => 'Conversion with $bin failed.', 'fileid' => $_REQUEST['fileid']];
-        } elseif (!file_exists($dbfile.'.'.$_SESSION['uploadInfo'][$tmpid]['fileformat'].'.orig')) {
-            return ['status' => 'FAIL', 'error' => 'Could not move file to library.', 'fileid' => $_REQUEST['fileid']];
+        try {
+            CoreUtils::encodeTrack($tmpfile, $dbfile);
+        } catch (MyRadioException $e) {
+            return ['status' => 'FAIL', 'error' => $e->getMessage(), 'fileid' => $_REQUEST['fileid']];
         }
 
         NIPSWeb_BAPSUtils::linkCentralLists($item);
