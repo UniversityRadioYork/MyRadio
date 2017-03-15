@@ -77,7 +77,7 @@ var Webcam = function () {
 
       currentWebcam = data["status"]["camera"];
       if (currentWebcam !== -1) {
-        onAir.innerHTML = data["status"]["location"] + " is On Air";
+        onAir.innerHTML = "<strong>" + data["status"]["location"] + "</strong> is On Air.";
       } else {
         onAir.innerHTML = "Webcam information is not available at this time.";
       }
