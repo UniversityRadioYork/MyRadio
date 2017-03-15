@@ -195,10 +195,11 @@ class MyRadio_Selector
         if ($response === 'FLK') {
             throw new MyRadioException('Selector Locked');
         } elseif ($response === 'ACK') {
-            // DB may not have updaded from the physical selector, so force it.
+            // DB may not have updated from the physical selector, so force it.
             $statusUpdated = getStatusAtTime();
             $statusUpdated['selectedfrom'] = 1;
             $statusUpdated['studio'] = $studio;
+            $statusUpdated['lastmod'] = time();
             return $statusUpdated;
         }
     }
