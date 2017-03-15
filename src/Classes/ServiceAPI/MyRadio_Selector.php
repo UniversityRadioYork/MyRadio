@@ -197,7 +197,7 @@ class MyRadio_Selector
         } elseif ($response === 'ACK') {
             // DB may not have updaded from the physical selector, so force it.
             $statusUpdated = getStatusAtTime();
-            $statusUpdated['selectedfrom'] = $status['studio'];
+            $statusUpdated['selectedfrom'] = 1;
             $statusUpdated['studio'] = $studio;
             return $statusUpdated;
         }
