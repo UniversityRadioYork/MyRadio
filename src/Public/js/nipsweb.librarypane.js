@@ -239,7 +239,21 @@ $(document).ready(function () {
   });
 
   $("#menu-import").click(function () {
-    var url = $(this).attr("href");
+
+    //work out the channel
+    channel0lastweight = $("#baps-channel-1 li:last").attr("weight");
+    channel1lastweight = $("#baps-channel-2 li:last").attr("weight");
+    channel2lastweight = $("#baps-channel-3 li:last").attr("weight");
+    if (channel0lastweight == undefined) {
+      channel0lastweight = -1;
+    }
+    if (channel1lastweight == undefined) {
+      channel1lastweight = -1;
+    }
+    if (channel2lastweight == undefined) {
+      channel2lastweight = -1;
+    }
+    var url = $(this).attr("href") + "?clientid=" + clientid + "&channel0lastweight=" + channel0lastweight + "&channel1lastweight=" + channel1lastweight + "&channel2lastweight=" + channel2lastweight;
     myradio.createDialog("Import from another show", "<iframe src='" + url + "' width='580' height='500' frameborder='0'></iframe>");
     return false;
   });

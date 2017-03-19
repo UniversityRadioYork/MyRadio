@@ -21,6 +21,15 @@ var showAlert = function (text, type) {
     return (className.match (/(^|\s)alert-\S+/g) || []).join(' ')
   }).addClass("alert-"+type).html(icon + text);
 };
+
+//reload the page after something good or bad happens
+var reload = function() {
+  location.reload();
+}
+
+// Stores the clientid to enable multiple editors
+var clientid = null;
+
 /* global ChannelConfigurator, myradio, mConfig */
 /* exported NIPSWeb */
 var NIPSWeb = function (d) {
@@ -30,8 +39,7 @@ var NIPSWeb = function (d) {
   var changeQueue = $({});
   // Queue up sending ajax requests one at a time
   var ajaxQueue = $({});
-  // Stores the clientid to enable multiple editors
-  var clientid = null;
+
   // Stores whether this show plan is writable
   var writable = true;
   // Stores the actual player audio elements

@@ -6,6 +6,7 @@
     <style>html,body{background: none; box-shadow: none; width: 550px; min-width: 550px; height: auto;}</style>
     </head>
   <body>
+    <div id="alert" class="alert alert-warning"><div class="glyphicon glyphicon-refresh gly-spin"></div> Welcome to the Importer!</div>
     <select class="form-control" id="import-show-selector" disabled="disabled">
       <option disabled="disabled" selected="selected" value="null">Select a show...</option>
     </select>
@@ -21,10 +22,40 @@
         <a href="#" id="import-channel-1" channel="1" class="btn btn-default">Channel 2</a>
         <a href="#" id="import-channel-2" channel="2" class="btn btn-default">Channel 3</a>
     </div>
-    <ul id="import-channel-list" class="baps-channel hidden"></ul>
+    <form id="import-channel-list" class="baps-channel hidden"></form>
+      <div id="import-to-channel-selector" class="hidden">
+        <label>Import to </label>
+        <div class="btn-group">
+            <a href="#" id="import-to-channel-0" channel="0" class="btn btn-default" onclick="importSelectedTracks(0)">Channel 1</a>
+            <a href="#" id="import-to-channel-1" channel="1" class="btn btn-default" onclick="importSelectedTracks(1)">Channel 2</a>
+            <a href="#" id="import-to-channel-2" channel="2" class="btn btn-default" onclick="importSelectedTracks(2)">Channel 3</a>
+        </div>
+      <div
+    </div>
     <script type="text/javascript">
+
+    // Queue up sending ajax requests one at a time
+    var ajaxQueue = $({});
+
+
+          //Get the GET variables for clientid.
+          $.urlParam = function(name){
+            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            return results[1] || 0;
+          }
+      var clientid;
+      var nextWeightChannel0;
+      var nextWeightChannel1;
+      var nextWeightChannel2;
+
       $(document).ready(
         function () {
+
+          clientid = parseInt($.urlParam('clientid'));
+          nextWeightChannel0 = parseInt($.urlParam('channel0lastweight'))+1;
+          nextWeightChannel1 = parseInt($.urlParam('channel1lastweight'))+1;
+          nextWeightChannel2 = parseInt($.urlParam('channel2lastweight'))+1;
+
           $.ajax({
             url: mConfig.api_url + "/v2/user/" + window.memberid + "/shows/",
             type: "get",
@@ -52,6 +83,40 @@
         }
       );
 
+      //reload the page after something good or bad happens
+      var reload = function() {
+        parent.location.reload();
+      }
+
+      //popup alert controller.
+      var showAlert = function (text, type, reload) {
+        // Stores fancy message notice icons.
+        const ICON_ERROR = "<div class='glyphicon glyphicon-exclamation-sign'></div>&nbsp;";
+        const ICON_OK = "<div class='glyphicon glyphicon-ok'></div>&nbsp;";
+        const ICON_LOADING = "<div class='glyphicon glyphicon-refresh gly-spin'></div>&nbsp;";
+        const ICON_CLOSE = "<a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>";
+        if (!type) {
+          type = "success";
+        }
+        var icon;
+        if (type == "success") {
+          icon = ICON_OK;
+        } else if (type == "warning"){
+          icon = ICON_LOADING;
+        } else if (type == "danger") {
+          icon = ICON_ERROR;
+        }
+        if (reload) {
+          text = text + ' <a onClick="reload()" title="Reload the page">Please reload your show plan.</a>';
+        }
+
+        $("#alert").removeClass(function (index, className) {
+          return (className.match (/(^|\s)alert-\S+/g) || []).join(' ')
+        }).addClass("alert-"+type).html(icon + text);
+
+        parent.showAlert(text, type, reload);
+      };
+
       function selectChannel(channelNo) {
         $('#import-channel-selector a').removeClass('active');
         $('#import-channel-' + channelNo).addClass('active');
@@ -72,11 +137,14 @@
               $('#import-channel-list').empty();
               selectedChannelNo = $('#import-channel-selector a.active').attr('channel');
               for (item in data.payload[selectedChannelNo]) {
-                extraString = "";
                 if (data.payload[selectedChannelNo][item].type == "central") {
-                  extraString += " - " + data.payload[selectedChannelNo][item].artist;
+                  extraString = " - " + data.payload[selectedChannelNo][item].artist;
+                  itemid = data.payload[selectedChannelNo][item]['album'].recordid + "-" + data.payload[selectedChannelNo][item].trackid;
+                } else {
+                  extraString = "";
+                  itemid = "ManagedDB-" + data.payload[selectedChannelNo][item].managedid;
                 }
-                $('#import-channel-list').append("<li>" + data.payload[selectedChannelNo][item].title + extraString + "</li>");
+                $('#import-channel-list').append('<input type="checkbox" value="'+ itemid + '">' + data.payload[selectedChannelNo][item].title + extraString + "<br>");
               }
               if (data.payload[selectedChannelNo] == undefined || data.payload[selectedChannelNo].length == 0) {
                 $('#import-channel-list').append("<li>No items in this channel.</li>");
@@ -97,6 +165,7 @@
         $("#import-channel-selector").removeClass("hidden");
         $("#import-channel-list").removeClass("hidden");
         loadChannelList();
+        $("#import-to-channel-selector").removeClass("hidden");
       });
 
       function updateSeasonList() {
@@ -149,10 +218,76 @@
         };
       };
 
-
+      function importSelectedTracks(channelNo) {
+        var ops = [];
+        $('input[type=checkbox]').each(function () {
+          if (this.checked) {
+            //alert($(this).val());
+            if (channelNo == 0){
+              weight = nextWeightChannel0;
+              nextWeightChannel0++;
+            } else if (channelNo == 1){
+              weight = nextWeightChannel1;
+              alert(weight);
+              nextWeightChannel1++;
+            } else if (channelNo == 2){
+              weight = nextWeightChannel2;
+              nextWeightChannel2++;
+            }
+            ops.push({
+              op: "AddItem",
+              id: $(this).val(), //format: album-track
+              channel: parseInt(channelNo),
+              weight: weight
+            });
+           }
+        });
+        shipChanges(ops, clientid);
+      };
+  /**
+   * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
+   * ops: JSON changeset to send
+   * addOp: If true, there has been an add operation. We currently make these syncronous.
+   * pNext: Optional. Parent queue to process on completion.
+   */
+  var shipChanges = function (ops, clientid) {
+    ajaxQueue.queue(
+      function (next) {
+        $.ajax({
+          async: false,
+          cache: false,
+          success: function (data) {
+            for (var i in data) {
+              if (i === "myradio_errors") {
+                continue;
+              }
+              if (typeof data[i].timeslotitemid !== "undefined") {
+                //@todo multiple AddItem ops in a jsonon set will make this break
+                //We should say something here on screen about importing this secific track.
+                console.log('We got a timeslotitemid, so it was added.');
+              }
+              if (!data[i].status) {
+                console.log('Nope, something weird happened here.');
+              }
+            }
+          },
+          complete: function () {
+            next();
+            showAlert("Tracks imported!", "success", true)
+          },
+          data: {
+            clientid: clientid,
+            ops: ops
+          },
+          dataType: "json",
+          type: "POST",
+          url: myradio.makeURL("NIPSWeb", "recv_ops")
+        });
+      }
+    );
+  };
     </script>
 
 {% include 'parts/base_foot.twig' %}
   </body>
 </html>
-
