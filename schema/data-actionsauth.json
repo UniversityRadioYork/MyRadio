@@ -80,6 +80,7 @@
     ["NIPSWeb", "secure_play", "AUTH_USENIPSWEB"],
     ["NIPSWeb", "upload_aux", "AUTH_USENIPSWEB"],
     ["NIPSWeb", "upload_central", "AUTH_USENIPSWEB"],
+    ["NIPSWeb", "import", "AUTH_USENIPSWEB"],
     ["Podcast", "createPodcast", "AUTH_STANDALONEPODCAST"],
     ["Podcast", "createPodcast", "AUTH_APPLYFORSHOW"],
     ["Podcast", "createPodcast", "AUTH_UPLOADPODCASTS"],
