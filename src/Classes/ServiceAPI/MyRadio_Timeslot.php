@@ -679,7 +679,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             }
         }
 
-        if (isset($response['next']) && sizeof($response['next']) === 1) {
+        if (isset($response['next']) && sizeof($response['next']) === 1 && $n==1) {
             $response['next'] = $response['next'][0];
         }
 
