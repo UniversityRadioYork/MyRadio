@@ -1122,7 +1122,7 @@ $times
             $string_keys = ['title', 'description', 'tag'];
         }
 
-        $r = parent::searchMeta(
+        $r = parent::searchMetaBase(
             $query,
             $string_keys,
             $effective_from,

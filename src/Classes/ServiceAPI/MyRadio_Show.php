@@ -849,7 +849,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $string_keys = ['title', 'description', 'tag'];
         }
 
-        $r = parent::searchMeta(
+        $r = parent::searchMetaBase(
             $query,
             $string_keys,
             $effective_from,

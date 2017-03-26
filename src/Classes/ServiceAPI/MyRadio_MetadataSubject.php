@@ -255,7 +255,7 @@ trait MyRadio_MetadataSubject
      *
      * @return array The list of IDs of whatever is being searched.
      */
-    public static function searchMeta(
+    protected static function searchMetaBase(
         $query,
         $string_keys,
         $effective_from = null,
@@ -287,4 +287,20 @@ trait MyRadio_MetadataSubject
 
         return $results;
     }
+
+    /**
+     * Abstract actual implementation of searchMetaBase.
+     * Passes $table & $id_field into searchMetaBase and then does something else with the results.
+     *
+     * @param string $query          The query value.
+     * @param array  $string_keys    The metadata keys to search
+     * @param int    $effective_from UTC Time to search from.
+     * @param int    $effective_to   UTC Time to search to.
+     */
+    abstract public static function searchMeta(
+        $query,
+        $string_keys = null,
+        $effective_from = null,
+        $effective_to = null
+    );
 }
