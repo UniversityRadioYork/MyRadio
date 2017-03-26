@@ -4,8 +4,6 @@
  */
 namespace MyRadio\ServiceAPI;
 
-use MyRadio\Iface\IServiceAPI;
-use MyRadio\Iface\MyRadio_DataSource;
 use MyRadio\Config;
 use MyRadio\Database;
 use MyRadio\MyRadioException;
@@ -17,7 +15,7 @@ use MyRadio\MyRadioException;
  * @uses    \Database
  * @uses    \CacheProvider
  */
-abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
+abstract class ServiceAPI
 {
     /**
      * All ServiceAPI subclasses will contain a reference to the Database Singleton.
