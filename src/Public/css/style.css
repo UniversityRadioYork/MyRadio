@@ -227,18 +227,6 @@ body {
   display: inline-block;
 }
 
-/** MyRadio News Alert Styles **/
-.myury-news-alert {
-  text-align: center;
-}
-.myury-news-alert ul {
-  text-align: left;
-}
-.myury-news-alert footer {
-  text-align: right;
-  padding-right: 10px;
-}
-
 fieldset.myradioform label {
   width: 12em;
 }
