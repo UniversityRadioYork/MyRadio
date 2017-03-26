@@ -39,6 +39,8 @@ body {
 }
 #resource-add-header {
   background-color: #777;
+  height:92px;
+  padding-top: 5px;
 }
 #resource-add-header .tt-hint {
   margin: 0 0 0 2px;
@@ -52,8 +54,8 @@ body {
 
 #central-dragdrop, #res-dragdrop {
   height: 150px;
-  margin-bottom: 0;
-  width: 550px;
+  margin: 0 2px 0 1px;
+  width: calc(100% - 3px);
 }
 #central-status, #res-status {
   position: relative;
@@ -64,7 +66,8 @@ body {
   padding-top: 5px;
 }
 #res-type-sel {
-  margin-bottom: 10px;
+  margin: 0 2px 5px 1px;
+  width: calc(100% - 3px);
 }
 .result-container {
   width: 550px;
@@ -100,7 +103,6 @@ body {
   float: right;
   margin: 0;
   position: relative;
-  right: 20px;
 }
 #baps-menu .btn-group {
   margin: -2px 0 0 0;
@@ -120,7 +122,9 @@ body {
   padding: 0;
   width: 100%;
 }
-
+#res-filter-name {
+  margin-top:24px;
+}
 .box.height-1 {
   height: 75%;
 }
@@ -129,7 +133,7 @@ body {
   margin-bottom: 0;
 }
 
-ul.baps-channel {
+ul.baps-channel, form.baps-channel {
   overflow-x: hidden;
   overflow-y: scroll;
   padding: 0;
@@ -177,6 +181,16 @@ select {
 
 #track-manual-entry label {
   width: 150px;
+}
+
+/** Iframe Popups **/
+
+#iframe {
+  background: none;
+  box-shadow: none;
+  width: 568px;
+  min-width: 568px;
+  height: auto;
 }
 
 /** SLIDER COMPONENT **/
