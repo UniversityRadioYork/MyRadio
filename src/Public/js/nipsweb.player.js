@@ -467,102 +467,266 @@ var NIPSWeb = function (d) {
     });
   };
 
-  var configureContextMenus = function () {
-    var invert = function (obj, attr) {
-      if (obj.getAttribute(attr) == 1) {
-        obj.setAttribute(attr, 0);
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  //
+  // H E L P E R    F U N C T I O N S
+  //
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Function to check if we clicked inside an element with a particular class
+   * name.
+   *
+   * @param {Object} e The event
+   * @param {String} className The class name to check against
+   * @return {Boolean}
+   */
+  function clickInsideElement( e, className ) {
+    var el = e.srcElement || e.target;
+
+    if ( el.classList.contains(className) ) {
+      return el;
+    } else {
+      while ( el = el.parentNode ) {
+        if ( el.classList && el.classList.contains(className) ) {
+          return el;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Get's exact position of event.
+   *
+   * @param {Object} e The event passed in
+   * @return {Object} Returns the x and y position
+   */
+  function getPosition(e) {
+    var posx = 0;
+    var posy = 0;
+
+    if (!e) var e = window.event;
+
+    if (e.pageX || e.pageY) {
+      posx = e.pageX;
+      posy = e.pageY;
+    } else if (e.clientX || e.clientY) {
+      posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+      posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+    }
+
+    return {
+      x: posx,
+      y: posy
+    }
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  //
+  // C O R E    F U N C T I O N S
+  //
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Variables.
+   */
+  var contextMenuClassName = "context-menu";
+  var contextMenuItemClassName = "context-menu__item";
+  var contextMenuLinkClassName = "context-menu__link";
+  var contextMenuActive = "context-menu--active";
+
+  var taskItemClassName = "showplan-item";
+  var taskItemInContext;
+
+  var clickCoords;
+  var clickCoordsX;
+  var clickCoordsY;
+
+  var menu = document.querySelector("#context-menu");
+  var menuItems = menu.querySelectorAll(".context-menu__item");
+  var menuState = 0;
+  var menuWidth;
+  var menuHeight;
+  var menuPosition;
+  var menuPositionX;
+  var menuPositionY;
+
+  var windowWidth;
+  var windowHeight;
+
+  /**
+   * Initialise our application's code.
+   */
+  function initContextMenu() {
+    contextListener();
+    clickListener();
+    keyupListener();
+    resizeListener();
+  }
+
+  /**
+   * Listens for contextmenu events.
+   */
+  function contextListener() {
+    document.addEventListener( "contextmenu", function(e) {
+      taskItemInContext = clickInsideElement( e, taskItemClassName );
+
+      if ( taskItemInContext ) {
+        e.preventDefault();
+        bapschannel = "#baps-channel-" + (parseInt(taskItemInContext.getAttribute("channel")) + 1);
+
+        $(".contextIcon-AutoAdvance").css("visibility", $(bapschannel).attr("autoadvance")==1 ? "visible" : "hidden");
+        $(".contextIcon-PlayOnLoad").css("visibility", $(bapschannel).attr("playonload")==1 ? "visible" : "hidden");
+        $(".contextIcon-Repeat0").css("visibility", $(bapschannel).attr("repeat")==0 ? "visible" : "hidden");
+        $(".contextIcon-Repeat1").css("visibility", $(bapschannel).attr("repeat")==1 ? "visible" : "hidden");
+        $(".contextIcon-Repeat2").css("visibility", $(bapschannel).attr("repeat")==2 ? "visible" : "hidden");
+
+        toggleMenuOn();
+        positionMenu(e);
       } else {
-        obj.setAttribute(attr, 1);
+        taskItemInContext = null;
+        toggleMenuOff();
+      }
+    });
+  }
+
+  /**
+   * Listens for click events.
+   */
+  function clickListener() {
+    document.addEventListener( "click", function(e) {
+      var clickeElIsLink = clickInsideElement( e, contextMenuLinkClassName );
+
+      if ( clickeElIsLink ) {
+        e.preventDefault();
+        menuItemListener( clickeElIsLink );
+      } else {
+        var button = e.which || e.button;
+        if ( button === 1 ) {
+          toggleMenuOff();
+        }
+      }
+    });
+  }
+
+  /**
+   * Listens for keyup events.
+   */
+  function keyupListener() {
+    window.onkeyup = function(e) {
+      if ( e.keyCode === 27 ) {
+        toggleMenuOff();
+      }
+    }
+  }
+
+  /**
+   * Window resize event listener
+   */
+  function resizeListener() {
+    window.onresize = function(e) {
+      toggleMenuOff();
+    };
+  }
+
+  /**
+   * Turns the custom context menu on.
+   */
+  function toggleMenuOn() {
+    if ( menuState !== 1 ) {
+      menuState = 1;
+      menu.classList.add( contextMenuActive );
+    }
+  }
+
+  /**
+   * Turns the custom context menu off.
+   */
+  function toggleMenuOff() {
+    if ( menuState !== 0 ) {
+      menuState = 0;
+      menu.classList.remove( contextMenuActive );
+    }
+  }
+
+  /**
+   * Positions the menu properly.
+   *
+   * @param {Object} e The event
+   */
+  function positionMenu(e) {
+    clickCoords = getPosition(e);
+    clickCoordsX = clickCoords.x;
+    clickCoordsY = clickCoords.y;
+
+    menuWidth = menu.offsetWidth + 4;
+    menuHeight = menu.offsetHeight + 4;
+
+    windowWidth = window.innerWidth;
+    windowHeight = window.innerHeight;
+
+    if ( (windowWidth - clickCoordsX) < menuWidth ) {
+      menu.style.left = windowWidth - menuWidth - 30 + "px";
+    } else {
+      menu.style.left = clickCoordsX + "px";
+    }
+
+    if ( (windowHeight - clickCoordsY) < menuHeight ) {
+      menu.style.top = windowHeight - menuHeight + "px";
+    } else {
+      menu.style.top = clickCoordsY -90 + "px";
+    }
+  }
+
+  /**
+   * Dummy action function that logs an action when a menu item link is clicked
+   *
+   * @param {HTMLElement} link The link that was clicked
+   */
+  function menuItemListener( link ) {
+    var currentAction = link.getAttribute("data-action");
+
+    var invert = function (obj, attr) {
+      if ($(obj).attr(attr) == 1) {
+        $(obj).attr(attr, 0);
+      } else {
+        $(obj).attr(attr, 1);
       }
     };
-    channelMenu = contextMenu(
-      [
-        {
-          icon: "trash",
-          text: "Delete item",
-          callback: function (e) {
-            var toDelete = e.triggeredBy.parentNode.removeChild(e.triggeredBy);
-            calcChanges(toDelete);
-          },
-          open: function (e) {
-            if (e.triggeredBy.nodeName == "LI") {
-              this.enable();
-            } else {
-              this.disable();
-            }
-          }
-        },
-        {
-          icon: "",
-          text: "Automatic advance",
-          callback: function (e) {
-            invert(e.boundTo, "autoadvance");
-          },
-          open: function (e) {
-            this.setIcon(e.boundTo.getAttribute("autoadvance") == 1 ? "ok" : "");
-          }
-        },
-        {
-          icon: "",
-          text: "Play on load",
-          callback: function (e) {
-            invert(e.boundTo, "playonload");
-          },
-          open: function (e) {
-            this.setIcon(e.boundTo.getAttribute("playonload") == 1 ? "ok" : "");
-          }
-        },
-        {
-          icon: "",
-          text: "Repeat none",
-          callback: function (e) {
-            e.boundTo.setAttribute("repeat", 0);
-          },
-          open: function (e) {
-            this.setIcon(e.boundTo.getAttribute("repeat") == 0 ? "record" : "");
-          }
-        },
-        {
-          icon: "",
-          text: "Repeat one",
-          callback: function (e) {
-            e.boundTo.setAttribute("repeat", 1);
-          },
-          open: function (e) {
-            this.setIcon(e.boundTo.getAttribute("repeat") == 1 ? "record" : "");
-          }
-        },
-        {
-          icon: "",
-          text: "Repeat all",
-          callback: function (e) {
-            e.boundTo.setAttribute("repeat", 2);
-          },
-          open: function (e) {
-            this.setIcon(e.boundTo.getAttribute("repeat") == 2 ? "record" : "");
-          }
-        },
-        {
-          icon: "refresh",
-          text: "Reset channel"
-        },
-        {
-          icon: "save",
-          text: "Save channel as...",
-          callback: function () {
-            showAlert("Save/Load channel functionality is not available.", "danger");
-          }
-        },
-        {
-          icon: "open",
-          text: "Load channel",
-          callback: function () {
-            showAlert("Save/Load channel functionality is not available.", "danger");
-          }
-        }
-      ]
-    );
-  };
+
+    var bapschannel = "#baps-channel-" + (parseInt(taskItemInContext.getAttribute("channel")) + 1);
+
+    switch (currentAction) {
+
+      case "Delete":
+        var toDelete = taskItemInContext.parentNode.removeChild(taskItemInContext);
+        calcChanges(toDelete);
+        break;
+      case "AutoAdvance":
+        invert(bapschannel, "autoadvance");
+        break;
+      case "PlayOnLoad":
+        invert(bapschannel, "playonload");
+        break;
+      case "Repeat0":
+        $(bapschannel).attr("repeat", 0);
+        break;
+      case "Repeat1":
+        $(bapschannel).attr("repeat", 1);
+        break;
+      case "Repeat2":
+        $(bapschannel).attr("repeat", 2);
+        break;
+    }
+    toggleMenuOff();
+
+  }
 
   var initialiseUI = function () {
     if (writable) {
@@ -598,7 +762,8 @@ var NIPSWeb = function (d) {
     registerItemClicks();
     setupGenericListeners();
     updateChannelTotalTimers();
-    configureContextMenus();
+    //configureContextMenus();
+    initContextMenu();
   };
 
   var getChannelInt = function (channel) {
@@ -642,6 +807,7 @@ var NIPSWeb = function (d) {
     var ul = document.getElementById("baps-channel-"+channel);
     ul.setAttribute("autoadvance", 1);
     ul.setAttribute("repeat", 0);
+    ul.setAttribute("playonload", 0);
 
     if (outputDevice !== "default") {
       navigator.mediaDevices.getUserMedia({audio: true}).then(function() {
@@ -667,7 +833,7 @@ var NIPSWeb = function (d) {
         if (channelDiv.attr("autoadvance") == 1 && parseInt(channelDiv.attr("repeat")) !== 1) {
           var next = el.next("li");
           if (!next.length && el.parent().attr("repeat") == 2) {
-            next = el.parent().children()[0];
+            next = el.parent().children().first();
           }
           if (next && next.length) {
             el.removeClass("selected");
@@ -759,7 +925,7 @@ var NIPSWeb = function (d) {
       }
     );
 
-    channelDiv.on("contextmenu", channelMenu.show);
+    //channelDiv.on("contextmenu", channelMenu.show);
 
     $("#ch" + channel + "-play").on(
       "click",
@@ -921,124 +1087,6 @@ var NIPSWeb = function (d) {
     registerItemClicks: registerItemClicks
   };
 
-};
-
-/**
- * Items options: icon (required), text (required), callback
- */
-var contextMenu = function (items) {
-  var hideListener;
-  // The element the event that opened the menu is bound to
-  var boundTo;
-  // The element that was activated when the menu was opened
-  var triggeredBy;
-
-  /**
-   * DOM ELEMENTS
-   **/
-  var menuContainer = document.createElement("ul");
-  menuContainer.className = "context-menu dropdown-menu";
-  menuContainer.style.position = "absolute";
-  menuContainer.style.display = "none";
-
-  var callback = function (item, cb) {
-    if (cb) {
-      return function (e) {
-        e.boundTo = boundTo;
-        e.triggeredBy = triggeredBy;
-        cb.apply(item, [e]);
-      };
-    } else {
-      return function (){};
-    }
-  };
-
-  var open = function (item, cb) {
-    if (cb) {
-      return function (e) {
-        e.boundTo = boundTo;
-        e.triggeredBy = triggeredBy;
-        cb.apply(item, [e]);
-      };
-    } else {
-      return function (){};
-    }
-  };
-
-  var setIcon = function (itemIcon) {
-    return function (icon) {
-      itemIcon.className = "glyphicon glyphicon-" + icon;
-    };
-  };
-
-  var disable = function (item, callback) {
-    return function () {
-      item.style.opacity = "0.5";
-      item.removeEventListener("click", callback);
-    };
-  };
-
-  var enable = function (item, callback) {
-    return function () {
-      item.style.opacity = "1.0";
-      item.addEventListener("click", callback);
-    };
-  };
-
-  for (var i = 0; i < items.length; i++) {
-    var item = document.createElement("li");
-
-    var itemLink = document.createElement("a");
-    itemLink.setAttribute("href", "javascript:");
-
-    var itemIcon = document.createElement("span");
-    itemIcon.style.width = "14px";
-    itemIcon.className = "glyphicon glyphicon-" + items[i].icon;
-
-    var itemText = document.createTextNode(" " + items[i].text);
-
-    itemLink.appendChild(itemIcon);
-    itemLink.appendChild(itemText);
-    item.appendChild(itemLink);
-
-    callback(item, items[i].callback);
-
-    item.open = open(item, items[i].open);
-    item.setIcon = setIcon(itemIcon);
-    item.disable = disable(item, callback);
-    item.enable = enable(item, callback);
-    item.addEventListener("click", callback);
-
-    menuContainer.appendChild(item);
-  }
-
-  document.body.appendChild(menuContainer);
-
-  hideListener = function () {
-    menuContainer.style.display = "none";
-    document.body.removeEventListener("click", hideListener);
-  };
-
-  return {
-    show: function (e) {
-      boundTo = e.currentTarget;
-      triggeredBy = e.target;
-      for (var i = 0; i < menuContainer.children.length; i++) {
-        if (menuContainer.children[i].hasOwnProperty("open")) {
-          menuContainer.children[i].open.apply(menuContainer.children[i], [e]);
-        }
-      }
-      menuContainer.style.display = "block";
-      menuContainer.style.left = e.pageX + "px";
-      menuContainer.style.top = e.pageY + "px";
-      document.body.addEventListener("click", hideListener);
-      e.preventDefault();
-    }
-  };
-};
-
-contextMenu.prototype = {
-  constructor: contextMenu
 };
 
 var playoutSlider = function (e) {

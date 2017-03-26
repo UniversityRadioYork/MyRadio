@@ -20,13 +20,13 @@
       {% for i in 0..2 %}
         <ul class="box col-xs-3 height-2 baps-channel" channel="{{i+1}}" id="baps-channel-{{i + 1}}">
           {% for track in tracks[i] %}
-            <li id='{% if track['managedid'] is defined %}ManagedDB{% else %}{{track['album']['recordid']}}{% endif %}-{{track['trackid']}}' type='{{track['type']}}'
+            <li class="showplan-item" id='{% if track['managedid'] is defined %}ManagedDB{% else %}{{track['album']['recordid']}}{% endif %}-{{track['trackid']}}' type='{{track['type']}}'
                 {% if track['managedid'] is defined %}managedid='{{track['managedid']}}'{% endif %}
                 {% if track['clean'] is defined and track['clean'] == false %}class="unclean"{% endif %}
                 {% if track['type'] == 'aux' %}auxid='{{track['auxid']}}'{% endif %}
                 length='{{track['length']}}' timeslotitemid='{{track['timeslotitemid']}}'
                 weight='{{track['weight']}}' channel='{{track['channel']}}' intro='{{track['intro']}}'
-                title='{{track['title']}} ({{track['length']}})'>
+                title='{{track['title']}} {% if track['artist'] is defined %} - {{track['artist']}}{% endif %} ({{track['length']}})'>
                 {% if track['clean'] is defined and track['clean'] == false %}**{% endif %}{{track['title']}}
                 {% if track['artist'] is defined %} - {{track['artist']}}{% endif %}</li>
           {% endfor %}
@@ -36,7 +36,9 @@
       <div id="resource-add-container" class="box col-md-3 col-sm-3 col-xs-3 height-2">
         <div id="resource-add-header">
           {% include 'NIPSWeb/res_selector.twig' %}
-          <input type="text" placeholder="Filter by artist..." id="res-filter-artist" class="hidden" />
+          <div id="res-filter-artist-container" class="hidden" >
+            <input type="text" placeholder="Filter by artist..." id="res-filter-artist"/>
+          </div>
           <input type="text" placeholder="Filter by track..." id="res-filter-track" class="hidden" />
           <input type="text" placeholder="Filter by name..." id="res-filter-name" class="hidden" />
         </div>
@@ -67,6 +69,43 @@
     </div>
 
 </div>
+
+<nav id="context-menu" class="context-menu">
+    <ul class="context-menu__items dropdown-menu" style="display:block;">
+      <li class="context-menu__item">
+        <a href="#" class="context-menu__link" data-action="Delete"><i class="glyphicon contextIcon-Delete glyphicon-trash"></i> Delete Item</a>
+      </li>
+      <li class="context-menu__item">
+        <a href="#" class="context-menu__link" data-action="AutoAdvance"><i class="glyphicon contextIcon-AutoAdvance glyphicon-ok"></i> Automatic Advance</a>
+      </li>
+      <li class="context-menu__item">
+        <a href="#" class="context-menu__link" data-action="PlayOnLoad"><i class="glyphicon contextIcon-PlayOnLoad glyphicon-ok"></i> Play on Load</a>
+      </li>
+      <li class="context-menu__item">
+        <a href="#" class="context-menu__link" data-action="Repeat0"><i class="glyphicon contextIcon-Repeat0 glyphicon-record"></i> Repeat None</a>
+      </li>
+      <li class="context-menu__item">
+        <a href="#" class="context-menu__link" data-action="Repeat1"><i class="glyphicon contextIcon-Repeat1 glyphicon-record"></i> Repeat One</a>
+      </li>
+      <li class="context-menu__item">
+        <a href="#" class="context-menu__link" data-action="Repeat2"><i class="glyphicon contextIcon-Repeat2 glyphicon-record"></i> Repeat All</a>
+      </li>
+    </ul>
+  </nav>
+
+<style>
+
+  .context-menu {
+  display: none;
+  position: absolute;
+  z-index: 10;
+}
+
+.context-menu--active {
+  display: block;
+}
+</style>
+
 
 {% endblock %}
 
