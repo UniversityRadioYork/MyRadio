@@ -329,3 +329,14 @@ select {
   border: 2px solid #d9534f;
   border-radius: 5px;
 }
+
+
+.context-menu {
+  display: none;
+  position: absolute;
+  z-index: 10;
+}
+
+.context-menu--active {
+  display: block;
+}
