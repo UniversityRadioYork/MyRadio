@@ -1,3 +1,21 @@
+//Still can't believe js/jquery doesn't have escaping built-in!
+var entityMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+  '/': '&#x2F;',
+  '`': '&#x60;',
+  '=': '&#x3D;'
+};
+
+function escapeHTML (string) {
+  return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+    return entityMap[s];
+  });
+}
+
 /* global Bloodhound, myradio, planner, ulsort */
 /**
  * This file contains the necessary functions for browsing searching and adding
@@ -9,11 +27,12 @@
  * Search the central library using the input criteria, rendering the response
  * in the search panel
  */
+
+
 var searchTimerRef = null;
 function updateCentralSearch()
 {
   var file;
-  showAlert("Searching library...", "warning");
   $.ajax({
     url: mConfig.api_url + "/v2/track/search/",
     type: 'get',
@@ -35,17 +54,17 @@ function updateCentralSearch()
         if (!data.payload[file].clean) {
           classes = classes + " unclean";
           cleanStars = "**";
-          tooltip = "This track is explicit. Do not broadcast before 9PM."
+          tooltip = "This track is explicit. Do not broadcast before 9PM. ";
         }
+        tooltip += escapeHTML(data.payload[file].title) + " - " + escapeHTML(data.payload[file].artist)+ " (" + data.payload[file].length + ")";
         $("#baps-channel-res").append(
           "<li id='" + data.payload[file].album.recordid + "-" + data.payload[file].trackid +
           "' intro='" + data.payload[file].intro + "' title='" + tooltip + "'" +
           "' channel='res' weight='0' type='central' class='" + classes + "' length='" + data.payload[file].length + "'>" +
-          cleanStars + data.payload[file].title + " - " + data.payload[file].artist + "</li>"
+          cleanStars + escapeHTML(data.payload[file].title) + " - " + escapeHTML(data.payload[file].artist) + "</li>"
         );
       }
       planner.registerItemClicks();
-      showAlert("Library Search Complete", "success");
     }
   });
 }
@@ -56,10 +75,11 @@ function updateCentralSearch()
 $(document).ready(function () {
   $("#res-type-sel").change(function () {
     var file;
+    showAlert("Loading results...", "warning");
     //Show the relevent filter forms
     if ($(this).val() === "central") {
       $("#res-filter-name").hide();
-      $("#res-filter-artist, #res-filter-track").fadeIn();
+      $("#res-filter-artist-container, #res-filter-track").fadeIn();
       //This doesn't auto-load any files until search paramaters are set
 
     } else if ($(this).val().match(/managed-.*/)) {
@@ -82,11 +102,11 @@ $(document).ready(function () {
             }
             $("#baps-channel-res").append(
               "<li id='" + data.payload[file].album.recordid + "-" + data.payload[file].trackid +
-              "' title='" + data.payload[file].title + "(" + data.payload[file].length + ")" +
+              "' title='" + escapeHTML(data.payload[file].title) + " (" + data.payload[file].length + ")" +
               "' intro='" + data.payload[file].intro + "'" +
               "' class='" + classes + "'" +
               "' channel='res' weight='0' type='central' length='" + data.payload[file].length + "'>" +
-              data.payload[file].title + " - " + data.payload[file].artist + "</li>"
+              escapeHTML(data.payload[file].title) + " - " + escapeHTML(data.payload[file].artist) + "</li>"
             );
           }
           $("#res-loading").hide();
@@ -96,7 +116,7 @@ $(document).ready(function () {
           planner.registerItemClicks();
         }
       });
-      $("#res-filter-artist, #res-filter-track").hide();
+      $("#res-filter-artist-container, #res-filter-track").fadeOut();
       $("#res-filter-name").fadeIn();
 
     } else if ($(this).val().match(/auto-.*/)) {
@@ -117,11 +137,11 @@ $(document).ready(function () {
             }
             $("#baps-channel-res").append(
               "<li id='" + data[file].album.recordid + "-" + data[file].trackid +
-              "' title='" + data[file].title + "(" + data[file].length + ")" +
+              "' title='" + escapeHTML(data[file].title) + " - " + escapeHTML(data[file].artist) + " (" + data[file].length + ")" +
               "' intro='" + data[file].intro + "'" +
               "' class='" + classes + "'" +
               "' channel='res' weight='0' type='central' length='" + data[file].length + "'>" +
-              data[file].title + " - " + data[file].artist + "</li>"
+              escapeHTML(data[file].title) + " - " + escapeHTML(data[file].artist) + "</li>"
             );
           }
           $("#res-loading").hide();
@@ -131,7 +151,7 @@ $(document).ready(function () {
           planner.registerItemClicks();
         }
       });
-      $("#res-filter-artist, #res-filter-track").hide();
+      $("#res-filter-artist-container, #res-filter-track").fadeOut();
       $("#res-filter-name").fadeIn();
 
     } else if ($(this).val().match(/^aux-\d+|^user-.*/)) {
@@ -148,9 +168,9 @@ $(document).ready(function () {
               $("#baps-channel-res").append(
                 "<li id='ManagedDB-" + data[file].managedid +
                 "' length='" + data[file].length +
-                "' title='" + data[file].title + "(" + data[file].length + ")" +
+                "' title='" + escapeHTML(data[file].title) + " (" + data[file].length + ")" +
                 "' channel='res' weight='0' type='aux' managedid='" + data[file].managedid + "'>" +
-                data[file].title + "</li>"
+                escapeHTML(data[file].title) + "</li>"
               );
             }
           }
@@ -161,9 +181,10 @@ $(document).ready(function () {
           planner.registerItemClicks();
         }
       });
-      $("#res-filter-artist, #res-filter-track").hide();
+      $("#res-filter-artist-container, #res-filter-track").fadeOut();
       $("#res-filter-name").fadeIn();
     }
+    showAlert("Loading Complete", "success");
     //Clear the current list
     $("#baps-channel-res").empty();
     //Makes the artist search autocompleting. When an artist is selected it'll filter
@@ -234,7 +255,7 @@ $(document).ready(function () {
    */
   $("#menu-track-upload").click(function () {
     var url = $(this).attr("href");
-    myradio.createDialog("Upload to Library", "<iframe src='" + url + "' width='580' height='500' frameborder='0'></iframe>");
+    myradio.createDialog("Upload to Library", "<iframe src='" + url + "' width='570' height='500' frameborder='0'></iframe>");
     return false;
   });
 
@@ -254,7 +275,7 @@ $(document).ready(function () {
       channel2lastweight = -1;
     }
     var url = $(this).attr("href") + "?clientid=" + clientid + "&channel0lastweight=" + channel0lastweight + "&channel1lastweight=" + channel1lastweight + "&channel2lastweight=" + channel2lastweight;
-    myradio.createDialog("Import from another show", "<iframe src='" + url + "' width='580' height='500' frameborder='0'></iframe>");
+    myradio.createDialog("Import from another show", "<iframe src='" + url + "' width='570' height='500' frameborder='0'></iframe>");
     return false;
   });
 
