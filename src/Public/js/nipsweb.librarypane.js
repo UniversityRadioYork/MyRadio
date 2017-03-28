@@ -1,13 +1,20 @@
+/* global Bloodhound, myradio, planner, ulsort, mConfig, showAlert */
+/**
+ * This file contains the necessary functions for browsing searching and adding
+ * items in the Library pane of the main interface
+ * @todo Includes length attribute to list items
+ */
+
 //Still can't believe js/jquery doesn't have escaping built-in!
 var entityMap = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#39;',
-  '/': '&#x2F;',
-  '`': '&#x60;',
-  '=': '&#x3D;'
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&#39;",
+  "/": "&#x2F;",
+  "`": "&#x60;",
+  "=": "&#x3D;"
 };
 
 function escapeHTML (string) {
@@ -16,18 +23,10 @@ function escapeHTML (string) {
   });
 }
 
-/* global Bloodhound, myradio, planner, ulsort */
-/**
- * This file contains the necessary functions for browsing searching and adding
- * items in the Library pane of the main interface
- * @todo Includes length attribute to list items
- */
-
 /**
  * Search the central library using the input criteria, rendering the response
  * in the search panel
  */
-
 
 var searchTimerRef = null;
 function updateCentralSearch()
@@ -35,7 +34,7 @@ function updateCentralSearch()
   var file;
   $.ajax({
     url: mConfig.api_url + "/v2/track/search/",
-    type: 'get',
+    type: "get",
     data: {
       artist: $("#res-filter-artist").val(),
       title: $("#res-filter-track").val(),

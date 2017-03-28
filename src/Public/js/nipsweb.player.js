@@ -1,3 +1,4 @@
+/* global ChannelConfigurator, myradio, mConfig */
 //Global popup alert controller for all nipsweb js files.
 var showAlert = function (text, type) {
   // Stores fancy message notice icons.
@@ -30,7 +31,6 @@ var reload = function() {
 // Stores the clientid to enable multiple editors
 var clientid = null;
 
-/* global ChannelConfigurator, myradio, mConfig */
 /* exported NIPSWeb */
 var NIPSWeb = function (d) {
   // If enabled, doesn't reload on error
@@ -909,8 +909,6 @@ var NIPSWeb = function (d) {
                 }
               }
           });
-        } else {
-
         }
       }
     );
@@ -924,8 +922,6 @@ var NIPSWeb = function (d) {
         player.cueTime = e.originalEvent.detail.time;
       }
     );
-
-    //channelDiv.on("contextmenu", channelMenu.show);
 
     $("#ch" + channel + "-play").on(
       "click",
