@@ -9,14 +9,6 @@ body {
   margin: 20px auto 0 auto;
 }
 
-/* #notice {
-  position: fixed;
-  top: 0;
-  left: -2px;
-  z-index: 1050;
-  height: 51px;
-} */
-
 .main-container, #baps-channel-container {
   height: calc(100% - 60px);
   width: 100%;
