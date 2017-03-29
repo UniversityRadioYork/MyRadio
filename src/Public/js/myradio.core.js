@@ -49,7 +49,15 @@ var myradio = {
     );
     return reportButton;
   },
-  callAPI: function (method, module, action, id, firstParam, options) {
+  callAPI: function (method, module, action, id, firstParam, options, successFunc = function(){}) {
+    $.ajax({
+      url: myradio.getAPIURL(module, action, id, firstParam),
+      data: options,
+      method: method,
+      success: successFunc
+    });
+  },
+  getAPIURL: function (module, action, id, firstParam) {
     var url = mConfig.api_url;
     url += "/v2/" + module;
     if (id !== "") {
@@ -59,12 +67,7 @@ var myradio = {
     if (firstParam !== "") {
       url += "/" + firstParam;
     }
-
-    $.ajax({
-      url: url,
-      data: options,
-      method: method
-    });
+    return url;
   }
 };
 
