@@ -1,4 +1,4 @@
-/* global Bloodhound, myradio, planner, ulsort, mConfig, showAlert */
+/* global Bloodhound, myradio, planner, ulsort, showAlert */
 /**
  * This file contains the necessary functions for browsing searching and adding
  * items in the Library pane of the main interface
@@ -31,17 +31,17 @@ function escapeHTML (string) {
 var searchTimerRef = null;
 function updateCentralSearch()
 {
-  var file;
-  $.ajax({
-    url: mConfig.api_url + "/v2/track/search/",
-    type: "get",
-    data: {
-      artist: $("#res-filter-artist").val(),
-      title: $("#res-filter-track").val(),
-      limit: 100,
-      digitised: true
-    },
-    success: function (data) {
+
+  var options = {
+    artist: $("#res-filter-artist").val(),
+    title: $("#res-filter-track").val(),
+    limit: 100,
+    digitised: true
+  };
+
+  myradio.callAPI("GET","track","search","","", options,
+    function (data) {
+      var file;
       $("#baps-channel-res").empty();
       for (file in data.payload) {
         if (file === "myradio_errors") {
@@ -65,8 +65,9 @@ function updateCentralSearch()
       }
       planner.registerItemClicks();
     }
-  });
+  );
 }
+
 
 /**
  *Deal with the Resources Library selector being changed
@@ -74,7 +75,7 @@ function updateCentralSearch()
 $(document).ready(function () {
   $("#res-type-sel").change(function () {
     var file;
-    showAlert("Loading results...", "warning");
+    showAlert("Loading Library results...", "warning");
     //Show the relevent filter forms
     if ($(this).val() === "central") {
       $("#res-filter-name").hide();
@@ -83,12 +84,13 @@ $(document).ready(function () {
 
     } else if ($(this).val().match(/managed-.*/)) {
       //Load a managed playlist
-      $("#res-loading").show();
-      $.ajax({
-        url: mConfig.api_url + "/v2/track/search/",
-        type: "get",
-        data: {itonesplaylistid: $(this).val().replace(/managed-/, ""), digitised: true, limit: 0},
-        success: function (data) {
+      var options = {
+        itonesplaylistid: $(this).val().replace(/managed-/, ""),
+        digitised: true,
+        limit: 0
+      };
+      myradio.callAPI("GET","track","search","","", options,
+        function (data) {
           for (file in data) {
             if (file === "myradio_errors") {
               continue;
@@ -108,19 +110,17 @@ $(document).ready(function () {
               escapeHTML(data.payload[file].title) + " - " + escapeHTML(data.payload[file].artist) + "</li>"
             );
           }
-          $("#res-loading").hide();
           //Enable name filtering
           ulsort.List.Filter("#res-filter-name", "#baps-channel-res>li");
           //Make them activatable
           planner.registerItemClicks();
         }
-      });
+      );
       $("#res-filter-artist-container, #res-filter-track").fadeOut();
       $("#res-filter-name").fadeIn();
 
     } else if ($(this).val().match(/auto-.*/)) {
       //Load an auto playlist
-      $("#res-loading").show();
       $.ajax({
         url: myradio.makeURL("NIPSWeb", "load_auto_managed"),
         type: "get",
@@ -143,7 +143,6 @@ $(document).ready(function () {
               escapeHTML(data[file].title) + " - " + escapeHTML(data[file].artist) + "</li>"
             );
           }
-          $("#res-loading").hide();
           //Enable name filtering
           ulsort.List.Filter("#res-filter-name", "#baps-channel-res>li");
           //Make them activatable
@@ -154,7 +153,6 @@ $(document).ready(function () {
       $("#res-filter-name").fadeIn();
 
     } else if ($(this).val().match(/^aux-\d+|^user-.*/)) {
-      $("#res-loading").show();
       $.ajax({
         url: myradio.makeURL("NIPSWeb", "load_aux_lib"),
         type: "get",
@@ -173,7 +171,6 @@ $(document).ready(function () {
               );
             }
           }
-          $("#res-loading").hide();
           //Enable name filtering
           ulsort.List.Filter("#res-filter-name", "#baps-channel-res>li");
           //Make them activatable
@@ -183,7 +180,7 @@ $(document).ready(function () {
       $("#res-filter-artist-container, #res-filter-track").fadeOut();
       $("#res-filter-name").fadeIn();
     }
-    showAlert("Loading Complete", "success");
+    showAlert("Loading Library Complete", "success");
     //Clear the current list
     $("#baps-channel-res").empty();
     //Makes the artist search autocompleting. When an artist is selected it'll filter
@@ -197,7 +194,7 @@ $(document).ready(function () {
         return local.title == remote.title;
       },
       prefetch: {
-        url: mConfig.api_url + "/v2/artist/findbyname/?title=null&limit=500",
+        url: myradio.getAPIURL("artist","findbyname","","") + "?title=null&limit=500",
         filter: function (data) {
           return $.map(data.payload, function (artist) {
             return {
@@ -207,7 +204,7 @@ $(document).ready(function () {
         }
       },
       remote: {
-        url: mConfig.api_url + "/v2/artist/findbyname/?title=%QUERY&limit=5", //Seperated out otherwise % gets urlescaped
+        url: myradio.getAPIURL("artist","findbyname","","") + "?title=%QUERY&limit=5", //Seperated out otherwise % gets urlescaped
         filter: function (data) {
           return $.map(data.payload, function (artist) {
             return {
@@ -261,9 +258,9 @@ $(document).ready(function () {
   $("#menu-import").click(function () {
 
     //work out the channel
-    channel0lastweight = $("#baps-channel-1 li:last").attr("weight");
-    channel1lastweight = $("#baps-channel-2 li:last").attr("weight");
-    channel2lastweight = $("#baps-channel-3 li:last").attr("weight");
+    var channel0lastweight = $("#baps-channel-1 li:last").attr("weight");
+    var channel1lastweight = $("#baps-channel-2 li:last").attr("weight");
+    var channel2lastweight = $("#baps-channel-3 li:last").attr("weight");
     if (channel0lastweight == undefined) {
       channel0lastweight = -1;
     }
