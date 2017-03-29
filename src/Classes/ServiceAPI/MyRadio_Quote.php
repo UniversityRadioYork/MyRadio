@@ -141,7 +141,7 @@ class MyRadio_Quote extends ServiceAPI
      */
     public static function getInstance($quote_id = -1)
     {
-        self::__wakeup();
+        self::wakeup();
 
         if (!is_numeric($quote_id)) {
             throw new MyRadioException(
