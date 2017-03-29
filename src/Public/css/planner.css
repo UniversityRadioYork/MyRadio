@@ -104,12 +104,6 @@ body {
   padding: 6px 15px;
   margin: 0 10px;
 }
-#res-loading {
-  float: right;
-  font-size: smaller;
-  padding: 1px;
-  margin: 2px;
-}
 #res-filter-artist,  #res-filter-track,  #res-filter-name, #resource-add-header .twitter-typeahead {
   padding: 0;
   width: 100%;
