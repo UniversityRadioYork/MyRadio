@@ -87,7 +87,8 @@ $(document).ready(function () {
       //Load a managed playlist
       var options = {
         itonesplaylistid: $(this).val().replace(/managed-/, ""),
-        digitised: true
+        digitised: true,
+        limit: 0
       };
       myradio.callAPI("GET","track","search","","", options,
         function (data) {

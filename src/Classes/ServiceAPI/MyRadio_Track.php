@@ -674,9 +674,9 @@ class MyRadio_Track extends ServiceAPI
         //Shortcircuit - if itonesplaylistid is the only not-default value, just return the playlist
         $conflict = false;
 
-        if (!$conflict && !empty($options['itonesplaylistid'])) {
+        if (!$conflict && !empty($itonesplaylistid)) {
 
-            return iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks();
+            return iTones_Playlist::getInstance($itonesplaylistid)->getTracks();
         }
 
         $options = [
