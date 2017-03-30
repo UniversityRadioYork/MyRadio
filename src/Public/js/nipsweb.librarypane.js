@@ -103,7 +103,7 @@ $(document).ready(function () {
             }
             $("#baps-channel-res").append(
               "<li id='" + data.payload[file].album.recordid + "-" + data.payload[file].trackid +
-              "' title='" + escapeHTML(data.payload[file].title) + " - " + escapeHTML(data[file].artist) + " - " + escapeHTML(data[file].album.title) + " (" + data.payload[file].length + ")" +
+              "' title='" + escapeHTML(data.payload[file].title) + " - " + escapeHTML(data.payload[file].artist) + " - " + escapeHTML(data[file].album.title) + " (" + data.payload[file].length + ")" +
               "' intro='" + data.payload[file].intro + "'" +
               "' class='" + classes + "'" +
               "' channel='res' weight='0' type='central' length='" + data.payload[file].length + "'>" +
