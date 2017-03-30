@@ -163,7 +163,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
 
         //Validate template
         try {
-            $this->twig->parse($this->twig->tokenize(file_get_contents(__DIR__.'/../Templates/'.$template), $template));
+            $this->twig->parse($this->twig->tokenize(new \Twig_Source(file_get_contents(__DIR__.'/../Templates/'.$template), $template)));
 
             // the $template is valid
         } catch (Twig_Error_Syntax $e) {

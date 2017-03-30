@@ -195,15 +195,12 @@ class MyRadio_Selector
         if ($response === 'FLK') {
             throw new MyRadioException('Selector Locked');
         } elseif ($response === 'ACK') {
-            return [
-            'studio' => $studio,
-            'lock' => 0,
-            'selectedfrom' => 1,
-            's1power' => self::getStudio1PowerAtTime($time),
-            's2power' => self::getStudio2PowerAtTime($time),
-            's4power' => (self::remoteStreams()['s1']) ? true : false,
-            'lastmod' => time(),
-            ];
+            // DB may not have updated from the physical selector, so force it.
+            $statusUpdated = self::getStatusAtTime();
+            $statusUpdated['selectedfrom'] = 1;
+            $statusUpdated['studio'] = $studio;
+            $statusUpdated['lastmod'] = time();
+            return $statusUpdated;
         }
     }
 
@@ -396,6 +393,7 @@ class MyRadio_Selector
             'selectedfrom' => self::getSetbyAtTime($time),
             's1power' => self::getStudio1PowerAtTime($time),
             's2power' => self::getStudio2PowerAtTime($time),
+            's3power' => true,
             's4power' => (isset($status['s1'])) ? $status['s1'] : false,
             'lastmod' => self::getLastModAtTime($time),
         ];

@@ -1,5 +1,5 @@
 {% extends 'stripe.twig' %}
-
+{% import 'macros.twig' as MyRadio %}
 {% block stripecontent %}
 <a href="{{MyRadio.makeURL(config, "MyRadio", "listPermissions")}}">&larr; Back to permissions list</a>
 {% if usage[0] %}

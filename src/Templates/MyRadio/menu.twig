@@ -8,7 +8,7 @@
   <h3 class="section">{{ section.title }}</h3>
   <ul>
     {% for item in section.items %}
-      {% if item.template is not sameas(null) %}
+      {% if item.template is not same as(null) %}
       {% include item.template %}
       {% else %}
       <li><a href="{{ item.url }}" title="{{ item.description | replace({'"': '&quot;'}) | raw }}">{{ item.title }}</a></li>

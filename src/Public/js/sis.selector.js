@@ -26,7 +26,6 @@ var Selector = function () {
         myradio.createDialog("Error", "Could not change studio.<br>Studio selector is currently locked out.");
         return;
       }
-
       $.get(
         myradio.makeURL("SIS", "selector.set"),
         {src: studio},
@@ -44,44 +43,31 @@ var Selector = function () {
       );
     },
     update = function (data) {
-      var liveStatus, s, time = parseInt(data["lastmod"]);
+      var liveStatus, s, studioNum, studioNumIndex, time = parseInt(data["lastmod"]);
       // Disregard data older than the latest update
       if (time <= lastTime) {
         return;
       }
-
-      lastTime = parseInt(data["lastmod"]);
+      lastTime = time;
       // When called bet selectStudio, this isn't what I think it is
       // @todo, see if that can be bound nicer
       that.registerParam("selector-lasttime", lastTime);
 
       if (data["ready"]) {
-        if (!data["s1power"]) {
-          buttons[0].setAttribute("title", studios[0] + " Powered Off");
-          buttons[0].setAttribute("class", "selbtn poweredoff");
-          buttons[0].setAttribute("on", "false");
-        } else {
-          liveStatus = (data["studio"] == 1) ? "s1on" : "s1off";
-          buttons[0].setAttribute("title", studios[0]);
-          buttons[0].setAttribute("class", "selbtn poweredon " + liveStatus);
-          buttons[0].setAttribute("on", "true");
+        for (studioNum = 1; studioNum <= 4; studioNum++) {
+          studioNumIndex = studioNum-1;
+          if (data["s" + studioNum + "power"]) {
+            liveStatus = (data["studio"] == studioNum) ? "s" + studioNum + "on" : "s" + studioNum + "off";
+            buttons[studioNumIndex].setAttribute("title", studios[studioNumIndex]);
+            buttons[studioNumIndex].setAttribute("class", "selbtn poweredon " + liveStatus);
+            buttons[studioNumIndex].setAttribute("on", "true");
+          } else {
+            buttons[studioNumIndex].setAttribute("title", studios[studioNumIndex] + " Powered Off");
+            buttons[studioNumIndex].setAttribute("class", "selbtn poweredoff s" + studioNum + "off");
+            buttons[studioNumIndex].setAttribute("on", "false");
+          }
         }
-
-        if (!data["s2power"]) {
-          buttons[1].setAttribute("title", studios[1] + " Powered Off");
-          buttons[1].setAttribute("class", "selbtn poweredoff");
-          buttons[1].setAttribute("on", "false");
-        } else {
-          liveStatus = (data["studio"] == 2) ? "s2on" : "s2off";
-          buttons[1].setAttribute("title", studios[1]);
-          buttons[1].setAttribute("class", "selbtn poweredon " + liveStatus);
-          buttons[1].setAttribute("on", "true");
-        }
-
-        liveStatus = (data["studio"] == 3) ? "s3on" : "s3off";
-        buttons[2].setAttribute("class", "selbtn poweredon " + liveStatus);
-
-        s = studios[data["studio"] - 1] + " On Air";
+        s = "<strong>" + studios[data["studio"] - 1] + "</strong> is On Air.";
         currentStudio = data["studio"];
         if (data["lock"] != 0) {
           s = s + "<small> &mdash; Locked</small>";

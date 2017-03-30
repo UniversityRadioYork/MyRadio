@@ -101,7 +101,6 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
             [$this->getID()]
         );
         $this->removeInstance();
-        unset($this);
     }
 
     public static function createManaged($timeslot, $manageditemid, $channel, $weight)
