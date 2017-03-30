@@ -7,7 +7,6 @@ $.urlParam = function(name){
   var results = new RegExp("[\?&]" + name + "=([^&#]*)").exec(window.location.href);
   return results[1] || 0;
 };
-var clientid;
 var nextWeightChannel0;
 var nextWeightChannel1;
 var nextWeightChannel2;
@@ -15,7 +14,6 @@ var nextWeightChannel2;
 $(document).ready(
   function () {
 
-    clientid = parseInt($.urlParam("clientid"));
     nextWeightChannel0 = parseInt($.urlParam("channel0lastweight"))+1;
     nextWeightChannel1 = parseInt($.urlParam("channel1lastweight"))+1;
     nextWeightChannel2 = parseInt($.urlParam("channel2lastweight"))+1;
@@ -55,7 +53,12 @@ var reload = function() {
 
 var selectAll = function() {  //"select all" change
   $(".channel-list-item").each(function(){ //iterate all listed checkbox items
-    this.checked = status; //change ".checkbox" checked status
+    this.checked = true; //change checkbox checked status
+  });
+};
+var selectNone = function() {  //"select none" change
+  $(".channel-list-item").each(function(){ //iterate all listed checkbox items
+    this.checked = false; //change checkbox checked status
   });
 };
 
@@ -106,19 +109,27 @@ function loadChannelList() {
       }
       $("#import-channel-list").empty();
       var selectedChannelNo = $("#import-channel-selector a.active").attr("channel");
-      var item, itemid, extraString;
+      var item, itemid, cleanStars, extraString;
       for (item in data.payload[selectedChannelNo]) {
         if (data.payload[selectedChannelNo][item].type == "central") {
-          extraString = " - " + data.payload[selectedChannelNo][item].artist;
+          if (!data.payload[selectedChannelNo][item].clean) {
+            cleanStars = "**";
+          } else {
+            cleanStars = "";
+          }
+          extraString = " - " + data.payload[selectedChannelNo][item].artist + " - " + data.payload[selectedChannelNo][item].album.title + " (" + data.payload[selectedChannelNo][item].length + ")";
           itemid = data.payload[selectedChannelNo][item]["album"].recordid + "-" + data.payload[selectedChannelNo][item].trackid;
         } else {
+          cleanStars = "";
           extraString = "";
           itemid = "ManagedDB-" + data.payload[selectedChannelNo][item].managedid;
         }
-        $("#import-channel-list").append("<input type=\"checkbox\" class=\"channel-list-item\" value=\""+ itemid + "\">" + data.payload[selectedChannelNo][item].title + extraString + "<br>");
+        $("#import-channel-list").append("<input type=\"checkbox\" class=\"channel-list-item\" value=\""+ itemid + "\">" + cleanStars + data.payload[selectedChannelNo][item].title + extraString + "<br>");
+        $("#import-channel-filter-btns").fadeIn();
       }
       if (data.payload[selectedChannelNo] == undefined || data.payload[selectedChannelNo].length == 0) {
-        $("#import-channel-list").append("<li>No items in this channel.</li>");
+        $("#import-channel-list").append("<p>No items in this channel.</p>");
+        $("#import-channel-filter-btns").fadeOut();
       }
     }
   });
@@ -133,10 +144,10 @@ $("#import-season-selector").change(function() {
 });
 
 $("#import-timeslot-selector").change(function() {
-  $("#import-channel-selector").removeClass("hidden");
-  $("#import-channel-list").removeClass("hidden");
+  $("#import-channel-selector").fadeIn();
+  $("#import-channel-list").fadeIn();
   loadChannelList();
-  $("#import-to-channel-selector").removeClass("hidden");
+  $("#import-to-channel-selector").fadeIn();
 });
 
 function updateSeasonList() {
@@ -193,15 +204,15 @@ function updateTimeslotList() {
 
 function importSelectedTracks(channelNo) {
   var ops = [];
-  $("input[type=checkbox]").each(function () {
-    if (this.checked) {
+  if ($("input[type=checkbox]:checked").length > 0) {
+    showAlert("Importing Tracks...", "warning");
+    $("input[type=checkbox]:checked").each(function () {
       var weight;
       if (channelNo == 0){
         weight = nextWeightChannel0;
         nextWeightChannel0++;
       } else if (channelNo == 1){
         weight = nextWeightChannel1;
-        alert(weight);
         nextWeightChannel1++;
       } else if (channelNo == 2){
         weight = nextWeightChannel2;
@@ -213,9 +224,11 @@ function importSelectedTracks(channelNo) {
         channel: parseInt(channelNo),
         weight: weight
       });
-    }
-  });
-  shipChanges(ops, clientid);
+    });
+    shipChanges(ops);
+  } else {
+    showAlert("No tracks were selected.", "danger");
+  }
 }
 /**
  * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
@@ -223,7 +236,7 @@ function importSelectedTracks(channelNo) {
  * addOp: If true, there has been an add operation. We currently make these syncronous.
  * pNext: Optional. Parent queue to process on completion.
  */
-var shipChanges = function (ops, clientid) {
+var shipChanges = function (ops) {
   ajaxQueue.queue(
     function (next) {
       $.ajax({
@@ -241,12 +254,11 @@ var shipChanges = function (ops, clientid) {
           showAlert("Tracks imported!", "success", true);
         },
         data: {
-          clientid: clientid,
           ops: ops
         },
         dataType: "json",
-        type: "POST",
-        url: myradio.makeURL("NIPSWeb", "recv_ops")
+        type: "PUT",
+        url: myradio.getAPIURL("timeslot", "updateshowplan", window.timeslotid, "")
       });
     }
   );

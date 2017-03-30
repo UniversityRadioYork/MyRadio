@@ -21,7 +21,10 @@
         <a href="#" id="import-channel-1" channel="1" class="btn btn-default">Channel 2</a>
         <a href="#" id="import-channel-2" channel="2" class="btn btn-default">Channel 3</a>
     </div>
-    <a href="#" onclick="selectAll()">Select All</a>
+    <div id="import-channel-filter-btns" class="hidden">
+      <a href="#" onclick="selectNone()">Select None</a> |
+       <a href="#" onclick="selectAll()">Select All</a>
+    </div>
     <form id="import-channel-list" class="baps-channel hidden">
     </form>
       <div id="import-to-channel-selector" class="hidden">

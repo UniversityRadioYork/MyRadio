@@ -126,7 +126,6 @@ ul.baps-channel, form.baps-channel {
   margin: 0;
   background-color: #eee;
   border: 1px solid #777;
-  border-bottom: none;
   position: static; /* override bootstrap relative, which breaks sortable */
 }
 
@@ -326,3 +325,26 @@ select {
 .context-menu--active {
   display: block;
 }
+
+#import-show-selector, #import-season-selector,
+#import-timeslot-selector, #import-channel-selector,
+#import-channel-list, #import-import-to-channel-selector {
+  margin-bottom:5px;
+}
+#import-channel-list {
+  padding: 5px;
+  border-radius: 4px;
+}
+#import-channel-list p {
+  margin: 0 20px;
+}
+#import-channel-list input[type=checkbox] {
+  margin-right: 5px;
+}
+#import-channel-filter-btns {
+  display: inline-block;
+}
+#alert a {
+  cursor: pointer;
+}
+
