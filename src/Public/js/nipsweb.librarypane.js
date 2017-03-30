@@ -31,7 +31,7 @@ function escapeHTML (string) {
 var searchTimerRef = null;
 function updateCentralSearch()
 {
-
+  showAlert("Loading Library results...", "warning");
   var options = {
     artist: $("#res-filter-artist").val(),
     title: $("#res-filter-track").val(),
@@ -64,6 +64,7 @@ function updateCentralSearch()
         );
       }
       planner.registerItemClicks();
+      showAlert("Loading Library Complete", "success");
     }
   );
 }
@@ -75,7 +76,6 @@ function updateCentralSearch()
 $(document).ready(function () {
   $("#res-type-sel").change(function () {
     var file;
-    showAlert("Loading Library results...", "warning");
     //Show the relevent filter forms
     if ($(this).val() === "central") {
       $("#res-filter-name").hide();
@@ -83,6 +83,7 @@ $(document).ready(function () {
       //This doesn't auto-load any files until search paramaters are set
 
     } else if ($(this).val().match(/managed-.*/)) {
+      showAlert("Loading Library results...", "warning");
       //Load a managed playlist
       var options = {
         itonesplaylistid: $(this).val().replace(/managed-/, ""),
@@ -114,12 +115,14 @@ $(document).ready(function () {
           ulsort.List.Filter("#res-filter-name", "#baps-channel-res>li");
           //Make them activatable
           planner.registerItemClicks();
+          showAlert("Loading Library Complete", "success");
         }
       );
       $("#res-filter-artist-container, #res-filter-track").fadeOut();
       $("#res-filter-name").fadeIn();
 
     } else if ($(this).val().match(/auto-.*/)) {
+      showAlert("Loading Library results...", "warning");
       //Load an auto playlist
       $.ajax({
         url: myradio.makeURL("NIPSWeb", "load_auto_managed"),
@@ -147,12 +150,14 @@ $(document).ready(function () {
           ulsort.List.Filter("#res-filter-name", "#baps-channel-res>li");
           //Make them activatable
           planner.registerItemClicks();
+          showAlert("Loading Library Complete", "success");
         }
       });
       $("#res-filter-artist-container, #res-filter-track").fadeOut();
       $("#res-filter-name").fadeIn();
 
     } else if ($(this).val().match(/^aux-\d+|^user-.*/)) {
+      showAlert("Loading Library results...", "warning");
       $.ajax({
         url: myradio.makeURL("NIPSWeb", "load_aux_lib"),
         type: "get",
@@ -175,12 +180,12 @@ $(document).ready(function () {
           ulsort.List.Filter("#res-filter-name", "#baps-channel-res>li");
           //Make them activatable
           planner.registerItemClicks();
+          showAlert("Loading Library Complete", "success");
         }
       });
       $("#res-filter-artist-container, #res-filter-track").fadeOut();
       $("#res-filter-name").fadeIn();
     }
-    showAlert("Loading Library Complete", "success");
     //Clear the current list
     $("#baps-channel-res").empty();
     //Makes the artist search autocompleting. When an artist is selected it'll filter
