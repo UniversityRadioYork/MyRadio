@@ -827,7 +827,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         //Being a Database Transaction - this all succeeds, or none of it does
         self::$db->query('BEGIN');
 
-        foreach ($set['ops'] as $op) {
+        foreach ($set as $op) {
             switch ($op['op']) {
                 case 'AddItem':
                     try {

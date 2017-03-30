@@ -1,4 +1,4 @@
-/* global ChannelConfigurator, myradio, mConfig */
+/* global ChannelConfigurator, myradio */
 //Global popup alert controller for all nipsweb js files.
 var showAlert = function (text, type) {
   // Stores fancy message notice icons.
@@ -121,16 +121,21 @@ var NIPSWeb = function (d) {
           async: !addOp,
           cache: false,
           success: function (data) {
-            for (var i in data) {
+            for (var i in data.payload) {
               if (i === "myradio_errors") {
                 continue;
               }
-              if (typeof data[i].timeslotitemid !== "undefined") {
+              if (typeof data.payload[i].timeslotitemid !== "undefined") {
                 //@todo multiple AddItem ops in a jsonon set will make this break
-                $("ul.baps-channel li[timeslotitemid=\"findme\"]").attr("timeslotitemid", data[i].timeslotitemid);
+                $("ul.baps-channel li[timeslotitemid=\"findme\"]").attr("timeslotitemid", data.payload[i].timeslotitemid);
               }
-              if (!data[i].status && !debug) {
-                window.location.reload();
+              if (!data.payload[i].status) {
+                showAlert("Save failed! Reloading in 5 seconds.", "danger");
+                if (!debug) {
+                  setTimeout(function(){ reload(); }, 5000);
+                }
+              } else {
+                showAlert("Changes Saved Successfuly", "success");
               }
             }
           },
@@ -139,15 +144,12 @@ var NIPSWeb = function (d) {
             if (typeof pNext !== "undefined") {
               pNext();
             }
-            showAlert("Changes Saved Successfuly", "success");
           },
           data: {
-            clientid: clientid,
             ops: ops
           },
-          dataType: "json",
-          type: "POST",
-          url: myradio.makeURL("NIPSWeb", "recv_ops")
+          type: "PUT",
+          url: myradio.getAPIURL("timeslot", "updateshowplan", window.timeslotid, "")
         });
       }
     );
