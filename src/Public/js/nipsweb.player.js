@@ -5,7 +5,6 @@ var showAlert = function (text, type) {
   const ICON_ERROR = "<div class='glyphicon glyphicon-exclamation-sign'></div>&nbsp;";
   const ICON_OK = "<div class='glyphicon glyphicon-ok'></div>&nbsp;";
   const ICON_LOADING = "<div class='glyphicon glyphicon-refresh gly-spin'></div>&nbsp;";
-  const ICON_CLOSE = "<a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>";
   if (!type) {
     type = "success";
   }
@@ -19,14 +18,14 @@ var showAlert = function (text, type) {
   }
 
   $("#notice").removeClass(function (index, className) {
-    return (className.match (/(^|\s)alert-\S+/g) || []).join(' ')
+    return (className.match (/(^|\s)alert-\S+/g) || []).join(" ");
   }).addClass("alert-"+type).html(icon + text);
 };
 
 //reload the page after something good or bad happens
 var reload = function() {
   location.reload();
-}
+};
 
 // Stores the clientid to enable multiple editors
 var clientid = null;
@@ -46,8 +45,6 @@ var NIPSWeb = function (d) {
   var players = [];
   // Store the interactive sliders/seek bars
   var sliders = [];
-  // Stores the context menu reference
-  var channelMenu;
 
 
   if (writable) {
@@ -340,7 +337,7 @@ var NIPSWeb = function (d) {
     // Used by dragdrop - enables the selected item to move down on drag/drop
     $("ul.baps-channel li").off("mousedown.predrag").on(
       "mousedown.predrag",
-      function (e) {
+      function () {
         $(this).attr(
           "nextSelect",
           typeof $(this).next().attr("id") !== "undefined" ? $(this).next().attr("id") : $(this).prev().attr("id")
@@ -467,14 +464,8 @@ var NIPSWeb = function (d) {
     });
   };
 
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-  //
-  // H E L P E R    F U N C T I O N S
-  //
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-
+  // Context Menu - Helper Functions
+  // Adapted From https://github.com/callmenick/Custom-Context-Menu
   /**
    * Function to check if we clicked inside an element with a particular class
    * name.
@@ -489,7 +480,7 @@ var NIPSWeb = function (d) {
     if ( el.classList.contains(className) ) {
       return el;
     } else {
-      while ( el = el.parentNode ) {
+      while ( el == el.parentNode ) {
         if ( el.classList && el.classList.contains(className) ) {
           return el;
         }
@@ -509,7 +500,7 @@ var NIPSWeb = function (d) {
     var posx = 0;
     var posy = 0;
 
-    if (!e) var e = window.event;
+    if (!e) e = window.event;
 
     if (e.pageX || e.pageY) {
       posx = e.pageX;
@@ -522,22 +513,14 @@ var NIPSWeb = function (d) {
     return {
       x: posx,
       y: posy
-    }
+    };
   }
 
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-  //
-  // C O R E    F U N C T I O N S
-  //
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
+  // Context Menu - Core Functions
 
   /**
    * Variables.
    */
-  var contextMenuClassName = "context-menu";
-  var contextMenuItemClassName = "context-menu__item";
   var contextMenuLinkClassName = "context-menu__link";
   var contextMenuActive = "context-menu--active";
 
@@ -549,13 +532,9 @@ var NIPSWeb = function (d) {
   var clickCoordsY;
 
   var menu = document.querySelector("#context-menu");
-  var menuItems = menu.querySelectorAll(".context-menu__item");
   var menuState = 0;
   var menuWidth;
   var menuHeight;
-  var menuPosition;
-  var menuPositionX;
-  var menuPositionY;
 
   var windowWidth;
   var windowHeight;
@@ -579,7 +558,7 @@ var NIPSWeb = function (d) {
 
       if ( taskItemInContext ) {
         e.preventDefault();
-        bapschannel = "#baps-channel-" + (parseInt(taskItemInContext.getAttribute("channel")) + 1);
+        var bapschannel = "#baps-channel-" + (parseInt(taskItemInContext.getAttribute("channel")) + 1);
 
         $(".contextIcon-AutoAdvance").css("visibility", $(bapschannel).attr("autoadvance")==1 ? "visible" : "hidden");
         $(".contextIcon-PlayOnLoad").css("visibility", $(bapschannel).attr("playonload")==1 ? "visible" : "hidden");
@@ -623,14 +602,14 @@ var NIPSWeb = function (d) {
       if ( e.keyCode === 27 ) {
         toggleMenuOff();
       }
-    }
+    };
   }
 
   /**
    * Window resize event listener
    */
   function resizeListener() {
-    window.onresize = function(e) {
+    window.onresize = function() {
       toggleMenuOff();
     };
   }
@@ -685,7 +664,7 @@ var NIPSWeb = function (d) {
   }
 
   /**
-   * Dummy action function that logs an action when a menu item link is clicked
+   * The function that makes clicking options on the context menu work!
    *
    * @param {HTMLElement} link The link that was clicked
    */
@@ -704,29 +683,31 @@ var NIPSWeb = function (d) {
 
     switch (currentAction) {
 
-      case "Delete":
-        var toDelete = taskItemInContext.parentNode.removeChild(taskItemInContext);
-        calcChanges(toDelete);
-        break;
-      case "AutoAdvance":
-        invert(bapschannel, "autoadvance");
-        break;
-      case "PlayOnLoad":
-        invert(bapschannel, "playonload");
-        break;
-      case "Repeat0":
-        $(bapschannel).attr("repeat", 0);
-        break;
-      case "Repeat1":
-        $(bapschannel).attr("repeat", 1);
-        break;
-      case "Repeat2":
-        $(bapschannel).attr("repeat", 2);
-        break;
+    case "Delete":
+      var toDelete = taskItemInContext.parentNode.removeChild(taskItemInContext);
+      calcChanges(toDelete);
+      break;
+    case "AutoAdvance":
+      invert(bapschannel, "autoadvance");
+      break;
+    case "PlayOnLoad":
+      invert(bapschannel, "playonload");
+      break;
+    case "Repeat0":
+      $(bapschannel).attr("repeat", 0);
+      break;
+    case "Repeat1":
+      $(bapschannel).attr("repeat", 1);
+      break;
+    case "Repeat2":
+      $(bapschannel).attr("repeat", 2);
+      break;
     }
     toggleMenuOff();
 
   }
+
+  //End of Context Menu
 
   var initialiseUI = function () {
     if (writable) {
@@ -762,7 +743,6 @@ var NIPSWeb = function (d) {
     registerItemClicks();
     setupGenericListeners();
     updateChannelTotalTimers();
-    //configureContextMenus();
     initContextMenu();
   };
 
@@ -861,7 +841,7 @@ var NIPSWeb = function (d) {
       "durationchange",
       function () {
         getDuration(channel);
-        if ($('#baps-channel-' + channel + ' li.selected[type="central"]').length !=0) {
+        if ($("#baps-channel-" + channel + " li.selected[type=\"central\"]").length !=0) {
           sliders[getChannelInt(channel)].reset(
             player.duration,
             0,
@@ -889,26 +869,24 @@ var NIPSWeb = function (d) {
     $(slider).on(
       "introChanged",
       function (e) {
-        if ($(channelDiv).children('.selected[type="central"]').length != 0) {
+        if ($(channelDiv).children(".selected[type=\"central\"]").length != 0) {
+          var file;
           var trackid = getRecTrackFromID($(channelDiv).children(".selected")[0].getAttribute("id"))[1];
           $(channelDiv).children(".selected")[0].setAttribute("intro", parseInt(e.originalEvent.detail.time));
-          $.ajax({
-              url: mConfig.api_url + "/v2/track/" + trackid + "/intro",
-              type: 'PUT',
-              data : {duration: e.originalEvent.detail.time},
-              success: function (data) {
-                for (file in data) {
-                  if (file === "myradio_errors") {
-                    continue;
-                  }
-                }
-                if (!data.status) {
-                  showAlert("We couldn't save that intro, try reloading.", "danger");
-                } else {
-                  showAlert("Intro Updated Successfuly", "success");
+          myradio.callAPI("PUT","track","intro",trackid, "", {duration: e.originalEvent.detail.time},
+            function (data) {
+              for (file in data) {
+                if (file === "myradio_errors") {
+                  continue;
                 }
               }
-          });
+              if (!data.status) {
+                showAlert("We couldn't save that intro, try reloading.", "danger");
+              } else {
+                showAlert("Intro Updated Successfuly", "success");
+              }
+            }
+          );
         }
       }
     );
@@ -1163,7 +1141,7 @@ var playoutSlider = function (e) {
         positionInt = calculatePositionFromSeek(e, positionSlider);
         return false;
       };
-      var dragEnd = function (e) {
+      var dragEnd = function () {
         sliderContainer.dispatchEvent(new CustomEvent("seeked", {detail: {time: positionInt}}));
 
         sliderContainer.removeEventListener("mousemove", dragMove);
@@ -1186,7 +1164,7 @@ var playoutSlider = function (e) {
         intro = calculatePositionFromSeek({clientX: e.clientX, currentTarget: introSlider}, introSlider);
         return false;
       };
-      var dragEnd = function (e) {
+      var dragEnd = function () {
         sliderContainer.dispatchEvent(new CustomEvent("introChanged", {detail: {time: intro}}));
 
         sliderContainer.parentNode.parentNode.removeEventListener("mousemove", dragMove);
@@ -1209,7 +1187,7 @@ var playoutSlider = function (e) {
         cue = calculatePositionFromSeek({clientX: e.clientX, currentTarget: cueSlider}, cueSlider);
         return false;
       };
-      var dragEnd = function (e) {
+      var dragEnd = function () {
         sliderContainer.dispatchEvent(new CustomEvent("cueChanged", {detail: {time: cue}}));
 
         sliderContainer.parentNode.parentNode.removeEventListener("mousemove", dragMove);
