@@ -5,6 +5,8 @@
     ["\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", "getWeekSchedule", null],
     ["\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", "getShowPlan", "AUTH_USENIPSWEB"],
     ["\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", "updateShowPlan", "AUTH_USENIPSWEB"],
+    ["\\MyRadio\\ServiceAPI\\MyRadio_Track", "itonesPlaylist", "AUTH_USENIPSWEB"],
+    ["\\MyRadio\\ServiceAPI\\MyRadio_Track", "itonesPlaylist", "AUTH_SEARCHCENTRALDB"],
     ["\\MyRadio\\ServiceAPI\\MyRadio_Track", "setIntro", "AUTH_USENIPSWEB"],
     ["\\MyRadio\\ServiceAPI\\MyRadio_Track", "search", "AUTH_SEARCHCENTRALDB"],
     ["\\MyRadio\\ServiceAPI\\MyRadio_Artist", "findByName", "AUTH_SEARCHCENTRALDB"]

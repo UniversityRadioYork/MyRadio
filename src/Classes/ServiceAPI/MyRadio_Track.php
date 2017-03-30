@@ -671,14 +671,6 @@ class MyRadio_Track extends ServiceAPI
             throw new MyRadioException('Valid values for sort are id, title and random.');
         }
 
-        //Shortcircuit - if itonesplaylistid is the only not-default value, just return the playlist
-        $conflict = false;
-
-        if (!$conflict && !empty($itonesplaylistid)) {
-
-            return iTones_Playlist::getInstance($itonesplaylistid)->getTracks();
-        }
-
         $options = [
             'title' => $title,
             'artist' => $artist,
@@ -884,6 +876,18 @@ class MyRadio_Track extends ServiceAPI
                 iTones_Playlist::getInstance($options['itonesplaylistid'])
                 ->getTracks()
             );
+    }
+    /**
+     * This method allows direct access to iTonesPlaylists, without all the weird stuff in search api.$_COOKIE
+     *
+     * @param int itonesplaylistid The id of the itones playlist we want to get tracks for.
+    */
+    public static function itonesPlaylist($itonesplaylistid = null) {
+        if ($itonesplaylistid == null) {
+            throw new MyRadioException('No valid iTones playlist id was provided.');
+        } else {
+            iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks();
+        }
     }
 
     /**

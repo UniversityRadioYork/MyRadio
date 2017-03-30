@@ -86,11 +86,9 @@ $(document).ready(function () {
       showAlert("Loading Library results...", "warning");
       //Load a managed playlist
       var options = {
-        itonesplaylistid: $(this).val().replace(/managed-/, ""),
-        digitised: true,
-        limit: 0
+        itonesplaylistid: $(this).val().replace(/managed-/, "")
       };
-      myradio.callAPI("GET","track","search","","", options,
+      myradio.callAPI("GET","track","itonesPlaylist","","", options,
         function (data) {
           for (file in data) {
             if (file === "myradio_errors") {
