@@ -88,7 +88,7 @@ $(document).ready(function () {
       var options = {
         itonesplaylistid: $(this).val().replace(/managed-/, "")
       };
-      myradio.callAPI("GET","track","itonesPlaylist","","", options,
+      myradio.callAPI("GET","track","itonesplaylist","","", options,
         function (data) {
           for (file in data) {
             if (file === "myradio_errors") {
