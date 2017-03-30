@@ -886,7 +886,7 @@ class MyRadio_Track extends ServiceAPI
         if ($itonesplaylistid == null) {
             throw new MyRadioException('No valid iTones playlist id was provided.');
         } else {
-            iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks();
+            return iTones_Playlist::getInstance($itonesplaylistid)->getTracks();
         }
     }
 
