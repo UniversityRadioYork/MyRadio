@@ -26,7 +26,7 @@
                 {% if track['type'] == 'aux' %}auxid='{{track['auxid']}}'{% endif %}
                 length='{{track['length']}}' timeslotitemid='{{track['timeslotitemid']}}'
                 weight='{{track['weight']}}' channel='{{track['channel']}}' intro='{{track['intro']}}'
-                title='{{track['title']}} {% if track['artist'] is defined %} - {{track['artist']}}{% endif %} ({{track['length']}})'>
+                title='{{track['title']}} {% if track['artist'] is defined %} - {{track['artist']}}{% endif %} {% if track['album']['title'] is defined %} - {{track['album']['title']}}{% endif %} ({{track['length']}})'>
                 {% if track['clean'] is defined and track['clean'] == false %}**{% endif %}{{track['title']}}
                 {% if track['artist'] is defined %} - {{track['artist']}}{% endif %}</li>
           {% endfor %}

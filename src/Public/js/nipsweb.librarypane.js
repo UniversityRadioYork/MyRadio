@@ -55,7 +55,7 @@ function updateCentralSearch()
           cleanStars = "**";
           tooltip = "This track is explicit. Do not broadcast before 9PM. ";
         }
-        tooltip += escapeHTML(data.payload[file].title) + " - " + escapeHTML(data.payload[file].artist)+ " (" + data.payload[file].length + ")";
+        tooltip += escapeHTML(data.payload[file].title) + " - " + escapeHTML(data.payload[file].artist) + " - " + escapeHTML(data.payload[file].album.title) + " (" + data.payload[file].length + ")";
         $("#baps-channel-res").append(
           "<li id='" + data.payload[file].album.recordid + "-" + data.payload[file].trackid +
           "' intro='" + data.payload[file].intro + "' title='" + tooltip + "'" +
@@ -103,7 +103,7 @@ $(document).ready(function () {
             }
             $("#baps-channel-res").append(
               "<li id='" + data.payload[file].album.recordid + "-" + data.payload[file].trackid +
-              "' title='" + escapeHTML(data.payload[file].title) + " (" + data.payload[file].length + ")" +
+              "' title='" + escapeHTML(data.payload[file].title) + " - " + escapeHTML(data[file].artist) + " - " + escapeHTML(data[file].album.title) + " (" + data.payload[file].length + ")" +
               "' intro='" + data.payload[file].intro + "'" +
               "' class='" + classes + "'" +
               "' channel='res' weight='0' type='central' length='" + data.payload[file].length + "'>" +
@@ -136,7 +136,7 @@ $(document).ready(function () {
             }
             $("#baps-channel-res").append(
               "<li id='" + data[file].album.recordid + "-" + data[file].trackid +
-              "' title='" + escapeHTML(data[file].title) + " - " + escapeHTML(data[file].artist) + " (" + data[file].length + ")" +
+              "' title='" + escapeHTML(data[file].title) + " - " + escapeHTML(data[file].artist) + " - " + escapeHTML(data[file].album.title) + " (" + data[file].length + ")" +
               "' intro='" + data[file].intro + "'" +
               "' class='" + classes + "'" +
               "' channel='res' weight='0' type='central' length='" + data[file].length + "'>" +
