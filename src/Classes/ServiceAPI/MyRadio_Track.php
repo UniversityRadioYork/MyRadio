@@ -671,6 +671,20 @@ class MyRadio_Track extends ServiceAPI
             throw new MyRadioException('Valid values for sort are id, title and random.');
         }
 
+        //Shortcircuit - if itonesplaylistid is the only not-default value, just return the playlist
+        $conflict = false;
+        foreach (['title', 'artist', 'digitised'] as $k) {
+            if (!empty($options[$k])) {
+                $conflict = true;
+                break;
+            }
+        }
+
+        if (!$conflict && !empty($options['itonesplaylistid'])) {
+
+            return iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks();
+        }
+
         $options = [
             'title' => $title,
             'artist' => $artist,
@@ -732,6 +746,7 @@ class MyRadio_Track extends ServiceAPI
         }
 
         if (!$conflict && !empty($options['itonesplaylistid'])) {
+
             return iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks();
         }
         if (isset($options['random']) && isset($options['titlesort'])) {
