@@ -270,7 +270,7 @@ $(document).ready(function () {
     if (channel2lastweight == undefined) {
       channel2lastweight = -1;
     }
-    var url = $(this).attr("href") + "?clientid=" + clientid + "&channel0lastweight=" + channel0lastweight + "&channel1lastweight=" + channel1lastweight + "&channel2lastweight=" + channel2lastweight;
+    var url = $(this).attr("href") + "?channel0lastweight=" + channel0lastweight + "&channel1lastweight=" + channel1lastweight + "&channel2lastweight=" + channel2lastweight;
     myradio.createDialog("Import from another show", "<iframe src='" + url + "' width='570' height='500' frameborder='0'></iframe>");
     return false;
   });
