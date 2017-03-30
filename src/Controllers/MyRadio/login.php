@@ -16,7 +16,7 @@ use \MyRadio\MyRadio\MyRadioFormField;
  */
 
 if (isset($_SESSION['memberid'])) {
-    URLUtils::redirect(Config::$base_url);
+    URLUtils::redirectWithMessage("/", "", "It seems you were trying to login while still being logged in, if that is not what happened, please contact the Computing Team.");
 } else {
     $form = (
         new MyRadioForm(
