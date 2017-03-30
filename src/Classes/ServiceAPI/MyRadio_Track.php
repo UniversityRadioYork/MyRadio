@@ -673,12 +673,6 @@ class MyRadio_Track extends ServiceAPI
 
         //Shortcircuit - if itonesplaylistid is the only not-default value, just return the playlist
         $conflict = false;
-        foreach (['title', 'artist', 'digitised'] as $k) {
-            if (!empty($options[$k])) {
-                $conflict = true;
-                break;
-            }
-        }
 
         if (!$conflict && !empty($options['itonesplaylistid'])) {
 
