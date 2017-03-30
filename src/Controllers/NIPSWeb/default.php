@@ -12,8 +12,8 @@ use \MyRadio\ServiceAPI\MyRadio_User;
 
 CoreUtils::requireTimeslot();
 
-    $title = MyRadio_Timeslot::getInstance($_SESSION['timeslotid'])->getMeta('title');
-    $timeDate = CoreUtils::HappyTime(MyRadio_Timeslot::getInstance($_SESSION['timeslotid'])->getStartTime());
+    $show_title = MyRadio_Timeslot::getInstance($_SESSION['timeslotid'])->getMeta('title');
+    $start_time = CoreUtils::HappyTime(MyRadio_Timeslot::getInstance($_SESSION['timeslotid'])->getStartTime());
 
 if (isset($_REQUEST['readonly'])) {
     $template = 'NIPSWeb/readonly.twig';
@@ -31,8 +31,9 @@ if (isset($_REQUEST['readonly'])) {
 }
 
 CoreUtils::getTemplateObject()->setTemplate($template)
-    ->addVariable('title', $title)
-    ->addVariable('timeDate', $timeDate)
+    ->addVariable('title', "Show Planner")
+    ->addVariable('show_title', $show_title)
+    ->addVariable('start_time', $start_time)
     ->addVariable('tracks', MyRadio_Timeslot::getInstance($_SESSION['timeslotid'])->getShowPlan())
     ->addVariable('reslists', $reslists)
     ->render();
