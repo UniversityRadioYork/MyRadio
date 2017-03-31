@@ -202,7 +202,6 @@ var shipChanges = function (ops) {
   ajaxQueue.queue(
     function (next) {
       $.ajax({
-        async: false,
         cache: false,
         success: function (data) {
           for (var i in data) {
