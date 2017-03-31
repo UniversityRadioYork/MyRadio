@@ -27,9 +27,6 @@ var reload = function() {
   location.reload();
 };
 
-// Stores the clientid to enable multiple editors
-var clientid = null;
-
 /* exported NIPSWeb */
 var NIPSWeb = function (d) {
   // If enabled, doesn't reload on error
@@ -45,19 +42,6 @@ var NIPSWeb = function (d) {
   var players = [];
   // Store the interactive sliders/seek bars
   var sliders = [];
-
-
-  if (writable) {
-    //Get a client id to identify this session
-    $.ajax({
-      url: myradio.makeURL("NIPSWeb", "get_client_token"),
-      type: "POST",
-      success: function (data) {
-        clientid = parseInt(data.token);
-      },
-      async: false
-    });
-  }
 
   /**
    * Returns number of minutes (zero padded) from a time in seconds
