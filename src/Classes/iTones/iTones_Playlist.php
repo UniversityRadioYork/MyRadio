@@ -33,7 +33,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Initiates the ManagedPlaylist variables.
      *
-     * @param int $playlistid The ID of the managed playlist to initialise
+     * @param string $playlistid The ID of the managed playlist to initialise
      *                        Note: Only links *non-expired* items
      */
     protected function __construct($playlistid)
