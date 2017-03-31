@@ -196,16 +196,6 @@ $(document).ready(function () {
       dupDetector: function (remote, local) {
         return local.title == remote.title;
       },
-      prefetch: {
-        url: myradio.getAPIURL("artist","findbyname","","") + "?title=null&limit=500",
-        filter: function (data) {
-          return $.map(data.payload, function (artist) {
-            return {
-              title: artist.title,
-            };
-          });
-        }
-      },
       remote: {
         url: myradio.getAPIURL("artist","findbyname","","") + "?title=%QUERY&limit=5", //Seperated out otherwise % gets urlescaped
         filter: function (data) {
