@@ -1,8 +1,8 @@
-/* global myradio, mConfig */
+/* global myradio */
 // Queue up sending ajax requests one at a time
 var ajaxQueue = $({});
 
-//Get the GET variables for clientid & nextWeightChanneln .
+//Get the GET variables for nextWeightChanneln.
 $.urlParam = function(name){
   var results = new RegExp("[\?&]" + name + "=([^&#]*)").exec(window.location.href);
   return results[1] || 0;
