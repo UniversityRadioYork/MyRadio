@@ -107,7 +107,6 @@ class MyRadio_Swagger
             '__wakeup',
             'removeInstance',
             '__toString',
-            'setToDataSource',
             '__construct',
         ];
         $data = [
