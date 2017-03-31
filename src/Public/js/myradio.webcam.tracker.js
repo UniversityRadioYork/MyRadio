@@ -4,6 +4,10 @@
  * Sends a notice to the webcam logger every 15 seconds that this user is still watching
  */
 function webcamTrackViewer() {
+  // Use page visibility API to stop sending messages when the page is hidden
+  if (typeof document.hidden !== "undefined" && document.hidden) {
+    return;
+  }
   $.ajax({
     type: "get",
     cache: false,
