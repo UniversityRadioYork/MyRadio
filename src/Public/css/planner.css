@@ -46,8 +46,7 @@ body {
 
 #central-dragdrop, #res-dragdrop {
   height: 150px;
-  margin: 0 2px 0 1px;
-  width: calc(100% - 3px);
+  margin: 0;
 }
 #central-status, #res-status {
   position: relative;
@@ -60,9 +59,6 @@ body {
 #res-type-sel {
   margin: 0 2px 5px 1px;
   width: calc(100% - 3px);
-}
-.result-container {
-  width: 550px;
 }
 .result-container .alert {
   width: 100%;
@@ -173,9 +169,10 @@ select {
 #iframe {
   background: none;
   box-shadow: none;
-  width: 568px;
-  min-width: 568px;
+  width: 100%;
+  min-width: 0;
   height: auto;
+  margin:0;
 }
 
 /** SLIDER COMPONENT **/
