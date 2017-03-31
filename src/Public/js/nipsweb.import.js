@@ -18,10 +18,8 @@ $(document).ready(
     nextWeightChannel1 = parseInt($.urlParam("channel1lastweight"))+1;
     nextWeightChannel2 = parseInt($.urlParam("channel2lastweight"))+1;
 
-    $.ajax({
-      url: mConfig.api_url + "/v2/user/" + window.memberid + "/shows/",
-      type: "get",
-      success: function (data) {
+    myradio.callAPI("GET","user","shows", window.myradio.memberid,"","",
+      function (data) {
         var show;
         for (show in data) {
           if (show === "myradio_errors") {
@@ -37,7 +35,7 @@ $(document).ready(
           updateSeasonList();
         }
       }
-    });
+    );
 
     $("#import-channel-selector a").on("click","", function() {
       selectChannel($(this).attr("channel"));
@@ -98,10 +96,8 @@ function selectChannel(channelNo) {
 
 function loadChannelList() {
   var selectedTimeslotID = $("#import-timeslot-selector").find(":selected").attr("value");
-  $.ajax({
-    url: mConfig.api_url + "/v2/timeslot/" + selectedTimeslotID + "/showplan",
-    type: "get",
-    success: function (data) {
+  myradio.callAPI("GET","timeslot","showplan",selectedTimeslotID,"","",
+    function (data) {
       for (item in data) {
         if (item === "myradio_errors") {
           continue;
@@ -132,7 +128,7 @@ function loadChannelList() {
         $("#import-channel-filter-btns").fadeOut();
       }
     }
-  });
+  );
 }
 
 $("#import-show-selector").change(function() {
@@ -155,10 +151,8 @@ function updateSeasonList() {
   $("#import-season-selector").prop("disabled", "disabled");
   $("#import-season-selector option:not(:disabled)").remove();
   if (selectedShowID != "null") {
-    $.ajax({
-      url: mConfig.api_url + "/v2/show/" + selectedShowID + "/allseasons",
-      type: "get",
-      success: function (data) {
+    myradio.callAPI("GET","show","allseasons",selectedShowID,"","",
+      function (data) {
         var season;
         for (season in data) {
           if (season === "myradio_errors") {
@@ -174,7 +168,7 @@ function updateSeasonList() {
           updateTimeslotList();
         }
       }
-    });
+    );
   }
 }
 
@@ -183,10 +177,8 @@ function updateTimeslotList() {
   $("#import-timeslot-selector").prop("disabled", "disabled");
   $("#import-timeslot-selector option:not(:disabled)").remove();
   if (selectedSeasonID != "null") {
-    $.ajax({
-      url: mConfig.api_url + "/v2/season/" + selectedSeasonID + "/alltimeslots",
-      type: "get",
-      success: function (data) {
+    myradio.callAPI("GET","season","alltimeslots",selectedSeasonID,"","",
+      function (data) {
         var timeslot;
         for (timeslot in data) {
           if (timeslot === "myradio_errors") {
@@ -198,7 +190,7 @@ function updateTimeslotList() {
         }
         $("#import-timeslot-selector").prop("disabled", false);
       }
-    });
+    );
   }
 }
 
@@ -233,8 +225,6 @@ function importSelectedTracks(channelNo) {
 /**
  * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
  * ops: JSON changeset to send
- * addOp: If true, there has been an add operation. We currently make these syncronous.
- * pNext: Optional. Parent queue to process on completion.
  */
 var shipChanges = function (ops) {
   ajaxQueue.queue(
@@ -258,7 +248,7 @@ var shipChanges = function (ops) {
         },
         dataType: "json",
         type: "PUT",
-        url: myradio.getAPIURL("timeslot", "updateshowplan", window.timeslotid, "")
+        url: myradio.getAPIURL("timeslot", "updateshowplan", window.myradio.timeslotid, "")
       });
     }
   );
