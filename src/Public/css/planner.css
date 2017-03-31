@@ -95,7 +95,7 @@ body {
 #baps-menu .btn-group {
   margin: -2px 0 0 0;
 }
-#notice {
+#baps-menu #showAlert {
   display: inline-block;
   padding: 6px 15px;
   margin: 0 10px;
@@ -341,7 +341,7 @@ select {
 #import-channel-filter-btns {
   display: inline-block;
 }
-#alert a {
+#showAlert a {
   cursor: pointer;
 }
 

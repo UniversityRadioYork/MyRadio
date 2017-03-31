@@ -1,26 +1,4 @@
 /* global ChannelConfigurator, myradio */
-//Global popup alert controller for all nipsweb js files.
-var showAlert = function (text, type) {
-  // Stores fancy message notice icons.
-  const ICON_ERROR = "<div class='glyphicon glyphicon-exclamation-sign'></div>&nbsp;";
-  const ICON_OK = "<div class='glyphicon glyphicon-ok'></div>&nbsp;";
-  const ICON_LOADING = "<div class='glyphicon glyphicon-refresh gly-spin'></div>&nbsp;";
-  if (!type) {
-    type = "success";
-  }
-  var icon;
-  if (type == "success") {
-    icon = ICON_OK;
-  } else if (type == "warning"){
-    icon = ICON_LOADING;
-  } else if (type == "danger") {
-    icon = ICON_ERROR;
-  }
-
-  $("#notice").removeClass(function (index, className) {
-    return (className.match (/(^|\s)alert-\S+/g) || []).join(" ");
-  }).addClass("alert-"+type).html(icon + text);
-};
 
 //reload the page after something good or bad happens
 var reload = function() {
@@ -114,12 +92,12 @@ var NIPSWeb = function (d) {
                 $("ul.baps-channel li[timeslotitemid=\"findme\"]").attr("timeslotitemid", data.payload[i].timeslotitemid);
               }
               if (!data.payload[i].status) {
-                showAlert("Save failed! Reloading in 5 seconds.", "danger");
+                myradio.showAlert("Save failed! Reloading in 5 seconds.", "danger");
                 if (!debug) {
                   setTimeout(function(){ reload(); }, 5000);
                 }
               } else {
-                showAlert("Changes Saved Successfuly", "success");
+                myradio.showAlert("Changes Saved Successfuly", "success");
               }
             }
           },
@@ -133,7 +111,7 @@ var NIPSWeb = function (d) {
             ops: ops
           },
           type: "PUT",
-          url: myradio.getAPIURL("timeslot", "updateshowplan", window.timeslotid, "")
+          url: myradio.getAPIURL("timeslot", "updateshowplan", window.myradio.timeslotid, "")
         });
       }
     );
@@ -143,7 +121,7 @@ var NIPSWeb = function (d) {
    * Detect what changes have been made to the show plan
    */
   var calcChanges = function (li) {
-    showAlert("Saving changes to show plan...", "warning");
+    myradio.showAlert("Saving changes to show plan...", "warning");
     if (!li.hasOwnProperty("attr")) {
       li = $(li);
     }
@@ -335,19 +313,19 @@ var NIPSWeb = function (d) {
       function (e) {
         var channel = $(this).parent(".baps-channel").attr("channel");
         if (!getPlayer(channel).paused) {
-          showAlert("Cannot load track whilst another is playing.", "warning");
+          myradio.showAlert("Cannot load track whilst another is playing.", "warning");
           e.stopPropagation();
           return false;
         }
         if ($(this).hasClass("undigitised")) {
           //Can't select the track - it isn't digitised
-          showAlert($(this).html() + " has not been digitised.", "danger");
+          myradio.showAlert($(this).html() + " has not been digitised.", "danger");
           e.stopPropagation();
           return false;
         }
         if ($(this).hasClass("unclean")) {
           //This track may have naughty words, but don't block selection
-          showAlert("<strong>" + $(this).html() + "</strong> is explicit. Do not broadcast before 9pm.", "danger");
+          myradio.showAlert("<strong>" + $(this).html() + "</strong> is explicit. Do not broadcast before 9pm.", "danger");
         }
         //Set this track as the active file for this channel
         //First, we need to remove the active class for any other file in the channel
@@ -867,9 +845,9 @@ var NIPSWeb = function (d) {
                 }
               }
               if (!data.status) {
-                showAlert("We couldn't save that intro, try reloading.", "danger");
+                myradio.showAlert("We couldn't save that intro, try reloading.", "danger");
               } else {
-                showAlert("Intro Updated Successfuly", "success");
+                myradio.showAlert("Intro Updated Successfuly", "success");
               }
             }
           );
@@ -962,7 +940,7 @@ var NIPSWeb = function (d) {
             getPlayer(channel).type = "audio/ogg";
             params.ogg = true;
           } else {
-            showAlert("Sorry, you need to use a modern browser to use Track Preview.", "danger");
+            myradio.showAlert("Sorry, you need to use a modern browser to use Track Preview.", "danger");
           }
           getPlayer(channel).src = myradio.makeURL("NIPSWeb", "secure_play", params);
           $(getPlayer(channel)).off("canplay.forloaded").on(
@@ -1043,7 +1021,6 @@ var NIPSWeb = function (d) {
     debug: debug,
     initialiseUI: initialiseUI,
     initialisePlayer: initialisePlayer,
-    showAlert: showAlert,
     registerItemClicks: registerItemClicks
   };
 

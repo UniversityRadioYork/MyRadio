@@ -1,4 +1,4 @@
-/* global NIPSWeb,showAlert */
+/* global NIPSWeb, myradio */
 /* exported planner */
 var planner = null;
 $(document).ready(
@@ -9,6 +9,6 @@ $(document).ready(
     planner.initialisePlayer("1");
     planner.initialisePlayer("2");
     planner.initialisePlayer("3");
-    showAlert("Welcome to Show Planner!", "success");
+    myradio.showAlert("Welcome to Show Planner!", "success");
   }
 );

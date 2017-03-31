@@ -60,34 +60,6 @@ var selectNone = function() {  //"select none" change
   });
 };
 
-//popup alert controller.
-var showAlert = function (text, type, reload) {
-  // Stores fancy message notice icons.
-  const ICON_ERROR = "<div class='glyphicon glyphicon-exclamation-sign'></div>&nbsp;";
-  const ICON_OK = "<div class='glyphicon glyphicon-ok'></div>&nbsp;";
-  const ICON_LOADING = "<div class='glyphicon glyphicon-refresh gly-spin'></div>&nbsp;";
-  if (!type) {
-    type = "success";
-  }
-  var icon;
-  if (type == "success") {
-    icon = ICON_OK;
-  } else if (type == "warning"){
-    icon = ICON_LOADING;
-  } else if (type == "danger") {
-    icon = ICON_ERROR;
-  }
-  if (reload) {
-    text = text + " <a onClick=\"reload()\" title=\"Reload the page\">Please reload your show plan.</a>";
-  }
-
-  $("#alert").removeClass(function (index, className) {
-    return (className.match (/(^|\s)alert-\S+/g) || []).join(" ");
-  }).addClass("alert-"+type).html(icon + text);
-
-  parent.showAlert(text, type, reload);
-};
-
 function selectChannel(channelNo) {
   $("#import-channel-selector a").removeClass("active");
   $("#import-channel-" + channelNo).addClass("active");
@@ -197,7 +169,7 @@ function updateTimeslotList() {
 function importSelectedTracks(channelNo) {
   var ops = [];
   if ($("input[type=checkbox]:checked").length > 0) {
-    showAlert("Importing Tracks...", "warning");
+    myradio.showAlert("Importing Tracks...", "warning");
     $("input[type=checkbox]:checked").each(function () {
       var weight;
       if (channelNo == 0){
@@ -219,7 +191,7 @@ function importSelectedTracks(channelNo) {
     });
     shipChanges(ops);
   } else {
-    showAlert("No tracks were selected.", "danger");
+    myradio.showAlert("No tracks were selected.", "danger");
   }
 }
 /**
@@ -241,7 +213,9 @@ var shipChanges = function (ops) {
         },
         complete: function () {
           next();
-          showAlert("Tracks imported!", "success", true);
+          var text = "Tracks imported! <a onClick=\"reload()\" title=\"Reload the page\">Please reload your show plan.</a>";
+          myradio.showAlert(text, "success");
+          parent.myradio.showAlert(text, "success");
         },
         data: {
           ops: ops
