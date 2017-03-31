@@ -49,7 +49,10 @@ var myradio = {
     );
     return reportButton;
   },
-  callAPI: function (method, module, action, id, firstParam, options, successFunc = function(){}) {
+  callAPI: function (method, module, action, id, firstParam, options, successFunc) {
+    if (successFunc == undefined) {
+      successFunc = function(){};
+    }
     $.ajax({
       url: myradio.getAPIURL(module, action, id, firstParam),
       data: options,
