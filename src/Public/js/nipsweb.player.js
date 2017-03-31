@@ -182,14 +182,14 @@ var NIPSWeb = function (d) {
             current = li;
             while (current.next().length === 1) {
               current = current.next();
-              current.attr("weight", parseInt(current.attr("weight")) + 1);
+              current.attr("weight", parseInt(current.attr("weight")) + 1, 10);
               ops.push({
                 op: "MoveItem",
-                timeslotitemid: parseInt(current.attr("timeslotitemid")),
-                oldchannel: parseInt(current.attr("channel")),
-                oldweight: parseInt(current.attr("weight")) - 1,
-                channel: parseInt(current.attr("channel")),
-                weight: parseInt(current.attr("weight"))
+                timeslotitemid: parseInt(current.attr("timeslotitemid"), 10),
+                oldchannel: parseInt(current.attr("channel"), 10),
+                oldweight: parseInt(current.attr("weight"), 10) - 1,
+                channel: parseInt(current.attr("channel"), 10),
+                weight: parseInt(current.attr("weight"), 10)
               });
             }
 
@@ -198,8 +198,8 @@ var NIPSWeb = function (d) {
             ops.push({
               op: "AddItem",
               id: li.attr("id"),
-              channel: parseInt(li.attr("channel")),
-              weight: parseInt(li.attr("weight"))
+              channel: parseInt(li.attr("channel"), 10),
+              weight: parseInt(li.attr("weight"), 10)
             });
             li.attr("timeslotitemid", "findme");
 
@@ -212,14 +212,14 @@ var NIPSWeb = function (d) {
              */
             $("ul.baps-channel li[channel=" + oldChannel + "]").each(function () {
               if (oldWeight - $(this).attr("weight") < 0) {
-                $(this).attr("weight", parseInt($(this).attr("weight")) - 1);
+                $(this).attr("weight", parseInt($(this).attr("weight"), 10) - 1);
                 ops.push({
                   op: "MoveItem",
-                  timeslotitemid: parseInt($(this).attr("timeslotitemid")),
-                  oldchannel: parseInt($(this).attr("channel")),
-                  oldweight: parseInt($(this).attr("weight")) + 1,
-                  channel: parseInt($(this).attr("channel")),
-                  weight: parseInt($(this).attr("weight"))
+                  timeslotitemid: parseInt($(this).attr("timeslotitemid"), 10),
+                  oldchannel: parseInt($(this).attr("channel"), 10),
+                  oldweight: parseInt($(this).attr("weight"), 10) + 1,
+                  channel: parseInt($(this).attr("channel"), 10),
+                  weight: parseInt($(this).attr("weight"), 10)
                 });
               }
             });
@@ -228,9 +228,9 @@ var NIPSWeb = function (d) {
             // This is after the moves to ensure there aren't two items of the same weight
             ops.push({
               op: "RemoveItem",
-              timeslotitemid: parseInt(li.attr("timeslotitemid")),
-              channel: parseInt(oldChannel),
-              weight: parseInt(oldWeight)
+              timeslotitemid: parseInt(li.attr("timeslotitemid"), 10),
+              channel: parseInt(oldChannel, 10),
+              weight: parseInt(oldWeight, 10)
             });
             li.attr("timeslotitemid", null);
 
@@ -249,7 +249,7 @@ var NIPSWeb = function (d) {
               if (oldWeight - $(this).attr("weight") < 0 &&
                 $(this).attr("timeslotitemid") !== li.attr("timeslotitemid")) {
                 dec.push($(this).attr("timeslotitemid"));
-                $(this).attr("weight", parseInt($(this).attr("weight")) - 1);
+                $(this).attr("weight", parseInt($(this).attr("weight"), 10) - 1);
               }
             });
 
@@ -261,12 +261,12 @@ var NIPSWeb = function (d) {
               if (pos >= 0) {
                 $("ui.baps-channel li[timeslotitemid=" + dec[pos] + "]").attr(
                   "weight",
-                  parseInt($("ui.baps-channel li[timeslotitemid=" + dec[pos] + "]")) + 1
+                  parseInt($("ui.baps-channel li[timeslotitemid=" + dec[pos] + "]"), 10) + 1
                 );
                 dec[pos] = null;
               } else {
                 inc.push(current.attr("timeslotitemid"));
-                current.attr("weight", parseInt(current.attr("weight")) + 1);
+                current.attr("weight", parseInt(current.attr("weight"), 10) + 1);
               }
             }
 
@@ -274,11 +274,11 @@ var NIPSWeb = function (d) {
               obj = $("ul.baps-channel li[timeslotitemid=" + inc[i] + "]");
               ops.push({
                 op: "MoveItem",
-                timeslotitemid: parseInt(inc[i]),
-                oldchannel: parseInt(obj.attr("channel")),
-                oldweight: parseInt(obj.attr("weight")) - 1,
-                channel: parseInt(obj.attr("channel")),
-                weight: parseInt(obj.attr("weight"))
+                timeslotitemid: parseInt(inc[i], 10),
+                oldchannel: parseInt(obj.attr("channel"), 10),
+                oldweight: parseInt(obj.attr("weight"), 10) - 1,
+                channel: parseInt(obj.attr("channel"), 10),
+                weight: parseInt(obj.attr("weight"), 10)
               });
             }
 
@@ -289,22 +289,22 @@ var NIPSWeb = function (d) {
               obj = $("ul.baps-channel li[timeslotitemid=" + dec[i] + "]");
               ops.push({
                 op: "MoveItem",
-                timeslotitemid: parseInt(dec[i]),
-                oldchannel: parseInt(obj.attr("channel")),
-                oldweight: parseInt(obj.attr("weight")) + 1,
-                channel: parseInt(obj.attr("channel")),
-                weight: parseInt(obj.attr("weight"))
+                timeslotitemid: parseInt(dec[i], 10),
+                oldchannel: parseInt(obj.attr("channel"), 10),
+                oldweight: parseInt(obj.attr("weight"), 10) + 1,
+                channel: parseInt(obj.attr("channel"), 10),
+                weight: parseInt(obj.attr("weight"), 10)
               });
             }
 
             // Finally, we can add the item itself
             ops.push({
               op: "MoveItem",
-              timeslotitemid: parseInt(li.attr("timeslotitemid")),
-              oldchannel: parseInt(oldChannel),
-              oldweight: parseInt(oldWeight),
-              channel: parseInt(li.attr("channel")),
-              weight: parseInt(li.attr("weight"))
+              timeslotitemid: parseInt(li.attr("timeslotitemid"), 10),
+              oldchannel: parseInt(oldChannel, 10),
+              oldweight: parseInt(oldWeight, 10),
+              channel: parseInt(li.attr("channel"), 10),
+              weight: parseInt(li.attr("weight"), 10)
             });
           }
           /**
@@ -443,8 +443,8 @@ var NIPSWeb = function (d) {
         if (tmp.length !== 3) {
           return;
         }
-        time += parseInt(tmp[1]) * 60;
-        time += parseInt(tmp[2]);
+        time += parseInt(tmp[1], 10) * 60;
+        time += parseInt(tmp[2], 10);
       });
       $("#" + $(this).attr("id") + "-total").html("(" + timeMins(time) + ":" + timeSecs(time) + ")");
     });
@@ -544,7 +544,7 @@ var NIPSWeb = function (d) {
 
       if ( taskItemInContext ) {
         e.preventDefault();
-        var bapschannel = "#baps-channel-" + (parseInt(taskItemInContext.getAttribute("channel")) + 1);
+        var bapschannel = "#baps-channel-" + (parseInt(taskItemInContext.getAttribute("channel"), 10) + 1);
 
         $(".contextIcon-AutoAdvance").css("visibility", $(bapschannel).attr("autoadvance")==1 ? "visible" : "hidden");
         $(".contextIcon-PlayOnLoad").css("visibility", $(bapschannel).attr("playonload")==1 ? "visible" : "hidden");
@@ -665,7 +665,7 @@ var NIPSWeb = function (d) {
       }
     };
 
-    var bapschannel = "#baps-channel-" + (parseInt(taskItemInContext.getAttribute("channel")) + 1);
+    var bapschannel = "#baps-channel-" + (parseInt(taskItemInContext.getAttribute("channel"), 10) + 1);
 
     switch (currentAction) {
 
@@ -796,7 +796,7 @@ var NIPSWeb = function (d) {
       function () {
         var el = $("#baps-channel-" + channel + " li.selected");
         stopping(channel);
-        if (channelDiv.attr("autoadvance") == 1 && parseInt(channelDiv.attr("repeat")) !== 1) {
+        if (channelDiv.attr("autoadvance") == 1 && parseInt(channelDiv.attr("repeat"), 10) !== 1) {
           var next = el.next("li");
           if (!next.length && el.parent().attr("repeat") == 2) {
             next = el.parent().children().first();
@@ -805,7 +805,7 @@ var NIPSWeb = function (d) {
             el.removeClass("selected");
             next.click();
           }
-        } else if (parseInt(channelDiv.attr("repeat")) === 1) {
+        } else if (parseInt(channelDiv.attr("repeat"), 10) === 1) {
           player.currentTime = player.cueTime;
           player.play();
           playing(channel);
@@ -858,7 +858,7 @@ var NIPSWeb = function (d) {
         if ($(channelDiv).children(".selected[type=\"central\"]").length != 0) {
           var file;
           var trackid = getRecTrackFromID($(channelDiv).children(".selected")[0].getAttribute("id"))[1];
-          $(channelDiv).children(".selected")[0].setAttribute("intro", parseInt(e.originalEvent.detail.time));
+          $(channelDiv).children(".selected")[0].setAttribute("intro", parseInt(e.originalEvent.detail.time), 10);
           myradio.callAPI("PUT","track","intro",trackid, "", {duration: e.originalEvent.detail.time},
             function (data) {
               for (file in data) {
@@ -1199,9 +1199,9 @@ var playoutSlider = function (e) {
   sliderContainer.addEventListener("mousedown", clickHandler);
 
   var reset = function (newDuration, newCue, newIntro) {
-    duration = parseInt(newDuration);
-    cue = parseInt(newCue);
-    intro = parseInt(newIntro);
+    duration = parseInt(newDuration, 10);
+    cue = parseInt(newCue, 10);
+    intro = parseInt(newIntro, 10);
     positionInt = 0;
     redraw();
   };

@@ -14,9 +14,9 @@ var nextWeightChannel2;
 $(document).ready(
   function () {
 
-    nextWeightChannel0 = parseInt($.urlParam("channel0lastweight"))+1;
-    nextWeightChannel1 = parseInt($.urlParam("channel1lastweight"))+1;
-    nextWeightChannel2 = parseInt($.urlParam("channel2lastweight"))+1;
+    nextWeightChannel0 = parseInt($.urlParam("channel0lastweight"), 10)+1;
+    nextWeightChannel1 = parseInt($.urlParam("channel1lastweight"), 10)+1;
+    nextWeightChannel2 = parseInt($.urlParam("channel2lastweight"), 10)+1;
 
     myradio.callAPI("GET","user","shows", window.myradio.memberid,"","",
       function (data) {
@@ -213,7 +213,7 @@ function importSelectedTracks(channelNo) {
       ops.push({
         op: "AddItem",
         id: $(this).val(), //format: album-track
-        channel: parseInt(channelNo),
+        channel: parseInt(channelNo, 10),
         weight: weight
       });
     });
