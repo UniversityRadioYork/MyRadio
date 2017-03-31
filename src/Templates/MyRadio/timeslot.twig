@@ -51,8 +51,7 @@
 {% block foot %}
 {{ parent() }}
 <script type='text/javascript'>
-    window.showdata = {{timeslots|json_encode|raw}};
-    window.memberid = {{memberid}};
+    window.myradio.showdata = {{timeslots|json_encode|raw}};
 </script>
 <script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
 <script type='text/javascript' src='{{baseurl}}js/myradio.timeslot.js'></script>
