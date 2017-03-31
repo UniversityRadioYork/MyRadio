@@ -50,7 +50,7 @@ var myradio = {
     return reportButton;
   },
   callAPI: function (method, module, action, id, firstParam, options, successFunc) {
-    if (successFunc == undefined) {
+    if (typeof successFunc === "undefined") {
       successFunc = function(){};
     }
     $.ajax({
