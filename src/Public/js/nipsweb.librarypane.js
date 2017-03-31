@@ -85,10 +85,7 @@ $(document).ready(function () {
     } else if ($(this).val().match(/managed-.*/)) {
       myradio.showAlert("Loading Library results...", "warning");
       //Load a managed playlist
-      var options = {
-        itonesplaylistid: $(this).val().replace(/managed-/, "")
-      };
-      myradio.callAPI("GET","track","itonesplaylist","","", options,
+      myradio.callAPI("GET","iTonesPlaylist","tracks",$(this).val().replace(/managed-/, ""),"", "",
         function (data) {
           for (file in data) {
             if (file === "myradio_errors") {

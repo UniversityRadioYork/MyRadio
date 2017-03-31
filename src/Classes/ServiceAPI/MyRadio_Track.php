@@ -877,18 +877,6 @@ class MyRadio_Track extends ServiceAPI
                 ->getTracks()
             );
     }
-    /**
-     * This method allows direct access to iTonesPlaylists, without all the weird stuff in search api.$_COOKIE
-     *
-     * @param int itonesplaylistid The id of the itones playlist we want to get tracks for.
-    */
-    public static function itonesPlaylist($itonesplaylistid = null) {
-        if ($itonesplaylistid == null) {
-            throw new MyRadioException('No valid iTones playlist id was provided.');
-        } else {
-            return iTones_Playlist::getInstance($itonesplaylistid)->getTracks();
-        }
-    }
 
     /**
      * This method processes an unknown mp3 file that has been uploaded, storing a temporary copy of the file in /tmp/,
