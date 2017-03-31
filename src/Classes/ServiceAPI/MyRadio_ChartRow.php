@@ -79,7 +79,7 @@ class MyRadio_ChartRow extends ServiceAPI
      */
     public static function getInstance($chart_row_id = -1)
     {
-        self::__wakeup();
+        self::wakeup();
 
         if (!is_numeric($chart_row_id)) {
             throw new MyRadioException(

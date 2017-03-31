@@ -165,7 +165,7 @@ class MyRadio_ChartRelease extends ServiceAPI
      */
     public static function getInstance($chart_release_id = -1, $chart_type = null)
     {
-        self::__wakeup();
+        self::wakeup();
 
         if (!is_numeric($chart_release_id)) {
             throw new MyRadioException(
