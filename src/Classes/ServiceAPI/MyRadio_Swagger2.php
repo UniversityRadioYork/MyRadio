@@ -139,7 +139,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         // @todo: This could probably be refactored to be friendlier now isValidClassMethodCombination exists.
         $path = '/';
         if ($id) {
-            $path = $path.'{id}';
+            $path = $path.'{id}/';
         }
 
         if ($method) {
