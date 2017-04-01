@@ -32,8 +32,7 @@ $(".twig-datatable").dataTable({
     },
     //seasons
     {
-      "sTitle": "Seasons",
-      "bVisible": false
+      "sTitle": "Seasons"
     },
     //editlink
     {
