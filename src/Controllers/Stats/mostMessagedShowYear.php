@@ -8,5 +8,5 @@ use \MyRadio\ServiceAPI\MyRadio_Show;
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('title', 'Most messaged shows this academic year')
     ->addVariable('tabledata', MyRadio_Show::getMostMessaged(strtotime(CoreUtils::getAcademicYear().'-09-01')))
-    ->addVariable('tablescript', 'myradio.datatable.default')
+    ->addVariable('tablescript', 'myradio.stats.mostmessagedshow')
     ->render();
