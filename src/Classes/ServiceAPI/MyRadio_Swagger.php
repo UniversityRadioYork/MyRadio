@@ -451,14 +451,12 @@ class MyRadio_Swagger
      */
     protected static function getCurrentUserWithoutMessingWithSession()
     {
-        $dummysession = $_SESSION;
-        session_decode((new MyRadioSession())->read(session_id()));
-        if (!isset($_SESSION['memberid'])) {
+        $dummysession = unserialize((new MyRadioSession())->read(session_id()));
+        if (!isset($dummysession['memberid'])) {
             $user = null;
         } else {
-            $user = MyRadio_User::getInstance($_SESSION['memberid']);
+            $user = MyRadio_User::getInstance($dummysession['memberid']);
         }
-        $_SESSION = $dummysession;
 
         return $user;
     }

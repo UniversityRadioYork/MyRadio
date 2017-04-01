@@ -16,7 +16,7 @@ use \MyRadio\MyRadio\MyRadioFormField;
  */
 
 if (isset($_SESSION['memberid'])) {
-    URLUtils::redirect(Config::$base_url);
+    isset($_GET["next"]) ? URLUtils::redirectURI($_GET["next"]) : URLUtils::redirect(Config::$default_module);
 } else {
     $form = (
         new MyRadioForm(

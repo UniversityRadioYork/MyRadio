@@ -82,6 +82,16 @@ class URLUtils
     }
 
     /**
+     * Redirects to another page, specified already by the caller.
+     *
+     * @param string  $URI The relative URI to redirect to.
+     */
+    public static function redirectURI($URI)
+    {
+        header('Location: '.$URI);
+    }
+
+    /**
      * Builds a module/action URL.
      *
      * @param string $module
