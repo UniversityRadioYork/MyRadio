@@ -522,6 +522,7 @@ var NIPSWeb = function (d) {
           $("#context-menu-delete").hide();
         } else {
           if (taskItemInContext.getAttribute("channel") == "res") {
+            contextBapsChannel = "#baps-channel-res";
             $("#context-menu-delete").hide();
           } else {
             contextBapsChannel = "#baps-channel-" + (parseInt(taskItemInContext.getAttribute("channel"), 10)+1);
