@@ -31,7 +31,7 @@ function escapeHTML (string) {
 var searchTimerRef = null;
 function updateCentralSearch()
 {
-  myradio.showAlert("Loading Library results...", "warning");
+  myradio.showAlert("Loading Library results...", "loading");
   var options = {
     artist: $("#res-filter-artist").val(),
     title: $("#res-filter-track").val(),
@@ -83,7 +83,7 @@ $(document).ready(function () {
       //This doesn't auto-load any files until search paramaters are set
 
     } else if ($(this).val().match(/managed-.*/)) {
-      myradio.showAlert("Loading Library results...", "warning");
+      myradio.showAlert("Loading Library results...", "loading");
       //Load a managed playlist
       myradio.callAPI("GET","playlist","tracks",$(this).val().replace(/managed-/, ""),"", "",
         function (data) {
@@ -117,7 +117,7 @@ $(document).ready(function () {
       $("#res-filter-name").fadeIn();
 
     } else if ($(this).val().match(/auto-.*/)) {
-      myradio.showAlert("Loading Library results...", "warning");
+      myradio.showAlert("Loading Library results...", "loading");
       //Load an auto playlist
       $.ajax({
         url: myradio.makeURL("NIPSWeb", "load_auto_managed"),
@@ -152,7 +152,7 @@ $(document).ready(function () {
       $("#res-filter-name").fadeIn();
 
     } else if ($(this).val().match(/^aux-\d+|^user-.*/)) {
-      myradio.showAlert("Loading Library results...", "warning");
+      myradio.showAlert("Loading Library results...", "loading");
       $.ajax({
         url: myradio.makeURL("NIPSWeb", "load_aux_lib"),
         type: "get",
