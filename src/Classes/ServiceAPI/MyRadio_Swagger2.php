@@ -113,7 +113,6 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         }
 
         $refClass = new self($classes[$class]);
-var_dump($refClass->getClassMethodsPublicNames());
         return in_array($method, $refClass->getClassMethodsPublicNames());
     }
 
@@ -147,6 +146,7 @@ var_dump($refClass->getClassMethodsPublicNames());
 
         if ($arg0) {
             // array_filter($paths, func, ARRAY_FILTER_USE_KEY) is not running func for me...
+            // @todo: This could probably be refactored to be friendlier now isValidClassMethodCombination exists.
             $options = [];
             foreach (array_keys($paths) as $key) {
                 if (strpos($key, $path.'/{') === 0) {
