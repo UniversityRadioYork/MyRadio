@@ -70,7 +70,7 @@ final class Config
      *
      * @var string
      */
-    public static $base_url = '//ury.org.uk/myury/';
+    public static $base_url = '//ury.org.uk/myradio/';
 
     /**
      * The base URL of the schedule - has some JS resources from MyRadio.
@@ -88,8 +88,8 @@ final class Config
 
     /**
      * Whether nice URL rewrites are enabled
-     * If true, then urls will be myury/[module]/[action]
-     * If false, then urls will be myury/?module=[module]&action=[action].
+     * If true, then urls will be myradio/[module]/[action]
+     * If false, then urls will be myradio/?module=[module]&action=[action].
      *
      * @var bool
      */

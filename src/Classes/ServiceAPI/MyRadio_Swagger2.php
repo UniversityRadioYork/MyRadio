@@ -488,7 +488,6 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             '__wakeup',
             'removeInstance',
             '__toString',
-            'setToDataSource',
             '__construct',
             'resultSetToObjArray',
             '__destruct'

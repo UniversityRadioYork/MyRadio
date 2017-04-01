@@ -158,7 +158,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
      * As this is the initial creation, all tags are <i>approved</i> by the submitter
      * so the Season has some initial values
      *
-     * @throws MyURYException
+     * @throws MyRadioException
      */
     public static function create($params = [])
     {
@@ -414,6 +414,12 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 'title' => 'Allocate Timeslots to Season',
                 'template' => 'Scheduler/allocate.twig',
             ]
+        )->addField(
+            new MyRadioFormField(
+                'season_id', // NOTE: Needed by this name for passing the season ID around for allocation
+                MyRadioFormField::TYPE_HIDDEN,
+                ['value' => $this->getID()]
+            )
         );
 
         //Set up the weeks checkboxes
@@ -631,10 +637,10 @@ EOT
     /**
      * Alias for getCredits($this->getShow()), which enables credits to be
      * automatically inherited from the show.
-     *
+     * @param parent Unused for type compatibility with parent
      * @return array[]
      */
-    public function getCredits()
+    public function getCredits(MyRadio\ServiceAPI\MyRadio_Metadata_Common $parent = null)
     {
         return parent::getCredits($this->getShow());
     }
@@ -653,18 +659,10 @@ EOT
      *                               for value in the array.
      * @param int    $effective_from UTC Time the metavalue is effective from. Default now.
      * @param int    $effective_to   UTC Time the metadata value is effective to. Default NULL (does not expire).
-     * @param null   $table          No action. Used for compatibility with parent.
-     * @param null   $pkey           No action. Used for compatibility with parent.
      */
-    public function setMeta(
-        $string_key,
-        $value,
-        $effective_from = null,
-        $effective_to = null,
-        $table = null,
-        $pkey = null
-    ) {
-        $r = parent::setMeta(
+    public function setMeta($string_key, $value, $effective_from = null, $effective_to = null)
+    {
+        $r = parent::setMetaBase(
             $string_key,
             $value,
             $effective_from,
@@ -1122,7 +1120,7 @@ $times
             $string_keys = ['title', 'description', 'tag'];
         }
 
-        $r = parent::searchMeta(
+        $r = parent::searchMetaBase(
             $query,
             $string_keys,
             $effective_from,

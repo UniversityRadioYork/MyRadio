@@ -38,7 +38,7 @@ foreach ($albums as $album) {
 $cacher->set('myradioLibraryGapFillerCheckedTracks', $checked);
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-    ->addVariable('tablescript', 'myury.library.gapfiller')
+    ->addVariable('tablescript', 'myradio.library.gapfiller')
     ->addVariable('title', 'Updated Tracks')
     ->addVariable('tabledata', CoreUtils::dataSourceParser($updated))
     ->render();

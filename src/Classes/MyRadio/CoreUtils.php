@@ -10,7 +10,7 @@ use MyRadio\Database;
 use MyRadio\MyRadioTwig;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadioError;
-use MyRadio\Iface\MyRadio_DataSource;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
  * Standard API Utilities. Basically miscellaneous functions for the core system
@@ -322,18 +322,45 @@ class CoreUtils
      */
     public static function dataSourceParser($data, $mixins = [])
     {
-        if (is_object($data) && $data instanceof MyRadio_DataSource) {
+        if (is_object($data) && $data instanceof ServiceAPI) {
             return $data->toDataSource($mixins);
         } elseif (is_array($data)) {
             foreach ($data as $k => $v) {
                 $data[$k] = self::dataSourceParser($v, $mixins);
             }
-
             return $data;
         } else {
             return $data;
         }
     }
+
+   /**
+     * Iteratively calls the toDataSource method on all of the objects in the given array, returning the results as
+     * a new array.
+     * @param array $array
+     * @param array $mixins Mixins
+     * @return array, unless it wasn't passed an array to begin with, in which case just return $array.
+     * @throws MyRadioException Throws an Exception if a provided object is not a DataSource
+     */
+    public static function setToDataSource($array, $mixins = [])
+    {
+        if (!is_array($array)) {
+            return $array;
+        }
+        $result = [];
+        foreach ($array as $element) {
+            //It must implement the toDataSource method!
+            if (!method_exists($element, 'toDataSource')) {
+                throw new MyRadioException(
+                    'Attempted to convert '.get_class($element).' to a DataSource but it not a valid Data Object!',
+                    500
+                );
+            }
+            $result[] = $element->toDataSource($full);
+        }
+        return $result;
+    }
+
 
     //from http://www.php.net/manual/en/function.xml-parse-into-struct.php#109032
     public static function xml2array($xml)

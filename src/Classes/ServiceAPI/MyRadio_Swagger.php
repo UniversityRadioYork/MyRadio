@@ -35,11 +35,11 @@ class MyRadio_Swagger
             'apis' => [],
         ];
 
-        foreach (self::getApiClasses() as $api => $myury) {
-            if ($myury == __CLASS__) {
+        foreach (self::getApiClasses() as $api => $myradio_class) {
+            if ($myradio_class == __CLASS__) {
                 continue;
             }
-            $class = new ReflectionClass($myury);
+            $class = new ReflectionClass($myradio_class);
             $meta = self::getClassDoc($class);
             $data['apis'][] = ['path' => '/resources/'.$api, 'description' => $meta['short_desc']];
         }
@@ -107,7 +107,6 @@ class MyRadio_Swagger
             '__wakeup',
             'removeInstance',
             '__toString',
-            'setToDataSource',
             '__construct',
         ];
         $data = [

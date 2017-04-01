@@ -632,18 +632,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      *                               for value in the array.
      * @param int    $effective_from UTC Time the metavalue is effective from. Default now.
      * @param int    $effective_to   UTC Time the metadata value is effective to. Default NULL (does not expire).
-     * @param null   $table          Used for compatibility with parent.
-     * @param null   $pkey           Used for compatibility with parent.
      */
-    public function setMeta(
-        $string_key,
-        $value,
-        $effective_from = null,
-        $effective_to = null,
-        $table = null,
-        $pkey = null
-    ) {
-        $r = parent::setMeta(
+    public function setMeta($string_key, $value, $effective_from = null, $effective_to = null)
+    {
+        $r = parent::setMetaBase(
             $string_key,
             $value,
             $effective_from,
@@ -849,7 +841,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $string_keys = ['title', 'description', 'tag'];
         }
 
-        $r = parent::searchMeta(
+        $r = parent::searchMetaBase(
             $query,
             $string_keys,
             $effective_from,

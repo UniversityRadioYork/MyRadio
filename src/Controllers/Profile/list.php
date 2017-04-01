@@ -19,7 +19,7 @@ foreach ($members as $k => $v) {
 }
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-    ->addVariable('tablescript', 'myury.profile.list')
+    ->addVariable('tablescript', 'myradio.profile.list')
     ->addVariable('title', 'Members List')
     ->addVariable('tabledata', $members)
     ->render();

@@ -414,7 +414,7 @@ var MyRadioForm = {
         $(this).attr("nextvalue", parseInt(new_id) + 1);
       }
     );
-    $("button.myuryfrm-remove-row").on(
+    $("button.myradioform-remove-row").on(
       "click",
       function () {
         $(this).closest("tr").remove();
@@ -422,7 +422,7 @@ var MyRadioForm = {
       }
     );
     //And the dataTable that contains them
-    $("table.myuryfrm-repeaterset-container").dataTable({
+    $("table.myradioform-repeaterset-container").dataTable({
       bSort: false,
       bPaginate: false,
       bFilter: false
@@ -437,7 +437,7 @@ var MyRadioForm = {
         "submit",
         function () {
           if ($("#UPLOAD_IDENTIFIER").nextAll("input")[0].value !== "") {
-            $(".myuryfrm-file-upload-progress").progressbar({value: false});
+            $(".myradioform-file-upload-progress").progressbar({value: false});
             //Poke the server for upload progress status
             setInterval(MyRadioForm.pollFileProgress, 1000);
           }
@@ -448,7 +448,7 @@ var MyRadioForm = {
         function () {
           var data = $.parseJSON($($(this).contents().find("body").children()[0]).html());
           var percent = data.bytes_uploaded / data.bytes_total * 100;
-          $(".myuryfrm-file-upload-progress").progressbar("value", percent);
+          $(".myradioform-file-upload-progress").progressbar("value", percent);
           $(".progress-label").html(Math.floor(percent) + "% (" + Math.floor(data.speed_average / 1024) + "Kbps)");
         }
       );

@@ -15,7 +15,7 @@ use MyRadio\MyRadioError;
 class URLUtils
 {
     /**
-     * Stores actionid => uri mappings of custom web addresses (e.g. /myury/iTones/default gets mapped to /itones).
+     * Stores actionid => uri mappings of custom web addresses (e.g. /myradio/iTones/default gets mapped to /itones).
      *
      * @var array
      */

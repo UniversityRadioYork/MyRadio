@@ -29,7 +29,7 @@ switch ($format) {
     default:
         $twig = CoreUtils::getTemplateObject()->setTemplate('table_timeinput.twig')
         ->addVariable('title', 'Station Tracklist History')
-        ->addVariable('tablescript', 'myury.stats.fulltracklist')
+        ->addVariable('tablescript', 'myradio.stats.fulltracklist')
         ->addVariable('starttime', CoreUtils::happyTime($start))
         ->addVariable('endtime', CoreUtils::happyTime($end));
 

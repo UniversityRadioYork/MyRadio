@@ -161,14 +161,14 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
 
     public static function cacheItem($tmp_path)
     {
-        if (!isset($_SESSION['myury_nipsweb_file_cache_counter'])) {
-            $_SESSION['myury_nipsweb_file_cache_counter'] = 0;
+        if (!isset($_SESSION['myradio_nipsweb_file_cache_counter'])) {
+            $_SESSION['myradio_nipsweb_file_cache_counter'] = 0;
         }
         if (!is_dir(Config::$audio_upload_tmp_dir)) {
             mkdir(Config::$audio_upload_tmp_dir);
         }
 
-        $filename = session_id().'-'.++$_SESSION['myury_nipsweb_file_cache_counter'].'.mp3';
+        $filename = session_id().'-'.++$_SESSION['myradio_nipsweb_file_cache_counter'].'.mp3';
 
         move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir.'/'.$filename);
 

@@ -151,7 +151,7 @@
                                     {
                                         "title": "Assign Action Permissions",
                                         "url": "module=MyRadio,action=actionPermissions",
-                                        "description": "Manage the requirements to use MyURY Actions"
+                                        "description": "Manage the requirements to use MyRadio Actions"
                                     },
                                     {
                                         "title": "Campus Jukebox Manager",
