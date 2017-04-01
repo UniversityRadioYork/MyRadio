@@ -16,6 +16,10 @@ if ($url === 'swagger.json') {
 
 // @todo: Isn't this some fun confusing spaghetti code. Need to refactor this routing.
 $parts = explode('/', $url);
+// Ignore trailing slashes
+if ($parts[sizeof($parts) - 1] === '') {
+    array_pop($parts);
+}
 $op = strtolower($_SERVER['REQUEST_METHOD']);
 $class = preg_replace('/[^0-9a-zA-Z-_]+/', '', $parts[0]);
 // Defaults to assuming the last field
