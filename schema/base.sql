@@ -248,15 +248,22 @@ CREATE SEQUENCE bapsplanner.timeslot_items_timeslot_item_id_seq
     CACHE 1;
 ALTER SEQUENCE bapsplanner.timeslot_items_timeslot_item_id_seq OWNED BY bapsplanner.timeslot_items.timeslot_item_id;
 SET search_path = jukebox, pg_catalog;
+CREATE SEQUENCE playlist_availability_playlist_availability_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 CREATE TABLE playlist_availability (
     memberid integer,
     approvedid integer,
     effective_from timestamp with time zone NOT NULL,
     effective_to timestamp with time zone,
-    playlist_availability_id integer DEFAULT nextval('website.banner_campaign_banner_campaign_id_seq'::regclass) NOT NULL,
+    playlist_availability_id integer DEFAULT nextval('jukebox.playlist_availability_playlist_availability_id_seq'::regclass) NOT NULL,
     weight integer NOT NULL,
     playlistid character varying NOT NULL
 );
+ALTER SEQUENCE playlist_availability_playlist_availability_id_seq OWNED BY playlist_availability.playlist_availability_id;
 CREATE TABLE playlist_entries (
     playlistid character varying(15) NOT NULL,
     trackid integer NOT NULL,
@@ -3730,88 +3737,6 @@ ALTER TABLE ONLY recommended_listening
 
 
 --
--- Name: sched_entrytype_entrytypename_key; Type: CONSTRAINT; Schema: public
---
-
-ALTER TABLE ONLY sched_entrytype
-    ADD CONSTRAINT sched_entrytype_entrytypename_key UNIQUE (entrytypename);
-
-ALTER TABLE sched_entrytype CLUSTER ON sched_entrytype_entrytypename_key;
-
-
---
--- Name: sched_entrytype_pkey; Type: CONSTRAINT; Schema: public
---
-
-ALTER TABLE ONLY sched_entrytype
-    ADD CONSTRAINT sched_entrytype_pkey PRIMARY KEY (entrytypeid);
-
-
---
--- Name: sched_genre_musiccategoryname_key; Type: CONSTRAINT; Schema: public
---
-
-ALTER TABLE ONLY sched_genre
-    ADD CONSTRAINT sched_genre_musiccategoryname_key UNIQUE (genrename);
-
-
---
--- Name: sched_genre_pkey; Type: CONSTRAINT; Schema: public
---
-
-ALTER TABLE ONLY sched_genre
-    ADD CONSTRAINT sched_genre_pkey PRIMARY KEY (genreid);
-
-
---
--- Name: sched_musiccategory_musiccategoryname_key; Type: CONSTRAINT; Schema: public
---
-
-ALTER TABLE ONLY sched_musiccategory
-    ADD CONSTRAINT sched_musiccategory_musiccategoryname_key UNIQUE (musiccategoryname);
-
-
---
--- Name: sched_musiccategory_pkey; Type: CONSTRAINT; Schema: public
---
-
-ALTER TABLE ONLY sched_musiccategory
-    ADD CONSTRAINT sched_musiccategory_pkey PRIMARY KEY (musiccategoryid);
-
-
---
--- Name: sched_room_pkey; Type: CONSTRAINT; Schema: public
---
-
-ALTER TABLE ONLY sched_room
-    ADD CONSTRAINT sched_room_pkey PRIMARY KEY (roomid);
-
-
---
--- Name: sched_room_roomname_key; Type: CONSTRAINT; Schema: public
---
-
-ALTER TABLE ONLY sched_room
-    ADD CONSTRAINT sched_room_roomname_key UNIQUE (roomname);
-
-
---
--- Name: sched_speechcategory_pkey; Type: CONSTRAINT; Schema: public
---
-
-ALTER TABLE ONLY sched_speechcategory
-    ADD CONSTRAINT sched_speechcategory_pkey PRIMARY KEY (speechcategoryid);
-
-
---
--- Name: sched_speechcategory_speechcategoryname_key; Type: CONSTRAINT; Schema
---
-
-ALTER TABLE ONLY sched_speechcategory
-    ADD CONSTRAINT sched_speechcategory_speechcategoryname_key UNIQUE (speechcategoryname);
-
-
---
 -- Name: selector_actions_pkey; Type: CONSTRAINT; Schema: public
 --
 
@@ -4704,13 +4629,6 @@ CREATE INDEX rec_unique_recordid ON rec_labelqueue USING btree (recordid);
 
 CREATE INDEX recommended_listening_chartweek_key ON recommended_listening USING btree (week);
 
-
---
--- Name: sched_entrytype_entrytypenamenews_key; Type: INDEX; Schema: public
---
-
-CREATE INDEX sched_entrytype_entrytypenamenews_key ON sched_entrytype USING btree (entrytypename) WHERE ((entrytypename)::text = 'News'::text);
-
 --
 -- Name: strm_log_starttime_key; Type: INDEX; Schema: public
 --
@@ -5312,14 +5230,6 @@ ALTER TABLE ONLY playlist_timeslot
 
 ALTER TABLE ONLY playlist_timeslot
     ADD CONSTRAINT playlist_timeslot_memberid_fkey FOREIGN KEY (memberid) REFERENCES public.member(memberid);
-
-
---
--- Name: playlist_timeslot_playlistid_fkey; Type: FK CONSTRAINT; Schema: jukebox
---
-
-ALTER TABLE ONLY playlist_timeslot
-    ADD CONSTRAINT playlist_timeslot_playlistid_fkey FOREIGN KEY (playlistid) REFERENCES playlists(playlistid);
 
 
 --
@@ -6298,13 +6208,6 @@ ALTER TABLE ONLY rec_itunes
 
 ALTER TABLE ONLY rec_track
     ADD CONSTRAINT rec_track_digitisedby_fkey FOREIGN KEY (digitisedby) REFERENCES member(memberid) ON UPDATE CASCADE ON DELETE SET NULL;
-
---
--- Name: rec_track_lasteditedby_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY rec_track
-    ADD CONSTRAINT rec_track_lasteditedby_fkey FOREIGN KEY (last_edited_memberid) REFERENCES member(memberid) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
