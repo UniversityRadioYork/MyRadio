@@ -59,7 +59,7 @@ function updateCentralSearch()
         $("#baps-channel-res").append(
           "<li id='" + data.payload[file].album.recordid + "-" + data.payload[file].trackid +
           "' intro='" + data.payload[file].intro + "' title='" + tooltip + "'" +
-          "' channel='res' weight='0' type='central' class='" + classes + "' length='" + data.payload[file].length + "'>" +
+          "' channel='res' weight='0' type='central' class='" + classes + " showplan-item' length='" + data.payload[file].length + "'>" +
           cleanStars + escapeHTML(data.payload[file].title) + " - " + escapeHTML(data.payload[file].artist) + "</li>"
         );
       }
@@ -101,7 +101,7 @@ $(document).ready(function () {
               "<li id='" + data.payload[file].album.recordid + "-" + data.payload[file].trackid +
               "' title='" + escapeHTML(data.payload[file].title) + " - " + escapeHTML(data.payload[file].artist) + " - " + escapeHTML(data.payload[file].album.title) + " (" + data.payload[file].length + ")" +
               "' intro='" + data.payload[file].intro + "'" +
-              "' class='" + classes + "'" +
+              "' class='" + classes + " showplan-item'" +
               "' channel='res' weight='0' type='central' length='" + data.payload[file].length + "'>" +
               escapeHTML(data.payload[file].title) + " - " + escapeHTML(data.payload[file].artist) + "</li>"
             );
@@ -136,7 +136,7 @@ $(document).ready(function () {
               "<li id='" + data[file].album.recordid + "-" + data[file].trackid +
               "' title='" + escapeHTML(data[file].title) + " - " + escapeHTML(data[file].artist) + " - " + escapeHTML(data[file].album.title) + " (" + data[file].length + ")" +
               "' intro='" + data[file].intro + "'" +
-              "' class='" + classes + "'" +
+              "' class='" + classes + " showplan-item'" +
               "' channel='res' weight='0' type='central' length='" + data[file].length + "'>" +
               escapeHTML(data[file].title) + " - " + escapeHTML(data[file].artist) + "</li>"
             );
@@ -166,7 +166,7 @@ $(document).ready(function () {
                 "<li id='ManagedDB-" + data[file].managedid +
                 "' length='" + data[file].length +
                 "' title='" + escapeHTML(data[file].title) + " (" + data[file].length + ")" +
-                "' channel='res' weight='0' type='aux' managedid='" + data[file].managedid + "'>" +
+                "' channel='res' weight='0' type='aux' managedid='" + data[file].managedid + "' class='showplan-item'>" +
                 escapeHTML(data[file].title) + "</li>"
               );
             }

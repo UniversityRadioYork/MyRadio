@@ -481,7 +481,10 @@ var NIPSWeb = function (d) {
   var contextMenuActive = "context-menu--active";
 
   var taskItemClassName = "showplan-item";
+  var channelClassName = "channel-list";
   var taskItemInContext;
+  var channelInContext;
+  var contextBapsChannel;
 
   var clickCoords;
   var clickCoordsX;
@@ -510,17 +513,26 @@ var NIPSWeb = function (d) {
    */
   function contextListener() {
     document.addEventListener( "contextmenu", function(e) {
+      channelInContext = clickInsideElement( e, channelClassName );
       taskItemInContext = clickInsideElement( e, taskItemClassName );
-
-      if ( taskItemInContext ) {
+      if ( channelInContext || taskItemInContext) {
         e.preventDefault();
-        var bapschannel = "#baps-channel-" + (parseInt(taskItemInContext.getAttribute("channel"), 10) + 1);
-
-        $(".contextIcon-AutoAdvance").css("visibility", $(bapschannel).attr("autoadvance")==1 ? "visible" : "hidden");
-        $(".contextIcon-PlayOnLoad").css("visibility", $(bapschannel).attr("playonload")==1 ? "visible" : "hidden");
-        $(".contextIcon-Repeat0").css("visibility", $(bapschannel).attr("repeat")==0 ? "visible" : "hidden");
-        $(".contextIcon-Repeat1").css("visibility", $(bapschannel).attr("repeat")==1 ? "visible" : "hidden");
-        $(".contextIcon-Repeat2").css("visibility", $(bapschannel).attr("repeat")==2 ? "visible" : "hidden");
+        if ( !taskItemInContext ) {
+          contextBapsChannel = "#baps-channel-" + (channelInContext.getAttribute("channel"));
+          $("#context-menu-delete").hide();
+        } else {
+          if (taskItemInContext.getAttribute("channel") == "res") {
+            $("#context-menu-delete").hide();
+          } else {
+            contextBapsChannel = "#baps-channel-" + (parseInt(taskItemInContext.getAttribute("channel"), 10)+1);
+            $("#context-menu-delete").show();
+          }
+        }
+        $(".contextIcon-AutoAdvance").css("visibility", $(contextBapsChannel).attr("autoadvance")==1 ? "visible" : "hidden");
+        $(".contextIcon-PlayOnLoad").css("visibility", $(contextBapsChannel).attr("playonload")==1 ? "visible" : "hidden");
+        $(".contextIcon-Repeat0").css("visibility", $(contextBapsChannel).attr("repeat")==0 ? "visible" : "hidden");
+        $(".contextIcon-Repeat1").css("visibility", $(contextBapsChannel).attr("repeat")==1 ? "visible" : "hidden");
+        $(".contextIcon-Repeat2").css("visibility", $(contextBapsChannel).attr("repeat")==2 ? "visible" : "hidden");
 
         toggleMenuOn();
         positionMenu(e);
@@ -635,8 +647,6 @@ var NIPSWeb = function (d) {
       }
     };
 
-    var bapschannel = "#baps-channel-" + (parseInt(taskItemInContext.getAttribute("channel"), 10) + 1);
-
     switch (currentAction) {
 
     case "Delete":
@@ -644,19 +654,19 @@ var NIPSWeb = function (d) {
       calcChanges(toDelete);
       break;
     case "AutoAdvance":
-      invert(bapschannel, "autoadvance");
+      invert(contextBapsChannel, "autoadvance");
       break;
     case "PlayOnLoad":
-      invert(bapschannel, "playonload");
+      invert(contextBapsChannel, "playonload");
       break;
     case "Repeat0":
-      $(bapschannel).attr("repeat", 0);
+      $(contextBapsChannel).attr("repeat", 0);
       break;
     case "Repeat1":
-      $(bapschannel).attr("repeat", 1);
+      $(contextBapsChannel).attr("repeat", 1);
       break;
     case "Repeat2":
-      $(bapschannel).attr("repeat", 2);
+      $(contextBapsChannel).attr("repeat", 2);
       break;
     }
     toggleMenuOff();

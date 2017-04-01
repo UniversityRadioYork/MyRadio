@@ -19,7 +19,7 @@
   <div id="bapswrapper">
     <div id="baps-channel-container" class="clearfix">
       {% for i in 0..2 %}
-        <ul class="box col-xs-3 height-2 baps-channel" channel="{{i+1}}" id="baps-channel-{{i + 1}}">
+        <ul class="box col-xs-3 height-2 baps-channel channel-list" channel="{{i+1}}" id="baps-channel-{{i + 1}}">
           {% for track in tracks[i] %}
             <li class="showplan-item" id='{% if track['managedid'] is defined %}ManagedDB{% else %}{{track['album']['recordid']}}{% endif %}-{{track['trackid']}}' type='{{track['type']}}'
                 {% if track['managedid'] is defined %}managedid='{{track['managedid']}}'{% endif %}
@@ -43,7 +43,7 @@
           <input type="text" placeholder="Filter by track..." id="res-filter-track" class="hidden" />
           <input type="text" placeholder="Filter by name..." id="res-filter-name" class="hidden" />
         </div>
-        <ul class="box baps-channel" id="baps-channel-res" channel="res">
+        <ul class="box baps-channel channel-list" id="baps-channel-res" channel="res">
         </ul>
       </div>
 
@@ -74,7 +74,7 @@
 <nav id="context-menu" class="context-menu">
     <ul class="context-menu__items dropdown-menu" style="display:block;">
       <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="Delete"><i class="glyphicon contextIcon-Delete glyphicon-trash"></i> Delete Item</a>
+        <a href="#" id="context-menu-delete" class="context-menu__link" data-action="Delete"><i class="glyphicon contextIcon-Delete glyphicon-trash"></i> Delete Item</a>
       </li>
       <li class="context-menu__item">
         <a href="#" class="context-menu__link" data-action="AutoAdvance"><i class="glyphicon contextIcon-AutoAdvance glyphicon-ok"></i> Automatic Advance</a>
