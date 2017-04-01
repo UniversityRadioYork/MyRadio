@@ -91,7 +91,7 @@ var NIPSWeb = function (d) {
                   setTimeout(function(){ reload(); }, 5000);
                 }
               } else {
-                myradio.showAlert("Changes Saved Successfuly", "success");
+                myradio.showAlert("Changes Saved Successfully", "success");
               }
             }
           },
@@ -850,7 +850,7 @@ var NIPSWeb = function (d) {
               if (!data.status) {
                 myradio.showAlert("We couldn't save that intro, try reloading.", "danger");
               } else {
-                myradio.showAlert("Intro Updated Successfuly", "success");
+                myradio.showAlert("Intro Updated Successfully", "success");
               }
             }
           );
