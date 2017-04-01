@@ -406,14 +406,16 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
     public function getAllocateForm()
     {
-        $form = new MyRadioForm(
-            'sched_allocate',
-            'Scheduler',
-            'allocate',
-            [
-                'title' => 'Allocate Timeslots to Season',
-                'template' => 'Scheduler/allocate.twig',
-            ]
+        $form = (
+            new MyRadioForm(
+                'sched_allocate',
+                'Scheduler',
+                'allocate',
+                [
+                    'title' => 'Allocate Timeslots to Season',
+                    'template' => 'Scheduler/allocate.twig',
+                ]
+            )
         )->addField(
             new MyRadioFormField(
                 'season_id', // NOTE: Needed by this name for passing the season ID around for allocation
