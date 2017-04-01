@@ -187,13 +187,11 @@ class MyRadio_TracklistItem extends ServiceAPI
             unset($data['digitised']);
             unset($data['deletelink']);
             unset($data['trackno']);
+            unset($data['intro']);
 
             //for manual SIS entries
             if (!isset($data['trackid'])) {
-                $data['trackid'] = 0;
-            }
-            if (!isset($data['intro'])) {
-                $data['intro'] = 0;
+                $data['trackid'] = "SIS Manual";
             }
 
             if (is_array($data['album'])) {

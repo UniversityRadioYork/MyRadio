@@ -17,10 +17,6 @@ $(".twig-datatable").dataTable({
     {
       "bVisible": false
     },
-    //Intro
-    {
-      "bVisible": false
-    },
     //time
     {
       "sTitle": "Epoch Time",
