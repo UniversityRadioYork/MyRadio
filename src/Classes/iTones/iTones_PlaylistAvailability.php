@@ -35,19 +35,12 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
      */
     protected function __construct($id)
     {
-        $this->availability_table = 'jukebox.playlist_availability';
-        $this->timeslot_table = 'jukebox.playlist_timeslot';
-        $this->id_field = 'playlist_availability_id';
-
-        $result = self::$db->fetchOne(
-            'SELECT * FROM '.$this->availability_table.' WHERE '.$this->id_field.'=$1',
-            [$id]
+        $result = $this->setAvailability(
+            $id,
+            'jukebox.playlist_availability',
+            'jukebox.playlist_timeslot',
+            'playlist_availability_id'
         );
-        if (empty($result)) {
-            throw new MyRadioException('Playlist Availability '.$id.' does not exist!');
-        }
-
-        parent::__construct($id, $result);
 
         $this->playlist = iTones_Playlist::getInstance($result['playlistid']);
         $this->weight = intval($result['weight']);
@@ -176,7 +169,7 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
      */
     public static function getForm($playlistid = null)
     {
-        return parent::getForm('iTones', 'editAvailability')
+        return parent::getFormBase('iTones', 'editAvailability')
             ->setTitle('Edit Playlist Availability')
             ->addField(
                 new MyRadioFormField(
