@@ -136,17 +136,18 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         $refClass = new self($classes[$class]);
         $paths = $refClass->getClassInfo()['children'];
 
+        // @todo: This could probably be refactored to be friendlier now isValidClassMethodCombination exists.
         $path = '';
         if ($id) {
             $path = $path.'/{id}';
         }
-        if ($method) {
+        // empty string is here so the trailing slash is added back
+        if ($method || $method === '') {
             $path = $path.'/'.$method;
         }
 
         if ($arg0) {
             // array_filter($paths, func, ARRAY_FILTER_USE_KEY) is not running func for me...
-            // @todo: This could probably be refactored to be friendlier now isValidClassMethodCombination exists.
             $options = [];
             foreach (array_keys($paths) as $key) {
                 if (strpos($key, $path.'/{') === 0) {
