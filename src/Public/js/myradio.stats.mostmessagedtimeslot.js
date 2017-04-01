@@ -1,6 +1,11 @@
 $(".twig-datatable").dataTable({
   bSort: false,
   "aoColumns": [
+    //Show_id
+    {
+      "sTitle": "Show ID",
+      "bVisible": false
+    },
     //title
     {
       "sTitle": "Title",
@@ -18,6 +23,11 @@ $(".twig-datatable").dataTable({
     //description
     {
       "sTitle" : "Description",
+      "bVisible": false
+    },
+     //show_type_id
+    {
+      "sTitle" : "Show Type ID",
       "bVisible": false
     },
     //seasons
@@ -40,14 +50,19 @@ $(".twig-datatable").dataTable({
       "sTitle": "View Microsite",
       "bVisible": false
     },
-    //id
+    //photo
     {
+      "sTitle": "Photo",
+      "bVisible": false
+    },
+    //season_id
+    {
+      "sTitle": "Season ID",
       "bVisible": false
     },
     //season_num
     {
       "sTitle": "Season #",
-      "bVisible": false
     },
     //createddate
     {
@@ -67,7 +82,6 @@ $(".twig-datatable").dataTable({
     //numepisodes
     {
       "sTitle": "# of Episodes",
-      "bVisible": true
     },
     //allocatelink
     {
@@ -81,9 +95,19 @@ $(".twig-datatable").dataTable({
       "bSortable": false,
       "bVisible": false
     },
-    //timeslotnum
+    //timeslot_id
+    {
+      "sTitle": "Timeslot id",
+      "bVisible": false
+    },
+    //timeslot_num
     {
       "sTitle": "Episode #"
+    },
+    //tags
+    {
+      "sTitle": "Tags",
+      "bVisible": false
     },
     //starttime
     {
@@ -93,10 +117,15 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "Length"
     },
+    //mixcloud_status
+    {
+      "sTitle": "MixCloud Status",
+      "bVisible": false
+    },
     //msg_count
     {
       "sTitle": "Message Count"
-    }
+    },
   ],
   "bPaginate": false
 });
