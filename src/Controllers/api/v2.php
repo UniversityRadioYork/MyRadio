@@ -14,16 +14,23 @@ if ($url === 'swagger.json') {
     return;
 }
 
+// @todo: Isn't this some fun confusing spaghetti code. Need to refactor this routing.
 $parts = explode('/', $url);
 $op = strtolower($_SERVER['REQUEST_METHOD']);
 $class = preg_replace('/[^0-9a-zA-Z-_]+/', '', $parts[0]);
+// Defaults to assuming the last field
 $method = preg_replace('/[^0-9a-zA-Z-_]+/', '', $parts[sizeof($parts) - 1]);
 $id = null;
 $arg0 = null;
 if (sizeof($parts) === 1) {
     $method = null;
 } elseif (sizeof($parts) === 3) {
-    if (is_numeric($parts[1])) {
+    /**
+     * Possible combinations here are /class/id/method/
+     * and /class/method/arg0
+     * Check which combination is a valid endpoint
+     */
+    if (MyRadio_Swagger2::isValidClassMethodCombination($class, $method)) {
         $id = $parts[1];
     } else {
         $method = $parts[1];
@@ -33,7 +40,8 @@ if (sizeof($parts) === 1) {
     $id = $parts[1];
     $method = $parts[2];
     $arg0 = $parts[3];
-} elseif (is_numeric($method)) {
+} elseif (!MyRadio_Swagger2::isValidClassMethodCombination($class, $method)) {
+    // If it just wants the toDataSource, $method here could be the ID
     $id = $method;
     $method = null;
 }
