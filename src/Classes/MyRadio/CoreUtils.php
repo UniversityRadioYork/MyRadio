@@ -242,8 +242,10 @@ class CoreUtils
      */
     public static function encodeTrack($tmpfile, $dbfile)
     {
-        $commands = ['mp3' => "nice -n 15 ffmpeg -i '{$tmpfile}' -ab 192k -f mp3 -map 0:a '{$dbfile}.mp3'",
-                     'ogg' => "nice -n 15 ffmpeg -i '{$tmpfile}' -acodec libvorbis -ab 192k -map 0:a '{$dbfile}.ogg'"];
+        $commands = [
+            'mp3' => "nice -n 15 ffmpeg -i '{$tmpfile}' -ab 192k -f mp3 -map 0:a '{$dbfile}.mp3'",
+            'ogg' => "nice -n 15 ffmpeg -i '{$tmpfile}' -acodec libvorbis -ab 192k -map 0:a '{$dbfile}.ogg'"
+        ];
         $escaped_commands = array_map('escapeshellcmd', $commands);
         $failed_formats = [];
 
