@@ -414,6 +414,12 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 'title' => 'Allocate Timeslots to Season',
                 'template' => 'Scheduler/allocate.twig',
             ]
+        )->addField(
+            new MyRadioFormField(
+                'season_id', // NOTE: Needed by this name for passing the season ID around for allocation
+                MyRadioFormField::TYPE_HIDDEN,
+                ['value' => $this->getID()]
+            )
         );
 
         //Set up the weeks checkboxes
