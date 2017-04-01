@@ -140,9 +140,7 @@ class MyRadio_Alias extends ServiceAPI
 
     /**
      * Returns data about the Alias for the API.
-     *
      * @param array $mixins
-     *
      * @return array
      */
     public function toDataSource($mixins = [])

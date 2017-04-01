@@ -413,8 +413,17 @@ class MyRadioEmail extends ServiceAPI
         return $this->email_id;
     }
 
-    public function toDataSource($full = false)
+    /**
+     * @mixin body Also returns the body of the email.
+     */
+    public function toDataSource($mixins = [])
     {
+        $mixin_funcs = [
+            'body' => function (&$data) {
+                $data['body'] = $this->getViewableBody();
+            },
+        ];
+
         $data = [
             'email_id' => $this->getID(),
             'from' => empty($this->from) ? null : $this->from->getName(),
@@ -428,10 +437,7 @@ class MyRadioEmail extends ServiceAPI
             ],
         ];
 
-        if ($full) {
-            $data['body'] = $this->getViewableBody();
-        }
-
+        this->addMixins($data, $mixins, $mixin_funcs);
         return $data;
     }
 

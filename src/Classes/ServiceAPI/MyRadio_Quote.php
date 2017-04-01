@@ -336,10 +336,10 @@ class MyRadio_Quote extends ServiceAPI
 
     /**
      * Converts this quote to a table data source.
-     *
+     * @param array $mixins Mixins. Currently unused.
      * @return array The object as a data source.
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'id' => $this->getID(),

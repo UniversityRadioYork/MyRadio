@@ -99,11 +99,12 @@ abstract class ServiceAPI
         }
     }
 
-    // TODO: Convert to abstract function once all child classes use mixins properly
-    public function toDataSource($mixins = [])
-    {
-        throw new MyRadioException(get_called_class().' has not had a DataSource Conversion Method Defined!', 500);
-    }
+    /**
+     * Base method for serialising the class.
+     * @param array $mixins Mixins
+     * @return array
+     */
+    abstract public function toDataSource($mixins = []);
 
     public function __toString()
     {

@@ -70,10 +70,10 @@ class MyRadio_Photo extends ServiceAPI
 
     /**
      * Get array of information about the object.
-     *
+     * @param array $mixins Mixins. Currently unused.
      * @return array
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'photoid' => $this->getID(),

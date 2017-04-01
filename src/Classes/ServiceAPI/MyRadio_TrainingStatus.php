@@ -254,10 +254,10 @@ class MyRadio_TrainingStatus extends ServiceAPI
 
     /**
      * Get an array of properties for this TrainingStatus.
-     *
+     * @param array $mixins Mixins. Unused.
      * @return array
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'status_id' => $this->getID(),

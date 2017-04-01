@@ -248,10 +248,10 @@ class MyRadio_ChartType extends MyRadio_Type
 
     /**
      * Converts this chart type to a table data source.
-     *
+     * @param array $mixins Mixins.
      * @return array The object as a data source.
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'name' => $this->getName(),

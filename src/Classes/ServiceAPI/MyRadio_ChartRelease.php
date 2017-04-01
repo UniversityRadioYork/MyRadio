@@ -441,10 +441,10 @@ class MyRadio_ChartRelease extends ServiceAPI
 
     /**
      * Converts this chart release to a table data source.
-     *
+     * @param array $mixins Mixins.
      * @return array The object as a data source.
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'type' => $this->getChartType()->getDescription(),

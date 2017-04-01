@@ -136,12 +136,19 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Returns data about the Availability.
      *
-     * @param bool $full If true, returns full, detailed data about the timeslots in this campaign
+     * @param array $mixins Mixins
+     * @mixin timeslots Provides data about the timeslots in this campaign
      *
      * @return array
      */
-    public function toDataSource($full = false)
+    public function toDataSource($mixins = [])
     {
+        $mixin_funcs = [
+            'timeslots' => function (&$data) {
+                $data['timeslots'] = $this->getTimeslots();
+            },
+        ];
+
         $data = [
             'id' => $this->getID(),
             'created_by' => $this->getCreatedBy()->getID(),
@@ -152,9 +159,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
             'num_timeslots' => sizeof($this->getTimeslots()),
         ];
 
-        if ($full) {
-            $data['timeslots'] = $this->getTimeslots();
-        }
+        $this->addMixins($data, $mixins, $mixin_funcs);
 
         return $data;
     }

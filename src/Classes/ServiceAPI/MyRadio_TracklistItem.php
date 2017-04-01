@@ -401,12 +401,12 @@ class MyRadio_TracklistItem extends ServiceAPI
         return $result[0] < 2;
     }
 
-    public function toDataSource($full = false)
+    public function toDataSource($mixins = [])
     {
         if (is_array($this->track)) {
             $return = $this->track;
         } else {
-            $return = $this->getTrack()->toDataSource($full);
+            $return = $this->getTrack()->toDataSource($mixins);
         }
         $return['time'] = $this->getStartTime();
         $return['starttime'] = date('d/m/Y H:i:s', $this->getStartTime());
