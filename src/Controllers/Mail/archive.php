@@ -24,7 +24,7 @@ foreach ($archive as $key => $value) {
 }
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-    ->addVariable('tablescript', 'myradio.Mail.archive')
+    ->addVariable('tablescript', 'myradio.mail.archive')
     ->addVariable('title', $list->getName().' Archive')
     ->addVariable('tabledata', $archive)
     ->render();
