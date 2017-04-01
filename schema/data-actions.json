@@ -80,6 +80,7 @@
     ["NIPSWeb", "upload_aux"],
     ["NIPSWeb", "confirm_aux_upload"],
     ["NIPSWeb", "live"],
+    ["NIPSWeb", "import"],
     ["Podcast", "setCover"],
     ["Podcast", "createPodcast"],
     ["Podcast", "editPodcast"],

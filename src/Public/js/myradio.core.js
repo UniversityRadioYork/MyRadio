@@ -49,7 +49,18 @@ var myradio = {
     );
     return reportButton;
   },
-  callAPI: function (method, module, action, id, firstParam, options) {
+  callAPI: function (method, module, action, id, firstParam, options, successFunc) {
+    if (typeof successFunc === "undefined") {
+      successFunc = function(){};
+    }
+    $.ajax({
+      url: myradio.getAPIURL(module, action, id, firstParam),
+      data: options,
+      method: method,
+      success: successFunc
+    });
+  },
+  getAPIURL: function (module, action, id, firstParam) {
     var url = mConfig.api_url;
     url += "/v2/" + module;
     if (id !== "") {
@@ -59,12 +70,30 @@ var myradio = {
     if (firstParam !== "") {
       url += "/" + firstParam;
     }
+    return url;
+  },
+  //Global popup alert controller for new alert popups.
+  showAlert: function (text, type) {
+    // Stores fancy message notice icons.
+    const ICON_ERROR = "<div class='glyphicon glyphicon-exclamation-sign'></div>&nbsp;";
+    const ICON_OK = "<div class='glyphicon glyphicon-ok'></div>&nbsp;";
+    const ICON_LOADING = "<div class='glyphicon glyphicon-refresh gly-spin'></div>&nbsp;";
+    if (!type) {
+      type = "success";
+    }
+    var icon;
+    if (type == "success") {
+      icon = ICON_OK;
+    } else if (type == "loading"){
+      icon = ICON_LOADING;
+      type = "warning"; //override so still orange alert :)
+    } else if (type == "danger" || type == "warning") {
+      icon = ICON_ERROR;
+    }
 
-    $.ajax({
-      url: url,
-      data: options,
-      method: method
-    });
+    $("#showAlert").removeClass(function (index, className) {
+      return (className.match (/(^|\s)alert-\S+/g) || []).join(" ");
+    }).addClass("alert-"+type).html(icon + text);
   }
 };
 

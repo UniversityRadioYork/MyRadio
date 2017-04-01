@@ -1,4 +1,10 @@
-/* global ChannelConfigurator, myradio, mConfig */
+/* global ChannelConfigurator, myradio */
+
+//reload the page after something good or bad happens
+var reload = function() {
+  location.reload();
+};
+
 /* exported NIPSWeb */
 var NIPSWeb = function (d) {
   // If enabled, doesn't reload on error
@@ -7,29 +13,13 @@ var NIPSWeb = function (d) {
   var changeQueue = $({});
   // Queue up sending ajax requests one at a time
   var ajaxQueue = $({});
-  // Stores the clientid to enable multiple editors
-  var clientid = null;
+
   // Stores whether this show plan is writable
   var writable = true;
   // Stores the actual player audio elements
   var players = [];
   // Store the interactive sliders/seek bars
   var sliders = [];
-  // Stores the context menu reference
-  var channelMenu;
-
-
-  if (writable) {
-    //Get a client id to identify this session
-    $.ajax({
-      url: myradio.makeURL("NIPSWeb", "get_client_token"),
-      type: "POST",
-      success: function (data) {
-        clientid = parseInt(data.token);
-      },
-      async: false
-    });
-  }
 
   /**
    * Returns number of minutes (zero padded) from a time in seconds
@@ -76,52 +66,32 @@ var NIPSWeb = function (d) {
     $("#ch" + channel + "-duration").html(mindur + ":" + secdur);
   };
 
-  var showAlert = function (text, type) {
-    if (!type) {
-      type = "success";
-    }
-
-    var close = "<button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>×</span><span class='sr-only'>Close</span></button>";
-
-    var alert = $("<div></div>").addClass("footer-alert").addClass("alert").addClass("alert-"+type).html(text + close);
-    alert.alert();
-
-    setTimeout(function () {
-      alert.alert("close");
-    }, 15000);
-
-    $(document.body).append(alert);
-  };
-
   /**
    * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
    * ops: JSON changeset to send
-   * addOp: If true, there has been an add operation. We currently make these syncronous.
    * pNext: Optional. Parent queue to process on completion.
    */
-  var shipChanges = function (ops, addOp, pNext) {
-    if (typeof addOp === "undefined") {
-      addOp = false;
-    }
+  var shipChanges = function (ops, pNext) {
 
     ajaxQueue.queue(
       function (next) {
-        $("#notice").html("Saving changes...").show();
         $.ajax({
-          async: !addOp,
           cache: false,
           success: function (data) {
-            $("#notice").hide();
-            for (var i in data) {
+            for (var i in data.payload) {
               if (i === "myradio_errors") {
                 continue;
               }
-              if (typeof data[i].timeslotitemid !== "undefined") {
-                //@todo multiple AddItem ops in a jsonon set will make this break
-                $("ul.baps-channel li[timeslotitemid=\"findme\"]").attr("timeslotitemid", data[i].timeslotitemid);
+              if (typeof data.payload[i].timeslotitemid !== "undefined") {
+                $("ul.baps-channel li[timeslotitemid=\"findme\"]").attr("timeslotitemid", data.payload[i].timeslotitemid);
               }
-              if (!data[i].status && !debug) {
-                window.location.reload();
+              if (!data.payload[i].status) {
+                myradio.showAlert("Save failed! Reloading in 5 seconds.", "danger");
+                if (!debug) {
+                  setTimeout(function(){ reload(); }, 5000);
+                }
+              } else {
+                myradio.showAlert("Changes Saved Successfully", "success");
               }
             }
           },
@@ -132,12 +102,10 @@ var NIPSWeb = function (d) {
             }
           },
           data: {
-            clientid: clientid,
             ops: ops
           },
-          dataType: "json",
-          type: "POST",
-          url: myradio.makeURL("NIPSWeb", "recv_ops")
+          type: "PUT",
+          url: myradio.getAPIURL("timeslot", "updateshowplan", window.myradio.timeslotid, "")
         });
       }
     );
@@ -147,6 +115,7 @@ var NIPSWeb = function (d) {
    * Detect what changes have been made to the show plan
    */
   var calcChanges = function (li) {
+    myradio.showAlert("Saving changes to show plan...", "loading");
     if (!li.hasOwnProperty("attr")) {
       li = $(li);
     }
@@ -173,9 +142,7 @@ var NIPSWeb = function (d) {
            * This item definitely isn't where it was before. Notify the server of the potential actions.
            */
           var ops = [];
-          var addOp = false;
           if (oldChannel === "res" && li.attr("channel") !== "res") {
-            addOp = true;
             /**
              * This item has just been added to the show plan. Send the server a AddItem operation.
              * This operation will also send a number of MoveItem notifications - one for each item below this one in the
@@ -185,14 +152,14 @@ var NIPSWeb = function (d) {
             current = li;
             while (current.next().length === 1) {
               current = current.next();
-              current.attr("weight", parseInt(current.attr("weight")) + 1);
+              current.attr("weight", parseInt(current.attr("weight")) + 1, 10);
               ops.push({
                 op: "MoveItem",
-                timeslotitemid: parseInt(current.attr("timeslotitemid")),
-                oldchannel: parseInt(current.attr("channel")),
-                oldweight: parseInt(current.attr("weight")) - 1,
-                channel: parseInt(current.attr("channel")),
-                weight: parseInt(current.attr("weight"))
+                timeslotitemid: parseInt(current.attr("timeslotitemid"), 10),
+                oldchannel: parseInt(current.attr("channel"), 10),
+                oldweight: parseInt(current.attr("weight"), 10) - 1,
+                channel: parseInt(current.attr("channel"), 10),
+                weight: parseInt(current.attr("weight"), 10)
               });
             }
 
@@ -201,12 +168,12 @@ var NIPSWeb = function (d) {
             ops.push({
               op: "AddItem",
               id: li.attr("id"),
-              channel: parseInt(li.attr("channel")),
-              weight: parseInt(li.attr("weight"))
+              channel: parseInt(li.attr("channel"), 10),
+              weight: parseInt(li.attr("weight"), 10)
             });
             li.attr("timeslotitemid", "findme");
 
-          } else if ( $(this).attr("channel") !== "res" && (li.attr("channel") === "res" || li.attr("channel") == null)) {
+          } else if ( oldChannel !== "res" && (li.attr("channel") === "res" || li.attr("channel") == null)) {
             /**
              * This item has just been removed from the Show Plan. Send the server a RemoveItem operation.
              * This operation will also send a number of MoveItem notifications - one for each item below this one in the
@@ -215,14 +182,14 @@ var NIPSWeb = function (d) {
              */
             $("ul.baps-channel li[channel=" + oldChannel + "]").each(function () {
               if (oldWeight - $(this).attr("weight") < 0) {
-                $(this).attr("weight", parseInt($(this).attr("weight")) - 1);
+                $(this).attr("weight", parseInt($(this).attr("weight"), 10) - 1);
                 ops.push({
                   op: "MoveItem",
-                  timeslotitemid: parseInt($(this).attr("timeslotitemid")),
-                  oldchannel: parseInt($(this).attr("channel")),
-                  oldweight: parseInt($(this).attr("weight")) + 1,
-                  channel: parseInt($(this).attr("channel")),
-                  weight: parseInt($(this).attr("weight"))
+                  timeslotitemid: parseInt($(this).attr("timeslotitemid"), 10),
+                  oldchannel: parseInt($(this).attr("channel"), 10),
+                  oldweight: parseInt($(this).attr("weight"), 10) + 1,
+                  channel: parseInt($(this).attr("channel"), 10),
+                  weight: parseInt($(this).attr("weight"), 10)
                 });
               }
             });
@@ -231,9 +198,9 @@ var NIPSWeb = function (d) {
             // This is after the moves to ensure there aren't two items of the same weight
             ops.push({
               op: "RemoveItem",
-              timeslotitemid: parseInt(li.attr("timeslotitemid")),
-              channel: parseInt(oldChannel),
-              weight: parseInt(oldWeight)
+              timeslotitemid: parseInt(li.attr("timeslotitemid"), 10),
+              channel: parseInt(oldChannel, 10),
+              weight: parseInt(oldWeight, 10)
             });
             li.attr("timeslotitemid", null);
 
@@ -252,7 +219,7 @@ var NIPSWeb = function (d) {
               if (oldWeight - $(this).attr("weight") < 0 &&
                 $(this).attr("timeslotitemid") !== li.attr("timeslotitemid")) {
                 dec.push($(this).attr("timeslotitemid"));
-                $(this).attr("weight", parseInt($(this).attr("weight")) - 1);
+                $(this).attr("weight", parseInt($(this).attr("weight"), 10) - 1);
               }
             });
 
@@ -264,12 +231,12 @@ var NIPSWeb = function (d) {
               if (pos >= 0) {
                 $("ui.baps-channel li[timeslotitemid=" + dec[pos] + "]").attr(
                   "weight",
-                  parseInt($("ui.baps-channel li[timeslotitemid=" + dec[pos] + "]")) + 1
+                  parseInt($("ui.baps-channel li[timeslotitemid=" + dec[pos] + "]"), 10) + 1
                 );
                 dec[pos] = null;
               } else {
                 inc.push(current.attr("timeslotitemid"));
-                current.attr("weight", parseInt(current.attr("weight")) + 1);
+                current.attr("weight", parseInt(current.attr("weight"), 10) + 1);
               }
             }
 
@@ -277,11 +244,11 @@ var NIPSWeb = function (d) {
               obj = $("ul.baps-channel li[timeslotitemid=" + inc[i] + "]");
               ops.push({
                 op: "MoveItem",
-                timeslotitemid: parseInt(inc[i]),
-                oldchannel: parseInt(obj.attr("channel")),
-                oldweight: parseInt(obj.attr("weight")) - 1,
-                channel: parseInt(obj.attr("channel")),
-                weight: parseInt(obj.attr("weight"))
+                timeslotitemid: parseInt(inc[i], 10),
+                oldchannel: parseInt(obj.attr("channel"), 10),
+                oldweight: parseInt(obj.attr("weight"), 10) - 1,
+                channel: parseInt(obj.attr("channel"), 10),
+                weight: parseInt(obj.attr("weight"), 10)
               });
             }
 
@@ -292,30 +259,29 @@ var NIPSWeb = function (d) {
               obj = $("ul.baps-channel li[timeslotitemid=" + dec[i] + "]");
               ops.push({
                 op: "MoveItem",
-                timeslotitemid: parseInt(dec[i]),
-                oldchannel: parseInt(obj.attr("channel")),
-                oldweight: parseInt(obj.attr("weight")) + 1,
-                channel: parseInt(obj.attr("channel")),
-                weight: parseInt(obj.attr("weight"))
+                timeslotitemid: parseInt(dec[i], 10),
+                oldchannel: parseInt(obj.attr("channel"), 10),
+                oldweight: parseInt(obj.attr("weight"), 10) + 1,
+                channel: parseInt(obj.attr("channel"), 10),
+                weight: parseInt(obj.attr("weight"), 10)
               });
             }
 
             // Finally, we can add the item itself
             ops.push({
               op: "MoveItem",
-              timeslotitemid: parseInt(li.attr("timeslotitemid")),
-              oldchannel: parseInt(oldChannel),
-              oldweight: parseInt(oldWeight),
-              channel: parseInt(li.attr("channel")),
-              weight: parseInt(li.attr("weight"))
+              timeslotitemid: parseInt(li.attr("timeslotitemid"), 10),
+              oldchannel: parseInt(oldChannel, 10),
+              oldweight: parseInt(oldWeight, 10),
+              channel: parseInt(li.attr("channel"), 10),
+              weight: parseInt(li.attr("weight"), 10)
             });
           }
-
           /**
            * The important bit - ship the change operations over to the server to update the remote datastructure,
            * the change log, and to propogate the changes to any other clients that may be active.
            */
-          shipChanges(ops, addOp, next);
+          shipChanges(ops, next);
         } else {
           $(this).dequeue();
         }
@@ -327,7 +293,7 @@ var NIPSWeb = function (d) {
     // Used by dragdrop - enables the selected item to move down on drag/drop
     $("ul.baps-channel li").off("mousedown.predrag").on(
       "mousedown.predrag",
-      function (e) {
+      function () {
         $(this).attr(
           "nextSelect",
           typeof $(this).next().attr("id") !== "undefined" ? $(this).next().attr("id") : $(this).prev().attr("id")
@@ -339,19 +305,19 @@ var NIPSWeb = function (d) {
       function (e) {
         var channel = $(this).parent(".baps-channel").attr("channel");
         if (!getPlayer(channel).paused) {
-          showAlert("Cannot load track whilst another is playing.", "warning");
+          myradio.showAlert("Cannot load track whilst another is playing.", "warning");
           e.stopPropagation();
           return false;
         }
         if ($(this).hasClass("undigitised")) {
           //Can't select the track - it isn't digitised
-          showAlert($(this).html() + " has not been digitised.", "danger");
+          myradio.showAlert($(this).html() + " has not been digitised.", "danger");
           e.stopPropagation();
           return false;
         }
         if ($(this).hasClass("unclean")) {
           //This track may have naughty words, but don't block selection
-          showAlert($(this).html() + " explicit. Do not broadcast before 9pm.", "danger");
+          myradio.showAlert("<strong>" + $(this).html() + "</strong> is explicit. Do not broadcast before 9pm.", "danger");
         }
         //Set this track as the active file for this channel
         //First, we need to remove the active class for any other file in the channel
@@ -447,109 +413,268 @@ var NIPSWeb = function (d) {
         if (tmp.length !== 3) {
           return;
         }
-        time += parseInt(tmp[1]) * 60;
-        time += parseInt(tmp[2]);
+        time += parseInt(tmp[1], 10) * 60;
+        time += parseInt(tmp[2], 10);
       });
       $("#" + $(this).attr("id") + "-total").html("(" + timeMins(time) + ":" + timeSecs(time) + ")");
     });
   };
 
-  var configureContextMenus = function () {
-    var invert = function (obj, attr) {
-      if (obj.getAttribute(attr) == 1) {
-        obj.setAttribute(attr, 0);
-      } else {
-        obj.setAttribute(attr, 1);
+  // Context Menu - Helper Functions
+  // Adapted From https://github.com/callmenick/Custom-Context-Menu
+  /**
+   * Function to check if we clicked inside an element with a particular class
+   * name.
+   *
+   * @param {Object} e The event
+   * @param {String} className The class name to check against
+   * @return {Boolean}
+   */
+  function clickInsideElement( e, className ) {
+    var el = e.srcElement || e.target;
+
+    if ( el.classList.contains(className) ) {
+      return el;
+    } else {
+      while ( el == el.parentNode ) {
+        if ( el.classList && el.classList.contains(className) ) {
+          return el;
+        }
       }
+    }
+
+    return false;
+  }
+
+  /**
+   * Get's exact position of event.
+   *
+   * @param {Object} e The event passed in
+   * @return {Object} Returns the x and y position
+   */
+  function getPosition(e) {
+    var posx = 0;
+    var posy = 0;
+
+    if (!e) e = window.event;
+
+    if (e.pageX || e.pageY) {
+      posx = e.pageX;
+      posy = e.pageY;
+    } else if (e.clientX || e.clientY) {
+      posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+      posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+    }
+
+    return {
+      x: posx,
+      y: posy
     };
-    channelMenu = contextMenu(
-      [
-        {
-          icon: "trash",
-          text: "Delete item",
-          callback: function (e) {
-            var toDelete = e.triggeredBy.parentNode.removeChild(e.triggeredBy);
-            calcChanges(toDelete);
-          },
-          open: function (e) {
-            if (e.triggeredBy.nodeName == "LI") {
-              this.enable();
-            } else {
-              this.disable();
-            }
-          }
-        },
-        {
-          icon: "",
-          text: "Automatic advance",
-          callback: function (e) {
-            invert(e.boundTo, "autoadvance");
-          },
-          open: function (e) {
-            this.setIcon(e.boundTo.getAttribute("autoadvance") == 1 ? "ok" : "");
-          }
-        },
-        {
-          icon: "",
-          text: "Play on load",
-          callback: function (e) {
-            invert(e.boundTo, "playonload");
-          },
-          open: function (e) {
-            this.setIcon(e.boundTo.getAttribute("playonload") == 1 ? "ok" : "");
-          }
-        },
-        {
-          icon: "",
-          text: "Repeat none",
-          callback: function (e) {
-            e.boundTo.setAttribute("repeat", 0);
-          },
-          open: function (e) {
-            this.setIcon(e.boundTo.getAttribute("repeat") == 0 ? "record" : "");
-          }
-        },
-        {
-          icon: "",
-          text: "Repeat one",
-          callback: function (e) {
-            e.boundTo.setAttribute("repeat", 1);
-          },
-          open: function (e) {
-            this.setIcon(e.boundTo.getAttribute("repeat") == 1 ? "record" : "");
-          }
-        },
-        {
-          icon: "",
-          text: "Repeat all",
-          callback: function (e) {
-            e.boundTo.setAttribute("repeat", 2);
-          },
-          open: function (e) {
-            this.setIcon(e.boundTo.getAttribute("repeat") == 2 ? "record" : "");
-          }
-        },
-        {
-          icon: "refresh",
-          text: "Reset channel"
-        },
-        {
-          icon: "save",
-          text: "Save channel as...",
-          callback: function () {
-            showAlert("Save/Load channel functionality is not available.", "danger");
-          }
-        },
-        {
-          icon: "open",
-          text: "Load channel",
-          callback: function () {
-            showAlert("Save/Load channel functionality is not available.", "danger");
+  }
+
+  // Context Menu - Core Functions
+
+  /**
+   * Variables.
+   */
+  var contextMenuLinkClassName = "context-menu__link";
+  var contextMenuActive = "context-menu--active";
+
+  var taskItemClassName = "showplan-item";
+  var channelClassName = "channel-list";
+  var taskItemInContext;
+  var channelInContext;
+  var contextBapsChannel;
+
+  var clickCoords;
+  var clickCoordsX;
+  var clickCoordsY;
+
+  var menu = document.querySelector("#context-menu");
+  var menuState = 0;
+  var menuWidth;
+  var menuHeight;
+
+  var windowWidth;
+  var windowHeight;
+
+  /**
+   * Initialise our application's code.
+   */
+  function initContextMenu() {
+    contextListener();
+    clickListener();
+    keyupListener();
+    resizeListener();
+  }
+
+  /**
+   * Listens for contextmenu events.
+   */
+  function contextListener() {
+    document.addEventListener( "contextmenu", function(e) {
+      channelInContext = clickInsideElement( e, channelClassName );
+      taskItemInContext = clickInsideElement( e, taskItemClassName );
+      if ( channelInContext || taskItemInContext) {
+        e.preventDefault();
+        if ( !taskItemInContext ) {
+          contextBapsChannel = "#baps-channel-" + (channelInContext.getAttribute("channel"));
+          $("#context-menu-delete").hide();
+        } else {
+          if (taskItemInContext.getAttribute("channel") == "res") {
+            contextBapsChannel = "#baps-channel-res";
+            $("#context-menu-delete").hide();
+          } else {
+            contextBapsChannel = "#baps-channel-" + (parseInt(taskItemInContext.getAttribute("channel"), 10)+1);
+            $("#context-menu-delete").show();
           }
         }
-      ]
-    );
-  };
+        $(".contextIcon-AutoAdvance").css("visibility", $(contextBapsChannel).attr("autoadvance")==1 ? "visible" : "hidden");
+        $(".contextIcon-PlayOnLoad").css("visibility", $(contextBapsChannel).attr("playonload")==1 ? "visible" : "hidden");
+        $(".contextIcon-Repeat0").css("visibility", $(contextBapsChannel).attr("repeat")==0 ? "visible" : "hidden");
+        $(".contextIcon-Repeat1").css("visibility", $(contextBapsChannel).attr("repeat")==1 ? "visible" : "hidden");
+        $(".contextIcon-Repeat2").css("visibility", $(contextBapsChannel).attr("repeat")==2 ? "visible" : "hidden");
+
+        toggleMenuOn();
+        positionMenu(e);
+      } else {
+        taskItemInContext = null;
+        toggleMenuOff();
+      }
+    });
+  }
+
+  /**
+   * Listens for click events.
+   */
+  function clickListener() {
+    document.addEventListener( "click", function(e) {
+      var clickeElIsLink = clickInsideElement( e, contextMenuLinkClassName );
+
+      if ( clickeElIsLink ) {
+        e.preventDefault();
+        menuItemListener( clickeElIsLink );
+      } else {
+        var button = e.which || e.button;
+        if ( button === 1 ) {
+          toggleMenuOff();
+        }
+      }
+    });
+  }
+
+  /**
+   * Listens for keyup events.
+   */
+  function keyupListener() {
+    window.onkeyup = function(e) {
+      if ( e.keyCode === 27 ) {
+        toggleMenuOff();
+      }
+    };
+  }
+
+  /**
+   * Window resize event listener
+   */
+  function resizeListener() {
+    window.onresize = function() {
+      toggleMenuOff();
+    };
+  }
+
+  /**
+   * Turns the custom context menu on.
+   */
+  function toggleMenuOn() {
+    if ( menuState !== 1 ) {
+      menuState = 1;
+      menu.classList.add( contextMenuActive );
+    }
+  }
+
+  /**
+   * Turns the custom context menu off.
+   */
+  function toggleMenuOff() {
+    if ( menuState !== 0 ) {
+      menuState = 0;
+      menu.classList.remove( contextMenuActive );
+    }
+  }
+
+  /**
+   * Positions the menu properly.
+   *
+   * @param {Object} e The event
+   */
+  function positionMenu(e) {
+    clickCoords = getPosition(e);
+    clickCoordsX = clickCoords.x;
+    clickCoordsY = clickCoords.y;
+
+    menuWidth = menu.offsetWidth + 4;
+    menuHeight = menu.offsetHeight + 4;
+
+    windowWidth = window.innerWidth;
+    windowHeight = window.innerHeight;
+
+    if ( (windowWidth - clickCoordsX) < menuWidth ) {
+      menu.style.left = windowWidth - menuWidth - 30 + "px";
+    } else {
+      menu.style.left = clickCoordsX + "px";
+    }
+
+    if ( (windowHeight - clickCoordsY) < menuHeight ) {
+      menu.style.top = windowHeight - menuHeight + "px";
+    } else {
+      menu.style.top = clickCoordsY -90 + "px";
+    }
+  }
+
+  /**
+   * The function that makes clicking options on the context menu work!
+   *
+   * @param {HTMLElement} link The link that was clicked
+   */
+  function menuItemListener( link ) {
+    var currentAction = link.getAttribute("data-action");
+
+    var invert = function (obj, attr) {
+      if ($(obj).attr(attr) == 1) {
+        $(obj).attr(attr, 0);
+      } else {
+        $(obj).attr(attr, 1);
+      }
+    };
+
+    switch (currentAction) {
+
+    case "Delete":
+      var toDelete = taskItemInContext.parentNode.removeChild(taskItemInContext);
+      calcChanges(toDelete);
+      break;
+    case "AutoAdvance":
+      invert(contextBapsChannel, "autoadvance");
+      break;
+    case "PlayOnLoad":
+      invert(contextBapsChannel, "playonload");
+      break;
+    case "Repeat0":
+      $(contextBapsChannel).attr("repeat", 0);
+      break;
+    case "Repeat1":
+      $(contextBapsChannel).attr("repeat", 1);
+      break;
+    case "Repeat2":
+      $(contextBapsChannel).attr("repeat", 2);
+      break;
+    }
+    toggleMenuOff();
+
+  }
+
+  //End of Context Menu
 
   var initialiseUI = function () {
     if (writable) {
@@ -585,7 +710,7 @@ var NIPSWeb = function (d) {
     registerItemClicks();
     setupGenericListeners();
     updateChannelTotalTimers();
-    configureContextMenus();
+    initContextMenu();
   };
 
   var getChannelInt = function (channel) {
@@ -629,6 +754,7 @@ var NIPSWeb = function (d) {
     var ul = document.getElementById("baps-channel-"+channel);
     ul.setAttribute("autoadvance", 1);
     ul.setAttribute("repeat", 0);
+    ul.setAttribute("playonload", 0);
 
     if (outputDevice !== "default") {
       navigator.mediaDevices.getUserMedia({audio: true}).then(function() {
@@ -651,16 +777,16 @@ var NIPSWeb = function (d) {
       function () {
         var el = $("#baps-channel-" + channel + " li.selected");
         stopping(channel);
-        if (channelDiv.attr("autoadvance") == 1 && parseInt(channelDiv.attr("repeat")) !== 1) {
+        if (channelDiv.attr("autoadvance") == 1 && parseInt(channelDiv.attr("repeat"), 10) !== 1) {
           var next = el.next("li");
           if (!next.length && el.parent().attr("repeat") == 2) {
-            next = el.parent().children()[0];
+            next = el.parent().children().first();
           }
           if (next && next.length) {
             el.removeClass("selected");
             next.click();
           }
-        } else if (parseInt(channelDiv.attr("repeat")) === 1) {
+        } else if (parseInt(channelDiv.attr("repeat"), 10) === 1) {
           player.currentTime = player.cueTime;
           player.play();
           playing(channel);
@@ -669,15 +795,7 @@ var NIPSWeb = function (d) {
         }
       }
     );
-    // Chrome sometimes stops playback after seeking
-    $(player).on(
-      "seeked",
-      function (e) {
-        if (player.nwIsPlaying) {
-          setTimeout(player.play, 50);
-        }
-      }
-    );
+
     $(player).on(
       "timeupdate",
       function () {
@@ -690,18 +808,26 @@ var NIPSWeb = function (d) {
       "durationchange",
       function () {
         getDuration(channel);
-        sliders[getChannelInt(channel)].reset(
-          player.duration,
-          0,
-          $("#baps-channel-" + channel + " li.selected").attr("intro")
-        );
+        if ($("#baps-channel-" + channel + " li.selected[type=\"central\"]").length !=0) {
+          sliders[getChannelInt(channel)].reset(
+            player.duration,
+            0,
+            $("#baps-channel-" + channel + " li.selected").attr("intro")
+          );
+        } else {
+          sliders[getChannelInt(channel)].reset(
+            player.duration,
+            0,
+            0
+          );
+        }
       }
     );
 
     $(slider).on(
       "seeked",
       function (e) {
-        if (e.originalEvent.detail.time) {
+        if (e.originalEvent.detail.time && isFinite(e.originalEvent.detail.time)) {
           player.currentTime = parseFloat(e.originalEvent.detail.time.toPrecision(12));
         }
       }
@@ -710,11 +836,25 @@ var NIPSWeb = function (d) {
     $(slider).on(
       "introChanged",
       function (e) {
-        var trackid = getRecTrackFromID($(channelDiv).children(".selected")[0].getAttribute("id"))[1];
-        $.post(
-          mConfig.api_url + "/Track/" + trackid + "/setIntro",
-          {duration: e.originalEvent.detail.time}
-        );
+        if ($(channelDiv).children(".selected[type=\"central\"]").length != 0) {
+          var file;
+          var trackid = getRecTrackFromID($(channelDiv).children(".selected")[0].getAttribute("id"))[1];
+          $(channelDiv).children(".selected")[0].setAttribute("intro", parseInt(e.originalEvent.detail.time), 10);
+          myradio.callAPI("PUT","track","intro",trackid, "", {duration: e.originalEvent.detail.time},
+            function (data) {
+              for (file in data) {
+                if (file === "myradio_errors") {
+                  continue;
+                }
+              }
+              if (!data.status) {
+                myradio.showAlert("We couldn't save that intro, try reloading.", "danger");
+              } else {
+                myradio.showAlert("Intro Updated Successfully", "success");
+              }
+            }
+          );
+        }
       }
     );
 
@@ -727,8 +867,6 @@ var NIPSWeb = function (d) {
         player.cueTime = e.originalEvent.detail.time;
       }
     );
-
-    channelDiv.on("contextmenu", channelMenu.show);
 
     $("#ch" + channel + "-play").on(
       "click",
@@ -805,10 +943,9 @@ var NIPSWeb = function (d) {
             getPlayer(channel).type = "audio/ogg";
             params.ogg = true;
           } else {
-            $("#notice").html("Sorry, you need to use a modern browser to use Track Preview.").addClass("alert-error").show();
+            myradio.showAlert("Sorry, you need to use a modern browser to use Track Preview.", "danger");
           }
           getPlayer(channel).src = myradio.makeURL("NIPSWeb", "secure_play", params);
-
           $(getPlayer(channel)).off("canplay.forloaded").on(
             "canplay.forloaded",
             function () {
@@ -835,7 +972,6 @@ var NIPSWeb = function (d) {
         }
       );
     }
-
     getPlayer(channel).cueTime = 0;
   };
 
@@ -888,128 +1024,9 @@ var NIPSWeb = function (d) {
     debug: debug,
     initialiseUI: initialiseUI,
     initialisePlayer: initialisePlayer,
-    showAlert: showAlert,
     registerItemClicks: registerItemClicks
   };
 
-};
-
-/**
- * Items options: icon (required), text (required), callback
- */
-var contextMenu = function (items) {
-  var hideListener;
-  // The element the event that opened the menu is bound to
-  var boundTo;
-  // The element that was activated when the menu was opened
-  var triggeredBy;
-
-  /**
-   * DOM ELEMENTS
-   **/
-  var menuContainer = document.createElement("ul");
-  menuContainer.className = "context-menu dropdown-menu";
-  menuContainer.style.position = "absolute";
-  menuContainer.style.display = "none";
-
-  var callback = function (item, cb) {
-    if (cb) {
-      return function (e) {
-        e.boundTo = boundTo;
-        e.triggeredBy = triggeredBy;
-        cb.apply(item, [e]);
-      };
-    } else {
-      return function (){};
-    }
-  };
-
-  var open = function (item, cb) {
-    if (cb) {
-      return function (e) {
-        e.boundTo = boundTo;
-        e.triggeredBy = triggeredBy;
-        cb.apply(item, [e]);
-      };
-    } else {
-      return function (){};
-    }
-  };
-
-  var setIcon = function (itemIcon) {
-    return function (icon) {
-      itemIcon.className = "glyphicon glyphicon-" + icon;
-    };
-  };
-
-  var disable = function (item, callback) {
-    return function () {
-      item.style.opacity = "0.5";
-      item.removeEventListener("click", callback);
-    };
-  };
-
-  var enable = function (item, callback) {
-    return function () {
-      item.style.opacity = "1.0";
-      item.addEventListener("click", callback);
-    };
-  };
-
-  for (var i = 0; i < items.length; i++) {
-    var item = document.createElement("li");
-
-    var itemLink = document.createElement("a");
-    itemLink.setAttribute("href", "javascript:");
-
-    var itemIcon = document.createElement("span");
-    itemIcon.style.width = "14px";
-    itemIcon.className = "glyphicon glyphicon-" + items[i].icon;
-
-    var itemText = document.createTextNode(" " + items[i].text);
-
-    itemLink.appendChild(itemIcon);
-    itemLink.appendChild(itemText);
-    item.appendChild(itemLink);
-
-    callback(item, items[i].callback);
-
-    item.open = open(item, items[i].open);
-    item.setIcon = setIcon(itemIcon);
-    item.disable = disable(item, callback);
-    item.enable = enable(item, callback);
-    item.addEventListener("click", callback);
-
-    menuContainer.appendChild(item);
-  }
-
-  document.body.appendChild(menuContainer);
-
-  hideListener = function () {
-    menuContainer.style.display = "none";
-    document.body.removeEventListener("click", hideListener);
-  };
-
-  return {
-    show: function (e) {
-      boundTo = e.currentTarget;
-      triggeredBy = e.target;
-      for (var i = 0; i < menuContainer.children.length; i++) {
-        if (menuContainer.children[i].hasOwnProperty("open")) {
-          menuContainer.children[i].open.apply(menuContainer.children[i], [e]);
-        }
-      }
-      menuContainer.style.display = "block";
-      menuContainer.style.left = e.pageX + "px";
-      menuContainer.style.top = e.pageY + "px";
-      document.body.addEventListener("click", hideListener);
-      e.preventDefault();
-    }
-  };
-};
-
-contextMenu.prototype = {
-  constructor: contextMenu
 };
 
 var playoutSlider = function (e) {
@@ -1090,7 +1107,7 @@ var playoutSlider = function (e) {
         positionInt = calculatePositionFromSeek(e, positionSlider);
         return false;
       };
-      var dragEnd = function (e) {
+      var dragEnd = function () {
         sliderContainer.dispatchEvent(new CustomEvent("seeked", {detail: {time: positionInt}}));
 
         sliderContainer.removeEventListener("mousemove", dragMove);
@@ -1113,7 +1130,7 @@ var playoutSlider = function (e) {
         intro = calculatePositionFromSeek({clientX: e.clientX, currentTarget: introSlider}, introSlider);
         return false;
       };
-      var dragEnd = function (e) {
+      var dragEnd = function () {
         sliderContainer.dispatchEvent(new CustomEvent("introChanged", {detail: {time: intro}}));
 
         sliderContainer.parentNode.parentNode.removeEventListener("mousemove", dragMove);
@@ -1136,7 +1153,7 @@ var playoutSlider = function (e) {
         cue = calculatePositionFromSeek({clientX: e.clientX, currentTarget: cueSlider}, cueSlider);
         return false;
       };
-      var dragEnd = function (e) {
+      var dragEnd = function () {
         sliderContainer.dispatchEvent(new CustomEvent("cueChanged", {detail: {time: cue}}));
 
         sliderContainer.parentNode.parentNode.removeEventListener("mousemove", dragMove);
@@ -1162,9 +1179,9 @@ var playoutSlider = function (e) {
   sliderContainer.addEventListener("mousedown", clickHandler);
 
   var reset = function (newDuration, newCue, newIntro) {
-    duration = parseInt(newDuration);
-    cue = parseInt(newCue);
-    intro = parseInt(newIntro);
+    duration = parseInt(newDuration, 10);
+    cue = parseInt(newCue, 10);
+    intro = parseInt(newIntro, 10);
     positionInt = 0;
     redraw();
   };

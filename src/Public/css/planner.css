@@ -9,14 +9,6 @@ body {
   margin: 20px auto 0 auto;
 }
 
-#notice {
-  position: fixed;
-  top: 0;
-  left: -2px;
-  z-index: 1050;
-  height: 51px;
-}
-
 .main-container, #baps-channel-container {
   height: calc(100% - 60px);
   width: 100%;
@@ -38,8 +30,9 @@ body {
   padding: 0;
 }
 #resource-add-header {
-  height: 88px;
   background-color: #777;
+  height:92px;
+  padding-top: 5px;
 }
 #resource-add-header .tt-hint {
   margin: 0 0 0 2px;
@@ -53,8 +46,7 @@ body {
 
 #central-dragdrop, #res-dragdrop {
   height: 150px;
-  margin-bottom: 0;
-  width: 550px;
+  margin: 0;
 }
 #central-status, #res-status {
   position: relative;
@@ -65,10 +57,8 @@ body {
   padding-top: 5px;
 }
 #res-type-sel {
-  margin-bottom: 10px;
-}
-.result-container {
-  width: 550px;
+  margin: 0 2px 5px 1px;
+  width: calc(100% - 3px);
 }
 .result-container .alert {
   width: 100%;
@@ -97,35 +87,26 @@ body {
 #baps-channel-res {
   height: calc(100% - 90px);
 }
-#a-manage-library {
+#baps-menu {
   float: right;
   margin: 0;
   position: relative;
-  right: 20px;
-  top: 0.5em;
 }
-
-#res-loading {
-  float: right;
-  font-size: smaller;
-  padding: 1px;
-  margin: 2px;
+#baps-menu .btn-group {
+  margin: -2px 0 0 0;
+}
+#baps-menu #showAlert {
+  display: inline-block;
+  padding: 6px 15px;
+  margin: 0 10px;
 }
 #res-filter-artist,  #res-filter-track,  #res-filter-name, #resource-add-header .twitter-typeahead {
   padding: 0;
   width: 100%;
 }
-
-.footer-alert {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1050;
-  margin-bottom: 0;
-  padding: 10px;
+#res-filter-name {
+  margin-top:24px;
 }
-
 .box.height-1 {
   height: 75%;
 }
@@ -134,14 +115,13 @@ body {
   margin-bottom: 0;
 }
 
-ul.baps-channel {
+ul.baps-channel, form.baps-channel {
   overflow-x: hidden;
   overflow-y: scroll;
   padding: 0;
   margin: 0;
   background-color: #eee;
   border: 1px solid #777;
-  border-bottom: none;
   position: static; /* override bootstrap relative, which breaks sortable */
 }
 
@@ -182,6 +162,17 @@ select {
 
 #track-manual-entry label {
   width: 150px;
+}
+
+/** Iframe Popups **/
+
+#iframe {
+  background: none;
+  box-shadow: none;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  margin:0;
 }
 
 /** SLIDER COMPONENT **/
@@ -320,3 +311,37 @@ select {
   border: 2px solid #d9534f;
   border-radius: 5px;
 }
+
+
+.context-menu {
+  display: none;
+  position: absolute;
+  z-index: 10;
+}
+
+.context-menu--active {
+  display: block;
+}
+
+#import-show-selector, #import-season-selector,
+#import-timeslot-selector, #import-channel-selector,
+#import-channel-list, #import-import-to-channel-selector {
+  margin-bottom:5px;
+}
+#import-channel-list {
+  padding: 5px;
+  border-radius: 4px;
+}
+#import-channel-list p {
+  margin: 0 20px;
+}
+#import-channel-list input[type=checkbox] {
+  margin-right: 5px;
+}
+#import-channel-filter-btns {
+  display: inline-block;
+}
+#showAlert a {
+  cursor: pointer;
+}
+

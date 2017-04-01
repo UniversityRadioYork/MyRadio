@@ -9,7 +9,7 @@ $("#shows").on(
     $("#timeslots").empty();
     $("#signin-list").empty();
     $("#signin-submit").hide();
-    for (var seriesno = 0; seriesno < window.showdata[$(this).val()].length; seriesno++) {
+    for (var seriesno = 0; seriesno < window.myradio.showdata[$(this).val()].length; seriesno++) {
       $("#seasons").append("<option value='" + seriesno + "'>Season " + (seriesno + 1) + "</option>");
     }
   }
@@ -20,7 +20,7 @@ $("#seasons").on(
     $("#timeslots").empty();
     $("#signin-list").empty();
     $("#signin-submit").hide();
-    var season = window.showdata[$("#shows").val()][$(this).val()];
+    var season = window.myradio.showdata[$("#shows").val()][$(this).val()];
     for (var timeslot in season) {
       var time = moment.unix(season[timeslot][1]);
       $("#timeslots").append("<option value='" + season[timeslot][0] + "'>" + time.format("DD/MM/YYYY HH:mm") + "</option>");
@@ -35,7 +35,7 @@ $("#timeslots").on(
       $("#signin-list").empty();
       $("#signin-submit").show();
       //Okay, now if the show is <> 2hours, let them sign in
-      var timeslots = window.showdata[$("#shows").val()][$("#seasons").val()];
+      var timeslots = window.myradio.showdata[$("#shows").val()][$("#seasons").val()];
       var start;
       var end;
       for (var id in timeslots) {
@@ -70,7 +70,7 @@ $("#timeslots").on(
                     check.attr("checked", "checked")
                       .attr("disabled", "true");
                     label.append(" (Signed in by "+data[row].signedby.fname + " "+data[row].signedby.sname + ")");
-                  } else if (data[row].user.memberid == window.memberid) {
+                  } else if (data[row].user.memberid == window.myradio.memberid) {
                     check.attr("checked", "checked");
                   }
                   $("#signin-list").append(check).append(label).append("<br>");
@@ -95,7 +95,7 @@ $(document).ready(
     //Now we're going to select the closest timeslot
     var closest = [null, null, null, null];
     var seconds = (new Date()).getTime() / 1000;
-    var shows = window.showdata;
+    var shows = window.myradio.showdata;
     for (var show in shows) {
       for (var season in shows[show]) {
         for (var timeslot in shows[show][season]) {

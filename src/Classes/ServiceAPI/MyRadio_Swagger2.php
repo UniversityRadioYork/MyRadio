@@ -99,6 +99,24 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
     }
 
     /**
+     * Identify if the class/method combination given is valid. Useful for routing when paths are ambiguous.
+     *
+     * @param string $class The URI-name of the class to check
+     * @param string $method The URI-name of the method to check
+     * @return boolean
+     */
+    public static function isValidClassMethodCombination($class, $method)
+    {
+        $classes = array_flip(self::getApis());
+        if (!isset($classes[$class])) {
+            return false;
+        }
+
+        $refClass = new self($classes[$class]);
+        return in_array($method, $refClass->getClassMethodsPublicNames());
+    }
+
+    /**
      * Process an /api/v2 request.
      *
      * @param string $op     The HTTP request method (GET/PUT/POST/DELETE...)
@@ -118,12 +136,14 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         $refClass = new self($classes[$class]);
         $paths = $refClass->getClassInfo()['children'];
 
-        $path = '';
+        // @todo: This could probably be refactored to be friendlier now isValidClassMethodCombination exists.
+        $path = '/';
         if ($id) {
-            $path = $path.'/{id}';
+            $path = $path.'{id}/';
         }
+
         if ($method) {
-            $path = $path.'/'.$method;
+            $path .= $method;
         }
 
         if ($arg0) {
@@ -448,14 +468,20 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         }
 
         if (CoreUtils::startsWith($name, 'set') || CoreUtils::startsWith($name, 'get')) {
-            return '/'.strtolower(substr($name, 3));
+            return strtolower(substr($name, 3));
         }
 
-        return '/'.strtolower($name);
+        return strtolower($name);
     }
 
-    public function getClassInfo()
+    /**
+     * Returns an array of ReflectionMethod objects for each method this class should have exposed.
+     * @return ReflectionMethod[]
+     */
+    private function getReflectedMethods()
     {
+        $methods = [];
+
         $blocked_methods = [
             'getInstance',
             'wakeup',
@@ -468,14 +494,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             '__destruct'
         ];
 
-        $data = [
-            'description' => '',
-            'children' => [],
-        ];
-
         $refClass = new ReflectionClass($this->class);
-
-        $data['description'] = self::getClassDoc($refClass)['short_desc'];
 
         foreach ($refClass->getMethods() as $method) {
             if ((!$method->isPublic())
@@ -485,15 +504,46 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                 continue;
             }
 
+            $methods[] = $method;
+        }
+
+        return $methods;
+    }
+
+    /**
+     * Gets a list of all the public method names for this class.
+     * @return String[]
+     */
+    public function getClassMethodsPublicNames()
+    {
+        $names = [];
+        foreach ($this->getReflectedMethods() as $method) {
+            $names[] = self::getMethodPublicName($method);
+        }
+
+        return $names;
+    }
+
+    public function getClassInfo()
+    {
+        $data = [
+            'description' => '',
+            'children' => [],
+        ];
+
+        $refClass = new ReflectionClass($this->class);
+        $data['description'] = self::getClassDoc($refClass)['short_desc'];
+
+        foreach ($this->getReflectedMethods() as $method) {
             $op = self::getMethodOpType($method);
-            $public_name = self::getMethodPublicName($method);
+            $public_name = '/' . self::getMethodPublicName($method);
 
             if (!$method->isStatic()) {
                 $public_name = '/{id}'.$public_name;
             }
 
             if (self::isOptionInPathForMethod($method)) {
-                $public_name .= '/{'.$method->getParameters()[0]->getName().'}';
+                $public_name .= '{'.$method->getParameters()[0]->getName().'}/';
             }
 
             $data['children'][$public_name][$op] = $method;

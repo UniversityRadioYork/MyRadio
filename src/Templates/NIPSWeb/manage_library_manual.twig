@@ -3,9 +3,8 @@
   <head>
 {% include 'parts/base_head.twig' %}
       <link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css" />
-      <style>html,body{background: none; box-shadow: none; width: 550px; min-width: 550px; height: auto;}</style>
     </head>
-    <body>
+    <body id="iframe">
   {% include 'NIPSWeb/res_selector.twig' %}
         <div id="central-container" class="res-container hidden">
           <p>You can upload track to the central database by dragging them into the box below. I'll try to analyse the file and if I can figure out what it is, then I'll upload it for you. If the track is of poor quality then I will not allow tracks to be uploaded.</p>
@@ -39,7 +38,7 @@
                     <input type="number" id="track-manual-entry-position" class="form-control">
                   </div>
                   <div class="checkbox">
-                    <label for="track-manual-entry-explicit"><input type="checkbox" id="track-manual-entry-explicit"> <strong>Explicit?</strong></label>    
+                    <label for="track-manual-entry-explicit"><input type="checkbox" id="track-manual-entry-explicit"> <strong>Explicit?</strong></label>
                   </div>
                 </form>
               </div>
@@ -52,7 +51,6 @@
           <div id="res-dragdrop" class="well">Drag WAV/MP3 files here to upload<div class="alert alert-warning" id="res-status">Getting set up...</div></div>
           <div id="res-result" class="result-container"></div>
         </div>
-        <script type="text/javascript">window.memberid = parseInt({{memberid}});</script>
   {% include 'parts/base_foot.twig' %}
       <script type="text/javascript" src="{{baseurl}}js/vendor/jquery.filedrop.js"></script>
       <script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
