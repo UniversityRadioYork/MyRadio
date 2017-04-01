@@ -109,6 +109,11 @@ $(".twig-datatable").dataTable({
       "sTitle": "Tags",
       "bVisible": false
     },
+    //time
+    {
+      "sTitle": "Epoch Start Time",
+      "bVisible": false
+    },
     //starttime
     {
       "sTitle": "Time"
