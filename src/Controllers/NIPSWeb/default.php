@@ -12,7 +12,7 @@ use \MyRadio\ServiceAPI\MyRadio_User;
 
 CoreUtils::requireTimeslot();
 
-    $show_title = MyRadio_Timeslot::getInstance($_SESSION['timeslotid'])->getMeta('title');
+$show_title = MyRadio_Timeslot::getInstance($_SESSION['timeslotid'])->getMeta('title');
 
 if (isset($_REQUEST['readonly'])) {
     $template = 'NIPSWeb/readonly.twig';
