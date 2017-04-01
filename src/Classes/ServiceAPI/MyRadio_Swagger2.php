@@ -137,12 +137,12 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         $paths = $refClass->getClassInfo()['children'];
 
         // @todo: This could probably be refactored to be friendlier now isValidClassMethodCombination exists.
-        $path = '';
+        $path = '/';
         if ($id) {
-            $path = $path.'/{id}';
+            $path = $path.'{id}';
         }
-        // empty string is here so the trailing slash is added back
-        if ($method || $method === '') {
+
+        if ($method) {
             $path = $path.'/'.$method;
         }
 
