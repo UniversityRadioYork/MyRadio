@@ -363,8 +363,8 @@ class MyRadio_List extends ServiceAPI
                     $data['optin'] = [
                         'display' => 'icon',
                         'value' => 'plus',
-                        'title' => 'subscribe to this mailing list',
-                        'url' => urlutils::makeurl('mail', 'optin', ['list' => $this->getid()]),
+                        'title' => 'Subscribe to this mailing list',
+                        'url' => URLUtils::makeURL('Mail', 'optin', ['list' => $this->getID()]),
                     ];
                 } else {
                     $data['optin'] = null;
