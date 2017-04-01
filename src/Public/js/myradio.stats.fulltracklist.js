@@ -15,7 +15,16 @@ $(".twig-datatable").dataTable({
     },
     //trackid
     {
-      bVisible: 0
+      "bVisible": false
+    },
+    //Intro
+    {
+      "bVisible": false
+    },
+    //time
+    {
+      "sTitle": "Epoch Time",
+      "bVisible": false
     },
     //starttime
     {
