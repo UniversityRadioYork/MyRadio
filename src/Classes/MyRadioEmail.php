@@ -437,7 +437,7 @@ class MyRadioEmail extends ServiceAPI
             ],
         ];
 
-        this->addMixins($data, $mixins, $mixin_funcs);
+        $this->addMixins($data, $mixins, $mixin_funcs);
         return $data;
     }
 
