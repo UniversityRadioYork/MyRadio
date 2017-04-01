@@ -84,7 +84,7 @@ class MyRadio_Banner extends MyRadio_Photo
         );
     }
 
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         $data = [
             'banner_id' => $this->getBannerID(),
@@ -106,7 +106,7 @@ class MyRadio_Banner extends MyRadio_Photo
             ],
         ];
 
-        return array_merge(parent::toDataSource(), $data);
+        return array_merge(parent::toDataSource($mixins), $data);
     }
 
     /**

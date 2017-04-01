@@ -36,7 +36,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Initiates the ManagedItem variables.
      *
-     * @param int                     $resid       The ID of the managed resource to initialise
+     * @param int $resid The ID of the managed resource to initialise
      * @param NIPSWeb_ManagedPlaylist $playlistref If the playlist is requesting this item, then pass the playlist obj
      *
      * @todo Length, BPM
@@ -140,12 +140,11 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Returns an array of key information, useful for Twig rendering and JSON requests.
-     *
-     * @todo Expand the information this returns
-     *
+     * @param array $mixins Mixins. Currently unused
      * @return array
+     * @todo Expand the information this returns
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'type' => 'aux', //Legacy NIPSWeb Views

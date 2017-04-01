@@ -17,7 +17,7 @@ use MyRadio\MyRadio\MyRadioFormField;
  *
  * @todo    Dedicated Term class
  */
-class MyRadio_Scheduler extends MyRadio_Metadata_Common
+class MyRadio_Scheduler extends ServiceAPI
 {
     /**
      * This provides a temporary cache of the result from pendingAllocationsQuery.

@@ -123,13 +123,18 @@ class MyRadio_BannerCampaign extends ServiceAPI
 
     /**
      * Returns data about the Campaign.
-     *
-     * @param bool $full If true, returns full, detailed data about the timeslots in this campaign
-     *
+     * @param array $mixins Mixins.
+     * @mixin timeslots Provides data about the timeslots in this campaign
      * @return array
      */
-    public function toDataSource($full = false)
+    public function toDataSource($mixins = [])
     {
+        $mixin_funcs = [
+            'timeslots' => function (&$data) {
+                $data['timeslots'] = $this->getTimeslots();
+            }
+        ];
+
         $data = [
             'banner_campaign_id' => $this->getID(),
             'created_by' => $this->getCreatedBy()->getID(),
@@ -147,9 +152,7 @@ class MyRadio_BannerCampaign extends ServiceAPI
             ],
         ];
 
-        if ($full) {
-            $data['timeslots'] = $this->getTimeslots();
-        }
+        $this->addMixins($data, $mixins, $mixin_funcs);
 
         return $data;
     }

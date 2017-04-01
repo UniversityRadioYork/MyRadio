@@ -582,13 +582,25 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     /**
      * Get data in array format.
-     *
+     * @param array $mixins Mixins.
+     * @mixin show Provides data about the show this podcast is from
+     * @mixin credits Returns the names of the credited people, as a comma-separated list
      * @param bool $full If true, returns more data.
      *
      * @return array
      */
-    public function toDataSource($full = true)
+    public function toDataSource($mixins = [])
     {
+        $mixin_funcs = [
+            'show' => function (&$data) {
+                $data['show'] = $this->getShow() ?
+                    $this->getShow()->toDataSource($mixins) : null;
+            },
+            'credits' => function (&$data) {
+                $data['credits'] = implode(', ', $this->getCreditsNames(false));
+            },
+        ];
+
         $data = [
             'podcast_id' => $this->getID(),
             'title' => $this->getMeta('title'),
@@ -610,12 +622,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             ],
         ];
 
-        if ($full) {
-            $data['credits'] = implode(', ', $this->getCreditsNames(false));
-            $data['show'] = $this->getShow() ?
-                $this->getShow()->toDataSource(false) : null;
-        }
-
+        $this->addMixins($data, $mixins, $mixin_funcs);
         return $data;
     }
 

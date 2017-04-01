@@ -99,7 +99,7 @@ class MyRadio_Swagger
             '' : $meta['params'][$param->getName()]['description'];
     }
 
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         $blocked_methods = [
             'getInstance',
@@ -152,13 +152,12 @@ class MyRadio_Swagger
                 //toDataSource has a full option
                 $params[] = [
                     'paramType' => 'query',
-                    'name' => 'full',
-                    'description' => 'Some objects can optionally return a small or large response. '
-                                     . 'By default, a full response is on, although it is intended for this to change.',
-                    'type' => 'boolean',
+                    'name' => 'mixins',
+                    'description' => 'Some objects can optionally extra data as strings to the api call',
+                    'type' => 'Array',
                     'required' => false,
                     'allowMultiple' => false,
-                    'defaultValue' => true,
+                    'defaultValue' => [],
                 ];
             }
 

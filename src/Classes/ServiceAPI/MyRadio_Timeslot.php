@@ -307,30 +307,33 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         return self::resultSetToObjArray($r);
     }
 
-    public function toDataSource()
+    /**
+     * Serialises the timeslot. Merges with the parent season object as well.
+     */
+    public function toDataSource($mixins = [])
     {
         return array_merge(
-            $this->getSeason()->toDataSource(),
+            $this->getSeason()->toDataSource($mixins),
             [
-            'timeslot_id' => $this->getID(),
-            'timeslot_num' => $this->getTimeslotNumber(),
-            'title' => $this->getMeta('title'),
-            'description' => $this->getMeta('description'),
-            'tags' => $this->getMeta('tag'),
-            'time' => $this->getStartTime(),
-            'start_time' => CoreUtils::happyTime($this->getStartTime()),
-            'duration' => $this->getDuration(),
-            'mixcloud_status' => $this->getMeta('upload_state'),
-            'rejectlink' => [
-            'display' => 'icon',
-            'value' => 'trash',
-            'title' => 'Cancel Episode',
-            'url' => URLUtils::makeURL(
-                'Scheduler',
-                'cancelEpisode',
-                ['show_season_timeslot_id' => $this->getID()]
-            ),
-            ],
+                'timeslot_id' => $this->getID(),
+                'timeslot_num' => $this->getTimeslotNumber(),
+                'title' => $this->getMeta('title'),
+                'description' => $this->getMeta('description'),
+                'tags' => $this->getMeta('tag'),
+                'time' => $this->getStartTime(),
+                'start_time' => CoreUtils::happyTime($this->getStartTime()),
+                'duration' => $this->getDuration(),
+                'mixcloud_status' => $this->getMeta('upload_state'),
+                'rejectlink' => [
+                    'display' => 'icon',
+                    'value' => 'trash',
+                    'title' => 'Cancel Episode',
+                    'url' => URLUtils::makeURL(
+                        'Scheduler',
+                        'cancelEpisode',
+                        ['show_season_timeslot_id' => $this->getID()]
+                    ),
+                ],
             ]
         );
     }

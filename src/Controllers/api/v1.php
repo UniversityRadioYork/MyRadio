@@ -141,21 +141,9 @@ if (!$api_key->canCall($classes[$class], $method)) {
 
     header('Content-Type: application/json');
 
-    /*
-     * Some objects have really expensive "full" responses. Some systems
-     * (e.g. authenticators) don't need this much information and need to respond
-     * quickly.
-     * @todo Make full false by default.
-     */
-    if (isset($_REQUEST['full'])) {
-        $full = $_REQUEST['full'] !== 'false';
-    } else {
-        $full = true;
-    }
-
     $data = $class === 'resources' ? $result : [
         'status' => 'OK',
-        'payload' => CoreUtils::dataSourceParser($result, $full),
+        'payload' => CoreUtils::dataSourceParser($result, $_REQUEST['mixins'] ?: []),
         'time' => sprintf('%f', $__start + microtime(true)),
     ];
 

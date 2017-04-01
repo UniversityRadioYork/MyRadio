@@ -852,7 +852,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         return self::resultSetToObjArray($r);
     }
 
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         $data = [
             'show_id' => $this->getID(),

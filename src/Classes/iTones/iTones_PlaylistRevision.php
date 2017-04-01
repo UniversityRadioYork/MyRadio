@@ -136,12 +136,11 @@ class iTones_PlaylistRevision extends iTones_Playlist
 
     /**
      * Returns an array of key information, useful for Twig rendering and JSON requests.
-     *
-     * @todo Expand the information this returns
-     *
+     * @param array $mixins Mixins. Currently unused.
      * @return array
+     * @todo Expand the information this returns
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'revisionid' => $this->getRevisionID(),

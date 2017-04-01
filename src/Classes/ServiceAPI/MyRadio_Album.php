@@ -410,7 +410,7 @@ class MyRadio_Album extends ServiceAPI
         return self::getInstance($id[0]['recordid']);
     }
 
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'title' => $this->getTitle(),
