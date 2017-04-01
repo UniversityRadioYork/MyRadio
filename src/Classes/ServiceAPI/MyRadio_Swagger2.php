@@ -535,14 +535,14 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
         foreach ($this->getReflectedMethods() as $method) {
             $op = self::getMethodOpType($method);
-            $public_name = self::getMethodPublicName($method);
+            $public_name = '/' . self::getMethodPublicName($method);
 
             if (!$method->isStatic()) {
-                $public_name = '/{id}/'.$public_name;
+                $public_name = '/{id}'.$public_name;
             }
 
             if (self::isOptionInPathForMethod($method)) {
-                $public_name .= '/{'.$method->getParameters()[0]->getName().'}/';
+                $public_name .= '{'.$method->getParameters()[0]->getName().'}/';
             }
 
             $data['children'][$public_name][$op] = $method;
