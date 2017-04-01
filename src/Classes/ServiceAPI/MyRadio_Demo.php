@@ -16,7 +16,7 @@ use MyRadio\MyRadioEmail;
  *
  * @uses    \Database
  */
-class MyRadio_Demo extends MyRadio_Metadata_Common
+class MyRadio_Demo extends ServiceAPI
 {
     public static function registerDemo($time)
     {
