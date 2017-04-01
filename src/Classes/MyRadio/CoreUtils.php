@@ -334,7 +334,7 @@ class CoreUtils
         }
     }
 
-   /**
+    /**
      * Iteratively calls the toDataSource method on all of the objects in the given array, returning the results as
      * a new array.
      * @param array $array
@@ -356,11 +356,10 @@ class CoreUtils
                     500
                 );
             }
-            $result[] = $element->toDataSource($full);
+            $result[] = $element->toDataSource($mixins);
         }
         return $result;
     }
-
 
     //from http://www.php.net/manual/en/function.xml-parse-into-struct.php#109032
     public static function xml2array($xml)
