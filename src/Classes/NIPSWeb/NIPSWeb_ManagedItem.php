@@ -231,7 +231,6 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
          */
         $tmpfile = Config::$audio_upload_tmp_dir.'/'.$tmpid;
         $dbfile = $item->getFolder().'/'.$item->getID();
-        CoreUtils::encodeTrack($tmpfile, $dbfile);
 
         try {
             CoreUtils::encodeTrack($tmpfile, $dbfile);
