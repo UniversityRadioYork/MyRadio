@@ -143,7 +143,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         }
 
         if ($method) {
-            $path = $path.'/'.$method;
+            $path .= $method;
         }
 
         if ($arg0) {
