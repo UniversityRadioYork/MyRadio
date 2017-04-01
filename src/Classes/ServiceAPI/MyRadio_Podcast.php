@@ -318,7 +318,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Existing Cover File',
-                    'explanation' => 'To use an existing cover file, copy the Existing Cover File of a podcast with that file into here.',
+                    'explanation' => 'To use an existing cover file, '
+                                     . 'copy the Existing Cover File of a podcast with that file into here.',
                     'required' => false,
                 ]
             )
@@ -384,8 +385,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      * @param array        $tags        An array of String tags
      * @param string       $file        The local filesystem path to the Podcast file
      * @param MyRadio_Show $show        The show to attach the Podcast to
-     * @param array        $credits     Credit data. Format compatible with a credit TABULARSET (see Scheduler) TABULARSET (see Scheduler)
-     *                                  TABULARSET (see Scheduler)
+     * @param array        $credits     Credit data. Format compatible with a credit TABULARSET (see Scheduler)
      */
     public static function create(
         $title,
@@ -688,8 +688,14 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             $string_keys = ['title', 'description', 'tag'];
         }
 
-        $r = parent::searchMeta($query, $string_keys, $effective_from, $effective_to, 'uryplayer.podcast_metadata', 'podcast_id');
-
+        $r = parent::searchMetaBase(
+            $query,
+            $string_keys,
+            $effective_from,
+            $effective_to,
+            'uryplayer.podcast_metadata',
+            'podcast_id'
+        );
         return self::resultSetToObjArray($r);
     }
 
@@ -703,17 +709,21 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      * This will *not* unset is_multiple values that are not in the new set.
      *
      * @param string $string_key     The metadata key
-     * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance for value in the array. for value in the array.
+     * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance
      *                               for value in the array.
      * @param int    $effective_from UTC Time the metavalue is effective from. Default now.
      * @param int    $effective_to   UTC Time the metadata value is effective to. Default NULL (does not expire).
-     * @param null   $table          Used for compatibility with parent.
-     * @param null   $pkey           Used for compatibility with parent.
      */
-    public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null)
+    public function setMeta($string_key, $value, $effective_from = null, $effective_to = null)
     {
-        parent::setMeta($string_key, $value, $effective_from, $effective_to, 'uryplayer.podcast_metadata', 'podcast_id');
-
+        parent::setMetaBase(
+            $string_key,
+            $value,
+            $effective_from,
+            $effective_to,
+            'uryplayer.podcast_metadata',
+            'podcast_id'
+        );
         return $this;
     }
 

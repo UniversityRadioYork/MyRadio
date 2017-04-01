@@ -4,8 +4,6 @@
  */
 namespace MyRadio\ServiceAPI;
 
-use MyRadio\Iface\IServiceAPI;
-use MyRadio\Iface\MyRadio_DataSource;
 use MyRadio\Config;
 use MyRadio\Database;
 use MyRadio\MyRadioException;
@@ -17,7 +15,7 @@ use MyRadio\MyRadioException;
  * @uses    \Database
  * @uses    \CacheProvider
  */
-abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
+abstract class ServiceAPI
 {
     /**
      * All ServiceAPI subclasses will contain a reference to the Database Singleton.
@@ -101,38 +99,10 @@ abstract class ServiceAPI implements IServiceAPI, MyRadio_DataSource
         }
     }
 
-    public function toDataSource($full = false)
+    // TODO: Convert to abstract function once all child classes use mixins properly
+    public function toDataSource($mixins = [])
     {
         throw new MyRadioException(get_called_class().' has not had a DataSource Conversion Method Defined!', 500);
-    }
-
-    /**
-     * Iteratively calls the toDataSource method on all of the objects in the given array, returning the results as
-     * a new array.
-     *
-     * @param array $array
-     * @param bool  $full  If true, will return expanded data if available.
-     *
-     * @return array
-     *
-     * @throws MyRadioException Throws an Exception if a provided object is not a DataSource
-     */
-    public static function setToDataSource($array, $full = false)
-    {
-        if (!is_array($array)) {
-            return $array;
-        }
-        $result = [];
-        foreach ($array as $element) {
-            //It must implement the toDataSource method!
-            if (!method_exists($element, 'toDataSource')) {
-                throw new MyRadioException('Attempted to convert '.get_class($element).' to a DataSource but it not a valid Data Object!', 500);
-            } else {
-                $result[] = $element->toDataSource($full);
-            }
-        }
-
-        return $result;
     }
 
     public function __toString()

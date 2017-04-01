@@ -3,7 +3,6 @@
  * Lists Shows the User has.
  */
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
 $shows = MyRadio_User::getInstance()->getShows();
@@ -15,8 +14,8 @@ if (empty($shows) or (sizeof($shows) === 1 and sizeof($shows[0]->getAllSeasons()
 
 $twig = CoreUtils::getTemplateObject()->setTemplate('Scheduler/myShows.twig')
     ->addVariable('title', 'My Shows')
-    ->addVariable('tabledata', ServiceAPI::setToDataSource($shows))
-    ->addVariable('tablescript', 'myury.scheduler.showlist');
+    ->addVariable('tabledata', CoreUtils::setToDataSource($shows))
+    ->addVariable('tablescript', 'myradio.scheduler.showlist');
 
 if (isset($_REQUEST['msg'])) {
     switch ($_REQUEST['msg']) {

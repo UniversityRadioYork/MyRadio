@@ -147,7 +147,8 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
             'created_by' => $this->getCreatedBy()->getID(),
             'approved_by' => ($this->getApprovedBy() == null) ? null : $this->getApprovedBy()->getID(),
             'effective_from' => CoreUtils::happyTime($this->getEffectiveFrom()),
-            'effective_to' => ($this->getEffectiveTo() === null) ? 'Never' : CoreUtils::happyTime($this->getEffectiveTo()),
+            'effective_to' => ($this->getEffectiveTo() === null) ?
+                                   'Never' : CoreUtils::happyTime($this->getEffectiveTo()),
             'num_timeslots' => sizeof($this->getTimeslots()),
         ];
 

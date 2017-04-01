@@ -15,7 +15,7 @@ use MyRadio\MyRadioError;
 class URLUtils
 {
     /**
-     * Stores actionid => uri mappings of custom web addresses (e.g. /myury/iTones/default gets mapped to /itones).
+     * Stores actionid => uri mappings of custom web addresses (e.g. /myradio/iTones/default gets mapped to /itones).
      *
      * @var array
      */
@@ -31,7 +31,8 @@ class URLUtils
 
     public static function backWithMessage($message)
     {
-        header('Location: '.$_SERVER['HTTP_REFERER'].(strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?').'message='.base64_encode($message));
+        header('Location: '.$_SERVER['HTTP_REFERER']
+            .(strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?').'message='.base64_encode($message));
     }
 
     /**
@@ -81,6 +82,16 @@ class URLUtils
     }
 
     /**
+     * Redirects to another page, specified already by the caller.
+     *
+     * @param string  $URI The relative URI to redirect to.
+     */
+    public static function redirectURI($URI)
+    {
+        header('Location: '.$URI);
+    }
+
+    /**
      * Builds a module/action URL.
      *
      * @param string $module
@@ -99,7 +110,10 @@ class URLUtils
             }
         }
         //Check if there is a custom URL configured
-        $key = CoreUtils::getActionId(CoreUtils::getModuleId($module), empty($action) ? Config::$default_action : $action);
+        $key = CoreUtils::getActionId(
+            CoreUtils::getModuleId($module),
+            empty($action) ? Config::$default_action : $action
+        );
         if (!empty(self::$custom_uris[$key])) {
             return self::$custom_uris[$key];
         }

@@ -85,19 +85,25 @@ class MyRadio_StatsGenDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $totalplays = 0;
         $totaltracks = 0;
         $totaltime = 0;
-        $table = '<table><tr><th>Number of Plays</th><th>Title</th><th>Total Playtime</th><th>Playlist Membership</th></tr>';
+        $table = '<table>';
+        $table .= '<tr><th>Number of Plays</th><th>Title</th><th>Total Playtime</th><th>Playlist Membership</th></tr>';
 
         foreach ($info as $row) {
-            $table .= '<tr><td>'.$row['num_plays'].'</td><td>'.$row['title'].'</td><td>'.$row['total_playtime'].'</td><td>'
-                    .$row['in_playlists'].'</td></tr>'."\r\n";
+            $table .= '<tr><td>'.$row['num_plays'].'</td><td>'.$row['title'].'</td><td>'
+                .$row['total_playtime'].'</td><td>'.$row['in_playlists'].'</td></tr>'."\r\n";
             $totalplays += $row['num_plays'];
             ++$totaltracks;
             $totaltime += $row['total_playtime'];
         }
 
-        $table .= '<tr><th>'.$totalplays.'</th><th>'.$totaltracks.'</th><th>'.CoreUtils::intToTime($totaltime).'</th></tr>';
+        $table .= '<tr><th>'.$totalplays.'</th><th>'.$totaltracks
+            .'</th><th>'.CoreUtils::intToTime($totaltime).'</th></tr>';
         $table .= '</table>';
 
-        MyRadioEmail::sendEmailToList(MyRadio_List::getByName(Config::$reporting_list), 'Jukebox Playout Report', $table);
+        MyRadioEmail::sendEmailToList(
+            MyRadio_List::getByName(Config::$reporting_list),
+            'Jukebox Playout Report',
+            $table
+        );
     }
 }

@@ -17,15 +17,15 @@ use MyRadio\MyRadio\CoreUtils;
 class Profile extends ServiceAPI
 {
     /**
-     * Stores an Array representation of the current officers from the getCurrentOfficers function when it is first called
-     * This is also cached using a CacheProvider.
+     * Stores an Array representation of the current officers from the getCurrentOfficers function when it is first
+     * called. This is also cached using a CacheProvider.
      *
      * @var array
      */
     private static $currentOfficers = null;
     /**
-     * Stores an Array representation of the current officerships and members holding them from the getOfficers function when it is first called
-     * This is also cached using a CacheProvider.
+     * Stores an Array representation of the current officerships and members holding them from the getOfficers function
+     * when it is first called This is also cached using a CacheProvider.
      *
      * @var array
      */
@@ -83,8 +83,8 @@ class Profile extends ServiceAPI
     }
 
     /**
-     * Returns an Array representation of the current URY Officers. On first run, this is cached locally in the class, and
-     * shared in the CacheProvider until the Cache is cleared.
+     * Returns an Array representation of the current URY Officers. On first run, this is cached locally in the class,
+     * and shared in the CacheProvider until the Cache is cleared.
      *
      * @return array A two-dimensional Array, each element in the first dimension container the following details about
      *               officer, sorted by their officer ordering:
@@ -101,9 +101,13 @@ class Profile extends ServiceAPI
         if (self::$currentOfficers === false) {
             self::wakeup();
             self::$currentOfficers = self::$db->fetchAll(
-                'SELECT team.team_name AS team, officer.officer_name AS officership, sname || \', \' || fname AS name, member.memberid
+                'SELECT team.team_name AS team, officer.officer_name AS officership,
+                        sname || \', \' || fname AS name, member.memberid
                 FROM member, officer, member_officer, team
-                WHERE member_officer.memberid = member.memberid AND officer.officerid = member_officer.officerid AND officer.teamid = team.teamid AND member_officer.till_date IS NULL
+                WHERE member_officer.memberid = member.memberid
+                    AND officer.officerid = member_officer.officerid
+                    AND officer.teamid = team.teamid
+                    AND member_officer.till_date IS NULL
                 ORDER BY team.ordering, officer.ordering, sname'
             );
             self::$cache->set('MyRadioProfile_currentOfficers', self::$currentOfficers);
@@ -113,8 +117,8 @@ class Profile extends ServiceAPI
     }
 
     /**
-     * Returns an Array representation of the current URY officerships and the member holding them. On first run, this is cached locally in the class, and
-     * shared in the CacheProvider until the Cache is cleared.
+     * Returns an Array representation of the current URY officerships and the member holding them. On first run, this
+     * is cached locally in the class, and shared in the CacheProvider until the Cache is cleared.
      *
      * @return array A two-dimensional Array, each element in the first dimension container the following details about
      *               a member, sorted by their name:
@@ -132,10 +136,11 @@ class Profile extends ServiceAPI
             self::wakeup();
             self::$officers = self::$db->fetchAll(
                 'SELECT team.team_name AS team, officer.type, officer.officer_name AS officership,
-                fname || \' \' || sname AS name, member.memberid, officer.officerid
+                    fname || \' \' || sname AS name, member.memberid, officer.officerid
                 FROM team
                 LEFT JOIN officer ON team.teamid = officer.teamid AND officer.status = \'c\'
-                LEFT JOIN member_officer ON officer.officerid = member_officer.officerid AND member_officer.till_date IS NULL
+                LEFT JOIN member_officer ON officer.officerid = member_officer.officerid
+                    AND member_officer.till_date IS NULL
                 LEFT JOIN member ON member_officer.memberid = member.memberid
                 WHERE team.status = \'c\' AND officer.type != \'m\'
                 ORDER BY team.ordering, officer.ordering, sname'

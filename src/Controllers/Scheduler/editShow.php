@@ -16,7 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($data['id'])) {
         //create new
         $show = MyRadio_Show::create($data);
-        URLUtils::redirectWithMessage('Scheduler', 'myShows', 'Your show, '.$show->getMeta('title').', has been created!');
+        URLUtils::redirectWithMessage(
+            'Scheduler',
+            'myShows',
+            'Your show, ' . $show->getMeta('title') . ', has been created!'
+        );
     } else {
         //submit edit
         $show = MyRadio_Show::getInstance($data['id']);
@@ -37,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
         $show->setGenre($data['genres']);
-        $show->setCredits($data['credits']['member'], $data['credits']['credittype']);
+        $show->setCredits($data['credits']['memberid'], $data['credits']['credittype']);
 
         if ($data['mixclouder']) {
             $show->setMeta('upload_state', 'Requested');
@@ -65,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         //create form
         MyRadio_Show::getForm()
-            ->setFieldValue('credits.member', [MyRadio_User::getInstance()])
+            ->setFieldValue('credits.memberid', [MyRadio_User::getInstance()])
             ->setFieldValue('credits.credittype', [1])
             ->setTemplate('Scheduler/createShow.twig')
             ->render();

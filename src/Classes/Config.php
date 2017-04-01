@@ -70,7 +70,7 @@ final class Config
      *
      * @var string
      */
-    public static $base_url = '//ury.org.uk/myury/';
+    public static $base_url = '//ury.org.uk/myradio/';
 
     /**
      * The base URL of the schedule - has some JS resources from MyRadio.
@@ -88,12 +88,12 @@ final class Config
 
     /**
      * Whether nice URL rewrites are enabled
-     * If true, then urls will be myury/[module]/[action]
-     * If false, then urls will be myury/?module=[module]&action=[action].
+     * If true, then urls will be myradio/[module]/[action]
+     * If false, then urls will be myradio/?module=[module]&action=[action].
      *
      * @var bool
      */
-    public static $rewrite_url = false;
+    public static $rewrite_url = true;
 
     /**
      * Whether to enable the Caching system
@@ -109,12 +109,12 @@ final class Config
      *
      * @var string
      */
-    public static $cache_provider = '\MyRadio\APCProvider';
+    public static $cache_provider = '\MyRadio\MemcachedProvider';
     /**
      * If using the Memcached CacheProvider, set a list of servers to use here.
      * e.g. [['localhost', 11211]] (optionally, a third option, a weighting).
      */
-    public static $cache_memcached_servers = [];
+    public static $cache_memcached_servers = [['localhost', 11211]];
     /**
      * How long ServiceAPI items should be cached for by default. Turn this down if you
      * get a lot of edits from other sources.
@@ -449,11 +449,6 @@ final class Config
     public static $error_report_email = 'alerts.myradio';
 
     /**
-     * Raven (sentry) DSN.
-     */
-    public static $raven_dsn;
-
-    /**
      * The number of seconds an iTones Playlist lock is valid for before it expires.
      *
      * @var int
@@ -480,7 +475,7 @@ final class Config
     public static $yusu_api_key;
 
     /**
-     * The web address (up to the endpoint) where the YUSU API lives. It changes from time 
+     * The web address (up to the endpoint) where the YUSU API lives. It changes from time
      * to time so check that the API calls are actually succeeding now and then.
      */
     public static $yusu_api_website;
@@ -601,7 +596,7 @@ final class Config
      *
      * @var string
      */
-    public static $social_engineering_warning = 'Beware of Social Engineering, someone may be trying to disrupt your show.
+    public static $social_engineering_warning = 'Beware of Social Engineering, someone may be trying to spoil your show.
     Management and Computing will never send official communication through SIS.';
 
     /**
@@ -677,6 +672,11 @@ final class Config
      * The current choice should mean it resets results week.
      */
     public static $account_expiry_before = 49;
+
+    /**
+     * The email list to send Obit activation notifications to.
+     */
+    public static $obit_list_id = 36;
 
     /**** DAEMON CONFIGURATION ****/
     public static $d_BAPSSync_enabled = false;

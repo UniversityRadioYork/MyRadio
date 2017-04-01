@@ -66,7 +66,7 @@
                                     },
                                     {
                                         "title": "Get Beds/Jingles",
-                                        "url": "module=Mail,action=send,list=38",
+                                        "url": "https://goo.gl/forms/Gik8PkDjnAsI22MK2",
                                         "description": "The Production team have a huge library and a little experience - give them a shot if you want that little something that makes your show stand out."
                                     },
                                     {
@@ -151,7 +151,7 @@
                                     {
                                         "title": "Assign Action Permissions",
                                         "url": "module=MyRadio,action=actionPermissions",
-                                        "description": "Manage the requirements to use MyURY Actions"
+                                        "description": "Manage the requirements to use MyRadio Actions"
                                     },
                                     {
                                         "title": "Campus Jukebox Manager",

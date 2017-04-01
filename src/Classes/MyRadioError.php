@@ -13,11 +13,6 @@ namespace MyRadio;
 class MyRadioError
 {
     /**
-     * @var int Stores the number of errors thrown
-     */
-    private static $count = 0;
-
-    /**
      * @var array An array that matches error codes from $errno to
      *            a short string which names the error type (such as
      *            "User-generated error", or "User-generated warning")
@@ -40,9 +35,7 @@ class MyRadioError
 
     private static function getErrorName($errno)
     {
-        return $error_name = (isset(self::$error_type[$errno]) ?
-            self::$error_type[$errno] : 'Unknown error code'
-        );
+        return isset(self::$error_type[$errno]) ? self::$error_type[$errno] : 'Unknown error code';
     }
 
     /**
@@ -130,10 +123,8 @@ class MyRadioError
         if (strstr($errstr, 'should be compatible with') !== false) {
             return;
         }
-        ++self::$count; //Increment the error counter
 
         $errstr = utf8_encode($errstr);
-        $error_name = self::getErrorName($errno);
         // Log errors to file for permenance
         self::errorsToLog($errno, $errstr, $errfile, $errline);
         /*
@@ -268,20 +259,5 @@ class MyRadioError
                 }
             }
         }
-    }
-
-    /**
-     * Returns the number of errors encountered during execution.
-     *
-     * @return int
-     */
-    public static function getErrorCount()
-    {
-        return self::$count;
-    }
-
-    public static function resetErrorCount()
-    {
-        self::$count = 0;
     }
 }

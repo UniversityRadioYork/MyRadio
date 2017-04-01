@@ -10,6 +10,13 @@ use \MyRadio\Config;
 $session = $_SESSION;
 session_write_close();
 
+// Session has ended up without a timeslot
+// User has probably logged out (& in) on another tab, so ask them to pick another one (handled by JS)
+if (!isset($session['timeslotid'])) {
+    header('HTTP/1.1 400 Bad Request');
+    exit;
+}
+
 $pollFuncs = SIS_Utils::readPolls(Config::$sis_modules);
 
 //Enter an infinite loop calling these functions, and enjoy the ride

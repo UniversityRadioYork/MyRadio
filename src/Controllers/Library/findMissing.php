@@ -20,7 +20,7 @@ foreach ($tracks as $track) {
 }
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-    ->addVariable('tablescript', 'myury.datatable.default')
+    ->addVariable('tablescript', 'myradio.datatable.default')
     ->addVariable('title', 'Missing Track Files')
     ->addVariable('tabledata', CoreUtils::dataSourceParser($missing))
     ->addInfo(

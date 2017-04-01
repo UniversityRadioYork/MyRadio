@@ -20,5 +20,5 @@ CoreUtils::getTemplateObject()->setTemplate('Website/campaigns.twig')->addVariab
     )->addVariable('bannersurl', URLUtils::makeURL('Website', 'banners'))
     ->addVariable('bannerName', $banner->getAlt())
     ->addVariable('tabledata', CoreUtils::dataSourceParser($banner->getCampaigns()))
-    ->addVariable('tablescript', 'myury.website.campaignlist')
+    ->addVariable('tablescript', 'myradio.website.campaignlist')
     ->render();

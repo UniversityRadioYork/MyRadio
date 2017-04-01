@@ -33,7 +33,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Initiates the ManagedPlaylist variables.
      *
-     * @param int $playlistid The ID of the managed playlist to initialise
+     * @param string $playlistid The ID of the managed playlist to initialise
      *                        Note: Only links *non-expired* items
      */
     protected function __construct($playlistid)
@@ -241,11 +241,12 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      * Takes a lock on this playlist - stores a notification to all other systems that it should not be edited.
      *
      * @param string       $lockstr If you already have a lock, put it here. It will be renewed if it is still valid.
-     * @param MyRadio_User $user    The user that has acquired the lock. Defaults to current user. Required for CLI requests. This String will be invalidated by the update.
-     *                              This String will be invalidated by the update.
+     * @param MyRadio_User $user    The user that has acquired the lock. Defaults to current user.
+     *                              Required for CLI requests. This String will be invalidated by the update.
      *
      * @return bool|string false if the lock is not available, or a sha1 that proves ownership of the lock.
-     *                     No, the hash isn't all that fancy, but it prevents people being stupid. Write operations require this String.
+     *                     No, the hash isn't all that fancy, but it prevents people being stupid.
+     *                     Write operations require this String.
      */
     public function acquireOrRenewLock($lockstr = null, MyRadio_User $user = null)
     {
@@ -254,7 +255,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         }
         //Acquire a lock on the lock row - we don't want someone else acquiring a lock while we are!
         self::$db->query('BEGIN');
-        self::$db->query('SELECT * FROM jukebox.playlists WHERE playlistid=$1 FOR UPDATE', [$this->getID()], true);
+        self::$db->query('SELECT * FROM jukebox.playlists WHERE playlistid=$1 FOR UPDATE', [$this->getID()]);
 
         //Refresh the local lock information - threads using this could have been running for a *while*
         $this->refreshLockInformation();
@@ -269,7 +270,10 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         }
         //Or, if there isn't an active lock
         $locktime = time();
-        self::$db->query('UPDATE jukebox.playlists SET lock=$1, locktime=$2 WHERE playlistid=$3', [$user->getID(), $locktime, $this->getID()], true);
+        self::$db->query(
+            'UPDATE jukebox.playlists SET lock=$1, locktime=$2 WHERE playlistid=$3',
+            [$user->getID(), $locktime, $this->getID()]
+        );
         self::$db->query('COMMIT'); //This releases the lock
         $this->refreshLockInformation();
 
@@ -293,7 +297,10 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      */
     private function refreshLockInformation()
     {
-        $result = self::$db->fetchOne('SELECT lock, locktime FROM jukebox.playlists WHERE playlistid=$1', [$this->getID()]);
+        $result = self::$db->fetchOne(
+            'SELECT lock, locktime FROM jukebox.playlists WHERE playlistid=$1',
+            [$this->getID()]
+        );
         $this->lock = empty($result['lock']) ? null : MyRadio_User::getInstance($result['lock']);
         $this->locktime = (int) $result['locktime'];
     }
@@ -335,11 +342,11 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      * Once that's done, go over every Track still in the temporary list and remove them from the Playlist
      *
      * @param MyRadio_Track[] $tracks  Tracks to put in the playlist.
-     * @param string          $lockstr The string that provides Write access to this Playlist. Acquired from acquireLock();
+     * @param string          $lockstr String that provides Write access to this Playlist. Acquired from acquireLock();
      * @param string          $notes   Optional. A textual commit message about the change.
      *
-     * @todo Push these changes to the playlist files on playoutsvc.ury.york.ac.uk. This should probably be a MyRadioDaemon
-     * configured to run only on that server.
+     * @todo Push these changes to the playlist files on playoutsvc.ury.york.ac.uk. This should probably be a
+     *       MyRadioDaemon configured to run only on that server.
      */
     public function setTracks($tracks, $lockstr, $notes = null, MyRadio_User $user = null)
     {
@@ -383,8 +390,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         self::$db->query(
             'INSERT INTO jukebox.playlist_revisions (playlistid, revisionid, author, notes)
             VALUES ($1, $2, $3, $4) RETURNING revisionid',
-            [$this->getID(), $revisionid, $user->getID(), $notes],
-            true
+            [$this->getID(), $revisionid, $user->getID(), $notes]
         );
         //Add new tracks
         foreach ($new_additions as $track) {
@@ -394,8 +400,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
             }
             self::$db->query(
                 'INSERT INTO jukebox.playlist_entries (playlistid, trackid, revision_added) VALUES ($1, $2, $3)',
-                [$this->getID(), $track->getID(), $revisionid],
-                true
+                [$this->getID(), $track->getID(), $revisionid]
             );
         }
         //Remove old tracks
@@ -404,8 +409,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 self::$db->query(
                     'UPDATE jukebox.playlist_entries SET revision_removed=$1 WHERE playlistid=$2 AND trackid=$3
                     AND revision_removed IS NULL',
-                    [$revisionid, $this->getID(), $track->getID()],
-                    true
+                    [$revisionid, $this->getID(), $track->getID()]
                 );
             }
         }
@@ -435,7 +439,10 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public function setDescription($description)
     {
-        self::$db->query('UPDATE jukebox.playlists SET description=$1 WHERE playlistid=$2', [$description, $this->getID()]);
+        self::$db->query(
+            'UPDATE jukebox.playlists SET description=$1 WHERE playlistid=$2',
+            [$description, $this->getID()]
+        );
         $this->description = $description;
         $this->updateCacheObject();
     }

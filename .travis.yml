@@ -1,0 +1,48 @@
+language: php
+php:
+    - '7.0'
+    - '7.1'
+    - 'nightly' # why not
+
+matrix:
+    allow_failures:
+        - php: 'nightly'
+addons:
+    postgresql: '9.5'
+services:
+    - postgresql
+install:
+    - composer install
+    - npm install -g jasmine-node
+    - npm install frisby
+    - sudo apt-get update
+    - sudo apt-get install apache2 libapache2-mod-fastcgi
+before_script:
+    # enable php-fpm
+    - phpenv config-add sample_configs/travis-php.ini
+    - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf{.default,}
+    - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf{.default,}
+    - sudo a2enmod rewrite actions fastcgi alias
+    - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
+    # configure apache virtual hosts
+    - sudo cp -f sample_configs/travis-fpm.conf /etc/apache2/sites-available/default
+    - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
+    - sudo a2enmod rewrite
+    - sudo a2ensite default
+    - sudo service apache2 restart
+    - sudo apachectl -S
+    - sudo cat /etc/apache2/sites-enabled/*
+    # setup postgres
+    - psql -U postgres < sample_configs/postgres.sql
+    - PGPASSWORD=myradio psql -U myradio myradio < schema/base.sql
+    # Disabled until patch files are implemented (there's a 1.sql which renames schema myury to myradio)
+    #- PGPASSWORD=myradio psql -U myradio myradio < schema/patches/*.sql
+    - PGPASSWORD=myradio psql -U myradio myradio < sample_configs/travis-auth.sql
+    # configure MyRadio
+    - cp sample_configs/travis-config.php src/MyRadio_Config.local.php
+script:
+    - curl -v http://localhost/api/v2/config/publicconfig?api_key=travis-test-key
+    - jasmine-node tests/api/
+after_script:
+    - sudo cat $(pwd)/apache-*.log

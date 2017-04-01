@@ -44,7 +44,8 @@ class MyRadio_TracklistItem extends ServiceAPI
         $this->starttime = strtotime($result['timestart']);
         $this->endtime = strtotime($result['timestop']);
         $this->state = $result['state'];
-        $this->timeslot = is_numeric($result['timeslotid']) ? MyRadio_Timeslot::getInstance($result['timeslotid']) : null;
+        $this->timeslot = is_numeric($result['timeslotid']) ?
+            MyRadio_Timeslot::getInstance($result['timeslotid']) : null;
         $this->bapsaudioid = is_numeric($result['bapsaudioid']) ? (int) $result['bapsaudioid'] : null;
 
         $this->track = is_numeric($result['trackid']) ? $result['trackid'] :
@@ -88,7 +89,8 @@ class MyRadio_TracklistItem extends ServiceAPI
     /**
      * Returns an array of all TracklistItems played during the given Timeslot.
      *
-     * @param int $timeslotid
+     * @param int $timeslotid The ID of the Timeslot
+     * @param int $offset     Skip items with an audiologid <= this
      *
      * @return array
      */
@@ -116,8 +118,8 @@ class MyRadio_TracklistItem extends ServiceAPI
      *
      * @param int  $start           Period to start log from. Default 0.
      * @param int  $end             Period to end log from. Default time().
-     * @param bool $include_playout Optional. Default true. If true, include statistics from when jukebox was not on air,
-     *                              i.e. when it was only feeding campus bars.
+     * @param bool $include_playout Optional. If true, include statistics from when jukebox was not on air,
+     *                              i.e. when it was only feeding campus bars. Default true.
      */
     public static function getTracklistForJukebox($start = null, $end = null, $include_playout = true)
     {
@@ -236,7 +238,6 @@ class MyRadio_TracklistItem extends ServiceAPI
                 $playlistobjs = iTones_Playlist::getPlaylistsWithTrack($trackobj);
                 $track['in_playlists'] = implode(', ', array_map(function ($i) {
                     return $i->getTitle();
-
                 }, $playlistobjs));
             }
 
@@ -247,13 +248,13 @@ class MyRadio_TracklistItem extends ServiceAPI
     }
 
     /**
-     * Get an amalgamation of all tracks played by Jukebox. This looks at all played tracks within the proposed timeframe,
-     * and outputs the play count of each Track, including the total time played.
+     * Get an amalgamation of all tracks played by Jukebox. This looks at all played tracks within the proposed
+     * timeframe, and outputs the play count of each Track, including the total time played.
      *
      * @param int  $start           Period to start log from. Default 0.
      * @param int  $end             Period to end log from. Default time().
-     * @param bool $include_playout Optional. Default true. If true, include statistics from when jukebox was not on air,
-     *                              i.e. when it was only feeding campus bars.
+     * @param bool $include_playout Optional. If true, include statistics from when jukebox was not on air,
+     *                              i.e. when it was only feeding campus bars. Default true.
      * @param bool $playlists       Whether to get playlist membership metadata for tracks.
      *
      * @return Array, 2D, with the inner dimension being a MyRadio_Track Datasource output, with the addition of:
@@ -261,8 +262,12 @@ class MyRadio_TracklistItem extends ServiceAPI
      *                total_playtime: The total number of seconds the track has been on air
      *                in_playlists: A CSV of playlists the Track is in
      */
-    public static function getTracklistStatsForJukebox($start = null, $end = null, $include_playout = true, $playlists = false)
-    {
+    public static function getTracklistStatsForJukebox(
+        $start = null,
+        $end = null,
+        $include_playout = true,
+        $playlists = false
+    ) {
         self::wakeup();
 
         $start = $start === null ? '1970-01-01 00:00:00' : CoreUtils::getTimestamp($start);
@@ -339,9 +344,8 @@ class MyRadio_TracklistItem extends ServiceAPI
      *
      * @param MyRadio_Track $track
      * @param bool          $include_queue If true, will include the tracks in the iTones queue.
-     *                                     queue.
-     * @param int           $time.         If set, will check if playing it at $time would be a/was a breach. No, this isn't magic and know the future accurately. a breach. No, this isn't magic and know the future accurately.
-     *                                     a breach. No, this isn't magic and know the future accurately.
+     * @param int           $time          If set, will check if playing it at $time would be a/was a breach.
+     *                                     No, this isn't magic and know the future accurately.
      *
      * @return bool
      */
@@ -385,7 +389,10 @@ class MyRadio_TracklistItem extends ServiceAPI
                  * The title check is a hack to work around our default album
                  * being URY Downloads
                  */
-                if (($t->getAlbum()->getID() == $track->getAlbum()->getID() && stristr($t->getAlbum()->getTitle(), Config::$short_name.' Downloads') === false) or $t->getArtist() === $track->getArtist()) {
+                if (($t->getAlbum()->getID() == $track->getAlbum()->getID()
+                    && stristr($t->getAlbum()->getTitle(), Config::$short_name.' Downloads') === false)
+                    || $t->getArtist() === $track->getArtist()
+                ) {
                     ++$result[0];
                 }
             }

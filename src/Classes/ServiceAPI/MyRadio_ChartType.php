@@ -82,7 +82,7 @@ class MyRadio_ChartType extends MyRadio_Type
      */
     public static function getInstance($chart_type_id = -1)
     {
-        self::__wakeup();
+        self::wakeup();
 
         if (!is_numeric($chart_type_id)) {
             throw new MyRadioException(

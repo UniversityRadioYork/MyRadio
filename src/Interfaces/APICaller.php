@@ -18,11 +18,6 @@ interface APICaller
     public function canCall($class, $method);
 
     /**
-     * Log that this APICaller has Called an API Call.
-     */
-    public function logCall($uri, $args);
-
-    /**
      * Tells you whether this APICaller can use the given mixins.
      *
      * @param string   $class  The class the method belongs to (actual, not API Alias)

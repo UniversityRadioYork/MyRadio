@@ -141,7 +141,7 @@ class MyRadio_Quote extends ServiceAPI
      */
     public static function getInstance($quote_id = -1)
     {
-        self::__wakeup();
+        self::wakeup();
 
         if (!is_numeric($quote_id)) {
             throw new MyRadioException(
@@ -253,7 +253,7 @@ class MyRadio_Quote extends ServiceAPI
     /**
      * Sets this quote's date.
      *
-     * @param int|string $date The date, as a UNIX timestamp or date string.
+     * @param int $date The date, as a UNIX timestamp.
      *
      * @return MyRadio_Quote This object, for method chaining.
      */

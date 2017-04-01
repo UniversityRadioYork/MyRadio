@@ -32,7 +32,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
     public function __construct()
     {
         $twig_loader = new Twig_Loader_Filesystem(__DIR__.'/../Templates/');
-        $this->contextVariables['notices'] = '';
+        $this->contextVariables['notices'] = [];
         $this->twig = new Twig_Environment($twig_loader, ['auto_reload' => true]);
         if (Config::$template_debug) {
             $this->twig->addExtension(new Twig_Extension_Debug());
@@ -163,7 +163,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
 
         //Validate template
         try {
-            $this->twig->parse($this->twig->tokenize(file_get_contents(__DIR__.'/../Templates/'.$template), $template));
+            $this->twig->parse($this->twig->tokenize(new \Twig_Source(file_get_contents(__DIR__.'/../Templates/'.$template), $template)));
 
             // the $template is valid
         } catch (Twig_Error_Syntax $e) {
