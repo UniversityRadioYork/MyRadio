@@ -1,0 +1,12 @@
+{% extends 'stripe.twig' %}
+{% block stripecontent %}
+<form action='' method='GET' class='myradiofrm'>
+  <select name='id' class='myradiofrmfield'><option disabled selected>Pick one...</option>
+  {% for item in maps %}
+    <option value="{{item.value}}">{{item.text}}</option>
+  {% endfor %}
+  </select><input type="submit" class='btn btn-default' />
+</form>
+{{caption}}
+<img src="{{baseurl}}{{image}}" width="98%" />
+{% endblock %}
