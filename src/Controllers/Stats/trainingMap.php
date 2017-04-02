@@ -7,18 +7,18 @@ use \MyRadio\ServiceAPI\MyRadio_TrainingStatus;
 
 function status_map($status)
 {
-  return [
-    'value' => $status->getID(),
-    'text' => $status->getTitle()
-  ];
+    return [
+        'value' => $status->getID(),
+        'text' => $status->getTitle()
+    ];
 }
 
 $caption = 'Please select a Training Status above.';
 $img = '';
 if (isset($_GET['id'])) {
-  $title = MyRadio_TrainingStatus::getInstance($_GET['id'])->getTitle();
-  $caption = 'This is a map of who trained who for the ' . $title . ' Training Status.';
-  $img = 'img/stats_training_' . $_GET['id'] . '.svg';
+    $title = MyRadio_TrainingStatus::getInstance($_GET['id'])->getTitle();
+    $caption = 'This is a map of who trained who for the ' . $title . ' Training Status.';
+    $img = 'img/stats_training_' . $_GET['id'] . '.svg';
 }
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/trainingMap.twig')
