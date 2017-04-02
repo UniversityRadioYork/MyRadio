@@ -120,9 +120,9 @@ if (!defined('PHP_VERSION_ID')) {
     define('PHP_VERSION_ID', ($version[0] * 10000 + $version[1] * 100 + $version[2]));
 }
 
-if (PHP_VERSION_ID < 50400) {
+if (PHP_VERSION_ID < 70000) {
     $ready = false;
-    $problems[] = 'You must be running at least PHP 5.4.';
+    $problems[] = 'You must be running at least PHP 7.0.';
 } else {
     $successes[] = 'You are running PHP '.PHP_VERSION.'.';
 }
@@ -242,7 +242,7 @@ foreach ($function_checks as $check) {
             <h3>Cheating</h3>
             <p>If you're using Ubuntu (&gt;=16.04), the following commands (as root) will get you most of the way:</p>
             <code>
-              apt install php-curl php-geoip php-gd php-ldap php-pgsql php-mbstring php-dev composer<br>
+              apt install php-curl php-geoip php-gd php-ldap php-pgsql php-mbstring php-dev composer graphviz<br>
               composer update<br>
               service apache2 restart
             </code>
