@@ -16,7 +16,7 @@ use MyRadio\MyRadio\MyRadioFormField;
  *
  * @uses    \Database
  */
-class MyRadio_BannerCampaign extends \MyRadio\MyRadio_Availability
+class MyRadio_BannerCampaign extends \MyRadio\MyRadio\MyRadio_Availability
 {
     /**
      * The Banner this is a Campaign for.
