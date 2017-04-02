@@ -57,7 +57,7 @@ class MyRadio_StatsGenDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 
             $dotstr .= '}';
 
-            passthru("echo '$dotstr' | /bin/env sfdp -Tsvg > $outputbase" . $status->getID() . '.svg');
+            passthru("echo '$dotstr' | /usr/bin/env sfdp -Tsvg > $outputbase" . $status->getID() . '.svg');
         }
     }
 
