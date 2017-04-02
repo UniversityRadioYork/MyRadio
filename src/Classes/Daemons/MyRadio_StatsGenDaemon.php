@@ -45,7 +45,7 @@ class MyRadio_StatsGenDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $statuses = MyRadio_TrainingStatus::getAll();
 
         foreach ($statuses as $status) {
-            $awards = $status::getAwardedTo();
+            $awards = $status->getAwardedTo();
             $dotstr = 'digraph { overlap=false; splines=false; ';
 
             foreach ($awards as $award) {
