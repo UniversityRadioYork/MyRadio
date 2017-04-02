@@ -542,7 +542,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             }
 
             if (self::isOptionInPathForMethod($method)) {
-                $public_name .= '{'.$method->getParameters()[0]->getName().'}/';
+                $public_name .= '/{'.$method->getParameters()[0]->getName().'}';
             }
 
             $data['children'][$public_name][$op] = $method;
