@@ -245,6 +245,7 @@ class MyRadio_BannerCampaign extends \MyRadio\MyRadio\MyRadio_Availability
     public static function getForm($bannerid = null)
     {
         return parent::getFormBase(
+            $bannerid,
             'Website',
             'editCampaign',
             ['template' => 'Website/campaignfrm.twig', 'title' => 'Edit Banner Campaign']
@@ -257,15 +258,6 @@ class MyRadio_BannerCampaign extends \MyRadio\MyRadio\MyRadio_Availability
                     'label' => 'Location',
                     'explanation' => 'Choose where on the website this Campaign is run.',
                     'options' => self::getCampaignLocations(),
-                ]
-            )
-        )
-        ->addField(
-            new MyRadioFormField(
-                'bannerid',
-                MyRadioFormField::TYPE_HIDDEN,
-                [
-                    'value' => $bannerid,
                 ]
             )
         );

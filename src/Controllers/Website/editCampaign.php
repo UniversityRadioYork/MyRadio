@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($data['id'])) {
         //create new
         $campaign = MyRadio_BannerCampaign::create(
-            MyRadio_Banner::getInstance($data['bannerid']),
+            MyRadio_Banner::getInstance($data['availabilityid']),
             $data['location'],
             $data['effective_from'],
             $data['effective_to'],
@@ -41,18 +41,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_REQUEST['campaignid'])) {
         //edit form
-
-            $campaign = MyRadio_BannerCampaign::getInstance($_REQUEST['campaignid']);
+        $campaign = MyRadio_BannerCampaign::getInstance($_REQUEST['campaignid']);
         $campaign->getEditForm()
-                ->render(
-                    [
+            ->render(
+                [
                     'campaignStart' => CoreUtils::happyTime($campaign->getEffectiveFrom()),
                     'bannerName' => $campaign->getBanner()->getAlt(),
-                    ]
-                );
+                ]
+            );
     } else {
         //create form
-
         if (!isset($_REQUEST['bannerid'])) {
             throw new MyRadioException('You must provide a bannerid', 400);
         }
@@ -60,10 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $banner = MyRadio_Banner::getInstance($_REQUEST['bannerid']);
 
         MyRadio_BannerCampaign::getForm($banner->getBannerID())
-            ->render(
-                [
-                'bannerName' => $banner->getAlt(),
-                ]
-            );
+            ->render(['bannerName' => $banner->getAlt()]);
     }
 }

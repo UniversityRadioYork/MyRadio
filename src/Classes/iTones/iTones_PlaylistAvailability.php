@@ -169,7 +169,7 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
      */
     public static function getForm($playlistid = null)
     {
-        return parent::getFormBase('iTones', 'editAvailability')
+        return parent::getFormBase($playlistid, 'iTones', 'editAvailability')
             ->setTitle('Edit Playlist Availability')
             ->addField(
                 new MyRadioFormField(
@@ -179,14 +179,6 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
                         'required' => true,
                         'label' => 'Weight',
                         'explanation' => 'A heavier playlist is more likely to be played.',
-                    ]
-                )
-            )->addField(
-                new MyRadioFormField(
-                    'playlistid',
-                    MyRadioFormField::TYPE_HIDDEN,
-                    [
-                        'value' => $playlistid,
                     ]
                 )
             );

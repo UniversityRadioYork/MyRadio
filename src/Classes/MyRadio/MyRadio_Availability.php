@@ -356,7 +356,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
      *
      * @return MyRadioForm
      */
-    protected static function getFormBase($module, $action, $params = [])
+    protected static function getFormBase($id, $module, $action, $params = [])
     {
         return (
             new MyRadioForm(
@@ -364,6 +364,12 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
                 $module,
                 $action,
                 $params
+            )
+        )->addField(
+            new MyRadioFormField(
+                'availabilityid',
+                MyRadioFormField::TYPE_HIDDEN,
+                ['value' => $id]
             )
         )
         ->addField(
