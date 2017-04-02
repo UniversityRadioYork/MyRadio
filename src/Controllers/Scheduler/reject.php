@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     MyRadio_Season::getInstance($data['season_id'])
         ->reject($data['reason'], $data['notify_user']);
 
-    URLUtils::backWithMessage('Season Rejected!');
+    URLUtils::redirectWithMessage('Scheduler', 'default', 'Season Rejected!');
 } else {
     //Not Submitted
 
