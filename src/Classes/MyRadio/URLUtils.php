@@ -76,9 +76,10 @@ class URLUtils
         header('Location: '.self::makeURL($module, $action, $params));
     }
 
-    public static function redirectWithMessage($module, $action, $message)
+    public static function redirectWithMessage($module, $action, $message, $params = [])
     {
-        self::redirect($module, $action, ['message' => base64_encode($message)]);
+        $params['message'] = base64_encode($message);
+        self::redirect($module, $action, $params);
     }
 
     /**
