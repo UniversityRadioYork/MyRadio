@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $season->setCredits($data['credits']['member'], $data['credits']['credittype']);
     }
 
-    URLUtils::redirectWithMessage('Scheduler', 'myShows', 'Season Updated!');
+    URLUtils::redirectWithMessage('Scheduler', 'listSeasons', 'Season Updated!', ['seasonid' => $season->getID()]);
 } else {
     //Not Submitted
     if (isset($_REQUEST['seasonid'])) {
