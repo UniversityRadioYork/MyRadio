@@ -347,9 +347,8 @@ class MyRadioEmail extends ServiceAPI
             if (!($user instanceof MyRadio_User)) {
                 throw new MyRadioException($user.' is not an instance or derivative of the user class!');
             }
-
-            self::create(['members' => $to], $subject, $message, $from);
         }
+        self::create(['members' => $to], $subject, $message, $from);
     }
 
     /**
