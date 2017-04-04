@@ -76,15 +76,19 @@ class MyRadioEmail extends ServiceAPI
             //There's HTML in there
             $split = \Html2Text\Html2Text::convert($this->body);
             $this->multipart = true;
-            $this->body_transformed = 'This is a MIME encoded message.'
+            $body_transformed = 'This is a MIME encoded message.'
                     .self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
                     .'Content-Type: text/plain;charset=utf-8'.self::$rtnl.self::$rtnl
                     .self::addFooter($split).self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
                     .'Content-Type: text/html;charset=utf-8'.self::$rtnl.self::$rtnl
                     .self::addHTMLFooter($this->body).self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.'--';
         } else {
-            $this->body_transformed = self::addFooter($this->body);
+            $body_transformed = self::addFooter($this->body);
         }
+
+        // PHP's mail function doesn't deal with the fact there's a line limit for
+        // emails for you, other than to mention it's a thing in the docs.
+        $this->body_transformed = wordwrap($body_transformed, 80, "\r\n", true);
     }
 
     /**
