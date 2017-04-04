@@ -2180,10 +2180,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 $data['officerships'] = $this->getOfficerships();
             },
             'training' => function (&$data) {
-                $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining(), false);
+                $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining());
             },
             'shows' => function (&$data) {
-                $data['shows'] = CoreUtils::dataSourceParser($this->getShows(), false);
+                $data['shows'] = CoreUtils::dataSourceParser($this->getShows());
             },
             'personal_data' => function (&$data) {
                 $data['paid'] = $this->getAllPayments();

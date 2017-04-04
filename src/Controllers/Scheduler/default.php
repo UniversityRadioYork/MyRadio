@@ -11,8 +11,5 @@ CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('title', 'Scheduler')
     ->addVariable(
         'tabledata',
-        CoreUtils::dataSourceParser(
-            MyRadio_Scheduler::getPendingAllocations(),
-            false
-        )
+        CoreUtils::dataSourceParser(MyRadio_Scheduler::getPendingAllocations())
     )->render();

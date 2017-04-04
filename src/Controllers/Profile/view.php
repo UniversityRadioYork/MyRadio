@@ -28,9 +28,7 @@ if ($user->getID() === $visitor->getID() || AuthUtils::hasPermission(AUTH_VIEWOT
 $userData = $user->toDataSource($mixins);
 
 $userData['training'] = CoreUtils::dataSourceParser($user->getAllTraining(true));
-$userData['training_avail'] = CoreUtils::dataSourceParser(
-    MyRadio_TrainingStatus::getAllAwardableTo($user)
-);
+$userData['training_avail'] = CoreUtils::dataSourceParser(MyRadio_TrainingStatus::getAllAwardableTo($user));
 
 // A non-officer viewing an officer
 if ($user->isOfficer()) {
