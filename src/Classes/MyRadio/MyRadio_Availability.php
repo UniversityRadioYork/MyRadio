@@ -401,6 +401,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
                 'timeslots',
                 MyRadioFormField::TYPE_WEEKSELECT,
                 [
+                    'required' => false,
                     'label' => 'Timeslots',
                     'explanation' => 'All times filled in on this schedule (i.e. are purple) are times during the'
                     .' week that this Availability is considered active, and therefore appears on the website.'
