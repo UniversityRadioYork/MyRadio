@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = MyRadio_BannerCampaign::getForm()->readValues();
 
-    if (empty($data['id'])) {
+    if (empty($data['availabilityid'])) {
         //create new
         $campaign = MyRadio_BannerCampaign::create(
             MyRadio_Banner::getInstance($data['availabilityid']),
@@ -20,9 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data['effective_to'],
             $data['timeslots']
         );
+        URLUtils::redirectWithMessage('Website','editCampaign','Campaign Added!', ['campaignid' => $campaign->getID()]);
     } else {
         //submit edit
-        $campaign = MyRadio_BannerCampaign::getInstance($data['id']);
+        $campaign = MyRadio_BannerCampaign::getInstance($data['availabilityid']);
 
         $campaign->clearTimeslots();
 
@@ -33,9 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $campaign->setEffectiveFrom($data['effective_from'])
             ->setEffectiveTo($data['effective_to'])
             ->setLocation($data['location']);
-    }
 
-    URLUtils::backWithMessage('Campaign Updated!');
+        URLUtils::redirectWithMessage('Website','editCampaign','Campaign Updated!', ['campaignid' => $campaign->getID()]);
+    }
 } else {
     //Not Submitted
 

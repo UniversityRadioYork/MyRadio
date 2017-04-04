@@ -282,8 +282,9 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public function setEffectiveTo($time)
     {
+        $this->effective_to = $time;
+
         if ($time === null) {
-            $this->effective_to = $time;
             self::$db->query(
                 'UPDATE '.$this->availability_table.' SET effective_to=NULL WHERE '.$this->id_field.'=$1',
                 [$this->getID()]
