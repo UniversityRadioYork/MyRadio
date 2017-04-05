@@ -239,17 +239,28 @@ class MyRadio_BannerCampaign extends \MyRadio\MyRadio\MyRadio_Availability
     /**
      * Returns the form needed to create or edit Banner Campaigns.
      *
-     * @param int $bannerid The ID of the Banner that this Campaign will be/is linked to
+     * @param int $newBannerID The ID of the Banner that this Campaign will be created for
+     * @param int $availabilityid The ID of the campaign that will be edited
      *
      * @return MyRadioForm
      */
-    public static function getForm($bannerid = null)
+    public static function getForm($availabilityid = null, $newBannerID = null)
     {
         return parent::getFormBase(
-            $bannerid,
+            $availabilityid,
             'Website',
             'editCampaign',
             ['template' => 'Website/campaignfrm.twig', 'title' => 'Edit Banner Campaign']
+        )
+        ->addField(
+            new MyRadioFormField(
+                'newbannerid',
+                MyRadioFormField::TYPE_HIDDEN,
+                [
+                    'required' => false,
+                    'value' => $newBannerID
+                ]
+            )
         )
         ->addField(
             new MyRadioFormField(
