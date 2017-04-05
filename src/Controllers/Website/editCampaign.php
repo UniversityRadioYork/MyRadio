@@ -11,10 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = MyRadio_BannerCampaign::getForm()->readValues();
 
-    if (empty($data['availabilityid'])) {
+    if ($data['availabilityid'] == -1) {
         //create new
         $campaign = MyRadio_BannerCampaign::create(
-            MyRadio_Banner::getInstance($data['availabilityid']),
+            MyRadio_Banner::getInstance($data['newbannerid']),
             $data['location'],
             $data['effective_from'],
             $data['effective_to'],
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $banner = MyRadio_Banner::getInstance($_REQUEST['bannerid']);
 
-        MyRadio_BannerCampaign::getForm($banner->getBannerID())
+        MyRadio_BannerCampaign::getForm(-1,$_REQUEST['bannerid'])
             ->render(['bannerName' => $banner->getAlt()]);
     }
 }
