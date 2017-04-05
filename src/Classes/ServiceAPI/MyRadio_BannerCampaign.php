@@ -101,6 +101,7 @@ class MyRadio_BannerCampaign extends \MyRadio\MyRadio\MyRadio_Availability
             ->editMode(
                 $this->getID(),
                 [
+                    'availabilityid' => $this->getID(),
                     'timeslots' => $this->getTimeslots(),
                     'effective_from' => CoreUtils::happyTime($this->getEffectiveFrom()),
                     'effective_to' => $this->getEffectiveTo() === null ? null :
