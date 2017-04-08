@@ -115,7 +115,6 @@ var NIPSWeb = function (d) {
    * Detect what changes have been made to the show plan
    */
   var calcChanges = function (li) {
-    myradio.showAlert("Saving changes to show plan...", "loading");
     if (!li.hasOwnProperty("attr")) {
       li = $(li);
     }
@@ -136,11 +135,11 @@ var NIPSWeb = function (d) {
         }
         li.attr("channel", newChannel);
         li.attr("weight", li.index());
-
         if (oldChannel !== li.attr("channel") || oldWeight !== li.attr("weight")) {
           /**
            * This item definitely isn't where it was before. Notify the server of the potential actions.
            */
+          myradio.showAlert("Saving changes to show plan...", "loading");
           var ops = [];
           if (oldChannel === "res" && li.attr("channel") !== "res") {
             /**
@@ -204,7 +203,7 @@ var NIPSWeb = function (d) {
             });
             li.attr("timeslotitemid", null);
 
-          } else if ($(this).attr("channel") !== "res" || li.attr("channel") !== "res") {
+          } else if (oldChannel !== "res" || li.attr("channel") !== "res") {
             /**
              * This item has just been moved from one position to another.
              * This involves a large number of MoveItem ops being sent to the server:
@@ -281,9 +280,15 @@ var NIPSWeb = function (d) {
            * The important bit - ship the change operations over to the server to update the remote datastructure,
            * the change log, and to propogate the changes to any other clients that may be active.
            */
-          shipChanges(ops, next);
+          if (ops != "") {
+            shipChanges(ops, next);
+          } else {
+            $(this).dequeue();
+            myradio.showAlert("No changes were made.", "success");
+          }
         } else {
           $(this).dequeue();
+          myradio.showAlert("No changes were made.", "success");
         }
       }
     );
