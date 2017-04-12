@@ -201,7 +201,7 @@ var NIPSWeb = function (d) {
               channel: parseInt(oldChannel, 10),
               weight: parseInt(oldWeight, 10)
             });
-            li.attr("timeslotitemid", null);
+            li.remove();
 
           } else if (oldChannel !== "res" || li.attr("channel") !== "res") {
             /**
