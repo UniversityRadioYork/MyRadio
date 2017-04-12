@@ -85,7 +85,6 @@ var ChannelConfigurator = function(player) {
 
       select.addEventListener("change", function() {
         var sink = this.value;
-        alert(sink);
         player.setSinkId(sink)
           .then(function() {
             console.log("Changed output successfully", player, sink);
