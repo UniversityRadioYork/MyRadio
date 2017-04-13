@@ -39,7 +39,6 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
      * @param int $resid The ID of the managed resource to initialise
      * @param NIPSWeb_ManagedPlaylist $playlistref If the playlist is requesting this item, then pass the playlist obj
      *
-     * @todo Length, BPM
      * @todo Seperate Managed Items and Managed User Items. The way they were implemented was a horrible hack, for which
      * I am to blame. I should go to hell for it, seriously - Lloyd
      */
@@ -73,7 +72,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
                 );
         $this->folder = $result['folder'];
         $this->title = $result['title'];
-        $this->length = strtotime('1970-01-01 '.$result['length']);
+        $this->length = $result['length'];
         $this->bpm = (int) $result['bpm'];
         $this->expirydate = strtotime($result['expirydate']);
         $this->member = empty($result['memberid']) ? null : MyRadio_User::getInstance($result['memberid']);
@@ -102,9 +101,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Get the length of the ManagedItem, in seconds.
      *
-     * @todo Not Implemented as Length not stored in DB
-     *
-     * @return int
+     * @return string Length of track in hh:mm:ss format
      */
     public function getLength()
     {
@@ -151,7 +148,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
             'summary' => $this->getTitle(), //Again, freaking NIPSWeb
             'title' => $this->getTitle(),
             'managedid' => $this->getID(),
-            'length' => CoreUtils::happyTime($this->getLength() > 0 ? $this->getLength() : 0, true, false),
+            'length' => $this->getLength(),
             'trackid' => $this->getID(),
             'recordid' => 'ManagedDB', //Legacy NIPSWeb Views
             'auxid' => 'managed:'.$this->getID(), //Legacy NIPSWeb Views
@@ -301,7 +298,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
                 [
                     $path,
                     trim($options['title']),
-                    CoreUtils::intToTime($options['duration']),
+                    CoreUtils::intToTime(floor($options['duration'])),
                     $options['bpm'],
                 ]
             );
@@ -322,7 +319,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
                 [
                     $playlistid,
                     trim($options['title']),
-                    CoreUtils::intToTime($options['duration']),
+                    CoreUtils::intToTime(floor($options['duration'])),
                     $options['bpm'],
                     $options['expires'],
                     $_SESSION['memberid'],
