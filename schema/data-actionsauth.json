@@ -70,7 +70,6 @@
     ["NIPSWeb", "confirm_central_upload", "AUTH_USENIPSWEB"],
     ["NIPSWeb", "create_token", "AUTH_USENIPSWEB"],
     ["NIPSWeb", "default", "AUTH_USENIPSWEB"],
-    ["NIPSWeb", "get_client_token", "AUTH_USENIPSWEB"],
     ["NIPSWeb", "live", "AUTH_USENWLIVE"],
     ["NIPSWeb", "load_auto_managed", "AUTH_USENIPSWEB"],
     ["NIPSWeb", "load_aux_lib", "AUTH_USENIPSWEB"],
