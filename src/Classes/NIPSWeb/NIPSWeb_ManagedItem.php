@@ -143,12 +143,14 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public function toDataSource($mixins = [])
     {
+        $lengthSplit = explode(".", $this->getLength());
+        $length = $lengthSplit[0];
         return [
             'type' => 'aux', //Legacy NIPSWeb Views
             'summary' => $this->getTitle(), //Again, freaking NIPSWeb
             'title' => $this->getTitle(),
             'managedid' => $this->getID(),
-            'length' => $this->getLength(),
+            'length' => $length,
             'trackid' => $this->getID(),
             'recordid' => 'ManagedDB', //Legacy NIPSWeb Views
             'auxid' => 'managed:'.$this->getID(), //Legacy NIPSWeb Views
