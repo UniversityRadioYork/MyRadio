@@ -496,6 +496,7 @@ var NIPSWeb = function (d) {
   var clickCoordsY;
 
   var menu = document.querySelector("#context-menu");
+  var menuInner = document.querySelector(".context-menu__items");
   var menuState = 0;
   var menuWidth;
   var menuHeight;
@@ -617,15 +618,14 @@ var NIPSWeb = function (d) {
     clickCoords = getPosition(e);
     clickCoordsX = clickCoords.x;
     clickCoordsY = clickCoords.y;
-
-    menuWidth = menu.offsetWidth + 4;
-    menuHeight = menu.offsetHeight + 4;
+    menuWidth = menuInner.offsetWidth + 4;
+    menuHeight = menuInner.offsetHeight + 4;
 
     windowWidth = window.innerWidth;
     windowHeight = window.innerHeight;
 
     if ( (windowWidth - clickCoordsX) < menuWidth ) {
-      menu.style.left = windowWidth - menuWidth - 30 + "px";
+      menu.style.left = windowWidth - menuWidth + "px";
     } else {
       menu.style.left = clickCoordsX + "px";
     }
@@ -633,7 +633,7 @@ var NIPSWeb = function (d) {
     if ( (windowHeight - clickCoordsY) < menuHeight ) {
       menu.style.top = windowHeight - menuHeight + "px";
     } else {
-      menu.style.top = clickCoordsY -90 + "px";
+      menu.style.top = clickCoordsY + "px";
     }
   }
 
