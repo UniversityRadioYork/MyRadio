@@ -72,7 +72,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
                 );
         $this->folder = $result['folder'];
         $this->title = $result['title'];
-        $this->length = $result['length'];
+        $this->length = strtotime('1970-01-01 '.$result['length']. ' UTC');
         $this->bpm = (int) $result['bpm'];
         $this->expirydate = strtotime($result['expirydate']);
         $this->member = empty($result['memberid']) ? null : MyRadio_User::getInstance($result['memberid']);
@@ -101,7 +101,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Get the length of the ManagedItem, in seconds.
      *
-     * @return string Length of track in hh:mm:ss format
+     * @return int Length of track in seconds
      */
     public function getLength()
     {
@@ -143,14 +143,12 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public function toDataSource($mixins = [])
     {
-        $lengthSplit = explode(".", $this->getLength());
-        $length = $lengthSplit[0];
         return [
             'type' => 'aux', //Legacy NIPSWeb Views
             'summary' => $this->getTitle(), //Again, freaking NIPSWeb
             'title' => $this->getTitle(),
             'managedid' => $this->getID(),
-            'length' => $length,
+            'length' => CoreUtils::intToTime($this->getLength() > 0 ? $this->getLength() : 0),
             'trackid' => $this->getID(),
             'recordid' => 'ManagedDB', //Legacy NIPSWeb Views
             'auxid' => 'managed:'.$this->getID(), //Legacy NIPSWeb Views
