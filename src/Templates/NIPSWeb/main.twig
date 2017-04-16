@@ -27,7 +27,7 @@
                 {% if track['type'] == 'aux' %}auxid='{{track['auxid']}}'{% endif %}
                 length='{{track['length']}}' timeslotitemid='{{track['timeslotitemid']}}'
                 weight='{{track['weight']}}' channel='{{track['channel']}}' intro='{{track['intro']}}'
-                title='{{track['title']}} {% if track['artist'] is defined %} - {{track['artist']}}{% endif %} {% if track['album']['title'] is defined %} - {{track['album']['title']}}{% endif %} ({{track['length']}})'>
+                title='{{track['title']}} {% if track['artist'] is defined %} - {{track['artist']}}{% endif %}{% if track['album']['title'] is defined %} - {{track['album']['title']}}{% endif %} ({{track['length']}})'>
                 {% if track['clean'] is defined and track['clean'] == false %}**{% endif %}{{track['title']}}
                 {% if track['artist'] is defined %} - {{track['artist']}}{% endif %}</li>
           {% endfor %}
@@ -76,6 +76,11 @@
     <li class="context-menu__item">
       <a href="#" id="context-menu-delete" class="context-menu__link" data-action="Delete"><i class="glyphicon contextIcon-Delete glyphicon-trash"></i> Delete Item</a>
     </li>
+    {% if auth_edit_tracks is defined and auth_edit_tracks == true %}
+    <li class="context-menu__item">
+      <a href="#" id="context-menu-edit" class="context-menu__link" data-action="Edit"><i class="glyphicon contextIcon-Edit glyphicon-pencil"></i> Edit Track Details</a>
+    </li>
+    {% endif %}
     <li class="context-menu__item">
       <a href="#" class="context-menu__link" data-action="AutoAdvance"><i class="glyphicon contextIcon-AutoAdvance glyphicon-ok"></i> Automatic Advance</a>
     </li>

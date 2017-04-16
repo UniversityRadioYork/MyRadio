@@ -526,6 +526,7 @@ var NIPSWeb = function (d) {
         if ( !taskItemInContext ) {
           contextBapsChannel = "#baps-channel-" + (channelInContext.getAttribute("channel"));
           $("#context-menu-delete").hide();
+          $("#context-menu-edit").hide();
         } else {
           if (taskItemInContext.getAttribute("channel") == "res") {
             contextBapsChannel = "#baps-channel-res";
@@ -533,6 +534,12 @@ var NIPSWeb = function (d) {
           } else {
             contextBapsChannel = "#baps-channel-" + (parseInt(taskItemInContext.getAttribute("channel"), 10)+1);
             $("#context-menu-delete").show();
+          }
+          if (taskItemInContext.getAttribute("type") == "central") {
+          //will only show if user has permissions via twig template.
+            $("#context-menu-edit").show();
+          } else {
+            $("#context-menu-edit").hide();
           }
         }
         $(".contextIcon-AutoAdvance").css("visibility", $(contextBapsChannel).attr("autoadvance")==1 ? "visible" : "hidden");
@@ -658,6 +665,11 @@ var NIPSWeb = function (d) {
     case "Delete":
       var toDelete = taskItemInContext.parentNode.removeChild(taskItemInContext);
       calcChanges(toDelete);
+      break;
+    case "Edit":
+      //get the track ID
+      var toEdit = taskItemInContext.getAttribute("id").split("-")[1];
+      window.open(myradio.makeURL("Library","editTrack", {trackid: toEdit}), "_blank");
       break;
     case "AutoAdvance":
       invert(contextBapsChannel, "autoadvance");

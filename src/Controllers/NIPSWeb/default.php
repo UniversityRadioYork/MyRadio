@@ -2,6 +2,7 @@
 /**
  * Main renderer for NIPSWeb.
  */
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 use \MyRadio\iTones\iTones_Playlist;
@@ -29,4 +30,5 @@ CoreUtils::getTemplateObject()->setTemplate($template)
     ->addVariable('show_title', $show_title)
     ->addVariable('tracks', MyRadio_Timeslot::getInstance($_SESSION['timeslotid'])->getShowPlan())
     ->addVariable('reslists', $reslists)
+    ->addVariable('auth_edit_tracks', AuthUtils::hasPermission(AUTH_EDITMUSIC))
     ->render();
