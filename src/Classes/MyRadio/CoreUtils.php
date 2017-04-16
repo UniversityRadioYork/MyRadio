@@ -137,11 +137,15 @@ class CoreUtils
             $hr_separator = null;
         } else {
             $hr_separator = ":";
-            $hours = sprintf("%02d", $hours);
         }
 
-        $mins = sprintf("%02d", floor(($int - ($hours * 3600)) / 60));
-        $secs = sprintf("%02d", ($int - ($hours * 3600) - ($mins * 60)));
+        $mins = floor(($int - ($hours * 3600)) / 60);
+        $secs = ($int - ($hours * 3600) - ($mins * 60));
+
+        //force 2 digit values for h,m and s.
+        $hours = sprintf("%02d", $hours);
+        $mins = sprintf("%02d", $mins);
+        $secs = sprintf("%02d", $secs);
 
         return "$hours$hr_separator$mins:$secs";
     }
