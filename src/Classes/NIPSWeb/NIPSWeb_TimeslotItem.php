@@ -16,7 +16,11 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
 {
     private $timeslot_item_id;
 
-    private $item;
+    private $item_id;
+
+    private $item_type;
+
+    private $item_playlist_ref;
 
     private $channel;
 
@@ -48,10 +52,13 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
         */
         if ($result['rec_track_id'] != null) {
             //CentralDB
-            $this->item = MyRadio_Track::getInstance($result['rec_track_id']);
+            $this->item_type = "CentralDB";
+            $this->item_id = $result['rec_track_id'];
         } elseif ($result['managed_item_id'] != null) {
             //ManagedDB (Central Beds, Jingles...)
-            $this->item = NIPSWeb_ManagedItem::getInstance($result['managed_item_id'], $playlistref);
+            $this->item_type = "ManagedDB";
+            $this->item_id = $result['managed_item_id'];
+            $this->item_playlist_ref = $playlistref;
         }
 
         $this->channel = (int) $result['channel_id'];
@@ -80,7 +87,11 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
 
     public function getItem()
     {
-        return $this->item;
+        if ($this->item_type == "CentralDB") {
+            return MyRadio_Track::getInstance($this->item_id);
+        } else if ($this->item_type == "ManagedDB") {
+            return NIPSWeb_ManagedItem::getInstance($this->item_id, $this->item_playlist_ref);
+        }
     }
 
     public function setLocation($channel, $weight)

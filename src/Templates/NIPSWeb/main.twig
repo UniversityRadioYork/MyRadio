@@ -27,7 +27,7 @@
                 {% if track['type'] == 'aux' %}auxid='{{track['auxid']}}'{% endif %}
                 length='{{track['length']}}' timeslotitemid='{{track['timeslotitemid']}}'
                 weight='{{track['weight']}}' channel='{{track['channel']}}' intro='{{track['intro']}}'
-                title='{{track['title']}} {% if track['artist'] is defined %} - {{track['artist']}}{% endif %} {% if track['album']['title'] is defined %} - {{track['album']['title']}}{% endif %} ({{track['length']}})'>
+                title='{{track['title']}} {% if track['artist'] is defined %} - {{track['artist']}}{% endif %}{% if track['album']['title'] is defined %} - {{track['album']['title']}}{% endif %} ({{track['length']}})'>
                 {% if track['clean'] is defined and track['clean'] == false %}**{% endif %}{{track['title']}}
                 {% if track['artist'] is defined %} - {{track['artist']}}{% endif %}</li>
           {% endfor %}
@@ -68,31 +68,36 @@
         </div>
       {% endfor %}
     </div>
-
+  </div>
 </div>
 
 <nav id="context-menu" class="context-menu">
-    <ul class="context-menu__items dropdown-menu" style="display:block;">
-      <li class="context-menu__item">
-        <a href="#" id="context-menu-delete" class="context-menu__link" data-action="Delete"><i class="glyphicon contextIcon-Delete glyphicon-trash"></i> Delete Item</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="AutoAdvance"><i class="glyphicon contextIcon-AutoAdvance glyphicon-ok"></i> Automatic Advance</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="PlayOnLoad"><i class="glyphicon contextIcon-PlayOnLoad glyphicon-ok"></i> Play on Load</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="Repeat0"><i class="glyphicon contextIcon-Repeat0 glyphicon-record"></i> Repeat None</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="Repeat1"><i class="glyphicon contextIcon-Repeat1 glyphicon-record"></i> Repeat One</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="Repeat2"><i class="glyphicon contextIcon-Repeat2 glyphicon-record"></i> Repeat All</a>
-      </li>
-    </ul>
-  </nav>
+  <ul class="context-menu__items dropdown-menu" style="display:block;">
+    <li class="context-menu__item">
+      <a href="#" id="context-menu-delete" class="context-menu__link" data-action="Delete"><i class="glyphicon contextIcon-Delete glyphicon-trash"></i> Delete Item</a>
+    </li>
+    {% if auth_edit_tracks is defined and auth_edit_tracks == true %}
+    <li class="context-menu__item">
+      <a href="#" id="context-menu-edit" class="context-menu__link" data-action="Edit"><i class="glyphicon contextIcon-Edit glyphicon-pencil"></i> Edit Track Details</a>
+    </li>
+    {% endif %}
+    <li class="context-menu__item">
+      <a href="#" class="context-menu__link" data-action="AutoAdvance"><i class="glyphicon contextIcon-AutoAdvance glyphicon-ok"></i> Automatic Advance</a>
+    </li>
+    <li class="context-menu__item">
+      <a href="#" class="context-menu__link" data-action="PlayOnLoad"><i class="glyphicon contextIcon-PlayOnLoad glyphicon-ok"></i> Play on Load</a>
+    </li>
+    <li class="context-menu__item">
+      <a href="#" class="context-menu__link" data-action="Repeat0"><i class="glyphicon contextIcon-Repeat0 glyphicon-record"></i> Repeat None</a>
+    </li>
+    <li class="context-menu__item">
+      <a href="#" class="context-menu__link" data-action="Repeat1"><i class="glyphicon contextIcon-Repeat1 glyphicon-record"></i> Repeat One</a>
+    </li>
+    <li class="context-menu__item">
+      <a href="#" class="context-menu__link" data-action="Repeat2"><i class="glyphicon contextIcon-Repeat2 glyphicon-record"></i> Repeat All</a>
+    </li>
+  </ul>
+</nav>
 
 {% endblock %}
 

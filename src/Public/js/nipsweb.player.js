@@ -115,7 +115,6 @@ var NIPSWeb = function (d) {
    * Detect what changes have been made to the show plan
    */
   var calcChanges = function (li) {
-    myradio.showAlert("Saving changes to show plan...", "loading");
     if (!li.hasOwnProperty("attr")) {
       li = $(li);
     }
@@ -136,11 +135,11 @@ var NIPSWeb = function (d) {
         }
         li.attr("channel", newChannel);
         li.attr("weight", li.index());
-
         if (oldChannel !== li.attr("channel") || oldWeight !== li.attr("weight")) {
           /**
            * This item definitely isn't where it was before. Notify the server of the potential actions.
            */
+          myradio.showAlert("Saving changes to show plan...", "loading");
           var ops = [];
           if (oldChannel === "res" && li.attr("channel") !== "res") {
             /**
@@ -202,9 +201,11 @@ var NIPSWeb = function (d) {
               channel: parseInt(oldChannel, 10),
               weight: parseInt(oldWeight, 10)
             });
-            li.attr("timeslotitemid", null);
+            li.remove();
+            //hide any lingering tooltips from the screen.
+            $(".tooltip").fadeOut().remove();
 
-          } else if ($(this).attr("channel") !== "res" || li.attr("channel") !== "res") {
+          } else if (oldChannel !== "res" || li.attr("channel") !== "res") {
             /**
              * This item has just been moved from one position to another.
              * This involves a large number of MoveItem ops being sent to the server:
@@ -281,9 +282,15 @@ var NIPSWeb = function (d) {
            * The important bit - ship the change operations over to the server to update the remote datastructure,
            * the change log, and to propogate the changes to any other clients that may be active.
            */
-          shipChanges(ops, next);
+          if (ops != "") {
+            shipChanges(ops, next);
+          } else {
+            $(this).dequeue();
+            myradio.showAlert("No changes were made.", "success");
+          }
         } else {
           $(this).dequeue();
+          myradio.showAlert("No changes were made.", "success");
         }
       }
     );
@@ -491,6 +498,7 @@ var NIPSWeb = function (d) {
   var clickCoordsY;
 
   var menu = document.querySelector("#context-menu");
+  var menuInner = document.querySelector(".context-menu__items");
   var menuState = 0;
   var menuWidth;
   var menuHeight;
@@ -520,6 +528,7 @@ var NIPSWeb = function (d) {
         if ( !taskItemInContext ) {
           contextBapsChannel = "#baps-channel-" + (channelInContext.getAttribute("channel"));
           $("#context-menu-delete").hide();
+          $("#context-menu-edit").hide();
         } else {
           if (taskItemInContext.getAttribute("channel") == "res") {
             contextBapsChannel = "#baps-channel-res";
@@ -527,6 +536,12 @@ var NIPSWeb = function (d) {
           } else {
             contextBapsChannel = "#baps-channel-" + (parseInt(taskItemInContext.getAttribute("channel"), 10)+1);
             $("#context-menu-delete").show();
+          }
+          if (taskItemInContext.getAttribute("type") == "central") {
+          //will only show if user has permissions via twig template.
+            $("#context-menu-edit").show();
+          } else {
+            $("#context-menu-edit").hide();
           }
         }
         $(".contextIcon-AutoAdvance").css("visibility", $(contextBapsChannel).attr("autoadvance")==1 ? "visible" : "hidden");
@@ -612,15 +627,14 @@ var NIPSWeb = function (d) {
     clickCoords = getPosition(e);
     clickCoordsX = clickCoords.x;
     clickCoordsY = clickCoords.y;
-
-    menuWidth = menu.offsetWidth + 4;
-    menuHeight = menu.offsetHeight + 4;
+    menuWidth = menuInner.offsetWidth + 4;
+    menuHeight = menuInner.offsetHeight + 4;
 
     windowWidth = window.innerWidth;
     windowHeight = window.innerHeight;
 
     if ( (windowWidth - clickCoordsX) < menuWidth ) {
-      menu.style.left = windowWidth - menuWidth - 30 + "px";
+      menu.style.left = windowWidth - menuWidth + "px";
     } else {
       menu.style.left = clickCoordsX + "px";
     }
@@ -628,7 +642,7 @@ var NIPSWeb = function (d) {
     if ( (windowHeight - clickCoordsY) < menuHeight ) {
       menu.style.top = windowHeight - menuHeight + "px";
     } else {
-      menu.style.top = clickCoordsY -90 + "px";
+      menu.style.top = clickCoordsY + "px";
     }
   }
 
@@ -653,6 +667,11 @@ var NIPSWeb = function (d) {
     case "Delete":
       var toDelete = taskItemInContext.parentNode.removeChild(taskItemInContext);
       calcChanges(toDelete);
+      break;
+    case "Edit":
+      //get the track ID
+      var toEdit = taskItemInContext.getAttribute("id").split("-")[1];
+      window.open(myradio.makeURL("Library","editTrack", {trackid: toEdit}), "_blank");
       break;
     case "AutoAdvance":
       invert(contextBapsChannel, "autoadvance");

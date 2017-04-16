@@ -2,6 +2,7 @@
 /**
  * Main renderer for NIPSWeb.
  */
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 use \MyRadio\iTones\iTones_Playlist;
@@ -14,24 +15,20 @@ CoreUtils::requireTimeslot();
 
 $show_title = MyRadio_Timeslot::getInstance($_SESSION['timeslotid'])->getMeta('title');
 
-if (isset($_REQUEST['readonly'])) {
-    $template = 'NIPSWeb/readonly.twig';
-    $reslists = [];
-} else {
-    $template = 'NIPSWeb/main.twig';
-    $reslists = CoreUtils::dataSourceParser(
-        [
-            'managed' => iTones_Playlist::getAlliTonesPlaylists(),
-            'auto' => NIPSWeb_AutoPlaylist::getAllAutoPlaylists(),
-            'aux' => NIPSWeb_ManagedPlaylist::getAllManagedPlaylists(),
-            'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(MyRadio_User::getInstance()),
-        ]
-    );
-}
+$template = 'NIPSWeb/main.twig';
+$reslists = CoreUtils::dataSourceParser(
+    [
+        'managed' => iTones_Playlist::getAlliTonesPlaylists(),
+        'auto' => NIPSWeb_AutoPlaylist::getAllAutoPlaylists(),
+        'aux' => NIPSWeb_ManagedPlaylist::getAllManagedPlaylists(),
+        'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(MyRadio_User::getInstance()),
+    ]
+);
 
 CoreUtils::getTemplateObject()->setTemplate($template)
     ->addVariable('title', "Show Planner")
     ->addVariable('show_title', $show_title)
     ->addVariable('tracks', MyRadio_Timeslot::getInstance($_SESSION['timeslotid'])->getShowPlan())
     ->addVariable('reslists', $reslists)
+    ->addVariable('auth_edit_tracks', AuthUtils::hasPermission(AUTH_EDITMUSIC))
     ->render();

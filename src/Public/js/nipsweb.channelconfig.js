@@ -18,13 +18,13 @@ var ChannelConfigurator = function(player) {
     }
 
     for (var i = 0; i < devices.length; i++) {
-      if (devices[i].kind === "audiooutput" && devices[i].groupId !== "communications") {
+      if (devices[i].kind === "audiooutput" && devices[i].deviceId !== "communications") {
         mapped = false;
         for (var j = 0; j < storedDevices.length; j++) {
-          if (devices[i].groupId == storedDevices[j]) {
+          if (devices[i].deviceId == storedDevices[j]) {
             // We've previously seen this device. Use the previous number.
             mapped = true;
-            map[storedDevices[j]] = devices[i].groupId;
+            map[storedDevices[j]] = devices[i].deviceId;
             break;
           }
         }
@@ -38,7 +38,7 @@ var ChannelConfigurator = function(player) {
     // For each unmapped device, shove it in at the end of the map.
     // Should we actually put it in the first free gap, perhaps?
     for (i = 0; i < unmapped.length; i++) {
-      map.push(unmapped[i].groupId);
+      map.push(unmapped[i].deviceId);
     }
 
     // And update localStorage
