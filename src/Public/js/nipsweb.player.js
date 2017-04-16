@@ -202,6 +202,8 @@ var NIPSWeb = function (d) {
               weight: parseInt(oldWeight, 10)
             });
             li.remove();
+            //hide any lingering tooltips from the screen.
+            $(".tooltip").fadeOut().remove();
 
           } else if (oldChannel !== "res" || li.attr("channel") !== "res") {
             /**
