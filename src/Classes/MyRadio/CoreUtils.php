@@ -123,7 +123,7 @@ class CoreUtils
     }
 
     /**
-     * Formats a number into h:m:s format.
+     * Formats a number into hh:mm:ss format.
      *
      * @param int $int
      *
@@ -132,13 +132,6 @@ class CoreUtils
     public static function intToTime($int)
     {
         $hours = floor($int / 3600);
-        if ($hours === 0) {
-            $hours = null;
-            $hr_separator = null;
-        } else {
-            $hr_separator = ":";
-        }
-
         $mins = floor(($int - ($hours * 3600)) / 60);
         $secs = ($int - ($hours * 3600) - ($mins * 60));
 
@@ -147,7 +140,7 @@ class CoreUtils
         $mins = sprintf("%02d", $mins);
         $secs = sprintf("%02d", $secs);
 
-        return "$hours$hr_separator$mins:$secs";
+        return "$hours:$mins:$secs";
     }
 
     /**
