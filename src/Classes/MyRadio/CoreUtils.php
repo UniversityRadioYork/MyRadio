@@ -135,11 +135,11 @@ class CoreUtils
         if ($hours === 0) {
             $hours = null;
         } else {
-            $hours = $hours.':';
+            $hours = sprintf("%02d", $hours).':';
         }
 
-        $mins = floor(($int - ($hours * 3600)) / 60);
-        $secs = ($int - ($hours * 3600) - ($mins * 60));
+        $mins = sprintf("%02d", floor(($int - ($hours * 3600)) / 60));
+        $secs = sprintf("%02d", ($int - ($hours * 3600) - ($mins * 60)));
 
         return "$hours$mins:$secs";
     }
