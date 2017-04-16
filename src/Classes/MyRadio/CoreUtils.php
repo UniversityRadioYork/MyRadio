@@ -134,14 +134,16 @@ class CoreUtils
         $hours = floor($int / 3600);
         if ($hours === 0) {
             $hours = null;
+            $hr_separator = null;
         } else {
-            $hours = sprintf("%02d", $hours).':';
+            $hr_separator = ":";
+            $hours = sprintf("%02d", $hours);
         }
 
         $mins = sprintf("%02d", floor(($int - ($hours * 3600)) / 60));
         $secs = sprintf("%02d", ($int - ($hours * 3600) - ($mins * 60)));
 
-        return "$hours$mins:$secs";
+        return "$hours$hr_separator$mins:$secs";
     }
 
     /**
