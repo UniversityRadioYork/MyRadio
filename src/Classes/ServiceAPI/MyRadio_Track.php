@@ -1289,11 +1289,11 @@ class MyRadio_Track extends ServiceAPI
     public static function getAllDigitised()
     {
         self::initDB();
-        $result = self::$db->fetchColumn(self::BASE_TRACK_SQL.' WHERE digitised=\'t\'');
+        $result = self::$db->fetchColumn('SELECT trackid FROM public.rec_track WHERE digitised=\'t\'');
 
         $tracks = [];
         foreach ($result as $row) {
-            $tracks[] = new self($row);
+            $tracks[] = self::getInstance($row);
         }
 
         return $tracks;
