@@ -27,6 +27,7 @@ $form = (
         'subject',
         MyRadioFormField::TYPE_TEXT,
         [
+            'label' => 'Subject',
             'placeholder' => 'Subject (['.Config::$short_name.'] is prefixed automatically)',
         ]
     )
@@ -34,7 +35,9 @@ $form = (
     new MyRadioFormField(
         'body',
         MyRadioFormField::TYPE_BLOCKTEXT,
-        []
+        [
+            'label' => 'Message Body',
+        ]
     )
 )->addField(
     new MyRadioFormField(
