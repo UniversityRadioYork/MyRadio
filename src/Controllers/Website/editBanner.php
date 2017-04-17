@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $banner = MyRadio_Banner::getInstance($_REQUEST['bannerid']);
         $banner
             ->getEditForm()
-            ->render(['bannerName' => $banner->getAlt()]);
+            ->render(['bannerName' => $banner->getAlt(), 'bannerURL' => $banner->getURL()]);
     } else {
         //create form
         MyRadio_Banner::getForm()->render();
