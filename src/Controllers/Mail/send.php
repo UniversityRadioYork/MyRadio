@@ -35,9 +35,7 @@ $form = (
     new MyRadioFormField(
         'body',
         MyRadioFormField::TYPE_BLOCKTEXT,
-        [
-            'label' => 'Message Body',
-        ]
+        ['label' => 'Message Body',]
     )
 )->addField(
     new MyRadioFormField(

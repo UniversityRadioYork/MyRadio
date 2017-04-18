@@ -20,7 +20,6 @@ use MyRadio\iTones\iTones_Playlist;
  */
 class MyRadio_Track extends ServiceAPI
 {
-    const BASE_TRACK_SQL = 'SELECT * FROM public.rec_track';
 
     /**
      * The number of the Track on a Record.
@@ -181,7 +180,7 @@ class MyRadio_Track extends ServiceAPI
      */
     protected static function factory($trackid)
     {
-        $sql = self::BASE_TRACK_SQL.' WHERE trackid=$1 LIMIT 1';
+        $sql = 'SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1';
         $result = self::$db->fetchOne($sql, [$trackid]);
 
         if (empty($result)) {
