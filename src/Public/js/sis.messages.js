@@ -30,7 +30,7 @@ var Messages = function () {
             location = location + " (" + message.location[1] + ")";
           }
         }
-        myradio.createDialog("Message", "<blockquote><p>" +message.body + "</p><footer>Listener via " + locationName + " at <cite>" + time + "</cite>.</footer></blockquote>" + location,  [myradio.closeButton()]);
+        myradio.createDialog("Message", "<blockquote><p>" +message.body + "</p><footer>Listener via " + locationName + " at <cite>" + time + "</cite>.</footer></blockquote>" + location);
       });
     };
 
