@@ -23,7 +23,7 @@ var Messages = function () {
         var time;
         dateTime = moment.unix(message.time);
         time = dateTime.format("HH:mm");
-        var location;
+        var location = "";
         if (message.location) {
           location = message.location[0];
           if (message.location.length >= 2) {
