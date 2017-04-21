@@ -23,14 +23,14 @@ var Messages = function () {
         var time;
         dateTime = moment.unix(message.time);
         time = dateTime.format("HH:mm");
-        var location;
+        var location = "";
         if (message.location) {
           location = message.location[0];
           if (message.location.length >= 2) {
             location = location + " (" + message.location[1] + ")";
           }
         }
-        myradio.createDialog("Message", "<blockquote><p>" +message.body + "</p><footer>Listener via " + locationName + " at <cite>" + time + "</cite>.</footer></blockquote>" + location,  [myradio.closeButton()]);
+        myradio.createDialog("Message", "<blockquote><p>" +message.body + "</p><footer>Listener via " + locationName + " at <cite>" + time + "</cite>.</footer></blockquote>" + location);
       });
     };
 
