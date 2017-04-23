@@ -109,10 +109,7 @@ var MyRadioForm = {
         dupDetector: function (remote, local) {
           return local.trackid == remote.trackid;
         },
-        prefetch: {
-          url: myradio.makeURL("MyRadio", "a-findtrack", {term: null, limit: 500})
-        },
-        remote: myradio.makeURL("MyRadio", "a-findtrack", {limit: 25, term: ""}) + "%QUERY" //Separated out otherwise % gets urlescaped
+        remote: myradio.makeURL("MyRadio", "a-findtrack", {limit: 25, require_digitised: true, term: ""}) + "%QUERY" //Separated out otherwise % gets urlescaped
       });
       trackLookup.initialize();
 
