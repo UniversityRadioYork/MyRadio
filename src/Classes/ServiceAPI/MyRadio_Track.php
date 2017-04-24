@@ -804,7 +804,7 @@ class MyRadio_Track extends ServiceAPI
             && !$options['recordid']
             && !$options['lastfmverified']
             && !$options['random']
-            && !$options['idsort']
+            &&  $options['idsort']
             && !$options['custom']
             && !$options['nocorrectionproposed']
             && !$options['clean']
