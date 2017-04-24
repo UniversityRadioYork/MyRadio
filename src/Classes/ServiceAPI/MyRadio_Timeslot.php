@@ -1069,7 +1069,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $signedIn = !empty(self::$db->fetchOne(
             'SELECT * FROM sis2.member_signin
                WHERE show_season_timeslot_id=$1 AND memberid=$2',
-            [$this->getID(), $member->getID]
+            [$this->getID(), $member->getID()]
         ));
         if (!$signedIn) {
             self::$db->query(
