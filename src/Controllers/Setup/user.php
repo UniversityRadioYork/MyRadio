@@ -11,7 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $params = [
         'fname' => $_REQUEST['first-name'],
         'sname' => $_REQUEST['last-name'],
-        'sex' => $_REQUEST['gender'],
         'email' => $_REQUEST['email'],
         'phone' => $_REQUEST['phone'],
         'paid' => Config::$membership_fee,
