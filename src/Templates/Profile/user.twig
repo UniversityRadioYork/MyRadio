@@ -16,18 +16,6 @@
       <td>{{user.fname}} {{user.sname}}</td>
       <td rowspan="15" style="vertical-align:top"><img src="{{user.photo}}" width="300"></td>
     </tr>
-    <tr>
-      <td><b>Sex:</b></td>
-      <td>
-        {% if user.sex == 'm' %}
-          Male
-        {% elseif user.sex == 'f' %}
-          Female
-        {% else %}
-          Other
-        {% endif %}
-      </td>
-    </tr>
     {% if user.college is defined %}
       <tr>
         <td><b>College:</b></td>
