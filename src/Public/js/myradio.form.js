@@ -341,6 +341,18 @@ var MyRadioForm = {
         MyRadioForm.gCheckedValue = null;
       }
     );
+    $("#myradiofrmfield-weeklyselectall").on(
+      "click",
+      function () {
+        $("table.myradiofrmfield-weeklycheck td").children("input[type=checkbox]").prop("checked", true);
+      }
+    );
+    $("#myradiofrmfield-weeklyselectnone").on(
+      "click",
+      function () {
+        $("table.myradiofrmfield-weeklycheck td").children("input[type=checkbox]").prop("checked", false);
+      }
+    );
   },
   setUpTinyMCEFields: function () {
     /**
