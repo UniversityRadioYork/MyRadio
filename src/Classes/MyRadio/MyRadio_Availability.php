@@ -314,13 +314,13 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
     {
         $start = gmdate('H:i:s', $start).'+00';
         $end = gmdate('H:i:s', $end).'+00';
-
         $id = self::$db->fetchColumn(
             'INSERT INTO '.$this->timeslot_table.'
             ('.$this->id_field.', memberid, approvedid, day, start_time, end_time)
-            VALUES ($1, $2, $2, $3, $4, $5) RETURNING id',
+            VALUES ($1, $2, $2, $3, $4, $5, $6) RETURNING id',
             [
                 $this->getID(),
+                MyRadio_User::getInstance()->getID(),
                 MyRadio_User::getInstance()->getID(),
                 $day,
                 $start,
