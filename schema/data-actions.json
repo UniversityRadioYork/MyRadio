@@ -6,6 +6,7 @@
     ["Charts", "editChartType"],
     ["Charts", "default"],
     ["iTones", "editPlaylist"],
+    ["iTones", "editAvailability"],
     ["iTones", "default"],
     ["iTones", "requestTrack"],
     ["iTones", "configurePlaylist"],
