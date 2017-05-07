@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $campaign->clearTimeslots();
 
         foreach ($data['timeslots'] as $timeslot) {
-            $campaign->addTimeslot($timeslot['day'], $timeslot['start_time'], $timeslot['end_time']);
+            $campaign->addTimeslot($timeslot['day'], $timeslot['start_time'], $timeslot['end_time'], 'order',$campaign->getID());
         }
 
         $campaign->setEffectiveFrom($data['effective_from'])

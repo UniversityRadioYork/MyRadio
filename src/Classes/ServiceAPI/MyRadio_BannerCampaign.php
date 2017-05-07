@@ -168,9 +168,9 @@ class MyRadio_BannerCampaign extends \MyRadio\MyRadio\MyRadio_Availability
         $campaign = self::getInstance($result[0]);
 
         foreach ($timeslots as $timeslot) {
-            $campaign->addTimeslot($timeslot['day'], $timeslot['start_time'], $timeslot['end_time']);
+            $campaign->addTimeslot($timeslot['day'], $timeslot['start_time'], $timeslot['end_time'], 'order',$result[0]);
         }
-
+        $campaign->updateCacheObject();
         return $campaign;
     }
 

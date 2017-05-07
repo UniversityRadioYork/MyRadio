@@ -106,6 +106,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
         $this->timeslot_table = $timeslot_table;
         $this->id_field = $id_field;
 
+
         $result = self::$db->fetchOne(
             'SELECT * FROM '.$this->availability_table.' WHERE '.$this->id_field.'=$1',
             [$id]
@@ -310,23 +311,31 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
      *
      * @todo  Input validation.
      */
-    public function addTimeslot($day, $start, $end)
+    public function addTimeslot($day, $start, $end, $optional_field_name, $optional_field_val = NULL)
     {
         $start = gmdate('H:i:s', $start).'+00';
         $end = gmdate('H:i:s', $end).'+00';
+        $userid = MyRadio_User::getInstance()->getID();
+        if (!is_null($optional_field_name) && !is_null($optional_field_val)) {
+            $optional_field = true;
+        } else {
+            $optional_field = false;
+        }
         $id = self::$db->fetchColumn(
             'INSERT INTO '.$this->timeslot_table.'
-            ('.$this->id_field.', memberid, approvedid, day, start_time, end_time)
-            VALUES ($1, $2, $2, $3, $4, $5, $6) RETURNING id',
+            ('.$this->id_field.', memberid, approvedid, day, start_time, end_time'. ($optional_field ? ', '.$optional_field_name : '') .')
+            VALUES ($1, $2, $2, $3, $4, $5, $6'. ($optional_field ? ', $7' : '') . ') RETURNING id',
             [
                 $this->getID(),
-                MyRadio_User::getInstance()->getID(),
-                MyRadio_User::getInstance()->getID(),
+                $userid,
+                $userid,
                 $day,
                 $start,
                 $end,
+                $optional_field_val,
             ]
         )[0];
+
 
         $this->timeslots[] = [
             'id' => $id,
