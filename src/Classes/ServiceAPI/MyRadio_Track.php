@@ -161,9 +161,12 @@ class MyRadio_Track extends ServiceAPI
         $this->artist = $result['artist'];
         $this->clean = $result['clean'];
         $this->digitised = ($result['digitised'] == 't') ? true : false;
-        $this->digitisedby = empty($result['digitisedby']) ? null : (int) $result['digitisedby'];
-        $this->last_edited_time = empty($result['last_edited_time']) ? null : $result['last_edited_time'];
-        $this->last_edited_memberid = empty($result['last_edited_memberid']) ? null : (int) $result['last_edited_memberid'];
+        $this->digitisedby = empty($result['digitisedby']) ?
+            null : (int) $result['digitisedby'];
+        $this->last_edited_time = empty($result['last_edited_time']) ?
+            null : $result['last_edited_time'];
+        $this->last_edited_memberid = empty($result['last_edited_memberid']) ?
+            null : (int) $result['last_edited_memberid'];
         $this->genre = $result['genre'];
         $this->intro = strtotime('1970-01-01 '.$result['intro'].'+00');
         $this->length = $result['length'];
@@ -533,7 +536,8 @@ class MyRadio_Track extends ServiceAPI
                 $this->last_edited_time,
                 $this->last_edited_memberid,
                 $this->getID()
-            ]);
+            ]
+        );
         $this->updateCacheObject();
     }
 
@@ -648,7 +652,8 @@ class MyRadio_Track extends ServiceAPI
      * @param boolean $precise Only return exact matches for title and artist. Defaults to fuzzy search.
      * @param integer $limit Search only returns the default config number of results by default, this overrides that.
      * @param enum $sort Sort order. Possible values: "id" (default), "title", "random". Random will not paginate well.
-     * @param string $itonesplaylistid Managed playlist id to return, for example 'breakfast' will return all tracks from the breakfast playlist.
+     * @param string $itonesplaylistid Managed playlist id to return,
+     * for example 'breakfast' will return all tracks from the breakfast playlist.
      */
     public static function search(
         $title = null,
@@ -730,7 +735,6 @@ class MyRadio_Track extends ServiceAPI
         }
 
         if (!$conflict && !empty($options['itonesplaylistid'])) {
-
             return iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks();
         }
         if (isset($options['random']) && isset($options['titlesort'])) {

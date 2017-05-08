@@ -550,20 +550,6 @@ final class Config
     public static $recaptcha_private_key = 'YOUR_PRIVATE_KEY';
 
     /**
-     * Relative path to the SIS plugins.
-     *
-     * @var string
-     */
-    public static $sis_plugin_folder = 'Models/SIS/plugins';
-
-    /**
-     * Relative path to the SIS tabs.
-     *
-     * @var string
-     */
-    public static $sis_tab_folder = 'Models/SIS/tabs';
-
-    /**
      * Array of tabs and plugins to be used by SIS. They will be loaded in order.
      */
     public static $sis_modules = [

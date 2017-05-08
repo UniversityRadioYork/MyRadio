@@ -202,7 +202,11 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             // Don't send the API key to the function
             unset($args['api_key']);
 
-            $data = ['status' => $status, 'content' => invokeArgsNamed($paths[$path][$op], $object, $args), 'mixins' => $args['mixins']];
+            $data = [
+                'status' => $status,
+                'content' => invokeArgsNamed($paths[$path][$op], $object, $args),
+                'mixins' => $args['mixins']
+            ];
 
             // If this returns a datasourceable array of objects, validate any mixins
             $sample_obj = null;
@@ -323,12 +327,10 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                     '$ref' => '#/parameters/dataSourceFull',
                 ];
             }
-        } else if (
-            $method->name === 'create' &&
-            $method->getNumberOfParameters() === 1
-            && $op === 'post'
-            && self::getApiConfig()['specs'][$public_name]
-            ) {
+        } elseif ($method->name === 'create'
+                  && $method->getNumberOfParameters() === 1
+                  && $op === 'post'
+                  && self::getApiConfig()['specs'][$public_name]) {
             //This endpoint can have JSON POSTed at it
             $parameters[] = [
                 'name' => $public_name,

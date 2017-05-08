@@ -204,18 +204,20 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     /**
      * Creates a new MyRadio Show and returns an object representing it.
      *
-     * @param array $params An assoc array (possibly decoded from JSON), taking a format generally based on what toDataSource produces
-     * Properties may be "genres" (["Jazz", ...], "credits" ([["memberid": 7449, "typeid": 1], ...]), location or any valid metadata key.
-     * the title/description metadata keys, and the credits key, are all required.
+     * @param array $params An assoc array (possibly decoded from JSON),
+     * taking a format generally based on what toDataSource produces
+     * Properties may be "genres" (["Jazz", ...], "credits" ([["memberid": 7449, "typeid": 1], ...]),
+     * location or any valid metadata key.
+     * The title/description metadata keys, and the credits key, are all required.
      * e.g. Set upload_state: "Requested" to set this show to be uploaded to Mixclouder after broadcast.
      *
-     * title, description, credits are required fields.
-     *
-     * As this is the initial creation, all data are <i>approved</i> by the submitter so the show has some initial values
+     * As this is the initial creation, all data are <i>approved</i> by the submitter
+     * so the show has some initial values
      *
      * @throws MyRadioException
      */
-    public static function create($params = []) {
+    public static function create($params = [])
+    {
         //Validate input
         $required = ['title', 'description', 'credits'];
         foreach ($required as $field) {

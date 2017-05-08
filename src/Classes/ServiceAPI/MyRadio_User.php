@@ -1694,8 +1694,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * must be filled in. Password will be generated automatically and emailed to
      * the user. See schema/api.json.
      *
-     * @param array $params An assoc array (possibly decoded from JSON), taking a format generally based on what toDataSource produces
-     * fname and sname are required.
+     * @param array $params An assoc array (possibly decoded from JSON), taking a format generally based on what
+     * toDataSource produces fname and sname are required.
      *
      * @return MyRadio_User
      *
@@ -1823,17 +1823,23 @@ class MyRadio_User extends ServiceAPI implements APICaller
          * @todo Make this easier to change
          * @todo Link to Facebook events
          */
-        $uname = empty($params['eduroam']) ? $params['email'] : str_replace(Config::$eduroam_domain, '', $params['eduroam']);
+        $uname = empty($params['eduroam']) ?
+            $params['email'] : str_replace(Config::$eduroam_domain, '', $params['eduroam']);
         if (!empty($params['provided_password'])) {
             $plain_pass = '(The password you entered when registering)';
         }
-        $welcome_email = str_replace(['#NAME', '#USER', '#PASS'], [$params['fname'], $uname, $plain_pass], Config::$welcome_email);
+        $welcome_email = str_replace(
+            ['#NAME', '#USER', '#PASS'],
+            [$params['fname'], $uname, $plain_pass],
+            Config::$welcome_email
+        );
 
         //Send the email
-        /*
-         * @todo Make this be sent from the getinvolved email, rather than no-reply.
-         */
-        MyRadioEmail::sendEmailToUser($user, 'Welcome to '.Config::$short_name.' - Getting Involved and Your Account', $welcome_email);
+        MyRadioEmail::sendEmailToUser(
+            $user,
+            'Welcome to '.Config::$short_name.' - Getting Involved and Your Account',
+            $welcome_email
+        );
 
         return $user;
     }
