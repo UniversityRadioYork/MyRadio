@@ -32,6 +32,8 @@ $log_level = 4; //0: Critical, 1: Important, 2: Run Process, 3: Info, 4: Debug
  */
 $syspath = '';
 
+$pidfile = '/var/run/myradio_daemon.pid';
+
 function dlog($x, $level = 3)
 {
     if ($level == 0) {
@@ -55,6 +57,9 @@ function signal_handler($signo)
             $GLOBALS['once'] = true; //This will kill after next iteration
     }
 }
+
+$pid = getmypid();
+if (!file_put_contents($pidfile, "$pid\n")) die("Can't write pid file $pidfile\n");
 
 //Is the extension installed?
 if (function_exists('pcntl_signal')) {
@@ -81,7 +86,7 @@ while (false !== ($file = readdir($handle))) {
         continue;
     }
     //Is the file valid PHP?
-    system($syspath.'php -l '.$path.$file, $result);
+    system(PHP_BINDIR."/php -l $path$file", $result);
     if ($result !== 0) {
         dlog('Not checking '.$file.' - Parse Error', 1);
     } else {
@@ -152,3 +157,5 @@ while (true) {
     //Reload the configuration to see if it has changed
     include 'MyRadio_Config.local.php';
 }
+
+unlink($pidfile);
