@@ -1313,7 +1313,6 @@ CREATE TABLE member (
     memberid integer DEFAULT nextval(('"member_memberid_seq"'::text)::regclass) NOT NULL,
     fname character varying(255) NOT NULL,
     sname character varying(255) NOT NULL,
-    sex character(1) NOT NULL,
     college integer NOT NULL,
     phone character varying(255),
     email character varying(255),

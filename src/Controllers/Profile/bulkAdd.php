@@ -21,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $params['fname'],
                 $params['sname'],
                 $params['eduroam'],
-                $params['sex'],
                 $params['collegeid']
             );
             $template->addInfo('Added Member with ID '.$user->getID());
