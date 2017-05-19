@@ -48,35 +48,31 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         // Note that credits have different metadata timeranges to text
         // This is annoying, but needs to be this way.
         $result = self::$db->fetchOne(
-            'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid,
-            (
-                SELECT array(
+            'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid, (
+                SELECT array_to_json(array(
                     SELECT metadata_key_id FROM schedule.timeslot_metadata
                     WHERE show_season_timeslot_id=$1
                     AND effective_from < NOW()
                     AND (effective_to IS NULL OR effective_to > NOW())
                     ORDER BY effective_from, show_season_timeslot_id
-                )
-            ) AS metadata_types,
-            (
-                SELECT array(
+                ))
+            ) AS metadata_types, (
+                SELECT array_to_json(array(
                     SELECT metadata_value FROM schedule.timeslot_metadata
                     WHERE show_season_timeslot_id=$1
                     AND effective_from < NOW()
                     AND (effective_to IS NULL OR effective_to > NOW())
                     ORDER BY effective_from, show_season_timeslot_id
-                )
-            ) AS metadata,
-            (
+                ))
+            ) AS metadata, (
                 SELECT COUNT(*) FROM schedule.show_season_timeslot
                 WHERE show_season_id=(
                     SELECT show_season_id FROM schedule.show_season_timeslot
                     WHERE show_season_timeslot_id=$1
                 )
                 AND start_time<=(SELECT start_time FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1)
-            ) AS timeslot_num,
-            (
-                SELECT array(
+            ) AS timeslot_num, (
+                SELECT array_to_json(array(
                     SELECT creditid FROM schedule.show_credit
                     WHERE show_id=(
                         SELECT show_id FROM schedule.show_season_timeslot
@@ -87,10 +83,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     AND (effective_to IS NULL OR effective_to > start_time)
                     AND approvedid IS NOT NULL
                     ORDER BY show_credit_id
-                )
-            ) AS credits,
-            (
-                SELECT array(
+                ))
+            ) AS credits, (
+                SELECT array_to_json(array(
                     SELECT credit_type_id FROM schedule.show_credit
                     WHERE show_id=(
                         SELECT show_id FROM schedule.show_season_timeslot
@@ -101,7 +96,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     AND (effective_to IS NULL OR effective_to > start_time)
                     AND approvedid IS NOT NULL
                     ORDER BY show_credit_id
-                )
+                ))
             ) AS credit_types
             FROM schedule.show_season_timeslot
             WHERE show_season_timeslot_id=$1',
@@ -120,8 +115,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $this->owner = MyRadio_User::getInstance($result['memberid']);
         $this->timeslot_num = (int) $result['timeslot_num'];
 
-        $metadata_types = self::$db->decodeArray($result['metadata_types']);
-        $metadata = self::$db->decodeArray($result['metadata']);
+        $metadata_types = json_decode($result['metadata_types']);
+        $metadata = json_decode($result['metadata']);
         //Deal with the metadata
         for ($i = 0; $i < sizeof($metadata_types); ++$i) {
             if (self::isMetadataMultiple($metadata_types[$i])) {
@@ -132,8 +127,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         }
 
         //Deal with the Credits arrays
-        $credit_types = self::$db->decodeArray($result['credit_types']);
-        $credits = self::$db->decodeArray($result['credits']);
+        $credit_types = json_decode($result['credit_types']);
+        $credits = json_decode($result['credits']);
 
         for ($i = 0; $i < sizeof($credits); ++$i) {
             if (empty($credits[$i])) {

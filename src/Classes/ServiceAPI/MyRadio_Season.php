@@ -40,46 +40,46 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         //Get the basic info about the season
         $result = self::$db->fetchOne(
             'SELECT show_id, termid, submitted, memberid, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT metadata_key_id FROM schedule.season_metadata
                     WHERE show_season_id=$1 AND effective_from <= NOW()
                     AND (effective_to IS NULL OR effective_to >= NOW())
                     ORDER BY effective_from, season_metadata_id
-                )
+                ))
             ) AS metadata_types, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT metadata_value FROM schedule.season_metadata
                     WHERE show_season_id=$1 AND effective_from <= NOW()
                     AND (effective_to IS NULL OR effective_to >= NOW())
                     ORDER BY effective_from, season_metadata_id
-                )
+                ))
             ) AS metadata, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT requested_day FROM schedule.show_season_requested_time
                     WHERE show_season_id=$1 ORDER BY preference ASC
-                )
+                ))
             ) AS requested_days, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT start_time FROM schedule.show_season_requested_time
                     WHERE show_season_id=$1
                     ORDER BY preference ASC
-                )
+                ))
             ) AS requested_start_times, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT duration FROM schedule.show_season_requested_time
                     WHERE show_season_id=$1
                     ORDER BY preference ASC
-                )
+                ))
             ) AS requested_durations, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
                     WHERE show_season_id=$1
                     ORDER BY start_time ASC
-                )
+                ))
             ) AS timeslots, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT week FROM schedule.show_season_requested_week WHERE show_season_id=$1
-                )
+                ))
             ) AS requested_weeks, (
                 SELECT COUNT(*) FROM schedule.show_season
                 WHERE show_id=(SELECT show_id FROM schedule.show_season WHERE show_season_id=$1)
@@ -101,8 +101,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $this->term_id = (int) $result['termid'];
         $this->season_num = (int) $result['season_num'];
 
-        $metadata_types = self::$db->decodeArray($result['metadata_types']);
-        $metadata = self::$db->decodeArray($result['metadata']);
+        $metadata_types = json_decode($result['metadata_types']);
+        $metadata = json_decode($result['metadata']);
         //Deal with the metadata
         for ($i = 0; $i < sizeof($metadata_types); ++$i) {
             if (self::isMetadataMultiple($metadata_types[$i])) {
@@ -113,16 +113,16 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         }
 
         //Requested Weeks
-        $requested_weeks = self::$db->decodeArray($result['requested_weeks']);
+        $requested_weeks = json_decode($result['requested_weeks']);
         $this->requested_weeks = [];
         foreach ($requested_weeks as $requested_week) {
             $this->requested_weeks[] = intval($requested_week);
         }
 
         //Requested timeslots
-        $requested_days = self::$db->decodeArray($result['requested_days']);
-        $requested_start_times = self::$db->decodeArray($result['requested_start_times']);
-        $requested_durations = self::$db->decodeArray($result['requested_durations']);
+        $requested_days = json_decode($result['requested_days']);
+        $requested_start_times = json_decode($result['requested_start_times']);
+        $requested_durations = json_decode($result['requested_durations']);
 
         for ($i = 0; $i < sizeof($requested_days); ++$i) {
             $this->requested_times[] = [
@@ -132,7 +132,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             ];
         }
 
-        $this->timeslots = self::$db->decodeArray($result['timeslots']);
+        $this->timeslots = json_decode($result['timeslots']);
     }
 
     /**

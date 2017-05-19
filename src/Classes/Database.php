@@ -251,38 +251,6 @@ class Database
         throw new MyRadioException('Attempted to clone a singleton');
     }
 
-    /**
-     * Converts a postgresql array to a php array
-     * json_decode *nearly* works in some cases, but this tends to be more reliable.
-     *
-     * Based on http://stackoverflow.com/questions/3068683/convert-postgresql-array-to-php-array
-     *
-     * @deprecated Use json output from Postgres instead
-     */
-    public function decodeArray($text)
-    {
-        $limit = strlen($text) - 1;
-        $output = [];
-        $offset = 1;
-
-        if ('{}' != $text) {
-            do {
-                if ('{' != $text{$offset}) {
-                    preg_match('/(\\{?"([^"\\\\]|\\\\.)*"|[^,{}]+)+([,}]+)/', $text, $match, 0, $offset);
-                    $offset += strlen($match[0]);
-                    $output[] = ('"' != $match[1]{0} ? $match[1] : stripcslashes(substr($match[1], 1, -1)));
-                    if ('},' == $match[3]) {
-                        return $offset;
-                    }
-                } else {
-                    $offset = pg_array_parse($text, $output[], $limit, $offset + 1);
-                }
-            } while ($limit > $offset);
-        }
-
-        return $output;
-    }
-
     public function intervalToTime($interval)
     {
         return strtotime('1970-01-01 '.$interval.'+00');

@@ -82,39 +82,39 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
         $result = self::$db->fetchOne(
             'SELECT file, memberid, approvedid, submitted, show_id, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT metadata_key_id FROM uryplayer.podcast_metadata
                     WHERE podcast_id=$1 AND effective_from <= NOW()
                     ORDER BY effective_from, podcast_metadata_id
-                )
+                ))
             ) AS metadata_types, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT metadata_value FROM uryplayer.podcast_metadata
                     WHERE podcast_id=$1 AND effective_from <= NOW()
                     ORDER BY effective_from, podcast_metadata_id
-                )
+                ))
             ) AS metadata, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT metadata_value FROM uryplayer.podcast_image_metadata
                     WHERE podcast_id=$1 AND effective_from <= NOW()
                     ORDER BY effective_from, podcast_image_metadata_id
-                )
+                ))
             ) AS image_metadata, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT credit_type_id FROM uryplayer.podcast_credit
                     WHERE podcast_id=$1 AND effective_from <= NOW()
                     AND (effective_to IS NULL OR effective_to >= NOW())
                     AND approvedid IS NOT NULL
                     ORDER BY podcast_credit_id
-                )
+                ))
             ) AS credit_types, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT creditid FROM uryplayer.podcast_credit
                     WHERE podcast_id=$1 AND effective_from <= NOW()
                     AND (effective_to IS NULL OR effective_to >= NOW())
                     AND approvedid IS NOT NULL
                     ORDER BY podcast_credit_id
-                )
+                ))
             ) AS credits
             FROM uryplayer.podcast
             LEFT JOIN schedule.show_podcast_link USING (podcast_id)
@@ -133,8 +133,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $this->show_id = (int) $result['show_id'];
 
         //Deal with the Credits arrays
-        $credit_types = self::$db->decodeArray($result['credit_types']);
-        $credits = self::$db->decodeArray($result['credits']);
+        $credit_types = json_decode($result['credit_types']);
+        $credits = json_decode($result['credits']);
 
         for ($i = 0; $i < sizeof($credits); ++$i) {
             if (empty($credits[$i])) {
@@ -148,8 +148,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         }
 
         //Deal with the Metadata arrays
-        $metadata_types = self::$db->decodeArray($result['metadata_types']);
-        $metadata = self::$db->decodeArray($result['metadata']);
+        $metadata_types = json_decode($result['metadata_types']);
+        $metadata = json_decode($result['metadata']);
 
         for ($i = 0; $i < sizeof($metadata); ++$i) {
             if (self::isMetadataMultiple($metadata_types[$i])) {
