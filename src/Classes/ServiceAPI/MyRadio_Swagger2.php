@@ -176,6 +176,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             throw new MyRadioException("$path does not have a valid $op handler.", 405);
         }
 
+        // Note: May not contain a 'mixins' key. Don't add it either, or the empty array will get passed to functions
         $args = self::getArgs($op, $paths[$path][$op], $arg0);
 
         if ($id) {
@@ -193,7 +194,9 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
         if (!$caller) {
             throw new MyRadioException('No valid authentication data provided.', 401);
-        } elseif (self::validateRequest($caller, $classes[$class], $paths[$path][$op]->getName(), $args['mixins'])) {
+        } elseif (
+            self::validateRequest($caller, $classes[$class], $paths[$path][$op]->getName(), $args['mixins'] ?? [])
+        ) {
             $status = '200 OK';
             if ($paths[$path][$op]->getName() === 'create') {
                 $status = '201 Created';
@@ -205,7 +208,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             $data = [
                 'status' => $status,
                 'content' => invokeArgsNamed($paths[$path][$op], $object, $args),
-                'mixins' => $args['mixins']
+                'mixins' => $args['mixins'] ?? []
             ];
 
             // If this returns a datasourceable array of objects, validate any mixins
@@ -216,7 +219,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                 $sample_obj = $data;
             }
 
-            if ($sample_obj && !$caller->canMixin(get_class($sample_obj), $args['mixins'])) {
+            if ($sample_obj && !$caller->canMixin(get_class($sample_obj), $args['mixins'] ?? [])) {
                 throw new MyRadioException('Caller cannot access this method.', 403);
             }
 
