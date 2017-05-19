@@ -213,10 +213,13 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
             // If this returns a datasourceable array of objects, validate any mixins
             $sample_obj = null;
-            if (is_array($data) && sizeof($data) > 0 && is_subclass_of($data[0], 'MyRadio::ServiceAPI::ServiceAPI')) {
-                $sample_obj = $data[0];
-            } elseif (is_subclass_of($data, 'MyRadio::ServiceAPI::ServiceAPI')) {
-                $sample_obj = $data;
+            if (is_array($data['content'])
+                && sizeof($data['content']) > 0
+                && is_subclass_of(array_values($data['content'])[0], 'MyRadio::ServiceAPI::ServiceAPI')
+               ) {
+                $sample_obj = array_values($data['content'])[0];
+            } elseif (is_subclass_of($data['content'], 'MyRadio::ServiceAPI::ServiceAPI')) {
+                $sample_obj = $data['content'];
             }
 
             if ($sample_obj && !$caller->canMixin(get_class($sample_obj), $args['mixins'] ?? [])) {
