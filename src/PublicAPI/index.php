@@ -86,18 +86,6 @@ if (empty($class)) {
     exit;
 }
 
-/*
- * Check and provide Access-Control-Allow-Origin if needed
- */
-if (isset($_SERVER['HTTP_ORIGIN'])) {
-    if (empty(Config::$api_allowed_domains) or
-        in_array($_SERVER['HTTP_ORIGIN'], Config::$api_allowed_domains)
-    ) {
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
-    }
-}
-
 //Go to the right version controller
 if (strpos($_SERVER['REQUEST_URI'], Config::$api_uri.'v2/') !== false) {
     require_once '../Controllers/api/v2.php';
