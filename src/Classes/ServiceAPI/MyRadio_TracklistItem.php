@@ -405,7 +405,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             }
         }
 
-        return $result[0] = 0;
+        return $result[0] == 0;
     }
 
     public function toDataSource($mixins = [])
