@@ -344,9 +344,10 @@ class MyRadio_TracklistItem extends ServiceAPI
      * Check whether queuing the given Track for playout right now would be a
      * breach of our PPL Licence.
      *
-     * The PPL Licence states that a maximum of two songs from an artist or album
-     * in a two hour period may be broadcast. Any more is a breach of this licence
-     * so we should really stop doing it.
+     * The PPL Licence states that a maximum of three songs from an album (and no
+     * more than two consecutively) AND a maximum of four songs by an artist (and
+     * no more than three consecutively) may be broadcast in any two hour period.
+     * Any more is a breach of this licence, so we should really stop doing it.
      *
      * @param MyRadio_Track $track
      * @param bool          $include_queue If true, will include the tracks in the iTones queue.
@@ -360,7 +361,7 @@ class MyRadio_TracklistItem extends ServiceAPI
         if ($time == null) {
             $time = time();
         }
-        $timeout = CoreUtils::getTimestamp($time - (3600 * 2)); //Two hours ago
+        $timeout = CoreUtils::getTimestamp($time - 3600); //One hour ago
 
         /*
          * The title check is a hack to work around our default album
@@ -404,7 +405,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             }
         }
 
-        return $result[0] < 2;
+        return $result[0] == 0;
     }
 
     public function toDataSource($mixins = [])
