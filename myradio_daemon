@@ -25,7 +25,7 @@ load_rc_config $name
 
 command=/usr/local/www/myradio/src/Controllers/daemon.php
 command_interpreter=/usr/local/bin/php
-command_args="process >/var/log/myradio/daemon.log 2>&1 &"
+command_args="process >>/var/log/myradio/daemon.log 2>&1 &"
 pidfile="/var/run/${name}.pid"
 
 run_rc_command "$1"
