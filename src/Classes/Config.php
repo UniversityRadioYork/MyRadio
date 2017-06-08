@@ -345,15 +345,9 @@ final class Config
      */
     public static $lastfm_api_secret;
 
-    /**
-     * The last.fm group specifically for the University of York. If using
-     * this aspect of the code you probably want to change this bit.
-     */
-    public static $lastfm_group = 'University+of+York';
-
      /**
-      * The last.fm nation of choice, at least for us. Again, you might wish to
-      * change this bit.
+      * The last.fm nation of choice, at least for us. If using
+      * this aspect of the code you probably want to change this bit.
       */
     public static $lastfm_geo = 'United+Kingdom';
 
