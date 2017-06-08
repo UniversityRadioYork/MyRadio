@@ -513,15 +513,6 @@ final class Config
     public static $webcam_prefix = '//ury.org.uk/webcam/';
 
     /**
-     * BRA Server.
-     *
-     * @var string
-     */
-    public static $bra_uri = 'ury.org.uk/bra';
-    public static $bra_user = '';
-    public static $bra_pass = '';
-
-    /**
      * Relative path to the API. Must have trailing /.
      *
      * @var string
@@ -705,9 +696,6 @@ EOT;
             'default_module' => self::$default_module,
             'default_action' => self::$default_action,
             'webcam_prefix' => self::$webcam_prefix,
-            'bra_uri' => self::$bra_uri,
-            'bra_user' => self::$bra_user,
-            'bra_pass' => self::$bra_pass,
             'short_name' => self::$short_name,
             'long_name' => self::$long_name,
             'founded' => self::$founded,
