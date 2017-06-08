@@ -125,12 +125,5 @@ if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
 // read sessions without actually having to activate them and read them into $_SESSION
 ini_set('session.serialize_handler', 'php_serialize');
 
-session_set_save_handler(
-    [$session_handler, 'open'],
-    [$session_handler, 'close'],
-    [$session_handler, 'read'],
-    [$session_handler, 'write'],
-    [$session_handler, 'destroy'],
-    [$session_handler, 'gc']
-);
+session_set_save_handler($session_handler, true);
 session_start();
