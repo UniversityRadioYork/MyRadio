@@ -887,15 +887,6 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             }
         }
 
-        self::$db->query(
-            'INSERT INTO bapsplanner.timeslot_change_ops (client_id, change_ops)
-            VALUES ($1, $2)',
-            [
-                $set['clientid'],
-                json_encode($set['ops']),
-            ]
-        );
-
         self::$db->query('COMMIT');
 
         //Update the legacy baps show plans database
