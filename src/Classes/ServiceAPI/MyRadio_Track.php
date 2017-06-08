@@ -789,6 +789,9 @@ class MyRadio_Track extends ServiceAPI
         if (empty($options['idsort'])) {
             $options['idsort'] = null;
         }
+        if (empty($options['titlesort'])) {
+            $options['titlesort'] = null;
+        }
         if (empty($options['custom'])) {
             $options['custom'] = null;
         }
