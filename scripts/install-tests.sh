@@ -1,8 +1,14 @@
 #!/usr/bin/env sh
 
 # Installs the necessary stuff for running tests. Steals relevant configs from travis and bypasses setup
+# Requires elevated permissions
 
 set -eux
+
+if [ $EUID -ne 0 ]; then
+    echo "Run with elevated permissions"
+	exit 1
+fi
 
 # Add a recent Node repo
 curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
@@ -13,8 +19,6 @@ sudo apt-get install -y nodejs
 npm install -g jasmine-node
 npm install --no-bin-links frisby
 
-export PGPASSWORD=myradio
-psql -U myradio -h 127.0.0.1 myradio < schema/base.sql
-# Disabled until patch files are implemented (there's a 1.sql which renames schema myury to myradio)
-#psql -U myradio -h 127.0.0.1 myradio < schema/patches/*.sql
-psql -U myradio -h 127.0.0.1 myradio < sample_configs/travis-auth.sql
+# Necessary for dropping the database and recreating it each test run
+# NEVER RUN IN PRODUCTION
+su - postgres -c 'psql -c "ALTER USER myradio CREATEDB;"'
