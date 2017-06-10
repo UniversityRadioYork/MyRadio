@@ -7,6 +7,12 @@ php:
 matrix:
     allow_failures:
         - php: 'nightly'
+
+cache:
+  directories:
+    - src/vendor
+    - $HOME/.cache/composer/files
+
 addons:
     postgresql: '9.5'
 services:
