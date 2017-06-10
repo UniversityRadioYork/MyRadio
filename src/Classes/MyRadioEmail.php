@@ -76,7 +76,7 @@ class MyRadioEmail extends ServiceAPI
         $split = strip_tags($this->body);
         if ($this->body !== $split) {
             //There's HTML in there
-            $split = \Html2Text\Html2Text::convert($this->body);
+            $split = \Html2Text\Html2Text::convert($this->body, true); // ignore errors
             $this->multipart = true;
             $body_transformed = 'This is a MIME encoded message.'
                     .self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
