@@ -38,9 +38,9 @@ function api_error($code, $message = null)
     header('Content-Type: application/json');
     echo json_encode(
         [
-        'status' => $code,
-        'time' => sprintf('%f', $GLOBALS['__start'] + microtime(true)),
-        'message' => $message,
+            'status' => $code,
+            'time' => sprintf('%f', $GLOBALS['__start'] + microtime(true)),
+            'message' => $message,
         ]
     );
     //Log an API failure so it appears in the status graphs.

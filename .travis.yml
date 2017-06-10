@@ -42,6 +42,8 @@ before_script:
     # configure MyRadio
     - cp sample_configs/travis-config.php src/MyRadio_Config.local.php
 script:
+    - src/vendor/bin/phpcs --standard=PSR2 --ignore=*.min.*,*/vendor/*,*/PublicAPI/rtfm/*,*/Public/js/* --exclude=Squiz.Classes.ValidClassName,PSR1.Files.SideEffects src/ -p -s
+
     - curl -v http://localhost/api/v2/config/publicconfig?api_key=travis-test-key
     - jasmine-node tests/api/
 after_script:

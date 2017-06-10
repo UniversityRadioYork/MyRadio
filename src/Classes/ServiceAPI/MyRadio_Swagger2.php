@@ -194,8 +194,11 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
         if (!$caller) {
             throw new MyRadioException('No valid authentication data provided.', 401);
-        } elseif (
-            self::validateRequest($caller, $classes[$class], $paths[$path][$op]->getName(), $args['mixins'] ?? [])
+        } elseif (self::validateRequest(
+            $caller,
+            $classes[$class],
+            $paths[$path][$op]->getName(),
+            $args['mixins'] ?? [])
         ) {
             $status = '200 OK';
             if ($paths[$path][$op]->getName() === 'create') {
