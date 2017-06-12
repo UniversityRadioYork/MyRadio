@@ -398,7 +398,7 @@ class MyRadio_TracklistItem extends ServiceAPI
                  */
                 if (($t->getAlbum()->getID() == $track->getAlbum()->getID()
                     && stristr($t->getAlbum()->getTitle(), Config::$short_name.' Downloads') === false)
-                    || $t->getArtist() === $track->getArtist()
+                    || $t->getArtist() == $track->getArtist()
                 ) {
                     ++$result[0];
                 }
