@@ -396,9 +396,9 @@ class MyRadio_TracklistItem extends ServiceAPI
                  * The title check is a hack to work around our default album
                  * being URY Downloads
                  */
-                if (($t->getAlbum()->getID() == $track->getAlbum()->getID()
+                if (($t->getAlbum()->getID() === $track->getAlbum()->getID()
                     && stristr($t->getAlbum()->getTitle(), Config::$short_name.' Downloads') === false)
-                    || $t->getArtist() == $track->getArtist()
+                    || $t->getArtist() === $track->getArtist()
                 ) {
                     ++$result[0];
                 }
