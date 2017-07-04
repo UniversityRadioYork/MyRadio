@@ -186,7 +186,7 @@ var SIS = function (container) {
   connect();
 
   return {
-    registerModule: function (id, module, type) {
+    registerModule: function (id, module) {
       if (!module.hasOwnProperty("initialise") || !module.hasOwnProperty("name") || !module.hasOwnProperty("type")) {
         console.error("Cannot load " + id + " as it is invalid.");
         return;

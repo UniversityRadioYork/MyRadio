@@ -3,16 +3,11 @@
  */
 $(document).ready(
   function () {
-    /**
-     * Hide the repeating add link day/start time
-     */
+    /* Hide the repeating add link day/start time */
     $("#sched_season-day-repeater, #sched_season-stime-repeater").hide();
-    /**
-     * This is all horrible.
-     */
-    $("#sched_season-etime-repeater").on(
-      "click",
-      function (e) {
+    /* This is all horrible. */
+    $("#sched_season-etime-repeater").click(
+      function () {
         $("#sched_season-day-repeater").trigger("click");
         //$('#sched_season-stime-repeater').parent().parent().find('label:first').clone().insertBefore($('#sched_season-stime-repeater').parent());
         $("#sched_season-stime-repeater").trigger("click");
