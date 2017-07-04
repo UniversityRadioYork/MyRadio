@@ -383,7 +383,9 @@ class MyRadioForm
             $return['id'] = is_numeric($tempID) ? (int) $tempID : $tempID;
         }
         //XSRF check
-        if ($_REQUEST[$this->getPrefix().'__xsrf-token'] !== $_SESSION['myradio-xsrf-token']) {
+        if (!isset($_SESSION['myradio-xsrf-token'])
+            || $_REQUEST[$this->getPrefix().'__xsrf-token'] !== $_SESSION['myradio-xsrf-token']
+        ) {
             throw new MyRadioException('Session expired (Invalid token). Please refresh the page.', 401);
         }
 

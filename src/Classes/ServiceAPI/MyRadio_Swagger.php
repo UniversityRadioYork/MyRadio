@@ -297,8 +297,13 @@ class MyRadio_Swagger
                      * info[2] should be the description
                      */
                     $info = preg_split('/\s+/', $key['data'], 3);
-                    $arg = str_replace('$', '', $info[1]); //Strip the $ from variable name
-                    $params[$arg] = ['type' => $info[0], 'description' => empty($info[2]) ?: $info[2]];
+                    if (sizeof($info) > 1) {
+                        $arg = str_replace('$', '', $info[1]); //Strip the $ from variable name
+                        $params[$arg] = [
+                            'type' => $info[0],
+                            'description' => $info[2] ?? ''
+                        ];
+                    }
                     break;
                 case 'mixin':
                     /*

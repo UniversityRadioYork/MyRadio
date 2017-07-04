@@ -36,7 +36,6 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         self::updateMostPlayedPlaylist();
         self::updateNewestUploadsPlaylist();
         self::updateRandomTracksPlaylist();
-        self::updateLastFMGroupPlaylist();
         self::updateLastFMGeoPlaylist();
         self::updateLastFMTopPlaylist();
         self::updateLastFMHypePlaylist();
@@ -260,39 +259,6 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         self::playlistGenCommit(
             'random-auto',
             NIPSWeb_AutoPlaylist::findByName('Random Tracks')->getTracks()
-        );
-    }
-
-    private static function updateLastFMGroupPlaylist()
-    {
-        if (!self::playlistGenPrepare('lastgroup-auto')) {
-            return;
-        }
-
-        $data = json_decode(
-            file_get_contents(
-                'https://ws.audioscrobbler.com/2.0/?method=group.getweeklytrackchart&api_key='
-                .Config::$lastfm_api_key
-                .'&group='.Config::$lastfm_group
-                .'&format=json'
-            ),
-            true
-        );
-
-        $items = array_map(
-            function ($m) {
-                return [
-                    'count' => $m['playcount'],
-                    'title' => $m['name'],
-                    'artist' => $m['artist']['#text'],
-                ];
-            },
-            $data['weeklytrackchart']['track']
-        );
-
-        self::playlistGenCommit(
-            'lastgroup-auto',
-            self::dataSimilarIterator($items, 100, 2)
         );
     }
 

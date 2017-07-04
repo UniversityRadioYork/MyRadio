@@ -345,15 +345,9 @@ final class Config
      */
     public static $lastfm_api_secret;
 
-    /**
-     * The last.fm group specifically for the University of York. If using
-     * this aspect of the code you probably want to change this bit.
-     */
-    public static $lastfm_group = 'University+of+York';
-
      /**
-      * The last.fm nation of choice, at least for us. Again, you might wish to
-      * change this bit.
+      * The last.fm nation of choice, at least for us. If using
+      * this aspect of the code you probably want to change this bit.
       */
     public static $lastfm_geo = 'United+Kingdom';
 
@@ -511,15 +505,6 @@ final class Config
      * @var string
      */
     public static $webcam_prefix = '//ury.org.uk/webcam/';
-
-    /**
-     * BRA Server.
-     *
-     * @var string
-     */
-    public static $bra_uri = 'ury.org.uk/bra';
-    public static $bra_user = '';
-    public static $bra_pass = '';
 
     /**
      * Relative path to the API. Must have trailing /.
@@ -705,9 +690,6 @@ EOT;
             'default_module' => self::$default_module,
             'default_action' => self::$default_action,
             'webcam_prefix' => self::$webcam_prefix,
-            'bra_uri' => self::$bra_uri,
-            'bra_user' => self::$bra_user,
-            'bra_pass' => self::$bra_pass,
             'short_name' => self::$short_name,
             'long_name' => self::$long_name,
             'founded' => self::$founded,

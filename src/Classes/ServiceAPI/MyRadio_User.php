@@ -1645,8 +1645,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
      *
      * @throws MyRadioException
      */
-    public static function create($params) {
-
+    public static function create($params)
+    {
         $defaults = [
             'eduroam' => null,
             'collegeid' => null,

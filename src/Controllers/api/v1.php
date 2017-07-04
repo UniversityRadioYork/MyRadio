@@ -143,7 +143,7 @@ if (!$api_key->canCall($classes[$class], $method)) {
 
     $data = $class === 'resources' ? $result : [
         'status' => 'OK',
-        'payload' => CoreUtils::dataSourceParser($result, $_REQUEST['mixins'] ?: []),
+        'payload' => CoreUtils::dataSourceParser($result, $_REQUEST['mixins'] ?? []),
         'time' => sprintf('%f', $__start + microtime(true)),
     ];
 

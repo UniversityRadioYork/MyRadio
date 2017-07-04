@@ -789,6 +789,9 @@ class MyRadio_Track extends ServiceAPI
         if (empty($options['idsort'])) {
             $options['idsort'] = null;
         }
+        if (empty($options['titlesort'])) {
+            $options['titlesort'] = null;
+        }
         if (empty($options['custom'])) {
             $options['custom'] = null;
         }
@@ -1260,7 +1263,7 @@ class MyRadio_Track extends ServiceAPI
     /**
      * Set the length of the track intro, in seconds.
      *
-     * @param int
+     * @param int $duration Duration of the intro
      *
      * @api POST
      */

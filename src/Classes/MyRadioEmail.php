@@ -24,8 +24,10 @@ class MyRadioEmail extends ServiceAPI
      */
     private static $headers = 'Content-type: text/plain; charset=utf-8';
     private static $sender = 'From: MyRadio <no-reply@ury.org.uk>';
-    private static $footer = 'This email was sent automatically from MyRadio. You can opt out of emails by visiting https://ury.org.uk/myradio/Profile/edit/.';
-    private static $html_footer = 'This email was sent automatically from MyRadio. You can opt out of emails <a href="https://ury.org.uk/myradio/Profile/edit/">on your profile page</a>.';
+    private static $footer = 'This email was sent automatically from MyRadio. '
+        .'You can opt out of emails by visiting https://ury.org.uk/myradio/Profile/edit/.';
+    private static $html_footer = 'This email was sent automatically from MyRadio. '
+        .'You can opt out of emails <a href="https://ury.org.uk/myradio/Profile/edit/">on your profile page</a>.';
     // Standard
     /**
      * @var string carriage return + newline
@@ -74,7 +76,7 @@ class MyRadioEmail extends ServiceAPI
         $split = strip_tags($this->body);
         if ($this->body !== $split) {
             //There's HTML in there
-            $split = \Html2Text\Html2Text::convert($this->body);
+            $split = \Html2Text\Html2Text::convert($this->body, true); // ignore errors
             $this->multipart = true;
             $body_transformed = 'This is a MIME encoded message.'
                     .self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl

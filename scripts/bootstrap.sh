@@ -1,4 +1,7 @@
 #!/usr/bin/env sh
+
+# Bootstrapping script just for vagrant
+
 set -eux
 
 # Base packages and Apache setup

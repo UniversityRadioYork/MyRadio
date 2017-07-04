@@ -59,7 +59,9 @@ function signal_handler($signo)
 }
 
 $pid = getmypid();
-if (!file_put_contents($pidfile, "$pid\n")) die("Can't write pid file $pidfile\n");
+if (!file_put_contents($pidfile, "$pid\n")) {
+    die("Can't write pid file $pidfile\n");
+}
 
 //Is the extension installed?
 if (function_exists('pcntl_signal')) {

@@ -103,7 +103,7 @@ class MyRadio_ChartType extends MyRadio_Type
      *
      * @return array An array of all active chart types.
      */
-    public function getAll()
+    public static function getAll()
     {
         $chart_type_ids = self::$db->fetchColumn(
             'SELECT chart_type_id
