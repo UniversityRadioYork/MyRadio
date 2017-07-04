@@ -198,7 +198,8 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             $caller,
             $classes[$class],
             $paths[$path][$op]->getName(),
-            $args['mixins'] ?? [])
+            $args['mixins'] ?? []
+        )
         ) {
             $status = '200 OK';
             if ($paths[$path][$op]->getName() === 'create') {
