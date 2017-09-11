@@ -364,7 +364,7 @@ var NIPSWeb = function (d) {
         var trigger = false;
         switch (e.which) {
         case keys.F1:
-            //Play channel 1
+          //Play channel 1
           play(1);
           trigger = true;
           break;
@@ -377,7 +377,7 @@ var NIPSWeb = function (d) {
           trigger = true;
           break;
         case keys.F5:
-            //Play channel 2
+          //Play channel 2
           play(2);
           trigger = true;
           break;
@@ -390,7 +390,7 @@ var NIPSWeb = function (d) {
           trigger = true;
           break;
         case keys.F9:
-            //Play channel 3
+          //Play channel 3
           play(3);
           trigger = true;
           break;
@@ -1055,9 +1055,9 @@ var playoutSlider = function (e) {
   var positionInt = 0;
   var isSliding = false;
 
-/**
- * DOM ELEMENTS
- **/
+  /**
+   * DOM ELEMENTS
+   */
   var sliderContainer = document.createElement("div");
   sliderContainer.className = "playout-slider";
 
@@ -1093,9 +1093,9 @@ var playoutSlider = function (e) {
   positionSlider.appendChild(positionHandle);
   sliderContainer.appendChild(positionSlider);
 
-/**
- * HELPER FUNCTIONS
- **/
+  /**
+   * HELPER FUNCTIONS
+   */
   var calculatePositionFromSeek = function (e, slider) {
     var result = e.clientX - getXOffset(e.currentTarget) + 3;
     if (result > sliderContainer.offsetWidth) {

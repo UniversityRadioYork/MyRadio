@@ -1,3 +1,5 @@
+sudo: required
+dist: trusty # Use notancient unbuntu
 language: php
 php:
     - '7.0'
@@ -12,6 +14,7 @@ cache:
   directories:
     - src/vendor
     - $HOME/.cache/composer/files
+    - node_modules/
 
 addons:
     postgresql: '9.5'
@@ -21,9 +24,12 @@ install:
     - composer install
     - npm install -g jasmine-node
     - npm install frisby
+    - npm install eslint
     - sudo apt-get update
     - sudo apt-get install apache2 libapache2-mod-fastcgi
 before_script:
+    # missing read perms on $HOME, which apache24 requires
+    - chmod 755 $HOME
     # enable php-fpm
     - phpenv config-add sample_configs/travis-php.ini
     - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf{.default,}
@@ -32,10 +38,10 @@ before_script:
     - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
     - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
     # configure apache virtual hosts
-    - sudo cp -f sample_configs/travis-fpm.conf /etc/apache2/sites-available/default
-    - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
-    - sudo a2enmod rewrite
-    - sudo a2ensite default
+    - sudo cp -f sample_configs/travis-fpm.conf /etc/apache2/sites-available/myradio-travis.conf
+    - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/myradio-travis.conf
+    - sudo a2dissite 000-default
+    - sudo a2ensite myradio-travis
     - sudo service apache2 restart
     - sudo apachectl -S
     - sudo cat /etc/apache2/sites-enabled/*
@@ -48,8 +54,8 @@ before_script:
     # configure MyRadio
     - cp sample_configs/travis-config.php src/MyRadio_Config.local.php
 script:
-    - src/vendor/bin/phpcs --standard=PSR2 --ignore=*.min.*,*/vendor/*,*/PublicAPI/rtfm/*,*/Public/js/* --exclude=Squiz.Classes.ValidClassName,PSR1.Files.SideEffects src/ -p -s
-
+    - src/vendor/bin/phpcs --standard=PSR2 --ignore="*.min.*,*/vendor/*,*/PublicAPI/rtfm/*,*/Public/js/*" --exclude=Squiz.Classes.ValidClassName,PSR1.Files.SideEffects src/ -p -s
+    - node_modules/.bin/eslint .
     - curl -v http://localhost/api/v2/config/publicconfig?api_key=travis-test-key
     - jasmine-node tests/api/
 after_script:

@@ -1,2 +1,4 @@
 *.min.js
-**/vendor/*.js
+src/vendor/**/*.js
+src/Public/js/vendor/**/*.js
+src/PublicAPI/rtfm/*
