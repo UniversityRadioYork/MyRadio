@@ -108,7 +108,7 @@ class AuthUtils
         if (isset($_SESSION['memberid'])) {
             return MyRadio_User::getInstance()->hasAuth($permission);
         } else {
-            return $permission === null;
+            return false;
         }
     }
 

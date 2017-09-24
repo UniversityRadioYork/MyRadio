@@ -298,15 +298,23 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
             self::telnetStart();
         }
 
-        fwrite(self::$telnet_handle, $command."\n");
         $response = '';
         $line = '';
+        $empty_line_counter = 0;
         do {
             $response .= $line;
-            $line = fgets(self::$telnet_handle, 1048576); //Read a max of 1MB of data
+            $line = fgets(self::$telnet_handle, 1024); //Read a max of 1KB of data
+            if (empty(trim($line))) {
+                $empty_line_counter++;
+                if ($empty_line_counter > 5) {
+                    break;
+                }
+            } else {
+                $empty_line_counter = 0;
+            }
         } while (trim($line) !== 'END');
 
-        //Remove the END
+        //Intentionally doesn't append END
         return trim($response);
     }
 
@@ -324,7 +332,10 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 
     public static function telnetEnd()
     {
-        fwrite(self::$telnet_handle, "quit\n");
-        fclose(self::$telnet_handle);
+        if (self::$telnet_handle) {
+            fwrite(self::$telnet_handle, "quit\n");
+            fclose(self::$telnet_handle);
+            self::$telnet_handle = null;
+        }
     }
 }
