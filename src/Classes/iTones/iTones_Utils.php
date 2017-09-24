@@ -82,7 +82,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
                     && !$track->isBlacklisted()
                     // These ones involve running more queries...
                     && !MyRadio_TracklistItem::getIfPlayedRecently($track)
-                    && MyRadio_TracklistItem::getIfAlbumArtistCompliant($track))
+                    && MyRadio_TracklistItem::getIfAlbumArtistCompliant($track)
                     // And this one involves telnet!
                     && !iTones_Utils::getIfQueued($track)
                 ) {
