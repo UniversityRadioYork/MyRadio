@@ -463,9 +463,14 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Uses weighted playout values to select a random Playlist, returning it.
      *
+     * Only includes Playlists with a currently running slot, and a Track.
+     *
+     * @param iTones_Playlist[] A list of one or more playlists to not return.
+     * @throws MyRadioException If no playlists are available.
+     * 
      * @return iTones_Playlist
      */
-    public static function getPlaylistFromWeights()
+    public static function getPlaylistFromWeights($playlists_to_ignore = [])
     {
         self::wakeup();
 
@@ -482,8 +487,28 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                         day=EXTRACT(DOW FROM NOW())
                         OR (EXTRACT(DOW FROM NOW())=0 AND day=7)
                     )
+                    AND EXISTS (
+                        SELECT 1
+                        FROM jukebox.playlist_entries
+                        WHERE playlistid=jukebox.playlists.playlistid
+                        AND revision_removed IS NULL
+                        LIMIT 1
+                    )
                 GROUP BY playlists.playlistid'
         );
+
+        if (!sizeof($result)) {
+            throw new MyRadioException('No weighted playlists currently available.');
+        }
+        
+        for ($i = 0; $i < sizeof($result); $i++) {
+            foreach ($playlists_to_ignore as $playlist) {
+                if ($result[$i]['item'] === $playlist->getID()) {
+                    unset($result[$i]);
+                    break;
+                }
+            }
+        }
 
         return self::getInstance(CoreUtils::biasedRandom($result));
     }
