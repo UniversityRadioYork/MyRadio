@@ -1229,7 +1229,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 );
                 $this->payment[$k]['paid'] = $amount;
                 $this->clearPermissionCache()->updateCacheObject();
-
+                $this->updateCacheObject();
                 return;
             }
         }
@@ -1242,7 +1242,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         );
         $this->payment[] = ['year' => $year, 'paid' => $amount];
         $this->clearPermissionCache()->updateCacheObject();
-
+        $this->updateCacheObject();
         return;
     }
 
@@ -1794,15 +1794,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function activateMemberThisYear($paid = 0)
     {
-        if ($this->isActiveMemberForYear()) {
-            return true;
-        } else {
-            $year = CoreUtils::getAcademicYear();
-            $this->setPayment($paid, $year);
-            $this->updateCacheObject();
-
-            return true;
+        if (!$this->isActiveMemberForYear()) {
+            $this->setPayment($paid);
         }
+        return true;
     }
 
     /**
