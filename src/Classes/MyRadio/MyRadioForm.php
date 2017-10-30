@@ -95,6 +95,13 @@ class MyRadioForm
     private $title = null;
 
     /**
+     * The subtitle of the page (a smaller human readable description).
+     *
+     * @var string
+     */
+    private $subtitle = null;
+
+    /**
      * Logging output.
      *
      * @var array
@@ -128,6 +135,7 @@ class MyRadioForm
      *                       get - Whether to use the GET submission method - default false<br>
      *                       template - The Twig template to use for the form - default form.twig<br>
      *                       title - Form Title<br>
+     *                       subtitle - Form Subtitle<br>
      *                       captcha - Whether to require a captcha for this form - default false
      *
      * @throws MyRadioException Thrown on failure of a sanity check
@@ -178,6 +186,18 @@ class MyRadioForm
     public function setTitle($title)
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * Update the subtitle of the form.
+     *
+     * @param string $subtitle
+     */
+    public function setSubtitle($subtitle)
+    {
+        $this->subtitle = $subtitle;
 
         return $this;
     }
@@ -319,6 +339,7 @@ class MyRadioForm
                 ->addVariable('frm_action', URLUtils::makeURL($this->module, $this->action))
                 ->addVariable('frm_method', $this->get ? 'get' : 'post')
                 ->addVariable('title', isset($this->title) ? $this->title : $this->name)
+                ->addVariable('subtitle', isset($this->subtitle) ? $this->subtitle : '')
                 ->addVariable('serviceName', isset($this->module) ? $this->module : $this->name)
                 ->addVariable('frm_fields', $fields)
                 ->addVariable('redact', $redact)

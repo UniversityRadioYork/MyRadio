@@ -13,7 +13,8 @@ if (empty($shows) or (sizeof($shows) === 1 and sizeof($shows[0]->getAllSeasons()
 }
 
 $twig = CoreUtils::getTemplateObject()->setTemplate('Scheduler/myShows.twig')
-    ->addVariable('title', 'My Shows')
+    ->addVariable('title', 'Scheduler')
+    ->addVariable('subtitle', 'My Shows')
     ->addVariable('tabledata', CoreUtils::setToDataSource($shows))
     ->addVariable('tablescript', 'myradio.scheduler.showlist');
 

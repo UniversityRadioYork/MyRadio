@@ -55,7 +55,8 @@ class MyRadio_Demo extends ServiceAPI
                 'Scheduler',
                 'createDemo',
                 [
-                    'title' => 'Create Training Session',
+                    'title' => 'Scheduler',
+                    'subtitle' => 'Create Training Session',
                 ]
             )
         )->addField(
