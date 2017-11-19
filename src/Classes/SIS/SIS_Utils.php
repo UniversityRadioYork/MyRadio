@@ -67,7 +67,7 @@ class SIS_Utils extends ServiceAPI
             } elseif (empty($geoip['city'])) {
                 $location[0] = "{$geoip['country_name']}";
             } else {
-                $location[0] = utf8_encode($geoip['city']) . "{$geoip['country_name']}";
+                $location[0] = utf8_encode($geoip['city']) . ", " . "{$geoip['country_name']}";
             }
 
             return $location;
