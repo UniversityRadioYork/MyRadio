@@ -1048,9 +1048,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      *
      * @param  string $tweet the tweet(mention) to be sent
      * @param  string $sender the sender of the tweet to be sent
+     * @param  string $tweetID the ID of the tweet to be sent
      * @return MyRadio_Timeslot
      */
-    public function sendTweet($tweet, $sender)
+    public function sendTweet($tweet, $sender, $tweetID)
     {
         $tweet = trim($tweet);
 
@@ -1073,11 +1074,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             [
                 $this->getID(),           // timeslot
                 6,                        // commtypeid : twitter
-                'Twitter',                // sender
+                $sender,                // sender : Name (ScreenName)
                 substr($tweet, 0, 144), // subject : trancated message
                 $prefix.$tweet,         // content : message with prefix
                 $junk ? 4 : 1,            // statusid : junk or unread
-                $sender,                  // comm_source : Name (ScreenName)
+                $tweetID,                  // comm_source : tweetID
             ]
         );
 
