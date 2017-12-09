@@ -1044,6 +1044,47 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
+     * Sends a tweet to the timeslot for display in SIS.
+     *
+     * @param  string $tweet the tweet(mention) to be sent
+     * @param  string $sender the sender of the tweet to be sent
+     * @return MyRadio_Timeslot
+     */
+    public function sendTweet($tweet, $sender)
+    {
+        $tweet = trim($tweet);
+
+        if (empty($tweet)) {
+            throw new MyRadioException('Tweet is empty.', 400);
+        }
+
+        $junk = SIS_Utils::checkMessageSpam($tweet);
+        $warning = SIS_Utils::checkMessageSocialEngineering($tweet);
+
+        if ($warning !== false) {
+            $prefix = '<p class="bg-danger">'.$warning.'</p> ';
+        } else {
+            $prefix = '';
+        }
+
+        self::$db->query(
+            'INSERT INTO sis2.messages (timeslotid, commtypeid, sender, subject, content, statusid, comm_source)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [
+                $this->getID(),           // timeslot
+                6,                        // commtypeid : twitter
+                'Twitter',                // sender
+                substr($tweet, 0, 144), // subject : trancated message
+                $prefix.$tweet,         // content : message with prefix
+                $junk ? 4 : 1,            // statusid : junk or unread
+                $sender,                  // comm_source : Name (ScreenName)
+            ]
+        );
+
+        return $this;
+    }
+
+    /**
      * Signs the given user into the timeslot to say they were
      * on air at this time, if they haven't been signed in already.
      *
