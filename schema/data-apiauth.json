@@ -12,5 +12,6 @@
     ["\\MyRadio\\iTones\\iTones_Playlist", "getTracks", "AUTH_SEARCHCENTRALDB"],
     ["\\MyRadio\\ServiceAPI\\MyRadio_Track", "setIntro", "AUTH_USENIPSWEB"],
     ["\\MyRadio\\ServiceAPI\\MyRadio_Track", "search", "AUTH_SEARCHCENTRALDB"],
-    ["\\MyRadio\\ServiceAPI\\MyRadio_Artist", "findByName", "AUTH_SEARCHCENTRALDB"]
+    ["\\MyRadio\\ServiceAPI\\MyRadio_Artist", "findByName", "AUTH_SEARCHCENTRALDB"],
+    ["\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", "isActiveTerm", "AUTH_APITERM"]
 ]
