@@ -594,10 +594,22 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public static function getCurrentAndNext($time = null, $n = 1, $filter = array(1))
     {
+        $isTerm = MyRadio_Scheduler::isActiveTerm();
         $timeslot = self::getCurrentTimeslot($time, $filter);
         $next = self::getNextTimeslot($time, $filter);
-
-        if (empty($timeslot)) {
+        
+        //Still display a show if there's one scheduled for whatever reason.
+        if (!$isTerm && empty($timeslot)) {
+            //We're outside term time.
+            $response = [
+                'current' => [
+                    'title' => 'Off Air',
+                    'desc' => 'We\'re not broadcasting right now, we\'ll be back next term.',
+                    'photo' => Config::$default_show_uri,
+                    'end_time' => $next ? $next->getStartTime() : 'The End of Time',
+                ],
+            ];
+        } elseif (empty($timeslot)) {
             //There's currently not a show on.
             $response = [
                 'current' => [
