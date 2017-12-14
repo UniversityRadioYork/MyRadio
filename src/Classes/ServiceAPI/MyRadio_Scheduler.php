@@ -131,7 +131,14 @@ class MyRadio_Scheduler extends ServiceAPI
             ORDER BY start ASC'
         );
     }
-
+    
+    /**
+     * Returns term item of the id $termid.
+     *
+     * @todo There's currently no caching on this, could be a potential slowdown
+     *
+     * @return Array of a term
+     */
     public static function getTerm($termid)
     {
         $terms = self::getTerms();
@@ -142,6 +149,36 @@ class MyRadio_Scheduler extends ServiceAPI
         }
 
         throw new MyRadioException('That term could not be found', 400);
+    }
+    
+    /**
+     * Returns the current term, if there is one.
+     *
+     * @todo There's currently no caching on this, could be a potential slowdown
+     *
+     * @return Array of a term
+     */
+    
+    public static function getActiveTerm()
+    {
+        return self::$db->fetchAll(
+            'SELECT termid, EXTRACT(EPOCH FROM start) AS start, descr
+            FROM terms
+            WHERE start <= now() AND finish > now()
+            ORDER BY start ASC'
+        );
+    }
+    
+    /**
+     * Returns if we are currently in term time.
+     *
+     * @todo There's currently no caching on this, could be a potential slowdown
+     *
+     * @return Boolean
+     */
+    public static function isActiveTerm()
+    {
+        return (!empty(self::getActiveTerm()));
     }
 
     public static function getActiveApplicationTermInfo()
