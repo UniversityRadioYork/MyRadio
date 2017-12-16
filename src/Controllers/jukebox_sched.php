@@ -14,4 +14,4 @@ require_once __DIR__.'/root_cli.php';
 
 $track = iTones_Utils::getTrackForJukebox();
 
-echo $track->getPath() + "\n";
+echo $track->getPath() . "\n";

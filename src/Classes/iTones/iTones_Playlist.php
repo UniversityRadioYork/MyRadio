@@ -467,7 +467,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      *
      * @param iTones_Playlist[] A list of one or more playlists to not return.
      * @throws MyRadioException If no playlists are available.
-     * 
+     *
      * @return iTones_Playlist
      */
     public static function getPlaylistFromWeights($playlists_to_ignore = [])
@@ -500,7 +500,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         if (!sizeof($result)) {
             throw new MyRadioException('No weighted playlists currently available.');
         }
-        
+
         for ($i = 0; $i < sizeof($result); $i++) {
             foreach ($playlists_to_ignore as $playlist) {
                 if ($result[$i]['item'] === $playlist->getID()) {

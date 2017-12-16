@@ -76,9 +76,8 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
             shuffle($tracks);
 
             while ($track = array_pop($tracks)) {
-                if (
-                    // $track-> calls first because in theory these checks are really fast
-                    $track->getClean() !== 'n'
+                // $track-> calls first because in theory these checks are really fast
+                if ($track->getClean() !== 'n'
                     && !$track->isBlacklisted()
                     // These ones involve running more queries...
                     && !MyRadio_TracklistItem::getIfPlayedRecently($track)
@@ -92,7 +91,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 
             // We've reached the end of the track list and none of them are playable
             // ignore the playlist we've been given, and try again
-            array_push($playlists_to_ignore, $playlist);
+            $playlists_to_ignore[] = $playlist;
         }
     }
 
