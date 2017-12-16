@@ -439,6 +439,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      * Gets the previous Timeslots before $time, in reverse chronological order.
      *
      * @param int $time
+     * @param int $n defines the number of timeslots you want before this time.
      * @param     $filter defines a filter of show_type ids
      *
      * @return MyRadio_Timeslot
@@ -453,10 +454,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             INNER JOIN schedule.show_season USING (show_season_id)
             INNER JOIN schedule.show USING (show_id)
             WHERE start_time < $1
-            AND show_type_id = ANY ($2)
+            AND show_type_id = ANY ($3)
             ORDER BY start_time DESC
-            LIMIT $n',
-            [CoreUtils::getTimestamp($time), $filter]
+            LIMIT $2',
+            [CoreUtils::getTimestamp($time), $n, $filter]
         );
 
         if (empty($result)) {
