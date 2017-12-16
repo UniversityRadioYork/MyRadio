@@ -118,8 +118,6 @@ class MyRadio_Scheduler extends ServiceAPI
     /**
      * Returns a list of terms in the present or future.
      *
-     * @todo There's currently no caching on this, could be a potential slowdown
-     *
      * @return Array[Array] an array of arrays of terms
      */
     public static function getTerms()
@@ -131,11 +129,9 @@ class MyRadio_Scheduler extends ServiceAPI
             ORDER BY start ASC'
         );
     }
-    
+
     /**
      * Returns term item of the id $termid.
-     *
-     * @todo There's currently no caching on this, could be a potential slowdown
      *
      * @return Array of a term
      */
@@ -150,15 +146,13 @@ class MyRadio_Scheduler extends ServiceAPI
 
         throw new MyRadioException('That term could not be found', 400);
     }
-    
+
     /**
      * Returns the current term, if there is one.
      *
-     * @todo There's currently no caching on this, could be a potential slowdown
-     *
      * @return Array of a term
      */
-    
+
     public static function getActiveTerm()
     {
         return self::$db->fetchAll(
@@ -168,11 +162,9 @@ class MyRadio_Scheduler extends ServiceAPI
             ORDER BY start ASC'
         );
     }
-    
+
     /**
      * Returns if we are currently in term time.
-     *
-     * @todo There's currently no caching on this, could be a potential slowdown
      *
      * @return Boolean
      */
