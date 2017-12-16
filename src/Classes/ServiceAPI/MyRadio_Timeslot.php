@@ -597,7 +597,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $isTerm = MyRadio_Scheduler::isActiveTerm();
         $timeslot = self::getCurrentTimeslot($time, $filter);
         $next = self::getNextTimeslot($time, $filter);
-        
+
         //Still display a show if there's one scheduled for whatever reason.
         if (!$isTerm && empty($timeslot)) {
             //We're outside term time.
@@ -614,7 +614,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $response = [
                 'current' => [
                     'title' => Config::$short_name.' Jukebox',
-                    'desc' => 'Non-stop Music',
+                    'desc' => 'There are currently no shows on right now, even our presenters
+                                need a break. But it\'s okay, ' .Config::$short_name.
+                                'Jukebox has got you covered, playing the best music for your ears!',
                     'photo' => Config::$default_show_uri,
                     'end_time' => $next ? $next->getStartTime() : 'The End of Time',
                 ],
@@ -646,7 +648,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
                     $response['next'][] = [
                         'title' => Config::$short_name.' Jukebox',
-                        'desc' => 'Non-stop Music',
+                        'desc' => 'There are currently no shows on right now, even our presenters
+                                    need a break. But it\'s okay, ' .Config::$short_name.
+                                    'Jukebox has got you covered, playing the best music for your ears!',
                         'photo' => Config::$default_show_uri,
                         'start_time' => $lastnext->getEndTime(),
                         'end_time' => $nextshow ? $nextshow->getStartTime() : 'The End of Time',
