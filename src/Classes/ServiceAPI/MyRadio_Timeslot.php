@@ -436,6 +436,37 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
+     * Gets the previous Timeslots before $time, in reverse chronological order.
+     *
+     * @param int $time
+     * @param     $filter defines a filter of show_type ids
+     *
+     * @return MyRadio_Timeslot
+     */
+    public static function getPreviousTimeslots($time = null, $n=1, $filter = array(1))
+    {
+        $filter = '{'.implode(', ', $filter).'}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
+
+        $result = self::$db->fetchColumn(
+            'SELECT show_season_timeslot_id
+            FROM schedule.show_season_timeslot
+            INNER JOIN schedule.show_season USING (show_season_id)
+            INNER JOIN schedule.show USING (show_id)
+            WHERE start_time < $1
+            AND show_type_id = ANY ($2)
+            ORDER BY start_time DESC
+            LIMIT $n',
+            [CoreUtils::getTimestamp($time), $filter]
+        );
+
+        if (empty($result)) {
+            return;
+        } else {
+            return self::getInstance($result[0]);
+        }
+    }
+
+    /**
      * Gets the next Timeslot to start after $time.
      *
      * @param int $time
