@@ -608,7 +608,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'status' => $this->getStatus(),
             'time' => $this->getSubmitted(),
             'file' => $this->getFile(),
-            'webFile' => $this->getWebFile(),
+            'webfile' => $this->getWebFile(),
             'photo' => Config::$public_media_uri.'/'.$this->getCover(),
             'editlink' => [
                 'display' => 'icon',
