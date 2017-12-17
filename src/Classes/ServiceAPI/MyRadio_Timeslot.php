@@ -594,7 +594,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public static function getCurrentAndNext($time = null, $n = 1, $filter = array(1))
     {
-        $isTerm = MyRadio_Scheduler::isActiveTerm();
+        $isTerm = MyRadio_Scheduler::isTerm();
         $timeslot = self::getCurrentTimeslot($time, $filter);
         $next = self::getNextTimeslot($time, $filter);
 
