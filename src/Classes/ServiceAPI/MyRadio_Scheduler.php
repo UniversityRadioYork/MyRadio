@@ -123,14 +123,10 @@ class MyRadio_Scheduler extends ServiceAPI
      */
     public static function getTerms($currentOnly = false)
     {
-        $filter = $currentOnly ? 'start <= now() AND' : '';
-        return self::$db->fetchAll(
-            'SELECT termid, EXTRACT(EPOCH FROM start) AS start, descr
-            FROM terms
-            WHERE $1 finish > now()
-            ORDER BY start ASC',
-            [$filter]
-        );
+        $query = 'SELECT termid, EXTRACT(EPOCH FROM start) AS start, descr FROM terms WHERE ';
+        $query .= $currentOnly ? 'start <= now() AND ' : '';
+        $query .= 'finish > now() ORDER BY start ASC';
+        return self::$db->fetchAll($query);
     }
 
     /**
