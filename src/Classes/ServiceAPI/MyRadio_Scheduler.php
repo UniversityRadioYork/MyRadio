@@ -128,7 +128,8 @@ class MyRadio_Scheduler extends ServiceAPI
             'SELECT termid, EXTRACT(EPOCH FROM start) AS start, descr
             FROM terms
             WHERE $1 finish > now()
-            ORDER BY start ASC', [$filter]
+            ORDER BY start ASC',
+            [$filter]
         );
     }
 
