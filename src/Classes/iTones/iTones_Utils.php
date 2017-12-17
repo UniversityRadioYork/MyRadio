@@ -297,6 +297,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
             self::telnetStart();
         }
 
+        fwrite(self::$telnet_handle, $command."\n");
         $response = '';
         $line = '';
         $empty_line_counter = 0;
