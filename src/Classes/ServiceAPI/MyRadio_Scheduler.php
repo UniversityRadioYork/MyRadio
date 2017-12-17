@@ -118,15 +118,17 @@ class MyRadio_Scheduler extends ServiceAPI
     /**
      * Returns a list of terms in the present or future.
      *
+     * @param bool $currentOnly If only the present term should be output (if term time)
      * @return Array[Array] an array of arrays of terms
      */
-    public static function getTerms()
+    public static function getTerms($currentOnly = false)
     {
+        $filter = $currentOnly ? 'start <= now() AND' : '';
         return self::$db->fetchAll(
             'SELECT termid, EXTRACT(EPOCH FROM start) AS start, descr
             FROM terms
-            WHERE finish > now()
-            ORDER BY start ASC'
+            WHERE $1 finish > now()
+            ORDER BY start ASC', [$filter]
         );
     }
 
@@ -148,29 +150,13 @@ class MyRadio_Scheduler extends ServiceAPI
     }
 
     /**
-     * Returns the current term, if there is one.
-     *
-     * @return Array of a term
-     */
-
-    public static function getActiveTerm()
-    {
-        return self::$db->fetchOne(
-            'SELECT termid, EXTRACT(EPOCH FROM start) AS start, descr
-            FROM terms
-            WHERE start <= now() AND finish > now()
-            ORDER BY start ASC'
-        );
-    }
-
-    /**
      * Returns if we are currently in term time.
      *
      * @return Boolean
      */
-    public static function isActiveTerm()
+    public static function isTerm()
     {
-        return (!empty(self::getActiveTerm()));
+        return (!empty(self::getTerms(true)));
     }
 
     public static function getActiveApplicationTermInfo()
