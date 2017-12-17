@@ -155,7 +155,7 @@ class MyRadio_Scheduler extends ServiceAPI
 
     public static function getActiveTerm()
     {
-        return self::$db->fetchAll(
+        return self::$db->fetchOne(
             'SELECT termid, EXTRACT(EPOCH FROM start) AS start, descr
             FROM terms
             WHERE start <= now() AND finish > now()
