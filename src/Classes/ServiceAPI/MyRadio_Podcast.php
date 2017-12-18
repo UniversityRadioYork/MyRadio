@@ -519,7 +519,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     }
 
     /**
-     * Get the value that *should* be stored in uryplayer.podcast.file.
+     * Get the value that *should* be stored in uryplayer.podcast.file when a new podcast is created.
      *
      * @return string
      */
@@ -607,8 +607,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'description' => $this->getMeta('description'),
             'status' => $this->getStatus(),
             'time' => $this->getSubmitted(),
-            'file' => $this->getFile(),
-            'webfile' => $this->getWebFile(),
+            'uri' => $this->getURI(),
             'photo' => Config::$public_media_uri.'/'.$this->getCover(),
             'editlink' => [
                 'display' => 'icon',
