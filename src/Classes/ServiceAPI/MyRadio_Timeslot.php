@@ -444,7 +444,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      *
      * @return MyRadio_Timeslot
      */
-    public static function getPreviousTimeslots($time = null, $n=1, $filter = array(1))
+    public static function getPreviousTimeslots($time = null, $n = 1, $filter = array(1))
     {
         $filter = '{'.implode(', ', $filter).'}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
 
