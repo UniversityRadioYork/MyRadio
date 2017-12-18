@@ -801,13 +801,14 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      */
     public static function getAllPodcasts($noResults = 0, $page = 1)
     {
+        $query = "SELECT podcast_id FROM uryplayer.podcast
+                  ORDER BY submitted DESC OFFSET ";
+
         $filterLimit = $noResults == 0 ? 'ALL' : $noResults;
         $filterOffset = $noResults * $page;
-        $result = self::$db->fetchColumn(
-            'SELECT podcast_id FROM uryplayer.podcast
-            ORDER BY submitted DESC OFFSET $1 LIMIT $2',
-            [$filterOffset,$filterLimit]
-        );
+
+        $query .= $filterOffset . " LIMIT " . $filterLimit;
+        $result = self::$db->fetchColumn($query);
 
         $podcasts = [];
         foreach ($result as $row) {
