@@ -21,6 +21,14 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "Time Submitted"
     },
+    // file
+    {
+      "bVisible": false
+    },
+    // webFile
+    {
+      "bVisible": false
+    },
     // photo
     {
       "bVisible": false
