@@ -81,7 +81,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $this->podcast_id = (int) $podcast_id;
 
         $result = self::$db->fetchOne(
-            'SELECT file, memberid, approvedid, submitted, show_id, (
+            'SELECT file, memberid, approvedid, submitted, suspended, show_id, (
                 SELECT array_to_json(array(
                     SELECT metadata_key_id FROM uryplayer.podcast_metadata
                     WHERE podcast_id=$1 AND effective_from <= NOW()
@@ -130,6 +130,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $this->memberid = (int) $result['memberid'];
         $this->approvedid = (int) $result['approvedid'];
         $this->submitted = strtotime($result['submitted']);
+        $this->suspended = strtotime($result['suspended']);
         $this->show_id = (int) $result['show_id'];
 
         //Deal with the Credits arrays
@@ -489,13 +490,25 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      */
     public function getStatus()
     {
-        if (empty($this->submitted)) {
+        if ($this->suspended) {
+            return 'Suspended';
+        } elseif (empty($this->submitted)) {
             return 'Processing...';
         } elseif ($this->submitted > time()) {
             return 'Scheduled for publication ('.CoreUtils::happyTime($this->submitted).')';
         } else {
             return 'Published';
         }
+    }
+
+    /**
+     * Returns if the Podcast is suspended.
+     *
+     * @return bool
+     */
+    public function getSuspended()
+    {
+        return $this->suspended;
     }
 
     /**
@@ -538,6 +551,11 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         return Config::$public_media_uri.'/'.$this->file;
     }
 
+    /**
+     * Get the time the podcast is due to be, or was published.
+     *
+     * @return int
+     */
     public function getSubmitted()
     {
         return $this->submitted;
@@ -551,6 +569,22 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     public function getWebpage()
     {
         return '/uryplayer/podcasts/'.$this->getID();
+    }
+
+    /**
+     * Set the suspended status of this podcast.
+     *
+     * @param bool $is_suspended
+     */
+    public function setSuspended(bool $is_suspended) {
+        $this->suspended = $is_suspended;
+        self::$db->query(
+            'UPDATE uryplayer.podcast SET suspended=$1
+            WHERE podcast_id=$2',
+            [$this->getSuspended(), $this->getID()]
+        );
+
+        return $this;
     }
 
     /**
