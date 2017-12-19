@@ -583,7 +583,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      *
      * @param bool $is_suspended
      */
-    public function setSuspended(bool $is_suspended) {
+    public function setSuspended(bool $is_suspended)
+    {
         $this->suspended = $is_suspended;
         self::$db->query(
             'UPDATE uryplayer.podcast SET suspended=$1
