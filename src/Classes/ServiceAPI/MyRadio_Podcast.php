@@ -513,7 +513,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      *
      * @return bool
      */
-    public function getSuspended()
+    public function isSuspended()
     {
         return $this->suspended;
     }
@@ -589,7 +589,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         self::$db->query(
             'UPDATE uryplayer.podcast SET suspended=$1
             WHERE podcast_id=$2',
-            [$this->getSuspended(), $this->getID()]
+            [$this->isSuspended(), $this->getID()]
         );
 
         return $this;
