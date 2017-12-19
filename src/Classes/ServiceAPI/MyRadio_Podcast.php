@@ -137,7 +137,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $this->memberid = (int) $result['memberid'];
         $this->approvedid = (int) $result['approvedid'];
         $this->submitted = strtotime($result['submitted']);
-        $this->suspended = (bool) $result['suspended'];
+        $this->suspended = ($result['suspended'] === 't') ? true : false;
         $this->show_id = (int) $result['show_id'];
 
         //Deal with the Credits arrays
