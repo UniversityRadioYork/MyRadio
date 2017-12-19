@@ -44,6 +44,13 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     private $submitted;
 
     /**
+     * If the Podcast has been suspended.
+     *
+     * @var bool
+     */
+    private $suspended;
+
+    /**
      * The ID of the User that uploaded the Podcast.
      *
      * @var int
@@ -130,7 +137,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $this->memberid = (int) $result['memberid'];
         $this->approvedid = (int) $result['approvedid'];
         $this->submitted = strtotime($result['submitted']);
-        $this->suspended = strtotime($result['suspended']);
+        $this->suspended = (bool) $result['suspended'];
         $this->show_id = (int) $result['show_id'];
 
         //Deal with the Credits arrays
