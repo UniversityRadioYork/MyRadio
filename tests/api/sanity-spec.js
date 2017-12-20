@@ -1,5 +1,6 @@
-var frisby = require("frisby");
-var url = require("./lib/url");
+const frisby = require("frisby");
+const Joi = frisby.Joi;
+const url = require("./lib/url");
 
 frisby.globalSetup({
   request: {
@@ -8,17 +9,22 @@ frisby.globalSetup({
   }
 });
 
-frisby.create("Get public config")
-  .get(url.base + "config/publicconfig?api_key=travis-test-key")
-  .expectStatus(200)
-  .expectHeaderContains("content-type", "application/json")
-  .expectJSON({
-    status: "OK",
-    payload: {
-      short_name: "URN"
-    }
-  })
-  .expectJSONTypes({
-    time: String
-  })
-  .toss();
+describe("Public config", function() {
+  it("should get", function(doneFn) {
+    frisby.get(url.base + "config/publicconfig?api_key=travis-test-key")
+      .expect("status", 200)
+      .expect("header", {
+        "content-type": "application/json"
+      })
+      .expect("json", "*", {
+        status: "OK",
+        payload: {
+          short_name: "URN"
+        }
+      })
+      .expect("jsonTypes", "*", {
+        time: Joi.string(),
+      })
+      .done(doneFn);
+  });
+});

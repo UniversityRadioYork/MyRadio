@@ -1,0 +1,24 @@
+{
+  "name": "myradio",
+  "version": "1.0.0",
+  "description": "University Radio York's back-end radio management system (test framework)",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^4.13.1",
+    "eslint-plugin-jasmine": "^2.9.1",
+    "frisby": "^2.0.10",
+    "jasmine-node": "^1.14.5"
+  },
+  "scripts": {
+    "test": "jasmine-node tests/api/",
+    "eslint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UniversityRadioYork/MyRadio.git"
+  },
+  "author": "University Radio York Computing Team",
+  "bugs": {
+    "url": "https://github.com/UniversityRadioYork/MyRadio/issues"
+  }
+}

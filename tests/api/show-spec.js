@@ -1,5 +1,6 @@
-var frisby = require("frisby");
-var url = require("./lib/url");
+const frisby = require("frisby");
+const Joi = frisby.Joi;
+const url = require("./lib/url");
 
 frisby.globalSetup({
   request: {
@@ -20,75 +21,86 @@ var show = {
   description: "Travis is a busy guy, but in his spare time, he does his own radio show to test what this on the air malarkey is all about.",
 };
 
-frisby.create("Create a test member")
-  .post(url.base + "user?api_key=travis-test-key", user, {json: true})
-  .expectStatus(201)
-  .afterJSON(function(json) {
+describe("Create a show", function() {
+  it("should create a test member", function(done) {
+    frisby.post(url.base + "user?api_key=travis-test-key", user, {json: true})
+      .expect("status", 201)
+      .done(done);
+  });
+
+  it("should create a test show", function(done) {
     var memberid = json.payload.memberid;
     // This is the format the create form submites :(
     show.credits = {credittype: [1], memberid: [memberid]};
 
-    frisby.create("Create a test show")
-      .post(url.base + "show?api_key=travis-test-key", show, {json: true})
-      .expectStatus(201)
-      .expectHeaderContains("content-type", "application/json")
-      .expectJSON({
+    frisby.post(url.base + "show?api_key=travis-test-key", show, {json: true})
+      .expect("status", 201)
+      .expect("header", {
+        "content-type": "application/json"
+      })
+      .expect("json", "*", {
         status: "OK",
         payload: {
           title: show.title,
           description: show.description
         }
       })
-      .expectJSONTypes({
-        time: String,
+      .expect("jsonTypes", "*", {
+        time: Joi.string(),
         payload: {
-          show_id: Number,
-          credits_string: String
+          show_id: Joi.number(),
+          credits_string: Joi.string(),
         }
       })
-      .afterJSON(function(json) {
-        var showid = json.payload.show_id;
+      .done(done);
+  });
 
-        frisby.create("The show should have no seasons")
-          .get(url.base + "show/" + showid + "/numberofseasons?api_key=travis-test-key")
-          .expectStatus(200)
-          .expectHeaderContains("content-type", "application/json")
-          .expectJSON({
-            status: "OK",
-            payload: 0
-          })
-          .expectJSONTypes({
-            time: String
-          })
-          .toss();
-
-        frisby.create("The show should have a credit")
-          .get(url.base + "show/" + showid + "/credits?api_key=travis-test-key")
-          .expectStatus(200)
-          .expectHeaderContains("content-type", "application/json")
-          .expectJSON({
-            status: "OK",
-            payload: [{memberid: memberid}]
-          })
-          .expectJSONTypes({
-            time: String
-          })
-          .toss();
-
-        frisby.create("The show should appear in the All Shows list")
-          .get(url.base + "show/allshows?api_key=travis-test-key")
-          .expectStatus(200)
-          .expectHeaderContains("content-type", "application/json")
-          .expectJSON("payload.?", {
-            show_id: showid,
-            title: show.title,
-            description: show.description
-          })
-          .expectJSONTypes({
-            time: String
-          })
-          .toss();
+  it("should have no seasons", function(done) {
+    frisby.get(url.base + "show/" + showid + "/numberofseasons?api_key=travis-test-key")
+      .expect("status", 200)
+      .expect("header", {
+        "content-type": "application/json",
       })
-      .toss();
-  })
-  .toss();
+      .expect("json", "*", {
+        status: "OK",
+        payload: 0
+      })
+      .expect("jsonTypes", "*", {
+        time: Joi.string(),
+      })
+      .done(done);
+  });
+
+  it("should have a credit", function(done) {
+    frisby.get(url.base + "show/" + showid + "/credits?api_key=travis-test-key")
+      .expect("status", 200)
+      .expect("header", {
+        "content-type": "application/json",
+      })
+      .expect("json", "*", {
+        status: "OK",
+        payload: [{memberid: memberid}]
+      })
+      .expect("jsonTypes", "*", {
+        time: Joi.string(),
+      })
+      .done(done);
+  });
+
+  it("should appear in the All Shows list", function(done) {
+    frisby.get(url.base + "show/allshows?api_key=travis-test-key")
+      .expect("status", 200)
+      .expect("header", {
+        "content-type": "application/json",
+      })
+      .expect("json", "payload.*", {
+        show_id: showid,
+        title: show.title,
+        description: show.description
+      })
+      .expect("jsonTypes", "*", {
+        time: Joi.string(),
+      })
+      .done(done);
+  });
+});

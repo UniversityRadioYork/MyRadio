@@ -13,4 +13,5 @@ build/
 src/vendor
 composer.lock
 node_modules/
+package-lock.json
 src/Public/img/stats_training_*.svg
