@@ -37,7 +37,7 @@
       if (url && url.length > 1) {
         url = decodeURIComponent(url[1]);
       } else {
-        var apiURL = location.pathname.substr(0, str.lastIndexOf("rtfm"));
+        var apiURL = location.pathname.substr(0, location.pathname.lastIndexOf("rtfm"));
         url = apiURL + "v2/swagger.json";
       }
 
