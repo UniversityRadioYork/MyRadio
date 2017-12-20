@@ -596,7 +596,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         if ($t instanceof \DateTime) {
             $tdt = $t;
-        } else if (is_string($t)) {
+        } elseif (is_string($t)) {
             $tdt = \DateTime::createFromFormat(\DateTime::RFC3339, $t);
 
             if (!($tdt instanceof \DateTime)) {
@@ -605,7 +605,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
                 $tdt = \DateTime::createFromFormat("Y-m-d H:i:sP", $t);
             }
-        } else if (is_int($t)) {
+        } elseif (is_int($t)) {
             $tdt = new \DateTime("@$t");
         } else {
             throw new MyRadioException('Invalid type for schedule timestamp.');
@@ -647,7 +647,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      *
      * @return array[]  An array of timeslot summaries (see above).
      */
-    public static function getLightSchedule($start, $end=null)
+    public static function getLightSchedule($start, $end = null)
     {
         self::wakeup();
 
