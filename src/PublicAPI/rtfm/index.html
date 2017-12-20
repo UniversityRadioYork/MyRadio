@@ -37,7 +37,8 @@
       if (url && url.length > 1) {
         url = decodeURIComponent(url[1]);
       } else {
-        url = "/api/v2/swagger.json";
+        var apiURL = location.pathname.substr(0, str.lastIndexOf("rtfm"));
+        url = apiURL + "v2/swagger.json";
       }
 
       hljs.configure({
