@@ -15,7 +15,7 @@ class PublicConfigCest
     public function getConfig(ApiTester $I)
     {
         $I->wantTo("retrieve the public config");
-        $I->sendGET("publicconfig?api_key=travis-test-key");
+        $I->sendGET("/config/publicconfig?api_key=travis-test-key");
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
     }

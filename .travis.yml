@@ -55,6 +55,6 @@ script:
     - src/vendor/bin/phpcs --standard=PSR2 --ignore="*.min.*,*/vendor/*,*/PublicAPI/rtfm/*,*/Public/js/*" --exclude=Squiz.Classes.ValidClassName,PSR1.Files.SideEffects src/ -p -s
     - node_modules/.bin/eslint .
     - curl -v http://localhost/api/v2/config/publicconfig?api_key=travis-test-key
-    - src/vendor/bin/codecept run
+    - src/vendor/bin/codecept run --env travis
 after_script:
     - sudo cat $(pwd)/apache-*.log

@@ -3,6 +3,15 @@ modules:
     enabled:
         - \Helper\Api
         - REST:
-              url: http://localhost/api/v2
+              url: http://localhost:7080/api/v2
               depends: PhpBrowser
               part: Json
+
+env:
+    travis:
+        modules:
+            enabled:
+                - REST:
+                      url: http://localhost/api/v2
+                      depends: PhpBrowser
+                      part: Json
