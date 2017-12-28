@@ -1,7 +1,7 @@
 <?php
 
 
-class PublicConfigCest
+class SanitySpecCest
 {
     public function _before(ApiTester $I)
     {
@@ -18,5 +18,14 @@ class PublicConfigCest
         $I->sendGET("/config/publicconfig?api_key=travis-test-key");
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
+        $I->seeResponseContainsJson([
+            "status" => "OK",
+            "payload" => [
+                "short_name" => "URN"
+            ]
+        ]);
+        $I->seeResponseMatchesJsonType([
+            "time" => "string"
+        ]);
     }
 }

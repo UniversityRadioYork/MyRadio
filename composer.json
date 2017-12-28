@@ -13,7 +13,8 @@
         "sebastian/phpcpd": "~3.0",
         "phploc/phploc": "~4.0",
         "theseer/phpdox": "~0.9",
-        "codeception/codeception": "~2.3"
+        "codeception/codeception": "~2.3",
+        "flow/jsonpath": "^0.3.4"
     },
     "config": {
         "vendor-dir": "src/vendor"
