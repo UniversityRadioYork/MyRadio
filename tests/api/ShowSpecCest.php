@@ -21,7 +21,7 @@ class ShowSpecCest
 
         $I->sendPOST("/user?api_key=travis-test-key", ["user" => ShowSpecCest::$user]);
         $I->seeResponseCodeIs(201); // User creation testing is done elsewhere
-        ShowSpecCest::$user["id"] = $I->grabDataFromResponseByJsonPath("$.payload.memberid");
+        ShowSpecCest::$user["id"] = $I->grabDataFromResponseByJsonPath("$.payload.memberid")[0];
 
         $I->haveHttpHeader('Content-Type', 'application/json'); // Necessary for post requests
     }
@@ -34,8 +34,8 @@ class ShowSpecCest
     public function testShowCreate(ApiTester $I)
     {
         ShowSpecCest::$show["credits"] = [
-            "credittype" => 1,
-            "memberid" => [ShowSpecCest::$user["id"]], // Extra array is necessary here...
+            "credittype" => [1], // Show creation requires these extra arrays :(
+            "memberid" => [ShowSpecCest::$user["id"]],
         ];
         $I->wantTo("create a show");
         $I->sendPOST("/show?api_key=travis-test-key", ShowSpecCest::$show);
@@ -58,7 +58,7 @@ class ShowSpecCest
         ]);
 
         $I->wantTo("check the show has no seasons");
-        $showid = $I->grabDataFromResponseByJsonPath("$.payload.show_id");
+        $showid = $I->grabDataFromResponseByJsonPath("$.payload.show_id")[0];
         $I->sendGET("/show/".$showid."/numberofseasons?api_key=travis-test-key");
         $I->seeResponseCodeIs(200);
         $I->haveHttpHeader("Content-Type", "application/json");
