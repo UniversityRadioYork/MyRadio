@@ -107,8 +107,8 @@ class Database
             if (is_array($v) || is_object($v)) {
                 throw new MyRadioException(
                     'Query failure: '.$sql.'<br>'
-                    .'Tried to pass array to query<br>'
-                    .'Params: '.print_r($params, true),
+                    .'Params: '.var_export($params, true)
+                    .'Tried to pass array to query<br>',
                     400
                 );
             }
@@ -133,7 +133,7 @@ class Database
             }
             throw new MyRadioException(
                 'Query failure: '.$sql.'<br>'
-                .'Params: '.print_r($params, true).'<br>'
+                .'Params: '.var_export($params, true).'<br>'
                 .$errmsg,
                 500
             );
