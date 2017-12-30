@@ -24,9 +24,13 @@ Database: myradio
 Username: myradio
 Password: myradio
 
+Note that the Vagrant bootstrap script gives the myradio user CREATEDB
+permissions, so be sure to never run this in a production environment, or remove
+the permission before doing so.
+
 Quickstart
 ==========
-Install Apache2, PHP, Composer and PostgreSQL on your prefered *nix distro.
+Install Apache2, PHP, Composer and PostgreSQL on your prefered `*nix distro.
 Or Windows, if you're into that. MyRadio has been tested with Ubuntu and
 FreeBSD.
 
@@ -65,6 +69,29 @@ psql
 CREATE USER myradio WITH password '[A_STRONG_PASSWORD]';
 CREATE DATABASE myradio WITH OWNER=myradio;
 ```
+
+Tests
+-----
+MyRadio uses [Codeception](http://codeception.com/quickstart) for its test
+suite.
+
+To run the tests, call `src/vendor/bin/codecept run` from the root directory.
+By default this assumes that the API is running at http://localhost:7080/api/v2,
+as per the Vagrant instance's defaults. It can also use port 80 for the tests,
+by running the tests with `--env travis` appended to it.
+
+A script at `./scripts/reset-db.sh` is provided that creates a Config file and
+database structure such that the tests can be run (essentially just runs setup
+for you). This script operates on the database directly, so needs to be ran on
+the Vagrant instance rather than the host, if that's necesssary. The script
+blanks the `myradio_test` database each time it is ran, so it can be used to
+reset the database and config file, should this prove necessary.
+
+
+Summary:
+* `vagrant up`
+* `vagrant ssh -- /vagrant/scripts/reset-db.sh`
+* `src/vendor/bin/codecept run`
 
 Next steps
 ==========
