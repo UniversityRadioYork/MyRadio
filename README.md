@@ -30,7 +30,7 @@ the permission before doing so.
 
 Quickstart
 ==========
-Install Apache2, PHP, Composer and PostgreSQL on your prefered `*nix distro.
+Install Apache2, PHP, Composer and PostgreSQL on your prefered *nix distro.
 Or Windows, if you're into that. MyRadio has been tested with Ubuntu and
 FreeBSD.
 
