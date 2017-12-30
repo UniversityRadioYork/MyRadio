@@ -12,20 +12,15 @@ class SanitySpecCest
     }
 
     // tests
-    public function getConfig(ApiTester $I)
+    public function getConfig(\Step\Api\MyRadioTester $I)
     {
         $I->wantTo("retrieve the public config");
         $I->sendGET("/config/publicconfig?api_key=travis-test-key");
-        $I->seeResponseCodeIs(200);
-        $I->seeResponseIsJson();
+        $I->checkAPIResponse();
         $I->seeResponseContainsJson([
-            "status" => "OK",
             "payload" => [
-                "short_name" => "URN"
-            ]
-        ]);
-        $I->seeResponseMatchesJsonType([
-            "time" => "string"
+                "short_name" => "URN",
+            ],
         ]);
     }
 }
