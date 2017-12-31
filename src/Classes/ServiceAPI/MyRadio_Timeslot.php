@@ -218,7 +218,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      *
      * @return MyRadio_Timeslot|null If null, Jukebox is next.
      */
-    public function getTimeslotAfter($filter = array(1))
+    public function getTimeslotAfter($filter = [1])
     {
         $filter = '{'.implode(', ', $filter).'}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
 
@@ -408,7 +408,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      *
      * @return MyRadio_Timeslot|null
      */
-    public static function getCurrentTimeslot($time = null, $filter = array(1))
+    public static function getCurrentTimeslot($time = null, $filter = [1])
     {
         self::initDB(); //First DB access for Timelord
         if ($time === null) {
@@ -444,7 +444,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      *
      * @return MyRadio_Timeslot
      */
-    public static function getPreviousTimeslots($time = null, $n = 1, $filter = array(1))
+    public static function getPreviousTimeslots($time = null, $n = 1, $filter = [1])
     {
         $filter = '{'.implode(', ', $filter).'}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
 
@@ -475,7 +475,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      *
      * @return MyRadio_Timeslot
      */
-    public static function getNextTimeslot($time = null, $filter = array(1))
+    public static function getNextTimeslot($time = null, $filter = [1])
     {
         $filter = '{'.implode(', ', $filter).'}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
 
@@ -624,7 +624,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      * @param int $n    number of next shows to return
      * @param $filter defines a filter of show_type ids
      */
-    public static function getCurrentAndNext($time = null, $n = 1, $filter = array(1))
+    public static function getCurrentAndNext($time = null, $n = 1, $filter = [1])
     {
         $isTerm = MyRadio_Scheduler::isTerm();
         $timeslot = self::getCurrentTimeslot($time, $filter);
