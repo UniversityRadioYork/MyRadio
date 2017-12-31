@@ -218,7 +218,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      *
      * @return MyRadio_Timeslot|null If null, Jukebox is next.
      */
-    public function getTimeslotAfter($filter = array(1))
+    public function getTimeslotAfter($filter = [1])
     {
         $filter = '{'.implode(', ', $filter).'}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
 
@@ -408,7 +408,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      *
      * @return MyRadio_Timeslot|null
      */
-    public static function getCurrentTimeslot($time = null, $filter = array(1))
+    public static function getCurrentTimeslot($time = null, $filter = [1])
     {
         self::initDB(); //First DB access for Timelord
         if ($time === null) {
@@ -436,6 +436,38 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
+     * Gets the previous Timeslots before $time, in reverse chronological order.
+     *
+     * @param int $time
+     * @param int $n defines the number of timeslots you want before this time.
+     * @param     $filter defines a filter of show_type ids
+     *
+     * @return MyRadio_Timeslot
+     */
+    public static function getPreviousTimeslots($time = null, $n = 1, $filter = [1])
+    {
+        $filter = '{'.implode(', ', $filter).'}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
+
+        $result = self::$db->fetchColumn(
+            'SELECT show_season_timeslot_id
+            FROM schedule.show_season_timeslot
+            INNER JOIN schedule.show_season USING (show_season_id)
+            INNER JOIN schedule.show USING (show_id)
+            WHERE start_time < $1
+            AND show_type_id = ANY ($3)
+            ORDER BY start_time DESC
+            LIMIT $2',
+            [CoreUtils::getTimestamp($time), $n, $filter]
+        );
+
+        if (empty($result)) {
+            return;
+        } else {
+            return self::getInstance($result[0]);
+        }
+    }
+
+    /**
      * Gets the next Timeslot to start after $time.
      *
      * @param int $time
@@ -443,7 +475,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      *
      * @return MyRadio_Timeslot
      */
-    public static function getNextTimeslot($time = null, $filter = array(1))
+    public static function getNextTimeslot($time = null, $filter = [1])
     {
         $filter = '{'.implode(', ', $filter).'}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
 
@@ -592,7 +624,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      * @param int $n    number of next shows to return
      * @param $filter defines a filter of show_type ids
      */
-    public static function getCurrentAndNext($time = null, $n = 1, $filter = array(1))
+    public static function getCurrentAndNext($time = null, $n = 1, $filter = [1])
     {
         $isTerm = MyRadio_Scheduler::isTerm();
         $timeslot = self::getCurrentTimeslot($time, $filter);
