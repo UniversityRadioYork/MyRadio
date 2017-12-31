@@ -52,6 +52,7 @@
     ["View URY Statistics","AUTH_VIEWSTATS", true],
     ["[API Only] Unrestricted API Access","AUTH_APISUDO", false],
     ["[API Only] Read Selector Status","AUTH_APIREADSEL", false],
+    ["[API Only] Check Scheduler Term Status","AUTH_APITERM", false],
     ["[Deprecated] Change Any Password","AUTH_CHANGEANYPASSWORD", false],
     ["Edit Any Profile","AUTH_EDITANYPROFILE", true],
     ["Edit Any Show","AUTH_EDITSHOWS", true],
