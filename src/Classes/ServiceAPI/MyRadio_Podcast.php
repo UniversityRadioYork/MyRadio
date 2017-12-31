@@ -835,18 +835,18 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     /**
      * Returns all Podcasts. Caches for 1h.
      *
-     * @param int $noResults The number of results to return per page. 0 for all podcasts.
+     * @param int $num_results The number of results to return per page. 0 for all podcasts.
      * @param int $page The page required.
      *
      * @return Array[MyRadio_Podcast]
      */
-    public static function getAllPodcasts($noResults = 0, $page = 1)
+    public static function getAllPodcasts($num_results = 0, $page = 1)
     {
         $query = "SELECT podcast_id FROM uryplayer.podcast
                   ORDER BY submitted DESC OFFSET ";
 
-        $filterLimit = $noResults == 0 ? 'ALL' : $noResults;
-        $filterOffset = $noResults * $page;
+        $filterLimit = $num_results == 0 ? 'ALL' : $num_results;
+        $filterOffset = $num_results * $page;
 
         $query .= $filterOffset . " LIMIT " . $filterLimit;
         $result = self::$db->fetchColumn($query);
