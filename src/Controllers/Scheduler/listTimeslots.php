@@ -11,6 +11,7 @@ $season = MyRadio_Season::getInstance($_GET['show_season_id']);
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('tablescript', 'myradio.scheduler.timeslotlist')
-    ->addVariable('title', 'Episodes of '.$season->getMeta('title'))
+    ->addVariable('title', 'Scheduler')
+    ->addVariable('subtitle', 'Episodes of "'.$season->getMeta('title').'"')
     ->addVariable('tabledata', CoreUtils::setToDataSource($season->getAllTimeslots()))
     ->render();
