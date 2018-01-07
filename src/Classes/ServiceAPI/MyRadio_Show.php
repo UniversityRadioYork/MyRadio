@@ -375,7 +375,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'editShow',
                 [
                     'debug' => true,
-                    'title' => 'Create Show',
+                    'title' => 'Scheduler',
+                    'subtitle' => 'Create a Show'
                 ]
             )
         )->addField(
@@ -472,7 +473,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     public function getEditForm()
     {
         return self::getForm()
-            ->setTitle('Edit Show')
+            ->setSubtitle('Edit Show')
             ->editMode(
                 $this->getID(),
                 [

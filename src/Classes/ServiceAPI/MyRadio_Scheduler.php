@@ -345,7 +345,8 @@ class MyRadio_Scheduler extends ServiceAPI
                 'Scheduler',
                 'editTerm',
                 [
-                    'title' => 'Create Term',
+                    'title' => 'Scheduler',
+                    'subtitle' => 'Create Term',
                 ]
             )
         )->addField(
