@@ -648,7 +648,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     'title' => Config::$short_name.' Jukebox',
                     'desc' => 'There are currently no shows on right now, even our presenters
                                 need a break. But it\'s okay, ' .Config::$short_name.
-                                'Jukebox has got you covered, playing the best music for your ears!',
+                                ' Jukebox has got you covered, playing the best music for your ears!',
                     'photo' => Config::$default_show_uri,
                     'end_time' => $next ? $next->getStartTime() : 'The End of Time',
                 ],
@@ -682,7 +682,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                         'title' => Config::$short_name.' Jukebox',
                         'desc' => 'There are currently no shows on right now, even our presenters
                                     need a break. But it\'s okay, ' .Config::$short_name.
-                                    'Jukebox has got you covered, playing the best music for your ears!',
+                                    ' Jukebox has got you covered, playing the best music for your ears!',
                         'photo' => Config::$default_show_uri,
                         'start_time' => $lastnext->getEndTime(),
                         'end_time' => $nextshow ? $nextshow->getStartTime() : 'The End of Time',
