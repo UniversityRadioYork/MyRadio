@@ -476,9 +476,9 @@ final class Config
 
     /**
      * The default college for new users that do not specify one.
-     * 1 is Unknown. (Unless you're URY, in which case it's 10 because legacy).
+     * 10 is Unknown, because legacy URY
      */
-    public static $default_college = 1;
+    public static $default_college = 10;
 
     /**
      * A path to the file system (preferably in /tmp) that the MyRadio Daemon tools can have write access to. It stores
