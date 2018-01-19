@@ -18,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $track->setIntro($data['intro']);
     $track->setClean($data['clean']);
     $track->setGenre($data['genre']);
-    $track->setDigitised($data['digitised']);
     $track->setBlacklisted($data['blacklisted']);
     $track->setLastEdited();
 
