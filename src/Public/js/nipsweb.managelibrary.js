@@ -44,22 +44,22 @@ var Library = function () {
     var message;
     switch (err) {
     case "BrowserNotSupported":
-      message = ICON_ERROR + "You need to use Google Chrome or Mozilla Firefox 3.6+ to upload files.";
+      message = "You need to use Google Chrome or Mozilla Firefox 3.6+ to upload files.";
       break;
     case "TooManyFiles":
-      message = ICON_ERROR + "Please don't upload too many files at once.";
+      message = "Please don't upload too many files at once.";
       break;
     case "FileTooLarge":
-      message = ICON_ERROR + "<strong>" + file.name + "</strong> is too big. Please upload files smaller than " + mConfig.audio_upload_max_size + "MB.";
+      message = "<strong>" + file.name + "</strong> is too big. Please upload files smaller than " + mConfig.audio_upload_max_size + "MB.";
       break;
     case "FileTypeNotAllowed":
-      message = ICON_ERROR + "The file you uploaded is not an accepted audio file type.";
+      message = "The file you uploaded is not an accepted audio file type.";
       break;
     default:
-      message = ICON_ERROR + "An unknown error occured: " + err;
+      message = "An unknown error occured: " + err;
     }
 
-    $(".result-container:visible").append("<div class='alert alert-danger'>" + message + "</div>");
+    $(".result-container:visible").append("<div class='alert alert-danger'>" + ICON_ERROR + message + "</div>");
   };
 
   var centralDbInit = function () {
