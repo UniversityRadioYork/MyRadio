@@ -53,7 +53,7 @@ var Library = function () {
       message = file.name + " is too big. Please upload files smaller than " + mConfig.audio_upload_max_size + "MB.";
       break;
     case "FileTypeNotAllowed":
-      message = file.name + " is not a valid audio file.";
+      message = "The file you uploaded is not a valid audio file.";
       break;
     default:
       message = "An unknown error occured: " + err;
