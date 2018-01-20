@@ -258,9 +258,13 @@ class CoreUtils
             throw new MyRadioException('Conversion failed', 500);
         }
 
-        rename($tmpfile, "{$dbfile}.mp3.orig");
+        copy($tmpfile, "{$dbfile}.mp3.orig");
         if (!file_exists("{$dbfile}.mp3.orig")) {
-            throw new MyRadioException('Could not move file to library.');
+            throw new MyRadioException('Could not copy file to library. File was not created.');
+        } else if ((filesize($tempfile) !== filesize("{$dbfile}.mp3.orig")) || (md5_file($tempfile) !== md5_file("{$dbfile}.mp3.orig"))){
+            throw new MyRadioException('Could not move file "'.$tempfile.'" to library as "{$dbfile}.mp3.orig", files are not equal.');
+        } else {
+            unlink($tempfile);
         }
     }
 
