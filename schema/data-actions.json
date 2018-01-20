@@ -60,6 +60,7 @@
     ["MyRadio", "a-timeslotSignin"],
     ["MyRadio", "addActionPermission"],
     ["MyRadio", "actionPermissions"],
+    ["MyRadio", "addPermission"],
     ["MyRadio", "menu"],
     ["MyRadio", "news"],
     ["MyRadio", "impersonate"],

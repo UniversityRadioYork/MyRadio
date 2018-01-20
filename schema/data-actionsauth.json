@@ -63,6 +63,7 @@
     ["MyRadio", "news", "AUTH_EDITTECHNEWS"],
     ["MyRadio", "permissionAssignedTo", "AUTH_ALTERPERMISSIONFLAGS"],
     ["MyRadio", "permissionUsage", "AUTH_ALTERPERMISSIONFLAGS"],
+    ["MyRadio", "addPermission", "AUTH_ALTERPERMISSIONFLAGS"],
     ["MyRadio", "pwChange", "AUTH_NOLOGIN"],
     ["MyRadio", "pwReset", "AUTH_NOLOGIN"],
     ["MyRadio", "StaticProxy", null],
