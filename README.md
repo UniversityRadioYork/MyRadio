@@ -13,21 +13,25 @@ MyRadio is part of a suite of upcoming public projects, including:
 
 Super Quickstart
 ----------------
-MyRadio comes with a Vagrantfile based on Ubuntu 14.04.
+MyRadio comes with a Vagrantfile based on Ubuntu 16.04.
 If you have [Vagrant](https://www.vagrantup.com) installed and want to get
 developing or playing right away, just run `vagrant up` and a few minutes
 later [you'll have a working server](https://localhost:4443/myradio/).
 
 During setup, you'll be asked for database credentials - you can use:
-Hostname: localhost
-Database: myradio
-Username: myradio
-Password: myradio
+* Hostname: localhost
+* Database: myradio
+* Username: myradio
+* Password: myradio
+
+Note that the Vagrant bootstrap script gives the myradio user CREATEDB
+permissions, so be sure to never run this in a production environment, or remove
+the permission before doing so.
 
 Quickstart
 ==========
-Install Apache2, PHP, Composer and PostgreSQL on your prefered *nix distro.
-Or Windows, if you're into that. MyRadio has been tested with Ubuntu and
+Install Apache2, PHP, Composer and PostgreSQL on your prefered Unix-based
+distro. Or Windows, if you're into that. MyRadio has been tested with Ubuntu and
 FreeBSD.
 
 cd to your MyRadio installation and run `composer install`
@@ -65,6 +69,34 @@ psql
 CREATE USER myradio WITH password '[A_STRONG_PASSWORD]';
 CREATE DATABASE myradio WITH OWNER=myradio;
 ```
+
+Tests
+-----
+MyRadio uses [Codeception](http://codeception.com/quickstart) for its test
+suite.
+
+To run the tests, call `src/vendor/bin/codecept run` from the root directory.
+By default this assumes that the API is running at http://localhost:7080/api/v2,
+as per the Vagrant instance's defaults. It can also use port 80 for the tests,
+by running the tests with `--env travis` appended to it.
+
+A script at `./scripts/reset-db.sh` is provided that creates a Config file and
+database structure such that the tests can be run (essentially just runs setup
+for you). This script operates on the database directly, so needs to be ran on
+the Vagrant instance rather than the host, if that's necesssary. The script
+blanks the `myradio_test` database each time it is ran, so it can be used to
+reset the database and config file, should this prove necessary.
+
+Summary:
+* `composer install`
+* `vagrant up`
+* `vagrant ssh -- /vagrant/scripts/reset-db.sh`
+* `src/vendor/bin/codecept run`
+
+The vagrant initialisation script also runs `composer install`, but that is run
+on the virtual machine which also installs the PHP extensions required for
+Codeception. These extensions may be missing locally, so running composer will
+confirm that they are present.
 
 Next steps
 ==========

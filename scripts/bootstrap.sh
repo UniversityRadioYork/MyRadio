@@ -75,14 +75,12 @@ openssl rsa -in /etc/apache2/myradio.key -out /etc/apache2/myradio.key -passin e
 openssl x509 -req -days 3650 -in /etc/apache2/myradio.csr -signkey /etc/apache2/myradio.key -out /etc/apache2/myradio.crt
 
 # Start httpd back up
+service apache2 enable
 service apache2 start
 
 # Create DB cluster/database/user
 pg_createcluster 9.5 myradio
 su - postgres -c "cat /vagrant/sample_configs/postgres.sql | psql"
-
-# Start httpd back up
-service apache2 start
 
 # Somewhere to store audio uploads
 music_dirs="records membersmusic beds jingles"
