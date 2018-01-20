@@ -81,7 +81,6 @@
     ["NIPSWeb", "live"],
     ["NIPSWeb", "import"],
     ["Podcast", "setCover"],
-    ["Podcast", "createPodcast"],
     ["Podcast", "editPodcast"],
     ["Podcast", "default"],
     ["Profile", "officers"],
