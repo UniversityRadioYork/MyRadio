@@ -49,13 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $constant = $data['constant'];
     if (substr($constant, 0, 5) == 'AUTH_' && strlen($constant) >= 6) {
-        AuthUtils::addPermission($data['description'],$constant);
+        AuthUtils::addPermission($data['description'], $constant);
         $message = 'The permission "'. $constant .'" has been added successfully.';
-        URLUtils::redirectWithMessage('MyRadio','listPermissions',$message);
+        URLUtils::redirectWithMessage('MyRadio', 'listPermissions', $message);
     } else {
         URLUtils::backWithMessage('The permission name should be a constant starting in "AUTH_".');
     }
-
 } else {
     //Not submitted
     $form->render();
