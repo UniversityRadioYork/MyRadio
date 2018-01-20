@@ -261,7 +261,10 @@ class CoreUtils
         copy($tmpfile, $orig_new_filename);
         if (!file_exists($orig_new_filename)) {
             throw new MyRadioException('Could not copy file to library. File was not created.');
-        } else if ((filesize($tmpfile) !== filesize($orig_new_filename)) || (md5_file($tmpfile) !== md5_file($orig_new_filename))){
+        } elseif (
+                (filesize($tmpfile) !== filesize($orig_new_filename))
+                || (md5_file($tmpfile) !== md5_file($orig_new_filename))
+            ) {
             throw new MyRadioException('File mismatch: "'.$tmpfile.'" copied to library as "'.$orig_new_filename.'", files are not equal.');
         } else {
             unlink($tmpfile);
