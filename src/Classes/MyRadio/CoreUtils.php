@@ -264,7 +264,8 @@ class CoreUtils
         } elseif ((filesize($tmpfile) !== filesize($orig_new_filename))
                 || (md5_file($tmpfile) !== md5_file($orig_new_filename))
             ) {
-            throw new MyRadioException('File mismatch: "'.$tmpfile.'" copied to library as "'.$orig_new_filename.'", files are not equal.');
+            throw new MyRadioException('File mismatch: "'.$tmpfile.'" copied to library as
+                "'.$orig_new_filename.'", files are not equal.');
         } else {
             unlink($tmpfile);
         }
