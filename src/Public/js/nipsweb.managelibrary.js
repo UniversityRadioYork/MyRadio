@@ -248,13 +248,13 @@ var Library = function () {
         maxfilesize: mConfig.audio_upload_max_size,
         queuefiles: 1,
         drop: function () {
-          $("#central-status").html(ICON_LOADING + "Getting Ready...");
+          $("#res-status").html(ICON_LOADING + "Getting Ready...");
         },
         uploadStarted: function (i, file, total) { // eslint-disable-line no-unused-vars
-          $("#central-status").html(ICON_LOADING + "Uploading " + file.name + " (0% of " + byteSize(file.size) + ")...");
+          $("#res-status").html(ICON_LOADING + "Uploading " + file.name + " (0% of " + byteSize(file.size) + ")...");
         },
         progressUpdated: function (i, file, progress) {
-          $("#central-status").html(ICON_LOADING + "Uploading " + file.name + " (" + progress + "% of " + byteSize(file.size) + ")...");
+          $("#res-status").html(ICON_LOADING + "Uploading " + file.name + " (" + progress + "% of " + byteSize(file.size) + ")...");
         },
         uploadFinished: function (i, file, response, time) { // eslint-disable-line no-unused-vars
           $("#res-status").html(ICON_OK + "Uploaded " + file.name + " (" + byteSize(file.size) + ").");
