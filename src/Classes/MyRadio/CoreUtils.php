@@ -258,6 +258,9 @@ class CoreUtils
             throw new MyRadioException('Conversion failed', 500);
         }
         $orig_new_filename = $dbfile .".mp3.orig";
+        // using copy() instead of rename() because renaming between different file partitions
+        // generates a warning relating to atomicity.
+        // Now added some more checking to hopefully find when tracks don't get uploaded correctly.
         copy($tmpfile, $orig_new_filename);
         if (!file_exists($orig_new_filename)) {
             throw new MyRadioException('Could not copy file to library. File was not created.');
