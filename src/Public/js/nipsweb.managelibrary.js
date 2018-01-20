@@ -286,7 +286,7 @@ var Library = function () {
                 $("<input type=\"text\" placeholder=\"Leave blank to never expire.\" />")
                   .addClass("date form-control")
                   .attr("id", "resuploaddate-" + i)
-                  .datetimepicker({format: "YYYY-MM-dd", showClear: true})
+                  .datetimepicker({format: "YYYY-MM-DD", showClear: true})
               );
             }
             result.append("<div id=\"confirminator-" + (response.fileid.replace(/\.mp3/, "")) + "\"></div>");
