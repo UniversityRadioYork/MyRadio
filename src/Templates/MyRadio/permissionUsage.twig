@@ -1,7 +1,8 @@
 {% extends 'stripe.twig' %}
 {% import 'macros.twig' as MyRadio %}
 {% block stripecontent %}
-<a href="{{MyRadio.makeURL(config, "MyRadio", "listPermissions")}}">&larr; Back to permissions list</a>
+<a href="{{MyRadio.makeURL(config, "MyRadio", "listPermissions")}}">&larr; Back to All Permissions</a><br>
+<hr>
 {% if usage[0] %}
 <p>This permission flag is used by the following MyRadio Actions:</p>
 <ul>
@@ -11,8 +12,8 @@
 </ul>
 {% else %}
 <p>This permission flag is not automatically used by any MyRadio Actions.</p>
+<hr>
 {% endif %}
-
 {% if usage[1] %}
 <p>This permission flag is used by the following MyRadio API Endpoints:</p>
 <ul>

@@ -18,7 +18,6 @@ $form = new MyRadioForm(
     [
         'title' => 'Permissions',
         'subtitle' => 'New Permission',
-        'description' => 'This page allows you to add a new permission so that it can be added to members and modules/actions.'
     ]
 );
 

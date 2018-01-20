@@ -27,7 +27,8 @@ $data = array_map(
 );
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/listPermissions.twig')
-        ->addVariable('title', 'Available Permissions')
+        ->addVariable('title', 'Permissions')
+        ->addVariable('subtitle', 'Available Permissions')
         ->addVariable('tabledata', $data)
         ->addVariable('tablescript', 'myradio.listPermissions')
         ->render();

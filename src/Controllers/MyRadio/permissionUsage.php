@@ -10,6 +10,7 @@ use \MyRadio\MyRadio\CoreUtils;
 $usage = AuthUtils::getAuthUsage($_REQUEST['typeid']);
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/permissionUsage.twig')
-        ->addVariable('title', 'Permission Usage | '.AuthUtils::getAuthDescription($_REQUEST['typeid']))
+        ->addVariable('title', 'Permissions')
+        ->addVariable('subtitle', '"'.AuthUtils::getAuthDescription($_REQUEST['typeid']).'" Usage')
         ->addVariable('usage', $usage)
         ->render();
