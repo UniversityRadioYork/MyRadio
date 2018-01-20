@@ -104,6 +104,14 @@ class Database
             if (is_bool($v)) {
                 $params[$k] = ($v ? 't' : 'f');
             }
+            if (is_array($v) || is_object($v)) {
+                throw new MyRadioException(
+                    'Query failure: '.$sql.'<br>'
+                    .'Params: '.var_export($params, true)
+                    .'Tried to pass array to query<br>',
+                    400
+                );
+            }
         }
 
         if (defined('DB_PROFILE')) {
@@ -113,17 +121,20 @@ class Database
         }
 
         if (empty($params)) {
-            $result = @pg_query($this->db, $sql);
+            pg_send_query($this->db, $sql);
         } else {
-            $result = @pg_query_params($this->db, $sql, $params);
+            pg_send_query_params($this->db, $sql, $params);
         }
-        if (!$result) {
+        $result = pg_get_result($this->db);
+        $errmsg = pg_result_error($result);
+        if ($errmsg != "") {
             if ($this->in_transaction) {
                 pg_query($this->db, 'ROLLBACK');
             }
             throw new MyRadioException(
                 'Query failure: '.$sql.'<br>'
-                .pg_last_error($this->db).'<br>Params: '.print_r($params, true),
+                .'Params: '.var_export($params, true).'<br>'
+                .$errmsg,
                 500
             );
         }

@@ -50,16 +50,16 @@ var Library = function () {
       message = "Please don't upload too many files at once.";
       break;
     case "FileTooLarge":
-      message = file.name + " is too big. Please upload files smaller than " + mConfig.audio_upload_max_size + "MB.";
+      message = "<strong>" + file.name + "</strong> is too big. Please upload files smaller than " + mConfig.audio_upload_max_size + "MB.";
       break;
     case "FileTypeNotAllowed":
-      message = file.name + " is not a valid audio file.";
+      message = "The file you uploaded is not an accepted audio file type.";
       break;
     default:
       message = "An unknown error occured: " + err;
     }
 
-    $(".result-container:visible").append("<div class='alert alert-danger'>" + message + "</div>");
+    $(".result-container:visible").append("<div class='alert alert-danger'>" + ICON_ERROR + message + "</div>");
   };
 
   var centralDbInit = function () {
@@ -75,16 +75,16 @@ var Library = function () {
       maxfilesize: mConfig.audio_upload_max_size,
       queuefiles: 1,
       drop: function () {
-        $("#central-status").html(ICON_LOADING + "Reading file (0%)...");
+        $("#central-status").html(ICON_LOADING + "Getting Ready...");
       },
       uploadStarted: function (i, file, total) { // eslint-disable-line no-unused-vars
-        $("#central-status").html(ICON_LOADING + "Uploading " + file.name + "... (" + byteSize(file.size) + ")");
+        $("#central-status").html(ICON_LOADING + "Uploading " + file.name + " (0% of " + byteSize(file.size) + ")...");
       },
       progressUpdated: function (i, file, progress) {
-        $("#central-status").html(ICON_LOADING + "Reading " + file.name + " (" + progress + "%)...");
+        $("#central-status").html(ICON_LOADING + "Uploading " + file.name + " (" + progress + "% of " + byteSize(file.size) + ")...");
       },
       uploadFinished: function (i, file, response, time) { // eslint-disable-line no-unused-vars
-        var status = ICON_OK + "Uploaded " + file.name;
+        var status = ICON_OK + "Uploaded " + file.name + " (" + byteSize(file.size) + ").";
         $("#central-status").html(status);
 
         setTimeout(function () {
@@ -248,16 +248,16 @@ var Library = function () {
         maxfilesize: mConfig.audio_upload_max_size,
         queuefiles: 1,
         drop: function () {
-          $("#res-status").html(ICON_LOADING + "Reading file (0%)...");
+          $("#res-status").html(ICON_LOADING + "Getting Ready...");
         },
         uploadStarted: function (i, file, total) { // eslint-disable-line no-unused-vars
-          $("#res-status").html(ICON_LOADING + "Uploading " + file.name + "... (" + byteSize(file.size) + ")");
+          $("#res-status").html(ICON_LOADING + "Uploading " + file.name + " (0% of " + byteSize(file.size) + ")...");
         },
         progressUpdated: function (i, file, progress) {
-          $("#res-status").html(ICON_LOADING + "Reading " + file.name + " (" + progress + "%)...");
+          $("#res-status").html(ICON_LOADING + "Uploading " + file.name + " (" + progress + "% of " + byteSize(file.size) + ")...");
         },
         uploadFinished: function (i, file, response, time) { // eslint-disable-line no-unused-vars
-          $("#res-status").html(ICON_OK + "Uploaded " + file.name);
+          $("#res-status").html(ICON_OK + "Uploaded " + file.name + " (" + byteSize(file.size) + ").");
 
           var result = $("<div class='alert'></div>");
           if (response["status"] == "FAIL") {
@@ -286,7 +286,7 @@ var Library = function () {
                 $("<input type=\"text\" placeholder=\"Leave blank to never expire.\" />")
                   .addClass("date form-control")
                   .attr("id", "resuploaddate-" + i)
-                  .datetimepicker({pickTime: "false"})
+                  .datetimepicker({format: "YYYY-MM-DD", showClear: true})
               );
             }
             result.append("<div id=\"confirminator-" + (response.fileid.replace(/\.mp3/, "")) + "\"></div>");

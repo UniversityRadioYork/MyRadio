@@ -501,8 +501,8 @@ class MyRadio_Track extends ServiceAPI
     {
         $this->digitised = $digitised;
         self::$db->query(
-            'UPDATE rec_track SET digitised=$1, digitisedby=$2 WHERE trackid=$3',
-            $digitised ? ['t', $_SESSION['memberid'], $this->getID()] : ['f', null, $this->getID()]
+            'UPDATE rec_track SET digitised=$1 WHERE trackid=$2',
+            $digitised ? ['t', $this->getID()] : ['f', $this->getID()]
         );
         $this->updateCacheObject();
     }
@@ -1063,6 +1063,7 @@ class MyRadio_Track extends ServiceAPI
             } else {
                 //Mark it as digitised/explicit
                 $track->setDigitised(true);
+                $track->setDigitisedBy(MyRadio_User::getInstance(SESSION['memberid']));
                 $track->setClean($clean);
             }
         }
