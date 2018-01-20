@@ -257,12 +257,12 @@ class CoreUtils
         } elseif (!file_exists($dbfile.'.mp3') || !file_exists($dbfile.'.ogg')) {
             throw new MyRadioException('Conversion failed', 500);
         }
-
-        copy($tmpfile, "{$dbfile}.mp3.orig");
-        if (!file_exists("{$dbfile}.mp3.orig")) {
+        $orig_new_filename = $dbfile .".mp3.orig";
+        copy($tmpfile, $orig_new_filename);
+        if (!file_exists($orig_new_filename)) {
             throw new MyRadioException('Could not copy file to library. File was not created.');
-        } else if ((filesize($tempfile) !== filesize("{$dbfile}.mp3.orig")) || (md5_file($tempfile) !== md5_file("{$dbfile}.mp3.orig"))){
-            throw new MyRadioException('Could not move file "'.$tempfile.'" to library as "{$dbfile}.mp3.orig", files are not equal.');
+        } else if ((filesize($tempfile) !== filesize($orig_new_filename)) || (md5_file($tempfile) !== md5_file($orig_new_filename))){
+            throw new MyRadioException('File mismatch: "'.$tempfile.'" copied to library as "'.$orig_new_filename.'", files are not equal.');
         } else {
             unlink($tempfile);
         }
