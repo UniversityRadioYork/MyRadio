@@ -81,14 +81,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $message = 'The action permission has been not been altered.';
     }
-    URLUtils::redirectWithMessage('MyRadio','actionPermissions',$message);
-
+    URLUtils::redirectWithMessage('MyRadio', 'actionPermissions', $message);
 } else {
     //Not Submitted
     if (isset($_REQUEST['permissionid'])) {
         $actionPermission = AuthUtils::getActionPermission($_REQUEST['permissionid']);
-        $form->editMode($_REQUEST['permissionid'],
-            [
+        $form->editMode($_REQUEST['permissionid'], [
                 'permissionid' => $_REQUEST['permissionid'],
                 'module' => $actionPermission['module'],
                 'action' => $actionPermission['action'],
