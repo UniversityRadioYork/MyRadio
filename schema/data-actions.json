@@ -59,6 +59,7 @@
     ["MyRadio", "a-readnews"],
     ["MyRadio", "a-timeslotSignin"],
     ["MyRadio", "addActionPermission"],
+    ["MyRadio", "removeActionPermission"],
     ["MyRadio", "actionPermissions"],
     ["MyRadio", "addPermission"],
     ["MyRadio", "menu"],
