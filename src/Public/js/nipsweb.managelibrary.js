@@ -78,13 +78,13 @@ var Library = function () {
         $("#central-status").html(ICON_LOADING + "Getting Ready...");
       },
       uploadStarted: function (i, file, total) { // eslint-disable-line no-unused-vars
-        $("#central-status").html(ICON_LOADING + "Uploading " + file.name + " (0%)...");
+        $("#central-status").html(ICON_LOADING + "Uploading " + file.name + " (0% of " + byteSize(file.size) + ")...");
       },
       progressUpdated: function (i, file, progress) {
-        $("#central-status").html(ICON_LOADING + "Uploading " + file.name + " (" + progress + "%)...");
+        $("#central-status").html(ICON_LOADING + "Uploading " + file.name + " (" + progress + "% of " + byteSize(file.size) + ")...");
       },
       uploadFinished: function (i, file, response, time) { // eslint-disable-line no-unused-vars
-        var status = ICON_OK + "Uploaded " + file.name;
+        var status = ICON_OK + "Uploaded " + file.name + "(" + byteSize(file.size) + ")...";
         $("#central-status").html(status);
 
         setTimeout(function () {
