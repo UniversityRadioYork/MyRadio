@@ -7,8 +7,8 @@ use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_TracklistItem;
 
-$start = !empty($_GET['rangesel-starttime']) ? strtotime($_GET['rangesel-starttime']) : time() - (86400 * 28);
-$end = !empty($_GET['rangesel-endtime']) ? strtotime($_GET['rangesel-endtime']) : time();
+$start = !empty($_GET['rangesel-starttime']) ? happyTime($_GET['rangesel-starttime']) : time() - (86400 * 28);
+$end = !empty($_GET['rangesel-endtime']) ? happyTime($_GET['rangesel-endtime']) : time();
 
 $data = MyRadio_TracklistItem::getTracklistForTime($start, $end);
 
