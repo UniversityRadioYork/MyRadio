@@ -2,5 +2,5 @@
 <input type="text" class="{{field.class}}{% if field.required %} required{% endif %} datetime"
        value="{{field.value}}" name="{{frm_name}}-{{sfieldname}}" id="{{frm_name}}-{{field.name}}"
        {% if not field.enabled %} readonly="readonly"{% endif %} placeholder="Day/Month/Year Hour:Mins"
-       data-date-format="DD/MM/YYYY HH:mm" />
+       data-date-format="YYYY-MM-DD HH:mm" />
 <span class="myradiofrmhint" id="{{frm_name}}-{{field.name}}-hint">{{field.explanation | raw}}</span>
