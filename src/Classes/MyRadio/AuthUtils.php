@@ -355,7 +355,6 @@ class AuthUtils
             WHERE typeid=$1',
             [$typeid]
         );
-        //throw new MyRadioException(print_r($officers),404);
 
         return [$officers, $trainingStatuses];
     }
