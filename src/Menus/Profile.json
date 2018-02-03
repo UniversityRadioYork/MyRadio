@@ -27,6 +27,11 @@
             "description": "List the current trainers"
         },
         {
+            "title": "Training Statuses",
+            "url": "module=Profile,action=listTrainingStatuses",
+            "description": "List the available statuses to train members for."
+        },
+        {
             "title": "Add Member",
             "url": "module=Profile,action=quickAdd",
             "description": "Add a new Member"
