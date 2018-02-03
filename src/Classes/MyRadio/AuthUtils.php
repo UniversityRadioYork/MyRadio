@@ -334,6 +334,33 @@ class AuthUtils
     }
 
     /**
+     * Returns a list of Officership roles assigned with a specific permission.
+     *
+     * @return array A 2D Array of [officers,trainingstatuses].
+     */
+    public static function getPermissionAssignedTo($typeid)
+    {
+        $db = Database::getInstance();
+        $officers = $db->fetchAll(
+            'SELECT officer.officerid AS officerid, officer.officer_name AS officer_name
+            FROM public.auth_officer
+            LEFT JOIN public.officer USING (officerid)
+            WHERE lookupid=$1',
+            [$typeid]
+        );
+        $trainingStatuses = $db->fetchAll(
+            'SELECT l_presenterstatus.presenterstatusid AS statusid, l_presenterstatus.descr AS statusname
+            FROM public.auth_trainingstatus
+            LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
+            WHERE typeid=$1',
+            [$typeid]
+        );
+        //throw new MyRadioException(print_r($officers),404);
+
+        return [$officers, $trainingStatuses];
+    }
+
+    /**
      * udiff function for permission value equality.
      *
      * @param array $perm1 permission value & description

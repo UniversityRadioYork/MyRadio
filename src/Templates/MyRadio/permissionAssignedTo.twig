@@ -1,0 +1,28 @@
+{% extends 'stripe.twig' %}
+{% import 'macros.twig' as MyRadio %}
+{% block stripecontent %}
+<a href="{{MyRadio.makeURL(config, "MyRadio", "listPermissions")}}">&larr; Back to All Permissions</a><br>
+<hr>
+{% if assignedTo[0] %}
+<p>This permission flag has been given to the following Officers:</p>
+<ul>
+    {% for i in assignedTo[0] %}
+    <li><a href="{{MyRadio.makeURL(config, 'profile', 'officer', {officerid: i.officerid})}}">{{i.officerid}}: {{ i.officer_name }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>This permission flag has not been given to any Officer roles.</p>
+{% endif %}
+<hr>
+{% if assignedTo[1] %}
+<p>This permission flag has been given to the following Training Statuses:</p>
+<ul>
+    {% for i in assignedTo[1] %}
+    <li>{{i.statusid}}: {{ i.statusname }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>This permission flag has not been given to any Training Statuses.</p>
+{% endif %}
+<hr>
+{% endblock %}

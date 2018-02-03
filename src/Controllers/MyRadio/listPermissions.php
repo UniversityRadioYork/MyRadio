@@ -18,7 +18,7 @@ $data = array_map(
         $x['assigned'] = [
         'display' => 'text',
         'value' => 'Assigned To',
-        'url' => URLUtils::makeURL('MyRadio', 'permissionAssigned', ['typeid' => $x['value']]),
+        'url' => URLUtils::makeURL('MyRadio', 'permissionAssignedTo', ['typeid' => $x['value']]),
         ];
 
         return $x;
