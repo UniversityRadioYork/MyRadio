@@ -460,15 +460,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             [CoreUtils::getTimestamp($time), $n, $filter]
         );
 
-        if (empty($result)) {
-            return;
-        } else {
-            $output = [];
-            for ($i = 0; $i < sizeof($result); $i++) {
-                $output[$i] = self::getInstance($result[$i]);
-            }
-            return $output;
-        }
+        return self::resultSetToObjArray($result);
     }
 
     /**
