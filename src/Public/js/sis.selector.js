@@ -14,6 +14,7 @@ var Selector = function () {
     lastTime = 0,
     currentStudio,
     locked = true,
+    confirm = 0, //Used to confirm switching to Off Air.
     selectStudio = function () {
       var studio = this.getAttribute("studio");
       if (studio == currentStudio) {
@@ -27,6 +28,23 @@ var Selector = function () {
         myradio.createDialog("Selector Error", "Could not change studio.<br>Studio Selector is currently locked out.");
         return;
       }
+
+      if (studio == 8) {
+        alert(confirm);
+        if (confirm == 0) {
+          confirm = studio;
+          myradio.createDialog("Selector Confirmation", "Click source again to confirm switch to <strong>" + studios[studio] + "</strong>.");
+        } else {
+          if (confirm == studio) {
+            selStudio(studio);
+          }
+          confirm = 0; // reset and let it continue.
+        }
+      } else {
+        selStudio(studio);
+      }
+    },
+    selStudio = function (studio) {
       $.get(
         myradio.makeURL("SIS", "selector.set"),
         {src: studio},
@@ -55,7 +73,7 @@ var Selector = function () {
       that.registerParam("selector-lasttime", lastTime);
 
       if (data["ready"]) {
-        for (studioNum = 1; studioNum <= 4; studioNum++) {
+        for (studioNum in studios) {
           if (data["s" + studioNum + "power"]) {
             liveStatus = (data["studio"] == studioNum) ? "s" + studioNum + "on" : "s" + studioNum + "off";
             buttons[studioNum].setAttribute("title", studios[studioNum]);
@@ -103,6 +121,7 @@ var Selector = function () {
         button.setAttribute("title", studios[i]);
         button.setAttribute("studio", i);
         button.setAttribute("on", "true");
+        button.innerText = i; //Button Label Numbers
         button.addEventListener("click", selectStudio);
         row.appendChild(button);
         buttons[i] = button;

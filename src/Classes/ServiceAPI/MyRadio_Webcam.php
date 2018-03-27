@@ -82,10 +82,12 @@ class MyRadio_Webcam extends ServiceAPI
                     $location = 'Jukebox';
                     break;
                 case 4:
-                    $location = 'OB';
+                    $location = 'Outside Broadcast';
                     break;
+                case 8:
+                    $location = 'Off Air';
                 default:
-                    $location = 'Unknown';
+                    $location = 'Unknown Source';
                     break;
             }
 
@@ -108,7 +110,7 @@ class MyRadio_Webcam extends ServiceAPI
      */
     public static function setWebcam($id)
     {
-        $validCams = ['studio1', 'studio2', 'cam1', 'cam2', 'cam5'];
+        $validCams = ['studio1', 'studio2', 'cam1', 'cam2', 'cam5', 'hall', 'office'];
         if (in_array($id, $validCams)) {
             $ch = \curl_init(Config::$webcam_set_url.$id);
             \curl_setopt($ch, CURLOPT_POST, true);
