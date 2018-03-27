@@ -86,6 +86,7 @@ class MyRadio_Webcam extends ServiceAPI
                     break;
                 case 8:
                     $location = 'Off Air';
+                    break;
                 default:
                     $location = 'Unknown Source';
                     break;
