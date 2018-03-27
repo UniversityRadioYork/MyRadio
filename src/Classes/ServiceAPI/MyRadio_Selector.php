@@ -393,8 +393,9 @@ class MyRadio_Selector
             'selectedfrom' => self::getSetbyAtTime($time),
             's1power' => self::getStudio1PowerAtTime($time),
             's2power' => self::getStudio2PowerAtTime($time),
-            's3power' => true,
-            's4power' => (isset($status['s1'])) ? $status['s1'] : false,
+            's3power' => true, //Jukebox
+            's4power' => (isset($status['s1'])) ? $status['s1'] : false, //OB
+            's8power' => true, //Off Air
             'lastmod' => self::getLastModAtTime($time),
         ];
     }
