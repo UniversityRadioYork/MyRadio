@@ -89,12 +89,20 @@ fieldset { padding:0; border:0; margin-top:25px; }
 }
 .selbtn {
   height: 35px;
-  width: 35px;
-  background-color: #eee;
+  min-width: 30px;
+  background-color: #ddd;
+  text-align: center;
+  margin: 5px;
+  font-size: 1.2em;
+  padding: 5px 0;
+  color: #fff;
+  display: inline-block;
 }
 .poweredon { cursor:pointer; }
 .s1on, .s2on, .s3on, .s4on, .s8on {
   border: 5px solid gold;
+  height: 25px;
+  box-sizing: content-box;
 }
 .poweredon.s1on { background-color: #f00; }
 .poweredon.s1off { background-color: #600; }
@@ -107,9 +115,7 @@ fieldset { padding:0; border:0; margin-top:25px; }
 .poweredon.s8on { background-color: #ffa500; }
 .poweredon.s8off { background-color: #9c6600; }
 
-
-
-.poweredoff { background-color: #eee; }
+.poweredoff { background-color: #ddd; }
 
 
 .td-msgitem, .delbutton {
