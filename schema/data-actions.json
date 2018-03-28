@@ -95,7 +95,6 @@
     ["Profile", "edit"],
     ["Profile", "list"],
     ["Profile", "listTrainers"],
-    ["Profile", "listTrainingStatuses"],
     ["Profile", "default"],
     ["Profile", "addTrainingStatus"],
     ["Profile", "lock"],
