@@ -19,8 +19,7 @@ $form = new MyRadioForm(
         'title' => 'Permissions',
         'subtitle' => 'Delete Action Permission',
     ]
-);
-$form->addField(
+)->addField(
     new MyRadioFormField(
         'permissionid',
         MyRadioFormField::TYPE_HIDDEN,
@@ -28,8 +27,7 @@ $form->addField(
             'required' => true
         ]
     )
-);
-$form->addField(
+)->addField(
     new MyRadioFormField(
         'module',
         MyRadioFormField::TYPE_TEXT,
@@ -37,8 +35,7 @@ $form->addField(
             'enabled' => false
         ]
     )
-);
-$form->addField(
+)->addField(
     new MyRadioFormField(
         'action',
         MyRadioFormField::TYPE_TEXT,
@@ -46,8 +43,7 @@ $form->addField(
             'enabled' => false
         ]
     )
-);
-$form->addField(
+)->addField(
     new MyRadioFormField(
         'permission',
         MyRadioFormField::TYPE_TEXT,
@@ -55,8 +51,7 @@ $form->addField(
             'enabled' => false
         ]
     )
-);
-$form->addField(
+)->addField(
     new MyRadioFormField(
         'confirm',
         MyRadioFormField::TYPE_CHECK,

@@ -19,9 +19,7 @@ $form = new MyRadioForm(
         'title' => 'Permissions',
         'subtitle' => 'New Permission',
     ]
-);
-
-$form->addField(
+)->addField(
     new MyRadioFormField(
         'constant',
         MyRadioFormField::TYPE_TEXT,
