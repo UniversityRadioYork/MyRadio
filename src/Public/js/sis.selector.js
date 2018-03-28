@@ -30,7 +30,6 @@ var Selector = function () {
       }
 
       if (studio == 8) {
-        alert(confirm);
         if (confirm == 0) {
           confirm = studio;
           myradio.createDialog("Selector Confirmation", "Click source again to confirm switch to <strong>" + studios[studio] + "</strong>.");

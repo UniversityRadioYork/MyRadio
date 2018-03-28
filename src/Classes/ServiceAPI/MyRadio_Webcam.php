@@ -71,20 +71,29 @@ class MyRadio_Webcam extends ServiceAPI
             $response = file_get_contents(Config::$webcam_current_url);
             $response = json_decode($response, true);
 
-            switch ($response['room']) {
-                case 1:
+            switch ($response['camera']) {
+                case 'studio1':
                     $location = 'Studio 1';
                     break;
-                case 2:
+                case 'cam5':
+                    $location = 'Studio 1 Secondary';
+                    break;
+                case 'studio2':
                     $location = 'Studio 2';
                     break;
-                case 3:
+                case 'cam1':
                     $location = 'Jukebox';
                     break;
-                case 4:
+                case 'cam2':
                     $location = 'Outside Broadcast';
                     break;
-                case 8:
+                case 'office':
+                    $location = 'Office';
+                    break;
+                case 'hall':
+                    $location = 'Hall';
+                    break;
+                case 'offair':
                     $location = 'Off Air';
                     break;
                 default:

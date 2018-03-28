@@ -128,7 +128,8 @@ figure {
 }
 figure.webcam-stream-container {
   width: 70px;
-  display: block;
+  display: inline-block;
+  vertical-align: top;
 }
 figure.webcam-stream-container.live {
   width: 150px;
