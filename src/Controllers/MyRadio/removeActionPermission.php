@@ -86,12 +86,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Not Submitted
     if (isset($_REQUEST['permissionid'])) {
         $actionPermission = AuthUtils::getActionPermission($_REQUEST['permissionid']);
-        $form->editMode($_REQUEST['permissionid'], [
-                'permissionid' => $_REQUEST['permissionid'],
-                'module' => $actionPermission['module'],
-                'action' => $actionPermission['action'],
-                'permission' => $actionPermission['permission'],
-            ]
+        $form->editMode($_REQUEST['permissionid'],
+        [
+            'permissionid' => $_REQUEST['permissionid'],
+            'module' => $actionPermission['module'],
+            'action' => $actionPermission['action'],
+            'permission' => $actionPermission['permission'],
+        ]
         )->render();
     } else {
         throw new MyRadioException('An PermissionID to delete has not been provided, please try again.', 400);
