@@ -11,9 +11,9 @@ $src = (isset($_REQUEST['src'])) ? (int) $_REQUEST['src'] : 0;
 $status = MyRadio_Selector::getStatusAtTime();
 
 if (($src <= 0) || ($src > 8)) {
-    $data = ['error' => 'Invalid Selection'];
+    $data = ['error' => 'Invalid selection.'];
 } elseif ($src == $status['studio']) {
-    $data = ['error' => 'Source '.$src.' already selected'];
+    $data = ['error' => 'Source '.$src.' is already selected.'];
 } elseif ((($src == 1) && (!$status['s1power']))
     || (($src == 2) && (!$status['s2power']))
     || (($src == 4) && (!$status['s4power']))
