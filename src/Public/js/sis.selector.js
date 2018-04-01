@@ -31,6 +31,7 @@ var Selector = function () {
 
       if (confirm == studio) {
         selStudio(studio); // If they click the same source twice, select it.
+        confirm = 0;
       } else {
         // If first click, or didn't click same one...
         confirm = studio;
