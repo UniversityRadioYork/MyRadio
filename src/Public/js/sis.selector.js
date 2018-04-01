@@ -29,18 +29,12 @@ var Selector = function () {
         return;
       }
 
-      if (studio == 8) {
-        if (confirm == 0) {
-          confirm = studio;
-          myradio.createDialog("Selector Confirmation", "Click source again to confirm switch to <strong>" + studios[studio] + "</strong>.");
-        } else {
-          if (confirm == studio) {
-            selStudio(studio);
-          }
-          confirm = 0; // reset and let it continue.
-        }
+      if (confirm == studio) {
+        selStudio(studio); // If they click the same source twice, select it.
       } else {
-        selStudio(studio);
+        // If first click, or didn't click same one...
+        confirm = studio;
+        myradio.createDialog("Selector Confirmation", "Click source again to confirm switch to <strong>" + studios[studio] + "</strong>.");
       }
     },
     selStudio = function (studio) {
