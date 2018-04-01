@@ -303,7 +303,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 'editSeason',
                 [
                     'debug' => true,
-                    'title' => 'Create Season',
+                    'title' => 'Scheduler',
+                    'subtitle' => 'New Season',
                 ]
             )
         )->addField(
@@ -394,7 +395,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     public function getEditForm()
     {
         return self::getForm()
-            ->setTitle('Edit Season')
+            ->setSubTitle('Edit Season')
             ->editMode(
                 $this->getID(),
                 [
@@ -412,7 +413,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 'Scheduler',
                 'allocate',
                 [
-                    'title' => 'Allocate Timeslots to Season',
+                    'title' => 'Scheduler',
+                    'subtitle' => 'Allocate Timeslots to Season',
                     'template' => 'Scheduler/allocate.twig',
                 ]
             )
@@ -514,7 +516,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 'reject',
                 [
                     'debug' => false,
-                    'title' => 'Reject Season Application',
+                    'title' => 'Scheduler',
+                    'subtitle' => 'Reject Season Application'
                 ]
             )
         )->addField(

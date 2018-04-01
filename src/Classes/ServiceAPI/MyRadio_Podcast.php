@@ -44,6 +44,13 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     private $submitted;
 
     /**
+     * If the Podcast has been suspended.
+     *
+     * @var bool
+     */
+    private $suspended;
+
+    /**
      * The ID of the User that uploaded the Podcast.
      *
      * @var int
@@ -81,7 +88,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $this->podcast_id = (int) $podcast_id;
 
         $result = self::$db->fetchOne(
-            'SELECT file, memberid, approvedid, submitted, show_id, (
+            'SELECT file, memberid, approvedid, submitted, suspended, show_id, (
                 SELECT array_to_json(array(
                     SELECT metadata_key_id FROM uryplayer.podcast_metadata
                     WHERE podcast_id=$1 AND effective_from <= NOW()
@@ -130,6 +137,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $this->memberid = (int) $result['memberid'];
         $this->approvedid = (int) $result['approvedid'];
         $this->submitted = strtotime($result['submitted']);
+        $this->suspended = ($result['suspended'] === 't') ? true : false;
         $this->show_id = (int) $result['show_id'];
 
         //Deal with the Credits arrays
@@ -489,13 +497,25 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      */
     public function getStatus()
     {
-        if (empty($this->submitted)) {
+        if ($this->suspended) {
+            return 'Suspended';
+        } elseif (empty($this->submitted)) {
             return 'Processing...';
         } elseif ($this->submitted > time()) {
             return 'Scheduled for publication ('.CoreUtils::happyTime($this->submitted).')';
         } else {
             return 'Published';
         }
+    }
+
+    /**
+     * Returns if the Podcast is suspended.
+     *
+     * @return bool
+     */
+    public function isSuspended()
+    {
+        return $this->suspended;
     }
 
     /**
@@ -519,7 +539,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     }
 
     /**
-     * Get the value that *should* be stored in uryplayer.podcast.file.
+     * Get the value that *should* be stored in uryplayer.podcast.file when a new podcast is created.
      *
      * @return string
      */
@@ -538,6 +558,11 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         return Config::$public_media_uri.'/'.$this->file;
     }
 
+    /**
+     * Get the time the podcast is due to be, or was published.
+     *
+     * @return int
+     */
     public function getSubmitted()
     {
         return $this->submitted;
@@ -551,6 +576,23 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     public function getWebpage()
     {
         return '/uryplayer/podcasts/'.$this->getID();
+    }
+
+    /**
+     * Set the suspended status of this podcast.
+     *
+     * @param bool $is_suspended
+     */
+    public function setSuspended(bool $is_suspended)
+    {
+        $this->suspended = $is_suspended;
+        self::$db->query(
+            'UPDATE uryplayer.podcast SET suspended=$1
+            WHERE podcast_id=$2',
+            [$this->isSuspended(), $this->getID()]
+        );
+
+        return $this;
     }
 
     /**
@@ -607,6 +649,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'description' => $this->getMeta('description'),
             'status' => $this->getStatus(),
             'time' => $this->getSubmitted(),
+            'uri' => $this->getURI(),
             'photo' => Config::$public_media_uri.'/'.$this->getCover(),
             'editlink' => [
                 'display' => 'icon',
@@ -792,14 +835,21 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     /**
      * Returns all Podcasts. Caches for 1h.
      *
+     * @param int $num_results The number of results to return per page. 0 for all podcasts.
+     * @param int $page The page required.
+     *
      * @return Array[MyRadio_Podcast]
      */
-    public static function getAllPodcasts()
+    public static function getAllPodcasts($num_results = 0, $page = 1)
     {
-        $result = self::$db->fetchColumn(
-            'SELECT podcast_id FROM uryplayer.podcast
-            ORDER BY submitted DESC'
-        );
+        $query = "SELECT podcast_id FROM uryplayer.podcast
+                  ORDER BY submitted DESC OFFSET ";
+
+        $filterLimit = $num_results == 0 ? 'ALL' : $num_results;
+        $filterOffset = $num_results * $page;
+
+        $query .= $filterOffset . " LIMIT " . $filterLimit;
+        $result = self::$db->fetchColumn($query);
 
         $podcasts = [];
         foreach ($result as $row) {
