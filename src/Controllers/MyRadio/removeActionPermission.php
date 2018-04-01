@@ -19,7 +19,8 @@ $form = new MyRadioForm(
         'title' => 'Permissions',
         'subtitle' => 'Delete Action Permission',
     ]
-)->addField(
+);
+$form->addField(
     new MyRadioFormField(
         'permissionid',
         MyRadioFormField::TYPE_HIDDEN,
