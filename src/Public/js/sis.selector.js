@@ -1,18 +1,20 @@
 /* global myradio, sis */
 /* Selector */
 var Selector = function () {
-  var studios = [
-      "Studio 1",
-      "Studio 2",
-      "Jukebox",
-      "Outside Broadcast"
-    ],
+  var studios = {
+      1: "Studio 1",
+      2: "Studio 2",
+      3: "Jukebox",
+      4: "Outside Broadcast",
+      8: "Off Air"
+    },
     that,
     buttons = [],
     onAir = document.createElement("span"),
     lastTime = 0,
     currentStudio,
     locked = true,
+    confirm = 0, //Used to confirm switching to Off Air.
     selectStudio = function () {
       var studio = this.getAttribute("studio");
       if (studio == currentStudio) {
@@ -23,15 +25,26 @@ var Selector = function () {
       }
 
       if (locked) {
-        myradio.createDialog("Error", "Could not change studio.<br>Studio selector is currently locked out.");
+        myradio.createDialog("Selector Error", "Could not change studio.<br>Studio Selector is currently locked out.");
         return;
       }
+
+      if (confirm == studio) {
+        selStudio(studio); // If they click the same source twice, select it.
+        confirm = 0;
+      } else {
+        // If first click, or didn't click same one...
+        confirm = studio;
+        myradio.createDialog("Selector Confirmation", "Click source again to confirm switch to <strong>" + studios[studio] + "</strong>.");
+      }
+    },
+    selStudio = function (studio) {
       $.get(
         myradio.makeURL("SIS", "selector.set"),
         {src: studio},
         function (data) {
           if (data["error"] == "locked") {
-            myradio.createDialog("Selector Error", "Could not change studio; studio selector is currently locked out.");
+            myradio.createDialog("Selector Error", "Could not change studio.<br>Studio Selector is currently locked out.");
             return;
           }
           if (data["error"]) {
@@ -43,7 +56,7 @@ var Selector = function () {
       );
     },
     update = function (data) {
-      var liveStatus, s, studioNum, studioNumIndex, time = parseInt(data["lastmod"]);
+      var liveStatus, s, studioNum, time = parseInt(data["lastmod"]);
       // Disregard data older than the latest update
       if (time <= lastTime) {
         return;
@@ -54,20 +67,22 @@ var Selector = function () {
       that.registerParam("selector-lasttime", lastTime);
 
       if (data["ready"]) {
-        for (studioNum = 1; studioNum <= 4; studioNum++) {
-          studioNumIndex = studioNum-1;
+        for (studioNum in studios) {
           if (data["s" + studioNum + "power"]) {
             liveStatus = (data["studio"] == studioNum) ? "s" + studioNum + "on" : "s" + studioNum + "off";
-            buttons[studioNumIndex].setAttribute("title", studios[studioNumIndex]);
-            buttons[studioNumIndex].setAttribute("class", "selbtn poweredon " + liveStatus);
-            buttons[studioNumIndex].setAttribute("on", "true");
+            buttons[studioNum].setAttribute("title", studios[studioNum]);
+            buttons[studioNum].setAttribute("class", "selbtn poweredon " + liveStatus);
+            buttons[studioNum].setAttribute("on", "true");
           } else {
-            buttons[studioNumIndex].setAttribute("title", studios[studioNumIndex] + " Powered Off");
-            buttons[studioNumIndex].setAttribute("class", "selbtn poweredoff s" + studioNum + "off");
-            buttons[studioNumIndex].setAttribute("on", "false");
+            buttons[studioNum].setAttribute("title", studios[studioNum] + " (Powered Off)");
+            buttons[studioNum].setAttribute("class", "selbtn poweredoff s" + studioNum + "off");
+            buttons[studioNum].setAttribute("on", "false");
           }
         }
-        s = "<strong>" + studios[data["studio"] - 1] + "</strong> is On Air.";
+        if (studios[data["studio"]] == undefined) {
+          studios[data["studio"]] = "Source " + data["studio"] + " (Unknown)";
+        }
+        s = "<strong>" + studios[data["studio"]] + "</strong> is selected.";
         currentStudio = data["studio"];
         if (data["lock"] != 0) {
           s = s + "<small> &mdash; Locked</small>";
@@ -95,14 +110,15 @@ var Selector = function () {
       for (var i in studios) {
         i = parseInt(i);
         button = document.createElement("td");
-        button.setAttribute("class", "selbtn s" + (i+1) + "off");
+        button.setAttribute("class", "selbtn s" + i + "off");
         button.setAttribute("id", "s" + i);
         button.setAttribute("title", studios[i]);
-        button.setAttribute("studio", (i + 1));
+        button.setAttribute("studio", i);
         button.setAttribute("on", "true");
+        button.innerText = i; //Button Label Numbers
         button.addEventListener("click", selectStudio);
         row.appendChild(button);
-        buttons.push(button);
+        buttons[i] = button;
       }
 
       onAir.innerHTML = "Selector unavailable &mdash; Locked";

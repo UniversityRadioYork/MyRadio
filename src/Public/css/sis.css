@@ -85,26 +85,38 @@ fieldset { padding:0; border:0; margin-top:25px; }
   margin-bottom: .5em;
   border-collapse: separate;
   max-width: 250px;
-  
+
 }
 .selbtn {
   height: 35px;
-  width: 35px;
-  background-color: #eee;
+  min-width: 30px;
+  background-color: #ddd;
+  text-align: center;
+  margin: 5px;
+  font-size: 1.2em;
+  padding: 5px 0;
+  color: #fff;
+  display: inline-block;
 }
 .poweredon { cursor:pointer; }
-.s1on, .s2on, .s3on, .s4on {
+.s1on, .s2on, .s3on, .s4on, .s8on {
   border: 5px solid gold;
+  height: 25px;
+  box-sizing: content-box;
 }
-.poweredon.s4on { background-color: #6b00a3; }
-.poweredon.s4off { background-color: #5f0093; }
-.poweredon.s3on { background-color: #0f0; }
-.poweredon.s3off { background-color: #080; }
-.poweredon.s2on { background-color: #0044ba; }
-.poweredon.s2off { background-color: #003c76; }
 .poweredon.s1on { background-color: #f00; }
 .poweredon.s1off { background-color: #600; }
-.poweredoff { background-color: #eee; }
+.poweredon.s2on { background-color: #0044ba; }
+.poweredon.s2off { background-color: #003c76; }
+.poweredon.s3on { background-color: #0f0; }
+.poweredon.s3off { background-color: #080; }
+.poweredon.s4on { background-color: #6b00a3; }
+.poweredon.s4off { background-color: #5f0093; }
+.poweredon.s8on { background-color: #ffa500; }
+.poweredon.s8off { background-color: #9c6600; }
+
+.poweredoff { background-color: #ddd; }
+
 
 .td-msgitem, .delbutton {
   cursor: pointer;
@@ -116,7 +128,8 @@ figure {
 }
 figure.webcam-stream-container {
   width: 70px;
-  display: block;
+  display: inline-block;
+  vertical-align: top;
 }
 figure.webcam-stream-container.live {
   width: 150px;
