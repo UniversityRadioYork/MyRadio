@@ -18,7 +18,7 @@ if (($src <= 0) || ($src > 8)) {
     || (($src == 2) && (!$status['s2power']))
     || (($src == 4) && (!$status['s4power']))
 ) {
-    $data = ['error' => 'Source '.$src.' not powered'];
+    $data = ['error' => 'Source '.$src.' is not powered.'];
 } elseif ($status['lock'] != 0) {
     $data = ['error' => 'locked'];
 } else {

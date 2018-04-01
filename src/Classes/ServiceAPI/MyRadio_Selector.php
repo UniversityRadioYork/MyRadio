@@ -178,13 +178,13 @@ class MyRadio_Selector
         $status = self::getStatusAtTime();
 
         if ($studio == $status['studio']) {
-            throw new MyRadioException('Source '.$studio.' is already selected');
+            throw new MyRadioException('Source '.$studio.' is already selected.');
         }
         if ((($studio == 1) && (!$status['s1power']))
             || (($studio == 2) && (!$status['s2power']))
             || (($studio == 4) && (!$status['s4power']))
         ) {
-            throw new MyRadioException('Source '.$studio.' is not powered');
+            throw new MyRadioException('Source '.$studio.' is not powered.');
         }
         if ($status['lock'] != 0) {
             throw new MyRadioException('Selector Locked');
