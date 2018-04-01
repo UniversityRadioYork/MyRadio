@@ -448,7 +448,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         $filter = '{'.implode(', ', $filter).'}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
 
-        $result = self::$db->fetchColumn(
+        $result = self::$db->fetchAll(
             'SELECT show_season_timeslot_id
             FROM schedule.show_season_timeslot
             INNER JOIN schedule.show_season USING (show_season_id)
@@ -460,7 +460,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             [CoreUtils::getTimestamp($time), $n, $filter]
         );
 
-        return self::resultSetToObjArray($result);
+        foreach ($result as $r) {
+            $timeslots[] =  self::getInstance($r['show_season_timeslot_id']);
+        }
+        return $timeslots;
     }
 
     /**
