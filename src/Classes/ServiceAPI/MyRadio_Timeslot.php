@@ -460,8 +460,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             [CoreUtils::getTimestamp($time), $n, $filter]
         );
 
+        $timeslots = [];
         foreach ($result as $r) {
-            $timeslots[] =  self::getInstance($r['show_season_timeslot_id']);
+            $timeslots[] = self::getInstance($r['show_season_timeslot_id']);
         }
         return $timeslots;
     }
