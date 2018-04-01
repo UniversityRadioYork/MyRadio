@@ -432,18 +432,14 @@ class AuthUtils
      *
      * @param int $actPermissionID     The action permission ID.
      */
-    public static function removeActionPermission($actPermissionID = -1)
+    public static function removeActionPermission($actPermissionID)
     {
-        if ($actPermissionID >= 0) {
-            $db = Database::getInstance();
-            $db->query(
-                'DELETE FROM myury.act_permission WHERE
-                actpermissionid = $1',
-                [$actPermissionID]
-            );
-        } else {
-            throw new MyRadioException("Invalid actPermissionID provided.");
-        }
+        $db = Database::getInstance();
+        $db->query(
+            'DELETE FROM myury.act_permission WHERE
+            actpermissionid = $1',
+            [$actPermissionID]
+        );
     }
 
     /**
