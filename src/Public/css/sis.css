@@ -1,4 +1,4 @@
-.container {
+.main-container.container {
   width: calc(100% - 10px);
 }
 
