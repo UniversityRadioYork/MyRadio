@@ -1708,7 +1708,7 @@ ALTER SEQUENCE strm_stream_streamid_seq OWNED BY strm_stream.streamid;
 CREATE TABLE team (
     teamid integer DEFAULT nextval(('"team_teamid_seq"'::text)::regclass) NOT NULL,
     team_name character varying(255) NOT NULL,
-    descr character varying(255),
+    descr text,
     local_group character varying(255),
     local_alias character varying(255),
     ordering smallint,
