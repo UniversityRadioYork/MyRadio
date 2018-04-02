@@ -91,3 +91,11 @@ $(".twig-datatable").dataTable({
   ],
   "bPaginate": false
 });
+
+var table = $(".twig-datatable").DataTable();
+// Replace epoch 0 with Not Scheduled.
+table.column(15).nodes().each(function (node) {
+  if (table.cell(node).data().indexOf("01/01/1970") >= 0) {
+    table.cell(node).data("Not Scheduled");
+  }
+});
