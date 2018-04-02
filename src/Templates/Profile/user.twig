@@ -154,7 +154,8 @@
           <li>{{train.title}} on {{train.awarded_time|date("j/n/Y")}}
             <em>by <a href="{{train.awarded_by.url}}">{{train.awarded_by.value}}</a>
               {% if train.revoked_by %}
-                , revoked by <a href="{{train.revoked_by.url}}">{{train.revoked_by|json_encode}}</a>
+                , revoked on {{train.revoked_time|date("j/n/Y")}} by
+                <a href="{{train.revoked_by.url}}">{{train.revoked_by.fname}} {{train.revoked_by.sname}}</a>
               {% endif %}
             </em>
           </li>
