@@ -70,7 +70,7 @@ final class Config
      *
      * @var string
      */
-    public static $base_url = '//ury.org.uk/myury/';
+    public static $base_url = '//ury.org.uk/myradio/';
 
     /**
      * The base URL of the schedule - has some JS resources from MyRadio.
@@ -80,13 +80,20 @@ final class Config
     public static $schedule_url = '//ury.org.uk/schedule';
 
     /**
+     * The base URL of the radio home pages.
+     *
+     * @var string
+     */
+    public static $website_url = '//ury.org.uk/';
+
+    /**
      * Whether nice URL rewrites are enabled
-     * If true, then urls will be myury/[module]/[action]
-     * If false, then urls will be myury/?module=[module]&action=[action].
+     * If true, then urls will be myradio/[module]/[action]
+     * If false, then urls will be myradio/?module=[module]&action=[action].
      *
      * @var bool
      */
-    public static $rewrite_url = false;
+    public static $rewrite_url = true;
 
     /**
      * Whether to enable the Caching system
@@ -102,12 +109,12 @@ final class Config
      *
      * @var string
      */
-    public static $cache_provider = '\MyRadio\APCProvider';
+    public static $cache_provider = '\MyRadio\MemcachedProvider';
     /**
      * If using the Memcached CacheProvider, set a list of servers to use here.
      * e.g. [['localhost', 11211]] (optionally, a third option, a weighting).
      */
-    public static $cache_memcached_servers = [];
+    public static $cache_memcached_servers = [['localhost', 11211]];
     /**
      * How long ServiceAPI items should be cached for by default. Turn this down if you
      * get a lot of edits from other sources.
@@ -338,15 +345,9 @@ final class Config
      */
     public static $lastfm_api_secret;
 
-    /**
-     * The last.fm group specifically for the University of York. If using
-     * this aspect of the code you probably want to change this bit.
-     */
-    public static $lastfm_group = 'University+of+York';
-
      /**
-      * The last.fm nation of choice, at least for us. Again, you might wish to
-      * change this bit.
+      * The last.fm nation of choice, at least for us. If using
+      * this aspect of the code you probably want to change this bit.
       */
     public static $lastfm_geo = 'United+Kingdom';
 
@@ -442,11 +443,6 @@ final class Config
     public static $error_report_email = 'alerts.myradio';
 
     /**
-     * Raven (sentry) DSN.
-     */
-    public static $raven_dsn;
-
-    /**
      * The number of seconds an iTones Playlist lock is valid for before it expires.
      *
      * @var int
@@ -461,6 +457,11 @@ final class Config
     public static $system_user = 779;
 
     /**
+     * The URL for the SU page allowing people to pay and join the society.
+     */
+    public static $yusu_payment_url;
+
+    /**
      * This key enables automated access to the YUSU CMS information about URY's members.
      *
      * This is literally only useful if you are URY.
@@ -468,7 +469,7 @@ final class Config
     public static $yusu_api_key;
 
     /**
-     * The web address (up to the endpoint) where the YUSU API lives. It changes from time 
+     * The web address (up to the endpoint) where the YUSU API lives. It changes from time
      * to time so check that the API calls are actually succeeding now and then.
      */
     public static $yusu_api_website;
@@ -497,17 +498,6 @@ final class Config
     public static $api_url = '/api';
 
     /**
-     * A list of domains that will get a valid Access-Control-Allow-Origin.
-     *
-     * The default, an empty array, allows all access.
-     *
-     * @todo Is this a sane default?
-     *
-     * @var array
-     */
-    public static $api_allowed_domains = [];
-
-    /**
      * The URL prefix to URY's webcam.
      *
      * Must be absolute. With trailing /
@@ -515,15 +505,6 @@ final class Config
      * @var string
      */
     public static $webcam_prefix = '//ury.org.uk/webcam/';
-
-    /**
-     * BRA Server.
-     *
-     * @var string
-     */
-    public static $bra_uri = 'ury.org.uk/bra';
-    public static $bra_user = '';
-    public static $bra_pass = '';
 
     /**
      * Relative path to the API. Must have trailing /.
@@ -541,20 +522,6 @@ final class Config
      */
     public static $recaptcha_public_key = 'YOUR_API_KEY';
     public static $recaptcha_private_key = 'YOUR_PRIVATE_KEY';
-
-    /**
-     * Relative path to the SIS plugins.
-     *
-     * @var string
-     */
-    public static $sis_plugin_folder = 'Models/SIS/plugins';
-
-    /**
-     * Relative path to the SIS tabs.
-     *
-     * @var string
-     */
-    public static $sis_tab_folder = 'Models/SIS/tabs';
 
     /**
      * Array of tabs and plugins to be used by SIS. They will be loaded in order.
@@ -589,7 +556,7 @@ final class Config
      *
      * @var string
      */
-    public static $social_engineering_warning = 'Beware of Social Engineering, someone may be trying to disrupt your show.
+    public static $social_engineering_warning = 'Beware of Social Engineering, someone may be trying to spoil your show.
     Management and Computing will never send official communication through SIS.';
 
     /**
@@ -666,6 +633,11 @@ final class Config
      */
     public static $account_expiry_before = 49;
 
+    /**
+     * The email list to send Obit activation notifications to.
+     */
+    public static $obit_list_id = 36;
+
     /**** DAEMON CONFIGURATION ****/
     public static $d_BAPSSync_enabled = false;
     public static $d_EmailQueue_enabled = true;
@@ -713,18 +685,17 @@ EOT;
             'base_url' => self::$base_url,
             'rewrite_url' => self::$rewrite_url,
             'schedule_url' => self::$schedule_url,
+            'website_url' => self::$website_url,
             'timezone' => self::$timezone,
             'default_module' => self::$default_module,
             'default_action' => self::$default_action,
             'webcam_prefix' => self::$webcam_prefix,
-            'bra_uri' => self::$bra_uri,
-            'bra_user' => self::$bra_user,
-            'bra_pass' => self::$bra_pass,
             'short_name' => self::$short_name,
             'long_name' => self::$long_name,
             'founded' => self::$founded,
             'facebook' => self::$facebook,
             'audio_upload_max_size' => self::$audio_upload_max_size,
+            'payment_url' => self::$yusu_payment_url,
         ];
     }
 }

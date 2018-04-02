@@ -3,7 +3,7 @@
 namespace MyRadio;
 
 /**
- * https://github.com/php-fig/fig-standards/blob/908fa291434a29951868b5111889ea6d0b37481a/accepted/PSR-4-autoloader-examples.md.
+ * https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader-examples.md
  *
  * An example of a general-purpose implementation that includes the optional
  * functionality of allowing multiple base directories for a single namespace
@@ -72,9 +72,8 @@ class Autoloader
      * @param string $prefix   The namespace prefix.
      * @param string $base_dir A base directory for class files in the
      *                         namespace.
-     * @param bool   $prepend  If true, prepend the base directory to the stack instead of appending it; this causes it to be searched first rather than last. instead of appending it; this causes it to be searched first rather than last.
-     *                         instead of appending it; this causes it to be searched first rather
-     *                         than last.
+     * @param bool   $prepend  If true, prepend the base directory to the stack instead of appending it; this causes it
+     *                         to be searched first rather than last.
      */
     public function addNamespace($prefix, $base_dir, $prepend = false)
     {
@@ -82,7 +81,6 @@ class Autoloader
         $prefix = trim($prefix, '\\').'\\';
 
         // normalize the base directory with a trailing separator
-        $base_dir = rtrim($base_dir, '/').DIRECTORY_SEPARATOR;
         $base_dir = rtrim($base_dir, DIRECTORY_SEPARATOR).'/';
 
         // initialize the namespace prefix array
@@ -113,8 +111,7 @@ class Autoloader
 
         // work backwards through the namespace names of the fully-qualified
         // class name to find a mapped file name
-        while (false !== $pos = strrpos($prefix, '\\')) {
-
+        while (($pos = strrpos($prefix, '\\')) !== false) {
             // retain the trailing namespace separator in the prefix
             $prefix = substr($class, 0, $pos + 1);
 
@@ -154,13 +151,9 @@ class Autoloader
 
         // look through base directories for this namespace prefix
         foreach ($this->prefixes[$prefix] as $base_dir) {
-
             // replace the namespace prefix with the base directory,
             // replace namespace separators with directory separators
             // in the relative class name, append with .php
-            $file = $base_dir
-                  .str_replace('\\', DIRECTORY_SEPARATOR, $relative_class)
-                  .'.php';
             $file = $base_dir
                   .str_replace('\\', '/', $relative_class)
                   .'.php';

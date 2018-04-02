@@ -228,12 +228,11 @@ class MyRadio_TrackCorrection extends MyRadio_Track
 
     /**
      * Returns an array of key information, useful for Twig rendering and JSON requests.
-     *
-     * @todo Expand the information this returns
-     *
+     * @param array $mixins Mixins. Currently unused
      * @return array
+     * @todo Expand the information this returns
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'title' => $this->getTitle(),
@@ -256,13 +255,21 @@ class MyRadio_TrackCorrection extends MyRadio_Track
                 'display' => 'icon',
                 'value' => 'ok',
                 'title' => 'Approve Track Correction',
-                'url' => URLUtils::makeURL('Library', 'acceptTrackCorrection', ['correctionid' => $this->getCorrectionID()]),
+                'url' => URLUtils::makeURL(
+                    'Library',
+                    'acceptTrackCorrection',
+                    ['correctionid' => $this->getCorrectionID()]
+                ),
             ],
             'rejectlink' => [
                 'display' => 'icon',
                 'value' => 'trash',
                 'title' => 'Reject Track Correction',
-                'url' => URLUtils::makeURL('Library', 'rejectTrackCorrection', ['correctionid' => $this->getCorrectionID()]),
+                'url' => URLUtils::makeURL(
+                    'Library',
+                    'rejectTrackCorrection',
+                    ['correctionid' => $this->getCorrectionID()]
+                ),
             ],
         ];
     }

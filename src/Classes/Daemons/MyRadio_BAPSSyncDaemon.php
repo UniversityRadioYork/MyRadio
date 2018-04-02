@@ -46,9 +46,8 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $db->query('DELETE FROM public.baps_show WHERE broadcastdate=$1', [$special_date]);
         //Start with the Jukebox Playlists
         foreach (iTones_Playlist::getAlliTonesPlaylists() as $list) {
-            /*
-             * Create the playlist. '61' is system, which appears to be how BAPS chooses what shows are recommended listening
-             */
+            /* Create the playlist. '61' is system, which appears to be how
+             * BAPS chooses what shows are recommended listening */
             $r = $db->fetchColumn(
                 'INSERT INTO public.baps_show (userid, name, broadcastdate, viewable)
                 VALUES (61, $1, $2, true) RETURNING showid',
@@ -77,7 +76,10 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 
             foreach ($list->getTracks() as $track) {
                 ++$i;
-                $libraryitemid = NIPSWeb_BAPSUtils::getTrackDetails($track->getID(), $track->getAlbum()->getID())['libraryitemid'];
+                $libraryitemid = NIPSWeb_BAPSUtils::getTrackDetails(
+                    $track->getID(),
+                    $track->getAlbum()->getID()
+                )['libraryitemid'];
                 pg_query_params(
                     'INSERT INTO public.baps_item (listingid, name1, name2, position, libraryitemid)
                     VALUES ($1, $2, $3, $4, $5)',
@@ -89,9 +91,8 @@ class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 
         //And now the Aux Resource Playlists
         foreach (NIPSWeb_ManagedPlaylist::getAllManagedPlaylists() as $list) {
-            /*
-             * Create the playlist. '61' is system, which appears to be how BAPS chooses what shows are recommended listening
-             */
+            /* Create the playlist. '61' is system, which appears to be how
+             * BAPS chooses what shows are recommended listening */
             $r = pg_fetch_row(
                 pg_query_params(
                     'INSERT INTO public.baps_show (userid, name, broadcastdate, viewable)

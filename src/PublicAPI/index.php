@@ -1,6 +1,5 @@
 <?php
 
-use \ReflectionMethod;
 use \MyRadio\Config;
 
 $__start = -microtime(true);
@@ -11,17 +10,22 @@ $__start = -microtime(true);
  * @todo Management interfaces to configure keys and expose methods
  */
 // Configure MyRadio & Set API Settings
-define('SILENT_EXCEPTIONS', true);
+define('SILENT_EXCEPTIONS', false);
 define('DISABLE_SESSION', true);
 define('JSON_DEBUG', true);
 
 require_once __DIR__.'/../Controllers/root_cli.php';
 
+ob_start();
+ini_set('display_errors', 'On');
+error_reporting(E_ALL);
+
 /**
  * Handle API errors.
  */
-function api_error($code, $message = null, $previous = null)
+function api_error($code, $message = null)
 {
+    ob_end_clean();
     $messages = [
         400 => 'Bad Request',
         401 => 'Unauthorized',
@@ -34,9 +38,9 @@ function api_error($code, $message = null, $previous = null)
     header('Content-Type: application/json');
     echo json_encode(
         [
-        'status' => $code,
-        'time' => sprintf('%f', $GLOBALS['__start'] + microtime(true)),
-        'message' => $message,
+            'status' => $code,
+            'time' => sprintf('%f', $GLOBALS['__start'] + microtime(true)),
+            'message' => $message,
         ]
     );
     //Log an API failure so it appears in the status graphs.
@@ -51,9 +55,17 @@ function api_error($code, $message = null, $previous = null)
 function invokeArgsNamed(ReflectionMethod $refmethod, $object, array $args = [])
 {
     $parameters = $refmethod->getParameters();
-    foreach ($parameters as &$param) {
-        $name = $param->getName();
-        $param = isset($args[$name]) ? $args[$name] : $param->getDefaultValue();
+    if (sizeof($parameters) === 1 and sizeof($args) === 1) {
+        // Handle the case where the request body is the param, and also a shortcut...
+        $parameters = $args;
+    } else {
+        foreach ($parameters as &$param) {
+            $name = $param->getName();
+            if (!$param->isOptional() && !isset($args[$name])) {
+                api_error(400, $name . ' is required.');
+            }
+            $param = isset($args[$name]) ? $args[$name] : $param->getDefaultValue();
+        }
     }
     unset($param);
 
@@ -72,18 +84,6 @@ if (empty($class)) {
     //Someone's gone to the home page. Let's tell them to RTFM
     header('Location: rtfm');
     exit;
-}
-
-/*
- * Check and provide Access-Control-Allow-Origin if needed
- */
-if (isset($_SERVER['HTTP_ORIGIN'])) {
-    if (empty(Config::$api_allowed_domains) or
-        in_array($_SERVER['HTTP_ORIGIN'], Config::$api_allowed_domains)
-    ) {
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
-    }
 }
 
 //Go to the right version controller

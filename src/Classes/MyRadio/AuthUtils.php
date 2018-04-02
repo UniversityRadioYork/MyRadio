@@ -108,7 +108,7 @@ class AuthUtils
         if (isset($_SESSION['memberid'])) {
             return MyRadio_User::getInstance()->hasAuth($permission);
         } else {
-            return $permission === null;
+            return false;
         }
     }
 
@@ -167,7 +167,11 @@ class AuthUtils
         $authorised = false;
         foreach ($result as $permission) {
             //It only needs to match one
-            if ($permission === AUTH_NOLOGIN || (self::hasPermission($permission) && $_SESSION['auth_use_locked'] === false)) {
+            if ($permission === AUTH_NOLOGIN
+                || (self::hasPermission($permission)
+                    && isset($_SESSION['auth_use_locked'])
+                    && $_SESSION['auth_use_locked'] === false)
+            ) {
                 $authorised = true;
                 break;
             }
@@ -175,7 +179,8 @@ class AuthUtils
 
         if (!$authorised && $require) {
             //Requires login
-            if (!isset($_SESSION['memberid']) || $_SESSION['auth_use_locked'] !== false) {
+            if (!isset($_SESSION['memberid']) || (isset($_SESSION['auth_use_locked'])
+                                                  && $_SESSION['auth_use_locked'] !== false)) {
                 $is_ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
                                 && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
                             || empty($_SERVER['REMOTE_ADDR']);

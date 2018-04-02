@@ -3,7 +3,7 @@
  * Tracklist Track Finder for SIS.
  */
 use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\ServiceAPI\Artist;
+use \MyRadio\ServiceAPI\MyRadio_Artist;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 use \MyRadio\ServiceAPI\MyRadio_Album;
 
@@ -12,7 +12,7 @@ $album = $_GET['album'];
 $tname = $_GET['tname'];
 $box = $_GET['box'];
 
-$artistResult = Artist::findByOptions(
+$artistResult = MyRadio_Artist::findByOptions(
     [
         'title' => $tname,
         'artist' => $artist,

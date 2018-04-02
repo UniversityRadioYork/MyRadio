@@ -30,6 +30,14 @@ $longtext = [
     'welcome_email',
 ];
 
+/* Paths we might need to create */
+$path_cfgs = [
+    'webcam_archive_path',
+    'podcast_archive_path',
+    'public_media_path',
+    'audio_upload_tmp_dir',
+];
+
 $short_params = [];
 $long_params = [];
 $rConfig = new ReflectionClass('\MyRadio\Config');
@@ -52,6 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($_POST as $k => $v) {
         if (Config::$$k !== $v) {
             $config_overrides[$k] = $v;
+        }
+        if (array_key_exists($k, $path_cfgs) && (is_dir($v) || !mkdir($v, 0755, true))) {
+            die("Could not create '$k' directory at '$v'");
         }
     }
     header('Location: ?c=user');

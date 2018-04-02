@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ->render(
             [
             'tabledata' => $data,
-            'tablescript' => 'myury.core.actionPermissions',
+            'tablescript' => 'myradio.core.actionPermissions',
             ]
         );
 }

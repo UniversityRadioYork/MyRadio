@@ -95,6 +95,13 @@ class MyRadioForm
     private $title = null;
 
     /**
+     * The subtitle of the page (a smaller human readable description).
+     *
+     * @var string
+     */
+    private $subtitle = null;
+
+    /**
      * Logging output.
      *
      * @var array
@@ -128,6 +135,7 @@ class MyRadioForm
      *                       get - Whether to use the GET submission method - default false<br>
      *                       template - The Twig template to use for the form - default form.twig<br>
      *                       title - Form Title<br>
+     *                       subtitle - Form Subtitle<br>
      *                       captcha - Whether to require a captcha for this form - default false
      *
      * @throws MyRadioException Thrown on failure of a sanity check
@@ -183,6 +191,18 @@ class MyRadioForm
     }
 
     /**
+     * Update the subtitle of the form.
+     *
+     * @param string $subtitle
+     */
+    public function setSubtitle($subtitle)
+    {
+        $this->subtitle = $subtitle;
+
+        return $this;
+    }
+
+    /**
      * Adds a new MyRadioFormField to this MyRadioForm. You should initialise a new MyRadioFormField and pass the object
      * straight into the parameter of this method.
      *
@@ -209,7 +229,7 @@ class MyRadioForm
      * Allows you to update a MyRadioFormField contained within this object with a new value to be used when rendering.
      *
      * @param string $fieldname The unique name of the MyRadioFormField to edit
-     * @param mixed  $value     The new value of the MyRadioFormField. The variable type depends on the MyRadioFormField type
+     * @param mixed  $value     The new value of the MyRadioFormField. The type depends on the MyRadioFormField type
      *
      * @throws MyRadioException When trying to update a MyRadioFormField that is not attached to this MyRadioForm
      */
@@ -233,17 +253,17 @@ class MyRadioForm
      *
      * This methods sets all TYPE_FILE fields to not required - it is assumed that they are not needed for editing.
      *
-     * @param mixed $identifier Usually a primary key, something unique that the receiving controller will use to know which instance of an entry is being updated
-     *                          which instance of an entry is being updated
-     * @param array $values     A key=>value array of input names and their values. These will literally be sent to setFieldValue iteratively
-     *                          iteratively
+     * @param mixed $ident  Usually a primary key, something unique that the receiving controller will use to know
+     *                      which instance of an entry is being updated
+     * @param array $values A key=>value array of input names and their values. These will literally be sent to
+     *                      setFieldValue iteratively
      * @param string action If set, will replace the default Form action.
      *
      * Note: This method should only be called once in the object's lifetime
      */
-    public function editMode($identifier, $values, $action = null)
+    public function editMode($ident, $values, $action = null)
     {
-        $this->addField(new MyRadioFormField('myradiofrmedid', MyRadioFormField::TYPE_HIDDEN, ['value' => $identifier]));
+        $this->addField(new MyRadioFormField('myradiofrmedid', MyRadioFormField::TYPE_HIDDEN, ['value' => $ident]));
 
         foreach ($values as $k => $v) {
             $this->setFieldValue($k, $v);
@@ -281,13 +301,18 @@ class MyRadioForm
         if (!isset($_SESSION['myradio-xsrf-token'])) {
             $_SESSION['myradio-xsrf-token'] = bin2hex(openssl_random_pseudo_bytes(128));
         }
-        $this->addField(new MyRadioFormField('__xsrf-token', MyRadioFormField::TYPE_HIDDEN, ['value' => $_SESSION['myradio-xsrf-token']]));
+        $this->addField(new MyRadioFormField(
+            '__xsrf-token',
+            MyRadioFormField::TYPE_HIDDEN,
+            ['value' => $_SESSION['myradio-xsrf-token']]
+        ));
 
         /*
          * If we need to do a captcha, load the requirements
          */
         if ($this->captcha) {
-            $captcha = '<div class="g-recaptcha" data-sitekey="'.Config::$recaptcha_public_key.'"></div><script src="https://www.google.com/recaptcha/api.js"></script>';
+            $captcha = '<div class="g-recaptcha" data-sitekey="'.Config::$recaptcha_public_key.'"></div>'
+                .'<script src="https://www.google.com/recaptcha/api.js"></script>';
         } else {
             $captcha = null;
         }
@@ -314,6 +339,7 @@ class MyRadioForm
                 ->addVariable('frm_action', URLUtils::makeURL($this->module, $this->action))
                 ->addVariable('frm_method', $this->get ? 'get' : 'post')
                 ->addVariable('title', isset($this->title) ? $this->title : $this->name)
+                ->addVariable('subtitle', isset($this->subtitle) ? $this->subtitle : '')
                 ->addVariable('serviceName', isset($this->module) ? $this->module : $this->name)
                 ->addVariable('frm_fields', $fields)
                 ->addVariable('redact', $redact)
@@ -378,7 +404,9 @@ class MyRadioForm
             $return['id'] = is_numeric($tempID) ? (int) $tempID : $tempID;
         }
         //XSRF check
-        if ($_REQUEST[$this->getPrefix().'__xsrf-token'] !== $_SESSION['myradio-xsrf-token']) {
+        if (!isset($_SESSION['myradio-xsrf-token'])
+            || $_REQUEST[$this->getPrefix().'__xsrf-token'] !== $_SESSION['myradio-xsrf-token']
+        ) {
             throw new MyRadioException('Session expired (Invalid token). Please refresh the page.', 401);
         }
 

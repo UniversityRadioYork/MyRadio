@@ -7,6 +7,7 @@ namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
 use MyRadio\Database;
+use MyRadio\MyRadioEmail;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\iTones\iTones_Utils;
@@ -177,13 +178,13 @@ class MyRadio_Selector
         $status = self::getStatusAtTime();
 
         if ($studio == $status['studio']) {
-            throw new MyRadioException('Source '.$studio.' is already selected');
+            throw new MyRadioException('Source '.$studio.' is already selected.');
         }
         if ((($studio == 1) && (!$status['s1power']))
             || (($studio == 2) && (!$status['s2power']))
             || (($studio == 4) && (!$status['s4power']))
         ) {
-            throw new MyRadioException('Source '.$studio.' is not powered');
+            throw new MyRadioException('Source '.$studio.' is not powered.');
         }
         if ($status['lock'] != 0) {
             throw new MyRadioException('Selector Locked');
@@ -194,15 +195,12 @@ class MyRadio_Selector
         if ($response === 'FLK') {
             throw new MyRadioException('Selector Locked');
         } elseif ($response === 'ACK') {
-            return [
-            'studio' => $studio,
-            'lock' => 0,
-            'selectedfrom' => 1,
-            's1power' => self::getStudio1PowerAtTime($time),
-            's2power' => self::getStudio2PowerAtTime($time),
-            's4power' => (self::remoteStreams()['s1']) ? true : false,
-            'lastmod' => time(),
-            ];
+            // DB may not have updated from the physical selector, so force it.
+            $statusUpdated = self::getStatusAtTime();
+            $statusUpdated['selectedfrom'] = 1;
+            $statusUpdated['studio'] = $studio;
+            $statusUpdated['lastmod'] = time();
+            return $statusUpdated;
         }
     }
 
@@ -395,7 +393,9 @@ class MyRadio_Selector
             'selectedfrom' => self::getSetbyAtTime($time),
             's1power' => self::getStudio1PowerAtTime($time),
             's2power' => self::getStudio2PowerAtTime($time),
-            's4power' => (isset($status['s1'])) ? $status['s1'] : false,
+            's3power' => true, //Jukebox
+            's4power' => (isset($status['s1'])) ? $status['s1'] : false, //OB
+            's8power' => true, //Off Air
             'lastmod' => self::getLastModAtTime($time),
         ];
     }
@@ -435,10 +435,11 @@ class MyRadio_Selector
         }
 
         //Lock the selector
-        self::lock();
+        self::setLock();
 
         //Email people
-        MyRadioEmail::sendEmailToComputing(
+        MyRadioEmail::sendEmailToList(
+            MyRadio_List::getInstance(Config::$obit_list_id),
             'OBIT INITIATED',
             'Urgent: Initiated Obit procedure for station as requested by '
             .MyRadio_User::getInstance()->getName().' - '

@@ -165,7 +165,7 @@ class MyRadio_ChartRelease extends ServiceAPI
      */
     public static function getInstance($chart_release_id = -1, $chart_type = null)
     {
-        self::__wakeup();
+        self::wakeup();
 
         if (!is_numeric($chart_release_id)) {
             throw new MyRadioException(
@@ -441,10 +441,10 @@ class MyRadio_ChartRelease extends ServiceAPI
 
     /**
      * Converts this chart release to a table data source.
-     *
+     * @param array $mixins Mixins.
      * @return array The object as a data source.
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'type' => $this->getChartType()->getDescription(),

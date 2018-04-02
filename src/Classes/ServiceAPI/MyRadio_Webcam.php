@@ -71,21 +71,33 @@ class MyRadio_Webcam extends ServiceAPI
             $response = file_get_contents(Config::$webcam_current_url);
             $response = json_decode($response, true);
 
-            switch ($response['room']) {
-                case 1:
+            switch ($response['camera']) {
+                case 'studio1':
                     $location = 'Studio 1';
                     break;
-                case 2:
+                case 'cam5':
+                    $location = 'Studio 1 Secondary';
+                    break;
+                case 'studio2':
                     $location = 'Studio 2';
                     break;
-                case 3:
+                case 'cam1':
                     $location = 'Jukebox';
                     break;
-                case 4:
-                    $location = 'OB';
+                case 'cam2':
+                    $location = 'Outside Broadcast';
+                    break;
+                case 'office':
+                    $location = 'Office';
+                    break;
+                case 'hall':
+                    $location = 'Hall';
+                    break;
+                case 'offair':
+                    $location = 'Off Air';
                     break;
                 default:
-                    $location = 'Unknown';
+                    $location = 'Unknown Source';
                     break;
             }
 
@@ -108,18 +120,14 @@ class MyRadio_Webcam extends ServiceAPI
      */
     public static function setWebcam($id)
     {
-        if (($id == 'studio1')
-            || ($id == 'studio2')
-            || ($id == 'cam1')
-            || ($id == 'cam2')
-            || ($id == 'cam5')
-        ) {
+        $validCams = ['studio1', 'studio2', 'cam1', 'cam2', 'cam5', 'hall', 'office'];
+        if (in_array($id, $validCams)) {
             $ch = \curl_init(Config::$webcam_set_url.$id);
             \curl_setopt($ch, CURLOPT_POST, true);
             \curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
             \curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
-            $response = \curl_exec($ch);
+            \curl_exec($ch); // ignore response
         }
     }
 }

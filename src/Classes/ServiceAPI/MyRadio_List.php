@@ -98,7 +98,10 @@ class MyRadio_List extends ServiceAPI
 
         if ($this->optin) {
             //Get subscribed members
-            $this->members = self::$db->fetchColumn('SELECT memberid FROM mail_subscription WHERE listid=$1', [$listid]);
+            $this->members = self::$db->fetchColumn(
+                'SELECT memberid FROM mail_subscription WHERE listid=$1',
+                [$listid]
+            );
         } else {
             //Get members joined with opted-out members
             $this->members = self::$db->fetchColumn(
@@ -354,14 +357,18 @@ class MyRadio_List extends ServiceAPI
     {
         $mixin_funcs = [
             'actions' => function (&$data) {
-                $data['optIn'] = ((!$data['subscribed'] && ($this->optin || $this->hasOptedOutOfAuto(MyRadio_User::getCurrentOrSystemUser()->getID()))) ?
-                    [
+                if (!$data['subscribed']
+                    && ($this->optin || $this->hasOptedOutOfAuto(MyRadio_User::getCurrentOrSystemUser()->getID()))
+                ) {
+                    $data['optin'] = [
                         'display' => 'icon',
                         'value' => 'plus',
                         'title' => 'Subscribe to this mailing list',
                         'url' => URLUtils::makeURL('Mail', 'optin', ['list' => $this->getID()]),
-                    ] : null
-                );
+                    ];
+                } else {
+                    $data['optin'] = null;
+                }
                 $data['optOut'] = ($data['subscribed'] ? [
                     'display' => 'icon',
                     'value' => 'minus',

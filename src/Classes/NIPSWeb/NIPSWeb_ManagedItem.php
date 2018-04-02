@@ -1,7 +1,7 @@
 <?php
 /**
- * This file provides the NIPSWeb_ManagedItem class for MyRadio - these are Jingles, Beds, Adverts and others of a similar
- * ilk.
+ * This file provides the NIPSWeb_ManagedItem class for MyRadio - these are Jingles, Beds, Adverts and others of a
+ * similar ilk.
  */
 namespace MyRadio\NIPSWeb;
 
@@ -36,10 +36,9 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Initiates the ManagedItem variables.
      *
-     * @param int                     $resid       The ID of the managed resource to initialise
-     * @param NIPSWeb_ManagedPlaylist $playlistref If the playlist is requesting this item, then pass the playlist object
+     * @param int $resid The ID of the managed resource to initialise
+     * @param NIPSWeb_ManagedPlaylist $playlistref If the playlist is requesting this item, then pass the playlist obj
      *
-     * @todo Length, BPM
      * @todo Seperate Managed Items and Managed User Items. The way they were implemented was a horrible hack, for which
      * I am to blame. I should go to hell for it, seriously - Lloyd
      */
@@ -50,17 +49,19 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
         $result = self::$db->fetchOne(
             'SELECT manageditemid, title, length, bpm, NULL AS folder, memberid, expirydate, managedplaylistid
             FROM bapsplanner.managed_items WHERE manageditemid=$1
-            UNION SELECT manageditemid, title, length, bpm, managedplaylistid AS folder, NULL AS memberid, NULL AS expirydate,
-            NULL as managedplaylistid
+            UNION
+            SELECT manageditemid, title, length, bpm, managedplaylistid AS folder,
+                NULL AS memberid, NULL AS expirydate, NULL as managedplaylistid
             FROM bapsplanner.managed_user_items WHERE manageditemid=$1
             LIMIT 1',
             [$resid]
         );
 
         if (empty($result)) {
-            throw new MyRadioException('The specified NIPSWeb Managed Item or Managed User Item does not seem to exist', 404);
-
-            return;
+            throw new MyRadioException(
+                'The specified NIPSWeb Managed Item or Managed User Item does not seem to exist',
+                404
+            );
         }
 
         $this->managed_playlist = empty(
@@ -71,7 +72,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
                 );
         $this->folder = $result['folder'];
         $this->title = $result['title'];
-        $this->length = strtotime('1970-01-01 '.$result['length']);
+        $this->length = strtotime('1970-01-01 '.$result['length']. ' UTC');
         $this->bpm = (int) $result['bpm'];
         $this->expirydate = strtotime($result['expirydate']);
         $this->member = empty($result['memberid']) ? null : MyRadio_User::getInstance($result['memberid']);
@@ -100,9 +101,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Get the length of the ManagedItem, in seconds.
      *
-     * @todo Not Implemented as Length not stored in DB
-     *
-     * @return int
+     * @return int Length of track in seconds
      */
     public function getLength()
     {
@@ -118,12 +117,15 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public function getPath($extension = 'mp3')
     {
-        return Config::$music_central_db_path.'/'.($this->managed_playlist ? $this->managed_playlist->getFolder() : $this->folder).'/'.$this->getID().'.'.$extension;
+        return Config::$music_central_db_path.'/'
+            .($this->managed_playlist ? $this->managed_playlist->getFolder() : $this->folder)
+            .'/'.$this->getID().'.'.$extension;
     }
 
     public function getFolder()
     {
-        $dir = Config::$music_central_db_path.'/'.($this->managed_playlist ? $this->managed_playlist->getFolder() : $this->folder);
+        $dir = Config::$music_central_db_path.'/'
+            .($this->managed_playlist ? $this->managed_playlist->getFolder() : $this->folder);
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0777, true)) {
                 return false;
@@ -135,19 +137,18 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Returns an array of key information, useful for Twig rendering and JSON requests.
-     *
-     * @todo Expand the information this returns
-     *
+     * @param array $mixins Mixins. Currently unused
      * @return array
+     * @todo Expand the information this returns
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'type' => 'aux', //Legacy NIPSWeb Views
             'summary' => $this->getTitle(), //Again, freaking NIPSWeb
             'title' => $this->getTitle(),
             'managedid' => $this->getID(),
-            'length' => CoreUtils::happyTime($this->getLength() > 0 ? $this->getLength() : 0, true, false),
+            'length' => CoreUtils::intToTime($this->getLength() > 0 ? $this->getLength() : 0),
             'trackid' => $this->getID(),
             'recordid' => 'ManagedDB', //Legacy NIPSWeb Views
             'auxid' => 'managed:'.$this->getID(), //Legacy NIPSWeb Views
@@ -156,14 +157,14 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
 
     public static function cacheItem($tmp_path)
     {
-        if (!isset($_SESSION['myury_nipsweb_file_cache_counter'])) {
-            $_SESSION['myury_nipsweb_file_cache_counter'] = 0;
+        if (!isset($_SESSION['myradio_nipsweb_file_cache_counter'])) {
+            $_SESSION['myradio_nipsweb_file_cache_counter'] = 0;
         }
         if (!is_dir(Config::$audio_upload_tmp_dir)) {
             mkdir(Config::$audio_upload_tmp_dir);
         }
 
-        $filename = session_id().'-'.++$_SESSION['myury_nipsweb_file_cache_counter'].'.mp3';
+        $filename = session_id().'-'.++$_SESSION['myradio_nipsweb_file_cache_counter'].'.mp3';
 
         move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir.'/'.$filename);
 
@@ -178,10 +179,20 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
 
         // File quality checks
         if ($fileInfo['audio']['bitrate'] < 192000) {
-            return ['status' => 'FAIL', 'error' => 'Bitrate is below 192kbps.', 'fileid' => $filename, 'bitrate' => $fileInfo['audio']['bitrate']];
+            return [
+                'status' => 'FAIL',
+                'error' => 'Bitrate is below 192kbps.',
+                'fileid' => $filename,
+                'bitrate' => $fileInfo['audio']['bitrate']
+            ];
         }
         if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
-            return ['status' => 'FAIL', 'error' => 'Item is not stereo.', 'fileid' => $filename, 'channelmode' => $fileInfo['audio']['channelmode']];
+            return [
+                'status' => 'FAIL',
+                'error' => 'Item is not stereo.',
+                'fileid' => $filename,
+                'channelmode' => $fileInfo['audio']['channelmode']
+            ];
         }
 
         return [
@@ -199,10 +210,13 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
         ];
 
         $item = self::create($options);
-
         if (!$item) {
             //Database transaction failed.
             return ['status' => 'FAIL', 'error' => 'A database kerfuffle occured.', 'fileid' => $_REQUEST['fileid']];
+        }
+        if (!$item->getFolder()) {
+            //Creating folders failed.
+            return ['status' => 'FAIL', 'error' => 'Folders could not be created.', 'fileid' => $_REQUEST['fileid']];
         }
 
         /*
@@ -212,31 +226,12 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
          * 3- Original file for potential future conversions
          */
         $tmpfile = Config::$audio_upload_tmp_dir.'/'.$tmpid;
-
-        if (!$item->getFolder()) {
-            //Creating folders failed.
-            return ['status' => 'FAIL', 'error' => 'Folders could not be created.', 'fileid' => $_REQUEST['fileid']];
-        }
         $dbfile = $item->getFolder().'/'.$item->getID();
 
-        //Convert it with ffmpeg/avconv
-        if (`which ffmpeg`) {
-            $bin = 'ffmpeg';
-        } elseif (`which avconv`) {
-            $bin = 'avconv';
-        } else {
-            throw new MyRadioException('Could not find ffmpeg or avconv.', 500);
-        }
-        // BAPS needs stdout > to file
-        shell_exec("nice -n 15 $bin -i '$tmpfile' -ab 192k -f mp3 '{$dbfile}.mp3'");
-        shell_exec("nice -n 15 $bin -i '$tmpfile' -acodec libvorbis -ab 192k '{$dbfile}.ogg'");
-        rename($tmpfile, $dbfile.'.'.$_SESSION['uploadInfo'][$tmpid]['fileformat'].'.orig');
-
-        if (!file_exists($dbfile.'.mp3') || !file_exists($dbfile.'.ogg')) {
-            //Conversion failed!
-            return ['status' => 'FAIL', 'error' => 'Conversion with $bin failed.', 'fileid' => $_REQUEST['fileid']];
-        } elseif (!file_exists($dbfile.'.'.$_SESSION['uploadInfo'][$tmpid]['fileformat'].'.orig')) {
-            return ['status' => 'FAIL', 'error' => 'Could not move file to library.', 'fileid' => $_REQUEST['fileid']];
+        try {
+            CoreUtils::encodeTrack($tmpfile, $dbfile);
+        } catch (MyRadioException $e) {
+            return ['status' => 'FAIL', 'error' => $e->getMessage(), 'fileid' => $_REQUEST['fileid']];
         }
 
         NIPSWeb_BAPSUtils::linkCentralLists($item);
@@ -287,7 +282,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
                 [
                     $path,
                     trim($options['title']),
-                    CoreUtils::intToTime($options['duration']),
+                    CoreUtils::intToTime(floor($options['duration'])),
                     $options['bpm'],
                 ]
             );
@@ -308,7 +303,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
                 [
                     $playlistid,
                     trim($options['title']),
-                    CoreUtils::intToTime($options['duration']),
+                    CoreUtils::intToTime(floor($options['duration'])),
                     $options['bpm'],
                     $options['expires'],
                     $_SESSION['memberid'],

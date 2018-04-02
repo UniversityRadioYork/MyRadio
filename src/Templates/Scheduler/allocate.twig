@@ -1,13 +1,13 @@
 {% extends 'form.twig' %}
 
 {% block stripecontent %}
-<p>You are allocating Timeslots for a Season of <strong>{{frm_custom.name}}</strong> in the current term.</p>
+<p>You are allocating Timeslots for a Season of <strong>{{frm_custom.title}}</strong> in the current term.</p>
 <div class="well">
 {{frm_custom.description|raw}}
 </div>
 <ul id="allocate_credits">
 {% for credit in frm_custom.credits %}
-<li>{{credit.type_name}}: {{credit.name}}</li>
+<li>{{credit.type_name}}: {{credit.User.fname}} {{credit.User.sname}}</li>
 {% endfor %}
 </ul>
 {{ parent() }}

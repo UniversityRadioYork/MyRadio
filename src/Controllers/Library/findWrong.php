@@ -39,7 +39,7 @@ foreach (Config::$music_central_db_exts as $ext) {
 }
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-    ->addVariable('tablescript', 'myury.datatable.default')
+    ->addVariable('tablescript', 'myradio.datatable.default')
     ->addVariable('title', 'Misplaced Tracks')
     ->addVariable('tabledata', CoreUtils::dataSourceParser($wrong))
     ->addInfo(

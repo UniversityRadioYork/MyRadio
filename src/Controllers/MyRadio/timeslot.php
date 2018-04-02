@@ -28,7 +28,7 @@ function setupTimeslot($timeslot)
         $_SESSION['timeslotid'] = $timeslot->getID();
         $_SESSION['timeslotname'] = CoreUtils::happyTime($timeslot->getStartTime());
         //Handle sign-ins
-        foreach ($_REQUEST['signin'] as $memberid) {
+        foreach (($_REQUEST['signin'] ?? []) as $memberid) {
             $timeslot->signIn(MyRadio_User::getInstance($memberid));
         }
         header('Location: '.($_REQUEST['next'] !== '' ? $_REQUEST['next'] : Config::$base_url));

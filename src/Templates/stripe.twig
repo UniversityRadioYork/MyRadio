@@ -1,7 +1,7 @@
 {% extends 'base.twig' %}
 {% block content %}
 <header class="page-header">
-  <h1>{{ title }}</h1>
+  <h1>{{ title }}{% if subtitle %} <small>{{subtitle}}</small>{% endif %}</h1>
 </header>
 <div id="grid" class="transBG clearfix">
   <div id="content-body" class="clearfix">

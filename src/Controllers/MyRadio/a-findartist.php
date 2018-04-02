@@ -7,12 +7,12 @@
  */
 use \MyRadio\Config;
 use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\ServiceAPI\Artist;
+use \MyRadio\ServiceAPI\MyRadio_Artist;
 
 if (!isset($_REQUEST['term'])) {
     $data = [];
 } else {
-    $data = Artist::findByName(
+    $data = MyRadio_Artist::findByName(
         $_REQUEST['term'],
         isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default
     );

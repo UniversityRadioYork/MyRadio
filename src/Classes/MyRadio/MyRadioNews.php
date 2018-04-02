@@ -113,7 +113,10 @@ class MyRadioNews
         $db = Database::getInstance();
 
         try {
-            $db->query('INSERT INTO public.member_news_feed (newsentryid, memberid) VALUES ($1, $2)', [$newsentryid, $user->getID()]);
+            $db->query(
+                'INSERT INTO public.member_news_feed (newsentryid, memberid) VALUES ($1, $2)',
+                [$newsentryid, $user->getID()]
+            );
         } catch (MyRadioException $e) {
         }; //Can sometimes get duplicate key errors
     }

@@ -13,6 +13,7 @@ use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_List;
 
 define('SILENT_EXCEPTIONS', true);
+
 ini_set('log_errors', 1);
 ini_set('error_log', '/tmp/php-mailparser-error.log');
 ini_set('display_errors', 'Off');
@@ -20,11 +21,9 @@ ini_set('display_errors', 'Off');
 require_once __DIR__.'/root_cli.php';
 ini_set('display_errors', 'Off');
 
-set_exception_handler(
-    function () {
-        exit(0);
-    }
-); //We do not want bounce messages from this!
+set_exception_handler(function () {
+    exit(0);
+}); //We do not want bounce messages from this!
 
 //Read in email
 $fd = fopen('php://stdin', 'r');

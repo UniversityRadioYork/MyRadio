@@ -9,6 +9,7 @@ namespace MyRadio\SIS;
 
 use MyRadio\ServiceAPI\ServiceAPI;
 use MyRadio\ServiceAPI\MyRadio_TracklistItem;
+use MyRadio\ServiceAPI\MyRadio_Track;
 
 /**
  * This class has helper functions for SIS tracklisting.

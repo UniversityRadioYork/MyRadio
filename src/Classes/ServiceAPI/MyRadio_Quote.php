@@ -141,7 +141,7 @@ class MyRadio_Quote extends ServiceAPI
      */
     public static function getInstance($quote_id = -1)
     {
-        self::__wakeup();
+        self::wakeup();
 
         if (!is_numeric($quote_id)) {
             throw new MyRadioException(
@@ -162,7 +162,7 @@ class MyRadio_Quote extends ServiceAPI
      *
      * @return array An array of all active quotes.
      */
-    public function getAll()
+    public static function getAll()
     {
         $quote_ids = self::$db->fetchColumn(self::GET_ALL_SQL, []);
 
@@ -209,7 +209,7 @@ class MyRadio_Quote extends ServiceAPI
      *
      * @return nothing.
      */
-    public function create($data)
+    public static function create($data)
     {
         self::$db->query(
             self::INSERT_SQL,
@@ -253,7 +253,7 @@ class MyRadio_Quote extends ServiceAPI
     /**
      * Sets this quote's date.
      *
-     * @param int|string $date The date, as a UNIX timestamp or date string.
+     * @param int $date The date, as a UNIX timestamp.
      *
      * @return MyRadio_Quote This object, for method chaining.
      */
@@ -336,10 +336,10 @@ class MyRadio_Quote extends ServiceAPI
 
     /**
      * Converts this quote to a table data source.
-     *
+     * @param array $mixins Mixins. Currently unused.
      * @return array The object as a data source.
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'id' => $this->getID(),

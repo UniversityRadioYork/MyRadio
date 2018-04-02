@@ -16,7 +16,7 @@ use \MyRadio\MyRadio\MyRadioFormField;
  */
 
 if (isset($_SESSION['memberid'])) {
-    URLUtils::redirect(Config::$base_url);
+    isset($_GET["next"]) ? URLUtils::redirectURI($_GET["next"]) : URLUtils::redirect(Config::$default_module);
 } else {
     $form = (
         new MyRadioForm(
@@ -32,7 +32,6 @@ if (isset($_SESSION['memberid'])) {
             'user',
             MyRadioFormField::TYPE_TEXT,
             [
-                'explanation' => '',
                 'label' => 'Username:',
                 'options' => [
                     'placeholder' => 'abc123',
@@ -65,6 +64,7 @@ if (isset($_SESSION['memberid'])) {
         $data = $form->readValues();
 
         $raw_uname = str_replace('@'.Config::$eduroam_domain, '', $data['user']);
+        $raw_uname = strtolower($raw_uname);
 
         $authenticators = [];
         foreach (Config::$authenticators as $i) {
@@ -151,13 +151,19 @@ if (isset($_SESSION['memberid'])) {
                 $options[] = $option;
             }
             $twig->addVariable('methods', $options)
-                ->addVariable('next', isset($data['next']) ? $data['next'] : URLUtils::makeURL(Config::$default_module))
+                ->addVariable(
+                    'next',
+                    isset($data['next']) ? $data['next'] : URLUtils::makeURL(Config::$default_module)
+                )
                 ->render();
         } elseif ($status === 'change') {
             URLUtils::redirect('MyRadio', 'pwChange');
         } elseif ($status !== 'success') {
-            $form->setFieldValue('next', isset($data['next']) ? $data['next'] : URLUtils::makeURL(Config::$default_module))
-                ->render(['error' => true]);
+            $form->setFieldValue(
+                'next',
+                isset($data['next']) ? $data['next'] : URLUtils::makeURL(Config::$default_module)
+            )
+            ->render(['error' => true]);
         } else {
             if (isset($data['next'])) {
                 header('Location: '.$data['next']);

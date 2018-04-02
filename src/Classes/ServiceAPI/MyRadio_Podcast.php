@@ -44,6 +44,13 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     private $submitted;
 
     /**
+     * If the Podcast has been suspended.
+     *
+     * @var bool
+     */
+    private $suspended;
+
+    /**
      * The ID of the User that uploaded the Podcast.
      *
      * @var int
@@ -81,40 +88,40 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $this->podcast_id = (int) $podcast_id;
 
         $result = self::$db->fetchOne(
-            'SELECT file, memberid, approvedid, submitted, show_id, (
-                SELECT array(
+            'SELECT file, memberid, approvedid, submitted, suspended, show_id, (
+                SELECT array_to_json(array(
                     SELECT metadata_key_id FROM uryplayer.podcast_metadata
                     WHERE podcast_id=$1 AND effective_from <= NOW()
                     ORDER BY effective_from, podcast_metadata_id
-                )
+                ))
             ) AS metadata_types, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT metadata_value FROM uryplayer.podcast_metadata
                     WHERE podcast_id=$1 AND effective_from <= NOW()
                     ORDER BY effective_from, podcast_metadata_id
-                )
+                ))
             ) AS metadata, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT metadata_value FROM uryplayer.podcast_image_metadata
                     WHERE podcast_id=$1 AND effective_from <= NOW()
                     ORDER BY effective_from, podcast_image_metadata_id
-                )
+                ))
             ) AS image_metadata, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT credit_type_id FROM uryplayer.podcast_credit
                     WHERE podcast_id=$1 AND effective_from <= NOW()
                     AND (effective_to IS NULL OR effective_to >= NOW())
                     AND approvedid IS NOT NULL
                     ORDER BY podcast_credit_id
-                )
+                ))
             ) AS credit_types, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT creditid FROM uryplayer.podcast_credit
                     WHERE podcast_id=$1 AND effective_from <= NOW()
                     AND (effective_to IS NULL OR effective_to >= NOW())
                     AND approvedid IS NOT NULL
                     ORDER BY podcast_credit_id
-                )
+                ))
             ) AS credits
             FROM uryplayer.podcast
             LEFT JOIN schedule.show_podcast_link USING (podcast_id)
@@ -130,11 +137,12 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $this->memberid = (int) $result['memberid'];
         $this->approvedid = (int) $result['approvedid'];
         $this->submitted = strtotime($result['submitted']);
+        $this->suspended = ($result['suspended'] === 't') ? true : false;
         $this->show_id = (int) $result['show_id'];
 
         //Deal with the Credits arrays
-        $credit_types = self::$db->decodeArray($result['credit_types']);
-        $credits = self::$db->decodeArray($result['credits']);
+        $credit_types = json_decode($result['credit_types']);
+        $credits = json_decode($result['credits']);
 
         for ($i = 0; $i < sizeof($credits); ++$i) {
             if (empty($credits[$i])) {
@@ -148,8 +156,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         }
 
         //Deal with the Metadata arrays
-        $metadata_types = self::$db->decodeArray($result['metadata_types']);
-        $metadata = self::$db->decodeArray($result['metadata']);
+        $metadata_types = json_decode($result['metadata_types']);
+        $metadata = json_decode($result['metadata']);
 
         for ($i = 0; $i < sizeof($metadata); ++$i) {
             if (self::isMetadataMultiple($metadata_types[$i])) {
@@ -318,7 +326,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Existing Cover File',
-                    'explanation' => 'To use an existing cover file, copy the Existing Cover File of a podcast with that file into here.',
+                    'explanation' => 'To use an existing cover file, '
+                                     . 'copy the Existing Cover File of a podcast with that file into here.',
                     'required' => false,
                 ]
             )
@@ -384,8 +393,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      * @param array        $tags        An array of String tags
      * @param string       $file        The local filesystem path to the Podcast file
      * @param MyRadio_Show $show        The show to attach the Podcast to
-     * @param array        $credits     Credit data. Format compatible with a credit TABULARSET (see Scheduler) TABULARSET (see Scheduler)
-     *                                  TABULARSET (see Scheduler)
+     * @param array        $credits     Credit data. Format compatible with a credit TABULARSET (see Scheduler)
      */
     public static function create(
         $title,
@@ -489,13 +497,25 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      */
     public function getStatus()
     {
-        if (empty($this->submitted)) {
+        if ($this->suspended) {
+            return 'Suspended';
+        } elseif (empty($this->submitted)) {
             return 'Processing...';
         } elseif ($this->submitted > time()) {
             return 'Scheduled for publication ('.CoreUtils::happyTime($this->submitted).')';
         } else {
             return 'Published';
         }
+    }
+
+    /**
+     * Returns if the Podcast is suspended.
+     *
+     * @return bool
+     */
+    public function isSuspended()
+    {
+        return $this->suspended;
     }
 
     /**
@@ -519,7 +539,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     }
 
     /**
-     * Get the value that *should* be stored in uryplayer.podcast.file.
+     * Get the value that *should* be stored in uryplayer.podcast.file when a new podcast is created.
      *
      * @return string
      */
@@ -538,6 +558,11 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         return Config::$public_media_uri.'/'.$this->file;
     }
 
+    /**
+     * Get the time the podcast is due to be, or was published.
+     *
+     * @return int
+     */
     public function getSubmitted()
     {
         return $this->submitted;
@@ -551,6 +576,23 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     public function getWebpage()
     {
         return '/uryplayer/podcasts/'.$this->getID();
+    }
+
+    /**
+     * Set the suspended status of this podcast.
+     *
+     * @param bool $is_suspended
+     */
+    public function setSuspended(bool $is_suspended)
+    {
+        $this->suspended = $is_suspended;
+        self::$db->query(
+            'UPDATE uryplayer.podcast SET suspended=$1
+            WHERE podcast_id=$2',
+            [$this->isSuspended(), $this->getID()]
+        );
+
+        return $this;
     }
 
     /**
@@ -582,19 +624,32 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     /**
      * Get data in array format.
-     *
+     * @param array $mixins Mixins.
+     * @mixin show Provides data about the show this podcast is from
+     * @mixin credits Returns the names of the credited people, as a comma-separated list
      * @param bool $full If true, returns more data.
      *
      * @return array
      */
-    public function toDataSource($full = true)
+    public function toDataSource($mixins = [])
     {
+        $mixin_funcs = [
+            'show' => function (&$data) {
+                $data['show'] = $this->getShow() ?
+                    $this->getShow()->toDataSource($mixins) : null;
+            },
+            'credits' => function (&$data) {
+                $data['credits'] = implode(', ', $this->getCreditsNames(false));
+            },
+        ];
+
         $data = [
             'podcast_id' => $this->getID(),
             'title' => $this->getMeta('title'),
             'description' => $this->getMeta('description'),
             'status' => $this->getStatus(),
             'time' => $this->getSubmitted(),
+            'uri' => $this->getURI(),
             'photo' => Config::$public_media_uri.'/'.$this->getCover(),
             'editlink' => [
                 'display' => 'icon',
@@ -610,12 +665,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             ],
         ];
 
-        if ($full) {
-            $data['credits'] = implode(', ', $this->getCreditsNames(false));
-            $data['show'] = $this->getShow() ?
-                $this->getShow()->toDataSource(false) : null;
-        }
-
+        $this->addMixins($data, $mixins, $mixin_funcs);
         return $data;
     }
 
@@ -688,8 +738,14 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             $string_keys = ['title', 'description', 'tag'];
         }
 
-        $r = parent::searchMeta($query, $string_keys, $effective_from, $effective_to, 'uryplayer.podcast_metadata', 'podcast_id');
-
+        $r = parent::searchMetaBase(
+            $query,
+            $string_keys,
+            $effective_from,
+            $effective_to,
+            'uryplayer.podcast_metadata',
+            'podcast_id'
+        );
         return self::resultSetToObjArray($r);
     }
 
@@ -703,17 +759,21 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      * This will *not* unset is_multiple values that are not in the new set.
      *
      * @param string $string_key     The metadata key
-     * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance for value in the array. for value in the array.
+     * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance
      *                               for value in the array.
      * @param int    $effective_from UTC Time the metavalue is effective from. Default now.
      * @param int    $effective_to   UTC Time the metadata value is effective to. Default NULL (does not expire).
-     * @param null   $table          Used for compatibility with parent.
-     * @param null   $pkey           Used for compatibility with parent.
      */
-    public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null)
+    public function setMeta($string_key, $value, $effective_from = null, $effective_to = null)
     {
-        parent::setMeta($string_key, $value, $effective_from, $effective_to, 'uryplayer.podcast_metadata', 'podcast_id');
-
+        parent::setMetaBase(
+            $string_key,
+            $value,
+            $effective_from,
+            $effective_to,
+            'uryplayer.podcast_metadata',
+            'podcast_id'
+        );
         return $this;
     }
 
@@ -755,12 +815,13 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      *
      * If the preferred format is changed, re-run this on every Podcast to
      * reencode them.
+     * @note See CoreUtils::encodeTrack
      */
     public function convert()
     {
         $tmpfile = $this->getArchiveFile();
         $dbfile = $this->getWebFile();
-        shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 - >'{$dbfile}'");
+        shell_exec("nice -n 15 ffmpeg -i '{$tmpfile}' -ab 192k -f mp3 -map 0:a '{$dbfile}'");
 
         self::$db->query(
             'UPDATE uryplayer.podcast SET file=$1 WHERE podcast_id=$2',
@@ -774,14 +835,21 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     /**
      * Returns all Podcasts. Caches for 1h.
      *
+     * @param int $num_results The number of results to return per page. 0 for all podcasts.
+     * @param int $page The page required.
+     *
      * @return Array[MyRadio_Podcast]
      */
-    public static function getAllPodcasts()
+    public static function getAllPodcasts($num_results = 0, $page = 1)
     {
-        $result = self::$db->fetchColumn(
-            'SELECT podcast_id FROM uryplayer.podcast
-            ORDER BY submitted DESC'
-        );
+        $query = "SELECT podcast_id FROM uryplayer.podcast
+                  ORDER BY submitted DESC OFFSET ";
+
+        $filterLimit = $num_results == 0 ? 'ALL' : $num_results;
+        $filterOffset = $num_results * $page;
+
+        $query .= $filterOffset . " LIMIT " . $filterLimit;
+        $result = self::$db->fetchColumn($query);
 
         $podcasts = [];
         foreach ($result as $row) {

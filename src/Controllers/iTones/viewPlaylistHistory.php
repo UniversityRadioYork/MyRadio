@@ -11,5 +11,5 @@ CoreUtils::getTemplateObject()->setTemplate('table.twig')
             'tabledata',
             CoreUtils::dataSourceParser(iTones_PlaylistRevision::getAllRevisions($_REQUEST['playlistid']))
         )
-        ->addVariable('tablescript', 'myury.datatable.default')
+        ->addVariable('tablescript', 'myradio.datatable.default')
         ->render();

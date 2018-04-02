@@ -29,7 +29,7 @@ switch ($format) {
     default:
         $twig = CoreUtils::getTemplateObject()->setTemplate('table_timeinput.twig')
         ->addVariable('title', 'Station Tracklist History')
-        ->addVariable('tablescript', 'myury.stats.fulltracklist')
+        ->addVariable('tablescript', 'myradio.stats.fulltracklist')
         ->addVariable('starttime', CoreUtils::happyTime($start))
         ->addVariable('endtime', CoreUtils::happyTime($end));
 
@@ -46,9 +46,10 @@ switch ($format) {
                 'Stats',
                 'fullTracklist',
                 [
-                'rangesel-starttime' => array_key_exists($_GET['rangesel-starttime']) ? $_GET['rangesel-starttime'] : '',
-                'rangesel-endtime' => array_key_exists($_GET['rangesel-endtime']) ? $_GET['rangesel-endtime'] : '',
-                'format' => 'csv',
+                    'rangesel-starttime' => isset($_GET['rangesel-starttime']) ?
+                        $_GET['rangesel-starttime'] : '',
+                    'rangesel-endtime' => isset($_GET['rangesel-endtime']) ? $_GET['rangesel-endtime'] : '',
+                    'format' => 'csv',
                 ]
             )
             .'">CSV File</a>.'
