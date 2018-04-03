@@ -18,7 +18,7 @@ $data = array_map(
         $x['assigned'] = [
         'display' => 'text',
         'value' => 'Assigned To',
-        'url' => URLUtils::makeURL('MyRadio', 'permissionAssigned', ['typeid' => $x['value']]),
+        'url' => URLUtils::makeURL('MyRadio', 'permissionAssignedTo', ['typeid' => $x['value']]),
         ];
 
         return $x;
@@ -27,7 +27,8 @@ $data = array_map(
 );
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/listPermissions.twig')
-        ->addVariable('title', 'Available Permissions')
+        ->addVariable('title', 'Permissions')
+        ->addVariable('subtitle', 'Available Permissions')
         ->addVariable('tabledata', $data)
         ->addVariable('tablescript', 'myradio.listPermissions')
         ->render();
