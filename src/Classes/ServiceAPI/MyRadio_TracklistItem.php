@@ -411,6 +411,11 @@ class MyRadio_TracklistItem extends ServiceAPI
     public function toDataSource($mixins = [])
     {
         if (is_array($this->track)) {
+            // If manually tracklisted, track_norec table is just a plain text album.
+            // Make it an array like regular tracks.
+            if (!is_array($this->track["album"])) {
+                $this->track["album"] = MyRadio_Album::findOrCreate($this->track["album"], $this->track["artist"]);
+            }
             $return = $this->track;
         } else {
             $return = $this->getTrack()->toDataSource($mixins);
