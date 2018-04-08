@@ -414,7 +414,24 @@ class MyRadio_TracklistItem extends ServiceAPI
             // If manually tracklisted, track_norec table is just a plain text album.
             // Make it an array like regular tracks.
             if (!is_array($this->track["album"])) {
-                $this->track["album"] = MyRadio_Album::findOrCreate($this->track["album"], $this->track["artist"]);
+                $album = [
+                    "title" => $this->track["album"],
+                    "recordid" => null,
+                    "artist" => $this->track["artist"],
+                    "cdid" => null,
+                    "date_added" => date('d/m/Y H:i', $this->getStartTime()),
+                    "date_released" => null,
+                    "format" => "Album",
+                    "last_modified" => null,
+                    "location" => null,
+                    "media" => "Manual Tracklist",
+                    "member_add" => $this->getTrack()->getDigitisedBy()->getMemberID(),
+                    "member_edit" => null,
+                    "record_label" => "",
+                    "status" => "digital only",
+                    "label" => "Manual Tracklist"
+                ];
+                $this->track["album"] = $album;
             }
             $return = $this->track;
         } else {
