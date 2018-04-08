@@ -425,7 +425,7 @@ class MyRadio_TracklistItem extends ServiceAPI
                     "last_modified" => null,
                     "location" => null,
                     "media" => "Manual Tracklist",
-                    "member_add" => $this->getTrack()->getDigitisedBy()->getMemberID(),
+                    "member_add" => null,
                     "member_edit" => null,
                     "record_label" => "",
                     "status" => "digital only",
