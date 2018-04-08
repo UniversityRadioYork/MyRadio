@@ -540,6 +540,31 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
+     * A simplified version of getAllTimeslots in MyRadio_Season.
+     * This gets all the timeslots that were part of a show, but only returns a few values.
+     * Note that start_time is a (PSQL) timestamp, not an epoch.
+     *
+     * @return Array timeslots with season_id, timeslot_id, start_time and duration
+     */
+    public function getAllTimeslots()
+    {
+        $sql =
+            'SELECT
+               show_season.show_season_id AS season_id,
+               show_season_timeslot.show_season_timeslot_id AS timeslot_id,
+               show_season_timeslot.start_time,
+               show_season_timeslot.duration
+             FROM schedule.show
+             INNER JOIN
+               schedule.show_season ON show.show_id = show_season.show_id
+             INNER JOIN
+               schedule.show_season_timeslot ON show_season.show_season_id = show_season_timeslot.show_season_id
+             WHERE show.show_id = $1
+             ORDER BY timeslot_id ASC';
+        return self::$db->fetchAll($sql, [$this->show_id]);
+    }
+
+    /**
      * Internally associates a Season with this Show.
      * Does not persist in database. Used for updating the cache.
      *
