@@ -561,7 +561,17 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                schedule.show_season_timeslot ON show_season.show_season_id = show_season_timeslot.show_season_id
              WHERE show.show_id = $1
              ORDER BY timeslot_id ASC';
-        return self::$db->fetchAll($sql, [$this->show_id]);
+        $result = self::$db->fetchAll($sql, [$this->show_id]);
+        $timeslots = [];
+        foreach ($result as $row) {
+            $timeslots[] = [
+                'season_id'   => (int) $row['season_id'],
+                'timeslot_id' => (int) $row['timeslot_id'],
+                'start_time'  => $row['start_time'],
+                'duration'    => $row['duration'],
+            ];
+        }
+        return $timeslots;
     }
 
     /**
