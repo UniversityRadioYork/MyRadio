@@ -62,7 +62,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Based on the set of configured playlists, schedules, weights, track history, OBIT
-     * and other stuff, select a track that the jukebox should play from.
+     * and other stuff, select a track that the jukebox should play.
      *
      * @return MyRadio_Track
      */
