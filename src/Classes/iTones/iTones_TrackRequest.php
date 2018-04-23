@@ -93,7 +93,7 @@ class iTones_TrackRequest
      */
     private function trackCanBePlayed()
     {
-        return !(MyRadio_TracklistItem::getIfPlayedRecently($this->track));
+        return (!(MyRadio_TracklistItem::getIfPlayedRecently($this->track) && MyRadio_Track::getInstance($this->track)->getClean());
     }
 
     /**
