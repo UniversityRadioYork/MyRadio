@@ -10,6 +10,7 @@ use MyRadio\MyRadioException;
 use MyRadio\ServiceAPI\MyRadio_User;
 use MyRadio\ServiceAPI\MyRadio_Track;
 use MyRadio\ServiceAPI\MyRadio_TracklistItem;
+use MyRadio\ServiceAPI\MyRadio_Selector;
 use MyRadio\iTones\iTones_TrackRequest;
 use MyRadio\iTones\iTones_Playlist;
 
@@ -60,39 +61,56 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Based on the set of configured playlists, schedules, weights, track history
-     * and other stuff, select a track that the jukebox should play.
+     * Based on the set of configured playlists, schedules, weights, track history, OBIT
+     * and other stuff, select a track that the jukebox should play from.
      *
      * @return MyRadio_Track
      */
     public static function getTrackForJukebox()
     {
-        $playlists_to_ignore = [];
+        if (MyRadio_Selector::isObitHappening()) {
+            $track = getTrackFromPlaylist(iTones_Playlist::getInstance(Config::$OBIT_playlist_id));
+        } else {
+            $playlists_to_ignore = [];
 
-        while ($playlist = iTones_Playlist::getPlaylistFromWeights($playlists_to_ignore)) {
-            $tracks = $playlist->getTracks();
-
-            // Randomly sort the array, then pop them out until one is playable (or we run out)
-            shuffle($tracks);
-
-            while ($track = array_pop($tracks)) {
-                // $track-> calls first because in theory these checks are really fast
-                if ($track->getClean() !== 'n'
-                    && !$track->isBlacklisted()
-                    // These ones involve running more queries...
-                    && !MyRadio_TracklistItem::getIfPlayedRecently($track)
-                    && MyRadio_TracklistItem::getIfAlbumArtistCompliant($track)
-                    // And this one involves telnet!
-                    && !iTones_Utils::getIfQueued($track)
-                ) {
+            while ($playlist = iTones_Playlist::getPlaylistFromWeights($playlists_to_ignore)) {
+                // We've reached the end of the track list and none of them are playable
+                // ignore the playlist we've been given, and try again
+                $track = getTrackFromPlaylist($playlist);
+                if ($track === false) {
+                    $playlists_to_ignore[] = $playlist;
+                } else {
                     return $track;
                 }
             }
-
-            // We've reached the end of the track list and none of them are playable
-            // ignore the playlist we've been given, and try again
-            $playlists_to_ignore[] = $playlist;
         }
+    }
+
+    /**
+     * Find a suitable track from a playlist that Jukebox should play.
+     *
+     * @return MyRadio_Track
+     */
+    public static function getTrackFromPlaylist($playlist) {
+        $tracks = $playlist->getTracks();
+
+        // Randomly sort the array, then pop them out until one is playable (or we run out)
+        shuffle($tracks);
+
+        while ($track = array_pop($tracks)) {
+            // $track-> calls first because in theory these checks are really fast
+            if ($track->getClean() !== 'n'
+                && !$track->isBlacklisted()
+                // These ones involve running more queries...
+                && !MyRadio_TracklistItem::getIfPlayedRecently($track)
+                && MyRadio_TracklistItem::getIfAlbumArtistCompliant($track)
+                // And this one involves telnet!
+                && !iTones_Utils::getIfQueued($track)
+            ) {
+                return $track;
+            }
+        }
+        return false;
     }
 
     /**

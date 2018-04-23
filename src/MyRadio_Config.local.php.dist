@@ -60,6 +60,11 @@ Config::$recaptcha_public_key = 'YOUR KEY HERE';
 Config::$recaptcha_private_key = 'YOUR KEY HERE';
 
 /**
+ * OBIT Settings
+ */
+Config::$OBIT_playlist_id = 1;
+
+/**
  * Feature enable
  */
 Config::$rewrite_url = true;
