@@ -88,7 +88,7 @@
     ["Podcast", "default", "AUTH_UPLOADPODCASTS"],
     ["Podcast", "default", "AUTH_PODCASTANYSHOW"],
     ["Podcast", "default", "AUTH_STANDALONEPODCAST"],
-    ["Podcast", "allPodcast", "AUTH_EDITALLPODCASTS"],
+    ["Podcast", "allPodcast", "AUTH_EDITANYPODCAST"],
     ["Podcast", "setCover", "AUTH_UPLOADPODCASTS"],
     ["Profile", "addTrainingStatus", null],
     ["Profile", "bulkAdd", "AUTH_ADDMEMBER"],
