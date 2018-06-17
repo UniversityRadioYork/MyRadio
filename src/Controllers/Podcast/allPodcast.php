@@ -9,8 +9,8 @@ use \MyRadio\ServiceAPI\MyRadio_Podcast;
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('tablescript', 'myradio.podcasts')
     ->addVariable('title', 'Podcasts')
-    ->addVariable('title', 'All Podcasts')
+    ->addVariable('subtitle', 'All Podcasts')
     ->addVariable(
         'tabledata',
-        CoreUtils::setToDataSource(MyRadio_Podcast::getAllPodcasts(), false)
+        CoreUtils::setToDataSource(MyRadio_Podcast::getAllPodcasts())
     )->render();
