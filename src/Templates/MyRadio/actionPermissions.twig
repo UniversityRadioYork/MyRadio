@@ -9,8 +9,11 @@
   or more of the permissions matching an Action in order to perform it. An Action must have at least one permission
   field defined (even if it's an allow all) to ensure the developer has put security in place.</p>
 <p>This programmatic method is not a complete replacement as it will not handle inline permissions.</p>
-<p><a href="{{MyRadio.makeURL(config, 'MyRadio', 'listPermissions')}}">Click here to manage available permissions.</a></p>
+<hr>
+<p><a href="{{MyRadio.makeURL(config, 'MyRadio', 'listPermissions')}}">Manage available permissions</a></p>
+<hr>
 {{ parent() }}
+<hr>
 {% set tabledata = frm_custom.tabledata %}
 {% include 'parts/table-content.twig' %}
 {% endblock %}

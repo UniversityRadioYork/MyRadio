@@ -442,13 +442,13 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      * @param int $n defines the number of timeslots you want before this time.
      * @param     $filter defines a filter of show_type ids
      *
-     * @return MyRadio_Timeslot
+     * @return Array of MyRadio_Timeslots
      */
     public static function getPreviousTimeslots($time = null, $n = 1, $filter = [1])
     {
         $filter = '{'.implode(', ', $filter).'}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
 
-        $result = self::$db->fetchColumn(
+        $result = self::$db->fetchAll(
             'SELECT show_season_timeslot_id
             FROM schedule.show_season_timeslot
             INNER JOIN schedule.show_season USING (show_season_id)
@@ -460,11 +460,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             [CoreUtils::getTimestamp($time), $n, $filter]
         );
 
-        if (empty($result)) {
-            return;
-        } else {
-            return self::getInstance($result[0]);
+        $timeslots = [];
+        foreach ($result as $r) {
+            $timeslots[] = self::getInstance($r['show_season_timeslot_id']);
         }
+        return $timeslots;
     }
 
     /**

@@ -16,7 +16,8 @@ $form = new MyRadioForm(
     $module,
     $action,
     [
-        'title' => 'Assign Action Permissions',
+        'title' => 'Permissions',
+        'subtitle' => 'Assign Action Permissions',
     ]
 );
 

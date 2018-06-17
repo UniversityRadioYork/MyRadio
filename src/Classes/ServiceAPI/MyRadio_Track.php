@@ -1063,7 +1063,7 @@ class MyRadio_Track extends ServiceAPI
             } else {
                 //Mark it as digitised/explicit
                 $track->setDigitised(true);
-                $track->setDigitisedBy(MyRadio_User::getInstance(SESSION['memberid']));
+                $track->setDigitisedBy(MyRadio_User::getInstance($_SESSION['memberid']));
                 $track->setClean($clean);
             }
         }

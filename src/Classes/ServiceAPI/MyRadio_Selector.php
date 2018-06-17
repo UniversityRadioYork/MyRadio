@@ -178,13 +178,13 @@ class MyRadio_Selector
         $status = self::getStatusAtTime();
 
         if ($studio == $status['studio']) {
-            throw new MyRadioException('Source '.$studio.' is already selected');
+            throw new MyRadioException('Source '.$studio.' is already selected.');
         }
         if ((($studio == 1) && (!$status['s1power']))
             || (($studio == 2) && (!$status['s2power']))
             || (($studio == 4) && (!$status['s4power']))
         ) {
-            throw new MyRadioException('Source '.$studio.' is not powered');
+            throw new MyRadioException('Source '.$studio.' is not powered.');
         }
         if ($status['lock'] != 0) {
             throw new MyRadioException('Selector Locked');
@@ -393,8 +393,9 @@ class MyRadio_Selector
             'selectedfrom' => self::getSetbyAtTime($time),
             's1power' => self::getStudio1PowerAtTime($time),
             's2power' => self::getStudio2PowerAtTime($time),
-            's3power' => true,
-            's4power' => (isset($status['s1'])) ? $status['s1'] : false,
+            's3power' => true, //Jukebox
+            's4power' => (isset($status['s1'])) ? $status['s1'] : false, //OB
+            's8power' => true, //Off Air
             'lastmod' => self::getLastModAtTime($time),
         ];
     }
