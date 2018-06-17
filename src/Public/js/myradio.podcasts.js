@@ -25,10 +25,6 @@ $(".twig-datatable").dataTable({
     {
       "bVisible": false
     },
-    // webFile
-    {
-      "bVisible": false
-    },
     // photo
     {
       "bVisible": false
