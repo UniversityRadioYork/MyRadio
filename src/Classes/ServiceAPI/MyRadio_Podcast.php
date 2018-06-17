@@ -853,11 +853,10 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
         $podcasts = [];
         foreach ($result as $row) {
-            $podcast = new self($row);
+            $podcast = self::getInstance($row);
             $podcast->updateCacheObject();
             $podcasts[] = $podcast;
         }
-
         return $podcasts;
     }
 }
