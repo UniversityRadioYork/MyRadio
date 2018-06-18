@@ -42,7 +42,8 @@ $(".twig-datatable").dataTable({
       "bVisible": true
     }
   ],
-  "bPaginate": true
+  "bPaginate": true,
+  "aaSorting": [[4, "desc"]] //sort by submitted
 });
 
 $(".column-time").text(function (i, old) {
