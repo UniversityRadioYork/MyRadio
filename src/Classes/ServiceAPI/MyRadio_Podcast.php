@@ -223,7 +223,10 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 'createpodcastfrm',
                 'Podcast',
                 'editPodcast',
-                ['title' => 'Create Podcast']
+                [
+                    'title' => 'Podcasts',
+                    'subtitle' => 'Create Podcast'
+                ]
             )
         )->addField(
             new MyRadioFormField(
@@ -359,7 +362,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     public function getEditForm()
     {
         return self::getForm()
-            ->setTitle('Edit Podcast')
+            ->setSubtitle('Edit Podcast')
             ->editMode(
                 $this->getID(),
                 [
