@@ -190,23 +190,25 @@ foreach ($function_checks as $check) {
     </nav>
     <br>
     <div class="container main-container">
-      <h1>Hello there!</h1>
-      <p>
-        It looks like you're trying to install MyRadio! Would you like some help with that?
-        No? Well too bad, I'm not a paperclip you can hide.
-      </p>
-      <p>I'm just running some background checks to see if you're ready to go.</p>
+        <h1>Hello there!</h1>
+        <p>
+            It looks like you're trying to install MyRadio! Would you like some help with that?
+            No? Well too bad, I'm not a paperclip you can hide.
+        </p>
+        <p>I'm just running some background checks to see if you're ready to go.</p>
         <?php
-            if ($ready) {
+        if ($ready) {
         ?>
-            <p class="alert alert-success">Good news! It looks like you're ready to go.
-            <a href="?c=dbserver">Click here to continue</a>.</p>
+            <p class="alert alert-success">
+                Good news! It looks like you're ready to go.
+                <a href="?c=dbserver">Click here to continue</a>.
+            </p>
         <?php
-            } else {
+        } else {
         ?>
             <p class="alert alert-danger">
-              Uh oh! It looks like there's some things you'll have to get sorted out before you can continue.
-              Follow the advice below, then <a href=''>refresh this page</a> to try again.
+                Uh oh! It looks like there's some things you'll have to get sorted out before you can continue.
+                Follow the advice below, then <a href=''>refresh this page</a> to try again.
             </p>
         <?php
             echo '<h3>The following tests failed and must be fixed before you can proceed:</h3><ul>';
