@@ -331,7 +331,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 [
                     'label' => 'Existing Cover Photo',
                     'explanation' => 'To use an existing cover photo of another podcast, '
-                                     . 'copy the Existing Cover Photo file of another podcast with that photo into here. For new images, keep blank.',
+                                     . 'copy the Existing Cover Photo file of another '
+                                     . 'podcast with that photo into here. For new images, keep blank.',
                     'required' => false,
                 ]
             )
