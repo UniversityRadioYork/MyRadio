@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (is_uploaded_file($data['new_cover']['tmp_name'])) {
         $podcast->createCover($data['new_cover']['tmp_name']);
     } else {
-        throw new MyRadioException('Unknown cover upload method.', 400);
+        throw new MyRadioException('You must provide either an existing or new cover photo.', 400);
     }
 
     URLUtils::redirectWithMessage($return_message, "Podcast", "default");

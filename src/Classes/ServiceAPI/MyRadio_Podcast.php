@@ -329,9 +329,9 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 'existing_cover',
                 MyRadioFormField::TYPE_TEXT,
                 [
-                    'label' => 'Existing Cover File',
-                    'explanation' => 'To use an existing cover file, '
-                                     . 'copy the Existing Cover File of a podcast with that file into here.',
+                    'label' => 'Existing Cover Photo',
+                    'explanation' => 'To use an existing cover photo of another podcast, '
+                                     . 'copy the Existing Cover Photo file of another podcast with that photo into here. For new images, keep blank.',
                     'required' => false,
                 ]
             )
@@ -340,8 +340,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 'new_cover',
                 MyRadioFormField::TYPE_FILE,
                 [
-                    'label' => 'Upload New Cover File',
-                    'explanation' => 'If you selected Upload New below, add the file here.',
+                    'label' => 'Upload New Cover Photo',
+                    'explanation' => 'If you haven\'t specificied an exisiting cover photo, upload one here.',
                     'required' => false,
                 ]
             )
