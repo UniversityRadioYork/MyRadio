@@ -282,7 +282,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 'credits',
                 MyRadioFormField::TYPE_TABULARSET,
                 [
-                    'label' => 'Credits', 'options' => [
+                    'label' => 'Credits',
+                    'options' => [
                         new MyRadioFormField(
                             'member',
                             MyRadioFormField::TYPE_MEMBER,
