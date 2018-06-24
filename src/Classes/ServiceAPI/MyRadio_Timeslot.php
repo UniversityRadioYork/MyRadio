@@ -637,7 +637,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 'current' => [
                     'title' => 'Off Air',
                     'desc' => 'We\'re not broadcasting right now, we\'ll be back next term.',
-                    'photo' => Config::$default_show_uri,
+                    'photo' => Config::$offair_uri,
                     'end_time' => $next ? $next->getStartTime() : 'The End of Time',
                 ],
             ];

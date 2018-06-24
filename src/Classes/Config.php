@@ -259,6 +259,13 @@ final class Config
      * @var string
      */
     public static $default_show_uri = '/media/image_meta/ShowImageMetadata/22.png';
+    
+    /**
+     * The full web address to the image that will be served outside of term time.
+     *
+     * @var string
+     */
+    public static $offair_uri = '/media/image_meta/ShowImageMetadata/offair.png';
 
     /**
      * The full web address to the image that will be served on a member's profile page if they do not have a profile
