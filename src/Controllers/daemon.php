@@ -134,7 +134,7 @@ while (true) {
                     '[MyRadio] Background Service Failure',
                     "MyRadio's connection to the Database Server has been lost. "
                     ."Attempts to reconnect for the last 15 minutes have proved futile, so the service has stopped.\r\n"
-                    .'Please investigate Database connectivity and restart the service one access is restored.'
+                    .'Please investigate Database connectivity and restart the service once access is restored.'
                 );
             }
             dlog('FAILED! Will retry in 30 seconds.', 0);
