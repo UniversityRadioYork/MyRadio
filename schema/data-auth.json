@@ -34,6 +34,7 @@
     ["Impersonate Users with \"Block Impersonate\"","AUTH_IMPERSONATE_BLOCKED_USERS", true],
     ["Revoke Training Status","AUTH_TRAIN_REVOKE", true],
     ["Deploy New Services","AUTH_DEPLOY", true],
+    ["Edit Any Podcast","AUTH_EDITANYPODCAST", true],
     ["Upload Podcasts","AUTH_UPLOADPODCASTS", true],
     ["Download from HQ Logger","AUTH_DOWNLOADHQ", true],
     ["Download from LQ Logger","AUTH_DOWNLOADLQ", true],

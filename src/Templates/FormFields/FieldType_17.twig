@@ -1,3 +1,4 @@
+{% if display_labels %}<label for="{{frm_name}}-{{field.name}}-container">{{field.label}}</label>{% endif %}
 {% set thisfield, display_labels = field, false %}
 <table class="myradioform-repeaterset-container" id="{{thisfield.name}}">
   <thead>
