@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Check if user can edit this podcast
         if (!in_array($podcast->getID(), MyRadio_Podcast::getPodcastIDsAttachedToUser())) {
-            AuthUtils::requirePermission(AUTH_PODCASTANYSHOW);
+            AuthUtils::requirePermission(AUTH_EDITANYPODCAST);
         }
 
         $podcast
