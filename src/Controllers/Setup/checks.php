@@ -198,19 +198,16 @@ foreach ($function_checks as $check) {
         <p>I'm just running some background checks to see if you're ready to go.</p>
         <?php
         if ($ready) {
-        ?>
-            <p class="alert alert-success">
-                Good news! It looks like you're ready to go.
-                <a href="?c=dbserver">Click here to continue</a>.
-            </p>
-        <?php
+            echo '<p class="alert alert-success">';
+            echo 'Good news! It looks like you\'re ready to go.';
+            echo '<a href="?c=dbserver">Click here to continue</a>.';
+            echo '</p>';
         } else {
-        ?>
-            <p class="alert alert-danger">
-                Uh oh! It looks like there's some things you'll have to get sorted out before you can continue.
-                Follow the advice below, then <a href=''>refresh this page</a> to try again.
-            </p>
-        <?php
+            echo '<p class="alert alert-danger">';
+            echo 'Uh oh! It looks like there\'s some things you\'ll have to get sorted out before you can continue.';
+            echo 'Follow the advice below, then <a href=\'\'>refresh this page</a> to try again.';
+            echo '</p>';
+
             echo '<h3>The following tests failed and must be fixed before you can proceed:</h3><ul>';
             foreach ($problems as $problem) {
                 echo '<li>'.$problem.'</li>';
@@ -248,7 +245,7 @@ foreach ($function_checks as $check) {
               composer update<br>
               service apache2 restart
             </code>
-        <?php
+            <?php
         }
         ?>
     </div>
