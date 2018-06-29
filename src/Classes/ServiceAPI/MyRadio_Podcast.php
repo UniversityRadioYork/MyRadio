@@ -342,7 +342,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_FILE,
                 [
                     'label' => 'Upload New Cover Photo',
-                    'explanation' => 'If you haven\'t specificied an exisiting cover photo, upload one here.',
+                    'explanation' => 'If you haven\'t specified an existing cover photo, upload one here.',
                     'required' => false,
                 ]
             )
