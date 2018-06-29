@@ -244,6 +244,13 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $params['tags'] = '';
         }
 
+        //Explode the tags
+        $tags = explode(' ', $params['tags']);
+        foreach ($tags as $tag) {
+            if (strlen($tag) > 20) {
+                URLUtils::backWithMessage("One or more of the tags you provided were too long (over 20 characters). Please try again.");
+            }
+
         // Support API calls where there is no session.
         // @todo should this be system_user?
         if (!empty($_SESSION['memberid'])) {
@@ -292,8 +299,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             );
         }
 
-        //Explode the tags
-        $tags = explode(' ', $params['tags']);
+        //Store the tags
         foreach ($tags as $tag) {
             self::$db->query(
                 'INSERT INTO schedule.show_metadata

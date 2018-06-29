@@ -403,6 +403,12 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         MyRadio_Show $show = null,
         $credits = null
     ) {
+        //Explode the tags
+        $tags = explode(' ', $tags);
+        foreach ($tags as $tag) {
+            if (strlen($tag) > 20) {
+                URLUtils::backWithMessage("One or more of the tags you provided were too long (over 20 characters). Please try again.");
+            }
 
         //Get an ID for the new Podcast
         $id = (int) self::$db->fetchColumn(
