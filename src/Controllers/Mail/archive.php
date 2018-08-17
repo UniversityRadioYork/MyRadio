@@ -4,16 +4,16 @@
  */
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_List;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
 $list = MyRadio_List::getInstance($_REQUEST['list']);
 
 if (!$list->isMember(MyRadio_User::getInstance()->getID())) {
-    throw new MyRadioException(
+    URLUtils::backWithMessage(
         'You can only view archives for Lists you are a'
-        .' member of.',
-        403
+        .' member of.'
     );
 }
 
