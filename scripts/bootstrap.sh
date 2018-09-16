@@ -9,8 +9,8 @@ apt-get update
 apt-get install -y apache2 \
 	libapache2-mod-php \
 	php-common \
-	postgresql-9.5 \
-	postgresql-client-9.5 \
+	postgresql-10 \
+	postgresql-client-10 \
 	memcached \
 	php-curl \
 	php-geoip \
@@ -23,7 +23,7 @@ apt-get install -y apache2 \
 	php-mbstring \
 	php-xsl \
 	openssl \
-	libav-tools \
+	ffmpeg \
 	zip \
 	unzip \
 	composer
@@ -31,7 +31,7 @@ a2enmod ssl
 a2enmod rewrite
 service apache2 stop
 
-cat <<EOF >> /etc/php/7.0/mods-available/xdebug.ini
+cat <<EOF >> /etc/php/7.2/mods-available/xdebug.ini
 xdebug.default_enable=1
 xdebug.remote_enable=1
 xdebug.remote_autostart=0
@@ -75,11 +75,12 @@ openssl rsa -in /etc/apache2/myradio.key -out /etc/apache2/myradio.key -passin e
 openssl x509 -req -days 3650 -in /etc/apache2/myradio.csr -signkey /etc/apache2/myradio.key -out /etc/apache2/myradio.crt
 
 # Start httpd back up
-service apache2 enable
+
+update-rc.d apache2 defaults
 service apache2 start
 
 # Create DB cluster/database/user
-pg_createcluster 9.5 myradio
+pg_createcluster 10 myradio
 su - postgres -c "cat /vagrant/sample_configs/postgres.sql | psql"
 
 # Somewhere to store audio uploads
