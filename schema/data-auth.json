@@ -23,6 +23,7 @@
     ["Delete Wiki Pages","AUTH_WIKIADMIN", true],
     ["Impersonate Other Users","AUTH_IMPERSONATE", true],
     ["Edit the Chart","AUTH_EDIT_CHART", true],
+    ["[API Only] View the Chart","AUTH_VIEW_CHART", false],
     ["Edit Recommended Listening","AUTH_EDIT_RECOMMENDED", true],
     ["Edit Tech News Feed","AUTH_EDITTECHNEWS", true],
     ["Block Impersonation","AUTH_BLOCKIMPERSONATE", true],

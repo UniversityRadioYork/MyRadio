@@ -14,4 +14,5 @@
     ["\\MyRadio\\ServiceAPI\\MyRadio_Track", "search", "AUTH_SEARCHCENTRALDB"],
     ["\\MyRadio\\ServiceAPI\\MyRadio_Artist", "findByName", "AUTH_SEARCHCENTRALDB"],
     ["\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", "isTerm", "AUTH_APITERM"]
+    ["\\MyRadio\\ServiceAPI\\MyRadio_ChartRelease", "getChartRows", "AUTH_VIEW_CHART"]
 ]
