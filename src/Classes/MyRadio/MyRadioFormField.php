@@ -606,11 +606,9 @@ class MyRadioFormField
         $name = $prefix.str_replace(' ', '_', $this->name);
         //The easiest ones can just be returned
         switch ($this->type) {
-            case self::TYPE_ARTIST:
-                return strip_tags($_REQUEST[$name]);
-            break;
             case self::TYPE_TEXT:
             case self::TYPE_EMAIL:
+            case self::TYPE_ARTIST:
                 //Deal with Arrays for repeated elements (inc TYPE_TABULARSET)
                 if (is_array($_REQUEST[$name])) {
                     $stripped_values = [];
