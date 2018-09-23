@@ -606,10 +606,21 @@ class MyRadioFormField
         $name = $prefix.str_replace(' ', '_', $this->name);
         //The easiest ones can just be returned
         switch ($this->type) {
-            case self::TYPE_TEXT:
-            case self::TYPE_EMAIL:
             case self::TYPE_ARTIST:
                 return strip_tags($_REQUEST[$name]);
+            break;
+            case self::TYPE_TEXT:
+            case self::TYPE_EMAIL:
+                //Deal with Arrays for repeated elements (inc TYPE_TABULARSET)
+                if (is_array($_REQUEST[$name])) {
+                    $stripped_values = [];
+                    foreach ($_REQUEST[$name] as $field_key => $field_value) {
+                        $stripped_values[$field_key] = strip_tags($field_value);
+                    }
+                    return $stripped_values;
+                } else {
+                    return strip_tags($_REQUEST[$name]);
+                }
             break;
             case self::TYPE_BLOCKTEXT:
                 $dom = new \DOMDocument();
@@ -629,7 +640,7 @@ class MyRadioFormField
                 return $_REQUEST[$name];
             break;
             case self::TYPE_MEMBER:
-                //Deal with Arrays for repeated elements
+                //Deal with Arrays for repeated elements (inc TYPE_TABULARSET)
                 if (is_array($_REQUEST[$name])) {
                     for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                         if (empty($_REQUEST[$name][$i])) {
@@ -648,7 +659,7 @@ class MyRadioFormField
                 }
                 break;
             case self::TYPE_TRACK:
-                //Deal with Arrays for repeated elements
+                //Deal with Arrays for repeated elements (inc TYPE_TABULARSET)
                 if (is_array($_REQUEST[$name])) {
                     for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                         if (empty($_REQUEST[$name][$i])) {
@@ -666,7 +677,7 @@ class MyRadioFormField
             case self::TYPE_SELECT:
             case self::TYPE_RADIO:
             case self::TYPE_DAY:
-                //Deal with Arrays for repeated elements
+                //Deal with Arrays for repeated elements (inc TYPE_TABULARSET)
                 if (is_array($_REQUEST[$name])) {
                     for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                         if (is_numeric($_REQUEST[$name][$i])) {
@@ -686,7 +697,7 @@ class MyRadioFormField
             case self::TYPE_DATE:
             case self::TYPE_DATETIME:
             case self::TYPE_TIME:
-                //Deal with repeated elements
+                //Deal with repeated elements (inc TYPE_TABULARSET)
                 if (is_array($_REQUEST[$name])) {
                     for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                         $_REQUEST[$name][$i] = $this->convertTime($_REQUEST[$name][$i]);
@@ -774,7 +785,7 @@ class MyRadioFormField
                 return;
                 break;
             case self::TYPE_ALBUM:
-                //Deal with Arrays for repeated elements
+                //Deal with Arrays for repeated elements (inc TYPE_TABULARSET)
                 if (is_array($_REQUEST[$name])) {
                     for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                         if (empty($_REQUEST[$name][$i])) {
