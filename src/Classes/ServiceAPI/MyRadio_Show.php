@@ -438,13 +438,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'credits',
                 MyRadioFormField::TYPE_TABULARSET,
                 [
+                    'label' => 'Credits',
                     'options' => [
                         new MyRadioFormField(
                             'memberid',
                             MyRadioFormField::TYPE_MEMBER,
                             [
                                 'explanation' => '',
-                                'label' => 'Credit',
+                                'label' => 'Member Name',
                             ]
                         ),
                         new MyRadioFormField(
