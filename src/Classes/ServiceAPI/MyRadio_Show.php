@@ -292,8 +292,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             );
         }
 
-        //Explode the tags
-        $tags = explode(' ', $params['tags']);
+        // Explode the tags
+        // We want to handle the case when people delimit with commas, spaces, or commas and
+        // spaces, as well as handling extended spaces.
+        $tags = preg_split('/[, ] */', $params['tags'], null, PREG_SPLIT_NO_EMPTY);
         foreach ($tags as $tag) {
             if (strlen($tag) < 25) {
                 self::$db->query(
@@ -424,7 +426,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Tags',
-                    'explanation' => 'A set of keywords to describe your show generally, seperated with spaces.',
+                    'explanation' => 'A set of keywords to describe your show generally, seperated with commas.',
                 ]
             )
         )->addField(
@@ -486,7 +488,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'title' => $this->getMeta('title'),
                     'description' => $this->getMeta('description'),
                     'genres' => $this->getGenre(),
-                    'tags' => is_null($this->getMeta('tag')) ? null : implode(' ', $this->getMeta('tag')),
+                    'tags' => is_null($this->getMeta('tag')) ? null : implode(',', $this->getMeta('tag')),
                     'credits.memberid' => array_map(
                         function ($ar) {
                             return $ar['User'];

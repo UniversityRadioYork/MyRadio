@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $show->setMeta('title', $data['title']);
         $show->setMeta('description', $data['description']);
 
-        // We want to handle the case when people delimit with commas, or commas and
+        // We want to handle the case when people delimit with commas, spaces, or commas and
         // spaces, as well as handling extended spaces.
         $tags = preg_split('/[, ] */', $data['tags'], null, PREG_SPLIT_NO_EMPTY);
         foreach ($tags as $tag) {
