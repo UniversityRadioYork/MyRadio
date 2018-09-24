@@ -593,8 +593,9 @@ class MyRadioFormField
      *
      * This is called by MyRadioForm::readValues()
      *
-     * Repeated elements -> TYPE_TABULARSET data has a little quirk. Because PHP, the table data is returned as a parent array of each
-     * column (not row), with child arrays containing each row value for each column. This is probably opposite to what you're thinking.
+     * Repeated elements -> TYPE_TABULARSET data has a little quirk. Because PHP, the table data is returned as a 
+     * parent array of each column (not row), with child arrays containing each row value for each column.
+     * This is probably opposite to what you're thinking.
      *
      * @param string $prefix The current prefix to the field name
      *
@@ -622,7 +623,7 @@ class MyRadioFormField
                 } else {
                     return strip_tags($_REQUEST[$name]);
                 }
-            break;
+            	break;
             case self::TYPE_BLOCKTEXT:
                 $dom = new \DOMDocument();
                 // We have to wrap the html so that DOMDocument has a root
@@ -635,11 +636,11 @@ class MyRadioFormField
 
                 // Strip the <div> ... </div> nodes back off
                 return substr(trim($dom->saveHTML()), 5, -6);
-            break;
+            	break;
             case self::TYPE_HIDDEN:
             case self::TYPE_PASSWORD:
                 return $_REQUEST[$name];
-            break;
+            	break;
             case self::TYPE_MEMBER:
                 //Deal with Arrays for repeated elements - see function comment.
                 if (is_array($_REQUEST[$name])) {
