@@ -6,6 +6,7 @@
  */
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\URLUtils;
+use \MyRadio\MyRadioException;
 use \MyRadio\ServiceAPI\MyRadio_Show;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
@@ -35,9 +36,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // We want to handle the case when people delimit with commas, or commas and
         // spaces, as well as handling extended spaces.
+        $tags = preg_split('/[, ] */', $data['tags'], null, PREG_SPLIT_NO_EMPTY);
+        foreach ($tags as $tag) {
+            if (strlen($tag) >= 25) {
+                throw new MyRadioException('Sorry, individual tags longer than 24 characters
+                    aren\'t allowed. Please try again.', 400);
+            }
+        }
         $show->setMeta(
             'tag',
-            preg_split('/[, ] */', $data['tags'], null, PREG_SPLIT_NO_EMPTY)
+            $tags
         );
 
         $show->setGenre($data['genres']);

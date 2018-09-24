@@ -295,13 +295,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         //Explode the tags
         $tags = explode(' ', $params['tags']);
         foreach ($tags as $tag) {
-            self::$db->query(
-                'INSERT INTO schedule.show_metadata
-                (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid)
-                VALUES ($1, $2, $3, NOW(), $4, $4)',
-                [self::getMetadataKey('tag'), $show_id, $tag, $creator],
-                true
-            );
+            if (strlen($tag) < 25) {
+                self::$db->query(
+                    'INSERT INTO schedule.show_metadata
+                    (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid)
+                    VALUES ($1, $2, $3, NOW(), $4, $4)',
+                    [self::getMetadataKey('tag'), $show_id, $tag, $creator],
+                    true
+                );
+            } else {
+                self::$db->query('ABORT');
+                throw new MyRadioException('Sorry, individual tags longer than 24 characters
+                    aren\'t allowed. Please try again.', 400);
+            }
         }
 
         //Set a location
