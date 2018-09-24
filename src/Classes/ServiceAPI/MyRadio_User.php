@@ -2030,6 +2030,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 'bulkaddrepeater',
                 MyRadioFormField::TYPE_TABULARSET,
                 [
+                    'label' => "Member Details",
                     'options' => [
                         new MyRadioFormField(
                             'fname',
