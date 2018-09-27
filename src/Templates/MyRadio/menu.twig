@@ -45,8 +45,10 @@ var news = {{news|json_encode()|raw}};
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud <a>exercitation ullamco laboris nisi ut</a> aliquip ex ea commodo consequat.</p>
       </div>
       <div class="modal-footer">
-          <button class="btn" data-dismiss="modal">Leave Site</button>
-          <button class="btn btn-primary" data-dismiss="modal">Accept Terms</button>
+        <button class="btn" data-dismiss="modal">Leave Site</button>
+        <a href="{{baseurl}}MyRadio/acceptGDPR">
+          <button class="btn btn-primary">Accept Terms</button>
+        </a>
       </div>
     </div>
   </div>
