@@ -29,7 +29,11 @@ $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/menu.twig')
         ->addVariable('is_trainer', $user->isTrainer())
         ->addVariable('has_show', $user->hasShow())
         ->addVariable('paid', $user->isCurrentlyPaid())
-        ->addVariable('contract_signed', $user->hasSignedContract());
+        ->addVariable('contract_signed', $user->hasSignedContract())
+        /*
+         * Get whether we need to annoy the user with an "Accept our terms" popup
+         */
+        ->addVariable('gdpr_accepted', $user->hasAcceptedGDPR());
 
 if (Config::$members_news_enable) {
     $twig->addVariable('news', $news);

@@ -19,15 +19,38 @@
   </div>
 {% endfor %}
 {% endblock %}
-
 {% block foot %}
 {{ parent() }}
 <script type="text/javascript" src="{{baseurl}}js/myradio.menu.js"></script>
 {% if news_clickthrough %}
 <script type="text/javascript">
-var news={{news|json_encode()|raw}};
+var news = {{news|json_encode()|raw}};
 </script>
 <script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/myradio.news.clickthrough.js"></script>
 {% endif %}
+
+{# GDPR Modal lives on this page now. #}
+{% if gdpr_accepted == false %}
+  <script type="text/javascript" src="{{baseurl}}js/myradio.menu.gdprmodal.js"></script>
+<div id="gdprModal" class="modal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">×</button>
+          <h3 id="myModalLabel">GDPR Stuff</h3>
+      </div>
+      <div class="modal-body">
+          <p>One fine body…</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud <a>exercitation ullamco laboris nisi ut</a> aliquip ex ea commodo consequat.</p>
+      </div>
+      <div class="modal-footer">
+          <button class="btn" data-dismiss="modal">Leave Site</button>
+          <button class="btn btn-primary" data-dismiss="modal">Accept Terms</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 {% endblock %}

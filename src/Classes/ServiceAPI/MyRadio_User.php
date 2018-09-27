@@ -195,6 +195,13 @@ class MyRadio_User extends ServiceAPI implements APICaller
     private $contract_signed;
 
     /**
+     * True if user has accepted new GDPR terms
+     *
+     * @var bool
+     */
+    private $gdpr_accepted;
+
+    /**
      * Initiates the User variables.
      *
      * @param int $memberid The ID of the member to initialise
@@ -207,7 +214,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'SELECT fname, sname, college AS collegeid, l_college.descr AS college,
             phone, email, receive_email::boolean::text, local_name, local_alias, eduroam,
             account_locked::boolean::text, last_login, joined, profile_photo, bio,
-            auth_provider, require_password_change::boolean::text, contract_signed::boolean::text
+            auth_provider, require_password_change::boolean::text, contract_signed::boolean::text,
+            gdpr_accepted::boolean::text
             FROM member, l_college
             WHERE memberid=$1
             AND member.college = l_college.collegeid
@@ -707,6 +715,16 @@ class MyRadio_User extends ServiceAPI implements APICaller
     }
 
     /**
+     * Get whether the user has accepted the new GDPR terms.
+     *
+     * @return bool if the presenter has accepted the new GDPR terms.
+     */
+    public function hasAcceptedGDPR()
+    {
+        return $this->gdpr_accepted;
+    }
+
+    /**
      * Get whether the user needs to change their password.
      *
      * @return bool
@@ -1068,6 +1086,20 @@ class MyRadio_User extends ServiceAPI implements APICaller
             throw new MyRadioException('Oh come on, everybody has a name.', 400);
         }
         $this->setCommonParam('fname', $fname);
+
+        return $this;
+    }
+
+    /**
+     * Set's a User's GDPR Terms Acceptance.
+     *
+     * @param bool $acceptance.
+     *
+     * @return MyRadio_User
+     */
+    public function setGDPRAccepted($acceptance = true)
+    {
+        $this->setCommonParam('gdpr_accepted', $acceptance);
 
         return $this;
     }
