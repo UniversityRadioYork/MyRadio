@@ -127,7 +127,7 @@ var MyRadioForm = {
                 //Fix typeahead not showing after hiding
                 //TODO: Report this @ https://github.com/twitter/typeahead.js/
                 $("input:focus").parent().children(".tt-dropdown-menu").removeClass("hidden");
-                return "<p>" + i.title + "<br><span style=\"font-size:.8em\">" + i.artist + "</span></p>";
+                return $("<p>").text(i.title).append("<br>").append($("<span>").css("fontSize", ".8em").text(i.artist));
               }
             }
           }
@@ -179,7 +179,7 @@ var MyRadioForm = {
                 //Fix typeahead not showing after hiding
                 //TODO: Report this @ https://github.com/twitter/typeahead.js/
                 $("input:focus").parent().children(".tt-dropdown-menu").removeClass("hidden");
-                return "<p>" + i.title + "</p>";
+                return $("<p>").text(i.title);
               }
             }
           }
@@ -234,7 +234,7 @@ var MyRadioForm = {
                 //Fix typeahead not showing after hiding
                 //TODO: Report this @ https://github.com/twitter/typeahead.js/
                 $("input:focus").parent().children(".tt-dropdown-menu").removeClass("hidden");
-                return "<p>" + i.title + "</p>";
+                return $("<p>").text(i.title);
               }
             }
           }
