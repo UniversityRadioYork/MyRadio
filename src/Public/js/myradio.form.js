@@ -76,7 +76,7 @@ var MyRadioForm = {
                 } else {
                   identity = "(#" + i.memberid + ")";
                 }
-                return "<p>" + i.fname + " " + i.sname + " " + identity + "</p>";
+                return $("<p>").text(i.fname + " " + i.sname + " " + identity);
               }
             }
           })
