@@ -654,6 +654,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             WHERE show_image_metadata_id=$2',
             [$suffix, $result]
         );
+        $self->updateCacheObject();
     }
 
     /**
