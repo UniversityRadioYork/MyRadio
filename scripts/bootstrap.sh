@@ -89,3 +89,6 @@ for i in ${music_dirs}; do # no spaces
 	mkdir -p /music/$i
 	chown www-data:www-data /music/$i
 done
+# And logs
+mkdir -p /var/log/myradio
+chown www-data:www-data /var/log/myradio

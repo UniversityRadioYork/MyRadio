@@ -62,9 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (Config::$$k !== $v) {
             $config_overrides[$k] = $v;
         }
-        if (array_key_exists($k, $path_cfgs) && (is_dir($v) || !mkdir($v, 0755, true))) {
+        if (array_key_exists($k, $path_cfgs) && (!is_dir($v) && !mkdir($v, 0755, true))) {
             die("Could not create '$k' directory at '$v'");
         }
+    }
+    /* Make sure log directory exists as well */
+    $log_dir = dirname(Config::$log_file);
+    if (!is_dir($log_dir) && !mkdir($log_dir, 0755)) {
+        die("Could not create log directory at '$log_dir'");
     }
     header('Location: ?c=user');
 } else {
