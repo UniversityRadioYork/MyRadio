@@ -245,6 +245,12 @@ class CoreUtils
         $escaped_commands = array_map('escapeshellcmd', $commands);
         $failed_formats = [];
 
+        foreach (['mp3', 'ogg'] as $format) {
+            if (file_exists("{$dbfile}.{$format}")) {
+                throw new MyRadioException("Cannot encode, track {$dbfile}.{$format} already exists", 500);
+            }
+        }
+
         foreach ($escaped_commands as $format => $command) {
             exec($command, $command_stdout, $command_exit_code);
             if ($command_exit_code) {
