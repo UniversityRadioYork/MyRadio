@@ -1018,7 +1018,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         if (empty($eduroam) && empty($this->email)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
         } elseif ($this->getEduroam() !== $eduroam && self::findByEmail($eduroam) !== null) {
-            throw new MyRadioException('The eduroam account '.$eduroam.' is already allocated to another User.', 500);
+            throw new MyRadioException('The eduroam account '.$eduroam.' is already allocated to another User.', 400);
         }
         $this->setCommonParam('eduroam', $eduroam);
 
@@ -1046,7 +1046,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         if (empty($email) && empty($this->eduroam)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
         } elseif ($email !== $this->email && self::findByEmail($email) !== null && self::findByEmail($email) != $this) {
-            throw new MyRadioException('The email account '.$email.' is already allocated to another User.', 500);
+            throw new MyRadioException('The email account '.$email.' is already allocated to another User.', 400);
         }
         $this->setCommonParam('email', $email);
 
@@ -1084,7 +1084,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function setLocalAlias($alias)
     {
         if ($alias !== $this->local_alias && self::findByEmail($alias) !== null) {
-            throw new MyRadioException('That Mailbox Name is already in use. Please choose another.', 500);
+            throw new MyRadioException('That Mailbox Name is already in use. Please choose another.', 400);
         }
         $this->setCommonParam('local_alias', $alias);
 
@@ -1106,7 +1106,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             throw new MyRadioException('Mailbox alias may not contain an @ symbol');
         }
         if ($name !== $this->local_name && self::findByEmail($name) !== null && self::findByEmail($name) != $this) {
-            throw new MyRadioException('That Mailbox Alias is already in use. Please choose another.', 500);
+            throw new MyRadioException('That Mailbox Alias is already in use. Please choose another.', 400);
         }
         $this->setCommonParam('local_name', $name);
 
