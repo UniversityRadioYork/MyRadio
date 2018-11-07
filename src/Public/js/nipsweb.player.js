@@ -695,6 +695,118 @@ var NIPSWeb = function (d) {
 
   //End of Context Menu
 
+  // Begin auto cue
+
+  var initAutoCue = function() {
+    let nowIndicatorXPosition;
+    let pixelsPerSecond;
+
+    let calculateBarPositionFromSeek = function(startPosition, eventPosition, target) {
+      // Not using nowIndicatorXPosition as that compensates for the container, these
+      // values are relative to the page
+      let drawPosition = eventPosition - startPosition;
+      $(target).css({left: drawPosition});
+      let timePosition = target.getBoundingClientRect().x - $("#baps-autocue-timebar")[0].getBoundingClientRect().x;
+      let currentTimeSec = (new Date).getTime() / 1000;
+      let currentOffsetSec = timePosition / pixelsPerSecond;
+      let result = Math.round(currentTimeSec + currentOffsetSec);
+
+      return result;
+    };
+
+    let scheduleBarDragStart = function (e) {
+      let slider = this;
+      let startPosition = e.clientX - slider.getBoundingClientRect().x;
+      let startAt;
+      let dragMove = function (e) {
+        startAt = calculateBarPositionFromSeek(startPosition, e.clientX, slider);
+        slider.querySelector(".start").innerHTML = moment(startAt * 1000).format("HH:mm:ss");
+        slider.querySelector(".end").innerHTML = moment(startAt * 1000 + 60000).format("HH:mm:ss");
+        return false;
+      };
+      let dragEnd = function () {
+        slider.startAt = startAt;
+        slider.isDragging = false;
+        slider.parentNode.parentNode.removeEventListener("mousemove", dragMove);
+        window.removeEventListener("mouseup", dragEnd);
+        return false;
+      };
+      slider.parentNode.parentNode.addEventListener("mousemove", dragMove);
+      slider.isDragging = true;
+      window.addEventListener("mouseup", dragEnd);
+      // Prevent bubbling the event up
+      return false;
+    };
+
+    let onTimer = function() {
+      nowIndicatorXPosition = $("#baps-autocue-timebar")[0].getBoundingClientRect().x - $("#baps-autocue-container")[0].getBoundingClientRect().x;
+      $("#baps-autocue-time-display").text(moment().format("HH:mm:ss"));
+      for (let i = 1; i <= 3; i++) {
+        let scheduleBar = $("#baps-autocue-schedulebar-" + i);
+        if (!players[i].duration || scheduleBar[0].isDragging) {
+          continue;
+        }
+        let channelHasSchedule = !!scheduleBar[0].startAt;
+
+        if (!players[i].paused) {
+          scheduleBar[0].startAt = 0;
+          scheduleBar.find(".start").text("");
+          scheduleBar.find(".end").text(moment().add(players[i].duration - players[i].currentTime, "seconds").format("HH:mm:ss"));
+          scheduleBar.css({
+            left: nowIndicatorXPosition - (players[i].currentTime * pixelsPerSecond),
+            backgroundColor: "#5bc0de"
+          });
+        } else if (!channelHasSchedule) {
+          scheduleBar.find(".end").text("");
+          scheduleBar.css({
+            left: nowIndicatorXPosition - (players[i].currentTime * pixelsPerSecond),
+            backgroundColor: "#777"
+          });
+        } else {
+          let startAtOffset = scheduleBar[0].startAt - (new Date).getTime() / 1000;
+          let startAtPositionOffset = startAtOffset * pixelsPerSecond;
+          scheduleBar.find(".start").text(moment().add(startAtOffset, "seconds").format("HH:mm:ss"));
+          scheduleBar.find(".end").text(moment().add(startAtOffset + players[i].duration, "seconds").format("HH:mm:ss"));
+          scheduleBar.css({
+            left: nowIndicatorXPosition + startAtPositionOffset,
+            backgroundColor: "#5bc85c"
+          });
+
+          if (startAtOffset <= 0) {
+            // The UI currently doesn't respond to the players be interacted with directly
+            // So I did some evil. Other bits of this file do this too...
+            $("#ch" + i + "-play").click();
+          }
+        }
+      }
+    };
+
+    setInterval(onTimer, 50);
+
+    for (let i = 1; i <= 3; i++) {
+      players[i].addEventListener("durationchange", function() {
+        if (!this.duration) {
+          return;
+        }
+
+        this.isDragging = false;
+        this.offset = 0;
+
+        let totalDuration = (players[1].duration || 0) + (players[2].duration || 0) + (players[3].duration || 0);
+        let availableWidth = $("#baps-autocue-container").width() - nowIndicatorXPosition;
+        pixelsPerSecond = Math.min(availableWidth, availableWidth / totalDuration * 1.3);
+
+        for (let j = 1; j <= 3; j++) {
+          let thisDuration = players[j].duration;
+          $("#baps-autocue-schedulebar-" + j).width(thisDuration * pixelsPerSecond);
+        }
+      });
+      $("#baps-autocue-schedulebar-" + i).on("mousedown", scheduleBarDragStart);
+    }
+  };
+
+  // End auto cue
+
   var initialiseUI = function () {
     if (writable) {
       $("ul.baps-channel").sortable({
@@ -730,6 +842,7 @@ var NIPSWeb = function (d) {
     setupGenericListeners();
     updateChannelTotalTimers();
     initContextMenu();
+    initAutoCue();
   };
 
   var getChannelInt = function (channel) {

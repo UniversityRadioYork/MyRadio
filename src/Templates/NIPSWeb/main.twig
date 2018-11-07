@@ -49,7 +49,7 @@
 
     </div>
 
-    <div id="baps-channelaction-container"  class="clearfix">
+    <div id="baps-channelaction-container" class="clearfix">
       {% set channels = [1, 2, 3, 'res'] %}
       {% for channel in channels %}
         <div class='box col-xs-3 baps-channel channel-footer{% if channel == 'res' %} library-footer{% endif %}'>
@@ -67,6 +67,17 @@
           <label id='ch{{channel}}-duration'>--:--</label>
         </div>
       {% endfor %}
+    </div>
+
+    <div id="baps-autocue-container" class="clearfix">
+      {% set channels = [1, 2, 3] %}
+      {% for channel in channels %}
+        <div class="baps-autocue-outer">
+          <div class="baps-autocue-label">Channel {{channel}}</div>
+          <div id="baps-autocue-schedulebar-{{channel}}" class="baps-autocue-schedulebar">&nbsp;<span class="start"></span><span class="end"></span></div>
+        </div>
+      {% endfor %}
+        <div id="baps-autocue-time"><span id="baps-autocue-time-display">--:--:--</span><span id="baps-autocue-timebar">&nbsp;</span></div>
     </div>
   </div>
 </div>
@@ -103,6 +114,7 @@
 
 {% block foot %}
 {{ parent() }}
+<script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/vendor/typeahead.bundle.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/nipsweb.channelconfig.js"></script>

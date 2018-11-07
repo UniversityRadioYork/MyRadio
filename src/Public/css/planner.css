@@ -5,12 +5,12 @@ html {
 body {
   width: 98%;
   min-width: 1200px;
-  height: calc(100% - 42px);
+  height: calc(100% - 5rem);
   margin: 20px auto 0 auto;
 }
 
 .main-container, #baps-channel-container {
-  height: calc(100% - 60px);
+  height: calc(100% - 11rem);
   width: 100%;
 }
 
@@ -347,3 +347,61 @@ select {
   cursor: pointer;
 }
 
+#baps-autocue-container {
+  width: 100%;
+  height: 10rem;
+  border: 2px solid #333;
+  margin: 1rem 0;
+  padding: .5rem 0 0 0;
+  position: relative;
+  cursor: default;
+  overflow: hidden;
+}
+
+.baps-autocue-outer {
+  width: 100%;
+  height: 2.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.baps-autocue-label {
+  display: inline-block;
+  position: absolute;
+  z-index: 20;
+}
+
+.baps-autocue-schedulebar {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  z-index: 10;
+  cursor: col-resize;
+}
+
+.baps-autocue-schedulebar .start {
+  position: absolute;
+  left: 1rem;
+  text-align: left;
+}
+
+.baps-autocue-schedulebar .end {
+  position: absolute;
+  right: 1rem;
+  text-align: right;
+}
+
+#baps-autocue-time {
+  position: absolute;
+  bottom: 0rem;
+  left: 7rem;
+}
+
+#baps-autocue-timebar {
+  position: absolute;
+  left: 45%;
+  top: -7.6rem;
+  height: 8rem;
+  border-left: 2px solid #0a5a9c;
+}
