@@ -888,7 +888,10 @@ EOT
     {
         //Verify that the input time is valid
         if (!isset($params['time']) or !is_numeric($params['time'])) {
-            throw new MyRadioException('No valid Time was sent to the Scheduling Mapper.', 400);
+            throw new MyRadioException(
+                'No valid Time was sent to the Scheduling Mapper.',
+                400
+            );
         }
         if ($params['time'] != -1 && !isset($this->requested_times[$params['time']])) {
             throw new MyRadioException(
@@ -943,7 +946,10 @@ EOT
                 $conflict = MyRadio_Scheduler::getScheduleConflict($show_time, $show_time + $req_time['duration']);
                 if (!empty($conflict)) {
                     self::$db->query('ROLLBACK');
-                    throw new MyRadioException('A show is already scheduled for this time: '.print_r($conflict, true), 400);
+                    throw new MyRadioException(
+                        'A show is already scheduled for this time: '.print_r($conflict, true),
+                        400
+                    );
                 }
 
                 //This week is due to be scheduled! QUERY! QUERY!
