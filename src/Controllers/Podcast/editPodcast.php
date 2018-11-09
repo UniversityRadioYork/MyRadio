@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $podcast = MyRadio_Podcast::create(
             $data['title'],
             $data['description'],
-            explode(' ', $data['tags']),
+            $data['tags'],
             $data['file']['tmp_name'],
             empty($data['show']) ? null : MyRadio_Show::getInstance($data['show']),
             $data['credits']
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $podcast->setMeta('title', $data['title'])
             ->setMeta('description', $data['description'])
-            ->setMeta('tag', explode(' ', $data['tags']))
+            ->setMeta('tag', CoreUtils::explodeTags($data['tags']))
             ->setCredits($data['credits']['member'], $data['credits']['credittype']);
 
         if (!empty($data['show'])) {
