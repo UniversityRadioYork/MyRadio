@@ -5,6 +5,7 @@
  * which should be the ID of the Show to edit.
  */
 use \MyRadio\MyRadio\AuthUtils;
+use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\MyRadioException;
 use \MyRadio\ServiceAPI\MyRadio_Show;
@@ -34,18 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $show->setMeta('title', $data['title']);
         $show->setMeta('description', $data['description']);
 
-        // We want to handle the case when people delimit with commas, spaces, or commas and
-        // spaces, as well as handling extended spaces.
-        $tags = preg_split('/[, ] */', $data['tags'], null, PREG_SPLIT_NO_EMPTY);
-        foreach ($tags as $tag) {
-            if (strlen($tag) > 24) {
-                throw new MyRadioException('Sorry, individual tags longer than 24 characters
-                    aren\'t allowed. Please try again.', 400);
-            }
-        }
+        //Explode the tags
         $show->setMeta(
             'tag',
-            $tags
+            CoreUtils::explodeTags($data['tags'])
         );
 
         $show->setGenre($data['genres']);

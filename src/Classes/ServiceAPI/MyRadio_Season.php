@@ -169,6 +169,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 throw new MyRadioException('Parameter '.$field.' was not provided.', 400);
             }
         }
+        $tags = (!empty($params['tags'])) ? CoreUtils::explodeTags($params['tags']) : [];
 
         /**
          * Select an appropriate value for $term_id.
@@ -256,32 +257,18 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         }
 
         //Same with tags
-        if (!empty($params['tags'])) {
-            // Explode the tags
-            // We want to handle the case when people delimit with commas, spaces, or commas and
-            // spaces, as well as handling extended spaces.
-            $tags = preg_split('/[, ] */', $params['tags'], null, PREG_SPLIT_NO_EMPTY);
-            foreach ($tags as $tag) {
-                if (empty($tag)) {
-                    continue;
-                }
-                self::$db->query(
-                    'INSERT INTO schedule.season_metadata
-                    (metadata_key_id, show_season_id, metadata_value, effective_from, memberid, approvedid)
-                    VALUES ($1, $2, $3, NOW(), $4, $4)',
-                    [
-                        self::getMetadataKey('tag'),
-                        $season_id,
-                        $tag,
-                        MyRadio_User::getInstance()->getID(),
-                    ]
-                );
-                if (strlen($tag) > 24){
-                    self::$db->query('ABORT');
-                    throw new MyRadioException('Sorry, individual tags longer than 24 characters
-                        aren\'t allowed. Please try again.', 400);
-                }
-            }
+        foreach ($tags as $tag) {
+            self::$db->query(
+                'INSERT INTO schedule.season_metadata
+                (metadata_key_id, show_season_id, metadata_value, effective_from, memberid, approvedid)
+                VALUES ($1, $2, $3, NOW(), $4, $4)',
+                [
+                    self::getMetadataKey('tag'),
+                    $season_id,
+                    $tag,
+                    MyRadio_User::getInstance()->getID(),
+                ]
+            );
         }
 
         //Actually commit the show to the database!

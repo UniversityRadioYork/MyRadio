@@ -293,9 +293,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         }
 
         // Explode the tags
-        // We want to handle the case when people delimit with commas, spaces, or commas and
-        // spaces, as well as handling extended spaces.
-        $tags = preg_split('/[, ] */', $params['tags'], null, PREG_SPLIT_NO_EMPTY);
+        $tags = CoreUtils::explodeTags($params['tags']);
         foreach ($tags as $tag) {
             self::$db->query(
                 'INSERT INTO schedule.show_metadata
@@ -304,11 +302,6 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 [self::getMetadataKey('tag'), $show_id, $tag, $creator],
                 true
             );
-            if (strlen($tag) > 24) {
-                self::$db->query('ABORT');
-                throw new MyRadioException('Sorry, individual tags longer than 24 characters
-                    aren\'t allowed. Please try again.', 400);
-            }
         }
 
         //Set a location

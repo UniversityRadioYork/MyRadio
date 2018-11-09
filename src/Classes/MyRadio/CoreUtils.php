@@ -620,6 +620,34 @@ class CoreUtils
         return $needle === '' || strrpos($haystack, $needle, -strlen($haystack)) !== false;
     }
 
+    /**
+     * Explode tags from string to array.
+     * We want to handle the case when people delimit with commas, spaces, or commas and
+     * spaces, as well as handling extended spaces.
+     *
+     * @param string $tags A tags string, comma separated.
+     *
+     * @return array The exploded tags.
+     *
+     * @throws MyRadioException when tags are longer than 24 characters.
+    **/
+    public static function explodeTags($tags)
+    {
+        $tags = preg_split('/[, ] */', $tags, null, PREG_SPLIT_NO_EMPTY);
+        $exploded_tags = [];
+        foreach ($tags as $tag) {
+            if (empty($tag)) {
+                continue;
+            }
+            if (strlen($tag) > 24) {
+                throw new MyRadioException('Sorry, individual tags longer than 24 characters
+                    aren\'t allowed. Please try again.', 400);
+            }
+            $exploded_tags += $tag;
+        }
+        return $exploded_tags;
+    }
+
     private function __construct()
     {
     }
