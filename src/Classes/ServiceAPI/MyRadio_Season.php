@@ -264,19 +264,19 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             foreach ($tags as $tag) {
                 if (empty($tag)) {
                     continue;
-                } else if (strlen($tag) < 25) {
-                    self::$db->query(
-                        'INSERT INTO schedule.season_metadata
-                        (metadata_key_id, show_season_id, metadata_value, effective_from, memberid, approvedid)
-                        VALUES ($1, $2, $3, NOW(), $4, $4)',
-                        [
-                            self::getMetadataKey('tag'),
-                            $season_id,
-                            $tag,
-                            MyRadio_User::getInstance()->getID(),
-                        ]
-                    );
-                } else {
+                }
+                self::$db->query(
+                    'INSERT INTO schedule.season_metadata
+                    (metadata_key_id, show_season_id, metadata_value, effective_from, memberid, approvedid)
+                    VALUES ($1, $2, $3, NOW(), $4, $4)',
+                    [
+                        self::getMetadataKey('tag'),
+                        $season_id,
+                        $tag,
+                        MyRadio_User::getInstance()->getID(),
+                    ]
+                );
+                if (strlen($tag) > 24){
                     self::$db->query('ABORT');
                     throw new MyRadioException('Sorry, individual tags longer than 24 characters
                         aren\'t allowed. Please try again.', 400);

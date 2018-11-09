@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // spaces, as well as handling extended spaces.
         $tags = preg_split('/[, ] */', $data['tags'], null, PREG_SPLIT_NO_EMPTY);
         foreach ($tags as $tag) {
-            if (strlen($tag) >= 25) {
+            if (strlen($tag) > 24) {
                 throw new MyRadioException('Sorry, individual tags longer than 24 characters
                     aren\'t allowed. Please try again.', 400);
             }
