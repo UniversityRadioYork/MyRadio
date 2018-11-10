@@ -404,25 +404,23 @@ class MyRadio_Selector
      * SERIOUSLY, KNOW WHAT YOU ARE DOING WITH THIS METHOD.
      *
      * Calling this method will *terminate station output*, replacing it with
-     * our pre-mixed audio for use in cases of national emergency such as
+     * our OBIT playlist for use in cases of national emergency such as
      * terrorist attacks or the death of someone in the royal family.
      *
-     * Jukebox has this file requested multiple times, then our studio selector
-     * is told to switch to Jukebox, then lock itself so only technical staff can
-     * restore studio functionality.
+     * Jukebox will be fed OBIT tracks using iTonesUtils::getTrackForJukebox(),
+     * then our studio selector is told to switch to Jukebox, then lock itself
+     * so only technical staff can restore studio functionality.
      *
      * It also emails an array of various important people to inform them that
      * this has happened.
      */
     public static function setObit()
     {
+        //Store the event for Jukebox / Timelord
+        file_put_contents('/tmp/myradio-obit', 1);
+
         //Empty all existing request queues
         iTones_Utils::emptyQueues();
-
-        //Request the obit file a few times (5h of content)
-        for ($i = 0; $i < 5; ++$i) {
-            iTones_Utils::requestFile(Config::$jukebox_obit_file);
-        }
 
         //Skip to the next track
         iTones_Utils::skip();
@@ -445,9 +443,6 @@ class MyRadio_Selector
             .MyRadio_User::getInstance()->getName().' - '
             .MyRadio_User::getInstance()->getEmail()
         );
-
-        //Store the event for Timelord
-        file_put_contents('/tmp/myradio-obit', 1);
     }
 
     /**
