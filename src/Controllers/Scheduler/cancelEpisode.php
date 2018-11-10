@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$result) {
         $message = 'Your cancellation request could not be processed at this time. '
-            .'Please contact programming@ury.org.uk instead.';
+            .'Please contact programming@'.Config::$email_domain.' instead.';
     } else {
         $message = 'Your cancellation request has been sent. You will receive an email informing you of updates.';
     }

@@ -259,7 +259,7 @@ final class Config
      * @var string
      */
     public static $default_show_uri = '/media/image_meta/ShowImageMetadata/22.png';
-    
+
     /**
      * The full web address to the image that will be served outside of term time.
      *
@@ -603,16 +603,28 @@ final class Config
     public static $auth_ldap_root = 'ou=people,ou=csrv,ou=nos,dc=york,dc=ac,dc=uk';
     public static $auth_db_user = '';
     public static $auth_db_pass = '';
+
+    /**
+     * Optional eduroam auth domain (probably .ac.uk).
+     *
+     * @var string
+     */
     public static $eduroam_domain = 'york.ac.uk';
     public static $auth_ldap_friendly_name = 'IT Services';
     public static $auth_ldap_reset_url = 'https://idm.york.ac.uk/';
 
-/**
- * Email configuration.
- */
+    /**
+     * Email configuration.
+     */
+
     //All email domains handled by MyRadio
     public static $local_email_domains = [];
-    //Primary email domains
+
+    /**
+     * Primary email domain. MyRadio will send emails from this domain.
+     *
+     * @var string
+     */
     public static $email_domain = 'ury.org.uk';
 
     /**
@@ -700,6 +712,7 @@ EOT;
             'short_name' => self::$short_name,
             'long_name' => self::$long_name,
             'founded' => self::$founded,
+            'email_domain' => self::$email_domain,
             'facebook' => self::$facebook,
             'audio_upload_max_size' => self::$audio_upload_max_size,
             'payment_url' => self::$yusu_payment_url,

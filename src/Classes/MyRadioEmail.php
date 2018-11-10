@@ -23,11 +23,11 @@ class MyRadioEmail extends ServiceAPI
      * @todo Hardcoded URLs
      */
     private static $headers = 'Content-type: text/plain; charset=utf-8';
-    private static $sender = 'From: MyRadio <no-reply@ury.org.uk>';
+    private static $sender = 'From: MyRadio <no-reply@'.Config::$email_domain.'>';
     private static $footer = 'This email was sent automatically from MyRadio. '
-        .'You can opt out of emails by visiting https://ury.org.uk/myradio/Profile/edit/.';
+        .'You can opt out of emails by visiting https:'.Config::$base_url.'Profile/edit/.';
     private static $html_footer = 'This email was sent automatically from MyRadio. '
-        .'You can opt out of emails <a href="https://ury.org.uk/myradio/Profile/edit/">on your profile page</a>.';
+        .'You can opt out of emails <a href="'.Config::$base_url.'Profile/edit/">on your profile page</a>.';
     // Standard
     /**
      * @var string carriage return + newline
