@@ -23,6 +23,7 @@ $shorttext = [
     'long_name',
     'founded',
     'email_domain',
+    'eduroam_domain',
     'facebook',
 ];
 
