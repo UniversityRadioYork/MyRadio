@@ -91,7 +91,8 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
      *
      * @return MyRadio_Track
      */
-    public static function getTrackFromPlaylist($playlist) {
+    public static function getTrackFromPlaylist($playlist)
+    {
         $tracks = $playlist->getTracks();
 
         // Randomly sort the array, then pop them out until one is playable (or we run out)
