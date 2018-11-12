@@ -888,12 +888,15 @@ EOT
     {
         //Verify that the input time is valid
         if (!isset($params['time']) or !is_numeric($params['time'])) {
-            throw new MyRadioException('No valid Time was sent to the Scheduling Mapper.', MyRadioException::FATAL);
+            throw new MyRadioException(
+                'No valid Time was sent to the Scheduling Mapper.',
+                400
+            );
         }
         if ($params['time'] != -1 && !isset($this->requested_times[$params['time']])) {
             throw new MyRadioException(
                 'The Time value sent is not a valid Requested Time Reference.',
-                MyRadioException::FATAL
+                400
             );
         }
         //Verify the custom times are valid
@@ -901,7 +904,7 @@ EOT
             or !isset($params['timecustom_stime'])  //Same again with midnight (00:00)
             or empty($params['timecustom_etime']))
         ) {
-            throw new MyRadioException('The Custom Time value sent is invalid.', MyRadioException::FATAL);
+            throw new MyRadioException('The Custom Time value sent is invalid.', 400);
         }
         //Okay, let's get to business
         //First, figure out what time things are happening
@@ -943,7 +946,10 @@ EOT
                 $conflict = MyRadio_Scheduler::getScheduleConflict($show_time, $show_time + $req_time['duration']);
                 if (!empty($conflict)) {
                     self::$db->query('ROLLBACK');
-                    throw new MyRadioException('A show is already scheduled for this time: '.print_r($conflict, true));
+                    throw new MyRadioException(
+                        'A show is already scheduled for this time: '.print_r($conflict, true),
+                        400
+                    );
                 }
 
                 //This week is due to be scheduled! QUERY! QUERY!
