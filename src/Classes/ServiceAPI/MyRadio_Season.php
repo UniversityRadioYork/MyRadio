@@ -896,7 +896,7 @@ EOT
         if ($params['time'] != -1 && !isset($this->requested_times[$params['time']])) {
             throw new MyRadioException(
                 'The Time value sent is not a valid Requested Time Reference.',
-                500
+                400
             );
         }
         //Verify the custom times are valid
