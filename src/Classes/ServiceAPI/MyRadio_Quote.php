@@ -36,16 +36,16 @@ class MyRadio_Quote extends ServiceAPI
             date DESC
         ;';
 
-	const GET_RANDOM_SQL = '
-		SELECT
-			*
-		FROM
-			people.quote
-		ORDER BY 
-			random()
-		LIMIT 1
-		;';
-		
+    const GET_RANDOM_SQL = '
+        SELECT
+            *
+        FROM
+            people.quote
+        ORDER BY 
+            random()
+        LIMIT 1
+        ;';
+        
     const INSERT_SQL = '
         INSERT INTO
             people.quote(text, source, date)
@@ -178,19 +178,19 @@ class MyRadio_Quote extends ServiceAPI
 
         return array_map('self::getInstance', $quote_ids);
     }
-
-	/**
-	* Retrieves a random quote
-	* Probably didn't need to use array_map, but I copied getAll. Sorry - Jordan
-	* @return array An array of active quote
-	*/
+    
+    /**
+    * Retrieves a random quote
+    * Probably didn't need to use array_map, but I copied getAll. Sorry - Jordan
+    * @return array An array of active quote
+    */
 	public static function getRandom()
-	{
-		$quote_id = self::$db->fetchColumn(self::GET_RANDOM_SQL, []);
-		
-		return array_map('self::getInstance', $quote_id);
-	}
-	
+    {
+        $quote_id = self::$db->fetchColumn(self::GET_RANDOM_SQL, []);
+        
+        return array_map('self::getInstance', $quote_id);
+    }
+    
     /**
      * @return int The quote ID.
      */
