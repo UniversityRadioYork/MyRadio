@@ -43,8 +43,8 @@ class MyRadio_Quote extends ServiceAPI
             people.quote
         ORDER BY 
             random()
-        LIMIT 1
-        ;';
+        LIMIT 1;
+        ';
         
     const INSERT_SQL = '
         INSERT INTO

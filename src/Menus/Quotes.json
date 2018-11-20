@@ -14,7 +14,7 @@
             {
                 "title": "Random Quote",
                 "url": "module=Quotes,action=randomQuote",
-                "description": "You feeling lucky!"
+                "description": "You feeling lucky?!?!"
             }
         ]
 }
