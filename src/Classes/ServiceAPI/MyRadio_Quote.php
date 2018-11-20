@@ -79,7 +79,7 @@ class MyRadio_Quote extends ServiceAPI
         WHERE
             quote_id = $2
         ;';
-	
+    
     /**
      * The quote ID.
      *
@@ -184,7 +184,7 @@ class MyRadio_Quote extends ServiceAPI
     * Probably didn't need to use array_map, but I copied getAll. Sorry - Jordan
     * @return array An array of active quote
     */
-	public static function getRandom()
+    public static function getRandom()
     {
         $quote_id = self::$db->fetchColumn(self::GET_RANDOM_SQL, []);
         
