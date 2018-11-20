@@ -179,6 +179,11 @@ class MyRadio_Quote extends ServiceAPI
         return array_map('self::getInstance', $quote_ids);
     }
 
+	/**
+	* Retrieves a random quote
+	* Probably didn't need to use array_map, but I copied getAll. Sorry - Jordan
+	* @return array An array of active quote
+	*/
 	public static function getRandom()
 	{
 		$quote_id = self::$db->fetchColumn(self::GET_RANDOM_SQL, []);

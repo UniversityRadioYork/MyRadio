@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Allows the addition of new quotes.
+ * Allows the viewing of a single random quote
  */
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Quote;
