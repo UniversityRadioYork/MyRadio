@@ -36,6 +36,16 @@ class MyRadio_Quote extends ServiceAPI
             date DESC
         ;';
 
+	const GET_RANDOM_SQL = '
+		SELECT
+			*
+		FROM
+			people.quote
+		ORDER BY 
+			random()
+		LIMIT 1
+		;';
+		
     const INSERT_SQL = '
         INSERT INTO
             people.quote(text, source, date)
@@ -69,7 +79,7 @@ class MyRadio_Quote extends ServiceAPI
         WHERE
             quote_id = $2
         ;';
-
+	
     /**
      * The quote ID.
      *
@@ -169,6 +179,13 @@ class MyRadio_Quote extends ServiceAPI
         return array_map('self::getInstance', $quote_ids);
     }
 
+	public static function getRandom()
+	{
+		$quote_id = self::$db->fetchColumn(self::GET_RANDOM_SQL, []);
+		
+		return array_map('self::getInstance', $quote_id);
+	}
+	
     /**
      * @return int The quote ID.
      */
