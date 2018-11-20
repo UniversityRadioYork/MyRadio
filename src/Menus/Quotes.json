@@ -10,6 +10,11 @@
                 "title": "Add Quote",
                 "url": "module=Quotes,action=editQuote",
                 "description": "Add a quote to the Quotes Database."
-            }
+            },
+			{
+				"title": "Random Quote",
+				"url": "module=Quotes,action=randomQuote",
+				"description": "You feeling lucky!"
+			}
         ]
 }
