@@ -18,6 +18,21 @@ $currentUser = MyRadio_User::getInstance();
 foreach ($demos as $demo) {
     if ($currentUser->hasAuth(AUTH_ADDDEMOS)) {
         $demo['attending'] = MyRadio_Demo::usersAttendingDemo($demo['show_season_timeslot_id']);
+     
+
+        if (MyRadio_Demo::isDemoEmpty($demo['show_season_timeslot_id'] && MyRadio_Demo::getDemoer())) {
+            $demo['attending'] = 'Empty';
+            $demo['remove'] = [
+                'display' => 'icon',
+                'value' => 'trash',
+                'title' => 'Cancel Demo',
+                'url' => URLUtils::makeURL(
+                    'Scheduler',
+                    'cancelEpisode',
+                    ['show_season_timeslot_id' => $demo['show_season_timeslot_id']]
+                ),
+                ];
+        }
     } else {
         if (MyRadio_Demo::isUserAttendingDemo($demo['show_season_timeslot_id'], $currentUser->getID())) {
             $demo['attending'] = 'You are attending this demo';

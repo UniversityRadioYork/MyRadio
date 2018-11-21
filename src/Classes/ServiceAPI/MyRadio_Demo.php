@@ -83,6 +83,11 @@ class MyRadio_Demo extends ServiceAPI
         return self::attendingDemoCount($demoid) < 2;
     }
 
+    public static function isDemoEmpty($demoid)
+    {
+        return self::attendingDemoCount($demoid) == 0;
+    }
+
     public static function usersAttendingDemo($demoid)
     {
         // First, retrieve all the memberids attending this demo
