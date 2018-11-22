@@ -49,6 +49,7 @@
     ["Apply for a Show","AUTH_APPLYFORSHOW", true],
     ["View Webcam Video Archives","AUTH_VIEWWEBCAMARCHIVE", true],
     ["Add Demo Slots","AUTH_ADDDEMOS", true],
+    ["Cancel Demo Slots","AUTH_CANCELDEMOS", true],
     ["Attend a Demo","AUTH_ATTENDDEMO", true],
     ["View URY Statistics","AUTH_VIEWSTATS", true],
     ["[API Only] Unrestricted API Access","AUTH_APISUDO", false],
