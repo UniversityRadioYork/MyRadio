@@ -7,7 +7,6 @@
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\MyRadioException;
 use \MyRadio\ServiceAPI\MyRadio_Show;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
@@ -35,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $show->setMeta('title', $data['title']);
         $show->setMeta('description', $data['description']);
 
-        //Explode the tags
         $show->setMeta(
             'tag',
             CoreUtils::explodeTags($data['tags'])
