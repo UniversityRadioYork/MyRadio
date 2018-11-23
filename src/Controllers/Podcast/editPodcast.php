@@ -4,6 +4,7 @@
  */
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\AuthUtils;
+use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Podcast;
 use \MyRadio\ServiceAPI\MyRadio_Show;
