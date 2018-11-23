@@ -643,7 +643,8 @@ class CoreUtils
                 throw new MyRadioException('Sorry, individual tags longer than 24 characters
                     aren\'t allowed. Please try again.', 400);
             }
-            $exploded_tags += trim($tag);
+            // Add the valid tag to the returned array.
+            $exploded_tags[] = trim($tag);
         }
         return $exploded_tags;
     }
