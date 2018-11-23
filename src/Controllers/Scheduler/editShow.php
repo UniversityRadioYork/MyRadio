@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         URLUtils::redirectWithMessage(
             'Scheduler',
             'myShows',
-            'Your show, ' . $show->getMeta('title') . ', has been created!'
+            'Your show, ' . $show->getMeta('title') . ', has been created. Now create a new season for it!'
         );
     } else {
         //submit edit
