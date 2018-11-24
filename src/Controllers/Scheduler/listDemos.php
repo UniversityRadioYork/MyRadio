@@ -16,34 +16,36 @@ $tabledata = [];
 $currentUser = MyRadio_User::getInstance();
 
 foreach ($demos as $demo) {
-    if ($currentUser->hasAuth(AUTH_CANCELDEMOS)) {
-        $demo['attending'] = MyRadio_Demo::usersAttendingDemo($demo['show_season_timeslot_id']);
+    $demoid = $demo['show_season_timeslot_id'];
 
-        if (MyRadio_Demo::isDemoEmpty($demo['show_season_timeslot_id'])) {
+    if ($currentUser->hasAuth(AUTH_CANCELDEMOS)) {
+        $demo['attending'] = MyRadio_Demo::usersAttendingDemo($demoid);
+
+        if (MyRadio_Demo::isDemoEmpty($demoid)) {
             $demo['attending'] = 'Empty';
             $demo = addCancelButton($demo);
         }
     } elseif ($currentUser->hasAuth(AUTH_ADDDEMOS)) {
-        $demo['attending'] = MyRadio_Demo::usersAttendingDemo($demo['show_season_timeslot_id']);
+        $demo['attending'] = MyRadio_Demo::usersAttendingDemo($demoid);
 
-        if (MyRadio_Demo::isDemoEmpty($demo['show_season_timeslot_id'] && MyRadio_Demo::getDemoer() == $currentUser)) {
+        if (MyRadio_Demo::isDemoEmpty($demoid) && MyRadio_Demo::getDemoer($demoid) == $currentUser) {
             $demo['attending'] = 'Empty';
             $demo = addCancelButton($demo);
         }
     } else {
-        if (MyRadio_Demo::isUserAttendingDemo($demo['show_season_timeslot_id'], $currentUser->getID())) {
+        if (MyRadio_Demo::isUserAttendingDemo($demoid, $currentUser->getID())) {
             $demo['attending'] = 'You are attending this demo';
             $demo['join'] = [
                 'display' => 'text',
                 'value' => 'Leave',
-                'url' => URLUtils::makeURL('Scheduler', 'leaveDemo', ['demoid' => $demo['show_season_timeslot_id']]),
+                'url' => URLUtils::makeURL('Scheduler', 'leaveDemo', ['demoid' => $demoid]),
             ];
-        } elseif (MyRadio_Demo::isSpaceOnDemo($demo['show_season_timeslot_id'])) {
+        } elseif (MyRadio_Demo::isSpaceOnDemo($demoid)) {
             $demo['attending'] = 'Space available!';
             $demo['join'] = [
                 'display' => 'text',
                 'value' => 'Join',
-                'url' => URLUtils::makeURL('Scheduler', 'attendDemo', ['demoid' => $demo['show_season_timeslot_id']]),
+                'url' => URLUtils::makeURL('Scheduler', 'attendDemo', ['demoid' => $demoid]),
             ];
         } else {
             $demo['attending'] = 'Demo full';
