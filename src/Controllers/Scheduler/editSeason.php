@@ -17,7 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($data['id'])) {
         //create new
         MyRadio_Season::create($data);
-        URLUtils::redirectWithMessage('Scheduler', 'myShows', 'Your new season has been created. You should recieve an email when it\'s scheduled!');
+        URLUtils::redirectWithMessage(
+            'Scheduler',
+            'myShows',
+            'Your new season has been created. You should recieve an email when it\'s scheduled!'
+        );
     } else {
         //submit edit
         $season = MyRadio_Season::getInstance($data['id']);
