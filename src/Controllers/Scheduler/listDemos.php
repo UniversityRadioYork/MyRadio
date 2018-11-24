@@ -22,14 +22,12 @@ foreach ($demos as $demo) {
         $demo['attending'] = MyRadio_Demo::usersAttendingDemo($demoid);
 
         if (MyRadio_Demo::isDemoEmpty($demoid)) {
-            $demo['attending'] = 'Empty';
             $demo = addCancelButton($demo);
         }
     } elseif ($currentUser->hasAuth(AUTH_ADDDEMOS)) {
         $demo['attending'] = MyRadio_Demo::usersAttendingDemo($demoid);
 
         if (MyRadio_Demo::isDemoEmpty($demoid) && MyRadio_Demo::getDemoer($demoid) == $currentUser) {
-            $demo['attending'] = 'Empty';
             $demo = addCancelButton($demo);
         }
     } else {
