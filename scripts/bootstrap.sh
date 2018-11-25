@@ -84,7 +84,7 @@ pg_createcluster 10 myradio
 su - postgres -c "cat /vagrant/sample_configs/postgres.sql | psql"
 
 # Somewhere to store audio uploads
-music_dirs="records membersmusic beds jingles"
+music_dirs="records membersmusic beds jingles podcasts"
 for i in ${music_dirs}; do # no spaces
 	mkdir -p /music/$i
 	chown www-data:www-data /music/$i
