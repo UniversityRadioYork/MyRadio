@@ -395,7 +395,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 $this->getID(),
                 [
                     'description' => $this->getMeta('description'),
-                    'tags' => implode(',', $this->getMeta('tag')),
+                    'tags' => implode(', ', $this->getMeta('tag')),
                 ]
             );
     }
