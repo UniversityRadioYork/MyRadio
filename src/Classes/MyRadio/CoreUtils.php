@@ -640,8 +640,9 @@ class CoreUtils
                 continue;
             }
             if (strlen($tag) > 24) {
-                throw new MyRadioException('Sorry, individual tags longer than 24 characters
-                    aren\'t allowed. Please try again.', 400);
+                throw new MyRadioException(
+                    "Sorry, individual tags longer than 24 characters aren't allowed. Please try again.",
+                    400);
             }
             // Add the valid tag to the returned array.
             $exploded_tags[] = trim($tag);

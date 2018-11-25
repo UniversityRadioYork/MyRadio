@@ -405,7 +405,7 @@ class MyRadioForm
         }
         if ($_SERVER['CONTENT_LENGTH'] > $post_size) {
             throw new MyRadioException(
-                'The content uploaded in this form was too large for the server\'s configuration.',
+                "The content uploaded in this form was too large for the server's configuration.",
                 500
             );
         }

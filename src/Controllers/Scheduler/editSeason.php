@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         URLUtils::redirectWithMessage(
             'Scheduler',
             'myShows',
-            'Your new season has been created. You should recieve an email when it\'s scheduled!'
+            "Your new season has been created. You should recieve an email when it's scheduled!"
         );
     } else {
         //submit edit
