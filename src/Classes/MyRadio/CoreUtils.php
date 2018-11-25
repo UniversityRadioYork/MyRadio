@@ -650,6 +650,37 @@ class CoreUtils
         return $exploded_tags;
     }
 
+    public static function checkUploadPostSize(){
+        // Check that any files don't go over the PHP post_max_size
+        // Otherwise, sometimes PHP won't return an error, causing an empty $_POST.
+        // This would cause confusing errors relating to empty fields.
+        // @see https://stackoverflow.com/questions/2133652/how-to-gracefully-handle-files-that-exceed-phps-post-max-size
+        $post_size = trim(ini_get('post_max_size'));
+        if ($post_size != '') {
+            $last = strtolower(substr($post_size, -1));
+        } else {
+            $last = '';
+        }
+        switch ($last) {
+            // The 'G' modifier is available since PHP 5.1.0
+            case 'g':
+                $post_size *= 1024;
+                // fall through
+            case 'm':
+                $post_size *= 1024;
+                // fall through
+            case 'k':
+                $post_size *= 1024;
+                // fall through
+        }
+        if ($_SERVER['CONTENT_LENGTH'] > $post_size) {
+            throw new MyRadioException(
+                "The content uploaded in this form was too large for the server's configuration.",
+                500
+            );
+        }
+    }
+
     private function __construct()
     {
     }
