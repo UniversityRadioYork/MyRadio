@@ -196,7 +196,7 @@ class MyRadioEmail extends ServiceAPI
     {
         $html_footer = 'This email was sent automatically from MyRadio. '
             .'You can opt out of emails <a href="'.URLUtils::makeURL('Profile', 'edit').'">on your profile page</a>.';
-        return $message.'<hr>'.self::$html_footer;
+        return $message.'<hr>'.$html_footer;
     }
 
     /**
