@@ -642,7 +642,8 @@ class CoreUtils
             if (strlen($tag) > 24) {
                 throw new MyRadioException(
                     "Sorry, individual tags longer than 24 characters aren't allowed. Please try again.",
-                    400);
+                    400
+                );
             }
             // Add the valid tag to the returned array.
             $exploded_tags[] = trim($tag);
@@ -654,7 +655,7 @@ class CoreUtils
         // Check that any files don't go over the PHP post_max_size
         // Otherwise, sometimes PHP won't return an error, causing an empty $_POST.
         // This would cause confusing errors relating to empty fields.
-        // @see https://stackoverflow.com/questions/2133652/how-to-gracefully-handle-files-that-exceed-phps-post-max-size
+        // https://stackoverflow.com/questions/2133652/how-to-gracefully-handle-files-that-exceed-phps-post-max-size
         $post_size = trim(ini_get('post_max_size'));
         if ($post_size != '') {
             $last = strtolower(substr($post_size, -1));
