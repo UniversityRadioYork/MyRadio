@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         throw new MyRadioException('You must provide either an existing or new cover photo.', 400);
     }
 
-    URLUtils::redirectWithMessage($return_message, "Podcast", "default");
+    URLUtils::redirectWithMessage("Podcast", "default", $return_message);
 } else {
     //Not Submitted
     if (isset($_REQUEST['podcast_id'])) {
