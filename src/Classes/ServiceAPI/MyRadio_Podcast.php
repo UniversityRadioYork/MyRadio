@@ -611,7 +611,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      *
      * @param MyRadio_Show $show
      */
-    public function setShow($show)
+    public function setShow(MyRadio_Show $show)
     {
         self::$db->query(
             'DELETE FROM schedule.show_podcast_link
@@ -620,16 +620,12 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         );
 
         if (!empty($show)) {
-            if ($show instanceof MyRadio_Show) {
-                self::$db->query(
-                    'INSERT INTO schedule.show_podcast_link
-                    (show_id, podcast_id) VALUES ($1, $2)',
-                    [$show->getID(), $this->getID()]
-                );
-                $this->show_id = $show->getID();
-            } else {
-                throw new MyRadioException("The parameter provided is not a MyRadio_Show instance.", 500);
-            }
+            self::$db->query(
+                'INSERT INTO schedule.show_podcast_link
+                (show_id, podcast_id) VALUES ($1, $2)',
+                [$show->getID(), $this->getID()]
+            );
+            $this->show_id = $show->getID();
         } else {
             $this->show_id = null;
         }
