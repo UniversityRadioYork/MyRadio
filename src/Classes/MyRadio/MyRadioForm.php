@@ -2,7 +2,7 @@
 
 namespace MyRadio\MyRadio;
 
-use MyRadio\CoreUtils;
+use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadioException;
 use MyRadio\Config;
 
