@@ -651,7 +651,8 @@ class CoreUtils
         return $exploded_tags;
     }
 
-    public static function checkUploadPostSize(){
+    public static function checkUploadPostSize()
+    {
         // Check that any files don't go over the PHP post_max_size
         // Otherwise, sometimes PHP won't return an error, causing an empty $_POST.
         // This would cause confusing errors relating to empty fields.
