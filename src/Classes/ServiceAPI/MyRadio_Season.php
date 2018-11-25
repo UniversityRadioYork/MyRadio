@@ -608,7 +608,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $this->setMeta('reject-reason', $reason);
 
         if ($notify_user) {
-            $sname = Config::$short_name;
+            $sname = Config::$short_name; // Heredocs can't do static class variables
+            $email = Config::$email_domain;
             MyRadioEmail::sendEmailToUserSet(
                 $this->getShow()->getCreditObjects(),
                 $this->getMeta('title').' Application Rejected',
@@ -619,7 +620,8 @@ Your application for a season of a show was rejected by our programming team, fo
 
 $reason
 
-You can reapply online at any time, or for more information, email pc@ury.org.uk.
+You can reapply online at any time, or for more information, email pc@{$email}.
+
 
 ~ {$sname} Scheduling Legume
 EOT
@@ -1001,7 +1003,7 @@ $times
   and then selecting cancel for the particular time.
   ".URLUtils::makeURL('Scheduler', 'myShows').'
 
-  If you have any questions about your application, direct them to pc@ury.org.uk
+  If you have any questions about your application, direct them to pc@'.Config::$email_domain.'
 
   ~ '.Config::$short_name.' Scheduling Legume';
 

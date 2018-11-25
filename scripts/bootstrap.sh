@@ -4,6 +4,12 @@
 
 set -eux
 
+if [ ! -d /vagrant ]; then
+	echo "This script should only ever be run on a vagrant virtual machine"
+	echo "Seriously, don't run this anywhere other than vagrant, it will ruin your day";
+	exit 1;
+fi
+
 # Base packages and Apache setup
 apt-get update
 apt-get install -y apache2 \
@@ -47,8 +53,8 @@ cd /vagrant
 mkdir -p /vagrant/src/vendor
 su vagrant -c 'composer --no-progress update'
 
-ln -s /vagrant/src /var/www/myradio
-ln -s /vagrant/sample_configs/apache.conf /etc/apache2/sites-available/myradio.conf
+ln -sf /vagrant/src /var/www/myradio
+ln -sf /vagrant/sample_configs/apache.conf /etc/apache2/sites-available/myradio.conf
 a2ensite myradio
 a2dissite 000-default
 
@@ -80,8 +86,12 @@ update-rc.d apache2 defaults
 service apache2 start
 
 # Create DB cluster/database/user
-pg_createcluster 10 myradio
+pg_dropcluster 10 main --stop || true # Seriously, don't use this anywhere other than vagrant
+if ! `pg_lsclusters | grep -q myradio`; then pg_createcluster 10 myradio -p 5432; fi
+systemctl start postgresql@10-myradio
 su - postgres -c "cat /vagrant/sample_configs/postgres.sql | psql"
+
+rm -f /vagrant/src/MyRadio_Config.local.php # Remove any existing config
 
 # Somewhere to store audio uploads
 music_dirs="records membersmusic beds jingles"
@@ -89,3 +99,6 @@ for i in ${music_dirs}; do # no spaces
 	mkdir -p /music/$i
 	chown www-data:www-data /music/$i
 done
+# And logs
+mkdir -p /var/log/myradio
+chown www-data:www-data /var/log/myradio
