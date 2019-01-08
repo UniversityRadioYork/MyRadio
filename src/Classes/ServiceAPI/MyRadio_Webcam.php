@@ -73,13 +73,13 @@ class MyRadio_Webcam extends ServiceAPI
 
             switch ($response['camera']) {
                 case 'studio1':
-                    $location = 'Studio 1';
+                    $location = 'Studio Red';
                     break;
                 case 'cam5':
-                    $location = 'Studio 1 Secondary';
+                    $location = 'Studio Red Secondary';
                     break;
                 case 'studio2':
-                    $location = 'Studio 2';
+                    $location = 'Studio Blue';
                     break;
                 case 'cam1':
                     $location = 'Jukebox';
