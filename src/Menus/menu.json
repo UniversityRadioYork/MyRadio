@@ -36,9 +36,9 @@
                                         "description": "Add a training slot for presenters-to-be to sign up to."
                                     },
                                     {
-                                        "title": "Studio 1 Training Video",
+                                        "title": "Studio Training Video",
                                         "url": "http://youtu.be/S5SuC-_Ut-w",
-                                        "description": "Forgotten how to use Studio 1? Want to get ahead of studio training? Here's the place to start."
+                                        "description": "Forgotten how to use the studios? Want to get ahead of studio training? Here's the place to start."
                                     },
                                     {
                                         "template": "MyRadio/getOnAir.twig"
