@@ -187,13 +187,18 @@
                                 [
                                     {
                                         "title": "Constitution",
-                                        "url": "/wiki/Constitution",
+                                        "url": "https://drive.google.com/open?id=1FU0vx9sTCy-IsvTxU4zYpaxNbe1Utb8E",
                                         "description": "The Constitution is the overarching contract by which we are all bound for life. Worth a skim read."
                                     },
                                     {
                                         "title": "Members",
                                         "url": "module=Profile,action=list",
                                         "description": "List and manage members."
+                                    },
+                                     {
+                                        "title": "Minutes",
+                                        "url": "https://drive.google.com/drive/folders/1txLjiR0LUvaZo9DvuDjN7uGHrPkGGmkX",
+                                        "decription": "Want to know what happened in previous station meetings? Check the documents out here."
                                     },
                                     {
                                         "title": "Officers",
