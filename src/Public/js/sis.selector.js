@@ -2,8 +2,8 @@
 /* Selector */
 var Selector = function () {
   var studios = {
-      1: "Studio 1",
-      2: "Studio 2",
+      1: "Studio Red",
+      2: "Studio Blue",
       3: "Jukebox",
       4: "Outside Broadcast",
       8: "Off Air"
