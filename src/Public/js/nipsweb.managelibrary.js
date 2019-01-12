@@ -50,190 +50,188 @@ var Library = function () {
       message = "Please don't upload too many files at once.";
       break;
     case "FileTooLarge":
-      message = file.name + " is too big. Please upload files smaller than " + mConfig.audio_upload_max_size + "MB.";
+      message = "<strong>" + file.name + "</strong> is too big. Please upload files smaller than " + mConfig.audio_upload_max_size + "MB.";
       break;
     case "FileTypeNotAllowed":
-      message = file.name + " is not a valid audio file.";
+      message = "The file you uploaded is not an accepted audio file type.";
       break;
     default:
       message = "An unknown error occured: " + err;
     }
 
-    $(".result-container:visible").append("<div class='alert alert-danger'>" + message + "</div>");
+    $(".result-container:visible").append("<div class='alert alert-danger'>" + ICON_ERROR + message + "</div>");
   };
 
   var centralDbInit = function () {
     /**
      * Central Database Handler
-     **/
-    $("#central-dragdrop").filedrop(
-      {
-        url: myradio.makeURL("NIPSWeb", "upload_central"),
-        paramname: "audio",
-        error: filedrop_error_handler,
-        allowedfiletypes: ALLOWED_MP3,
-        maxfiles: 1,
-        maxfilesize: mConfig.audio_upload_max_size,
-        queuefiles: 1,
-        drop: function () {
-          $("#central-status").html(ICON_LOADING + "Reading file (0%)...");
-        },
-        uploadStarted: function (i, file, total) {
-          $("#central-status").html(ICON_LOADING + "Uploading " + file.name + "... (" + byteSize(file.size) + ")");
-        },
-        progressUpdated: function (i, file, progress) {
-          $("#central-status").html(ICON_LOADING + "Reading " + file.name + " (" + progress + "%)...");
-        },
-        uploadFinished: function (i, file, response, time) {
-          var status = ICON_OK + "Uploaded " + file.name;
-          $("#central-status").html(status);
+     */
+    $("#central-dragdrop").filedrop({
+      url: myradio.makeURL("NIPSWeb", "upload_central"),
+      paramname: "audio",
+      error: filedrop_error_handler,
+      allowedfiletypes: ALLOWED_MP3,
+      maxfiles: 1,
+      maxfilesize: mConfig.audio_upload_max_size,
+      queuefiles: 1,
+      drop: function () {
+        $("#central-status").html(ICON_LOADING + "Getting Ready...");
+      },
+      uploadStarted: function (i, file, total) { // eslint-disable-line no-unused-vars
+        $("#central-status").html(ICON_LOADING + "Uploading " + file.name + " (0% of " + byteSize(file.size) + ")...");
+      },
+      progressUpdated: function (i, file, progress) {
+        $("#central-status").html(ICON_LOADING + "Uploading " + file.name + " (" + progress + "% of " + byteSize(file.size) + ")...");
+      },
+      uploadFinished: function (i, file, response, time) { // eslint-disable-line no-unused-vars
+        var status = ICON_OK + "Uploaded " + file.name + " (" + byteSize(file.size) + ").";
+        $("#central-status").html(status);
 
-          setTimeout(function () {
-            if ($("#central-status").html() == status) {
-              $("#central-status").html(ICON_OK + "Ready");
-            }
-          }, 5000);
-
-          var submittable_track = false;
-          var manual_div = document.getElementById("track-manual-entry");
-          if (manual_div !== null) {
-            if (response["status"] !== "OK" && response["submittable"]) {
-              // If the div exists, then the user has permission to upload a track
-              // manually, so display the div and set submittable_track to true.
-              $(manual_div).slideDown();
-              submittable_track = true;
-            } else if (response["status"] !== "OK" && response["submittable"] != true ) {
-              $(manual_div).slideUp();
-              submittable_track = false;
-            }
-            //Prevents any previous uploaded but not submitted tracks from being incorrectly submitted.
-            $(".current-track span").html(ICON_ERROR);
-            $(".current-track").append("File was not submitted. ");
-            $(".current-track a").remove();
-            $(".current-track").removeClass("alert-info").addClass("alert-danger").removeClass("current-track");
-            //Hide any previous form fill errors.
-            $(".form-error").slideUp();
-            $("#track-manual-entry button").remove();
+        setTimeout(function () {
+          if ($("#central-status").html() == status) {
+            $("#central-status").html(ICON_OK + "Ready");
           }
-          var result = $("<div class='alert'></div>");
+        }, 5000);
 
-          if (response["status"] !== "OK") {
-            if (response["status"] === "FAIL") {
-              //An error occurred
-              result.addClass("alert-danger").append("<span class='error'>" + ICON_ERROR + response["message"] + ": </span>");
-            } else if (response["status"] === "INFO") {
-              //An info message has been sent (A song is now being edited)
-              result.addClass("alert-info current-track").append("<span class='error'>" + response["message"] + ": </span>");
-            }
+        var submittable_track = false;
+        var manual_div = document.getElementById("track-manual-entry");
+        if (manual_div !== null) {
+          if (response["status"] !== "OK" && response["submittable"]) {
+            // If the div exists, then the user has permission to upload a track
+            // manually, so display the div and set submittable_track to true.
+            $(manual_div).slideDown();
+            submittable_track = true;
+          } else if (response["status"] !== "OK" && response["submittable"] != true ) {
+            $(manual_div).slideUp();
+            submittable_track = false;
           }
-
-          // Track info.
-          var track_fileid = "";
-          var track_title = "";
-          var track_artist = "";
-          var track_album = "";
-          var track_position = "";
-          var track_explicit = false;
-
-          if (submittable_track) {
-            if (response.analysis) {
-              //Otherwise, if we got an analysis from the ID3 tags, prefill the textboxes.
-              var decodeHtml = function (html) {
-                //Removes special HTML &xxx; from recieved data
-                var txt = document.createElement("textarea");
-                txt.innerHTML = html;
-                return txt.value;
-              };
-              document.getElementById("track-manual-entry-title").value = decodeHtml(response.analysis.title);
-              document.getElementById("track-manual-entry-artist").value = decodeHtml(response.analysis.artist);
-              document.getElementById("track-manual-entry-album").value = decodeHtml(response.analysis.album);
-              document.getElementById("track-manual-entry-position").value = decodeHtml(response.analysis.position);
-              document.getElementById("track-manual-entry-explicit").checked = response.analysis.explicit;
-            } else {
-              //If we didn't get an analysis for some reason, just make the textboxes empty.
-              document.getElementById("track-manual-entry-title").value = "";
-              document.getElementById("track-manual-entry-artist").value = "";
-              document.getElementById("track-manual-entry-album").value = "";
-              document.getElementById("track-manual-entry-position").value = "";
-              document.getElementById("track-manual-entry-explicit").checked = false;
-            }
-          }
-
-          // The submit part
-          var submit = $("<button type=\"button\" class=\"btn btn-primary\">Save Track</button>").click(function () {
-            if (submittable_track) {
-              track_fileid = response.fileid;
-              track_title = document.getElementById("track-manual-entry-title").value;
-              track_artist = document.getElementById("track-manual-entry-artist").value;
-              track_album = document.getElementById("track-manual-entry-album").value;
-              track_position = document.getElementById("track-manual-entry-position").value;
-              track_explicit = document.getElementById("track-manual-entry-explicit").checked;
-
-              if (!track_title) {
-                $(".form-error").html(ICON_ERROR + "Please enter a title.").slideDown();
-                $("#track-manual-entry-title").focus();
-                return;
-              }
-              if (!track_artist) {
-                $(".form-error").html(ICON_ERROR + "Please enter an artist.").slideDown();
-                $("#track-manual-entry-artist").focus();
-                return;
-              }
-              if (!track_album) {
-                $(".form-error").html(ICON_ERROR + "Please enter an album.").slideDown();
-                $("#track-manual-entry-album").focus();
-                return;
-              }
-              if (!track_position) {
-                $(".form-error").html(ICON_ERROR + "Please enter a track number.").slideDown();
-                $("#track-manual-entry-position").focus();
-                return;
-              }
-            }
-
-            result.removeClass("alert-danger")
-              .addClass("alert-info")
-              .removeClass("current-track")
-              .html(ICON_LOADING + "<strong>" + track_title + "</strong> is saving...").slideDown();
-            $("#track-manual-entry").slideUp();
-            submit.remove();
-            $(".form-error").hide();
-
-            $.ajax({
-              url: myradio.makeURL("NIPSWeb", "confirm_central_upload"),
-              data: {
-                title: track_title,
-                artist: track_artist,
-                album: track_album,
-                position: track_position,
-                fileid: track_fileid,
-                explicit: track_explicit
-              },
-              dataType: "json",
-              type: "get",
-              success: function (data) {
-                data.fileid = data.fileid.replace(/\.mp3/, "");
-                if (data.status == "OK") {
-                  result.removeClass("alert-info")
-                    .addClass("alert-success alert-dismissable")
-                    .html(ICON_CLOSE + ICON_OK + "<strong>" + track_title + "</strong> uploaded successfully.");
-                } else {
-                  result.removeClass("alert-info")
-                    .addClass("alert-danger alert-dismissable")
-                    .html(ICON_CLOSE + ICON_ERROR + "<strong>" + track_title + "</strong> " + data.error);
-                }
-              }
-            });
-          });
-
-          result.append("<label for='centralupload-" + i + "'>" + file.name + " &nbsp;</label>");
-          if (submittable_track) {
-            $("#track-manual-entry form").append(submit);
-          }
-          $("#central-result").append(result);
+          //Prevents any previous uploaded but not submitted tracks from being incorrectly submitted.
+          $(".current-track span").html(ICON_ERROR);
+          $(".current-track").append("File was not submitted. ");
+          $(".current-track a").remove();
+          $(".current-track").removeClass("alert-info").addClass("alert-danger").removeClass("current-track");
+          //Hide any previous form fill errors.
+          $(".form-error").slideUp();
+          $("#track-manual-entry button").remove();
         }
+        var result = $("<div class='alert'></div>");
+
+        if (response["status"] !== "OK") {
+          if (response["status"] === "FAIL") {
+            //An error occurred
+            result.addClass("alert-danger").append("<span class='error'>" + ICON_ERROR + response["message"] + ": </span>");
+          } else if (response["status"] === "INFO") {
+            //An info message has been sent (A song is now being edited)
+            result.addClass("alert-info current-track").append("<span class='error'>" + response["message"] + ": </span>");
+          }
+        }
+
+        // Track info.
+        var track_fileid = "";
+        var track_title = "";
+        var track_artist = "";
+        var track_album = "";
+        var track_position = "";
+        var track_explicit = false;
+
+        if (submittable_track) {
+          if (response.analysis) {
+            //Otherwise, if we got an analysis from the ID3 tags, prefill the textboxes.
+            var decodeHtml = function (html) {
+              //Removes special HTML &xxx; from recieved data
+              var txt = document.createElement("textarea");
+              txt.innerHTML = html;
+              return txt.value;
+            };
+            document.getElementById("track-manual-entry-title").value = decodeHtml(response.analysis.title);
+            document.getElementById("track-manual-entry-artist").value = decodeHtml(response.analysis.artist);
+            document.getElementById("track-manual-entry-album").value = decodeHtml(response.analysis.album);
+            document.getElementById("track-manual-entry-position").value = decodeHtml(response.analysis.position);
+            document.getElementById("track-manual-entry-explicit").checked = response.analysis.explicit;
+          } else {
+            //If we didn't get an analysis for some reason, just make the textboxes empty.
+            document.getElementById("track-manual-entry-title").value = "";
+            document.getElementById("track-manual-entry-artist").value = "";
+            document.getElementById("track-manual-entry-album").value = "";
+            document.getElementById("track-manual-entry-position").value = "";
+            document.getElementById("track-manual-entry-explicit").checked = false;
+          }
+        }
+
+        // The submit part
+        var submit = $("<button type=\"button\" class=\"btn btn-primary\">Save Track</button>").click(function () {
+          if (submittable_track) {
+            track_fileid = response.fileid;
+            track_title = document.getElementById("track-manual-entry-title").value;
+            track_artist = document.getElementById("track-manual-entry-artist").value;
+            track_album = document.getElementById("track-manual-entry-album").value;
+            track_position = document.getElementById("track-manual-entry-position").value;
+            track_explicit = document.getElementById("track-manual-entry-explicit").checked;
+
+            if (!track_title) {
+              $(".form-error").html(ICON_ERROR + "Please enter a title.").slideDown();
+              $("#track-manual-entry-title").focus();
+              return;
+            }
+            if (!track_artist) {
+              $(".form-error").html(ICON_ERROR + "Please enter an artist.").slideDown();
+              $("#track-manual-entry-artist").focus();
+              return;
+            }
+            if (!track_album) {
+              $(".form-error").html(ICON_ERROR + "Please enter an album.").slideDown();
+              $("#track-manual-entry-album").focus();
+              return;
+            }
+            if (!track_position) {
+              $(".form-error").html(ICON_ERROR + "Please enter a track number.").slideDown();
+              $("#track-manual-entry-position").focus();
+              return;
+            }
+          }
+
+          result.removeClass("alert-danger")
+            .addClass("alert-info")
+            .removeClass("current-track")
+            .html(ICON_LOADING + "<strong>" + track_title + "</strong> is saving...").slideDown();
+          $("#track-manual-entry").slideUp();
+          submit.remove();
+          $(".form-error").hide();
+
+          $.ajax({
+            url: myradio.makeURL("NIPSWeb", "confirm_central_upload"),
+            data: {
+              title: track_title,
+              artist: track_artist,
+              album: track_album,
+              position: track_position,
+              fileid: track_fileid,
+              explicit: track_explicit
+            },
+            dataType: "json",
+            type: "get",
+            success: function (data) {
+              data.fileid = data.fileid.replace(/\.mp3/, "");
+              if (data.status == "OK") {
+                result.removeClass("alert-info")
+                  .addClass("alert-success alert-dismissable")
+                  .html(ICON_CLOSE + ICON_OK + "<strong>" + track_title + "</strong> uploaded successfully.");
+              } else {
+                result.removeClass("alert-info")
+                  .addClass("alert-danger alert-dismissable")
+                  .html(ICON_CLOSE + ICON_ERROR + "<strong>" + track_title + "</strong> " + data.error);
+              }
+            }
+          });
+        });
+
+        result.append("<label for='centralupload-" + i + "'>" + file.name + " &nbsp;</label>");
+        if (submittable_track) {
+          $("#track-manual-entry form").append(submit);
+        }
+        $("#central-result").append(result);
       }
-    );
+    });
   };
 
   /**
@@ -250,16 +248,16 @@ var Library = function () {
         maxfilesize: mConfig.audio_upload_max_size,
         queuefiles: 1,
         drop: function () {
-          $("#res-status").html(ICON_LOADING + "Reading file (0%)...");
+          $("#res-status").html(ICON_LOADING + "Getting Ready...");
         },
-        uploadStarted: function (i, file, total) {
-          $("#res-status").html(ICON_LOADING + "Uploading " + file.name + "... (" + byteSize(file.size) + ")");
+        uploadStarted: function (i, file, total) { // eslint-disable-line no-unused-vars
+          $("#res-status").html(ICON_LOADING + "Uploading " + file.name + " (0% of " + byteSize(file.size) + ")...");
         },
         progressUpdated: function (i, file, progress) {
-          $("#res-status").html(ICON_LOADING + "Reading " + file.name + " (" + progress + "%)...");
+          $("#res-status").html(ICON_LOADING + "Uploading " + file.name + " (" + progress + "% of " + byteSize(file.size) + ")...");
         },
-        uploadFinished: function (i, file, response, time) {
-          $("#res-status").html(ICON_OK + "Uploaded " + file.name);
+        uploadFinished: function (i, file, response, time) { // eslint-disable-line no-unused-vars
+          $("#res-status").html(ICON_OK + "Uploaded " + file.name + " (" + byteSize(file.size) + ").");
 
           var result = $("<div class='alert'></div>");
           if (response["status"] == "FAIL") {
@@ -288,7 +286,7 @@ var Library = function () {
                 $("<input type=\"text\" placeholder=\"Leave blank to never expire.\" />")
                   .addClass("date form-control")
                   .attr("id", "resuploaddate-" + i)
-                  .datetimepicker({pickTime: "false"})
+                  .datetimepicker({format: "YYYY-MM-DD", showClear: true})
               );
             }
             result.append("<div id=\"confirminator-" + (response.fileid.replace(/\.mp3/, "")) + "\"></div>");

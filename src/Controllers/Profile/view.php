@@ -1,7 +1,7 @@
 <?php
 /**
  * View a User's profile. There are different levels of information available:<br>
- * - Any member can view Name, Sex, College, Officership, Training status and photo of any other member
+ * - Any member can view Name, College, Officership, Training status and photo of any other member
  * - Any member can also view Phone & email alias of any committee member
  * - Members with AUTH_VIEWOTHERMEMBERS can view eduroam/email/locked/last login/paid of any other member.
  */
@@ -27,7 +27,7 @@ if ($user->getID() === $visitor->getID() || AuthUtils::hasPermission(AUTH_VIEWOT
 
 $userData = $user->toDataSource($mixins);
 
-$userData['training'] = CoreUtils::dataSourceParser($user->getAllTraining(true));
+$userData['training'] = CoreUtils::dataSourceParser($user->getAllTraining());
 $userData['training_avail'] = CoreUtils::dataSourceParser(MyRadio_TrainingStatus::getAllAwardableTo($user));
 
 // A non-officer viewing an officer

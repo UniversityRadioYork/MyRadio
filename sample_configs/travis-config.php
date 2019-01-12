@@ -1,5 +1,6 @@
 <?php
 use \MyRadio\Config;
+
 Config::$db_hostname = 'localhost';
 Config::$db_name = 'myradio';
 Config::$db_user = 'myradio';

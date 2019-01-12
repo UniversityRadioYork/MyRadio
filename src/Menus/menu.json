@@ -36,9 +36,9 @@
                                         "description": "Add a training slot for presenters-to-be to sign up to."
                                     },
                                     {
-                                        "title": "Studio 1 Training Video",
+                                        "title": "Studio Training Video",
                                         "url": "http://youtu.be/S5SuC-_Ut-w",
-                                        "description": "Forgotten how to use Studio 1? Want to get ahead of studio training? Here's the place to start."
+                                        "description": "Forgotten how to use the studios? Want to get ahead of studio training? Here's the place to start."
                                     },
                                     {
                                         "template": "MyRadio/getOnAir.twig"
@@ -66,13 +66,23 @@
                                     },
                                     {
                                         "title": "Get Beds/Jingles",
-                                        "url": "https://goo.gl/forms/Gik8PkDjnAsI22MK2",
-                                        "description": "The Production team have a huge library and a little experience - give them a shot if you want that little something that makes your show stand out."
+                                        "url": "https://goo.gl/forms/y7EPYc5jMcPcmv8z1",
+                                        "description": "The Audio Resources team have a huge library and a little experience - give them a shot if you want that little something that makes your show stand out."
                                     },
                                     {
                                         "title": "Get Computing/Engineering Support",
                                         "url": "module=Mail,action=send,list=30",
                                         "description": "Having a problem? Report it here and Computing and/or Engineering team will fix it for you. Or at least try."
+                                    },
+                                    {
+                                        "title": "Book Off-Air Studio",
+                                        "url": "https://docs.google.com/a/yusu.org/spreadsheets/d/1tJ9E0laOPX-_nkWiPT9amDaliCWFRZENWDW51gLhTOM/edit?usp=sharing",
+                                        "description": "If you would like to use studio 2 we ask that you book the time you require. You can check availability and block out your required times here."
+                                    },
+                                    {
+                                        "title": "Apply for an Event",
+                                        "url": "https://goo.gl/forms/bIxTp43VqqMQtRZ92",
+                                        "description": "Planning an event? Make sure our production team are aware of it by completing the following form."
                                     }
                                 ]
                         }
@@ -177,13 +187,18 @@
                                 [
                                     {
                                         "title": "Constitution",
-                                        "url": "/wiki/Constitution",
+                                        "url": "https://drive.google.com/open?id=1FU0vx9sTCy-IsvTxU4zYpaxNbe1Utb8E",
                                         "description": "The Constitution is the overarching contract by which we are all bound for life. Worth a skim read."
                                     },
                                     {
                                         "title": "Members",
                                         "url": "module=Profile,action=list",
                                         "description": "List and manage members."
+                                    },
+                                     {
+                                        "title": "Minutes",
+                                        "url": "https://drive.google.com/drive/folders/1txLjiR0LUvaZo9DvuDjN7uGHrPkGGmkX",
+                                        "decription": "Want to know what happened in previous station meetings? Check the documents out here."
                                     },
                                     {
                                         "title": "Officers",

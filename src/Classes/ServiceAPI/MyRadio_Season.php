@@ -40,46 +40,46 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         //Get the basic info about the season
         $result = self::$db->fetchOne(
             'SELECT show_id, termid, submitted, memberid, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT metadata_key_id FROM schedule.season_metadata
                     WHERE show_season_id=$1 AND effective_from <= NOW()
                     AND (effective_to IS NULL OR effective_to >= NOW())
                     ORDER BY effective_from, season_metadata_id
-                )
+                ))
             ) AS metadata_types, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT metadata_value FROM schedule.season_metadata
                     WHERE show_season_id=$1 AND effective_from <= NOW()
                     AND (effective_to IS NULL OR effective_to >= NOW())
                     ORDER BY effective_from, season_metadata_id
-                )
+                ))
             ) AS metadata, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT requested_day FROM schedule.show_season_requested_time
                     WHERE show_season_id=$1 ORDER BY preference ASC
-                )
+                ))
             ) AS requested_days, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT start_time FROM schedule.show_season_requested_time
                     WHERE show_season_id=$1
                     ORDER BY preference ASC
-                )
+                ))
             ) AS requested_start_times, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT duration FROM schedule.show_season_requested_time
                     WHERE show_season_id=$1
                     ORDER BY preference ASC
-                )
+                ))
             ) AS requested_durations, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
                     WHERE show_season_id=$1
                     ORDER BY start_time ASC
-                )
+                ))
             ) AS timeslots, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT week FROM schedule.show_season_requested_week WHERE show_season_id=$1
-                )
+                ))
             ) AS requested_weeks, (
                 SELECT COUNT(*) FROM schedule.show_season
                 WHERE show_id=(SELECT show_id FROM schedule.show_season WHERE show_season_id=$1)
@@ -101,8 +101,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $this->term_id = (int) $result['termid'];
         $this->season_num = (int) $result['season_num'];
 
-        $metadata_types = self::$db->decodeArray($result['metadata_types']);
-        $metadata = self::$db->decodeArray($result['metadata']);
+        $metadata_types = json_decode($result['metadata_types']);
+        $metadata = json_decode($result['metadata']);
         //Deal with the metadata
         for ($i = 0; $i < sizeof($metadata_types); ++$i) {
             if (self::isMetadataMultiple($metadata_types[$i])) {
@@ -113,16 +113,16 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         }
 
         //Requested Weeks
-        $requested_weeks = self::$db->decodeArray($result['requested_weeks']);
+        $requested_weeks = json_decode($result['requested_weeks']);
         $this->requested_weeks = [];
         foreach ($requested_weeks as $requested_week) {
             $this->requested_weeks[] = intval($requested_week);
         }
 
         //Requested timeslots
-        $requested_days = self::$db->decodeArray($result['requested_days']);
-        $requested_start_times = self::$db->decodeArray($result['requested_start_times']);
-        $requested_durations = self::$db->decodeArray($result['requested_durations']);
+        $requested_days = json_decode($result['requested_days']);
+        $requested_start_times = json_decode($result['requested_start_times']);
+        $requested_durations = json_decode($result['requested_durations']);
 
         for ($i = 0; $i < sizeof($requested_days); ++$i) {
             $this->requested_times[] = [
@@ -132,7 +132,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             ];
         }
 
-        $this->timeslots = self::$db->decodeArray($result['timeslots']);
+        $this->timeslots = json_decode($result['timeslots']);
     }
 
     /**
@@ -303,7 +303,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 'editSeason',
                 [
                     'debug' => true,
-                    'title' => 'Create Season',
+                    'title' => 'Scheduler',
+                    'subtitle' => 'New Season',
                 ]
             )
         )->addField(
@@ -394,7 +395,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     public function getEditForm()
     {
         return self::getForm()
-            ->setTitle('Edit Season')
+            ->setSubTitle('Edit Season')
             ->editMode(
                 $this->getID(),
                 [
@@ -412,7 +413,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 'Scheduler',
                 'allocate',
                 [
-                    'title' => 'Allocate Timeslots to Season',
+                    'title' => 'Scheduler',
+                    'subtitle' => 'Allocate Timeslots to Season',
                     'template' => 'Scheduler/allocate.twig',
                 ]
             )
@@ -514,7 +516,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 'reject',
                 [
                     'debug' => false,
-                    'title' => 'Reject Season Application',
+                    'title' => 'Scheduler',
+                    'subtitle' => 'Reject Season Application'
                 ]
             )
         )->addField(
@@ -605,7 +608,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $this->setMeta('reject-reason', $reason);
 
         if ($notify_user) {
-            $sname = Config::$short_name;
+            $sname = Config::$short_name; // Heredocs can't do static class variables
+            $email = Config::$email_domain;
             MyRadioEmail::sendEmailToUserSet(
                 $this->getShow()->getCreditObjects(),
                 $this->getMeta('title').' Application Rejected',
@@ -616,7 +620,8 @@ Your application for a season of a show was rejected by our programming team, fo
 
 $reason
 
-You can reapply online at any time, or for more information, email pc@ury.org.uk.
+You can reapply online at any time, or for more information, email pc@{$email}.
+
 
 ~ {$sname} Scheduling Legume
 EOT
@@ -818,7 +823,7 @@ EOT
                 'description' => $this->getMeta('description'),
                 'submitted' => $this->getSubmittedTime(),
                 'requested_time' => count($requested_times) > 0 ? $requested_times[0] : null,
-                'first_time' => ($first_time ? CoreUtils::happyTime($first_time) : 'Not Scheduled'),
+                'first_time' => CoreUtils::happyTime(($first_time ? $first_time : 0)),
                 'num_episodes' => [
                     'display' => 'text',
                     'value' => count($this->timeslots),
@@ -885,12 +890,15 @@ EOT
     {
         //Verify that the input time is valid
         if (!isset($params['time']) or !is_numeric($params['time'])) {
-            throw new MyRadioException('No valid Time was sent to the Scheduling Mapper.', MyRadioException::FATAL);
+            throw new MyRadioException(
+                'No valid Time was sent to the Scheduling Mapper.',
+                400
+            );
         }
         if ($params['time'] != -1 && !isset($this->requested_times[$params['time']])) {
             throw new MyRadioException(
                 'The Time value sent is not a valid Requested Time Reference.',
-                MyRadioException::FATAL
+                400
             );
         }
         //Verify the custom times are valid
@@ -898,7 +906,7 @@ EOT
             or !isset($params['timecustom_stime'])  //Same again with midnight (00:00)
             or empty($params['timecustom_etime']))
         ) {
-            throw new MyRadioException('The Custom Time value sent is invalid.', MyRadioException::FATAL);
+            throw new MyRadioException('The Custom Time value sent is invalid.', 400);
         }
         //Okay, let's get to business
         //First, figure out what time things are happening
@@ -940,7 +948,10 @@ EOT
                 $conflict = MyRadio_Scheduler::getScheduleConflict($show_time, $show_time + $req_time['duration']);
                 if (!empty($conflict)) {
                     self::$db->query('ROLLBACK');
-                    throw new MyRadioException('A show is already scheduled for this time: '.print_r($conflict, true));
+                    throw new MyRadioException(
+                        'A show is already scheduled for this time: '.print_r($conflict, true),
+                        400
+                    );
                 }
 
                 //This week is due to be scheduled! QUERY! QUERY!
@@ -992,7 +1003,7 @@ $times
   and then selecting cancel for the particular time.
   ".URLUtils::makeURL('Scheduler', 'myShows').'
 
-  If you have any questions about your application, direct them to pc@ury.org.uk
+  If you have any questions about your application, direct them to pc@'.Config::$email_domain.'
 
   ~ '.Config::$short_name.' Scheduling Legume';
 

@@ -13,20 +13,9 @@ use MyRadio\ServiceAPI\MyRadio_List;
 
 /**
  * Provides email functions so that MyRadio can send email.
- *
- * @todo Footers contain hard-coded URLs. This used to be necessary (when the links went to mint), but isn't now.
  */
 class MyRadioEmail extends ServiceAPI
 {
-    // Defaults
-    /**
-     * @todo Hardcoded URLs
-     */
-    private static $headers = 'Content-type: text/plain; charset=utf-8';
-    private static $sender = 'From: MyRadio <no-reply@ury.org.uk>';
-    private static $footer = 'This email was sent automatically from MyRadio. You can opt out of emails by visiting https://ury.org.uk/myradio/Profile/edit/.';
-    private static $html_footer = 'This email was sent automatically from MyRadio. You can opt out of emails <a href="https://ury.org.uk/myradio/Profile/edit/">on your profile page</a>.';
-    // Standard
     /**
      * @var string carriage return + newline
      */
@@ -74,7 +63,7 @@ class MyRadioEmail extends ServiceAPI
         $split = strip_tags($this->body);
         if ($this->body !== $split) {
             //There's HTML in there
-            $split = \Html2Text\Html2Text::convert($this->body);
+            $split = \Html2Text\Html2Text::convert($this->body, true); // ignore errors
             $this->multipart = true;
             $body_transformed = 'This is a MIME encoded message.'
                     .self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
@@ -198,12 +187,16 @@ class MyRadioEmail extends ServiceAPI
 
     private static function addFooter($message)
     {
-        return $message.self::$rtnl.self::$rtnl.self::$footer;
+        $footer = 'This email was sent automatically from MyRadio. '
+            .'You can opt out of emails by visiting '.URLUtils::makeURL('Profile', 'edit').'.';
+        return $message.self::$rtnl.self::$rtnl.$footer;
     }
 
     private static function addHTMLFooter($message)
     {
-        return $message.'<hr>'.self::$html_footer;
+        $html_footer = 'This email was sent automatically from MyRadio. '
+            .'You can opt out of emails <a href="'.URLUtils::makeURL('Profile', 'edit').'">on your profile page</a>.';
+        return $message.'<br><hr>'.$html_footer;
     }
 
     /**
@@ -468,6 +461,8 @@ class MyRadioEmail extends ServiceAPI
      */
     private static function getDefaultHeader()
     {
-        return self::$headers.self::$rtnl.self::$sender;
+        $headers = 'Content-type: text/plain; charset=utf-8';
+        $sender = 'From: MyRadio <no-reply@'.Config::$email_domain.'>';
+        return $headers.self::$rtnl.$sender;
     }
 }

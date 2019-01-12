@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($data['id'])) {
         //create new
         MyRadio_Season::create($data);
+        URLUtils::redirectWithMessage('Scheduler', 'myShows', 'Season created!');
     } else {
         //submit edit
         $season = MyRadio_Season::getInstance($data['id']);
@@ -30,9 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $season->setMeta('description', $data['description']);
         $season->setMeta('tag', explode(' ', $data['tags']));
         $season->setCredits($data['credits']['member'], $data['credits']['credittype']);
-    }
 
-    URLUtils::redirectWithMessage('Scheduler', 'listSeasons', 'Season Updated!', ['seasonid' => $season->getID()]);
+        URLUtils::redirectWithMessage('Scheduler', 'listSeasons', 'Season updated!', ['seasonid' => $season->getID()]);
+    }
 } else {
     //Not Submitted
     if (isset($_REQUEST['seasonid'])) {

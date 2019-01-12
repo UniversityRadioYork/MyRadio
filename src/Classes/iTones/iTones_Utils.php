@@ -9,7 +9,9 @@ use MyRadio\Config;
 use MyRadio\MyRadioException;
 use MyRadio\ServiceAPI\MyRadio_User;
 use MyRadio\ServiceAPI\MyRadio_Track;
+use MyRadio\ServiceAPI\MyRadio_TracklistItem;
 use MyRadio\iTones\iTones_TrackRequest;
+use MyRadio\iTones\iTones_Playlist;
 
 /**
  * The iTones_Utils class provides generic utilities for controlling iTones - URY's Campus Jukebox.
@@ -55,6 +57,42 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
             MyRadio_User::getInstance()->getID(),
             Config::$itones_request_period,
         ];
+    }
+
+    /**
+     * Based on the set of configured playlists, schedules, weights, track history
+     * and other stuff, select a track that the jukebox should play.
+     *
+     * @return MyRadio_Track
+     */
+    public static function getTrackForJukebox()
+    {
+        $playlists_to_ignore = [];
+
+        while ($playlist = iTones_Playlist::getPlaylistFromWeights($playlists_to_ignore)) {
+            $tracks = $playlist->getTracks();
+
+            // Randomly sort the array, then pop them out until one is playable (or we run out)
+            shuffle($tracks);
+
+            while ($track = array_pop($tracks)) {
+                // $track-> calls first because in theory these checks are really fast
+                if ($track->getClean() !== 'n'
+                    && !$track->isBlacklisted()
+                    // These ones involve running more queries...
+                    && !MyRadio_TracklistItem::getIfPlayedRecently($track)
+                    && MyRadio_TracklistItem::getIfAlbumArtistCompliant($track)
+                    // And this one involves telnet!
+                    && !iTones_Utils::getIfQueued($track)
+                ) {
+                    return $track;
+                }
+            }
+
+            // We've reached the end of the track list and none of them are playable
+            // ignore the playlist we've been given, and try again
+            $playlists_to_ignore[] = $playlist;
+        }
     }
 
     /**
@@ -262,12 +300,21 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
         fwrite(self::$telnet_handle, $command."\n");
         $response = '';
         $line = '';
+        $empty_line_counter = 0;
         do {
             $response .= $line;
-            $line = fgets(self::$telnet_handle, 1048576); //Read a max of 1MB of data
+            $line = fgets(self::$telnet_handle, 1024); //Read a max of 1KB of data
+            if (empty(trim($line))) {
+                $empty_line_counter++;
+                if ($empty_line_counter > 5) {
+                    break;
+                }
+            } else {
+                $empty_line_counter = 0;
+            }
         } while (trim($line) !== 'END');
 
-        //Remove the END
+        //Intentionally doesn't append END
         return trim($response);
     }
 
@@ -285,7 +332,10 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 
     public static function telnetEnd()
     {
-        fwrite(self::$telnet_handle, "quit\n");
-        fclose(self::$telnet_handle);
+        if (self::$telnet_handle) {
+            fwrite(self::$telnet_handle, "quit\n");
+            fclose(self::$telnet_handle);
+            self::$telnet_handle = null;
+        }
     }
 }

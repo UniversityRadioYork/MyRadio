@@ -32,6 +32,8 @@ $log_level = 4; //0: Critical, 1: Important, 2: Run Process, 3: Info, 4: Debug
  */
 $syspath = '';
 
+$pidfile = '/var/run/myradio_daemon.pid';
+
 function dlog($x, $level = 3)
 {
     if ($level == 0) {
@@ -54,6 +56,11 @@ function signal_handler($signo)
             dlog('Caught SIGTERM. Shutting down after this loop.', 1);
             $GLOBALS['once'] = true; //This will kill after next iteration
     }
+}
+
+$pid = getmypid();
+if (!file_put_contents($pidfile, "$pid\n")) {
+    die("Can't write pid file $pidfile\n");
 }
 
 //Is the extension installed?
@@ -81,7 +88,7 @@ while (false !== ($file = readdir($handle))) {
         continue;
     }
     //Is the file valid PHP?
-    system($syspath.'php -l '.$path.$file, $result);
+    system(PHP_BINDIR."/php -l $path$file", $result);
     if ($result !== 0) {
         dlog('Not checking '.$file.' - Parse Error', 1);
     } else {
@@ -127,7 +134,7 @@ while (true) {
                     '[MyRadio] Background Service Failure',
                     "MyRadio's connection to the Database Server has been lost. "
                     ."Attempts to reconnect for the last 15 minutes have proved futile, so the service has stopped.\r\n"
-                    .'Please investigate Database connectivity and restart the service one access is restored.'
+                    .'Please investigate Database connectivity and restart the service once access is restored.'
                 );
             }
             dlog('FAILED! Will retry in 30 seconds.', 0);
@@ -152,3 +159,5 @@ while (true) {
     //Reload the configuration to see if it has changed
     include 'MyRadio_Config.local.php';
 }
+
+unlink($pidfile);

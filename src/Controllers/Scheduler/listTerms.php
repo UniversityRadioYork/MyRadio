@@ -15,7 +15,8 @@ $terms = array_map(
 );
 
 CoreUtils::getTemplateObject()->setTemplate('Scheduler/listTerms.twig')
-    ->addVariable('title', 'Terms')
+    ->addVariable('title', 'Scheduler')
+    ->addVariable('subtitle', 'Manage Terms')
     ->addVariable('tabledata', CoreUtils::dataSourceParser($terms))
     ->addVariable('tablescript', 'myradio.scheduler.termlist')
     ->render();

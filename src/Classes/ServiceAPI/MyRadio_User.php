@@ -53,13 +53,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
     private $sname;
 
     /**
-     * Stores the User's gender (either 'm' or 'f').
-     *
-     * @var string
-     */
-    private $sex;
-
-    /**
      * Stores the User's preferred contact address.
      *
      * @var string
@@ -211,7 +204,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $this->memberid = (int) $memberid;
         //Get the base data
         $data = self::$db->fetchOne(
-            'SELECT fname, sname, sex, college AS collegeid, l_college.descr AS college,
+            'SELECT fname, sname, college AS collegeid, l_college.descr AS college,
             phone, email, receive_email::boolean::text, local_name, local_alias, eduroam,
             account_locked::boolean::text, last_login, joined, profile_photo, bio,
             auth_provider, require_password_change::boolean::text, contract_signed::boolean::text
@@ -420,16 +413,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function getName()
     {
         return $this->fname.' '.$this->sname;
-    }
-
-    /**
-     * Returns the User's sex.
-     *
-     * @return string The User's sex
-     */
-    public function getSex()
-    {
-        return $this->sex;
     }
 
     public function getLastLogin()
@@ -1035,7 +1018,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         if (empty($eduroam) && empty($this->email)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
         } elseif ($this->getEduroam() !== $eduroam && self::findByEmail($eduroam) !== null) {
-            throw new MyRadioException('The eduroam account '.$eduroam.' is already allocated to another User.', 500);
+            throw new MyRadioException('The eduroam account '.$eduroam.' is already allocated to another User.', 400);
         }
         $this->setCommonParam('eduroam', $eduroam);
 
@@ -1063,7 +1046,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         if (empty($email) && empty($this->eduroam)) {
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
         } elseif ($email !== $this->email && self::findByEmail($email) !== null && self::findByEmail($email) != $this) {
-            throw new MyRadioException('The email account '.$email.' is already allocated to another User.', 500);
+            throw new MyRadioException('The email account '.$email.' is already allocated to another User.', 400);
         }
         $this->setCommonParam('email', $email);
 
@@ -1101,7 +1084,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function setLocalAlias($alias)
     {
         if ($alias !== $this->local_alias && self::findByEmail($alias) !== null) {
-            throw new MyRadioException('That Mailbox Name is already in use. Please choose another.', 500);
+            throw new MyRadioException('That Mailbox Name is already in use. Please choose another.', 400);
         }
         $this->setCommonParam('local_alias', $alias);
 
@@ -1123,7 +1106,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             throw new MyRadioException('Mailbox alias may not contain an @ symbol');
         }
         if ($name !== $this->local_name && self::findByEmail($name) !== null && self::findByEmail($name) != $this) {
-            throw new MyRadioException('That Mailbox Alias is already in use. Please choose another.', 500);
+            throw new MyRadioException('That Mailbox Alias is already in use. Please choose another.', 400);
         }
         $this->setCommonParam('local_name', $name);
 
@@ -1213,29 +1196,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
     }
 
     /**
-     * Set the User's Gender.
-     *
-     * @param char $initial (m)ale, (f)emale or (o)ther
-     *
-     * @return MyRadio_User
-     *
-     * @throws MyRadioException
-     */
-    public function setSex($initial = 'o')
-    {
-        $initial = strtolower($initial);
-        if (!in_array($initial, ['m', 'f', 'o'])) {
-            throw new MyRadioException(
-                'You can be either "(M)ale", "(F)emale", or "(O)ther". You can\'t be none of these,'
-                .' or more than one of these. Sorry.'
-            );
-        }
-        $this->setCommonParam('sex', $initial);
-
-        return $this;
-    }
-
-    /**
      * Set the User's HTML biography.
      *
      * @param string $bio
@@ -1269,7 +1229,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 );
                 $this->payment[$k]['paid'] = $amount;
                 $this->clearPermissionCache()->updateCacheObject();
-
+                $this->updateCacheObject();
                 return;
             }
         }
@@ -1282,7 +1242,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         );
         $this->payment[] = ['year' => $year, 'paid' => $amount];
         $this->clearPermissionCache()->updateCacheObject();
-
+        $this->updateCacheObject();
         return;
     }
 
@@ -1495,22 +1455,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
                     'value' => $this->getSName(),
                     ]
                 )
-            )
-            ->addField(
-                new MyRadioFormField(
-                    'sex',
-                    MyRadioFormField::TYPE_SELECT,
-                    [
-                    'required' => true,
-                    'label' => 'Gender',
-                    'value' => $this->getSex(),
-                    'options' => [
-                    ['value' => 'm', 'text' => 'Male'],
-                    ['value' => 'f', 'text' => 'Female'],
-                    ['value' => 'o', 'text' => 'Other'],
-                    ],
-                    ]
-                )
             );
         if (empty(Config::$contract_uri) === false) {
             $form->addField(
@@ -1599,8 +1543,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 [
                     'required' => false,
                     'label' => 'University Email',
-                    'value' => str_replace('@york.ac.uk', '', $this->getUniAccount()),
-                    'explanation' => '@york.ac.uk',
+                    'value' => str_replace('@'.Config::$eduroam_domain, '', $this->getUniAccount()),
+                    'explanation' => '@'.Config::$eduroam_domain,
                 ]
             )
         )
@@ -1671,7 +1615,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                     MyRadioFormField::TYPE_TEXT,
                     [
                         'required' => false,
-                        'label' => '@ury.org.uk Alias',
+                        'label' => '@'.Config::$email_domain.' Alias',
                         'value' => $this->getLocalAlias(),
                         'explanation' => 'Usually, this is firstname.lastname (i.e. '.
                         strtolower($this->getFName().'.'.$this->getSName()).')',
@@ -1701,11 +1645,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
      *
      * @throws MyRadioException
      */
-    public static function create($params) {
-
+    public static function create($params)
+    {
         $defaults = [
             'eduroam' => null,
-            'sex' => 'o',
             'collegeid' => null,
             'email' => null,
             'phone' => null,
@@ -1766,10 +1709,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
             throw new MyRadioException('Can\'t set both Email and Eduroam to null.', 400);
         }
 
-        if ($params['sex'] !== 'm' && $params['sex'] !== 'f' && $params['sex'] !== 'o') {
-            throw new MyRadioException('User gender must be m, f or o!', 400);
-        }
-
         if (!is_numeric($params['paid'])) {
             throw new MyRadioException('Invalid payment amount!', 400);
         }
@@ -1790,13 +1729,12 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
         //Actually create the member!
         $r = self::$db->fetchColumn(
-            'INSERT INTO public.member (fname, sname, sex,
-            college, phone, email, receive_email, eduroam, require_password_change)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid',
+            'INSERT INTO public.member (fname, sname, college, phone,
+            email, receive_email, eduroam, require_password_change)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING memberid',
             [
                 $params['fname'],
                 $params['sname'],
-                $params['sex'],
                 $params['collegeid'],
                 $params['phone'],
                 $params['email'],
@@ -1856,15 +1794,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function activateMemberThisYear($paid = 0)
     {
-        if ($this->isActiveMemberForYear()) {
-            return true;
-        } else {
-            $year = CoreUtils::getAcademicYear();
-            $this->setPayment($paid, $year);
-            $this->updateCacheObject();
-
-            return true;
+        if (!$this->isActiveMemberForYear()) {
+            $this->setPayment($paid);
         }
+        return true;
     }
 
     /**
@@ -1873,7 +1806,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * @param string $fname         The User's first name.
      * @param string $sname         The User's last name.
      * @param string $eduroam       The User's @york.ac.uk address.
-     * @param char   $sex           The User's gender.
      * @param int    $collegeid     The User's college.
      * @param string $email         The User's non @york.ac.uk address.
      * @param string $phone         The User's phone number.
@@ -1888,7 +1820,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $fname,
         $sname,
         $eduroam = null,
-        $sex = 'o',
         $collegeid = null,
         $email = null,
         $phone = null,
@@ -1909,7 +1840,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 'fname' => $fname,
                 'sname' => $sname,
                 'eduroam' => $eduroam,
-                'sex' => $sex,
                 'collegeid' => $collegeid,
                 'email' => $email,
                 'phone' => $phone,
@@ -1926,7 +1856,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * @param string $fname     The User's first name.
      * @param string $sname     The User's last name.
      * @param string $eduroam   The User's @york.ac.uk address.
-     * @param char   $sex       The User's gender.
      * @param int    $collegeid The User's college.
      * @param string $email     The User's non @york.ac.uk address.
      * @param string $phone     The User's phone number.
@@ -1938,7 +1867,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $sname,
         $captcha,
         $eduroam = null,
-        $sex = 'o',
         $collegeid = null,
         $email = null,
         $phone = null
@@ -1946,7 +1874,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $captchaResponse = AuthUtils::verifyRecaptcha($captcha, $_SERVER['REMOTE_ADDR']);
 
         if ($captchaResponse === true) {
-            return self::createOrActivate($fname, $sname, $eduroam, $sex, $collegeid, $email, $phone);
+            return self::createOrActivate($fname, $sname, $eduroam, $collegeid, $email, $phone);
         } else {
             return $captchaResponse;
         }
@@ -2034,21 +1962,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
                     'label' => 'Last Name',
                 ]
             )
-        )
-        ->addField(
-            new MyRadioFormField(
-                'sex',
-                MyRadioFormField::TYPE_SELECT,
-                [
-                    'required' => true,
-                    'label' => 'Gender',
-                    'options' => [
-                        ['value' => 'm', 'text' => 'Male'],
-                        ['value' => 'f', 'text' => 'Female'],
-                        ['value' => 'o', 'text' => 'Other'],
-                    ],
-                ]
-            )
         );
 
         //Contact details
@@ -2079,7 +1992,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 [
                     'required' => true,
                     'label' => 'University Email',
-                    'explanation' => '@york.ac.uk',
+                    'explanation' => '@'.Config::$eduroam_domain,
                 ]
             )
         )
@@ -2117,6 +2030,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 'bulkaddrepeater',
                 MyRadioFormField::TYPE_TABULARSET,
                 [
+                    'label' => "Member Details",
                     'options' => [
                         new MyRadioFormField(
                             'fname',
@@ -2135,19 +2049,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
                             ]
                         ),
                         new MyRadioFormField(
-                            'sex',
-                            MyRadioFormField::TYPE_SELECT,
-                            [
-                                'required' => true,
-                                'label' => 'Gender',
-                                'options' => [
-                                    ['value' => 'm', 'text' => 'Male'],
-                                    ['value' => 'f', 'text' => 'Female'],
-                                    ['value' => 'o', 'text' => 'Other'],
-                                ],
-                            ]
-                        ),
-                        new MyRadioFormField(
                             'collegeid',
                             MyRadioFormField::TYPE_SELECT,
                             [
@@ -2162,7 +2063,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                             [
                                 'required' => true,
                                 'label' => 'University Email',
-                                'explanation' => '@york.ac.uk',
+                                'explanation' => '@'.Config::$eduroam_domain,
                             ]
                         ),
                     ],
@@ -2212,7 +2113,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'memberid' => $this->getID(),
             'fname' => $this->getFName(),
             'sname' => $this->getSName(),
-            'sex' => $this->getSex(),
             'public_email' => $this->getPublicEmail(),
             'url' => $this->getURL(),
             'receive_email' => $this->getReceiveEmail(),

@@ -245,6 +245,12 @@ class CoreUtils
         $escaped_commands = array_map('escapeshellcmd', $commands);
         $failed_formats = [];
 
+        foreach (['mp3', 'ogg'] as $format) {
+            if (file_exists("{$dbfile}.{$format}")) {
+                throw new MyRadioException("Cannot encode, track {$dbfile}.{$format} already exists", 500);
+            }
+        }
+
         foreach ($escaped_commands as $format => $command) {
             exec($command, $command_stdout, $command_exit_code);
             if ($command_exit_code) {
@@ -257,10 +263,20 @@ class CoreUtils
         } elseif (!file_exists($dbfile.'.mp3') || !file_exists($dbfile.'.ogg')) {
             throw new MyRadioException('Conversion failed', 500);
         }
-
-        rename($tmpfile, "{$dbfile}.mp3.orig");
-        if (!file_exists("{$dbfile}.mp3.orig")) {
-            throw new MyRadioException('Could not move file to library.');
+        $orig_new_filename = $dbfile .".mp3.orig";
+        // using copy() instead of rename() because renaming between different file partitions
+        // generates a warning relating to atomicity.
+        // Now added some more checking to hopefully find when tracks don't get uploaded correctly.
+        copy($tmpfile, $orig_new_filename);
+        if (!file_exists($orig_new_filename)) {
+            throw new MyRadioException('Could not copy file to library. File was not created.');
+        } elseif ((filesize($tmpfile) !== filesize($orig_new_filename))
+                || (md5_file($tmpfile) !== md5_file($orig_new_filename))
+            ) {
+            throw new MyRadioException('File mismatch: "'.$tmpfile.'" copied to library as
+                "'.$orig_new_filename.'", files are not equal.');
+        } else {
+            unlink($tmpfile);
         }
     }
 

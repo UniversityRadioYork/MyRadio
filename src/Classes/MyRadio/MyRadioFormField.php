@@ -593,6 +593,10 @@ class MyRadioFormField
      *
      * This is called by MyRadioForm::readValues()
      *
+     * Repeated elements -> TYPE_TABULARSET data has a little quirk. Because PHP, the table data is returned as a
+     * parent array of each column (not row), with child arrays containing each row value for each column.
+     * This is probably opposite to what you're thinking.
+     *
      * @param string $prefix The current prefix to the field name
      *
      * @return mixed The submitted field value
@@ -609,8 +613,17 @@ class MyRadioFormField
             case self::TYPE_TEXT:
             case self::TYPE_EMAIL:
             case self::TYPE_ARTIST:
-                return strip_tags($_REQUEST[$name]);
-            break;
+                //Deal with Arrays for repeated elements - see function comment.
+                if (is_array($_REQUEST[$name])) {
+                    $stripped_values = [];
+                    foreach ($_REQUEST[$name] as $field_key => $field_value) {
+                        $stripped_values[$field_key] = strip_tags($field_value);
+                    }
+                    return $stripped_values;
+                } else {
+                    return strip_tags($_REQUEST[$name]);
+                }
+                break;
             case self::TYPE_BLOCKTEXT:
                 $dom = new \DOMDocument();
                 // We have to wrap the html so that DOMDocument has a root
@@ -623,13 +636,13 @@ class MyRadioFormField
 
                 // Strip the <div> ... </div> nodes back off
                 return substr(trim($dom->saveHTML()), 5, -6);
-            break;
+                break;
             case self::TYPE_HIDDEN:
             case self::TYPE_PASSWORD:
                 return $_REQUEST[$name];
-            break;
+                break;
             case self::TYPE_MEMBER:
-                //Deal with Arrays for repeated elements
+                //Deal with Arrays for repeated elements - see function comment.
                 if (is_array($_REQUEST[$name])) {
                     for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                         if (empty($_REQUEST[$name][$i])) {
@@ -648,7 +661,7 @@ class MyRadioFormField
                 }
                 break;
             case self::TYPE_TRACK:
-                //Deal with Arrays for repeated elements
+                //Deal with Arrays for repeated elements - see function comment.
                 if (is_array($_REQUEST[$name])) {
                     for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                         if (empty($_REQUEST[$name][$i])) {
@@ -666,7 +679,7 @@ class MyRadioFormField
             case self::TYPE_SELECT:
             case self::TYPE_RADIO:
             case self::TYPE_DAY:
-                //Deal with Arrays for repeated elements
+                //Deal with Arrays for repeated elements - see function comment.
                 if (is_array($_REQUEST[$name])) {
                     for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                         if (is_numeric($_REQUEST[$name][$i])) {
@@ -686,7 +699,7 @@ class MyRadioFormField
             case self::TYPE_DATE:
             case self::TYPE_DATETIME:
             case self::TYPE_TIME:
-                //Deal with repeated elements
+                //Deal with repeated elements - see function comment.
                 if (is_array($_REQUEST[$name])) {
                     for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                         $_REQUEST[$name][$i] = $this->convertTime($_REQUEST[$name][$i]);
@@ -774,7 +787,7 @@ class MyRadioFormField
                 return;
                 break;
             case self::TYPE_ALBUM:
-                //Deal with Arrays for repeated elements
+                //Deal with Arrays for repeated elements - see function comment.
                 if (is_array($_REQUEST[$name])) {
                     for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                         if (empty($_REQUEST[$name][$i])) {

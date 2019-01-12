@@ -86,7 +86,7 @@
    <arg value="--report-summary" />
    <arg value="--standard=PSR2" />
    <arg value="--ignore=*.min.*,*/vendor/*,*/PublicAPI/rtfm/*,*/Public/js/*" />
-   <arg value="--exclude=Squiz.Classes.ValidClassName" />
+   <arg value="--exclude=Squiz.Classes.ValidClassName,PSR1.Files.SideEffects" />
    <arg path="${basedir}/src" />
    <arg value="-p" />
   </exec>

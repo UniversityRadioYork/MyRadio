@@ -18,6 +18,7 @@ if (sizeof(MyRadio_User::getInstance()->getShows()) === 1 && sizeof($seasons) ==
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('tablescript', 'myradio.scheduler.seasonlist')
-    ->addVariable('title', 'Seasons of '.$show->getMeta('title'))
+    ->addVariable('title', 'Scheduler')
+    ->addVariable('subtitle', 'Seasons of "'.$show->getMeta('title').'"')
     ->addVariable('tabledata', CoreUtils::setToDataSource($seasons))
     ->render();

@@ -89,7 +89,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
     {
         if ($this->item_type == "CentralDB") {
             return MyRadio_Track::getInstance($this->item_id);
-        } else if ($this->item_type == "ManagedDB") {
+        } elseif ($this->item_type == "ManagedDB") {
             return NIPSWeb_ManagedItem::getInstance($this->item_id, $this->item_playlist_ref);
         }
     }

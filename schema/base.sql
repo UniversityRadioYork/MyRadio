@@ -216,20 +216,6 @@ CREATE TABLE bapsplanner.secure_play_token (
     trackid integer NOT NULL
 );
 COMMENT ON TABLE bapsplanner.secure_play_token IS 'Stores ''tokens'' that allow a user to play a file - once the file is played the token is removed preventing downloads or sharing.';
-CREATE TABLE bapsplanner.timeslot_change_ops (
-    timeslot_change_set_id integer NOT NULL,
-    client_id integer,
-    change_ops text,
-    "timestamp" timestamp without time zone DEFAULT now()
-);
-COMMENT ON TABLE bapsplanner.timeslot_change_ops IS 'Stores changes to a show plan in the Planner''s standard JSON Operation Notation (JSONON)';
-CREATE SEQUENCE bapsplanner.timeslot_change_ops_timeslot_change_set_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE bapsplanner.timeslot_change_ops_timeslot_change_set_id_seq OWNED BY bapsplanner.timeslot_change_ops.timeslot_change_set_id;
 CREATE TABLE bapsplanner.timeslot_items (
     timeslot_item_id integer NOT NULL,
     timeslot_id integer NOT NULL,
@@ -1313,7 +1299,6 @@ CREATE TABLE member (
     memberid integer DEFAULT nextval(('"member_memberid_seq"'::text)::regclass) NOT NULL,
     fname character varying(255) NOT NULL,
     sname character varying(255) NOT NULL,
-    sex character(1) NOT NULL,
     college integer NOT NULL,
     phone character varying(255),
     email character varying(255),
@@ -1723,7 +1708,7 @@ ALTER SEQUENCE strm_stream_streamid_seq OWNED BY strm_stream.streamid;
 CREATE TABLE team (
     teamid integer DEFAULT nextval(('"team_teamid_seq"'::text)::regclass) NOT NULL,
     team_name character varying(255) NOT NULL,
-    descr character varying(255),
+    descr text,
     local_group character varying(255),
     local_alias character varying(255),
     ordering smallint,
@@ -2362,7 +2347,6 @@ ALTER SEQUENCE banner_type_banner_type_id_seq OWNED BY banner_type.banner_type_i
 SET search_path = bapsplanner, pg_catalog;
 ALTER TABLE ONLY managed_items ALTER COLUMN manageditemid SET DEFAULT nextval('managed_items_manageditemid_seq'::regclass);
 ALTER TABLE ONLY managed_playlists ALTER COLUMN managedplaylistid SET DEFAULT nextval('managed_playlists_managedplaylistid_seq'::regclass);
-ALTER TABLE ONLY timeslot_change_ops ALTER COLUMN timeslot_change_set_id SET DEFAULT nextval('timeslot_change_ops_timeslot_change_set_id_seq'::regclass);
 ALTER TABLE ONLY timeslot_items ALTER COLUMN timeslot_item_id SET DEFAULT nextval('timeslot_items_timeslot_item_id_seq'::regclass);
 SET search_path = jukebox, pg_catalog;
 ALTER TABLE ONLY playlist_entries ALTER COLUMN entryid SET DEFAULT nextval('playlist_entries_entryid_seq'::regclass);
@@ -2532,14 +2516,6 @@ ALTER TABLE ONLY managed_playlists
 
 ALTER TABLE ONLY secure_play_token
     ADD CONSTRAINT secure_play_token_pkey PRIMARY KEY (sessionid, memberid, "timestamp", trackid);
-
-
---
--- Name: timeslot_change_ops_pkey; Type: CONSTRAINT; Schema: bapsplanner
---
-
-ALTER TABLE ONLY timeslot_change_ops
-    ADD CONSTRAINT timeslot_change_ops_pkey PRIMARY KEY (timeslot_change_set_id);
 
 
 --
@@ -5116,14 +5092,6 @@ ALTER TABLE ONLY secure_play_token
 
 ALTER TABLE ONLY secure_play_token
     ADD CONSTRAINT spt_fk_memberid FOREIGN KEY (memberid) REFERENCES public.member(memberid);
-
-
---
--- Name: timeslot_change_ops_client_id_fkey; Type: FK CONSTRAINT; Schema: bapsplanner
---
-
-ALTER TABLE ONLY timeslot_change_ops
-    ADD CONSTRAINT timeslot_change_ops_client_id_fkey FOREIGN KEY (client_id) REFERENCES client_ids(client_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

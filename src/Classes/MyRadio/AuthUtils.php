@@ -108,7 +108,7 @@ class AuthUtils
         if (isset($_SESSION['memberid'])) {
             return MyRadio_User::getInstance()->hasAuth($permission);
         } else {
-            return $permission === null;
+            return false;
         }
     }
 
@@ -168,7 +168,9 @@ class AuthUtils
         foreach ($result as $permission) {
             //It only needs to match one
             if ($permission === AUTH_NOLOGIN
-                || (self::hasPermission($permission) && $_SESSION['auth_use_locked'] === false)
+                || (self::hasPermission($permission)
+                    && isset($_SESSION['auth_use_locked'])
+                    && $_SESSION['auth_use_locked'] === false)
             ) {
                 $authorised = true;
                 break;
@@ -177,7 +179,8 @@ class AuthUtils
 
         if (!$authorised && $require) {
             //Requires login
-            if (!isset($_SESSION['memberid']) || $_SESSION['auth_use_locked'] !== false) {
+            if (!isset($_SESSION['memberid']) || (isset($_SESSION['auth_use_locked'])
+                                                  && $_SESSION['auth_use_locked'] !== false)) {
                 $is_ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
                                 && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
                             || empty($_SERVER['REMOTE_ADDR']);
@@ -257,6 +260,67 @@ class AuthUtils
     }
 
     /**
+     * Returns an action permission with a MyRadio Service/Module/Action combination.
+     *
+     * This has multiple UNIONS with similar queries so it gracefully deals with NULL values - the joins lose them.
+     *
+     * @todo Is there a nicer way of doing this?
+     * @todo Won't do null fields. Requires outer joins.
+     *
+     * @return array A 2D Array, where each second dimensions is as follows:<br>
+     *               action: The name of the Action page<br>
+     *               module: The name of the Module the action is in<br>
+     *               service: The name of the Service the module is in<br>
+     *               permission: The name of the permission applied to that Service/Module/Action combination<br>
+     *               actpermissionid: The unique ID of this Service/Module/Action combination
+     */
+    public static function getActionPermission($actPermissionID)
+    {
+        return Database::getInstance()->fetchOne(
+            'SELECT actpermissionid,
+            myury.services.name AS service,
+            myury.modules.name AS module,
+            myury.actions.name AS action,
+            public.l_action.descr AS permission
+            FROM myury.act_permission, myury.services, myury.modules, myury.actions, public.l_action
+            WHERE myury.act_permission.actionid=myury.actions.actionid
+            AND myury.act_permission.moduleid=myury.modules.moduleid
+            AND myury.act_permission.serviceid=myury.services.serviceid
+            AND myury.act_permission.typeid = public.l_action.typeid
+            AND myury.act_permission.actpermissionid = $1
+
+            UNION
+
+            SELECT actpermissionid,
+            myury.services.name AS service,
+            myury.modules.name AS module,
+            \'ALL ACTIONS\' AS action,
+            public.l_action.descr AS permission
+            FROM myury.act_permission, myury.services, myury.modules, public.l_action
+            WHERE myury.act_permission.moduleid=myury.modules.moduleid
+            AND myury.act_permission.serviceid=myury.services.serviceid
+            AND myury.act_permission.typeid = public.l_action.typeid
+            AND myury.act_permission.actionid IS NULL
+            AND myury.act_permission.actpermissionid = $1
+
+            UNION
+
+            SELECT actpermissionid,
+            myury.services.name AS service,
+            myury.modules.name AS module,
+            myury.actions.name AS action,
+            \'GLOBAL ACCESS\' AS permission
+            FROM myury.act_permission, myury.services, myury.modules, myury.actions
+            WHERE myury.act_permission.moduleid=myury.modules.moduleid
+            AND myury.act_permission.serviceid=myury.services.serviceid
+            AND myury.act_permission.actionid=myury.actions.actionid
+            AND myury.act_permission.typeid IS NULL
+            AND myury.act_permission.actpermissionid = $1',
+            [$actPermissionID]
+        );
+    }
+
+    /**
      * Returns a list of Permissions ready for direct use in a select MyRadioFormField.
      *
      * @return array A 2D Array matching the MyRadioFormField::TYPE_SELECT specification.
@@ -267,6 +331,32 @@ class AuthUtils
             'SELECT typeid AS value, descr AS text FROM public.l_action
             ORDER BY descr ASC'
         );
+    }
+
+    /**
+     * Returns a list of Officership roles assigned with a specific permission.
+     *
+     * @return array A 2D Array of [officers,trainingstatuses].
+     */
+    public static function getPermissionAssignedTo($typeid)
+    {
+        $db = Database::getInstance();
+        $officers = $db->fetchAll(
+            'SELECT officer.officerid AS officerid, officer.officer_name AS officer_name
+            FROM public.auth_officer
+            LEFT JOIN public.officer USING (officerid)
+            WHERE lookupid=$1',
+            [$typeid]
+        );
+        $trainingStatuses = $db->fetchAll(
+            'SELECT l_presenterstatus.presenterstatusid AS statusid, l_presenterstatus.descr AS statusname
+            FROM public.auth_trainingstatus
+            LEFT JOIN public.l_presenterstatus USING (presenterstatusid)
+            WHERE typeid=$1',
+            [$typeid]
+        );
+
+        return [$officers, $trainingStatuses];
     }
 
     /**
@@ -334,6 +424,21 @@ class AuthUtils
             'INSERT INTO myury.act_permission (serviceid, moduleid, actionid, typeid)
             VALUES ($1, $2, $3, $4)',
             [Config::$service_id, $module, $action, $permission]
+        );
+    }
+
+    /**
+     * Deletes action permissions.
+     *
+     * @param int $actPermissionID     The action permission ID.
+     */
+    public static function removeActionPermission($actPermissionID)
+    {
+        $db = Database::getInstance();
+        $db->query(
+            'DELETE FROM myury.act_permission WHERE
+            actpermissionid = $1',
+            [$actPermissionID]
         );
     }
 

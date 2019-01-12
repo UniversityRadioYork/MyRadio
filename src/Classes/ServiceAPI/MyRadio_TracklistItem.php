@@ -344,9 +344,10 @@ class MyRadio_TracklistItem extends ServiceAPI
      * Check whether queuing the given Track for playout right now would be a
      * breach of our PPL Licence.
      *
-     * The PPL Licence states that a maximum of two songs from an artist or album
-     * in a two hour period may be broadcast. Any more is a breach of this licence
-     * so we should really stop doing it.
+     * The PPL Licence states that a maximum of three songs from an album (and no
+     * more than two consecutively) AND a maximum of four songs by an artist (and
+     * no more than three consecutively) may be broadcast in any two hour period.
+     * Any more is a breach of this licence, so we should really stop doing it.
      *
      * @param MyRadio_Track $track
      * @param bool          $include_queue If true, will include the tracks in the iTones queue.
@@ -360,7 +361,7 @@ class MyRadio_TracklistItem extends ServiceAPI
         if ($time == null) {
             $time = time();
         }
-        $timeout = CoreUtils::getTimestamp($time - (3600 * 2)); //Two hours ago
+        $timeout = CoreUtils::getTimestamp($time - 3600); //One hour ago
 
         /*
          * The title check is a hack to work around our default album
@@ -395,7 +396,7 @@ class MyRadio_TracklistItem extends ServiceAPI
                  * The title check is a hack to work around our default album
                  * being URY Downloads
                  */
-                if (($t->getAlbum()->getID() == $track->getAlbum()->getID()
+                if (($t->getAlbum()->getID() === $track->getAlbum()->getID()
                     && stristr($t->getAlbum()->getTitle(), Config::$short_name.' Downloads') === false)
                     || $t->getArtist() === $track->getArtist()
                 ) {
@@ -404,12 +405,34 @@ class MyRadio_TracklistItem extends ServiceAPI
             }
         }
 
-        return $result[0] < 2;
+        return $result[0] == 0;
     }
 
     public function toDataSource($mixins = [])
     {
         if (is_array($this->track)) {
+            // If manually tracklisted, track_norec table is just a plain text album.
+            // Make it an array like regular tracks.
+            if (!is_array($this->track["album"])) {
+                $album = [
+                    "title" => $this->track["album"],
+                    "recordid" => null,
+                    "artist" => $this->track["artist"],
+                    "cdid" => null,
+                    "date_added" => date('d/m/Y H:i', $this->getStartTime()),
+                    "date_released" => null,
+                    "format" => "Album",
+                    "last_modified" => null,
+                    "location" => null,
+                    "media" => "Manual Tracklist",
+                    "member_add" => null,
+                    "member_edit" => null,
+                    "record_label" => "",
+                    "status" => "digital only",
+                    "label" => "Manual Tracklist"
+                ];
+                $this->track["album"] = $album;
+            }
             $return = $this->track;
         } else {
             $return = $this->getTrack()->toDataSource($mixins);

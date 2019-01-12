@@ -18,7 +18,7 @@ var entityMap = {
 };
 
 function escapeHTML (string) {
-  return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+  return String(string).replace(/[&<>"'`=/]/g, function (s) {
     return entityMap[s];
   });
 }

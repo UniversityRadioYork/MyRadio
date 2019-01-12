@@ -38,9 +38,9 @@ function api_error($code, $message = null)
     header('Content-Type: application/json');
     echo json_encode(
         [
-        'status' => $code,
-        'time' => sprintf('%f', $GLOBALS['__start'] + microtime(true)),
-        'message' => $message,
+            'status' => $code,
+            'time' => sprintf('%f', $GLOBALS['__start'] + microtime(true)),
+            'message' => $message,
         ]
     );
     //Log an API failure so it appears in the status graphs.
@@ -84,18 +84,6 @@ if (empty($class)) {
     //Someone's gone to the home page. Let's tell them to RTFM
     header('Location: rtfm');
     exit;
-}
-
-/*
- * Check and provide Access-Control-Allow-Origin if needed
- */
-if (isset($_SERVER['HTTP_ORIGIN'])) {
-    if (empty(Config::$api_allowed_domains) or
-        in_array($_SERVER['HTTP_ORIGIN'], Config::$api_allowed_domains)
-    ) {
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
-    }
 }
 
 //Go to the right version controller

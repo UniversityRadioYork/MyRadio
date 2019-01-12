@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             empty($data['show']) ? null : MyRadio_Show::getInstance($data['show']),
             $data['credits']
         );
+        $return_message = "New Podcast Created";
     } else {
         //submit edit
         $podcast = MyRadio_Podcast::getInstance($data['id']);
@@ -41,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $podcast->setShow(null);
         }
+        $return_message = "Podcast Updated";
     }
 
     if (!empty($data['existing_cover'])) {
@@ -48,10 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (is_uploaded_file($data['new_cover']['tmp_name'])) {
         $podcast->createCover($data['new_cover']['tmp_name']);
     } else {
-        throw new MyRadioException('Unknown cover upload method.', 400);
+        throw new MyRadioException('You must provide either an existing or new cover photo.', 400);
     }
 
-    URLUtils::backWithMessage('Podcast Updated');
+    URLUtils::redirectWithMessage($return_message, "Podcast", "default");
 } else {
     //Not Submitted
     if (isset($_REQUEST['podcast_id'])) {
@@ -60,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Check if user can edit this podcast
         if (!in_array($podcast->getID(), MyRadio_Podcast::getPodcastIDsAttachedToUser())) {
-            AuthUtils::requirePermission(AUTH_PODCASTANYSHOW);
+            AuthUtils::requirePermission(AUTH_EDITANYPODCAST);
         }
 
         $podcast

@@ -1,34 +1,29 @@
 /* global Bloodhound, myradio, tinymce */
+
 /**
  * The MyRadio Standard Form JavaScript Tools
  * This file initialises jQuery validation, autocompletes and other resources
  * needed for a MyRadio Form
  */
+
 jQuery.validator.addMethod(
-    "dateITA",
-    function (
-        value,
-        element
-    ) {
-      var check = false;
-      var re = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
-      if (re.test(value)) {
-        var adata = value.split("/");
-        var gg = parseInt(adata[0],10);
-        var mm = parseInt(adata[1],10);
-        var aaaa = parseInt(adata[2],10);
-        var xdata = new Date(aaaa,mm-1,gg);
-        if ((xdata.getFullYear() === aaaa) && (xdata.getMonth() === mm - 1) && (xdata.getDate() === gg)) {
-          check = true;
-        } else {
-          check = false;
-        }
-      } else {
-        check = false;
+  "dateITA",
+  function (value, element) {
+    var check = false;
+    var re = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+    if (re.test(value)) {
+      var adata = value.split("/");
+      var gg = parseInt(adata[0],10);
+      var mm = parseInt(adata[1],10);
+      var aaaa = parseInt(adata[2],10);
+      var xdata = new Date(aaaa,mm-1,gg);
+      if ((xdata.getFullYear() === aaaa) && (xdata.getMonth() === mm - 1) && (xdata.getDate() === gg)) {
+        check = true;
       }
-      return this.optional(element) || check;
-    },
-    "Please enter a valid date."
+    }
+    return this.optional(element) || check;
+  },
+  "Please enter a valid date."
 );
 
 var MyRadioForm = {
@@ -81,7 +76,7 @@ var MyRadioForm = {
                 } else {
                   identity = "(#" + i.memberid + ")";
                 }
-                return "<p>" + i.fname + " " + i.sname + " " + identity + "</p>";
+                return $("<p>").text(i.fname + " " + i.sname + " " + identity);
               }
             }
           })
@@ -132,7 +127,7 @@ var MyRadioForm = {
                 //Fix typeahead not showing after hiding
                 //TODO: Report this @ https://github.com/twitter/typeahead.js/
                 $("input:focus").parent().children(".tt-dropdown-menu").removeClass("hidden");
-                return "<p>" + i.title + "<br><span style=\"font-size:.8em\">" + i.artist + "</span></p>";
+                return $("<p>").text(i.title).append("<br>").append($("<span>").css("fontSize", ".8em").text(i.artist));
               }
             }
           }
@@ -184,7 +179,7 @@ var MyRadioForm = {
                 //Fix typeahead not showing after hiding
                 //TODO: Report this @ https://github.com/twitter/typeahead.js/
                 $("input:focus").parent().children(".tt-dropdown-menu").removeClass("hidden");
-                return "<p>" + i.title + "</p>";
+                return $("<p>").text(i.title);
               }
             }
           }
@@ -239,7 +234,7 @@ var MyRadioForm = {
                 //Fix typeahead not showing after hiding
                 //TODO: Report this @ https://github.com/twitter/typeahead.js/
                 $("input:focus").parent().children(".tt-dropdown-menu").removeClass("hidden");
-                return "<p>" + i.title + "</p>";
+                return $("<p>").text(i.title);
               }
             }
           }

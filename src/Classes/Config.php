@@ -261,6 +261,13 @@ final class Config
     public static $default_show_uri = '/media/image_meta/ShowImageMetadata/22.png';
 
     /**
+     * The full web address to the image that will be served outside of term time.
+     *
+     * @var string
+     */
+    public static $offair_uri = '/media/image_meta/ShowImageMetadata/offair.png';
+
+    /**
      * The full web address to the image that will be served on a member's profile page if they do not have a profile
      * photo. The original value, /static/img/default_show_player.png is the main website's placeholder for shows.
      *
@@ -345,15 +352,9 @@ final class Config
      */
     public static $lastfm_api_secret;
 
-    /**
-     * The last.fm group specifically for the University of York. If using
-     * this aspect of the code you probably want to change this bit.
-     */
-    public static $lastfm_group = 'University+of+York';
-
      /**
-      * The last.fm nation of choice, at least for us. Again, you might wish to
-      * change this bit.
+      * The last.fm nation of choice, at least for us. If using
+      * this aspect of the code you probably want to change this bit.
       */
     public static $lastfm_geo = 'United+Kingdom';
 
@@ -504,17 +505,6 @@ final class Config
     public static $api_url = '/api';
 
     /**
-     * A list of domains that will get a valid Access-Control-Allow-Origin.
-     *
-     * The default, an empty array, allows all access.
-     *
-     * @todo Is this a sane default?
-     *
-     * @var array
-     */
-    public static $api_allowed_domains = [];
-
-    /**
      * The URL prefix to URY's webcam.
      *
      * Must be absolute. With trailing /
@@ -522,15 +512,6 @@ final class Config
      * @var string
      */
     public static $webcam_prefix = '//ury.org.uk/webcam/';
-
-    /**
-     * BRA Server.
-     *
-     * @var string
-     */
-    public static $bra_uri = 'ury.org.uk/bra';
-    public static $bra_user = '';
-    public static $bra_pass = '';
 
     /**
      * Relative path to the API. Must have trailing /.
@@ -622,16 +603,28 @@ final class Config
     public static $auth_ldap_root = 'ou=people,ou=csrv,ou=nos,dc=york,dc=ac,dc=uk';
     public static $auth_db_user = '';
     public static $auth_db_pass = '';
+
+    /**
+     * Optional eduroam auth domain (probably .ac.uk).
+     *
+     * @var string
+     */
     public static $eduroam_domain = 'york.ac.uk';
     public static $auth_ldap_friendly_name = 'IT Services';
     public static $auth_ldap_reset_url = 'https://idm.york.ac.uk/';
 
-/**
- * Email configuration.
- */
+    /**
+     * Email configuration.
+     */
+
     //All email domains handled by MyRadio
     public static $local_email_domains = [];
-    //Primary email domains
+
+    /**
+     * Primary email domain. MyRadio will send emails from this domain.
+     *
+     * @var string
+     */
     public static $email_domain = 'ury.org.uk';
 
     /**
@@ -716,12 +709,10 @@ EOT;
             'default_module' => self::$default_module,
             'default_action' => self::$default_action,
             'webcam_prefix' => self::$webcam_prefix,
-            'bra_uri' => self::$bra_uri,
-            'bra_user' => self::$bra_user,
-            'bra_pass' => self::$bra_pass,
             'short_name' => self::$short_name,
             'long_name' => self::$long_name,
             'founded' => self::$founded,
+            'email_domain' => self::$email_domain,
             'facebook' => self::$facebook,
             'audio_upload_max_size' => self::$audio_upload_max_size,
             'payment_url' => self::$yusu_payment_url,

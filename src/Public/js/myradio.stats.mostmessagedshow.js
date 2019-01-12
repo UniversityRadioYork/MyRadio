@@ -25,7 +25,7 @@ $(".twig-datatable").dataTable({
       "sTitle" : "Description",
       "bVisible": false
     },
-     //show_type_id
+    //show_type_id
     {
       "sTitle" : "Show Type ID",
       "bVisible": false

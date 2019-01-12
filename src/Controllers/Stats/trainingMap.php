@@ -5,13 +5,9 @@
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_TrainingStatus;
 
-function status_map($status)
-{
-    return [
-        'value' => $status->getID(),
-        'text' => $status->getTitle()
-    ];
-}
+$status_map = function ($status) {
+    return ['value' => $status->getID(), 'text' => $status->getTitle()];
+};
 
 $caption = 'Please select a Training Status above.';
 $img = '';
@@ -23,7 +19,7 @@ if (isset($_GET['id'])) {
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/trainingMap.twig')
     ->addVariable('title', 'Member Training Graph')
-    ->addVariable('maps', array_map('status_map', MyRadio_TrainingStatus::getAll()))
+    ->addVariable('maps', array_map($status_map, MyRadio_TrainingStatus::getAll()))
     ->addVariable('caption', $caption)
     ->addVariable('image', $img)
     ->render();

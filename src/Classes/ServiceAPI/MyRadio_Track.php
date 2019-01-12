@@ -501,8 +501,8 @@ class MyRadio_Track extends ServiceAPI
     {
         $this->digitised = $digitised;
         self::$db->query(
-            'UPDATE rec_track SET digitised=$1, digitisedby=$2 WHERE trackid=$3',
-            $digitised ? ['t', $_SESSION['memberid'], $this->getID()] : ['f', null, $this->getID()]
+            'UPDATE rec_track SET digitised=$1 WHERE trackid=$2',
+            $digitised ? ['t', $this->getID()] : ['f', $this->getID()]
         );
         $this->updateCacheObject();
     }
@@ -789,6 +789,9 @@ class MyRadio_Track extends ServiceAPI
         if (empty($options['idsort'])) {
             $options['idsort'] = null;
         }
+        if (empty($options['titlesort'])) {
+            $options['titlesort'] = null;
+        }
         if (empty($options['custom'])) {
             $options['custom'] = null;
         }
@@ -1060,6 +1063,7 @@ class MyRadio_Track extends ServiceAPI
             } else {
                 //Mark it as digitised/explicit
                 $track->setDigitised(true);
+                $track->setDigitisedBy(MyRadio_User::getInstance($_SESSION['memberid']));
                 $track->setClean($clean);
             }
         }
@@ -1260,7 +1264,7 @@ class MyRadio_Track extends ServiceAPI
     /**
      * Set the length of the track intro, in seconds.
      *
-     * @param int
+     * @param int $duration Duration of the intro
      *
      * @api POST
      */
