@@ -70,7 +70,7 @@ class MyRadio_Webcam extends ServiceAPI
         if (Config::$webcam_current_url) {
             $response = file_get_contents(Config::$webcam_current_url);
             $response = json_decode($response, true);
-
+            $streams = self::getStreams();
             switch($response['camera']) {
                 case 'cam1':
                     $location = 'Jukebox';
