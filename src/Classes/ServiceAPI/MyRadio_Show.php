@@ -629,6 +629,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         return isset($this->genres[0]) ? $this->genres[0] : null;
     }
 
+    /**
+    * Sets show photo
+    *
+    * @param string $tmp_path
+    */
     public function setShowPhoto($tmp_path)
     {
         $result = self::$db->fetchColumn(
@@ -642,7 +647,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ]
         )[0];
 
-        $suffix = 'image_meta/ShowImageMetadata/'.$result.'.png';
+	    $filetype = end(explode('.',$tmp_path));
+        $suffix = 'image_meta/ShowImageMetadata/'.$result.'.'.$filetype;
         $path = Config::$public_media_path.'/'.$suffix;
         rename($tmp_path, $path);
 
@@ -659,6 +665,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             WHERE show_image_metadata_id=$2',
             [$suffix, $result]
         );
+
+	    $this->photo_url = $path;
         $this->updateCacheObject();
     }
 
