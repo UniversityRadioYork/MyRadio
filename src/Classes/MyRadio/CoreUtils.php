@@ -626,6 +626,69 @@ class CoreUtils
         return $needle === '' || strrpos($haystack, $needle, -strlen($haystack)) !== false;
     }
 
+    /**
+     * Explode tags from string to array.
+     * We want to handle the case when people delimit with commas, spaces, or commas and
+     * spaces, as well as handling extended spaces.
+     *
+     * @param string $tags A tags string, comma separated.
+     *
+     * @return array The exploded tags.
+     *
+     * @throws MyRadioException when tags are longer than 24 characters.
+    **/
+    public static function explodeTags($tags)
+    {
+        $tags = preg_split('/[, ] */', $tags, null, PREG_SPLIT_NO_EMPTY);
+        $exploded_tags = [];
+        foreach ($tags as $tag) {
+            if (empty($tag)) {
+                continue;
+            }
+            if (strlen($tag) > 24) {
+                throw new MyRadioException(
+                    "Sorry, individual tags longer than 24 characters aren't allowed. Please try again.",
+                    400
+                );
+            }
+            // Add the valid tag to the returned array.
+            $exploded_tags[] = trim($tag);
+        }
+        return $exploded_tags;
+    }
+
+    public static function checkUploadPostSize()
+    {
+        // Check that any files don't go over the PHP post_max_size
+        // Otherwise, sometimes PHP won't return an error, causing an empty $_POST.
+        // This would cause confusing errors relating to empty fields.
+        // https://stackoverflow.com/questions/2133652/how-to-gracefully-handle-files-that-exceed-phps-post-max-size
+        $post_size = trim(ini_get('post_max_size'));
+        if ($post_size != '') {
+            $last = strtolower(substr($post_size, -1));
+        } else {
+            $last = '';
+        }
+        switch ($last) {
+            // The 'G' modifier is available since PHP 5.1.0
+            case 'g':
+                $post_size *= 1024;
+                // fall through
+            case 'm':
+                $post_size *= 1024;
+                // fall through
+            case 'k':
+                $post_size *= 1024;
+                // fall through
+        }
+        if ($_SERVER['CONTENT_LENGTH'] > $post_size) {
+            throw new MyRadioException(
+                "The content uploaded in this form was too large for the server's configuration.",
+                500
+            );
+        }
+    }
+
     private function __construct()
     {
     }

@@ -292,8 +292,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             );
         }
 
-        //Explode the tags
-        $tags = explode(' ', $params['tags']);
+        // Explode the tags
+        $tags = CoreUtils::explodeTags($params['tags']);
         foreach ($tags as $tag) {
             self::$db->query(
                 'INSERT INTO schedule.show_metadata
@@ -418,7 +418,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Tags',
-                    'explanation' => 'A set of keywords to describe your show generally, seperated with spaces.',
+                    'explanation' => 'A set of keywords to describe your show generally, seperated with commas.',
                 ]
             )
         )->addField(
@@ -430,13 +430,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'credits',
                 MyRadioFormField::TYPE_TABULARSET,
                 [
+                    'label' => 'Credits',
                     'options' => [
                         new MyRadioFormField(
                             'memberid',
                             MyRadioFormField::TYPE_MEMBER,
                             [
                                 'explanation' => '',
-                                'label' => 'Credit',
+                                'label' => 'Member Name',
                             ]
                         ),
                         new MyRadioFormField(
@@ -480,7 +481,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'title' => $this->getMeta('title'),
                     'description' => $this->getMeta('description'),
                     'genres' => $this->getGenre(),
-                    'tags' => is_null($this->getMeta('tag')) ? null : implode(' ', $this->getMeta('tag')),
+                    'tags' => is_null($this->getMeta('tag')) ? null : implode(', ', $this->getMeta('tag')),
                     'credits.memberid' => array_map(
                         function ($ar) {
                             return $ar['User'];

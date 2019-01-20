@@ -246,7 +246,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Tags',
-                    'explanation' => 'A set of keywords to describe your podcast generally, seperated with spaces.',
+                    'explanation' => 'A set of keywords to describe your podcast generally, seperated with commas.',
                 ]
             )
         );
@@ -370,7 +370,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 [
                     'title' => $this->getMeta('title'),
                     'description' => $this->getMeta('description'),
-                    'tags' => is_null($this->getMeta('tag')) ? null : implode(' ', $this->getMeta('tag')),
+                    'tags' => is_null($this->getMeta('tag')) ? null : implode(', ', $this->getMeta('tag')),
                     'show' => empty($this->show_id) ? null : $this->show_id,
                     'credits.member' => array_map(
                         function ($credit) {
@@ -408,6 +408,10 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         MyRadio_Show $show = null,
         $credits = null
     ) {
+        //Validate the tags
+        $tags = CoreUtils::explodeTags($tags);
+
+        self::$db->query('BEGIN');
 
         //Get an ID for the new Podcast
         $id = (int) self::$db->fetchColumn(
@@ -416,6 +420,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             .'RETURNING podcast_id',
             [MyRadio_User::getInstance()->getID()]
         )[0];
+
+        self::$db->query('COMMIT');
 
         $podcast = self::getInstance($id);
 
@@ -605,7 +611,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      *
      * @param MyRadio_Show $show
      */
-    public function setShow(MyRadio_Show $show)
+    public function setShow($show)
     {
         self::$db->query(
             'DELETE FROM schedule.show_podcast_link
@@ -614,12 +620,16 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         );
 
         if (!empty($show)) {
-            self::$db->query(
-                'INSERT INTO schedule.show_podcast_link
-                (show_id, podcast_id) VALUES ($1, $2)',
-                [$show->getID(), $this->getID()]
-            );
-            $this->show_id = $show->getID();
+            if ($show instanceof MyRadio_Show) {
+                self::$db->query(
+                    'INSERT INTO schedule.show_podcast_link
+                    (show_id, podcast_id) VALUES ($1, $2)',
+                    [$show->getID(), $this->getID()]
+                );
+                $this->show_id = $show->getID();
+            } else {
+                throw new MyRadioException("The parameter provided is not a MyRadio_Show instance.", 500);
+            }
         } else {
             $this->show_id = null;
         }

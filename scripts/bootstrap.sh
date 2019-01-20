@@ -94,7 +94,7 @@ su - postgres -c "cat /vagrant/sample_configs/postgres.sql | psql"
 rm -f /vagrant/src/MyRadio_Config.local.php # Remove any existing config
 
 # Somewhere to store audio uploads
-music_dirs="records membersmusic beds jingles"
+music_dirs="records membersmusic beds jingles podcasts"
 for i in ${music_dirs}; do # no spaces
 	mkdir -p /music/$i
 	chown www-data:www-data /music/$i

@@ -169,6 +169,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 throw new MyRadioException('Parameter '.$field.' was not provided.', 400);
             }
         }
+        $tags = (!empty($params['tags'])) ? CoreUtils::explodeTags($params['tags']) : [];
 
         /**
          * Select an appropriate value for $term_id.
@@ -256,24 +257,18 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         }
 
         //Same with tags
-        if (!empty($params['tags'])) {
-            $tags = explode(' ', $params['tags']);
-            foreach ($tags as $tag) {
-                if (empty($tag)) {
-                    continue;
-                }
-                self::$db->query(
-                    'INSERT INTO schedule.season_metadata
-                    (metadata_key_id, show_season_id, metadata_value, effective_from, memberid, approvedid)
-                    VALUES ($1, $2, $3, NOW(), $4, $4)',
-                    [
-                        self::getMetadataKey('tag'),
-                        $season_id,
-                        $tag,
-                        MyRadio_User::getInstance()->getID(),
-                    ]
-                );
-            }
+        foreach ($tags as $tag) {
+            self::$db->query(
+                'INSERT INTO schedule.season_metadata
+                (metadata_key_id, show_season_id, metadata_value, effective_from, memberid, approvedid)
+                VALUES ($1, $2, $3, NOW(), $4, $4)',
+                [
+                    self::getMetadataKey('tag'),
+                    $season_id,
+                    $tag,
+                    MyRadio_User::getInstance()->getID(),
+                ]
+            );
         }
 
         //Actually commit the show to the database!
@@ -379,8 +374,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Tags',
-                    'explanation' => 'A set of keywords to describe this Season. These will be added onto the '
-                        .'Tags you already have set for the Show.',
+                    'explanation' => 'A set of keywords to describe this Season, separated by commas. '
+                        .'These will be added onto the tags you already have set for the Show.',
                     'required' => false,
                 ]
             )
@@ -400,7 +395,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 $this->getID(),
                 [
                     'description' => $this->getMeta('description'),
-                    'tags' => implode(' ', $this->getMeta('tag')),
+                    'tags' => implode(', ', $this->getMeta('tag')),
                 ]
             );
     }

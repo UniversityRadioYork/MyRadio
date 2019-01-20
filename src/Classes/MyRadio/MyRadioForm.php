@@ -2,6 +2,7 @@
 
 namespace MyRadio\MyRadio;
 
+use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadioException;
 use MyRadio\Config;
 
@@ -379,6 +380,8 @@ class MyRadioForm
      */
     public function readValues()
     {
+        CoreUtils::checkUploadPostSize();
+
         //If there was a captcha, verify it
         if ($this->captcha) {
             $valid = AuthUtils::verifyRecaptcha($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);

@@ -5,6 +5,7 @@
  * which should be the ID of the Show to edit.
  */
 use \MyRadio\MyRadio\AuthUtils;
+use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Show;
 use \MyRadio\ServiceAPI\MyRadio_User;
@@ -19,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         URLUtils::redirectWithMessage(
             'Scheduler',
             'myShows',
-            'Your show, ' . $show->getMeta('title') . ', has been created!'
+            'Your show, ' . $show->getMeta('title') . ', has been created. Now create a new season for it!'
         );
     } else {
         //submit edit
@@ -33,11 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $show->setMeta('title', $data['title']);
         $show->setMeta('description', $data['description']);
 
-        // We want to handle the case when people delimit with commas, or commas and
-        // spaces, as well as handling extended spaces.
         $show->setMeta(
             'tag',
-            preg_split('/[, ] */', $data['tags'], null, PREG_SPLIT_NO_EMPTY)
+            CoreUtils::explodeTags($data['tags'])
         );
 
         $show->setGenre($data['genres']);
