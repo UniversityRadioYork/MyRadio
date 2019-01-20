@@ -646,8 +646,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 $this->getID()
             ]
         )[0];
-
-	    $filetype = end(explode('.',$tmp_path));
+        
+        $filetype = end(explode('.', $tmp_path));
         $suffix = 'image_meta/ShowImageMetadata/'.$result.'.'.$filetype;
         $path = Config::$public_media_path.'/'.$suffix;
         rename($tmp_path, $path);
@@ -665,8 +665,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             WHERE show_image_metadata_id=$2',
             [$suffix, $result]
         );
-
-	    $this->photo_url = $path;
+        
+        $this->photo_url = $path;
         $this->updateCacheObject();
     }
 
