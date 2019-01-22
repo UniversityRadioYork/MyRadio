@@ -630,17 +630,28 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         return isset($this->genres[0]) ? $this->genres[0] : null;
     }
 
+    /**
+    * Sets show photo
+    *
+    * @param string $tmp_path
+    */
     public function setShowPhoto($tmp_path)
     {
         $result = self::$db->fetchColumn(
             'INSERT INTO schedule.show_image_metadata (memberid, approvedid, metadata_key_id, metadata_value, show_id)
             VALUES ($1, $1, $2, $3, $4) RETURNING show_image_metadata_id',
-            [$_SESSION['memberid'], self::getMetadataKey('player_image'), 'tmp', $this->getID()]
+            [
+                MyRadio_User::getCurrentOrSystemUser()->getID(),
+                self::getMetadataKey('player_image'),
+                'tmp',
+                $this->getID()
+            ]
         )[0];
-
-        $suffix = 'image_meta/ShowImageMetadata/'.$result.'.png';
+        
+        $filetype = end(explode('.', $tmp_path));
+        $suffix = 'image_meta/ShowImageMetadata/'.$result.'.'.$filetype;
         $path = Config::$public_media_path.'/'.$suffix;
-        move_uploaded_file($tmp_path, $path);
+        rename($tmp_path, $path);
 
         self::$db->query(
             'UPDATE schedule.show_image_metadata SET effective_to=NOW()
@@ -655,7 +666,9 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             WHERE show_image_metadata_id=$2',
             [$suffix, $result]
         );
-        $self->updateCacheObject();
+        
+        $this->photo_url = $path;
+        $this->updateCacheObject();
     }
 
     /**
