@@ -102,6 +102,7 @@ class MyRadio_List extends ServiceAPI
         $this->public = $result['toexim'];
         $this->address = $result['listaddress'];
         $this->optin = $result['subscribable'] === 't';
+        $this->current = $result['current'] === 't';
 
         if ($this->optin) {
             //Get subscribed members
@@ -350,9 +351,14 @@ class MyRadio_List extends ServiceAPI
      *
      * @return MyRadio_List[]
      */
-    public static function getAllLists()
+    public static function getAllLists($current = "")
     {
-        $r = self::$db->fetchColumn('SELECT listid FROM mail_list');
+        if ($current != "") {
+            $current_sql = "WHERE current = ";
+            $current = $current_sql . ($current ? "true" : "false");
+        }
+
+        $r = self::$db->fetchColumn('SELECT listid FROM mail_list '.$current);
 
         $lists = [];
         foreach ($r as $list) {
@@ -407,7 +413,7 @@ class MyRadio_List extends ServiceAPI
                 } else {
                     $data['optin'] = null;
                 }
-                $data['optOut'] = ($data['subscribed'] ? [
+                $data['optOut'] = (($data['subscribed'] && $this->optin) ? [
                     'display' => 'icon',
                     'value' => 'minus',
                     'title' => 'Opt out of this mailing list',

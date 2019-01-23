@@ -12,7 +12,7 @@ use \MyRadio\ServiceAPI\MyRadio_List;
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('tablescript', 'myradio.mail.default')
     ->addVariable('title', 'All Mailing Lists')
-    ->addVariable('tabledata', CoreUtils::dataSourceParser(MyRadio_List::getUserLists(), ['actions']))
+    ->addVariable('tabledata', CoreUtils::dataSourceParser(MyRadio_List::getAllLists(True), ['actions']))
     ->addInfo(
         'You will only get any messages from '
         .Config::$short_name
