@@ -1283,7 +1283,7 @@ COMMENT ON COLUMN mail_list.defn IS 'A SQL string that returns fname, sname and 
 COMMENT ON COLUMN mail_list.toexim IS 'Whether to create a mail alias on the email server for this list.';
 COMMENT ON COLUMN mail_list.listaddress IS 'If the list is exported, this is the list''s email address.';
 COMMENT ON COLUMN mail_list.subscribable IS 'Whether members can (un)subscribe freely.';
-COMMENT ON COLUMN mail_list.current IS 'If this mailing list is currently used (should be displayed to members';
+COMMENT ON COLUMN mail_list.current IS 'If this mailing list is currently used (should be displayed to members).';
 CREATE SEQUENCE mail_list_listid_seq
     START WITH 1
     INCREMENT BY 1
