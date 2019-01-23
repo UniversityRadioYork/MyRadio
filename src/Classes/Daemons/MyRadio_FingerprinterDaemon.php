@@ -57,8 +57,9 @@ class MyRadio_FingerprinterDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
              * 1. Is the rank high (> 0.8)?
              * 2. Does is have a short levenshtein difference from the current value?
              */
-            if (empty($info[0]) or $info[0]['rank'] < 0.8) {
-                echo 'Fingerprint data for '.$track->getID().' unreliable (p='.(empty($info[0]) ? '0' : $info[0]['rank'])."). Skipping.\n";
+            if (empty($info[0]) || $info[0]['rank'] < 0.8) {
+                echo 'Fingerprint data for '.$track->getID() .
+                     ' unreliable (p=' . (empty($info[0]) ? '0' : $info[0]['rank']) . "). Skipping.\n";
                 continue;
             }
 
@@ -67,7 +68,9 @@ class MyRadio_FingerprinterDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 $track->setTitle($info[0]['title']);
             }
 
-            if ($info[0]['artist'] !== $track->getArtist() && levenshtein($info[0]['artist'], $track->getArtist()) <= 2) {
+            if ($info[0]['artist'] !== $track->getArtist()
+                && levenshtein($info[0]['artist'], $track->getArtist()) <= 2
+            ) {
                 echo "Minor artist correction made - {$track->getArtist()} to {$info[0]['artist']}\n";
                 $track->setArtist($info[0]['artist']);
             }
@@ -81,16 +84,31 @@ class MyRadio_FingerprinterDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 continue;
             }
 
-            $album = MyRadio_Track::getAlbumDurationAndPositionFromLastfm($info[0]['title'], $info[0]['artist'])['album']->getTitle();
+            $album = MyRadio_Track::getAlbumDurationAndPositionFromLastfm(
+                $info[0]['title'],
+                $info[0]['artist']
+            )['album']->getTitle();
 
             if (levenshtein($info[0]['title'], $track->getTitle()) < 8
-                or levenshtein($info[0]['artist'], $track->getArtist()) < 5
-                or levenshtein($album, $track->getAlbum()->getTitle()) < 5
+                || levenshtein($info[0]['artist'], $track->getArtist()) < 5
+                || levenshtein($album, $track->getAlbum()->getTitle()) < 5
             ) {
-                MyRadio_TrackCorrection::create($track, $info[0]['title'], $info[0]['artist'], $album, MyRadio_TrackCorrection::LEVEL_RECOMMEND);
+                MyRadio_TrackCorrection::create(
+                    $track,
+                    $info[0]['title'],
+                    $info[0]['artist'],
+                    $album,
+                    MyRadio_TrackCorrection::LEVEL_RECOMMEND
+                );
                 echo "Correction recommended for {$track->getID()}.\n";
             } else {
-                MyRadio_TrackCorrection::create($track, $info[0]['title'], $info[0]['artist'], $album, MyRadio_TrackCorrection::LEVEL_SUGGEST);
+                MyRadio_TrackCorrection::create(
+                    $track,
+                    $info[0]['title'],
+                    $info[0]['artist'],
+                    $album,
+                    MyRadio_TrackCorrection::LEVEL_SUGGEST
+                );
                 echo "Correction suggested {$track->getID()}.\n";
             }
 

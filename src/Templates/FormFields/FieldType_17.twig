@@ -1,5 +1,6 @@
+{% if display_labels %}<label for="{{frm_name}}-{{field.name}}-container">{{field.label}}</label>{% endif %}
 {% set thisfield, display_labels = field, false %}
-<table class="myuryfrm-repeaterset-container" id="{{thisfield.name}}">
+<table class="myradioform-repeaterset-container" id="{{thisfield.name}}">
   <thead>
     <tr>
     {% for field in thisfield.options %}
@@ -26,7 +27,7 @@ but for some reason the template doesn't rended when I do that. #}
         {% include ('FormFields/FieldType_'~field.type~'.twig') %}
         </div></td>
     {% endfor %}
-      <td><button type="button" class="myuryfrm-remove-row btn btn-link">Remove Item</button></td>
+      <td><button type="button" class="myradioform-remove-row btn btn-link">Remove Item</button></td>
     </tr>
               {% endfor %}
 </table>

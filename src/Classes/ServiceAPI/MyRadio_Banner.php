@@ -84,7 +84,7 @@ class MyRadio_Banner extends MyRadio_Photo
         );
     }
 
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         $data = [
             'banner_id' => $this->getBannerID(),
@@ -106,7 +106,7 @@ class MyRadio_Banner extends MyRadio_Photo
             ],
         ];
 
-        return array_merge(parent::toDataSource(), $data);
+        return array_merge(parent::toDataSource($mixins), $data);
     }
 
     /**
@@ -239,8 +239,10 @@ class MyRadio_Banner extends MyRadio_Photo
         }
 
         $this->type = $type;
-        self::$db->query('UPDATE website.banner SET banner_type_id=$1 WHERE banner_id=$2', [$type, $this->getBannerID()]);
-
+        self::$db->query(
+            'UPDATE website.banner SET banner_type_id=$1 WHERE banner_id=$2',
+            [$type, $this->getBannerID()]
+        );
         return $this;
     }
 
@@ -343,56 +345,58 @@ class MyRadio_Banner extends MyRadio_Photo
             'Website',
             'editBanner',
             [
-            'title' => 'Edit Banner',
-            'template' => 'Website/bannerfrm.twig',
+                'title' => 'Edit Banner',
+                'template' => 'Website/bannerfrm.twig',
             ]
         ))
-                ->addField(
-                    new MyRadioFormField(
-                        'alt',
-                        MyRadioFormField::TYPE_TEXT,
-                        [
-                        'label' => 'Title',
-                        'explanation' => 'This is used on the backpages to identify the Banner, and also on the main website as mouseover text.',
-                        ]
-                    )
-                )
-                ->addField(
-                    new MyRadioFormField(
-                        'target',
-                        MyRadioFormField::TYPE_TEXT,
-                        [
-                        'label' => 'Action',
-                        'explanation' => 'This is the URL that the User will be taken to if they click the Banner. You can leave this blank for there to not be a link.',
-                        'required' => false,
-                        ]
-                    )
-                )
-                ->addField(
-                    new MyRadioFormField(
-                        'type',
-                        MyRadioFormField::TYPE_SELECT,
-                        [
-                        'label' => 'Type',
-                        'explanation' => 'TODO: Ask Matt what this is even supposed to do.',
-                        'options' => array_map(
-                            function ($x) {
-                                return ['value' => $x['banner_type_id'], 'text' => $x['description']];
-                            },
-                            self::getBannerTypes()
-                        ),
-                        ]
-                    )
-                )
-                ->addField(
-                    new MyRadioFormField(
-                        'photo',
-                        MyRadioFormField::TYPE_FILE,
-                        [
-                        'label' => 'Image',
-                        'explanation' => 'Please upload a 680x230px image file to use as the Banner.',
-                        ]
-                    )
-                );
+        ->addField(
+            new MyRadioFormField(
+                'alt',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Title',
+                    'explanation' => 'This is used on the backpages to identify the Banner, '
+                                     . 'and also on the main website as mouseover text.',
+                ]
+            )
+        )
+        ->addField(
+            new MyRadioFormField(
+                'target',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Action',
+                    'explanation' => 'This is the URL that the User will be taken to if they click the Banner. '
+                    . 'You can leave this blank for there to not be a link.',
+                    'required' => false,
+                ]
+            )
+        )
+        ->addField(
+            new MyRadioFormField(
+                'type',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'label' => 'Type',
+                    'explanation' => 'TODO: Ask Matt what this is even supposed to do.',
+                    'options' => array_map(
+                        function ($x) {
+                            return ['value' => $x['banner_type_id'], 'text' => $x['description']];
+                        },
+                        self::getBannerTypes()
+                    ),
+                ]
+            )
+        )
+        ->addField(
+            new MyRadioFormField(
+                'photo',
+                MyRadioFormField::TYPE_FILE,
+                [
+                    'label' => 'Image',
+                    'explanation' => 'Please upload a 680x230px image file to use as the Banner.',
+                ]
+            )
+        );
     }
 }

@@ -204,23 +204,15 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     /**
      * Creates a new MyRadio Show and returns an object representing it.
      *
-     * @param array $params An array of Show properties compatible with the Models/Scheduler/showfrm Form:
-     *                      title: The name of the show<br>
-     *                      description: The description of the show<br>
-     *                      genres: An array of 0 or more genre ids this Show is a member of<br>
-     *                      tags: A string of 0 or more space-seperated tags this Show relates to<br>
-     *                      credits: a 2D Array with keys member and credittype. member is Array of Users, credittype is Array of<br>
-     *                      corresponding credittypeids
-     *                      showtypeid: The ID of the type of show (see schedule.show_type). Defaults to "Show"
-     *                      location: The ID of the location the show will be in
-     *                      mixclouder: If true, the show will be published to Mixcloud after broadcast.
-     *                      Requires https://github.com/UniversityRadioYork/mixclouder.
+     * @param array $params An assoc array (possibly decoded from JSON),
+     * taking a format generally based on what toDataSource produces
+     * Properties may be "genres" (["Jazz", ...], "credits" ([["memberid": 7449, "typeid": 1], ...]),
+     * location or any valid metadata key.
+     * The title/description metadata keys, and the credits key, are all required.
+     * e.g. Set upload_state: "Requested" to set this show to be uploaded to Mixclouder after broadcast.
      *
-     * title, description, credits and credittypes are required fields.
-     *
-     * As this is the initial creation, all tags are <i>approved</i> by the submitted so the show has some initial values
-     *
-     * @todo   location (above) Is not in the Show creation form
+     * As this is the initial creation, all data are <i>approved</i> by the submitter
+     * so the show has some initial values
      *
      * @throws MyRadioException
      */
@@ -230,7 +222,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $required = ['title', 'description', 'credits'];
         foreach ($required as $field) {
             if (!isset($params[$field])) {
-                throw new MyRadioException('Parameter '.$field.' was not provided.');
+                throw new MyRadioException('You must provide ' . $field, 400);
             }
         }
 
@@ -252,6 +244,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $params['tags'] = '';
         }
 
+        // Support API calls where there is no session.
+        // @todo should this be system_user?
+        if (!empty($_SESSION['memberid'])) {
+            $creator = $_SESSION['memberid'];
+        } else {
+            $creator = $params['credits']['memberid'][0];
+        }
+
         //We're all or nothing from here on out - transaction time
         self::$db->query('BEGIN');
 
@@ -260,7 +260,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $result = self::$db->fetchColumn(
             'INSERT INTO schedule.show (show_type_id, submitted, memberid)
             VALUES ($1, NOW(), $2) RETURNING show_id',
-            [$params['showtypeid'], $_SESSION['memberid']],
+            [$params['showtypeid'], $creator],
             true
         );
         $show_id = $result[0];
@@ -271,7 +271,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'INSERT INTO schedule.show_metadata
                 (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid)
                 VALUES ($1, $2, $3, NOW(), $4, $4)',
-                [self::getMetadataKey($key), $show_id, $params[$key], $_SESSION['memberid']],
+                [self::getMetadataKey($key), $show_id, $params[$key], $creator],
                 true
             );
         }
@@ -287,19 +287,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             self::$db->query(
                 'INSERT INTO schedule.show_genre (show_id, genre_id, effective_from, memberid, approvedid)
                 VALUES ($1, $2, NOW(), $3, $3)',
-                [$show_id, $genre, $_SESSION['memberid']],
+                [$show_id, $genre, $creator],
                 true
             );
         }
 
-        //Explode the tags
-        $tags = explode(' ', $params['tags']);
+        // Explode the tags
+        $tags = CoreUtils::explodeTags($params['tags']);
         foreach ($tags as $tag) {
             self::$db->query(
                 'INSERT INTO schedule.show_metadata
                 (metadata_key_id, show_id, metadata_value, effective_from, memberid, approvedid)
                 VALUES ($1, $2, $3, NOW(), $4, $4)',
-                [self::getMetadataKey('tag'), $show_id, $tag, $_SESSION['memberid']],
+                [self::getMetadataKey('tag'), $show_id, $tag, $creator],
                 true
             );
         }
@@ -319,16 +319,23 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             [
                 $show_id,
                 $params['location'],
-                $_SESSION['memberid'],
+                $creator,
             ],
             true
         );
 
         //And now all that's left is who's on the show
-        for ($i = 0; $i < sizeof($params['credits']['member']); ++$i) {
+        for ($i = 0; $i < sizeof($params['credits']['memberid']); ++$i) {
             //Skip blank entries
-            if (empty($params['credits']['member'][$i])) {
+            if (empty($params['credits']['memberid'][$i])) {
                 continue;
+            }
+            // Both a memberid and a User object are valid here.
+            // This is icky and should be fixed.
+            if (is_numeric($params['credits']['memberid'][$i])) {
+                $member = MyRadio_User::getInstance($params['credits']['memberid'][$i]);
+            } else {
+                $member = $params['credits']['memberid'][$i];
             }
             self::$db->query(
                 'INSERT INTO schedule.show_credit
@@ -337,8 +344,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 [
                     $show_id,
                     (int) $params['credits']['credittype'][$i],
-                    $params['credits']['member'][$i]->getID(),
-                    $_SESSION['memberid'],
+                    $member->getID(),
+                    $creator,
                 ],
                 true
             );
@@ -368,7 +375,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'editShow',
                 [
                     'debug' => true,
-                    'title' => 'Create Show',
+                    'title' => 'Scheduler',
+                    'subtitle' => 'Create a Show'
                 ]
             )
         )->addField(
@@ -410,7 +418,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Tags',
-                    'explanation' => 'A set of keywords to describe your show generally, seperated with spaces.',
+                    'explanation' => 'A set of keywords to describe your show generally, seperated with commas.',
                 ]
             )
         )->addField(
@@ -422,13 +430,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'credits',
                 MyRadioFormField::TYPE_TABULARSET,
                 [
+                    'label' => 'Credits',
                     'options' => [
                         new MyRadioFormField(
-                            'member',
+                            'memberid',
                             MyRadioFormField::TYPE_MEMBER,
                             [
                                 'explanation' => '',
-                                'label' => 'Credit',
+                                'label' => 'Member Name',
                             ]
                         ),
                         new MyRadioFormField(
@@ -465,15 +474,15 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     public function getEditForm()
     {
         return self::getForm()
-            ->setTitle('Edit Show')
+            ->setSubtitle('Edit Show')
             ->editMode(
                 $this->getID(),
                 [
                     'title' => $this->getMeta('title'),
                     'description' => $this->getMeta('description'),
                     'genres' => $this->getGenre(),
-                    'tags' => is_null($this->getMeta('tag')) ? null : implode(' ', $this->getMeta('tag')),
-                    'credits.member' => array_map(
+                    'tags' => is_null($this->getMeta('tag')) ? null : implode(', ', $this->getMeta('tag')),
+                    'credits.memberid' => array_map(
                         function ($ar) {
                             return $ar['User'];
                         },
@@ -532,6 +541,41 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
+     * A simplified version of getAllTimeslots in MyRadio_Season.
+     * This gets all the timeslots that were part of a show, but only returns a few values.
+     * Note that start_time is a (PSQL) timestamp, not an epoch.
+     *
+     * @return Array timeslots with season_id, timeslot_id, start_time and duration
+     */
+    public function getAllTimeslots()
+    {
+        $sql =
+            'SELECT
+               show_season.show_season_id AS season_id,
+               show_season_timeslot.show_season_timeslot_id AS timeslot_id,
+               show_season_timeslot.start_time,
+               show_season_timeslot.duration
+             FROM schedule.show
+             INNER JOIN
+               schedule.show_season ON show.show_id = show_season.show_id
+             INNER JOIN
+               schedule.show_season_timeslot ON show_season.show_season_id = show_season_timeslot.show_season_id
+             WHERE show.show_id = $1
+             ORDER BY timeslot_id ASC';
+        $result = self::$db->fetchAll($sql, [$this->show_id]);
+        $timeslots = [];
+        foreach ($result as $row) {
+            $timeslots[] = [
+                'season_id'   => (int) $row['season_id'],
+                'timeslot_id' => (int) $row['timeslot_id'],
+                'start_time'  => $row['start_time'],
+                'duration'    => $row['duration'],
+            ];
+        }
+        return $timeslots;
+    }
+
+    /**
      * Internally associates a Season with this Show.
      * Does not persist in database. Used for updating the cache.
      *
@@ -586,17 +630,28 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         return isset($this->genres[0]) ? $this->genres[0] : null;
     }
 
+    /**
+    * Sets show photo
+    *
+    * @param string $tmp_path
+    */
     public function setShowPhoto($tmp_path)
     {
         $result = self::$db->fetchColumn(
             'INSERT INTO schedule.show_image_metadata (memberid, approvedid, metadata_key_id, metadata_value, show_id)
             VALUES ($1, $1, $2, $3, $4) RETURNING show_image_metadata_id',
-            [$_SESSION['memberid'], self::getMetadataKey('player_image'), 'tmp', $this->getID()]
+            [
+                MyRadio_User::getCurrentOrSystemUser()->getID(),
+                self::getMetadataKey('player_image'),
+                'tmp',
+                $this->getID()
+            ]
         )[0];
-
-        $suffix = 'image_meta/ShowImageMetadata/'.$result.'.png';
+        
+        $filetype = end(explode('.', $tmp_path));
+        $suffix = 'image_meta/ShowImageMetadata/'.$result.'.'.$filetype;
         $path = Config::$public_media_path.'/'.$suffix;
-        move_uploaded_file($tmp_path, $path);
+        rename($tmp_path, $path);
 
         self::$db->query(
             'UPDATE schedule.show_image_metadata SET effective_to=NOW()
@@ -611,6 +666,9 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             WHERE show_image_metadata_id=$2',
             [$suffix, $result]
         );
+        
+        $this->photo_url = $path;
+        $this->updateCacheObject();
     }
 
     /**
@@ -623,22 +681,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * This will *not* unset is_multiple values that are not in the new set.
      *
      * @param string $string_key     The metadata key
-     * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance for value in the array. for value in the array.
+     * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance
      *                               for value in the array.
      * @param int    $effective_from UTC Time the metavalue is effective from. Default now.
      * @param int    $effective_to   UTC Time the metadata value is effective to. Default NULL (does not expire).
-     * @param null   $table          Used for compatibility with parent.
-     * @param null   $pkey           Used for compatibility with parent.
      */
-    public function setMeta(
-        $string_key,
-        $value,
-        $effective_from = null,
-        $effective_to = null,
-        $table = null,
-        $pkey = null
-    ) {
-        $r = parent::setMeta(
+    public function setMeta($string_key, $value, $effective_from = null, $effective_to = null)
+    {
+        $r = parent::setMetaBase(
             $string_key,
             $value,
             $effective_from,
@@ -746,10 +796,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     public static function getMostMessaged($date = 0)
     {
         $result = self::$db->fetchAll(
-            'SELECT show.show_id, count(*) as msg_count FROM sis2.messages
-            LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid = show_season_timeslot.show_season_timeslot_id
-            LEFT JOIN schedule.show_season ON show_season_timeslot.show_season_id = show_season.show_season_id
-            LEFT JOIN schedule.show ON show_season.show_id = show.show_id
+            'SELECT show.show_id, COUNT(*) as msg_count FROM sis2.messages
+            LEFT JOIN schedule.show_season_timeslot ON messages.timeslotid=show_season_timeslot.show_season_timeslot_id
+            LEFT JOIN schedule.show_season ON show_season_timeslot.show_season_id=show_season.show_season_id
+            LEFT JOIN schedule.show ON show_season.show_id=show.show_id
             WHERE show_season_timeslot.start_time > $1 GROUP BY show.show_id ORDER BY msg_count DESC LIMIT 30',
             [CoreUtils::getTimestamp($date)]
         );
@@ -786,8 +836,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      *
      * @param int $date If specified, only messages for timeslots since $date are counted.
      *
-     * @return array An array of 30 Timeslots that have been put through toDataSource, with the addition of a msg_count key,
-     *               referring to the number of messages sent to that show.
+     * @return array An array of 30 Timeslots that have been put through toDataSource, with the addition of a msg_count
+     *               key, referring to the number of messages sent to that show.
      */
     public static function getMostListened($date = 0)
     {
@@ -844,12 +894,18 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $string_keys = ['title', 'description', 'tag'];
         }
 
-        $r = parent::searchMeta($query, $string_keys, $effective_from, $effective_to, 'schedule.show_metadata', 'show_id');
-
+        $r = parent::searchMetaBase(
+            $query,
+            $string_keys,
+            $effective_from,
+            $effective_to,
+            'schedule.show_metadata',
+            'show_id'
+        );
         return self::resultSetToObjArray($r);
     }
 
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         $data = [
             'show_id' => $this->getID(),
@@ -858,6 +914,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             'credits' => array_map(
                 function ($x) {
                     $x['User'] = $x['User']->toDataSource();
+                    $x['type_name'] = $this->getCreditName($x['type']);
 
                     return $x;
                 },

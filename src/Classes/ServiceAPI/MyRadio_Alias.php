@@ -43,16 +43,24 @@ class MyRadio_Alias extends ServiceAPI
     protected function __construct($id)
     {
         $result = self::$db->fetchOne(
-            'SELECT source, '
-            .'(SELECT array(SELECT destination FROM mail.alias_text '
-            .'  WHERE alias_id=$1)) AS dtext, '
-            .'(SELECT array(SELECT destination FROM mail.alias_officer '
-            .'  WHERE alias_id=$1)) AS dofficer, '
-            .'(SELECT array(SELECT destination FROM mail.alias_member '
-            .'  WHERE alias_id=$1)) AS dmember, '
-            .'(SELECT array(SELECT destination FROM mail.alias_list '
-            .'  WHERE alias_id=$1)) AS dlist '
-            .'FROM mail.alias WHERE alias_id=$1',
+            'SELECT source, (
+                SELECT array_to_json(array(
+                    SELECT destination FROM mail.alias_text WHERE alias_id=$1
+                ))
+            ) AS dtext, (
+                SELECT array_to_json(array(
+                    SELECT destination FROM mail.alias_officer WHERE alias_id=$1
+                ))
+            ) AS dofficer, (
+                SELECT array_to_json(array(
+                    SELECT destination FROM mail.alias_member WHERE alias_id=$1
+                ))
+            ) AS dmember, (
+                SELECT array_to_json(array(
+                    SELECT destination FROM mail.alias_list WHERE alias_id=$1
+                ))
+            ) AS dlist
+            FROM mail.alias WHERE alias_id=$1',
             [$id]
         );
         if (empty($result)) {
@@ -61,28 +69,28 @@ class MyRadio_Alias extends ServiceAPI
             $this->alias_id = (int) $id;
             $this->source = $result['source'];
 
-            foreach (self::$db->decodeArray($result['dtext']) as $text) {
+            foreach (json_decode($result['dtext']) as $text) {
                 $this->destinations[] = [
                     'type' => 'text',
                     'value' => $text,
                 ];
             }
 
-            foreach (self::$db->decodeArray($result['dofficer']) as $officer) {
+            foreach (json_decode($result['dofficer']) as $officer) {
                 $this->destinations[] = [
                     'type' => 'officer',
                     'value' => MyRadio_Officer::getInstance($officer),
                 ];
             }
 
-            foreach (self::$db->decodeArray($result['dmember']) as $member) {
+            foreach (json_decode($result['dmember']) as $member) {
                 $this->destinations[] = [
                     'type' => 'member',
                     'value' => MyRadio_User::getInstance($member),
                 ];
             }
 
-            foreach (self::$db->decodeArray($result['dlist']) as $list) {
+            foreach (json_decode($result['dlist']) as $list) {
                 $this->destinations[] = [
                     'type' => 'list',
                     'value' => MyRadio_List::getInstance($list),
@@ -140,9 +148,7 @@ class MyRadio_Alias extends ServiceAPI
 
     /**
      * Returns data about the Alias for the API.
-     *
      * @param array $mixins
-     *
      * @return array
      */
     public function toDataSource($mixins = [])

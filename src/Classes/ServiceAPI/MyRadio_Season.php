@@ -40,46 +40,46 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         //Get the basic info about the season
         $result = self::$db->fetchOne(
             'SELECT show_id, termid, submitted, memberid, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT metadata_key_id FROM schedule.season_metadata
                     WHERE show_season_id=$1 AND effective_from <= NOW()
                     AND (effective_to IS NULL OR effective_to >= NOW())
                     ORDER BY effective_from, season_metadata_id
-                )
+                ))
             ) AS metadata_types, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT metadata_value FROM schedule.season_metadata
                     WHERE show_season_id=$1 AND effective_from <= NOW()
                     AND (effective_to IS NULL OR effective_to >= NOW())
                     ORDER BY effective_from, season_metadata_id
-                )
+                ))
             ) AS metadata, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT requested_day FROM schedule.show_season_requested_time
                     WHERE show_season_id=$1 ORDER BY preference ASC
-                )
+                ))
             ) AS requested_days, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT start_time FROM schedule.show_season_requested_time
                     WHERE show_season_id=$1
                     ORDER BY preference ASC
-                )
+                ))
             ) AS requested_start_times, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT duration FROM schedule.show_season_requested_time
                     WHERE show_season_id=$1
                     ORDER BY preference ASC
-                )
+                ))
             ) AS requested_durations, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
                     WHERE show_season_id=$1
                     ORDER BY start_time ASC
-                )
+                ))
             ) AS timeslots, (
-                SELECT array(
+                SELECT array_to_json(array(
                     SELECT week FROM schedule.show_season_requested_week WHERE show_season_id=$1
-                )
+                ))
             ) AS requested_weeks, (
                 SELECT COUNT(*) FROM schedule.show_season
                 WHERE show_id=(SELECT show_id FROM schedule.show_season WHERE show_season_id=$1)
@@ -101,8 +101,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $this->term_id = (int) $result['termid'];
         $this->season_num = (int) $result['season_num'];
 
-        $metadata_types = self::$db->decodeArray($result['metadata_types']);
-        $metadata = self::$db->decodeArray($result['metadata']);
+        $metadata_types = json_decode($result['metadata_types']);
+        $metadata = json_decode($result['metadata']);
         //Deal with the metadata
         for ($i = 0; $i < sizeof($metadata_types); ++$i) {
             if (self::isMetadataMultiple($metadata_types[$i])) {
@@ -113,16 +113,16 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         }
 
         //Requested Weeks
-        $requested_weeks = self::$db->decodeArray($result['requested_weeks']);
+        $requested_weeks = json_decode($result['requested_weeks']);
         $this->requested_weeks = [];
         foreach ($requested_weeks as $requested_week) {
             $this->requested_weeks[] = intval($requested_week);
         }
 
         //Requested timeslots
-        $requested_days = self::$db->decodeArray($result['requested_days']);
-        $requested_start_times = self::$db->decodeArray($result['requested_start_times']);
-        $requested_durations = self::$db->decodeArray($result['requested_durations']);
+        $requested_days = json_decode($result['requested_days']);
+        $requested_start_times = json_decode($result['requested_start_times']);
+        $requested_durations = json_decode($result['requested_durations']);
 
         for ($i = 0; $i < sizeof($requested_days); ++$i) {
             $this->requested_times[] = [
@@ -132,29 +132,33 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             ];
         }
 
-        $this->timeslots = self::$db->decodeArray($result['timeslots']);
+        $this->timeslots = json_decode($result['timeslots']);
     }
 
     /**
      * Creates a new MyRadio Season Application and returns an object representing it.
      *
-     * @param array $params An array of Seasons properties compatible with the Models/Scheduler/seasonfrm Form,
-     *                      with a few additional potential customisation options:
+     * @param array $params An array of Seasons properties compatible with the Models/Scheduler/seasonfrm Form, with a
+     *                      few additional potential customisation options:
      *                      weeks: An Array of weeks, keyed wk1-10, representing the requested week<br>
      *                      times: a 2D Array of:<br>
-     *                      day: An Array of one or more requested days, 0 being Monday, 6 being Sunday. Corresponds to (s|e)time<br>
+     *                      day: An Array of one or more requested days, 0 being Monday, 6 being Sunday. Corresponds to
+     *                      (s|e)time<br>
      *                      stime: An Array of sizeof(day) times, represeting the time of day the show should start<br>
      *                      etime: An Array of sizeof(day) times, represeting the time of day the show should end<br>
-     *                      description: A description of this Season of the Show, in addition to the Show description<br>
-     *                      tags: A string of 0 or more space-seperated tags this Season relates to, in addition to the Show tags<br>
+     *                      description: A description of this Season of the Show, in addition to the Show
+     *                      description<br>
+     *                      tags: A string of 0 or more space-seperated tags this Season relates to, in addition to the
+     *                      Show tags<br>
      *                      show_id: The ID of the Show to assign the application to
      *                      termid: The ID of the term being applied for. Defaults to the current Term
      *
      * weeks, day, stime, etime, show_id are all required fields
      *
-     * As this is the initial creation, all tags are <i>approved</i> by the submitter so the Season has some initial values
+     * As this is the initial creation, all tags are <i>approved</i> by the submitter
+     * so the Season has some initial values
      *
-     * @throws MyURYException
+     * @throws MyRadioException
      */
     public static function create($params = [])
     {
@@ -165,6 +169,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 throw new MyRadioException('Parameter '.$field.' was not provided.', 400);
             }
         }
+        $tags = (!empty($params['tags'])) ? CoreUtils::explodeTags($params['tags']) : [];
 
         /**
          * Select an appropriate value for $term_id.
@@ -209,17 +214,16 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
         //Now for requested times
         for ($i = 0; $i < sizeof($params['times']['day']); ++$i) {
-            if (is_null($params['times']['day'][$i])
-                || is_null($params['times']['stime'][$i])
-                || is_null($params['times']['etime'][$i])
-            ) {
+            $stime = $params['times']['stime'][$i];
+            $etime = $params['times']['etime'][$i];
+            if (is_null($params['times']['day'][$i]) || is_null($stime) || is_null($etime)) {
                 throw new MyRadioException('Each requested time must have a day, start time and end time.', 400);
             }
             //Deal with the possibility of a show from 11pm to midnight etc.
-            if ($params['times']['stime'][$i] < $params['times']['etime'][$i]) {
-                $interval = CoreUtils::makeInterval($params['times']['stime'][$i], $params['times']['etime'][$i]);
+            if ($stime < $etime) {
+                $interval = CoreUtils::makeInterval($stime, $etime);
             } else {
-                $interval = CoreUtils::makeInterval($params['times']['stime'][$i], $params['times']['etime'][$i] + 86400);
+                $interval = CoreUtils::makeInterval($stime, $etime + 86400);
             }
 
             //Enter the data
@@ -229,7 +233,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 VALUES ($1, $2, $3, $4, $5)',
                 [
                     $params['times']['day'][$i],
-                    $params['times']['stime'][$i],
+                    $stime,
                     $i,
                     $interval,
                     $season_id,
@@ -248,31 +252,23 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                     $season_id,
                     $params['description'],
                     MyRadio_User::getInstance()->getID(),
-                ],
-                true
+                ]
             );
         }
 
         //Same with tags
-        if (!empty($params['tags'])) {
-            $tags = explode(' ', $params['tags']);
-            foreach ($tags as $tag) {
-                if (empty($tag)) {
-                    continue;
-                }
-                self::$db->query(
-                    'INSERT INTO schedule.season_metadata
-                    (metadata_key_id, show_season_id, metadata_value, effective_from, memberid, approvedid)
-                    VALUES ($1, $2, $3, NOW(), $4, $4)',
-                    [
-                        self::getMetadataKey('tag'),
-                        $season_id,
-                        $tag,
-                        MyRadio_User::getInstance()->getID(),
-                    ],
-                    true
-                );
-            }
+        foreach ($tags as $tag) {
+            self::$db->query(
+                'INSERT INTO schedule.season_metadata
+                (metadata_key_id, show_season_id, metadata_value, effective_from, memberid, approvedid)
+                VALUES ($1, $2, $3, NOW(), $4, $4)',
+                [
+                    self::getMetadataKey('tag'),
+                    $season_id,
+                    $tag,
+                    MyRadio_User::getInstance()->getID(),
+                ]
+            );
         }
 
         //Actually commit the show to the database!
@@ -302,7 +298,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 'editSeason',
                 [
                     'debug' => true,
-                    'title' => 'Create Season',
+                    'title' => 'Scheduler',
+                    'subtitle' => 'New Season',
                 ]
             )
         )->addField(
@@ -377,8 +374,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Tags',
-                    'explanation' => 'A set of keywords to describe this Season. These will be added onto the '
-                        .'Tags you already have set for the Show.',
+                    'explanation' => 'A set of keywords to describe this Season, separated by commas. '
+                        .'These will be added onto the tags you already have set for the Show.',
                     'required' => false,
                 ]
             )
@@ -393,26 +390,35 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     public function getEditForm()
     {
         return self::getForm()
-            ->setTitle('Edit Season')
+            ->setSubTitle('Edit Season')
             ->editMode(
                 $this->getID(),
                 [
                     'description' => $this->getMeta('description'),
-                    'tags' => implode(' ', $this->getMeta('tag')),
+                    'tags' => implode(', ', $this->getMeta('tag')),
                 ]
             );
     }
 
     public function getAllocateForm()
     {
-        $form = new MyRadioForm(
-            'sched_allocate',
-            'Scheduler',
-            'allocate',
-            [
-                'title' => 'Allocate Timeslots to Season',
-                'template' => 'Scheduler/allocate.twig',
-            ]
+        $form = (
+            new MyRadioForm(
+                'sched_allocate',
+                'Scheduler',
+                'allocate',
+                [
+                    'title' => 'Scheduler',
+                    'subtitle' => 'Allocate Timeslots to Season',
+                    'template' => 'Scheduler/allocate.twig',
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'season_id', // NOTE: Needed by this name for passing the season ID around for allocation
+                MyRadioFormField::TYPE_HIDDEN,
+                ['value' => $this->getID()]
+            )
         );
 
         //Set up the weeks checkboxes
@@ -505,7 +511,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 'reject',
                 [
                     'debug' => false,
-                    'title' => 'Reject Season Application',
+                    'title' => 'Scheduler',
+                    'subtitle' => 'Reject Season Application'
                 ]
             )
         )->addField(
@@ -590,13 +597,14 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             return false;
         }
         self::$db->query('BEGIN');
-        self::$db->query('UPDATE schedule.show_season SET submitted=NULL WHERE show_season_id=$1', [$this->getID()], true);
+        self::$db->query('UPDATE schedule.show_season SET submitted=NULL WHERE show_season_id=$1', [$this->getID()]);
         $this->submitted = null;
 
         $this->setMeta('reject-reason', $reason);
 
         if ($notify_user) {
-            $sname = Config::$short_name;
+            $sname = Config::$short_name; // Heredocs can't do static class variables
+            $email = Config::$email_domain;
             MyRadioEmail::sendEmailToUserSet(
                 $this->getShow()->getCreditObjects(),
                 $this->getMeta('title').' Application Rejected',
@@ -607,7 +615,8 @@ Your application for a season of a show was rejected by our programming team, fo
 
 $reason
 
-You can reapply online at any time, or for more information, email pc@ury.org.uk.
+You can reapply online at any time, or for more information, email pc@{$email}.
+
 
 ~ {$sname} Scheduling Legume
 EOT
@@ -630,10 +639,10 @@ EOT
     /**
      * Alias for getCredits($this->getShow()), which enables credits to be
      * automatically inherited from the show.
-     *
+     * @param parent Unused for type compatibility with parent
      * @return array[]
      */
-    public function getCredits()
+    public function getCredits(MyRadio\ServiceAPI\MyRadio_Metadata_Common $parent = null)
     {
         return parent::getCredits($this->getShow());
     }
@@ -648,16 +657,21 @@ EOT
      * This will *not* unset is_multiple values that are not in the new set.
      *
      * @param string $string_key     The metadata key
-     * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance for value in the array. for value in the array.
+     * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance
      *                               for value in the array.
      * @param int    $effective_from UTC Time the metavalue is effective from. Default now.
      * @param int    $effective_to   UTC Time the metadata value is effective to. Default NULL (does not expire).
-     * @param null   $table          No action. Used for compatibility with parent.
-     * @param null   $pkey           No action. Used for compatibility with parent.
      */
-    public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $pkey = null)
+    public function setMeta($string_key, $value, $effective_from = null, $effective_to = null)
     {
-        $r = parent::setMeta($string_key, $value, $effective_from, $effective_to, 'schedule.season_metadata', 'show_season_id');
+        $r = parent::setMetaBase(
+            $string_key,
+            $value,
+            $effective_from,
+            $effective_to,
+            'schedule.season_metadata',
+            'show_season_id'
+        );
         $this->updateCacheObject();
 
         return $r;
@@ -733,7 +747,6 @@ EOT
         foreach ($this->requested_times as $time) {
             //Check for existence of shows in requested times
             $conflicts = MyRadio_Scheduler::getScheduleConflicts($this->term_id, $time);
-            $warnings = [];
 
             if (!empty($conflicts)) {
                 $conflict = '';
@@ -750,10 +763,18 @@ EOT
 
                 if (!empty($conflict)) {
                     // return conflicts
-                    $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => true, 'info' => 'Conflicts with: '.$conflict];
+                    $return[] = [
+                        'time' => self::formatTimeHuman($time),
+                        'conflict' => true,
+                        'info' => 'Conflicts with: ' . $conflict
+                    ];
                 } else {
                     // return warning
-                    $return[] = ['time' => self::formatTimeHuman($time), 'conflict' => false, 'info' => 'Warnings with: '.$warning];
+                    $return[] = [
+                        'time' => self::formatTimeHuman($time),
+                        'conflict' => false,
+                        'info' => 'Warnings with: ' . $warning
+                    ];
                 }
             } else {
                 // no conflicts or warnings
@@ -780,59 +801,63 @@ EOT
         return $this->season_num;
     }
 
-    public function toDataSource($full = true)
+    /**
+     * Serialises the season. Merges with the parent show object as well.
+     */
+    public function toDataSource($mixins = [])
     {
         $first_time = $this->getFirstTime();
+        $requested_times = $this->getRequestedTimes();
 
         return array_merge(
-            $this->getShow()->toDataSource(false),
+            $this->getShow()->toDataSource($mixins),
             [
-            'season_id' => $this->getID(),
-            'season_num' => $this->getSeasonNumber(),
-            'title' => $this->getMeta('title'),
-            'description' => $this->getMeta('description'),
-            'submitted' => $this->getSubmittedTime(),
-            'requested_time' => sizeof($this->getRequestedTimes()) === 0 ? null : $this->getRequestedTimes()[0],
-            'first_time' => ($first_time ? CoreUtils::happyTime($first_time) : 'Not Scheduled'),
-            'num_episodes' => [
-            'display' => 'text',
-            'value' => sizeof($this->timeslots),
-            'url' => URLUtils::makeURL(
-                'Scheduler',
-                'listTimeslots',
-                ['show_season_id' => $this->getID()]
-            ),
-            ],
-            'editlink' => [
-            'display' => 'icon',
-            'value' => 'pencil',
-            'title' => 'Edit Season',
-            'url' => URLUtils::makeURL(
-                'Scheduler',
-                'editSeason',
-                ['seasonid' => $this->getID()]
-            ),
-            ],
-            'allocatelink' => [
-            'display' => 'icon',
-            'value' => 'pencil',
-            'title' => 'Edit Application or Allocate Season',
-            'url' => URLUtils::makeURL(
-                'Scheduler',
-                'allocate',
-                ['show_season_id' => $this->getID()]
-            ),
-            ],
-            'rejectlink' => [
-            'display' => 'icon',
-            'value' => 'trash',
-            'title' => 'Reject Application',
-            'url' => URLUtils::makeURL(
-                'Scheduler',
-                'reject',
-                ['show_season_id' => $this->getID()]
-            ),
-            ],
+                'season_id' => $this->getID(),
+                'season_num' => $this->getSeasonNumber(),
+                'title' => $this->getMeta('title'),
+                'description' => $this->getMeta('description'),
+                'submitted' => $this->getSubmittedTime(),
+                'requested_time' => count($requested_times) > 0 ? $requested_times[0] : null,
+                'first_time' => CoreUtils::happyTime(($first_time ? $first_time : 0)),
+                'num_episodes' => [
+                    'display' => 'text',
+                    'value' => count($this->timeslots),
+                    'url' => URLUtils::makeURL(
+                        'Scheduler',
+                        'listTimeslots',
+                        ['show_season_id' => $this->getID()]
+                    ),
+                ],
+                'editlink' => [
+                    'display' => 'icon',
+                    'value' => 'pencil',
+                    'title' => 'Edit Season',
+                    'url' => URLUtils::makeURL(
+                        'Scheduler',
+                        'editSeason',
+                        ['seasonid' => $this->getID()]
+                    ),
+                ],
+                'allocatelink' => [
+                    'display' => 'icon',
+                    'value' => 'pencil',
+                    'title' => 'Edit Application or Allocate Season',
+                    'url' => URLUtils::makeURL(
+                        'Scheduler',
+                        'allocate',
+                        ['show_season_id' => $this->getID()]
+                    ),
+                ],
+                'rejectlink' => [
+                    'display' => 'icon',
+                    'value' => 'trash',
+                    'title' => 'Reject Application',
+                    'url' => URLUtils::makeURL(
+                        'Scheduler',
+                        'reject',
+                        ['show_season_id' => $this->getID()]
+                    ),
+                ],
             ]
         );
     }
@@ -860,17 +885,23 @@ EOT
     {
         //Verify that the input time is valid
         if (!isset($params['time']) or !is_numeric($params['time'])) {
-            throw new MyRadioException('No valid Time was sent to the Scheduling Mapper.', MyRadioException::FATAL);
+            throw new MyRadioException(
+                'No valid Time was sent to the Scheduling Mapper.',
+                400
+            );
         }
         if ($params['time'] != -1 && !isset($this->requested_times[$params['time']])) {
-            throw new MyRadioException('The Time value sent is not a valid Requested Time Reference.', MyRadioException::FATAL);
+            throw new MyRadioException(
+                'The Time value sent is not a valid Requested Time Reference.',
+                400
+            );
         }
         //Verify the custom times are valid
         if ($params['time'] == -1 && (!isset($params['timecustom_day'])  //0 (monday) would fail an empty() test
             or !isset($params['timecustom_stime'])  //Same again with midnight (00:00)
             or empty($params['timecustom_etime']))
         ) {
-            throw new MyRadioException('The Custom Time value sent is invalid.', MyRadioException::FATAL);
+            throw new MyRadioException('The Custom Time value sent is invalid.', 400);
         }
         //Okay, let's get to business
         //First, figure out what time things are happening
@@ -912,7 +943,10 @@ EOT
                 $conflict = MyRadio_Scheduler::getScheduleConflict($show_time, $show_time + $req_time['duration']);
                 if (!empty($conflict)) {
                     self::$db->query('ROLLBACK');
-                    throw new MyRadioException('A show is already scheduled for this time: '.print_r($conflict, true));
+                    throw new MyRadioException(
+                        'A show is already scheduled for this time: '.print_r($conflict, true),
+                        400
+                    );
                 }
 
                 //This week is due to be scheduled! QUERY! QUERY!
@@ -949,16 +983,22 @@ EOT
         $message = '
 Hello,
 
-  Please note that one of your shows has been allocated the following timeslots on the '.Config::$short_name." Schedule:
+  Please note that one of your shows has been allocated the following timeslots
+  on the '.Config::$short_name." Schedule:
 
 $times
 
-  Remember that except in exceptional circumstances, you must give at least 48 hours notice for cancelling your show as part of your presenter contract. If you do not do this for two shows in one season, all other shows are forfeit and may be cancelled.
+  Remember that except in exceptional circumstances, you must give at least
+  48 hours notice for cancelling your show as part of your presenter contract.
+  If you do not do this for two shows in one season, all other shows are forfeit
+  and may be cancelled.
 
-  You can cancel a timeslot by going to: My Shows -> Seasons for Show -> Timeslots for Season, and selecting cancel for the particular time.
+  You can cancel a timeslot by going to:
+    My Shows -> Seasons for Show -> Timeslots for Season
+  and then selecting cancel for the particular time.
   ".URLUtils::makeURL('Scheduler', 'myShows').'
 
-  If you have any questions about your application, direct them to pc@ury.org.uk
+  If you have any questions about your application, direct them to pc@'.Config::$email_domain.'
 
   ~ '.Config::$short_name.' Scheduling Legume';
 
@@ -983,18 +1023,23 @@ $times
             $timeslot_str .= CoreUtils::happyTime("{$timeslot['start_time']}\r\n");
         }
 
-        $email = 'Please note that your show, '.$this->getMeta('title').' has been cancelled for the rest of the current Season. This is the following timeslots: '.$timeslot_str;
-        $email .= "\r\n\r\nRegards\r\n".Config::$long_name.' Programming Team';
+        $email = 'Please note that your show, '
+            . $this->getMeta('title')
+            . ' has been cancelled for the rest of the current Season. This is the following timeslots: '
+            . $timeslot_str
+            . "\r\n\r\n";
+        $email .= "Regards\r\n" . Config::$long_name . ' Programming Team';
 
         foreach ($this->getShow()->getCredits() as $credit) {
             $u = MyRadio_User::getInstance($credit);
             MyRadioEmail::sendEmailToUser($u, 'Show Cancelled', $email);
         }
 
-        $r = (bool) self::$db->query('DELETE FROM schedule.show_season_timeslot WHERE show_season_id=$1 AND start_time >= NOW()', [$this->getID()]);
-
+        $r = (bool) self::$db->query(
+            'DELETE FROM schedule.show_season_timeslot WHERE show_season_id=$1 AND start_time >= NOW()',
+            [$this->getID()]
+        );
         $this->updateCacheObject();
-
         return $r;
     }
 
@@ -1087,8 +1132,14 @@ $times
             $string_keys = ['title', 'description', 'tag'];
         }
 
-        $r = parent::searchMeta($query, $string_keys, $effective_from, $effective_to, 'schedule.season_metadata', 'show_season_id');
-
+        $r = parent::searchMetaBase(
+            $query,
+            $string_keys,
+            $effective_from,
+            $effective_to,
+            'schedule.season_metadata',
+            'show_season_id'
+        );
         return self::resultSetToObjArray($r);
     }
 }

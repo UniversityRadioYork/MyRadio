@@ -23,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $user->setFName($data['fname'])
         ->setSName($data['sname'])
-        ->setSex($data['sex'])
         ->setCollegeID($data['collegeid'])
         ->setPhone($data['phone'])
         ->setEmail($data['email'])

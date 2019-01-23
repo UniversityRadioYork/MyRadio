@@ -7,12 +7,10 @@ use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-    ->addVariable('tablescript', 'myury.scheduler.pending')
+    ->addVariable('tablescript', 'myradio.scheduler.pending')
     ->addVariable('title', 'Scheduler')
+    ->addVariable('subtitle', 'Pending Allocations')
     ->addVariable(
         'tabledata',
-        CoreUtils::dataSourceParser(
-            MyRadio_Scheduler::getPendingAllocations(),
-            false
-        )
+        CoreUtils::dataSourceParser(MyRadio_Scheduler::getPendingAllocations())
     )->render();

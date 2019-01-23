@@ -12,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $params['fname'],
         $params['sname'],
         $params['eduroam'],
-        $params['sex'],
         $params['collegeid'],
         null,
         $params['phone']

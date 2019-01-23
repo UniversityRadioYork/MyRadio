@@ -71,8 +71,14 @@ trait MyRadio_MetadataSubject
      * @param string $table          The metadata table, *including* the schema.
      * @param string $id_field       The ID field in the metadata table.
      */
-    public function setMeta($string_key, $value, $effective_from = null, $effective_to = null, $table = null, $id_field = null)
-    {
+    protected function setMetaBase(
+        $string_key,
+        $value,
+        $effective_from = null,
+        $effective_to = null,
+        $table = null,
+        $id_field = null
+    ) {
         $key = self::getMetadataKey($string_key); //Integer meta key
         $multiple = self::isMetadataMultiple($key); //Bool whether multiple values are allowed
         if ($effective_from === null) {
@@ -121,6 +127,18 @@ trait MyRadio_MetadataSubject
 
         return true;
     }
+
+    /**
+     * Abstract actual implementation of setMetaBase.
+     * Passes $table & $id_field into searchMetaBase and then does something else with the results.
+     *
+     * @param string $string_key     The metadata key
+     * @param mixed  $value          The metadata value. If key is_multiple and value is an array, will create instance
+     *                               for value in the array.
+     * @param int    $effective_from UTC Time the metavalue is effective from. Default now.
+     * @param int    $effective_to   UTC Time the metadata value is effective to. Default NULL (does not expire).
+     */
+    abstract public function setMeta($string_key, $value, $effective_from = null, $effective_to = null);
 
     protected static function cacheMetadataKeys()
     {
@@ -249,8 +267,14 @@ trait MyRadio_MetadataSubject
      *
      * @return array The list of IDs of whatever is being searched.
      */
-    public static function searchMeta($query, $string_keys, $effective_from = null, $effective_to = null, $table = null, $id_field = null)
-    {
+    protected static function searchMetaBase(
+        $query,
+        $string_keys,
+        $effective_from = null,
+        $effective_to = null,
+        $table = null,
+        $id_field = null
+    ) {
         if (is_null($table) || is_null($id_field)) {
             throw new MyRadioException('Search table and ID must be set.');
         }
@@ -275,4 +299,20 @@ trait MyRadio_MetadataSubject
 
         return $results;
     }
+
+    /**
+     * Abstract actual implementation of searchMetaBase.
+     * Passes $table & $id_field into searchMetaBase and then does something else with the results.
+     *
+     * @param string $query          The query value.
+     * @param array  $string_keys    The metadata keys to search
+     * @param int    $effective_from UTC Time to search from.
+     * @param int    $effective_to   UTC Time to search to.
+     */
+    abstract public static function searchMeta(
+        $query,
+        $string_keys = null,
+        $effective_from = null,
+        $effective_to = null
+    );
 }

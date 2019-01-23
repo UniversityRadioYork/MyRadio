@@ -126,12 +126,11 @@ class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Returns an array of key information, useful for Twig rendering and JSON requests.
-     *
-     * @todo Expand the information this returns
-     *
+     * @param array $mixins Mixins. Currently unused
      * @return array
+     * @todo Expand the information this returns
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'title' => $this->getTitle(),

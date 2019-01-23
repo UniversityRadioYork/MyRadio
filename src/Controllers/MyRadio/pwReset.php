@@ -47,7 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_REQUEST['myradio_pwReset-us
         }
 
         $form->render(
-            ['messages' => ['<div class="alert alert-success">Please check your email to finish resetting your password.</div>']]
+            [
+                'messages' => [
+                    '<div class="alert alert-success">Please check your email to finish resetting your password.</div>'
+                ]
+            ]
         );
     }
 } else {

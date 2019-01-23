@@ -104,7 +104,13 @@ class MyRadio_TrainingStatus extends ServiceAPI
         $this->depends = empty($result['depends']) ? null : $result['depends'];
         $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
 
-        $this->permissions = self::$db->fetchColumn('SELECT typeid FROM public.auth_trainingstatus WHERE presenterstatusid=$1', [$statusid]);
+        $this->permissions = array_map(
+            'intval',
+            self::$db->fetchColumn(
+                'SELECT typeid FROM public.auth_trainingstatus WHERE presenterstatusid=$1',
+                [$statusid]
+            )
+        );
     }
 
     /**
@@ -251,10 +257,10 @@ class MyRadio_TrainingStatus extends ServiceAPI
 
     /**
      * Get an array of properties for this TrainingStatus.
-     *
+     * @param array $mixins Mixins. Unused.
      * @return array
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'status_id' => $this->getID(),

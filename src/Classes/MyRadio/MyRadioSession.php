@@ -7,7 +7,7 @@ use MyRadio\Database;
 /**
  * Custom session handler.
  */
-class MyRadioSession
+class MyRadioSession implements \SessionHandlerInterface
 {
     const TIMEOUT = 7200; //Session expires after 2hrs
 
@@ -27,7 +27,7 @@ class MyRadioSession
         $this->db = Database::getInstance();
     }
 
-    public function open($id)
+    public function open($save_path, $sesion_name)
     {
         return true;
     }

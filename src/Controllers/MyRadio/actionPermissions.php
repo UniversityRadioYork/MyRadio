@@ -16,7 +16,8 @@ $form = new MyRadioForm(
     $module,
     $action,
     [
-        'title' => 'Assign Action Permissions',
+        'title' => 'Permissions',
+        'subtitle' => 'Assign Action Permissions',
     ]
 );
 
@@ -104,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ->render(
             [
             'tabledata' => $data,
-            'tablescript' => 'myury.core.actionPermissions',
+            'tablescript' => 'myradio.core.actionPermissions',
             ]
         );
 }

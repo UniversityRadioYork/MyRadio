@@ -35,7 +35,7 @@ class MyRadioNullSession extends MyRadioSession
      */
     public function write($id, $data)
     {
-        return empty($data);
+        return !empty($id);
     }
 
     /**

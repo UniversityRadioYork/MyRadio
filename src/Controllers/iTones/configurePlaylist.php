@@ -43,12 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $playlist->getEditForm()
             ->setTemplate('iTones/configurePlaylist.twig')
             ->render(
-                array(
+                [
                     'tabledata' => CoreUtils::dataSourceParser(
                         iTones_PlaylistAvailability::getAvailabilitiesForPlaylist($playlist->getID())
                     ),
                     'playlistid' => $_REQUEST['playlistid'],
-                    )
+                ]
             );
     }
 }
