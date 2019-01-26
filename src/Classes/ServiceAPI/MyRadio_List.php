@@ -428,12 +428,16 @@ class MyRadio_List extends ServiceAPI
                     'title' => 'Send a message to this mailing list',
                     'url' => URLUtils::makeURL('Mail', 'send', ['list' => $this->getID()]),
                 ];
-                $data['archive'] = [
-                    'display' => 'icon',
-                    'value' => 'folder-close',
-                    'title' => 'View archives for this mailing list',
-                    'url' => URLUtils::makeURL('Mail', 'archive', ['list' => $this->getID()]),
-                ];
+                if ($data['subscribed']) {
+                    $data['archive'] = [
+                        'display' => 'icon',
+                        'value' => 'folder-close',
+                        'title' => 'View archives for this mailing list',
+                        'url' => URLUtils::makeURL('Mail', 'archive', ['list' => $this->getID()]),
+                    ];
+                } else {
+                    $data['archive'] = null;
+                }
             },
             'recipients' => function (&$data) {
                 $data['recipients'] = CoreUtils::dataSourceParser($this->getMembers());
