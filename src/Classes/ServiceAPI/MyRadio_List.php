@@ -354,9 +354,9 @@ class MyRadio_List extends ServiceAPI
      *
      * @return MyRadio_List[]
      */
-    public static function getAllLists($current = Null)
+    public static function getAllLists($current = null)
     {
-        if ($current != Null) {
+        if ($current != null) {
             $current_sql = "WHERE current = ";
             $current = $current_sql . ($current ? "true" : "false");
         }
