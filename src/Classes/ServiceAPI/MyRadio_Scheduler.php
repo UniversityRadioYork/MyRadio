@@ -194,13 +194,17 @@ class MyRadio_Scheduler extends ServiceAPI
     }
 
     /**
-     * Returns a list of potential genres, organised so they can be used as a SELECT MyRadioFormField data source.
+     * Returns a list of potential genres, so they can be used as a SELECT MyRadioFormField data source if $id_only.
+     *
+     * @param bool $id_only Only return genre_id's, else return all data.
      */
-    public static function getGenres()
+    public static function getGenres($id_only = True)
     {
         self::wakeup();
 
-        return self::$db->fetchAll('SELECT genre_id AS value, name AS text FROM schedule.genre ORDER BY name ASC');
+        $select = $id_only ? "genre_id" : "*";
+
+        return self::$db->fetchAll('SELECT '.$select.' AS value, name AS text FROM schedule.genre ORDER BY name ASC');
     }
 
     /**
