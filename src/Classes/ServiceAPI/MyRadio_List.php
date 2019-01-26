@@ -372,27 +372,6 @@ class MyRadio_List extends ServiceAPI
     }
 
     /**
-     * Return mailing lists a user has access to.
-     *
-     * @return MyRadio_List[]
-     */
-    public static function getUserLists($memberid = -1)
-    {
-        $member = MyRadio_User::getInstance($memberid)->getID();
-        $r = self::$db->fetchColumn('SELECT listid FROM mail_list');
-
-        $lists = [];
-        foreach ($r as $list) {
-            $l = self::getInstance($list);
-            if ($l->optin || in_array($member, $l->members) || in_array($member, $l->optedOutMembers)) {
-                $lists[] = $l;
-            }
-        }
-
-        return $lists;
-    }
-
-    /**
      * Returns data about the List.
      *
      * @mixin actions Returns interaction options for the UI
