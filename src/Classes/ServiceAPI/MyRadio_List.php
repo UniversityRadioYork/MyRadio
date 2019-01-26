@@ -53,7 +53,7 @@ class MyRadio_List extends ServiceAPI
     private $address;
 
     /**
-     * If true, this means that members subscribe themselves to this list.
+     * If true, this means that members subscribe themselves to this list manually.
      *
      * @var bool
      */
@@ -67,11 +67,12 @@ class MyRadio_List extends ServiceAPI
     private $members = [];
 
     /**
-     * This is the set of members have opted out of this 'optin' list.
+     * In the case that is a automatic mailing list (ie. $optin is false),
+     * this is the set of members who have manually opted out.
      *
      * @var int[]
      */
-    private $nonMembers = [];
+    private $optedOutMembers = [];
 
     /**
      * Initialised on first request, stores an archive of all the email IDs
@@ -117,7 +118,7 @@ class MyRadio_List extends ServiceAPI
                 (SELECT memberid FROM mail_subscription WHERE listid=$1)',
                 [$listid]
             );
-            $this->nonMembers = self::$db->fetchColumn(
+            $this->optedOutMembers = self::$db->fetchColumn(
                 'SELECT memberid FROM mail_subscription WHERE listid=$1',
                 [$listid]
             );
@@ -128,11 +129,11 @@ class MyRadio_List extends ServiceAPI
             },
             $this->members
         );
-        $this->nonMembers = array_map(
+        $this->optedOutMembers = array_map(
             function ($x) {
                 return (int) $x;
             },
-            $this->nonMembers
+            $this->optedOutMembers
         );
     }
 
@@ -381,7 +382,7 @@ class MyRadio_List extends ServiceAPI
         $lists = [];
         foreach ($r as $list) {
             $l = self::getInstance($list);
-            if ($l->optin || in_array($member, $l->members) || in_array($member, $l->nonMembers)) {
+            if ($l->optin || in_array($member, $l->members) || in_array($member, $l->optedOutMembers)) {
                 $lists[] = $l;
             }
         }
