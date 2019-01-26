@@ -350,11 +350,13 @@ class MyRadio_List extends ServiceAPI
     /**
      * Return all mailing lists.
      *
+     * @param bool $current Filters by current DB field (True: only current, False: only historic, Default: all)
+     *
      * @return MyRadio_List[]
      */
-    public static function getAllLists($current = "")
+    public static function getAllLists($current = Null)
     {
-        if ($current != "") {
+        if ($current != Null) {
             $current_sql = "WHERE current = ";
             $current = $current_sql . ($current ? "true" : "false");
         }
