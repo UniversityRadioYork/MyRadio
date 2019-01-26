@@ -210,12 +210,12 @@ class MyRadio_List extends ServiceAPI
             return false;
         }
 
-        return sizeof(
-            self::$db->query(
+        return !empty(
+            self::$db->fetchOne(
                 'SELECT memberid FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
                 [$userid, $this->getID()]
             )
-        ) === 1;
+        );
     }
 
     /**
@@ -416,7 +416,7 @@ class MyRadio_List extends ServiceAPI
                 } else {
                     $data['optin'] = null;
                 }
-                $data['optOut'] = (($data['subscribed'] && $this->optin) ? [
+                $data['optOut'] = (($data['subscribed']) ? [
                     'display' => 'icon',
                     'value' => 'minus',
                     'title' => 'Opt out of this mailing list',
