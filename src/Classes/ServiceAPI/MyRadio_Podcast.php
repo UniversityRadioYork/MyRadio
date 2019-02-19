@@ -859,10 +859,10 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     public static function getAllPodcasts($num_results = 0, $page = 1, $includeSuspended = true)
     {
         $query = "SELECT podcast_id FROM uryplayer.podcast
-                  ORDER BY submitted DESC";
+                  ORDER BY submitted DESC ";
 
         if(!includeSuspended) {
-            $query .= " WHERE suspended = false ";
+            $query .= "WHERE suspended = false ";
         }
 
         $filterLimit = $num_results == 0 ? 'ALL' : $num_results;
