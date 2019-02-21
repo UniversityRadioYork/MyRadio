@@ -861,7 +861,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $query = "SELECT podcast_id FROM uryplayer.podcast
                   ORDER BY submitted DESC ";
 
-        if(!includeSuspended) {
+        if (!includeSuspended) {
             $query .= "WHERE suspended = false ";
         }
 
