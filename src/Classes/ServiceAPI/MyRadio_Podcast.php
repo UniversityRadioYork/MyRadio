@@ -852,18 +852,23 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      *
      * @param int $num_results The number of results to return per page. 0 for all podcasts.
      * @param int $page The page required.
+     * @param bool $includeSuspended Whether to include suspended podcasts in the result
      *
      * @return Array[MyRadio_Podcast]
      */
-    public static function getAllPodcasts($num_results = 0, $page = 1)
+    public static function getAllPodcasts($num_results = 0, $page = 1, $includeSuspended = true)
     {
         $query = "SELECT podcast_id FROM uryplayer.podcast
-                  ORDER BY submitted DESC OFFSET ";
+                  ORDER BY submitted DESC ";
+
+        if (!includeSuspended) {
+            $query .= "WHERE suspended = false ";
+        }
 
         $filterLimit = $num_results == 0 ? 'ALL' : $num_results;
         $filterOffset = $num_results * $page;
 
-        $query .= $filterOffset . " LIMIT " . $filterLimit;
+        $query .= "OFFSET " . $filterOffset . " LIMIT " . $filterLimit;
         $result = self::$db->fetchColumn($query);
 
         $podcasts = [];
