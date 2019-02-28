@@ -861,7 +861,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $where .= !$includeSuspended ? 'WHERE suspended = false ': '';
         $filterLimit = $num_results == 0 ? 'ALL' : $num_results;
         $filterOffset = $num_results * $page;
-        $query = "SELECT podcast_id FROM uryplayer.podcast " . $where . "ORDER BY submitted DESC OFFSET " . $filterOffset . " LIMIT " . $filterLimit;
+        $query = "SELECT podcast_id FROM uryplayer.podcast " . $where 
+            . "ORDER BY submitted DESC OFFSET " . $filterOffset . " LIMIT " . $filterLimit;
 
         $result = self::$db->fetchColumn($query);
 
