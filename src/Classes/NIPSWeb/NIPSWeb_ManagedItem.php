@@ -108,6 +108,32 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
         return $this->length;
     }
 
+
+    /**
+     * Get the expiry date of the ManagedItem
+     *
+     * @return int Timestamp of expiry date.
+     */
+    public function getExpiryDate()
+    {
+        return $this->expirydate;
+    }
+
+    /**
+    * Get if the ManagedItem has expired.
+    *
+    * @return bool Has the item expired?
+    */
+    public function isExpired()
+    {
+        $expires = $this->getExpiryDate;
+        if ($expires != Null) {
+            return $expires <= strtotime("now");
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Get the path of the ManagedItem.
      *
@@ -150,6 +176,8 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
             'managedid' => $this->getID(),
             'length' => CoreUtils::intToTime($this->getLength() > 0 ? $this->getLength() : 0),
             'trackid' => $this->getID(),
+            'expirydate' => $this->getExpiryDate(),
+            'expired' => $this->isExpired(),
             'recordid' => 'ManagedDB', //Legacy NIPSWeb Views
             'auxid' => 'managed:'.$this->getID(), //Legacy NIPSWeb Views
         ];
