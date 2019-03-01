@@ -148,7 +148,7 @@ function loadChannelList() {
       }
       $("#import-channel-list").empty();
       var selectedChannelNo = $("#import-channel-selector a.active").attr("channel");
-      var item, itemid, cleanStars, extraString;
+      var item, itemid, cleanStars, extraString, expired, disabled;
       for (item in data.payload[selectedChannelNo]) {
         if (data.payload[selectedChannelNo][item].type == "central") {
           if (!data.payload[selectedChannelNo][item].clean) {
@@ -156,14 +156,19 @@ function loadChannelList() {
           } else {
             cleanStars = "";
           }
+          expired = !(data.payload[selectedChannelNo][item].digitised);
           extraString = " - " + data.payload[selectedChannelNo][item].artist + " - " + data.payload[selectedChannelNo][item].album.title + " (" + data.payload[selectedChannelNo][item].length + ")";
           itemid = data.payload[selectedChannelNo][item]["album"].recordid + "-" + data.payload[selectedChannelNo][item].trackid;
         } else {
           cleanStars = "";
           extraString = "";
           itemid = "ManagedDB-" + data.payload[selectedChannelNo][item].managedid;
+          expired = data.payload[selectedChannelNo][item].expired;
         }
-        $("#import-channel-list").append("<input type=\"checkbox\" class=\"channel-list-item\" value=\""+ itemid + "\">" + cleanStars + data.payload[selectedChannelNo][item].title + extraString + "<br>");
+        disabled = (expired ? "disabled": "");
+        $("#import-channel-list").append("<li class=\"" + disabled + "\"><input type=\"checkbox\" class=\"channel-list-item\" "
+          + disabled + " value=\""+ itemid + "\">"
+          + cleanStars + data.payload[selectedChannelNo][item].title + extraString + "</li>");
         $("#import-channel-filter-btns").fadeIn();
       }
       if (data.payload[selectedChannelNo] == undefined || data.payload[selectedChannelNo].length == 0) {

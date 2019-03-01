@@ -337,6 +337,12 @@ select {
 #import-channel-list p {
   margin: 0 20px;
 }
+#import-channel-list li {
+  list-style: none;
+}
+#import-channel-list li.disabled {
+  background: lightpink;
+}
 #import-channel-list input[type=checkbox] {
   margin-right: 5px;
 }
