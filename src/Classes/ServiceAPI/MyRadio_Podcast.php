@@ -858,10 +858,11 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      */
     public static function getAllPodcasts($num_results = 0, $page = 1, $includeSuspended = true)
     {
-        $where = !$includeSuspended ? 'WHERE suspended = false': '';
+        $where = !$includeSuspended ? 'WHERE suspended = false ': '';
         $filterLimit = $num_results == 0 ? 'ALL' : $num_results;
         $filterOffset = $num_results * $page;
-        $query = "SELECT podcast_id FROM uryplayer.podcast $where ORDER BY submitted DESC OFFSET $filterOffset LIMIT $filterLimit";
+        $query = "SELECT podcast_id FROM uryplayer.podcast $where";
+        $query .= "ORDER BY submitted DESC OFFSET $filterOffset LIMIT $filterLimit"
 
         $result = self::$db->fetchColumn($query);
 
