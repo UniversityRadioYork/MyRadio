@@ -342,6 +342,7 @@ select {
 }
 #import-channel-list li.disabled {
   background: lightpink;
+  padding-left: 5px;
 }
 #import-channel-list input[type=checkbox] {
   margin-right: 5px;
