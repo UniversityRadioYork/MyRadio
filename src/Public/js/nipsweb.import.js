@@ -161,7 +161,7 @@ function loadChannelList() {
           itemid = data.payload[selectedChannelNo][item]["album"].recordid + "-" + data.payload[selectedChannelNo][item].trackid;
         } else {
           cleanStars = "";
-          extraString = "";
+          extraString = "(" + data.payload[selectedChannelNo][item].length + ")";
           itemid = "ManagedDB-" + data.payload[selectedChannelNo][item].managedid;
           expired = data.payload[selectedChannelNo][item].expired;
         }
