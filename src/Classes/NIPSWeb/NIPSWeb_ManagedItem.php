@@ -127,7 +127,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
     public function isExpired()
     {
         $expires = $this->getExpiryDate();
-        if ($expires != NULL) {
+        if ($expires != null) {
             return $expires <= strtotime("now");
         } else {
             return false;
