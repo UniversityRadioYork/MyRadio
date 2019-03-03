@@ -20,7 +20,7 @@ if (empty($_REQUEST['api_key']) && $class === 'resources') {
 }
 
 $api_key = MyRadio_Swagger::getAPICaller();
-if (!$api_key) {
+if (!$api_key || $api_key->isRevoked()) {
     api_error(401, 'An API Key must be provided.');
 }
 
