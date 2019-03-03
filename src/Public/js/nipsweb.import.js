@@ -142,6 +142,7 @@ function loadShowPlan() {
   var selectedTimeslotID = $("#import-timeslot-selector").find(":selected").attr("value");
   myradio.callAPI("GET", "timeslot", "showplan", selectedTimeslotID, "", "",
     function (data) {
+      var item;
       for (item in data) {
         if (item === "myradio_errors") {
           continue;
