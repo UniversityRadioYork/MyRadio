@@ -154,6 +154,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         return $this->timeslot_id;
     }
 
+    public function isDemo()
+    {
+        return $this->season_id == 0;
+    }
+
     public function getSeason()
     {
         return MyRadio_Season::getInstance($this->season_id);
@@ -760,7 +765,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 $r = $this->cancelTimeslotRequest($reason);
             }
         // Check to see if timeslot is a demo and user has perms to remove demos
-        } elseif ($this->season_id == 0 && MyRadio_User::getInstance()->hasAuth(AUTH_CANCELDEMOS)) {
+        } elseif ($this->isDemo() && MyRadio_User::getInstance()->hasAuth(AUTH_CANCELDEMOS)) {
             $r = $this->cancelTimeslotAdmin($reason);
         } else {
             //They can't do this.
