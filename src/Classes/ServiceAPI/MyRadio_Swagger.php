@@ -443,6 +443,10 @@ class MyRadio_Swagger
             $api_key = self::getCurrentUserWithoutMessingWithSession();
         } else {
             $api_key = MyRadio_APIKey::getInstance($_REQUEST['api_key']);
+            # If the API key has been revoked, it doesn't exist anymore.
+            if (isset($api_key)) {
+                $api_key = $api_key->isRevoked() ? false : $api_key;
+            }
         }
 
         return $api_key;

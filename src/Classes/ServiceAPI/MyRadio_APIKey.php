@@ -57,4 +57,13 @@ class MyRadio_APIKey extends ServiceAPI implements APICaller
     {
         return $this->key;
     }
+
+
+    /**
+     * Get if the key has been revoked.
+     */
+    public function isRevoked()
+    {
+        return $this->revoked;
+    }
 }
