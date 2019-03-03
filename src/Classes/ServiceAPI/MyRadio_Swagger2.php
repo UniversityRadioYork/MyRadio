@@ -192,7 +192,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         //Cool, it's valid. Can they get at it?
         $caller = self::getAPICaller();
 
-        if (!$caller) {
+        if (!$caller || $caller->isRevoked()) {
             throw new MyRadioException('No valid authentication data provided.', 401);
         } elseif (self::validateRequest(
             $caller,
