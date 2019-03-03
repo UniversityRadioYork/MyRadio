@@ -2,6 +2,7 @@
 /**
  * Presents a form to the user to enable them to cancel an Episode.
  */
+use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
