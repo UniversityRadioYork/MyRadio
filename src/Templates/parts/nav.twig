@@ -9,11 +9,11 @@
         <span class="icon-bar"></span>
       </button>
       {% if websiteurl %}
-        <a class="navbar-brand homepage-logo" href="{{websiteurl}}" title="Go to the {{shortname}} homepage"><img alt="Go to the {{shortname}} homepage" src="{{baseurl}}img/{{shortname}}.svg"></a>
+        <a class="navbar-brand homepage-logo" href="{{websiteurl}}" title="Go to the {{shortname}} homepage"><img alt="Go to the {{shortname}} homepage" src="{{baseurl}}img/{{shortname}}.svg?version={{version}}"></a>
       {% endif %}
       <span class="navbar-brand divider"></span>
       <a class="navbar-brand myradio-logo" href="{{baseurl}}" title="Go to MyRadio main menu">
-        <img alt="Go to MyRadio main menu" src="{{baseurl}}img/myradio-logo.svg">
+        <img alt="Go to MyRadio main menu" src="{{baseurl}}img/myradio-logo.svg?version={{version}}">
       </a>
     </div>
     <div class="collapse navbar-collapse" id="navbar-collapse-1">
