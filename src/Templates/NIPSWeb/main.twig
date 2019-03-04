@@ -2,7 +2,7 @@
 {% import 'macros.twig' as MyRadio %}
 {% block head %}
 {{ parent() }}
-<link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css" />
+<link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css?version={{version}}" />
 {% endblock %}
 {% block content %}
 <header id="content-header">
@@ -105,8 +105,8 @@
 {{ parent() }}
 <script type="text/javascript" src="{{baseurl}}js/vendor/typeahead.bundle.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/ul-sort.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/nipsweb.channelconfig.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/nipsweb.player.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/nipsweb.librarypane.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/nipsweb.init.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.channelconfig.js?version={{version}}"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.player.js?version={{version}}"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.librarypane.js?version={{version}}"></script>
+<script type="text/javascript" src="{{baseurl}}js/nipsweb.init.js?version={{version}}"></script>
 {% endblock %}

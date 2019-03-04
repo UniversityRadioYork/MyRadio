@@ -2,7 +2,7 @@
 <html>
   <head>
 {% include 'parts/base_head.twig' %}
-    <link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css" />
+    <link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css?version={{version}}" />
   </head>
   <body id="iframe">
     <div id="showAlert" class="alert alert-success"><div class="glyphicon glyphicon-ok"></div> Welcome to the Show Planner Importer!</div>
@@ -39,7 +39,7 @@
         </div>
       </div>
     </div>
-  <script type="text/javascript" src="{{baseurl}}js/nipsweb.import.js"></script>
+  <script type="text/javascript" src="{{baseurl}}js/nipsweb.import.js?version={{version}}"></script>
 {% include 'parts/base_foot.twig' %}
   </body>
 </html>

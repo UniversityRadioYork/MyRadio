@@ -1,5 +1,5 @@
-<script type="text/javascript" src="{{baseurl}}{% if not rewriteurl %}?action={% else %}MyRadio/{% endif %}config.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/myradio.core.js"></script>
+<script type="text/javascript" src="{{baseurl}}{% if not rewriteurl %}?action={% else %}MyRadio/{% endif %}config.js?version={{version}}"></script>
+<script type="text/javascript" src="{{baseurl}}js/myradio.core.js?version={{version}}"></script>
 <script type="text/javascript">
   window.myradio.module = "{{module}}";
   window.myradio.action = "{{action}}";

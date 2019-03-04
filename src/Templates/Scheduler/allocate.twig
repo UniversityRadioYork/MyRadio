@@ -17,6 +17,6 @@
 {% block foot %}
 {{ parent() }}
 <script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/myradio.schedule.view.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/myradio.scheduler.allocate.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/myradio.schedule.view.js?version={{version}}"></script>
+<script type="text/javascript" src="{{baseurl}}js/myradio.scheduler.allocate.js?version={{version}}"></script>
 {% endblock %}

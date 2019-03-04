@@ -1,7 +1,7 @@
 {% extends 'base.twig' %}
 {% block head %}
 {{ parent() }}
-<link rel="stylesheet" type="text/css" href="{{baseurl}}css/sis.css">
+<link rel="stylesheet" type="text/css" href="{{baseurl}}css/sis.css?version={{version}}">
 {% endblock %}
 {% block content %}
 	<header id="content-header">
@@ -14,11 +14,11 @@
 {{ parent() }}
 <script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/vendor/typeahead.bundle.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/sis.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/sis.js?version={{version}}"></script>
 <script type="text/javascript">
 var sis = new SIS(document.getElementById('grid'));
 </script>
 {% for module in modules %}
-	<script type="text/javascript" src="{{baseurl}}js/sis.{{module}}.js"></script>
+	<script type="text/javascript" src="{{baseurl}}js/sis.{{module}}.js?version={{version}}"></script>
 {% endfor %}
 {% endblock %}

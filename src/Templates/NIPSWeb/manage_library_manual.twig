@@ -2,7 +2,7 @@
 <html>
   <head>
 {% include 'parts/base_head.twig' %}
-      <link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css" />
+      <link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css?version={{version}}" />
     </head>
     <body id="iframe">
   {% include 'NIPSWeb/res_selector.twig' %}
@@ -55,5 +55,5 @@
       <script type="text/javascript" src="{{baseurl}}js/vendor/jquery.filedrop.js"></script>
       <script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
       <script type="text/javascript" src="{{baseurl}}js/vendor/bootstrap-datetimepicker.min.js"></script>
-      <script type="text/javascript" src="{{baseurl}}js/nipsweb.managelibrary.js"></script>
+      <script type="text/javascript" src="{{baseurl}}js/nipsweb.managelibrary.js?version={{version}}"></script>
       </body></html>
