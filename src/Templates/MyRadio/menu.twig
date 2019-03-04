@@ -22,12 +22,12 @@
 
 {% block foot %}
 {{ parent() }}
-<script type="text/javascript" src="{{baseurl}}js/myradio.menu.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/myradio.menu.js?version={{version}}"></script>
 {% if news_clickthrough %}
 <script type="text/javascript">
 var news={{news|json_encode()|raw}};
 </script>
 <script type="text/javascript" src="{{baseurl}}js/vendor/moment.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}js/myradio.news.clickthrough.js"></script>
+<script type="text/javascript" src="{{baseurl}}js/myradio.news.clickthrough.js?version={{version}}"></script>
 {% endif %}
 {% endblock %}
