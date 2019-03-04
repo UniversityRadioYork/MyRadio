@@ -749,4 +749,17 @@ class CoreUtils
         'Vinyl',
         'Broadcasting',
     ];
+
+    /**
+     * Get the hash of the current git HEAD, used to append to CSS urls for caching
+     * @return mixed Either the hash or a boolean false
+     */
+    public static function getVersion() {
+      $branch_ref = trim(explode("ref: ", file_get_contents('../../.git/HEAD'))[1]);
+      if ( $hash = file_get_contents( sprintf( '../../.git/%s', $branch_ref ) ) ) {
+        return trim($hash);
+      } else {
+        return false;
+      }
+    }
 }

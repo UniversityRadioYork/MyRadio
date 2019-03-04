@@ -4,6 +4,7 @@ namespace MyRadio;
 
 use MyRadio\Config;
 use MyRadio\Database;
+use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioMenu;
@@ -64,7 +65,8 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
             ->addVariable('module', empty($GLOBALS['module']) ? Config::$default_module : $GLOBALS['module'])
             ->addVariable('action', empty($GLOBALS['action']) ? Config::$default_action : $GLOBALS['action'])
             ->addVariable('config', Config::getPublicConfig())
-            ->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : '');
+            ->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : '')
+            ->addVariable('version', CoreUtils::getVersion());
 
         if (!empty($GLOBALS['module']) && isset($_SESSION['memberid'])) {
             $this->addVariable('submenu', (new MyRadioMenu())->getSubMenuForUser($GLOBALS['module']))
