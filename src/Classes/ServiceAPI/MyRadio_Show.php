@@ -648,7 +648,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ]
         )[0];
         
-        $filetype = end(explode('.', $tmp_path));
+        $filetype = explode('/', getimagesize($tmp_path)['mime'])[1];
         $suffix = 'image_meta/ShowImageMetadata/'.$result.'.'.$filetype;
         $path = Config::$public_media_path.'/'.$suffix;
         rename($tmp_path, $path);
