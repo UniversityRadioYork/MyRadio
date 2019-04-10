@@ -11,7 +11,7 @@ function webcamTrackViewer() {
   $.ajax({
     type: "get",
     cache: false,
-    url: myradio.makeURL("Webcam", "a-trackViewer"),
+    url: myradio.getAPIURL("webcam", "incrementviewcounter","",""),
     statusCode: {
       // API returns 400 when timedelta is too big (minimised tab or whatever) clientside should ignore.
       400: function () {}

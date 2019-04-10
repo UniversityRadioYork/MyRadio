@@ -5,9 +5,12 @@
 namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 /**
- * @todo Document
+ * Deals with Webcam features within MyRadio.
+ *
+ * @uses    \Database
  */
 class MyRadio_Webcam extends ServiceAPI
 {
@@ -16,8 +19,12 @@ class MyRadio_Webcam extends ServiceAPI
         return self::$db->fetchAll('SELECT * FROM webcam.streams ORDER BY streamid ASC');
     }
 
-    public static function incrementViewCounter(MyRadio_User $user)
+    /**
+    * Increments the logged in user's webcam counter.
+    */
+    public static function incrementViewCounter()
     {
+        $user = MyRadio_User::getInstance(); // This bit will fail if it's not an actual user calling the API.
         //Get the current view counter. We do this as a separate query in case the row doesn't exist yet
         $counter = self::$db->fetchOne('SELECT timer FROM webcam.memberviews WHERE memberid = $1', [$user->getID()]);
         if (empty($counter)) {
@@ -104,9 +111,9 @@ class MyRadio_Webcam extends ServiceAPI
     }
 
     /**
-     * [setWebcam description].
+     * Changes the currently public live webcam.
      *
-     * @param [type] $id [description]
+     * @param string $id A string of the correct camera.
      */
     public static function setWebcam($id)
     {
