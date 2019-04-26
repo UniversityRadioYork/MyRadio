@@ -667,7 +667,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             [$suffix, $result]
         );
         
-        $this->photo_url = $path;
+        $this->photo_url = Config::$public_media_uri.'/'.$suffix;
         $this->updateCacheObject();
     }
 
