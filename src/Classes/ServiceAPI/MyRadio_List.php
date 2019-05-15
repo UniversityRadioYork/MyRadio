@@ -53,7 +53,7 @@ class MyRadio_List extends ServiceAPI
     private $address;
 
     /**
-     * If true, this means that members subscribe themselves to this list.
+     * If true, this means that members subscribe themselves to this list manually.
      *
      * @var bool
      */
@@ -65,6 +65,14 @@ class MyRadio_List extends ServiceAPI
      * @var int[]
      */
     private $members = [];
+
+    /**
+     * In the case that is a automatic mailing list (ie. $optin is false),
+     * this is the set of members who have manually opted out.
+     *
+     * @var int[]
+     */
+    private $optedOutMembers = [];
 
     /**
      * Initialised on first request, stores an archive of all the email IDs
@@ -95,6 +103,7 @@ class MyRadio_List extends ServiceAPI
         $this->public = $result['toexim'];
         $this->address = $result['listaddress'];
         $this->optin = $result['subscribable'] === 't';
+        $this->current = $result['current'] === 't';
 
         if ($this->optin) {
             //Get subscribed members
@@ -109,12 +118,22 @@ class MyRadio_List extends ServiceAPI
                 (SELECT memberid FROM mail_subscription WHERE listid=$1)',
                 [$listid]
             );
+            $this->optedOutMembers = self::$db->fetchColumn(
+                'SELECT memberid FROM mail_subscription WHERE listid=$1',
+                [$listid]
+            );
         }
         $this->members = array_map(
             function ($x) {
                 return (int) $x;
             },
             $this->members
+        );
+        $this->optedOutMembers = array_map(
+            function ($x) {
+                return (int) $x;
+            },
+            $this->optedOutMembers
         );
     }
 
@@ -191,12 +210,12 @@ class MyRadio_List extends ServiceAPI
             return false;
         }
 
-        return sizeof(
-            self::$db->query(
+        return !empty(
+            self::$db->fetchOne(
                 'SELECT memberid FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
                 [$userid, $this->getID()]
             )
-        ) === 1;
+        );
     }
 
     /**
@@ -331,11 +350,18 @@ class MyRadio_List extends ServiceAPI
     /**
      * Return all mailing lists.
      *
-     * @return MyRadio_User[]
+     * @param bool $current Filters by current DB field (True: only current, False: only historic, Default: all)
+     *
+     * @return MyRadio_List[]
      */
-    public static function getAllLists()
+    public static function getAllLists($current = null)
     {
-        $r = self::$db->fetchColumn('SELECT listid FROM mail_list');
+        if ($current != null) {
+            $current_sql = "WHERE current = ";
+            $current = $current_sql . ($current ? "true" : "false");
+        }
+
+        $r = self::$db->fetchColumn('SELECT listid FROM mail_list '.$current);
 
         $lists = [];
         foreach ($r as $list) {
@@ -369,7 +395,7 @@ class MyRadio_List extends ServiceAPI
                 } else {
                     $data['optin'] = null;
                 }
-                $data['optOut'] = ($data['subscribed'] ? [
+                $data['optOut'] = (($data['subscribed']) ? [
                     'display' => 'icon',
                     'value' => 'minus',
                     'title' => 'Opt out of this mailing list',
@@ -381,12 +407,16 @@ class MyRadio_List extends ServiceAPI
                     'title' => 'Send a message to this mailing list',
                     'url' => URLUtils::makeURL('Mail', 'send', ['list' => $this->getID()]),
                 ];
-                $data['archive'] = [
-                    'display' => 'icon',
-                    'value' => 'folder-close',
-                    'title' => 'View archives for this mailing list',
-                    'url' => URLUtils::makeURL('Mail', 'archive', ['list' => $this->getID()]),
-                ];
+                if ($data['subscribed']) {
+                    $data['archive'] = [
+                        'display' => 'icon',
+                        'value' => 'folder-close',
+                        'title' => 'View archives for this mailing list',
+                        'url' => URLUtils::makeURL('Mail', 'archive', ['list' => $this->getID()]),
+                    ];
+                } else {
+                    $data['archive'] = null;
+                }
             },
             'recipients' => function (&$data) {
                 $data['recipients'] = CoreUtils::dataSourceParser($this->getMembers());
