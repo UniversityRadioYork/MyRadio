@@ -15,8 +15,8 @@ apt-get update
 apt-get install -y apache2 \
 	libapache2-mod-php \
 	php-common \
-	postgresql-10 \
-	postgresql-client-10 \
+	postgresql-11 \
+	postgresql-client-11 \
 	memcached \
 	php-curl \
 	php-geoip \
@@ -86,9 +86,9 @@ update-rc.d apache2 defaults
 service apache2 start
 
 # Create DB cluster/database/user
-pg_dropcluster 10 main --stop || true # Seriously, don't use this anywhere other than vagrant
-if ! `pg_lsclusters | grep -q myradio`; then pg_createcluster 10 myradio -p 5432; fi
-systemctl start postgresql@10-myradio
+pg_dropcluster 11 main --stop || true # Seriously, don't use this anywhere other than vagrant
+if ! `pg_lsclusters | grep -q myradio`; then pg_createcluster 11 myradio -p 5432; fi
+systemctl start postgresql@11-myradio
 su - postgres -c "cat /vagrant/sample_configs/postgres.sql | psql"
 
 rm -f /vagrant/src/MyRadio_Config.local.php # Remove any existing config
@@ -102,3 +102,5 @@ done
 # And logs
 mkdir -p /var/log/myradio
 chown www-data:www-data /var/log/myradio
+
+echo "MyRadio is now installed in your Vagrant VM. Go to https://localhost:4443/myradio/ :)"
