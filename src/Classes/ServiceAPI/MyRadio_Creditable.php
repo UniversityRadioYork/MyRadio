@@ -5,6 +5,7 @@
 namespace MyRadio\ServiceAPI;
 
 use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\Config;
 
 /**
  * The MyRadio_Creditable trait adds credits functionality to an object.
@@ -101,8 +102,9 @@ trait MyRadio_Creditable
     public function getPresenterString()
     {
         $str = '';
+        $presenter_credit_ids = Config::$presenter_credit_ids;
         foreach ($this->getCredits() as $credit) {
-            if ($credit['type'] !== 1) {
+            if (!in_array($credit['type'], $presenter_credit_ids)) {
                 continue;
             } else {
                 $str .= $credit['User']->getName().', ';
