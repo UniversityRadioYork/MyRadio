@@ -82,3 +82,8 @@ Config::$d_Podcast_enabled = true;
 Config::$d_StatsGen_enabled = false;
 Config::$d_Explicit_enabled = false;
 
+/**
+ * General Settings
+ */
+// Define credit_type_ids that are to be the main presenters. (To include co-presenters if present).
+Config::$presenter_credit_ids = [1];
