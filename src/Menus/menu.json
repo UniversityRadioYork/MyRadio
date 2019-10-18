@@ -80,6 +80,11 @@
                                         "description": "If you would like to use the off-air studio we ask that you book the time you require. You can check availability and block out your required times here."
                                     },
                                     {
+                                        "title": "Book a Recorder",
+                                        "url": "",
+                                        "description": "If you would like to use a recorder we ask that you book the time you require. You can check availability and block out your required times here."
+                                    },
+                                    {
                                         "title": "Apply for an Event",
                                         "url": "https://goo.gl/forms/bIxTp43VqqMQtRZ92",
                                         "description": "Planning an event? Make sure our production team are aware of it by completing the following form."
