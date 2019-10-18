@@ -69,16 +69,8 @@ commonName=myradio.local
 organizationalUnitName=MyRadio
 emailAddress=someone@example.com
 "
-openssl genrsa -des3 -out /etc/apache2/myradio.key -passout env:PASSPHRASE 2048
-openssl req \
-	-new \
-	-batch \
-	-subj "$(echo -n "$subj" | tr "\n" "/")" \
-	-key /etc/apache2/myradio.key \
-	-out /etc/apache2/myradio.csr \
-	-passin env:PASSPHRASE
-openssl rsa -in /etc/apache2/myradio.key -out /etc/apache2/myradio.key -passin env:PASSPHRASE
-openssl x509 -req -days 3650 -in /etc/apache2/myradio.csr -signkey /etc/apache2/myradio.key -out /etc/apache2/myradio.crt
+openssl req -newkey rsa:2048 -nodes -subj "$(echo -n "$subj" | tr "\n" "/")" -keyout /etc/apache2/myradio.key -x509 -days 365 -out /etc/apache2/myradio.crt \
+-addext extendedKeyUsage=serverAuth -addext subjectAltName=DNS:localhost
 
 # Start httpd back up
 
