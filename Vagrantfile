@@ -41,7 +41,7 @@ Vagrant.configure(2) do |config|
   # config.vm.synced_folder "./", "/vagrant_data"
 
   # Set www-data so MyRadio/Apache2 is happy.
-  config.vm.synced_folder ".", "/vagrant", owner: "www-data", group: "vagrant"
+  config.vm.synced_folder ".", "/vagrant", :mount_options => ['dmode=775', 'fmode=775']
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
