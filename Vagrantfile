@@ -73,6 +73,6 @@ Vagrant.configure(2) do |config|
   config.trigger.after :up do |trigger|
     trigger.name = "Apache2 Restart"
     trigger.info = "Restarting Apache2, it doesn't seem to start correctly."
-    trigger.run_remote = {inline: "service apache2 restart"}
+    trigger.run_remote = {inline: "service apache2 reload"}
   end
 end
