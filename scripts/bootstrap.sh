@@ -48,6 +48,8 @@ xdebug.idekey="MyRadio vagrant"
 xdebug.remote_handler=dbgp
 EOF
 
+su -c "adduser www-data vagrant"
+
 # Composer
 cd /vagrant
 mkdir -p /vagrant/src/vendor
