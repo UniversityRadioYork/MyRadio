@@ -32,10 +32,10 @@ class MyRadio_Quote extends ServiceAPI
             quote_id
         FROM
             people.quote
-        ORDER BY
-            date DESC
         WHERE
             suspended = false
+        ORDER BY
+            date DESC
         ;';
 
     const GET_RANDOM_SQL = '
@@ -392,29 +392,29 @@ class MyRadio_Quote extends ServiceAPI
 
     public function getRemoveForm()
     {
-        return (
-            new MyRadioForm(
-                'quote_remove',
-                'Quote',
-                'removeQuote',
-                [
-                    'debug' => false,
-                    'title' => 'Remove Quote',
-                ]
-            )->addField(
-                new MyRadioFormField(
-                    'reason',
-                    MyRadioFormField::TYPE_BLOCKTEXT,
-                    ['label' => 'Please explain why this Quote should be removed from Quotes Board']
-                )
-            )->addField(
-                new MyRadioFormField(
-                    'quote_id',
-                    MyRadioFOrmField::TYPE_HIDDEN,
-                    ['value' => $_REQUEST['quote_id']]
-                )
+        $form = new MyRadioForm(
+            'quote_remove',
+            'Quote',
+            'removeQuote',
+            [
+                'debug' => false,
+                'title' => 'Remove Quote'
+            ]
+        );
+        $form->addField(
+            new MyRadioFormField(
+                'reason',
+                MyRadioFormField::TYPE_BLOCKTEXT,
+                ['label' => 'Please explain why this Quote should be removed from Quotes Board']
             )
-                );
+        )->addField(
+            new MyRadioFormField(
+                'quote_id',
+                MyRadioFOrmField::TYPE_HIDDEN,
+                ['value' => $_REQUEST['quote_id']]
+            )
+        );
+        return $form;
     }
 
     public function removeQuote($reason)
@@ -449,6 +449,7 @@ class MyRadio_Quote extends ServiceAPI
                 'display' => 'html',
                 'html' => $this->getText(),
             ],
+            'suspended' => $this->getSuspended(),
             'editlink' => [
                 'display' => 'icon',
                 'value' => 'pencil',
