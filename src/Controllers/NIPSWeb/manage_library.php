@@ -4,13 +4,13 @@
  */
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadioException;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\NIPSWeb\NIPSWeb_ManagedPlaylist;
 use \MyRadio\NIPSWeb\NIPSWeb_ManagedUserPlaylist;
 
 if (!AuthUtils::hasPermission(AUTH_UPLOADMUSICMANUAL)) {
-    $message = 'You must have been Manual Upload trained before accessing the uploader. If you need to get trained, please contact the Head of Music.';
-    require_once 'Controllers/Errors/403.php';
+    throw new MyRadioException('You must have been Manual Upload trained before accessing the uploader. If you need to get trained, please contact the Head of Music.', 403);
 }
 
 CoreUtils::getTemplateObject()->setTemplate('NIPSWeb/manage_library_manual.twig')
