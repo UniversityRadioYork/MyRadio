@@ -8,12 +8,12 @@ use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\NIPSWeb\NIPSWeb_ManagedPlaylist;
 use \MyRadio\NIPSWeb\NIPSWeb_ManagedUserPlaylist;
 
-$template = 'NIPSWeb/manage_library.twig';
-if (AuthUtils::hasPermission(AUTH_UPLOADMUSICMANUAL)) {
-    $template = 'NIPSWeb/manage_library_manual.twig';
+if (!AuthUtils::hasPermission(AUTH_UPLOADMUSICMANUAL)) {
+    $message = 'You must have been Manual Upload trained before accessing the uploader. If you need to get trained, please contact the Head of Music.';
+    require_once 'Controllers/Errors/403.php';
 }
 
-CoreUtils::getTemplateObject()->setTemplate($template)
+CoreUtils::getTemplateObject()->setTemplate('NIPSWeb/manage_library_manual.twig')
     ->addVariable(
         'reslists',
         CoreUtils::dataSourceParser(
