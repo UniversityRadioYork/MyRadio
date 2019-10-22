@@ -54,11 +54,7 @@
                                         "url": "module=Scheduler,action=myShows",
                                         "description": "You signed a contract saying you'd give 48 hours of cancelling a show. Click here to do just that. Or if you want to fix a spelling mistake in the title of your show."
                                     },
-                                    {
-                                        "title": "Ask about shows/training",
-                                        "url": "module=Mail,action=send,list=56",
-                                        "description": "If you need to contact the Programme Controller or Training Coordinator then click here."
-                                    },
+                                   
                                     {
                                         "title": "Contact Management",
                                         "url": "module=Mail,action=send,list=44",
@@ -79,11 +75,7 @@
                                         "url": "https://docs.google.com/a/yusu.org/spreadsheets/d/1tJ9E0laOPX-_nkWiPT9amDaliCWFRZENWDW51gLhTOM/edit?usp=sharing",
                                         "description": "If you would like to use the off-air studio we ask that you book the time you require. You can check availability and block out your required times here."
                                     },
-                                    {
-                                        "title": "Apply for an Event",
-                                        "url": "https://goo.gl/forms/bIxTp43VqqMQtRZ92",
-                                        "description": "Planning an event? Make sure our production team are aware of it by completing the following form."
-                                    }
+                                    
                                 ]
                         }
                     ]
