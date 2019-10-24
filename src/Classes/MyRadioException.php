@@ -66,12 +66,17 @@ class MyRadioException extends \RuntimeException
         }
 
         //Set up the Exception
-        $this->error = "<p>MyRadio has encountered a problem processing this request.</p>
+        if ($code === 403) {
+            $this->error = "<p>I'm sorry, but you don't have permission to access this page.</p>
+                            <p>{$this->getMessage()}</p>";
+        } else {
+            $this->error = "<p>MyRadio has encountered a problem processing this request.</p>
                 <table class='errortable' style='color:#633'>
                   <tr><td>Message: </td><td>{$this->getMessage()}</td></tr>
                   <tr><td>Location: </td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
-                  <tr><td>Trace: </td><td>".nl2br($this->traceStr).'</td></tr>
+                  <tr><td>Trace: </td><td>" . nl2br($this->traceStr) . '</td></tr>
                 </table>';
+        }
     }
 
     /**
@@ -91,6 +96,7 @@ class MyRadioException extends \RuntimeException
                 && class_exists('\MyRadio\MyRadioEmail')
                 && $this->code !== 400
                 && $this->code !== 401
+                && $this->code !== 403
             ) {
                 MyRadioEmail::sendEmailToComputing(
                     '[MyRadio] Exception Thrown',
