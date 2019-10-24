@@ -147,7 +147,7 @@ class MyRadioException extends \RuntimeException
                         $twig = CoreUtils::getTemplateObject();
                         $twig->setTemplate('error.twig')
                             ->addVariable('serviceName', 'Error')
-                            ->addVariable('title', 'Internal Server Error')
+                            ->addVariable('title', $this->getCodeName())
                             ->addVariable('body', $this->error)
                             ->addVariable('uri', $_SERVER['REQUEST_URI'])
                             ->render();
@@ -182,8 +182,8 @@ class MyRadioException extends \RuntimeException
                         //We can use a pretty full-page output
                         $twig = CoreUtils::getTemplateObject();
                         $twig->setTemplate('error.twig')
-                            ->addVariable('title', '')
-                            ->addVariable('body', $error)
+                            ->addVariable('title', $this->getCodeName())
+                            ->addVariable('body', $this->error)
                             ->addVariable('uri', $_SERVER['REQUEST_URI'])
                             ->render();
                     } else {
