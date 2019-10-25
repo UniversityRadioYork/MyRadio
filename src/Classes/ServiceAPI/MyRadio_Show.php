@@ -15,7 +15,6 @@ use MyRadio\ServiceAPI\MyRadio_User;
 use MyRadio\ServiceAPI\MyRadio_Season;
 use MyRadio\ServiceAPI\MyRadio_Scheduler;
 use MyRadio\ServiceAPI\MyRadio_Timeslot;
-use function MyRadio\Helpers\get_subtype_for_show;
 
 /**
  * The Show class is used to create, view and manupulate Shows within the new MyRadio Scheduler Format.
@@ -348,7 +347,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'INSERT INTO schedule.show_season_subtype
             (show_id, show_subtype_id, effective_from)
             (SELECT $1, (SELECT show_subtype_id FROM show_subtypes WHERE show_subtypes.name = $2), NOW())',
-                [$show_id, get_subtype_for_show($params['title'])]
+                [$show_id, CoreUtils::get_subtype_for_show($params['title'])]
             );
         }
 
