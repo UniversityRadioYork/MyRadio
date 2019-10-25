@@ -29,6 +29,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     private $requested_times = [];
     private $requested_weeks = [];
     private $season_num;
+    private $subtype_id;
     protected $owner;
 
     protected function __construct($season_id)
@@ -85,7 +86,16 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 WHERE show_id=(SELECT show_id FROM schedule.show_season WHERE show_season_id=$1)
                 AND show_season_id<=$1
                 AND show_season_id IN (SELECT show_season_id FROM schedule.show_season_timeslot)
-            ) AS season_num
+            ) AS season_num, (
+                SELECT show_season_subtype_id
+                FROM show_season_subtype
+                WHERE season_id=$1 OR show_id = show_season.show_id
+                AND effective_from <= NOW()
+                AND (effective_to IS NULL OR effective_to >= NOW())
+                GROUP BY show_season_subtype_id
+                ORDER BY effective_from, season_id, show_id
+                LIMIT 1
+            ) AS subtype_id
             FROM schedule.show_season WHERE show_season_id=$1',
             [$season_id]
         );
@@ -100,6 +110,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $this->submitted = strtotime($result['submitted']);
         $this->term_id = (int) $result['termid'];
         $this->season_num = (int) $result['season_num'];
+        $this->subtype_id = (int) $result['subtype_id'];
 
         $metadata_types = json_decode($result['metadata_types']);
         $metadata = json_decode($result['metadata']);
@@ -267,6 +278,19 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                     $season_id,
                     $tag,
                     MyRadio_User::getInstance()->getID(),
+                ]
+            );
+        }
+
+        // If the subtype isn't blank, add that in too
+        if (!empty($params['subtype'])) {
+            self::$db->query(
+                'INSERT INTO schedule.show_season_subtype
+                (season_id, show_subtype_id, effective_from)
+                VALUES ($1, $2, NOW())',
+                [
+                    $season_id,
+                    $params['subtype']
                 ]
             );
         }
@@ -705,6 +729,38 @@ EOT
         return '/schedule/shows/seasons/'.$this->getID();
     }
 
+    /**
+     * Gets the subtype for this show.
+     *
+     * A show having no subtype makes sense, but a season having no subtype is a nonsense.
+     * @return MyRadio_ShowSubtype
+     */
+    public function getSubtype() {
+        if ($this->subtype_id === null) {
+            throw new MyRadioException('Season missing subtype!');
+        }
+        return MyRadio_ShowSubtype::getInstance($this->subtype_id);
+    }
+
+    /**
+     * Sets this season's subtype.
+     *
+     * @todo support effectiveFrom and effectiveTo
+     * @param $subtypeId
+     */
+    public function setSubtype($subtypeId) {
+        self::$db->query('UPDATE schedule.show_season_subtype SET show_subtype_id = $1 WHERE season_id = $1', [
+            $subtypeId, $this->season_id
+        ]);
+    }
+
+    /**
+     * Clears the subtype for this season, resetting it to the show's "main" subtype.
+     */
+    public function clearSubtype() {
+        self::$db->query('DELETE FROM schedule.show_season_subtype WHERE season_id = $1', [$this->season_id]);
+    }
+
     public function getRequestedTimes()
     {
         $return = [];
@@ -816,6 +872,7 @@ EOT
                 'season_num' => $this->getSeasonNumber(),
                 'title' => $this->getMeta('title'),
                 'description' => $this->getMeta('description'),
+                'subtype' => $this->getSubtype()->toDataSource($mixins),
                 'submitted' => $this->getSubmittedTime(),
                 'requested_time' => count($requested_times) > 0 ? $requested_times[0] : null,
                 'first_time' => CoreUtils::happyTime(($first_time ? $first_time : 0)),

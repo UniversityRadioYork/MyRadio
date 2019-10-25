@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
     } else {
         //submit edit
+        /** @var MyRadio_Show $show */
         $show = MyRadio_Show::getInstance($data['id']);
 
         //Check the user has permission to edit this show
@@ -47,6 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $show->setMeta('upload_state', 'Opted Out');
         }
+
+        // TODO: enable this once subtypes have been backfilled, as setSubtypeByName assumes the show already has one
+//        $show->setSubtypeByName(\MyRadio\Helpers\get_subtype_for_show($data['title']));
+
         URLUtils::redirectWithMessage('Scheduler', 'myShows', 'Show Updated!');
     }
 } else {
