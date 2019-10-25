@@ -23,7 +23,7 @@ services:
     - postgresql
 install:
     - composer install
-    - npm install eslint
+    - npm install eslint@6.5.x
     - sudo apt-get update
     - sudo apt-get install apache2 libapache2-mod-fastcgi
 before_script:
