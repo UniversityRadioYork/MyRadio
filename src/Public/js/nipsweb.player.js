@@ -115,7 +115,7 @@ var NIPSWeb = function (d) {
    * Detect what changes have been made to the show plan
    */
   var calcChanges = function (li) {
-    if (!li.hasOwnProperty("attr")) {
+    if (!Object.prototype.hasOwnProperty.call(li, "attr")) {
       li = $(li);
     }
     changeQueue.queue(
@@ -745,7 +745,7 @@ var NIPSWeb = function (d) {
     var outputDevice = "default";
 
     try {
-      if (localStorage && localStorage.hasOwnProperty("nipsWebDeviceMapping")) {
+      if (localStorage && Object.prototype.hasOwnProperty.call(localStorage, "nipsWebDeviceMapping")) {
         var audioSinks = JSON.parse(localStorage.nipsWebDeviceMapping);
         if (audioSinks[channel]) {
           outputDevice = audioSinks[channel];

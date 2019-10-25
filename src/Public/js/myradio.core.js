@@ -142,7 +142,7 @@ $(document).ajaxSuccess(
     } catch (error) {
       return; //Not JSON
     }
-    if (data.hasOwnProperty("myradio_errors") && data.myradio_errors.length > 0) {
+    if (Object.prototype.hasOwnProperty.call(data, "myradio_errors") && data.myradio_errors.length > 0) {
       myradio.errorReport(data.myradio_errors, e, xhr, settings);
     }
   }
