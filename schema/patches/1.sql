@@ -33,8 +33,33 @@ VALUES (1,
         'Collaboration',
         'd14fda');
 
--- we're not using a show_subtype join table, because it
--- makes no sense for a show to have multiple subtypes
-ALTER TABLE show ADD COLUMN subtype INTEGER NOT NULL DEFAULT 1;
-ALTER TABLE show ADD CONSTRAINT show_subtype_fkey FOREIGN KEY (subtype) REFERENCES schedule.show_subtypes(show_subtype_id) ON DELETE SET DEFAULT;
-COMMENT ON COLUMN show.subtype IS 'The subtype of the show - determines its colour on the website.';
+CREATE SEQUENCE show_subtype_id_seq
+    START WITH 7
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER SEQUENCE show_subtype_id_seq OWNED BY show_subtypes.show_subtype_id;
+ALTER TABLE ONLY show_subtypes ALTER COLUMN show_subtype_id SET DEFAULT nextval('show_subtype_id_seq');
+
+CREATE TABLE show_season_subtype (
+    show_season_subtype_id INTEGER NOT NULL,
+    show_id INTEGER DEFAULT NULL,
+    season_id INTEGER DEFAULT NULL,
+    show_subtype_id INTEGER NOT NULL DEFAULT 1,
+    effective_from TIMESTAMP WITH TIME ZONE,
+    effective_to TIMESTAMP WITH TIME ZONE
+);
+ALTER TABLE show_season_subtype ADD CONSTRAINT chk_subtype_show_or_season_id CHECK (show_id IS NOT NULL OR season_id IS NOT NULL);
+ALTER TABLE show_season_subtype ADD CONSTRAINT fk_show_subtype FOREIGN KEY (show_subtype_id) REFERENCES show_subtypes (show_subtype_id) ON DELETE SET DEFAULT;
+ALTER TABLE show_season_subtype ADD CONSTRAINT fk_subtype_show FOREIGN KEY (show_id) REFERENCES show (show_id) ON DELETE CASCADE;
+ALTER TABLE show_season_subtype ADD CONSTRAINT fk_subtype_season FOREIGN KEY (season_id) REFERENCES show_season (show_season_id) ON DELETE CASCADE;
+
+CREATE SEQUENCE show_season_subtype_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER SEQUENCE show_season_subtype_id_seq OWNED BY show_season_subtype.show_season_subtype_id;
+ALTER TABLE ONLY show_season_subtype ALTER COLUMN show_season_subtype_id SET DEFAULT nextval('show_season_subtype_id_seq');
