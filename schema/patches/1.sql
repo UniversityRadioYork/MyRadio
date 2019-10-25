@@ -35,5 +35,6 @@ VALUES (1,
 
 -- we're not using a show_subtype join table, because it
 -- makes no sense for a show to have multiple subtypes
-ALTER TABLE show ADD COLUMN subtype INTEGER NULL DEFAULT NULL;
+ALTER TABLE show ADD COLUMN subtype INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE show ADD CONSTRAINT show_subtype_fkey FOREIGN KEY (subtype) REFERENCES schedule.show_subtypes(show_subtype_id) ON DELETE SET DEFAULT;
 COMMENT ON COLUMN show.subtype IS 'The subtype of the show - determines its colour on the website.';
