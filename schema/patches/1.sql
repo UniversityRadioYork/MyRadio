@@ -3,38 +3,41 @@ CREATE TABLE show_subtypes
 (
     show_subtype_id INTEGER NOT NULL,
     name            text    NOT NULL,
-    colour          CHAR(6) NOT NULL
+    class          text     NOT NULL
 );
 
 COMMENT ON TABLE show_subtypes IS 'The various subtypes of show (music, news etc.)';
 COMMENT ON COLUMN show_subtypes.name IS 'The publicly visible name of the subtype.';
-COMMENT ON COLUMN show_subtypes.colour IS 'The colour of the subtype, as a hex colour code without the leading # (eg. E91E61)';
+COMMENT ON COLUMN show_subtypes.class IS 'The CSS class of the subtype - similar to the name, but not intended for humans';
 
-INSERT INTO show_subtypes (show_subtype_id, name, colour)
+INSERT INTO show_subtypes (show_subtype_id, name, class)
 VALUES (1,
         'Regular',
-        '002d5a'),
+        'regular'),
        (2,
         'Primetime',
-        'feb93a'),
+        'primetime'),
        (3,
         'Events',
-        'd0011b'),
+        'events'),
        (4,
         'News',
-        '5A162E'),
+        'news'),
        (4,
         'Speech',
-        '2A722B'),
+        'speech'),
        (5,
         'Music',
-        '562179'),
+        'music'),
        (6,
         'Collaboration',
-        'd14fda');
+        'collab'),
+       (7,
+        'Events',
+        'event');
 
 CREATE SEQUENCE show_subtype_id_seq
-    START WITH 7
+    START WITH 8
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
