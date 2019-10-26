@@ -4,16 +4,16 @@
  */
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadioException;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\NIPSWeb\NIPSWeb_ManagedPlaylist;
 use \MyRadio\NIPSWeb\NIPSWeb_ManagedUserPlaylist;
 
-$template = 'NIPSWeb/manage_library.twig';
-if (AuthUtils::hasPermission(AUTH_UPLOADMUSICMANUAL)) {
-    $template = 'NIPSWeb/manage_library_manual.twig';
+if (!AuthUtils::hasPermission(AUTH_UPLOADMUSICMANUAL)) {
+    throw new MyRadioException('You must have been Manual Upload trained before accessing the uploader. If you need to get trained, please contact the Training Coordinator at training.coordinator@ury.org.uk or in #training on Slack.', 403);
 }
 
-CoreUtils::getTemplateObject()->setTemplate($template)
+CoreUtils::getTemplateObject()->setTemplate('NIPSWeb/manage_library_manual.twig')
     ->addVariable(
         'reslists',
         CoreUtils::dataSourceParser(
