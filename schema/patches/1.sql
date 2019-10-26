@@ -3,7 +3,7 @@ CREATE TABLE show_subtypes
 (
     show_subtype_id INTEGER NOT NULL,
     name            text    NOT NULL,
-    class          text     NOT NULL
+    class           text    NOT NULL
 );
 
 COMMENT ON TABLE show_subtypes IS 'The various subtypes of show (music, news etc.)';
@@ -34,7 +34,7 @@ VALUES (1,
         'collab');
 
 CREATE SEQUENCE show_subtype_id_seq
-    START WITH 8
+    START WITH 7
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
