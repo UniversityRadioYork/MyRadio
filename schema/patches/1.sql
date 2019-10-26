@@ -19,7 +19,7 @@ VALUES (1,
         'primetime'),
        (3,
         'Events',
-        'events'),
+        'event'),
        (4,
         'News',
         'news'),
@@ -31,10 +31,7 @@ VALUES (1,
         'music'),
        (6,
         'Collaboration',
-        'collab'),
-       (7,
-        'Events',
-        'event');
+        'collab');
 
 CREATE SEQUENCE show_subtype_id_seq
     START WITH 8
