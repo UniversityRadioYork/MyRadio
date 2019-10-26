@@ -15,6 +15,12 @@ use MyRadio\MyRadioException;
  */
 class MyRadio_ShowSubtype extends ServiceAPI {
     /**
+     * The ID of this subtype
+     * @var int
+     */
+    private $show_subtype_id;
+
+    /**
      * The name of this subtype. Publicly visible on the website.
      * @var string
      */
@@ -24,13 +30,18 @@ class MyRadio_ShowSubtype extends ServiceAPI {
      * The colour of this subtype, as a hex colour code without the leading # (e.g. "ff1200")
      * @var string
      */
-    private $colour;
+    private $class;
 
     public function __construct($data)
     {
         parent::__construct();
+        $this->show_subtype_id = $data['show_subtype_id'];
         $this->name = $data['name'];
-        $this->colour = $data['colour'];
+        $this->class = $data['class'];
+    }
+
+    public function getID() {
+        return $this->show_subtype_id;
     }
 
 
@@ -43,24 +54,24 @@ class MyRadio_ShowSubtype extends ServiceAPI {
     }
 
     /**
-     * Get the colour of this subtype, as a hex colour code without the leading #.
+     * Get the CSS class of this subtype.
      * @return string
      */
-    public function getColour() {
-        return $this->colour;
+    public function getClass() {
+        return $this->class;
     }
 
     public function toDataSource($mixins = [])
     {
         return [
             'name' => $this->getName(),
-            'colour' => $this->getColour()
+            'class' => $this->getClass()
         ];
     }
 
     protected static function factory($itemid)
     {
-        $sql = 'SELECT * FROM schedule.show_subtypes WHERE show_subtype_id = $1 LIMIT 1';
+        $sql = 'SELECT show_subtype_id, name, class FROM schedule.show_subtypes WHERE show_subtype_id = $1 LIMIT 1';
         $result = self::$db->fetchOne($sql, [$itemid]);
 
         if (empty($result)) {
