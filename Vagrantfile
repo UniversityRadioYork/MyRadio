@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "bento/ubuntu-18.04"
+  config.vm.box = "bento/ubuntu-19.04"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -39,6 +39,9 @@ Vagrant.configure(2) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "./", "/vagrant_data"
+
+  # Set www-data so MyRadio/Apache2 is happy.
+  config.vm.synced_folder ".", "/vagrant", :mount_options => ['dmode=775', 'fmode=775']
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -67,4 +70,9 @@ Vagrant.configure(2) do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision :shell, :inline => "sed -i 's#http://us.archive.ubuntu.com/ubuntu/#mirror://mirrors.ubuntu.com/mirrors.txt#g' /etc/apt/sources.list"
   config.vm.provision :shell, path: "scripts/bootstrap.sh"
+  config.trigger.after :up do |trigger|
+    trigger.name = "Apache2 Restart"
+    trigger.info = "Restarting Apache2, it doesn't seem to start correctly."
+    trigger.run_remote = {inline: "service apache2 reload"}
+  end
 end
