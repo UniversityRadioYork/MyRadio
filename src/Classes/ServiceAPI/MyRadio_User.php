@@ -499,7 +499,13 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 //ffs, some people don't have an eduroam either.
                 $eduroam = $this->getEduroam();
                 if (empty($eduroam)) {
-                    return;
+                    if (!empty($this->email)) {
+                        //This is an email not associated to a user.
+                        return $this->email;
+                    } else {
+                        //Give up trying to send.
+                        return;
+                    }
                 } else {
                     return $eduroam.'@'.Config::$eduroam_domain;
                 }
