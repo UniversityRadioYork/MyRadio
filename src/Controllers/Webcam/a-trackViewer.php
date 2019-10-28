@@ -9,7 +9,7 @@ use \MyRadio\MyRadioException;
 
 if (isset($_SESSION['webcam_lastcounterincrement']) && $_SESSION['webcam_lastcounterincrement'] > time() - 10) {
     // Occurs when browser wakes up and tries to spam all the missed updates.
-    throw new MyRadioException("The Webcam counter was last updated too recently, this request was ingored.", 400);
+    throw new MyRadioException("The Webcam counter was last updated too recently, this request was ignored.", 400);
 }
 $_SESSION['webcam_lastcounterincrement'] = time();
 
