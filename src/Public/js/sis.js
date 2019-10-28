@@ -187,7 +187,9 @@ var SIS = function (container) {
 
   return {
     registerModule: function (id, module) {
-      if (!module.hasOwnProperty("initialise") || !module.hasOwnProperty("name") || !module.hasOwnProperty("type")) {
+      if (!Object.prototype.hasOwnProperty.call(module, "initialise") ||
+        !Object.prototype.hasOwnProperty.call(module, "name") ||
+        !Object.prototype.hasOwnProperty.call(module, "type")) {
         console.error("Cannot load " + id + " as it is invalid.");
         return;
       }
@@ -199,12 +201,12 @@ var SIS = function (container) {
         objs = generatePluginContainer(id, module.name);
       }
       // Make it the active module if it is set to be
-      if (defaultActiveFound === false && module.hasOwnProperty("activeByDefault") && module.activeByDefault) {
+      if (defaultActiveFound === false && Object.prototype.hasOwnProperty.call(module, "activeByDefault") && module.activeByDefault) {
         defaultActiveFound = true;
         $(objs.link).click();
       }
 
-      if (module.hasOwnProperty("update")) {
+      if (Object.prototype.hasOwnProperty.call(module, "update")) {
         callbacks[id] = function (data) {
           module.update.call(objs.container, data);
         };
