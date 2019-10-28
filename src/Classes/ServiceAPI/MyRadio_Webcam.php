@@ -37,7 +37,7 @@ class MyRadio_Webcam extends ServiceAPI
     public static function getViewCounter(MyRadio_User $user)
     {
         $counter = self::$db->fetchOne('SELECT timer FROM webcam.memberviews WHERE memberid = $1', [$user->getID()]);
-        return $counter['timer'];
+        return $counter;
     }
 
     /**
