@@ -673,6 +673,9 @@ final class Config
     public static $long_name = 'University Radio York';
     public static $founded = '1967';
     public static $facebook = 'https://www.facebook.com/URY1350';
+
+    /**** SIGNUP EMAILS ****/
+    public static $welcome_email_sender_memberid = NULL;
     public static $welcome_email = <<<EOT
 
    This is a welcome email. You can use #NAME to get the user's first name.
