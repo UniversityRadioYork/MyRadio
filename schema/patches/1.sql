@@ -1,7 +1,7 @@
 SET search_path = schedule, pg_catalog;
 CREATE TABLE show_subtypes
 (
-    show_subtype_id INTEGER NOT NULL,
+    show_subtype_id INTEGER NOT NULL PRIMARY KEY,
     name            text    NOT NULL,
     class           text    NOT NULL
 );
@@ -43,7 +43,7 @@ ALTER SEQUENCE show_subtype_id_seq OWNED BY show_subtypes.show_subtype_id;
 ALTER TABLE ONLY show_subtypes ALTER COLUMN show_subtype_id SET DEFAULT nextval('show_subtype_id_seq');
 
 CREATE TABLE show_season_subtype (
-    show_season_subtype_id INTEGER NOT NULL,
+    show_season_subtype_id INTEGER NOT NULL PRIMARY KEY,
     show_id INTEGER DEFAULT NULL,
     season_id INTEGER DEFAULT NULL,
     show_subtype_id INTEGER NOT NULL DEFAULT 1,
