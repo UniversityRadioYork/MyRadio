@@ -70,10 +70,10 @@ class MyRadio_Photo extends ServiceAPI
 
     /**
      * Get array of information about the object.
-     *
+     * @param array $mixins Mixins. Currently unused.
      * @return array
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'photoid' => $this->getID(),
@@ -167,9 +167,12 @@ class MyRadio_Photo extends ServiceAPI
         $photo = self::getInstance($id);
         if (!move_uploaded_file($tmp_file, $photo->getURI())) {
             self::$db->query('DELETE FROM myury.photos WHERE photoid=$1', [$id]);
-            throw new MyRadioException('Failed to move new Photo from '.$tmp_file.' to '.$photo->getURI().'. Are permissions for the destination right?', 500);
+            throw new MyRadioException(
+                'Failed to move new Photo from ' . $tmp_file . ' to ' . $photo->getURI()
+                . '. Are permissions for the destination right?',
+                500
+            );
         }
-
         return $photo;
     }
 }

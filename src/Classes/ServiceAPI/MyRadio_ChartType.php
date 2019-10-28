@@ -82,7 +82,7 @@ class MyRadio_ChartType extends MyRadio_Type
      */
     public static function getInstance($chart_type_id = -1)
     {
-        self::__wakeup();
+        self::wakeup();
 
         if (!is_numeric($chart_type_id)) {
             throw new MyRadioException(
@@ -103,7 +103,7 @@ class MyRadio_ChartType extends MyRadio_Type
      *
      * @return array An array of all active chart types.
      */
-    public function getAll()
+    public static function getAll()
     {
         $chart_type_ids = self::$db->fetchColumn(
             'SELECT chart_type_id
@@ -248,10 +248,10 @@ class MyRadio_ChartType extends MyRadio_Type
 
     /**
      * Converts this chart type to a table data source.
-     *
+     * @param array $mixins Mixins.
      * @return array The object as a data source.
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'name' => $this->getName(),

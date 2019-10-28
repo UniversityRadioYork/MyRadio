@@ -5,7 +5,6 @@
  * @todo This requires manual permission checks as it needs interesting things
  */
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\ServiceAPI\MyRadio_Show;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
@@ -18,7 +17,8 @@ if (sizeof(MyRadio_User::getInstance()->getShows()) === 1 && sizeof($seasons) ==
 }
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-    ->addVariable('tablescript', 'myury.scheduler.seasonlist')
-    ->addVariable('title', 'Seasons of '.$show->getMeta('title'))
-    ->addVariable('tabledata', ServiceAPI::setToDataSource($seasons))
+    ->addVariable('tablescript', 'myradio.scheduler.seasonlist')
+    ->addVariable('title', 'Scheduler')
+    ->addVariable('subtitle', 'Seasons of "'.$show->getMeta('title').'"')
+    ->addVariable('tabledata', CoreUtils::setToDataSource($seasons))
     ->render();

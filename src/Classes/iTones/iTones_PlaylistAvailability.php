@@ -55,14 +55,12 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
 
     /**
      * Returns data about the Availability.
-     *
-     * @param bool $full If true, returns full, detailed data about the timeslots in this campaign
-     *
+     * @param array $mixins Mixins. Also includes data about the parent Availability object
      * @return array
      */
-    public function toDataSource($full = false)
+    public function toDataSource($mixins = [])
     {
-        $data = parent::toDataSource($full);
+        $data = parent::toDataSource($mixins);
         $data['playlist'] = $this->getPlaylist()->toDataSource();
         $data['weight'] = $this->getWeight();
         $data['edit'] = [
@@ -190,7 +188,8 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
                         'explanation' => 'A heavier playlist is more likely to be played.',
                     ]
                 )
-            )->addField(
+            )
+            ->addField(
                 new MyRadioFormField(
                     'playlistid',
                     MyRadioFormField::TYPE_HIDDEN,

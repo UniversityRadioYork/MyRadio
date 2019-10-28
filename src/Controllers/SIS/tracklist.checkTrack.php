@@ -4,6 +4,7 @@
  */
 use \MyRadio\SIS\SIS_Tracklist;
 use \MyRadio\ServiceAPI\MyRadio_Track;
+use \MyRadio\MyRadioException;
 
 $artist = $_REQUEST['artist'];
 $album = $_REQUEST['album'];

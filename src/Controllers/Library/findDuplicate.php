@@ -74,7 +74,7 @@ do {
 } while (!empty($tracks));
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-    ->addVariable('tablescript', 'myury.datatable.default')
+    ->addVariable('tablescript', 'myradio.datatable.default')
     ->addVariable('title', 'Duplicate Tracks')
     ->addVariable('tabledata', CoreUtils::dataSourceParser($duplicates))
     ->render();

@@ -35,11 +35,11 @@ class MyRadio_Swagger
             'apis' => [],
         ];
 
-        foreach (self::getApiClasses() as $api => $myury) {
-            if ($myury == __CLASS__) {
+        foreach (self::getApiClasses() as $api => $myradio_class) {
+            if ($myradio_class == __CLASS__) {
                 continue;
             }
-            $class = new ReflectionClass($myury);
+            $class = new ReflectionClass($myradio_class);
             $meta = self::getClassDoc($class);
             $data['apis'][] = ['path' => '/resources/'.$api, 'description' => $meta['short_desc']];
         }
@@ -49,7 +49,9 @@ class MyRadio_Swagger
 
     public static function getApiClasses()
     {
-        $data = Database::getInstance()->fetchAll('SELECT class_name, api_name FROM myury.api_class_map ORDER BY api_name');
+        $data = Database::getInstance()->fetchAll(
+            'SELECT class_name, api_name FROM myury.api_class_map ORDER BY api_name'
+        );
         $result = [];
 
         foreach ($data as $row) {
@@ -71,15 +73,34 @@ class MyRadio_Swagger
 
     protected static function getParamType($param, $meta)
     {
-        return empty($meta['params'][$param->getName()]['type']) ? 'int' : $meta['params'][$param->getName()]['type'];
+        $type = empty($meta['params'][$param->getName()]['type'])
+            ? 'integer' : $meta['params'][$param->getName()]['type'];
+        switch ($type) {
+            case 'int':
+                $type = 'integer';
+                break;
+            case 'float':
+            case 'double':
+                $type = 'number';
+                break;
+            case 'char':
+                $type = 'string';
+                break;
+            case 'bool':
+                $type = 'boolean';
+                break;
+        }
+
+        return $type;
     }
 
     protected static function getParamDescription($param, $meta)
     {
-        return empty($meta['params'][$param->getName()]['description']) ? '' : $meta['params'][$param->getName()]['description'];
+        return empty($meta['params'][$param->getName()]['description']) ?
+            '' : $meta['params'][$param->getName()]['description'];
     }
 
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         $blocked_methods = [
             'getInstance',
@@ -87,7 +108,6 @@ class MyRadio_Swagger
             '__wakeup',
             'removeInstance',
             '__toString',
-            'setToDataSource',
             '__construct',
         ];
         $data = [
@@ -114,7 +134,8 @@ class MyRadio_Swagger
             if ($count === 1) {
                 $meta['api'] = $comment;
             } else {
-                $meta['api'] = (substr($method->getName(), 0, 3) === 'set' or $method->getName() === 'create') ? 'POST' : 'GET';
+                $meta['api'] = (substr($method->getName(), 0, 3) === 'set' || $method->getName() === 'create') ?
+                    'POST' : 'GET';
             }
 
             //Build the API URL
@@ -132,12 +153,12 @@ class MyRadio_Swagger
                 //toDataSource has a full option
                 $params[] = [
                     'paramType' => 'query',
-                    'name' => 'full',
-                    'description' => 'Some objects can optionally return a small or large response. By default, a full response is on, although it is intended for this to change.',
-                    'type' => 'boolean',
+                    'name' => 'mixins',
+                    'description' => 'Some objects can optionally extra data as strings to the api call',
+                    'type' => 'Array',
                     'required' => false,
                     'allowMultiple' => false,
-                    'defaultValue' => true,
+                    'defaultValue' => [],
                 ];
             }
 
@@ -150,7 +171,8 @@ class MyRadio_Swagger
                 $params[] = [
                     'paramType' => 'path',
                     'name' => 'id',
-                    'description' => "The unique identifier of the $this->class to be acted on. An int for most Objects, but some are Strings.",
+                    'description' => "The unique identifier of the $this->class to be acted on. "
+                                     . "An int for most Objects, but some are Strings.",
                     'type' => 'int',
                     'required' => true,
                     'allowMultiple' => false,
@@ -191,7 +213,10 @@ class MyRadio_Swagger
 
     public static function parseDoc($doc)
     {
-        $raw = explode("\n", trim(preg_replace('/(\/\*\*)|(\n\s+\*\/?[^\S\r\n]?)/', "\n", $doc->getDocComment()), " \n"));
+        $raw = explode(
+            "\n",
+            trim(preg_replace('/(\/\*\*)|(\n\s+\*\/?[^\S\r\n]?)/', "\n", $doc->getDocComment()), " \n")
+        );
 
         $lines = [''];
         $keys = [];
@@ -200,7 +225,7 @@ class MyRadio_Swagger
                 $lines[] = '';
             } elseif (substr($line, 0, 1) === '@') {
                 $key = preg_replace('/^\@([a-zA-Z]+)(.*)$/', '$1', $line);
-                $keys[$key][] = trim(preg_replace('/^\@([a-zA-Z]+) (.*)$/', '$2', $line));
+                $keys[] = ['type' => $key, 'data' => trim(preg_replace('/^\@([a-zA-Z]+) (.*)$/', '$2', $line))];
             } else {
                 $lines[sizeof($lines) - 1] .= $line.' ';
             }
@@ -221,8 +246,8 @@ class MyRadio_Swagger
         //Now parse for docblock things
         $params = [];
         $return_type = 'Set';
-        foreach ($doc['keys'] as $key => $values) {
-            switch ($key) {
+        foreach ($doc['keys'] as $key) {
+            switch ($key['type']) {
                 //Deal with $params
                 case 'param':
                     /*
@@ -231,7 +256,7 @@ class MyRadio_Swagger
                      * info[2] should be parameter name
                      * info[3] should be the description
                      */
-                    $info = explode(' ', $values[0], 4);
+                    $info = explode(' ', $key['data'][0], 4);
                     $arg = str_replace('$', '', $info[2]); //Strip the $ from variable name
                     $params[$arg] = ['type' => $info[1], 'description' => empty($info[3]) ?: $info[3]];
                     break;
@@ -260,9 +285,10 @@ class MyRadio_Swagger
         $mixins = [];
         $return_type = 'Set';
         $deprecated = false;
+        $ignore = false;
         $method = 'auto';
-        foreach ($doc['keys'] as $key => $values) {
-            switch ($key) {
+        foreach ($doc['keys'] as $key) {
+            switch ($key['type']) {
                 //Deal with $params
                 case 'param':
                     /*
@@ -270,22 +296,32 @@ class MyRadio_Swagger
                      * info[1] should be parameter name
                      * info[2] should be the description
                      */
-                    $info = preg_split('/\s+/', $values[0], 3);
-                    $arg = str_replace('$', '', $info[1]); //Strip the $ from variable name
-                    $params[$arg] = ['type' => $info[0], 'description' => empty($info[2]) ?: $info[2]];
+                    $info = preg_split('/\s+/', $key['data'], 3);
+                    if (sizeof($info) > 1) {
+                        $arg = str_replace('$', '', $info[1]); //Strip the $ from variable name
+                        $params[$arg] = [
+                            'type' => $info[0],
+                            'description' => $info[2] ?? ''
+                        ];
+                    }
                     break;
                 case 'mixin':
                     /*
                      * info[0] should be the mixin name
                      * info[1] should be a description of what the mixin does
                      */
-                    foreach ($values as $value) {
+                    foreach ($key['data'] as $value) {
                         $info = explode(' ', $value, 2);
                         $mixins[$info[0]] = $info[1];
                     }
                     break;
                 case 'deprecated':
                     $deprecated = true;
+                    break;
+                case 'swagger':
+                    if ($key['data'][0] === 'ignore') {
+                        $ignore = true;
+                    }
                     break;
             }
         }
@@ -297,6 +333,7 @@ class MyRadio_Swagger
             'mixins' => $mixins,
             'return_type' => $return_type,
             'deprecated' => $deprecated,
+            'ignore' => $ignore
         ];
     }
 
@@ -310,9 +347,13 @@ class MyRadio_Swagger
     public static function getOptionsAllow(ReflectionMethod $method)
     {
         $info = self::parseDoc($method);
-        if (isset($info['keys']['api'])) {
-            return array_merge(['OPTIONS'], $info['keys']['api']);
-        } elseif (strncmp($method->getName(), 'set', strlen('set')) === 0) {
+        foreach ($info['keys'] as $key) {
+            if ($key['type'] === 'api') {
+                return array_merge(['OPTIONS'], $key['data']);
+            }
+        }
+
+        if (strncmp($method->getName(), 'set', strlen('set')) === 0) {
             return ['OPTIONS', 'POST'];
         } else {
             return ['OPTIONS', 'GET'];
@@ -402,6 +443,10 @@ class MyRadio_Swagger
             $api_key = self::getCurrentUserWithoutMessingWithSession();
         } else {
             $api_key = MyRadio_APIKey::getInstance($_REQUEST['api_key']);
+            # If the API key has been revoked, it doesn't exist anymore.
+            if (isset($api_key)) {
+                $api_key = $api_key->isRevoked() ? false : $api_key;
+            }
         }
 
         return $api_key;
@@ -414,14 +459,12 @@ class MyRadio_Swagger
      */
     protected static function getCurrentUserWithoutMessingWithSession()
     {
-        $dummysession = $_SESSION;
-        session_decode((new MyRadioSession())->read(session_id()));
-        if (!isset($_SESSION['memberid'])) {
+        $dummysession = unserialize((new MyRadioSession())->read(session_id()));
+        if (!isset($dummysession['memberid'])) {
             $user = null;
         } else {
-            $user = MyRadio_User::getInstance($_SESSION['memberid']);
+            $user = MyRadio_User::getInstance($dummysession['memberid']);
         }
-        $_SESSION = $dummysession;
 
         return $user;
     }

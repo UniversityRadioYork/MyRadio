@@ -19,20 +19,15 @@
 name=myradio_daemon
 rcvar=myradio_daemon_enable
 
-load_rc_config myradio_daemon_enable
+load_rc_config $name
 
 : ${myradio_daemon_enable:="NO"}
 
 command=/usr/local/www/myradio/src/Controllers/daemon.php
-command_interpreter=`which php`
-command_args='process >/var/log/ury-org-uk/myradio_daemon.log 2>&1 &'
-start_precmd=find_pidfile
-stop_precmd=find_pidfile
+command_interpreter=/usr/local/bin/php
+command_args="process >>/var/log/myradio/daemon.log 2>&1 &"
+pidfile="/var/run/${name}.pid"
 
-find_pidfile()
-{
-	pidfile='/var/run/myradio_daemon.pid'
-}
-
+# Necessary for podcasts (ffmpeg)
 export PATH=/usr/local/bin:/usr/local/sbin:$PATH
 run_rc_command "$1"

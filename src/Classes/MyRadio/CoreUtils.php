@@ -10,7 +10,7 @@ use MyRadio\Database;
 use MyRadio\MyRadioTwig;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadioError;
-use MyRadio\Iface\MyRadio_DataSource;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
  * Standard API Utilities. Basically miscellaneous functions for the core system
@@ -64,11 +64,9 @@ class CoreUtils
         } catch (MyRadioException $e) {
             return false;
         }
-        /*
-         * This is better than file_exists because it ensures that the response is valid for a version which has the file
-         * when live does not
-         */
 
+        /* This is better than file_exists because it ensures that the response
+         * is valid for a version which has the file when live does not */
         return is_string(stream_resolve_include_path('Controllers/'.$module.'/'.$action.'.php'));
     }
 
@@ -83,9 +81,6 @@ class CoreUtils
      */
     public static function getTemplateObject()
     {
-        require_once 'Twig/Autoloader.php';
-        \Twig_Autoloader::register();
-
         return new MyRadioTwig();
     }
 
@@ -121,11 +116,14 @@ class CoreUtils
      */
     public static function happyTime($timestring, $time = true, $date = true)
     {
-        return date(($date ? 'd/m/Y' : '').($time && $date ? ' ' : '').($time ? 'H:i' : ''), is_numeric($timestring) ? $timestring : strtotime($timestring));
+        return date(
+            ($date ? 'd/m/Y' : '').($time && $date ? ' ' : '').($time ? 'H:i' : ''),
+            is_numeric($timestring) ? $timestring : strtotime($timestring)
+        );
     }
 
     /**
-     * Formats a number into h:m:s format.
+     * Formats a number into hh:mm:ss format.
      *
      * @param int $int
      *
@@ -134,16 +132,15 @@ class CoreUtils
     public static function intToTime($int)
     {
         $hours = floor($int / 3600);
-        if ($hours === 0) {
-            $hours = null;
-        } else {
-            $hours = $hours.':';
-        }
-
         $mins = floor(($int - ($hours * 3600)) / 60);
         $secs = ($int - ($hours * 3600) - ($mins * 60));
 
-        return "$hours$mins:$secs";
+        //force 2 digit values for h,m and s.
+        $hours = sprintf("%02d", $hours);
+        $mins = sprintf("%02d", $mins);
+        $secs = sprintf("%02d", $secs);
+
+        return "$hours:$mins:$secs";
     }
 
     /**
@@ -229,6 +226,58 @@ class CoreUtils
     public static function makeInterval($start, $end)
     {
         return $end - $start.' seconds';
+    }
+
+    /**
+     * Runs the relevant encode commands on an uploaded music file.
+     *
+     * @param string $tmpfile The original unencoded filepath
+     * @param string $dbfile  The destination filepath, sans extension
+     * @throws MyRadioException Thrown if encode or move commands appear to fail.
+     * @note Similar command is run for podcast uploads, which are done slightly differently
+     */
+    public static function encodeTrack($tmpfile, $dbfile)
+    {
+        $commands = [
+            'mp3' => "nice -n 15 ffmpeg -i '{$tmpfile}' -ab 192k -f mp3 -map 0:a '{$dbfile}.mp3'",
+            'ogg' => "nice -n 15 ffmpeg -i '{$tmpfile}' -acodec libvorbis -ab 192k -map 0:a '{$dbfile}.ogg'"
+        ];
+        $escaped_commands = array_map('escapeshellcmd', $commands);
+        $failed_formats = [];
+
+        foreach (['mp3', 'ogg'] as $format) {
+            if (file_exists("{$dbfile}.{$format}")) {
+                throw new MyRadioException("Cannot encode, track {$dbfile}.{$format} already exists", 500);
+            }
+        }
+
+        foreach ($escaped_commands as $format => $command) {
+            exec($command, $command_stdout, $command_exit_code);
+            if ($command_exit_code) {
+                $failed_formats[] = $format;
+            }
+        }
+
+        if ($failed_formats) {
+            throw new MyRadioException('Conversion failed: ' . implode(',', $failed_formats), 500);
+        } elseif (!file_exists($dbfile.'.mp3') || !file_exists($dbfile.'.ogg')) {
+            throw new MyRadioException('Conversion failed', 500);
+        }
+        $orig_new_filename = $dbfile .".mp3.orig";
+        // using copy() instead of rename() because renaming between different file partitions
+        // generates a warning relating to atomicity.
+        // Now added some more checking to hopefully find when tracks don't get uploaded correctly.
+        copy($tmpfile, $orig_new_filename);
+        if (!file_exists($orig_new_filename)) {
+            throw new MyRadioException('Could not copy file to library. File was not created.');
+        } elseif ((filesize($tmpfile) !== filesize($orig_new_filename))
+                || (md5_file($tmpfile) !== md5_file($orig_new_filename))
+            ) {
+            throw new MyRadioException('File mismatch: "'.$tmpfile.'" copied to library as
+                "'.$orig_new_filename.'", files are not equal.');
+        } else {
+            unlink($tmpfile);
+        }
     }
 
     /**
@@ -324,17 +373,43 @@ class CoreUtils
      */
     public static function dataSourceParser($data, $mixins = [])
     {
-        if (is_object($data) && $data instanceof MyRadio_DataSource) {
+        if (is_object($data) && $data instanceof ServiceAPI) {
             return $data->toDataSource($mixins);
         } elseif (is_array($data)) {
             foreach ($data as $k => $v) {
                 $data[$k] = self::dataSourceParser($v, $mixins);
             }
-
             return $data;
         } else {
             return $data;
         }
+    }
+
+    /**
+     * Iteratively calls the toDataSource method on all of the objects in the given array, returning the results as
+     * a new array.
+     * @param array $array
+     * @param array $mixins Mixins
+     * @return array, unless it wasn't passed an array to begin with, in which case just return $array.
+     * @throws MyRadioException Throws an Exception if a provided object is not a DataSource
+     */
+    public static function setToDataSource($array, $mixins = [])
+    {
+        if (!is_array($array)) {
+            return $array;
+        }
+        $result = [];
+        foreach ($array as $element) {
+            //It must implement the toDataSource method!
+            if (!method_exists($element, 'toDataSource')) {
+                throw new MyRadioException(
+                    'Attempted to convert '.get_class($element).' to a DataSource but it not a valid Data Object!',
+                    500
+                );
+            }
+            $result[] = $element->toDataSource($mixins);
+        }
+        return $result;
     }
 
     //from http://www.php.net/manual/en/function.xml-parse-into-struct.php#109032
@@ -426,17 +501,6 @@ class CoreUtils
         if ($db->getInTransaction()) {
             $db->query('ROLLBACK');
         }
-
-        $errors = MyRadioError::getErrorCount();
-        $exceptions = MyRadioException::getExceptionCount();
-        $queries = $db->getCounter();
-        $host = gethostbyname(gethostname());
-
-        $db->query(
-            'INSERT INTO myury.error_rate (server_ip, error_count, exception_count, queries)
-            VALUES ($1, $2, $3, $4)',
-            [$host, $errors, $exceptions, $queries]
-        );
     }
 
     /**
@@ -468,30 +532,6 @@ class CoreUtils
             ),
             true
         );
-    }
-
-    public static function getErrorStats($since = null)
-    {
-        if ($since === null) {
-            $since = time() - 86400;
-        }
-        $result = Database::getInstance()->fetchAll(
-            'SELECT
-            round(extract(\'epoch\' from timestamp) / 600) * 600 as timestamp,
-            SUM(error_count)/COUNT(error_count) AS errors, SUM(exception_count)/COUNT(exception_count) AS exceptions,
-            SUM(queries)/COUNT(queries) AS queries
-            FROM myury.error_rate WHERE timestamp>=$1 GROUP BY round(extract(\'epoch\' from timestamp) / 600)
-            ORDER BY timestamp ASC',
-            [self::getTimestamp($since)]
-        );
-
-        $return = [];
-        $return[] = ['Timestamp', 'Errors per request', 'Exceptions per request', 'Queries per request'];
-        foreach ($result as $row) {
-            $return[] = [date('H:i', $row['timestamp']), (int) $row['errors'], (int) $row['exceptions'], (int) $row['queries']];
-        }
-
-        return $return;
     }
 
     public static function getSafeHTML($dirty_html)
@@ -584,6 +624,69 @@ class CoreUtils
     {
         // search backwards starting from haystack length characters from the end
         return $needle === '' || strrpos($haystack, $needle, -strlen($haystack)) !== false;
+    }
+
+    /**
+     * Explode tags from string to array.
+     * We want to handle the case when people delimit with commas, spaces, or commas and
+     * spaces, as well as handling extended spaces.
+     *
+     * @param string $tags A tags string, comma separated.
+     *
+     * @return array The exploded tags.
+     *
+     * @throws MyRadioException when tags are longer than 24 characters.
+    **/
+    public static function explodeTags($tags)
+    {
+        $tags = preg_split('/[, ] */', $tags, null, PREG_SPLIT_NO_EMPTY);
+        $exploded_tags = [];
+        foreach ($tags as $tag) {
+            if (empty($tag)) {
+                continue;
+            }
+            if (strlen($tag) > 24) {
+                throw new MyRadioException(
+                    "Sorry, individual tags longer than 24 characters aren't allowed. Please try again.",
+                    400
+                );
+            }
+            // Add the valid tag to the returned array.
+            $exploded_tags[] = trim($tag);
+        }
+        return $exploded_tags;
+    }
+
+    public static function checkUploadPostSize()
+    {
+        // Check that any files don't go over the PHP post_max_size
+        // Otherwise, sometimes PHP won't return an error, causing an empty $_POST.
+        // This would cause confusing errors relating to empty fields.
+        // https://stackoverflow.com/questions/2133652/how-to-gracefully-handle-files-that-exceed-phps-post-max-size
+        $post_size = trim(ini_get('post_max_size'));
+        if ($post_size != '') {
+            $last = strtolower(substr($post_size, -1));
+        } else {
+            $last = '';
+        }
+        switch ($last) {
+            // The 'G' modifier is available since PHP 5.1.0
+            case 'g':
+                $post_size *= 1024;
+                // fall through
+            case 'm':
+                $post_size *= 1024;
+                // fall through
+            case 'k':
+                $post_size *= 1024;
+                // fall through
+        }
+        if ($_SERVER['CONTENT_LENGTH'] > $post_size) {
+            throw new MyRadioException(
+                "The content uploaded in this form was too large for the server's configuration.",
+                500
+            );
+        }
     }
 
     private function __construct()

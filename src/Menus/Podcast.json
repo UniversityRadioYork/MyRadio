@@ -4,7 +4,12 @@
             {
                 "title": "My Podcasts",
                 "url": "module=Podcast",
-                "description": "View your podcasts"
+                "description": "View your Podcasts"
+            },
+            {
+                "title": "All Podcasts",
+                "url": "module=Podcast,action=allPodcast",
+                "description": "View all Podcasts"
             },
             {
                 "title": "Create Podcast",

@@ -25,14 +25,13 @@ class MyRadio_PodcastDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 
     public static function run()
     {
-        dlog('Checking for pending Podcasts...', 4);
         $podcasts = MyRadio_Podcast::getPending();
 
         if (!empty($podcasts)) {
             //Encode the first podcast.
             dlog('Converting Podcast '.$podcasts[0]->getID().'...', 3);
             $podcasts[0]->convert();
-            dlog('Converstion complete.', 3);
+            dlog('Conversion complete.', 3);
         }
     }
 }

@@ -54,7 +54,8 @@ class MyRadioFormField
      */
     const TYPE_DATE = 0x03;
     /**
-     * The constant used to specify this MyRadioFormField must be a valid date and time, providing a datetime widget for it.
+     * The constant used to specify this MyRadioFormField must be a valid date and time,
+     * and provides a datetime widget for it.
      *
      * The datetime field currently takes no custom options.
      * NOTE: Currently, the TIME aspect must be in 15 minute intervals
@@ -65,7 +66,8 @@ class MyRadioFormField
      */
     const TYPE_DATETIME = 0x04;
     /**
-     * The constant used to specify this MyRadioFormField must be a valid member, providing a Member autocomplete for it.
+     * The constant used to specify this MyRadioFormField must be a valid member,
+     * and provides a Member autocomplete for it.
      * This actually renders two fields - the visible one the user can enter a name into, and a hidden one that will
      * store the ID once it has been selected.
      *
@@ -92,7 +94,8 @@ class MyRadioFormField
      */
     const TYPE_TRACK = 0x06;
     /**
-     * The constant used to specify this MyRadioFormField must be a valid artist, providing an Artist autocomplete for it.
+     * The constant used to specify this MyRadioFormField must be a valid artist,
+     * providing an Artist autocomplete for it.
      * This actually renders two fields - the visible one the user can enter an artist into, and a hidden one that will
      * store the ID once it has been selected.
      *
@@ -113,8 +116,8 @@ class MyRadioFormField
     /**
      * The constant used to specify this MyRadioFormField must be a standard HTML select field.
      *
-     * The Custom Options property for this MyRadioFormField type is an Array of items in the select list, each defined as
-     * follows:
+     * The Custom Options property for this MyRadioFormField type is an Array of items in the select list, each defined
+     * as follows:
      *
      * value: The value of the select option.
      *
@@ -126,8 +129,8 @@ class MyRadioFormField
     /**
      * The constant used to specify this MyRadioFormField must be a set of standard HTML radio fields.
      *
-     * The Custom Options property for this MyRadioFormField type is an Array of items in the Radio list, each defined as
-     * follows:
+     * The Custom Options property for this MyRadioFormField type is an Array of items in the Radio list, each defined
+     * as follows:
      *
      * value: The value of the radio option.
      *
@@ -176,12 +179,12 @@ class MyRadioFormField
      */
     const TYPE_TIME = 0x0E;
     /**
-     * The constant used to specify this MyRadioFormField should be a group of checkbox MyRadioFormFields grouped within a
-     * a single fieldset. This provides the advantage of Select All and Select None links and a generally more organised
-     * feel.
+     * The constant used to specify this MyRadioFormField should be a group of checkbox MyRadioFormFields grouped within
+     * a single fieldset. This provides the advantage of Select All and Select None links and a generally more
+     * organised feel.
      *
-     * The Custom Options field for this MyRadioFormField field type is an Array of MyRadioFormFields of the Checkbox type
-     * which are to be rendered within this MyRadioFormField.
+     * The Custom Options field for this MyRadioFormField field type is an Array of MyRadioFormFields of the Checkbox
+     * type which are to be rendered within this MyRadioFormField.
      */
     const TYPE_CHECKGRP = 0x0F;
     /**
@@ -194,12 +197,12 @@ class MyRadioFormField
      */
     const TYPE_SECTION = 0x10;
     /**
-     * The constant used to specify this MyRadioFormField should be a container for a set of repeating MyRadioFormFields.
-     * By default these render in a tabular layout.
+     * The constant used to specify this MyRadioFormField should be a container for a set of repeating
+     * MyRadioFormFields. By default these render in a tabular layout.
      *
-     * The Custom Options field for this MyRadioFormField field type is an Array of MyRadioFormFields of any singular type.
-     * This means that CHECKGRP, SECTION and other similar field types are not supported by this MyRadioFormField Type
-     * and may have... interesting... results.
+     * The Custom Options field for this MyRadioFormField field type is an Array of MyRadioFormFields of any singular
+     * type. This means that CHECKGRP, SECTION and other similar field types are not supported by this MyRadioFormField
+     * Type and may have... interesting... results.
      */
     const TYPE_TABULARSET = 0x11;
     /**
@@ -339,16 +342,30 @@ class MyRadioFormField
      * Set up a new MyRadio Form Field with the new parameters, returning the new field.
      * This method is only useful practically when the MyRadioFormField is inserted to a MyRadioForm.
      *
-     * @param string $name    The name and id of the field, as used in the HTML properties - should be unique to the form '.' IS A RESERVED CHARACTER!
-     *                        '.' IS A RESERVED CHARACTER!
-     * @param int    $type    The MyRadioFormField Field Type to use. See the constants defined in this class for details
-     * @param array  $options A set of additional settings for the MyRadioFormField as follows (all optional):<br> required: Whether the field is required (default true)<br> label: The human-readable name of the field. (default reuses name)<br> explanation: Help text for the MyRadioFormField (default none)<br> display: Whether the MyRadioFormField should be visible when the page loads (default true)<br> classes: An array of additional classes to add to the input field (default empty)<br> options: An array of additional settings that are specific to the field type (default empty)<br> value: The default value of the field when it is rendered (default none)<br> enabled: Whether the field is enabled when the page is loaded (default true)<br> redacted: If true, this field is hidden in debug output (default false)
+     * @param string $name    The name and id of the field, as used in the HTML properties - should be unique to the
+     *                        form '.' IS A RESERVED CHARACTER!  '.' IS A RESERVED CHARACTER!
+     * @param int    $type    The MyRadioFormField Field Type to use. See the constants defined in this class for
+     *                        details
+     * @param array  $options A set of additional settings for the MyRadioFormField as follows (all optional):<br>
+     *                        required: Whether the field is required (default true)<br> label: The human-readable name
+     *                        of the field. (default reuses name)<br>
+     *                        explanation: Help text for the MyRadioFormField (default none)<br>
+     *                        display: Whether the MyRadioFormField should be visible when the page loads
+     *                        (default true)<br>
+     *                        classes: An array of additional classes to add to the input field (default empty)<br>
+     *                        options: An array of additional settings that are specific to the field type
+     *                        (default empty)<br>
+     *                        value: The default value of the field when it is rendered (default none)<br>
+     *                        enabled: Whether the field is enabled when the page is loaded (default true)<br> redacted:
+     *                        If true, this field is hidden in debug output (default false)
      *                        required: Whether the field is required (default true)<br>
      *                        label: The human-readable name of the field. (default reuses name)<br>
      *                        explanation: Help text for the MyRadioFormField (default none)<br>
-     *                        display: Whether the MyRadioFormField should be visible when the page loads (default true)<br>
+     *                        display: Whether the MyRadioFormField should be visible when the page loads
+     *                        (default true)<br>
      *                        classes: An array of additional classes to add to the input field (default empty)<br>
-     *                        options: An array of additional settings that are specific to the field type (default empty)<br>
+     *                        options: An array of additional settings that are specific to the field type
+     *                        (default empty)<br>
      *                        value: The default value of the field when it is rendered (default none)<br>
      *                        enabled: Whether the field is enabled when the page is loaded (default true)<br>
      *                        redacted: If true, this field is hidden in debug output (default false)
@@ -527,6 +544,19 @@ class MyRadioFormField
                 $options['trackname'] = $this->value->getTitle();
                 $value = $this->value->getID();
             }
+        } elseif (($this->type === self::TYPE_ALBUM) && !empty($this->value)) {
+            if (is_array($this->value)) { //Deal with TABULARSETs
+                foreach ($this->value as $k => $v) {
+                    if (empty($v)) {
+                        continue;
+                    }
+                    $options['albumname'][$k] = $v->getTitle();
+                    $value[$k] = $v->getID();
+                }
+            } else {
+                $options['albumname'] = $this->value->getTitle();
+                $value = $this->value->getID();
+            }
         } elseif (($this->type === self::TYPE_MEMBER) && !empty($this->value)) {
             if (is_array($this->value)) { //Deal with TABULARSETs
                 foreach ($this->value as $k => $v) {
@@ -563,6 +593,10 @@ class MyRadioFormField
      *
      * This is called by MyRadioForm::readValues()
      *
+     * Repeated elements -> TYPE_TABULARSET data has a little quirk. Because PHP, the table data is returned as a
+     * parent array of each column (not row), with child arrays containing each row value for each column.
+     * This is probably opposite to what you're thinking.
+     *
      * @param string $prefix The current prefix to the field name
      *
      * @return mixed The submitted field value
@@ -579,25 +613,36 @@ class MyRadioFormField
             case self::TYPE_TEXT:
             case self::TYPE_EMAIL:
             case self::TYPE_ARTIST:
-                return strip_tags($_REQUEST[$name]);
-            break;
+                //Deal with Arrays for repeated elements - see function comment.
+                if (is_array($_REQUEST[$name])) {
+                    $stripped_values = [];
+                    foreach ($_REQUEST[$name] as $field_key => $field_value) {
+                        $stripped_values[$field_key] = strip_tags($field_value);
+                    }
+                    return $stripped_values;
+                } else {
+                    return strip_tags($_REQUEST[$name]);
+                }
+                break;
             case self::TYPE_BLOCKTEXT:
                 $dom = new \DOMDocument();
-                $dom->loadHtml($_REQUEST[$name]);
+                // We have to wrap the html so that DOMDocument has a root
+                $dom->loadHtml("<div>$_REQUEST[$name]</div>", LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
                 $xpath = new \DOMXPath($dom);
                 while ($node = $xpath->query('//script')->item(0)) {
                     $node->parentNode->removeChild($node);
                 }
 
-                return $dom->saveHTML();
-            break;
+                // Strip the <div> ... </div> nodes back off
+                return substr(trim($dom->saveHTML()), 5, -6);
+                break;
             case self::TYPE_HIDDEN:
             case self::TYPE_PASSWORD:
                 return $_REQUEST[$name];
-            break;
+                break;
             case self::TYPE_MEMBER:
-                //Deal with Arrays for repeated elements
+                //Deal with Arrays for repeated elements - see function comment.
                 if (is_array($_REQUEST[$name])) {
                     for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                         if (empty($_REQUEST[$name][$i])) {
@@ -616,7 +661,7 @@ class MyRadioFormField
                 }
                 break;
             case self::TYPE_TRACK:
-                //Deal with Arrays for repeated elements
+                //Deal with Arrays for repeated elements - see function comment.
                 if (is_array($_REQUEST[$name])) {
                     for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                         if (empty($_REQUEST[$name][$i])) {
@@ -634,7 +679,7 @@ class MyRadioFormField
             case self::TYPE_SELECT:
             case self::TYPE_RADIO:
             case self::TYPE_DAY:
-                //Deal with Arrays for repeated elements
+                //Deal with Arrays for repeated elements - see function comment.
                 if (is_array($_REQUEST[$name])) {
                     for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                         if (is_numeric($_REQUEST[$name][$i])) {
@@ -654,7 +699,7 @@ class MyRadioFormField
             case self::TYPE_DATE:
             case self::TYPE_DATETIME:
             case self::TYPE_TIME:
-                //Deal with repeated elements
+                //Deal with repeated elements - see function comment.
                 if (is_array($_REQUEST[$name])) {
                     for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                         $_REQUEST[$name][$i] = $this->convertTime($_REQUEST[$name][$i]);
@@ -742,7 +787,7 @@ class MyRadioFormField
                 return;
                 break;
             case self::TYPE_ALBUM:
-                //Deal with Arrays for repeated elements
+                //Deal with Arrays for repeated elements - see function comment.
                 if (is_array($_REQUEST[$name])) {
                     for ($i = 0; $i < sizeof($_REQUEST[$name]); ++$i) {
                         if (empty($_REQUEST[$name][$i])) {
@@ -757,11 +802,9 @@ class MyRadioFormField
                 }
                 break;
             case self::TYPE_WEEKSELECT:
-                /*
-                 * Now isn't this fun. The week select is comprised of 336 checkboxes that we need to amalgamate.
-                 * Value returned are relative to days starting at midnight, not 7am.
-                 * Selections spanning multiple days will return as two seperate selections ('days' here again being midnight)
-                 */
+                /* Now isn't this fun. The week select is comprised of 336 checkboxes that we need to amalgamate. Value
+                 * returned is relative to days starting at midnight, not 7am. Selections spanning multiple days will
+                 * return as two seperate selections ('days' here again being midnight) */
                 $times = [];
                 $active_day = null;
                 $active_time = null;
@@ -801,7 +844,9 @@ class MyRadioFormField
                 return $times;
                 break;
             default:
-                throw new MyRadioException('Field type '.$this->type.' does not have a valid value interpreter definition.');
+                throw new MyRadioException(
+                    'Field type ' . $this->type . ' does not have a valid value interpreter definition.'
+                );
         }
     }
 
@@ -812,8 +857,7 @@ class MyRadioFormField
         }
         /* For why we need to do this, consult the notes at
          * http://php.net/manual/en/function.strtotime.php.
-         * YES, PHP IS RETARDED.
-         */
+         * YES, PHP IS RETARDED. */
         $timeString = str_replace('/', '-', $timeString);
         $time = (int) strtotime($timeString);
         //Times should be seconds since midnight *any* day

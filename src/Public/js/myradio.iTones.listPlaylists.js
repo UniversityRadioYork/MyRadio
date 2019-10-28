@@ -1,31 +1,29 @@
-$('.twig-datatable').dataTable(
+$(".twig-datatable").dataTable({
+  "aoColumns": [
+    //title
     {
-        "aoColumns": [
-        //title
-        {
-            "sTitle": "Title"
-        },
-        //playlistid
-        {
-            bVisible: false
-        },
-        //description
-        {
-            "sTitle": "Description"
-        },
-        //edittrackslink
-        {
-            "sTitle": "Edit"
-        },
-        //configurelink
-        {
-            "sTitle": "Configure",
-        },
-        //revisionslink
-        {
-            "sTitle": "Revisions"
-        },
-        ],
-        "bPaginate": false
-    }
-);
+      "sTitle": "Title"
+    },
+    //playlistid
+    {
+      bVisible: false
+    },
+    //description
+    {
+      "sTitle": "Description"
+    },
+    //edittrackslink
+    {
+      "sTitle": "Edit"
+    },
+    //configurelink
+    {
+      "sTitle": "Configure",
+    },
+    //revisionslink
+    {
+      "sTitle": "Revisions"
+    },
+  ],
+  "bPaginate": false
+});

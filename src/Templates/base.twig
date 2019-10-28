@@ -8,43 +8,7 @@
     {% endblock %}
   </head>
   <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="{{baseurl}}">MyRadio</a>
-        </div>
-        <div class="collapse navbar-collapse">
-         <ul class="nav navbar-nav navbar-right">
-            {% if memberid %}
-              <li>
-                <a href="{{MyRadio.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}">
-                  <span class="glyphicon glyphicon-time"></span> {% if timeslotname is not null %}{{ timeslotname }}{% else %}Select Timeslot{% endif %}
-                </a>
-              </li>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  {% if impersonator %}
-                    <span class="glyphicon glyphicon-eye-open"></span>
-                  {% else %}
-                    <span class="glyphicon glyphicon-user"></span>
-                  {% endif %}
-                   {{ name }}<span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu" role="menu">
-                  <li><a href="{{MyRadio.makeURL(config, 'Profile')}}"><span class="glyphicon glyphicon-user"></span> My Profile</a></li>
-                  {% if impersonator %}
-                    <li class="divider"></li>
-                    <li class="dropdown-header">Impersonator: {{impersonator}}</li>
-                    <li><a href="{{MyRadio.makeURL(config, 'MyRadio', 'impersonate')}}"><span class="glyphicon glyphicon-eye-close"></span> Unimpersonate</a></li>
-                  {% endif %}
-                  <li><a href="{{MyRadio.makeURL(config, 'MyRadio', 'logout')}}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-                </ul>
-              </li>
-            {% endif %}
-          </ul>
-        </div>
-      </div>
-    </nav>
+    {% include 'parts/nav.twig' %}
     <br>
     <div class="container main-container">
       {% if phperrors is not null %}
@@ -64,7 +28,7 @@
         <div class="container">
           <div class="row">
             <div class="col-md-6">
-              &copy;{{config.founded}}-{{"now"|date('Y')}} {{config.long_name}}. MyRadio by <a href="mailto:webmaster@ury.org.uk" title="{{query_count}}">URY Computing Team</a>
+              &copy;{{config.founded}}-{{"now"|date('Y')}} {{config.long_name}}. MyRadio by <a href="mailto:webmaster@{{ config.email_domain }}" title="{{query_count}}">URY Computing Team</a>
             </div>
             <div class="col-md-6 text-right">
               <a href="http://www.york.ac.uk/docs/disclaimer/disclaimer.htm">Disclaimer</a>

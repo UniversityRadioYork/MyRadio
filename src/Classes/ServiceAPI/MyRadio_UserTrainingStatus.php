@@ -153,10 +153,10 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
 
     /**
      * Get an array of properties for this UserTrainingStatus.
-     *
+     * @param array $mixins Mixins
      * @return array
      */
-    public function toDataSource($full = true)
+    public function toDataSource($mixins = [])
     {
         $data = parent::toDataSource();
         $data['user_status_id'] = $this->getUserTrainingStatusID();
@@ -172,7 +172,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         ];
         $data['awarded_time'] = $this->getAwardedTime();
         $data['revoked_by'] = ($this->getRevokedBy() === null ? null :
-                $this->getRevokedBy()->toDataSource($full));
+                $this->getRevokedBy()->toDataSource($mixins));
         $data['revoked_time'] = $this->getRevokedTime();
 
         return $data;

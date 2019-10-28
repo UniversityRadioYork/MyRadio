@@ -2,6 +2,7 @@
 /**
  * Presents a form to the user to enable them to cancel an Episode.
  */
+use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
@@ -15,8 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $timeslot->cancelTimeslot($data['reason']);
 
     if (!$result) {
-        $message = 'Your cancellation request could not be processed at this time. '
-            .'Please contact programming@ury.org.uk instead.';
+        $message = 'This episode is too close to its scheduled time to be automatically cancelled, '
+            .'please contact programming@'.Config::$email_domain.' instead.';
     } else {
         $message = 'Your cancellation request has been sent. You will receive an email informing you of updates.';
     }

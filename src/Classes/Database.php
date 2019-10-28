@@ -104,6 +104,14 @@ class Database
             if (is_bool($v)) {
                 $params[$k] = ($v ? 't' : 'f');
             }
+            if (is_array($v) || is_object($v)) {
+                throw new MyRadioException(
+                    'Query failure: '.$sql.'<br>'
+                    .'Params: '.var_export($params, true)
+                    .'Tried to pass array to query<br>',
+                    400
+                );
+            }
         }
 
         if (defined('DB_PROFILE')) {
@@ -113,17 +121,20 @@ class Database
         }
 
         if (empty($params)) {
-            $result = @pg_query($this->db, $sql);
+            pg_send_query($this->db, $sql);
         } else {
-            $result = @pg_query_params($this->db, $sql, $params);
+            pg_send_query_params($this->db, $sql, $params);
         }
-        if (!$result) {
+        $result = pg_get_result($this->db);
+        $errmsg = pg_result_error($result);
+        if ($errmsg != "") {
             if ($this->in_transaction) {
                 pg_query($this->db, 'ROLLBACK');
             }
             throw new MyRadioException(
                 'Query failure: '.$sql.'<br>'
-                .pg_last_error($this->db).'<br>Params: '.print_r($params, true),
+                .'Params: '.var_export($params, true).'<br>'
+                .$errmsg,
                 500
             );
         }
@@ -249,38 +260,6 @@ class Database
     public function __clone()
     {
         throw new MyRadioException('Attempted to clone a singleton');
-    }
-
-    /**
-     * Converts a postgresql array to a php array
-     * json_decode *nearly* works in some cases, but this tends to be more reliable.
-     *
-     * Based on http://stackoverflow.com/questions/3068683/convert-postgresql-array-to-php-array
-     *
-     * @deprecated Use json output from Postgres instead
-     */
-    public function decodeArray($text)
-    {
-        $limit = strlen($text) - 1;
-        $output = [];
-        $offset = 1;
-
-        if ('{}' != $text) {
-            do {
-                if ('{' != $text{$offset}) {
-                    preg_match('/(\\{?"([^"\\\\]|\\\\.)*"|[^,{}]+)+([,}]+)/', $text, $match, 0, $offset);
-                    $offset += strlen($match[0]);
-                    $output[] = ('"' != $match[1]{0} ? $match[1] : stripcslashes(substr($match[1], 1, -1)));
-                    if ('},' == $match[3]) {
-                        return $offset;
-                    }
-                } else {
-                    $offset = pg_array_parse($text, $output[], $limit, $offset + 1);
-                }
-            } while ($limit > $offset);
-        }
-
-        return $output;
     }
 
     public function intervalToTime($interval)

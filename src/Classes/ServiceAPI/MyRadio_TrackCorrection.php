@@ -96,7 +96,12 @@ class MyRadio_TrackCorrection extends MyRadio_Track
             return;
         }
 
-        parent::__construct($result['trackid']);
+        $track_res = self::$db->fetchOne('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', [$trackid]);
+        if (empty($track_res)) {
+            throw new MyRadioException('The specified Track does not seem to exist', 404);
+        }
+
+        parent::__construct($track_res);
 
         $this->proposed_title = $result['proposed_title'];
         $this->proposed_artist = $result['proposed_artist'];
@@ -228,12 +233,11 @@ class MyRadio_TrackCorrection extends MyRadio_Track
 
     /**
      * Returns an array of key information, useful for Twig rendering and JSON requests.
-     *
-     * @todo Expand the information this returns
-     *
+     * @param array $mixins Mixins. Currently unused
      * @return array
+     * @todo Expand the information this returns
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'title' => $this->getTitle(),
@@ -256,13 +260,21 @@ class MyRadio_TrackCorrection extends MyRadio_Track
                 'display' => 'icon',
                 'value' => 'ok',
                 'title' => 'Approve Track Correction',
-                'url' => URLUtils::makeURL('Library', 'acceptTrackCorrection', ['correctionid' => $this->getCorrectionID()]),
+                'url' => URLUtils::makeURL(
+                    'Library',
+                    'acceptTrackCorrection',
+                    ['correctionid' => $this->getCorrectionID()]
+                ),
             ],
             'rejectlink' => [
                 'display' => 'icon',
                 'value' => 'trash',
                 'title' => 'Reject Track Correction',
-                'url' => URLUtils::makeURL('Library', 'rejectTrackCorrection', ['correctionid' => $this->getCorrectionID()]),
+                'url' => URLUtils::makeURL(
+                    'Library',
+                    'rejectTrackCorrection',
+                    ['correctionid' => $this->getCorrectionID()]
+                ),
             ],
         ];
     }

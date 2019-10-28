@@ -41,23 +41,12 @@ class MyRadio_APIKey extends ServiceAPI implements APICaller
         $this->key = $key;
         $revoked = self::$db->fetchColumn('SELECT revoked from myury.api_key WHERE key_string=$1', [$key]);
         $this->revoked = ($revoked[0] == 't');
-        $this->permissions = self::$db->fetchColumn('SELECT typeid FROM myury.api_key_auth WHERE key_string=$1', [$key]);
-    }
-
-    /**
-     * Logs that this API Key has called something. Used for auditing.
-     *
-     * @param string $uri
-     * @param array  $args
-     *
-     * @deprecated
-     */
-    public function logCall($uri, $args)
-    {
-        self::$db->query(
-            'INSERT INTO myury.api_key_log (key_string, remote_ip, request_path, request_params)
-            VALUES ($1, $2, $3, $4)',
-            [$this->key, $_SERVER['REMOTE_ADDR'], $uri, json_encode($args)]
+        $this->permissions = array_map(
+            'intval',
+            self::$db->fetchColumn(
+                'SELECT typeid FROM myury.api_key_auth WHERE key_string=$1',
+                [$key]
+            )
         );
     }
 
@@ -67,5 +56,14 @@ class MyRadio_APIKey extends ServiceAPI implements APICaller
     public function getID()
     {
         return $this->key;
+    }
+
+
+    /**
+     * Get if the key has been revoked.
+     */
+    public function isRevoked()
+    {
+        return $this->revoked;
     }
 }

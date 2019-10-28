@@ -13,20 +13,9 @@ use MyRadio\ServiceAPI\MyRadio_List;
 
 /**
  * Provides email functions so that MyRadio can send email.
- *
- * @todo    Footers contain hard-coded URLs. This used to be necessary (when the links went to mint), but isn't now.
  */
 class MyRadioEmail extends ServiceAPI
 {
-    // Defaults
-    /**
-     * @todo Hardcoded URLs
-     */
-    private static $headers = 'Content-type: text/plain; charset=utf-8';
-    private static $sender = 'From: MyRadio <no-reply@ury.org.uk>';
-    private static $footer = 'This email was sent automatically from MyRadio. You can opt out of emails by visiting https://ury.org.uk/myury/Profile/edit/.';
-    private static $html_footer = 'This email was sent automatically from MyRadio. You can opt out of emails <a href="https://ury.org.uk/myury/Profile/edit/">on your profile page</a>.';
-    // Standard
     /**
      * @var string carriage return + newline
      */
@@ -58,9 +47,14 @@ class MyRadioEmail extends ServiceAPI
         $this->timestamp = strtotime($info['timestamp']);
         $this->email_id = $eid;
 
-        $this->r_users = self::$db->fetchColumn('SELECT memberid FROM mail.email_recipient_member WHERE email_id=$1', [$eid]);
-
-        $this->r_lists = self::$db->fetchColumn('SELECT listid FROM mail.email_recipient_list WHERE email_id=$1', [$eid]);
+        $this->r_users = self::$db->fetchColumn(
+            'SELECT memberid FROM mail.email_recipient_member WHERE email_id=$1',
+            [$eid]
+        );
+        $this->r_lists = self::$db->fetchColumn(
+            'SELECT listid FROM mail.email_recipient_list WHERE email_id=$1',
+            [$eid]
+        );
 
         /*
          * Check if the body needs to be split into multipart.
@@ -69,17 +63,21 @@ class MyRadioEmail extends ServiceAPI
         $split = strip_tags($this->body);
         if ($this->body !== $split) {
             //There's HTML in there
-            $split = html_entity_decode($split);
+            $split = \Html2Text\Html2Text::convert($this->body, true); // ignore errors
             $this->multipart = true;
-            $this->body_transformed = 'This is a MIME encoded message.'
+            $body_transformed = 'This is a MIME encoded message.'
                     .self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
                     .'Content-Type: text/plain;charset=utf-8'.self::$rtnl.self::$rtnl
                     .self::addFooter($split).self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
                     .'Content-Type: text/html;charset=utf-8'.self::$rtnl.self::$rtnl
                     .self::addHTMLFooter($this->body).self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.'--';
         } else {
-            $this->body_transformed = self::addFooter($this->body);
+            $body_transformed = self::addFooter($this->body);
         }
+
+        // PHP's mail function doesn't deal with the fact there's a line limit for
+        // emails for you, other than to mention it's a thing in the docs.
+        $this->body_transformed = wordwrap($body_transformed, 80, "\r\n", true);
     }
 
     /**
@@ -189,12 +187,16 @@ class MyRadioEmail extends ServiceAPI
 
     private static function addFooter($message)
     {
-        return $message.self::$rtnl.self::$rtnl.self::$footer;
+        $footer = 'This email was sent automatically from MyRadio. '
+            .'You can opt out of emails by visiting '.URLUtils::makeURL('Profile', 'edit').'.';
+        return $message.self::$rtnl.self::$rtnl.$footer;
     }
 
     private static function addHTMLFooter($message)
     {
-        return $message.'<hr>'.self::$html_footer;
+        $html_footer = 'This email was sent automatically from MyRadio. '
+            .'You can opt out of emails <a href="'.URLUtils::makeURL('Profile', 'edit').'">on your profile page</a>.';
+        return $message.'<br><hr>'.$html_footer;
     }
 
     /**
@@ -216,7 +218,12 @@ class MyRadioEmail extends ServiceAPI
                         $u_subject = '['.Config::$short_name.'] '.$u_subject;
                     }
                     $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-                    if (!mail($user->getName().' <'.$user->getEmail().'>', $u_subject, $u_message, $this->getHeader())) {
+                    if (!mail(
+                        $user->getName() . ' <' . $user->getEmail() . '>',
+                        $u_subject,
+                        $u_message,
+                        $this->getHeader()
+                    )) {
                         continue;
                     }
                 }
@@ -231,7 +238,12 @@ class MyRadioEmail extends ServiceAPI
                     if ($user->getReceiveEmail()) {
                         $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
                         $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-                        if (!mail($list->getName().' <'.$user->getEmail().'>', '['.Config::$short_name.'] '.$u_subject, $u_message, $this->getHeader())) {
+                        if (!mail(
+                            $list->getName().' <'.$user->getEmail().'>',
+                            '['.Config::$short_name.'] '.$u_subject,
+                            $u_message,
+                            $this->getHeader()
+                        )) {
                             continue;
                         }
                     }
@@ -245,27 +257,37 @@ class MyRadioEmail extends ServiceAPI
 
     public function getSentToUser(MyRadio_User $user)
     {
-        $r = self::$db->fetchColumn('SELECT sent FROM mail.email_recipient_member WHERE email_id=$1 AND memberid=$2 LIMIT 1', [$this->email_id, $user->getID()]);
-
+        $r = self::$db->fetchColumn(
+            'SELECT sent FROM mail.email_recipient_member WHERE email_id=$1 AND memberid=$2 LIMIT 1',
+            [$this->email_id, $user->getID()]
+        );
         return $r[0] === 't';
     }
 
     public function setSentToUser(MyRadio_User $user)
     {
-        self::$db->query('UPDATE mail.email_recipient_member SET sent=\'t\' WHERE email_id=$1 AND memberid=$2', [$this->email_id, $user->getID()]);
+        self::$db->query(
+            'UPDATE mail.email_recipient_member SET sent=\'t\' WHERE email_id=$1 AND memberid=$2',
+            [$this->email_id, $user->getID()]
+        );
         $this->updateCacheObject();
     }
 
     public function getSentToList(MyRadio_List $list)
     {
-        $r = self::$db->fetchColumn('SELECT sent FROM mail.email_recipient_list WHERE email_id=$1 AND listid=$2 LIMIT 1', [$this->email_id, $list->getID()]);
-
+        $r = self::$db->fetchColumn(
+            'SELECT sent FROM mail.email_recipient_list WHERE email_id=$1 AND listid=$2 LIMIT 1',
+            [$this->email_id, $list->getID()]
+        );
         return $r[0] === 't';
     }
 
     public function setSentToList(MyRadio_List $list)
     {
-        self::$db->query('UPDATE mail.email_recipient_list SET sent=\'t\' WHERE email_id=$1 AND listid=$2', [$this->email_id, $list->getID()]);
+        self::$db->query(
+            'UPDATE mail.email_recipient_list SET sent=\'t\' WHERE email_id=$1 AND listid=$2',
+            [$this->email_id, $list->getID()]
+        );
         $this->updateCacheObject();
     }
 
@@ -318,9 +340,8 @@ class MyRadioEmail extends ServiceAPI
             if (!($user instanceof MyRadio_User)) {
                 throw new MyRadioException($user.' is not an instance or derivative of the user class!');
             }
-
-            self::create(['members' => $to], $subject, $message, $from);
         }
+        self::create(['members' => $to], $subject, $message, $from);
     }
 
     /**
@@ -388,8 +409,17 @@ class MyRadioEmail extends ServiceAPI
         return $this->email_id;
     }
 
-    public function toDataSource($full = false)
+    /**
+     * @mixin body Also returns the body of the email.
+     */
+    public function toDataSource($mixins = [])
     {
+        $mixin_funcs = [
+            'body' => function (&$data) {
+                $data['body'] = $this->getViewableBody();
+            },
+        ];
+
         $data = [
             'email_id' => $this->getID(),
             'from' => empty($this->from) ? null : $this->from->getName(),
@@ -403,10 +433,7 @@ class MyRadioEmail extends ServiceAPI
             ],
         ];
 
-        if ($full) {
-            $data['body'] = $this->getViewableBody();
-        }
-
+        $this->addMixins($data, $mixins, $mixin_funcs);
         return $data;
     }
 
@@ -420,8 +447,12 @@ class MyRadioEmail extends ServiceAPI
      */
     public static function sendEmailToComputing($subject, $message)
     {
-        mail('MyRadio Service <'.Config::$error_report_email.'@'.Config::$email_domain.'>', $subject, self::addFooter($message), self::getDefaultHeader());
-
+        mail(
+            'MyRadio Service <'.Config::$error_report_email.'@'.Config::$email_domain.'>',
+            $subject,
+            self::addFooter($message),
+            self::getDefaultHeader()
+        );
         return true;
     }
 
@@ -430,6 +461,8 @@ class MyRadioEmail extends ServiceAPI
      */
     private static function getDefaultHeader()
     {
-        return self::$headers.self::$rtnl.self::$sender;
+        $headers = 'Content-type: text/plain; charset=utf-8';
+        $sender = 'From: MyRadio <no-reply@'.Config::$email_domain.'>';
+        return $headers.self::$rtnl.$sender;
     }
 }

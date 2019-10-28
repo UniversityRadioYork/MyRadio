@@ -32,7 +32,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
     public function __construct()
     {
         $twig_loader = new Twig_Loader_Filesystem(__DIR__.'/../Templates/');
-        $this->contextVariables['notices'] = '';
+        $this->contextVariables['notices'] = [];
         $this->twig = new Twig_Environment($twig_loader, ['auto_reload' => true]);
         if (Config::$template_debug) {
             $this->twig->addExtension(new Twig_Extension_Debug());
@@ -55,6 +55,8 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
             ->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null)
             ->addVariable('timeslotid', isset($_SESSION['timeslotid']) ? $_SESSION['timeslotid'] : null)
             ->addVariable('baseurl', Config::$base_url)
+            ->addVariable('websiteurl', Config::$website_url)
+            ->addVariable('shortname', Config::$short_name)
             ->addVariable('rewriteurl', Config::$rewrite_url)
             ->addVariable('serviceName', 'MyRadio')
             ->setTemplate('stripe.twig')
@@ -161,7 +163,9 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
 
         //Validate template
         try {
-            $this->twig->parse($this->twig->tokenize(file_get_contents(__DIR__.'/../Templates/'.$template), $template));
+            $this->twig->parse($this->twig->tokenize(
+                new \Twig_Source(file_get_contents(__DIR__.'/../Templates/'.$template), $template)
+            ));
 
             // the $template is valid
         } catch (Twig_Error_Syntax $e) {

@@ -1,7 +1,10 @@
 {% extends 'form.twig' %}
 {% block stripecontent %}
 {% if frm_custom.bannerName %}
-<p>You are editing the <em>{{frm_custom.bannerName}}</em> Banner.</p>
+<p>
+  <img src="{{frm_custom.bannerURL}}" style="width:100%; max-width:300px; margin-right:5px;" alt="{{frm_custom.bannerName}} Banner Preview" />
+  You are editing the <em>{{frm_custom.bannerName}}</em> Banner.
+</p>
 {% else %}
 <p>You are creating a new Banner.</p>
 {% endif %}

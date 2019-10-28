@@ -17,7 +17,7 @@ use MyRadio\MyRadio\MyRadioFormField;
  *
  * @todo    Dedicated Term class
  */
-class MyRadio_Scheduler extends MyRadio_Metadata_Common
+class MyRadio_Scheduler extends ServiceAPI
 {
     /**
      * This provides a temporary cache of the result from pendingAllocationsQuery.
@@ -29,7 +29,8 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     /**
      * Returns an Array of pending Season allocations.
      *
-     * @return array An Array of MyRadio_Season objects which do not have an allocated timeslot, ordered by time submitted
+     * @return array An Array of MyRadio_Season objects which do not have an allocated timeslot,
+     *               ordered by time submitted
      *
      * @todo Move to MyRadio_Season?
      */
@@ -117,20 +118,22 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
     /**
      * Returns a list of terms in the present or future.
      *
-     * @todo There's currently no caching on this, could be a potential slowdown
-     *
+     * @param bool $currentOnly If only the present term should be output (if term time)
      * @return Array[Array] an array of arrays of terms
      */
-    public static function getTerms()
+    public static function getTerms($currentOnly = false)
     {
-        return self::$db->fetchAll(
-            'SELECT termid, EXTRACT(EPOCH FROM start) AS start, descr
-            FROM terms
-            WHERE finish > now()
-            ORDER BY start ASC'
-        );
+        $query = 'SELECT termid, EXTRACT(EPOCH FROM start) AS start, descr FROM terms WHERE ';
+        $query .= $currentOnly ? 'start <= now() AND ' : '';
+        $query .= 'finish > now() ORDER BY start ASC';
+        return self::$db->fetchAll($query);
     }
 
+    /**
+     * Returns term item of the id $termid.
+     *
+     * @return Array of a term
+     */
     public static function getTerm($termid)
     {
         $terms = self::getTerms();
@@ -141,6 +144,16 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
         }
 
         throw new MyRadioException('That term could not be found', 400);
+    }
+
+    /**
+     * Returns if we are currently in term time.
+     *
+     * @return Boolean
+     */
+    public static function isTerm()
+    {
+        return (!empty(self::getTerms(true)));
     }
 
     public static function getActiveApplicationTermInfo()
@@ -332,7 +345,8 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
                 'Scheduler',
                 'editTerm',
                 [
-                    'title' => 'Create Term',
+                    'title' => 'Scheduler',
+                    'subtitle' => 'Create Term',
                 ]
             )
         )->addField(
@@ -340,7 +354,8 @@ class MyRadio_Scheduler extends MyRadio_Metadata_Common
                 'descr',
                 MyRadioFormField::TYPE_TEXT,
                 [
-                    'explanation' => 'Name the term. Try and make it unique.',
+                    'explanation' => 'Name the term. A value of "Autumn" denotes that this '
+                                     . 'term represents the start of a new membership year.',
                     'label' => 'Term description',
                     'options' => ['maxlength' => 10],
                 ]

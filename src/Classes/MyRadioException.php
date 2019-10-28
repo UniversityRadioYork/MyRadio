@@ -54,8 +54,7 @@ class MyRadioException extends \RuntimeException
 
         ++self::$count;
         if (self::$count > Config::$exception_limit) {
-            trigger_error('Exception limit exceeded. Futher exceptions will not be reported.');
-
+            trigger_error("Exception limit exceeded. Further exceptions will not be reported.");
             return;
         }
 
@@ -67,12 +66,17 @@ class MyRadioException extends \RuntimeException
         }
 
         //Set up the Exception
-        $this->error = "<p>MyRadio has encountered a problem processing this request.</p>
+        if ($code === 403) {
+            $this->error = "<p>I'm sorry, but you don't have permission to access this page.</p>
+                            <p>{$this->getMessage()}</p>";
+        } else {
+            $this->error = "<p>MyRadio has encountered a problem processing this request.</p>
                 <table class='errortable' style='color:#633'>
                   <tr><td>Message: </td><td>{$this->getMessage()}</td></tr>
                   <tr><td>Location: </td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
-                  <tr><td>Trace: </td><td>".nl2br($this->traceStr).'</td></tr>
+                  <tr><td>Trace: </td><td>" . nl2br($this->traceStr) . '</td></tr>
                 </table>';
+        }
     }
 
     /**
@@ -88,16 +92,11 @@ class MyRadioException extends \RuntimeException
                 || empty($_SERVER['REMOTE_ADDR'])
                 || (defined('JSON_DEBUG') && JSON_DEBUG);
 
-            // Sentry exception handling
-            if (Config::$raven_dsn) {
-                $client = new \Raven_Client(Config::$raven_dsn);
-                $client->getIdent($client->captureException($this));
-            }
-
             if (Config::$email_exceptions
                 && class_exists('\MyRadio\MyRadioEmail')
                 && $this->code !== 400
                 && $this->code !== 401
+                && $this->code !== 403
             ) {
                 MyRadioEmail::sendEmailToComputing(
                     '[MyRadio] Exception Thrown',
@@ -148,7 +147,7 @@ class MyRadioException extends \RuntimeException
                         $twig = CoreUtils::getTemplateObject();
                         $twig->setTemplate('error.twig')
                             ->addVariable('serviceName', 'Error')
-                            ->addVariable('title', 'Internal Server Error')
+                            ->addVariable('title', $this->getCodeName())
                             ->addVariable('body', $this->error)
                             ->addVariable('uri', $_SERVER['REQUEST_URI'])
                             ->render();
@@ -172,7 +171,7 @@ class MyRadioException extends \RuntimeException
                     $_SESSION['last_ajax_error'] = [$this->error, $this->code, $this->trace];
                 } else {
                     $error = '<div class="errortable">'
-                        .'<p>Sorry, we have encountered an error and are unable to continue. Please try again later.</p>'
+                        .'<p>Sorry, we encountered an error and are unable to continue. Please try again later.</p>'
                         .'<p>'.$this->message.'</p>'
                         .'<p>Computing Team have been notified.</p>'
                         .'</div>';
@@ -183,8 +182,8 @@ class MyRadioException extends \RuntimeException
                         //We can use a pretty full-page output
                         $twig = CoreUtils::getTemplateObject();
                         $twig->setTemplate('error.twig')
-                            ->addVariable('title', '')
-                            ->addVariable('body', $error)
+                            ->addVariable('title', $this->getCodeName())
+                            ->addVariable('body', $this->error)
                             ->addVariable('uri', $_SERVER['REQUEST_URI'])
                             ->render();
                     } else {
@@ -193,18 +192,9 @@ class MyRadioException extends \RuntimeException
                 }
             }
         } elseif (!$silent) {
-            echo 'MyRadio is unavailable at the moment. Please try again later. If the problem persists, contact support.';
+            echo 'MyRadio is unavailable at the moment. '
+                .'Please try again later. If the problem persists, contact support.';
         }
-    }
-
-    /**
-     * Get the number of MyRadioExceptions that have been fired.
-     *
-     * @return int
-     */
-    public static function getExceptionCount()
-    {
-        return self::$count;
     }
 
     public static function resetExceptionCount()

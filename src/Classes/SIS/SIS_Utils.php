@@ -53,13 +53,22 @@ class SIS_Utils extends ServiceAPI
      */
     public static function ipLookup($ip)
     {
-        $query = self::$db->query('SELECT iscollege, description FROM l_subnet WHERE subnet >> $1 ORDER BY description ASC', [$ip]);
+        $query = self::$db->query(
+            'SELECT iscollege, description FROM l_subnet WHERE subnet >> $1 ORDER BY description ASC',
+            [$ip]
+        );
 
         $location = [];
 
         if (($query === null) or (pg_num_rows($query) == 0)) {
             $geoip = geoip_record_by_name($ip);
-            $location[0] = ($geoip === false) ? 'Unknown' : empty($geoip['city']) ? "{$geoip['country_name']}" : utf8_encode($geoip['city']).", {$geoip['country_name']}";
+            if ($geoip === false) {
+                $location[0] = 'Unknown';
+            } elseif (empty($geoip['city'])) {
+                $location[0] = "{$geoip['country_name']}";
+            } else {
+                $location[0] = utf8_encode($geoip['city']) . ", " . "{$geoip['country_name']}";
+            }
 
             return $location;
         }

@@ -36,6 +36,16 @@ class MyRadio_Quote extends ServiceAPI
             date DESC
         ;';
 
+    const GET_RANDOM_SQL = '
+        SELECT
+            *
+        FROM
+            people.quote
+        ORDER BY 
+            random()
+        LIMIT 1;
+        ';
+        
     const INSERT_SQL = '
         INSERT INTO
             people.quote(text, source, date)
@@ -69,7 +79,7 @@ class MyRadio_Quote extends ServiceAPI
         WHERE
             quote_id = $2
         ;';
-
+    
     /**
      * The quote ID.
      *
@@ -141,7 +151,7 @@ class MyRadio_Quote extends ServiceAPI
      */
     public static function getInstance($quote_id = -1)
     {
-        self::__wakeup();
+        self::wakeup();
 
         if (!is_numeric($quote_id)) {
             throw new MyRadioException(
@@ -162,13 +172,25 @@ class MyRadio_Quote extends ServiceAPI
      *
      * @return array An array of all active quotes.
      */
-    public function getAll()
+    public static function getAll()
     {
         $quote_ids = self::$db->fetchColumn(self::GET_ALL_SQL, []);
 
         return array_map('self::getInstance', $quote_ids);
     }
-
+    
+    /**
+    * Retrieves a random quote
+    * Probably didn't need to use array_map, but I copied getAll. Sorry - Jordan
+    * @return array An array of active quote
+    */
+    public static function getRandom()
+    {
+        $quote_id = self::$db->fetchColumn(self::GET_RANDOM_SQL, []);
+        
+        return array_map('self::getInstance', $quote_id);
+    }
+    
     /**
      * @return int The quote ID.
      */
@@ -209,7 +231,7 @@ class MyRadio_Quote extends ServiceAPI
      *
      * @return nothing.
      */
-    public function create($data)
+    public static function create($data)
     {
         self::$db->query(
             self::INSERT_SQL,
@@ -253,7 +275,7 @@ class MyRadio_Quote extends ServiceAPI
     /**
      * Sets this quote's date.
      *
-     * @param int|string $date The date, as a UNIX timestamp or date string.
+     * @param int $date The date, as a UNIX timestamp.
      *
      * @return MyRadio_Quote This object, for method chaining.
      */
@@ -336,10 +358,10 @@ class MyRadio_Quote extends ServiceAPI
 
     /**
      * Converts this quote to a table data source.
-     *
+     * @param array $mixins Mixins. Currently unused.
      * @return array The object as a data source.
      */
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             'id' => $this->getID(),

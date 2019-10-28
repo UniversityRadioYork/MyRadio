@@ -5,7 +5,7 @@
 use \MyRadio\Config;
 use \MyRadio\MyRadio\CoreUtils;
 
-$path = __DIR__.'/../../MyRadio_Config.local.php';
+$path = realpath(__DIR__ . '/../../') . '/MyRadio_Config.local.php';
 
 //Merge existing config
 if (file_exists($path)) {
@@ -35,18 +35,8 @@ if (!empty($_SERVER['HTTP_HOST'])) {
 }
 $config_overrides['base_url'] = '//'.$domain.explode('?', $_SERVER['REQUEST_URI'])[0];
 
-//Actually write the file
-$file = @fopen($path, 'w');
-if (!$file) {
-    //...or not
-    CoreUtils::getTemplateObject()
-        ->setTemplate('minimal.twig')
-        ->addVariable('content', 'An error occurred saving your settings. Please make sure I have write access to '.$path.' and then reload this page.')
-        ->render();
-    exit;
-}
-fwrite($file, "<?php\n");
-fwrite($file, "use \\MyRadio\\Config;\n");
+// Build the config file
+$file_str = "<?php\nuse \\MyRadio\\Config;\n";
 foreach ($config_overrides as $k => $v) {
     if (is_numeric($v) != true && is_bool($v) != true) {
         $v = "'".str_replace("'", "\\'", $v)."'";
@@ -55,8 +45,31 @@ foreach ($config_overrides as $k => $v) {
     } elseif ($v === false) {
         $v = 'false';
     }
-    fwrite($file, 'Config::$'.$k.' = '.strval($v).";\n");
+    $file_str .= 'Config::$'.$k.' = '.strval($v).";\n";
 }
 
-fclose($file);
-header('Location: ./');
+//Actually write the file
+$file = @fopen($path, 'w');
+if (!$file) {
+    //...or not
+    CoreUtils::getTemplateObject()
+        ->setTemplate('minimal.twig')
+        ->addVariable(
+            'content',
+            "An error occurred saving your settings.\n"
+            ."This is OK! It's probably best that the web server doesn't have write access to the webroot.\n"
+            ."Either write out the following into '$path' or give me write access to it, then reload this page.\n\n"
+        )
+        ->addVariable(
+            'rawcontent',
+            "<button data-toggle='collapse' data-target='#config'>Show config</button><br><br>"
+            ."<textarea id='config' class='form-control collapse' readonly rows=20>"
+            .$file_str
+            .'</textarea>'
+        )
+        ->render();
+} else {
+    fwrite($file, $file_str);
+    fclose($file);
+    header('Location: ./');
+}
