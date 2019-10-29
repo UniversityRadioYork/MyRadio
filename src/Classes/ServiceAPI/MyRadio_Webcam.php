@@ -19,7 +19,7 @@ class MyRadio_Webcam extends ServiceAPI
     public static function incrementViewCounter(MyRadio_User $user)
     {
         //Get the current view counter. We do this as a separate query in case the row doesn't exist yet
-        $counter = self::$db->fetchOne('SELECT timer FROM webcam.memberviews WHERE memberid = $1', [$user->getID()]);
+        $counter = self::getViewCounter($user);
         if (empty($counter)) {
             $counter = 0;
             $sql = 'INSERT INTO webcam.memberviews (memberid, timer) VALUES ($1, $2)';
@@ -31,6 +31,12 @@ class MyRadio_Webcam extends ServiceAPI
 
         self::$db->query($sql, [$user->getID(), $counter]);
 
+        return $counter;
+    }
+
+    public static function getViewCounter(MyRadio_User $user)
+    {
+        $counter = self::$db->fetchOne('SELECT timer FROM webcam.memberviews WHERE memberid = $1', [$user->getID()]);
         return $counter;
     }
 
