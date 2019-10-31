@@ -43,6 +43,7 @@ function webcamTrackViewer() {
 
 $(document).ready(
   function () {
+    webcamTrackViewer();
     setInterval(webcamTrackViewer, 15000);
   }
 );
