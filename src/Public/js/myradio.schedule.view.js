@@ -230,26 +230,26 @@ var ScheduleView = function (options) {
   };
 
   //Parse options
-  if (options.hasOwnProperty("year")) {
+  if (Object.prototype.hasOwnProperty.call(options, "year")) {
     year = options.year;
   } else {
     year = moment().year();
   }
-  if (options.hasOwnProperty("week")) {
+  if (Object.prototype.hasOwnProperty.call(options, "week")) {
     week = options.week;
   } else {
     week = moment().isoWeek();
   }
-  if (options.hasOwnProperty("day")) {
+  if (Object.prototype.hasOwnProperty.call(options, "day")) {
     day = options.day;
   } else {
     day = moment().isoWeekday();
   }
 
-  if (options.hasOwnProperty("ui")) {
+  if (Object.prototype.hasOwnProperty.call(options, "ui")) {
     ui = options.ui;
   }
-  if (options.hasOwnProperty("view")) {
+  if (Object.prototype.hasOwnProperty.call(options, "view")) {
     view = options.view;
   }
 

@@ -15,8 +15,8 @@ apt-get update
 apt-get install -y apache2 \
 	libapache2-mod-php \
 	php-common \
-	postgresql-10 \
-	postgresql-client-10 \
+	postgresql-11 \
+	postgresql-client-11 \
 	memcached \
 	php-curl \
 	php-geoip \
@@ -48,6 +48,8 @@ xdebug.idekey="MyRadio vagrant"
 xdebug.remote_handler=dbgp
 EOF
 
+su -c "adduser www-data vagrant"
+
 # Composer
 cd /vagrant
 mkdir -p /vagrant/src/vendor
@@ -69,16 +71,8 @@ commonName=myradio.local
 organizationalUnitName=MyRadio
 emailAddress=someone@example.com
 "
-openssl genrsa -des3 -out /etc/apache2/myradio.key -passout env:PASSPHRASE 2048
-openssl req \
-	-new \
-	-batch \
-	-subj "$(echo -n "$subj" | tr "\n" "/")" \
-	-key /etc/apache2/myradio.key \
-	-out /etc/apache2/myradio.csr \
-	-passin env:PASSPHRASE
-openssl rsa -in /etc/apache2/myradio.key -out /etc/apache2/myradio.key -passin env:PASSPHRASE
-openssl x509 -req -days 3650 -in /etc/apache2/myradio.csr -signkey /etc/apache2/myradio.key -out /etc/apache2/myradio.crt
+openssl req -newkey rsa:2048 -nodes -subj "$(echo -n "$subj" | tr "\n" "/")" -keyout /etc/apache2/myradio.key -x509 -days 365 -out /etc/apache2/myradio.crt \
+-addext extendedKeyUsage=serverAuth -addext subjectAltName=DNS:localhost
 
 # Start httpd back up
 
@@ -86,9 +80,9 @@ update-rc.d apache2 defaults
 service apache2 start
 
 # Create DB cluster/database/user
-pg_dropcluster 10 main --stop || true # Seriously, don't use this anywhere other than vagrant
-if ! `pg_lsclusters | grep -q myradio`; then pg_createcluster 10 myradio -p 5432; fi
-systemctl start postgresql@10-myradio
+pg_dropcluster 11 main --stop || true # Seriously, don't use this anywhere other than vagrant
+if ! `pg_lsclusters | grep -q myradio`; then pg_createcluster 11 myradio -p 5432; fi
+systemctl start postgresql@11-myradio
 su - postgres -c "cat /vagrant/sample_configs/postgres.sql | psql"
 
 rm -f /vagrant/src/MyRadio_Config.local.php # Remove any existing config
@@ -102,3 +96,5 @@ done
 # And logs
 mkdir -p /var/log/myradio
 chown www-data:www-data /var/log/myradio
+
+echo "MyRadio is now installed in your Vagrant VM. Go to https://localhost:4443/myradio/ :)"
