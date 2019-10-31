@@ -675,7 +675,7 @@ final class Config
     public static $facebook = 'https://www.facebook.com/URY1350';
 
     /**** SIGNUP EMAILS ****/
-    public static $welcome_email_sender_memberid = NULL;
+    public static $welcome_email_sender_memberid = null;
     public static $welcome_email = <<<EOT
 
    This is a welcome email. You can use #NAME to get the user's first name.
