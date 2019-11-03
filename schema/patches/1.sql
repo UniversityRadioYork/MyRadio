@@ -34,7 +34,7 @@ VALUES (1,
         'collab');
 
 CREATE SEQUENCE show_subtype_id_seq
-    START WITH 7
+    START WITH 8
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
