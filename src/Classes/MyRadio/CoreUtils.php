@@ -669,6 +669,8 @@ class CoreUtils
         } else {
             $last = '';
         }
+        $post_size = substr($post_size, 0, -1); // Remove the letter
+        $post_size = intval($post_size); // Convert to int.
         switch ($last) {
             // The 'G' modifier is available since PHP 5.1.0
             case 'g':
