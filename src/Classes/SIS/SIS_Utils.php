@@ -116,14 +116,16 @@ class SIS_Utils extends ServiceAPI
      */
     public static function checkMessageSpam($message)
     {
+        if (strlen($message) > 1000) {
+         return true;   
+        }
         if (!empty(Config::$spam)) {
             foreach (Config::$spam as $needle) {
                 if (stripos($message, $needle) !== false) {
                     return true;
-                } else {
-                    return false;
                 }
             }
+            return false;
         } else {
             return false;
         }
