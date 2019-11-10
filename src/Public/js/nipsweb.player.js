@@ -88,6 +88,7 @@ var NIPSWeb = function (d) {
               if (!data.payload[i].status) {
                 myradio.showAlert("Save failed! Reloading in 5 seconds.", "danger");
                 if (!debug) {
+                  $(".baps-channel.ui-sortable").sortable("disable")
                   setTimeout(function(){ reload(); }, 5000);
                 }
               } else {
