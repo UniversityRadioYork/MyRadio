@@ -43,6 +43,25 @@ if (isset($_REQUEST['request'])) {
     }
 }
 
+// Check for maintenance
+// First on all of MyRadio
+if (Config::$maintenance_modules === '*') {
+    require 'Controllers/Errors/Maintenance.php';
+    exit;
+}
+// Then on the whole module
+if (in_array($module, Config::$maintenance_modules)) {
+    if (Config::$maintenance_modules[$module] === '*') {
+        require 'Controllers/Errors/Maintenance.php';
+        exit;
+    }
+    // Then on the action
+    if (in_array($action, Config::$maintenance_modules[$module])) {
+        require 'Controllers/Errors/Maintenance.php';
+        exit;
+    }
+}
+
 /*
  * Use the Database authentication data to check whether the user has permission to access that.
  * This method will automatically cause a premature exit if necessary.
