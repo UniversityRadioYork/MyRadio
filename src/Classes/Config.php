@@ -269,11 +269,11 @@ final class Config
 
     /**
      * The full web address to the image that will be served on a member's profile page if they do not have a profile
-     * photo. The original value, /static/img/default_show_player.png is the main website's placeholder for shows.
+     * photo. The original value, /images/default_show_profile.png is the main website's placeholder for shows.
      *
      * @var string
      */
-    public static $default_person_uri = '/static/img/default_show_player.png';
+    public static $default_person_uri = '/images/default_show_profile.png';
 
     /**
      * The full web address of the image that will be shown for a vacant officer position.
