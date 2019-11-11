@@ -50,7 +50,7 @@ if (Config::$maintenance_modules === '*') {
     exit;
 }
 // Then on the whole module
-if (in_array($module, Config::$maintenance_modules)) {
+if (key_exists($module, Config::$maintenance_modules)) {
     if (Config::$maintenance_modules[$module] === '*') {
         require 'Controllers/Errors/Maintenance.php';
         exit;
