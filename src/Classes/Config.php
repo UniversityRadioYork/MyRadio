@@ -681,6 +681,28 @@ final class Config
 EOT;
 
     /**
+     * The MyRadio features that are under maintenance.
+     *
+     * This should be an associative array of arrays, where the keys are module names
+     * and the values are the actions in that module that are under maintenance and should be disabled for users.
+     *
+     * For example,
+     *
+     *     [
+     *      'scheduler' => ['editShow', 'editSeason']
+     *     ]
+     *
+     * would disable editing (and creation) of shows and seasons.
+     *
+     * Instead of passing an array of action names, you can pass '*', which would treat all actions in that module
+     * as under maintenance.
+     *
+     * You can also set $maintenance_modules to '*' to shut down MyRadio altogether (don't do that).
+     *
+     */
+    public static $maintenance_modules = [];
+
+    /**
      * The constructor doesn't do anything practical.
      *
      * By making the constructor private, even though it does not do anything, we are prohibiting code elsewhere from
