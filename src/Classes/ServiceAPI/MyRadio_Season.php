@@ -730,14 +730,12 @@ EOT
     }
 
     /**
-     * Gets the subtype for this show.
-     *
-     * A show having no subtype makes sense, but a season having no subtype is a nonsense.
+     * Gets the subtype for this season.
      * @return MyRadio_ShowSubtype
      */
     public function getSubtype() {
         if ($this->subtype_id === null) {
-            throw new MyRadioException('Season missing subtype!');
+            return $this->getShow()->getSubtype();
         }
         return MyRadio_ShowSubtype::getInstance($this->subtype_id);
     }
