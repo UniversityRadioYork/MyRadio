@@ -35,7 +35,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             array_to_json(credits.credit_type_id) AS credit_types,
             array_to_json(credits.creditid) AS credits,
             array_to_json(genre.genre_id) AS genres,
-            array_to_json(season.show_season_id) AS seasons
+            array_to_json(season.show_season_id) AS seasons,
+            subtype.show_season_subtype_id as subtype_id
         FROM
             schedule.show
             NATURAL FULL JOIN
@@ -92,7 +93,13 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     array_agg(show_season_id) AS show_season_id
                 FROM schedule.show_season
                 GROUP BY show_id
-            ) AS season';
+            ) AS season
+            NATURAL FULL JOIN (
+                SELECT show_season_subtype_id,
+                       show_id
+                FROM schedule.show_season_subtype
+                GROUP BY show_season_subtype_id
+            ) AS subtype';
 
     private $show_id;
     protected $owner;
@@ -102,6 +109,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     private $submitted_time;
     private $season_ids;
     private $photo_url;
+    private $subtype_id;
 
     /**
      * @param $result Array
@@ -126,6 +134,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $this->owner = (int) $result['owner'];
         $this->show_type = (int) $result['show_type_id'];
         $this->submitted_time = strtotime($result['submitted']);
+        $this->subtype_id = (int) $result['subtype_id'];
 
         $this->genres = json_decode($result['genres']);
         if ($this->genres === null) {
@@ -323,6 +332,24 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ],
             true
         );
+
+        // Subtype too
+        // TODO: kill this bodgy shit as soon as possible
+        if (!empty($params['subtype'])) {
+            self::$db->query(
+                'INSERT INTO schedule.show_season_subtype
+            (show_id, show_subtype_id, effective_from)
+            VALUES ($1, $2, NOW())',
+                [$show_id, $params['subtype']]
+            );
+        } else {
+            self::$db->query(
+                'INSERT INTO schedule.show_season_subtype
+            (show_id, show_subtype_id, effective_from)
+            (SELECT $1, (SELECT show_subtype_id FROM schedule.show_subtypes WHERE show_subtypes.class = $2), NOW())',
+                [$show_id, CoreUtils::get_subtype_for_show($params['title'])]
+            );
+        }
 
         //And now all that's left is who's on the show
         for ($i = 0; $i < sizeof($params['credits']['memberid']); ++$i) {
@@ -631,6 +658,42 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
+     * Gets the subtype for this show.
+     *
+     * Note that subtypes can be overridden per-season, so you should probably use MyRadio_Season->getSubtype().
+     * @return MyRadio_ShowSubtype
+     */
+    public function getSubtype() {
+        return MyRadio_ShowSubtype::getInstance($this->subtype_id);
+    }
+
+    /**
+     * Sets this show's subtype.
+     *
+     * @todo support effectiveFrom and effectiveTo
+     * @param $subtypeId
+     */
+    public function setSubtype($subtypeId) {
+        self::$db->query('UPDATE schedule.show_season_subtype SET show_subtype_id = $1 WHERE show_id = $1', [
+            $subtypeId, $this->show_id
+        ]);
+    }
+
+    /**
+     * Sets this show's subtype by the subtype name.
+     * @param $subtypeName
+     */
+    public function setSubtypeByName($subtypeName) {
+        self::$db->query(
+            'UPDATE schedule.show_season_subtype
+            SET show_subtype_id = subtype.show_subtype_id
+            FROM (SELECT show_subtype_id FROM show_subtypes WHERE show_subtypes.class = $2) AS subtype
+            WHERE show_id = $1',
+            [$this->show_id, $subtypeName]
+        );
+    }
+
+    /**
     * Sets show photo
     *
     * @param string $tmp_path
@@ -922,6 +985,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ),
             'description' => $this->getMeta('description'),
             'show_type_id' => $this->show_type,
+            'subtype' => $this->getSubtype()->toDataSource($mixins),
             'seasons' => [
                 'display' => 'text',
                 'value' => $this->getNumberOfSeasons(),
