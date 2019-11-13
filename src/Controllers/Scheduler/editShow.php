@@ -49,8 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $show->setMeta('upload_state', 'Opted Out');
         }
 
-        // TODO: enable this once subtypes have been backfilled, as setSubtypeByName assumes the show already has one
-        $show->setSubtypeByName(\MyRadio\Helpers\get_subtype_for_show($data['title']));
+        $show->setSubtypeByName(CoreUtils::get_subtype_for_show($data['title']));
 
         URLUtils::redirectWithMessage('Scheduler', 'myShows', 'Show Updated!');
     }
@@ -69,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($meta === null) {
             $meta = [];
         }
-        $show->getEditForm()->render();
+        $show->getEditForm()->render();\MyRadio\Helpers\
     } else {
         //create form
         MyRadio_Show::getForm()
