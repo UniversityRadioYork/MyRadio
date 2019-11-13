@@ -687,7 +687,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         self::$db->query(
             'UPDATE schedule.show_season_subtype
             SET show_subtype_id = subtype.show_subtype_id
-            FROM (SELECT show_subtype_id FROM show_subtypes WHERE show_subtypes.class = $2) AS subtype
+            FROM (SELECT show_subtype_id FROM schedule.show_subtypes WHERE show_subtypes.class = $2) AS subtype
             WHERE show_id = $1',
             [$this->show_id, $subtypeName]
         );
