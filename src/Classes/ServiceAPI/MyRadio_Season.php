@@ -88,7 +88,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 AND show_season_id IN (SELECT show_season_id FROM schedule.show_season_timeslot)
             ) AS season_num, (
                 SELECT show_season_subtype_id
-                FROM show_season_subtype
+                FROM schedule.show_season_subtype
                 WHERE season_id=$1 OR show_id = show_season.show_id
                 AND effective_from <= NOW()
                 AND (effective_to IS NULL OR effective_to >= NOW())
