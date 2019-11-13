@@ -46,7 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted Current
     setupTimeslot(MyRadio_Timeslot::getCurrentTimeslot());
 } elseif (!empty(Config::$contract_uri) && !MyRadio_User::getInstance()->hasSignedContract()) {
-    $message = "You need to have signed the Presenter's Contract to view this - <a href \"https://ury.org.uk/myradio/Profile/edit/\"> Click Here to Sign</a>";
+    $message = "You need to have signed the Presenter's Contract to view this - <a href=".URLUtils::makeURL(
+'Profile',
+'edit',
+['memberid' => $user->getID()]
+)"> Click Here to Sign</a>";
     require_once 'Controllers/Errors/403.php';
 } else {
     //Not Submitted
