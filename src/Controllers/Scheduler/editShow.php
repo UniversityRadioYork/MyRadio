@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($meta === null) {
             $meta = [];
         }
-        $show->getEditForm()->render();\MyRadio\Helpers\
+        $show->getEditForm()->render();
     } else {
         //create form
         MyRadio_Show::getForm()
