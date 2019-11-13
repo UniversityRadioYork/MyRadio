@@ -94,12 +94,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 FROM schedule.show_season
                 GROUP BY show_id
             ) AS season
-            INNER JOIN (
+            NATURAL FULL JOIN (
                 SELECT show_season_subtype_id,
                        show_id
                 FROM schedule.show_season_subtype
                 GROUP BY show_season_subtype_id
-            ) AS subtype ON subtype.show_id = show_id';
+            ) AS subtype';
 
     private $show_id;
     protected $owner;
@@ -346,7 +346,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             self::$db->query(
                 'INSERT INTO schedule.show_season_subtype
             (show_id, show_subtype_id, effective_from)
-            (SELECT $1, (SELECT show_subtype_id FROM show_subtypes WHERE show_subtypes.name = $2), NOW())',
+            (SELECT $1, (SELECT show_subtype_id FROM schedule.show_subtypes WHERE show_subtypes.class = $2), NOW())',
                 [$show_id, CoreUtils::get_subtype_for_show($params['title'])]
             );
         }
@@ -687,7 +687,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         self::$db->query(
             'UPDATE schedule.show_season_subtype
             SET show_subtype_id = subtype.show_subtype_id
-            FROM (SELECT show_subtype_id FROM show_subtypes WHERE show_subtypes.name = $2) AS subtype
+            FROM (SELECT show_subtype_id FROM show_subtypes WHERE show_subtypes.class = $2) AS subtype
             WHERE show_id = $1',
             [$this->show_id, $subtypeName]
         );
