@@ -64,6 +64,7 @@ class MyRadio_ShowSubtype extends ServiceAPI {
     public function toDataSource($mixins = [])
     {
         return [
+            'id' => $this->getID(),
             'name' => $this->getName(),
             'class' => $this->getClass()
         ];
