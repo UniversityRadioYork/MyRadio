@@ -36,7 +36,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             array_to_json(credits.creditid) AS credits,
             array_to_json(genre.genre_id) AS genres,
             array_to_json(season.show_season_id) AS seasons,
-            subtype.show_season_subtype_id as subtype_id
+            subtype.show_subtype_id as subtype_id
         FROM
             schedule.show
             NATURAL FULL JOIN
@@ -95,10 +95,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 GROUP BY show_id
             ) AS season
             NATURAL FULL JOIN (
-                SELECT show_season_subtype_id,
+                SELECT show_subtypes.show_subtype_id,
                        show_id
                 FROM schedule.show_season_subtype
-                GROUP BY show_season_subtype_id
+                INNER JOIN schedule.show_subtypes ON show_season_subtype.show_subtype_id = show_subtypes.show_subtype_id
+                GROUP BY show_subtypes.show_subtype_id, show_id
             ) AS subtype';
 
     private $show_id;
