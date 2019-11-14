@@ -95,11 +95,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 GROUP BY show_id
             ) AS season
             NATURAL FULL JOIN (
-                SELECT show_subtypes.show_subtype_id,
+                SELECT show_subtype_id,
                        show_id
                 FROM schedule.show_season_subtype
-                INNER JOIN schedule.show_subtypes ON show_season_subtype.show_subtype_id = show_subtypes.show_subtype_id
-                GROUP BY show_subtypes.show_subtype_id, show_id
+                GROUP BY show_subtype_id, show_id
             ) AS subtype';
 
     private $show_id;
