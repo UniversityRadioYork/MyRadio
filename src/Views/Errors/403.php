@@ -7,13 +7,13 @@ use \MyRadio\MyRadio\URLUtils;
 
 header('HTTP/1.1 403 Forbidden');
 
-if ($err_type == 'contract'){
-	$twig_template = 'contract.twig';
-	$link = URLUtils::makeURL('Profile', 'edit', []);
-}else{
-	$twig_template = 'error.twig';
-	$link = 'javascript:history.go(-1)';
-}
+if (isset($err_type){
+	switch ($err_type){
+	case 'contract':
+		$link = array("text"=>"Sign Contract", "href"=>URLUtils::makeURL('Profile', 'edit', []));
+		break;
+	}
+}else{$link = array("text"=>"Go back", "href"=>'javascript:history.go(-1)');}
 
 CoreUtils::getTemplateObject()->setTemplate($twig_template)
     ->addVariable('serviceName', 'Error')
