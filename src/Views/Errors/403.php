@@ -15,7 +15,7 @@ if (isset($err_type){
 	}
 }else{$link = array("text"=>"Go back", "href"=>'javascript:history.go(-1)');}
 
-CoreUtils::getTemplateObject()->setTemplate($twig_template)
+CoreUtils::getTemplateObject()->setTemplate('error.twig')
     ->addVariable('serviceName', 'Error')
     ->addVariable('title', 'Forbidden')
     ->addVariable(
