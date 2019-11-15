@@ -6,7 +6,13 @@ use \MyRadio\MyRadio\CoreUtils;
 
 header('HTTP/1.1 403 Forbidden');
 
-CoreUtils::getTemplateObject()->setTemplate('error.twig')
+if ($err_type == 'contract'){
+	$twig_template = 'contract.twig';
+}else{
+	$twig_template = 'error.twig';
+}
+
+CoreUtils::getTemplateObject()->setTemplate($twig_template)
     ->addVariable('serviceName', 'Error')
     ->addVariable('title', 'Forbidden')
     ->addVariable(
