@@ -985,11 +985,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ),
             'description' => $this->getMeta('description'),
             'show_type_id' => $this->show_type,
-            'subtype' => [
+            'subtype' => array_merge($this->getSubtype()->toDataSource($mixins), [
                 // I don't like using html here, but if I use text it adds an unnecessary and ugly <a> tag
-              'display' => 'html',
-              'html' => $this->getSubtype()->getName()
-            ],
+                'display' => 'html',
+                'html' => $this->getSubtype()->getName()
+            ]),
             'seasons' => [
                 'display' => 'text',
                 'value' => $this->getNumberOfSeasons(),
