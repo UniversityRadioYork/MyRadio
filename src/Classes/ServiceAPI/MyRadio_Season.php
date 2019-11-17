@@ -870,7 +870,7 @@ EOT
                 'season_num' => $this->getSeasonNumber(),
                 'title' => $this->getMeta('title'),
                 'description' => $this->getMeta('description'),
-                'subtype' => $this->getSubtype()->toDataSource($mixins),
+//                'subtype' => $this->getSubtype()->toDataSource($mixins),
                 'submitted' => $this->getSubmittedTime(),
                 'requested_time' => count($requested_times) > 0 ? $requested_times[0] : null,
                 'first_time' => CoreUtils::happyTime(($first_time ? $first_time : 0)),

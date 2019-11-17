@@ -985,7 +985,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ),
             'description' => $this->getMeta('description'),
             'show_type_id' => $this->show_type,
-            'subtype' => $this->getSubtype()->toDataSource($mixins),
+//            'subtype' => $this->getSubtype()->toDataSource($mixins),
             'seasons' => [
                 'display' => 'text',
                 'value' => $this->getNumberOfSeasons(),
