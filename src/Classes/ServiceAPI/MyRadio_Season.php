@@ -870,7 +870,11 @@ EOT
                 'season_num' => $this->getSeasonNumber(),
                 'title' => $this->getMeta('title'),
                 'description' => $this->getMeta('description'),
-//                'subtype' => $this->getSubtype()->toDataSource($mixins),
+                'subtype' => [
+                    // I don't like using html here, but if I use text it adds an unnecessary and ugly <a> tag
+                    'display' => 'html',
+                    'html' => $this->getSubtype()->getName()
+                ],
                 'submitted' => $this->getSubmittedTime(),
                 'requested_time' => count($requested_times) > 0 ? $requested_times[0] : null,
                 'first_time' => CoreUtils::happyTime(($first_time ? $first_time : 0)),
