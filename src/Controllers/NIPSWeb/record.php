@@ -31,5 +31,5 @@ CoreUtils::getTemplateObject()->setTemplate($template)
     ->addVariable('tracks', MyRadio_Timeslot::getInstance($_SESSION['timeslotid'])->getShowPlan())
     ->addVariable('reslists', $reslists)
     ->addVariable('auth_edit_tracks', AuthUtils::hasPermission(AUTH_EDITMUSIC))
-    ->addVariable('columns', [1,2,3,'res'])
+    ->addVariable('columns', [1,'res'])
     ->render();
