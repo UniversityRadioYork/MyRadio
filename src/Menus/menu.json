@@ -117,6 +117,11 @@
                                         "title": "Studio Information Service",
                                         "url": "module=SIS",
                                         "description": "Access the Studio Information Service."
+                                    },
+                                    {
+                                        "title": "Pre-Record Show",
+                                        "url": "module=NIPSWeb, action=record",
+                                        "description": "Pre-record your show"
                                     }
                                 ]
                         },
