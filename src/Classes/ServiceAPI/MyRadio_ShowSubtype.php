@@ -6,6 +6,7 @@
 
 namespace MyRadio\ServiceAPI;
 
+use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadioException;
 
 /**
@@ -68,6 +69,23 @@ class MyRadio_ShowSubtype extends ServiceAPI {
             'name' => $this->getName(),
             'class' => $this->getClass()
         ];
+    }
+
+    /**
+     * Gets all subtypes.
+     *
+     * @return MyRadio_ShowSubtype[]
+     */
+    public static function getAll() {
+        $sql = 'SELECT show_subtype_id, name, class FROM schedule.show_subtypes';
+        $rows = self::$db->fetchAll($sql);
+
+        $subtypes = [];
+        foreach ($rows as $row) {
+            $subtypes[] = new self($row);
+        }
+
+        return CoreUtils::setToDataSource($subtypes);
     }
 
     protected static function factory($itemid)
