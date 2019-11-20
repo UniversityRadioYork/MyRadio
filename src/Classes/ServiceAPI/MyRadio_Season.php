@@ -584,6 +584,14 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         );
     }
 
+    public function setCredits($users, $credittypes, $table = null, $pkey = null)
+    {
+        $r = parent::setCredits($users, $credittypes, 'schedule.season_credit', 'season_id');
+        $this->updateCacheObject();
+
+        return $r;
+    }
+
     /**
      * Get a list of all Seasons that were for the current term, or
      * if we are not currently in a Term, the most recenly finished term.
