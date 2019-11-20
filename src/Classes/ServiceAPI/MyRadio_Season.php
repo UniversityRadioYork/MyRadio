@@ -414,7 +414,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                         ),
                         'label' => 'Subtype',
                         'explanation' => 'If necessary, override the subtype for this season. '
-                            .'If you\'re not sure what you\'re doing, leave it what it is.'
+                            .'If you\'re not sure what you\'re doing, leave it what it is.',
+                        'required' => false
                     ]
                 )
             )->addField(
